@@ -1,281 +1,142 @@
-Return-Path: <linux-kernel+bounces-439048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283949EA9FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:46:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE8E9EA9CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:42:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96C4285E0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:46:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145FC188778B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770C6238754;
-	Tue, 10 Dec 2024 07:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446B922D4DA;
+	Tue, 10 Dec 2024 07:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C0aPo7yS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dYs32Ks4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141D92309B7;
-	Tue, 10 Dec 2024 07:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765B422839A;
+	Tue, 10 Dec 2024 07:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733816610; cv=none; b=H9PrcrRdU3JmChVJLzJaf9w/wNW9w2Hz+DNgawxWN8cCpU1hc5BFc2ku4Y4FLTw8hDKHyP80v2RqrG/z5LrttKrV6+WOjZrXQ0K/B6Wm+3NlrwaSpg8k3cACI7cQbf8hMCFI75u7MN06Ye+N4M8fs4UXFiUyEMdXF8mCUjcsKnI=
+	t=1733816551; cv=none; b=fMtYkHDY1/YynfxsI/CdhOBWUgJ8d822durEsSCM+1EmVjbqpK2bw828sS6sN4WERgIRK+stn34RljCoC7+SLQuZ8hlKWMi/NNT87/ZbPCepgq+xCLx7AV/TesyqZfO0UPPDYjLxa8PdIGspNx0qdrm/J049Oraua3ToM0w56AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733816610; c=relaxed/simple;
-	bh=wQnGWxW/lsCQklEB8sPLffgLUWX4VCLMzTrRwYYaBlM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c/lpz0yRtGbNOZbP/1aK2zmT6fCXmTIRmGcPXy3HDHpRp/31V1+6exfhK/nQD0Zvl/qLw1RghKVIa11bLtjiSalyozQzA2x4XIhm1ZGvYQ+BORRBJi9LRFS2ZXYG7LGnmN1D+r9pSt4CpZDNMfEDSVUSprZBofxuT2rWmIoh9hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C0aPo7yS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA51KXH020686;
-	Tue, 10 Dec 2024 07:43:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8F6IIIUDruDCqpHYbeb8jF26ziBHJJCbUJR/ebXKLX8=; b=C0aPo7ySVf5gT2gB
-	TSDSVb75cg64rC8t7cmf1JZDE/kq2uZrhYMqPWwk8myo7sln1BJ64nkj6+crkphJ
-	LPnUadKGWYQISjIx6nF8NcTOHJDDirzS2m4yI9gvXSyl43ovgXYZrqBvVLKYk1m/
-	Qw2PAko4Ia+XIwZa0Wx3pclCCcwbD+Is4sq9I09bKFkE5h2l3u1hn4FiGW86AaEz
-	fIE5zbn3iCe+ZpFBKncTrnIrFVQV5dzvJ89cQHVSk9rnxsd9GtDqXWuZVYqtuYSr
-	pQ6yFgXfbFkH+y+UI/CNXME8D+xxcLL7TQBLIyQxo8EUL1tWlxeCKfx3dN3ru43R
-	gTGKMw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e341a8n0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 07:43:24 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA7hNUh005468
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 07:43:23 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Dec 2024 23:43:19 -0800
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-To: <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Balamurugan S
-	<quic_bselvara@quicinc.com>,
-        P Praneesh <quic_ppranees@quicinc.com>,
-        "Raj
- Kumar Bhagat" <quic_rajkbhag@quicinc.com>
-Subject: [PATCH v4 13/13] wifi: ath12k: enable ath12k AHB support
-Date: Tue, 10 Dec 2024 13:11:59 +0530
-Message-ID: <20241210074159.2637933-14-quic_rajkbhag@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241210074159.2637933-1-quic_rajkbhag@quicinc.com>
-References: <20241210074159.2637933-1-quic_rajkbhag@quicinc.com>
+	s=arc-20240116; t=1733816551; c=relaxed/simple;
+	bh=8hjTD94y9nFNvIoE44eb2J6vN/+FjBwV0spUClTOLto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CupjfosjZJlzZ7u2mjOTB/SUrJE+2UXqLPwxcnY/b3nx0Mc6HY21qFaL3RW/cjGob77Vz1CIAu7R3R5rWNEV036JAk8I+GQgxuSj1Xpw4bxS4bE1pO/ke/f/I5Xkdlg4fQgWwustCY+zaTsp2PxLQHZjZ/zJcM/y9+PosaE2DPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dYs32Ks4; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733816550; x=1765352550;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8hjTD94y9nFNvIoE44eb2J6vN/+FjBwV0spUClTOLto=;
+  b=dYs32Ks4kxEyPe4gJcRAOo6x4FWE6CxZW6xVbWDxuQsZ4zYOoYT9Gz13
+   0LJ4+Gn2Qt06azlYG+W2zXV2qAM5HUrRPaMvc5wttKMv5rzd4RPfKTDnX
+   V3UCpTQK4aFPEwr0t9YX9erY02DwRwnL7xylFDLnCRtpj3nHcwNAX34Oy
+   XrpYQNM1rVoiUF+zQHf1hvcji+uNNCxj/IUjF5FAN74AZYqgunukpJE34
+   4NiSjRh3zUUk+ANYGTEJPtwyNf3hOn10OYAci7hdNg/BJ0Wbh7nGy1Ie3
+   7zziV6aB2N77oSa2O6zbDTk/f3Dkpr6iZUrilJm/nz6YTsmdfWKvuTK8F
+   g==;
+X-CSE-ConnectionGUID: /WahzK1rTDGtTN/LvNfTqA==
+X-CSE-MsgGUID: dl9O4c0dSw6Vtxg4IJ+MUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="44820329"
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="44820329"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 23:42:27 -0800
+X-CSE-ConnectionGUID: k/NybUJjR3qiT+0izjIHEw==
+X-CSE-MsgGUID: IBChTmGvTRiqnl3u8X09KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="95772494"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 23:42:24 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 66BA911F71F;
+	Tue, 10 Dec 2024 09:42:21 +0200 (EET)
+Date: Tue, 10 Dec 2024 07:42:21 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jai Luthra <jai.luthra@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4 04/15] media: i2c: ds90ub960: Fix logging SP & EQ
+ status only for UB9702
+Message-ID: <Z1fw3YPN3F8aeUeW@kekkonen.localdomain>
+References: <20241206-ub9xx-fixes-v4-0-466786eec7cc@ideasonboard.com>
+ <20241206-ub9xx-fixes-v4-4-466786eec7cc@ideasonboard.com>
+ <Z1a0OiRDw92o1w6_@kekkonen.localdomain>
+ <e53c8964-5373-4c1f-ad48-69a474a997fb@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yMnJK32G-QUo81sq74ccDJL10nY0D716
-X-Proofpoint-ORIG-GUID: yMnJK32G-QUo81sq74ccDJL10nY0D716
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
- spamscore=0 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100058
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e53c8964-5373-4c1f-ad48-69a474a997fb@ideasonboard.com>
 
-From: Balamurugan S <quic_bselvara@quicinc.com>
+Huomenta,
 
-Currently only PCI devices are supported in Ath12k driver. Refactor
-Ath12k module_init and module_exit to include Ath12k AHB support.
+On Tue, Dec 10, 2024 at 09:38:30AM +0200, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 09/12/2024 11:11, Sakari Ailus wrote:
+> > Huomenta,
+> > 
+> > On Fri, Dec 06, 2024 at 10:26:40AM +0200, Tomi Valkeinen wrote:
+> > > UB9702 does not have SP and EQ registers, but the driver uses them in
+> > > log_status(). Fix this by separating the SP and EQ related log_status()
+> > > work into a separate function (for clarity) and calling that function
+> > > only for UB960.
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
+> > > Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > > ---
+> > >   drivers/media/i2c/ds90ub960.c | 90 ++++++++++++++++++++++++-------------------
+> > >   1 file changed, 50 insertions(+), 40 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+> > > index 24198b803eff..94c8acf171b4 100644
+> > > --- a/drivers/media/i2c/ds90ub960.c
+> > > +++ b/drivers/media/i2c/ds90ub960.c
+> > > @@ -2950,6 +2950,54 @@ static const struct v4l2_subdev_pad_ops ub960_pad_ops = {
+> > >   	.set_fmt = ub960_set_fmt,
+> > >   };
+> > > +static void ub960_log_status_ub960_sp_eq(struct ub960_data *priv,
+> > > +					 unsigned int nport)
+> > > +{
+> > > +	struct device *dev = &priv->client->dev;
+> > > +	u8 eq_level;
+> > > +	s8 strobe_pos;
+> > > +	u8 v = 0;
+> > > +
+> > > +	/* Strobe */
+> > > +
+> > > +	ub960_read(priv, UB960_XR_AEQ_CTL1, &v);
+> > 
+> > How about adding __must_check to the ub960_read()?
+> 
+> Actually, this is just moving code around (behind an if), so I'd rather not
+> add more to this patch, especially as this is a fix.
+> 
+> We'll add the error handling separately on top.
 
-Add Ath12k AHB support in Kconfig with dependency on Remoteproc
-driver. Ath12k AHB support relies on remoteproc driver for firmware
-download, power up/down etc.
+Works for me.
 
-Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
-
-Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
-Co-developed-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/Kconfig  |  6 ++++
- drivers/net/wireless/ath/ath12k/Makefile |  1 +
- drivers/net/wireless/ath/ath12k/ahb.h    | 12 ++++++++
- drivers/net/wireless/ath/ath12k/core.c   | 35 ++++++++++++++++++++++--
- drivers/net/wireless/ath/ath12k/pci.c    | 12 ++------
- drivers/net/wireless/ath/ath12k/pci.h    |  2 ++
- 6 files changed, 56 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/Kconfig b/drivers/net/wireless/ath/ath12k/Kconfig
-index 52a1bb19e3da..b2bfcaca00b3 100644
---- a/drivers/net/wireless/ath/ath12k/Kconfig
-+++ b/drivers/net/wireless/ath/ath12k/Kconfig
-@@ -15,6 +15,12 @@ config ATH12K
- 
- 	  If you choose to build a module, it'll be called ath12k.
- 
-+config ATH12K_AHB
-+	bool "QTI ath12k AHB support"
-+	depends on ATH12K && REMOTEPROC && QCOM_Q6V5_WCSS_SEC
-+	help
-+	  Enable support for Ath12k AHB bus chipsets, example IPQ5332.
-+
- config ATH12K_DEBUG
- 	bool "ath12k debugging"
- 	depends on ATH12K
-diff --git a/drivers/net/wireless/ath/ath12k/Makefile b/drivers/net/wireless/ath/ath12k/Makefile
-index b5bb3e2599cd..4aeb6b95baa4 100644
---- a/drivers/net/wireless/ath/ath12k/Makefile
-+++ b/drivers/net/wireless/ath/ath12k/Makefile
-@@ -23,6 +23,7 @@ ath12k-y += core.o \
- 	    fw.o \
- 	    p2p.o
- 
-+ath12k-$(CONFIG_ATH12K_AHB) += ahb.o
- ath12k-$(CONFIG_ATH12K_DEBUGFS) += debugfs.o debugfs_htt_stats.o
- ath12k-$(CONFIG_ACPI) += acpi.o
- ath12k-$(CONFIG_ATH12K_TRACING) += trace.o
-diff --git a/drivers/net/wireless/ath/ath12k/ahb.h b/drivers/net/wireless/ath/ath12k/ahb.h
-index 0dbbbfd45eab..fc21211c01dd 100644
---- a/drivers/net/wireless/ath/ath12k/ahb.h
-+++ b/drivers/net/wireless/ath/ath12k/ahb.h
-@@ -65,4 +65,16 @@ static inline struct ath12k_ahb *ath12k_ab_to_ahb(struct ath12k_base *ab)
- 	return (struct ath12k_ahb *)ab->drv_priv;
- }
- 
-+#ifdef CONFIG_ATH12K_AHB
-+int ath12k_ahb_init(void);
-+void ath12k_ahb_exit(void);
-+#else
-+static inline int ath12k_ahb_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void ath12k_ahb_exit(void) {};
-+#endif
-+
- #endif
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-index 49d1ac15cb7a..941924630bcb 100644
---- a/drivers/net/wireless/ath/ath12k/core.c
-+++ b/drivers/net/wireless/ath/ath12k/core.c
-@@ -9,15 +9,18 @@
- #include <linux/remoteproc.h>
- #include <linux/firmware.h>
- #include <linux/of.h>
-+#include "ahb.h"
- #include "core.h"
- #include "dp_tx.h"
- #include "dp_rx.h"
- #include "debug.h"
--#include "hif.h"
--#include "fw.h"
- #include "debugfs.h"
-+#include "fw.h"
-+#include "hif.h"
-+#include "pci.h"
- #include "wow.h"
- 
-+static int ahb_err, pci_err;
- unsigned int ath12k_debug_mask;
- module_param_named(debug_mask, ath12k_debug_mask, uint, 0644);
- MODULE_PARM_DESC(debug_mask, "Debugging mask");
-@@ -1685,5 +1688,31 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
- 	return NULL;
- }
- 
--MODULE_DESCRIPTION("Core module for Qualcomm Atheros 802.11be wireless LAN cards.");
-+static int ath12k_init(void)
-+{
-+	ahb_err = ath12k_ahb_init();
-+	if (ahb_err)
-+		pr_warn("Failed to initialize ath12k AHB device: %d\n", ahb_err);
-+
-+	pci_err = ath12k_pci_init();
-+	if (pci_err)
-+		pr_warn("Failed to initialize ath12k PCI device: %d\n", pci_err);
-+
-+	/* If both failed, return one of the failures (arbitrary) */
-+	return ahb_err && pci_err ? ahb_err : 0;
-+}
-+
-+static void ath12k_exit(void)
-+{
-+	if (!pci_err)
-+		ath12k_pci_exit();
-+
-+	if (!ahb_err)
-+		ath12k_ahb_exit();
-+}
-+
-+module_init(ath12k_init)
-+module_exit(ath12k_exit)
-+
-+MODULE_DESCRIPTION("Driver support for Qualcomm Technologies 802.11be WLAN devices");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
-index 06cff3849ab8..a5ae66f0ee1f 100644
---- a/drivers/net/wireless/ath/ath12k/pci.c
-+++ b/drivers/net/wireless/ath/ath12k/pci.c
-@@ -1821,7 +1821,7 @@ static struct pci_driver ath12k_pci_driver = {
- 	.driver.pm = &ath12k_pci_pm_ops,
- };
- 
--static int ath12k_pci_init(void)
-+int ath12k_pci_init(void)
- {
- 	int ret;
- 
-@@ -1832,16 +1832,10 @@ static int ath12k_pci_init(void)
- 		return ret;
- 	}
- 
--	return 0;
-+	return ret;
- }
--module_init(ath12k_pci_init);
- 
--static void ath12k_pci_exit(void)
-+void ath12k_pci_exit(void)
- {
- 	pci_unregister_driver(&ath12k_pci_driver);
- }
--
--module_exit(ath12k_pci_exit);
--
--MODULE_DESCRIPTION("Driver support for Qualcomm Technologies PCIe 802.11be WLAN devices");
--MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.h b/drivers/net/wireless/ath/ath12k/pci.h
-index 31584a7ad80e..18648ca11dfc 100644
---- a/drivers/net/wireless/ath/ath12k/pci.h
-+++ b/drivers/net/wireless/ath/ath12k/pci.h
-@@ -145,4 +145,6 @@ void ath12k_pci_stop(struct ath12k_base *ab);
- int ath12k_pci_start(struct ath12k_base *ab);
- int ath12k_pci_power_up(struct ath12k_base *ab);
- void ath12k_pci_power_down(struct ath12k_base *ab, bool is_suspend);
-+int ath12k_pci_init(void);
-+void ath12k_pci_exit(void);
- #endif /* ATH12K_PCI_H */
 -- 
-2.34.1
-
+Sakari Ailus
 
