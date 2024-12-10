@@ -1,161 +1,101 @@
-Return-Path: <linux-kernel+bounces-440256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430A29EBACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:26:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBCF9EBADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585CD1888578
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6322D1657F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ED4226892;
-	Tue, 10 Dec 2024 20:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E12227578;
+	Tue, 10 Dec 2024 20:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9cPzPfu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EIQVNf9e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0786C23ED44;
-	Tue, 10 Dec 2024 20:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550E321504C;
+	Tue, 10 Dec 2024 20:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733862389; cv=none; b=GC0d/sr2SHP7aP8tanvs/RFcugOmeGK5T8TQLO+mkkHraSm5KgsGtyORkLTjilgxKrv+RNRCGVFIxaCYGDL7feKfL8BRa1XPXGVzlQi0tpAnvGTnS7YM+YK7g/FLup378pOA5UnrcQ/DWT6LJjtyOV+qbSOmo38sBGV7u8u+Oug=
+	t=1733862464; cv=none; b=ehozZ49fLGsCD7IzA0uFt5v0xVtyCz+pqdmif/gh00s6+CvSMJbhj42xOo18QU4NLoqsjO2/xtqXT0/s9mSaaAR9lpwWrUyJ0X45jOv8CZcR/HP4W8yTjj5IjZ2eGbEdOiyQuv/SqPD0mrwf7/OSgT9ddMaBbFMhgFXTfXPS7QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733862389; c=relaxed/simple;
-	bh=Mr8Qa/vYrrZI/ef3Lx4QEUCO5zvzeKXwDX87KYC582A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F9fvs5/vxRDAsBhnFLZ0StJ5Xo0wsthjQv+JHhU3G6Y76XW7GpRLJgAYDQK+r6sInzeg6IAshOEtKuHUSBOAgsn7WYOuwGdJTVF8mMmG4p2fHl9rVQssNOdEvZ/aANFOHTi8dXoxkFWWJyDgXpURUv/mfxV45gLUhfJaS8Z/xqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9cPzPfu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C29C4CEE3;
-	Tue, 10 Dec 2024 20:26:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733862388;
-	bh=Mr8Qa/vYrrZI/ef3Lx4QEUCO5zvzeKXwDX87KYC582A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=E9cPzPfuL7RlWcx0zJBUDFUu09gSQvZUzF5qETBJw9yn5Ml+lIdMbVZcBXaLcW4tN
-	 4zkiuH/7U3TSZ+4FyXEyH4eyULAGIGobEw0PWSgkGV31vm5o0zJsmyOJFGa9PCGsmI
-	 qMC1AUO7/9IYVLvHoN614iOm9KrWPOn/TJZpIVhdtsKyNo/rIkr+z3HYzvuSJimSdk
-	 +Lf1DRR/YMag/sgXHWLBM4y2XUKRed9vt16Zfhr88aCGvlEr34FAdJh8TZQvZvdx7B
-	 OjuipqDB3VSylCELYBYDPbXUhqLjzv4cwo+yOZuz4MX2IrNhk8Oq/LjEv0jn3YffhT
-	 6BYGvtt5RcvxA==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5ee645cf763so2645057eaf.2;
-        Tue, 10 Dec 2024 12:26:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW8pm1grYE20aA/O1N/mzXIappu5TsG4vWUl0PmOrbbGDF4IBFBGnFn2GnyB/k/Tt3ziS0rJBQZPXQ=@vger.kernel.org, AJvYcCWqHia60c0wNUm8qG86Ad0RYEeDPgmCeG6FTJWtznG93bMhMXg8wp7NHxhXyL+O872f2Wd6M1eemZkgyQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM7akv8d64+lFvdHhngw5LX9Jkc3W0eszq6rf8IrXGWvd+73zf
-	Oun9jMKsUw0O4gXjj8ByTdFRmY9Ta/sUZ89NxOO7WIxqUJl+jPA+OY6ZprDjYdsY3ym4Ze8hZN7
-	tW8N5z9kTJ2VWbXx920VRdWg0BJI=
-X-Google-Smtp-Source: AGHT+IGAyRNiwYKTrTG0yZbrE3WcttNIKtNYMbg2SWTIT69NpV3P18Z9BP+LFfelVuGw/M81CP1lh6zjOKjDWKu5KO0=
-X-Received: by 2002:a4a:ee98:0:b0:5f1:e293:e102 with SMTP id
- 006d021491bc7-5f2da12c63amr160202eaf.8.1733862387732; Tue, 10 Dec 2024
- 12:26:27 -0800 (PST)
+	s=arc-20240116; t=1733862464; c=relaxed/simple;
+	bh=goZardWMquXxzpOl9Tq+pH1tOzOCyV2LTao3+db3xfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBhXdAb/Xdb/Dx723Ew9UwG2GPsNJpGJHcO7of8AtTkHodA3JkcAUDgq9EsLCAgt5iNreZyRuOiOTDVCPtlHcOq2IpHZ+nmzygfOgDSIWUerUWuytaQuVDVk+16tyZVJhFWjaqUX+G+qWBixR9FTng4H1yGUo1zaT2LUI5HJVAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EIQVNf9e; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733862463; x=1765398463;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=goZardWMquXxzpOl9Tq+pH1tOzOCyV2LTao3+db3xfM=;
+  b=EIQVNf9e7pPor5W6Lw+58jNj5ZZKptNgvytktYJRx8gD98QNwC0UiL7r
+   jV4NwivpkilO8S5xvkEfVggZRixDcORyubeDn+Y5JlnC4UfgFQyBySajQ
+   yAZytVCPdeQJCj2DnYdXasXrhKEXv3j+u7JRzuUsp6c1IaOHvAUFKUPJR
+   BZ3bdFQBPoJn++EgTUmy49h5qaRrFvyWJkEBy+83yZUWrKNNZgroJuqRx
+   B6nWW4VF3rYXb1esrPn3YG+9qI71FzwUhQKfEiEWxYo+0wp5Ox/QNZH5H
+   yuTIBCKuSXRW2P+TF400DXo6qcGtlwxBg3HHlpj5nrddsLgD7HtBc00bs
+   w==;
+X-CSE-ConnectionGUID: 0mPdF05VQMS3s6MEz9Od6w==
+X-CSE-MsgGUID: av2GIo5VT8S4NJp1l3H0XA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45626398"
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="45626398"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 12:27:43 -0800
+X-CSE-ConnectionGUID: QvhTK9y5SeS1fwWB3EjvZQ==
+X-CSE-MsgGUID: KnLnPeyWRymjVYrk7hB6rQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="95355142"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 12:27:42 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tL6pX-00000006HiC-2ah8;
+	Tue, 10 Dec 2024 22:27:39 +0200
+Date: Tue, 10 Dec 2024 22:27:39 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the auxdisplay
+ tree
+Message-ID: <Z1ikO7HzRx3NyZSn@smile.fi.intel.com>
+References: <20241210095145.43be58b0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com> <20241204140828.11699-4-patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <20241204140828.11699-4-patryk.wlazlyn@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 21:26:16 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hL0QOT17DnsUKONHVy1+Yy84soPWU74gHAxjsozerPgg@mail.gmail.com>
-Message-ID: <CAJZ5v0hL0QOT17DnsUKONHVy1+Yy84soPWU74gHAxjsozerPgg@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] intel_idle: Provide the default enter_dead() handler
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, peterz@infradead.org, dave.hansen@linux.intel.com, 
-	gautham.shenoy@amd.com, tglx@linutronix.de, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210095145.43be58b0@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Dec 4, 2024 at 3:08=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> Recent Intel platforms require idle driver to provide information about
-> the MWAIT hint used to enter the deepest idle state in the play_dead
-> code.
->
-> Provide the default enter_dead() handler for all of the platforms and
-> allow overwriting with a custom handler for each platform if needed.
+On Tue, Dec 10, 2024 at 09:51:45AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>   fcfadc7fef8c ("auxdisplay: img-ascii-lcd: Constify struct img_ascii_lcd_config")
+>   3b362560d9a3 ("auxdisplay: img-ascii-lcd: Remove an unused field in struct img_ascii_lcd_ctx")
+> 
+> are missing a Signed-off-by from their committer.
 
-My changelog for this patch:
+Fixed now, thanks for notifying!
 
-"A subsequent change is going to make native_play_dead() rely on the
-idle driver to put CPUs going offline into appropriate idle states.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-For this reason, provide the default :enter_dead() handler for all of
-the idle states on all platforms supported by intel_idle with an
-option to override it with a custom handler if needed."
 
-> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-> ---
->  drivers/idle/intel_idle.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index ac4d8faa3886..c6874a6dbe95 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -56,6 +56,7 @@
->  #include <asm/mwait.h>
->  #include <asm/spec-ctrl.h>
->  #include <asm/fpu/api.h>
-> +#include <asm/smp.h>
->
->  #define INTEL_IDLE_VERSION "0.5.1"
->
-> @@ -227,6 +228,16 @@ static __cpuidle int intel_idle_s2idle(struct cpuidl=
-e_device *dev,
->         return 0;
->  }
->
-> +static __cpuidle void intel_idle_enter_dead(struct cpuidle_device *dev,
-> +                                           int index)
-> +{
-> +       struct cpuidle_driver *drv =3D cpuidle_get_cpu_driver(dev);
-> +       struct cpuidle_state *state =3D &drv->states[index];
-> +       unsigned long eax =3D flg2MWAIT(state->flags);
-> +
-> +       mwait_play_dead(eax);
-> +}
-> +
->  /*
->   * States are indexed by the cstate number,
->   * which is also the index into the MWAIT hint array.
-> @@ -1798,6 +1809,7 @@ static void __init intel_idle_init_cstates_acpi(str=
-uct cpuidle_driver *drv)
->                         state->flags |=3D CPUIDLE_FLAG_TIMER_STOP;
->
->                 state->enter =3D intel_idle;
-> +               state->enter_dead =3D intel_idle_enter_dead;
->                 state->enter_s2idle =3D intel_idle_s2idle;
->         }
->  }
-> @@ -2143,10 +2155,12 @@ static void __init intel_idle_init_cstates_icpu(s=
-truct cpuidle_driver *drv)
->                 if (intel_idle_max_cstate_reached(cstate))
->                         break;
->
-> -               if (!cpuidle_state_table[cstate].enter &&
-> -                   !cpuidle_state_table[cstate].enter_s2idle)
-> +               if (!cpuidle_state_table[cstate].enter)
-
-I don't think that the above change belongs to this patch.  If I'm
-mistaken, it should be mentioned in the changelog and the reason for
-making it should be explained.
-
->                         break;
->
-> +               if (!cpuidle_state_table[cstate].enter_dead)
-> +                       cpuidle_state_table[cstate].enter_dead =3D intel_=
-idle_enter_dead;
-> +
->                 /* If marked as unusable, skip this state. */
->                 if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUS=
-ABLE) {
->                         pr_debug("state %s is disabled\n",
-> --
 
