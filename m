@@ -1,50 +1,61 @@
-Return-Path: <linux-kernel+bounces-439723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E319EB320
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5709EB328
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F706283F2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23129283140
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B291AE877;
-	Tue, 10 Dec 2024 14:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEE61B4240;
+	Tue, 10 Dec 2024 14:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ohxgPAk5"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T6Wnr/Nk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF281AAA38;
-	Tue, 10 Dec 2024 14:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95871B219F;
+	Tue, 10 Dec 2024 14:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733840719; cv=none; b=d5/ZmfVVBgIqT74sCLs64y8PVm7h4PSd8Yq0DYw52OxWGSmjdY2LXFOydRFNoZis6YlNDrLN2x83889K4DUHQHzylY17L07cpZqw2juDnvOwfSC/g4zJJmDSXZK9kg9+KB+kjJaaG8RQBPwc88tpwRW9Am67fOHWHvoTLuy125E=
+	t=1733840753; cv=none; b=LJZmt0Xx7/5E31+p6AyNfEZsylSIAi9IItcqxYtWPAew7+qEemERlK5bsYaH09qzlBTF5Zu17+HRR1S3TvzufBzSU5c11U7ivPRccBvENyCk84qW8Ug6hFjro5EyCEf1QrClsEP12OWRMrd7FTJza2+HIa1skYoi/1Kp3K7XLUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733840719; c=relaxed/simple;
-	bh=XvACE+bdqQyWiqXaX0FQMqrV41fU2XwxHSNf6quzRNM=;
+	s=arc-20240116; t=1733840753; c=relaxed/simple;
+	bh=mlDGfhaWS1q8ZGab27Xs3j9ugz6feCvic5MUD0SxWUk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGYBVB7uuJ1OIfs+VS4Ef8uaN9EVVsp113nuiF7PG+/nqO0JhzU5Pr2eSbQO1eEt8EkDlRd5KRhATVnSPbiHSDGNUOs844BafJsQI8lFmrr93veZoscomoBdRrczaXt7ZRQjS7XSB8wfTJak53gq9i/DI10RXGEEHz5aBIP5tFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ohxgPAk5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70476C4CEDE;
-	Tue, 10 Dec 2024 14:25:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqS34335gl5m1YHgI3JiXq3AD2NCzV9Hj6Lyqrv43B6+8tzzU6zMnueIPIfOpAhPBd2MP+n1dZ1JM3gMRfAsf/L1nx1K+34MbLI5pB33dQAKGUppKy0dkJg6wRLx/2ij0creKDhpzk6GnjyPdYV/WpBik+M0rjyyRWFAh1L1TuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T6Wnr/Nk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB31C4CEDF;
+	Tue, 10 Dec 2024 14:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733840718;
-	bh=XvACE+bdqQyWiqXaX0FQMqrV41fU2XwxHSNf6quzRNM=;
+	s=korg; t=1733840752;
+	bh=mlDGfhaWS1q8ZGab27Xs3j9ugz6feCvic5MUD0SxWUk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ohxgPAk5I/GLaIskYIwE6w1VuTM7PUnEFC3rvpKTg05SBwffEWgZhZsu9Z2n6QWOS
-	 lVcW1CavMeGNdG/X6t0wJiL02K7xz6BJjuEwicsEUZUzfPoIDVG7RKnusXs5vE2T+S
-	 1ZplfdjGTrRrjvPebjVdW4SNdDp/onKaRwh1gAR4=
-Date: Tue, 10 Dec 2024 15:24:43 +0100
+	b=T6Wnr/Nk3W+3py0cN+M2G6SP4IVRZ2JlKZzADfNSNiszW1l+u62WdN11yqHbM0qYa
+	 KjK/AgTlhAAsz7jLsxCeIRLyZm5HzXHnrh+O1fNXZDA5/ha63VDZ7zB0Yd+kATftcD
+	 tQZLuC41VXm77LA6/xGXxmeNZV9RAtGCwIm+7SBw=
+Date: Tue, 10 Dec 2024 15:25:16 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Antonio Riccio <linux@ariccio.me>
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: fbtft: Remove unnecessary parentheses
-Message-ID: <2024121021-blurred-dotted-c78d@gregkh>
-References: <Z1hNxNkVSt11ncXs@stream-circuit>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: quic_jjohnson@quicinc.com, kees@kernel.org, abdul.rahim@myyahoo.com,
+	m.grzeschik@pengutronix.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
+	shijie.cai@samsung.com, alim.akhtar@samsung.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded
+ issue during MIDI bind retries
+Message-ID: <2024121054-pregnant-verse-d8d5@gregkh>
+References: <CGME20241208152338epcas5p4fde427bb4467414417083221067ac7ab@epcas5p4.samsung.com>
+ <20241208152322.1653-1-selvarasu.g@samsung.com>
+ <6b3b314e-20a3-4b3f-a3ab-bb2df21de4f5@samsung.com>
+ <2024121035-manicure-defiling-e92c@gregkh>
+ <e3f45175-a17d-4b88-b6e4-5c75e91132be@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,25 +64,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1hNxNkVSt11ncXs@stream-circuit>
+In-Reply-To: <e3f45175-a17d-4b88-b6e4-5c75e91132be@samsung.com>
 
-On Tue, Dec 10, 2024 at 02:18:48PM +0000, Antonio Riccio wrote:
-> Adhere to Linux kernel coding style.
+On Tue, Dec 10, 2024 at 07:41:53PM +0530, Selvarasu Ganesan wrote:
 > 
-> Reported by checkpatch:
+> On 12/10/2024 3:48 PM, Greg KH wrote:
+> > On Tue, Dec 10, 2024 at 03:23:22PM +0530, Selvarasu Ganesan wrote:
+> >> Hello Maintainers.
+> >>
+> >> Gentle remainder for review.
+> > You sent this 2 days ago, right?
+> >
+> > Please take the time to review other commits on the miailing list if you
+> > wish to see your patches get reviewed faster, to help reduce the
+> > workload of people reviewing your changes.
+> >
+> > Otherwise just wait for people to get to it, what is the rush here?
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> CHECK: Unnecessary parentheses around 'devcode != 0x0000'
-> CHECK: Unnecessary parentheses around 'devcode != 0x9320'
 > 
-> Signed-off-by: Antonio Riccio <linux@ariccio.me>
-> ---
->  drivers/staging/fbtft/fb_ili9320.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Greg,
+> 
+> 
+> There is no rush. I understand that the review will take time and I 
+> apologize for any inconvenience caused by sending the reminder email.
 
-Checkpatch is wrong here, sorry.  Please see the archives for the
-details as to why I don't take changes like this.
+Great, during that time, please do some patch reviews of the changes on
+the mailing list to help us out.
 
-sorry,
+thanks,
 
 greg k-h
 
