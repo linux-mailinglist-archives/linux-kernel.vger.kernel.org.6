@@ -1,341 +1,135 @@
-Return-Path: <linux-kernel+bounces-439568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB299EB12B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:48:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82090188170A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:48:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579761A3AB8;
-	Tue, 10 Dec 2024 12:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="eP6rfkr3"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020128.outbound.protection.outlook.com [52.101.61.128])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6D49EB133
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:50:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B80F1A00EE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.128
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733834899; cv=fail; b=EA2qkjx/nYnr5cobMJ1fU8OOLtjafhGHkdaLdXGADjSvacRA6QBWltIzihwuWT1Y/IV3/U6KlVv5j6/v/QB1QXyQrld/DPhL2JYRyZ1Bgkbtoqm4tuIwK8r05y3gV6CMkLVPvmRqBwaPIuXLG12C73CWKk+7zzev9QJpLJZ3L3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733834899; c=relaxed/simple;
-	bh=GXrfREQqyfQkmquUjgxj2+SZ+xhAaQ9R1x4Re9na2cY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Zd2FlW2eqniFr9Av6IlvesYN+KL5pV1P4zKBs5qnv6MqVTMFT63cgR9BBpduT71WkEyweUELnKylS/X+jywIUme9yEbo//F9z8UpA1rwCB+0qfQr1Bie1H89klVL10q1NroQ0i3q5a0rExOBYWIT9RIXos+UCLMAG0nAjyzTI/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=eP6rfkr3; arc=fail smtp.client-ip=52.101.61.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D7Ibkt1Kz2/SRZ1TcoDr3jVRTMZ1MZG6riBWlFwIzT3rVUDkzbi8CQMZp8gAxmBmBg+NdQ88uv+79p6rNJ9y+XI/k9pM66TLq1Gan0eRGZLwTzPD8+WfqhvCmNPuyuZbmwQ5lqRDacrT9rQ0vs3kKsYklCCKqYLzkZKLVg0/eAahAy7bUBkYnhIgwhYY5LA1v793zvfM5GsjKne6fk8A9H15ACc/RdpDgVoDxCuSOB2jy3ia1wQ5nNWZR88PJX97w7BkFtoBoQ9C6ZT6aPmXz9UuiDxIoZj4Zbr7G19mkGPQo2v3MwL5gHAv/fQS/xEZCVFTay9pMmL551BtAShgIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J8x1udZZHvdT+JK8AgVjGOdciByLjSbhqk4gHF4lK3M=;
- b=jnv7MaCn5C1Puhl7J0BQzarSygnjK4MY/GKWkeBLiVHymvy4NvK+JmRy/XoyKgd79iZEAidzHVIoqF2aonnBI1oaqnQEZyAVZ/1tCJGPTyYe+j1nbskQYWDh0w3IguxC4sedU6B7mDVPfOTjWr94ztrPJtUbrfFThyOPRAKM2Eel7bzMF+i7gjSuJD/1TMt3Kc6aQOltExtiSM7/qVaUV5S1aYdCdmuQ233vLtYzTc2dDN7vlPB1HLDvSmX7hedFnXPIA/yZUFtDNh3wmH6qtT0myFLBcsQh1R4qVMoHllKHIPgCDVxIhfEg/mAH/ayWtDLcuLXwo4yhqob0PTmKUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J8x1udZZHvdT+JK8AgVjGOdciByLjSbhqk4gHF4lK3M=;
- b=eP6rfkr3iZ2eJyV2TrmlU2AOrVI5T2RoRN8SDAigBxrdpd6H06RoU8x7h8Lr6mo898EVDIJYb+fFYFKUtUsgHEsdVzai8TYBCKHRhNWF+7kZaHN3Oop+s6EZmrdHcz9wTaBDFlFkh2p6408aFOeln74RZITsZVtDAuZ9BYG0lFk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from SJ2PR01MB8101.prod.exchangelabs.com (2603:10b6:a03:4f6::10) by
- SA3PR01MB8476.prod.exchangelabs.com (2603:10b6:806:37f::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.12; Tue, 10 Dec 2024 12:48:12 +0000
-Received: from SJ2PR01MB8101.prod.exchangelabs.com
- ([fe80::292:6d9c:eb9a:95c9]) by SJ2PR01MB8101.prod.exchangelabs.com
- ([fe80::292:6d9c:eb9a:95c9%5]) with mapi id 15.20.8251.008; Tue, 10 Dec 2024
- 12:48:12 +0000
-Message-ID: <20a6d0d5-2733-4959-a9a1-bc6c2e64111f@os.amperecomputing.com>
-Date: Tue, 10 Dec 2024 18:18:04 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer
- expired
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvmarm <kvmarm@lists.linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, oliver.upton@linux.dev,
- christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org,
- catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com,
- yuzenghui@huawei.com, darren@os.amperecomputing.com,
- vishnu@os.amperecomputing.com
-References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
- <867c89tc4q.wl-maz@kernel.org>
- <c5b1c3d7-56ca-4afc-a831-045dba4beffa@os.amperecomputing.com>
- <865xntt2kv.wl-maz@kernel.org>
-Content-Language: en-US
-From: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-In-Reply-To: <865xntt2kv.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA1PR01CA0146.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:71::16) To SJ2PR01MB8101.prod.exchangelabs.com
- (2603:10b6:a03:4f6::10)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8978287954
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:50:15 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94E71A7255;
+	Tue, 10 Dec 2024 12:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="CvozP1XJ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD911CA9C;
+	Tue, 10 Dec 2024 12:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733835010; cv=none; b=LhKk6Chge5uOGZtkyMLgNffU8kupE8h5AkE90c01KrQ/ydNyWOHHaKczj1mIjN1vMB0GQcMuB8KmDcwkzkzrpgr7xYk66WJTtR49Dg23C5mPxT9mqt3LyZoB+kHzxvjXR+aSX+cBbub45XeWUl1XF0b8UZNQ9emTeOaKTzJJVMA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733835010; c=relaxed/simple;
+	bh=caMIoAkHWjs05XI5L7ESLFOjqTSD2G4USqirzJlSnDY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=TbveO5zSQbuhUaOar4uNdS57AZVMiIT1m+M93lWV9BK3BLt8GedGqKXQniavzQSBfZ4+OxVitcQ9ei60Y1M1NTuhImuv6gXctl4ajW+RgmiuIt6fGQ7SQMg8+0VhrKIPFUmGG4H+jtMCfybS6EG+2ggTcApLwqzomO7hu+ohm1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=CvozP1XJ reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=nw/CxItkTnCd0XnlMACUyCY4DU5/yrHaEShv6qcL0LQ=; b=C
+	vozP1XJLUbudLGiQHIMaho1wOOeqDo/imAVQUh8/zcrpsdMvRwukD+KnHoXezWlX
+	binZcnTdeEUv6DCCZ8xCnGMuiaDunznjdabiidjqcn6JwTiHyYP0Poqy7G8d7yuP
+	/yGWiZC187PcU1htJkiXsm0GXj97U48L90+Zmybaa4=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-102 (Coremail) ; Tue, 10 Dec 2024 20:48:12 +0800
+ (CST)
+Date: Tue, 10 Dec 2024 20:48:12 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	"Daniel Semkowicz" <dse@thaumatec.com>, 
+	"Diederik de Haas" <didi.debian@cknow.org>, andy.yan@rock-chips.com, 
+	Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, 
+	jonas@kwiboo.se, krzk+dt@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	neil.armstrong@linaro.org, quentin.schulz@cherry.de, 
+	rfoss@kernel.org, robh@kernel.org, tzimmermann@suse.de
+Subject: Re:Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2
+ controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <jl5obi7rd4h6ywozeqruxq2vx62sx5yf4wwpksrq3prdleps2k@d3zbr5ttquvn>
+References: <20241203165450.1501219-1-heiko@sntech.de>
+ <20241209150619.33998-1-dse@thaumatec.com>
+ <D67AV178CEBD.3QA9VD4ZPRNQ1@cknow.org> <2203458.KiezcSG77Q@diego>
+ <4e015ea9.960.193ae0c236a.Coremail.andyshrk@163.com>
+ <ay5hbnqqjhopaqof6z7j2rzm2bc6xa2vbzan2ak3if6wzmyip2@kqh7gtrajnm2>
+ <33e2c5db.1300.193ae284b6d.Coremail.andyshrk@163.com>
+ <CAA8EJprLA09NP0KAztc5eoAMkGcrom84jg_pcbNcwN0FAaSLrw@mail.gmail.com>
+ <2d68155e.1e5b.193ae4616b9.Coremail.andyshrk@163.com>
+ <jl5obi7rd4h6ywozeqruxq2vx62sx5yf4wwpksrq3prdleps2k@d3zbr5ttquvn>
+X-NTES-SC: AL_Qu2YAfSYu0Ai5COQbOkZnEobh+Y5UcK2s/ki2YFXN5k0tCTI0SYQW29KGUD2y86DDiKsoAirUQVL5MpFRpJHY45QxyzaS0hvthPy8V40pXsw
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR01MB8101:EE_|SA3PR01MB8476:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee69a2e2-bfff-448e-b3b4-08dd1918e814
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WlZyUXFrTlJ1dzkrWmhrWHE3eE5PemVYcEt6Nm81UCsvbW96M2J6RWhJQnhN?=
- =?utf-8?B?UjJKVDZXSTNvamVObmx4d2JkTHlTc01SQ1RiaW5JYzcxc1YvZGhFRThxUXg5?=
- =?utf-8?B?TG5DU3dyVXRzc0RNMzhhTUx0RmRHSlJIL2syUml2SXoxRWc2VUdVS25OYmpU?=
- =?utf-8?B?bjZ3WWw1Nkd6N0dGMFRNTHljR2FqaG9qNXBBNjcyOS9NMElkR0ZNSXZXbW1K?=
- =?utf-8?B?aDFXcFNseTRCbTFjQ0REUFFBdkc1NW5QVzdUc0VFbVZhU1ZVN2RERy9TYWVO?=
- =?utf-8?B?OFRnRkxyb3Nab3NwOXF4OVZOcU9Eb0dreUFId2xNalU5cHZ4ZGtsTlczK3h6?=
- =?utf-8?B?eUd6dG1OZlM1a0dYa1lsdG9JT0swQXdsTHpoTUpDUWpaR1N2QW1TaEtyMUlM?=
- =?utf-8?B?V0JseUJmNTV2RDB0UTFNWWtBelE1cW92R0Mzb0RrN2dobzRHRytVVEZzZHdq?=
- =?utf-8?B?YmpQdTVTemlkVUR3LzB5aThoYk5LcnNTYUllZXB5dHRmY2N3dHk0NGRCWS8w?=
- =?utf-8?B?cVNzSUp6NXRPamxOUXBlTWVrTnVKTi9QMXAxS21NQ1JYckExaDEybzVqMHVJ?=
- =?utf-8?B?UFJYSjljVzNNd0YvTE80eVBMdWhyekdJc2hyQ2hGMUtOYU0rWUFRdkNNcnMz?=
- =?utf-8?B?TUQyTXpCWlVHbHpZUXB2Y0habGZZeE42aTgxWkttclU3RHFDY3ZVT3plN3lG?=
- =?utf-8?B?TS9oNXVuMDl3VmVDaC9Td2lDYldjUlJyZVVSQk0vV0c3N1BxUWpQaG5aclpJ?=
- =?utf-8?B?MnRrcURsVEtFQytsdndyQzZNRWFKVlpaUWhyczg3R2huUVdPa0RWVjQ2R0Rh?=
- =?utf-8?B?L1JZazhmT0RDS1RoUDU0eHdjRTVtTThTZHhBTS9wQnh0TFRucTRwbHE1ZkNv?=
- =?utf-8?B?NXV6MTZxdVJjMGNieHpOcFYvakJPWGdsaXNSbVpiR1NvT1prN25POXBsRVZr?=
- =?utf-8?B?VkJQMG1QdmVyTWx6bWZwZitYbnhpQXh4QzFRRm44UmpNR1VSbXdLY01KS3JB?=
- =?utf-8?B?Ympya0kxQWd0YkZIR012N1lkOXYreHFtTGZYMUJBVTh1S2FqYzdlNmRBM2Nr?=
- =?utf-8?B?enk4NHI4ZGcwb1dyZHVYSnJ5b3NmT1JMOXo3QUp0TDVHc1QxMElpOHpyMUpL?=
- =?utf-8?B?WVRkZlNkd0VNV3FURWtBV3Q0UWdhN1M4RXA2eC9tc2NyL0VQaVNaMGVoZmla?=
- =?utf-8?B?YlR4MVFzQjVPZVZVdDNRRHA3L0pkQTl2ZGRwcEpBTWRQVnE2MTlFcjdVbU4z?=
- =?utf-8?B?Q3NBTDJGbVBxVjlCUnRJQTFYWnl4UUNlemNGUHJJb2VINnpjK3p0N3ZuQk8z?=
- =?utf-8?B?S3ZhYjdUOTZZTmpyT3l2UUdNaE81MU9WbFFnb2ZTQloyL3EyS1hFMTI2elZ3?=
- =?utf-8?B?NHZGUDkxQjN1dytwcU16aEVhZ01CMEVIYms1ZmlCdElOMVV4WVNPaWFPTVZo?=
- =?utf-8?B?Y0wrZjJ6cWx6MkNRK1d0Tm1ZQ05kQWpSVTBKQ3FFcnhPUWV2VnBmL0s0OXFO?=
- =?utf-8?B?UWw2WlpiOEpLMm4wd1lUb0kyNm5keVVvZnYwY3RVY3YwSnhiTENsWVMzNUR3?=
- =?utf-8?B?SUU0ajdLVnRpckk5d00xTXBGNFpicUlwd3d6V3FkRGpvdkFUbWtHU0dEWXU4?=
- =?utf-8?B?SjZqbW0xcmdWUGV5cE9xUmJjeHM5cFoyWE12UU5PUUtUK2Y4TmhPUDhPVTA5?=
- =?utf-8?B?dXJNdldHZmxvRUMraW1RWnVDTVdzamFzNEdDM1FWc0o0bnVaZlUxdkYzc0NW?=
- =?utf-8?B?QUd3aTJMMFFiUmQycG5la0tQK0FNT0NLS0FQSDVHYmhyNmMwTGZCOFlCMzNI?=
- =?utf-8?Q?CYCVQmoR4HmR/t8Hs35X1w5ejp8NF/cSg+NDs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR01MB8101.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UnNhckxkd3Qxd3Q3K2ppSUZZMDhpTkU4cTF3Q1JMQkVycjBQb045REloeW9L?=
- =?utf-8?B?cUo4bnFBUllNUFZjNW54RFJNanVpelZIelVmdCtlVkM1cHdFSkt4ZlIvQVd2?=
- =?utf-8?B?NWNQaWRUWGw2YlFzM0RzdzdPSTR2NzdxMmo2amhvQWF6MTBXVTdIT1Jaanlz?=
- =?utf-8?B?UVlTNlhRYjVtcEVlQ1FlNGpnVGhIRms0U2Zhck90WExCSnBzN2ZzVVQ3TEFq?=
- =?utf-8?B?UHhVQXJYQTZzSzYrd1FhMTFlV2xLTTRlWnQ5dkZsUmd5bmh5T2NrRG9udkxR?=
- =?utf-8?B?aE9zbUl5SWo0KzR2Y1VRQ3B0QXF1Nmd2WTZyS2dvc05PUHBzK2ZtcGFkMjB1?=
- =?utf-8?B?UFdEaVo0N3p6ZjJTZ25DdmxzcE1xSnFiQW1TNys2bFdsNTZrT3VFbDFtMWJr?=
- =?utf-8?B?YWRPejlhak1YVUphTGVjQzZMWnF6Y1VKT3puZVlQb0Q4blFzditvUlNKZ0gz?=
- =?utf-8?B?Y2g4cHZUOTNsUHlJQzNrZGNRdG1ZdUVlbFJyVHVGOGtZRHBBNUxwY2lSS0JH?=
- =?utf-8?B?UEt1OHNaZ3NicHI1WGtQWUVUNjhCUnNYK012cFpvZ2ljcVFkY2hBWlM5TXVL?=
- =?utf-8?B?R2x1Z3BGQUFVYXN6ZkpuQnVOdG45djJKbCtnMlJETG5ydUEveHRtRFV6aWZi?=
- =?utf-8?B?Yzg4dTFyZkF4VE04dDA1K0VpTnJNQlY2Q3c3WmcrdlNIQ01YV051NFVYZ3FU?=
- =?utf-8?B?bE5ERXhtNXM0dkI4K3FFMUtTcXdTallCSzd6SWxVR292Tld3MnZCd25UNGky?=
- =?utf-8?B?dEJDR0dvZ0k5RDRmVWRxVzFKdTJiMFIyMzNNajZyMkswMmpoekd6SjlpSEJS?=
- =?utf-8?B?TUVLNlllUkd2Q0p0L2xRQ0NZcjl5TjN1SkFFT0lrc1ZSSjZZc20wdHFxMUFF?=
- =?utf-8?B?aElXUG5LeDFRK0ZVQzVaUjUzZXJ4cDVCSGxkUUhJMDRTcTBtYzAwbGZVL2x3?=
- =?utf-8?B?bGJtZzF3L1pjZGV4bDNrVU1QUzlKbi80N0VqOWw0UytKdjJhc1pGc2NlK3gx?=
- =?utf-8?B?M2RIZTYxVmFUUlVIeWpZTnRrNFlScjlNbzd5R2p0SzhhVzRHb3NydldnMmsr?=
- =?utf-8?B?NW1nTFZkaG9HM3IvcWd5a1l4U0hIdEU2WGx1SVE0SFFyQ2FrWUsrTXZZU0Nh?=
- =?utf-8?B?OXlsUU9lcEs2d3FyWURqM2xCT2tGbUI0akgrTVRYUTZCYzk4NjBVb21JZDVX?=
- =?utf-8?B?TXkycmdESncwakVQMCswbktVY0RYcjRaSG1tZm1mYitaRzhXQXdOWnVHdlVy?=
- =?utf-8?B?WFdnWXRFVzA1cDZvaWd3bmc1SDBPemd0N2RpVU43czZ1ZG1vTTk1enB6M2VG?=
- =?utf-8?B?UE9FMFVHeFhuUkxkczBQdzNRaEkxVVdOT1lVby83WSsvNjNhcG5HZy8vZVlR?=
- =?utf-8?B?OHpGSm5oUmVHbGdsaXlEdlk3eStwZHo3ckhvVEE5cHRKYndBMmYxK3YwQjNq?=
- =?utf-8?B?cDZ5NGVrOStKRGdWREpxMEd0S3VyOGpiRWhZQzR3WkVyWkV6Q1picXZWVWh2?=
- =?utf-8?B?WFBpUzNRaXBHSllkeVcyNkVBamVVK2tiU0h2N0o4cStSdS9JdVdoZEgwSGVY?=
- =?utf-8?B?ZHBuaVdwNkk2c0M1Ujd1b3g1NE92eEltU05qUUd4NkQ2ZWFqVkViQkpVZDRZ?=
- =?utf-8?B?cFRwK2tqeUV3dFBpZHh3N0FGTURHOXVpa0JQeStvUVp2bkFRczFnNStmaHps?=
- =?utf-8?B?OXlzaW9YdWo4KytlVW9pbisyZHN4bmtCMklxRXBzWHl2d1loMndseEJxWDU2?=
- =?utf-8?B?a0I2NjRSRm9HSGk0RlNWdFpYZDgrL1dLTWJ3UkIrOThrR1BEQUlZTE4zeEdT?=
- =?utf-8?B?V0JZYkk0Z2NVbndOZDRnUmpJbDNhYmUrTlg3em5pR0ZUdjl3d3pjcjFkdS9I?=
- =?utf-8?B?TVVFZEU0T0szaEg2WVNMemgwWGVFazY0WDJmY0hadnh2anNhcitwTmY3ZDlI?=
- =?utf-8?B?aWw5bmNEZVZTZVA0OE1FUEJxYkFWVGk3NnpGM3pTM2tXcnZ6TjBPOW1mQW1W?=
- =?utf-8?B?Z0Fybmw3Vlo1MXBINlM3aWRrUy9vUnFMTmQ5cFpqaVN1RUg0SmVCbHFUMmVF?=
- =?utf-8?B?TXJlaFdTRkh3ZzZDRzkvTzM2WCtxOWVIK2R1TGNpQUZOSk44YWZybmo4THFH?=
- =?utf-8?B?Yk5IM1pWYVQ3eW1wV3N1OUxKS0NSYzRjVldoZFNFa2VZVGdOZEUxUHRWdWNx?=
- =?utf-8?Q?GNE2CjeB7LdZNQhknnaMsKFo3PRmTfg/K9yI+kceizPd?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee69a2e2-bfff-448e-b3b4-08dd1918e814
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR01MB8101.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 12:48:12.3321
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EQMebjXOgP/bg6FrOfN56TFarZoJ4G270AYRDTNiBtw1hENYuDLTguHvJQECX6xf7P46uMm59EsZBsIfVEFHBbhw9f9zFMWvJur2yMG0Ux2I3xZ6ZMaSeuI8XVEV2zHy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR01MB8476
+Message-ID: <78e7b8e.b5ee.193b09ce46d.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZigvCgD3f7eMOFhn7N07AA--.52128W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMxWxXmdYMSCOHwABs3
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-> Please give the fixup below a go.
-> 
-> 	M.
-> 
-> [1] https://lore.kernel.org/all/20241202172134.384923-6-maz@kernel.org/
-> 
->  From 2bbd6f9b41a20ad573376c20c158ff3c12db5009 Mon Sep 17 00:00:00 2001
-> From: Marc Zyngier <maz@kernel.org>
-> Date: Mon, 9 Dec 2024 10:58:08 +0000
-> Subject: [PATCH] fixup! KVM: arm64: nv: Publish emulated timer interrupt state
->   in the in-memory state
-> 
-> ---
->   arch/arm64/kvm/arch_timer.c | 32 +++++++++++++-------------------
->   1 file changed, 13 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-> index 895f09658ef83..91bda986c344b 100644
-> --- a/arch/arm64/kvm/arch_timer.c
-> +++ b/arch/arm64/kvm/arch_timer.c
-> @@ -432,25 +432,6 @@ static void kvm_timer_update_irq(struct kvm_vcpu *vcpu, bool new_level,
->   {
->   	int ret;
->   
-> -	/*
-> -	 * Paper over NV2 brokenness by publishing the interrupt status
-> -	 * bit. This still results in a poor quality of emulation (guest
-> -	 * writes will have no effect until the next exit).
-> -	 *
-> -	 * But hey, it's fast, right?
-> -	 */
-> -	if (is_hyp_ctxt(vcpu) &&
-> -	    (timer_ctx == vcpu_vtimer(vcpu) || timer_ctx == vcpu_ptimer(vcpu))) {
-> -		u32 ctl = timer_get_ctl(timer_ctx);
-> -
-> -		if (new_level)
-> -			ctl |= ARCH_TIMER_CTRL_IT_STAT;
-> -		else
-> -			ctl &= ~ARCH_TIMER_CTRL_IT_STAT;
-> -
-> -		timer_set_ctl(timer_ctx, ctl);
-> -	}
-> -
->   	timer_ctx->irq.level = new_level;
->   	trace_kvm_timer_update_irq(vcpu->vcpu_id, timer_irq(timer_ctx),
->   				   timer_ctx->irq.level);
-> @@ -471,6 +452,19 @@ static void timer_emulate(struct arch_timer_context *ctx)
->   
->   	trace_kvm_timer_emulate(ctx, should_fire);
->   
-> +	/*
-> +	 * Paper over NV2 brokenness by publishing the interrupt status
-> +	 * bit. This still results in a poor quality of emulation (guest
-> +	 * writes will have no effect until the next exit).
-> +	 *
-> +	 * But hey, it's fast, right?
-> +	 */
-> +	if (is_hyp_ctxt(ctx->vcpu)) {
-> +		unsigned long val = timer_get_ctl(ctx);
-> +		__assign_bit(__ffs(ARCH_TIMER_CTRL_IT_STAT), &val, should_fire);
-> +		timer_set_ctl(ctx, val);
-> +	}
-> +
->   	if (should_fire != ctx->irq.level) {
->   		kvm_timer_update_irq(ctx->vcpu, should_fire, ctx);
->   		return;
-
-I tried this patch and it did not work, looks like there are some 
-exit/entry paths which updates timer interrupt without going though 
-timer_emulate (like kvm_hrtimer_expire). If I undo the deleted lines in 
-above diff in the function kvm_timer_update_irq, then it is working.
-
-below is the diff which is working.
-
-diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-index dd038d62e99b..a54bdb6dc566 100644
---- a/arch/arm64/kvm/arch_timer.c
-+++ b/arch/arm64/kvm/arch_timer.c
-@@ -432,23 +432,11 @@ static void kvm_timer_update_irq(struct kvm_vcpu 
-*vcpu, bool new_level,
-  {
-         int ret;
-
--       /*
--        * Paper over NV2 brokenness by publishing the interrupt status
--        * bit. This still results in a poor quality of emulation (guest
--        * writes will have no effect until the next exit).
--        *
--        * But hey, it's fast, right?
--        */
-         if (is_hyp_ctxt(vcpu) &&
-             (timer_ctx == vcpu_vtimer(vcpu) || timer_ctx == 
-vcpu_ptimer(vcpu))) {
--               u32 ctl = timer_get_ctl(timer_ctx);
--
--               if (new_level)
--                       ctl |= ARCH_TIMER_CTRL_IT_STAT;
--               else
--                       ctl &= ~ARCH_TIMER_CTRL_IT_STAT;
--
--               timer_set_ctl(timer_ctx, ctl);
-+               unsigned long val = timer_get_ctl(timer_ctx);
-+               __assign_bit(__ffs(ARCH_TIMER_CTRL_IT_STAT), &val, 
-new_level);
-+               timer_set_ctl(timer_ctx, val);
-         }
-
-         timer_ctx->irq.level = new_level;
-@@ -471,6 +459,19 @@ static void timer_emulate(struct arch_timer_context 
-*ctx)
-
-         trace_kvm_timer_emulate(ctx, should_fire);
-
-+       /*
-+        * Paper over NV2 brokenness by publishing the interrupt status
-+        * bit. This still results in a poor quality of emulation (guest
-+        * writes will have no effect until the next exit).
-+        *
-+        * But hey, it's fast, right?
-+        */
-+       if (is_hyp_ctxt(ctx->vcpu)) {
-+               unsigned long val = timer_get_ctl(ctx);
-+               __assign_bit(__ffs(ARCH_TIMER_CTRL_IT_STAT), &val, 
-should_fire);
-+               timer_set_ctl(ctx, val);
-+       }
-+
-         if (should_fire != ctx->irq.level) {
-                 kvm_timer_update_irq(ctx->vcpu, should_fire, ctx);
-                 return;
-@@ -948,9 +949,6 @@ void kvm_timer_sync_nested(struct kvm_vcpu *vcpu)
-          * which allows trapping of the timer registers even with NV2.
-          * Still, this is still worse than FEAT_NV on its own. Meh.
-          */
--       if (cpus_have_final_cap(ARM64_HAS_ECV) || !is_hyp_ctxt(vcpu))
--               return;
--
-         if (!vcpu_el2_e2h_is_set(vcpu)) {
-                 /*
-                  * A non-VHE guest hypervisor doesn't have any direct 
-access
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 2c35e1f8193e..52a263e7dcca 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -1238,7 +1238,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
-                 if (static_branch_unlikely(&userspace_irqchip_in_use))
-                         kvm_timer_sync_user(vcpu);
-
--               if (vcpu_has_nv(vcpu))
-+               if (is_hyp_ctxt(vcpu))
-                         kvm_timer_sync_nested(vcpu);
-
-                 kvm_arch_vcpu_ctxsync_fp(vcpu);
-
-
--- 
-Thanks,
-Ganapat/GK
-
+CkhpIEFsbCwK5ZyoIDIwMjQtMTItMTAgMjA6MzI6MDPvvIwiRG1pdHJ5IEJhcnlzaGtvdiIgPGRt
+aXRyeS5iYXJ5c2hrb3ZAbGluYXJvLm9yZz4g5YaZ6YGT77yaCj5PbiBUdWUsIERlYyAxMCwgMjAy
+NCBhdCAwOTo1NDowOUFNICswODAwLCBBbmR5IFlhbiB3cm90ZToKPj4gCj4+IEhpIERtaXRyeSwK
+Pj4gCj4+IOWcqCAyMDI0LTEyLTEwIDA5OjQ1OjEx77yMIkRtaXRyeSBCYXJ5c2hrb3YiIDxkbWl0
+cnkuYmFyeXNoa292QGxpbmFyby5vcmc+IOWGmemBk++8mgo+PiA+T24gVHVlLCAxMCBEZWMgMjAy
+NCBhdCAwMzoyMiwgQW5keSBZYW4gPGFuZHlzaHJrQDE2My5jb20+IHdyb3RlOgo+PiA+Pgo+PiA+
+Pgo+PiA+PiBIaSBEbWl0cnksCj4+ID4+Cj4+ID4+IOWcqCAyMDI0LTEyLTEwIDA5OjAxOjM477yM
+IkRtaXRyeSBCYXJ5c2hrb3YiIDxkbWl0cnkuYmFyeXNoa292QGxpbmFyby5vcmc+IOWGmemBk++8
+mgo+PiA+PiA+T24gVHVlLCBEZWMgMTAsIDIwMjQgYXQgMDg6NTA6NTFBTSArMDgwMCwgQW5keSBZ
+YW4gd3JvdGU6Cj4+ID4+ID4+Cj4+ID4+ID4+Cj4+ID4+ID4+IEhpLAo+PiA+PiA+Pgo+PiA+PiA+
+PiBBdCAyMDI0LTEyLTEwIDA3OjEyOjI2LCAiSGVpa28gU3TDvGJuZXIiIDxoZWlrb0BzbnRlY2gu
+ZGU+IHdyb3RlOgo+PiA+PiA+PiA+QW0gTW9udGFnLCA5LiBEZXplbWJlciAyMDI0LCAxNzoxMTow
+MyBDRVQgc2NocmllYiBEaWVkZXJpayBkZSBIYWFzOgo+PiA+PiA+PiA+PiBIaSwKPj4gPj4gPj4g
+Pj4KPj4gPj4gPj4gPj4gT24gTW9uIERlYyA5LCAyMDI0IGF0IDQ6MDYgUE0gQ0VULCBEYW5pZWwg
+U2Vta293aWN6IHdyb3RlOgo+PiA+PiA+PiA+PiA+IE9uIDAzLjEyLjI0IDIxOjU0LCBIZWlrbyBT
+dHVlYm5lciB3cm90ZToKPj4gPj4gPj4gPj4gPiA+IFRoaXMgc2VyaWVzIGFkZHMgYSBicmlkZ2Ug
+YW5kIGdsdWUgZHJpdmVyIGZvciB0aGUgRFNJMiBjb250cm9sbGVyIGZvdW5kCj4+ID4+ID4+ID4+
+ID4gPiBpbiB0aGUgcmszNTg4IHNvYyBmcm9tIFJvY2tjaGlwLCB0aGF0IGlzIGJhc2VkIG9uIGEg
+U3lub3BzaXMgSVAgYmxvY2suCj4+ID4+ID4+ID4+ID4gPgo+PiA+PiA+PiA+PiA+Cj4+ID4+ID4+
+ID4+ID4gSSBkaWQgbW9yZSB0ZXN0cyB3aXRoIGRpZmZlcmVudCBMVkRTIGRpc3BsYXlzLiBJIHRl
+c3RlZCBmb2xsb3dpbmcKPj4gPj4gPj4gPj4gPiBjb25maWd1cmF0aW9ucyB3aXRoIERTSS9MVkRT
+IGJyaWRnZToKPj4gPj4gPj4gPj4gPiAtIDEwMjR4NjAwQDYwLjAxCj4+ID4+ID4+ID4+ID4gLSAx
+MDI0eDc2OEA2MC4wMgo+PiA+PiA+PiA+PiA+IC0gMTI4MHg4MDBANjAuMDcKPj4gPj4gPj4gPj4g
+PiAtIDEzNjZ4NzY4QDYwLjA2Cj4+ID4+ID4+ID4+ID4KPj4gPj4gPj4gPj4gPiBBbGwgb2YgdGhl
+bSB3b3JrZWQgd2l0aG91dCBpc3N1ZXMsIGV4Y2VwdCAxMzY2eDc2OC4KPj4gPj4gPj4gPj4gPiBX
+aXRoIHRoaXMgcmVzb2x1dGlvbiwgdmlkZW8gaXMgYmx1cnJ5LCBhbmQgb2Zmc2V0IGluY29ycmVj
+dGx5Cj4+ID4+ID4+ID4+ID4gdG8gdGhlIGxlZnQuIFRoZXJlIGFyZSBhbHNvIHJlcGVhdGluZyBl
+cnJvcnMgb24gdGhlIGNvbnNvbGU6Cj4+ID4+ID4+ID4+ID4KPj4gPj4gPj4gPj4gPiAgIHJvY2tj
+aGlwLWRybSBkaXNwbGF5LXN1YnN5c3RlbTogW2RybV0gKkVSUk9SKiBQT1NUX0JVRl9FTVBUWSBp
+cnEgZXJyIGF0IHZwMwo+PiA+PiA+PiA+PiA+Cj4+ID4+ID4+ID4+ID4gSW4gY29ycmVjdCBvcGVy
+YXRpb24gd2l0aCBvdGhlciByZXNvbHV0aW9ucywgdGhlcmUgaXMgbm8gZXJyb3IuCj4+ID4+ID4+
+ID4+ID4gSSBhbSBub3Qgc3VyZSBpZiB0aGlzIGlzIGEgcHJvYmxlbSBpbiB5b3VyIHNlcmllcyBv
+ciByYXRoZXIgaW4gVk9QMgo+PiA+PiA+PiA+PiA+IGRyaXZlci4KPj4gPj4gPj4gPgo+PiA+PiA+
+PiA+VGhpcyByZWFsbHkgc291bmRzIGxpa2Ugc29tZXRoaW5nIGlzIHdyb25nIG9uIHRoZSB2b3Ag
+c2lkZS4KPj4gPj4gPj4gPlRoZSBpbnRlcnJ1cHQgaXMgcGFydCBvZiB0aGUgdm9wLCB0aGUgZGl2
+aXNhYmxlIGJ5IDQgdGhpbmdzIGxpa2VseSB0b28uCj4+ID4+ID4+Cj4+ID4+ID4+IFRoaXMgaXMg
+YSBoYXJkd2FyZSBsaW1pdGF0aW9uIG9uIHZvcCBzaWRlOgo+PiA+PiA+PiBUaGUgaG9yaXpvbnRh
+bCByZXNvbHV0aW9uIG11c3QgYmUgNCBwaXhlbCBhbGlnbmVkLgo+PiA+PiA+Cj4+ID4+ID5UaGVu
+IG1vZGVfdmFsaWQoKSBhbmQgYXRvbWljX2NoZWNrKCkgbXVzdCByZWplY3QgbW9kZXMgdGhhdCBk
+b24ndCBmaXQuCj4+ID4+Cj4+ID4+IFdlIHJvdW5kIGRvd24gdG8gNCBwaXhlbCBhbGlnbmVkIGlu
+IG1vZGVfZml4dXAgaW4gb3VyIGJzcCBrZXJuZWwsCj4+ID4KPj4gPldoYXQgaXMgbWVhbnQgYnkg
+dGhlICJic3Aga2VybmVsIiBoZXJlPyBJIGRvbid0IHNlZSBpdCBiZWluZyBwcmVzZW50Cj4+IAo+
+PiBic3Aga2VybmVsIG1lYW5zIGRvd25zdHJlYW0gdmVuZG9yIGtlcm5lbC4KPj4gCj4+ID5pbiB0
+aGUgbWFpbmxpbmUga2VybmVsLiBTbywgaWYgdGhlIG1vZGUgaXMgdW5zdXBwb3J0ZWQsIGl0IHNo
+b3VsZCBiZQo+PiAKPj4gV2lsbCBpdCBiZSBhY2NlcHRhYmxlIHRvIGFkZCB0aGlzIHJvdW5kIGRv
+d24gaW4gdGhlIG1haW5saW5lIG1vZGVfZml4dXA/Cj4KPkkgdGhpbmsgc28uCgpUaGVuIEkgY2Fu
+IHdyaXRlIGEgcGF0Y2ggZm9yIGl0LgoKPgo+PiAKPj4gPnJlamVjdGVkLgo+PiA+Cj4+ID4+IGJl
+Y2F1c2Ugc29tZXRpbWVzLCBzb21lIGJvYXJkcyBkbyBpbmRlZWQgY2hvb3NlIGEgc2NyZWVuIHRo
+YXQgaXMgbm90IDQgcGl4ZWwgYWxpZ25lZAo+Cj4tLSAKPldpdGggYmVzdCB3aXNoZXMKPkRtaXRy
+eQo=
 
