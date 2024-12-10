@@ -1,213 +1,137 @@
-Return-Path: <linux-kernel+bounces-438866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B815C9EA7B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:23:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93609EA7BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6E218891CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC00166D9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBD0226186;
-	Tue, 10 Dec 2024 05:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8652F227576;
+	Tue, 10 Dec 2024 05:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F7wJbo2b"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3QpNI84"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBEC23312A;
-	Tue, 10 Dec 2024 05:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A12D23312A;
+	Tue, 10 Dec 2024 05:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808174; cv=none; b=CJ/wn0/KlnLw2RztblNmmYtD4zN4udEe4124G69N/7qunE61TPMxDtItUgW+3JkIHOS+p7I7g8YYLRUNJTkKCsWSZStJVR9ZGm4zrFprPO/VVaMTBOok1ChHFeVWYOld/6QAivU8gDJN+trzKDWYT/oMT5SQR4Cmxa1PyPTNPN0=
+	t=1733808233; cv=none; b=pwETWpXM0BvG4ut1/uvdXQGTOFtmM0cwrf55Ok8UzI9ef7nvsubuVJa1EysqpuJbYx7XNwySD3r6T09h/N2VPalosXZMD/FrDhkJY9Hx2jnUiD9vbZJuMDTVe+rcAH/p87su393S9uNFmNfAfi6xAVtu0ox1QFXKTFrLx2Cjst4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808174; c=relaxed/simple;
-	bh=zJUBuHFfZ5MhenPpO2nkxGxrUh/tpO38Y2cdDaU6zmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NkjB0TngA/+pK3yRSSTkeV8xs97eHp46rsshGu2IIkhcBNQMrN0i5q93euJ/u7q0rKT432mPcUr0iWfsZs0GpSyMiExvXCfZk+GZoQeWPQ4lXRlXnwv7aPEaJtvQw0JVpmxumX8mfiTzq2I3QR/Z2e9JaAbYMSaXAH6DIybxsKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F7wJbo2b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA3ovFe014620;
-	Tue, 10 Dec 2024 05:22:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dP14CTz/69rtTmc+A6xvwGc7j5vxWtLdUQfQ2Wk3Q5Q=; b=F7wJbo2bkHjctD+O
-	0Qsc9Xjq9KTkf4BGpWK1KckjHs06Scj7egkW29tZJjIXPt8sDEfEez1D6Lpt6fdn
-	oD/qUxvZPapGc0+xVGuTpDR2JRXRD4AvOzEEGCftrJz31nAkVdfh4anj1XQhHaNr
-	+odhibYqaetX/uUVtaqtSc+yoa6+rHUQ3aWE+CV9BAh49dEHVRis4wQC/i3nU1VK
-	AAd6U6OeLyIS+6vScgP0QW8ILrar/DF2wZ4ALTMniLFKBMjuwQSPuhKqt+p9wK1v
-	AuMS0Ser1gODngAvrAkj1RdVPdI//9MIwwb6+YDqPvDBVtAM1ImCdF+CSwHypAzB
-	br5RpA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3n85sd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 05:22:47 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA5MkUw021716
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 05:22:46 GMT
-Received: from [10.216.2.81] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 21:22:40 -0800
-Message-ID: <95a64663-2e48-400d-b4e9-a99e18e62825@quicinc.com>
-Date: Tue, 10 Dec 2024 10:52:37 +0530
+	s=arc-20240116; t=1733808233; c=relaxed/simple;
+	bh=+yvIxadNHP2tMjc38a6nuEX5dE9n2JekZyl1HOaVL4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gU8TR4oZCLBljZADDb3OA/YRem3OcDf/tBgUT+Y3U23G8Yin9b3RzNkrIgQ9BHGDTidf/haw67Ssij0YxM8vQxNPj99ayXGVkdbw647bON4Xg5sqRWErxtqCOKPIVswHt3YhOOeKW04h2WakLOOh0oCD7MP0Z71CfR0TBEo2Lm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3QpNI84; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733808231; x=1765344231;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+yvIxadNHP2tMjc38a6nuEX5dE9n2JekZyl1HOaVL4I=;
+  b=h3QpNI84o4cXamOJUIDAXd13JmtZIK3MhiVTm19byiFwozBlXGJX5iXq
+   kgDhAkCzirNxDZzbmpRp6VzjZ/cww01Np/lvhJJt43MVcn/RjFSAQAenz
+   1zSNZlTPrQdHg3Q9p5hsIzIgkRu3+JPdLMpM5m0ifd/dNdvVhB2tIHUSX
+   FedcIQANvrtKsGboHs3RlBw1KbQHiYPYjiYU/G/tgiJcBlxu+5qFWcYDA
+   FtuSAnr6zxe+j1fF+c3syVGxYs8/B4zZ9Z1FbZhuKmc0Be6FvHK65Y/Tq
+   PCeXO/kb0vcbob7z3mNNvkkqNKHRFpPyTIB5T5XExd8rdwvcFJImGuYua
+   Q==;
+X-CSE-ConnectionGUID: jcHuG38MSvmfhHxACGIdfw==
+X-CSE-MsgGUID: zK5g1UIcSmO0VJHHe31/uw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="56616480"
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="56616480"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 21:23:50 -0800
+X-CSE-ConnectionGUID: SyTKH2znT7iIfSGI/sbSmg==
+X-CSE-MsgGUID: 8BL6lDlHTTuI51xf1CTxPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="95134854"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 09 Dec 2024 21:23:45 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKsil-00058Z-1M;
+	Tue, 10 Dec 2024 05:23:43 +0000
+Date: Tue, 10 Dec 2024 13:22:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, NXP S32 Linux <s32@nxp.com>,
+	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+Subject: Re: [PATCH v6 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Message-ID: <202412101248.CBSpbBCZ-lkp@intel.com>
+References: <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/7] Add support to load QUP SE firmware from
-To: <neil.armstrong@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>,
-        <andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>,
-        <jirislaby@kernel.org>, <broonie@kernel.or>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <johan+linaro@kernel.org>,
-        <dianders@chromium.org>, <agross@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>
-CC: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        <quic_anupkulk@quicinc.com>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <9d5e5b8b-aeaf-4ec8-b34a-8edeaec20037@oss.qualcomm.com>
- <42b1c187-e924-4690-8338-4c694f3e16d9@linaro.org>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <42b1c187-e924-4690-8338-4c694f3e16d9@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: t4JlOE0tJ5BqbHKQrbJxi6tQ0uA6ctZ3
-X-Proofpoint-ORIG-GUID: t4JlOE0tJ5BqbHKQrbJxi6tQ0uA6ctZ3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100038
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
 
+Hi Ciprian,
 
+kernel test robot noticed the following build errors:
 
-On 12/9/2024 8:15 PM, neil.armstrong@linaro.org wrote:
-> On 05/12/2024 16:59, Konrad Dybcio wrote:
->> On 4.12.2024 4:03 PM, Viken Dadhaniya wrote:
->>> In Qualcomm SoCs, firmware loading for Serial Engines (SE) in the QUP
->>> hardware has traditionally been managed by TrustZone (TZ). This setup
->>> handled Serial Engines(SE) assignments and access control permissions,
->>> ensuring a high level of security but limiting flexibility and
->>> accessibility.
->>> This limitation poses a significant challenge for developers who need 
->>> more
->>> flexibility to enable any protocol on any of the SEs within the QUP
->>> hardware.
->>> To address this, we are introducing a change that opens the firmware
->>> loading mechanism to the Linux environment. This enhancement increases
->>> flexibility and allows for more streamlined and efficient management. We
->>> can now handle SE assignments and access control permissions directly
->>> within Linux, eliminating the dependency on TZ.
->>> We propose an alternative method for firmware loading and SE
->>> ownership/transfer mode configuration based on device tree 
->>> configuration.
->>> This method does not rely on other execution environments, making it
->>> accessible to all developers.
->>> For SEs used prior to the kernel, their firmware will be loaded by the
->>> respective image drivers (e.g., Debug UART, Secure or trusted SE).
->>> Additionally, the GSI firmware, which is common to all SEs per QUPV3 
->>> core,
->>> will not be loaded by Linux driver but TZ only. At the kernel level, 
->>> only
->>> the SE protocol driver should load the respective protocol firmware.
->>
->> I think this is a great opportunity to rethink the SE node in general.
->>
->> Currently, for each supported protocol, we create a new node that
->> differs in (possibly) interconnects and pinctrl states. These are really
->> defined per-SE however and we can programmatically determine which ones
->> are relevant.
->>
->> With the growing number of protocols supported, we would have to add
->> 20+ nodes in some cases for each one of them. I think a good one would
->> look like:
->>
->> geni_se10: serial-engine@abcdef {
->>     compatible = "qcom,geni-se";
->>
->>     reg
->>     clocks
->>     power-domains
->>     interconnects
->>     ...
->>
->>     status
->>
->>     geni_se10_i2c: i2c {
->>         // i2c-controller.yaml
->>     };
->>
->>     geni_se10_spi: spi {
->>         // spi-controller.yaml
->>     };
->>
->>     ...
->> }
->>
->> Or maybe even get rid of the subnodes and restrict that to a single
->> se-protocol = <SE_PROTOCOL_xyz> property, if the bindings folks agree.
->>
->> We could extend the DMA APIs to dynamically determine the protocol
->> ID and get rid of hardcoding it.
->>
->> And then we could spawn an instance of the spi, i2c, etc. driver from
->> the GENI SE driver.
-> 
-> How/where would you add the peripheral subnodes ? A Serial Engine can 
-> only be a
-> single type on a board, but I agree we could have a "generic" serial 
-> engine node
-> that would be differenciated in the board DT with the protocol, and use 
-> the bindings
-> yaml checked to properly check the subnodes/properties depending on the 
-> protocol
-> property.
-> 
-> But we would still need all the serial nodes in the SoC DT.
-> 
-> This may make the software support harder, meaning we would either need to
-> have the same compatible probed in sequence from the i2c/spi/uart driver 
-> until
-> one matches the protocol, or have the qup driver spawn an auxiliary device.
-> 
-> Honestly, not sure it would be much simpler...
-> 
+[auto build test ERROR on abelloni/rtc-next]
+[also build test ERROR on robh/for-next linus/master v6.13-rc2 next-20241209]
+[cannot apply to arm64/for-next/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Agree Neil, it has it's own challenges in terms actual code changes per 
-driver and common driver redesign when we move the SE nodes and make it 
-common. We may come up with some solution to make one SE DTSI node for 
-all protocols having different (pinctrl configuration, DMA 
-configuration) but it's also going to add some level of code 
-complexities and yaml changes.
-Can we exclude this design change for this firmware loading and later 
-align to this new design change ?
+url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-rtc-add-schema-for-NXP-S32G2-S32G3-SoCs/20241206-151308
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/20241206070955.1503412-3-ciprianmarian.costea%40oss.nxp.com
+patch subject: [PATCH v6 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241210/202412101248.CBSpbBCZ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241210/202412101248.CBSpbBCZ-lkp@intel.com/reproduce)
 
-> Neil
-> 
->>
->> Konrad
->>
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412101248.CBSpbBCZ-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+ERROR: modpost: "__udivdi3" [drivers/rtc/rtc-s32g.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/rtc/rtc-s32g.ko] undefined!
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
