@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-438872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5849EA7CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:27:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2F69EA7D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:28:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B11D28447B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D7C2847C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B346D226191;
-	Tue, 10 Dec 2024 05:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B60227B9D;
+	Tue, 10 Dec 2024 05:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kX+DkHSn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDh7vTsr"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE6422616A;
-	Tue, 10 Dec 2024 05:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA4E4F8A0;
+	Tue, 10 Dec 2024 05:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808431; cv=none; b=jhYIQhe7Q6VQplwsQ8d3hC0QxsGPmazUI92CT9ZNzYCdJe7w8S1eKNzU9gbFQcsyuhVZvhpCy5QPLrMgUharH0YnDDswcDGhK50faRAkYmJ9YSPtfF5/GobxKja7XlDJgpx9ufACnMtHdbwwcoi/ntACOTdYp27NF8Y9Cg/sl0Y=
+	t=1733808500; cv=none; b=BrlbZAM/B+ACg+Pmi2cCbzwIvyu0//fS+IcytqTZvRLXkNy0dJH8xPMCZuzgoYtSrIxe7MraH6C2ie4NYVZEgcTTxit4Em5vFQWPjtjpnSGHgZouuhY3JzfTl3FTfQc4T/ej9ipC9nQeqLQT5Iq7BBgp+pY68ddjW7evOD9u164=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808431; c=relaxed/simple;
-	bh=c99OcWHLd9glOzgh5/aLRHmE3tJAPbZAmvzLEO/XT7Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=N5hPMluxwGyO1XrDwQsKGw9NdPMnezZqAzpjxhYFka/Aoskk1fXgzcqgdn/4h43fOYtVjXip5K2rj0dUEtXe+DPfjyZ+XqE9JqzNaOFcxdAHelCJKQIYvU4hRRKbBkcMM9xIGkVcHd0+j5kQVarvJ4YNTlR7QNvfg+BX7nEBX54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kX+DkHSn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9HLRpp032550;
-	Tue, 10 Dec 2024 05:27:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=LPzWFx5Zfx4cXehpMKgB5C
-	ml8AHa1x0prdlTRmHHhKk=; b=kX+DkHSnq7ek71gouMfKpdy7R/YnIzEWvDkUqq
-	sYuEDZx+M1OXDkuyiMPcJD7j5nt8wSe9oHDphEFgSHln839UqVLRel1m4tbAfZV0
-	snbkWTj0K3sw7ucwOzyBS+ZNSOSuwEkeVu8fF+co8pxr7yWthNeISP/y6GpCK4i6
-	SJAWYOq7dYhEFFW+4HKbOkv14kLk+O9+cio94iS8FYIOsmtQRrlKARVHTuXIApYh
-	tt71nLoe1IuS/aiH9p3DWRP9qb6CnZYA15x8PgedJgzNWnZvboA4838cRYCftuCo
-	bllT8fw6EaqSD8iH7Kuc4yNOHTEjQeu8JdNncqNwevAxdnkA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdxxf64p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 05:27:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA5R0p5011493
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 05:27:00 GMT
-Received: from hu-adisi-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Dec 2024 21:26:58 -0800
-From: Aditya Kumar Singh <quic_adisi@quicinc.com>
-Date: Tue, 10 Dec 2024 10:56:33 +0530
-Subject: [PATCH] wifi: ath12k: fix read pointer after free in
- ath12k_mac_assign_vif_to_vdev()
+	s=arc-20240116; t=1733808500; c=relaxed/simple;
+	bh=/CHRIAmokQKSuvyPcFbygTSnD2QhhmisB3/mhhq+btA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NlW0d+ch3oRX/NY9ddTBlm2ZwaBro24ri7rEdHIexGkEOIDD0fXGgmqI/yWaet8Ypb/VfhtsXjxYrVFNrc7SFU0Q8cr/AIKbSDsYnLsSsIuVQs/kDMBBisJqHi4AMBuExcX7l9POWdhkxlRsTmYiN6xPVsjvfFzJH/Ah4FSmEwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDh7vTsr; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa684b6d9c7so328647366b.2;
+        Mon, 09 Dec 2024 21:28:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733808497; x=1734413297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iahb3Sc0n+N6aK3kht+20K6wy2Ru9xprYtQWnbXt+98=;
+        b=DDh7vTsrUeRKYAnP/MOeL7MLPz6QeMMg9iNIMThUghwJ1ULb2GvNjFGgu4pGsBxq7U
+         pyxnN4oRvgGTNjbBd1OiK87Fsrpod0OILuz3tNrQgPQ9zfFbYaY2WXDsXm9jusge0SN2
+         Qvhgp9iVv2dGE/ptQ92vjTvxSowHJ70k4ro6BZEzakCFxggs4GJbNP8L6eo5SKjqjcxR
+         CtckvYxuyPaTZJQv8UmWdBT2j0SjsymUx0uL6Qulz+KrIYo7Sn+cPYWM34GYyhKRSETT
+         8Dxceu3bom1fORsewIagEXGm84y3JW0oOyKuzUAOtNjc+ApwRmLmzPkzoVIgcRCQo9MI
+         +6gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733808497; x=1734413297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iahb3Sc0n+N6aK3kht+20K6wy2Ru9xprYtQWnbXt+98=;
+        b=TJL3fq/7q1dBbQuzh+HEaFUoYbYDcw8fv+vlzjJ9TMp0/HZfBweRorVdlKWcOOpJ08
+         WXLIcjVlN/E4V/WIltUQsC3y/iUKerZnQkKoMU/ePQLN29cpM6bSGVUPTISQ2VkC2NX6
+         DxUdPLUaSLD6cT8EuQSv+oD84ziQd3m5VTI2N12rzuWFHg196lwvj/bQZyT+R0RmfPsP
+         eNQRYBiJMUap9NH2xSiVaZCRGPU4Q2GwuL+Siz94/aIKLuypriziYfAMOG4Bv3aZwA5j
+         K6JgYHZSGUAH3sA58dOriOjTfbwTRoVzvBbxunzx9GZ5umIc+Wx51f2iwlZCUyohu9rm
+         uxgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/ye2SugO1jgaUicatsHo5gWOxUrUwiMINiIxK63XNWyCP06/2KgqJ+8ZbY3txlchvrA9M8DhqLNl9NbVp@vger.kernel.org, AJvYcCWOPR4lXwX3TN0fJBT/KyLMFtxo0muVlrY1ew5HkAhUC8ZlPQ5EULbalxRnsxz2KEySofWZNqjQbRlw@vger.kernel.org, AJvYcCXTUJLUf49lx/+JFQ6tUZ7gXIGGAjhxrTamkOxb0JpOIJWtdgT1JMkYE7Q+ii+CJibV2AMHotN+ThZf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuIGUemCyE8j5Hs/4b8enrVR3W8GV3BfWDZmvhyswxYEKpOgMu
+	BA2Pn3TUpI3E7taTNCLaqc3SW77Y0l9VVl8T0/1Vt2x9je3ADEajWmAwlh6JBq4OmUBsVBT0wIi
+	xG38Tlq105vauFRX6F5mzkILh4nI=
+X-Gm-Gg: ASbGncvn1nfHKGuwTEFqtC2HbYawdBe7WB15KBBmUm68tUJP+AD1yB8TeDcIR4GGgiL
+	GtNRiHN7MTK8lW9ziRLJCZeQkB8v4xyOgN4E=
+X-Google-Smtp-Source: AGHT+IEl8ns+cPO0dh6oNxLl3Hy89Vyof1Yn6p4dY5lR+i3YkD30mfiis7m7alp59zPhWqLBAQWw4dOz/Y4XLwVMzMI=
+X-Received: by 2002:a17:906:18aa:b0:aa6:8096:2043 with SMTP id
+ a640c23a62f3a-aa6809621a9mr587539966b.8.1733808496899; Mon, 09 Dec 2024
+ 21:28:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241210-read_after_free-v1-1-969f69c7d66c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAnRV2cC/x3MQQqAIBBG4avErBN0aBFdJUJMf2s2FWNEEN09a
- fkt3nuoQAWFhuYhxSVF9q3CtQ3FNWwLjKRqYsudY2eNIiQf8gn1WQHTgTnOKTqknmp1KLLc/3G
- c3vcDbyOEnmEAAAA=
-X-Change-ID: 20241210-read_after_free-4e22cbdc1ed8
-To: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        Rameshkumar Sundaram <quic_ramess@quicinc.com>,
-        Sriram R
-	<quic_srirrama@quicinc.com>
-CC: Kalle Valo <quic_kvalo@quicinc.com>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>,
-        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Aditya Kumar
- Singh" <quic_adisi@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pUu9L7tdE2Ix9IdZlBJmlwnU0Sbc3jcv
-X-Proofpoint-GUID: pUu9L7tdE2Ix9IdZlBJmlwnU0Sbc3jcv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- phishscore=0 mlxlogscore=669 priorityscore=1501 clxscore=1011
- malwarescore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100038
+References: <20241203091540.3695650-1-j2anfernee@gmail.com>
+ <20241203091540.3695650-3-j2anfernee@gmail.com> <8f5ca298-54ba-4274-a35d-83be868fcfc8@baylibre.com>
+ <a4cd4d74-93bc-4c63-a9ee-aa25957b96d9@baylibre.com>
+In-Reply-To: <a4cd4d74-93bc-4c63-a9ee-aa25957b96d9@baylibre.com>
+From: Yu-Hsian Yang <j2anfernee@gmail.com>
+Date: Tue, 10 Dec 2024 13:27:40 +0800
+Message-ID: <CA+4VgcKjK9N+Y=q5iAz2nJOtcyyuBdkSPvggSd+5KQ49F=+ttg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: add Nuvoton NCT720x ADC driver
+To: David Lechner <dlechner@baylibre.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nuno.sa@analog.com, javier.carrasco.cruz@gmail.com, 
+	andriy.shevchenko@linux.intel.com, marcelo.schmitt@analog.com, 
+	olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com, 
+	matteomartelli3@gmail.com, alisadariana@gmail.com, gstols@baylibre.com, 
+	thomas.bonnefille@bootlin.com, ramona.nechita@analog.com, 
+	mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com, 
+	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In ath12k_mac_assign_vif_to_vdev(), if arvif is created on a different
-radio, it gets deleted from that radio through a call to
-ath12k_mac_unassign_link_vif(). This action frees the arvif pointer.
-Subsequently, there is a check involving arvif, which will result in a
-read-after-free scenario.
+Dear David Lechner,
 
-Fix this by moving this check after arvif is again assigned via call to
-ath12k_mac_assign_link_vif().
+David Lechner <dlechner@baylibre.com> =E6=96=BC 2024=E5=B9=B412=E6=9C=886=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=883:01=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On 12/5/24 12:22 PM, David Lechner wrote:
+> > On 12/3/24 3:15 AM, Eason Yang wrote:
+>
+>
+> >> +static int nct720x_read_raw(struct iio_dev *indio_dev,
+> >> +                        struct iio_chan_spec const *chan,
+> >> +                        int *val, int *val2, long mask)
+> >> +{
+> >> +    int index =3D nct720x_chan_to_index[chan->address];
+> >> +    u16 volt;
+> >> +    unsigned int value;
+> >> +    int err;
+> >> +    struct nct720x_chip_info *chip =3D iio_priv(indio_dev);
+> >> +
+> >> +    if (chan->type !=3D IIO_VOLTAGE)
+> >> +            return -EOPNOTSUPP;
+> >> +
+> >> +    guard(mutex)(&chip->access_lock);
+> >> +    switch (mask) {
+> >> +    case IIO_CHAN_INFO_RAW:
+> >> +            err =3D regmap_read(chip->regmap16, REG_VIN[index], &valu=
+e);
+> >> +            if (err < 0)
+> >> +                    return err;
+> >> +            volt =3D (u16)value;
+> >> +            *val =3D volt >> 3;
+> >
+> > It seems strange that this is 13 bits when the chips are 8 and 12 bit.
+> >
+> >> +            return IIO_VAL_INT;
+> >> +    case IIO_CHAN_INFO_SCALE:
+> >> +            /* From the datasheet, we have to multiply by 0.0004995 *=
+/
+> >
+> > The scale is the same for both 8 bit and 12 bit chips?
+> >
+> >> +            *val =3D 0;
+> >> +            *val2 =3D 499500;
+> >> +            return IIO_VAL_INT_PLUS_NANO;
+> >> +    default:
+> >> +            return -EINVAL;
+> >> +    }
+> >> +}
+> >> +
+>
+> Sorry, I got confused. The difference between the two chips is the
+> number of channels, not the number of bits. Please ignore these two
+> comments.
 
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00173-QCAHKSWPL_SILICONZ-1
-
-Closes: https://scan5.scan.coverity.com/#/project-view/63541/10063?selectedIssue=1636423
-Fixes: b5068bc9180d ("wifi: ath12k: Cache vdev configs before vdev create")
-Signed-off-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/mac.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-index c4eab4c1c10e0a05248fb58858dac9a00ef2e799..47a80d28d1d7f83ae7f61ecb89c6cd7d1d779494 100644
---- a/drivers/net/wireless/ath/ath12k/mac.c
-+++ b/drivers/net/wireless/ath/ath12k/mac.c
-@@ -8064,9 +8064,6 @@ static struct ath12k *ath12k_mac_assign_vif_to_vdev(struct ieee80211_hw *hw,
- 
- 	ab = ar->ab;
- 
--	if (arvif->is_created)
--		goto flush;
--
- 	/* Assign arvif again here since previous radio switch block
- 	 * would've unassigned and cleared it.
- 	 */
-@@ -8077,6 +8074,9 @@ static struct ath12k *ath12k_mac_assign_vif_to_vdev(struct ieee80211_hw *hw,
- 		goto unlock;
- 	}
- 
-+	if (arvif->is_created)
-+		goto flush;
-+
- 	if (ar->num_created_vdevs > (TARGET_NUM_VDEVS - 1)) {
- 		ath12k_warn(ab, "failed to create vdev, reached max vdev limit %d\n",
- 			    TARGET_NUM_VDEVS);
-
----
-base-commit: 27909c77d085d32db141cbb32b2cc9fbef874197
-change-id: 20241210-read_after_free-4e22cbdc1ed8
-
+Yes, The difference between nct7201 and nct7202 is the vin numbers.
+And VOLTAGE SENSE DATA FORMAT is
+Voltage(V) =3D13bitCountValue * 0.0004995
 
