@@ -1,314 +1,176 @@
-Return-Path: <linux-kernel+bounces-438991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9B99EA93B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:05:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5697B9EA93D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6858168BAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:05:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1BD11882645
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42437227599;
-	Tue, 10 Dec 2024 07:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FB622CBCD;
+	Tue, 10 Dec 2024 07:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMzQAO3W"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ccgni6Oa"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED77DA6C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733814352; cv=none; b=ttK0Xpe7aZLehua970gDy6ABUrdr/+qGHJ38cFM5HEmacr1g21Vsx6YdWWhlSParzm2FnKJC9ffTSZ+Vqd+n/HnSiMyl/apwkA58h7gANbSE50JuaPwaQ5XqTa44Q/WioK6uhAls2LRP20GCXciCHr0QNXVu2VsyC2DJ+k3sJRQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733814352; c=relaxed/simple;
-	bh=/E01dvAT+77VjZi3WL+hOTXDKafUlM+cCZnWoMbawKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HfAdkv4LnvQed+PRseiDjRSCEWTo+QF0kpcjatKP13WywlSL21L+wfkBBWglimJnaRNK80SyzrB25WjTDaNvhj8GwGsJKQTBhKMvwPvjGDx5fLx0871EsamRhFhW8v3YdrXyw8DSQ8pI6YvBSC59uxcLQzIBFFYqEn5X/29kC/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMzQAO3W; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso56449811fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 23:05:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733814348; x=1734419148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+r40tdqGxedKVHyxQ11mMVfv6cV8xIj7UlzXlFGqZx0=;
-        b=mMzQAO3W2s0citVznLPPMesUxqj2qWWIWi/iba5pTMUy7F7c4fPqmuwEuqaGkfT4R4
-         F3txYLjhFc6+u3CBJ6To73yLzraaHO2gCFNJZC6mMuptU1it5PUjzPWtWukf+fKIF9RW
-         qNRExaa2WlIjOncQecw8vhSe/HTb37VUJqj/7rY5rzAw5zzzE+VWKnAhSs22Ly7xHbK7
-         NxalRKy2P2sqUrv9/X1I9XKBvYXYg4KqR6EFVoKF6DEa9jvZFC+EJOOyTWkdCp8pvuNv
-         H/p7xN3I4Bf+HkrnsDIKda3tT6N7AmOETbuzf+rPaK0l50vBGcPBM7YYB+5AMuWpVmtr
-         MgLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733814348; x=1734419148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+r40tdqGxedKVHyxQ11mMVfv6cV8xIj7UlzXlFGqZx0=;
-        b=plyVBB3YW3/rlGv1F2VNbIzUSsTI4uZesXlHtT30dxFyQbXmylBWgM4h2+hCt5vsNi
-         f1Bz967am1iLRqjgirY/z8wrT/GOSyu/jFKjy5tGW4II4PMsscjJV5f0ZYer/iCRpW1R
-         sZ2idtCrW9XsxtsHs+Tc1SpMDauVQ3hJMTsJ+tSGq8fXH64JdDxT9EkhwsniaMQL4INU
-         OupL4RQBrGU2IUk6R4biNi7rLpRntXHE47vfdvpm/604tAQQCEJP6/qWAlTMCYSIowZ9
-         RgYYz/X8CkpiSIK9df/uPPtDs+GvXy4Bq2Sog5XMIVCxI2Z1rivp+eNfANIcDZVd79m5
-         Kb8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVumXC5m4aEzJ+P51qmDKLsrERFsfs9CFx7yiPbyXM8Gx6bpNQh3wVFarhoPF4NGGwI4UfAdgu/PQFcKI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOB2zKtOquK1H3vK4+v06gqvnS8GNPOFGwTCczOCQpZ6eQYwfl
-	xXWQC+zM+DUAeoqyUkyIA5f7gi+SFD2pUzEEzjcOuIYDbw5ViSIHpDv7HzgfTAbSNGmXrdN1d5l
-	SmIwBUN3UN0QQTjZ1e4ZwActstZQ=
-X-Gm-Gg: ASbGncuh08HBP9LZ5qjCDBQumbnFDTt0rna75L2RYMDKPjp09aQRbZdeYgEC57/g7E9
-	urDTsaQ1Zk0rte/YnQ5Z1mfI4j5fRjfKRNv0=
-X-Google-Smtp-Source: AGHT+IEjoI16xcnZF00aY7SZ9MT7aVBjK3lvkjb0W6tTxbslbqdA3eSBFAwxcLHXTBxMh/ShOeZiwD7vHDwNxwkCxfs=
-X-Received: by 2002:a05:651c:1556:b0:2ff:a89b:4210 with SMTP id
- 38308e7fff4ca-3022fb3ef21mr11751991fa.8.1733814348062; Mon, 09 Dec 2024
- 23:05:48 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B56622839A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733814364; cv=fail; b=RpfWLsbdr72cBulmCC05Cwq63tQRizlzrM7bmri3vE91bJnIK/YMwhRF+dtgAZPndmWsygIOxo8qfF/VuUeLVUgN3L4r4Gr7EzM1ryFklT8om1UQXiSF03DDCjvLrkzWTrPAs7BBsVc/BvvpD5AT2fyzyQxQHcL8z7cvlntdBj4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733814364; c=relaxed/simple;
+	bh=LUS2SV9Ol2wd/LcgjSibt3VnQ+WIT3JGBjn58+18Mtk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dNlBulORRDokHOEXFPI/SUvW1PNdps2JQ9Exf3yULcAz71mmonraHZlQ4wCV1iLpwwtEVItX41sayE2H6SL1trtFJ+doi2AamYcFiOFMjZdXUM7MWFIq7ZmuNETvGEyMIa6bVpZNy+zOJXY+L14pqNWSsV37g/JMy5qRgWG6TXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ccgni6Oa; arc=fail smtp.client-ip=40.107.94.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v+Z3sdcWmtLt0tuznNfTfQEKtwRK52Z8H5Th6aNGNq9Ni3BLFgjuwVwD4kLgMO85GtSCPYMWuoATeSJOQykQYLJhjHN37EEA90xpvw+U4DZ+xSjooxAHuoBPYFgRpqk5f5c5To2CZXwPHKtMn+/1N+pmwGyT4ljKdqo5R/tdWVZgxNVXdERv5sRmHq+Ej0Z6t7Hnl9hSSkUyn+TgbOmc9761OL5RAA3rERzWhw6ErSZUgdZ7+ml9HlbEGJG5FcVn9fQiugZkze9jx/Ru2ObDQdnuYB7m7pfKSD1T8UD2vTeuouuujd3xm2I3V7TVaNM70caZNdl4rCPxhj+gQ6f5WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LUS2SV9Ol2wd/LcgjSibt3VnQ+WIT3JGBjn58+18Mtk=;
+ b=Hfsyf84OVzYLJ0O6hFok4/FbVXSosTK6oTMX7DwMlL3PBoWrVTXP9sR6+F86jt80/zNfJQjxlLikTIX2/oQ96X3nnR3L1Imv5leyjTghnS5uhxfxyuz+b/JhSq0SaEA1XcbzmmvgNtrlQScjeSVfjZwyE4oTTtnNi2RNmuU4EVoKWPKMjbRpE23NgUg+0NyAhj5JrjmJgrcgSxyAIqK2zOGff5RidSXBAqhQXHkoqqLwmxX3TvO1ryuJporHz26ai+1Z1+9RV8XqTRiQs11XpKjhUStJKPSY0jBW8bTvbvgB4bkjuhou31oxsgtzR5WW8hcb/S3vOikJrNRtwUIaCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LUS2SV9Ol2wd/LcgjSibt3VnQ+WIT3JGBjn58+18Mtk=;
+ b=ccgni6Oa56EvXwI695n7n6UO9N2y5DIar0FrG1pz581+Ish5Lkf/km/mUNZC6aQC5RgD6cNPiIzquvFxlJxjoiEBlwkNa0Whud+FihUPq6Yt0rxKnxgNgyIluQrBmADjiOjEq9KKMXNstYWlgD/fxPuJdJAfV53L55iubaSnhe0=
+Received: from BL1PR12MB5333.namprd12.prod.outlook.com (2603:10b6:208:31f::11)
+ by CH3PR12MB9395.namprd12.prod.outlook.com (2603:10b6:610:1ce::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.17; Tue, 10 Dec
+ 2024 07:05:55 +0000
+Received: from BL1PR12MB5333.namprd12.prod.outlook.com
+ ([fe80::d4a:9dd1:afd9:1c70]) by BL1PR12MB5333.namprd12.prod.outlook.com
+ ([fe80::d4a:9dd1:afd9:1c70%4]) with mapi id 15.20.8251.008; Tue, 10 Dec 2024
+ 07:05:55 +0000
+From: "Agarwal, Nikhil" <nikhil.agarwal@amd.com>
+To: "Gangurde, Abhijit" <abhijit.gangurde@amd.com>, "Gupta, Nipun"
+	<Nipun.Gupta@amd.com>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Simek,
+ Michal" <michal.simek@amd.com>, "git (AMD-Xilinx)" <git@amd.com>, "Gangurde,
+ Abhijit" <abhijit.gangurde@amd.com>
+Subject: RE: [PATCH v2 1/2] cdx: register shutdown callback for cdx controller
+Thread-Topic: [PATCH v2 1/2] cdx: register shutdown callback for cdx
+ controller
+Thread-Index: AQHbRV/JHoY+1CpCbE6TgKk++IKvi7LfGCcw
+Date: Tue, 10 Dec 2024 07:05:55 +0000
+Message-ID:
+ <BL1PR12MB53331D320D70A12414E7325D9D3D2@BL1PR12MB5333.namprd12.prod.outlook.com>
+References: <20241203084409.2747897-1-abhijit.gangurde@amd.com>
+In-Reply-To: <20241203084409.2747897-1-abhijit.gangurde@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_ActionId=4c8a831b-77fe-40cf-9d07-a77e40900fbc;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_ContentBits=0;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Enabled=true;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Method=Privileged;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Name=Non-Business_New;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_SetDate=2024-12-10T07:02:30Z;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR12MB5333:EE_|CH3PR12MB9395:EE_
+x-ms-office365-filtering-correlation-id: 8d58b8ef-8329-40d8-f0bb-08dd18e9175e
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?J3p9Y0BQwPREUC/0LWddgYLk7cgVUlNOif7/ZcnP4Nv42nhEnf1g3YddmT5r?=
+ =?us-ascii?Q?0T9ytXuV6x6W9g6VKMLDkJazICjWEgHaaZ3dE2fevFmb3iieFqtr5gDr4+A5?=
+ =?us-ascii?Q?KUIyKronPEwoUYRnNkW5XrdJSCNE7P0LfAvuIuN6iZV+01TVMyvKWS41C9Xv?=
+ =?us-ascii?Q?4EVkmfxFtH9KP/jjr7dMLKc45TE9gWsXGJfS2dUQxNJI9iLcgXbSjHJnrylw?=
+ =?us-ascii?Q?qDm1NhqYBLwaZGaHHlPDCHJ64U30sJ9FLhGnpMgKDbKFhIQg9CMMgYxZY2pV?=
+ =?us-ascii?Q?ujAqAxeZbUfJ8quWIc4Ho7qXO3XOJhgnbOyAOb9clYRATqeoLRngg3TNhtFm?=
+ =?us-ascii?Q?F9GZnwQ1YQY7nDpopLmSXmR9w6HsrJYo6lpkcRHqeVVoREwHAn9+GwGVnXx4?=
+ =?us-ascii?Q?meYVHfFY78UWRMZrxVy2SaBq6TQFaBQ0pxL6jhi9DEv+Dqbq2xBouDTo9nfJ?=
+ =?us-ascii?Q?qGLZHgDvZ2iPwK9L0JixboFLIZc5MXfFaMhygXCMf4gptOjXDRcmaws+TDaR?=
+ =?us-ascii?Q?kQvDYVOCHBVqDCxdNLeAPiPSVtm07GER1UkFQdV6s5GMP5KED1+qyla5yURJ?=
+ =?us-ascii?Q?PtcAAbd1awWm+fdO2ZL8/ADV9T40Y5hjw7l/JmxRWf+12aM4XaWU2nIXDGBC?=
+ =?us-ascii?Q?zQtTJKDW1q7b/aD7pKwTwUcVpQ9fPhd5w2DLCVSY7IS6whM2txh+91xhKptE?=
+ =?us-ascii?Q?0acAQWnKN8XikuZxZWhwoxykNfWNtMWizDJLwDGyJjBGUW8OMDOwMFyLyXKa?=
+ =?us-ascii?Q?nuwpoG04uv2S6xg3Zkjiecm9PGUCnuO7cUligUPj13KJVtoGuVX78/rY/ZCb?=
+ =?us-ascii?Q?aO1PJNKE1NRQvkkIJNL0rlNzYv5iTno1Bfr5j6DpETd7IOF4mXTIsTPyKfJ2?=
+ =?us-ascii?Q?4BF2/h3OZos6Jjm31DXEaYj9+a+1xXyXDsxRs5CcO8IyeMwwhsjrysrSfb0U?=
+ =?us-ascii?Q?sDOmo23QpxxOV3rhShu6tvgiVu2k1eYMvRyAuUM/5M38i5f6gNizvawBrAoa?=
+ =?us-ascii?Q?OdiVViYl93SEqD67VYj3sQwEorpksP7yJ3fM8orgha9FGWViiloVscr8Bwaz?=
+ =?us-ascii?Q?/GJCqXr5mgIlXQDJaw+oPja/YNx8e5ii8xUbhtC2Fd1pdt40tabDa39LfWiA?=
+ =?us-ascii?Q?Qki7d4wAlmS2yNt77PtW0FImmJrCzmvy793+ybasqabZNZAnYPhdyyHRSy0V?=
+ =?us-ascii?Q?H2N8HNqS6roP16l5XgeSOdrtluaVf5eTuNPTs8szIo+8wbYoMSHGuR6dEFwU?=
+ =?us-ascii?Q?2RJGjizHeyNtmskH7PtaZ4Da690ZZ5jFboZEqVq2jsyusEM2U//XJm7O1Ww3?=
+ =?us-ascii?Q?fBCCoLz40JGMoTD1Re+yebjWyVUOCWNHqIXlGkbEfwVR2AsRkMHh5cNR9mHs?=
+ =?us-ascii?Q?Gh2HXJ6YEVzEXHqt0Svr5sdIUA6CaDmAIeDNObakHJNbPwDWEQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5333.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?ndDU+Zd0OlBYSmbQ07kRUxqX7+aweNupbhITCSQrXmO4tQyegS9NdTRoFyb+?=
+ =?us-ascii?Q?VbK/OuqZkRv8JJoCIOkhXqFhX69V2Q5UlH6CjkAm5FX1bRr+5cxR9neacrCO?=
+ =?us-ascii?Q?YlsgEtaf5OwSwFFI+8tnmiUzG2AVbM9zM3TDDn6d1YPVKrHqQtmyJzazvtV+?=
+ =?us-ascii?Q?vGipI5DkglvlTL4sz97bgd3JRGRO5WvHNZBNUIkANgl2sRz2pSDM3KWDdINc?=
+ =?us-ascii?Q?s8z/ESDPNIoRVA+QMZ+dYRh1wCXzxdfr6Op6J2KkSc21SED3hkha82pNfr5w?=
+ =?us-ascii?Q?o1aqIgNjCoTWBuI7wk46NR3M9h83lGvv4kR3KvkRsZXLPs+I7mrwSm1Cx24M?=
+ =?us-ascii?Q?971nGZECpadBLYSyYCEIfSi02qtiMQkLTXypPAvBgsmRzm6Vg5dDfA91UUbH?=
+ =?us-ascii?Q?oA8M8nHOvV5cNst8JYZfU2EKjc/ZIbpU8allgsH2xRA66mP4JZ9CbVVMMgvx?=
+ =?us-ascii?Q?o27duMajg8d+quomua/e+nkFVLNHQSUtUNdWVqN6Wi9GtoCycLpziZjUUqTq?=
+ =?us-ascii?Q?ELL4Ds/BFTyBqT42Pn0NRUDIsrpK2d3rEW7arxVjFZPY0wKPjenD6ACFeK5O?=
+ =?us-ascii?Q?A3WRcwAncM3GqTULcW+JRimHyip7l0QGc1BPv1joFvZOL9nhJIyOnCV1DDLI?=
+ =?us-ascii?Q?i3fhnM1SfvasHUY9pSEvBlcje1s4O/aXQJ15m8Ha6kt88WZH5jYWjGHwEG/d?=
+ =?us-ascii?Q?QCZfMM1QRb9ZUxoMpuTgzsiuTAa4DjaBjyQ7U7edCRmEAy9XAUh3bDGUw1Ka?=
+ =?us-ascii?Q?1lRJ2nq0nDM3vaafyyJxUcQQKNTcyVAdYbri+XthFKx32taJxPE61IXhT/sn?=
+ =?us-ascii?Q?+gsq8xNrrVZN4iyJhZDoDssq3DcNwlKuwAs7mRSKscjuAAkCUF49DmC5iQ5N?=
+ =?us-ascii?Q?GbvhOzYNj8Nygz7ADMsilHQ1I1OQWY8lQZ7rjX6B0Pp0qaqNnljeCYrVbQhS?=
+ =?us-ascii?Q?izV3Yj573Dbt9fftYjKMRnaL1nkp/ireiEzKF9yTeUuBpRLd5R1xnVDXth0S?=
+ =?us-ascii?Q?U9lG36BR5KoyNfgjWrkqpu7WA5omOzsZMYh+VYDDXDRqYtxFnBwC543jmQ2x?=
+ =?us-ascii?Q?NP8pX2DNBYLVffQhh3stwle7Nsk/gGVvonKSZEqQctToXfciHgTtp7XL7QkF?=
+ =?us-ascii?Q?uwSB4LqdjiYIA4AsHB3G+Uc2y/4BkoIjpBw3krJDHRgIxVsAUWMqHQDkOJtD?=
+ =?us-ascii?Q?k9m7pqBTWlzt9wTdOyba6cqLSOoBLtiDstg2tX/ngX7FWdbIkuq1t3mf+FRI?=
+ =?us-ascii?Q?gkoQOsE1yq94hlCRybI4jHrZsXCb6sZb06W3wAlKMspJv+0kOsswTo2CZRTD?=
+ =?us-ascii?Q?Mysg8v+aH7Ns1LBUpvwtn2P88X1gvmVxZfe3DMar2x+Z/f+UAIUaD0Gdcm9d?=
+ =?us-ascii?Q?9jM2LdfuKjTuT6qPp1YHjmCy+GYmSptiw7oJbjvCpZdIgdua7EN6lCvAiGkQ?=
+ =?us-ascii?Q?xJXCDQOTDV4EzSDOagrzHCta4t+ifeFssdL03eKNCslqOO60nCrJWoLbCoiO?=
+ =?us-ascii?Q?1ltfGtGXcvJl10Ut7ec/PJTaIdZJ55wTTeU6W/tshqxXGfx54NNlb+4xWuqW?=
+ =?us-ascii?Q?lEyYI86w4ieuuwtg8RY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-5-ryncsn@gmail.com>
- <CACePvbXD=2Xj0yykQQdeQpaO_KCfyOCw1Q+U9VXugPttqH1bbA@mail.gmail.com>
-In-Reply-To: <CACePvbXD=2Xj0yykQQdeQpaO_KCfyOCw1Q+U9VXugPttqH1bbA@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 10 Dec 2024 15:05:31 +0800
-Message-ID: <CAMgjq7AFjXa0bkeeeCYSvuFu4EDTEKSczRJG1G=vXAf=9BAYFw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] mm, swap_cgroup: remove global swap cgroup lock
-To: Chris Li <chrisl@kernel.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5333.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d58b8ef-8329-40d8-f0bb-08dd18e9175e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2024 07:05:55.4926
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gQBxn9yge3oj8852ziOKAXtwKJ14VcjKieNZ88sWbq7PBm6BcnVsS6oaQh0XwRxA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9395
 
-On Thu, Dec 5, 2024 at 3:40=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
->
-> On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > commit e9e58a4ec3b1 ("memcg: avoid use cmpxchg in swap cgroup maintaina=
-nce")
-> > replaced the cmpxchg/xchg with a global irq spinlock because some archs
-> > doesn't support 2 bytes cmpxchg/xchg. Clearly this won't scale well.
-> >
-> > And as commented in swap_cgroup.c, this lock is not needed for map
-> > synchronization.
-> >
-> > Emulation of 2 bytes cmpxchg/xchg with atomic isn't hard, so implement
-> > it to get rid of this lock.
-> >
-> > Testing using 64G brd and build with build kernel with make -j96 in 1.5=
-G
-> > memory cgroup using 4k folios showed below improvement (10 test run):
-> >
-> > Before this series:
-> > Sys time: 10730.08 (stdev 49.030728)
-> > Real time: 171.03 (stdev 0.850355)
-> >
-> > After this commit:
-> > Sys time: 9612.24 (stdev 66.310789), -10.42%
-> > Real time: 159.78 (stdev 0.577193), -6.57%
-> >
-> > With 64k folios and 2G memcg:
-> > Before this series:
-> > Sys time: 7626.77 (stdev 43.545517)
-> > Real time: 136.22 (stdev 1.265544)
-> >
-> > After this commit:
-> > Sys time: 6936.03 (stdev 39.996280), -9.06%
-> > Real time: 129.65 (stdev 0.880039), -4.82%
-> >
-> > Sequential swapout of 8G 4k zero folios (24 test run):
-> > Before this series:
-> > 5461409.12 us (stdev 183957.827084)
-> >
-> > After this commit:
-> > 5420447.26 us (stdev 196419.240317)
-> >
-> > Sequential swapin of 8G 4k zero folios (24 test run):
-> > Before this series:
-> > 19736958.916667 us (stdev 189027.246676)
-> >
-> > After this commit:
-> > 19662182.629630 us (stdev 172717.640614)
-> >
-> > Performance is better or at least not worse for all tests above.
-> >
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  mm/swap_cgroup.c | 56 +++++++++++++++++++++++++++++++++++-------------
-> >  1 file changed, 41 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-> > index a76afdc3666a..028f5e6be3f0 100644
-> > --- a/mm/swap_cgroup.c
-> > +++ b/mm/swap_cgroup.c
-> > @@ -5,6 +5,15 @@
-> >
-> >  #include <linux/swapops.h> /* depends on mm.h include */
-> >
-> > +#define ID_PER_UNIT (sizeof(atomic_t) / sizeof(unsigned short))
->
-> You might want to have some compile time assert that (sizeof(atomic_t)
-> % sizeof(unsigned short)) is zero. Could not hurt.
->
-> > +struct swap_cgroup_unit {
-> > +       union {
-> > +               int raw;
-> > +               atomic_t val;
-> > +               unsigned short __id[ID_PER_UNIT];
-> > +       };
-> > +};
->
-> I suggest just getting rid of this complicated struct/union and using
-> bit shift and mask to get the u16 out from the atomic_t.
 
-Good suggestion.
 
->
-> > +
-> >  static DEFINE_MUTEX(swap_cgroup_mutex);
-> >
-> >  struct swap_cgroup {
-> > @@ -12,8 +21,10 @@ struct swap_cgroup {
-> >  };
-> >
-> >  struct swap_cgroup_ctrl {
-> > -       unsigned short  *map;
-> > -       spinlock_t      lock;
-> > +       union {
-> > +               struct swap_cgroup_unit *units;
-> > +               unsigned short *map;
->
-> You really shouldn't access the map as an "unsigned short" array,
-> therefore, I suggest changing the array pointer to "atomic_t".
->
-> > +       };
-> >  };
-> >
-> >  static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SWAPFILES];
-> > @@ -31,6 +42,24 @@ static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_=
-SWAPFILES];
-> >   *
-> >   * TODO: we can push these buffers out to HIGHMEM.
-> >   */
-> > +static unsigned short __swap_cgroup_xchg(void *map,
-> > +                                        pgoff_t offset,
-> > +                                        unsigned int new_id)
-> > +{
-> > +       unsigned int old_id;
-> > +       struct swap_cgroup_unit *units =3D map;
-> > +       struct swap_cgroup_unit *unit =3D &units[offset / ID_PER_UNIT];
-> > +       struct swap_cgroup_unit new, old =3D { .raw =3D atomic_read(&un=
-it->val) };
-> > +
-> > +       do {
-> > +               new.raw =3D old.raw;
-> > +               old_id =3D old.__id[offset % ID_PER_UNIT];
-> > +               new.__id[offset % ID_PER_UNIT] =3D new_id;
-> > +       } while (!atomic_try_cmpxchg(&unit->val, &old.raw, new.raw));
->
-> I suggest just calculating the atomic_t offset  (offset /
-> ID_PER_UNIT) and getting the address of the atomic_t.
-> Then use the mask and shift to construct the new atomic_t value. It is
-> likely to generate better code.
-> You don't want the compiler to generate memory load and store for
-> constructing the temporary new value.
-> I haven't checked the machine generated code, I suspect the compiler
-> is not smart enough to convert those into register shift here. Which
-> is what you really want.
->
-> > +
-> > +       return old_id;
-> > +}
-> > +
-> >  /**
-> >   * swap_cgroup_record - record mem_cgroup for a set of swap entries
-> >   * @ent: the first swap entry to be recorded into
-> > @@ -44,22 +73,19 @@ unsigned short swap_cgroup_record(swp_entry_t ent, =
-unsigned short id,
-> >                                   unsigned int nr_ents)
-> >  {
-> >         struct swap_cgroup_ctrl *ctrl;
-> > -       unsigned short *map;
-> > -       unsigned short old;
-> > -       unsigned long flags;
-> >         pgoff_t offset =3D swp_offset(ent);
-> >         pgoff_t end =3D offset + nr_ents;
-> > +       unsigned short old, iter;
-> > +       unsigned short *map;
->
-> Make it an atomic_t pointer here as well.
->
-> >
-> >         ctrl =3D &swap_cgroup_ctrl[swp_type(ent)];
-> >         map =3D ctrl->map;
-> >
-> > -       spin_lock_irqsave(&ctrl->lock, flags);
-> > -       old =3D map[offset];
-> > +       old =3D READ_ONCE(map[offset]);
->
-> Ah, you shouldn't perform u16 reading directly. That will get into the
-> endian problem of how the u16 is arranged into atomic_t. You should do
-> atomic reading then shift the bits out so you don't have the endian
-> problem. It is a bad idea mixing atomic updates and reading the middle
-> of the atomic address location.
+> -----Original Message-----
+> From: Abhijit Gangurde <abhijit.gangurde@amd.com>
+>=20
+> register shutdown callback for cdx controller platform device to handle g=
+raceful
+> connection closure of rpmsg transport.
+>=20
+> Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
 
-Good suggestion, convert the whole map into atomic_t and access / xchg
-with bit shifts is also OK, mixing atomic with other types may lead to
-misuse indeed.
-
->
-> Chris
->
-> >         do {
-> > -               VM_BUG_ON(map[offset] !=3D old);
-> > -               map[offset] =3D id;
-> > +               iter =3D __swap_cgroup_xchg(map, offset, id);
-> > +               VM_BUG_ON(iter !=3D old);
-> >         } while (++offset !=3D end);
-> > -       spin_unlock_irqrestore(&ctrl->lock, flags);
-> >
-> >         return old;
-> >  }
-> > @@ -85,20 +111,20 @@ unsigned short lookup_swap_cgroup_id(swp_entry_t e=
-nt)
-> >
-> >  int swap_cgroup_swapon(int type, unsigned long max_pages)
-> >  {
-> > -       void *map;
-> > +       struct swap_cgroup_unit *units;
-> >         struct swap_cgroup_ctrl *ctrl;
-> >
-> >         if (mem_cgroup_disabled())
-> >                 return 0;
-> >
-> > -       map =3D vzalloc(max_pages * sizeof(unsigned short));
-> > -       if (!map)
-> > +       units =3D vzalloc(DIV_ROUND_UP(max_pages, ID_PER_UNIT) *
-> > +                       sizeof(struct swap_cgroup_unit));
-> > +       if (!units)
-> >                 goto nomem;
-> >
-> >         ctrl =3D &swap_cgroup_ctrl[type];
-> >         mutex_lock(&swap_cgroup_mutex);
-> > -       ctrl->map =3D map;
-> > -       spin_lock_init(&ctrl->lock);
-> > +       ctrl->units =3D units;
-> >         mutex_unlock(&swap_cgroup_mutex);
-> >
-> >         return 0;
-> > --
-> > 2.47.0
-> >
->
+For the series,
+Reviewed-by: Nikhil Agarwal <Nikhil.agarwal@amd.com>
 
