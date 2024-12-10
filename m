@@ -1,129 +1,81 @@
-Return-Path: <linux-kernel+bounces-438740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1684A9EA4FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:15:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9389EA4FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9237D285DDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8992286D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841F819D065;
-	Tue, 10 Dec 2024 02:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313AC19F118;
+	Tue, 10 Dec 2024 02:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqrptU7/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4ZtsEtaD"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D301219ADA2;
-	Tue, 10 Dec 2024 02:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA411946DA;
+	Tue, 10 Dec 2024 02:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796783; cv=none; b=fHN9Yx4exHApy+E5Yu7p5noLAdcsJozKCEFlosFUTNVQTfHvhBKif5COq32VnOwLRj5prlRx2VHNDlVVZMFwxsFeFmsnf2q83LAJNiIMWuodMoNrHwDvpA6G0uZ7ZSmEzgB/8lGCtk8ttsZ2N/pQDiV2FwuSuo34o7H3p+/m9EI=
+	t=1733796814; cv=none; b=lD+2K9mXGRgzhTQjnqVGOO+TS64CJiE6l0dP6VVXReXix+oS/EgyzMLDqU1/TvvOsnQxMBSwQFhHNyL4i6PycSR6GGYJVrNmtd34ufr0/f5pWMqtR9fifEce4TjTLtlfghfhRJ3hMQ+IPHujs61XaJHDnX9m072xS5jNFt+6wxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796783; c=relaxed/simple;
-	bh=2p9qHO+5munvSFM1Ox+17a3n3bNIcRbVVvxTG/0uOJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bPNqnJ002UqPo5O5rd4NWhBpV54O31vUm1Vrfr1f4TuyisM3n8C745jVyZEzSPMGnHogtCO6aSHQrg6Tq2g3PWZIOXVl8dqi5WkbeKAkTbiFgu5pACtSXMiJgO8UWcSoCDh0upQg6RfqN6NlJnYYkSJ/IYiOau9GWgV7tkmuXDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqrptU7/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60EB6C4CEDE;
-	Tue, 10 Dec 2024 02:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733796783;
-	bh=2p9qHO+5munvSFM1Ox+17a3n3bNIcRbVVvxTG/0uOJA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jqrptU7/krbW2vld9AMvRl/6FEz36YnXi0SBLbdF7SrAPP6RBOmv+N9cXozwszjEJ
-	 McSRhgf4mafEBlbLV/qb1Rlo2NA6ybeCm7udERnyBeVgMMQtf7b2WoN6OKOx3DIUVZ
-	 AOlCs1UnyWOq49PXfLb1pzFlvKARIHCu8ZN73QtMf1/oBEeik9Xok4jhgGvIYi6eHr
-	 ql1RsJFUfhqWfN10VUBVyOdntClk6YcU4yVxvB2EIVPDlriR4ogcm52lRTIjpl+Y3L
-	 NGzChcLIjtwJmuZB6+It+ThZX2RBwuL8Z8rVw1pIcKMiR8ZS/9192IMPvHjVDx2rOx
-	 O7WCrDdQH7H6w==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v21 20/20] bpf: Use ftrace_get_symaddr() for kprobe_multi probes
-Date: Tue, 10 Dec 2024 11:12:58 +0900
-Message-ID: <173379677799.973433.10413868616941810350.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <173379652547.973433.2311391879173461183.stgit@devnote2>
-References: <173379652547.973433.2311391879173461183.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1733796814; c=relaxed/simple;
+	bh=7O98vRtnaEdu730nQRwyeGUu0Mb0tOJM5Hi5VaUvqQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9qJ+1nOW/Ci8xATsUhzIgsQXs1jlVhfSAUxCC/k+A+ypGI/pRxMhtjgvqOSdzyIilFp1mQFglCqM0Yu0IPU09vaGDhF1LA4Tzxr+EbarlSNWENr+L4K190FMEgLrAWoC3LTmWGjrkuUzPCiz4Qp2F0Knv3/iZWVmKga9Xc4LGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4ZtsEtaD; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ubAVteXO9Hp+IB+xrZH2DsQtgmSavWPrjYhzDvWuX1o=; b=4ZtsEtaDJM+Un6iYiOu2ljI2GE
+	mXz35RqeLSEJSTrhKD9C9XOBAKlAFQxZ3u/gVK69z8mLY89LZJP5TvC/XZEYQ6xEVdaU4jcZJ61kz
+	8lIdhdUC2Ag9hi5HJyQg/5cmFdqY/WbwQYWkMsXegsH4ZC0Nj7iAwpvRIxWMTa0h0/5w=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKpkd-00FkAP-Aa; Tue, 10 Dec 2024 03:13:27 +0100
+Date: Tue, 10 Dec 2024 03:13:27 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v1 11/11] net: usb: lan78xx: Improve error
+ handling in WoL operations
+Message-ID: <189487eb-dfba-4d1b-ae62-c25a7e5574f1@lunn.ch>
+References: <20241209130751.703182-1-o.rempel@pengutronix.de>
+ <20241209130751.703182-12-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209130751.703182-12-o.rempel@pengutronix.de>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Mon, Dec 09, 2024 at 02:07:51PM +0100, Oleksij Rempel wrote:
+> Enhance error handling in Wake-on-LAN (WoL) operations:
+> - Log a warning in `lan78xx_get_wol` if `lan78xx_read_reg` fails.
+> - Check and handle errors from `device_set_wakeup_enable` and
+>   `phy_ethtool_set_wol` in `lan78xx_set_wol`.
+> - Ensure proper cleanup with a unified error handling path.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Add ftrace_get_entry_ip() which is only for ftrace based probes, and use
-it for kprobe multi probes because they are based on fprobe which uses
-ftrace instead of kprobes.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v21:
-  - Use new ftreace_get_symaddr() only for kprobe multi probes.
- Changes in v19:
-  - Use ftrace_get_symaddr() instead of introducing new arch dependent code.
-  - Also, replace x86 code with ftrace_get_symaddr(), which does the same
-   thing.
----
- kernel/trace/bpf_trace.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 852400170c5c..91c18e9aac6b 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1070,6 +1070,13 @@ static unsigned long get_entry_ip(unsigned long fentry_ip)
- #define get_entry_ip(fentry_ip) fentry_ip
- #endif
- 
-+static unsigned long ftrace_get_entry_ip(unsigned long fentry_ip)
-+{
-+	unsigned long ip = ftrace_get_symaddr(fentry_ip);
-+
-+	return ip ? : fentry_ip;
-+}
-+
- BPF_CALL_1(bpf_get_func_ip_kprobe, struct pt_regs *, regs)
- {
- 	struct bpf_trace_run_ctx *run_ctx __maybe_unused;
-@@ -2818,7 +2825,8 @@ kprobe_multi_link_handler(struct fprobe *fp, unsigned long fentry_ip,
- 	int err;
- 
- 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
--	err = kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), fregs, false, data);
-+	err = kprobe_multi_link_prog_run(link, ftrace_get_entry_ip(fentry_ip),
-+					 fregs, false, data);
- 	return is_kprobe_session(link->link.prog) ? err : 0;
- }
- 
-@@ -2830,7 +2838,8 @@ kprobe_multi_link_exit_handler(struct fprobe *fp, unsigned long fentry_ip,
- 	struct bpf_kprobe_multi_link *link;
- 
- 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
--	kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), fregs, true, data);
-+	kprobe_multi_link_prog_run(link, ftrace_get_entry_ip(fentry_ip),
-+				   fregs, true, data);
- }
- 
- static int symbols_cmp_r(const void *a, const void *b, const void *priv)
-
+    Andrew
 
