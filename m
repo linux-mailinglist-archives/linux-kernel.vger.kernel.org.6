@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-440194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BC79EB9FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:18:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F0B9EB9FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:17:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B441677A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764FB188341D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF0D226186;
-	Tue, 10 Dec 2024 19:17:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5281BC9E2;
-	Tue, 10 Dec 2024 19:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6574F214231;
+	Tue, 10 Dec 2024 19:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N/zD+rQJ"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A37F194080
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733858268; cv=none; b=TrtW3YMN2l3p3279Nrf5dgEMmDpQ3VHbREGGOOjahYJjYqUCuN1P5tau2vb02dku+IpDnuvclRDFY4N/87AZY2FXlR9ZJfuYFXmc89QoU+hZBqugj7cevgBY3an0xPtWcaluJGa3uaqmKc9nySp/kBl4kpTlyL6OkWqt6EE8iEc=
+	t=1733858265; cv=none; b=YF+qnlwEdHLegmvbgeB4Kq/nB6I/4eDFDud0XBtBvuEGlNJJgidaN1b306ZH4PxQ/FQa9iILtCLE+JD3dkKAUWiJI0Y4aisUYF1V152ct8UH7XIgaPzoxAicq122/QyNhoO+JajY8KMm/xbyFLum9nXRA4vCewtGnyZLUuxq+oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733858268; c=relaxed/simple;
-	bh=DtSI4q9agKjvQP+kvF0OA0ulQMNOErz0r1oRKwcrUwg=;
+	s=arc-20240116; t=1733858265; c=relaxed/simple;
+	bh=eGU0mIINa6T8fhI5FtprhirLw8Zptc42GotzkU7/ioo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kF6np+sWxJxx+o8uYYe/V7EyjwO4GNlqNT1lABeZGrFVPfCPFkA4s0Qv9rQWpxcj/2xkPZa3BcE2/+/LBhg3lb/IkTOpSsWm59zk40QQZMSz2JMsaT5p+Ym0OagEZC1nfjGe8pjn308Hv1D+I+328p7CFzxIHS9utUH46o6ykRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A86BA1063;
-	Tue, 10 Dec 2024 11:18:12 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEF653F5A1;
-	Tue, 10 Dec 2024 11:17:43 -0800 (PST)
-Date: Tue, 10 Dec 2024 19:17:36 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: arm64: stacktrace: unwind exception boundaries
-Message-ID: <Z1iT0AQqu5dqdCSg@J2N7QTR9R3>
-References: <36kx57aw46vwykgckr5cm4fafhw54tjuj4cqljrdnpfwvjl7if@a7znuhpfu54o>
- <zbwbgkuvvciezpmigcp6gaahfxwm7cwhpzus7gtbfnbzsjb2n3@kfbdppbd74o4>
- <Z1bWaGCvUrwrj2fZ@J2N7QTR9R3>
- <Z1gll87-TkAqFwUz@J2N7QTR9R3>
- <rxc57eg65sg4iayhj7gc7yl24w524lviedxnydl2mggqnatglq@iairj2ci7ioj>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkoQcC6Xw7C8SFEzWQ6cBs9CW1UycbMUWdUnF6JDvEGPuJG6bkFh5x207d3V0zya8wvNZ+Uv+Ml+elnz0NpOyex4sygesVehj8aQYpbpTMaDzPPgEI91vHEsz0QjgMUoU7Ut6bXxeUJac8VLNAFlrThi/f233F3o4JU5p1Xr2lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=N/zD+rQJ; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-725ed193c9eso2257471b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:17:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733858264; x=1734463064; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xk47WmIz9ki3Hb/hScrQj5pNAhQ/SieMlK2IVydARFk=;
+        b=N/zD+rQJ1MoEeFYrHtn5sGRyt8nDlPwIB18fTUZAJOSLmBr5yd82d8+nHY2yLQqu9w
+         cHwly2ChE1v40HVuxTkVDF+8+wQ9RJ27HUdvm887evT7QXy0IPuuGCsztitYttFcPRpm
+         mvaWFWBJmOLT+4pqz/OzGSIWgk+WnHoOCvuWs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733858264; x=1734463064;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xk47WmIz9ki3Hb/hScrQj5pNAhQ/SieMlK2IVydARFk=;
+        b=ty8AcIHnPT+AweFi6Qj//e4/M3A+HA4JjRSw2knAVFr6NBmlqXHyGjqv0rmuBop72t
+         HK0E0jsNb4mAGuks7bI0Uu/+TH9kQP+krMHPOkq0k48G1WgjE1L6iNU0DKRbGeooSF4C
+         cPJvYI9ucFPir0bouOOWftiQRRXFPIA4tOKzWu2xJcpnB6vwi4KBvs+W+s9hY+54UtFE
+         Z2RJzMU/oxLSe1zUyan+BP8MaoDcRW6vcLuIH4MspS43VbmfgtBjOEmwF7a8wGAqcBN9
+         0vPmFV2aigtq2EntuW8fRtruhuU9UFJKgxp5GD0pfSDGEXAvno0Ypux8LuDEBbfsSjgq
+         szOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJXk8IZLPBDAJ5LYnKtgsLOH2XAaLl4a7oiJI3vmScAOurC9s8X9710lWVlpmK4Nksw4j/pw+VW9a3ca4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT9dt6OIaw3dz1sOip3zMHgmRdp7JiU1euGYV+CerMQBpKEgRK
+	H6wiHNZ8zu8p6xcGuEb3PlI6Eb0g1gaKOgYSkyM8nCIYc3IJVkc4O7tgx7LKFw==
+X-Gm-Gg: ASbGncvjBDs78bykVDeu9Z3GRxK7vPXR3yTaqkn2BlYZQgMq8VunsIPlAvSMC6Txett
+	J5LDVExwBl2QAMGg4CdMrffrxBRF5xY52w30NP9JtzreUd2P7i8btMkHLh5S5shSH1WsW2uOqKS
+	X6BUnvnMRrhKR0zpDUT1Y5qiGb08FpHhPEAbsUKsJ7lJXuCgCUR/Aj8tzcA2pc0DOxooDucQHDv
+	1jjpEOaC1h2bx/Gt6kdq6/WiAW3mN+rjSUn9LLEdmbCbs9lPXsm049fZAB7XfYhbG5XAGNMl2Oz
+	nvm4rDhB9NDfqPH1
+X-Google-Smtp-Source: AGHT+IFouz+xwSXmKJpuaar0NgPRKR2IqrtLtUtgVKbajLdmdXyU+pX/x3oI08eGDNaVgZLpKgwCWQ==
+X-Received: by 2002:a05:6a00:2e9b:b0:725:9f02:489f with SMTP id d2e1a72fcca58-728ed4cf3b9mr166355b3a.26.1733858263696;
+        Tue, 10 Dec 2024 11:17:43 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:cf2b:44dd:668c:5818])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-725c91c58fesm6871160b3a.51.2024.12.10.11.17.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 11:17:43 -0800 (PST)
+Date: Tue, 10 Dec 2024 11:17:42 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] driver core: Don't match device with NULL of_node/fwnode
+Message-ID: <Z1iT1tK-kHyNIoNL@google.com>
+References: <20241204000259.2699841-1-robh@kernel.org>
+ <2024120450-jogging-duty-fad4@gregkh>
+ <Z1eBotg2DiaXLWqn@google.com>
+ <CAL_Jsq+5cQHqoJ9wAgt0moU94Bddgsw+Q3TEWDqQ+-rryJPS1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <rxc57eg65sg4iayhj7gc7yl24w524lviedxnydl2mggqnatglq@iairj2ci7ioj>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+5cQHqoJ9wAgt0moU94Bddgsw+Q3TEWDqQ+-rryJPS1Q@mail.gmail.com>
 
-On Tue, Dec 10, 2024 at 07:40:04AM -0500, Kent Overstreet wrote:
-> On Tue, Dec 10, 2024 at 11:27:19AM +0000, Mark Rutland wrote:
-> > On Mon, Dec 09, 2024 at 11:37:12AM +0000, Mark Rutland wrote:
-> > > On Thu, Dec 05, 2024 at 01:04:59PM -0500, Kent Overstreet wrote:
-
-> > Looking some more, I see that bch2_btree_transactions_read() is trying
-> > to unwind other tasks, and I believe what's happening here is that the
-> > unwindee isn't actually blocked for the duration of the unwind, leading
-> > to the unwinder encountering junk and consequently producing the
-> > warning.
-> > 
-> > As a test case, it's possible to trigger similar with a few parallel
-> > instances of:
-> > 
-> > 	while true; do cat /proc/*/stack > /dev/null
-> > 
-> > The only thing we can do on the arm64 side is remove the WARN_ON_ONCE(),
-> > which'll get rid of the splat. It seems we've never been unlucky enough
-> > to hit a stale fgraph entry, or that would've blown up also.
-> > 
-> > Regardless of the way arm64 behaves here, the unwind performed by
-> > bch2_btree_transactions_read() is going to contain garbage unless the
-> > task is pinned in a blocked state. AFAICT the way
-> > btree_trans::locking_wait::task is used is here is racy, and there's no
-> > guarantee that the unwindee is actually blocked.
+On Tue, Dec 10, 2024 at 06:33:05AM -0600, Rob Herring wrote:
+> On Mon, Dec 9, 2024 at 5:47 PM Brian Norris <briannorris@chromium.org> wrote:
+> > FWIW, last week, I also cooked this change locally (+ the ACPI change;
+> > and a kunit test for added fun), before I noticed Rob submitted this
+> > one. If you'd rather, I can submit my patch series. Or I can submit my
+> > patch series on top of this. Whichever you'd prefer.
 > 
-> Occasionally returning garbage is completely fine, as long as the
-> interface is otherwise safe. This is debug info; it's important that it
-> be available and we can't impose additional synchronization for it.
+> If you have a kunit test, you win. :)
 
-Sure thing; just note that there's no guarantee that this is only
-"occasionally" garbage -- this could be wrong 1% of the time or 99% of
-the time depending on the specific scenario, HW it's running on, etc. As
-long as you're happy to hold the pieces when that happens, that's fine.
+Ha, OK:
 
-I've pushed out fixes to the arm64/stacktrace/fixes branch on my
-kernel.org git repo:
+https://lore.kernel.org/linux-kselftest/20241210191353.533801-1-briannorris@chromium.org/
+Subject: [PATCH 0/4] drivers: base: Don't match device with NULL of_node/fwnode/etc + tests
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/stacktrace/fixes
-  git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git arm64/stacktrace/fixes
+(Side note: I just noticed my mail script managed to skip LKML, although
+it got the acpi, kunit, and kselftest lists. I can resend if that's a
+problem.)
 
-... and I'll get that out as a series on the list tomorrow.
-
-Mark.
+Brian
 
