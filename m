@@ -1,183 +1,141 @@
-Return-Path: <linux-kernel+bounces-438727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06AB79EA4D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:12:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8D49EA4DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E9328705F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F8A28740D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCC61C9DF0;
-	Tue, 10 Dec 2024 02:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBFB1CEE88;
+	Tue, 10 Dec 2024 02:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAyrHAlz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1WIgW8u"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8E91990BA;
-	Tue, 10 Dec 2024 02:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9275418A94C;
+	Tue, 10 Dec 2024 02:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796663; cv=none; b=gDqLBDYBQBrEkNOH1JxpimteuKfRRLUxkQRPcLB7aimgaF+cp/uC5L1T/d5hSPs2uuXleQB7LnowN4la3JprIDrLAXbJ/xS+iNGxXIjE0mzjG3yfMTZ2bvnDQPAymVUdIbMPkJKyoQPuLAGBHCGvBrey4941IoVXrO7ZYs14SDw=
+	t=1733796673; cv=none; b=MbDuMRHJGxf6nnpdcIXNq5h8vPdZZhhT3k2pZ3dtWmZxrvGrsxWrAPit96QiDC6hAaSzA/Qs5t1eHYNFbXKvmAA6IcMOMm3zuXcQv7IP+945PhKm/MNRN3r8JgmrlSpk+Up/oBa7Pm66qadt+NraejWHjJqzMf4F76e24aggYJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796663; c=relaxed/simple;
-	bh=9OGc+Psrr2RQl+U3BiCBOgmGTipVIBYkFiE8ke4Sv8g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oVc4USQn74crIJwALaHH3OpnWaF8vEepvBkDa6p8C1PkORcvIa9FP+cbgiWWoZqLsOuXgnVDdgS6kHxAUaVpkGTAu4Rup5xUQpeUpnTERAxNCKP+ijpK9SgVF/Zof3nYvYvSFsK4JPtA8/lvv+Zptz3d6/UkIsYFzRNRN5lgelM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAyrHAlz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A6D6C4CED1;
-	Tue, 10 Dec 2024 02:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733796662;
-	bh=9OGc+Psrr2RQl+U3BiCBOgmGTipVIBYkFiE8ke4Sv8g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vAyrHAlzcEOWwVLwkwR4wZhCtOHfNOUUuVTiT5yzqjhDDtkSXFnRMP8Ttsy/dHSw5
-	 ROo/txeA1MVCEVQUiavf5tGWg+bRXhjhqdoiBfBcf8xeTQOwB/tkQ0btQH892ZykvF
-	 vezL6QQOCayy+72oHlOU1MyxR9XRewcU7SrSXqmnRZMqfszF3ajntY/+9+QZOPnqZC
-	 FO/HemrKTBD+lAe9Lzxi+mtjPOxBatqqi0ZMcWopsr8gI1/JJVbSf9sw3Tfsb3ylfS
-	 +CFzTn1nchqQO2sgdqaJj0NfCbFY9WWlCHmcGfudP1OZ9K1aBV2OZKj651J34lR7LB
-	 wgkJ5luo1kzWw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v21 10/20] bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
-Date: Tue, 10 Dec 2024 11:10:56 +0900
-Message-ID: <173379665670.973433.15793757202692406914.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <173379652547.973433.2311391879173461183.stgit@devnote2>
-References: <173379652547.973433.2311391879173461183.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1733796673; c=relaxed/simple;
+	bh=Y1paDHAZryavy2dZ2mMhQFQQD2mz0VBvLfEIvMI1XHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L2muVdTJ3wGBQH7z1mCrdV6FtgSAP21/qmiy1IgkkW8dLwDfHviAk+pQv+4ZkyRxZ3ROE0zajvdKXvwZGF+UV+aAYhqB6M7DO2uUqqL/waSZ5esH8ndGkqXSM2JE5uyQzUQcksN4Da1A3lZsIiOKa8wALOwDaZOjYV1zEuCWK20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1WIgW8u; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-725c86bbae7so2797787b3a.3;
+        Mon, 09 Dec 2024 18:11:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733796671; x=1734401471; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BOZIKt0bFPSGKmOzo4t4qSgnBLd3lwCXFJNT3HqXBN0=;
+        b=K1WIgW8uF2EFjpEGOp+EhYm78mYP+kWEb/q4aD96n3BySsVbpt6c4bL103QMf+3bP5
+         S1DwgCSUTTIeVIYve6UWBT7ksvY6VtyaP9aN9sVOlZrhAyMdu9Hyf/TS4AoJgYqUohFV
+         Yleec0nE61wCPSDHCZdWUb0aEQNjlD6mQzemkCaTUPpeJpWDYjr8K5tY2OMK6ex8pNA4
+         bFqI6YmE17wYKtXpikd+Dzt+lq48XCKNu5tOfEIM/F7z/tbZTQMgW/42pri1iYkEmcxd
+         AsnLxp1t9qEygf1HS0k4KlIpf1401EPfkZfQx5RHD4yqFJFscCkX8b8z0y2mSSAbMnNo
+         cprg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733796671; x=1734401471;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BOZIKt0bFPSGKmOzo4t4qSgnBLd3lwCXFJNT3HqXBN0=;
+        b=eDrJcUNsDmXELA5QzAliJMeTIC1g0Ic6ot/LEEsfNDLKwbBFHuON99TbH9oD8bSHtC
+         pgsP+WMfQOAcW1YigMPe+vCEPR0nCpJTazMxRhH0D63hcVYssNh5fQYm5jp1eN+XYw4F
+         C0c6CaPGuHhQjydHyAx1OeZCII8Klvkz9QWPsNPWhjlsfp8t1Q82CUvsQ2cPT0c3aiWt
+         LVrzXjrOsHIjcPhnZ9xN71n4RSkQAdr4BHweUuKWE6MVmlWzgv5svqcAkTz/YjC4rKBB
+         0DAYJYRJVPJiDvgwM0VA15PWToOwJK8TC3F7WTPqPpVFqHS40wR3O6OOoVac/ioNP7Tq
+         USSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWoW1NLMNjJELAe9bfcmm7HQCGRq3ixtxp7bvpSrGOgoO0x2Pu71ttqh03ke+2y3TtSH1Vi4q98XuER5yzmo50/iOO3Q==@vger.kernel.org, AJvYcCXiP8hk+c6iPqXO/2sVRpOpZRopnXvel5Dwg2moYTRA1NULb+gO852cSBy8CCinp+H9CLs+en/Iwm0xOkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrxAKywxxDszV6FV8Isk3ANaCKfF6OYa5HMBILIUaKwzCjf5uU
+	At3I/pOFsyhLWPHQYuOMjMd1y/YPp3jhBjlTiXc4C652Jxe/tQCDvN2dBQ==
+X-Gm-Gg: ASbGncsnxF3M5LLBD7kJo38uwbikc16nSVtI9axyP8v7o8spNHKYMQfd4AZPAhMiQiK
+	xRPRiunTDslZGYzl/B9uGjSMSaTBwxXHXuRDHnUR78FDevVvRepfHT3psirBVGXCegzqQTFLU9P
+	GCFouNRUUveni7wqkBdxDwNBqGX7RfPpZ2yy+BAh1Pic8cacqaXRKFwe8nM/14GADP8LnCvvLrL
+	QqSsHoZtMSw65IJ508H6PH+htD7qCApTXGufVxpma5Q0WTrBlN37kZYgM/IttkKAsCqeaT11cWr
+	tmNMx7uTkNm5
+X-Google-Smtp-Source: AGHT+IH3Wfym1SYu+U7j7MtdnjgU3L70JGzgl5EJBX48ob+wAaSTQM5wwXwfE3/CXOkOMBafaZYvCw==
+X-Received: by 2002:a05:6a00:2d85:b0:725:ebab:bb2e with SMTP id d2e1a72fcca58-7273cb134e1mr3079754b3a.11.1733796670859;
+        Mon, 09 Dec 2024 18:11:10 -0800 (PST)
+Received: from alphacentauri (host111.181-10-101.telecom.net.ar. [181.10.101.111])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a9205fsm8215567b3a.99.2024.12.09.18.11.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 18:11:10 -0800 (PST)
+Date: Mon, 9 Dec 2024 23:11:06 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: jlee@suse.com, farhan.anwar8@gmail.com, rayanmargham4@gmail.com, 
+	hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] platform/x86: acer-wmi: Rename
+ ACER_CAP_FAN_SPEED_READ
+Message-ID: <2emajkofqh6hwih7cnetj4j4b6rhnncnsrhkbve6yxn55rzy7b@atfif46fugf3>
+References: <20241210001657.3362-1-W_Armin@gmx.de>
+ <20241210001657.3362-3-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210001657.3362-3-W_Armin@gmx.de>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Tue, Dec 10, 2024 at 01:16:54AM +0100, Armin Wolf wrote:
+> Rename ACER_CAP_FAN_SPEED_READ to ACER_CAP_HWMON to prepare for
+> upcoming changes in the hwmon handling code.
 
-Enable kprobe_multi feature if CONFIG_FPROBE is enabled. The pt_regs is
-converted from ftrace_regs by ftrace_partial_regs(), thus some registers
-may always returns 0. But it should be enough for function entry (access
-arguments) and exit (access return value).
+Reviewed-by: Kurt Borja <kuurtb@gmail.com>
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Florent Revest <revest@chromium.org>
----
- Changes in v9:
-  - Avoid wasting memory for bpf_kprobe_multi_pt_regs when
-    CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST=y
----
- kernel/trace/bpf_trace.c |   27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 88aad3e3742c..852400170c5c 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2550,7 +2550,7 @@ struct bpf_session_run_ctx {
- 	void *data;
- };
- 
--#if defined(CONFIG_FPROBE) && defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
-+#ifdef CONFIG_FPROBE
- struct bpf_kprobe_multi_link {
- 	struct bpf_link link;
- 	struct fprobe fp;
-@@ -2573,6 +2573,13 @@ struct user_syms {
- 	char *buf;
- };
- 
-+#ifndef CONFIG_HAVE_FTRACE_REGS_HAVING_PT_REGS
-+static DEFINE_PER_CPU(struct pt_regs, bpf_kprobe_multi_pt_regs);
-+#define bpf_kprobe_multi_pt_regs_ptr()	this_cpu_ptr(&bpf_kprobe_multi_pt_regs)
-+#else
-+#define bpf_kprobe_multi_pt_regs_ptr()	(NULL)
-+#endif
-+
- static int copy_user_syms(struct user_syms *us, unsigned long __user *usyms, u32 cnt)
- {
- 	unsigned long __user usymbol;
-@@ -2767,7 +2774,7 @@ static u64 bpf_kprobe_multi_entry_ip(struct bpf_run_ctx *ctx)
- 
- static int
- kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
--			   unsigned long entry_ip, struct pt_regs *regs,
-+			   unsigned long entry_ip, struct ftrace_regs *fregs,
- 			   bool is_return, void *data)
- {
- 	struct bpf_kprobe_multi_run_ctx run_ctx = {
-@@ -2779,6 +2786,7 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
- 		.entry_ip = entry_ip,
- 	};
- 	struct bpf_run_ctx *old_run_ctx;
-+	struct pt_regs *regs;
- 	int err;
- 
- 	if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
-@@ -2789,6 +2797,7 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
- 
- 	migrate_disable();
- 	rcu_read_lock();
-+	regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
- 	old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
- 	err = bpf_prog_run(link->link.prog, regs);
- 	bpf_reset_run_ctx(old_run_ctx);
-@@ -2805,15 +2814,11 @@ kprobe_multi_link_handler(struct fprobe *fp, unsigned long fentry_ip,
- 			  unsigned long ret_ip, struct ftrace_regs *fregs,
- 			  void *data)
- {
--	struct pt_regs *regs = ftrace_get_regs(fregs);
- 	struct bpf_kprobe_multi_link *link;
- 	int err;
- 
--	if (!regs)
--		return 0;
--
- 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
--	err = kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), regs, false, data);
-+	err = kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), fregs, false, data);
- 	return is_kprobe_session(link->link.prog) ? err : 0;
- }
- 
-@@ -2823,13 +2828,9 @@ kprobe_multi_link_exit_handler(struct fprobe *fp, unsigned long fentry_ip,
- 			       void *data)
- {
- 	struct bpf_kprobe_multi_link *link;
--	struct pt_regs *regs = ftrace_get_regs(fregs);
--
--	if (!regs)
--		return;
- 
- 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
--	kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), regs, true, data);
-+	kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), fregs, true, data);
- }
- 
- static int symbols_cmp_r(const void *a, const void *b, const void *priv)
-@@ -3090,7 +3091,7 @@ int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 	kvfree(cookies);
- 	return err;
- }
--#else /* !CONFIG_FPROBE || !CONFIG_DYNAMIC_FTRACE_WITH_REGS */
-+#else /* !CONFIG_FPROBE */
- int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
- {
- 	return -EOPNOTSUPP;
-
+> 
+> Tested-by: Rayan Margham <rayanmargham4@gmail.com>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/acer-wmi.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+> index 5cff538ee67f..dd57787466b9 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -246,7 +246,7 @@ struct hotkey_function_type_aa {
+>  #define ACER_CAP_TURBO_LED		BIT(8)
+>  #define ACER_CAP_TURBO_FAN		BIT(9)
+>  #define ACER_CAP_PLATFORM_PROFILE	BIT(10)
+> -#define ACER_CAP_FAN_SPEED_READ		BIT(11)
+> +#define ACER_CAP_HWMON			BIT(11)
+> 
+>  /*
+>   * Interface type flags
+> @@ -358,7 +358,7 @@ static void __init set_quirks(void)
+> 
+>  	if (quirks->predator_v4)
+>  		interface->capability |= ACER_CAP_PLATFORM_PROFILE |
+> -					 ACER_CAP_FAN_SPEED_READ;
+> +					 ACER_CAP_HWMON;
+>  }
+> 
+>  static int __init dmi_matched(const struct dmi_system_id *dmi)
+> @@ -2551,7 +2551,7 @@ static int acer_platform_probe(struct platform_device *device)
+>  			goto error_platform_profile;
+>  	}
+> 
+> -	if (has_cap(ACER_CAP_FAN_SPEED_READ)) {
+> +	if (has_cap(ACER_CAP_HWMON)) {
+>  		err = acer_wmi_hwmon_init();
+>  		if (err)
+>  			goto error_hwmon;
+> --
+> 2.39.5
+> 
 
