@@ -1,248 +1,162 @@
-Return-Path: <linux-kernel+bounces-439128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B799EAB2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:59:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EA49EAB33
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:01:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE65D168B20
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:01:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7216022F3BB;
+	Tue, 10 Dec 2024 09:01:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D82A428189A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:59:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F9D230D3A;
-	Tue, 10 Dec 2024 08:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0RKof0sA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gfS2R9sx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0RKof0sA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gfS2R9sx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9042822ACFA
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AABF1C75F3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733821144; cv=none; b=f1q5l7c7wCvFM42REo9b6/1QzqilxfRbDk61pMRUqzdVLOxRgazz3ytwA5jWg204YkgGCnOYxOQiWRar2iD2bfAbGuLShuVYJrT6aszt770hiQX/JccXt28EAM4vsmfQSCtfadMiHFBFKV85ry7uuaVL0wswN6qncOfi8B3lgrs=
+	t=1733821286; cv=none; b=ARDMyvzJbp1wRKc87M3d4E147NUdkpcHTwoWPeQBXEk6op80u91bRcfCBGinVxnUxwMdnGPJOZbkPITyRjLnCkkuWWsVBUJMQ80KyRZckZ6CM0vp/daEr14b47rQOXzyz8iSoPyiMNGR83DzQrNWvDI5W14j89PQ7WW6fj9qZRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733821144; c=relaxed/simple;
-	bh=mwkycVxOAMYjNkYlgq+iY9V5Ef2gJz/AA8Y7zWoCC50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QO6TlwIi8xjtj+ILz1add+1FcZPK45z+Q8Q/rNnNL2TAwhqimT0AIgKui47HzBCA5PtI40GT1m4u0KlKZ7MXiAS5lRUWGWAyBctugftGCt4ew5oQ5Uv9dwHMtqY0w+Eh0f2AhKax6lg8jZqavIBKXRKxYeXHZp15dm/Hip4Ior8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0RKof0sA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gfS2R9sx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0RKof0sA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gfS2R9sx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7F3D42111F;
-	Tue, 10 Dec 2024 08:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733821140; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49hMjNt9pBGKOeBV6I29R5mRJ1+yvQypQMT7IZyVWhg=;
-	b=0RKof0sAp83qTzhJL+hjC4PqP1s5rBTdjEBQzVSV1Ywizae/yKSo17KMOpYygL1Q6Ep9SJ
-	Br0bXl+DJvBrWkTfTeKFPBoSUn11JQYddibTJDd/zLDMl/QgMDCSR3Xun1LdsYQ+CqcjSd
-	DIlap8QraFMLh8a7IgzEi54Lo0caux4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733821140;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49hMjNt9pBGKOeBV6I29R5mRJ1+yvQypQMT7IZyVWhg=;
-	b=gfS2R9sxzVTNc/EFlnZN7pZsYx4HooM/RjlwmGbFZ9x6o1sfy7ZlwicGJr6g5G+8Y+rinc
-	lJUKS4t0mDhsakAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0RKof0sA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=gfS2R9sx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733821140; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49hMjNt9pBGKOeBV6I29R5mRJ1+yvQypQMT7IZyVWhg=;
-	b=0RKof0sAp83qTzhJL+hjC4PqP1s5rBTdjEBQzVSV1Ywizae/yKSo17KMOpYygL1Q6Ep9SJ
-	Br0bXl+DJvBrWkTfTeKFPBoSUn11JQYddibTJDd/zLDMl/QgMDCSR3Xun1LdsYQ+CqcjSd
-	DIlap8QraFMLh8a7IgzEi54Lo0caux4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733821140;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49hMjNt9pBGKOeBV6I29R5mRJ1+yvQypQMT7IZyVWhg=;
-	b=gfS2R9sxzVTNc/EFlnZN7pZsYx4HooM/RjlwmGbFZ9x6o1sfy7ZlwicGJr6g5G+8Y+rinc
-	lJUKS4t0mDhsakAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2439E138D2;
-	Tue, 10 Dec 2024 08:59:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qatuB9QCWGdtKAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 10 Dec 2024 08:59:00 +0000
-Message-ID: <183e6f35-85bd-4a96-be5e-eded1d9fc14b@suse.de>
-Date: Tue, 10 Dec 2024 09:58:59 +0100
+	s=arc-20240116; t=1733821286; c=relaxed/simple;
+	bh=gBFwtX62HZzRaai0K+v2rk3fcFBb5+CMCQxsV9IEtl8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HE/0icMTa8c/TogGT+BVPb//u9GARpJpnisZdkFiwW6TiZ+TCgdcRIp/n+nwiAWc3JO7ZzrVNctfSGLSik8oPEac3dl/5pWfEJBiS9oNJ4eyKp+Ep0OeNIfyIDW+PaayAXsnMiTbcWIN6X4+dC0S3DLwKyiUWTFauh+Ysn3KG/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1tKw73-00051L-G9; Tue, 10 Dec 2024 10:01:01 +0100
+Message-ID: <b092fdec6fda26c56b4f2cc5927bbaa4a6d786f9.camel@pengutronix.de>
+Subject: Re: [PATCH v2] serial: imx: Use uart_port_lock_irq() instead of
+ uart_port_lock()
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>, gregkh@linuxfoundation.org, 
+ jirislaby@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+ kernel@pengutronix.de, festevam@gmail.com, esben@geanix.com, marex@denx.de,
+  ilpo.jarvinen@linux.intel.com, linux@rasmusvillemoes.dk, 
+ stefan.eichenberger@toradex.com, l.sanfilippo@kunbus.com, 
+ cniedermaier@dh-electronics.com, rickaran@axis.com
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Date: Tue, 10 Dec 2024 10:00:57 +0100
+In-Reply-To: <20241210034223.1493522-1-xiaolei.wang@windriver.com>
+References: <20241210034223.1493522-1-xiaolei.wang@windriver.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [v2] drm: rework FB_CORE dependency
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jocelyn Falempe <jfalempe@redhat.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Jani Nikula <jani.nikula@intel.com>, Harry Wentland
- <harry.wentland@amd.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Jonathan Cavitt <jonathan.cavitt@intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241115162323.3555229-1-arnd@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20241115162323.3555229-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7F3D42111F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,arndb.de:email];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[arndb.de,linux.intel.com,kernel.org,gmail.com,ffwll.ch,redhat.com,glider.be,intel.com,amd.com,lists.freedesktop.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[renesas];
-	DKIM_TRACE(0.00)[suse.de:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi
+Am Dienstag, dem 10.12.2024 um 11:42 +0800 schrieb Xiaolei Wang:
+> When executing 'ehco mem > /sys/power/state', the following
+> deadlock occurs. Since there is output during the serial
+> port entering the suspend process, the suspend will be
+> interrupted, resulting in the nesting of locks. Therefore,
+> use uart_port_lock_irq() instead of uart_port_unlock().
+>=20
+> WARNING: inconsistent lock state
+> 6.12.0-rc2-00002-g3c199ed5bd64-dirty #23 Not tainted
+> --------------------------------
+> inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+> sh/494 [HC0[0]:SC0[0]:HE1:SE1] takes:
+> c4db5850 (&port_lock_key){?.-.}-{3:3}, at: imx_uart_enable_wakeup+0x14/0x=
+254
+> {IN-HARDIRQ-W} state was registered at:
+>   lock_acquire+0x104/0x348
+>   _raw_spin_lock+0x48/0x84
+>   imx_uart_int+0x14/0x4dc
+>   __handle_irq_event_percpu+0xac/0x2fc
+>   handle_irq_event_percpu+0xc/0x40
+>   handle_irq_event+0x38/0x8c
+>   handle_fasteoi_irq+0xb4/0x1b8
+>   handle_irq_desc+0x1c/0x2c
+>   gic_handle_irq+0x6c/0xa0
+>   generic_handle_arch_irq+0x2c/0x64
+>   call_with_stack+0x18/0x20
+>   __irq_svc+0x9c/0xbc
+>   _raw_spin_unlock_irqrestore+0x2c/0x48
+>   uart_write+0xd8/0x3a0
+>   do_output_char+0x1a8/0x1e4
+>   n_tty_write+0x224/0x440
+>   file_tty_write.constprop.0+0x124/0x250
+>   do_iter_readv_writev+0x100/0x1e0
+>   vfs_writev+0xc4/0x448
+>   do_writev+0x68/0xf8
+>   ret_fast_syscall+0x0/0x1c
+> irq event stamp: 31593
+> hardirqs last  enabled at (31593): [<c1150e48>] _raw_spin_unlock_irqresto=
+re+0x44/0x48
+> hardirqs last disabled at (31592): [<c07f32f0>] clk_enable_lock+0x60/0x12=
+0
+> softirqs last  enabled at (30334): [<c012d1d4>] handle_softirqs+0x2cc/0x4=
+78
+> softirqs last disabled at (30325): [<c012d510>] __irq_exit_rcu+0x120/0x15=
+c
+>=20
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+>=20
+>        CPU0
+>        ----
+>   lock(&port_lock_key);
+>   <Interrupt>
+>     lock(&port_lock_key);
+>=20
+> Fixes: 3c199ed5bd64 ("serial: imx: Grab port lock in imx_uart_enable_wake=
+up()")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 
-
-Am 15.11.24 um 17:23 schrieb Arnd Bergmann:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The 'select FB_CORE' statement moved from CONFIG_DRM to DRM_CLIENT_LIB,
-> but there are now configurations that have code calling into fb_core
-> as built-in even though the client_lib itself is a loadable module:
->
-> x86_64-linux-ld: drivers/gpu/drm/drm_fbdev_shmem.o: in function `drm_fbdev_shmem_driver_fbdev_probe':
-> drm_fbdev_shmem.c:(.text+0x1fc): undefined reference to `fb_deferred_io_init'
-> x86_64-linux-ld: drivers/gpu/drm/drm_fbdev_shmem.o: in function `drm_fbdev_shmem_fb_destroy':
-> drm_fbdev_shmem.c:(.text+0x2e1): undefined reference to `fb_deferred_io_cleanup'
-> ...
-> x86_64-linux-ld: drivers/gpu/drm/drm_fb_helper.o: in function `drm_fb_helper_set_suspend':
-> drm_fb_helper.c:(.text+0x2c6): undefined reference to `fb_set_suspend'
-> x86_64-linux-ld: drivers/gpu/drm/drm_fb_helper.o: in function `drm_fb_helper_resume_worker':
-> drm_fb_helper.c:(.text+0x2e1): undefined reference to `fb_set_suspend'
->
-> In addition to DRM_CLIENT_LIB, the 'select' needs to be at least in
-> two more parts, DRM_KMS_HELPER and DRM_GEM_SHMEM_HELPER, so add those
-> here.
->
-> Fixes: dadd28d4142f ("drm/client: Add client-lib module")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Looks like this patch got lost. I'll merge it now and will also send a 
-patch for DMA- and TTM-related options.
-
-Best regards
-Thomas
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
 > ---
-> v2: keep the select in DRM_CLIENT_LIB, keep alphabetic sorting
-> ---
->   drivers/gpu/drm/Kconfig | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index a4a092ee70d9..410bd6d78408 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -98,6 +98,7 @@ config DRM_KUNIT_TEST
->   config DRM_KMS_HELPER
->   	tristate
->   	depends on DRM
-> +	select FB_CORE if DRM_FBDEV_EMULATION
->   	help
->   	  CRTC helpers for KMS drivers.
->   
-> @@ -371,6 +372,7 @@ config DRM_GEM_DMA_HELPER
->   config DRM_GEM_SHMEM_HELPER
->   	tristate
->   	depends on DRM && MMU
-> +	select FB_CORE if DRM_FBDEV_EMULATION
->   	select FB_SYSMEM_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
->   	help
->   	  Choose this if you need the GEM shmem helper functions
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+>=20
+> v1:
+>   https://patchwork.kernel.org/project/linux-arm-kernel/patch/20241209124=
+732.693834-1-xiaolei.wang@windriver.com/
+> v2:
+>   use uart_port_lock_irq() instead of uart_port_lock_irqsave()
+>=20
+>  drivers/tty/serial/imx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 17f70e4bee43..9c59ec128bb4 100644
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -2692,7 +2692,7 @@ static void imx_uart_enable_wakeup(struct imx_port =
+*sport, bool on)
+>  {
+>  	u32 ucr3;
+> =20
+> -	uart_port_lock(&sport->port);
+> +	uart_port_lock_irq(&sport->port);
+> =20
+>  	ucr3 =3D imx_uart_readl(sport, UCR3);
+>  	if (on) {
+> @@ -2714,7 +2714,7 @@ static void imx_uart_enable_wakeup(struct imx_port =
+*sport, bool on)
+>  		imx_uart_writel(sport, ucr1, UCR1);
+>  	}
+> =20
+> -	uart_port_unlock(&sport->port);
+> +	uart_port_unlock_irq(&sport->port);
+>  }
+> =20
+>  static int imx_uart_suspend_noirq(struct device *dev)
 
 
