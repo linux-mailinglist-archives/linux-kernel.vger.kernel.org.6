@@ -1,164 +1,107 @@
-Return-Path: <linux-kernel+bounces-439309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2B79EAD77
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:02:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5163016D33D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:00:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994D0210F4B;
-	Tue, 10 Dec 2024 10:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qm9JVpnS"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D3B9EAD66
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:01:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5E72080C9;
-	Tue, 10 Dec 2024 09:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777E928A18E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:01:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20754212D94;
+	Tue, 10 Dec 2024 10:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyQQvgut"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B790212D80;
+	Tue, 10 Dec 2024 10:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733824800; cv=none; b=aPz2muW2iraqNvH9u38U8AcwSPs3G3fBf0pC/wbaPt4+IWkb0kEh0PHIUF/V4Cd4ow2cEf/oSUQvZqKUj7X8m5ju6Lau/mMVr58DH9SaRsIXibtC+BhDi0yzKhisHPpRnM3jLrZEqLlFZVDhY6YSsSV9jRUCwC/MFhf9wZOaGF8=
+	t=1733824808; cv=none; b=ZKchZgZuCq65aMcxvUYzxqhgDUBPYfzp3ikKgYkN525js9Ke4n82NEsQoh6X3cItl21T1asQkYqhFpG9r+sWQpcjYtlhBc+fj2T+NSyiw9ivMsu40rvc+Z7OGs1psk3zzLGCgvipjOHng6fv+ReEzYKqW5qpVmyjaq6sHzzlwkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733824800; c=relaxed/simple;
-	bh=t5EUydVzLEUmqeeWH9AEltt3IDkS6msVBQR7PHoGIfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o/kmibDbPhfYjNDv1Dfa5UTnsHPmJtFKFlfqvvnn3fEFBxc3Fjjdeq7oOmhnsY5ng57sKPl+MjNviIKFV/YV1Hj0iYTgGksw6CpFSXZWLhYX9MZPs/zGzNS73wYMMELxRa/FMIb4PfmPpkykiqTf928CBJeVl4fGgsfjOQJZm1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qm9JVpnS; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA9RiFj019995;
-	Tue, 10 Dec 2024 09:59:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vkFVlj
-	oYH9tR0VLBFqHDDM+41lBT98TZUnYgw/2vQoA=; b=Qm9JVpnSTodL6Jn+KB49XV
-	f9nDS8IPQZ9xAesoWjK91x5dceFBm3H527xuZJo2J6YoGFLxlZoxPX6/eyaz/EhK
-	nVMEzx9qZKm1WMCtkOdhn1J0wm031Qx7DeCniPryb7Ee0mZyaji41b+gDx+Uwy5t
-	ZfqlMAtBVPhtRQSNRJz4YmyupXUogGb2Eq4VN9RsJDKxpqq/woa08P5lhunpdcVy
-	5f6AWUabbj35aXNyqG5zQsouEInumm7FgqYsL+Z5iTp1yTNZ2d0YPpCaCFBF+Gur
-	9I66aqy6ARe66rdt7NDaq2bqy55RKHdJfScKOnkl31+sPI0oh6VsFWrZYznvtj/A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38pak1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 09:59:54 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BA9tgcM020180;
-	Tue, 10 Dec 2024 09:59:54 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38pajy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 09:59:53 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA8uKK3023018;
-	Tue, 10 Dec 2024 09:59:53 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wjtrke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 09:59:52 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BA9xngf59113872
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 09:59:49 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6AD6420043;
-	Tue, 10 Dec 2024 09:59:49 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3714720040;
-	Tue, 10 Dec 2024 09:59:49 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 09:59:49 +0000 (GMT)
-Date: Tue, 10 Dec 2024 10:59:47 +0100
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Cc: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
-        alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-        guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dust Li
- <dust.li@linux.alibaba.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH net-next v2 2/2] net/smc: support ipv4 mapped ipv6 addr
- client for smc-r v2
-Message-ID: <20241210105947.466674a4.pasic@linux.ibm.com>
-In-Reply-To: <58075d86-b43a-4d58-bf64-c29418f99143@linux.alibaba.com>
-References: <20241202125203.48821-1-guangguan.wang@linux.alibaba.com>
-	<20241202125203.48821-3-guangguan.wang@linux.alibaba.com>
-	<894d640f-d9f6-4851-adb8-779ff3678440@linux.ibm.com>
-	<20241205135833.0beafd61.pasic@linux.ibm.com>
-	<5ac2c5a7-3f12-48e5-83a9-ecd3867e6125@linux.alibaba.com>
-	<7de81edd-86f2-4cfd-95db-e273c3436eb6@linux.ibm.com>
-	<3710a042-cabe-4b6d-9caa-fd4d864b2fdc@linux.ibm.com>
-	<d2af79e2-adb2-46f0-a7e3-67a9265f3adf@linux.alibaba.com>
-	<868f5d66-ac74-4b0a-a0d0-e44fdea3bb73@linux.ibm.com>
-	<20241209104647.5c36c429.pasic@linux.ibm.com>
-	<85d1c6e1-0fe3-4c71-af4e-8015270b90dc@linux.alibaba.com>
-	<20241209214449.0bb5afce.pasic@linux.ibm.com>
-	<58075d86-b43a-4d58-bf64-c29418f99143@linux.alibaba.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733824808; c=relaxed/simple;
+	bh=yDJ3Y0CQ1Zzxec55vnfNIZbtTZPxyflnGg8JzL2FZ1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbvcjGyuB+ivrp8sDPllfqrudpBDIzLXnErC/TvlIcsnFcMhEmoF/vpzSIAJCEwShbnQ/EtDHRkaO933yYMgurLhF/sbn86ltTJ7F8Pt5mcaexSrTRJpJKkNglxVlnk33ygxWySOWQiQBlKmgObS4DwCAaRCEbaPuL5hJEMtKmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyQQvgut; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07874C4CEE2;
+	Tue, 10 Dec 2024 10:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733824808;
+	bh=yDJ3Y0CQ1Zzxec55vnfNIZbtTZPxyflnGg8JzL2FZ1w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pyQQvgut2sQT7pkKgPppqPLEYyUx98FyzMV/z+DeXUB3g7zLz2eHCBVIk1s9GntpA
+	 bMQwi6xX91MJ+5O/JX6240gXOalG0GMFaVOfWYjW+JqBd/AdHtZSJ2Z/S/GzzKRcXA
+	 Pz96j1262YCWsHWY35e9JLpxcetqsKibI+nVwnyH2D4qQUYKne4fmkRMDb/zsnPWXv
+	 SrVCoIAh6k/CKz+eujSumQ//l/4g/Y0Z49ZcSLy9oP5sRvRK/DBehqrK1/JzPc5tk8
+	 QRkemTmC1AkSv8GyJUtuRHPVuwWAYahEYWbWNodEbt8ARNUv/LHomopjzCBfdC3PwZ
+	 2Bn/bj1wmEvlQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so48593381fa.3;
+        Tue, 10 Dec 2024 02:00:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVWrGE9CKm6+aRpsUMTnpfsGkQScY/CKZ+FsDjcKCJlJ7WECAyqREb29iBbgsg/Z5eJ4gG+DkmdA/XfA00=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+UN9PuaNrlnAURCeKjR8fNKwznQ/SyvFTSGNzweB5hV00ikSu
+	O0xlHepvgx6drpn4eSWe/hJ+xSHnMm6TgYqEj8Rqp0HX0CLgzLsC2EP8RbjAcQkVE1/oZCffrqT
+	0I45N0Rd/4+PIEffaLi9dRHqdULo=
+X-Google-Smtp-Source: AGHT+IFSCLO1ka++DkAz9IMfQBoTMj5q6DboeP/rPFyJAVEPmRkEfNV18wimpRcX28lLOVMIzt1ZtWXRFxaf8wONWPg=
+X-Received: by 2002:a2e:bcc4:0:b0:302:2a23:cf5 with SMTP id
+ 38308e7fff4ca-3022fd42dd5mr13476071fa.19.1733824806347; Tue, 10 Dec 2024
+ 02:00:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: dHsgy1URY5S9tEcSQkFfxg7h82R871U5
-X-Proofpoint-ORIG-GUID: 2Ce0Tx0GAoXpvCY_w4Jxbxfc-J6aTeY2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=857
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100074
+References: <20241209182041.60286-1-hamzamahfooz@linux.microsoft.com>
+In-Reply-To: <20241209182041.60286-1-hamzamahfooz@linux.microsoft.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 10 Dec 2024 10:59:55 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEnxgsy6LkyWGFmwDxVroDofeGYdUd2BvfJ=bNgj0TYVg@mail.gmail.com>
+Message-ID: <CAMj1kXEnxgsy6LkyWGFmwDxVroDofeGYdUd2BvfJ=bNgj0TYVg@mail.gmail.com>
+Subject: Re: [PATCH] efi: bump up EFI_MMAP_NR_SLACK_SLOTS to 32
+To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+Cc: linux-efi@vger.kernel.org, stable@kernel.org, 
+	Allen Pais <apais@linux.microsoft.com>, Tyler Hicks <code@tyhicks.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Marek <jonathan@marek.ca>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 10 Dec 2024 15:07:04 +0800
-Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
+On Mon, 9 Dec 2024 at 19:20, Hamza Mahfooz
+<hamzamahfooz@linux.microsoft.com> wrote:
+>
+> Recent platforms require more slack slots than the current value of
+> EFI_MMAP_NR_SLACK_SLOTS, otherwise they fail to boot. The current
+> workaround is to append `efi=disable_early_pci_dma` to the kernel's
+> cmdline. So, bump up EFI_MMAP_NR_SLACK_SLOTS to 32 to allow those
+> platforms to boot with the aforementioned workaround.
+>
+> Cc: stable@kernel.org
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Allen Pais <apais@linux.microsoft.com>
+> Cc: Tyler Hicks <code@tyhicks.com>
+> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+> ---
+>  drivers/firmware/efi/libstub/efistub.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
+> index 76e44c185f29..e95ce6ae5c26 100644
+> --- a/drivers/firmware/efi/libstub/efistub.h
+> +++ b/drivers/firmware/efi/libstub/efistub.h
+> @@ -171,7 +171,7 @@ void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
+>   * the EFI memory map. Other related structures, e.g. x86 e820ext, need
+>   * to factor in this headroom requirement as well.
+>   */
+> -#define EFI_MMAP_NR_SLACK_SLOTS        8
+> +#define EFI_MMAP_NR_SLACK_SLOTS        32
+>
+>  typedef struct efi_generic_dev_path efi_device_path_protocol_t;
+>
 
-> On 2024/12/10 04:44, Halil Pasic wrote:
-> > On Mon, 9 Dec 2024 20:36:45 +0800
-> > Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
-> >   
-> >>> I believe we would like to have a v3 here. Also I'm not sure
-> >>> checking on saddr is sufficient, but I didn't do my research on
-> >>> that question yet.
-> >>>
-> >>> Regards,
-> >>> Halil    
-> >>
-> >> Did you mean to research whether the daddr should be checked too?  
-> > 
-> > Right! Or is it implied that if saddr is a ipv4 mapped ipv6 addr
-> > then the daddr must be ipv4 mapped ipv6 addr as well?
-> > 
-> > Regards,
-> > Halil  
-> 
-> I did a test by iperf3:
-> A server with IPV4 addr 11.213.5.33/24 and real IPV6 addr 2012::1/64.
-> A client with IPV4 addr 11.213.5.5/24 and real IPV6 addr 2012::2/64.
-> iperf3 fails to run when server listen on IPV6 addr and client connect
-> to server using IPV4 mapped IPV6 addr. commands show below:
-> server: smc_run iperf3 -s -6 -B 2012::1
-> client: smc_run iperf3 -t 10 -c 2012::1 -6 -B ::ffff:11.213.5.5
-> 
-> Failure happened due to the connect() function got the errno -EAFNOSUPPORT,
-> I also located the kernel code where the -EAFNOSUPPORT is returned
-> (https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/ipv6/ip6_output.c#:~:text=err%20%3D%20%2DEAFNOSUPPORT%3B).
-
-Thanks! That is enough for me!
-
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
