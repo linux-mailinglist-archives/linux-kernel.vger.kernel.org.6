@@ -1,204 +1,171 @@
-Return-Path: <linux-kernel+bounces-439485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F35D9EAFEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:31:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A94916AB3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:31:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B61A78F4B;
-	Tue, 10 Dec 2024 11:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="rhbg1cnD"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE5E9EAFEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:31:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A8478F24
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F19228FC57
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:31:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0642080D7;
+	Tue, 10 Dec 2024 11:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MLfRIkxm"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4E478F24;
+	Tue, 10 Dec 2024 11:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733830278; cv=none; b=R+ga0MoUct2P+SoxPY4OjTDW7WWcku4vIMxzbGgCcDucJ//NHXiTfUl0kFVWEZoYH1oW+CgbTN42f5bwpthpe3Bph0mMYM8rAHDllnIJc4b42unwH+uUstVPpJHs6cqF/IKiN4QM8IuiOBO5eKbbv8W6Hmko5LiK290VlTDfuA8=
+	t=1733830293; cv=none; b=rCPEFWpAfegCNZuyF17Cqdx9iHmK/akdVCZjSj8JeP0l//zT2jyXiS0yeDjnWGx3LXReURTj/O8sDSrX0gIfVcCxcM2vUoWN4QlkPCbLyhTjFd1cUY3mypcV8T3XML/3WuIDY9QIa5K/vuVIrOoWXOeiDf0wAU5t74ZU1LvMJmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733830278; c=relaxed/simple;
-	bh=9keLN6u9MLaCHXqWbzaLWWtINTKiS3eNWIl3UFRz3c0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=d++2nrt3WV8bykd2g1WYrx1HoS65VCvBvy8lgOjnBiRe1F9gDLm3LbpXQoiXtPAXCLpbTsbVJ/9sr6JjN61/1v4Fu7FHIgzJ9WXGzWfyauH3VOt2lQnPrB550NlWNrHFuoQRuadsJ/1tjD7/oFkD2sXKXuCdjMlzFdrwpNCVf7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=rhbg1cnD; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1733830293; c=relaxed/simple;
+	bh=GSUye358gWFOvZ1gSTeQH/vASNgwPRjWO01L50+BkmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xd0V59xKSTVHCKeendZ9sbtaULR+0DrLSQVPE9sI7NAqOXq2ZNEpJP7ua7DRuNe03ud+HN7jLo9LiF2ryPMgaB2eJ7alsniGlSqcCGP1gAROxA9XHBbDZbuJRumTZSkja8i+NSZBqqu19rT6RchL55DpIR+5N7pv6Fd0MZ63Las=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MLfRIkxm; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Feb0jQOujGmxXR8PPkTXLVIfG9wGJNk4iUPyw0CUCJk=; b=MLfRIkxmC678SS76Jwg2qowzDG
+	MVcEEk5oKwIV+Zo3/Xi1v8CIsS0OSNiWMxO90sJsOhj/PgH+nFLVcDPHx8BkD7a0X+BZRBPhFf/kh
+	6wTmJzYom4GQC1UYADZmKHT42oXD+zVpiqC8EJpt5yKqGRZDNlBp625Hlt8Vupv7bY8GJUpVz2zvt
+	OTXh8nxAvd2MzmIrCslZ6eyW3G3l/EMwZrPf+6+Ocq0FkkEXOHAGt0WynxEI1YebHD4wBFX6NooS0
+	iYR9kFFGZ7ayxwI8ctp0my/fftrO6xL+nT3YZfckqJZhqNKoRNJ2xawBzdGrPiydCi0g/wXw2crLi
+	6oTukqmQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKySh-0000000BJy9-0FwJ;
+	Tue, 10 Dec 2024 11:31:31 +0000
+Date: Tue, 10 Dec 2024 03:31:31 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, bfoster@redhat.com
+Subject: Re: [PATCH 11/12] mm/filemap: make buffered writes work with
+ RWF_UNCACHED
+Message-ID: <Z1gmk_X9RrG7O0Fi@infradead.org>
+References: <20241203153232.92224-2-axboe@kernel.dk>
+ <20241203153232.92224-13-axboe@kernel.dk>
+ <20241206171740.GD7820@frogsfrogsfrogs>
+ <39033717-2f6b-47ca-8288-3e9375d957cb@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1733830272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dC9p5FCQHs2anWJcb1DSJZ9Qt5OmqJaqiCA2H3GVUdA=;
-	b=rhbg1cnDCmr4+sq42ofOWItwWMMrQ/fu3jv83RueAD29byK8AuCHomk+TOanv7eTttbQ4O
-	SlK3EjM51VoQtoedkuRdy9/wxUoYnw1tJb5P19ZzuLkzRPyIYhI/Xe9nRsIeXFGf6RZVyh
-	PPRxoFJPVc+Ddh50sp6ecHS6VDOTRDXIA6KddPPRunRntp8cWBkfR+q7WrMsFPL7m6O1AB
-	KLUl/t3jylitbOMRyfrs4zeQGCg2bQOlWC1TqPn3BTkkPJZVMt2Gt2CP/0TxispyBNtH/q
-	RwHbfXmksyJ2Hrwjt2N+NcwGxdhaVhXsaLkqJpemT8rCJgdpM7+I0KEFca0zJA==
-Content-Type: multipart/signed;
- boundary=768b44e4608be46521de5d39885a4e035e23bf1739a34b0bd3d7b81b3cbe;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Tue, 10 Dec 2024 12:31:02 +0100
-Message-Id: <D67ZJ6MOM5TH.2WBYCCU20DDJO@cknow.org>
-Subject: Re: [PATCH 5/6] arm64: dts: rockchip: correct rk3328-roc regulator
- map
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Peter Geis" <pgwipeout@gmail.com>, "Heiko Stuebner" <heiko@sntech.de>
-Cc: "Conor Dooley" <conor+dt@kernel.org>, "Dragan Simic"
- <dsimic@manjaro.org>, "Johan Jonker" <jbx6244@gmail.com>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Levin Du" <djw@t-chip.com.cn>, "Rob
- Herring" <robh@kernel.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>
-References: <20241210013010.81257-1-pgwipeout@gmail.com>
- <20241210013010.81257-6-pgwipeout@gmail.com>
-In-Reply-To: <20241210013010.81257-6-pgwipeout@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39033717-2f6b-47ca-8288-3e9375d957cb@kernel.dk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
---768b44e4608be46521de5d39885a4e035e23bf1739a34b0bd3d7b81b3cbe
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, Dec 06, 2024 at 11:22:55AM -0700, Jens Axboe wrote:
+> > Honestly, I'm not a fan of foliop_uncached or foliop_is_uncached.
+> 
+> It definitely is what I would elegantly refer to as somewhat of a
+> hack... But it's not _that_ bad imho.
 
-Hi Peter,
+It's pretty horrible actually.
 
-Thanks for this series, I already saw some familiar error msgs
-mentioned, so will try this series out soon (tm).
+> > I think these two macros are only used for ext4 (or really, !iomap)
+> > support, right?  And that's only to avoid messing with ->write_begin?
+> 
+> Indeed, ideally we'd change ->write_begin() instead. And that probably
+> should still be done, I just did not want to deal with that nightmare in
+> terms of managing the patchset. And honestly I think it'd be OK to defer
+> that part until ->write_begin() needs to be changed for other reasons,
+> it's a lot of churn just for this particular thing and dealing with the
+> magic pointer value (at least to me) is liveable.
 
-On Tue Dec 10, 2024 at 2:30 AM CET, Peter Geis wrote:
-> The rk3328-roc-cc input power is sourced from a micro-usb port, while
-> the rk3328-roc-pc input power is sourced from a usb-c port. Both inputs
-> are 5vdc only. Remove the 12v input from the device tree.
->
-> While we are at it, add missing voltages and supply to vcc_phy, missing
-> voltages to vcc_host1_5v, and standardize the order of regulator
-> properties among the fixed regulators.
+->write_begin() really should just go away, it is a horrible interface.
+Note that in that past it actually had a flags argument, but that got
+killed a while ago.
 
-Big fan of standardization :-) ...
+> > What if you dropped ext4 support instead? :D
+> 
+> Hah, yes obviously that'd be a solution, then I'd need to drop btrfs as
+> well. And I would kind of prefer not doing that ;-)
 
->
-> Fixes: 2171f4fdac06 ("arm64: dts: rockchip: add roc-rk3328-cc board")
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> ---
->
->  arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi | 23 +++++++++++++-------
->  1 file changed, 15 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi b/arch/arm64/bo=
-ot/dts/rockchip/rk3328-roc.dtsi
-> index f782c8220dd3..6984387ff8b3 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-> @@ -24,22 +24,23 @@ gmac_clkin: external-gmac-clock {
->  		#clock-cells =3D <0>;
->  	};
-> =20
-> -	dc_12v: regulator-dc-12v {
-> +	/* fed from passive usb input connector */
-> +	dc_5v: regulator-dc-5v {
->  		compatible =3D "regulator-fixed";
-> -		regulator-name =3D "dc_12v";
-> +		regulator-name =3D "dc_5v";
->  		regulator-always-on;
->  		regulator-boot-on;
-> -		regulator-min-microvolt =3D <12000000>;
-> -		regulator-max-microvolt =3D <12000000>;
-> +		regulator-min-microvolt =3D <5000000>;
-> +		regulator-max-microvolt =3D <5000000>;
->  	};
-> =20
->  	vcc_sd: regulator-sdmmc {
->  		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "vcc_sd";
->  		gpio =3D <&gpio0 RK_PD6 GPIO_ACTIVE_LOW>;
->  		pinctrl-names =3D "default";
->  		pinctrl-0 =3D <&sdmmc0m1_pin>;
->  		regulator-boot-on;
-> -		regulator-name =3D "vcc_sd";
->  		regulator-min-microvolt =3D <3300000>;
->  		regulator-max-microvolt =3D <3300000>;
->  		vin-supply =3D <&vcc_io>;
+Btrfs doesn't need it.  In fact the code would be cleaner and do less
+work with out, see the patch below.  And for ext4 there already is an
+iomap conversion patch series on the list that just needs more review,
+so skipping it here and growing the uncached support through that sounds
+sensible.
 
-... but why not put regulator-name as the first of the regulator
-properties as is done in the rk3328-rock64.dts ...
-
-> @@ -50,22 +51,25 @@ vcc_sdio: regulator-sdmmcio {
->  		states =3D <1800000 0x1>, <3300000 0x0>;
->  		regulator-name =3D "vcc_sdio";
->  		regulator-type =3D "voltage";
-> +		regulator-always-on;
->  		regulator-min-microvolt =3D <1800000>;
->  		regulator-max-microvolt =3D <3300000>;
-> -		regulator-always-on;
->  		vin-supply =3D <&vcc_sys>;
->  	};
-> =20
->  	vcc_host1_5v: vcc_otg_5v: regulator-vcc-host1-5v {
->  		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "vcc_host1_5v";
->  		enable-active-high;
->  		pinctrl-names =3D "default";
->  		pinctrl-0 =3D <&usb20_host_drv>;
-> -		regulator-name =3D "vcc_host1_5v";
->  		regulator-always-on;
-> +		regulator-min-microvolt =3D <5000000>;
-> +		regulator-max-microvolt =3D <5000000>;
->  		vin-supply =3D <&vcc_sys>;
->  	};
-
-... and was the case here?
-
-Cheers,
-  Diederik
-
-> =20
-> +	/* sourced from usb input through 3A fuse */
->  	vcc_sys: regulator-vcc-sys {
->  		compatible =3D "regulator-fixed";
->  		regulator-name =3D "vcc_sys";
-> @@ -73,7 +77,7 @@ vcc_sys: regulator-vcc-sys {
->  		regulator-boot-on;
->  		regulator-min-microvolt =3D <5000000>;
->  		regulator-max-microvolt =3D <5000000>;
-> -		vin-supply =3D <&dc_12v>;
-> +		vin-supply =3D <&dc_5v>;
->  	};
-> =20
->  	vcc_phy: regulator-vcc-phy {
-> @@ -81,6 +85,9 @@ vcc_phy: regulator-vcc-phy {
->  		regulator-name =3D "vcc_phy";
->  		regulator-always-on;
->  		regulator-boot-on;
-> +		regulator-min-microvolt =3D <3300000>;
-> +		regulator-max-microvolt =3D <3300000>;
-> +		vin-supply =3D <&vcc_io>;
->  	};
-> =20
->  	leds {
-
-
---768b44e4608be46521de5d39885a4e035e23bf1739a34b0bd3d7b81b3cbe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ1gmeQAKCRDXblvOeH7b
-bmMBAQDzQzO1G+w5qzoBp5aUjpUNIUQhGVvq8MR3l/ziGJqI8gEAyBZ7Pt2t9Uc1
-WSOu5/T6z7u4uJ8LYn9q97mYE7UlTg0=
-=qRUc
------END PGP SIGNATURE-----
-
---768b44e4608be46521de5d39885a4e035e23bf1739a34b0bd3d7b81b3cbe--
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 444bee219b4e..db3a3c7ecf77 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -894,20 +894,17 @@ static gfp_t get_prepare_gfp_flags(struct inode *inode, bool nowait)
+  */
+ static noinline int prepare_one_folio(struct inode *inode, struct folio **folio_ret,
+ 				      loff_t pos, size_t write_bytes,
+-				      bool force_uptodate, bool nowait)
++				      bool force_uptodate, fgf_t fgp_flags)
+ {
+ 	unsigned long index = pos >> PAGE_SHIFT;
+-	gfp_t mask = get_prepare_gfp_flags(inode, nowait);
+-	fgf_t fgp_flags = (nowait ? FGP_WRITEBEGIN | FGP_NOWAIT : FGP_WRITEBEGIN);
++	gfp_t mask = get_prepare_gfp_flags(inode, fgp_flags & FGP_NOWAIT);
+ 	struct folio *folio;
+ 	int ret = 0;
+ 
+-	if (foliop_is_uncached(folio_ret))
+-		fgp_flags |= FGP_UNCACHED;
+ again:
+ 	folio = __filemap_get_folio(inode->i_mapping, index, fgp_flags, mask);
+ 	if (IS_ERR(folio)) {
+-		if (nowait)
++		if (fgp_flags & FGP_NOWAIT)
+ 			ret = -EAGAIN;
+ 		else
+ 			ret = PTR_ERR(folio);
+@@ -925,7 +922,7 @@ static noinline int prepare_one_folio(struct inode *inode, struct folio **folio_
+ 	if (ret) {
+ 		/* The folio is already unlocked. */
+ 		folio_put(folio);
+-		if (!nowait && ret == -EAGAIN) {
++		if (!(fgp_flags & FGP_NOWAIT) && ret == -EAGAIN) {
+ 			ret = 0;
+ 			goto again;
+ 		}
+@@ -1135,9 +1132,15 @@ ssize_t btrfs_buffered_write(struct kiocb *iocb, struct iov_iter *i)
+ 	const bool nowait = (iocb->ki_flags & IOCB_NOWAIT);
+ 	unsigned int bdp_flags = (nowait ? BDP_ASYNC : 0);
+ 	bool only_release_metadata = false;
++	fgf_t fgp_flags = FGP_WRITEBEGIN;
+ 
+-	if (nowait)
++	if (nowait) {
+ 		ilock_flags |= BTRFS_ILOCK_TRY;
++		fgp_flags |= FGP_NOWAIT;
++	}
++
++	if (iocb->ki_flags & IOCB_UNCACHED)
++		fgp_flags |= FGP_UNCACHED;
+ 
+ 	ret = btrfs_inode_lock(BTRFS_I(inode), ilock_flags);
+ 	if (ret < 0)
+@@ -1232,11 +1235,8 @@ ssize_t btrfs_buffered_write(struct kiocb *iocb, struct iov_iter *i)
+ 			break;
+ 		}
+ 
+-		if (iocb->ki_flags & IOCB_UNCACHED)
+-			folio = foliop_uncached;
+-
+ 		ret = prepare_one_folio(inode, &folio, pos, write_bytes,
+-					force_page_uptodate, false);
++					force_page_uptodate, fgp_flags);
+ 		if (ret) {
+ 			btrfs_delalloc_release_extents(BTRFS_I(inode),
+ 						       reserve_bytes);
 
