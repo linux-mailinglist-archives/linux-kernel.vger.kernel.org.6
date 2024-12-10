@@ -1,79 +1,234 @@
-Return-Path: <linux-kernel+bounces-438715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1C99EA4B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:09:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA2B9EA4BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:09:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CF6286D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84596188B51F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DC519CC33;
-	Tue, 10 Dec 2024 02:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A804E19E993;
+	Tue, 10 Dec 2024 02:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="SW/R5NYM"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWXQBqPh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9813143871;
-	Tue, 10 Dec 2024 02:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22EB5D477;
+	Tue, 10 Dec 2024 02:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796539; cv=none; b=ncAP6SPzQ7QqIBD6vZr/6yakFQnQ/T7W/fvBXc/0GNDAAbaQuWij1GlICSKCskaemNzwR+1gumYhnTrPcgolTg5893308yBaykSYZmoWx9/NrGB7Pdrnk9Y+dtmoXzJlxeZlPEAqmOTwS6r/Yjna0TLRVGAA6Uqn9H8B9i09kdg=
+	t=1733796546; cv=none; b=s2ODgrqYJK52BURkW+40+G/s5QMRSLoLvyvNhKvBn9O+y4jaDKhWK28sDgxd2fKKpT3dq0RKiPU9jelPKYv0l1IZefG4XppSY00vzUQKt4VEY7u9kQl8g8hcg1pH3JTx1vAgP5fcN+XDV5hVWVVmUoGTwxfOQxnJGbwEq0hIdMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796539; c=relaxed/simple;
-	bh=7o0K0deh3aPbCh0CTJWcwB8tY38CMwIafSGGXUQvumQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYeLoXSm8myh0U6jBqSGRgiNsz4w6xUeLZYKeEexxqaFvEUSvAo7aN06RsNP8RPIASPU57QKCTmkQDAShy5tHuJGZpfA6pIjzQ4lA09gayYl0nDJkPvlpEDlScvxJ9Ve1FKSzTChKDZAd2X8YPZkVw/qnpYlXbeon6MYX0VUVdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=SW/R5NYM; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=UMHqTznOYsHCLmjcT88TZ5gKiSqZgDMQ86jIADuyxH4=; b=SW/R5NYMFIM7hJHln+PmC+Yjda
-	Dg8Zlv/Fl7iZhUBbJinOouO3OLJFTg/YExW8UZW6aLTVsvDgpPU+DZ5bfm412HwTMFXkPvNq90lTn
-	YWR4pF+FxlaiBmeaQAVJbrIQb+6YEvyS6uGYHdbv9q8I2147JUnuQa5Vdg6F85oa/V9M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKpgB-00Fk82-OP; Tue, 10 Dec 2024 03:08:51 +0100
-Date: Tue, 10 Dec 2024 03:08:51 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 08/11] net: usb: lan78xx: Use
- function-specific label in lan78xx_mac_reset
-Message-ID: <711fbc8c-9576-4c1e-af09-b1b19ee73243@lunn.ch>
-References: <20241209130751.703182-1-o.rempel@pengutronix.de>
- <20241209130751.703182-9-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1733796546; c=relaxed/simple;
+	bh=kDfvYl7lD7/37OU2jQkyIgYBfM0i34+G673loU7DXHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gdOjSNuDsg7Stl6uLIA2Z419+yldxdBUJQl0PwtSVuieWmTVqiZ5TLyzeKrdMAythPn2WUFhJcWvVObL0pxFUEq9eZWx7qCni2XF/LW8voxNc3/wm3zGoafn0uvm5hNwaTX93PB+mfQr6hmfuKeUcdwmljvooRgxFnwFVGIyhnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWXQBqPh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4122AC4CEE1;
+	Tue, 10 Dec 2024 02:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733796545;
+	bh=kDfvYl7lD7/37OU2jQkyIgYBfM0i34+G673loU7DXHc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QWXQBqPhujtfBsQ8BRBEklfPL0Xv9qgvz9zRwu7G7WOB/TEMawPQ0VdYl4fIygItG
+	 ybgLnsXzhhkyBWWWMHE/TqQN3HgWJFc6sfeXDnpjNJs8cP+YfI1FF3jMQux4sug6GI
+	 A7USSXy0AMZLrU5FZn1GbBAaw7kHrX3MlU69J0bg8LtCgA3QcH30xUGqjRfYzFHaZu
+	 N+2oSRQf/BhxwWvncRlTPOXmJU23KQyL1fE1/UyQOFjcV/diyUpzPzhvUqlvA/m7SB
+	 XVqCtExlVyFoJtTFZWxTdCIr6RbYlswAOyDGM8odBiSgrKsxPkiKdA3AuSvlA8376d
+	 NZiDCUBkv0MVA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arch@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v21 01/20] fgraph: Get ftrace recursion lock in function_graph_enter
+Date: Tue, 10 Dec 2024 11:08:57 +0900
+Message-ID: <173379653720.973433.18438622234884980494.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <173379652547.973433.2311391879173461183.stgit@devnote2>
+References: <173379652547.973433.2311391879173461183.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209130751.703182-9-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 09, 2024 at 02:07:48PM +0100, Oleksij Rempel wrote:
-> Rename the generic `done` label to the function-specific
-> `mac_reset_done` label in `lan78xx_mac_reset`. This improves clarity and
-> aligns with best practices for error handling and cleanup labels.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Get the ftrace recursion lock in the generic function_graph_enter()
+instead of each architecture code.
+This changes all function_graph tracer callbacks running in
+non-preemptive state. On x86 and powerpc, this is by default, but
+on the other architecutres, this will be new.
 
-    Andrew
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N Rao <naveen@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+---
+ Changes in v21:
+  - Newly added.
+---
+ arch/powerpc/kernel/trace/ftrace.c       |    6 ------
+ arch/powerpc/kernel/trace/ftrace_64_pg.c |    6 ------
+ arch/x86/kernel/ftrace.c                 |    7 -------
+ kernel/trace/fgraph.c                    |    8 +++++++-
+ 4 files changed, 7 insertions(+), 20 deletions(-)
+
+diff --git a/arch/powerpc/kernel/trace/ftrace.c b/arch/powerpc/kernel/trace/ftrace.c
+index 5ccd791761e8..e41daf2c4a31 100644
+--- a/arch/powerpc/kernel/trace/ftrace.c
++++ b/arch/powerpc/kernel/trace/ftrace.c
+@@ -658,7 +658,6 @@ void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
+ 		       struct ftrace_ops *op, struct ftrace_regs *fregs)
+ {
+ 	unsigned long sp = arch_ftrace_regs(fregs)->regs.gpr[1];
+-	int bit;
+ 
+ 	if (unlikely(ftrace_graph_is_dead()))
+ 		goto out;
+@@ -666,14 +665,9 @@ void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+ 		goto out;
+ 
+-	bit = ftrace_test_recursion_trylock(ip, parent_ip);
+-	if (bit < 0)
+-		goto out;
+-
+ 	if (!function_graph_enter(parent_ip, ip, 0, (unsigned long *)sp))
+ 		parent_ip = ppc_function_entry(return_to_handler);
+ 
+-	ftrace_test_recursion_unlock(bit);
+ out:
+ 	arch_ftrace_regs(fregs)->regs.link = parent_ip;
+ }
+diff --git a/arch/powerpc/kernel/trace/ftrace_64_pg.c b/arch/powerpc/kernel/trace/ftrace_64_pg.c
+index 98787376eb87..8fb860b90ae1 100644
+--- a/arch/powerpc/kernel/trace/ftrace_64_pg.c
++++ b/arch/powerpc/kernel/trace/ftrace_64_pg.c
+@@ -790,7 +790,6 @@ static unsigned long
+ __prepare_ftrace_return(unsigned long parent, unsigned long ip, unsigned long sp)
+ {
+ 	unsigned long return_hooker;
+-	int bit;
+ 
+ 	if (unlikely(ftrace_graph_is_dead()))
+ 		goto out;
+@@ -798,16 +797,11 @@ __prepare_ftrace_return(unsigned long parent, unsigned long ip, unsigned long sp
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+ 		goto out;
+ 
+-	bit = ftrace_test_recursion_trylock(ip, parent);
+-	if (bit < 0)
+-		goto out;
+-
+ 	return_hooker = ppc_function_entry(return_to_handler);
+ 
+ 	if (!function_graph_enter(parent, ip, 0, (unsigned long *)sp))
+ 		parent = return_hooker;
+ 
+-	ftrace_test_recursion_unlock(bit);
+ out:
+ 	return parent;
+ }
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 4dd0ad6c94d6..33f50c80f481 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -615,7 +615,6 @@ void prepare_ftrace_return(unsigned long ip, unsigned long *parent,
+ 			   unsigned long frame_pointer)
+ {
+ 	unsigned long return_hooker = (unsigned long)&return_to_handler;
+-	int bit;
+ 
+ 	/*
+ 	 * When resuming from suspend-to-ram, this function can be indirectly
+@@ -635,14 +634,8 @@ void prepare_ftrace_return(unsigned long ip, unsigned long *parent,
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+ 		return;
+ 
+-	bit = ftrace_test_recursion_trylock(ip, *parent);
+-	if (bit < 0)
+-		return;
+-
+ 	if (!function_graph_enter(*parent, ip, frame_pointer, parent))
+ 		*parent = return_hooker;
+-
+-	ftrace_test_recursion_unlock(bit);
+ }
+ 
+ #ifdef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 0bf78517b5d4..c57540ad384d 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -650,8 +650,13 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+ 	struct ftrace_graph_ent trace;
+ 	unsigned long bitmap = 0;
+ 	int offset;
++	int bit;
+ 	int i;
+ 
++	bit = ftrace_test_recursion_trylock(func, ret);
++	if (bit < 0)
++		return -EBUSY;
++
+ 	trace.func = func;
+ 	trace.depth = ++current->curr_ret_depth;
+ 
+@@ -697,12 +702,13 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+ 	 * flag, set that bit always.
+ 	 */
+ 	set_bitmap(current, offset, bitmap | BIT(0));
+-
++	ftrace_test_recursion_unlock(bit);
+ 	return 0;
+  out_ret:
+ 	current->curr_ret_stack -= FGRAPH_FRAME_OFFSET + 1;
+  out:
+ 	current->curr_ret_depth--;
++	ftrace_test_recursion_unlock(bit);
+ 	return -EBUSY;
+ }
+ 
+
 
