@@ -1,111 +1,81 @@
-Return-Path: <linux-kernel+bounces-439900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2309EB5A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:08:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354089EB5A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:08:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF4D281B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4E1188A668
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4B71B6D0D;
-	Tue, 10 Dec 2024 16:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fu2xMOst";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aY5Ek/Ug"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229641BDABE;
+	Tue, 10 Dec 2024 16:08:17 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3523523DEA7
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B044323DEA7;
+	Tue, 10 Dec 2024 16:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733846882; cv=none; b=NxtCbMghFVH4KHDrGGOX1DsABqfixIZBlSc7E5+4ZBI4JmBrpkjFYY8U6ptsJ0WJCPcjWGgb6l+s5jYmXQCbAr3WrKXY0mapECX7UCmfcK2Cp1se4NY5ZmQGRD5s4M3VmX+fYEmpIQ3o7RcEWLDFTkQlNa3qrO7JqxvodP7UDFg=
+	t=1733846896; cv=none; b=Y3/EYqvLkUdtWeNpUhVzSrh1dbkrlXDObGlKQ0xvMNn7GOA/jxMkr2+IcO04aIKdki3bABECoPY9UMV3Uz39DnR50FgTOtzpfz+3mMJ+o8ngNbhNlnNe61TT/gU1/TcRDB/0miTPf6dYQbQuhKCLq509nuf/5bhUy50azZhVFWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733846882; c=relaxed/simple;
-	bh=nGvyVJuYH9+fcN7xa+anNdS7yWyjPlhnKDr3QlZshwk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=N/Zg7p8GYuvgT1d8rn54xrUzFCgqp6IjowVZFoyFonrcrV5nrDbfYa/Wn/R6t1gi1jnVx0sP8b4uh5cbCcU54UUvh35oPceADOmn3EPne1mfLZZEl89+3XUnNyKmQetcCsPuLllLR7h/Be4w0g1aTv6kqFaPfxjUvCJc7wdncWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fu2xMOst; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aY5Ek/Ug; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733846878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bE7IXpJA5hJHsq8aQLolOyoeGuZXWcnHnnjJ6t3jR+A=;
-	b=Fu2xMOstG6thuj2sknsEuaore0PPn6/aSK1jyxsZ7mdDkbRqgH/iiexnJP4DHSXb6NtaZy
-	Tn0RJONS1+pcdltntuFKD537gL8xk0UeWx3xVZLZwREroD7LW5c9Rj5uFwCUdKPC9V5vZi
-	z0oFkLzbAKgvyR9WM2qhzxUdO3M6uVRPfO1lkF3XSVq68mQ50+0UbGXVfmV15tG+mpBUiH
-	BOAmlQMSv4De6lpLOAdnX3jRCTk/xMAB9P3YrU3q3m1KR9yqMLQNoGbA5N3b9QpXBRl0rw
-	DVHgCbsfnZTR9yWqhpaiGesTTy/d5EKGnmrWzcR5wTo6ZkXLQZEyrIfkglC/DA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733846878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bE7IXpJA5hJHsq8aQLolOyoeGuZXWcnHnnjJ6t3jR+A=;
-	b=aY5Ek/UgxNeApe5XgLRAl0UQt/2+Wp2cmrO2paxIw3/4qwWp1dhTVDbZrJQJ8gadhN7TcJ
-	k3+cBSg7umZPlyDg==
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org
-Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
- Long <longman@redhat.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 03/11] futex: Allow automatic allocation of process
- wide futex hash.
-In-Reply-To: <20241203164335.1125381-4-bigeasy@linutronix.de>
-References: <20241203164335.1125381-1-bigeasy@linutronix.de>
- <20241203164335.1125381-4-bigeasy@linutronix.de>
-Date: Tue, 10 Dec 2024 17:07:58 +0100
-Message-ID: <87cyhzcyht.ffs@tglx>
+	s=arc-20240116; t=1733846896; c=relaxed/simple;
+	bh=PLfAgq5Hmdu2Pj0dxykFQD+ZyQvOCG+Bk4IVmhx0xP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sQ22KxWNgeWOLNYAwjVxQq4wff5KOklvSBpFhDKp/2aRP78QtyhWtB2KJb5AGfqnfeGTG+azcJiSu1GhcUyGNEnccDX/wt7pgtiJPgplu9a+1PdmJm1M+W7MQ0cEUfrxMMaEBKjYaSZaEteX+hkJkLUjTGYPj77Zq97rhAST0NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2401C4CED6;
+	Tue, 10 Dec 2024 16:08:09 +0000 (UTC)
+Date: Tue, 10 Dec 2024 16:08:07 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Donald Dutile <ddutile@redhat.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Will Deacon <will@kernel.org>,
+	ankita@nvidia.com, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	ryan.roberts@arm.com, shahuang@redhat.com, lpieralisi@kernel.org,
+	aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com,
+	targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com,
+	apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com,
+	zhiw@nvidia.com, mochs@nvidia.com, udhoke@nvidia.com,
+	dnigam@nvidia.com, alex.williamson@redhat.com,
+	sebastianene@google.com, coltonlewis@google.com,
+	kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org,
+	akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/1] KVM: arm64: Map GPU memory with no struct pages
+Message-ID: <Z1hnZ0H13Pst5sKF@arm.com>
+References: <20241118131958.4609-1-ankita@nvidia.com>
+ <20241210140739.GC15607@willie-the-truck>
+ <20241210141806.GI2347147@nvidia.com>
+ <0723d890-1f90-463b-a814-9f7bb7e2200b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0723d890-1f90-463b-a814-9f7bb7e2200b@redhat.com>
 
-On Tue, Dec 03 2024 at 17:42, Sebastian Andrzej Siewior wrote:
-> +static bool need_futex_hash_allocate_default(u64 clone_flags)
-> +{
-> +	if ((clone_flags & (CLONE_THREAD | CLONE_VM)) != (CLONE_THREAD | CLONE_VM))
-> +		return false;
-> +	if (!thread_group_empty(current))
-> +		return false;
-> +	if (current->mm->futex_hash_bucket)
-> +		return false;
+On Tue, Dec 10, 2024 at 10:56:43AM -0500, Donald Dutile wrote:
+> So, I'm not sure I read what is needed to resolve this patch. I read
+> Will's reply to split it further and basically along what logical
+> lines of functionality; is there still an MTE complexity that has to
+> be resolved/included in the series?
 
-If you add an accessor like:
+Since MTE is still around, the complexity did not go away. But I need to
+properly read the patch and Will's comment and page in the whole
+discussion from last year.
 
-        if (mm_get_futex_hash_bucket(current->mm))
+There's now FEAT_MTE_PERM as well but we don't have those patches in
+yet:
 
-then you can either #ifdef the futex muck in mm_struct or make it
+https://lore.kernel.org/r/20241028094014.2596619-1-aneesh.kumar@kernel.org/
 
-struct mm_futex_hash_bucket {
-#ifdef CONFIG_FUTEX
-	unsigned int			futex_hash_mask;
-	struct futex_hash_bucket	*futex_hash_bucket;
-#endif
-};
-
-and avoid the #ifdeffery in mm_struct itself because the empty struct
-occupies zero space.
-
-The accessor and the other helpers allow the the compiler to optimize
-all of it out for CONFIG_FUTEX=n.
-
-Thanks,
-
-        tglx
-
-
+-- 
+Catalin
 
