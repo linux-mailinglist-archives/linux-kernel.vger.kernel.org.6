@@ -1,83 +1,146 @@
-Return-Path: <linux-kernel+bounces-439715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FA29EB2FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:19:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62D29EB302
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:20:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064E9188737A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5854D169718
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C49C1AE877;
-	Tue, 10 Dec 2024 14:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nQSHYhwo"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE971BB6A0;
+	Tue, 10 Dec 2024 14:19:09 +0000 (UTC)
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123731AB523
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C661B1422
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733840311; cv=none; b=fdY0Xc33+G4ZHXl/VQfuBDxfSyHHymXKHTnbJqGVqlPgWwf75XgBcik6KcCawpGuqes1tfRpzpodoWShqHtjD9h6YcoS0YnJNkYp/M1tglthAKNNMtTM/3ZkVN+IbJqzF5s5f1W2YrZEiT85u33048LjYmFvr4LCISvfnR/rOK0=
+	t=1733840349; cv=none; b=KVMb89+3L6pBf0z/Avln3ML3Q5Z1b78WyNfTSfo2Mh447qynlZqHym41nwOaBaUGpvYycm8mCxm09O/aPRBZAV+wmW7a3RFWNIv3bCV+wRVBLIBYDrRGO23pZGEAsu9t4OiNe+eUQPjDMfcQaiIz9Q0yrL2vwGijSYurxaPeDf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733840311; c=relaxed/simple;
-	bh=H8yPQo4JGnB2nd1FXAwNgQfN1W+rWdoAuSMsWLRf+mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Le0xx9dk+KR/5kcsRKh/VmFikql1s5K38P3LgBy/Otwp2hmxvvOW+3MpoPo0C4OIc6BTo/HBNI/3+I5/5tdH/Hw3EGOwtQvPA5D6f3Dso+UQpQlZ25+NuaOPbzGvDJcPrEPUGw1EMcbnh6lV/BvuLpAxZIJO+CPnMYAbO7KufkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nQSHYhwo; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9ecDL11umLz/3mzUGJV+SCF67OF9NNuAqpPLULsYGKc=; b=nQSHYhwo6/fDo6fgBK9DQlmdHP
-	BGB2o/FRCklrBpQdp9CSya4aUZDOHzSJUlw+8rla6L4X19+aSuqDODK+GJah9dx9mWwb9MtTGGPdD
-	V2/f4z6ZyFaZhfOnx3JuSgVBgHk9HtXJVx+BgIvkigZm+9BTifpp9aX2YLi3IYaPVszvotWEDIhzZ
-	wEP8X83QjeQDwS8kfBXTYr6F+HYntrGwvwcldwHBhf03lObjxg4D5jGVz9hAGbcuaLfh54EUUF0ou
-	lsNS5yksF3OyD+2tu60l0H3GOqWd04LizMP5oBFc7dd6Rp2pqR/DMiQlYjOA+z0+OdYnEwJVEaBsx
-	8z1ppB9A==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tL14C-00000003h2N-1lV2;
-	Tue, 10 Dec 2024 14:18:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F22D0300402; Tue, 10 Dec 2024 15:18:23 +0100 (CET)
-Date: Tue, 10 Dec 2024 15:18:23 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] sched/core: Enhanced debug logs in do_task_dead()
-Message-ID: <20241210141823.GU35539@noisy.programming.kicks-ass.net>
-References: <20241210134513.2179786-1-quic_zhonhan@quicinc.com>
+	s=arc-20240116; t=1733840349; c=relaxed/simple;
+	bh=XyDoA+ncHBDc11pytHnx1nGF7Oi1lcXIhydNIHqgz44=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Uh5+UapeefH4v9KkwRFhp1fZMVN4f8bG4tRjqg/138fuWN7TlKCszL1nyvrklf/tAx2iBhktn9lQ4BSsPHMjDwqh1afJjtrJ5OsHokCLFJ5gfX1GP2vUZpaVltuwdWK0sXFGxVqrKPVdbaaDDQv/zq2BQ0oA2jZ9Pc1juv8TmJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:bf13:4c3:373e:7260])
+	by laurent.telenet-ops.be with cmsmtp
+	id n2Jp2D00h3K2VbF012JpoX; Tue, 10 Dec 2024 15:19:03 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tL14a-000fT8-G4;
+	Tue, 10 Dec 2024 15:18:49 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tL14b-00AXmu-Mf;
+	Tue, 10 Dec 2024 15:18:49 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] drm/bridge: ti-sn65dsi86: Fix multiple instances
+Date: Tue, 10 Dec 2024 15:18:46 +0100
+Message-Id: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210134513.2179786-1-quic_zhonhan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 10, 2024 at 09:45:13PM +0800, Zhongqiu Han wrote:
-> If BUG() is a NOP, dump the problematic stack for debugging purposes.
-> 
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-> ---
-> If BUG() is a NOP, it should make sense for debugging purposes. However,
-> just arising the patch with RFC, because at least for now, I haven't found
-> a definition of BUG() as NOP in various architectures. Thanks~
+Each bridge instance creates up to four auxiliary devices with different
+names.  However, their IDs are always zero, causing duplicate filename
+errors when a system has multiple bridges:
 
-Yeah, this don't make sense. If you want a stack-trace you shouldn't
-have killed BUG.
+    sysfs: cannot create duplicate filename '/bus/auxiliary/devices/ti_sn65dsi86.gpio.0'
 
-And yeah, having done a quick peek, I don't see how you can kill BUG
-these days other than explicitly modyfing your source, in which case you
-get to keep the pieces.
+Fix this by using a unique instance ID per bridge instance.  The
+instance ID is derived from the I2C adapter number and the bridge's I2C
+address, to support multiple instances on the same bus.
+
+Fixes: bf73537f411b0d4f ("drm/bridge: ti-sn65dsi86: Break GPIO and MIPI-to-eDP bridge into sub-drivers")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+On the White Hawk development board:
+
+    /sys/bus/auxiliary/devices/
+    |-- ti_sn65dsi86.aux.1068
+    |-- ti_sn65dsi86.aux.4140
+    |-- ti_sn65dsi86.bridge.1068
+    |-- ti_sn65dsi86.bridge.4140
+    |-- ti_sn65dsi86.gpio.1068
+    |-- ti_sn65dsi86.gpio.4140
+    |-- ti_sn65dsi86.pwm.1068
+    `-- ti_sn65dsi86.pwm.4140
+
+Discussion after v1:
+  - https://lore.kernel.org/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.1729180470.git.geert+renesas@glider.be
+
+Notes:
+  - While the bridge supports only two possible I2C addresses, I2C
+    translators may be present, increasing the address space.  Hence the
+    instance ID calculation assumes 10-bit addressing.  Perhaps it makes
+    sense to introduce a global I2C helper function for this?
+
+  - I think this is the simplest solution.  If/when the auxiliary bus
+    receives support à la PLATFORM_DEVID_AUTO, the driver can be
+    updated.
+
+v2:
+  - Use I2C adapter/address instead of ida_alloc().
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index 9e31f750fd889745..fb452d1b46995673 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -480,6 +480,7 @@ static int ti_sn65dsi86_add_aux_device(struct ti_sn65dsi86 *pdata,
+ 				       const char *name)
+ {
+ 	struct device *dev = pdata->dev;
++	const struct i2c_client *client = to_i2c_client(dev);
+ 	struct auxiliary_device *aux;
+ 	int ret;
+ 
+@@ -488,6 +489,7 @@ static int ti_sn65dsi86_add_aux_device(struct ti_sn65dsi86 *pdata,
+ 		return -ENOMEM;
+ 
+ 	aux->name = name;
++	aux->id = (client->adapter->nr << 10) | client->addr;
+ 	aux->dev.parent = dev;
+ 	aux->dev.release = ti_sn65dsi86_aux_device_release;
+ 	device_set_of_node_from_dev(&aux->dev, dev);
+-- 
+2.34.1
+
 
