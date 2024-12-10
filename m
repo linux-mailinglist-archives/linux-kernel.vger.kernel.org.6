@@ -1,246 +1,294 @@
-Return-Path: <linux-kernel+bounces-439467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF409EAFB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:19:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6405C9EAFBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0657188BAF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B66DD16AC4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DFE212D63;
-	Tue, 10 Dec 2024 11:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB9D1E515;
+	Tue, 10 Dec 2024 11:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="XYyqBTIh";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="AfPod0ZG"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="DSOTLoWb"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBC62080DF;
-	Tue, 10 Dec 2024 11:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733829391; cv=fail; b=pKbormMoPv51T01WED7xb5gM09GloZrMrvP/KnPDE/Q9jlI7hXjhDMuH3xh78zzN1smg+v+DWQQx+0b83CMsmfYiGoTD19QFaYFqa/kOppHFKbkXxpkx/dhob+UYs2mW3eskDI7ySdEEWFqeB5R6NEDqZWbpmZJuoAEC3vwZ+NY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733829391; c=relaxed/simple;
-	bh=cWF1mkC7T0R9vgRVwvTx1HbqOINdxa9Vgk35Rpt7GDQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QdpXFBqsz5993iTZqHhdPREksNb3K0v5hH3BeoTWBhMZUWTwoi67Wqphijxg4GQ1eDH5uwGY7tbfsKhN9W5YB7QS7hsjujaVGVU3hZ9YTsJtBcKxRanFpJzENUO9I+7c9/fzFA/g88H+ewYlXS8X/mFdEcRjl1VtUXL9ZM4SkNA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=XYyqBTIh; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=AfPod0ZG; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id BD7B3480525;
-	Tue, 10 Dec 2024 06:16:27 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733829387;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=vhKMx+j4Oi0hlXt2utJ2x7QiGaDUXzciAI+c9jXIkIw=;
- b=XYyqBTIhqS6ah7Gf1yVNy+yHRk3iGc1ZmlAGsvE6lensXHIUgsWLYKHw6c+mrKY3RU9sE
- 3mTqy6L7SlyXoKMCw==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733829387;
-	cv=none; b=GWpiPzb4XL/1OWmhhH9b7kl1nnC94EcgUUk/JORh2D6Voih9vQM1ptkXyKdFg7kpTyYeYoLjfshnU8WZKj5IcGmTCQWWkSjwTyChuPnw5R6BAr8EVO7aXBhOSe/mUd3mjZ0gZBHdqIXAlVq67UXzBcxDPjnS7fgctMF0bGWwqQ9Y11RLwDWeJ/BpooWSFXlwWHUBCEozWS578KePKJMDEuyxtWekWsXNmDm7hKEyZyj5CVAqREuk/hheF89P8gQVK6i/XnOUkQYwr0lvCGVJC29h++0JMJ4+HNnJzr0NZ9qLjv45BmUEGx3nig+kKtWNvEOaFtLuN6vRMOSpYolvdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1733829387; c=relaxed/simple;
-	bh=cWF1mkC7T0R9vgRVwvTx1HbqOINdxa9Vgk35Rpt7GDQ=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=EU+THIu45ap799E/qZjc+ZizJcfcKsWXr8kGHIJkvDtOHizwmyHLoaX/OEGRxcXGRxjfgw+Pl+gnaVH/hzEBlAo0EHei/a4KgBkadUx6q6FEOy86Qh37er7Y1IulMMgIRJwnsUiGBO0YOrRXGWy9/h9cUkat907DJLsHdh6NBlzUM0O9wyxqH0+QM8wwTxst006b2g9gQQXBSQtsQDf8brCyKNMvXslsjCIiKLJXf7nodnBZ3GIPcbUD9SgrR38/4sdtwlELlVciQCs204gh3o49z7WTG62fAmvnZYe8mAkYtRw9dtSKFzVn+VoLuFIItIMshpXgbU3drjBWEhgmRA==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733829387;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=vhKMx+j4Oi0hlXt2utJ2x7QiGaDUXzciAI+c9jXIkIw=;
- b=AfPod0ZGnZUXic1K1pWl3XZkE1/sVVtpx0zX3atwsBkrMkMzYg3AIcF6JxCm6v79JRCQ1
- F3bw7RQf1eRY0l9alXU/xX+gRNfOT7OsN/bBqsx/ZXISsWv8wWGqo/Raue7EmPkcN9RZpIi
- ib6jj2rc0Czs4yCO3Ci2Fzs/9p+FPhYJH4+OH+wBXfzf/FURatcsywp8lkCezvYfd9Ktrce
- KUKqj72/S8cr9J+tzc8PS+56uVM67mNvQyWa3QCV1mpikuljk1pvm+fXelQVf04alrCM4db
- X+HOJAA+B2PlyCXJzxnfchsWt1S3MVPBdHJf5guqOxF54vsVC2XVEePkdBkQ==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id 5607F280015;
-	Tue, 10 Dec 2024 06:16:27 -0500 (EST)
-Message-ID: <c1805642a6c5da6fef3927c70358c8cb851d2784.camel@sapience.com>
-Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
-From: Genes Lists <lists@sapience.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>, Sakari Ailus
-	 <sakari.ailus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
-	torvalds@linux-foundation.org, stable@vger.kernel.org, 
-	linux-media@vger.kernel.org, bingbu.cao@intel.com, Rodrigo Vivi	
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>,  Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Date: Tue, 10 Dec 2024 06:16:26 -0500
-In-Reply-To: <87seqvzzg6.fsf@intel.com>
-References: <2024120917-vision-outcast-85f2@gregkh>
-	 <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
-	 <Z1fqitbWlmELb5pj@kekkonen.localdomain> <87seqvzzg6.fsf@intel.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-avh/+DlCgXmdUpZzNj15"
-User-Agent: Evolution 3.54.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7077523DE95
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733829448; cv=none; b=mDT4EzNVQI3Q2a7PaCQUoFzXUQ0uGLNBCJEJUUiXq46DS/c8jGjaETd5bqAC+8ob4GKrX/tlmuIYWvxF8D6cMwdLckOgCpXkkXNgNaHV+G0MOtoPy1qy5PcWQjXlKR2FB53DBRv08769ebhpLVIDY3Yp8/u/nxNwfxTqvECqFXo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733829448; c=relaxed/simple;
+	bh=3IaavqenstEFlp7aEeDiBvK7w+yVdZgac92bDfgacsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zp31f9SdRisyW3oAQZ07sslvYcws7prFuCnyuv5XnkiAUHHnbIG49L7gh9b82O0CMCnGwLG+PCX1FOO58RpFmWQiIhfp0ycv9aIAnrXhMbxCSheuPNm0vVJwe9zsmnHQhkOY/fWZ8hVC3cWEOEOXaf0poFccunVBsciTN+rmwqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=DSOTLoWb; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434e406a547so21609755e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:17:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1733829445; x=1734434245; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDojbZ2VONgpjznrfPM339c4Ui/XuZ8qmsW07fn2uQY=;
+        b=DSOTLoWbZ+uiPphn5ZXRlSE5EC2ByARAmFdlmujSQCvKJPqGlmlOkUsOji21/shjHq
+         gJsQzJMfYmiqerTFZtHT2NExVajfjn48Y1LOqDWa055kLkdQ4/ixRH+sXN9i5vpXyAoK
+         nP+UfsuBRuO8/PDtYXerr5WQtX8puQX6aRTls=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733829445; x=1734434245;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IDojbZ2VONgpjznrfPM339c4Ui/XuZ8qmsW07fn2uQY=;
+        b=m3zXc+PNEtzgGopCc5i0ZIn5aSOx1R6GbZCYFngc+LjMYbTaLvqAscws6T2i2uxrrN
+         n5tYOsDHqz5niI0EHXoc3sP7pZnFlD/WzU0zTDQy9l4gbOl77rAf1yTgPTDGYCU9JbEB
+         pDcGOGSMaN40bvnDNHI8uvl8FCO37RmdA7g+puea6IavKYog+rGclyOpkVLL0E+mHr2G
+         gfe8hZd3g53BBfkk+lOXpJL0cfV2CFHcDToVRCWK8lb7wrYRCNEmyHWKDpnfSDGPlWyc
+         Smye5pGET/t9Ljhr1bJjLaeKCS+in1zELkP078W4o+Qmpyl9fxKq1U6qw8ikkbAFo3MB
+         eg/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBpfu35h4utjqAC5v1yFJYStgyqNeVDx3dYPRr97aFW2rGz22G+GNaiUlR/JSaGrt5igmiLkkxmyzWlHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2EIW8jdbv2LsD7dQbtiATb4s4U9uDIcPMw1w1Rux2Xkm+xGps
+	ZbmMhtXMuvc4U2Os81wZkcCw2QlGytrOXrNZxyJOTKAGZ6ADClUWw3lkO3ZEUPOeOl//GXM5kzx
+	5lx0=
+X-Gm-Gg: ASbGncsM7UweVpSggV1wU97v4bxetzqKfLXYcagVnFtvmXXRFOq00ozhBYVpLEuCubg
+	pVIOHnqDBrjhNiCuJWSBNfNw1or7Y4v1NsT3BTIuQfhXMYRcy6a1vlGgGFYkozU7T31k6U0MEwb
+	7QywaPF8sPnBvanzeuQKUOXG8ok5/KoHbIuZXUH3JNpRsIv/sbXO76iPS3dbZSrRQsSs51gosne
+	sbPhcGN+RQX5jfX5QMHLvwYRqrt4QguGuiLXeC6Y13CPAcjaUy5ocHxrNcmHrL7lA==
+X-Google-Smtp-Source: AGHT+IG0c0/kJCByoAXTvAWZSCghtb2kRyPv2cAHMRWAM/x2Lb1XI1VpZSJ/qQlmCYfTOguR1LwFBA==
+X-Received: by 2002:a05:600c:458b:b0:434:f739:7ce3 with SMTP id 5b1f17b1804b1-434fff41b59mr33461855e9.8.1733829443037;
+        Tue, 10 Dec 2024 03:17:23 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbd72sm227349055e9.44.2024.12.10.03.17.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 03:17:22 -0800 (PST)
+Date: Tue, 10 Dec 2024 12:17:20 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+	intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>,
+	Linux MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Maciej Patelczyk <maciej.patelczyk@intel.com>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>
+Subject: Re: [PATCH 14/26] drm/xe/eudebug: implement userptr_vma access
+Message-ID: <Z1gjQOvr847-zuwM@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+	intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>,
+	Linux MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Maciej Patelczyk <maciej.patelczyk@intel.com>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>
+References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com>
+ <20241209133318.1806472-15-mika.kuoppala@linux.intel.com>
+ <ec42fe8b-9be0-41cc-96f4-f1869c6bb7e6@amd.com>
+ <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local>
+ <e4401ab1-0562-407a-a0e9-2f6e43e5ac22@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e4401ab1-0562-407a-a0e9-2f6e43e5ac22@amd.com>
+X-Operating-System: Linux phenom 6.11.6-amd64 
 
+On Mon, Dec 09, 2024 at 04:42:32PM +0100, Christian König wrote:
+> Am 09.12.24 um 16:31 schrieb Simona Vetter:
+> > On Mon, Dec 09, 2024 at 03:03:04PM +0100, Christian König wrote:
+> > > Am 09.12.24 um 14:33 schrieb Mika Kuoppala:
+> > > > From: Andrzej Hajda <andrzej.hajda@intel.com>
+> > > > 
+> > > > Debugger needs to read/write program's vmas including userptr_vma.
+> > > > Since hmm_range_fault is used to pin userptr vmas, it is possible
+> > > > to map those vmas from debugger context.
+> > > Oh, this implementation is extremely questionable as well. Adding the LKML
+> > > and the MM list as well.
+> > > 
+> > > First of all hmm_range_fault() does *not* pin anything!
+> > > 
+> > > In other words you don't have a page reference when the function returns,
+> > > but rather just a sequence number you can check for modifications.
+> > I think it's all there, holds the invalidation lock during the critical
+> > access/section, drops it when reacquiring pages, retries until it works.
+> > 
+> > I think the issue is more that everyone hand-rolls userptr.
+> 
+> Well that is part of the issue.
 
---=-avh/+DlCgXmdUpZzNj15
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yeah I ignored the other part, because that didn't seem super interesting
+really.
 
-On Tue, 2024-12-10 at 10:58 +0200, Jani Nikula wrote:
-> On Tue, 10 Dec 2024, Sakari Ailus <sakari.ailus@linux.intel.com>
-> wrote:
-> > Hi,
-> >=20
-> > > ...
-> > > FYI 6.12.4 got a crash shortly after booting in dma_alloc_attrs -
-> > > maybe
-> > > triggered in ipu6_probe. Crash only happened on laptop with ipu6.
-> > > All
-> > > other machines are running fine.
-> >=20
-> > Have you read the dmesg further than the IPU6 related warning? The
-> > IPU6
-> > driver won't work (maybe not even probe?) but if the system
-> > crashes, it
-> > appears unlikely the IPU6 drivers would have something to do with
-> > that.
-> > Look for warnings on linked list corruption later, they seem to be
-> > coming
-> > from the i915 driver.
->=20
-> And the list corruption is actually happening in
-> cpu_latency_qos_update_request(). I don't see any i915 changes in
-> 6.12.4
-> that could cause it.
->=20
-> I guess the question is, when did it work? Did 6.12.3 work?
->=20
->=20
-> BR,
-> Jani.
+Like for compute you can make the architectural assumption that gpu
+addresses match cpu addresses, and this all becomes easy. Or at least
+easier, there's still the issue of having to call into the driver for gpu
+side flushes.
 
+But for 3d userptr that's not the case, and you get two options:
+- Have some tracking structure that umd and debugger agree on, so stable
+  abi fun and all that, so you can find the mapping. And I think in some
+  cases this would need to be added first.
+- Just ask the kernel, which already knows.
 
- - 6.12.1 worked
+Like for cpu mmaps we also don't inject tracking code into mmap/munmap, we
+just ask the kernel through /proc/pid/maps. This sounds like the same
+question, probably should have a similar answer.
 
- - mainline - works (but only with i915 patch set [1] otherwise there
-are no graphics at all)
+I guess you can do a bit a bikeshed about whether the kernel should only
+do the address translation and then you do a ptrace poke/peek for the
+actual access. But again you need some flushes, so this might be a bit
+silly.
 
-    [1] https://patchwork.freedesktop.org/series/141911/
+But fundamentally this makes sense to me to ask the entity that actually
+knows how userptr areas map to memory.
+-Sima
 
-- 6.12.3 - crashed (i see i915 not ipu6) and again it has      =C2=A0
-    cpu_latency_qos_update_request+0x61/0xc0
+> 
+> The general problem here is that the eudebug interface tries to simulate the
+> memory accesses as they would have happened by the hardware.
+> 
+> What the debugger should probably do is to cleanly attach to the
+> application, get the information which CPU address is mapped to which GPU
+> address and then use the standard ptrace interfaces.
+> 
+> The whole interface re-invents a lot of functionality which is already there
+> just because you don't like the idea to attach to the debugged application
+> in userspace.
+> 
+> As far as I can see this whole idea is extremely questionable. This looks
+> like re-inventing the wheel in a different color.
+> 
+> Regards,
+> Christian.
+> 
+> >   Probably time
+> > we standardize that and put it into gpuvm as an optional part, with
+> > consistent locking, naming (like not calling it _pin_pages when it's
+> > unpinnged userptr), kerneldoc and all the nice things so that we
+> > stop consistently getting confused by other driver's userptr code.
+> > 
+> > I think that was on the plan originally as an eventual step, I guess time
+> > to pump that up. Matt/Thomas, thoughts?
+> > -Sima
+> > 
+> > > > v2: pin pages vs notifier, move to vm.c (Matthew)
+> > > > v3: - iterate over system pages instead of DMA, fixes iommu enabled
+> > > >       - s/xe_uvma_access/xe_vm_uvma_access/ (Matt)
+> > > > 
+> > > > Signed-off-by: Andrzej Hajda <andrzej.hajda@intel.com>
+> > > > Signed-off-by: Maciej Patelczyk <maciej.patelczyk@intel.com>
+> > > > Signed-off-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+> > > > Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com> #v1
+> > > > ---
+> > > >    drivers/gpu/drm/xe/xe_eudebug.c |  3 ++-
+> > > >    drivers/gpu/drm/xe/xe_vm.c      | 47 +++++++++++++++++++++++++++++++++
+> > > >    drivers/gpu/drm/xe/xe_vm.h      |  3 +++
+> > > >    3 files changed, 52 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/xe/xe_eudebug.c b/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > index 9d87df75348b..e5949e4dcad8 100644
+> > > > --- a/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > +++ b/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > @@ -3076,7 +3076,8 @@ static int xe_eudebug_vma_access(struct xe_vma *vma, u64 offset_in_vma,
+> > > >    		return ret;
+> > > >    	}
+> > > > -	return -EINVAL;
+> > > > +	return xe_vm_userptr_access(to_userptr_vma(vma), offset_in_vma,
+> > > > +				    buf, bytes, write);
+> > > >    }
+> > > >    static int xe_eudebug_vm_access(struct xe_vm *vm, u64 offset,
+> > > > diff --git a/drivers/gpu/drm/xe/xe_vm.c b/drivers/gpu/drm/xe/xe_vm.c
+> > > > index 0f17bc8b627b..224ff9e16941 100644
+> > > > --- a/drivers/gpu/drm/xe/xe_vm.c
+> > > > +++ b/drivers/gpu/drm/xe/xe_vm.c
+> > > > @@ -3414,3 +3414,50 @@ void xe_vm_snapshot_free(struct xe_vm_snapshot *snap)
+> > > >    	}
+> > > >    	kvfree(snap);
+> > > >    }
+> > > > +
+> > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64 offset,
+> > > > +			 void *buf, u64 len, bool write)
+> > > > +{
+> > > > +	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
+> > > > +	struct xe_userptr *up = &uvma->userptr;
+> > > > +	struct xe_res_cursor cur = {};
+> > > > +	int cur_len, ret = 0;
+> > > > +
+> > > > +	while (true) {
+> > > > +		down_read(&vm->userptr.notifier_lock);
+> > > > +		if (!xe_vma_userptr_check_repin(uvma))
+> > > > +			break;
+> > > > +
+> > > > +		spin_lock(&vm->userptr.invalidated_lock);
+> > > > +		list_del_init(&uvma->userptr.invalidate_link);
+> > > > +		spin_unlock(&vm->userptr.invalidated_lock);
+> > > > +
+> > > > +		up_read(&vm->userptr.notifier_lock);
+> > > > +		ret = xe_vma_userptr_pin_pages(uvma);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +	}
+> > > > +
+> > > > +	if (!up->sg) {
+> > > > +		ret = -EINVAL;
+> > > > +		goto out_unlock_notifier;
+> > > > +	}
+> > > > +
+> > > > +	for (xe_res_first_sg_system(up->sg, offset, len, &cur); cur.remaining;
+> > > > +	     xe_res_next(&cur, cur_len)) {
+> > > > +		void *ptr = kmap_local_page(sg_page(cur.sgl)) + cur.start;
+> > > The interface basically creates a side channel to access userptrs in the way
+> > > an userspace application would do without actually going through userspace.
+> > > 
+> > > That is generally not something a device driver should ever do as far as I
+> > > can see.
+> > > 
+> > > > +
+> > > > +		cur_len = min(cur.size, cur.remaining);
+> > > > +		if (write)
+> > > > +			memcpy(ptr, buf, cur_len);
+> > > > +		else
+> > > > +			memcpy(buf, ptr, cur_len);
+> > > > +		kunmap_local(ptr);
+> > > > +		buf += cur_len;
+> > > > +	}
+> > > > +	ret = len;
+> > > > +
+> > > > +out_unlock_notifier:
+> > > > +	up_read(&vm->userptr.notifier_lock);
+> > > I just strongly hope that this will prevent the mapping from changing.
+> > > 
+> > > Regards,
+> > > Christian.
+> > > 
+> > > > +	return ret;
+> > > > +}
+> > > > diff --git a/drivers/gpu/drm/xe/xe_vm.h b/drivers/gpu/drm/xe/xe_vm.h
+> > > > index 23adb7442881..372ad40ad67f 100644
+> > > > --- a/drivers/gpu/drm/xe/xe_vm.h
+> > > > +++ b/drivers/gpu/drm/xe/xe_vm.h
+> > > > @@ -280,3 +280,6 @@ struct xe_vm_snapshot *xe_vm_snapshot_capture(struct xe_vm *vm);
+> > > >    void xe_vm_snapshot_capture_delayed(struct xe_vm_snapshot *snap);
+> > > >    void xe_vm_snapshot_print(struct xe_vm_snapshot *snap, struct drm_printer *p);
+> > > >    void xe_vm_snapshot_free(struct xe_vm_snapshot *snap);
+> > > > +
+> > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64 offset,
+> > > > +			 void *buf, u64 len, bool write);
+> 
 
- CPU: 3 UID: 0 PID: 233674 Comm: kworker/3:1 Tainted: G        W     =20
-6.12.3-stable-1 #2 b13471ff40a4c707f51ed6741af496b8675e3b0f
- Tainted: [W]=3DWARN
- Hardware name: Dell Inc. XPS 9320/0CR6NC, BIOS 2.16.1 09/11/2024
- Workqueue: events output_poll_execute
- RIP: 0010:__list_add_valid_or_report+0x83/0xa0
- Code: eb e9 48 89 c1 48 c7 c7 18 61 b3 ac e8 76 26 a0 ff 0f 0b eb d6
-48 89 d1 48 89 c6 4c 89 c2 48 c7 c7 68 61 b3 ac e8 5d 26 a0 ff <0f> 0b
-eb bd 48 89 f2 48 89 c1 48 89 fe 48 c7 c7 b8 61 b3 ac e8 44
- RSP: 0018:ffffa903b1a3f8a8 EFLAGS: 00010086
- RAX: 0000000000000000 RBX: ffff8ac28751a0a8 RCX: 0000000000000027
- RDX: ffff8ac9ef3a18c8 RSI: 0000000000000001 RDI: ffff8ac9ef3a18c0
- RBP: ffff8ac283fc6ea8 R08: 0000000000000000 R09: ffffa903b1a3f728
- R10: ffffffffad2a67f0 R11: 0000000000000003 R12: ffffffffad25e960
- R13: ffff8ac283fc6ec0 R14: ffff8ac283fc6eb0 R15: 0000000000000000
- FS:  0000000000000000(0000) GS:ffff8ac9ef380000(0000)
-knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00002d641a8cd000 CR3: 00000006afa24000 CR4: 0000000000f52ef0
- PKRU: 55555554
- Call Trace:
-  <TASK>
-  ? __list_add_valid_or_report+0x83/0xa0
-  ? __warn.cold+0x93/0xf6
-  ? __list_add_valid_or_report+0x83/0xa0
-  ? report_bug+0xff/0x140
-  ? console_unlock+0x9d/0x140
-  ? handle_bug+0x58/0x90
-  ? exc_invalid_op+0x17/0x70
-  ? asm_exc_invalid_op+0x1a/0x20
-  ? __list_add_valid_or_report+0x83/0xa0
-  ? __list_add_valid_or_report+0x83/0xa0
-  plist_add+0xdd/0x140
-  pm_qos_update_target+0xa0/0x1f0
-  cpu_latency_qos_update_request+0x61/0xc0
-  intel_dp_aux_xfer+0x4c7/0x6e0 [i915
-130aa22568da4be1bf6a8f4b926f812e9a4460d0]
-  intel_dp_aux_transfer+0x10e/0x3b0 [i915
-130aa22568da4be1bf6a8f4b926f812e9a4460d0]
-  drm_dp_i2c_do_msg+0x81/0x300 [drm_display_helper
-f34443fa650f4fdc86a0e4b3a7e8f7fa67570a48]
-  drm_dp_i2c_xfer+0xe4/0x2f0 [drm_display_helper
-f34443fa650f4fdc86a0e4b3a7e8f7fa67570a48]
-  __i2c_transfer+0x1d5/0x540
-  i2c_transfer+0x5c/0xd0
-  drm_do_probe_ddc_edid+0xc0/0x140
-  ? __pfx_drm_do_probe_ddc_edid+0x10/0x10
-  edid_block_read+0x38/0x100
-  _drm_do_get_edid+0xb6/0x3a0=20
-  ? __pfx_drm_do_probe_ddc_edid+0x10/0x10
-  drm_edid_read_custom+0x32/0xc0
-  intel_dp_set_edid+0x3d4/0x3f0 [i915
-130aa22568da4be1bf6a8f4b926f812e9a4460d0]
-  intel_dp_detect+0x502/0x7b0 [i915
-130aa22568da4be1bf6a8f4b926f812e9a4460d0]
-  drm_helper_probe_detect_ctx+0x52/0x110
-  output_poll_execute+0x13d/0x2d0
-  process_one_work+0x174/0x330
-  worker_thread+0x252/0x390
-  ? __pfx_worker_thread+0x10/0x10
-  kthread+0xcf/0x100
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork+0x31/0x50
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
- ---[ end trace 0000000000000000 ]---
- ------------[ cut here ]------------
-
-
-
-
-
---=-avh/+DlCgXmdUpZzNj15
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1gjCgAKCRA5BdB0L6Ze
-25vHAQCnR9NmwK4EpL3QFZnfr2sIxDtzMJIWHDYvXsP5MMoULQD/ZFpQKygOMSys
-tOEd0b80dMNuZq7nKENA49onAZpHTQE=
-=ZMGK
------END PGP SIGNATURE-----
-
---=-avh/+DlCgXmdUpZzNj15--
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
