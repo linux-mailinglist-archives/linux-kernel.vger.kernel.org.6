@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-439616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940519EB1BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:15:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D47A9EB1C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:18:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07AA1885097
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356D12841F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23611A3AB8;
-	Tue, 10 Dec 2024 13:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FE51A76DE;
+	Tue, 10 Dec 2024 13:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abGiSbIX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cas5dQYS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1F31E52D;
-	Tue, 10 Dec 2024 13:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8329519DF99;
+	Tue, 10 Dec 2024 13:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733836536; cv=none; b=TcvLpuuq/aJNlX6mbJO2zwncItc1Jw8TftUdQd7b7wx6jn/fUFW2M43QrhZJcSUECnNqsj+KUA8y5JgjBzHfcdGNoD56ZfKbFSjz05Jt2UhBpkjrfjky1pb0Tka4GBfOOyTS8NeocmKcu/+PsVD2lw+QZRHhd5iHsXeccyZorMQ=
+	t=1733836699; cv=none; b=dj2S3JjVA16YJzc/XfohlPGyrriYk6vb0ZQdl60NCGySm/MmxBYEdbV9d/Sc0Z79JwqcE1ry4LqRmKoM685pr8WoMK7YufPy+/MWmS/rgT4ZoG6wSFu9EJo/MC4N3msJ3++ghm1r6hyMMdCqThTyWjpNqPlbGXYWMcCvr3cB3MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733836536; c=relaxed/simple;
-	bh=LqZ03NPt2oqcQSx8/itvDBKprwoopoJ6bbtd6IPULkg=;
+	s=arc-20240116; t=1733836699; c=relaxed/simple;
+	bh=uIhQoJGYiDFo8tFm8p4NlRafWkGjon8JvpSmePl2JMk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kONVb+269slVUqV9hfNv585xUuuvlRaRi0rXeGpcPYae2QF6AOBDYw+NAyRY5xXrYjJqL8ByHHFD+FWBZ7obCpe22JJ45i1PnQP2YVdF9PSqsAjNQ6ha5aRmoBKA3qjzUzXHPIiSBF9qtKWMd9HBZjf4DX1HqMIorVBkECR1ukQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abGiSbIX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D47BDC4CEDE;
-	Tue, 10 Dec 2024 13:15:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOAu4q06wPDkrw6NSbAtfK+FihnKfRnuOKIpq7ZJ0s1TXGs7mPZkjBirFTrDLcX1mzmZUVmOZOkmBi3JEQ5aPCKPNCxrKJpPYyvOmvHuBZrIc8iYFAPCbBmNoTcZmv5zVFkdGyQTuo90RZ6DbOBWENVlHQ+AiU+RtUyKazG7cUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cas5dQYS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBB9C4CED6;
+	Tue, 10 Dec 2024 13:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733836535;
-	bh=LqZ03NPt2oqcQSx8/itvDBKprwoopoJ6bbtd6IPULkg=;
+	s=k20201202; t=1733836699;
+	bh=uIhQoJGYiDFo8tFm8p4NlRafWkGjon8JvpSmePl2JMk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=abGiSbIXYTeUeVzV1rzdESvB1bPxcjqobRg3RHDsohwthBoJ08rGFjMkX8pVzF2Ge
-	 uudnRNisbPn/ICxjtitgnbFn6zQCgm8tBKNnWlvmweCC+2BeUyicRSJlJFyyybydyw
-	 cz+0/+tH938AU59c38TQxdJ2fb7EMI9MGf/X8+Hb6TguI30mXMUoH0KoSFMkPsY7aI
-	 yR2bKRdLv9iCcX+QaXVKP9+hHXPnfZIm3sbWrNlqWyKEAuc+XUDicQPMUUFErtSzEi
-	 9TBcEOQuwO8c2VpbFL91eQXamnxTJzx8opHGZ7BLodIsNOvA7t/QIq4GBSpksT1OvK
-	 xD8biU97uku2w==
-Date: Tue, 10 Dec 2024 10:15:30 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Sandipan Das <sandipan.das@amd.com>, Xu Yang <xu.yang_2@nxp.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf jevents: Fix build issue in '*/' in event
- descriptions
-Message-ID: <Z1g-8ggHQ8MoVNhx@x1>
-References: <20241113165558.628856-1-irogers@google.com>
- <CAP-5=fWK-eeDEvE4+LeeScbHFecmc5+H8WB_5fepfrJJLZsF0Q@mail.gmail.com>
- <Z1dS6HrfkVS4OeZz@x1>
- <CAP-5=fUze9j8etq-17L0dWVoYfE-bA+61wrEAXN9vJSCj9dCbw@mail.gmail.com>
+	b=cas5dQYSHHhm8M/gB6qwrIbPiixehQJUFtK1qDl77QQXEQHApgI27VWeZaKte04bC
+	 JW5qTVuFuMOWZb/XdcV4Rbg68xnRHEGf6ZH1+vmhL+De5BCzl2xJLBYQPuSONEPBfx
+	 yRDchOYP9r94Q+2N7I8DifGBcu1zFQodE8ehMRXjBnuVE9/J7Mc0PjVRQUzzDq1JwP
+	 3UQEA2fPGVK1rHZuIK+6f6kNPKvHxYDjy3ye8zNBneDsDkbuseMdSvvx/Cr8UeT6mb
+	 Y/+yiBj9nfjI8nhHlczlTW0bYrJ4rJIeB8rT4LcUODRsS7Ni+ZpOiQaZKdeAeMQ+qC
+	 jGFA+XgCE6xpw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tL084-000000000ye-2T37;
+	Tue, 10 Dec 2024 14:18:21 +0100
+Date: Tue, 10 Dec 2024 14:18:20 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>, Marc Zyngier <maz@kernel.org>,
+	Xilin Wu <wuxilin123@gmail.com>, Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] arm64: dts: qcom: x1e*: Fix USB QMP PHY supplies
+Message-ID: <Z1g_nFhYXrBxHtrb@hovoldconsulting.com>
+References: <20241210-x1e80100-usb-qmp-supply-fix-v1-0-0adda5d30bbd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUze9j8etq-17L0dWVoYfE-bA+61wrEAXN9vJSCj9dCbw@mail.gmail.com>
+In-Reply-To: <20241210-x1e80100-usb-qmp-supply-fix-v1-0-0adda5d30bbd@linaro.org>
 
-On Mon, Dec 09, 2024 at 01:29:15PM -0800, Ian Rogers wrote:
-> On Mon, Dec 9, 2024 at 12:28 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 10:35:34AM -0800, Ian Rogers wrote:
-> > > On Wed, Nov 13, 2024 at 8:56 AM Ian Rogers <irogers@google.com> wrote:
-> > > >
-> > > > For big string offsets we output comments for what string the offset
-> > > > is for. If the string contains a '*/' as seen in Intel Arrowlake event
-> > > > descriptions, then this causes C parsing issues for the generated
-> > > > pmu-events.c. Catch such '*/' values and escape to avoid this.
-> > > >
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > >
-> > > Ping.
-> >
-> > A fixes: is missing, probably this should go via perf-tools, i.e. for
-> > this merge window?
+On Tue, Dec 10, 2024 at 10:07:31AM +0100, Stephan Gerhold wrote:
+> On the X1E80100 CRD, &vreg_l3e_1p2 only powers &usb_mp_qmpphy0/1
+> (i.e. USBSS_3 and USBSS_4). The QMP PHYs for USB_0, USB_1 and USB_2
+> are actually powered by &vreg_l2j_1p2.
 > 
-> We don't yet have arrowlake events/metrics, should there be a fixes?
+> Since most X1E device trees just mirror the power supplies from the
+> x1e80100-crd device tree, this series fixes up all the X1E boards with
+> the same change.
 
-Ok, thanks for the clarification.
+Nice find! I've confirmed that this matches both the CRD and T14s
+schematics.
 
-> I'm just preparing the patches for the latest vendor json from Intel,
-> but they will depend on this. I suspect given the size of the vendor
-> json it will miss the current merge window.
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
-Probably best to have big patches via perf-tools-next at this point in
-time.
+> Stephan Gerhold (8):
+>       arm64: dts: qcom: x1e001de-devkit: Fix USB QMP PHY supplies
+>       arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s: Fix USB QMP PHY supplies
 
-- Arnaldo
+nit: We've been using the shorter "x1e78100-t14s" prefix for this one so
+far. This may apply to some of the others as well.
+
+>       arm64: dts: qcom: x1e80100-asus-vivobook-s15: Fix USB QMP PHY supplies
+>       arm64: dts: qcom: x1e80100-crd: Fix USB QMP PHY supplies
+>       arm64: dts: qcom: x1e80100-dell-xps13-9345: Fix USB QMP PHY supplies
+>       arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: Fix USB QMP PHY supplies
+>       arm64: dts: qcom: x1e80100-microsoft-romulus: Fix USB QMP PHY supplies
+>       arm64: dts: qcom: x1e80100-qcp: Fix USB QMP PHY supplies
+
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
 
