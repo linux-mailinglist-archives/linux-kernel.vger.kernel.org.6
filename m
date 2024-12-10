@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-440346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B929EBBFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:42:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607C69EBC01
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D77188AFB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:42:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA69E168F1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1A62397AA;
-	Tue, 10 Dec 2024 21:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E9F23A583;
+	Tue, 10 Dec 2024 21:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGUlodse"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNhcZIPZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9F5237A57;
-	Tue, 10 Dec 2024 21:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C5F23A561;
+	Tue, 10 Dec 2024 21:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733866923; cv=none; b=k5M8NpeTaBTCcqHXzGdfze4n3yxzICRl2OlB0ygCcD7EE71kZCn0CnF+xm+SWqsLXaVxbM8PyPJ1G2GhfH6RxhnHl8L0SIHzUFiaW91CqwB0VUE8SZxLg+YBuhLw3nkqv5cU4hXTK9Ek/ZkX/Cwj/SEyH920HVmFqWbQ+D3tXPw=
+	t=1733866925; cv=none; b=YSe9OD4GreU+A4aZqSPkeBQkMUVcQS0WZ2sUNz7CpJ6CkCYNIupTYq72zJwiJ8Ftjzt/Ol1g5SQcvsc43oq/POvLw8Vqs5jUx69iUjXQ+2UqURj5DO3SNee2UWhel7s8qzgae/RWvnkM0P2G3SuU0mvaoYUyfA3/4TUO3iFZQDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733866923; c=relaxed/simple;
-	bh=eMB4BERgg0UcMa0SMSP2cNR/GwixDiZtVw4VPXs5cTE=;
+	s=arc-20240116; t=1733866925; c=relaxed/simple;
+	bh=J7RAxM/q6Q/8DwyccS9Kg3PsZEkN8XyD8RVXJt3my1s=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=OH8l0t0ryxpinTh+cAoVaFoTzzmbZIeGE6nj1y9XPMd7oCkH+lQjB6SVtg2JCiVEgceuEoL8H446mK8JO4OgvidI24egHDUn6Svv6EOBYLwpTAkDW8UsWfmwt/pI+ABYi5HDPuo78rCmSHx/jKGUvClGwRoD7geB6b+Ok8EZ+CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGUlodse; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C22C4CED6;
-	Tue, 10 Dec 2024 21:42:02 +0000 (UTC)
+	 Message-Id:Subject; b=cS3fPTnvG852yEh91QZBZpFUXG+LzDUKs3UVXcIy54HCGPPS3F0/0EAjSDUZarLUNoPt2jYf2ZwlU3+iNX6rF1AEcOiMyriE66czo9mhwxNz6ePKx5/DqW45xBfwzUVUz5qxZb9pby8edvAT11sVnakrWzSt1ittgx+r4ATCh7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNhcZIPZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFCFBC4CED6;
+	Tue, 10 Dec 2024 21:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733866922;
-	bh=eMB4BERgg0UcMa0SMSP2cNR/GwixDiZtVw4VPXs5cTE=;
+	s=k20201202; t=1733866925;
+	bh=J7RAxM/q6Q/8DwyccS9Kg3PsZEkN8XyD8RVXJt3my1s=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=CGUlodseObfVPj3hiYJxhiXbZsEPZpsH23S+zoCmMvLMQnnbIU0JLOP9hWJzmuRDx
-	 RtC8q/UxA4NHet4EyYjfivZBBJB99SuL6jPhTnXBe7jy0S+5xx82g/g0IaHcKeQqG9
-	 aUc6/dnLbUJxN8ek959LpitRRFEIWtwZ5RrZU37JPTxei3C6AZchUr0OoudUu11py9
-	 ygJzjUdIhPClcWfe5OjpuItqxWMmLEdR/mfHFnPWsJBTBJsb6RAxqDePbe9Bk80MBR
-	 GglhVj4D71ZQpTgCUAGsrEPAxLn5Z5bpu8irWqswMkC+z5arwkewHO9fIqL8vI5i2N
-	 Yo4OuTxOOuOYg==
-Date: Tue, 10 Dec 2024 15:42:00 -0600
+	b=HNhcZIPZ3f9Tae9yxevgtUmOhA9UE6hjFegL/J7gs1+9JKN9iCVqgVnYqvPMVjYke
+	 +wZssjSG5CvWjvFFoNrtPCIlSZVIxUa42MvJ2vHUgU5uNEdIa5OzxEceQy8PTpDzQf
+	 8XDQK2FbCnNmYq+gzrn9Dj2hCGr4+VWoEFc1SmzjVBkpuk1MJrnMqb07vGTS9RAIuG
+	 qOcqwbnxIVkeE/6/ytrxU9yDQ0Ked2fHToHHN8cAiuI9XyVoGzXjdmAGVtbMCotvxX
+	 5yD5fSjFPWaCwXAzi0jguMkvOiQFoPY4jRcLTHztkH/2j7mLyb27pVkS0olnYKC7Ez
+	 QrdWXY14WSmkA==
+Date: Tue, 10 Dec 2024 15:42:03 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,52 +50,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
- Paolo Abeni <pabeni@redhat.com>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Woojung Huh <woojung.huh@microchip.com>, Conor Dooley <conor+dt@kernel.org>, 
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Eric Dumazet <edumazet@google.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-In-Reply-To: <20241209103434.359522-1-o.rempel@pengutronix.de>
-References: <20241209103434.359522-1-o.rempel@pengutronix.de>
-Message-Id: <173386568446.497546.553726469163110460.robh@kernel.org>
-Subject: Re: [PATCH v2 0/4] Add support for Priva E-Measuringbox board
+Cc: linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, quic_anubhavg@quicinc.com, 
+ Mark Brown <broonie@kernel.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-pm@vger.kernel.org, quic_mohamull@quicinc.com, 
+ quic_hbandi@quicinc.com, devicetree@vger.kernel.org, 
+ Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+In-Reply-To: <20241209103455.9675-1-quic_janathot@quicinc.com>
+References: <20241209103455.9675-1-quic_janathot@quicinc.com>
+Message-Id: <173386568587.497565.1413799827375300987.robh@kernel.org>
+Subject: Re: [PATCH v5 0/4] Enable Bluetooth on qcs6490-rb3gen2 board
 
 
-On Mon, 09 Dec 2024 11:34:30 +0100, Oleksij Rempel wrote:
-> This patch series introduces support for the Priva E-Measuringbox board
-> based on the ST STM32MP133 SoC. The set includes all the necessary
-> changes for device tree bindings, vendor prefixes, thermal support, and
-> board-specific devicetree to pass devicetree validation and checkpatch
-> tests.
+On Mon, 09 Dec 2024 16:04:51 +0530, Janaki Ramaiah Thota wrote:
+> - Patch 1/4 Add description of the PMU of the WCN6750 module.
+> - Patch 2/4 add and enable BT node for qcs6490-rb3gen board.
+> - Patch 3/4 use the power sequencer for wcn6750.
+> - Patch 4/4 add support for the WCN6750 PMU.
 > 
-> changes v2:
-> - drop: dt-bindings: net: Add TI DP83TD510 10BaseT1L PHY
+> ----
+> Changes from v4:
+> * Added reviewed tag by Krzysztof in p1
+> * Updated the p2 commit message with sw_ctrl and wifi-enable are
+>   handled in wifi FW.
+> * Added blank line between the nodes in p2
+> * Placed the structures in proper order in p4
+> * Link to v4: https://lore.kernel.org/all/20241204131706.20791-1-quic_janathot@quicinc.com/
 > 
-> Oleksij Rempel (2):
->   dt-bindings: vendor-prefixes: Add prefix for Priva
->   dt-bindings: arm: stm32: Add Priva E-Measuringbox board
+> Changes from v3:
+> * Defined the PMU node and used the its output to power up BT
+> * Used power sequencer for wcn wcn6750 module
+> * Split the patch to multiple as per subtree
+> * Add description of the PMU of the WCN6750 module
+> * Include separate UART state node for sleep pin configuarion
+> * Link to v3: https://lore.kernel.org/linux-arm-msm/20241022104600.3228-1-quic_janathot@quicinc.com/
 > 
-> Roan van Dijk (2):
->   arm: dts: stm32: Add thermal support for STM32MP131
->   arm: dts: stm32: Add Priva E-Measuringbox devicetree
+> Changes from v2:
+> * Sorted nodes alphabetically
+> * Link to v2: https://lore.kernel.org/linux-arm-msm/20241010105107.30118-1-quic_janathot@quicinc.com/
 > 
->  .../devicetree/bindings/arm/stm32/stm32.yaml  |   6 +
->  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
->  arch/arm/boot/dts/st/Makefile                 |   1 +
->  arch/arm/boot/dts/st/stm32mp131.dtsi          |  35 ++
->  arch/arm/boot/dts/st/stm32mp133c-prihmb.dts   | 496 ++++++++++++++++++
->  5 files changed, 540 insertions(+)
->  create mode 100644 arch/arm/boot/dts/st/stm32mp133c-prihmb.dts
+> Changes from v1:
+> * Corrected the board name in subject
+> * Link to v1: https://lore.kernel.org/linux-arm-msm/20241009111436.23473-1-quic_janathot@quicinc.com/
+> 
+> Janaki Ramaiah Thota (4):
+>   regulator:·dt-bindings:·qcom,qca6390-pmu:·document wcn6750-pmu
+>   arm64: dts: qcom: qcs6490-rb3gen: add and enable BT node
+>   Bluetooth: hci_qca: use the power sequencer for wcn6750
+>   power: sequencing: qcom-wcn: add support for the WCN6750 PMU
+> 
+>  .../bindings/regulator/qcom,qca6390-pmu.yaml  |  27 +++
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 168 +++++++++++++++++-
+>  drivers/bluetooth/hci_qca.c                   |   2 +-
+>  drivers/power/sequencing/pwrseq-qcom-wcn.c    |  22 +++
+>  4 files changed, 217 insertions(+), 2 deletions(-)
 > 
 > --
-> 2.39.5
 > 
 > 
 > 
@@ -115,12 +132,20 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y st/stm32mp133c-prihmb.dtb' for 20241209103434.359522-1-o.rempel@pengutronix.de:
+New warnings running 'make CHECK_DTBS=y qcom/qcs6490-rb3gen2.dtb' for 20241209103455.9675-1-quic_janathot@quicinc.com:
 
-arch/arm/boot/dts/st/stm32mp133c-prihmb.dtb: adc@48004000: adc@0:interrupts: 0 was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/st,stm32-adc.yaml#
-arch/arm/boot/dts/st/stm32mp133c-prihmb.dtb: adc@48003000: adc@0:interrupts: 0 was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/st,stm32-adc.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'enable-gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'swctrl-gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'vddio-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'vddbtcxmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'vddasd-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: pinctrl@f100000: Unevaluated properties are not allowed ('qup_uart7_sleep' was unexpected)
+	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,sc7280-pinctrl.yaml#
 
 
 
