@@ -1,47 +1,84 @@
-Return-Path: <linux-kernel+bounces-439885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35DD9EB577
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:56:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F40501887B6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:56:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3827038DEC;
-	Tue, 10 Dec 2024 15:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJok4Q0E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AE49EB579
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:57:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F0B22FDF6;
-	Tue, 10 Dec 2024 15:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9942835DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:56:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E92022FE04;
+	Tue, 10 Dec 2024 15:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RvUcSeuk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1EF22FDFB
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733846196; cv=none; b=pYjKjZlrCBzDf2/ZJdm3/hjIUxFlIak753hb7M+IQmt7N1TGkkCAvTVT6Ujz2wZekctTJqHpAUNiBcOoFiidSszfij/FzfA3g0f85Qeft65WCmLDVs1BdHsTke2yQUkhflHqJjCi5bjyr1hUDtvT9L79FbU59DWLUM40OvLlRyk=
+	t=1733846212; cv=none; b=YiI0tUw2YuCMJwb1zvD+t4DxAdSakKhBCO0gli+jYu/fMrv/NUxpAgs5fls0sI7KOUh9agsdwak8hEmPmgQ4lfAZerG9IL5jnhQ3zHdyM1IhEi9shRplIhjR0Sqk2vpYdS59M+tOJ1g3xJEktMWokRxerRN50hqwhLAi0ZZW560=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733846196; c=relaxed/simple;
-	bh=K0Hp3vj1oNggak521PkVammo4vyZpQr9K+Iic5eeY+g=;
+	s=arc-20240116; t=1733846212; c=relaxed/simple;
+	bh=SzR+uX2G10Zb0oIitnBL937V9VC0oJl6Rj07zpVuMlQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qKgDEHIMCOJKpEhvNL9SV8uj8yDtQD2qqbRDxwq/fxbFNrBXfbdYcmxAfR01iBVWC6clC+2J2RFoAKx0zq9WInErxuyAcU/fC6tgYakcWaGIfgQhtuKWulQNopl6rcQ/9NeKsY+O0mjkHCbx2XQTQJVhVBrsvr04LAblWXisMMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJok4Q0E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8904AC4CED6;
-	Tue, 10 Dec 2024 15:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733846195;
-	bh=K0Hp3vj1oNggak521PkVammo4vyZpQr9K+Iic5eeY+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sJok4Q0EK0Cb65YN/3g0uAJD54ySjw5k5eWDU8KSELLB+I4/Eblb95T21w5+W6/Sh
-	 enR5q+/UicEDwZq7baVlIdYGSuIA+ZL8Yo1rcU/2jRU1w//sQozFzQMSrNXeTIYpNt
-	 f1jBNCe0JPaoAbVfRiGtiAttv+vTcoZvgZR+Uae+jlZc4ENh7IMRPgskSP8E5DlCh/
-	 UYhfE2ncCB25hZGBb+EWFo7ew0bqCcuc6cQ/Q+58Ju2bDixuAKbv+8gx7zbpJGLskW
-	 M4tdgtNEFZ+AcasJsA2vdk5tYWJYYuGyRiX0rgpDOiDJotxl9YdX4s4vwrxSNUJlFX
-	 9i37GDFK/t+hw==
-Message-ID: <c55d8212-9b7e-4ede-a15d-3fbeeb95f956@kernel.org>
-Date: Tue, 10 Dec 2024 16:56:26 +0100
+	 In-Reply-To:Content-Type; b=n+7+oCUg4GldsfgmodQSxkhh8DjQjXxBTgAukcKBjrfF2Ok8tWiFbiTFSFrv1dHZiGnXGTouDJEb7PkVFSjSXG9EmsEnGwJ/3aw2KR3iuXDhVion8yd2ZApXgGjypQKtWqRqx4YiyD0pr8A7/AIyZ3EwTX+1qB/7eNUZCTQ/W7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RvUcSeuk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733846209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O6COf3Hkk0aQA9lsD0i2AqUa4d4P/34xWsXqJ5E4hUk=;
+	b=RvUcSeukDNbR4QaxVrNt90me8idF7L8YglgPMpQQIBuPAZQ+74JKNc0LoJhdZ/1Ln2ie48
+	npc6Ybt1rSmIY6UMTjVsdyecwbg2j/PGxcMAovM/VG+1fnQpEqnAHsjYYqm7VEThikUMgx
+	qPtDzt2iMwZAXjsq4o6sxWjuq84M8PE=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-178-8TO_mAZuNhyBe00ScD20zQ-1; Tue, 10 Dec 2024 10:56:48 -0500
+X-MC-Unique: 8TO_mAZuNhyBe00ScD20zQ-1
+X-Mimecast-MFC-AGG-ID: 8TO_mAZuNhyBe00ScD20zQ
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-843fef4b9dfso522973139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:56:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733846208; x=1734451008;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6COf3Hkk0aQA9lsD0i2AqUa4d4P/34xWsXqJ5E4hUk=;
+        b=oXp2xvi3neCc4jGFhT8oiyeNT2kY0WL01i+VLIuyBSo87kuraIRrRCoL7sjfOt56PF
+         /3zrrAlsLTc8Ow7xcJSbzqkK3AtimQP0Nel4nUwQ3TTiWDBzw2F/zX8UIAWMpqIGY5Z2
+         kQKtVFuTKVBxsrbsrOamOgJ+BbZb5qpGIq4pKAm+9io5FEm+IO03Gu7xathwu0JRb6ex
+         LvMmOyEWYcIxv9PxE4YnpAdC0cz08Pg7zP7lhuuRjD4gWy8bbAMdWMYMOVCbVQgBB9r3
+         LKA4abcbtmzug5+xQGkVRy9hrKZFGgxf4tb4/i9ump5jMPJ4P0XITPyJFu3m0niYvoH/
+         43xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvnj1uenFUXAtwzvyPeuTTxY2jvEXzza2W5LRQMWoko/8Mpvj2QI6i+6XZuaZt/bUUA/D+BhqgrQbpLZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE07KcdCUq/y9oAIybPrML4ST/t2u12vODvBsZcGEe38hUPVcL
+	qCJ/DqdAN309yLvsU6rWkZintee6c1vtx05uAYwx9zbRGIWSK/GGaxR4SmNNFcdexS7SIZqCpwh
+	gwHRhJ6hNoq4Fn5x1ZcQBzzmqceC1Eq2idVe9my7a/n5W3AyqZ7uE4ki9KEFplA==
+X-Gm-Gg: ASbGncvR+ls6kr0gragE27IUO1Hax+9BO3YmesVbiwM+CPTtrD7paFfz42KLFXSmSyD
+	0J7TL8aZyqKEa9FIcPVEs1UBwHNnz1D9rmPHr4t3729qhD47U4ggTSuL/vghGoqclDadScB+jmU
+	aRGRAZ/GcALaUchPrLT9iUWB+gnmFx9kpDj+3P+GXY8WVrjxdzIbTlRKGvMjOhIcwbZUtIV1eg8
+	inKADK/R4dz8MGeX4ArnjU0NbuIrfVcjjIHMS3OaBvHYu5v+S4mn+s=
+X-Received: by 2002:a05:6602:a108:b0:83a:943d:a280 with SMTP id ca18e2360f4ac-844b87f7863mr300002939f.1.1733846208067;
+        Tue, 10 Dec 2024 07:56:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGO/en2fuAvQyTs2jHHMl4LqDZEtajqMB/Su9iQAs0bW7stQDAwQKFTzGD6u5DQDQ+uVMvWSg==
+X-Received: by 2002:a05:6602:a108:b0:83a:943d:a280 with SMTP id ca18e2360f4ac-844b87f7863mr299997739f.1.1733846207687;
+        Tue, 10 Dec 2024 07:56:47 -0800 (PST)
+Received: from [192.168.40.164] ([70.105.235.240])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2bf67d125sm1155622173.96.2024.12.10.07.56.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 07:56:47 -0800 (PST)
+Message-ID: <0723d890-1f90-463b-a814-9f7bb7e2200b@redhat.com>
+Date: Tue, 10 Dec 2024 10:56:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,106 +86,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Konrad Dybcio <konradybcio@gmail.com>,
- Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, konrad.dybcio@linaro.org,
- andersson@kernel.org, andi.shyti@kernel.org, linux-arm-msm@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org,
- devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org,
- dan.carpenter@linaro.org, Frank.Li@nxp.com, konradybcio@kernel.org,
- bryan.odonoghue@linaro.org, krzk+dt@kernel.org, robh@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
- <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
- <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
- <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
- <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
- <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
- <da2ba3df-eb47-4b55-a0c9-e038a3b9da30@quicinc.com>
- <a7186553-d8f6-46d4-88da-d042a4a340e2@oss.qualcomm.com>
- <e9fb294b-b6b8-4034-84c9-a25b83321399@kernel.org>
- <835ac8c6-3fbb-4a0d-aa07-716d1c8aad7c@gmail.com>
- <f1fa2bde-95ce-45e9-ad2d-f1d82ec6303c@kernel.org>
- <8b33f935-04a9-48df-8ea1-f6b98efecb9d@kernel.org>
- <422e6a1e-e76a-4ebc-a0a5-64c47ea57823@gmail.com>
- <aad3c217-a6f6-4415-8e08-8fc113504756@quicinc.com>
- <1035d5c0-7034-4797-8a89-d0d92811c0ef@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 0/1] KVM: arm64: Map GPU memory with no struct pages
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1035d5c0-7034-4797-8a89-d0d92811c0ef@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To: Jason Gunthorpe <jgg@nvidia.com>, Will Deacon <will@kernel.org>
+Cc: ankita@nvidia.com, maz@kernel.org, oliver.upton@linux.dev,
+ joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+ catalin.marinas@arm.com, ryan.roberts@arm.com, shahuang@redhat.com,
+ lpieralisi@kernel.org, aniketa@nvidia.com, cjia@nvidia.com,
+ kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com,
+ acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com,
+ danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com, udhoke@nvidia.com,
+ dnigam@nvidia.com, alex.williamson@redhat.com, sebastianene@google.com,
+ coltonlewis@google.com, kevin.tian@intel.com, yi.l.liu@intel.com,
+ ardb@kernel.org, akpm@linux-foundation.org, gshan@redhat.com,
+ linux-mm@kvack.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241118131958.4609-1-ankita@nvidia.com>
+ <20241210140739.GC15607@willie-the-truck>
+ <20241210141806.GI2347147@nvidia.com>
+From: Donald Dutile <ddutile@redhat.com>
+In-Reply-To: <20241210141806.GI2347147@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
->> There would be spare register but i think it should be in sync with hardware team. let me check with them and update back if any bit can be repurposed for this feature. I agree, if any register is available, it can programmed prior to kernel.
->>> It would need to be reserved on all SoCs though (future and
->>> past), to make sure the contract is always held up, but I
->>> think finding a persistent bit that has never been used
->>> shouldn't be impossible.
->>>
->> Yes, let me check it with hardware and firmware team and update back. Does this mean, there can't be a such software sharing mechanism (purely software decision) based on DTSI flag ?
-> 
-> I suppose that depends on our needs. If we can set that bit
-> before Linux starts (i.e. in UEFI), we can avoid touching
-> the pinctrl state regardless of whether the other entities
-> have started up yet to avoid overcomplicating it.
-> 
-> If we need Linux to set that bit, we would still need some
-> mechanism like a dt property. But I really think that the
-> bootloader should be burdened with this instead, given it
-> has a better understanding of the hardware due to it being
-> well, the bootloader).
-> 
-> Krzysztof, I'm assuming that sounds sane from your
-> perspective too?
-Yes, sound okay.
 
-Best regards,
-Krzysztof
+
+On 12/10/24 9:18 AM, Jason Gunthorpe wrote:
+> On Tue, Dec 10, 2024 at 02:07:40PM +0000, Will Deacon wrote:
+>> On Mon, Nov 18, 2024 at 01:19:57PM +0000, ankita@nvidia.com wrote:
+>>> The changes are heavily influenced by the insightful discussions between
+>>> Catalin Marinas and Jason Gunthorpe [1] on v1. Many thanks for their
+>>> valuable suggestions.
+>>>
+>>> Link: https://lore.kernel.org/lkml/20230907181459.18145-2-ankita@nvidia.com [1]
+>>
+>> That's a different series, no? It got merged at v9:
+> 
+> I was confused by this too. v1 of that series included this patch, as
+> that series went along it became focused only on enabling WC
+> (Normal-NC) in a VM for device MMIO and this patch for device cachable
+> memory was dropped off.
+> 
+> There are two related things:
+>   1) Device MMIO memory should be able to be Normal-NC in a VM. Already
+>      merged
+>   2) Device Cachable memory (ie CXL and pre-CXL coherently attached
+>      memory) should be Normal Cachable in a VM, even if it doesn't have
+>      struct page/etc. (this patch)
+> 
+> IIRC this part was dropped off because of the MTE complexity that
+> Catalin raised.
+> 
+> Jason
+> 
+Jason & Catalin: Thanks for the filler for the splitting.
+
+So, I'm not sure I read what is needed to resolve this patch.
+I read Will's reply to split it further and basically along what logical lines of functionality;
+is there still an MTE complexity that has to be resolved/included in the series?
+
+IOW, I'm looking for a complete, clear (set of) statement(s) that Ankit can implement to get this (requested) series moving forward, sooner than later;
+it's already been a year+ to get to this point, and I don't want further ambiguity/uncertainty to drag it out more than needed.
+
+Thanks... Don
+
 
