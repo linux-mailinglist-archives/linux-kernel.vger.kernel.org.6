@@ -1,190 +1,162 @@
-Return-Path: <linux-kernel+bounces-439111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A27F9EAAEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:45:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8599EAAF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:46:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061B3283BF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4502809C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC69C2309B5;
-	Tue, 10 Dec 2024 08:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE1B22E3E3;
+	Tue, 10 Dec 2024 08:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JgvBjpf5"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BcU/kg5E";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O3Skgj/X"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ECA22D4CF
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94892AEE7
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733820310; cv=none; b=Ap+NH4TI38MfSYEJv9AgnoBwf5QYBfj2vdZo4Ub7OYT5N2uguPUQk/JLjG8CW/8oEHQedlL95yM8zMNPfGC5hN9Syqaa+GwT9tM0X15cbYRjCcRWg2YarfxSbpfZdlO6x8L8fjF7UOLnwQ4VB7MtTktzybE4zqzq6CzyuvldUno=
+	t=1733820401; cv=none; b=FrP9NNTSzoBGvF5/PeekgOcg8AvV9TT16lL5ZF0H3WHHPP7YOne5m16jtVINOprd2YTAj/R2iiQGu/FN7a1oVFvYVuyCwj7hpKP7j207Mgzx8CYfwgNrZuA70qqDpsDEIvXTMfv43I5gzP+40vh7OCtMTHKxj2fzwT0p4ssk99w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733820310; c=relaxed/simple;
-	bh=+x1Mft7oUP79FmKr4fBecXE4fgVs+62YnJHX8KLkmQc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XnuOGBYzMtPXPNLLCP0LSb2GKrj7/Xt+uAA2PSvdl66l3BdraFFwC4FS7rKjdNydPeaI2MzPCIJ7O33TzL+R6JnB7tZwc4bYsGaZi+AT2bA2o37ue2L+9+1dL1q99WkIP9DhMb2YXvRcR1e4PxRlIM5EpOuAZEVvTGfF31lLw94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JgvBjpf5; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434f239bcd6so2005965e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:45:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733820307; x=1734425107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGPzafJOEdoHb7yCUcUHHdTxZLNCJp4WwMrLYstSYKE=;
-        b=JgvBjpf5l2UtQsOsfkXWGV+beLKiUPAycrVMqVUPGwSgPojhHdWDDbZI2HY19WTLfV
-         6ZYCWw13AyNqKaMYeqhHw+Fs4t2c3Ux8XO3RO8Px6pby9kz/1IISBUqwnc5uVw9OV7wB
-         hozyD4meDqMP9fXNTlVh49vXmrjOvd0+r2NTYaVrtHnjuZsUlmxcHexkjUW+I2X8nKTS
-         H7ilfv+cDt68wVA5dIKaiDnNBNcxXQlTIL8EajqAeCgTPnA2r78W6lj7XyrcBfrbtqTT
-         0JmrIyxEhG4f9NOSV0W/8t+YTxS/UHpeZHC7SMZOi+6nOo9J5uNIbxOqHsO7yU+Im4Tt
-         pGAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733820307; x=1734425107;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EGPzafJOEdoHb7yCUcUHHdTxZLNCJp4WwMrLYstSYKE=;
-        b=OO0kRMxN4wWMb9OtL6KfGw53eM+n0qD0G0NjHZ8J/arBItNwoU+8yd0XumYpF4TL1q
-         D//QKsVne769sAWqcO+p9fcxWcTbK91T74tmV+6tWqnnxKCjx2pkbM/mt2UvhNDomwlj
-         GFRsI7u9nw6BFjTiey3CjJpoSoDh1mrZ9YPqKZv6c3gptsP29qp9Qexg9i5It6sgcjaE
-         05BJEIHHHFsKrVEt1f9lkhXQsGa/tcR3Xpu0KsPtot6GfPGbSubGW3kHAyT/MSzTO12C
-         5VCOIRJ313uqI5fW/MjtB9FQsk3sMBBlh4ZyrJjfTZgPxVBr+BNwL9WAyc01f8xwUVxZ
-         4Olw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUFxSbXodjTu4xGn8ckBSPB/lf2Aji9TXO59BY/G2L9nuxARN5hZyI2YHmq3B8VJ2B1NqTL258o/wMjgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOwqGZLkRa+/T4NaDloykOtRPtQNSwx2iSYn5q3Hvw/N5EuxPr
-	BO21VJI3gdrg52KrnL1o3Zr9lyLRM0ZH1QnmE/fdELX6WlCs7EUbtg708JE08C8=
-X-Gm-Gg: ASbGncu6BClrkPWZj2Prt6e2Mjkk408Fdz170IXwVnK1pgN37lf751OuQ5yil8PRsmz
-	0+QIA4ugT3lG09ExltI314/jmBOWMPTUx7UTEpr7geRw3Jns4l+ynUIinHC/CoVzhgFeS5NwUkO
-	DNl3skhiYw9em3moTKlE6985X9LFcb4yIBrhRpTz4W77gG54SZcB+wdHXYvHiYZ40XNBB3FzOkJ
-	tnP92vDloxHk0yKLbFGKB+Ze5sPMhx3aLOjxBUNvE0PXGW4wtI3Z5vJ70RJlpSCD4Ixu6EKTg==
-X-Google-Smtp-Source: AGHT+IGIbVpoRmpF/fMTJFNEwzOHMG59iwFgI6N67U5I2zZMBPgokITH6VMHyBfnG2hgq55rbdMOGg==
-X-Received: by 2002:a05:600c:1c28:b0:434:a0fd:95d0 with SMTP id 5b1f17b1804b1-435019a81abmr8545715e9.4.1733820306820;
-        Tue, 10 Dec 2024 00:45:06 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0d26b0sm188531705e9.9.2024.12.10.00.45.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 00:45:06 -0800 (PST)
-Message-ID: <b8c1c4d9-3234-4184-b57c-8cd5cb18f815@linaro.org>
-Date: Tue, 10 Dec 2024 09:45:04 +0100
+	s=arc-20240116; t=1733820401; c=relaxed/simple;
+	bh=uQqwjUTPiQQt+f4tYkOg9flK7igU0UGqZy9dJWSGFNY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CEJWes8BRqdIuXS7TrXzG6VSlzcPdRYkHewAiXsRJoDlOcQIlz0ucK8LwFSSdvgrxDAsK74YDbFeHMm2XJJpcjAyhI6Ov3ADq/gRgtLBVs6zVDe4nmnQwAGvDR5JWCoAld+4YiBB++ZC2FZEC2GEogen0AyJGExRGDcioHqKj3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BcU/kg5E; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O3Skgj/X; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id C45D31381D88;
+	Tue, 10 Dec 2024 03:46:37 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 10 Dec 2024 03:46:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733820397;
+	 x=1733906797; bh=85LRYKUeIbL3UcQvmEcS0/dbZ7pj+vVRPWkht8UMN7g=; b=
+	BcU/kg5E19YhIVE1aCBA9Qbwu/wol6eaRPiPiSlJH7BI28RvoTR6M/AEQyKWkAj7
+	CR7f6JBy/Vzao1ZVwvrIslxbDrn//duoqn0A5cOzsPr+el1Q6+A/3SK4t0Kdppjn
+	BLyLiNU1d87AZSfdeClY7wzSk6G9l9DhSlcor1Boxn4YHsCYwBd5CumZFCtuz+hG
+	JQmWpk3ZCsuFNGogYIMi2VL+weHjRX901p/FoN7aM79EnPfyvSwVT1d+TbD4hz/H
+	2mRNjzov6NweuxpSB1teThKDkX6yUvmoxWIbbr8NDEVMHNwH8+4gN5DsBCiOmX+z
+	jv7V0NhlunsW69pRop2hUg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733820397; x=
+	1733906797; bh=85LRYKUeIbL3UcQvmEcS0/dbZ7pj+vVRPWkht8UMN7g=; b=O
+	3Skgj/XKrzu1v5ERSTy3GR+o5Jg7u0HGga27Az1k3kGVzbyqASbenx84XWalyG1c
+	tskzb+l6gM2Pza1WHjk5XTuc2QnrOL8FjcoXfQM6N6xj6ep4po+QTwzB0egzENN+
+	fJC/j738ryWmG/EETVJ8nij8C7TB4KVK/itUF6f3Y/TyCAV5UhVy/G6o1r0Kx+da
+	AEa4VbGICJqxQ+YUame2P1j27kkPyAwCK7oF0QY48P6AFBT5UTB8Te5nhIaw8pMK
+	9QzL+P3KAj0/QiGum2D4uy6C8zJdCBHJv6tKBMzBJL0N8CWIwK9Kh6JncygTVBOG
+	a6keOVdfxWtDeicKEldBg==
+X-ME-Sender: <xms:7f9XZ50rdLGghJi6cVkt-Ia-9j_5lbvIjQyXBKFAuTnScZBcCtPUSQ>
+    <xme:7f9XZwG8V5DGo8ql5QmAeZshShSiwNN6T8D95ceh74cxAkbbE4zus03NQDRE3qkHI
+    CQ-zPacZzcZcrY4s6o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeejgdduvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohephedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgusegrrhhmrdgtohhmpdhrtghpth
+    htohepshhuuggvvghprdhhohhllhgrsegrrhhmrdgtohhmpdhrtghpthhtohephigvohhr
+    vghumhdrhihunhesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvg
+    hrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:7f9XZ55KkG43CufokNv_1iaFKmxmWAAEHBQLXbFvLWu_jszg2qEtkw>
+    <xmx:7f9XZ20lBcmeRkYZbtb1uRQgA5SKynlxQb8quDxv-KGw1hnLbR6ZBw>
+    <xmx:7f9XZ8GhkHnY1hGgePXp0CVuu-IIofGN7FIxITANgKSwT1FLPhS0cA>
+    <xmx:7f9XZ3_hurDHfKdbl6BV7l7YTLugMv2qKT9qFbqgbZuzGKb_NXM7Yg>
+    <xmx:7f9XZ4gX0SAhp00-_1_jM268_u791VYrVwQGChoWA1NunWtI_YWnKqVZ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7B1282220072; Tue, 10 Dec 2024 03:46:37 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mailbox: mediatek: Add mtk-apu-mailbox driver
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: =?UTF-8?B?S2FybCBMaSAo5p2O5pm65ZiJKQ==?= <Karl.Li@mediatek.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: =?UTF-8?B?Q2h1bmd5aW5nIEx1ICjlkYLlv6DnqY4p?= <Chungying.Lu@mediatek.com>,
- =?UTF-8?B?QW5keSBUZW5nICjphKflpoLlro8p?= <Andy.Teng@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?Q2hpZW4tQ2hpaCBUc2VuZyAo5pu+5bu65pm6KQ==?=
- <Chien-Chih.Tseng@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>
-References: <20241024092608.431581-1-karl.li@mediatek.com>
- <20241024092608.431581-4-karl.li@mediatek.com>
- <083c8f7b-0969-4ca3-8a91-35f5767c5f32@collabora.com>
- <CAGXv+5Fw+qZhTTgJq0QdiQHgiQP2ByR1tgae2+k4erx+0fp61g@mail.gmail.com>
- <a3c3280478bf86eb97a422782ce60ec4eaa35224.camel@mediatek.com>
- <0f98405c40530d81c342af06dea593e7babedeac.camel@mediatek.com>
- <cf75f3c3932ddc50f5697bc4f394bd77fc16cd39.camel@mediatek.com>
- <0d23ccf9-3420-45bf-aac7-5c1a075e031f@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <0d23ccf9-3420-45bf-aac7-5c1a075e031f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 10 Dec 2024 09:45:51 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yeoreum Yun" <yeoreum.yun@arm.com>
+Cc: "Sudeep Holla" <sudeep.holla@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ nd@arm.com
+Message-Id: <d750f114-8a25-4c84-912e-b6fb407a5150@app.fastmail.com>
+In-Reply-To: <Z1fvkpYvqpnjPZA8@e129823.arm.com>
+References: <20241203143109.1030514-1-yeoreum.yun@arm.com>
+ <20241203143109.1030514-3-yeoreum.yun@arm.com>
+ <9e60e996-070e-43a7-80e9-efdfda9f6223@app.fastmail.com>
+ <Z1ch52AthTYVhtH4@bogus>
+ <0cb655ee-9401-41bb-b9cd-580e0aeef2be@app.fastmail.com>
+ <Z1fvkpYvqpnjPZA8@e129823.arm.com>
+Subject: Re: [PATCH v2 2/2] firmware/arm_ffa: remove __le64_to_cpu() when set uuid for
+ direct msg v2
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 10/12/2024 09:44, Krzysztof Kozlowski wrote:
-> On 05/12/2024 08:32, Karl Li (李智嘉) wrote:
->> On Thu, 2024-12-05 at 07:05 +0000, Karl Li (李智嘉) wrote:
->>> Dead maintainers,
->> "Dear" maintainers. Really sorry for the typo...
->>>
->>> I hope you're doing well. Just a warm reminder that we're following
->>> up
->>> on these patch and really appreciate any feedback you might have.
->>>
-> 
-> You received like 6 or 7 reviews/replies for your patchset. What are you
-> implying here if feedback was not enough?
-> 
-> Respond and implement the feedback instead ignoring it.
-> 
+On Tue, Dec 10, 2024, at 08:36, Yeoreum Yun wrote:
+>> On Mon, Dec 9, 2024, at 17:59, Sudeep Holla wrote:
+>> > On Mon, Dec 09, 2024 at 04:27:14PM +0100, Arnd Bergmann wrote:
+>>
+>> Looking through the other functions in drivers/firmware/arm_ffa/driver.c,
+>> I see that most of them just match the specification. One exception
+>> is ffa_notification_info_get(), which incorrectly casts the
+>> argument response arguments to an array of 'u16' values. Using
+>> the correct bit shifts according to the specification would
+>> make that work on big-endian and also more readable and
+>> robust. Another one is __ffa_partition_info_get_regs(), which
+>> does an incorrect memcpy() instead of decoding the values.
+>>
+> Conclusionly, Yes. But the RFC 4122 said with network byte order.
+> to describe how uuid is saved.
+>
+> but I think the endianess to load the register is not a choice.
+> because the spec says:
+>
+>     UUID Lo  x2  Bytes[0...7] of UUID with byte 0 in the low-order bits.
+>     UUID Hi  x3  Bytes[8...15] of UUID with byte 8 in the low-order bits.
+>
+> this means UUID.bytes[0] should be loaded to x2.bytes[0].
+>            UUID.bytes[1] should be loaded to x2,bytes[1]
+>            ...
 
-Ah - and obvious static check warnings as well!
+I meant they had the choice and chose to specify little-endian
+64-bit word to encode the sequence of bytes of the standard
+in-memory representation of UUIDs. 
 
-Please run standard kernel tools for static analysis, like coccinelle,
-smatch and sparse, and fix reported warnings. Also please check for
-warnings when building with W=1. Most of these commands (checks or W=1
-build) can build specific targets, like some directory, to narrow the
-scope to only your code. The code here looks like it needs a fix. Feel
-free to get in touch if the warning is not clear.
+> That's why other software spec (i.e tf-a) doesn't loads UUID from register
+> wihtout swapping byte with endianess but just copy it.
 
-Best regards,
-Krzysztof
+If the uuid is transferred in memory, you obviously don't want to
+swap it. If they pass it in registers across different endianess
+code without specifying the byteorder in the caller, then they
+would have the same bug.
 
+> The bug is "not send UUID according to spec" in kernel side
+> That's why it fails when I send message  with direct message version 2.
+> So, it''s not change code unportable to portable but it fixes according
+> to spec (load UUID as it is in register wihtout endianess).
+
+Sorry, but you are not making sense here.
+
+Sudeep, should I just cherry-pick your other fix from the pull
+request and ignore this patch?
+
+      Arnd
 
