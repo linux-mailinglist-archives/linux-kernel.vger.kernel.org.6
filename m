@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-439992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BC99EB73B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:56:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CF79EB73E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E8818811F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:56:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A901884313
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BA9231C8C;
-	Tue, 10 Dec 2024 16:56:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7E81BD004
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E01231C8C;
+	Tue, 10 Dec 2024 16:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+C7OCfU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0001A726B;
+	Tue, 10 Dec 2024 16:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849793; cv=none; b=piuLBPZiiR6QgoQ5v3DgSBb2TPkdhvFrERtRKxBJtKG51GkKohZkI0u8Cd/mffVsUKpGq1UFwn0V2BpJpHHvZJnzGooo7Z60u9flvxLdTYGbQoxyOQdMLQd+fLqi8Of7HgIzwSG9NoAfpijgnFiNirOX9X9XOafmvKNZ8NcDxPU=
+	t=1733849909; cv=none; b=NcXK4p8l8QURJQwM/hGQImEak5nY84Ox811eyDztpf5A21nP5o4QU9YZt01oel4Aesmk6JTnccBLJG0BnkGBR++nJvzZc50dqzBsYsTcP0KePO59yZty+dZ2GbD1lZ/eTitbRy69DRQ8gvDXA+22n6q1ad74UZUkF/TMQz3Nfx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849793; c=relaxed/simple;
-	bh=nf893GV9pe9ICJS5zpYSXpY52UVhEnchtBK7YZAzJ+E=;
+	s=arc-20240116; t=1733849909; c=relaxed/simple;
+	bh=IH6nxTo0dSlu+DCh6FbNH7CPXaJy626QG94fPt1JanQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p4F/rg0pilTPAaK7BVhLmkPp9m6yUPleKQwkht89NCIuSZx9e/MSNEq4gbaY+YIr0eE2JzkYCaNNDBqVwon0VwU7kPLJ81F9Vs1TrZuXueUp5p0jjViGDqxBnv4NCBRWq4fvIn4oXo5w0KzFJmxdRZ/eep4I0s9UN/yK+UZPqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A69091007;
-	Tue, 10 Dec 2024 08:56:58 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 917773F58B;
-	Tue, 10 Dec 2024 08:56:28 -0800 (PST)
-Date: Tue, 10 Dec 2024 16:56:25 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev
-Subject: Re: [PATCH V2 5/7] arm64/cpufeature: Add field details for
- ID_AA64DFR1_EL1 register
-Message-ID: <Z1hyueAQJTroNIRW@J2N7QTR9R3>
-References: <20241028053426.2486633-1-anshuman.khandual@arm.com>
- <20241028053426.2486633-6-anshuman.khandual@arm.com>
- <20241210164144.GA16039@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=njS0+SpHUErdOsPZTHWbsKt3y82u17sF/AbUJimTNWFkH5dU64dbi6+UrFxO8tbbZRF8XJvNwyRFsWo3EhvBNB88LOXOOioZaqFZAMlz8To8Ck7v/X7FCnLLxixi8W6rgWgi5ZQmfldumOztws+BNFYyASF+Vzy0l+k7Rsyanjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+C7OCfU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1A6C4CED6;
+	Tue, 10 Dec 2024 16:58:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733849909;
+	bh=IH6nxTo0dSlu+DCh6FbNH7CPXaJy626QG94fPt1JanQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X+C7OCfU8szXuO9ID4jwF5opi+z2xyKyukPmYLXBVMv4/V98bPAMA0U+22RwAURzo
+	 dkW1L2Bubo6fFKeIawzr25D26KH9QgMNA2zHw3HipJ37W+3BrCZ9H5L1VmUKfnclJx
+	 V+t+CzQCANUj52tr/+h0LApYSpqxKpj1U9AH2z8aEl6MKNRuJB7RnpP4aLZpa68p87
+	 H5VTpcabaVZMaczOJc2W0VdBZIH2qw8Vz+oNrXI3Xq42ettDSeQbSewhzvaIk0bP1p
+	 urp7mMarApZ/fEBfW/O6PFYULo2EUKp0KXaS/p4t5OCtAxVRdaAieEJHMX1JpT1bNP
+	 TL1duNFJzPhQQ==
+Date: Tue, 10 Dec 2024 22:28:25 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the dmaengine
+ tree
+Message-ID: <Z1hzMRuORVOQvKLW@vaman>
+References: <20241209075036.055e0729@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,41 +58,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210164144.GA16039@willie-the-truck>
+In-Reply-To: <20241209075036.055e0729@canb.auug.org.au>
 
-On Tue, Dec 10, 2024 at 04:41:44PM +0000, Will Deacon wrote:
-> On Mon, Oct 28, 2024 at 11:04:24AM +0530, Anshuman Khandual wrote:
-> > +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
-> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
-> > +	ARM64_FTR_END,
-> > +};
+On 09-12-24, 07:50, Stephen Rothwell wrote:
+> Hi all,
 > 
-> I think I mentioned this on an earlier series, but it would be useful to
-> see some justification in the commit message as to why some of these
-> features are considered STRICT vs NONSTRICT and why LOWER_SAFE is
-> preferred over EXACT.
+> Commit
 > 
-> For example, why is EBEP strict whereas other PMU-related fields aren't?
-> Why is the CTX_CMPs field treated differently to the same field in DFR0?
+>   1ad2ebf3be83 ("dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA")
 > 
-> I'm not saying the above table is wrong, it just looks arbitrary without
-> the justification.
+> is missing a Signed-off-by from its author.
+> 
+> Scripting confused by the comma in the origin SoB line?
 
-FWIW, Anshuman and I discussed that on the v1 thread, after this v2
-thread was posted. Anshuman promised to provide some rationale and make
-some updates in the next version (i.e. v3):
+Yes I guess so, checked again yes b4 seems to eat it up
 
-  https://lore.kernel.org/linux-arm-kernel/8efe902c-8b9f-494a-b9da-430d8ced32ef@arm.com/
+> 
+> Also, please keep all the commit message tags together at the end of
+> the commit message.
 
-Mark.
+Again scripting is going bonkers here
+
+I have fixed it up now
+
+-- 
+~Vinod
 
