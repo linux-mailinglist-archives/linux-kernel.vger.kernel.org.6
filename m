@@ -1,98 +1,122 @@
-Return-Path: <linux-kernel+bounces-440058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FCC9EB81B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:19:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D01F9EB826
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63C52829B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E67282C4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D3B8632B;
-	Tue, 10 Dec 2024 17:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ED186325;
+	Tue, 10 Dec 2024 17:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Jy+8s1oj"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+lek6YZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F50F23ED73;
-	Tue, 10 Dec 2024 17:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCCD86320
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733851165; cv=none; b=IHrmSwcVDvRgJzjmGcC9tsGg5xc4tnKhSiHOyR4msCngdp6IxZjAML8TtbrkHmgHWW4zJxp3Obi4D1v7oH4jnEF5DQJk55ELe5Iu75XWl5++Pj9RfN7HVUyQ/mWN9ZSGKPJHujAqwo5OxAV8bCxnNJcUTgFpiBICuUxn1bJ67Cg=
+	t=1733851332; cv=none; b=N4xLeCQY96n05ElJcaswHKl7MN6oiZyLwyUJK27IVhaVii9yjwgbct6bn+qodHgsgSQDliuuh96daOsagmwBgXa6sjfQKMd4CyGBjcacrHdavuJSnh/FZXAJ81CKmf5eQZspIhhZ0SciFRfJmoooTO4CR0A+ptFtAa9N82XNS/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733851165; c=relaxed/simple;
-	bh=9NLcram25uGG4pJA65qR5hY7bjLt/TKcvouELSThXm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFkhdha0NDT9CCFiUSGOL+LdLUZEusdr+Ml7+x1QSn4b5NWzff1GvnJcIopqYcmQuuiZHAWg9KoeuX+La4g0+xpix92tX08Me2fNygJQRgiLNVperpQivH1qyecUw54c5CwH3EXM4uDxY25XMt2FovTx4Npr4yxeRjmWXjwI0c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Jy+8s1oj; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8FE5540E0289;
-	Tue, 10 Dec 2024 17:19:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 0jnBisfy_Cqk; Tue, 10 Dec 2024 17:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733851155; bh=rAzyiP+MOBHFa4O5i82TYJRQbhWHe5IRsXkt/3mioNg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jy+8s1ojKVZ6mdeKYesGtlBK4UWWKzHNOMwIDDLu2NiUgCEEKWZsMUEMiR+Ay3Bwt
-	 +jYD6gIob55rc/wc9tPjuNANpUQbnQvTGEMqbMMEvqWVaoaXyegdXk5BXREJM5ajy0
-	 mt7JsUOlx0evNc0ze42by7r9fMkcW+b/iWDsIAbuEwy5sawA37/xzTBKiBYgam2PWh
-	 KBRuzr54SYvJy+JbUHZB1O8hlHFAYOUwNw2QvmycugaQhrb55tH4UgzWCpnx3DGW9A
-	 UKb6YOFh7Qh65y3JjEAPHj65H8+dMI+9sC9C2efbuhFs/8XSpy75w6Zy37LRNXVpaM
-	 CEKjBhBWQPCyvCxvOWqdRuKIdsyfABPfobB2ZbMReSvoBa2AyyoRSIebYRmW0vI6nk
-	 VLzyER8gq+cbfZ5wlkciHA+mI3KHyuGSVSc7jjcP3h5j351+hgfx8qkOl79RFj1RZG
-	 OD2guCajHFRp7eEVq6JoKWRs/Xfx9kJJsZZ1E2roYvnPl5g5614+j9CcUEMFYekoTS
-	 nmOkwMX8sQeH393a7dXsl8Eorzv0CDj/ahc37uoqpKdUH0McsigbXkaU1TGSZRbTrI
-	 31+Fi9WruYIiikevYEwqYIhdjk/wQ5SQy2NxxzlRYZ9MqulbrfPAOqNcPEY22sfs8/
-	 mra+RYSeIOrNjj1XmHKhQqVo=
-Received: from zn.tnic (p200300EA971f930C329C23FfFEa6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:930c:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B405040E02B9;
-	Tue, 10 Dec 2024 17:19:04 +0000 (UTC)
-Date: Tue, 10 Dec 2024 18:18:58 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v15 06/13] x86/sev: Prevent GUEST_TSC_FREQ MSR
- interception for Secure TSC enabled guests
-Message-ID: <20241210171858.GKZ1h4Apb2kWr6KAyL@fat_crate.local>
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-7-nikunj@amd.com>
- <20241210121127.GBZ1gv74Q6IRtAS1pl@fat_crate.local>
- <b1d90372-ed95-41ce-976f-3f119735707c@amd.com>
+	s=arc-20240116; t=1733851332; c=relaxed/simple;
+	bh=JqwIwKHXQ3YYhSseR2XdZhg3K/koJuneICegfB3H4T4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HqSG61UshQfeXew81ppYy37x8rOg5YhZ/mucUVwBlzqgHu1HRp0LND1UARQXjZBGxXLZy4YiKiyjldA+lHa891ZtMNFufGTg2pJYID61DR8vUgX7SkyzXm0WFBGFPON+hRrkh456bHPH0p6YydCyaEx9om3bRgvqQZ84M/s9wL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+lek6YZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2644CC4CED6;
+	Tue, 10 Dec 2024 17:22:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733851331;
+	bh=JqwIwKHXQ3YYhSseR2XdZhg3K/koJuneICegfB3H4T4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e+lek6YZUxkVUzRMIXFqR1hnd/W83yhh5F6eGTgI+221+ilRenSkiPi06ZZt/0c1S
+	 R9W97UQX2a7d0raHssllgOPwaG51AAaJl6+v37OaZZOi7FJ/FqMjEMVHCmj4TRgluu
+	 OrsfUhG3mzsEr5X9zvd1i9zW5BFd/XaMA1qdNRcwwo5g/lYRmhUFotMg+jFDZI68+9
+	 pzUPnr1twoMP0KN/ZBQq8skmeeseMWRGHjZjQjG3AoDcQM95cUBZPPnww54BWapgRv
+	 Hg/CuFAB6GZnOTzO7GylRvGkMvu6+YLx5htrf/pQZbTzi7XEnRDun8nqW008Gq8ivH
+	 SXlYXBPg9DNig==
+Message-ID: <00beef4c-fef7-4628-854a-f3da3ba90541@kernel.org>
+Date: Tue, 10 Dec 2024 09:22:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b1d90372-ed95-41ce-976f-3f119735707c@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 1/5] ARC: Remove GENERIC_PENDING_IRQ
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: x86@kernel.org, Anup Patel <apatel@ventanamicro.com>,
+ Vineet Gupta <vgupta@kernel.org>, Brian Cain <bcain@quicinc.com>,
+ Wei Liu <wei.liu@kernel.org>, Steve Wahl <steve.wahl@hpe.com>,
+ Joerg Roedel <joro@8bytes.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Juergen Gross <jgross@suse.com>
+References: <20241210102148.760383417@linutronix.de>
+ <20241210103335.373392568@linutronix.de>
+From: Vineet Gupta <vgupta@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20241210103335.373392568@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 10, 2024 at 10:43:05PM +0530, Nikunj A Dadhania wrote:
-> This is incorrect, for a non-Secure TSC guest, a read of intercepted 
-> MSR_AMD64_GUEST_TSC_FREQ will return value of rdtsc_ordered(). This is an invalid 
-> MSR when SecureTSC is not enabled.
+On 12/10/24 02:34, Thomas Gleixner wrote:
+> Nothing uses the actual functionality and the MCIP controller sets the
+> flags which disables the deferred affinity change. The other interrupt
+> controller does not support affinity setting at all.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Vineet Gupta <vgupta@kernel.org>
 
-So how would you change this diff to fix this?
+Acked-by: Vineet Gupta <vgupta@kernel.org>   # arch/arc/
 
--- 
-Regards/Gruss,
-    Boris.
+> ---
+>  arch/arc/Kconfig       |    1 -
+>  arch/arc/kernel/mcip.c |    2 --
+>  kernel/irq/debugfs.c   |    1 +
+>  3 files changed, 1 insertion(+), 3 deletions(-)
+>
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -24,7 +24,6 @@ config ARC
+>  	# for now, we don't need GENERIC_IRQ_PROBE, CONFIG_GENERIC_IRQ_CHIP
+>  	select GENERIC_IRQ_SHOW
+>  	select GENERIC_PCI_IOMAP
+> -	select GENERIC_PENDING_IRQ if SMP
+>  	select GENERIC_SCHED_CLOCK
+>  	select GENERIC_SMP_IDLE_THREAD
+>  	select GENERIC_IOREMAP
+> --- a/arch/arc/kernel/mcip.c
+> +++ b/arch/arc/kernel/mcip.c
+> @@ -357,8 +357,6 @@ static void idu_cascade_isr(struct irq_d
+>  static int idu_irq_map(struct irq_domain *d, unsigned int virq, irq_hw_number_t hwirq)
+>  {
+>  	irq_set_chip_and_handler(virq, &idu_irq_chip, handle_level_irq);
+> -	irq_set_status_flags(virq, IRQ_MOVE_PCNTXT);
+> -
+>  	return 0;
+>  }
+>  
+> --- a/kernel/irq/debugfs.c
+> +++ b/kernel/irq/debugfs.c
+> @@ -53,6 +53,7 @@ static const struct irq_bit_descr irqchi
+>  	BIT_MASK_DESCR(IRQCHIP_SUPPORTS_NMI),
+>  	BIT_MASK_DESCR(IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND),
+>  	BIT_MASK_DESCR(IRQCHIP_IMMUTABLE),
+> +	BIT_MASK_DESCR(IRQCHIP_MOVE_DEFERRED),
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I think this leaked in here, needs to be in patch 3/5
+
+Cheers,
+-Vineet
+
+>  };
+>  
+>  static void
+>
+
 
