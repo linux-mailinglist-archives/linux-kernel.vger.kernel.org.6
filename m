@@ -1,107 +1,81 @@
-Return-Path: <linux-kernel+bounces-440286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614D29EBB43
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:56:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4D69EBB45
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20B228293F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F8B0283C79
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CDF22B5BB;
-	Tue, 10 Dec 2024 20:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6359722F3AE;
+	Tue, 10 Dec 2024 20:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/A5cgp9"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j9AdDqLp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FE422ACEB;
-	Tue, 10 Dec 2024 20:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217F122CBDC;
+	Tue, 10 Dec 2024 20:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733864197; cv=none; b=Z/CzGTK3emGLd2i7NPsY/J3SMvsnIFJhvMiMwqHFFzJ3NVRODYKAC4T+3r3ft0trVFNX5FWktrTCkxwm2kJR4Qt0NdUuCctr0du0c3Kzp5JDZZXS//YN46eU0tGKDcWibEp3013KtjZC+WlERTozRLyw66CspSav0u+iWBp4QfA=
+	t=1733864200; cv=none; b=C2Kgf2RDQPYEHIfRcnBlFzqddL0SjRtWQDuzVg3oN6Xv6kNezEVcvByzf1VXhgRxVqdfqxhv3tkKp8KsBqRpK7imSFA5otPZaK6sldQYt36Rk2YdoBF6DsuwADcP4KuBTqxf1pCsnmOvxbTHxGA8zyOdxS2SvkH+sTmg2nTrAyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733864197; c=relaxed/simple;
-	bh=tPvcnCxzks7PcExkMvBzhiHrl0pQoDRJidYEOXPc57M=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9dXSN+RgfpjmxQK5UebjrqYNYV4UbJC+qNJNB5kyUwxe1ARNWtj2Q/CJ/kZ+cbkVYqDjT8KwQI5rdafxzBTEcFYJ68euBlryavAm0hMwzTdThqY8FtalQpUab9kDwGdFiIIBKyxExWLDcO6kf9mUsz6Ke1prztFBFjFq6FD778=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/A5cgp9; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a736518eso67288555e9.1;
-        Tue, 10 Dec 2024 12:56:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733864194; x=1734468994; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wa1C0CK2LUPWgoQl8J3ltgkkEcHnA6/0miJrX+XQgJM=;
-        b=Q/A5cgp9CThNeBT+GyycdKtkRyNIWygP70V2WesA/n6Crcx8n7KnMr2ImKG+RSdne2
-         gY58aa95VWr6FTaG2RYHRhsWdhU1YvmibD7Baj77frisVhCZLuUc3vkxFyEaZjaQts2B
-         e5MLoqrL6yI3HnPt/A/oLFQgFpguu7IDtRejYtiPaYuD/QjhKZ6QEXnvDc24JK7yEkQj
-         KjgnfGiJCq8w00IwVK9M81XCf0QwDI45iL+HpReL0VUEpH0m9OQkNreSXwxFXvseOTyx
-         eLLulq6GxwPRLBdCyx1cf2UjHdat9Lkz3llJ961szlPl+oEkS6BLUumMGP6nSrqutVra
-         bJJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733864194; x=1734468994;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wa1C0CK2LUPWgoQl8J3ltgkkEcHnA6/0miJrX+XQgJM=;
-        b=HALZt4DYr3CAGR4pb+XwmqJ5VB0YcvATZDzSLuogB/suZr5kk2yfhfPwXb7esbCTB5
-         fyQRCfGO85gGnouaU7uuzgtHhJHxk6quxTl56kE692o1iD8H7aDQizU25a3UtXcjuZkg
-         W9QXTm6sp/c3E7KU7huhqsLnEbWpzpuYMUW9+w52es3uz637g2kSv8igfzvJtt/xOgg8
-         ok+cdIQK46usScKDvy1R2KiuUCxU5zDyCzRxa3L+9PecoI2bCtEBOqX2GBFiQ9p2MjX9
-         RDn4vIqnetJ2O5+Q6GztBgA/gw3pgxSJIq8rvN0zwgw+50D7M2f+2mc4Ny7hsPuObGP8
-         rO4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Mg5crVMpM+sxhlqgBX1Sb2hp5p3mBGM4+EQIVxc40ZJKxKRxmSer9ZTTSeFLhXYo0eq9zYwLMsrw@vger.kernel.org, AJvYcCVhbEJYCTuyQkJkDYvw26Vl2KfOj773CkWeZQ2OVoPtODNu0Aw2wrZwjpGuBmgHNtux1XKhSSPW@vger.kernel.org, AJvYcCVmOgeQw/saEom2tq43q4sWkiECzgzvj2IYjj+5EN5mAaG8VbN7NluI8R/fsvkPvl9i0hCSSHGrt12tXDhU@vger.kernel.org
-X-Gm-Message-State: AOJu0YykyZXCK483I1ViXxuhpLeCBFZ5oZ+XZ5eMSsjKQAYFGvQiCnPW
-	XSqLbX4gQDMsSafiWtX+l6eSsKMuNDNKmB/G56AcM9Hy+XhH96Xa
-X-Gm-Gg: ASbGncvQk5h6JdtFqMHedbAYaMZYG78RhuN38a+CiPJ2Ot434KKDgVv575+NFoxKyZQ
-	h+RnpxcSfEXUoFxVdk518RHJtkUBarFooyXRAbipLZm5RTfyFp6jYtSbH0yvgN8i5BYoiSyGQ7J
-	H0VKtNO/bheEw/zWaN7t1JvPJL0EVtHjW6fsME5xt8m94WzBDySlZhzYxZ9mWQfnQ1FiyFcSy0q
-	XVQ+HPLKKa0btqFw5AVw0C+ZiYld3yWe5a7tgyVr5VOfa53mBSh8+gcKnVfC9lFYYlMoSUsphcF
-	yr7w98R+Qw==
-X-Google-Smtp-Source: AGHT+IFO9JdRbxTE32/Wvk1uVcdsvnlU93WdY8tnjY1ZWyo8G3dYd8QPxRdPIKttUVaFIptDS6Wn3w==
-X-Received: by 2002:a05:600c:3109:b0:434:a04d:1670 with SMTP id 5b1f17b1804b1-4361c2b7e29mr2708705e9.0.1733864193989;
-        Tue, 10 Dec 2024 12:56:33 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434fb066874sm69945475e9.32.2024.12.10.12.56.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 12:56:33 -0800 (PST)
-Message-ID: <6758ab01.7b0a0220.b8716.380c@mx.google.com>
-X-Google-Original-Message-ID: <Z1iq_jC0bK47OJ-a@Ansuel-XPS.>
-Date: Tue, 10 Dec 2024 21:56:30 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-References: <20241205162759.pm3iz42bhdsvukfm@skbuf>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <20241205180539.6t5iz2m3wjjwyxp3@skbuf>
- <6751f125.5d0a0220.255b79.7be0@mx.google.com>
- <20241205185037.g6cqejgad5jamj7r@skbuf>
- <675200c3.7b0a0220.236ac3.9edf@mx.google.com>
- <20241205235709.pa5shi7mh26cnjhn@skbuf>
- <67543b6f.df0a0220.3bd32.6d5d@mx.google.com>
- <20241210203148.2lw5zwldazmwr2rn@skbuf>
+	s=arc-20240116; t=1733864200; c=relaxed/simple;
+	bh=+trftT/A5eeKZmoRuAbn6h89guEn6f9AB4cq8MitB/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jkvxac5Yp15xlLi8TrT++SSPXgJgbWma7sko0eTS1PvAozob+9+CxiWq1OcZf7DeDUi5TTipq5dwzZasC//PSKQJXaJZhNWsMpaSJFBDzLNq0bj0tyBzGzbjFboXWYTHb8CgtepTLv0xGP4Nx6Z3PiKYCKehhjt55FANX8qtIFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j9AdDqLp; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733864200; x=1765400200;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+trftT/A5eeKZmoRuAbn6h89guEn6f9AB4cq8MitB/g=;
+  b=j9AdDqLp+YgvZa/uy15pdK//mxolQRPoH6r881v6KE7VXyyTRLsJw489
+   TgxHNO2g9xCyRRkgZxlq5uer1SZJzQhxZWeDlI4xuq5QnGcC0yC5PXvrm
+   uGsrF4GfPzNEMPsKEnVOnazebTuzCj670zYPeraOsohyysz4IEnRMN5ka
+   uvQE0Lp0pq7BmlO4rnG8amUOgh4GtQ7H9hO1p73LCcCSWF5smmLBoWN0s
+   cjUqt7U3wF6ENcIShAM1DEikV6HSwz44DCYfBg1cYX5uCX2XtaKGmBH5s
+   h4OczGr/bOyzUSwQJO3zmoa4SN7uzx0vsEWhGdWIon9N8QP3f8OoN3BHt
+   w==;
+X-CSE-ConnectionGUID: /Hu34bG6S5GNYjmwUiDYRg==
+X-CSE-MsgGUID: l/J2We1DRc6jqANm35ougg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="37915895"
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="37915895"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 12:56:39 -0800
+X-CSE-ConnectionGUID: 50u5dATqRFyaflnCQ/LHVw==
+X-CSE-MsgGUID: v5uzMed6QuiUyLTvHJuKxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="100034841"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 12:56:36 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id A77AC11F81D;
+	Tue, 10 Dec 2024 22:56:33 +0200 (EET)
+Date: Tue, 10 Dec 2024 20:56:33 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 4/7] ACPI: header: implement acpi_device_handle when
+ !ACPI
+Message-ID: <Z1irAT0KVwqhBSSZ@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-4-00e409c84a6c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,29 +84,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210203148.2lw5zwldazmwr2rn@skbuf>
+In-Reply-To: <20241210-fix-ipu-v3-4-00e409c84a6c@chromium.org>
 
-On Tue, Dec 10, 2024 at 10:31:48PM +0200, Vladimir Oltean wrote:
-> On Sat, Dec 07, 2024 at 01:11:23PM +0100, Christian Marangi wrote:
-> > I finished testing and this works, I'm not using mdio-parent-bus tho as
-> > the mdio-mux driver seems overkill for the task and problematic for PAGE
-> > handling. (mdio-mux doesn't provide a way to give the current addr that
-> > is being accessed)
+Hi Ricardo,
+
+On Tue, Dec 10, 2024 at 07:56:01PM +0000, Ricardo Ribalda wrote:
+> Provide an implementation of acpi_device_handle that can be used when
+> CONFIG_ACPI is not set.
 > 
-> The use of mdio-parent-bus doesn't necessarily imply an mdio-mux. For
-> example, you'll also see it used in net/dsa/microchip,ksz.yaml.
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  include/linux/acpi.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> You say this switch is also accessible over I2C. How are the internal
-> PHYs accessed in that case? Still over MDIO? If so, it would be nice to
-> have a unified scheme for both I2C-controlled switch and MDIO-controlled
-> switch, which is something that mdio-parent-bus would permit.
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 05f39fbfa485..59a5d110ff54 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -787,6 +787,12 @@ const char *acpi_get_subsystem_id(acpi_handle handle);
+>  #define acpi_dev_hid_uid_match(adev, hid2, uid2)	(adev && false)
+>  
+>  struct fwnode_handle;
+> +struct acpi_device;
+> +
+> +static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
+> +{
+> +	return NULL;
+> +}
+>  
+>  static inline bool acpi_dev_found(const char *hid)
+>  {
+> 
 
-What is not clear to me is where that property should be used in the
-code or it's just for reference in DT to describe what is the parent?
+Please remove the extra forward declaration of struct acpi_device a few
+lines below this.
 
-Given MFD implementation, I pass the bus by accessing the MFD priv
-struct so having the parent property is redundant.
+With that,
+
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
-	Ansuel
+Regards,
+
+Sakari Ailus
 
