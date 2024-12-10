@@ -1,161 +1,113 @@
-Return-Path: <linux-kernel+bounces-440070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087A29EB84D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:31:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A63C9EB856
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:32:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB66B2857BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169D218872FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948961AAA06;
-	Tue, 10 Dec 2024 17:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E8B14A60F;
+	Tue, 10 Dec 2024 17:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7rwvAvr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyVG0jw6"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63901990BA;
-	Tue, 10 Dec 2024 17:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5926023ED6D;
+	Tue, 10 Dec 2024 17:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733851886; cv=none; b=EggjCAv1WTIK7bypZtIYVbvcEfpJZGp+g7PI4bwEu8QeHhnHOsdGq1viASKmhoBEn8Ckfy47qJQFsKwylUmiqFprTs52oFZAaXEDmxDzxDAdYNeoggsZGq/0/acGmUrpdaiLz1V/r7lrWhZq63tImQC75j6y0ZahYCsgSug5Dz8=
+	t=1733851956; cv=none; b=lHKbz55kRhOPPqjTEgR7KBAo+SaisagXqvBcRqJwBJueOHAj13eYQF0r3fC52lfsCTz2zZv24zuv3iOrmRzI+3FXpXYbfYILTtAkj0FnsUzhH7w4/K2o4ZL5m76wGiBdqYLi2JC19k9dxnB3fpTIupLI6+FnqNvHdFE91wJs7Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733851886; c=relaxed/simple;
-	bh=DuBdlT+k6TDL3ybELXaf3EyWiycHlo9VKr61ZHOmzqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=lEn2IGX/yid9TnhzWcA3uUpOndzz5oeqAFCCLxmxCgDpVpjU0xOAS1uzhSTB9oIAUKKTLFauJypv1DXMmCyELAhR+HV//502gYoHWSc3lbeP2yZ0yM9o4PuEpFJt/Ax10VQU60C0oliky2A+3Nwg0R7jClfUkEaUXJhItbxE3LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7rwvAvr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9F5C4CEDD;
-	Tue, 10 Dec 2024 17:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733851885;
-	bh=DuBdlT+k6TDL3ybELXaf3EyWiycHlo9VKr61ZHOmzqI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=u7rwvAvrDmwsGVeL9KORiux9PdU5c0Jz5MVI/MTPKUOA/8/SA2I5FiDLLrcyssx2m
-	 TTTRY1hm2x5TzBu//inrGvww2OTIK4/q4vRJh6+xbkIzMzK6YKdNnU56B5MC2/fSUz
-	 jLoDp8Zt7LdKbXQFipYs4Ss1g7S/wbYXMDJxiFrVG2OHhuJItj2s/Ph1cS2fGQSrF0
-	 UvKGW94k3B/dXFvKP/owrasdIEnx48Wd/vIahARjJNkbd5TPzxWWD+AwnEdSYo+UYQ
-	 W9jbhPX0IuGvTjGEwjtWzn9jIudc/8TAwVJhX/IrAWay6OcR9dquLF9BbhTS6vLCoJ
-	 6DJV/yhON5qOw==
-Date: Tue, 10 Dec 2024 11:31:23 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Chen Wang <unicornxw@gmail.com>
-Cc: kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, bhelgaas@google.com, unicorn_wang@outlook.com,
-	conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
-	krzk+dt@kernel.org, lee@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, pbrobinson@gmail.com, robh@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
-	fengchun.li@sophgo.com
-Subject: Re: [PATCH v2 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-Message-ID: <20241210173123.GA3247614@bhelgaas>
+	s=arc-20240116; t=1733851956; c=relaxed/simple;
+	bh=gTC2WbHsHIxo2KUcFsBzSif50gSYtUeB9LXwHQ9ABW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BLm+prdQa8L4L/Lk/PkjELpyzQU3H363Np57WcFpiy5xvXRFD3esYue7z22TpFlbhdxmT6G2v5y3P65drpbDRvOEZAt8Kz+ZakL7uSpWRfJzTy6hLjGqGFZ4vUef7DH1G0tKHn0bfFfJaWDDVuaa8cWL3QQBKjLlM9s2Z5OmIwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lyVG0jw6; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e3990f53d30so703274276.1;
+        Tue, 10 Dec 2024 09:32:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733851953; x=1734456753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=riVnafjJmAbE5C8uQj3rW4S2epeHRFSM2DiMxirvVAc=;
+        b=lyVG0jw6rBxOIjmM7RWSTTUcdL9S18N5ii4jY9A2ovlDB2/wyMKhqoOEkucA8W1jlA
+         auZ+0SPVCSHjbOwUbmoU0kQ02OUI8k29eDtnp9lDVQo4R4qI8AWROSOmCwlWvH7oFs+H
+         K0BWNBzjuYOI7qgzRFxf6VEGDJ/9ATb3w4Huhqsvlq/+WmvGycPqgXZEGBDrLZRGJYKB
+         XA+6ap+Kc9IK5pxFkptAv7nIZ7/meq31VSR173WMIt54MHpGtU/FdvZ9h5kwugCNFuFU
+         j12+h1URd/5DpG4CWYNGEaHESf9hZtNrMN1Zg5aIirYTlyoi22gmbLRyJGQPqgMKGP1q
+         au2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733851953; x=1734456753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=riVnafjJmAbE5C8uQj3rW4S2epeHRFSM2DiMxirvVAc=;
+        b=TjJ1wE/510dCOP0zLEzqpK69aZMh6UuCP5OJFlNtqts8giTY8veJKX1APkj9WuJNIx
+         8CDTVdONjM3rVhUl2BVPgWvzOEI8Dc2qz+V1uzrOIDlqtGpn8584nQifCLp/ucNfioHU
+         ThlrV43XPFUv7cf8yMua3J5dUxXowOmhxVJ0Jb8MquMYdzjqhWhxnCaxDZedEs8EQ3ua
+         NEKzeg+NWspe7SkkwaRmnGdfF0gzqTijM+oUYF+fcLu4MdKClhnTEqbbRsYpVznSZr3p
+         bXwx2Pj6ahS2ECLszgJ5iFLX0qI7UkzrpvQpPDt7h5k8LPUZykKheZat5V3s/wveAm0q
+         ljgg==
+X-Forwarded-Encrypted: i=1; AJvYcCV07bAMZJXxMYS/3oo2Lv8o/dbx7PHEy+Tdvy4OrAohv4L/r0p6I0UIu17NBUkYIgBFuawrdLUgHgXvbHwB@vger.kernel.org, AJvYcCWAyHfdFjaY6XT/cuXrZ4Vor1VmhclqeHySnN/xCrak/m0u60ddw9pA5hY5lK3WPxAhdGAvYWR0oAtm@vger.kernel.org, AJvYcCXGv5c2mCgKDjnuh4vn0Kvq0ABTbippHp0PZBWyoZHD154wBp5ntMVkwNtaTvhvzuuiushYxjhdmOxI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTeiAp/2XatG0DGWiLIjj8+IgU2i6lSQ4SPmXqMHUYzZxZeCb5
+	6NWqNI1AWjeaX6N7eojgE/1U+np2quT8QxA6tPhfOZ1+eaAGwbh6NWad3vSVcPIj5ZDsn3qBOQY
+	jliqqLbMhJk7DNBPfMfUGlPKeXpw=
+X-Gm-Gg: ASbGncsSf+e/RTWn1xQS4nLUBxR6ZSOnYSjjbbUkTEvNu1SlYGa+x9l1K1rNxvhNYjX
+	3T+fXpdSI1jdN5kelOnrRp/0OqKoJp0qHXGI=
+X-Google-Smtp-Source: AGHT+IElEqNpYwYR/RLezdGqAkAtOtqt+SgPG0NdRzzrAOgBGD3TTo394TeFkpEr6ceht5/A2akYwBM00eY+33kThTs=
+X-Received: by 2002:a05:690c:3302:b0:6ef:97d0:a989 with SMTP id
+ 00721157ae682-6f024e6c89amr17580847b3.4.1733851953190; Tue, 10 Dec 2024
+ 09:32:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d82eff3670f60df24228e5c83cf663c6dd61eaf.1733726572.git.unicorn_wang@outlook.com>
+References: <20241205171343.308963-1-l.rubusch@gmail.com> <20241205171343.308963-3-l.rubusch@gmail.com>
+ <20241208132750.24ff93b8@jic23-huawei>
+In-Reply-To: <20241208132750.24ff93b8@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Tue, 10 Dec 2024 18:31:57 +0100
+Message-ID: <CAFXKEHZu7SFx9DS3-cy-=JXSRL6CD0L-WG_BACNa=0w9f_yOEQ@mail.gmail.com>
+Subject: Re: [PATCH v5 02/10] iio: accel: adxl345: rename variable data to st
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 03:19:57PM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> Add support for PCIe controller in SG2042 SoC. The controller
-> uses the Cadence PCIe core programmed by pcie-cadence*.c. The
-> PCIe controller will work in host mode only.
+Hi,
 
-> +++ b/drivers/pci/controller/cadence/Makefile
-> @@ -4,3 +4,4 @@ obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
->  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
->  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
->  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
-> +obj-$(CONFIG_PCIE_SG2042) += pcie-sg2042.o
-> \ No newline at end of file
+On Sun, Dec 8, 2024 at 2:28=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Thu,  5 Dec 2024 17:13:35 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Rename the locally used variable data to st. The st refers to "state",
+> > representing the internal state of the driver object. Further it
+> > prepares the usage of an internal data pointer needed for the
+> > implementation of the sensor features.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> Applied to the togreg branch of iio.git. Initially pushed out as testing
+> to let the bots take a look.
 
-Add the newline.
+Should I actually drop the "applied" patches in a v6? Or, may I keep them?
 
-> +++ b/drivers/pci/controller/cadence/pcie-sg2042.c
+I see that Dan Carpenters smatch now comes up with some issues. So, do
+the fixes go into v6 here, or better separate?
 
-> +#include "../../../irqchip/irq-msi-lib.h"
-
-This is the only file outside drivers/irqchip/ that includes this.
-What's special about this driver?  Maybe this is a hint that something
-here belongs in drivers/irqchip/?
-
-> +#ifdef CONFIG_SMP
-
-No other drivers test CONFIG_SMP, why should this be different?
-
-> +static int sg2042_pcie_msi_irq_set_affinity(struct irq_data *d,
-> +					    const struct cpumask *mask,
-> +					    bool force)
-> +{
-> +	if (d->parent_data)
-> +		return irq_chip_set_affinity_parent(d, mask, force);
-> +
-> +	return -EINVAL;
-> +}
-> +#endif /* CONFIG_SMP */
-
-> +static int sg2042_pcie_init_msi_data(struct sg2042_pcie *pcie)
-> +{
-> +	struct device *dev = pcie->cdns_pcie->dev;
-> +	u32 value;
-> +	int ret;
-> +
-> +	raw_spin_lock_init(&pcie->msi_lock);
-> +
-> +	/*
-> +	 * Though the PCIe controller can address >32-bit address space, to
-> +	 * facilitate endpoints that support only 32-bit MSI target address,
-> +	 * the mask is set to 32-bit to make sure that MSI target address is
-> +	 * always a 32-bit address
-> +	 */
-> +	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
-
-Not sure this is needed.  Does DT dma-ranges not cover this?
-
-> +static int sg2042_pcie_setup_msi(struct sg2042_pcie *pcie, struct device_node *msi_node)
-
-Wrap to fit in 80 columns like the rest.
-
-> +/*
-> + * SG2042 only support 4-byte aligned access, so for the rootbus (i.e. to read
-> + * the PCIe controller itself, read32 is required. For non-rootbus (i.e. to read
-
-s/PCIe controller/Root Port/
-
-> + * the PCIe peripheral registers, supports 1/2/4 byte aligned access, so
-> + * directly use read should be fine.
-
-s/use read/using read/
-
-> +static int sg2042_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct pci_host_bridge *bridge;
-> +	struct device_node *np_syscon;
-> +	struct device_node *msi_node;
-> +	struct cdns_pcie *cdns_pcie;
-> +	struct sg2042_pcie *pcie;
-> +	struct cdns_pcie_rc *rc;
-> +	struct regmap *syscon;
-> +	int ret;
-> +
-> +	if (!IS_ENABLED(CONFIG_PCIE_CADENCE_HOST))
-> +		return -ENODEV;
-
-I don't think this is needed since CONFIG_PCIE_SG2042 selects
-PCIE_CADENCE_HOST.
-
-Bjorn
+Best,
+L
 
