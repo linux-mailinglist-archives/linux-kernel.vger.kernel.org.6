@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-438867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F169EA7B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:23:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2699EA7C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:25:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE8B1889334
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE471673BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1A7226179;
-	Tue, 10 Dec 2024 05:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EF2226187;
+	Tue, 10 Dec 2024 05:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyrLzzFb"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SXf6BTqq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4E523312A;
-	Tue, 10 Dec 2024 05:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492BD1D9A40;
+	Tue, 10 Dec 2024 05:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808226; cv=none; b=gcV/xBifXOO2tdBeg0wMs01DoK4yMot99Z6P6a+SuWlr9rNhGkpVxN5VY+cZDtbObxhhw4e3IQ3S/s02haYwYcRU9IgcFSmXSr+h1hjCsYEksUSfp1lV7Bjq4VvjZ2FFyI7TaOREvwUVsQAr0IrsePhqWcs+Y/EluhERGKeSJZs=
+	t=1733808291; cv=none; b=GrjLwaCSbS4Px0X53OCohhW0e3rL9bpPuPco77jiALvCc3L3fC2hJJ1K7T3T6Lll72s2pOHBCkMdNtXQhYjjXslKEAtTkaqP/ZTml4a8JlTVCPGKWI6LcX5jsD2MyfQj5750i73avyuTNrvLNVE9dZT4dJc7aMEr2q0xig9kU+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808226; c=relaxed/simple;
-	bh=xqYv6QgBXA4t3Jg7VQbQP9HP/CtdPar1I9KrW8+WJg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nay3n8+vGnKImrPmzUGTB1YU57ZIVsQKS4C75qP7fPzlzH8hZ5/Tmd/56AXhVRPoL5+IuliAR4aNrAFn5G0gOP+Fh8SAIczqe/hJyP4MB9ozG0+NFzrs0+aXMwImlcSzxvBRa+P9VDqDRaQqq9zjWJrWleWmR2FUPP3NKZJnsWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyrLzzFb; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7258cf2975fso4450416b3a.0;
-        Mon, 09 Dec 2024 21:23:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733808224; x=1734413024; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KBU1UAuy5MjYfrWbZjh4/sgnYH98b4q96SgJM7Z+66M=;
-        b=RyrLzzFbhV0/PAuFe1KXkP49GhmrcgvYf2azs8f3u896SOn3fep1fEkpnRnQakhra6
-         XAEyPjbBf2pPAR/Wqox59p2qyTQFcqenK+osRgtEBQ7UT3yBuQEdJC3JV+6ZC9DTSUUd
-         fxpvhv1Y28uCAvFqP8wKfs8n3DfhYc0gq3y5eV/dichK5Q/BLBr7a8rWTzTRaT9PPV3N
-         iuokewb7KBx2fwykyYgBk8qnlgcdQlv8pR8faP8QWY4DZitHRK8svMSRAyCOayl8PlP/
-         lcU9c9bcxn5QGTSndPVh4/OSOICppc3kT4D+teaAhxvJtfedF44k10YRXgQ56M0ohbcw
-         tpdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733808224; x=1734413024;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KBU1UAuy5MjYfrWbZjh4/sgnYH98b4q96SgJM7Z+66M=;
-        b=k3ZO42ydTOaIinVnuhJ+XmguzLgNxPLybpC98xJeOISG6k5t65QiST6PXP4op7ok7V
-         E0FQu3u/xlgaM9RWNY+YlSr7vFmt+obHFppt4xB3vkasjLJ0+UiQZpq+fDxt2Cpr+/Dj
-         6AOT46TWpUN6NrsxqkaVkUa/usmN5oKEjrrGw5S7SB+3QlnqaGa9Kx4vK6DZEyUaV7cD
-         +Dv/lQf8CqLeT97WQc3Yn5X4lNldH7djw8FMRn3rciwV70kEIQoBkfJd4gLZm6h5eSau
-         YxDyQif1/zTIl5QorknYu052vlA7ZKBSSgBgn5atylMA8DAr8jYN1PfTeK5tmPsmhNKI
-         vO7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4R/OgDgCeh/aIqs+NRANC4y81tL403ieP2X7KcW9jYHh0EriUUY7jy4ChUWSjgj3zoBGizYoA8kBj@vger.kernel.org, AJvYcCV8U/X35Jy8CbZ1CqwB2k8e+LS5BDJLY5vUZfpzhEgK6O77HdvT6QUiYgFwC6Kp1c/uJtNINqmQQIYAAfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE0yrrzL1eeA4Pl2vGdwMzWLkgb9JS3SHGAiK1BzBnE3/GTeN4
-	2dEsCRURqPBkZ6LzxdH8uCSKuaAz2VdshS3slPtJ07rU2UAd8D6M
-X-Gm-Gg: ASbGncs3demOJ5H+UdR+SLKRQOWXM8Zu7HMimxwwUO3QM0wLC0QCOQaM/Be6iFejegQ
-	twuykLumEEejE/aY3wgT/M0AWpOqPEQbx0u6MO5NOXUoJu/Bh797RZsC6ljqgoef+IxHVdVYMPp
-	PMo2sJIV4t+IFYq/fORu3yRIwdJ4tmsqqo2eyVc8+8ixxPIPLhFKVAZdH32JvxH1ib+rKgTvsOm
-	lIGLRD58mx5+rcTIYoNC51d1U5B87N7W8S7/EsoOU6XNJ1bndMDNW8JwcCBIrQNmJWJ1FNsFHLH
-	OqKOQATeLeB4siO7Cbx6Fx1BYZWd
-X-Google-Smtp-Source: AGHT+IFRDtAZUHy67YBIFMjYuSZVAM9Ll94FWK+XfQgDXiw8IJ+uc/Rits4ApUB7XKhyFdVb7YNsBw==
-X-Received: by 2002:a05:6a00:c8c:b0:725:f18a:da52 with SMTP id d2e1a72fcca58-7273c8f4d8cmr4767471b3a.4.1733808224007;
-        Mon, 09 Dec 2024 21:23:44 -0800 (PST)
-Received: from [172.19.1.43] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725cb065fbdsm5359995b3a.39.2024.12.09.21.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 21:23:43 -0800 (PST)
-Message-ID: <274c7ba7-dd7a-4981-95a8-38ed953a7dbc@gmail.com>
-Date: Tue, 10 Dec 2024 13:23:39 +0800
+	s=arc-20240116; t=1733808291; c=relaxed/simple;
+	bh=DAxhrU8nYe3wIVwTN/sHDUPcQXoFKKbHmXYU8frJH4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTCKoZKvZivP+V4GlMSiLa+JSYMjZlhySwRHLAU2ZsSyr4NX7U+43e1RtuKyEAL8gwJeKtq67Tbculv5P6EUae9jpTaosgNQEQe2Q9T1X75NpNv2xx0wAHR3uujr/Z7z8QjMoLmHVdODDJGXYxl37SA4kuIb6ccPb5PrnojnYCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SXf6BTqq; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733808291; x=1765344291;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DAxhrU8nYe3wIVwTN/sHDUPcQXoFKKbHmXYU8frJH4s=;
+  b=SXf6BTqqt3Qnx3YmO1u/cfFRn+xCztCQ5xfxwojDjulJxscLVjgAgzx7
+   Gun9e9QGeJ/MA8cJT6TKI9JvUJTRPauaNipUInZoNkEUK0mNnfBjKedZK
+   wwiCSs2rmSyzJtvImtdCV3ulcPhBGQlYsdhR+Gqd+8XC6QsGZiqfCgVwh
+   AKNUF82JswU1SvYJQhCygzDVZ8caoKE2f7/VKQjGNIwJBDbVdtzGAT0Ld
+   GsDndVgB/l6/GtyX4ISQ6kPWtGB4Wd8x/jjgi2O518Mn46vOeIl6RJ+kj
+   iCXpgt43ngpYR7YDdg5PwzDuPV+HkYVCpKTZzNgw8aB1LaMpohVXOe4qL
+   w==;
+X-CSE-ConnectionGUID: B/JfgfNNTOah+X7GUT2+ug==
+X-CSE-MsgGUID: O4zHj/q/TcKCAKB6+A1B0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45517234"
+X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
+   d="scan'208";a="45517234"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 21:24:50 -0800
+X-CSE-ConnectionGUID: yT3wQW55SUqvh5zoMS2Sng==
+X-CSE-MsgGUID: atNr2jojQd+IxiaOFRtDGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="95490968"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 09 Dec 2024 21:24:46 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKsjj-00058n-1q;
+	Tue, 10 Dec 2024 05:24:43 +0000
+Date: Tue, 10 Dec 2024 13:23:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Inochi Amaoto <inochiama@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 2/2] clk: sophgo: Add clock controller support for SG2044
+ SoC
+Message-ID: <202412101358.czZY7XmR-lkp@intel.com>
+References: <20241209082132.752775-3-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- sudeep.holla@arm.com, arnd@arndb.de, peng.fan@nxp.com, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, dmitry.torokhov@gmail.com
-References: <20241204021014.5083-1-mjchen0829@gmail.com>
- <20241204021014.5083-3-mjchen0829@gmail.com>
- <2a47hwrbl3r6h5umwikt7bd7rp3njj6wnlo5e67f5kl6zhaq7g@cnolynoswb37>
-Content-Language: en-US
-From: Ming-Jen Chen <mjchen0829@gmail.com>
-In-Reply-To: <2a47hwrbl3r6h5umwikt7bd7rp3njj6wnlo5e67f5kl6zhaq7g@cnolynoswb37>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209082132.752775-3-inochiama@gmail.com>
 
+Hi Inochi,
 
+kernel test robot noticed the following build warnings:
 
-On 2024/12/4 下午 03:49, Krzysztof Kozlowski wrote:
-> On Wed, Dec 04, 2024 at 02:10:14AM +0000, Ming-Jen Chen wrote:
->> Add YAML bindings for MA35D1 SoC keypad.
->>
->> Signed-off-by: Ming-Jen Chen <mjchen0829@gmail.com>
-> 
-> 
-> Repeating same comment third or fourth time is a waste of my time.
-> 
-> NAK.
-> 
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion and
-> either implement all requested changes or keep discussing them.
-> 
-> Best regards,
-> Krzysztof
-> 
+[auto build test WARNING on sophgo/for-next]
+[also build test WARNING on sophgo/fixes clk/clk-next robh/for-next linus/master v6.13-rc2 next-20241209]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I will carefully review the v3 discussion thread to ensure that all
-feedback is properly implemented. Once I’ve addressed the issues, I’d
-like to confirm the next steps with you:
+url:    https://github.com/intel-lab-lkp/linux/commits/Inochi-Amaoto/dt-bindings-clock-sophgo-add-clock-controller-for-SG2044/20241209-162418
+base:   https://github.com/sophgo/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241209082132.752775-3-inochiama%40gmail.com
+patch subject: [PATCH 2/2] clk: sophgo: Add clock controller support for SG2044 SoC
+config: parisc-randconfig-r053-20241210 (https://download.01.org/0day-ci/archive/20241210/202412101358.czZY7XmR-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.2.0
 
-1. Should I drop v4 entirely and submit a revised patch as v5?
-2. Alternatively, would you prefer me to resend v4 with the necessary
-corrections?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412101358.czZY7XmR-lkp@intel.com/
 
-Please let me know your preference so I can proceed accordingly and
-ensure a smoother review process.
+cocci warnings: (new ones prefixed by >>)
+>> drivers/clk/sophgo/clk-sg2044.c:133:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
+>> drivers/clk/sophgo/clk-sg2044.c:149:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
 
-Thank you again for your guidance and understanding.
+vim +133 drivers/clk/sophgo/clk-sg2044.c
 
-Best regards,
-Ming-Jen Chen
+   126	
+   127	static unsigned long sg2044_pll_calc_vco_rate(unsigned long parent_rate,
+   128						      unsigned long refdiv,
+   129						      unsigned long fbdiv)
+   130	{
+   131		u64 numerator = parent_rate * fbdiv;
+   132	
+ > 133		do_div(numerator, refdiv);
+   134	
+   135		return numerator;
+   136	}
+   137	
+   138	static unsigned long sg2044_pll_calc_rate(unsigned long parent_rate,
+   139						  unsigned long refdiv,
+   140						  unsigned long fbdiv,
+   141						  unsigned long postdiv1,
+   142						  unsigned long postdiv2)
+   143	{
+   144		u64 numerator, denominator;
+   145	
+   146		numerator = parent_rate * fbdiv;
+   147		denominator = refdiv * (postdiv1 + 1) * (postdiv2 + 1);
+   148	
+ > 149		do_div(numerator, denominator);
+   150	
+   151		return numerator;
+   152	}
+   153	
 
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
