@@ -1,187 +1,200 @@
-Return-Path: <linux-kernel+bounces-440266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94459EBAF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:45:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E6C9EBB0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69FDE283791
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04A0283B5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465F222ACEA;
-	Tue, 10 Dec 2024 20:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F9422B5AC;
+	Tue, 10 Dec 2024 20:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuPefJyw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZUMg/U1"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A5D22A1C3;
-	Tue, 10 Dec 2024 20:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB1422B597;
+	Tue, 10 Dec 2024 20:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733863528; cv=none; b=XEMT6wx38qDmkSAqUr6pt6y7wtuQabmHxMBtUbcLZheSe3/ZYOJAm9CC3xNw0MPQ4tPH8yRwFUkCsnmsmUJBiRyHA0Pm9k6QZaUTwrSiQUV7TngZl9GsKumWTSDbeKcofFvTupgZgpIEaE1Q60xqviCpJV0gs9fAnmyEztSwOrg=
+	t=1733863764; cv=none; b=CNzNnD+CngYv/DSH0bN0MUAnE88OxXj8vZMZLunYuOAcGJd4i1eHFTCk+Kducenb/tVGQ5kbXiZl9bFLxwCZRvpng0YROnnnhGvtKtd4/z6YzMrjaVqVazGDfzAe2IlePLlZUo2ZPO4FAjtnxlquhc8wGnsyD8ifUrxVinccuSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733863528; c=relaxed/simple;
-	bh=ju4X+yZhI1BnsMkCLu3fV4gRYkOlFHLyiHLIqGY2oAI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XQa/wcEk6QKQvhRuASxSr/nVmg0/70awf+tc0fcocZjB7qBiOz3kluNNVAG361bgABl9TwTWk3QtflfcXmWqYYgbZ4bYlnlqoFuPVcJ/dPJgLPRETdpSqITy7VGwloW/q/h3XIeuye+zRN/wnVg5YPPlasokXU2ny2L0yJTWDpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuPefJyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C215C4CED6;
-	Tue, 10 Dec 2024 20:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733863526;
-	bh=ju4X+yZhI1BnsMkCLu3fV4gRYkOlFHLyiHLIqGY2oAI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=fuPefJywZSC3M5DKCRmu3ip8euNlDXxGdFXxooGSAULaGIOQ5Nr3J7A8yuFDyXspy
-	 oQHvIsVL3v9/2MJzNtHGIBnOWUMkQV9CLVYggHAk4mUIFLn8ppTNLaDNDJ5mzYNClN
-	 VSAnWePQkypQYcUCAZYFVZbYW58OhC0MG5N26Q+r34e0hFf3ycJbcxEAjSzibf320q
-	 lE8PTVeXmLFx2jA3BhWto17ogq/CBBuZPWRn1hOW/idRHZkiH8d3NfUHD4mV420G9X
-	 OPPTNfH92OPYM86pO92Jhv5vAAilHptux61V7er22TPoa0+IyydzfwsiBKB9tsj9Ta
-	 dmZsLMaPudTMQ==
-Message-ID: <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
-Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
- 2.5 GT/s
-From: Niklas Schnelle <niks@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,  Bjorn
- Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Rob Herring
- <robh@kernel.org>, Krzysztof Wilczy??ski	 <kw@linux.com>, "Maciej W .
- Rozycki" <macro@orcam.me.uk>, Jonathan Cameron	
- <Jonathan.Cameron@huawei.com>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
- Krishna chaitanya chundru	 <quic_krichai@quicinc.com>, Srinivas Pandruvada	
- <srinivas.pandruvada@linux.intel.com>, "Rafael J . Wysocki"
- <rafael@kernel.org>, 	linux-pm@vger.kernel.org, Smita Koralahalli	
- <Smita.KoralahalliChannabasappa@amd.com>, linux-kernel@vger.kernel.org, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria
- <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,  Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>, Mika Westerberg
- <mika.westerberg@linux.intel.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>
-Date: Tue, 10 Dec 2024 21:45:18 +0100
-In-Reply-To: <Z1gSZCdv3fwnRRNk@wunner.de>
-References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
-		 <Z1gSZCdv3fwnRRNk@wunner.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1733863764; c=relaxed/simple;
+	bh=OLTPVYyc/7nlCM5FPxXemPRns+bgGCcQnKZHAGRTsMA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=t9VRITUCYGvKNHVwyP96AtkfHXYoXafmmWjm8VE0pUIhnKYNcbeQhOl42bTPYcGI5QViqkOtBmnobv03Z9Fqee1W5o28xBJ0UEdH48bBXGtDW4d47aRHmAzXQXxACa7ElPm6GoR22DQL+P0GT57Kb8goH97bSGWCaIxnE/d84wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZUMg/U1; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3862b40a6e0so2662895f8f.0;
+        Tue, 10 Dec 2024 12:49:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733863761; x=1734468561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jg5mU2JMtNTWEE8J9PA490rUld5BDirou6U7dgBSKuk=;
+        b=jZUMg/U1vsiNSQuJOjeBb+sknSpZjFZAXjs2RMHNTieBMQpvqs0Sj0EvKY7FCydIZJ
+         I7fySqgz7lsN07BpZAWScosTREF1x1eO4jMLO0YhcyPed2LpbTbq1SCq0IjCikTT61aD
+         k6UnDY+dt12FeZ5qUFBsLQZq5YG6Y5oYb6S4lzgVH3AXChkn/c/Ygm1TkO0a+JYQjddd
+         Fejz/G5Ar3LpEbs4EBm859NDaoATG7W+2Q77jY5U7tJqjTf/YocZEhZIi+gto37QTRq6
+         jk2rsugxoktMGW83F5NDNQfGv0sCHFdVa/ckb1DLpf4DP2NqS8VQHfeb7KFhNhAhYvnn
+         6rVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733863761; x=1734468561;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jg5mU2JMtNTWEE8J9PA490rUld5BDirou6U7dgBSKuk=;
+        b=DA8Sq3MsztlQvaacL8HXZ1eiqnPS+AIUIGGg4jSeqWxIqHUaYB0m1R2tayYMhKW6BS
+         OiXqBxcXkDwkx5Y/2ZkKF9bVf7urxOZjNAKAidhK0GoXrysY3gGSXehOo0oODapOI+QE
+         1DdwZntRAdRpzeLd64Ys4ReTr7Tc8rqueM4hcTaxXhN4FawTTiPPxmgA8YypF9IhHIlQ
+         1EKHieU2guuIxP14JbRGKJ7CWX46I39nH8im+WPahhdW9PoltLYUr3LCCJWPbae7RYpy
+         7zcrdi9JCfyCDVDGcNC9CF9Gmbxqw9dp5AKOU/UmHQA/oohZLzAu4yydMLQSXhBJidOp
+         AqhA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6y7t+PXES5lFWQzTWPekVoFcuoBpkXDjFrHZcXTOs/ZHwv6f0+tjSQ1YkUyT4h5I/tg/k3ZCHIpNgADTg@vger.kernel.org, AJvYcCW9gcj+6sMnJ+fnCZRR+PIYd8pcolNTk1vUqMfS3JKkFga9LSqtYQcN3ywaTUslxloM15K16s0r28Dj@vger.kernel.org, AJvYcCXsqx3M72ZuAkc1MmNj07kU/lsOlrYNNRgMWdLV7dM/iTLQlBlgwbqm6IsepktS62JfgRdS0EHKAfogBwP+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP8OVNmBeTPBf314Mi+9T+VAwPUjLe2o9cNuEus2gyN9HCP9to
+	jryr1hN45IlvT+t2uA6JGtnPLnAaCZP1+dQvivlVZjCA6Wj2voFq
+X-Gm-Gg: ASbGncvaGbQPks0SxrVrp1IGUaVqnymQpwo2s5Tcl7AsL+0F6o+JBOA8LErK3S07B9Z
+	46R0zkQ/w67gTXGeoev+sYFU6XJV6sgRSqu9adHR5As8Pf1EpU13WZMHhNmuksfdLvdRQCLmmtM
+	SQOzZzK46fax9BKaCXzTxP2jWVIZK1qoXW6HAAmAaMOUoOFUigeJsdsVqHq2ScJLrA3AI2ezDgq
+	LDDxTS/lbTUmqdr3pIKVSB/XsdQQBv7gCewP5ewYsHvDWu2iKe5VL9hY7JHjC3TcU3ulpo/7nY/
+	hKU/0PaDpk/BDHTfmBvHJDQ=
+X-Google-Smtp-Source: AGHT+IFdGKcgUx09Wfb/ixJSF3YMDPcdaSeYAbxmPfqXTo/jaPabL7YpzhSY2394DQYnDqVsbDBPcg==
+X-Received: by 2002:a05:6000:1f82:b0:385:f56c:d90a with SMTP id ffacd0b85a97d-3864ced1f55mr354339f8f.55.1733863760924;
+        Tue, 10 Dec 2024 12:49:20 -0800 (PST)
+Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-386334d0486sm11808307f8f.50.2024.12.10.12.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 12:49:19 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	upstream@airoha.com
+Subject: [PATCH v8 0/3] crypto: Add EIP-93 crypto engine support
+Date: Tue, 10 Dec 2024 21:48:30 +0100
+Message-ID: <20241210204853.18765-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-12-10 at 11:05 +0100, Lukas Wunner wrote:
-> On Sat, Dec 07, 2024 at 07:44:09PM +0100, Niklas Schnelle wrote:
-> > Trying to enable bwctrl on a Thunderbolt port causes a boot hang on som=
-e
-> > systems though the exact reason is not yet understood.
->=20
-> Probably worth highlighting the discrete Thunderbolt chip which exhibits
-> this issue, i.e. Intel JHL7540 (Titan Ridge).
+This small series add support for the Inside Secure EIP-93.
+This is a predecessor of the current supported EIP197. It doesn't
+require a firmware but instead it's embedded in the SoC.
 
-Agree will ad for v2.
+First patch extend guard for spinlock_bh.
 
->=20
-> > --- a/drivers/pci/pcie/portdrv.c
-> > +++ b/drivers/pci/pcie/portdrv.c
-> > @@ -270,7 +270,8 @@ static int get_port_device_capability(struct pci_de=
-v *dev)
-> >  		u32 linkcap;
-> > =20
-> >  		pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &linkcap);
-> > -		if (linkcap & PCI_EXP_LNKCAP_LBNC)
-> > +		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
-> > +		    (linkcap & PCI_EXP_LNKCAP_SLS) !=3D PCI_EXP_LNKCAP_SLS_2_5GB)
-> >  			services |=3D PCIE_PORT_SERVICE_BWCTRL;
-> >  	}
->=20
-> This is fine in principle because PCIe r6.2 sec 8.2.1 states:
->=20
->    "A device must support 2.5 GT/s and is not permitted to skip support
->     for any data rates between 2.5 GT/s and the highest supported rate."
->=20
-> However the Implementation Note at the end of PCIe r6.2 sec 7.5.3.18
-> cautions:
->=20
->    "It is strongly encouraged that software primarily utilize the
->     Supported Link Speeds Vector instead of the Max Link Speed field,
+The other actually implement Documentation and Driver.
 
->     so that software can determine the exact set of supported speeds
->     on current and future hardware. This can avoid software being
->     confused if a future specification defines Links that do not
->     require support for all slower speeds."
->=20
-> First of all, the Supported Link Speeds field in the Link Capabilities
-> register (which you're querying here) was renamed to Max Link Speed in
-> PCIe r3.1=C2=A0and a new Link Capabilities 2 register was added which con=
-tains
-> a new Supported Link Speeds field.  Software is supposed to query the
-> latter if the device implements the Link Capabilities 2 register
-> (see the other Implementation Note at the end of PCIe r6.2 sec 7.5.3.18).
+The Driver pass all the normal selft test for the supported
+algo and also pass the EXTRA test with fuzz_iterations set to 10000.
 
-Would it maybe make sense to update the comment for PCI_EXP_LNKCAP_SLS
-in pci_regs.h to point out that in PCIe r3.1 and newer this is called
-the Max Link Speed field? This would certainly helped me here.
+Changes v8:
+- Rework export and update to not sleep on exporting state
+  (consume pending packet in update and return -EINPROGRESS)
+Changes v7:
+- Fix copypaste error in __eip93_hash_init
+- Rework import/export to actually export the partial hash
+  (we actually unmap DMA on export)
+- Rename no_finalize variable to better partial_hash
+- Rename 3rd commit title and drop Mediatek from title.
+- Add Cover Letter
+- Add Reviewed-by to DT commit
+(cumulative changes from old series that had changelog in each patch)
+Changes v6:
+- Add SoC specific compatible
+- Add now supported entry for compatible with no user
+Changes v5:
+- Add Ack tag to guard patch
+- Comment out compatible with no current user
+- Fix smatch warning (reported by Dan Carpenter)
+Changes v4:
+- Out of RFC
+- Add missing bitfield.h
+- Drop useless header
+Changes v3:
+- Mute warning from Clang about C23
+- Fix not inizialized err
+- Drop unused variable
+- Add SoC compatible with generic one
+Changes v2:
+- Rename all variables from mtk to eip93
+- Move to inside-secure directory
+- Check DMA map errors
+- Use guard API for spinlock
+- Minor improvements to code
+- Add guard patch
+- Change to better compatible
+- Add description for EIP93 models
 
->=20
-> Second, the above-quoted Implementation Note says that software should
-> not rely on future spec versions to mandate that *all* link speeds
-> (2.5 GT/s and all intermediate speeds up to the maximum supported speed)
-> are supported.
->=20
-> Since v6.13-rc1, we cache the supported speeds in the "supported_speeds"
-> field in struct pci_dev, taking care of the PCIe 3.0 versus later version=
-s
-> issue.
->=20
-> So to make this future-proof what you could do is check whether only a
-> *single* speed is supported (which could be something else than 2.5 GT/s
-> if future spec versions allow that), i.e.:
->=20
-> -		if (linkcap & PCI_EXP_LNKCAP_LBNC)
-> +		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
-> +		    hweight8(dev->supported_speeds) > 1)
+Christian Marangi (3):
+  spinlock: extend guard with spinlock_bh variants
+  dt-bindings: crypto: Add Inside Secure SafeXcel EIP-93 crypto engine
+  crypto: Add Inside Secure SafeXcel EIP-93 crypto engine support
 
-This also makes sense to me in that the argument holds that if there is
-only one supported speed bwctrl can't control it. That said it is
-definitely more general than this patch.
+ .../crypto/inside-secure,safexcel-eip93.yaml  |  67 ++
+ MAINTAINERS                                   |   7 +
+ drivers/crypto/Kconfig                        |   1 +
+ drivers/crypto/Makefile                       |   1 +
+ drivers/crypto/inside-secure/eip93/Kconfig    |  20 +
+ drivers/crypto/inside-secure/eip93/Makefile   |   5 +
+ .../crypto/inside-secure/eip93/eip93-aead.c   | 710 +++++++++++++
+ .../crypto/inside-secure/eip93/eip93-aead.h   |  38 +
+ .../crypto/inside-secure/eip93/eip93-aes.h    |  16 +
+ .../crypto/inside-secure/eip93/eip93-cipher.c | 413 ++++++++
+ .../crypto/inside-secure/eip93/eip93-cipher.h |  60 ++
+ .../crypto/inside-secure/eip93/eip93-common.c | 822 +++++++++++++++
+ .../crypto/inside-secure/eip93/eip93-common.h |  23 +
+ .../crypto/inside-secure/eip93/eip93-des.h    |  16 +
+ .../crypto/inside-secure/eip93/eip93-hash.c   | 987 ++++++++++++++++++
+ .../crypto/inside-secure/eip93/eip93-hash.h   |  77 ++
+ .../crypto/inside-secure/eip93/eip93-main.c   | 502 +++++++++
+ .../crypto/inside-secure/eip93/eip93-main.h   | 152 +++
+ .../crypto/inside-secure/eip93/eip93-regs.h   | 335 ++++++
+ include/linux/spinlock.h                      |  13 +
+ 20 files changed, 4265 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
+ create mode 100644 drivers/crypto/inside-secure/eip93/Kconfig
+ create mode 100644 drivers/crypto/inside-secure/eip93/Makefile
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-aead.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-aead.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-aes.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-cipher.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-cipher.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-common.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-common.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-des.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-hash.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-hash.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-main.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-main.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-regs.h
 
-Sadly, I tried it and in my case it doesn't work. Taking a closer look
-at lspci -vvv of the Thunderbolt port as well as a debug print reveals
-why:
-
-07:00.0 PCI bridge: Intel Corporation JHL7540 Thunderbolt 3 Bridge [Titan R=
-idge 4C 2018] (rev 06) (prog-if 00 [Normal decode])
-       ...
-                LnkCap: Port #0, Speed 2.5GT/s, Width x4, ASPM L1, Exit Lat=
-ency L1 <1us
-                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
-                LnkCtl: ASPM Disabled; LnkDisable- CommClk+
-                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-                LnkSta: Speed 2.5GT/s, Width x4
-                        TrErr- Train- SlotClk+ DLActive- BWMgmt+ ABWMgmt-
-	...
-                LnkCap2: Supported Link Speeds: 2.5-8GT/s, Crosslink- Retim=
-er- 2Retimers- DRS-
-                LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- Speed=
-Dis-, Selectable De-emphasis: -6dB
-                         Transmit Margin: Normal Operating Range, EnterModi=
-fiedCompliance- ComplianceSOS-
-                         Compliance Preset/De-emphasis: -6dB de-emphasis, 0=
-dB preshoot
-	...
-
-So it seems that on this Thunderbolt chip the LnkCap field
-says 2.5 GT/s only as per the USB 4 spec you quoted but LnkCap2
-is 0x0E i.e. 2.5-8 GT/s.
-
-I wonder if this is related to why the hang occurs. Could it be that
-bwctrl tries to enable speeds above 2.5 GT/s and that causes links to
-fail?
-
-Thanks,
-Niklas
+-- 
+2.45.2
 
 
