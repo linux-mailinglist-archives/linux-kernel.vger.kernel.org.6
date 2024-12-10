@@ -1,88 +1,62 @@
-Return-Path: <linux-kernel+bounces-439621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D009EB1DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:27:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAE99EB1D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:26:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C2918899FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CECF166D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB261A9B52;
-	Tue, 10 Dec 2024 13:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B641C1A9B34;
+	Tue, 10 Dec 2024 13:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="npblBpuh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxKiOhrG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD96C1E52D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA4D41C64;
+	Tue, 10 Dec 2024 13:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733837211; cv=none; b=I3UJ72xH6mG4Y01AmqpWLMohm40ch2BzLoWT0dskF7xOzWlwMF6tvNfVH24+yX6D17Aohy1XFkYW9ScDviN5fBNVK93ZUFsXICWKhal9NLoP3fwPm5i0y4GIkcAx0RKLBr7DgPrqVWD9zFryuGuhD8Xa6zotar2HqFpKuBx2bQw=
+	t=1733837211; cv=none; b=WdEUewyX9tHsFbImEYhlYdrne+TsOi1+xJAo07eTPbd10R6ReCGiOFv/BnJVkGqNFDQISeSC1ABE281XDnnS+zN2et5wR6OxrbOgr3xbbQDbmfZTAIC6YdxUip7CfMz06cRJJNRqvCRbOB5kG9w+A8co9MXfvXLbo4/0C79X1eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733837211; c=relaxed/simple;
-	bh=o3FwI02N8aqXF4xZIrONk/VReti3pvSzpyqhoYtREr8=;
+	bh=sXTucf7zi96OnR6q9RPV98KKkWEHPLcp10zsSkEWwfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjcbuYK/z4/AnQN6hwXzWd/OTkEI3k1oLLb8e0MfwcQfEs2+gnrLeIpc8z+eCEhfjkxD330lP0D4cwQhDIolhVAK6lYfZ44dBI/+33+x0A8hDNEaa3KnzdFwv8Qo9qkpoyq17YaD4Atdb7jCqVN3HLrY5t1ljM4eLyhzL0cURdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=npblBpuh; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733837210; x=1765373210;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=o3FwI02N8aqXF4xZIrONk/VReti3pvSzpyqhoYtREr8=;
-  b=npblBpuhKnIR/7+uGvgqMsOGLMB+JtoTEX0g4+pbUlgabdLvmp2xhU4T
-   dE9DSTTXv4S+iQhy/MqazhG8l7RxC6FrPPUWU0ldX+2WvSXHGxJBw+hSX
-   Yw3TiTIedAk05VToYAIKmia85i3FZnpXQ9M5qyjdnPgwe0bPOjUbcms1R
-   5kNOiN/Ci9lwwioNNTfu7wudGxunVvWT2XdCFxDEedhkbG4pnkfTo3TGc
-   en1cADLg+UjodBSVUuCbuqK3pbxQ3DeQ05+gYgvd4u7wLMmzmHZeAW0nr
-   haXWCJmBkg4BnwK7f+cH/HHGZFTAAOmTuB7LaaxKumpNsr7Eh+RNW9WSq
-   g==;
-X-CSE-ConnectionGUID: E7ZsjQ8kRsmomZ2VShy9bA==
-X-CSE-MsgGUID: v0T5+kqVR8eZLTMhah+HTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="37864852"
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="37864852"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 05:26:49 -0800
-X-CSE-ConnectionGUID: tUiZTf8LRc6BazYMUocLhA==
-X-CSE-MsgGUID: MAqDFBXxQs2A/WQFrE0SGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="95750103"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Dec 2024 05:26:42 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 0FF4D26B; Tue, 10 Dec 2024 15:26:40 +0200 (EET)
-Date: Tue, 10 Dec 2024 15:26:40 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Eric Chan <ericchancf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kai Huang <kai.huang@intel.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Russell King <linux@armlinux.org.uk>, Samuel Holland <samuel.holland@sifive.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Yuntao Wang <ytcoode@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: Re: [PATCHv2 2/2] x86/mm: Make memremap(MEMREMAP_WB) map memory as
- encrypted by default
-Message-ID: <bz3vlh3lri7yfckdkddopwhsgvkmizhw5q6ecomgeba7q22ufp@ntu2kugiho4o>
-References: <20241021105723.2707507-1-kirill.shutemov@linux.intel.com>
- <20241021105723.2707507-3-kirill.shutemov@linux.intel.com>
- <20241118164616.GAZztvWGs9cOV8t20_@fat_crate.local>
- <s4frmqwtuvclinuu7ttyzfpe7bj7hju5xgt6sxzy3gyt3prr62@rrgvhkv4lgwv>
- <20241121114952.GCZz8eYEVa3yubYQzO@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqofWHQoekt3b8oRQsnhon81Lb7hp65CBATQx++2MhElbF340vr2jMKQ7EU6hzZkDRoMlI45CNAEfUQ6y7B0ChgUp1GsYptynMSg9y10qi5NkNQIaQlrfQuttfbh9Xrp9R0QW2YiV4bcQS++EQBQDB43LUiKc++jdkM0kpiXi80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxKiOhrG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC94EC4CEDE;
+	Tue, 10 Dec 2024 13:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733837210;
+	bh=sXTucf7zi96OnR6q9RPV98KKkWEHPLcp10zsSkEWwfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZxKiOhrG6hxNPWoonT0B50VczPJNW0DjrBF63q6cbfbSrCyPFs9m/pBHFBqGxCo6Z
+	 6oXrDYnDWUN2REYuTasnWh8cY5tsr9NGgeSKFuTT/tiyv2Wob1blHbtawv3kHhxanX
+	 Equ5ayBaWrsjR6XWjdahDXnO6gdUUE44S8yuh6hW/pJEwFVKqUxAb5WNpcnvRLLUvd
+	 5JQ7udiEPSkuB7K1/sTNSzWjBTo8JhfBfyOHsymgCb9Gz4dlClyDcUSfLN9mxdQsg9
+	 JsUarcEEYEFf0bRpex4aN5713uM+irz9g2CVmur5rKlT/XV0rtq4yfWoAGstNJidpN
+	 EiGSlz0qYAv6Q==
+Date: Tue, 10 Dec 2024 10:26:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>,
+	James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Leo Yan <leo.yan@arm.com>, Dima Kogan <dima@secretsauce.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf probe: Fix uninitialized variable
+Message-ID: <Z1hBk3b5zcSy567S@x1>
+References: <20241209171222.1422577-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,102 +65,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241121114952.GCZz8eYEVa3yubYQzO@fat_crate.local>
+In-Reply-To: <20241209171222.1422577-1-james.clark@linaro.org>
 
-On Thu, Nov 21, 2024 at 12:49:52PM +0100, Borislav Petkov wrote:
-> On Tue, Nov 19, 2024 at 10:21:05AM +0200, Kirill A. Shutemov wrote:
-> > Sure, we can workaround every place that touches such ranges.
+On Mon, Dec 09, 2024 at 05:12:21PM +0000, James Clark wrote:
+> Since the linked fixes: commit, err is returned uninitialized due to the
+> removal of "return 0". Initialize err to fix it, and rename err to out
+> to avoid confusion because buf is still supposed to be freed in non
+> error cases.
 > 
-> Every place? Which every place? I thought this is only an EISA issue?
-
-I looked at other places where we call memremap(MEMREMAP_WB) such as
-acpi_wakeup_cpu(). We actually get encrypted/private mapping for this
-callsite despite __ioremap_caller() being called encrypted == false.
-This happens because of IORES_MAP_ENCRYPTED check in __ioremap_caller().
-
-So we depend on the BIOS here. The EISA problem happens because the
-target memory is in !IORES_MAP_ENCRYPTED memory.
-
-It's hard to say if any other memremap(MEMREMAP_WB) would trigger the
-issue. And what will happen after next BIOS update.
-
-> Then clearly your changelogs need to expand considerably more what we're
-> *really* addressing here.
+> This fixes the following intermittent test failure on release builds:
 > 
-> > Or we can address problem at the root and make creating decrypted/shared
-> > mappings explicit.
-> 
-> What is the problem? That KVM implicitly converts memory to shared? Why does
-> KVM do that an can it be fixed not to?
-> 
-> Doesn't sound like the guest's problem.
+>  $ perf test "testsuite_probe"
+>  ...
+>  -- [ FAIL ] -- perf_probe :: test_invalid_options :: mutually exclusive options :: -L foo -V bar (output regexp parsing)
+>  Regexp not found: \"Error: switch .+ cannot be used with switch .+\"
+>  ...
 
-Well, the problem is on the both sides.
+Namhyung, I think this should go via perf-tools,
 
-VMM behaviour on such accesses is not specified in any spec. AFAIK all
-current VMM implementations do this implicit conversion.
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-I think it has to be fixed. VMMs (not only KVM) should not silently
-convert memory to shared. But VMMs cannot make memory access to go away.
-The only option they have is to inject #VE instead indicating bogus
-access. At this point it becomes a guest problem.
-
-It will get fixed in VMMs naturally when TDX Connect gets enabled.
-With a secure device assigned to a TD, VMM would loose the ability to
-convert memory on its own. The guest would have to unlock the memory
-first. This will make implicit conversion impossible.
-
-But it also means guest should never initiate shared access without
-explicit conversion. Otherwise #VE will crash it.
-
-> Or maybe this needs a lot more explanation what we're fixing here.
-> 
-> > Such mappings have both functional (as we see here) and security
-> > implications (VMM can manipulate the guest memory range). We should not
-> > create decrypted mappings by default on legacy interfaces.
-> 
-> So we're getting closer.
-> 
-> The changes themselves are fine but your text is missing a lot about what
-> we're fixing here. When I asked, I barely scratched the surface. So can we
-> elaborate here pls?
-
-What about this:
-
-x86/mm: Make memremap(MEMREMAP_WB) map memory as encrypted by default
-
-Currently memremap(MEMREMAP_WB) can produce decrypted/shared mapping:
-
-memremap(MEMREMAP_WB)
-  arch_memremap_wb()
-    ioremap_cache()
-      __ioremap_caller(.encrytped = false)
-
-In such cases, the IORES_MAP_ENCRYPTED flag on the memory will determine
-if the resulting mapping is encrypted or decrypted.
-
-Creating a decrypted mapping without explicit request from the caller is
-risky:
-
-  - It can inadvertently expose the guest's data and compromise the
-    guest.
-
-  - Accessing private memory via shared/decrypted mapping on TDX will
-    either trigger implicit conversion to shared or #VE (depending on
-    VMM implementation).
-
-    Implicit conversion is destructive: subsequent access to the same
-    memory via private mapping will trigger a hard-to-debug #VE crash.
-
-The kernel already provides a way to request decrypted mapping
-explicitly via the MEMREMAP_DEC flag.
-
-Modify memremap(MEMREMAP_WB) to produce encrypted/private mapping by
-default unless MEMREMAP_DEC is specified.
-
-This change fixes the crash on kexec in TDX guests if CONFIG_EISA is
-enabled.
+- Arnaldo
  
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> Fixes: 080e47b2a237 ("perf probe: Introduce quotation marks support")
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  tools/perf/util/probe-event.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index 6d51a4c98ad7..35af6570cf9b 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -1370,7 +1370,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  {
+>  	char *buf = strdup(arg);
+>  	char *p;
+> -	int err;
+> +	int err = 0;
+>  
+>  	if (!buf)
+>  		return -ENOMEM;
+> @@ -1383,20 +1383,20 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  		if (p == buf) {
+>  			semantic_error("No file/function name in '%s'.\n", p);
+>  			err = -EINVAL;
+> -			goto err;
+> +			goto out;
+>  		}
+>  		*(p++) = '\0';
+>  
+>  		err = parse_line_num(&p, &lr->start, "start line");
+>  		if (err)
+> -			goto err;
+> +			goto out;
+>  
+>  		if (*p == '+' || *p == '-') {
+>  			const char c = *(p++);
+>  
+>  			err = parse_line_num(&p, &lr->end, "end line");
+>  			if (err)
+> -				goto err;
+> +				goto out;
+>  
+>  			if (c == '+') {
+>  				lr->end += lr->start;
+> @@ -1416,11 +1416,11 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  		if (lr->start > lr->end) {
+>  			semantic_error("Start line must be smaller"
+>  				       " than end line.\n");
+> -			goto err;
+> +			goto out;
+>  		}
+>  		if (*p != '\0') {
+>  			semantic_error("Tailing with invalid str '%s'.\n", p);
+> -			goto err;
+> +			goto out;
+>  		}
+>  	}
+>  
+> @@ -1431,7 +1431,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  			lr->file = strdup_esq(p);
+>  			if (lr->file == NULL) {
+>  				err = -ENOMEM;
+> -				goto err;
+> +				goto out;
+>  			}
+>  		}
+>  		if (*buf != '\0')
+> @@ -1439,7 +1439,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  		if (!lr->function && !lr->file) {
+>  			semantic_error("Only '@*' is not allowed.\n");
+>  			err = -EINVAL;
+> -			goto err;
+> +			goto out;
+>  		}
+>  	} else if (strpbrk_esq(buf, "/."))
+>  		lr->file = strdup_esq(buf);
+> @@ -1448,10 +1448,10 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  	else {	/* Invalid name */
+>  		semantic_error("'%s' is not a valid function name.\n", buf);
+>  		err = -EINVAL;
+> -		goto err;
+> +		goto out;
+>  	}
+>  
+> -err:
+> +out:
+>  	free(buf);
+>  	return err;
+>  }
+> -- 
+> 2.34.1
+> 
 
