@@ -1,164 +1,195 @@
-Return-Path: <linux-kernel+bounces-438976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4B79EA8F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:52:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43F49EA8F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F389916718E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:52:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD71E167620
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C27822CBD8;
-	Tue, 10 Dec 2024 06:52:07 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.104])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931611D7E31;
-	Tue, 10 Dec 2024 06:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDD822CBCC;
+	Tue, 10 Dec 2024 06:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cVlCVeo8"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57451D7E31
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733813526; cv=none; b=Lz1WbiP9MHeTy4vo6847/sIaW5mOgzO4fWt0NpdlTGdGNlCXyWWeVIT7uSCtng9wqH5i/P/9KN9C8oeZDaDOc8mT3D+boMAUg4psYe9n0J3XBCmiwD6/bMU4kQ4HKPpd4biM6tTUjfExvoBEcJMdpnEHum+S19ZQHPAjHnZtt+0=
+	t=1733813597; cv=none; b=sGTTuzyJnGW3l5MCPBkYi1gKtlDS3seYzqP15BIc1eUofg169AOR8zYurEB0prTFz1ZnmxBWgUHEjBZ4ortVEbGZHyxTPzglvkLxc+LKqH4yMwueS0kyX/UqLLYDjWqJ0NMpAXhbwerTTz07mesSQR39rZ/zr7gSwV8xDlqW5Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733813526; c=relaxed/simple;
-	bh=1wo6h0OJIzB66Qq1Y13/KffCz76yHWcvbhx2dxPieDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dp0xLyEFV0YedWHN7FcH2V3kUd/1pXs/6JbdtbJt58NwpL10yID9zXMz+K/ANJcBeTwSScSgSQ2ugrbq5jDVvRgTOgOXTGmGRd7RHqHHtKTWwls0LH+2PyWm5pfpYpzxeDtf3bf85B+7jHivnV4uvj5jiWG/yfQLajfKXf6wiJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.243.18:47524.362293956
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-123.150.8.42 (unknown [10.158.243.18])
-	by 189.cn (HERMES) with SMTP id AA7CD102982;
-	Tue, 10 Dec 2024 14:51:53 +0800 (CST)
-Received: from  ([123.150.8.42])
-	by gateway-153622-dep-5c5f88b874-pd459 with ESMTP id 1a4a4f250c474ca0a0ca5c21d408b4f4 for krzk@kernel.org;
-	Tue, 10 Dec 2024 14:51:54 CST
-X-Transaction-ID: 1a4a4f250c474ca0a0ca5c21d408b4f4
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 123.150.8.42
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-Message-ID: <692f3d4a-dded-4e1b-8bb8-95fd165d2f15@189.cn>
-Date: Tue, 10 Dec 2024 14:51:52 +0800
+	s=arc-20240116; t=1733813597; c=relaxed/simple;
+	bh=ut5JAkYztnQBo6RdRBF+10lftaJlehSlM8UEIZYLWwY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Kjab3EEeJQ8UvKauKxrYnLpBPIFVBCm9Rbcpb3m97ZGM3NyUX+YRjybQU3ta0X3M7QTwgPbfkReKQcnL/4YlGzxe6Et115NajuTerP9iD3GXovMRG5GnT80AG/2Gm9aGaifknRPQRlvD1oqUmFwWZU13ZyXEdkcsLaZiqmwGE2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cVlCVeo8; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733813591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e12qJKNRrXaJEuaxEsHAVfWP9J4uhR6b+tP4H87o7vQ=;
+	b=cVlCVeo8wkb+TN/q0OW+dRDF9yAUygDh+uxzILPdJknnZBEXoiswET2A/BIq2/KRdEOQ70
+	JHAnmfPA2BuCXKbH6D4NVtXsISWG5S6qCdtC9Ka2zoI/0fjtbs0GaKXDAbAn+FCxDMy3Z/
+	egMpZo/FcmJ7gF1G6/snxcIqfcDe23s=
+From: Hao Ge <hao.ge@linux.dev>
+To: surenb@google.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	hao.ge@linux.dev,
+	greearb@candelatech.com,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v2] mm/alloc_tag: Add kasan_alloc_module_shadow when CONFIS_KASAN_VMALLOC disabled
+Date: Tue, 10 Dec 2024 14:53:04 +0800
+Message-Id: <20241210065304.781620-1-hao.ge@linux.dev>
+In-Reply-To: <20241210041515.765569-1-hao.ge@linux.dev>
+References: <20241210041515.765569-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator:s5m8767 Fully convert to GPIO descriptors
-To: Krzysztof Kozlowski <krzk@kernel.org>, lgirdwood@gmail.com,
- broonie@kernel.org, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241206051358.496832-1-chensong_2000@189.cn>
- <17a4dbd7-56cb-4c20-a913-0df5c39fc3ff@kernel.org>
- <862662aa-c5a2-4e15-b97f-ca1b4757ab25@189.cn>
- <bf80a815-a602-4bbe-a950-e8b6c1b0789a@kernel.org>
-Content-Language: en-US
-From: Song Chen <chensong_2000@189.cn>
-In-Reply-To: <bf80a815-a602-4bbe-a950-e8b6c1b0789a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-hi Krzysztof,
+From: Hao Ge <gehao@kylinos.cn>
 
-It's clear, will send a v2 soon.
+When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
+is not enabled, we may encounter a panic during system boot.
 
-Best regards,
+Because we haven't allocated pages and created mappings
+for the shadow memory corresponding to module_tags region,
+similar to how it is done for execmem_vmalloc.
 
-Song
+The difference is that our module_tags are allocated on demand,
+so similarly,we also need to allocate shadow memory regions on demand.
+However, we still need to adhere to the MODULE_ALIGN principle.
 
-在 2024/12/10 03:50, Krzysztof Kozlowski 写道:
-> On 07/12/2024 07:16, Song Chen wrote:
->>>>    		}
->>>> -		pdata->buck_gpios[i] = gpio;
->>>> +
->>>> +		/* SET GPIO*/
->>>
->>> What is a SET GPIO?
->>>
->>>> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
->>>
->>> Why using "SET" as name, not the actual name it is used for? Buck DVS?
->>
->> from below snippets:
->> s5m8767_pmic_probe of drivers/regulator/s5m8767.c
->>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
->>                       "S5M8767 SET1");
->>           if (ret)
->>               return ret;
->>
->>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
->>                       "S5M8767 SET2");
->>           if (ret)
->>               return ret;
->>
->>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
->>                       "S5M8767 SET3");
-> 
-> 
-> Yeah, your code is fine.
-> 
->>
->> and arch/arm/boot/dts/samsung/exynos5250-spring.dts
->>
->>           s5m8767,pmic-buck-dvs-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>, /* DVS1 */
->>                             <&gpd1 1 GPIO_ACTIVE_LOW>, /* DVS2 */
->>                             <&gpd1 2 GPIO_ACTIVE_LOW>; /* DVS3 */
->>
->>           s5m8767,pmic-buck-ds-gpios = <&gpx2 3 GPIO_ACTIVE_LOW>, /* SET1 */
->>                            <&gpx2 4 GPIO_ACTIVE_LOW>, /* SET2 */
->>                            <&gpx2 5 GPIO_ACTIVE_LOW>; /* SET3 */
->>
->>>
->>>> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
->>>> +		gpiod_direction_output(pdata->buck_gpios[i],
->>>> +					(pdata->buck_default_idx >> (2 - i)) & 0x1);
->>>
->>> This is not an equivalent code. You set values for GPIOs 0-1 even if
->>> requesting GPIO 2 fails.
->>>
->>> On which board did you test it?
->>
->> You are right ,it's not equivalent with original code, i will fix it.
->> but i have a question here:
->>
->>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
->>                       "S5M8767 SET1");
->>           if (ret)
->>               return ret;
->>
->>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
->>                       "S5M8767 SET2");
->>           if (ret)
->>               return ret;
->>
->>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
->>                       "S5M8767 SET3");
->>           if (ret)
->>               return ret;
->>
->> if it fails to request buck_gpios[2] after successfully requests
->> buck_gpios[0] and buck_gpios[1], the probe fails as well, should it call
->> gpiod_put to return gpio resource?
-> 
-> 
-> Aren't you using devm interface? Please read the API. You do not need to
-> put anything, unless you use some other interface and I missed the point
-> of the question.
-> 
+Here is the log for panic:
 
-Not until you told me, I read the devm code, devres_release_all releases 
-gpio resources eventually by calling dr->node.release(devm_gpiod_release).
+[   18.349421] BUG: unable to handle page fault for address: fffffbfff8092000
+[   18.350016] #PF: supervisor read access in kernel mode
+[   18.350459] #PF: error_code(0x0000) - not-present page
+[   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PTE 0
+[   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+[   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #3
+[   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
+[   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
+[   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
+[   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff82a7ceac
+[   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc0490000
+[   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff809201d
+[   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc0490000
+[   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000000002c
+[   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlGS:0000000000000000
+[   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 0000000000771ef0
+[   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   18.362020] PKRU: 55555554
+[   18.362261] Call Trace:
+[   18.362481]  <TASK>
+[   18.362671]  ? __die+0x23/0x70
+[   18.362964]  ? page_fault_oops+0xc2/0x160
+[   18.363318]  ? exc_page_fault+0xad/0xc0
+[   18.363680]  ? asm_exc_page_fault+0x26/0x30
+[   18.364056]  ? move_module+0x3cc/0x8a0
+[   18.364398]  ? kasan_check_range+0xba/0x1b0
+[   18.364755]  __asan_memcpy+0x3c/0x60
+[   18.365074]  move_module+0x3cc/0x8a0
+[   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
+[   18.365841]  ? early_mod_check+0x3dc/0x510
+[   18.366195]  load_module+0x72/0x1850
+[   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
+[   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
+[   18.367262]  init_module_from_file+0xd1/0x130
+[   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
+[   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
+[   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+[   18.368938]  idempotent_init_module+0x22c/0x790
+[   18.369332]  ? simple_getattr+0x6f/0x120
+[   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
+[   18.370110]  ? fdget+0x58/0x3a0
+[   18.370393]  ? security_capable+0x64/0xf0
+[   18.370745]  __x64_sys_finit_module+0xc2/0x140
+[   18.371136]  do_syscall_64+0x7d/0x160
+[   18.371459]  ? fdget_pos+0x1c8/0x4c0
+[   18.371784]  ? ksys_read+0xfd/0x1d0
+[   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.372525]  ? do_syscall_64+0x89/0x160
+[   18.372860]  ? do_syscall_64+0x89/0x160
+[   18.373194]  ? do_syscall_64+0x89/0x160
+[   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.373952]  ? do_syscall_64+0x89/0x160
+[   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.374701]  ? do_syscall_64+0x89/0x160
+[   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
+[   18.375416]  ? clear_bhb_loop+0x25/0x80
+[   18.375748]  ? clear_bhb_loop+0x25/0x80
+[   18.376119]  ? clear_bhb_loop+0x25/0x80
+[   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-many thanks.
+Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
+Reported-by: Ben Greear <greearb@candelatech.com>
+Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com/
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+v2: Add comments to facilitate understanding of the code.
+    Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_module_shadow
+    already handles this internally,but to make the code more readable and user-friendly
 
-> Best regards,
-> Krzysztof
-> 
-> 
+commit 233e89322cbe ("alloc_tag: fix module allocation
+tags populated area calculation") is currently in the
+mm-hotfixes-unstable branch, so this patch is
+developed based on the mm-hotfixes-unstable branch.
+---
+ lib/alloc_tag.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index f942408b53ef..bd3ee57ea13f 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -10,6 +10,7 @@
+ #include <linux/seq_buf.h>
+ #include <linux/seq_file.h>
+ #include <linux/vmalloc.h>
++#include <linux/math.h>
+ 
+ #define ALLOCINFO_FILE_NAME		"allocinfo"
+ #define MODULE_ALLOC_TAG_VMAP_SIZE	(100000UL * sizeof(struct alloc_tag))
+@@ -422,6 +423,17 @@ static int vm_module_tags_populate(void)
+ 			return -ENOMEM;
+ 		}
+ 		vm_module_tags->nr_pages += nr;
++
++		/*
++		 * Kasan allocates 1 byte of shadow for every 8 bytes of data.
++		 * When kasan_alloc_module_shadow allocates shadow memory,
++		 * it does so in units of pages.
++		 * Therefore, here we need to align to MODULE_ALIGN.
++		 */
++		if ((phys_end & (MODULE_ALIGN - 1)) == 0)
++			kasan_alloc_module_shadow((void *)phys_end,
++						  round_up(nr << PAGE_SHIFT, MODULE_ALIGN),
++						  GFP_KERNEL);
+ 	}
+ 
+ 	/*
+-- 
+2.25.1
+
 
