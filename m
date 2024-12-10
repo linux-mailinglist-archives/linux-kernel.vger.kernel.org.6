@@ -1,444 +1,145 @@
-Return-Path: <linux-kernel+bounces-439377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511A99EAE7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:49:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E6C9EAE2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:45:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49BE21888CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:45:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE5A2080C6;
+	Tue, 10 Dec 2024 10:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIBPsBdw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2B7281F6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:49:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1747F223E92;
-	Tue, 10 Dec 2024 10:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLjnzMdC"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5C7223E69;
-	Tue, 10 Dec 2024 10:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F6178F55;
+	Tue, 10 Dec 2024 10:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733827585; cv=none; b=RRLQNjvK+lRZJL5IOLrTMOWuUlrEzyBD2SaKn/slORvaJHSWBBdSFWnfSaKbQRwcGqYEPIFjdwW0YqwvMHXA4umEUg7EOVPix9OqvVe53qiUKvASZEaqIjIfplykpG8cuYAr1xTI6I1PVgFw5VvFKzi2JUrumNpvo/Zp3sPTl1I=
+	t=1733827528; cv=none; b=WcqF6B+Lwfyq7HRK3CTpI61aFmmp1ZhnaL86nbBD3oRTrHQWNj4U7JZCW0Lf7Zq3RrBqftAB+XI6umorrGZRsB+hsmx8/tyiVSrobPeMov6d1bHDzEc7R+U//hrHqoN+rimw1xKpD3vy1cZch9nmsP/I9TgvvcZBFkSwJ2bJUE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733827585; c=relaxed/simple;
-	bh=hUdmWJrZ8uZDa08fx3jiEpjOsAtFBYDD54GTsPyfnC8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cLLoBuVjyQw9RL24p1KRTbEZAYleujAMMPjHndX8a6gNGcLXZNNKpsPqWlmvTjv3X+qt5NbtSYe5IKXa85nabRHxAC7RWVPdOHT+W+tkAmuMxc73RYbTQFu7zrVxrca86NcRVbBIuY2+Scy3puzt2vSusLh9GbkZ/4tTNdbylEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLjnzMdC; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-725ee27e905so2175893b3a.2;
-        Tue, 10 Dec 2024 02:46:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733827583; x=1734432383; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a/tsulPfEI/HbzTLrZhhJrzZ8h085yaO/VGtKwjuGCg=;
-        b=gLjnzMdCnOx7iG/zJEDzfN93IjzDtOfR9l4T59jmvOOiKz45sGza3WZOK4cd0U1XOH
-         +hbF706uMF9Y4lKj0LlR5o3mCkH3xW5JdnP69gkNe8lmqWGPF0nzOGb4Wl8M6X9La/bU
-         +mPnGmtLLBtKe2kdBe5rRROiQ5x92mqCV0BgWyzqISBQAFMogxNdFSXN0WvpdxTCxRNX
-         5LSC6ET+SSa+6u8gUrXch4vvwwJ1EsIXu+dI3VsrRAkGs3UKSlYRUInm7VeSuGg3wAnZ
-         BYggvfkmKWJo1ckP1bU927ZxvBVD3iBs+pWdcxEizKVE7a//iEO47uRUFp6nl3/ib354
-         OB3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733827583; x=1734432383;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a/tsulPfEI/HbzTLrZhhJrzZ8h085yaO/VGtKwjuGCg=;
-        b=Ei4RjC/v5HwBKzeDx7GsA2fdaVCz3tRWzcyRxRpE9deLRb8k26qYvzCCDxSxJ2Sc4C
-         A+P/51KCP42iLPfUHfl5iugV1xUvfVPfCMa+SvTMsSutrlFprZMfuFjkgiwmzMtgSKO4
-         rRkwDL9nGBNPc29nFyOmi7/pggfy5t32K/qHGitsAWtic9kx+/DDuyncJo2GiG8cfTLr
-         7mxbP7gbK1iaBCbxrmpfUn3MJafUhUr3CK0bVZqsd1pwYDUzv0WfOCMbNAIKzlAsxiOl
-         5YIo7iQYfEbnINZpDZto85Ti0wnlFRxuo/PAHOPoC+gQrg+pAaL3QFLAVKBcPLQ0EIsA
-         U7Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZx+vhIBUy3U0JBkKynBzpZCgaWlutuC7rsTApK2RhR+dfwuxkEe3v87StYL24m6Lmwo73g/nIv6tS@vger.kernel.org, AJvYcCUuhc2JN3Tx2+sLDw4vA0nh4IAtuO7OwKnsNeAGoQSYaz9F3rjC/sdfHRQ9op7M3nonjjBBDNgcQxhD9g==@vger.kernel.org, AJvYcCVhnBqNSbvCiw11mnnCbsVsowpDLGoqi90zW2Oxu1iFlpKCwAqoq3VA00lLFgA8qBK59qMTH6lCppU/+ZkNJf0=@vger.kernel.org, AJvYcCVoIS/38/UKVoRv72OIjf+pfB1++ERoEuKDuHjAz+Zqm3OYuV5QYWM01FasxK4DUx2/GFlPin+4@vger.kernel.org, AJvYcCWSL05b/p3MXsROYBOQU7xz9j5TQWhLVoKTVmPVwuLp7kX308qRKjpokzDPC8IBxaoInj9hKxYhPoQ=@vger.kernel.org, AJvYcCXM3zuC6rf0einIUFLlmGQx5rBjEQCx2XVcyQFY+m+J/ZNbU1lDMRwe/Rd4p08FQ/VCkCXLJ3fn6dEI@vger.kernel.org, AJvYcCXxGOhifzF5Xe60SxemlGn6qQmNjY9khvu/dNICPAUjowD00zCe/9pb4mgzT8m3jxvlMmtTyavIlNku/8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4RW0OwnYAB7kqe2QRUBZ4MhAuwxGDtqICz4hp6icQ2w9C0/xD
-	ILRlhK3+cAjaTx/il/ZGNOhjD1pw4yjX6IO1z/HlQw9BNbllO62x
-X-Gm-Gg: ASbGnctHAhQTEo0w3Zw4Y/lWumw9AduJtmI6tIhoUUCv4kKReSoE/xFe2Kx0+QGRBKZ
-	7Y5Lij2yoQTAG84692Xhbt1D4bkEftoM97iUgQiVQm63C9K0i+SHiOBIetlH5UNsYVie6XmCCYc
-	0SjRyAsGYxpeABXv7zJ8VQy+h2hyO6NjLSU7HMYkxOEZ0Wb9MUNN9jawlO6OVNPu0RO/tC16BFh
-	JJUYNRR9kl86nQKJ9YAuspNcYj+2mYB00BtoGkSll2eLf9s4I5tf/9JwPQ7eelq6KauqH/cShRL
-	o3Iu4AwHqbQw683f
-X-Google-Smtp-Source: AGHT+IEFzISgMzORm1VZJHloXLXa4RbAFlrP6lX4mjT3bkPPo/3uvNKogh8I0oZwg4hGcbnrTfGVmA==
-X-Received: by 2002:a05:6a20:3945:b0:1e1:afa9:d397 with SMTP id adf61e73a8af0-1e1afa9d6fdmr8076953637.15.1733827582738;
-        Tue, 10 Dec 2024 02:46:22 -0800 (PST)
-Received: from hcdev-d520mt2.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156dfe2fsm8905748a12.31.2024.12.10.02.46.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 02:46:22 -0800 (PST)
-From: Ming Yu <a0282524688@gmail.com>
-X-Google-Original-From: Ming Yu <tmyu0@nuvoton.com>
-To: tmyu0@nuvoton.com,
-	lee@kernel.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	andi.shyti@kernel.org,
-	mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	jdelvare@suse.com,
-	alexandre.belloni@bootlin.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: [PATCH v3 7/7] rtc: Add Nuvoton NCT6694 RTC support
-Date: Tue, 10 Dec 2024 18:45:24 +0800
-Message-Id: <20241210104524.2466586-8-tmyu0@nuvoton.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241210104524.2466586-1-tmyu0@nuvoton.com>
-References: <20241210104524.2466586-1-tmyu0@nuvoton.com>
+	s=arc-20240116; t=1733827528; c=relaxed/simple;
+	bh=l7fBF8yvaA8NA8poiu32Gw7o8kTZtL24RhNPjNqxYwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bo80v7m7r2L6R4TJjL0z8n1MVVRoZiWhafVK8AjdgkF3iGO3tKAJADjj03q4b5Nl9cKYKoz0FJ5WcY2DBjtC/aXGKubS4mswJzNxrKoRsFT76QgE9SeNgg2nc5EilSCyAXIcykRWi22ZaY33FUGnRseuBTRlt/dWZ2SYjOAYpgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIBPsBdw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B422BC4CED6;
+	Tue, 10 Dec 2024 10:45:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733827527;
+	bh=l7fBF8yvaA8NA8poiu32Gw7o8kTZtL24RhNPjNqxYwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KIBPsBdwLX0jx+tKoF8ZtEhhttiLaFsv4VKShxS41Ugn8o/y7pWkg7fJiff263Hw/
+	 6f+FmcqsNAaOfyT8Hnz96MdBvPxZsViYtiHTwTgHeQ4vquPZCC7Tss70kW0SQJrtsA
+	 sdBdsFMhr1ugWTzYCU0mCEF+GbJWUcEX3HdsZNAsTNgNknFHlV54P/Xpx5f0tj//rE
+	 gR8ekN+m3XJKxeTtwfrOpjI5HgB8zrCEtLncpZiojlLrwsyiAiUk8Ck3QdAMXeRkrZ
+	 M/EOV5iM90L8tj2pxRAV/2Wc7OlQXD4bk8UvqmX0iTvP9nVaOR4NlNTMh0LM5FVVUM
+	 wgokuo2Is4dyw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tKxk9-000000004tl-10rO;
+	Tue, 10 Dec 2024 11:45:29 +0100
+Date: Tue, 10 Dec 2024 11:45:29 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v2 0/2] arm64: dts: qcom: x1e80100: fix USB OTG
+ regressions
+Message-ID: <Z1gbyXk-SktGjL6-@hovoldconsulting.com>
+References: <20241209111905.31017-1-johan+linaro@kernel.org>
+ <iw2c4fceyppf2w2gueevsqsz2z7hatbqo33vufx3veatprczu5@u4k3j2igy6ee>
+ <Z1cNHOqlRk2Cxwvd@hovoldconsulting.com>
+ <CAA8EJppcQrJkZe1ft_PLaB1C5d6vTke6BOSDZXJuNwrxy3kJKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJppcQrJkZe1ft_PLaB1C5d6vTke6BOSDZXJuNwrxy3kJKQ@mail.gmail.com>
 
-This driver supports RTC functionality for NCT6694 MFD device
-based on USB interface.
+On Mon, Dec 09, 2024 at 06:00:21PM +0200, Dmitry Baryshkov wrote:
+> On Mon, 9 Dec 2024 at 17:30, Johan Hovold <johan@kernel.org> wrote:
+> > On Mon, Dec 09, 2024 at 03:23:05PM +0200, Dmitry Baryshkov wrote:
+> > > On Mon, Dec 09, 2024 at 12:19:03PM +0100, Johan Hovold wrote:
+> > > > A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
+> > > > ports can break SuperSpeed device hotplugging.
+> > > >
+> > > > Abel noticed that the corresponding commit for the CRD also triggers a
+> > > > hard reset during resume from suspend.
+> > > >
+> > > > With retimer (and orientation detection) support not even merged yet,
+> > > > let's revert at least until we have stable host mode in mainline.
+> > > >
+> > > > Note that Stephan and Dmitry have already identified other problems with
+> > > > the offending commits here:
+> > > >
+> > > >     https://lore.kernel.org/all/ZxZO6Prrm2ITUZMQ@linaro.org/
+> > > >     https://lore.kernel.org/all/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef
+> >
+> > > > Changes in v2
+> > > >  - revert also the corresponding patch for the CRD which breaks suspend
+> > >
+> > > As you are reverting two commits, please revert the third one too, it
+> > > breaks pmic-glink.
+> >
+> > Can you be more specific?
+> >
+> > I was gonna say that pmic_glink works since hotplug and orientation
+> > detection still works, but I tested now with DP altmode and that is
+> > indeed broken unless I revert the third commit (f042bc234c2e ("arm64:
+> > dts: qcom: x1e80100: enable OTG on USB-C controllers")).
+> >
+> > Was that what you had in mind? Can you explain why that breaks?
+> 
+> See https://linux-regtracking.leemhuis.info/regzbot/regression/lore/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef/
+> 
+> For some reason commit f042bc234c2e ("arm64: dts: qcom: x1e80100: enable
+> OTG on USB-C controllers") seems to break UCSI on X1E80100 CRD:
+> 
+> [   34.479352] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: PPM init
+> failed, stop trying
 
-Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
----
- MAINTAINERS               |   1 +
- drivers/rtc/Kconfig       |  10 ++
- drivers/rtc/Makefile      |   1 +
- drivers/rtc/rtc-nct6694.c | 264 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 276 insertions(+)
- create mode 100644 drivers/rtc/rtc-nct6694.c
+Ok, so you're referring to your UCSI report that I linked to above.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6414eea0463..6d1cfec28076 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16550,6 +16550,7 @@ F:	drivers/hwmon/nct6694-hwmon.c
- F:	drivers/i2c/busses/i2c-nct6694.c
- F:	drivers/mfd/nct6694.c
- F:	drivers/net/can/nct6694_canfd.c
-+F:	drivers/rtc/rtc-nct6694.c
- F:	drivers/watchdog/nct6694_wdt.c
- F:	include/linux/mfd/nct6694.h
- 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 66eb1122248b..36829d096194 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -406,6 +406,16 @@ config RTC_DRV_NCT3018Y
- 	   This driver can also be built as a module, if so, the module will be
- 	   called "rtc-nct3018y".
- 
-+config RTC_DRV_NCT6694
-+	tristate "Nuvoton NCT6694 RTC support"
-+	depends on MFD_NCT6694
-+	help
-+	  If you say yes to this option, support will be included for Nuvoton
-+	  NCT6694, a USB device to RTC.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called rtc-nct6694.
-+
- config RTC_DRV_RK808
- 	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
- 	depends on MFD_RK8XX
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index f62340ecc534..64443d26bb5b 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -116,6 +116,7 @@ obj-$(CONFIG_RTC_DRV_MXC)	+= rtc-mxc.o
- obj-$(CONFIG_RTC_DRV_MXC_V2)	+= rtc-mxc_v2.o
- obj-$(CONFIG_RTC_DRV_GAMECUBE)	+= rtc-gamecube.o
- obj-$(CONFIG_RTC_DRV_NCT3018Y)	+= rtc-nct3018y.o
-+obj-$(CONFIG_RTC_DRV_NCT6694)	+= rtc-nct6694.o
- obj-$(CONFIG_RTC_DRV_NTXEC)	+= rtc-ntxec.o
- obj-$(CONFIG_RTC_DRV_OMAP)	+= rtc-omap.o
- obj-$(CONFIG_RTC_DRV_OPAL)	+= rtc-opal.o
-diff --git a/drivers/rtc/rtc-nct6694.c b/drivers/rtc/rtc-nct6694.c
-new file mode 100644
-index 000000000000..0dbe2aa0a042
---- /dev/null
-+++ b/drivers/rtc/rtc-nct6694.c
-@@ -0,0 +1,264 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Nuvoton NCT6694 RTC driver based on USB interface.
-+ *
-+ * Copyright (C) 2024 Nuvoton Technology Corp.
-+ */
-+
-+#include <linux/bcd.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/nct6694.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/rtc.h>
-+#include <linux/slab.h>
-+
-+/* Host interface */
-+#define NCT6694_RTC_MOD		0x08
-+
-+/* Message Channel */
-+/* Command 00h */
-+#define NCT6694_RTC_CMD0_LEN	0x07
-+#define NCT6694_RTC_CMD0_OFFSET	0x0000	/* OFFSET = SEL|CMD */
-+/* Command 01h */
-+#define NCT6694_RTC_CMD1_LEN	0x05
-+#define NCT6694_RTC_CMD1_OFFSET	0x0001	/* OFFSET = SEL|CMD */
-+/* Command 02h */
-+#define NCT6694_RTC_CMD2_LEN	0x02
-+#define NCT6694_RTC_CMD2_OFFSET	0x0002	/* OFFSET = SEL|CMD */
-+
-+#define NCT6694_RTC_IRQ_INT_EN		BIT(0)	/* Transmit a USB INT-in when RTC alarm */
-+#define NCT6694_RTC_IRQ_GPO_EN		BIT(5)	/* Trigger a GPO Low Pulse when RTC alarm */
-+
-+#define NCT6694_RTC_IRQ_EN		(NCT6694_RTC_IRQ_INT_EN | NCT6694_RTC_IRQ_GPO_EN)
-+#define NCT6694_RTC_IRQ_STS		BIT(0)	/* Write 1 clear IRQ status */
-+
-+struct __packed nct6694_rtc_cmd0 {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
-+	u8 week;
-+	u8 day;
-+	u8 month;
-+	u8 year;
-+};
-+
-+struct __packed nct6694_rtc_cmd1 {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
-+	u8 alarm_en;
-+	u8 alarm_pend;
-+};
-+
-+struct __packed nct6694_rtc_cmd2 {
-+	u8 irq_en;
-+	u8 irq_pend;
-+};
-+
-+struct nct6694_rtc_data {
-+	struct nct6694 *nct6694;
-+	struct rtc_device *rtc;
-+	struct mutex lock;
-+	unsigned char *xmit_buf;
-+};
-+
-+static int nct6694_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_cmd0 *buf = (struct nct6694_rtc_cmd0 *)data->xmit_buf;
-+	int ret;
-+
-+	guard(mutex)(&data->lock);
-+
-+	ret = nct6694_read_msg(data->nct6694, NCT6694_RTC_MOD,
-+			       NCT6694_RTC_CMD0_OFFSET,
-+			       NCT6694_RTC_CMD0_LEN,
-+			       buf);
-+	if (ret)
-+		return ret;
-+
-+	tm->tm_sec = bcd2bin(buf->sec);		/* tm_sec expect 0 ~ 59 */
-+	tm->tm_min = bcd2bin(buf->min);		/* tm_min expect 0 ~ 59 */
-+	tm->tm_hour = bcd2bin(buf->hour);	/* tm_hour expect 0 ~ 23 */
-+	tm->tm_wday = bcd2bin(buf->week) - 1;	/* tm_wday expect 0 ~ 6 */
-+	tm->tm_mday = bcd2bin(buf->day);	/* tm_mday expect 1 ~ 31 */
-+	tm->tm_mon = bcd2bin(buf->month) - 1;	/* tm_month expect 0 ~ 11 */
-+	tm->tm_year = bcd2bin(buf->year) + 100;	/* tm_year expect since 1900 */
-+
-+	return ret;
-+}
-+
-+static int nct6694_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_cmd0 *buf = (struct nct6694_rtc_cmd0 *)data->xmit_buf;
-+
-+	guard(mutex)(&data->lock);
-+
-+	buf->sec = bin2bcd(tm->tm_sec);
-+	buf->min = bin2bcd(tm->tm_min);
-+	buf->hour = bin2bcd(tm->tm_hour);
-+	buf->week = bin2bcd(tm->tm_wday + 1);
-+	buf->day = bin2bcd(tm->tm_mday);
-+	buf->month = bin2bcd(tm->tm_mon + 1);
-+	buf->year = bin2bcd(tm->tm_year - 100);
-+
-+	return nct6694_write_msg(data->nct6694, NCT6694_RTC_MOD,
-+				 NCT6694_RTC_CMD0_OFFSET,
-+				 NCT6694_RTC_CMD0_LEN,
-+				 buf);
-+}
-+
-+static int nct6694_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_cmd1 *buf = (struct nct6694_rtc_cmd1 *)data->xmit_buf;
-+	int ret;
-+
-+	guard(mutex)(&data->lock);
-+
-+	ret = nct6694_read_msg(data->nct6694, NCT6694_RTC_MOD,
-+			       NCT6694_RTC_CMD1_OFFSET,
-+			       NCT6694_RTC_CMD1_LEN,
-+			       buf);
-+	if (ret)
-+		return ret;
-+
-+	alrm->time.tm_sec = bcd2bin(buf->sec);
-+	alrm->time.tm_min = bcd2bin(buf->min);
-+	alrm->time.tm_hour = bcd2bin(buf->hour);
-+	alrm->enabled = buf->alarm_en;
-+	alrm->pending = buf->alarm_pend;
-+
-+	return ret;
-+}
-+
-+static int nct6694_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_cmd1 *buf = (struct nct6694_rtc_cmd1 *)data->xmit_buf;
-+
-+	guard(mutex)(&data->lock);
-+
-+	buf->sec = bin2bcd(alrm->time.tm_sec);
-+	buf->min = bin2bcd(alrm->time.tm_min);
-+	buf->hour = bin2bcd(alrm->time.tm_hour);
-+	buf->alarm_en = alrm->enabled ? NCT6694_RTC_IRQ_EN : 0;
-+	buf->alarm_pend = 0;
-+
-+	return nct6694_write_msg(data->nct6694, NCT6694_RTC_MOD,
-+				 NCT6694_RTC_CMD1_OFFSET,
-+				 NCT6694_RTC_CMD1_LEN,
-+				 buf);
-+}
-+
-+static int nct6694_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_cmd2 *buf = (struct nct6694_rtc_cmd2 *)data->xmit_buf;
-+
-+	guard(mutex)(&data->lock);
-+
-+	if (enabled)
-+		buf->irq_en |= NCT6694_RTC_IRQ_EN;
-+	else
-+		buf->irq_en &= ~NCT6694_RTC_IRQ_EN;
-+
-+	buf->irq_pend = 0;
-+
-+	return nct6694_write_msg(data->nct6694, NCT6694_RTC_MOD,
-+				 NCT6694_RTC_CMD2_OFFSET,
-+				 NCT6694_RTC_CMD2_LEN,
-+				 buf);
-+}
-+
-+static const struct rtc_class_ops nct6694_rtc_ops = {
-+	.read_time = nct6694_rtc_read_time,
-+	.set_time = nct6694_rtc_set_time,
-+	.read_alarm = nct6694_rtc_read_alarm,
-+	.set_alarm = nct6694_rtc_set_alarm,
-+	.alarm_irq_enable = nct6694_rtc_alarm_irq_enable,
-+};
-+
-+static irqreturn_t nct6694_irq(int irq, void *dev_id)
-+{
-+	struct nct6694_rtc_data *data = dev_id;
-+	struct nct6694_rtc_cmd2 *buf = (struct nct6694_rtc_cmd2 *)data->xmit_buf;
-+	int ret;
-+
-+	guard(mutex)(&data->lock);
-+
-+	buf->irq_en = NCT6694_RTC_IRQ_EN;
-+	buf->irq_pend = NCT6694_RTC_IRQ_STS;
-+	ret = nct6694_write_msg(data->nct6694, NCT6694_RTC_MOD,
-+				NCT6694_RTC_CMD2_OFFSET,
-+				NCT6694_RTC_CMD2_LEN,
-+				buf);
-+	if (ret)
-+		return IRQ_NONE;
-+
-+	rtc_update_irq(data->rtc, 1, RTC_IRQF | RTC_AF);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int nct6694_rtc_probe(struct platform_device *pdev)
-+{
-+	struct nct6694_rtc_data *data;
-+	struct nct6694 *nct6694 = dev_get_drvdata(pdev->dev.parent);
-+	int ret, irq;
-+
-+	irq = irq_create_mapping(nct6694->domain, NCT6694_IRQ_RTC);
-+	if (!irq)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->xmit_buf = devm_kcalloc(&pdev->dev, NCT6694_MAX_PACKET_SZ,
-+				      sizeof(unsigned char), GFP_KERNEL);
-+	if (!data->xmit_buf)
-+		return -ENOMEM;
-+
-+	data->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(data->rtc))
-+		return PTR_ERR(data->rtc);
-+
-+	data->nct6694 = nct6694;
-+	data->rtc->ops = &nct6694_rtc_ops;
-+	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
-+
-+	mutex_init(&data->lock);
-+
-+	device_set_wakeup_capable(&pdev->dev, 1);
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
-+					nct6694_irq, IRQF_ONESHOT,
-+					"nct6694-rtc", data);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to request irq\n");
-+
-+	/* Register rtc device to RTC framework */
-+	return devm_rtc_register_device(data->rtc);
-+}
-+
-+static struct platform_driver nct6694_rtc_driver = {
-+	.driver = {
-+		.name	= "nct6694-rtc",
-+	},
-+	.probe		= nct6694_rtc_probe,
-+};
-+
-+module_platform_driver(nct6694_rtc_driver);
-+
-+MODULE_DESCRIPTION("USB-RTC driver for NCT6694");
-+MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:nct6694-rtc");
--- 
-2.34.1
+With the full series applied, I typically do *not* see the PPM init
+error message, so it does not seem directly related to the regressions I
+reported. DP still works even when SS hotplug does not.
 
+With only the first patch applied, I do see the PPM init error on every
+boot and DP is broken. Hotplug and orientation detection still works
+though:
+
+[   19.698560] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: PPM init failed, stop trying
+[   45.100142] r8152-cfgselector 4-1: USB disconnect, device number 2
+[   47.380999] usb 4-1: new SuperSpeed USB device number 3 using xhci-hcd
+[   47.549862] r8152-cfgselector 4-1: reset SuperSpeed USB device number 3 using xhci-hcd
+[   47.630710] r8152 4-1:1.0 eth0: v1.12.13
+[   50.591050] r8152 4-1:1.0 eth0: carrier on
+[   50.892296] r8152-cfgselector 4-1: USB disconnect, device number 3
+[   55.517111] usb 4-1: new SuperSpeed USB device number 4 using xhci-hcd
+[   55.694021] r8152-cfgselector 4-1: reset SuperSpeed USB device number 4 using xhci-hcd
+
+> > I'll respin with a v3, but please answer the above first.
+
+I'll revert the first patch as well.
+
+Johan
 
