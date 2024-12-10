@@ -1,171 +1,100 @@
-Return-Path: <linux-kernel+bounces-440319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6839EBBC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:24:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6509EBBC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1163281231
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7E2281511
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CA8230D21;
-	Tue, 10 Dec 2024 21:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD780231C8A;
+	Tue, 10 Dec 2024 21:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqNi3BmZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YXHfBSgV"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8AB23ED4A;
-	Tue, 10 Dec 2024 21:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CAA23ED4A;
+	Tue, 10 Dec 2024 21:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733865846; cv=none; b=q69WpWaQ1wgF5Vwdqp2NUNexN/mtwl7Cc/i1qyw6n8upB/AkId/rp4yXEZ3UjDYqyr5agCfaHHdLdo81ah5M0EIbyxeBjBdUyr5AvmJBRS082Z8rR5+4a/cLj86KmuS4mfNeU/GA0+sVhSydpOwZZibeuPEibx4Chusuw/6dYs4=
+	t=1733865945; cv=none; b=YUuTVsPbLryGEjK9rJTJQ9hS+PghwJ8ztOX+OOxRaM7bI/wVnF3RVeDhCYXO8hev2AsJOIRMKg3NtByXmN0jHIQix08lsmb7P4qmX3O1RKDVnibmG2cCEQL7z00qw1N9fDEKVc89b213tPn7Hj23u9CLjigKB6nWG4LOTdPSOKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733865846; c=relaxed/simple;
-	bh=Z5QvjqXjt7nt1q0SyE0Y+TbsCeMskbC5KMAyiIhNWlM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g0RNfekqGpRhFzG/vKLHnXyVTTb408dOkFyMNonCxkrzshGrPtAJw0L2oUyOtbzne4kHm1liPEXPoyqRoSfmcvkoHW/y2r6gvx63Pqku+j9DJ6Cuu906Wol+B4G3Koi871BdoxaFHUKCr4JOFcWDmTAWB8Wx6U061ddSEeGBRz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqNi3BmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4674DC4CED6;
-	Tue, 10 Dec 2024 21:24:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733865846;
-	bh=Z5QvjqXjt7nt1q0SyE0Y+TbsCeMskbC5KMAyiIhNWlM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BqNi3BmZUbZUW6Zfk5jruHxc91Vc4ndIr/HQATGRfe4AEuzMXIuAGGUZM02wiCxcU
-	 BeyzmRVUEOWnu6w7P25Q3tNM6A5L7XIqjGQnbHR1Gh8i1sI/UNVYTxfvF/uFg7uBMq
-	 3bXhLuQF1VVtz5EtLDVeBpv1Mms4q3OVr21jfz+lABscBw7b1+N63WhnyUFDq8/6Md
-	 j9D8ka0190Ef4Bkbk5+KViXESKdYnWegZS3OIB2elS7T/8Dlesll/WZRpfygMKbR42
-	 hFjSfqkMPqCqor/LGEx1gO52loRWGpwHIWlgdTlszXXSCH9Ibrc0MwtdQ6O4+8rVlb
-	 uEL4n4cfioiIQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tL7i7-002QNJ-Ry;
-	Tue, 10 Dec 2024 21:24:03 +0000
-Date: Tue, 10 Dec 2024 21:24:03 +0000
-Message-ID: <87ed2fs03w.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	"Konrad\
- Dybcio" <konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten
-	<marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	"Simona\
- Vetter" <simona@ffwll.ch>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	"Pavan\
- Kondeti" <quic_pkondeti@quicinc.com>,
-	<linux-arm-msm@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>,
-	<freedreno@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-In-Reply-To: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733865945; c=relaxed/simple;
+	bh=HpklVVKV+tUCokf9h02FJlrQ6G4LkY8oP1AxulOL8V0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F2ezc2njl4sgB8wt6qhYM5Qni+HXeW8kRWyzdDzQ/EAGZKp28DIqr5h6jbIVrIXxowHI9Xluw5geHojrdn1ipTPaw+toBFpLYY9owROxIsWaaUnIjSJ0EadizV5t+n8rkKgU97vh5bTxeXo2trMrBm2+oE9nc5m7Idr21rPmSoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YXHfBSgV; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733865941;
+	bh=HpklVVKV+tUCokf9h02FJlrQ6G4LkY8oP1AxulOL8V0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YXHfBSgVhJxGEaQIbNC5zwmPk2cnZjMrTKoQ2+SOfWAQ56bHJj3ejSJYiBEtS/Y12
+	 DaXLsJ160BtkrzRUMKBwjgiyRGt+XDWDDDJC/QLSlGEq1wC24/sxQHKMd8H+vY0iBS
+	 zjJZWTytzx7vaP725hPwfEE5b0WjWzhX5AyX3n81LmwPGphcyjWeHjgbJgvbTFwtv6
+	 33tOhyF5w0yoUBfqQXUduflGohjjf37ebHnsLkjYQ9KsvitktitpWbodrwoADsMxpA
+	 Xqyzkm/CctC1hWSnvLmukAJz1HlRpvVBN+4DuZRCQ3XxIMPyvnfIwtqqvgQ5V//P8B
+	 o8VhIPOCJK0Hg==
+Received: from nicolas-tpx395.lan (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0EBDF17E37F9;
+	Tue, 10 Dec 2024 22:25:39 +0100 (CET)
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: 
+Cc: ezequiel@vanguardiasur.com.ar,
+	linux-media@vger.kernel.org,
+	hverkuil-cisco@xs4all.nl,
+	mchehab@kernel.org,
+	p.zabel@pengutronix.de,
+	benjamin.gaignard@collabora.com,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	kernel@collabora.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] media: hantro: Replacement maintainers
+Date: Tue, 10 Dec 2024 16:25:16 -0500
+Message-ID: <20241210212518.1587395-1-nicolas.dufresne@collabora.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: quic_akhilpo@quicinc.com, robdclark@gmail.com, sean@poorly.run, konradybcio@kernel.org, quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch, quic_eberman@quicinc.com, quic_pkondeti@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 09 Dec 2024 08:19:15 +0000,
-Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
-> 
-> When kernel is booted in EL2, SECVID registers are accessible to the
-> KMD. So we can use that to switch GPU's secure mode to avoid dependency
-> on Zap firmware. Also, we can't load a secure firmware without a
-> hypervisor that supports it.
-> 
-> Tested following configurations on sa8775p chipset (Adreno 663 gpu):
-> 
-> 1. Gunyah (No KVM) - Loads zap shader based on DT
-> 2. KVM in VHE - Skips zap shader load and programs SECVID register
-> 3. KVM in nVHE - Loads zap shader based on DT
-> 4. Kernel in EL2 with CONFIG_KVM=n - Skips zap shader load and
-> 	programs SECVID register
->
-> For (1) and (3) configuration, this patch doesn't have any impact.
-> Driver loads secure firmware based on other existing hints.
+As per a long time request from Ezequiel who left the project around
+2020, replace the top maintainers with Benjamin and myself, keeping
+Philipp who is still active in the subsystem.
 
-The moment the kernel is entered at EL2, this is a bare metal
-situation, and everything is accessible. So your distinction between
-VHE and nVHE (which would equally apply to hVHE and pKVM) makes no
-sense at all. Same thing for KVM being disabled, which has no bearing
-on what can be accessed.
+Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+---
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 82 +++++++++++++++++++++++------------
->  1 file changed, 54 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index 019610341df1..9dcaa8472430 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -14,6 +14,10 @@
->  #include <linux/pm_domain.h>
->  #include <linux/soc/qcom/llcc-qcom.h>
->  
-> +#ifdef CONFIG_ARM64
-> +#include <asm/virt.h>
-> +#endif
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e930c7a58b1..00e95d6512f7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10030,7 +10030,8 @@ F:	include/trace/events/handshake.h
+ F:	net/handshake/
+ 
+ HANTRO VPU CODEC DRIVER
+-M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
++M:	Nicolas Dufresne <nicolas.dufresne@collabora.com>
++M:	Benjamin Gaignard <benjamin.gaignard@collabora.com>
+ M:	Philipp Zabel <p.zabel@pengutronix.de>
+ L:	linux-media@vger.kernel.org
+ L:	linux-rockchip@lists.infradead.org
 
-How about 32bit ARM?
-
-> +
->  #define GPU_PAS_ID 13
->  
->  static inline bool _a6xx_check_idle(struct msm_gpu *gpu)
-> @@ -998,6 +1002,54 @@ static int a6xx_zap_shader_init(struct msm_gpu *gpu)
->  	return ret;
->  }
->  
-> +static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
-> +{
-> +	int ret;
-> +
-> +#ifdef CONFIG_ARM64
-> +	/*
-> +	 * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
-> +	 * to switch the secure mode to avoid the dependency on zap shader.
-> +	 */
-> +	if (is_kernel_in_hyp_mode())
-> +		goto direct_switch;
-
-No, please. To check whether you are *booted* at EL2, you need to
-check for is_hyp_available(). Whether the kernel runs at EL1 or EL2 is
-none of the driver's business, really. This is still absolutely
-disgusting from an abstraction perspective, but I guess we don't have
-much choice here.
-
-In the future, for anything involving KVM, please Cc the maintainers,
-reviewers and mailing list listed in the MAINTAINERS file.
-
-Thanks,
-
-	M.
-
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
 -- 
-Without deviation from the norm, progress is not possible.
+2.47.1
+
 
