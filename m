@@ -1,92 +1,96 @@
-Return-Path: <linux-kernel+bounces-438845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFF79EA72E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:29:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316639EA731
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9F6188840F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D38167EBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EE814037F;
-	Tue, 10 Dec 2024 04:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H5YUKu2r"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01560DF58
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CD9142659;
+	Tue, 10 Dec 2024 04:33:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6852D23312A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733804985; cv=none; b=gtgXfzAAQVBdqpxHUS+TbA1F5X74Vo/a3MaLpu3q1lNp9MHSJFxqo2uq+hvg80XIu4ep1d90azCivgiYiyjRP7Tw+q6sOrxkE3Xi6ZC+KIQzJCGDmk2Cg2MNgC5KJSZt44YKE8YJAjpKj5D67oc6I59NMAFJoZkAJM0Ey8OmcBM=
+	t=1733805190; cv=none; b=oEZv4aW/V/M5GLfBvvvh0ownLndyoPSLv3zK54Ps41MhVGHZrU6C86njkQPk2MaxLd8efNM4451bS5kuOD+NI6zhuta3IXp3yNReC3tHQ7V5q3kvLQkkno+tGlzNE0dImLOpQlMI1nJvQcXP2XLbieKmIWzlTu9UXiAzIGrPGUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733804985; c=relaxed/simple;
-	bh=NmyoN29d8RdomLKXISK8uOQeYdX97YvxL1tC7L1Wg6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjmc7B8fG7mKWxcjOh6fx1fHYKX6s2AliO7kJaCkhc+U8+O0eYhjSl/xxLR9Mg9abm8RgMx/VaLzGIWXhZKxJk7dfDuOtyQgV5zw92WPMvi2R6iypebq/YnKMmEhQueegJ7e9uvy9g5Xs0CgsAeTkyB1n2rPwb3lq7Ioglz1JeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H5YUKu2r; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=W0mVNYleG7rejvTbSAYKoOpittcDfBCnrACXJYLLcN8=; b=H5YUKu2rtpLnxLyMrn/owXTZbk
-	kNqdORedQBdRJ8ZkGg+HarmxiLCFk2iiE3LjamNeV1gO1ny4BO6FgXjalTLugUhyO4OxUTdYnrZuD
-	TXHJ97dOAhOd1t8jWDvJe/q9kZ0WygEhF5gSTRwc2SPmvSKjN7VXDbA4dFWW6McylpsOvUQWV0Nd4
-	/zSpGRD0Iam2J3jjHiKs0DMEtPRegsJ11gAXyO0Wchbk7NgYSgmLLNEZ2bfbOo3qW7Yidn3RS5+wo
-	uAU0roywBuS+bz3rodBqZFAVKRl/y/UMGgl8RK/IkKlWrinWUL37xMTMDQ86/QNf4s6ODbzEmSyzv
-	hap6q4zA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKrsQ-0000000AC9F-1WCJ;
-	Tue, 10 Dec 2024 04:29:38 +0000
-Date: Mon, 9 Dec 2024 20:29:38 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	christian.koenig@amd.com, Oleg Nesterov <oleg@redhat.com>,
-	linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Andi Shyti <andi.shyti@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Maciej Patelczyk <maciej.patelczyk@linux.intel.com>,
-	Dominik Grzegorzek <dominik.grzegorzek@intel.com>,
-	Jonathan Cavitt <jonathan.cavitt@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>
-Subject: Re: [PATCH 01/26] ptrace: export ptrace_may_access
-Message-ID: <Z1fDsvIKB4j_-Tv_@infradead.org>
-References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com>
- <20241209133318.1806472-2-mika.kuoppala@linux.intel.com>
+	s=arc-20240116; t=1733805190; c=relaxed/simple;
+	bh=8jG1mr07fyqmubOV3BuZf+p8XhgtkdhHcWKMHpGP/dM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lXYWcK2nnRqJB163BxEa6rCwnlGuEroso4Re5cNPQp3qIWKS6aZ/2EeQE4w5DsbgE6ySmwaIbPiGopkXwmUze3WRpQkkw9V6+442kB877rY59+dSILSKHs6p4etKERcEwrR71nEzZ/7W4AJ/ixUyTHEevjMmyomfSz4E6rsOULY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 684D2113E;
+	Mon,  9 Dec 2024 20:33:35 -0800 (PST)
+Received: from a077893.arm.com (unknown [10.163.48.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 841DD3F58B;
+	Mon,  9 Dec 2024 20:33:04 -0800 (PST)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64/Kconfig: Drop EXECMEM dependency from ARCH_WANTS_EXECMEM_LATE
+Date: Tue, 10 Dec 2024 10:02:57 +0530
+Message-Id: <20241210043257.715822-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209133318.1806472-2-mika.kuoppala@linux.intel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 09, 2024 at 03:32:52PM +0200, Mika Kuoppala wrote:
-> xe driver would like to allow fine grained access control
-> for GDB debugger using ptrace. Without this export, the only
-> option would be to check for CAP_SYS_ADMIN.
-> 
-> The check intended for an ioctl to attach a GPU debugger
-> is similar to the ptrace use case: allow a calling process
-> to manipulate a target process if it has the necessary
-> capabilities or the same permissions, as described in
-> Documentation/process/adding-syscalls.rst.
-> 
-> Export ptrace_may_access function to allow GPU debugger to
-> have identical access control for debugger(s)
-> as a CPU debugger.
+ARCH_WANTS_EXECMEM_LATE indicates subscribing platform's preference for
+EXECMEM late initialisation without creating a new dependency. Hence this
+just drops EXECMEM dependency while selecting ARCH_WANTS_EXECMEM_LATE.
 
-This seems to mis an actual user or you forgot to Cc linux-kernel on it.
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+This patch applies on v6.13-rc1
+
+Changes in V2:
+
+- Dropped generic EXECMEM config changes per Catalin
+- Updated the commit message as required
+
+Changes in V1:
+
+https://lore.kernel.org/all/20241209031251.515903-1-anshuman.khandual@arm.com/
+
+ arch/arm64/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index b5479c8b454c..b146372bc365 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -113,7 +113,7 @@ config ARM64
+ 	select ARCH_WANT_FRAME_POINTERS
+ 	select ARCH_WANT_HUGE_PMD_SHARE if ARM64_4K_PAGES || (ARM64_16K_PAGES && !ARM64_VA_BITS_36)
+ 	select ARCH_WANT_LD_ORPHAN_WARN
+-	select ARCH_WANTS_EXECMEM_LATE if EXECMEM
++	select ARCH_WANTS_EXECMEM_LATE
+ 	select ARCH_WANTS_NO_INSTR
+ 	select ARCH_WANTS_THP_SWAP if ARM64_4K_PAGES
+ 	select ARCH_HAS_UBSAN
+-- 
+2.30.2
 
 
