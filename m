@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-439232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D26A9EAC93
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:41:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E63F9162945
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:41:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94975210F58;
-	Tue, 10 Dec 2024 09:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i5+XQl+h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8739EAC94
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:41:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23DE2080ED
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D912931E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:41:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801392153C8;
+	Tue, 10 Dec 2024 09:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N0HAlAF0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280CC226187
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733823402; cv=none; b=QsNiG9WYYpC6a/Vi3PAcu8uMyTQR760oxigL6DvGr1ocD4EqIc4VvkMfSpEEZnVvefYSMpgv+7yU6f65l8yMA4qplSpmxZRaVmVH5BChEAFZvlL37pSxDIizl91H6mpQzbg4P67NhaOizMRT6ls+BZa/mJZnE1BjxiVdgbYOYAA=
+	t=1733823402; cv=none; b=SvH5bHwjk4JI+HaLhxKoZ28E8QvAtEoA/k/kgJk2VKshgaV+xyvTDbQX1xW60/GqHv3ZSGDNfI1g1JTLlVriRwXlQdWIkYXy5Yi/aiJ/p+Zgf87xILHs5lE+IYtrJo3FLBaMxOVj1pBJkk00oJKan8pf7+oCB+OIaac6e/aoJ7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733823402; c=relaxed/simple;
-	bh=jIM2Nq4f5WnUcnB609WkmMYX+Lj3WU/hNwpGca62GPw=;
+	bh=VbadVLs847riKOPtPZOOzLVpGiQTZz6DcW4e6MXix6c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E0R5qE8tGPnIVcwkO1XkAHsUB0oqz+wrdzt3eBn0cqb3uy5WEUz3KAWTJSYDpYi5OwQ4YU0NFCUpKoDCi/ofL6myGobhwuROGNixU8MvDdYELbS3wlUslqCk63UJRxiz8NNou5nwyIfhKjE9lBszM00c/KeT7WG3DzYyUGkTEU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i5+XQl+h; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=pGcXawQvJRXZ7HGqqswa5sOoxcCozKlccO8pMjxnk5iyQ+k3zmy6XDCdWzp+/dHkLodQ5rnrpX8KUtitAFKHMcrgOXlJG36eojp5yLdkkUIRrXK9tXeX/+EfehBGyROwaT9DeBZDTsqwZr6FKMCHnNS+1rZJq7LNKncHL1JUDno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N0HAlAF0; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733823398;
+	s=mimecast20190719; t=1733823400;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LVaggClDk0v6DxqBIr8rSNLckk7O8I9tAhXLRAjBDic=;
-	b=i5+XQl+hmkEIIn9xo0OTVLQ8EQGohtXvkIIYhLu1JrBa0VHYLYyHFHdVUyarZTb2kgfFBN
-	ij9H8MKDkj+e1dcUhiUh22DuNCRPujPKuzypQ54KFbvrbSx07f5Z0TGr4m80fwTFfo632W
-	oGANrPqL4ZEFOAyUq7BjjU+OCURwIZc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=iWTb3hoUCwegak53chUf+LNZzlAZcUL2Dp00ardPGKc=;
+	b=N0HAlAF0jkgSk9tkv02mOv1LJiA4Ea4nLXHCCXIvSzGl7JMYt08fKh0jRnnO2Z2L30ITTR
+	A7H3zgQzVtvEAZPbyE6CEQA9TEnBBvSP7ccSiOBjfrIeiAOUZlcpiLhU/qRkDGW7MF6zvO
+	6dhN2aWlax1uSdLWRY5FX4dAwjSdBoI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-9zsftm08PQumOdxhP8DrZQ-1; Tue,
- 10 Dec 2024 04:36:33 -0500
-X-MC-Unique: 9zsftm08PQumOdxhP8DrZQ-1
-X-Mimecast-MFC-AGG-ID: 9zsftm08PQumOdxhP8DrZQ
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-66-dy3X_BvfMaqKjhMJ3vfAcA-1; Tue,
+ 10 Dec 2024 04:36:37 -0500
+X-MC-Unique: dy3X_BvfMaqKjhMJ3vfAcA-1
+X-Mimecast-MFC-AGG-ID: dy3X_BvfMaqKjhMJ3vfAcA
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F3AA91955DC1;
-	Tue, 10 Dec 2024 09:36:31 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB0371955D53;
+	Tue, 10 Dec 2024 09:36:35 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.39.193.39])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8E4BB1956089;
-	Tue, 10 Dec 2024 09:36:28 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6AD041956089;
+	Tue, 10 Dec 2024 09:36:32 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Jani Nikula <jani.nikula@linux.intel.com>,
 	Rodrigo Vivi <rodrigo.vivi@intel.com>,
@@ -68,9 +68,9 @@ To: Jani Nikula <jani.nikula@linux.intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
 Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v3 2/6] drm/i915/display/i9xx: Add a disable_tiling() for i9xx planes
-Date: Tue, 10 Dec 2024 10:28:42 +0100
-Message-ID: <20241210093505.589893-3-jfalempe@redhat.com>
+Subject: [PATCH v3 3/6] drm/i915/display: Add a disable_tiling() for skl planes
+Date: Tue, 10 Dec 2024 10:28:43 +0100
+Message-ID: <20241210093505.589893-4-jfalempe@redhat.com>
 In-Reply-To: <20241210093505.589893-1-jfalempe@redhat.com>
 References: <20241210093505.589893-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -88,64 +88,47 @@ the panic screen.
 
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
- drivers/gpu/drm/i915/display/i9xx_plane.c     | 23 +++++++++++++++++++
- .../drm/i915/display/intel_display_types.h    |  2 ++
- 2 files changed, 25 insertions(+)
+ .../drm/i915/display/skl_universal_plane.c    | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/display/i9xx_plane.c b/drivers/gpu/drm/i915/display/i9xx_plane.c
-index 17a1e3801a85c..671d3914585bf 100644
---- a/drivers/gpu/drm/i915/display/i9xx_plane.c
-+++ b/drivers/gpu/drm/i915/display/i9xx_plane.c
-@@ -848,6 +848,27 @@ static const struct drm_plane_funcs i8xx_plane_funcs = {
- 	.format_mod_supported = i8xx_plane_format_mod_supported,
- };
+diff --git a/drivers/gpu/drm/i915/display/skl_universal_plane.c b/drivers/gpu/drm/i915/display/skl_universal_plane.c
+index 038ca2ec5d7a6..e2a54547a29d5 100644
+--- a/drivers/gpu/drm/i915/display/skl_universal_plane.c
++++ b/drivers/gpu/drm/i915/display/skl_universal_plane.c
+@@ -2575,6 +2575,25 @@ static u8 skl_get_plane_caps(struct drm_i915_private *i915,
+ 	return caps;
+ }
  
-+static void i9xx_disable_tiling(struct intel_plane *plane)
++static void skl_disable_tiling(struct intel_plane *plane)
 +{
++	u32 plane_ctl;
++	struct intel_plane_state *state = to_intel_plane_state(plane->base.state);
 +	struct drm_i915_private *dev_priv = to_i915(plane->base.dev);
-+	enum i9xx_plane_id i9xx_plane = plane->i9xx_plane;
-+	u32 dspcntr;
-+	u32 reg;
++	u32 stride = state->view.color_plane[0].scanout_stride / 64;
 +
-+	dspcntr = intel_de_read_fw(dev_priv, DSPCNTR(dev_priv, i9xx_plane));
-+	dspcntr &= ~DISP_TILED;
-+	intel_de_write_fw(dev_priv, DSPCNTR(dev_priv, i9xx_plane), dspcntr);
++	plane_ctl = intel_de_read(dev_priv, PLANE_CTL(plane->pipe, plane->id));
++	plane_ctl &= ~PLANE_CTL_TILED_MASK;
 +
-+	if (DISPLAY_VER(dev_priv) >= 4) {
-+		reg = intel_de_read_fw(dev_priv, DSPSURF(dev_priv, i9xx_plane));
-+		intel_de_write_fw(dev_priv, DSPSURF(dev_priv, i9xx_plane), reg);
++	intel_de_write_fw(dev_priv, PLANE_STRIDE(plane->pipe, plane->id),
++			  PLANE_STRIDE_(stride));
 +
-+	} else {
-+		reg = intel_de_read_fw(dev_priv, DSPADDR(dev_priv, i9xx_plane));
-+		intel_de_write_fw(dev_priv, DSPADDR(dev_priv, i9xx_plane), reg);
-+	}
++	intel_de_write_fw(dev_priv, PLANE_CTL(plane->pipe, plane->id), plane_ctl);
++
++	intel_de_write_fw(dev_priv, PLANE_SURF(plane->pipe, plane->id),
++			  skl_plane_surf(state, 0));
 +}
 +
  struct intel_plane *
- intel_primary_plane_create(struct drm_i915_private *dev_priv, enum pipe pipe)
- {
-@@ -973,6 +994,8 @@ intel_primary_plane_create(struct drm_i915_private *dev_priv, enum pipe pipe)
- 		plane->disable_flip_done = ilk_primary_disable_flip_done;
+ skl_universal_plane_create(struct drm_i915_private *dev_priv,
+ 			   enum pipe pipe, enum plane_id plane_id)
+@@ -2620,6 +2639,7 @@ skl_universal_plane_create(struct drm_i915_private *dev_priv,
+ 		plane->max_height = skl_plane_max_height;
+ 		plane->min_cdclk = skl_plane_min_cdclk;
  	}
++	plane->disable_tiling = skl_disable_tiling;
  
-+	plane->disable_tiling = i9xx_disable_tiling;
-+
- 	modifiers = intel_fb_plane_get_modifiers(dev_priv, INTEL_PLANE_CAP_TILING_X);
- 
- 	if (DISPLAY_VER(dev_priv) >= 5 || IS_G4X(dev_priv))
-diff --git a/drivers/gpu/drm/i915/display/intel_display_types.h b/drivers/gpu/drm/i915/display/intel_display_types.h
-index ff6eb93337e0a..31804fb99e168 100644
---- a/drivers/gpu/drm/i915/display/intel_display_types.h
-+++ b/drivers/gpu/drm/i915/display/intel_display_types.h
-@@ -1482,6 +1482,8 @@ struct intel_plane {
- 			   bool async_flip);
- 	void (*enable_flip_done)(struct intel_plane *plane);
- 	void (*disable_flip_done)(struct intel_plane *plane);
-+	/* For drm_panic */
-+	void (*disable_tiling)(struct intel_plane *plane);
- };
- 
- #define to_intel_atomic_state(x) container_of(x, struct intel_atomic_state, base)
+ 	if (DISPLAY_VER(dev_priv) >= 13)
+ 		plane->max_stride = adl_plane_max_stride;
 -- 
 2.47.1
 
