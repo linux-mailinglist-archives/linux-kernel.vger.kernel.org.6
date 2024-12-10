@@ -1,100 +1,79 @@
-Return-Path: <linux-kernel+bounces-439102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA429EAAD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:38:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E019EAAD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:39:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CCF1161446
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:39:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5092309A6;
+	Tue, 10 Dec 2024 08:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IrCULZP7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54934283ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:38:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DD92309A1;
-	Tue, 10 Dec 2024 08:38:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAAB1B6CE5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0D81B6CE5;
+	Tue, 10 Dec 2024 08:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819911; cv=none; b=QNp/vgAXja083HgH6IDXO4Y1+1i2MKjo+ZcrxuMgAXUQDsIK0xvcUohrE9MsZP4Jm/y3x0vS7P/aPReeLALzlh/sDkhleyD3fGokmQnU4OEf66g/WU2Vgd/chcpU7zsrTQqhwSFtirCykKvKJLwkEn6tWox7C29Q7kPdJOdY71Q=
+	t=1733819980; cv=none; b=VPKotDsq28GMJFYIqml3CDF/cAAyQzqAhAgEiJLkwTFHLnuy1eHK8GEr6Fk1a1m/tFRT5ny20WTY/LNMeK0k5mbjd77w/Zq28lRRDaH0/lfcmPbH7sJ3YfVFWoSKHr+ggoGjMtYiv88Sxf6l5LRA9e2AQV86i9WSUc3ZBQsD8Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819911; c=relaxed/simple;
-	bh=cAGIuD2YlET0cy0jpLsSeRHL+mXLnXuqvkoYlbkbngE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYYJYKvQ2Vj72pXI1+sshtDpjL6f+E30MvUpnMT/5xZ/k4NY28vsHK9A4ghzNrx0JyNXjTVrxqh8g115hyjef6TXjDRV+5WnIOBKK6DBKNeDO6TKs43RdNn6mF4+0WPLzygp3Db6c/MdxOpQGMlI9b5hOc084eTtz+jbDB5W0cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7230B113E;
-	Tue, 10 Dec 2024 00:38:55 -0800 (PST)
-Received: from [10.163.48.173] (unknown [10.163.48.173])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 426E93F720;
-	Tue, 10 Dec 2024 00:38:22 -0800 (PST)
-Message-ID: <0224b253-5eae-4921-a066-308033396a73@arm.com>
-Date: Tue, 10 Dec 2024 14:08:19 +0530
+	s=arc-20240116; t=1733819980; c=relaxed/simple;
+	bh=sQWWPjqW9qZ0FOVV/QYr3voi+8AelmLLdsNParFMTts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYm6aAvIIaJE/wj2Pr5VwZg6tKHTlwsTb5qb+xmtSAfosKRgSg7HXM0e6kIKVqgGcufNGBZOFS4yMwZnv+fyjh2HJp9X0Xo8VDwlCAUeBufMIZg+/VxSxb758u1RRBvdZ19Ev9pYaODxyVziljay//P6SBqxdBJfVpb61Bt7Q84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IrCULZP7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47081C4CED6;
+	Tue, 10 Dec 2024 08:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733819979;
+	bh=sQWWPjqW9qZ0FOVV/QYr3voi+8AelmLLdsNParFMTts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IrCULZP736306m/01c3UUZ26tq2+sXu++khH7xVvNdwKyNiyx7nE49oT1hlT6n9Ui
+	 dK2wdhqiUKWILwMbO1BmQD4TJ3EUe9U6wjC/EClIHOfL0J7AOq85QK98+ZMhbC7vU9
+	 OTvMRCIuxC6akhjTXoaqTfxQbRs6UVYr9Kozbfqg=
+Date: Tue, 10 Dec 2024 09:39:03 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Dave Penkler <dpenkler@gmail.com>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] staging: gpib: Fix i386 build issue
+Message-ID: <2024121051-snowiness-sampling-2fe2@gregkh>
+References: <20241204162128.25617-1-dpenkler@gmail.com>
+ <CAMuHMdVUnr4iAZmuy8Z3S+sCYN4P26RdpPwXevwiJrh+KN025Q@mail.gmail.com>
+ <ddc720b2-8bb4-4a07-8280-dadeb2de5b26@roeck-us.net>
+ <CAMuHMdUb-tpmTiKV5BFopCWoY96D_HYNG60Kv+wVRKnDFF+COA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: refactor the rodata=xxx
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org, corbet@lwn.net, patches@amperecomputing.com, cl@linux.com,
- akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
- xiongwei.song@windriver.com, inux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241209072020.4743-1-shijie@os.amperecomputing.com>
- <20241209072020.4743-2-shijie@os.amperecomputing.com>
- <d13f1879-7fbc-458d-8fd3-4340b51165fd@arm.com>
- <CAMj1kXFJhFfhy=Gwm=QrdN6XPUd=7SKNKFBF_Z4eQ30r509BCg@mail.gmail.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <CAMj1kXFJhFfhy=Gwm=QrdN6XPUd=7SKNKFBF_Z4eQ30r509BCg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUb-tpmTiKV5BFopCWoY96D_HYNG60Kv+wVRKnDFF+COA@mail.gmail.com>
 
-
-
-On 12/10/24 12:51, Ard Biesheuvel wrote:
-> On Tue, 10 Dec 2024 at 08:17, Anshuman Khandual
-> <anshuman.khandual@arm.com> wrote:
->>
-> ...
->>
->> Reformatted and cleaned up the above comment a bit but feel free to
->> improve it further.
->>
->> /*
->>  * rodata=on (default)
->>  *
->>  *    This applies read-only attributes to VM areas and to the linear
->>  *    alias of the backing pages as well. This prevents code or read-
->>  *    only data from being modified (inadvertently or intentionally),
->>  *    via another mapping for the same memory page.
->>  *
->>  *    But this might cause linear map region to be mapped down to base
->>  *    pages, which may adversely affect performance in some cases.
->>  *
->>  * rodata=off
->>  *
->>  *    This provides more block mappings and contiguous hints for linear
->>  *    map region which would minimize TLB footprint. This also leaves
->>  *    read-only kernel memory writable for debugging.
->>  *
->>  * rodata=noalias
->>  *
->>  *    This provides more block mappings and contiguous hints for linear
->>  *    map region which would minimize TLB footprint. Linear aliases of
->>  *    pages belonging to read-only mappings in vmalloc region are also
->>  *    marked as read-only.
->>
+On Tue, Dec 10, 2024 at 08:52:08AM +0100, Geert Uytterhoeven wrote:
+> Hi Günter,
 > 
-> If linear aliases are marked as read-only, how does 'noalias' differ from 'on'?
+> On Mon, Dec 9, 2024 at 5:18 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > The underlying problem is that the code uses a pointer to store the physical
+> > address. That doesn't work if sizeof(pointer) < sizeof(physical address),
+> > which affects systems with X86_PAE enabled. I have not seen the problem
+> > anywhere else.
+> 
+> I could reproduce the build issue on ARM, with CONFIG_ARM_LPAE=y,
+> which is not enabled by allmodconfig.
 
-Right, the last sentence can be can dropped.
+So does that mean this patch is incorrect?
+
+confused,
+
+greg k-h
 
