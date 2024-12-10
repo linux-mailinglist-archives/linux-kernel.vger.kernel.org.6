@@ -1,608 +1,251 @@
-Return-Path: <linux-kernel+bounces-438692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAE19EA46B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:32:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5752E9EA449
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:28:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A21161938
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9477D1883575
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861BF70813;
-	Tue, 10 Dec 2024 01:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBE17082B;
+	Tue, 10 Dec 2024 01:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hpz66a8r"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JxsS4ehI"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513FC34CF5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC9E382;
+	Tue, 10 Dec 2024 01:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733794314; cv=none; b=tYfjBdc7oCPvGY8hnDSx6HoO/h7JLO/uunbN7xFkEQSP0Dgp2RHkPLS4rmbxR5YzM4ksH9dxW89jGZWhWR34YPjVharBSg9Q9mXjOQO7NJH5gVJapGedT4pMYhKqIA42RX6R/NlZZ0p+WgmnZ9usTboDUumKBULYfL/ZHekGhfg=
+	t=1733794098; cv=none; b=qpAM4Y5SWRZnfUEDuthwQamczP0V5KPQkVT4al1qBHkx1a/N5FOuo6oxJx1wL6uO3DDQ+tZ1e2P23TZAXsT4HQU1lngmoJ4kgMt0tNitV6QIAMrIYUPpjyaV7gSjU1dCWAGQN8Qh+00um66xueQKuLKy/ANBBipapI7dyTGWvto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733794314; c=relaxed/simple;
-	bh=NuFiB8BdWbc3Uu21dl/dWu+gcGb1hGbAKU1uwUlPiKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=V23NwjmaUlBrmRohmgQZRuaCtTra4ldXuX9x5xsSmzgmiHwuQ022dMMNji4HX+YfZWHyqHiZ4245BeSuB5cEM+SJAPNOm7d1LDyqKRY8b2s7kipRtuIIzTEsgXCvxJESp2itwUnN7YOUhud13Xuq7CAJ/8nXvOInDvRrC1b5ugE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hpz66a8r; arc=none smtp.client-ip=115.124.30.110
+	s=arc-20240116; t=1733794098; c=relaxed/simple;
+	bh=0WGDEIBUdYzdvcU7vz5nQuOkZ6/HgJBnZUPutGdPLls=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=YhUv+jIsmD07OsJ6GGRUfXl5TVHck4E3XjYLkZ2zh1mouNaiixW3IbxHW+IPKnrzO+qvBAOh/vukXzimSv0ssp1vKlrEtAifrkUcdlc0a9gBh57VZCOaaBGfYS6hhz1LmU1NON71zIkW19GjpeVcS+c+rwFoPps2817AtaO/SOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JxsS4ehI; arc=none smtp.client-ip=115.124.30.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1733794308; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=9PUBfpN0x7TmLF+kQOlj98hjCOpBNDzdn8kWGsEAPCc=;
-	b=hpz66a8rxPwd7zkD4APJRqut0BwN1rpAYWQSNoF+bYB8KeUYYZX8wE0k271jad1K8EFs/s47MbxAORe8dhoI5TBE4d7ojIw7hjFqGdrGafzPikGpswWwn30nqeDSSe8U2kLFa4KSUD+UKZTri3k1ly1vvwLnQknNuwQOIsUtz+0=
-Received: from 30.170.86.122(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WLD03BA_1733793983 cluster:ay36)
+	t=1733794087; h=Message-ID:Subject:Date:From:To;
+	bh=yBYoMTDeCXIFbr2CWMfboyCFY2eYGLTga/HAl0c5j54=;
+	b=JxsS4ehIVreAytoj6UDvYRG1tuqp07ZAhjwZTVOTxmYmYRMBp35hDLQWshH1TEaOPpwglv3ioHzVEs+XoREt12/edL0MuOcI+9mKl/hcr46QS5CBTJViie+U4TN+ahBe9Rc77W4H9AQJbCy8I6iIMaTEKkDc0XeAqctCk/yjdCA=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WLCv2v2_1733794085 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 10 Dec 2024 09:26:31 +0800
-Message-ID: <7986d9f5-10d9-4c29-a39b-6bebc68e3229@linux.alibaba.com>
-Date: Tue, 10 Dec 2024 09:26:22 +0800
+          Tue, 10 Dec 2024 09:28:06 +0800
+Message-ID: <1733794074.144948-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH net v4 0/6] virtio_net: correct netdev_tx_reset_queue() invocation points
+Date: Tue, 10 Dec 2024 09:27:54 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: mst@redhat.com,
+ jasowang@redhat.com,
+ eperezma@redhat.com,
+ andrew+netdev@lunn.ch,
+ davem@davemloft.net,
+ edumazet@google.com,
+ kuba@kernel.org,
+ pabeni@redhat.com,
+ jiri@resnulli.us,
+ netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org,
+ virtualization@lists.linux.dev
+References: <20241206011047.923923-1-koichiro.den@canonical.com>
+In-Reply-To: <20241206011047.923923-1-koichiro.den@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [erofs?] KASAN: slab-use-after-free Read in
- z_erofs_put_pcluster
-To: syzbot <syzbot+06bfc1fda6094b0755f0@syzkaller.appspotmail.com>,
- chao@kernel.org, dhavale@google.com, huyue2@coolpad.com,
- jefflexu@linux.alibaba.com, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- xiang@kernel.org
-References: <6756d2f0.050a0220.2477f.0040.GAE@google.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <6756d2f0.050a0220.2477f.0040.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-#syz dup: KASAN: slab-use-after-free Read in z_erofs_decompress_queue
 
-On 2024/12/9 19:22, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=137b1f5f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e550a68d9f2e11a3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=06bfc1fda6094b0755f0
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f4d196047218/disk-b86545e0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/be50bc18d79a/vmlinux-b86545e0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/8b6adb7024e6/bzImage-b86545e0.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+06bfc1fda6094b0755f0@syzkaller.appspotmail.com
-> 
-> erofs (device loop4): failed to decompress -26 in[46, 0] out[9000]
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-> BUG: KASAN: slab-use-after-free in queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
-> BUG: KASAN: slab-use-after-free in do_raw_spin_trylock+0x66/0x180 kernel/locking/spinlock_debug.c:123
-> Read of size 4 at addr ffff888034ece0b0 by task kworker/u9:5/5868
-> 
-> CPU: 0 UID: 0 PID: 5868 Comm: kworker/u9:5 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: erofs_worker z_erofs_decompressqueue_work
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->   print_address_description mm/kasan/report.c:378 [inline]
->   print_report+0xc3/0x620 mm/kasan/report.c:489
->   kasan_report+0xd9/0x110 mm/kasan/report.c:602
->   check_region_inline mm/kasan/generic.c:183 [inline]
->   kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
->   instrument_atomic_read include/linux/instrumented.h:68 [inline]
->   atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
->   queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
->   do_raw_spin_trylock+0x66/0x180 kernel/locking/spinlock_debug.c:123
->   __raw_spin_trylock include/linux/spinlock_api_smp.h:89 [inline]
->   _raw_spin_trylock+0x1b/0x80 kernel/locking/spinlock.c:138
->   spin_trylock include/linux/spinlock.h:361 [inline]
->   z_erofs_put_pcluster.part.0+0x112/0x200 fs/erofs/zdata.c:959
->   z_erofs_put_pcluster fs/erofs/zdata.c:1403 [inline]
->   z_erofs_decompress_pcluster fs/erofs/zdata.c:1403 [inline]
->   z_erofs_decompress_queue+0x226a/0x27f0 fs/erofs/zdata.c:1425
->   z_erofs_decompressqueue_work+0x77/0xb0 fs/erofs/zdata.c:1437
->   process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
->   process_scheduled_works kernel/workqueue.c:3310 [inline]
->   worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
->   kthread+0x2c4/0x3a0 kernel/kthread.c:389
->   ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
-> 
-> Allocated by task 9350:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->   kmalloc_noprof include/linux/slab.h:901 [inline]
->   kzalloc_noprof include/linux/slab.h:1037 [inline]
->   erofs_init_fs_context+0x47/0x3a0 fs/erofs/super.c:790
->   alloc_fs_context+0x54d/0x9c0 fs/fs_context.c:318
->   do_new_mount fs/namespace.c:3486 [inline]
->   path_mount+0xb08/0x1f20 fs/namespace.c:3834
->   do_mount fs/namespace.c:3847 [inline]
->   __do_sys_mount fs/namespace.c:4057 [inline]
->   __se_sys_mount fs/namespace.c:4034 [inline]
->   __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Freed by task 5850:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:582
->   poison_slab_object mm/kasan/common.c:247 [inline]
->   __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->   kasan_slab_free include/linux/kasan.h:233 [inline]
->   slab_free_hook mm/slub.c:2338 [inline]
->   slab_free mm/slub.c:4598 [inline]
->   kfree+0x14f/0x4b0 mm/slub.c:4746
->   erofs_kill_sb+0x1a5/0x240 fs/erofs/super.c:824
->   deactivate_locked_super+0xc1/0x1a0 fs/super.c:473
->   deactivate_super+0xde/0x100 fs/super.c:506
->   cleanup_mnt+0x222/0x450 fs/namespace.c:1373
->   task_work_run+0x151/0x250 kernel/task_work.c:239
->   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->   exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->   syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
->   do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> The buggy address belongs to the object at ffff888034ece000
->   which belongs to the cache kmalloc-1k of size 1024
-> The buggy address is located 176 bytes inside of
->   freed 1024-byte region [ffff888034ece000, ffff888034ece400)
-> 
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x34ec8
-> head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-> page_type: f5(slab)
-> raw: 00fff00000000040 ffff88801b041dc0 0000000000000000 dead000000000001
-> raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-> head: 00fff00000000040 ffff88801b041dc0 0000000000000000 dead000000000001
-> head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-> head: 00fff00000000003 ffffea0000d3b201 ffffffffffffffff 0000000000000000
-> head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 3, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6062, tgid 6062 (kworker/u8:10), ts 164036055360, free_ts 158527873125
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
->   prep_new_page mm/page_alloc.c:1564 [inline]
->   get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
->   __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
->   alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
->   alloc_slab_page mm/slub.c:2408 [inline]
->   allocate_slab mm/slub.c:2574 [inline]
->   new_slab+0x2c9/0x410 mm/slub.c:2627
->   ___slab_alloc+0xdac/0x1870 mm/slub.c:3815
->   __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3905
->   __slab_alloc_node mm/slub.c:3980 [inline]
->   slab_alloc_node mm/slub.c:4141 [inline]
->   __do_kmalloc_node mm/slub.c:4282 [inline]
->   __kmalloc_noprof+0x2ec/0x510 mm/slub.c:4295
->   kmalloc_noprof include/linux/slab.h:905 [inline]
->   kzalloc_noprof include/linux/slab.h:1037 [inline]
->   ieee802_11_parse_elems_full+0xea/0x1680 net/mac80211/parse.c:958
->   ieee802_11_parse_elems_crc net/mac80211/ieee80211_i.h:2386 [inline]
->   ieee802_11_parse_elems net/mac80211/ieee80211_i.h:2393 [inline]
->   ieee80211_inform_bss+0xfd/0x1100 net/mac80211/scan.c:79
->   rdev_inform_bss net/wireless/rdev-ops.h:418 [inline]
->   cfg80211_inform_single_bss_data+0x8f9/0x1de0 net/wireless/scan.c:2334
->   cfg80211_inform_bss_data+0x205/0x3ba0 net/wireless/scan.c:3189
->   cfg80211_inform_bss_frame_data+0x272/0x7a0 net/wireless/scan.c:3284
->   ieee80211_bss_info_update+0x311/0xab0 net/mac80211/scan.c:226
->   ieee80211_rx_bss_info net/mac80211/ibss.c:1101 [inline]
->   ieee80211_rx_mgmt_probe_beacon net/mac80211/ibss.c:1580 [inline]
->   ieee80211_ibss_rx_queued_mgmt+0x189c/0x2f50 net/mac80211/ibss.c:1607
->   ieee80211_iface_process_skb net/mac80211/iface.c:1616 [inline]
->   ieee80211_iface_work+0xc0b/0xf00 net/mac80211/iface.c:1670
-> page last free pid 6620 tgid 6619 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1127 [inline]
->   free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
->   __put_partials+0x14c/0x170 mm/slub.c:3142
->   qlink_free mm/kasan/quarantine.c:163 [inline]
->   qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
->   kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
->   __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
->   kasan_slab_alloc include/linux/kasan.h:250 [inline]
->   slab_post_alloc_hook mm/slub.c:4104 [inline]
->   slab_alloc_node mm/slub.c:4153 [inline]
->   __do_kmalloc_node mm/slub.c:4282 [inline]
->   __kmalloc_noprof+0x1cd/0x510 mm/slub.c:4295
->   kmalloc_noprof include/linux/slab.h:905 [inline]
->   tomoyo_realpath_from_path+0xb9/0x720 security/tomoyo/realpath.c:251
->   tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
->   tomoyo_path_number_perm+0x248/0x590 security/tomoyo/file.c:723
->   security_file_ioctl+0x9b/0x240 security/security.c:2908
->   __do_sys_ioctl fs/ioctl.c:900 [inline]
->   __se_sys_ioctl fs/ioctl.c:892 [inline]
->   __x64_sys_ioctl+0xb7/0x200 fs/ioctl.c:892
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Memory state around the buggy address:
->   ffff888034ecdf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff888034ece000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ffff888034ece080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                       ^
->   ffff888034ece100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff888034ece180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-> BUG: KASAN: slab-use-after-free in raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-> BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-> BUG: KASAN: slab-use-after-free in queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
-> BUG: KASAN: slab-use-after-free in do_raw_spin_trylock+0x164/0x180 kernel/locking/spinlock_debug.c:123
-> Read of size 4 at addr ffff888034ece0b0 by task kworker/u9:5/5868
-> 
-> CPU: 0 UID: 0 PID: 5868 Comm: kworker/u9:5 Tainted: G    B              6.12.0-syzkaller-10553-gb86545e02e8c #0
-> Tainted: [B]=BAD_PAGE
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: erofs_worker z_erofs_decompressqueue_work
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->   print_address_description mm/kasan/report.c:378 [inline]
->   print_report+0xc3/0x620 mm/kasan/report.c:489
->   kasan_report+0xd9/0x110 mm/kasan/report.c:602
->   arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
->   raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
->   atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
->   queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
->   do_raw_spin_trylock+0x164/0x180 kernel/locking/spinlock_debug.c:123
->   __raw_spin_trylock include/linux/spinlock_api_smp.h:89 [inline]
->   _raw_spin_trylock+0x1b/0x80 kernel/locking/spinlock.c:138
->   spin_trylock include/linux/spinlock.h:361 [inline]
->   z_erofs_put_pcluster.part.0+0x112/0x200 fs/erofs/zdata.c:959
->   z_erofs_put_pcluster fs/erofs/zdata.c:1403 [inline]
->   z_erofs_decompress_pcluster fs/erofs/zdata.c:1403 [inline]
->   z_erofs_decompress_queue+0x226a/0x27f0 fs/erofs/zdata.c:1425
->   z_erofs_decompressqueue_work+0x77/0xb0 fs/erofs/zdata.c:1437
->   process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
->   process_scheduled_works kernel/workqueue.c:3310 [inline]
->   worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
->   kthread+0x2c4/0x3a0 kernel/kthread.c:389
->   ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
-> 
-> Allocated by task 9350:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->   kmalloc_noprof include/linux/slab.h:901 [inline]
->   kzalloc_noprof include/linux/slab.h:1037 [inline]
->   erofs_init_fs_context+0x47/0x3a0 fs/erofs/super.c:790
->   alloc_fs_context+0x54d/0x9c0 fs/fs_context.c:318
->   do_new_mount fs/namespace.c:3486 [inline]
->   path_mount+0xb08/0x1f20 fs/namespace.c:3834
->   do_mount fs/namespace.c:3847 [inline]
->   __do_sys_mount fs/namespace.c:4057 [inline]
->   __se_sys_mount fs/namespace.c:4034 [inline]
->   __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Freed by task 5850:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:582
->   poison_slab_object mm/kasan/common.c:247 [inline]
->   __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->   kasan_slab_free include/linux/kasan.h:233 [inline]
->   slab_free_hook mm/slub.c:2338 [inline]
->   slab_free mm/slub.c:4598 [inline]
->   kfree+0x14f/0x4b0 mm/slub.c:4746
->   erofs_kill_sb+0x1a5/0x240 fs/erofs/super.c:824
->   deactivate_locked_super+0xc1/0x1a0 fs/super.c:473
->   deactivate_super+0xde/0x100 fs/super.c:506
->   cleanup_mnt+0x222/0x450 fs/namespace.c:1373
->   task_work_run+0x151/0x250 kernel/task_work.c:239
->   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->   exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->   syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
->   do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> The buggy address belongs to the object at ffff888034ece000
->   which belongs to the cache kmalloc-1k of size 1024
-> The buggy address is located 176 bytes inside of
->   freed 1024-byte region [ffff888034ece000, ffff888034ece400)
-> 
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x34ec8
-> head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-> page_type: f5(slab)
-> raw: 00fff00000000040 ffff88801b041dc0 0000000000000000 dead000000000001
-> raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-> head: 00fff00000000040 ffff88801b041dc0 0000000000000000 dead000000000001
-> head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-> head: 00fff00000000003 ffffea0000d3b201 ffffffffffffffff 0000000000000000
-> head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 3, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6062, tgid 6062 (kworker/u8:10), ts 164036055360, free_ts 158527873125
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
->   prep_new_page mm/page_alloc.c:1564 [inline]
->   get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
->   __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
->   alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
->   alloc_slab_page mm/slub.c:2408 [inline]
->   allocate_slab mm/slub.c:2574 [inline]
->   new_slab+0x2c9/0x410 mm/slub.c:2627
->   ___slab_alloc+0xdac/0x1870 mm/slub.c:3815
->   __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3905
->   __slab_alloc_node mm/slub.c:3980 [inline]
->   slab_alloc_node mm/slub.c:4141 [inline]
->   __do_kmalloc_node mm/slub.c:4282 [inline]
->   __kmalloc_noprof+0x2ec/0x510 mm/slub.c:4295
->   kmalloc_noprof include/linux/slab.h:905 [inline]
->   kzalloc_noprof include/linux/slab.h:1037 [inline]
->   ieee802_11_parse_elems_full+0xea/0x1680 net/mac80211/parse.c:958
->   ieee802_11_parse_elems_crc net/mac80211/ieee80211_i.h:2386 [inline]
->   ieee802_11_parse_elems net/mac80211/ieee80211_i.h:2393 [inline]
->   ieee80211_inform_bss+0xfd/0x1100 net/mac80211/scan.c:79
->   rdev_inform_bss net/wireless/rdev-ops.h:418 [inline]
->   cfg80211_inform_single_bss_data+0x8f9/0x1de0 net/wireless/scan.c:2334
->   cfg80211_inform_bss_data+0x205/0x3ba0 net/wireless/scan.c:3189
->   cfg80211_inform_bss_frame_data+0x272/0x7a0 net/wireless/scan.c:3284
->   ieee80211_bss_info_update+0x311/0xab0 net/mac80211/scan.c:226
->   ieee80211_rx_bss_info net/mac80211/ibss.c:1101 [inline]
->   ieee80211_rx_mgmt_probe_beacon net/mac80211/ibss.c:1580 [inline]
->   ieee80211_ibss_rx_queued_mgmt+0x189c/0x2f50 net/mac80211/ibss.c:1607
->   ieee80211_iface_process_skb net/mac80211/iface.c:1616 [inline]
->   ieee80211_iface_work+0xc0b/0xf00 net/mac80211/iface.c:1670
-> page last free pid 6620 tgid 6619 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1127 [inline]
->   free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
->   __put_partials+0x14c/0x170 mm/slub.c:3142
->   qlink_free mm/kasan/quarantine.c:163 [inline]
->   qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
->   kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
->   __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
->   kasan_slab_alloc include/linux/kasan.h:250 [inline]
->   slab_post_alloc_hook mm/slub.c:4104 [inline]
->   slab_alloc_node mm/slub.c:4153 [inline]
->   __do_kmalloc_node mm/slub.c:4282 [inline]
->   __kmalloc_noprof+0x1cd/0x510 mm/slub.c:4295
->   kmalloc_noprof include/linux/slab.h:905 [inline]
->   tomoyo_realpath_from_path+0xb9/0x720 security/tomoyo/realpath.c:251
->   tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
->   tomoyo_path_number_perm+0x248/0x590 security/tomoyo/file.c:723
->   security_file_ioctl+0x9b/0x240 security/security.c:2908
->   __do_sys_ioctl fs/ioctl.c:900 [inline]
->   __se_sys_ioctl fs/ioctl.c:892 [inline]
->   __x64_sys_ioctl+0xb7/0x200 fs/ioctl.c:892
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Memory state around the buggy address:
->   ffff888034ecdf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff888034ece000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ffff888034ece080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                       ^
->   ffff888034ece100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff888034ece180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-> BUG: KASAN: slab-use-after-free in atomic_try_cmpxchg_acquire include/linux/atomic/atomic-instrumented.h:1300 [inline]
-> BUG: KASAN: slab-use-after-free in queued_spin_trylock include/asm-generic/qspinlock.h:97 [inline]
-> BUG: KASAN: slab-use-after-free in do_raw_spin_trylock+0xa2/0x180 kernel/locking/spinlock_debug.c:123
-> Write of size 4 at addr ffff888034ece0b0 by task kworker/u9:5/5868
-> 
-> CPU: 0 UID: 0 PID: 5868 Comm: kworker/u9:5 Tainted: G    B              6.12.0-syzkaller-10553-gb86545e02e8c #0
-> Tainted: [B]=BAD_PAGE
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: erofs_worker z_erofs_decompressqueue_work
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->   print_address_description mm/kasan/report.c:378 [inline]
->   print_report+0xc3/0x620 mm/kasan/report.c:489
->   kasan_report+0xd9/0x110 mm/kasan/report.c:602
->   check_region_inline mm/kasan/generic.c:183 [inline]
->   kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
->   instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
->   atomic_try_cmpxchg_acquire include/linux/atomic/atomic-instrumented.h:1300 [inline]
->   queued_spin_trylock include/asm-generic/qspinlock.h:97 [inline]
->   do_raw_spin_trylock+0xa2/0x180 kernel/locking/spinlock_debug.c:123
->   __raw_spin_trylock include/linux/spinlock_api_smp.h:89 [inline]
->   _raw_spin_trylock+0x1b/0x80 kernel/locking/spinlock.c:138
->   spin_trylock include/linux/spinlock.h:361 [inline]
->   z_erofs_put_pcluster.part.0+0x112/0x200 fs/erofs/zdata.c:959
->   z_erofs_put_pcluster fs/erofs/zdata.c:1403 [inline]
->   z_erofs_decompress_pcluster fs/erofs/zdata.c:1403 [inline]
->   z_erofs_decompress_queue+0x226a/0x27f0 fs/erofs/zdata.c:1425
->   z_erofs_decompressqueue_work+0x77/0xb0 fs/erofs/zdata.c:1437
->   process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
->   process_scheduled_works kernel/workqueue.c:3310 [inline]
->   worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
->   kthread+0x2c4/0x3a0 kernel/kthread.c:389
->   ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
-> 
-> Allocated by task 9350:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->   kmalloc_noprof include/linux/slab.h:901 [inline]
->   kzalloc_noprof include/linux/slab.h:1037 [inline]
->   erofs_init_fs_context+0x47/0x3a0 fs/erofs/super.c:790
->   alloc_fs_context+0x54d/0x9c0 fs/fs_context.c:318
->   do_new_mount fs/namespace.c:3486 [inline]
->   path_mount+0xb08/0x1f20 fs/namespace.c:3834
->   do_mount fs/namespace.c:3847 [inline]
->   __do_sys_mount fs/namespace.c:4057 [inline]
->   __se_sys_mount fs/namespace.c:4034 [inline]
->   __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Freed by task 5850:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:582
->   poison_slab_object mm/kasan/common.c:247 [inline]
->   __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->   kasan_slab_free include/linux/kasan.h:233 [inline]
->   slab_free_hook mm/slub.c:2338 [inline]
->   slab_free mm/slub.c:4598 [inline]
->   kfree+0x14f/0x4b0 mm/slub.c:4746
->   erofs_kill_sb+0x1a5/0x240 fs/erofs/super.c:824
->   deactivate_locked_super+0xc1/0x1a0 fs/super.c:473
->   deactivate_super+0xde/0x100 fs/super.c:506
->   cleanup_mnt+0x222/0x450 fs/namespace.c:1373
->   task_work_run+0x151/0x250 kernel/task_work.c:239
->   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->   exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->   syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
->   do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> The buggy address belongs to the object at ffff888034ece000
->   which belongs to the cache kmalloc-1k of size 1024
-> The buggy address is located 176 bytes inside of
->   freed 1024-byte region [ffff888034ece000, ffff888034ece400)
-> 
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x34ec8
-> head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-> page_type: f5(slab)
-> raw: 00fff00000000040 ffff88801b041dc0 0000000000000000 dead000000000001
-> raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-> head: 00fff00000000040 ffff88801b041dc0 0000000000000000 dead000000000001
-> head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-> head: 00fff00000000003 ffffea0000d3b201 ffffffffffffffff 0000000000000000
-> head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 3, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6062, tgid 6062 (kworker/u8:10), ts 164036055360, free_ts 158527873125
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
->   prep_new_page mm/page_alloc.c:1564 [inline]
->   get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
->   __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
->   alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
->   alloc_slab_page mm/slub.c:2408 [inline]
->   allocate_slab mm/slub.c:2574 [inline]
->   new_slab+0x2c9/0x410 mm/slub.c:2627
->   ___slab_alloc+0xdac/0x1870 mm/slub.c:3815
->   __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3905
->   __slab_alloc_node mm/slub.c:3980 [inline]
->   slab_alloc_node mm/slub.c:4141 [inline]
->   __do_kmalloc_node mm/slub.c:4282 [inline]
->   __kmalloc_noprof+0x2ec/0x510 mm/slub.c:4295
->   kmalloc_noprof include/linux/slab.h:905 [inline]
->   kzalloc_noprof include/linux/slab.h:1037 [inline]
->   ieee802_11_parse_elems_full+0xea/0x1680 net/mac80211/parse.c:958
->   ieee802_11_parse_elems_crc net/mac80211/ieee80211_i.h:2386 [inline]
->   ieee802_11_parse_elems net/mac80211/ieee80211_i.h:2393 [inline]
->   ieee80211_inform_bss+0xfd/0x1100 net/mac80211/scan.c:79
->   rdev_inform_bss net/wireless/rdev-ops.h:418 [inline]
->   cfg80211_inform_single_bss_data+0x8f9/0x1de0 net/wireless/scan.c:2334
->   cfg80211_inform_bss_data+0x205/0x3ba0 net/wireless/scan.c:3189
->   cfg80211_inform_bss_frame_data+0x272/0x7a0 net/wireless/scan.c:3284
->   ieee80211_bss_info_update+0x311/0xab0 net/mac80211/scan.c:226
->   ieee80211_rx_bss_info net/mac80211/ibss.c:1101 [inline]
->   ieee80211_rx_mgmt_probe_beacon net/mac80211/ibss.c:1580 [inline]
->   ieee80211_ibss_rx_queued_mgmt+0x189c/0x2f50 net/mac80211/ibss.c:1607
->   ieee80211_iface_process_skb net/mac80211/iface.c:1616 [inline]
->   ieee80211_iface_work+0xc0b/0xf00 net/mac80211/iface.c:1670
-> page last free pid 6620 tgid 6619 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1127 [inline]
->   free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
->   __put_partials+0x14c/0x170 mm/slub.c:3142
->   qlink_free mm/kasan/quarantine.c:163 [inline]
->   qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
->   kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
->   __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
->   kasan_slab_alloc include/linux/kasan.h:250 [inline]
->   slab_post_alloc_hook mm/slub.c:4104 [inline]
->   slab_alloc_node mm/slub.c:4153 [inline]
->   __do_kmalloc_node mm/slub.c:4282 [inline]
->   __kmalloc_noprof+0x1cd/0x510 mm/slub.c:4295
->   kmalloc_noprof include/linux/slab.h:905 [inline]
->   tomoyo_realpath_from_path+0xb9/0x720 security/tomoyo/realpath.c:251
->   tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
->   tomoyo_path_number_perm+0x248/0x590 security/tomoyo/file.c:723
->   security_file_ioctl+0x9b/0x240 security/security.c:2908
->   __do_sys_ioctl fs/ioctl.c:900 [inline]
->   __se_sys_ioctl fs/ioctl.c:892 [inline]
->   __x64_sys_ioctl+0xb7/0x200 fs/ioctl.c:892
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Memory state around the buggy address:
->   ffff888034ecdf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff888034ece000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ffff888034ece080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                       ^
->   ffff888034ece100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff888034ece180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+For the series,
 
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+
+Thanks
+
+
+On Fri,  6 Dec 2024 10:10:41 +0900, Koichiro Den <koichiro.den@canonical.com> wrote:
+> When virtnet_close is followed by virtnet_open, some TX completions can
+> possibly remain unconsumed, until they are finally processed during the
+> first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
+> [1]. Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
+> before RX napi enable") was not sufficient to eliminate all BQL crash
+> scenarios for virtio-net.
+>
+> This issue can be reproduced with the latest net-next master by running:
+> `while :; do ip l set DEV down; ip l set DEV up; done` under heavy network
+> TX load from inside the machine.
+>
+> This patch series resolves the issue and also addresses similar existing
+> problems:
+>
+> (a). Drop netdev_tx_reset_queue() from open/close path. This eliminates the
+>      BQL crashes due to the problematic open/close path.
+>
+> (b). As a result of (a), netdev_tx_reset_queue() is now explicitly required
+>      in freeze/restore path. Add netdev_tx_reset_queue() immediately after
+>      free_unused_bufs() invocation.
+>
+> (c). Fix missing resetting in virtnet_tx_resize().
+>      virtnet_tx_resize() has lacked proper resetting since commit
+>      c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits").
+>
+> (d). Fix missing resetting in the XDP_SETUP_XSK_POOL path.
+>      Similar to (c), this path lacked proper resetting. Call
+>      netdev_tx_reset_queue() when virtqueue_reset() has actually recycled
+>      unused buffers.
+>
+> This patch series consists of six commits:
+>   [1/6]: Resolves (a) and (b).                      # also -stable 6.11.y
+>   [2/6]: Minor fix to make [4/6] streamlined.
+>   [3/6]: Prerequisite for (c).                      # also -stable 6.11.y
+>   [4/6]: Resolves (c) (incl. Prerequisite for (d))  # also -stable 6.11.y
+>   [5/6]: Preresuisite for (d).
+>   [6/6]: Resolves (d).
+>
+> Changes for v4:
+>   - move netdev_tx_reset_queue() out of free_unused_bufs()
+>   - submit to net, not net-next
+> Changes for v3:
+>   - replace 'flushed' argument with 'recycle_done'
+> Changes for v2:
+>   - add tx queue resetting for (b) to (d) above
+>
+> v3: https://lore.kernel.org/all/20241204050724.307544-1-koichiro.den@canonical.com/
+> v2: https://lore.kernel.org/all/20241203073025.67065-1-koichiro.den@canonical.com/
+> v1: https://lore.kernel.org/all/20241130181744.3772632-1-koichiro.den@canonical.com/
+>
+> [1]:
+> ------------[ cut here ]------------
+> kernel BUG at lib/dynamic_queue_limits.c:99!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
+> Tainted: [N]=TEST
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
+> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> RIP: 0010:dql_completed+0x26b/0x290
+> Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
+> 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
+> d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
+> RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
+> RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
+> RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
+> RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
+> R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
+> FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
+> PKRU: 55555554
+> Call Trace:
+>  <IRQ>
+>  ? die+0x32/0x80
+>  ? do_trap+0xd9/0x100
+>  ? dql_completed+0x26b/0x290
+>  ? dql_completed+0x26b/0x290
+>  ? do_error_trap+0x6d/0xb0
+>  ? dql_completed+0x26b/0x290
+>  ? exc_invalid_op+0x4c/0x60
+>  ? dql_completed+0x26b/0x290
+>  ? asm_exc_invalid_op+0x16/0x20
+>  ? dql_completed+0x26b/0x290
+>  __free_old_xmit+0xff/0x170 [virtio_net]
+>  free_old_xmit+0x54/0xc0 [virtio_net]
+>  virtnet_poll+0xf4/0xe30 [virtio_net]
+>  ? __update_load_avg_cfs_rq+0x264/0x2d0
+>  ? update_curr+0x35/0x260
+>  ? reweight_entity+0x1be/0x260
+>  __napi_poll.constprop.0+0x28/0x1c0
+>  net_rx_action+0x329/0x420
+>  ? enqueue_hrtimer+0x35/0x90
+>  ? trace_hardirqs_on+0x1d/0x80
+>  ? kvm_sched_clock_read+0xd/0x20
+>  ? sched_clock+0xc/0x30
+>  ? kvm_sched_clock_read+0xd/0x20
+>  ? sched_clock+0xc/0x30
+>  ? sched_clock_cpu+0xd/0x1a0
+>  handle_softirqs+0x138/0x3e0
+>  do_softirq.part.0+0x89/0xc0
+>  </IRQ>
+>  <TASK>
+>  __local_bh_enable_ip+0xa7/0xb0
+>  virtnet_open+0xc8/0x310 [virtio_net]
+>  __dev_open+0xfa/0x1b0
+>  __dev_change_flags+0x1de/0x250
+>  dev_change_flags+0x22/0x60
+>  do_setlink.isra.0+0x2df/0x10b0
+>  ? rtnetlink_rcv_msg+0x34f/0x3f0
+>  ? netlink_rcv_skb+0x54/0x100
+>  ? netlink_unicast+0x23e/0x390
+>  ? netlink_sendmsg+0x21e/0x490
+>  ? ____sys_sendmsg+0x31b/0x350
+>  ? avc_has_perm_noaudit+0x67/0xf0
+>  ? cred_has_capability.isra.0+0x75/0x110
+>  ? __nla_validate_parse+0x5f/0xee0
+>  ? __pfx___probestub_irq_enable+0x3/0x10
+>  ? __create_object+0x5e/0x90
+>  ? security_capable+0x3b/0x7[I0
+>  rtnl_newlink+0x784/0xaf0
+>  ? avc_has_perm_noaudit+0x67/0xf0
+>  ? cred_has_capability.isra.0+0x75/0x110
+>  ? stack_depot_save_flags+0x24/0x6d0
+>  ? __pfx_rtnl_newlink+0x10/0x10
+>  rtnetlink_rcv_msg+0x34f/0x3f0
+>  ? do_syscall_64+0x6c/0x180
+>  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+>  netlink_rcv_skb+0x54/0x100
+>  netlink_unicast+0x23e/0x390
+>  netlink_sendmsg+0x21e/0x490
+>  ____sys_sendmsg+0x31b/0x350
+>  ? copy_msghdr_from_user+0x6d/0xa0
+>  ___sys_sendmsg+0x86/0xd0
+>  ? __pte_offset_map+0x17/0x160
+>  ? preempt_count_add+0x69/0xa0
+>  ? __call_rcu_common.constprop.0+0x147/0x610
+>  ? preempt_count_add+0x69/0xa0
+>  ? preempt_count_add+0x69/0xa0
+>  ? _raw_spin_trylock+0x13/0x60
+>  ? trace_hardirqs_on+0x1d/0x80
+>  __sys_sendmsg+0x66/0xc0
+>  do_syscall_64+0x6c/0x180
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f41defe5b34
+> Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
+> f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
+> f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+> RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
+> RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
+> RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
+> R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
+> R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
+>  </TASK>
+> [...]
+> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>
+> Koichiro Den (6):
+>   virtio_net: correct netdev_tx_reset_queue() invocation point
+>   virtio_net: replace vq2rxq with vq2txq where appropriate
+>   virtio_ring: add a func argument 'recycle_done' to virtqueue_resize()
+>   virtio_net: ensure netdev_tx_reset_queue is called on tx ring resize
+>   virtio_ring: add a func argument 'recycle_done' to virtqueue_reset()
+>   virtio_net: ensure netdev_tx_reset_queue is called on bind xsk for tx
+>
+>  drivers/net/virtio_net.c     | 31 +++++++++++++++++++++++++------
+>  drivers/virtio/virtio_ring.c | 12 ++++++++++--
+>  include/linux/virtio.h       |  6 ++++--
+>  3 files changed, 39 insertions(+), 10 deletions(-)
+>
+> --
+> 2.43.0
+>
 
