@@ -1,104 +1,115 @@
-Return-Path: <linux-kernel+bounces-440108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B529EB8EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:01:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 823919EB8F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F241889A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5261889ACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6A2204682;
-	Tue, 10 Dec 2024 18:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD5E204693;
+	Tue, 10 Dec 2024 18:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djCli8sv"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cr52aB73"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB18986325;
-	Tue, 10 Dec 2024 18:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945E98633C;
+	Tue, 10 Dec 2024 18:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853693; cv=none; b=tABy4FVNgNut8+ahae/6lwgYjzx1SSskvpxWxOiSayPTArjuns4zR5Y/dJSPKjxwApQPH48dR2TJWhl7+L8pA8tAjP1RhnW/qNWtqAYlS8rqekHI5MlcjuaaISIrKDnk5Lu9pB3RjpaAfYtT5ZwZCivexvdAW4EJHGy7AMnUjIg=
+	t=1733853744; cv=none; b=BoKrhzWN5q9xmi4/7XNX9uPZNKsrey+RhieZEm4AEznt8sT9mJT1Rw1ZC58YPuw0u4LLAZqlLe354JigfW/cp45k2YH0Jjd6ay5HALszFpDoriF+g5w4V9oHgtQdp2ffhNyloES47JGwhMVjbbnMgeIjRLrlv52bDt0KCaAel20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853693; c=relaxed/simple;
-	bh=JNsfJ5pdWNc2079cGlyKbP97GYc87y3iN+nIMeKFqCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NUxTnYO44jquQOjNQejP7aKgrEfSvN1DQQ6uzndxshIV4DKXpS8m1dHMbTBzAk9KISjBgQPPJwJEy8he0i1lA2BInJyV89eu7/pIDtvCZO9gwQjnwgZKvc0PsUHp2F4oZuarGY3ZGZql6JQeaOWMK63h8GPWpeLmoMP0shuJWB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=djCli8sv; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1733853744; c=relaxed/simple;
+	bh=Wn8dvmhpbqifczjq1ws+Q7oM4cr83bwHC/c4lzlzkrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y91Dt07+04ud8hKGiTDmh+Nl0c5R83M7RdSB5qqssE8fkUoWpK4cqpf9VA5NrkspGIwNNwEiXBHaQMC5j4nqiBFzbMNDpWVmSWt9iLjKqEkLKeYuU5+12fasG0yPgWUDsQ7bU6sAyDhDi6tkwmVK5WOfSaMqPWNfOzPU+KIU5tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cr52aB73; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ee94a2d8d0so867288a91.2;
-        Tue, 10 Dec 2024 10:01:31 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa68b513abcso424358866b.0;
+        Tue, 10 Dec 2024 10:02:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733853691; x=1734458491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JNsfJ5pdWNc2079cGlyKbP97GYc87y3iN+nIMeKFqCk=;
-        b=djCli8svf4Fcokb8aYB+aSwP9d6XkgNVrU4Rr3a0Rlg88odCus0z4VDa72dFuDvOSF
-         Foy2EnqYt7Hixv7+tscnbV0J/iGXFLksE38gIJWhmU6GIqaoLDXMYEFP5h3LX/dMiMuL
-         NjbJt553KZS0dbsbKecq4K8+uDjJ3kmaL3cz06ucEeqixpW3VerulLTfMzm99zjFtBug
-         i4vbZGRXIuYsXhyb8XpymvUF+a7AfZSZXm9HH0yrGGoqUQE2QnJonS3zuWAv8Kaw3OvX
-         Bm6YsoQVNoi5OueF8q/UZv6Jn3VlHhq8FJ/JEBw+AL17YHtDYfLnsiRuC1+wf79uAOlK
-         ENLw==
+        d=gmail.com; s=20230601; t=1733853741; x=1734458541; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BCY2cGBNnositKDICf7Efd3URLuqM088tDb4fIyX/u8=;
+        b=cr52aB73cyzr+dWE291LQtGWqZi6SJw3+UNDqfjvj1lI4XxzydjdytUKKD2NF0DPZm
+         MUaKquxW4idkeoGqz9DYFm0B69fSQ2Kju3q7fiyRDqZt8vrGVKl0TeEiLHE0dgpxfQDh
+         6NQX332j80Dk2y719puKpK8l9H3xjPX3xubdIdg8F/id1+nYqcKHRrAvfG/yFwsCH482
+         eSOfpJILBHg18uaarJ2da/gCxTf5Avgi+qfHHHi1J9qcwLWhYTfJyLtpgR79h26/UmpK
+         Ev719fDqoGyjlY9UU1FJMPzpUOe6CSdeyQItFO783xFwSYkh0WUgh7AxxQlbiOiUCsFM
+         fCgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853691; x=1734458491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JNsfJ5pdWNc2079cGlyKbP97GYc87y3iN+nIMeKFqCk=;
-        b=R9hVUwdyuAlm4D6j1nYgC2Df4pRJY0PUcDkC6o3eHwNnCcOLuVdJ2wqls4nz3d2VnC
-         GOKeKqu8A+afGj13Apc3WKwpoko7F7CDQk3gZQELQfEQV5do8G6X1dCmdXG8AwCHBVLk
-         NyJXDR9UXfeW16PI2c3W2GBJi/YKxIWrTmQ/toCcsH8d9s+EtGyVOSDYcm2Rs7EtDG0V
-         zpyW61X8wDK8sNvOuYywl5db7PJU3zDGbNTUgVRHaO5nWNNJR2EqFoAiIuui2Vl6MN6i
-         n2Z3qpRNB/m8HakjiT8shZb52GZKTdRABymLtByk0ykQ0/N3Dk42EyePCt83TrUG7YDO
-         b5og==
-X-Forwarded-Encrypted: i=1; AJvYcCWqcDYHvRkW7CbxZR7rKKCxLNQMq+IwBpnBnbGsOlOVEagI39RZk3DZDTCd6If42v/5gIdjE/OIjxB/tes=@vger.kernel.org, AJvYcCXawQWTxrWaflTK2TN+urCWaQvJUO1p2QE5gorBLGTlzk5Vq952nbZH5x2AICRltigKeFXPgtJXN3VeQLJRlWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYfS7jwfN/J6IPVNK2KsMLzVW6Px2mpVoRhti3dnkafbcR9BNa
-	peAOE4pVVuEY1/aDoRwh1QwVxdlcbcuwzXEHQnR9/rKvBzJN35n0340nbv0F2weBDY7jDWDpBwe
-	yf0B7gng6/pZV1QRbI3ruRFZMY9A=
-X-Gm-Gg: ASbGnctyGPUVzosYBdzZT3KTvB6NPPTf9qz4qzKEUtMlJSgfnCDQVcoiOfUnS34l0Vr
-	ciNozTFn22I5aIjMXIv3+ViYFmvh9mZJ3PGE=
-X-Google-Smtp-Source: AGHT+IEOx4TLwYTEx0tez22Ay9j240MtFpVMbkftbBFXYTPrYlXiCjSnJ2j0pJzk51KujYrWBs+KGwyhX9ukXvtPB3w=
-X-Received: by 2002:a17:90b:3b4c:b0:2ee:f59a:94d3 with SMTP id
- 98e67ed59e1d1-2ef69196c7bmr10125270a91.0.1733853690916; Tue, 10 Dec 2024
- 10:01:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733853741; x=1734458541;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BCY2cGBNnositKDICf7Efd3URLuqM088tDb4fIyX/u8=;
+        b=Koz1nChlkySIE7gd6QE3Q4B34Fjx7DkDj6UUiKuslbw/T/RIpehSc7zlUI8mn3pn4X
+         /GwGb65ivDLFdZVkxZOIp+rYcusjQEhjEbOMnLH8Ra3VCZI0kMTC7295Uk6sgj7XYxyD
+         SV7JfgtI2RE84Uj3eWJxTe4WQvu/wDOCYN13BiLlVYI7EmTGDklOlIIvn4MpZD0VSxOf
+         8fT2xTw0UBSNB2EEuLfR5EWg+fEZwsOCduNuDnljMxDy1LalA9iHlInOaUS3ebT5WKwb
+         k/9aGXRHtSLVJsyUbnJtRV0FALzmvLP6eqZ0Yrb3O0g/R5F3R+v5JKUNcu2Ky0sIVaWH
+         dl2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV81QFcX9Ju6ewZE+QDORURlnAgrzXbwZ1+0iWP75XoJIx34mgFjfJM1/mQjeKyj/x9N5EV23ckwv1H@vger.kernel.org, AJvYcCWjbE7mFEzz1sSx3Fig+clmRekVMl3NDCsDjyM/Fy0m/dt7WxhC1OH72/VxDuuKzFO/XUSDpmeX5C/BnazZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRgoMAgjkp91Os1j/+SXkyulkk9UZYo9yIgczfUuYh7BIrbPHc
+	w9fDmKu48PAWLXVZPjUfGUEFkX5GTKyjot1DPeqNuyYvo7k7+DNb
+X-Gm-Gg: ASbGncsRf2O2QDfXr/jUbQ1xCmuUC+Ja4+8fN5YvmjB7AIFWnI9FoSO56mU0GV9c9Z9
+	xaz41gYJbxQZL7sOrITv6y3t8Xefhntbja/0LH0wGD7FZlPqpO8durmwrENjIwlnigTAeLWu3Zr
+	bUs+qAat0HUeEiNF7P2BLy06pZMeVFuRHnXFXzu3JpSNHDu3QiHmDPo8BanB5athTw57UkePeVC
+	m+kNpqa6trdBxJ6UsclLDsCzYU8JQKw5iVtMiRZ58iFL6cFjYWMYcEjToEe7+XYfppStIJQSIBR
+	Sf7ocTyI23LMzzhcT2lxCqw4kX5pjA==
+X-Google-Smtp-Source: AGHT+IFXTKqLN7rVjG4MT816P3sDPA226Vptf61aO0FKpDWfT8usup+FPSpJd+BDFWR01cmVkV/mUA==
+X-Received: by 2002:a17:906:cc2:b0:aa5:27d4:980a with SMTP id a640c23a62f3a-aa63a242b13mr1598856266b.49.1733853740403;
+        Tue, 10 Dec 2024 10:02:20 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69448304asm276347066b.45.2024.12.10.10.02.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 10:02:19 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] arm64: dts: exynos8895: Add m2-pmu, poweroff and reboot
+Date: Tue, 10 Dec 2024 20:02:14 +0200
+Message-ID: <20241210180216.398165-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817070955.75717-1-ojeda@kernel.org>
-In-Reply-To: <20240817070955.75717-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 10 Dec 2024 19:01:18 +0100
-Message-ID: <CANiq72ksDpJz2M=qPmx7F+MxpiY5ms8zUpdkTL4BQ+EvOS21Zw@mail.gmail.com>
-Subject: Re: [RFC PATCH] rust: use the hidden variant of `rust-project.json`
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Ali Bektas <bektasali@protonmail.com>, Lukas Wirth <lukastw97@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 17, 2024 at 9:10=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> This is a patch for the future -- we need to wait until most Rust kernel
-> developers are using a new enough version of rust-analyzer. Thanks Ali
-> & Lukas!
+Hey folks,
 
-For future reference, this has been available starting with Rust
-1.82.0's rust-analyzer.
+This series adds support for syscon-reboot and syscon-poweroff to
+exynos8895, as well as support for the mongoose cluster PMU in DT hence
+a compatible for that was recently added.
 
-Cheers,
-Miguel
+The new syscon nodes have been tested with reboot and poweroff commands
+respectively.
+
+Kind regards,
+Ivo
+
+Ivaylo Ivanov (2):
+  arm64: dts: exynos8895: Add a PMU node for the second cluster
+  arm64: dts: exynos8895: Add syscon-poweroff and syscon-reboot nodes
+
+ arch/arm64/boot/dts/exynos/exynos8895.dtsi | 27 +++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
+
+-- 
+2.43.0
+
 
