@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-438915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4682C9EA849
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:58:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B993A9EA84A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:58:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B7816BA1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791AE2888BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A396E22CBE5;
-	Tue, 10 Dec 2024 05:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBC422A1FB;
+	Tue, 10 Dec 2024 05:55:44 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09D822619A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA4B22617E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733810140; cv=none; b=iYCOI/aZSa9g9QsMsgq/cCKUgqos0pk7RFLaR8I6sqK/AosKnwJjTEdgB89iPWhDqBbs2XIm+fsDcVEAnRz86fQz42DQyo8n84ETugp+Ru85TKWRMI1pjlI7mipaOlQI8rPRA51pvsgbIx1MGMq/SsRRpO4IhjubL7rqtXHRoKs=
+	t=1733810144; cv=none; b=D5TSuBNYQ5L884XgMbdHOFscReQ366qF6jb3GaRrSAekLbih6N6bUGqklZxxdVypQe1/80FhyFq8O3Tp4R+TsLeJIJpQjZLCLMjZ/Y0vNxbngB4K9/aaT6QO+H0/GuB7XkOdutIZlfRkhfSeQ6Xo5dWermuBc63OjCB56ICB48k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733810140; c=relaxed/simple;
-	bh=GuqtVTO39TXRTCS66vt7c7IRbx52cb427Sflt83BtkY=;
+	s=arc-20240116; t=1733810144; c=relaxed/simple;
+	bh=1BkLXAJD4mjMJrhhq3+BTjYGvwtwnfgwGPCbumUojlA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dnvjh/onAO7VSS0kDLQR6scyU/VBh7X/smDj8A2jvTNo4qAH6F7sFfMfngm4H76H0tUBFMUEkvNkRwGov019mHPlgFfbiCNypxFsxE5+dbfryvTbBRmvaMAKHnfFHHGId/GL12xk2i3RKbZV1JFaLn8iJuov2GpE+JXqudVdAug=
+	 MIME-Version; b=GPut4ANFAlLSMvh6Cz3rzHu7GQW464VxREKIXgvNgq03tsKSDVYQwGEhhW1b9RvzW6+/jEH+7D8SkSxXnIemESN7O5cLqBEotW4wo7DOgOdcg89n2TwdEN0aa20oaeDQzfA+Vq8m71WE+y/HF+pX3lF6ILOz+e6I47K2a4jaA2g=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DC20113E;
-	Mon,  9 Dec 2024 21:56:06 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF828113E;
+	Mon,  9 Dec 2024 21:56:10 -0800 (PST)
 Received: from a077893.arm.com (unknown [10.163.48.173])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6DE5E3F58B;
-	Mon,  9 Dec 2024 21:55:34 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 02C403F58B;
+	Mon,  9 Dec 2024 21:55:38 -0800 (PST)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-kernel@vger.kernel.org,
 	kvmarm@lists.linux.dev,
@@ -45,9 +45,9 @@ Cc: ryan.roberts@arm.com,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH V2 25/46] arm64/sysreg: Add register fields for SPMOVSCLR_EL0
-Date: Tue, 10 Dec 2024 11:22:50 +0530
-Message-Id: <20241210055311.780688-26-anshuman.khandual@arm.com>
+Subject: [PATCH V2 26/46] arm64/sysreg: Add register fields for SPMOVSSET_EL0
+Date: Tue, 10 Dec 2024 11:22:51 +0530
+Message-Id: <20241210055311.780688-27-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241210055311.780688-1-anshuman.khandual@arm.com>
 References: <20241210055311.780688-1-anshuman.khandual@arm.com>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds register fields for SPMOVSCLR_EL0 as per the definitions based
+This adds register fields for SPMOVSSET_EL0 as per the definitions based
 on DDI0601 2024-09.
 
 Cc: Catalin Marinas <catalin.marinas@arm.com>
@@ -73,14 +73,14 @@ Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
  1 file changed, 67 insertions(+)
 
 diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-index 34323fe73188..40de71614af7 100644
+index 40de71614af7..c983c1360908 100644
 --- a/arch/arm64/tools/sysreg
 +++ b/arch/arm64/tools/sysreg
-@@ -178,6 +178,73 @@ Field	1	P
- Field	0	E
+@@ -245,6 +245,73 @@ Field	1	P1
+ Field	0	P0
  EndSysreg
  
-+Sysreg	SPMOVSCLR_EL0	2	3	9	12	3
++Sysreg	SPMOVSSET_EL0	2	3	9	14	3
 +Field	63	P63
 +Field	62	P62
 +Field	61	P61
