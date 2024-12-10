@@ -1,173 +1,142 @@
-Return-Path: <linux-kernel+bounces-440008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0BD9EB777
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:09:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FB99EB77A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C32188736B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC9D164965
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA39233D70;
-	Tue, 10 Dec 2024 17:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38F7234974;
+	Tue, 10 Dec 2024 17:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lkm2W1a/"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="hXE5Xpt0"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AA623278D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCCA23278D;
+	Tue, 10 Dec 2024 17:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850550; cv=none; b=FS+8kFz5+2tN6dRKexcNESkVFX7SOYhOokEkCbE0Aohecv70znll0wiew2MXcganUyP3aQPc0DgL/rcPEKFtcRyrn9qH2vaY8/0xQzgPOZHTp1Q8wv4L80jQG1LNJ49x0zaELJRjgsOe0NzX3X6QSo50M1MFzb9Nj3k2x12gFYg=
+	t=1733850560; cv=none; b=Uv9kTTi07OwDbXU4fsAlAXLNFhVFRluiD6uOvKPdWD+BLSurrU6faqSnN3PBFD1GBUpF3swOwnz7RgsxVTAQlNR2U5ep+N8lshUnOqUVOYwJyeMhwSeldmY/ruS4OMIu2ZGdKwgOZ7izJbNNzAARlDmHgOgCuBaSXHnF/6PBnds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850550; c=relaxed/simple;
-	bh=kmpw+MU85Klv2VgMx3ZqVirEPF5gOEEsCLRROZYzfzg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MX6CERD6kiBFG33ckOtOTt/TykFWvxKKZu6+i6dfuMTxoIXXeCJsvXFtPteVdGb/YiKJINYzT0r2f6PT2SxdOcQGNn8YIu/0pCCjOyQRZPIUKyntWnEPl8fL853plbBbJd5Wmyva4XKJV8H0T6kOTO6GrEBbyTUTIw6w8JU1u2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lkm2W1a/; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5401c52000fso2435102e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:09:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733850546; x=1734455346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LuhRNegPQNd7+gF/yjuNpjthxXavGQO/1ZgSXezZky4=;
-        b=lkm2W1a/idpkoQhC8rT/QkOJlS/nnHiVXKrL6LmHPsuzSNaOuVXZG8IMj9Ey+kpZhF
-         uZWiIFVS5nFihyzDswETynDUQI0TAa9R5h2WuVIpUTLnvZTN3G/4dN3lUbVnuLiU+Zbo
-         fgFgRIvljUe/3l90XTqsKi8so5sodmSO53G2I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850546; x=1734455346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LuhRNegPQNd7+gF/yjuNpjthxXavGQO/1ZgSXezZky4=;
-        b=s9Egr0nfM661IzPU9uSRITt0nVOwDgIxB/KTU52YoKlVwQXH3fWiSr15HGsQ9jiWEi
-         unKAe9LXw02YSdT3R1y81LAb38JOPeYMTamDI/z7bIVgQupjVrhq/HnbBO+FdDTofIb/
-         jpX10wvhm4YJsrOb02ecxG+wza5n4ZQ0Gm4UgQRU620WzwnO6dY4DvijW9WOcjerdby4
-         GzIoizBPbLo80XgrtsE92Z4JFBNhWeejba6AXuEVbd4kSwgUhm3CIMoNbgQy+1Cox0jk
-         s8vQeudjp/fk6l7JdfIoYcOMeJHWVSXlW14G7KjehXeXMRiDJPi8p3pH8hr/eeAxMcNk
-         g0Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWv1vwnGJRi5vvBmBpjkre9F2dMLLG/be4Qb0Wj9S8iMZGUAsEoRLjev/BEHo7ax6PhWmO9YuEfMgjLljk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVJYnAH6QHiZGuAwk6XiuX6ROlr13+y3dbRuy8BLaD+p39sonc
-	uuhLrl5G66UVwnl97exKpIkR5BgsiH0yDeo3/lvJRdjBRaoq7vcWySH6oQJwOSDWeoSAo4WogVo
-	VHw==
-X-Gm-Gg: ASbGncthHnuS2NnkXGuB3z6stinHURkpHrJ9VICJ0eQt/6P+8jvweWLnbgcAuUKRGjo
-	a6eFBz5NGzfsSzpHPOY0IhYYCemlHuiyWVviIE26z3hy036MPPrDaLkm+8gwDLl7cTZQkyJhOrp
-	4isx1QCOhosxFzVIbZXuPM2ilbnWvPTSff2YfRdn+7YEACh3pc+LwEAlWsveVdkJNEGP/8YTY0E
-	IBiGP9+Vi0FDh3ZEcCLnfSdPCAKLTBilHkiAcGaZzZ+ITD6TC3Q4YEdJFx8pAefTxE4R65zharm
-	wV8pyDoWBMnchlwT7Q==
-X-Google-Smtp-Source: AGHT+IEn0Qez9FAqeh4gb6MVbGzUqhxYTnP8C5zUzfj8/i5XNg7/3CIl5t8cgJytiZz1MPDtzUSmTA==
-X-Received: by 2002:a05:6512:1095:b0:53e:94f8:bb30 with SMTP id 2adb3069b0e04-540240bd78dmr2060238e87.24.1733850545829;
-        Tue, 10 Dec 2024 09:09:05 -0800 (PST)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e37e20ebesm1327400e87.110.2024.12.10.09.09.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 09:09:04 -0800 (PST)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5401c52000fso2435039e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:09:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUvU7ntjG5byUngyvlA5tcvT3zEYiaTF5VWLSsm3CDuklxskfhDftxO6rWrRpYRAKnpqVwCG3rQ0Aky9TY=@vger.kernel.org
-X-Received: by 2002:a05:6512:33d0:b0:53e:368c:ac43 with SMTP id
- 2adb3069b0e04-540240aac8fmr2378233e87.5.1733850544359; Tue, 10 Dec 2024
- 09:09:04 -0800 (PST)
+	s=arc-20240116; t=1733850560; c=relaxed/simple;
+	bh=wO/0cbFH5CrJBGE3thNjrMItqwmJVeacGdmd/tvE0BE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U8KaH10ZY2xFR4DEB9egWGBSIniL8DSqpePENQaUCCkh2GrqCYpG9UreAADepA6MRGYeZFlF9bP5mpXOnZtitQ0AaWz2nx8dPWhk+wc06SaRzAKNv+W3DvLrIHn1Ja+TGsterkL0M2jzw9Rxr92M3bGKml4s5xc6NycEUIDFxRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=hXE5Xpt0; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=TWAHK6mWkMJL0EVKia4A1USZ4Y/1FqYrDSK3+4KSzJM=; b=hXE5Xpt0hwS2nZFoUWTqNCROqN
+	9q7dMF45qXto8teUS2DtJoPgbB3zg/F2mRljNK4kWypnWikAkIKTjLZFoKgn1tyaHX8YrPD0+uJlo
+	lH8K6/KAWUPlK6YColXEX4irbYrkb82kNhPy6jAbx7QE/TpaiV7d1bDLCDpt76gy+O2bncJpyd7Jv
+	WegDc4/AD5EUqoFpT5vveYvITbaRLFcoVl17xxzwEEDh+q//tzjIpeRYI4jineuxLR/HD86BJmHUd
+	FEshfLmVluOUfkBMrdU3a66JnQRFSKYCTRWu8Mz3GEuXeKOtE2FcnWSPviKeSsRbYtfKnQIPo7pFs
+	V0q2cbeg==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1tL3jT-000Gg2-Pm; Tue, 10 Dec 2024 18:09:11 +0100
+Received: from [178.197.248.35] (helo=[192.168.1.114])
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1tL3jS-000JDL-2M;
+	Tue, 10 Dec 2024 18:09:10 +0100
+Message-ID: <76104a18-490d-4751-b377-c82c41cf59d4@iogearbox.net>
+Date: Tue, 10 Dec 2024 18:09:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
-In-Reply-To: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 10 Dec 2024 09:08:52 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XpRt_ivSDz0Lzc=A+z3KFrXkVYTn716TD1kZMAyoGQ_A@mail.gmail.com>
-X-Gm-Features: AZHOrDkvV4hXVBzL5LdGwv2-ywEkfcu0N74i9maLRg8R7KrBlypjtg_v-QyKEuk
-Message-ID: <CAD=FV=XpRt_ivSDz0Lzc=A+z3KFrXkVYTn716TD1kZMAyoGQ_A@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/bridge: ti-sn65dsi86: Fix multiple instances
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Linus Walleij <linus.walleij@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Greg KH <gregkh@linuxfoundation.org>, dri-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 1/2] tools/resolve_btfids: Add
+ --fatal_warnings option
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20241204-resolve_btfids-v3-0-e6a279a74cfd@weissschuh.net>
+ <20241204-resolve_btfids-v3-1-e6a279a74cfd@weissschuh.net>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ xsFNBGNAkI0BEADiPFmKwpD3+vG5nsOznvJgrxUPJhFE46hARXWYbCxLxpbf2nehmtgnYpAN
+ 2HY+OJmdspBntWzGX8lnXF6eFUYLOoQpugoJHbehn9c0Dcictj8tc28MGMzxh4aK02H99KA8
+ VaRBIDhmR7NJxLWAg9PgneTFzl2lRnycv8vSzj35L+W6XT7wDKoV4KtMr3Szu3g68OBbp1TV
+ HbJH8qe2rl2QKOkysTFRXgpu/haWGs1BPpzKH/ua59+lVQt3ZupePpmzBEkevJK3iwR95TYF
+ 06Ltpw9ArW/g3KF0kFUQkGXYXe/icyzHrH1Yxqar/hsJhYImqoGRSKs1VLA5WkRI6KebfpJ+
+ RK7Jxrt02AxZkivjAdIifFvarPPu0ydxxDAmgCq5mYJ5I/+BY0DdCAaZezKQvKw+RUEvXmbL
+ 94IfAwTFA1RAAuZw3Rz5SNVz7p4FzD54G4pWr3mUv7l6dV7W5DnnuohG1x6qCp+/3O619R26
+ 1a7Zh2HlrcNZfUmUUcpaRPP7sPkBBLhJfqjUzc2oHRNpK/1mQ/+mD9CjVFNz9OAGD0xFzNUo
+ yOFu/N8EQfYD9lwntxM0dl+QPjYsH81H6zw6ofq+jVKcEMI/JAgFMU0EnxrtQKH7WXxhO4hx
+ 3DFM7Ui90hbExlFrXELyl/ahlll8gfrXY2cevtQsoJDvQLbv7QARAQABzSZEYW5pZWwgQm9y
+ a21hbm4gPGRhbmllbEBpb2dlYXJib3gubmV0PsLBkQQTAQoAOxYhBCrUdtCTcZyapV2h+93z
+ cY/jfzlXBQJjQJCNAhsDBQkHhM4ACAsJCAcNDAsKBRUKCQgLAh4BAheAAAoJEN3zcY/jfzlX
+ dkUQAIFayRgjML1jnwKs7kvfbRxf11VI57EAG8a0IvxDlNKDcz74mH66HMyhMhPqCPBqphB5
+ ZUjN4N5I7iMYB/oWUeohbuudH4+v6ebzzmgx/EO+jWksP3gBPmBeeaPv7xOvN/pPDSe/0Ywp
+ dHpl3Np2dS6uVOMnyIsvmUGyclqWpJgPoVaXrVGgyuer5RpE/a3HJWlCBvFUnk19pwDMMZ8t
+ 0fk9O47HmGh9Ts3O8pGibfdREcPYeGGqRKRbaXvcRO1g5n5x8cmTm0sQYr2xhB01RJqWrgcj
+ ve1TxcBG/eVMmBJefgCCkSs1suriihfjjLmJDCp9XI/FpXGiVoDS54TTQiKQinqtzP0jv+TH
+ 1Ku+6x7EjLoLH24ISGyHRmtXJrR/1Ou22t0qhCbtcT1gKmDbTj5TcqbnNMGWhRRTxgOCYvG0
+ 0P2U6+wNj3HFZ7DePRNQ08bM38t8MUpQw4Z2SkM+jdqrPC4f/5S8JzodCu4x80YHfcYSt+Jj
+ ipu1Ve5/ftGlrSECvy80ZTKinwxj6lC3tei1bkI8RgWZClRnr06pirlvimJ4R0IghnvifGQb
+ M1HwVbht8oyUEkOtUR0i0DMjk3M2NoZ0A3tTWAlAH8Y3y2H8yzRrKOsIuiyKye9pWZQbCDu4
+ ZDKELR2+8LUh+ja1RVLMvtFxfh07w9Ha46LmRhpCzsFNBGNAkI0BEADJh65bNBGNPLM7cFVS
+ nYG8tqT+hIxtR4Z8HQEGseAbqNDjCpKA8wsxQIp0dpaLyvrx4TAb/vWIlLCxNu8Wv4W1JOST
+ wI+PIUCbO/UFxRy3hTNlb3zzmeKpd0detH49bP/Ag6F7iHTwQQRwEOECKKaOH52tiJeNvvyJ
+ pPKSKRhmUuFKMhyRVK57ryUDgowlG/SPgxK9/Jto1SHS1VfQYKhzMn4pWFu0ILEQ5x8a0RoX
+ k9p9XkwmXRYcENhC1P3nW4q1xHHlCkiqvrjmWSbSVFYRHHkbeUbh6GYuCuhqLe6SEJtqJW2l
+ EVhf5AOp7eguba23h82M8PC4cYFl5moLAaNcPHsdBaQZznZ6NndTtmUENPiQc2EHjHrrZI5l
+ kRx9hvDcV3Xnk7ie0eAZDmDEbMLvI13AvjqoabONZxra5YcPqxV2Biv0OYp+OiqavBwmk48Z
+ P63kTxLddd7qSWbAArBoOd0wxZGZ6mV8Ci/ob8tV4rLSR/UOUi+9QnkxnJor14OfYkJKxot5
+ hWdJ3MYXjmcHjImBWplOyRiB81JbVf567MQlanforHd1r0ITzMHYONmRghrQvzlaMQrs0V0H
+ 5/sIufaiDh7rLeZSimeVyoFvwvQPx5sXhjViaHa+zHZExP9jhS/WWfFE881fNK9qqV8pi+li
+ 2uov8g5yD6hh+EPH6wARAQABwsF8BBgBCgAmFiEEKtR20JNxnJqlXaH73fNxj+N/OVcFAmNA
+ kI0CGwwFCQeEzgAACgkQ3fNxj+N/OVfFMhAA2zXBUzMLWgTm6iHKAPfz3xEmjtwCF2Qv/TT3
+ KqNUfU3/0VN2HjMABNZR+q3apm+jq76y0iWroTun8Lxo7g89/VDPLSCT0Nb7+VSuVR/nXfk8
+ R+OoXQgXFRimYMqtP+LmyYM5V0VsuSsJTSnLbJTyCJVu8lvk3T9B0BywVmSFddumv3/pLZGn
+ 17EoKEWg4lraXjPXnV/zaaLdV5c3Olmnj8vh+14HnU5Cnw/dLS8/e8DHozkhcEftOf+puCIl
+ Awo8txxtLq3H7KtA0c9kbSDpS+z/oT2S+WtRfucI+WN9XhvKmHkDV6+zNSH1FrZbP9FbLtoE
+ T8qBdyk//d0GrGnOrPA3Yyka8epd/bXA0js9EuNknyNsHwaFrW4jpGAaIl62iYgb0jCtmoK/
+ rCsv2dqS6Hi8w0s23IGjz51cdhdHzkFwuc8/WxI1ewacNNtfGnorXMh6N0g7E/r21pPeMDFs
+ rUD9YI1Je/WifL/HbIubHCCdK8/N7rblgUrZJMG3W+7vAvZsOh/6VTZeP4wCe7Gs/cJhE2gI
+ DmGcR+7rQvbFQC4zQxEjo8fNaTwjpzLM9NIp4vG9SDIqAm20MXzLBAeVkofixCsosUWUODxP
+ owLbpg7pFRJGL9YyEHpS7MGPb3jSLzucMAFXgoI8rVqoq6si2sxr2l0VsNH5o3NgoAgJNIg=
+In-Reply-To: <20241204-resolve_btfids-v3-1-e6a279a74cfd@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27483/Tue Dec 10 10:38:50 2024)
 
-Hi,
+On 12/4/24 8:37 PM, Thomas Weißschuh wrote:
+> Currently warnings emitted by resolve_btfids are buried in the build log
+> and are slipping into mainline frequently.
+> Add an option to elevate warnings to hard errors so the CI bots can
+> catch any new warnings.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-On Tue, Dec 10, 2024 at 6:19=E2=80=AFAM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Each bridge instance creates up to four auxiliary devices with different
-> names.  However, their IDs are always zero, causing duplicate filename
-> errors when a system has multiple bridges:
->
->     sysfs: cannot create duplicate filename '/bus/auxiliary/devices/ti_sn=
-65dsi86.gpio.0'
->
-> Fix this by using a unique instance ID per bridge instance.  The
-> instance ID is derived from the I2C adapter number and the bridge's I2C
-> address, to support multiple instances on the same bus.
->
-> Fixes: bf73537f411b0d4f ("drm/bridge: ti-sn65dsi86: Break GPIO and MIPI-t=
-o-eDP bridge into sub-drivers")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> On the White Hawk development board:
->
->     /sys/bus/auxiliary/devices/
->     |-- ti_sn65dsi86.aux.1068
->     |-- ti_sn65dsi86.aux.4140
->     |-- ti_sn65dsi86.bridge.1068
->     |-- ti_sn65dsi86.bridge.4140
->     |-- ti_sn65dsi86.gpio.1068
->     |-- ti_sn65dsi86.gpio.4140
->     |-- ti_sn65dsi86.pwm.1068
->     `-- ti_sn65dsi86.pwm.4140
->
-> Discussion after v1:
->   - https://lore.kernel.org/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.1729=
-180470.git.geert+renesas@glider.be
->
-> Notes:
->   - While the bridge supports only two possible I2C addresses, I2C
->     translators may be present, increasing the address space.  Hence the
->     instance ID calculation assumes 10-bit addressing.  Perhaps it makes
->     sense to introduce a global I2C helper function for this?
->
->   - I think this is the simplest solution.  If/when the auxiliary bus
->     receives support =C3=A0 la PLATFORM_DEVID_AUTO, the driver can be
->     updated.
->
-> v2:
->   - Use I2C adapter/address instead of ida_alloc().
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 ++
->  1 file changed, 2 insertions(+)
-
-While I agree with Laurent that having a more automatic solution would
-be nice, this is small and fixes a real problem. I'd be of the opinion
-that we should land it.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-If I personally end up being the person to land it, I'll likely wait
-until January since I'll be on vacation soon for the holidays and I
-don't want to check something that's slightly controversial in and
-then disappear. If someone else feels it's ready to land before then I
-have no objections.
-
--Doug
+Given the dependencies by now propagated to bpf-next, I took these two
+in, thanks!
 
