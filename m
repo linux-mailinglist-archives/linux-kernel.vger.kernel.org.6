@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-438654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E559EA3F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:55:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00149EA3F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:59:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809CF168EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:55:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B90CC167EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2DD38FAD;
-	Tue, 10 Dec 2024 00:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B012EB10;
+	Tue, 10 Dec 2024 00:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/2URD3y"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Jfn8WX97"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9D23C0C;
-	Tue, 10 Dec 2024 00:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A57617580
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733792112; cv=none; b=BW8yl4qq1AqrZdDZYSpxG0gHvQ8IXZV1Qo7PbswGy6yIO9kSK4sqPYLMXD4uRF0/WwYYT6ZXydc3hOzFO7TDNcksL+8Y8aLQFMQ0A0OUPKXXFLwg5ZSZ64iMM7lyWLLyyskdAAfkdk+R5SqzFP6/OqhxyMYc4/mtsKy5YBckrEw=
+	t=1733792336; cv=none; b=dlwrvQxw0GaPX6i54bSf6QfjnnoDXN0PzK6hfSwtSw7tXhvvxHhwc5mY5aNS6mBsM2/Lud6Is0YFHqS5MjVyLcg+zhJ3yKZBf1bt5git/UyNm6qv2lPDlOkhRDz70di2hE7O91to8xqLhJpxiam3I22Ov9bFOKsMvdAhqyau/Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733792112; c=relaxed/simple;
-	bh=boq/ye7PO9PoIgAzqFV+pTvqHtk4MpiX+xbOXYpT+I4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6YJ7S2AyPOH9qCDdKyetdajSlgi7MWMTkxhB5jON1bnyrTJEdqikPWgmHV9w3EJ/+qNjV5Viy9uSovgwwXRY/PSIuTby5X8MjFj/s/4K2ALg/o6CmYIgW4ogVZl+Ipcl4vQBg1rYdjgsxTuc+bdrZ8DMATmsxzC71spCUlTAKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/2URD3y; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385e2880606so4122614f8f.3;
-        Mon, 09 Dec 2024 16:55:10 -0800 (PST)
+	s=arc-20240116; t=1733792336; c=relaxed/simple;
+	bh=DxAm7kB2JcECl7gkapIzceGKJiE+AFE7Hpp0h/5e9u0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PUNMg6EIWOYuYpoPOInnk8/IH3PhyyEw0sZY3+BJO1OwT8MVssdkGl2lbnOcAP8Y7F+xdPU+qj/5YvEjNgD6Ac4t3eiwVhfeOAaVREEV51NAaX9Rslvomt4F2xbOsNaUN3bBl5+nDAueRhIeNYraxSNz/qL0qRDEcy4QKx+f2Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Jfn8WX97; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-841a9366b5eso352777639f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 16:58:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733792109; x=1734396909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=boq/ye7PO9PoIgAzqFV+pTvqHtk4MpiX+xbOXYpT+I4=;
-        b=e/2URD3ytBA6g1LKirtTsE9u16omVlM4FaVjd3GzC1WYzZSb8L4pV79HjzZyYkFeFl
-         mhX+rCJBUdyQ7+WlCzqIIbUqnXg64sL47+JAstUfzWCwIBYxNNopo5EQeFN70tMWj4Wd
-         kUMEytE/Pvr60Dw8WZubsqNr5s65XEZ/grygK7c/5JYIwp0KC/1jXm3xLGJAZvadnzqy
-         +flP0chsDM2AJqqwJxwKqQ0ntSzjFp3HdkjXhiNMEX1dfuN60rGaI/bcFqzKjN51WWvd
-         5V4i1Uo7GtzOPwgkgTJvA5/HdWUMGY1vuQ2uslkzwPUfR/7EhWyVPlT9gPCGRJkE+5O+
-         AGcA==
+        d=linuxfoundation.org; s=google; t=1733792332; x=1734397132; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SEjpZPJq8u289IHUov+/X17hbI/fbgadb77smhqlSX8=;
+        b=Jfn8WX97H8LZp5TPqijjgUZ8sJQk9GamWeVOdaxZafHte8TNTTuk/4IjTGnyTCBnI/
+         AlmoWE/r7JAj+OSLU2TlTxXu6dvq30Sklij+ZY25ydjBDjjU5VeuLmR5D3nZQtYXzdwd
+         7b83Qnt+n3cZIp0FZz63AJuj1lWSh6kOEhc00=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733792109; x=1734396909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=boq/ye7PO9PoIgAzqFV+pTvqHtk4MpiX+xbOXYpT+I4=;
-        b=ZW5ik024QiUGyFOEwnWyGzJoBbGskL8nwehE7wI/KQW7OscR7hMqD23OJe+tC7VMt3
-         mwqofUVLKFP9nvOQyV/AJ2Ib6bISDw9Hx9/gsamAyDYSTAhq72G8rMknLf6PQWev5hU0
-         NQeVZ3KdkwOyeYwnlLldj8K0r41BcwIfz0Ywwhp/pab83ZfYD1PWA9qY9XNztZEfsyn8
-         vHQCl8hRsrGhnPjV8to/fwCSL0ta2Cxn11P3UiNhx8y4Aj714GpB5QUCnq3jJi6hshlA
-         iTXlzha8QkzGrkoYRYlCY3KE65nby8gXZFIO61tkNo+NuXOWUscBiskjNQVvLl6ZsEji
-         CTvg==
-X-Forwarded-Encrypted: i=1; AJvYcCX552uri6c5tanuUnpaPUa9Db24Z/BHfnmBmGjGABygRd52R9DTgcSawf9H0j6sUqzcGg+/Vx7qv4NZF66N@vger.kernel.org, AJvYcCXNQWxLg2O1lgf8yd3zraksVLfgeTP62+u5nmtLnq+0aAVj1bpBlVfPr5zRoE705rmCfV8=@vger.kernel.org, AJvYcCXQ8IRJIQjLKRvmseP9/t/Z+QnAgJJMKC/FSYE552/V31AWh+ciRFQ1t6r5KbzNSPGjQtPDhIKs@vger.kernel.org, AJvYcCXZ9144oMc2vBBlK0r3LurzZ1Ehh4GbtTF+eC2x8iLLGRloq/MKo/4gBcrqzkweYU6LAKoOFTr4zJTG4X99hcc4XgIu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG+qxEJmu5fDKRiuLMA/8ZmOOAM6KEb7/DGDF7GPCoqsMTcJuF
-	Gvn7X0fUIZ75P9kR5JeSC14/84P4Dpxo5sCPx90pZ5g0187iYdmPPW6vJQmvKYnWG5zoyzLGLRt
-	z1H6uR5cQTG6PF17kbP2ynLXKegA=
-X-Gm-Gg: ASbGncuipN86jIRKpjljilfUpzu58YP91g8koQ3m6Ml/U9iJUrTNEESwS8CYaS5+ixj
-	ywBzHE3baks6T/Aycs0AbQtIOZXCr8+PiA3Mv7Kmv8zk73QNVaak=
-X-Google-Smtp-Source: AGHT+IG8axsEndvXuoPkC8p+vwh99ZMJK/1WzuRhn68RFvJiGxFaSRJKeeUzI7NxPzu+eY7U5xB7avCHwEO3py1fnMk=
-X-Received: by 2002:a05:6000:1868:b0:385:fd24:3317 with SMTP id
- ffacd0b85a97d-386453cf868mr2754572f8f.1.1733792109319; Mon, 09 Dec 2024
- 16:55:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733792332; x=1734397132;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEjpZPJq8u289IHUov+/X17hbI/fbgadb77smhqlSX8=;
+        b=LV+0N9HkKTcqg4mhJ52ZFKXZOe6nIBGzoR6eNJsAwJm5T9qLevkoZM/q1YilU90WxR
+         k32clT9nUao0hvYIYqZczVezRURAFLweLqsRKTfKjM5xeUMFCgmsVNJ3bjG0Q/b5F4lz
+         8q9EO/keufzihdlQa4PS0zqJe0obfHoqZpryG+za0wDs+GmV+GeySC2YbwVXcq/YioIs
+         oFRXX4GwTsum5cwRoVMRk9KFBPYs9Gg/aBRlsCDLmbHeU8f9kok7zDtcsBcqu8DPEoHN
+         90b+bdwQ2LrQuDofAu6MmLZjuXSBXpfwYmvg0AtXbPVq//ljuvvwsQf2Z9JVJzjtwRDw
+         9tKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhUR67boco6m7Kc3eY91KieDekC96lxJ0+87WdzYDBB56yEClb89a8+loU0uS/12XDPvOlVn/uBjM5LLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc/erdncvpNLlmFxeXtSxNvgI4lYgYTr5ndBia2dJAnBUFqv2F
+	5DxzGP4dLDVVCRlluj62jk5Tia/nnf3FzHC/viKqqWkfcdiH+2sWlVqEI3sIyhE=
+X-Gm-Gg: ASbGncv914A+kDzlBXeZbMmAV8G8vsJfUjr1Wvz6EDRdKqROrcfOYtPAf6BIaSbzRg9
+	MZ5jk8dVn7eqcqwwYChyKDHzuAIzq9sfA7HJovgBuQOE8u+5vwr+/Y9hLsaAT1OBw0ZvUnzl5Tp
+	65lI95Kx69ZdReAht7SFdR1Hy2U/05A9Ky5UuVrN9TRD55ROyFvx4tFA2End/zIyP5psFvz0L9u
+	2RBhrz9uSdDiKwcfX44ztWnoh+TqSgcvDcjEBYgdiFpqSPOQLUHjIznItbJv68OHA==
+X-Google-Smtp-Source: AGHT+IFtcBzpMhyjSQe9UzBOfjoOKfl8uNNpbJPlBJbRvrs/Ojhx1komTQp0qnO6A25grb08jLMKjQ==
+X-Received: by 2002:a05:6e02:1cab:b0:3a4:eca2:95f1 with SMTP id e9e14a558f8ab-3a9dbac0352mr35106495ab.6.1733792332487;
+        Mon, 09 Dec 2024 16:58:52 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2c64c24a7sm540644173.78.2024.12.09.16.58.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 16:58:51 -0800 (PST)
+Message-ID: <16615e97-268e-4daf-a991-6cad7803ac16@linuxfoundation.org>
+Date: Mon, 9 Dec 2024 17:58:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-bpf-fix-uprobe-uaf-v2-1-4c75c54fe424@google.com>
- <CAEf4BzYxaKd8Gv5g8PBY6zaQukYKSjjtaSgYMjJxL-PZ0dLrbQ@mail.gmail.com>
- <CAG48ez3i5haHCc8EQMVNjKnd9xYwMcp4sbW_Y8DRpJCidJotjw@mail.gmail.com>
- <CAEf4BzYkGQ0sw9JEeAMLAfcQbzxwg46c487kBD_LcbZSaTKD5Q@mail.gmail.com>
- <CAG48ez1LRsuew4y_KQxPHNipA68hhm+iJohHbk6=1cwv5QPCxQ@mail.gmail.com>
- <CAG48ez2+3TTbWNNO4aqxFAX8Cd4COaayRxoy1V2xvM9oS2_ygQ@mail.gmail.com>
- <CAEf4BzbhDkFq9DB2VKxsHmffynQBvbD_RVKTUm3zCqvO_e1dug@mail.gmail.com>
- <CAG48ez2LW9zyiptNq8jApD3zeS05wvNPs-jj2zOeaCDQbZnD4g@mail.gmail.com>
- <CAEf4BzbVqfWZUJUkUwJvfaGViwiP8cnVAYAWX67LP-ejPvmAPA@mail.gmail.com> <CAEf4BzbzXT6e-dKtxr6SDzekXC+Zu45uX10dL+DuTA8Xn=cgjw@mail.gmail.com>
-In-Reply-To: <CAEf4BzbzXT6e-dKtxr6SDzekXC+Zu45uX10dL+DuTA8Xn=cgjw@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 9 Dec 2024 16:54:57 -0800
-Message-ID: <CAADnVQJ9grJJs4s_eBBk7iL136FNKt3ahhaLLDo1igrBBscxYA@mail.gmail.com>
-Subject: Re: [PATCH bpf v2] bpf: Fix prog_array UAF in __uprobe_perf_func()
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jann Horn <jannh@google.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Delyan Kratunov <delyank@fb.com>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pm: cpupower: Makefile: Fix cross compilation
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Renninger <trenn@suse.com>,
+ Shuah Khan <shuah@kernel.org>, "John B. Wyatt IV" <jwyatt@redhat.com>,
+ John Kacur <jkacur@redhat.com>, Peng Fan <peng.fan@nxp.com>,
+ "open list:CPU POWER MONITORING SUBSYSTEM" <linux-pm@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241129012006.3068626-1-peng.fan@oss.nxp.com>
+ <ae5eba41-e2ae-48c4-b25d-daece4d329ca@broadcom.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ae5eba41-e2ae-48c4-b25d-daece4d329ca@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 9, 2024 at 2:45=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> Ok, weeding through the perf/uprobe plumbing for BPF, I think we avoid
-> this problem with uprobe BPF link because uprobe_unregister_sync()
-> waits for RCU Tasks Trace GP, and so once we finish uprobe
-> unregistration, we have a guarantee that there is no more uprobe that
-> might dereference our BPF program. (I might have thought about this
-> problem when fixing BPF link for sleepable tracepoints, but I missed
-> the legacy perf_event attach/detach case).
->
-> With legacy perf event perf_event_detach_bpf_prog() we don't do any of
-> that, we just NULL out pointer and do bpf_prog_put(), not caring
-> whether this is uprobe, kprobe, or tracepoint...
->
-> So one way to solve this is to either teach
-> perf_event_detach_bpf_prog() to delay bpf_prog_put() until after RCU
-> Tasks Trace GP (which is what we do with bpf_prog_array, but not the
-> program itself),
+On 12/2/24 10:12, Florian Fainelli wrote:
+> On 11/28/24 17:20, Peng Fan (OSS) wrote:
+>> From: Peng Fan <peng.fan@nxp.com>
+>>
+>> After commit f79473ed9220 ("pm: cpupower: Makefile: Allow overriding
+>> cross-compiling env params") we would fail to cross compile cpupower in
+>> buildroot which uses the recipe at [1] where only the CROSS variable is
+>> being set.
+>>
+>> The issue here is the use of the lazy evaluation for all variables: CC,
+>> LD, AR, STRIP, RANLIB, rather than just CROSS.
+>>
+>> [1]:
+>> https://git.buildroot.net/buildroot/tree/package/linux-tools/linux-tool-cpupower.mk.in
+>>
+>> Fixes: f79473ed9220 ("pm: cpupower: Makefile: Allow overriding cross-compiling env params")
+>> Reported-by: Florian Fainelli <florian.fainelli@broadcom.com>
+>> Closes: https://lore.kernel.org/all/2bbabd2c-24ef-493c-a199-594e5dada3da@broadcom.com/
+>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> 
+> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> Thanks!
 
-since this is a legacy prog detach api I would just add sync_rcu_tt
-there. It's a backportable one line change.
+Thank you. Applied to linux-cpupower for my next full request to
+Rafael.
 
-> or add prog->aux->sleepable_hook flag in addition to
-> prog->aux->sleepable, and then inside bpf_prog_put() check
-> (prog->aux->sleepable || prog->aux->sleepable_hook) and do RCU Tasks
-> Trace delay (in addition to normal call_rcu()).
-
-That sounds like more work and if we introduce sleepable_hook
-we would better generalize it and rely on it everywhere.
-Which makes it even more work and certainly not for stable.
-
-> Third alternative would be to have something like
-> bpf_prog_put_sleepable() (just like we have
-> bpf_prog_array_free_sleepable()), where this would do additional
-> call_rcu_tasks_trace() even if BPF program itself isn't sleepable.
-
-Sounds like less work than 2, but conceptually it's the same as 1.
-Just call_rcu_tt vs sync_rcu_tt.
-And we can wait just fine in that code path.
-So I'd go with 1.
+thanks,
+-- Shuah
 
