@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-440431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6879EBDD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:26:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C169EBDD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:26:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565DC2842E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:26:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D683616624A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C25211260;
-	Tue, 10 Dec 2024 22:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9057F1EE7DF;
+	Tue, 10 Dec 2024 22:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z1GQSxbg"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YaT4HUGZ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736282451F1;
-	Tue, 10 Dec 2024 22:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DDB2451F1;
+	Tue, 10 Dec 2024 22:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869592; cv=none; b=EYmothD/NCNSa/f3Wytshl90scSHNhlbtnwe1G1Sexv7Vq3THjPRhFyBJ1H31KE8C5pLqM+CXEvqAHlJw2vc8AUGgzRxSEcuwFFBdPFBFc4R4v+W+PBuLfiZ1lPQqFmwmsU4uVMgGbVkJ+7izXhR7qEPfan01WpTDWpsKpwfiHc=
+	t=1733869585; cv=none; b=QTEVnNxJHQ5b0vIbKVleOLWZLqYF4+1OSPEL2bYQkEOTwXVhwIsqFFg+jUiafuAAUvcRafgZWGEorofpvbV2Uf/9ICKTv7AOQDB3PjyTcNgtnRiktwQxVit6EzlsGfVYl5cJ1kZIfMtEdz6I4kXY/fwN0L+GjFnbQyNKM9+N3CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869592; c=relaxed/simple;
-	bh=3NCMVw/Lby/M4m7AcE6GO4Jv/FYRr6XCAdEnlPolzy8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N0/ioNVi3hDsV/K7FoHU+o7oJz9nIO+SjZpR5swvWL9lrDviCrZCQyrmeuELALSkgFcXnx6W0pQZC8n2MqIDlQGH8DyeejVWMbS6brzk+g8rMPQSufwO6x2crObbWmR4ZeIxlHbKhR3+QNqEzq1Fwjj4aVOcT4yuP03y54encSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z1GQSxbg; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADraZ3009236;
-	Tue, 10 Dec 2024 22:26:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=jnzZkYeW8tWSyuUF39ZkUJVg3Xdkp4MeuZXuKcDYJ
-	0k=; b=Z1GQSxbgd1TfNCiV8uz3MyrW8ugL3kEEezu+9RzHiM028antD29uns2mi
-	oaVTMJODshXTLXaKEPmxQRXNALd4ylItkG93QYO38Qf3TgHzQW/8B8uxGT/38HLo
-	Qo5obMDCFjrqiqoKB3XljGWWWrpA3E2g80dQ0EVX4vfDiOJFmdeQHCCVGs86Q6pO
-	3dxKabgw4HF5IlLC5gj7kSEVkf9W9H2aA3rtD3mDJPzoTcBPsCD9Agqqt7zTdkIK
-	1a59VtRtqjzDjcfcL7b/SyStgDbvBwwTsyBHL96H86/4fgEueja58BBa6eLS6Arl
-	0b/f8n24oJqng7y1KNsCEJjsNdkxg==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38ssdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 22:26:23 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAKvhLC017428;
-	Tue, 10 Dec 2024 22:26:22 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1nht3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 22:26:22 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAMQMQo17760832
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 22:26:22 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E1BA458052;
-	Tue, 10 Dec 2024 22:26:21 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D35158054;
-	Tue, 10 Dec 2024 22:26:21 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 22:26:21 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
-        Andy Liang <andy.liang@hpe.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH] tpm/eventlog: Limit memory allocations for event logs with excessive size
-Date: Tue, 10 Dec 2024 17:26:08 -0500
-Message-ID: <20241210222608.598424-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733869585; c=relaxed/simple;
+	bh=7dyBhkgm4N/DLXAeBBU91aVdSrvgFws4aFL8S4LxIyw=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2U4WgD/+OdjOrkgech9cKdN4crX5R4ZdkuIzdLhIS0+S1X043Bo/6m+u2pi7EEXbraHSQnW7cXCaWUN5fx0XCBpwHIDWnlcc+oMOgfLaI04jgvGhDVcBFK4z8elgSjOucYmcdjXtQoc8SVAEyhwHBNj+xU3HWJFQQsROUOxhwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YaT4HUGZ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434f09d18e2so35620055e9.0;
+        Tue, 10 Dec 2024 14:26:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733869582; x=1734474382; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UAnLPvcXxqQcZMFvRdGiegZqvPuvQ8o1GFTUSOFQNIg=;
+        b=YaT4HUGZ29KbopI4xPnFV5yQ1k3CiVqjDm/2OVTrr8Yfw5Ln2YIw2BhEfnUR/AL10l
+         9hQfs3auWSyaCXaLs+h7OoEB0LzQ6x9l6oNxmNErFwftnxMBleSx6T3z2/DVADz6sETH
+         r5LTskDTQbETsgswj/HaHaT/fwKYI++8jRkP+o4d61vaQ62j6k7b/0IN5gpDeADQfPbB
+         xKNi1S4IiIM1nmWPQ5zgUEDYvGdUv1KDXAKnuarHq/nWVg2/7u2HCDg7KAW3gIGfjJ76
+         k0tMPTnjm+jnIgS2r89rhOWm7AUJ6Ilct0DFaBtQLKxYDOUz138ZJZzzLJbhEny05CGb
+         u5cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733869582; x=1734474382;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UAnLPvcXxqQcZMFvRdGiegZqvPuvQ8o1GFTUSOFQNIg=;
+        b=CSrpfwLfxRDKePVTXdOaTWTgk5VfPFtIK9rIlhAoXW8AE+Xq/roLQBOkrBV9k9MLyH
+         EdDy+KQDw9i7EI5QC7A1hIZ9QgG1habUlPLOLvU6SBlPzloWWFvu2CeeWXUhsB7PfsP7
+         aTYeAaWjNbkbucDNFV5TSTaeKRt5IW+mPQE8+dtLG8M0AyTo2qNV/7k9cyBGglcm14jV
+         dGoqCD5SOtRJFlPark5QrqQm7KCh17p6mNnG7U5dcSMA3PxjZi/jq2IH/goVMNB22CNV
+         HsUsjl8DGia/v4IGVcNohAdNvkJLi8bbBixnQzdhrVRTabK1lVpQGE8eBv2VRQK+/IE9
+         I88A==
+X-Forwarded-Encrypted: i=1; AJvYcCU7HEu3ja6dGw1PQ2nqJ6aqQday7chUpVIE2Sr8DJT2KYecYeFozmNeDRzj62Q9q9YOekzNtyfs2IvvVoMk@vger.kernel.org, AJvYcCUiQDCvLH5U4CfUqTu6jl1pLXDVSzbeqE9At0a8FGvqKfmCnVPQa+Ts2EbHGRFwSwHgA2wOMMjj@vger.kernel.org, AJvYcCXt203kkPm5aK3kEykN08bea2hNwOvtucB7JfuF4BIxmk7CPF/Ck7U8Jr+z2bZOyr3wSH8CCb10jrln@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLsG+pmb5iELhLTDoawhN00tM9yhMV5DFgia2vuIjFRou8QYWS
+	b9HaQGAmKvXwD/SIVwAjtIOP4HzoHLP6IUJwGYTjg8XRX0DNS4uS03WNXA==
+X-Gm-Gg: ASbGnctTl0747H2s8bSZtF6QmB7ke0NrWsfEh5Z5KQbTZdbYWEOYAKu+XlVeSlp7pRg
+	cb/Nf+Ceyy8RS5RE5U2QV8G6lZAi5/y8CeV9gyst23lrVDCmsqlFSYyQn8L0ZUMr/R7PZGOVjyz
+	Z+WeR55rJv+NJnAyinrZH2IuqXBPTFYzm6P4LNazEN55ZuS6osZkeS2y4DaD0/odglY28eQd/fU
+	yk4vv9RbJLt0zhVf7f026BCSWAyq4BY76S2b4pS9+JF71c8Ax87u2wRRw2TANccxRNNN9JlrJm+
+	FPYhwam5nw==
+X-Google-Smtp-Source: AGHT+IEIx73L8V9Xn20US5TZdCSs05hwB1+pqofuOI4Tftmw7ho7qTCb/DpbVER3GSlQTeepdonLzw==
+X-Received: by 2002:a05:6000:1fae:b0:385:e30a:394e with SMTP id ffacd0b85a97d-3864ce862d2mr561573f8f.3.1733869581438;
+        Tue, 10 Dec 2024 14:26:21 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f9da4cd0sm81688025e9.26.2024.12.10.14.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 14:26:20 -0800 (PST)
+Message-ID: <6758c00c.050a0220.1dd14c.63cd@mx.google.com>
+X-Google-Original-Message-ID: <Z1jACflOJaLJmhgy@Ansuel-XPS.>
+Date: Tue, 10 Dec 2024 23:26:17 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v11 3/9] dt-bindings: net: dsa: Document support
+ for Airoha AN8855 DSA Switch
+References: <20241209134459.27110-1-ansuelsmth@gmail.com>
+ <20241209134459.27110-4-ansuelsmth@gmail.com>
+ <20241210204855.7pgvh74irualyxbn@skbuf>
+ <6758ab9b.7b0a0220.3347af.914a@mx.google.com>
+ <20241210221602.ohyzlic2x3pflmrg@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fko00RqIkJ3ZBmeBtyrGZ37_2ubZdB0d
-X-Proofpoint-ORIG-GUID: fko00RqIkJ3ZBmeBtyrGZ37_2ubZdB0d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210221602.ohyzlic2x3pflmrg@skbuf>
 
-The TPM2 ACPI BIOS eventlog of a particular machine indicates that the
-length of the log is 4MB, even though the actual length of its useful data,
-when dumped, are only 69kb. To avoid allocating excessive amounts of memory
-for the event log, limit the size of any eventlog to 128kb. This should be
-sufficient memory and also not unnecessarily truncate event logs on any
-other machine.
+On Wed, Dec 11, 2024 at 12:16:02AM +0200, Vladimir Oltean wrote:
+> On Tue, Dec 10, 2024 at 09:59:04PM +0100, Christian Marangi wrote:
+> > > > +  airoha,ext-surge:
+> > > > +    $ref: /schemas/types.yaml#/definitions/flag
+> > > > +    description:
+> > > > +      Calibrate the internal PHY with the calibration values stored in EFUSE
+> > > > +      for the r50Ohm values.
+> > > 
+> > > Doesn't seem that this pertains to the switch.
+> > 
+> > Do you think this should be placed in each PHY node?
+> 
+> Logically speaking, that's where it belongs.
+> 
+> > I wanted to prevent having to define a schema also for PHY if possible
+> > given how integrated these are. (originally it was defined in DT node
+> > to follow how it was done in Airoha SDK)
+> 
+> Does compatibility with the Airoha SDK dt-bindings matter in any way?
 
-Reported-by: Andy Liang <andy.liang@hpe.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219495
-Cc: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/eventlog/acpi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+No it doesn't, the requirement for nvmem already deviates a lot so changes
+are needed anyway.
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 69533d0bfb51..701fd7d4cc28 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -26,6 +26,8 @@
- #include "../tpm.h"
- #include "common.h"
- 
-+#define MAX_TPM_LOG_LEN		(128 * 1024)
-+
- struct acpi_tcpa {
- 	struct acpi_table_header hdr;
- 	u16 platform_class;
-@@ -135,6 +137,12 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 		return -EIO;
- 	}
- 
-+	if (len > MAX_TPM_LOG_LEN) {
-+		dev_warn(&chip->dev, "Excessive TCPA log len %llu truncated to %u bytes\n",
-+			 len, MAX_TPM_LOG_LEN);
-+		len = MAX_TPM_LOG_LEN;
-+	}
-+
- 	/* malloc EventLog space */
- 	log->bios_event_log = devm_kmalloc(&chip->dev, len, GFP_KERNEL);
- 	if (!log->bios_event_log)
 -- 
-2.43.0
-
+	Ansuel
 
