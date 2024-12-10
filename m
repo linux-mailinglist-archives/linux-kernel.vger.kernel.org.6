@@ -1,273 +1,151 @@
-Return-Path: <linux-kernel+bounces-440217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6109EBA57
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:52:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5B61888EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:52:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C29F22618B;
-	Tue, 10 Dec 2024 19:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gw6vOseD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9BC9EBA5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:54:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC34153BF6;
-	Tue, 10 Dec 2024 19:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B636283372
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:54:48 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE10B226870;
+	Tue, 10 Dec 2024 19:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cAsno5oY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AD023ED59;
+	Tue, 10 Dec 2024 19:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733860317; cv=none; b=bGGrJr8DqClIfPwp7C25azshXWcA00OtkGRy5F91LneiYA8S5VWJDJljNxxcnrRWiVB94yR89lB7XWMdbq8vtCgYR0bZ0d2vXCK7352B1rSqTL2dUiNLJ+n7InkFSUbCptaorw+rhSSnW/dD3WVa1U0kFm6yKpOC8yIDvqkHnac=
+	t=1733860480; cv=none; b=hBmt2l57Dq+sIknsA5/P93OJlkBW3L/4GksKrcQ+nbpu+rd45P2jQDo6Ed5XOOmfLdKIM8Qt4CY7jokUsDbdTm6eFoPW4K8Vigw6afNlgyhMFarEt9eILPOM41BXJJUe/lbsup73ekpMCWiE64XatlmhO/Pe2TeaFzkqLWE6RhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733860317; c=relaxed/simple;
-	bh=uVNtA4UP4gYY1Fh3dyi6MlUBu6yIgXwwrtxJO7qjI4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8aPOdsKNU0GswnSiiGIH2StrE0g158uKUbuaxVVmCplLC6vFV9iEpFZuzGxzaaoskXClFhXdHdBAkGbWIJm0fOsBKHzcCTBZqumgbtmFcySQ5FJTJ1zHFiq83RJF0JS5hSDyZVRWV8CYbmYsssZSLBiMVw1jqy0bDsZ22ZQLf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gw6vOseD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B981AC4CEE2;
-	Tue, 10 Dec 2024 19:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733860316;
-	bh=uVNtA4UP4gYY1Fh3dyi6MlUBu6yIgXwwrtxJO7qjI4c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gw6vOseDnS37P97gPVAjqc6HRdGsQbM11TCHXvR2E2anV7EixzqCnD7+/48Z3uxq2
-	 J6EbTk5m7iiO+pFcx60dBhMyhWdNZpc3BS93bhIQX0cVJbSDHRm1AiBTTnbzY9zM7c
-	 YOolB49NEol5yFL/iUlxewPaU0imzt9oCBQb9qT+sKkow19WgGASJfXkhKYyG4MIyS
-	 GNMp02ZFItp7ui1GM1US0aBfAhH5HAOjF0/22Fq3aQyIctOtvlhSG1AJckvZ1XvnGi
-	 32AanCCnsVnoMiSU3VTXJnOLmbfsKYZnOXzanKP1fUa91KMdD5/uZw/ez9WcgRK2SD
-	 Q8DhsUTQ8ZiUw==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-29e65257182so2949846fac.2;
-        Tue, 10 Dec 2024 11:51:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUgu7gKTgEcHURRfrS945fGikXgjNzLn0O7puV/4QAhI/v7GmABJQYig59KHFsJCL47mSC8NsUMo/g=@vger.kernel.org, AJvYcCV4jzEen/MS0fMrvI6qU+utBiFnlchFR37yhn6z/m3lk1k7FLeWD8QIy5TzvOVD8i/tj5khxiMajVR/3RU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHyArzP4vtEJssx0ZlNe82qD7y1QWGqY//Dtcv0zStEQcSW9Kq
-	NZmSyrOSYz4SDbv7s+K6XH/KKQMPKvfZXos/VMROz91taMwc4byH9//8C3G+0pyuY1HtsLkmPn2
-	wcVqdcWdDi1I0U12IlYLEV+zgg7Y=
-X-Google-Smtp-Source: AGHT+IGze+/0YQKfiA5MqyQLVSRFptaYBpPZOn3z2i8CbXO2eUmQACXiqL02u2AFaRGvh67C/NC+/bmlbcaeaWei+6k=
-X-Received: by 2002:a05:6870:1588:b0:287:471:41eb with SMTP id
- 586e51a60fabf-2a012bb4c4cmr265506fac.6.1733860315572; Tue, 10 Dec 2024
- 11:51:55 -0800 (PST)
+	s=arc-20240116; t=1733860480; c=relaxed/simple;
+	bh=4QD1jq7IN/UMgjwr2EzUkF3AbcDeXPhUr3d1bSOs3Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WglaaIIWV7usW2AxhuJHW6/OScHl/aq4ZyAr8kY2Ztetq/Z/rTkeP15oB6Qmeh1xwdtxrDMDXgfIW0uPn+av/a8kPP3ZGHb/ynsIn5Rvc+4PDLz1BAvndGm7bi+dj78w3VKrmzovGT9eOAdhMJq9KKRQNf0JYsBgjMpE711GND4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cAsno5oY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=qqR4+EDOTOKUygjAju/GpX8orxXt5neI5PHSlKTEs2U=; b=cAsno5oYRVseXjiVyM/UxIK07w
+	qtwmVLePT9tyGDCOACnIbCo40y4bTizPr6kk63/9XWmj/J55i3q114gzkNk4xoRKYXmQOOdNnUIwd
+	e0z5ZPxhUJZrzSP4ACjLwX4i6KMaSWHX+743h08HRYQNDmcTQeeK8YlV1y3hzlnQT+Iw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tL6JH-00FqUX-Bp; Tue, 10 Dec 2024 20:54:19 +0100
+Date: Tue, 10 Dec 2024 20:54:19 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
+ MBa62xx carrier board Device Trees
+Message-ID: <2953e10c-0a57-4d49-b831-3864a07eefd5@lunn.ch>
+References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
+ <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
+ <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
+ <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
+ <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
+ <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
+ <a2a2f201-73a4-4a99-baef-0d593a88c872@lunn.ch>
+ <309052f3f69950fe43390505cc7254aee8c8f5c6.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129182232.14987-1-patryk.wlazlyn@linux.intel.com> <20241129182232.14987-2-patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <20241129182232.14987-2-patryk.wlazlyn@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 20:51:44 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jhK51+pkf=Amr=qXWzK3e1xC_tdt0iqQXxVfeE4pcFJQ@mail.gmail.com>
-Message-ID: <CAJZ5v0jhK51+pkf=Amr=qXWzK3e1xC_tdt0iqQXxVfeE4pcFJQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] x86/smp: Allow calling mwait_play_dead with an
- arbitrary hint
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, peterz@infradead.org, dave.hansen@linux.intel.com, 
-	gautham.shenoy@amd.com, tglx@linutronix.de, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <309052f3f69950fe43390505cc7254aee8c8f5c6.camel@ew.tq-group.com>
 
-First, I would change the subject to something like "x86/smp: Add hint
-parameter to mwait_play_dead()"
+On Tue, Dec 10, 2024 at 10:56:41AM +0100, Matthias Schiffer wrote:
+> On Mon, 2024-12-09 at 17:14 +0100, Andrew Lunn wrote:
+> > 
+> > > Not our board, but the AM62 SoC. From the datasheet:
+> > > 
+> > > "TXC is delayed internally before being driven to the RGMII[x]_TXC pin. This
+> > > internal delay is always enabled." So enabling the TX delay on the PHY side
+> > > would result in a double delay.
+> > 
+> > phy-mode describes the board. If the board does not have extra long
+> > clock lines, phy-mode should be rgmii-id.
+> > 
+> > The fact the MAC is doing something which no other MAC does should be
+> > hidden away in the MAC driver, as much as possible.
+> 
+> Isn't it kind of a philosophical question whether a delay added by the SoC
+> integration is part of the MAC or not? One could also argue that the MAC IP core
+> is always the same, with some SoCs adding the delay and others not. (I don't
+> know if there are actually SoCs with the same IP core that don't add a delay;
+> I'm just not a big fan of hiding details in the driver that could easily be
+> described by the Device Tree, thus making the driver more generic)
 
-On Fri, Nov 29, 2024 at 7:22=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> Introduce a helper function to allow offlined CPUs to enter FFh idle
-> states with a specific MWAIT hint. The new helper will be used in
-> subsequent patches by the acpi_idle and intel_idle drivers.
+It is more about, what does phy-mode = "rgmii"; mean? It means the
+board provides the delay via extra long clock lines. Except for when
+some random MAC driver has a completely different meaning, it is not
+documented it means something else, you have to read the sources and
+the mailing lists, to find out what this particularly MAC driver is
+doing for phy-mode = "rgmii".
 
-And the above would become
+Do we really want that. Or should we define that phy-mode = "rgmii"
+means the PCB provides the delay. End of story, no exceptions. And
+that "rgmii-id" means the MAC/PHY pair need to provide the delay? End
+of story, no exceptions.
 
-"Change mwait_play_dead() into a helper function allowing CPUs going
-offline to enter idle states via MWAIT with a specific hint passed to
-it as an argument.
+> > Since the MAC driver is forcing the TX delay, it needs to take the
+> > value returned from of_get_phy_mode() and mask out the TX bit before
+> > passing it to the PHY.
+> 
+> Hmm okay, this is what the similar ICSSG/PRUETH driver does. I've always found
+> that solution to be particularly confusing, but if that's how it's supposed to
+> work, I'll have to accept that.
 
-Add mwait_play_dead_cpuid_hint() as a wrapper around mwait_play_dead()
-implementing the existing behavior of the code.
+It has to be that why. If the MAC does the delay, the MAC needs to
+ensure the PHY does not do the delays and well, and it achieves that
+by setting PHY_INTERFACE_MODE to indicate the PHY should not add
+delays. Do you have a better idea how this can be done?
 
-Subsequently, the new helper will also be used by the acpi_idle and
-intel_idle drivers in idle-state-specific :enter_dead() callbacks."
+> In my opinion the documentation Documentation/networking/phy.rst is not very
+> clear on this matter - the whole section "(RG)MII/electrical interface
+> considerations" talks about whether the PHY inserts the delay or not, so my
+> assumption was that phy-mode describes the PHY side of things and only that.
+> 
+> It gets even more confusing when taking into account
+> Documentation/devicetree/bindings/net/ethernet-controller.yaml, which contains
+> comments like "RGMII with internal RX delay provided by the PHY, the MAC should
+> not add an RX delay in this case", which sounds like there are only the cases
+> "delay is added by the PHY" and "delay is added by the MAC" - the case "delay is
+> part of the board design, neither MAC nor PHY add it" doesn't even appear.
 
-> No functional change intended.
->
-> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-> ---
->  arch/x86/include/asm/smp.h |  3 ++
->  arch/x86/kernel/smpboot.c  | 90 ++++++++++++++++++++------------------
->  2 files changed, 51 insertions(+), 42 deletions(-)
->
-> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-> index ca073f40698f..dfd09a1e09bf 100644
-> --- a/arch/x86/include/asm/smp.h
-> +++ b/arch/x86/include/asm/smp.h
-> @@ -114,6 +114,7 @@ void wbinvd_on_cpu(int cpu);
->  int wbinvd_on_all_cpus(void);
->
->  void smp_kick_mwait_play_dead(void);
-> +void mwait_play_dead(unsigned int hint);
->
->  void native_smp_send_reschedule(int cpu);
->  void native_send_call_func_ipi(const struct cpumask *mask);
-> @@ -164,6 +165,8 @@ static inline struct cpumask *cpu_llc_shared_mask(int=
- cpu)
->  {
->         return (struct cpumask *)cpumask_of(0);
->  }
-> +
-> +static inline void mwait_play_dead(unsigned int eax_hint) { }
->  #endif /* CONFIG_SMP */
->
->  #ifdef CONFIG_DEBUG_NMI_SELFTEST
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index b5a8f0891135..8a3545c2cae9 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -1272,13 +1272,57 @@ void play_dead_common(void)
->         local_irq_disable();
->  }
->
-> +void __noreturn mwait_play_dead(unsigned int eax_hint)
-> +{
-> +       struct mwait_cpu_dead *md =3D this_cpu_ptr(&mwait_cpu_dead);
-> +
-> +       /* Set up state for the kexec() hack below */
-> +       md->status =3D CPUDEAD_MWAIT_WAIT;
-> +       md->control =3D CPUDEAD_MWAIT_WAIT;
-> +
-> +       wbinvd();
-> +
-> +       while (1) {
-> +               /*
-> +                * The CLFLUSH is a workaround for erratum AAI65 for
-> +                * the Xeon 7400 series.  It's not clear it is actually
-> +                * needed, but it should be harmless in either case.
-> +                * The WBINVD is insufficient due to the spurious-wakeup
-> +                * case where we return around the loop.
-> +                */
-> +               mb();
-> +               clflush(md);
-> +               mb();
-> +               __monitor(md, 0, 0);
-> +               mb();
-> +               __mwait(eax_hint, 0);
-> +
-> +               if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT=
-) {
-> +                       /*
-> +                        * Kexec is about to happen. Don't go back into m=
-wait() as
-> +                        * the kexec kernel might overwrite text and data=
- including
-> +                        * page tables and stack. So mwait() would resume=
- when the
-> +                        * monitor cache line is written to and then the =
-CPU goes
-> +                        * south due to overwritten text, page tables and=
- stack.
-> +                        *
-> +                        * Note: This does _NOT_ protect against a stray =
-MCE, NMI,
-> +                        * SMI. They will resume execution at the instruc=
-tion
-> +                        * following the HLT instruction and run into the=
- problem
-> +                        * which this is trying to prevent.
-> +                        */
-> +                       WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
-> +                       while(1)
-> +                               native_halt();
-> +               }
-> +       }
-> +}
-> +
->  /*
->   * We need to flush the caches before going to sleep, lest we have
->   * dirty data in our caches when we come back up.
->   */
-> -static inline void mwait_play_dead(void)
-> +static inline void mwait_play_dead_cpuid_hint(void)
->  {
-> -       struct mwait_cpu_dead *md =3D this_cpu_ptr(&mwait_cpu_dead);
->         unsigned int eax, ebx, ecx, edx;
->         unsigned int highest_cstate =3D 0;
->         unsigned int highest_subcstate =3D 0;
-> @@ -1316,45 +1360,7 @@ static inline void mwait_play_dead(void)
->                         (highest_subcstate - 1);
->         }
->
-> -       /* Set up state for the kexec() hack below */
-> -       md->status =3D CPUDEAD_MWAIT_WAIT;
-> -       md->control =3D CPUDEAD_MWAIT_WAIT;
-> -
-> -       wbinvd();
-> -
-> -       while (1) {
-> -               /*
-> -                * The CLFLUSH is a workaround for erratum AAI65 for
-> -                * the Xeon 7400 series.  It's not clear it is actually
-> -                * needed, but it should be harmless in either case.
-> -                * The WBINVD is insufficient due to the spurious-wakeup
-> -                * case where we return around the loop.
-> -                */
-> -               mb();
-> -               clflush(md);
-> -               mb();
-> -               __monitor(md, 0, 0);
-> -               mb();
-> -               __mwait(eax, 0);
-> -
-> -               if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT=
-) {
-> -                       /*
-> -                        * Kexec is about to happen. Don't go back into m=
-wait() as
-> -                        * the kexec kernel might overwrite text and data=
- including
-> -                        * page tables and stack. So mwait() would resume=
- when the
-> -                        * monitor cache line is written to and then the =
-CPU goes
-> -                        * south due to overwritten text, page tables and=
- stack.
-> -                        *
-> -                        * Note: This does _NOT_ protect against a stray =
-MCE, NMI,
-> -                        * SMI. They will resume execution at the instruc=
-tion
-> -                        * following the HLT instruction and run into the=
- problem
-> -                        * which this is trying to prevent.
-> -                        */
-> -                       WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
-> -                       while(1)
-> -                               native_halt();
-> -               }
-> -       }
-> +       mwait_play_dead(eax);
->  }
->
->  /*
-> @@ -1407,7 +1413,7 @@ void native_play_dead(void)
->         play_dead_common();
->         tboot_shutdown(TB_SHUTDOWN_WFS);
->
-> -       mwait_play_dead();
-> +       mwait_play_dead_cpuid_hint();
->         if (cpuidle_play_dead())
->                 hlt_play_dead();
->  }
-> --
+We have tried to improve the documentation. We have also been very
+rigid in reviewing DT bindings, and what these things mean. But it
+seems like many developers don't read reviews other developers get. Go
+search the email archive. How many times have i had this very same
+conversation?
 
-And honestly I'm wondering why adding a parameter to mwait_play_dead()
-is better than introducing mwait_play_dead_with_hint(), in analogy
-with the existing mwait_idle_with_hints()?
+Everybody gets pause wrong. Everybody gets EEE wrong. Everybody gets
+RGMII delays wrong, not matter how many times we tell developers they
+are getting it wrong.... phylink is helping with this, it takes it out
+of developers hands so they cannot get pause or soon EEE wrong.
 
-The latter option would allow you to avoid introducing a function that
-is deleted in the same patch series (in patch 4).
+	Andrew
 
