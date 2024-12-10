@@ -1,196 +1,190 @@
-Return-Path: <linux-kernel+bounces-439644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC719EB223
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:46:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2395F9EB22A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E18C188C250
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:46:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B4181644DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AF11AA7A3;
-	Tue, 10 Dec 2024 13:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FC31A9B5C;
+	Tue, 10 Dec 2024 13:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvBPD1tR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Fda72QNP"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D9A26AF6;
-	Tue, 10 Dec 2024 13:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733838375; cv=none; b=F19QeEa/RYFx55FPufyLzrz9nTObd/T5R1WDWoU+QVEKZQDXIFR9KP5t2mDziASTMKCJhTiDuS6gye6f042fkPEA8TFLCfoPi8S1Yx8LYkvH40QOrsP+5Lqy1mcsqvHrDZ/SwHniTSsjURFQHSn3kDHP1VDCj74i60AV6bZ+Sqc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733838375; c=relaxed/simple;
-	bh=x730fyX6dMkFw5tutqwYFzZbDyd2+aZYRXnREzK9WoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OCbM6BfHwV7CWiYjOe9HNJLZP3oWSNnuIdvBXFxOXkbMjxTo8xMMUHtrToZkt0qVPYgkqh5Oz/l5YuUeyaJmyl+ixPCnWmcTFV+19sPKYIL5QVjWLZeSfBldFjea7iCTpQ6HfZJTCY9HBr36/GQA8Yj/rWUBWIbl/FpZBZHK3Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvBPD1tR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04344C4AF0B;
-	Tue, 10 Dec 2024 13:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733838375;
-	bh=x730fyX6dMkFw5tutqwYFzZbDyd2+aZYRXnREzK9WoQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XvBPD1tRBD7OU7iZzwf69SJy3kJ8KrrMxWMwC/bmZjw3iULXdkmxudhpcaTsL8aQa
-	 s+u3+1DPUeVBLUIaHQ8qW2LZQDCcsES+AWLks2sLLZ2tNjX7Sj2PpB38U8XzlMsOoc
-	 JtYXX3pymBvtNuMt0YNrULJMaxxXY7NKObjRbJD3P85Ojcocr+WCdYsg+3NBTi0yRt
-	 EyWImMyp+ie/SMsXZ++kkH3mcrrfCpeyBCS/4x0VLfFqukWC0pjsaCAOg00J/E//iN
-	 qExim+WBCNMQBvZX0DtGfDMvzK0kXtJ/HiRKgRlCkjr0QsQNPYkJ//sowYA6xtCEAy
-	 HncGDn6HADjvg==
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3988fdb580so4471679276.2;
-        Tue, 10 Dec 2024 05:46:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV5veoMHfkjqYxo2okQgrH3dAqGZ8H79rytxb4u4y1UKMUCgaLHtSNQu4NQESUNUFuN5J8zr6yRWk3SwA==@vger.kernel.org, AJvYcCWK/6pUrCZJuCn/1ujrJpORc53bX2AzMVSDgqWoT9Jz8AXZOIt6JcTLTR2FChRGcRsNxaGfBPhfMsJDv8Hc@vger.kernel.org, AJvYcCWk3gQM2yHjIWBpSNsEBDw0JdyDEPEgeuvzjE0Z7SVkmhxZPZZ9wwAytIVW4BRjlWVq4UVLP7lUsN/UzJHOiok79gVZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYs3o3drmZVuPJjWISMDu8IcMlIkF83021W537glQvwLr5uQNK
-	CAlYF31wG6iGT7Bg9sw7ZyLReSoSm7zqRQPOmZSmGul8LaPe9x89iMIYRHMUZHabIr2JE/nZWxQ
-	mOVeT0xd1NQCK+bJVJpB2/T/ruw==
-X-Google-Smtp-Source: AGHT+IFEJu9NTYWGNNmGhCKFl6IIPQSbjUyN0ns29zQAUyT/ZrhFzuKfUga+5b6UJ+tGB6G+6RDedWNBOIows2KSM80=
-X-Received: by 2002:a05:6902:2009:b0:e39:9b9f:7f83 with SMTP id
- 3f1490d57ef6-e3a59afd53emr4031159276.12.1733838373977; Tue, 10 Dec 2024
- 05:46:13 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41811E515;
+	Tue, 10 Dec 2024 13:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733838513; cv=fail; b=pumATHQk8BEGabVT4Dye6lf5kLkF5ED7fiG9Brih+IAVDvMzqPA4ys9tj9f5KdbXMjqD2YJeybuBvXk4uHFfE/7V0W0TWKRSHDLaGGY9RrSPzXhiCrqRmQbTYvBp1ngMAjMhr5CSXdmHNr/nQOftBzpMuaI8lgLxAw/O/AFTzmY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733838513; c=relaxed/simple;
+	bh=RV1gQ6OZxqAcNvoA0YHlLN2lkt+7dZcF+AA38TlCotY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cJtU+gZFMwe6B3kBy08Zkc4DcrRCiZ1E40dVlRcNQeiyCBvMBL5VKfd47Hvc01sqGfHC9VFlReiOnHT3+oS6AxVbXWZyfrwHPql832O9wkfEAuPyml99ewg4xzvrjicsKVQzlg11YZG9CJBF4WreRDUgSLC/tYQJ1Sh7mLm3GqM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Fda72QNP; arc=fail smtp.client-ip=40.107.220.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IPBZy/qY1I2O5CZbmXGI+9fet0oCjdcnTVH1yw8UZbPwVajROwk+fYoYsUSaev3tpNAihlfPs4VCKN5XrdSjlEdRRzYjMPhRuK8O3Y3YfamlAnZsSOBuvqYCIY8YCqqElmsBCFqUCw8JZzBipxUgiL7y4jRG3yWT/4Rc1OgQsVsLfvZdx+vX/w1dotwYup8rvo7CrOtvNsyQIvAmE+K5YEwVNjgiSQp9PzDrlRgFZauHf1xdS96YKRWovQ/umuEmYymzByeZp/wdsWENGmM06hz+UJ8dVGh25mefkUuSYwpkBXvPXL0PlU+aTaYCAQ356ie3tkB2RpRvgei9Hy8fYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4uhoVustdB/9sB8ljf2ajbO8h13E4/YOJrGZSUEnhHQ=;
+ b=tuFSmuLzFxjy24V1PjYvQL5O0Waf0rBysofLNnIHZ3yjR4fy3TfHPocap8JDIQ5VSCsC6+oIXm3KioAU9W4CEC4JpHqdOnghtQufnHLNYhTuUAKJdzJYBveORL20zgnTk01oKj9muTfNityNAh6A2R/ybV1FeOLozNUsFkarA9QPQmEhjmy2MLlINnV06I47H3ySK4YNsEqGNQtEODI653cJDe7CQgKspMdOpVQRik5LxPPqE6xyITsmsOFcmWbkAneufRWZ51lGdL9uqwaQQICS0ORH5N9hiQEUpfa+sPYYWiCl0i/M4456Fclebn5tltI+6b6xGk9f6DBvjZNCmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4uhoVustdB/9sB8ljf2ajbO8h13E4/YOJrGZSUEnhHQ=;
+ b=Fda72QNPCW1tTsvNpWWJ3Nwne7BJRjQ802OsCGUlxDlaRqetFmB1Ase60VIloBFRGiVz25z2y1ccg7A23xFbD+0VwEvISux5Mv1HbCRCBz3SXmtDmEZPYxUZCrpAW0A8nJo3Xg7DM+qA6g7GK3JNLbAzIv3DCqoBRAr+BjU0ki0CXl3z6shGduyR+WQ5J5bq5QW2s5KMQxW58rtOMAzMvLopHR3GrpLDwu9bxtSki6jrIWop7vv1kqNBmG/ugGIrEbsIuq38QlIwK7HvlklFiFf/9xttsOKQ5DuP4f7PZRI7lTdzqnDs9EhhSPpAo/Bw0xqVN/f/3zcfIIgHIsMnJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by LV3PR12MB9118.namprd12.prod.outlook.com (2603:10b6:408:1a1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
+ 2024 13:48:28 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%5]) with mapi id 15.20.8230.010; Tue, 10 Dec 2024
+ 13:48:28 +0000
+Date: Tue, 10 Dec 2024 09:48:27 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: leon@kernel.org, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org, tangchengchang@huawei.com
+Subject: Re: [PATCH for-next] RDMA/hns: Support mmapping reset state to
+ userspace
+Message-ID: <20241210134827.GG2347147@nvidia.com>
+References: <20241014130731.1650279-1-huangjunxian6@hisilicon.com>
+ <20241209190125.GA2367762@nvidia.com>
+ <f046d3f8-a1c8-0174-8db9-24467c038557@hisilicon.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f046d3f8-a1c8-0174-8db9-24467c038557@hisilicon.com>
+X-ClientProxiedBy: MN2PR13CA0005.namprd13.prod.outlook.com
+ (2603:10b6:208:160::18) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209151830.95723-1-herve.codina@bootlin.com>
- <CAL_JsqLT3prYBcxnsUwAShULCLJScYoU29ta29RJLGyiNkCrTg@mail.gmail.com> <20241210091604.512496d3@bootlin.com>
-In-Reply-To: <20241210091604.512496d3@bootlin.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 10 Dec 2024 07:46:02 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJCbmMJWJnmr8FneKrW4pjvTcyEco94Ot32o2YtaVxRQQ@mail.gmail.com>
-Message-ID: <CAL_JsqJCbmMJWJnmr8FneKrW4pjvTcyEco94Ot32o2YtaVxRQQ@mail.gmail.com>
-Subject: Re: [PATCH 0/7] of: overlay: Add support for export-symbols node feature
-To: Herve Codina <herve.codina@bootlin.com>, David Gibson <david@gibson.dropbear.id.au>
-Cc: Andrew Davis <afd@ti.com>, Ayush Singh <ayush@beagleboard.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Devicetree Compiler <devicetree-compiler@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV3PR12MB9118:EE_
+X-MS-Office365-Filtering-Correlation-Id: e34c6f6c-4ec4-4115-e9ee-08dd192153c6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vNdV74TSb/K3vcw10RhiuvoWzcRJUHkRYJCO6eLy5n6nLeJ9jV9ntR8S1aJI?=
+ =?us-ascii?Q?tHlf6XoT3klynvl7a3uTmsNenjBaM9dc3/7IieKiksXv2AaK5ZfiJ0mEyfOx?=
+ =?us-ascii?Q?N+9c+bRpqS9QSDIAgnw1UqTq6bOgGHyRjzkl6CoYfsVUnQqVuUb6vBSaYSgz?=
+ =?us-ascii?Q?UxXziOX3SvpauLQaTKXUu9Blq7vUpT1ZmXXY2gnE02qiHA5/57G+qIypioz0?=
+ =?us-ascii?Q?rVIca+E61PjMnO8dWgER/+Xc3eGLq5MukRCWC0E+2Lb8+cHO0NxYy3N4T/rD?=
+ =?us-ascii?Q?fRL8GV+IxdnmzVW2pLNTk6nGQoTW+17tZ5g/4uXZ1/8lY6Pz2hvUsVnxKgLF?=
+ =?us-ascii?Q?kI3dQPjKMv/2ykN5Eyzzy0aibQAfmi1icnZGPAtRBCGx8AlS+WbAy4vZ6Je9?=
+ =?us-ascii?Q?X0xjlqFz+RjcSKDnE1+zJvLrY4t1uxvbJVkFAyjMBunH2M7Ja1fhrx6Ey14E?=
+ =?us-ascii?Q?rJvB0jPMhY+zjhyF6Qm0Wu36hNRedYyzpOxK88DroHeHSkApNBUs6j2dL9pO?=
+ =?us-ascii?Q?T+tOPNdC9E/CW8YenTL21TK+By2sCFH75FD/ulz4A4jHDiAKaTdkoJLlFrZ5?=
+ =?us-ascii?Q?SqgK/15WO6lXvBlMWf0Drkk5/q13tVMY9/7uXX/QHLu/R7bRsbd9rj3gZsLn?=
+ =?us-ascii?Q?iImq2+em7VCSd3q5EmaCWPc9lu9gaj4rTwcKmHp89TRFcqAPnxKQ+PqHa8DC?=
+ =?us-ascii?Q?utg8d6HZ/KOheVq4wLb1EswVXVs3ThMWzSgharzwHHd+Ps+P7LpWUK2qDhdq?=
+ =?us-ascii?Q?hkV9i8Y71jKkmjqblseDZiqiC+b1s281vg5MmJXob04yL+xyJUOJZmJjKcc3?=
+ =?us-ascii?Q?SrefY7qsuEzcdikkJXC8QgYidnaTlyHXXfeYuhpPVG19RhX0akwv7Fe10tQ4?=
+ =?us-ascii?Q?aHjtawce2YuiTHGk489X9vkSMK05i/qIBYuI7KrDxp1+ZUFlHRMHsgPOrGHq?=
+ =?us-ascii?Q?buyW1Tera9vpZF2hyTzOPnxB4ciyEsAu31BuK1BHeYWw+JUavec6Zw03BlAP?=
+ =?us-ascii?Q?ky119a4WtDtWxG5YIbG3zDNwnSsFiHzDGOnEAjy1p7s5ECN2JgHom+AkLWuF?=
+ =?us-ascii?Q?PedMGneUlIeJl1J9o5cERF/ttRZAGH33LWcHLSzuN0IWXzRZbByyK/xa80Op?=
+ =?us-ascii?Q?wr2uZHBzd1MsDfzLWOv7VYHr7TlCZeO2vSLlGmZ4+3gL+Cn8/PLOq6fPlQud?=
+ =?us-ascii?Q?erpSkhfq/JWKYpqenmPNR+1PeQuU9d4A4rOrXUvGkdm0zDezhbSJ9OCYyFL4?=
+ =?us-ascii?Q?KsYFVrXg2oJTg2h22Sq35vMAkEXGJjpZI869OgYX32SFDQVgWCpty108AYOU?=
+ =?us-ascii?Q?2Ux1sDpIiFpCd2Qr8K7uWPhSzxx+kkC53eAkXU3lpmRADQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?F4HHCI6497oKSyfv0WO/O8mdBnKNlw/TzQ+VMhHQXwM35UoxEfPCzQ3bP7+y?=
+ =?us-ascii?Q?shLlNSpbuZJApN742YJrZ+ck45wrHXfOR7Pg4zzCXz/PRTYLdB1p5RH928Gi?=
+ =?us-ascii?Q?NBh8vvFljxpgGC+y3c+aTibvRFauGyy1wTy/X2Z/I++nPIde1OFMNzYNpkfy?=
+ =?us-ascii?Q?qeqDj73LDuq07wewBI+UkT3k+1pX2kdUiI7fEOmHqSAFkhq+ro79bNCx6hQ5?=
+ =?us-ascii?Q?ankHCaM3byhEomZVscrB8tofL2RJy5LBXg1a9Rs/etqFTLgCl2IucM3zfpOg?=
+ =?us-ascii?Q?LpttL/ll6asjMwrsUV417BuqGeZwuJtwXnwoO7OL2mSWQvxJkJe83HcvSDig?=
+ =?us-ascii?Q?v8t8XXy/Va9dw8ph9AcCLHisa/pNqhCdsF/hmL5AeYUtFmcuaJYVy/cLQXLR?=
+ =?us-ascii?Q?QGBWN+6lUB+PKRHPhHkfM2q/KtcJ57zdE9U/Ks2y0KyuZ+3ZkdGX7klZ9iBv?=
+ =?us-ascii?Q?Rl4oUcXo8VNHN/dgMWgU01C9a+LTIvxL9l9rv9a2B1v/kUOGFWIz1IuRNywV?=
+ =?us-ascii?Q?NPoeroA2qN9C83z8Tpd6w5YTcIOkbBEba7HRgjqFva1hixXDG82I6I6KSmIV?=
+ =?us-ascii?Q?Qh9geJxdcWgRnzbNUFnrGR+dXAvsO5sR8CHfY4Dzm3cj8gjIpBD5t7da7j9B?=
+ =?us-ascii?Q?r7luAD8K9DxqBsP1McIwF/J6bCvOAirZcyPpkVDXbORyNIYUg94xpT0dbOvR?=
+ =?us-ascii?Q?23+Q5hwPyRSgtaQURbf2KT261LwMWrZk1kTwTJnbaSegjaNz91b6ZpFzd55K?=
+ =?us-ascii?Q?2SCKLLvzBumHwURibCV7dgH790AKVIxid/zFkcVbQuiaZUi00h+VahN2DjZn?=
+ =?us-ascii?Q?H0dKdSTjPCuiRamHpTxCvmsERs+7Hhm11yMGDMLnjsmPlGimYqi9xmLpT1Gr?=
+ =?us-ascii?Q?rZbi4bgcK1vLtxFpNUGMOSlY48spsRBdzWfGVTVeKxZTAKKRtZcp8zvZG6wm?=
+ =?us-ascii?Q?UH2fr0RVmiOF5JV8jyGd3w+GKl2dxVH/C3+5kWMscNj7DQNSmkukD3a2a5Lu?=
+ =?us-ascii?Q?PCSQbobr2v5+03J0qLt6K4yDTmHjjTiyfoC2yzRnNneQ7LKIhPO8Nr8Oi2tA?=
+ =?us-ascii?Q?yg7SwM+PR8advab3WfB37P51wHxc37icwrF9J9KwOHBPZh/o7HsmxPRNmGDI?=
+ =?us-ascii?Q?pghegpcSzSO8G8EXNhE0QBQYOPV8oaZd8gag/Q7QhS8SC8Pcnq5AAjQOA1As?=
+ =?us-ascii?Q?/LhwS61xrOcr4bZiOgoD090lj/vM6kjnKRaHYUboZOWlieuBeDrxTTEZHw5j?=
+ =?us-ascii?Q?dUpm2JKeoy6oy87mgdyrgOj5j+4+aUtKF/9RM6Zr0FkPX/tyqVKwaK/IAaQT?=
+ =?us-ascii?Q?GeiwoxQWydkJALyJKZr6Z2UOAJL9W9omSyi/MzSir88kNSOIqO4x8aBjqJDe?=
+ =?us-ascii?Q?WB0fk3YvK/M+6Nti5kKMBLDzw8SDQsCfWQCygSQLbYaSiUn05Qx5IaEGasks?=
+ =?us-ascii?Q?4U9jrEcoUZU10phmlv6skjUYfpUv4BvAV58gVwt3eICNJRPet8a8mGbJMYLQ?=
+ =?us-ascii?Q?hFeNtYmkIzgLAvbxbnevjWakFCLjgZPf/RcEd/655/U2P2xt5qwmq0gKuu2n?=
+ =?us-ascii?Q?kHoDlZ9GuP+6hKtg0xQDluRM4PLEGEnVxoF2g4KY?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e34c6f6c-4ec4-4115-e9ee-08dd192153c6
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 13:48:28.7929
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jlBPMa7p9Kt/+D4QOhm+apxEj7tGaknskz81uQ7RNmy5EofNLTIyplMy73f6N6xn
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9118
 
-+dtc list and David G.
+On Tue, Dec 10, 2024 at 02:24:16PM +0800, Junxian Huang wrote:
+> 
+> 
+> On 2024/12/10 3:01, Jason Gunthorpe wrote:
+> > On Mon, Oct 14, 2024 at 09:07:31PM +0800, Junxian Huang wrote:
+> >> From: Chengchang Tang <tangchengchang@huawei.com>
+> >>
+> >> Mmap reset state to notify userspace about HW reset. The mmaped flag
+> >> hw_ready will be initiated to a non-zero value. When HW is reset,
+> >> the mmap page will be zapped and userspace will get a zero value of
+> >> hw_ready.
+> > 
+> > This needs alot more explanation about *why* does userspace need this
+> > information and why is hns unique here.
+> > 
+> 
+> Our HW cannot flush WQEs by itself unless the driver posts a modify-qp-to-err
+> mailbox. But when the HW is reset, it'll stop handling mailbox too, so the HW
+> becomes unable to produce any more CQEs for the existing WQEs. This will break
+> some users' expectation that they should be able to poll CQEs as many as the
+> number of the posted WQEs in any cases.
 
-On Tue, Dec 10, 2024 at 2:16=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
-com> wrote:
->
-> Hi Rob,
->
-> On Mon, 9 Dec 2024 14:11:09 -0600
-> Rob Herring <robh@kernel.org> wrote:
->
-> ...
-> > >
-> > > Our overlay using the nexus node can contains:
-> > >    node {
-> > >       foo-gpio =3D <&connector 0 GPIO_ACTIVE_HIGH>;
-> > >    };
-> >
-> > Couldn't we make something like this work:
-> >
-> > connector: __overlay__ {
-> >
-> >    node {
-> >       foo-gpio =3D <&connector 0 GPIO_ACTIVE_HIGH>;
-> >    };
-> > };
-> >
-> > We already have to process all the phandles in the overlay. So this
-> > just changes handling of 'connector' from being a local phandle which
-> > we just renumber to an unresolved phandle which we have to lookup and
-> > replace the phandle uses with.
-> >
->
-> I have tried what you suggested but I've got some issues with dtc.
->
-> If a label is not used as a phandle in a dts, dtc doesn't create the phan=
-dle
-> property in the pointed node (except if we use '-@' option but I don't wa=
-nt
-> to add all symbols in my dtb just for one or two connector symbols).
+But your reset flow partially disassociates the device, when the
+userspace goes back to sleep, or rearms the CQ, it should get a hard
+fail and do a full cleanup without relying on flushing.
 
-Sorry, but that's the cost of using overlays, and that's pretty
-orthogonal to the issue of how the overlay references the connector
-node.
+> We try to notify the reset state to userspace so that we can generate software
+> WCs for the existing WQEs in userspace instead of HW in reset state, which is
+> what this rdma-core PR does:
 
-However, I agree '-@' is a pretty big switch and an issue that's been
-discussed before. I also don't like that all labels become part of the
-ABI nor the fact that overlays can make any random modification
-anywhere in the DT. I would rather see some sort of explicit opt-in
-mechanism of nodes we can apply overlays to. Perhaps we could do
-something like this:
+That doesn't sound right at all. Device disassociation is a hard fail,
+we don't try to elegantly do things like generate completions. The
+device is dead, the queues are gone.
 
-/export/ label: node {
-};
-
-And then __symbols__ can be only those exported labels (unless -@ is used).
-
-> The way to make sure that the phandle property will be created in the bas=
-e
-> DT node by dtc is to reference the label as a phandle in the base DT.
-> The export-symbols node references this label as a phandle in the base DT
-> and so, with that, dtc creates the phandle property.
->
-> Also, using 'connector: __overlay__' allows to have only one label from
-> the base DT to be referenced by the overlay.
->
-> I don't know if use cases exist where more than one label need to be
-> referenced but this 'one label' constraint is not present with the
-> export-symbols node.
->
-> The use case where more than one label would be needed is the need for a
-> phandle from the overlay that couldn't be translated by the connector nex=
-us
-> node. Maybe pinctrl because it uses of_find_node_by_phandle().
-
-Labels are an ABI. I can't see that we need to remap them when we can
-just say the name must be X. We can have multiple labels on a node as
-well. So I think the problem space is purely mapping 1 name to
-multiple possible names.
-
-The connector handling has to be addressed binding by binding at least
-for each pattern of binding. Pinctrl binding is pretty unique, so we
-should make sure we can handle it in this case.
-
-> Last point, having export-symbols node makes some nodes explicitly
-> candidates for an overlay and defines the label to be used on the base DT
-> node side. This specific label can be described in the node binding as we=
-ll
-> as the nexus node properties.
-
-Both David (IIRC) and I feel that putting the overlay info
-(__symbols__, __fixups__, etc.) within the DT data rather than in the
-DTB format was a mistake. The export-symbols node expands on that, so
-I'm not sure that's the right direction.
-
-(We should have rev'ed the DTB format to store type information for
-(at a minimum) phandles.)
-
-> With 'connector: __overlay__', the overlay can be applied on any nodes, a=
-t
-> least from the needed label point of view without any restrictions.
-
-Certainly that is something I'd like to have some control over. An
-/export/ tag would accomplish that.
-
-One idea I have there is that the overlay could have the compatible of
-the connector and we use that for matching. That would give us a way
-to know what base DTs overlays apply to. Then you could load an
-overlay and dispatch it to the correct driver to handle. It would have
-to be handled as a special case as the compatible may match, but
-wouldn't necessarily be equal values.
-
-
-I'll throw out another idea. What if we make resolving phandle errors
-something that can be handled by the connector driver? The driver
-knows 'connector' resolves to the connector node it is applying the
-overlay to.
-
-Rob
+Jason
 
