@@ -1,206 +1,164 @@
-Return-Path: <linux-kernel+bounces-438824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A659EA6CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:45:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82E39EA6CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B42165B99
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:45:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C22167C32
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B401D7E3E;
-	Tue, 10 Dec 2024 03:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AC21D79A3;
+	Tue, 10 Dec 2024 03:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="WOpGT33c"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010060.outbound.protection.outlook.com [52.101.228.60])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lt1sFw6E"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9923C2F;
-	Tue, 10 Dec 2024 03:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733802327; cv=fail; b=gWE1QMn2c3u7K5Dzg6HJAR1ERN0NdniQ6+tHM1DDPpCROpDnDbFNI1bUSopbPmkyQuiS07IohVLXzEmWWmn6zk5JXgXR2dBdKR+6Gw57R8f9rzhJe5Aom5mqZIDJy9gFLeW8YxIpPGbsWWmR2j3sfXQOhKjM4xmJaQtQrfw+E18=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733802327; c=relaxed/simple;
-	bh=zdyCuLcQ33QVLbz5CLFbrveoMT1QiCe08sz2Flydky0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ARuEXiOlnB77JhZu6/LssWObJYxNeRRdQa3IU3ykpHitO6064xti8Rbdy1vSfdYsTYhzbrCo3qVCkFLA8nsqWPM/SiUNObRqEYy2eZ7WRjHD9QrFBnAYtPH44KqjvvhXhmia3k0umRQ5Z4LXTXFB0/mwc0M8IEL4eWGaA/KRQ88=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=WOpGT33c; arc=fail smtp.client-ip=52.101.228.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cb56/Z0k1WLT6XxZh+UlvM0A9opIbX+MpgDfYnFJCK0gtEJks4f4JtpeYMMhpEIZwhrrflOKD4+T72z0wmRhOT1e6FYCeXCbQWwPt0b9A4a8v2YXcNQubm+5FoaBGs5lldbuw1T11qD/0WZWruAAvCT0eTutCIJ4Bunu047KXN/c0P2dwnraB22bZQyELCCm3HIDgjfyKRdjyyd2/UscbBb5DRHUreL037dIknUz+21Pb2cJzoL7k3U/Vy/6Mn3HYoRJ/cPTGR5F1KhlsgvqAtrMtyL0hcC6JB9XCmqBgR34ZlkKCJ++jiqRJ2E+yqR0aDL+ZEvprAtPAySXmvyrEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oLRRKFTWDEQxUTExSjeWtlps48OwPc/EIi9+WGIQsB8=;
- b=gMfu/+0liYJUlymlRBsrOk3iCjjYaZusp9JZ7E1XwUWR9YZlraEaswq0s5rIcxnMf812OYahQMJRWvnrNAwTtc3oM37yjEMk39sMQ9kmfjsf+2B3npU83gahHTb9Oo9cImb+JwcbX4dCfSVLPVFXtcCFuymWub0U4/w+u269jHKPB0MhDKyTGvONKPKp0e+EujlaPl9Igy6qx+iC9xCaILDEH7GW0kvaf5rBQAmc1J0/ZOjrwPmE/bCrS9w7eEhIu2JoqokxqsWmCPZk+sBCQmfMLFUIvQYn4pbVhkWYE5daueTzXNSrd+1XU+GnrKDImpMB4bQDWbTmnFUrsWn61Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oLRRKFTWDEQxUTExSjeWtlps48OwPc/EIi9+WGIQsB8=;
- b=WOpGT33cA7EFQm6U1Qopi9qQ4rVuaccWxVbN2Ure+pvHOYtEmIsBQ7aoxiPIkQvIw4JDMo5QZ08MWS+VMrwkm3jBLot/pUfoAd0vQerbzFZRfnFl43SQA+WlRoebdEfp9Q47v/7wVGwEHW8FZJQYHCK4pU/fCes16K1OTbBZYTU=
-Received: from TYWPR01MB11030.jpnprd01.prod.outlook.com
- (2603:1096:400:390::11) by TYAPR01MB6378.jpnprd01.prod.outlook.com
- (2603:1096:400:a2::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
- 2024 03:45:20 +0000
-Received: from TYWPR01MB11030.jpnprd01.prod.outlook.com
- ([fe80::a78e:aecb:953:b562]) by TYWPR01MB11030.jpnprd01.prod.outlook.com
- ([fe80::a78e:aecb:953:b562%4]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
- 03:45:20 +0000
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: nikita.yoush <nikita.yoush@cogentembedded.com>, Andrew Lunn
-	<andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Dege
-	<michael.dege@renesas.com>, Christian Mardmoeller
-	<christian.mardmoeller@renesas.com>, Dennis Ostermann
-	<dennis.ostermann@renesas.com>, nikita.yoush
-	<nikita.yoush@cogentembedded.com>
-Subject: RE: [PATCH net v2 resend 0/4] net: renesas: rswitch: several fixes
-Thread-Topic: [PATCH net v2 resend 0/4] net: renesas: rswitch: several fixes
-Thread-Index: AQHbSVaVHV5EFPR38UivJMIG3UPOmLLe2LHg
-Date: Tue, 10 Dec 2024 03:45:20 +0000
-Message-ID:
- <TYWPR01MB11030F47568869C13DD40966FD83D2@TYWPR01MB11030.jpnprd01.prod.outlook.com>
-References: <20241208095004.69468-1-nikita.yoush@cogentembedded.com>
-In-Reply-To: <20241208095004.69468-1-nikita.yoush@cogentembedded.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB11030:EE_|TYAPR01MB6378:EE_
-x-ms-office365-filtering-correlation-id: f6a30b8a-cc1a-489d-e4ca-08dd18cd11ee
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|10070799003|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?DPwZiRKBw/zHHEywk1RWeIeUyD6dZ0thGU4Wdcygi7PwyTMBK1mAyAoEuxpL?=
- =?us-ascii?Q?6mJJ1uMpnujVAZKSsLA4nx0l2quWpOeayDlzMx7GeLfS9/SXIo/cSSAv9kbV?=
- =?us-ascii?Q?BG5emKIYik6yUiYO/Y3GLJ79Gn4S1J3NI/0VDou1O/PDU3wlZrs2D1Jjj/++?=
- =?us-ascii?Q?X2XgcZmfzEEYP9dOekhCnHsIbrQtMlih8c956lmrEvO1aSk7Em76FPBobRlg?=
- =?us-ascii?Q?77uNcqhffCdpCS2TBUd9oYe2vkpR7DFCjXMtE14HWqCtaxv3viZxh5zlYUM6?=
- =?us-ascii?Q?A61mrgMUefOW+wmi1qF3ktvKMSKgS6kvgQoOcSaG/PDKLKN8T9Iqc65ho/w0?=
- =?us-ascii?Q?GS2hzas/YCePuLj2iFLNgfMHTF4y2UOzNUNhSGkChfzEpqLM+ePjdNuCv8NZ?=
- =?us-ascii?Q?PqwRtIQvHvCr2USM+uwJM2GHAzBZtu1MoMxsiC/kQhUjg6Jw3yG75NXO9CNT?=
- =?us-ascii?Q?VdFeQn081ktwPy50Z6cdsnwgg/BnNPq2BZBcGJo/DF0pp3ZXn7RuznpMh69u?=
- =?us-ascii?Q?8Mw3O+p+bYyHD76ZQcfqgMUlaRLFuURADtPGta56mBzOoU+r8zobergm/HCf?=
- =?us-ascii?Q?JGx7SGo8kHDVPpXH2zdGPfH8aEsZNIaX32JWG166gGOigfWfa8kP2xNxXOt0?=
- =?us-ascii?Q?9dxDaGh87TvcruIj6d5OUCbnh2pSujFW6Hiz9rJY3ohXZgkO+5TLsMC9iypp?=
- =?us-ascii?Q?6cwWbZ49rUEfx3Go57wK9V4L+1lXtxNTxG2JRndLSGTA1WOurERKh2/1jx4r?=
- =?us-ascii?Q?l9j7SSagUvcwJnCE55MTqdrGO16fWL340U43xW33PLslrR5VbQuwdXGuK9j8?=
- =?us-ascii?Q?wsyZ/k8BPyMiq8OI+/QuVauhUD5Lr/Z//1AjAB0Ief1CnHbenb/EW4rTNrXY?=
- =?us-ascii?Q?4a8YvRM9CTw8+59KKq52NRFG48EV6cofk70qSNP13gTLreZHel6UGUkplC2S?=
- =?us-ascii?Q?Uq439LMnLqaKgXoVInTN+yrvkiM++s5y8SqS/6+r+X2s024Ise9X7Vv7XMCh?=
- =?us-ascii?Q?QYznGPuhVzaVXZsnyemqxK3MwsyTrQM+e+er2y5zejAQ9gtY7QkkcZVdHWAd?=
- =?us-ascii?Q?NQX8QgGotMWETI/mRXjqoZXInvxhrjBsd1PsowSEG2fBxopkQS/WPqVpYy8W?=
- =?us-ascii?Q?p890jGeZgeTocFVLxKC1k8Q5Gdy5K0fXJIsAji8vpB6EW7y6LZiU+cnAaQ/7?=
- =?us-ascii?Q?+GAQ1J3hbxQO0iedsGghHqyyroY2oa0/DJw8dagU6eu2yK3x1zmJ5xHeFbMu?=
- =?us-ascii?Q?4fDstfQoDl/bCwjnk8tM+v4U0An7siGTfbP2vX12TRPAYKiUmZ6kX8P0kAaW?=
- =?us-ascii?Q?q9s8Yqwnh/S+LujOtYWOoXQA8/vFDuhLpl+S+Rn29aVlP25B+l8pFP6rA24S?=
- =?us-ascii?Q?cZN+VUW/Xe2d72FMJ0EfOhNKkA45xuBiHGrQgvFolbAkCA59fQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11030.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ARWhBaCvcoouhD4qqRHeW/zEuIpb8Fk/5P6g2dP8RHY7e7lOybgJgvVR6Edh?=
- =?us-ascii?Q?kXZaSz8LUiIS2Sb7n0GVT9XtvbXE8asYPxSJVcWwLzmn0Izm8e44qiYqta1T?=
- =?us-ascii?Q?Tm/5wxrbDxKcuUNcfKWfDyymj18btE0NJsBeEtlPEaKWD82mtywmGwy0qvR1?=
- =?us-ascii?Q?ltMO1kOF4aKmRrNynkKaRiMfyREKMOv1ZG8mvTnWRYfWPheEzAsa2P/8kCxz?=
- =?us-ascii?Q?Nz4vdPFaxUi84R42y+FfZ93wgnjnmov674sSgKouhtVgeayQ74tw3zc10tHF?=
- =?us-ascii?Q?d9J3i5rHC7RG0TnvIRwCG403Lk7v617ddluKiMrqteDOnCdk1TCcEXJ2rmgo?=
- =?us-ascii?Q?5z8cclmTZPUNu/ycy3Wx4bwsJbpHZDociau/0kn2Ly7TbX+Ya4c+kSD1qwp5?=
- =?us-ascii?Q?jCdEYy/nfgJXS0OUehd9xi4SkDKv0BShhb4xz/F5Pgj735e2PgWVS4OCqCPt?=
- =?us-ascii?Q?J21uqkD7nGgD5qnN/o1BEJ8gIl9k79VFOpZhm7XcagRytawEa4Ov5bPDEiQ2?=
- =?us-ascii?Q?pvIzexTwnvx7gVHwscy2CzekuPOcMQGAJA/xrRKQn3n/Aby3axyet57rrXvm?=
- =?us-ascii?Q?HiYTGDqgRpF0Zp6id34INUrSVHS0U8eqkGjm88VCGOtyr51LrnrakkbJVSf3?=
- =?us-ascii?Q?On8R7EUAKQ7rjk4lCsviO7/ZkfdVxFasj65dFh4EAO+P9uwes1GMU9nswOhr?=
- =?us-ascii?Q?6Q+HMEx1tY0EvnASxfrPowxmOG8w8CRUuiasogGMkAQw1Te3WLPSrVlYOGqT?=
- =?us-ascii?Q?kvh3eKNudtKVju7893Xtzhl1Au4TBHuuFXmrYHeqhEjj/brbx8gdI2h1b01R?=
- =?us-ascii?Q?Q72xgpOyDkWhZs8cElIYe775KyIQvXsFQQyRJefXLqCKD1eImcwhQ27BJNDL?=
- =?us-ascii?Q?AgPHkHMZ7U8fgFMw9vwZzlg+J+qCQKqStUbUtegKS35d+loM9dJBAcCXiGj4?=
- =?us-ascii?Q?rqL01xN9SeF7Ilp+WBE9B3hZo/T7NMiKyouX7aKKr4TTzS5vrNwE0/sUXa7U?=
- =?us-ascii?Q?WdvNS3BotMRLp/cyhmIX41fdi5YeIq4yAU9WaMufnft5fwpRFVDUvDx5HZJz?=
- =?us-ascii?Q?7WHju8hNyVIYyBpA+MUGg0Hr1FW7c6WR4Ll0vq752TY5whCmnEiFDFZPl/wi?=
- =?us-ascii?Q?1O52INqRuWxAg54aPbtttMTThtMoLn3bEDcf6YHz1QutrPs1P51n2186tcIy?=
- =?us-ascii?Q?jaXD3RI2sKzFaFtsTh/V41A+5IBK5N/UPfAQ6L1HnAMcjQdNBLS/qEVaD1JD?=
- =?us-ascii?Q?nl9AW94ZSsLp6yjDQkBBKct+Q8Dps2ybBRWTjsF3K+WwdtRPtDCPC1FXCCSU?=
- =?us-ascii?Q?4lBV3K6XBs3XGl4maRN1sGnocYlW7TMorGxoBfGjsrJvVJi/BVXzggdhPEpM?=
- =?us-ascii?Q?3hB0cp5ybGF33dGV2taFqc6FL5nw3JSA/D1B862uVxOrl6elU9sdKSTDWIhN?=
- =?us-ascii?Q?ykmlbFO8Ex0txwuFu6qvTCOTP0oHWpExpH+9/KsanfNIjDP3R3Wt1nPVewQF?=
- =?us-ascii?Q?gh6SR3Ehs/Tt2B1mylXLsatB+6bxqDpNcDW/SRv16buIq8Hl5ZCnezHcA6g6?=
- =?us-ascii?Q?oce028fZI5AJpFCYWTaRSfhyzlgZ+UVcZSeyyQmoi2zHn16JL4xgTxUifrJF?=
- =?us-ascii?Q?yqmBmYtWUU8ypPbLXEcXENVFUwoHnEIOitfaSPZluKff6v3DO6fhN/EbBlw9?=
- =?us-ascii?Q?ABZ+mg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47223A8F7;
+	Tue, 10 Dec 2024 03:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733802485; cv=none; b=I02JxfeJM28lhA1/fUP0C896V4utyX2ZLugnCB68lzJbMcgb0MuZ0XvqgKbf6hpjKcyzlY/YVf2vVzIKNEpzLkliK2z+JyvfnckICdd7HlyN7oLWYOF/EUThqmmnTta79uDt8FpGAO8HD5XyLQG34Q7Bb93EMsNh8dntw5euPz8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733802485; c=relaxed/simple;
+	bh=txrG3+eIYDqM1S678lEJawTVP1ldIQoIKi/h+tQfDsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bzUMBkAfs2UXJKxgJNjgYSy6vwa+N/FU7Z2KYJvEFxCjYSk77zz8HLZeYxdQQGZf9dfbpboKTGTze9PXxvfWlnl1mEVFZFRu/O/KxwyZv6ttbmVVVfL9l5ltk1xfLaki4njpG7OlJnY66YpyTCInqXYCwWDn19DUQMqGXQf+kIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lt1sFw6E; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Gop96010830;
+	Tue, 10 Dec 2024 03:47:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0sp+NriK9XK3JaCzsb/sGmpDPHE14rYe/jnqALky9D4=; b=lt1sFw6E8behZiVy
+	3skjjFT3HaEwRyoJAO88EPsZiXkT6W6Udi65HIszP1ZmIywMkPrPUfCrc/+/zZBH
+	P8TeH+x/mHM1g4pFIVv7fLttanp6zxrZYpXkThb3gJhi5w3coxyS/E1+B4dIbd6Z
+	tWyi6dIruXm1H3nzmTiExPKJxTNZDfG4HYbIlBiE5RRRt+Gu1fYFhnjEsss0HBKc
+	bL4NXROnGTpVFs7t5Wk9YCdC0Wlo/WGheME7ZL1Hoz2Uu8+F1SaNjm6uiEittXy0
+	p5sEXgIdt48OVnsBRCbgUuiekl5tTQI3BMYgvJ9dhwuF21sR8UYzJAX1pQJi8Y2u
+	G4JqVg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetq5p8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 03:47:55 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA3lsu2015327
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 03:47:54 GMT
+Received: from [10.64.16.135] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 19:47:51 -0800
+Message-ID: <8c9f35dd-3176-4d76-b3b4-06ba25d898ec@quicinc.com>
+Date: Tue, 10 Dec 2024 11:47:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11030.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6a30b8a-cc1a-489d-e4ca-08dd18cd11ee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2024 03:45:20.4540
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: btF1/JryXq+9575qqZqGwFE6bbU/EXmmqgGt+koQ2fV9v/LuGgyIF1CdIGZbBo96+lRl+BwVOUf5teJzwMNdOew3eIfXke4wV0J70xt+9sQn6c2icfqOx6zF3hmSzHYJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB6378
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/msm/dpu: filter out too wide modes if no 3dmux is
+ present
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        "Sean
+ Paul" <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241209-no_3dmux-v3-1-48aaa555b0d3@quicinc.com>
+From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+In-Reply-To: <20241209-no_3dmux-v3-1-48aaa555b0d3@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dwBLimgYi_zaqjlbn0BGVRXooJALkntk
+X-Proofpoint-ORIG-GUID: dwBLimgYi_zaqjlbn0BGVRXooJALkntk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=889
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100025
 
-Hello Nikita-san,
 
-> From: Nikita Yushchenko, Sent: Sunday, December 8, 2024 6:50 PM
->=20
-> This series fixes several glitches found in the rswitch driver.
->=20
-> This repost fixes a mistake in the previous post at
-<snip URL>
 
-Thank you for your patches!
-
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Best regards,
-Yoshihiro Shimoda
-
->=20
-> Nikita Yushchenko (4):
->   net: renesas: rswitch: fix possible early skb release
->   net: renesas: rswitch: fix race window between tx start and complete
->   net: renesas: rswitch: fix leaked pointer on error path
->   net: renesas: rswitch: avoid use-after-put for a device tree node
->=20
->  drivers/net/ethernet/renesas/rswitch.c | 25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
+On 12/10/2024 5:18 AM, Abhinav Kumar wrote:
+> On chipsets such as QCS615, there is no 3dmux present. In such
+> a case, a layer exceeding the max_mixer_width cannot be split,
+> hence cannot be supported.
+> 
+> Filter out the modes which exceed the max_mixer_width when there
+> is no 3dmux present. Also, add a check in the dpu_crtc_atomic_check()
+> to return failure for such modes.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > ---
-> v1:
-<snip URL>
->=20
-> Changes since v1:
-> - changed target tree to net,
-> - do not include patches that shall go via net-next,
-> - added a new patch that fixes a race.
->=20
-> --
-> 2.39.5
+> Note: this was only compile tested, so its pending validation on QCS615
+> ---
+> Changes in v3:
+> - Move && to previous line
+> - Link to v2: https://lore.kernel.org/r/20241209-no_3dmux-v2-1-fcad057eb92e@quicinc.com
+> 
+> Changes in v2:
+> - replace MODE_BAD with MODE_BAD_HVALUE to indicate the failure better
+> - Link to v1: https://lore.kernel.org/r/20241206-no_3dmux-v1-1-72ad2677a323@quicinc.com
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+Tested-by: Xiangxu Yin <quic_xiangxuy@quicinc.com> # QCS615
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> index 9f6ffd344693ecfb633095772a31ada5613345dc..ad3462476a143ec01a3b8817a2c85b0f50435a9e 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -732,6 +732,13 @@ static int _dpu_crtc_check_and_setup_lm_bounds(struct drm_crtc *crtc,
+>  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+>  	int i;
+>  
+> +	/* if we cannot merge 2 LMs (no 3d mux) better to fail earlier
+> +	 * before even checking the width after the split
+> +	 */
+> +	if (!dpu_kms->catalog->caps->has_3d_merge &&
+> +	    adj_mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
+> +		return -E2BIG;
+> +
+>  	for (i = 0; i < cstate->num_mixers; i++) {
+>  		struct drm_rect *r = &cstate->lm_bounds[i];
+>  		r->x1 = crtc_split_width * i;
+> @@ -1251,6 +1258,12 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
+>  {
+>  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+>  
+> +	/* if there is no 3d_mux block we cannot merge LMs so we cannot
+> +	 * split the large layer into 2 LMs, filter out such modes
+> +	 */
+> +	if (!dpu_kms->catalog->caps->has_3d_merge &&
+> +	    mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
+> +		return MODE_BAD_HVALUE;
+>  	/*
+>  	 * max crtc width is equal to the max mixer width * 2 and max height is 4K
+>  	 */
+> 
+> ---
+> base-commit: af2ea8ab7a546b430726183458da0a173d331272
+> change-id: 20241206-no_3dmux-521a55ea0669
+> 
+> Best regards,
 
 
