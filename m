@@ -1,237 +1,122 @@
-Return-Path: <linux-kernel+bounces-440173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404919EB9B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:54:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56539EB9B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:55:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343EA165B2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02B32845E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424BE21420B;
-	Tue, 10 Dec 2024 18:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4F72046B8;
+	Tue, 10 Dec 2024 18:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1Rxzeue"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9mBDgZx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6F22046BB
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9830323ED41;
+	Tue, 10 Dec 2024 18:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856840; cv=none; b=f1My0RgCH3xDZxWUrTMPg0s3FFpx0xTLoYyeOxsYHE0tS0PtF8+0e0aaWp4Iae0vuzDKI/T6tFgDld+bNT3iScvrZgPeVys6QCB8HWSEovnYDkPZvU0i1hZ/EXbxiNAfwRlhDN9COAHnnmsbGpfITWemEQeVQPhVcUBFS4RB/eI=
+	t=1733856937; cv=none; b=mXi5H6Z9WrnQcPiuPBRqQu/SECHzg68BEdZy3GekpVAbzzXJgQdkTUBKv6VYOPIKyCWo0PkzYbrsMMwfMnqaVJ7OyAFXtD0bg8LnPpNDuhvg1s/VbtPEVyhRos7tvXSCTIdQuWsR2H8g3Uclb6YidjcVVtxqBVusxfJ84GFZntU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856840; c=relaxed/simple;
-	bh=Z/5SHQmsNqHlJAYNjAylaK9pqmWXlMUYJvhbFpO0HXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FK4bcWekEa3mRK99XAsy1bDw5n5+Nu0B90dr22jIzLitsQ7QW2B079ktvg9iJBGfgQWISV1aNcxgq8JR98VttWtwPDybKtrBFXBJ5x7uAm5rxu2FxvxSxERdx6YlT+7+PHfUNmasBgreB3R+DNjj66i+R001/0VT8ED4287hXAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1Rxzeue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E62C4CED6;
-	Tue, 10 Dec 2024 18:54:00 +0000 (UTC)
+	s=arc-20240116; t=1733856937; c=relaxed/simple;
+	bh=Kd+e021LK4yd0D9+Rum9XT5qFFk22kB4JCc5aJmJpZ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dRKP+iwliDcXvCMurLJoyu5jZtJYWywjwMJjLcVUosV4HRauHgnwInNnl7R30GPkyY1ayYt7Pd86L0Lmy0Lu/AWNgy3ba/bFErC2cc1fVOltpEYbA7ItisQusYdLTGbw4KnaLMA+M/UnoXfDDPM2dZ/Q40TT9Hzoyl0S4P0ScfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9mBDgZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE04C4CEE1;
+	Tue, 10 Dec 2024 18:55:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733856840;
-	bh=Z/5SHQmsNqHlJAYNjAylaK9pqmWXlMUYJvhbFpO0HXQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q1Rxzeueb/f6Nvc9aMBU3yWGwd/enV6/2wNSpnKR1Cd3OYzVJEL70SFmof/1PbCiJ
-	 xX6sRrwb7fvgt7N2bIlnOy4Wd+w+c/IGcVSh5lZOGASO1QJdYiVV9qsWCUwqXjK3w2
-	 nFATD5whxjizhlyQCwBny3xavtS63lXLo86FOD+spwDTvljduhcXUTh2z7R58+7p45
-	 fJvlUaOeAVlAgYI0kVIGtykSkLoPa3aZD+t/G0Xnodwcs4xPCSJcUiqKyiuaz1OixB
-	 jZeN3WEb29SHz1xLOCD+np5xVvHDNxsqVv42j7Kye/3JKnswC3B90+J4hwX1YbgQVQ
-	 Gr9ErNjdJUhKQ==
-From: SeongJae Park <sj@kernel.org>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	gourry@gourry.net,
-	nehagholkar@meta.com,
-	abhishekd@meta.com,
-	david@redhat.com,
-	ying.huang@intel.com,
-	nphamcs@gmail.com,
-	akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	feng.tang@intel.com,
-	kbusch@meta.com,
-	bharata@amd.com,
-	Hasan.Maruf@amd.com,
-	willy@infradead.org,
-	kirill.shutemov@linux.intel.com,
-	mgorman@techsingularity.net,
-	vbabka@suse.cz,
-	hughd@google.com,
-	rientjes@google.com,
-	shy828301@gmail.com,
-	Liam.Howlett@Oracle.com,
-	peterz@infradead.org,
-	mingo@redhat.com
-Subject: Re: [RFC PATCH V0 0/10] mm: slowtier page promotion based on PTE A bit
-Date: Tue, 10 Dec 2024 10:53:57 -0800
-Message-Id: <20241210185357.81214-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241201153818.2633616-1-raghavendra.kt@amd.com>
-References: 
+	s=k20201202; t=1733856937;
+	bh=Kd+e021LK4yd0D9+Rum9XT5qFFk22kB4JCc5aJmJpZ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e9mBDgZxxZmlo0u7VGb4Uqmm0ekMvx+2Bzm/fgHCbs5kl2C4GXjNae81aGXXtu8XF
+	 VUt5WFgMoBsLfo4Dn78rnkIhioc1f/wEzpZ0RDXf6v58jbzDzpuTxM8lD0fX6XmzvL
+	 J7f53STZ+c/O+L4naLu5ZymSB0V2EFaPZIhbX3k6O76nkvI4XChU5rY54mpI+wMPZU
+	 tVsIaDdG4nocZR6JTrqnuPXNauDIgBbTP8FlHFtNub1ar4kVAieKXv/YMTnJWUygqZ
+	 REqnBcDeIc1b4TK3ar1B31v17eH1lkFwWuskutZJYneQO2TEFaJGZ0vTHxARM3DHX4
+	 JhHqk+TYaFOOw==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5f2abc195f3so1223811eaf.0;
+        Tue, 10 Dec 2024 10:55:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVFItgzLPK2wkgGQ5RNBLtK2xJjYhoPwDLECZ6jGTdbMs0JWHSE2FU8BYA8wzsqfuyLMR7pFTtlxw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7XiQ+WH7q18cDNYpFzYqpRjRbq6WYzZUWV23jx33yogz/eurv
+	enFkQ4mbr5QtOea3M+hgHKDKrlQ/XPJ2R5PD7s6vP1j5ivKoTkxMuWJqIymUO8pSn7F/EsCM3cm
+	eCZlF187aAU3tixpIVZA8ISW2Nsc=
+X-Google-Smtp-Source: AGHT+IH45EhjFO2CmSd7uTuJxJOCv/ldjGFHF3AlvubEv/20uUyVcuIHcdujmzmfY6mTf3h4zsAy8ERc301Pns7vDfg=
+X-Received: by 2002:a05:6820:1896:b0:5f2:af90:e90 with SMTP id
+ 006d021491bc7-5f2da0c2491mr37933eaf.3.1733856936548; Tue, 10 Dec 2024
+ 10:55:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241129045750.456251-1-rdunlap@infradead.org>
+In-Reply-To: <20241129045750.456251-1-rdunlap@infradead.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Dec 2024 19:55:25 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gnsFM7YcBqO8Mbkr72ipQxT8nJ=i94z74Q0XM1csnTYw@mail.gmail.com>
+Message-ID: <CAJZ5v0gnsFM7YcBqO8Mbkr72ipQxT8nJ=i94z74Q0XM1csnTYw@mail.gmail.com>
+Subject: Re: [PATCH] kernel.h: add comments for system_states
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Raghavendra,
+On Fri, Nov 29, 2024 at 5:57=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+>
+> Provide some basic comments about the system_states and what they imply.
+> Also convert the comments to kernel-doc format.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: linux-pm@vger.kernel.org
+> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
 
+Fine by me.
 
-Thank you for posting this nice patch series.  I gave you some feedback
-offline.  Adding those here again for transparency on this grateful public
-discussion.
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-On Sun, 1 Dec 2024 15:38:08 +0000 Raghavendra K T <raghavendra.kt@amd.com> wrote:
-
-> Introduction:
-> =============
-> This patchset is an outcome of an ongoing collaboration between AMD and Meta.
-> Meta wanted to explore an alternative page promotion technique as they
-> observe high latency spikes in their workloads that access CXL memory.
-> 
-> In the current hot page promotion, all the activities including the
-> process address space scanning, NUMA hint fault handling and page
-> migration is performed in the process context. i.e., scanning overhead is
-> borne by applications.
-
-Yet another approach is using DAMON.  DAMON does access monitoring, and further
-allows users to request access pattern-driven system operations in name of
-DAMOS (Data Access Monitoring-based Operation Schemes).  Using it, users can
-request DAMON to find hot pages and promote, while finding cold pages and
-demote.  SK hynix has made their CXL-based memory capacity expansion solution
-in the way (https://github.com/skhynix/hmsdk/wiki/Capacity-Expansion).  We
-collaboratively developed new DAMON features for that, and those are all
-in the mainline since Linux v6.11.
-
-I also proposed an idea for advancing it using DAMOS auto-tuning on more
-general (>2 tiers) setup
-(https:lore.kernel.org/20231112195602.61525-1-sj@kernel.org).  I haven't had a
-time to further implement and test the idea so far, though.
-
-> 
-> This is an early RFC patch series to do (slow tier) CXL page promotion.
-> The approach in this patchset assists/addresses the issue by adding PTE
-> Accessed bit scanning.
-> 
-> Scanning is done by a global kernel thread which routinely scans all
-> the processes' address spaces and checks for accesses by reading the
-> PTE A bit. It then migrates/promotes the pages to the toptier node
-> (node 0 in the current approach).
-> 
-> Thus, the approach pushes overhead of scanning, NUMA hint faults and
-> migrations off from process context.
-
-DAMON also uses PTE A bit as major source of the access information.  And DAMON
-does both access monitoring and promotion/demotion in a global kernel thread,
-namely kdamond.  Hence the DAMON-based approach would also offload the
-overheads from process context.  So I feel your approach has a sort of
-similarity with DAMON-based one in a way, and we might have a chance to avoid
-unnecessary duplicates.
-
-[...]
-> 
-> Limitations:
-> ===========
-> PTE A bit scanning approach lacks information about exact destination
-> node to migrate to.
-
-This is same for DAMON-based approach, since DAMON also uses PTE A bit as the
-major source of the information.  We aim to extend DAMON to aware of the access
-source CPU, and use it for solving this problem, though.  Utilizing page faults
-or AMD IBS-like h/w features are on the table of the ideas.
-
-> 
-> Notes/Observations on design/Implementations/Alternatives/TODOs...
-> ================================
-> 1. Fine-tuning scan throttling
-
-DAMON allows users set the upper-limit of monitoring overhead, using
-max_nr_regions parameter.  Then it provides its best-effort accuracy.  We also
-have ongoing projects for making it more accurate and easier to tune.
-
-> 
-> 2. Use migrate_balanced_pgdat() to balance toptier node before migration
->  OR Use migrate_misplaced_folio_prepare() directly.
->  But it may need some optimizations (for e.g., invoke occasionaly so
-> that overhead is not there for every migration).
-> 
-> 3. Explore if a separate PAGE_EXT flag is needed instead of reusing
-> PAGE_IDLE flag (cons: complicates PTE A bit handling in the system),
-> But practically does not look good idea.
-> 
-> 4. Use timestamp information-based migration (Similar to numab mode=2).
-> instead of migrating immediately when PTE A bit set.
-> (cons:
->  - It will not be accurate since it is done outside of process
-> context.
->  - Performance benefit may be lost.)
-
-DAMON provides a sort of time-based aggregated monitoring results.  And DAMOS
-provides prioritization of pages based on the access temperature.  Hence,
-DAMON-based apparoach can also be used for a similar purpose (promoting not
-every accessed pages but pages that more frequently used for longer time).
-
-> 
-> 5. Explore if we need to use PFN information + hash list instead of
-> simple migration list. Here scanning is directly done with PFN belonging
-> to CXL node.
-
-DAMON supports physical address space monitoring, and maintains the access
-monitoring results in its own data structure called damon_region.  So I think
-similar benefit can be achieved using DAMON?
-
-[...]
-> 8. Using DAMON APIs OR Reusing part of DAMON which already tracks range of
-> physical addresses accessed.
-
-My biased humble opinion is that it would be very nice to explore this
-opportunity, since I show some similarities and opportunities to solve some of
-challenges on your approach in an easier way.  Even if it turns out that DAMON
-cannot be used for your use case, failing earlier is a good thing, I'd say :)
-
-> 
-> 9. Gregory has nicely mentioned some details/ideas on different approaches in
-> [1] : development notes, in the context of promoting unmapped page cache folios.
-
-DAMON supports monitoring accesses to unmapped page cache folios, so hopefully
-DAMON-based approaches can also solve this issue.
-
-> 
-> 10. SJ had pointed about concerns about kernel-thread based approaches as in
-> kstaled [2]. So current patchset has tried to address the issue with simple
-> algorithms to reduce CPU overhead. Migration throttling, Running the daemon
-> in NICE priority, Parallelizing migration with scanning could help further.
-> 
-> 11. Toptier pages scanned can be used to assist current NUMAB by providing information
-> on hot VMAs.
-> 
-> Credits
-> =======
-> Thanks to Bharata, Joannes, Gregory, SJ, Chris for their valuable comments and
-> support.
-
-I also learned many things from the great discussions, thank you :)
-
-[...]
-> 
-> Links:
-> [1] https://lore.kernel.org/lkml/20241127082201.1276-1-gourry@gourry.net/
-> [2] kstaled: https://lore.kernel.org/lkml/1317170947-17074-3-git-send-email-walken@google.com/#r
-> [3] https://lore.kernel.org/lkml/Y+Pj+9bbBbHpf6xM@hirez.programming.kicks-ass.net/
-> 
-> I might have CCed more people or less people than needed
-> unintentionally.
-
-
-Thanks,
-SJ
-
-[...]
+> ---
+>  include/linux/kernel.h |   14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+>
+> --- linux-next-20241125.orig/include/linux/kernel.h
+> +++ linux-next-20241125/include/linux/kernel.h
+> @@ -176,9 +176,19 @@ extern int root_mountflags;
+>
+>  extern bool early_boot_irqs_disabled;
+>
+> -/*
+> - * Values used for system_state. Ordering of the states must not be chan=
+ged
+> +/**
+> + * enum system_states - Values used for system_state.
+> + * Ordering of the states must not be changed
+>   * as code checks for <, <=3D, >, >=3D STATE.
+> + *
+> + * @SYSTEM_BOOTING:    %0, no init needed
+> + * @SYSTEM_SCHEDULING: system is ready for scheduling; OK to use RCU
+> + * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost run=
+ning
+> + * @SYSTEM_RUNNING:    system is up and running
+> + * @SYSTEM_HALT:       system entered clean system halt state
+> + * @SYSTEM_POWER_OFF:  system entered shutdown/clean power off state
+> + * @SYSTEM_RESTART:    system entered emergency power off or normal rest=
+art
+> + * @SYSTEM_SUSPEND:    system entered suspend or hibernate state
+>   */
+>  extern enum system_states {
+>         SYSTEM_BOOTING,
+>
 
