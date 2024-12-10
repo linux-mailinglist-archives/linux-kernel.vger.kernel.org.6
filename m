@@ -1,239 +1,139 @@
-Return-Path: <linux-kernel+bounces-440429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DEEC9EBDCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:25:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86ADE1883B68
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:25:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE361EE7CE;
-	Tue, 10 Dec 2024 22:25:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6879EBDD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:26:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5772451F1;
-	Tue, 10 Dec 2024 22:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565DC2842E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:26:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C25211260;
+	Tue, 10 Dec 2024 22:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z1GQSxbg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736282451F1;
+	Tue, 10 Dec 2024 22:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869536; cv=none; b=aDSbh64Oszhp4sauhXTTd2x9RuK5fVHw1WGtL6cQQlgIbqDfEDJDs928zcIz/fuZx7gk/bLstbeplYN8kYL4ho2kcaWWNJBFe1rmlihkz7+AZHcxwPjOpz/+du0itIesS9vkcj7oBfaSlRU7DbGUesMNCgGUuQmMG74yFTJ56hA=
+	t=1733869592; cv=none; b=EYmothD/NCNSa/f3Wytshl90scSHNhlbtnwe1G1Sexv7Vq3THjPRhFyBJ1H31KE8C5pLqM+CXEvqAHlJw2vc8AUGgzRxSEcuwFFBdPFBFc4R4v+W+PBuLfiZ1lPQqFmwmsU4uVMgGbVkJ+7izXhR7qEPfan01WpTDWpsKpwfiHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869536; c=relaxed/simple;
-	bh=O3OJbBLmg2fsTkk7oAuJubmyRerENRw8xeQZIlNz7zw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=skzMHnrd/jW1TpSAo9LZOmG1d3fo1kkjN82syHEqykqUZKax/rbORXRYxcHg4FK0mxLqP1pfYFoDbzfPFOgEjbkt1WboPbsB8NYgAd2gwzL0kLHTnI86HfqPGJt/SE8WGH75Nw9qp8Utqv69pK4JTMNB9A2IIfbcatTjTe8DeK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4948DC4CED6;
-	Tue, 10 Dec 2024 22:25:35 +0000 (UTC)
-Date: Tue, 10 Dec 2024 17:25:33 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] tracing: Fix trace output when pointer hash is disabled
-Message-ID: <20241210172533.04bcd5f7@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733869592; c=relaxed/simple;
+	bh=3NCMVw/Lby/M4m7AcE6GO4Jv/FYRr6XCAdEnlPolzy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N0/ioNVi3hDsV/K7FoHU+o7oJz9nIO+SjZpR5swvWL9lrDviCrZCQyrmeuELALSkgFcXnx6W0pQZC8n2MqIDlQGH8DyeejVWMbS6brzk+g8rMPQSufwO6x2crObbWmR4ZeIxlHbKhR3+QNqEzq1Fwjj4aVOcT4yuP03y54encSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z1GQSxbg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADraZ3009236;
+	Tue, 10 Dec 2024 22:26:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=jnzZkYeW8tWSyuUF39ZkUJVg3Xdkp4MeuZXuKcDYJ
+	0k=; b=Z1GQSxbgd1TfNCiV8uz3MyrW8ugL3kEEezu+9RzHiM028antD29uns2mi
+	oaVTMJODshXTLXaKEPmxQRXNALd4ylItkG93QYO38Qf3TgHzQW/8B8uxGT/38HLo
+	Qo5obMDCFjrqiqoKB3XljGWWWrpA3E2g80dQ0EVX4vfDiOJFmdeQHCCVGs86Q6pO
+	3dxKabgw4HF5IlLC5gj7kSEVkf9W9H2aA3rtD3mDJPzoTcBPsCD9Agqqt7zTdkIK
+	1a59VtRtqjzDjcfcL7b/SyStgDbvBwwTsyBHL96H86/4fgEueja58BBa6eLS6Arl
+	0b/f8n24oJqng7y1KNsCEJjsNdkxg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38ssdv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 22:26:23 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAKvhLC017428;
+	Tue, 10 Dec 2024 22:26:22 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1nht3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 22:26:22 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAMQMQo17760832
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 22:26:22 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E1BA458052;
+	Tue, 10 Dec 2024 22:26:21 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D35158054;
+	Tue, 10 Dec 2024 22:26:21 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 22:26:21 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
+        Andy Liang <andy.liang@hpe.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH] tpm/eventlog: Limit memory allocations for event logs with excessive size
+Date: Tue, 10 Dec 2024 17:26:08 -0500
+Message-ID: <20241210222608.598424-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: fko00RqIkJ3ZBmeBtyrGZ37_2ubZdB0d
+X-Proofpoint-ORIG-GUID: fko00RqIkJ3ZBmeBtyrGZ37_2ubZdB0d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100157
 
-From: Steven Rostedt <rostedt@goodmis.org>
+The TPM2 ACPI BIOS eventlog of a particular machine indicates that the
+length of the log is 4MB, even though the actual length of its useful data,
+when dumped, are only 69kb. To avoid allocating excessive amounts of memory
+for the event log, limit the size of any eventlog to 128kb. This should be
+sufficient memory and also not unnecessarily truncate event logs on any
+other machine.
 
-The "%p" in the trace output is by default hashes the pointer. An option
-was added to disable the hashing as reading trace output is a privileged
-operation (just like reading kallsyms). When hashing is disabled, the
-iter->fmt temp buffer is used to add "x" to "%p" into "%px" before sending
-to the svnprintf() functions.
-
-The problem with using iter->fmt, is that the trace_check_vprintf() that
-makes sure that trace events "%pX" pointers are not dereferencing freed
-addresses (and prints a warning if it does) also uses the iter->fmt to
-save to and use to print out for the trace file. When the hash_ptr option
-is disabled, the "%px" version is added to the iter->fmt buffer, and that
-then is passed to the trace_check_vprintf() function that then uses the
-iter->fmt as a temp buffer. Obviously this caused bad results.
-
-This was noticed when backporting the persistent ring buffer to 5.10 and
-added this code without the option being disabled by default, so it failed
-one of the selftests because the sched_wakeup was missing the "comm"
-field:
-
-     cat-907     [006] dN.4.   249.722403: sched_wakeup: comm= pid=74 prio=120 target_cpu=006
-
-Instead of showing:
-
-  <idle>-0       [004] dNs6.    49.076464: sched_wakeup: comm=sshd-session pid=896 prio=120 target_cpu=0040
-
-To fix this, change trace_check_vprintf() to modify the iter->fmt instead
-of copying to it. If the fmt passed in is not the iter->fmt, first copy
-the entire fmt string to iter->fmt and then iterate the iter->fmt. When
-the format needs to be processed, perform the following like actions:
-
-  save_ch = p[i];
-  p[i] = '\0';
-  trace_seq_printf(&iter->seq, p, str);
-  p[i] = save_ch;
-
-Cc: stable@vger.kernel.org
-Fixes: efbbdaa22bb78 ("tracing: Show real address for trace event arguments")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Reported-by: Andy Liang <andy.liang@hpe.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219495
+Cc: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- kernel/trace/trace.c | 82 ++++++++++++++++++++++++++------------------
- 1 file changed, 49 insertions(+), 33 deletions(-)
+ drivers/char/tpm/eventlog/acpi.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index be62f0ea1814..ceae68b7466d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3711,8 +3711,10 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- {
- 	long text_delta = 0;
- 	long data_delta = 0;
--	const char *p = fmt;
- 	const char *str;
-+	char *p;
-+	char save_ch;
-+	char *buf = NULL;
- 	bool good;
- 	int i, j;
+diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
+index 69533d0bfb51..701fd7d4cc28 100644
+--- a/drivers/char/tpm/eventlog/acpi.c
++++ b/drivers/char/tpm/eventlog/acpi.c
+@@ -26,6 +26,8 @@
+ #include "../tpm.h"
+ #include "common.h"
  
-@@ -3737,6 +3739,19 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 	if (iter->fmt == static_fmt_buf)
- 		goto print;
- 
-+	if (fmt != iter->fmt) {
-+		int len = strlen(fmt);
-+		while (iter->fmt_size < len + 1) {
-+			/*
-+			 * If we can't expand the copy buffer,
-+			 * just print it.
-+			 */
-+			if (!trace_iter_expand_format(iter))
-+				goto print;
-+		}
-+		strscpy(iter->fmt, fmt, iter->fmt_size);
-+	}
-+	p = iter->fmt;
- 	while (*p) {
- 		bool star = false;
- 		int len = 0;
-@@ -3748,14 +3763,6 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 		 * as well as %p[sS] if delta is non-zero
- 		 */
- 		for (i = 0; p[i]; i++) {
--			if (i + 1 >= iter->fmt_size) {
--				/*
--				 * If we can't expand the copy buffer,
--				 * just print it.
--				 */
--				if (!trace_iter_expand_format(iter))
--					goto print;
--			}
- 
- 			if (p[i] == '\\' && p[i+1]) {
- 				i++;
-@@ -3788,10 +3795,11 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 		if (!p[i])
- 			break;
- 
--		/* Copy up to the %s, and print that */
--		strncpy(iter->fmt, p, i);
--		iter->fmt[i] = '\0';
--		trace_seq_vprintf(&iter->seq, iter->fmt, ap);
-+		/* Print up to the %s */
-+		save_ch = p[i];
-+		p[i] = '\0';
-+		trace_seq_vprintf(&iter->seq, p, ap);
-+		p[i] = save_ch;
- 
- 		/* Add delta to %pS pointers */
- 		if (p[i+1] == 'p') {
-@@ -3837,6 +3845,8 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 			good = trace_safe_str(iter, str, star, len);
- 		}
- 
-+		p += i;
++#define MAX_TPM_LOG_LEN		(128 * 1024)
 +
- 		/*
- 		 * If you hit this warning, it is likely that the
- 		 * trace event in question used %s on a string that
-@@ -3849,41 +3859,47 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 		if (WARN_ONCE(!good, "fmt: '%s' current_buffer: '%s'",
- 			      fmt, seq_buf_str(&iter->seq.seq))) {
- 			int ret;
-+#define TEMP_BUFSIZ 1024
-+
-+			if (!buf) {
-+				char *buf = kmalloc(TEMP_BUFSIZ, GFP_KERNEL);
-+				if (!buf) {
-+					/* Need buffer to read address */
-+					trace_seq_printf(&iter->seq, "(0x%px)[UNSAFE-MEMORY]", str);
-+					goto print;
-+				}
-+			}
-+			if (len >= TEMP_BUFSIZ)
-+				len = TEMP_BUFSIZ - 1;
- 
- 			/* Try to safely read the string */
- 			if (star) {
--				if (len + 1 > iter->fmt_size)
--					len = iter->fmt_size - 1;
--				if (len < 0)
--					len = 0;
--				ret = copy_from_kernel_nofault(iter->fmt, str, len);
--				iter->fmt[len] = 0;
--				star = false;
-+				ret = copy_from_kernel_nofault(buf, str, len);
-+				buf[len] = 0;
- 			} else {
--				ret = strncpy_from_kernel_nofault(iter->fmt, str,
--								  iter->fmt_size);
-+				ret = strncpy_from_kernel_nofault(buf, str, 1024);
- 			}
- 			if (ret < 0)
- 				trace_seq_printf(&iter->seq, "(0x%px)", str);
- 			else
--				trace_seq_printf(&iter->seq, "(0x%px:%s)",
--						 str, iter->fmt);
--			str = "[UNSAFE-MEMORY]";
--			strcpy(iter->fmt, "%s");
-+				trace_seq_printf(&iter->seq, "(0x%px:%s)", str, buf);
-+			trace_seq_puts(&iter->seq, "[UNSAFE-MEMORY]");
- 		} else {
--			strncpy(iter->fmt, p + i, j + 1);
--			iter->fmt[j+1] = '\0';
-+			save_ch = p[j + 1];
-+			p[j + 1] = '\0';
-+			if (star)
-+				trace_seq_printf(&iter->seq, p, len, str);
-+			else
-+				trace_seq_printf(&iter->seq, p, str);
-+			p[j + 1] = save_ch;
- 		}
--		if (star)
--			trace_seq_printf(&iter->seq, iter->fmt, len, str);
--		else
--			trace_seq_printf(&iter->seq, iter->fmt, str);
- 
--		p += i + j + 1;
-+		p += j + 1;
+ struct acpi_tcpa {
+ 	struct acpi_table_header hdr;
+ 	u16 platform_class;
+@@ -135,6 +137,12 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+ 		return -EIO;
  	}
-  print:
- 	if (*p)
- 		trace_seq_vprintf(&iter->seq, p, ap);
-+	kfree(buf);
- }
  
- const char *trace_event_format(struct trace_iterator *iter, const char *fmt)
++	if (len > MAX_TPM_LOG_LEN) {
++		dev_warn(&chip->dev, "Excessive TCPA log len %llu truncated to %u bytes\n",
++			 len, MAX_TPM_LOG_LEN);
++		len = MAX_TPM_LOG_LEN;
++	}
++
+ 	/* malloc EventLog space */
+ 	log->bios_event_log = devm_kmalloc(&chip->dev, len, GFP_KERNEL);
+ 	if (!log->bios_event_log)
 -- 
-2.45.2
+2.43.0
 
 
