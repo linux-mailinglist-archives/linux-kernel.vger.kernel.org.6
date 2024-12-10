@@ -1,551 +1,308 @@
-Return-Path: <linux-kernel+bounces-439923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F9D9EB625
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:23:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37969EB628
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24C1316205D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:23:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0F34161F6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC541BFE01;
-	Tue, 10 Dec 2024 16:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21B11BBBFE;
+	Tue, 10 Dec 2024 16:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="e4VdnEue"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2038.outbound.protection.outlook.com [40.92.90.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jul2tfis"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB04219D06E;
-	Tue, 10 Dec 2024 16:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733847797; cv=fail; b=tuFlK3J5yYY6HzGW/m1fpPTGMbbnmppFNmWPWuVfS4qgXL6/wSnGssxwFrXzfb/yoyqWPl2tRgYCT2yUfzMToqq5jmUD266MR82WCeePFqL39NlEY0tBdsKqsYh7rSBPtlVryztALnScp/QWA8I7bo1SffFgPnMab+JkqEQr1as=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733847797; c=relaxed/simple;
-	bh=u5cGNKz6aj3lt+RRF0uKni8gKHs3YoPTkfRYp1kbIQQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=myzHjYM9FIYY8BqiXJXarkDLXBnMP+yem+gIBdxpaXS1SlZMCFUAhCU/BuVUQt2ecMD6gNFpyIHWjtAkhS/Vj7s7YF7B9lSBZOki1v5EX2W1ND0lLAnAEW6g2Nnqns50LUEzQeSiIbGRohTGE29RyfcoMx+L7YNaZf66GAHPYyk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=e4VdnEue; arc=fail smtp.client-ip=40.92.90.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NSbGHvS80sTmtOia2uQPlkSvWzAgxuhTetT3vVIUI7SE+tlDVdOUShTNVHuVkyG1IwcLUZnew6G0TFRi2zZ5Se4o6df4EfHSRLk9wUE1BYL+jLPpbGLaKY6r5f8caNrq0n7BWO6qKM7UtyH7qrGxLG8/R4OAdnaE/xMty2L+yi2mlz/dJ/cdHnoLf8PgcIvMYxU26fmProy2Cy7eTRLbygnEffOOm8Dd1Fh8D9+CmrBIbQ/Ek1IG47YaE4FeC77DzO+Pgsn1fGo8gV6OGrDnixFZXaY6l5Y1f8/Ycp6vdmSzrSuw9Y31r85PTMOGHjPOTdMg6XB+ufVGpWsneB5XyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YgY3z3c4t2J2TvV2rWtgAn2WTZmZ60AkzlFXY4InlEQ=;
- b=ZcFyTDRwpUCRyXW5VrX+rdb5hnKhAO2LodsEY6RqsGQJfCWT4w3G+DxN+EOrHC1eb0ZjKIj5Frh5YFCTGQ+Jwfii6ot6nWTIhw4lGiF9lAJmXaEXCGHMntirdyhCvsTmgagGGxwcKENvhpkbx+rAGE+4CsD9sJGnc0/qyfdiRR56ln0vopNFrQ727A2LjgrS9MMnW85lnopmgdXNYgFUvyCYAFsif9pX4DKP/HnjBNFC25PZOjtjXmXUzjOfGI2I1AGYFKs3aHuwg0PwXrTrDI3xVanGOB0M1cgf+MG0EwziArQ1RLByem6G5/Em1+BdNWv1+erF2pxyGOKGm/PPyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YgY3z3c4t2J2TvV2rWtgAn2WTZmZ60AkzlFXY4InlEQ=;
- b=e4VdnEue0hfhXdm5ph4Qj12xU70dkDHeFT18WAgyERAgeJwASDlgfApg0w8vwTNX3Xlnqxa+2EAuFWYSOZnSd10Q9vRhvgxgYUM4pMRK/FrUILthJyxOdsFseG1oT9S3wlmZDxtOi6W/6v4oOJtzKvg5MSY1Z3lW6rcR8F/aTvuGpQ+1ybs2Pc/LMLWeCE3+hji0gOsid7wJ7cdK8yuaLWCeyl3Kk0g7HqdM83GS+WBwUJE7zhY4NuPg1qs+AGqfaSCu/vhAy8n0Y3wE005oclK25hB90R7lQKDpmDYoS1Re03fGwvbEzThcN9eucoItd8hPgEI1SxBSaLzuSzFNuA==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by AS2PR03MB9671.eurprd03.prod.outlook.com (2603:10a6:20b:5e8::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Tue, 10 Dec
- 2024 16:23:10 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%5]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
- 16:23:08 +0000
-Message-ID:
- <AM6PR03MB50808A2F7DEBB5825473B38F993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Date: Tue, 10 Dec 2024 16:23:07 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v5 2/5] selftests/bpf: Add tests for open-coded
- style process file iterator
-To: Christian Brauner <brauner@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080756ABBCCCBF664B374EB993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <20241210-zustehen-skilift-44ba2f53ceca@brauner>
-Content-Language: en-US
-From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <20241210-zustehen-skilift-44ba2f53ceca@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0366.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18e::11) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <0596bc66-c3f2-443a-a83b-b2c58085c3c7@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D711E1AAA0E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733847818; cv=none; b=RHY2to3h5EtIu41eH5lHLW7+zobHm5Sm0mDrrSxVLveagFuI4uQha7vdXTmjMz3LMtZ3Im74hRhDW9H/MbczlzDCORfC2AbxRwKbEqPLYnmpIm1A3vR87OQYsexbkcakIzI7//ZJUvbqitsmFPourSJnY3A+lSvLYqin+ihICAY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733847818; c=relaxed/simple;
+	bh=EgNAnZt/X6+3EynJv3E+SWObqbPol4gEyTlUiv5uDO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h/gOMS1Q7faTj08DZb8K7GW7zR51vsUyIU9PSArSsnBZsR1EbQE9uJbKhZYcY0rV2wigb5yAmqAmRV9mKXra5fU243PqZSrSOAY44k86gN3Q7zPc8Tb6ywIe/9VPdf5ZAIcFVvuRjFGL8EmN5dSkkHW0Bex+RGhpDHHNxinpL8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jul2tfis; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4674c22c4afso299571cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:23:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733847814; x=1734452614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g+EjMlFhXDunShDRcDP0ShIng5wdn8oOvu3uP5ozI5o=;
+        b=Jul2tfisS/nc6wcFLQjAIhrTuNMojMzkxqZkb80Y9iQJUN21XUTOSCzYnBoXBn2Nds
+         vBTLeqDqJz+LIFoxPCMcFJ3aNS5hHUUJ9IoYQYsB8yN4JgcWMxhV1yuFs4OxDD+LKZnq
+         4F1wXz7LWNr1LM7I9Nwm4cDtAZXbOfxFjpscirw/Waf9mGbsIU34laSYkqaMOeXSAFlQ
+         UhOq71IwjUR44cDcJtDjq8NPAhL40NGlw6o+KtlbF1bKsDsL9KAuRMKpyUw8zkf6pATB
+         O0XcKUGuWo7RqpPpK8xku+XmMEtMcjcQIOl3sCEuJ7YswvWUE5T8EACbMyFkZL06E1kT
+         vT0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733847814; x=1734452614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g+EjMlFhXDunShDRcDP0ShIng5wdn8oOvu3uP5ozI5o=;
+        b=TAZyR9DqC9TXg2JypfoMGr5DkJapFMJ/cfOsOmMEkVFCvYAPPsi5W3aSIVI9ZNqFU9
+         P28TWSSc7usXdh5ciW+rS3zXP46kUYxB6RH0uAZMwdfESWKgHA4Dynnl81FaPjDLOUJc
+         EHGvOR4Nye8zN5VDnKdTfPC05kGsdrcA9QlxvjhtWHVqI1afgExeRbLwMwEKJ1IyuZsq
+         G9iM6AJsJT/+cFDw7Lbi6iiAb8r4tGwWnOePLW6Xqcxof2GWC+ruyvif7fvZ0NMmhC3r
+         hhzRsw4MSYjJ9KzjEiTsum/c3/DKbFjaH7qsIEBqPdX3+ZKAEptv0Tr75bBO9Ud0zowp
+         tXtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhysMnkCVq3CWFsGetMNmdhIHHYazZfs7uoN2rOEDoJbp51ca0Q+3zgABgN762jW1blqW2amWh+AxSDfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlDYtFvHNZOxrtGi+tPoszQSm8PytZqNoxQg5bZNlP1ZrcJql8
+	KPqEnFFBypg0Xn90GcXO41ypfttRym0VDji2BoS/zu/ZcMSaYCULHgXC0zF2gU7oaZoJzi2C8hh
+	Pip3prRHyxORGECQiVhuJbTdBCoVW3vtVGd2l
+X-Gm-Gg: ASbGncuEqNlv/mZ3X7CB652GLsLTs8klUqPQ9l/O+wKe9V2DksyF2YhlaYqF1jN40Ll
+	BHYwoQQeXoQE+NKM0ku0DofAgzFD5OZ0v5RQgANRoGkai6jwuSMEfTjgdD0XETL3z5Q==
+X-Google-Smtp-Source: AGHT+IEOXgRpOlgsb1NGKHvnvi+3D5vXYnKehzcgJVuWcqYg9JXGMb6VpYKVRgpdRgZJFhzDzTjw+1bk5bdlflK5QZU=
+X-Received: by 2002:a05:622a:4c18:b0:466:97d6:b245 with SMTP id
+ d75a77b69052e-46776274fdamr4711171cf.22.1733847813416; Tue, 10 Dec 2024
+ 08:23:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|AS2PR03MB9671:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1cf35194-4e4f-4ed9-e00d-08dd1936eebf
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|6090799003|461199028|8060799006|19110799003|5072599009|15080799006|10035399004|440099028|3412199025|4302099013|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MFh1UG9PcUV1c3VMTEhWbC93bVRRb0xHSi9vbUFjWDdiZjZUWld5QkNiL0Nn?=
- =?utf-8?B?ZUdQVUdYNXNWN2p1MVgwM3JvQkFZNW1TeTlJWGl5NWxLdW81Smw5d1dUVmN5?=
- =?utf-8?B?aTVBckh1NnR2VERYVWhyQ1V5TldoS1F6cVF1SHVtQTVGM2tBNTBXVTZpRDYw?=
- =?utf-8?B?bTcxQVQxeE1RNlgyUTJqZW14WEVEc09aK0RRd1lmc3dSeE9DWThsVTJ2N0sw?=
- =?utf-8?B?VkpYb0l4TTIvSjhxSUtyOExhWHNJandmNGx2S1J6eWoyY0REajc4aXMvcGpw?=
- =?utf-8?B?SHpWYVg5bDhQVC9jcHJoQTlBTXJYMTFlR1BlY0d2SkthZ2RLL2F2b1pTdUw5?=
- =?utf-8?B?Z3hNc1lCcWpLR1pBMVpzUG00YmQrNEJzNTZySlBmM1phZmhMR2lHVWsvMGUz?=
- =?utf-8?B?Yi9wTFNzYlArTmZUTGRmMzZxZnhxemN2dU1HMmdtazJBK0dLaitiK3hrSnNm?=
- =?utf-8?B?WHByTnYwc0YyaldkVEFKZmxkZkxCRjJJZXFCbVNsTTRmQmtjVXkrRmlZR3R0?=
- =?utf-8?B?Unhrd2JCdjJsL3NBblFsWEtjdGFLMm9mWHA1YS9sa2Q2STVkc0xsZmtZM2No?=
- =?utf-8?B?ZHVVQVZNanpseEZ3VHd6Z0doT2x6QjZRZFZpTlhmWktmYnMrT0prQzhBd011?=
- =?utf-8?B?cWh6YndKY0FhNVB1Z1lnbERGVnZPckhHYUdRUG9QWnRzeHJNanF2NzhCdTZQ?=
- =?utf-8?B?cWVmR0VmcmdoOGw2UnRobng0YTZFUU54MDA4eFBjYnNDaTRmUnFTNmpTTTJE?=
- =?utf-8?B?NnVkdXZLN3FJcktkQWVsY3BqdGZQYzJ1eU83Z3g1SzN1aGJNcjBzeWQ2SWo2?=
- =?utf-8?B?RDk0QmIzSzkwbUVES2cwOXBnZVFQUFhiKzJTKzEyYWNEZDJxa2dkVWtQQzBw?=
- =?utf-8?B?bDdzem5hRHhrWVNJbWx5Z0Rod2FqYW1sb1h6VVlxK2kzNjluTUV3dDhVUEdO?=
- =?utf-8?B?VTdjZ1hnTTBXU1NPL2Y4aW0xdW5JdEgxbEw5Q0VFNnh6MXl6Z1pIYWtSL2ta?=
- =?utf-8?B?c2lrOXNxMFU2S3A5SnBWZGR0bkZzcHN2TUlZWkE2STJNTEhSZmFWMEFwTmVI?=
- =?utf-8?B?SllvMmpmbnA2TFI0NjhqSHJCK1EwYXBBRnNma1l6a2o5b0d1TE5acURhbmtr?=
- =?utf-8?B?eVRSbDhKN3p6bk04UWhpeGFQRGdDNmsrOE1QSS9tMzR2KzZQemhLUGZXM0Rr?=
- =?utf-8?B?RnJ2VUF6MzZsU1A2eFBNYmNQaXRyZGJKcHF3a29BdUYzRnRycCtlSDRFMWJm?=
- =?utf-8?B?WE1NRTgvd3hqQ1FUZmIwUkZRbXpnZkNTWlFTb3BabS82K29adi9TSURGMGJi?=
- =?utf-8?B?SkV6Sm45aEREcjZ5Z3VBbW1kaVJ2Sk5SRWpuTUR3bWZ5bVlJU2xPa1lpL3Nx?=
- =?utf-8?B?d2l0RDNWbEdMUVBSdGlVUjhXWlJndHN1VEJtK3l4cWlzRmxremQ0WERVT09P?=
- =?utf-8?B?WnI4UXlSbU8wcS9VS1FmRGxvOFNOMW1ZTklQTU5vWXZzL1ZwczNzU05OQWRz?=
- =?utf-8?B?VmliQ2JPZmdrQWlELzFGa25FQWhPWXo4NmZ1eThiOXRpYnhleVpsUGp2UDBV?=
- =?utf-8?B?RE5Xa2JSR2JEb1VXQVpnYnNtS3I2T2xMMmplY0FiL1Z3cUpjeGFqc0Zab1Zr?=
- =?utf-8?B?OUJRakNLbmh2MjluOFZyUGFkaDQ5NFE9PQ==?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnI3Vkl2THR3WENkWTQ2N3ViV0o1ekJvWnVVNDMvNDVnZEczdG1nbDNtRjI0?=
- =?utf-8?B?a2sxNGNad2tnWVF1b3pBYUQzclQ4L2pPRk5aSjVhclpSWTRWV3dmNVFuM3dq?=
- =?utf-8?B?Z1cvWkVLMDkxakxZUzZrb3I0cmd3TDlTRS85ZWxIeUUzRzBzc3VSNTMzcmR2?=
- =?utf-8?B?TDFmUDJkK0g3M2d5MTQ4ODUxNnlqMUlEMXFKc2RkcmpTckVmaTVnbmtZNFIv?=
- =?utf-8?B?czUybHpYdVZ6azRTOUZsUGsxYmJkbnpKZGZZWENXK056Y2RLKzZTRkM5VGt4?=
- =?utf-8?B?Y2s3SDBMV0MyMmdWRFpuSEVwbG9LU1Z2dDE1dmFTa3MreGprRDVSaE1GRGdC?=
- =?utf-8?B?MC9GRTZObVhrdlJQaTJ5N3FCTmJ4YUlOdWhUb0ZVemlBL3BDSi9ueWJZY0J6?=
- =?utf-8?B?ZXZ3c2lCK1NQcUtKMTVLTnJ6aTZRSysrejMyUENsQnhZQ1JzT3dvVTFsNEp3?=
- =?utf-8?B?SUUwa0trV0NrVFJWVnVVLzdiYjBsdnpmSEdMNXBLMk14cE05K29JVVZQTkJV?=
- =?utf-8?B?cnJPb1orYWJES24wcnZWc1BJRU9NajV3Q3loV1pNTXlRSVRGakdTK28vbFI2?=
- =?utf-8?B?M2FUR3FUYmlMQ2lqemIvTWhXT3o3dm9naFh4TVh4TkRFYW0vSlZCL1pOTzFx?=
- =?utf-8?B?LzdramhEOUJJVW9qMXl4OTlSdGw0aS84cTVKN0ladmxBdWJBQ0QyT2tpTVZY?=
- =?utf-8?B?bG42MTA0amcxb3cxRldVUFRoejhNZ3RqLzVwNGxuY3Q0U3dKWmpJUS9FTFRW?=
- =?utf-8?B?UzMwaW05d010QlVJQXVaWGFmK2ovbTlHNHYzcGdnSERBWll0K3RSNWw4c3JK?=
- =?utf-8?B?TTRVeG9KRkVSNHFPSHlSdUtXMlppajZMakFaMVZRcXkzQUlRekllaDB5TVdo?=
- =?utf-8?B?bnExZXVjaU4rZUNUSjR1WWNiaW56aWN5RHFDYTZERVlrK0t5N3lRNmJ5aTFo?=
- =?utf-8?B?RUV3eVJMUkMwU1VEaWV2SmM5ZGNsNmI1QzBrVFllM2pwc0FIa1Nra09JUnZo?=
- =?utf-8?B?YXhVVHliRTc1VWp2QzBHMkgzTkR4aWtiVFJnTjJBQXBFWXYxdlRLaXAvd3dO?=
- =?utf-8?B?T2RMckVKTkR4WjVJYzl1TGM5Q2FlMDdZdTVWUzFYdVhrazFmSkNwSTdrTDY0?=
- =?utf-8?B?MXljTUNOakRpR1UyWHB2MGlqbzBndVVobGF1cDY0M2xzSFVXSUlEWnpaN0xU?=
- =?utf-8?B?OEM4VDVZWmxLN3VuOHNncWxSMENuU1FuTkpIMTRuK2M1VG9PUENMeURpZ2dT?=
- =?utf-8?B?UVhsdTdkRUZBeUJCcExjV1QvUi83Z2J6a3FwazlldWRjdE5QT0FudWZSemJo?=
- =?utf-8?B?ME96UmwwWGZTZHZtMWVla2UvNVUzQW9idjl4NzlYZm80bkloUGdiN25xcWxv?=
- =?utf-8?B?ZzhvWEFXSkpFS2t0VnozYWRHU1Q3MlpuR1hPTzZSN1VXeSs3SWtSTm15Zi8x?=
- =?utf-8?B?NjNvRmtVV1VBT3BpL1FCMzJxOVo0Q0pEenMycWtWOG1WV0xhTm5FM1VKRTlQ?=
- =?utf-8?B?YWoybUNpUnNzamZiemlWNnlObTNvNm55cTMzQUx3b0UxZHdLWFRCWWRYTURl?=
- =?utf-8?B?MlZVS1hIaUhnY09icGNFK1QwMmtWcDUwRVgvUmQ2bEtjbFIyUTBDWkdza0hN?=
- =?utf-8?B?bzJvcWxrNWFmSVR5WHZGbmo5dTFJWEFuL2FGTW1hU0xHSVRsWlNYOHllSW5y?=
- =?utf-8?Q?mnuzML+mEZAaZJAUHT1P?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cf35194-4e4f-4ed9-e00d-08dd1936eebf
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 16:23:08.3155
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB9671
+References: <20241206225204.4008261-1-surenb@google.com> <20241206225204.4008261-5-surenb@google.com>
+ <9f000fbf-b5c4-41f5-8a4a-9c78b37c2ec5@suse.cz>
+In-Reply-To: <9f000fbf-b5c4-41f5-8a4a-9c78b37c2ec5@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 10 Dec 2024 08:23:22 -0800
+Message-ID: <CAJuCfpFn-MTSVb30e1q0xVbLgURdZibePFbPDLyKNrjeTHkRfQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] mm: make vma cache SLAB_TYPESAFE_BY_RCU
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
+	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
+	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
+	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
+	hughd@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/12/10 14:37, Christian Brauner wrote:
-> On Tue, Dec 10, 2024 at 02:03:51PM +0000, Juntong Deng wrote:
->> This patch adds test cases for open-coded style process file iterator.
->>
->> Test cases related to process files are run in the newly created child
->> process. Close all opened files inherited from the parent process in
->> the child process to avoid the files opened by the parent process
->> affecting the test results.
->>
->> In addition, this patch adds failure test cases where bpf programs
->> cannot pass the verifier due to uninitialized or untrusted
->> arguments, or not in RCU CS, etc.
->>
->> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
->> ---
->>   .../testing/selftests/bpf/bpf_experimental.h  |   7 ++
->>   .../testing/selftests/bpf/prog_tests/iters.c  |  79 ++++++++++++
->>   .../selftests/bpf/progs/iters_task_file.c     |  88 ++++++++++++++
->>   .../bpf/progs/iters_task_file_failure.c       | 114 ++++++++++++++++++
->>   4 files changed, 288 insertions(+)
->>   create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file.c
->>   create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file_failure.c
->>
->> diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
->> index cd8ecd39c3f3..ce1520c56b55 100644
->> --- a/tools/testing/selftests/bpf/bpf_experimental.h
->> +++ b/tools/testing/selftests/bpf/bpf_experimental.h
->> @@ -588,4 +588,11 @@ extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym
->>   extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
->>   extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
->>   
->> +struct bpf_iter_task_file;
->> +struct bpf_iter_task_file_item;
->> +extern int bpf_iter_task_file_new(struct bpf_iter_task_file *it, struct task_struct *task) __ksym;
->> +extern struct bpf_iter_task_file_item *
->> +bpf_iter_task_file_next(struct bpf_iter_task_file *it) __ksym;
->> +extern void bpf_iter_task_file_destroy(struct bpf_iter_task_file *it) __ksym;
->> +
->>   #endif
->> diff --git a/tools/testing/selftests/bpf/prog_tests/iters.c b/tools/testing/selftests/bpf/prog_tests/iters.c
->> index 3cea71f9c500..cfe5b56cc027 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/iters.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/iters.c
->> @@ -1,6 +1,8 @@
->>   // SPDX-License-Identifier: GPL-2.0
->>   /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
->>   
->> +#define _GNU_SOURCE
->> +#include <sys/socket.h>
->>   #include <sys/syscall.h>
->>   #include <sys/mman.h>
->>   #include <sys/wait.h>
->> @@ -16,11 +18,13 @@
->>   #include "iters_num.skel.h"
->>   #include "iters_testmod.skel.h"
->>   #include "iters_testmod_seq.skel.h"
->> +#include "iters_task_file.skel.h"
->>   #include "iters_task_vma.skel.h"
->>   #include "iters_task.skel.h"
->>   #include "iters_css_task.skel.h"
->>   #include "iters_css.skel.h"
->>   #include "iters_task_failure.skel.h"
->> +#include "iters_task_file_failure.skel.h"
->>   
->>   static void subtest_num_iters(void)
->>   {
->> @@ -291,6 +295,78 @@ static void subtest_css_iters(void)
->>   	iters_css__destroy(skel);
->>   }
->>   
->> +static int task_file_test_process(void *args)
->> +{
->> +	int pipefd[2], sockfd, err = 0;
->> +
->> +	/* Create a clean file descriptor table for the test process */
->> +	close_range(0, ~0U, 0);
->> +
->> +	if (pipe(pipefd) < 0)
->> +		return 1;
->> +
->> +	sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
->> +	if (sockfd < 0) {
->> +		err = 2;
->> +		goto cleanup_pipe;
->> +	}
->> +
->> +	usleep(1);
->> +
->> +	close(sockfd);
->> +cleanup_pipe:
->> +	close(pipefd[0]);
->> +	close(pipefd[1]);
->> +	return err;
->> +}
->> +
->> +static void subtest_task_file_iters(void)
->> +{
->> +	const int stack_size = 1024 * 1024;
->> +	struct iters_task_file *skel;
->> +	int child_pid, wstatus, err;
->> +	char *stack;
->> +
->> +	skel = iters_task_file__open_and_load();
->> +	if (!ASSERT_OK_PTR(skel, "open_and_load"))
->> +		return;
->> +
->> +	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
->> +		goto cleanup_skel;
->> +
->> +	skel->bss->parent_pid = getpid();
->> +	skel->bss->count = 0;
->> +
->> +	err = iters_task_file__attach(skel);
->> +	if (!ASSERT_OK(err, "skel_attach"))
->> +		goto cleanup_skel;
->> +
->> +	stack = (char *)malloc(stack_size);
->> +	if (!ASSERT_OK_PTR(stack, "clone_stack"))
->> +		goto cleanup_attach;
->> +
->> +	/* Note that there is no CLONE_FILES */
->> +	child_pid = clone(task_file_test_process, stack + stack_size, CLONE_VM | SIGCHLD, NULL);
->> +	if (!ASSERT_GT(child_pid, -1, "child_pid"))
->> +		goto cleanup_stack;
->> +
->> +	if (!ASSERT_GT(waitpid(child_pid, &wstatus, 0), -1, "waitpid"))
->> +		goto cleanup_stack;
->> +
->> +	if (!ASSERT_OK(WEXITSTATUS(wstatus), "run_task_file_iters_test_err"))
->> +		goto cleanup_stack;
->> +
->> +	ASSERT_EQ(skel->bss->count, 1, "run_task_file_iters_test_count_err");
->> +	ASSERT_OK(skel->bss->err, "run_task_file_iters_test_failure");
->> +
->> +cleanup_stack:
->> +	free(stack);
->> +cleanup_attach:
->> +	iters_task_file__detach(skel);
->> +cleanup_skel:
->> +	iters_task_file__destroy(skel);
->> +}
->> +
->>   void test_iters(void)
->>   {
->>   	RUN_TESTS(iters_state_safety);
->> @@ -315,5 +391,8 @@ void test_iters(void)
->>   		subtest_css_task_iters();
->>   	if (test__start_subtest("css"))
->>   		subtest_css_iters();
->> +	if (test__start_subtest("task_file"))
->> +		subtest_task_file_iters();
->>   	RUN_TESTS(iters_task_failure);
->> +	RUN_TESTS(iters_task_file_failure);
->>   }
->> diff --git a/tools/testing/selftests/bpf/progs/iters_task_file.c b/tools/testing/selftests/bpf/progs/iters_task_file.c
->> new file mode 100644
->> index 000000000000..81bcd20041d8
->> --- /dev/null
->> +++ b/tools/testing/selftests/bpf/progs/iters_task_file.c
->> @@ -0,0 +1,88 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +#include "vmlinux.h"
->> +#include <bpf/bpf_tracing.h>
->> +#include <bpf/bpf_helpers.h>
->> +#include "bpf_misc.h"
->> +#include "bpf_experimental.h"
->> +#include "task_kfunc_common.h"
->> +
->> +char _license[] SEC("license") = "GPL";
->> +
->> +int err, parent_pid, count;
->> +
->> +extern const void pipefifo_fops __ksym;
->> +extern const void socket_file_ops __ksym;
->> +
->> +SEC("fentry/" SYS_PREFIX "sys_nanosleep")
->> +int test_bpf_iter_task_file(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +	struct bpf_iter_task_file_item *item;
->> +	struct task_struct *task;
->> +
->> +	task = bpf_get_current_task_btf();
->> +	if (task->parent->pid != parent_pid)
->> +		return 0;
->> +
->> +	count++;
->> +
->> +	bpf_rcu_read_lock();
-> 
-> What does the RCU read lock do here exactly?
-> 
+On Tue, Dec 10, 2024 at 4:06=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 12/6/24 23:52, Suren Baghdasaryan wrote:
+> > To enable SLAB_TYPESAFE_BY_RCU for vma cache we need to ensure that
+> > object reuse before RCU grace period is over will be detected inside
+> > lock_vma_under_rcu().
+> > lock_vma_under_rcu() enters RCU read section, finds the vma at the
+> > given address, locks the vma and checks if it got detached or remapped
+> > to cover a different address range. These last checks are there
+> > to ensure that the vma was not modified after we found it but before
+> > locking it.
+> > vma reuse introduces several new possibilities:
+> > 1. vma can be reused after it was found but before it is locked;
+> > 2. vma can be reused and reinitialized (including changing its vm_mm)
+> > while being locked in vma_start_read();
+> > 3. vma can be reused and reinitialized after it was found but before
+> > it is locked, then attached at a new address or to a new mm while
+> > read-locked;
+> > For case #1 current checks will help detecting cases when:
+> > - vma was reused but not yet added into the tree (detached check)
+> > - vma was reused at a different address range (address check);
+> > We are missing the check for vm_mm to ensure the reused vma was not
+> > attached to a different mm. This patch adds the missing check.
+> > For case #2, we pass mm to vma_start_read() to prevent access to
+> > unstable vma->vm_mm. This might lead to vma_start_read() returning
+> > a false locked result but that's not critical if it's rare because
+> > it will only lead to a retry under mmap_lock.
+> > For case #3, we ensure the order in which vma->detached flag and
+> > vm_start/vm_end/vm_mm are set and checked. vma gets attached after
+> > vm_start/vm_end/vm_mm were set and lock_vma_under_rcu() should check
+> > vma->detached before checking vm_start/vm_end/vm_mm. This is required
+> > because attaching vma happens without vma write-lock, as opposed to
+> > vma detaching, which requires vma write-lock. This patch adds memory
+> > barriers inside is_vma_detached() and vma_mark_attached() needed to
+> > order reads and writes to vma->detached vs vm_start/vm_end/vm_mm.
+> > After these provisions, SLAB_TYPESAFE_BY_RCU is added to vm_area_cachep=
+.
+> > This will facilitate vm_area_struct reuse and will minimize the number
+> > of call_rcu() calls.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  include/linux/mm.h               |  36 +++++--
+> >  include/linux/mm_types.h         |  10 +-
+> >  include/linux/slab.h             |   6 --
+> >  kernel/fork.c                    | 157 +++++++++++++++++++++++++------
+> >  mm/memory.c                      |  15 ++-
+> >  mm/vma.c                         |   2 +-
+> >  tools/testing/vma/vma_internal.h |   7 +-
+> >  7 files changed, 179 insertions(+), 54 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 2bf38c1e9cca..3568bcbc7c81 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -257,7 +257,7 @@ struct vm_area_struct *vm_area_alloc(struct mm_stru=
+ct *);
+> >  struct vm_area_struct *vm_area_dup(struct vm_area_struct *);
+> >  void vm_area_free(struct vm_area_struct *);
+> >  /* Use only if VMA has no other users */
+> > -void __vm_area_free(struct vm_area_struct *vma);
+> > +void vm_area_free_unreachable(struct vm_area_struct *vma);
+> >
+> >  #ifndef CONFIG_MMU
+> >  extern struct rb_root nommu_region_tree;
+> > @@ -706,8 +706,10 @@ static inline void vma_lock_init(struct vm_area_st=
+ruct *vma)
+> >   * Try to read-lock a vma. The function is allowed to occasionally yie=
+ld false
+> >   * locked result to avoid performance overhead, in which case we fall =
+back to
+> >   * using mmap_lock. The function should never yield false unlocked res=
+ult.
+> > + * False locked result is possible if mm_lock_seq overflows or if vma =
+gets
+> > + * reused and attached to a different mm before we lock it.
+> >   */
+> > -static inline bool vma_start_read(struct vm_area_struct *vma)
+> > +static inline bool vma_start_read(struct mm_struct *mm, struct vm_area=
+_struct *vma)
+> >  {
+> >       /*
+> >        * Check before locking. A race might cause false locked result.
+> > @@ -716,7 +718,7 @@ static inline bool vma_start_read(struct vm_area_st=
+ruct *vma)
+> >        * we don't rely on for anything - the mm_lock_seq read against w=
+hich we
+> >        * need ordering is below.
+> >        */
+> > -     if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(vma->vm_mm->mm_l=
+ock_seq.sequence))
+> > +     if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(mm->mm_lock_seq.=
+sequence))
+> >               return false;
+> >
+> >       if (unlikely(down_read_trylock(&vma->vm_lock.lock) =3D=3D 0))
+> > @@ -733,7 +735,7 @@ static inline bool vma_start_read(struct vm_area_st=
+ruct *vma)
+> >        * after it has been unlocked.
+> >        * This pairs with RELEASE semantics in vma_end_write_all().
+> >        */
+> > -     if (unlikely(vma->vm_lock_seq =3D=3D raw_read_seqcount(&vma->vm_m=
+m->mm_lock_seq))) {
+> > +     if (unlikely(vma->vm_lock_seq =3D=3D raw_read_seqcount(&mm->mm_lo=
+ck_seq))) {
+> >               up_read(&vma->vm_lock.lock);
+> >               return false;
+> >       }
+>
+> This could have been perhaps another preparatory patch to make this one s=
+maller?
+>
+> >
+> > +static void vm_area_ctor(void *data)
+> > +{
+> > +     struct vm_area_struct *vma =3D (struct vm_area_struct *)data;
+> > +
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +     /* vma is not locked, can't use vma_mark_detached() */
+> > +     vma->detached =3D true;
+> > +#endif
+> > +     INIT_LIST_HEAD(&vma->anon_vma_chain);
+> > +     vma_lock_init(vma);
+> > +}
+> > +
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +
+> > +static void vma_clear(struct vm_area_struct *vma, struct mm_struct *mm=
+)
+> > +{
+> > +     vma->vm_mm =3D mm;
+> > +     vma->vm_ops =3D &vma_dummy_vm_ops;
+> > +     vma->vm_start =3D 0;
+> > +     vma->vm_end =3D 0;
+> > +     vma->anon_vma =3D NULL;
+> > +     vma->vm_pgoff =3D 0;
+> > +     vma->vm_file =3D NULL;
+> > +     vma->vm_private_data =3D NULL;
+> > +     vm_flags_init(vma, 0);
+> > +     memset(&vma->vm_page_prot, 0, sizeof(vma->vm_page_prot));
+> > +     memset(&vma->shared, 0, sizeof(vma->shared));
+> > +     memset(&vma->vm_userfaultfd_ctx, 0, sizeof(vma->vm_userfaultfd_ct=
+x));
+> > +     vma_numab_state_init(vma);
+> > +#ifdef CONFIG_ANON_VMA_NAME
+> > +     vma->anon_name =3D NULL;
+> > +#endif
+> > +#ifdef CONFIG_SWAP
+> > +     memset(&vma->swap_readahead_info, 0, sizeof(vma->swap_readahead_i=
+nfo));
+> > +#endif
+> > +#ifndef CONFIG_MMU
+> > +     vma->vm_region =3D NULL;
+> > +#endif
+> > +#ifdef CONFIG_NUMA
+> > +     vma->vm_policy =3D NULL;
+> > +#endif
+>
+> This isn't the ideal pattern I think, now that we have a ctor. Ideally th=
+e
+> ctor would do all this (except setting the vm_mm), and then we need to ma=
+ke
+> sure it's also done when freeing the vma, to make sure the freed object i=
+s
+> in the same state as a new object after the constructor.
+>
+> On freeing, things like numab_state and anon_name could be NULL'd (by the
+> respective destructors) only when they are non-NULL and thus freeing the
+> objects pointed to. vm_policy and vm_file could perhaps be handled same w=
+ay
+> after some refactoring (see remove_vma()), vma_dummy_vm_ops are possibly
+> already reset by vma_close(), etc.
 
-Thanks for your reply.
+Ok, let me look some more into it and see if I can improve and
+simplify the initialization/freeing logic. Thanks!
 
-This is used to solve the problem previously discussed in v3 [0].
-
-Task ref may be released during iteration.
-
-[0]: 
-https://lore.kernel.org/bpf/CAADnVQ+0LUXxmfm1YgyGDz=cciy3+dGGM-Zysq84fpAdaB74Qw@mail.gmail.com/
-
->> +	bpf_iter_task_file_new(&task_file_it, task);
->> +
->> +	item = bpf_iter_task_file_next(&task_file_it);
->> +	if (item == NULL) {
->> +		err = 1;
->> +		goto cleanup;
->> +	}
->> +
->> +	if (item->fd != 0) {
->> +		err = 2;
->> +		goto cleanup;
->> +	}
->> +
->> +	if (item->file->f_op != &pipefifo_fops) {
->> +		err = 3;
->> +		goto cleanup;
->> +	}
->> +
->> +	item = bpf_iter_task_file_next(&task_file_it);
->> +	if (item == NULL) {
->> +		err = 4;
->> +		goto cleanup;
->> +	}
->> +
->> +	if (item->fd != 1) {
->> +		err = 5;
->> +		goto cleanup;
->> +	}
->> +
->> +	if (item->file->f_op != &pipefifo_fops) {
->> +		err = 6;
->> +		goto cleanup;
->> +	}
->> +
->> +	item = bpf_iter_task_file_next(&task_file_it);
->> +	if (item == NULL) {
->> +		err = 7;
->> +		goto cleanup;
->> +	}
->> +
->> +	if (item->fd != 2) {
->> +		err = 8;
->> +		goto cleanup;
->> +	}
->> +
->> +	if (item->file->f_op != &socket_file_ops) {
->> +		err = 9;
->> +		goto cleanup;
->> +	}
->> +
->> +	item = bpf_iter_task_file_next(&task_file_it);
->> +	if (item != NULL)
->> +		err = 10;
->> +cleanup:
->> +	bpf_iter_task_file_destroy(&task_file_it);
->> +	bpf_rcu_read_unlock();
->> +	return 0;
->> +}
->> diff --git a/tools/testing/selftests/bpf/progs/iters_task_file_failure.c b/tools/testing/selftests/bpf/progs/iters_task_file_failure.c
->> new file mode 100644
->> index 000000000000..c3de9235b888
->> --- /dev/null
->> +++ b/tools/testing/selftests/bpf/progs/iters_task_file_failure.c
->> @@ -0,0 +1,114 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +#include "vmlinux.h"
->> +#include <bpf/bpf_tracing.h>
->> +#include <bpf/bpf_helpers.h>
->> +#include "bpf_misc.h"
->> +#include "bpf_experimental.h"
->> +#include "task_kfunc_common.h"
->> +
->> +char _license[] SEC("license") = "GPL";
->> +
->> +SEC("syscall")
->> +__failure __msg("expected an RCU CS when using bpf_iter_task_file")
->> +int bpf_iter_task_file_new_without_rcu_lock(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +	struct task_struct *task;
->> +
->> +	task = bpf_get_current_task_btf();
->> +
->> +	bpf_iter_task_file_new(&task_file_it, task);
->> +
->> +	bpf_iter_task_file_destroy(&task_file_it);
->> +	return 0;
->> +}
->> +
->> +SEC("syscall")
->> +__failure __msg("expected uninitialized iter_task_file as arg #1")
->> +int bpf_iter_task_file_new_inited_iter(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +	struct task_struct *task;
->> +
->> +	task = bpf_get_current_task_btf();
->> +
->> +	bpf_rcu_read_lock();
->> +	bpf_iter_task_file_new(&task_file_it, task);
->> +
->> +	bpf_iter_task_file_new(&task_file_it, task);
->> +
->> +	bpf_iter_task_file_destroy(&task_file_it);
->> +	bpf_rcu_read_unlock();
->> +	return 0;
->> +}
->> +
->> +SEC("syscall")
->> +__failure __msg("Possibly NULL pointer passed to trusted arg1")
->> +int bpf_iter_task_file_new_null_task(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +	struct task_struct *task = NULL;
->> +
->> +	bpf_rcu_read_lock();
->> +	bpf_iter_task_file_new(&task_file_it, task);
->> +
->> +	bpf_iter_task_file_destroy(&task_file_it);
->> +	bpf_rcu_read_unlock();
->> +	return 0;
->> +}
->> +
->> +SEC("syscall")
->> +__failure __msg("R2 must be referenced or trusted")
->> +int bpf_iter_task_file_new_untrusted_task(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +	struct task_struct *task;
->> +
->> +	task = bpf_get_current_task_btf()->parent;
->> +
->> +	bpf_rcu_read_lock();
->> +	bpf_iter_task_file_new(&task_file_it, task);
->> +
->> +	bpf_iter_task_file_destroy(&task_file_it);
->> +	bpf_rcu_read_unlock();
->> +	return 0;
->> +}
->> +
->> +SEC("syscall")
->> +__failure __msg("Unreleased reference")
->> +int bpf_iter_task_file_no_destory(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +	struct task_struct *task;
->> +
->> +	task = bpf_get_current_task_btf();
->> +
->> +	bpf_rcu_read_lock();
->> +	bpf_iter_task_file_new(&task_file_it, task);
->> +
->> +	bpf_rcu_read_unlock();
->> +	return 0;
->> +}
->> +
->> +SEC("syscall")
->> +__failure __msg("expected an initialized iter_task_file as arg #1")
->> +int bpf_iter_task_file_next_uninit_iter(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +
->> +	bpf_iter_task_file_next(&task_file_it);
->> +
->> +	return 0;
->> +}
->> +
->> +SEC("syscall")
->> +__failure __msg("expected an initialized iter_task_file as arg #1")
->> +int bpf_iter_task_file_destroy_uninit_iter(void *ctx)
->> +{
->> +	struct bpf_iter_task_file task_file_it;
->> +
->> +	bpf_iter_task_file_destroy(&task_file_it);
->> +
->> +	return 0;
->> +}
->> -- 
->> 2.39.5
->>
-
+>
+> > +}
+> > +
+> > +static void vma_copy(const struct vm_area_struct *src, struct vm_area_=
+struct *dest)
+> > +{
+> > +     dest->vm_mm =3D src->vm_mm;
+> > +     dest->vm_ops =3D src->vm_ops;
+> > +     dest->vm_start =3D src->vm_start;
+> > +     dest->vm_end =3D src->vm_end;
+> > +     dest->anon_vma =3D src->anon_vma;
+> > +     dest->vm_pgoff =3D src->vm_pgoff;
+> > +     dest->vm_file =3D src->vm_file;
+> > +     dest->vm_private_data =3D src->vm_private_data;
+> > +     vm_flags_init(dest, src->vm_flags);
+> > +     memcpy(&dest->vm_page_prot, &src->vm_page_prot,
+> > +            sizeof(dest->vm_page_prot));
+> > +     memcpy(&dest->shared, &src->shared, sizeof(dest->shared));
+> > +     memcpy(&dest->vm_userfaultfd_ctx, &src->vm_userfaultfd_ctx,
+> > +            sizeof(dest->vm_userfaultfd_ctx));
+> > +#ifdef CONFIG_ANON_VMA_NAME
+> > +     dest->anon_name =3D src->anon_name;
+> > +#endif
+> > +#ifdef CONFIG_SWAP
+> > +     memcpy(&dest->swap_readahead_info, &src->swap_readahead_info,
+> > +            sizeof(dest->swap_readahead_info));
+> > +#endif
+> > +#ifndef CONFIG_MMU
+> > +     dest->vm_region =3D src->vm_region;
+> > +#endif
+> > +#ifdef CONFIG_NUMA
+> > +     dest->vm_policy =3D src->vm_policy;
+> > +#endif
+> > +}
+> > +
+> > +#else /* CONFIG_PER_VMA_LOCK */
 
