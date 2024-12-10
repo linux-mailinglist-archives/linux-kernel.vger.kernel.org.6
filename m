@@ -1,186 +1,146 @@
-Return-Path: <linux-kernel+bounces-439986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110279EB723
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D339EB714
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61DB166988
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:52:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8490165901
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935582343C8;
-	Tue, 10 Dec 2024 16:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7559C1BC09F;
+	Tue, 10 Dec 2024 16:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YArZUg0v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYini5tk"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399672343AA;
-	Tue, 10 Dec 2024 16:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCD61A76AC;
+	Tue, 10 Dec 2024 16:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849533; cv=none; b=gOkPGN5o6U3HQ0Mj5/Z+nxfPHN3G3hFaEF2+tIMei4qN8LQaDWZUqtsUm9jou3gjV9t6WPZt2iDiOq2gqOdmWXo5gQGzehzUU9XNgMHQ1yJ6VsBnWlArFJYi43ZcnITtsGWZdNePx0hwislIPtqEtkxipyzsaB4EOUn6bnrsCSM=
+	t=1733849506; cv=none; b=BjilVpQYJ9GWz2XPuMrGq2ObS7Rf9jwcn4ay07gFKxPijQmRGBgD7+Q9uo8UtM3ta2oVC2VAPw2mvZRtsxatMSqbIb4jfsMpSU9mG9CakwXO9/i1BgVkfaX758lfIk2oRczwClli6NmCfiDXJswf7+rE5bRKN1q0t7MJxDl8tjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849533; c=relaxed/simple;
-	bh=ktVrGTmpt3/F/GW41gzk3PL3sv/yG1zugRTt+gti1gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zw3kz5lEgFfTcOet4warQ2UliLkgjTLpS68PPQMfACu9Id66ZuSlNcnZwTmk6/KSTYZeYcEeCbpYbav0YdXkwMnos67k4vgKd9QJb9snKaDFvoLpTXqnMEO3Mtg7UIxEdyaCUMyO9QFLG+vIgkshKo5kaD4nsQmQb10jDKfq7/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YArZUg0v; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733849533; x=1765385533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ktVrGTmpt3/F/GW41gzk3PL3sv/yG1zugRTt+gti1gU=;
-  b=YArZUg0vDZaTJIZ5eK6qPo4VWg2CnSMWE5hBxcz5Z3C9PAoy88CBRQze
-   j4yKsWt5Gjy2bLV8LfeTEocCx+NCXnggfgjM41cU5jgu2NlBvbw7Yb+ri
-   5KZkvbIIQrYvHjiC7Ovs19vnMF/E5pwSXChAijeVqTA2JbK78DSjT/IW1
-   QQTEqRvBHZBUgOwvVv5u4utEGYy6J1Crx1BZhUBS78fGxThzcEGjlXUoV
-   QqYSXK+bjHOLT354GQcZSnOjT01yBoQ3IXw4b6lJ5emlKC9dcvd22JKLc
-   iLS1eKyqufqhTXt6vAvgqFO/RiTOmR8eSfSknVVjtqynUTwlFrmk8Hipq
-   Q==;
-X-CSE-ConnectionGUID: La1y43AtR9qXhyLtiLNAjA==
-X-CSE-MsgGUID: 1FrBPPYJSZ2AsgWmrt1Zsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="37888690"
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="37888690"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 08:52:12 -0800
-X-CSE-ConnectionGUID: 9LmtNp1cSwyu+lAo7cXK1g==
-X-CSE-MsgGUID: 7+Zp40k0RIeDtWdqUlzVzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="95918226"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 10 Dec 2024 08:52:07 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tL3Sv-0005mn-0p;
-	Tue, 10 Dec 2024 16:52:05 +0000
-Date: Wed, 11 Dec 2024 00:51:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Herve Codina <herve.codina@bootlin.com>, Andrew Davis <afd@ti.com>,
-	Ayush Singh <ayush@beagleboard.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 7/7] of: unittest: Add tests for export symbols
-Message-ID: <202412110002.61YacCza-lkp@intel.com>
-References: <20241209151830.95723-8-herve.codina@bootlin.com>
+	s=arc-20240116; t=1733849506; c=relaxed/simple;
+	bh=Mxw/pGwRlstlF+sMsnwXXRjVPqmnOa+upzVXrXLGTd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ng53blHNkMe5wX5GUgknG3nmm+E19UOBAPwU6CcjKBGikfsFVPZeBjpzQSDjjC9s3C+g2t+N9WThgbACzsLHOLmT0+MNS4Er1hH3/QUw1G5OoAEpwrdycUvKlFgV810ikEt/geVn8vRSqNqu5057ryNcfqrku47ZgyvVn+5uKok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYini5tk; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21636268e43so35163455ad.2;
+        Tue, 10 Dec 2024 08:51:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733849505; x=1734454305; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JuzEEwZKQf9j9mqhaN0lST/eQY9CbMt5tK8I46FKdZM=;
+        b=XYini5tkdpS1NzH6m0i0TTJ6MkThJ1d+n9qrQNzp7/1DvLw24m1iFxqeiWhVymJi5B
+         3oQY5WNEcP+zPdNX+bRqqBkHtIDpj9OBt7LZ67tlWZpowCdC9QqpTdNvfUX4r5NxN/A6
+         BRCDKOXYiFeT/HJC8XUGe+VtjWKHWn27NVL8aM6nHbudtJAlsTOHRIQLbJDRkA9Ioomg
+         +NGEimPDf2BRvJFHcYM5eRfV0RKZuhsYkbhZln0ikmZuO4MJY2xM+Ym20pteNtZauaPg
+         xvWkVwdt9465CAS1cwVZHKkAFhJ84WPFwp1ixeBHbccdggLOFCMILuX6V94gzKe44N1w
+         xMFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733849505; x=1734454305;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JuzEEwZKQf9j9mqhaN0lST/eQY9CbMt5tK8I46FKdZM=;
+        b=bpvRMZMjtSxQqUJeMyuMZlaq0/2irSdVVNp9EOltpvO/IXPRyG+hTjUT3zVe7o2SR3
+         yCgPKv8TDcbNi3iQ4ptAVYnjeEPK9j5SO2urCOjFTzzjHW2DMwdmbpoAyBx9IvuC5L6b
+         oIu84la+o2yg8UXAcOOqxAdyqeybeQKN8aaIsKfO42CTqpgCjWNy+eZg2jmpNBYu7MBl
+         0fnqzbkU9dT7bl9PzlI26d5WXoPReWrzKZ/HnugAfVR/EHv2KPTBIFelg5lD1Q/RMl3S
+         PZy5HqSuPs6e1nd5ihY3D8BtyVVQ7sgR5LvsHu2vkDRssiiS7um0q9zHS3yfEFmJPra4
+         wNSg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Gq+as6KUo51q0HvTxz3Ky7hhtmQiB40LGwHm3MyG0Is+k9f7hSgRoANh37E4kXqX4Yn/B9M7czg=@vger.kernel.org, AJvYcCWIsc6PWJ9iQp4GXeeHctnxOboE16XnyinQJ6Z4Lkx3W8xWh9YSdvGIVDTzbfsbhzxgmhi2goeDKST0bNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8qRa/JeTtCN1I0jGCgNLcQcie0eC9HbFMeDGov8uerGuDo8OL
+	MXzZgbp6vlUJKv5DBv0GqTrw4i8f/Nh1MIk4JY2lh9xVg+K+8/c8
+X-Gm-Gg: ASbGncv0b06jAnfgvW5ssBG6LodDDy2C20u4xJoZ6f0rv0yGe9YxXOGDwK4o76IlWsG
+	VS/FRzSdz83o4i91nySSOBGOAcd9Q+BIcJA/cxunthRbEgwb1ekJ+ATfGX5oPqe80DmkIVZBibe
+	9ZWraGCBco4rsm0IDcp0uZAamPsBGKwvIWXEw/DvnKWIBPmYNsOUXtraBxOi2Y4Xz1tocxecJ61
+	UodmxDRimbgGXS8UsDH0/1iem7ATi88Mcjp1fnsHgjSyX6SzWvQzkLYod+/L4+YMPGKJ4G6EKkK
+	D85s1BzOx7MzdI0c7XITqVJlgAth
+X-Google-Smtp-Source: AGHT+IHq5GJLA69hWJIqMBI3xX9I2B1vs+oiOQMLHk1Gt8OrfhdtpCShimUSU+G1kzy0p/Cgwakamg==
+X-Received: by 2002:a17:902:e750:b0:216:3c36:69a7 with SMTP id d9443c01a7336-2166a0987ddmr69103725ad.45.1733849504588;
+        Tue, 10 Dec 2024 08:51:44 -0800 (PST)
+Received: from localhost ([2a00:79e1:2e00:1301:12e9:d196:a1e9:ab67])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216363a3176sm51054905ad.246.2024.12.10.08.51.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 08:51:44 -0800 (PST)
+From: Rob Clark <robdclark@gmail.com>
+To: iommu@lists.linux.dev
+Cc: linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Mostafa Saleh <smostafa@google.com>,
+	Will Deacon <will@kernel.org>,
+	Rob Clark <robdclark@chromium.org>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm Adreno GPUs),
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Joao Martins <joao.m.martins@oracle.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-pm@vger.kernel.org (open list:SUSPEND TO RAM),
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Sean Paul <sean@poorly.run>
+Subject: [PATCH v11 0/4] io-pgtable-arm + drm/msm: Extend iova fault debugging
+Date: Tue, 10 Dec 2024 08:51:18 -0800
+Message-ID: <20241210165127.600817-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209151830.95723-8-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Herve,
+From: Rob Clark <robdclark@chromium.org>
 
-kernel test robot noticed the following build errors:
+This series extends io-pgtable-arm with a method to retrieve the page
+table entries traversed in the process of address translation, and then
+beefs up drm/msm gpu devcore dump to include this (and additional info)
+in the devcore dump.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.13-rc2 next-20241210]
-[cannot apply to char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This is a respin of https://patchwork.freedesktop.org/series/94968/
+(minus a patch that was already merged)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Herve-Codina/dt-bindings-Add-support-for-export-symbols-node/20241209-232324
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241209151830.95723-8-herve.codina%40bootlin.com
-patch subject: [PATCH 7/7] of: unittest: Add tests for export symbols
-config: i386-buildonly-randconfig-004-20241210 (https://download.01.org/0day-ci/archive/20241211/202412110002.61YacCza-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412110002.61YacCza-lkp@intel.com/reproduce)
+v2:  Fix an armv7/32b build error in the last patch
+v3:  Incorperate Will Deacon's suggestion to make the interface
+     callback based.
+v4:  Actually wire up the callback
+v5:  Drop the callback approach
+v6:  Make walk-data struct pgtable specific and rename
+     io_pgtable_walk_data to arm_lpae_io_pgtable_walk_data
+v7:  Re-use the pgtable walker added for arm_lpae_read_and_clear_dirty()
+v8:  Pass pte pointer to callback so it can modify the actual pte
+v9:  Fix selftests_running case
+v10: Call visit cb for all nodes traversed, leave the decision about
+     whether to care about non-leaf nodes to the callback
+v11: Adjust logic in 3/4 [smostafa@]
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412110002.61YacCza-lkp@intel.com/
+Rob Clark (4):
+  iommu/io-pgtable-arm: Make pgtable walker more generic
+  iommu/io-pgtable-arm: Re-use the pgtable walk for iova_to_phys
+  iommu/io-pgtable-arm: Add way to debug pgtable walk
+  drm/msm: Extend gpu devcore dumps with pgtbl info
 
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/of/unittest.c:8:
-   In file included from include/linux/memblock.h:12:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/of/unittest.c:4347:2: error: call to undeclared function 'of_unittest_overlay_export_symbols'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    4347 |         of_unittest_overlay_export_symbols();
-         |         ^
-   1 warning and 1 error generated.
-
-
-vim +/of_unittest_overlay_export_symbols +4347 drivers/of/unittest.c
-
-  4297	
-  4298	static int __init of_unittest(void)
-  4299	{
-  4300		struct device_node *np;
-  4301		int res;
-  4302	
-  4303		pr_info("start of unittest - you will see error messages\n");
-  4304	
-  4305		/* Taint the kernel so we know we've run tests. */
-  4306		add_taint(TAINT_TEST, LOCKDEP_STILL_OK);
-  4307	
-  4308		/* adding data for unittest */
-  4309		res = unittest_data_add();
-  4310		if (res)
-  4311			return res;
-  4312		if (!of_aliases)
-  4313			of_aliases = of_find_node_by_path("/aliases");
-  4314	
-  4315		np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
-  4316		if (!np) {
-  4317			pr_info("No testcase data in device tree; not running tests\n");
-  4318			return 0;
-  4319		}
-  4320		of_node_put(np);
-  4321	
-  4322		of_unittest_check_tree_linkage();
-  4323		of_unittest_check_phandles();
-  4324		of_unittest_find_node_by_name();
-  4325		of_unittest_dynamic();
-  4326		of_unittest_parse_phandle_with_args();
-  4327		of_unittest_parse_phandle_with_args_map();
-  4328		of_unittest_printf();
-  4329		of_unittest_property_string();
-  4330		of_unittest_property_copy();
-  4331		of_unittest_changeset();
-  4332		of_unittest_changeset_prop();
-  4333		of_unittest_parse_interrupts();
-  4334		of_unittest_parse_interrupts_extended();
-  4335		of_unittest_dma_get_max_cpu_address();
-  4336		of_unittest_parse_dma_ranges();
-  4337		of_unittest_pci_dma_ranges();
-  4338		of_unittest_bus_ranges();
-  4339		of_unittest_bus_3cell_ranges();
-  4340		of_unittest_reg();
-  4341		of_unittest_translate_addr();
-  4342		of_unittest_match_node();
-  4343		of_unittest_platform_populate();
-  4344		of_unittest_overlay();
-  4345		of_unittest_lifecycle();
-  4346		of_unittest_pci_node();
-> 4347		of_unittest_overlay_export_symbols();
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c |  10 ++
+ drivers/gpu/drm/msm/msm_gpu.c           |   9 ++
+ drivers/gpu/drm/msm/msm_gpu.h           |   8 ++
+ drivers/gpu/drm/msm/msm_iommu.c         |  22 ++++
+ drivers/gpu/drm/msm/msm_mmu.h           |   3 +-
+ drivers/iommu/io-pgtable-arm.c          | 157 +++++++++++++++---------
+ include/linux/io-pgtable.h              |  15 +++
+ 7 files changed, 167 insertions(+), 57 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.1
+
 
