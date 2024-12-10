@@ -1,111 +1,79 @@
-Return-Path: <linux-kernel+bounces-438710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D869EA4AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:04:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B139EA4AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165F916726A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DA7188A316
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F01136326;
-	Tue, 10 Dec 2024 02:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDD8148FE8;
+	Tue, 10 Dec 2024 02:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld/zC4m+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HGLJ0r6I"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038495FDA7;
-	Tue, 10 Dec 2024 02:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E8D13959D;
+	Tue, 10 Dec 2024 02:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796276; cv=none; b=Hv/x99uORzZ5+sxAaejsYjrvssYxdwXLu6+ATRsSZGUIfEM/fVVz8Y34ivbToyxqIXE3hyvb2/MkTi7FCwbf75xuns8Gso9ku/0BcWjWs/ncGCQQi5sOCxLoOAQv1S5Mviv5VROWuUV6Y/Pd0zKe92LNBMugAuFF6DrQVlVr3MU=
+	t=1733796285; cv=none; b=CU+m0aqo8kZx4Oh5t8AdU6I1gdHrSolV5VF91tCCsgoev7BcKse/ZOgWymPWb6i0NH8dMLnY4RYEdVNTv0sGTKswieX1C/kQ6rmV2GuIiAOMEgVsYNK9qCBHswdYVphaIsOnzyMH1kmZf8I0sPK4LwFmFSTuOYdb/AwwTsxSFQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796276; c=relaxed/simple;
-	bh=oPZZN+mwOAYFn85jtDrCczgEYZMHPEWfpX3ZfHCQARI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=mTdlF8GrZPslaiCK+DnyxSfsD/heRhbkJQwePwB7h5o7RUZePCHhZwG6qfyabKpaxoHXGhBHxH1fx4Jlv/12U16+VowcFgdv1udreBfPTkli80RauoOwaxEs4iQ7TUIbaFdQKQmoCjFaRI+lIpvgT/4r74LB4TAzPoavBHwxzv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld/zC4m+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC75C4CED1;
-	Tue, 10 Dec 2024 02:04:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733796274;
-	bh=oPZZN+mwOAYFn85jtDrCczgEYZMHPEWfpX3ZfHCQARI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ld/zC4m+xupGCW2EUBrjZnpcZfmDygF5+GZHa6+zh5zLDZyZSoZHaR00Im0YJlOiU
-	 /yXoCfqnJZumHo237u//g1VqiieSYz55JWo2ei/MAJ+r2FnpQaDjQKEl0fboADJLRW
-	 M52pcYxeYpKf1DGLjfd6ajXgFglkpPsFA1ozUyJqLPNuwJepjuMYhWzPefNYQCz/N1
-	 /q7hrmQKBIkfhdygrZxcuUvzqVAqzfzmS0aJQI/g1ls6grgzG3eo3m3x7tPXxvWkJq
-	 Ka6KkRc058U/p8+UNVLLVE63FDPxnpZlcZCP+KJrk0YUHefc7+kj1umMLuWq+GM2Pi
-	 qvwFXdfgRL0AA==
-Date: Tue, 10 Dec 2024 11:04:28 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Anil S Keshavamurthy
- <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov
- <oleg@redhat.com>, Tzvetomir Stoyanov <tz.stoyanov@gmail.com>, Naveen N Rao
- <naveen@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
- <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
-Message-Id: <20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
-In-Reply-To: <20241209110411.GL21636@noisy.programming.kicks-ass.net>
-References: <173371205755.480397.7893311565254712194.stgit@devnote2>
-	<173371208663.480397.7535769878667655223.stgit@devnote2>
-	<20241209110411.GL21636@noisy.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733796285; c=relaxed/simple;
+	bh=a7sTrcHZITQc14v1fBWxTeO1i4B3T9w5bEyRHIFBrLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=luM1TQKCU3f2RimEIcFS+aRDIbMJuWdxAkUhmZBxtjL7WJ590IuQ0NdXHXgzLXhwe6Eaco8ZqL15fZAbD5Aui64D/cr6gw1yo5C1DkFThkwKlDSdMLW6VD8KSLvSTpOtXZ+sKhJEGnmFSRsEDeEtXThtTWKCjMdZaeSMQzU9SwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HGLJ0r6I; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=iVu3dU21lp6tZiyps4adjx+PzV2uCgPAhkstxj/HbPA=; b=HGLJ0r6IwIP1wrRFd1O2MPj1zu
+	JtXkvWzBz4DAguByO5VolpW2g1+Sg920zHZWjV3d+HG5CJuE527QQNhIjKnL/QRZM4IvtRyrMHMXo
+	dHPhYdeO47cbWBoh9RcFOpmLJ6WaG6ZrBqcGZORIAo/s7vU0vC9jUlOsALQPjMP11iuw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKpc5-00Fk5i-W6; Tue, 10 Dec 2024 03:04:37 +0100
+Date: Tue, 10 Dec 2024 03:04:37 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v1 06/11] net: usb: lan78xx: Fix return value
+ handling in lan78xx_set_features
+Message-ID: <b6dc9069-a473-4de2-ae54-b18f1f3a96b3@lunn.ch>
+References: <20241209130751.703182-1-o.rempel@pengutronix.de>
+ <20241209130751.703182-7-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209130751.703182-7-o.rempel@pengutronix.de>
 
-On Mon, 9 Dec 2024 12:04:11 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Mon, Dec 09, 2024 at 11:41:26AM +0900, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Use guard() for text_mutex, cpu_read_lock, and jump_label_lock in
-> > the kprobes.
+On Mon, Dec 09, 2024 at 02:07:46PM +0100, Oleksij Rempel wrote:
+> Update `lan78xx_set_features` to correctly return the result of
+> `lan78xx_write_reg`. This ensures that errors during register writes
+> are propagated to the caller.
 > 
-> > @@ -853,29 +850,24 @@ static void try_to_optimize_kprobe(struct kprobe *p)
-> >  		return;
-> >  
-> >  	/* For preparing optimization, jump_label_text_reserved() is called. */
-> > -	cpus_read_lock();
-> > -	jump_label_lock();
-> > -	mutex_lock(&text_mutex);
-> > +	guard(cpus_read_lock)();
-> > +	guard(jump_label_lock)();
-> > +	guard(mutex)(&text_mutex);
-> >  
-> 
-> > @@ -1294,62 +1280,55 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
-> >  	int ret = 0;
-> >  	struct kprobe *ap = orig_p;
-> >  
-> > -	cpus_read_lock();
-> > -
-> > -	/* For preparing optimization, jump_label_text_reserved() is called */
-> > -	jump_label_lock();
-> > -	mutex_lock(&text_mutex);
-> 
-> Why does kprobe need jump_label_lock and how does it then not also need
-> static_call_lock ?
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Good catch! It has not been updated for static_call_text_reserved().
-We need static_call_lock() here too.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Thanks!
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+    Andrew
 
