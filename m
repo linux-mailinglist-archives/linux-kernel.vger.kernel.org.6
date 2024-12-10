@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-438735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5299EA4EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:14:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7F8168F9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:14:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8D41D88CA;
-	Tue, 10 Dec 2024 02:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYvjhi37"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09C49EA4F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:14:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D371C305A;
-	Tue, 10 Dec 2024 02:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F41286855
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:14:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641971D89ED;
+	Tue, 10 Dec 2024 02:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="svUVIH94"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348BE1D89E3;
+	Tue, 10 Dec 2024 02:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796741; cv=none; b=J4lJRdLkd38q8DKLHzIwrtV29+zpKWaUinirQOT3kh/sSHJfZmEiqMWnNQ78cdgRrFK90NmzNxN/tk33010oJqSTOqBHrlJvjbvVnIEfNc9oxVU+sA09SAeVwfuOrin6h5TlTLZIQuChmyhtnkCRKJYM/isx+olU6qOB0ZSUDpE=
+	t=1733796744; cv=none; b=e1OBu1voKR6Zi0VqnXG2ToawoTzYNK9JfE3k4G/VQ+/ahkMa1CGvMyTRR2eQfyB/4rod3zYKWMtwW4DKscJoeUVSzEApl32yDx7FOgtFW+reGlwbqVvF+QY8+3Y/0MZnga7i+TRCO/yLzYR4PUSzI0u0eSUF7npskn6F3MXFezc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796741; c=relaxed/simple;
-	bh=wZEjksI48uEO6V4KtS7yN1QVU17ztXbJ6mD6JSkXebk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sqwe9sdZN9t6iW4HgWZNjamzn+O4yLB1RPfVt3Be3b1sZtJ1nyY8953NxZ478KNk6dCKnCuBqdPzRSM1W7KvlADG5jcq7ESFUzZYFRCouGxq2FX5Yx6zsVjfjYpitot5yWNKwYpqzV9+zFnz0TqvgHcEm2xYnncwhJvAXtlhHWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYvjhi37; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D2BC4CED1;
-	Tue, 10 Dec 2024 02:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733796740;
-	bh=wZEjksI48uEO6V4KtS7yN1QVU17ztXbJ6mD6JSkXebk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XYvjhi37zwMnmXiY3MlgnFfF2V2csiR3hbOV4u3u1GR05jlqLVPHwQypcfbBc/6tv
-	 whA+27A4lpJIDg+sM66X7oYCONK6wQ3mep+9RttN/OOEs/z0El3SJwOv1bz+zSkBdM
-	 lHPV+xeEPzNadEItjFZJxi99tHF6n12UijC04pOTeIF9suzsfPfa1g8MsekIcbrgwO
-	 9H2d9oXeBfbN+oPlOeGudXEjfK7p2lb5R744JEV3EM1KbPARnSMj0vDA/pyJukhFNa
-	 eyC4AYwX62/hSETNfFXbs9ky32ETVmgxBxPR4UTiKi/Qh27QVcZYN8U8vKIy6R7H3z
-	 eluqG6kOEbP/Q==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v21 16/20] selftests: ftrace: Remove obsolate maxactive syntax check
-Date: Tue, 10 Dec 2024 11:12:14 +0900
-Message-ID: <173379673463.973433.782737454522874207.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <173379652547.973433.2311391879173461183.stgit@devnote2>
-References: <173379652547.973433.2311391879173461183.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1733796744; c=relaxed/simple;
+	bh=3oe+kW+81rhk92Q8T6VuCdh3CFJRUA6sivllRxaKECs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4LziVOGkmbQZwwsIie/QkP/m89zw4mwLktLEE4QD5dtOnaY8Aa0I3AOUBnzHwxj/fpWLGDTbMDVA2bnQF9ARr7tW9ooQzjy6kjSv0ctUTSStTdOttWTntOZLqnpv2bQsQoQMo3vKSWb2Z/6iylQLkP35tkCFfE4idNGOWaJY6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=svUVIH94; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=LhNyKCoYf7g5GFa8lww0Ss6AXMB0IAjxmPxAijXGzEA=; b=svUVIH94NcD8UyyxRttKyhvyTw
+	u078WaANVygJT3dl1Ou1DvHZa+kPs8isMsce+uEB3PkV5mv5fAw+taUIz1AkdYGZVN8AHOi86DLbJ
+	a6Md6yscS5tgHFEh9TZXGU1zspmGdN5OehXOmzhHeRmnjK9iAok4PZ/EByo9nAkwwcYc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKpjV-00Fk9k-CB; Tue, 10 Dec 2024 03:12:17 +0100
+Date: Tue, 10 Dec 2024 03:12:17 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v1 10/11] net: usb: lan78xx: Rename
+ lan78xx_phy_wait_not_busy to lan78xx_mdiobus_wait_not_busy
+Message-ID: <9d9ebf3c-5cf1-4367-8a1b-0c286c9be44c@lunn.ch>
+References: <20241209130751.703182-1-o.rempel@pengutronix.de>
+ <20241209130751.703182-11-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209130751.703182-11-o.rempel@pengutronix.de>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Mon, Dec 09, 2024 at 02:07:50PM +0100, Oleksij Rempel wrote:
+> Rename `lan78xx_phy_wait_not_busy` to `lan78xx_mdiobus_wait_not_busy`
+> for clarity and accuracy, as the function operates on the MII bus rather
+> than a specific PHY. Update all references to reflect the new name.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Since the fprobe event does not support maxactive anymore, stop
-testing the maxactive syntax error checking.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
-index 61877d166451..c9425a34fae3 100644
---- a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
-@@ -16,9 +16,7 @@ aarch64)
-   REG=%r0 ;;
- esac
- 
--check_error 'f^100 vfs_read'		# MAXACT_NO_KPROBE
--check_error 'f^1a111 vfs_read'		# BAD_MAXACT
--check_error 'f^100000 vfs_read'		# MAXACT_TOO_BIG
-+check_error 'f^100 vfs_read'		# BAD_MAXACT
- 
- check_error 'f ^non_exist_func'		# BAD_PROBE_ADDR (enoent)
- check_error 'f ^vfs_read+10'		# BAD_PROBE_ADDR
-
+    Andrew
 
