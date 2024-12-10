@@ -1,180 +1,137 @@
-Return-Path: <linux-kernel+bounces-440503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6343E9EBF30
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:17:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812169EBF31
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:17:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC05A18894DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D61918892E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214AD1F1934;
-	Tue, 10 Dec 2024 23:16:57 +0000 (UTC)
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBA11F1937;
+	Tue, 10 Dec 2024 23:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbA3ybWN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE94E1EE7B6
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D371CF7B8;
+	Tue, 10 Dec 2024 23:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733872616; cv=none; b=Ab70qyXhdHIlI+GwHTqpxiEmD2ICL3+1LrjwCMxPqEMmbMry+tdZYED2BCwjsPgBDgKGa2tOkyjMbDM6ndk+p7oETWyJRMMnTzT1N3hb2gsrNY8Vq7QMqliIxeizktMfbTHpf2Wgp9Xsa1nXXge9G9Ag8fix7ZyQZndIBS1sAUg=
+	t=1733872632; cv=none; b=fAMMpnSbAjchoeTZAz1WzeD2l3lIGndtokrH3m9l4I6J1ok9MUn/IAlj7BZ/VwU9ggvSKFVSFHPc7Gn5MylkyXos+0wuo6iUGySmJ1q6RnOZvp9fV8z1oXmVYFB718QKBczdM1PPUkKCucA2S8IyM6zLPhktvei0nQSHzXS3y94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733872616; c=relaxed/simple;
-	bh=mdnCGIWXBGUzj1A2GisYnibKroCixl7/CirAUVwRZIM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LtyKM6YWtrTw+j/PtXeDgJpSzrVG4jVRO25TleUefHKPlX4tFooFXOoTpeu7TFMptRV5EqEUZfZaVoYZeSr2Ysbynx82BiEfA1NkUjLDPfE0ZwBCOi7wLgIMToqbtUV/c20OR5zl2p6Tz4JZZsoKBSf6bUeqJYVhbnyXWP3WWtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-4361a50e337so5587945e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:16:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733872613; x=1734477413;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:cc:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MUd+hg5ESgx0k9OrAj02wmea9+mPnDO7+O2wIkoXbws=;
-        b=vMMVGz6WGclgtKFi85QpvIJmmTsuIlEVw+/1SWTkIW+MtKe+R90Aj3vr7naN7nNsAk
-         PM/Be32MJxjL+PP06886jMX7AEgXAuaJ9iibZrbnru1Ka0dS8flNqvCgbLyeQ/fvIvJG
-         htg8sRHUsG/yRxLKI2aFCfg85+mizsppTgUfk22uQjN1b22VSClZ0twOcunSSMhYVVZ9
-         O11RaGdTmgRrzzAfxgt8ukbvAWJZARYRzSiqHTpAdeEVcUR4lHxyBJufytJmgTuSR4PL
-         svqnTih2gh8VZurmS8bU1PrMmSTXv11GgKFCMXEk1IaArOUBx3qQ7l271IgaXXILyv3i
-         nKGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWb4J1l5BMEhd049s7sXW45AuIXuGft8T3+6QIH85hrSEjhaTOzgrmIiOLjXj7ICsA4E9oBS3TPCfKTvFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYDdETb7EJbrUZ7Rewcahlrklw0hxMbcXFZAfLPkI9AvZ1KKP2
-	rGDiD2xkPf9iK1Rch7w2S2TkNtZtbWp6uTp1W5kv8UlPhSRUic/l
-X-Gm-Gg: ASbGnctkLt0/zlSfTjgKL9fTzdwAe4sZQwvlFuk/cGjL4eORauFprIPfGPOjPXAHVVT
-	h4WL4XgOntF9yWTJBUf0yApQ+bTecyDRZnZKM/Wh0xjWH7IZYN681MEnqeol6ts9iKcpp9pjEB8
-	FE2Wgz5l6sIN3XCQT1nfn3bgivJTsogmFV9btevmy+dew6VBgivdOuyawP3aeU3sBBzLU8Qtxzx
-	XrSxgYmQ3mpltSD0Dcz+6ICKbrvCmXPmNtsuSQrS55X3iHYvLJsm5oS36f6CN0fumKUkeinBp+Y
-	/DgNtgnwFQ==
-X-Google-Smtp-Source: AGHT+IGlqMZ2v2ynN5k+/u9A0gCsL2qzVATXypSkUwAbsz2m8daOxmtnirk+KMRbcaReFwtkcpGAUg==
-X-Received: by 2002:a05:600c:4f11:b0:430:563a:b20a with SMTP id 5b1f17b1804b1-4361c3aa6demr3892305e9.11.1733872612719;
-        Tue, 10 Dec 2024 15:16:52 -0800 (PST)
-Received: from [192.168.0.13] (ip-86-49-44-151.bb.vodafone.cz. [86.49.44.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361b6d6ea0sm12232935e9.16.2024.12.10.15.16.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 15:16:52 -0800 (PST)
-Message-ID: <0d64be76-7afe-416b-96f7-6ceb713c7ce0@ovn.org>
-Date: Wed, 11 Dec 2024 00:16:51 +0100
+	s=arc-20240116; t=1733872632; c=relaxed/simple;
+	bh=pvLgzqvT8heMfxqBWCzQLTJLGu/Nu+xIER9KJT1b1rs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rHrC/1HE1NVthq5isWTDQ9R8jg8wRKJSgSm7QmTqBgOCz+f5qXIhg00tX70xqFIcnLz0zamY46f5liyF8J8gTL+43Ig54ZlDFuGSRCfyhfP6juuSrs4zPfMqzhEdeQMc7WvKOsOW6qmIsnDMmEsYoi6bc20SVhRhecGfBKDfSpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbA3ybWN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18797C4CED6;
+	Tue, 10 Dec 2024 23:17:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733872631;
+	bh=pvLgzqvT8heMfxqBWCzQLTJLGu/Nu+xIER9KJT1b1rs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NbA3ybWNbtSc32RkGczm1Ssbsu5GtmZMY2/rB7BfoxWxMXhUTk+zB1uAempd/c4Lh
+	 ifqiy4pHzONqB5I8uMiZhjCjttHdmqujjjohGISGYuE3vBiurr5WCVxOKxzfwtW1K6
+	 xuKRaV0lH+bLVXyfpCHp9SWvGIdhp+50Covb1DiMo2GZhiMOjeOhT+VVGMdN9jbn/L
+	 DKgd1DYqJHsP/Ik8NR/XCq7oBIioaUOkE1K5OnT5ZscwSIwO2pwzB/jE5EYQI6P/oc
+	 zWGvKFaBHPcdRqKoQUhveClt/e5X0dk7TlrpzC6FtX5737nzhmpDQZTO4CFyV/q4NF
+	 0CLt+cTS4GspQ==
+Date: Wed, 11 Dec 2024 08:17:04 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov
+ <oleg@redhat.com>, Tzvetomir Stoyanov <tz.stoyanov@gmail.com>, Naveen N Rao
+ <naveen@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
+ <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
+Message-Id: <20241211081704.1bb59a96be45f6e9a3d9d45a@kernel.org>
+In-Reply-To: <20241210231241.88c0ed24004b2bda2985ad99@kernel.org>
+References: <173371205755.480397.7893311565254712194.stgit@devnote2>
+	<173371208663.480397.7535769878667655223.stgit@devnote2>
+	<20241209110411.GL21636@noisy.programming.kicks-ass.net>
+	<20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
+	<20241210111528.bb2c66d71fe38be92010264a@kernel.org>
+	<20241210121027.GM8562@noisy.programming.kicks-ass.net>
+	<20241210231241.88c0ed24004b2bda2985ad99@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: i.maximets@ovn.org, Peter Zijlstra <peterz@infradead.org>,
- Joel Fernandes <joel@joelfernandes.org>, LKML
- <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, vineethrp@google.com,
- shraash@google.com, marcel.ziswiler@codethink.co.uk
-Subject: Re: [v6.12] WARNING: at kernel/sched/deadline.c:1995
- enqueue_dl_entity (task blocked for more than 28262 seconds)
-To: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-References: <571b2045-320d-4ac2-95db-1423d0277613@ovn.org>
- <20241206151819.GA3949140@google.com>
- <CAO7JXPhdv+Jx_UpAq=-aG-BKwiyjZ2kvuZDM4+GLjbya_=ZJsw@mail.gmail.com>
- <20241209105514.GK21636@noisy.programming.kicks-ass.net>
- <CAO7JXPgSYCzu0mtnWqBaS8ihmoQXX3WE_Yb_rEYuMeQn+B6KJg@mail.gmail.com>
- <20241209125601.GQ35539@noisy.programming.kicks-ass.net>
- <8ff30c5d-b8ac-4825-874a-d73931b85014@ovn.org>
- <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
- <CAO7JXPjGFmfwAVcSaRhtM2Mf=V9P6oQm6H=QfHcFhtkLU8magQ@mail.gmail.com>
- <10db7c11-5578-4386-88ae-542ffcaac818@ovn.org>
-Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <10db7c11-5578-4386-88ae-542ffcaac818@ovn.org>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 12/10/24 10:28, Ilya Maximets wrote:
-> On 12/10/24 03:58, Vineeth Remanan Pillai wrote:
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index fbdca89c677f..1f4b76c1f032 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -1159,8 +1159,6 @@ static inline void update_curr_task(struct
->>> task_struct *p, s64 delta_exec)
->>>         trace_sched_stat_runtime(p, delta_exec);
->>>         account_group_exec_runtime(p, delta_exec);
->>>         cgroup_account_cputime(p, delta_exec);
->>> -       if (p->dl_server)
->>> -               dl_server_update(p->dl_server, delta_exec);
->>>  }
->>>
->>>  static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct
->>> sched_entity *curr)
->>> @@ -1210,6 +1208,11 @@ s64 update_curr_common(struct rq *rq)
->>>         return delta_exec;
->>>  }
->>>
->>> +static inline bool dl_server_active(struct dl_sched_entity *dl_se)
->> Sorry a small typo in here. it should be struct sched_dl_entity and
->> not dl_sched_entity. The line should be:
->>
->> "static inline bool dl_server_active(struct sched_dl_entity *dl_se)"
-> 
-> Sure.  I can try that.
+On Tue, 10 Dec 2024 23:12:41 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-Running with this for about 8 hours and so far so good.
-Will leave the test running for the night, just in case.
-
-Best regards, Ilya Maximets.
-
+> On Tue, 10 Dec 2024 13:10:27 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> Note:  I did indeed got lucky with the warning after 1 minute the
-> first time.  The second time I tried the system didn't show any
-> issues up until 6 hours into the test...
+> > 
+> > > Wait, this is for checking the jump_label_text_reserved(), but as far as
+> > > I know, the text reserved area of jump_label will be updated when the
+> > > module is loaded or removed. And the static call too, right?
+> > 
+> > Correct.
+> > 
+> > > In that case, what we need is to lock the modules (for the short term,
+> > > can we use rcu_read_lock?) for using both jump_label_text_reserved()
+> > > and static_call_text_reserved()?
+> > 
+> > Yes, rcu_read_lock() is sufficient to observe fully loaded modules. I
+> > don't think you care about placing kprobes on modules that are still
+> > loading (that doesn't really make sense).
 > 
-> Best regards, Ilya Maximets.
+> Actually, to probe module's __init function, it may put a probe during
+> loading modules (by trace_kprobe.c) which has been done by module
+> notification callback.
 > 
+> trace_kprobe_module_callback()
+>  -> register_module_trace_kprobe()
+>    -> __register_trace_kprobe()
+>       -> register_kprobe()
+>          -> check_kprobe_address_safe()
+> 
+> Anyway, unless we run the module notifier callbacks in parallel,
+> it should be safe.
 
+Hmm, this is still a problem. We need to acquire jump_label_lock()
+even for the jump_label_text_reserved().
+
+If user runs module load and register_kprobe() in parallel, 
+jump_label_module_notify() and check_kprobe_address_safe() may run
+in parallel.
+
+jump_label_module_notify()
+  -> jump_label_add_module()
+     -> jump_label_sort_entries() <- update mod->jump_entries
+
+check_kprobe_address_safe()
+  -> jump_label_text_reserved()
+      -> __jump_label_mod_text_reserved() <- read mod->jump_entries
+
+So there is a race on mod->jump_entries. jump_label_lock() avoids
+this race.
+(IIRC, module can get the reference in the MODULE_STATE_COMING state.)
+
+On the other hand, static_call_text_reserved() does not need a lock
+because it does not sort the list, nor update the static_call_site::addr.
+
+In conclusion, we need jump_label_lock() as it is, and don't need
+static_call_lock().
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
