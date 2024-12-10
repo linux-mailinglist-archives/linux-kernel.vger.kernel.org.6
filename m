@@ -1,305 +1,144 @@
-Return-Path: <linux-kernel+bounces-439159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009C09EAB9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:14:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B3B9EABAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:15:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41CDA28A05F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2B7B18895A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7043D232780;
-	Tue, 10 Dec 2024 09:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FB5231C96;
+	Tue, 10 Dec 2024 09:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U3ZZiiLr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AFYWvYOJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D83185920;
-	Tue, 10 Dec 2024 09:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4884133985
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733822035; cv=none; b=XPnhBIdN6Tr8tPQPPky+2qlBLb94rGF6pyEBtQJuJSruwPgaKVAdXzmxOewlPKlshfTvau2PxX5shEuW4qFXcIyFkpyNBfwrPqG+nfVe/83liOma7ttawYaUq8kHU1lrJmP6OEi+U2ry42SEC8HlSD4iWAEz9HkOfd6uFUoB8Gc=
+	t=1733822100; cv=none; b=BTqO+AzvdCnCq6Idx5anPxKJr4S5OOIA3sk0uQkCbmrnrqExoGbFoqePP5dQZ5vb5n/l5aCQM5ZyLrrWtFIu8Y7e7WIXZremb4PHPRs8tvmmoNFQ8RqOk6b/PPsuKTZ1fGKX+dP7FgfW4ErqZi49S2JXo/ei1kBxp+AR66yY2CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733822035; c=relaxed/simple;
-	bh=gQ4CqlYS+gkoJ+LdGGIYbf4Po/NhbslmVGgbgvSM9fM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BSOL4dlLGywcD4GiWIDnJTTiultmKu0BUdjHoPGz8cSyalhIMfpkVjVB+cWOaQ3i+zWBV3sqkId1YiYZKR3BExO5ylZS+rl9JJSHybLZ6NqjtO33bqUswbHCoZlWfeXaISKRntsux8VMI9mLX6hvQtCQqiglPjKTVqcNok4lqs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U3ZZiiLr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA87Tt5012016;
-	Tue, 10 Dec 2024 09:13:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	srQZWeMlx+pakwxWjuiOgz/E3BSN2yj3M1WFaurbpwU=; b=U3ZZiiLrX6dXd5P+
-	9aJ/Yi4+e1nXDiTcSo+a2EGg900t1bYjGxEVQfnnDMZtxShfIXZSuyJD5jkikHoB
-	jE7/TgvV+UOR6mljDK2uW8lhqqDRDmdSAgtTZfO1lTuKKWqIpHE/AkG8TnGchi7Y
-	c4B4ap021yLmXEryvW1pNV0QEFi5u7+uyOseABdnfZBmxU/ymCprpXC/HhwU/N4o
-	jyp3MBvoolHq2eS5iuTkvndd84IoDoBfViATjL/DpyFL6pNDt3PgIUhsH2o23Vpw
-	ZAEWBvIwGmgzxW00rNmfFVQRaRzixMdq9HidwksEOy0bcWtgsV69J671Zn0N9bRU
-	gq1VVQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdxxfre7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 09:13:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA9Db4e025176
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 09:13:37 GMT
-Received: from [10.216.3.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
- 2024 01:13:32 -0800
-Message-ID: <eb467542-af20-4327-b4ea-c7eba56431ab@quicinc.com>
-Date: Tue, 10 Dec 2024 14:43:29 +0530
+	s=arc-20240116; t=1733822100; c=relaxed/simple;
+	bh=DQqporSEqBDBt0Hma4gLo8sMC5I4P9TbjCaeUkHG2TI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bxDvZhasma+Z0s4SuqWX+aArxjeYrHTJwT2eNlG3SMKXznbB4IaKhwtHDoCvOh3gFryb1eIX8FDxB1oTs8KF3YZ5s1kNR/+SFu1u3QpbjkGPGcaECCaaoGxEg2ach4CRlsCuYWtd0dodSm54jLxIKCiPd9UpHJQk5vtpF7qTfCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AFYWvYOJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733822098; x=1765358098;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DQqporSEqBDBt0Hma4gLo8sMC5I4P9TbjCaeUkHG2TI=;
+  b=AFYWvYOJgXUOxWT2E8faGpp7klQUkaIEzpMPHapqrQq85tO0VhROE9tD
+   zJNkDR29GGq+gAxjXvoWj9MpsE/PfV4G7KJv9UmWTK8X9N8b/U3fYGYou
+   QSGmQShp7pD2PcETbTI7NFz6Tx2eWaqwGhUeWuWotdst9CuY1WuqmdVTJ
+   Eq7szHcNrItG1Q2PYdq9LO3I+8D8Mn+Ib2wMpPuP337khFCmsiAebHuZ1
+   73QiSogKwqcte6zm1DweabJnr5JXLrltsDkSw3pEIyxA8QKmDlZ/fwMdj
+   RB1LyvoMfAsC0P7IXZXg9oMLl+o0emQY8vIhPJbdO6sWx0Awz1KBYYo1E
+   w==;
+X-CSE-ConnectionGUID: RM/+EY96SvyUP4aRN1U/lg==
+X-CSE-MsgGUID: 0q8+xdLtRzOW3N9VucJRMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="33485986"
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="33485986"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 01:14:58 -0800
+X-CSE-ConnectionGUID: yo6dw5mIRSqB5Mki7BX/sg==
+X-CSE-MsgGUID: YJilgC3+Ra6nGKdk9pIMzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="95410031"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 10 Dec 2024 01:14:56 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKwKT-0005JT-1z;
+	Tue, 10 Dec 2024 09:14:53 +0000
+Date: Tue, 10 Dec 2024 17:14:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Arinzon <darinzon@amazon.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Shay Agroskin <shayagr@amazon.com>
+Subject: drivers/net/ethernet/amazon/ena/ena_netdev.c:77 ena_tx_timeout()
+ warn: inconsistent indenting
+Message-ID: <202412101739.umNl7yYu-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-To: Rob Clark <robdclark@gmail.com>, <devicetree@vger.kernel.org>
-CC: Pavan Kondeti <quic_pkondeti@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Elliot Berman
-	<quic_eberman@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
- <CAF6AEGtKfWOGpd1gMfJ96BjCqwERZzBVmj5GzmjKxw8_vmSrJg@mail.gmail.com>
- <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com>
- <CAF6AEGvBU8mB5HHNK4nP5h9ouKfLNhCMFgF+PhrC77ZMfSOTkQ@mail.gmail.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <CAF6AEGvBU8mB5HHNK4nP5h9ouKfLNhCMFgF+PhrC77ZMfSOTkQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: G2x57hF0pEkvWqm6_9ajq9VNxgD2j6Wr
-X-Proofpoint-GUID: G2x57hF0pEkvWqm6_9ajq9VNxgD2j6Wr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- phishscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
- malwarescore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 12/10/2024 3:26 AM, Rob Clark wrote:
-> On Mon, Dec 9, 2024 at 12:52 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>
->> On 12/10/2024 1:24 AM, Rob Clark wrote:
->>> On Mon, Dec 9, 2024 at 12:20 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>>>
->>>> When kernel is booted in EL2, SECVID registers are accessible to the
->>>> KMD. So we can use that to switch GPU's secure mode to avoid dependency
->>>> on Zap firmware. Also, we can't load a secure firmware without a
->>>> hypervisor that supports it.
->>>
->>> Shouldn't we do this based on whether zap node is in dtb (and not disabled)?
->>
->> This is better, isn't it? Otherwise, multiple overlays should be
->> maintained for each soc/board since EL2 can be toggled from bootloader.
->> And this feature is likely going to be more widely available.
-> 
-> I guess the first question is what the dt should look like.  I think
-> it makes sense to not have a zap node when booting in EL2 (or at least
-> disabling it) because that describes the hw+fw situation.  And in any
-> case, so far it seems like we often need unrelated changes[1].  But
-> maybe others have differing opinions.
-> 
-> And depending on how much cooperation we get from the bootloader, it
-> could be that our hand is forced.  I figured I should at least point
-> out how we currently handle this.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7cb1b466315004af98f6ba6c2546bb713ca3c237
+commit: 071271f39ce833a3534d1fbd47174d1bed6d9326 net: ena: Add more information on TX timeouts
+date:   10 months ago
+config: arm-randconfig-r073-20241209 (https://download.01.org/0day-ci/archive/20241210/202412101739.umNl7yYu-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
 
-At the moment, the bootloader we use on sa8775p doesn't have overlay
-support. So I felt we could free GPU from that requirement and get it
-enabled independently. At least to get the basic things working *out of
-the box*. We have Display, GPU and Guest VM working with no extra changes.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412101739.umNl7yYu-lkp@intel.com/
 
-> 
-> A further point, I suppose it is in theory possible that a device
-> could have no secure playback support, despite booting in EL1?  So
-> tying this to EL2 seems a bit contrived.
-> 
+smatch warnings:
+drivers/net/ethernet/amazon/ena/ena_netdev.c:77 ena_tx_timeout() warn: inconsistent indenting
 
-That is correct. But not sure how widely that configuration would be
-used practically. OTOH, Kernel running at EL2 in qcom chipsets is going
-to be more wider in usage. This is showing up as a common requirement
-for non-handset chipsets, especially IoT. So a special case here in our
-driver doesn't seem bad to me. Let software work out of the box, instead
-of "disable GPU by default". ;)
+vim +77 drivers/net/ethernet/amazon/ena/ena_netdev.c
 
--Akhil.
+    47	
+    48	static void ena_tx_timeout(struct net_device *dev, unsigned int txqueue)
+    49	{
+    50		enum ena_regs_reset_reason_types reset_reason = ENA_REGS_RESET_OS_NETDEV_WD;
+    51		struct ena_adapter *adapter = netdev_priv(dev);
+    52		unsigned int time_since_last_napi, threshold;
+    53		struct ena_ring *tx_ring;
+    54		int napi_scheduled;
+    55	
+    56		if (txqueue >= adapter->num_io_queues) {
+    57			netdev_err(dev, "TX timeout on invalid queue %u\n", txqueue);
+    58			goto schedule_reset;
+    59		}
+    60	
+    61		threshold = jiffies_to_usecs(dev->watchdog_timeo);
+    62		tx_ring = &adapter->tx_ring[txqueue];
+    63	
+    64		time_since_last_napi = jiffies_to_usecs(jiffies - tx_ring->tx_stats.last_napi_jiffies);
+    65		napi_scheduled = !!(tx_ring->napi->state & NAPIF_STATE_SCHED);
+    66	
+    67		netdev_err(dev,
+    68			   "TX q %d is paused for too long (threshold %u). Time since last napi %u usec. napi scheduled: %d\n",
+    69			   txqueue,
+    70			   threshold,
+    71			   time_since_last_napi,
+    72			   napi_scheduled);
+    73	
+    74		if (threshold < time_since_last_napi && napi_scheduled) {
+    75			netdev_err(dev,
+    76				   "napi handler hasn't been called for a long time but is scheduled\n");
+  > 77				   reset_reason = ENA_REGS_RESET_SUSPECTED_POLL_STARVATION;
+    78		}
+    79	schedule_reset:
+    80		/* Change the state of the device to trigger reset
+    81		 * Check that we are not in the middle or a trigger already
+    82		 */
+    83		if (test_and_set_bit(ENA_FLAG_TRIGGER_RESET, &adapter->flags))
+    84			return;
+    85	
+    86		ena_reset_device(adapter, reset_reason);
+    87		ena_increase_stat(&adapter->dev_stats.tx_timeout, 1, &adapter->syncp);
+    88	}
+    89	
 
-> BR,
-> -R
-> 
-> [1] https://github.com/TravMurav/slbounce/blob/main/dtbo/x1e-el2.dtso
-> 
->> -Akhil.
->>
->>>
->>> slbounce applies some dtb overlays to disable the zap node when
->>> booting in EL2 (and make some other changes due to kernel being in
->>> control of the pci smmuv3, or something along those lines).
->>>
->>> BR,
->>> -R
->>>
->>>>
->>>> Tested following configurations on sa8775p chipset (Adreno 663 gpu):
->>>>
->>>> 1. Gunyah (No KVM) - Loads zap shader based on DT
->>>> 2. KVM in VHE - Skips zap shader load and programs SECVID register
->>>> 3. KVM in nVHE - Loads zap shader based on DT
->>>> 4. Kernel in EL2 with CONFIG_KVM=n - Skips zap shader load and
->>>>         programs SECVID register
->>>>
->>>> For (1) and (3) configuration, this patch doesn't have any impact.
->>>> Driver loads secure firmware based on other existing hints.
->>>>
->>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>> ---
->>>> ---
->>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 82 +++++++++++++++++++++++------------
->>>>  1 file changed, 54 insertions(+), 28 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> index 019610341df1..9dcaa8472430 100644
->>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> @@ -14,6 +14,10 @@
->>>>  #include <linux/pm_domain.h>
->>>>  #include <linux/soc/qcom/llcc-qcom.h>
->>>>
->>>> +#ifdef CONFIG_ARM64
->>>> +#include <asm/virt.h>
->>>> +#endif
->>>> +
->>>>  #define GPU_PAS_ID 13
->>>>
->>>>  static inline bool _a6xx_check_idle(struct msm_gpu *gpu)
->>>> @@ -998,6 +1002,54 @@ static int a6xx_zap_shader_init(struct msm_gpu *gpu)
->>>>         return ret;
->>>>  }
->>>>
->>>> +static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
->>>> +{
->>>> +       int ret;
->>>> +
->>>> +#ifdef CONFIG_ARM64
->>>> +       /*
->>>> +        * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
->>>> +        * to switch the secure mode to avoid the dependency on zap shader.
->>>> +        */
->>>> +       if (is_kernel_in_hyp_mode())
->>>> +               goto direct_switch;
->>>> +#endif
->>>> +
->>>> +       /*
->>>> +        * Try to load a zap shader into the secure world. If successful
->>>> +        * we can use the CP to switch out of secure mode. If not then we
->>>> +        * have no resource but to try to switch ourselves out manually. If we
->>>> +        * guessed wrong then access to the RBBM_SECVID_TRUST_CNTL register will
->>>> +        * be blocked and a permissions violation will soon follow.
->>>> +        */
->>>> +       ret = a6xx_zap_shader_init(gpu);
->>>> +       if (ret == -ENODEV) {
->>>> +               /*
->>>> +                * This device does not use zap shader (but print a warning
->>>> +                * just in case someone got their dt wrong.. hopefully they
->>>> +                * have a debug UART to realize the error of their ways...
->>>> +                * if you mess this up you are about to crash horribly)
->>>> +                */
->>>> +               dev_warn_once(gpu->dev->dev,
->>>> +                       "Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
->>>> +               goto direct_switch;
->>>> +       } else if (ret)
->>>> +               return ret;
->>>> +
->>>> +       OUT_PKT7(gpu->rb[0], CP_SET_SECURE_MODE, 1);
->>>> +       OUT_RING(gpu->rb[0], 0x00000000);
->>>> +
->>>> +       a6xx_flush(gpu, gpu->rb[0]);
->>>> +       if (!a6xx_idle(gpu, gpu->rb[0]))
->>>> +               return -EINVAL;
->>>> +
->>>> +       return 0;
->>>> +
->>>> +direct_switch:
->>>> +       gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
->>>> +       return 0;
->>>> +}
->>>> +
->>>>  #define A6XX_INT_MASK (A6XX_RBBM_INT_0_MASK_CP_AHB_ERROR | \
->>>>                        A6XX_RBBM_INT_0_MASK_RBBM_ATB_ASYNCFIFO_OVERFLOW | \
->>>>                        A6XX_RBBM_INT_0_MASK_CP_HW_ERROR | \
->>>> @@ -1341,35 +1393,9 @@ static int hw_init(struct msm_gpu *gpu)
->>>>         if (ret)
->>>>                 goto out;
->>>>
->>>> -       /*
->>>> -        * Try to load a zap shader into the secure world. If successful
->>>> -        * we can use the CP to switch out of secure mode. If not then we
->>>> -        * have no resource but to try to switch ourselves out manually. If we
->>>> -        * guessed wrong then access to the RBBM_SECVID_TRUST_CNTL register will
->>>> -        * be blocked and a permissions violation will soon follow.
->>>> -        */
->>>> -       ret = a6xx_zap_shader_init(gpu);
->>>> -       if (!ret) {
->>>> -               OUT_PKT7(gpu->rb[0], CP_SET_SECURE_MODE, 1);
->>>> -               OUT_RING(gpu->rb[0], 0x00000000);
->>>> -
->>>> -               a6xx_flush(gpu, gpu->rb[0]);
->>>> -               if (!a6xx_idle(gpu, gpu->rb[0]))
->>>> -                       return -EINVAL;
->>>> -       } else if (ret == -ENODEV) {
->>>> -               /*
->>>> -                * This device does not use zap shader (but print a warning
->>>> -                * just in case someone got their dt wrong.. hopefully they
->>>> -                * have a debug UART to realize the error of their ways...
->>>> -                * if you mess this up you are about to crash horribly)
->>>> -                */
->>>> -               dev_warn_once(gpu->dev->dev,
->>>> -                       "Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
->>>> -               gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
->>>> -               ret = 0;
->>>> -       } else {
->>>> +       ret = a6xx_switch_secure_mode(gpu);
->>>> +       if (!ret)
->>>>                 return ret;
->>>> -       }
->>>>
->>>>  out:
->>>>         if (adreno_has_gmu_wrapper(adreno_gpu))
->>>>
->>>> ---
->>>> base-commit: f4a867a46862c1743501bbe8c813238456ec8699
->>>> change-id: 20241120-drm-msm-kvm-support-cd6e6744ced6
->>>>
->>>> Best regards,
->>>> --
->>>> Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>>
->>
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
