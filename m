@@ -1,191 +1,286 @@
-Return-Path: <linux-kernel+bounces-439321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E579EADA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:10:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A329EADA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D50E1883786
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:10:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6021883777
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2285E23DEAC;
-	Tue, 10 Dec 2024 10:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB5623DEA6;
+	Tue, 10 Dec 2024 10:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UomKj/Oh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="NP0seO6Z"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89CE23DE8B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0635623DE8B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825440; cv=none; b=kKFiNtTy60Uo0gR9kENKDrvL1I9Aj8n/YcjLTUQ3107ymThJZj4pAEUpd1cmdungXN1JPIDU663rYUlqqsxFCtPe8lSOR0QzaW5CbZ3WWvgkJFAcNw6p51eqvk6Y2lOWxWRNG+dm27ZNhV+QhbEFd+jqOufsL0VsP09cqo2oU98=
+	t=1733825486; cv=none; b=eW7WjfYdTl+n515xSKFKYLVObqI96m/LAiBl29VA+1ELzF702Y6eqAFoY2sAL4uVxWjQad5TXgIxMmOs4w1xI7+ok3kFO2RuVgOzRzmwSbwxJRMdCU0FYRnHPX7VcIdSfqt38nTLPOY/spjHwoIJLA775xNtzF/hmEia3IpQ7d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825440; c=relaxed/simple;
-	bh=HFMbe08H1k1y0mqVM0u4b8h/zU/qVcRKr7WB9uytT8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5TY8odZ09biqUmf7UQlvMGM00KMzTiWuuvrh2iW3rZA85sQOxApxF1qdUYMyinK8IkBaO5cMQz3VhB9RkjabQPozsqklhbpk6Otr1g6sPuPRrXVWKGnNJDSB7KSoY+nbQPyEq5kdFF9tkniTsiQSpqYMGd9ZNvIhSX7hn6VEJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UomKj/Oh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733825436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WHKaqHT8TmPKp+vfFyKZV4r9sjaGCxpUSBkDEyH4Mpw=;
-	b=UomKj/Oh2j7xLqZFEUIC20ADp38z7b0nIv+JJuIkM2nH/o2500COwXfMY0SiZjPARcVDJ2
-	vwZtaLsMhUuOQUbgp5+8PhGAkrloM3fXOiPgS3GKtlRMn5oOPWrhxPI3DMCIov8APt8PIN
-	1S3gPMwGIpzs5fDZoCUpDUJYfAeDgso=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-4SG8OQ_FOKiM-Fk5uxTknQ-1; Tue, 10 Dec 2024 05:10:35 -0500
-X-MC-Unique: 4SG8OQ_FOKiM-Fk5uxTknQ-1
-X-Mimecast-MFC-AGG-ID: 4SG8OQ_FOKiM-Fk5uxTknQ
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-434f387f346so17090035e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:10:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733825434; x=1734430234;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WHKaqHT8TmPKp+vfFyKZV4r9sjaGCxpUSBkDEyH4Mpw=;
-        b=Qls5lgqAJTiA+Y5I0NI1lbyZV7Mu5KAzS97G/xG8HhqjTrV2B3AV21sXoNdKGTgjjS
-         KnxnjomnaY9EuxA+m+H8tnU05df9HXq/nAcrSK/wJHBfz838MfVeWSQxFnO8VcvtInF9
-         DvVyS0daCqeKQnPLjF8UAsfHGiNLTbgSsj+c1IA42xHlBHa/ffAoNQo2QGfbi7JO8K/9
-         DJAjmp0p5lvTEnV/E6qOQEhGsdHsQ/Dxn0neVgtaJce7RSG4JsI6uqes0k8HstUmTY6l
-         ReJ/ZXCXFCNrTKFsO3ApW14FvYVGa9J9kILdeyrGO8AAGYSjnSFrg7YMqjX0up+4F0iW
-         gV9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVFIsGbguPzR9k4xGsABVQF5ilbgsqyok6IDCcfwA+Urzztr75aZfWpWHyWQc45jyYGYdhQIsurGKuUEug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjAIVNs2cMEWk2nqxA+/MQeermaKGBJjzs80s6oTI03y/WuwHX
-	0MHYfOrAu9I/PFkDC2LS37jBf1gXD5WT1OalVn7sdjaUD+JPzgPbMD/Npqe2GDRjwUF0ZUJ6oTK
-	j3QuWn8ajfRwQjhC/qfNHad9kysmCDaIN2A+o79OFpyvOz8Am04LltAn2y7l97w==
-X-Gm-Gg: ASbGncvPP9w0mGonN3lfSAp88MWPBm8O09++k413+6CuKgtwujEOJBHR+3Nw+CSLCMb
-	WGMiNZbac0er7KtshUdddyZYe3cBWj+q6HmOB9GiKKUM/QfO06t4F3x70MIKMaYPyGPUdeCisWs
-	FbYdQ0XIpTLeeheH2amtTzHGGtvX1i6byOiyerj3mDqH9ZKg/5Ni8cqn4+JeFnkDW3/7blcCYW6
-	HBfQR0zwbI4qXgFBORNFJpH1ZtRg4N/KzAnalg6NTrDqyrNQf3vVbQzvS2wq5zrCHlnjYxgllPJ
-	PNKqzcjGOKqDj0b6+XroPB2ei4bsOUkpcE+z4sIdlvnV84iEQTiK/xDBdIQeUHzpAMP28WsBztv
-	PKlxO/g==
-X-Received: by 2002:a5d:5f8e:0:b0:386:3803:bbd8 with SMTP id ffacd0b85a97d-3863803bdc1mr8557220f8f.59.1733825434213;
-        Tue, 10 Dec 2024 02:10:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH+VnuFpTTDtc9IBkNAkw6YO/9HOkWYUVF564g0JrmQz1f6HgbOaLN8ZjLolBzYrdtJsxAHDQ==
-X-Received: by 2002:a5d:5f8e:0:b0:386:3803:bbd8 with SMTP id ffacd0b85a97d-3863803bdc1mr8557197f8f.59.1733825433837;
-        Tue, 10 Dec 2024 02:10:33 -0800 (PST)
-Received: from ?IPV6:2003:cb:c723:b800:9a60:4b46:49f9:87f3? (p200300cbc723b8009a604b4649f987f3.dip0.t-ipconnect.de. [2003:cb:c723:b800:9a60:4b46:49f9:87f3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0d26b0sm190812545e9.9.2024.12.10.02.10.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 02:10:32 -0800 (PST)
-Message-ID: <69d2c332-04f1-43df-950f-931f20ad725e@redhat.com>
-Date: Tue, 10 Dec 2024 11:10:31 +0100
+	s=arc-20240116; t=1733825486; c=relaxed/simple;
+	bh=Is04EpUqny47P+McpfOwBkWYp5nx/FFC8BY4uWj8p4E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rLm0jvskFge46hk8y4a92jVF8qig8sZD9dy3vGop3Fe2irzfc5KCYLeWv2Hcc1plV5PibWjHgvTVI3HSDZ3KKCqXpZn2Ca17cdshqgax43exYOcwv79EdK/0KMHgEYx5sSbuwaWsYmS+/1VUkR8mlpgFJTwb4Bip8uJXVqnqQLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=NP0seO6Z; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/page_alloc: don't call pfn_to_page() on possibly
- non-existent PFN in split_large_buddy()
-To: Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
- Yu Zhao <yuzhao@google.com>, stable@vger.kernel.org
-References: <20241210093437.174413-1-david@redhat.com>
- <c06e7552-bcce-49b9-8d77-72de48014a56@suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <c06e7552-bcce-49b9-8d77-72de48014a56@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1733825479;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=purajMjFhhk8y5/cpEF3Tr9X2g/M0StBEyNcpYreAGQ=;
+	b=NP0seO6ZkdS2m743DvP2W4u6umphTKJ3vID18ZeBxSHPY0Yo3J+7mkFKSH269V5fr3hvZm
+	T74G377FYPbEDDgtfloYV/kw0OgMQ4wg5UvqGE2V4MaK5sHQZUXBOyaULdn1jfyo/puj2c
+	8Xvj6JMIPwRply5w+fCIm6ZhRmwKpYxZ1e8npoBeJ5zXiEL4V9tkjU1oMrM1zMlh3TcH9x
+	L3BssV0fnPQ8De/3uBS8KENaNxj73YxspCuc3EcZZyUcqlvizwXohOgG10PCmcmoPVZ+q+
+	/0SJNDbGqwoS6ulAFy7hF/4UPKWXILs8u7EVdclE8QdaYJ82hC7QXLG+Ga0hgQ==
+Content-Type: multipart/signed;
+ boundary=f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Tue, 10 Dec 2024 11:11:09 +0100
+Message-Id: <D67XU0SO4U6D.2GTDZE4V7RK0J@cknow.org>
+Cc: <kernel@collabora.com>, <linux-kernel@vger.kernel.org>,
+ <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <dmitry.osipenko@collabora.com>,
+ "Sebastian Reichel" <sebastian.reichel@collabora.com>, "AngeloGioacchino
+ Del Regno" <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v5 2/4] dt-bindings: media: Document bindings for HDMI
+ RX Controller
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Shreeya Patel" <shreeya.patel@collabora.com>, <heiko@sntech.de>,
+ <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+ <p.zabel@pengutronix.de>, <jose.abreu@synopsys.com>,
+ <nelson.costa@synopsys.com>, <shawn.wen@rock-chips.com>,
+ <nicolas.dufresne@collabora.com>, <hverkuil@xs4all.nl>,
+ <hverkuil-cisco@xs4all.nl>
+References: <20241209200120.3228643-1-shreeya.patel@collabora.com>
+ <01020193ad040150-e0cf3371-115b-469e-840e-4fa97af5b207-000000@eu-west-1.amazonses.com>
+In-Reply-To: <01020193ad040150-e0cf3371-115b-469e-840e-4fa97af5b207-000000@eu-west-1.amazonses.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 10.12.24 10:48, Vlastimil Babka wrote:
-> On 12/10/24 10:34, David Hildenbrand wrote:
->> In split_large_buddy(), we might call pfn_to_page() on a PFN that might
->> not exist. In corner cases, such as when freeing the highest pageblock in
->> the last memory section, this could result with CONFIG_SPARSEMEM &&
->> !CONFIG_SPARSEMEM_EXTREME in __pfn_to_section() returning NULL and
->> and __section_mem_map_addr() dereferencing that NULL pointer.
->>
->> Let's fix it, and avoid doing a pfn_to_page() call for the first
->> iteration, where we already have the page.
->>
->> So far this was found by code inspection, but let's just CC stable as
->> the fix is easy.
->>
->> Fixes: fd919a85cd55 ("mm: page_isolation: prepare for hygienic freelists")
->> Reported-by: Vlastimil Babka <vbabka@suse.cz>
->> Closes: https://lkml.kernel.org/r/e1a898ba-a717-4d20-9144-29df1a6c8813@suse.cz
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Johannes Weiner <hannes@cmpxchg.org>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Yu Zhao <yuzhao@google.com>
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+--f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-BTW, staring at nr_isolate_pageblock accounting, I just stumbled over 
-prep_move_freepages_block(), and I am not sure about the 
-zone_spans_pfn() checks in there.
+Hi,
 
-With overlapping zones, these are not reliably, which makes me believe 
-that maybe these checks are not required at all. Or that there is a bug. 
-Or that there is some implication that these checks are only required on 
-systems without overlapping zones :)
+On Mon Dec 9, 2024 at 9:02 PM CET, Shreeya Patel wrote:
+> Document bindings for the Synopsys DesignWare HDMI RX Controller.
+>
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> ---
+>
+> Changes in v5 :-
+> - Correct the interrupt IRQ number
+>
+> Changes in v4 :-
+> - No change
+>
+> Changes in v3 :-
+> - Rename hdmirx_cma to hdmi_receiver_cma
+> - Add a Reviewed-by tag
+>
+> Changes in v2 :-
+> - Add a description for the hardware
+> - Rename resets, vo1 grf and HPD properties
+> - Add a proper description for grf and vo1-grf phandles
+> - Rename the HDMI Input node name to hdmi-receiver
+> - Improve the subject line
+> - Include gpio header file in example to fix dt_binding_check failure
+>
+>  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-=
+rx.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml=
+ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> new file mode 100644
+> index 000000000000..510e94e9ca3a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> @@ -0,0 +1,132 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
+> +
+> +---
+> +$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Synopsys DesignWare HDMI RX Controller
+> +
+> +maintainers:
+> +  - Shreeya Patel <shreeya.patel@collabora.com>
+> +
+> +description:
+> +  Synopsys DesignWare HDMI Input Controller preset on RK3588 SoCs
 
--- 
+s/preset/present/ ?
+
+> +  allowing devices to receive and decode high-resolution video streams
+> +  from external sources like media players, cameras, laptops, etc.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: rockchip,rk3588-hdmirx-ctrler
+> +      - const: snps,dw-hdmi-rx
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: cec
+> +      - const: hdmi
+> +      - const: dma
+> +
+> +  clocks:
+> +    maxItems: 7
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aclk
+> +      - const: audio
+> +      - const: cr_para
+> +      - const: pclk
+> +      - const: ref
+> +      - const: hclk_s_hdmirx
+> +      - const: hclk_vo1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 4
+> +
+> +  reset-names:
+> +    items:
+> +      - const: axi
+> +      - const: apb
+> +      - const: ref
+> +      - const: biu
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +
+> +  hpd-gpios:
+> +    description: GPIO specifier for HPD.
+> +    maxItems: 1
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle of the syscon node for the general register file
+> +      containing HDMIRX PHY status bits.
+> +
+> +  rockchip,vo1-grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle of the syscon node for the Video Output GRF register
+> +      to enable EDID transfer through SDAIN and SCLIN.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - resets
+> +  - pinctrl-0
+> +  - hpd-gpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/power/rk3588-power.h>
+> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+> +    hdmi_receiver: hdmi-receiver@fdee0000 {
+> +      compatible =3D "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdmi-rx";
+> +      reg =3D <0xfdee0000 0x6000>;
+> +      interrupts =3D <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                   <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                   <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
+> +      interrupt-names =3D "cec", "hdmi", "dma";
+> +      clocks =3D <&cru ACLK_HDMIRX>,
+> +               <&cru CLK_HDMIRX_AUD>,
+> +               <&cru CLK_CR_PARA>,
+> +               <&cru PCLK_HDMIRX>,
+> +               <&cru CLK_HDMIRX_REF>,
+> +               <&cru PCLK_S_HDMIRX>,
+> +               <&cru HCLK_VO1>;
+> +      clock-names =3D "aclk",
+> +                    "audio",
+> +                    "cr_para",
+> +                    "pclk",
+> +                    "ref",
+> +                    "hclk_s_hdmirx",
+> +                    "hclk_vo1";
+> +      power-domains =3D <&power RK3588_PD_VO1>;
+> +      resets =3D <&cru SRST_A_HDMIRX>, <&cru SRST_P_HDMIRX>,
+> +               <&cru SRST_HDMIRX_REF>, <&cru SRST_A_HDMIRX_BIU>;
+> +      reset-names =3D "axi", "apb", "ref", "biu";
+> +      memory-region =3D <&hdmi_receiver_cma>;
+> +      pinctrl-0 =3D <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdm=
+im1_rx_sda &hdmirx_5v_detection>;
+> +      pinctrl-names =3D "default";
+> +      hpd-gpios =3D <&gpio1 22 GPIO_ACTIVE_LOW>;
+
+I just found out it isn't documented in the DTS coding style and that
+the binding is technically not specifically for a Rockchip based
+component, but there is a convention to sort the node properties
+alpha-numerically by property name, with some exceptions.
+
+So would it be useful to apply that convention to the example?
+And possibly to the list of required properties as well?
+
 Cheers,
+  Diederik
 
-David / dhildenb
+> +    };
 
+
+--f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ1gTwQAKCRDXblvOeH7b
+bsFZAP9ah94RpYjb318hSsjAUcVveSXQNnXUQZtSOiciapqPPwD9HrzGbq5DsPOY
+Dbp0/AwZTuRb8GPhxezjlT57mTULfAc=
+=kg+g
+-----END PGP SIGNATURE-----
+
+--f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1--
 
