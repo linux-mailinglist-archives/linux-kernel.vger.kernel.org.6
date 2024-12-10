@@ -1,267 +1,244 @@
-Return-Path: <linux-kernel+bounces-440104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC039EB8D7
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DAE9EB8D6
 	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:55:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E8C188138F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA797283415
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F9D1DE2B4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF030204692;
 	Tue, 10 Dec 2024 17:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="odh4QGOX"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o6YvVuuw"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A161B4220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA0A1C5CAE
 	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853341; cv=none; b=T+p84TcnKV/Ucopn2dO5MCu9FtT3Pj4V7QUR7GKSOzgJJCMbPDB4OSBvra34zH+XySsFs+8xFAhAq4WkXhAk9F4LNjkNjIo8h3QaAtXJDs8Y+Hkhppxd2yI4ctqxUws3L6PS/LgC8QWzbgDdvpmSy7d9uKq70/nTjMdZGodEH1Y=
+	t=1733853342; cv=none; b=V2UCUuu7QIfNBaiNvEQUg1gqgPVgH3n2T64ReJgPLu5MAbWylQsckSuXNSY8Fw7nurGDecJTwkaW2U4768r8subUaEjJdyKpYXLoZlMwTd6909PTnP8R9YBa5q5oiwGcdHCQ8B76bkNf6wg2QVvKxdSLAU1MQ3b1yAMQyfQBcok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853341; c=relaxed/simple;
-	bh=5Lqgn1nZKsEr1Zvz28/OBYcyY8ixJY1MStjrAlmKHLQ=;
+	s=arc-20240116; t=1733853342; c=relaxed/simple;
+	bh=iV6hA0IYWTLQAyvLjwsvTOjyYSVIwGM/w77HmkdSwPg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LJle7sfk8kJU+P+c4EE1tOwfuza7o5z7u0At0eTOYmhi6HrxVhtxqi8R90dRQVQrnnZFBawivZQJ8vKAVgYO14754D77BPEyaEOL8WsppvC9eHbJ5q9ifMXQjJxkF75SXVwLIaPGQeijKW3NGdaq2upuz9SRlWbBgK8o/clm2UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=odh4QGOX; arc=none smtp.client-ip=209.85.160.181
+	 To:Cc:Content-Type; b=Io5TYxGPQnS1KubxuFQWoondYEYo9NKRMJXfTX/ZKGFtZtZqR29MNSUW+4dki7V7RPvcmjE6bZwkMirsG8fG+YTny2ML8rDZbmWdWYllSOThZZW66Ay++dMgbMAenvtwP1X//VeW0z3TfUCJ6wTcZ0PVzcg9BYCCp9ropdTCUH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o6YvVuuw; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-467431402deso6951cf.0
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21625b4f978so3865ad.0
         for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:55:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733853338; x=1734458138; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733853339; x=1734458139; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tyxl+ttUb9oKqLIiCZsmpPDMeBgG6nRk3s3B134NCU0=;
-        b=odh4QGOXRDWmvRIvmgwewrBmsJ2Y9BbUIoHut6TnGtGg6S2/6BA5pi3cIN4BoF2iqz
-         8/JhpA38J28LoNmW8T7aDjnMEpxZ8WUHf/ox7DDxTaDow1fPVOxR9VXXppL4A5up9lt7
-         00SAwrVsredhVdNK8pB2D1YKmja3JTDzInrOGfvspT687eEt88iyyNF+iG/3lCKDEB6k
-         iK+20Z/4coCY79ru/PMCeKzzM83J9clmdd+0cbCbuKh1gi6OSmGN4XP6Vl4FXHS7HdiB
-         MgjeYX/JKTR95LqH6pPWtMMhyraOeXCmOWpZ2EY+YNDJIT1zWeAk7R+Y1HgoLXm6sp7f
-         0aRw==
+        bh=R0WaAW3kh+VqyYkynbg5Bnnaq2ujjkmV+I+q8jKp9mU=;
+        b=o6YvVuuwTQc3x/NTSjOgUR229ZYckJgkZajd3JUsuBl6J81vq7gv9KkF7ByTLOZgwW
+         pYjVtiJLBnEaBHwte3VV6Y2AQmoIxy9IB4Hr4wr+D1IKGhnEJTbYr9sPuusXnW6YVfBw
+         pbBXHUWOVGjsDXAHodkfV1+GzyY+IyCdofUWTr5JVfDuds9B5Nt7VW7XZQ/JHOn93Xf/
+         CuMbSqYI2a3kY2NFQUrX4Fxc8CxrgAUZPjgTEuMtm7KOoUL5Y2dw7TyRGi1i/2O89NiZ
+         rLQva1s7LqyEnvop6mPsI3wTU3OwrLzFcdkAx3CdorpgysFFm15PUFRHFy4wKgnp+us2
+         gl5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853338; x=1734458138;
+        d=1e100.net; s=20230601; t=1733853339; x=1734458139;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tyxl+ttUb9oKqLIiCZsmpPDMeBgG6nRk3s3B134NCU0=;
-        b=PL4mQwd18IAYMTOy9sMl3FYNGUqdV0G+wgckjpzDE8hHFStyA2jZBpH4erJV+2RoPC
-         vGeYO3BG1imO0p2YNhYeUpVE5sBok2U4U2ZZVpb+rPOEoNiWtsdYJvQYFrMonPUp1cmc
-         646z0Tf5WAaJXjcFEkkgNSctWF1xJhT75B0l2ji9Uisra9h1AbrarMchhlNQ4vpWFXVJ
-         baigzrQJw5S+KQ5WvqbXHwQypXPk/uhicVNpTQ74xlWqh3WzEUklS3k9ovHumIko9hDG
-         9IHzJagc66WgYCp1BDfUogq6nyE5rogX1FiifVWgRyb9CVkRmssDnOFXmH7cGYDtQCaB
-         8AWA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8wM1plhzvi8bW0/1SXYrBY3nvQ0phFkPQ8AXtq8gOU45rKmOKCRErM8zNS2GmLiBhOH+lQWtfjjhl8Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVntk6/UjBAQeNS+Nfr2Mq/9Gee6T/EuHaDBRjDOQcXESSjibp
-	XT4WPCf0tnISzL8aqR7EfGc/jTwQFo8wR1yX+OCJ5MtXLhNo8FJqq0AO9ASUNsRfXlO15pI/A6X
-	Y791wnZXEk6dxsQVgrEqBaavYMwZe3ToFmG5a
-X-Gm-Gg: ASbGncsnq9lZxDZlACNascT0M811EMvgIShL5o2xSISdTXw77258k8BhkR+2OScn9Nv
-	BkzWE9SiTrqiL+GQJGLyw7KLgtHvYdlfdYwoDL6u1WsNXtaWEQ4bB0gDXm+YrPlDHHg==
-X-Google-Smtp-Source: AGHT+IG3VpXV1WLM2E+buv1L2blkpVBsdm3XboX8oZHVk8mJpLJ9ElOelY7ne/6rJJPBu93F7oJ1RCJlUW5nZaN1dfk=
-X-Received: by 2002:a05:622a:5a19:b0:466:9b73:8e3c with SMTP id
- d75a77b69052e-46777658682mr4661321cf.13.1733853338141; Tue, 10 Dec 2024
- 09:55:38 -0800 (PST)
+        bh=R0WaAW3kh+VqyYkynbg5Bnnaq2ujjkmV+I+q8jKp9mU=;
+        b=C8bZPTAivbtpNc4DN+dlqeJFbZDqhGlDYp2OnCE84PufG5eRrH/QX7KD5xM0jtiL5I
+         seeis16zyCTnvNLYjVKRvOewc2+k5ZB9uMTWVQ+30kyVSzrCgZjjPv5iPBZ6ZqcpdLN9
+         oeZTpZPFj4mPf6dnLYpyHAv7ULNnuBOLkLskHQhuDNg/GQQFP7k2y/GdktZ+XY1Ta34V
+         Xn4yX9i5Q7myyK9OrZ1CQVDb/ks3Kpp9n38HR0jWwmuzzIht7XtT55wXXZBSpdmGIsuH
+         dzwdU+McH/Omr6aGd626J8aw9eDqOmTb8H1N+B/fRhGLTSN0+G7hCKThF7ofD4zAjn2q
+         FsrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiBZtNkXcYT9R6FmzEzcNQFO9awL6LLNoCzn8fW98V/PobWcpvDSvBKzmBTbyC6MDHTKyCoK4/CQ8FEpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY+/kY7FRYlRnDEnfJSp/O189H6KkwPpS36GB2RW+HoIPF7mYB
+	MO+8A3mqgzWtlutZmPno5g/LKMM6WWHtg8owbKp6ER/UDMohpDV4WQZC+gRaj9MlP98e8NeQLoU
+	br3LvWtqhqj2y0TsWE2QqVaXDtj4uKSTC/J5c
+X-Gm-Gg: ASbGncvQaPJ/5L6xPAuh2QPNzTFPbPrKdleSCFN8aZasOMNhj96iTdwslScMcj83ZxM
+	MUvgglIXFaR/QqUEuBfi7XT/kQs17W5xC89xOR0vCh9DMRvDJpg6RFFJVIPjSfBeU
+X-Google-Smtp-Source: AGHT+IGLvX826EUtDFzCMbe4Z82/rCvZNBH+2oBWnGrvdZr1UuD+ncWShG6UN2y8G42XtPREcypqHTRZ438FncSXyng=
+X-Received: by 2002:a17:903:144b:b0:215:79b5:aa7e with SMTP id
+ d9443c01a7336-21674d58706mr2897555ad.13.1733853339077; Tue, 10 Dec 2024
+ 09:55:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210041515.765569-1-hao.ge@linux.dev> <20241210065304.781620-1-hao.ge@linux.dev>
-In-Reply-To: <20241210065304.781620-1-hao.ge@linux.dev>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 10 Dec 2024 09:55:26 -0800
-Message-ID: <CAJuCfpGVTyKJ5yMQUqvNXRfBnBYj+dhUEqq0YAddtrqcWP27yw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/alloc_tag: Add kasan_alloc_module_shadow when
- CONFIS_KASAN_VMALLOC disabled
-To: Hao Ge <hao.ge@linux.dev>
-Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, greearb@candelatech.com, 
-	Hao Ge <gehao@kylinos.cn>
+References: <20241210024119.2488608-1-kaleshsingh@google.com>
+ <20241210024119.2488608-2-kaleshsingh@google.com> <CAHbLzkpCRGF+-WXkHVEutkEGHSWydmpb1CwkvHZRTH-f773J-w@mail.gmail.com>
+In-Reply-To: <CAHbLzkpCRGF+-WXkHVEutkEGHSWydmpb1CwkvHZRTH-f773J-w@mail.gmail.com>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Tue, 10 Dec 2024 09:55:27 -0800
+Message-ID: <CAC_TJvc5SU_khaBf7NS1VvD+d5PJ4X1DwKWbO92j-dZ+rEuc9A@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable 01/17] mm: Introduce generic_mmap_hint()
+To: Yang Shi <shy828301@gmail.com>
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, yang@os.amperecomputing.com, 
+	riel@surriel.com, david@redhat.com, linux@armlinux.org.uk, 
+	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, 
+	davem@davemloft.net, andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
+	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com, 
+	leitao@debian.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
+	kernel-team@android.com, android-mm@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 9, 2024 at 10:53=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
+On Mon, Dec 9, 2024 at 7:27=E2=80=AFPM Yang Shi <shy828301@gmail.com> wrote=
+:
 >
-> From: Hao Ge <gehao@kylinos.cn>
+> On Mon, Dec 9, 2024 at 6:41=E2=80=AFPM Kalesh Singh <kaleshsingh@google.c=
+om> wrote:
+> >
+> > Consolidate the hint searches from both direcitons (topdown and
+> > bottomup) into generic_mmap_hint().
+> >
+> > No functional change is introduced.
+> >
+> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> > ---
+> >  include/linux/sched/mm.h |  4 ++++
+> >  mm/mmap.c                | 45 ++++++++++++++++++++++++----------------
+> >  2 files changed, 31 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> > index 928a626725e6..edeec19d1708 100644
+> > --- a/include/linux/sched/mm.h
+> > +++ b/include/linux/sched/mm.h
+> > @@ -201,6 +201,10 @@ unsigned long mm_get_unmapped_area_vmflags(struct =
+mm_struct *mm,
+> >                                            unsigned long flags,
+> >                                            vm_flags_t vm_flags);
+> >
+> > +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
+> > +                               unsigned long len, unsigned long pgoff,
+> > +                               unsigned long flags);
+> > +
+> >  unsigned long
+> >  generic_get_unmapped_area(struct file *filp, unsigned long addr,
+> >                           unsigned long len, unsigned long pgoff,
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index df9154b15ef9..e97eb8bf4889 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -620,6 +620,27 @@ unsigned long vm_unmapped_area(struct vm_unmapped_=
+area_info *info)
+> >         return addr;
+> >  }
+> >
+> > +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
+> > +                               unsigned long len, unsigned long pgoff,
+> > +                               unsigned long flags)
+> > +{
+> > +       struct mm_struct *mm =3D current->mm;
+> > +       struct vm_area_struct *vma, *prev;
+> > +       const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, f=
+lags);
+> > +
+> > +       if (!addr)
+> > +               return 0;
+> > +
+> > +       addr =3D PAGE_ALIGN(addr);
+> > +       vma =3D find_vma_prev(mm, addr, &prev);
+> > +       if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &&
+> > +           (!vma || addr + len <=3D vm_start_gap(vma)) &&
+> > +           (!prev || addr >=3D vm_end_gap(prev)))
+> > +               return addr;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  /* Get an address range which is currently unmapped.
+> >   * For shmat() with addr=3D0.
+> >   *
+> > @@ -637,7 +658,6 @@ generic_get_unmapped_area(struct file *filp, unsign=
+ed long addr,
+> >                           unsigned long flags, vm_flags_t vm_flags)
+> >  {
+> >         struct mm_struct *mm =3D current->mm;
+> > -       struct vm_area_struct *vma, *prev;
+> >         struct vm_unmapped_area_info info =3D {};
+> >         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, f=
+lags);
+> >
+> > @@ -647,14 +667,9 @@ generic_get_unmapped_area(struct file *filp, unsig=
+ned long addr,
+> >         if (flags & MAP_FIXED)
+> >                 return addr;
 >
-> When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
-> is not enabled, we may encounter a panic during system boot.
->
-> Because we haven't allocated pages and created mappings
-> for the shadow memory corresponding to module_tags region,
-> similar to how it is done for execmem_vmalloc.
->
-> The difference is that our module_tags are allocated on demand,
-> so similarly,we also need to allocate shadow memory regions on demand.
-> However, we still need to adhere to the MODULE_ALIGN principle.
->
-> Here is the log for panic:
->
-> [   18.349421] BUG: unable to handle page fault for address: fffffbfff809=
-2000
-> [   18.350016] #PF: supervisor read access in kernel mode
-> [   18.350459] #PF: error_code(0x0000) - not-present page
-> [   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PT=
-E 0
-> [   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> [   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+=
- #3
-> [   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> [   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
-> [   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 0=
-0 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <=
-48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
-> [   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
-> [   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff8=
-2a7ceac
-> [   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc=
-0490000
-> [   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff=
-809201d
-> [   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc=
-0490000
-> [   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000=
-000002c
-> [   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlG=
-S:0000000000000000
-> [   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 000000000=
-0771ef0
-> [   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
-0000000
-> [   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
-0000400
-> [   18.362020] PKRU: 55555554
-> [   18.362261] Call Trace:
-> [   18.362481]  <TASK>
-> [   18.362671]  ? __die+0x23/0x70
-> [   18.362964]  ? page_fault_oops+0xc2/0x160
-> [   18.363318]  ? exc_page_fault+0xad/0xc0
-> [   18.363680]  ? asm_exc_page_fault+0x26/0x30
-> [   18.364056]  ? move_module+0x3cc/0x8a0
-> [   18.364398]  ? kasan_check_range+0xba/0x1b0
-> [   18.364755]  __asan_memcpy+0x3c/0x60
-> [   18.365074]  move_module+0x3cc/0x8a0
-> [   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
-> [   18.365841]  ? early_mod_check+0x3dc/0x510
-> [   18.366195]  load_module+0x72/0x1850
-> [   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
-> [   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
-> [   18.367262]  init_module_from_file+0xd1/0x130
-> [   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
-> [   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
-> [   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
-> [   18.368938]  idempotent_init_module+0x22c/0x790
-> [   18.369332]  ? simple_getattr+0x6f/0x120
-> [   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
-> [   18.370110]  ? fdget+0x58/0x3a0
-> [   18.370393]  ? security_capable+0x64/0xf0
-> [   18.370745]  __x64_sys_finit_module+0xc2/0x140
-> [   18.371136]  do_syscall_64+0x7d/0x160
-> [   18.371459]  ? fdget_pos+0x1c8/0x4c0
-> [   18.371784]  ? ksys_read+0xfd/0x1d0
-> [   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
-> [   18.372525]  ? do_syscall_64+0x89/0x160
-> [   18.372860]  ? do_syscall_64+0x89/0x160
-> [   18.373194]  ? do_syscall_64+0x89/0x160
-> [   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
-> [   18.373952]  ? do_syscall_64+0x89/0x160
-> [   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
-> [   18.374701]  ? do_syscall_64+0x89/0x160
-> [   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
-> [   18.375416]  ? clear_bhb_loop+0x25/0x80
-> [   18.375748]  ? clear_bhb_loop+0x25/0x80
-> [   18.376119]  ? clear_bhb_loop+0x25/0x80
-> [   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
-> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated are=
-a calculation")
-> Reported-by: Ben Greear <greearb@candelatech.com>
-> Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@=
-candelatech.com/
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> ---
-> v2: Add comments to facilitate understanding of the code.
->     Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_mo=
-dule_shadow
->     already handles this internally,but to make the code more readable an=
-d user-friendly
->
-> commit 233e89322cbe ("alloc_tag: fix module allocation
-> tags populated area calculation") is currently in the
-> mm-hotfixes-unstable branch, so this patch is
-> developed based on the mm-hotfixes-unstable branch.
-> ---
->  lib/alloc_tag.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index f942408b53ef..bd3ee57ea13f 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -10,6 +10,7 @@
->  #include <linux/seq_buf.h>
->  #include <linux/seq_file.h>
->  #include <linux/vmalloc.h>
-> +#include <linux/math.h>
->
->  #define ALLOCINFO_FILE_NAME            "allocinfo"
->  #define MODULE_ALLOC_TAG_VMAP_SIZE     (100000UL * sizeof(struct alloc_t=
-ag))
-> @@ -422,6 +423,17 @@ static int vm_module_tags_populate(void)
->                         return -ENOMEM;
->                 }
->                 vm_module_tags->nr_pages +=3D nr;
-> +
-> +               /*
-> +                * Kasan allocates 1 byte of shadow for every 8 bytes of =
-data.
-> +                * When kasan_alloc_module_shadow allocates shadow memory=
-,
-> +                * it does so in units of pages.
-> +                * Therefore, here we need to align to MODULE_ALIGN.
-> +                */
-> +               if ((phys_end & (MODULE_ALIGN - 1)) =3D=3D 0)
+> It seems you also can move the MAP_FIXED case into generic_mmap_hint(), r=
+ight?
 
-phys_end is calculated as:
+I think that could be done too. we'll need a new name :) Let me take a
+look at it ...
 
-unsigned long phys_end =3D ALIGN_DOWN(module_tags.start_addr, PAGE_SIZE) +
-                                           (vm_module_tags->nr_pages
-<< PAGE_SHIFT);
+-- Kalesh
 
-and therefore is always PAGE_SIZE-aligned. PAGE_SIZE is always a
-multiple of MODULE_ALIGN, therefore phys_end is always
-MODULE_ALIGN-aligned and the above condition is not needed.
-
-> +                       kasan_alloc_module_shadow((void *)phys_end,
-> +                                                 round_up(nr << PAGE_SHI=
-FT, MODULE_ALIGN),
-
-Here again, (nr << PAGE_SHIFT) is PAGE_SIZE-aligned and PAGE_SIZE is a
-multiple of MODULE_ALIGN, therefore (nr << PAGE_SHIFT) is always
-multiple of MODULE_ALIGN and there is no need for round_up().
-
-IOW, I think this patch should simply add one line:
-
-                vm_module_tags->nr_pages +=3D nr;
-+               kasan_alloc_module_shadow((void *)phys_end, nr <<
-PAGE_SHIFT, GFP_KERNEL);
-
-Am I missing something?
-
-
-> +                                                 GFP_KERNEL);
->         }
 >
->         /*
-> --
-> 2.25.1
->
+> >
+> > -       if (addr) {
+> > -               addr =3D PAGE_ALIGN(addr);
+> > -               vma =3D find_vma_prev(mm, addr, &prev);
+> > -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr=
+ &&
+> > -                   (!vma || addr + len <=3D vm_start_gap(vma)) &&
+> > -                   (!prev || addr >=3D vm_end_gap(prev)))
+> > -                       return addr;
+> > -       }
+> > +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
+> > +       if (addr)
+> > +               return addr;
+> >
+> >         info.length =3D len;
+> >         info.low_limit =3D mm->mmap_base;
+> > @@ -685,7 +700,6 @@ generic_get_unmapped_area_topdown(struct file *filp=
+, unsigned long addr,
+> >                                   unsigned long len, unsigned long pgof=
+f,
+> >                                   unsigned long flags, vm_flags_t vm_fl=
+ags)
+> >  {
+> > -       struct vm_area_struct *vma, *prev;
+> >         struct mm_struct *mm =3D current->mm;
+> >         struct vm_unmapped_area_info info =3D {};
+> >         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, f=
+lags);
+> > @@ -698,14 +712,9 @@ generic_get_unmapped_area_topdown(struct file *fil=
+p, unsigned long addr,
+> >                 return addr;
+> >
+> >         /* requesting a specific address */
+> > -       if (addr) {
+> > -               addr =3D PAGE_ALIGN(addr);
+> > -               vma =3D find_vma_prev(mm, addr, &prev);
+> > -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr=
+ &&
+> > -                               (!vma || addr + len <=3D vm_start_gap(v=
+ma)) &&
+> > -                               (!prev || addr >=3D vm_end_gap(prev)))
+> > -                       return addr;
+> > -       }
+> > +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
+> > +       if (addr)
+> > +               return addr;
+> >
+> >         info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
+> >         info.length =3D len;
+> > --
+> > 2.47.0.338.g60cca15819-goog
+> >
+> >
 
