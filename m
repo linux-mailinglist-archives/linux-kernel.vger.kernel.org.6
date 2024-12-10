@@ -1,144 +1,189 @@
-Return-Path: <linux-kernel+bounces-439904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D7A9EB5B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:10:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E249EB5B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:11:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23991161D24
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5745628127F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367F622FDF2;
-	Tue, 10 Dec 2024 16:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855F51BBBFE;
+	Tue, 10 Dec 2024 16:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODwTq95q"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="ge4vdMT6"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453E1BDABE;
-	Tue, 10 Dec 2024 16:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA04C23DEA7
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733847028; cv=none; b=qqmMT9W8KN5gFxT9wrwV4vyI/IIjWLBJA+7qO5YlLld43MWyStwr7f8if26ELQxeiKrowGxtoqW14ZxKmwCG/ZBs6PUP8wHjkP6I8FQBBJ07x1uvpdASw0sYoTx5RH3gvUO4D3P9qp1ipb8D6zETyz1EqlxFWruh8Q6Rh1HDiA8=
+	t=1733847097; cv=none; b=iZ/woxX+7+vw91dygVisnymqDnpbsdrKPlQiaNyHHYsAvNqayrBuoFEZXQLLv+7hDFMB+VzRJwlq2tuPY8qvdLldLLj2QMAXEPj8NFnrSLaKP5b9qb6pkUfXG9W0xMs0cSgY2ugPZ4S168N9prRd4K+iyNVevJglNeRG1af/buw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733847028; c=relaxed/simple;
-	bh=aAV1ttlGf9XkPkPC37hCTTwpTpgbklabITddkLKpu3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1wWfowVcn/ngvR7EjWjPCJFNtpDQnuX9XTitg4JyDFWOydf/3CB6X8XlQruwfoNmtLDwqXcD1Q8YUtO5PAOdq/dGwTJiYP6aVFPp8baFIqOT8QmWU9w8Jm2lOqNYRitdcx6T652SXZ/2xT2I6LQrHiAXZC7hQr5FI3G9/42RlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ODwTq95q; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-728ea1573c0so438796b3a.0;
-        Tue, 10 Dec 2024 08:10:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733847026; x=1734451826; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nG2ao3wocTl4ojmZx0A0uC7NWJk+M9hRa4s4yysqSkY=;
-        b=ODwTq95qyGtVgEuqgS0ilHqQINOY3guU34sTYkLvXBkUq3OijK8q4pl+pcp3OOkfMM
-         gYMHAGzo6qXv1CoJsuHdAWvXJsYEA+CV9w7uQWu3ljHOrC8zub4D6bWvxgsyLUQHCyl3
-         jBFlYigcVK9gM9FBAI0u9eQfoEJOL3XwkndWZE90rBkeOYjNjwe7HBUtGq68uRp7cvnt
-         orTNH6GcMFJe7Jr3GoQRWymV6iZ/B8Np7QJABoyrovFMFWLEwSM8UgoGVgrSwgp/aNzs
-         z5juZGBoTgFd8k29z5/n9Wz7xscKplad3oi72fT5ItG7EnJyBsVpS7c4K+QM6FE9tHPE
-         ZKDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733847026; x=1734451826;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nG2ao3wocTl4ojmZx0A0uC7NWJk+M9hRa4s4yysqSkY=;
-        b=A6q7r6zh0UJidUu4Ls+e5xpSZ0mP2ZDPPV7q4a6Dj+M3jM95uP2EXm5ozVbAUrsu6U
-         wTRCJ1/uT0qOmgnp10qFR8LLqYQfd+ayyN1X4TC3uXofnXdd20ri5a8LNXBszUQm+cgJ
-         /1eshvpa1lv6kNPEQFLLC+Nklbj5w5AxY1By9bc1IWHioB7whL9qJgLj328cDPwia2Gm
-         9cDjQbZQtOmojOiCYZAM8zaqwPm9XAD6cmYQcjqmij4/hseAp1P1MV4r0yx0zP1jogbm
-         TNQEhwlvD23kHsJeoC8A9XtX2UMtcHGvUc86gOjceFYsfs5+A0oPvm22phiz1/BLD2XV
-         9+pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWDXdA3Toti3I6G/gOHGjahrCI7D0+UGMxcHK/k9qbtg8oIKEzQoNyZP0CZpg0DiD9vZKP+KXV@vger.kernel.org, AJvYcCVsY8b+P/CVrpnFT7WCc3wB1RAetIuwz52JVa6NEEv3twU5y6FfVkxWHg2YG6jbCdScI61RAg0Q@vger.kernel.org, AJvYcCWMcOkSRESzHPaIj3q28lh9Aq6lkOButOhMvCipFhoSANPfhOS9o02Psq4iklndTXn8Ixyjfz7jCn+Webc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8AU4A5CfQaLs6GxoczVDZlN6uX9y5ttgvDd+BT8g1PInR2CPe
-	BEvdl0lQKJRLP6W5HwbZrgaMgeYWSw8IKna0sfYepvJW/yHhoI73
-X-Gm-Gg: ASbGncv6hVl6Ny3mNwT/XDYQZ0lNJnGrVIFhPbBTu7tCwlsr9tEvBBxdHTPfhV0wDwz
-	kJGF7nFC//14fJ24K956cO0fur/bo1d539YtX+cObZY93c6zPzrLVXSGTO3i4K3wBdY/ZCWQgN5
-	NAU37lPG+PHAv2WPwYAXCL+rdpTMTmWOyR9YRQAS46EXbJtmeArycU/YwFtSQAYviW4y/Kxkhox
-	mPOZ3hrEiuQuA586t52vVAKfgR/DDJw7lASHK/CEbzPXKCOFSPOviMifLefSKWSFwjc6xR2dXnI
-	PWNKX0AfFYD9
-X-Google-Smtp-Source: AGHT+IEAkBsbIsMo38CZywg50F4iK7XY9L0JeGmqbkviqzpzFb8HQ1tBYdBVreKjLDfyfZK7ZLEh1w==
-X-Received: by 2002:a05:6a20:244f:b0:1e1:bf3d:a190 with SMTP id adf61e73a8af0-1e1bf3da46bmr964419637.30.1733847026107;
-        Tue, 10 Dec 2024 08:10:26 -0800 (PST)
-Received: from xiberoa (c-76-103-20-67.hsd1.ca.comcast.net. [76.103.20.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725f19a6197sm3432996b3a.198.2024.12.10.08.10.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 08:10:25 -0800 (PST)
-Date: Tue, 10 Dec 2024 08:10:22 -0800
-From: Frederik Deweerdt <deweerdt.lkml@gmail.com>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: David.Laight@ACULAB.COM, davem@davemloft.net, dhowells@redhat.com,
-	edumazet@google.com, horms@kernel.org, jdamato@fastly.com,
-	kuba@kernel.org, linux-kernel@vger.kernel.org, mhal@rbox.co,
-	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org,
-	xiyou.wangcong@gmail.com
-Subject: Re: [PATCH v2 net] splice: do not checksum AF_UNIX sockets
-Message-ID: <Z1hn7p4T7_NTVbzN@xiberoa>
-References: <Z1fMaHkRf8cfubuE@xiberoa>
- <20241210081721.66479-1-kuniyu@amazon.com>
+	s=arc-20240116; t=1733847097; c=relaxed/simple;
+	bh=yLgsIJxLXWe//vZnL+rb4anEjoDukn3viJQnX0ujSFQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lOAJNqQmPCJ9IYQZcKQ9wosHYiMGfwCaTIe4El6EXrtXvJmiE7C1yLo0nkXoKvUYSHu/IoSzi8cM4VkowaN8pch81BdeOtLnC7mcLSmYM+1+PVU7aIbq+giGi4CqwxMpFhqoCN0cCwzQRx3h2EF1ttEtK2SZ8XPxl+I8IxbOwQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=ge4vdMT6; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yLgsIJxLXWe//vZnL+rb4anEjoDukn3viJQnX0ujSFQ=; b=ge4vdMT6CUBrk7v/fIhpnDVg4V
+	aO+a8vju6O2ZZKXXY8/9HtvEcvGgU3QmrvXG04YpRMCd57D8pUfMvyGgbe2eubxkoGFrlnBfWznrt
+	1tWOHXw7HS22iZ9VW5JRsXRg5YEbtp08E0K/3Eghfr0HwqcBp3E2Ury1oaVZMP+ZO0llIbdUVP8YF
+	tW7B8/z5FYAJ+kwP6HfR4uaO+/I2hAXFuc44nBBDjUqYe39SNsLlDIzOg+6B1LKEkFqI4pG7nqnJs
+	U034AYF8eysvyR4Ie5nCdlATG5CmUv0dKpXaKb14346NvMRlnTo3Zo6ULgCFDK4UyDdXtHvAmmtzl
+	5hDtFIHA==;
+Received: from [194.230.241.203] (helo=[10.10.1.195])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1tL2pa-001S4V-0Q; Tue, 10 Dec 2024 16:11:26 +0000
+Message-ID: <06a86aa50e62911871e95bb36b420cbd4e4fafbc.camel@codethink.co.uk>
+Subject: Re: [v6.12] WARNING: at kernel/sched/deadline.c:1995
+ enqueue_dl_entity (task blocked for more than 28262 seconds)
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Ilya Maximets
+	 <i.maximets@ovn.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Joel Fernandes
+	 <joel@joelfernandes.org>, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar
+	 <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	 <vincent.guittot@linaro.org>, vineethrp@google.com, shraash@google.com
+Date: Tue, 10 Dec 2024 17:11:24 +0100
+In-Reply-To: <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
+References: <571b2045-320d-4ac2-95db-1423d0277613@ovn.org>
+	 <20241206151819.GA3949140@google.com>
+	 <CAO7JXPhdv+Jx_UpAq=-aG-BKwiyjZ2kvuZDM4+GLjbya_=ZJsw@mail.gmail.com>
+	 <20241209105514.GK21636@noisy.programming.kicks-ass.net>
+	 <CAO7JXPgSYCzu0mtnWqBaS8ihmoQXX3WE_Yb_rEYuMeQn+B6KJg@mail.gmail.com>
+	 <20241209125601.GQ35539@noisy.programming.kicks-ass.net>
+	 <8ff30c5d-b8ac-4825-874a-d73931b85014@ovn.org>
+	 <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.54.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210081721.66479-1-kuniyu@amazon.com>
+Sender: marcel.ziswiler@codethink.co.uk
 
-On Tue, Dec 10, 2024 at 05:17:21PM +0900, Kuniyuki Iwashima wrote:
-> From: Frederik Deweerdt <deweerdt.lkml@gmail.com>
-> Date: Mon, 9 Dec 2024 21:06:48 -0800
-> > When `skb_splice_from_iter` was introduced, it inadvertently added
-> > checksumming for AF_UNIX sockets. This resulted in significant
-> > slowdowns, for example when using sendfile over unix sockets.
-> > 
-> > Using the test code in [1] in my test setup (2G single core qemu),
-> > the client receives a 1000M file in:
-> > - without the patch: 1482ms (+/- 36ms)
-> > - with the patch: 652.5ms (+/- 22.9ms)
-> > 
-> > This commit addresses the issue by marking checksumming as unnecessary in
-> > `unix_stream_sendmsg`
-> > 
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Frederik Deweerdt <deweerdt.lkml@gmail.com>
-> > Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff for MSG_SPLICE_PAGES")
-> > ---
-> 
-> For the future submission, it would be nice to explain changes
-> between versions and add the old patch link under '---' here.
-> 
-Will do, thank you.
+T24gTW9uLCAyMDI0LTEyLTA5IGF0IDIxOjUyIC0wNTAwLCBWaW5lZXRoIFJlbWFuYW4gUGlsbGFp
+IHdyb3RlOgo+IE9uIE1vbiwgRGVjIDksIDIwMjQgYXQgNzozNOKAr1BNIElseWEgTWF4aW1ldHMg
+PGkubWF4aW1ldHNAb3ZuLm9yZz4gd3JvdGU6Cj4gPiAKPiA+IE9uIDEyLzkvMjQgMTM6NTYsIFBl
+dGVyIFppamxzdHJhIHdyb3RlOgo+ID4gPiAKPiA+ID4gRG9lcyBzb21ldGhpbmcgbGlrZSB0aGUg
+YmVsb3cgbWFrZSBzZW5zZT8KPiA+ID4gCj4gPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
+L3NjaGVkLmggYi9pbmNsdWRlL2xpbnV4L3NjaGVkLmgKPiA+ID4gaW5kZXggZDM4MGJmZmVlMmVm
+Li5hYmViZWI2N2RlNGUgMTAwNjQ0Cj4gPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvc2NoZWQuaAo+
+ID4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3NjaGVkLmgKPiA+ID4gQEAgLTY2NCw2ICs2NjQsNyBA
+QCBzdHJ1Y3Qgc2NoZWRfZGxfZW50aXR5IHsKPiA+ID4gwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnTC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkbF9ub25fY29udGVuZGluZyA6
+IDE7Cj4gPiA+IMKgwqDCoMKgwqAgdW5zaWduZWQgaW50wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgZGxfb3ZlcnJ1bsKgwqDCoMKgwqDCoMKgIDogMTsKPiA+ID4gwqDCoMKg
+wqDCoCB1bnNpZ25lZCBpbnTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBk
+bF9zZXJ2ZXLCoMKgwqDCoMKgwqDCoMKgIDogMTsKPiA+ID4gK8KgwqDCoMKgIHVuc2lnbmVkIGlu
+dMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRsX3NlcnZlcl9hY3RpdmXC
+oCA6IDE7Cj4gPiA+IMKgwqDCoMKgwqAgdW5zaWduZWQgaW50wqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgZGxfZGVmZXLCoMKgwqDCoMKgwqDCoMKgwqAgOiAxOwo+ID4gPiDC
+oMKgwqDCoMKgIHVuc2lnbmVkIGludMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGRsX2RlZmVyX2FybWVkwqDCoMKgIDogMTsKPiA+ID4gwqDCoMKgwqDCoCB1bnNpZ25lZCBp
+bnTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkbF9kZWZlcl9ydW5uaW5n
+wqAgOiAxOwo+ID4gPiBkaWZmIC0tZ2l0IGEva2VybmVsL3NjaGVkL2RlYWRsaW5lLmMgYi9rZXJu
+ZWwvc2NoZWQvZGVhZGxpbmUuYwo+ID4gPiBpbmRleCBkOWQ1YTcwMmYxYTYuLmUyYjU0MmY2ODRk
+YiAxMDA2NDQKPiA+ID4gLS0tIGEva2VybmVsL3NjaGVkL2RlYWRsaW5lLmMKPiA+ID4gKysrIGIv
+a2VybmVsL3NjaGVkL2RlYWRsaW5lLmMKPiA+ID4gQEAgLTE2NDcsNiArMTY0Nyw3IEBAIHZvaWQg
+ZGxfc2VydmVyX3N0YXJ0KHN0cnVjdCBzY2hlZF9kbF9lbnRpdHkgKmRsX3NlKQo+ID4gPiDCoMKg
+wqDCoMKgIGlmICghZGxfc2UtPmRsX3J1bnRpbWUpCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHJldHVybjsKPiA+ID4gCj4gPiA+ICvCoMKgwqDCoCBkbF9zZS0+ZGxfc2VydmVyX2Fj
+dGl2ZSA9IDE7Cj4gPiA+IMKgwqDCoMKgwqAgZW5xdWV1ZV9kbF9lbnRpdHkoZGxfc2UsIEVOUVVF
+VUVfV0FLRVVQKTsKPiA+ID4gwqDCoMKgwqDCoCBpZiAoIWRsX3Rhc2soZGxfc2UtPnJxLT5jdXJy
+KSB8fCBkbF9lbnRpdHlfcHJlZW1wdChkbF9zZSwgJnJxLT5jdXJyLT5kbCkpCj4gPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlc2NoZWRfY3VycihkbF9zZS0+cnEpOwo+ID4gPiBAQCAt
+MTY2MSw2ICsxNjYyLDcgQEAgdm9pZCBkbF9zZXJ2ZXJfc3RvcChzdHJ1Y3Qgc2NoZWRfZGxfZW50
+aXR5ICpkbF9zZSkKPiA+ID4gwqDCoMKgwqDCoCBocnRpbWVyX3RyeV90b19jYW5jZWwoJmRsX3Nl
+LT5kbF90aW1lcik7Cj4gPiA+IMKgwqDCoMKgwqAgZGxfc2UtPmRsX2RlZmVyX2FybWVkID0gMDsK
+PiA+ID4gwqDCoMKgwqDCoCBkbF9zZS0+ZGxfdGhyb3R0bGVkID0gMDsKPiA+ID4gK8KgwqDCoMKg
+IGRsX3NlLT5kbF9zZXJ2ZXJfYWN0aXZlID0gMDsKPiA+ID4gwqB9Cj4gPiA+IAo+ID4gPiDCoHZv
+aWQgZGxfc2VydmVyX2luaXQoc3RydWN0IHNjaGVkX2RsX2VudGl0eSAqZGxfc2UsIHN0cnVjdCBy
+cSAqcnEsCj4gPiA+IEBAIC0yNDIwLDggKzI0MjIsMTAgQEAgc3RhdGljIHN0cnVjdCB0YXNrX3N0
+cnVjdCAqX19waWNrX3Rhc2tfZGwoc3RydWN0IHJxICpycSkKPiA+ID4gwqDCoMKgwqDCoCBpZiAo
+ZGxfc2VydmVyKGRsX3NlKSkgewo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwID0g
+ZGxfc2UtPnNlcnZlcl9waWNrX3Rhc2soZGxfc2UpOwo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBpZiAoIXApIHsKPiA+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgZGxfc2UtPmRsX3lpZWxkZWQgPSAxOwo+ID4gPiAtwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1cGRhdGVfY3Vycl9kbF9zZShycSwgZGxfc2UsIDApOwo+
+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoZGxfc2Ut
+PmRsX3NlcnZlcl9hY3RpdmUpIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRsX3NlLT5kbF95aWVsZGVkID0gMTsKPiA+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHVwZGF0ZV9jdXJyX2RsX3NlKHJxLCBkbF9zZSwgMCk7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIGdvdG8gYWdhaW47Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIH0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcnEtPmRsX3NlcnZlciA9
+IGRsX3NlOwo+ID4gCj4gPiBBbmQgSSB0cmllZCB0aGlzIG9uZSBvbiB0b3Agb2YgdjYuMTIsIGJ1
+dCBnb3QgYSB3YXJuaW5nIGFmdGVyIGFib3V0IDEgbWludXRlIChsdWNreT8pLgo+ID4gCj4gSG1t
+IHN0cmFuZ2UsIEkgd2FzIHJ1bm5pbmcgaXQgZm9yIGFib3V0IDEyIGhvdXJzIGFuZCBoYXMgbm90
+IFdBUk5lZAo+IHRpbGwgbm93LiBJIGFtIG9uIDYuMTMtcmMxIGJ1dCBnaXQgbG9nIGRpZCBub3Qg
+c2hvdyBhbnkgZGxzZXJ2ZXIKPiByZWxhdGVkIGNoYW5nZXMgYmV0d2VlbiA2LjEyIGFuZCA2LjEz
+IHRob3VnaC4gSSBhbHNvIGhhdmUgYW5vdGhlcgo+IHBhdGNoIGZvciB0aGUgZG91YmxlIGVucXVl
+dWUgc2NlbmFyaW8gd2Ugd2VyZSBkaXN1c3NpbmcgaW4gdGhpcwo+IHRocmVhZChiZWNhdXNlIG9m
+IHRoZSB3cm9uZyBjaGVjayBpbiB1cGRhdGVfY3VycikuIENvdWxkIHlvdSBwbGVhc2UKPiBhZGQg
+dGhlIGZvbGxvd2luZyBjaGFuZ2VzIHRvIGFib3ZlIHBhdGNoZXMgYW5kIHNlZSBpZiB0aGUgaXNz
+c3VlIGlzCj4gcmVwcm9kdWNpYmxlPwo+IAo+IGRpZmYgLS1naXQgYS9rZXJuZWwvc2NoZWQvZmFp
+ci5jIGIva2VybmVsL3NjaGVkL2ZhaXIuYwo+IGluZGV4IGZiZGNhODljNjc3Zi4uMWY0Yjc2YzFm
+MDMyIDEwMDY0NAo+IC0tLSBhL2tlcm5lbC9zY2hlZC9mYWlyLmMKPiArKysgYi9rZXJuZWwvc2No
+ZWQvZmFpci5jCj4gQEAgLTExNTksOCArMTE1OSw2IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCB1cGRh
+dGVfY3Vycl90YXNrKHN0cnVjdAo+IHRhc2tfc3RydWN0ICpwLCBzNjQgZGVsdGFfZXhlYykKPiDC
+oMKgwqDCoMKgwqDCoCB0cmFjZV9zY2hlZF9zdGF0X3J1bnRpbWUocCwgZGVsdGFfZXhlYyk7Cj4g
+wqDCoMKgwqDCoMKgwqAgYWNjb3VudF9ncm91cF9leGVjX3J1bnRpbWUocCwgZGVsdGFfZXhlYyk7
+Cj4gwqDCoMKgwqDCoMKgwqAgY2dyb3VwX2FjY291bnRfY3B1dGltZShwLCBkZWx0YV9leGVjKTsK
+PiAtwqDCoMKgwqDCoMKgIGlmIChwLT5kbF9zZXJ2ZXIpCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgZGxfc2VydmVyX3VwZGF0ZShwLT5kbF9zZXJ2ZXIsIGRlbHRhX2V4ZWMpOwo+IMKg
+fQo+IAo+IMKgc3RhdGljIGlubGluZSBib29sIGRpZF9wcmVlbXB0X3Nob3J0KHN0cnVjdCBjZnNf
+cnEgKmNmc19ycSwgc3RydWN0Cj4gc2NoZWRfZW50aXR5ICpjdXJyKQo+IEBAIC0xMjEwLDYgKzEy
+MDgsMTEgQEAgczY0IHVwZGF0ZV9jdXJyX2NvbW1vbihzdHJ1Y3QgcnEgKnJxKQo+IMKgwqDCoMKg
+wqDCoMKgIHJldHVybiBkZWx0YV9leGVjOwo+IMKgfQo+IAo+ICtzdGF0aWMgaW5saW5lIGJvb2wg
+ZGxfc2VydmVyX2FjdGl2ZShzdHJ1Y3QgZGxfc2NoZWRfZW50aXR5ICpkbF9zZSkKPiArewo+ICvC
+oMKgwqDCoMKgwqAgcmV0dXJuIGRsX3NlLT5kbF9zZXJ2ZXJfYWN0aXZlOwo+ICt9Cj4gKwo+IMKg
+LyoKPiDCoCAqIFVwZGF0ZSB0aGUgY3VycmVudCB0YXNrJ3MgcnVudGltZSBzdGF0aXN0aWNzLgo+
+IMKgICovCj4gQEAgLTEyMzcsMTEgKzEyNDAsMTYgQEAgc3RhdGljIHZvaWQgdXBkYXRlX2N1cnIo
+c3RydWN0IGNmc19ycSAqY2ZzX3JxKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1
+cGRhdGVfY3Vycl90YXNrKHAsIGRlbHRhX2V4ZWMpOwo+IAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAvKgo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBBbnkgZmFp
+ciB0YXNrIHRoYXQgcnVucyBvdXRzaWRlIG9mIGZhaXJfc2VydmVyIHNob3VsZAo+IC3CoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBhY2NvdW50IGFnYWluc3QgZmFpcl9zZXJ2ZXIgc3Vj
+aCB0aGF0IGl0IGNhbiBhY2NvdW50IGZvcgo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgKiB0aGlzIHRpbWUgYW5kIHBvc3NpYmx5IGF2b2lkIHJ1bm5pbmcgdGhpcyBwZXJpb2QuCj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIElmIHRoZSBmYWlyX3NlcnZlciBpcyBh
+Y3RpdmUsIHdlIG5lZWQgdG8gYWNjb3VudCBmb3IgdGhlCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAqIGZhaXJfc2VydmVyIHRpbWUgd2hldGhlciBvciBub3QgdGhlIHRhc2sgaXMg
+cnVubmluZyBvbgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBiZWhhbGYgb2Yg
+ZmFpcl9zZXJ2ZXIgb3Igbm90Ogo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKsKg
+IC0gSWYgdGhlIHRhc2sgaXMgcnVubmluZyBvbiBiZWhhbGYgb2YgZmFpcl9zZXJ2ZXIsIHdlIG5l
+ZWQKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICrCoMKgwqAgdG8gbGltaXQgaXRz
+IHRpbWUgYmFzZWQgb24gdGhlIGFzc2lnbmVkIHJ1bnRpbWUuCj4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAqwqAgLSBGYWlyIHRhc2sgdGhhdCBydW5zIG91dHNpZGUgb2YgZmFpcl9z
+ZXJ2ZXIgc2hvdWxkIGFjY291bnQKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICrC
+oMKgwqAgYWdhaW5zdCBmYWlyX3NlcnZlciBzdWNoIHRoYXQgaXQgY2FuIGFjY291bnQgZm9yIHRo
+aXMgdGltZQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKsKgwqDCoCBhbmQgcG9z
+c2libHkgYXZvaWQgcnVubmluZyB0aGlzIHBlcmlvZC4KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAqLwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChwLT5kbF9z
+ZXJ2ZXIgIT0gJnJxLT5mYWlyX3NlcnZlcikKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBpZiAoZGxfc2VydmVyX2FjdGl2ZSgmcnEtPmZhaXJfc2VydmVyKSkKPiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRsX3NlcnZlcl91cGRhdGUoJnJxLT5m
+YWlyX3NlcnZlciwgZGVsdGFfZXhlYyk7Cj4gwqDCoMKgwqDCoMKgwqAgfQoKVGhhdCBpbmRlZWQg
+YWxzbyBmaXhlcyBpdCBmb3IgbWUuCgpodHRwczovL2RyaXZlLmNvZGV0aGluay5jby51ay9zL3M5
+a1pRczJNejZEcEgzWAoKPiBUaGFua3MgZm9yIHlvdXIgdGltZSB0ZXN0aW5nIHRoZSBmaXhlcyA6
+LSkKCllvdSBhcmUgdmVyeSB3ZWxjb21lLiBUaGFua3MgeW91IQoKPiB+VmluZWV0aAoKQ2hlZXJz
+CgpNYXJjZWwK
 
-> The patch itself looks good to me.
-> 
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> 
-
-Thanks!
-Frederik
-> >  net/unix/af_unix.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> > index 001ccc55ef0f..6b1762300443 100644
-> > --- a/net/unix/af_unix.c
-> > +++ b/net/unix/af_unix.c
-> > @@ -2313,6 +2313,7 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
-> >  		fds_sent = true;
-> >  
-> >  		if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES)) {
-> > +			skb->ip_summed = CHECKSUM_UNNECESSARY;
-> >  			err = skb_splice_from_iter(skb, &msg->msg_iter, size,
-> >  						   sk->sk_allocation);
-> >  			if (err < 0) {
-> > -- 
-> > 2.44.1
 
