@@ -1,186 +1,140 @@
-Return-Path: <linux-kernel+bounces-438662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F059EA412
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:03:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A52A188A015
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:03:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61BE15B122;
-	Tue, 10 Dec 2024 01:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="KOWgrwKb"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6895D9EA413
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:04:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5940C5474C;
-	Tue, 10 Dec 2024 01:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78E1287B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:04:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72831EB5B;
+	Tue, 10 Dec 2024 01:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FAR+fJct"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514072B9BC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733792573; cv=none; b=bGyGzf0s4d4ULiDQd06FJxRRKw+gBRcQlNsY4goA0tO7VDX8x0z96CleGIk794P7dVLdidundvBVRNYWOeW+QOznPyUSG4D5Zls4isnw7hR2VOk58AZ9JZDU22jcIbOCcGPG2uv8+3pXRt+qxx7eamHrwWXWd2MQRMjW8cA/i7w=
+	t=1733792592; cv=none; b=pvJuaAjpBEYghGxUOXqauImI9m/TyMInghG4NoMCFo/BkEcEdrYUyhqWym51pVVHa5lCalTsR/RH1Fzaq3ocJpFQ1ZOxqv+ds+Rnft7bRr2DO3smoouamUUQjpn78LnJ1mnuWNxMc5l979pX1KK9OJ2q+38UQy6OLTgLvnwNH9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733792573; c=relaxed/simple;
-	bh=Mi4R10fc6D0UG1ykrzFINIkrlpryLoSgpy/zCpwnInM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QSkHZZvmiBaHiDNA2H1KhoV4zbQ2X2w7tN5eDY30sE2/G4Y7ZRh0YXI4IfzEGmf5iR+jclbDKV2SxwL4pbepp9lDleIGLraoh0Nse+pgZ1MggOT76tYqJTfsmybSr7fxaLoSZzr5F/e0ab0KsL3scUjHDsIAoXUo4jc6TtyBfmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=KOWgrwKb; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=5B4ouTrfxMGgmCIM/C5GmAPRV6HRICqep5cx1w2PwJY=; b=KOWgrwKbB1Ikp21D
-	XzO9tb01IzcShm3/Pl0mvLHmelEwmaWibosoArIgawg1hd6ESuf4PvsJisKh3WBGVRUKRKKu/fEmT
-	gdiROW8Z1r9hu02cTb4o83F4R7/P4ZW/zZ+xarrKEGshimTywwu6LqDF0YODUGZoCvUYCsa8ZdRZu
-	wTVC4eBAA0aVuaCaTx8aqM0G1Ooe7Yi62WwZJyFQm/T+Xn/ja6kL9lypQmiUCZX4RLHWofjh/Ks+s
-	KxxjCU6nrR6a4f6WWNQTwvQOSFBVHrefz3PJo1UXW/fPVsneHXOYXh4Iie3zK/iDRxPbNI9GqThmd
-	CJVwErrZInizD5StGg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tKoe1-004Oea-03;
-	Tue, 10 Dec 2024 01:02:33 +0000
-From: linux@treblig.org
-To: trondmy@kernel.org,
-	anna@kernel.org,
-	chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com
-Cc: linux-nfs@vger.kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 3/3] sunrpc: Remove gss_{de,en}crypt_xdr_buf deadcode
-Date: Tue, 10 Dec 2024 01:02:25 +0000
-Message-ID: <20241210010225.343017-4-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241210010225.343017-1-linux@treblig.org>
-References: <20241210010225.343017-1-linux@treblig.org>
+	s=arc-20240116; t=1733792592; c=relaxed/simple;
+	bh=4EBLrNo7slfh5LLt28VP+LF0vIoQ0iAaq0SmWJdsc8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ah9y+qnTV1xLkWg17pqF4EqNRoZwAy9qhil4dbNeRZmDDv2BNDxMV30Oo8+Xn3leLpOOOxmKjE92NDfL4Amgzp5qhXrPSO+q1zFJLkRaPQPP3hGd9utSqhNNyi+hP55MTm3ESVPkOxF2O1z5JF2CF4cJ/Ee19ZOLC01/XCVyrRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FAR+fJct; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53e3a5fa6aaso2546970e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 17:03:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733792588; x=1734397388; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wuMOGX85l5nyRxt+UxCQ7JHkxB5r1qM4UgPGN4w1SHo=;
+        b=FAR+fJctbZObM190tDQAf0kqzrdKd+/Ikr/Hp1KbyfnSBraTqEcvKmkn3bL3PZiBXA
+         HIHtxrfqtdqrSNVWuuXNcTF6xbYXi19X6ZiGiNt9tkibUeb/kZ5C4XJ4lT81kH4SB531
+         vXod2FBWM3fUWJwobmvsPuu6lZP9LkJOztJH6MIwXGYRIoiKcUu5agraMV1LMwtt0OOi
+         rKEU37SpUuuUynIDCpzCav2uWbNBGaFSMwLlD3zAy/IChFxzm5BbeI9rafrTzFDtmNN/
+         SlRzDc+Hm9WY/TJDhIvZQJrX7DIi5vFn0E/quxb98ePLv4BpktDyhSsKZgBbnPmyvGsW
+         etOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733792588; x=1734397388;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wuMOGX85l5nyRxt+UxCQ7JHkxB5r1qM4UgPGN4w1SHo=;
+        b=JRX8Fm4WpVKIBuf7KoFctmW9FiK09VCDOkxokyBPz5gXqL4UgjXi2sWMMJUQHd8MMn
+         W5yD9ElTGhIOFWjbOqQ4G4XIxwsTcz8hh2ymxl/MhRvkxWvKQP8COP+S9yFWI7tJkpsq
+         WrhgM1y+gmDpkf32sU6Spw+/AoMWYdFT0WHfxt6bNLI51/yMaLrk1SLnAAcw4UivAF4Q
+         NGXBks+WQ11GhGdOWk5iuDeT/FHypeTO/9jNLOIcDyszUwe6yxfVLLxZZZFzDS0Bz72S
+         ESa7VWlBDkGEpSx3QNsJ2WHIJ9RO+bqT+nQsNh4NdgP8m1wsVrYeV5qov4CJWmG4TOmO
+         JHPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVOB2dElpRRhaEnXgGlWExPfsbFB6XIOSpxqJKswOJPIgBgsSIY6zTRV3puNLh8IduzjwNr/9wg/A1W2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjdeRB+wuY3dkY3uR5eF5/5ZdrXfuAYyW/yGfbDNREsXC/cS24
+	yE52NJ7lATC9fRlq8eHf8YEGvp5MLeyrezJrluPi2OD+rEkMgKvP+mBlKWgcSCk=
+X-Gm-Gg: ASbGnctxBfnTBCfMEXUkuBStdRV9uRzCZHxwf3EH0Wm66o0a660vaCx1DSysShVoX2p
+	0XsnF1CvTVBxzfZTDCsizDT80SgMSNRCfW9C19+Cg+nQuxmyZl5seHby20ZL49koki2pxKB0Lg0
+	WIvfnJm3T938431ATjSULW7AxWgbMn8TNBhRQ7iX6mjPRKJpFQ2KHtLCPbvMUQ+zHzWs4nx4WMF
+	CO24fVSxSrFIjrTAB3KUiTyv0RhkTHdt0Dt3GtmxWixpTnuA/+eQZ8sv9oA3hcWahTZo3OOwUJE
+	SwVScZvTeVUQwDJipK4Uy3JikzxJSkg3YA==
+X-Google-Smtp-Source: AGHT+IE8VzIRsoOMMK5ni+Jq+hPyqKRMlOBk8PtNU6SADe1Jqc+MHdxWquf3NeGRrAWy95PtMn2ddA==
+X-Received: by 2002:a05:6512:4005:b0:53e:39ba:fb3b with SMTP id 2adb3069b0e04-540252183cdmr348409e87.21.1733792588450;
+        Mon, 09 Dec 2024 17:03:08 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e34916befsm1143550e87.120.2024.12.09.17.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 17:03:07 -0800 (PST)
+Date: Tue, 10 Dec 2024 03:03:05 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 drm-dp 2/5] drm/hisilicon/hibmc: add dp link moduel in
+ hibmc
+Message-ID: <aj6yh5jgxmscmmdt7djbmr6h3bwhelvisoyvkfwfniahwididi@4l2krysjdg7l>
+References: <20241209144840.1933265-1-shiyongbang@huawei.com>
+ <20241209144840.1933265-3-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209144840.1933265-3-shiyongbang@huawei.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, Dec 09, 2024 at 10:48:37PM +0800, Yongbang Shi wrote:
+> From: baihan li <libaihan@huawei.com>
+> 
+> Add link training process functions in this moduel.
+> 
+> Signed-off-by: Baihan Li <libaihan@huawei.com>
+> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+> ---
+> Changelog:
+> v6 -> v7:
+>   - deleteing unset fields in struct hibmc_link_cap, suggested by Dmitry Baryshkov.
+>   - using macro instead of constants in hibmc_dp_link_training_configure(), suggested by Dmitry Baryshkov.
+> v5 -> v6:
+>   - using drm_dbg_dp() to print debug info instead of drm_info(), suggested by Dmitry Baryshkov.
+> v3 -> v4:
+>   - optimizing hibmc_dp_link_get_adjust_train() to delete for loop, suggested by Dmitry Baryshkov.
+>   - changing ELNRNG to EIO error code, suggested by Dmitry Baryshkov.
+>   - deleting meaningless macro, suggested by Dmitry Baryshkov.
+>   - fixing build errors reported by kernel test robot <lkp@intel.com>
+>     Closes: https://lore.kernel.org/oe-kbuild-all/202411041559.WIfxRN6n-lkp@intel.com/
+> v2 -> v3:
+>   - using switchcase in dp_link_reduce_lane, suggested by Dmitry Baryshkov.
+>   - deleting dp_link_pattern2dpcd function and using macros directly, suggested by Dmitry Baryshkov.
+>   - deleting EFAULT error codes, suggested by Dmitry Baryshkov.
+> v1 -> v2:
+>   - using drm_dp_* functions implement dp link training process, suggested by Jani Nikula.
+>   - fix build errors reported by kernel test robot <lkp@intel.com>
+>     Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
+>   v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
+> ---
+>  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   2 +-
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  21 ++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c | 329 +++++++++++++++++++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |   8 +
+>  4 files changed, 359 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+> 
 
-Commit ec596aaf9b48 ("SUNRPC: Remove code behind
-CONFIG_RPCSEC_GSS_KRB5_SIMPLIFIED") was the last user of the
-gss_decrypt_xdr_buf() and gss_encrypt_xdr_buf() functions.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Remove them.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- net/sunrpc/auth_gss/gss_krb5_crypto.c   | 55 -------------------------
- net/sunrpc/auth_gss/gss_krb5_internal.h |  7 ----
- 2 files changed, 62 deletions(-)
-
-diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-index d2b02710ab07..9a27201638e2 100644
---- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-@@ -442,35 +442,6 @@ encryptor(struct scatterlist *sg, void *data)
- 	return 0;
- }
- 
--int
--gss_encrypt_xdr_buf(struct crypto_sync_skcipher *tfm, struct xdr_buf *buf,
--		    int offset, struct page **pages)
--{
--	int ret;
--	struct encryptor_desc desc;
--	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
--
--	BUG_ON((buf->len - offset) % crypto_sync_skcipher_blocksize(tfm) != 0);
--
--	skcipher_request_set_sync_tfm(req, tfm);
--	skcipher_request_set_callback(req, 0, NULL, NULL);
--
--	memset(desc.iv, 0, sizeof(desc.iv));
--	desc.req = req;
--	desc.pos = offset;
--	desc.outbuf = buf;
--	desc.pages = pages;
--	desc.fragno = 0;
--	desc.fraglen = 0;
--
--	sg_init_table(desc.infrags, 4);
--	sg_init_table(desc.outfrags, 4);
--
--	ret = xdr_process_buf(buf, offset, buf->len - offset, encryptor, &desc);
--	skcipher_request_zero(req);
--	return ret;
--}
--
- struct decryptor_desc {
- 	u8 iv[GSS_KRB5_MAX_BLOCKSIZE];
- 	struct skcipher_request *req;
-@@ -525,32 +496,6 @@ decryptor(struct scatterlist *sg, void *data)
- 	return 0;
- }
- 
--int
--gss_decrypt_xdr_buf(struct crypto_sync_skcipher *tfm, struct xdr_buf *buf,
--		    int offset)
--{
--	int ret;
--	struct decryptor_desc desc;
--	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
--
--	/* XXXJBF: */
--	BUG_ON((buf->len - offset) % crypto_sync_skcipher_blocksize(tfm) != 0);
--
--	skcipher_request_set_sync_tfm(req, tfm);
--	skcipher_request_set_callback(req, 0, NULL, NULL);
--
--	memset(desc.iv, 0, sizeof(desc.iv));
--	desc.req = req;
--	desc.fragno = 0;
--	desc.fraglen = 0;
--
--	sg_init_table(desc.frags, 4);
--
--	ret = xdr_process_buf(buf, offset, buf->len - offset, decryptor, &desc);
--	skcipher_request_zero(req);
--	return ret;
--}
--
- /*
-  * This function makes the assumption that it was ultimately called
-  * from gss_wrap().
-diff --git a/net/sunrpc/auth_gss/gss_krb5_internal.h b/net/sunrpc/auth_gss/gss_krb5_internal.h
-index 3afd4065bf3d..a47e9ec228a5 100644
---- a/net/sunrpc/auth_gss/gss_krb5_internal.h
-+++ b/net/sunrpc/auth_gss/gss_krb5_internal.h
-@@ -172,13 +172,6 @@ u32 krb5_decrypt(struct crypto_sync_skcipher *key, void *iv, void *in,
- int xdr_extend_head(struct xdr_buf *buf, unsigned int base,
- 		    unsigned int shiftlen);
- 
--int gss_encrypt_xdr_buf(struct crypto_sync_skcipher *tfm,
--			struct xdr_buf *outbuf, int offset,
--			struct page **pages);
--
--int gss_decrypt_xdr_buf(struct crypto_sync_skcipher *tfm,
--			struct xdr_buf *inbuf, int offset);
--
- u32 gss_krb5_aes_encrypt(struct krb5_ctx *kctx, u32 offset,
- 			 struct xdr_buf *buf, struct page **pages);
- 
 -- 
-2.47.1
-
+With best wishes
+Dmitry
 
