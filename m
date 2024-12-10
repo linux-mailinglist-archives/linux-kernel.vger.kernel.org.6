@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-438629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DDCD9EA3B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:43:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D949EA3BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9E3282B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8C86282C2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA831863E;
-	Tue, 10 Dec 2024 00:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28AD1BC5C;
+	Tue, 10 Dec 2024 00:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwiLlCX3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PgnA62os"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDF333EA
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE01380
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733791384; cv=none; b=E1r1vSqZw0bs9TwfIZrXwDrFYxsHLcJ85QtwoQJIGpQ2fO1lx/ffFpvQqKpc1r4+HMmsms6rsCC8ygbeUIH2B7I8uFNzbVyWR/natQg4OKZTLK9VK6xE/g7bL7Z73vbIr0A9pf1QG5n4b6770n5rYK5NXQnse2QfdAvZoxQAxp0=
+	t=1733791419; cv=none; b=MDrdZfbp/TdPc3ifPRAwVuOW9Nf7Y/xqg3JgNtj6lQjd9A1SNnx84DOrP2EuWrEMRCQjVHcApMpLjGig/np3vKgfF8Mx6/5ULtmsHiyeApejGL3Pfa1GzbAslAOaPKoONiHYk3vDbOt5HEXF6DaTPMJnmflzNCW/OZALz5uH/uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733791384; c=relaxed/simple;
-	bh=RuCcFUDLbLjGKs6CmeSz+8foqRR83dy3HBN8E1REPgw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sCXRtpDkKhcLFPtC36ADgr70HNRQvKxLKMyV02KIkxeSumqZHxSV4aNyeOffGsVyl3S9+ydYOlbEgrdyy7Pazk/hxvbb0kNTryfzt4Iqqj1MHS+YWHohLhB8t3JcyZkwIBcbfkLsx5b9Y0rdmZpMVft2o3QrpvbaWXfe3o0qLNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwiLlCX3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A6DC4CED1;
-	Tue, 10 Dec 2024 00:43:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733791384;
-	bh=RuCcFUDLbLjGKs6CmeSz+8foqRR83dy3HBN8E1REPgw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=XwiLlCX3NpbW5Hm/QQaTrLYAbO7u1kk/ba5Q3+Yi9NKQHeeHQlFTMFOnvybDWQWoO
-	 QIjJL986KmJ5TO5M8tlvosJ8aohW0UDGsglBpne1uU/BORySyjPoJeqmx42JoJChNM
-	 o9ASe1zqgDbELymkdd5Hj/ylXasRwfI/pCj4jD0OnkmSAPNe2C54yAPRC6f4Ds9yPG
-	 nnDsszJGXHV5SV5l+c2uO9YjyJNRXqlHrLThjRqCmXhNPQbPL74IkpdmZMqMQkGM82
-	 8ecaEsVJrDaW0SEWBTRVJkOW+ZeKRc3YBX0n+ivxQpQdrlG+coQIDHwFWJMpidPnCm
-	 N1SFD/qSqmF1g==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 10 Dec 2024 00:42:53 +0000
-Subject: [PATCH] arm64/signal: Silence spurious sparse warning storing
- GCSPR_EL0
+	s=arc-20240116; t=1733791419; c=relaxed/simple;
+	bh=7s8cXBHP/4C+GO2k56/2eFfcYIYomUQvCh2uoFWNhto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iL254iX0DQcg6Ijjl7XmTOU2zCXVe9N69EvakUqRsZ164QT1GUJWJuSMsgdL08258zqEKmu1KbtUFGMBAvpTK4nl4GkjSWWpTLjmkLFiEP97mr4qbbJ5vFCxfsKsTZdIcwt4AqDnQJb6eweG1W6luLh7itsne/CNPY7bwYNW6+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PgnA62os; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-843df3c4390so164573639f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 16:43:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1733791416; x=1734396216; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uxQj4mFkPuCMF5g/bHPAP+ehf22UWQDWDQ3gf17TMVs=;
+        b=PgnA62oso5qKw3Cryin9/fmfASCNwmh9+HvR8/5+uGLLkGhtmDBtP1PF235C3cJZH7
+         8ZMhhd92uvfc0pBu+f236n0EWlm4Zaf9aNO0bHQvYHzpYrH9dCOcTpxQDT8N5Z2vs/H9
+         CCvE8+k99zWJXBEMJkdwEBHZd/jeoCs+tEvk4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733791416; x=1734396216;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uxQj4mFkPuCMF5g/bHPAP+ehf22UWQDWDQ3gf17TMVs=;
+        b=At9GNun8dbFPECb8BEoLtBsAI2VQe7Q79+YvgWhUvSNRHFvc3/5eTMaNLye8bGAcJy
+         tv89ZGqd4YNxnMiK1odugJGK1rhXg9dqEXAqXgZ8Eoc13pa0jxxxTqwKvrJaaaRrk1G4
+         Oh/DwNnWvAAGbVCS0HfqAJas8GkwBWxzoCEJXI2RPIE/PAosSQYXlnEK4QEixYml2dhS
+         Fj1FUtThjxA706ZH4xM6khcNlGpRR7d4qYSTrdxsabMfwLQjc0Bbo2WN4jcPUbkCk+Sp
+         8F88cCok/5VGrVVtoNNEo5JFMnAcaiz1GbUK1CVUJ/SP3fJqd4KMMLRfU+Kr+CmiHRTH
+         GJjQ==
+X-Gm-Message-State: AOJu0YwDqa9rM/NHCQOvJAqEuquIFO9aMfT0vDFmX9agzbphRqKUQwtB
+	r2trLP2oeEpA7PMVUjUn7PQba+9v1dD9cPro6OOzo+PK/1rNK8d5L+LgJRmnLA4=
+X-Gm-Gg: ASbGncvjWq0LLCTi3Q9i4QdhrnaUIV0OZBwRCtYImP7X/45sV6J+DOj/R6lFapdoDSb
+	q3h6da0CGjtmnPb4vZghdzKyzFRtsHfpq9E70m/zwveoUO7TdD5CRBwa/L8sxRCSIOU4/1fFIL0
+	eoUJBvygwVaDhJjGKzRLJ/bupe5cmcJNtFbIqVSPe6rzegwjN+cZ1M5RHB98Q9xa5YxaQFN65mu
+	3ALwSN+8sUte8q30zJETaIOkWcOumPzR0rHxV+8InT65I2/DwxnkUiQF0/YEpV4rg==
+X-Google-Smtp-Source: AGHT+IEfT6QHF9o4tTU+ARq3U2kLw293RMSpojeZMjocSBS13RSPmW2lOyXE12NqKCYYgMLVBKBVng==
+X-Received: by 2002:a05:6602:1482:b0:835:4931:b110 with SMTP id ca18e2360f4ac-844b51791a0mr375170339f.5.1733791415202;
+        Mon, 09 Dec 2024 16:43:35 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-84473a5b3b9sm291700439f.35.2024.12.09.16.43.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 16:43:34 -0800 (PST)
+Message-ID: <e5b0996d-be80-47a9-af28-ee9776638ab7@linuxfoundation.org>
+Date: Mon, 9 Dec 2024 17:43:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpupower: fix TSC MHz calculation for Mperf monitor
+To: He Rongguang <herongguang@linux.alibaba.com>, trenn@suse.com,
+ shuah@kernel.org, jwyatt@redhat.com, jkacur@redhat.com, wyes.karny@amd.com
+Cc: linux-kernel@vger.kernel.org, shannon.zhao@linux.alibaba.com,
+ linux-pm@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <269b8bb2-85b5-4cc9-9354-a1270f2eed35@linux.alibaba.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <269b8bb2-85b5-4cc9-9354-a1270f2eed35@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-arm64-gcs-signal-sparse-v1-1-26888bcd6f89@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAIyOV2cC/x3MQQqEMAxA0atI1hOoVSvOVQYXoaY1oB1JYBgQ7
- 25x+Rb/n2Cswgbv5gTln5h8S0X7aiCuVDKjLNXgne9b7yYk3UOPORqa5EIb2kFqjEOXaIq0hDG
- NUOtDOcn/OX/m67oBZlzzEmkAAAA=
-X-Change-ID: 20241209-arm64-gcs-signal-sparse-53fa9cad67f7
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel test robot <lkp@intel.com>, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2301; i=broonie@kernel.org;
- h=from:subject:message-id; bh=RuCcFUDLbLjGKs6CmeSz+8foqRR83dy3HBN8E1REPgw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnV46Vtms1HDkXqNTBQOpNkKXM/NwnEd+RWOX8aUVV
- AbjDp5yJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ1eOlQAKCRAk1otyXVSH0Nf2B/
- 46IZKbsXIhvCH3YKyKwJdChGOWpXTBf6YEHh8T/jS05DXa9vZNHU+B/U9TxDHM1CRUdPUaDQbcPXRn
- Cav5lk1kZUrdoXnHYm/rOR9zaX0z1TLE+u9NuSeLglpLyzQyBfkdbLpQ5YgNt3I0Fm8RAnBl6zDPER
- L1Vch0wPxEUNOIpID45ry1unNSmMG5StXBNkYURQ18PTCDuQ+5ACgoY1lJifvm+MchS8oIzmzV9WzU
- RKhqAjUYSPe0PDDKklWHuCPCHqq6GrMtc2q7jCQGQ242brIFmQyTJ+SEs0GRzkCxwckTmOwjGRv8ix
- 5JPpPWdYRqvVCKFWKwVyszinhF2iSX
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-We are seeing a false postive sparse warning in gcs_restore_signal()
+On 11/28/24 02:50, He Rongguang wrote:
+> Commit 'cpupower: Make TSC read per CPU for Mperf monitor' (c2adb1877b7)
+> changes TSC counter reads to per cpu, but left time diff global (from
+> start of all cpus to end of all cpus), thus diff(time) is too large for
+> a cpu's tsc counting, resulting in far less than acutal TSC_Mhz and thus
+> `cpupower monitor` showing far less than actual cpu realtime frequency.
+> 
+> Fix this by making timediff also per cpu.
+> 
+> /proc/cpuinfo shows frequency:
+> cat /proc/cpuinfo | egrep -e 'processor' -e 'MHz'
+> ...
+> processor : 171
+> cpu MHz   : 4108.498
+> ...
+> 
+> before fix (System 100% busy):
+>      | Mperf              || Idle_Stats
+>   CPU| C0   | Cx   | Freq  || POLL | C1   | C2
+>   171|  0.77| 99.23|  2279||  0.00|  0.00|  0.00
+> 
+> after fix (System 100% busy):
+>      | Mperf              || Idle_Stats
+>   CPU| C0   | Cx   | Freq  || POLL | C1   | C2
+>   171|  0.46| 99.54|  4095||  0.00|  0.00|  0.00
+> 
+> Fixes: c2adb1877b76f ("cpupower: Make TSC read per CPU for Mperf monitor")
+> Signed-off-by: He Rongguang <herongguang@linux.alibaba.com>
+> ---
 
-arch/arm64/kernel/signal.c:1054:9: sparse: sparse: cast removes address space '__user' of expression
+This patch has several warnings and seems to corrupt. Can you
+look into this and send v2?
 
-when storing the final GCSPR_EL0 value back into the register, caused by
-the fact that write_sysreg_s() casts the value it writes to a u64 which
-sparse sees as discarding the __userness of the pointer. The magic for
-handling such situations with sparse is to cast the value to an unsigned
-long which sparse sees as a valid thing to do with __user pointers so add
-such a cast.
+scripts/checkpatch.pl will show you the problems.
 
-While we're at it also remove spurious casts of the gcspr_el0 value as we
-manipulate it which were the result of bitrot as the code was tweaked in
-the long period it was out of tree.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202412082005.OBJ0BbWs-lkp@intel.com/
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/kernel/signal.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 14ac6fdb872b9672e4b16a097f1b577aae8dec50..83ea7e5fd2b54566c6649b82b8570657a5711dd4 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -39,7 +39,7 @@
- #ifdef CONFIG_ARM64_GCS
- #define GCS_SIGNAL_CAP(addr) (((unsigned long)addr) & GCS_CAP_ADDR_MASK)
- 
--static bool gcs_signal_cap_valid(u64 addr, u64 val)
-+static bool gcs_signal_cap_valid(unsigned long __user *addr, u64 val)
- {
- 	return val == GCS_SIGNAL_CAP(addr);
- }
-@@ -1094,15 +1094,15 @@ static int gcs_restore_signal(void)
- 	/*
- 	 * Check that the cap is the actual GCS before replacing it.
- 	 */
--	if (!gcs_signal_cap_valid((u64)gcspr_el0, cap))
-+	if (!gcs_signal_cap_valid(gcspr_el0, cap))
- 		return -EINVAL;
- 
- 	/* Invalidate the token to prevent reuse */
--	put_user_gcs(0, (__user void*)gcspr_el0, &ret);
-+	put_user_gcs(0, gcspr_el0, &ret);
- 	if (ret != 0)
- 		return -EFAULT;
- 
--	write_sysreg_s(gcspr_el0 + 1, SYS_GCSPR_EL0);
-+	write_sysreg_s((unsigned long)(gcspr_el0 + 1), SYS_GCSPR_EL0);
- 
- 	return 0;
- }
-
----
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-change-id: 20241209-arm64-gcs-signal-sparse-53fa9cad67f7
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+thanks,
+-- Shuah
 
 
