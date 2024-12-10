@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-439693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16E49EB2AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:07:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C96A9EB2BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:09:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EFED284B60
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:07:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DC91678FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBF81AAA15;
-	Tue, 10 Dec 2024 14:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A831AAE0D;
+	Tue, 10 Dec 2024 14:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hohfcpAy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FM39Fpu/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD6A78F36;
-	Tue, 10 Dec 2024 14:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1A378F36;
+	Tue, 10 Dec 2024 14:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733839639; cv=none; b=Fme2AHg0jNufV7933RV4Z2+S4qGZQXYTseY4yvXpJ+JSf3idRU3QYYYLEk3u4UdUuj/NIOC33b0t462VQY3ebvtizA+r4LRe+2OivkBhoTDxHam3bEwM1bbmnYUzIvjKj72bd6AlAi1eWRVFkYS0HiMlALNIBKdqIWRS6GYTuWA=
+	t=1733839646; cv=none; b=R2iDJmma3HvpQjVNGunFeNrKiGHn7SxZvkbrFblWd+Mwtoy8MbxleiOi6eKHeI90BYp4ZA904GzC+htX4HxtH8eJBPUcmvpjqeoJi0b9OjmvqQOZu1h8nqKSeEVUFq2xToXtcg69+SQhJEHhG/bqUYmhezZgfBYVEjA5pVCPzhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733839639; c=relaxed/simple;
-	bh=i9G83b35R57ZrkD9ceAYPAVQmGkZPFS0wVEM8ZlFXYQ=;
+	s=arc-20240116; t=1733839646; c=relaxed/simple;
+	bh=/wBby0ZaQ5upXhJFQV1aKko4D11BdDLGyQDqBZJw7ng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjvA9X7pigHHjY89rmvf1ufMz96yy5DIPsYMwKNo9XDs2sf173kogza4569aenV7Ub9CYfW7a+muxc/lGfatILM45VHuR6aqMD5yoOOmc0mNnGB6RvMVQWpgWBsQ/9ZSJcCrKibAIMFYylYYjfzVxL1Ex4IotOvdbqn5gAtJOcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hohfcpAy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E97EC4CED6;
-	Tue, 10 Dec 2024 14:07:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=se1jxl3dhC4F8lGZFh6wIAHNYHPt8V31nZyHkN5V17esaevi0pomk3X097nPHFJWiJPlsJl7x+qzicFqdybmxVrUtYzQi7LkDYb3UDQX+FQZ1fDZqiJj6CwgeSv/7AZbkFcFXP98sa5pqrosZlzWH52TtL/f+dnJqYG/pbyfOY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FM39Fpu/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9867FC4CED6;
+	Tue, 10 Dec 2024 14:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733839639;
-	bh=i9G83b35R57ZrkD9ceAYPAVQmGkZPFS0wVEM8ZlFXYQ=;
+	s=k20201202; t=1733839646;
+	bh=/wBby0ZaQ5upXhJFQV1aKko4D11BdDLGyQDqBZJw7ng=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hohfcpAyEew2WhwjL/IXEsWcOQ1wPbUTqBid2L4cshcjM0Aw4txRyHGB1Z8BNpMrM
-	 QPP0xt9M14fNvbLveRyNL6V8DluRM47cjV5QqleTeRSPW+YFjl030nux9D4YLqTW6b
-	 8KyH4ua5GWQKX+Bj+ubiw3ygSuU2JAV6//3YptawVKzcs9TXxAtJiubhaDNNINqhb9
-	 d+q80jUFvbF++IjIswb2u1C4tpogbtzOq4iXubRSQLe+y1gQql1NprEl0uHbu4TOjK
-	 dJJNk1G1/FLlPTeynuv4xIE1Fa8zMNEbbfaqfUxemb0WtEnDH3a/AQlZJHxVp/EsEo
-	 028/7g8PIIR8Q==
-Date: Tue, 10 Dec 2024 11:07:13 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org,
-	Ian Rogers <irogers@google.com>, thomas.falcon@intel.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] libperf: evlist: Fix --cpu argument on hybrid
- platform
-Message-ID: <Z1hLEQwYE3ymbrIr@x1>
-References: <20241114160450.295844-1-james.clark@linaro.org>
- <20241114160450.295844-2-james.clark@linaro.org>
- <Z1hHc-Q-TKgagORu@x1>
- <eb8301ec-50af-4414-89e7-5d49585bda47@linaro.org>
+	b=FM39Fpu/5upH/82Z/8Fd2WSdrJDJEVGe172obK/xEzH9uIao5ILbSih94BGykRLHZ
+	 6LAdl+Kd1s7Ai6qGVpD8BoF+u0+SHBOD4MzHbopL6wOjR31GN8VxhVNEGOqpRo4ZZD
+	 dM3cpEb8iJCcB0s9deqYRwpxKlf6utqhRnTIhmZyT1SoZvrJkMKRWZr+6YnwfghQut
+	 sbc8C1/JaRRaqz4+IE5BL0K2umV3gGx46VcGVk65wYCWqPEgW5OZZ1uSNf1myzTHuX
+	 Jzfr3iuhom3i1wqkRweTvaUbsfEmHxvuwEC6L2J+VaLcnh/xfwRMz2tpKqLbtqXiB3
+	 fHyTBqHAY2Ucg==
+Date: Tue, 10 Dec 2024 14:07:22 +0000
+From: Simon Horman <horms@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dsa: mv88e6xxx: Move available stats into info
+ structure
+Message-ID: <20241210140722.GC4202@kernel.org>
+References: <20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-v1-0-b9960f839846@lunn.ch>
+ <20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-v1-1-b9960f839846@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,23 +61,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eb8301ec-50af-4414-89e7-5d49585bda47@linaro.org>
+In-Reply-To: <20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-v1-1-b9960f839846@lunn.ch>
 
-On Tue, Dec 10, 2024 at 01:56:21PM +0000, James Clark wrote:
-> On 10/12/2024 1:51 pm, Arnaldo Carvalho de Melo wrote:
-> > James, the second patch isn't applying to perf-tools/perf-tools.
- 
-> The second one applies on
-> https://lore.kernel.org/linux-perf-users/20241113011956.402096-1-irogers@google.com/T/#m2a3587fb83e6ab2d970bae25982ae9d6c8d9e5cd
-> because that also does an evlist__remove() which gets fixed up.
+On Sat, Dec 07, 2024 at 03:18:44PM -0600, Andrew Lunn wrote:
+> Different families of switches have different statistics available.
+> This information is current hard coded into functions, however this
+> information will also soon be needed when getting statistics from the
+> RMU. Move it into the info structure.
+> 
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 
-Right, I have to test that series on the ARM machines I have access to,
-but there is a question from a tester that is waiting for a reply, I'll
-see if I can reproduce that problem as well.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-> But the first one is ok to go in on its own.
- 
-Agreed.
-
-- Arnaldo
 
