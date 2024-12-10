@@ -1,462 +1,152 @@
-Return-Path: <linux-kernel+bounces-439526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB929EB087
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:11:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CE39EB089
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED866166564
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E76F1692A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A031E1A265E;
-	Tue, 10 Dec 2024 12:11:12 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DF01A239B;
+	Tue, 10 Dec 2024 12:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nOHM7UND"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058611A2543
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3F11A2398;
+	Tue, 10 Dec 2024 12:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733832671; cv=none; b=HxbZB+ceuCHr4W9U+9/yhBOLuS7q6ixMHOkkuAJ/jGIbvV1sKnBaAyiMgFzj+EpN+YaIjOTqZMSe0ah04b4TNJ6dJg82ztuQK1JzDs/b+i5wlv7/d3ehqhamrPh+G6xi5dSK9Ib5hzAqQLU2m43Ny5nth8gt5NXDkwy9ff9R50E=
+	t=1733832694; cv=none; b=ly0qk9VqptnUzg/ohUg2CKxhUcUOxoOSpgVf1Iz4lo64WLCQSWM+tLuibuywohOKZGcykS4vI8NE6kQjQgoLuOw0H9Jfi5NoY+YU9WY7eCpCpDLqLNK7BjlQbk4G+SYhbFyxxksDc9uPnr82ud3XLZnSH7m4syuXKtb/hDSWyGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733832671; c=relaxed/simple;
-	bh=bH5jT74QVvAHlwBD9PsxmREr3pVKeZdt8+rdko8xi8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kxeGrc7a5nWk1V8Nw8jXgLFUrdAxg2xLAYjLjkTX186GFgI9VP+qKfgSdVU1MCaLEDeEeQSTCVXSZ3J0wNsKC6TfQl/ptbTT9awsdH8pXr/baq9kq2ahkAIpgtlSAuLlHSFfXGCPggHAFfWTXNpw6Bs9k90nkNfjNDVqVb4ApzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y6yHZ1PgHz1JDvb;
-	Tue, 10 Dec 2024 20:10:50 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 473281401DC;
-	Tue, 10 Dec 2024 20:11:04 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 10 Dec
- 2024 20:11:03 +0800
-Message-ID: <ee9573f8-dd9c-49dc-8518-68bb45e1bbf4@huawei.com>
+	s=arc-20240116; t=1733832694; c=relaxed/simple;
+	bh=5QcZLHny0olE30ytkp4MH8IjgwzPeDI6yCw7Kv0u32s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u8sxigPmc+bqXptxRFUV4gvTlBnxNozZeq8V3VDof9XDlQO78I0uopLFdhNlb3GvMkAsJjf8y3BCkLz2zrfcXtiRoH21Y5imyZ9ZvmW4higRjVviBrYINW3xA6MLEd9NdYGgIgz7R7DCNDdAaGT2kcX83+YOndW1iUHOzgOC7uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nOHM7UND; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-728ea1573c0so66946b3a.0;
+        Tue, 10 Dec 2024 04:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733832692; x=1734437492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2SbFr1LH1Hb+rihMpff4bIPu/Em9rs2b4NG+Lm1rqxg=;
+        b=nOHM7UND3K4apnh7qaoWYrwsqJy4XkVa6Dc5qRRgpti7yMRqNOdC0dwbf3gFczwQBR
+         pbBvZfWtcefDpsumDtHTAhK0ZQCMOq6XoC4oBEwaDtrzl8P/ymOC7NHBLMohYOMdL4Hl
+         8C4XpFiFOc7qXtP+ZvmwKt9oNG/AcSLhhrAG5BVXz6zzRF1Lyr0u4MFPIzuw4UxBo2Bn
+         qU4Ym4jCuvLtA2lnU4clUYijhrnm4qTSC/EotvVQWi8MpfFf7xSn+hUiflFon/LIzgxx
+         unAdJcU+hhG5OHYHEzd/7ucdtPFKbLYuRjRlnhpJpco8kXzJ3VOTk3u9vQ4f5SVH8EHt
+         f3Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733832692; x=1734437492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2SbFr1LH1Hb+rihMpff4bIPu/Em9rs2b4NG+Lm1rqxg=;
+        b=XVraU5rvTs1fKeW4C1vxKdP2CKTJ8ouxAm9208Nndm1V4d+DF/KCK0X8lB1AfpqQq0
+         w6m8rX3O57s4tL0Zlm8stW5VUoaPOmALwu9A10J5mKfdTQ3Cvad5oQ53nyMDRWh+768X
+         XM6TCZuAr68GHFIUrNJONpOMk/01NrWjWliKVfrM/fxwj63eKT2Z7QX2N0B9Y72uGW0S
+         YBIR4Dw98ssKfomlb+zv8i3I2rhdGEdDNJsm7rkyY7tqkZd+CW1IjpD7abrzoM9FFbZe
+         RX5T3pl7vs1896rFbthtP8ONd+ul3RdICqedsgq5Gf8yXCk47nlPqNbZXagzNfOwoVvd
+         zlCg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3UC0rilfqvJGQHqzr1xAeQHVLJpaKdjgXrX9ahVi7E1uC3Md9Qd6xB0Rbiwtl9ZWvoMCZwwUv7Y0izCE=@vger.kernel.org, AJvYcCUocE1yGVmyFbm3SsPI70Ng3W7t2HorbsgUTy8BKAOc4uCxc/Fd0RqEAf9gYZ/LiiU5uvwc3ZPL4XOSD4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdD3jI7Q8j17hrVTURsu0Lr9+Af2aPKM9H13qQnG6RDo1FtfUR
+	oRjHZsHlfTfF28EiXHNK4AVjQIHACTHpujFbBXcn640v72FBmpZc
+X-Gm-Gg: ASbGncvMbl21sez4TBGsHzknmg5h1tGRrFiO2IQ/i14f+12ezprBRe5EpsFZSf/8gvG
+	Y753lhtUIjdf2WYxgcuwsrIpYeXkQZ0xF8r6vq54aIM02e7W2/KANaFdIx6JCzTm6Oms+naf45D
+	F8HXompVaCJkGeYBGjtetfiVrjv+F9WVo7MhJl710w8E7UlNN9o3zbeq3lYzHP6Y1zgpPfaaaXZ
+	dsTEf0EcgKd23Sr3gM//z9tnZLcPfEhnzu3HxohrkCnO5iHrgfLS5SRPrwBTtHYriQ=
+X-Google-Smtp-Source: AGHT+IH+CqGieM7HRhOP1D3Ye7Ty1n33UunTr12BrSks4jwDDtU29vqdMfAogEVH/6S/6l/Zcv19Zg==
+X-Received: by 2002:a05:6a00:3027:b0:725:df1a:285 with SMTP id d2e1a72fcca58-725df1a17a1mr15934686b3a.12.1733832692014;
+        Tue, 10 Dec 2024 04:11:32 -0800 (PST)
+Received: from localhost.localdomain ([221.221.237.217])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725f1fba027sm3065316b3a.3.2024.12.10.04.11.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 04:11:31 -0800 (PST)
+From: Yang Zhao <etoyz688@gmail.com>
+To: 
+Cc: Yang Zhao <etoyz688@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Jiawei Wang <me@jwang.link>,
+	"end.to.start" <end.to.start@mail.ru>,
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: amd: yc: Fix bug where quirks code was skipped due to early return.
 Date: Tue, 10 Dec 2024 20:11:02 +0800
+Message-ID: <20241210121106.497223-1-etoyz688@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] mm: vmascan: retry folios written back while
- isolated for traditional LRU
-To: Barry Song <21cnbao@gmail.com>
-CC: Chen Ridong <chenridong@huaweicloud.com>, <akpm@linux-foundation.org>,
-	<mhocko@suse.com>, <hannes@cmpxchg.org>, <yosryahmed@google.com>,
-	<yuzhao@google.com>, <david@redhat.com>, <willy@infradead.org>,
-	<ryan.roberts@arm.com>, <wangkefeng.wang@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <wangweiyang2@huawei.com>,
-	<xieym_ict@hotmail.com>
-References: <20241209083618.2889145-1-chenridong@huaweicloud.com>
- <20241209083618.2889145-2-chenridong@huaweicloud.com>
- <CAGsJ_4wuy5Nhn0pdoz7YvzTXs9LCUrpxT5c4+Hd7-DGH3yBsog@mail.gmail.com>
- <13223d50-6218-49db-8356-700a1907e224@huawei.com>
- <CAGsJ_4yWLpd262vOMb11qeQXhXeNFLOKpmEUat3kvJv4wBxi5w@mail.gmail.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <CAGsJ_4yWLpd262vOMb11qeQXhXeNFLOKpmEUat3kvJv4wBxi5w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
+Replaced the early return with DMI quirks code.
+This ensures that DMI quirks are executed.
 
+Fixes: 4095cf872084 ("ASoC: amd: yc: Fix for enabling DMIC on acp6x via _DSD entry")
+Signed-off-by: Yang Zhao <etoyz688@gmail.com>
+---
+ sound/soc/amd/yc/acp6x-mach.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-On 2024/12/10 16:24, Barry Song wrote:
-> On Tue, Dec 10, 2024 at 2:41 PM chenridong <chenridong@huawei.com> wrote:
->>
->>
->>
->> On 2024/12/10 12:54, Barry Song wrote:
->>> On Mon, Dec 9, 2024 at 4:46 PM Chen Ridong <chenridong@huaweicloud.com> wrote:
->>>>
->>>> From: Chen Ridong <chenridong@huawei.com>
->>>>
->>>> The commit 359a5e1416ca ("mm: multi-gen LRU: retry folios written back
->>>> while isolated") only fixed the issue for mglru. However, this issue
->>>> also exists in the traditional active/inactive LRU. This issue will be
->>>> worse if THP is split, which makes the list longer and needs longer time
->>>> to finish a batch of folios reclaim.
->>>>
->>>> This issue should be fixed in the same way for the traditional LRU.
->>>> Therefore, the common logic was extracted to the 'find_folios_written_back'
->>>> function firstly, which is then reused in the 'shrink_inactive_list'
->>>> function. Finally, retry reclaiming those folios that may have missed the
->>>> rotation for traditional LRU.
->>>
->>> let's drop the cover-letter and refine the changelog.
->>>
->> Will update.
->>
->>>>
->>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>> ---
->>>>  include/linux/mmzone.h |   3 +-
->>>>  mm/vmscan.c            | 108 +++++++++++++++++++++++++++++------------
->>>>  2 files changed, 77 insertions(+), 34 deletions(-)
->>>>
->>>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->>>> index b36124145a16..47c6e8c43dcd 100644
->>>> --- a/include/linux/mmzone.h
->>>> +++ b/include/linux/mmzone.h
->>>> @@ -391,6 +391,7 @@ struct page_vma_mapped_walk;
->>>>
->>>>  #define LRU_GEN_MASK           ((BIT(LRU_GEN_WIDTH) - 1) << LRU_GEN_PGOFF)
->>>>  #define LRU_REFS_MASK          ((BIT(LRU_REFS_WIDTH) - 1) << LRU_REFS_PGOFF)
->>>> +#define LRU_REFS_FLAGS         (BIT(PG_referenced) | BIT(PG_workingset))
->>>>
->>>>  #ifdef CONFIG_LRU_GEN
->>>>
->>>> @@ -406,8 +407,6 @@ enum {
->>>>         NR_LRU_GEN_CAPS
->>>>  };
->>>>
->>>> -#define LRU_REFS_FLAGS         (BIT(PG_referenced) | BIT(PG_workingset))
->>>> -
->>>>  #define MIN_LRU_BATCH          BITS_PER_LONG
->>>>  #define MAX_LRU_BATCH          (MIN_LRU_BATCH * 64)
->>>>
->>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>>> index 76378bc257e3..1f0d194f8b2f 100644
->>>> --- a/mm/vmscan.c
->>>> +++ b/mm/vmscan.c
->>>> @@ -283,6 +283,48 @@ static void set_task_reclaim_state(struct task_struct *task,
->>>>         task->reclaim_state = rs;
->>>>  }
->>>>
->>>> +/**
->>>> + * find_folios_written_back - Find and move the written back folios to a new list.
->>>> + * @list: filios list
->>>> + * @clean: the written back folios list
->>>> + * @skip: whether skip to move the written back folios to clean list.
->>>> + */
->>>> +static inline void find_folios_written_back(struct list_head *list,
->>>> +               struct list_head *clean, bool skip)
->>>> +{
->>>> +       struct folio *folio;
->>>> +       struct folio *next;
->>>> +
->>>> +       list_for_each_entry_safe_reverse(folio, next, list, lru) {
->>>> +               if (!folio_evictable(folio)) {
->>>> +                       list_del(&folio->lru);
->>>> +                       folio_putback_lru(folio);
->>>> +                       continue;
->>>> +               }
->>>> +
->>>> +               if (folio_test_reclaim(folio) &&
->>>> +                   (folio_test_dirty(folio) || folio_test_writeback(folio))) {
->>>> +                       /* restore LRU_REFS_FLAGS cleared by isolate_folio() */
->>>> +                       if (lru_gen_enabled() && folio_test_workingset(folio))
->>>> +                               folio_set_referenced(folio);
->>>> +                       continue;
->>>> +               }
->>>> +
->>>> +               if (skip || folio_test_active(folio) || folio_test_referenced(folio) ||
->>>> +                   folio_mapped(folio) || folio_test_locked(folio) ||
->>>> +                   folio_test_dirty(folio) || folio_test_writeback(folio)) {
->>>> +                       /* don't add rejected folios to the oldest generation */
->>>> +                       if (lru_gen_enabled())
->>>> +                               set_mask_bits(&folio->flags, LRU_REFS_MASK | LRU_REFS_FLAGS,
->>>> +                                             BIT(PG_active));
->>>> +                       continue;
->>>> +               }
->>>> +
->>>> +               /* retry folios that may have missed folio_rotate_reclaimable() */
->>>> +               list_move(&folio->lru, clean);
->>>> +       }
->>>> +}
->>>> +
->>>>  /*
->>>>   * flush_reclaim_state(): add pages reclaimed outside of LRU-based reclaim to
->>>>   * scan_control->nr_reclaimed.
->>>> @@ -1907,6 +1949,25 @@ static int current_may_throttle(void)
->>>>         return !(current->flags & PF_LOCAL_THROTTLE);
->>>>  }
->>>>
->>>> +static inline void acc_reclaimed_stat(struct reclaim_stat *stat,
->>>> +               struct reclaim_stat *curr)
->>>> +{
->>>> +       int i;
->>>> +
->>>> +       stat->nr_dirty += curr->nr_dirty;
->>>> +       stat->nr_unqueued_dirty += curr->nr_unqueued_dirty;
->>>> +       stat->nr_congested += curr->nr_congested;
->>>> +       stat->nr_writeback += curr->nr_writeback;
->>>> +       stat->nr_immediate += curr->nr_immediate;
->>>> +       stat->nr_pageout += curr->nr_pageout;
->>>> +       stat->nr_ref_keep += curr->nr_ref_keep;
->>>> +       stat->nr_unmap_fail += curr->nr_unmap_fail;
->>>> +       stat->nr_lazyfree_fail += curr->nr_lazyfree_fail;
->>>> +       stat->nr_demoted += curr->nr_demoted;
->>>> +       for (i = 0; i < ANON_AND_FILE; i++)
->>>> +               stat->nr_activate[i] = curr->nr_activate[i];
->>>> +}
->>>
->>> you had no this before, what's the purpose of this？
->>>
->>
->> We may call shrink_folio_list twice, and the 'stat curr' will reset in
->> the shrink_folio_list function. We should accumulate the stats as a
->> whole, which will then be used to calculate the cost and return it to
->> the caller.
-> 
-> Does mglru have the same issue? If so, we may need to send a patch to
-> fix mglru's stat accounting as well. By the way, the code is rather
-> messy—could it be implemented as shown below instead?
-> 
+diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
+index e38c5885dadf..9dfbcd00b897 100644
+--- a/sound/soc/amd/yc/acp6x-mach.c
++++ b/sound/soc/amd/yc/acp6x-mach.c
+@@ -23,7 +23,7 @@ SND_SOC_DAILINK_DEF(acp6x_pdm,
+ 
+ SND_SOC_DAILINK_DEF(dmic_codec,
+ 		    DAILINK_COMP_ARRAY(COMP_CODEC("dmic-codec.0",
+-						  "dmic-hifi")));
++							      "dmic-hifi")));
+ 
+ SND_SOC_DAILINK_DEF(pdm_platform,
+ 		    DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_yc_pdm_dma.0")));
+@@ -583,13 +583,12 @@ static int acp6x_probe(struct platform_device *pdev)
+ 
+ 	if (is_dmic_enable && wov_en)
+ 		platform_set_drvdata(pdev, &acp6x_card);
+-	else
+-		return 0;
+-
+-	/* check for any DMI overrides */
+-	dmi_id = dmi_first_match(yc_acp_quirk_table);
+-	if (dmi_id)
+-		platform_set_drvdata(pdev, dmi_id->driver_data);
++	else {
++		/* check for any DMI overrides */
++		dmi_id = dmi_first_match(yc_acp_quirk_table);
++		if (dmi_id)
++			platform_set_drvdata(pdev, dmi_id->driver_data);
++	}
+ 
+ 	card = platform_get_drvdata(pdev);
+ 	if (!card)
+@@ -601,8 +600,8 @@ static int acp6x_probe(struct platform_device *pdev)
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+ 	if (ret) {
+ 		return dev_err_probe(&pdev->dev, ret,
+-				"snd_soc_register_card(%s) failed\n",
+-				card->name);
++				     "snd_soc_register_card(%s) failed\n",
++				     card->name);
+ 	}
+ 	return 0;
+ }
+-- 
+2.47.1
 
-I have checked the code (in the evict_folios function) again, and it
-appears that 'reclaimed' should correspond to sc->nr_reclaimed, which
-accumulates the results twice. Should I address this issue with a
-separate patch?
-
-if (!cgroup_reclaim(sc))
-	__count_vm_events(item, reclaimed);
-__count_memcg_events(memcg, item, reclaimed);
-__count_vm_events(PGSTEAL_ANON + type, reclaimed);
-
-
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 1f0d194f8b2f..40d2ddde21f5 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1094,7 +1094,6 @@ static unsigned int shrink_folio_list(struct
-> list_head *folio_list,
->   struct swap_iocb *plug = NULL;
-> 
->   folio_batch_init(&free_folios);
-> - memset(stat, 0, sizeof(*stat));
->   cond_resched();
->   do_demote_pass = can_demote(pgdat->node_id, sc);
-> 
-> @@ -1949,25 +1948,6 @@ static int current_may_throttle(void)
->   return !(current->flags & PF_LOCAL_THROTTLE);
->  }
-> 
-> -static inline void acc_reclaimed_stat(struct reclaim_stat *stat,
-> - struct reclaim_stat *curr)
-> -{
-> - int i;
-> -
-> - stat->nr_dirty += curr->nr_dirty;
-> - stat->nr_unqueued_dirty += curr->nr_unqueued_dirty;
-> - stat->nr_congested += curr->nr_congested;
-> - stat->nr_writeback += curr->nr_writeback;
-> - stat->nr_immediate += curr->nr_immediate;
-> - stat->nr_pageout += curr->nr_pageout;
-> - stat->nr_ref_keep += curr->nr_ref_keep;
-> - stat->nr_unmap_fail += curr->nr_unmap_fail;
-> - stat->nr_lazyfree_fail += curr->nr_lazyfree_fail;
-> - stat->nr_demoted += curr->nr_demoted;
-> - for (i = 0; i < ANON_AND_FILE; i++)
-> - stat->nr_activate[i] = curr->nr_activate[i];
-> -}
-> -
->  /*
->   * shrink_inactive_list() is a helper for shrink_node().  It returns the number
->   * of reclaimed pages
-> @@ -1981,7 +1961,7 @@ static unsigned long
-> shrink_inactive_list(unsigned long nr_to_scan,
->   unsigned long nr_scanned;
->   unsigned int nr_reclaimed = 0;
->   unsigned long nr_taken;
-> - struct reclaim_stat stat, curr;
-> + struct reclaim_stat stat;
->   bool file = is_file_lru(lru);
->   enum vm_event_item item;
->   struct pglist_data *pgdat = lruvec_pgdat(lruvec);
-> @@ -2022,9 +2002,8 @@ static unsigned long
-> shrink_inactive_list(unsigned long nr_to_scan,
-> 
->   memset(&stat, 0, sizeof(stat));
->  retry:
-> - nr_reclaimed += shrink_folio_list(&folio_list, pgdat, sc, &curr, false);
-> + nr_reclaimed += shrink_folio_list(&folio_list, pgdat, sc, &stat, false);
->   find_folios_written_back(&folio_list, &clean_list, skip_retry);
-> - acc_reclaimed_stat(&stat, &curr);
-> 
->   spin_lock_irq(&lruvec->lru_lock);
->   move_folios_to_lru(lruvec, &folio_list);
-> 
-
-This seems much better. But we have extras works to do:
-
-1. In the shrink_folio_list function:
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1089,12 +1089,12 @@ static unsigned int shrink_folio_list(struct
-list_head *folio_list,
-        LIST_HEAD(ret_folios);
-        LIST_HEAD(demote_folios);
-        unsigned int nr_reclaimed = 0;
--       unsigned int pgactivate = 0;
-+       unsigned int pgactivate = stat->nr_activate[0] +
-stat->nr_activate[1];
-+       unsigned int nr_demote = 0;
-        bool do_demote_pass;
-        struct swap_iocb *plug = NULL;
-
-        folio_batch_init(&free_folios);
--       memset(stat, 0, sizeof(*stat));
-        cond_resched();
-        do_demote_pass = can_demote(pgdat->node_id, sc);
-
-@@ -1558,7 +1558,8 @@ static unsigned int shrink_folio_list(struct
-list_head *folio_list,
-
-        /* Migrate folios selected for demotion */
-        stat->nr_demoted = demote_folio_list(&demote_folios, pgdat);
--       nr_reclaimed += stat->nr_demoted;
-+       stat->nr_demoted += nr_demote;
-+       nr_reclaimed += nr_demote;
-        /* Folios that could not be demoted are still in @demote_folios */
-        if (!list_empty(&demote_folios)) {
-                /* Folios which weren't demoted go back on @folio_list */
-@@ -1586,7 +1587,7 @@ static unsigned int shrink_folio_list(struct
-list_head *folio_list,
-                }
-        }
-
--       pgactivate = stat->nr_activate[0] + stat->nr_activate[1];
-+       pgactivate = stat->nr_activate[0] + stat->nr_activate[1] -
-pgactivate;
-
-        mem_cgroup_uncharge_folios(&free_folios);
-        try_to_unmap_flush();
-
-
-2. Outsize of the shrink_folio_list function, The callers should memset
-the stat.
-
-If you think this will be better, I will update like this.
-
->>
->> Thanks,
->> Ridong
->>
->>>> +
->>>>  /*
->>>>   * shrink_inactive_list() is a helper for shrink_node().  It returns the number
->>>>   * of reclaimed pages
->>>> @@ -1916,14 +1977,16 @@ static unsigned long shrink_inactive_list(unsigned long nr_to_scan,
->>>>                 enum lru_list lru)
->>>>  {
->>>>         LIST_HEAD(folio_list);
->>>> +       LIST_HEAD(clean_list);
->>>>         unsigned long nr_scanned;
->>>>         unsigned int nr_reclaimed = 0;
->>>>         unsigned long nr_taken;
->>>> -       struct reclaim_stat stat;
->>>> +       struct reclaim_stat stat, curr;
->>>>         bool file = is_file_lru(lru);
->>>>         enum vm_event_item item;
->>>>         struct pglist_data *pgdat = lruvec_pgdat(lruvec);
->>>>         bool stalled = false;
->>>> +       bool skip_retry = false;
->>>>
->>>>         while (unlikely(too_many_isolated(pgdat, file, sc))) {
->>>>                 if (stalled)
->>>> @@ -1957,10 +2020,20 @@ static unsigned long shrink_inactive_list(unsigned long nr_to_scan,
->>>>         if (nr_taken == 0)
->>>>                 return 0;
->>>>
->>>> -       nr_reclaimed = shrink_folio_list(&folio_list, pgdat, sc, &stat, false);
->>>> +       memset(&stat, 0, sizeof(stat));
->>>> +retry:
->>>> +       nr_reclaimed += shrink_folio_list(&folio_list, pgdat, sc, &curr, false);
->>>> +       find_folios_written_back(&folio_list, &clean_list, skip_retry);
->>>> +       acc_reclaimed_stat(&stat, &curr);
->>>>
->>>>         spin_lock_irq(&lruvec->lru_lock);
->>>>         move_folios_to_lru(lruvec, &folio_list);
->>>> +       if (!list_empty(&clean_list)) {
->>>> +               list_splice_init(&clean_list, &folio_list);
->>>> +               skip_retry = true;
->>>> +               spin_unlock_irq(&lruvec->lru_lock);
->>>> +               goto retry;
-> 
-> This is rather confusing. We're still jumping to retry even though
-> skip_retry=true is set. Can we find a clearer approach for this?
-> 
-> It was somewhat acceptable before we introduced the extracted
-> function find_folios_written_back(). However, it has become
-> harder to follow now that skip_retry is passed across functions.
-> 
-> I find renaming skip_retry to is_retry more intuitive. The logic
-> is that since we are already retrying, find_folios_written_back()
-> shouldn’t move folios to the clean list again. The intended semantics
-> are: we have retris, don’t retry again.
-> 
-
-Reasonable. Will update.
-
-Thanks,
-Ridong
-
-> 
->>>> +       }
->>>>
->>>>         __mod_lruvec_state(lruvec, PGDEMOTE_KSWAPD + reclaimer_offset(),
->>>>                                         stat.nr_demoted);
->>>> @@ -4567,8 +4640,6 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
->>>>         int reclaimed;
->>>>         LIST_HEAD(list);
->>>>         LIST_HEAD(clean);
->>>> -       struct folio *folio;
->>>> -       struct folio *next;
->>>>         enum vm_event_item item;
->>>>         struct reclaim_stat stat;
->>>>         struct lru_gen_mm_walk *walk;
->>>> @@ -4597,34 +4668,7 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
->>>>                         scanned, reclaimed, &stat, sc->priority,
->>>>                         type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
->>>>
->>>> -       list_for_each_entry_safe_reverse(folio, next, &list, lru) {
->>>> -               if (!folio_evictable(folio)) {
->>>> -                       list_del(&folio->lru);
->>>> -                       folio_putback_lru(folio);
->>>> -                       continue;
->>>> -               }
->>>> -
->>>> -               if (folio_test_reclaim(folio) &&
->>>> -                   (folio_test_dirty(folio) || folio_test_writeback(folio))) {
->>>> -                       /* restore LRU_REFS_FLAGS cleared by isolate_folio() */
->>>> -                       if (folio_test_workingset(folio))
->>>> -                               folio_set_referenced(folio);
->>>> -                       continue;
->>>> -               }
->>>> -
->>>> -               if (skip_retry || folio_test_active(folio) || folio_test_referenced(folio) ||
->>>> -                   folio_mapped(folio) || folio_test_locked(folio) ||
->>>> -                   folio_test_dirty(folio) || folio_test_writeback(folio)) {
->>>> -                       /* don't add rejected folios to the oldest generation */
->>>> -                       set_mask_bits(&folio->flags, LRU_REFS_MASK | LRU_REFS_FLAGS,
->>>> -                                     BIT(PG_active));
->>>> -                       continue;
->>>> -               }
->>>> -
->>>> -               /* retry folios that may have missed folio_rotate_reclaimable() */
->>>> -               list_move(&folio->lru, &clean);
->>>> -       }
->>>> -
->>>> +       find_folios_written_back(&list, &clean, skip_retry);
->>>>         spin_lock_irq(&lruvec->lru_lock);
->>>>
->>>>         move_folios_to_lru(lruvec, &list);
->>>> --
->>>> 2.34.1
->>>>
->>>
-> 
-> Thanks
->  Barry
 
