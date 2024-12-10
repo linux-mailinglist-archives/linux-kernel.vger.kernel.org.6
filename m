@@ -1,260 +1,216 @@
-Return-Path: <linux-kernel+bounces-440513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8639EBF80
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:37:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6B89EBF81
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5223A1632E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68B2188AE68
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982B9225A39;
-	Tue, 10 Dec 2024 23:37:36 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1D1225A33;
+	Tue, 10 Dec 2024 23:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x+0eqxQU"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDBF225A2A;
-	Tue, 10 Dec 2024 23:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733873855; cv=fail; b=EEAa+UsvwdbRi9u8GGPKcfDuv2Y9E1JA68kQ8qNaX8SpVGKpPnqlTbVqo42Nu6NAoR/7KJppHiKa4e93o8uhmMGeSZwQVfXvQmeEaP7J3tm4D2G9JbqK4bk63SkbM5B4IYbfdfHBQECtG1uEJ3kPW/bKngXsidRA5JZ8bvsrV2c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733873855; c=relaxed/simple;
-	bh=4b2FYWcZH/9j2f/0CF1IvDGO5jhHfaDTDgraPYfKRFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=K9odjXi3FuY8bkHRJZadjKU68oI9tpT236yjhWP3uixTZcZF9velX1kgBdx15Hi+LpqGm1GOcdYyKYTsAj6yCz+EmKUKuYm0flIe2bt16Hxq4kh6GdeWrZdDtzkHXEnPhj7PZl1NWmYb8gsMD0QGCEtyrQgcAJNPJhPH5P6xHS4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAHhb3u005554;
-	Tue, 10 Dec 2024 23:36:39 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2045.outbound.protection.outlook.com [104.47.70.45])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy3kgnf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 23:36:38 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WqdbMJnHco1rGsOw65WrKWo+llH84eCX7GEgUDNbgqrR4A+rDP/KmpstwxBoTfPNXlO0PI5HTdyDA1jszrqdCzCPtFQ0OuXsMRC+7+VeeHfViRGXlz8TeS+KH+qGXX9vbNRCdY842MbvyviBrhCXLMroDPs8M3QMqdbfoiuSRuQC8TyLtZHJCjdqsn4jOyX4vKGRLXtQeezZtH25jgaCtAR5TI2FSPtvts7D4ZqwkjGE4yHf2dDPUKMg7EeCiRp5+kbTTwIj+miObTfsty64rt8fr7sA8k9y858iR/WcOnBLmM563DfKyrrDOHOGfoGn9Iu7WU/DRxWMY7yVWnSn1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y1E0+uIMwr90c6wyu3dMpH/74kw0d7Pg4ChP3iwymAI=;
- b=c5wMwtGfd6uom7Uujhm/6DqfHR2gSJhkY7A573Mp7Z7e08qnSkn4aIebSaTTYIHuZfHHWyFEKHkFpScvcQuqAxTmHdq4EXH/pE5hBCNWWZypKC4YSHEj0zQ/IH5QohGfafzI8ANa685JOCa8uumxGPH+vRXw3BQY/ueDlzbeAc49O11gQnymbmbzP5CIzbqACrNjwebymqvC/sf0RcdWvcrYst12PzcENcj5oj+lAb8DTIBilvSlxPzn6SfbEZl7oRvQYI2zejVka9UNtxHExxQOwP7GL7jEs4l2BhWhn20kL3bzVpIS/I+vqZiA2QnB5bQBoHAvIq0gnYi3YViphQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
- by CH0PR11MB5284.namprd11.prod.outlook.com (2603:10b6:610:bf::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
- 2024 23:36:35 +0000
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8%7]) with mapi id 15.20.8230.010; Tue, 10 Dec 2024
- 23:36:35 +0000
-From: Xiaolei Wang <xiaolei.wang@windriver.com>
-To: l.stach@pengutronix.de, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, esben@geanix.com, marex@denx.de,
-        ilpo.jarvinen@linux.intel.com, linux@rasmusvillemoes.dk,
-        stefan.eichenberger@toradex.com, l.sanfilippo@kunbus.com,
-        cniedermaier@dh-electronics.com, rickaran@axis.com,
-        xiaolei.wang@windriver.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3] serial: imx: Use uart_port_lock_irq() instead of uart_port_lock()
-Date: Wed, 11 Dec 2024 07:36:13 +0800
-Message-Id: <20241210233613.2881264-1-xiaolei.wang@windriver.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0064.apcprd02.prod.outlook.com
- (2603:1096:4:54::28) To MW5PR11MB5764.namprd11.prod.outlook.com
- (2603:10b6:303:197::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B016B225A22
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733873884; cv=none; b=hGKaTBnmV5jJhEqIp1e1w7mTXMiQUJdIiFyAj1p4s2U4vuvVSs8yLdCku/ujaTcG9/CT0q5FW5nfLLSREHcsHmEGhPcKngNZB+WTfaYVgYzJTGhPUpWkktNo9nkaPYcIZad+1NZzg1zNXmPb2ssDWcoAXF2L5rkTkAZYuZ8GngA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733873884; c=relaxed/simple;
+	bh=CIRYSdyvuK7eTruNeed8tolmP53zFL7MixtgpYTu72k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kFEZr6eTvVwK2oQ9dDSAiF5AMRBQHGlzeAkqismcKXPiyVl6208Kq+bHoKo5W5jOReIFQj0tWt0/jgCuNcjsDOKhwaYdb3yUCPk+4vLCKLCbLgU+GRilaqP9caOl5JJB7cYCyZQ3XNTc+IwaHcmkhHv45UT2cJj+tuUZH/j9TF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x+0eqxQU; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4674c22c4afso30841cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:38:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733873881; x=1734478681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uu2SYWJsLxhdZs4rx8neOqZ9H9vIwKibAwt/zeZ9+H0=;
+        b=x+0eqxQUWY44hRoDy8ZXW6iiFbesoCg4ZdWSmJmQVKNVRZ8Ao3uqdKlUrHhaMQPNSV
+         UFvZM1HdHcftDUpM+/WBxovNbbkjQwsIKekirUwZ2HXtBbykuzb32X44Z8BhC3H3FxC6
+         W2nDi/uqCfxzJon1VwdmxENgZtITIaQLJ0cKP+slfvuTMxevOnzTQ0U7+RaeWH+6MW0v
+         UBIYvf59mTF1JneGEOMUckkwSIe/8bTNqXoLUMruKRD7ductQjOBCjTzmXAvRG7t9sEM
+         bJVY9fLRmU5tvF68S9BFz9RG92QbEVLI5UUfVrb3Z0RA6LQABPPcZWB10fbfMbSMaBU6
+         ymnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733873881; x=1734478681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uu2SYWJsLxhdZs4rx8neOqZ9H9vIwKibAwt/zeZ9+H0=;
+        b=J5aMSxZ9IRKZq+SYWLGDK7ksF3fZZ//AaByu4fyosdYzQ7MX8t5tMPWYPyXbHcI8Cn
+         Yua08e+n4oJ+HJqBDUWrm/9PQesdTeeBS+R+kiEWjxXQVxaIgLISvoYKc2oSZN/JYrUL
+         aa+DKU3PU0dszxRCvNg8GlGDbxQZkacwuEbOQtCksqtT6uxfffNN4rkAVk3ZqcqWz6Bz
+         OosPrisp3cFFRvAhW2o/gA/YZcNEM15f/pDKMH9DG2HyD3PXrQ0EAs2GtEemOj3pkIT+
+         L/1fR/7OaJAzjYVg5/kwfOhOrbFXdBRHbiatcg2k/uze48DhscA0GpeWVrluzn4NdAqr
+         3oiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKOfcoFcHNR4ZfHAevP3J0pArt0izvV+HhneV7dkAYZhf00Ano3IoXar0ImL/pY8k2oijJCxHQ++g0O2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj7or/9i34GqQu9QWmGysfk5GlIzdpOW2wDtVQyhn/SWBk6nap
+	0FAW8XWMb9b4hlMUedFCp+1g1rab7pjyQowSb3IXOZzuVuh8ZDp29Lx5HYev0KMBCyuQOcpwhip
+	DfddmhwzwwJFN52donW52TgYrhX0AKE9k/UaT
+X-Gm-Gg: ASbGncsCWvnLkj5f13XOHuhqQ9pCPXJoUoTqn1sZwhYE9zur9o5CoR7d6eiwinPRV8i
+	TpGk2NDSr207ykTNkoiZjobkQKyjWJkl2agsqRDrelHxlPiidW/aNJAw8Yvs6Vurdc5rQ
+X-Google-Smtp-Source: AGHT+IGVBhSdLp0As/jnqYKsN1aao1rI32aOWTfzLBLFYeCOWRS7Ts77DeQuAR9U51StXOPpmkFzjIEqygtIUoqBAKY=
+X-Received: by 2002:a05:622a:1928:b0:466:8a29:9de7 with SMTP id
+ d75a77b69052e-46788c830b3mr1583661cf.12.1733873881306; Tue, 10 Dec 2024
+ 15:38:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|CH0PR11MB5284:EE_
-X-MS-Office365-Filtering-Correlation-Id: e55a7377-2e87-4ca7-ea99-08dd19737c3e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|52116014|1800799024|38350700014|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BDQg1l12bBJs9E0F+0hAS6E/toJwFFAOAGPOCW6z3bB+8SFHe+Vb1wsCFs8A?=
- =?us-ascii?Q?FcFXn9Ue1IzZ1U+RaDce6tSopa5V3XJX0/ftf+/hOdivrIbvZZD5zDOQ70eV?=
- =?us-ascii?Q?C232xn1/ieu0ZDeUaPp4j5DGvXAWVEKWulKW4rYaE68GqIoI0+qoOLvigDvL?=
- =?us-ascii?Q?IwIbXhWCeN7IkcqxHBv9rJA0DNNcv2NYo4IXuuUfUNPjpPJvoAdG7/f10BBr?=
- =?us-ascii?Q?O94en288D+Xld1IdgEJds+G4O0OxC7iUflgYCva//z9pLKDPNiJixq7JPwZV?=
- =?us-ascii?Q?F+pAHoo954WuhlmEtAIsBJbryiNJY1d9avYNNwa3RIUDOm5T4vRAk5+ppbj7?=
- =?us-ascii?Q?8Df76bgoQ5wAQs9KSPQuuIzilvgB+IYWisbllgResOBDli/FsOi9z60btW6m?=
- =?us-ascii?Q?UVTVJF5nQHYFiIfSNuk++AQK3omoH3qwJ6T5ISD02xpj1/S7g+SzdERHTb1p?=
- =?us-ascii?Q?zCP+auCRbvuKg2bhNTot0DtGbMEgy8igjKxOXMerEvci5yOnZhWyfw/h6bHV?=
- =?us-ascii?Q?lRZsvK3Dy1DwsTxPwomqRutv7sQEBwteXGJlIhmLxjZmg8NF2w6I4TGh93X/?=
- =?us-ascii?Q?BvDYwnaS0clsOqvOtelPccGYz23x38o2MNJhPy9zyAtEx0eQ8ekofPG4PxLT?=
- =?us-ascii?Q?q/3nlYRIg3g/PovcT5+7AA2QbVwSj45Hrsk5Zyd+YRs+ib7xTtHdTUk7fub3?=
- =?us-ascii?Q?pbmB1sih1vAIk9MuvQabnr4kiTOgjiEvIi0IypKDQhSPYGe2qQNIfZ+hy4ue?=
- =?us-ascii?Q?HcMyALzF3AJeTLcMlcG1gFRuZ9bH9/SIjemMWpJrPbLt5DrrdU7VUevMGDWm?=
- =?us-ascii?Q?btU26gp4Y6/c09aVeNWgtUph60WwasAAWx49uhESYZbplsOgdok6fM7sfZTY?=
- =?us-ascii?Q?x+5s9Q+ZkKcrwAd/o78D3aVshUHySpCiyLxPLXDneFZlWGLOiXRIuKYY+Nv0?=
- =?us-ascii?Q?9IPqqK35IvX9wjrpBa+HT5WMlN19j2KORPmsSqpagg3GufjdhunPST2YMvOp?=
- =?us-ascii?Q?N7UE5xSS1glGKG/EoA9zaJan9mx0hwFfgNANA1YfZJeBryncfVn6UdiI0MZt?=
- =?us-ascii?Q?dow1utEc+obmjm0hyuN2PyHLc8Y2uQd7DBhCjxW8SfsV0v+BwH6Z+mjtgNY6?=
- =?us-ascii?Q?8rDrNcLwJkRUBaRLAKsKZFqT870UPRmYgJ8NVDlxfthD+Yfb0g6xv5dx8taX?=
- =?us-ascii?Q?fEx5+PmzSs4oYHoeKPe/CdZOn2V17oukt9NOxac3QwIFkyp3CYJj/CEoqqxz?=
- =?us-ascii?Q?P2Zd6oD7pHNv7cxbzlx+Cz5chCn8wnpINTmBC/sl/HS8Fqi8LD4IByriFiC4?=
- =?us-ascii?Q?2lu/Tjg1dutfpRjrl/9rpnXp2ENkjduPswK4Ffq3Wz/v80R6oXeQx9LBIySl?=
- =?us-ascii?Q?A7gaLPyQEetpFuNU6y4tWUgH8d6IWYw2PICN7xIM1SmWzB0DvV9LnebES1WZ?=
- =?us-ascii?Q?FL/kCGX2CAM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(52116014)(1800799024)(38350700014)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gcXFon8SUKe31bHxMW9hp9JradQWd/KQQ9bUGfpjczVqq/jFLGBrWT3dMqvZ?=
- =?us-ascii?Q?vFOsqMgw9b5iSiazoFb6IMCU6E/11e8WUjLbln953Skqyc8Ap6KxhpYDjqJl?=
- =?us-ascii?Q?7i6PQZln1NBTfCjQZ0K3ziGCA3fU5FzMmY8wQO3r/8RTQHYIuLzEIevb53Y5?=
- =?us-ascii?Q?LPZBtjNIc4l08pv0tHUgj7doxeC7owU6rR/XbYv6uePMWvTFLCXLeW6aPx5U?=
- =?us-ascii?Q?qVRhiXXeyzsp/eDtnOD4396c96Kv1lrrQDZWq22oMWMhmTFDIZacaO09QUrv?=
- =?us-ascii?Q?MkQSjN5mkpVU42iawibfv9fEHev2x2YOcmm6rELpwmCxTsQ5Pl75mBB6Y5Wv?=
- =?us-ascii?Q?5zh9euIHVsUbCDHNcJDi+vLL+nWBRVqj/maMHZH9qQ0d6V0ZBILyuCG7mG/B?=
- =?us-ascii?Q?MvYYyfNpi8lhDdRK2RZxaelP1/b2dSzthuAsGoC/YLdCiokA4z5/W2Hk6Nyf?=
- =?us-ascii?Q?9K/8WmxHXxjDQ9k/lpanrHMljlOhje62kx0RfAvp4F2lRKZ42HL2AeyZ6CZr?=
- =?us-ascii?Q?Vsncs1YXZ6KS8Jsnf+tmZKMjHntIweIpOLgYcq0zoou/yNfiJcS4VLKi91x3?=
- =?us-ascii?Q?as5fcp/KV6IThzAAv3mgy9EZPtLXdWSpKZNBzXN+SJoFzd1blfD5hwxVJta2?=
- =?us-ascii?Q?IAiqh4QH/f701qwN8FVjwQj3FEDoA/oWf2kW7tIcWfxSbc9cd97pOtRK5FHg?=
- =?us-ascii?Q?IOkvYcB/RgKvKwHrvHOCo6kZpb1s9jR//soTjNnAWGJC0bUOhksyhgMLos1K?=
- =?us-ascii?Q?omuZKZNoYujjhlWxuZW3P03cqdd3CDmSJGCaOIOsrAcSUxE45N7XFnAe4Nxw?=
- =?us-ascii?Q?kjtCusXHe1qBD8f6Xz66vHQRa5DVpgt1MvbB4V4hke0IxoIWSQ2Emrmzp5qV?=
- =?us-ascii?Q?W5tCaQf869p4zs46Y2GlXUfk0kIQgpgUk52Cnj/VXg6NrHekiQ2Ad6sHOX9v?=
- =?us-ascii?Q?uD9OQ3+WSf+jjti/egPm38tQR61nxeKCnZ3h9Pp4I7BVoZg6rj9Zsf/sj53d?=
- =?us-ascii?Q?KWj1R4uHmCzbPgOFuxwkEm6tF+jUIJ/GNturZQATbYUvP9TUlH3hc9RblZRS?=
- =?us-ascii?Q?omwO0VVIFbOXlWwxyOkkTEWoX2owh4SAm4VRAPUkE0SYOJuC3lQE6y7/N31G?=
- =?us-ascii?Q?PlNDwv31CTj5Y8pAdOkspB2mjXO4DyoOg+4rDMDSWNFA80wwP2P4Qob7BrcT?=
- =?us-ascii?Q?q81rymxOsomr+O1I1yX9l0DYpEjHoXKJ7XtxWYVgS2/BQEo4P3lTN3+UN0Xi?=
- =?us-ascii?Q?DW6U8A4xNgoo1rkyJFnvG+WU6p1QN9Ps6Tp0mcKSHtDDsGtJqkxRp/gg564L?=
- =?us-ascii?Q?wB2YhGQKvLBQ88S5KAhRl32VR5a67jDGjSEuFcV8wi9aFaIrZg4q8JvMTaS6?=
- =?us-ascii?Q?AqT0RXCsbzKSX/rQB3yIfDCYaCyqGeY6gt8sBFG0TD9O8EJDcjW9vBEddrm+?=
- =?us-ascii?Q?WafzHqbhNuQ4KdAiN9+yCCOqc1DG5snaS9EkyYWMENCRihEX/FG77dy4iAJP?=
- =?us-ascii?Q?zABmqOv1fFake6a0IOWeelSCoGD4Mw4hjms4APySwKF58FtcnQgqkQlSvJlE?=
- =?us-ascii?Q?XKXnvZYTAMwbhP73GZLFGgw1bdBacQ5mR8QRHOyXDDWb3qlCcZ6b55KOzeG2?=
- =?us-ascii?Q?LA=3D=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e55a7377-2e87-4ca7-ea99-08dd19737c3e
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 23:36:35.4604
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Hg3P1WYVLuuoe/1mOhiQsVc1hrubDeVeW5ODXNDfT+pmpQprsk0yof8OeHT/ng05BNyuB89y8MoyNyjP+DJXA03I7yHrJrXOPD32EWAb/I8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5284
-X-Proofpoint-GUID: Gv-fkUBtERz3WJyB__ZYQekhBN1LyqMY
-X-Proofpoint-ORIG-GUID: Gv-fkUBtERz3WJyB__ZYQekhBN1LyqMY
-X-Authority-Analysis: v=2.4 cv=D7O9KuRj c=1 sm=1 tr=0 ts=6758d086 cx=c_pps a=WCFCujto17ieNoiWBJjljg==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=RZcAm9yDv7YA:10 a=bRTqI5nwn0kA:10 a=VwQbUJbxAAAA:8
- a=t7CeM3EgAAAA:8 a=pGLkceISAAAA:8 a=A__u6bYh_LbSektZ6DAA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-10_13,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0
- clxscore=1015 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2411120000 definitions=main-2412100169
+References: <20241111205506.3404479-1-surenb@google.com> <20241111205506.3404479-4-surenb@google.com>
+ <ZzLgZTH9v5io1Elx@casper.infradead.org> <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
+ <20241210223850.GA2484@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241210223850.GA2484@noisy.programming.kicks-ass.net>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 10 Dec 2024 15:37:50 -0800
+Message-ID: <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com, 
+	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When executing 'echo mem > /sys/power/state', the following
-deadlock occurs. Since there is output during the serial
-port entering the suspend process, the suspend will be
-interrupted, resulting in the nesting of locks. Therefore,
-use uart_port_lock_irq() instead of uart_port_unlock().
+On Tue, Dec 10, 2024 at 2:39=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Tue, Nov 12, 2024 at 07:18:45AM -0800, Suren Baghdasaryan wrote:
+> > On Mon, Nov 11, 2024 at 8:58=E2=80=AFPM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > > On Mon, Nov 11, 2024 at 12:55:05PM -0800, Suren Baghdasaryan wrote:
+> > > > When a reader takes read lock, it increments the atomic, unless the
+> > > > top two bits are set indicating a writer is present.
+> > > > When writer takes write lock, it sets VMA_LOCK_WR_LOCKED bit if the=
+re
+> > > > are no readers or VMA_LOCK_WR_WAIT bit if readers are holding the l=
+ock
+> > > > and puts itself onto newly introduced mm.vma_writer_wait. Since all
+> > > > writers take mmap_lock in write mode first, there can be only one w=
+riter
+> > > > at a time. The last reader to release the lock will signal the writ=
+er
+> > > > to wake up.
+> > >
+> > > I don't think you need two bits.  You can do it this way:
+> > >
+> > > 0x8000'0000 - No readers, no writers
+> > > 0x1-7fff'ffff - Some number of readers
+> > > 0x0 - Writer held
+> > > 0x8000'0001-0xffff'ffff - Reader held, writer waiting
+> > >
+> > > A prospective writer subtracts 0x8000'0000.  If the result is 0, it g=
+ot
+> > > the lock, otherwise it sleeps until it is 0.
+> > >
+> > > A writer unlocks by adding 0x8000'0000 (not by setting the value to
+> > > 0x8000'0000).
+> > >
+> > > A reader unlocks by adding 1.  If the result is 0, it wakes the write=
+r.
+> > >
+> > > A prospective reader subtracts 1.  If the result is positive, it got =
+the
+> > > lock, otherwise it does the unlock above (this might be the one which
+> > > wakes the writer).
+> > >
+> > > And ... that's it.  See how we use the CPU arithmetic flags to tell u=
+s
+> > > everything we need to know without doing arithmetic separately?
+> >
+> > Yes, this is neat! You are using the fact that write-locked =3D=3D no
+> > readers to eliminate unnecessary state. I'll give that a try. Thanks!
+>
+> The reason I got here is that Vlastimil poked me about the whole
+> TYPESAFE_BY_RCU thing.
+>
+> So the normal way those things work is with a refcount, if the refcount
+> is non-zero, the identifying fields should be stable and you can
+> determine if you have the right object, otherwise tough luck.
+>
+> And I was thinking that since you abuse this rwsem you have, you might
+> as well turn that into a refcount with some extra.
+>
+> So I would propose a slightly different solution.
+>
+> Replace vm_lock with vm_refcnt. Replace vm_detached with vm_refcnt =3D=3D=
+ 0
+> -- that is, attach sets refcount to 1 to indicate it is part of the mas,
+> detached is the final 'put'.
 
-WARNING: inconsistent lock state
-6.12.0-rc2-00002-g3c199ed5bd64-dirty #23 Not tainted
---------------------------------
-inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
-sh/494 [HC0[0]:SC0[0]:HE1:SE1] takes:
-c4db5850 (&port_lock_key){?.-.}-{3:3}, at: imx_uart_enable_wakeup+0x14/0x254
-{IN-HARDIRQ-W} state was registered at:
-  lock_acquire+0x104/0x348
-  _raw_spin_lock+0x48/0x84
-  imx_uart_int+0x14/0x4dc
-  __handle_irq_event_percpu+0xac/0x2fc
-  handle_irq_event_percpu+0xc/0x40
-  handle_irq_event+0x38/0x8c
-  handle_fasteoi_irq+0xb4/0x1b8
-  handle_irq_desc+0x1c/0x2c
-  gic_handle_irq+0x6c/0xa0
-  generic_handle_arch_irq+0x2c/0x64
-  call_with_stack+0x18/0x20
-  __irq_svc+0x9c/0xbc
-  _raw_spin_unlock_irqrestore+0x2c/0x48
-  uart_write+0xd8/0x3a0
-  do_output_char+0x1a8/0x1e4
-  n_tty_write+0x224/0x440
-  file_tty_write.constprop.0+0x124/0x250
-  do_iter_readv_writev+0x100/0x1e0
-  vfs_writev+0xc4/0x448
-  do_writev+0x68/0xf8
-  ret_fast_syscall+0x0/0x1c
-irq event stamp: 31593
-hardirqs last  enabled at (31593): [<c1150e48>] _raw_spin_unlock_irqrestore+0x44/0x48
-hardirqs last disabled at (31592): [<c07f32f0>] clk_enable_lock+0x60/0x120
-softirqs last  enabled at (30334): [<c012d1d4>] handle_softirqs+0x2cc/0x478
-softirqs last disabled at (30325): [<c012d510>] __irq_exit_rcu+0x120/0x15c
+I need to double-check if we ever write-lock a detached vma. I don't
+think we do but better be safe. If we do then that wait-until() should
+accept 0x8000'0001 as well.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+>
+> RCU lookup does the inc_not_zero thing, when increment succeeds, compare
+> mm/addr to validate.
+>
+> vma_start_write() already relies on mmap_lock being held for writing,
+> and thus does not have to worry about writer-vs-writer contention, that
+> is fully resolved by mmap_sem. This means we only need to wait for
+> readers to drop out.
+>
+> vma_start_write()
+>         add(0x8000'0001); // could fetch_add and double check the high
+>                           // bit wasn't already set.
+>         wait-until(refcnt =3D=3D 0x8000'0002); // mas + writer ref
+>         WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
+>         sub(0x8000'0000);
+>
+> vma_end_write()
+>         put();
 
-       CPU0
-       ----
-  lock(&port_lock_key);
-  <Interrupt>
-    lock(&port_lock_key);
+We don't really have vma_end_write(). Instead it's vma_end_write_all()
+which increments mm_lock_seq unlocking all write-locked VMAs.
+Therefore in vma_start_write() I think we can sub(0x8000'0001) at the
+end.
 
-Fixes: 3c199ed5bd64 ("serial: imx: Grab port lock in imx_uart_enable_wakeup()")
-Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
----
+>
+> vma_start_read() then becomes something like:
+>
+>         if (vm_lock_seq =3D=3D mm_lock_seq)
+>           return false;
+>
+>         cnt =3D fetch_inc(1);
+>         if (cnt & msb || vm_lock_seq =3D=3D mm_lock_seq) {
+>           put();
+>           return false;
+>         }
+>
+>         return true;
+>
+> vma_end_read() then becomes:
+>         put();
+>
+>
+> and the down_read() from uffffffd requires mmap_read_lock() and thus
+> does not have to worry about writers, it can simpy be inc() and put(),
+> no?
 
-v1:
-  https://patchwork.kernel.org/project/linux-arm-kernel/patch/20241209124732.693834-1-xiaolei.wang@windriver.com/
-v2:
-  use uart_port_lock_irq() instead of uart_port_lock_irqsave()
-v3:
-  update commit log 'ehco --> echo'
-
- drivers/tty/serial/imx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 17f70e4bee43..9c59ec128bb4 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -2692,7 +2692,7 @@ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
- {
- 	u32 ucr3;
- 
--	uart_port_lock(&sport->port);
-+	uart_port_lock_irq(&sport->port);
- 
- 	ucr3 = imx_uart_readl(sport, UCR3);
- 	if (on) {
-@@ -2714,7 +2714,7 @@ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
- 		imx_uart_writel(sport, ucr1, UCR1);
- 	}
- 
--	uart_port_unlock(&sport->port);
-+	uart_port_unlock_irq(&sport->port);
- }
- 
- static int imx_uart_suspend_noirq(struct device *dev)
--- 
-2.25.1
-
+I think your proposal should work. Let me try to code it and see if
+something breaks.
+Thanks Peter!
 
