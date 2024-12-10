@@ -1,150 +1,156 @@
-Return-Path: <linux-kernel+bounces-439877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3B79EB556
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:47:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133499EB55D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:49:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E0F2281CDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05A99167AEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E457622FDFF;
-	Tue, 10 Dec 2024 15:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ks7eCByW"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F3122FDFC;
+	Tue, 10 Dec 2024 15:49:06 +0000 (UTC)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6871B4236
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE9219D060;
+	Tue, 10 Dec 2024 15:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733845647; cv=none; b=OyWvHisAbFeb5qqcM88yMBY+IfLvIGL48mcAzoYFnokCczZkLwb6r/9yT0KgQ/b+yFayq0mKo5fnzOawfasnY6V9rpNIxCqxg1nBdGMuQRA44GB/x49SmYBHIeYBCqQoHwCaoI2R93tEcgo65ZeDt/vs+I6xe6/lvW5sXwyWaFk=
+	t=1733845746; cv=none; b=XX477iNq1+KgSpBfb6V2jlp44MVkjL2730xrsdDxYHlUzx1uF7QnwGD2WCT7jyKVh72eZ7yQK/3RYypbY08bi00lgqgmF+0OLxb0+cDrU9nwV2uzUq4K4Va+EKVdmU+cFouyr3l5vs06+L5y5dSi/Zd6GacZHWhxFdP7R8Do5Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733845647; c=relaxed/simple;
-	bh=1CUVzWgqlJWWmRwsJh1LsALpOZYBXhS4oaGhAijTERk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=F/qoDzsQSKVPPxiBqeX9ICTMcm0VUSRZWl6F09eHZbRTg7yh+kmwYYgMmu1UIWQNMuJkxMN7bSlsPP/yFQYYjuvixxdPMc7aTohNQxLEVR2eDOu8uABA0V0uXklV73oZEPVhm3KSjGE9wZRWsC27B6D/AuJyXmbwvv1f+oAwB24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ks7eCByW; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-728e4e30163so441445b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:47:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733845645; x=1734450445; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KTvSRRTfNZQvoZQzqZSdBQnAG8g17VjNF2nt+7pLczk=;
-        b=Ks7eCByWNdPHBkYEVLy09wezTPij72NUfjt8Kr6HeuBijlk/gGi8gnN1tko6jatETM
-         8icpN42BWiJgLha56Mlo2yvZh2epZZ3MaIGX43wa7N7P38X6G3QwtDdD7AdQ9gcBKlkL
-         o5lWI4Hvt7CeVDGUvCbiGChlKOMRVPhe7FJCn2U3ItWQMxXI3BmVQwMXEgn9dbrLTf8B
-         G4EwkSSGsQ+sQWQlqTLZ0DunmL4Jjbnjpu8VdUb7fFc4f9Z8+4jMgaLkclvLe7nYjX1n
-         zZOI8X6ik1Rk6HE2m0vOIXiPxQ6FgKDU6UV9uWnVJvEOI+hLEQIS9eeyEntF5kb6xCMa
-         ZTXw==
+	s=arc-20240116; t=1733845746; c=relaxed/simple;
+	bh=peHE+DJbLeZLy74+idXHUoT1cVdhbshNNIJ0NAsfJy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bc4+TBLsn23mOoFHnAXdTXVhd1Ko/rCC8q9rFx7DcsLhfj4bEyKPdzGkGLbAMjUapA4qxPbkbUD9b/cdeW2OlRcq5Bxa5mINoQA/fT/iNiwYkFkjnoPCGsiF9vQbYklcwiPYI0ydBXHcXyP5m1dHSeAIMsZs/ovCGESYnBQ8o+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5187cd9b8e5so639240e0c.1;
+        Tue, 10 Dec 2024 07:49:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733845645; x=1734450445;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KTvSRRTfNZQvoZQzqZSdBQnAG8g17VjNF2nt+7pLczk=;
-        b=MDrpvB9EENDfQ0VJOozqvwhnA7czsgRIXSaeC0FFejum0ISvtl+1F2co8MJAEW2lOr
-         MeL6nm2n4ITvgWHBlshvmSU9yzeuTgJMExXFxWfo2sv+Pfd9FLpKCnZdIX7RicANMF2v
-         z3GqgSXTT3T07gEm1ZXpatdB7dgUamsRAC3mzsAlAtYQy2HsT9iPBBmRe5QJpQr4igcl
-         nGKjk6OIA9uOPj95HN1uPGd7A5sc3fi4TgvyCNe5+Lwn1TJoqCU3gNKfRBhozuY3Yjp7
-         rLvqt5CwEe351JBlvMP13nUu8QGU4JpXtaoJ+fcQ7BsuaL0/8DhBoB/NjVwgJqxSnBfc
-         wqZA==
-X-Gm-Message-State: AOJu0YwPIAyT/O9WLDA5whuo15FZiWowey0wWWea4f3ni34PMKjXuNJ9
-	pzl9C1MQM+GEDk9upqFyTBzRXt6eAok0gOIzC+H9rlx++Cd7PSRvmNlT1KhoCISrxHGIqgUjfSa
-	ijw==
-X-Google-Smtp-Source: AGHT+IGHIWibTQSvd05WcbKMeMUoU8sV0PDsPWhPYjcWh/orNjkXeSQt6HCj/nEUskeUrNyc9MtmCiSB0kw=
-X-Received: from pfbcp27.prod.google.com ([2002:a05:6a00:349b:b0:725:b203:3555])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:cd4:b0:725:b4f7:378e
- with SMTP id d2e1a72fcca58-7273c7fdbf1mr7689740b3a.0.1733845645355; Tue, 10
- Dec 2024 07:47:25 -0800 (PST)
-Date: Tue, 10 Dec 2024 07:47:23 -0800
-In-Reply-To: <52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org>
+        d=1e100.net; s=20230601; t=1733845743; x=1734450543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D/Rwez1TpZi0OQAp5ylPL1NO7to/Przt1wcc1OfzevU=;
+        b=O1nE0J8v0UFlD48KVKrzlls3XhziD+AxASLc+9zzZYQYYaQZyYYDW4zbnID1mI+UkT
+         zjD2XjfSoGLuPGcowRhMwAWu0RhlWDiCJeX4ooFq7bQsAdO9TMZPRGZlydKuVNTBqPqz
+         3KGR36DFhrnWCI6MSbqgdGK+xGrGJ1/uLBvA03FQVYr4bYA+siYioRDalnxIs8UXcdYp
+         uxsMz0ZlQajeXBKz/7o0Gzu/T5jQY5VKupIWAg2ZUzoYSY0yayFRQodu0JEp7m+4cJ6P
+         H0ZqEW269Imz1oOrEFshbel3PYdHscGmPvSfwCz0d6TaLG7SdgjQFHsf+N9u7/JZGLV5
+         MUlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqeE+QGs87Ce5lyos52IJ3mpHmoCFjaNtweO4qA5KD42OxWYHvZXxTbe/fGlrgcxDB/ooMbkXtEM36Qr9N@vger.kernel.org, AJvYcCVZv1B9KUwVSuwnu1LZ+3A5ff9F52o/PJeP7uYLgxh3gCRF55UgK1aMeU4G1/D/TvIAqbVV9/ohLKE3W/3z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl3cgXgofDivCCkYz4Q/O0zJkc+DlekvmoBXywFKZVJYpHq3DE
+	CXwMBomABC+UWONzd0p4DFlvMEE5u2+JViW176dcKxvBXRYJ5HIbJL8xyp5B
+X-Gm-Gg: ASbGncsjc0nW9J2FHhO0Ue+XONSZYz80MhIqzn9SSIt131+sNIMj+nuvF1Gobr3QFtI
+	9zjl2uEO+uvv4DdpT8KzuicLjowaWd/+19VBhq/OmBfTKpVE1iL3ulUhij1LzDHMdS6+AEOqT/1
+	9BDhoH9F6XD6z8e5A2RAqNwWFvuq4NrQAFEOstmEsYdXKYy113NCgJEYwxsfPXjbZ9l3dHz6dE8
+	ILp02f09rHs+2hCcBDzAHwScl2vcUJHoJVR+gkKuXWjRiKx7lRgNSggez32shokXZ/7n5w0HpvU
+	9Os7Fjwp0fJ/HUhb
+X-Google-Smtp-Source: AGHT+IFAmbUgg8c9/53gYmcUQuhJWQmkxebLELy5nmWvMoktgAOdMnIEerSEhuJAqxrxK428wDDUuQ==
+X-Received: by 2002:a05:6122:46a0:b0:515:d38a:e168 with SMTP id 71dfb90a1353d-515fc9fcf79mr16829781e0c.4.1733845743298;
+        Tue, 10 Dec 2024 07:49:03 -0800 (PST)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-516244bafa8sm516481e0c.26.2024.12.10.07.49.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 07:49:03 -0800 (PST)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4aff620b232so764515137.0;
+        Tue, 10 Dec 2024 07:49:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVxhT31kInDs9U5k5L6GxLTqqu37UYfkwVcWAxvEl62El6c8NpD+1oCYVgKI3hp9qH37zRY94dbbogUsZFw@vger.kernel.org, AJvYcCX0DCN8VlHe1bwhCiHhvvPxlgZrkjMpunzHYBLE86wifb+WL/UN+8xQOpn/uAl3U+s0828h9XP5+boaHH/n@vger.kernel.org
+X-Received: by 2002:a67:e916:0:b0:4af:d487:45ef with SMTP id
+ ada2fe7eead31-4afd4874811mr12030637137.5.1733845742841; Tue, 10 Dec 2024
+ 07:49:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org>
-Message-ID: <Z1hiiz40nUqN2e5M@google.com>
-Subject: Re: [REGRESSION] from 74a0e79df68a8042fb84fd7207e57b70722cf825: VFIO
- PCI passthrough no longer works
-From: Sean Christopherson <seanjc@google.com>
-To: Simon Pilkington <simonp.git@mailbox.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	regressions@lists.linux.dev, Tom Lendacky <thomas.lendacky@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <a779f3f44c24716d783d782c935be9fe4f410bff.1733238060.git.geert+renesas@glider.be>
+ <6392704d.c158.1938d27f38e.Coremail.00107082@163.com>
+In-Reply-To: <6392704d.c158.1938d27f38e.Coremail.00107082@163.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Dec 2024 16:48:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWTSnHnO7wm04TSBKPu+-aAO9JehW6rK5y6D0uBWu+6Pg@mail.gmail.com>
+Message-ID: <CAMuHMdWTSnHnO7wm04TSBKPu+-aAO9JehW6rK5y6D0uBWu+6Pg@mail.gmail.com>
+Subject: Re: [PATCH] genirq: Remove leading space from .irq_print_chip() callbacks
+To: David Wang <00107082@163.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	=?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+Tom
+Hi David,
 
-On Tue, Dec 10, 2024, Simon Pilkington wrote:
-> Hi,
-> 
-> With the aforementioned commit I am no longer able to use PCI passthrough to
-> a Windows guest on the X570 chipset with a 5950X CPU.
-> 
-> The minimal reproducer for me is to attach a GPU to the VM and attempt to
-> start Windows setup from an iso image. The VM will apparently livelock at the
-> setup splash screen before the spinner appears as one of my CPU cores goes up
-> to 100% usage until I force off the VM. This could be very machine-specific
-> though.
+On Tue, Dec 3, 2024 at 4:34=E2=80=AFPM David Wang <00107082@163.com> wrote:
+> At 2024-12-03 23:02:31, "Geert Uytterhoeven" <geert+renesas@glider.be> wr=
+ote:
+> >The space separator was factored out from the multiple chip name prints,
+> >but several irq_chip.irq_print_chip() callbacks still print a leading
+> >space.  Remove the superfluous double spaces.
+> >
+> >Fixes: 9d9f204bdf7243bf ("genirq/proc: Add missing space separator back"=
+)
+> >Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Ugh.  Yeah, it's pretty much guaranteed to be CPU specific behavior.
+> >--- a/drivers/irqchip/irq-partition-percpu.c
+> >+++ b/drivers/irqchip/irq-partition-percpu.c
+> >@@ -98,7 +98,7 @@ static void partition_irq_print_chip(struct irq_data *=
+d, struct seq_file *p)
+> >       struct irq_chip *chip =3D irq_desc_get_chip(part->chained_desc);
+> >       struct irq_data *data =3D irq_desc_get_irq_data(part->chained_des=
+c);
+> >
+> >-      seq_printf(p, " %5s-%lu", chip->name, data->hwirq);
+> >+      seq_printf(p, "%5s-%lu", chip->name, data->hwirq);
+> > }
+> >
+> > static struct irq_chip partition_irq_chip =3D {
+> >diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> >index 4783ab1adb8d953b..a3e88ced328a91f1 100644
+> >--- a/drivers/soc/qcom/smp2p.c
+> >+++ b/drivers/soc/qcom/smp2p.c
+> >@@ -365,7 +365,7 @@ static void smp2p_irq_print_chip(struct irq_data *ir=
+qd, struct seq_file *p)
+> > {
+> >       struct smp2p_entry *entry =3D irq_data_get_irq_chip_data(irqd);
+> >
+> >-      seq_printf(p, " %8s", dev_name(entry->smp2p->dev));
+> >+      seq_printf(p, "%8s", dev_name(entry->smp2p->dev));
+> > }
+> >
+> > static struct irq_chip smp2p_irq_chip =3D {
+> >--
+> >2.34.1
+>
+> Match with my check result against .irq_print_chip implementation under d=
+rivers.
+> But I think "%8s" and "%5s-%lu" should be "%s" and "%s-%lu", otherwise th=
+ere would still
+> be leading spaces when the device name string is short.
 
-Tom, any idea what the guest might be trying to do?  It probably doesn't matter
-in the end, it's not like KVM does anything with the value...
+I believe these are present for alignment of later columns within the
+same irqchip.
 
-> Reverting to the old XOR check fixes both 6.12.y stable and 6.13-rc2 for me.
-> Otherwise they're both bad. Can you please look into it? I can share the
-> config I used for test builds if it would help.
+Gr{oetje,eeting}s,
 
-Can you run with the below to see what bits the guest is trying to set (or clear)?
-We could get the same info via tracepoints, but this will likely be faster/easier.
+                        Geert
 
----
- arch/x86/kvm/svm/svm.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index dd15cc635655..5144d0283c9d 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -3195,11 +3195,14 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	case MSR_AMD64_DE_CFG: {
- 		u64 supported_de_cfg;
- 
--		if (svm_get_feature_msr(ecx, &supported_de_cfg))
-+		if (WARN_ON_ONCE(svm_get_feature_msr(ecx, &supported_de_cfg)))
- 			return 1;
- 
--		if (data & ~supported_de_cfg)
-+		if (data & ~supported_de_cfg) {
-+			pr_warn("DE_CFG supported = %llx, WRMSR = %llx\n",
-+				supported_de_cfg, data);
- 			return 1;
-+		}
- 
- 		/*
- 		 * Don't let the guest change the host-programmed value.  The
-@@ -3207,8 +3210,11 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		 * are completely unknown to KVM, and the one bit known to KVM
- 		 * is simply a reflection of hardware capabilities.
- 		 */
--		if (!msr->host_initiated && data != svm->msr_decfg)
-+		if (!msr->host_initiated && data != svm->msr_decfg) {
-+			pr_warn("DE_CFG current = %llx, WRMSR = %llx\n",
-+				svm->msr_decfg, data);
- 			return 1;
-+		}
- 
- 		svm->msr_decfg = data;
- 		break;
-
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
--- 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
