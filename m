@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-439013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6225E9EA981
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:24:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E949EA985
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:25:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6011D165B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D556287EF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0F622D4C6;
-	Tue, 10 Dec 2024 07:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD1F22D4D4;
+	Tue, 10 Dec 2024 07:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDHBHUW4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIhg58dw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB3D226160;
-	Tue, 10 Dec 2024 07:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372A21FCCE6;
+	Tue, 10 Dec 2024 07:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733815484; cv=none; b=naVM0g5QCkciOEvu/jpWMBYfUMDVlub5rwewosdUbPKU2/YpNcpe8ZTHboDX9hzHA5XhkrcF5vo8+HNuxhxBoT1yQyagP/kHcLTyQMg93EhEdhWNPMMWdoKmpvby0KdgZk3kGuX3eagusf/mnMjaPgs08pSo4CPY6MSOaD6zTgo=
+	t=1733815541; cv=none; b=tLdo0H/DzfxdjUH6wrix1jq5+YpTZzN3G54ZyFdg9HJHWM55JkW622w/zqar/d6qqqhCZNWLhsXZR+Bdt2Elq1X75+IQOb36DnhpC6Tk1qM3x50EhmCEBm+Kl4ceUpOenixDToaIUhsqX+CuUwxk3+1k12ENbkkllju40zrbWWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733815484; c=relaxed/simple;
-	bh=JZn+CIFqltfQMRkCq0auNHlzYcJGcUeSKxtpvyL7h10=;
+	s=arc-20240116; t=1733815541; c=relaxed/simple;
+	bh=ox/K7B152a5pImlzTHzezl1rRj8orN8GA7FhCyBAK0o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tvWEXnJtfYDtthMCzxJeEt6b/1n0kAWlXPiBiRg6sylMiKa9Ra+QrZo9F93X3RV0dKHEBkTMm8NB1kB3d2ONNci4m7RZ5fAmuZK3p5xtGspEeZfhiD3FI8F4Ui5Q4uLXfBJVncVR6c2a6xSi9ZRW4rTJtOC8o8aC3VoLK2bNl9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDHBHUW4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E62C4CED6;
-	Tue, 10 Dec 2024 07:24:39 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Par9qrO8CVFSn2KdFJFIQRAPTNDxU/ul0ekbZeBGml0i32Qq6S+beFZKpu8dTP99KUTUBCC3JRAl848aptUVGQO2Q54Y6brqPYerUKQJqXeiiOhsJHLqasDzDxLlLkfyVCUG+xHeTMXsXeOrkma4lxCAm0FP7YefjoTUTItwz1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIhg58dw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2518C4CED6;
+	Tue, 10 Dec 2024 07:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733815484;
-	bh=JZn+CIFqltfQMRkCq0auNHlzYcJGcUeSKxtpvyL7h10=;
+	s=k20201202; t=1733815540;
+	bh=ox/K7B152a5pImlzTHzezl1rRj8orN8GA7FhCyBAK0o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jDHBHUW4wPJQdJ3bNIEiLFvaNewL9vttnlRy7DoqB255GY03SLtvIyt0mYRQsdCWQ
-	 n0m7ooAVlowmMZn3t7GzYEf88LxO5zlhztRHXqzR9bb2UHizYq5amYEzs3amNJKPBr
-	 rgGap1e1UTd5iwx+f1cVweqHtlaDt0pODDBSHOPRaT/dFKaHoJJBNrpsN+bkGaJRjN
-	 TtpLr+HEIxKD52Hu6Ts5sOlwwNDxWWyFUmJGfSW3zh9w6NeS0TqzLOoBdESwigtb7X
-	 fjpEMoeHgzauAfy4urS85W4ougH2NTBKrXqjzxGOGMW5ytEagpA+s3khPp/asNsGUx
-	 6MRIafjcFQ+qw==
-Message-ID: <8a39feee-c861-4f66-8653-362b629d8924@kernel.org>
-Date: Tue, 10 Dec 2024 08:24:37 +0100
+	b=AIhg58dwmlzZpg2yhpF2D0JbUjEVZR+SzL13y3fTSQ63IiHl93ADmSOzDhGtCjk7i
+	 oixba8olwZQeop/2ghMlxum3DeP43l5KJZ9fwFPsBu7vf6u65mia59JdTSRhfBMS6u
+	 PW+2fG/fUvs5Gzm+0OFtjvgI74ml0xoWxmICyWTFRT6ZxXAF7MleiGVPIRRw00zBOA
+	 FlbSaq0NZrRR/yS/6tElL1/XcR8het/GQFhfBiBs+G2ef9xEKKMZLP3i2XYOmzVZee
+	 65X9jIX0ZZkBz0E8H79ESWvvzgXif1t7Y2k5PU9nEpth0X1JpGqfCTKp3FfV5QYuTH
+	 2PxTA1E/m8C7A==
+Message-ID: <5782d7c6-1a75-4f15-8942-387742e0ae09@kernel.org>
+Date: Tue, 10 Dec 2024 08:25:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: vendor-prefixes: Update rockchip company
- name
-To: Kever Yang <kever.yang@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
- <heiko.stuebner@cherry.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241205082258.857018-1-kever.yang@rock-chips.com>
- <kwx76ihsftsgw3u53l33z4kodihyfcvpqpl2a2nk7aedgnr6e6@2324w7s7zmio>
- <5a869ce4-b1ef-4308-a8ad-4252d8a7e5e3@rock-chips.com>
+Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
+ Ride-r3
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Wasim Nazir <quic_wasimn@quicinc.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
+ <20241119174954.1219002-6-quic_wasimn@quicinc.com>
+ <9e351979-be01-4d38-9b94-cc23efac4c3f@kernel.org>
+ <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
+ <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
+ <c639ca40-9e4f-4882-8441-57413e835422@kernel.org>
+ <Z1c9wMxQ5xSqvPmf@hu-wasimn-hyd.qualcomm.com>
+ <8cf9edc0-a0cb-4fd0-b10e-2138784dfba3@kernel.org>
+ <iu6ssjczkdfkhfy2n6vxf3f3c2pepsepslzvnh5z4susxgxgqa@engwsvhu533x>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,27 +113,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <5a869ce4-b1ef-4308-a8ad-4252d8a7e5e3@rock-chips.com>
+In-Reply-To: <iu6ssjczkdfkhfy2n6vxf3f3c2pepsepslzvnh5z4susxgxgqa@engwsvhu533x>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/12/2024 01:37, Kever Yang wrote:
-> HI Kyzysztof,
+On 10/12/2024 00:25, Dmitry Baryshkov wrote:
+>>>>>> 9100 & 9075 are different from “safe” perspective. They differ in
+>>>>>> changes related to thermal which will be added later in devicetree.
+>>>>>
+>>>>> Since this can't be inferred from just looking at the changes, please
+>>>>> make sure to add that to the commit message
+>>>>
+>>>> Any include of other DTS is clear sign something is odd here. Including
+>>>> multiple times without any added nodes is showing these are not real
+>>>> products/boards .
+>>>
+>>> We're adding DTS to reuse the common board changes, with plans to
+>>> include the differences in upcoming patches. To provide more clarity, I
+>>> will include patches in this series to highlight the differences between
+>>> the 9100 and 9075 boards.
+>>
+>> Sure, still do not include DTS. Just like C files don't include C files.
 > 
->      Thanks for your reply.
-> 
-> On 2024/12/9 17:42, Krzysztof Kozlowski wrote:
->> On Thu, Dec 05, 2024 at 04:22:58PM +0800, Kever Yang wrote:
->>> Rockchip company name has update to below name since 2021:
->>> Rockchip Electronics Co., Ltd.
->> Some reference would be useful. Wikipedia says:
-> 
-> The Wikipedia is the third party website and could be modified by anyone.
+> So, is the solution simple, rename .dts to .dtsi and include it from
+> both .dts files?
 
-
-And the company representatives obviously would make one 100% sure that
-name in Wikipedia is correct.
-
+For example. This leads to more questions - what is common here? We do
+not create shared DTSI files just because someone wants, but to really
+note shared components or shared designs.
 
 Best regards,
 Krzysztof
