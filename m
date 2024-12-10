@@ -1,82 +1,108 @@
-Return-Path: <linux-kernel+bounces-440123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9817E9EB929
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:17:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340019EB932
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:19:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF1C283FB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C5761889BD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74420204692;
-	Tue, 10 Dec 2024 18:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA212046AB;
+	Tue, 10 Dec 2024 18:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEqVO4SP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fN47Kc/h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFC423ED59;
-	Tue, 10 Dec 2024 18:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EC723ED59;
+	Tue, 10 Dec 2024 18:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733854646; cv=none; b=r6Koaumo/1cqP7zVhSoseKbNxJICmJl1BzqGAtvTQxQUuG6fxZPcbxID5nzW0CEDK2i9kBPwsRVoHysF1RuRooI3kmRH3wFQlWJAlY72N4TiTS3/QDErnDA3zt1vOcXaZPm0WCdeKWC+XMoyAG5K0vJOz3as1oV526MqJEL0TtQ=
+	t=1733854783; cv=none; b=L6rdmt9y9lw6syIqpPS/KXmn3TKoyPpCHUUdm0hsW+HnyfALwR8b/N5sepI5StNDpJOE4Py4R+kBWKIOXffei46Snf7IJgUdvEQm59ZKkWaLTd8ASD5B3DkKloJCZN/5lg4yNouPslSShBRVW9r+erI0FKCnrFfysU0v2N8abq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733854646; c=relaxed/simple;
-	bh=jN756xLVBFxNxpzSE64UVqN6NuUqd49ydB11a1N3dIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fapmFQ7ewUXiNMJTf3pxI5HFh+DU0pwElBLRt7XSWOcqGa2MsuutJ9ouUKsuGbZb0G+I/afAkzKCfGrgPxkL/PzqUhQ+xfnJ988K1bEm2NI7w+0mjnobCNa3UdCSbNV2FZkHpcMvymsqErX+SFOTb17Ps0uKtElCokLLJNYnGbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEqVO4SP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FC7C4CED6;
-	Tue, 10 Dec 2024 18:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733854646;
-	bh=jN756xLVBFxNxpzSE64UVqN6NuUqd49ydB11a1N3dIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pEqVO4SP9BPt5gJeIBldqzX3p8Y/ruyTVW++MXZ1C7yppD0Rw1qcpc/g2iQ1NpyTh
-	 Ocdzk5bgm/+ea83z+Yymk1z9j3370D3jc67oRptrMv+LHqiIw7/mCPqVZLnOcn6soX
-	 U0+fSOt7SceXTiL3YG/z3O8ww3t0blhUNk1iJJRcqhyKo3/aZFPQaaiFrvVSEUqGHY
-	 f0WcUBKbX5SjAOpEGvEGW2bbilN4f3rfOd1KLg7FBcEBYGeWMQXRevLf8jpRpuIozH
-	 Sgu93ibA8wi3MEz+7ohFBx/0nI5iD5ssTbjOMQ/Q2zeFSIgBhPskoUpNiLmWr47juG
-	 qTPHra/UsysrQ==
-Date: Tue, 10 Dec 2024 15:17:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: Re: [PATCH 0/4 perf-tools-next] perf ftrace latency linear buckets
-Message-ID: <Z1iFsz-Jis6rgpjb@x1>
-References: <20241112181214.1171244-1-acme@kernel.org>
+	s=arc-20240116; t=1733854783; c=relaxed/simple;
+	bh=bOl88BIrBVQcyS4UvrQpTwuyM5PF7qtNXyWSrImey1s=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=F4DMPa4IO5GDMfJiXmfZ+iWhLajclA8G0rf4V4ehkSvCkstZgellNe/tIieEb2ON1yhYHD82hcmQpnMIowChze+4OB1TQEV1L7srTwbwehn9+ZFHsIK/mVX4YzvXmuK4PIODqokjU6XbRqZB5yY2fn/D2taCHAMsi+GOZ6isbvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fN47Kc/h; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733854782; x=1765390782;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=bOl88BIrBVQcyS4UvrQpTwuyM5PF7qtNXyWSrImey1s=;
+  b=fN47Kc/hybgERyI6vFVhrDCKPyi8u87yHVYF8slGlLNgoy1tb+NGdNeF
+   E8B8YbvoDxOeoAM5tlsx1otADXKHuOlt+me11dB3DiZvEKTJcJG7tBdvk
+   D2tYzz9LP72xLGkfVA0WWTvzGDaWcSEVK+5s0/Y5apd5a1kn9L654eQyY
+   dXHpRz/xz7EOmCwPPP695KYJ0BlRrLyM0W0PQX2SNZqn89QbNjfTMa3Sb
+   vL/e1GBcepBmh4qn/ODXyFwyLLnWJahmWgnosdunvfIAr8W+8FNXmsK2A
+   BZsBzkjcIwOZ6rEdJ8qfXzbXF+yFM89wgW7BuGL+DjAGPjXsx6qoTbtPe
+   g==;
+X-CSE-ConnectionGUID: rS77Tem4Skudzdg9/9bzjA==
+X-CSE-MsgGUID: 9qtFp5zJTlaNOZSwF/y+tg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="51626751"
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="51626751"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 10:19:42 -0800
+X-CSE-ConnectionGUID: V8DJcyq5QXmnIWhcgVU0TA==
+X-CSE-MsgGUID: M4jpkmM9QUmVBhSJX0WQWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="99986249"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 10:19:39 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 10 Dec 2024 20:19:36 +0200 (EET)
+To: Bjorn Helgaas <bhelgaas@google.com>
+cc: linux-pci@vger.kernel.org, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Lukas Wunner <lukas@wunner.de>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v6 0/8] PCI: Consolidate TLP Log reading and printing
+In-Reply-To: <cb44bafe-a7ec-889b-5c1c-ee8ca6c540a0@linux.intel.com>
+Message-ID: <38a03e53-789e-363a-c336-dc939161d7d7@linux.intel.com>
+References: <20240913143632.5277-1-ilpo.jarvinen@linux.intel.com> <cb44bafe-a7ec-889b-5c1c-ee8ca6c540a0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112181214.1171244-1-acme@kernel.org>
+Content-Type: multipart/mixed; boundary="8323328-1421109454-1733854776=:905"
 
-On Tue, Nov 12, 2024 at 03:12:10PM -0300, Arnaldo Carvalho de Melo wrote:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> Hi,
-> 
-> 	Gabriele has been using 'perf ftrace latency' in some
-> investigations at work and wanted to have an alternative way of
-> populating the buckets, so we came up with this series, please take a
-> look at the examples provided in the changesets.
-> 
-> Thanks,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Applied to perf-tools-next,
+--8323328-1421109454-1733854776=:905
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-- Arnaldo
+On Wed, 23 Oct 2024, Ilpo J=E4rvinen wrote:
+
+> On Fri, 13 Sep 2024, Ilpo J=E4rvinen wrote:
+>=20
+> > This series has the remaining patches of the AER & DPC TLP Log handling
+> > consolidation and now includes a few minor improvements to the earlier
+> > accepted TLP Logging code.
+> >=20
+> > v6:
+> > - Preserve "AER:"/"DPC:" prefix on the printed TLP line
+> > - New patch to add "AER:" also  on other lines of the AER error dump
+>=20
+> Hi Bjorn,
+>=20
+> A small reminder this series exists.
+
+Another reminder about this series. :-)
+
+--=20
+ i.
+
+--8323328-1421109454-1733854776=:905--
 
