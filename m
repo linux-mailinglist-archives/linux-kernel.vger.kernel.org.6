@@ -1,95 +1,202 @@
-Return-Path: <linux-kernel+bounces-439768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8A49EB3C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:45:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1B09EB3BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:44:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D54188C832
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:44:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A7FF2841A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF011B85F0;
-	Tue, 10 Dec 2024 14:44:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699C21B6CE1;
+	Tue, 10 Dec 2024 14:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dko6LHmG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1891B415C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88321B2195;
+	Tue, 10 Dec 2024 14:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841844; cv=none; b=TDNSuOJCUIwTcwhvYY1BXiQvgOzghbbhn/x5wavd7LaeV8pIgUkPLgjNhynvo84Vk6JUOY7pFHlzcD89lY3BfjGMcwVoxgKaK5Xxl4gSKpk+HmGSzKjINujydOcxtCOv/EeHemH5GRE4gxuHyMLW5kY33kR71Rx3Jfm/28gV0Bg=
+	t=1733841882; cv=none; b=ONww7PadaafP5QDat766YEXl/4fP77nEJchTRLPJ+fw3MbF/lezhk6uGdYthLtNgXq59wh48LdQ5v2d/kgcS1Gh5lDnmNggoFgyCun6OK3xNXXfrKAaMQpi2eevnV7HE9bQVjOnwvfGiNmtD1W6GhHyr15afHbo4G+ICVtv1DCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841844; c=relaxed/simple;
-	bh=UJwFBO9vbEOarQQdzEAtnm6eWrTvYdifQjQmy9S6VNk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Sk+vA3WNoyr88lpzwfLIrA0Mu51gRgvKav1Ax/zx9KOm6Oxtse5mrI9TjqDCTJRTVxjU7Vib3cIJwiXTpvv/VNTYnqdRBWqN4/rur+Hvx1UMjOT+oXryCq9wgTBkT6Z1woEO9wA71txKLVQVB71SxgU/GYekOUyqB/xOZVkGbqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a9cefa1969so22333595ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:44:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733841842; x=1734446642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wHRmglB/uTlqO78lWJ+GcsToPOMC3b4XV7WsgLDkrd8=;
-        b=Y62tIpEXW3NfDhtXVy47YIrfcm0h0zsntzYhk3k4fS0pnfuOsHqLxbOct6ZrYiXNTg
-         7QoMAGbf/AqI5iwE/PLjsUptVocnY1cynDyn77Nnhg15QIWzg9iiKWfLnhpqBNEPgs+V
-         HDgDCvcTosnmcw8wujnXmm0LBWJM1oZSOycZUt3iv523RToeUm/4ctSQu1m4QiGaBLsJ
-         EsKhYerIi9kT93l6UFx514PEhHLTLkp8cMMUpPVlASLuZCP+n3paJbVqf1aYXEks2ZRB
-         q5HI/SDOG6jnBIsgAwkmgBWnui5+uUKCA1LlJwpVxNluonZECm3vjPou4QcBwCdA6nIR
-         USbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfUIgCMx4Rvp7NGZbXhE+vq1/UqOix6O+TWDCpQHDHKRjqbjefzEpng/Fo41cjw87bOAWWDHF+j0bAe1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9iIkvma2O6Aq7l6SWROE2+oq4wGEi1bosR1oNMpbptlhKuN+U
-	AAulllEJzgq5TkGgAPOB6onzqFTdhMIjSB+CSJM1qUbooQyX4E2ycAnyuWE6FgeXpvAiVpS+uht
-	2QRTIYr8htfGeNsvilM5tgnV1gXsW/58zbMm2oFl+iGqU7ZOPnInS8EI=
-X-Google-Smtp-Source: AGHT+IGGgYznzK9FyGa6Y3SQoRd69Sy14L/LftCeFxE3fEamhn1CYv6QsyjuW4JiisG7CRdwe3bBn4Sam8D0BTwyfYYIVTU8kMOm
+	s=arc-20240116; t=1733841882; c=relaxed/simple;
+	bh=p92MSmrg16W+AvmipmOqXkEVwVKuNWKW3EymIxk3aYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugFVeVI5HH4L2fMjYos0dMhONHe/vKxli8qX24aD5lEvLaM8aIysiYueGGt8MzQ/8aF6KvSMcjzBqd+fJkv29l5iX4Jjjpbm330YMpVJTZZn9KD/fcvkjF/fRjbIdTV2WlJT58WiXjA4+LN2IIMxi6RgWv4Y2xbHpp1yaSieKZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dko6LHmG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4006EC4CED6;
+	Tue, 10 Dec 2024 14:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733841882;
+	bh=p92MSmrg16W+AvmipmOqXkEVwVKuNWKW3EymIxk3aYA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dko6LHmGKFs3oBZQ4HJ3a6GbYW3z7hfjfLQRNqS0+yJWfNCQHgyvuTgpqHV6JSYRZ
+	 cxwCAfpzvZ1Vx5ClH+tc0Mkxeh0UGFoCCu81tDhcfpKoyo6/Qgsjz7/DQoVFJb2JR3
+	 hR+H0d7z0BXhOEEwv7SdOPbxAiY1bH1bE3t4EXHcIYVrMtPhtXj4IxoT4r6SlLW03+
+	 RJYwPdJ+Hg5JZ7WfkmLso4WLqhjDOY7ezgmkHn6wLQ396sNLtb+5HoHuMCvZ2VYQI/
+	 iFOiImcEPB7wrskOfym5Yub/YOAaoXUwqh0rh5Y0EBAF3wHEWtHTtYj5D/IRw4fWV4
+	 qaoB1U5qROEpA==
+Date: Tue, 10 Dec 2024 15:44:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 0/5] bpf: Add open-coded style process file
+ iterator and bpf_fget_task() kfunc
+Message-ID: <20241210-geholfen-aufheben-b4b57524c00f@brauner>
+References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1786:b0:3a7:a69c:9692 with SMTP id
- e9e14a558f8ab-3a9dbb2b21amr44928275ab.21.1733841842547; Tue, 10 Dec 2024
- 06:44:02 -0800 (PST)
-Date: Tue, 10 Dec 2024 06:44:02 -0800
-In-Reply-To: <6757fb68.050a0220.2477f.005f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675853b2.050a0220.2477f.0065.GAE@google.com>
-Subject: Re: [syzbot] [net?] [afs?] WARNING in rxrpc_send_data
-From: syzbot <syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dhowells@redhat.com, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	marc.dionne@auristor.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-syzbot has bisected this issue to:
+On Tue, Dec 10, 2024 at 02:01:53PM +0000, Juntong Deng wrote:
+> This patch series adds open-coded style process file iterator
+> bpf_iter_task_file and bpf_fget_task() kfunc, and corresponding
+> selftests test cases.
+> 
+> In addition, since fs kfuncs is generic and useful for scenarios
+> other than LSM, this patch makes fs kfuncs available for SYSCALL
+> and TRACING program types [0].
+> 
+> [0]: https://lore.kernel.org/bpf/CAPhsuW6ud21v2xz8iSXf=CiDL+R_zpQ+p8isSTMTw=EiJQtRSw@mail.gmail.com/
+> 
+> Although iter/task_file already exists, for CRIB we still need the
 
-commit b341a0263b1b804d329f864c2dc24815364510ec
-Author: David Howells <dhowells@redhat.com>
-Date:   Wed Dec 4 07:46:46 2024 +0000
+What is CRIB?
 
-    rxrpc: Implement progressive transmission queue struct
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17bbeb30580000
-start commit:   e58b4771af2b Merge branch 'vxlan-support-user-defined-rese..
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=147beb30580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=107beb30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=ff11be94dfcd7a5af8da
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14cb93e8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a3d4df980000
-
-Reported-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
-Fixes: b341a0263b1b ("rxrpc: Implement progressive transmission queue struct")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> open-coded iterator style process file iterator, and the same is true
+> for other bpf iterators such as iter/tcp, iter/udp, etc.
+> 
+> The traditional bpf iterator is more like a bpf version of procfs, but
+> similar to procfs, it is not suitable for CRIB scenarios that need to
+> obtain large amounts of complex, multi-level in-kernel information.
+> 
+> The following is from previous discussions [2].
+> 
+> [2]: https://lore.kernel.org/bpf/AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
+> 
+> This is because the context of bpf iterators is fixed and bpf iterators
+> cannot be nested. This means that a bpf iterator program can only
+> complete a specific small iterative dump task, and cannot dump
+> multi-level data.
+> 
+> An example, when we need to dump all the sockets of a process, we need
+> to iterate over all the files (sockets) of the process, and iterate over
+> the all packets in the queue of each socket, and iterate over all data
+> in each packet.
+> 
+> If we use bpf iterator, since the iterator can not be nested, we need to
+> use socket iterator program to get all the basic information of all
+> sockets (pass pid as filter), and then use packet iterator program to
+> get the basic information of all packets of a specific socket (pass pid,
+> fd as filter), and then use packet data iterator program to get all the
+> data of a specific packet (pass pid, fd, packet index as filter).
+> 
+> This would be complicated and require a lot of (each iteration)
+> bpf program startup and exit (leading to poor performance).
+> 
+> By comparison, open coded iterator is much more flexible, we can iterate
+> in any context, at any time, and iteration can be nested, so we can
+> achieve more flexible and more elegant dumping through open coded
+> iterators.
+> 
+> With open coded iterators, all of the above can be done in a single
+> bpf program, and with nested iterators, everything becomes compact
+> and simple.
+> 
+> Also, bpf iterators transmit data to user space through seq_file,
+> which involves a lot of open (bpf_iter_create), read, close syscalls,
+> context switching, memory copying, and cannot achieve the performance
+> of using ringbuf.
+> 
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> ---
+> v4 -> v5:
+> * Add file type checks in test cases for process file iterator
+>   and bpf_fget_task().
+> 
+> * Use fentry to synchronize tests instead of waiting in a loop.
+> 
+> * Remove path_d_path_kfunc_non_lsm test case.
+> 
+> * Replace task_lookup_next_fdget_rcu() with fget_task_next().
+> 
+> * Remove future merge conflict section in cover letter (resolved).
+> 
+> v3 -> v4:
+> * Make all kfuncs generic, not CRIB specific.
+> 
+> * Move bpf_fget_task to fs/bpf_fs_kfuncs.c.
+> 
+> * Remove bpf_iter_task_file_get_fd and bpf_get_file_ops_type.
+> 
+> * Use struct bpf_iter_task_file_item * as the return value of
+>   bpf_iter_task_file_next.
+> 
+> * Change fd to unsigned int type and add next_fd.
+> 
+> * Add KF_RCU_PROTECTED to bpf_iter_task_file_new.
+> 
+> * Make fs kfuncs available to SYSCALL and TRACING program types.
+> 
+> * Update all relevant test cases.
+> 
+> * Remove the discussion section from cover letter.
+> 
+> v2 -> v3:
+> * Move task_file open-coded iterator to kernel/bpf/helpers.c.
+> 
+> * Fix duplicate error code 7 in test_bpf_iter_task_file().
+> 
+> * Add comment for case when bpf_iter_task_file_get_fd() returns -1.
+> 
+> * Add future plans in commit message of "Add struct file related
+>   CRIB kfuncs".
+> 
+> * Add Discussion section to cover letter.
+> 
+> v1 -> v2:
+> * Fix a type definition error in the fd parameter of
+>   bpf_fget_task() at crib_common.h.
+> 
+> Juntong Deng (5):
+>   bpf: Introduce task_file open-coded iterator kfuncs
+>   selftests/bpf: Add tests for open-coded style process file iterator
+>   bpf: Add bpf_fget_task() kfunc
+>   bpf: Make fs kfuncs available for SYSCALL and TRACING program types
+>   selftests/bpf: Add tests for bpf_fget_task() kfunc
+> 
+>  fs/bpf_fs_kfuncs.c                            |  42 ++++---
+>  kernel/bpf/helpers.c                          |   3 +
+>  kernel/bpf/task_iter.c                        |  92 ++++++++++++++
+>  .../testing/selftests/bpf/bpf_experimental.h  |  15 +++
+>  .../selftests/bpf/prog_tests/fs_kfuncs.c      |  46 +++++++
+>  .../testing/selftests/bpf/prog_tests/iters.c  |  79 ++++++++++++
+>  .../selftests/bpf/progs/fs_kfuncs_failure.c   |  33 +++++
+>  .../selftests/bpf/progs/iters_task_file.c     |  88 ++++++++++++++
+>  .../bpf/progs/iters_task_file_failure.c       | 114 ++++++++++++++++++
+>  .../selftests/bpf/progs/test_fget_task.c      |  63 ++++++++++
+>  .../selftests/bpf/progs/verifier_vfs_reject.c |  10 --
+>  11 files changed, 559 insertions(+), 26 deletions(-)
+>  create mode 100644 tools/testing/selftests/bpf/progs/fs_kfuncs_failure.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file_failure.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/test_fget_task.c
+> 
+> -- 
+> 2.39.5
+> 
 
