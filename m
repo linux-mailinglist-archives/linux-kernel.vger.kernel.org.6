@@ -1,91 +1,116 @@
-Return-Path: <linux-kernel+bounces-440505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD199EBF34
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A8D9EBF3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:24:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A233B284701
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:18:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E19284825
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD917211265;
-	Tue, 10 Dec 2024 23:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32321211274;
+	Tue, 10 Dec 2024 23:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EZsp/FYR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tAIKk3I+"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5AB1AAA0F;
-	Tue, 10 Dec 2024 23:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7492186324;
+	Tue, 10 Dec 2024 23:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733872707; cv=none; b=ZE8bc7AVOofaJQGA2YyBfF0+wHHrZYPplJq7Zbb88nnsS+AngBGYvoI2X8rcKaEl931cVXluaQmctUx1qtgOuz/DYrVkPObjgDNLZ5NsALOc4y8LWVV/ZP/bvlD+O3hLi6sKdU1t/JmovyArfMzjh8ph/xzT9uobyNrusoJdXZ8=
+	t=1733873046; cv=none; b=ZDAbGJeqRLXhiZt5gt+pqHXamjwygjdPQcBgL6YwmHWdm2sNKtmVvOS1+oWbcniAyKP7kXGppZzju00Fvk2pjqomX4on+Oc7ESGD1SLx4HpKqESJo9rFevZdNJuOIdNWIezs/Nefc93bNbq6xeZRJp4iCxHAcy8V11yEhujBRbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733872707; c=relaxed/simple;
-	bh=2xopEnnq5/pPO8ebcQ2iA7v0L/YlJ7nHPQG7P9WTTEk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LLfDK2737FEdG3Ka1oU74ObM+/mgXg3fLmC4uR5632DxyapGsM/0J9RKDKJV5WlTtNhMdux6ykK7fSfTOGqYNBDJV6R9BcpkLYOBGjHpR2AWcOmeeX5abWzY073n4skK32xttzv1B9JiTdlpwk1cquYx0i45/9GFZVWBk7iLCqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EZsp/FYR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733872703;
-	bh=2xopEnnq5/pPO8ebcQ2iA7v0L/YlJ7nHPQG7P9WTTEk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=EZsp/FYRIFSmUXEd2TZUjJHZYAZKXEk2H2eiauaA0UN8wgqFeaCBYlQWGoSEpQnD7
-	 jFdNMcnVS6J7H5pUohRFkpVLEQ3EReBmUlNwzAusaBjaYdyLNuZCWTNBgyM3VIq0Z8
-	 S19sh8M7d4kWUgDkqyOWx+khUgj4v2HjctQeWzq4l20nLNfx3UKplW1DPBlbhw7QGD
-	 v3DW2aS/3Xy+tUXoANx3jX/1fWYreKuRbMQy7a3yyQrinMdlewtfJG1VvhnHRjkQNZ
-	 ysMuhjr/vY3P1KqZSsSCTcGJJ01iIKq60GEsMS3pPaLnC5+VULo9xk5YO8yQLcklB/
-	 3LYr+AHwfXYbQ==
-Received: from [192.168.1.90] (unknown [188.27.48.199])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DDF7317E0B54;
-	Wed, 11 Dec 2024 00:18:22 +0100 (CET)
-Message-ID: <b15c0a3b-36dc-49f8-9dfc-4bac5beece9a@collabora.com>
-Date: Wed, 11 Dec 2024 01:18:22 +0200
+	s=arc-20240116; t=1733873046; c=relaxed/simple;
+	bh=uRN07EVZGn1ySGZv5iCrZP2k3eDPDlir8l8cG+/nBNg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=djVFawKNe3h8O09yj+dsQqCxJiZ3urOFUviHHFBHjjARJH1MtmhJO1nGwnrO/r62lAcQxPZ5MPCWkCZ3m7OUthgaAXSLx3uwdkNIAZ63JJltxMiQen45cxtKyxMoNzZS33UtJdNMj506X9MvVFYlKsZMM5k6dNxl3WBV5exPUK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tAIKk3I+; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733873039;
+	bh=uRN07EVZGn1ySGZv5iCrZP2k3eDPDlir8l8cG+/nBNg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=tAIKk3I+YW3bATNqVJ0HOahk0dHpNyEmUl/XAnNV2d1K9+Rnfqwbv9EkHB/9FS8Kf
+	 iljXflny+OcKhx5xwZNC/GQAwsgo3zE+Royibl8Kg/hkXsAdoORvu3RkS825Fss4uj
+	 Jrze6upuoWOVNRo4WrkCfZYNcEJrIchHlmdGD888=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Wed, 11 Dec 2024 00:23:50 +0100
+Subject: [PATCH bpf-next] kbuild, bpf: Enable reproducible BTF generation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add support for HDMI1 output on RK3588 SoC
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241211-pahole-reproducible-v1-1-22feae19bad9@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAIXNWGcC/x3MTQqAIBBA4avErBNSgn6uEi0cnWogVMaKILp70
+ vJbvPdAJmHKMFYPCF2cOYYCXVfgNhtWUuyLwTSm1dq0Ktkt7qSEkkR/OsYCg303WNejtwilTEI
+ L3/91AkyLCnQfML/vB8Sjn3FvAAAA
+X-Change-ID: 20241124-pahole-reproducible-2b879ac8bdab
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Kui-Feng Lee <kuifeng@fb.com>, Alan Maguire <alan.maguire@oracle.com>, 
+ Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
+ Miguel Ojeda <ojeda@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733873038; l=1632;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=uRN07EVZGn1ySGZv5iCrZP2k3eDPDlir8l8cG+/nBNg=;
+ b=/K5by3KiAguNYUyBxdbON2ym8wXtDZA5r1rYnu1i+YNRs8mopxH+WoCM6tKFjMPPByj6lVsUw
+ jkPJPbm5x6PBNY00W47hd982/eRvPPKNVhI11w3Y82iNHI0M3Mpptyl
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On 12/7/24 11:32 PM, Cristian Ciocaltea wrote:
-> The patches provide the basic support to handle the second HDMI output
-> port found on Rockchip RK3588 SoC.
-> 
-> For now I enabled it on Radxa ROCK 5B only, the board I've been using to
-> validate this.
+Pahole v1.27 added a new BTF generation feature to support
+reproducibility in the face of multithreading.
+Enable it if supported and reproducible builds are requested.
 
-Please ignore this revision and use v2 [1] instead, as it fixes a pin 
-conflict issue occurring when having CONFIG_SPI_ROCKCHIP_SFC enabled.
+As unknown --btf_features are ignored, avoid the test for the pahole
+version to keep the line readable.
 
-Thanks,
-Cristian
+Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and generate BTF with multithreading.")
+Fixes: 72d091846de9 ("kbuild: avoid too many execution of scripts/pahole-flags.sh")
+Link: https://lore.kernel.org/lkml/4154d202-5c72-493e-bf3f-bce882a296c6@gentoo.org/
+Link: https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v1-1-3eaafb1842da@weissschuh.net/
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ scripts/Makefile.btf | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1] https://lore.kernel.org/all/20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com/
+diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
+index c3cbeb13de503555adcf00029a0b328e74381f13..da23265bc8b3cf43c0a1c89fbc4f53815a290e13 100644
+--- a/scripts/Makefile.btf
++++ b/scripts/Makefile.btf
+@@ -22,6 +22,7 @@ else
+ 
+ # Switch to using --btf_features for v1.26 and later.
+ pahole-flags-$(call test-ge, $(pahole-ver), 126)  = -j$(JOBS) --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func,decl_tag_kfuncs
++pahole-flags-$(if $(KBUILD_BUILD_TIMESTAMP),y) += --btf_features=reproducible_build
+ 
+ ifneq ($(KBUILD_EXTMOD),)
+ module-pahole-flags-$(call test-ge, $(pahole-ver), 126) += --btf_features=distilled_base
+
+---
+base-commit: 7cb1b466315004af98f6ba6c2546bb713ca3c237
+change-id: 20241124-pahole-reproducible-2b879ac8bdab
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
