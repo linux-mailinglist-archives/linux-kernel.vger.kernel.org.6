@@ -1,364 +1,166 @@
-Return-Path: <linux-kernel+bounces-439520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A21799EB072
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:06:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A269EB075
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:06:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC65616888B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1042855C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527C11A0BCF;
-	Tue, 10 Dec 2024 12:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686A81A2C29;
+	Tue, 10 Dec 2024 12:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qJBMGtBF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gf1e1f9Q";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qJBMGtBF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gf1e1f9Q"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFRAl5Cg"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAF41A0B0D;
-	Tue, 10 Dec 2024 12:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9651A262A;
+	Tue, 10 Dec 2024 12:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733832392; cv=none; b=OcHQmbpPWGVsxMJaXNT8nGfwjdrBKVBfwJcVKl/2eWh280rPLnkxZoglYYjubpHfzuIwxo6HbcepIHXNxH5wyTztWyAk+eorpx87Chc3NXoJy4Vck5e2I2mmOyk7lSZdh3qt8sCyjcsacwypCr9hlAWB3kN8zoKp0lgx03zebrE=
+	t=1733832398; cv=none; b=ID0xf05YfI0fU7SYyJi3UkFe15Cb+2u09yGD881eAZ4hFn1mbPFuvL2OuZeJVt2dsa8XUyjIuFxrgmoTRNq+InkhsyMBGK0B5KWxYfgxGxHynSzwyaEuEcrbJ/dhmsHCmwxPtSc48379ODe7RWWpfC8IYA3CJf3Y6l8KTzsdMSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733832392; c=relaxed/simple;
-	bh=1/+zi2oed/oMIsCnusE2JFOeNlspb/ZjC0p5az1x+ro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pC6NBytbCAlPgKfYlky/IWmvaGL4FfJGQZZ3GUYp+/2k0VzIqbntBXgjo6hsQ0EgxQpgfjPYIDhU4rzk6KnKwkmJiiz/pwHn2+esLmfIJZQBjgZEhHLsfZlWkDX8ssQI/Kig2Myr9r/bbyDN4em89RlwI1YaTQrDemWtMSUAtZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qJBMGtBF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gf1e1f9Q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qJBMGtBF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gf1e1f9Q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D47A81F395;
-	Tue, 10 Dec 2024 12:06:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733832386; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OkZB7jqkDiu96dB+hkG5d8vaATfSyqCtRYPDrmMMQ10=;
-	b=qJBMGtBFixuL5n1gpUVThJejxNTGV1cS+YFy5em5AyDY0SRKWCgjy3jm1N03y4k/R5KEvY
-	7n1wumCGQBQ85j75zuQnoJAciZ4J9XSVEyNBWh/j8Zvklmz01u0A7bDCNUu3uM9rFP8Ink
-	2o4jqhrynkSKEtZ5eqtIzfzYPqQ5hW4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733832386;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OkZB7jqkDiu96dB+hkG5d8vaATfSyqCtRYPDrmMMQ10=;
-	b=Gf1e1f9QMSno+QUQmHZKaNTRBA9q80elKWNOhZSB+xSxXSrSwoM6K8JDsjwU0ieHr64Jws
-	IeI++Xz97Dw9NZDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733832386; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OkZB7jqkDiu96dB+hkG5d8vaATfSyqCtRYPDrmMMQ10=;
-	b=qJBMGtBFixuL5n1gpUVThJejxNTGV1cS+YFy5em5AyDY0SRKWCgjy3jm1N03y4k/R5KEvY
-	7n1wumCGQBQ85j75zuQnoJAciZ4J9XSVEyNBWh/j8Zvklmz01u0A7bDCNUu3uM9rFP8Ink
-	2o4jqhrynkSKEtZ5eqtIzfzYPqQ5hW4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733832386;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OkZB7jqkDiu96dB+hkG5d8vaATfSyqCtRYPDrmMMQ10=;
-	b=Gf1e1f9QMSno+QUQmHZKaNTRBA9q80elKWNOhZSB+xSxXSrSwoM6K8JDsjwU0ieHr64Jws
-	IeI++Xz97Dw9NZDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9657E13A15;
-	Tue, 10 Dec 2024 12:06:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DbcEJMIuWGenZQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 10 Dec 2024 12:06:26 +0000
-Message-ID: <9f000fbf-b5c4-41f5-8a4a-9c78b37c2ec5@suse.cz>
-Date: Tue, 10 Dec 2024 13:06:26 +0100
+	s=arc-20240116; t=1733832398; c=relaxed/simple;
+	bh=tac7FU1HS14XQp9BMuUMwuSzdZ33pnoQf7dmpahU5IM=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jhb3mLawgXTcIaSWJ72P1DKF+lnlKwKsauN7Bt9j+4GiGv9y1Dqn/ViayF6dUG0BpL52i17Zb0ZChL9zMkNlP1cMGgUMRNamFbBnXPsvc3e8ZGFxDXr55GrYR8HvJjqSvo4RNooNCX68pdrUfo1DRk8cZEoOs7iFeeUV2bVXC5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFRAl5Cg; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434f74e59c7so23979415e9.3;
+        Tue, 10 Dec 2024 04:06:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733832395; x=1734437195; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=46aYL8Qujac4/4V9g8K6BMoI6Lwj7kmEE7LxrwnxQWE=;
+        b=DFRAl5Cgv+dEMJGLYK7Cex7eXQw5NnfMpX4ZOkkf2cAa3vwxw/Hcg0RPhZ4hb4y9YZ
+         Z5yJUtqF52wcPImGfMULE4rL4RfToitKywOZrCeTvXfXnYQl+mo7XJORsDPHyV+J8LZv
+         Q/tAI/QZ3Sf5ttuEo/uQUQ6yfFdsfN2f2vZC/PZ+9YdpCl9w6q3QL5KBkgtF8d0ysuPI
+         8Lk+TouRZmwq1oSkvxUFMynRaKbJfwz91fjE1+G9WT0zVdHsv3q5BCFor9S+4WaJv4jh
+         LZef/pZeoVGrZCDKiI1okC2Sj8wZI9po6dD86dyTH4hRsk0SO+IJj5Hdi6CrIkWCmkst
+         BnmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733832395; x=1734437195;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=46aYL8Qujac4/4V9g8K6BMoI6Lwj7kmEE7LxrwnxQWE=;
+        b=u9e7HIjruaIdjn+IHGqoATTpWqF64Q6sHP3a1hA7eSBIqknMX5eJTONGpcxluZoTeQ
+         oKzqQJI/UH8nak7xBVmTEMUH8k+Tob4WyT1U/lR/m8HFUjr76MFWxXnCjnnpfR96YtjY
+         CMw+vvJ7jgbFAHC5EkunnRFsB1DKXMaXJzAnf4L2o94oOslUmD8JBobqSfSyddhoUGMy
+         ZqKWfZc5E9z4m17aJ+e9h9lQtPihSTiCOy+fuTRfUCyAoBzNwNf5GH2rj92Ir/IDIAKz
+         Wco8v8sjGWiCD1/RCjarEyhyrZPtE0jE6mJSeafYqhWhzI0HHECjBf8YqYVE9JK8eNOl
+         SkMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdrSjbcAAWI8F+OmwOAvQINC+9Z5u+bFT6SgCxL2niz0QAfZWU/KbLqnO+b/pA3vWH7vl/WWMF@vger.kernel.org, AJvYcCVWhyYzLU5JGBUB+o67uV6wqw1bBWh/oPyol6O8HuTJxbyLaifLetzPJKZ8s2985+bP/4UkQqzsyzCE3zRc@vger.kernel.org, AJvYcCVzCcB+wbFUn+XtZnwDHoXZDLIqzHEUhQgcTuFyQCeGL/f+x9F2keGg8QEhHY1Perv1ZY5zeGdLYrbv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5CYa56CxiD7G5UbQqVrbAHvwSCR9cOqKZbrbA08eovdlk/6lK
+	bs0gk+UC8xUGWfqB0Qovqt1BlDenLuO5nPtnyNBmwpmwX2Vv8k89
+X-Gm-Gg: ASbGncvy5N9yhdluTy7YOajmw2Xj6AeokHD4Pvt+WIsKaGcLhBOs3CPDc1mcHA/WM90
+	OJOcrWGiVD8+26wOEqZD1UShtoNdOcG3EvIvCf/Se/AZOtkHohpiU+2mhpqtgNKQXJ/QSYHWsJp
+	GCQyOmuRi7IyI2EcRNZAE4S8lliGHRbZ1zreEPIIN3zlonjF9eVrJF/aVVIHLGbwdPn5s4r4bty
+	SY44KdnJx3WtPqpmI/pDPPZMc9myojLxThdwATFJ09iDwrSXJBamTSUoU5ExFO4g2769E3Zg9SI
+	o7PxfLC0PA==
+X-Google-Smtp-Source: AGHT+IGpcC8Z7oXmbBOkKTQCK7YHx0j6xObP8W63hf6oMmuAzbltOfilbIotkhxBgXfUoy6iy3NP7Q==
+X-Received: by 2002:a05:600c:3b04:b0:434:a706:c0fb with SMTP id 5b1f17b1804b1-434fff3dcfbmr51803755e9.10.1733832395127;
+        Tue, 10 Dec 2024 04:06:35 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386394dd379sm8026747f8f.24.2024.12.10.04.06.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 04:06:34 -0800 (PST)
+Message-ID: <67582eca.050a0220.3b9b85.2de4@mx.google.com>
+X-Google-Original-Message-ID: <Z1guxUhVSGLHUVUh@Ansuel-XPS.>
+Date: Tue, 10 Dec 2024 13:06:29 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v11 6/9] net: mdio: Add Airoha AN8855 Switch
+ MDIO Passtrough
+References: <20241209134459.27110-1-ansuelsmth@gmail.com>
+ <20241209134459.27110-7-ansuelsmth@gmail.com>
+ <5aec4a94-3cea-41a4-8500-71472fae51d4@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] mm: make vma cache SLAB_TYPESAFE_BY_RCU
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
- mhocko@suse.com, hannes@cmpxchg.org, mjguzik@gmail.com,
- oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com,
- peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
- brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
- minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
- souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@android.com
-References: <20241206225204.4008261-1-surenb@google.com>
- <20241206225204.4008261-5-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241206225204.4008261-5-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	FREEMAIL_CC(0.00)[infradead.org,oracle.com,suse.com,cmpxchg.org,gmail.com,intel.com,techsingularity.net,redhat.com,stgolabs.net,kernel.org,sina.com,google.com,linux.dev,soleen.com,lwn.net,vger.kernel.org,kvack.org,android.com];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLumbhs4xhzuuihrchnpuyb6qu)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5aec4a94-3cea-41a4-8500-71472fae51d4@lunn.ch>
 
-On 12/6/24 23:52, Suren Baghdasaryan wrote:
-> To enable SLAB_TYPESAFE_BY_RCU for vma cache we need to ensure that
-> object reuse before RCU grace period is over will be detected inside
-> lock_vma_under_rcu().
-> lock_vma_under_rcu() enters RCU read section, finds the vma at the
-> given address, locks the vma and checks if it got detached or remapped
-> to cover a different address range. These last checks are there
-> to ensure that the vma was not modified after we found it but before
-> locking it.
-> vma reuse introduces several new possibilities:
-> 1. vma can be reused after it was found but before it is locked;
-> 2. vma can be reused and reinitialized (including changing its vm_mm)
-> while being locked in vma_start_read();
-> 3. vma can be reused and reinitialized after it was found but before
-> it is locked, then attached at a new address or to a new mm while
-> read-locked;
-> For case #1 current checks will help detecting cases when:
-> - vma was reused but not yet added into the tree (detached check)
-> - vma was reused at a different address range (address check);
-> We are missing the check for vm_mm to ensure the reused vma was not
-> attached to a different mm. This patch adds the missing check.
-> For case #2, we pass mm to vma_start_read() to prevent access to
-> unstable vma->vm_mm. This might lead to vma_start_read() returning
-> a false locked result but that's not critical if it's rare because
-> it will only lead to a retry under mmap_lock.
-> For case #3, we ensure the order in which vma->detached flag and
-> vm_start/vm_end/vm_mm are set and checked. vma gets attached after
-> vm_start/vm_end/vm_mm were set and lock_vma_under_rcu() should check
-> vma->detached before checking vm_start/vm_end/vm_mm. This is required
-> because attaching vma happens without vma write-lock, as opposed to
-> vma detaching, which requires vma write-lock. This patch adds memory
-> barriers inside is_vma_detached() and vma_mark_attached() needed to
-> order reads and writes to vma->detached vs vm_start/vm_end/vm_mm.
-> After these provisions, SLAB_TYPESAFE_BY_RCU is added to vm_area_cachep.
-> This will facilitate vm_area_struct reuse and will minimize the number
-> of call_rcu() calls.
+On Tue, Dec 10, 2024 at 02:53:34AM +0100, Andrew Lunn wrote:
+> > +static int an855_phy_restore_page(struct an8855_mfd_priv *priv,
+> > +				  int phy) __must_hold(&priv->bus->mdio_lock)
+> > +{
+> > +	/* Check PHY page only for addr shared with switch */
+> > +	if (phy != priv->switch_addr)
+> > +		return 0;
+> > +
+> > +	/* Don't restore page if it's not set to switch page */
+> > +	if (priv->current_page != FIELD_GET(AN8855_PHY_PAGE,
+> > +					    AN8855_PHY_PAGE_EXTENDED_4))
+> > +		return 0;
+> > +
+> > +	/* Restore page to 0, PHY might change page right after but that
+> > +	 * will be ignored as it won't be a switch page.
+> > +	 */
+> > +	return an8855_mii_set_page(priv, phy, AN8855_PHY_PAGE_STANDARD);
+> > +}
 > 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  include/linux/mm.h               |  36 +++++--
->  include/linux/mm_types.h         |  10 +-
->  include/linux/slab.h             |   6 --
->  kernel/fork.c                    | 157 +++++++++++++++++++++++++------
->  mm/memory.c                      |  15 ++-
->  mm/vma.c                         |   2 +-
->  tools/testing/vma/vma_internal.h |   7 +-
->  7 files changed, 179 insertions(+), 54 deletions(-)
+> I don't really understand what is going on here. Maybe the commit
+> message needs expanding, or the function names changing.
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 2bf38c1e9cca..3568bcbc7c81 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -257,7 +257,7 @@ struct vm_area_struct *vm_area_alloc(struct mm_struct *);
->  struct vm_area_struct *vm_area_dup(struct vm_area_struct *);
->  void vm_area_free(struct vm_area_struct *);
->  /* Use only if VMA has no other users */
-> -void __vm_area_free(struct vm_area_struct *vma);
-> +void vm_area_free_unreachable(struct vm_area_struct *vma);
->  
->  #ifndef CONFIG_MMU
->  extern struct rb_root nommu_region_tree;
-> @@ -706,8 +706,10 @@ static inline void vma_lock_init(struct vm_area_struct *vma)
->   * Try to read-lock a vma. The function is allowed to occasionally yield false
->   * locked result to avoid performance overhead, in which case we fall back to
->   * using mmap_lock. The function should never yield false unlocked result.
-> + * False locked result is possible if mm_lock_seq overflows or if vma gets
-> + * reused and attached to a different mm before we lock it.
->   */
-> -static inline bool vma_start_read(struct vm_area_struct *vma)
-> +static inline bool vma_start_read(struct mm_struct *mm, struct vm_area_struct *vma)
->  {
->  	/*
->  	 * Check before locking. A race might cause false locked result.
-> @@ -716,7 +718,7 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
->  	 * we don't rely on for anything - the mm_lock_seq read against which we
->  	 * need ordering is below.
->  	 */
-> -	if (READ_ONCE(vma->vm_lock_seq) == READ_ONCE(vma->vm_mm->mm_lock_seq.sequence))
-> +	if (READ_ONCE(vma->vm_lock_seq) == READ_ONCE(mm->mm_lock_seq.sequence))
->  		return false;
->  
->  	if (unlikely(down_read_trylock(&vma->vm_lock.lock) == 0))
-> @@ -733,7 +735,7 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
->  	 * after it has been unlocked.
->  	 * This pairs with RELEASE semantics in vma_end_write_all().
->  	 */
-> -	if (unlikely(vma->vm_lock_seq == raw_read_seqcount(&vma->vm_mm->mm_lock_seq))) {
-> +	if (unlikely(vma->vm_lock_seq == raw_read_seqcount(&mm->mm_lock_seq))) {
->  		up_read(&vma->vm_lock.lock);
->  		return false;
->  	}
+> Generally, i would expect a save/restore action. Save the current
+> page, swap to the PHY page, do the PHY access, and then restore to the
+> saved page.
+>
 
-This could have been perhaps another preparatory patch to make this one smaller?
+Idea is to save on extra read/write on subsequent write on the same
+page.
 
->  
-> +static void vm_area_ctor(void *data)
-> +{
-> +	struct vm_area_struct *vma = (struct vm_area_struct *)data;
-> +
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +	/* vma is not locked, can't use vma_mark_detached() */
-> +	vma->detached = true;
-> +#endif
-> +	INIT_LIST_HEAD(&vma->anon_vma_chain);
-> +	vma_lock_init(vma);
-> +}
-> +
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +
-> +static void vma_clear(struct vm_area_struct *vma, struct mm_struct *mm)
-> +{
-> +	vma->vm_mm = mm;
-> +	vma->vm_ops = &vma_dummy_vm_ops;
-> +	vma->vm_start = 0;
-> +	vma->vm_end = 0;
-> +	vma->anon_vma = NULL;
-> +	vma->vm_pgoff = 0;
-> +	vma->vm_file = NULL;
-> +	vma->vm_private_data = NULL;
-> +	vm_flags_init(vma, 0);
-> +	memset(&vma->vm_page_prot, 0, sizeof(vma->vm_page_prot));
-> +	memset(&vma->shared, 0, sizeof(vma->shared));
-> +	memset(&vma->vm_userfaultfd_ctx, 0, sizeof(vma->vm_userfaultfd_ctx));
-> +	vma_numab_state_init(vma);
-> +#ifdef CONFIG_ANON_VMA_NAME
-> +	vma->anon_name = NULL;
-> +#endif
-> +#ifdef CONFIG_SWAP
-> +	memset(&vma->swap_readahead_info, 0, sizeof(vma->swap_readahead_info));
-> +#endif
-> +#ifndef CONFIG_MMU
-> +	vma->vm_region = NULL;
-> +#endif
-> +#ifdef CONFIG_NUMA
-> +	vma->vm_policy = NULL;
-> +#endif
+Idea here is that PHY will receive most of the read (for status
+poll) hence in 90% of the time page will be 0.
 
-This isn't the ideal pattern I think, now that we have a ctor. Ideally the
-ctor would do all this (except setting the vm_mm), and then we need to make
-sure it's also done when freeing the vma, to make sure the freed object is
-in the same state as a new object after the constructor.
+And switch will receive read/write only on setup or fdb/vlan access on
+configuration so it will receive subsequent write on the same page.
+(page 4)
 
-On freeing, things like numab_state and anon_name could be NULL'd (by the
-respective destructors) only when they are non-NULL and thus freeing the
-objects pointed to. vm_policy and vm_file could perhaps be handled same way
-after some refactoring (see remove_vma()), vma_dummy_vm_ops are possibly
-already reset by vma_close(), etc.
+PHY might also need to write on page 1 on setup but never on page 4 as
+that is reserved for switch.
 
-> +}
-> +
-> +static void vma_copy(const struct vm_area_struct *src, struct vm_area_struct *dest)
-> +{
-> +	dest->vm_mm = src->vm_mm;
-> +	dest->vm_ops = src->vm_ops;
-> +	dest->vm_start = src->vm_start;
-> +	dest->vm_end = src->vm_end;
-> +	dest->anon_vma = src->anon_vma;
-> +	dest->vm_pgoff = src->vm_pgoff;
-> +	dest->vm_file = src->vm_file;
-> +	dest->vm_private_data = src->vm_private_data;
-> +	vm_flags_init(dest, src->vm_flags);
-> +	memcpy(&dest->vm_page_prot, &src->vm_page_prot,
-> +	       sizeof(dest->vm_page_prot));
-> +	memcpy(&dest->shared, &src->shared, sizeof(dest->shared));
-> +	memcpy(&dest->vm_userfaultfd_ctx, &src->vm_userfaultfd_ctx,
-> +	       sizeof(dest->vm_userfaultfd_ctx));
-> +#ifdef CONFIG_ANON_VMA_NAME
-> +	dest->anon_name = src->anon_name;
-> +#endif
-> +#ifdef CONFIG_SWAP
-> +	memcpy(&dest->swap_readahead_info, &src->swap_readahead_info,
-> +	       sizeof(dest->swap_readahead_info));
-> +#endif
-> +#ifndef CONFIG_MMU
-> +	dest->vm_region = src->vm_region;
-> +#endif
-> +#ifdef CONFIG_NUMA
-> +	dest->vm_policy = src->vm_policy;
-> +#endif
-> +}
-> +
-> +#else /* CONFIG_PER_VMA_LOCK */
+Making the read/swap/write/restore adds 2 additional operation that can
+really be skipped 90% of the time.
+
+Also curret_page cache is indirectly protected by the mdio lock.
+
+So in short this function makes sure PHY for port 0 is configured on the
+right page based on the prev page set.
+
+An alternative way might be assume PHY is always on page 0 and any
+switch operation save and restore the page.
+
+Hope it's clear now why this is needed. Is this ok or you prefer the
+alternative way? 
+
+-- 
+	Ansuel
 
