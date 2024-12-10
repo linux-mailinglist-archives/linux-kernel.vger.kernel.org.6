@@ -1,175 +1,179 @@
-Return-Path: <linux-kernel+bounces-439496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CAE9EB008
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:39:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B951888382
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:39:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34CD2080F4;
-	Tue, 10 Dec 2024 11:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eU09mV9o"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570FE9EB00F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:42:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF15923DEA1;
-	Tue, 10 Dec 2024 11:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87FBC282C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:42:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB7C210F6B;
+	Tue, 10 Dec 2024 11:42:26 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913361DC9A3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733830789; cv=none; b=LWpWImhDlmSQcMjzCXOUCk2ydknUUAZu3xpPf/428vAreEOM99rzHs1WFodFiQ31OZkyQBBf/QqtssgLjJLbOXwL6eNKtYw2jDM7A7Yi1I61An/gUpfH7+18EoYB2abPjvP4vebVZhkHNpzWhjjS2xITwCXQVcaVNpIty+ku/ck=
+	t=1733830946; cv=none; b=baA5KoShM1ukN7JtqXrTfd2Mq9gi+s0uaF3O0R2OFhMKau+lYDTZfF6CaVHDaqFKOY4kklRSHvK2zFZoiAmchgVHmqKeK1tgY8zm0Ji7qdI0D1gdtafOx6Z8yeKihqCTtBecBtwz1M8Y+PML4QreYqdClPUIUSql08S2ZgewF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733830789; c=relaxed/simple;
-	bh=MTzLSYgqUA+bsOXDpT13CU6rZYFE9WiZ5LWCOFsmbTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kuk7TMVvarf5vdFNsJyDQjhjZXGjjxwKBy2kd8TXoLM9/+51fzN3QiHXyvg5++L1pHDw15cCSUw/jitCQgGbquJDRJsTE/XymBzAgUn3y+HVeSFKtYX2Oh/b6Ls1+J+1l3wp7FIAYie68/VBkEfLmVUwrzcGTF70LT2hJn7bPI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eU09mV9o; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAAliFS014132;
-	Tue, 10 Dec 2024 11:39:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=mz1VnT
-	CLKwSTE/XFSlcXZVDFOm23CFsOIfddiKwhVAg=; b=eU09mV9okO50Wj2nAFafab
-	fPg2Q6IIt3XsQ7gSMm/YTIxyBm4Ugnr7RH3kMOf8MLTE7MBLz6ru3scegZiQKD4B
-	Z4swt0HuJILCz+qv/Lr7a4LSVXFArMsg2KQBLiqV8zYQSqSqTJGg8goYcwJ0evzz
-	sslzreMzrj4icg3E3IXZ+yqK3iMcmze6bhbbd68Ksjt1ywQ0FCN8rQoaNagM2+iR
-	WiEtRd/fkDLdji2GntUflXZnMunFk7MAy1exrcycXroRW2SwBOqTNmowjzC4zRNw
-	p0XE8zUKsBBe/2TkQSsLWhCZmIpt6e0FOKvQ7lyYTs15aesqAFr48C46cH1yiySg
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq610n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:39:46 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA81BUa018636;
-	Tue, 10 Dec 2024 11:39:45 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26kbagm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:39:45 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BABde8k55705988
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 11:39:40 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F01D620043;
-	Tue, 10 Dec 2024 11:39:39 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CC56420040;
-	Tue, 10 Dec 2024 11:39:39 +0000 (GMT)
-Received: from [9.155.198.95] (unknown [9.155.198.95])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 11:39:39 +0000 (GMT)
-Message-ID: <1dfd5850-3fd0-4b85-8293-ba4221a5e6ae@linux.ibm.com>
-Date: Tue, 10 Dec 2024 12:39:39 +0100
+	s=arc-20240116; t=1733830946; c=relaxed/simple;
+	bh=UW7nVJgMSDsCk5nhpkvy5y90xLmpM24XXSYiM05EBhc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=h+CMXuBVOAP9v3yh/a3z01s/UeVKrsmSmzHDsUviXs7iqnOej+UnNs6u17jl4JulcOncLQLMAPIbxVuVEGjOdx2CZTZnqq8H8ixN5moNtFrQvPSsV3k7XbU1UKHw2Fbo85ZuZET+3Zw7CwsFci3+2opNvG47InUM5uMBdshGxgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a814406be9so73987685ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:42:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733830944; x=1734435744;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5m2IMBwyvKGjD4ASF9enDVMm3TnL+MXwspx2kXIXm4k=;
+        b=NKoWs7STuU9I3MEWUsAZI4g0U7SYUCeFq+OWlz41f7M4nAl+r+7QodeyuNMC+CyXi8
+         Hi2YgeSaB2BdYMhgsT/lybWRUOXRwXa5IsJlkNkYnYrdmQPvI2HvtM3zrDHoddk74IjQ
+         LAvO9TKWLVqUS86lCeeXSFV+K3k0Z/Gw3Dq36fj1DIUPl1ICVtnaio6j6Maq6KR5nKXW
+         RoIC4g7tahJkuW7a9+fRjPnU6N2vcKzdnM8+dzrkLeTqxKLEBGv4K4BCFFC7gKcSNkFm
+         ep6a1n938ABMAdysdamhzui+vc9170ANXe3ZoH1tEtJ/RKUfA1ZhI3OMWYn5zxA9rsY4
+         qiVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVJtHnHUsa+9oZ5m3m2DqoMWgltBzK9xx40ggjve8zIb7092P0bdJoh2aPjoa9T5XUxuYNgCSMLzBdfFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ6fDGDDLYI3wsV++B79EGXfZv+4Rk15ba1X1wRzF5CC5NWsja
+	y7F/qU5ZaDOSvUOTKkL+DW46hZuws11AkSrpOrDj7+bURt+GJDMG58fCvpLvvNMwWRkuxXKeBoH
+	5QTUj3O9KLoOQMfXQGuuZcWSaT358VOp/1lwT1K94GmFiplPP7XjDFyQ=
+X-Google-Smtp-Source: AGHT+IGBQssi01htYmZEm14m55mxtFLRLISagzgoDQduMbwA+tF8VeW+YEPZThfeQGhlh05jVAPdusLO3m/3pIufPA3yEt7k0nn9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] KVM: s390: VSIE: fix virtual/physical address in
- unpin_scb()
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        borntraeger@de.ibm.com, nrb@linux.ibm.com
-References: <20241210083948.23963-1-imbrenda@linux.ibm.com>
-Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- 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
-In-Reply-To: <20241210083948.23963-1-imbrenda@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: CVlB-01JWvYpwiVx0a7D0SYh7SL6E04g
-X-Proofpoint-GUID: CVlB-01JWvYpwiVx0a7D0SYh7SL6E04g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=943 adultscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
- suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100085
+X-Received: by 2002:a05:6e02:178a:b0:3a7:7e0f:777d with SMTP id
+ e9e14a558f8ab-3a9dbac727amr36369765ab.11.1733830943814; Tue, 10 Dec 2024
+ 03:42:23 -0800 (PST)
+Date: Tue, 10 Dec 2024 03:42:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6758291f.050a0220.a30f1.01ce.GAE@google.com>
+Subject: [syzbot] [btrfs?] WARNING in create_pending_snapshot (2)
+From: syzbot <syzbot+76f08f4610b770486522@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/10/24 9:39 AM, Claudio Imbrenda wrote:
-> In commit 77b533411595 ("KVM: s390: VSIE: sort out virtual/physical
-> address in pin_guest_page"), only pin_scb() has been updated. This
-> means that in unpin_scb() a virtual address was still used directly as
-> physical address without conversion. The resulting physical address is
-> obviously wrong and most of the time also invalid.
-> 
-> Since commit d0ef8d9fbebe ("KVM: s390: Use kvm_release_page_dirty() to
-> unpin "struct page" memory"), unpin_guest_page() will directly use
-> kvm_release_page_dirty(), instead of kvm_release_pfn_dirty(), which has
-> since been removed.
-> 
-> One of the checks that were performed by kvm_release_pfn_dirty() was to
-> verify whether the page was valid at all, and silently return
-> successfully without doing anything if the page was invalid.
-> 
-> When kvm_release_pfn_dirty() was still used, the invalid page was thus
-> silently ignored. Now the check is gone and the result is an Oops.
-> This also means that when running with a V!=R kernel, the page was not
-> released, causing a leak.
-> 
-> The solution is simply to add the missing virt_to_phys()
+Hello,
 
-Please lower-case the "VSIE" in the subject.
-I know that you're replicating the subject prefix from the patch you're 
-fixing but this looks weird.
+syzbot found the following issue on:
 
-Thanks for fixing this so quickly.
-Please push this for CI coverage if you haven't already.
+HEAD commit:    5076001689e4 Merge tag 'loongarch-fixes-6.13-1' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ead0f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=76f08f4610b770486522
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-50760016.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/76ef343a98c8/vmlinux-50760016.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e42b3235bcc3/bzImage-50760016.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+76f08f4610b770486522@syzkaller.appspotmail.com
+
+BTRFS error (device loop0): allocation failed flags 12, wanted 4096 tree-log 0, relocation: 0
+BTRFS info (device loop0): space_info DATA+METADATA has 8323072 free, is full
+BTRFS info (device loop0): space_info total=11534336, used=1114112, pinned=0, reserved=0, may_use=2097152, readonly=0 zone_unusable=0
+BTRFS info (device loop0): global_block_rsv: size 1441792 reserved 1441792
+BTRFS info (device loop0): trans_block_rsv: size 0 reserved 0
+BTRFS info (device loop0): chunk_block_rsv: size 0 reserved 0
+BTRFS info (device loop0): delayed_block_rsv: size 0 reserved 0
+BTRFS info (device loop0): delayed_refs_rsv: size 0 reserved 0
+BTRFS info (device loop0): block group 5242880 has 1638400 bytes, 1114112 used 0 pinned 0 reserved 0 delalloc 0 super 0 zone_unusable (524288 bytes available) 
+BTRFS critical (device loop0): entry offset 5251072, bytes 36864, bitmap no
+BTRFS critical (device loop0): entry offset 5308416, bytes 4096, bitmap no
+BTRFS critical (device loop0): entry offset 5316608, bytes 45056, bitmap no
+BTRFS critical (device loop0): entry offset 6443008, bytes 438272, bitmap no
+BTRFS info (device loop0): block group has cluster?: no
+BTRFS info (device loop0): 4 free space entries at or bigger than 4096 bytes
+BTRFS info (device loop0): block group 6881280 has 1638400 bytes, 0 used 0 pinned 0 reserved 0 delalloc 0 super 0 zone_unusable (1638400 bytes available) 
+BTRFS critical (device loop0): entry offset 6881280, bytes 1638400, bitmap no
+BTRFS info (device loop0): block group has cluster?: no
+BTRFS info (device loop0): 1 free space entries at or bigger than 4096 bytes
+BTRFS info (device loop0): block group 8519680 has 8257536 bytes, 0 used 0 pinned 0 reserved 0 delalloc 0 super 0 zone_unusable (8257536 bytes available) 
+BTRFS critical (device loop0): entry offset 8519680, bytes 8257536, bitmap no
+BTRFS info (device loop0): block group has cluster?: no
+BTRFS info (device loop0): 1 free space entries at or bigger than 4096 bytes
+BTRFS info (device loop0): 10420224 bytes available across all block groups
+------------[ cut here ]------------
+BTRFS: Transaction aborted (error -28)
+WARNING: CPU: 0 PID: 5319 at fs/btrfs/transaction.c:1787 create_pending_snapshot+0x2502/0x2a10 fs/btrfs/transaction.c:1787
+Modules linked in:
+CPU: 0 UID: 0 PID: 5319 Comm: syz.0.0 Not tainted 6.13.0-rc1-syzkaller-00036-g5076001689e4 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:create_pending_snapshot+0x2502/0x2a10 fs/btrfs/transaction.c:1787
+Code: 4b 8c 44 89 fe e8 0e 16 9d fd 90 0f 0b 90 90 e9 55 f9 ff ff e8 af 6e dc fd 90 48 c7 c7 e0 57 4b 8c 44 89 fe e8 ef 15 9d fd 90 <0f> 0b 90 90 e9 5b f9 ff ff e8 90 6e dc fd 90 48 c7 c7 e0 57 4b 8c
+RSP: 0018:ffffc9000d3bf540 EFLAGS: 00010246
+RAX: d3c4d91482e22a00 RBX: ffff88803f5f4001 RCX: ffff88801f728000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc9000d3bf830 R08: ffffffff81601c02 R09: fffffbfff1cfa210
+R10: dffffc0000000000 R11: fffffbfff1cfa210 R12: dffffc0000000000
+R13: ffff88800068e000 R14: 0000000000000000 R15: 00000000ffffffe4
+FS:  00007f02809dd6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000011c06000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ create_pending_snapshots+0x195/0x1d0 fs/btrfs/transaction.c:1919
+ btrfs_commit_transaction+0xf11/0x3720 fs/btrfs/transaction.c:2398
+ create_snapshot+0x655/0x990 fs/btrfs/ioctl.c:875
+ btrfs_mksubvol+0x58f/0x710 fs/btrfs/ioctl.c:1029
+ btrfs_mksnapshot+0xae/0xf0 fs/btrfs/ioctl.c:1073
+ __btrfs_ioctl_snap_create+0x37d/0x4b0 fs/btrfs/ioctl.c:1337
+ btrfs_ioctl_snap_create_v2+0x1ef/0x390 fs/btrfs/ioctl.c:1418
+ btrfs_ioctl+0xa07/0xcc0
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0280f7ff19
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f02809dd058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f0281146080 RCX: 00007f0280f7ff19
+RDX: 0000000020001480 RSI: 0000000050009417 RDI: 0000000000000006
+RBP: 00007f0280ff3986 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f0281146080 R15: 00007ffc49e40d48
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
