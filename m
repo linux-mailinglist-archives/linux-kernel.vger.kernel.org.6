@@ -1,156 +1,114 @@
-Return-Path: <linux-kernel+bounces-440192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E959EB9FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:17:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780BC9EB9F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:16:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB902838F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF26A1675DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEE8224AEB;
-	Tue, 10 Dec 2024 19:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127FD214200;
+	Tue, 10 Dec 2024 19:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="Q5WLWETe"
-Received: from mx0a-00206402.pphosted.com (mx0a-00206402.pphosted.com [148.163.148.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHN3Ajuf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E8D1BC9E2;
-	Tue, 10 Dec 2024 19:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE2B23ED63;
+	Tue, 10 Dec 2024 19:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733858256; cv=none; b=tqn1S5aHJ4gbyKEVB2qm0anNEq7itXammtGxbkbq79F1SCRC7FEadzuINVZ6tE/3UcJc3v11eUeUPFq6p8kt1nCopJYQlNzLwOAAX9rJNcXBEoHsTZ9hLVvK57gxu7J8txuNkVzJZztRaKAPjjzeSak+i7OR306+V4ozipgNW+M=
+	t=1733858165; cv=none; b=YooUH1zen4Qp7ZS/eHVcf7++TPf0s8/CX8Wtqq/y+/60w9IsFGgSZ4K/doah9DJOOvM4pkFIGPE4k+/RAtTY/ttVXJjbgThohSu3/JT5YzjCYZdZ6YC2OkWkHmPyfkAFxsdNP08jEG6J+eRV2TtqUf+knUUrSbymXWbD+gW/aQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733858256; c=relaxed/simple;
-	bh=B1adUjR1VE80f1PTstNu785YA4jDE4rVDXmLSCYT2aI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dTjXL6YtlcBzVdPq3dFpahLcUlE4PLJEgZYm85rQhNx+szyxUaUdczonyr4yjyej+h97BCYGiZObXlXKOZKKkx/NGcCZ4iNfhQOWwpMwZEftYVKzlYVHFv+ao5fOl32Uq+VP45q6ds0H41tyjVVuV5tSg/U5LaCMzPYCFUZKU4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=Q5WLWETe; arc=none smtp.client-ip=148.163.148.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
-Received: from pps.filterd (m0354652.ppops.net [127.0.0.1])
-	by mx0a-00206402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAGAf2t018432;
-	Tue, 10 Dec 2024 19:15:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
-	 h=cc:content-id:content-transfer-encoding:content-type:date
-	:from:in-reply-to:message-id:mime-version:references:subject:to;
-	 s=default; bh=B1adUjR1VE80f1PTstNu785YA4jDE4rVDXmLSCYT2aI=; b=Q
-	5WLWETej/0uKO6cQ1WldX4CJ3IaLH90EjGr1lkk0cGOEJj9n5PVIBgjR9chPXsbh
-	WXfczIGo4DVHR8tSYL60ElqL20UzdQeCSsvKfZtraVBvxMfQNWA7GJ/+SG0UnDNz
-	aKyYPDoWR4XmnBmuqNDUlpXmXzhsu7tfSKi8/HI7jvRVcAEOEgNbqvgw9dFh+4zI
-	mwo5kSulGhKEyf1/Qm32CpBkx88bzZXpktbqg7i1aCI4I3PP2pU9IC1qmoqodYQA
-	abjRiSXTTPxt3IO7dNESBuZUu7pikklfjV20zIHwzNeudEq0BlTJggjPmdZvr173
-	tg/P8MaftEbtGDXHPrYtg==
-Received: from mail.crowdstrike.com (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
-	by mx0a-00206402.pphosted.com (PPS) with ESMTPS id 43erxfgjqw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 19:15:15 +0000 (GMT)
-Received: from 04wpexch06.crowdstrike.sys (10.100.11.99) by
- 04wpexch05.crowdstrike.sys (10.100.11.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Dec 2024 19:15:13 +0000
-Received: from 04wpexch06.crowdstrike.sys ([fe80::9386:41e4:ec25:9fd5]) by
- 04wpexch06.crowdstrike.sys ([fe80::9386:41e4:ec25:9fd5%9]) with mapi id
- 15.02.1544.009; Tue, 10 Dec 2024 19:15:13 +0000
-From: Martin Kelly <martin.kelly@crowdstrike.com>
-To: "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "ojeda@kernel.org"
-	<ojeda@kernel.org>,
-        "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-        "pasha.tatashin@soleen.com" <pasha.tatashin@soleen.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>,
-        "james.clark@arm.com" <james.clark@arm.com>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "mathieu.desnoyers@efficios.com"
-	<mathieu.desnoyers@efficios.com>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "nathan@kernel.org"
-	<nathan@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-        "nicolas@fjasle.eu" <nicolas@fjasle.eu>,
-        "surenb@google.com"
-	<surenb@google.com>,
-        "npiggin@gmail.com" <npiggin@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "hpa@zytor.com"
-	<hpa@zytor.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "zhengyejian@huaweicloud.com" <zhengyejian@huaweicloud.com>,
-        "naveen.n.rao@linux.ibm.com" <naveen.n.rao@linux.ibm.com>,
-        "bp@alien8.de"
-	<bp@alien8.de>,
-        "kent.overstreet@linux.dev" <kent.overstreet@linux.dev>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>
-CC: Amit Dang <amit.dang@crowdstrike.com>,
-        "linux-modules@vger.kernel.org"
-	<linux-modules@vger.kernel.org>,
-        "linux-kbuild@vger.kernel.org"
-	<linux-kbuild@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/5] kallsyms: Emit symbol for holes in text and fix
- weak function issue
-Thread-Topic: [PATCH v2 0/5] kallsyms: Emit symbol for holes in text and fix
- weak function issue
-Thread-Index: AQHbSzfWIbF4ko3yU0yIDGnRxekZ5w==
-Date: Tue, 10 Dec 2024 19:15:13 +0000
-Message-ID: <44353f4cd4d1cc7170d006031819550b37039dd2.camel@crowdstrike.com>
-References: <20240723063258.2240610-1-zhengyejian@huaweicloud.com>
-In-Reply-To: <20240723063258.2240610-1-zhengyejian@huaweicloud.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-disclaimer: USA
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <894EEA24DDE3DA4C924E664F311AA9D3@crowdstrike.sys>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1733858165; c=relaxed/simple;
+	bh=dTh0f4Eb1IUBh61NKD536k6i1e5gAg+9XbUosL5lnMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IcXrMVVW/phu83FKVqiKsB0vNbAmpjHwiVyGLTepDQ0KpbpmfgL86E28bLkdKrHoGmF8LBOFBiJCEOLz2ldpn2AvuRzh1f6S4mOI+bMclgC8FrfYJd38K9tMnI+TuHr8SmfrWWlK702E1X8ORS+A/lj6BipmKjuaCEw4U84YqG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHN3Ajuf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080D5C4CEE1;
+	Tue, 10 Dec 2024 19:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733858165;
+	bh=dTh0f4Eb1IUBh61NKD536k6i1e5gAg+9XbUosL5lnMc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PHN3AjufxqgxuYDFQVzayKedOQ/nBGx8WF0pdH/Nb6X1dDD1RxaKZGvbNBjIEXX7y
+	 UDtAftM8QxYDXXAOlYSyVKVGACL7sMx+vTqrB0MNSjl6UWKe3epwi3rIRSbWJik8nx
+	 qkHNe/LysWQTujUl+JD0OMLRdLsTUPaxjRVRoqGzHOHG+a1SbeeyaKXJ9lDnlAfzrR
+	 rdLpZ3M1ea7t7N2A+dvjVm22ypUL7cWD2P7WIF8tSJgiULpdCdZdoM8SMj0e9RcN23
+	 xdCl2eXvZwvpeHULduQqTcYWpSJZRATVuTE8fxyF8uzBkuCBAw6VytLG5Rqs21E+0g
+	 1tRKYvrpA1a/A==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-71dfaa28eeaso1316165a34.0;
+        Tue, 10 Dec 2024 11:16:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVU4jN1Rj5p10XbwJxEubMq5blGhkxtuAJ5jFCp35SPq55nRgpIVGo2pq9fPQMrQBKC1ZP+CA00eGM=@vger.kernel.org, AJvYcCWVMqB2fhuyuwnhHyKs61XgOn6PSYJTKmHAN8WRBddbB7EsAra7xi0DRCGUtycHCmzEcokwOyAFldihFn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3spedWWv6Ii040DBFCXSIElJoqzl1imR06V1T91teMcvpgoFx
+	kXntht/qDTHxv/yWpAPXFbHTA2mkkUNgDeo57pc3YOBdURSRrfmOke/QJS2ofOJ0cpK72HokU5w
+	qa4SGT4aV4AEbeCCHJAWAhCnzKNY=
+X-Google-Smtp-Source: AGHT+IF3PhBBh4zFLI4PBAPxw0IFKiyucLSi/qXLMPA15KDoalq7haRCQLVLvG1fcxMcZshIODUwYjbcI/OF9Rc+ql4=
+X-Received: by 2002:a05:6830:6d14:b0:71e:4fc:6ef6 with SMTP id
+ 46e09a7af769-71e197e566fmr38214a34.12.1733858164326; Tue, 10 Dec 2024
+ 11:16:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authority-Analysis: v=2.4 cv=Td5stQQh c=1 sm=1 tr=0 ts=67589343 cx=c_pps a=1d8vc5iZWYKGYgMGCdbIRA==:117 a=1d8vc5iZWYKGYgMGCdbIRA==:17 a=xqWC_Br6kY4A:10 a=EjBHVkixTFsA:10 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8
- a=pl6vuDidAAAA:8 a=eHuGQ7gFT_7OOu_YEIIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: mM4J9j6hWFAPRFjVNI4NhQBKWaTtiq1Z
-X-Proofpoint-GUID: mM4J9j6hWFAPRFjVNI4NhQBKWaTtiq1Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 suspectscore=0
- spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=658
- adultscore=0 clxscore=1011 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412100140
+References: <20241203143729.478-1-paul.barker.ct@bp.renesas.com>
+In-Reply-To: <20241203143729.478-1-paul.barker.ct@bp.renesas.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Dec 2024 20:15:52 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0j9JMPYGprbFdTX80d7ghE13ndcxR1ANcdLqj6yDU5nMg@mail.gmail.com>
+Message-ID: <CAJZ5v0j9JMPYGprbFdTX80d7ghE13ndcxR1ANcdLqj6yDU5nMg@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: PM: Clarify pm_runtime_resume_and_get
+ return value
+To: Paul Barker <paul.barker.ct@bp.renesas.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
+	Alan Stern <stern@rowland.harvard.edu>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVHVlLCAyMDI0LTA3LTIzIGF0IDE0OjMyICswODAwLCBaaGVuZyBZZWppYW4gd3JvdGU6DQo+
-IEJhY2tncm91bmQgb2YgdGhpcyBwYXRjaCBzZXQgY2FuIGJlIGZvdW5kIGluIHYxOg0KPiANCj4g
-aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwNjEzMTMzNzExLjI4Njc3NDUtMS16aGVu
-Z3llamlhbjFAaHVhd2VpLmNvbS8NCj4gwqANCj4gDQo+IEhlcmUgYWRkIGEgcmVwcm9kdWN0aW9u
-IHRvIHNob3cgdGhlIGltcGFjdCB0byBsaXZlcGF0Y2g6DQo+IDEuIEFkZCBmb2xsb3dpbmcgaGFj
-ayB0byBtYWtlIGxpdmVwYXRjaC1zYW1wbGUua28gZG8gcGF0Y2ggb24NCj4gZG9fb25lX2luaXRj
-YWxsKCkNCj4gwqDCoCB3aGljaCBoYXMgYW4gb3ZlcnJpZGVuIHdlYWsgZnVuY3Rpb24gYmVoaW5k
-IGluIHZtbGludXgsIHRoZW4gcHJpbnQNCj4gdGhlDQo+IMKgwqAgYWN0dWFsbHkgdXNlZCBfX2Zl
-bnRyeV9fIGxvY2F0aW9uOg0KPiANCg0KSGkgYWxsLCB3aGF0IGlzIHRoZSBzdGF0dXMgb2YgdGhp
-cyBwYXRjaCBzZXJpZXM/IEknZCByZWFsbHkgbGlrZSB0byBzZWUNCml0IG9yIHNvbWUgb3RoZXIg
-Zml4IHRvIHRoaXMgaXNzdWUgbWVyZ2VkLiBUaGUgdW5kZXJseWluZyBidWcgaXMgYQ0Kc2lnbmlm
-aWNhbnQgb25lIHRoYXQgY2FuIGNhdXNlIGZ0cmFjZS9saXZlcGF0Y2gvQlBGIGZlbnRyeSB0byBm
-YWlsDQpzaWxlbnRseS4gSSd2ZSBub3RpY2VkIHRoaXMgYnVnIGluIGFub3RoZXIgY29udGV4dFsx
-XSBhbmQgcmVhbGl6ZWQNCnRoZXkncmUgdGhlIHNhbWUgaXNzdWUuDQoNCkknbSBoYXBweSB0byBo
-ZWxwIHdpdGggdGhpcyBwYXRjaCBzZXJpZXMgdG8gYWRkcmVzcyBhbnkgaXNzdWVzIGFzDQpuZWVk
-ZWQuDQoNClsxXQ0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYnBmLzcxMzY2MDVkMjRkZTliMWZj
-NjJkMDJhMzU1ZWYxMWM5NTBhOTQxNTMuY2FtZWxAY3Jvd2RzdHJpa2UuY29tL1QvI21iN2U2Zjg0
-YWM5MGZhNzg5ODllOWUyYzNjZDhkMjlmNjVhNzg4NDViDQo=
+On Tue, Dec 3, 2024 at 3:38=E2=80=AFPM Paul Barker
+<paul.barker.ct@bp.renesas.com> wrote:
+>
+> Update the documentation to match the behaviour of the code.
+>
+> The function pm_runtime_resume_and_get() always returns 0 on success,
+> even if __pm_runtime_resume() returns 1.
+>
+> Fixes: 2c412337cfe6 ("PM: runtime: Add documentation for pm_runtime_resum=
+e_and_get()")
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> ---
+>  Documentation/power/runtime_pm.rst | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/power/runtime_pm.rst b/Documentation/power/run=
+time_pm.rst
+> index 53d1996460ab..a86f1173980a 100644
+> --- a/Documentation/power/runtime_pm.rst
+> +++ b/Documentation/power/runtime_pm.rst
+> @@ -347,7 +347,9 @@ drivers/base/power/runtime.c and include/linux/pm_run=
+time.h:
+>
+>    `int pm_runtime_resume_and_get(struct device *dev);`
+>      - run pm_runtime_resume(dev) and if successful, increment the device=
+'s
+> -      usage counter; return the result of pm_runtime_resume
+> +      usage counter; returns 0 on success (whether or not the device's r=
+untime
+> +      PM status was already 'active') or the error code from pm_runtime_=
+resume
+> +      on failure.
+>
+>    `int pm_request_idle(struct device *dev);`
+>      - submit a request to execute the subsystem-level idle callback for =
+the
+> --
+
+Applied (with some minor adjustments) as 6.13-rc material, thanks!
 
