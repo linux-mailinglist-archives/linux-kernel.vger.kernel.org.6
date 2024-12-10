@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-439170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF669EABD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:23:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E9C9EABE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:25:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4DA528AEF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337761887445
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6512327BE;
-	Tue, 10 Dec 2024 09:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76072233D96;
+	Tue, 10 Dec 2024 09:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbZcwxVJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6LHjU0F"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCCD22756D;
-	Tue, 10 Dec 2024 09:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A94D233D7A;
+	Tue, 10 Dec 2024 09:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733822627; cv=none; b=OlypAvE/z04I/WcY5h7SVvQdeba+Uv0vYVSQLXgW4brHbBHhW+sMpv/YQjS2Sbh1CbYsX4MpN45do+l0218GeGsFGF4qm7bYwNtERb/Wh0ngFkR1f5Pg6i0NlAnTge+NhdKhY7cnG7MlBhCDvpuDzwIC00lWJiz0ZXjndleWSHM=
+	t=1733822724; cv=none; b=qFatOC+uCEznLi3BhE1wQDvnNvYwVrvyJD61EYx0gCaEht5ZMryHxXkBF8BblyJ94D5j87vS5zedyfV7onbHb4hxsKhrzVHh0K2PH+sDLcEIKYl1wtDYAETPf7LSh6pd/4OphkMnIr2XV94AEZd0X2LXGu6ZfheiCgcbC1a1Qmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733822627; c=relaxed/simple;
-	bh=OdPkZKRxS9w54vXjesm3XgUA6+R7fcnjzAuePfh5u1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=syXMx1ysIMDnQwn8+HqRR9sUfmerEzcX73rcBUbvS2FkqjfbPHVe0gZR0UCjmXdmtZNcmmpJOrEZYsAY5YeakXX1UF20wwpFPJ+F3zVGYuGInJJnaqEzwz0w6bdl00bpHtef//wh6dPGz3LKWOjXg4CPZhrBRVJedykjFBnntHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MbZcwxVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A32C4CED6;
-	Tue, 10 Dec 2024 09:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733822627;
-	bh=OdPkZKRxS9w54vXjesm3XgUA6+R7fcnjzAuePfh5u1w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MbZcwxVJ0LZn01l9icAdKjgzEhJBcnBCL9PyAsXxOIxgWkiaYezMGqJ9DkmJSRz0s
-	 LKdja3kZflwcMtSzqLDSNsWuIEVFwveJ7u4W4hiylyRivI7/cdRq4c0c4poBgtgAMC
-	 o3/xz4/rgmWage9jogRKpoFNaYfXGxHTMGOolzvTAEixLXak70TQqf8m8ZA5Oi9oD/
-	 OvU5dRsmkmWJC0MUWDC8CJ+YAwRUfg+em+ClZo7C/x7N8UrVvjxRc5WPfs3dg8Vd+J
-	 wKa8w0RxeI+jugelTnSnebKiyyDJGlxtxDDRvUQ0pRdKXXnu+CLpPh5FKGPRUAvEIY
-	 sv+zvcFMW78Aw==
-Message-ID: <f1e3cc94-3a29-4d1d-85dc-ea3270b0838e@kernel.org>
-Date: Tue, 10 Dec 2024 10:23:38 +0100
+	s=arc-20240116; t=1733822724; c=relaxed/simple;
+	bh=U4EIJduUVU+AZu1bT10Rl02jbPPXAi6Xe1i11IgFCoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BDpT2gvUrYaiI4Ji5IZNKpOsMMeKS7uC628jqpkYUj4anwdKWhII8Xv5DOuJNhDaRqdPyjwiga1cJ3G6E8WnPcU9lLbyZhSZkNnRmXjGsDBDFoGB0dYccEt7q12L7a8jbBolz8o3ajSCrbnFVK1OPyTjwamZY+qVqRAYk4tYCFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6LHjU0F; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa6413fc7c5so524164466b.0;
+        Tue, 10 Dec 2024 01:25:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733822721; x=1734427521; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eM2aY2jhSfrimDAy8nlYTfo5e6PgwQ/aXGIc2H8RXPo=;
+        b=L6LHjU0FUWoSqIWW463MvKLTW44bAgqwupecpZ9kUQYHgZYlzGZ2G1ApIPd9WcZHNF
+         dW1tvD1JiWlfLmqoZ4OovsIHSs4i6Iridxfh6j1VnwgG3JUfioJtyYxGlef6qB8VBhPp
+         Cx+CfVTRZZ6JWATQ8q1bmAH36yZBgZSUuIkTjJrzZ+G031/jvCTJuHjVAGsA02Ffd3b+
+         PKLgzLiXJV0XyLiUP9dA2fcFU0rliw60RVXzl3MVL45E2EaAXLZIGp6N8Wsz9/JfgaoY
+         XyY/Uz7OszmPqWVNVyePwK8fqjSH0h52s/wbGDS1ocjHiE+9WIAOoKaGjYsTJHYPCGlO
+         bgMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733822721; x=1734427521;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eM2aY2jhSfrimDAy8nlYTfo5e6PgwQ/aXGIc2H8RXPo=;
+        b=kBZHl2Unv91VVIRF+iwy3IXulyBScJbxBuA3WYbtemDDJgXGyI5krPSWctQUHUgMTN
+         fZTKxAkWlln7vzv5TwYnOZGCqSXLulg+VGC6Mxyv+k7rzJHdcwiXEm7e/x64S5XWG/Q5
+         sN9VoSF7R6THgZI3PftxseKF6J1bmyh8ZlqjKn16yjF/IXHV+A16Zyyb2iE8PsiaS5HM
+         3Q19aCKY9/NCBW6iuztHdySbnayNtQKud2C0GYqfd5PYgF2KN0bofxkhbBbEy/JTm5O8
+         ht/aHDc/C/iDKkb5bVZeR7POb8/lVTAQoZYFdkDRXc4ZE0NXhCGMHGV6/u20O1tglJiH
+         DxLg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0/pkp+lIS78R9fJfoqJGsD6qJjUBNkY1wXcmaKf+zuYc6+ArwNXqWTzPCxlqOyqFsfAyWWbQJvTA=@vger.kernel.org, AJvYcCUGRJbOlf68Eux4p7cvrwT1v7KPUOBleKnlx/ywy1RwMWXY4AxumwIM67kQF57SxA5Etl/hVb2/TEHI@vger.kernel.org, AJvYcCWBfhv4+D5LZUqIpH/Q2+dm4jpJTYa+kKxxA2YS2nw8w60vPQCO0EGxO0vfGvrIC9klT1mNL/W0Vz4LgDzR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEx0Avj3nukb/2XYysGKA+6hk3gWF0EmmqBdOwkAyVlb0jqLty
+	QORqcfWJnBQYpbgeSgwxTxFsfettMxj6vxynCDkpF/v+751YopSu
+X-Gm-Gg: ASbGncsRvGbuEqgzbnp+bfBB4bQ1fZNL+hg1jhwsEABJmShlezur84fdVq1VGESQljF
+	HTxu7r7wlj0awjkQdH/V1MFpYSZSKmOgAZfuAFSlD+wgIFiReF6YUrfLCKcYrndkFM+KvEyyI00
+	kM7xdYr82majbXVQtoIQwdn8YvqR5NWxil/AjyHXFi1sRgQftkG7PPrFtcn5wE7rpICqZXHy6K1
+	GSus0qABBaMC6ZAsjMWyzAJ58YPWjcsAzesIEGBdISpnwxC16SdL5k2ATGUkjNPzliCx+hCzCZX
+	b9HoezQ=
+X-Google-Smtp-Source: AGHT+IHEQM19BfQF/lOFgKzNDopfEPFPaCxM8uKvUeAbQ00HxI70ZFCiAZYyARi3xHbuM3EzCkVukw==
+X-Received: by 2002:a05:6402:35d3:b0:5d0:d3eb:a78f with SMTP id 4fb4d7f45d1cf-5d4183c5564mr9697753a12.0.1733822721407;
+        Tue, 10 Dec 2024 01:25:21 -0800 (PST)
+Received: from stefan.beckhoff.com ([195.226.174.194])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa6260e2c31sm817095166b.180.2024.12.10.01.25.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 01:25:21 -0800 (PST)
+From: Stefan Raufhake <raufhakestefan@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: s.raufhake@beckhoff.com,
+	s.dirkwinkel@beckhoff.com,
+	Stefan Raufhake <s.raufhake@beckhoff.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v2 0/1] power: supply: gpio-charger: Support to disable charger
+Date: Tue, 10 Dec 2024 09:23:42 +0000
+Message-Id: <20241210092343.3537-1-raufhakestefan@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 1/2] ASoC: dt-bindings: Add schema for "awinic,aw88083"
-To: wangweidong.a@awinic.com, lgirdwood@gmail.com, broonie@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
- tiwai@suse.com, rf@opensource.cirrus.com, jack.yu@realtek.com,
- neil.armstrong@linaro.org, ivprusov@salutedevices.com,
- zhoubinbin@loongson.cn, quic_pkumpatl@quicinc.com, herve.codina@bootlin.com,
- masahiroy@kernel.org, nuno.sa@analog.com, yesanishhere@gmail.com,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: yijiangtao@awinic.com
-References: <20241210091054.88779-1-wangweidong.a@awinic.com>
- <20241210091054.88779-2-wangweidong.a@awinic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241210091054.88779-2-wangweidong.a@awinic.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/12/2024 10:10, wangweidong.a@awinic.com wrote:
-> From: Weidong Wang <wangweidong.a@awinic.com>
-> 
-> Add the awinic,aw88083 property to support the aw88083 chip.
-> 
-> Signed-off-by: Weidong Wang <wangweidong.a@awinic.com>
-> ---
+From: Stefan Raufhake <s.raufhake@beckhoff.de>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hello,
+We have a device with a simple built-in UPS, which
+is controlled by GPIOs. For the control of the UPS,
+we used the “gpio-charger” driver module from the
+power-supply. For our usecase we want to support 
+enabing and disabling the ups. When the UPS is 
+disabled, the device turns off immediately if the
+supply power is switched off. When the UPS is
+enabled, the device has power as long as the UPS
+has enough energy for the device. Now, we are
+looking for the best way to implement this
+function. This patch contains our first proposal.
 
-Best regards,
-Krzysztof
+Changes since v1:
+=================
+
+- Rework of the commit message
+- Changed the property name from "charge-disable-gpios" to "enable-gpios".
+- Inverted the logic of charge_type to 0 = disable and 1 = enable for the 
+charger.
+
+
+Stefan Raufhake (1):
+  power: supply: gpio-charger: Support to disable charger
+
+ .../bindings/power/supply/gpio-charger.yaml   |  6 +++
+ drivers/power/supply/gpio-charger.c           | 43 +++++++++++++++++++
+ 2 files changed, 49 insertions(+)
+
+-- 
+2.25.1
+
 
