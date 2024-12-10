@@ -1,77 +1,116 @@
-Return-Path: <linux-kernel+bounces-439948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C5C9EB69D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7F09EB6A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F50328365D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E597283409
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF10F207E0C;
-	Tue, 10 Dec 2024 16:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D01022FE02;
+	Tue, 10 Dec 2024 16:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gz1d8Juz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3+duxsp"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4786B1BDABE;
-	Tue, 10 Dec 2024 16:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BFC1A3BA1;
+	Tue, 10 Dec 2024 16:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733848656; cv=none; b=F5X8qpXP9NQG5W0h9TQ8H3HBjHsUJI5Qu6UVYX8tWS79rqGUDEX8h3ZAwyCSJXiBuzBBw6KzcUH439I3lbg1A0664UrPkQ2kpPLvp/SGfqLFIdVUO4KD56r/9jbnSOFX/4BY73ikl5yPVnG2ZBictuApw8ys38zKC3kIM1Wllq8=
+	t=1733848841; cv=none; b=TWTLBIPZRtKKF0RGyEwjOAEBtwuXS5xOD0hzhaRKg4p2l1jn+ZGgGk0poeap5+Ixa/s19M8x43G4924fWI7rSJ/bj7j/OQGW/+V/h1m35ZsPyaTwz9KiQopD2247RmAvGeTV2jNY5inMvOUacncnQPMows831aj7tK0II4o+3NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733848656; c=relaxed/simple;
-	bh=MpjaKk7cYVbdE3GJCoyN8FReQ8QSVbfdgLJdLgGBhWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PNy6VhbrK3O6TfqAIZGrKLq42ymr6/jpMn3YpxMH36jmv87AKC8Mym2kAaERlROjL1+Ux67n0+6LhTE/RWl8XMN8CBWQNci+NjUKNQbXjKy9AIN7Zd29I7J9t6DXiqchraOYgaPlhdKa/5wWDXlob81s8R0icHs5XD8Nc5YCyHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gz1d8Juz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F18AC4CED6;
-	Tue, 10 Dec 2024 16:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733848655;
-	bh=MpjaKk7cYVbdE3GJCoyN8FReQ8QSVbfdgLJdLgGBhWA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gz1d8JuziAphylEjEF7B7BQqTxIYY7Trtru/YIrM8k+ROuMaOX9yTpGIpfzm5Ygf+
-	 lTFi9KBrJm+wXylFvc4LHyoqpMg6K7xvKeqBYU0/gvYHv5Y1eoyPWo9vaEkiYEQTKE
-	 sGPu/EkDINd6D3AWM4sOQhl+tD3cR2PgEMa9quhT+iSna+kcIUzSQaSswqraLsEVpJ
-	 TCCexVKL7jTc7lX+y4bTYCGGyfRd255RAntolZK3GCzV/F78jZKSgv87LmW2P96m28
-	 dQ4VVniFe2e3zUKidWjthS19Vm8bsYKkoadKvFgKRRz56o8XGqJjatmOtmO2iiOycq
-	 HR6bJJ1Gr3e+A==
-Date: Tue, 10 Dec 2024 10:37:34 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Meyer, Kyle" <kyle.meyer@hpe.com>,
-	"Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"rric@kernel.org" <rric@kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
-Message-ID: <20241210163734.GA3244835@bhelgaas>
+	s=arc-20240116; t=1733848841; c=relaxed/simple;
+	bh=M4ooYKAP68HiocUG6DLFW5qEwy8s/XFVd985iW8wS6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RRY/dLvNF/YYFrZvmBqir7BkPvb9NrzVWXY2rpKV1FZUysEIeEljq0ZGKuWAhLhpE3XeP9YImaoW/hYshpVRZ70LtqoEj3sZzFJoZgAaqKGGWnykyaglmeFefK29vxpXzgImLi1aJ9pR6ckBiKVnFDvuEaFQTqtTgMhhi2NFWYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3+duxsp; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-540218726d5so1912251e87.2;
+        Tue, 10 Dec 2024 08:40:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733848838; x=1734453638; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l1NR4XDrzkG0LF9IjqYUSN1Pt/c9p5VT4+mElCy3nh4=;
+        b=H3+duxsp473n8IPiTQhyR853UuBvplh7MzLilbkbPEEwUpwZP/lSVFA6XgHePp/4If
+         2X4D+Y7S0Dj9ioLl8Ppoi11JrVU0L20iuu1MpQiJsZDBshH+wiyoayFyF8BEqzEzYUUp
+         T72hyLB0xpkBVvoTo1wAhTd3qfo8GXNhSjLsqyxW82mfGe8+UqHoN5v7sSrF9tALlkuy
+         SkmHS9Pb8kFCn/uuy8xTuonQEyqLhmmvst2oD79Mo1g4oHkUgm9/RXGH3wIxawFfNld8
+         0pXK1nplRVS8GkqN5NDhm9Ph9sg/UYrcKaGy8MSD+eKZPFBRe599DZKM9tIFxMZ2Zw9J
+         3CGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733848838; x=1734453638;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l1NR4XDrzkG0LF9IjqYUSN1Pt/c9p5VT4+mElCy3nh4=;
+        b=BJRkI0VhQrUB+Nu27Roj5TkwIqYSyaywddovyOZk041FxZ+zFOz1sjE9xNLXF1u70L
+         QTjeZlrXOk15boWWS2oyY0EhqYfd+wTJsrb0BnuEtaepDeivaqX4E7weab/i1LNgpRT2
+         pCG0fI/EbGQECMRGXztJuyuBv3yZJtaGi5ur/gtyBlcX+Nthz4eDBQF20pf+xmm2nzlz
+         RiBNeuK/iqN3COT96v2pR2uhV2ToF6beOA9vPWjKX8JDWPog90AvhMi7DA8NYaSlJ6kw
+         uYeYEOC0gScqKl9RuLzo4Mwpl96cqYX78ICHqApxJPm9dlDQyznXSxMhDDNEyvXZd0wd
+         o9BA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcuDHr2+/zFBw3D2y3mWt/zzVR5qGJzQWmopYpadCIdhBvJKGVGVZdDuXFv4KNwUewmY9BHUe+EhS+2i4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysLn113RHcH+eVbNUKHNMJbUa4o6jIMPsbk0v1oTWFPjUFgcGH
+	LnQT9NZMS3Z6WTYN1gw33e/+tH9aUEWMtZ1DpYBJ9yfP35jezmpQ
+X-Gm-Gg: ASbGncvGVgYz/DbTKXeSG3hvziIvuXkT2LRTOkne+s9SZ3J1gRW+skbaRIhuzURrBCJ
+	V2jHPWmtMDN+dGgjy9rKZoiDk0LxDlCGcYrM/h6NL1cLixVidyGynVrVYXIIv3Txk9mQN8rqIaH
+	L2Idmb0A2dVJY/RQCpprTJCtONZtC9s65J3CM1likF2AMRb48ZY7cSGw+/YbReYVVCdwirAMMJK
+	0F1prvIC13gcKfH4WlE9txtpCM95rtKiyVqq+OiAHjOmI1n4g==
+X-Google-Smtp-Source: AGHT+IH9RyvPRa6gS0q+nSyvQmhCivmoPKywFQXKBsBvN/j3adpTWSGWBc9DS9ApCiXsjFLoA/AoAA==
+X-Received: by 2002:a05:6512:6c5:b0:53e:350a:72a6 with SMTP id 2adb3069b0e04-5402410fed3mr1519426e87.53.1733848837503;
+        Tue, 10 Dec 2024 08:40:37 -0800 (PST)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53f93377eefsm1031875e87.67.2024.12.10.08.40.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 08:40:36 -0800 (PST)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [RFC v1 0/5] Move kvfree_rcu() into SLAB
+Date: Tue, 10 Dec 2024 17:40:30 +0100
+Message-Id: <20241210164035.3391747-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB60832217752DE71A4ED1054CFC312@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 06, 2024 at 10:09:23PM +0000, Luck, Tony wrote:
-> What we need here is a function that maps from a PCIe device to a CPU socket.
-> 
-> Has this problem been encountered before? Is there an existing solution?
+Hello!
 
-There's nothing in PCI itself that connects a device to a CPU.  It
-sounds like something that might fit with an ACPI NUMA description,
-e.g., if a CPU and a PCI host bridge had the same ACPI _PXM value, you
-could conclude that the devices below the host bridge are close to the
-CPU.
+This series is based on v6.12 kernel. It is an attempt to move the kvfree_rcu()
+into MM from the kernel/rcu/ place. I split the series into a few patches so it
+is easier to follow a migration process.
 
-Bjorn
+As a result of this series, the main functionality is located under MM.
+
+Uladzislau Rezki (Sony) (5):
+  rcu/kvfree: Temporary reclaim over call_rcu()
+  mm/slab: Copy main data structures of kvfree_rcu()
+  mm/slab: Copy internal functions of kvfree_rcu()
+  mm/slab: Copy a function of kvfree_rcu() initialization
+  mm/slab: Move kvfree_rcu() into SLAB
+
+ include/linux/slab.h |   1 +
+ init/main.c          |   1 +
+ kernel/rcu/tree.c    | 866 ------------------------------------------
+ mm/slab_common.c     | 875 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 877 insertions(+), 866 deletions(-)
+
+-- 
+2.39.5
+
+
 
