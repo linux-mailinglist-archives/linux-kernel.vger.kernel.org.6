@@ -1,141 +1,187 @@
-Return-Path: <linux-kernel+bounces-440265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42559EBAF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:44:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94459EBAF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:45:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6591887F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69FDE283791
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1592922ACDF;
-	Tue, 10 Dec 2024 20:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465F222ACEA;
+	Tue, 10 Dec 2024 20:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+TiFuME"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuPefJyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1E122ACCA;
-	Tue, 10 Dec 2024 20:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A5D22A1C3;
+	Tue, 10 Dec 2024 20:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733863489; cv=none; b=RKTs2lN3BaZrAdyX1qNiCCxG3IcEKiv0PMH1v1e1FseOkwGh2m7ff85ijXshhAlQuX08D99gC8S0RNLAZ8p0g15lXIJyfuCzpheI2oeUjgJvA9EH+Firjl/PT2XwlkpMfTYg6mS5doL1f7zwwjl1cjKwp5ZWiA8tM0veffa6600=
+	t=1733863528; cv=none; b=XEMT6wx38qDmkSAqUr6pt6y7wtuQabmHxMBtUbcLZheSe3/ZYOJAm9CC3xNw0MPQ4tPH8yRwFUkCsnmsmUJBiRyHA0Pm9k6QZaUTwrSiQUV7TngZl9GsKumWTSDbeKcofFvTupgZgpIEaE1Q60xqviCpJV0gs9fAnmyEztSwOrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733863489; c=relaxed/simple;
-	bh=wiUU5YoAOZ55YgXTrWBqWI5AoAogjeS3OF3MSNstWk4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KfxAQQxAlds7utV3UDws4ERJm30JYsIwCCN6TDRRsnbjs21H/96Lu5ivv+UXfkKIUIdCIK4A0dY7XCbTua4CvFRpkr+Bz/JVzgvNH27hznleRollcMcXCEfPhdPX3AQYIOoBqEU3U9wMo4UT6huRy4JpEe4FzbnnvqyToSZE7GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+TiFuME; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38634c35129so2720361f8f.3;
-        Tue, 10 Dec 2024 12:44:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733863486; x=1734468286; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iwyCGq8tBYpLXJEdw3+rIczGnurdoKFj8KXQjbjaFLk=;
-        b=P+TiFuMEG1NA173QcmlA48DkpWa8gvrrY2it6aspRDqEU7CcUWx48EUgrEaZgIVEWo
-         Nv+jMciUUy9bjgcujg+G8EavaystUTtGcu0eTa3gt5rrJT6ZWn/1Hn3xDeJF6J4W8W50
-         aBzl3Hv4x5gTU/Fv/vHA7KcBZViaftR2ZtFEbOgyBD663U9YAcIdqkCALmmQu7RP8JEU
-         FfLYV15Imdon9Vtm9OJDmrMwtTCjcwougWy4QGa1Lp/zhibIqBS41SsNdOuDz9vgmc4/
-         39B55CW6ltLJlqSTQfOrDXRFRBX2LSzYTPF9sooSKFySwJvner2EHXuRaBMxUoUSoPhs
-         p/dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733863486; x=1734468286;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iwyCGq8tBYpLXJEdw3+rIczGnurdoKFj8KXQjbjaFLk=;
-        b=E23YrhZvYqVl/mYtUG+g6Vd+Poo0500+K54AF789C6rmCKBeMe9yHJTWM3XajOGaV7
-         69hVNcVFd+fve/AIjs5Lmz9oUOp/ZSfsR4X4lDz7SsZDRlFUaX6X9tpHBBDnLLxWdrfm
-         dWV/vRijjrIxgtWroFoSIQeFVBIu0hyydIEB+KD3LuJ7KGlVcx06sxR45Gi7u9nsmHjz
-         qX/zz8rBOWNLSTwm8heV/bntnAMuSDEF8d9T0bWWtIzv0MpJZYA05tIHtE664nNPUhRk
-         +b9SpBMB2vBI8R0IGpHoBdt+fDLuvPC1J8QOkA5HMCl3gcwRNTvRYWx/RgBUGUY+p6Ne
-         sWxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8zGsqK6+xL1VZ5DYR3QY9XYgYn66wUvz/isC5igJctUhwaLYaqejWEZo2D+xtYjEb9rjE9P7znoXBJPIZaA==@vger.kernel.org, AJvYcCWg75HEXNdnL4IQlH6AS9YtcT00al5+VAL4mlDyGForKmysvjYk5PusXkusT0wFTG62C75y3wTdOlpo/uNF@vger.kernel.org, AJvYcCWqgWzeSGAntP+26wN7WGuxLUNBlXFe4rbIUzmguJWqU6DpYilQH1AlW6eNJnnGPoWhguEeiG74oKSg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkoa6F2J3/BUgpsZYvJD1FXp46uRxhyTgX7iKW9hdcTNK+py3V
-	Rb3+v8OSdZqnyI8yHsCXWwfbi/LojguHTxeA+U+mg6HhpQo6OXSnNAj7A6ueNywI46XIbajpe1X
-	EobQ8PNPAgjXKHCL5mABUviMEZw==
-X-Gm-Gg: ASbGncuoq/UIB8p3S/FR0Di/Ng9IEIkoAW/lh6UfPrV14XPL01rVCSLbZo8p3ah4gem
-	D6PsmZFTtKN2syRWcCBfudopK0J3suhBhVg==
-X-Google-Smtp-Source: AGHT+IFPwHAdLeO/YMpVL8hdXbKSE0DwHsXkmFGiG9KCRAVZmOE5EzTBijPLZ4yvHP6SCrLORAISTAVMWd4Yn5hkinw=
-X-Received: by 2002:a05:6000:144c:b0:385:f00a:a45b with SMTP id
- ffacd0b85a97d-3864ce925a7mr280370f8f.21.1733863485135; Tue, 10 Dec 2024
- 12:44:45 -0800 (PST)
+	s=arc-20240116; t=1733863528; c=relaxed/simple;
+	bh=ju4X+yZhI1BnsMkCLu3fV4gRYkOlFHLyiHLIqGY2oAI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XQa/wcEk6QKQvhRuASxSr/nVmg0/70awf+tc0fcocZjB7qBiOz3kluNNVAG361bgABl9TwTWk3QtflfcXmWqYYgbZ4bYlnlqoFuPVcJ/dPJgLPRETdpSqITy7VGwloW/q/h3XIeuye+zRN/wnVg5YPPlasokXU2ny2L0yJTWDpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuPefJyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C215C4CED6;
+	Tue, 10 Dec 2024 20:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733863526;
+	bh=ju4X+yZhI1BnsMkCLu3fV4gRYkOlFHLyiHLIqGY2oAI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=fuPefJywZSC3M5DKCRmu3ip8euNlDXxGdFXxooGSAULaGIOQ5Nr3J7A8yuFDyXspy
+	 oQHvIsVL3v9/2MJzNtHGIBnOWUMkQV9CLVYggHAk4mUIFLn8ppTNLaDNDJ5mzYNClN
+	 VSAnWePQkypQYcUCAZYFVZbYW58OhC0MG5N26Q+r34e0hFf3ycJbcxEAjSzibf320q
+	 lE8PTVeXmLFx2jA3BhWto17ogq/CBBuZPWRn1hOW/idRHZkiH8d3NfUHD4mV420G9X
+	 OPPTNfH92OPYM86pO92Jhv5vAAilHptux61V7er22TPoa0+IyydzfwsiBKB9tsj9Ta
+	 dmZsLMaPudTMQ==
+Message-ID: <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
+Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
+ 2.5 GT/s
+From: Niklas Schnelle <niks@kernel.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,  Bjorn
+ Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Rob Herring
+ <robh@kernel.org>, Krzysztof Wilczy??ski	 <kw@linux.com>, "Maciej W .
+ Rozycki" <macro@orcam.me.uk>, Jonathan Cameron	
+ <Jonathan.Cameron@huawei.com>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
+ Krishna chaitanya chundru	 <quic_krichai@quicinc.com>, Srinivas Pandruvada	
+ <srinivas.pandruvada@linux.intel.com>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, 	linux-pm@vger.kernel.org, Smita Koralahalli	
+ <Smita.KoralahalliChannabasappa@amd.com>, linux-kernel@vger.kernel.org, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria
+ <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,  Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Mika Westerberg
+ <mika.westerberg@linux.intel.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>
+Date: Tue, 10 Dec 2024 21:45:18 +0100
+In-Reply-To: <Z1gSZCdv3fwnRRNk@wunner.de>
+References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
+		 <Z1gSZCdv3fwnRRNk@wunner.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210-x1e80100-usb-qmp-supply-fix-v1-0-0adda5d30bbd@linaro.org>
- <20241210-x1e80100-usb-qmp-supply-fix-v1-5-0adda5d30bbd@linaro.org>
-In-Reply-To: <20241210-x1e80100-usb-qmp-supply-fix-v1-5-0adda5d30bbd@linaro.org>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Tue, 10 Dec 2024 21:44:33 +0100
-Message-ID: <CAMcHhXpvwR50GCkTvtkmWW4mvV5o9vbMvrvqLiEkJpKDHP_REA@mail.gmail.com>
-Subject: Re: [PATCH 5/8] arm64: dts: qcom: x1e80100-dell-xps13-9345: Fix USB
- QMP PHY supplies
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, Marc Zyngier <maz@kernel.org>, Xilin Wu <wuxilin123@gmail.com>, 
-	Abel Vesa <abel.vesa@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Johan Hovold <johan@kernel.org>, "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 10 Dec 2024 at 10:07, Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
->
-> On the X1E80100 CRD, &vreg_l3e_1p2 only powers &usb_mp_qmpphy0/1
-> (i.e. USBSS_3 and USBSS_4). The QMP PHYs for USB_0, USB_1 and USB_2
-> are actually powered by &vreg_l2j_1p2.
->
-> Since x1e80100-dell-xps13-9345 mostly just mirrors the power supplies from
-> the x1e80100-crd device tree, assume that the fix also applies here.
+On Tue, 2024-12-10 at 11:05 +0100, Lukas Wunner wrote:
+> On Sat, Dec 07, 2024 at 07:44:09PM +0100, Niklas Schnelle wrote:
+> > Trying to enable bwctrl on a Thunderbolt port causes a boot hang on som=
+e
+> > systems though the exact reason is not yet understood.
+>=20
+> Probably worth highlighting the discrete Thunderbolt chip which exhibits
+> this issue, i.e. Intel JHL7540 (Titan Ridge).
 
-Though I can't verify schematics (perhaps Laurentiu can?), can confirm
-USBs still work as expected with this change.
+Agree will ad for v2.
 
-Tested-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+>=20
+> > --- a/drivers/pci/pcie/portdrv.c
+> > +++ b/drivers/pci/pcie/portdrv.c
+> > @@ -270,7 +270,8 @@ static int get_port_device_capability(struct pci_de=
+v *dev)
+> >  		u32 linkcap;
+> > =20
+> >  		pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &linkcap);
+> > -		if (linkcap & PCI_EXP_LNKCAP_LBNC)
+> > +		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
+> > +		    (linkcap & PCI_EXP_LNKCAP_SLS) !=3D PCI_EXP_LNKCAP_SLS_2_5GB)
+> >  			services |=3D PCIE_PORT_SERVICE_BWCTRL;
+> >  	}
+>=20
+> This is fine in principle because PCIe r6.2 sec 8.2.1 states:
+>=20
+>    "A device must support 2.5 GT/s and is not permitted to skip support
+>     for any data rates between 2.5 GT/s and the highest supported rate."
+>=20
+> However the Implementation Note at the end of PCIe r6.2 sec 7.5.3.18
+> cautions:
+>=20
+>    "It is strongly encouraged that software primarily utilize the
+>     Supported Link Speeds Vector instead of the Max Link Speed field,
 
->
-> Cc: stable@vger.kernel.org
-> Fixes: f5b788d0e8cd ("arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> index b112092fbb9fd955adca1ae8a76294c776fa2d1e..1aec536218bc2c9197410a43adec291a31f9beed 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> @@ -1093,7 +1093,7 @@ &usb_1_ss0_hsphy {
->  };
->
->  &usb_1_ss0_qmpphy {
-> -       vdda-phy-supply = <&vreg_l3e_1p2>;
-> +       vdda-phy-supply = <&vreg_l2j_1p2>;
->         vdda-pll-supply = <&vreg_l1j_0p9>;
->
->         status = "okay";
-> @@ -1125,7 +1125,7 @@ &usb_1_ss1_hsphy {
->  };
->
->  &usb_1_ss1_qmpphy {
-> -       vdda-phy-supply = <&vreg_l3e_1p2>;
-> +       vdda-phy-supply = <&vreg_l2j_1p2>;
->         vdda-pll-supply = <&vreg_l2d_0p9>;
->
->         status = "okay";
->
-> --
-> 2.47.0
->
+>     so that software can determine the exact set of supported speeds
+>     on current and future hardware. This can avoid software being
+>     confused if a future specification defines Links that do not
+>     require support for all slower speeds."
+>=20
+> First of all, the Supported Link Speeds field in the Link Capabilities
+> register (which you're querying here) was renamed to Max Link Speed in
+> PCIe r3.1=C2=A0and a new Link Capabilities 2 register was added which con=
+tains
+> a new Supported Link Speeds field.  Software is supposed to query the
+> latter if the device implements the Link Capabilities 2 register
+> (see the other Implementation Note at the end of PCIe r6.2 sec 7.5.3.18).
+
+Would it maybe make sense to update the comment for PCI_EXP_LNKCAP_SLS
+in pci_regs.h to point out that in PCIe r3.1 and newer this is called
+the Max Link Speed field? This would certainly helped me here.
+
+>=20
+> Second, the above-quoted Implementation Note says that software should
+> not rely on future spec versions to mandate that *all* link speeds
+> (2.5 GT/s and all intermediate speeds up to the maximum supported speed)
+> are supported.
+>=20
+> Since v6.13-rc1, we cache the supported speeds in the "supported_speeds"
+> field in struct pci_dev, taking care of the PCIe 3.0 versus later version=
+s
+> issue.
+>=20
+> So to make this future-proof what you could do is check whether only a
+> *single* speed is supported (which could be something else than 2.5 GT/s
+> if future spec versions allow that), i.e.:
+>=20
+> -		if (linkcap & PCI_EXP_LNKCAP_LBNC)
+> +		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
+> +		    hweight8(dev->supported_speeds) > 1)
+
+This also makes sense to me in that the argument holds that if there is
+only one supported speed bwctrl can't control it. That said it is
+definitely more general than this patch.
+
+Sadly, I tried it and in my case it doesn't work. Taking a closer look
+at lspci -vvv of the Thunderbolt port as well as a debug print reveals
+why:
+
+07:00.0 PCI bridge: Intel Corporation JHL7540 Thunderbolt 3 Bridge [Titan R=
+idge 4C 2018] (rev 06) (prog-if 00 [Normal decode])
+       ...
+                LnkCap: Port #0, Speed 2.5GT/s, Width x4, ASPM L1, Exit Lat=
+ency L1 <1us
+                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
+                LnkCtl: ASPM Disabled; LnkDisable- CommClk+
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 2.5GT/s, Width x4
+                        TrErr- Train- SlotClk+ DLActive- BWMgmt+ ABWMgmt-
+	...
+                LnkCap2: Supported Link Speeds: 2.5-8GT/s, Crosslink- Retim=
+er- 2Retimers- DRS-
+                LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- Speed=
+Dis-, Selectable De-emphasis: -6dB
+                         Transmit Margin: Normal Operating Range, EnterModi=
+fiedCompliance- ComplianceSOS-
+                         Compliance Preset/De-emphasis: -6dB de-emphasis, 0=
+dB preshoot
+	...
+
+So it seems that on this Thunderbolt chip the LnkCap field
+says 2.5 GT/s only as per the USB 4 spec you quoted but LnkCap2
+is 0x0E i.e. 2.5-8 GT/s.
+
+I wonder if this is related to why the hang occurs. Could it be that
+bwctrl tries to enable speeds above 2.5 GT/s and that causes links to
+fail?
+
+Thanks,
+Niklas
+
 
