@@ -1,86 +1,62 @@
-Return-Path: <linux-kernel+bounces-440351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88DB9EBC0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:44:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803C09EBC13
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E69818854D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8551316900A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73E72397A9;
-	Tue, 10 Dec 2024 21:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7CA2397A8;
+	Tue, 10 Dec 2024 21:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uwqy/m4h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pc0Ktdl7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C0B23979F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B2C1A9B4C;
+	Tue, 10 Dec 2024 21:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733867045; cv=none; b=qxZ1khcNOy37Wj6s0jGQD+5PSxLXYV/S1Ne0C6irM0qTxv/2dsHnmJJ92xNXuTxSQQRGaUUtg9KRmCsT0A5Lh8A95liRXhw6hdAhJY/JL8bdJbZm6JtqaDggolidI7P9fvCwzLrhDnmKgBeVKXgntsOUZ5U3pCUwonYM2SszdyQ=
+	t=1733867081; cv=none; b=uQ8wvj9Q5Dpf9Dv8tKZy5fZ/ROO1M7XW/ufECKVFdKZ/w1UmwEPxHSfwddfu2t6Z+GzgqRy9ZyXJY1Ra1elKltOS5bBYOMZ8rqkJ2yeLOgYWB5V/VaF59r8IuNTmj1Js+e/AWVSGQ4XR7UG2tcOGknZOhV5cD5naqXm72icxwlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733867045; c=relaxed/simple;
-	bh=GUrF2UrU0XGgUzb6wTe5TrC047ereMAOApbFsLOhx2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o55w3BLplRpDgpmMZHG/NeVVmACPxbagew1Rz5rLJ/1jnSYSaIssmqZ4ovR27bUPZUXOZrDnLw7BciBdlTx3iPrWRXI9ht7ZcfyZIVNJyMxy5oGhWRKoLyCFEO2C3JyjoIB+h3WdPMDAwfHc/96cFAY7NogB6tAoG99Nr9L4Lhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uwqy/m4h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733867043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tP1MjT4qda+yWrKqxPuVRXu+p9J5U29ZhaYXhXN3XqQ=;
-	b=Uwqy/m4h2etZhILWoZVEcYiLSQUvgvMBp1Y5RyJ7DcKrZ9vssv88A87nYKo6FZPynL98Fp
-	dC+y3olkRr82HjQ0PI5+5SqhcvZ37Wtl2vwYbZwmE338dYmucxx6NO6AsxdLGQmzUVZGfU
-	InUJZVxwQMamLLJ8eQ6O3K6yw98Eepg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-KDxUOAnjMdGsTUIL7AyerA-1; Tue, 10 Dec 2024 16:44:00 -0500
-X-MC-Unique: KDxUOAnjMdGsTUIL7AyerA-1
-X-Mimecast-MFC-AGG-ID: KDxUOAnjMdGsTUIL7AyerA
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-386321c8f4bso2193411f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:43:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733867039; x=1734471839;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tP1MjT4qda+yWrKqxPuVRXu+p9J5U29ZhaYXhXN3XqQ=;
-        b=FyO2QMu9I9IgpyKlOixAgW+1o7i8ikhyO8wVCB32Pt9ck9uJygwuFUefF9f5ryVmxR
-         g322g5gWfYfAjc9bYil+eEKNcjDiASEC9/M7hMovW+o134wx7EDhtu2xxISMQXka6RKR
-         sLNquSXTrBmijhBxDxYUnaRJgrprLQQclOVdjEA8IEXAJ43yKX8aw3+xBPCwE4pPS8Xe
-         xdJk9HcLMmVk7IQoJp4MLx2cH3HbrkqIkl9gNJubbM9k7WQUhuUH7ClLHc9H/rPaWp0Q
-         Jgs8jFn8DgfN+By8+vidBf8oGCVgWxNO96PrAOnOgK3OEN+YmYHpMCmpGXJGqta39PDP
-         YfUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXE/9bEV4F+bzAzlUwB8EofXGlXVPN7p5iNA1ECLqKD8+M1/LnnDKUN0TaXG8lvfSo/3xttpko2KlN3768=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdFainVLeshi1b21CgqCz0f12hc/QhSNRcawojvRtSsdshHmyC
-	cFQEL4lcNtVc0V5upiCQSh7mYpJ8rSW+e5qZNFY+pBUu6KOLd5WiliDavOk/4jk5/bTnCCj8+Ld
-	f/KVfSDsEqWpMvzscUXst3juNcXR5b3UlrNfAPpALy3s5T8ulTTkKvQp94pkDMQ==
-X-Gm-Gg: ASbGncum9gnK5MrIHLb2+KL8Hg6W+z0FQe/bgc7GRk6JaFwSkPD3h3tmRstQ6TiZE0U
-	1fr5eiGaVA1bFYpwYneg+w6+XgvtH7NcshtV05+2i48O8LtYhcZmEY90s77m6C/sh6Czqzpcood
-	j8Nh1mZ4bDniOxw2qJ+1O0U72WT4ibDF+2aefFj9Hvv5btfkI6IGnR+RpjobAK/Yko4vKGDBNx+
-	xcaAhLvqTR1BqxUI124gFaocVektH5bR4K2A6uMQwpbO3vodM8i62fvYFwTbh8Fu6PlvzShRrPc
-	RgPfhAE=
-X-Received: by 2002:a05:6000:178b:b0:385:faaa:9d1d with SMTP id ffacd0b85a97d-3864cea04aamr426991f8f.35.1733867038820;
-        Tue, 10 Dec 2024 13:43:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHBntV1r1V7qqw90fwsLljHpEimdBIKjwkwSqRAQs8sHJ14VdSz0YmnkZwq+Lk4qViVzkpGhA==
-X-Received: by 2002:a05:6000:178b:b0:385:faaa:9d1d with SMTP id ffacd0b85a97d-3864cea04aamr426978f8f.35.1733867038413;
-        Tue, 10 Dec 2024 13:43:58 -0800 (PST)
-Received: from [192.168.3.141] (p5b0c61ad.dip0.t-ipconnect.de. [91.12.97.173])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361b09fec0sm12034785e9.4.2024.12.10.13.43.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 13:43:57 -0800 (PST)
-Message-ID: <63ae2ae4-b023-4802-9b34-a2c0d272f6d7@redhat.com>
-Date: Tue, 10 Dec 2024 22:43:55 +0100
+	s=arc-20240116; t=1733867081; c=relaxed/simple;
+	bh=RgFRJO9SxDbTYwqB9l2YEX3eD4HJt7/X9nbJYXoi4Z0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SWJae7HM1Ma2QFNw37NV9hdU25oFXR7asDnNGIvcygxoA4ssiWQFlk2U6hlbHVLOjhZua/C9Ld/Ul0swZEQd2ZLWp3Qssyzrr8iCuBs7tfKOpkcKzJlCEgKSnBzybqm3qQLSeGnrvpXiM6LxAeuPqjFptVPsXiL7Y9azD+VLqjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pc0Ktdl7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAG2LLP002749;
+	Tue, 10 Dec 2024 21:44:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	51H1zx6ZjCIKp6pg8lVoWsLVvCUHrUDqc8EXCbYTcrw=; b=Pc0Ktdl7NlBSoUNh
+	M9xDwzn2aqDyAcBTu9PQm4kbWuONOOb+7zzUPiCKQf0tYcY/Tm4GhnKzTT6JUhXz
+	6VROOHpSfSDzuIxthmbxqvNETnjTSIxEzUIEX2KFrO5vgNpHv05mgkqJIdOXn1L7
+	dCwg3Q/iAkoqJM9eVyx3aOAAjYSGGPe2BZZ4YU0OhZ19Q4ckz3yK29ynfbUmND8G
+	SbvVyLH0o72I01hwFntIUl/QfFFaYOE4IZRz/tdapM//PkgilWZv4mDuRXEur0f4
+	7ZTx5d+tiLGDx+HhvI3vVqZKTEQJ7OeWoRkc92AzomFVFlyNW77mNroETtFGQp7J
+	h4SLjA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw45m5f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 21:44:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BALiXNt005768
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 21:44:33 GMT
+Received: from [10.4.85.13] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
+ 2024 13:44:31 -0800
+Message-ID: <d26420b8-f62d-4c2a-ae58-a7fa5744ba28@quicinc.com>
+Date: Wed, 11 Dec 2024 08:44:31 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,165 +64,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fork: avoid inappropriate uprobe access to invalid mm
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- linux-mm@kvack.org, Peng Zhang <zhangpeng.00@bytedance.com>,
- syzbot+2d788f4f7cb660dac4b7@syzkaller.appspotmail.com
-References: <20241210172412.52995-1-lorenzo.stoakes@oracle.com>
- <3bd43f87-571a-4bc6-b068-69056ec18d85@redhat.com>
- <ec718cd8-afcf-4002-95c5-4cc610a44107@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 05/10] qcomtee: implement object invoke support
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ec718cd8-afcf-4002-95c5-4cc610a44107@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Jens Wiklander <jens.wiklander@linaro.org>
+CC: Sumit Garg <sumit.garg@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+ <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-5-f502ef01e016@quicinc.com>
+ <CAHUa44FhZc1ZVgJQrqbDdY1kegNgHrC4VTs66-5CDfY04D6MMw@mail.gmail.com>
+From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+In-Reply-To: <CAHUa44FhZc1ZVgJQrqbDdY1kegNgHrC4VTs66-5CDfY04D6MMw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3lP6DyhHCYupfFmkE1NW4XcyA3Qhp7k5
+X-Proofpoint-GUID: 3lP6DyhHCYupfFmkE1NW4XcyA3Qhp7k5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100155
 
-On 10.12.24 21:59, Lorenzo Stoakes wrote:
-> On Tue, Dec 10, 2024 at 08:35:30PM +0100, David Hildenbrand wrote:
->> On 10.12.24 18:24, Lorenzo Stoakes wrote:
->>> If dup_mmap() encounters an issue, currently uprobe is able to access the
->>> relevant mm via the reverse mapping (in build_map_info()), and if we are
->>> very unlucky with a race window, observe invalid XA_ZERO_ENTRY state which
->>> we establish as part of the fork error path.
->>>
->>> This occurs because uprobe_write_opcode() invokes anon_vma_prepare() which
->>> in turn invokes find_mergeable_anon_vma() that uses a VMA iterator,
->>> invoking vma_iter_load() which uses the advanced maple tree API and thus is
->>> able to observe XA_ZERO_ENTRY entries added to dup_mmap() in commit
->>> d24062914837 ("fork: use __mt_dup() to duplicate maple tree in
->>> dup_mmap()").
->>>
->>> This change was made on the assumption that only process tear-down code
->>> would actually observe (and make use of) these values. However this very
->>> unlikely but still possible edge case with uprobes exists and unfortunately
->>> does make these observable.
->>>
->>> The uprobe operation prevents races against the dup_mmap() operation via
->>> the dup_mmap_sem semaphore, which is acquired via uprobe_start_dup_mmap()
->>> and dropped via uprobe_end_dup_mmap(), and held across
->>> register_for_each_vma() prior to invoking build_map_info() which does the
->>> reverse mapping lookup.
->>>
->>> Currently these are acquired and dropped within dup_mmap(), which exposes
->>> the race window prior to error handling in the invoking dup_mm() which
->>> tears down the mm.
->>>
->>> We can avoid all this by just moving the invocation of
->>> uprobe_start_dup_mmap() and uprobe_end_dup_mmap() up a level to dup_mm()
->>> and only release this lock once the dup_mmap() operation succeeds or clean
->>> up is done.
+
+
+On 12/10/2024 9:24 PM, Jens Wiklander wrote:
+> On Tue, Dec 3, 2024 at 5:20 AM Amirreza Zarrabi
+> <quic_azarrabi@quicinc.com> wrote:
 >>
->> What I understand is: we need to perform the uprobe_end_dup_mmap() after the
->> mmput().
-> 
-> Ack yes.
-> 
+>> Introduce qcom_tee_object, which represents an object in both QTEE and
+>> the kernel. QTEE clients can invoke an instance of qcom_tee_object to
+>> access QTEE services. If this invocation produces a new object in QTEE,
+>> an instance of qcom_tee_object will be returned.
 >>
->> I assume/hope that we cannot see another mmget() before we return here. In
->> that case, this LGTM.
-> 
-> We are dealing with a tiny time window and brief rmap availability, so it's hard
-> to say that's impossible. You also have to have failed to allocate really very
-> small amounts of memory, so we are talking lottery odds for this to even happen
-> in the first instance :)
-
-Yes, likely the error injection framework is one of the only reliable 
-ways to trigger that :)
-
-> 
-> I mean the syzkaller report took a year or so to hit it, and had to do
-> fault injection to do so.
-
-Ah, there it is: "fault injection" :D
-
-> 
-> Also it's not impossible that there are other means of accessing the mm
-> contianing XA_ZERO_ENTRY items through other means (I believe Liam was looking
-> into this).
-> 
-> However this patch is intended to at least eliminate the most proximate obvious
-> case with as simple a code change as possible.
-> 
-> Ideally we'd somehow mark the mm as being inaccessible somehow, but MMF_ flags
-> are out, and the obvious one to extend to mean this here, MMF_UNSTABLE, may
-> interact with oomk logic in some horrid way.
-> 
+>> Similarly, QTEE can request services from the kernel by issuing a callback
+>> request, which invokes an instance of qcom_tee_object in the kernel.
+>> Any subsystem that exposes a service to QTEE should allocate and initialize
+>> an instance of qcom_tee_object with a dispatcher callback that is called
+>> when the object is invoked.
 >>
->> --
->> Cheers,
+>> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+>> ---
+>>  drivers/tee/Kconfig                    |   1 +
+>>  drivers/tee/Makefile                   |   1 +
+>>  drivers/tee/qcomtee/Kconfig            |  10 +
+>>  drivers/tee/qcomtee/Makefile           |   6 +
+>>  drivers/tee/qcomtee/async.c            | 153 ++++++
+>>  drivers/tee/qcomtee/core.c             | 928 +++++++++++++++++++++++++++++++++
+>>  drivers/tee/qcomtee/qcom_scm.c         |  36 ++
+>>  drivers/tee/qcomtee/qcomtee_msg.h      | 217 ++++++++
+>>  drivers/tee/qcomtee/qcomtee_private.h  |  47 ++
+>>  drivers/tee/qcomtee/release.c          |  66 +++
+>>  include/linux/firmware/qcom/qcom_tee.h | 284 ++++++++++
+>>  11 files changed, 1749 insertions(+)
 >>
->> David / dhildenb
->>
+> [snip]
 > 
-> So overall this patch is a relatively benign attempt to deal with the most
-> obvious issue with no apparent cost, but doesn't really rule out the need
-> to do more going forward...
+>> +/**
+>> + * DOC: Overview
+>> + *
+>> + * qcom_tee_object provides object ref-counting, id allocation for objects hosted in
+>> + * REE, and necessary message marshaling for Qualcomm TEE (QTEE).
+>> + *
+>> + * To invoke an object in QTEE, user calls qcom_tee_object_do_invoke() while passing
+>> + * an instance of &struct qcom_tee_object and the requested operation + arguments.
+>> + *
+>> + * After the boot, QTEE provides a static object %ROOT_QCOM_TEE_OBJECT (type of
+>> + * %QCOM_TEE_OBJECT_TYPE_ROOT). The root object is invoked to pass user's credentials and
+>> + * obtain other instances of &struct qcom_tee_object (type of %QCOM_TEE_OBJECT_TYPE_TEE)
+>> + * that represents services and TAs in QTEE, see &enum qcom_tee_object_type.
+>> + *
+>> + * The object received from QTEE are refcounted. So the owner of these objects can
+>> + * issue qcom_tee_object_get(), to increase the refcount, and pass objects to other
+>> + * clients, or issue qcom_tee_object_put() to decrease the refcount, and releasing
+>> + * the resources in QTEE.
+>> + *
+>> + * REE can host services accessible to QTEE. A driver should embed an instance of
+>> + * &struct qcom_tee_object in the struct it wants to export to QTEE (it is called
+>> + * callback object). It issues qcom_tee_object_user_init() to set the dispatch()
+>> + * operation for the callback object and set its type to %QCOM_TEE_OBJECT_TYPE_CB_OBJECT.
+>> + *
+>> + * core.c holds an object table for callback objects. An object id is assigned
+>> + * to each callback object which is an index to the object table. QTEE uses these ids
+>> + * to reference or invoke callback objects.
+>> + *
+>> + * If QTEE invoke a callback object in REE, the dispatch() operation is called in the
+>> + * context of thread that called qcom_tee_object_do_invoke(), originally.
+>> + */
+>> +
+>> +/**
+>> + * enum qcom_tee_object_typ - Object types.
+>> + * @QCOM_TEE_OBJECT_TYPE_TEE: object hosted on QTEE.
+>> + * @QCOM_TEE_OBJECT_TYPE_CB_OBJECT: object hosted on REE.
+>> + * @QCOM_TEE_OBJECT_TYPE_ROOT: 'primordial' object.
+>> + * @QCOM_TEE_OBJECT_TYPE_NULL: NULL object.
+>> + *
+>> + * Primordial object is used for bootstrapping the IPC connection between a REE
+>> + * and QTEE. It is invoked by REE when it wants to get a 'client env'.
+>> + */
+>> +enum qcom_tee_object_type {
+>> +       QCOM_TEE_OBJECT_TYPE_TEE,
+>> +       QCOM_TEE_OBJECT_TYPE_CB_OBJECT,
+> 
+> The second OBJECT seems redundant. How about QCOM_TEE_OBJECT_TYPE_CB
+> or QCOM_TEE_OBJECT_TYPE_CALLBACK instead?
+> 
 
-Maybe add a bit of that to the patch description. Like "Fixes the 
-reproducer, but likely there is more we'll tackle separately", your call.
+Sure. I'll rename to QCOM_TEE_OBJECT_TYPE_CALLBACK.
 
-Thanks for the details!
+Best Regards,
+Amir
 
--- 
-Cheers,
 
-David / dhildenb
-
+>> +       QCOM_TEE_OBJECT_TYPE_ROOT,
+>> +       QCOM_TEE_OBJECT_TYPE_NULL,
+>> +};
+> [snip]
+> 
+> Cheers,
+> Jens
 
