@@ -1,99 +1,105 @@
-Return-Path: <linux-kernel+bounces-440180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE779EB9C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:03:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23579EB9C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ACC41882F6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:03:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC8E1664F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38B2214205;
-	Tue, 10 Dec 2024 19:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9875B214207;
+	Tue, 10 Dec 2024 19:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drBGaFYM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyX2Q84s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A953A94D;
-	Tue, 10 Dec 2024 19:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3576621420A;
+	Tue, 10 Dec 2024 19:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733857387; cv=none; b=XJ8t7HtJc6B9iMh1jOZIwqQYpyAykYxrYgmcHtxdvPEEXyhA1eGUR/hBsMOUUb76Mq/J/ACeSwHULnmlvkitVz5e99zvU7JrlNnvlOZCF2kwGkIWpnXiTzpKw9wtsqFSyFGjAjl52W/1eJQbaQzjxWTtPcNzCdyBIo/1wujPkQM=
+	t=1733857416; cv=none; b=QdqNRngm5I+WPZVER0jFFn5eA31uE2wuFVTVA83PvK0LSIkcRhSKpA+FoOOUoJHtLWRtcUfHeVnmg5rPZOqvchslydcjuopG9v30B2jXctdBwvLRPIDuIIUeAPhcRhfIvx6D8A4+prfl940usIZ6WEulTbthFWvq9s/2UQ6UcFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733857387; c=relaxed/simple;
-	bh=d6ROkkJrqNfgyixg9hx2zDBh0CYKajb8GtnqVhhCW4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CaSycBfbU6dVeUzF73nBerwGy2CSlbr+irzw++Mq0wWHzrzPDvOPK76DYnFfaPDZ9J9kYlYR8gULjIvnOy3SGOhcLzqXSVbj5IrU0vS0iKrVN4Hqeoh7eEiffk8dbzY19Ut2POxtowhjibT5DzlEFgX/Rn9RQ01H4npM6MMkvRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drBGaFYM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E2BAC4CEDD;
-	Tue, 10 Dec 2024 19:03:05 +0000 (UTC)
+	s=arc-20240116; t=1733857416; c=relaxed/simple;
+	bh=4oezj9P0v6OHDqQy0p+1h+9SQPQBzV2h/aMu3Q3bmic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5vhzcrKzAKrChrKCD/s79CDRaDxCxhkRcQ5ygP+nFczCUp81zKMZ3TwiMWFLCRFUJc/baQXEiThMlnMJafcKzGJ07znAYRjVYmHwF/p4gROaBZqN/WZ1uo7+IJuu7EJ/pCme5q3wxrgJgQ0BcnzGTg5W601SVuyODGsytMKAOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyX2Q84s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B3DC4CED6;
+	Tue, 10 Dec 2024 19:03:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733857385;
-	bh=d6ROkkJrqNfgyixg9hx2zDBh0CYKajb8GtnqVhhCW4o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=drBGaFYM20iRv91K05nnf9KZY0a9wRZZP1650dl6f++TAUL7QOCsWH78St0cV8pjD
-	 b5D9FU/SBXAeGentGyCokV3f1CTIIXsDQCpuIcDZTawTbvUeKEEX7PiAQfd+qPBE7+
-	 oX9grfYYF3VLaGOKMwN9+Mo8W3u9bmxqQqHjB2V0x0s4OJeoOSyVcMzjCETccSr2Ny
-	 HqrsKrowTmXxyuyF1L04MhywufTdTfkQ95P3PHfzY0mKEyASsAoDQRgWCgGsaGW1au
-	 /i4SgCiHzePIufk8FLOTCN1aPE7bbvCA2BvewoT/a/9AXKFl641uo987aPYy9KfZTT
-	 CBrSE5EOggPJA==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5f2ba68b40aso973701eaf.1;
-        Tue, 10 Dec 2024 11:03:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUd4aHyJoWdfp2sAsuAvD1IONn5qvn5/zMlZvHPeIke3WYqC6EZFJ8mCUpdJZXApC4NXHHkkSJd1mcA//Y=@vger.kernel.org, AJvYcCX249J94/LsQ4y8+aPNwuEFg+Rhd+bZ4HMAao1lyh3ePZuLXHpyaVzeEmuLc6hvAVNvBLEdg5n2I/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydTvA9UQJXnu56VIYkaEaz8V+NzZjFc5NEgTdfyk3QV4jLlkHH
-	xBuLwHNh3CXKiyFi32fQktM2pqESjvgSKxhMZWej7LFDYaHVbsMBbRDLT4wfVgz1WSRehLRhHo/
-	+U5U40c5WGLEGG3J1ulCXBZR3vZY=
-X-Google-Smtp-Source: AGHT+IG7/ZJyrVp7WSUfRkKlrMa8ovsO4i/bL/jbEw1fNfRq7T80SzE9HpRlAaD6DuPTci5BdmAuTg26uNQjo6hh/6w=
-X-Received: by 2002:a05:6820:2604:b0:5f2:9d29:2c4c with SMTP id
- 006d021491bc7-5f2da147485mr41456eaf.6.1733857384917; Tue, 10 Dec 2024
- 11:03:04 -0800 (PST)
+	s=k20201202; t=1733857415;
+	bh=4oezj9P0v6OHDqQy0p+1h+9SQPQBzV2h/aMu3Q3bmic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OyX2Q84sxxv/o8t6Ecw64+Drcve06uxDTuLFwceUNZqpXcnxFoQArnN/sMePFmlFg
+	 RZhoI3tvY27DVuj8IXIVAINb/ptEep3H4gCMpX3iNFosy2CjRsQUdW7n3lvnzhJs/q
+	 vwpwGKG30ld96Q/KzTYQ8sDHXzuCF0Q2ffC31mxBtWJ8zMxBlHz57+8wFEoOSf9BB+
+	 Rcpztiuw5k/9hceXShHfZ6qOl7ZCaxdNcTeBGHbEpQT10DPBbyASkwfjGl7otw7S5l
+	 0JDlixxvnIJTt0AG4MY7KydjptXKMoIdD+jNq6h2/TIaunveWjaqY09+8V/6usSHl7
+	 11YWKXV1AGOvA==
+Date: Tue, 10 Dec 2024 16:03:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Kan Liang <kan.liang@linux.intel.com>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>,
+	Edward Baker <edward.baker@intel.com>,
+	Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH v1 00/22] Intel vendor events and TMA 5.01 metrics
+Message-ID: <Z1iQhL4WXFL4Wf27@x1>
+References: <20241209222800.296000-1-irogers@google.com>
+ <CAP-5=fWr9R74-NbKbW96otG6KitQYaQng4D40Bv4z9ov9yvNJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203075802.584741-1-rui.zhang@intel.com>
-In-Reply-To: <20241203075802.584741-1-rui.zhang@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 20:02:54 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hwAz_9avAMhyY6AfAg2ZdffrhnS5EUPi-pU7LyQfdKHA@mail.gmail.com>
-Message-ID: <CAJZ5v0hwAz_9avAMhyY6AfAg2ZdffrhnS5EUPi-pU7LyQfdKHA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Add RAPL/DPTF support for Pantherlake
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, srinivas.pandruvada@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWr9R74-NbKbW96otG6KitQYaQng4D40Bv4z9ov9yvNJA@mail.gmail.com>
 
-On Tue, Dec 3, 2024 at 8:58=E2=80=AFAM Zhang Rui <rui.zhang@intel.com> wrot=
-e:
->
-> There is an effort on going to avoid per CPU model ID enabling for RAPL
-> support. But this takes some time and requires sufficient test to make
-> sure no regression introduced. So enable PantherLake RAPL support before
-> any rework.
->
-> Zhang Rui (3):
->   powercap: intel_rapl: Add support for PantherLake platform
->   thermal: intel: int340x: processor: Enable MMIO RAPL for PantherLake
->   ACPI: DPTF: Support Panther Lake
->
->  drivers/acpi/dptf/dptf_pch_fivr.c                           | 1 +
->  drivers/acpi/dptf/dptf_power.c                              | 2 ++
->  drivers/acpi/dptf/int340x_thermal.c                         | 6 ++++++
->  drivers/acpi/fan.h                                          | 1 +
->  drivers/powercap/intel_rapl_common.c                        | 1 +
->  drivers/thermal/intel/int340x_thermal/int3400_thermal.c     | 1 +
->  drivers/thermal/intel/int340x_thermal/int3403_thermal.c     | 1 +
->  .../intel/int340x_thermal/processor_thermal_device.h        | 1 +
->  .../intel/int340x_thermal/processor_thermal_device_pci.c    | 1 +
->  9 files changed, 15 insertions(+)
->
-> --
+On Mon, Dec 09, 2024 at 04:44:27PM -0800, Ian Rogers wrote:
+> On Mon, Dec 9, 2024 at 2:28 PM Ian Rogers <irogers@google.com> wrote:
+> >
+> > Update the Intel vendor events to the latest.
+> > Update the metrics to TMA 5.01.
+> > Add Arrowlake support.
+> > Add metrics for LNL and GNR.
+> > Address IIO uncore issue spotted on EMR, GRR, GNR, SPR and SRF.
+> >
+> > The perf json was generated using the script:
+> > https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
+> > with the generated json being in:
+> > https://github.com/intel/perfmon/tree/main/scripts/perf
+> >
+> > Thanks to Perry Taylor <perry.taylor@intel.com>, Caleb Biggers
+> > <caleb.biggers@intel.com>, Edward Baker <edward.baker@intel.com> and
+> > Weilin Wang <weilin.wang@intel.com> for helping get this patch series
+> > together.
+> 
+> I should have also said, this series requires:
+> https://lore.kernel.org/all/20241113165558.628856-1-irogers@google.com/
 
-All applied as 6.14 material, thanks!
+Applying that one now to perf-tools-next,
+
+Kan, can I have your Acked-by or Reviewed-by?
+
+Thanks,
+
+- Arnaldo
 
