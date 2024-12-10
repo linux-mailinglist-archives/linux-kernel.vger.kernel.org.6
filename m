@@ -1,152 +1,138 @@
-Return-Path: <linux-kernel+bounces-439315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3169EAD8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:05:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D559EAD91
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B70285A92
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D912873C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9513823DEB5;
-	Tue, 10 Dec 2024 10:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="cZKSv3ld"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692B678F23;
+	Tue, 10 Dec 2024 10:05:39 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EB723DE96;
-	Tue, 10 Dec 2024 10:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A9323DE9D;
+	Tue, 10 Dec 2024 10:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825090; cv=none; b=DgLmDWRgz6iKzTN9u36QG21er0Do6lH5LWJ87PlGtpeUNG45Y5/QfN9F/l0m5MwsOmLRjkxjjsnpG9G8fMr5IbloBhru1TzZVNq38oUW1/P3dsV3J6Et/uQCf8fatkpzeg/vRBr9wU0xl1h1U/CYZcdZqNfS5zyuZvgJ2JPSY5s=
+	t=1733825139; cv=none; b=E2mVRpBvwZjSSSNzQx1BbB3QFkydc5y2AWiALeFbfk+1SpEMle6eamZZsBe+8fNx4NJTCTJ5yRx9EWuyjz/ZNNjmdzvuqs+eZQuFvoyemPJVkijKLKtacEwBXshg9uEhmYsQv8MIepCWHVCB8NYnunSzczfeq9ogAQK2YT4mXNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825090; c=relaxed/simple;
-	bh=1PNJmzZ2WAVkuKjY9BRcQ8kJoyGcegpzX4I1aJ/V/TQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Y/+PvgceX4uI8+3OKKxZvlr34AS85l6TJrTYCaRxlINyrWa3L0ZhSelFSw61KGT397B0ZJ/dHFXXO/T0JgWIxxJX7VbT9AsHKkoIABQORBLOsre0G0tMcjvK9mdeR9j5tQpKH+psn7JdKuJS6KuVQJ6GU4bHza6rJzgTVkNQtC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=cZKSv3ld; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1733825139; c=relaxed/simple;
+	bh=lyfeqoW7UDdpbTjJvfagr193PybcKSPetWVvLfyXFgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mh0n2k+WO1p7QCmlccqkojeFzGc49TbExeXDofpJWYXYKiXLQ7UKDQKzuJ8Vq0cNSgvrHVD8ktD0xJ22dc2cUlqzU+pTVeKunUFLSIYymQUqZZJminrmf35e5mMxXyupYjRx0aftlJVNl9nvDP6N5M0BHz1MQpiaqly4UR3TyM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id E7CD52800BB73;
+	Tue, 10 Dec 2024 11:05:24 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id C309A5F845F; Tue, 10 Dec 2024 11:05:24 +0100 (CET)
+Date: Tue, 10 Dec 2024 11:05:24 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Niklas Schnelle <niks@kernel.org>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
+ 2.5 GT/s
+Message-ID: <Z1gSZCdv3fwnRRNk@wunner.de>
+References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1733825085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1I7wfU9DCOpusJPrwzxJlCH5FeLkZRrVEv4XdJSr+ME=;
-	b=cZKSv3ldr6gGegwxMIz1JjnH9exKl+mMNrJ4RQH1roYVzEC9pXfABLJzcSgtzuVa0JSSF8
-	c1iw/TrS9tI7hhFaCOFCh/IhydCmy30ki5QEnHhOVVp6Eoca+TWZYRyiStMK2NUXw9Ezrd
-	2sflyZrMlYoTLKjNvZgSOtIXYuLbZx9vJKpF72u3heuMHd/kau7Uuee9VMrjIM6Ol+i90W
-	PaBdIAm/al7Shz38CJtWFzuzk6M0Tl9R+bvlYQNsuMNI/ijHJEzZZ5E5mxIJJIxcCNHfQP
-	p/WNEjV1I8VNdHKS61vkbwh70p6PNYxvURbKsgPgJiBMRZENNXI/YypoAEju1w==
-Date: Tue, 10 Dec 2024 11:04:45 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>, Conor
- Dooley <conor+dt@kernel.org>, Diederik de Haas <didi.debian@cknow.org>,
- Johan Jonker <jbx6244@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Liang Chen <cl@rock-chips.com>, Rob Herring
- <robh@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, shironeko <shironeko@tesaguri.club>
-Subject: Re: [PATCH 4/6] arm64: dts: rockchip: add hevc power domain clock to
- rk3328
-In-Reply-To: <20241210013010.81257-5-pgwipeout@gmail.com>
-References: <20241210013010.81257-1-pgwipeout@gmail.com>
- <20241210013010.81257-5-pgwipeout@gmail.com>
-Message-ID: <e32fa593abfa6d08202b4f929e0b4bdb@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
 
-Hello Peter,
+On Sat, Dec 07, 2024 at 07:44:09PM +0100, Niklas Schnelle wrote:
+> Trying to enable bwctrl on a Thunderbolt port causes a boot hang on some
+> systems though the exact reason is not yet understood.
 
-On 2024-12-10 02:30, Peter Geis wrote:
-> There is a race condition at startup between disabling power domains 
-> not
-> used and disabling clocks not used on the rk3328. When the clocks are
-> disabled first, the hevc power domain fails to shut off leading to a
-> splat of failures. Add the hevc core clock to the rk3328 power domain
-> node to prevent this condition.
-> 
-> rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 3-.... 
-> }
-> 1087 jiffies s: 89 root: 0x8/.
-> rcu: blocking rcu_node structures (internal RCU debug):
-> Sending NMI from CPU 0 to CPUs 3:
-> NMI backtrace for cpu 3
-> CPU: 3 UID: 0 PID: 86 Comm: kworker/3:3 Not tainted 6.12.0-rc5+ #53
-> Hardware name: Firefly ROC-RK3328-CC (DT)
-> Workqueue: pm genpd_power_off_work_fn
-> pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : regmap_unlock_spinlock+0x18/0x30
-> lr : regmap_read+0x60/0x88
-> sp : ffff800081123c00
-> x29: ffff800081123c00 x28: ffff2fa4c62cad80 x27: 0000000000000000
-> x26: ffffd74e6e660eb8 x25: ffff2fa4c62cae00 x24: 0000000000000040
-> x23: ffffd74e6d2f3ab8 x22: 0000000000000001 x21: ffff800081123c74
-> x20: 0000000000000000 x19: ffff2fa4c0412000 x18: 0000000000000000
-> x17: 77202c31203d2065 x16: 6c6469203a72656c x15: 6c6f72746e6f632d
-> x14: 7265776f703a6e6f x13: 2063766568206e69 x12: 616d6f64202c3431
-> x11: 347830206f742030 x10: 3430303034783020 x9 : ffffd74e6c7369e0
-> x8 : 3030316666206e69 x7 : 205d383738353733 x6 : 332e31202020205b
-> x5 : ffffd74e6c73fc88 x4 : ffffd74e6c73fcd4 x3 : ffffd74e6c740b40
-> x2 : ffff800080015484 x1 : 0000000000000000 x0 : ffff2fa4c0412000
-> Call trace:
-> regmap_unlock_spinlock+0x18/0x30
-> rockchip_pmu_set_idle_request+0xac/0x2c0
-> rockchip_pd_power+0x144/0x5f8
-> rockchip_pd_power_off+0x1c/0x30
-> _genpd_power_off+0x9c/0x180
-> genpd_power_off.part.0.isra.0+0x130/0x2a8
-> genpd_power_off_work_fn+0x6c/0x98
-> process_one_work+0x170/0x3f0
-> worker_thread+0x290/0x4a8
-> kthread+0xec/0xf8
-> ret_from_fork+0x10/0x20
-> rockchip-pm-domain ff100000.syscon:power-controller: failed to get ack 
-> on
-> domain 'hevc', val=0x88220
-> 
-> Fixes: 52e02d377a72 ("arm64: dts: rockchip: add core dtsi file for 
-> RK3328 SoCs")
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+Probably worth highlighting the discrete Thunderbolt chip which exhibits
+this issue, i.e. Intel JHL7540 (Titan Ridge).
 
-While I was unable to formally verify this clock assignment,
-i.e. by using the RK3328 TRM or the downstream kernel source
-from Rockchip, it makes perfect sense to me.  Thanks for the
-patch, and please feel free to include:
+> --- a/drivers/pci/pcie/portdrv.c
+> +++ b/drivers/pci/pcie/portdrv.c
+> @@ -270,7 +270,8 @@ static int get_port_device_capability(struct pci_dev *dev)
+>  		u32 linkcap;
+>  
+>  		pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &linkcap);
+> -		if (linkcap & PCI_EXP_LNKCAP_LBNC)
+> +		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
+> +		    (linkcap & PCI_EXP_LNKCAP_SLS) != PCI_EXP_LNKCAP_SLS_2_5GB)
+>  			services |= PCIE_PORT_SERVICE_BWCTRL;
+>  	}
 
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+This is fine in principle because PCIe r6.2 sec 8.2.1 states:
 
-> ---
-> 
->  arch/arm64/boot/dts/rockchip/rk3328.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> index 0597de415fe0..7d992c3c01ce 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> @@ -333,6 +333,7 @@ power: power-controller {
-> 
->  			power-domain@RK3328_PD_HEVC {
->  				reg = <RK3328_PD_HEVC>;
-> +				clocks = <&cru SCLK_VENC_CORE>;
->  				#power-domain-cells = <0>;
->  			};
->  			power-domain@RK3328_PD_VIDEO {
+   "A device must support 2.5 GT/s and is not permitted to skip support
+    for any data rates between 2.5 GT/s and the highest supported rate."
+
+However the Implementation Note at the end of PCIe r6.2 sec 7.5.3.18
+cautions:
+
+   "It is strongly encouraged that software primarily utilize the
+    Supported Link Speeds Vector instead of the Max Link Speed field,
+    so that software can determine the exact set of supported speeds
+    on current and future hardware. This can avoid software being
+    confused if a future specification defines Links that do not
+    require support for all slower speeds."
+
+First of all, the Supported Link Speeds field in the Link Capabilities
+register (which you're querying here) was renamed to Max Link Speed in
+PCIe r3.1 and a new Link Capabilities 2 register was added which contains
+a new Supported Link Speeds field.  Software is supposed to query the
+latter if the device implements the Link Capabilities 2 register
+(see the other Implementation Note at the end of PCIe r6.2 sec 7.5.3.18).
+
+Second, the above-quoted Implementation Note says that software should
+not rely on future spec versions to mandate that *all* link speeds
+(2.5 GT/s and all intermediate speeds up to the maximum supported speed)
+are supported.
+
+Since v6.13-rc1, we cache the supported speeds in the "supported_speeds"
+field in struct pci_dev, taking care of the PCIe 3.0 versus later versions
+issue.
+
+So to make this future-proof what you could do is check whether only a
+*single* speed is supported (which could be something else than 2.5 GT/s
+if future spec versions allow that), i.e.:
+
+-		if (linkcap & PCI_EXP_LNKCAP_LBNC)
++		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
++		    hweight8(dev->supported_speeds) > 1)
+
+...and optionally add a code comment, e.g.:
+
+	/* Enable bandwidth control if more than one speed is supported. */
+
+Thanks,
+
+Lukas
 
