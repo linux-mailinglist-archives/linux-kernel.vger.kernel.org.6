@@ -1,130 +1,220 @@
-Return-Path: <linux-kernel+bounces-439860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4F09EB50C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:31:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5956B9EB51A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:34:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A155F188866C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B765D28665F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBB51BB6A0;
-	Tue, 10 Dec 2024 15:31:38 +0000 (UTC)
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C3D1B4F04;
+	Tue, 10 Dec 2024 15:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O02w0W70"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CB0282ED;
-	Tue, 10 Dec 2024 15:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895BD1A3056
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733844698; cv=none; b=Ld01/9uF5o0z+pVqAYoZfTB4zMtG5R0LL72gdrd92gZfd9kRr4tAvCvd6/mev53MKtvZGkCfTIJ5CGLkKLRZ6hQdsBc+0b807ZrlwjLECuQDiSVjOKHHsFEw6Kh91wLaj7fMI/IjE1nT+fHmcx3TDtckTX2EGeGQITFYKCKZYwQ=
+	t=1733844871; cv=none; b=SweTkOTBItYbXCjETPYlmaELE6Fg14gVS9efcs2VZsq50IFdp5RIiBfpxKJW9jjvIcdc5VaQkGC0yD8wLKrbxcEXh8x+M0s4iJCkCCFAqAB3VAfx68NSPNyA6y9ZHwYnkxltBDl4jSuiiwYcP/MZVwM+cVWVUEQVTSbMUhzG/Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733844698; c=relaxed/simple;
-	bh=VVgqv6FkmSnI+RO2vFqJXLoC8vvYFCGEx4TZsUvSsZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U1v3G3hg5zxFleiyZ1YmEqXuHQsFnjIGVXU5RR5iiJAgp+5VnjTRtEZ33aUOaO7VWPJmdKNXCwNyD/3I3oV/7NUFtdsivKdLpQPKmlzBwE5XpA524IN5tks41xSNp1AU07MDGa81vsJ+wwN05D149JH0sNbCMSIrXAsptTBLAnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-467631f3ae3so14672971cf.0;
-        Tue, 10 Dec 2024 07:31:36 -0800 (PST)
+	s=arc-20240116; t=1733844871; c=relaxed/simple;
+	bh=D4EPrZ1KlCJrj+YiSAnr4IIWbtdz8oQu+zYxqHKFgUs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QEJbNf1tXN9lvNEWAWyvsARf3w5yOqC0SOT/C6MexQB71sJ5PL6qTWxu61/33MZiFisf1P6qCgDTfx98gjbdu72PVi+W25h+AEOImVCX/VNQvUilaCc7e5DVmgeBN85ERSIiRnusSf+3iZWOuib2440I0ujYxVBmOEweVByzuhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O02w0W70; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434e5e71a08so46345e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:34:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733844868; x=1734449668; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e7oKn8SfeOYu43ner6bNalQq2+eOUuwHIvOMLrZ7fjg=;
+        b=O02w0W70FuVOT8i4NVJ0fKUczVrmKJQpgCfMRM5BnF/MDkuupXA4XnaZLCvPhaV/Gm
+         FbvaoLdsmjpdvwMqpbBH4G9tjhE8TojAHseHTLBXb1ojKVo3NkBH9ZiGayPlQ4h7E9WA
+         N3Nh9wNgL/pg3GgOWf0bQKW+ilDEZMcnljzLAgoMcIMVzPnfFvLaZm0ke/8hkaCJGU+p
+         jB9oJLSQarLtg2+zLwP4jImxbXmwpDoDzDIpIeLcBNRReMBUmuTjqzW4l0hqqUE4hpMB
+         FruaV8A4NzcbFMm1nOQJp8QRll59jp76rmu1sMVqnR+mofaCfaQTXR0dOJiiOdzVw9jw
+         bn6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733844693; x=1734449493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bvkDKTKiNoo1ealOS02lkDBKr/zdbL5bowKhEQIzcag=;
-        b=lZNjeADijaZ4vFdWrT3mAwyyPrOYZ2j8MQNubXNQhYsRG0y/jarPczxPWc9yWSivS0
-         W5bY6+mLr50wDCQIm59VsUQFYIGbF3nCubQkcLRU8LYqUE1PRGvajHW8i2Xa1s3bhryM
-         lfv9ay67tTbFdu+2kC3F3rw18jqXbIP0zTNobZtUT3TQsAFt4yFSTl3e4Fa3SLE73+cZ
-         6p6gwwND+hv0BHCtVrgCHthUeHWJlU/IeNWg+rtvb55KzqFRnvr+eiIy+Vp3sBpS/cAB
-         qePdeUf2J2nSXByPJuZINAsTPlWvoBzIi9y+gE6irEsAcHaLZ0DbpvYFrejrM4xeavIM
-         uPrg==
-X-Forwarded-Encrypted: i=1; AJvYcCU72qsVs6osOYPAdWGLjZJIKQXGcEQR8M0ZkYx7tQuzmWgP57MJXH7xQT49wmP6oqlZWrdh1+K8r+PWEzYR@vger.kernel.org, AJvYcCUTMl9uNbIjfV5bJnjgL4b1Sz5DWcwCC68l8ZSd8tqUZlYxatMzXPQdudTxqoF1G96xDPwNTIkjZHvsmmvZFFTcuMY=@vger.kernel.org, AJvYcCVX8/d0AX+/luOSHZ/m2dtFcCBM4JPgPTiHOSqg/LjBSVaXW7hDG1qGY5QGprcfl+G7+Xu/K9CZPedd@vger.kernel.org, AJvYcCVcXNUMDhUk9m5UPhKaPXu0EzFyU5TMsFnvk6SemuYlrmRbHv7/npp0FK73X6jH/gWNjwtv02QNL/hj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxefZ9UNXoS0WYfLVGiY4QdactfESQwmwCOaeNIUbMZB5A+SM3i
-	MIlwwSzp/qd23ODry/rIhMuLRjkD9gFRDS2VwnqGb3ykcJ0Cb8jMPA3U+GZv
-X-Gm-Gg: ASbGncslgzRFY08tojKMtCpivLM8q7VGJeyvMe1bvV/GeIU+qDyi5CzlBymJK16KdlO
-	ZAMt+4FrFG+Ko1WiZw8smjWTc0gDiqV+VMumAl3aVE+NIdQ+WsOjacFYDRsR3dCp7UvAJTQk+E1
-	err1LK2Ns5WT/Dq5YEMBqJ7R9m+R7poxvdfBRN77AsiJbLbLs34V8/Oj+IiohPJGbT7QM00EcIc
-	vW9JpLPPs6fKdOUCQT9M3F4xLQ66bO2b3VnJEqDd4iP61uCDDC7RG2ef1l/05iVj8/O1+IhnimX
-	Vi7uNkcKDIugAF1Z/ufG
-X-Google-Smtp-Source: AGHT+IEktidqbq0PT9EFy/m/p+2IFKYLgPVlfFfsQVe5CG6vHlWz+6hEYKsvqZs/gG2ZCEqK2Zae6A==
-X-Received: by 2002:a05:622a:1a9a:b0:464:c8d3:30c0 with SMTP id d75a77b69052e-46734f76d97mr275261591cf.35.1733844693112;
-        Tue, 10 Dec 2024 07:31:33 -0800 (PST)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4675f92098dsm26136661cf.67.2024.12.10.07.31.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 07:31:32 -0800 (PST)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b6c8b11407so157326985a.0;
-        Tue, 10 Dec 2024 07:31:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUQwj3sHctJYC4uh6Yxtb6IiwYG+URgbL0ROIPau8et1rUvqmC9E5C1wjIzOBV7JKZeKpo2QtNR2H5Z@vger.kernel.org, AJvYcCV6G9GDoH0CK3Dpp0JURdgs5RPjqypm76tXrTJSARn/YjYtr6nyPwNDlWU/H+UmVkPJRb1YT9jYaI7NcScH@vger.kernel.org, AJvYcCVJtnILVIujexlw/Qu3B90adCT8CQ35lPyy++ET2JWKUOzcXZu160Vg7EiKmd9U7iGDOyTXhlfb9ygS@vger.kernel.org, AJvYcCXFDz+ulM+eUs5DO0A14iWLbB6zxA0nADjH4xdIc3sQDfbqFMQIHe8K897A4q/WIPcuLJ8Tb/SyG6gqV08VP7ODcYY=@vger.kernel.org
-X-Received: by 2002:a05:620a:29d6:b0:7b6:d273:9b44 with SMTP id
- af79cd13be357-7b6d2739e80mr1380681885a.18.1733844691902; Tue, 10 Dec 2024
- 07:31:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733844868; x=1734449668;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e7oKn8SfeOYu43ner6bNalQq2+eOUuwHIvOMLrZ7fjg=;
+        b=AqMxKip45UVv6HbSW/g/i2Vu4aVUTo0JmH5s7579jN2lXTkXs/oUmAUfEPeOdpCrx4
+         Y4z6hR5GDPjeTg76IY8N+aBgfYA4o0tkPeeoj9j9uJpsFJJNz22ET/+3MghgkBcCVtP7
+         P26PpIBhBO5T+o5mfddx1IiSs5QigTzThQ0zHvujDUEbElFXCfvRZ8R2nk77eks4DgY5
+         Tkm4xeBVVnid8sCk5nnC16q3bfCIu7DC2BVOQzkdvCSAbrMbNRJkQQYlADlPcTthUqUd
+         QYLeRcdVKwR8zU6VG+lCQLMg5OtcyMAUXsfgr/yx5k3oLP5LS6vaq5wU5EqJnnfixGBt
+         HP+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWANQMZY3cgKWb6WmQmJClfaz/8y5wn18ihtDuV8+AWtzGWM+z340hJbHHaXs3zU8nA7AxduJ1RPXCPN4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT1N6afI9l+Lu2fP+a1Cnt9GFAUnKWNRp7kSX1il8sEXx1AIuh
+	YEkgO5iT599IvroKdSyQhGsPUWAJmuC9n79bq0gESVhwUCfDTDTGff8n6+coxEH1n0ffx9A03lL
+	wQZWw
+X-Gm-Gg: ASbGncvVksNYl79ryBBOex1VZWF3cT2uACTcBBKZPhZttmsWET2hDc7KGhVma/ePpkj
+	OJKVt69HgNS3vnEJzwvVnHOgLSuX5yK6JbRskRGIPtq7OvptWzCkLG61/yjbmdOK49gZU5ToVeD
+	CU3fOIb4BZIok5XvjH/CxqFZCQEeO2OHWieC6iSsAnp9wUppLmyn2Hoa9JiXSJvf+sbj091Xcwh
+	fUmK+p2SVbNF2GouV8i8TucNHTTvI+7L3JTAXMkbFM=
+X-Google-Smtp-Source: AGHT+IEBipaGZmUxyH+9ZM7xyHO/CFA1s88GF5PM0VfgA8u/bXFdvNqD/XiKoIz1xDNwuIeIsZQPCA==
+X-Received: by 2002:a05:600c:4907:b0:434:f7fc:1b18 with SMTP id 5b1f17b1804b1-435028ac13amr1382405e9.4.1733844867378;
+        Tue, 10 Dec 2024 07:34:27 -0800 (PST)
+Received: from localhost ([2a00:79e0:9d:4:deb9:87dc:18b2:3f1c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f5774454sm87113235e9.13.2024.12.10.07.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 07:34:26 -0800 (PST)
+From: Jann Horn <jannh@google.com>
+Date: Tue, 10 Dec 2024 16:34:18 +0100
+Subject: [PATCH bpf v3] bpf: Fix theoretical prog_array UAF in
+ __uprobe_perf_func()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-14-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241126092050.1825607-14-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Dec 2024 16:31:20 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXv3=pEfx9YiXqh1nFfa0jVD-TRoaxfije8KuzkA4A_dA@mail.gmail.com>
-Message-ID: <CAMuHMdXv3=pEfx9YiXqh1nFfa0jVD-TRoaxfije8KuzkA4A_dA@mail.gmail.com>
-Subject: Re: [PATCH v2 13/15] arm64: dts: renesas: r9a08g045: Enable the
- system controller
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, 
-	yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241210-bpf-fix-uprobe-uaf-v3-1-ce50ae2a2f0f@google.com>
+X-B4-Tracking: v=1; b=H4sIAHlfWGcC/4XNTQ7CIBAF4Ks0rB1TptAfV97DuAA6tCQqDViia
+ Xp3CTs3unwzb77ZWKTgKLJTtbFAyUXnHzk0h4qZWT0mAjfmzLBGwbFuQS8WrHvBugSvCVZlQTb
+ jgL1Wuhlrlg+XQLlR0AvLfXbNw9nFpw/v8ijxsvplJg4c2r4dTK94h7I/T95PNzoafy9ewv8GZ
+ kOYThopLAkUX8a+7x+UKE0C/gAAAA==
+X-Change-ID: 20241206-bpf-fix-uprobe-uaf-53d928bab3d0
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Delyan Kratunov <delyank@fb.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733844863; l=3983;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=D4EPrZ1KlCJrj+YiSAnr4IIWbtdz8oQu+zYxqHKFgUs=;
+ b=YSLxoLODDEklujQg5BUuocln7Wu7g1Q2qyVqqEYI8R/sFpAgizW5+17PAauI5LlhDHyYaXmsw
+ W8+IwulIzpyBm+Hc1bCaKBP5vLFPL2W1EMagiEREaBmtwnXRUzi2N/n
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-Hi Claudiu,
+Currently, the pointer stored in call->prog_array is loaded in
+__uprobe_perf_func(), with no RCU annotation and no immediately visible
+RCU protection, so it looks as if the loaded pointer can immediately be
+dangling.
+Later, bpf_prog_run_array_uprobe() starts a RCU-trace read-side critical
+section, but this is too late. It then uses rcu_dereference_check(), but
+this use of rcu_dereference_check() does not actually dereference anything.
 
-On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable the system controller. It is needed for USB and SoC
-> identification.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Fix it by aligning the semantics to bpf_prog_run_array(): Let the caller
+provide rcu_read_lock_trace() protection and then load call->prog_array
+with rcu_dereference_check().
 
-Thanks for your patch!
+This issue seems to be theoretical: I don't know of any way to reach this
+code without having handle_swbp() further up the stack, which is already
+holding a rcu_read_lock_trace() lock, so where we take
+rcu_read_lock_trace() in __uprobe_perf_func()/bpf_prog_run_array_uprobe()
+doesn't actually have any effect.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> @@ -207,7 +207,6 @@ sysc: system-controller@11020000 {
->                         interrupt-names =3D "lpm_int", "ca55stbydone_int"=
-,
->                                           "cm33stbyr_int", "ca55_deny";
->                         #renesas,sysc-signal-cells =3D <2>;
-> -                       status =3D "disabled";
->                 };
+Fixes: 8c7dcb84e3b7 ("bpf: implement sleepable uprobes by chaining gps")
+Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Changes in v3:
+- align semantics with bpf_prog_run_array()
+- correct commit message: the issue is theoretical
+- remove stable CC
+- Link to v2: https://lore.kernel.org/r/20241206-bpf-fix-uprobe-uaf-v2-1-4c75c54fe424@google.com
 
-Please enable it on all members of the RZ/G2L family, and combine
-this with "[PATCH v2 12/15]".
+Changes in v2:
+- remove diff chunk in patch notes that confuses git
+- Link to v1: https://lore.kernel.org/r/20241206-bpf-fix-uprobe-uaf-v1-1-6869c8a17258@google.com
+---
+ include/linux/bpf.h         | 11 +++--------
+ kernel/trace/trace_uprobe.c |  6 +++++-
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index eaee2a819f4c150a34a7b1075584711609682e4c..7fe5cf181511d543b1b100028db94ebb2a44da5d 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2193,26 +2193,22 @@ bpf_prog_run_array(const struct bpf_prog_array *array,
+  * rcu-protected dynamically sized maps.
+  */
+ static __always_inline u32
+-bpf_prog_run_array_uprobe(const struct bpf_prog_array __rcu *array_rcu,
++bpf_prog_run_array_uprobe(const struct bpf_prog_array *array,
+ 			  const void *ctx, bpf_prog_run_fn run_prog)
+ {
+ 	const struct bpf_prog_array_item *item;
+ 	const struct bpf_prog *prog;
+-	const struct bpf_prog_array *array;
+ 	struct bpf_run_ctx *old_run_ctx;
+ 	struct bpf_trace_run_ctx run_ctx;
+ 	u32 ret = 1;
+ 
+ 	might_fault();
++	RCU_LOCKDEP_WARN(!rcu_read_lock_trace_held(), "no rcu lock held");
+ 
+-	rcu_read_lock_trace();
+ 	migrate_disable();
+ 
+ 	run_ctx.is_uprobe = true;
+ 
+-	array = rcu_dereference_check(array_rcu, rcu_read_lock_trace_held());
+-	if (unlikely(!array))
+-		goto out;
+ 	old_run_ctx = bpf_set_run_ctx(&run_ctx.run_ctx);
+ 	item = &array->items[0];
+ 	while ((prog = READ_ONCE(item->prog))) {
+@@ -2227,9 +2223,8 @@ bpf_prog_run_array_uprobe(const struct bpf_prog_array __rcu *array_rcu,
+ 			rcu_read_unlock();
+ 	}
+ 	bpf_reset_run_ctx(old_run_ctx);
+-out:
++
+ 	migrate_enable();
+-	rcu_read_unlock_trace();
+ 	return ret;
+ }
+ 
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index fed382b7881b82ee3c334ea77860cce77581a74d..4875e7f5de3db249af34c539c079fbedd38f4107 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -1402,9 +1402,13 @@ static void __uprobe_perf_func(struct trace_uprobe *tu,
+ 
+ #ifdef CONFIG_BPF_EVENTS
+ 	if (bpf_prog_array_valid(call)) {
++		const struct bpf_prog_array *array;
+ 		u32 ret;
+ 
+-		ret = bpf_prog_run_array_uprobe(call->prog_array, regs, bpf_prog_run);
++		rcu_read_lock_trace();
++		array = rcu_dereference_check(call->prog_array, rcu_read_lock_trace_held());
++		ret = bpf_prog_run_array_uprobe(array, regs, bpf_prog_run);
++		rcu_read_unlock_trace();
+ 		if (!ret)
+ 			return;
+ 	}
 
-                        Geert
+---
+base-commit: 509df676c2d79c985ec2eaa3e3a3bbe557645861
+change-id: 20241206-bpf-fix-uprobe-uaf-53d928bab3d0
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Jann Horn <jannh@google.com>
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
