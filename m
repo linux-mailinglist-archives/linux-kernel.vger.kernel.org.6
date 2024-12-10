@@ -1,103 +1,51 @@
-Return-Path: <linux-kernel+bounces-440435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2BB9EBDE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:32:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960759EBDE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5073E16A350
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD7C188465D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCA41F1917;
-	Tue, 10 Dec 2024 22:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5CLeXqF"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC7C1F1917;
+	Tue, 10 Dec 2024 22:33:51 +0000 (UTC)
+Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [5.144.164.162])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE132451EE;
-	Tue, 10 Dec 2024 22:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF9F1EE7DC;
+	Tue, 10 Dec 2024 22:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869945; cv=none; b=oMY3cJwVv7lc78zunZePQufzfpi4PyUKrw3gmi+NmMbOfoQY+VXI4tnrJCDD3GxgBy1cJLnzQH0EXIGLqpPbh1MAebSqH889eXFa+wxzzfz2ATaSdquuCQ19yJNfsXRPAm9l26mWAqIFP80UjmipzBLxpsIVZiSgNIWeyOlcDvM=
+	t=1733870031; cv=none; b=AoZhY8cqFPMQxC88pKg0E0NJ6u+ZbeYmsDHC8MkaFSdFwGoWQZTn1L3WTM5tym8T/+2LxWvYoRSzbsluujTfycvbaiSbNOjRn8Urk8pmtdye3RadflIUCkt4OYPwr9tn9+zdXQhRb5yY9auHEVj5ZD4k2FHbQ29gpNDv9DM3UkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869945; c=relaxed/simple;
-	bh=hgMJx2VtJ+BbwJuND9+Surw/NGbnfW1t9z8fyk7Lwpw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdnC11SuYXaPMeq5OnLpiJoqla9QpZO8TsYvsuK8yUjQWOXsceKqJ1XcN9I8S0auSTnAA+kqICL+OWPsrlha55b8EpTsMBMfnE2WM+e5b40vBRzLroQIrw/adBrpn6WA6sC3j+ZmJ/rGWr0hlRD94t0OavDU/sU8WXHKRXAkdfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5CLeXqF; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3862b364538so48322f8f.1;
-        Tue, 10 Dec 2024 14:32:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733869942; x=1734474742; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnO56ocUjPfv+bgOKk5gIkhPUA621URHfVhC+NJz7p4=;
-        b=U5CLeXqFf4tHcprr2O6oChNC4XUwEqBLmSuYDg4pDG664k9T2LCC7lRYkDuSPn8M8k
-         C2Klleznh+7UM8y2d4JM4lrBZNOgUWCjZOo3o2TG+7IKX4VMg0XfP36zxuf3c7NVeWkX
-         nKOslg7BVSeqHQE7t+2xqMPyK3s/rlc27LRN/xNTUfvUeaXhga6taC25izzvm+iQ6EIH
-         QETUJuW1alZjKZQHZ90cjnXXvDW7WfpvyEkg3CklPM9a58cdtpVOUABduePedQu+n6bT
-         IuI/xh1lwkZsK8xQ9ROlICJhv/2FywmfWcy2CZkMaGnU1uhGS8bRYHSxuRPl3KwXe9fe
-         atyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733869942; x=1734474742;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QnO56ocUjPfv+bgOKk5gIkhPUA621URHfVhC+NJz7p4=;
-        b=ha9Kqp+tmvIqOFomIx5xSbEUXv5NFCvJXbeaEvjUH42T4kGMawc50FE5wHKusUg3rd
-         FGCNx9FdjpCHngMgsKEQKl6AifyIM+56XJzVj8Ce9PuVl4Zwj5Zj2U1M7GEo+Ei5k3cI
-         PmxUYHwyz88xX4JFBhGwGkpxUcfm6CFifA42mGM4Fd9Uv91vKrNGfJ97+5HgTc4JJQ6v
-         w/QHM9TEQpKcfe6qyo7WC4LkZFeyJaF+83xrOpdEXf4rGMxCTCg3+cT6rDyVYgTMsPuU
-         oynrcCYyuNuEafv9FD+sWpph1YWH7/Ifh+qXKMxDW4ZPn1+jm9ZiMXCg9oP4c9LZlDaC
-         AS9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFndzAnyrUAN69rZXMOco3OUB81o33Ml162R1+t46oXuROKYNT/QBVpnXN7cGDGhLThjV/LqDnjMte8Hfo@vger.kernel.org, AJvYcCVMBzA6pTnznmTGth2j6SCPfUsAcIkWSOR/kiStwrkFoM4oFhJr7ALj/C+yqK8nTG+h7LrNW168HBF2@vger.kernel.org, AJvYcCWDaEJzrHtK1Y6aKMnh8OgLzeYN3LU/ZZONpTzVwuBmNxTP3yITPJj69qUbvcYUUeEleqBWnTc0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRsHZR8LRsoT3F1kQgw1sh8N7wbcpnV4ZD1/6OtoiXarFk+GE4
-	RnfLcGWTV+zSGrGgznDZSQQVqLT9FD1zniyXDRuYLu2r8kKs6FKH
-X-Gm-Gg: ASbGncu5c5X+1vCcwDkMfs+0SH/BmOEImOU+yX/gRB4G1CF20EfVsieXOawye2b2WHz
-	h8TzRLmcP5pF1wAkkuzFomgBSzf/4B6ZPZnPnq3x7JZCmzgeq0GNTmyfYxtioPL3wRlsUDA4fi4
-	imA/Xts2SFK3tJqKBjfF17XkDmve5xUptVqZgfOeFgZa8tn6ILrdpIOEivL/xP1i+z3IUMvgfPg
-	nFIoXPdq/zOubtGTKsRXH988RhXwpHDnDZLvwjjAUN6swb4pVl1mDMr0SjUA1uw1Ylgj7/CnVHg
-	OwidhRO2/Q==
-X-Google-Smtp-Source: AGHT+IG1bSXHS0bpB9SrnpgSiy3t2o7skv79APs7LVWlF3TOUod3SzTBdm60dVBBJHjBYfbo6u0icA==
-X-Received: by 2002:a05:6000:1a85:b0:386:3c93:70ff with SMTP id ffacd0b85a97d-3864de9e47emr286354f8f.8.1733869941960;
-        Tue, 10 Dec 2024 14:32:21 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f8836dbbsm62231295e9.0.2024.12.10.14.32.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 14:32:20 -0800 (PST)
-Message-ID: <6758c174.050a0220.52a35.06bc@mx.google.com>
-X-Google-Original-Message-ID: <Z1jBccAhjYjXTNRV@Ansuel-XPS.>
-Date: Tue, 10 Dec 2024 23:32:17 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v11 5/9] mfd: an8855: Add support for Airoha
- AN8855 Switch MFD
-References: <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-6-ansuelsmth@gmail.com>
- <20241209134459.27110-6-ansuelsmth@gmail.com>
- <20241210211529.osgzd54flq646bcr@skbuf>
+	s=arc-20240116; t=1733870031; c=relaxed/simple;
+	bh=LfscyWWl6+HGjgaF7cqByFfruwjVxqGh4cFTwHTDglk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQdhj22MT66dWHHwKFCJ7QBhiHzommRfK3lOFq085AYXs4oyZj/jDE969re5hRtv02iP9Ou30qVeC3yCfRGRUm+a2Tiz8pgW9gi4V/6sKhJCEjay7IN4X8Ux7rUFxd84y79xpTaM61JEpaBRZmxWGcrpSWw/YZNQ9AHqe2dcgkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 23CEE1F8B2;
+	Tue, 10 Dec 2024 23:33:46 +0100 (CET)
+Date: Tue, 10 Dec 2024 23:33:44 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>
+Subject: Re: [PATCH 0/3] drm/msm/dp: Fix and utilize TPG with a debugfs
+Message-ID: <zmbipw4zmcdabimxdd4adyzeqhy5dyoburjxene4ub62ws2pym@drvsjowufdh2>
+References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,50 +54,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210211529.osgzd54flq646bcr@skbuf>
+In-Reply-To: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
 
-On Tue, Dec 10, 2024 at 11:15:29PM +0200, Vladimir Oltean wrote:
-> On Mon, Dec 09, 2024 at 02:44:22PM +0100, Christian Marangi wrote:
-> > +int an8855_mii_set_page(struct an8855_mfd_priv *priv, u8 phy_id,
-> > +			u8 page) __must_hold(&priv->bus->mdio_lock)
-> > +{
-> > +	struct mii_bus *bus = priv->bus;
-> > +	int ret;
-> > +
-> > +	ret = __mdiobus_write(bus, phy_id, AN8855_PHY_SELECT_PAGE, page);
-> > +	if (ret < 0)
-> > +		dev_err_ratelimited(&bus->dev,
-> > +				    "failed to set an8855 mii page\n");
-> > +
-> > +	/* Cache current page if next mii read/write is for switch */
-> > +	priv->current_page = page;
-> > +	return ret < 0 ? ret : 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(an8855_mii_set_page);
+On 2024-12-02 12:41:57, Abhinav Kumar wrote:
+> DP Test Patten Generator is a very useful tool to debug issues such
+> as blank screen or corruption seen on the DP monitor by isolating it
+> to whether the corruption is coming from further upstream such as DPU
+> OR from the DP controller and below. It was noted in [1] that this API
+> is unused. Rather than dropping the API, it should be fixed and used.
 > 
-> You could keep the implementation more contained, and you could avoid
-> exporting an8855_mii_set_page() and an8855_mfd_priv to the MDIO
-> passthrough driver, if you implement a virtual regmap and give it to the
-> MDIO passthrough child MFD device.
+> Hence, this series fixes the DP Test Patten Generator API and also utilizes
+> it by adding a debugfs for it.
 > 
-> If this bus supports only clause 22 accesses (and it looks like it does),
-> you could expose a 16-bit regmap with a linear address space of 32 MDIO
-> addresses x 65536 registers. The bus->read() of the MDIO bus passthrough
-> just performs regmap_read(), and bus->write() just performs regmap_write().
-> The MFD driver decodes the regmap address into a PHY address and a regnum,
-> and performs the page switching locally, if needed.
+> [1] : https://patchwork.freedesktop.org/patch/623508/?series=141074&rev=1
 
-Doesn't regmap add lots of overhead tho? Maybe I should really change
-the switch regmap to apply a save/restore logic?
+This all sounds great, but perhaps the "unused function" issue applies to the
+DSI TPG from your series at [1] as well.  There, the patch describes where to
+insert the function call, but I remember that the contents of that function also
+changed over time.
 
-With an implementation like that current_page is not needed anymore.
-And I feel additional read/write are ok for switch OP.
+Are you planning to add a debugfs entry, or perhaps entries to configure the
+pattern bits for DPU's DSI TPG as well, as suggested in [2]?  Or should someone
+else look into it to make it useful again?
 
-On mdio I can use the parent-mdio-bus property to get the bus directly
-without using MFD priv.
+[1]: https://lore.kernel.org/linux-arm-msm/1626922232-29105-2-git-send-email-abhinavk@codeaurora.org/
+[2]: https://lore.kernel.org/linux-arm-msm/CAA8EJpqjWbEbgn9Sw=Hd8f7pP+NXDeM308jG8HirKjk7QcfOxA@mail.gmail.com/
 
-What do you think?
+> 
+> To: Rob Clark <robdclark@gmail.com>
+> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> To: Sean Paul <sean@poorly.run>
+> To: Marijn Suijten <marijn.suijten@somainline.org>
+> To: David Airlie <airlied@gmail.com>
+> To: Simona Vetter <simona@ffwll.ch>
+> To: Stephen Boyd <swboyd@chromium.org>
+> To: Kuogee Hsieh <quic_khsieh@quicinc.com>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Jessica Zhang <quic_jesszhan@quicinc.com>
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+> Abhinav Kumar (3):
+>       drm/msm/dp: account for widebus in msm_dp_catalog_panel_tpg_enable()
+>       drm/msm/dp: do not touch the MMSS_DP_INTF_CONFIG for tpg
+>       drm/msm/dp: add a debugfs node for using tpg
 
--- 
-	Ansuel
+Should TPG be capitalized in these titles, as it is an abbreviation with
+capitalized words in your description as well?
+
+Thanks!
+
+- Marijn
+
+> 
+>  drivers/gpu/drm/msm/dp/dp_catalog.c | 15 +++++++--
+>  drivers/gpu/drm/msm/dp/dp_debug.c   | 61 +++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_panel.h   |  2 ++
+>  3 files changed, 76 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+> change-id: 20241202-tpg-3f7543c036ac
+> 
+> Best regards,
+> -- 
+> Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
 
