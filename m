@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-438594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574D79EA33E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:01:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17E91887AFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:01:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D3F6CDBA;
-	Tue, 10 Dec 2024 00:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kxiED/4q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 435A59EA340
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:01:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA7AA934;
-	Tue, 10 Dec 2024 00:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69FCE28136B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:01:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D6522612;
+	Tue, 10 Dec 2024 00:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cTmxL/a/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3268218E3F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733788859; cv=none; b=AVxp67xPD0fLcr0UBmaFX6MZ5oViJsHayiUy+AeorMwHXvSX7d4I2Vh5+ZConZ3Tl2H9qlLCQiedDw/y0/SbyAey9DYIgDvHbVJ9cyrUex8K5XblhYOew795RExsFlM1hYD7cflr6q2Pi9l6XWkFg/bGcmqxgFB3ZLQfZffmtQc=
+	t=1733788889; cv=none; b=DI1y1q+Oj9sTZhTcgHnUBkxbGikDEitvivAexqPpFcPRS9I/KFP9vL4uiDxQCvoQXXpIDn77c9dcIZJ42xPqI2yUdRvPk/rTaEPNX7OJKD+MG4G+kDnBWtvEwM27Z8NhwBdJEJBr+e4e88zQIGIHpEzeSzDK6Pe+K8IpAx3yE/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733788859; c=relaxed/simple;
-	bh=Hx3TYCfv8vO1GHDfioqECB6aGnBv+pYMSPSzeHD0ACM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SOBU8SUd1iY83gZvDSc4rZPF4eVv0P9w1rqsntBBKNwgEm964tbdID/LoEEQRC+vxJpbPHJ+XMt3UKV2KSaojP1yoqagPNXkeNxEXRzqr15qR8dbrKf9PmVuQbt7eGfhorzHlHZdjj22jPv2LZh5gYjx11lb2hbsHl5K00+nfe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kxiED/4q; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733788857; x=1765324857;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Hx3TYCfv8vO1GHDfioqECB6aGnBv+pYMSPSzeHD0ACM=;
-  b=kxiED/4qWgdjC8syHpcQ/oBSt6TehmN8CqDPcrmesjwGYrR4b+zABNOR
-   pPka+VVmu0Ied4rHDt2RARryuxBEZtc+SmP8TI9abNm1UZ/GIFmQDUNL5
-   TGH3TIfjxHgiE2Ey3kn2joO0QnncLvj//19BafU9NFyMiIJNoUzyYl55+
-   G8YzMt/qpthbRSDQF27OUpEOPl1WgAI1BskUyRsyJwGqx/maGrb2yMD4w
-   m/Z/I+iFVuqYBXytHoFMDpuvbPhUg0Ykmiftl50xNG3Z4FN5OMl6YFR7K
-   Ctu//wNnA4tngjhOqc6fzn5oNN19B6M/R3YETqc90danguAbsxhIXko3C
-   Q==;
-X-CSE-ConnectionGUID: HtBvaavbTyaz/aIQwm+riw==
-X-CSE-MsgGUID: ch2bNqTkSf68VnQ41V09wQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45493623"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="45493623"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 16:00:56 -0800
-X-CSE-ConnectionGUID: FrHyAsf+TsSInDwzX9C6WQ==
-X-CSE-MsgGUID: fvwvGNsbQQub6ODNnUFruA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
-   d="scan'208";a="95095907"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 16:00:56 -0800
-Date: Mon, 9 Dec 2024 16:00:54 -0800
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, "Yu, Fenghua" <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, "x86@kernel.org" <x86@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v11 2/8] x86/resctrl: Prepare for per-CTRL_MON group
- mba_MBps control
-Message-ID: <Z1eEti6Kswtb3HC5@agluck-desk3>
-References: <20241206163148.83828-1-tony.luck@intel.com>
- <20241206163148.83828-3-tony.luck@intel.com>
- <20241209204519.GAZ1dW3-NjcL4Sewaf@fat_crate.local>
- <SJ1PR11MB6083BA367F2CDFC92D87FDA1FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20241209222047.GKZ1dtPxIu5_Hxs1fp@fat_crate.local>
- <SJ1PR11MB60830B8ED36CCA7E304D9E97FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <678cef69-78ef-4951-bd31-10abe646e6d8@intel.com>
+	s=arc-20240116; t=1733788889; c=relaxed/simple;
+	bh=ODTr/EN7uOzzdelyAGiLaho7MMk/IuODVtzg+npRn00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H6z2ZwsmprR+cOfNN5iFMAAeuQqFSSkbtg7khMcrcf7+9dq9Rj1yvqmj8MljttfxY9xSXPYEnUX5EwTdULQy9zPvj23NczUTZy2yW/ETTWa0Gka7QcKc8rRxhfSCqQM25zn64Npe0ugL5yAN/omYemakMAk7lASiUN8oRJO6zZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cTmxL/a/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9NqLJl021040
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:01:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1EqxPduBDSvSsoN4JFJf1y6Rui0Hp2FOo5ojAyR5TFQ=; b=cTmxL/a/AIHdqNDY
+	NTFredgPjjARGh7yUS80FKnTsiIWELuR1UPvXouOaHS1PyPiQpFUPxHWkdPZtNrj
+	LzWgzkDzyRXthhKmAfT6ehzr6CuTHtdf71sk9vKVwGVsjgjMQjxLkryJKu/ZylDk
+	UVl2A/bU3eCDWjm/9mnqxgfqjnaP2h9ONkPm/Jhk39KgmwOju5tE/qSKEJjje0hG
+	fa3U1Jj79MtlIFM/IXsJY9CTIYvEaxgT4kQb3x2ldYiP9gzw+06EnoOlQ3iHHuUh
+	AaZZfda1Ri6iVNXb/EdCMVfJad+stfIpYf31CZ28qXLCNi1k61tR5HxGyLAQZW15
+	sTpuxg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eak380jy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:01:27 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-725dd39ebe7so1646145b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 16:01:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733788886; x=1734393686;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1EqxPduBDSvSsoN4JFJf1y6Rui0Hp2FOo5ojAyR5TFQ=;
+        b=uC9pJdeEYN317aZyGHupBMPo9EsbDrv9RMylM50/lKrAYpA5NgHrEkABxk/PTLky8B
+         gbvwIQhnuhkon/Evt05Vj9uRoVkI6PsGutiRVb3TqkGDVtyzhrbHu9Dp0ar+WKL2yErT
+         feruTgTU/SBcXv6vnCTSaanXx/NfSCJHdqsSJVY1w+MZGCT55ozLJkBnC4yDrbpBiknl
+         NiItHq/mCqdxrrt17tz5mT1e2wYmWK4EwNYz0mDkBp9Ej74WMsPFz0VYYvM9jgHUlFND
+         IDcUNPbOqQ7uxgf3ZolbncxkjtxXkg4BQfonJJwxFIqy9cQdYebyWe6yutCOiRpRiiJG
+         cWBQ==
+X-Gm-Message-State: AOJu0YzTdpxN/4DgvjKfRKJ7y5iTq0GdVYMMst8eSKLQeLQYeRw2P+XR
+	yFB4SRPfs6mxF1RU84RQPFpFIfLrJY48ZgKYt+8vhWU4NY6ylY4/tMLtcOWFzcihA3puLmf6sft
+	7aAIWF358cOtDE0IymzzuOOFHPD9DY2u3UAROc39Gmvl7ImIALFf2Vn4WPjr/j6k=
+X-Gm-Gg: ASbGncu38US4x60djsfF2XogbvyOO0xnCx6m0Jao0j4269Z+SdlMOVcFNupopZPnvM7
+	BzRb8KMOtAcLo42XRP+AW57c3yc2incGIjPePO/QnZOoM7A8JxGb8ckkkh+nZ6sRc4+3kU47Cpc
+	60yG2EkdQOsRL7OedqX3dpImtdL1ztHd9e+4zsvW3q4yyPhHy9s+fF/r3Rs4gYmwuxDa7gCamBg
+	wR+JsDei+uXdS0U6h5SbldgO8361oWVMSgDkOFmCTQSs7iZ0j/0yFMgR8CvBPMYntxFlfzzk7rN
+	BUsQ+Sg5+l/rR7w=
+X-Received: by 2002:a05:6a00:816:b0:71e:4786:98ee with SMTP id d2e1a72fcca58-7273cba6f5bmr3311101b3a.21.1733788886343;
+        Mon, 09 Dec 2024 16:01:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGERk0lzTLfmPchRAiAHRbnp6RfJLbLF+LVgKVUWmhDtsOlSUndfB+9OPQWeoieIm4bzgudIg==
+X-Received: by 2002:a05:6a00:816:b0:71e:4786:98ee with SMTP id d2e1a72fcca58-7273cba6f5bmr3311033b3a.21.1733788885886;
+        Mon, 09 Dec 2024 16:01:25 -0800 (PST)
+Received: from [10.81.24.74] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725ce38be98sm4867179b3a.52.2024.12.09.16.01.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 16:01:25 -0800 (PST)
+Message-ID: <79f0dbc0-b0b7-448d-a4fb-9e3eceb89801@oss.qualcomm.com>
+Date: Mon, 9 Dec 2024 16:01:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <678cef69-78ef-4951-bd31-10abe646e6d8@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] soc: hisilicon: kunpeng_hbmcache: Add support for
+ online and offline the hbm cache
+To: Zhang Zekun <zhangzekun11@huawei.com>, xuwei5@hisilicon.com,
+        lihuisong@huawei.com, Jonathan.Cameron@huawei.com
+Cc: linux-kernel@vger.kernel.org, liuyongqiang13@huawei.com
+References: <20241206112812.32618-1-zhangzekun11@huawei.com>
+ <20241206112812.32618-3-zhangzekun11@huawei.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20241206112812.32618-3-zhangzekun11@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: zH-YqVUZQOBgoXyhZE6Vl0WozsjdKNBT
+X-Proofpoint-GUID: zH-YqVUZQOBgoXyhZE6Vl0WozsjdKNBT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=857 clxscore=1015 spamscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090187
 
-On Mon, Dec 09, 2024 at 03:40:12PM -0800, Reinette Chatre wrote:
-> Hi Tony,
+On 12/6/24 03:28, Zhang Zekun wrote:
+> Add a driver for High Bandwidth Memory (HBM) cache, which provides user
+> space interfaces to power on/off the HBM cache. Use HBM as a cache can
+> take advantage of the high bandwidth of HBM in normal memory access, and
+> OS does not need to aware of the existence of HBM cache. For workloads
+> which does not require a high memory access bandwidth, power off the HBM
+> cache device can help save energy.
 > 
-> On 12/9/24 2:35 PM, Luck, Tony wrote:
-> >>> mba_mbps_default_event isn't architecture specific. The mba_MBps
-> >>> feedback code could be implemented on any architecture that supports
-> >>> both measurement and control of memory bandwidth.
-> >>
-> >> Yes, and it should be moved to that header then, right?
-> >>
-> >> But not earlier.
-> > 
-> > If you feel strongly about it then go ahead and cut the line from <linux/rectrl.h>
-> > and paste it into <asm/resctrl.h>
-> 
-> I am not sure about this ... I expect the code needing this initially will
-> form part of the filesystem code so it may be more intuitive to have it
-> be located in arch/x86/kernel/cpu/resctrl/internal.h as Boris suggested.
-> As part of the arch/fs split it may then move to fs/resctrl/internal.h
-> 
-> mba_mbps_default_event may even stay internal to the fs/resctrl code with an
-> arch helper created later to initialize it. This is because I think
-> the initialization of mba_mbps_default_event may move out of
-> get_rdt_mon_resources() into resctrl_mon_resource_init() that is being
-> created as part of the MPAM work [1]. An example of current fs initialization
-> done in arch code that is moved to it can be found in [2].
+> Signed-off-by: Zhang Zekun <zhangzekun11@huawei.com>
 
-Reinette is right. The post-split home of this is not <linux/resctrl.h>
-but fs/resctrl/internal.h which doesn't exist yet.
+...
 
-So Boris is right, this declaration should be added to arch/x86/kernel/cpu/resctrl/internal.h
-by this patch to be moved later.
+> +module_exit(hbm_cache_module_exit);
+> +MODULE_LICENSE("GPL");
 
-> 
-> [1] https://lore.kernel.org/all/20241004180347.19985-17-james.morse@arm.com/
-> [2] https://lore.kernel.org/all/20241004180347.19985-20-james.morse@arm.com/
+Unlike the 1/2 patch, this one CAN be built as a module, so please add the
+missing MODULE_DESCRIPTION() macro to avoid the warning with make W=1.
 
--Tony
+/jeff
+
 
