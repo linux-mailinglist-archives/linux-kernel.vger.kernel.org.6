@@ -1,134 +1,170 @@
-Return-Path: <linux-kernel+bounces-440262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B459EBAEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:41:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988B89EBAE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:37:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 339A1283705
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:41:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A591886503
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE798229B19;
-	Tue, 10 Dec 2024 20:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75F222836A;
+	Tue, 10 Dec 2024 20:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RJI/Znfz"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LuabywJN"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF325228C8D;
-	Tue, 10 Dec 2024 20:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88212226895
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 20:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733863275; cv=none; b=R0hceW9/hwKkJxxWpMfFg4OqgG73Gqq5DZFT+xNLcfBphFBTb/mcdrYWdRUdprajFnzN3Fk245iJCZadxB75nfh7W5VL01YWFQPnlPzcev7Qj7fHGAALU9l3issHWaLDwQ1Ns1on3Cu7IYs22iHW3NPSHP4rQHkszbC+PNc99LI=
+	t=1733863026; cv=none; b=IvsIul9rR+sG3Mfc/HpWfJUMIlSZTBIN30ggMyATic9b3G0mgpk3lNjNuwRIOYOfH/aVmdcxqTOQE8ZLwW6U30cW2MVl2Vyw5m9zpHk4Bfvil5qlHlpYz6RSol8DNa8XYaMpJH+pkMkVclhgdX/eT23mQMNkhqpij92eKI5ECEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733863275; c=relaxed/simple;
-	bh=WzlgaaqUhE+WLmXr70jjwrg28mgcgmJ7MrB6fom+u8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P6kIyqWvlGM0AgOZtG+LnKD8vP3Mtm6YGT5hLtpAfDNsaGkETovAD9sO7cIVYJwkcHtpr5TAh8nzPQZ4+ibXhdQ6KipE74JQLz+R0C5UkeKPE+9FQsSjqLw+UHcQZujg0I1962oRaElZNYI8eZA3dH2pWEjfE8wuztw9PAcGM8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RJI/Znfz; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Y79S75H7nz9sRf;
-	Tue, 10 Dec 2024 21:33:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1733862839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vIkYPi7cZvR+Cq3i7sOkgKR+4usrBNWR28vWv5aHXPw=;
-	b=RJI/Znfz/PYtHY+3VxJ/HMSqnJ36wtzAvyDFB2T1rYIKsE14oDoiHeQua55B8kNP6ZheUY
-	0ObNWeC4U2A5i4QdoVfzwZYn0mfHVgjjOntfEElSRMUohdc7Csa8k1A8QsWQ05KpL1jOVL
-	AfTJA9faF8XrAQntuCqQ+mZDOhKnfxuNZbNZXbM+9yPkcmeL6huHFXTcx9LJQc7wJB9Cy8
-	5j9iUr+RUyrAdkSFjiwqaHdpbUnMNasW3B01PSyflsAH0uuPYabUhe1MPKccargZsMXRVH
-	IowlDdhnI3MUfjux/dcgNCo7h9i6n8HzX3kNSXI2PwxhiMhpipJ3vYbZQPhj0A==
-Message-ID: <93a3edef-dde6-4ef6-ae40-39990040a497@mailbox.org>
-Date: Tue, 10 Dec 2024 21:33:58 +0100
+	s=arc-20240116; t=1733863026; c=relaxed/simple;
+	bh=0fQX49mSHPQYrzA8Z31PEJhbNQ8oFJAfOm9cbO8QOh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lE4Pva9O7l6Yv6/YJYbKX+AK9M/ujTk0R6n+Uj0JMEMrs1ivxz5tktvHyEdgjDfSY92sDuIphsmHR8f1qcDyZAlJqfGnAK1wDBccT7KJgfDCU1xXVyjH+w9IGnpQZ/mii3zBYCwuPeILOEZRkZIIoxhIPXhjkK2hSo260id64UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LuabywJN; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa6a92f863cso166500966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:37:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733863022; x=1734467822; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zn4VZjCebgcs43D4JwNn5+c65Hi6gGT2rIBjaMw3GPQ=;
+        b=LuabywJN8jBkE/zSeMixqqnREhLRL/DAC9oGA2N6BEDh6Nbu+LLmD2pj8R1vRaZiLu
+         JrVfnJR0gCfqNB+Y21fm+0FORNBncEuPb2yqYr3lFuH7EIXHEOdEO/o2hdb6cLSo9F9K
+         zVKUYNVs5PeifzUnmz6prTLwStUMvhF3PCeVZlXhTv4WivMOcofDgMBO0iF8EXV5fRl8
+         FkksjkpYJNZXebcJoAoIOWj3dyZ9zdwrUV9yoUxpcy515pisHmcA5uM8Sn0E36wCeEj3
+         6esjjrJg1Kd59pElCyGtAwQVIRfDBtRnLc052DzqHsE8wIaRbq9+BHMGTWRo5K5/EfOb
+         XBcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733863022; x=1734467822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zn4VZjCebgcs43D4JwNn5+c65Hi6gGT2rIBjaMw3GPQ=;
+        b=On36VOcYVv0vSthiiP6+0YITaNbosnrcBJHVbeKPIUI8lbklb+Dk03Wjtkatz2E4KN
+         XfG0sjpAK2ZBuUaUikPanYhJgkn5uHxQhDuYqMjwtnAmAswFVtBxxwiLcsf4fEfPSvmt
+         Uo+jxhbLeh3wpMbGvSOJbg5AYP1ie90YOx6XwehpU47pp2FCKXylOUAdzy2G8vve5nRz
+         XUIhXabHNW6DXoB9sT5ZtddlOFwLttkaXLZxYaQLPex2DyGsV9pii8EVarHnw3Zjou5u
+         XtbNzBoFjZgHu1czTD0IRjQME7YSdeF6ANliOomJsjcy+PiOTO/PxeQZzJXDMBZDVdfp
+         P4yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrUwITYRAzGjg6NahtmkOt1ag+hpBAdTtv+PnQnNE8Ot+kfoVfKan5UwrVjQ3cvNJInfD9MrGh4RqK6Go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuI5h16/cZGTZNAIcb5+l42g5RXgquacMxdhMh9VqN4mu/iL9/
+	E5h4YyvVuDC6x7DxjRJySKNyN7hsf1h0CTcC3F/x4gs3VtBeBRA0dDYMRDnXxffXxR6WvAaTAVP
+	Q/sqVYGxI6CEOfCDJwLszSepTTBx4R1J6BM3wzQ==
+X-Gm-Gg: ASbGncsZksR6xmFPBSY6LRFjdoTl/f5I+LDWhjeQJgW/kR1gPU0sEYSAlBVpyTcGyQU
+	tp5o6pqOnLqstuAk/PPFpCaWTEnryU7ZgKT4=
+X-Google-Smtp-Source: AGHT+IGWUXD7IWZ/eeOLyw9PNNJAuQCg5LPrjaY10z82+Km24i2uSdLaLZdXA6A5BFJA17MApH7HCIysDMV+DYBFD2w=
+X-Received: by 2002:a17:907:7703:b0:aa6:74a9:ce6e with SMTP id
+ a640c23a62f3a-aa6b1179ab6mr16738566b.16.1733863021774; Tue, 10 Dec 2024
+ 12:37:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [REGRESSION] from 74a0e79df68a8042fb84fd7207e57b70722cf825: VFIO
- PCI passthrough no longer works
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- regressions@lists.linux.dev, Tom Lendacky <thomas.lendacky@amd.com>
-References: <52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org>
- <Z1hiiz40nUqN2e5M@google.com>
-Content-Language: en-GB
-From: Simon Pilkington <simonp.git@mailbox.org>
-In-Reply-To: <Z1hiiz40nUqN2e5M@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 0cea7763452cf96db1b
-X-MBO-RS-META: hqxa4gxhzzjmcxgkgeomtyp99m94k69s
+References: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com>
+In-Reply-To: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com>
+From: Stefan Schmidt <stefan.schmidt@linaro.org>
+Date: Tue, 10 Dec 2024 21:36:51 +0100
+Message-ID: <CAEvtbuubfZq2jtoUesrmitStAyXy3HJXqvdYQYO=BA8L-1eHTA@mail.gmail.com>
+Subject: Re: [PATCH v8 00/28] Qualcomm iris video decoder driver
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Nicolas Dufresne <nicolas@ndufresne.ca>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Vedang Nagar <quic_vnagar@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/12/2024 16:47, Sean Christopherson wrote:
-> Can you run with the below to see what bits the guest is trying to set (or clear)?
-> We could get the same info via tracepoints, but this will likely be faster/easier.
-> 
-> ---
->  arch/x86/kvm/svm/svm.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index dd15cc635655..5144d0283c9d 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -3195,11 +3195,14 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->  	case MSR_AMD64_DE_CFG: {
->  		u64 supported_de_cfg;
->  
-> -		if (svm_get_feature_msr(ecx, &supported_de_cfg))
-> +		if (WARN_ON_ONCE(svm_get_feature_msr(ecx, &supported_de_cfg)))
->  			return 1;
->  
-> -		if (data & ~supported_de_cfg)
-> +		if (data & ~supported_de_cfg) {
-> +			pr_warn("DE_CFG supported = %llx, WRMSR = %llx\n",
-> +				supported_de_cfg, data);
->  			return 1;
-> +		}
->  
->  		/*
->  		 * Don't let the guest change the host-programmed value.  The
-> @@ -3207,8 +3210,11 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->  		 * are completely unknown to KVM, and the one bit known to KVM
->  		 * is simply a reflection of hardware capabilities.
->  		 */
-> -		if (!msr->host_initiated && data != svm->msr_decfg)
-> +		if (!msr->host_initiated && data != svm->msr_decfg) {
-> +			pr_warn("DE_CFG current = %llx, WRMSR = %llx\n",
-> +				svm->msr_decfg, data);
->  			return 1;
-> +		}
->  
->  		svm->msr_decfg = data;
->  		break;
-> 
-> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+Hello Dikshita,
 
-Relevant dmesg output with some context below. VM locked up as expected.
+On Tue, 10 Dec 2024 at 12:05, Dikshita Agarwal
+<quic_dikshita@quicinc.com> wrote:
+>
+> Introduce support for Qualcomm new video acceleration hardware i.e.
+> iris, used for video stream decoding.
+>
+> Iris is a multi pipe based hardware that offloads video stream decoding
+> from the application processor (AP). It supports H.264 decoding. The AP
+> communicates with hardware through a well defined protocol, called as
+> host firmware interface (HFI), which provides fine-grained and
+> asynchronous control over individual hardware features.
+>
+> This driver implements upgraded HFI gen2 to communicate with firmware.
+> It supports SM8550 which is based out of HFI gen 2. It also supports
+> SM8250 which is based out of HFI gen1.
+>
+> This driver comes with below capabilities:
+> - V4L2 complaint video driver with M2M and STREAMING capability.
+> - Supports H264 decoder.
+>
+> This driver comes with below features:
+> - Centralized resource management.
+> - Centralized management of core and instance states.
+> - Defines platform specific capabilities and features. As a results, it
+>   provides a single point of control to enable/disable a given feature
+>   depending on specific platform capabilities.
+> - Handles various video recommended sequences, like DRC, Drain, Seek,
+>   EOS.
+> - Implements asynchronous communication with hardware to achieve better
+>   experience in low latency usecases.
+> - Output and capture planes are controlled independently. Thereby
+>   providing a way to reconfigure individual plane.
+> - Native hardware support of LAST flag which is mandatory to align with
+>   port reconfiguration and DRAIN sequence as per V4L guidelines.
 
-[   85.834971] vfio-pci 0000:0c:00.0: resetting
-[   85.937573] vfio-pci 0000:0c:00.0: reset done
-[   86.494210] vfio-pci 0000:0c:00.0: resetting
-[   86.494264] vfio-pci 0000:0c:00.1: resetting
-[   86.761442] vfio-pci 0000:0c:00.0: reset done
-[   86.761480] vfio-pci 0000:0c:00.1: reset done
-[   86.762392] vfio-pci 0000:0c:00.0: resetting
-[   86.865462] vfio-pci 0000:0c:00.0: reset done
-[   86.977360] virbr0: port 1(vnet1) entered learning state
-[   88.993052] virbr0: port 1(vnet1) entered forwarding state
-[   88.993057] virbr0: topology change detected, propagating
-[  103.459114] kvm_amd: DE_CFG current = 0, WRMSR = 2
-[  161.442032] virbr0: port 1(vnet1) entered disabled state // VM shut down
+[...]
+
+>
+> To: Vikash Garodia <quic_vgarodia@quicinc.com>
+> To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> To: Mauro Carvalho Chehab <mchehab@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: Sebastian Fricke <sebastian.fricke@collabora.com>
+> Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Nicolas Dufresne <nicolas@ndufresne.ca>
+> Cc: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> Cc: Jianhua Lu <lujianhua000@gmail.com>
+> Cc: Stefan Schmidt <stefan.schmidt@linaro.org>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+
+With my few pending questions and remarks taken into account you can add my
+
+Tested-by: Stefan Schmidt <stefan.schmidt@linaro.org> # x1e80100 (Dell
+XPS 13 9345)
+Reviewed-by: Stefan Schmidt <stefan.schmidt@linaro.org>
+
+for the full series.
+
+regards
+Stefan Schmidt
 
