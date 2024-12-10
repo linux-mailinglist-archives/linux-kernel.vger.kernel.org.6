@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-439327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691749EADB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 331F19EADB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB775188514E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DC301888B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A3B19D084;
-	Tue, 10 Dec 2024 10:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEBD78F45;
+	Tue, 10 Dec 2024 10:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPT0kTJ/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKeHOKRK"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4FD23DEBA;
-	Tue, 10 Dec 2024 10:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9340E78F24;
+	Tue, 10 Dec 2024 10:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825642; cv=none; b=GN/jOfulYPZl8dtfJnNpv5B9KMxnimIKDGOI1wdYkInpafNRtA5hlQCzUiL0+VaSariU7Y7zInf+TPXjFb4AZxcPFf7FSjVI84Yw0gfXM9Tc8sFV4Wl8qO5eRhEpEAPpofc8aSbLz76VR57BlzyCcRgDLJVsa4dE7ZnEDQPeadU=
+	t=1733825626; cv=none; b=bVVVlp53zc2PVb7wjnTxQnrLfN0YCG1JMUJbPBRIx73r7ijDYZBBoGKlPryh71Xyh5izmwDs+NKZGKKgzBHpRrYvQlMNopYmm3A9UTLnE00uzXT3kr7COIBrXfUihsPF5ajEo60csQzd+4wfgyYHmppw5dhOzehOXihLKUOpSDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825642; c=relaxed/simple;
-	bh=uM78Fee6MDITdbkXhG/QTjdUmZK3+qbgXKmP8Y5eHt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L9qxcplZ7ixQn/G6HCEG4v3nL4zrsDwputojfWQ0QXzV4CelHif+Z2UubW1YqPgWO9fR+T0DLtfSBc+SzclXcYF9qKqX7uxWxyJhvQbxhh4TvVA2m0RQqqoNgQDEnuZYt+rEuh+xjWPlw1113LSH/ss7PuwbL+QimjD8I7D7ZTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPT0kTJ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0523DC4CED6;
-	Tue, 10 Dec 2024 10:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733825642;
-	bh=uM78Fee6MDITdbkXhG/QTjdUmZK3+qbgXKmP8Y5eHt4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oPT0kTJ/+wef7R4zQ3QnKqoFB1lAXhNBMVC+VJk7DWZtK5Q0Z0YGQZdPmJpZUetwZ
-	 WbcMTrmZ1TBCGQFdmkogwuwe2kt6GhgLy3xBsbf+gynE8kvtTNmQC0kPPY5f9AYgvJ
-	 zACgClJ8DTEZoXJhMSjtHiIRUyuEECe2lhPFPpH3MeL7k7v9EeXrdXnR18Dm7WT7V+
-	 rAgjF8BVnnkLvJrSDab7L0Xqar2rBRdiKnGz55fLpdHojJaViTYVv1451Bg71cVGpX
-	 AsX3u4wVAl1gm66OweMPz2SarRQW9kPjVdnjv67Sw+JVc9WYKHfw9ddwKSZhZvm8mj
-	 iuRPLqojjCmnw==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54024aa9febso1031276e87.1;
-        Tue, 10 Dec 2024 02:14:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUb5AkKGbT77Om2wdqwFzEWKysN1Iz/dsHx7vVccRauGQjgq9o23gQVgaM22eyoyxuyOLhlb95Tu20kBffK@vger.kernel.org, AJvYcCXyf1rTi8s5yzLLEZz2HIS4a3+cNOyCYX8DR0f5itzGyYWUCVXE9o8jtSy9UOMb15zloT3BixcaGYVCfhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxovIufbFyJosYREOmd0HZ69ZQ3B7b63vRQkkBpz05Ip/7snTI7
-	/Rw57rTjtRQV/1kfEq97wValRLhtsCpQtP+WYJd7/9rQnlrRnzES8kf1wvqP4QRntTsw5TUgQH3
-	xciGwtmKJHQk2ZOJ4KMGRgMMkCcg=
-X-Google-Smtp-Source: AGHT+IGGF3JC4ufgVyXLTrRakAfW2ICWmUO6jufw1sFgNBH6mV4KxN/2slWSks172u7MWlcHh1LHq3z6Oi1izqGMcHg=
-X-Received: by 2002:a05:6512:3a91:b0:540:1fd6:4e4f with SMTP id
- 2adb3069b0e04-5401fd64ecdmr2543931e87.22.1733825640677; Tue, 10 Dec 2024
- 02:14:00 -0800 (PST)
+	s=arc-20240116; t=1733825626; c=relaxed/simple;
+	bh=yUvWNxb4idOZ2cYkFtqd2fPWAQc5SwtEKIjpQd2PNA8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=TSJIDe/nZq79KMIIEp61iL7i303Ny1ih5Ml1sEP2axdbonEj3qP6qON3xPmf32yzZgi3MDe4EAEuBy/XMab7o7CvvU7/2mq9FYlD0OBNEJvThTkh8XNUQHhg8bpyWcc43QPkhLoJ5wDee1JK/bOO9nMf5Er3Ptt8UGxCTqivrQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKeHOKRK; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-728e729562fso131884b3a.0;
+        Tue, 10 Dec 2024 02:13:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733825624; x=1734430424; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yUvWNxb4idOZ2cYkFtqd2fPWAQc5SwtEKIjpQd2PNA8=;
+        b=WKeHOKRKGlNUSPOE4UIIA+jDmSGpcg0hfeX4KGnLW70Eqb5emQFhvhGoVL/npqqLfd
+         gUC9zB01nW1tSYbdYzek9f7MnE1XeId+gvr8j6DdwENFrp7ULtpY8z6OOKmiFi9pKy/8
+         QO76Q5tLSP3NNJbxl6LJ7k6gwAd33/3wQ+kkzLQDz3g/jL6paSZ2LjKgzRUE1jT8yce+
+         1+2YS+kWJL5luEzl71+8d7edDYqcJwsqVOJaNyRgp9XUR7vH9OJ3WRbl25pdXgDSRca1
+         PEqGvq7jmRKaXK1uSqCT9cn6V6iMdVUh+56byjVePDG8iE7TXhy0HzGj1LFhgN7JK07B
+         xKgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733825624; x=1734430424;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yUvWNxb4idOZ2cYkFtqd2fPWAQc5SwtEKIjpQd2PNA8=;
+        b=bXyIJnddv3/oWyYpT/1754buh7pexcgLnoo1Dn1LDQbfZ7fju5SwCUD2QK41EH99UB
+         5Ed5BXZmqUO/A8nexbCL2lkXHmD/SYNIZTxvQPyJxa4loSLstJPpeVIJznQqIL+wLGYw
+         jtEsW98Qphs5xq3qdKVDeAlhdE+Myrk7OBXRZ9hRWesfs3aNXyQl45j9dqfsG+DSej2A
+         1/J5df2VODjSmUNjxSgwVWDY9bjSmqacwcjbuX1ZQz9lnlnZKdRKItPRpSo+gX6XNWRj
+         fHc/ZD+4zSEThHNUUA/rgYj1ooMZmjuZRpXA46b+BKMR5FlzP6RgICLnjNNo38g8QcV+
+         jeAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxBnN++pTiPGurdsMeBjmMYwz9vmWLHTbZ8S38BogeVcjUFJ7ABuQuvOsiOjsH2ZbXa+ljTMFumSD2lzqBArGyvw==@vger.kernel.org, AJvYcCX+3KSZBNDks5FhGjRmCWKKEZA+x8e0fgXRiR0+xeHB0yGPXqfWfavWxxHXHXESgglGFd+83A7wlIb4dd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRH1oz/7NyDSqiNOsiLQEYp7Xu614CJK534VK3rnq9nigr3SCF
+	1EB6XN6wOCDXpg+8EjCZjLgYVTwRVEloNJkbjjhZVctMNoBMipDI
+X-Gm-Gg: ASbGncuSCDzxI1nfsnh1018MZt0SztbDtyE2025zN0RhjVHOUwUb+v3e+5T34wUvluz
+	Mly3kiuUCE07tE3kRWdn7R4uFjqeUdhdzFEXMYfOY9uNNcWlifTCyLIh6XjySCjYVGXC86EmAIN
+	Rj6Jb0tmstY6lnXt1HPgonYzkAKoyLX2NnwRsm/yd9bdFnQz6JtM5R16EPuC/oxdcnVFnzooyjL
+	FKGn7ZZDliMh3Xpy/aLZvLkZjFyKY+6qTz4a4yU7xrYf9uITS9HACQBkaSu/kqZhXD5GqC32JT4
+	vvWceQe+HJ2MJ55CA1fph4tLj/9vWp7k/vgmSPamFw==
+X-Google-Smtp-Source: AGHT+IEm9Hiq7FabfFpjZn/bDEYOqeD+ryLTLp+waiBObTFwwxsnEC+qurPI1TXeXrum62n36s/uhw==
+X-Received: by 2002:a05:6a00:ae16:b0:725:db34:6a7d with SMTP id d2e1a72fcca58-725db346d85mr15093285b3a.23.1733825623790;
+        Tue, 10 Dec 2024 02:13:43 -0800 (PST)
+Received: from smtpclient.apple (174.137.59.200.16clouds.com. [174.137.59.200])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e71ce821sm4200751b3a.183.2024.12.10.02.13.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Dec 2024 02:13:43 -0800 (PST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <168b2cb09f09ec3cead8a6b1e726ac76f5d06171.1733820553.git.geert+renesas@glider.be>
-In-Reply-To: <168b2cb09f09ec3cead8a6b1e726ac76f5d06171.1733820553.git.geert+renesas@glider.be>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 10 Dec 2024 19:13:24 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR8dy-=EcsZFb-tjXSk2sK7sHrV0WSSV4E8dzRh5Veceg@mail.gmail.com>
-Message-ID: <CAK7LNAR8dy-=EcsZFb-tjXSk2sK7sHrV0WSSV4E8dzRh5Veceg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Drop architecture argument from headers_check.pl
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH] perf evlist: Fix the warning logic about
+ warn_user_request_cpu
+From: Chunxin Zang <spring.cxz@gmail.com>
+In-Reply-To: <fd2eedf8-0eb3-4dbd-8cdd-a6f87f7e3ffc@linaro.org>
+Date: Tue, 10 Dec 2024 18:13:24 +0800
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>,
+ Chen Yang <yangchen11@lixiang.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ mingo@redhat.com,
+ namhyung@kernel.org,
+ mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com,
+ jolsa@kernel.org,
+ adrian.hunter@intel.com,
+ zhouchunhua@lixiang.com,
+ linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ zangchunxin@lixiang.com
 Content-Transfer-Encoding: quoted-printable
-
-On Tue, Dec 10, 2024 at 5:52=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Since commit 7ff0fd4a9e20cf73 ("kbuild: drop support for
-
-This is not a fixed commit hash because Andrew Morton
-does not use 'git request-pull'
-
-I will squash this to the original patch.
+Message-Id: <A5417261-B860-4993-AB33-A52AA2F2F83D@gmail.com>
+References: <20240318121150.1552888-1-spring.cxz@gmail.com>
+ <Z1cB28q8r54L59zU@x1> <fd2eedf8-0eb3-4dbd-8cdd-a6f87f7e3ffc@linaro.org>
+To: James Clark <james.clark@linaro.org>
+X-Mailer: Apple Mail (2.3731.700.6)
 
 
-> include/asm-<arch> in headers_check.pl"), the second argument $arch is
-> no longer used, hence drop it.
->
-> Reported-by: Masahiro Yamada <masahiroy@kernel.org>
-> Closes: https://lore.kernel.org/CAK7LNARNa3NPSeRAUgMaEqWiA+C6-s1PxRe1bCUJ=
-g6zLyOtDkA@mail.gmail.com
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Commit 7ff0fd4a9e20cf73 is part of the mm tree.
->
->  usr/include/Makefile         | 2 +-
->  usr/include/headers_check.pl | 5 ++---
->  2 files changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/usr/include/Makefile b/usr/include/Makefile
-> index 771e32872b2ab12d..6c6de1b1622b1a69 100644
-> --- a/usr/include/Makefile
-> +++ b/usr/include/Makefile
-> @@ -78,7 +78,7 @@ quiet_cmd_hdrtest =3D HDRTEST $<
->        cmd_hdrtest =3D \
->                 $(CC) $(c_flags) -fsyntax-only -x c /dev/null \
->                         $(if $(filter-out $(no-header-test), $*.h), -incl=
-ude $< -include $<); \
-> -               $(PERL) $(src)/headers_check.pl $(obj) $(SRCARCH) $<; \
-> +               $(PERL) $(src)/headers_check.pl $(obj) $<; \
->                 touch $@
->
->  $(obj)/%.hdrtest: $(obj)/%.h FORCE
-> diff --git a/usr/include/headers_check.pl b/usr/include/headers_check.pl
-> index 7070c891ea294b4d..2b70bfa5558e6451 100755
-> --- a/usr/include/headers_check.pl
-> +++ b/usr/include/headers_check.pl
-> @@ -3,9 +3,8 @@
->  #
->  # headers_check.pl execute a number of trivial consistency checks
->  #
-> -# Usage: headers_check.pl dir arch [files...]
-> +# Usage: headers_check.pl dir [files...]
->  # dir:   dir to look for included files
-> -# arch:  architecture
->  # files: list of files to check
->  #
->  # The script reads the supplied files line by line and:
-> @@ -23,7 +22,7 @@ use warnings;
->  use strict;
->  use File::Basename;
->
-> -my ($dir, $arch, @files) =3D @ARGV;
-> +my ($dir, @files) =3D @ARGV;
->
->  my $ret =3D 0;
->  my $line;
-> --
-> 2.34.1
->
 
+> On Dec 10, 2024, at 17:28, James Clark <james.clark@linaro.org> wrote:
+>=20
+> .
 
---=20
-Best Regards
-Masahiro Yamada
+Hi James, Arnaldo
+
+At that time, I also released a v2 version, and Ian Rogers provided some =
+suggestions
+for modifications. However, I'm very sorry that later, because I was =
+busy with other
+things, I forgot about this issue.=20
+Now I'm very glad to hear that this problem has been fixed. I'll verify =
+it in my environment
+when I have time this weekend.
+
+=
+https://lore.kernel.org/lkml/20240319091429.2056555-1-spring.cxz@gmail.com=
+/
+
+Best wishes
+Chunxin
 
