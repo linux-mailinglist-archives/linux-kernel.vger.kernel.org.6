@@ -1,162 +1,164 @@
-Return-Path: <linux-kernel+bounces-438851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6972B9EA74D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:48:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709AC1672A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:48:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8373226170;
-	Tue, 10 Dec 2024 04:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NO5QwH9x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D2E9EA751
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:49:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4774AEE2;
-	Tue, 10 Dec 2024 04:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526D32888DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:49:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0061AAA27;
+	Tue, 10 Dec 2024 04:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWqDUp6T"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBE413A865;
+	Tue, 10 Dec 2024 04:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733806108; cv=none; b=nGIW1abJu5jM9ZS/WDvR3qMopIhZWG/Fk4ilM+FkykvSPgbIGwL9bla9aJ+L/ODOObikHq/1/rEBh3h+LEY/6lRJwyV0xQCiJSUl1/09K1NhbdSkrv3Ux2NqQhpCugEUZEszZ4u1bRsuYFJJTWYZcqeIDDZc1vEgrR4J3Sut2Z4=
+	t=1733806135; cv=none; b=bF+IOHCTMrkHSWxNa6NvBNE1dxM8SZOfuQ81dP1d7GQcbl8c2A9GXd8NbW0JxPOS1o3N8ufXM9THrpZSMdV1VLgM1moKZUlbKYwCVP2W5+AQnUDOMegCuOllkkgc3Vy+/WNAZ82XbWl5X4CLlTaKnTzJVmuoy0po+mvavit3YG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733806108; c=relaxed/simple;
-	bh=3U6JcCeKNUWGnPNiljOaGIIMA78S3QZFZl5NyP1P5wc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=heNnmCPf7gP1yvF2KJssHxgcITeeXZQ2kt+oXivGUkdOMVl2sV96HKbSU7GUXEkbyOWKQo5ZCIKR0wUAqOs9HRaiMW2BZr8AEJaOEoJkUrI+SKwJR07U7PTRadv04MUhDtX9orkxhgPR+XpSL8VoCK6fdiYwNGhyyNBjwO+daeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NO5QwH9x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA3SXde014031;
-	Tue, 10 Dec 2024 04:48:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o1t/zfcp5xm0iq9g1wA52EzvM9hljEHIRdsWCAsl5W8=; b=NO5QwH9x62NUzPZO
-	H9AAVBgxnbq+NKno1qxft38UnlcJr5ypGQHCOur7DfptY8JhNt3BfNUKQslw/otu
-	RVkqRr3gB3Z4UbwMFnOq9I/7rWpo86tH3h5NB0mph0rH28bkW/rZH1jFqpsaSC4B
-	LkrNC1zhL5u2ZiggRI+kSrSBLfDbrfhB1JdJxaCaDsXo2rDuQLb5ldWKknZ6yGmd
-	YMcLSJ8MaTmeV+idPVKG6SSFyP4GhlE08ccnkmAUPV3O19Wu4Vpwy6Q/lH0yGtTd
-	hFDqbUqGqjGvCmtQiLHbG7CIwphVQFcEyJg8Q0QsCKqFWdpr7hVuqfDwwX2wYdSj
-	wUBpVw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dvyakb7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 04:48:18 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA4mH4e029910
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 04:48:17 GMT
-Received: from [10.216.2.81] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 20:48:11 -0800
-Message-ID: <183ec6e2-b78d-47f3-843c-b15dd3e7838d@quicinc.com>
-Date: Tue, 10 Dec 2024 10:18:08 +0530
+	s=arc-20240116; t=1733806135; c=relaxed/simple;
+	bh=fmuHub6i/UU89iJ3zmI8M0zPA8LOY2hfDA7Kp09iC4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=At5NYm294cGa7qdCJmCkJLgkhzdqOsWIKOG7DSizj6xLcWxPlIOfYUGfhc41PLoTkgHTMSIhAihQE+LaUMbru5/AD0r7rzy8YlIKUiSa7yPrFkhARvGZmIIYICRwnox+WGMFXGsTzSMfg3lbydpWo0x+AiPQ4f5HW+iwprpOOaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWqDUp6T; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3ea065b79so3474915a12.3;
+        Mon, 09 Dec 2024 20:48:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733806132; x=1734410932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SRhudRntXMdMCmvTCWHy+R0vrWQamPgM9djZeqqOOGk=;
+        b=JWqDUp6T0+SBmHbjjRV18IYsuMP1fR184k/jhfMJ8SCAa5rlCqlJiQutajFr7HngxA
+         V8TAEHFcDeMTcLr6KUcEwvVYPZ4U7JJB4fFn1aRrsOjS3N/+PYlEBTfHIbeJFOSpVgf6
+         EwBABaiGcZqa0SSVDWyo9BciDNKPDQAJ79KLNIpDEsKcgDCQjSJIQouh529U186I2aHg
+         RsPzj3ZJIPjKJZdtpMtXBVrnftAePSqd2hwg2y1tJo+isncQgS8b/WU2QvpsS583e5Ql
+         3WuphfQhU3xT8Ym/Fauvnax9rudST0Sou2XhcHiZeLbPhVxfQULyRJKMlS9RtgEdTYPl
+         +HJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733806132; x=1734410932;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SRhudRntXMdMCmvTCWHy+R0vrWQamPgM9djZeqqOOGk=;
+        b=L2n+a/96yv3nV1WYj7do+bR53K1kiWxMzCAe4y4PneEg7MMfrJiYediMc37g6GenRc
+         9YF6MzLfs/uZgB7V1zZVVemRYNXtaxt7jhuEGQuFmv4Lk75PYJrQnOxapx9suUCpC0be
+         vBBtQsbzOzvkSIZcyIgk9w/+1ttW/i9CSXcjSzLmbe9hmHIg9Z7rqie6zU+IUz5HcRnv
+         8rn1lA1iY9nRTqfpuLUuvtdaIUCXglHIfEspb72Kh7qnE/+R7d5cEO2OpDjWHLpIyrMX
+         P1MfWzSBfn+FboQ6D4+v2mRHdW/KYIVD4i/ushgLxuTjQBq2IhZqm3mivJ58UDeA+itw
+         VqRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8XG678TKO7TZcBFxpzjbDQ0DwXKHdgCjLav3A8iF9HD7z2b33VH/YrTk2kpn3eoHKHEE9THnJgsuJvFQC@vger.kernel.org, AJvYcCXeJEaPOqKSPdjO3Gftdk18si29tBMHMDDxuxCQ8YClWUt9Ba8JnT5KOdM6qOYEoC0/Vxg6hZwOft+QHNGp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEKYix9k8q9cwoqg/5UyBFukdb5G5diHQUtXypv2FNmZwDXIL8
+	fTDYo2T1FkEdjMU70R+zRpsM7EhcX2huOLufn1QneLPQDLCndFP4aTa67RedfurbM/FVYtKDayB
+	vdiFe14CSMOHmkqRiz6PMlUFuPAo=
+X-Gm-Gg: ASbGncsGCzzrjjH+reWtcaCIwEpCuECxuxwOeMUR3ByO9kwDKd9nii4lps/jTeknvob
+	HzgChwKOS7LPj/6EAlCEbzP9LA90V3FT1E2c=
+X-Google-Smtp-Source: AGHT+IGBiffJ5X2iaWC0nwpDNkAHhlszy1HhQEUv64YxBZjY2IAnPM4N3S8MjfXyUDtvLqL91fcR3OhcyBd47zZ6puU=
+X-Received: by 2002:a05:6402:1e90:b0:5d0:bcdd:ff9c with SMTP id
+ 4fb4d7f45d1cf-5d418502c73mr3460582a12.2.1733806132161; Mon, 09 Dec 2024
+ 20:48:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/7] dt-bindings: i2c: qcom,i2c-geni: Document DT
- properties for QUP firmware loading
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>,
-        <jirislaby@kernel.org>, <broonie@kernel.or>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <johan+linaro@kernel.org>,
-        <dianders@chromium.org>, <agross@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <quic_anupkulk@quicinc.com>,
-        Mukesh Kumar Savaliya
-	<quic_msavaliy@quicinc.com>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
- <garuc5au5464xpmj3exlull4o2763xrkqubplde56xmyfhfhmn@cpd4bbt4dfyr>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <garuc5au5464xpmj3exlull4o2763xrkqubplde56xmyfhfhmn@cpd4bbt4dfyr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cR1DaSoAvTnCAWOx6wIMIDUALLorzzAo
-X-Proofpoint-ORIG-GUID: cR1DaSoAvTnCAWOx6wIMIDUALLorzzAo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100033
+References: <20241205154743.1586584-1-mjguzik@gmail.com> <20241206-inszenieren-anpflanzen-317317fd0e6d@brauner>
+ <20241209195637.GY3387508@ZenIV>
+In-Reply-To: <20241209195637.GY3387508@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 10 Dec 2024 05:48:40 +0100
+Message-ID: <CAGudoHH76NYH2O-TQw6ZPjZF5ht76HgiKtsG=owYdLZarGRwcA@mail.gmail.com>
+Subject: Re: [MEH PATCH] fs: sort out a stale comment about races between fd
+ alloc and dup2
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 9, 2024 at 8:56=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Fri, Dec 06, 2024 at 01:13:47PM +0100, Christian Brauner wrote:
+> > On Thu, 05 Dec 2024 16:47:43 +0100, Mateusz Guzik wrote:
+> > > It claims the issue is only relevant for shared descriptor tables whi=
+ch
+> > > is of no concern for POSIX (but then is POSIX of concern to anyone
+> > > today?), which I presume predates standarized threading.
+> > >
+> > > The comment also mentions the following systems:
+> > > - OpenBSD installing a larval file -- this remains accurate
+> > > - FreeBSD returning EBADF -- not accurate, the system uses the same
+> > >   idea as OpenBSD
+> > > - NetBSD "deadlocks in amusing ways" -- their solution looks
+> > >   Solaris-inspired (not a compliment) and I would not be particularly
+> > >   surprised if it indeed deadlocked, in amusing ways or otherwise
+>
+> FWIW, the note about OpenBSD approach is potentially still interesting,
+> but probably not in that place...
+>
+> These days "not an embryo" indicator would probably map to FMODE_OPENED,
+> so fget side would be fairly easy (especially if we invert that bit -
+> then the same logics we have for "don't accept FMODE_PATH" would apply
+> verbatim).
+>
+> IIRC, the last time I looked into it the main obstacle to untangle had
+> boiled down to "how do we guarantee that do_dentry_open() failing with
+> -ESTALE will leave struct file in pristine state" and _that_ got boggled
+> down in S&M shite - ->file_open() is not idempotent and has no reverse
+> operation - ->file_free_security() takes care of everything.
+>
+> If that gets solved, we could lift alloc_empty_file() out of path_openat(=
+)
+> into do_filp_open()/do_file_open_root() - it would require a non-trivial
+> amount of massage, but a couple of years ago that appeared to have been
+> plausible; would need to recheck that...  It would reduce the amount of
+> free/reallocate cycles for struct file in those, which might make it
+> worthwhile on its own.
 
+Oh huh. I had seen that code before, did not mentally register there
+may be repeat file alloc/free calls due to repeat path_openat.
 
-On 12/5/2024 4:06 AM, Dmitry Baryshkov wrote:
-> On Wed, Dec 04, 2024 at 08:33:20PM +0530, Viken Dadhaniya wrote:
->> Document the 'qcom,load-firmware' and 'qcom,xfer-mode' properties to
->> support SE(Serial Engine) firmware loading from the protocol driver and to
->> select the data transfer mode, either GPI DMA (Generic Packet Interface)
->> or non-GPI mode (PIO/CPU DMA).
->>
->> I2C controller can operate in one of two modes based on the
->> 'qcom,xfer-mode' property, and the firmware is loaded accordingly.
->>
->> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->> ---
->>   .../devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml   | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> index 9f66a3bb1f80..a26f34fce1bb 100644
->> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> @@ -66,6 +66,15 @@ properties:
->>     required-opps:
->>       maxItems: 1
->>   
->> +  qcom,load-firmware:
->> +    type: boolean
->> +    description: Optional property to load SE (serial engine) Firmware from protocol driver.
->> +
->> +  qcom,xfer-mode:
->> +    description: Value 1,2 and 3 represents FIFO, CPU DMA and GSI DMA mode respectively.
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    enum: [1, 2, 3]
->> +
->>   required:
->>     - compatible
->>     - interrupts
->> @@ -142,5 +151,7 @@ examples:
->>           interconnect-names = "qup-core", "qup-config", "qup-memory";
->>           power-domains = <&rpmhpd SC7180_CX>;
->>           required-opps = <&rpmhpd_opp_low_svs>;
->> +        qcom,load-firmware;
-> 
-> please use instead:
-> firmware-name = "qcom/sc7180/qupv3.elf"
+Indeed it would be nice if someone(tm) sorted it out, but I don't see
+how this has any relation to installing the file early and thus having
+fget worry about it.
 
-Agreed, will be adopted in next patch.
+Suppose the "embryo"/"larval" file pointer is to be installed early
+and populated later. I don't see a benefit but do see a downside: this
+requires protection against close() on the fd (on top of dup2 needed
+now).
+The options that I see are:
+- install the file with a refcount of 2, let dup2/close whack it, do a
+fput in open to bring back to 1 or get rid of it if it raced (yuck)
+(freebsd is doing this)
+- dup2 is already special casing to not mess with it, add that to
+close as well (also yuck imo)
 
-> 
->> +        qcom,xfer-mode = <1>;
->>       };
->>   ...
->> -- 
->> 2.34.1
->>
-> 
+From userspace side the only programs which can ever see EBUSY are
+buggy or trying to screw the kernel, so not a concern on that front.
+
+Now something amusing, I did not realize I had a super stale copy of
+the OpenBSD source code hanging around -- they stopped pre-installing
+files in 2018! Instead they install late and do the in dup2 returning
+EBUSY, i.e. the same thing as Linux. I do have up to date FreeBSD and
+NetBSD though. :)
+
+Christian, would you mind massaging the OS entries in the commit
+message (or should i send a v2?):
+- OpenBSD installing a larval file -- they moved away from it, file is
+installed late and EBUSY is returned on conflict
+- FreeBSD returning EBADF -- reworked to install the file early like
+OpenBSD used to do
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
