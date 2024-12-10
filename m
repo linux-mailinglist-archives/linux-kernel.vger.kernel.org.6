@@ -1,166 +1,119 @@
-Return-Path: <linux-kernel+bounces-439704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80FE9EB2D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:12:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45709EB2D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:12:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E259B1882620
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:12:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1401881D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7692B1AAE1B;
-	Tue, 10 Dec 2024 14:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C571AAA32;
+	Tue, 10 Dec 2024 14:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AJSUtyuR"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzwoPKOv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA3619DF9A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9081A9B55;
+	Tue, 10 Dec 2024 14:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733839926; cv=none; b=tmCPjp8ZHx83C1BxoEOmdfJVeQD7swCQCdCb1pmb5gtjd9VUZHHMOU+epWcn537vN5F5y7IX09cCS7XTT40DSbxTN0nZpV3PLEItIp/lzQsNXaC/gWR0tIF06TtRij2FMM/oyQh3UQNpAAMznyS793CdopzwdV8bltabcItbS/g=
+	t=1733839967; cv=none; b=Jdt52Cpshlqy4kRsU2QQtMP4TQCN3AuwDCk0w9SWdp20Dw/kGN/1dRDWkMN8lEJCgSdVtwU83Om8eos101Ebiih3FBtaY+Rwybw3+QOC92c+FS6cZng7MLyYxeNVWTmkysgH3RSn0L00nqKeD625x1wycFKkENCfOlDo6t5v4gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733839926; c=relaxed/simple;
-	bh=zTzEWizpRaM8ODZvWNOpxJ8TZzIGu5NbRBoMbnMFbQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=TpysBXgY87Zwd3PbooNJfDi/puc1CJ3iT3nVOU5vYUD1WrnBje+WLW+DqVAUG99zrgW6A7gGU0j1h/UISd8qWCJckk19u3EO39rn+KUkGex3PtFcFEmkbRpXc9DePzaAOWwVDIDemNUFe5xpDO1oO0WAMvkFCvOuUXJYZTSHgQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AJSUtyuR; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241210141200epoutp017d0e00d6536577038e40379d977b39c5~P1jjC3N4M1236512365epoutp01f
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:12:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241210141200epoutp017d0e00d6536577038e40379d977b39c5~P1jjC3N4M1236512365epoutp01f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733839920;
-	bh=HfwqOcrO3Cvy54+XQ2mqcIc5mAMae4tZNeYE/5TOFLc=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=AJSUtyuR01TIKiB9qiX5y4nHwh2m6vDfgk8YjY6Rj1YQ+9U2xrFURXk1mshfboSof
-	 wR/WK3vJ3FyU6UWmsZ6gU6VLXAsWgF8u+0pVvcSJyKAM/YPmXsxdlpDhqQ7h/xGHOk
-	 U4bzE63SmjzlOSa1uOezVKQDLM9jecod4Ef0T7L8=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20241210141159epcas5p217de40b5a6a540752a998faa14f2fa07~P1jiJ6Dqe1988119881epcas5p2G;
-	Tue, 10 Dec 2024 14:11:59 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y70zL5XKnz4x9Pt; Tue, 10 Dec
-	2024 14:11:58 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E4.7D.19710.E2C48576; Tue, 10 Dec 2024 23:11:58 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241210141157epcas5p2ff173636946d70e2b6d0a44cd7c087be~P1jgCIQj10084800848epcas5p2G;
-	Tue, 10 Dec 2024 14:11:57 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241210141157epsmtrp2922d6521234b8ec8c5d3657f0a4bc104~P1jf-PUeU3088230882epsmtrp2L;
-	Tue, 10 Dec 2024 14:11:57 +0000 (GMT)
-X-AuditID: b6c32a44-363dc70000004cfe-13-67584c2e12e6
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	21.B7.18949.D2C48576; Tue, 10 Dec 2024 23:11:57 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241210141154epsmtip22eb775c181d0f8e44c3ead32f983c546~P1jdghQqC0507705077epsmtip2h;
-	Tue, 10 Dec 2024 14:11:54 +0000 (GMT)
-Message-ID: <e3f45175-a17d-4b88-b6e4-5c75e91132be@samsung.com>
-Date: Tue, 10 Dec 2024 19:41:53 +0530
+	s=arc-20240116; t=1733839967; c=relaxed/simple;
+	bh=KsuCpCpU4NCI4skx9geIqKf8RaGjHnVWPpoq4+ibDFY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=DYE1I2rG5Lv72sMjDSGmHDw7fYwOSuoB7TyzyucL5svDY+KZ/Hn8ik4H2lrdyH1NDVoMptk4vVzEoQeOU59fbvLQ1TksQonFIwgMPtZCMDT+RIFl36Z6uFJFgn1oxwBi3vtlegex+VMVkBQD5W9XZAiqq7zC0gA8kcaNtYYkdEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzwoPKOv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D792FC4CED6;
+	Tue, 10 Dec 2024 14:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733839967;
+	bh=KsuCpCpU4NCI4skx9geIqKf8RaGjHnVWPpoq4+ibDFY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rzwoPKOvMq/9sNXD14y/0WAeUy8VC6FvFT2D9HDD7YqaawBKSaIF1MZJ07QeiJVNs
+	 kGTqqEnWI6J3NRE73mhplFFu1s2Dra/t2HBZxZFNR1b1LHvCqVzudIbrJvKzuHmqru
+	 5bCSBShAU2uIwjjF0xZYcxtYrgyOnrLXUnpSQ8yZXLQpNwN1B7+KNQikNWpfJaL8gK
+	 sgVyf2G8KvaNOQ7vDOSimY3mzWJAijOIcKvhWZ3yjoPHwMcPdr5uMKW5GlFX4o6KXt
+	 C3hDcGiJ1OvpezxQQ4HYdScfho1D3tbuUY1qSqf/O3HUuXKEKTqPq0wJBaFTulAMxL
+	 qfCIAyru97bfg==
+Date: Tue, 10 Dec 2024 23:12:41 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov
+ <oleg@redhat.com>, Tzvetomir Stoyanov <tz.stoyanov@gmail.com>, Naveen N Rao
+ <naveen@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
+ <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
+Message-Id: <20241210231241.88c0ed24004b2bda2985ad99@kernel.org>
+In-Reply-To: <20241210121027.GM8562@noisy.programming.kicks-ass.net>
+References: <173371205755.480397.7893311565254712194.stgit@devnote2>
+	<173371208663.480397.7535769878667655223.stgit@devnote2>
+	<20241209110411.GL21636@noisy.programming.kicks-ass.net>
+	<20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
+	<20241210111528.bb2c66d71fe38be92010264a@kernel.org>
+	<20241210121027.GM8562@noisy.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded
- issue during MIDI bind retries
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: quic_jjohnson@quicinc.com, kees@kernel.org, abdul.rahim@myyahoo.com,
-	m.grzeschik@pengutronix.de, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
-	rc93.raju@samsung.com, taehyun.cho@samsung.com, hongpooh.kim@samsung.com,
-	eomji.oh@samsung.com, shijie.cai@samsung.com, alim.akhtar@samsung.com,
-	stable@vger.kernel.org
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <2024121035-manicure-defiling-e92c@gregkh>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxbZRT27W1vLyQ11wLjpRhWS3CjDNZKKRcFhoraDGJIFMX9AAp90xL6
-	td4ydVnMmAKyrQIFy0Zg1LlBLM3IsBusdk5r+BgjI9K5CIE5PlSmQwcU5zIctr04+fecc55z
-	znPOeV8C40/iAqJCb0YmvVIrwsPZF79L3Jmckl+klty8I6Zabec51N0fHBzq9qmLODVtt7Go
-	0e7PWNSHn/filNVzgU3NzP7Nps4tjXMon7sdp0531WCUq/YGi1oZ3OBQ1a4ZDuWob2dTvvuX
-	MMp+fg5Q1m+jcviKPkc9rrjS4eQqhhaHuYqGfySKJs8Hik9cDqBY7Ysr4O6rzNQgpQqZhEhf
-	blBV6NVZorw3Sl4uSZNLpMnSDCpdJNQrdShLlJtfkPxqhTYwhEh4QKmtCrgKlDQt2p2daTJU
-	mZFQY6DNWSJkVGmNMmMKrdTRVXp1ih6Zn5dKJM+lBYillZq16nq2sYvznmWthnUYHGMfBWEE
-	JGXw54ZrARxO8MmvAOw6bsUZYwXAiS+cgDH+ArBltulxirPTvsm6DGDzcFsowCeXAJxtjAxi
-	HpkNu4/0giBmkwnQbfGwGP9T8OrJhRA/itwOf5o6wQ3iCLICrrUeDfEjyZ3wzuBUSBNGOjE4
-	6bfgwQBGRsOphc5AIYLASSn8ZSQz6A4j0+GDlUkOQ9kO+5fasWAuJBcJuD7WzWFU58KW6ebN
-	CSLgb8MuLoMFcPWPyziDy6HH6t/0a6DX4cUYvAf22Mc4wb4YmQh73buZXk9Cy8OFkBxI8uDH
-	tXyGnQBHq32bFWPhrTM3NxUo4GjtfS6zt2UA29tPshqBsG3LWtq2TNm2ZZy2/zvbAdsBYpCR
-	1qlReZpRqkfvPj54uUHXB0JvXJw7AH7sfJTiBSwCeAEkMFEkj8grVPN5KuX7B5HJUGKq0iLa
-	C9IC92nCBFHlhsAn0ZtLpLIMiUwul8syUuVSUTTv95oOFZ9UK82oEiEjMv2XxyLCBIdZbx86
-	fdc1Vi8wz003H6lZuTXWeX2c7mk13Xv9lcJdWtmyHMvj7zjw6UZxcVbHs18bY9aKfOjLb6JL
-	cGG/c1413zQ0V1X3jm1A6E9tXD4eH/HRE/2nDsGRc2XHyjguhG+rkK/HJ9ahmQahLW6FezYu
-	cZsb7d1fm1+XPhvpH7FdM6Ra7/H23x7cI6j5NSf+0UPjRGOzeEiBvNMt44kFNp9YTydMXvHP
-	r/qGz7SUJvcoIsqSsi/p7JKnVaNOosV9Y4efdzB+LClG80J+TvheS2zR1cIOZHrmtfCNPy/s
-	S5rgOR8U8y0vnRiULM5cB2ffetGte3N9YJfXEzvwfV8pn1ctYtMapVSMmWjlv4MjXMpsBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSvK6uT0S6wcHjkhbTp21ktXhzdRWr
-	xYN529gs7iyYxmRxavlCJovmxevZLCbt2cpicffhDxaLdW/Ps1pc3jWHzWLRslZmiy1tV5gs
-	Ph39z2rRuOUuq8WqzjksFpe/72S2WLDxEaPFpIOiDkIem1Z1snnsn7uG3ePYi+PsHv1/DTwm
-	7qnz6NuyitHj8ya5APYoLpuU1JzMstQifbsEroyvjZ0sBctYK3q/tjI1MHazdDFyckgImEis
-	mb+ArYuRi0NIYDejxJ85Z9ggEtISr2d1MULYwhIr/z1nhyh6zSjx7MVGdpAEr4CdxPKm9WBF
-	LAKqErt69zBBxAUlTs58ArZBVEBe4v6tGWD1wgKZEvdOzQRbICKgIfHy6C0WkKHMAmuYJX7N
-	6GCE2PCRUeJH1ySwKmYBcYlbT+YDTeXgYBMwlHh2wgYkzClgLvHz001WiBIzia6tEJcyAy3b
-	/nYO8wRGoVlI7piFZNIsJC2zkLQsYGRZxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kR
-	HLVaWjsY96z6oHeIkYmD8RCjBAezkggvh3douhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeb697
-	U4QE0hNLUrNTUwtSi2CyTBycUg1MxX+qyjdxPr3XqPb1l9mTFV8NW8zV5DhKpjNERxzLCpiV
-	w1BsL37p9t9Yplnx8x09A4OijSwz2jLMD4t6yN3ntjlXXLPH6Fk5N++WCg1+N29HyVk2G4/M
-	WbljxlVth+cPJIXyJRdkvJGu1DYQCc5gZHQ48Eb9r4Xuuxt2fz7+2XPk7/Kb7vOYtRY731y1
-	00codUrnhi2C6Qz5vxU5tq+o522fzJf5KzE/bv38PW3c5Y67DafWtPN9EJuWfOEL69mERFFN
-	fYGEL6m3P30ODs4ycpbzfFSwM5RxM0diXrPiaZlbJ2oWFTgHfr4x8XaurMc2s7NLBNd9f/+7
-	7V36B7dnFps4Sp8nX034pruPv1yJpTgj0VCLuag4EQAXdKj5SQMAAA==
-X-CMS-MailID: 20241210141157epcas5p2ff173636946d70e2b6d0a44cd7c087be
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241208152338epcas5p4fde427bb4467414417083221067ac7ab
-References: <CGME20241208152338epcas5p4fde427bb4467414417083221067ac7ab@epcas5p4.samsung.com>
-	<20241208152322.1653-1-selvarasu.g@samsung.com>
-	<6b3b314e-20a3-4b3f-a3ab-bb2df21de4f5@samsung.com>
-	<2024121035-manicure-defiling-e92c@gregkh>
 
+On Tue, 10 Dec 2024 13:10:27 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-On 12/10/2024 3:48 PM, Greg KH wrote:
-> On Tue, Dec 10, 2024 at 03:23:22PM +0530, Selvarasu Ganesan wrote:
->> Hello Maintainers.
->>
->> Gentle remainder for review.
-> You sent this 2 days ago, right?
->
-> Please take the time to review other commits on the miailing list if you
-> wish to see your patches get reviewed faster, to help reduce the
-> workload of people reviewing your changes.
->
-> Otherwise just wait for people to get to it, what is the rush here?
->
-> thanks,
->
-> greg k-h
+> 
+> > Wait, this is for checking the jump_label_text_reserved(), but as far as
+> > I know, the text reserved area of jump_label will be updated when the
+> > module is loaded or removed. And the static call too, right?
+> 
+> Correct.
+> 
+> > In that case, what we need is to lock the modules (for the short term,
+> > can we use rcu_read_lock?) for using both jump_label_text_reserved()
+> > and static_call_text_reserved()?
+> 
+> Yes, rcu_read_lock() is sufficient to observe fully loaded modules. I
+> don't think you care about placing kprobes on modules that are still
+> loading (that doesn't really make sense).
 
+Actually, to probe module's __init function, it may put a probe during
+loading modules (by trace_kprobe.c) which has been done by module
+notification callback.
 
-Hi Greg,
+trace_kprobe_module_callback()
+ -> register_module_trace_kprobe()
+   -> __register_trace_kprobe()
+      -> register_kprobe()
+         -> check_kprobe_address_safe()
 
+Anyway, unless we run the module notifier callbacks in parallel,
+it should be safe.
 
-There is no rush. I understand that the review will take time and I 
-apologize for any inconvenience caused by sending the reminder email.
+Hmm, however, it seems that trace_probe's module notifier priority
+is not correct. It must be lower than jump_label but it is the same.
 
-Thanks,
-Selva
+OK, let me remove jump_label_lock() from kprobes (if it gets
+module reference), and give a lower priority to the trace_probe's
+module notifier to ensure it is called after jump_label is updated.
+
+> 
+> Also see:
+> 
+>   https://lkml.kernel.org/r/20241205215102.hRywUW2A@linutronix.de
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
