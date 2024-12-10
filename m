@@ -1,184 +1,129 @@
-Return-Path: <linux-kernel+bounces-438862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41B19EA789
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AC59EA78C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:07:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3F42835B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:07:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B062838FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25658226164;
-	Tue, 10 Dec 2024 05:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672E2226199;
+	Tue, 10 Dec 2024 05:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8uzWcSn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3bNebKT"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAB7224CC;
-	Tue, 10 Dec 2024 05:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCF2226182;
+	Tue, 10 Dec 2024 05:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733807210; cv=none; b=YaOB8NVQ4thsdV4seEvaq3ssirbOnPHKPQUU5uNx1Q5u91RFf3AKfsOFPnhjvNmqStGJDT9iXcVdjcLDMkolcv9f35Q4lpsrGESOnwWuhiQP36aR54tKTTSQdV63vwcnedXgr3+sueA4dk2HWSaUKdlbqluY+07kZfwAKGiYNhI=
+	t=1733807214; cv=none; b=aL8htE1BoW6VXYXoQqlw5fG6JlP0eYoKvmtHJSaBXipa88UfUMqWMnq90ViN3FYS/Uc73fPP3P+emlbKpDvDBZuENK93GLQLKXbmbW2nAY46M6kQK9walJu4v3I3SV3W9xw8IMu3DY7Z2tnXezXQamwuo4yEDWj7ptPDrOH07Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733807210; c=relaxed/simple;
-	bh=FvfgAQ2425VTwe2Rssp59H7oBWDMAlE6EsZmZZJntMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VIJ+10QpAGPBA97WtcAWvM6PK30k9JGfyBhcR7tdedcOqbyESE2ytVjgwUd/euVqSO4apDbtqLCWteh92yOhgirIad9SPB7TASuiVmQe5QgSOwNlpXMdcpziyrYQm7iYFgDb5/N3ej/LYWuPqLLae+4l4p30l0JgEM002hBksNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8uzWcSn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA3ovEM014620;
-	Tue, 10 Dec 2024 05:06:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qdAsSi2b7dDbgl0I+VDHPcKW0KEesI/jK4tE4M/2cSQ=; b=h8uzWcSn1B08jBFD
-	Hh9vfBPnwSKw4WAL3oPT20z30oKz7WSHbRD9krM0W3xavhjkh8PT0zvJc4uTWQ2z
-	w5wkZy+CRWRoVWDfAfgr95sQrAQ6qoMDmOa4O+DYcBav0E+XsMis/RJJxKni9XVd
-	6xaOCjQqsAJkJinWn8olKcYr0ONSa7PpI9Ncs+0G2MYpFCiGSORZ0+PluywBz+sd
-	0zdRVf+yuF7OoyOHn6bGEQoru/J6QQdMHvSlbTjhvsA3YIHXNKywe61SeFCtmOKc
-	+5ZS+8g+wt8CnkhNcGzvmntMAWp5hw+QRLlAkIgH6CbjHWpaiBAWBXLUUqTdTh9V
-	2AHh9g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3n84pj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 05:06:44 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA56eqo022909
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 05:06:40 GMT
-Received: from [10.216.2.81] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 21:06:34 -0800
-Message-ID: <9af6d639-9066-46a1-96c8-1b0b1790191d@quicinc.com>
-Date: Tue, 10 Dec 2024 10:36:31 +0530
+	s=arc-20240116; t=1733807214; c=relaxed/simple;
+	bh=bnkUahMoe/2DYRbSBWm5xIriVjrHBkBhabIvxjeBeXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ucByQEXKB/UKUacak6fwZ1cbzIBBCDmHGEAhzfDIqCibSwOwwz2GdYSrUOu9RneNCiLMSJWaC8+lfY3k74SQ8CPmcvBUU5nqh5FkqlyOpnNQKxqRzHoLH6ZIV3qHyJ7evyGHU6dMQ27nNcCfV9k3r505SdyVQHuJKrP9WsfiioE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3bNebKT; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2efded08c79so90467a91.0;
+        Mon, 09 Dec 2024 21:06:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733807212; x=1734412012; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dydebYrUiZDY1lQnbppwxvbgV+WzSwhPfcXyLsgRJsI=;
+        b=H3bNebKTu4UJw0mxGKE93DJAMnx5pU9vtdRk+zwzv5gcH7V/UzAlK62YUpiCNUNkNp
+         sb3Uc3fLKQO3GC0qkL+DHsf4+agUtFQZbeh5+HkINIrfXPAIVU0CgURbDaSExltyp6tR
+         U9As3OQdSZ8WZMwx6P2/sHOIwLejQinyoS8jjyLvYBDO7pUAhjiQTqrRLz/+C5fSTgfZ
+         s+pZYEgNwoJ595ujsOXHnbQnMgx8vwcYzSe8WkXivrQPY9Dg+Msikh6neRIdaWsMLjyy
+         pPeo8eUtDjaQrPIFJN6lC6LyV3u1L93iDLNxwsBDAgRS4aZwGziGzTaePEH+ULfQWol7
+         mRjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733807212; x=1734412012;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dydebYrUiZDY1lQnbppwxvbgV+WzSwhPfcXyLsgRJsI=;
+        b=gQQi3q5+5JszzFzA5X9lSf0O0tqQNmWKf1qKSCwxP+Yt0EOrhh1fRiQED9mz2i+dmE
+         lJ59FB6+Lc6W818XuvXkmdeTZfbRJg8N7jQGwEpvucA0U5Vf4ek+bVpa3VcyFZU1Er1w
+         FRCX3DFAsXzYKFmb3ZQxMzHyQUzaSHXKlZ+VUONEWzWHE72BP7oTk3wdDC3yF6eOpUpj
+         oErPcwhIUH4oOadyXAkXxrhxZHu6i2E3ud405oUkpRO82MOTvgDdwDc7WNCzTnjBlZ8S
+         h1/9BPu/kA5G54cPQbMTuSikQ08TcVxk0v02pCER34qLDWlS6jJBvMViumrUyh+sOEmv
+         cm7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUufS8AZ2IDWA0Q0h5vlU1rUVmaooeM7ThUEiAOyBXDDf8Yucwwvsv7Fg8l/y1r8FvE7gMyRBDR@vger.kernel.org, AJvYcCWkCr7YyggkSZV2yx1dQSI7RT/EisETiks+osoBFFk/EyPmkVAqotn7LMEzfMMv1YItXXZvETv3aOiwOJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy83uwEs4rxNDhs5t8yNmubVEmjAQoQ91ZCzKhgr1bOzCTNnWc
+	oYh88wfM4JrI3W7GurVXGSKySqr3maNBq4mMp5mToYGHP8eIvfQq9mlY3hka
+X-Gm-Gg: ASbGncsuNBGPzywFxNzKnkED4CbWnGHSZjLz7bQcJ120p3YOI4z/Gf2HyztmG/gIW3z
+	xbP1LYOH+4i6ILE1iRKN+J/zRlFhHBn0sU+eEWhHUj0/6xsODIjJXNvSq9FpZQHeI/7cSe8Aea2
+	GmnEwKnFFyjl9pTvdFWYiu4ux/+VqfhbqTjZRSmQtPQWBTYXhKRdA/cn+yXDgdxepjLMng2sxnw
+	Z6B61IYz8j/Hdb73Wy37KVfKdRUqg3RDn7nYhBsTobkqG+6ihurNaDv/gt/0liu7lWagKcAt0wP
+	tM56TXB0VRp8
+X-Google-Smtp-Source: AGHT+IEAORtju9S5h0kVI3znrOXeKH7w2rA5o0agZXRBE+GxLm5nxeAEr6Xzme+30l7AGcejo40jGQ==
+X-Received: by 2002:a17:90b:46:b0:2ee:df8b:684 with SMTP id 98e67ed59e1d1-2efcef21b5dmr5313424a91.0.1733807212157;
+        Mon, 09 Dec 2024 21:06:52 -0800 (PST)
+Received: from xiberoa (c-76-103-20-67.hsd1.ca.comcast.net. [76.103.20.67])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd55a9a5edsm1524182a12.55.2024.12.09.21.06.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 21:06:51 -0800 (PST)
+Date: Mon, 9 Dec 2024 21:06:48 -0800
+From: Frederik Deweerdt <deweerdt.lkml@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Frederik Deweerdt <deweerdt.lkml@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Michal Luczaj <mhal@rbox.co>,
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
+	xiyou.wangcong@gmail.com, David.Laight@ACULAB.COM,
+	jdamato@fastly.com, stable@vger.kernel.org
+Subject: [PATCH v2 net] splice: do not checksum AF_UNIX sockets
+Message-ID: <Z1fMaHkRf8cfubuE@xiberoa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/7] Add support to load QUP SE firmware from
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andi.shyti@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-        <broonie@kernel.or>, <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <johan+linaro@kernel.org>, <dianders@chromium.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>
-CC: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        <quic_anupkulk@quicinc.com>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <9d5e5b8b-aeaf-4ec8-b34a-8edeaec20037@oss.qualcomm.com>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <9d5e5b8b-aeaf-4ec8-b34a-8edeaec20037@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qRRXYg9a7E_Wfm1f0CN3LgSjkDWWg104
-X-Proofpoint-ORIG-GUID: qRRXYg9a7E_Wfm1f0CN3LgSjkDWWg104
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100035
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+When `skb_splice_from_iter` was introduced, it inadvertently added
+checksumming for AF_UNIX sockets. This resulted in significant
+slowdowns, for example when using sendfile over unix sockets.
 
+Using the test code in [1] in my test setup (2G single core qemu),
+the client receives a 1000M file in:
+- without the patch: 1482ms (+/- 36ms)
+- with the patch: 652.5ms (+/- 22.9ms)
 
-On 12/5/2024 9:29 PM, Konrad Dybcio wrote:
-> On 4.12.2024 4:03 PM, Viken Dadhaniya wrote:
->> In Qualcomm SoCs, firmware loading for Serial Engines (SE) in the QUP
->> hardware has traditionally been managed by TrustZone (TZ). This setup
->> handled Serial Engines(SE) assignments and access control permissions,
->> ensuring a high level of security but limiting flexibility and
->> accessibility.
->>   
->> This limitation poses a significant challenge for developers who need more
->> flexibility to enable any protocol on any of the SEs within the QUP
->> hardware.
->>   
->> To address this, we are introducing a change that opens the firmware
->> loading mechanism to the Linux environment. This enhancement increases
->> flexibility and allows for more streamlined and efficient management. We
->> can now handle SE assignments and access control permissions directly
->> within Linux, eliminating the dependency on TZ.
->>   
->> We propose an alternative method for firmware loading and SE
->> ownership/transfer mode configuration based on device tree configuration.
->> This method does not rely on other execution environments, making it
->> accessible to all developers.
->>   
->> For SEs used prior to the kernel, their firmware will be loaded by the
->> respective image drivers (e.g., Debug UART, Secure or trusted SE).
->> Additionally, the GSI firmware, which is common to all SEs per QUPV3 core,
->> will not be loaded by Linux driver but TZ only. At the kernel level, only
->> the SE protocol driver should load the respective protocol firmware.
-> 
-> I think this is a great opportunity to rethink the SE node in general.
-> 
-> Currently, for each supported protocol, we create a new node that
-> differs in (possibly) interconnects and pinctrl states. These are really
-> defined per-SE however and we can programmatically determine which ones
-> are relevant.
-> 
-> With the growing number of protocols supported, we would have to add
-> 20+ nodes in some cases for each one of them. I think a good one would
-> look like:
-> 
-> geni_se10: serial-engine@abcdef {
-> 	compatible = "qcom,geni-se";
-> 
-> 	reg
-> 	clocks
-> 	power-domains
-> 	interconnects
-> 	...
-> 
-> 	status
-> 
-> 	geni_se10_i2c: i2c {
-> 		// i2c-controller.yaml
-> 	};
-> 
-> 	geni_se10_spi: spi {
-> 		// spi-controller.yaml
-> 	};
-> 
-> 	...
-> }
-> 
-> Or maybe even get rid of the subnodes and restrict that to a single
-> se-protocol = <SE_PROTOCOL_xyz> property, if the bindings folks agree.
-> 
-> We could extend the DMA APIs to dynamically determine the protocol
-> ID and get rid of hardcoding it.
-> 
-> And then we could spawn an instance of the spi, i2c, etc. driver from
-> the GENI SE driver.
-> 
-> Konrad
+This commit addresses the issue by marking checksumming as unnecessary in
+`unix_stream_sendmsg`
 
-Thanks for the advice.
-The above design suggested by you may add more code change into protocol 
-driver as well as common driver.
-I am really interested to discuss more options and come to better 
-design. let me discuss with you on this.
-Also do you think we can push the re-design of DTSI nodes as separate 
-change instead of clubbing with this FW load change ?
+Cc: stable@vger.kernel.org
+Signed-off-by: Frederik Deweerdt <deweerdt.lkml@gmail.com>
+Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff for MSG_SPLICE_PAGES")
+---
+ net/unix/af_unix.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 001ccc55ef0f..6b1762300443 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -2313,6 +2313,7 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
+ 		fds_sent = true;
+ 
+ 		if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES)) {
++			skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 			err = skb_splice_from_iter(skb, &msg->msg_iter, size,
+ 						   sk->sk_allocation);
+ 			if (err < 0) {
+-- 
+2.44.1
 
 
