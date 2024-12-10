@@ -1,145 +1,132 @@
-Return-Path: <linux-kernel+bounces-439367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E6C9EAE2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5150A9EAE33
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49BE21888CE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:45:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258B21888E9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE5A2080C6;
-	Tue, 10 Dec 2024 10:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA69B12E4A;
+	Tue, 10 Dec 2024 10:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIBPsBdw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="XJbG1lW0"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F6178F55;
-	Tue, 10 Dec 2024 10:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D98A1DC982;
+	Tue, 10 Dec 2024 10:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733827528; cv=none; b=WcqF6B+Lwfyq7HRK3CTpI61aFmmp1ZhnaL86nbBD3oRTrHQWNj4U7JZCW0Lf7Zq3RrBqftAB+XI6umorrGZRsB+hsmx8/tyiVSrobPeMov6d1bHDzEc7R+U//hrHqoN+rimw1xKpD3vy1cZch9nmsP/I9TgvvcZBFkSwJ2bJUE0=
+	t=1733827555; cv=none; b=NjDXQ4GCgM+YRwrjozbhpfAAwrs9blEIbe51yy5kz5vZK7yNEKw/OBZ/6Xc7E17TPOFnZATE1Howcii8BUHHy2lErWmxG1ov3VUz/IWjgpAthY99hFBkreHrOWc3ZrJ9HcpN1m3+mvUzd+gsc8+0kUTL8+ENKE8UqGiKBHiTcAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733827528; c=relaxed/simple;
-	bh=l7fBF8yvaA8NA8poiu32Gw7o8kTZtL24RhNPjNqxYwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bo80v7m7r2L6R4TJjL0z8n1MVVRoZiWhafVK8AjdgkF3iGO3tKAJADjj03q4b5Nl9cKYKoz0FJ5WcY2DBjtC/aXGKubS4mswJzNxrKoRsFT76QgE9SeNgg2nc5EilSCyAXIcykRWi22ZaY33FUGnRseuBTRlt/dWZ2SYjOAYpgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIBPsBdw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B422BC4CED6;
-	Tue, 10 Dec 2024 10:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733827527;
-	bh=l7fBF8yvaA8NA8poiu32Gw7o8kTZtL24RhNPjNqxYwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIBPsBdwLX0jx+tKoF8ZtEhhttiLaFsv4VKShxS41Ugn8o/y7pWkg7fJiff263Hw/
-	 6f+FmcqsNAaOfyT8Hnz96MdBvPxZsViYtiHTwTgHeQ4vquPZCC7Tss70kW0SQJrtsA
-	 sdBdsFMhr1ugWTzYCU0mCEF+GbJWUcEX3HdsZNAsTNgNknFHlV54P/Xpx5f0tj//rE
-	 gR8ekN+m3XJKxeTtwfrOpjI5HgB8zrCEtLncpZiojlLrwsyiAiUk8Ck3QdAMXeRkrZ
-	 M/EOV5iM90L8tj2pxRAV/2Wc7OlQXD4bk8UvqmX0iTvP9nVaOR4NlNTMh0LM5FVVUM
-	 wgokuo2Is4dyw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tKxk9-000000004tl-10rO;
-	Tue, 10 Dec 2024 11:45:29 +0100
-Date: Tue, 10 Dec 2024 11:45:29 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH v2 0/2] arm64: dts: qcom: x1e80100: fix USB OTG
- regressions
-Message-ID: <Z1gbyXk-SktGjL6-@hovoldconsulting.com>
-References: <20241209111905.31017-1-johan+linaro@kernel.org>
- <iw2c4fceyppf2w2gueevsqsz2z7hatbqo33vufx3veatprczu5@u4k3j2igy6ee>
- <Z1cNHOqlRk2Cxwvd@hovoldconsulting.com>
- <CAA8EJppcQrJkZe1ft_PLaB1C5d6vTke6BOSDZXJuNwrxy3kJKQ@mail.gmail.com>
+	s=arc-20240116; t=1733827555; c=relaxed/simple;
+	bh=KcuRT9gwOX+t8q9/p363S/BIEnItmU1RXAbOOJJIRJA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=iDdxNmCaFL4hcwrYiRhAc6IclG/p3Btl4omEsjbK/MbEBsj88VXpvUSbqixie2VoqBYaqY+BU6g7FzAwUG/3Cwp+yj18X1beCaXSTDX+GueLwEaP6Fbj00xk/AkZYfM+99LCQI92rgVJldwkhCuBUytFKpI7lXAh+3PYC42k3dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=XJbG1lW0; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppcQrJkZe1ft_PLaB1C5d6vTke6BOSDZXJuNwrxy3kJKQ@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1733827551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=utTTuCvuh3w8J6nQIZy3AvdY9OBVE0hycTiZtgTEi6Y=;
+	b=XJbG1lW0Cdd/1WVz8664gHslMX0L0NGOdEauAEbidL2Gz+zZANyaa5m3Y7MF+Jwx1FK1wx
+	pqqqBhccPr0qh6EnZzwULif0FUZQ66Kxwgzs8vQB8yte7weND74C9EaecXpmqCgEglz0BF
+	qFpD2qwgBraLaXi75Xt3CbLWHoxlNT2gf2NBcVG0NPl8XRo0iAyxPXCf52e4vWk8401iYh
+	o9JK+th0SkNNtJx9t8m+GcLRSdvklGZGjF5jzws2NlAZxVD+uvUfVCoZb28YVZ2bhaxxxB
+	Ur1oPJd18Q8Rtn2REqhJNcictZvuw6q2QD1ubROxoc/dBFmPPYJzGwR097EJOg==
+Date: Tue, 10 Dec 2024 11:45:49 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Peter Geis <pgwipeout@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
+ Diederik de Haas <didi.debian@cknow.org>, Johan Jonker <jbx6244@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 6/6] arm64: dts: rockchip: Remove address aligned beats
+ from rk3328-roc
+In-Reply-To: <20241210013010.81257-7-pgwipeout@gmail.com>
+References: <20241210013010.81257-1-pgwipeout@gmail.com>
+ <20241210013010.81257-7-pgwipeout@gmail.com>
+Message-ID: <2b68c2dd3618e5904a4eac1ec87d29a7@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Mon, Dec 09, 2024 at 06:00:21PM +0200, Dmitry Baryshkov wrote:
-> On Mon, 9 Dec 2024 at 17:30, Johan Hovold <johan@kernel.org> wrote:
-> > On Mon, Dec 09, 2024 at 03:23:05PM +0200, Dmitry Baryshkov wrote:
-> > > On Mon, Dec 09, 2024 at 12:19:03PM +0100, Johan Hovold wrote:
-> > > > A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
-> > > > ports can break SuperSpeed device hotplugging.
-> > > >
-> > > > Abel noticed that the corresponding commit for the CRD also triggers a
-> > > > hard reset during resume from suspend.
-> > > >
-> > > > With retimer (and orientation detection) support not even merged yet,
-> > > > let's revert at least until we have stable host mode in mainline.
-> > > >
-> > > > Note that Stephan and Dmitry have already identified other problems with
-> > > > the offending commits here:
-> > > >
-> > > >     https://lore.kernel.org/all/ZxZO6Prrm2ITUZMQ@linaro.org/
-> > > >     https://lore.kernel.org/all/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef
-> >
-> > > > Changes in v2
-> > > >  - revert also the corresponding patch for the CRD which breaks suspend
-> > >
-> > > As you are reverting two commits, please revert the third one too, it
-> > > breaks pmic-glink.
-> >
-> > Can you be more specific?
-> >
-> > I was gonna say that pmic_glink works since hotplug and orientation
-> > detection still works, but I tested now with DP altmode and that is
-> > indeed broken unless I revert the third commit (f042bc234c2e ("arm64:
-> > dts: qcom: x1e80100: enable OTG on USB-C controllers")).
-> >
-> > Was that what you had in mind? Can you explain why that breaks?
+Hello Peter,
+
+Thanks for the patch.  Please, see some comments below.
+
+On 2024-12-10 02:30, Peter Geis wrote:
+> Since commit 8a469ee35606 ("arm64: dts: rockchip: Add txpbl node for
+> RK3399/RK3328"), the snps,aal, snps,txpbl, and snps,rxpbl nodes have
+> been unnecessary in the separate device trees. There is also a
+> performance loss to using snps,aal. Remove these from the rk3328-roc
+> device tree.
 > 
-> See https://linux-regtracking.leemhuis.info/regzbot/regression/lore/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef/
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 > 
-> For some reason commit f042bc234c2e ("arm64: dts: qcom: x1e80100: enable
-> OTG on USB-C controllers") seems to break UCSI on X1E80100 CRD:
+> ---
 > 
-> [   34.479352] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: PPM init
-> failed, stop trying
+>  arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
+> index 6984387ff8b3..0d476cc2144d 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
+> @@ -155,12 +155,9 @@ &gmac2io {
+>  	phy-mode = "rgmii";
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&rgmiim1_pins>;
+> -	snps,aal;
 
-Ok, so you're referring to your UCSI report that I linked to above.
+Huh, I see that quite a few RK3328 board dts files specify
+the snps,aal node.  I wonder was it a "cargo cult" approach
+at play, :) or was there some real need for it?
 
-With the full series applied, I typically do *not* see the PPM init
-error message, so it does not seem directly related to the regressions I
-reported. DP still works even when SS hotplug does not.
+Actually, I see now that you added snps,aal to rk3328-roc-
+cc.dts in the commit 393f3875c385 ("arm64: dts: rockchip:
+improve rk3328-roc-cc rgmii performance."), so I guess that
+your further research and testing showed that it actually
+isn't needed for Ethernet stability?
 
-With only the first patch applied, I do see the PPM init error on every
-boot and DP is broken. Hotplug and orientation detection still works
-though:
+>  	snps,reset-gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
+>  	snps,reset-active-low;
+>  	snps,reset-delays-us = <0 10000 50000>;
+> -	snps,rxpbl = <0x4>;
+> -	snps,txpbl = <0x4>;
 
-[   19.698560] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: PPM init failed, stop trying
-[   45.100142] r8152-cfgselector 4-1: USB disconnect, device number 2
-[   47.380999] usb 4-1: new SuperSpeed USB device number 3 using xhci-hcd
-[   47.549862] r8152-cfgselector 4-1: reset SuperSpeed USB device number 3 using xhci-hcd
-[   47.630710] r8152 4-1:1.0 eth0: v1.12.13
-[   50.591050] r8152 4-1:1.0 eth0: carrier on
-[   50.892296] r8152-cfgselector 4-1: USB disconnect, device number 3
-[   55.517111] usb 4-1: new SuperSpeed USB device number 4 using xhci-hcd
-[   55.694021] r8152-cfgselector 4-1: reset SuperSpeed USB device number 4 using xhci-hcd
+Unless I'm missing something, the commit 8a469ee35606 ("arm64:
+dts: rockchip: Add txpbl node for RK3399/RK3328") doesn't add
+the snps,rxpbl node to the RK3328 SoC dtsi, and the respective
+driver does nothing about it when the snps,txpbl node is found.
 
-> > I'll respin with a v3, but please answer the above first.
+Though, I see that rk3328-rock-pi-e.dts is the only other
+RK3328 board dts file that specifies the snps,rxpbl node, so
+it seems that removing the snps,rxpbl node here should be safe,
+especially because it was you who added it in the same commit
+mentioned above.  If there were some SoC-level issues, all
+RK3328 boards would've needed it.
 
-I'll revert the first patch as well.
-
-Johan
+>  	tx_delay = <0x24>;
+>  	rx_delay = <0x18>;
+>  	status = "okay";
 
