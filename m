@@ -1,119 +1,146 @@
-Return-Path: <linux-kernel+bounces-439705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45709EB2D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D34989EB2E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:14:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1401881D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74928188670A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C571AAA32;
-	Tue, 10 Dec 2024 14:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36B41AAE1A;
+	Tue, 10 Dec 2024 14:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzwoPKOv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScFZexYJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9081A9B55;
-	Tue, 10 Dec 2024 14:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4172923DE87;
+	Tue, 10 Dec 2024 14:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733839967; cv=none; b=Jdt52Cpshlqy4kRsU2QQtMP4TQCN3AuwDCk0w9SWdp20Dw/kGN/1dRDWkMN8lEJCgSdVtwU83Om8eos101Ebiih3FBtaY+Rwybw3+QOC92c+FS6cZng7MLyYxeNVWTmkysgH3RSn0L00nqKeD625x1wycFKkENCfOlDo6t5v4gA=
+	t=1733840025; cv=none; b=qhrKaJ0gCFeH44cfltnPZcb2+Q6vBCG+cwFeUuMGCQRL5Ka7IJmLDF5Urz1gsL4HbAxq+vZDxC+vDIwoEvJwr0HuP9AXrcTy1T02ZZMr9Xpl8t/J7S0zJCpsZlNCwrjzAelOS8dnddRmiUZXjRQ9aF/WhYCJ2Sm0yuhajfUPXGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733839967; c=relaxed/simple;
-	bh=KsuCpCpU4NCI4skx9geIqKf8RaGjHnVWPpoq4+ibDFY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DYE1I2rG5Lv72sMjDSGmHDw7fYwOSuoB7TyzyucL5svDY+KZ/Hn8ik4H2lrdyH1NDVoMptk4vVzEoQeOU59fbvLQ1TksQonFIwgMPtZCMDT+RIFl36Z6uFJFgn1oxwBi3vtlegex+VMVkBQD5W9XZAiqq7zC0gA8kcaNtYYkdEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzwoPKOv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D792FC4CED6;
-	Tue, 10 Dec 2024 14:12:43 +0000 (UTC)
+	s=arc-20240116; t=1733840025; c=relaxed/simple;
+	bh=p1a7HwVIsBUxDg8oRarlZACVtkKI+wv6CArQotlXVmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OB22NABlcVl4RDRM++EwsUfSaqEuCs4KDz/uST85OCIMJojKOhcUNVVzlIwMPrr7rnnNfEJ1r6mLy04ZEPHK3rUvjkFtcVqXQAvisZJajNFwH0d+aaBrtG4URqhAVD1B+t/+EO9Uo4PhYXC3Q4N0j3GWvRIcSFuzwUtlOQBeTSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScFZexYJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2D2C4CED6;
+	Tue, 10 Dec 2024 14:13:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733839967;
-	bh=KsuCpCpU4NCI4skx9geIqKf8RaGjHnVWPpoq4+ibDFY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rzwoPKOvMq/9sNXD14y/0WAeUy8VC6FvFT2D9HDD7YqaawBKSaIF1MZJ07QeiJVNs
-	 kGTqqEnWI6J3NRE73mhplFFu1s2Dra/t2HBZxZFNR1b1LHvCqVzudIbrJvKzuHmqru
-	 5bCSBShAU2uIwjjF0xZYcxtYrgyOnrLXUnpSQ8yZXLQpNwN1B7+KNQikNWpfJaL8gK
-	 sgVyf2G8KvaNOQ7vDOSimY3mzWJAijOIcKvhWZ3yjoPHwMcPdr5uMKW5GlFX4o6KXt
-	 C3hDcGiJ1OvpezxQQ4HYdScfho1D3tbuUY1qSqf/O3HUuXKEKTqPq0wJBaFTulAMxL
-	 qfCIAyru97bfg==
-Date: Tue, 10 Dec 2024 23:12:41 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Anil S Keshavamurthy
- <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov
- <oleg@redhat.com>, Tzvetomir Stoyanov <tz.stoyanov@gmail.com>, Naveen N Rao
- <naveen@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
- <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
-Message-Id: <20241210231241.88c0ed24004b2bda2985ad99@kernel.org>
-In-Reply-To: <20241210121027.GM8562@noisy.programming.kicks-ass.net>
-References: <173371205755.480397.7893311565254712194.stgit@devnote2>
-	<173371208663.480397.7535769878667655223.stgit@devnote2>
-	<20241209110411.GL21636@noisy.programming.kicks-ass.net>
-	<20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
-	<20241210111528.bb2c66d71fe38be92010264a@kernel.org>
-	<20241210121027.GM8562@noisy.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1733840024;
+	bh=p1a7HwVIsBUxDg8oRarlZACVtkKI+wv6CArQotlXVmo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ScFZexYJCgt6WvxjNXGB3iIshv5MbK12VwWs0RNL583DU7niUDPigVOfY7yoa3/j7
+	 jGKzBvbGaWkSU7EFm2X0qPfbstIi4iKBDga7bJC0k9DWU3BazppUxr0LWaPMk+xnV+
+	 rlYMQcmCO5VeCUkgLgxianbVXCIVXl65tIL1OWREDwLJpFaM5Stz0HxofjGwGB5X+o
+	 yT3RQcemmJywxVjQ8F3OLIiwuAl2qtVRprlycljaqADLvtxXjgH3GeHsbNYgTmVzhb
+	 IbJUmrWsLgl+k+bglmuJTHdPdx0mlfARHOzohz16FYOvVOYcmimzSppaIV4dfgGZNK
+	 xIaVtrdVHGb7Q==
+Date: Tue, 10 Dec 2024 14:13:35 +0000
+From: Will Deacon <will@kernel.org>
+To: ankita@nvidia.com
+Cc: jgg@nvidia.com, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, ryan.roberts@arm.com, shahuang@redhat.com,
+	lpieralisi@kernel.org, aniketa@nvidia.com, cjia@nvidia.com,
+	kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com,
+	acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com,
+	danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com,
+	udhoke@nvidia.com, dnigam@nvidia.com, alex.williamson@redhat.com,
+	sebastianene@google.com, coltonlewis@google.com,
+	kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org,
+	akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <20241210141334.GD15607@willie-the-truck>
+References: <20241118131958.4609-1-ankita@nvidia.com>
+ <20241118131958.4609-2-ankita@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118131958.4609-2-ankita@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, 10 Dec 2024 13:10:27 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
-
+On Mon, Nov 18, 2024 at 01:19:58PM +0000, ankita@nvidia.com wrote:
+> From: Ankit Agrawal <ankita@nvidia.com>
 > 
-> > Wait, this is for checking the jump_label_text_reserved(), but as far as
-> > I know, the text reserved area of jump_label will be updated when the
-> > module is loaded or removed. And the static call too, right?
+> Currently KVM determines if a VMA is pointing at IO memory by checking
+> pfn_is_map_memory(). However, the MM already gives us a way to tell what
+> kind of memory it is by inspecting the VMA.
 > 
-> Correct.
+> This patch solves the problems where it is possible for the kernel to
+> have VMAs pointing at cachable memory without causing
+> pfn_is_map_memory() to be true, eg DAX memremap cases and CXL/pre-CXL
+> devices. This memory is now properly marked as cachable in KVM.
 > 
-> > In that case, what we need is to lock the modules (for the short term,
-> > can we use rcu_read_lock?) for using both jump_label_text_reserved()
-> > and static_call_text_reserved()?
+> The pfn_is_map_memory() is restrictive and allows only for the memory
+> that is added to the kernel to be marked as cacheable. In most cases
+> the code needs to know if there is a struct page, or if the memory is
+> in the kernel map and pfn_valid() is an appropriate API for this.
+> Extend the umbrella with pfn_valid() to include memory with no struct
+> pages for consideration to be mapped cacheable in stage 2. A !pfn_valid()
+> implies that the memory is unsafe to be mapped as cacheable.
 > 
-> Yes, rcu_read_lock() is sufficient to observe fully loaded modules. I
-> don't think you care about placing kprobes on modules that are still
-> loading (that doesn't really make sense).
-
-Actually, to probe module's __init function, it may put a probe during
-loading modules (by trace_kprobe.c) which has been done by module
-notification callback.
-
-trace_kprobe_module_callback()
- -> register_module_trace_kprobe()
-   -> __register_trace_kprobe()
-      -> register_kprobe()
-         -> check_kprobe_address_safe()
-
-Anyway, unless we run the module notifier callbacks in parallel,
-it should be safe.
-
-Hmm, however, it seems that trace_probe's module notifier priority
-is not correct. It must be lower than jump_label but it is the same.
-
-OK, let me remove jump_label_lock() from kprobes (if it gets
-module reference), and give a lower priority to the trace_probe's
-module notifier to ensure it is called after jump_label is updated.
-
+> Moreover take account of the mapping type in the VMA to make a decision
+> on the mapping. The VMA's pgprot is tested to determine the memory type
+> with the following mapping:
+>  pgprot_noncached    MT_DEVICE_nGnRnE   device (or Normal_NC)
+>  pgprot_writecombine MT_NORMAL_NC       device (or Normal_NC)
+>  pgprot_device       MT_DEVICE_nGnRE    device (or Normal_NC)
+>  pgprot_tagged       MT_NORMAL_TAGGED   RAM / Normal
+>  -                   MT_NORMAL          RAM / Normal
 > 
-> Also see:
+> Also take care of the following two cases that prevents the memory to
+> be safely mapped as cacheable:
+> 1. The VMA pgprot have VM_IO set alongwith MT_NORMAL or
+>    MT_NORMAL_TAGGED. Although unexpected and wrong, presence of such
+>    configuration cannot be ruled out.
+> 2. Configurations where VM_MTE_ALLOWED is not set and KVM_CAP_ARM_MTE
+>    is enabled. Otherwise a malicious guest can enable MTE at stage 1
+>    without the hypervisor being able to tell. This could cause external
+>    aborts.
 > 
->   https://lkml.kernel.org/r/20241205215102.hRywUW2A@linutronix.de
+> Introduce a new variable noncacheable to represent whether the memory
+> should not be mapped as cacheable. The noncacheable as false implies
+> the memory is safe to be mapped cacheable. Use this to handle the
+> aforementioned potentially unsafe cases for cacheable mapping.
+> 
+> Note when FWB is not enabled, the kernel expects to trivially do
+> cache management by flushing the memory by linearly converting a
+> kvm_pte to phys_addr to a KVA, see kvm_flush_dcache_to_poc(). This is
+> only possibile for struct page backed memory. Do not allow non-struct
+> page memory to be cachable without FWB.
+> 
+> The device memory such as on the Grace Hopper systems is interchangeable
+> with DDR memory and retains its properties. Allow executable faults
+> on the memory determined as Normal cacheable.
 
-Thank you,
+Sorry, but a change this subtle to the arch code is going to need a _much_
+better explanation than the rambling text above.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+I also suspect that you're trying to do too many things in one patch.
+In particular, the changes to execute permission handling absolutely
+need to be discussed as a single patch in the series.
+
+Please can you split this up in to a set of changes with useful commit
+messages so that we can review them?
+
+Jason knows how to do this so you could ask him for help if you're stuck.
+Otherwise, there are plenty of examples of well-written commit messages
+on the mailing list and in the git history.
+
+Thanks,
+
+Will
 
