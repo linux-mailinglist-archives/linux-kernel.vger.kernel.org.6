@@ -1,130 +1,103 @@
-Return-Path: <linux-kernel+bounces-439750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64439EB382
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:37:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74EF4162BC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:36:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8164C1B219F;
-	Tue, 10 Dec 2024 14:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="apGYPtk9"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64FEF9EB385
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:37:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F61C1AA1FD;
-	Tue, 10 Dec 2024 14:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C37281FE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:37:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D8D1B6541;
+	Tue, 10 Dec 2024 14:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmmhdpNK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BED61B21A0;
+	Tue, 10 Dec 2024 14:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841417; cv=none; b=cRkih6HYCPfCaGa706fVBbebf/E1PSlQp1Ki1RM6GJ4fEBRFIuSoV4MBtqSrwmiTFaYWftQKp2bJlGlvvTSpZ4xonLNCsIrxtqcAjp20P/rvO+/8RDnKplaEZxHUjW7Ld0+miPgJXGApBYB2fq03nPft7NUCmA9+zEr2Z6aq+JQ=
+	t=1733841426; cv=none; b=VqOyRJrlq5Cr3d1eEJ76mSXyDRqMpPmP9DYrxGQwelWQsoMqaslBvy++DYCA4N1e2LANVyg1nWsHD5TaviDIXbbjslCb9WnDEk8RIrfXi5F7NDLv+vSfe9G9HeIZNb9SpxjT2ZhQTwM8UcTuZPTof0oZK9RkGYLx8t1U6W0tZy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841417; c=relaxed/simple;
-	bh=Vm/SMvu/8EpKkDOC/meueBC9lfWEJCHJn3wNu3oS+nU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Asl87HwZHhhMZ97wBzIeivOUvyiCGAunmA5X6NoDPsErX/psp2/77boJtoToLmHdiYnn8YHKYali1uRfYyLsyhxl/3J+gcw8wr8JtbVsvTBhWaKWh0b8CKGPBRABqAkjZAHlA+Zgv8ZroX4NbaoBTRQImCeHB+e2WjAKC8bmUtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=apGYPtk9; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Vm/SMvu/8EpKkDOC/meueBC9lfWEJCHJn3wNu3oS+nU=; b=apGYPtk9B8cEHvRnlKnZRfyPlB
-	UjU0n9BxnezEUSJl9xr/rIS3CAWGyApMVmPm35fTQfK9Lg1qjH1CqrI3pEIUsgAH3IAqgLHXpIi+5
-	1Rn2C4tjKDlVc/d7X34Zq4zZ6HCNJYmUb07z1nntcDroUOFxB3djTFTLeug2S0rRYOYXLX1VKG3d7
-	wnlxrVKNe5R4q/9/UANNYjy5aP2n7mEi9uoUgwPSQFTqN5FNCUlgEBz+0dey58QWAUnSOtLtS+W6w
-	sowpUyWKnenxm2NVdRvHK4tS7iOstRm1QAWChyc+OKiUkXA6I87nkF1VdHmwPKgZxU/V0Fy5rB84E
-	//ZQ2gsg==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tL1Lk-0006dG-TS; Tue, 10 Dec 2024 15:36:32 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Yan <andyshrk@163.com>
-Cc: Daniel Semkowicz <dse@thaumatec.com>,
- Diederik de Haas <didi.debian@cknow.org>, andy.yan@rock-chips.com,
- Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- neil.armstrong@linaro.org, quentin.schulz@cherry.de, rfoss@kernel.org,
- robh@kernel.org, tzimmermann@suse.de
-Subject:
- Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2 controller
-Date: Tue, 10 Dec 2024 15:36:31 +0100
-Message-ID: <3104907.xgJ6IN8ObU@diego>
-In-Reply-To: <78e7b8e.b5ee.193b09ce46d.Coremail.andyshrk@163.com>
-References:
- <20241203165450.1501219-1-heiko@sntech.de>
- <jl5obi7rd4h6ywozeqruxq2vx62sx5yf4wwpksrq3prdleps2k@d3zbr5ttquvn>
- <78e7b8e.b5ee.193b09ce46d.Coremail.andyshrk@163.com>
+	s=arc-20240116; t=1733841426; c=relaxed/simple;
+	bh=0zTO85Ef0r5vwedW1R+Oz3DQpMhOwp9gRtoPw4cpcvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dpr4OPwMvm2fBb/EkC0BgV9dtlrVDZLH96F40R0tOERmIhjZJzvdMRUi3H0PJbymKnlzSdwRlDMVUDTTdBBaxiQ49LHYKZQoPjHB6l4jRa8PbAO+ZWxO9VeEcoYM8al7MJpWcYSQjXQlRpw621irG2cD9mWEzftWTxChGm1Trpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmmhdpNK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26122C4CED6;
+	Tue, 10 Dec 2024 14:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733841425;
+	bh=0zTO85Ef0r5vwedW1R+Oz3DQpMhOwp9gRtoPw4cpcvg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bmmhdpNK5lajnWc8RWTrVAIWk3x/s2bEnYFJy/7pAlRm47WQ8wNNSD/lKfP7OSdrB
+	 lWUv4Szx1zQpyznAHRhe5Qoy0wefA3LZHDXh/2jwgkoo7nVzwI35WW8yQkurl/n7wN
+	 /xTlReSC4MAuvtRboXNjZYPoY1LJbFBDgAYrgb9KmdGyvMFHyVn3Ng7NvlE7vswslU
+	 QzocjUopNQ3oiKP6xXnCVbc3Q94YkQmF9dhVNFIYaUfnaB7nICT8JdxHTUNvYDMO0Z
+	 T95QQn/X5q0ZlPV6lbB88q2Dnh/3/TYa+UlhApvDIZDF4vz0M56WhtZGyb167azL3j
+	 Hct/I8qbx8sDQ==
+Date: Tue, 10 Dec 2024 06:37:04 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Paolo Abeni <pabeni@redhat.com>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Simon Horman <horms@kernel.org>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: Move callback comments from
+ struct to kernel-doc section
+Message-ID: <20241210063704.09c0ac8a@kernel.org>
+In-Reply-To: <Z1hJ4Wopr_4BJzan@shell.armlinux.org.uk>
+References: <20241206113952.406311-1-o.rempel@pengutronix.de>
+	<e6a812ba-b7ea-4f8a-8bdd-1306921c318f@redhat.com>
+	<Z1hJ4Wopr_4BJzan@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Andy,
+On Tue, 10 Dec 2024 14:02:09 +0000 Russell King (Oracle) wrote:
+> On Tue, Dec 10, 2024 at 12:56:07PM +0100, Paolo Abeni wrote:
+> > On 12/6/24 12:39, Oleksij Rempel wrote:  
+> > > +#if 0 /* For kernel-doc purposes only. */
+> > > +
+> > > +/**
+> > > + * soft_reset - Issue a PHY software reset.
+> > > + * @phydev: The PHY device to reset.
+> > > + *
+> > > + * Returns 0 on success or a negative error code on failure.  
+> > 
+> > KDoc is not happy about the lack of ':' after 'Returns':
+> > 
+> > include/linux/phy.h:1099: warning: No description found for return value
+> > of 'soft_reset'  
+> 
+> We have a huge amount of kernel-doc comments that use "Returns" without
+> a colon. I've raised this with Jakub previously, and I think kernel-doc
+> folk were quite relaxed about the idea of allowing it if there's enough
+> demand.
 
-Am Dienstag, 10. Dezember 2024, 13:48:12 CET schrieb Andy Yan:
-> =E5=9C=A8 2024-12-10 20:32:03=EF=BC=8C"Dmitry Baryshkov" <dmitry.baryshko=
-v@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
-> >On Tue, Dec 10, 2024 at 09:54:09AM +0800, Andy Yan wrote:
-> >> =E5=9C=A8 2024-12-10 09:45:11=EF=BC=8C"Dmitry Baryshkov" <dmitry.barys=
-hkov@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
-> >> >On Tue, 10 Dec 2024 at 03:22, Andy Yan <andyshrk@163.com> wrote:
-> >> >> =E5=9C=A8 2024-12-10 09:01:38=EF=BC=8C"Dmitry Baryshkov" <dmitry.ba=
-ryshkov@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
-> >> >> >On Tue, Dec 10, 2024 at 08:50:51AM +0800, Andy Yan wrote:
-> >> >> >> At 2024-12-10 07:12:26, "Heiko St=C3=BCbner" <heiko@sntech.de> w=
-rote:
-> >> >> >> >Am Montag, 9. Dezember 2024, 17:11:03 CET schrieb Diederik de H=
-aas:
-> >> >> >> >> On Mon Dec 9, 2024 at 4:06 PM CET, Daniel Semkowicz wrote:
-> >> >> >> >> > On 03.12.24 21:54, Heiko Stuebner wrote:
-> >> >> >> >This really sounds like something is wrong on the vop side.
-> >> >> >> >The interrupt is part of the vop, the divisable by 4 things lik=
-ely too.
-> >> >> >>
-> >> >> >> This is a hardware limitation on vop side:
-> >> >> >> The horizontal resolution must be 4 pixel aligned.
-> >> >> >
-> >> >> >Then mode_valid() and atomic_check() must reject modes that don't =
-fit.
-> >> >>
-> >> >> We round down to 4 pixel aligned in mode_fixup in our bsp kernel,
-> >> >
-> >> >What is meant by the "bsp kernel" here? I don't see it being present
-> >>=20
-> >> bsp kernel means downstream vendor kernel.
-> >>=20
-> >> >in the mainline kernel. So, if the mode is unsupported, it should be
-> >>=20
-> >> Will it be acceptable to add this round down in the mainline mode_fixu=
-p?
-> >
-> >I think so.
->=20
-> Then I can write a patch for it.
+Ack, and I do apply your patches. IIRC lack of Returns: in a C source 
+now causes a W=1 build warning, which I personally think was a wrong
+decision, it's a distraction. W=2 would be more appropriate.
 
-thanks a lot for looking into that :-)
+> I certainly can't help but write the "returns" statement in natural
+> English, rather than kernel-doc "Returns:" style as can be seen from
+> my recent patches that have been merged. "Returns" without a colon is
+> just way more natural when writing documentation.
+> 
+> IMHO, kernel-doc has made a wrong decision by requiring the colon.
 
-
-Heiko
-
-
+For the patch under consideration, however, I think _some_ attempt 
+to make fully documenting callbacks inline possible needs to be made :(
 
