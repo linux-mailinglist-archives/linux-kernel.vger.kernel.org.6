@@ -1,179 +1,175 @@
-Return-Path: <linux-kernel+bounces-439774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896C69EB3D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:47:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0040F9EB3DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D9B166D49
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6FF1881EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DF91B6544;
-	Tue, 10 Dec 2024 14:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99361A9B3F;
+	Tue, 10 Dec 2024 14:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jMBXDUUG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bisdn-de.20230601.gappssmtp.com header.i=@bisdn-de.20230601.gappssmtp.com header.b="VFTPkYYW"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF491A01D4;
-	Tue, 10 Dec 2024 14:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F588B676
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842013; cv=none; b=CQnvWpGRlp9h/vytl/UyYjX4MvZDEwVSD6pyyWtzZSJQsXH6vVE6orPdfZkfteKAJV1uBWLXgTB5VjbTh/V4UA39vtwUQLSEQsiV683tjGOGa/2QpjcLOAS1HDE/c/xBnQXyPcsZWlqNde0uGfK6kIXaQqAPifvpBP55Vr1WfKM=
+	t=1733842050; cv=none; b=JzNPK4Z3uayqymAozuWndLkVOyV/UmUJpTc2dZmpEBIcManB++ul/76JSataCoUKCYMEbLJzS9qfbrdTKctHuDMHYR/inJXJroaZsxNdfxTNfD4yly/6uU/X8PCYUotTwnPKp7iWFhPPzI0wFaI3mm3cU02hPe/4hDcc3eAtQPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842013; c=relaxed/simple;
-	bh=zCVNItat7KAJZV5fl9f36Lgf1b8uI6A148fvl6A9d1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIQlRovUrBssmg5AKhVn0/kJ9CDBUD954osPu09/95kg9VnM5pwluvJBqx9vjoCNtxxgJtlPAtnBQTmSRM5sv7IIa+crRelMWZ5fUiYtZ4O5kTP5fpy2lfIu7Ig/a4j9XjJLlwCFqdBJfoDtZh0FP7VOXwGNjAsBYnu+5lXlLck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jMBXDUUG; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733842011; x=1765378011;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zCVNItat7KAJZV5fl9f36Lgf1b8uI6A148fvl6A9d1U=;
-  b=jMBXDUUG6jvk5mjQ9QLt5TzA/RqQZHdQlx5/L81Ho9I+IQKG/Qevpjpy
-   xj2CYHGrgx1TFG5m6Yr+TmgxkRWKLd8V3oYBSUUaOcUFfonaYVqwOylcj
-   S5AIZ0atueN2mpd1GjIaecAxl79dVXMUalcFVZynmHRt/FlsTbeAu39BM
-   V8pON+vIS9yiT4bNHZxqEM7PYQEGnOUh9Lj7RieSaN3M4LPS/04L5CjXO
-   yq4mM0rSnVQOumMgBaho909SzrvE1DecmKqRqyR/x0NZl+jTg0D/AzP/0
-   844fUkP/umWM1ARZu1w+wd1d/NT/XqXlU8dj/ZQC6DVcJuQDUqlPD0j9U
-   A==;
-X-CSE-ConnectionGUID: DtB3lTw0R+2z3qbR5SV8Jw==
-X-CSE-MsgGUID: UeHO0CSNQr6nTHfThLPygQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="33918606"
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="33918606"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 06:46:51 -0800
-X-CSE-ConnectionGUID: orNCXP5iSfORxIjovRQcxQ==
-X-CSE-MsgGUID: EY2JQNdjRmSVxx2IfMJGSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="95264822"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 10 Dec 2024 06:46:44 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tL1VZ-0005fr-2R;
-	Tue, 10 Dec 2024 14:46:41 +0000
-Date: Tue, 10 Dec 2024 22:45:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
-	vbabka@suse.cz, yang@os.amperecomputing.com, riel@surriel.com,
-	david@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, linux@armlinux.org.uk,
-	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com,
-	ysato@users.sourceforge.jp, dalias@libc.org,
-	glaubitz@physik.fu-berlin.de, davem@davemloft.net,
-	andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net,
-	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com,
-	leitao@debian.org, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 13/17] mm: sparc64: Introduce arch_mmap_hint()
-Message-ID: <202412102215.fF34r4Uo-lkp@intel.com>
-References: <20241210024119.2488608-14-kaleshsingh@google.com>
+	s=arc-20240116; t=1733842050; c=relaxed/simple;
+	bh=fnM7XdZPmq4dQ8q57DyE5z4e346R3Iv66K4+vOj/nSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VahlkUPjpttRbxXtgd1l+SOkfTi9kJAQkxQj6A5DtggDUEDcIuKceHSNOhNCXGV4XxqbbRLvtFw3p3ZdovIfA16O4D6VaakFUK2OPnoj4YFgA/6EhkvjESicjsEfvwtgzIr3Mp+mIfVFgWeZevp48WPtj8x5ObfWsv/1eE14Ny4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bisdn.de; spf=none smtp.mailfrom=bisdn.de; dkim=pass (2048-bit key) header.d=bisdn-de.20230601.gappssmtp.com header.i=@bisdn-de.20230601.gappssmtp.com header.b=VFTPkYYW; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bisdn.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bisdn.de
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4677cbea36dso204201cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:47:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bisdn-de.20230601.gappssmtp.com; s=20230601; t=1733842047; x=1734446847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rzs1DO8cqSom2w5LB1plSfwZm2SKsh6MLmfHHtdFuyU=;
+        b=VFTPkYYWezuuze83ttZ5iiTb4aXwTZCJ+7Gm8AZ/UcEDkqu3udqenCAhgJHdWy084Q
+         3cllSCvujBtiCqPtQXKKxdp1aQ1vnsWW+0ozQlDewywSJ+wK0NIrqropyuBB/F9ykCE9
+         oMunlkOl9NA8kTNvp8jWBguBdXYdxIDl78Kl5526VdJrnfF+C80J/rISX2uzud8WVrfL
+         vqKDu4EmxXD7t9Q8rmuXwgf9+4639e+YZOizwdx7hT0kO37uOtC7mrtRyIEytGxlP4Vw
+         RD4STEdN7ACZoQP/7AQrEXfwZsfjtWueGYgqWXlTbEF9qL8yFYo6OgdkGCMcCx2Iwmqv
+         qWPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733842047; x=1734446847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rzs1DO8cqSom2w5LB1plSfwZm2SKsh6MLmfHHtdFuyU=;
+        b=GmvBCOHDx4jeGlEES3SS08LzDL37ZiHNG/KB4+TOiZn7NYLzf2Oh0uSOGWtkIwWv7k
+         hltGE7hR4dPkjT92gOlQcQch+0ZxGXwxsqs4eHEt/f0KxqzV5mU/akIc8qQjUrHGV/kX
+         mNNbKv8Y39QGkLRXuzA02SU+p//KQbPVU9ig81lvS7gz9vcUhtCnb5GEvaD4qkAGLfjP
+         VueMERHRUd87p2EyeA371fz8YyAa7cX6OKcfGP4Ztxh/9XoJOb+Xfl0ebD77BiCEQi9Z
+         kIKROvtPwHQcHQ+lGy4cjFY2GPC2EccbTGX/d8wYUyhjzHEZ/mXUDv/79NBJvv0xpBsX
+         H0dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdwy+bdz7FTUbhFlmJqetVKItaZgIpnrSEDK5QgPaFnVCiTeqAcMgHQ9B2IWOYwSR7UqdETEmOC8R78io=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpJk14puwQXwA5TuFo/ljBRXiPnZ8lKQTkmYUDdb+dwVNyt5TM
+	4hrNqXqrymkXbaiVKzYfE6bsIwpZbadhdCUikfoMmY7DHDQX2lnFxgDv6ogE9KMRB0m6j1CP1Ji
+	o4e3OfGYQsGfFQC9Na5X1EMpbiHbvd0KpcEspkr38OY1g7/As8Csls/djzBVtWa9e309FaB6uX7
+	pAHNDrLjYZwk582N4sRoHj8ROc3v+ImQ==
+X-Gm-Gg: ASbGnctnXE/2LLCGWUPPGaJwJrZ1wmBRCFRv9WkQIna0QLSgFU1VxNiMMpJuc5Z2djC
+	pK7wVcARH8nUl2CXeXNCZ7q/Z3v+srT8apg==
+X-Google-Smtp-Source: AGHT+IGsh2nFo1NsXdN/9EcCCJOyiewT7PU4OIYHkIeQY6kKt2wkQpzsETMHpFlZJixwWx1bhe0I8N/7iUts9Fm2jEI=
+X-Received: by 2002:a05:622a:110e:b0:461:6599:b9a with SMTP id
+ d75a77b69052e-467746ad834mr24853361cf.11.1733842047128; Tue, 10 Dec 2024
+ 06:47:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210024119.2488608-14-kaleshsingh@google.com>
+References: <20241210140654.108998-1-jonas.gorski@bisdn.de> <20241210143438.sw4bytcsk46cwqlf@skbuf>
+In-Reply-To: <20241210143438.sw4bytcsk46cwqlf@skbuf>
+From: Jonas Gorski <jonas.gorski@bisdn.de>
+Date: Tue, 10 Dec 2024 15:47:11 +0100
+Message-ID: <CAJpXRYTGbrM1rK8WVkLERf5B_zdt20Zf+MB67O5M0BT0iJ+piw@mail.gmail.com>
+Subject: Re: [PATCH RFC] net: bridge: handle ports in locked mode for ll learning
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Roopa Prabhu <roopa@nvidia.com>, Nikolay Aleksandrov <razor@blackwall.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Ido Schimmel <idosch@nvidia.com>, Hans Schultz <schultz.hans@gmail.com>, 
+	"Hans J. Schultz" <netdev@kapio-technology.com>, bridge@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kalesh,
+Am Di., 10. Dez. 2024 um 15:34 Uhr schrieb Vladimir Oltean
+<vladimir.oltean@nxp.com>:
+>
+> On Tue, Dec 10, 2024 at 03:06:53PM +0100, Jonas Gorski wrote:
+> >
+> > When support for locked ports was added with commit a21d9a670d81 ("net:
+> > bridge: Add support for bridge port in locked mode"), learning is
+> > inhibited when the port is locked in br_handle_frame_finish().
+> >
+> > It was later extended in commit a35ec8e38cdd ("bridge: Add MAC
+> > Authentication Bypass (MAB) support") where optionally learning is done
+> > with locked entries.
+> >
+> > Unfortunately both missed that learning may also happen on frames to
+> > link local addresses (01:80:c2:00:00:0X) in br_handle_frame(), which
+> > will call __br_handle_local_finish(), which may update the fdb unless
+> > (ll) learning is disabled as well.
+> >
+> > This can be easily observed by e.g. EAPOL frames to 01:80:c2:00:00:03 o=
+n
+> > a port causing the source mac to be learned, which is then forwarded
+> > normally, essentially bypassing any authentication.
+> >
+> > Fix this by moving the BR_PORT_LOCKED handling into its own function,
+> > and call it from both places.
+> >
+> > Fixes: a21d9a670d81 ("net: bridge: Add support for bridge port in locke=
+d mode")
+> > Fixes: a35ec8e38cdd ("bridge: Add MAC Authentication Bypass (MAB) suppo=
+rt")
+> > Signed-off-by: Jonas Gorski <jonas.gorski@bisdn.de>
+> > ---
+> > Sent as RFC since I'm not 100% sure this is the right way to fix.
+>
+> It was decided that this is expected behavior.
+> https://man7.org/linux/man-pages/man8/bridge.8.html
+>        locked on or locked off
+>               Controls whether a port is locked or not. When locked,
+>               non-link-local frames received through the port are
+>               dropped unless an FDB entry with the MAC source address
+>               points to the port. The common use case is IEEE 802.1X
+>               where hosts can authenticate themselves by exchanging
+>               EAPOL frames with an authenticator. After authentication
+>               is complete, the user space control plane can install a
+>               matching FDB entry to allow traffic from the host to be
+>               forwarded by the bridge. When learning is enabled on a
+>                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>               locked port, the no_linklocal_learn bridge option needs to
+>               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>               be on to prevent the bridge from learning from received
+>               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>               EAPOL frames. By default this flag is off.
+>               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-kernel test robot noticed the following build warnings:
+Huh, indeed. Unexpected decision, didn't think that this was
+intentional. I wonder what the use case for that is.
 
-[auto build test WARNING on akpm-mm/mm-everything]
+Ah well, then disregard my patch.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kalesh-Singh/mm-Introduce-generic_mmap_hint/20241210-104424
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20241210024119.2488608-14-kaleshsingh%40google.com
-patch subject: [PATCH mm-unstable 13/17] mm: sparc64: Introduce arch_mmap_hint()
-config: sparc-randconfig-002-20241210 (https://download.01.org/0day-ci/archive/20241210/202412102215.fF34r4Uo-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241210/202412102215.fF34r4Uo-lkp@intel.com/reproduce)
+Best Regards,
+Jonas
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412102215.fF34r4Uo-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   arch/sparc/kernel/sys_sparc_64.c: In function 'arch_get_unmapped_area':
->> arch/sparc/kernel/sys_sparc_64.c:135:13: warning: variable 'do_color_align' set but not used [-Wunused-but-set-variable]
-     135 |         int do_color_align;
-         |             ^~~~~~~~~~~~~~
+--=20
+BISDN GmbH
+K=C3=B6rnerstra=C3=9Fe 7-10
+10785 Berlin
+Germany
 
 
-vim +/do_color_align +135 arch/sparc/kernel/sys_sparc_64.c
+Phone:=20
++49-30-6108-1-6100
 
-aef9ae8eac4116 arch/sparc/kernel/sys_sparc_64.c Kalesh Singh      2024-12-09  131  
-25d4054cc97484 arch/sparc/kernel/sys_sparc_64.c Mark Brown        2024-09-04  132  unsigned long arch_get_unmapped_area(struct file *filp, unsigned long addr, unsigned long len, unsigned long pgoff, unsigned long flags, vm_flags_t vm_flags)
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  133  {
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  134  	unsigned long task_size = TASK_SIZE;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16 @135  	int do_color_align;
-b80fa3cbb78c0f arch/sparc/kernel/sys_sparc_64.c Rick Edgecombe    2024-03-25  136  	struct vm_unmapped_area_info info = {};
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  137  	bool file_hugepage = false;
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  138  
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  139  	if (filp && is_file_hugepages(filp))
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  140  		file_hugepage = true;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  141  
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  142  	if (flags & MAP_FIXED) {
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  143  		/* We do not accept a shared mapping if it would violate
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  144  		 * cache aliasing constraints.
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  145  		 */
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  146  		if (!file_hugepage && (flags & MAP_SHARED) &&
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  147  		    ((addr - (pgoff << PAGE_SHIFT)) & (SHMLBA - 1)))
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  148  			return -EINVAL;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  149  		return addr;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  150  	}
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  151  
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  152  	if (test_thread_flag(TIF_32BIT))
-d61e16df940e02 arch/sparc64/kernel/sys_sparc.c  David S. Miller   2006-03-17  153  		task_size = STACK_TOP32;
-a91690ddd05ab0 arch/sparc64/kernel/sys_sparc.c  David S. Miller   2006-03-17  154  	if (unlikely(len > task_size || len >= VA_EXCLUDE_START))
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  155  		return -ENOMEM;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  156  
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  157  	do_color_align = 0;
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  158  	if ((filp || (flags & MAP_SHARED)) && !file_hugepage)
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  159  		do_color_align = 1;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  160  
-aef9ae8eac4116 arch/sparc/kernel/sys_sparc_64.c Kalesh Singh      2024-12-09  161  	addr = arch_mmap_hint(filp, addr, len, pgoff, flags);
-aef9ae8eac4116 arch/sparc/kernel/sys_sparc_64.c Kalesh Singh      2024-12-09  162  	if (addr)
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  163  		return addr;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  164  
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  165  	info.length = len;
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  166  	info.low_limit = TASK_UNMAPPED_BASE;
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  167  	info.high_limit = min(task_size, VA_EXCLUDE_START);
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  168  	info.align_mask = get_align_mask(filp, flags);
-a8d457b29b017a arch/sparc/kernel/sys_sparc_64.c Oscar Salvador    2024-10-07  169  	if (!file_hugepage)
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  170  		info.align_offset = pgoff << PAGE_SHIFT;
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  171  	addr = vm_unmapped_area(&info);
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  172  
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  173  	if ((addr & ~PAGE_MASK) && task_size > VA_EXCLUDE_END) {
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  174  		VM_BUG_ON(addr != -ENOMEM);
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  175  		info.low_limit = VA_EXCLUDE_END;
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  176  		info.high_limit = task_size;
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  177  		addr = vm_unmapped_area(&info);
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  178  	}
-1363c3cd8603a9 arch/sparc64/kernel/sys_sparc.c  Wolfgang Wander   2005-06-21  179  
-bb64f55019c7b0 arch/sparc/kernel/sys_sparc_64.c Michel Lespinasse 2012-12-11  180  	return addr;
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  181  }
-^1da177e4c3f41 arch/sparc64/kernel/sys_sparc.c  Linus Torvalds    2005-04-16  182  
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Managing Directors:=C2=A0
+Dr.-Ing. Hagen Woesner, Andreas=20
+K=C3=B6psel
+
+
+Commercial register:=C2=A0
+Amtsgericht Berlin-Charlottenburg HRB 141569=20
+B
+VAT ID No:=C2=A0DE283257294
+
 
