@@ -1,45 +1,53 @@
-Return-Path: <linux-kernel+bounces-439004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBED19EA96F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:20:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C60B1168559
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:20:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D0A22D4C6;
-	Tue, 10 Dec 2024 07:20:51 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C749F9EA970
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:21:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2FC13B280;
-	Tue, 10 Dec 2024 07:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879A9283F14
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:21:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6C222CBEB;
+	Tue, 10 Dec 2024 07:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YWPgYXjV"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1EF19F471
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733815250; cv=none; b=QYZFFiTWR0M090wXu6Uc9N7OMagwuIuYvBC0tcVAxRHZr1IrbPUorxJqMaIBBk1RnAIjL6IOlAT5gICxFvVO/LjfyFxntYfS/oYVvlSldWNLfHzbY4Y5sTeSyb7O3wFjPDSkwo9vI7S/cfNrU1lTkGEIgHZgWZLw7AZQjCIws38=
+	t=1733815294; cv=none; b=ALzYbl243J3pPiz2Zc5sKTQSyJt1y0LU8iwIZTJ4pAep0QYN5KXw79m1h9SUNY5BwxlNOhDyhKRelWS4jCzeMJMEAg6WHXD5HEymnqPmU3W5NjgXN8uD1cerlddUSXMRYqLzS9dh/0hSW3aMo7wKqPyH7PkLLllKEf0aJJXRAtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733815250; c=relaxed/simple;
-	bh=4NlQbx3T63+OULWemSfy5ocPZ6KErYVuWVssn3kaxdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RS6lOF0d0SbA4BHCsCa4JES9pLCa4wDPHUhGKaHxszXnNKduk4C4gB6xGHqSRg6ou3utjEgqs0PVAHHu01bN/j68IJXamU/mlZHeRAWKnHdBxMW/O+nZmSeGK6V+X7urlnu+dferUKSQpj8ltOkJIwVh5yUaNfjjX3MEWy4nKjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Y6qps1Z15z21mVL;
-	Tue, 10 Dec 2024 15:19:01 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id D25C01A0188;
-	Tue, 10 Dec 2024 15:20:44 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 10 Dec
- 2024 15:20:44 +0800
-Message-ID: <522721da-1a5c-439c-96a8-d0300dd0f906@huawei.com>
-Date: Tue, 10 Dec 2024 15:20:43 +0800
+	s=arc-20240116; t=1733815294; c=relaxed/simple;
+	bh=RrVc4QpoSQM4iuG25WIbl04t6qd10VxLosfDjcCFBVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gCMqafAlM7PtRh/qgdGqDmKg0lxW+x6kfTY2Hs/O83OvD3ZPVg/sAsCsT4C6iIf4B5YwlhH+O47OQ1zM1GJTEN+aRqbuLjxbsbOvAL4oyUur8do7El6a0aB2xr6fgyTepczpv46epnBctsjkKkky/anDU96zWCSOlxWVI1dmTuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YWPgYXjV; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Gr9/Sh34c7zNzxKIvdyMiRRN/frtceZPv+8tWFte7sY=; b=YWPgYXjV+/FbHZDQsAwWdT64hB
+	zfxHT6te/qq0RNpAe7lOIPr91/7LbghvDCYJ4zDBL10NFaUJyig1hewyOT+ifiihYO/HJFHNVGMB3
+	Blfw9yYFelw7QQrttYXbBaNDAnHuO2KJ/qm357BWd//s1FiOQ4TwMHyAY+HAZ+b5hl5muMHbLEU79
+	jCPY+6MUKAFcH7wDrMouci4jWCFNhMRVxt5hU9ZGm66RMdopX3aY5FjeW0n6fpyfoLiqLgOYL2XhB
+	Ra9/CH7lgbLwNm2r5ZnqCcLGxM9ZN+RB2cbMOCXqyAWnIgnd7CAGC3tvSIB35Bj4YPNUCnkvOo0Y0
+	oTlb0eSQ==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tKuYN-001NDl-28; Tue, 10 Dec 2024 08:21:07 +0100
+Message-ID: <41fdc3ec-7082-41f9-99b5-ab28838d9ec1@igalia.com>
+Date: Tue, 10 Dec 2024 16:21:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,320 +55,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] cpufreq: CPPC: Support for autonomous selection in
- cppc_cpufreq
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <fanghao11@huawei.com>,
-	Pierre Gondois <pierre.gondois@arm.com>, <lenb@kernel.org>,
-	<robert.moore@intel.com>, "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-References: <20241114084816.1128647-1-zhenglifeng1@huawei.com>
- <20241114084816.1128647-4-zhenglifeng1@huawei.com>
- <9f46991d-98c3-41f5-8133-6612b397e33a@arm.com>
- <fc7cbe88-64a3-4b65-ae37-3a1f50257f22@huawei.com>
- <43b4cdee-ba78-4421-bdc6-cefebe3eaf8b@arm.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <43b4cdee-ba78-4421-bdc6-cefebe3eaf8b@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Subject: Re: [PATCH v4 2/6] sched_ext: Implement scx_rq_clock_update/stale()
+To: Andrea Righi <arighi@nvidia.com>
+Cc: tj@kernel.org, void@manifault.com, mingo@redhat.com,
+ peterz@infradead.org, kernel-dev@igalia.com, linux-kernel@vger.kernel.org
+References: <20241209061531.257531-1-changwoo@igalia.com>
+ <20241209061531.257531-3-changwoo@igalia.com> <Z1a7EfETQi3FSLJG@gpd3>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <Z1a7EfETQi3FSLJG@gpd3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Rafael & Viresh
+Hello Andrea,
 
-On 2024/12/9 21:15, Pierre Gondois wrote:
-> Hello Lifeng,
-> 
-> On 12/9/24 09:40, zhenglifeng (A) wrote:
->> Hello Pierre,
->>
->> On 2024/12/6 22:23, Pierre Gondois wrote:
->>> Hello Lifeng,
->>>
->>> On 11/14/24 09:48, Lifeng Zheng wrote:
->>>> Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
->>>> driver.
->>>>
->>>> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
->>>> ---
->>>>    .../ABI/testing/sysfs-devices-system-cpu      |  54 +++++++
->>>>    drivers/cpufreq/cppc_cpufreq.c                | 141 ++++++++++++++++++
->>>>    2 files changed, 195 insertions(+)
->>>>
->>>> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
->>>> index 206079d3bd5b..ba7b8ea613e5 100644
->>>> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
->>>> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
->>>> @@ -268,6 +268,60 @@ Description:    Discover CPUs in the same CPU frequency coordination domain
->>>>            This file is only present if the acpi-cpufreq or the cppc-cpufreq
->>>>            drivers are in use.
->>>>    +What:        /sys/devices/system/cpu/cpuX/cpufreq/auto_select
->>>> +Date:        October 2024
->>>> +Contact:    linux-pm@vger.kernel.org
->>>> +Description:    Autonomous selection enable
->>>> +
->>>> +        Read/write interface to control autonomous selection enable
->>>> +            Read returns autonomous selection status:
->>>> +                0: autonomous selection is disabled
->>>> +                1: autonomous selection is enabled
->>>> +
->>>> +            Write '1' to enable autonomous selection.
->>>> +            Write '0' to disable autonomous selection.
->>>> +
->>>> +        This file only presents if the cppc-cpufreq driver is in use.
->>>> +
->>>> +What:        /sys/devices/system/cpu/cpuX/cpufreq/auto_act_window
->>>> +Date:        October 2024
->>>> +Contact:    linux-pm@vger.kernel.org
->>>> +Description:    Autonomous activity window
->>>> +
->>>> +        This file indicates a moving utilization sensitivity window to
->>>> +        the platform's autonomous selection policy.
->>>> +
->>>> +        Read/write an integer represents autonomous activity window (in
->>>> +        microseconds) from/to this file. The max value to write is
->>>> +        1270000000 but the max significand is 127. This means that if 128
->>>> +        is written to this file, 127 will be stored. If the value is
->>>> +        greater than 130, only the first two digits will be saved as
->>>> +        significand.
->>>> +
->>>> +        Writing a zero value to this file enable the platform to
->>>> +        determine an appropriate Activity Window depending on the workload.
->>>> +
->>>> +        Writing to this file only has meaning when Autonomous Selection is
->>>> +        enabled.
->>>> +
->>>> +        This file only presents if the cppc-cpufreq driver is in use.
->>>> +
->>>> +What:        /sys/devices/system/cpu/cpuX/cpufreq/energy_perf
->>>> +Date:        October 2024
->>>> +Contact:    linux-pm@vger.kernel.org
->>>> +Description:    Energy performance preference
->>>> +
->>>> +        Read/write an 8-bit integer from/to this file. This file
->>>> +        represents a range of values from 0 (performance preference) to
->>>> +        0xFF (energy efficiency preference) that influences the rate of
->>>> +        performance increase/decrease and the result of the hardware's
->>>> +        energy efficiency and performance optimization policies.
->>>> +
->>>> +        Writing to this file only has meaning when Autonomous Selection is
->>>> +        enabled.
->>>> +
->>>> +        This file only presents if the cppc-cpufreq driver is in use.
->>>> +
->>>>      What:        /sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
->>>>    Date:        August 2008
->>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
->>>> index 2b8708475ac7..b435e1751d0d 100644
->>>> --- a/drivers/cpufreq/cppc_cpufreq.c
->>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
->>>> @@ -792,10 +792,151 @@ static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
->>>>          return cpufreq_show_cpus(cpu_data->shared_cpu_map, buf);
->>>>    }
->>>> +
->>>> +static ssize_t show_auto_select(struct cpufreq_policy *policy, char *buf)
->>>> +{
->>>> +    u64 val;
->>>> +    int ret;
->>>> +
->>>> +    ret = cppc_get_auto_sel(policy->cpu, &val);
->>>> +
->>>> +    /* show "<unsupported>" when this register is not supported by cpc */
->>>> +    if (ret == -EOPNOTSUPP)
->>>> +        return sysfs_emit(buf, "%s\n", "<unsupported>");
->>>> +
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    return sysfs_emit(buf, "%lld\n", val);
->>>> +}
->>>> +
->>>> +static ssize_t store_auto_select(struct cpufreq_policy *policy,
->>>> +                 const char *buf, size_t count)
->>>> +{
->>>> +    unsigned long val;
->>>> +    int ret;
->>>> +
->>>> +    ret = kstrtoul(buf, 0, &val);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    if (val > 1)
->>>> +        return -EINVAL;
->>>> +
->>>> +    ret = cppc_set_auto_sel(policy->cpu, val);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    return count;
->>>> +}
->>>> +
->>>> +#define AUTO_ACT_WINDOW_SIG_BIT_SIZE    (7)
->>>> +#define AUTO_ACT_WINDOW_EXP_BIT_SIZE    (3)
->>>> +#define AUTO_ACT_WINDOW_MAX_SIG    ((1 << AUTO_ACT_WINDOW_SIG_BIT_SIZE) - 1)
->>>> +#define AUTO_ACT_WINDOW_MAX_EXP    ((1 << AUTO_ACT_WINDOW_EXP_BIT_SIZE) - 1)
->>>> +/* AUTO_ACT_WINDOW_MAX_SIG is 127, so 128 and 129 will decay to 127 when writing */
->>>> +#define AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
->>>
->>> Maybe this would be better to place these macros in include/acpi/cppc_acpi.h
->>> (with a CPPC_XXX prefix)
->>
->> Will move them, Thanks.
->>
->>>
->>>> +
->>>> +static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
->>>> +{
->>>> +    int sig, exp;
->>>> +    u64 val;
->>>> +    int ret;
->>>> +
->>>> +    ret = cppc_get_auto_act_window(policy->cpu, &val);
->>>> +
->>>> +    /* show "<unsupported>" when this register is not supported by cpc */
->>>> +    if (ret == -EOPNOTSUPP)
->>>> +        return sysfs_emit(buf, "%s\n", "<unsupported>");
->>>> +
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    sig = val & AUTO_ACT_WINDOW_MAX_SIG;
->>>> +    exp = (val >> AUTO_ACT_WINDOW_SIG_BIT_SIZE) & AUTO_ACT_WINDOW_MAX_EXP;
->>>> +
->>>> +    return sysfs_emit(buf, "%lld\n", sig * int_pow(10, exp));
->>>> +}
->>>> +
->>>> +static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
->>>> +                     const char *buf, size_t count)
->>>> +{
->>>> +    unsigned long usec;
->>>> +    int digits = 0;
->>>> +    int ret;
->>>> +
->>>> +    ret = kstrtoul(buf, 0, &usec);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    if (usec > AUTO_ACT_WINDOW_MAX_SIG * int_pow(10, AUTO_ACT_WINDOW_MAX_EXP))
->>>> +        return -EINVAL;
->>>> +
->>>> +    while (usec > AUTO_ACT_WINDOW_SIG_CARRY_THRESH) {
->>>> +        usec /= 10;
->>>> +        digits += 1;
->>>> +    }
->>>> +
->>>> +    if (usec > AUTO_ACT_WINDOW_MAX_SIG)
->>>> +        usec = AUTO_ACT_WINDOW_MAX_SIG;
->>>> +
->>>> +    ret = cppc_set_auto_act_window(policy->cpu,
->>>> +                       (digits << AUTO_ACT_WINDOW_SIG_BIT_SIZE) + usec);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    return count;
->>>> +}
-> 
-> Also I tested the logic and it was working correctly for me.
-> 
->>>> +
->>>> +static ssize_t show_energy_perf(struct cpufreq_policy *policy, char *buf)
->>>> +{
->>>> +    u64 val;
->>>> +    int ret;
->>>> +
->>>> +    ret = cppc_get_epp_perf(policy->cpu, &val);
->>>> +
->>>> +    /* show "<unsupported>" when this register is not supported by cpc */
->>>> +    if (ret == -EOPNOTSUPP)
->>>> +        return sysfs_emit(buf, "%s\n", "<unsupported>");
->>>> +
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    return sysfs_emit(buf, "%lld\n", val);
->>>> +}
->>>> +
->>>> +#define ENERGY_PERF_MAX    (0xFF)
->>>
->>> Same comment to move to include/acpi/cppc_acpi.h
->>>
->>>> +
->>>> +static ssize_t store_energy_perf(struct cpufreq_policy *policy,
->>>> +                 const char *buf, size_t count)
->>>> +{
->>>> +    unsigned long val;
->>>> +    int ret;
->>>> +
->>>> +    ret = kstrtoul(buf, 0, &val);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    if (val > ENERGY_PERF_MAX)
->>>> +        return -EINVAL;
->>>> +
->>>> +    ret = cppc_set_epp(policy->cpu, val);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    return count;
->>>> +}
->>>> +
->>>>    cpufreq_freq_attr_ro(freqdomain_cpus);
->>>> +cpufreq_freq_attr_rw(auto_select);
->>>> +cpufreq_freq_attr_rw(auto_act_window);
->>>> +cpufreq_freq_attr_rw(energy_perf);
->>>
->>> It might be better from a user PoV to hide the following entries:
->>> - auto_act_window
->>> - energy_perf
->>> if auto_select is not available or disabled.
->>
->> Users might like to modify the value of auto_act_window and energy_perf
->> before turning on auto_select. So I think it is freer for users to read and
->> write them no matter what auto_select is. What do you think?
-> 
-> Autonomous selection is not the most common case for the CPPC cpufreq drivers,
-> so these new files might bring questions to people currently using it.
-> 
-> On the other side, making these files visible only when 'auto_select' is enabled
-> will require additional logic in the code (while the current implementation is
-> quite clear).
-> 
-> I think Rafael or Viresh should take the decision. So it might be better to
-> directly ping them,
-> 
-> Regards,
-> Pierre
+Thank you for the review.
 
-Since Pierre and me have discussed about whether or not to show
-auto_act_window and energy_perf when auto_select is disabled. It seems
-like whether to show these two files has their own points. We'd like to
-ask your advice and look forward to your reply!
-
-Regards,
-Lifeng
-
+On 24. 12. 9. 18:40, Andrea Righi wrote:
+>> @@ -766,9 +767,11 @@ struct scx_rq {
+>>   	unsigned long		ops_qseq;
+>>   	u64			extra_enq_flags;	/* see move_task_to_local_dsq() */
+>>   	u32			nr_running;
+>> -	u32			flags;
+>>   	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
+>>   	bool			cpu_released;
+>> +	u32			flags;
+>> +	u64			clock;			/* current per-rq clock -- see scx_bpf_now_ns() */
+>> +	u64			prev_clock;		/* previous per-rq clock -- see scx_bpf_now_ns() */
 > 
->>
->>>
->>> ------
->>>
->>> Also just for reference, in ACPI 6.5, s8.4.6.1.2.3 Desired Performance Register
->>> """
->>> When Autonomous Selection is enabled, it is not necessary for OSPM to assess processor workload performance
->>> demand and convey a corresponding performance delivery request to the platform via the Desired Register. If the
->>> Desired Performance Register exists, OSPM may provide an explicit performance requirement hint to the platform by
->>> writing a non-zero value.
->>> """
->>>
->>> So it seems it still makes sense to have cpufreq requesting a certain performance
->>> level even though autonomous selection is enabled.
->>
->> We did struggle with this. This solves our doubts. Thanks!
->>
->>>
->>
+> Since we're reordering this struct, we may want to move cpu_released all
+> the way to the bottom to get rid of the 3-bytes hole (and still have
+> flags, clock and prev_clock in the same cacheline).
+
+We'd better keep the layout as it is. That is because moving
+cpu_released to the end of the struct creates 4-byte hole between
+flags and clock and 7-byte padding at the end after cpu_released.
+I double-checked the two layouts using pahole.
+
+
+> Nit, this is just personal preference (feel free to ignore it):
 > 
+> 	if (!scx_enabled())
+> 		return;
+> 	rq->scx.prev_clock = rq->scx.clock;
+> 	rq->scx.clock = clock;
+> 	rq->scx.flags |= SCX_RQ_CLK_VALID;
+> 
+That's prettier. I will change it as you suggested.
+
+
+> I'm wondering if we need to invalidate the clock on all rqs when we call
+> scx_ops_enable() to prevent getting stale information from a previous
+> scx scheduler.
+> 
+> Probably it's not an issue, since scx_ops_disable_workfn() should make
+> sure that all tasks are going through rq_unpin_lock() before unloading
+> the current scheduler, maybe it could be helpful to add comment about
+> this scenario in scx_bpf_now_ns() (PATCH 4/6)?
+
+That's a good catch. In theory, there is a possibility that
+a scx_rq is not invalidated when unloading the sched_ext. Since
+scx_ops_disable_workfn() iterates all the sched_ext tasks, an rq
+would not be invalidated if there is no scx task on the rq.
+I will add the code which iterates and invalidates all scx_rqs at
+scx_ops_disable_workfn() in the next version.
+
+Thank you again!
+Changwoo Min
 
 
