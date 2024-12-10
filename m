@@ -1,266 +1,136 @@
-Return-Path: <linux-kernel+bounces-439782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE329EB3EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:50:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9739EB3EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928D0188A7F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94ED7188B2D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F441BBBCF;
-	Tue, 10 Dec 2024 14:50:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799371BEF8C;
+	Tue, 10 Dec 2024 14:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZujiaCE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4647A1B6CE1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EA91BE86A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842201; cv=none; b=kgf8SLwgO+wNUR0LIYN5tUPx/rr+f/OuiROQd7yHPAIGEkFyJNTCcoHRAob9nzxWj3ciVl7bZ+wYk9cHi+80ryB9pECi/jrN2JyfLtJ1I5u26iglWOhtxOp45renad9N6DJnurI8GQmqNMiD355xWkLDHPcB0nEAh7x4oWkMjbw=
+	t=1733842209; cv=none; b=maUHwd1SveBOvI7fJuj8vEItgvTW2Pq8GUkTRoo1ZmwqXj5rCv5Nzchq+bkXwMW540OgpLysgcUGK/qPeZt1xHLWFWfV9cC5Is6chX8MiU66ifap2so+yJrCfkhohjmbl7t1xUVm+YGgZpgGZo9qVftZlpXA2tfGkiJyMCGlhzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842201; c=relaxed/simple;
-	bh=egbRlbmlhjY1fckZ53UEb1P9iVDOvrQeu9+7WhhX9Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btTLBerjoO/hU8Cot1JL1Pbt8KntCylZI7NX9FVOmK8inFv01WIkieqy1M06WKSKXajlk/YwUDcuZZxZ6R7WPwDqde4M4HFIxpPZzVEWJrOGmM0OoYx4YOP5Qsajtt6jWe57bdMNJpzX1ZrG1naMhECBvsLWUxfxrSckBPx/0Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tL1YR-0005u5-Pz; Tue, 10 Dec 2024 15:49:39 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tL1YQ-002hu8-0r;
-	Tue, 10 Dec 2024 15:49:39 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tL1YQ-008Y8G-2u;
-	Tue, 10 Dec 2024 15:49:38 +0100
-Date: Tue, 10 Dec 2024 15:49:38 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengfei Li <pengfei.li_1@nxp.com>, devicetree@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, imx@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] thermal: imx91: Add support for i.MX91 thermal
- monitoring unit
-Message-ID: <20241210144938.zf3dkiubqhcxguqv@pengutronix.de>
-References: <20241209-imx91tmu-v1-0-7859c5387f31@nxp.com>
- <20241209-imx91tmu-v1-2-7859c5387f31@nxp.com>
- <20241210103646.7gblp7mzxbna5gas@pengutronix.de>
- <Z1hLlm75iGMogltc@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1733842209; c=relaxed/simple;
+	bh=hRlH4NBVNwGhJ1JpNPALCjGk3CXpM7yv7jTBCNwOqX4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=g+htsAbJ6VGro4o3BNKbeed08pTokyZGONHn4x0xYLjchdBLejcq1DeW5uq9lLkRBLmZozgbgBB2NsDQYNnIxXaASTL1orFpzAmhMYP8vU8gm5SJ1BDDpNSAugRvrtbaF6c9DHT1QCSF3DsAhKZ8nJkNXkSZter1GuJb+oEcZfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZujiaCE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0BAC4CEDE;
+	Tue, 10 Dec 2024 14:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733842209;
+	bh=hRlH4NBVNwGhJ1JpNPALCjGk3CXpM7yv7jTBCNwOqX4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GZujiaCEMkCIsTyMDSjPEg9/x3UV3riCwi9DlqVmH2yWvCHcW3+ks+7jw15JcstKo
+	 Kyh9OaufWOE+DhWbUKiYUV2pOtrzbyoJPBXHqGCm6JkiPiku/1BOwCVSuSfNnVlLI1
+	 AwU3DYpss7wqr8h2VCynpaS1d1ZGJaqyf3N4h5AacfOy3No8t5knnFyzm4sEL5iQjF
+	 KSQ7p4mNdG+I5JYxVWgB1BQc2IJ/y+DD3otaQTXF0H/Y5V/zlcGR3jCEpeYGpOUEQP
+	 yvruMzJvEKcAYuBWZMjHPtrKi2tcAemNkCb99bPHVrQOO9BUk776TfxxStF/yqqgnP
+	 Sm1Z5+W+DcMog==
+From: Arnd Bergmann <arnd@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v2 05/11] x86: add CONFIG_X86_64_NATIVE option
+Date: Tue, 10 Dec 2024 15:49:39 +0100
+Message-Id: <20241210144945.2325330-6-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241210144945.2325330-1-arnd@kernel.org>
+References: <20241210144945.2325330-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1hLlm75iGMogltc@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On 24-12-10, Frank Li wrote:
-> On Tue, Dec 10, 2024 at 11:36:46AM +0100, Marco Felsch wrote:
-> > Hi,
-> >
-> > On 24-12-09, Frank Li wrote:
+From: Arnd Bergmann <arnd@arndb.de>
 
-...
+As a replacement for the obsole MK8/MPSC/MCORE2 configuration options,
+allow building a specialized kernel for the local CPU, which is useful
+for users building their own kernels, and does not require maintaining
+a list of possible CPU options.
 
-> > > +	/* disable the monitor during initialization */
-> > > +	imx91_tmu_enable(tmu, false);
-> > > +	imx91_tmu_start(tmu, false);
-> >
-> > Make use of pm_runtime?
-> 
-> thermal is always on after probe. continue measure tempature. So pm_runtime
-> is not suitable for this case.
+Between -march=native and -mtune=native, I pick the former in order
+to give the best performance through the use of extra instructions,
+but at the cost of not being able to run on older CPUs at all. This
+creates a small risk of running into illegal instruction faults when
+the resulting binary ends up being run on a machine other than the
+one it was built on.
 
-There are at least 3 drivers which use pm-runtime including the i.MX6/7
-imx_thermal.c driver.
+Link: https://lore.kernel.org/lkml/CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/x86/Kconfig.cpu | 14 ++++++++++++++
+ arch/x86/Makefile    |  5 +++++
+ 2 files changed, 19 insertions(+)
 
-> > > +	ret = imx91_init_from_nvmem_cells(tmu);
-> > > +	if (ret) {
-> > > +		writel_relaxed(DEFAULT_TRIM1_CONFIG, tmu->base + TRIM1);
-> > > +		writel_relaxed(DEFAULT_TRIM2_CONFIG, tmu->base + TRIM2);
-> > > +	}
-> > > +
-> > > +	/* The typical conv clk is 4MHz, the output freq is 'rate / (div + 1)' */
-> > > +	rate = clk_get_rate(tmu->clk);
-> > > +	div = (rate / 4000000) - 1;
-> >
-> > Would be nice to validate the div value before passing to the HW and if
-> > the target rate of 4MHz can't be reached by the div you you should
-> > return -EINVAL.
-> >
-> > > +
-> > > +	/* Set divider value and enable divider */
-> > > +	writel_relaxed(DIV_EN | FIELD_PREP(DIV_MASK, div), tmu->base + REF_DIV);
-> > > +
-> > > +	/* Set max power up delay: 'Tpud(ms) = 0xFF * 1000 / 4000000' */
-> > > +	writel_relaxed(FIELD_PREP(PUDL_MASK, 100U), tmu->base + PUD_ST_CTRL);
-> > > +
-> > > +	/*
-> > > +	 * Set resolution mode
-> > > +	 * 00b - Conversion time = 0.59325 ms
-> > > +	 * 01b - Conversion time = 1.10525 ms
-> > > +	 * 10b - Conversion time = 2.12925 ms
-> > > +	 * 11b - Conversion time = 4.17725 ms
-> > > +	 */
-> > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x3), tmu->base + CTRL1_CLR);
-> > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x1), tmu->base + CTRL1_SET);
-> > > +
-> > > +	/*
-> > > +	 * Set measure mode
-> > > +	 * 00b - Single oneshot measurement
-> > > +	 * 01b - Continuous measurement
-> > > +	 * 10b - Periodic oneshot measurement
-> > > +	 */
-> >
-> > For the resolution it's fine to have the values directly coded without a
-> > define, but here we can definitly use a define and drop the comment.
-> >
-> > > +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, 0x3), tmu->base + CTRL1_CLR);
-> > > +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, 0x1), tmu->base + CTRL1_SET);
-> >
-> > Why do we set it to periodic mode instead of the single-shot? At the
-> > moment the device doesn't have IRQ support, and so there is no need to
-> > run the measurements in background.
-> 
-> It is "continous measurement".  first clean MODE_MASK, then then 01.
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 8fcb8ccee44b..d634b163e913 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -257,6 +257,20 @@ config X86_GENERIC
+ 	  This is really intended for distributors who need more
+ 	  generic optimizations.
+ 
++config X86_64_NATIVE
++	bool "Build with -march=native optimization"
++	depends on X86_64
++	help
++	  Make it possible to have a slightly better optimized kernel for
++	  the machine it is built on, by passing -march=native instead
++	  the more generic -march=x86-64 option.  This lets compilers
++	  use extensions to the x86-64 instruction set that were not
++	  present in the original AMD Opteron and Intel Pentium4 CPUs,
++	  and schedule instructions for the pipeline model.
++
++	  Select this option only when building a kernel to run locally,
++	  as it may be incompatible with any other processor.
++
+ #
+ # Define implied options from the CPU selection here
+ config X86_INTERNODE_CACHE_SHIFT
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 8120085b00a4..bf45b84c138f 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -178,8 +178,13 @@ else
+ 	# Use -mskip-rax-setup if supported.
+ 	KBUILD_CFLAGS += $(call cc-option,-mskip-rax-setup)
+ 
++ifdef CONFIG_X86_64_NATIVE
++        KBUILD_CFLAGS += -march=native
++        KBUILD_RUSTFLAGS += -Ctarget-cpu=native
++else
+         KBUILD_CFLAGS += -march=x86-64 -mtune=generic
+         KBUILD_RUSTFLAGS += -Ctarget-cpu=x86-64 -Ztune-cpu=generic
++endif
+ 
+         KBUILD_CFLAGS += -mno-red-zone
+         KBUILD_CFLAGS += -mcmodel=kernel
+-- 
+2.39.5
 
-Still, why? You return the temp value upon a request (get_temp). There
-is no async notification from this driver to others. So it can be left
-to single-shot and do the measurement on request (get_temp).
-
-> _CLR means clean bits according to mask
-> _SET means set bits according to mask.
-
-I know.
-
-Regards,
-  Marco
-
-> 
-> Frank
-> 
-> >
-> > > +
-> > > +	/*
-> > > +	 * Set Periodic Measurement Frequency to 25Hz:
-> > > +	 * tMEAS_FREQ = tCONV_CLK * PERIOD_CTRL[MEAS_FREQ]. ->
-> > > +	 * PERIOD_CTRL(MEAS_FREQ) = (1000 / 25) / (1000 / 4000000);
-> > > +	 * Where tMEAS_FREQ = Measurement period and tCONV_CLK = 1/fCONV_CLK.
-> > > +	 * This field should have value greater than count corresponds
-> > > +	 * to time greater than summation of conversion time, power up
-> > > +	 * delay, and six times of conversion clock time.
-> > > +	 * tMEAS_FREQ > (tCONV + tPUD + 6 * tCONV_CLK).
-> > > +	 * tCONV is conversion time determined by CTRL1[RESOLUTION].
-> > > +	 */
-> > > +	writel_relaxed(FIELD_PREP(MEAS_FREQ_MASK, 0x27100), tmu->base + PERIOD_CTRL);
-> >
-> > With the single-shot measurements we could remove this part and..
-> >
-> > > +
-> > > +	/* enable the monitor */
-> > > +	imx91_tmu_enable(tmu, true);
-> > > +	imx91_tmu_start(tmu, true);
-> >
-> > this part as well.
-> >
-> > Regards,
-> >   Marco
-> >
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static void imx91_tmu_remove(struct platform_device *pdev)
-> > > +{
-> > > +	struct imx91_tmu *tmu = platform_get_drvdata(pdev);
-> > > +
-> > > +	/* disable tmu */
-> > > +	imx91_tmu_start(tmu, false);
-> > > +	imx91_tmu_enable(tmu, false);
-> > > +}
-> > > +
-> > > +static int __maybe_unused imx91_tmu_suspend(struct device *dev)
-> > > +{
-> > > +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
-> > > +
-> > > +	/* disable tmu */
-> > > +	imx91_tmu_start(tmu, false);
-> > > +	imx91_tmu_enable(tmu, false);
-> > > +
-> > > +	clk_disable_unprepare(tmu->clk);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int __maybe_unused imx91_tmu_resume(struct device *dev)
-> > > +{
-> > > +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
-> > > +	int ret;
-> > > +
-> > > +	ret = clk_prepare_enable(tmu->clk);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	imx91_tmu_enable(tmu, true);
-> > > +	imx91_tmu_start(tmu, true);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static SIMPLE_DEV_PM_OPS(imx91_tmu_pm_ops,
-> > > +			 imx91_tmu_suspend, imx91_tmu_resume);
-> > > +
-> > > +static const struct of_device_id imx91_tmu_table[] = {
-> > > +	{ .compatible = "fsl,imx91-tmu", },
-> > > +	{ },
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, imx91_tmu_table);
-> > > +
-> > > +static struct platform_driver imx91_tmu = {
-> > > +	.driver = {
-> > > +		.name	= "i.MX91_thermal",
-> > > +		.pm	= pm_ptr(&imx91_tmu_pm_ops),
-> > > +		.of_match_table = imx91_tmu_table,
-> > > +	},
-> > > +	.probe = imx91_tmu_probe,
-> > > +	.remove = imx91_tmu_remove,
-> > > +};
-> > > +module_platform_driver(imx91_tmu);
-> > > +
-> > > +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-> > > +MODULE_DESCRIPTION("i.MX91 Thermal Monitor Unit driver");
-> > > +MODULE_LICENSE("GPL");
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> > >
-> > >
-> 
 
