@@ -1,163 +1,420 @@
-Return-Path: <linux-kernel+bounces-439510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25469EB04B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:58:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E284E9EB04D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:58:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEFBC282A5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBDF164539
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9089519F47E;
-	Tue, 10 Dec 2024 11:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B222A19F47E;
+	Tue, 10 Dec 2024 11:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RuEz1aVQ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUAAcqe1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F02119F11F;
-	Tue, 10 Dec 2024 11:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A5119F11F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733831878; cv=none; b=VzoJKk1t8e0tUqUL/N7zsS2i+l2wTHcRcH3Mn8hW5SyZM4Br6IcSFi+x7hCxmQPJ2WZF5J2PY+I9FiAs8aqsWHy88hnFMxPQ1LesMeA8HpfTsgwmkUVeNjsnf+eD6pioHU6Z/JgQwrqROGL0yB0IsQeCEBp1i/UUei+efjbMQwc=
+	t=1733831886; cv=none; b=c9vioX1lp3KvYnUuT4lDRNgpWvRGXMlSP2aFYVCf9WZmsh+4J3dUChDofInJtp+rDwSZ18ekZqcjAPittzCtwN9R8Bh7nT1COlqZD5V1aF6Z8nAMcH7nch+N2eF7A0HgG5gh8wKq/hPVJdZHyAooHtSd7VvAKrPMkLrBHzAqbuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733831878; c=relaxed/simple;
-	bh=LdEVmKKOlhCEmtz28en4sZeWOgFsqPYHNRhee3lIzsQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dZIqF7oAMv9S37KQFJOYmvWceA0cUyJ/yv3/9iDs3E/cpm3fVf1cO1hIhqbY2lDhU4OSDxgRBhHBRxUuILfFwVXdaJvUYT+m4etSoMb9sr8/wTvFsmS69oQ0a75mydqUI9BysuUkJw+3E9Wcozov+bLBSqFQjGcWcI7+WCk74Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RuEz1aVQ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KbVJw5J4GWJ01T8kGIEWydEYZvhCAGIPzpK/iHXKbT8=; b=RuEz1aVQq20Lt9i1RM6zkuMFJP
-	E7gWUPReBqKH8hpAFsniOi4v/LpHXv3Huxx0sfQy6a6Wv4J8NoiuKlL56oJ3qoVXx8FhEKY6PMtJN
-	ZlEeAarE6zVUMWD2bArovq74ytqUrvtYhvxy66Wh7mwUtEnrz0Sz1Iqu5xioV064XpTb4dBa3HR2l
-	LL3z9/hSMcy+0EdyOgpDFDzVLZ0qHW7r4Rn4bBa4SO0AtawcKWHheuFdCZHHYXM2p/E2Ucn2vedyZ
-	C7JA5VBytM4DCLM+U8MgACvIs57uqQXQFYUli/U7BKzTLVA0bNP3xs9OQFSM8Jbttbyl1OFEz0VDU
-	e+IKUKqA==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tKys5-00058v-Pm; Tue, 10 Dec 2024 12:57:45 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andy Yan <andyshrk@163.com>
-Cc: hjc@rock-chips.com, krzk+dt@kernel.org, s.hauer@pengutronix.de,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, derek.foreman@collabora.com,
- detlev.casanova@collabora.com, Andy Yan <andy.yan@rock-chips.com>,
- Michael Riesch <michael.riesch@wolfvision.net>
-Subject: Re: [PATCH v5 01/18] drm/rockchip: vop2: Add debugfs support
-Date: Tue, 10 Dec 2024 12:57:44 +0100
-Message-ID: <4471861.MSiuQNM8U4@diego>
-In-Reply-To: <20241209122943.2781431-4-andyshrk@163.com>
-References:
- <20241209122943.2781431-1-andyshrk@163.com>
- <20241209122943.2781431-4-andyshrk@163.com>
+	s=arc-20240116; t=1733831886; c=relaxed/simple;
+	bh=fkQQvhWkts9DOh8Pv3CfVt/3pMfiHZxuWSYMYbfIfCw=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:To:
+	 Date:Message-ID; b=lTC+GwRzCSZ5iZUu5hrK6lvo9sLL+qO0Dj+OAMwtfaR0lJmkU1+Qc8MR1N5yfyHTTHVjaxWLbZsDxkD/y0fnVZPsDyYeAiJ6iuiFqMypqlwOYEUpiMMAlahhAsVkpvfpHnB6S079bx+fL5UNaPvY5tYLKdm6RMXCjSz2Hd6Xax8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUAAcqe1; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733831884; x=1765367884;
+  h=mime-version:content-transfer-encoding:in-reply-to:
+   references:subject:from:to:date:message-id;
+  bh=fkQQvhWkts9DOh8Pv3CfVt/3pMfiHZxuWSYMYbfIfCw=;
+  b=UUAAcqe1wEgJuLoPjqVGDa3z/jnE0K82gQ6q+jHuWyWaWRVt4Lviq5Zi
+   SnUycyO4vu481vr6P4eAPEDoPtyegBIU324dJa2lkCVE+DHWdZpMbr/3/
+   t7OGYQ+3TQY3AYt003mUqitndGfIIUZg0ysqtcyLth/qUBL7ppuw7lDG9
+   pj7KhiRNmmakBDL51MRIFT5KWNF1YgP9lzI4eab3OfDpfk5yiRy41OVgl
+   16Zcg+53wwfquQyGXhCDv11vGm9HzuGJLRsAI4IveSC3lxPpvaNV6DR8l
+   ofyzrYpM0EAFaN7X8jq8bMsVOYeHlEljkpkhrjyhH+IQPAmO9Z33/OUW5
+   A==;
+X-CSE-ConnectionGUID: +CQ2YbKTT3qj3ygpSHaiRg==
+X-CSE-MsgGUID: zLaMVwQ2R8+MrY3AV+RwLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45182371"
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="45182371"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 03:58:04 -0800
+X-CSE-ConnectionGUID: VHh2vEPmS/ynGURgYwzjdw==
+X-CSE-MsgGUID: a3JQfRXGT0aqEepKq62cRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="100433990"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 03:58:01 -0800
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d2141daa-b556-4487-a310-69a7fea4eae8@amd.com>
+References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com> <20241209133318.1806472-15-mika.kuoppala@linux.intel.com> <ec42fe8b-9be0-41cc-96f4-f1869c6bb7e6@amd.com> <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local> <e4401ab1-0562-407a-a0e9-2f6e43e5ac22@amd.com> <173382321353.8959.8314520413901294535@jlahtine-mobl.ger.corp.intel.com> <d2141daa-b556-4487-a310-69a7fea4eae8@amd.com>
+Subject: Re: [PATCH 14/26] drm/xe/eudebug: implement userptr_vma access
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, Christian =?utf-8?q?K=C3=B6nig?= <christian.koenig@amd.com>, Christoph Hellwig <hch@lst.de>, Jonathan Cavitt <jonathan.cavitt@intel.com>, Linux MM <linux-mm@kvack.org>, Maciej Patelczyk <maciej.patelczyk@intel.com>, Mika Kuoppala <mika.kuoppala@linux.intel.com>, dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Date: Tue, 10 Dec 2024 13:57:58 +0200
+Message-ID: <173383187817.17709.7100544929981970614@jlahtine-mobl.ger.corp.intel.com>
+User-Agent: alot/0.10
 
-Hi Andy,
+Quoting Christian K=C3=B6nig (2024-12-10 12:00:48)
+> Am 10.12.24 um 10:33 schrieb Joonas Lahtinen:
+>=20
+>     Quoting Christian K=C3=B6nig (2024-12-09 17:42:32)
+>=20
+>         Am 09.12.24 um 16:31 schrieb Simona Vetter:
+>=20
+>             On Mon, Dec 09, 2024 at 03:03:04PM +0100, Christian K=C3=B6ni=
+g wrote:
+>=20
+>                 Am 09.12.24 um 14:33 schrieb Mika Kuoppala:
+>=20
+>                     From: Andrzej Hajda <andrzej.hajda@intel.com>
+>=20
+>                     Debugger needs to read/write program's vmas including=
+ userptr_vma.
+>                     Since hmm_range_fault is used to pin userptr vmas, it=
+ is possible
+>                     to map those vmas from debugger context.
+>=20
+>                 Oh, this implementation is extremely questionable as well=
+. Adding the LKML
+>                 and the MM list as well.
+>=20
+>                 First of all hmm_range_fault() does *not* pin anything!
+>=20
+>                 In other words you don't have a page reference when the f=
+unction returns,
+>                 but rather just a sequence number you can check for modif=
+ications.
+>=20
+>             I think it's all there, holds the invalidation lock during th=
+e critical
+>             access/section, drops it when reacquiring pages, retries unti=
+l it works.
+>=20
+>             I think the issue is more that everyone hand-rolls userptr.
+>=20
+>         Well that is part of the issue.
+>=20
+>         The general problem here is that the eudebug interface tries to s=
+imulate
+>         the memory accesses as they would have happened by the hardware.
+>=20
+>     Could you elaborate, what is that a problem in that, exactly?
+>=20
+>     It's pretty much the equivalent of ptrace() poke/peek but for GPU mem=
+ory.
+>=20
+>=20
+> Exactly that here. You try to debug the GPU without taking control of the=
+ CPU
+> process.
 
-Am Montag, 9. Dezember 2024, 13:29:13 CET schrieb Andy Yan:
-> From: Andy Yan <andy.yan@rock-chips.com>
-> 
-> /sys/kernel/debug/dri/vop2/summary:  dump vop display state
-> /sys/kernel/debug/dri/vop2/regs: dump whole vop registers
-> /sys/kernel/debug/dri/vop2/active_regs: only dump the registers of
-> activated modules
-> 
-> Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
-> Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
+You seem to have a built-in expectation that the CPU threads and memory spa=
+ce
+must be interfered with in order to debug a completely different set of thr=
+eads
+and memory space elsewhere that executes independently. I don't quite see w=
+hy?
 
-> +static void __vop2_regs_dump(struct seq_file *s, bool active_only)
-> +{
-> +	struct drm_info_node *node = s->private;
-> +	struct vop2 *vop2 = node->info_ent->data;
-> +	struct drm_minor *minor = node->minor;
-> +	struct drm_device *drm_dev = minor->dev;
-> +	const struct vop2_regs_dump *dump;
-> +	unsigned int i;
-> +
-> +	drm_modeset_lock_all(drm_dev);
-> +
-> +	regcache_drop_region(vop2->map, 0, vop2_regmap_config.max_register);
-> +
-> +	if (vop2->enable_count) {
-> +		for (i = 0; i < vop2->data->regs_dump_size; i++) {
-> +			dump = &vop2->data->regs_dump[i];
-> +			vop2_regs_print(vop2, s, dump, active_only);
-> +		}
-> +	} else {
-> +		seq_printf(s, "VOP disabled\n");
-> +	}
-> +	drm_modeset_unlock_all(drm_dev);
-> +
+In debugging massively parallel workloads, it's a huge drawback to be limit=
+ed to
+stop all mode in GDB. If ROCm folks are fine with such limitation, I have n=
+othing
+against them keeping that limitation. Just it was a starting design princip=
+le for
+this design to avoid such a limitation.
 
-nit: not needed empty line at the end of the function
+> This means that you have to re-implement all debug functionalities which =
+where
+> previously invested for the CPU process for the GPU once more.
 
-> +}
-> +
+Seems like a strawman argument. Can you list the "all interfaces" being add=
+ed
+that would be possible via indirection via ptrace() beyond peek/poke?
 
-> +static void vop2_debugfs_init(struct vop2 *vop2, struct drm_minor *minor)
-> +{
-> +	struct dentry *root;
-> +	unsigned int i;
-> +
-> +	root = debugfs_create_dir("vop2", minor->debugfs_root);
-> +	if (!IS_ERR(root)) {
-> +		for (i = 0; i < ARRAY_SIZE(vop2_debugfs_list); i++)
-> +			vop2_debugfs_list[i].data = vop2;
-> +
-> +		drm_debugfs_create_files(vop2_debugfs_list,
-> +					 ARRAY_SIZE(vop2_debugfs_list),
-> +					 root, minor);
-> +	}
-> +}
-> +
-> +static int vop2_crtc_late_register(struct drm_crtc *crtc)
-> +{
-> +	struct vop2_video_port *vp = to_vop2_video_port(crtc);
-> +	struct vop2 *vop2 = vp->vop2;
-> +
-> +	if (drm_crtc_index(crtc) == 0)
-> +		vop2_debugfs_init(vop2, crtc->dev->primary);
-> +
-> +	return 0;
-> +}
+> And that in turn creates a massive attack surface for security related
+> problems, especially when you start messing with things like userptrs whi=
+ch
+> have a very low level interaction with core memory management.
 
-I'm wondering about, shoudln't there be an unregister step too?
-I.e. the late_register callback says:
-"should be unregistered in the early_unregister callback" [0].
+Again, just seems like a strawman argument. You seem to generalize to some =
+massive
+attack surface of hypothetical interfaces which you don't list. We're talki=
+ng
+about memory peek/poke here.
 
-And there exists drm_debugfs_remove_files(), though it doesn't
-seem t be used much - just by tegra.
+Can you explain the high-level difference from security perspective for
+temporarily pinning userptr pages to write them to page tables for GPU to
+execute a dma-fence workload with and temporarily pinning pages for
+peek/poke?
 
-I haven't managed to find drm code handling that automatically though?
+>     And it is exactly the kind of interface that makes sense for debugger=
+ as
+>     GPU memory !=3D CPU memory, and they don't need to align at all.
+>=20
+>=20
+> And that is what I strongly disagree on. When you debug the GPU it is man=
+datory
+> to gain control of the CPU process as well.
 
+You are free to disagree on that. I simply don't agree and have in this
+and previous email presented multiple reasons as to why not. We can
+agree to disagree on the topic.
 
-Heiko
+> The CPU process is basically the overseer of the GPU activity, so it shou=
+ld
+> know everything about the GPU operation, for example what a mapping actua=
+lly
+> means.
 
+How does that relate to what is being discussed here? You just seem to
+explain how you think userspace driver should work: Maintain a shadow
+tree of each ppGTT VM layout? I don't agree on that, but I think it is
+slightly irrelevant here.
 
-[0] https://elixir.bootlin.com/linux/v6.12.4/source/include/drm/drm_crtc.h#L737
-[1] https://elixir.bootlin.com/linux/v6.12.4/source/drivers/gpu/drm/drm_debugfs.c#L265
+> The kernel driver and the hardware only have the information necessary to
+> execute the work prepared by the CPU process. So the information availabl=
+e is
+> limited to begin with.
 
+And the point here is? Are you saying kernel does not know the actual mappi=
+ngs
+maintained in the GPU page tables?
 
+>         What the debugger should probably do is to cleanly attach to the
+>         application, get the information which CPU address is mapped to w=
+hich
+>         GPU address and then use the standard ptrace interfaces.
+>=20
+>     I don't quite agree here -- at all. "Which CPU address is mapped to
+>     which GPU address" makes no sense when the GPU address space and CPU
+>     address space is completely controlled by the userspace driver/applic=
+ation.
+>=20
+>=20
+> Yeah, that's the reason why you should ask the userspace driver/applicati=
+on for
+> the necessary information and not go over the kernel to debug things.
+
+What hypothetical necessary information are you referring to exactly?
+
+I already explained there are good reasons not to map all the GPU memory
+into the CPU address space.
+
+>     Please try to consider things outside of the ROCm architecture.
+>=20
+>=20
+> Well I consider a good part of the ROCm architecture rather broken exactly
+> because we haven't pushed back hard enough on bad ideas.
+>=20
+>=20
+>     Something like a register scratch region or EU instructions should not
+>     even be mapped to CPU address space as CPU has no business accessing =
+it
+>     during normal operation. And backing of such region will vary per
+>     context/LRC on the same virtual address per EU thread.
+>=20
+>     You seem to be suggesting to rewrite even our userspace driver to beh=
+ave
+>     the same way as ROCm driver does just so that we could implement debu=
+g memory
+>     accesses via ptrace() to the CPU address space.
+>=20
+>=20
+> Oh, well certainly not. That ROCm has an 1 to 1 mapping between CPU and G=
+PU is
+> one thing I've pushed back massively on and has now proven to be problema=
+tic.
+
+Right, so is your claim then that instead of being 1:1 the CPU address space
+should be a superset of all GPU address spaces instead to make sure
+ptrace() can modify all memory?
+
+Cause I'm slightly lost here as you don't give much reasoning, just
+claim things to be certain way.
+
+>     That seems bit of a radical suggestion, especially given the drawbacks
+>     pointed out in your suggested design.
+>=20
+>=20
+>         The whole interface re-invents a lot of functionality which is al=
+ready
+>         there
+>=20
+>     I'm not really sure I would call adding a single interface for memory
+>     reading and writing to be "re-inventing a lot of functionality".
+>=20
+>     All the functionality behind this interface will be needed by GPU core
+>     dumping, anyway. Just like for the other patch series.
+>=20
+>=20
+> As far as I can see exactly that's an absolutely no-go. Device core dumpi=
+ng
+> should *never ever* touch memory imported by userptrs.
+
+Could you again elaborate on what the great difference is to short term
+pinning to use in dma-fence workloads? Just the kmap?
+
+> That's what process core dumping is good for.
+
+Not really sure I agree. If you do not dump the memory as seen by the
+GPU, then you need to go parsing the CPU address space in order to make
+sense which buffers were mapped where and that CPU memory contents containi=
+ng
+metadata could be corrupt as we're dealing with a crashing app to begin wit=
+h.
+
+Big point of relying to the information from GPU VM for the GPU memory layo=
+ut
+is that it won't be corrupted by rogue memory accesses in CPU process.
+
+>         just because you don't like the idea to attach to the debugged
+>         application in userspace.
+>=20
+>     A few points that have been brought up as drawback to the
+>     GPU debug through ptrace(), but to recap a few relevant ones for this
+>     discussion:
+>=20
+>     - You can only really support GDB stop-all mode or at least have to
+>       stop all the CPU threads while you control the GPU threads to
+>       avoid interference. Elaborated on this on the other threads more.
+>     - Controlling the GPU threads will always interfere with CPU threads.
+>       Doesn't seem feasible to single-step an EU thread while CPU threads
+>       continue to run freely?
+>=20
+>=20
+> I would say no.
+
+Should this be understood that you agree these are limitations of the ROCm
+debug architecture?
+
+>     - You are very much restricted by the CPU VA ~ GPU VA alignment
+>       requirement, which is not true for OpenGL or Vulkan etc. Seems
+>       like one of the reasons why ROCm debugging is not easily extendable
+>       outside compute?
+>=20
+>=20
+> Well as long as you can't take debugged threads from the hardware you can
+> pretty much forget any OpenGL or Vulkan debugging with this interface sin=
+ce it
+> violates the dma_fence restrictions in the kernel.
+
+Agreed. However doesn't mean because you can't do it right now, you you sho=
+uld
+design an architecture that actively prevents you from doing that in the fu=
+ture.
+
+>     - You have to expose extra memory to CPU process just for GPU
+>       debugger access and keep track of GPU VA for each. Makes the GPU mo=
+re
+>       prone to OOB writes from CPU. Exactly what not mapping the memory
+>       to CPU tried to protect the GPU from to begin with.
+>=20
+>=20
+>         As far as I can see this whole idea is extremely questionable. Th=
+is
+>         looks like re-inventing the wheel in a different color.
+>=20
+>     I see it like reinventing a round wheel compared to octagonal wheel.
+>=20
+>     Could you elaborate with facts much more on your position why the ROCm
+>     debugger design is an absolute must for others to adopt?
+>=20
+>=20
+> Well I'm trying to prevent some of the mistakes we did with the ROCm desi=
+gn.
+
+Well, I would say that the above limitations are direct results of the ROCm
+debugging design. So while we're eager to learn about how you perceive
+GPU debugging should work, would you mind addressing the above
+shortcomings?
+
+> And trying to re-invent well proven kernel interfaces is one of the big
+> mistakes made in the ROCm design.
+
+Appreciate the feedback. Please work on the representation a bit as it curr=
+ently
+doesn't seem very helpful but appears just as an attempt to try to throw a =
+spanner
+in the works.
+
+> If you really want to expose an interface to userspace
+
+To a debugger process, enabled only behind a flag.
+
+> which walks the process
+> page table, installs an MMU notifier
+
+This part is already done to put an userptr to the GPU page tables to
+begin with. So hopefully not too controversial.
+
+> kmaps the resulting page
+
+In addition to having it in the page tables where GPU can access it.
+
+> and then memcpy
+> to/from it then you absolutely *must* run that by guys like Christoph Hel=
+lwig,
+> Andrew and even Linus.
+
+Surely, that is why we're seeking out for review.
+
+We could also in theory use an in-kernel GPU context on the GPU hardware for
+doing the peek/poke operations on userptr.
+
+But that seems like a high-overhead thing to do due to the overhead of
+setting up a transfer per data word and going over the PCI bus twice
+compared to accessing the memory directly by CPU when it trivially can.
+
+So this is the current proposal.
+
+Regards, Joonas
+
+>=20
+> I'm pretty sure that those guys will note that a device driver should
+> absolutely not mess with such stuff.
+>=20
+> Regards,
+> Christian.
+>=20
+>=20
+>     Otherwise it just looks like you are trying to prevent others from
+>     implementing a more flexible debugging interface through vague commen=
+ts about
+>     "questionable design" without going into details. Not listing much co=
+ncrete
+>     benefits nor addressing the very concretely expressed drawbacks of yo=
+ur
+>     suggested design, makes it seem like a very biased non-technical disc=
+ussion.
+>=20
+>     So while review interest and any comments are very much appreciated, =
+please
+>     also work on providing bit more reasoning and facts instead of just c=
+laiming
+>     things. That'll help make the discussion much more fruitful.
+>=20
+>     Regards, Joonas
+>=20
+>
 
