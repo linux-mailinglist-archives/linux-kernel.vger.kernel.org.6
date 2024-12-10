@@ -1,144 +1,116 @@
-Return-Path: <linux-kernel+bounces-439328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3409EADB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:14:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25928164B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:14:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB961DC9A1;
-	Tue, 10 Dec 2024 10:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TKGdfG99"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D32C9EADC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:15:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBF223DEBA;
-	Tue, 10 Dec 2024 10:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825648; cv=none; b=Qo9dOF3dyVARpeKrtsc1Wmzl8vOLU8wR62EOHF1I8ROh7L8zBAJlZczYli3LoEXgUtUS8itK3DeWv6SZPrydjW/OHCTRZ6FCOvY8Iv+snoMrG06Xb38tmz/2fPE1tT/X6Tu5CqC6mYyVRrEtzl3hn0QM/9LzyzyqvF19QG1XDpE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825648; c=relaxed/simple;
-	bh=lujt3h3CG05++c6e+i+W692dngHXG+tuybMjifRcWR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCUaeILsEKFKIfN2EOXCddHXqJ7h+cg4mDq5OC+lfNd2mSNTHx71RMEXJdlNSNAcgkKC8jA8DFxXf5JPO6vHzvhZJo6EJmeiFToVwGCu9bm2OlzMnVmN2qZU4vhikKfnHOwg/Ve8ipWr4diaH9ghI/4fg5muZrhXzS3inFqsuWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TKGdfG99; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EF33640E02B9;
-	Tue, 10 Dec 2024 10:14:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Sowt0oMZdali; Tue, 10 Dec 2024 10:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733825639; bh=yrGa7tpyKCRTPnqr9DVCHERHwkS6nI41a3G5vTxiZOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TKGdfG99NQvFzj1PHJgtpk5QguaEOoOqzYZ+H7oUmDkZikMh28uI5CPlmBiqUohXS
-	 Ilzb14h0rxoxxjUbob34sNJ/4ZFVjnM9sDmoFdApmFQMvZqviITcs0A7FclutCiJmB
-	 vilryZ4AeWg7SK5V3mYGmgJoeC9wjtuPWrVUBEVdeefeZ78GFUBsHt7/PnS42idIvP
-	 A2Mww5ncWMq+vRThsnFbCFsRNqqbC7L3miqri5a7cRhE6SSBC2+UU3gOYynpQ/izpg
-	 FIKqKJNv9jrwZ5fM44ovGE4av8t5ZfhA1pj23GNukXlVTAVhveLW10QUsh08DMCLbl
-	 NmaOnJQhkQIZ/geAlGu3mnVLZdEcMagg8vx2uabE498hIaQMcjfUekDMqKUhG3QYOA
-	 0jR7QW4r3VeZSo8WWnX2Mf80BA97TPlIzZZ9zzvpFlVTh0b2JZuCt98dLj0z2chBeK
-	 yh1+cFHZYECg15fH4fCrwszq8yBCy+8wE8fmpZ/uHwJ5I7ELsrLwXGHSZmiV9JYaQC
-	 aS3M9OiE7x9lCdHVcfChKVVtLry8GwH47LJgC+DwDeCfP5sB/mJoH7eK44wmLx7rE0
-	 wmzFPvPEzgiW564DNxSIAiszWWG6pBM/Ti9DgGw1NiihSByksUUJsDsm0hddt7wUgg
-	 pVQnj2RsDd8ECv/LAHE3ZG98=
-Received: from zn.tnic (p200300ea971f9307329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEFF287D54
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:15:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42835199E9D;
+	Tue, 10 Dec 2024 10:15:45 +0000 (UTC)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EC24040E0286;
-	Tue, 10 Dec 2024 10:13:44 +0000 (UTC)
-Date: Tue, 10 Dec 2024 11:13:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	"Yu, Fenghua" <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, "x86@kernel.org" <x86@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v11 2/8] x86/resctrl: Prepare for per-CTRL_MON group
- mba_MBps control
-Message-ID: <20241210101339.GBZ1gUU3LiI7wAS3vQ@fat_crate.local>
-References: <20241206163148.83828-1-tony.luck@intel.com>
- <20241206163148.83828-3-tony.luck@intel.com>
- <20241209204519.GAZ1dW3-NjcL4Sewaf@fat_crate.local>
- <SJ1PR11MB6083BA367F2CDFC92D87FDA1FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20241209222047.GKZ1dtPxIu5_Hxs1fp@fat_crate.local>
- <SJ1PR11MB60830B8ED36CCA7E304D9E97FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <678cef69-78ef-4951-bd31-10abe646e6d8@intel.com>
- <Z1eEti6Kswtb3HC5@agluck-desk3>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCDE23DEAC;
+	Tue, 10 Dec 2024 10:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733825744; cv=none; b=T31K+0nXwjLm3H4uG6j0jgAiK9ATm/If02DMG9voIGKVuxeEzsMGXjwg0ykPysYrsA7yQE6jq5HVot364Ea3zv3xoArWLYHWiKpgE67sLOvpAsmMlbvrPtY8EEzEDDTpgnoaPGEOruruDTMZ4FJOrG8Im0cxo5fBHam3wSpvWeg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733825744; c=relaxed/simple;
+	bh=D4ZOBExquZ7c/tCXnjuhBALSErPwKsv5Me/SpRxzelk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lQXEFHeSOYp3PYe3LTrn4KNc0sQvEq9ZPXZIUJLj50dec/WbptK1TxyGVrsiJVzIdvVdo+5tbP7LsQ9WiqIXw5h0efizC9gKmvOc+gGvHdL50SENwy/uRxP7NEM/GRv1MwZrXo9tYuJXnL7M/tiqKA4yLjnZR2DMY+hcw5Pg0Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4afe99e5229so712704137.3;
+        Tue, 10 Dec 2024 02:15:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733825741; x=1734430541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VB6f4Rz8jPEzmCNgtIOwVu4unaWtfDXhGq42cgDlyPg=;
+        b=sS/ZR9kNZ0RJLhF/+aTQyCYxlFoy0eyMlHnUc6SXkAe2MyU1c/ihOzqxfdeHV4TL2T
+         YorhUKx8E5ep5wfkNG0dgW8clIrNFEZHRc2V/pKKFNFGWkK04QmtVNM9OlE6Q4Ejf2gf
+         SGKSkhAvKhtmkEife9q9Dq/GMPVjVlIhYPLxtZaktYedE1L8SFJXDomGKWuH8c+kT13B
+         gO29D8oKa7DSMtH10qR08ZADE/A5/h+RzsLjdnNejfpfKrPTNE+4t+M74gsh1Orhd886
+         bKkE6Lp7Pk35GAzE5oipVQRt4HxdnmLJKtovJZB95iuWpoRkCMxaRSVcPN0mcAglZtho
+         K8CA==
+X-Forwarded-Encrypted: i=1; AJvYcCVprbaGBCrO247Xgie0HWb+IgRrlgzz3PHiJAnvgbCpQ1t+wY5B/cSgP7UO5bmNeyfvF3uX9jjzMMVZWJ4=@vger.kernel.org, AJvYcCWvL6v6CBsfhRe6pbv/0RiEBNodcTvQaGj75FSBm8K83QAyO8Jqb6Qk39oNJIq7m/kt3N5VEWbeL42/jDjx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8+QB0Ci4L59pl+3q2LqXOd7u2a18e7UsCninqtUVGvGu9Wjjp
+	gJgOocFSNpCpO7tYg+0huOUoI4ohEsqhs2PrMbJ2Wd3Nriub09QIdr652VcN
+X-Gm-Gg: ASbGncu97+6oIlPypm8JMEqHd8hIOtWQkvRMBnwr6SROqXTDxUu7smeSjwx01Z77MuC
+	fQh8YzizFoZbVYfW4xeLy5zmHrqGh41vSos+PV7QiYdLDStYcRPBF664iiJUAHCeEJAapCDZ7c/
+	Z0bOW3gsfAVQVtf4zDyEoiy/x7ieh8ghJVQ+jJDaY5IePSVFlgWddk7P6s+iv+McY8qjM2xGUlj
+	BzDXO3ua/fCAZs8WkWLbmMMGG4uxmwR1qfyuUB1pgz151yTlQC/Kv5vfk88pI9C3v2UX2xpjBe4
+	q8dEeGl7HKrTuPRH
+X-Google-Smtp-Source: AGHT+IHvitPy3g+CcCGJcLKIZ/SgJVojVdpZPal37hNdz4sPko6Q5a0iJGX9TfJMF1MsF9r6l6OdNg==
+X-Received: by 2002:a05:6102:1612:b0:4af:ef85:dae4 with SMTP id ada2fe7eead31-4afef85dbe6mr7411438137.5.1733825740874;
+        Tue, 10 Dec 2024 02:15:40 -0800 (PST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2bcf37eesm1328094241.26.2024.12.10.02.15.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 02:15:40 -0800 (PST)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4aff78a39e1so538959137.1;
+        Tue, 10 Dec 2024 02:15:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV9mshy5+F7kI31UV2HKV8uffK4/Nrf3YBsnq9GNdflWr3NlqCIXE+JhOzagIDoQsDg/pKyjAVIbtXbLkk=@vger.kernel.org, AJvYcCXTQsn4W9wXhn5KWgP6Yva6W2SBiAT2Nu0S3fqTYVdGdEOlrq6LwAup/i4iHfenp7UE1GndtPF0lBWLPhKA@vger.kernel.org
+X-Received: by 2002:a05:6102:508e:b0:4b1:1295:43da with SMTP id
+ ada2fe7eead31-4b1129548d2mr4737360137.4.1733825740382; Tue, 10 Dec 2024
+ 02:15:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z1eEti6Kswtb3HC5@agluck-desk3>
+References: <168b2cb09f09ec3cead8a6b1e726ac76f5d06171.1733820553.git.geert+renesas@glider.be>
+ <CAK7LNAR8dy-=EcsZFb-tjXSk2sK7sHrV0WSSV4E8dzRh5Veceg@mail.gmail.com>
+In-Reply-To: <CAK7LNAR8dy-=EcsZFb-tjXSk2sK7sHrV0WSSV4E8dzRh5Veceg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Dec 2024 11:15:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWi-dGwdxydnmgNfDbM-uOP21zDAQz5-cZJiFEz4PhJnA@mail.gmail.com>
+Message-ID: <CAMuHMdWi-dGwdxydnmgNfDbM-uOP21zDAQz5-cZJiFEz4PhJnA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Drop architecture argument from headers_check.pl
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 04:00:54PM -0800, Luck, Tony wrote:
-> Reinette is right. The post-split home of this is not <linux/resctrl.h>
-> but fs/resctrl/internal.h which doesn't exist yet.
-> 
-> So Boris is right, this declaration should be added to arch/x86/kernel/cpu/resctrl/internal.h
-> by this patch to be moved later.
+Hi Yamada-san,
 
-Done:
+On Tue, Dec 10, 2024 at 11:14=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
+> On Tue, Dec 10, 2024 at 5:52=E2=80=AFPM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> >
+> > Since commit 7ff0fd4a9e20cf73 ("kbuild: drop support for
+>
+> This is not a fixed commit hash because Andrew Morton
+> does not use 'git request-pull'
+>
+> I will squash this to the original patch.
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 485800055a7d..542d01c055aa 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -510,6 +510,7 @@ extern struct mutex rdtgroup_mutex;
- extern struct rdt_hw_resource rdt_resources_all[];
- extern struct rdtgroup rdtgroup_default;
- extern struct dentry *debugfs_resctrl;
-+extern enum resctrl_event_id mba_mbps_default_event;
- 
- enum resctrl_res_level {
- 	RDT_RESOURCE_L3,
-@@ -653,5 +654,4 @@ void resctrl_file_fflags_init(const char *config, unsigned long fflags);
- void rdt_staged_configs_clear(void);
- bool closid_allocated(unsigned int closid);
- int resctrl_find_cleanest_closid(void);
--
- #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index fd05b937e2f4..d94abba1c716 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -49,8 +49,6 @@ enum resctrl_event_id {
- 	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
- };
- 
--extern enum resctrl_event_id mba_mbps_default_event;
--
- /**
-  * struct resctrl_staged_config - parsed configuration to be applied
-  * @new_ctrl:		new ctrl value to be loaded
+Thank you!
 
--- 
-Regards/Gruss,
-    Boris.
+Gr{oetje,eeting}s,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
