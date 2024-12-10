@@ -1,111 +1,148 @@
-Return-Path: <linux-kernel+bounces-440444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EB69EBDFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:44:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092629EBDFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:44:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7F8284075
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:44:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB96168992
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69FF1F1905;
-	Tue, 10 Dec 2024 22:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E651F1920;
+	Tue, 10 Dec 2024 22:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0KXdhbb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yekHXpLX"
+Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B0B2451C7;
-	Tue, 10 Dec 2024 22:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A4C1EE7BE
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733870662; cv=none; b=pveLuWutPUGe7dxukpATLIXseQwrhtUsQgWA6c9lFKzVM5KlpSesuYYMoTw9dCfJla93E8VGDyll8HtIpv00dQ0boZx+jVeQcyam4upLyTN/pgl0klJvmKhlmgVEgpfW6dRUEkOX8YP+W6Q1rTge/kmpE+tp2ilwo5B+JFANVnQ=
+	t=1733870680; cv=none; b=tmTpIyqfWTiMscNlnSOn6PUa9qufaqK9yNwkj1AV8SOj2AnITucOpwnIVf6WO4lXFrfcvPrsJpiIN1PFbEhgjJ0TmG/KrajiOYkD2i5wtG1xbndqAFdQGnl+LWK7QviPma4QwU5oXIeQE6tZOUPTSm9GUDItOELwgjyEV2AIR7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733870662; c=relaxed/simple;
-	bh=HP4MsNw/hXG7nhPJ0xWXWHKylFCTW4+JsqUQHNFKB2k=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=AQYIT1FMThmmPkR0PdE4M1nAp2tmpe6PKRjLEPxb1nmhjfYCEVJiCqlSMPdQeYxwhadw8GCI2hstRmOOWnLrzld06cHsQdp5dJKgw0Mc9H6JV5/WGHb/9KK64migGkzXjYgLN1AgxNamn2KlQYZsKAHZ/3mJ3ojJtWmF+ni2ync=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0KXdhbb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DCD1C4CED6;
-	Tue, 10 Dec 2024 22:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733870661;
-	bh=HP4MsNw/hXG7nhPJ0xWXWHKylFCTW4+JsqUQHNFKB2k=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=G0KXdhbbJ5rvvoDZqYRO6wYCU/J0eN/NtedIKQgZEPd2HdA2GPfsSOitJG8EW5ruE
-	 DxH6lGL9Jr28NBCy+ZXrSsNn4DVjD0FvcBq1IHIi8pNEFXKvR0PCQrZT9C7+C2x+Zt
-	 cxr1ixqZFf4slma0NhtmDYZ3q3DJxoHTkAmgxWTDbL8Ev4br2lExKoFXnGeQAGzVOf
-	 HzJ+oAHkfu/VaOcs5R0EREvFKR/EWDek4d7n6ZYmLXnQjDdqPaxB/vwJBhXM+eu9jo
-	 EIMrcVv9FF1sRyIKhwGu/JpCsHIZIhFmBYk/dVCi+OK6hJLpBpte73ViEaZLFrwE81
-	 CWJLj4Z6TEJOg==
-Message-ID: <fd2b473bc7c3c70ae0e85b2a6315d9e8.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733870680; c=relaxed/simple;
+	bh=u9leJh1meIuUaI/1M+S+UmdCfL/JpflDsWChpBlbaQ0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lRByAkk8wKrXob+JLIKxhUdOadhGxFpFTIIYYLHUow1c0BNTZT1hijVCyC5NhkOw4eU46IKZ0UygLv1tan8OEsVYCeACSDGHgWDoBrs2N1JMw3y8HTXDM5VhO6bUw2oKICpL4f4MXoGMRy93hBqmp2U4Xnkv1QgCHm9VhurY7zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yekHXpLX; arc=none smtp.client-ip=209.85.166.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
+Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-3a9d57cff85so43232305ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:44:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733870678; x=1734475478; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qqk+CWWqN5rq/MGB/yHuis8ZQybMADaRH3hk0OV3uFc=;
+        b=yekHXpLX+E2jJHHo8MvEQkcunPSy8qjbKcTNBtQErx6td5w0k5BQJOGkPiTDDYFT5Z
+         b++cL5CA7hgHl5U0DnU6ENsvXL/iK5lptiXXFVmTJZhb+zvuK2fDMan4CdeEHZVyIwmA
+         bnEddXaS7N0X+TbVbVv+Dh0hMTqJwRAEokdCznWiuI3Ly+XTKHPaQH8HtAXrjIAp7i2c
+         uW6BqdBC7cHpacBsbziD3qZaEsu8+9q3zU7Z5pud8YYqe/frP49nh8UsVNFAtcPqRoZN
+         qYanLMURSLIFIu6v2Fu0ex2Wf0BQzX9GpHUgfAxz1HCr37PbL64GbVOAO5oq+3c/wpmA
+         7k4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733870678; x=1734475478;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qqk+CWWqN5rq/MGB/yHuis8ZQybMADaRH3hk0OV3uFc=;
+        b=PPWJ6eYoCscw81qmdUB/DjsaWW1KEp2rGRIIntlplOiypO6Z2SsCcAUdcv9SCUcOUj
+         /3pZXTmdGalrGh+LDBdjSn5yMaqJllHAUfxOFiDWiXGF+hmP7Q8OBT8kf4+RNxOikOdF
+         r9nDAwU0vkQMuXjYTSiobbTHW+3CL44b9WUn2+hgI5qAAbH6k/rGufwjQR3xQ1JJe5w0
+         G107RBEMxNXCbDRX8XA/uzi78+nOvty3Jp2lj3XmLhxo9dOCXLvtBlPMzE2I7cx26/1p
+         b+uugKqZKtzhmBikDq94EsjcJraasoUZThYRybMs//z3yaoTnhd2G6A9z7Kn0Gtyh0Gs
+         GG5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZZgDQhonPMtQsLpNTPeL2+GQpOjpP/FIttiUVjyA+E6vziuFIgMUbZAvBt5RewJakpcgH6BsaqxPNXF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJVkA0LGEXb8GPHStAJvJSnt470QSAnpg1HTUXnImIoYdgsl09
+	PkwyzTbPJz86T6ZkDgA73tmqs8UXNe1jHqpi7UqjLB1Q5YSjA31wsBe6SGW2FfkfOe8ghBYKOJb
+	3KK53oQ==
+X-Google-Smtp-Source: AGHT+IET+QW/GxpL9rCtfukOBZmUY2qfXT9xKNqc21i3LI6O4efNul9iMc8xel/3eEjF4fnde26kqvcpA/Uu
+X-Received: from ilgm9.prod.google.com ([2002:a92:4b09:0:b0:3a7:cfdb:57d])
+ (user=rananta job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:1384:b0:3a7:5cda:2769
+ with SMTP id e9e14a558f8ab-3aa06bee07cmr8003405ab.12.1733870677912; Tue, 10
+ Dec 2024 14:44:37 -0800 (PST)
+Date: Tue, 10 Dec 2024 22:44:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241121-ge-ian-debug-imx8-clk-tree-v1-4-0f1b722588fe@bootlin.com>
-References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com> <20241121-ge-ian-debug-imx8-clk-tree-v1-4-0f1b722588fe@bootlin.com>
-Subject: Re: [PATCH 4/5] clk: Add flag to prevent frequency changes when walking subtrees
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Abel Vesa <abel.vesa@linaro.org>, Herve Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ian Ray <ian.ray@ge.com>, Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>, Michael Turquette <mturquette@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Ying Liu <victor.liu@nxp.com>
-Date: Tue, 10 Dec 2024 14:44:19 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241210224435.15206-1-rananta@google.com>
+Subject: [PATCH] selftests/rseq: Fix rseq for cases without glibc support
+From: Raghavendra Rao Ananta <rananta@google.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Raghavendra Rao Anata <rananta@google.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Quoting Miquel Raynal (2024-11-21 09:41:14)
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index adfc5bfb93b5a65b6f58c52ca2c432d651f7dd7d..94d93470479e77769e63e9746=
-2b176261103b552 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1927,7 +1927,6 @@ long clk_get_accuracy(struct clk *clk)
->  }
->  EXPORT_SYMBOL_GPL(clk_get_accuracy);
-> =20
-> -__maybe_unused
->  static unsigned long clk_determine(struct clk_core *core, unsigned long =
-rate)
->  {
->         struct clk_rate_request req =3D {};
+Currently the rseq constructor, rseq_init(), assumes that glibc always
+has the support for rseq symbols (__rseq_size for instance). However,
+glibc supports rseq from version 2.35 onwards. As a result, for the
+systems that run glibc less than 2.35, the global rseq_size remains
+initialized to -1U. When a thread then tries to register for rseq,
+get_rseq_min_alloc_size() would end up returning -1U, which is
+incorrect. Hence, initialize rseq_size for the cases where glibc doesn't
+have the support for rseq symbols.
 
-Please add functions in the same patch that uses them. It is hard to
-review this patch when half the context is in another patch.
+Cc: stable@vger.kernel.org
+Fixes: 73a4f5a704a2 ("selftests/rseq: Fix mm_cid test failure")
+Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
+---
+ tools/testing/selftests/rseq/rseq.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-> @@ -2272,7 +2271,13 @@ static void clk_calc_subtree(struct clk_core *core)
->  {
->         struct clk_core *child;
-> =20
-> -       core->new_rate =3D clk_recalc(core, core->parent->new_rate);
-> +       if (core->flags & CLK_NO_RATE_CHANGE_DURING_PROPAGATION) {
-> +               core->new_rate =3D clk_determine(core, core->rate);
-> +               if (!core->new_rate)
-> +                       core->new_rate =3D clk_recalc(core, core->parent-=
->new_rate);
-> +       } else {
-> +               core->new_rate =3D clk_recalc(core, core->parent->new_rat=
-e);
-> +       }
-> =20
->         hlist_for_each_entry(child, &core->children, child_node)
->                 clk_calc_subtree(child);
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 200135e0f6d00d48b10e843259333b9733c97f38..baef0b442ac1d36ee935cbcaa=
-aa4e2d95fe7654c 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -38,6 +38,8 @@
->  #define CLK_OPS_PARENT_ENABLE  BIT(12)
->  /* duty cycle call may be forwarded to the parent clock */
->  #define CLK_DUTY_CYCLE_PARENT  BIT(13)
-> +/* do not passively change this clock rate during subtree rate propagati=
-on */
-> +#define CLK_NO_RATE_CHANGE_DURING_PROPAGATION BIT(14)
+diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rseq/rseq.c
+index 5b9772cdf265..9eb5356f25fa 100644
+--- a/tools/testing/selftests/rseq/rseq.c
++++ b/tools/testing/selftests/rseq/rseq.c
+@@ -142,6 +142,16 @@ unsigned int get_rseq_kernel_feature_size(void)
+ 		return ORIG_RSEQ_FEATURE_SIZE;
+ }
+ 
++static void set_default_rseq_size(void)
++{
++	unsigned int rseq_kernel_feature_size = get_rseq_kernel_feature_size();
++
++	if (rseq_kernel_feature_size < ORIG_RSEQ_ALLOC_SIZE)
++		rseq_size = rseq_kernel_feature_size;
++	else
++		rseq_size = ORIG_RSEQ_ALLOC_SIZE;
++}
++
+ int rseq_register_current_thread(void)
+ {
+ 	int rc;
+@@ -219,12 +229,7 @@ void rseq_init(void)
+ 			fallthrough;
+ 		case ORIG_RSEQ_ALLOC_SIZE:
+ 		{
+-			unsigned int rseq_kernel_feature_size = get_rseq_kernel_feature_size();
+-
+-			if (rseq_kernel_feature_size < ORIG_RSEQ_ALLOC_SIZE)
+-				rseq_size = rseq_kernel_feature_size;
+-			else
+-				rseq_size = ORIG_RSEQ_ALLOC_SIZE;
++			set_default_rseq_size();
+ 			break;
+ 		}
+ 		default:
+@@ -239,8 +244,10 @@ void rseq_init(void)
+ 		rseq_size = 0;
+ 		return;
+ 	}
++
+ 	rseq_offset = (void *)&__rseq_abi - rseq_thread_pointer();
+ 	rseq_flags = 0;
++	set_default_rseq_size();
+ }
+ 
+ static __attribute__((destructor))
 
-Why doesn't rate locking work?
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.47.0.338.g60cca15819-goog
+
 
