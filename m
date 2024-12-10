@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-439631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5494A9EB205
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:36:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE959EB207
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:36:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A662846F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96347169951
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53C91AA1C6;
-	Tue, 10 Dec 2024 13:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6181AA7BF;
+	Tue, 10 Dec 2024 13:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nt6Lu3/d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0j65nno"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8C71A42C4;
-	Tue, 10 Dec 2024 13:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E519DF4B;
+	Tue, 10 Dec 2024 13:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733837759; cv=none; b=dqfLqTW1dn95Um4ZtPAX59OyVUaAi9hm329UJo5F9wmuasllH/BQpm83MHDRKbY6K8HTk2tGszvta0F0dyKmNSOjTVR6SNqAYOLhhLxN8wtYD3AThGgMsyIM0G1hM7De0KbRYhU7GR9AfPNSVFhc+EfL+AA9pdCEMBRNWAKycl8=
+	t=1733837763; cv=none; b=Gd4Jhr9idVe0MWGDjTcPILFgXoht7bJ0McWnJaUvOT5jh5VaJk6e5qULqSHmpzeu8PxGU6DAvvDbeldzK61JCxktuzJl02nSWwSM7wWDWbaqhCqXyjxK8DY7iefIGKMXuoyUkWl2b9R1YA4Be39qC6Fu7PmEwL9muSvCiJB6jSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733837759; c=relaxed/simple;
-	bh=b2I0+eKk4iK9OnVnulSzlYA0NLcSmfUjvE0er6c4iww=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OODo/nCYLBdVeY1qEUb5wiVxNX7hRiSirbgGy4Tk6ze6mET2fWWVc1dGWxg8q1K9k2RYrqeSwlth2N5fDJ7fM4TWHzT3Zzcs2VmkN8hY3cTDLDk1DDPO+xeuaBwO1sArjjlPkBwaYmXxyBxdHWVFPO/G1kix730g4IAhbs/j4gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nt6Lu3/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD34EC4CED6;
-	Tue, 10 Dec 2024 13:35:56 +0000 (UTC)
+	s=arc-20240116; t=1733837763; c=relaxed/simple;
+	bh=s2tWExV+CNbckvtXA8OAEn8h1cvGzaeoygyrproyKQA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jN1x5m5u0tFc6GSaiM7GEuaJ2tOTNRChmzGc4zIK4p2nTociLqqNZd5GlXr+EEM3aZu8RJmtbBMJ5BlbwVm9aAIyd+pRuS0hctMncceMZNIM4+Ji446pmD4pEhLNKdF4avO3ynfcGy2iNruTjV/mTp4OKADXgKwc251bzPgiX40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0j65nno; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9A8DC4CED6;
+	Tue, 10 Dec 2024 13:36:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733837758;
-	bh=b2I0+eKk4iK9OnVnulSzlYA0NLcSmfUjvE0er6c4iww=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=nt6Lu3/dIXv//XgupGVTniobw37MR1F2itWDNVH8bY13QPrlj9SUF0qTMBS/3GRav
-	 WBV+isYER+30vTCC4Gtt3lRAFjlpJROLjV0ZCtaFY1SS+PK/pAN9oLC7eUnJwEhP+W
-	 iLBvCFRpArPQzIWjymSS1xunV3pXjD3VeWbOg7PBzALqbJIg2nB7tyyF4y2+PPGsO4
-	 MOxcO3EmsqRAqEjiwbDH78Gwk6CGDUULRaKZptjFQPipQZRwcXHnRrMMjFBPynWe86
-	 lhMJKb2q0h6G8WtoZJAwERUnHRTGRnxqhDToi8DmsgSbg8fyOCerbcgmZKaZdky/yk
-	 3Jzazp9hkDi4g==
+	s=k20201202; t=1733837763;
+	bh=s2tWExV+CNbckvtXA8OAEn8h1cvGzaeoygyrproyKQA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=N0j65nnoW5difpZWYNUr+Cs8NT76udNun7Mq+hRCK7fBs3RaOnrmGvKj9jsuJawip
+	 6VdcTLjsJS2bPYHl6LMtRxjRC0D5fc17SglMOrggFOp8rYnnQQDlLv3QXrbzC0+ua6
+	 G8D4d04M2HTmXcmvcDm295mN3PCrxGXNnLg8hBHRqSuEgEf4OriR72gQIX+GYPA/+b
+	 Gs/7EmvB2kEXskSCunigRkIRYfZ9JEE78BEUlqgrK5OBoRGWLC9OWhcDQb288zZo2+
+	 QMpcib7tHY3jVLMG7aMAHBBj3L5GpDxq9Kdga2Ij5JU7iF9dFFOmmYdaTnzZExrKmj
+	 tWmeG3wRW+T2A==
 From: Mark Brown <broonie@kernel.org>
-To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-sound@vger.kernel.org, Chancel Liu <chancel.liu@nxp.com>
-In-Reply-To: <20241126115440.3929061-1-chancel.liu@nxp.com>
-References: <20241126115440.3929061-1-chancel.liu@nxp.com>
-Subject: Re: [PATCH 0/4] Add function to constrain rates
-Message-Id: <173383775650.46965.9428255940556546352.b4-ty@kernel.org>
-Date: Tue, 10 Dec 2024 13:35:56 +0000
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@vger.kernel.org, 
+ linux-sunxi@googlegroups.com, linux-sunxi@lists.linux.dev, 
+ linux-sound@vger.kernel.org, lander@jagmn.com, codekipper@gmail.com
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ jernej.skrabec@gmail.com, samuel@sholland.org, andre.przywara@arm.com, 
+ wens@csie.org, u.kleine-koenig@baylibre.com
+In-Reply-To: <20241111165600.57219-1-codekipper@gmail.com>
+References: <20241111165600.57219-1-codekipper@gmail.com>
+Subject: Re: [PATCH 0/3] ASoC: sun4i-spdif: Add 24bit support
+Message-Id: <173383776048.46965.5173929465030260982.b4-ty@kernel.org>
+Date: Tue, 10 Dec 2024 13:36:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,13 +62,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Tue, 26 Nov 2024 20:54:36 +0900, Chancel Liu wrote:
-> Platforms like i.MX93/91 only have one audio PLL. Some sample rates are
-> not supported. If the PLL source is used for 8kHz series rates, then
-> 11kHz series rates can't be supported. Add common function to constrain
-> rates according to different clock sources.
-> 
-> In ASoC drivers switch to this new function.
+On Mon, 11 Nov 2024 17:55:28 +0100, codekipper@gmail.com wrote:
+> I've tested this patch series on the Allwinner H3, A64, H6 and H313 SoCs
+> up to 192KHz.
+> 24bit support is working on my H313 board but 16bit plays a bit slow and
+> I suspect that there is an issue with the clock setups. This is even
+> present without this patch stack. I would look to address this asap,
+> but for now can you please review what's here.
+> BR,
+> CK
 > 
 > [...]
 
@@ -76,14 +80,12 @@ Applied to
 
 Thanks!
 
-[1/4] ASoC: fsl_utils: Add function to constrain rates
-      commit: 820bcaeb1ff5705ba907563e554f17d0deecc3fa
-[2/4] ASoC: fsl_micfil: Switch to common sample rate constraint function
-      commit: daf7a173fc7c4b652f3fe69d3b5aa520976a7d63
-[3/4] ASoC: fsl_xcvr: Add sample rate constraint
-      commit: b622b677d255b41cbfce20b66535723933a6b640
-[4/4] ASoC: fsl_sai: Add sample rate constraint
-      commit: 4edc98598be43634f87af5d3876ebec6c274d2cb
+[1/3] ASoC: sun4i-spdif: Add clock multiplier settings
+      commit: 0a2319308de88b9e819c0b43d0fccd857123eb31
+[2/3] ASoC: sun4i-spdif: Always set the valid data to be the MSB
+      commit: 80ac12ffb3a9e19a2f11eb1975ed31c9a39183c8
+[3/3] ASoC: sun4i-spdif: Add working 24bit audio support
+      commit: 6e750d3ec7410c8d3aa6a006d37142eb837b3c03
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
