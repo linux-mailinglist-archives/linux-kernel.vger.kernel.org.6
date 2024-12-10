@@ -1,145 +1,166 @@
-Return-Path: <linux-kernel+bounces-440168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08B09EB9A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:51:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14919EB9A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:52:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4B2163CD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7E921420F;
+	Tue, 10 Dec 2024 18:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3/EmaGw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BA9282792
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:51:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FA8207E18;
-	Tue, 10 Dec 2024 18:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYlrywhH"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BB223ED41;
-	Tue, 10 Dec 2024 18:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D7823ED41;
+	Tue, 10 Dec 2024 18:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856692; cv=none; b=kLZmi2cO8GtZyrZRf7KOIJLCSfKVWBj4WyfFDak6DFYKYLljjhmVkcI9oz10nIXI7Qj8A4rjqp55OnEirP+2LLThTI/VdgXl3rOsspsMAIlsEBrrezGbeg928ivh1usoauCrBtdNHDnmBFCcC+3lzZJZaO4a2THIhymKhnZX4AA=
+	t=1733856736; cv=none; b=QKNghQBJfZaYBIGJEEibqLqHhqPkgqYFHfaqDiPa6GD6omGe8dD6HR+H2BJj3G18DcqPIHaTVLCl1udn3cxb3jUqV7pVm67D66VChKk1Skr9+Uz8+oum6itvuwaSp+gPIHEBH7zQQR8+FndE/M4Ryjwx5uZMERNtMN2ucWoTCBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856692; c=relaxed/simple;
-	bh=lAZTB+5AUs87Gv5Bp400EFKF06lTy9auqfzLDlXibt0=;
+	s=arc-20240116; t=1733856736; c=relaxed/simple;
+	bh=K1bCEcql+Dy5pT5rqacU6v95YfdNRaf/sZWArH2Gqpw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJu4pRSVGNr0Zu16VBQUl6C6PxKtkRoRLxi8q0RSz3tL0X5hlcKWvMqkWwJk9tHqVDL7FT9dacMzLTiPLgJInOvOOWHsIBq42Pfi86gvims/ND31W+rEJuxHduZJmOCnXik993aHuC7Q/0nQiOllfrd7vSN4ZfWs5atqbcaetMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYlrywhH; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e1fcb0e1so3314010f8f.2;
-        Tue, 10 Dec 2024 10:51:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733856689; x=1734461489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sbWcTejsLTu/yfEmnZUJI7lrVRDEyeRIYi0sBNJufoA=;
-        b=gYlrywhH9uGWkWgkYvdFwD4QndXqKseDOfAXgabNgA7wbW17nvK2xgqtpjVfGEq+oE
-         z74YVld32l9aNhdT7wcvQ0bnsJj/84IP6A37wsF0m8HpzJTW9gDTJmQOrCZ5R5uabR0r
-         tLSoZ1Kb4nlQrhu4NthRQFwYeik1VQnB6ErcJDNPjcx4IagARABKT3m7htZyQL+SeLtg
-         hn+EVXoMpN6CXTBrK7nRqqWKTmaenxvMY76ZHsJQq+1y16dqV8CYEoQiyzp0DJFevRCi
-         n7ON8YqFuofi2WYYz8nci9Luj/VXRdn17Bw1kQnTRNoNAxXjPf3dLCzLhC60eHDl1V5+
-         tCiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733856689; x=1734461489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sbWcTejsLTu/yfEmnZUJI7lrVRDEyeRIYi0sBNJufoA=;
-        b=TqX5uiZBPk3D7goagN63sqUwQpPixYMgq38MPrHXUb+/+65ANn1IT4PUAX9gJHb7ET
-         oF2pLA85jct6etL3kORaoLtKn0lGUPqoGZRQdac0k2JgqgcZ8V6ZYFvZ/YWaXJ1fD5W3
-         1NvYsMXhjUvaQAr4atizFSZJmKFnexoEaHhQ9yLHXY0mQLLjLyXRgAL/5/5QkfkqvVFS
-         kCreCk34JhKrpVBmAtjp6oQPF6TnsD/+KMTikoNlmoUIM9ly9ofOzC9rKap0d+YIGRJi
-         fi9ziq1sHDz75JKTRzrJBS7mIbeYidFDYJjEqCzYDkdEcyhJ5pb1T4mUDXdabzi36pOU
-         0r9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2RTZsK6H4DmCgJwlxMiby8MOplZSEUGSr2N0rcPmKG+fDien30SjETIFBuPpmnx+F92M=@vger.kernel.org, AJvYcCUeTIBRyjHOU33/jqlXRW2HHiAaIvHezMSnfCp7A84vFxoGctuCfTXYYZa5cgVQbbmVCIWbHQD1YTLvIs0x5w==@vger.kernel.org, AJvYcCXIEgARs8NZYEgB1Bi1ZIQoulw8qY3508ukrOxeXyg0K17pbHMuwmYHR7E6AtlnBE+z0UbgVTOg/ZyyDLkX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaYPsWlYepUyTwt0GOXn2WDa6SQrkzkw2axsm2a0naTeT9wpeM
-	DP+FKxqhfU7Ww7OiYrL2MbFaWbW5t+YJBVyZf4nJctiFNcKv7i6umluvB55uAdXeJEzzB5uORtf
-	tTb+uYSg+zwK/AuKa8j297j4zric=
-X-Gm-Gg: ASbGnctg/xa3n5OYGNmyrgVT2oGFXmnsPR9Ofii1JHc0DBUJ9NFT2wYNG9oW3DURIy3
-	qKobOPPTwlrker+KGqtnZ+B4wCH5xwMcAykxL4gQjoVa+M8iiDUw=
-X-Google-Smtp-Source: AGHT+IEL/YKXKf4bDl5tUFIznsup7O7nfZD38kP19L0CXIrXpOLmVvLwja0xemsUWoCwI3noI6ez88l42gRf8OLITTQ=
-X-Received: by 2002:a05:6000:1a86:b0:385:e8f9:e839 with SMTP id
- ffacd0b85a97d-3864ced38a4mr149857f8f.56.1733856688725; Tue, 10 Dec 2024
- 10:51:28 -0800 (PST)
+	 To:Cc:Content-Type; b=RKGKQJZQYTZFRjyr8zV0klSYlkupH+Rw5pUol3x26phLJYtenNENgPc/FeYPOdDEbsU2eyDSC0gZi+QGHollrq36ODvKK+YfeXFrzw03H7DGb9jV0XPK1/K2cGs/8mN77/1JpV09pkGC70DpmNt5BMkY60hWBfTthynJVHGhWFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3/EmaGw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E28C4CEE6;
+	Tue, 10 Dec 2024 18:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733856736;
+	bh=K1bCEcql+Dy5pT5rqacU6v95YfdNRaf/sZWArH2Gqpw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O3/EmaGwKZDvY78qriEolcalnxoWnZ47pF1lY1Rd+7cVtNX9Sc5tG6ZZIiq4FJ+/z
+	 T2UfGfjNNTEDL09gk1+7w3LrfTnaBWYA3ShgrX+/KxtFn5ccrxyDnF2wJkXjW9nfaq
+	 /+NfHzO2xMG/ufhezJW0PhIAnhdtoIGkaUPz3vfpoXvuGWHZeFCvFcpTrP47Bh/jV6
+	 tJ0ma6MG7a3a+CebUGInZQRizdmNk+1W5QFnmoQb0/srllt87g/mw3ZURR8IS7eyRU
+	 Frac+iYvvxbYwDJflV6lq7O94Mqzfqg4Omdwt4LqRpEfKIlDI0GsrkGrw85osXPPHB
+	 KpXsfyIlq2zzg==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5f2abc195f3so1222454eaf.0;
+        Tue, 10 Dec 2024 10:52:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUYb/mjjEG6UFVXCT97gHZ+C7EBpLjHE/IvGXlXHI9YkjCfbMNehlOlDZguxHXBHFDn6/gtHRlGKHp1jbLK@vger.kernel.org, AJvYcCV0qyDx93J/sl+H94aOhg6gmxgOQ9aqxmrAJ6E64ehjb0/aSGgjOO475iDJ/WOt4MVgPjqjLo+3/GQ=@vger.kernel.org, AJvYcCVgh+Ec7rL31N8/u+J/YI3CwxhFutK3KszZtq0RpHN5emg8NRwlM3nc5Iduhjgup54i6nULGpMTs37q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKo+7eNES+S7sbugxp6M02p4xMCwxeBTj0728bUwLndxf6RvX3
+	xRy4Ud8OV93YWxmKe0wZc/f+ZpRso6QKSs6aPI57nqIUeWwtHMkmEIIPWre6N9ZTG8Wk07dd8ZU
+	PnA+cDx5vOyTtNxEOyXl9kAqyzeM=
+X-Google-Smtp-Source: AGHT+IEUVq2DG7knefuD9zoEnH3gP/20KGjUt5uUH68TvgFSufuWrRzLP6Ehja97D/mMTCDN6rSUF1q/wpb/iUTcTrI=
+X-Received: by 2002:a05:6820:1896:b0:5f2:af90:e90 with SMTP id
+ 006d021491bc7-5f2da0c2491mr32734eaf.3.1733856735696; Tue, 10 Dec 2024
+ 10:52:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080756ABBCCCBF664B374EB993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <20241210-zustehen-skilift-44ba2f53ceca@brauner> <AM6PR03MB50808A2F7DEBB5825473B38F993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB50808A2F7DEBB5825473B38F993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 10 Dec 2024 10:51:17 -0800
-Message-ID: <CAADnVQKK3vmfPmRxLuh6ad94FeioN2JV=v+L-93ZvwdYqR_Kcg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 2/5] selftests/bpf: Add tests for open-coded
- style process file iterator
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20241205-power-supply-extensions-v5-0-f0f996db4347@weissschuh.net>
+ <20241205-power-supply-extensions-v5-1-f0f996db4347@weissschuh.net> <esivcfgbfewjcnvc3uhsdvxbu5dmh3r5z2hjjagzvfrxxsioav@cx2du3oznvhi>
+In-Reply-To: <esivcfgbfewjcnvc3uhsdvxbu5dmh3r5z2hjjagzvfrxxsioav@cx2du3oznvhi>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Dec 2024 19:52:04 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iSVyfyBS=MtAW-0q8keJa9W=ztZDgPgZiNLNxFUcr6QQ@mail.gmail.com>
+Message-ID: <CAJZ5v0iSVyfyBS=MtAW-0q8keJa9W=ztZDgPgZiNLNxFUcr6QQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] ACPI: battery: Rename extensions to hook in messages
+To: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, Len Brown <lenb@kernel.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 8:23=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
+On Fri, Dec 6, 2024 at 1:40=E2=80=AFAM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
 >
-> >> +SEC("fentry/" SYS_PREFIX "sys_nanosleep")
-> >> +int test_bpf_iter_task_file(void *ctx)
-> >> +{
-> >> +    struct bpf_iter_task_file task_file_it;
-> >> +    struct bpf_iter_task_file_item *item;
-> >> +    struct task_struct *task;
-> >> +
-> >> +    task =3D bpf_get_current_task_btf();
-> >> +    if (task->parent->pid !=3D parent_pid)
-> >> +            return 0;
-> >> +
-> >> +    count++;
-> >> +
-> >> +    bpf_rcu_read_lock();
+> Hi,
+>
+> On Thu, Dec 05, 2024 at 09:46:35PM +0100, Thomas Wei=C3=9Fschuh wrote:
+> > This functionality is called "hook" everywhere in the code.
+> > For consistency call it the same in the log messages.
 > >
-> > What does the RCU read lock do here exactly?
+> > The power supply subsystem is about to get its own extension
+> > functionality. While the two are closely related and will be used
+> > together, the current wording leaves room for misinterpretation.
 > >
+> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> >
+> > ---
+> > This patch can also be applied independently through the ACPI tree.
+> > ---
 >
-> Thanks for your reply.
->
-> This is used to solve the problem previously discussed in v3 [0].
->
-> Task ref may be released during iteration.
->
-> [0]:
-> https://lore.kernel.org/bpf/CAADnVQ+0LUXxmfm1YgyGDz=3Dcciy3+dGGM-Zysq84fp=
-AdaB74Qw@mail.gmail.com/
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-I think you misunderstood my comment.
+Applied as 6.14 material, thanks!
 
-"If this object _was_ RCU protected ..."
 
-Adding rcu_read_lock doesn't make 'task' pointer RCU protected.
-That's not how RCU works.
-
-So patch 1 doing:
-
-item->task =3D task;
-
-is not correct.
-
-See bpf_iter_task_vma_new(). It's doing:
-kit->data->task =3D get_task_struct(task);
-to make sure task stays valid while iterating.
-
-pw-bot: cr
+> >  drivers/acpi/battery.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> > index 3d5342f8d7b3ae4e259131f9c7b7144a6206cfdb..6760330a8af55d51c82a044=
+7623c2040ffdaab10 100644
+> > --- a/drivers/acpi/battery.c
+> > +++ b/drivers/acpi/battery.c
+> > @@ -717,7 +717,7 @@ static void battery_hook_unregister_unlocked(struct=
+ acpi_battery_hook *hook)
+> >       }
+> >       list_del_init(&hook->list);
+> >
+> > -     pr_info("extension unregistered: %s\n", hook->name);
+> > +     pr_info("hook unregistered: %s\n", hook->name);
+> >  }
+> >
+> >  void battery_hook_unregister(struct acpi_battery_hook *hook)
+> > @@ -751,18 +751,18 @@ void battery_hook_register(struct acpi_battery_ho=
+ok *hook)
+> >               if (hook->add_battery(battery->bat, hook)) {
+> >                       /*
+> >                        * If a add-battery returns non-zero,
+> > -                      * the registration of the extension has failed,
+> > +                      * the registration of the hook has failed,
+> >                        * and we will not add it to the list of loaded
+> >                        * hooks.
+> >                        */
+> > -                     pr_err("extension failed to load: %s", hook->name=
+);
+> > +                     pr_err("hook failed to load: %s", hook->name);
+> >                       battery_hook_unregister_unlocked(hook);
+> >                       goto end;
+> >               }
+> >
+> >               power_supply_changed(battery->bat);
+> >       }
+> > -     pr_info("new extension: %s\n", hook->name);
+> > +     pr_info("new hook: %s\n", hook->name);
+> >  end:
+> >       mutex_unlock(&hook_mutex);
+> >  }
+> > @@ -805,10 +805,10 @@ static void battery_hook_add_battery(struct acpi_=
+battery *battery)
+> >       list_for_each_entry_safe(hook_node, tmp, &battery_hook_list, list=
+) {
+> >               if (hook_node->add_battery(battery->bat, hook_node)) {
+> >                       /*
+> > -                      * The notification of the extensions has failed,=
+ to
+> > -                      * prevent further errors we will unload the exte=
+nsion.
+> > +                      * The notification of the hook has failed, to
+> > +                      * prevent further errors we will unload the hook=
+.
+> >                        */
+> > -                     pr_err("error in extension, unloading: %s",
+> > +                     pr_err("error in hook, unloading: %s",
+> >                                       hook_node->name);
+> >                       battery_hook_unregister_unlocked(hook_node);
+> >               }
+> >
+> > --
+> > 2.47.1
+> >
 
