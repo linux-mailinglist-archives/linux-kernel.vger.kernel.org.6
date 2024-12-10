@@ -1,163 +1,163 @@
-Return-Path: <linux-kernel+bounces-438789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4DD9EA5F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:48:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979889EA606
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62ACC2886BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 285BF282207
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277431AAA36;
-	Tue, 10 Dec 2024 02:48:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0220719DFB5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3461B0F38;
+	Tue, 10 Dec 2024 02:51:38 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209561A2554
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733798884; cv=none; b=a5I8EJRtbiBy1a8t6U/KijqPtcTZXwv2vQDCFfIYRqfiXgXQ7pL2WDN+DNkrIMzZ7KXLPMITlwpI8fZKCuG6ruRzMNOi+ae0E++0hMgV/a6iQWtMa96Wwi5LVakR8n3ms69g5ray4QtUormPbMCJc5StQt34y5ZpQ4TSoBts3U4=
+	t=1733799097; cv=none; b=ASvRgOoS2Me01yve1/g0XjsuFrr8TCJJMS30cSzqWlaoA68UZ1sSvWX503Bjdhvzr8v8tHCIQiQkptD5PShcy/UcpdvwGSnA4aVKMfKs9JoEcZvKDXd1yS7t981I5eU7lvfWlcVtvthSf7TBLEqJCYT8gliaNY6ul7zcE+2AXvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733798884; c=relaxed/simple;
-	bh=I1Dj0RCG+Don+T68wEWCdnxtaMEuGdO1exmQEkWPfS4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Gve1BR5KYmqNyDq/XXC11VfgJmM1XYWllakeo3d/jFXdCo5SDXM0IPtCFXa6kBHONGf+ivr3nLelWDvMWCHBKzdORisyRhXH3oJyEw/P2H9u1s0HDS1u3diVN2UvguYQMgl28E4nnUjUC0McIEWelMR6NX9EZEzDs9e+FvdzAG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-841a54a66a2so535313339f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 18:48:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733798882; x=1734403682;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AT0Kkq4Hh3FibR+Xb0rirE0LNC6cFvKaqli+khFd8GU=;
-        b=qkNyKA57Nedh2n1VrVF3Mng0KxrU/DzUQ8IrIQ4Ccxd5lNZq3xr1RdOr65x2tXv/MS
-         dd/cErbXhi/SgHh2dozXCxYR+KlfM4B0DkhtisoH6NoDtNcIKynDGA4K+oyegVaQP9p7
-         LKqEQE9/NEsJ2Iy2bVXl+tHS/TN6wz2TvH5xoNtKwsZFq9ijG+m5bs64sADYPYIvxe4D
-         sRR6wm7ok14E9H9QYcaclB9/8MEcw/8VeKOHNmgwvtBNeX/A8O/RtHcH/BswNmOzzpsz
-         dIdCGULM51XmlcmwikFxOFKTqkgbwWYnLqYtKcAb1WLLAaLNTT/gqUmxMCTPFx4geXC3
-         oIQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0EvkBGqK85VnLJaWufiWKb7oA8qNzWvhqO3saz6KyUD7w86eQRozESupb4lnc1Lr1Qxdcvon9AhtE0Bk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDtK/HcY+hHXhJhtoGiZoTBIRbjdv/9ebxwHPHxTu6p1xbZ1SK
-	XBJqgxAhRwUtJyLhRdc5eLA1jv9xzbTu0/xzXjwFHR7UsaG8WMTnuEzoT3EjK2PTLOUKNUzUMGa
-	e+KRDn8TQUFN4/q5IQcmtBNanTD/k7TCNLnVT5fKsRllVDuT7YMmMsVA=
-X-Google-Smtp-Source: AGHT+IGQr+ymmoOo3Dm58nk04Sp9nFGffYqUo83yzDUiEbBTZDZ3ALlv9/0O0MXcw/aw8nvYVLEuDbQpcCijMXi9xCBrX5Kz+RTb
+	s=arc-20240116; t=1733799097; c=relaxed/simple;
+	bh=ikP2AZ1QNPCVrbja1AFpFnlbiV4vcygxdxdBVYqzhWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cCSwGbgmB8WJZVouY6mT7laP7lHkqXLpw+UiUS7y8B/Zsp6V6bhmGhDgJmLOqG01KdfbZ1I/8jZrg2LLl8XJBdYDrIVvZmg6pscg3Cl3bqyPIF/arEtsuNQtx91l75mnCwJRw8Ch/QfYspBV82kQqnNawrOnTrIpWthLUVRMOow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id D828F72C8CC;
+	Tue, 10 Dec 2024 05:51:27 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+	by imap.altlinux.org (Postfix) with ESMTPSA id C789B36D018A;
+	Tue, 10 Dec 2024 05:51:27 +0300 (MSK)
+Date: Tue, 10 Dec 2024 05:51:27 +0300
+From: Vitaly Chikunov <vt@altlinux.org>
+To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"Wangzhou (B)" <wangzhou1@hisilicon.com>,
+	Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
+ 0000000002000000 [#1] SMP
+Message-ID: <20241210025127.jmkcpw7ixu4r7hxl@altlinux.org>
+References: <20241202153618.GA6834@willie-the-truck>
+ <86ttbmt71k.wl-maz@kernel.org>
+ <20241202155940.p267a3tz5ypj4sog@altlinux.org>
+ <86ser6t6fs.wl-maz@kernel.org>
+ <20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
+ <20241203092721.j473dthkbq6wzez7@altlinux.org>
+ <1847e34fa7724d28aeb22d93752f64f2@huawei.com>
+ <20241203221453.mwh6sozyczi4ec2k@altlinux.org>
+ <87jzcfsuep.wl-maz@kernel.org>
+ <20241206205602.7phcrxqsv4c6oul4@altlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c563:0:b0:3a7:6792:60f with SMTP id
- e9e14a558f8ab-3a811c799a7mr158556505ab.4.1733798882168; Mon, 09 Dec 2024
- 18:48:02 -0800 (PST)
-Date: Mon, 09 Dec 2024 18:48:02 -0800
-In-Reply-To: <wx7x2qzdmadbdjy363jqz6nsfcnr3tougzlvb3oeomlqxjf6fl@dygmglqiqyx6>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6757abe2.050a0220.2477f.005d.GAE@google.com>
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in mas_preallocate (2)
-From: syzbot <syzbot+882589c97d51a9de68eb@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, jannh@google.com, liam.howlett@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20241206205602.7phcrxqsv4c6oul4@altlinux.org>
 
-Hello,
+On Fri, Dec 06, 2024 at 11:56:02PM +0300, Vitaly Chikunov wrote:
+> On Wed, Dec 04, 2024 at 08:51:26AM +0000, Marc Zyngier wrote:
+> > On Tue, 03 Dec 2024 22:14:53 +0000,
+> > Vitaly Chikunov <vt@altlinux.org> wrote:
+> > > On Tue, Dec 03, 2024 at 10:03:11AM +0000, Shameerali Kolothum Thodi wrote:
+> > 
+> > Mark has described what the problem is likely to be. 6.6-stable needs
+> > to have 6685f5d572c22e10 backported, and it probably should have been
+> > Cc: to stable. Can you please apply the following patch to your *host*
+> > machine and retest?
+> 
+> We tested the host with this patch applied over 6.6.63 and 6.13-rc1
+> guest does not Oops anymore.
+> 
+> I'd suggest this is also get backported to 6.12.y branch.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in corrupted
+Please, can someone backport this patch to v6.12 and send to stable? This
+would be really useful to have this fixed and it's noted this is a
+critical bug.
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	(detected by 0, t=12997 jiffies, g=15009, q=2022 ncpus=2)
-rcu: All QSes seen, last rcu_preempt kthread activity 12997 (4294963490-4294950493), jiffies_till_next_fqs=1, root ->qsmask 0x0
-rcu: rcu_preempt kthread starved for 12997 jiffies! g15009 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:25624 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- schedule_timeout+0x15a/0x290 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2045
- rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2247
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 0 UID: 0 PID: 6541 Comm: syz-executor Not tainted 6.13.0-rc1-syzkaller-00172-g6e165f544379 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5853
-Code: 2b 00 74 08 4c 89 f7 e8 8a 0a 8b 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
-RSP: 0018:ffffc900042ff080 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff9200085fe1c RCX: ffff888025bf8ad8
-RDX: dffffc0000000000 RSI: ffffffff8c0aa9a0 RDI: ffffffff8c5f98c0
-RBP: ffffc900042ff1d8 R08: ffffffff942a0887 R09: 1ffffffff2854110
-R10: dffffc0000000000 R11: fffffbfff2854111 R12: 1ffff9200085fe18
-R13: dffffc0000000000 R14: ffffc900042ff0e0 R15: 0000000000000246
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe0e0053440 CR3: 000000002d710000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- </IRQ>
- <TASK>
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- page_ext_get+0x3d/0x2a0 mm/page_ext.c:525
- page_table_check_clear+0x4b/0x550 mm/page_table_check.c:74
- get_and_clear_full_ptes include/linux/pgtable.h:712 [inline]
- zap_present_folio_ptes mm/memory.c:1510 [inline]
- zap_present_ptes mm/memory.c:1595 [inline]
- do_zap_pte_range mm/memory.c:1697 [inline]
- zap_pte_range mm/memory.c:1739 [inline]
- zap_pmd_range mm/memory.c:1822 [inline]
- zap_pud_range mm/memory.c:1851 [inline]
- zap_p4d_range mm/memory.c:1872 [inline]
- unmap_page_range+0x376a/0x48d0 mm/memory.c:1893
- unmap_vmas+0x3cc/0x5f0 mm/memory.c:1983
- exit_mmap+0x288/0xd50 mm/mmap.c:1263
- __mmput+0x115/0x3c0 kernel/fork.c:1406
- exit_mm+0x220/0x310 kernel/exit.c:570
- do_exit+0x9b2/0x28e0 kernel/exit.c:925
- do_group_exit+0x207/0x2c0 kernel/exit.c:1087
- get_signal+0x16b2/0x1750 kernel/signal.c:3017
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xce/0x340 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f479f176197
-Code: Unable to access opcode bytes at 0x7f479f17616d.
-RSP: 002b:00007fffa52fadc0 EFLAGS: 00000293 ORIG_RAX: 000000000000003d
-RAX: fffffffffffffe00 RBX: 000000000000199b RCX: 00007f479f176197
-RDX: 0000000040000000 RSI: 00007fffa52fadfc RDI: 00000000ffffffff
-RBP: 00007fffa52fadfc R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00007fffa52fae80
-R13: 00007fffa52fae88 R14: 0000000000000009 R15: 0000000000000000
- </TASK>
+Thanks,
 
-
-Tested on:
-
-commit:         6e165f54 mm/page_isolation: fixup isolate_single_pageb..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm mm-unstable
-console output: https://syzkaller.appspot.com/x/log.txt?x=1571d4df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6da4e19788a025a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=882589c97d51a9de68eb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+> 
+> Thanks,
+> 
+> > 
+> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> > index 370a1a7bd369..258a39bcd3c7 100644
+> > --- a/arch/arm64/kvm/sys_regs.c
+> > +++ b/arch/arm64/kvm/sys_regs.c
+> > @@ -1330,6 +1330,7 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
+> >  			val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MTE);
+> >  
+> >  		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_SME);
+> > +		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MPAM_frac);
+> >  		break;
+> >  	case SYS_ID_AA64ISAR1_EL1:
+> >  		if (!vcpu_has_ptrauth(vcpu))
+> > @@ -1472,6 +1473,13 @@ static u64 read_sanitised_id_aa64pfr0_el1(struct kvm_vcpu *vcpu,
+> >  
+> >  	val &= ~ID_AA64PFR0_EL1_AMU_MASK;
+> >  
+> > +	/*
+> > +	 * MPAM is disabled by default as KVM also needs a set of PARTID to
+> > +	 * program the MPAMVPMx_EL2 PARTID remapping registers with. But some
+> > +	 * older kernels let the guest see the ID bit.
+> > +	 */
+> > +	val &= ~ID_AA64PFR0_EL1_MPAM_MASK;
+> > +
+> >  	return val;
+> >  }
+> >  
+> > @@ -1560,6 +1568,29 @@ static int set_id_dfr0_el1(struct kvm_vcpu *vcpu,
+> >  	return set_id_reg(vcpu, rd, val);
+> >  }
+> >  
+> > +static int set_id_aa64pfr0_el1(struct kvm_vcpu *vcpu,
+> > +			       const struct sys_reg_desc *rd, u64 user_val)
+> > +{
+> > +	u64 hw_val = read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
+> > +	u64 mpam_mask = ID_AA64PFR0_EL1_MPAM_MASK;
+> > +
+> > +	/*
+> > +	 * Commit 011e5f5bf529f ("arm64/cpufeature: Add remaining feature bits
+> > +	 * in ID_AA64PFR0 register") exposed the MPAM field of AA64PFR0_EL1 to
+> > +	 * guests, but didn't add trap handling. KVM doesn't support MPAM and
+> > +	 * always returns an UNDEF for these registers. The guest must see 0
+> > +	 * for this field.
+> > +	 *
+> > +	 * But KVM must also accept values from user-space that were provided
+> > +	 * by KVM. On CPUs that support MPAM, permit user-space to write
+> > +	 * the sanitizied value to ID_AA64PFR0_EL1.MPAM, but ignore this field.
+> > +	 */
+> > +	if ((hw_val & mpam_mask) == (user_val & mpam_mask))
+> > +		user_val &= ~ID_AA64PFR0_EL1_MPAM_MASK;
+> > +
+> > +	return set_id_reg(vcpu, rd, user_val);
+> > +}
+> > +
+> >  /*
+> >   * cpufeature ID register user accessors
+> >   *
+> > @@ -2018,7 +2049,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+> >  	{ SYS_DESC(SYS_ID_AA64PFR0_EL1),
+> >  	  .access = access_id_reg,
+> >  	  .get_user = get_id_reg,
+> > -	  .set_user = set_id_reg,
+> > +	  .set_user = set_id_aa64pfr0_el1,
+> >  	  .reset = read_sanitised_id_aa64pfr0_el1,
+> >  	  .val = ID_AA64PFR0_EL1_CSV2_MASK | ID_AA64PFR0_EL1_CSV3_MASK, },
+> >  	ID_SANITISED(ID_AA64PFR1_EL1),
+> > 
 
