@@ -1,283 +1,187 @@
-Return-Path: <linux-kernel+bounces-439946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56869EB698
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:36:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18609EB69C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:37:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F50D283859
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:36:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4753D18885AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC0722FE0C;
-	Tue, 10 Dec 2024 16:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEE922FE04;
+	Tue, 10 Dec 2024 16:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BjH9XQUn"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPXQkT5e"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE6022FDF2;
-	Tue, 10 Dec 2024 16:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD7F1A3BA1;
+	Tue, 10 Dec 2024 16:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733848581; cv=none; b=lvVOxaOG2CH5O0eJJNseB2rthQC2vu3pWj9lHUwN5WsSSJbhl/BLNctaSfM/V4Rl84KHtQ5qWagcPXMA+JfmBj0kiwYH9uTeVGDQzpjoHT3TTpXOx1tt42NcKY7QNL+R880MFdbR+xOz96o7NocKlnlBzgAoxyLaVpDWQQmHzsc=
+	t=1733848646; cv=none; b=YjO+JnVuzfLdsGfyoe4aa1QQXLkXXB72c1+vumaYu90L9UbIaSkfiEVUPwM5S5J9XRv8fp2cYrW5T4hehj9RgdtRQssUFoOraULfaJCxcaq1Ewiezl3jGG+j1BtRpMk24pL5r+RcBSPSqvvAiwlrqA1TQ7wGJLnhc4pxwBPMZ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733848581; c=relaxed/simple;
-	bh=7PWSSRiIWGZLnnL3Lzp634to7qJspcp+JF2rxRh0SOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gK8z3pet/w83wbjQrdGh49jtxB5KlxxKBpOCyDpo5wNeK/340wYjpfOLfYwSdUt2yLkrQoLQIVTye5n2jtGzhBCfhudW6q6CLCm0JKksfhmqr7Rq5kL3gwvhDWFq7WjLoaDBjotjzri8pjvOR+eLR2UX+gRXMKkfZe3Dz7y+YZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BjH9XQUn; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733848577;
-	bh=7PWSSRiIWGZLnnL3Lzp634to7qJspcp+JF2rxRh0SOA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BjH9XQUnUbN+GmW1KUFXFFBcOaFN/Cm/xd6KanNCfmLwRC6/xNerGVsDOz3m3xWU5
-	 eTrd7X5LKcdhl6YekxmApK6ICnKhiFzNXnymH8vcgCwAwSKRAmAAP440IxOkC/xxzM
-	 sMqWoxzKOWXvxFrOTGtY6Dc+9G2AmXSV6WSVoP4aZP3AJGATZX78eHZIezpJMtyi9l
-	 eQ7W3vCphNMkDf78JU6auJJwhdOJyGUlhq6jWwYZ+HSxjfiSghMzeh6ez3nj9ouKcy
-	 YWC1zDlt7uVm4UfeL3BvEv/sFi8mq4lAFNO8eVWnrNgUOL1WDfxeRHlr/sXpZqZ66t
-	 myCmxrYeoRuvQ==
-Received: from jupiter.universe (dyndsl-091-248-190-127.ewe-ip-backbone.de [91.248.190.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9DCAC17E37AD;
-	Tue, 10 Dec 2024 17:36:17 +0100 (CET)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 2FF0A48CC8A; Tue, 10 Dec 2024 17:36:17 +0100 (CET)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH v1 1/1] arm64: dts: rockchip: Add USB-C support to ROCK 5B
-Date: Tue, 10 Dec 2024 17:36:01 +0100
-Message-ID: <20241210163615.120594-1-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733848646; c=relaxed/simple;
+	bh=bMaWMUz5V3ffO6Fby9ugSZR/xOrKRSiA3Zeu/M2/xfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PfiBnaSSekB7NcoKDR9WAMPOlNDcdANLdzEYfMtw47zOxOQc6fZ0nNZj951p9QwKCJhCRN3gN6U/LvAuJ8H+TjHO+8SB/CZEwpDSm2a0n7ZCZNxbW3EMhGqrD/1zitpUwm0T1Jyrd91W92YRNbfkWNF3UX6Z99g+9Kgz4tQiTnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lPXQkT5e; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30227ccf803so18584321fa.2;
+        Tue, 10 Dec 2024 08:37:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733848642; x=1734453442; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mMr2qVhA4J2Ksp2znQVcePx2ayh49sbpV9PFu6+5bZw=;
+        b=lPXQkT5eLbSJihPkq8nL0G8RkVzHzRoxK5mOatJadWIYXOxVDxpn+B/NjAsr3sNkyW
+         1cOGWBUM5DRxAknBLIIa5/A6cn7p9apbJyoJY2cMcfyqNdMJmMpKTp3JSDPexsdvavMs
+         5A+p1IsBU7sMkhEMTAjkU9wVpTHamZClnZMpUD+ekJn57j2QdyqlhkalHW1p+PH98SlX
+         NVO4E10KbKrtbbotRq0efHbzE6alEW2Dxj24B3MKZedyTM0yBpAAVZr5zdXKimdq2u7+
+         Zr8TjDW/hNkxGRvO/JDpak679tjOrtPnPQ6QhFNRe+jiirI/iLSsZE5ER/mC8JIZcB4p
+         nEig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733848642; x=1734453442;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mMr2qVhA4J2Ksp2znQVcePx2ayh49sbpV9PFu6+5bZw=;
+        b=t3VqFKAyh/iCq8qnFGWP+G27/0aq73Zt7kpOaAlPc5AtRJmLAruSeGmx1BO7twHDTi
+         tiiwQUrDPTrSHNMhn86hK2i9HGubV7CN0dRLJT/mIpqj5mcNwjNDsLjXpq4hS+4ffOwZ
+         tiszA4Die3jB2y7RkgUPHIhWMDdhB7sPytKysJz3ZAVHnBuyIdnsEJDPaedDsIbNjtQz
+         g1aExzpVYkbROFnqsKwokSe2AGfz8FOavv2bao+MtAv3CxWtJErBuhG/32p9C2VrRYKN
+         7hgyZ9Pm+LXsmYcunJ5b2bKX8BJ7mJHzGNP9HtNZzrPWp1n12jnkJLMIpVM2o6shTEZU
+         nnCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIA1APIB+1IXaJSTYld/QCmEc+YQtiTxQU+0hiXS1IJ7dl3+SbEoivIoGLL3Rt+dyv1Jvqf5ol@vger.kernel.org, AJvYcCVAtMZwqvBaghoKPvWhxRe+dogpLB5F85HKRwxWfq9wGoSwj2OrY6kSANwIYysufOyMdQ13Op8MIXPA@vger.kernel.org, AJvYcCVS1daRC6bzX4QHacuXx/Axq+TYWzUsmvsvavZ1spW2QHxesWHYfTT/OqrsDUj1guESVbxvG4pzPN+tS23toYk=@vger.kernel.org, AJvYcCWsAMbak7iBv9MOlSQ3bdWPsrNby2V/vIyRjiEZ0fmnrWcAG6PKoxEImYU5NSUfjPgXf6MB+1wcUzlKZM1v@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw80Bl/eCnReMrBbhcMMYZPNkDJoWLNFA3qinKBehRBL/ZpLhU8
+	1ZWrEEvIWJM5/QBsLYrK5aFKqp4HYkloFMc2eWMz6TPz/0ZfiFDLNOIL79b00FI5tPmx/C1Q2i8
+	ZU194xuOhgBdPeZb0trwY2S6tRHQ=
+X-Gm-Gg: ASbGnct6exCBj4xdRBsNdU2qWnitw9JO2TT5yDWfxOvxcBTQYE5uwg4bj8L3Yto0dY/
+	8gAATxVLCoIkAz3+xTa3QA4+lfW3U9aSeoSU=
+X-Google-Smtp-Source: AGHT+IHiGI51RueWOS5PEJQEG+4Gh2nJXRo4OsJkgCK1jqR6c9JsfhkuPRwhfJ6Gu9P1fz4wuUEMdL6zMVunaz4Mo1A=
+X-Received: by 2002:a05:651c:150c:b0:300:41a8:125b with SMTP id
+ 38308e7fff4ca-30041a813f7mr47506931fa.37.1733848642191; Tue, 10 Dec 2024
+ 08:37:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241208204708.3742696-1-ubizjak@gmail.com> <20241208204708.3742696-3-ubizjak@gmail.com>
+ <20241209113039.GN21636@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241209113039.GN21636@noisy.programming.kicks-ass.net>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Tue, 10 Dec 2024 17:37:10 +0100
+Message-ID: <CAFULd4Y7-_Zax3S-m3H6ok9SvsBgS7DmJjSu=3VZ1hyzT71jjg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] compiler.h: Introduce TYPEOF_UNQUAL() macro
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-arch@vger.kernel.org, 
+	netdev@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>, Brian Gerst <brgerst@gmail.com>, 
+	Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Nathan Chancellor <nathan@kernel.org>
+Content-Type: multipart/mixed; boundary="00000000000069a3ca0628ed186b"
 
-Add hardware description for the USB-C port in the Radxa Rock 5 Model B.
-This describes the OHCI, EHCI and XHCI USB parts, but not yet the
-DisplayPort AltMode (bindings are not yet upstream).
+--00000000000069a3ca0628ed186b
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The fusb302 node is marked with status "fail", since the board is usually
-powered through the USB-C port. Handling of errors can result in hard
-resets, which removed the bus power for some time resulting in a board
-reset.
+On Mon, Dec 9, 2024 at 12:30=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Sun, Dec 08, 2024 at 09:45:17PM +0100, Uros Bizjak wrote:
+> > Define TYPEOF_UNQUAL() to use __typeof_unqual__() as typeof operator
+> > when available, to return unqualified type of the expression.
+> >
+> > Current version of sparse doesn't know anything about __typeof_unqual__=
+()
+> > operator. Avoid the usage of __typeof_unqual__() when sparse checking
+> > is active to prevent sparse errors with unknowing keyword.
+>
+> Ooooh, new toys.
+>
+> I suppose __unqual_scalar_typeof() wants to be using this when
+> available?
 
-The main problem is that devices are supposed to interact with the
-power-supply within 5 seconds after the plug event according to the
-USB PD specification. This is more or less impossible to achieve when
-the kernel is the first software communicating with the power-supply.
+Not only that, the new toy enables clang to check kernel's address
+spaces in a generic way using address_space attribute.
 
-Recent U-Boot (v2025.01) will start doing USB-PD communication, which
-solves this issue. Upstream U-Boot doing USB-PD communication will also
-set the fusb302 node status to "okay". That way booting a kernel with
-the updated DT on an old U-Boot avoids a reset loop.
+Please find attached a follow-up patch that enables __percpu checks
+for all targets, supported by clang. Clang is a little bit pickier
+than gcc about named address space declarations (it warns for use of
+duplicated address space attribute), so the patch in addition to the
+obvious
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- .../boot/dts/rockchip/rk3588-rock-5b.dts      | 121 ++++++++++++++++++
- 1 file changed, 121 insertions(+)
++#  define __percpu_qual        __attribute__((address_space(3)))
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index d597112f1d5b..cb5990df6ccb 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -5,6 +5,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/soc/rockchip,vop2.h>
-+#include <dt-bindings/usb/pd.h>
- #include "rk3588.dtsi"
- 
- / {
-@@ -84,6 +85,15 @@ rfkill-bt {
- 		shutdown-gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_HIGH>;
- 	};
- 
-+	vcc12v_dcin: regulator-vcc12v-dcin {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc12v_dcin";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
- 	vcc3v3_pcie2x1l0: regulator-vcc3v3-pcie2x1l0 {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -142,6 +152,7 @@ vcc5v0_sys: regulator-vcc5v0-sys {
- 		regulator-boot-on;
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc12v_dcin>;
- 	};
- 
- 	vcc_1v1_nldo_s3: regulator-vcc-1v1-nldo-s3 {
-@@ -264,6 +275,67 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4m1_xfer>;
-+	status = "okay";
-+
-+	usbc0: usb-typec@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <RK_PB4 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usbc0_int>;
-+		vbus-supply = <&vcc12v_dcin>;
-+		/*
-+		 * When the board is starting to send power-delivery messages
-+		 * too late (5 seconds according to the specification), the
-+		 * power-supply reacts with a hard-reset. That removes the
-+		 * power from VBUS for some time, which resets te whole board.
-+		 */
-+		status = "fail";
-+
-+		usb_con: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			power-role = "sink";
-+			try-power-role = "sink";
-+			op-sink-microwatt = <1000000>;
-+			sink-pdos =
-+				<PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>,
-+				<PDO_VAR(5000, 20000, 5000)>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					usbc0_role_sw: endpoint {
-+						remote-endpoint = <&dwc3_0_role_switch>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					usbc0_orien_sw: endpoint {
-+						remote-endpoint = <&usbdp_phy0_orientation_switch>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					dp_altmode_mux: endpoint {
-+						remote-endpoint = <&usbdp_phy0_dp_altmode_mux>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i2c6 {
- 	status = "okay";
- 
-@@ -423,6 +495,10 @@ usb {
- 		vcc5v0_host_en: vcc5v0-host-en {
- 			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
-+
-+		usbc0_int: usbc0-int {
-+			rockchip,pins = <3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
- 	};
- };
- 
-@@ -835,6 +911,14 @@ &uart2 {
- 	status = "okay";
- };
- 
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
- &u2phy1 {
- 	status = "okay";
- };
-@@ -866,6 +950,29 @@ &usbdp_phy1 {
- 	status = "okay";
- };
- 
-+&usbdp_phy0 {
-+	mode-switch;
-+	orientation-switch;
-+	sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy0_orientation_switch: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc0_orien_sw>;
-+		};
-+
-+		usbdp_phy0_dp_altmode_mux: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&dp_altmode_mux>;
-+		};
-+	};
-+};
-+
- &usb_host0_ehci {
- 	status = "okay";
- };
-@@ -874,6 +981,20 @@ &usb_host0_ohci {
- 	status = "okay";
- };
- 
-+&usb_host0_xhci {
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		dwc3_0_role_switch: endpoint {
-+			remote-endpoint = <&usbc0_role_sw>;
-+		};
-+	};
-+};
-+
- &usb_host1_ehci {
- 	status = "okay";
- };
--- 
-2.45.2
+also fixes a couple of macros that could result in a duplicated
+address space attribute.
 
+The patch, applied as a follow-up to the series, survives allyesconfig
+compilation with clang-19 and produces a bootable kernel. The patch
+was tested only for x86_64 target, for other targets a couple of
+trivial fixes would be necessary (a cast or a substitution of typeof()
+with TYPEOF_UNQUAL()).
+
+AFAICS, the same approach using clang's address_space attribute can be
+implemented to also check other address spaces: __user, __iommu  and
+__rcu.
+
+Uros.
+
+--00000000000069a3ca0628ed186b
+Content-Type: text/plain; charset="US-ASCII"; name="percpu-clang.diff.txt"
+Content-Disposition: attachment; filename="percpu-clang.diff.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m4iomhgl0>
+X-Attachment-Id: f_m4iomhgl0
+
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvYXNtLWdlbmVyaWMvcGVyY3B1LmggYi9pbmNsdWRlL2FzbS1n
+ZW5lcmljL3BlcmNwdS5oCmluZGV4IDAyYWVjYTIxNDc5YS4uNDEwOWQ4MjhhNTY0IDEwMDY0NAot
+LS0gYS9pbmNsdWRlL2FzbS1nZW5lcmljL3BlcmNwdS5oCisrKyBiL2luY2x1ZGUvYXNtLWdlbmVy
+aWMvcGVyY3B1LmgKQEAgLTE2LDcgKzE2LDEyIEBACiAgKiBzcGFjZSBxdWFsaWZpZXIpLgogICov
+CiAjaWZuZGVmIF9fcGVyY3B1X3F1YWwKLSMgZGVmaW5lIF9fcGVyY3B1X3F1YWwKKyMgaWYgX19o
+YXNfYXR0cmlidXRlKGFkZHJlc3Nfc3BhY2UpICYmIFwKKyAgICAgZGVmaW5lZChDT05GSUdfQ0Nf
+SEFTX1RZUEVPRl9VTlFVQUwpICYmICFkZWZpbmVkKF9fQ0hFQ0tFUl9fKQorIyAgZGVmaW5lIF9f
+cGVyY3B1X3F1YWwJCV9fYXR0cmlidXRlX18oKGFkZHJlc3Nfc3BhY2UoMykpKQorIyBlbHNlCisj
+ICBkZWZpbmUgX19wZXJjcHVfcXVhbAorIyBlbmRpZgogI2VuZGlmCiAKICNpZmRlZiBDT05GSUdf
+U01QCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2RldmljZS5oIGIvaW5jbHVkZS9saW51eC9k
+ZXZpY2UuaAppbmRleCA2NjdjYjZkYjkwMTkuLjFkNmE1NWQ1MjUwYSAxMDA2NDQKLS0tIGEvaW5j
+bHVkZS9saW51eC9kZXZpY2UuaAorKysgYi9pbmNsdWRlL2xpbnV4L2RldmljZS5oCkBAIC00MzEs
+OSArNDMxLDkgQEAgc3RhdGljIGlubGluZSBpbnQgX19kZXZtX2FkZF9hY3Rpb25fb3JfcmVzZXQo
+c3RydWN0IGRldmljZSAqZGV2LCB2b2lkICgqYWN0aW9uKSgKICAqIFJFVFVSTlM6CiAgKiBQb2lu
+dGVyIHRvIGFsbG9jYXRlZCBtZW1vcnkgb24gc3VjY2VzcywgTlVMTCBvbiBmYWlsdXJlLgogICov
+Ci0jZGVmaW5lIGRldm1fYWxsb2NfcGVyY3B1KGRldiwgdHlwZSkgICAgICBcCi0JKCh0eXBlb2Yo
+dHlwZSkgX19wZXJjcHUgKilfX2Rldm1fYWxsb2NfcGVyY3B1KChkZXYpLCBzaXplb2YodHlwZSks
+IFwKLQkJCQkJCSAgICAgIF9fYWxpZ25vZl9fKHR5cGUpKSkKKyNkZWZpbmUgZGV2bV9hbGxvY19w
+ZXJjcHUoZGV2LCB0eXBlKQkJCQkgICAgXAorCSgoVFlQRU9GX1VOUVVBTCh0eXBlKSBfX3BlcmNw
+dSAqKV9fZGV2bV9hbGxvY19wZXJjcHUoKGRldiksIFwKKwkJCQlzaXplb2YodHlwZSksIF9fYWxp
+Z25vZl9fKHR5cGUpKSkKIAogdm9pZCBfX3BlcmNwdSAqX19kZXZtX2FsbG9jX3BlcmNwdShzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHNpemVfdCBzaXplLAogCQkJCSAgIHNpemVfdCBhbGlnbik7CmRpZmYg
+LS1naXQgYS9pbmNsdWRlL2xpbnV4L3BlcmNwdS5oIGIvaW5jbHVkZS9saW51eC9wZXJjcHUuaApp
+bmRleCA1MmI1ZWE2NjNiOWYuLmMzYmYwNDBhYmE2NiAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51
+eC9wZXJjcHUuaAorKysgYi9pbmNsdWRlL2xpbnV4L3BlcmNwdS5oCkBAIC0xNDgsMTMgKzE0OCwx
+MyBAQCBleHRlcm4gdm9pZCBfX3BlcmNwdSAqcGNwdV9hbGxvY19ub3Byb2Yoc2l6ZV90IHNpemUs
+IHNpemVfdCBhbGlnbiwgYm9vbCByZXNlcnZlZAogCWFsbG9jX2hvb2tzKHBjcHVfYWxsb2Nfbm9w
+cm9mKF9zaXplLCBfYWxpZ24sIHRydWUsIEdGUF9LRVJORUwpKQogCiAjZGVmaW5lIGFsbG9jX3Bl
+cmNwdV9nZnAodHlwZSwgZ2ZwKQkJCQkJXAotCSh0eXBlb2YodHlwZSkgX19wZXJjcHUgKilfX2Fs
+bG9jX3BlcmNwdV9nZnAoc2l6ZW9mKHR5cGUpLAlcCisJKFRZUEVPRl9VTlFVQUwodHlwZSkgX19w
+ZXJjcHUgKilfX2FsbG9jX3BlcmNwdV9nZnAoc2l6ZW9mKHR5cGUpLCBcCiAJCQkJCQlfX2FsaWdu
+b2ZfXyh0eXBlKSwgZ2ZwKQogI2RlZmluZSBhbGxvY19wZXJjcHUodHlwZSkJCQkJCQlcCi0JKHR5
+cGVvZih0eXBlKSBfX3BlcmNwdSAqKV9fYWxsb2NfcGVyY3B1KHNpemVvZih0eXBlKSwJCVwKKwko
+VFlQRU9GX1VOUVVBTCh0eXBlKSBfX3BlcmNwdSAqKV9fYWxsb2NfcGVyY3B1KHNpemVvZih0eXBl
+KSwJXAogCQkJCQkJX19hbGlnbm9mX18odHlwZSkpCiAjZGVmaW5lIGFsbG9jX3BlcmNwdV9ub3By
+b2YodHlwZSkJCQkJCVwKLQkoKHR5cGVvZih0eXBlKSBfX3BlcmNwdSAqKXBjcHVfYWxsb2Nfbm9w
+cm9mKHNpemVvZih0eXBlKSwJXAorCSgoVFlQRU9GX1VOUVVBTCh0eXBlKSBfX3BlcmNwdSAqKXBj
+cHVfYWxsb2Nfbm9wcm9mKHNpemVvZih0eXBlKSwgXAogCQkJCQlfX2FsaWdub2ZfXyh0eXBlKSwg
+ZmFsc2UsIEdGUF9LRVJORUwpKQogCiBleHRlcm4gdm9pZCBmcmVlX3BlcmNwdSh2b2lkIF9fcGVy
+Y3B1ICpfX3BkYXRhKTsK
+--00000000000069a3ca0628ed186b--
 
