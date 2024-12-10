@@ -1,394 +1,195 @@
-Return-Path: <linux-kernel+bounces-439059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF469EAA43
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:06:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D3F9EAA47
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9B0A167089
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB5618899FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5232B22CBF8;
-	Tue, 10 Dec 2024 08:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B13322E40A;
+	Tue, 10 Dec 2024 08:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="Jflf3ByV"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NCMDfrTe"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EF61C5CBA;
-	Tue, 10 Dec 2024 08:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFA9198E77
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733817981; cv=none; b=t8yyD1VITh4px4tzLSvOh48sUTuNPE6Rn2t/54qhFrr8bH/Ddqg/YOxDIrMZLJELeOXFs0X4Jbtv5d/Dsm35RiKb01qw/tXJrMawqYMTKF1N/euUOg7oUzAiI19XgdKQKmF7NZtL2Mho1xcgZhsCtjyJ+wSaSuNBSTJTX+lc3H8=
+	t=1733818076; cv=none; b=WUOpMvo+p2MJWJKdSNagnGrS8+1GL7I5HYa7RkSAPEnyd4Wbax3q+f9/XbYyWtFejG0nhsVrXxu1LQlgAQE1KvW90lMXvK3L49rIgZ0jrtRYyLvun8ypo2iuIPt/M/qQEnifX83dieTkE/MiwoIxztHN7kB/s58Nes/sio4a5+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733817981; c=relaxed/simple;
-	bh=Lrfbo6zQCTm9mTPXAsUwyIU60JKYWnaZ6IMpyGdbQds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VBymw+XqUfIZ15evxo5kzs1Y+ql+vkk4jdskdI/izVzmzGmoiB6o+3eZ5lpGXaknuvsOlY3DsYKc7kl1JtdNiXcf0306p6bHLqfwQ8fKly6OJNDIKj2aZXS6mMXpQBFnk+SxC1PBT5hDngdBUedE2RJdp/SGSDB7Ea9ARYpEf58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=Jflf3ByV; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jRzPBeNoDd8fIjJqfXOLjPmwwP4iWssBb0kRWNEAzWs=; b=Jflf3ByVJ/f8HNj9bef+gwyLLc
-	1fWSPaU7ptt5mKJz3e2Uz1bQ5KZDT9/jXnl4L1mp0QaCFL9LDtdpESRckf0OjBQKdVq2hEXJkMCLw
-	CIwfizz0+izYAQZ3R/igKxG3aEqR1f2pKBpGRwBSvPd1tHxOh6+0TyNO4O9Cwm30RizOnvRWuRJPL
-	Sgq5dsIY57EsYhUE+xbSJNmk6Rzzf1XpyHtJB2hSHlMnB6t2oKdqA8vwOrqZR6eeUvFZ25qlM+aV2
-	ieuRwRGt8LH8jbMO+VJeTwHiR2Z8eujHgQl6q7PC2NZwgGopBzuX4oiFQ+wcKW9580Ig1pqyo6UhF
-	7zSrEfOw==;
-Received: from [89.212.21.243] (port=38704 helo=[192.168.69.52])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <andrej.picej@norik.com>)
-	id 1tKvFy-001XcI-25;
-	Tue, 10 Dec 2024 09:06:10 +0100
-Message-ID: <4a0b3e4e-c791-43cd-8f82-8d25fae71d64@norik.com>
-Date: Tue, 10 Dec 2024 09:06:07 +0100
+	s=arc-20240116; t=1733818076; c=relaxed/simple;
+	bh=hDwWjzLfuxFr9/hUqMNrjEmfrk3FngQAtBesZGuM1sU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cjlccKpd4L/gnNs1rdOb4yvhHB9yT4Y35ENlODijxHY5oG+67QAA4W7lt0HNdHR6ozi+bGtWujjR8oE3XjERicDq6st/NGQ6fvUuibQWpM7TuSQx9hi2LgJgc2voDboDBLfyYVVXLHeIXlxlZ7yLEg1UD9NbahzAbNxwTgom3qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NCMDfrTe; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53e3a227b82so2861822e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:07:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1733818073; x=1734422873; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDwWjzLfuxFr9/hUqMNrjEmfrk3FngQAtBesZGuM1sU=;
+        b=NCMDfrTeMctQOPbJsZOOdlU3Gz4Fi7MgtO0H1/g7+F3RRYmIvWCcGhWORhWNt5t15+
+         EEuX9GsWSvtqRG4/xZvus3WwrqvIcZ8G4WopyeNSudyQwHHgSg5JFFPfAj9h90G0C5i+
+         5wdgwqNJ/V+3m4zGW/N7IqjsRrSEMkHRZsYMQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733818073; x=1734422873;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hDwWjzLfuxFr9/hUqMNrjEmfrk3FngQAtBesZGuM1sU=;
+        b=Y0/oxVXalt40Hg6xoPIO/bbIY9YdMy04wySkre3z6Hlw7BG730OdHC+CHcFeTj2Htu
+         q73Pon+MpAq4yR44pf8LbpqTs46AwKZxnxwSsjywbiA9cqywgR8TYylAgonGTRpixJF2
+         MqrW4xe/C7YN2IY9sTfBXKgJTHhujd3OleMd0OYCyTztdIGkG7b1KeQoa8HmGjWT329p
+         H0bOfzkdIZ7UThRw5D4hSCp349a5w/VGUlhdav1nyBQey/bUyTrX7Rgbg2d7HHrseH5S
+         PgjReor7TV54PDYyRkxEDDNUDnYT2QIFnyGyvBLUn23+tbf5oirh7n3rM6+SUy8OWmPJ
+         3kFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeR2gVC1F53UOShx9d2D81QY3V8hcohXCtVgewWKoBfroLuwly6VuuYodXQoUWpEw4sb1B3HBsOsrRd6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrUtKgqE0YsvfPNHFDpPrFGPhO5WbPnHTpbJIUqXYGf9Ezk2Py
+	0PnxaDwvbRw7hqawJhoSu/toCThsCCEGOdzOFwa+DDpsb+YNq9YidxOPKNT1p4NBEnw3KwatyUL
+	5gbIaekb4da5xB4YaLrz1ukpNYANbCdsVYgUB
+X-Gm-Gg: ASbGncsFSSjz0Pwl+QZYvXU14TyuXK4OPOuOB0NePeZ8uf2Ff/D8ftdLORIyABizWaA
+	h58v12+52dCO2b3+bMCgXflTTmDhwqGvh1Zj9
+X-Google-Smtp-Source: AGHT+IFUM00bXrbZPM88kU9gRNDUuamgsxOoWDbEMA49d+kpeyOs51eCsZxCwHrC4xexdtUL809J0fzCQ6i9JAtHGk0=
+X-Received: by 2002:a05:6512:23a1:b0:53e:391c:e983 with SMTP id
+ 2adb3069b0e04-53e391cec2fmr5383699e87.3.1733818073241; Tue, 10 Dec 2024
+ 00:07:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing
- optional properties
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, marex@denx.de, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- upstream@lists.phytec.de
-References: <20241205134021.2592013-1-andrej.picej@norik.com>
- <20241205134021.2592013-3-andrej.picej@norik.com>
- <nbumcptoi5hwehjbrynf6dh2wrz7a4ugqblrjxyswvj7udkf3u@6qikclizqfjr>
- <e420579f-25b2-41ca-9627-130d67c51541@norik.com>
- <xkrk3vdw7yhj22ornqog7wovqctgrolfcxbl43u7ddgstjqsbl@h22hxlld6zqg>
-Content-Language: en-US
-From: Andrej Picej <andrej.picej@norik.com>
-Autocrypt: addr=andrej.picej@norik.com; keydata=
- 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
- xtT/8OxBOVSHvA==
-In-Reply-To: <xkrk3vdw7yhj22ornqog7wovqctgrolfcxbl43u7ddgstjqsbl@h22hxlld6zqg>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
-X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20241209175751.287738-1-mlevitsk@redhat.com> <20241209175751.287738-3-mlevitsk@redhat.com>
+In-Reply-To: <20241209175751.287738-3-mlevitsk@redhat.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Tue, 10 Dec 2024 13:37:43 +0530
+Message-ID: <CAH-L+nM8v2paYtRoNpcRtFFsiWyuUGBE8r85fDNMpaXcJo=7_g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] net: mana: Fix irq_contexts memory leak in mana_gd_setup_irqs
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, 
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, linux-hyperv@vger.kernel.org, 
+	Dexuan Cui <decui@microsoft.com>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
+	Konstantin Taranov <kotaranov@microsoft.com>, Leon Romanovsky <leon@kernel.org>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Shradha Gupta <shradhagupta@linux.microsoft.com>, 
+	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Long Li <longli@microsoft.com>, 
+	Yury Norov <yury.norov@gmail.com>, Michael Kelley <mhklinux@outlook.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000061e8560628e5fa59"
+
+--00000000000061e8560628e5fa59
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 9, 2024 at 11:29=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.com=
+> wrote:
+>
+> gc->irq_contexts is not freeded if one of the later operations
+> fail.
+>
+> Suggested-by: Michael Kelley <mhklinux@outlook.com>
+> Fixes: 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+
+LGTM
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
 
+--=20
+Regards,
+Kalesh A P
 
-On 10. 12. 24 02:18, Dmitry Baryshkov wrote:
-> On Mon, Dec 09, 2024 at 08:56:29AM +0100, Andrej Picej wrote:
->> Hi Dmitry,
->>
->> On 5. 12. 24 23:48, Dmitry Baryshkov wrote:
->>> On Thu, Dec 05, 2024 at 02:40:20PM +0100, Andrej Picej wrote:
->>>> Add a optional properties to change LVDS output voltage. This should not
->>>> be static as this depends mainly on the connected display voltage
->>>> requirement. We have three properties:
->>>> - "ti,lvds-termination-ohms", which sets near end termination,
->>>> - "ti,lvds-vod-swing-data-microvolt" and
->>>> - "ti,lvds-vod-swing-clock-microvolt" which both set LVDS differential
->>>> output voltage for data and clock lanes. They are defined as an array
->>>> with min and max values. The appropriate bitfield will be set if
->>>> selected constraints can be met.
->>>>
->>>> If "ti,lvds-termination-ohms" is not defined the default of 200 Ohm near
->>>> end termination will be used. Selecting only one:
->>>> "ti,lvds-vod-swing-data-microvolt" or
->>>> "ti,lvds-vod-swing-clock-microvolt" can be done, but the output voltage
->>>> constraint for only data/clock lanes will be met. Setting both is
->>>> recommended.
->>>>
->>>> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
->>>> ---
->>>> Changes in v4:
->>>> - fix typo in commit message bitfiled -> bitfield
->>>> - use arrays (lvds_vod_swing_conf and lvds_term_conf) in private data, instead
->>>> of separate variables for channel A/B
->>>> - add more checks on return value of "of_property_read_u32_array"
->>>> Changes in v3:
->>>> - use microvolts for default array values 1000 mV -> 1000000 uV.
->>>> Changes in v2:
->>>> - use datasheet tables to get the proper configuration
->>>> - since major change was done change the authorship to myself
->>>> ---
->>>>    drivers/gpu/drm/bridge/ti-sn65dsi83.c | 147 +++++++++++++++++++++++++-
->>>>    1 file changed, 144 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
->>>> index 57a7ed13f996..f724d2a6777b 100644
->>>> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
->>>> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
->>>> @@ -132,6 +132,16 @@
->>>>    #define  REG_IRQ_STAT_CHA_SOT_BIT_ERR		BIT(2)
->>>>    #define  REG_IRQ_STAT_CHA_PLL_UNLOCK		BIT(0)
->>>> +enum sn65dsi83_channel {
->>>> +	CHANNEL_A,
->>>> +	CHANNEL_B
->>>> +};
->>>> +
->>>> +enum sn65dsi83_lvds_term {
->>>> +	OHM_100,
->>>> +	OHM_200
->>>> +};
->>>> +
->>>>    enum sn65dsi83_model {
->>>>    	MODEL_SN65DSI83,
->>>>    	MODEL_SN65DSI84,
->>>> @@ -147,6 +157,8 @@ struct sn65dsi83 {
->>>>    	struct regulator		*vcc;
->>>>    	bool				lvds_dual_link;
->>>>    	bool				lvds_dual_link_even_odd_swap;
->>>> +	int				lvds_vod_swing_conf[2];
->>>> +	int				lvds_term_conf[2];
->>>>    };
->>>>    static const struct regmap_range sn65dsi83_readable_ranges[] = {
->>>> @@ -237,6 +249,36 @@ static const struct regmap_config sn65dsi83_regmap_config = {
->>>>    	.max_register = REG_IRQ_STAT,
->>>>    };
->>>> +static const int lvds_vod_swing_data_table[2][4][2] = {
->>>> +	{	/* 100 Ohm */
->>>> +		{ 180000, 313000 },
->>>> +		{ 215000, 372000 },
->>>> +		{ 250000, 430000 },
->>>> +		{ 290000, 488000 },
->>>> +	},
->>>> +	{	/* 200 Ohm */
->>>> +		{ 150000, 261000 },
->>>> +		{ 200000, 346000 },
->>>> +		{ 250000, 428000 },
->>>> +		{ 300000, 511000 },
->>>> +	},
->>>> +};
->>>> +
->>>> +static const int lvds_vod_swing_clock_table[2][4][2] = {
->>>> +	{	/* 100 Ohm */
->>>> +		{ 140000, 244000 },
->>>> +		{ 168000, 290000 },
->>>> +		{ 195000, 335000 },
->>>> +		{ 226000, 381000 },
->>>> +	},
->>>> +	{	/* 200 Ohm */
->>>> +		{ 117000, 204000 },
->>>> +		{ 156000, 270000 },
->>>> +		{ 195000, 334000 },
->>>> +		{ 234000, 399000 },
->>>> +	},
->>>> +};
->>>> +
->>>>    static struct sn65dsi83 *bridge_to_sn65dsi83(struct drm_bridge *bridge)
->>>>    {
->>>>    	return container_of(bridge, struct sn65dsi83, bridge);
->>>> @@ -435,12 +477,16 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
->>>>    		val |= REG_LVDS_FMT_LVDS_LINK_CFG;
->>>>    	regmap_write(ctx->regmap, REG_LVDS_FMT, val);
->>>> -	regmap_write(ctx->regmap, REG_LVDS_VCOM, 0x05);
->>>> +	regmap_write(ctx->regmap, REG_LVDS_VCOM,
->>>> +			REG_LVDS_VCOM_CHA_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_A]) |
->>>> +			REG_LVDS_VCOM_CHB_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_B]));
->>>>    	regmap_write(ctx->regmap, REG_LVDS_LANE,
->>>>    		     (ctx->lvds_dual_link_even_odd_swap ?
->>>>    		      REG_LVDS_LANE_EVEN_ODD_SWAP : 0) |
->>>> -		     REG_LVDS_LANE_CHA_LVDS_TERM |
->>>> -		     REG_LVDS_LANE_CHB_LVDS_TERM);
->>>> +		     (ctx->lvds_term_conf[CHANNEL_A] ?
->>>> +			  REG_LVDS_LANE_CHA_LVDS_TERM : 0) |
->>>> +		     (ctx->lvds_term_conf[CHANNEL_B] ?
->>>> +			  REG_LVDS_LANE_CHB_LVDS_TERM : 0));
->>>>    	regmap_write(ctx->regmap, REG_LVDS_CM, 0x00);
->>>>    	le16val = cpu_to_le16(mode->hdisplay);
->>>> @@ -576,10 +622,101 @@ static const struct drm_bridge_funcs sn65dsi83_funcs = {
->>>>    	.atomic_get_input_bus_fmts = sn65dsi83_atomic_get_input_bus_fmts,
->>>>    };
->>>> +static int sn65dsi83_select_lvds_vod_swing(struct device *dev,
->>>> +	u32 lvds_vod_swing_data[2], u32 lvds_vod_swing_clk[2], u8 lvds_term)
->>>> +{
->>>> +	int i;
->>>> +
->>>> +	for (i = 0; i <= 3; i++) {
->>>> +		if (lvds_vod_swing_data_table[lvds_term][i][0] >= lvds_vod_swing_data[0] &&
->>>> +		lvds_vod_swing_data_table[lvds_term][i][1] <= lvds_vod_swing_data[1] &&
->>>> +		lvds_vod_swing_clock_table[lvds_term][i][0] >= lvds_vod_swing_clk[0] &&
->>>> +		lvds_vod_swing_clock_table[lvds_term][i][1] <= lvds_vod_swing_clk[1])
->>>> +			return i;
->>>> +	}
->>>> +
->>>> +	dev_err(dev, "failed to find appropriate LVDS_VOD_SWING configuration\n");
->>>> +	return -EINVAL;
->>>> +}
->>>> +
->>>> +static int sn65dsi83_parse_lvds_endpoint(struct sn65dsi83 *ctx, int channel)
->>>> +{
->>>> +	struct device *dev = ctx->dev;
->>>> +	struct device_node *endpoint;
->>>> +	/* Set so the property can be freely selected if not defined */
->>>> +	u32 lvds_vod_swing_data[2] = { 0, 1000000 };
->>>> +	u32 lvds_vod_swing_clk[2] = { 0, 1000000 };
->>>> +	u32 lvds_term = 200;
->>>> +	u8 lvds_term_conf;
->>>> +	int endpoint_reg;
->>>> +	int lvds_vod_swing_conf;
->>>> +	int ret = 0;
->>>> +	int ret_data;
->>>> +	int ret_clock;
->>>> +
->>>> +	if (channel == CHANNEL_A)
->>>> +		endpoint_reg = 2;
->>>> +	else
->>>> +		endpoint_reg = 3;
->>>> +
->>>> +	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, endpoint_reg, -1);
->>>> +	of_property_read_u32(endpoint, "ti,lvds-termination-ohms", &lvds_term);
->>>> +
->>>> +	if (lvds_term == 200)
->>>> +		lvds_term_conf = OHM_200;
->>>> +	else
->>>> +		lvds_term_conf = OHM_100;
->>>> +
->>>> +	ctx->lvds_term_conf[channel] = lvds_term_conf;
->>>> +
->>>> +	ret_data = of_property_read_u32_array(endpoint,
->>>> +			"ti,lvds-vod-swing-data-microvolt", lvds_vod_swing_data,
->>>> +			ARRAY_SIZE(lvds_vod_swing_data));
->>>> +	if (ret_data != 0 && ret_data != -EINVAL) {
->>>> +		ret = ret_data;
->>>> +		goto exit;
->>>> +	}
->>>> +
->>>> +	ret_clock = of_property_read_u32_array(endpoint,
->>>> +			"ti,lvds-vod-swing-clock-microvolt", lvds_vod_swing_clk,
->>>> +			ARRAY_SIZE(lvds_vod_swing_clk));
->>>> +	if (ret_clock != 0 && ret_clock != -EINVAL) {
->>>> +		ret = ret_clock;
->>>> +		goto exit;
->>>> +	}
->>>> +
->>>> +	/* If any of the two properties is defined. */
->>>> +	if (!ret_data || !ret_clock) {
->>>> +		lvds_vod_swing_conf = sn65dsi83_select_lvds_vod_swing(dev,
->>>> +			lvds_vod_swing_data, lvds_vod_swing_clk,
->>>> +			lvds_term_conf);
->>>> +		if (lvds_vod_swing_conf < 0) {
->>>> +			ret = lvds_vod_swing_conf;
->>>> +			goto exit;
->>>> +		}
->>>> +
->>>> +		ctx->lvds_vod_swing_conf[channel] = lvds_vod_swing_conf;
->>>> +	}
->>>> +	ret = 0;
->>>> +exit:
->>>> +	of_node_put(endpoint);
->>>> +	return ret;
->>>> +}
->>>> +
->>>>    static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
->>>>    {
->>>>    	struct drm_bridge *panel_bridge;
->>>>    	struct device *dev = ctx->dev;
->>>> +	int ret;
->>>> +
->>>> +	ctx->lvds_vod_swing_conf[CHANNEL_A] = 0x1;
->>>> +	ctx->lvds_vod_swing_conf[CHANNEL_B] = 0x1;
->>>> +	ctx->lvds_term_conf[CHANNEL_A] = 0x1;
->>>> +	ctx->lvds_term_conf[CHANNEL_B] = 0x1;
->>>
->>> These match the defaults in sn65dsi83_parse_lvds_endpoint(). Do we
->>> really need those?
->>
->> Yes, I think we do. This ensures that defaults are used even when property
->> is not defined/LVDS channel is not used. So also LVDS channel B defaults are
->> set even for sn65dsi83 (single LVDS output). Keeping the same reg values as
->> before these changes.
-> 
-> You can move sn65dsi83_parse_lvds_endpoint() out of the if() and get the
-> same result. Duplicating data (or code) is a bad idea, because it's easy
-> to update one point and miss another point. And then usually one has a
-> nice debugging session, trying to understand why their changes didn't
-> work out.
+--00000000000061e8560628e5fa59
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Ok I see what you are trying to accomplish. I'll set default values in 
-sn65dsi83_parse_lvds_endpoint() in v5 like you suggested. Thanks.
-
-Best regards,
-Andrej
-
-> 
->>
->> Best regards,
->> Andrej
->>
->>
->>>
->>>> +
->>>> +	ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_A);
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>>    	ctx->lvds_dual_link = false;
->>>>    	ctx->lvds_dual_link_even_odd_swap = false;
->>>> @@ -587,6 +724,10 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
->>>>    		struct device_node *port2, *port3;
->>>>    		int dual_link;
->>>> +		ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_B);
->>>> +		if (ret < 0)
->>>> +			return ret;
->>>> +
->>>>    		port2 = of_graph_get_port_by_id(dev->of_node, 2);
->>>>    		port3 = of_graph_get_port_by_id(dev->of_node, 3);
->>>>    		dual_link = drm_of_lvds_get_dual_link_pixel_order(port2, port3);
->>>> -- 
->>>> 2.34.1
->>>>
->>>
-> 
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEINdZoc3reemdznR8PIrnCdocsWW1cXx5XnQB3qvKKqbIMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTIxMDA4MDc1M1owaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBzFBzQGh8c
+XN42bCiVN7kMjngXqDfNZ3moAZI0OnXYUWYMUOlwCX+2O76iM+lyHGV7g8p5u1gaeNFVfeVPCspL
+aVqWtHzl69dHxHVBMi0h5rxL4JFvORX9Mk/idniUADzuRYZFDgXsU7Z4qASAPQrZ85nNSUJxLaBJ
+6zB9YpA8pkcjEyBmLhDayom/rMJUATTee4MromOH28mzWlS59xWw3qwaasZ8N0zEeplqFyGfjSqW
+pWGeoEzmARaf5MKbNS01k1RL8jL5iGcipYOByAhs3NTKip74mJ5IzyrdvNnQJunuKJXxTSEvBvHD
+ICq2t+Rh/OwKjNV8ZR4aZ4OvMG4C
+--00000000000061e8560628e5fa59--
 
