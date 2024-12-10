@@ -1,336 +1,289 @@
-Return-Path: <linux-kernel+bounces-439396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EC99EAEB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:54:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0849EAEC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:57:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25CE28B2FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:54:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470B5160669
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2115E1DC996;
-	Tue, 10 Dec 2024 10:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B6521578C;
+	Tue, 10 Dec 2024 10:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s5D+isdf"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EBBDPnRm"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0471D23DEA7
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437E51D5CE8;
+	Tue, 10 Dec 2024 10:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733827781; cv=none; b=jnSZUvKgjhlxKwxw6joue/6DylG8SjpRK+4yykArF63zFQxzFTtnWzPbwblzFbdyx5AnzQ26vGhoY21HgH3Y90e5msfGKE+Rz67Kb/sNpospz/fHO8NfGgSTdkXKBMZJt1tO2uqtzPzByuUaD+Nq7vhsA8efQl/t7BFPoYugWvw=
+	t=1733828106; cv=none; b=QoBVCudik/n2f5U07P1JV90iCLFFtA399Z3SjSFdEzJppIVzTfmYOsSC4E7mQPHR13QWueiBbU+J/gY74WUYmorK7O4aKkEfP4+yZ0Bqmvv83XzC753gZjrgkYkyHOXXaxfGMC2QURbwtUzzBw7Hnd9IOmKyy11QqvVyMmPPZrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733827781; c=relaxed/simple;
-	bh=DTd+Ro0ThaSGt/1eg/2h9LYMuTXo+hEettqlRh/EFik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:From:In-Reply-To:
-	 Content-Type:References; b=Ft9s9ui6+WPXMjABMcyk7hE/PmQCm3Q3+qLhXEYRArZEpp4B/D5H0chjqOcGj0eOpr+Im6FdIjusCCVB61+mqUaP2gx0uSxWeFxo3MHLs9nKBGT1Uawy78ETg/XhHAozCXqrNEPnFSJu+KypXPDdjiZZJ6P+zQlHGOJ8yhsVQ8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=s5D+isdf; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241210104935euoutp01e8231b659e871c5ce966df40d4b94268~PyyzcO1OQ2252522525euoutp010
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:49:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241210104935euoutp01e8231b659e871c5ce966df40d4b94268~PyyzcO1OQ2252522525euoutp010
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733827775;
-	bh=Ymesi6DNzhimTixN6xcdkcyjh/qDgQMHPVKz8a1icd0=;
-	h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-	b=s5D+isdfR29Op87LZHl73q2XTb+K8dZgd3VSMAmpt7M6KUSYQePZ60rhMy+KUsmxM
-	 gUWc8sY0fq3NYb/Z5+c3e8QBDo6h7JQUM3t+UnE9m2+9v761t8yXwjEzSraK1R+gRb
-	 e+4kHrXp6rBXxsBLa/AvbMFzY+xXqocUjGpEUDh8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241210104934eucas1p2e2cc4792bd21b64a84652995dd84043d~PyyzTY7gC2956229562eucas1p2t;
-	Tue, 10 Dec 2024 10:49:34 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 6E.80.20821.EBC18576; Tue, 10
-	Dec 2024 10:49:34 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241210104934eucas1p19459af12d0e83f45f9183eb1ab287757~PyyzCeZKp0220702207eucas1p1v;
-	Tue, 10 Dec 2024 10:49:34 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241210104934eusmtrp1b1a7bdbc63253d828114fbbd0c1a5c86~PyyzB9Ux-1050810508eusmtrp1E;
-	Tue, 10 Dec 2024 10:49:34 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-2e-67581cbe9b84
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.32.19654.EBC18576; Tue, 10
-	Dec 2024 10:49:34 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241210104934eusmtip182e30a9877935effa3a48006cb1aca9b~Pyyy2743A0566905669eusmtip1c;
-	Tue, 10 Dec 2024 10:49:34 +0000 (GMT)
-Received: from [106.110.32.87] (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 10 Dec 2024 10:49:33 +0000
-Message-ID: <95871917-9747-40d4-8305-51bc5d75cf82@samsung.com>
-Date: Tue, 10 Dec 2024 11:49:32 +0100
+	s=arc-20240116; t=1733828106; c=relaxed/simple;
+	bh=tcL2vnPk4Uo0JIrBOrkTI0QFy+X6OH0TPmC6bSGM7a0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=V1TJNugvO2FaySss1r6GwZ21Y1KMtyd8SH5hTQnAAK2NCHWVYF4UJIAf+m+ahUQeHOoZ5tyK7Zrtc2851UeBJfcLwjqWQtF+gXULoeBRtlZvjWzHiqw3QLNEo7Zdk7WlWD42kGeQEWLNDeNRuNBxEIolQKxXfEa2ZZ+o+H5RyUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EBBDPnRm; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA8JTPP013783;
+	Tue, 10 Dec 2024 11:54:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	IZeE9h1il+DsauaUC8/Tt9EQJI2HmML+xYXUzSuaNCE=; b=EBBDPnRmvTeMFUQu
+	rQueLTvQotmaBGL/Vz0IOHPGLDs8zB/PAqIIaqW1DOpPd1Y9gycxQMpKcf55xrbs
+	0JmP8oCcHGC9IDv3yKjpVFFcvduElckBzcfVYYawT3byQhbkDfrJ8LaJXU6KNEvq
+	It2RUdJES2aXkOTXrdBjW3/9s0jWMaHcFni5SXvkAsVi9fEkqrt/m6VPnbrsYRe3
+	13TIs+yRQqT/u7oaekZlZQsGehMmF1sclluGZJMoiJSnAOeBkwYH72XW0MKUGzFK
+	vznxqTmxJRe0x0oCmiweFQjaiGhGMTjsufsY2ju85kS3tMKq0pDISmOggB4QTmSm
+	GXmxpA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccnm4g0j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:54:38 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D4BBC40050;
+	Tue, 10 Dec 2024 11:53:41 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 81ED8244283;
+	Tue, 10 Dec 2024 11:52:15 +0100 (CET)
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Dec
+ 2024 11:52:15 +0100
+Received: from SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0]) by
+ SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0%13]) with mapi id
+ 15.01.2507.037; Tue, 10 Dec 2024 11:52:15 +0100
+From: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Cristian
+ Marussi" <cristian.marussi@arm.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Thread-Topic: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Thread-Index: AQHbRapDtK1zP5F5+E+8H5T6eqOTIbLdsy4AgAAr30uAAD/MAIABMogo
+Date: Tue, 10 Dec 2024 10:52:15 +0000
+Message-ID: <aac4c00dc3ba4599aaa91392dac71d6d@foss.st.com>
+References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
+ <20241203173908.3148794-3-etienne.carriere@foss.st.com>
+ <Z1bKlOeHJFHpe9ZU@bogus>
+ <ed164b6704ab4086b2fb22ae51658f31@foss.st.com>,<Z1ck5tFkb41wReZP@bogus>
+In-Reply-To: <Z1ck5tFkb41wReZP@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] module: Don't fail module loading when setting
- ro_after_init section RO failed
-Content-Language: en-GB
-To: Petr Pavlu <petr.pavlu@suse.com>
-CC: Christophe Leroy <christophe.leroy@csgroup.eu>, Luis Chamberlain
-	<mcgrof@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, Kees Cook
-	<kees@kernel.org>, <linux-modules@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-From: Daniel Gomez <da.gomez@samsung.com>
-In-Reply-To: <cee55e3b-9028-4f56-8ac6-9895ca383334@suse.com>
-Content-Type: text/plain; charset="UTF-8"; format="flowed"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djP87r7ZCLSDabfNrG4M+k5u8W6t+dZ
-	LS7vmsNm0TD7O6vFjQlPGS2WfnnHbLF0xVtWi82bpjI7cHh8vXmOyWPBplKPTas62TzenTvH
-	7rF+y1UWj8+b5ALYorhsUlJzMstSi/TtErgyZr9cwFhw06ei/+Rv5gbGJzZdjJwcEgImEuf/
-	PGbpYuTiEBJYwSgx49YyRgjnC6PE73MwzmdGiY9Ne9lgWn6/2sEMkVjOKHHz8wQ2uKpp35cy
-	g1QJCexklLh/wQfE5hWwk7h/7xk7iM0ioCqxYeZdJoi4oMTJmU9YQGxRAXmJ+7dmgNUIC+RK
-	tF17BhZnFhCXaPqykrWLkYNDREBF4tIjR5BdzALdTBI7Dy8Gq2cT0JTYd3ITmM0pYCOx5NkO
-	dpB6ZgErieknPCHGyEs0b53NDPGAosSMiStZIOxaiVNbbjGBzJQQmMwp8WDvbXaIhIvEh6fb
-	mSBsYYlXx7dAxWUkTk/ugWpOl1iybhaUXSCx5/YssDslBKwl+s7kQIQdJe5+3gwV5pO48VYQ
-	4hw+iUnbpjNPYFSdhRQQs5A8PAvhgVlIHljAyLKKUTy1tDg3PbXYMC+1XK84Mbe4NC9dLzk/
-	dxMjMCmd/nf80w7Gua8+6h1iZOJgPMQowcGsJMLL4R2aLsSbklhZlVqUH19UmpNafIhRmoNF
-	SZxXNUU+VUggPbEkNTs1tSC1CCbLxMEp1cAks99g3U1Pw+Se7ilzVrO2ViwsZ894vGFn7P4N
-	/nu8nntVWfzgX7js6OrF2XUzYqdEVFttMdbNUd4wc+oTY789pSUx88StOx+rXlh4P/Rx5Zqc
-	NpaAN0kO7O8Xu3rlz3c8kup7O9Z1dmfYZKmY9A9+/itX3Zgb+KF69bqr9Yf3rLeU8xTV8Yso
-	3VogvnT3iYznJnYfNpkEBcv9sDk+Tyo0NHKrr3Cti+C9QtuXzv8jStPlG/m9n/ztdPdQClvu
-	9VdXTOfdz3W/jntu+MExaemMO7uXb9zWd2uL9S2zaUtkT9ZOUrHevD8k4PwEvn4HG3V3Ji8B
-	Vs1fza4VceX50+cLrbKNTZD8UygmUby3P12JpTgj0VCLuag4EQDrGuKpuQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsVy+t/xu7r7ZCLSDa7sVbG4M+k5u8W6t+dZ
-	LS7vmsNm0TD7O6vFjQlPGS2WfnnHbLF0xVtWi82bpjI7cHh8vXmOyWPBplKPTas62TzenTvH
-	7rF+y1UWj8+b5ALYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJz
-	MstSi/TtEvQyZr9cwFhw06ei/+Rv5gbGJzZdjJwcEgImEr9f7WDuYuTiEBJYyiixsfMDO0RC
-	RmLjl6usELawxJ9rXWwgtpDAR0aJd3OCIRp2Mkps//0JLMErYCdx/94zsGYWAVWJDTPvMkHE
-	BSVOznzCAmKLCshL3L81A6xGWCBXou3aM7A4s4C4RNOXlUDLODhEBFQkLj1yBJnPLNDNJLHz
-	8GJ2iMUbWCT2veIHsdkENCX2ndwEFucUsJFY8mwHO8QcC4nFbw5C2fISzVtnM0M8oCgxY+JK
-	Fgi7VuLz32eMExhFZyE5bxaSM2YhGTULyagFjCyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcx
-	AuN527GfW3Ywrnz1Ue8QIxMH4yFGCQ5mJRFeDu/QdCHelMTKqtSi/Pii0pzU4kOMpsAwmsgs
-	JZqcD0woeSXxhmYGpoYmZpYGppZmxkrivGxXzqcJCaQnlqRmp6YWpBbB9DFxcEo1MIm1HJwb
-	saP2Xo9F8T7L59P7zRKzFJ5fK7zo+sS+68bjaSoPBL5mnGKY9TRNSujrucdrokxYvNoOZ6+b
-	lhfbtGv9uajUGv3rRu8uL15XMcNy/YPPyco2MfPn/AiZKBdh8mKfm0iNyEvtF3UB3iIzxSIP
-	bV/vqmMn9EbHxaNN+/yVhQf3xmW2Gyj5T+m6wrPUvrxOMd7rveXevNyfV1+ccNp9L+RQVVRo
-	8bY/vO/YIqsTvnjILvrjWDq/gNnoZ+KMw9O+mF2Q2vymv7xz195JO6esfL/4clxBZNRMfn/m
-	4LenHc75Ky+71Hf3TyyT3/bNwTPOdWtnph/d8Z9hTRnP/wbTQzc277vML/g0qS7Jd4MSS3FG
-	oqEWc1FxIgCrpqvPcAMAAA==
-X-CMS-MailID: 20241210104934eucas1p19459af12d0e83f45f9183eb1ab287757
-X-Msg-Generator: CA
-X-RootMTR: 20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be
-References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
-	<CGME20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be@eucas1p1.samsung.com>
-	<164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
-	<D5HZV4A6SC9A.25U3Q0WUVDJHZ@samsung.com>
-	<b74f0845-4916-47eb-945b-eb91ae05fc91@csgroup.eu>
-	<D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
-	<7fdcf601-524b-4530-861d-e4b0f8c1023b@suse.com>
-	<9734d93d-73c8-464e-8f32-6117c6f6c952@samsung.com>
-	<cee55e3b-9028-4f56-8ac6-9895ca383334@suse.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 12/4/2024 4:14 PM, Petr Pavlu wrote:
-> On 11/28/24 21:23, Daniel Gomez wrote:
->> On 11/12/2024 3:35 PM, Petr Pavlu wrote:
->>> On 11/12/24 10:43, Daniel Gomez wrote:
->>>> On Mon Nov 11, 2024 at 7:53 PM CET, Christophe Leroy wrote:
->>>>>
->>>>>
->>>>> Le 09/11/2024 à 23:17, Daniel Gomez a écrit :
->>>>>> On Sat Nov 9, 2024 at 11:35 AM CET, Christophe Leroy wrote:
->>>>>>> Once module init has succeded it is too late to cancel loading.
->>>>>>> If setting ro_after_init data section to read-only fails, all we
->>>>>>> can do is to inform the user through a warning.
->>>>>>>
->>>>>>> Reported-by: Thomas Gleixner <tglx@linutronix.de>
->>>>>>> Closes: https://protect2.fireeye.com/v1/url?k=d3deb284-b2a35ac3-d3df39cb-74fe485fff30-288375d7d91e4ad9&q=1&e=701066ca-634d-4525-a77d-1a44451f897a&u=https%3A%2F%2Feur01.safelinks.protection.outlook.com%2F%3Furl%3Dhttps%253A%252F%252Flore.kernel.org%252Fall%252F20230915082126.4187913-1-ruanjinjie%2540huawei.com%252F%26data%3D05%257C02%257Cchristophe.leroy%2540csgroup.eu%257C26b5ca7363e54210439b08dd010c4865%257C8b87af7d86474dc78df45f69a2011bb5%257C0%257C0%257C638667874457200373%257CUnknown%257CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%253D%253D%257C0%257C%257C%257C%26sdata%3DZeJ%252F3%252B2Nx%252FBf%252FWLFEkhxKlDhZk8LNkz0fs%252Fg2xMcOjY%253D%26reserved%3D0
->>>>>>> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()")
->>>>>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->>>>>>> ---
->>>>>>>     kernel/module/main.c | 6 +++---
->>>>>>>     1 file changed, 3 insertions(+), 3 deletions(-)
->>>>>>>
->>>>>>> diff --git a/kernel/module/main.c b/kernel/module/main.c
->>>>>>> index 2de4ad7af335..1bf4b0db291b 100644
->>>>>>> --- a/kernel/module/main.c
->>>>>>> +++ b/kernel/module/main.c
->>>>>>> @@ -2583,7 +2583,9 @@ static noinline int do_init_module(struct module *mod)
->>>>>>>     #endif
->>>>>>>     	ret = module_enable_rodata_ro_after_init(mod);
->>>>>>>     	if (ret)
->>>>>>> -		goto fail_mutex_unlock;
->>>>>>> +		pr_warn("%s: %s() returned %d, ro_after_init data might still be writable\n",
->>>>>>> +			mod->name, __func__, ret);
->>>>>>> +
->>>>>>>     	mod_tree_remove_init(mod);
->>>>>>>     	module_arch_freeing_init(mod);
->>>>>>>     	for_class_mod_mem_type(type, init) {
->>>>>>> @@ -2622,8 +2624,6 @@ static noinline int do_init_module(struct module *mod)
->>>>>>>     
->>>>>>>     	return 0;
->>>>>>
->>>>>> I think it would make sense to propagate the error. But that would
->>>>>> require changing modprobe.c. What kind of error can we expect when this
->>>>>> happens?
->>>>>
->>>>> AFAIK, on powerpc it fails with EINVAL when
->>>>> - The area is a vmalloc or module area and is a hugepage area
->>>>> - The area is not vmalloc or io register and MMU is not powerpc radix MMU
->>>>>
->>>>> Otherwise it propagates the error from apply_to_existing_page_range().
->>>>> IIUC it will return EINVAL when it hits a leaf PTE in upper directories.
->>>>
->>>> Looking at that path I see we can also fail at __apply_to_page_range()
->>>> -> apply_to_p4d_range() and return with -ENOMEM.
->>>>
->>>> My proposal was to do something like the change below in modprobe:
->>>>
->>>> diff --git a/tools/modprobe.c b/tools/modprobe.c
->>>> index ec66e6f..8876e27 100644
->>>> --- a/tools/modprobe.c
->>>> +++ b/tools/modprobe.c
->>>> @@ -572,6 +572,11 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
->>>>                   err = 0;
->>>>           else {
->>>>                   switch (err) {
->>>> +               case -EINVAL:
->>>> +                       ERR("module '%s'inserted: ro_after_init data might"
->>>> +                           "still be writable (see dmesg)\n",
->>>> +                           kmod_module_get_name(mod));
->>>> +                       break;
->>>>                   case -EEXIST:
->>>>                           ERR("could not insert '%s': Module already in kernel\n",
->>>>                               kmod_module_get_name(mod));
->>>>
->>>> But I think these error codes may be also be reported in other parts
->>>> such as simplify_symbols() so may not be a good idea after all.
->>>
->>> It isn't really possible to make a sensible use of the return code from
->>> init_module(), besides some basic check for -EEXIST. The problem is that
->>> any error code from a module's init function is also propagated as
->>> a result from the syscall.
->>>
->>>>
->>>> Maybe we just need to change the default/catch all error message in
->>>> modprobe.c and to indicate/include this case:
->>>>
->>>> diff --git a/tools/modprobe.c b/tools/modprobe.c
->>>> index ec66e6f..3647d37 100644
->>>> --- a/tools/modprobe.c
->>>> +++ b/tools/modprobe.c
->>>> @@ -582,7 +582,8 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
->>>>                               kmod_module_get_name(mod));
->>>>                           break;
->>>>                   default:
->>>> -                       ERR("could not insert '%s': %s\n", kmod_module_get_name(mod),
->>>> +                       ERR("could not insert '%s' or inserted with error %s, "
->>>> +                           "(see dmesg)\n", kmod_module_get_name(mod),
->>>>                               strerror(-err));
->>>>                           break;
->>>>                   }
->>>>
->>>>
->>>>>
->>>>> On other architectures it can be different, I know some architecture try
->>>>> to split the pages when they hit hugepages and that can fail.
->>>>
->>>> Is it worth it adding an error code for this case in case we want to
->>>> report it back?
->>>
->>> I feel that the proposed kernel warning about this situation is
->>> sufficient and the loader should then return 0 to indicate that the
->>> module got loaded. It would be more confusing to return an error but
->>> with the module actually remaining inserted.
->>>
->>> A module loaded without having its RO-after-init section changed
->>> properly to RO is still fully functional. In practice, if this final
->>> set_memory_ro() call fails, the system is already in such a state where
->>> the additional warning is the least of the issues?
->>>
->>
->> __ro_after_init is used for kernel self protection. We are loading
->> "successfully" the module yes, but variables with this attribute are
->> marked read-only to reduce the attack surface [1]. Since we have
->> considered this stage already too late to unload the module, IMHO we
->> should at least indicate that there was an error during the module
->> initialization and propagate that to the loader, so it can decide the
->> best action for their particular case. Warning once in the kernel log
->> system, does not seem sufficient to me.
->>
->> [1] Documentation/security/self-protection.rst
-> 
-> I'd be careful about introducing this new state where (f)init_module()
-> returns an error, yet the module actually gets loaded.
+On Monday, December 9, 2024, Sudeep Holla wrote:
+> On Mon, Dec 09, 2024 at 12:59:58PM +0000, Etienne CARRIERE - foss wrote:
+> > Hello Sudeep,
+> >
+> >  On Monday, December 9, 2024 11:46 AM, Sudeep Holla wrote:
+> > > On Tue, Dec 03, 2024 at 06:39:08PM +0100, Etienne Carriere wrote:
+> > > > Implement clock round_rate operation for SCMI clocks that describe =
+a
+> > > > discrete rates list. Bisect into the supported rates when using SCM=
+I
+> > > > message CLOCK_DESCRIBE_RATES to optimize SCMI communication transfe=
+rs.
+> > >
+> > > Let me stop here and try to understand the requirement here. So you d=
+o
+> > > communicate with the firmware to arrive at this round_rate ? Does the
+> > > list of discreet clock rates changes at the run-time that enables the
+> > > need for it. Or will the initial list just include max and min ?
+> >
+> > I don't expect the list to change at run-time. The initial list is
+> > expected to describe all supported rates. But because this list may
+> > be big, I don't think arm_scmi/clock.c driver should store the full lis=
+t
+> > of all supported rates for each of the SCMI clocks. It would cost to
+> > much memory. Therefore I propose to query it at runtime, when
+> > needed, and bisect to lower the number of required transactions
+> > between the agent and the firmware.
+> >
+>=20
+> Ah so, this is nothing to do with set_parent, but just an optimisation.
+> This change optimises for space but some other platform may have all the
+> space but the communication with SCMI platform is not good enough to make
+> runtime calls like this change. How do we cater that then ?
 
-Perhaps we just need this new stage? module loaded with 
-permission/security error?
+This change does not optimize memory. It implements a real clk_round_rate()
+operation for SCMI clocks that have a discrete supported rates list. The
+existing implementation does not support it, it behaves as if the
+requested clock is supported and let caller change the clock rate to
+find out which rounded rate it effectively gets. This does not suit=20
+audio and video clock constraints.
 
-> 
-> The init_module() interface has one return value which can originate
-> from anywhere during the load process, including from the module's own
-> init function. As mentioned, this means that the userspace cannot
-> distinguish why the module load failed. It would be needed to have
-> a specific error code returned only for this case, or to extend the
-> interface further in some way.
-> 
-> Another concern is consistency of the module loader interface as
-> a whole. Returning an error from init_module() in this case would mean
-> that only the specific caller is made aware that the module was loaded
-> with some issues. A different task that then decides to check the module
-> state under /sys/module would see it as normally loaded, and similarly a
+How to deal between platforms with large memory/slow SCMI=20
+communication and those with the opposite? I think the easiest way
+would be to have a dedicated SCMI Clock protocol command.
 
-Maybe we need to change this state too to indicate the problem.
+>=20
+> We need some spec-ed way or a unique way to identify what is best for
+> the platform IMO. We can change the way you have done in this change set
+> as someone else may complain in the future that it is costly to send
+> such command every time a clock needs to be set. I am just guessing here
+> may not be true.
+>=20
+> > >
+> > > > Parse the rate list array when the target rate fit in the bounds
+> > > > of the command response for simplicity.
+> > > >
+> > >
+> > > I don't understand what you mean by this.
+> >
+> > I meant here that we bisect into supported rates when communicating
+> > with the firmware but once the firmware response provides list portion
+> > when target rate fits into, we just scan into that array instead of bis=
+ecting
+> > into. We could also bisect into that array but it is likely quite small
+> > (<128 byte in existing SCMI transport drivers) and that would add a bit
+> > more code for no much gain IMHO.
+> >
+> >
+> > >
+> > > > If so some reason the sequence fails or if the SCMI driver has no
+> > > > round_rate SCMI clock handler, then fallback to the legacy strategy=
+ that
+> > > > returned the target rate value.
+> > > >
+> > >
+> > > Hmm, so we perform some extra dance but we are okay to fallback to de=
+fault.
+> > > I am more confused.
+> >
+> > Here, I propose to preserve the exiting sequence in clk/clk-scmi.c in c=
+ase
+> > arm_scmi/clock.c does not implement this new round_rate SCMI clock
+> > operation (it can be the case if these 2 drivers are .ko modules, not
+> > well known built-in drivers).
+> >
+>=20
+> I don't think it would work if it is not built on the same kernel anyways=
+.
+> I don't work much about this use-case.
 
-> task trying to insert it again would get -EEXIST. That likely would need
-> changing too.
-> 
-> What I'd like to understand is how reporting this as an error to the
-> userspace would help in practice. I think the userspace can decide to
-> report it as a warning and continue, or treat is as a hard problem and
-> stop the system? I would expect that most tools/systems would opt for
-> the former, but then this doesn't seem much different to me than when
-> the kernel produces the warning itself. The second option, with some
-> stretch, could be implemented with panic_on_warn=1.
+Using the same kernel will not enforce the driver was not modified regardin=
+g
+the vanilla upstream version. This may be also true for built-in modules
+I guess.
 
-Ideally, we would reverse the module initialization when encountering 
-this error [1]. However, since it's not feasible to undo it correctly at 
-this stage, reporting the error back to the caller allows them to assess 
-and decide whether to accept the risk.
+>=20
+> > >
+> > > > Operation handle scmi_clk_determine_rate() is change to get the eff=
+ective
+> > > > supported rounded rate when there is no clock re-parenting operatio=
+n
+> > > > supported. Otherwise, preserve the implementation that assumed any
+> > > > clock rate could be obtained.
+> > > >
+> > >
+> > > OK, no I think I am getting some idea. Is this case where the parent =
+has
+> > > changed and the describe rates can give a different result at run-tim=
+e.
+> >
+> > This does not deal with whether parent has changed or not. I would expe=
+ct
+> > the same request sent multiple times to provide the very same result. B=
+ut
+> > as I said above, I don't think arm_scmi/clock.c should consume a possib=
+ly
+> > large array of memory to store all supported rate each of the SCMI cloc=
+ks
+> > (that describe discrete rates).
+> >
+>=20
+> Right, my assumption was totally wrong. Thanks for confirming.
+>=20
+> > An alternate way could be to add an SCMI Clock protocol command in the
+> > spec allowing agent to query a closest supported rate, in 1 shot. Maybe
+> > this new command could return both rounded rate and the SCMI parent
+> > clock needed to reach that rounded rate, better fitting clk_determine_r=
+ate()
+> > expectations.
+> >
+>=20
+> May be that would be ideal but you need to make a case for such a spec ch=
+ange.
 
-[1] https://lore.kernel.org/all/Zuv0nmFblHUwuT8v@bombadil.infradead.org/
-> 
-> Do you envision that the userspace would handle this problem differently
-> and it is worth adding the complexity?
+We need effective round_rate support for STM32MP2 platforms where audio
+and video clocks are provided by a clock exposed by the SCMI server. These
+drivers detect the (possibly external) device needs at runtime and need
+to select an input clock that fits some constraints for quality reason.
+Audio quality is the most sensible to clock rate inaccuracy.
 
-What complexity do you mean?
+>=20
+> > >
+> > > I need to re-read the part of the spec, but we may need some clarity =
+so
+> > > that this implementation is not vendor specific. I am yet to understa=
+nd this
+> > > fully. I just need to make sure spec covers this aspect and anything =
+we
+> > > add here is generic solution.
+> > >
+> > > I would like to avoid this extra query if not required which you seem=
+ to
+> > > have made an attempt but I just want to be thorough and make sure tha=
+t's
+> > > what we need w.r.t the specification.
+> >
+> > Sure, I indeed prefer clear and robust implementation in the long term,
+> > being the one I propose here or another one.
+> >
+>=20
+> Good then, we can work towards achieving that. If you can specify how slo=
+w
+> or memory hungry is it without these changes and how much this change hel=
+ps
+> your platform, we can take it up with spec authors and see if they are ha=
+ppy
+> to provide some alternative to deal with this in a generic way.
 
-A module driver has ro_after_init for the purpose of protecting the 
-kernel from attack [2]. If we ignore it by warning once, the caller will 
-not be aware of such risk (unless the caller it's parsing the kernel log).
+The platforms we target usually have plenty of RAM, lets say hundreds of MB=
+ytes.
+Not that much for some system but enough I guess to store a few hundreds of
+clock rates for a few dozen of clocks (few kByte of RAM).
 
-[2] 
-https://lore.kernel.org/all/1455748879-21872-1-git-send-email-keescook@chromium.org/
+That said, thinking more and more about this, I really belive a dedicate SC=
+MI
+clock protocol command would better fit platform needs in the long term.
 
-Another option could be adding a kconfig to decide to report or not 
-which I would strongly suggest to report by default.
+BR,
+Etienne
 
-
-> 
-> As a side node, I've noticed that the module loader could mark also
-> static_call sections as ro_after_init. I'll post patches for that.
-> Additionally, both __jump_table and static_call sections could be
-> possibly turned RO earlier, after prepare_coming_module() ->
-> blocking_notifier_call_chain_robust() -> ... ->
-> jump_label_add_module()/static_call_add_module().
-> 
-
+>=20
+> --
+> Regards,
+> Sudeep
+>=20
 
