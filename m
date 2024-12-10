@@ -1,113 +1,161 @@
-Return-Path: <linux-kernel+bounces-439115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0419EAAF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:47:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3439EAAFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:47:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D16161A4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0967A2818C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC89230D03;
-	Tue, 10 Dec 2024 08:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424202309AA;
+	Tue, 10 Dec 2024 08:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHNKmpLJ"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hisit47a"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBB012DD88;
-	Tue, 10 Dec 2024 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870D623098B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733820438; cv=none; b=hiASm7FIlrLuMFqTprmguePVjDNs56QF6rJr7hWJ8KmntAVdEmH1dYVtcLLdZBwqjd1iKxZh9lZfcY/Vf/mlOH7HLKRv7mTdfxaSk3ExIyQ8N4VAfsluUCcduCdfcN9O3O1sgqRWBwN/6lY8J3KB6aOPnvkWtXsBOFwLuBh7pBM=
+	t=1733820465; cv=none; b=rDhqpkkE01lMdV6yHo55QY/9riTD3XuZIPYpgutIrfdJobE+SBaFVyku9kA412DML6iH9N+MxP04FFgZuUqpQj6X+AiQTp7/OlbNvcSNCm50Qv5okGEbVHZzhGRhxa1JAmGGCvEpIx/RyPV51LWgeggqCHYotpnPxrYhTcmnbrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733820438; c=relaxed/simple;
-	bh=yqgJ06i6Y7xo25MnVPg+XILEuMsyhZtOxmam3qSlkFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ffdcr6OJVoe2zuzz2oyblfsqeYJliuiwaq01mbguVPOxRZ498N1qRUyx4FL3DYs3xDQ5AhvWzGhIoSeJ0FKs+VCgqgU9KJ3OfIiO1gp+ib+vIsoWQTOa3LD4LR+4OSLNfZAFIY8QAqWmVP3M6dwMLh0yXldJZIHU3rlAYvZa3DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHNKmpLJ; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2162c0f6a39so23604585ad.0;
-        Tue, 10 Dec 2024 00:47:16 -0800 (PST)
+	s=arc-20240116; t=1733820465; c=relaxed/simple;
+	bh=ECuAT4nP7i9BweFK7juZ/y9yq7LiAJKWQ8pjhyaZfU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=RkShLhVlUVZPGJrYRSj5hkBfTWyRcLAURaCRjZ+lpMrjBE1JDkXYTlzRZfjPbPdMBXhQnMTKPB2ImpGFUVkdQStKk4o8G/A6bIfFVRT3XMAdk3vJT4140kfPZK/HydEfaz8GMDinYNcCfyj+vS+h7IehNv9xBj4oQi2Jklkgwdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hisit47a; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385f06d0c8eso2429540f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:47:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733820436; x=1734425236; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yqgJ06i6Y7xo25MnVPg+XILEuMsyhZtOxmam3qSlkFs=;
-        b=gHNKmpLJO7gva96UnxD7Ywn9UBYN67zJO5kd4oN+My5Qca2/W9BxLpRMcH0VLBMGCV
-         T99qjbF4Ay+Ben5BZySzd8RT9ApAlyq7xsf36IXoDvAc+IAF3rE/YmB8A3/8bNl5716+
-         n8pBnh6AOuMJWyB1pE3WOrtyAm6be5br9O+YA8rtLOYFdnqVMxXbcc5PDwsBGG3KDot5
-         45s4wpgAWSX/1nwBEhF+yClBRrD1XWbUHQtsjbf1A5OLBO1Gofk+iOwPIJ9ioUX0sWGU
-         5z3ziUgv+2hKTuEgEDfAbLIWvZvFojNNLE4RiW0IsOkRzPx1yDbPR/9iVTByLGOy7NMC
-         wC+Q==
+        d=linaro.org; s=google; t=1733820461; x=1734425261; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LN3mYjDf0WLLoooPbhO+3Eb4XaEvDNDr4DXqom+zuiQ=;
+        b=hisit47ayBdrn6NOlOd/osOhMZOh2Vwdj0N88+i8JsaSJrNutoZTZzsQF0b3jxBSNo
+         cFhYI3Rh0TDuYZV3oAsUNlFBQ/U5d8wWBSzw4J8ezp7trY40SEE9U5U6+fUUbyFsWvLn
+         FQ1SZpCS1ckGz/4OTuxaFMd8tWaxZVkv9nD8OtXMQmij3l7Wfj0MvuFPgsTeHbLvE7L1
+         RxOsf0VgtMRBT7astiblLbToS+2jg79po1CaiGR5mw78TB5AReHhqg+XezCrcTksvUe9
+         l8qBB37nP9bbGGkgbcAh2m9oc4M6qm/+sMvf6ouJfoFBcM6nibWgXld9XwoFLaUTnx1V
+         Wy2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733820436; x=1734425236;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqgJ06i6Y7xo25MnVPg+XILEuMsyhZtOxmam3qSlkFs=;
-        b=MZhoVJMMMe7IxUxWcv/7uNZT8MKhrGMe1icauo/kfFmypmd2/Qj2w5/ojDoTIL60E7
-         DuqGGa4zvMYMxuaetGaZPElRWSCb+ZrTj7aWwXe1xm7iAjq/jIWW8RkAgmTZeMxcIYBw
-         sqbe8kJo8Xo1c4VskPtlJhxI2ewySBqUh0vYoZKyws1a40KlBDnmr4WLXH5R32bTDkEl
-         vhTRRm9M8JAD7L+4n0HeYRvjZIzAksL1J+ojUnMb7KnNjjKXa2wZp4guj5OLg5U4oHd9
-         5zXrKJ/qjwua0PAAP3MG+/OqS3SQ/si5eLjYVhfr9O53Z5q0KLPh5ICNPzgb58uW+g7h
-         a0cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPBkUHhmRSlqM9Kuil2hLjp4qr7sH5KqzvJfe/LN2Jc1F8QxOE9Aq3Bqtw3VEG/gegII+EfqmmSFx8XQ==@vger.kernel.org, AJvYcCWms3gtL4OpKV510o6uTigbSpWXncXb5O+AhQtogZVfGvkuyqtIJe49pAMzkEc4Fw1Gow6N6YeBImji@vger.kernel.org, AJvYcCWrx39WwV/D4KPYOdGpqrxDaG1wxETj6Q8zJs7q55D8XLSuA+/V9Hhn0ZqDd7xpf2X+X59x/hkR4Z6G7Lk=@vger.kernel.org, AJvYcCXMhx0N/jA++WP4gRuex5jDJy51//DOf4egTCnzYp6mfxI7c1UF0SE1lwjgcvHlE5cWMDjNyNCK1LEnPAMw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPAw8lZmkC8mYIrWhOZhiGNkwdUUk48zNS1ZairgCoa8KNzByS
-	CaHDK/zI2LLx30Y6HTHTtzLOoFfEJkJ7wNrCry7NhpHXrhNTaTnu
-X-Gm-Gg: ASbGnctng0nbTNJoQO4Z9palOmBbHH54tWmc5k9ZoZlNcHuw+3tvdcbuIRgcetD+gN5
-	AUpIw3A/l8fmkL/AogdA2DWl3bqGgb81sJZmu61mGnDrXh5xGhWsrUAYG6OTi6KzuN/RjF9yxaE
-	Sh1+u+ac/QPJOAlElKulWw5ZTMp19giBnvMS0ZPABX4Qrj5x5B+u2rzZBHmoLk2OlPdUwwHkDfG
-	sBXs65vTHWJceno1czWycoe3tvM4uqgwNhp2YfdS8gz47vwjR78P8g5fh8Or85it0GVIhcLzVM5
-	/A==
-X-Google-Smtp-Source: AGHT+IFyFx9u2Q8EBc+BBmDXtC22UJjW0IxAAzdnx72zpqdewbRBPV5UQPIkvDpar7059Mt3H6VwCQ==
-X-Received: by 2002:a17:903:187:b0:215:a808:61cf with SMTP id d9443c01a7336-21670a47b3dmr40495715ad.25.1733820435973;
-        Tue, 10 Dec 2024 00:47:15 -0800 (PST)
-Received: from [192.168.0.115] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f26c6csm85230675ad.233.2024.12.10.00.47.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 00:47:15 -0800 (PST)
-Message-ID: <23e6d9c0-c3d6-40c1-b933-01c5a9ef43f8@gmail.com>
-Date: Tue, 10 Dec 2024 16:47:11 +0800
+        d=1e100.net; s=20230601; t=1733820461; x=1734425261;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LN3mYjDf0WLLoooPbhO+3Eb4XaEvDNDr4DXqom+zuiQ=;
+        b=wbp62YKM79r4xoJ45rqltgytu5UxnfV3TFvaeUYNQ5G6Fn+Y6w92UbltdEItOnin4C
+         M1wasr1QtFmoIOjf62Ef/OKm7q3v9gNJ8SMT4Z4ewoUIT2zUROBhBy46N3q5YE/CTbMT
+         QHDyQV9abdzHQsPX0MCFvHbXk5Izbl5DKB14d6KACLxkfTqJyx9CPn8e2DCFP3Hwh4Fj
+         6PYhOdia73hHirjk2cCZvn76xd6WX/vSlvYbSAqjDey5H4lO8+bwpNgd/VyZffVKVZ0L
+         GDrLTL6YPmNoA3h3b/RzxwMT9/wm8K1Zt6ZUtK4/lVWrCmtSiu1FPC5+I+mh5hug9c41
+         mXIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdwBmuOxS75ochynv47aT1+KBVrtHkh7ZkIgUu50FM5jgCqRUeaTbwBqk/zkDUkhN9m/vkdppO7LMSy4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1gtkoSujcxXtU7l3ROYjrQAcmON1/jBv9rameGsb4NzwLnpZc
+	ixEo0LQH+Fuu4y/PsBRSucYiMUIXJhyBB1peFL4vczuGi31OOi+ZathRkiYnZ+4=
+X-Gm-Gg: ASbGnctwYJ5sNr5s9eQZ+bfU8zQxf3dMtpfNX673R8CiM8Rm2Y8tOqeVS24bkGMD/Tp
+	IeaEN1jkgRwvDr/0DtWHo0JoEq3qOe+wVkhU98UCcQq3XTLgxNGNe6rHxZih+WTZNHDlwp/7QC+
+	36uJPoTkDJ2e/3GoFlmpPF++8mh+Dmgpp808VF6oUYksxgxBzHs6oPUp2sBQTSjUnR6Fz9qZw9J
+	EK2/+jbKGJHs6WuKOHjsZ5idP+R5ws9o0iHv6ehsIBhvbEImVNv3FpcnlQ=
+X-Google-Smtp-Source: AGHT+IG5cwePAttfHDiwnbYJqi1bg7G1KUe+FWSYgo/LN7Cys+F7UYQC66MSd4jFa0z12FH5wxvVww==
+X-Received: by 2002:a5d:47c9:0:b0:386:3328:6106 with SMTP id ffacd0b85a97d-386453e5101mr2651418f8f.35.1733820460851;
+        Tue, 10 Dec 2024 00:47:40 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a859esm15209515f8f.23.2024.12.10.00.47.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 00:47:40 -0800 (PST)
+Date: Tue, 10 Dec 2024 11:47:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Lothar Rubusch <l.rubusch@gmail.com>,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com,
+	l.rubusch@gmail.com
+Subject: Re: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark
+ events
+Message-ID: <dc914326-7eae-4e4a-8c93-ae1a7007bcc9@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] backlight: dwi_bl: Add Apple DWI backlight driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20241209075908.140014-1-towinchenmi@gmail.com>
- <20241209075908.140014-3-towinchenmi@gmail.com>
- <w5niokvjfwajnzz3muccb45jsvqzg7lql7g5tg5s6iat3mtqkk@qu2a5zcp3rs7>
-Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <w5niokvjfwajnzz3muccb45jsvqzg7lql7g5tg5s6iat3mtqkk@qu2a5zcp3rs7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205171343.308963-11-l.rubusch@gmail.com>
 
+Hi Lothar,
 
+kernel test robot noticed the following build warnings:
 
-Krzysztof Kozlowski 於 2024/12/10 下午4:32 寫道:
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Nothing improved here.
+url:    https://github.com/intel-lab-lkp/linux/commits/Lothar-Rubusch/iio-accel-adxl345-refrase-comment-on-probe/20241206-011802
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20241205171343.308963-11-l.rubusch%40gmail.com
+patch subject: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark events
+config: nios2-randconfig-r072-20241210 (https://download.01.org/0day-ci/archive/20241210/202412101132.Kj6R6i3h-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202412101132.Kj6R6i3h-lkp@intel.com/
 
-This is sent before you left any review, v4 will have improvements
+smatch warnings:
+drivers/iio/accel/adxl345_core.c:441 adxl345_event_handler() warn: unsigned 'int_stat' is never less than zero.
 
-Nick Chan
+vim +/ret +321 drivers/iio/accel/adxl345_core.c
+
+55d2386488598bb Lothar Rubusch 2024-12-05  433  static irqreturn_t adxl345_event_handler(int irq, void *p)
+55d2386488598bb Lothar Rubusch 2024-12-05  434  {
+55d2386488598bb Lothar Rubusch 2024-12-05  435  	struct iio_dev *indio_dev = p;
+55d2386488598bb Lothar Rubusch 2024-12-05  436  	struct adxl345_state *st = iio_priv(indio_dev);
+55d2386488598bb Lothar Rubusch 2024-12-05  437  	u8 int_stat;
+                                                        ^^^^^^^^^^^
+
+55d2386488598bb Lothar Rubusch 2024-12-05  438  	int samples;
+55d2386488598bb Lothar Rubusch 2024-12-05  439  
+55d2386488598bb Lothar Rubusch 2024-12-05  440  	int_stat = adxl345_get_status(st);
+55d2386488598bb Lothar Rubusch 2024-12-05 @441  	if (int_stat < 0)
+                                                            ^^^^^^^^^^^^
+signedness bug
+
+55d2386488598bb Lothar Rubusch 2024-12-05  442  		return IRQ_NONE;
+55d2386488598bb Lothar Rubusch 2024-12-05  443  
+55d2386488598bb Lothar Rubusch 2024-12-05  444  	if (int_stat == 0x0)
+55d2386488598bb Lothar Rubusch 2024-12-05  445  		goto err;
+55d2386488598bb Lothar Rubusch 2024-12-05  446  
+55d2386488598bb Lothar Rubusch 2024-12-05  447  	if (int_stat & ADXL345_INT_OVERRUN)
+55d2386488598bb Lothar Rubusch 2024-12-05  448  		goto err;
+55d2386488598bb Lothar Rubusch 2024-12-05  449  
+55d2386488598bb Lothar Rubusch 2024-12-05  450  	if (int_stat & (ADXL345_INT_DATA_READY | ADXL345_INT_WATERMARK)) {
+55d2386488598bb Lothar Rubusch 2024-12-05  451  		samples = adxl345_get_samples(st);
+55d2386488598bb Lothar Rubusch 2024-12-05  452  		if (samples < 0)
+55d2386488598bb Lothar Rubusch 2024-12-05  453  			goto err;
+55d2386488598bb Lothar Rubusch 2024-12-05  454  
+55d2386488598bb Lothar Rubusch 2024-12-05  455  		if (adxl345_fifo_push(indio_dev, samples) < 0)
+55d2386488598bb Lothar Rubusch 2024-12-05  456  			goto err;
+55d2386488598bb Lothar Rubusch 2024-12-05  457  
+55d2386488598bb Lothar Rubusch 2024-12-05  458  	}
+55d2386488598bb Lothar Rubusch 2024-12-05  459  	return IRQ_HANDLED;
+55d2386488598bb Lothar Rubusch 2024-12-05  460  
+55d2386488598bb Lothar Rubusch 2024-12-05  461  err:
+55d2386488598bb Lothar Rubusch 2024-12-05  462  	adxl345_fifo_reset(st);
+55d2386488598bb Lothar Rubusch 2024-12-05  463  
+55d2386488598bb Lothar Rubusch 2024-12-05  464  	return IRQ_HANDLED;
+55d2386488598bb Lothar Rubusch 2024-12-05  465  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
