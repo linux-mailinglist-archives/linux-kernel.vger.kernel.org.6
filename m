@@ -1,183 +1,169 @@
-Return-Path: <linux-kernel+bounces-439656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7F59EB24B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:54:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7690E9EB24C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:54:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B013188B9B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675FC1886986
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1045D1AAA0A;
-	Tue, 10 Dec 2024 13:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC551AA792;
+	Tue, 10 Dec 2024 13:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FljvzEpd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="PXPTL8i7"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E11AA1E4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733838825; cv=none; b=uQpjj2omMls10Jwb5/043bE/jVXNpeh3BGfEdrnb9WhuPkKy5ZDoqWTf0gTeC4SI6NwuNHshwnOZyzwg5wkiqidMKW6fiSsir6pal91OUahCHTMP5pmSyTbirP3+qbQ6QMla8qesR7ohMuE/U8j74DL6pAO17+L+wRFIphpQZPA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733838825; c=relaxed/simple;
-	bh=XRwYnChJePzqn20wldDIV3wuVph1Ee0m/c4Ln+xEExI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=E8Ye+MRuQBO29akBZpRZh+UNgHH9fJFcEM5AGD+cBnJyf88cB+cnpelFFmbB4NpAS9KUhgBkVBC7Of14X7sGwpIeOEwq8SjpndQB4QNhgdL8XLmhVh7RzK4/pURDTU/PQpzjIMnqWXk3E5EeBPpBHQCxaer2qOLSaI1OwFgWlnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FljvzEpd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733838822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/HoNuqIEOrVRmdvjmLSRb9lrwGMQMrAipZHJQOxiwTc=;
-	b=FljvzEpdB06iFSwqoq1dkPV89rYKuiHy1SALKfidhlZjTENLVKB2tm9sNF7mQW+YcFjb1G
-	FXhH3bSaWwghanPZqFScUVVrq5vOrFI/iEBs5voB5r+5B27aiR1fDBtLbO872XLEeZyLYB
-	ZcVj/iES5YwiqFfOVqaWj7AGkVbKQ4A=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-413-RULBSRxFMpCJZGAKif9Hdw-1; Tue, 10 Dec 2024 08:53:40 -0500
-X-MC-Unique: RULBSRxFMpCJZGAKif9Hdw-1
-X-Mimecast-MFC-AGG-ID: RULBSRxFMpCJZGAKif9Hdw
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434fff37885so8720625e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:53:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733838819; x=1734443619;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/HoNuqIEOrVRmdvjmLSRb9lrwGMQMrAipZHJQOxiwTc=;
-        b=o7mhDuckBXMmfNkoT2r2Mef6gWQs+iltK9liW2TdMWn85yXiKn0rjFmHehResWLK4e
-         ol4TTFwkcejkHDTQNE1RfjUgAGP0wi4MU09LJhhijTER/zNYy2TnUMT/lTyYzmxFxkIA
-         exeaZVf1KHEcn2groanFyVayCLCfShegW47pV/LpoppCzfZ4R308M2e6wULqd+as+Jk6
-         mx++4QRmcJ63SzPvnC5kK7Sodfp/NF9BYeX/fKPvSKu7nQAVONt3Zvr/V/jtrezAePXl
-         T49zDMaGvbHYBGXRvJ65a8vp9wMOAHMttcL1R7fj4ZeXbuKxPWFq7X3ScvKBPKat51j1
-         bwVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7hWrI5t6sVDrJtUp0eu4icdO5XzasHG2RJenglRfV9gCoN2Xsxjj/gjoShLSusP4FUHyhP8u89lzOXg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC0h588Rk9IKmi58wGXoHsBvFHT/GRqXOxlpwJqF2qJG7sUS0a
-	8k74TyvMRepsuinSXIFQi1LMPIsInKbR/+UrxjTszHBFXRqmMmMk1BNGxOFV6a97hkhfM073EAn
-	rT9mPoEzwD/eN0oW0bx/dwvjEzJ+qlfKDtr526QGORxdOK2AoHLC1u0zZpuPSnQ==
-X-Gm-Gg: ASbGncsMPmTpR55E0VJrf2BcMvcFe01RoxyJ1E3gNtzGUSo8bpcQg11bZ0PUr1vZQ0W
-	+4g/VvVr/Nv4KlHT4u8EE42fiwEm4JK6Stva7Td/aTzppIrAfqjoXCdiCGC/H7/Z05aOGKnnAqv
-	oiZcrjkrl6BMNQdPVVrACmsdddkIdZl9sULRKRD64kPow45ZxmzLLmrc7M/q24DpwcwUYuRc8Wr
-	JW6NeaV+/Bkb/uzoZr3q8Zz/RIx3/7m+bYfMGAe0U56FbGYrPGkpEi/d3+Ntawm1FYNcbdTz9fC
-	9+1dhhXnd66QJxlzhC9Ec49pWv+kRyE8qAHl9v4=
-X-Received: by 2002:a05:600c:4447:b0:434:a7e3:db66 with SMTP id 5b1f17b1804b1-434fffd0718mr34707705e9.26.1733838819517;
-        Tue, 10 Dec 2024 05:53:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGX1Bnu64mtb/xieDzhp74HQNT4+QKiGnwf7K+hTkAcz8zIBE2KO+I2nCgWMN/+kxkXTwBWJw==
-X-Received: by 2002:a05:600c:4447:b0:434:a7e3:db66 with SMTP id 5b1f17b1804b1-434fffd0718mr34706985e9.26.1733838819087;
-        Tue, 10 Dec 2024 05:53:39 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0dd4sm227972305e9.34.2024.12.10.05.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 05:53:38 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Petr Tesarik <ptesarik@suse.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
- bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Wanpeng Li <wanpengli@tencent.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>, Andy Lutomirski <luto@kernel.org>, Frederic
- Weisbecker <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- Neeraj
- Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes
- <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, Boqun
- Feng <boqun.feng@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
- <lstoakes@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
- <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>, Sami Tolvanen
- <samitolvanen@google.com>, Ard Biesheuvel <ardb@kernel.org>, Nicholas
- Piggin <npiggin@gmail.com>, Juerg Haefliger
- <juerg.haefliger@canonical.com>, Nicolas Saenz Julienne
- <nsaenz@kernel.org>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Nadav Amit <namit@vmware.com>, Dan
- Carpenter <error27@gmail.com>, Chuang Wang <nashuiliang@gmail.com>, Yang
- Jihong <yangjihong1@huawei.com>, Petr Mladek <pmladek@suse.com>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>, Julian Pidancet
- <julian.pidancet@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>,
- Dionna Glaze <dionnaglaze@google.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Juri Lelli <juri.lelli@redhat.com>, Marcelo
- Tosatti <mtosatti@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Daniel
- Wagner <dwagner@suse.de>
-Subject: Re: [RFC PATCH v3 13/15] context_tracking,x86: Add infrastructure
- to defer kernel TLBI
-In-Reply-To: <20241209154252.4f8fa5a8@mordecai.tesarici.cz>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-14-vschneid@redhat.com>
- <20241120152216.GM19989@noisy.programming.kicks-ass.net>
- <20241120153221.GM38972@noisy.programming.kicks-ass.net>
- <xhsmhldxdhl7b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20241121111221.GE24774@noisy.programming.kicks-ass.net>
- <4b562cd0-7500-4b3a-8f5c-e6acfea2896e@intel.com>
- <20241121153016.GL39245@noisy.programming.kicks-ass.net>
- <20241205183111.12dc16b3@mordecai.tesarici.cz>
- <xhsmh1pyh6p0k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20241209121249.GN35539@noisy.programming.kicks-ass.net>
- <20241209154252.4f8fa5a8@mordecai.tesarici.cz>
-Date: Tue, 10 Dec 2024 14:53:36 +0100
-Message-ID: <xhsmhv7vr63vj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081A322087;
+	Tue, 10 Dec 2024 13:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733838887; cv=pass; b=qW6rjA8rgDywQ47QflBzrhDD8qlEA8T4Ilpn84cyQwo0wy0ZIqb7cj2iGNMgZleFsB+GA6MMCimvKEdn96mgxz4O8hFNXMYZbEmcJZ4USKn/6nXhrfYZm1SRXAmbLrTBAbUeZzNTVEu54/FZxFRI3mrqsYftapy2cST1lk9BLU4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733838887; c=relaxed/simple;
+	bh=dst/ymbl8Rp99uil+6kvqc6lEF+yzYq7BByo2zD2l+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Am/xvpL4FicoFibgiTw13H1lCSre8v+k80HS/AsaQWq0tJmA43kd11VkNlXEq/KpWOB/lUmIrgBna3+e26hDdR6H0aaMiaG6lXhjI6QOE/W52dbXcp9jrfXc76X5S2f4W/ZSVA5ym1STVihiYWm9eYjmrm3f8rggGNy8iVbqSaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=PXPTL8i7; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733838869; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YZAsY7L4zjav6r3vV8B8icXQzxtB/Hb2Jh0GluSm5J6jjalWCiHiFcpRXpLByoGdLvjuEgxfrDyIiEPwtqyw2hYnurEUou5lGWatA+HdoQ9z3G5Pos8YsUCNV8evKrtDu822pUSoCfSh4SJQTomRMMYvvGws/03vhgoHRA4wWs8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733838869; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YMmppZyizEstfKri+9ofz1mcWacCaY/jsGFVQd+cu04=; 
+	b=hAmMBDdl7jW6Ssf+FsTeJG2kUM3GK6YEtN3Uibm0TEj9CGN+2ILFsOb4024YpGgyVqRSGJoPuW3ngDe37kOE8zrUT9zCE7hzOki3/ZKo2knRk9+//Sh1z4/lGzyi38k5gQ/M4OfVXjbDn83jZ+xXIwwuUqu76T3pSGkRqMpmNf4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
+	dmarc=pass header.from=<laura.nao@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733838869;
+	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
+	bh=YMmppZyizEstfKri+9ofz1mcWacCaY/jsGFVQd+cu04=;
+	b=PXPTL8i76B99cQxhJqqbbRlwstoVGH2mtAe4ecvD7UkoxmyiHCUOfzr3lvEvvm2f
+	f/0B4DVAwQ2TJICvzN+3nqoDqaVeF75kyWfjZHlU7dIkD6Eajsy8Hsh4jz4lFjoXPRN
+	Rw1DdNb1NLewPZJW3bZWqQsJZMHn8JSQO8ofZ8t0=
+Received: by mx.zohomail.com with SMTPS id 1733838867736641.1510856864684;
+	Tue, 10 Dec 2024 05:54:27 -0800 (PST)
+From: Laura Nao <laura.nao@collabora.com>
+To: olsajiri@gmail.com
+Cc: alan.maguire@oracle.com,
+	bpf@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	kernel@collabora.com,
+	laura.nao@collabora.com,
+	linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on
+Date: Tue, 10 Dec 2024 14:55:01 +0100
+Message-Id: <20241210135501.251505-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <Z1LvfndLE1t1v995@krava>
+References: <Z1LvfndLE1t1v995@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On 09/12/24 15:42, Petr Tesarik wrote:
-> On Mon, 9 Dec 2024 13:12:49 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
->
->> On Mon, Dec 09, 2024 at 01:04:43PM +0100, Valentin Schneider wrote:
+Hi Jiri,
+
+Thanks for the feedback!
+
+On 12/6/24 13:35, Jiri Olsa wrote:
+> On Fri, Nov 15, 2024 at 06:17:12PM +0100, Laura Nao wrote:
+>> On 11/13/24 10:37, Laura Nao wrote:
+>>>
+>>> Currently, KernelCI only retains the bzImage, not the vmlinux
+>>> binary. The
+>>> bzImage can be downloaded from the same link mentioned above by
+>>> selecting
+>>> 'kernel' from the dropdown menu (modules can also be downloaded the
+>>> same
+>>> way). I’ll try to replicate the build on my end and share the
+>>> vmlinux
+>>> with DWARF data stripped for convenience.
+>>>
 >>
->> > > But I wonder what exactly was the original scenario encountered by
->> > > Valentin. I mean, if TLB entry invalidations were necessary to sync
->> > > changes to kernel text after flipping a static branch, then it might be
->> > > less overhead to make a list of affected pages and call INVLPG on them.
+>> I managed to reproduce the issue locally and I've uploaded the
+>> vmlinux[1]
+>> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of
+>> the
+>> modules[3] and its btf data[4] extracted with:
 >>
->> No; TLB is not involved with text patching (on x86).
+>> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko >
+>> cros_kbd_led_backlight.ko.raw
 >>
->> > > Valentin, do you happen to know?
->> >
->> > So from my experimentation (hackbench + kernel compilation on housekeeping
->> > CPUs, dummy while(1) userspace loop on isolated CPUs), the TLB flushes only
->> > occurred from vunmap() - mainly from all the hackbench threads coming and
->> > going.
+>> Looking again at the logs[5], I've noticed the following is reported:
 >>
->> Right, we have virtually mapped stacks.
->
-> Wait... Are you talking about the kernel stac? But that's only 4 pages
-> (or 8 pages with KASAN), so that should be easily handled with INVLPG.
-> No CR4 dances are needed for that.
->
-> What am I missing?
->
+>> [    0.415885] BPF: 	 type_id=115803 offset=177920 size=1152
+>> [    0.416029] BPF:
+>> [    0.416083] BPF: Invalid offset
+>> [    0.416165] BPF:
+>>
+>> There are two different definitions of rcu_data in '.data..percpu',
+>> one
+>> is a struct and the other is an integer:
+>>
+>> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
+>> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
+>>
+>> [115801] VAR 'rcu_data' type_id=115572, linkage=static
+>> [115803] VAR 'rcu_data' type_id=1, linkage=static
+>>
+>> [115572] STRUCT 'rcu_data' size=1152 vlen=69
+>> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64
+>> encoding=(none)
+>>
+>> I assume that's not expected, correct?
+> 
+> yes, that seems wrong.. but I can't reproduce with your config
+> together with pahole 1.24 .. could you try with latest one?
 
-So the gist of the IPI deferral thing is to coalesce IPI callbacks into a
-single flag value that is read & acted on upon kernel entry. Freeing a
-task's kernel stack is not the only thing that can issue a vunmap(), so
-instead of tracking all the pages affected by the unmap (which is
-potentially an ever-growing memory leak as long as no kernel entry happens
-on the isolated CPUs), we just flush everything.
+I just tested next-20241210 with the latest pahole version (1.28 from
+the master branch[1]), and the issue does not occur with this version
+(I can see only one instance of rcu_data in the BTF data, as expected).
 
-Quick tracing with my dummy benchmark mostly shows
+I can confirm that the same kernel revision still exhibits the issue
+with pahole 1.24.
 
-  vfree_atomic() -> drain_vmap_work()
+If helpful, I can also test versions between 1.24 and 1.28 to identify
+which ones work.
 
-but pretty much any vfree() / kvfree_rcu() from the housekeeping CPUs can
-get us that IPI.
+Thanks,
+
+Laura
+
+[1] https://git.kernel.org/pub/scm/devel/pahole/pahole.git
+
+> 
+> jirka
+> 
+>>
+>> I'll dig a bit deeper and report back if I can find anything else.
+>>
+>> [1]
+>> https://people.collabora.com/~laura.nao/dbg-btf-mismatch-next-20241113/vmlinux
+>> [2]
+>> https://people.collabora.com/~laura.nao/dbg-btf-mismatch-next-20241113/vmlinux.raw
+>> [3]
+>> https://people.collabora.com/~laura.nao/dbg-btf-mismatch-next-20241113/cros_kbd_led_backlight.ko
+>> [4]
+>> https://people.collabora.com/~laura.nao/dbg-btf-mismatch-next-20241113/cros_kbd_led_backlight.ko.raw
+>> [5] https://pastebin.com/raw/FvvrPhAY
+>>
+>> Best,
+>>
+>> Laura
+>>
 
 
