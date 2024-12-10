@@ -1,211 +1,118 @@
-Return-Path: <linux-kernel+bounces-438832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490379EA701
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:08:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F01E1889760
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:08:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A832248B0;
-	Tue, 10 Dec 2024 04:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="bRzqWaIP"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6639EA707
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:09:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559BB1D79A3;
-	Tue, 10 Dec 2024 04:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E8B286A20
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:09:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33662224AE3;
+	Tue, 10 Dec 2024 04:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="N3V/kKSU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DE241C6C;
+	Tue, 10 Dec 2024 04:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733803694; cv=none; b=PB0e/Q0AVN7kOV+rHwe10kaD+bRThjIqHCed7VMQjBaNzyUcwkG/9r4POTNS6gtEOG1Vfk5JeGwjl3N2CCpHw0U4lasjYEqnKnKZU6fbOHnOOOdg5jTu+tt/mnmHrt8SqZNxnOYyGrVryk/vv/j0y/t+I/qSqaEnXILJtC1dyFQ=
+	t=1733803760; cv=none; b=XxjES0zE1XFXMlA4GxkZ5h61k++9OAp82u+hcmRoSv4cVy5bRq26hdXyUxV5UtOjN/TjB1IndgbTfJ8vHX326paSNF95bMgonYDAuKU0NsBSKwRPVer+CGW8Ev+E8zj87v3k0poYEn30I+z1xukamhIgQ4PzUwnhqTv4DuKaqGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733803694; c=relaxed/simple;
-	bh=Kd14JDL7U4ItsaLyqu11JTLUDIbecDEaGvzz3fHha8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SUrEc6PQzOjns7mZW2frA+z28OsrBltWrk7XqEWQzEXORLrWsna8dA0qp7b1ofD66NsnjxSJjsLCPdTbTbtQtgI3POIp5VcxsSJuF1DhST5BdZdbVRRzK6tEEUsNlRueA486A+w9e038JXGbACVO4sKeyMYhmfjh7xarBkKNI7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=bRzqWaIP; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1733803683; x=1734408483; i=w_armin@gmx.de;
-	bh=oahmG70NCBuHFXkgBAFpg9Aun+eU1gyPJog6Kzl8MqQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=bRzqWaIPnh3B0n5pVeODg0XGqMNaxXXuue1F9UkG9mjJvN2s0yWnl1m5UTSyKMHw
-	 CUFmLJFiqFGhdze9XkvAYiYYLiL9IL9qXue1r2XijqQN4x/SAzc4fduOAuIfI1XN8
-	 PdI5xSdKtbnF70MiWYndxaaUjWFI54NhW8IyozEU1ux81uDambP8x+zjPHQpv5sP4
-	 B5Us4MS85Kb8VOaNdzOfYUuStQYV0EHhYlyvcWSn2EBzzYEPbBQwYUQ5KL7Qbxzb4
-	 M5RRLo39Dqc9rkxwV8av4YhPKtRJpMTPA5sdXpfSSGfud8S2OOqAwN9laYJPtfKRw
-	 o3wjUN2+WOXgalyXzg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([91.14.230.110]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MacOW-1tvYs43ln8-00lzJa; Tue, 10
- Dec 2024 05:08:03 +0100
-Message-ID: <51dba8ab-b268-40ae-b005-87a5d0ab0566@gmx.de>
-Date: Tue, 10 Dec 2024 05:08:01 +0100
+	s=arc-20240116; t=1733803760; c=relaxed/simple;
+	bh=UC9488gl9T6A80VUWGtGF6J5sVo17VFJEmTIVqrxb70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8YzaGq3zLoOFeldGcE9zPdncgw72bl+wOSW2t6lCAXf4dU/zX5gOWtRcpmh5NppZg63fp29B1ozOZi6SfDXoKnV4Y18QVeOMhTTLjT4seExgpNY97aEDZaGbAezz9V134/41OvQ3VV8Jy96oBP8tP9WwkvUQaKUq4BQPZfW/WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=N3V/kKSU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CU/ceaeuMg6s5VeGV4bWHaOpATNGJK0FHJF/eoUa5PA=; b=N3V/kKSU/FUHhKITh5qPkAIq2L
+	yLkapdBDFcBAJ1sXfuSD9kCS4bPgVOYXuql/AHTZ41R2lwONLMeu6pwdwXLWKzYfbA4cHsjb3h3hc
+	Eh+iypQ4ulOV1WzZZY1XfZl+rZ+rJbaBgtKmhCBZJX8dnujmRhbkzGLetblkNadg0H2U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKrYe-00Fksr-DN; Tue, 10 Dec 2024 05:09:12 +0100
+Date: Tue, 10 Dec 2024 05:09:12 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yijie Yang <quic_yijiyang@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
+ node
+Message-ID: <31a87bd9-4ffb-4d5a-a77b-7411234f1a03@lunn.ch>
+References: <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
+ <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
+ <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
+ <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
+ <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
+ <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
+ <4a6a6697-a476-40f4-b700-09ef18e4ba22@lunn.ch>
+ <441f37f5-3c33-4c62-b3fe-728b43669e29@quicinc.com>
+ <4287c838-35b2-45bb-b4a2-e128b55ddbaf@lunn.ch>
+ <2e518360-be24-45d8-914d-1045c6771620@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] platform/x86: acer-wmi: Improve error handling
- when reading gaming system information
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: jlee@suse.com, farhan.anwar8@gmail.com, rayanmargham4@gmail.com,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241210001657.3362-1-W_Armin@gmx.de>
- <20241210001657.3362-4-W_Armin@gmx.de>
- <i4jcyhqxfugfykbtvrwba4udln4l2cgk7zgj3sy7iqncf47a4q@exk6jk7rmmvk>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <i4jcyhqxfugfykbtvrwba4udln4l2cgk7zgj3sy7iqncf47a4q@exk6jk7rmmvk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:zui3jdiZlAvLMwDc+Uw2Bly7fJ4KnVaCApWGJAgdYntRdojoIzK
- AgiJHjLTcwNso3hPWgDfjmK//M3UoZuaTBJKZ3AmalxNgQZxcXgjxWFpvRQAvN7r3j/C1Ld
- euy2d59AtcJKwtMLnzNxZszUqtjm/9K9vRGwpKkTzHb5/AkuSrD7hNBcumKkrutrmlpSND9
- ft+O0AeYoYLEYyNZH8VRQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EZOHrkQ1pyY=;y7LZjkA05sKiW/JUGNmzZzc+vJd
- 1elmSKIG9nDJwlAQLDOOtoN0YIw4zNkRJIcVsfr3CG2XK0UL/uN2+EPiV52r02SI6a4O/xVW8
- fiBoVLvOD5QX6hHcUWmiokyH0RX+7mLX07w0o9SgHEwFr0mat8KwhHa/pEFK0jTZfN6NHiVD4
- vDVwJv6QKDDVaf+9QH3/kolwrQOHyeyLiJlAW/4CPlj1Uf/oWHjoCKEYMqlnJzza+zRuzbu94
- BNyUxVcpagb8ZT9Uv0HQF5saNOrfbZiLZu4W9YnOgZbqp9AJZ18S/BJEI5ypYHKCq+8b6PLAI
- 3mEaPPwfkt7oM3LHOEaTGkhf+JUin4SylHR8M1uTt2SU0fQy8TeDG7lXYHZY44G9DqJ65tvxJ
- KjNwmV8W8l58i8wDyiLmC9X8FfsXFDA9DvaGtYedCoIgHeNaxfGAvkH+mla/Cd1WA6yVfv254
- Zw+w/QpVszuBwOESHOqWIX4RuS2uz15y7J0kvzEA5Lp0sTW7pGdWXbsgOTd6obxMWZHB59hBa
- 58EeFr9jQUB+FBXhrlxCNx/pkQ4U4L06eHiibNjFGPJc0CiHsjDniaftk49ae8xMZYxwI0CUy
- j6go/HxHO9QwGoNpLPjKUwpobiXY+zYaMJzxWvk7qOs4ASnV+BNls7shTO60s7YLAN/UYS1eE
- IVghDVzfxK2PY7nvqkRGd6RNs1lBGz0qBafPic2TPrwEsO7JSA7rZt6PQmsigwes23F/LD1cv
- jy7+WY0UaO/EjvjhV6vkOMtgb0JMjSoEeWd5BC9tK2ysHbAJkJdECIIQ1w2pLS2BbMw2aBrhY
- 9MA5BIJqpNd/A53t84wx1RyuqNf5TFD9SZsPc6xUNRrN6Y/eiG00lO+bt87sj46o/GtkDspu9
- hu8xTdx60rQQnBO8ilp0TaflOadr3mYc7EQiRSVEuvLOYx7wRb+tHAe9wRTT/Yep7AtoWMI92
- YyVxFmigVG8rZY4jkL81EAYBrNorqteUIKejUa5z88cxEAZQ80vcPpmbVDI+9tSYCLGdwYyUB
- btb31zvQAcjPVjFGAhtIhwAHj68XbfdBcxS9PSnFRVldGS1u/3keDIMdg8SaDXMo3VGdxTW3N
- kzYfjrJfZqsQTEfAcv+UlLHbitpsUR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e518360-be24-45d8-914d-1045c6771620@quicinc.com>
 
-Am 10.12.24 um 03:06 schrieb Kurt Borja:
+> As previously mentioned, using 'rgmii' will enable EMAC to provide the delay
+> while disabling the delay for EPHY. So there's won't be double delay.
+> 
+> Additionally, the current implementation of the QCOM driver code exclusively
+> supports this mode, with the entire initialization sequence of EMAC designed
+> and fixed for this specific mode.
 
-> On Tue, Dec 10, 2024 at 01:16:55AM +0100, Armin Wolf wrote:
->> If a call to ACER_WMID_GET_GAMING_SYS_INFO_METHODID fails, the lower
->> 8 bits will be non-zero. Introduce a helper function to check this and
->> use it when reading gaming system information.
->>
->> Tested-by: Rayan Margham <rayanmargham4@gmail.com>
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->>   drivers/platform/x86/acer-wmi.c | 55 +++++++++++++++++++++------------
->>   1 file changed, 36 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
->> index dd57787466b9..ac4500f33b8c 100644
->> --- a/drivers/platform/x86/acer-wmi.c
->> +++ b/drivers/platform/x86/acer-wmi.c
->> @@ -70,6 +70,7 @@ MODULE_LICENSE("GPL");
->>
->>   #define ACER_PREDATOR_V4_THERMAL_PROFILE_EC_OFFSET 0x54
->>
->> +#define ACER_PREDATOR_V4_RETURN_STATUS_BIT_MASK GENMASK_ULL(7, 0)
->>   #define ACER_PREDATOR_V4_FAN_SPEED_READ_BIT_MASK GENMASK(20, 8)
->>
->>   /*
->> @@ -1513,6 +1514,24 @@ static acpi_status WMID_gaming_get_u64(u64 *value, u32 cap)
->>   	return status;
->>   }
->>
->> +static int WMID_gaming_get_sys_info(u32 command, u64 *out)
->> +{
->> +	acpi_status status;
->> +	u64 result;
->> +
->> +	status = WMI_gaming_execute_u64(ACER_WMID_GET_GAMING_SYS_INFO_METHODID, command, &result);
->> +	if (ACPI_FAILURE(status))
->> +		return -EIO;
->> +
->> +	/* The return status must be zero for the operation to have succeeded */
->> +	if (FIELD_GET(ACER_PREDATOR_V4_RETURN_STATUS_BIT_MASK, result))
->> +		return -EIO;
->> +
->> +	*out = result;
->> +
->> +	return 0;
->> +}
->> +
->>   static void WMID_gaming_set_fan_mode(u8 fan_mode)
->>   {
->>   	/* fan_mode = 1 is used for auto, fan_mode = 2 used for turbo*/
->> @@ -1762,22 +1781,23 @@ static int acer_gsensor_event(void)
->>
->>   static int acer_get_fan_speed(int fan)
->>   {
->> -	if (quirks->predator_v4) {
->> -		acpi_status status;
->> -		u64 fanspeed;
->> +	u64 fanspeed;
->> +	u32 command;
->> +	int ret;
->>
->> -		status = WMI_gaming_execute_u64(
->> -			ACER_WMID_GET_GAMING_SYS_INFO_METHODID,
->> -			fan == 0 ? ACER_WMID_CMD_GET_PREDATOR_V4_CPU_FAN_SPEED :
->> -				   ACER_WMID_CMD_GET_PREDATOR_V4_GPU_FAN_SPEED,
->> -			&fanspeed);
->> +	if (!quirks->predator_v4)
->> +		return -EOPNOTSUPP;
->>
->> -		if (ACPI_FAILURE(status))
->> -			return -EIO;
->> +	if (fan == 0)
->> +		command = ACER_WMID_CMD_GET_PREDATOR_V4_CPU_FAN_SPEED;
->> +	else
->> +		command = ACER_WMID_CMD_GET_PREDATOR_V4_GPU_FAN_SPEED;
->>
->> -		return FIELD_GET(ACER_PREDATOR_V4_FAN_SPEED_READ_BIT_MASK, fanspeed);
->> -	}
->> -	return -EOPNOTSUPP;
->> +	ret = WMID_gaming_get_sys_info(command, &fanspeed);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	return FIELD_GET(ACER_PREDATOR_V4_FAN_SPEED_READ_BIT_MASK, fanspeed);
->>   }
-> I wonder if it's necessary to refactor this function if you are going to
-> drop it on Patch 4.
+OK. If it is impossible to disable these delays, you need to validate
+phy-mode. Only rgmii-id is allowed. Anybody trying to build a board
+using extra long clock lines is out of luck. It does not happen very
+often, but there are a small number of boards which do this, and the
+definitions of phy-mode are designed to support them.
 
-I did it so each patch has a single well-defined scope. And refactoring this function was necessary for
-the patch being complete.
+> I'm not sure if there's a disagreement about the definition or a
+> misunderstanding with other vendors. From my understanding, 'rgmii' should
+> not imply that the delay must be provided by the board, based on both the
+> definition in the dt-binding file and the implementations by other EMAC
+> vendors. Most EMAC drivers provide the delay in this mode.
 
-Thanks,
-Armin Wolf
+Nope. You are wrong. I've been enforcing this meaning for maybe the
+last 10 years. You can go search the email archive for netdev. Before
+that, we had a bit of a mess, developers were getting it wrong, and
+reviewing was not as good. And i don't review everything, so some bad
+code does get passed me every so often, e.g. if found out today that
+TI AM62 got this wrong, they hard code TX delays in the MAC, and DT
+developers have been using rgmii-rxid, not rgmii-id, and the MAC
+driver is missing the mask operation before calling phy_connect.
 
->>   /*
->> @@ -1942,12 +1962,9 @@ static int acer_thermal_profile_change(void)
->>   			return err;
->>
->>   		/* Check power source */
->> -		status = WMI_gaming_execute_u64(
->> -			ACER_WMID_GET_GAMING_SYS_INFO_METHODID,
->> -			ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STATUS, &on_AC);
->> -
->> -		if (ACPI_FAILURE(status))
->> -			return -EIO;
->> +		err = WMID_gaming_get_sys_info(ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STATUS, &on_AC);
->> +		if (err < 0)
->> +			return err;
->>
->>   		switch (current_tp) {
->>   		case ACER_PREDATOR_V4_THERMAL_PROFILE_TURBO:
->> --
->> 2.39.5
->>
+> I confirmed that there is no delay on the qcs615-ride board., and the QCOM
+> EMAC driver will adds the delay by shifting the clock after receiving
+> PHY_INTERFACE_MODE_RGMII.
+
+Which is wrong. Because you cannot disable the delay,
+PHY_INTERFACE_MODE_RGMII should return in EINVAL, or maybe
+EOPNOTSUPP. Your hardware only supports PHY_INTERFACE_MODE_RGMII_ID,
+and you need to mask what you pass to phylib/phylink to make it clear
+the MAC has added the delays.
+
+	Andrew
 
