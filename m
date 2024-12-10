@@ -1,87 +1,171 @@
-Return-Path: <linux-kernel+bounces-438703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B47A9EA491
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:56:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E9C165BB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:56:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD27D12DD8A;
-	Tue, 10 Dec 2024 01:56:12 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779A59EA480
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:50:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F1E41C64;
-	Tue, 10 Dec 2024 01:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FAE5281DB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:50:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBA574BED;
+	Tue, 10 Dec 2024 01:50:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0411863E;
+	Tue, 10 Dec 2024 01:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733795772; cv=none; b=gJRp3qm7OeHbTUWsTyqkC+M1Yr+uNq6Y7HB4Z+iOTYZUbfyluWYIOxFHhaGOAp3wmZhKZZK56V+9YDklohY2ueoEQ5MZWkNnrI1XePz+uIpBqvOVbtNKIJHQKnrkUcwT7y8SabaipfWYgCqnqowVyzk8/7kesNvm+gbXuHwk9Cg=
+	t=1733795413; cv=none; b=GlpaBkbrMj9urD2MjlnIjle/LbvJcM2opAOZeecucnM8sqLggT5S+8HP66CX3GuDjob+Yk36IOQWzCsZCLDsjdW13KahAw48sHKxvhlEdDBF+AbClhfvmh6+77k7sUbtvmBtaB3oDqi+LiDrBda+Y9w7i26I57gdEiLbhPER48o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733795772; c=relaxed/simple;
-	bh=vG1OrtSx6Xqo9Auqc9Ko65tcZ0Hn9T+5dg2LzUoLJqI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DHc+ezKZprvBlWHRMdioTNq2tviq7Wu/Ki+tM7WD3tfQFNqHaSiZdk/uEZIxNjUEk0s1y4ZuZS15dY8HEKWs1zfNhQCyqd+AJJ+B/s6FX0+H6ELFjZQtA/f/aoPmh+ghEjGJshrnhagsZV/mODLpE/KWsF4+F2hw1ZCjn69EcQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from hay.lan. (unknown [IPv6:2605:59c8:31de:bf00:6ecf:39ff:fe00:8375])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id EA76DB4B23CF;
-	Tue, 10 Dec 2024 02:50:22 +0100 (CET)
-From: E Shattow <e@freeshell.de>
-To: Conor Dooley <conor@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>
-Cc: E Shattow <e@freeshell.de>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: dts: starfive: jh7110-pinfunc.h
-Date: Mon,  9 Dec 2024 17:48:57 -0800
-Message-ID: <20241210014903.154551-1-e@freeshell.de>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733795413; c=relaxed/simple;
+	bh=seff3xHAWroiHiG59IU/R+uWJCXG6BxNtXbPtWfqUPA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=kakLE18QafScx14RwadXL2J6ajFOiVSTDk+mYXz7w4zkHH6Uvh9r55wHPSndQfbzeCx0A+pX3dqUuzh/RpKKnWwnrnJbKT8+M2fQ5kY2DhG58kaM0Ea+ONgEnBfO8iYQnGgSAYO7FgsqbYpe6R31MyhTHZRT2LNOsQyml16EP/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y6hW41MR7z4f3jks;
+	Tue, 10 Dec 2024 09:49:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 60BA71A058E;
+	Tue, 10 Dec 2024 09:50:06 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgDnwoZMnldnu5alEA--.59586S3;
+	Tue, 10 Dec 2024 09:50:06 +0800 (CST)
+Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
+ the tag reservation code"
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
+ ming.lei@redhat.com, osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+ <20241209115522.3741093-2-yukuai1@huaweicloud.com>
+ <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com>
+Date: Tue, 10 Dec 2024 09:50:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnwoZMnldnu5alEA--.59586S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF4Utry3tw4rKryDKF4fAFb_yoW5Jw17pF
+	45t3ZrKr10qF4kWFWjy3y3Zr1xWws8WryfGFyft393CF1Fvan3JF1FgF13WFZ3JrZxCw42
+	kr4qqa97Ar98tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Fix a typo in StarFive JH7110 pin function definitions
+Hi,
 
-Fixes: e22f09e598d12 ("riscv: dts: starfive: Add StarFive JH7110 pin function definitions")
-Signed-off-by: E Shattow <e@freeshell.de>
----
- arch/riscv/boot/dts/starfive/jh7110-pinfunc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+在 2024/12/10 2:02, Bart Van Assche 写道:
+> This is not correct. dd->async_depth can be modified via sysfs.
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
-index 256de17f5261..ae49c908e7fb 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
-+++ b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
-@@ -89,7 +89,7 @@
- #define GPOUT_SYS_SDIO1_DATA1			59
- #define GPOUT_SYS_SDIO1_DATA2			60
- #define GPOUT_SYS_SDIO1_DATA3			61
--#define GPOUT_SYS_SDIO1_DATA4			63
-+#define GPOUT_SYS_SDIO1_DATA4			62
- #define GPOUT_SYS_SDIO1_DATA5			63
- #define GPOUT_SYS_SDIO1_DATA6			64
- #define GPOUT_SYS_SDIO1_DATA7			65
+How about the following patch to fix min_shallow_depth for deadline?
 
-base-commit: 708d55db3edbe2ccf88d94b5f2e2b404bc0ba37c
--- 
-2.45.2
+Thanks,
+Kuai
+
+diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+index a9cf8e19f9d1..040ebb0b192d 100644
+--- a/block/mq-deadline.c
++++ b/block/mq-deadline.c
+@@ -667,8 +667,7 @@ static void dd_depth_updated(struct blk_mq_hw_ctx *hctx)
+         struct blk_mq_tags *tags = hctx->sched_tags;
+
+         dd->async_depth = q->nr_requests;
+-
+-       sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
++       sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 
+dd->async_depth);
+  }
+
+  /* Called by blk_mq_init_hctx() and blk_mq_init_sched(). */
+@@ -1012,6 +1011,47 @@ SHOW_INT(deadline_fifo_batch_show, dd->fifo_batch);
+  #undef SHOW_INT
+  #undef SHOW_JIFFIES
+
++static ssize_t deadline_async_depth_store(struct elevator_queue *e,
++                                         const char *page, size_t count)
++{
++       struct deadline_data *dd = e->elevator_data;
++       struct request_queue *q = dd->q;
++       struct blk_mq_hw_ctx *hctx;
++       unsigned long i;
++       int v;
++       int ret = kstrtoint(page, 0, &v);
++
++       if (ret < 0)
++               return ret;
++
++       if (v < 1)
++               v = 1;
++       else if (v > dd->q->nr_requests)
++               v = dd->q->nr_requests;
++
++       if (v == dd->async_depth)
++               return count;
++
++       blk_mq_freeze_queue(q);
++       blk_mq_quiesce_queue(q);
++
++       dd->async_depth = v;
++       if (blk_mq_is_shared_tags(q->tag_set->flags)) {
++               sbitmap_queue_min_shallow_depth(
++                       &q->sched_shared_tags->bitmap_tags, 
+dd->async_depth);
++       } else {
++               queue_for_each_hw_ctx(q, hctx, i)
++                       sbitmap_queue_min_shallow_depth(
++                               &hctx->sched_tags->bitmap_tags,
++                               dd->async_depth);
++       }
++
++       blk_mq_unquiesce_queue(q);
++       blk_mq_unfreeze_queue(q);
++
++       return count;
++}
++
+  #define STORE_FUNCTION(__FUNC, __PTR, MIN, MAX, __CONV) 
+         \
+  static ssize_t __FUNC(struct elevator_queue *e, const char *page, 
+size_t count)        \
+  {                                                                      \
+@@ -1037,7 +1077,6 @@ STORE_JIFFIES(deadline_write_expire_store, 
+&dd->fifo_expire[DD_WRITE], 0, INT_MA
+  STORE_JIFFIES(deadline_prio_aging_expire_store, 
+&dd->prio_aging_expire, 0, INT_MAX);
+  STORE_INT(deadline_writes_starved_store, &dd->writes_starved, INT_MIN, 
+INT_MAX);
+  STORE_INT(deadline_front_merges_store, &dd->front_merges, 0, 1);
+-STORE_INT(deadline_async_depth_store, &dd->async_depth, 1, INT_MAX);
+  STORE_INT(deadline_fifo_batch_store, &dd->fifo_batch, 0, INT_MAX);
+  #undef STORE_FUNCTION
+  #undef STORE_INT
 
 
