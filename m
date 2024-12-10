@@ -1,122 +1,162 @@
-Return-Path: <linux-kernel+bounces-439991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE64B9EB732
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:54:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064839EB735
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:54:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5A428461B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:54:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA6C188387F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCFB230D01;
-	Tue, 10 Dec 2024 16:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D95231C8A;
+	Tue, 10 Dec 2024 16:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f3hvz97N"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g4BzczLN"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E92A233139
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3E22309AF
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849656; cv=none; b=uaLNkOAgvUYTgoiuTuJ+mIhDSWzC7wLR9Y/kVpim6Y5w56gy72ACNTZzr218JECvEB+3zWV/bcjrZW5lXKt0qIavWZ1ZJw00nJFjOVKYG1meOdxgDD6H8WypaPYK55wC6Am92QxWd85InADgj4etnQhdambqxyQ17yYh3pvDnjQ=
+	t=1733849647; cv=none; b=nWWGDrQlqM7URL03LFz6rU9ivCw8vLjq2ybqi9UvC1BKy9+JSBpKNJvFLwfdt/Wd1f00NlyWBADLD273l+XXLADtCHnlwwLcqIznTSSGcWxFeVCzhntGXTo5VkhY/dRhEo0VM8L6uAEO8TxIV97YSjF8B3d4llz8Ey1Lnbh5p34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849656; c=relaxed/simple;
-	bh=3sn7QlcYPVrIalne+GpOHpJwfF0reHhkLV2yJqlqG7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GN6PzlSLQPbZgI+AMimL8CMF3xv039nheF1LIEa1Oy5JTcpyFKreYvWhx9KDwx0aUcHAgiwuTyRiKmHMdcR9Ukhd3XX4qP1jsLbCYYKP5d5DEWhVIKXvo7/mLQOcjbtdE7no1w6KspW3wUkw3kksOVsE2kSx/3m1ddBhoa/WxCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f3hvz97N; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733849653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uYgy4fScGjSMekKKz7zapMxNc5WYY7jYizVCi92CPVg=;
-	b=f3hvz97NNfVZeyVWUc8nLiXOctQqW4DpM6D+AWQ116r6Hz8gxUfqu0yKKZDOqUTUDCH/VR
-	tskjsdhY0+gI00KVVeq1iocZK9sNvpwpAUL3gDLmSZeYeLXMznEV0EVdTJsit2PfpWz8Le
-	pWlxqGIYj35TIuomFYf5g+u57t5nCSk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-5-Pcjwg3CCMr-5zOAySgSt3g-1; Tue,
- 10 Dec 2024 11:54:10 -0500
-X-MC-Unique: Pcjwg3CCMr-5zOAySgSt3g-1
-X-Mimecast-MFC-AGG-ID: Pcjwg3CCMr-5zOAySgSt3g
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3AE11955BF9;
-	Tue, 10 Dec 2024 16:54:06 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.4])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id F15341956089;
-	Tue, 10 Dec 2024 16:53:58 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 10 Dec 2024 17:53:43 +0100 (CET)
-Date: Tue, 10 Dec 2024 17:53:34 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org, Peng Zhang <zhangpeng.00@bytedance.com>
-Subject: Re: [PATCH] fork: avoid inappropriate uprobe access to invalid mm
-Message-ID: <20241210165334.GB31266@redhat.com>
-References: <20241210163104.55181-1-lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1733849647; c=relaxed/simple;
+	bh=l/8HBPCwyuNycmVKwayvf4SiKQB/PKOeP06ko+JSfEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p+8xLfjqQdc2DGuaqX4iUlyD5YpiLeQ57QFur/12oVwuGoaMqBikYbkoASWppxxnlme/Q9mi1L77lUUULVGR7MHQG0mn2ImQeKk/4dca+B+van7YgPJ/C15wli2qCwJp+1/TTH72CTEV1iHYa65giSeiJkBb8vlqBEQgD8rn38Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g4BzczLN; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30229d5b21cso16796211fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:54:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733849640; x=1734454440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l/8HBPCwyuNycmVKwayvf4SiKQB/PKOeP06ko+JSfEI=;
+        b=g4BzczLNekrJb9xykIcQgbaEFNiLSj0CCJ3eWSKcD/+/uWw5RZeFIJRAkC3VpEY0sH
+         MXo43DWeFo4dkCH6wLMFdE2CtmImISdyA+EHaSpQHURInTdDfZONRi0qrJ9MRIoE+e7h
+         QbWppbs7xY0YPQ/w9/u/EhVvTwGGxLsFv6fvE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733849640; x=1734454440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l/8HBPCwyuNycmVKwayvf4SiKQB/PKOeP06ko+JSfEI=;
+        b=i88Jq3gzMy96q8Tlx8Pqcy3KZOwsLf/QUAJoFbhnrfEx1ae9CDC0K5Za4YJNIAlPAZ
+         LhElV37x20pgXuPe8QYlZR4rHTIbEh8D5mCGHrm0d0+jGeFD+kP0seXxh6nrM9IcJLJt
+         I+JKskH8C9tiBOooEtG1LRsH45cJRPf3tkkHWyJvhQACqc3jxUTPNht1VI67dlzq5p0p
+         RDOTBBg8D0ekxtkKgzH4m8CrQ9TI9nAoB+JAQzMMadO//0MkAvKaAikAp6STUrTw+WMl
+         yUB5oPE57iyvxnqqnDd3Jn3v93pcTLKLC/olWDbAj4O80CIFFX70hl09E70uijbRVcId
+         dBHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF9HKIoh5J5wrxLgADMVpgjJiAo4J/yrNto8T6P4ID7NezRzbxHHpfA/C+EruM1uAr5ur1818a8Y9NnbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjuuIev7B1KIkSbgSShpmaPwffT/+RmLHxs9JdsB4c6kmyhvwH
+	oVGRvc8mkb7kUlECuyRju+2roMAqcoVLn5hWGo0qU8Vyckdf+vDkbLEmhUjuHJmQ7DQveN9jIpE
+	o8A==
+X-Gm-Gg: ASbGncu5uzJ4UTHZZUR/DgyvPngWThFM8FLGhsEUgvxYPoJ28KovNkECQB5l9NPWmLJ
+	eKq6CVuYVse9t4NtZF2NdRO/xoz/LS/JbEFkZy1MMgBQvO8GbkMEmyoeD7v8UetvWVAitwcrG8+
+	nyUOIjZXsFNpwpUTlkOvxDGCZxQhnITy4Mq8vOSkk6Xa62P0cxegRNvoVLNIDryofRN6fCDJCuX
+	QwUDpBkO6pwH8h1gaJbkNMbAOsMitiYUzb4KWj7GufE/RC2UWQ49JD9oteKwBcgbU+IFNjXPLxZ
+	K5aL6kbocryMaXrRTQ==
+X-Google-Smtp-Source: AGHT+IGYcP+NOWnAY+A0zYg1hRq3LLlTSYFmvNIp/odxi5qGwfA0h7/gjsef8Q/TxuZ0jkcMvZPnWQ==
+X-Received: by 2002:a2e:bc16:0:b0:302:2202:14dd with SMTP id 38308e7fff4ca-3022fd3cb07mr17377921fa.20.1733849640394;
+        Tue, 10 Dec 2024 08:54:00 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30031e14003sm12942321fa.36.2024.12.10.08.53.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 08:53:58 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54026562221so754672e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:53:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXra8d8VgRnbxZU3dXbXalPPF9kBd8GeHT7ZEzzM9/ZgQQahyGJCscyfwuX0VxN3G6jTSUmhPeF1HViTjE=@vger.kernel.org
+X-Received: by 2002:a05:6512:318b:b0:53e:3103:b967 with SMTP id
+ 2adb3069b0e04-54024108256mr1868839e87.35.1733849637744; Tue, 10 Dec 2024
+ 08:53:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210163104.55181-1-lorenzo.stoakes@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20241209174430.2904353-1-dianders@chromium.org> <20241210155604.GA15918@willie-the-truck>
+In-Reply-To: <20241210155604.GA15918@willie-the-truck>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 10 Dec 2024 08:53:46 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=U5xraosVuDGXxBN5Ajo0n=s50JZqtgQGPs1C9jM3YaFw@mail.gmail.com>
+X-Gm-Features: AZHOrDk7WvPRzq9z4VNazAXpYtL75nSHpExN5slME765TfN80XYGbQfqOs7VNn0
+Message-ID: <CAD=FV=U5xraosVuDGXxBN5Ajo0n=s50JZqtgQGPs1C9jM3YaFw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] arm64: errata: Add Qualcomm CPUs to the Spectre
+ mitigation lists
+To: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Julius Werner <jwerner@chromium.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	Besar Wicaksono <bwicaksono@nvidia.com>, D Scott Phillips <scott@os.amperecomputing.com>, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	linux-kernel@vger.kernel.org, james.morse@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I must have missed something, but...
+Hi,
 
-On 12/10, Lorenzo Stoakes wrote:
+On Tue, Dec 10, 2024 at 7:56=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
 >
-> @@ -1746,9 +1741,11 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
->  	if (!mm_init(mm, tsk, mm->user_ns))
->  		goto fail_nomem;
-> 
-> +	uprobe_start_dup_mmap();
->  	err = dup_mmap(mm, oldmm);
->  	if (err)
-> -		goto free_pt;
-> +		goto free_pt_end_uprobe;
-> +	uprobe_end_dup_mmap();
-> 
->  	mm->hiwater_rss = get_mm_rss(mm);
->  	mm->hiwater_vm = mm->total_vm;
-> @@ -1758,6 +1755,8 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
-> 
->  	return mm;
-> 
-> +free_pt_end_uprobe:
-> +	uprobe_end_dup_mmap();
+> Hi Doug,
+>
+> On Mon, Dec 09, 2024 at 09:43:10AM -0800, Douglas Anderson wrote:
+> >
+> > Since Qualcomm CPUs are all derivatives of ARM cores they all have
+> > unique MIDR values. This means that the tables listing necessary
+> > Spectre mitigations need special entries for them. However, those
+> > entries are not present and that means that some Spectre mitigations
+> > are lacking for Qualcomm CPUs.
+> >
+> > I've made an attempt at **GUESSING** what the right patches should be
+> > to enable mitigations for Qualcomm CPUs. This is mostly me searching
+> > the web to figure out what ARM cores various Qualcomm cores are based
+> > off of.
+> >
+> > These patches get more and more sketchy as the series progresses and I
+> > have noted that the later patces DON'T EVEN COMPILE. I have included
+> > them to make it obvious that I think these cores are affected even if
+> > I don't have all the right information to mitigate them. Hopefully
+> > Qualcomm can come and fix this mess for me.
+> >
+> > I'll note that I am certainly no expert on Spectre. Mostly I ended up
+> > here running `lscpu` on a device and noticing that it thought that it
+> > wasn't affected by Spectre v2 when I thought it was.
+>
+> Whilst only Qualcomm can say definitively whether or not they are
+> affected (and what values of 'k' are required for the loop-based
+> workarounds), I can't help but wonder whether the current mitigation
+> code is structured the wrong way around in this case.
+>
+> It looks to me like we don't have a way to identify a "vulnerable" CPU
+> for Spectre-BHB; either a CPU has some sort of mitigation or it's
+> unaffected. That means that there's very little incentive for vendors
+> to add their CPUs to one of the lists -- if they do nothing, userspace
+> is told that everything is golden and they don't pay the performance
+> hit of a workaround!
+>
+> So I think we should consider turning this on its head and assume that
+> CPUs we don't know about are vulnerable, having a list of unaffected
+> cores that predate the introduction of CSV2.3 which can be queried by
+> is_spectre_bhb_affected(). We can do that without the assistance of the
+> CPU vendors.
+>
+> Does that make sense, or did I miss something?
 
-if dup_mmap() fails and "mm" is incomplete, then with this version dup_mmap_sem
-is dropped before __mmput/exit_mmap/etc. How can this help?
+It makes sense to me. I'm not sure I'd be the best person to actually
+implement that, though. Maybe someone CCed on this thread could take a
+stab at it? It seems like folks from ARM would know the most about the
+various mitigations and which pre-CSV2.3 cores were safe.
 
-Oleg.
-
+-Doug
 
