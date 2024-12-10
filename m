@@ -1,160 +1,118 @@
-Return-Path: <linux-kernel+bounces-440125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCE59EB934
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:20:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BEA9EB937
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:22:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE9D165458
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:22:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F321B2046A0;
+	Tue, 10 Dec 2024 18:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BG9Kx6R7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F862284284
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:20:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9711B5ED1;
-	Tue, 10 Dec 2024 18:20:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B0723ED59
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C3F23ED59
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733854828; cv=none; b=LnePWNd71Sdjc36/rLxcHMVk/7xZlbqjSDHEUOVU3Cego42bfZ6Y90AkmwEe/EHsx8gmrhoWgrwIOu7RBuHQ4SqZxgfTuhPsGZK9XO12F4/Yg6NvBwIhJBy8E/mWPY8a7tJKC3k5c0FscvwLviRRMeNcyoFcDcYfkc6z4suCyT4=
+	t=1733854942; cv=none; b=ekLg9LGWrDXwOJ/HMBNlNZNpwJ5esOfEo0JCohB5Uzs+YmnpaARHHgtlChVK+5aQ4vHqb6gaxfQXjV56XCfOSGZisV4sdgEXEvbes8yzDDk5/5KQxjTeHwEz8OhU1pykeEzt3nmAUE6VIHEeLKcmxzP2drdaX2Z/3J0WqXRiy+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733854828; c=relaxed/simple;
-	bh=8X1cBbSjsVYSPA7/TPd/8Ejxj0AiaZ6jDoWQMyiylYk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XymHcgCts18BbEsxo9E2ZN5gI1R4PjnGWeB7jUT+r7bgmWKiIF3em+XSin1XQAVrKM0JcjAokpJBovO+2MZpcxNrhnVkc7ci+xpB6YCn1LtMjh1t7PPq7AlPgypN2gCTd0C/2xkF8UaE0TQjR1I0/GRFYpogfnW50bvN7w+mrmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso111971555ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:20:26 -0800 (PST)
+	s=arc-20240116; t=1733854942; c=relaxed/simple;
+	bh=1pHfdGZ8TK0Gn1cA1yV/fONw8m+PMIvPeERxVbGEHKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t2W7LXqIguAmLzNWmFWnFq6H44XYfhiXOEdY69CxrpPKxmcWVYopZYnvAe9cf8Mtj6s8TqjO2EzqJ/i2Muyv9pYAU/mygU29z7qicIiDVAJrOvFlexmbToUZbOEJGq5D/afMIzYPkP0z5l2obcHeJeAhZFOXQmul6+Dysx2OWzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BG9Kx6R7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733854939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zOADznZ6shRkxpA6k9z+HUBrSDKj4HgVFQ54YvYLX9M=;
+	b=BG9Kx6R7uMtILMmH66eyw6eVH//HQXDgdzNm+8ahpm1F6FEGdkzv7jKqTmqSWFdEfbRbaB
+	qD9xnpMymPGY5IDwalNi234UYZJsFSKm5QZJSqGt9GaJBy/jYVZemluYpUyM8l9PGAsm3G
+	i9OV58slS9DzMi8gu6/2gJjxx7TGXes=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-644-n2Px1cScOUSlb-KE1fF_Ag-1; Tue, 10 Dec 2024 13:22:18 -0500
+X-MC-Unique: n2Px1cScOUSlb-KE1fF_Ag-1
+X-Mimecast-MFC-AGG-ID: n2Px1cScOUSlb-KE1fF_Ag
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-385dfa9b758so2360714f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:22:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733854826; x=1734459626;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3iz0LvI06t2t+5BKL+U3ZhKEcCP4S3jXRHl4/Yuwiew=;
-        b=okZU6W0hJyzNpe/fF+pZIZrazEdvPZST0gXO6tkPuPcPUIhMIq8DIb8qOMq6zJ8zKI
-         1iBPQWNzVb7KmsRIwvUoZ1wHmBmvVMikUdVqngMG27tWN5lB/dW5cn+aGEhDBQXeRsx5
-         dGvdf4nVMwREz7yc8E17rFG/R8eDhFZwX1gk+JlwN+hNVrcBwnjRwlRHl1zHE+TJWYeZ
-         bzpOKH2vS3hQTGWJWOdz7YSYtvUUTIKjz309Sb8uJgTQJQnEiAID9FUutYVsuoihT3BI
-         WbZjxBhMc7yfW2C+7YQ1HdTStO7meQnNCqponRTpyGl5BhKTyw4JInsbJUuAFXrzw2Tc
-         9i6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVonojkRu0u3pnfHnZk37A2WQb8XKAb3gkp4gMRXZLZ4taSC4XUBl3xzmWtBOZU9GLLh5MJX2RNbWYCA1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL0NdYWc89ZUurnSbqyty5vxYTQsg0oiupgwO/2bQpYiUe5AS7
-	wJcFPZOMyDNUQ6QW9FMyPCRADaLQX/GfCCBB0aDInw1azLPbPNl81WNnYAhuByDvQ3/XUVEapQE
-	dEIljoHUKX+9CTrFQnysBcTy+CgaxCRkkkSMBoZ0BGHSfsnKCz4EJYyU=
-X-Google-Smtp-Source: AGHT+IH2RRMbbOZIOE8hFuP0Wd1SNGiEHsu/laAOuXeblnP25CD61Pi1qXmCn2f4vjfiAfGdcy8yjYvlYxl9Z/d52rd01iylXKg0
+        d=1e100.net; s=20230601; t=1733854937; x=1734459737;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zOADznZ6shRkxpA6k9z+HUBrSDKj4HgVFQ54YvYLX9M=;
+        b=AUXXx4W4olrhV6nLJ/9BymPRx18eXGST/z5b6WQApwAaJonykDIaeU2RyagWXc9IDA
+         EyF57HdENa8Ekf+1+eHetvJUCmoEZhNeBx/kVFlbo/7hNfnVW9tAexsEmAnjmXKjHCqw
+         4mIzv5F9stx+yDvWl3GT/0cg/knpaNk2LRfGQGhKOv0GXe90ilsL6tCOW+btFWsnvwtB
+         Ihps+p2OM5wbjvJv2YtljCAZTGoLpZNzuctZttAQLUrTYf9NPvfjloyxCAdbLQ1y/rZ9
+         HqUJf5ChPUacV6HOVp2ZifX1iDjU4o1abdNDLgOxP8K+0NUm9zNPz0NHQNVEt72KvYZ1
+         CunA==
+X-Forwarded-Encrypted: i=1; AJvYcCUj2J7APkxHZV7Cj3lWLRnzFSyBJ2A4DWTbAola79HpM3iHyUR4bLdrawCCzPSCFH3PWFy16RbG6rSTp/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH89ttEKwwX4a38wFCi60x0psRqp5X3aLjAUKatRXo8iprxfcr
+	p0o0ELBBpXXYnw3FPEdzch/Ex09u8kzYSrFjncVat9rVaUHwFkVdxZNbovpUZ3ncMozlAYPZATy
+	NL69M+He+AA990Qa7ake8AftmXfAZTUxddblBl3EtDom/pYUosXw1GHQ4IktpsQ==
+X-Gm-Gg: ASbGncvnf4LK/sXsq04QjtAwgyTZrfHuhwibJI8NJuVqE2ckvw79mdizAy2GML30P6V
+	xHZqmfY9kkV53aUDwBqvgCYjfSJBlBRQ/aMPh/4O9/13MtaafRBzwmrHfELcuMCdn7H9EtHy9jo
+	GLBXgZ2ZEYPv5e3JAFlukLpswwwiCmwykJiiKgVVKhGuvRgUIQW08aT4KNyJm1/uIRpUmloOhlO
+	BqigU1LIPpMLJHiqFC9JLNI73dV+MOGKHOuD3MiFeLmvilsI+PGNoFE
+X-Received: by 2002:a05:6000:184d:b0:385:fc97:9c63 with SMTP id ffacd0b85a97d-3864ce894a8mr101554f8f.9.1733854937415;
+        Tue, 10 Dec 2024 10:22:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEUJ77YDtXN6cvySvDYXOgTSlRflMAT/JOMpZp5d7B2OiXlMT2r6y/f/JDsGlP5KLnA6E2SuA==
+X-Received: by 2002:a05:6000:184d:b0:385:fc97:9c63 with SMTP id ffacd0b85a97d-3864ce894a8mr101539f8f.9.1733854937041;
+        Tue, 10 Dec 2024 10:22:17 -0800 (PST)
+Received: from [192.168.10.3] ([151.81.118.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38637111f88sm10383997f8f.98.2024.12.10.10.22.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 10:22:16 -0800 (PST)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	dave.hansen@linux.intel.com,
+	rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@intel.com,
+	binbin.wu@linux.intel.com,
+	dmatlack@google.com,
+	isaku.yamahata@intel.com,
+	isaku.yamahata@gmail.com,
+	nik.borisov@suse.com,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH v2 00/24] TDX MMU Part 2
+Date: Tue, 10 Dec 2024 19:21:57 +0100
+Message-ID: <20241210182156.251791-2-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1547:b0:3a7:6e72:fbb3 with SMTP id
- e9e14a558f8ab-3a811d774c1mr164591175ab.4.1733854826338; Tue, 10 Dec 2024
- 10:20:26 -0800 (PST)
-Date: Tue, 10 Dec 2024 10:20:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6758866a.050a0220.a30f1.01d9.GAE@google.com>
-Subject: [syzbot] [kernel?] KMSAN: uninit-value in timerqueue_add (2)
-From: syzbot <syzbot+8974d7bf41172a2b0729@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Applied to kvm-coco-queue, thanks.  Tomorrow I will go through the
+changes and review.
 
-syzbot found the following issue on:
+Paolo
 
-HEAD commit:    b8f52214c61a Merge tag 'audit-pr-20241205' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b6d330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dcc2c6db74766fbc
-dashboard link: https://syzkaller.appspot.com/bug?extid=8974d7bf41172a2b0729
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/961b446be7db/disk-b8f52214.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9f408f31c5b2/vmlinux-b8f52214.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/97900576aa59/bzImage-b8f52214.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8974d7bf41172a2b0729@syzkaller.appspotmail.com
-
-ffff88813fd05fc0: ffff888031cf2978 (0xffff888031cf2978)
-ffff88813fd05fc8: 0000000000000000 ...
-ffff88813fd05fe8: ffff888031cf2968 (0xffff888031cf2968)
-ffff88813fd05ff0: ffffffff8fe8d40e (instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline])
-ffff88813fd05ff0: ffffffff8fe8d40e (sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1049)
-ffff88813fd05ff8: ffff888031cf2958 (0xffff888031cf2958)
-BUG: KMSAN: uninit-value in rb_add_cached include/linux/rbtree.h:172 [inline]
-BUG: KMSAN: uninit-value in timerqueue_add+0x20b/0x3d0 lib/timerqueue.c:40
- rb_add_cached include/linux/rbtree.h:172 [inline]
- timerqueue_add+0x20b/0x3d0 lib/timerqueue.c:40
- enqueue_hrtimer+0x189/0x3a0 kernel/time/hrtimer.c:1084
- __run_hrtimer kernel/time/hrtimer.c:1756 [inline]
- __hrtimer_run_queues+0x64d/0xe40 kernel/time/hrtimer.c:1803
- hrtimer_interrupt+0x41b/0xb10 kernel/time/hrtimer.c:1865
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
- __sysvec_apic_timer_interrupt+0xa7/0x420 arch/x86/kernel/apic/apic.c:1055
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1049
-
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4774
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2344
- alloc_slab_page mm/slub.c:2408 [inline]
- allocate_slab+0x320/0x12e0 mm/slub.c:2574
- new_slab mm/slub.c:2627 [inline]
- ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3815
- __slab_alloc mm/slub.c:3905 [inline]
- __slab_alloc_node mm/slub.c:3980 [inline]
- slab_alloc_node mm/slub.c:4141 [inline]
- kmem_cache_alloc_node_noprof+0x84a/0xe00 mm/slub.c:4205
- __alloc_skb+0x1e9/0x7b0 net/core/skbuff.c:668
- alloc_skb include/linux/skbuff.h:1323 [inline]
- new_skb+0x46/0x560 drivers/block/aoe/aoecmd.c:66
- aoecmd_cfg_pkts drivers/block/aoe/aoecmd.c:430 [inline]
- aoecmd_cfg+0x2c0/0xac0 drivers/block/aoe/aoecmd.c:1370
- discover_timer+0x62/0x80 drivers/block/aoe/aoemain.c:25
- call_timer_fn+0x49/0x580 kernel/time/timer.c:1793
- expire_timers kernel/time/timer.c:1844 [inline]
- __run_timers kernel/time/timer.c:2418 [inline]
- __run_timer_base+0x84e/0xe90 kernel/time/timer.c:2430
- run_timer_base kernel/time/timer.c:2439 [inline]
- run_timer_softirq+0x3a/0x70 kernel/time/timer.c:2449
- handle_softirqs+0x1a0/0x7c0 kernel/softirq.c:554
- __do_softirq+0x14/0x1a kernel/softirq.c:588
-
-CPU: 1 UID: 0 PID: 8505 Comm: syz.1.784 Not tainted 6.13.0-rc1-syzkaller-00182-gb8f52214c61a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
