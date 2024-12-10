@@ -1,296 +1,361 @@
-Return-Path: <linux-kernel+bounces-438671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96BC9EA427
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:17:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30D59EA42B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:19:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0CF1168052
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95A0B2883D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE774C62E;
-	Tue, 10 Dec 2024 01:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A3E4207A;
+	Tue, 10 Dec 2024 01:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qO+huy68"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iuvACdTQ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAC92AE96
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E81920326
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733793416; cv=none; b=tYnoklELs7wOljY8ULfwj+jMstGL1SeYgXp6cccdijvMeoPNZCAOIdVPWMTIe3eqMAmrdIQV6Obx/mt8xP1jTfMw3vFSzGxpjnr2qn9jjZ8P+IOpsOUc8nqaLlS3KJ1VTIpOq+aatY3g4PX9EgK1QmXk4YDG5mNy/gCEDcTWgZc=
+	t=1733793544; cv=none; b=C3/dE5jTUH4/88Id/1u0etFKFbkfhXuTTn1SpqrZcTlxDUws8XrTm+GIIp3MSNAmqwNhw5lmpLfiEkpgnLbHvYFGeMR3BK47geq7ZY1a8wCN/b9lo2Ut6d2eaopaQe/ZT7Xv7Pe6mtokMBJ2E2QAUkcbxmUT5M5UZEslfRmIhTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733793416; c=relaxed/simple;
-	bh=xe55CIvx9ga5Wlbj8l+zBcpHsp0iebXqFs2lCVyrqGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZnqU1l1AwSwd2kqiDqUpy6PJsr8HyD8rGXoUErfQtjNEAmRjVn+aCjxlH9vDa7CNawa/KBozSWf+DihCIB6buBDhuzdH9cezJsyIHjjDFykRgJfqmo0vPQDV00FOkBG3ysidjs12ydTArkOM5bbqUHKujt0JxtKuYY5FpUKHY1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qO+huy68; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-725db141410so1813137b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 17:16:54 -0800 (PST)
+	s=arc-20240116; t=1733793544; c=relaxed/simple;
+	bh=IzMXc2AVzOGsxr6J8kkC7iCMjEPHrRHY5k9mCfFjBMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNhPyDF3mAhb4QwO+rJ9HqZw4dno51KFvX7ORfRAWwRzFXiGgjyc4UElW/yN+l04MNGQXheIg4J6XG4nbeZabt1AUkHjyFxAY/vi7RyDIGj9CgRm6qByIPhWBe1T7W8rgVmhKeyzIu/ro6m/7AYFPuGvs1NCPhboT/nK+w04Z7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iuvACdTQ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-540215984f0so1304734e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 17:19:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733793414; x=1734398214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l5lnOzUj92tNwAYe96qZDcz3FYlyRcurTdW3wXkywCY=;
-        b=qO+huy68wkoAh1hNuTPHmqglcowQjr0C2Ejf+m9AaOT7sbMlSkrwu+lTUEAKPSQkud
-         CnxCcKPWWp9uzwFh80XM20SuIWB2G/LOK3l76AED2BCqGQOXDhvxOoGKt4cYRUZUw0lh
-         xasEIhqIOoaIjA3+U6wrMdP7HY56eoRbL9LD5UidL93SOxaGPTHUgs7b1q6ZFC6H7dFN
-         mMfBR440EWNKEYfzD2Aav+sADQmm9c8hwTepM/kyUKuhUBqk3UU5LUsnQGbB5zD0R4bl
-         fSbuCNIuAmu2j/+sYg27fFcI4w1Q8Ikhp4MYPtyeMiFibTEeB3vtz7wG00K22oS2E72S
-         Dx1A==
+        d=linaro.org; s=google; t=1733793540; x=1734398340; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwOz/3s+5rB6IRZt+uNZZmxy+vjj4hk+TORJT/mIsZw=;
+        b=iuvACdTQcSLd3Xegm1/9gr8D0G/czzOby4nx8isddNyIoA7USMrEGH6zaI3Hn0oYPI
+         tszigMiHSoVpO3Gqt2Uze97yv9MP7Ql3GYobb23pz6BT0x+HE8iJXw53ZL8Pkl4xwI6W
+         3GC4EI5UcMmxJOMvsRJS13rxoy9gPiWuBvUZcrxhX5RJukyTpy3FeNAFxjglrQDIjqLo
+         PcD+ZZl6v/HBzxt4jg52uTUtU5p3Acm8ArlptoVM40dL5h2Th6kCGOkJ1nMMAWQvShnW
+         Hxl1NFZLOvuFGMKKbZAso9OVqOD6t6U8SCnEQucRiw2heZ3IqP9j+TOp597kuHY5TTS6
+         lBCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733793414; x=1734398214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l5lnOzUj92tNwAYe96qZDcz3FYlyRcurTdW3wXkywCY=;
-        b=rkCC/FCgkBa3JQipf0pXZIzJ1f5vbsMPtiNOQ27oy6RyvQ+WeoShJueghrzIDmE4L0
-         aFmCEiSUNEbPepZ8ZZAt/DqJclC3FhUhUEBR0dSXqWtrOQdg9h4i/74rnvVW9QU/I2ay
-         mZE2HzJQ8C2CfcKRUvuK6FtttWALS3xdlYtwtlX4axYuK2fGY6VSWQcLtoncNv/Fzti5
-         UsVMZTl8iEW23bmCGiQQjdbhIh3mVU5zmJbD6RfijYRZW6Vyz8K1EumRq8LjwnvmLuUT
-         c1qNW0mHfmeBm41xvUDN3rFg/Qi1mVeWsssuPo5Lr1oMUuFF8LZUV7ZnyzJNcaqOQ27U
-         q0Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxJto7m45tfy8AoXyAbyCpy81cCdq1c5BuUL90pcLeylhU3N/Hsv6RxUAEoiBTzB7X5p2LyobvrIR04Rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW27wgt/6Nbx9yBvvJEEg5gXnkmnznEf6UFs7gooT75Ic8PkAy
-	yMXtkb9hyPxfTFyQTCJOz7GdSf/nmpJe4TD8qQE/lHfGDXI+b8V70vzvD8iqYnbOKt4MbBB9EiE
-	xXtp3nXnHIVOT2jAzPhO4zlaWhc8Z4oszVeqfWg==
-X-Gm-Gg: ASbGncvauUgPOYU1aSPX+B+aR09h7Cu7hz+msJf2TE7pT7l6WGWracq55PzG5MToSKt
-	ydmRyrw6OBoOeElEgZlIF3yRnLQTpjA4gcQ==
-X-Google-Smtp-Source: AGHT+IHNDxzVFx4Fjry46BXz1MibF2flAze+KQwgSpC0yKWv1F2kvwsfIv8wF0CgYV8avF+Sj0p+siSkN66OmJVbtO0=
-X-Received: by 2002:a05:6a00:174b:b0:725:e37d:cd36 with SMTP id
- d2e1a72fcca58-7273c8f4a8bmr3915070b3a.2.1733793413778; Mon, 09 Dec 2024
- 17:16:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733793540; x=1734398340;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hwOz/3s+5rB6IRZt+uNZZmxy+vjj4hk+TORJT/mIsZw=;
+        b=wu7l9witjcJ4IuG3iofqznsVQRkwW9/QQTKsiGjS+kSCG2ndmThq1gKD/eBQbq/7oX
+         m1j5tyIY+sbGJOr3Oa0Eom3iShgKvE3v5dJCslKdn5JExrE88aYCgat+NmTz2iGoMFJ9
+         XzfeiT0gONprsraNZD03xqbG3wD6jQSGvhpmpso5zi1gS7hUSnjxE1Ric0M4n3riuZH9
+         9aNsf3oEBV9vTg+l19Z04Hoo+wB4IXXTIKlicNwLqYdHfcklWQc9bAGkowE44wnwf3nE
+         /fS0LX1e37rgbqq2lQsAXQY0x5O4U6WT4wszdMFuz8Xpd35rg+1T/wPnW7QvNtoWt4jT
+         owsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOBDhhXxHav4/FTmjyQ/6fyCSlPUO6ayAvhhnHRbrIiqD6YKzhEjsPZzuTVDZkaLTzthTFLVz/5Nkwyp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWJ4YQfcNTA9Nh9Z8rfewtirYPD0Ayb1dHtY49p60OGtls5c+c
+	ciESDc1N4jSvmQ66bd4aTnCN9GUuBJmyaahfEtn5FAKf+V5g4Tf8/3kQSNNo8P/QZl4QkvVFuo3
+	pXDE=
+X-Gm-Gg: ASbGnctlER5/bRubLiK4hInldBPEf4ED5NS0sauT2jCqMRwCGNBlCwzDFTvZN+fF0m4
+	WQ8l/Dddsy3LfwvWeJVEUxs0S/kDRK/WTXaBjCPM5PuMsh46N2ELfumy+Foct4vpSEzLlF86B82
+	guMeTafxeK7M4GCUffUziMB94dYcP6mRHnQ8ekzuKex12KjkP2QFm0/sp9ZwiB5GLeyR1Miw8uv
+	+groQcS4mYdCTwQdN+3RNQw18EcdFV8dHPshrY7nDyV2gpT7Rk+EE2mnx63fk76UnxokT7Txlcy
+	YczRPmPqeUg9tCiqjWwvB/6/CsX1nW4KNQ==
+X-Google-Smtp-Source: AGHT+IFhrbfBVLvwS8JtxYQvsf4ft/BOKHf1cBzqWj4YWhQkk8IVityumdfo4WZxOv1As/yfkbavcA==
+X-Received: by 2002:a05:6512:b96:b0:53f:8c46:42b6 with SMTP id 2adb3069b0e04-5402402ea2dmr922627e87.0.1733793540153;
+        Mon, 09 Dec 2024 17:19:00 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3847565csm1090292e87.190.2024.12.09.17.18.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 17:18:58 -0800 (PST)
+Date: Tue, 10 Dec 2024 03:18:56 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Andrej Picej <andrej.picej@norik.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, 
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, marex@denx.de, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de
+Subject: Re: [PATCH v4 2/3] drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing
+ optional properties
+Message-ID: <xkrk3vdw7yhj22ornqog7wovqctgrolfcxbl43u7ddgstjqsbl@h22hxlld6zqg>
+References: <20241205134021.2592013-1-andrej.picej@norik.com>
+ <20241205134021.2592013-3-andrej.picej@norik.com>
+ <nbumcptoi5hwehjbrynf6dh2wrz7a4ugqblrjxyswvj7udkf3u@6qikclizqfjr>
+ <e420579f-25b2-41ca-9627-130d67c51541@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
- <20241119-pmu_event_info-v1-5-a4f9691421f8@rivosinc.com> <0a4a569e-dfab-4aed-90df-2fe9719a3803@sifive.com>
-In-Reply-To: <0a4a569e-dfab-4aed-90df-2fe9719a3803@sifive.com>
-From: Atish Kumar Patra <atishp@rivosinc.com>
-Date: Mon, 9 Dec 2024 17:16:43 -0800
-Message-ID: <CAHBxVyGSxMVm5QO9TmSy6MBVtc6zX0ju6n2+PK-RXuX5=KLLjA@mail.gmail.com>
-Subject: Re: [PATCH 5/8] drivers/perf: riscv: Implement PMU event info function
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, Anup Patel <anup@brainfault.org>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Mayuresh Chitale <mchitale@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e420579f-25b2-41ca-9627-130d67c51541@norik.com>
 
-On Mon, Dec 2, 2024 at 2:49=E2=80=AFPM Samuel Holland <samuel.holland@sifiv=
-e.com> wrote:
->
-> Hi Atish,
->
-> On 2024-11-19 2:29 PM, Atish Patra wrote:
-> > With the new SBI PMU event info function, we can query the availability
-> > of the all standard SBI PMU events at boot time with a single ecall.
-> > This improves the bootime by avoiding making an SBI call for each
-> > standard PMU event. Since this function is defined only in SBI v3.0,
-> > invoke this only if the underlying SBI implementation is v3.0 or higher=
-.
-> >
-> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> > ---
-> >  arch/riscv/include/asm/sbi.h |  7 +++++
-> >  drivers/perf/riscv_pmu_sbi.c | 71 ++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 78 insertions(+)
-> >
-> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.=
-h
-> > index 3ee9bfa5e77c..c04f64fbc01d 100644
-> > --- a/arch/riscv/include/asm/sbi.h
-> > +++ b/arch/riscv/include/asm/sbi.h
-> > @@ -134,6 +134,7 @@ enum sbi_ext_pmu_fid {
-> >       SBI_EXT_PMU_COUNTER_FW_READ,
-> >       SBI_EXT_PMU_COUNTER_FW_READ_HI,
-> >       SBI_EXT_PMU_SNAPSHOT_SET_SHMEM,
-> > +     SBI_EXT_PMU_EVENT_GET_INFO,
-> >  };
-> >
-> >  union sbi_pmu_ctr_info {
-> > @@ -157,6 +158,12 @@ struct riscv_pmu_snapshot_data {
-> >       u64 reserved[447];
-> >  };
-> >
-> > +struct riscv_pmu_event_info {
-> > +     u32 event_idx;
-> > +     u32 output;
-> > +     u64 event_data;
-> > +};
-> > +
-> >  #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
-> >  #define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
-> >  /* SBI v3.0 allows extended hpmeventX width value */
-> > diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.=
-c
-> > index f0e845ff6b79..2a6527cc9d97 100644
-> > --- a/drivers/perf/riscv_pmu_sbi.c
-> > +++ b/drivers/perf/riscv_pmu_sbi.c
-> > @@ -100,6 +100,7 @@ static unsigned int riscv_pmu_irq;
-> >  /* Cache the available counters in a bitmask */
-> >  static unsigned long cmask;
-> >
-> > +static int pmu_event_find_cache(u64 config);
->
-> This new declaration does not appear to be used.
->
+On Mon, Dec 09, 2024 at 08:56:29AM +0100, Andrej Picej wrote:
+> Hi Dmitry,
+> 
+> On 5. 12. 24 23:48, Dmitry Baryshkov wrote:
+> > On Thu, Dec 05, 2024 at 02:40:20PM +0100, Andrej Picej wrote:
+> > > Add a optional properties to change LVDS output voltage. This should not
+> > > be static as this depends mainly on the connected display voltage
+> > > requirement. We have three properties:
+> > > - "ti,lvds-termination-ohms", which sets near end termination,
+> > > - "ti,lvds-vod-swing-data-microvolt" and
+> > > - "ti,lvds-vod-swing-clock-microvolt" which both set LVDS differential
+> > > output voltage for data and clock lanes. They are defined as an array
+> > > with min and max values. The appropriate bitfield will be set if
+> > > selected constraints can be met.
+> > > 
+> > > If "ti,lvds-termination-ohms" is not defined the default of 200 Ohm near
+> > > end termination will be used. Selecting only one:
+> > > "ti,lvds-vod-swing-data-microvolt" or
+> > > "ti,lvds-vod-swing-clock-microvolt" can be done, but the output voltage
+> > > constraint for only data/clock lanes will be met. Setting both is
+> > > recommended.
+> > > 
+> > > Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> > > ---
+> > > Changes in v4:
+> > > - fix typo in commit message bitfiled -> bitfield
+> > > - use arrays (lvds_vod_swing_conf and lvds_term_conf) in private data, instead
+> > > of separate variables for channel A/B
+> > > - add more checks on return value of "of_property_read_u32_array"
+> > > Changes in v3:
+> > > - use microvolts for default array values 1000 mV -> 1000000 uV.
+> > > Changes in v2:
+> > > - use datasheet tables to get the proper configuration
+> > > - since major change was done change the authorship to myself
+> > > ---
+> > >   drivers/gpu/drm/bridge/ti-sn65dsi83.c | 147 +++++++++++++++++++++++++-
+> > >   1 file changed, 144 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > index 57a7ed13f996..f724d2a6777b 100644
+> > > --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > @@ -132,6 +132,16 @@
+> > >   #define  REG_IRQ_STAT_CHA_SOT_BIT_ERR		BIT(2)
+> > >   #define  REG_IRQ_STAT_CHA_PLL_UNLOCK		BIT(0)
+> > > +enum sn65dsi83_channel {
+> > > +	CHANNEL_A,
+> > > +	CHANNEL_B
+> > > +};
+> > > +
+> > > +enum sn65dsi83_lvds_term {
+> > > +	OHM_100,
+> > > +	OHM_200
+> > > +};
+> > > +
+> > >   enum sn65dsi83_model {
+> > >   	MODEL_SN65DSI83,
+> > >   	MODEL_SN65DSI84,
+> > > @@ -147,6 +157,8 @@ struct sn65dsi83 {
+> > >   	struct regulator		*vcc;
+> > >   	bool				lvds_dual_link;
+> > >   	bool				lvds_dual_link_even_odd_swap;
+> > > +	int				lvds_vod_swing_conf[2];
+> > > +	int				lvds_term_conf[2];
+> > >   };
+> > >   static const struct regmap_range sn65dsi83_readable_ranges[] = {
+> > > @@ -237,6 +249,36 @@ static const struct regmap_config sn65dsi83_regmap_config = {
+> > >   	.max_register = REG_IRQ_STAT,
+> > >   };
+> > > +static const int lvds_vod_swing_data_table[2][4][2] = {
+> > > +	{	/* 100 Ohm */
+> > > +		{ 180000, 313000 },
+> > > +		{ 215000, 372000 },
+> > > +		{ 250000, 430000 },
+> > > +		{ 290000, 488000 },
+> > > +	},
+> > > +	{	/* 200 Ohm */
+> > > +		{ 150000, 261000 },
+> > > +		{ 200000, 346000 },
+> > > +		{ 250000, 428000 },
+> > > +		{ 300000, 511000 },
+> > > +	},
+> > > +};
+> > > +
+> > > +static const int lvds_vod_swing_clock_table[2][4][2] = {
+> > > +	{	/* 100 Ohm */
+> > > +		{ 140000, 244000 },
+> > > +		{ 168000, 290000 },
+> > > +		{ 195000, 335000 },
+> > > +		{ 226000, 381000 },
+> > > +	},
+> > > +	{	/* 200 Ohm */
+> > > +		{ 117000, 204000 },
+> > > +		{ 156000, 270000 },
+> > > +		{ 195000, 334000 },
+> > > +		{ 234000, 399000 },
+> > > +	},
+> > > +};
+> > > +
+> > >   static struct sn65dsi83 *bridge_to_sn65dsi83(struct drm_bridge *bridge)
+> > >   {
+> > >   	return container_of(bridge, struct sn65dsi83, bridge);
+> > > @@ -435,12 +477,16 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
+> > >   		val |= REG_LVDS_FMT_LVDS_LINK_CFG;
+> > >   	regmap_write(ctx->regmap, REG_LVDS_FMT, val);
+> > > -	regmap_write(ctx->regmap, REG_LVDS_VCOM, 0x05);
+> > > +	regmap_write(ctx->regmap, REG_LVDS_VCOM,
+> > > +			REG_LVDS_VCOM_CHA_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_A]) |
+> > > +			REG_LVDS_VCOM_CHB_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_B]));
+> > >   	regmap_write(ctx->regmap, REG_LVDS_LANE,
+> > >   		     (ctx->lvds_dual_link_even_odd_swap ?
+> > >   		      REG_LVDS_LANE_EVEN_ODD_SWAP : 0) |
+> > > -		     REG_LVDS_LANE_CHA_LVDS_TERM |
+> > > -		     REG_LVDS_LANE_CHB_LVDS_TERM);
+> > > +		     (ctx->lvds_term_conf[CHANNEL_A] ?
+> > > +			  REG_LVDS_LANE_CHA_LVDS_TERM : 0) |
+> > > +		     (ctx->lvds_term_conf[CHANNEL_B] ?
+> > > +			  REG_LVDS_LANE_CHB_LVDS_TERM : 0));
+> > >   	regmap_write(ctx->regmap, REG_LVDS_CM, 0x00);
+> > >   	le16val = cpu_to_le16(mode->hdisplay);
+> > > @@ -576,10 +622,101 @@ static const struct drm_bridge_funcs sn65dsi83_funcs = {
+> > >   	.atomic_get_input_bus_fmts = sn65dsi83_atomic_get_input_bus_fmts,
+> > >   };
+> > > +static int sn65dsi83_select_lvds_vod_swing(struct device *dev,
+> > > +	u32 lvds_vod_swing_data[2], u32 lvds_vod_swing_clk[2], u8 lvds_term)
+> > > +{
+> > > +	int i;
+> > > +
+> > > +	for (i = 0; i <= 3; i++) {
+> > > +		if (lvds_vod_swing_data_table[lvds_term][i][0] >= lvds_vod_swing_data[0] &&
+> > > +		lvds_vod_swing_data_table[lvds_term][i][1] <= lvds_vod_swing_data[1] &&
+> > > +		lvds_vod_swing_clock_table[lvds_term][i][0] >= lvds_vod_swing_clk[0] &&
+> > > +		lvds_vod_swing_clock_table[lvds_term][i][1] <= lvds_vod_swing_clk[1])
+> > > +			return i;
+> > > +	}
+> > > +
+> > > +	dev_err(dev, "failed to find appropriate LVDS_VOD_SWING configuration\n");
+> > > +	return -EINVAL;
+> > > +}
+> > > +
+> > > +static int sn65dsi83_parse_lvds_endpoint(struct sn65dsi83 *ctx, int channel)
+> > > +{
+> > > +	struct device *dev = ctx->dev;
+> > > +	struct device_node *endpoint;
+> > > +	/* Set so the property can be freely selected if not defined */
+> > > +	u32 lvds_vod_swing_data[2] = { 0, 1000000 };
+> > > +	u32 lvds_vod_swing_clk[2] = { 0, 1000000 };
+> > > +	u32 lvds_term = 200;
+> > > +	u8 lvds_term_conf;
+> > > +	int endpoint_reg;
+> > > +	int lvds_vod_swing_conf;
+> > > +	int ret = 0;
+> > > +	int ret_data;
+> > > +	int ret_clock;
+> > > +
+> > > +	if (channel == CHANNEL_A)
+> > > +		endpoint_reg = 2;
+> > > +	else
+> > > +		endpoint_reg = 3;
+> > > +
+> > > +	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, endpoint_reg, -1);
+> > > +	of_property_read_u32(endpoint, "ti,lvds-termination-ohms", &lvds_term);
+> > > +
+> > > +	if (lvds_term == 200)
+> > > +		lvds_term_conf = OHM_200;
+> > > +	else
+> > > +		lvds_term_conf = OHM_100;
+> > > +
+> > > +	ctx->lvds_term_conf[channel] = lvds_term_conf;
+> > > +
+> > > +	ret_data = of_property_read_u32_array(endpoint,
+> > > +			"ti,lvds-vod-swing-data-microvolt", lvds_vod_swing_data,
+> > > +			ARRAY_SIZE(lvds_vod_swing_data));
+> > > +	if (ret_data != 0 && ret_data != -EINVAL) {
+> > > +		ret = ret_data;
+> > > +		goto exit;
+> > > +	}
+> > > +
+> > > +	ret_clock = of_property_read_u32_array(endpoint,
+> > > +			"ti,lvds-vod-swing-clock-microvolt", lvds_vod_swing_clk,
+> > > +			ARRAY_SIZE(lvds_vod_swing_clk));
+> > > +	if (ret_clock != 0 && ret_clock != -EINVAL) {
+> > > +		ret = ret_clock;
+> > > +		goto exit;
+> > > +	}
+> > > +
+> > > +	/* If any of the two properties is defined. */
+> > > +	if (!ret_data || !ret_clock) {
+> > > +		lvds_vod_swing_conf = sn65dsi83_select_lvds_vod_swing(dev,
+> > > +			lvds_vod_swing_data, lvds_vod_swing_clk,
+> > > +			lvds_term_conf);
+> > > +		if (lvds_vod_swing_conf < 0) {
+> > > +			ret = lvds_vod_swing_conf;
+> > > +			goto exit;
+> > > +		}
+> > > +
+> > > +		ctx->lvds_vod_swing_conf[channel] = lvds_vod_swing_conf;
+> > > +	}
+> > > +	ret = 0;
+> > > +exit:
+> > > +	of_node_put(endpoint);
+> > > +	return ret;
+> > > +}
+> > > +
+> > >   static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+> > >   {
+> > >   	struct drm_bridge *panel_bridge;
+> > >   	struct device *dev = ctx->dev;
+> > > +	int ret;
+> > > +
+> > > +	ctx->lvds_vod_swing_conf[CHANNEL_A] = 0x1;
+> > > +	ctx->lvds_vod_swing_conf[CHANNEL_B] = 0x1;
+> > > +	ctx->lvds_term_conf[CHANNEL_A] = 0x1;
+> > > +	ctx->lvds_term_conf[CHANNEL_B] = 0x1;
+> > 
+> > These match the defaults in sn65dsi83_parse_lvds_endpoint(). Do we
+> > really need those?
+> 
+> Yes, I think we do. This ensures that defaults are used even when property
+> is not defined/LVDS channel is not used. So also LVDS channel B defaults are
+> set even for sn65dsi83 (single LVDS output). Keeping the same reg values as
+> before these changes.
 
-This is a forward declaration as  pmu_event_find_cache but it should
-be in the next patch instead of this patch.
-I have moved it to that patch.
+You can move sn65dsi83_parse_lvds_endpoint() out of the if() and get the
+same result. Duplicating data (or code) is a bad idea, because it's easy
+to update one point and miss another point. And then usually one has a
+nice debugging session, trying to understand why their changes didn't
+work out.
 
-> >  struct sbi_pmu_event_data {
-> >       union {
-> >               union {
-> > @@ -299,6 +300,68 @@ static struct sbi_pmu_event_data pmu_cache_event_m=
-ap[PERF_COUNT_HW_CACHE_MAX]
-> >       },
-> >  };
-> >
-> > +static int pmu_sbi_check_event_info(void)
-> > +{
-> > +     int num_events =3D ARRAY_SIZE(pmu_hw_event_map) + PERF_COUNT_HW_C=
-ACHE_MAX *
-> > +                      PERF_COUNT_HW_CACHE_OP_MAX * PERF_COUNT_HW_CACHE=
-_RESULT_MAX;
-> > +     struct riscv_pmu_event_info *event_info_shmem;
-> > +     phys_addr_t base_addr;
-> > +     int i, j, k, result =3D 0, count =3D 0;
-> > +     struct sbiret ret;
-> > +
-> > +     event_info_shmem =3D (struct riscv_pmu_event_info *)
-> > +                        kcalloc(num_events, sizeof(*event_info_shmem),=
- GFP_KERNEL);
->
-> Please drop the unnecessary cast.
->
+> 
+> Best regards,
+> Andrej
+> 
+> 
+> > 
+> > > +
+> > > +	ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_A);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > >   	ctx->lvds_dual_link = false;
+> > >   	ctx->lvds_dual_link_even_odd_swap = false;
+> > > @@ -587,6 +724,10 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+> > >   		struct device_node *port2, *port3;
+> > >   		int dual_link;
+> > > +		ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_B);
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +
+> > >   		port2 = of_graph_get_port_by_id(dev->of_node, 2);
+> > >   		port3 = of_graph_get_port_by_id(dev->of_node, 3);
+> > >   		dual_link = drm_of_lvds_get_dual_link_pixel_order(port2, port3);
+> > > -- 
+> > > 2.34.1
+> > > 
+> > 
 
-Done.
-
-> > +     if (!event_info_shmem) {
-> > +             pr_err("Can not allocate memory for event info query\n");
->
-> Usually there's no need to print an error for allocation failure, since t=
-he
-> allocator already warns. And this isn't really an error, since we can (an=
-d do)
-> fall back to the existing way of checking for events.
->
-
-Fixed.
-
-> > +             return -ENOMEM;
-> > +     }
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(pmu_hw_event_map); i++)
-> > +             event_info_shmem[count++].event_idx =3D pmu_hw_event_map[=
-i].event_idx;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(pmu_cache_event_map); i++) {
-> > +             for (int j =3D 0; j < ARRAY_SIZE(pmu_cache_event_map[i]);=
- j++) {
-> > +                     for (int k =3D 0; k < ARRAY_SIZE(pmu_cache_event_=
-map[i][j]); k++)
-> > +                             event_info_shmem[count++].event_idx =3D
-> > +                                                     pmu_cache_event_m=
-ap[i][j][k].event_idx;
-> > +             }
-> > +     }
-> > +
-> > +     base_addr =3D __pa(event_info_shmem);
-> > +     if (IS_ENABLED(CONFIG_32BIT))
-> > +             ret =3D sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_EVENT_GET_INFO=
-, lower_32_bits(base_addr),
-> > +                             upper_32_bits(base_addr), count, 0, 0, 0)=
-;
-> > +     else
-> > +             ret =3D sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_EVENT_GET_INFO=
-, base_addr, 0,
-> > +                             count, 0, 0, 0);
-> > +     if (ret.error) {
-> > +             result =3D -EOPNOTSUPP;
-> > +             goto free_mem;
-> > +     }
-> > +     /* Do we need some barriers here or priv mode transition will ens=
-ure that */
->
-> No barrier is needed -- the SBI implementation is running on the same har=
-t, so
-> coherency isn't even a consideration.
->
-> > +     for (i =3D 0; i < ARRAY_SIZE(pmu_hw_event_map); i++) {
-> > +             if (!(event_info_shmem[i].output & 0x01))
->
-> This bit mask should probably use a macro.
->
-> > +                     pmu_hw_event_map[i].event_idx =3D -ENOENT;
-> > +     }
-> > +
-> > +     count =3D ARRAY_SIZE(pmu_hw_event_map);
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(pmu_cache_event_map); i++) {
-> > +             for (j =3D 0; j < ARRAY_SIZE(pmu_cache_event_map[i]); j++=
-) {
-> > +                     for (k =3D 0; k < ARRAY_SIZE(pmu_cache_event_map[=
-i][j]); k++) {
-> > +                             if (!(event_info_shmem[count].output & 0x=
-01))
->
-> Same comment applies here.
->
-
-Done.
-
-
-> Regards,
-> Samuel
->
-> > +                                     pmu_cache_event_map[i][j][k].even=
-t_idx =3D -ENOENT;
-> > +                             count++;
-> > +                     }
-> > +             }
-> > +     }
-> > +
-> > +free_mem:
-> > +     kfree(event_info_shmem);
-> > +
-> > +     return result;
-> > +}
-> > +
-> >  static void pmu_sbi_check_event(struct sbi_pmu_event_data *edata)
-> >  {
-> >       struct sbiret ret;
-> > @@ -316,6 +379,14 @@ static void pmu_sbi_check_event(struct sbi_pmu_eve=
-nt_data *edata)
-> >
-> >  static void pmu_sbi_check_std_events(struct work_struct *work)
-> >  {
-> > +     int ret;
-> > +
-> > +     if (sbi_v3_available) {
-> > +             ret =3D pmu_sbi_check_event_info();
-> > +             if (!ret)
-> > +                     return;
-> > +     }
-> > +
-> >       for (int i =3D 0; i < ARRAY_SIZE(pmu_hw_event_map); i++)
-> >               pmu_sbi_check_event(&pmu_hw_event_map[i]);
-> >
-> >
->
+-- 
+With best wishes
+Dmitry
 
