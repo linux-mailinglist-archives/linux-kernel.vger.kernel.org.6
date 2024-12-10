@@ -1,132 +1,132 @@
-Return-Path: <linux-kernel+bounces-439108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE3B9EAAE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:43:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A7A9EAAE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:44:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30E016643F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:44:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E75819D897;
+	Tue, 10 Dec 2024 08:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AGtXbCzR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4402283BC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:43:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1ABB230D11;
-	Tue, 10 Dec 2024 08:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZKvoZl5"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E152309A9;
-	Tue, 10 Dec 2024 08:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C624230D18
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733820170; cv=none; b=DVB0OOr0pmdQmm1XdlAvpVtmqARWeEPncpL7kqif/ssyTT6TZlyjhapZ1Qw2LoAwizODba+I5WrOmDqtKJXZEtFfs3fqdrui6RDM3LVB3nrNfN1z69pF4JBRyI8VBLuQEEwXJ2xV48HLbPK5yRJOk1X1JrL0OFRCk/tCeAbMmm4=
+	t=1733820273; cv=none; b=LFNePATj4J3L9s5yjDnoKhrNYYHGBqR8gX9M5BuVK9GWcKHT73Ejqzn06g/kUAl4SUoiviiQ9Wjr+Y2w4uzyBe9naSNCm9WmpYxIflzx7epVbsg8Qzg5B8+bRqRgECvFggBxTGL/QF9oBnzSo8OgKhgxJ5PMLa26/QAZLsQZxDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733820170; c=relaxed/simple;
-	bh=jQk0f4q/XuuCz0zjldQlJAbtGrGdqrsZPT5uFwBjoaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ko4xtIRPqAip8LrJF6gu6K4p759Nezrj24xyGUBqhj9t6JCXCGdTenR3nCVJHTwEK+wDVgGdKJ4MwTsWkOq7hWuCSAp5hM6MbO7vu0CG6km9dDVStgqND1Ztm2/Rb366rt61xmlst8vZbRhtQSnHLqMfrP0T0yo1XXV4L5utyCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZKvoZl5; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7feb6871730so414090a12.2;
-        Tue, 10 Dec 2024 00:42:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733820168; x=1734424968; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hTrCgQ6oD+C4Q1a4tXHCQ84NTz2H34kW2g7zBT5Aiqw=;
-        b=HZKvoZl56dAKmj425WXN5WiIhYTWqtvin31G4elEKEOf/1ORVq7u6Bcju9Q1rYujGi
-         4BtKg8xU1A6ShCcdSPFy82w9/l6umTYUve6Sp6Xq8jByKEFfthCgUF7jJ6HznVeBWV+E
-         B4ziNr/1et+ROi6DTVge7y0qwQmInQIO0TyLzf6nNcdRISXxXbbAKnmqYO6KTwTd8c6R
-         GYvgnsIODhVFixboAxv95d7h4Kpk4rmJ8CKKCKckegmthPyze21rnYyGmjy6eUjQEyfO
-         P32lyyKdWRgVwUb42NB8WojvX/ks6i5Fd9TuM8nYcktFS9DlyUwfEkkwm/9x7haiO4Nx
-         M7FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733820168; x=1734424968;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hTrCgQ6oD+C4Q1a4tXHCQ84NTz2H34kW2g7zBT5Aiqw=;
-        b=JWd/XAHyUCzyNldISJHUp16bNlFpvq0UY+qDTSm17LvrsRywFsjhk+H8UHNDyyhEZc
-         +/vUI1pH8aMfUz+hK+kwlZ43OjPR5mWv0Q2zIAxMiuGNKM3kXKA1qbGsvHaukP3VZ8El
-         52BEKh85LlBTeOMkwHfZBT/I/ZcN27Rnr0D/dvzkyRJOoRHtJYI0EzOR8rEQaSL2d0MI
-         D/dTgR3wbS9F0irXCFPtsLUYsiVG5kYUVo/rmab9onE5u6DwvzvC7eknYweu+XZ+5TKQ
-         hJMmAp/yzljb7PDI0NprtZTxcgW6xjf/l3QdHtSZ+2WOWnHk6D1j0REvuwn3j9AuxyMb
-         m0nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOodw+u6knftMGy/BcNIWA/9OjVKlij+yMtj+g29YRHCThn7vgo7CcSagujs7mcyQGS+UhldjWI+d5@vger.kernel.org, AJvYcCWj/nvYKNNMU6GawW5/MYIf7ssUsjK4a+/KlAK2oDxjmcSFYdXgZ/WA23VWOfpOIJFW+lOzoV0V@vger.kernel.org, AJvYcCXdhcqIDSkX2TqfJLMgbhKJUAOez/8w2pbHqzHSPZQYNJ1vowXc53JDtVpGFWZ27y85jeHBGj6KI4bgRmOl@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqoWZakONCK6Nw5Z0rky3vay/RgnZszXdi94GCBjIW05pJqLVa
-	Jrk8b41igzmlqqXJh4pkVKI0zB0zLq+B9Gi3JpganP7+m8FxdAoMhuwxwcWLbj/L9NpREwxpHct
-	fiuOxfWyNdVG34omLPFETklbd0t0JpzjL
-X-Gm-Gg: ASbGncsu+1pDtLBBtAVEeRwBZa2Vbq3kt/c6kcR7xtchAjWPlsQ3I7v442aFgWjb4kb
-	DQrTnhaU1oEBZAvu3d9UeUasf4mi3+o4XDpE=
-X-Google-Smtp-Source: AGHT+IEIrGB+h3xUiEFf08eWa/unQdF5bHd02QOFRJlA54LZ44ereWwVqvK9NYKA6FonW/Oa8uGHFGM1dzqdsog370k=
-X-Received: by 2002:a17:90b:4c07:b0:2ee:5111:a54b with SMTP id
- 98e67ed59e1d1-2efcf26daddmr4636315a91.31.1733820168089; Tue, 10 Dec 2024
- 00:42:48 -0800 (PST)
+	s=arc-20240116; t=1733820273; c=relaxed/simple;
+	bh=JWLz+tgbhgfs4Gats6rTRa+7k8qgXJyOAENCx2C0cd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V6Q9mJMSBQJN54Z9ZLJeYyo17K4fTPUMs2XtCoAxgs4sPTXS+MBDG/IjSjJaDZtCZqwdq+CXHlGJrSK+winZgpMODLAb+8G1G5uuUdqQ8vrlyPTraANfPOj6q38Aom8nEQcnP8sekKNE5XKQQURBmfKf9/nFO50ohYB4csu9w4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AGtXbCzR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733820270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VvGth1QLNyFinm1dsOjrasK+ZrrCmJs8ywoSm1iafao=;
+	b=AGtXbCzRNyxI5m450HKEwPuKkzrFQEfrJawGwcUMISdZH11O6OycnZgdogr9Dd/WyWitQq
+	WsPsSww8UMKRUlk/ofSAw62Eulbyh3PjNONUzSF1b4Q7TLlmyuWnKMFRusfelJFqs0VHQe
+	8PmTrEDFrAjSSAsq+D+ghPicZMVbh0o=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-92-0M-iex6MM0ayGOvsxPLKug-1; Tue,
+ 10 Dec 2024 03:44:26 -0500
+X-MC-Unique: 0M-iex6MM0ayGOvsxPLKug-1
+X-Mimecast-MFC-AGG-ID: 0M-iex6MM0ayGOvsxPLKug
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E77B19560A1;
+	Tue, 10 Dec 2024 08:44:24 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.222])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 05FE419560A2;
+	Tue, 10 Dec 2024 08:44:20 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: quic_yuzha@quicinc.com
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	jtornosm@redhat.com,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	quic_cjhuang@quicinc.com,
+	vbenes@redhat.com
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations are supported
+Date: Tue, 10 Dec 2024 09:44:19 +0100
+Message-ID: <20241210084419.126723-1-jtornosm@redhat.com>
+In-Reply-To: <db61f998-2524-4623-8b0f-143661507e38@quicinc.com>
+References: <db61f998-2524-4623-8b0f-143661507e38@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118222828.240530-1-max.kellermann@ionos.com>
- <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
- <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
- <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
- <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
- <CAKPOu+8k9ze37v8YKqdHJZdPs8gJfYQ9=nNAuPeWr+eWg=yQ5Q@mail.gmail.com>
- <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
- <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com>
- <CAO8a2SiN+cnsK5LGMV+6jZM=VcO5kmxkTH1mR1bLF6Z5cPxH9A@mail.gmail.com>
- <CAKPOu+8u1Piy9KVvo+ioL93i2MskOvSTn5qqMV14V6SGRuMpOw@mail.gmail.com>
- <CAO8a2SizOPGE6z0g3qFV4E_+km_fxNx8k--9wiZ4hUG8_XE_6A@mail.gmail.com>
- <CAKPOu+_-RdM59URnGWp9x+Htzg5xHqUW9djFYi8msvDYwdGxyw@mail.gmail.com>
- <CAO8a2ShGd+jnLbLocJQv9ETD8JHVgvVezXDC60DewPneW48u5A@mail.gmail.com>
- <CAKPOu+-d=hYUYt-Xd8VpudfvMNHCSmzhSeMrGnk+YQL6WBh95w@mail.gmail.com> <CAO8a2ShQHCRWBGWs4rk69Gvm-NoKHyZPKJmmsazKeY3UZHeEdw@mail.gmail.com>
-In-Reply-To: <CAO8a2ShQHCRWBGWs4rk69Gvm-NoKHyZPKJmmsazKeY3UZHeEdw@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 10 Dec 2024 09:42:36 +0100
-Message-ID: <CAOi1vP-y26UPWH1Wv+Fb4c_cBc-59uxTJ=i5FuAHugPvrFaeXw@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: Max Kellermann <max.kellermann@ionos.com>, Patrick Donnelly <pdonnell@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Sun, Dec 8, 2024 at 11:17=E2=80=AFAM Alex Markuze <amarkuze@redhat.com> =
-wrote:
->
-> Illya, this patch is tested and it has my review by.
+> Yes, Can you pls share the complete steps and commands?
+Sure, I offered it before.
 
-Max's original patch has been applied (with the authorship, commit
-message, etc preserved).
+You need NetworkManager and of course NetworkManager-wifi packages installed
+and working.
+We are using Fedora/rhel with the default configuration and you can configure,
+before the next steps, the wifi interface as sta from NetworkManager or not
+(with no wifi configuration the same result happens) because it is going to
+be unmanaged.
 
-Thanks,
+After booting (wlp1s0 is the wifi interface for ath11k and there are no other
+wifi cards in the system), here the necessary steps with our network
+configuration:
+# nmcli  device set wlp1s0 managed off
+# ip link set wlp1s0 up
+# ip link add name wifi_br0 type bridge
+# ip addr add 192.168.254.1/24 dev wifi_br0
+# ip link set wifi_br0 up
+# iw dev wlp1s0 interface add wlp1s0_0 type __ap
+# iw dev wlp1s0 interface add wlp1s0_1 type __ap
+# systemd-run --unit hostapd1 hostapd -dd /tmp/hostapd1.conf
+# systemd-run --unit hostapd2 hostapd -dd /tmp/hostapd2.conf
+# dnsmasq \
+    --pid-file=/tmp/dnsmasq_wireless.pid \
+    --port=63 \
+    --no-hosts \
+    --interface=wifi_br0 \
+    --bind-interfaces \
+    --dhcp-range=192.168.254.2,192.168.254.205,60m \
+    --dhcp-option=option:router,192.168.254.1 \
+    --dhcp-leasefile=/var/lib/dnsmasq/hostapd.leases \
+    --dhcp-lease-max=200
 
-                Ilya
+After booting I get the same issue just doing:
+# nmcli  device set wlp1s0 managed off
+# ip link set wlp1s0 up
+And the step that you commented in a previous answer:
+# iw dev wlp1s0 interface add wlp1s0_0 type __ap
+# iw dev wlp1s0 interface add wlp1s0_1 type __ap
+# hostapd hostapd1.conf &
+# hostapd hostapd2.conf &
 
->
-> On Thu, Dec 5, 2024 at 10:24=E2=80=AFAM Max Kellermann <max.kellermann@io=
-nos.com> wrote:
-> >
-> > On Wed, Dec 4, 2024 at 1:51=E2=80=AFPM Alex Markuze <amarkuze@redhat.co=
-m> wrote:
-> > > It's already in a testing branch; what branch are you working on?
-> >
-> > I found this on branch "wip-shirnk-crash":
-> > https://github.com/ceph/ceph-client/commit/6cdec9f931e38980eb007d9704c5=
-a24535fb5ec5
-> > - did you mean this branch?
-> >
-> > This is my patch; but you removed the commit message, removed the
-> > explanation I wrote from the code comment, left the (useless and
-> > confusing) log message in, and then claimed authorship for my work.
-> >
->
+You can use whatever hostapd configuration (with the suitable interface name).
+
+Thanks
+
+Best regards
+Jose Ignacio
+
 
