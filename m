@@ -1,146 +1,90 @@
-Return-Path: <linux-kernel+bounces-439717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62D29EB302
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:20:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4999EB309
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5854D169718
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58C9518818E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE971BB6A0;
-	Tue, 10 Dec 2024 14:19:09 +0000 (UTC)
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0447A1B86D5;
+	Tue, 10 Dec 2024 14:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ariccio.me header.i=@ariccio.me header.b="S9rRYHQf"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C661B1422
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9EC1B2190;
+	Tue, 10 Dec 2024 14:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733840349; cv=none; b=KVMb89+3L6pBf0z/Avln3ML3Q5Z1b78WyNfTSfo2Mh447qynlZqHym41nwOaBaUGpvYycm8mCxm09O/aPRBZAV+wmW7a3RFWNIv3bCV+wRVBLIBYDrRGO23pZGEAsu9t4OiNe+eUQPjDMfcQaiIz9Q0yrL2vwGijSYurxaPeDf8=
+	t=1733840351; cv=none; b=uEkTWx6lgV4lluA4Fdjd0rUhtvzqim/8nGdy1csxUiWAcs0bkOe5+RO7V2d2tP2wzjqWA+0pQc3hDbUk3VVpvhGYObYgeqs+H5inEyZsS/G5HnZiHR0zrhyQ5XgdT3eMyZkhb25KwD74HwGyeKnkYFkHEJc7HkRytX+WY6ycDi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733840349; c=relaxed/simple;
-	bh=XyDoA+ncHBDc11pytHnx1nGF7Oi1lcXIhydNIHqgz44=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Uh5+UapeefH4v9KkwRFhp1fZMVN4f8bG4tRjqg/138fuWN7TlKCszL1nyvrklf/tAx2iBhktn9lQ4BSsPHMjDwqh1afJjtrJ5OsHokCLFJ5gfX1GP2vUZpaVltuwdWK0sXFGxVqrKPVdbaaDDQv/zq2BQ0oA2jZ9Pc1juv8TmJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:bf13:4c3:373e:7260])
-	by laurent.telenet-ops.be with cmsmtp
-	id n2Jp2D00h3K2VbF012JpoX; Tue, 10 Dec 2024 15:19:03 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tL14a-000fT8-G4;
-	Tue, 10 Dec 2024 15:18:49 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tL14b-00AXmu-Mf;
-	Tue, 10 Dec 2024 15:18:49 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Greg KH <gregkh@linuxfoundation.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] drm/bridge: ti-sn65dsi86: Fix multiple instances
-Date: Tue, 10 Dec 2024 15:18:46 +0100
-Message-Id: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733840351; c=relaxed/simple;
+	bh=3i+zRGoIAHKVd1ck+sBGI2cSTSVfLNulHCLRTB2UM2Q=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=UP8BMlKpoStsE8QNx8RX175YAajnc7AzxvcdL6S9aYYibB+1xlzk224t5IarycsfAvCw8TlKBpgwy9mi+Uzf8k0HOAJgdN4ORj5bv+x+yEC0ZC+s8Rsz4rKLEda9zujhGyv88GAWcdYpnTiXGE7JEa87xpjEDW9GXUS7CLZLswI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ariccio.me; spf=pass smtp.mailfrom=ariccio.me; dkim=pass (2048-bit key) header.d=ariccio.me header.i=@ariccio.me header.b=S9rRYHQf; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ariccio.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ariccio.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ariccio.me;
+	s=protonmail2; t=1733840335; x=1734099535;
+	bh=3i+zRGoIAHKVd1ck+sBGI2cSTSVfLNulHCLRTB2UM2Q=;
+	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=S9rRYHQfXfj/PIluj2/xZdYstKBPvz3w0HeYZrsoNQ9RBF6YoEg/U8PagBXHmKeg2
+	 HjWVsRJA/sZEh+jUCzuWD6oA5JL9yscBL0MvN/yzf0E5vO3+P3gzd8Qk8/9uENTqVw
+	 FVDmNEn607DIbOjBGKjooQ1+HZjFHOgwJOl6yfNrRl/u8K5sKzQ0XgJofFOiAVaG3S
+	 D9SrZ4DZAMseQTjDAd9isaJz4ix4vet27w1XZTzbjcgRuvuUjybyCYeUAuNHPP7AhS
+	 Gs2eYthrr+N3uXnR6IJWM6w9EZyFPhQq7LEzgrTMIq8nzSauLUSxW8WtO6p1R8e3du
+	 zuXzfiuL+uOhg==
+Date: Tue, 10 Dec 2024 14:18:48 +0000
+To: gregkh@linuxfoundation.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+From: Antonio Riccio <linux@ariccio.me>
+Subject: [PATCH] staging: fbtft: Remove unnecessary parentheses
+Message-ID: <Z1hNxNkVSt11ncXs@stream-circuit>
+Feedback-ID: 117734652:user:proton
+X-Pm-Message-ID: 81922902d7a06e1f45d4210d9402e12cd586accb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Each bridge instance creates up to four auxiliary devices with different
-names.  However, their IDs are always zero, causing duplicate filename
-errors when a system has multiple bridges:
+Adhere to Linux kernel coding style.
 
-    sysfs: cannot create duplicate filename '/bus/auxiliary/devices/ti_sn65dsi86.gpio.0'
+Reported by checkpatch:
 
-Fix this by using a unique instance ID per bridge instance.  The
-instance ID is derived from the I2C adapter number and the bridge's I2C
-address, to support multiple instances on the same bus.
+CHECK: Unnecessary parentheses around 'devcode !=3D 0x0000'
+CHECK: Unnecessary parentheses around 'devcode !=3D 0x9320'
 
-Fixes: bf73537f411b0d4f ("drm/bridge: ti-sn65dsi86: Break GPIO and MIPI-to-eDP bridge into sub-drivers")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Antonio Riccio <linux@ariccio.me>
 ---
-On the White Hawk development board:
+ drivers/staging/fbtft/fb_ili9320.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    /sys/bus/auxiliary/devices/
-    |-- ti_sn65dsi86.aux.1068
-    |-- ti_sn65dsi86.aux.4140
-    |-- ti_sn65dsi86.bridge.1068
-    |-- ti_sn65dsi86.bridge.4140
-    |-- ti_sn65dsi86.gpio.1068
-    |-- ti_sn65dsi86.gpio.4140
-    |-- ti_sn65dsi86.pwm.1068
-    `-- ti_sn65dsi86.pwm.4140
+diff --git a/drivers/staging/fbtft/fb_ili9320.c b/drivers/staging/fbtft/fb_=
+ili9320.c
+index 050fc2367c12..9f97cfa34b81 100644
+--- a/drivers/staging/fbtft/fb_ili9320.c
++++ b/drivers/staging/fbtft/fb_ili9320.c
+@@ -35,7 +35,7 @@ static int init_display(struct fbtft_par *par)
+ =09par->fbtftops.reset(par);
+=20
+ =09devcode =3D read_devicecode(par);
+-=09if ((devcode !=3D 0x0000) && (devcode !=3D 0x9320))
++=09if (devcode !=3D 0x0000 && devcode !=3D 0x9320)
+ =09=09dev_warn(par->info->device,
+ =09=09=09 "Unrecognized Device code: 0x%04X (expected 0x9320)\n",
+ =09=09=09devcode);
+--=20
+2.43.0
 
-Discussion after v1:
-  - https://lore.kernel.org/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.1729180470.git.geert+renesas@glider.be
-
-Notes:
-  - While the bridge supports only two possible I2C addresses, I2C
-    translators may be present, increasing the address space.  Hence the
-    instance ID calculation assumes 10-bit addressing.  Perhaps it makes
-    sense to introduce a global I2C helper function for this?
-
-  - I think this is the simplest solution.  If/when the auxiliary bus
-    receives support à la PLATFORM_DEVID_AUTO, the driver can be
-    updated.
-
-v2:
-  - Use I2C adapter/address instead of ida_alloc().
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index 9e31f750fd889745..fb452d1b46995673 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -480,6 +480,7 @@ static int ti_sn65dsi86_add_aux_device(struct ti_sn65dsi86 *pdata,
- 				       const char *name)
- {
- 	struct device *dev = pdata->dev;
-+	const struct i2c_client *client = to_i2c_client(dev);
- 	struct auxiliary_device *aux;
- 	int ret;
- 
-@@ -488,6 +489,7 @@ static int ti_sn65dsi86_add_aux_device(struct ti_sn65dsi86 *pdata,
- 		return -ENOMEM;
- 
- 	aux->name = name;
-+	aux->id = (client->adapter->nr << 10) | client->addr;
- 	aux->dev.parent = dev;
- 	aux->dev.release = ti_sn65dsi86_aux_device_release;
- 	device_set_of_node_from_dev(&aux->dev, dev);
--- 
-2.34.1
 
 
