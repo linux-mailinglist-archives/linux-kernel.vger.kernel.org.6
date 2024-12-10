@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-439694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C96A9EB2BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:09:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D1A9EB2B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:08:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DC91678FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F729287740
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A831AAE0D;
-	Tue, 10 Dec 2024 14:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D911AAA1E;
+	Tue, 10 Dec 2024 14:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FM39Fpu/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avoEUmP1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1A378F36;
-	Tue, 10 Dec 2024 14:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B023DEB6;
+	Tue, 10 Dec 2024 14:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733839646; cv=none; b=R2iDJmma3HvpQjVNGunFeNrKiGHn7SxZvkbrFblWd+Mwtoy8MbxleiOi6eKHeI90BYp4ZA904GzC+htX4HxtH8eJBPUcmvpjqeoJi0b9OjmvqQOZu1h8nqKSeEVUFq2xToXtcg69+SQhJEHhG/bqUYmhezZgfBYVEjA5pVCPzhU=
+	t=1733839670; cv=none; b=ipfsKbqxJjInaVfpqYueqhe7R+7mMwqttDAh+HxRzrVI91xwloOLcI12UzygHEDGb4SdaP31AA/nHzX9NooM4O9L4wKGWjXFKZ+B3pwe23xRu0ITv+O9KWuzEcwEz6O/LaA4LW0TUaB7UWvjMPgtsWWm3CTZWf3IwlpTvoR2o5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733839646; c=relaxed/simple;
-	bh=/wBby0ZaQ5upXhJFQV1aKko4D11BdDLGyQDqBZJw7ng=;
+	s=arc-20240116; t=1733839670; c=relaxed/simple;
+	bh=hEUtZzuBGTA2NOGk9ts8sazRmir1XBBr6jwB7hoMZlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=se1jxl3dhC4F8lGZFh6wIAHNYHPt8V31nZyHkN5V17esaevi0pomk3X097nPHFJWiJPlsJl7x+qzicFqdybmxVrUtYzQi7LkDYb3UDQX+FQZ1fDZqiJj6CwgeSv/7AZbkFcFXP98sa5pqrosZlzWH52TtL/f+dnJqYG/pbyfOY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FM39Fpu/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9867FC4CED6;
-	Tue, 10 Dec 2024 14:07:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0ncDqNW61erdybnloWrKrmqqe+AMsXaLh/zOZIN3rSDDG6GDZU3c0V6Tm1RbFnbsupgD3/OagO2DSzC3+uBraZRwzrgaOnEu0G3isjkkzYQCYiQLOucQBxEtqw5Ngm40JQpZASZjtllS+APbUhP/uCPWg6FEkQenkR37wkKGww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avoEUmP1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C73C4CED6;
+	Tue, 10 Dec 2024 14:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733839646;
-	bh=/wBby0ZaQ5upXhJFQV1aKko4D11BdDLGyQDqBZJw7ng=;
+	s=k20201202; t=1733839669;
+	bh=hEUtZzuBGTA2NOGk9ts8sazRmir1XBBr6jwB7hoMZlM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FM39Fpu/5upH/82Z/8Fd2WSdrJDJEVGe172obK/xEzH9uIao5ILbSih94BGykRLHZ
-	 6LAdl+Kd1s7Ai6qGVpD8BoF+u0+SHBOD4MzHbopL6wOjR31GN8VxhVNEGOqpRo4ZZD
-	 dM3cpEb8iJCcB0s9deqYRwpxKlf6utqhRnTIhmZyT1SoZvrJkMKRWZr+6YnwfghQut
-	 sbc8C1/JaRRaqz4+IE5BL0K2umV3gGx46VcGVk65wYCWqPEgW5OZZ1uSNf1myzTHuX
-	 Jzfr3iuhom3i1wqkRweTvaUbsfEmHxvuwEC6L2J+VaLcnh/xfwRMz2tpKqLbtqXiB3
-	 fHyTBqHAY2Ucg==
-Date: Tue, 10 Dec 2024 14:07:22 +0000
-From: Simon Horman <horms@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dsa: mv88e6xxx: Move available stats into info
- structure
-Message-ID: <20241210140722.GC4202@kernel.org>
-References: <20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-v1-0-b9960f839846@lunn.ch>
- <20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-v1-1-b9960f839846@lunn.ch>
+	b=avoEUmP1d9QdOaaXSiVgk6gC/OtmdYD96h4aD1/i0n1hksL6RqcyxtUApsBkJ5JYS
+	 Urna5iTGqdKjzfW2PJPIZ3NjTei6K3Z+Z4EFbejBnOhJxEvUF5ZVUdAumLpk3uolqX
+	 j5MwOyag1LeUKWgGlKxTknXH7zfto8kVef/uXuqs8oFurGsx49ugNXV1AVQy7SsgqI
+	 +JqZMkepFbwmr51yoOOitu+kyqBGgeEMmvU68j9B6ljmZK4OjIj29wePjEErWpf0vy
+	 qfXgHDZtFknnb90gAqURUgSVmoXqAwVn4fRAkX+RRxvcKwiS/K+041IbGMprBfqlfA
+	 qtJbfIspuwQ1w==
+Date: Tue, 10 Dec 2024 14:07:40 +0000
+From: Will Deacon <will@kernel.org>
+To: ankita@nvidia.com
+Cc: jgg@nvidia.com, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, ryan.roberts@arm.com, shahuang@redhat.com,
+	lpieralisi@kernel.org, aniketa@nvidia.com, cjia@nvidia.com,
+	kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com,
+	acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com,
+	danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com,
+	udhoke@nvidia.com, dnigam@nvidia.com, alex.williamson@redhat.com,
+	sebastianene@google.com, coltonlewis@google.com,
+	kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org,
+	akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/1] KVM: arm64: Map GPU memory with no struct pages
+Message-ID: <20241210140739.GC15607@willie-the-truck>
+References: <20241118131958.4609-1-ankita@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,16 +67,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-v1-1-b9960f839846@lunn.ch>
+In-Reply-To: <20241118131958.4609-1-ankita@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sat, Dec 07, 2024 at 03:18:44PM -0600, Andrew Lunn wrote:
-> Different families of switches have different statistics available.
-> This information is current hard coded into functions, however this
-> information will also soon be needed when getting statistics from the
-> RMU. Move it into the info structure.
+On Mon, Nov 18, 2024 at 01:19:57PM +0000, ankita@nvidia.com wrote:
+> The changes are heavily influenced by the insightful discussions between
+> Catalin Marinas and Jason Gunthorpe [1] on v1. Many thanks for their
+> valuable suggestions.
 > 
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Link: https://lore.kernel.org/lkml/20230907181459.18145-2-ankita@nvidia.com [1]
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+That's a different series, no? It got merged at v9:
 
+https://lore.kernel.org/all/20240224150546.368-1-ankita@nvidia.com/
+
+Will
 
