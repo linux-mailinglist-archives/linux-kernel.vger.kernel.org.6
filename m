@@ -1,117 +1,173 @@
-Return-Path: <linux-kernel+bounces-440007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5049EB771
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:09:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0BD9EB777
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:09:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DF02823F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:09:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C32188736B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93537233D81;
-	Tue, 10 Dec 2024 17:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA39233D70;
+	Tue, 10 Dec 2024 17:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fbNc3w+K"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lkm2W1a/"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E392343DD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AA623278D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850535; cv=none; b=qIKG4ZW9MJkIWRmcclEn8Fs+/A27bUHcnZ62p32KCuBTlM3sGJ5tYKBtL4FJx4j6GldN83jk5wh8W7+fUQ0iZP9Oup0Tw3CvdUZwTheCr4gBo2reNoYVYIcyYxCorjqQWrGmh64/Ock6gdHBp8tL/wO2kxmtZdhIusXqtZAxbTw=
+	t=1733850550; cv=none; b=FS+8kFz5+2tN6dRKexcNESkVFX7SOYhOokEkCbE0Aohecv70znll0wiew2MXcganUyP3aQPc0DgL/rcPEKFtcRyrn9qH2vaY8/0xQzgPOZHTp1Q8wv4L80jQG1LNJ49x0zaELJRjgsOe0NzX3X6QSo50M1MFzb9Nj3k2x12gFYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850535; c=relaxed/simple;
-	bh=vqnBy2TUzl5VEh6Ll+x+Xk8e1C2DbaIVDVhMQuQ/vzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QnIehm5sRRHPHMorTzOCxGOg92UqGJphnr2giowLEL+WuesxEUQp9UbtEzU2BDVKiWDyZLUw63qnOQMRqW5DhubQhATzXvKkM/QUJn2ZXEfvHHvKcMfz7aYnR0FGrIKjGWcu6guEfb7eBSxxGh0JyeHAquZZh5qsvLX03/tZjdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fbNc3w+K; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a9cee9d741so18341455ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:08:52 -0800 (PST)
+	s=arc-20240116; t=1733850550; c=relaxed/simple;
+	bh=kmpw+MU85Klv2VgMx3ZqVirEPF5gOEEsCLRROZYzfzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MX6CERD6kiBFG33ckOtOTt/TykFWvxKKZu6+i6dfuMTxoIXXeCJsvXFtPteVdGb/YiKJINYzT0r2f6PT2SxdOcQGNn8YIu/0pCCjOyQRZPIUKyntWnEPl8fL853plbBbJd5Wmyva4XKJV8H0T6kOTO6GrEBbyTUTIw6w8JU1u2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lkm2W1a/; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5401c52000fso2435102e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:09:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733850532; x=1734455332; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B5PJ17q8lD7k4hVY6ctGVVWNwOwWO51bb5PDCcKGo6o=;
-        b=fbNc3w+Km/yqjUHcR4q0Yw23p971vs1gYm7T0EeLW8sDF0dExjAKQqp4P7N6RbF01X
-         XdNolJsaUKonfeSuqix2Vl9Ffb8nBSyISOmNcIQp0lggxp/U+YnhJXLhOacxHg8yxMX1
-         kikdLbqsPLEbWlgxEapR2IW52icNC9GE1/oUM=
+        d=chromium.org; s=google; t=1733850546; x=1734455346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LuhRNegPQNd7+gF/yjuNpjthxXavGQO/1ZgSXezZky4=;
+        b=lkm2W1a/idpkoQhC8rT/QkOJlS/nnHiVXKrL6LmHPsuzSNaOuVXZG8IMj9Ey+kpZhF
+         uZWiIFVS5nFihyzDswETynDUQI0TAa9R5h2WuVIpUTLnvZTN3G/4dN3lUbVnuLiU+Zbo
+         fgFgRIvljUe/3l90XTqsKi8so5sodmSO53G2I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850532; x=1734455332;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B5PJ17q8lD7k4hVY6ctGVVWNwOwWO51bb5PDCcKGo6o=;
-        b=kklIfofS86VS0vmhbeQ8ynl61yEebm04LqArSlAd0l74klojGa+LtCBsgLft3r8yKy
-         hWTmWBte/V6QaUpq9ywir+7Q4sxvb01M4IGT7N0zAPserZw/Ir7m+asKnBJd69BV4UXR
-         t8BIli14pUAFupuKUcmJJZ9Ay86ENc/r/ywQlkn9SzFM1Zqozly/wzKEEw4zSK+80C9Y
-         Ta3ocmcCip2S6L1nuk/NwaGq1DbYhOxb9WOpXUlvsfsM8bJuYu/AFhixnFIbj3h7Vytf
-         3sIC54w0kSCzdOo81HOdAqGphwZIYrtQ2dzp7L6BDeLlgrQI3EU5NK/BYcuzOH+8vaao
-         qSbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUk1wUAfc/16SgNBRARqZwfK47v/r/kGl78VYFUxU/g6pB7PsGD21aLxQ891Zhrl7v9qeVw+KeN5GcQqPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1A3vsJvH7aI2BYVPNdhJOZupr/+cTmUjvamfAQ1Gwfa/lj2M4
-	nepEaHJjNjcMSWn6MtNxQXG9545wODRZwn5rSRMMvuR+rUu03nY5zFdH1Ky07FY=
-X-Gm-Gg: ASbGncvOo6A8d8DoFg/XdwCLSsjRFWu5EjPt1OTBTMaAgLPrKkxwz/nlReLE7b4b/l9
-	iaDHaKnJxz5tsWatnlZGAEKUy8mTNJsRvwM/WSFzMOT9BNDRtNTxgyJYTNzV3lbG7VKXVflG7uN
-	JEYSUDsfkuwPS68gg4gI4RwG5yI23DT52rYig7TWBKfRPKak8S2QY6zC/7AddzpCzTRmlOGvxiO
-	wxVCj3XHwJIUVL1J4eAbJX0ISk04itha/4WF08l2iN45mfba5mlADGVdQf110txdQ==
-X-Google-Smtp-Source: AGHT+IG/gkZmbkJxGMdHnI+Js79ydu8p5QIVfUBfMDkz2ZNcb9kT6//CIdURU7BGEZClLOWq6Kg11w==
-X-Received: by 2002:a05:6e02:1c8f:b0:3a7:dfe4:bd33 with SMTP id e9e14a558f8ab-3a811d98e10mr213572065ab.6.1733850532088;
-        Tue, 10 Dec 2024 09:08:52 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2ca310cfbsm701831173.152.2024.12.10.09.08.51
+        d=1e100.net; s=20230601; t=1733850546; x=1734455346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LuhRNegPQNd7+gF/yjuNpjthxXavGQO/1ZgSXezZky4=;
+        b=s9Egr0nfM661IzPU9uSRITt0nVOwDgIxB/KTU52YoKlVwQXH3fWiSr15HGsQ9jiWEi
+         unKAe9LXw02YSdT3R1y81LAb38JOPeYMTamDI/z7bIVgQupjVrhq/HnbBO+FdDTofIb/
+         jpX10wvhm4YJsrOb02ecxG+wza5n4ZQ0Gm4UgQRU620WzwnO6dY4DvijW9WOcjerdby4
+         GzIoizBPbLo80XgrtsE92Z4JFBNhWeejba6AXuEVbd4kSwgUhm3CIMoNbgQy+1Cox0jk
+         s8vQeudjp/fk6l7JdfIoYcOMeJHWVSXlW14G7KjehXeXMRiDJPi8p3pH8hr/eeAxMcNk
+         g0Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWv1vwnGJRi5vvBmBpjkre9F2dMLLG/be4Qb0Wj9S8iMZGUAsEoRLjev/BEHo7ax6PhWmO9YuEfMgjLljk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVJYnAH6QHiZGuAwk6XiuX6ROlr13+y3dbRuy8BLaD+p39sonc
+	uuhLrl5G66UVwnl97exKpIkR5BgsiH0yDeo3/lvJRdjBRaoq7vcWySH6oQJwOSDWeoSAo4WogVo
+	VHw==
+X-Gm-Gg: ASbGncthHnuS2NnkXGuB3z6stinHURkpHrJ9VICJ0eQt/6P+8jvweWLnbgcAuUKRGjo
+	a6eFBz5NGzfsSzpHPOY0IhYYCemlHuiyWVviIE26z3hy036MPPrDaLkm+8gwDLl7cTZQkyJhOrp
+	4isx1QCOhosxFzVIbZXuPM2ilbnWvPTSff2YfRdn+7YEACh3pc+LwEAlWsveVdkJNEGP/8YTY0E
+	IBiGP9+Vi0FDh3ZEcCLnfSdPCAKLTBilHkiAcGaZzZ+ITD6TC3Q4YEdJFx8pAefTxE4R65zharm
+	wV8pyDoWBMnchlwT7Q==
+X-Google-Smtp-Source: AGHT+IEn0Qez9FAqeh4gb6MVbGzUqhxYTnP8C5zUzfj8/i5XNg7/3CIl5t8cgJytiZz1MPDtzUSmTA==
+X-Received: by 2002:a05:6512:1095:b0:53e:94f8:bb30 with SMTP id 2adb3069b0e04-540240bd78dmr2060238e87.24.1733850545829;
+        Tue, 10 Dec 2024 09:09:05 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e37e20ebesm1327400e87.110.2024.12.10.09.09.04
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 09:08:51 -0800 (PST)
-Message-ID: <1e61303f-69b7-47e1-863f-1d52ac6c3ec7@linuxfoundation.org>
-Date: Tue, 10 Dec 2024 10:08:50 -0700
+        Tue, 10 Dec 2024 09:09:04 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5401c52000fso2435039e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:09:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUvU7ntjG5byUngyvlA5tcvT3zEYiaTF5VWLSsm3CDuklxskfhDftxO6rWrRpYRAKnpqVwCG3rQ0Aky9TY=@vger.kernel.org
+X-Received: by 2002:a05:6512:33d0:b0:53e:368c:ac43 with SMTP id
+ 2adb3069b0e04-540240aac8fmr2378233e87.5.1733850544359; Tue, 10 Dec 2024
+ 09:09:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next v3] selftests/cpufreq: gitignore output files and
- clean them in make clean
-To: Viresh Kumar <viresh.kumar@linaro.org>, Li Zhijian <lizhijian@fujitsu.com>
-Cc: linux-kselftest@vger.kernel.org, shuah@kernel.org,
- linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-pm@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241122074757.1583002-1-lizhijian@fujitsu.com>
- <20241122081304.j2zbjvmgd2nnfca3@vireshk-i7>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241122081304.j2zbjvmgd2nnfca3@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
+In-Reply-To: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 10 Dec 2024 09:08:52 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XpRt_ivSDz0Lzc=A+z3KFrXkVYTn716TD1kZMAyoGQ_A@mail.gmail.com>
+X-Gm-Features: AZHOrDkvV4hXVBzL5LdGwv2-ywEkfcu0N74i9maLRg8R7KrBlypjtg_v-QyKEuk
+Message-ID: <CAD=FV=XpRt_ivSDz0Lzc=A+z3KFrXkVYTn716TD1kZMAyoGQ_A@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/bridge: ti-sn65dsi86: Fix multiple instances
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Linus Walleij <linus.walleij@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Greg KH <gregkh@linuxfoundation.org>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/22/24 01:13, Viresh Kumar wrote:
-> On 22-11-24, 15:47, Li Zhijian wrote:
->> After `make run_tests`, the git status complains:
->> Untracked files:
->>      (use "git add <file>..." to include in what will be committed)
->>          cpufreq/cpufreq_selftest.dmesg_cpufreq.txt
->>          cpufreq/cpufreq_selftest.dmesg_full.txt
->>          cpufreq/cpufreq_selftest.txt
->>
->> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
->> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> Cc: Shuah Khan <shuah@kernel.org>
->> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+Hi,
 
-Applied to
+On Tue, Dec 10, 2024 at 6:19=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Each bridge instance creates up to four auxiliary devices with different
+> names.  However, their IDs are always zero, causing duplicate filename
+> errors when a system has multiple bridges:
+>
+>     sysfs: cannot create duplicate filename '/bus/auxiliary/devices/ti_sn=
+65dsi86.gpio.0'
+>
+> Fix this by using a unique instance ID per bridge instance.  The
+> instance ID is derived from the I2C adapter number and the bridge's I2C
+> address, to support multiple instances on the same bus.
+>
+> Fixes: bf73537f411b0d4f ("drm/bridge: ti-sn65dsi86: Break GPIO and MIPI-t=
+o-eDP bridge into sub-drivers")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> On the White Hawk development board:
+>
+>     /sys/bus/auxiliary/devices/
+>     |-- ti_sn65dsi86.aux.1068
+>     |-- ti_sn65dsi86.aux.4140
+>     |-- ti_sn65dsi86.bridge.1068
+>     |-- ti_sn65dsi86.bridge.4140
+>     |-- ti_sn65dsi86.gpio.1068
+>     |-- ti_sn65dsi86.gpio.4140
+>     |-- ti_sn65dsi86.pwm.1068
+>     `-- ti_sn65dsi86.pwm.4140
+>
+> Discussion after v1:
+>   - https://lore.kernel.org/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.1729=
+180470.git.geert+renesas@glider.be
+>
+> Notes:
+>   - While the bridge supports only two possible I2C addresses, I2C
+>     translators may be present, increasing the address space.  Hence the
+>     instance ID calculation assumes 10-bit addressing.  Perhaps it makes
+>     sense to introduce a global I2C helper function for this?
+>
+>   - I think this is the simplest solution.  If/when the auxiliary bus
+>     receives support =C3=A0 la PLATFORM_DEVID_AUTO, the driver can be
+>     updated.
+>
+> v2:
+>   - Use I2C adapter/address instead of ida_alloc().
+> ---
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/log/?h=cpupower
-for next pull request to Rafael.
+While I agree with Laurent that having a more automatic solution would
+be nice, this is small and fixes a real problem. I'd be of the opinion
+that we should land it.
 
-thanks,
--- Shuah
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+If I personally end up being the person to land it, I'll likely wait
+until January since I'll be on vacation soon for the holidays and I
+don't want to check something that's slightly controversial in and
+then disappear. If someone else feels it's ready to land before then I
+have no objections.
+
+-Doug
 
