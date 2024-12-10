@@ -1,226 +1,209 @@
-Return-Path: <linux-kernel+bounces-439748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5075D9EB37D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:36:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8A59EB378
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA5018898B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B701885BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55781B423F;
-	Tue, 10 Dec 2024 14:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FFD1AF0D3;
+	Tue, 10 Dec 2024 14:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKgBtVfC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BzPpNhLS"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2078.outbound.protection.outlook.com [40.107.21.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8686C1AA1D0
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841305; cv=none; b=nTu0oCjVT4xby+k5evcshZum1k6gyHiww6bdX+2QkSIAfFC7V8FBX/gKqZa3z0uBoXvagRH8R/+BEGWQfKQ21f2hS6TPrb3CpgvTKlyXfJ+6wa8lTLeJd/3WCUt3JOqUqQlZJ/EZxfMs85m/4S8IVSm2kWfGy8Xw3x8nJ9mApls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841305; c=relaxed/simple;
-	bh=I3+OgVND3ovs3EabmzXGFURX+i4WzYcd0zLU7C8kE5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BNy9nH3J+7KaXwvJP3qjQ5hydpxtBoAMfJkzvrJOfJNe/oewziuvKRiVF3lAjYmrAHAly4L6tsCXy+bs/a4hY+zrdJyaRNCKNIOZ6gknNrRA7qbLbF4MNEd3dpBB9dYiNu2oq21OQDF/H/7KrWQChDXefJ2L3yPWKPYlCj25xHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKgBtVfC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733841302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZHZJG01hNeaIMCFXcC4aAtIq9wGcVNYKpI5sbt4iaAs=;
-	b=GKgBtVfCPB2ewoxJC60wp6o/0QVjZsbEJz+7A5pbmGZdscCmHYYOt/WzbWwuFd11L8UwNC
-	E+lFBAFeYiIjgOQIwsAfvbXDQvjflY+cAxcmqq3jFXTVjwVHVmmZDUCGtvmO49hvSQgYtg
-	3bRCC7STY+QgzhzEi59lHaK5iViZGK8=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-251-nLcWp9tUM9-nUIsw2CvGjQ-1; Tue, 10 Dec 2024 09:34:57 -0500
-X-MC-Unique: nLcWp9tUM9-nUIsw2CvGjQ-1
-X-Mimecast-MFC-AGG-ID: nLcWp9tUM9-nUIsw2CvGjQ
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4667e12c945so83593681cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:34:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733841297; x=1734446097;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZHZJG01hNeaIMCFXcC4aAtIq9wGcVNYKpI5sbt4iaAs=;
-        b=U709DXp1HrCZcJEVUFdHtniWByUj8EiS48R8ZJtxpyGI8QgcPsdLuBEj3IhIXGDbmA
-         fLmK39RD7jo6P2y/7yn7ppB6OiusCULNCWq2g22/pQE7owYV2PQ+AVodkKUXFTAqvhfA
-         ee45aEf7ZVT6Eg0KNeoYd46XWFr377zyK08Y+/buzxiuuIF43mp2pUtqg4drRGTjNDUN
-         nEa9lOcrfRJ7nrei6jyHpf4N1LirfP7SpaLRP+vgeOU/GVtDbbRb0LPGFaVJXCWWMoYN
-         3vxUWMC5G/BPPNVHAbQteqHG10a56BMQQwPW+PsZKk4rWnisFLcrrPQfVhk+l9NwokAu
-         ig3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVt477U0skPvHGS6qdkVzHyrBzW/3LFx57B0hcDM6mSzz8QVdh2rvSdpBhohpPuQG2wwCps0QlJwDBeAa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZHJdpCURtET1qVCIAKcQfxwFbcbFtqGexFJTBAwQLfC2gBeOY
-	zuCGlEuqYTLTdg/7GLkAwp2xPrjmK1lwiSdwQQteC9CAr7a1OLksuu/16tK1Letkc8lC2CbidtR
-	JLg40upxs1q1YEQehYdJb7oBcvn7Ckoj3fyCDZ7cjxt9wOX7Zj3mfDQHCdjaGbA==
-X-Gm-Gg: ASbGncsWyXzoPtNmxfeFKei/HBbSe++5lmsgLyp5ve5p4P16y9iXr/QiHYOo9UYsh5l
-	JeimT8IGbvsXW+a/KALuQmHtY1r3PsGyaBc5Un2sovY6kpDLhwM9KfkiVfoAnX7QqO8zIkxkJzU
-	OY/zNbJTetfKQWrxSjZEKlPHgHfWU/vjKVjvUbA6+J0iGkQNmBszYmRknv0T3hy56CQztqWXGzj
-	qg1VsuWz4NnIehiE97gFRTKJ8cnVYKhc9jsYsUKs58xNSiCqbB+1vH8KAuOAUgeXckqX31bcmme
-	QPGPQ7oVxeSDa+sX4Mt2SkbMmepx3fc=
-X-Received: by 2002:ac8:5fc6:0:b0:467:6505:e3c with SMTP id d75a77b69052e-4676505132dmr138668301cf.24.1733841296844;
-        Tue, 10 Dec 2024 06:34:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEWTua5aJb1pNQFOVrnxFBRlJAcVPzKgg25Q3AMf1JLy1jJEt2pslYht0E+7saMZCCbUW+bWQ==
-X-Received: by 2002:ac8:5fc6:0:b0:467:6505:e3c with SMTP id d75a77b69052e-4676505132dmr138667721cf.24.1733841296367;
-        Tue, 10 Dec 2024 06:34:56 -0800 (PST)
-Received: from step1.redhat.com (host-87-12-25-244.business.telecomitalia.it. [87.12.25.244])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4675d0d9039sm27218631cf.22.2024.12.10.06.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 06:34:54 -0800 (PST)
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: linux-coco@lists.linux.dev
-Cc: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-integrity@vger.kernel.org,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	x86@kernel.org,
-	Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Dov Murik <dovmurik@linux.ibm.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
-Date: Tue, 10 Dec 2024 15:34:23 +0100
-Message-ID: <20241210143423.101774-4-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241210143423.101774-1-sgarzare@redhat.com>
-References: <20241210143423.101774-1-sgarzare@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898061AA1F2;
+	Tue, 10 Dec 2024 14:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733841289; cv=fail; b=tJ8cnFCyRS4BBAozPIXo2XeHz2nYo+vJwKWbQHeB3sIvLaca/N6CYA9lL2rmBGxO5E2RaBKwf/zqdpvJV0QRzB/lAqo65GAnMEP8gt7aUbkljqNZGkSocv3dSa1zHfJGeFYfRWkWc4lZ5H4W7mnESDJRleczFJEyQSBvPxPW4EQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733841289; c=relaxed/simple;
+	bh=uoXp8943+IB+uWEYVDeq+E1aF7xpEtbzek8LF+WI4Po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=q4lkLB6Nndu7Br5thvc1EoZHr0IggCmsK9yhd8oelxcy+SbRZbkh73+0t+X8+ADF91DOndHm43vuKk/H1vNwhc4hxJzt0I7PmJi6bQ65CMqxnVThtXIjWvRupYeU4kYZseuFZZBH6oWYd+SFd8Eo5sR97PIzWUkK/+GE3lftmwE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BzPpNhLS; arc=fail smtp.client-ip=40.107.21.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b3R5efRmAQZt2J3dMgPhVpqOYmRL3uUHL+hkpiDak5h50BdNsrgB4tPmt7cqSvEojr5ivVMpEQeFn66pLOcaoLAnKlC+pweihUGDQ7bcxmdPFi/ypdMm9eT29ZDDZBRwfhtLwLGoTBFMJe6AkoO3fe2tHS2Ue1VnlnWQDBrpFeE1v+J7TGxm22nA3vV2ZQBWe8uPIAtnz8ifOidBksSddXYD7ZJVO0Ix+hZYkY0LeOiUVF3jZsvRjBiTOuRT+KDIUO7SbR9Ly6DMtf5FhhVyPsIKGZYmcmMUskKUdx7cTjtrsNV3z3EKByLor+XhBM4hEHAa6I5No6prJFjeSOx7eQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fDRYjrrJ8T5W4x64JHEScZFnezzOX5UxQ4qNKMnXAqY=;
+ b=C1J1AfV1g+JqdO8woABprqkp31w0Sc7lMllEDXxa8PX9X8EHXtaA/cLJmhTEndH910LUcHBKEuluEY5zV2na/23QXtZ8xoEIGat7zb4PyKi/TNIiXlNQvQx1tnnrVlaR+R+vd6lsofPXECetydADyFl5M5SVBTZeALXtFG1XQKZfsZWzYD7d5w3g/N9/dE0FB1nQQioWaiPv+L+5TevrrIm1OLsAZELK2Vv9KRdhHa4NM7us7S3jzK85qrA5f12dgk81kkud6zb9kdRMbdd1V7mKya4wheyXRZdBUbNBsIAQbjV0iNQ6i75T+oUKO6C5NuYu1z3jyLVCrq2uYfS5DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fDRYjrrJ8T5W4x64JHEScZFnezzOX5UxQ4qNKMnXAqY=;
+ b=BzPpNhLSrQ//P6n8lzTEhdTa2Tz7rHLfViCzPg0dCDEtIjtWESoQJ6Qpm1ctsjymLbRRpbuXEp6ae78BnAtOKSPQfPqd3YE4FbZQmQ6hbwcSmffv1KE7ASpgz9Bo7oMv0BPo/zloXFVeuBW4zXE5A1gyUYoD8QMDr8QFXogMRcvzxz4H0/yW1+YVCWujKa1iLQXRBBtdAhmgSMWxCx4cW6exS2Fo/gmthxGEMpKl7petMcwtVxxG6dBMHQAtQ+uiQrVI1XQzn/5DAUqk56d3YYPkHGJOn8Jo1wjgTL2Ik665IZ/gO3L0g5UEmB95gLx7DSy5h8MfZ/azZCS8GxUQ7w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AS8PR04MB8199.eurprd04.prod.outlook.com (2603:10a6:20b:3f6::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Tue, 10 Dec
+ 2024 14:34:43 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8230.010; Tue, 10 Dec 2024
+ 14:34:41 +0000
+Date: Tue, 10 Dec 2024 16:34:38 +0200
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Jonas Gorski <jonas.gorski@bisdn.de>
+Cc: Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Ido Schimmel <idosch@nvidia.com>,
+	Hans Schultz <schultz.hans@gmail.com>,
+	"Hans J. Schultz" <netdev@kapio-technology.com>,
+	bridge@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] net: bridge: handle ports in locked mode for ll
+ learning
+Message-ID: <20241210143438.sw4bytcsk46cwqlf@skbuf>
+References: <20241210140654.108998-1-jonas.gorski@bisdn.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210140654.108998-1-jonas.gorski@bisdn.de>
+X-ClientProxiedBy: VI1PR0102CA0074.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803:15::15) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS8PR04MB8199:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14bb7f0b-87f2-4ec5-9a89-08dd1927c8a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MXrc0X62MRaL3e8MaEClOY+keelqLLcbTOZ+o+I2oJqfx80Mg14WslB12F5z?=
+ =?us-ascii?Q?b1erp2YmiqeDH38XWNm3WOJxABh+PIs3hVhIkolPV3cysUEMwNhSz7G1f2DN?=
+ =?us-ascii?Q?pTrX18pHRmYA+7XIoeFyHA5iMwrCjomZg6xE0y+FJVRwX2U6ewTY5nimQOYs?=
+ =?us-ascii?Q?HaMJzda7pEUQi+n+ghMg5zrX7RkfvlQOiVzWC4ZB/MNGnUOoOVl3NcnT9rlD?=
+ =?us-ascii?Q?jQKiiprKA3FOIf1l2XprUpLL588RnyGw9rghHOArVWwlimKgI+d3nTEbv7XK?=
+ =?us-ascii?Q?Xyv6k6eW/C/W+Gy2DZmHe87b4Q3joXQyiz/kdD3Ldc1WWxrwWQeGnZye2ryK?=
+ =?us-ascii?Q?qfFD2CZg0/1nExmmJ/eQTGYA9/zJy3NmwccSnite2ZXHmA071efWtk5GjOTd?=
+ =?us-ascii?Q?y/88NF+OuFI9ocauhWujZflrOreK3zKzFJZQZcKY3XxKtNr1vxNSkFP4H3LC?=
+ =?us-ascii?Q?AnPot8dICPuJ8B+nZ5EUrkAkzi3ZOPPmj5Y1YU4RY80cInM6vcyvlO/HeAF+?=
+ =?us-ascii?Q?Bw1ZgUbf9x0Upnf1w/lYWfGigdT1SA98vgIr2XFZe4OLwcd16gESo70ah6yE?=
+ =?us-ascii?Q?b+aIJgzTUKfqiy1RJjTglyR82y/l8yf9dsdn7D+D7+dmTRTMD80yKPilpL6P?=
+ =?us-ascii?Q?pfCsBA3gkbuJ7C92JqOk4PrFnu1OgV09C/uXDLz7cMIx2wPQr79Xu1jQtsXo?=
+ =?us-ascii?Q?EgtGnzf9vt/BdZTnB4tnXkbrWN0f9uMy1P2Fp1tS6iGqkgY4X71W8eyu/cMF?=
+ =?us-ascii?Q?JG/t4sDXzJLAB+BHZCXK6ryMj4uhDfIzrS3d8cjcvGUiRP6k33XMfxiKnbXm?=
+ =?us-ascii?Q?ZiX45l2f0C5iyVfE/YyM3YLQ+G0gkMLSqU29HEnb9duuu6SD84pPmNWpHHHY?=
+ =?us-ascii?Q?SBf6XqYvQwhmRfsIIDkHDN4jk1DJBfrRprVCili8QLZ5Go95OYGUsZoZtrPP?=
+ =?us-ascii?Q?JosAydEjFMfjrzvydnviIOPQKMUq13WYoRzOrppm0cySa7tPZDhxLWIcF/7A?=
+ =?us-ascii?Q?ulqMPm5/iWg46u90O2RhocMRQ/znyBbduoxhMrzWz9fP69XwKFA4diGQD39U?=
+ =?us-ascii?Q?kBnpFT1kp1jlnSrQQgWTe9/aq4oegfle48Xj+x6yTMF+b4Wmb5eziE3Bn55u?=
+ =?us-ascii?Q?nzAWU62qkJPEHc7GMx1eOPmfv4n/3gCrypx7syxiwmjTXu/14aXvbfO4cIEq?=
+ =?us-ascii?Q?kY7opEcbEEpCmOVqRr/NYEyXcqB1oeftEoL1E8Po+Q8O+kK3Ha44YoWuO+Mz?=
+ =?us-ascii?Q?2Jvnrixtm6h4bmzhQGL9LBm+xtrF7VriauRwkMxaeq2FxoCSxPisbSbT13Af?=
+ =?us-ascii?Q?e/s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rHzsUjVdViRFnLtPWrFHMuH1MtCLeexRw/cH/mVg8RK5UDtVuFuXKlPuVWUO?=
+ =?us-ascii?Q?gVRIz75vTN3nZc1gBVJbEkU7Tz6rMYeDdHjp+yQMGJFwmTxJc1T9wRWwm8X2?=
+ =?us-ascii?Q?zSweoUaExC7wg62HZMahqc7rvyAuw7V6vcKPp/QvGEZyhHPbdUBNjH5osVls?=
+ =?us-ascii?Q?oHDCA/RDsIhEEre6bdhVq6+Xup3YjOfcToAgomM9Tpcxi3KwOuHGdjtw6xoB?=
+ =?us-ascii?Q?YjEkywUkgs8GeNxixpsTsha2F8kXgZPpeBggi89cZjH3E3Y0dEXM9IVR/ljj?=
+ =?us-ascii?Q?WO1pQWLim3PZSfwKgQylUpJk8IFqX2Z7/UzaC5R+MDWQxwQj2wu8o5SbI2ty?=
+ =?us-ascii?Q?t4asogYQWxwictkDVlMssrfP0TkB8l/nBKBprz5M0rCko8Nm8gXsMz+cvAa7?=
+ =?us-ascii?Q?cF8cQpyRjIodELh1yMXfMbJbjq16Sso6XlkMvVgxma1Zz2Xf+l+RN8Vf4fye?=
+ =?us-ascii?Q?9vdyIJ+4tWpqYRzXWOSZhyzgiY+nNNqU9yUuboyR9OF7nlIY3pdRBBfi1oNJ?=
+ =?us-ascii?Q?j/f6REfH3m73TrANO0fA5foYFYGnW6pgDA7VUmSql893mGCQJ/1+o/Uyn9eq?=
+ =?us-ascii?Q?DbvK3OEd6uk/Bvkns2/OisWFWRffKmnYeevusezewvtTI4rIHCpE5lqYp31K?=
+ =?us-ascii?Q?N4BWbl64qOrQiwQTh/uGOV97wVCn2GRZP0GyQnwkKXOhG4zxO0UHp49BkInA?=
+ =?us-ascii?Q?JmowFQTDQ+0SjuLFzXn1MDoDyraM6to6xasTjAHjZzJheG+WMVmNzaOlxyrh?=
+ =?us-ascii?Q?tBG1ciJ/wpEpoGMwQ7JfPt3wK2qabaV//7iG87gHbDEzBrC1B+HJLIrGZQdE?=
+ =?us-ascii?Q?LDO2h8yq94sRj4212Ohe1l9DLqVgATLd7cHaD7lxIDsvOeydQihvefBcVlJ+?=
+ =?us-ascii?Q?xXAAU7Om/Mp1vB4dt2XQoHIu5cZ1d6amv4nZRrXJrcGKSVX4K1Es1uiBQMN8?=
+ =?us-ascii?Q?Gp/xQTRYPM3CfmVKENcaUku9IUelloXPK8X8Q7dKnB5DwLttHEEGyou0o5W6?=
+ =?us-ascii?Q?IBaFCl3tFXhlxauNUy25tI7mNzJf3BXMKa03+9DctREiJ4oIQjWMC/N/q6Q1?=
+ =?us-ascii?Q?W9lZoksQyjOP3VDVXpwD4+VAbO52UwkcjWQw7318ufvuOkiw5jUBElDBFsLG?=
+ =?us-ascii?Q?5nN6oJinW1AdKVMNgcAwfRWyioS9Kn5T5lVMdiAp9NQ0IIYLhwuP5utD0aZz?=
+ =?us-ascii?Q?EMsHkHB1J7ud0j3GhHstnFHGsHJ8+F0BfHLxA7g2Z8mfrSQBZ2imQ8csOCTW?=
+ =?us-ascii?Q?CRRCkD/Y6U1U92X3FXbH/CF09CUErc0TnWdgvS7OreisMAkNpezVJ5p47M0B?=
+ =?us-ascii?Q?2CjwWm1EPVmfbVFcVY62IwNRMfprpEquNj6gqiBV09p17Zx3wQI9skCblvL5?=
+ =?us-ascii?Q?TI1t5cpSFVc0Bcd5tWM401I1L6prCF8G6O0dRHtlenSjmXD+hYrdJnVEIiZH?=
+ =?us-ascii?Q?TuNaSu8v2u4JjMPpeh8RW2XybNGI83D4ix87ewMqy6Zv5nPrZoY0RQFHUXka?=
+ =?us-ascii?Q?8n2RlQxPufwqv3pJa6TsJFjb91QjNV9qbbDRqb4uE9umtsuiAfKoFGe8R2ci?=
+ =?us-ascii?Q?eIoNPvrcHuYZ02RqiG8AN3vIfAjEets28Kss5NP/+AZg0dHHaOjKm7FTuFcX?=
+ =?us-ascii?Q?mA=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14bb7f0b-87f2-4ec5-9a89-08dd1927c8a9
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 14:34:41.8784
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FgEccHfvkIVHrldTWP+sGj54pYwTE/OGb3U6dl1dwguW5suQEL2P3375SaWOGDwseAf7Gm+UyStarh20AZ/ECw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8199
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+On Tue, Dec 10, 2024 at 03:06:53PM +0100, Jonas Gorski wrote:
+> 
+> When support for locked ports was added with commit a21d9a670d81 ("net:
+> bridge: Add support for bridge port in locked mode"), learning is
+> inhibited when the port is locked in br_handle_frame_finish().
+> 
+> It was later extended in commit a35ec8e38cdd ("bridge: Add MAC
+> Authentication Bypass (MAB) support") where optionally learning is done
+> with locked entries.
+> 
+> Unfortunately both missed that learning may also happen on frames to
+> link local addresses (01:80:c2:00:00:0X) in br_handle_frame(), which
+> will call __br_handle_local_finish(), which may update the fdb unless
+> (ll) learning is disabled as well.
+> 
+> This can be easily observed by e.g. EAPOL frames to 01:80:c2:00:00:03 on
+> a port causing the source mac to be learned, which is then forwarded
+> normally, essentially bypassing any authentication.
+> 
+> Fix this by moving the BR_PORT_LOCKED handling into its own function,
+> and call it from both places.
+> 
+> Fixes: a21d9a670d81 ("net: bridge: Add support for bridge port in locked mode")
+> Fixes: a35ec8e38cdd ("bridge: Add MAC Authentication Bypass (MAB) support")
+> Signed-off-by: Jonas Gorski <jonas.gorski@bisdn.de>
+> ---
+> Sent as RFC since I'm not 100% sure this is the right way to fix.
 
-If the SNP boot has a SVSM, probe for the vTPM device by sending a
-SVSM_VTPM_QUERY call (function 8). The SVSM will return a bitmap with
-the TPM_SEND_COMMAND bit set only if the vTPM is present and it is able
-to handle TPM commands at runtime.
-
-If a vTPM is found, register a platform device as "platform:tpm" so it
-can be attached to the tpm_platform.c driver.
-
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-[CC] Used SVSM_VTPM_QUERY to probe the TPM
-Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-[SG] Code adjusted with some changes introduced in 6.11
-[SG] Used macro for SVSM_VTPM_CALL
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- arch/x86/coco/sev/core.c | 64 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index c5b0148b8c0a..ec0153fddc9e 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -21,6 +21,7 @@
- #include <linux/cpumask.h>
- #include <linux/efi.h>
- #include <linux/platform_device.h>
-+#include <linux/tpm_platform.h>
- #include <linux/io.h>
- #include <linux/psp-sev.h>
- #include <linux/dmi.h>
-@@ -2578,6 +2579,51 @@ static struct platform_device sev_guest_device = {
- 	.id		= -1,
- };
- 
-+static struct platform_device tpm_device = {
-+	.name		= "tpm",
-+	.id		= -1,
-+};
-+
-+static int snp_issue_svsm_vtpm_send_command(u8 *buffer)
-+{
-+	struct svsm_call call = {};
-+
-+	call.caa = svsm_get_caa();
-+	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_CMD);
-+	call.rcx = __pa(buffer);
-+
-+	return svsm_perform_call_protocol(&call);
-+}
-+
-+static bool is_svsm_vtpm_send_command_supported(void)
-+{
-+	struct svsm_call call = {};
-+	u64 send_cmd_mask = 0;
-+	u64 platform_cmds;
-+	u64 features;
-+	int ret;
-+
-+	call.caa = svsm_get_caa();
-+	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
-+
-+	ret = svsm_perform_call_protocol(&call);
-+
-+	if (ret != SVSM_SUCCESS)
-+		return false;
-+
-+	features = call.rdx_out;
-+	platform_cmds = call.rcx_out;
-+
-+	/* No feature supported, it must be zero */
-+	if (features)
-+		return false;
-+
-+	/* TPM_SEND_COMMAND - platform command 8 */
-+	send_cmd_mask = 1 << 8;
-+
-+	return (platform_cmds & send_cmd_mask) == send_cmd_mask;
-+}
-+
- static int __init snp_init_platform_device(void)
- {
- 	struct sev_guest_platform_data data;
-@@ -2593,6 +2639,24 @@ static int __init snp_init_platform_device(void)
- 		return -ENODEV;
- 
- 	pr_info("SNP guest platform device initialized.\n");
-+
-+	/*
-+	 * The VTPM device is available only if we have a SVSM and
-+	 * its VTPM supports the TPM_SEND_COMMAND platform command
-+	 */
-+	if (IS_ENABLED(CONFIG_TCG_PLATFORM) && snp_vmpl &&
-+	    is_svsm_vtpm_send_command_supported()) {
-+		struct tpm_platform_ops pops = {
-+			.sendrcv = snp_issue_svsm_vtpm_send_command,
-+		};
-+
-+		if (platform_device_add_data(&tpm_device, &pops, sizeof(pops)))
-+			return -ENODEV;
-+		if (platform_device_register(&tpm_device))
-+			return -ENODEV;
-+		pr_info("SNP SVSM VTPM platform device initialized\n");
-+	}
-+
- 	return 0;
- }
- device_initcall(snp_init_platform_device);
--- 
-2.47.1
-
+It was decided that this is expected behavior.
+https://man7.org/linux/man-pages/man8/bridge.8.html
+       locked on or locked off
+              Controls whether a port is locked or not. When locked,
+              non-link-local frames received through the port are
+              dropped unless an FDB entry with the MAC source address
+              points to the port. The common use case is IEEE 802.1X
+              where hosts can authenticate themselves by exchanging
+              EAPOL frames with an authenticator. After authentication
+              is complete, the user space control plane can install a
+              matching FDB entry to allow traffic from the host to be
+              forwarded by the bridge. When learning is enabled on a
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              locked port, the no_linklocal_learn bridge option needs to
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              be on to prevent the bridge from learning from received
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              EAPOL frames. By default this flag is off.
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
