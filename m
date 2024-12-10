@@ -1,111 +1,105 @@
-Return-Path: <linux-kernel+bounces-439562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481A19EB110
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:42:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589A69EB118
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A82128750A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:42:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92386287543
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D391C1A4F1F;
-	Tue, 10 Dec 2024 12:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6340B1A4F1F;
+	Tue, 10 Dec 2024 12:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DgVW3grD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="TsyEOpjz"
+Received: from pv50p00im-zteg10021401.me.com (pv50p00im-zteg10021401.me.com [17.58.6.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F311A38F9
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71D1CD15
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733834562; cv=none; b=ADE0Ra/pAsVWorx/lZblpy+TrIkGiEVJrL+Lt+hPIyCLsi9zdnNSTEHl+lphj7cGHIrKBi1UbzLNE0QFjr32gbc4SBEGUzPzsgMVAOk9l2+CdRlhTySs+ZpZ+rceu7alLDliHbiuogBsuwQUhrifPMS9Z0npPLMKGBmImmHclBM=
+	t=1733834667; cv=none; b=p5KtJ9N5gnCv5S4rOfmCuEOn9V/HgGK8kJX8OFR9BvlP4KhXhgrJ6EhlHTG08L4YlV+rJs0OcsA22f81pTfhrfS9utfEU6kuCPo4/TWGe0KGCTBi2cEnk0Bc7yv2sfh7scFIQ0nNnB1dob0hm0bXd0iZauQmdw9jpTFwBSehYbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733834562; c=relaxed/simple;
-	bh=FKpcB3MEcv9bVy7k7khv93pfJgAbXYQmLRdUCV7XMDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=boxswLduqrJFN4KNGoVqdSh4SxXrqqbXVfgututQ58lbG9dZEFGFLUH0ELLQ6tT+zZ6KzGXhFy2G6bEqydxCYeXikzN/vv0M4BuMa8qmkFeG0GmpbAi6A9f/MsmG8IiTLbF65EHt+JZLCWTgQQiAOFj++SRo1HkN8Ept6uZgxL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DgVW3grD; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733834561; x=1765370561;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=FKpcB3MEcv9bVy7k7khv93pfJgAbXYQmLRdUCV7XMDM=;
-  b=DgVW3grDVQsdHKTxBlZ15GK9VcJqSCaZfrlZkazbPs7gg7S12emah7HU
-   N16MbHAHk1ZiZnyiyd/TmvgOVohO2CWa20gsBPPZ7LtjeTWwIUZjLMktT
-   PpFy8yHdha9/YAkNCPlFJQfzb/oN6ja+wH5Hocb+vXb9Yv6mR7EvtwbZ7
-   FzPUzlA6qVCgJquBH+L9PZNR747Vjkfo6mQHAH7YOMomqi63q6R0mThJ2
-   oTBoKjc65ojVLGv0GLJW8B02r/Qo/WpPzo2xAyYZHufPXd5KuzTSBiPbA
-   A5NxiOouf3vPeIt+UAVUiSPD+KQVps8jjrP2OwrwiheYf7llDeODrJyqD
-   g==;
-X-CSE-ConnectionGUID: ckgM3mz3T4a55ViK+8/ceg==
-X-CSE-MsgGUID: qPSpTaQMR+e6g4DdWatQNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45557320"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="45557320"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 04:42:40 -0800
-X-CSE-ConnectionGUID: 9d/Dvm67Tv+k32DV6T21dQ==
-X-CSE-MsgGUID: 8IV8GeK4S0yX9YQPZz4z8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="95741296"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Dec 2024 04:42:38 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKzZT-0005Xp-2t;
-	Tue, 10 Dec 2024 12:42:35 +0000
-Date: Tue, 10 Dec 2024 20:42:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: drivers/usb/typec/ucsi/ucsi_yoga_c630.c:101:30: sparse: sparse:
- symbol 'yoga_c630_ucsi_ops' was not declared. Should it be static?
-Message-ID: <202412102033.J4vZNaaR-lkp@intel.com>
+	s=arc-20240116; t=1733834667; c=relaxed/simple;
+	bh=1Or8ky/gQQDQxZVueVYOIvTn9XadCmtEYG+XPJ56src=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HviwY0b/c2TMxdnCXnb4NKoNYNCkVuJm1g3ZxPg9FrbK1fVqUIPnLG3C3jHxOyBsEuPSY1AlWRCeN/YrpX9s6hWHYvowA4sWZeQGOI+jMZlxNdr0DmgIqGNT0Umwkm3SfwPZiSujOHC603a0vpdklGoLNnBOLJet9rC22LIMcwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=TsyEOpjz; arc=none smtp.client-ip=17.58.6.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733834666;
+	bh=gQGh6Z9zgbZ/t+U8O/w7cP42QXHfGREQL95maqlbm9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=TsyEOpjzGPcIadc/luHREOBryqzXjhEv8qWjLiUNQ2XA7sCujaXrCeQmWp0SF1j3X
+	 w9CWBDdYg9FhY9TyZWM/nhsp2/4jhgas83/r6GGpNyW5baDKKGfxj94v4Wxjb9cTiW
+	 LfC0S+NDRRt6i0qWvPebQ+LfgJsgAUViQSmY8iFaZpIkBNlK9CFE8qMuMNUu5eiORm
+	 XZz4GIiL+/H2wnkfUIyeFJ/4oEl96s7LSG+1MYklFMkajZxAG75AFoXX1ab9fpMeGa
+	 gVOCzTTQgJIHxRPijdVEDaF1kVADxOTqOfqlTQb2TW5ase3UXaBG8ORv+r5w0/UDJy
+	 8tNyks4MQeeeA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10021401.me.com (Postfix) with ESMTPSA id 2AC3B8E05A4;
+	Tue, 10 Dec 2024 12:44:21 +0000 (UTC)
+Message-ID: <dc989762-d868-44ff-968c-6d7be19e41cf@icloud.com>
+Date: Tue, 10 Dec 2024 20:44:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] of: property: Implement
+ of_fwnode_property_present() by of_property_present()
+To: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+ Leif Lindholm <leif.lindholm@linaro.org>,
+ Stephen Boyd <stephen.boyd@linaro.org>, Maxime Ripard <mripard@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Grant Likely
+ <grant.likely@secretlab.ca>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241206-of_core_fix-v1-0-dc28ed56bec3@quicinc.com>
+ <20241206-of_core_fix-v1-9-dc28ed56bec3@quicinc.com>
+ <CAL_JsqJvh5pddoVEgaKQvGth0ncgtC9AAGxMEiK__NiZKrjmxA@mail.gmail.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <CAL_JsqJvh5pddoVEgaKQvGth0ncgtC9AAGxMEiK__NiZKrjmxA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: l6rfo6fDJHytzY_G9afP-quudMfb-Lb1
+X-Proofpoint-ORIG-GUID: l6rfo6fDJHytzY_G9afP-quudMfb-Lb1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-10_06,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxlogscore=766 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2412100095
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7cb1b466315004af98f6ba6c2546bb713ca3c237
-commit: 2ea6d07efe5388d47afdb49079423334c97fe22b usb: typec: ucsi: add Lenovo Yoga C630 glue driver
-date:   6 months ago
-config: hexagon-randconfig-r122-20241210 (https://download.01.org/0day-ci/archive/20241210/202412102033.J4vZNaaR-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce: (https://download.01.org/0day-ci/archive/20241210/202412102033.J4vZNaaR-lkp@intel.com/reproduce)
+On 2024/12/10 00:48, Rob Herring wrote:
+> On Thu, Dec 5, 2024 at 6:54 PM Zijun Hu <zijun_hu@icloud.com> wrote:
+>>
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> of_property_read_bool() is deprecated for non-boolean property, but
+>> of_fwnode_property_present() still uses it.
+>>
+>> Fix by using of_property_present() instead of of_property_read_bool().
+> 
+> of_property_present() just calls of_property_read_bool(). For now. I'm
+> working on making using of_property_read_bool() on non-boolean a
+> warning. No point in this change until that happens.
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412102033.J4vZNaaR-lkp@intel.com/
+what about below idea?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/usb/typec/ucsi/ucsi_yoga_c630.c:101:30: sparse: sparse: symbol 'yoga_c630_ucsi_ops' was not declared. Should it be static?
+replace all of_property_read_bool() usages with of_property_present()
+then remove the former.
 
-vim +/yoga_c630_ucsi_ops +101 drivers/usb/typec/ucsi/ucsi_yoga_c630.c
+> Rob
 
-   100	
- > 101	const struct ucsi_operations yoga_c630_ucsi_ops = {
-   102		.read = yoga_c630_ucsi_read,
-   103		.sync_write = yoga_c630_ucsi_sync_write,
-   104		.async_write = yoga_c630_ucsi_async_write,
-   105	};
-   106	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
