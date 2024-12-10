@@ -1,329 +1,118 @@
-Return-Path: <linux-kernel+bounces-439869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F799EB538
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:41:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633A59EB53B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:41:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A77285B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347C3188624B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6127C1BC07B;
-	Tue, 10 Dec 2024 15:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="LFTYlwJk";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="hbQlnC90"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C7B1BD03F;
+	Tue, 10 Dec 2024 15:41:24 +0000 (UTC)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068391BAED6;
-	Tue, 10 Dec 2024 15:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733845262; cv=fail; b=fKQzhll3No2Iy5jBrj4pge9UtV21A1BgxFiSyYheDZtKBLC73ghDM2GL3yK7jYI0sfL81+tSumm4CT05JuAdgcxy57HEm25I2OAVXCyar9WtT8ccAz+BM0sBsy3/k4YdqMmzQ4RqSM16XXuYkimgMZBPVAvbF+/fk1t0ABNfTvg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733845262; c=relaxed/simple;
-	bh=xx9OGlyMWA+ZCfEDE/zVSR0WiOZyRnK7g97Awiaf61c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fJEX44hjytGivCJRYsCAphcFShsPIWJB207Vtn1ezMIYqKaPQtUVcwLTjuPC9LLf2KnUcw1ZX57BsmqgHeaZhhdUEvGLOTbC47z8jhMAR4E2ZHi2TT7iqkdVmyy3aSwv7VzTvDXnPlJvK/p9pPvDNbRggwfwwayVo3fWwGvcO+o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=LFTYlwJk; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=hbQlnC90; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 24D39480A33;
-	Tue, 10 Dec 2024 10:40:53 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733845252;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=viGzOwcqwCLVwVxfAG1ol+YDmxSbec8Tk3SBFWFyYpk=;
- b=LFTYlwJk5MubDFS20GYYlvcmz2anq5djcHHL3+ZoQtKeXEG45UVD7wKR4ryFKqMDwd2FV
- A9xp9QYXprDidp2DA==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733845252;
-	cv=none; b=MKY8PRs2U9FDBok0/wh5enK2cwbcvNzLJMUUYKZFdtVVZMNmtPidOsrDCJGANMR1+y1yoyi/vYf6HoxBK4DObYU0Y5h264sW72K2rSms/iz26h875hRSTPENC0Dy8xu/fHvG4aCajcGqecaA2VXqyIgXImBM/KWjBaTZ4J/r+mVwHAXqtv2EGor3dYJxy+6NMfmOhGa/eW+3yW4OJLnyd/oPSpzM3f1YWpEUJzLPVEl3ZT6Iw5siyCvkFYlqU1VHDFSKbppQYaDjfz5UGnv+UPUFYnIJ24VjvTvqbeGVcdlATLBF1khu/GyVQAQcKRHlAF9DziYRoHBpocd2wUQAnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1733845252; c=relaxed/simple;
-	bh=xx9OGlyMWA+ZCfEDE/zVSR0WiOZyRnK7g97Awiaf61c=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=or5aALtWSbfta0tfHYn3uO+ntBjh2NOpr587v75Cigw7sb195BNDXTz90/20IIVx1vFX62sakhKQTx8Q9B9Wa9zuOeWSK4IdgukQ+/epu8k8ZqlHyZSUEhCHrR3GlSAJcTuGCiC3CUSwUXWVWFAKtHE8oV75yAL2lZzkDe5fbb7ZWYqW+4qUz3McL7KwlUtPWcd0734hoH3y/q8Yw4+ON1IHHu/WHexf5Q9mHg3FjbOEFmIZMCG9ZaXT78QNjrpmIdz8Un6ycoHNPpRufLM102zFnkGvjkU4BkvoMzU55yKmgE2inPyN56/A3vCKKE6iaeNEbzzctN3LDz8UtPjhDQ==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733845252;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=viGzOwcqwCLVwVxfAG1ol+YDmxSbec8Tk3SBFWFyYpk=;
- b=hbQlnC90J5pqePwvPC1ZEcTBKYn3/EcftD7z65n+lsikCxvEGhHtlRQVw+1loKiAQagRU
- 82B/n2q3s5sTiUTmhEWpV+iUv+Y28gMSX/wQ9nnYjntFIfAHk617JG2e0eQtUTqJoDsqbFI
- TJ08/10/BpcwMCjMtsoPcs3P0V46hdEu7B6z75nIz8Liy4cZpQoHWu1bPLmtkbNdXzBDcC7
- fRt+QNT6H5NqGwiGsmUSe7NLQkQIauWjBwQDdQ7aYqaQefFDDjVJ65j5T8g4jzvM+/a5Pbp
- MUtOp2/TMjIoNKqMuh2JwiF0QVFEaFHXPzSs4Ewqce4E2DB/LK53kznGSlmg==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id D57BA280015;
-	Tue, 10 Dec 2024 10:40:52 -0500 (EST)
-Message-ID: <c7c1d564ed3d6612c132f0e5e9f45a18306877e0.camel@sapience.com>
-Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
-From: Genes Lists <lists@sapience.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jani Nikula
-	 <jani.nikula@linux.intel.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- linux-kernel@vger.kernel.org, 	akpm@linux-foundation.org,
- torvalds@linux-foundation.org, stable@vger.kernel.org, 
-	linux-media@vger.kernel.org, bingbu.cao@intel.com, Rodrigo Vivi	
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>,  Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Date: Tue, 10 Dec 2024 10:40:52 -0500
-In-Reply-To: <2024121001-senator-raffle-a371@gregkh>
-References: <2024120917-vision-outcast-85f2@gregkh>
-	 <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
-	 <Z1fqitbWlmELb5pj@kekkonen.localdomain> <87seqvzzg6.fsf@intel.com>
-	 <c1805642a6c5da6fef3927c70358c8cb851d2784.camel@sapience.com>
-	 <87bjxjzpwn.fsf@intel.com> <2024121001-senator-raffle-a371@gregkh>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-Xc8d1025CSmc9deeZWxz"
-User-Agent: Evolution 3.54.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69561BAED6;
+	Tue, 10 Dec 2024 15:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733845284; cv=none; b=mO6nlQfU+JJq0RV9qRcIjbKykuOr175vD2lHDlZNcjOLC39HOZte3PT7JqIbIMW28/EeZ7L+HlUTl65gNWOlAMM30/toudsbxrrtrBrZ7vTErcjkXpUTAo8eTAIesnpKVp41wOyeOp/fled41KZzLGir7obGnefyorlRh8a5llc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733845284; c=relaxed/simple;
+	bh=WGwOVXaxls9oMKmze/z9Q7IPNLkiCz+IAvZIRyXwimM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=drHrz+faeG+Hu3EwC2jk/22gASNtVQMKe8OiN5Lf6hIDRzReviKvT+3k76D4BcNFFa6d8doLh+BDoyFwav/2ZoWfuGmSc/U9Aeb8clyI0K/6a/KhrclIFG0RHZ+qP7K5QV61PmCBpo1Ud+jS8+Od/HrCYc1inafEgAoeZMOhoNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-85b83479f45so1101595241.0;
+        Tue, 10 Dec 2024 07:41:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733845280; x=1734450080;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UiU6dol6+4XO9aWJR+hvjMjVBST+e1yHPKcE/OhwbvU=;
+        b=bfskcUpIjom0s55X7dHRRnrz/O3IMmKqz23FKIhgY6gduMA3FtycW5ybymsVsuEhMD
+         FgVNXiw94zVG+GAYzGUdiy4buvcKKV3AkgNFQwxi470FCu9kwGGuM9n8stnRsZaou4JT
+         cVPXE+4Bh6CuZQQayR7DIi0BZ5qSAbWDOH3R11SNAo4LVWqkqaby+BBQw0AOvOZOCWde
+         SXkmA+omOR1Hf9tYuQuxiToEje5pYUssej5KJpgkPbnNjKGdBcHB9Pi7cKhTPmUEqaCK
+         VpUl9h3SavTBEQuL0s4gSYbbydCa+uii6eRPXuO56m9vvekS4Kmv43bx/OhvI/ghfPZi
+         AJUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGyR4tLdhyGuxRnVktdJKULB+dpDN7O24QoCnlsfZktCkUN+RDf6dQW2U+rR+oBLJZy5l5eHkoLYDT@vger.kernel.org, AJvYcCW78c1JMnRPdTyiN0CH7Y5Z0GL1DUbScu+CvZhPbdmffa+rF33e9VgY9+5wksHVwLnLsTBRgKL1loj9@vger.kernel.org, AJvYcCWN13OfixtCfAvw3zNeUXHtgJnbhVkxSwNzrZxB7EScjw8ROJVEdy6ieXVjUof4ljXpVOYnzYCkIuoXsRZkgq1Rw1g=@vger.kernel.org, AJvYcCXtNtQOq3zIQ0saSLad9JJNfRPlkfnzYwD2GOmkofHmOUhXQ6R+De1CsYNS9NTS/E0jQrIo4Qyjr9Hw5r1O@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHrNkp2neh0aRsS0YZtn0iJo3+GXRYL6qLEHE0Kr/61F4Ty7f4
+	1lYGXRMRi3dYvOXz3otzXabdDNq5r7A9qrRJC1TJh1dTSw5qWbSEM1LBP5V4
+X-Gm-Gg: ASbGncvaYvJ6bSNQ417BanRurv51HIhiMqob++4A8puzNkJ0CYKBhDfZRSwQAFkx5eC
+	U4PrLh3gyjU5pB6N6nOe4RaDvFyYz2pa2VNApkO+TeXImlp01Ayqny4EJkyBl8UK8nn3OdAIrKZ
+	YxezSDkqziF6HRHQo4sFAjqOuvAbsFWaZudb10yfl2x2Akl8+jbQWWUNUMIrh+XFkkIty2PXbj6
+	2b0vzzgsdLXcJTUdXTcb2ua3jrIMEH6PiJi6vm5bo+mKwqOC9TJ1GScf1QYCfj77+jPcpGpI+Dl
+	wD5fAJlruvdTExub
+X-Google-Smtp-Source: AGHT+IH4JO2irsPj8it2M4hKY3TSjZf9qQs+vHE597KV57HHN+SokDqdYYIUizbPzBnR15DEbA6hRw==
+X-Received: by 2002:a05:6122:30a1:b0:516:1b30:8797 with SMTP id 71dfb90a1353d-5161b308baemr9580292e0c.11.1733845278419;
+        Tue, 10 Dec 2024 07:41:18 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5160abcdc9csm670869e0c.10.2024.12.10.07.41.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 07:41:17 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4afdfefc6c1so932103137.0;
+        Tue, 10 Dec 2024 07:41:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCULQBUXt4AAkfKT+J+gbgEt+IczVoiqtn27sYWQFW4pc25s9edJV398zqauz+HM5+roy7K9UeCee+uliaORW2UKfwM=@vger.kernel.org, AJvYcCVCePdZqqroW7EjeVFl1lM7LsKnxRVNlLRmFFMreY0uGPj8X+llc+pzvZkTPsKqlv/moLIc2mStzSHlwmNN@vger.kernel.org, AJvYcCWQIIePpTSF2ETxYNsIKAgGBesAF8uaPhL+r9A4ILRg5YFoQkfQI7cruw0f4/ACpbY6A+McZZSP+Y9i@vger.kernel.org, AJvYcCXLQ+DuSsD2yj4L1Evz5w/+VjKXzhIIHg3khjgAcII6LHX1ifYJ9ID4IXbkll15iOPlXULEWZLUUHCE@vger.kernel.org
+X-Received: by 2002:a05:6102:5494:b0:4b1:14f3:5d6d with SMTP id
+ ada2fe7eead31-4b114f36884mr5547677137.6.1733845277603; Tue, 10 Dec 2024
+ 07:41:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-Xc8d1025CSmc9deeZWxz
-Content-Type: multipart/alternative; boundary="=-ATW+YCb9hWsFseu7CJ2a"
-
---=-ATW+YCb9hWsFseu7CJ2a
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-16-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241126092050.1825607-16-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Dec 2024 16:41:06 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUAXG9yLq0L-w7LOaURfPXVka+Bwt9oGoNVS_PJcd+aEw@mail.gmail.com>
+Message-ID: <CAMuHMdUAXG9yLq0L-w7LOaURfPXVka+Bwt9oGoNVS_PJcd+aEw@mail.gmail.com>
+Subject: Re: [PATCH v2 15/15] arm64: dts: renesas: rzg3s-smarc: Enable USB support
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, gregkh@linuxfoundation.org, 
+	yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-12-10 at 13:37 +0100, Greg Kroah-Hartman wrote:
-> > t's a clue nonetheless.
->=20
-> 'git bisect' would be nice to run if possible...
+On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Enable USB support (host, device, USB PHYs).
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - this was patch 15/16 in v1:
+> - dropped sysc enablement as it is now done in SoC dtsi file
 
-Done:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-a) One (hopefully) small caveat :
-the very first bisect hit the 6.12.2 bug of missing commit b23decf8ac91
-("sched: Initialize idle tasks only once").
-I applied the commit and continued.
+Gr{oetje,eeting}s,
 
-b) Result :
-
-6ac269abab9ca5ae910deb2d3ca54351c3467e99 is the first bad commit
-commit 6ac269abab9ca5ae910deb2d3ca54351c3467e99 (HEAD)
-Author: Bingbu Cao <bingbu.cao@intel.com>
-Date: Wed Oct 16 15:53:01 2024 +0800
-
-media: ipu6: not override the dma_ops of device in driver
-
-[ Upstream commit daabc5c64703432c4a8798421a3588c2c142c51b ]
-
-DMA ops are a helper for architectures and not for drivers to override
-the
-DMA implementation. Driver should not override the DMA implementation.
-
-This patch removes the dma_ops override from auxiliary device and adds
-driver-internal helpers that use the actual DMA mapping APIs.
-
-Fixes: 9163d83573e4 ("media: intel/ipu6: add IPU6 DMA mapping API and
-MMU table")
-Signed-off-by: Bingbu Cao <bingbu.cao@intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-[Sakari Ailus: Fix the commit message a little.]
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-
-drivers/media/pci/intel/ipu6/ipu6-bus.c | 6 --
-drivers/media/pci/intel/ipu6/ipu6-buttress.c | 21 +++++--
-drivers/media/pci/intel/ipu6/ipu6-cpd.c | 18 +++---
-drivers/media/pci/intel/ipu6/ipu6-dma.c | 195
-+++++++++++++++++++++++++++++---------------------------------
-drivers/media/pci/intel/ipu6/ipu6-dma.h | 34 ++++++++++-
-drivers/media/pci/intel/ipu6/ipu6-fw-com.c | 14 ++---
-6 files changed, 156 insertions(+), 132 deletions(-)
-
-c) git bisect log
-
-git bisect start
-# status: waiting for both good and bad commits
-# good: [d390303b28dabbb91b2d32016a4f72da478733b9] Linux 6.12.1
-git bisect good d390303b28dabbb91b2d32016a4f72da478733b9
-# status: waiting for bad commit, 1 good commit known
-# bad: [61baee2dc5341c936e7fa7b1ca33c5607868de69] Linux 6.12.4
-git bisect bad 61baee2dc5341c936e7fa7b1ca33c5607868de69
-# bad: [2bc07714dc955a91d2923a440ea02c3cb3376b10] virtiofs: use pages
-instead of pointer for kernel direct IO
-git bisect bad 2bc07714dc955a91d2923a440ea02c3cb3376b10
-# bad: [6f2648838ce1a9f2c432e84e38dec5d38412a551] wifi: wilc1000: Set
-MAC after operation mode
-git bisect bad 6f2648838ce1a9f2c432e84e38dec5d38412a551
-# good: [e20117a105d4174c2daf4d6da17b92d757487e60] media: i2c:
-max96717: clean up on error in max96717_subdev_init()
-git bisect good e20117a105d4174c2daf4d6da17b92d757487e60
-# bad: [74f21be9990a42dc2357bcf87a13e16c6998b90e] drm/vc4: hdmi: Avoid
-hang with debug registers when suspended
-git bisect bad 74f21be9990a42dc2357bcf87a13e16c6998b90e
-# good: [dfdd0e8ff65dfc4183b622c3ffd8d8c5d572ca34] dt-bindings: cache:
-qcom,llcc: Fix X1E80100 reg entries
-git bisect good dfdd0e8ff65dfc4183b622c3ffd8d8c5d572ca34
-# good: [b0cd515202cb31c89d7de46b103a7ff2de9de02b] media: ipu6: Fix DMA
-and physical address debugging messages for 32-bit
-git bisect good b0cd515202cb31c89d7de46b103a7ff2de9de02b
-# bad: [3d48d0fbaaa74a04fb9092780a3f83dc4f3f8160] HID: hyperv:
-streamline driver probe to avoid devres issues
-git bisect bad 3d48d0fbaaa74a04fb9092780a3f83dc4f3f8160
-# bad: [e3692460675bfe07f677711ead09a7a43934aa2f] pwm: Assume a
-disabled PWM to emit a constant inactive output
-git bisect bad e3692460675bfe07f677711ead09a7a43934aa2f
-# bad: [11b0543efe54357b94dccb88dac2099c59358cd4] media: ipu6: remove
-architecture DMA ops dependency in Kconfig
-git bisect bad 11b0543efe54357b94dccb88dac2099c59358cd4
-# bad: [6ac269abab9ca5ae910deb2d3ca54351c3467e99] media: ipu6: not
-override the dma_ops of device in driver
-git bisect bad 6ac269abab9ca5ae910deb2d3ca54351c3467e99
-# first bad commit: [6ac269abab9ca5ae910deb2d3ca54351c3467e99] media:
-ipu6: not override the dma_ops of device in driver
-
-
-
+                        Geert
 
 --=20
-Gene
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
---=-ATW+YCb9hWsFseu7CJ2a
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><style>pre,code,address {
-  margin: 0px;
-}
-h1,h2,h3,h4,h5,h6 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-ol,ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-blockquote {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-</style></head><body><div>On Tue, 2024-12-10 at 13:37 +0100, Greg Kroah-Har=
-tman wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; bord=
-er-left:2px #729fcf solid;padding-left:1ex"><blockquote type=3D"cite" style=
-=3D"margin:0 0 0 .8ex; border-left:2px #729fcf solid;padding-left:1ex"><div=
->t's a clue nonetheless.<br></div></blockquote><div><br></div><div>'git bis=
-ect' would be nice to run if possible...<br></div></blockquote><div><br></d=
-iv><div>Done:</div><div><br></div><div>a) One (hopefully) small caveat :</d=
-iv><div>  the very first bisect hit the 6.12.2 bug of missing commit b23dec=
-f8ac91</div><div>  ("sched: Initialize idle tasks only once").</div><div>  =
-I applied the commit and continued.</div><div><br></div><div>b) Result :</d=
-iv><div><br></div><div>6ac269abab9ca5ae910deb2d3ca54351c3467e99 is the firs=
-t bad commit</div><div>commit 6ac269abab9ca5ae910deb2d3ca54351c3467e99 (HEA=
-D)</div><div>Author: Bingbu Cao &lt;<a href=3D"mailto:bingbu.cao@intel.com"=
->bingbu.cao@intel.com</a>&gt;</div><div>Date:   Wed Oct 16 15:53:01 2024 +0=
-800</div><div><br></div><div>    media: ipu6: not override the dma_ops of d=
-evice in driver</div><div><br></div><div>    [ Upstream commit daabc5c64703=
-432c4a8798421a3588c2c142c51b ]</div><div><br></div><div>    DMA ops are a h=
-elper for architectures and not for drivers to override the</div><div>    D=
-MA implementation. Driver should not override the DMA implementation.</div>=
-<div><br></div><div>    This patch removes the dma_ops override from auxili=
-ary device and adds</div><div>    driver-internal helpers that use the actu=
-al DMA mapping APIs.</div><div><br></div><div>    Fixes: 9163d83573e4 ("med=
-ia: intel/ipu6: add IPU6 DMA mapping API and MMU table")</div><div>    Sign=
-ed-off-by: Bingbu Cao &lt;<a href=3D"mailto:bingbu.cao@intel.com">bingbu.ca=
-o@intel.com</a>&gt;</div><div>    Reviewed-by: Christoph Hellwig &lt;<a hre=
-f=3D"mailto:hch@lst.de">hch@lst.de</a>&gt;</div><div>    [Sakari Ailus: Fix=
- the commit message a little.]</div><div>    Signed-off-by: Sakari Ailus &l=
-t;<a href=3D"mailto:sakari.ailus@linux.intel.com">sakari.ailus@linux.intel.=
-com</a>&gt;</div><div>    Signed-off-by: Hans Verkuil &lt;<a href=3D"mailto=
-:hverkuil@xs4all.nl">hverkuil@xs4all.nl</a>&gt;</div><div>    Signed-off-by=
-: Sasha Levin &lt;<a href=3D"mailto:sashal@kernel.org">sashal@kernel.org</a=
->&gt;</div><div><br></div><div> drivers/media/pci/intel/ipu6/ipu6-bus.c    =
-  |   6 --</div><div> drivers/media/pci/intel/ipu6/ipu6-buttress.c |  21 ++=
-+++--</div><div> drivers/media/pci/intel/ipu6/ipu6-cpd.c      |  18 +++---<=
-/div><div> drivers/media/pci/intel/ipu6/ipu6-dma.c      | 195 +++++++++++++=
-++++++++++++++++---------------------------------</div><div> drivers/media/=
-pci/intel/ipu6/ipu6-dma.h      |  34 ++++++++++-</div><div> drivers/media/p=
-ci/intel/ipu6/ipu6-fw-com.c   |  14 ++---</div><div> 6 files changed, 156 i=
-nsertions(+), 132 deletions(-)</div><div><br></div><div>c) git bisect log</=
-div><div><br></div><div>git bisect start</div><div># status: waiting for bo=
-th good and bad commits</div><div># good: [d390303b28dabbb91b2d32016a4f72da=
-478733b9] Linux 6.12.1</div><div>git bisect good d390303b28dabbb91b2d32016a=
-4f72da478733b9</div><div># status: waiting for bad commit, 1 good commit kn=
-own</div><div># bad: [61baee2dc5341c936e7fa7b1ca33c5607868de69] Linux 6.12.=
-4</div><div>git bisect bad 61baee2dc5341c936e7fa7b1ca33c5607868de69</div><d=
-iv># bad: [2bc07714dc955a91d2923a440ea02c3cb3376b10] virtiofs: use pages in=
-stead of pointer for kernel direct IO</div><div>git bisect bad 2bc07714dc95=
-5a91d2923a440ea02c3cb3376b10</div><div># bad: [6f2648838ce1a9f2c432e84e38de=
-c5d38412a551] wifi: wilc1000: Set MAC after operation mode</div><div>git bi=
-sect bad 6f2648838ce1a9f2c432e84e38dec5d38412a551</div><div># good: [e20117=
-a105d4174c2daf4d6da17b92d757487e60] media: i2c: max96717: clean up on error=
- in max96717_subdev_init()</div><div>git bisect good e20117a105d4174c2daf4d=
-6da17b92d757487e60</div><div># bad: [74f21be9990a42dc2357bcf87a13e16c6998b9=
-0e] drm/vc4: hdmi: Avoid hang with debug registers when suspended</div><div=
->git bisect bad 74f21be9990a42dc2357bcf87a13e16c6998b90e</div><div># good: =
-[dfdd0e8ff65dfc4183b622c3ffd8d8c5d572ca34] dt-bindings: cache: qcom,llcc: F=
-ix X1E80100 reg entries</div><div>git bisect good dfdd0e8ff65dfc4183b622c3f=
-fd8d8c5d572ca34</div><div># good: [b0cd515202cb31c89d7de46b103a7ff2de9de02b=
-] media: ipu6: Fix DMA and physical address debugging messages for 32-bit</=
-div><div>git bisect good b0cd515202cb31c89d7de46b103a7ff2de9de02b</div><div=
-># bad: [3d48d0fbaaa74a04fb9092780a3f83dc4f3f8160] HID: hyperv: streamline =
-driver probe to avoid devres issues</div><div>git bisect bad 3d48d0fbaaa74a=
-04fb9092780a3f83dc4f3f8160</div><div># bad: [e3692460675bfe07f677711ead09a7=
-a43934aa2f] pwm: Assume a disabled PWM to emit a constant inactive output</=
-div><div>git bisect bad e3692460675bfe07f677711ead09a7a43934aa2f</div><div>=
-# bad: [11b0543efe54357b94dccb88dac2099c59358cd4] media: ipu6: remove archi=
-tecture DMA ops dependency in Kconfig</div><div>git bisect bad 11b0543efe54=
-357b94dccb88dac2099c59358cd4</div><div># bad: [6ac269abab9ca5ae910deb2d3ca5=
-4351c3467e99] media: ipu6: not override the dma_ops of device in driver</di=
-v><div>git bisect bad 6ac269abab9ca5ae910deb2d3ca54351c3467e99</div><div># =
-first bad commit: [6ac269abab9ca5ae910deb2d3ca54351c3467e99] media: ipu6: n=
-ot override the dma_ops of device in driver</div><div><br></div><div><br></=
-div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-left:2px #=
-729fcf solid;padding-left:1ex"></blockquote><div><br></div><div><span><pre>=
--- <br></pre><div><span style=3D"background-color: inherit;">Gene</span></d=
-iv><div><br></div></span></div></body></html>
-
---=-ATW+YCb9hWsFseu7CJ2a--
-
---=-Xc8d1025CSmc9deeZWxz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1hhBAAKCRA5BdB0L6Ze
-20+rAP97KbKEdNUT4x2dEC2CJCla1VPNBrE7XB17L954YKeHFQEA+apfQps2aZhO
-ydg+2W3peknkjwV0D4x6Hjvl13T0Fw4=
-=AmRv
------END PGP SIGNATURE-----
-
---=-Xc8d1025CSmc9deeZWxz--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
