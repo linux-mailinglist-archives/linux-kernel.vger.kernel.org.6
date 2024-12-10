@@ -1,108 +1,80 @@
-Return-Path: <linux-kernel+bounces-438876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76389EA7D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:29:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56CC21889687
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:29:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37F9227599;
-	Tue, 10 Dec 2024 05:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="r4E/7f7K"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200939EA7DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:30:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA05228372;
-	Tue, 10 Dec 2024 05:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CB1284512
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:30:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFDB22619D;
+	Tue, 10 Dec 2024 05:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AAYRabqU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD0E1BC58;
+	Tue, 10 Dec 2024 05:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808507; cv=none; b=A6ZQTmNmJDeEeBU7I53c+k7rHFD/tMyXzBNP7WjNf9vPdxHY5DZ3scvqEFoGGprQPLRHqRwywYNoR2fmos/CducIbjhLkDwtUGPMjuzNhEBYIEPAszY/QIpK7w5twgjEajkhcmzYb17gEE9lBgbVg/7m1hk3nQRcZ52lKoosCF0=
+	t=1733808613; cv=none; b=pww9Jx6AngJeR0JNhQjG44WuDonCzySUKjqCHhPSjq/OQjOsEwygj/0w9TbSH0NvkNCEH279kZNrEacTYMhNVM5XPayNXtE8EUcrGeyhiS0n/YQ0GKCRfosRUwS2vQsqi8n1VJsfvsfCtV9rqLz34c+yoJJs6lK1RyEIMx3X1qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808507; c=relaxed/simple;
-	bh=+DwSGOXuuqNabZsdzSbD+HwDHQWTNMD+nwplOuyHAhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=eGSUGyn5fOj6Qb0iawsuQF2xjkBO5ByBx5kSaxmndnFw3dogyTyK69S4uBePMR3gHQ4tZ5Rry/WOnmjlOkBDzF1WqtZsfPN4VMCMPKQNlKSCAG948lcA1E3qKTjjgKcoSzRIvMpA9oH09vCc38txKFLV68KL+pnNvvYr8iQqWBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=r4E/7f7K; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
-	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jS0KRHv3gisGkGaPcXBUeChmcT/fU7BjmCvQPNgWfQg=; b=r4E/7f7KUMd2ELmW7GfAM1kI8d
-	QQhp2W3uyJbFMjHLvboh8hECFZsjD4HMIDaCzI75hoqNLwpaL4/izZtq6898nLEEKaQ6AlFzUetif
-	XZ4uS1YyVVotNo+7EExeCxeRzGcrmy1Ce3Ogr0pvTSty5yljVO2+9Fh2Njbe5yPFctw7wxCqua88J
-	Fn4JntnmlcwqQo+P9DZ8iZBSrsixMqtmSsLJYFPtWDiS7rkhPTsc/e6KUCesTPduCkOTnBfq01giQ
-	Flohwb8YDNApLuvll9GGOWfazxgqAlc5Ln4cSRFjV5jN+4VAvXIIdbJFfRgjpy3U8oSvDhIjw+Ukf
-	eozgGcsw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tKsaD-000O2Z-1T;
-	Tue, 10 Dec 2024 13:28:15 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 13:28:14 +0800
-Date: Tue, 10 Dec 2024 13:28:14 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: hadar.gat@arm.com, olivia@selenic.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaopei01@kylinos.cn,
-	Tian Tao <tiantao6@hisilicon.com>
-Subject: Re: [PATCH] hwrng: cctrng: Add cancel_work_sync before module remove
-Message-ID: <Z1fRbqh2_2gSpgkJ@gondor.apana.org.au>
+	s=arc-20240116; t=1733808613; c=relaxed/simple;
+	bh=gKyLl7Ni8EQo6bSoMRSm1z+uDOmvAFDa0qi1Zuxu0PY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jaCnHzI/qIcgzMtoyaNvtNzgyPJ1MhlXbuEtTKHxeRO7A94By+YV0kF+pVbjqY71pIpTY5Mw8RzdAP6IRbHq3fFxtEJq2S7c7aH8w8r6WYXQqkBtgwS+2xVsj7V7de1CZ8ACz0RGu9zClwrFXsoJYa5wjJhAt0v4jnmp6VvgJtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AAYRabqU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C30C4CED6;
+	Tue, 10 Dec 2024 05:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1733808613;
+	bh=gKyLl7Ni8EQo6bSoMRSm1z+uDOmvAFDa0qi1Zuxu0PY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AAYRabqUYAEfJZW8m5Ro7cRX9qy0pZ/k7LUDYS91uGD6RFAmVKnHUWqz5VQ/0Seay
+	 OeSRANvCFLZw5Z5BG9+4MQQfflmx75tRys7Z32yl+/IQeA6JTKbzMZx7uobhZKAxY7
+	 Yw6gbLcUxvZQE1j+tDNMTJVGg7Nh4GzA5ZW17qR4=
+Date: Mon, 9 Dec 2024 21:30:12 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Suren Baghdasaryan <surenb@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, SeongJae Park <sj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-Id: <20241209213012.79c59371f25c08bcedfbc0c9@linux-foundation.org>
+In-Reply-To: <20241210160011.00c3dcd0@canb.auug.org.au>
+References: <20241209170829.11311e70@canb.auug.org.au>
+	<20241209182557.8794e5b886e4ca91994ed0d7@linux-foundation.org>
+	<20241210160011.00c3dcd0@canb.auug.org.au>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d71e0bcee781ebe12697df94083f16d651fb30c0.1732786634.git.xiaopei01@kylinos.cn>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Pei Xiao <xiaopei01@kylinos.cn> wrote:
-> Be ensured that the work is canceled before proceeding with
-> the cleanup in cc_trng_pm_fini.
+On Tue, 10 Dec 2024 16:00:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> On Mon, 9 Dec 2024 18:25:57 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > How about this?
 > 
-> Fixes: a583ed310bb6 ("hwrng: cctrng - introduce Arm CryptoCell driver")
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> ---
-> drivers/char/hw_random/cctrng.c | 2 ++
-> 1 file changed, 2 insertions(+)
+> Unfortunately:
 > 
-> diff --git a/drivers/char/hw_random/cctrng.c b/drivers/char/hw_random/cctrng.c
-> index 4db198849695..fd1ee3687782 100644
-> --- a/drivers/char/hw_random/cctrng.c
-> +++ b/drivers/char/hw_random/cctrng.c
-> @@ -127,6 +127,8 @@ static void cc_trng_pm_fini(struct cctrng_drvdata *drvdata)
-> {
->        struct device *dev = &(drvdata->pdev->dev);
-> 
-> +       cancel_work_sync(&drvdata->compwork);
-> +       cancel_work_sync(&drvdata->startwork);
->        pm_runtime_disable(dev);
-> }
+> In file included from mm/damon/vaddr.c:736:
+> mm/damon/tests/vaddr-kunit.h: In function 'damon_test_three_regions_in_vmas':
+> mm/damon/tests/vaddr-kunit.h:81:36: error: passing argument 2 of '__link_vmas' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+>    81 |         if (__link_vmas(&mm.mm_mt, vmas, ARRAY_SIZE(vmas)))
+>       |                                    ^~~~
+> mm/damon/tests/vaddr-kunit.h:17:70: note: expected 'struct vm_area_struct *' but argument is of type 'const struct vm_area_struct *'
+>    17 | static int __link_vmas(struct maple_tree *mt, struct vm_area_struct *vmas,
+>       |                                               ~~~~~~~~~~~~~~~~~~~~~~~^~~~
 
-I don't think this is right.  This is a problem with using devres:
-you need to be very careful with unwinding things.  The remove
-occurs before all devm resources are released.  So the device is
-still registered with the hwrng core and potentially live.
-
-These work tasks are created by the ISR.  So they should only be
-cancelled after the IRQ handler has been unregistered.
-
-Perhaps we should just rip out all the devm code and go back to
-manual freeing.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Bah.  OK, I'll drop the const.
 
