@@ -1,120 +1,161 @@
-Return-Path: <linux-kernel+bounces-438796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B729EA616
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:59:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 383569EA61B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D7D1886B20
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A1F188B719
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832B01D5CE8;
-	Tue, 10 Dec 2024 02:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013461C4A16;
+	Tue, 10 Dec 2024 02:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="ibYzfgWm"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i0O3a8Ck"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA2A1D31B5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74931A23AC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733799548; cv=none; b=E7Q8j3Mh5aoRTQNtaf+xF8GiP5yNEFhIZX0iolb0Dm7+sxqYEuiF7nlITXdGJ6jx8nEgqVD27cSvYpNrbzWGT1C8GWydg17QpJ4DdxhZgMFYOB243JptItP38mAzWI4/pUQ3NF4ZK2CAVXFwzIq1daEhLUgyv2BttaEpfx9Cj8M=
+	t=1733799598; cv=none; b=fAOoo6pl23sucpo8J9oU/38aaL8rLAUtYPjtQv2sAAS6X+xtfzlc3vb3jBwMr/xmez0c1B3Dr7olRCYoixxv6sn5JDdk+Jm+hHom8UIqQHvrospcFJay/fVvsibntwWPFkvaelDp0BJLNJ+E9Pr4c6OdFK8pAM5vCjm6CKvB1Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733799548; c=relaxed/simple;
-	bh=bfsUeisHEu6lR+oxAOInMQv/E9b73VupUc7a5RdlakM=;
+	s=arc-20240116; t=1733799598; c=relaxed/simple;
+	bh=01Tx+4XzEZ+NTO2+o9iHtwlXrsiYXte+gysvc6H9Cjw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H0V8CHXflCb/iygY9kmZeCC7RMH5VGoOQJBscWWou36+0Axi4qc6TcxP/4xVzLWYxbCIeQ8awEU41BKZgs57PhMjR9Km8ciD2+ysYyayHL1BOCRM8StNlbahdRhvxOmIqOhKD+QT0l8bC4pk0+BZuT2ci+WCQIOoGiAnwQXZ8KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=ibYzfgWm; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitbyteword.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6eff5f6fe07so20156437b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 18:59:06 -0800 (PST)
+	 To:Cc:Content-Type; b=nOw+P4GvX90eI+XMQnYGefB2oWepcq93Ar1f4zTaqO9v0MKMhsDNtUPIhkNKB+8YXHu71SJrttXa7H//zEez6/LxQ6+AVF7JAU5HEBipNrC5J8iv4JgHTccuYcKKMVP4b+b/xCzlRTt/JGBpZJWuiNLXEFHUb6Du9Dgjz6tWmlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i0O3a8Ck; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-467431402deso53491cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 18:59:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bitbyteword.org; s=google; t=1733799546; x=1734404346; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rs/gW358ue5xC/zVahNg27eE6CQJ16ZkM7/3bu7P/XU=;
-        b=ibYzfgWmgK5DQYAE2AP2KA8L6GoJnqNwBjwBv42pfNY+xFuA7LTtIHd9643GQIeXmt
-         t9lKQOrxlrtaIB9dqA9y6b/CYbaa0be649iM9Ckn2D0CHil0/hHQmuRPeckMZGQhoz2+
-         EYlUs13ZFKacLyBsTD53WZ1ElgQFygDbrGFzWu/WCN9lsWz+9K31bZn/fSyZvPO4rb3L
-         EQrBy0604IClHcVpIHgMoH2RF2a6K6EAzH9Nu/BndzsF/0wvC4xL/GQtNU/vKII+oeHU
-         pUR6cfZLmeJXDRoXJLVCgRL5D0W5+l50vX8y7i9W4TO4mvZnrL1iBJ8FOgECYQufHEHU
-         YlyQ==
+        d=google.com; s=20230601; t=1733799596; x=1734404396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TqtikDvWFJLEEUaQWd5b4CM9UaFy67luahhU5hmTSNg=;
+        b=i0O3a8CkrwWNE1dFf9jaQbpmmCd1aLpAKfJBYHWiAUsCpNBI+qCVk7zCsLApXR8OoJ
+         8S+eOdtRT6F8EIJQafnhvIHXJq2kxc4gGjdwPr/Rf4V9L8HdhfK+STsM04MxMszWfm1O
+         F+M8oqrJo//b8BREs5HBE3GSneN5IUGsgfmRoaUVz6VLWS76wBtwb8V1iZLW8ej+pTJU
+         hkfUFd7a7WxoRi/ezSOLk3DGp7ZixVg5BGpyIBHE5KQyd0ydDVJNCFEQAJ6ALnD8kwvB
+         Yrkri1X6xWoV/Gd0e5GK0ruCv/hPhJO+wbuS8S54VYMfgoMLNREdRxvi2zKz+Or1WmTG
+         aOAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733799546; x=1734404346;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rs/gW358ue5xC/zVahNg27eE6CQJ16ZkM7/3bu7P/XU=;
-        b=aR/jPBAQTQrkhiFFdTWNH0kMi4uz9czYPxAXL4C+N8tcksQwfEE5zao+f29T7kfy7g
-         Ui4PFxBqmvuCxodyajd1UAWrv/JB+5k8pE0fzM3yQtN5a1GERLTIYgBib/lhhZ+zrMQk
-         q/gH4lBHDrrkdOxZpCaojYXdezhAe0AgvS+qC0WkA+k+X/S0YcWXY9/cdIICUuAi5UXi
-         bgeSyX4Po2esfEZxOu0pphSUd1dQboA9cb9BIPqSK9jD6j+aI5RFCnEXPrYpH6CHoZYa
-         iPk5JCiNo2piucccEMr6PKth/JILmV1zDLZ0ThJpB3Jmq4C3rgWv9gbjZExiuoCPRjS2
-         VXGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHbRUppsfhxClSKIfylibvD6YaXZN/8nb8Plg1gpvbHolXWj9yKRuO6cJAimjVPnEe3/7m01gUohlZzI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUGQAAExqUkzmf/CdyhVkCON5yQr1sYx5aKIytbDXxsiCbMXpE
-	Loh8oGGZyn8gDqEYTZLxVGr03ujlGWcK53XyE3BYBzV52AYCZ2TncNntZjvA/eY9Ra8E7yCFjye
-	6wJbS8cSb7fvAOeGgcI9br3xJqTC6HzTKM43L6g==
-X-Gm-Gg: ASbGncta7A0jqdkCCvfF4EWDc1SkuIty8Bo+jh7XdeOsIMROdaDwLuQrYfk6v3XaZOn
-	TOfSZW4vmh6tuEKvHmUg7IJp93dQAM6006tI=
-X-Google-Smtp-Source: AGHT+IGuRz2Smsv5Gv0WeNvOJXdl+g1uOqY3a7aG3ffg7RUTxEcYRsKmrrwaOk2UxHLS6sZUeRQh8/wRJ/BwT5mfMCg=
-X-Received: by 2002:a05:690c:6f86:b0:6e5:adf8:b0a8 with SMTP id
- 00721157ae682-6f0258377cbmr19715607b3.6.1733799545816; Mon, 09 Dec 2024
- 18:59:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733799596; x=1734404396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TqtikDvWFJLEEUaQWd5b4CM9UaFy67luahhU5hmTSNg=;
+        b=Td91b7qjwjinpb9Qtw7yY/+3GmSS7YJxXykUnCCRRx4G89K+CroLUikYTbPZc7pHvs
+         t4bVE/mqZGmJ5yvKskyEz+H4Ad+2uKunJGpVG1MOGY2srPsixwwlHKz1GJ0ILLmXhZQN
+         ge353i3VfNnFXfAyH0ZyElDGzPM4mNB2JlhaiJcGswMVryfdkhfMbs+NWohZk53lZ5Vh
+         9G+FJq1wJsxsO03OroUwUGJcMGFfsfjD15rFLHXDH53GrmDle/cINK6A6MyH6yuMnbar
+         25V3nwr43vSIcyEp5z0izRYdTSODxmyf/JsSkU4VcM/UnXUxK29T2Ayr0tF/4F+OsFkg
+         qGjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSW2S2PbqgvoPe9dihqwDQhYITkaKPUA9upKGQcGoNOawaNStLg/aQkidNdJ7Fzp7KwfF1lF9jGPpvLEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdOvGGI9G3e/3mf9pnSa0n9dT+o27pdLvWQPh/YKVLObgpf8yG
+	+9IZbhyGPfTcA8IbELI1HxTB33l/YIixzVdwXbPMy5Y38wtC0KSy0krw09Chm8Cw/j9PyMr5mlz
+	8sEgWlHB6pAdKsf7pPKKAoOHZUoUIw36hYQA78B9/r/Jc28uwjgU7
+X-Gm-Gg: ASbGncuycqwsdbOeu8CSWGh9tHnTvu6mfK6a07gbhhjM5L4XY7Hgqjaq1F9YgIfTWT3
+	yGUiLzFPKwVhTlWYyvdsILJHDlQUHALIUvGw=
+X-Google-Smtp-Source: AGHT+IEHE/+Pilo+iwwcHWSCM+Hn33u8h4+xxjiqwbHH0akU+zubulaaVV4fWsU6X3yv/eY6vzu7g5PFNTMEm7xTYHY=
+X-Received: by 2002:a05:622a:229a:b0:465:18f3:79cc with SMTP id
+ d75a77b69052e-46777643edbmr1230341cf.11.1733799595361; Mon, 09 Dec 2024
+ 18:59:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <571b2045-320d-4ac2-95db-1423d0277613@ovn.org> <20241206151819.GA3949140@google.com>
- <CAO7JXPhdv+Jx_UpAq=-aG-BKwiyjZ2kvuZDM4+GLjbya_=ZJsw@mail.gmail.com>
- <20241209105514.GK21636@noisy.programming.kicks-ass.net> <CAO7JXPgSYCzu0mtnWqBaS8ihmoQXX3WE_Yb_rEYuMeQn+B6KJg@mail.gmail.com>
- <20241209125601.GQ35539@noisy.programming.kicks-ass.net> <8ff30c5d-b8ac-4825-874a-d73931b85014@ovn.org>
- <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
-In-Reply-To: <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
-From: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-Date: Mon, 9 Dec 2024 21:58:55 -0500
-Message-ID: <CAO7JXPjGFmfwAVcSaRhtM2Mf=V9P6oQm6H=QfHcFhtkLU8magQ@mail.gmail.com>
-Subject: Re: [v6.12] WARNING: at kernel/sched/deadline.c:1995
- enqueue_dl_entity (task blocked for more than 28262 seconds)
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, vineethrp@google.com, 
-	shraash@google.com, marcel.ziswiler@codethink.co.uk
+References: <20241209170829.11311e70@canb.auug.org.au> <20241209182557.8794e5b886e4ca91994ed0d7@linux-foundation.org>
+In-Reply-To: <20241209182557.8794e5b886e4ca91994ed0d7@linux-foundation.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 9 Dec 2024 18:59:44 -0800
+Message-ID: <CAJuCfpHXaSKab3xhFB-wmtw03EgotXgLjN4ynUZTjJmQ+xuaCw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the mm tree
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, SeongJae Park <sj@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index fbdca89c677f..1f4b76c1f032 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1159,8 +1159,6 @@ static inline void update_curr_task(struct
-> task_struct *p, s64 delta_exec)
->         trace_sched_stat_runtime(p, delta_exec);
->         account_group_exec_runtime(p, delta_exec);
->         cgroup_account_cputime(p, delta_exec);
-> -       if (p->dl_server)
-> -               dl_server_update(p->dl_server, delta_exec);
->  }
+On Mon, Dec 9, 2024 at 6:25=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
 >
->  static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct
-> sched_entity *curr)
-> @@ -1210,6 +1208,11 @@ s64 update_curr_common(struct rq *rq)
->         return delta_exec;
->  }
+> On Mon, 9 Dec 2024 17:08:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
 >
-> +static inline bool dl_server_active(struct dl_sched_entity *dl_se)
-Sorry a small typo in here. it should be struct sched_dl_entity and
-not dl_sched_entity. The line should be:
+> > Hi all,
+> >
+> > After merging the mm tree, today's linux-next build (powerpc allyesconf=
+ig)
+> > failed like this:
+> >
+> > In file included from mm/damon/vaddr.c:736:
+> > mm/damon/tests/vaddr-kunit.h: In function 'damon_test_three_regions_in_=
+vmas':
+> > mm/damon/tests/vaddr-kunit.h:92:1: error: the frame size of 3280 bytes =
+is larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+> >    92 | }
+> >       | ^
+> >
+> > Presumably caused by commit
+> >
+> >   062111898568 ("mm: move per-vma lock into vm_area_struct")
+> >
+>
+> How about this?
 
-"static inline bool dl_server_active(struct sched_dl_entity *dl_se)"
+This looks like a good fix. Thanks!
 
-
-Thanks,
-Vineeth
+>
+>
+> From: Andrew Morton <akpm@linux-foundation.org>
+> Subject: mm/damon/tests/vaddr-kunit.h: reduce stack consumption
+> Date: Mon Dec  9 06:20:01 PM PST 2024
+>
+> After "mm: move per-vma lock into vm_area_struct" we're hitting
+>
+> mm/damon/tests/vaddr-kunit.h: In function 'damon_test_three_regions_in_vm=
+as':
+> mm/damon/tests/vaddr-kunit.h:92:1: error: the frame size of 3280 bytes is=
+ larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+>
+> Fix by moving all those vmas off the stack.
+>
+>
+> Closes: https://lkml.kernel.org/r/20241209170829.11311e70@canb.auug.org.a=
+u
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: SeongJae Park <sj@kernel.org>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>
+>  mm/damon/tests/vaddr-kunit.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- a/mm/damon/tests/vaddr-kunit.h~mm-damon-tests-vaddr-kunith-reduce-sta=
+ck-consumption
+> +++ a/mm/damon/tests/vaddr-kunit.h
+> @@ -68,7 +68,7 @@ static void damon_test_three_regions_in_
+>         static struct mm_struct mm;
+>         struct damon_addr_range regions[3] =3D {0};
+>         /* 10-20-25, 200-210-220, 300-305, 307-330 */
+> -       struct vm_area_struct vmas[] =3D {
+> +       static const struct vm_area_struct vmas[] =3D {
+>                 (struct vm_area_struct) {.vm_start =3D 10, .vm_end =3D 20=
+},
+>                 (struct vm_area_struct) {.vm_start =3D 20, .vm_end =3D 25=
+},
+>                 (struct vm_area_struct) {.vm_start =3D 200, .vm_end =3D 2=
+10},
+> _
+>
 
