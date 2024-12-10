@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-439785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9739EB3EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:51:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7069EB3EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:51:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94ED7188B2D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB3B285DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799371BEF8C;
-	Tue, 10 Dec 2024 14:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D1B1C07E3;
+	Tue, 10 Dec 2024 14:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZujiaCE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYVZwvsn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EA91BE86A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00011C07D8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842209; cv=none; b=maUHwd1SveBOvI7fJuj8vEItgvTW2Pq8GUkTRoo1ZmwqXj5rCv5Nzchq+bkXwMW540OgpLysgcUGK/qPeZt1xHLWFWfV9cC5Is6chX8MiU66ifap2so+yJrCfkhohjmbl7t1xUVm+YGgZpgGZo9qVftZlpXA2tfGkiJyMCGlhzA=
+	t=1733842212; cv=none; b=SCzPAjw2XGGAjNdd7G3oS0QT/0reMw+iBoILlCkrGrOGpcXFA+ewkLk2l+6Jn5dmPGWB6j5nXq/ayqP9j/FLbvp49yC0GTwqhg43T24/T3zJU1GRMyE7GV68fX1GZOWPk2ImXUfq7BCe0P0LXv4My44Phq/HDALOnretaAqV4S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842209; c=relaxed/simple;
-	bh=hRlH4NBVNwGhJ1JpNPALCjGk3CXpM7yv7jTBCNwOqX4=;
+	s=arc-20240116; t=1733842212; c=relaxed/simple;
+	bh=bA380iQhHgz8R6aVv9J8t3S9BKJOjC/mxtAeEnuhehM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g+htsAbJ6VGro4o3BNKbeed08pTokyZGONHn4x0xYLjchdBLejcq1DeW5uq9lLkRBLmZozgbgBB2NsDQYNnIxXaASTL1orFpzAmhMYP8vU8gm5SJ1BDDpNSAugRvrtbaF6c9DHT1QCSF3DsAhKZ8nJkNXkSZter1GuJb+oEcZfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZujiaCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0BAC4CEDE;
-	Tue, 10 Dec 2024 14:50:06 +0000 (UTC)
+	 MIME-Version; b=ELoGpPo0Ux7Wk8SYLXag97F4Z/OoOPYiWZytz2yIItYg5rYTnB02i285PNjHzeDmfT3pm27yRKjLTnWrGZS8gx+QzFwlsyP/VOHgJsuv0tO7mAlVDKOUqKUFtRJChPhYVz9xlSBORz17hbsOTAqXqhK5FbVldOKPjnyam+Upo10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYVZwvsn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB8AC4CED6;
+	Tue, 10 Dec 2024 14:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733842209;
-	bh=hRlH4NBVNwGhJ1JpNPALCjGk3CXpM7yv7jTBCNwOqX4=;
+	s=k20201202; t=1733842212;
+	bh=bA380iQhHgz8R6aVv9J8t3S9BKJOjC/mxtAeEnuhehM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GZujiaCEMkCIsTyMDSjPEg9/x3UV3riCwi9DlqVmH2yWvCHcW3+ks+7jw15JcstKo
-	 Kyh9OaufWOE+DhWbUKiYUV2pOtrzbyoJPBXHqGCm6JkiPiku/1BOwCVSuSfNnVlLI1
-	 AwU3DYpss7wqr8h2VCynpaS1d1ZGJaqyf3N4h5AacfOy3No8t5knnFyzm4sEL5iQjF
-	 KSQ7p4mNdG+I5JYxVWgB1BQc2IJ/y+DD3otaQTXF0H/Y5V/zlcGR3jCEpeYGpOUEQP
-	 yvruMzJvEKcAYuBWZMjHPtrKi2tcAemNkCb99bPHVrQOO9BUk776TfxxStF/yqqgnP
-	 Sm1Z5+W+DcMog==
+	b=TYVZwvsncwbJHJei23pw/Nc9Wnwk5Ndk4nHauupXYi2Piw7MgXhq40CtgHk98ctPz
+	 YfBmZA+BT/iODJ98k31YtPaID+JZ+C32mMVzcXWsvsKdj5quu40rJEx5DVsrxG90e4
+	 SyxjKDzl1hXr81Ca5rDD2yq6pQ9XpVoM0u2WE2H1EndTu8EV5/V0wEm6d8sACOS6cF
+	 sVD6HQGh69/pmwqSEsTvzkh9OOA4Q40J+BQqrWjixxpsagAyi6ceYaJlOhK/bxno1e
+	 lHqh6LOj26922jrCCZWQEgyJb+jOoPX2+PRSyrIHbpo6xZfsDJL+XSPYuvYHceuLdA
+	 lUL9yrUykoiMw==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -52,9 +52,9 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Andy Shevchenko <andy@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v2 05/11] x86: add CONFIG_X86_64_NATIVE option
-Date: Tue, 10 Dec 2024 15:49:39 +0100
-Message-Id: <20241210144945.2325330-6-arnd@kernel.org>
+Subject: [PATCH v2 06/11] x86: remove HIGHMEM64G support
+Date: Tue, 10 Dec 2024 15:49:40 +0100
+Message-Id: <20241210144945.2325330-7-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241210144945.2325330-1-arnd@kernel.org>
 References: <20241210144945.2325330-1-arnd@kernel.org>
@@ -68,68 +68,223 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-As a replacement for the obsole MK8/MPSC/MCORE2 configuration options,
-allow building a specialized kernel for the local CPU, which is useful
-for users building their own kernels, and does not require maintaining
-a list of possible CPU options.
+The HIGHMEM64G support was added in linux-2.3.25 to support (then)
+high-end Pentium Pro and Pentium III Xeon servers with more than 4GB of
+addressing, NUMA and PCI-X slots started appearing.
 
-Between -march=native and -mtune=native, I pick the former in order
-to give the best performance through the use of extra instructions,
-but at the cost of not being able to run on older CPUs at all. This
-creates a small risk of running into illegal instruction faults when
-the resulting binary ends up being run on a machine other than the
-one it was built on.
+I have found no evidence of this ever being used in regular dual-socket
+servers or consumer devices, all the users seem obsolete these days,
+even by i386 standards:
 
-Link: https://lore.kernel.org/lkml/CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com/
+ - Support for NUMA servers (NUMA-Q, IBM x440, unisys) was already
+   removed ten years ago.
+
+ - 4+ socket non-NUMA servers based on Intel 450GX/450NX, HP F8 and
+   ServerWorks ServerSet/GrandChampion could theoretically still work
+   with 8GB, but these were exceptionally rare even 20 years ago and
+   would have usually been equipped with than the maximum amount of
+   RAM.
+
+ - Some SKUs of the Celeron D from 2004 had 64-bit mode fused off but
+   could still work in a Socket 775 mainboard designed for the later
+   Core 2 Duo and 8GB. Apparently most BIOSes at the time only allowed
+   64-bit CPUs.
+
+ - In the early days of x86-64 hardware, there was sometimes the need
+   to run a 32-bit kernel to work around bugs in the hardware drivers,
+   or in the syscall emulation for 32-bit userspace. This likely still
+   works but there should never be a need for this any more.
+
+PAE mode is still required to get access to the 'NX' bit on Atom
+'Pentium M' and 'Core Duo' CPUs.
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/Kconfig.cpu | 14 ++++++++++++++
- arch/x86/Makefile    |  5 +++++
- 2 files changed, 19 insertions(+)
+ Documentation/admin-guide/kdump/kdump.rst     |  4 --
+ Documentation/arch/x86/usb-legacy-support.rst | 11 +----
+ arch/x86/Kconfig                              | 46 +++----------------
+ arch/x86/configs/xen.config                   |  2 -
+ arch/x86/include/asm/page_32_types.h          |  4 +-
+ arch/x86/mm/init_32.c                         |  9 +---
+ 6 files changed, 11 insertions(+), 65 deletions(-)
 
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 8fcb8ccee44b..d634b163e913 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -257,6 +257,20 @@ config X86_GENERIC
- 	  This is really intended for distributors who need more
- 	  generic optimizations.
+diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
+index 5376890adbeb..1f7f14c6e184 100644
+--- a/Documentation/admin-guide/kdump/kdump.rst
++++ b/Documentation/admin-guide/kdump/kdump.rst
+@@ -180,10 +180,6 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+ 1) On i386, enable high memory support under "Processor type and
+    features"::
  
-+config X86_64_NATIVE
-+	bool "Build with -march=native optimization"
-+	depends on X86_64
-+	help
-+	  Make it possible to have a slightly better optimized kernel for
-+	  the machine it is built on, by passing -march=native instead
-+	  the more generic -march=x86-64 option.  This lets compilers
-+	  use extensions to the x86-64 instruction set that were not
-+	  present in the original AMD Opteron and Intel Pentium4 CPUs,
-+	  and schedule instructions for the pipeline model.
-+
-+	  Select this option only when building a kernel to run locally,
-+	  as it may be incompatible with any other processor.
-+
- #
- # Define implied options from the CPU selection here
- config X86_INTERNODE_CACHE_SHIFT
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 8120085b00a4..bf45b84c138f 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -178,8 +178,13 @@ else
- 	# Use -mskip-rax-setup if supported.
- 	KBUILD_CFLAGS += $(call cc-option,-mskip-rax-setup)
+-	CONFIG_HIGHMEM64G=y
+-
+-   or::
+-
+ 	CONFIG_HIGHMEM4G
  
-+ifdef CONFIG_X86_64_NATIVE
-+        KBUILD_CFLAGS += -march=native
-+        KBUILD_RUSTFLAGS += -Ctarget-cpu=native
-+else
-         KBUILD_CFLAGS += -march=x86-64 -mtune=generic
-         KBUILD_RUSTFLAGS += -Ctarget-cpu=x86-64 -Ztune-cpu=generic
-+endif
+ 2) With CONFIG_SMP=y, usually nr_cpus=1 need specified on the kernel
+diff --git a/Documentation/arch/x86/usb-legacy-support.rst b/Documentation/arch/x86/usb-legacy-support.rst
+index e01c08b7c981..b17bf122270a 100644
+--- a/Documentation/arch/x86/usb-legacy-support.rst
++++ b/Documentation/arch/x86/usb-legacy-support.rst
+@@ -20,11 +20,7 @@ It has several drawbacks, though:
+    features (wheel, extra buttons, touchpad mode) of the real PS/2 mouse may
+    not be available.
  
-         KBUILD_CFLAGS += -mno-red-zone
-         KBUILD_CFLAGS += -mcmodel=kernel
+-2) If CONFIG_HIGHMEM64G is enabled, the PS/2 mouse emulation can cause
+-   system crashes, because the SMM BIOS is not expecting to be in PAE mode.
+-   The Intel E7505 is a typical machine where this happens.
+-
+-3) If AMD64 64-bit mode is enabled, again system crashes often happen,
++2) If AMD64 64-bit mode is enabled, again system crashes often happen,
+    because the SMM BIOS isn't expecting the CPU to be in 64-bit mode.  The
+    BIOS manufacturers only test with Windows, and Windows doesn't do 64-bit
+    yet.
+@@ -38,11 +34,6 @@ Problem 1)
+   compiled-in, too.
+ 
+ Problem 2)
+-  can currently only be solved by either disabling HIGHMEM64G
+-  in the kernel config or USB Legacy support in the BIOS. A BIOS update
+-  could help, but so far no such update exists.
+-
+-Problem 3)
+   is usually fixed by a BIOS update. Check the board
+   manufacturers web site. If an update is not available, disable USB
+   Legacy support in the BIOS. If this alone doesn't help, try also adding
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 42494739344d..b373db8a8176 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1383,15 +1383,11 @@ config X86_CPUID
+ 	  with major 203 and minors 0 to 31 for /dev/cpu/0/cpuid to
+ 	  /dev/cpu/31/cpuid.
+ 
+-choice
+-	prompt "High Memory Support"
+-	default HIGHMEM4G
++config HIGHMEM4G
++	bool "High Memory Support"
+ 	depends on X86_32
+-
+-config NOHIGHMEM
+-	bool "off"
+ 	help
+-	  Linux can use up to 64 Gigabytes of physical memory on x86 systems.
++	  Linux can use up to 4 Gigabytes of physical memory on x86 systems.
+ 	  However, the address space of 32-bit x86 processors is only 4
+ 	  Gigabytes large. That means that, if you have a large amount of
+ 	  physical memory, not all of it can be "permanently mapped" by the
+@@ -1407,38 +1403,9 @@ config NOHIGHMEM
+ 	  possible.
+ 
+ 	  If the machine has between 1 and 4 Gigabytes physical RAM, then
+-	  answer "4GB" here.
++	  answer "Y" here.
+ 
+-	  If more than 4 Gigabytes is used then answer "64GB" here. This
+-	  selection turns Intel PAE (Physical Address Extension) mode on.
+-	  PAE implements 3-level paging on IA32 processors. PAE is fully
+-	  supported by Linux, PAE mode is implemented on all recent Intel
+-	  processors (Pentium Pro and better). NOTE: If you say "64GB" here,
+-	  then the kernel will not boot on CPUs that don't support PAE!
+-
+-	  The actual amount of total physical memory will either be
+-	  auto detected or can be forced by using a kernel command line option
+-	  such as "mem=256M". (Try "man bootparam" or see the documentation of
+-	  your boot loader (lilo or loadlin) about how to pass options to the
+-	  kernel at boot time.)
+-
+-	  If unsure, say "off".
+-
+-config HIGHMEM4G
+-	bool "4GB"
+-	help
+-	  Select this if you have a 32-bit processor and between 1 and 4
+-	  gigabytes of physical RAM.
+-
+-config HIGHMEM64G
+-	bool "64GB"
+-	depends on X86_HAVE_PAE
+-	select X86_PAE
+-	help
+-	  Select this if you have a 32-bit processor and more than 4
+-	  gigabytes of physical RAM.
+-
+-endchoice
++	  If unsure, say N.
+ 
+ choice
+ 	prompt "Memory split" if EXPERT
+@@ -1484,8 +1451,7 @@ config PAGE_OFFSET
+ 	depends on X86_32
+ 
+ config HIGHMEM
+-	def_bool y
+-	depends on X86_32 && (HIGHMEM64G || HIGHMEM4G)
++	def_bool HIGHMEM4G
+ 
+ config X86_PAE
+ 	bool "PAE (Physical Address Extension) Support"
+diff --git a/arch/x86/configs/xen.config b/arch/x86/configs/xen.config
+index 581296255b39..d5d091e03bd3 100644
+--- a/arch/x86/configs/xen.config
++++ b/arch/x86/configs/xen.config
+@@ -1,6 +1,4 @@
+ # global x86 required specific stuff
+-# On 32-bit HIGHMEM4G is not allowed
+-CONFIG_HIGHMEM64G=y
+ CONFIG_64BIT=y
+ 
+ # These enable us to allow some of the
+diff --git a/arch/x86/include/asm/page_32_types.h b/arch/x86/include/asm/page_32_types.h
+index faf9cc1c14bb..25c32652f404 100644
+--- a/arch/x86/include/asm/page_32_types.h
++++ b/arch/x86/include/asm/page_32_types.h
+@@ -11,8 +11,8 @@
+  * a virtual address space of one gigabyte, which limits the
+  * amount of physical memory you can use to about 950MB.
+  *
+- * If you want more physical memory than this then see the CONFIG_HIGHMEM4G
+- * and CONFIG_HIGHMEM64G options in the kernel configuration.
++ * If you want more physical memory than this then see the CONFIG_VMSPLIT_2G
++ * and CONFIG_HIGHMEM4G options in the kernel configuration.
+  */
+ #define __PAGE_OFFSET_BASE	_AC(CONFIG_PAGE_OFFSET, UL)
+ #define __PAGE_OFFSET		__PAGE_OFFSET_BASE
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index ac41b1e0940d..f288aad8dc74 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -582,7 +582,7 @@ static void __init lowmem_pfn_init(void)
+ 	"only %luMB highmem pages available, ignoring highmem size of %luMB!\n"
+ 
+ #define MSG_HIGHMEM_TRIMMED \
+-	"Warning: only 4GB will be used. Use a HIGHMEM64G enabled kernel!\n"
++	"Warning: only 4GB will be used. Support for for CONFIG_HIGHMEM64G was removed!\n"
+ /*
+  * We have more RAM than fits into lowmem - we try to put it into
+  * highmem, also taking the highmem=x boot parameter into account:
+@@ -606,18 +606,13 @@ static void __init highmem_pfn_init(void)
+ #ifndef CONFIG_HIGHMEM
+ 	/* Maximum memory usable is what is directly addressable */
+ 	printk(KERN_WARNING "Warning only %ldMB will be used.\n", MAXMEM>>20);
+-	if (max_pfn > MAX_NONPAE_PFN)
+-		printk(KERN_WARNING "Use a HIGHMEM64G enabled kernel.\n");
+-	else
+-		printk(KERN_WARNING "Use a HIGHMEM enabled kernel.\n");
++	printk(KERN_WARNING "Use a HIGHMEM enabled kernel.\n");
+ 	max_pfn = MAXMEM_PFN;
+ #else /* !CONFIG_HIGHMEM */
+-#ifndef CONFIG_HIGHMEM64G
+ 	if (max_pfn > MAX_NONPAE_PFN) {
+ 		max_pfn = MAX_NONPAE_PFN;
+ 		printk(KERN_WARNING MSG_HIGHMEM_TRIMMED);
+ 	}
+-#endif /* !CONFIG_HIGHMEM64G */
+ #endif /* !CONFIG_HIGHMEM */
+ }
+ 
 -- 
 2.39.5
 
