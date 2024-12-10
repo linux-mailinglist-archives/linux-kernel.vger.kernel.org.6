@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-439554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D449EB0F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 379DD9EB0F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E081695FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:37:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670381695A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0072E1A4F2D;
-	Tue, 10 Dec 2024 12:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B445E1A4F1F;
+	Tue, 10 Dec 2024 12:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="acbzj30F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UcZmr4en"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECA91A2860;
-	Tue, 10 Dec 2024 12:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8920A1A0BE3;
+	Tue, 10 Dec 2024 12:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733834268; cv=none; b=nM/kUfBWXrOwQQeN0WaJsjUQGXJKC9WxtQqErqH3pgwa88/nRy3uer1VTF7VbfNKefBoeoZ8YLu1v/JPR9SYtU9xb7IkVdsO064yYA16xpaDGgOZOj7bMHqzE/U9UhDgIJs4GdMjvBSU3LYKT0KLdm0KzGtljCTHyVCz7gpD82g=
+	t=1733834295; cv=none; b=uCvOGJR+4wGsDTqM18MPUIt79iuVN8M2HVf+VC96LaE/c4cg3af6b/2Kub0z5RsP774s340jYj6MqoilL/r2P/PAJFB6ql/TUuCmaCvXp2SXDouYk+2Dkf4laK9emBOF2ps9s8cQnoSeNxS4d5G2DDoV3AfWCJxiNPe6CNsE/es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733834268; c=relaxed/simple;
-	bh=yT+2etRjcgkDFWD03R9C8TI0zCspIsiAJ5OYsndSpFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ppJsrRpG1mMvPcS11M6foPZiB3NrURIt7eEFB6o3IVnTLWDmawNOvBPrKDdhm5HG3e+68Y+l+LTvxV5ifSX/OnJlUadiuC+zSIh3ggNgyIW52rl4yEeiN3bjFWbhDXIU9gDM2cYfqgeS4bn3JSymInbO2UVZ93+1pffEKzNvY38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=acbzj30F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67AA1C4CED6;
-	Tue, 10 Dec 2024 12:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733834267;
-	bh=yT+2etRjcgkDFWD03R9C8TI0zCspIsiAJ5OYsndSpFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=acbzj30FlK2EmvlLToH6QFS188H3wkR00SNtGXFoyXfo7grjKoQlB4SrcSoHAL9XJ
-	 9l3MKDEFHD8hdBLasqB681IDSjuNhKX5BhkWKO30ICYOu/pdrsYMLXzzwMUbU2A+VE
-	 8cHX00vEWt10382+pbKfofAHT8L+umujoA21BX/o=
-Date: Tue, 10 Dec 2024 13:37:11 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Genes Lists <lists@sapience.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	torvalds@linux-foundation.org, stable@vger.kernel.org,
-	linux-media@vger.kernel.org, bingbu.cao@intel.com,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
-Message-ID: <2024121001-senator-raffle-a371@gregkh>
-References: <2024120917-vision-outcast-85f2@gregkh>
- <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
- <Z1fqitbWlmELb5pj@kekkonen.localdomain>
- <87seqvzzg6.fsf@intel.com>
- <c1805642a6c5da6fef3927c70358c8cb851d2784.camel@sapience.com>
- <87bjxjzpwn.fsf@intel.com>
+	s=arc-20240116; t=1733834295; c=relaxed/simple;
+	bh=eZFdmnmgdiF7EMQGHOe4fW6FOym0ygc8NV9/ehA39F8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=GOck0NWqiR4Mhe070XuzVq0nXupvNNDb2vIMdoOd6mqgke/pS97coEuHlKmf7aXTACPD72mXyHguVysVQZ8Z3vkYZFec8k27mWm4uQYJBulxgQ7F7vLVJUCFK2aW5Puaz0lEAL0Su7wxfdM1aQFD5K8pYf6QVW9nEs3l9p/KwEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UcZmr4en; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA62dI7030022;
+	Tue, 10 Dec 2024 12:38:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=eZFdmn
+	mgdiF7EMQGHOe4fW6FOym0ygc8NV9/ehA39F8=; b=UcZmr4en7BYLCUkenctsvm
+	v35UFma2Rem8ZIilxlYYJY8j+YWj8YASl65E5upp7KoPOM7GdmUXmhOBT+3I/CGX
+	2NzEMtiZYO3KaaJxpCBf4vavvhamhLwy/GiPCvzfdzRZ692qm/XXn15/VqB26YoK
+	SoqclVA6T3ypkEqFwML8KDL6sI+ksLNG9ogMR75DpIEvjYchbIeUvtYia4MgvjoX
+	qWycbttHDHT+6YVSvJvNyNdUioSSJnoYh0Bb8OcHTRrsoyVzAzCGDcyxL52udhVm
+	79idHYuKy9ONkGc/qMkDs3nLeL8UfgpS/e17OK/qZV+9v90r7ldxD7OpNCEiMN5Q
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xdwtt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 12:38:12 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAApBZh016944;
+	Tue, 10 Dec 2024 12:38:11 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12y3sbw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 12:38:11 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BACc5hn16056748
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 12:38:05 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8ACAC2004B;
+	Tue, 10 Dec 2024 12:38:05 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F23920040;
+	Tue, 10 Dec 2024 12:38:04 +0000 (GMT)
+Received: from t14-nrb (unknown [9.155.202.61])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 12:38:04 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87bjxjzpwn.fsf@intel.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 10 Dec 2024 13:38:04 +0100
+Message-Id: <D680YIBTB8K9.3JYA0MCKDK0H9@linux.ibm.com>
+Cc: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <frankja@linux.ibm.com>, <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v1 1/1] KVM: s390: VSIE: fix virtual/physical address in
+ unpin_scb()
+From: "Nico Boehr" <nrb@linux.ibm.com>
+To: "Claudio Imbrenda" <imbrenda@linux.ibm.com>, <kvm@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241210083948.23963-1-imbrenda@linux.ibm.com>
+In-Reply-To: <20241210083948.23963-1-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3Z9eZ0TgUfsBHZ3CImIz7KClI7UI-Jbw
+X-Proofpoint-ORIG-GUID: 3Z9eZ0TgUfsBHZ3CImIz7KClI7UI-Jbw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1011 impostorscore=0 mlxscore=0 mlxlogscore=674
+ priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100093
 
-On Tue, Dec 10, 2024 at 02:24:56PM +0200, Jani Nikula wrote:
-> On Tue, 10 Dec 2024, Genes Lists <lists@sapience.com> wrote:
-> > On Tue, 2024-12-10 at 10:58 +0200, Jani Nikula wrote:
-> >> On Tue, 10 Dec 2024, Sakari Ailus <sakari.ailus@linux.intel.com>
-> >> wrote:
-> >> > Hi,
-> >> > 
-> >> > > ...
-> >> > > FYI 6.12.4 got a crash shortly after booting in dma_alloc_attrs -
-> >> > > maybe
-> >> > > triggered in ipu6_probe. Crash only happened on laptop with ipu6.
-> >> > > All
-> >> > > other machines are running fine.
-> >> > 
-> >> > Have you read the dmesg further than the IPU6 related warning? The
-> >> > IPU6
-> >> > driver won't work (maybe not even probe?) but if the system
-> >> > crashes, it
-> >> > appears unlikely the IPU6 drivers would have something to do with
-> >> > that.
-> >> > Look for warnings on linked list corruption later, they seem to be
-> >> > coming
-> >> > from the i915 driver.
-> >> 
-> >> And the list corruption is actually happening in
-> >> cpu_latency_qos_update_request(). I don't see any i915 changes in
-> >> 6.12.4
-> >> that could cause it.
-> >> 
-> >> I guess the question is, when did it work? Did 6.12.3 work?
-> >> 
-> >> 
-> >> BR,
-> >> Jani.
-> >
-> >
-> >  - 6.12.1 worked
-> >
-> >  - mainline - works (but only with i915 patch set [1] otherwise there
-> > are no graphics at all)
-> >
-> >     [1] https://patchwork.freedesktop.org/series/141911/
-> >
-> > - 6.12.3 - crashed (i see i915 not ipu6) and again it has       
-> >     cpu_latency_qos_update_request+0x61/0xc0
-> 
-> Thanks for testing.
-> 
-> There are no changes to either i915 or kernel/power between 6.12.1 and
-> 6.12.4.
-> 
-> There are some changes to drm core, but none that could explain this.
-> 
-> Maybe try the same kernels a few more times to see if it's really
-> deterministic? Not that I have obvious ideas where to go from there, but
-> it's a clue nonetheless.
+On Tue Dec 10, 2024 at 9:39 AM CET, Claudio Imbrenda wrote:
+> In commit 77b533411595 ("KVM: s390: VSIE: sort out virtual/physical
+> address in pin_guest_page"), only pin_scb() has been updated. This
+> means that in unpin_scb() a virtual address was still used directly as
+> physical address without conversion. The resulting physical address is
+> obviously wrong and most of the time also invalid.
+>
+> Since commit d0ef8d9fbebe ("KVM: s390: Use kvm_release_page_dirty() to
+> unpin "struct page" memory"), unpin_guest_page() will directly use
+> kvm_release_page_dirty(), instead of kvm_release_pfn_dirty(), which has
+> since been removed.
+>
+> One of the checks that were performed by kvm_release_pfn_dirty() was to
+> verify whether the page was valid at all, and silently return
+> successfully without doing anything if the page was invalid.
+>
+> When kvm_release_pfn_dirty() was still used, the invalid page was thus
+> silently ignored. Now the check is gone and the result is an Oops.
+> This also means that when running with a V!=3DR kernel, the page was not
+> released, causing a leak.
+>
+> The solution is simply to add the missing virt_to_phys().
+>
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Fixes: 77b533411595 ("KVM: s390: VSIE: sort out virtual/physical address =
+in pin_guest_page")
 
-'git bisect' would be nice to run if possible...
+Reviewed-by: Nico Boehr <nrb@linux.ibm.com>
 
