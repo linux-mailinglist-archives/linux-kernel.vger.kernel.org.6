@@ -1,150 +1,173 @@
-Return-Path: <linux-kernel+bounces-438950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528E19EA8AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:21:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E347E9EA8B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:22:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402911883ECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB2616140E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB62A22B5BF;
-	Tue, 10 Dec 2024 06:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dNowIjCi"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125D522B8D1;
+	Tue, 10 Dec 2024 06:22:45 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67FD22B5A7
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791E35967;
+	Tue, 10 Dec 2024 06:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733811666; cv=none; b=Re9b8qnkNE/gy0g4chpl/AyuXeqQol1dlXGyzIOqvtGHv8rdChfSHl/BbOwyf7cwE2DY5pstF+dsa+EL/aTBEvDHDxS5MVS97QK/3/153KLIZOgDZpBeBT/2qL4ivnc2eMhq4SEnBQMe2LDAIKgUidnryjwRxBqUzQjX/hzF/S8=
+	t=1733811764; cv=none; b=XaJ1huikC0BydbSX77yK48RpgScOQIA5Bu1QE3upYVg/wC6prDGmvgVPbEK8CCcasu7m+CdAEUNrCFOkPHac9ZAdlMn008ZNPXxZu3HJVKirkfGmSGPGJAlLudV1Fb7Vf4OsDjVy1OgrtBaCM+n9wb4RTMF6Ka6FM+X0/lr7LuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733811666; c=relaxed/simple;
-	bh=h1J9Zz9SFJg/t2V+4o8zsFLVW+QM+rpVZalbWQM4auA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=sFBgJAI+GwW/qOtU+sHZCvvBmu7OI//hjwkUyLifyQ8JwyGg0tnPbd6yiMWr8DqxzxqakU3sqFUTtlLKmlLinq90vOEMX+YDrox5BubcvnxbO49CrMOfWieHyGl7ZplkmHxyWSnR7Eit0SlAtHeO91aFEEL0aoKDQSCveZKlYRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dNowIjCi; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241210062100epoutp035b60a096803a277af424e1fd37ac15ec~PvITslObU2782727827epoutp03a
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:21:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241210062100epoutp035b60a096803a277af424e1fd37ac15ec~PvITslObU2782727827epoutp03a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733811660;
-	bh=0pntiW2qj943ljh4dAMm43hUmNNuzxP36dFj8iYz4qA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=dNowIjCie6fjmrB1kcTCCF2627cGxE687KsD/fvZcAhnQ9lKBkHjeQ1qzH0VLlDr8
-	 j8Jn2H+Ex9o+4lE6NJX38cqxxpeIqig1EbhBd5SnqzkmD2AOlGN05bp9/XANlDc4BB
-	 l3HqMd6vSNJpXmFgeVnNV7fs73IS/QT2KxD+qmAw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20241210062100epcas1p302f78d2af0527ae76c5148a53dd34ffd~PvITT06kp0632406324epcas1p3G;
-	Tue, 10 Dec 2024 06:21:00 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.247]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y6pWw0qjDz4x9Q0; Tue, 10 Dec
-	2024 06:21:00 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4B.97.23379.BCDD7576; Tue, 10 Dec 2024 15:21:00 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241210062059epcas1p19ab985f229a143b2f2c387adfaaa3952~PvIS21_Gn1249912499epcas1p1l;
-	Tue, 10 Dec 2024 06:20:59 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241210062059epsmtrp143ff70bce2d692c961390b4f53430756~PvIS2LJgl1947519475epsmtrp1S;
-	Tue, 10 Dec 2024 06:20:59 +0000 (GMT)
-X-AuditID: b6c32a37-171e970000005b53-38-6757ddcbe81a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5F.E9.18949.BCDD7576; Tue, 10 Dec 2024 15:20:59 +0900 (KST)
-Received: from jangsubyi03 (unknown [10.253.100.135]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241210062059epsmtip148f20c994ae6d1d0034ab987dd2f0574~PvISq93Ut2507625076epsmtip1h;
-	Tue, 10 Dec 2024 06:20:59 +0000 (GMT)
-From: "Jangsub Yi" <jangsub.yi@samsung.com>
-To: "'Christoph Hellwig'" <hch@infradead.org>
-Cc: <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <junwoo80.lee@samsung.com>,
-	<sh8267.baek@samsung.com>, <wkon.kim@samsung.com>
-In-Reply-To: <Z1fRaeTMz241A8FN@infradead.org>
-Subject: RE: [PATCH] mmc: Add config_host callback to set a mmc queue
-Date: Tue, 10 Dec 2024 15:20:59 +0900
-Message-ID: <023901db4acb$adfb84c0$09f28e40$@samsung.com>
+	s=arc-20240116; t=1733811764; c=relaxed/simple;
+	bh=gDCaMZ/VAL8kDYF3Kqce5IeF+M27AoZjL3I4Cx6USLE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=q7KCDwWm4q3DZ+INEEHz1tT0ku4IyciRoFvozUvenQhq/GNfpQ7bnpF2Gke4F7YMZaAr7whmh4GuclDBRU49Dg7Oe2NMcN12mS0wF65UuNeBeQekGN616GoUjIbpCAyXxPzhykUl4Gbz2kRq+mV+vb/M5AeqyxDSiRPLjC/Txwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y6pYN6mxRz4f3nbD;
+	Tue, 10 Dec 2024 14:22:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2CF091A018D;
+	Tue, 10 Dec 2024 14:22:37 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgBHI4cr3ldnzcO3EA--.47176S3;
+	Tue, 10 Dec 2024 14:22:36 +0800 (CST)
+Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
+ the tag reservation code"
+To: Yu Kuai <yukuai1@huaweicloud.com>, Bart Van Assche <bvanassche@acm.org>,
+ axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
+ ming.lei@redhat.com, osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+ <20241209115522.3741093-2-yukuai1@huaweicloud.com>
+ <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
+ <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7081765f-28d7-f594-1221-6034b9e88899@huaweicloud.com>
+Date: Tue, 10 Dec 2024 14:22:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH5zy9MrK58XqKdq8KPmuKMwnV7FAHbhmEtAfVDB6QBL9uedwJ0SwfJAz6GnnUB3YO3xgJLMHLPsisXbnA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIJsWRmVeSWpSXmKPExsWy7bCmnu6Zu+HpBle+MFmcnrCIyWLX32Ym
-	i8u75rBZHPnfz2hx7cwJVovja8MtNl/6xuLA7rF5hZbHnWt72Dz6tqxi9Pi8SS6AJSrbJiM1
-	MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwdov5JCWWJOKVAo
-	ILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKxArzgxt7g0L10vL7XEytDAwMgUqDAhO+Pkoham
-	gibWilsHXrE3MP5h7mLk5JAQMJF41HOMqYuRi0NIYAejRMfaBcwQzidGia7DW6Ay3xglzs34
-	xwLTsnzlM1aIxF5GiW09BxkhnFeMEp/mLWMHqWIT0JY48m05G4gtIqArcXbhC7AiZoE1jBLt
-	lzYygiQ4gRLfXiwHaxAWcJV4tOwCUJyDg0VAVeLdBAeQMK+ApcSyWbNYIWxBiZMzn4BdwSxg
-	IPH+3HxmCFteYvvbOVAPKUj8fLqMFWJvksT9T/uh6kUkZne2QdX0ckgsuSkOYbtI/Pp5iA3C
-	FpZ4dXwLO4QtJfGyvw3KLpY48OwR1Pc1EjsavjJB2PYSza3NbBDz+STefe1hBTlfQoBXoqNN
-	CMJUkdjapwYzceOeaVAXeEhMPXeFfQKj4iwkj81C8tgsJI/NQvLAAkaWVYxiqQXFuempxYYF
-	xvDYTs7P3cQITpta5jsYp739oHeIkYmD8RCjBAezkggvh3douhBvSmJlVWpRfnxRaU5q8SFG
-	U2BQT2SWEk3OBybuvJJ4QxNLAxMzIxMLY0tjMyVx3jNXylKFBNITS1KzU1MLUotg+pg4OKUa
-	mLJFHrC7z2q6/ftduq/xL9X2l643At73zXlTpO58TKlcei3Tpe8zPt7wMlwayRtsa+PM/nHf
-	zVfrd913P6mQvt7p2krNlnf52XeVPlWmc4WXH0tUFC31c+BLmdO0jfMR17wsFclHx0MXMQU/
-	X12RdbJk45Obyzx/irV8+PSfz0dbQsBmSm6Q/wfzP+6p/lcqvkn677mXuF7IvW/VpfO/7699
-	VXHGc/36jpOWn8O2HDmZx7+CK53vKm/+lvXdIuE1/cVvC75HbRNJPe28+/fm55c2ZS87/MHs
-	Qvy5+Sv8a57GCj8sf7GBf3+M3rGX53rVPIM4zOImWN/YIbxwza9Mx74Z+qavzOvCSlsXh339
-	FKTEUpyRaKjFXFScCAC/LrcMJAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsWy7bCSnO7pu+HpBgfOqlucnrCIyWLX32Ym
-	i8u75rBZHPnfz2hx7cwJVovja8MtNl/6xuLA7rF5hZbHnWt72Dz6tqxi9Pi8SS6AJYrLJiU1
-	J7MstUjfLoEr4+SiFqaCJtaKWwdesTcw/mHuYuTkkBAwkVi+8hlrFyMXh5DAbkaJHceeMHYx
-	cgAlpCQ+fEqBMIUlDh8uhih5wShxYc9bdpBeNgFtiSPflrOB2CICuhJnF75gBCliFtjEKPH2
-	33qwBUICP5gkNu02A7E5gYq+vVgO1iws4CrxaNkFsF0sAqoS7yY4gIR5BSwlls2axQphC0qc
-	nPmEBcRmFjCSOHdoPxuELS+x/e0cqPsVJH4+XcYKcUOSxP1P+6HqRSRmd7YxT2AUnoVk1Cwk
-	o2YhGTULScsCRpZVjJKpBcW56bnFhgVGeanlesWJucWleel6yfm5mxjB0aOltYNxz6oPeocY
-	mTgYDzFKcDArifByeIemC/GmJFZWpRblxxeV5qQWH2KU5mBREuf99ro3RUggPbEkNTs1tSC1
-	CCbLxMEp1cC0zG+z387yT+vVZA8/8Ek42VD9+ZVzlZFEf21cWkjQBQGLGZ/il4ld2BBle5pR
-	PXtFtqpZtC/3jsjrv68cszn4tujCbg2fhzM3B62RbTk64e7E6X+/2RrPuR03g9+t2F5lbeWK
-	2fEcWiurVp2YqMj0Y+aPuh53A551bDFH2XznmC5RZlotzirOMY+ZNbT8Rm8a1zQ39tWX7utJ
-	Js5ldew5PuGW6p+ExvPnvS2fBd8oKexMOyCtGm5Ud0kxfw3DT8H5cou5v+7avt11o2KFnPzh
-	RRG7rguU9kRMSuT1FVX3Pmm/q8dJa/26U1q6SVN7Xky9wZfvnTXltIbCmuxd5Wc2Xnuld9a4
-	ZNUpnS28h9qUWIozEg21mIuKEwH9wZCcDQMAAA==
-X-CMS-MailID: 20241210062059epcas1p19ab985f229a143b2f2c387adfaaa3952
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c
-References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
-	<20241106051347.969-1-jangsub.yi@samsung.com>
-	<ZyxelKdmXXiSVL1g@infradead.org>
-	<000001db30f4$4a749770$df5dc650$@samsung.com>
-	<ZyzYnw0PgpyViFdf@infradead.org>
-	<0b2e01db3410$a05f41c0$e11dc540$@samsung.com>
-	<000001db4ac3$b5584260$2008c720$@samsung.com>
-	<Z1fRaeTMz241A8FN@infradead.org>
+In-Reply-To: <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHI4cr3ldnzcO3EA--.47176S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw15Zw47KrWrJFW5Ar45GFg_yoW5Kr1rpr
+	48Ja17JryUtr1kWr1UJr1UJFy8Jr1UJwnrJr18XFyxJr1UJr1jqr1rXr1qgr1UJr48Jr4U
+	Jr1jqr9xZrnrJrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-> On Tue, Dec 10, 2024 at 02:23:55PM +0900, Jangsub Yi wrote:
-> > This is necessary to have separate policies for each device.
-> > I will also implement the host modifications related to this content
-> > and try to upstream it. Please review the core modifications.
+Hi,
+
+在 2024/12/10 9:50, Yu Kuai 写道:
+> Hi,
 > 
-> It is not reviewable without a user and your insistance to waste everyones
-> time for a patch that as is adds dead code is highly offensive.  Stop it.
+> 在 2024/12/10 2:02, Bart Van Assche 写道:
+>> This is not correct. dd->async_depth can be modified via sysfs.
 > 
- I'm sorry but I couldn't understand your intention clearly because 
-it's my first time reflecting on the mainline. I will include the
-modifications 
-made to the host (user) and upload the review again.
+> How about the following patch to fix min_shallow_depth for deadline?
+> 
+> Thanks,
+> Kuai
+> 
+> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> index a9cf8e19f9d1..040ebb0b192d 100644
+> --- a/block/mq-deadline.c
+> +++ b/block/mq-deadline.c
+> @@ -667,8 +667,7 @@ static void dd_depth_updated(struct blk_mq_hw_ctx 
+> *hctx)
+>          struct blk_mq_tags *tags = hctx->sched_tags;
+> 
+>          dd->async_depth = q->nr_requests;
+> -
+> -       sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
+> +       sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 
+> dd->async_depth);
+>   }
+> 
+>   /* Called by blk_mq_init_hctx() and blk_mq_init_sched(). */
+> @@ -1012,6 +1011,47 @@ SHOW_INT(deadline_fifo_batch_show, dd->fifo_batch);
+>   #undef SHOW_INT
+>   #undef SHOW_JIFFIES
+> 
+> +static ssize_t deadline_async_depth_store(struct elevator_queue *e,
+> +                                         const char *page, size_t count)
+> +{
+> +       struct deadline_data *dd = e->elevator_data;
+> +       struct request_queue *q = dd->q;
+> +       struct blk_mq_hw_ctx *hctx;
+> +       unsigned long i;
+> +       int v;
+> +       int ret = kstrtoint(page, 0, &v);
+> +
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       if (v < 1)
+> +               v = 1;
+> +       else if (v > dd->q->nr_requests)
+> +               v = dd->q->nr_requests;
+> +
+> +       if (v == dd->async_depth)
+> +               return count;
+> +
+> +       blk_mq_freeze_queue(q);
+> +       blk_mq_quiesce_queue(q);
+> +
+> +       dd->async_depth = v;
+> +       if (blk_mq_is_shared_tags(q->tag_set->flags)) {
+> +               sbitmap_queue_min_shallow_depth(
+> +                       &q->sched_shared_tags->bitmap_tags, 
+> dd->async_depth);
+> +       } else {
+> +               queue_for_each_hw_ctx(q, hctx, i)
+> +                       sbitmap_queue_min_shallow_depth(
+> +                               &hctx->sched_tags->bitmap_tags,
+> +                               dd->async_depth);
+> +       }
+
+Just realized that this is not ok, q->sysfs_lock must be held to protect
+changing hctx, however, the lock ordering is q->sysfs_lock before
+eq->sysfs_lock, and this context already hold eq->sysfs_lock.
+
+First of all, are we in the agreement that it's not acceptable to
+sacrifice performance in the default scenario just to make sure
+functional correctness if async_depth is set to 1?
+
+If so, following are the options that I can think of to fix this:
+
+1) make async_depth read-only, if 75% tags will hurt performance in some
+cases, user can increase nr_requests to prevent it.
+2) refactor elevator sysfs api, remove eq->sysfs_lock and replace it
+with q->sysfs_lock, so deadline_async_depth_store() will be protected
+against changing hctxs, and min_shallow_depth can be updated here.
+3) other options?
+
+Thanks,
+Kuai
 
 
