@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-440232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7B59EBA89
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:01:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1A19EBA8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:01:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E60166789
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F789282E37
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484DC226862;
-	Tue, 10 Dec 2024 20:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFBC2046B1;
+	Tue, 10 Dec 2024 20:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pelv31Vc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="POnaKq2W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF0823ED5A;
-	Tue, 10 Dec 2024 20:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E587523ED5A;
+	Tue, 10 Dec 2024 20:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733860881; cv=none; b=XVTl0Z/Km2w2EpY15PcmdToFkra/FF4K+mTdWU4cOmY3r1yHhQdPptvANYSJo1mqYO74NRTJ1EYcud8+csfeE7wC6eyKbFPH5NZr56eO1ZYfGF5thLmOwU3Fo3nGHwf34o3+b8e7eisr7z0aOQEOO0QMHG/43vZxTicPF++66Ys=
+	t=1733860885; cv=none; b=BSPVBqrtYyNcZuB1D2XW2o/Bq0+JuQu5Y9EIQc7hbPfBwWPRkiEOohwwONuo8Uo6f93t3ZvCInMwS4TNtGk20ePfTulVXNO5a/PhmIk1P6SW/s+pAuXSKCv7aohadsrVEcJiYk4oWTRbU8hggiYs2amihEpNpkOmvhPPU+2BhSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733860881; c=relaxed/simple;
-	bh=YXV+agBAHaQx3JUMim2czM+in4PUNgRqxhtN1zSl5OI=;
+	s=arc-20240116; t=1733860885; c=relaxed/simple;
+	bh=WKyTv58AqXYbXuKoBaXnVQPqw9lNxzSXEzGjTbzx6Jg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WiKfnoF+SLpjtAQfLv/2s2AAUcS3jqLQx0D1F16aXsmNfZXcLUlFTJvs1s4qEhVGRWDaHPVb7gTF7UOSw8SLQxLzfXV56wiCZaOEw7h/PTnx73n2DCnur9g2NZWfO7AWSS3OUQos3S0M/3S2IqO4FPAy8NWBeCuMCqtBNIMijQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pelv31Vc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85EE8C4CED6;
-	Tue, 10 Dec 2024 20:01:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMrpsvHvMYIqXy4/78KrqwUES3mCXZptWNBplRnnyTpSpLaqgEM2A8kBSLAvpKmTeaj8Zm3Kn2CbCUhUcUXC6ci+zTphRkHH8rlOuupBPR749gSgp0HhOCZHbsUZ2qy/YoVH2vXo/qtEKxqgbt+VHc4RuDrkDl8AiMTKRPqIKY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=POnaKq2W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0166AC4CEE0;
+	Tue, 10 Dec 2024 20:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733860880;
-	bh=YXV+agBAHaQx3JUMim2czM+in4PUNgRqxhtN1zSl5OI=;
+	s=k20201202; t=1733860884;
+	bh=WKyTv58AqXYbXuKoBaXnVQPqw9lNxzSXEzGjTbzx6Jg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pelv31VcxFqNTcIbe39dodlW9atq5X/iCdE9Q7tkluic/0p/XsfEw+n5bbqWmN1AH
-	 pvbyiELRKo0Y9npcupyI1eusdy5Nj6Pkk+ANPUTY52oqw32uktdOTvUpD2DrJGfevR
-	 zaJbh17OeQDR6u+R7vCV4qM02F2TaSfN6DnHfsgGzZz26502PSPiW3FHSJxYNgVG78
-	 1l9WaFeXQbw6sZHRTA9YQQJ6uJ1PiP1LaT5hozlIGqVD6/zHIxhXzGIm68qzmKUon1
-	 rrHHIgdpvHR3k+RBwGpZP06yMsgLttL9SwxY6jEYICLCBWtAfe+7j6nYpQbjZRyosB
-	 ITbEUWlSj/tdg==
-Date: Tue, 10 Dec 2024 20:01:15 +0000
-From: Simon Horman <horms@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: "nikita.yoush" <nikita.yoush@cogentembedded.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>
-Subject: Re: [PATCH net] net: renesas: rswitch: fix initial MPIC register
- setting
-Message-ID: <20241210200115.GC2806@kernel.org>
-References: <20241209075951.163924-1-nikita.yoush@cogentembedded.com>
- <TYWPR01MB11030BB4AC02261FF655A13CFD83D2@TYWPR01MB11030.jpnprd01.prod.outlook.com>
+	b=POnaKq2Wz/3Q+YvozF2Psn0nHOr1LObKHh6LUqtOUCtVvltoPMTc4NvYh9cKgth+E
+	 o4jlXuNG8EqOGSDJzhtI+0YcGdzoBSjqSr7w5rUu4qeJ7ega0nDoOmG5gR0Q9JRlXZ
+	 HBbaU0ql1KIDauSdTpKs1vIAbLs/WEct2/1CQ5Rj3fHdiJ6YoBNhHHYGqmQ/T6lCBW
+	 CRG3gW1HOhao9yYfGWxIn3SxqWu1XjJJnB42T+rM3x7Ao2uEZ768HnYfeaeeis5BGs
+	 D4Cwnr84IIHFW6orT1VHVFACSUukmxE9+tH2BKtCsQe8uRaIlI/nKgWxtw4M8GeF3e
+	 U6nI6wDuK9cqg==
+Date: Tue, 10 Dec 2024 17:01:21 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Sandipan Das <sandipan.das@amd.com>, Xu Yang <xu.yang_2@nxp.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf jevents: Fix build issue in '*/' in event
+ descriptions
+Message-ID: <Z1ieEX22EyS-v36o@x1>
+References: <20241113165558.628856-1-irogers@google.com>
+ <CAP-5=fWK-eeDEvE4+LeeScbHFecmc5+H8WB_5fepfrJJLZsF0Q@mail.gmail.com>
+ <Z1dS6HrfkVS4OeZz@x1>
+ <CAP-5=fUze9j8etq-17L0dWVoYfE-bA+61wrEAXN9vJSCj9dCbw@mail.gmail.com>
+ <Z1g-8ggHQ8MoVNhx@x1>
+ <Z1iTtJcMMsuwI0JX@x1>
+ <CAP-5=fXN-KaVnyciw-YBauS=QSWfi36Aan9eGu1xFV57MDcnNA@mail.gmail.com>
+ <Z1idV3K4RxLdMhT_@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <TYWPR01MB11030BB4AC02261FF655A13CFD83D2@TYWPR01MB11030.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1idV3K4RxLdMhT_@x1>
 
-On Tue, Dec 10, 2024 at 06:30:41AM +0000, Yoshihiro Shimoda wrote:
-> Hello Nikita-san,
-> 
-> > From: Nikita Yushchenko, Sent: Monday, December 9, 2024 5:00 PM
+On Tue, Dec 10, 2024 at 04:58:19PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Dec 10, 2024 at 11:24:28AM -0800, Ian Rogers wrote:
+> > On Tue, Dec 10, 2024 at 11:17 AM Arnaldo Carvalho de Melo
+> > > On Tue, Dec 10, 2024 at 10:15:30AM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > Probably best to have big patches via perf-tools-next at this point in
+> > > > time.
+> > >
+> > > I'm seeing this after applying:
+> > >
+> > > /home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py:434: SyntaxWarning: invalid escape sequence '\*'
+> > >   return s.replace('*/', '\*\/')
 > > 
-> > MPIC.PIS must be set per phy interface type.
-> > MPIC.LSC must be set per speed.
-> > 
-> > Do that strictly per datasheet, instead of hardcoding MPIC.PIS to GMII.
-> > 
-> > Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
-> > Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> > It likely needs to be:
+> > ```
+> > return s.replace('*/', r'\*\/')
+> > ```
+> > note the r. Could you test for me?
 > 
-> Thank you for the patch! I could not apply this patch on net.git / main branch
-> and the branch + your patches [1] though, this patch looks good. So,
-> 
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> 
-> [1]
-> https://patchwork.kernel.org/project/netdevbpf/list/?series=915669
+> Sure.
 
-Hi Nikita,
+Yeah, no more warning, thanks, fixed it up.
 
-I agree with Shimoda-san that this does not seem to apply cleanly to net.
-Which is a requirement for our CI to run. Please rebase and repost.
-
--- 
-pw-bot: changes-requested
+- Arnaldo
 
