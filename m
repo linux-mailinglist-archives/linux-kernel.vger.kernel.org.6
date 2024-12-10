@@ -1,266 +1,247 @@
-Return-Path: <linux-kernel+bounces-439889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B1E9EB588
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C800A9EB58A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D7C283A70
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 360B5283AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A474A22FE08;
-	Tue, 10 Dec 2024 15:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605E9230D01;
+	Tue, 10 Dec 2024 15:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E43od2uu"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="fp20a2RK"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2098.outbound.protection.outlook.com [40.107.20.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129211BD4E5;
-	Tue, 10 Dec 2024 15:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733846368; cv=none; b=HcDaE3mGm8+d8oFNaYd9/2CQI+QtkJ9rnnVTX0KZf3Cec1IphHUi/nazcL+nH2ttaqOIDTEz0ySE2DYgy+fjgFQJ1nYsdChewuSB6veHKUaHoo4VEMQeh7mMu5I8qP/Nw1VMX4mW2tLD683J/nPdj53cz3rdzS/3RATGLwtr4og=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733846368; c=relaxed/simple;
-	bh=6ap0bV+n7MBus+F2Ud2aD/1Nj0zSNnX+OxhYs144CGo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kneAf8xPqMj3ZbKUycXgc+2o+OrXB+iCANB2RGfIhRxFkp7j3XjdcVyEo3E0LBRyMtWPHGQ3YKtBmxzQnfU5d9fynKZ2OM4JcsSZcBJ3btTRoIoDAlCbsmqymffGFE//+GoHY3mIFFR88WWFkkSGQXDD1+FnbyDJh6ebd9wn3oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E43od2uu; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434f80457a4so13605965e9.0;
-        Tue, 10 Dec 2024 07:59:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733846365; x=1734451165; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wubk0prrUfZcPCKTjSsxQklCZ6pNG/rGo93+uqQj5JM=;
-        b=E43od2uuGyNNBAq3/1I8gvHwCH60x5TiyZlEg6FptV2tM5a4Shf7TrGgf88SOPeaAc
-         7PMQQNzB6uwPugtBiZwTg0fmLL+S4ZFpF2El6Lju7z4LA6VzPWgEpUKfGpPcyPjPQxOX
-         X8bqsaiTAK2SHytiy4eGxbvyEX6CVdSic2fynkxbTe51TdDpEgKzDsRgfTt9YFSMfUEx
-         ekHi4/2bzLordRXO1x+nirxpOuTh1E00UbuirJjKLk9uSGP2fZePaNkHVEzn1hpXDDBZ
-         yt1ghWFsWgMUkW1zenZw+UUjQG3jjBTIzAaLumBGrYn1dwZsdQjM3WHE++3RT6MQkOe2
-         cSVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733846365; x=1734451165;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wubk0prrUfZcPCKTjSsxQklCZ6pNG/rGo93+uqQj5JM=;
-        b=FeQhUFIkwzZ+qR/HJuTDPaJ/r4ceIkj6erH8odyH6dgqzTr/BOCKbxgfRp5OqPbaG4
-         m8/MpXb4FMNMZDTjWmcXFkJoaNXmZeapMWUxrcDYtdW7EJklXFQA++j/CPFD54QkOImW
-         KVO7kjR99yv07/FQxz7HG/Gx0UGW5tCBgmHAtkcHz2OyEZktVZu3SKiP0BAgTJZDEV94
-         bi9ptsTrAcju+sw/sxma8TRh4D6gDRB+uJC8sRldGeDOXjjgCpExXyOqF9MUc3hvygqw
-         4e2q73eFlUFSUzuE/BvTEo4EUO5zr41Dc6nHOs/KI1rQv9E2xj4fMotA1bc0e7nXSeSM
-         2ENw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+eaCq2AAL7cHK5GUp9DR6A7WGosKhbkCrEyMMFQLcYXz6+Fk/8IKrAjiv484FTFMoV8pL21wpnLdoL9A=@vger.kernel.org, AJvYcCWwbaQ9JohiyZKNclPJhMlLMUJUnJsDpBu7o8rjS9DqTfpK+YnLNAWaWn3ZqD2+/YGu7aMnNIsa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwySjkYge3IMClNzUwuSUWS2yc8J8FMiO6jSZ1rqa7B1O+L+45
-	yY/4EEQN8j1M9ccrcKQJKJPHHHaA88sPZ2s+z8p29d1tLk+NhRS5Vf+sKYMGaCT1z8ABJCuIp3y
-	toXoShZdl6vD/7KLlESnk9Ij9PGMznA==
-X-Gm-Gg: ASbGncu/7UF4MyQp90SKPgwkSAT3BjeFAiVwXXByVzUzXz4t7GCdzJ+gEng4qZUkdYj
-	1ad1kLqDLYW+ZyE/wINyI7J7rW3KTOyXCXhJ/954eXoYuX+d2XXmhJy1jdl68aqfVFHOU
-X-Google-Smtp-Source: AGHT+IEbRhG2/j/Qp5k/ecinTGRv5hY7zq64U1QHe6qQjpYUtAkrPBxMf5QU4PUu3agLMhJi6tRPf9V8cdr8WoRSw4E=
-X-Received: by 2002:a05:600c:4a13:b0:436:17a6:32ee with SMTP id
- 5b1f17b1804b1-43617a634b1mr17927285e9.10.1733846365108; Tue, 10 Dec 2024
- 07:59:25 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5E722FE1C;
+	Tue, 10 Dec 2024 15:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733846373; cv=fail; b=V7QCUNY+x6qgTspokDPixLHG0VVxg60Hi6tHPtWPctEs2EIF7Th5n0qy3VQ9ZRhuuA3sTu1KuveoGHhweQejTbZ4ZLWZKRLwQIvhsG3RbfPuVUKNwJQnhWodfY4qszQueebgus7TCJwc4od3nkVPJqUbeW2X42OpnO7jJ1+VcgA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733846373; c=relaxed/simple;
+	bh=U2rtSGED6UetJ1K7dnok3rr4YDDl1pu4QK4V8QOSCeY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NyHbXYjv/UvxbbHLpvlhFCO3tvrbnXhnpvZRY6Kc99EwEGopEtUeukVVw9dpvcfsU+MIZO0pIgE4fd6BFYjK8V1ODZVm6o0ZAygfLXzO4UO9STRu/gK5zHbH1Lo+nIQQIjBfj3Kjoco+8u3VfYyjmMhwIQgRPTJFWCLCZJ6T5JA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=fp20a2RK; arc=fail smtp.client-ip=40.107.20.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=In06InbvmEoSFWnyiXBXx0ey24HnOmy+wslmNfBUCqR2cTXWWXzw0aO2U7SXAeB7jxmOjiWmM9Xysy7UXrovD+iizg7K51pa1jz6mWaDy5/RVU2HHWIvasLUtaQ2xNP45xLDk+/KF7iTihI1FBGRozNCJu5uaAGsEWtiz2aOtAwc234whFL6D0CVrSUrFonD42kAf6izdSQBbWCtbOEP7MJRgOCKKwcSfkH7ZThy8WJrHXsxz7aLxNgAai1QyCpbPkHD5JipK8ZbbJYHlWYLqdxMPNJIRwvIe5urIj5tpD+RXvKZUq8OryuJM6GI+Wyj1rMuo9+DDJXcM3SGoljtaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NEwW8lOtXiS7iADVCJvq/FumlKQgikPyknfwN4og1xo=;
+ b=INe0ex4tWVAbb1cNfr3OIIVIpadZEfDBspC5+MJ3EO+q3rMfagv/Pqq5xfon/Tmtk786F3uwrek+2vNtRWVp6A35/0BNemjHTxW5vYAGjQtS+EMmcC51P2CtltJ7+zMjKmXuhILJafPoo/lh4UnuVg5UC/tguME7WOkvaokODn2cSo7sq4lCxnmJ7A+iz8Ox1NKQDbDnZRqGZ9pUj16wCddv6zaMt46mWRMQncUnn3cErttVNaGnV40PVJHca5abLO61k9gzyMVldtbC5DxZWP0DNw9Ip9IyKu55XbsUSJw48ey/uEO5Jq5rvRD4A4oycLV/fmWsvWK5I3rdiRpyJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NEwW8lOtXiS7iADVCJvq/FumlKQgikPyknfwN4og1xo=;
+ b=fp20a2RKyBfp2nDol8z1P18y0gIF61Zg2bUzFDCA0aBWN+nQ1QdogQIipyrYXbEc5+xqOC8pade8ADuF5daolMUanBaDhhmdnUvturhaCsilyUn9WE97WsrGZFkxTBCx+sBoAKGeFmePRdpu+HHHH2lFwRC/OzMkrVin9MK5UPc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by GVXPR10MB5886.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.14; Tue, 10 Dec
+ 2024 15:59:07 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19%5]) with mapi id 15.20.8251.008; Tue, 10 Dec 2024
+ 15:59:07 +0000
+Message-ID: <b5456480-a68f-4e71-831b-f145453e2646@kontron.de>
+Date: Tue, 10 Dec 2024 16:59:06 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/11] Revert "regulator: pca9450: Add sd-vsel GPIO"
+To: Conor Dooley <conor@kernel.org>, Frieder Schrempf <frieder@fris.de>
+Cc: linux-arm-kernel@lists.infradead.org, Marek Vasut <marex@denx.de>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Robin Gong <yibin.gong@nxp.com>, Joy Zou <joy.zou@nxp.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20241127164337.613915-1-frieder@fris.de>
+ <20241127164337.613915-2-frieder@fris.de>
+ <20241128-candle-guzzler-b7ea4e5ce643@spud>
+Content-Language: en-US, de-DE
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <20241128-candle-guzzler-b7ea4e5ce643@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0084.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cd::6) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206122533.3589947-1-linyunsheng@huawei.com>
- <CAKgT0UeXcsB-HOyeA7kYKHmEUM+d_mbTQJRhXfaiFBg_HcWV0w@mail.gmail.com>
- <3de1b8a3-ae4f-492f-969d-bc6f2c145d09@huawei.com> <CAKgT0Uc5A_mtN_qxR6w5zqDbx87SUdCTFOBxVWCarnryRvhqHA@mail.gmail.com>
- <15723762-7800-4498-845e-7383a88f147b@huawei.com>
-In-Reply-To: <15723762-7800-4498-845e-7383a88f147b@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Tue, 10 Dec 2024 07:58:48 -0800
-Message-ID: <CAKgT0Uf7V+wMa7zz+9j9gwHC+hia3OwL_bo_O-yhn4=Xh0WadA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 00/10] Replace page_frag with page_frag_cache (Part-2)
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|GVXPR10MB5886:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44ade5b6-c553-45fa-0620-08dd19339401
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MGJ2d25TaHA2V2haSS8yUnRqYTFQVG84ejk0NXJmYTJYSXlqV1ljYTBqU05j?=
+ =?utf-8?B?VVhacVcyYXoxcXFzd1piMU5QZWg4LzZLcXNEbzV3K0ErQkZ5V0FjdVJqaWY5?=
+ =?utf-8?B?N2c1V0RTeXFYSkVRVG9XbS83OVljK1ozTmtueFlldW13d1U4Y3dvaGRNUVFF?=
+ =?utf-8?B?N3hna0c1WHM0ZElOdUFSSXdRbmtZT2M5T2RCbTF0M3ExM29Yb3I0d2ZMNjF5?=
+ =?utf-8?B?b2Q2citRMnZMOWs5N2ZKWThncUFYZW93SlhOSEtyc0NrbHBpTDRzMGNycFFP?=
+ =?utf-8?B?Uk5YZDBPTnZja2h2RjNIWnU1NmJwV0xGUENYemkrTlhJS3A3YklWOFBrYTBO?=
+ =?utf-8?B?V0VPMFB5azN2bG8zMVM5VGdGSVFsMUkvN2YxUzY5K2hMSW9xc0UwL0dId1g3?=
+ =?utf-8?B?UVdpOFpBYzdNSGRyQTc4aVlVN1NFY3FFOHJLNkNiZC9kQmNCQjNsZlBtRm05?=
+ =?utf-8?B?aXQ3eUt6bkV6RXFDbWoydGE4dnFvZjJLRGVIaTlDb0VJbGJyQm1Ca1o3MkZv?=
+ =?utf-8?B?bEFwek5KaDhFZHJ1MkJHNERQditpdGloQlkwYld6TkNTVVo1c2Q0djZPenJF?=
+ =?utf-8?B?ZXhRVkJDZWlGc0Y3UVNYZkJtRUFMOU96dUJYVGRjY3BUTG4rRUFYUmVjQmor?=
+ =?utf-8?B?RUtqREFiazluL0NsSStVS05EWkZLcUpqZGVVeXk1YkFVaXJ1ZkdUZ1lpUUh1?=
+ =?utf-8?B?Z3ZRajd3UHRkM0xDZmcvVTlNalQ2Y0I0TmtBRFVJTlc3YkE3N0pPRkhDNVc3?=
+ =?utf-8?B?d0U0dE1ZbldOU3JxWEg5N3JBcHpQRUNqL2dvY0E5Tm0vQjVnYnhab085VzJU?=
+ =?utf-8?B?YlB1ejJrenRYYS9iUWJ1Z2hjZmhBMHBORHREN2JlOEg1T1YvUjA1ZnBtUDda?=
+ =?utf-8?B?bGdxTDh1WlB3aUhvN3FXM1dPTkMyVEgvRXJIaTBHa2FDKzE5L0dHb3hRZUYy?=
+ =?utf-8?B?Q1JJSkhnaHRnUHdiQ05CRytCL3ppNi9xYW5Yc3N2SzVLV203V2RDTWVDYW5t?=
+ =?utf-8?B?NndNS3pLU3FuSnBTMG9kdTR1L0hqYzhPU1dOQXhEL2g0NWg2MmtqVTNVSTMv?=
+ =?utf-8?B?VWg5WVBXVmRUMFlzd0JwODZ1Z1pmQ2lZK1RxVWNLL01mbDU3Y0V0RHQvU2ZH?=
+ =?utf-8?B?WFhSUnQyQ2JMWTU1YVR3Vk1ZeFMveS95UC9KVzMzck8yeUVhZGcwa3M3YnJv?=
+ =?utf-8?B?RXNJNlU1NCtBcTk1Z1BNb3BEd0J2MGxweWJzRUZKeVh0b0psWUpkdUZCQXI0?=
+ =?utf-8?B?ZzFjcUM2MFp1NDVIaUpmWWpoYzZRNXNZY2o4RGs1SmxwRlV2MlR3c2hKdWs2?=
+ =?utf-8?B?cExTMEpCVTRsMlNId3lOdXRpbzg2YWJpZmdWa3BMVHh1eU1RN0ZHQjZQN1ZB?=
+ =?utf-8?B?YTlSampvWW1YOVQxcnFhZ0VFYXVBb1NlbUp4RDRmMTVKZ3VVR0dYbXRJSlI0?=
+ =?utf-8?B?cDBheTJFeklOeDdVMHZuWGtpQVlYTy9TS1JEMDk0RjkvWEVNbmpBVDZwZ1Jz?=
+ =?utf-8?B?b2FSb0FiZXB2dXg2YkQyZWZ5VHZjRElXT2lxaE5scXlsTFd5YXhkYW9QaXRF?=
+ =?utf-8?B?Z1hiVk8vNnBSU2xvZ1hFcGZFbURXNDJpZndIbnozekpQTGNraEJpRE9qQkMw?=
+ =?utf-8?B?R3BKSTlHbnRMUDlkeGxDVUI0NFFxbXZnOVNLVllEMXRtblRJQ28wbkxvdlpV?=
+ =?utf-8?B?MWU3SHdpS1hQdlRWcE9HZFFMRDlvdFFXcjJWSTBFWHQ4d01idFkrMHNWT3kr?=
+ =?utf-8?B?L3FhSHJtWEdBYXk0VjMxTVpOVXJqL0IzZXlMMEpSUjNNaTUxNnk2ZEtaWWQ1?=
+ =?utf-8?B?ZGxCbFFyYkd1OTdXTU9Cdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VldTZ2ZORWxjbWErQ0pZWmExQS94YkdscldZQ2toMVRyMFF5L3FRM2E3OW1a?=
+ =?utf-8?B?UTR1Zk9NQTJEV2hiWXUwZEhGVXJjeEY1b3VqNW5JOHFUY3ZGVmVsRjZISEpv?=
+ =?utf-8?B?eXlJTitkbnUwL2pEU2hEZnpWZS95MURjSmlRUkVnRW1TZDF5SGppd05aOGpm?=
+ =?utf-8?B?c2JTSjNZZDBGWGx1MGF3LzhSaEpyS1RwNSszeGJjalgzbVJaQ3R6SUJJdExh?=
+ =?utf-8?B?eG1BTk9GK1BiM2FhZGp1OTlhZi95ZytpU1pvbEwxZWRVQ0NNeXlUYlN0eFg2?=
+ =?utf-8?B?dkU5ZkE1eDFEVmtwUkFwMWN2a3BUaGp2eXJOM0hnU1cxTTdqeEZ0TU1LajlN?=
+ =?utf-8?B?NmgrV1hFZUhQWFNoRnBIZ2tjWjh2SVFiZURySnRHL3laNzdIdWI4WDNuUFdk?=
+ =?utf-8?B?Uk5tdVJoV0FTZTdPYjhGNi9VQWt2S2J0a2VKY2RxZHlXU3lMZnhJZUI1UDRO?=
+ =?utf-8?B?Q0U5RnA3WGJvbzFOYTYwZnVEbHNEMkVYc0tLdmRKemVQbVk2SHpRZ0pkVlla?=
+ =?utf-8?B?dGFEa2hCcEpPMExmYy9UNEdlbXcwYXRPWW44WmlmMzY2Q3BRbXF6S0c2KzQw?=
+ =?utf-8?B?UVZXcmNPR01mazNyOXMwalMrcGo1aytuRHJ3SHJNTVVINUN1RWxFMUVZZWZn?=
+ =?utf-8?B?VEpCc3lnUkxTTitoQ1JJRFBkT3NwSzh6aDRNM3RwMEhtWjY2SExGcWNDeXJm?=
+ =?utf-8?B?eUVHTDN1ZHZIajNVU0tUWm1WMjEwc2NqMS81Ym95SXFyOTNUaGdMT25YL1lR?=
+ =?utf-8?B?VFpXWHZzekNEVi8vM2xlWFNiSzB2WTFWZDF2bFVqNE5vWlovVSs3dnA2WDhB?=
+ =?utf-8?B?a3ZIVFRSamJpelExNlhoVjdPUWRpTGNxcWo4ZUVpLzZuczExR291U2RnSXBu?=
+ =?utf-8?B?R3l2RWhzZytMWHI0RUJja0VlUDBLbC9lVmdFL0k5c1Z6RCt4c2hYZWI1bzZP?=
+ =?utf-8?B?VVZpYkVBUXQrS1RyQkxxQ2hOemlGMEZFT21IY1ZyMnNWV2g1U3VUMDB0blk2?=
+ =?utf-8?B?bTFkbUZ3Rk8ya2hmZU9Ga25sUTBxaFFyQm1wbEFlTEhnRXdaQjZIeFhOVEVn?=
+ =?utf-8?B?Y3dmaFluN0JhdDJUaVpWWmlENWMxQ3d5bEJ1VzZHc2RoS1liV3R2bE9sMDRk?=
+ =?utf-8?B?b01KMXE5Z213UnlBOTFHVXdlMC9VaTJwS2hLZG1scG1ZMnBEZGpJN1MwYzh5?=
+ =?utf-8?B?Rm9wOHpCNW4xV1JaT2tnVVdaWUNFSndjcmdNUVd6ZTM3Y2xnUytaLzYzbXV2?=
+ =?utf-8?B?TzB2RTRKS0VucTVHU2k4cVpRajdTTlFxNHd3dHpkTTd6YXA5VHpkSzY0RzVN?=
+ =?utf-8?B?TkhQcHkwbi9qY2hWZDZUR0czQmtZWERrK2cvTWVVbXdmVlJ4cWthL25saUEy?=
+ =?utf-8?B?TFRhMUE0cUxWT21yeDMvZjFqQmd5RkE5QW9tUFQ2VFR6UGlVVmMwWTBOVDdv?=
+ =?utf-8?B?eW0xOWdZOEpVTUN0VkdZWWNQcnJHYWlqSGNua0dmL2lSSWk0bzNuNmFpWWVY?=
+ =?utf-8?B?ZW1NWSt4U2p3cmR1WlIrRmxoMnA1Q3drMkpibkk3Qm43RTNkdlFVSFptajM0?=
+ =?utf-8?B?dEszUUR5bXBqUTlPQk5OM3prVm1QcnppbGpIdUgray9tOGN2S1lrMkF6MWRM?=
+ =?utf-8?B?R05JbGVLOXJ6R0xGRGF6V3gwRnRuNVhndXBJWWxEN05Vc0VkeEdTUDBaUVNX?=
+ =?utf-8?B?Tk9OR21PNHNuNkFpVzlEZkQxRmZUa01jMk5JZFltbVJKeUx5dzNCdjQ1VERo?=
+ =?utf-8?B?bmVYay91d0RjbHQxWDdLdk9RTFU1U3ZSbzhxSm9OK0pmVWQ4U1FZb3VIUHVn?=
+ =?utf-8?B?MHgrUHhCQk04OWpyQ1Q2OWtEVXdmMnF5SmxvY09UOWY4bE1tdXZwaFF5SU1T?=
+ =?utf-8?B?Y3kvaHczVVdFdGtjYW1wNy9MYnY3aHAzUXNQZHgwOGJrSVR0SUZ2Y0x6ZjU5?=
+ =?utf-8?B?KzFhTXJ1ZUFpbUpLOXZ3di9samhCM1dJN1BpbmRqT3QvdStUV1U5MnZtMXIv?=
+ =?utf-8?B?WFdOVThSM0I5MUplTCtVdFllcXMvSjBnM2ZuRXIvOFp3U21HNk1PbFZrM29n?=
+ =?utf-8?B?cXBJNVFvem50U0t4ZGFiaG5GQlBkeUpyRTl4YmRiWjBxWFdmTVEzVEFxWUov?=
+ =?utf-8?B?KzZYWm4rSGZIU2lJOEozT011R3hDYnNYZC9NcEp1R1RSS3NrcER5NFVQN2JO?=
+ =?utf-8?B?K2c9PQ==?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44ade5b6-c553-45fa-0620-08dd19339401
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 15:59:07.4810
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lARlK2zTrlQCQiNgNPvjAhLNiRiNdVOIaxMlOGoGxph2h2SxQErYW88fOvWpcbMEMAn1LFSMb8/OzG57OE9foBsg712gMcfL7PSiBR6Giyw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB5886
 
-On Tue, Dec 10, 2024 at 4:27=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
->
-> On 2024/12/10 0:03, Alexander Duyck wrote:
->
-> ...
->
-> >
-> > Other than code size have you tried using perf to profile the
-> > benchmark before and after. I suspect that would be telling about
-> > which code changes are the most likely to be causing the issues.
-> > Overall I don't think the size has increased all that much. I suspect
-> > most of this is the fact that you are inlining more of the
-> > functionality.
->
-> It seems the testing result is very sensitive to code changing and
-> reorganizing, as using the patch at the end to avoid the problem of
-> 'perf stat' not including data from the kernel thread seems to provide
-> more reasonable performance data.
->
-> It seems the most obvious difference is 'insn per cycle' and I am not
-> sure how to interpret the difference of below data for the performance
-> degradation yet.
->
-> With patch 1:
->  Performance counter stats for 'taskset -c 0 insmod ./page_frag_test.ko t=
-est_push_cpu=3D-1 test_pop_cpu=3D1 test_alloc_len=3D12 nr_test=3D51200000':
->
->        5473.815250      task-clock (msec)         #    0.984 CPUs utilize=
-d
->                 18      context-switches          #    0.003 K/sec
->                  1      cpu-migrations            #    0.000 K/sec
->                122      page-faults               #    0.022 K/sec
->        14210894727      cycles                    #    2.596 GHz         =
-             (92.78%)
->        18903171767      instructions              #    1.33  insn per cyc=
-le           (92.82%)
->         2997494420      branches                  #  547.606 M/sec       =
-             (92.84%)
->            7539978      branch-misses             #    0.25% of all branc=
-hes          (92.84%)
->         6291190031      L1-dcache-loads           # 1149.325 M/sec       =
-             (92.78%)
->           29874701      L1-dcache-load-misses     #    0.47% of all L1-dc=
-ache hits    (92.82%)
->           57979668      LLC-loads                 #   10.592 M/sec       =
-             (92.79%)
->             347822      LLC-load-misses           #    0.01% of all LL-ca=
-che hits     (92.90%)
->         5946042629      L1-icache-loads           # 1086.270 M/sec       =
-             (92.91%)
->             193877      L1-icache-load-misses                            =
-             (92.91%)
->         6820220221      dTLB-loads                # 1245.972 M/sec       =
-             (92.91%)
->             137999      dTLB-load-misses          #    0.00% of all dTLB =
-cache hits   (92.91%)
->         5947607438      iTLB-loads                # 1086.556 M/sec       =
-             (92.91%)
->                210      iTLB-load-misses          #    0.00% of all iTLB =
-cache hits   (85.66%)
->    <not supported>      L1-dcache-prefetches
->    <not supported>      L1-dcache-prefetch-misses
->
->        5.563068950 seconds time elapsed
->
-> Without patch 1:
-> root@(none):/home# perf stat -d -d -d taskset -c 0 insmod ./page_frag_tes=
-t.ko test_push_cpu=3D-1 test_pop_cpu=3D1 test_alloc_len=3D12 nr_test=3D5120=
-0000
-> insmod: can't insert './page_frag_test.ko': Resource temporarily unavaila=
-ble
->
->  Performance counter stats for 'taskset -c 0 insmod ./page_frag_test.ko t=
-est_push_cpu=3D-1 test_pop_cpu=3D1 test_alloc_len=3D12 nr_test=3D51200000':
->
->        5306.644600      task-clock (msec)         #    0.984 CPUs utilize=
-d
->                 15      context-switches          #    0.003 K/sec
->                  1      cpu-migrations            #    0.000 K/sec
->                122      page-faults               #    0.023 K/sec
->        13776872322      cycles                    #    2.596 GHz         =
-             (92.84%)
->        13257649773      instructions              #    0.96  insn per cyc=
-le           (92.82%)
->         2446901087      branches                  #  461.101 M/sec       =
-             (92.91%)
->            7172751      branch-misses             #    0.29% of all branc=
-hes          (92.84%)
->         5041456343      L1-dcache-loads           #  950.027 M/sec       =
-             (92.84%)
->           38418414      L1-dcache-load-misses     #    0.76% of all L1-dc=
-ache hits    (92.76%)
->           65486400      LLC-loads                 #   12.340 M/sec       =
-             (92.82%)
->             191497      LLC-load-misses           #    0.01% of all LL-ca=
-che hits     (92.79%)
->         4906456833      L1-icache-loads           #  924.587 M/sec       =
-             (92.90%)
->             175208      L1-icache-load-misses                            =
-             (92.91%)
->         5539879607      dTLB-loads                # 1043.952 M/sec       =
-             (92.91%)
->             140166      dTLB-load-misses          #    0.00% of all dTLB =
-cache hits   (92.91%)
->         4906685698      iTLB-loads                #  924.631 M/sec       =
-             (92.91%)
->                170      iTLB-load-misses          #    0.00% of all iTLB =
-cache hits   (85.66%)
->    <not supported>      L1-dcache-prefetches
->    <not supported>      L1-dcache-prefetch-misses
->
->        5.395104330 seconds time elapsed
->
->
-> Below is perf data for aligned API without patch 1, as above non-aligned
-> API also use test_alloc_len as 12, theoretically the performance data
-> should not be better than the non-aligned API as the aligned API will do
-> the aligning of fragsz basing on SMP_CACHE_BYTES, but the testing seems
-> to show otherwise and I am not sure how to interpret that too:
-> perf stat -d -d -d taskset -c 0 insmod ./page_frag_test.ko test_push_cpu=
-=3D-1 test_pop_cpu=3D1 test_alloc_len=3D12 nr_test=3D51200000 test_align=3D=
-1
-> insmod: can't insert './page_frag_test.ko': Resource temporarily unavaila=
-ble
->
->  Performance counter stats for 'taskset -c 0 insmod ./page_frag_test.ko t=
-est_push_cpu=3D-1 test_pop_cpu=3D1 test_alloc_len=3D12 nr_test=3D51200000 t=
-est_align=3D1':
->
->        2447.553100      task-clock (msec)         #    0.965 CPUs utilize=
-d
->                  9      context-switches          #    0.004 K/sec
->                  1      cpu-migrations            #    0.000 K/sec
->                122      page-faults               #    0.050 K/sec
->         6354149177      cycles                    #    2.596 GHz         =
-             (92.81%)
->         6467793726      instructions              #    1.02  insn per cyc=
-le           (92.76%)
->         1120749183      branches                  #  457.906 M/sec       =
-             (92.81%)
->            7370402      branch-misses             #    0.66% of all branc=
-hes          (92.81%)
->         2847963759      L1-dcache-loads           # 1163.596 M/sec       =
-             (92.76%)
->           39439592      L1-dcache-load-misses     #    1.38% of all L1-dc=
-ache hits    (92.77%)
->           42553468      LLC-loads                 #   17.386 M/sec       =
-             (92.71%)
->              95960      LLC-load-misses           #    0.01% of all LL-ca=
-che hits     (92.94%)
->         2554887203      L1-icache-loads           # 1043.854 M/sec       =
-             (92.97%)
->             118902      L1-icache-load-misses                            =
-             (92.97%)
->         3365755289      dTLB-loads                # 1375.151 M/sec       =
-             (92.97%)
->              81401      dTLB-load-misses          #    0.00% of all dTLB =
-cache hits   (92.97%)
->         2554882937      iTLB-loads                # 1043.852 M/sec       =
-             (92.97%)
->                159      iTLB-load-misses          #    0.00% of all iTLB =
-cache hits   (85.58%)
->    <not supported>      L1-dcache-prefetches
->    <not supported>      L1-dcache-prefetch-misses
->
->        2.535085780 seconds time elapsed
+On 28.11.24 6:37 PM, Conor Dooley wrote:
+> On Wed, Nov 27, 2024 at 05:42:17PM +0100, Frieder Schrempf wrote:
+>> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+>>
+>> This reverts commit 27866e3e8a7e93494f8374f48061aa73ee46ceb2.
+>>
+>> It turned out that this feature was implemented based on
+>> the wrong assumption that the SD_VSEL signal needs to be
+>> controlled as GPIO in any case.
+>>
+>> In fact the straight-forward approach is to mux the signal
+>> as USDHC_VSELECT and let the USDHC controller do the job.
+>>
+>> Most users never even used this property and the few who
+>> did have been or are getting migrated to the alternative
+>> approach.
+>>
+>> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+>> ---
+>> Changes for v2:
+>> * split revert into separate patch
+>> ---
+>>  .../devicetree/bindings/regulator/nxp,pca9450-regulator.yaml | 5 -----
+>>  1 file changed, 5 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
+>> index f8057bba747a5..79fc0baf5fa2f 100644
+>> --- a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
+>> +++ b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
+>> @@ -77,11 +77,6 @@ properties:
+>>  
+>>      additionalProperties: false
+>>  
+>> -  sd-vsel-gpios:
+>> -    description: GPIO that is used to switch LDO5 between being configured by
+>> -      LDO5CTRL_L or LDO5CTRL_H register. Use this if the SD_VSEL signal is
+>> -      connected to a host GPIO.
+> 
+> Your driver side of this, that I wasn't sent and cba downloading an
+> mbox of is not backwards compatible. The code has been there for a few
+> years, are you sure that there are no out of tree users or other OSes
+> that use the property?
 
-I'm not sure perf stat will tell us much as it is really too high
-level to give us much in the way of details. I would be more
-interested in the output from perf record -g followed by a perf
-report, or maybe even just a snapshot from perf top while the test is
-running. That should show us where the CPU is spending most of its
-time and what areas are hot in the before and after graphs.
+Yes, this is not backwards compatible. I introduced the original meaning
+for the sd-vsel-gpios property based on some misunderstanding of how the
+hardware actually works. Therefore I'm quite sure that except for the
+cases where someone copied my erroneous implementation into their
+devicetree, nobody has really any reason to actually use this.
+
+In-tree all users have been removed (one fix still included in this
+series). Of course we can't be fully sure that there isn't someone out
+there having non-standard hardware (SD_VSEL not connected to
+USDHC_VSELECT but to GPIO only) and using the old sd-vsel-gpios, but the
+probability is very, very low.
+
+IMHO taking the small risk here is better than keeping the misleading
+implementation which will likely cause confusion and failures in the
+future. But of course that's not up to me to decide.
+
+> 
+> tbh, I think all 3 of your dt-binding patches should be squashed rather
+> than drip-feeding the conversion. It makes more sense as a single
+> change, rather than splitting the rationales across 3 patches.
+
+Ok, if you like this better in one change I can squash these for the
+next version.
+
+Thanks!
 
