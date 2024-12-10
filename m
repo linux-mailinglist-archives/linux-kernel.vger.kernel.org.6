@@ -1,133 +1,156 @@
-Return-Path: <linux-kernel+bounces-438691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37B29EA46A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:31:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E04B9EA45A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:30:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470AE161769
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:31:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3275B28212E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515F01A0716;
-	Tue, 10 Dec 2024 01:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBE8524B0;
+	Tue, 10 Dec 2024 01:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnlUz32d"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N4Ed1XIy"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F861A01C6;
-	Tue, 10 Dec 2024 01:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9607F4A04;
+	Tue, 10 Dec 2024 01:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733794240; cv=none; b=b8VBjW70Hq78XhpHuOh/exqxHkL7uz6fyfVSV2wRyU7IzKVNSCo+EgssuPYeEuoCrU/8WVHcX6YCa9HYDalxU5Ner3YDbtRHrvkH7auwh9xYQz8fUK4THKfrxeAxHKZhzP9X1Y3gypGcjcOgChfDyWDUi/uhcZ4b9V0GNJq3gwA=
+	t=1733794219; cv=none; b=GqPpqHHV6RSdIh+r8LWUqLdtw9sPmk6scjrt5DDEnKxcJwnwSRLid4wRLNuryvy8tfS6jMfp0WOeCV6Hh6vUlMOPNc1EXSJmJy/wYQZVCTFo0z5S4UYn0ABhct7tGdr0Yo6G0EfLOVHetruunVqrAV9haHTSxVt6JM2w0W0jzPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733794240; c=relaxed/simple;
-	bh=BZYDFRTpTR3NtC0vC92IDRbXApKJBbwtNKxfulbPgWY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WJG/9NkHlCdhDy/LexrTpJxE6rCjjKSeOLekIyla3tHG579ebDdNy4XYA1PPfqP8qvEwyFplw9fvbHcBbnxrUOk7F4SpBdaK5xJBTkILb3vZ4Z9OBj5BoXzR2TKlx4VE6X9GTevEnNtGoRT+o5M4Hj5u0kWz0WaF0+R29Nao4Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OnlUz32d; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-467777d7c83so1666101cf.3;
-        Mon, 09 Dec 2024 17:30:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733794238; x=1734399038; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jqw9ssvr+RamFhuTkFddw4DLtLM/EJe/MJOiR1nlAKE=;
-        b=OnlUz32d8X/zRJo4HX4SXTwRWw++VVCWHpD583OC2wOZakMw7MaALrYws/3W9oC5xq
-         xUIBJBjGqE9E83PuF3ecIEILspaQFgtIS99vHiGvy+KYILjp7bkvtNClrOPNeyb/M5s3
-         C7+HpFaZlMdBDPs/hDSM0yoLbYRy8hTbP7eQQkkjzPMKtWu5mSqNAtbDevhBknb0Q4m/
-         kWMRvnjX+AvhKI0wHey2gmsHx5zZv/8Sb/x3Il62wSyBnwfBBq3oQ2tojxi7aFlNn4m8
-         UukkORXXC0rOyF6/gwZRDbXavgFbxz5xVXcmsIwiiTAChvi0tf1W4i7Tyw2SGz8eq2MO
-         mjWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733794238; x=1734399038;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jqw9ssvr+RamFhuTkFddw4DLtLM/EJe/MJOiR1nlAKE=;
-        b=MOOjadri7kjZ3KuIXztTNJoXX29QTP1BD7Hm8UfjaIp6eAj0Lc38Irw4V+qI2BwN2T
-         pg96qhIStQtgPUq1zv3MuQPxrp3hnVm6/9JpAU04vgrKHceeLl0xz40EV8VEWNzkVNCK
-         oEMpU24UMMUJQWFqN7uXS93URfuPkPVcdk9gKJRrBFVHLmmvwfNcm43enfxxKJOTzrHH
-         Q2D0FDAgH36ba1eDP1RFHN7YxJGIJ/VgKlq8M/hG2AJJj4geNoNBo2QjjOpi21z7Gq1z
-         e2UoZfykQEm5koDCXStDCUsYb7sgfvdcJpk+hpfafcOeG+blIv9XRrH6gNfhczvrfhE9
-         OT7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfnANBIw/2y5QY/J7s3omOQPv7QVbWHcqFm+xpPbpfbM7vSU6v1OK/j7TqNe89F149pJMMmqunvYhS@vger.kernel.org, AJvYcCXbyAhMa/hymT+v9SXLwB9t8ctE+u9IfEDKY5RchqUOMqmNpN8DgaIWSSkTgKqj4UwP/7emrHIVOW34NNbS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOTevSI9/3Yo9LGZT2VDcmFvLmtJX3SKuecAdQ/a/DmiI0utB0
-	JEceBp4yEiYSxvP9r3lnU6/PxM1frXA2IfRm0oXNNlRcnS0q3TRK
-X-Gm-Gg: ASbGncuxQrciZbuIis0Dyk1WDjAjKCmWYf5EVkb50/fVAV1qrxJwPQqpZNr/5qUb7u+
-	RNhG705f2v7cpXqZoYk9IyaUbfqn4PoOtiuZMJBHtpdrVA965zlHcC3W3Zto8AD+ytIeMkIsOeX
-	u3jAVRxRSie/zJ3J9dz8ASsVWmERGmBaoxvN9CuDkbCyEQmaUknE34pfVcfAeI6m2eS/MWwmL+g
-	6xTbE0kMWjH16Y7GATsDKlG8L1tsE/FY1saTeuc6jHZKWAERX7bkjT+ddTNcr7lpw==
-X-Google-Smtp-Source: AGHT+IH6JIbgEEMAy3xvXZsAPmdWHrEPx5XojlgCSN0/zSm0Ou9M/ynX9WkvMGNi2Bhw9DACvmHMFw==
-X-Received: by 2002:a05:6214:226a:b0:6d8:86c8:c2a9 with SMTP id 6a1803df08f44-6d8e73bf6b0mr241598566d6.31.1733794238061;
-        Mon, 09 Dec 2024 17:30:38 -0800 (PST)
-Received: from master-x64.sparksnet ([204.111.53.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8f429a79csm36834346d6.72.2024.12.09.17.30.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 17:30:36 -0800 (PST)
-From: Peter Geis <pgwipeout@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Peter Geis <pgwipeout@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Johan Jonker <jbx6244@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH 6/6] arm64: dts: rockchip: Remove address aligned beats from rk3328-roc
-Date: Tue, 10 Dec 2024 01:30:10 +0000
-Message-Id: <20241210013010.81257-7-pgwipeout@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241210013010.81257-1-pgwipeout@gmail.com>
-References: <20241210013010.81257-1-pgwipeout@gmail.com>
+	s=arc-20240116; t=1733794219; c=relaxed/simple;
+	bh=MI+1FDBSdcgtFatbg/h9hiNhgycwBsXF6wrb1dr7PiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DsJsonjIzVhKa+sy2xnWOImb9bE/dutKJjKKERnA1J6hYvha8QvhhSyKqa6n11a26x80RcazlR6MRyJMX6KKOB+rB3nIaeN9WnqTcdG+s+AzRNcjYvGC/9dZtpNujyCFipoIYtKNceFyCqM8N8+HItCcSOXctXNETBuhMNiIEOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=N4Ed1XIy; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733794208;
+	bh=An6uolrgf00SGJ8E+TJg/LlT/r+g0QzjXRT5lhUqzD8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=N4Ed1XIyDTsO8lZaqu0waqB+8djd/FB3UpH8uk/3yzQBavdwGZUyWlWG/xDk4TcrS
+	 QMIrmvF3xeD+yIu739ASkwAZxs0zCsd4Ek5/+pTcpKPXZutnVy74g7DVEDUECZgfLL
+	 kuPDj8kY1heGG48vl0t6m2AwpwsSCjtWIHR5tOJz4TpDF2t2+MtRtZ0FH222y54VxT
+	 fnGJJWHnfXDKbFoSRvw3hB7tIbqNH9cZz5NTLbv/WEtvGuCM8W9dARynRMPBIC814u
+	 P5ENS6UT1O32usMvWRaTZMiFDPGsBANP17Ved98SAdhM7NJCN/Pu6TLzZ6jTT+279A
+	 PZI43rgMDdg1A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y6h4H441sz4wcy;
+	Tue, 10 Dec 2024 12:30:07 +1100 (AEDT)
+Date: Tue, 10 Dec 2024 12:30:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>, Jani Nikula <jani.nikula@intel.com>,
+ Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Message-ID: <20241210123011.503ddd5a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/5nFw1kQmLV+O/LDFyqcNIaI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Since commit 8a469ee35606 ("arm64: dts: rockchip: Add txpbl node for
-RK3399/RK3328"), the snps,aal, snps,txpbl, and snps,rxpbl nodes have
-been unnecessary in the separate device trees. There is also a
-performance loss to using snps,aal. Remove these from the rk3328-roc
-device tree.
+--Sig_/5nFw1kQmLV+O/LDFyqcNIaI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+Hi all,
 
----
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
- arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi | 3 ---
- 1 file changed, 3 deletions(-)
+  drivers/gpu/drm/xe/display/xe_display.c
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-index 6984387ff8b3..0d476cc2144d 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-@@ -155,12 +155,9 @@ &gmac2io {
- 	phy-mode = "rgmii";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&rgmiim1_pins>;
--	snps,aal;
- 	snps,reset-gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
- 	snps,reset-active-low;
- 	snps,reset-delays-us = <0 10000 50000>;
--	snps,rxpbl = <0x4>;
--	snps,txpbl = <0x4>;
- 	tx_delay = <0x24>;
- 	rx_delay = <0x18>;
- 	status = "okay";
--- 
-2.39.5
+between commit:
 
+  a4de6beb83fc ("drm/xe/display: Separate the d3cold and non-d3cold runtime=
+ PM handling")
+
+from Linus' tree and commit:
+
+  f5d38d4fa884 ("drm/i915/display: convert intel_display_driver.[ch] to str=
+uct intel_display")
+
+from the drm-intel tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/xe/display/xe_display.c
+index b5502f335f53,b8bfb666ebe8..000000000000
+--- a/drivers/gpu/drm/xe/display/xe_display.c
++++ b/drivers/gpu/drm/xe/display/xe_display.c
+@@@ -446,25 -470,20 +475,22 @@@ static void __xe_display_pm_resume(stru
+  	if (has_display(xe))
+  		drm_mode_config_reset(&xe->drm);
+ =20
+- 	intel_display_driver_init_hw(xe);
+- 	intel_hpd_init(xe);
++ 	intel_display_driver_init_hw(display);
+ =20
+  	if (!runtime && has_display(xe))
+- 		intel_display_driver_resume_access(xe);
++ 		intel_display_driver_resume_access(display);
+ =20
+- 	/* MST sideband requires HPD interrupts enabled */
+- 	if (!runtime)
+- 		intel_dp_mst_resume(xe);
++ 	intel_hpd_init(xe);
+ =20
+  	if (!runtime && has_display(xe)) {
+- 		intel_display_driver_resume(xe);
++ 		intel_display_driver_resume(display);
+  		drm_kms_helper_poll_enable(&xe->drm);
+- 		intel_display_driver_enable_user_access(xe);
++ 		intel_display_driver_enable_user_access(display);
+ -		intel_hpd_poll_disable(xe);
+  	}
+ =20
+ +	if (has_display(xe))
+ +		intel_hpd_poll_disable(xe);
+ +
+  	intel_opregion_resume(display);
+ =20
+  	if (!runtime)
+
+--Sig_/5nFw1kQmLV+O/LDFyqcNIaI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdXmaMACgkQAVBC80lX
+0GzrfAf8CQNQLyvtHwD0N8dm5jXXHlNMtQoirBpRCe1plSNol9py/L0e0L0H1UMV
+Fg7OKElNC1p48U+R3XDdZEAKbF1LW5vXy78CTnDLNfcjpt5AIdICiYZtMq4hyz56
+xwYMtQBNXVBYLViRfty5OvR+LMwr5dstAcM/wZDT18zjuuVbuoU/ozmVKagezqxM
+Tdzi03oEoDi808Zn+6jClIYOSxTLbMjcoYgdKh9d8Z/yAHSpkNqd0dJFXInyBaKe
+jlcyfREij63DtP4s1kJz8FHjC59pJahgfktmuqDWe34MJe7TJx8pmPeYAaPWdBv+
+q7tbSO6Qs/bW1f40XqLqHLoRsRbuJw==
+=TiTq
+-----END PGP SIGNATURE-----
+
+--Sig_/5nFw1kQmLV+O/LDFyqcNIaI--
 
