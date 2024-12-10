@@ -1,171 +1,300 @@
-Return-Path: <linux-kernel+bounces-438837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D119EA720
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:15:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E7CD188A2C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:15:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F3243ACB;
-	Tue, 10 Dec 2024 04:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F0mTF8kV"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2659EA721
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:16:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA75423312C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BE07284449
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:16:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7408912AAE2;
+	Tue, 10 Dec 2024 04:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BgfU6gTr"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74E8DF58
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733804130; cv=none; b=EfmUtJcoU2wvg+OxNItzcqgBku4v/kds5pDLSOPzDMPKMluTIiwXYs/C66hmLSlBaCIYxi6BDeIhpkgmkJLQHpk7R5wpl9waIAHVZ5YMU/Onib7GWx5OSQ8cHjbD94P6Y3a4tCzZPdhnLRN5u8AVEBkpDv/cucMRO0ksvrxE6+A=
+	t=1733804188; cv=none; b=q6J1lUPomolWDGMMmkkz7/BLhP91A1fkhEDEqsJuULV4oK/hFh8nj0eEhU2ZyXbCvtuqbdKSQbikJUCdoup6s6lN67mJbgM5nSYJnmPIIXX6WaODcnCIfdd1/bkQCna5wI5juwxjRUpvhE6BKPf2ti2FrB5tjtI/sH+yW2+474Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733804130; c=relaxed/simple;
-	bh=ZiNByDPzHPXMpmas1pb4IChbkNzdrTYTOL2mElo35AI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RiWDrsYZvIBLZju25w1En/0KltcXOfo42wkCTbOotl4pzbvaqpPYFIAkWa40ZwBQ0aTeXNmlPerAZLchrv1z+hOz3Uw5hnZN8k8D1WflDlxOuyVeEwL1ZeDDd0eMY0nIUlcOutTCRxMdVNqK76qA8mhxuVSFs9BdBeKMyhnn+x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F0mTF8kV; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733804124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jvB6EzRbD16SkG58oiYpRiJHJAIgPKUq3a5VWnlP/Zw=;
-	b=F0mTF8kV0SH73PaVUbuhfhvdwQXCv/rb0RTtK54YqGRPilqq/P+TBGPBh7g4OIfrZWQYxn
-	Qn1ZIKvHicftZy3Y4qKYy/FH0Be4JjKPTFJzlNJiIC2WCPV7Wvi2tsC/d+Kms0+HJawUfb
-	JZdJO6NMVIUAQLEn35BJEOHqWT4rD/8=
-From: Hao Ge <hao.ge@linux.dev>
-To: surenb@google.com,
-	kent.overstreet@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	hao.ge@linux.dev,
-	Hao Ge <gehao@kylinos.cn>,
-	Ben Greear <greearb@candelatech.com>
-Subject: [PATCH] mm/alloc_tag: Add kasan_alloc_module_shadow when CONFIS_KASAN_VMALLOC disabled
-Date: Tue, 10 Dec 2024 12:15:15 +0800
-Message-Id: <20241210041515.765569-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1733804188; c=relaxed/simple;
+	bh=ZIY/w4m8Ra3CLU290svg1elEYBPkVlp9m+9/xmJTBo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fEBBqaWraKwiOp1tPFhvg4+eCvLa5Iz5elUwbMb8DCwHXkqcZhRKNKQfGBt5u3IcTafbOEswk0/T9ZeAgs3T+dmuWmajcbj78KwJ0KHxCrfxOZnsS8fNIZhWwM+386iUep9BSEIG6/n5/czbcyYbSnKac+jHQiTllYw14NsQ2tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BgfU6gTr; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5401bd6cdb4so2044057e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 20:16:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733804185; x=1734408985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVjyzJNZzUOHZ4xph7lTSEABYq06yQKkLnmVu5Ncc7M=;
+        b=BgfU6gTrIfCzSbzUp6DKjQpyoKqvawqmRuRfE0lrUfRU2XaOqWxmSLh1WqBzcut/PR
+         Vw5JQXFF6Cvv1pwIeJnVUYHuS8M8MpRljcWGWhjCjGQoj/LTwWB0kV0JPW2qRZQjZ7S3
+         fJ4nyaZ2SjFKfgbrzI3/paZ5HTHUPOnypfY+0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733804185; x=1734408985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kVjyzJNZzUOHZ4xph7lTSEABYq06yQKkLnmVu5Ncc7M=;
+        b=M9uBTHs7uMUt6xva+suLHJaMP1Oo86g4urSDmzX1hbr0VOekWSM3B00ZCG8TKwl0Y/
+         Wuhi7X3KMO5JU+SRySBSPOXDrNBmaFEF3BpzPygr3+GrCo+kaUoa9d4U+FJC3mzRHCkX
+         NnumPOuaTceSbKjIs13GdqZpz8+d2IFJDOCd9jdCGjmWVwO/oRoobY6Bs5VRqNT6xFyi
+         ErDonsiTb1tw9sVsLGxK2aWBgk8+ALnihDMPmwIeD4Nq5ZpSK6bdWT7g0+/Yu07pWRJi
+         +ZhcpknUiOa8za9qO6Os8F+211CGl14lYertnc4hVBdGCsWZecK6c5yme0OiBca8bTuF
+         j3qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWu3IZwW8gOSL1JZNHeStg8sKIDegZbViKPlKlOQ54bPmKMj1mKeWd22Lggb6l3ADQGaIOPfMWthSxHs5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWnluLmDMNqHue+9vJUx/9iMzOsljEsF2AfiwWMmNMHG8o9kKm
+	anRXlX0bgzh0xCgUFyRwfWjXfIYjTw7GrybZia0+oQ90oA+PlYOeIrfpUkaBEUADOIujqvb+MH+
+	wkvcGaPHSvi3TgTX1QsPV2lPwr+zUpQKWSVfu
+X-Gm-Gg: ASbGncsQuMv74hEXKzhw9402TSGHLt1qbdBve2aoCN40Gi2v/FTacuAm7E0DftVfsBc
+	F9zZccSjm7lyt64No0m2kZOF6b1Kzn1OHz0CDlQWPrKTTQyr6R/oElifXCfpH8ng=
+X-Google-Smtp-Source: AGHT+IFLm7BUs8MAU7wTXsZF4FUsJzFdNX0LJUGWf1hGpJQa8BMT4iC8QeVgWREJrgR+EdOW4ukZF7ZP90wiDT03Nq4=
+X-Received: by 2002:a05:6512:6cc:b0:53e:391c:e96c with SMTP id
+ 2adb3069b0e04-540240b0ff8mr1052794e87.8.1733804184782; Mon, 09 Dec 2024
+ 20:16:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241203-mt8188-afe-fix-hang-disabled-apll1-clk-v1-1-07cdd7760834@collabora.com>
+ <a10dbdf265194e77a69b6e40afa3df9636b3ab14.camel@mediatek.com>
+ <a70a0521-985d-43a4-a1fa-36eb733d5ca9@collabora.com> <1d2ee55dde84bcab6f777525042c6789b9f2c1fc.camel@mediatek.com>
+ <108d4187-26af-43f6-8b1e-0e48516524a4@notapiano>
+In-Reply-To: <108d4187-26af-43f6-8b1e-0e48516524a4@notapiano>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 10 Dec 2024 12:16:13 +0800
+Message-ID: <CAGXv+5Gi30-GSy_D+DHS_wz-A3F4qxuc7-6KpfBQ-iJwr3POtQ@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: mediatek: mt8188: Enable apll1 clock during reg rw
+ to prevent hang
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: =?UTF-8?B?VHJldm9yIFd1ICjlkLPmlofoia8p?= <Trevor.Wu@mediatek.com>, 
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.com" <tiwai@suse.com>, "perex@perex.cz" <perex@perex.cz>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kernel@collabora.com" <kernel@collabora.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Hao Ge <gehao@kylinos.cn>
+On Tue, Dec 10, 2024 at 4:08=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
+>
+> On Fri, Dec 06, 2024 at 06:57:00AM +0000, Trevor Wu (=E5=90=B3=E6=96=87=
+=E8=89=AF) wrote:
+> > On Thu, 2024-12-05 at 13:51 +0100, AngeloGioacchino Del Regno wrote:
+> > >
+> > >
+> > > Il 04/12/24 13:17, Trevor Wu (=E5=90=B3=E6=96=87=E8=89=AF) ha scritto=
+:
+> > > > On Tue, 2024-12-03 at 17:07 -0300, N=C3=ADcolas F. R. A. Prado wrot=
+e:
+> > > >
+> > > > >
+> > > > > Currently, booting the Genio 700 EVK board with the MT8188 sound
+> > > > > platform driver configured as a module (CONFIG_SND_SOC_MT8188=3Dm=
+)
+> > > > > results
+> > > > > in a system hang right when the HW registers for the audio
+> > > > > controller
+> > > > > are read:
+> > > > >
+> > > > >    mt8188-audio 10b10000.audio-controller: No cache defaults,
+> > > > > reading
+> > > > > back from HW
+> > > > >
+> > > > > The hang doesn't occur with the driver configured as builtin as
+> > > > > then
+> > > > > the
+> > > > > unused clocks are still enabled.
+> > > > >
+> > > > > Enable the apll1 clock during register read/write to prevent the
+> > > > > hang.
+> > > > >
+> > > > > Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.c=
+om>
+> > > > > ---
+> > > > >   sound/soc/mediatek/mt8188/mt8188-afe-clk.c | 4 ++++
+> > > > >   1 file changed, 4 insertions(+)
+> > > > >
+> > > > > diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
+> > > > > b/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
+> > > > > index
+> > > > > e69c1bb2cb239596dee50b166c20192d5408be10..fb8cf286df3f02ac076528b
+> > > > > 898f
+> > > > > d0d7a708ec1ea 100644
+> > > > > --- a/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
+> > > > > +++ b/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
+> > > > > @@ -587,6 +587,8 @@ int mt8188_afe_enable_reg_rw_clk(struct
+> > > > > mtk_base_afe *afe)
+> > > > >          mt8188_afe_enable_clk(afe, afe_priv-
+> > > > > > clk[MT8188_CLK_AUD_A1SYS_HP]);
+> > > > >
+> > > > >          mt8188_afe_enable_clk(afe, afe_priv-
+> > > > > > clk[MT8188_CLK_AUD_A1SYS]);
+> > > > >
+> > > > > +       mt8188_afe_enable_clk(afe, afe_priv-
+> > > > > > clk[MT8188_CLK_APMIXED_APLL1]);
+> > > > >
+> > > > > +
+> > > > >          return 0;
+> > > > >   }
+> > > >
+> > > > Hi Nicolas,
+> > > >
+> > > > If I understand correctly, APLL1 should be the parent clock of
+> > > > AUD_A1SYS_HP and AUD_A1SYS, so it should be enabled automatically
+> > > > by
+> > > > CCF.
+> > > >
+> > > > I'm not sure why you resolved the hang issue after enabling APLL1.
+> > > > Could you share more details about the solution?
+> > > >
+> > >
+> > > Hmm. Now I see what's happening here...
+> > >
+> > > Nicolas, Trevor,
+> > >
+> > > Possible parents for top_a1sys_hp are:
+> > >   - clk26m
+> > >   - apll1_d4
+> > >
+> > > ...what's happening here most probably is that after the clock gets
+> > > disabled as
+> > > unused, it gets parented to clk26m by default as that is parent index
+> > > 0... and
+> > > something else in AFE needs APLL1 to feed a clock to .. something ..
+> > > to allow
+> > > register access.
+> > >
+> > > Trevor, do you know why is this IP unaccessible when A1SYS is
+> > > parented to clk26m?
+> >
+> > Hi Angelo,
+> >
+> > As far as I know, it should work even though the clock is parented to
+> > clk26m.
+> >
+> > Unfortunately, I have no idea about why APLL1 enabling can resolve the
+> > hang issue. I'm also curious about how Nicolas found the solution to
+> > resolve the problem.
+> >
+> > From the description, it seems that the problem is related to register
+> > r/w hang. If I remembered correctly, when the mtcmos of ADSP_INFRA is
+> > ON, register r/w won't cause the cpu to hang. However, ADSP_INFRA has
+> > been configured as ALWAYS_ON in the driver. I'm not sure if it doesn't
+> > work correctly when the driver is configured as a module. Maybe Nicolas
+> > can also check this.
+>
+> Indeed, as suggested by Angelo, adding
+>
+>   assigned-clocks =3D <&topckgen CLK_TOP_A1SYS_HP>;
+>   assigned-clock-parents =3D <&topckgen CLK_TOP_APLL1_D4>;
+>
+> to the afe node also fixes this issue.
+>
+> In mt8188.dtsi, we currently have
+>
+>   afe: audio-controller@10b10000 {
+>         ...
+>         assigned-clocks =3D <&topckgen CLK_TOP_A1SYS_HP>;
+>         assigned-clock-parents =3D  <&clk26m>;
+>
+> So the question is, do other MT8188 platforms need clk26m to be the paren=
+t of
+> a1sys_hp? Depending on that I can either update the parent on the common
+> mt8188.dtsi or on the genio700-evk.dts, which is where I observed the iss=
+ue. I
+> don't have access to other mt8188 platforms. Trevor, do you know?
+>
+> As for how I identified this issue, I noticed that when booting with the
+> platform driver as a module the system would hang, and that passing
+> clk_ignore_unused avoided the issue. Then I selectively ignored some unus=
+ed
+> clocks until I narrowed down to ignoring unused only the apll1 clock, mea=
+ning
+> the apll1 clock needed to be left on during the platform driver probe for=
+ the
+> system to not hang.
 
-When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
-is not enabled, we may encounter a panic during system boot.
+I don't know. The AFE driver supposedly enables all clocks that are
+required for register access on runtime PM resume using
+mt8188_afe_enable_reg_rw_clk().
 
-Because we haven't allocated pages and created mappings
-for the shadow memory corresponding to module_tags region,
-similar to how it is done for execmem_vmalloc.
+Maybe try enabling debug printk in sound/soc/mediatek/mt8188/mt8188-afe-clk=
+.c
+and see what that gives you? There are already debug messages around the
+clk enable/disable calls.
 
-The difference is that our module_tags are allocated on demand,
-so similarly,we also need to allocate shadow memory regions on demand.
-However, we still need to adhere to the MODULE_ALIGN principle.
+Either there's a bug or incorrect description of the clock tree,
+or the AFE device node is referencing the wrong clocks.
 
-Here is the log for panic:
 
-[   18.349421] BUG: unable to handle page fault for address: fffffbfff8092000
-[   18.350016] #PF: supervisor read access in kernel mode
-[   18.350459] #PF: error_code(0x0000) - not-present page
-[   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PTE 0
-[   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
-[   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #3
-[   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
-[   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
-[   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
-[   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff82a7ceac
-[   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc0490000
-[   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff809201d
-[   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc0490000
-[   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000000002c
-[   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlGS:0000000000000000
-[   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 0000000000771ef0
-[   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   18.362020] PKRU: 55555554
-[   18.362261] Call Trace:
-[   18.362481]  <TASK>
-[   18.362671]  ? __die+0x23/0x70
-[   18.362964]  ? page_fault_oops+0xc2/0x160
-[   18.363318]  ? exc_page_fault+0xad/0xc0
-[   18.363680]  ? asm_exc_page_fault+0x26/0x30
-[   18.364056]  ? move_module+0x3cc/0x8a0
-[   18.364398]  ? kasan_check_range+0xba/0x1b0
-[   18.364755]  __asan_memcpy+0x3c/0x60
-[   18.365074]  move_module+0x3cc/0x8a0
-[   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
-[   18.365841]  ? early_mod_check+0x3dc/0x510
-[   18.366195]  load_module+0x72/0x1850
-[   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
-[   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
-[   18.367262]  init_module_from_file+0xd1/0x130
-[   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
-[   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
-[   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
-[   18.368938]  idempotent_init_module+0x22c/0x790
-[   18.369332]  ? simple_getattr+0x6f/0x120
-[   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
-[   18.370110]  ? fdget+0x58/0x3a0
-[   18.370393]  ? security_capable+0x64/0xf0
-[   18.370745]  __x64_sys_finit_module+0xc2/0x140
-[   18.371136]  do_syscall_64+0x7d/0x160
-[   18.371459]  ? fdget_pos+0x1c8/0x4c0
-[   18.371784]  ? ksys_read+0xfd/0x1d0
-[   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.372525]  ? do_syscall_64+0x89/0x160
-[   18.372860]  ? do_syscall_64+0x89/0x160
-[   18.373194]  ? do_syscall_64+0x89/0x160
-[   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.373952]  ? do_syscall_64+0x89/0x160
-[   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.374701]  ? do_syscall_64+0x89/0x160
-[   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
-[   18.375416]  ? clear_bhb_loop+0x25/0x80
-[   18.375748]  ? clear_bhb_loop+0x25/0x80
-[   18.376119]  ? clear_bhb_loop+0x25/0x80
-[   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ChenYu
 
-Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
-Reported-by: Ben Greear <greearb@candelatech.com>
-Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com/
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
-commit 233e89322cbe ("alloc_tag: fix module allocation
-tags populated area calculation") is currently in the
-mm-hotfixes-unstable branch, so this patch is
-developed based on the mm-hotfixes-unstable branch.
----
- lib/alloc_tag.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index f942408b53ef..88c1fc512ae0 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -422,6 +422,9 @@ static int vm_module_tags_populate(void)
- 			return -ENOMEM;
- 		}
- 		vm_module_tags->nr_pages += nr;
-+
-+		if ((phys_end & (MODULE_ALIGN - 1)) == 0)
-+			kasan_alloc_module_shadow((void *)phys_end, nr << PAGE_SHIFT, GFP_KERNEL);
- 	}
- 
- 	/*
--- 
-2.25.1
-
+> Thanks,
+> N=C3=ADcolas
+>
+> >
+> > Thanks,
+> > Trevor
+> >
+> > >
+> > > That might give Nicolas a definitive hint about how to resolve this
+> > > issue.
+> > >
+> > > Cheers,
+> > > Angelo
+> > >
+> > > > Thanks,
+> > > > Trevor
+> > > >
+> > > > >
+> > > > > @@ -594,6 +596,8 @@ int mt8188_afe_disable_reg_rw_clk(struct
+> > > > > mtk_base_afe *afe)
+> > > > >   {
+> > > > >          struct mt8188_afe_private *afe_priv =3D afe-
+> > > > > >platform_priv;
+> > > > >
+> > > > > +       mt8188_afe_disable_clk(afe, afe_priv-
+> > > > > > clk[MT8188_CLK_APMIXED_APLL1]);
+> > > > >
+> > > > > +
+> > > > >          mt8188_afe_disable_clk(afe, afe_priv-
+> > > > > > clk[MT8188_CLK_AUD_A1SYS]);
+> > > > >
+> > > > >          mt8188_afe_disable_clk(afe, afe_priv-
+> > > > > > clk[MT8188_CLK_AUD_A1SYS_HP]);
+> > > > >
+> > > > >          mt8188_afe_disable_clk(afe, afe_priv-
+> > > > > > clk[MT8188_CLK_AUD_AFE]);
+> > > > >
+> > > > > ---
+> > > > > base-commit: b852e1e7a0389ed6168ef1d38eb0bad71a6b11e8
+> > > > > change-id: 20241203-mt8188-afe-fix-hang-disabled-apll1-clk-
+> > > > > b3c11782cbaf
+> > > > >
+> > > > > Best regards,
+> > > > > --
+> > > > > N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> > > > >
+> > > > >
+> > >
+> > >
+>
 
