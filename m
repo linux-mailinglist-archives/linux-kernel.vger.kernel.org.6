@@ -1,189 +1,83 @@
-Return-Path: <linux-kernel+bounces-438815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E1F9EA6A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:30:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468EE9EA6AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:31:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F9B285FBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56467188A545
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935461D7E4E;
-	Tue, 10 Dec 2024 03:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7811BEF8B;
+	Tue, 10 Dec 2024 03:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RaB5BPXC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="EqmWEt5t"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C471D4609;
-	Tue, 10 Dec 2024 03:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231CB3C17;
+	Tue, 10 Dec 2024 03:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733801402; cv=none; b=cSYLLkW3EDXGEcKJ1wLKcbA6kHYcNUz/2d5LIBsOAEAbMvM6soIU3CAEW9/ZxuErJr499j44PmuWrDZckblFXqzOMV5dDQs/4pgBoILgpkjAhfP3JaDSa92INS6+mp9mO3ymChoE5vftPZOshcYEpG4zn90XKh0f4E10hoW4X6M=
+	t=1733801483; cv=none; b=owd9KCP0DFyuiwsIzQfzSocXfT5iQNN1FjAozfTMTGIrW7SVdCft9Xgl1hPNYedi/1sB2PtlfzTeuS3fnCgeY0tC4V0pBHRJ1HkOGcAua3ZIfcGHBi+FbQuB9bYg0mPOUEOUcWIdq75x6RYL9s4nQX49l+YoBo5WkuI/TSbHNB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733801402; c=relaxed/simple;
-	bh=JGTU7bdVVRhRv+47k01lq08c1pB8B27E5cGjRbVRJ9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FvdDB4SWqqLLb4jdMMUyC3TSfvKqSYvgVlpyCbRZyrxKZDVm+1gT/nRub/l3iDbv64RW2HZDdPJM13BotQR25S5SlpgCbLU+K/wlqC3j8IntM7QbyMyl3CM2bNzo9UIeHKsVjZaOPIn+2uhPDvTvuoRUZoPCNgDyfkm9/VgBnkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RaB5BPXC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9IgEnH006423;
-	Tue, 10 Dec 2024 03:29:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4lh7TdfdFQPLTjhs/GwI6Qlw77TZoNkDrm1oq9mNbkc=; b=RaB5BPXC1QbSxbKw
-	yNwuYfb/ylqe0iG5y+0qqRQaJl09o1kZOhrQtPt9ntBjrN2+hP5Hczv+nM5HSsyu
-	0jZE1TMbzHVoTIqd0IbW+S1QXfL/gQMkARbIWw7LylsA391PnwntsCqVUKCpDZRS
-	yM1E8W85P25GnUL82yplh89P2igolB1WQ6HEDdolOtBLdOik+yJ93Bf0jxsW2bxU
-	sO9gde9XavHflOGMC+v9OZxuzYIWzA5tW5nk8qYiNucWz1mB9CTBONPYQhtVKinR
-	CzS0MgxFjRmSFOcijNHTd74LKoNn4qMd9IQbNOI0r0NmTIBoAa19E6KmMryg1oaE
-	oZ5pYA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdxxexfc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 03:29:55 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA3TsLP014540
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 03:29:54 GMT
-Received: from [10.64.70.122] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 19:29:50 -0800
-Message-ID: <2e518360-be24-45d8-914d-1045c6771620@quicinc.com>
-Date: Tue, 10 Dec 2024 11:29:47 +0800
+	s=arc-20240116; t=1733801483; c=relaxed/simple;
+	bh=/xvEaXqGClLSE99ARv0pGP9OeJYBuAOmZF9ym6pK5dQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QQewkkoWlPyvCaU1b+xn+BTxzc9UOrcBU3Oo3o0JhplkBKtJsJJPVmEViFekQ5bJSLT7cOJS6WumhO5cPO2CUHwrDk3dnUA3dL4I66iQcB0QmcpG/FEgJj+biPyKtKYFRMvFNrflvLt8uJ5VnB73wOEL/2KfvM4vguXlOI+lR7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=EqmWEt5t; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=PdXlbzhXZmgM+/eqQWKKsKXyeZE8Daydu9uXrb9axzY=; b=EqmWEt5txs0xDkJ0tuhuegtQgG
+	DbQGwhpodXCGblVK9YG83Esxtx0iPWhlpdL9ON7iDUGZKisUwys5oymBkcf2lzSppUFa3bXkh+v2i
+	L9YAJPvrTnWK2diPG78AYov+74/BRf9s5zO2G1r7+WzBrMmUTIW/tlZ/6aOJdvUFtmN88xEn0pHpY
+	TVQr295iEmiHe2C5bFsqD4lkKmrCppsnChhF6n9fvbONT9CkunOGuESSCERJRy/UThpw6tecgU0tP
+	WRKL0IhxuML/VbQgpkDp8fcQru8EJpRSquKiwwGkkq8rxhI6d3JTL3hQgIBnQyTNMICtp9y9PxPUp
+	NDVNes6Q==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tKqky-000NDB-0X;
+	Tue, 10 Dec 2024 11:31:13 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 11:31:12 +0800
+Date: Tue, 10 Dec 2024 11:31:12 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
+	qianweili@huawei.com, linwenkai6@hisilicon.com
+Subject: Re: [PATCH v4 2/2] crypto: hisilicon/sec2 - fix for aead invalid
+ authsize
+Message-ID: <Z1e2APBqSnl8ayyu@gondor.apana.org.au>
+References: <20241115102139.3793659-1-huangchenghai2@huawei.com>
+ <20241115102139.3793659-3-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
- node
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20241118-dts_qcs615-v2-0-e62b924a3cbd@quicinc.com>
- <20241118-dts_qcs615-v2-2-e62b924a3cbd@quicinc.com>
- <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
- <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
- <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
- <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
- <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
- <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
- <4a6a6697-a476-40f4-b700-09ef18e4ba22@lunn.ch>
- <441f37f5-3c33-4c62-b3fe-728b43669e29@quicinc.com>
- <4287c838-35b2-45bb-b4a2-e128b55ddbaf@lunn.ch>
-Content-Language: en-US
-From: Yijie Yang <quic_yijiyang@quicinc.com>
-In-Reply-To: <4287c838-35b2-45bb-b4a2-e128b55ddbaf@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5ApMHT6AqNWH62gkGuSpQrlpA5smx2YX
-X-Proofpoint-GUID: 5ApMHT6AqNWH62gkGuSpQrlpA5smx2YX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- phishscore=0 mlxlogscore=939 priorityscore=1501 clxscore=1015
- malwarescore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100023
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115102139.3793659-3-huangchenghai2@huawei.com>
 
+On Fri, Nov 15, 2024 at 06:21:39PM +0800, Chenghai Huang wrote:
+>
+> +	a_ctx->fallback = false;
 
+Is this field still used anywhere? If not please remove it.  It's
+confusing to have two fallback fields.
 
-On 2024-12-09 11:13, Andrew Lunn wrote:
-> On Mon, Dec 09, 2024 at 10:11:23AM +0800, Yijie Yang wrote:
->>
->>
->> On 2024-11-29 23:29, Andrew Lunn wrote:
->>>> I was mistaken earlier; it is actually the EMAC that will introduce a time
->>>> skew by shifting the phase of the clock in 'rgmii' mode.
->>>
->>> This is fine, but not the normal way we do this. The Linux preference
->>> is that the PHY adds the delays. There are a few exceptions, boards
->>> which have PHYs which cannot add delays. In that case the MAC adds the
->>> delays. But this is pretty unusual.
->>
->> After testing, it has been observed that modes other than 'rgmii' do not
->> function properly due to the current configuration sequence in the driver
->> code.
-> 
-> O.K, so now you need to find out why.
-> 
-> It not working probably suggests you are adding double delays, both in
-> the MAC and the PHY. Where the PHY driver add delays is generally easy
-> to see in the code. Just search for PHY_INTERFACE_MODE_RGMII_ID. For
-> the MAC driver you probably need to read the datasheet and find
-> registers which control the delay.
-
-As previously mentioned, using 'rgmii' will enable EMAC to provide the 
-delay while disabling the delay for EPHY. So there's won't be double delay.
-
-Additionally, the current implementation of the QCOM driver code 
-exclusively supports this mode, with the entire initialization sequence 
-of EMAC designed and fixed for this specific mode.
-
-Therefore, no other options are available until changes are made to the 
-driver.
-
-> 
->>> If you decided you want to be unusual and have the MAC add the delays,
->>> it should not be hard coded. You need to look at phy-mode. Only add
->>
->> Are you suggesting that 'rgmii' indicates the delay is introduced by the
->> board rather than the EMAC?
-> 
-> Yes.
-> 
->> But according to the
->> Documentation/devicetree/bindings/net/ethernet-controller.yaml, this mode
->> explicitly states that 'RX and TX delays are added by the MAC when
->> required'. That is indeed my preference.
-> 
-> You need to be careful with context. If the board is not adding
-> delays, and you pass PHY_INTERFACE_MODE_RGMII to the PHY, the MAC must
-> be adding the delays, otherwise there will not be any delays, and it
-> will not work.
-> 
-
-I'm not sure if there's a disagreement about the definition or a 
-misunderstanding with other vendors. From my understanding, 'rgmii' 
-should not imply that the delay must be provided by the board, based on 
-both the definition in the dt-binding file and the implementations by 
-other EMAC vendors. Most EMAC drivers provide the delay in this mode.
-
-I confirmed that there is no delay on the qcs615-ride board., and the 
-QCOM EMAC driver will adds the delay by shifting the clock after 
-receiving PHY_INTERFACE_MODE_RGMII.
-
->>> delays for rgmii-id. And you then need to mask the value passed to the
->>> PHY, pass PHY_INTERFACE_MODE_RGMII, not PHY_INTERFACE_MODE_RGMII_ID,
->>> so the PHY does not add delays as well.
-> 
-> 	Andrew
-
+Thanks,
 -- 
-Best Regards,
-Yijie
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
