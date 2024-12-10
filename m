@@ -1,117 +1,164 @@
-Return-Path: <linux-kernel+bounces-440307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858EE9EBB88
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:08:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB5329EBBAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5323816847D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CE71889D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB1C23238F;
-	Tue, 10 Dec 2024 21:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4A823027F;
+	Tue, 10 Dec 2024 21:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtwL4ZBm"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="KcwrhxSb"
+Received: from mx0b-00206402.pphosted.com (mx0b-00206402.pphosted.com [148.163.152.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5FA23238A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79057153BF6;
+	Tue, 10 Dec 2024 21:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733864910; cv=none; b=cPBjGwjjEdUmX/vGncWtGpHkEp2wghpsj5G6F+QhSCz3lcv082lZdm/n2wVcqevIw7Lzld+SbUDcwKmkS5uPw85nwo78pc879APZlEfTCTYZ1jhy8bMZcnTh9pKAk4MEuuE5KQgaF5nNbg6V73vbZcWiL35l57n/0I3uA3AQvWQ=
+	t=1733865286; cv=none; b=n38iK4XlbV6F7Qrl75qWnkR1WuiO3HthudX+MfUWMgXbUpps1NHLx3ENMdAPcdbZ1IkEowQE3tUJbVBQ8xQN+saWPqD4uI+HUmxnp9OYamZ9LEty5K+Lnpaz8RbP+FDw0Y0qRdDd/yRo2rwmvzJx0IYeQxu/MSEQgVNsDHk0+lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733864910; c=relaxed/simple;
-	bh=CDXIfy3YQvMoIcBioQwy2dUQZMASYSjIFSFtueGVukU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F9n36A0+byUC1l30dAp3EB4xmP2oVFNAFTwa+zSqhUm/7cjqt9vZ1lG/Y5Sc1YTZaDG6OHj7SU5ejYam8n3kr+JP/w/b2bEvS2B1fTw4khJnRs1sNkC28RMext5ZJaJfojVZgKmEfZxGGHbT4WhFO1Fiyk/kTNCOat7PhgddeMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtwL4ZBm; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21680814d42so6646045ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:08:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733864908; x=1734469708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cmM5ilpxdp/4WJ1oVXkjuvQCAWPFFBfzL+5a70ISH3A=;
-        b=BtwL4ZBm9VpUiQfSWha3BoOUmc6cyGUwiJmwmoF3gYYkJkswHsQWTZjDq1GSik4eV+
-         euwRBDOtFWH5BR4PFSqb8ZCos3tzEs4NDawavCx/AFHAXqfG6Q7xByf4i8RGsNJ+iVN9
-         iq9FQvdgXJrVcnH4oSZPk7GA2jht+RxzVZS8+s5cBiRTVjxTtylLNYgjhjjpi8PHmn4i
-         M1dWO3V4VaRpA67aU4ggnKCyr8URRTA2IsegUdIfNqIqYcjf5SaftBnFxDVZnO705HId
-         nNGR3NGdn4effH8Lwk8Yy3VnEkohrPtESBKA7AuJlYB5Nt4iW5gzQbhjjOnti15Cc0AW
-         uEZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733864908; x=1734469708;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cmM5ilpxdp/4WJ1oVXkjuvQCAWPFFBfzL+5a70ISH3A=;
-        b=Akt6LeXQ/BxVfXfvHJ2fNIFMOiS5OIMR2HqNnkPFM7c3RVQZ06uWO1XgPTh/ZIqYP5
-         fz4xr1C/Gd5jWwksnZhUASAhU6fwrwz4cP8mvjiwKgbcKftbScqydiwD1bzLxROrnNwh
-         4IGud3xZ9AG6pr+ygc5gWDjxxgtHUsopcY6Dc7OCF+Dk2njFIOwzhGOSLJAyuN4i+o3X
-         uAekVRfRz+g6HXR9Iho3JgNNcrAoiuYporL9C5NCe9XTbEOerE+H0ZwENSx9CfWi6Owk
-         Rveg54caRZRO6f4x6DBT+B8YU/X9y89r4jRrHy8vdTN2BB8hN67dX64nkxaFEjEohoo9
-         UY9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXTw9tHtZvsuKrvC64LtH1417Y4Sv+fYxHZBjRJlsITFO0zh4NztUAXOQkgdJt9EIDJNLVjCrC63knqTns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym/TGoEbTntQs1hctx/PmStXl9Mf+P7TjRJ7mIWBzabZ5MSY3d
-	j+NWCWKuynJo7u/MS7v4Sq1dLmak6L3KD6T3J/gM+RITrxyU8pOS5xrn2AHd
-X-Gm-Gg: ASbGnctWAyfWuQPFE1RRD6umggK7iY7sYwa9gO24/kwYLFjVicCk/CTptVQ+U9ZAB1c
-	KGwNu9ZLAr8JCIMxO+6ewDI2jDOTgCLtSDGTjJnbzhsGIv0htWnu5EWESJsl/kTchT3YXRmoMdK
-	1SFVy4fNqLu1JDcB2o9vRodJmw8K6t28DeGYghxveJuT049zastXEz4Zpf793AZAI+XLZyhkCht
-	77nBGs8y3vW0VHpQBW+/9hD5FTRJAR34205CCDr54V/ufqCAGk0qdQXeoshCgm2Ze0D4smuA3g6
-	KQ==
-X-Google-Smtp-Source: AGHT+IG3jeXkz7uIamB7vFNp+gUbCT+d8SNySxHxTgaFtqZZSw2v1DEnnuvbqQj7GfGUZ0uwHg4eTg==
-X-Received: by 2002:a17:90b:1650:b0:2ee:a4f2:b311 with SMTP id 98e67ed59e1d1-2f127f55cacmr693734a91.8.1733864907550;
-        Tue, 10 Dec 2024 13:08:27 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef2700979fsm13385731a91.18.2024.12.10.13.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 13:08:27 -0800 (PST)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] staging: rtl8723bs: remove HAL_DEF_DBG_RX_INFO_DUMP caller
-Date: Tue, 10 Dec 2024 17:48:20 -0300
-Message-ID: <20241210210741.17101-4-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241210210741.17101-1-rodrigo.gobbi.7@gmail.com>
-References: <20241210210741.17101-1-rodrigo.gobbi.7@gmail.com>
+	s=arc-20240116; t=1733865286; c=relaxed/simple;
+	bh=uWWb82MfPtRjjHyxXIswpvSWMmUlqgSV9x5gdwMFw2Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XEnlc10fCY+Kt4W1BOs6ZNfEEz3CAIKvXGs4RTqCm31N1yke5ERCkSlrhjb3rHGWPV6eJd6Ft9TDOTek9DgReR9v/XhDjsPWRelrAY0ZOcbNr9uUDFaMFmUOd0hRDjYGEVZTROdbKHHWD4IlBRL4tCWdp+FDi6YM79dZ/QHS80o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=KcwrhxSb; arc=none smtp.client-ip=148.163.152.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
+Received: from pps.filterd (m0354655.ppops.net [127.0.0.1])
+	by mx0b-00206402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAJn2AF006248;
+	Tue, 10 Dec 2024 20:49:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
+	 h=cc:content-id:content-transfer-encoding:content-type:date
+	:from:in-reply-to:message-id:mime-version:references:subject:to;
+	 s=default; bh=uWWb82MfPtRjjHyxXIswpvSWMmUlqgSV9x5gdwMFw2Y=; b=K
+	cwrhxSbtEYBRvzsvsdx1itGQHsRJHy9PNRLA66zz6oyTYnQVI4c1q6FUCu9xMPRJ
+	x0sAFGTiqVpRUS1SpETm2fRLQ/m1uglh5GD2r43bUKz3rGW28EvMRm8p4o+NC4tC
+	h4lDRk+xz2rzDJfXliu7ZUCvW43PKN/YME0gxCX6zj+RcR7aLx7D6DWBN6w0Mz2l
+	uzjY4YVow0UhdvthHLIJkmc2TrD2MFIV4qkETzPE1q8RletPrvfLIQhEt/EyicLy
+	wW1C8eXBIGk7cxfwmGw6tyrSUH2ku/gOHcA1gY2p9uFvB/ssGOW+VTovtgSmKYTf
+	erSvpHH7AVT+6jFL/bhFQ==
+Received: from mail.crowdstrike.com (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
+	by mx0b-00206402.pphosted.com (PPS) with ESMTPS id 43enarhfqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 20:49:53 +0000 (GMT)
+Received: from 04WPEXCH006.crowdstrike.sys (10.100.11.70) by
+ 04wpexch08.crowdstrike.sys (10.100.11.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Dec 2024 20:49:52 +0000
+Received: from 04wpexch06.crowdstrike.sys (10.100.11.99) by
+ 04WPEXCH006.crowdstrike.sys (10.100.11.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Dec 2024 12:49:51 -0800
+Received: from 04wpexch06.crowdstrike.sys ([fe80::9386:41e4:ec25:9fd5]) by
+ 04wpexch06.crowdstrike.sys ([fe80::9386:41e4:ec25:9fd5%9]) with mapi id
+ 15.02.1544.009; Tue, 10 Dec 2024 20:49:51 +0000
+From: Martin Kelly <martin.kelly@crowdstrike.com>
+To: "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "ojeda@kernel.org"
+	<ojeda@kernel.org>,
+        "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+        "pasha.tatashin@soleen.com" <pasha.tatashin@soleen.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>,
+        "james.clark@arm.com" <james.clark@arm.com>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "nathan@kernel.org"
+	<nathan@kernel.org>,
+        "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "nicolas@fjasle.eu" <nicolas@fjasle.eu>,
+        "mathieu.desnoyers@efficios.com"
+	<mathieu.desnoyers@efficios.com>,
+        "npiggin@gmail.com" <npiggin@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "hpa@zytor.com"
+	<hpa@zytor.com>,
+        "surenb@google.com" <surenb@google.com>,
+        "zhengyejian@huaweicloud.com" <zhengyejian@huaweicloud.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "naveen.n.rao@linux.ibm.com"
+	<naveen.n.rao@linux.ibm.com>,
+        "kent.overstreet@linux.dev"
+	<kent.overstreet@linux.dev>,
+        "bp@alien8.de" <bp@alien8.de>, "mcgrof@kernel.org" <mcgrof@kernel.org>
+CC: Amit Dang <amit.dang@crowdstrike.com>,
+        "linux-modules@vger.kernel.org"
+	<linux-modules@vger.kernel.org>,
+        "linux-kbuild@vger.kernel.org"
+	<linux-kbuild@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Subject: Re: Re: [PATCH v2 0/5] kallsyms: Emit symbol for holes in text and
+ fix weak function issue
+Thread-Topic: Re: [PATCH v2 0/5] kallsyms: Emit symbol for holes in text and
+ fix weak function issue
+Thread-Index: AQHbS0UOy5EKb9eED0ygRLeYfQd4Mg==
+Date: Tue, 10 Dec 2024 20:49:51 +0000
+Message-ID: <d25741d8a6f88d5a6c219fb53e8aa0bcc1fea982.camel@crowdstrike.com>
+References: <20240723063258.2240610-1-zhengyejian@huaweicloud.com>
+	 <44353f4cd4d1cc7170d006031819550b37039dd2.camel@crowdstrike.com>
+	 <364aaf7c-cdc4-4e57-bb4c-f62e57c23279@csgroup.eu>
+In-Reply-To: <364aaf7c-cdc4-4e57-bb4c-f62e57c23279@csgroup.eu>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-disclaimer: USA
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B02A2CB1C4F11649B171690F94820629@crowdstrike.sys>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: PMYGstxHIcTVLjDkxVGTLGYbNtmnvdZh
+X-Authority-Analysis: v=2.4 cv=d6sPyQjE c=1 sm=1 tr=0 ts=6758a971 cx=c_pps a=1d8vc5iZWYKGYgMGCdbIRA==:117 a=1d8vc5iZWYKGYgMGCdbIRA==:17 a=xqWC_Br6kY4A:10 a=EjBHVkixTFsA:10 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=VwQbUJbxAAAA:8 a=AiHppB-aAAAA:8
+ a=PLFCH0Z3ytBysqgyJFcA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: PMYGstxHIcTVLjDkxVGTLGYbNtmnvdZh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=831
+ impostorscore=0 mlxscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100150
 
-Remove the HAL_DEF_DBG_RX_INFO_DUMP enum caller due
-to the removal of DBG_RX_SIGNAL_DISPLAY_RAW_DATA ifdef.
-
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index 317f3db19397..952ce6dd5af9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -4959,7 +4959,6 @@ void _linked_info_dump(struct adapter *padapter)
- 					rtw_hal_get_def_var(padapter, HW_DEF_RA_INFO_DUMP, &i);
- 			}
- 		}
--		rtw_hal_set_def_var(padapter, HAL_DEF_DBG_RX_INFO_DUMP, NULL);
- 	}
- }
- 
--- 
-2.47.0
-
+T24gVHVlLCAyMDI0LTEyLTEwIGF0IDIxOjAxICswMTAwLCBDaHJpc3RvcGhlIExlcm95IHdyb3Rl
+Og0KPiA+IA0KPiA+IEhpIGFsbCwgd2hhdCBpcyB0aGUgc3RhdHVzIG9mIHRoaXMgcGF0Y2ggc2Vy
+aWVzPyBJJ2QgcmVhbGx5IGxpa2UgdG8NCj4gPiBzZWUNCj4gPiBpdCBvciBzb21lIG90aGVyIGZp
+eCB0byB0aGlzIGlzc3VlIG1lcmdlZC4gVGhlIHVuZGVybHlpbmcgYnVnIGlzIGENCj4gPiBzaWdu
+aWZpY2FudCBvbmUgdGhhdCBjYW4gY2F1c2UgZnRyYWNlL2xpdmVwYXRjaC9CUEYgZmVudHJ5IHRv
+IGZhaWwNCj4gPiBzaWxlbnRseS4gSSd2ZSBub3RpY2VkIHRoaXMgYnVnIGluIGFub3RoZXIgY29u
+dGV4dFsxXSBhbmQgcmVhbGl6ZWQNCj4gPiB0aGV5J3JlIHRoZSBzYW1lIGlzc3VlLg0KPiA+IA0K
+PiA+IEknbSBoYXBweSB0byBoZWxwIHdpdGggdGhpcyBwYXRjaCBzZXJpZXMgdG8gYWRkcmVzcyBh
+bnkgaXNzdWVzIGFzDQo+ID4gbmVlZGVkLg0KPiANCj4gQXMgZmFyIGFzIEkgY2FuIHNlZSB0aGVy
+ZSBhcmUgcHJvYmxlbXMgb24gYnVpbGQgd2l0aCBwYXRjaCAxLCBzZWUgDQo+IGh0dHBzOi8vcGF0
+Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC1tb2R1bGVzL3BhdGNoLzIwMjQwNzIzMDYz
+MjU4LjIyNDA2MTAtMi16aGVuZ3llamlhbkBodWF3ZWljbG91ZC5jb20vDQo+IMKgDQo+IA0KPiAN
+Cg0KWWVhaCwgSSBzZWUgdGhvc2UuIEFkZGl0aW9uYWxseSwgdGhpcyBwYXRjaCBubyBsb25nZXIg
+YXBwbGllcyBjbGVhbmx5DQp0byBjdXJyZW50IG1hc3RlciwgdGhvdWdoIGZpeGluZyBpdCB1cCB0
+byBkbyBzbyBpcyBwcmV0dHkgZWFzeS4gSGF2aW5nDQpkb25lIHRoYXQsIHRoaXMgc2VyaWVzIGFw
+cGVhcnMgdG8gcmVzb2x2ZSB0aGUgaXNzdWVzIEkgc2F3IGluIHRoZSBvdGhlcg0KbGlua2VkIHRo
+cmVhZC4NCg0KWmhlbmcsIGRvIHlvdSBwbGFuIHRvIHNlbmQgYSB2Mz8gSSdkIGJlIGhhcHB5IHRv
+IGhlbHAgb3V0IHdpdGggdGhpcw0KcGF0Y2ggc2VyaWVzIGlmIHlvdSdkIGxpa2UsIGFzIEknbSBo
+b3BpbmcgdG8gZ2V0IHRoaXMgaXNzdWUgcmVzb2x2ZWQNCih0aG91Z2ggSSBhbSBub3QgYW4gZnRy
+YWNlIGV4cGVydCkuDQo=
 
