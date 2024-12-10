@@ -1,123 +1,129 @@
-Return-Path: <linux-kernel+bounces-440294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 080B89EBB63
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:00:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F439EBB69
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FF3188151C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B4E0162A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A6D22FAD6;
-	Tue, 10 Dec 2024 20:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDA822FACF;
+	Tue, 10 Dec 2024 21:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RlqrFQxI"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bLEz4f8v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0C922CBCD;
-	Tue, 10 Dec 2024 20:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47CF1BD9E9;
+	Tue, 10 Dec 2024 21:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733864394; cv=none; b=XzHAlMgYCQwFZ2G+JKjUGdz5wRkYspJWu4gbIulMRgu1gAEALGNEixVc+U5/dAqsOA4so4dNFVeLziqYa1R2Sv2vyFJpFtBZkANS2OC03v/glE4JNCF8bNd6mOZKfOOnh1PWfRnIA2fjCkTjV/jyJOQUXIVaugGZllE/l77msfg=
+	t=1733864485; cv=none; b=eGX+BgNpjK0fy/cPX5zDhbOkT18Q759bexvGmcEhY023QJi2k8ikV632BBV4C67A0tPERkUj/zxXxU+j9vznp13oyOhybzEnnK1afnTTfuxYsnY4zGtrn24g61FOl3ij3SKZiY3UHdfUyMCFbu4uVx/a1yl4o+ji/pUBmlx1MjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733864394; c=relaxed/simple;
-	bh=b36A/MI7Uhq9p9qgB4xCpkTfp69Q7QXfrz3GkeZCAeQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=DkhyMsGUprvpXsP48uK4kOvT5W+Av5cDZA8Xjn0NZEWSH8K/WQhU8i+Uhd4ZNhOxVRH1SimLSy7KEvFMnFMIxaVBG79CpOnniWKLg25al/VyOud2DIcOK+N4gv4Qi/BGwFI/tLqDwpNH+rGb6enA7vV/2WzGc+3xxdeQeBdhfUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RlqrFQxI; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BAKxWpO093332;
-	Tue, 10 Dec 2024 14:59:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733864372;
-	bh=3/c4szv2hbJGkO3LPAuOYMXLi58zyh4ZiQjA5EfGs3Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=RlqrFQxIKO6yRheKH84SmHqlxDEzXbBuKhh4pOj9bp5V/yLEt0m8QPFe/4YXL2pCn
-	 f7F9TJbvdAtQSRU+xRtfnSl/yZDSxv1CT3RvliDpfvJXT9YJXsnXRNki8/TrtYRDoB
-	 EcNy429PCKNyNT1BBUHay1KTBzTaDuFkf1/o5VwQ=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BAKxWIU043829;
-	Tue, 10 Dec 2024 14:59:32 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
- Dec 2024 14:59:31 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 10 Dec 2024 14:59:31 -0600
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BAKxVq9042179;
-	Tue, 10 Dec 2024 14:59:31 -0600
-From: Bryan Brattlof <bb@ti.com>
-Date: Tue, 10 Dec 2024 14:59:25 -0600
-Subject: [PATCH 2/2] arm64: dts: ti: k3-am62a: remove duplicate GICR reg
+	s=arc-20240116; t=1733864485; c=relaxed/simple;
+	bh=OOzhAnOXpwKXN+M0vFRzr74D2kIKATTBAFk9E4P0T+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R37LpPdLBWHbUO9zUq/7ometCcuJLRzcbVF8MFUA4MovB8lyymWQsZxiM6q2oT+Hj5OuoZZ24B7zwc7A7HUXpp56JtlbsnRogz/Y9/IOtmpEI0joP0Jx8n/kre4E8kddEuDc8IpLbswKKAowcUzxuXeo0zz0r0rOIv1bodkQFW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bLEz4f8v; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733864484; x=1765400484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OOzhAnOXpwKXN+M0vFRzr74D2kIKATTBAFk9E4P0T+U=;
+  b=bLEz4f8visZlalczU9Fre3dn3yWk0UVySdq//rr8XzVgG6kD6EG5qU2p
+   krWi9zqqlwR/hdVY5aKny9INSmWa5zZJmZ++FhvZPZHxeQ1Mv4n+2+qG0
+   WY5GMfLjqT4hrDkKQeFYLMsNR8M0eS9ULiSYnGqDOhHoJ5owD8/eLlB9C
+   j3wBIUJKspDNm8DFvV3LITuBkIJ2zEH3TaA+41j/w4e+NZj4O1ohsO2fp
+   frPyZsN8M8cVhkBNKMMIOGidyCqXOfVrcfhtyRrYdIdZ+X4SL/+VOVNfq
+   No34PFDYJ1zPBQJjxNtQhYCm09GpgN8WmwkY16zQ1MLXyS+pmT4YnFJp6
+   g==;
+X-CSE-ConnectionGUID: PI5NptKQTNyDz1VT+p76oA==
+X-CSE-MsgGUID: 7PIpC7kJSIqCvRVL3l1i+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="34280028"
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="34280028"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 13:01:24 -0800
+X-CSE-ConnectionGUID: m2VosdRXTkuaaB8Tw3UpyA==
+X-CSE-MsgGUID: fc4OJARwTDmfjX2Ld57FRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="95978425"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 13:01:21 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 2370C11F81D;
+	Tue, 10 Dec 2024 23:01:18 +0200 (EET)
+Date: Tue, 10 Dec 2024 21:01:18 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 6/7] ACPI: bus: implement acpi_device_hid when !ACPI
+Message-ID: <Z1isHpuHqHSX-jHd@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-6-00e409c84a6c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241210-am62-gic-fixup-v1-2-758b4d5b4a0a@ti.com>
-References: <20241210-am62-gic-fixup-v1-0-758b4d5b4a0a@ti.com>
-In-Reply-To: <20241210-am62-gic-fixup-v1-0-758b4d5b4a0a@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bin Liu <b-liu@ti.com>,
-        Bryan Brattlof
-	<bb@ti.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=940; i=bb@ti.com;
- h=from:subject:message-id; bh=b36A/MI7Uhq9p9qgB4xCpkTfp69Q7QXfrz3GkeZCAeQ=;
- b=owNCWmg5MUFZJlNZBhFKfAAAan////d/n/8239uN7f3/d7YfeZ2+e7fx7N7l/9tPtpbY1++wA
- RsYGKDQDQAaADQAADTQaBtQ0aAAAAAA0AAAA9RoDQyNqA9T1BoPRqPU/TVEAANNPUANAAANNMRo
- Gj0hoAHqAAGg9T1NDTTQBpoA9TymEGgDR6gNBp6QeSNAhoYjTEyNDRiGmgaA0GjENAMgADQBkNN
- DIGCDRgTTQ0MmgyMTQGgaGjRphACBXBbsKDPmwQgMJ1REyS4QZiaCFSG3sS7X27o0bIQkOA1Inz
- ayxv59QQB5GTxhSdCPl/wyYq40F8Gk5UXyeIagtWP1s5w5IcswBRJLwwVfgu54ivDCEgPubLVPa
- 2M7MrdnbcBhkakIGJOUOPvG/3aAUjjEyDK0A4BTcWZ6lVUO2cV8jXXuAyga07zXZw4WZFZ54r40
- WFqLGJ99voTLRioUVQsJkqTD9l6PGEIbwufwlGK6ZxWnNT9UuG9qbAodFAJgEFq9XnQKCC39IQq
- bcnY3aXuk1piy0xkqidPfHgIcKhwK05eJf5/YZ+2Xm06DV7MB0y4qfLbxntST9LGR8xZQgrEr7M
- RsnuLBhz0CL66kynLlhWG4uclIRgCjfwIbrZ2haan/EQbqLX5oQ3isF2alVIBeUw5DskgSSpoR8
- g4LmT/i7kinChIAwilPgA==
-X-Developer-Key: i=bb@ti.com; a=openpgp;
- fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210-fix-ipu-v3-6-00e409c84a6c@chromium.org>
 
-The GIC Redistributor control range is mapped twice. Remove the extra
-entry from the reg range.
+Hi Ricardo,
 
-Reported-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Bryan Brattlof <bb@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62a-main.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+On Tue, Dec 10, 2024 at 07:56:03PM +0000, Ricardo Ribalda wrote:
+> Provide an implementation of acpi_device_hid that can be used when
+> CONFIG_ACPI is not set.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  include/acpi/acpi_bus.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index 4f1b3a6f107b..c25914a152ee 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -1003,6 +1003,11 @@ static inline int unregister_acpi_bus_type(void *bus) { return 0; }
+>  
+>  static inline int acpi_wait_for_acpi_ipmi(void) { return 0; }
+>  
+> +static inline const char *acpi_device_hid(struct acpi_device *device)
+> +{
+> +	return "";
+> +}
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-index a93e2cd7b8c74..a1daba7b1fad5 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-@@ -18,7 +18,6 @@ gic500: interrupt-controller@1800000 {
- 		compatible = "arm,gic-v3";
- 		reg = <0x00 0x01800000 0x00 0x10000>,	/* GICD */
- 		      <0x00 0x01880000 0x00 0xc0000>,	/* GICR */
--		      <0x00 0x01880000 0x00 0xc0000>,   /* GICR */
- 		      <0x01 0x00000000 0x00 0x2000>,    /* GICC */
- 		      <0x01 0x00010000 0x00 0x1000>,    /* GICH */
- 		      <0x01 0x00020000 0x00 0x2000>;    /* GICV */
+I wonder if any caller might expect something of a string if provided?
+Valid _HIDs are either 7 or 8 characters whereas the proper version of the
+function returns "device" when one cannot be found (dummy_hid in
+drivers/acpi/scan.c). Unlikely to be a problem perhaps.
+
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+> +
+>  static inline acpi_status
+>  acpi_get_physical_device_location(acpi_handle handle, struct acpi_pld_info **pld)
+>  {
+> 
 
 -- 
-2.47.1
+Regards,
 
+Sakari Ailus
 
