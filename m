@@ -1,198 +1,145 @@
-Return-Path: <linux-kernel+bounces-439652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4839EB23E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:51:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650C89EB23F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:52:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C3B285C55
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:51:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F029188B1F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1346F1AA1E7;
-	Tue, 10 Dec 2024 13:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EE11AA1EC;
+	Tue, 10 Dec 2024 13:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUgCyr46"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oqrTCuDD"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF6422087;
-	Tue, 10 Dec 2024 13:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E2C1A9B5B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733838712; cv=none; b=Z23Us3ZGC1y8j75a67CCChTcRils4NLV089Bkp0qMjiplKjYFCB2zDVZoaPjZQyPAGqy6q107t+X5Uj3RQVb6mC9gqzI4xzjjWMTnXEW1uWLi9g/4PkvYSP6t1C+6WMJkPPJyf3/XC6PialKZqVCq2N3UhNCfz1IvhbjFd4vg78=
+	t=1733838739; cv=none; b=h96NlLj5Lro8Sl84UJYD6KpWgrNXCBcNtVDsLNMn90A+ZIWcIqB1x3r0Hijxtdx0o45p/KowPDQa0jXOj+9ECe2iJE8YRTH+7C6yj8I+UbFi1TPdiNRNQxFuu0yAKnmB/pBtjnOwjK9pf6oksrjlVCd/G0Hzgt3KvAc0Q/BoKR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733838712; c=relaxed/simple;
-	bh=w3mv4fHBCVqEeM6Pi3ba1qB9dAfsMIm1GhXtgjzgL04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QE32GEKjVLuK2/YPN8bMKcPcTUQB0uPAov/GNIQYsrbkDNEYA/r2jiGK5zO6tRz5PaqR9xPzLttO87CO5DyrF4LUx6ru8Ffu3tKE+/9DOSrqUDfNovG/7ZEH5DVytlOLqBnnL9NysFRLT4naS+ESZVr0agi4wZ1dexYXKjK/I7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUgCyr46; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F37F8C4CED6;
-	Tue, 10 Dec 2024 13:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733838711;
-	bh=w3mv4fHBCVqEeM6Pi3ba1qB9dAfsMIm1GhXtgjzgL04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YUgCyr46IwvzNRTmuGifNzUwzIpvfI8RX35zlauubPL+5htQDzGo3FveBOLQXpVAA
-	 VIduXmjlYQiEuR4RzfXEo8h8V1Nt4Ntp4XBkEWDF8xDAJpoYsJy+EVrcg+Ud+Y4hNZ
-	 AH4IAjqz73eI4Y3+deJVAh8f600YGnwBycyUXX8mh8xFvpmvVASkZnqLzKSEcg3eRb
-	 alwmOf03iiPYi3GftDzOD68I0g+EQEZnMe9qCB78lL2sxJqMtI4IpcvJ9BMKjnZ526
-	 DnZLpnHb01haFD0iq9a9j9ED9fsKM/jDYhXWpQLzsXK6MVT0rG+JrFM/OiOqBhMIF8
-	 FtfFz8BCA4xkQ==
-Date: Tue, 10 Dec 2024 10:51:47 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>,
-	James Clark <james.clark@linaro.org>
-Cc: linux-perf-users@vger.kernel.org, irogers@google.com,
-	thomas.falcon@intel.com, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] libperf: evlist: Fix --cpu argument on hybrid
- platform
-Message-ID: <Z1hHc-Q-TKgagORu@x1>
-References: <20241114160450.295844-1-james.clark@linaro.org>
- <20241114160450.295844-2-james.clark@linaro.org>
+	s=arc-20240116; t=1733838739; c=relaxed/simple;
+	bh=x0YzXghQ+gAKuEwKFhdi6SRVXz39dHzpMAssWYnJg+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=njSjeOKr2xC2ZoW6aVn+cHAiR9w16DAvAdste8GlWQerlsEmngVokgvDzvvQJB6ovUXOturCYbKMKkv0ZUbPOJdJ6olRxtlw0XoLrS6wpPhvbA3417WejuMySjRo1l8t/IALeew/0ELLerOnw/xaTmSUxWBKQA0uMZWbnwUqPjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oqrTCuDD; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3862b40a6e0so2408784f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:52:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733838736; x=1734443536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gvsJcHnWFJkaRdXIOYYPtjthmV89MakBwrZsJYDK4Qk=;
+        b=oqrTCuDDPhHCWbEBWkNNZaCM90uYmRvXQb9zRZa5kiv5vR/Lt7EIJUlCr1aUNGyu8A
+         J2jFg1U9ubHVCn1BYSulIkZuiU/FCH7MXQVtdjuLQQCFYfV0OfYsnnmr1a7upiTfOrtr
+         DP2uXTLFosJQRZWAtdcTKlReeB1zA5MWCD34qBO4fg4foBSDb/H3YTUgbh+RLspjA2Fd
+         j9+oq6926ZdWkbSRcAsqmKlxG6+5K6XwqedOkHSk1s2VAOR1JtW/a6N/YIzxtCGim0tR
+         q21f1f59k9dxCTRrRW2ZeGpdPMZ+cOp0Ke10NnlrMPc2o3JS3Lf3HeKI+JBLe+BKLkpK
+         n7CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733838736; x=1734443536;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gvsJcHnWFJkaRdXIOYYPtjthmV89MakBwrZsJYDK4Qk=;
+        b=gPNsQAlqetjbpbfT6gzLJbxrR5IPEN9EHJWAkL8V8pyTSRnnrLL9VmzOfe0GXkQERH
+         twYum7ua3eSQmHz4oqPM7pHPw9jBKPs3tZ1MgXLFyVdgAvrpnL5yAF2ZfYfVPdysFRjv
+         jRm/NcQINrAwQfx3+EGNfz9Ob+U6YeOD1MVsnCI7fYji87TcyREgTiQfENmmNG4hB2wz
+         4cOSH/z4yG8lpSHAxlk3YbO+MKt/ikA2TkPq6NOS9jgcn9GKnZQRjBKol3STcGjvmnGv
+         9SbU1ikYN1Kq+eOK7jVgcCMl3g19mcfpREZlxV2buqshuuonisGYx7YMfcWQBiBHxUF9
+         tWjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm3ShUw3nWxX1GZuMyNWBTYlh+kNnxYnQShuf1BqZv588F8SSJ2hsvXAWWpjS5/+KkDUDeb++awlIOKoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG3bIlRxeo0MUklkDzUY5u3G8GzdtbqGo9YUcOcYLkdj0GPHhC
+	SXc1vgIXFURfoZo3mikORsxPu5fNSTVNxweXo77m1DFfI6IDHccqCH/JEKBmcMo=
+X-Gm-Gg: ASbGnctNQ0EsZDx8tbPaxOPq61qKzSIMxw/StYtKqUSSat+Eb9qY6ex3QV0OFKmY3Gd
+	h6XUDS+6hI45dhJ4JrVCZ4GxKdoPhZGJ1YRy9AvQcbAPPdi8A6qnAI5g3Qp77BxLouVn/M2X7+8
+	zASIjczlmeY/kv0fWNPK7Gla0cqouZSy4MyX9jtzyoVZf15Xh4J3hXxl7Onz7LEfUuvAwe/suVy
+	2Ia7spkHKea7uXud0/Z2cjHB8pDjLOB8gw5FUQn+xV1htwmQBFF6Dsq5uPjvPABWp72aic2
+X-Google-Smtp-Source: AGHT+IFQ6nYMzgv6s9MPm0QEXnXj8O3sBLDqM8CxTrOU96IG8xBvdz2PcHy2jFxRyvN3ca+1FwMClg==
+X-Received: by 2002:a05:6000:42c3:b0:385:f1f2:13f1 with SMTP id ffacd0b85a97d-386453e2a8cmr1917700f8f.22.1733838735834;
+        Tue, 10 Dec 2024 05:52:15 -0800 (PST)
+Received: from [192.168.68.114] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3861ecf4119sm15806378f8f.14.2024.12.10.05.52.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 05:52:15 -0800 (PST)
+Message-ID: <3e16b2f5-5aeb-4988-bf6f-63c7309f53a4@linaro.org>
+Date: Tue, 10 Dec 2024 13:52:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241114160450.295844-2-james.clark@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] nvmem: imx-ocotp-ele: fix reading from ELE OCOTP
+To: Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peng Fan <peng.fan@nxp.com>
+Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, stable <stable@kernel.org>
+References: <20241202-imx-ele-ocotp-fixes-v2-0-3c021a97eb5d@pengutronix.de>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20241202-imx-ele-ocotp-fixes-v2-0-3c021a97eb5d@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 04:04:48PM +0000, James Clark wrote:
-> Since the linked fixes: commit, specifying a CPU on hybrid platforms
-> results in an error because Perf tries to open an extended type event
-> on "any" CPU which isn't valid. Extended type events can only be opened
-> on CPUs that match the type.
- 
-> Before (working):
- 
->   $ perf record --cpu 1 -- true
->   [ perf record: Woken up 1 times to write data ]
->   [ perf record: Captured and wrote 2.385 MB perf.data (7 samples) ]
- 
-> After (not working):
- 
->   $ perf record -C 1 -- true
->   WARNING: A requested CPU in '1' is not supported by PMU 'cpu_atom' (CPUs 16-27) for event 'cycles:P'
->   Error:
->   The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_atom/cycles:P/).
->   /bin/dmesg | grep -i perf may provide additional information.
+
+
+On 02/12/2024 11:22, Sascha Hauer wrote:
+> Commits b2ab0edaf484 ("arm64: dts: imx93: add nvmem property for fec1")
+> and 0d4fbaffbdca ("arm64: dts: imx93: add nvmem property for eqos")
+> introduced NVMEM cell bindings for reading MAC addresses from the ELE
+> OCOTP. This doesn't work as expected due to bugs in the driver:
 > 
-> (Ignore the warning message, that's expected and not particularly
-> relevant to this issue).
+> - imx_ocotp_reg_read() interprets the incoming offset as 32bit word
+>    offset, but it really is in bytes which means the driver reads bogus
+>    values whenever the offset is non zero
+> - imx_ocotp_reg_read() reads wrong results when the offset is not 32bit
+>    word aligned
+> - MAC addresses are stored in reverse byte order in the ELE OCOTP, we
+>    have to swap the order before passing them to the upper layer
 > 
-> This is because perf_cpu_map__intersect() of the user specified CPU (1)
-> and one of the PMU's CPUs (16-27) correctly results in an empty (NULL)
-> CPU map. However for the purposes of opening an event, libperf converts
-> empty CPU maps into an any CPU (-1) which the kernel rejects.
+> This likely went through unnoticed because the bootloader normally adds
+> the MAC addresses to the ethernet nodes and in this case they are
+> preferred over the NVMEM addresses.
 > 
-> Fix it by deleting evsels with empty CPU maps in the specific case where
-> user requested CPU maps are evaluated.
-
-
-Namhyung, I think this should go via perf-tools,
-
-Before, on an hybrid Intel processor:
-
-  ⬢ [acme@toolbox perf-tools]$ grep -m1 'model name' /proc/cpuinfo 
-  model name	: 13th Gen Intel(R) Core(TM) i7-1365U
-  ⬢ [acme@toolbox perf-tools]$
-
-  root@x1:~# perf record -C 1 -- true
-  WARNING: A requested CPU in '1' is not supported by PMU 'cpu_atom' (CPUs 4-11) for event 'cycles:P'
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_atom/cycles/P).
-  "dmesg | grep -i perf" may provide additional information.
-  root@x1:~# 
-
-After the patch:
-
-  root@x1:~# perf record -C 1 -- true
-  WARNING: A requested CPU in '1' is not supported by PMU 'cpu_atom' (CPUs 4-11) for event 'cycles:P'
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 1.369 MB perf.data (8 samples) ]
-  root@x1:~#
-  root@x1:~# perf evlist -v
-  cpu_core/cycles/P: type: 0 (PERF_TYPE_HARDWARE), size: 136, config: 0x400000000, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|CPU|PERIOD|IDENTIFIER, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-  dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|CPU|IDENTIFIER, read_format: ID|LOST, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-  root@x1:~#
-
-All on CPU 1:
-
-  root@x1:~# perf report -D | grep PERF_RECORD_SAMPLE
-  1 1809541166457609 0x15e410 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 719180/719180: 0xffffffff9b1ce418 period: 1 addr: 0
-  1 1809541166470019 0x15e448 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 719180/719180: 0xffffffff9a0206b1 period: 1 addr: 0
-  1 1809541166475543 0x15e480 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 719180/719180: 0xffffffff9a0a9158 period: 5 addr: 0
-  1 1809541166478316 0x15e4b8 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 719180/719180: 0xffffffff9a0a9158 period: 53 addr: 0
-  1 1809541166480879 0x15e4f0 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 719180/719180: 0xffffffff9a0a9158 period: 667 addr: 0
-  1 1809541166483895 0x15e528 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 719180/719180: 0xffffffff9b1bcbcc period: 8537 addr: 0
-  1 1809541166489116 0x15e560 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 719180/719180: 0xffffffff9a009b3b period: 98429 addr: 0
-  1 1809541168375508 0x15e620 [0x38]: PERF_RECORD_SAMPLE(IP, 0x4001): 0/0: 0xffffffff9b0e2a34 period: 732596 addr: 0
-  root@x1:~#
-
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-James, the second patch isn't applying to perf-tools/perf-tools.
-
-- Arnaldo
- 
-> Fixes: 251aa040244a ("perf parse-events: Wildcard most "numeric" events")
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Tested-by: Thomas Falcon <thomas.falcon@intel.com>
-> Signed-off-by: James Clark <james.clark@linaro.org>
+> This series fixes these issues.
+> 
+> Sascha
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 > ---
->  tools/lib/perf/evlist.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
+> Changes in v2:
+> - Add Fixes: and Cc: stable tag as requested by Fabio
+> - Link to v1: https://lore.kernel.org/r/20241023-imx-ele-ocotp-fixes-v1-0-4adc00ce288f@pengutronix.de
 > 
-> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-> index c6d67fc9e57e..83c43dc13313 100644
-> --- a/tools/lib/perf/evlist.c
-> +++ b/tools/lib/perf/evlist.c
-> @@ -47,6 +47,20 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
->  		 */
->  		perf_cpu_map__put(evsel->cpus);
->  		evsel->cpus = perf_cpu_map__intersect(evlist->user_requested_cpus, evsel->own_cpus);
-> +
-> +		/*
-> +		 * Empty cpu lists would eventually get opened as "any" so remove
-> +		 * genuinely empty ones before they're opened in the wrong place.
-> +		 */
-> +		if (perf_cpu_map__is_empty(evsel->cpus)) {
-> +			struct perf_evsel *next = perf_evlist__next(evlist, evsel);
-> +
-> +			perf_evlist__remove(evlist, evsel);
-> +			/* Keep idx contiguous */
-> +			if (next)
-> +				list_for_each_entry_from(next, &evlist->entries, node)
-> +					next->idx--;
-> +		}
->  	} else if (!evsel->own_cpus || evlist->has_user_cpus ||
->  		(!evsel->requires_cpu && perf_cpu_map__has_any_cpu(evlist->user_requested_cpus))) {
->  		/*
-> @@ -80,11 +94,11 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
->  
->  static void perf_evlist__propagate_maps(struct perf_evlist *evlist)
->  {
-> -	struct perf_evsel *evsel;
-> +	struct perf_evsel *evsel, *n;
->  
->  	evlist->needs_map_propagation = true;
->  
-> -	perf_evlist__for_each_evsel(evlist, evsel)
-> +	list_for_each_entry_safe(evsel, n, &evlist->entries, node)
->  		__perf_evlist__propagate_maps(evlist, evsel);
->  }
->  
-> -- 
-> 2.34.1
+> ---
+> Sascha Hauer (4):
+>        nvmem: imx-ocotp-ele: simplify read beyond device check
+>        nvmem: imx-ocotp-ele: fix reading from non zero offset
+>        nvmem: imx-ocotp-ele: fix MAC address byte order
+>        nvmem: imx-ocotp-ele: set word length to 1
+
+
+Applied thanks,
+
+--srini
+> 
+>   drivers/nvmem/imx-ocotp-ele.c | 38 +++++++++++++++++++++++++++++++-------
+>   1 file changed, 31 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> change-id: 20241023-imx-ele-ocotp-fixes-f7b216171e1e
+> 
+> Best regards,
 
