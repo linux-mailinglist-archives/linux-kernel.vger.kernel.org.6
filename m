@@ -1,196 +1,161 @@
-Return-Path: <linux-kernel+bounces-440069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64079EB844
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:30:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD33163A62
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:30:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010CC8635B;
-	Tue, 10 Dec 2024 17:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qa5hg5/g"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087A29EB84D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:31:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F75623ED68;
-	Tue, 10 Dec 2024 17:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB66B2857BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:31:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948961AAA06;
+	Tue, 10 Dec 2024 17:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7rwvAvr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63901990BA;
+	Tue, 10 Dec 2024 17:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733851820; cv=none; b=SGMY9krn5Fj97eXU+b7MXrlhGH+fCs2q0KNAir6aP5ZUBlBK6jB0R0teKHvoBGaOojXGUtbjfwBKDBwzShBQzooTdFNrvo/RhDIs7WS3+dHUC6uSHz2edOouE5K8+eSa/a2jC71WzkzL1lzpDa8LTUbJ7lnvbX8V1lwd7DCWj70=
+	t=1733851886; cv=none; b=EggjCAv1WTIK7bypZtIYVbvcEfpJZGp+g7PI4bwEu8QeHhnHOsdGq1viASKmhoBEn8Ckfy47qJQFsKwylUmiqFprTs52oFZAaXEDmxDzxDAdYNeoggsZGq/0/acGmUrpdaiLz1V/r7lrWhZq63tImQC75j6y0ZahYCsgSug5Dz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733851820; c=relaxed/simple;
-	bh=JIbhvMKKCNsFNVHATvxBxVjKBlYLJhzisEw7hU3DyL4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=g1JJLVk9QS7o5pXAAA15Angr720QFk94kmd+usFthr0tWalBoIhdaOLpBIImhrsKKQCtjrBWJt5rMGxSU1Pw0CNEBcJkbfTs3fGKXWV1SfnImL0sNi7oU6PL+SriZlthh2j0jbj7JlKsBiayH28BGgZHS1zmOFe+faBTyO8Sm/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qa5hg5/g; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733851819; x=1765387819;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=JIbhvMKKCNsFNVHATvxBxVjKBlYLJhzisEw7hU3DyL4=;
-  b=Qa5hg5/gw1whcq0pBYXrnLXcGO4OIcnNFBZHJH0z38+Ogp8m+pKR9Xbz
-   i1kUYFCS0st2AKVE7LlJhnvgHRwNqYVhpqJOnM9ya7FBEzA2IrHWrmh2N
-   1ZDYKHASewHU1mGBIw9nan7yiexnY6ygnQmbrDqFh6/UNDHR0R5K8AqOA
-   LSeBEMvg5sRxHXpxDmODDyE9o7OADERswxIJPuLnFV4GBPcbSspAQFazE
-   ojBhNx2xFEc9yIJvxJbielL1v/hfR98e9tDvD9aGcZbTCgA2xFE7L7SlU
-   GaB45nufLiNaleFdKEeZQqVXoVwDptVKEro4mqYn1GgQHUv9Bqp3ZQqxt
-   A==;
-X-CSE-ConnectionGUID: mxM9ASF1Twe/RZ0pYgdJIw==
-X-CSE-MsgGUID: vxTV8bqUS/COqAaB40uwHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="51735481"
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="51735481"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 09:30:18 -0800
-X-CSE-ConnectionGUID: GDjwszKgQeqWE1KGKuDc5Q==
-X-CSE-MsgGUID: Cb5B1ylERs62Jld5dPeyNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="132868383"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 09:30:12 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 10 Dec 2024 19:30:09 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>
-cc: Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>
-Subject: Re: [PATCH v10 00/22] Add support for binding ACPI platform profile
- to multiple drivers
-In-Reply-To: <20241206031918.1537-1-mario.limonciello@amd.com>
-Message-ID: <a34c7648-02cb-76e9-53f4-e54003c98ecb@linux.intel.com>
-References: <20241206031918.1537-1-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733851886; c=relaxed/simple;
+	bh=DuBdlT+k6TDL3ybELXaf3EyWiycHlo9VKr61ZHOmzqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lEn2IGX/yid9TnhzWcA3uUpOndzz5oeqAFCCLxmxCgDpVpjU0xOAS1uzhSTB9oIAUKKTLFauJypv1DXMmCyELAhR+HV//502gYoHWSc3lbeP2yZ0yM9o4PuEpFJt/Ax10VQU60C0oliky2A+3Nwg0R7jClfUkEaUXJhItbxE3LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7rwvAvr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9F5C4CEDD;
+	Tue, 10 Dec 2024 17:31:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733851885;
+	bh=DuBdlT+k6TDL3ybELXaf3EyWiycHlo9VKr61ZHOmzqI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=u7rwvAvrDmwsGVeL9KORiux9PdU5c0Jz5MVI/MTPKUOA/8/SA2I5FiDLLrcyssx2m
+	 TTTRY1hm2x5TzBu//inrGvww2OTIK4/q4vRJh6+xbkIzMzK6YKdNnU56B5MC2/fSUz
+	 jLoDp8Zt7LdKbXQFipYs4Ss1g7S/wbYXMDJxiFrVG2OHhuJItj2s/Ph1cS2fGQSrF0
+	 UvKGW94k3B/dXFvKP/owrasdIEnx48Wd/vIahARjJNkbd5TPzxWWD+AwnEdSYo+UYQ
+	 W9jbhPX0IuGvTjGEwjtWzn9jIudc/8TAwVJhX/IrAWay6OcR9dquLF9BbhTS6vLCoJ
+	 6DJV/yhON5qOw==
+Date: Tue, 10 Dec 2024 11:31:23 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
+	arnd@arndb.de, bhelgaas@google.com, unicorn_wang@outlook.com,
+	conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
+	krzk+dt@kernel.org, lee@kernel.org, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, pbrobinson@gmail.com, robh@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
+	fengchun.li@sophgo.com
+Subject: Re: [PATCH v2 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
+Message-ID: <20241210173123.GA3247614@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d82eff3670f60df24228e5c83cf663c6dd61eaf.1733726572.git.unicorn_wang@outlook.com>
 
-Hi Rafael,
+On Mon, Dec 09, 2024 at 03:19:57PM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Add support for PCIe controller in SG2042 SoC. The controller
+> uses the Cadence PCIe core programmed by pcie-cadence*.c. The
+> PCIe controller will work in host mode only.
 
-This series seems ready and Mario has requested it to be merged through 
-platform drivers tree despite majority of changes touching 
-drivers/acpi/platform_profile.c because its API relates to many pdx86 
-drivers.
+> +++ b/drivers/pci/controller/cadence/Makefile
+> @@ -4,3 +4,4 @@ obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
+>  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
+>  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+>  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
+> +obj-$(CONFIG_PCIE_SG2042) += pcie-sg2042.o
+> \ No newline at end of file
 
-Is that fine with you?
+Add the newline.
 
-On Thu, 5 Dec 2024, Mario Limonciello wrote:
+> +++ b/drivers/pci/controller/cadence/pcie-sg2042.c
 
-> Currently there are a number of ASUS products on the market that happen to
-> have ACPI objects for amd-pmf to bind to as well as an ACPI platform
-> profile provided by asus-wmi.
-> 
-> The ACPI platform profile support created by amd-pmf on these ASUS
-> products is "Function 9" which is specifically for "BIOS or EC
-> notification" of power slider position. This feature is actively used
-> by some designs such as Framework 13 and Framework 16.
-> 
-> On these ASUS designs we keep on quirking more and more of them to turn
-> off this notification so that asus-wmi can bind.
-> 
-> This however isn't how Windows works.  "Multiple" things are notified for
-> the power slider position. This series adjusts Linux to behave similarly.
-> 
-> Multiple drivers can now register an ACPI platform profile and will react
-> to set requests.
-> 
-> To avoid chaos, only positions that are common to both drivers are
-> accepted when the legacy /sys/firmware/acpi/platform_profile interface
-> is used.
-> 
-> This series also adds a new concept of a "custom" profile.  This allows
-> userspace to discover that there are multiple driver handlers that are
-> configured differently.
-> 
-> This series also allows dropping all of the PMF quirks from amd-pmf.
-> 
-> NOTE: Although this series changes code in acpi platform profile, I think
->       it is better to go through the platform-x86 tree as more drivers can
->       be introduced during the kernel cycle and should make the changes to
->       support class interface when merging.
-> 
-> v10:
->  * Whitespace changes
->  * Documentation update for custom in a single driver
-> 
-> Mario Limonciello (22):
->   ACPI: platform-profile: Add a name member to handlers
->   platform/x86/dell: dell-pc: Create platform device
->   ACPI: platform_profile: Add device pointer into platform profile
->     handler
->   ACPI: platform_profile: Add platform handler argument to
->     platform_profile_remove()
->   ACPI: platform_profile: Pass the profile handler into
->     platform_profile_notify()
->   ACPI: platform_profile: Move sanity check out of the mutex
->   ACPI: platform_profile: Move matching string for new profile out of
->     mutex
->   ACPI: platform_profile: Use guard(mutex) for register/unregister
->   ACPI: platform_profile: Use `scoped_cond_guard`
->   ACPI: platform_profile: Create class for ACPI platform profile
->   ACPI: platform_profile: Add name attribute to class interface
->   ACPI: platform_profile: Add choices attribute for class interface
->   ACPI: platform_profile: Add profile attribute for class interface
->   ACPI: platform_profile: Notify change events on register and
->     unregister
->   ACPI: platform_profile: Only show profiles common for all handlers
->   ACPI: platform_profile: Add concept of a "custom" profile
->   ACPI: platform_profile: Make sure all profile handlers agree on
->     profile
->   ACPI: platform_profile: Check all profile handler to calculate next
->   ACPI: platform_profile: Notify class device from
->     platform_profile_notify()
->   ACPI: platform_profile: Allow multiple handlers
->   platform/x86/amd: pmf: Drop all quirks
->   Documentation: Add documentation about class interface for platform
->     profiles
-> 
->  .../ABI/testing/sysfs-platform_profile        |   5 +
->  .../userspace-api/sysfs-platform_profile.rst  |  38 ++
->  drivers/acpi/platform_profile.c               | 534 ++++++++++++++----
->  .../surface/surface_platform_profile.c        |   8 +-
->  drivers/platform/x86/acer-wmi.c               |  12 +-
->  drivers/platform/x86/amd/pmf/Makefile         |   2 +-
->  drivers/platform/x86/amd/pmf/core.c           |   1 -
->  drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 ---
->  drivers/platform/x86/amd/pmf/pmf.h            |   3 -
->  drivers/platform/x86/amd/pmf/sps.c            |   4 +-
->  drivers/platform/x86/asus-wmi.c               |   8 +-
->  drivers/platform/x86/dell/alienware-wmi.c     |   8 +-
->  drivers/platform/x86/dell/dell-pc.c           |  38 +-
->  drivers/platform/x86/hp/hp-wmi.c              |   8 +-
->  drivers/platform/x86/ideapad-laptop.c         |   6 +-
->  .../platform/x86/inspur_platform_profile.c    |   7 +-
->  drivers/platform/x86/thinkpad_acpi.c          |  16 +-
->  include/linux/platform_profile.h              |   9 +-
->  18 files changed, 559 insertions(+), 214 deletions(-)
->  delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+> +#include "../../../irqchip/irq-msi-lib.h"
 
--- 
- i.
+This is the only file outside drivers/irqchip/ that includes this.
+What's special about this driver?  Maybe this is a hint that something
+here belongs in drivers/irqchip/?
 
+> +#ifdef CONFIG_SMP
+
+No other drivers test CONFIG_SMP, why should this be different?
+
+> +static int sg2042_pcie_msi_irq_set_affinity(struct irq_data *d,
+> +					    const struct cpumask *mask,
+> +					    bool force)
+> +{
+> +	if (d->parent_data)
+> +		return irq_chip_set_affinity_parent(d, mask, force);
+> +
+> +	return -EINVAL;
+> +}
+> +#endif /* CONFIG_SMP */
+
+> +static int sg2042_pcie_init_msi_data(struct sg2042_pcie *pcie)
+> +{
+> +	struct device *dev = pcie->cdns_pcie->dev;
+> +	u32 value;
+> +	int ret;
+> +
+> +	raw_spin_lock_init(&pcie->msi_lock);
+> +
+> +	/*
+> +	 * Though the PCIe controller can address >32-bit address space, to
+> +	 * facilitate endpoints that support only 32-bit MSI target address,
+> +	 * the mask is set to 32-bit to make sure that MSI target address is
+> +	 * always a 32-bit address
+> +	 */
+> +	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
+
+Not sure this is needed.  Does DT dma-ranges not cover this?
+
+> +static int sg2042_pcie_setup_msi(struct sg2042_pcie *pcie, struct device_node *msi_node)
+
+Wrap to fit in 80 columns like the rest.
+
+> +/*
+> + * SG2042 only support 4-byte aligned access, so for the rootbus (i.e. to read
+> + * the PCIe controller itself, read32 is required. For non-rootbus (i.e. to read
+
+s/PCIe controller/Root Port/
+
+> + * the PCIe peripheral registers, supports 1/2/4 byte aligned access, so
+> + * directly use read should be fine.
+
+s/use read/using read/
+
+> +static int sg2042_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct pci_host_bridge *bridge;
+> +	struct device_node *np_syscon;
+> +	struct device_node *msi_node;
+> +	struct cdns_pcie *cdns_pcie;
+> +	struct sg2042_pcie *pcie;
+> +	struct cdns_pcie_rc *rc;
+> +	struct regmap *syscon;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(CONFIG_PCIE_CADENCE_HOST))
+> +		return -ENODEV;
+
+I don't think this is needed since CONFIG_PCIE_SG2042 selects
+PCIE_CADENCE_HOST.
+
+Bjorn
 
