@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-440131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF63E9EB944
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:24:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89E89EB945
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:24:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EC828430D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:24:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395F016596F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF1C2046AF;
-	Tue, 10 Dec 2024 18:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7E02046BE;
+	Tue, 10 Dec 2024 18:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2QKUf3s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hQD1UpUL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2243786357;
-	Tue, 10 Dec 2024 18:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7A71850AF
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733855060; cv=none; b=qRFjAm2LcIfaULqzRA1I6CjqYPVpwwBeFUbnxYFK6YBLFqt4sIMbauX6ruhWV4xLZxG8ApsA0Rsqy9LebWJNkCMw6PnIstUWP0Kry7kfUIgJGNG2hk8e627uvBpLtl0ZPhEyVgWvg7ht6SEDZTnPy71+LyF3h7HTbp8WiV1GeaU=
+	t=1733855072; cv=none; b=P8mhPuAiHQbI0DBHduMGXgKj/i963YRaV+9Zi3x1ALI6rgJTkq39OQyhQByXRnrjGGoixf48Dhvm04ruMdRwHZVWXfiqboLjTKTs2h1YHc6Ayh+B0soSY3J3MasiRhI596AGmle4H60Zo//H9rSV0afa3nrL6ZyRGR7VZE/hMaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733855060; c=relaxed/simple;
-	bh=jGy78569S4tV2WAiXrkQv4BrwK/R7Y2sD93xKm9soio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxD94O6g0D5IU9OVnfDChC8h9Z02IgaQ+uSQEFMYo8Q1GP03tq6DUEXu64Nl0YGDuIsA+yBjG88Oz9PSW9YFG4XGQZabj0vVPT7n3Gtu/lmGPY/WgVfaMO3jrYlhWyz4PM5lRP7kQGUV7I1Hl8jOV60hFSY3ELMFYuiz84zq34s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2QKUf3s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34CB6C4CED6;
-	Tue, 10 Dec 2024 18:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733855059;
-	bh=jGy78569S4tV2WAiXrkQv4BrwK/R7Y2sD93xKm9soio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M2QKUf3siGL7b6NroqQ4bX6UOEldaH4jMa9iaUtMl34MhNafRFDzuJugwjQ19180X
-	 9EPxDAzpNb4Te//KkTwfV/obX9sDN06CaMuyoLm43cj9NElPdlAu1VB4SiXY1Z/+4H
-	 Ji8Zc51ycYvXNCzg0JvOrPNcr5Dn9YTM573oSgzu4wtfizkGSTHJiSTlkWTavoSChr
-	 64ItN0Nb1uIYFkSKkpyMSf7uvZdaqBS3tpgmAYVSHs9j3l6LQ51XqR2uxF5VSEzLpA
-	 zcSoLiwIl+r0xkZ+zuFZD2VQy3VNBttqZ6LIkE8fmQztG9mmLekB/AUsgEGysMEd6+
-	 YoMllr+dBYoXQ==
-Date: Tue, 10 Dec 2024 10:24:17 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Howard Chu <howardchu95@gmail.com>, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	James Clark <james.clark@linaro.org>
-Subject: Re: [PATCH v9 01/10] perf record --off-cpu: Add --off-cpu-thresh
- option
-Message-ID: <Z1iHUTN_T4xZcrgj@google.com>
-References: <20241122043840.217453-1-howardchu95@gmail.com>
- <20241122043840.217453-2-howardchu95@gmail.com>
- <Z1eGw52LThYh1Gjx@google.com>
- <CAP-5=fUm6kWmX3FzFYJ_xoBgfgs0zPigyMKLy7VrXvNt1sC+iQ@mail.gmail.com>
+	s=arc-20240116; t=1733855072; c=relaxed/simple;
+	bh=7nhMPj/ozuoD9sVD9Ow1ZB9+eVVLEWg/CeyeINkPCXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LHvsK92ishJEJk1sL5oyufhu383NPw0Mu7kzqpXI+vdqx54NqH295v5IuGqwAORW8vv7e+hFFxo3QKojbG4gdm6Mf4UBJVMmi4gMnVEkwkawkbUGUVLSI50bcAKVuD0fC3SiZ/9Un/x55V4+eNmMZL03BK7R3Cb/oGgrliat2yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hQD1UpUL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733855070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7nhMPj/ozuoD9sVD9Ow1ZB9+eVVLEWg/CeyeINkPCXM=;
+	b=hQD1UpULTwfDyvi7xGmhSj8Wh2IM5Sm28LlxJncFNLWjX5Q97CIQ07SL05XY+mUUqWdbAf
+	s9hZsxj5XYZohR58cUno9zTdW1lSIZ4wP9QCGyacEERTS1HywLpPtI5bIkMIk/CglHOx4c
+	Rf1WM0PTS0JQFxbBx3tzfuk0UT21dX0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-52-pKYp4utfPuyIGBr1h5JfVg-1; Tue, 10 Dec 2024 13:24:29 -0500
+X-MC-Unique: pKYp4utfPuyIGBr1h5JfVg-1
+X-Mimecast-MFC-AGG-ID: pKYp4utfPuyIGBr1h5JfVg
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e9c698e7so2873125f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:24:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733855068; x=1734459868;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7nhMPj/ozuoD9sVD9Ow1ZB9+eVVLEWg/CeyeINkPCXM=;
+        b=o1rKi9H1hFfGNM0jkKJ+DzPzzTD73Jet+2LQckIhqcjCfAxBIs+9vpzwdQJeOqFELm
+         hZxtyKeh6VZ7baK32QFxoYf8JXbsXUHvhdm8MGD3tiZWNqUYG/pL1rACGR49eoPjIb3e
+         MfnkDcVOAgIQ7iX/4gNQwd90UwlVzUuxmFo8WpKrlkoUaT3Aq2KY2eyNTbp87Ojt7Z0Y
+         2hvWkU3NJF7dOc/23qKA5GhvP2P/uQdsva7q1tlsK0MgYCVeDF/IOVbsM+SBf2wNw82W
+         2EIqqLChv+HMTHqW2YJg/e8XfH+AB2Lkf6zsCLGPjrSx8S9RX1SWhpRGkFoLj368jrPN
+         rZTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCM9I992gSvSETmInaJ+2D1tldfww7DLVJKQwsEGYBA0gt4me6shUpNrR7TufaeLJlKrt/SV+mJB7A6OQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhA8dtY3iCtyfYVByuo+aYFegyTFb/fAS6sxuJKQtvruTvyb8G
+	e8DeLW5HNblgrhWil3zc/VxZcPDgbo7MB8pUr3RR248stTm9gihrB42k/p67nJORjuoOFNRj8CK
+	tXO3ajWRS77o3wpyQqcEZ5XKxTVIrO+XTac1hDNRsS76UOZ3J3YqXE+2s1La8Ow==
+X-Gm-Gg: ASbGncum9A+jjzTAb7JAHzsu5nblawD0XdmO3aAk+GLhm6rJSCs5xkCq7r482bci/G/
+	uV/+qnR5OV9ZJv3LU5lcRFmJcgkhHF2JeAcLVZsGkSKWm6Q/RCB02ds8+a/F8pDWGyXIzwAT3pl
+	rCqr0Af0YLQduaPW/ckuu2+nC7w5Krw1g5LeKSsOkGydrXEDQXDzM4IFm683bTlrS8jwtXMh1Z0
+	JGvgmNh4Mtgd55+a2kLcbWXv0f/zT+arc0TspJ5tEGaqOYD+o1BqvxO
+X-Received: by 2002:a05:6000:4022:b0:386:3672:73e4 with SMTP id ffacd0b85a97d-386469e981amr3473955f8f.26.1733855068205;
+        Tue, 10 Dec 2024 10:24:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGHx26Gp55ua37c5IiyimVcDcoJIraGmY0UGD9XeA5hsX3pXEMqbHtCokBGh2VOcCbGG9W5FA==
+X-Received: by 2002:a05:6000:4022:b0:386:3672:73e4 with SMTP id ffacd0b85a97d-386469e981amr3473943f8f.26.1733855067885;
+        Tue, 10 Dec 2024 10:24:27 -0800 (PST)
+Received: from [192.168.10.3] ([151.81.118.45])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526ac03sm241795075e9.4.2024.12.10.10.24.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 10:24:27 -0800 (PST)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	isaku.yamahata@intel.com,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com,
+	michael.roth@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] KVM: TDX: TDX hypercalls may exit to userspace
+Date: Tue, 10 Dec 2024 19:24:19 +0100
+Message-ID: <20241210182418.251991-2-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUm6kWmX3FzFYJ_xoBgfgs0zPigyMKLy7VrXvNt1sC+iQ@mail.gmail.com>
 
-On Mon, Dec 09, 2024 at 06:24:21PM -0800, Ian Rogers wrote:
-> On Mon, Dec 9, 2024 at 4:09 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hi Howard,
-> >
-> > Sorry for the late review.
-> >
-> > On Thu, Nov 21, 2024 at 08:38:31PM -0800, Howard Chu wrote:
-> > > Specify the threshold for dumping offcpu samples with --off-cpu-thresh,
-> > > the unit is us (microsecond). Default value is 500,000us (500ms, 0.5s).
-> >
-> > I guess we mostly care about more than milli-seconds of off-cpu times.
-> > Can we change the unit to msec?
-> 
-> I wonder if there should be two values, one for the command line and
-> one in the code. I think microseconds make most sense in the code, 1ms
-> being roughly 1000 context switches. On the command line millisecond
-> would align with perf stat's -I option, and as you point out, users
-> aren't usually working at the granularity of a microsecond. Having the
-> code be microsecond oriented allows the option to have a more precise
-> command line option in the future, autotuning, etc.
+Applied to kvm-coco-queue, thanks.
 
-I'm fine as long as it has a proper suffix for the unit. :)
-
-Thanks,
-Namhyung
+Paolo
 
 
