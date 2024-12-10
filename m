@@ -1,116 +1,273 @@
-Return-Path: <linux-kernel+bounces-439122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99E29EAB09
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:52:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9459EAB0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:52:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0AE18884FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:52:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F40B230D19;
+	Tue, 10 Dec 2024 08:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6NiurQQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BE1C282995
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:52:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D578230D27;
-	Tue, 10 Dec 2024 08:52:18 +0000 (UTC)
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA6A12DD88
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D882F12DD88;
+	Tue, 10 Dec 2024 08:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733820738; cv=none; b=ICYHuBJCn7JCaNOJtA3dNDDIIshbdr108O7W8KEm4fsVTQHlVoHyCa1cQSWu37p5RWLLnD1HOHYzWwQ/GfBNz5H1AK5ejGrLwZ+TZVJcTnBMPpCtz7wqJiML038w4QC/7sR1X8R+l1NARYtVleEHC9UWFYFCOxoGL2GkC99qqws=
+	t=1733820771; cv=none; b=VWmycLt50XO9RcLQN7ZrmlGPnfOL8xcJR7qUr4+szXZl8bWsFrrQBxYP9qubvdFCN27jf6YqDBbInLq41d2qqxqgvzLd+ZHc7OButvQzFg0QpvcTwfHrnQwzZEDxxh9BJq8BS3nfsXDTY7lnNQec4PjPRrq1VCGqv2Br3XR4Cuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733820738; c=relaxed/simple;
-	bh=hr0TPaCGw3LhKmhIDpLsXe/y8JIpZV+C5LY9aLrSB/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kxp0D94++aL/1TzgEaynB709iI9Uj6wqb83apPxb5AHtK8fZzFFAI3G8CRRpETlxlZhCYXV+mSP+kjFeVjwk/CRGXecZNmwQ8X/jz6X43zN/85R0L+V0hXpFijJ8HcMfDSAFNDXR7DBEJLAkprCoG+fZOJU9210vIfLjmS5eiDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:bf13:4c3:373e:7260])
-	by laurent.telenet-ops.be with cmsmtp
-	id mws72D00K3K2VbF01ws7Kj; Tue, 10 Dec 2024 09:52:08 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tKvyP-000eT0-U3;
-	Tue, 10 Dec 2024 09:52:07 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tKvyR-009nZb-5C;
-	Tue, 10 Dec 2024 09:52:07 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] kbuild: Drop architecture argument from headers_check.pl
-Date: Tue, 10 Dec 2024 09:52:05 +0100
-Message-Id: <168b2cb09f09ec3cead8a6b1e726ac76f5d06171.1733820553.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733820771; c=relaxed/simple;
+	bh=KP7mBNP2pd/DwOBjVN/npe0wHUj0p6vln405+1vkD6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOmTDuwHyU7sTTl/ekIxOWfxTHgI6YczXjIxScKSdT9eTNi62n2w4QJxeS/2dclHJwputDGeXCDCsrvi09VypEnkGjhx1heqT7ueS/KKiKyo4xlIiPZrqD5bywNjgLMPKcnTKg+DNOlFpkJLlt+9e/k3dC4RMFDI7uMcDf6bVoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6NiurQQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C6BCC4CED6;
+	Tue, 10 Dec 2024 08:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733820770;
+	bh=KP7mBNP2pd/DwOBjVN/npe0wHUj0p6vln405+1vkD6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f6NiurQQ4XDxs1gH4XW/dww86rdwL0dyRBY+6cVYQy0dFPRAglysBqyDso5C3KC3R
+	 IpdFgRWwWUxxTvvsTOKRlr7kyICGceIqQCtfH+qojPFNpN5S1iWR2Bt6MFP7GuIaYO
+	 MwmLF+jKgTihBsI8QxB/WHBsU2Xca8fxgafYjp0pVEPo8WEycukLJ8cd+5T4qh/kMY
+	 cfC1j6+8/DATplAI0a8wUogZDvpBBE0cHnSY98sqoSqXnhA8Uxp4zIdf77rqV3kNyF
+	 JBGwDKJrC/izfdjhXh1krX1D9xhtdrPJif2nOQWpJbx4Nt9w/PJYWEJ+U4xtN+fuW5
+	 mUTCeKhY6fXLQ==
+Date: Tue, 10 Dec 2024 09:52:47 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Frank <Li@nxp.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: PCI: mobiveil: convert
+ mobiveil-pcie.txt to yaml format
+Message-ID: <t3mrs7bap5fbiyxpth5r364al4ca2s72ddsoqgutbrlhrgwqae@qmcjeis2akwp>
+References: <20241206222529.3706373-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241206222529.3706373-1-Frank.Li@nxp.com>
 
-Since commit 7ff0fd4a9e20cf73 ("kbuild: drop support for
-include/asm-<arch> in headers_check.pl"), the second argument $arch is
-no longer used, hence drop it.
+On Fri, Dec 06, 2024 at 05:25:27PM -0500, Frank Li wrote:
+> Convert device tree binding doc mobiveil-pcie.txt to yaml format. Merge
+> layerscape-pcie-gen4.txt into this file.
+> 
+> Additional change:
+> - interrupt-names: "aer", "pme", "intr", which align order in examples.
+> - reg-names: csr_axi_slave, config_axi_slave, which align existed dts file.
 
-Reported-by: Masahiro Yamada <masahiroy@kernel.org>
-Closes: https://lore.kernel.org/CAK7LNARNa3NPSeRAUgMaEqWiA+C6-s1PxRe1bCUJg6zLyOtDkA@mail.gmail.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Commit 7ff0fd4a9e20cf73 is part of the mm tree.
+mobiveil-pcie.txt binding suggested reversed orders of above, so please
+mention that you unify the order to match layerscape-pcie-gen4 and
+existing Layerscape DTS users.
 
- usr/include/Makefile         | 2 +-
- usr/include/headers_check.pl | 5 ++---
- 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/usr/include/Makefile b/usr/include/Makefile
-index 771e32872b2ab12d..6c6de1b1622b1a69 100644
---- a/usr/include/Makefile
-+++ b/usr/include/Makefile
-@@ -78,7 +78,7 @@ quiet_cmd_hdrtest = HDRTEST $<
-       cmd_hdrtest = \
- 		$(CC) $(c_flags) -fsyntax-only -x c /dev/null \
- 			$(if $(filter-out $(no-header-test), $*.h), -include $< -include $<); \
--		$(PERL) $(src)/headers_check.pl $(obj) $(SRCARCH) $<; \
-+		$(PERL) $(src)/headers_check.pl $(obj) $<; \
- 		touch $@
- 
- $(obj)/%.hdrtest: $(obj)/%.h FORCE
-diff --git a/usr/include/headers_check.pl b/usr/include/headers_check.pl
-index 7070c891ea294b4d..2b70bfa5558e6451 100755
---- a/usr/include/headers_check.pl
-+++ b/usr/include/headers_check.pl
-@@ -3,9 +3,8 @@
- #
- # headers_check.pl execute a number of trivial consistency checks
- #
--# Usage: headers_check.pl dir arch [files...]
-+# Usage: headers_check.pl dir [files...]
- # dir:   dir to look for included files
--# arch:  architecture
- # files: list of files to check
- #
- # The script reads the supplied files line by line and:
-@@ -23,7 +22,7 @@ use warnings;
- use strict;
- use File::Basename;
- 
--my ($dir, $arch, @files) = @ARGV;
-+my ($dir, @files) = @ARGV;
- 
- my $ret = 0;
- my $line;
--- 
-2.34.1
+...
+
+
+> +++ b/Documentation/devicetree/bindings/pci/mbvl,gpex40-pcie.yaml
+> @@ -0,0 +1,167 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/mbvl,gpex40-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mobiveil AXI PCIe Root Port Bridge
+> +
+> +maintainers:
+> +  - Frank Li <Frank Li@nxp.com>
+> +
+> +description:
+> +  Mobiveil's GPEX 4.0 is a PCIe Gen4 root port bridge IP. This configurable IP
+> +  has up to 8 outbound and inbound windows for the address translation.
+> +
+> +  NXP Layerscape PCIe Gen4 controller (Deprecated) base on Mobiveil's GPEX 4.0.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mbvl,gpex40-pcie
+> +      - fsl,lx2160a-pcie
+
+Please reverse them to keep alphabetical order.
+
+> +
+> +  reg:
+> +    items:
+> +      - description: PCIe controller registers
+> +      - description: Bridge config registers
+> +      - description: GPIO registers to control slot power
+> +      - description: MSI registers
+> +    minItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csr_axi_slave
+> +      - const: config_axi_slave
+> +      - const: gpio_slave
+> +      - const: apb_csr
+> +    minItems: 2
+> +
+> +  apio-wins:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      numbers of requested apio outbound windows
+> +        1. Config window
+> +        2. Memory window
+> +    default: 2
+> +    maximum: 256
+> +
+> +  ppio-wins:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: number of requested ppio inbound windows
+> +    default: 1
+> +    maximum: 256
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  dma-coherent: true
+> +
+> +  msi-parent: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - fsl,lx2160a-pcie
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 2
+> +
+> +        reg-names:
+> +          maxItems: 2
+> +
+
+interrupts:
+  minItems: 3
+
+> +        interrupt-names:
+> +          items:
+> +            - const: aer
+> +            - const: pme
+> +            - const: intr
+> +    else:
+> +      properties:
+> +        dma-coherent: false
+> +        msi-parent: false
+
+reg? interrupts? interrupt-names?
+
+
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    pcie@b0000000 {
+> +        compatible = "mbvl,gpex40-pcie";
+> +        reg = <0xb0000000 0x00010000>,
+> +              <0xa0000000 0x00001000>,
+> +              <0xff000000 0x00200000>,
+> +              <0xb0010000 0x00001000>;
+> +        reg-names = "csr_axi_slave",
+> +                    "config_axi_slave",
+> +                    "gpio_slave",
+> +                    "apb_csr";
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +        device_type = "pci";
+> +        apio-wins = <2>;
+> +        ppio-wins = <1>;
+> +        bus-range = <0x00000000 0x000000ff>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <1>;
+> +        interrupt-parent = <&gic>;
+> +        interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-map-mask = <0 0 0 7>;
+> +        interrupt-map = <0 0 0 0 &pci_express 0>,
+> +                        <0 0 0 1 &pci_express 1>,
+> +                        <0 0 0 2 &pci_express 2>,
+> +                        <0 0 0 3 &pci_express 3>;
+> +        ranges = <0x83000000 0 0x00000000 0xa8000000 0 0x8000000>;
+
+Please keep ranges after reg-names
+
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        pcie@3400000 {
+> +            compatible = "fsl,lx2160a-pcie";
+> +            reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
+> +                   0x80 0x00000000 0x0 0x00001000>; /* configuration space */
+> +            reg-names = "csr_axi_slave", "config_axi_slave";
+> +            interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
+> +                         <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
+> +                        <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
+> +            interrupt-names = "aer", "pme", "intr";
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            device_type = "pci";
+> +            apio-wins = <8>;
+> +            ppio-wins = <8>;
+> +            dma-coherent;
+> +            bus-range = <0x0 0xff>;
+> +            msi-parent = <&its>;
+> +            ranges = <0x82000000 0x0 0x40000000 0x80 0x40000000 0x0 0x40000000>;
+
+Ditto here
+
+> +            #interrupt-cells = <1>;
+> +            interrupt-map-mask = <0 0 0 7>;
+> +            interrupt-map = <0000 0 0 1 &gic 0 0 GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> +                            <0000 0 0 2 &gic 0 0 GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+> +                            <0000 0 0 3 &gic 0 0 GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
+> +                            <0000 0 0 4 &gic 0 0 GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+> +        };
+
+Best regards,
+Krzysztof
 
 
