@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-438927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E38B9EA856
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:00:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F5C9EA857
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CAFB16CD4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B91B16D7D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C43230D12;
-	Tue, 10 Dec 2024 05:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEA6228CA1;
+	Tue, 10 Dec 2024 05:56:38 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91F8228C9F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE39E227B9F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733810192; cv=none; b=USKBNAtahiFYgZ2UF4ZhkbBd5mJcNUwIBy5FxZTgvmwJ8G2si1FYRJkqcMZlaK3G0WToYAJUzxsgpSzaGl0MfDl+XevaH1SV6Sn0vHLycrufQ9uZxvQwbhbWiDxKCfIvCnTn2aMwr/HivOo3On7gvPkf9h0asMbOQ0mDM0miPC4=
+	t=1733810198; cv=none; b=fhxXCWbx9KjtKOGrNGEln6pNSl23w2D5jdY0VIFPjE0EhQJxDUm9UHYFniJGpgK95PdFNUiSYtiLxYeGiz4hgiLt8D0/dEw8rGLLieQL6YGj9zNiWndtMddZYZhsuJv5oqqVoJmIhRIHeoCirKn8pweNhDQXzsOj7rHwCips8Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733810192; c=relaxed/simple;
-	bh=JPkYsaUVI40eMiHv8osLbngvLv99SphoxOxVyh3Yb90=;
+	s=arc-20240116; t=1733810198; c=relaxed/simple;
+	bh=AKGqnRlsbpGjxwcSvfGpMEawxkUsWP6aZRz3F+X4Q/o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nWYyK5vLGNKQZNTDFqb4DN9kfjzpFoM9pF/Xe+cxQfpxgwA8kcipmnUqvI0ZBJUcj/6QQ3g/s9wcMYfE/eEeXdvcK84EDTpoMcPcOuMREAD9YQT28YCq9WN26MxkjQYPNOCygF4LTZeMcs1XRq4OcPk8D+h/xax+cJrXIpYN0pQ=
+	 MIME-Version; b=jW7aGphIncOxBLw1DZa8FOmod//SR8C5x+SDA0L66ZI8gmwFj3chRgBU2BM+OcziQm7qYayntkBSGpQyPhA8f+rsuTFizCEMffUG8K/gHN1CjUEiCU6NAJe6ozCLvaum9Ww4Sa7TJFSgq66XE9e0tw7f1ej5l7d6GuqKr4RVeIk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66914113E;
-	Mon,  9 Dec 2024 21:56:58 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B2A2113E;
+	Mon,  9 Dec 2024 21:57:04 -0800 (PST)
 Received: from a077893.arm.com (unknown [10.163.48.173])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BF9253F58B;
-	Mon,  9 Dec 2024 21:56:26 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E03233F58B;
+	Mon,  9 Dec 2024 21:56:30 -0800 (PST)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-kernel@vger.kernel.org,
 	kvmarm@lists.linux.dev,
@@ -45,9 +45,9 @@ Cc: ryan.roberts@arm.com,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH V2 37/46] arm64/sysreg: Add register fields for PMZR_EL0
-Date: Tue, 10 Dec 2024 11:23:02 +0530
-Message-Id: <20241210055311.780688-38-anshuman.khandual@arm.com>
+Subject: [PATCH V2 38/46] arm64/sysreg: Add register fields for SPMCGCR0_EL1
+Date: Tue, 10 Dec 2024 11:23:03 +0530
+Message-Id: <20241210055311.780688-39-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241210055311.780688-1-anshuman.khandual@arm.com>
 References: <20241210055311.780688-1-anshuman.khandual@arm.com>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds register fields for PMZR_EL0 as per the definitions based
+This adds register fields for SPMCGCR0_EL1 as per the definitions based
 on DDI0601 2024-09.
 
 Cc: Catalin Marinas <catalin.marinas@arm.com>
@@ -69,57 +69,35 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- arch/arm64/tools/sysreg | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ arch/arm64/tools/sysreg | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-index c87017e69be1..05f548b11470 100644
+index 05f548b11470..e97572c4f370 100644
 --- a/arch/arm64/tools/sysreg
 +++ b/arch/arm64/tools/sysreg
-@@ -3089,6 +3089,43 @@ Res0	19:16
- Field	15:0	evtCount
+@@ -114,6 +114,21 @@ Res0	63:1
+ Field	0	OSLK
  EndSysreg
  
-+Sysreg	PMZR_EL0	3	3	9	13	4
-+Res0	63:33
-+Field	32	FM
-+Field	31	C
-+Field	30	P30
-+Field	29	P29
-+Field	28	P28
-+Field	27	P27
-+Field	26	P26
-+Field	25	P25
-+Field	24	P24
-+Field	23	P23
-+Field	22	P22
-+Field	21	P21
-+Field	20	P20
-+Field	19	P19
-+Field	18	P18
-+Field	17	P17
-+Field	16	P16
-+Field	15	P15
-+Field	14	P14
-+Field	13	P13
-+Field	12	P12
-+Field	11	P11
-+Field	10	P10
-+Field	9	P9
-+Field	8	P8
-+Field	7	P7
-+Field	6	P6
-+Field	5	P5
-+Field	4	P4
-+Field	3	P3
-+Field	2	P2
-+Field	1	P1
-+Field	0	P0
++SysregFields	SPMCGCRx_EL1
++Field	63:56	N7
++Field	55:48	N6
++Field	47:40	N5
++Field	39:32	N4
++Field	31:24	N3
++Field	23:16	N2
++Field	15:8	N1
++Field	7:0	N0
++EndSysregFields
++
++Sysreg	SPMCGCR0_EL1	2	0	9	13	0
++Fields	SPMCGCRx_EL1
 +EndSysreg
 +
- SysregFields	HFGxTR_EL2
- Field	63	nAMAIR2_EL1
- Field	62	nMAIR2_EL1
+ Sysreg	SPMACCESSR_EL1	2	0	9	13	3
+ Field	63:62	P31
+ Field	61:60	P30
 -- 
 2.25.1
 
