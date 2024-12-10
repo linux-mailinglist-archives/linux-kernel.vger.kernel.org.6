@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-440122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CEB9EB925
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:15:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6320B1889CB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:15:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BBE1D8E09;
-	Tue, 10 Dec 2024 18:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NEEspu2b"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9817E9EB929
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:17:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C124523ED59;
-	Tue, 10 Dec 2024 18:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF1C283FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:17:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74420204692;
+	Tue, 10 Dec 2024 18:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEqVO4SP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFC423ED59;
+	Tue, 10 Dec 2024 18:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733854544; cv=none; b=Pq0rblZCRSK5vFO+qyZK6CEW3HzPQrqMDrQaPnl77FcxZsNDKC1i+see/cT1eLQGcjBAK5u9qpd/k+OI3ltUS2f3h8JIPv/uZa8o1YCb/ctSZ7LI1wrBYA932roAm7v7iPDdKUCX9sL9p90AQ/KQljiOxu4zmWwh92fxJJOHhy0=
+	t=1733854646; cv=none; b=r6Koaumo/1cqP7zVhSoseKbNxJICmJl1BzqGAtvTQxQUuG6fxZPcbxID5nzW0CEDK2i9kBPwsRVoHysF1RuRooI3kmRH3wFQlWJAlY72N4TiTS3/QDErnDA3zt1vOcXaZPm0WCdeKWC+XMoyAG5K0vJOz3as1oV526MqJEL0TtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733854544; c=relaxed/simple;
-	bh=MUgvN2LO4z97shSFG7P9yC0L4LFur7hd+6BDicaGC38=;
+	s=arc-20240116; t=1733854646; c=relaxed/simple;
+	bh=jN756xLVBFxNxpzSE64UVqN6NuUqd49ydB11a1N3dIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLa1Vw2XDIDLmpPAfAL7CZX52LgRFisxNxnmiGadKiedSPS4yl0uIIIrxB8BdvmxFZFo0NwFaNk+r5KvsOqkK+E2DJGESmTrFI5egybsJ7p9eLteCF1mcBQVotSGYayUt8OnZOl38O55C4FqVO518fWsXmG1pqbiAO690HrwXGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NEEspu2b; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jDhXgbgyx5KWrAQCTRL0SbVqDBJt06mti96q7/ZFnv4=; b=NEEspu2bx/5nmcoqsPkkyPwZ1c
-	JrsjY0LBikcu/Yd8MwbeKeK/2vg82OEgZmNs/nc8fwiVIypqiuLkSAyQtET3BqpxSfA858WWJXQYa
-	TrfsJlNPM1/zPYEwZQXmNsAILn7BE20jGUz5p6um1i/e7hzbP/MwpDaOfA1TAY+Clc9lUhmqAiDKt
-	DKGA3J/TR/4qHKnUpW5xhXiDkpQ9863R8i1tgUXLFSI+xvkLP4roOkbtrjVg2OsdglHmAYp7ZiCv4
-	z968P/rx++nybaL02dv9gkg3S3Z7uQ/TCocioXuHPJWLEspnWQ5SeWCKCvbMKGfzByPQKY/VmF0/Y
-	I22AHreg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tL4ln-00000006yDB-2VGv;
-	Tue, 10 Dec 2024 18:15:39 +0000
-Date: Tue, 10 Dec 2024 18:15:39 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [MEH PATCH] fs: sort out a stale comment about races between fd
- alloc and dup2
-Message-ID: <20241210181539.GE3387508@ZenIV>
-References: <20241205154743.1586584-1-mjguzik@gmail.com>
- <20241206-inszenieren-anpflanzen-317317fd0e6d@brauner>
- <20241209195637.GY3387508@ZenIV>
- <CAGudoHH76NYH2O-TQw6ZPjZF5ht76HgiKtsG=owYdLZarGRwcA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fapmFQ7ewUXiNMJTf3pxI5HFh+DU0pwElBLRt7XSWOcqGa2MsuutJ9ouUKsuGbZb0G+I/afAkzKCfGrgPxkL/PzqUhQ+xfnJ988K1bEm2NI7w+0mjnobCNa3UdCSbNV2FZkHpcMvymsqErX+SFOTb17Ps0uKtElCokLLJNYnGbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEqVO4SP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FC7C4CED6;
+	Tue, 10 Dec 2024 18:17:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733854646;
+	bh=jN756xLVBFxNxpzSE64UVqN6NuUqd49ydB11a1N3dIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pEqVO4SP9BPt5gJeIBldqzX3p8Y/ruyTVW++MXZ1C7yppD0Rw1qcpc/g2iQ1NpyTh
+	 Ocdzk5bgm/+ea83z+Yymk1z9j3370D3jc67oRptrMv+LHqiIw7/mCPqVZLnOcn6soX
+	 U0+fSOt7SceXTiL3YG/z3O8ww3t0blhUNk1iJJRcqhyKo3/aZFPQaaiFrvVSEUqGHY
+	 f0WcUBKbX5SjAOpEGvEGW2bbilN4f3rfOd1KLg7FBcEBYGeWMQXRevLf8jpRpuIozH
+	 Sgu93ibA8wi3MEz+7ohFBx/0nI5iD5ssTbjOMQ/Q2zeFSIgBhPskoUpNiLmWr47juG
+	 qTPHra/UsysrQ==
+Date: Tue, 10 Dec 2024 15:17:23 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Gabriele Monaco <gmonaco@redhat.com>
+Subject: Re: [PATCH 0/4 perf-tools-next] perf ftrace latency linear buckets
+Message-ID: <Z1iFsz-Jis6rgpjb@x1>
+References: <20241112181214.1171244-1-acme@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,58 +62,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHH76NYH2O-TQw6ZPjZF5ht76HgiKtsG=owYdLZarGRwcA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241112181214.1171244-1-acme@kernel.org>
 
-On Tue, Dec 10, 2024 at 05:48:40AM +0100, Mateusz Guzik wrote:
- 
-> Oh huh. I had seen that code before, did not mentally register there
-> may be repeat file alloc/free calls due to repeat path_openat.
+On Tue, Nov 12, 2024 at 03:12:10PM -0300, Arnaldo Carvalho de Melo wrote:
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
 > 
-> Indeed it would be nice if someone(tm) sorted it out, but I don't see
-> how this has any relation to installing the file early and thus having
-> fget worry about it.
+> Hi,
+> 
+> 	Gabriele has been using 'perf ftrace latency' in some
+> investigations at work and wanted to have an alternative way of
+> populating the buckets, so we came up with this series, please take a
+> look at the examples provided in the changesets.
+> 
+> Thanks,
 
-Other than the former being an obvious prereq for the latter?  Not much...
+Applied to perf-tools-next,
 
-> Suppose the "embryo"/"larval" file pointer is to be installed early
-> and populated later. I don't see a benefit but do see a downside: this
-> requires protection against close() on the fd (on top of dup2 needed
-> now).
-> The options that I see are:
-> - install the file with a refcount of 2, let dup2/close whack it, do a
-> fput in open to bring back to 1 or get rid of it if it raced (yuck)
-> (freebsd is doing this)
-> - dup2 is already special casing to not mess with it, add that to
-> close as well (also yuck imo)
-
-As a possibility (again, I'm not sold on the benefits of that scheme,
-just looking into feasibility):
-	dup2() when evicting an embryo:
-		mark it evicted
-		remove from descriptor table
-		do nothing to refcount (in effect, transfer it to open())
-		then proceed as if it hadn't been there
-		[== pretend that dup2() always loses the race]
-	close() when running into an embryo
-		return -EBADF
-		[== pretend that close() always loses the race]
-	open() when it's done setting file up:
-		if opening failed
-			if not marked evicted
-				remove from descriptor table
-			fput()
-			return whatever error we've got
-		else
-			if marked evicted
-				fput()
-			return the descriptor
-		[== pretend that open() always wins the race]
-"open" in the above stands for everything that opens a descriptor - socket(2),
-pipe(2), eventfd(2), whatever.
-
-> >From userspace side the only programs which can ever see EBUSY are
-> buggy or trying to screw the kernel, so not a concern on that front.
-
-Agreed.  I'm not saying we should go that way.
+- Arnaldo
 
