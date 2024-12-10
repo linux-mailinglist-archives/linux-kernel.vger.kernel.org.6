@@ -1,164 +1,127 @@
-Return-Path: <linux-kernel+bounces-438852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D2E9EA751
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:49:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C7B9EA755
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:50:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E851687C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:50:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CF91BC094;
+	Tue, 10 Dec 2024 04:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oAMMHS81"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526D32888DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:49:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0061AAA27;
-	Tue, 10 Dec 2024 04:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWqDUp6T"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBE413A865;
-	Tue, 10 Dec 2024 04:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD763132117
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733806135; cv=none; b=bF+IOHCTMrkHSWxNa6NvBNE1dxM8SZOfuQ81dP1d7GQcbl8c2A9GXd8NbW0JxPOS1o3N8ufXM9THrpZSMdV1VLgM1moKZUlbKYwCVP2W5+AQnUDOMegCuOllkkgc3Vy+/WNAZ82XbWl5X4CLlTaKnTzJVmuoy0po+mvavit3YG8=
+	t=1733806216; cv=none; b=cQuR3H1QzkOMxwddQHObbJzZ0TqQ+8X/fKKQ4PvSsFLzk6pqdBs5F0DVItXmSgB6jvs4lV+G/XXmCLqkAU/M0/29YhS5lF5CgZX+rGoL2zHlX3UZxAx2rTsu3EPNaQHPKCaMVPEzh2AFwcOS9CmAd3E5pYJ3gBmuWHhMLS2OZ6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733806135; c=relaxed/simple;
-	bh=fmuHub6i/UU89iJ3zmI8M0zPA8LOY2hfDA7Kp09iC4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=At5NYm294cGa7qdCJmCkJLgkhzdqOsWIKOG7DSizj6xLcWxPlIOfYUGfhc41PLoTkgHTMSIhAihQE+LaUMbru5/AD0r7rzy8YlIKUiSa7yPrFkhARvGZmIIYICRwnox+WGMFXGsTzSMfg3lbydpWo0x+AiPQ4f5HW+iwprpOOaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWqDUp6T; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3ea065b79so3474915a12.3;
-        Mon, 09 Dec 2024 20:48:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733806132; x=1734410932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SRhudRntXMdMCmvTCWHy+R0vrWQamPgM9djZeqqOOGk=;
-        b=JWqDUp6T0+SBmHbjjRV18IYsuMP1fR184k/jhfMJ8SCAa5rlCqlJiQutajFr7HngxA
-         V8TAEHFcDeMTcLr6KUcEwvVYPZ4U7JJB4fFn1aRrsOjS3N/+PYlEBTfHIbeJFOSpVgf6
-         EwBABaiGcZqa0SSVDWyo9BciDNKPDQAJ79KLNIpDEsKcgDCQjSJIQouh529U186I2aHg
-         RsPzj3ZJIPjKJZdtpMtXBVrnftAePSqd2hwg2y1tJo+isncQgS8b/WU2QvpsS583e5Ql
-         3WuphfQhU3xT8Ym/Fauvnax9rudST0Sou2XhcHiZeLbPhVxfQULyRJKMlS9RtgEdTYPl
-         +HJw==
+	s=arc-20240116; t=1733806216; c=relaxed/simple;
+	bh=ZQ0IJuZfLdX0xUZZupkgK1WpaesKhhlYAM4mLjlTITI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GxG57MhwDZrtiY83JBlxisyQ3+CxcgsQSYzjfyJK4uGnQa5DPiYBBzWFTaDaJQDGWoxajl22771/iMPMFOXNGcRFHxfo1QzsFN9TPbKWsxkAghzAuEBa3yRHejJ8uGvD3beO67W0By/S9fVbNdBI4N6Vk8HUwC3EFlteqkXP7RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oAMMHS81; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA2ev6w007425
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:50:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LuuYdInP7eOBnrgKXv1aGjEPQhcydVxdMGklxB39e1A=; b=oAMMHS813WBACQMy
+	t8JxGAc02X/1I3bzorg1ZOCwyZ85Om2gKLX0v+GSHj0827OaEdMJqSXW+DYFQ3pX
+	frwPS/PrkmodWU8vN0fajgPyMv94rT6VSL3nyclWubk2xdljhqHGDXcjaN47dP2+
+	BA+O3lZRScqyRD7khMDQU3dc57gY9DeTR+YLwRVBfhNcbAjJA01QT/KObMkmYjnc
+	Db6n0NU9IS4TjgCJCnmJlV+Mv0wy4Y6JvWQiQRe4mnlZ0K+SxSbT/WiO0MJ4lM83
+	T6Kwy3xFXWjtYd6K+eiGtv0d+YZWfMJvs3W3cDQHKq1MXodKW+Fk15CV8V5gjx7q
+	p9MxIA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e21bj3j0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:50:14 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-7f80959f894so5008262a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 20:50:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733806132; x=1734410932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SRhudRntXMdMCmvTCWHy+R0vrWQamPgM9djZeqqOOGk=;
-        b=L2n+a/96yv3nV1WYj7do+bR53K1kiWxMzCAe4y4PneEg7MMfrJiYediMc37g6GenRc
-         9YF6MzLfs/uZgB7V1zZVVemRYNXtaxt7jhuEGQuFmv4Lk75PYJrQnOxapx9suUCpC0be
-         vBBtQsbzOzvkSIZcyIgk9w/+1ttW/i9CSXcjSzLmbe9hmHIg9Z7rqie6zU+IUz5HcRnv
-         8rn1lA1iY9nRTqfpuLUuvtdaIUCXglHIfEspb72Kh7qnE/+R7d5cEO2OpDjWHLpIyrMX
-         P1MfWzSBfn+FboQ6D4+v2mRHdW/KYIVD4i/ushgLxuTjQBq2IhZqm3mivJ58UDeA+itw
-         VqRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8XG678TKO7TZcBFxpzjbDQ0DwXKHdgCjLav3A8iF9HD7z2b33VH/YrTk2kpn3eoHKHEE9THnJgsuJvFQC@vger.kernel.org, AJvYcCXeJEaPOqKSPdjO3Gftdk18si29tBMHMDDxuxCQ8YClWUt9Ba8JnT5KOdM6qOYEoC0/Vxg6hZwOft+QHNGp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEKYix9k8q9cwoqg/5UyBFukdb5G5diHQUtXypv2FNmZwDXIL8
-	fTDYo2T1FkEdjMU70R+zRpsM7EhcX2huOLufn1QneLPQDLCndFP4aTa67RedfurbM/FVYtKDayB
-	vdiFe14CSMOHmkqRiz6PMlUFuPAo=
-X-Gm-Gg: ASbGncsGCzzrjjH+reWtcaCIwEpCuECxuxwOeMUR3ByO9kwDKd9nii4lps/jTeknvob
-	HzgChwKOS7LPj/6EAlCEbzP9LA90V3FT1E2c=
-X-Google-Smtp-Source: AGHT+IGBiffJ5X2iaWC0nwpDNkAHhlszy1HhQEUv64YxBZjY2IAnPM4N3S8MjfXyUDtvLqL91fcR3OhcyBd47zZ6puU=
-X-Received: by 2002:a05:6402:1e90:b0:5d0:bcdd:ff9c with SMTP id
- 4fb4d7f45d1cf-5d418502c73mr3460582a12.2.1733806132161; Mon, 09 Dec 2024
- 20:48:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733806213; x=1734411013;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LuuYdInP7eOBnrgKXv1aGjEPQhcydVxdMGklxB39e1A=;
+        b=BP1OrzjpO2yTSSye9dxPTrhtmTWRnJfBaBIOm857rUaleAUSbUcnHxnAg/aRweY3Ou
+         Y2lbumY+ecxotBSawc89itBjtSuIFqqOyuX6HQN7UkK8aiW5hg2mh5/vI8AaItIYqqUm
+         M7wDI7ulU//bjp0/ek27tYeRbwnO0byagOPt6nqRS0pYzXJKMpCE97cb4qr7oj0eZ1+0
+         9vfEa7shkGv4aueP9atT047veEaa97Irr5BHRh2WCkudxjLcxM64uNx0ErSFEn5mHUSr
+         2zMPv7txQ4FBze7JFx8/HE743T4FjldDTinhJYqhm1JLTUkQuChY2avlmqB6pW8w4Xaw
+         ceUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfPLOUM0gnYiKKKXoc+gi/Q96+BLVg1gTM7Fg9uB9XEgWUg8rMy1/NYrxl6/H9NGwPIKim/ZrlizBKcME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqgaSJquQ5xLIBoVPjm5TM2DhLBfwlznUqRkHQA1fn/3stRtYP
+	C4K3rBraplycptZtGkrSwPe0MWZpX4DDBlq9W5VFm9PwnwEHqxlpS19/LHavvvCTCd4J50l0bc6
+	MHEHleAn4/djBSphKWwSJaB7yWM2GbIF3HfwsMRAu1cwNHwe70FNRYGlgSSho1kQzBp5lXKY=
+X-Gm-Gg: ASbGnctuYthChg9zMnw7870cnlY50kAeVHYkJRa4EkuR/2VvhxpWEEldkI0quEPnYfg
+	K63aaTSzzLLnsEYn4gMfB9gCvT4rsALh3yNt9ovEKLSV9RX+9rvsctmPtHHvBfT6iiWgrTxAtBg
+	VME7PwbbiC+R/4P0HYg38GP2C8vsxNqL4VNqcAGC94RBWcH6KWlv9ueGJRXMTm0hvAH/gbsfWwk
+	80h41LUDas6i5AG7Xz7s0uoH8i0BMcUW20ut3vB5LhwVLyk1Gf7xadqNBVOY4JyNkg1tTgQ0iCp
+	w9bgQhlabbfaOS9PfbpoC9u9wJm44T6ZlCkecz/NHwHpuFQ=
+X-Received: by 2002:a17:903:187:b0:215:a808:61cf with SMTP id d9443c01a7336-21670a47b3dmr31989625ad.25.1733806212973;
+        Mon, 09 Dec 2024 20:50:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFGhqg062ZytpVvK9uJNkfbL9AyKTZQ/TVFVk+nH7o+NW5xk7sDSvSmjMhjypV34iXLF6KiKQ==
+X-Received: by 2002:a17:903:187:b0:215:a808:61cf with SMTP id d9443c01a7336-21670a47b3dmr31989415ad.25.1733806212634;
+        Mon, 09 Dec 2024 20:50:12 -0800 (PST)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2164eadc389sm26268125ad.31.2024.12.09.20.50.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 20:50:12 -0800 (PST)
+Message-ID: <b5399f79-18bc-4fc2-a1b1-d010505cc0b8@oss.qualcomm.com>
+Date: Mon, 9 Dec 2024 20:50:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205154743.1586584-1-mjguzik@gmail.com> <20241206-inszenieren-anpflanzen-317317fd0e6d@brauner>
- <20241209195637.GY3387508@ZenIV>
-In-Reply-To: <20241209195637.GY3387508@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 10 Dec 2024 05:48:40 +0100
-Message-ID: <CAGudoHH76NYH2O-TQw6ZPjZF5ht76HgiKtsG=owYdLZarGRwcA@mail.gmail.com>
-Subject: Re: [MEH PATCH] fs: sort out a stale comment about races between fd
- alloc and dup2
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 wireless-next] wifi: ath12k: Fix out-of-bounds read in
+ ath12k_mac_vdev_create
+To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Cc: kvalo@kernel.org, ath12k@lists.infradead.org, jjohnson@kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241207071306.325641-1-dheeraj.linuxdev@gmail.com>
+ <cd5ef876-d849-4d7b-b8b7-94377e8720f0@oss.qualcomm.com>
+ <Z1fBOUqYGB5hNP1e@HOME-PC>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <Z1fBOUqYGB5hNP1e@HOME-PC>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: wkTSGT2bb1FeK0LlvkVAVGwnpSr_FzqD
+X-Proofpoint-ORIG-GUID: wkTSGT2bb1FeK0LlvkVAVGwnpSr_FzqD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=739 priorityscore=1501
+ spamscore=0 impostorscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100033
 
-On Mon, Dec 9, 2024 at 8:56=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Fri, Dec 06, 2024 at 01:13:47PM +0100, Christian Brauner wrote:
-> > On Thu, 05 Dec 2024 16:47:43 +0100, Mateusz Guzik wrote:
-> > > It claims the issue is only relevant for shared descriptor tables whi=
-ch
-> > > is of no concern for POSIX (but then is POSIX of concern to anyone
-> > > today?), which I presume predates standarized threading.
-> > >
-> > > The comment also mentions the following systems:
-> > > - OpenBSD installing a larval file -- this remains accurate
-> > > - FreeBSD returning EBADF -- not accurate, the system uses the same
-> > >   idea as OpenBSD
-> > > - NetBSD "deadlocks in amusing ways" -- their solution looks
-> > >   Solaris-inspired (not a compliment) and I would not be particularly
-> > >   surprised if it indeed deadlocked, in amusing ways or otherwise
->
-> FWIW, the note about OpenBSD approach is potentially still interesting,
-> but probably not in that place...
->
-> These days "not an embryo" indicator would probably map to FMODE_OPENED,
-> so fget side would be fairly easy (especially if we invert that bit -
-> then the same logics we have for "don't accept FMODE_PATH" would apply
-> verbatim).
->
-> IIRC, the last time I looked into it the main obstacle to untangle had
-> boiled down to "how do we guarantee that do_dentry_open() failing with
-> -ESTALE will leave struct file in pristine state" and _that_ got boggled
-> down in S&M shite - ->file_open() is not idempotent and has no reverse
-> operation - ->file_free_security() takes care of everything.
->
-> If that gets solved, we could lift alloc_empty_file() out of path_openat(=
-)
-> into do_filp_open()/do_file_open_root() - it would require a non-trivial
-> amount of massage, but a couple of years ago that appeared to have been
-> plausible; would need to recheck that...  It would reduce the amount of
-> free/reallocate cycles for struct file in those, which might make it
-> worthwhile on its own.
+On 12/9/2024 8:19 PM, Dheeraj Reddy Jonnalagadda wrote:
+> Thank you for the feedback once again. The Coverity issue is from the
+> "linux-next weekly scan" project and you would have to be subscribed to it. 
+> The link to that project is here:
+> https://scan.coverity.com/projects/linux-next-weekly-scan?tab=overview
 
-Oh huh. I had seen that code before, did not mentally register there
-may be repeat file alloc/free calls due to repeat path_openat.
+Thanks, I found that project earlier today and joined.
 
-Indeed it would be nice if someone(tm) sorted it out, but I don't see
-how this has any relation to installing the file early and thus having
-fget worry about it.
+So now I can track both linux and linux-next-weekly-scan.
 
-Suppose the "embryo"/"larval" file pointer is to be installed early
-and populated later. I don't see a benefit but do see a downside: this
-requires protection against close() on the fd (on top of dup2 needed
-now).
-The options that I see are:
-- install the file with a refcount of 2, let dup2/close whack it, do a
-fput in open to bring back to 1 or get rid of it if it raced (yuck)
-(freebsd is doing this)
-- dup2 is already special casing to not mess with it, add that to
-close as well (also yuck imo)
+/jeff
 
-From userspace side the only programs which can ever see EBUSY are
-buggy or trying to screw the kernel, so not a concern on that front.
-
-Now something amusing, I did not realize I had a super stale copy of
-the OpenBSD source code hanging around -- they stopped pre-installing
-files in 2018! Instead they install late and do the in dup2 returning
-EBUSY, i.e. the same thing as Linux. I do have up to date FreeBSD and
-NetBSD though. :)
-
-Christian, would you mind massaging the OS entries in the commit
-message (or should i send a v2?):
-- OpenBSD installing a larval file -- they moved away from it, file is
-installed late and EBUSY is returned on conflict
-- FreeBSD returning EBADF -- reworked to install the file early like
-OpenBSD used to do
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
