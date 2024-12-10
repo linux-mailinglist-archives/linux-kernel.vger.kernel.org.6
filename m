@@ -1,139 +1,112 @@
-Return-Path: <linux-kernel+bounces-440119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CCD9EB917
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:12:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3BC9EB91C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875051889A5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8931889A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F772046A4;
-	Tue, 10 Dec 2024 18:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54084204696;
+	Tue, 10 Dec 2024 18:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rAjs3hp+"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UphnejJU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134FA86320;
-	Tue, 10 Dec 2024 18:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439332046A0
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733854356; cv=none; b=jbsX0zdTTnufKAQI615/2Q/AJkPI858/0kjyn9CrHs6G3vQuib/JBy1RJlyu+ULIjJxwy5tiu69+WEFoHuhFvMYZNr/gR892YzyF3IUY/f4OoEiQQyiRev/X8fquPy5w7D4AEAZK+NqRgy/RLMoJDuYHyAGCasirc/FMTiNQU14=
+	t=1733854466; cv=none; b=MTigx+anaY8bHk2n5e1J+bAd9vv8m0h3aWfeuaX4xvzoYspaaH1+89ttExx0+N1Z2Ng8ZZPHH/o5wxUC5mrI386deFGerrs7lfIIhnmCQl8BymsdaFYEQH1wPd/LKV1Db8CUKkwy8wlortO2chIj8tiS+XSbPT2mCm3vncL9fSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733854356; c=relaxed/simple;
-	bh=t7CrIq08hMEBB7V/Ly4XFysngLUOyFusWVp18WQWAkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bBN5Lzx5z++SgdNmRD/DhmY/o8iuCkn41oQADbdombeLQDFGLar5h2dHYkX80jZ7nenFenvGagXMCdy3PDp34rrHABcJKzz8RQe5pN8gwfIsZakL95E5lQ8cGUukNzpCKVDeU+HOuaLMr53Zs4yUAZjFyeT6aRg9FT6iTz/hDxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rAjs3hp+; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=b7oDiXPiJY9WwPRA3kiAOcynjvwhmPmForwOjuK8hWc=; b=rAjs3hp+lI4OjrmZk7Z+PbPkh6
-	jzmlgWIEjpWKseQfQqNMyju0umSChmh5qjSqz4/tR1r9Xl+t9/vPwnX5l8h2J/vNp1ULsJMD3shOc
-	JD+qRo928zNTzoMmZhP+eBzbADv32tsCAfmudF/aenfcTF8TYOFY1mUevSkpygjsAmXqriKH2Wa50
-	NZiVt6O75tekZcAwCmBn4DHeLXqhxe4DL67tHE91BE3BQ5P0u0eFVB7HMSS+pQIw75z1IGAzvfEj3
-	PITH8BHgdJl9B3xl3DAs8ixcczVug8lwwbK0S79lGy45JlwI3EKz5pvtATl82/ZRG1UmdoxlZD3Ev
-	sJkuMhwA==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tL4if-00000003iCn-2WLk;
-	Tue, 10 Dec 2024 18:12:26 +0000
-Message-ID: <dcc786a8-744c-4829-9d1a-1764ad85479a@infradead.org>
-Date: Tue, 10 Dec 2024 10:12:19 -0800
+	s=arc-20240116; t=1733854466; c=relaxed/simple;
+	bh=58kxISxrk23kE8TYDeRPpcHawB18ecVmjqHz2YA7IpE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WTC8LDVygBN4Cxe/xxXKDaWwXXJOap5TfvtgWLyH8xwWqoKFbLOD2Om2Omq02pmUs81g3MXkc1ryK14YIiHF9hFsr+IB2wRbszFXXpPZx0/nc1cJA3707F9TksAcZ2D3Qhp0SLufqHzrqaujkWhtqRKJZd1q72F8v4zwxWbCBho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UphnejJU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733854464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92N47u4FApm/UnRcaQzi7CS8Y7ujQ0vFLMHe5hOUSYI=;
+	b=UphnejJUC7I4cpg+OrT0cYzCkU7FfSvnpsZS7lhegMTMxbLlkQ4wlrZ1z9F3xoj6dAgnG9
+	+Z4QqC2MaAGvwntSoUw7b7KF9uRb7OnhEzyxm1V5lCZd6X3om7+9gKnRZEVm3BNpeD9HEw
+	j3NpWOS+ASOMclYqYYN00Mi+CvJB3A8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-283-EVRDHubrMeKT-pbkwqreKw-1; Tue,
+ 10 Dec 2024 13:14:21 -0500
+X-MC-Unique: EVRDHubrMeKT-pbkwqreKw-1
+X-Mimecast-MFC-AGG-ID: EVRDHubrMeKT-pbkwqreKw
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10AB01955DA8;
+	Tue, 10 Dec 2024 18:14:18 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.2.16.40])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0926A300018D;
+	Tue, 10 Dec 2024 18:14:09 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>,  Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+ Arnd Bergmann <arnd@arndb.de>,  Shuah Khan <shuah@kernel.org>,
+ Kees Cook <kees@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,
+ linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, libc-alpha@sourceware.org
+Subject: Re: [PATCH RFC v3 02/10] sched_getattr: port to copy_struct_to_user
+In-Reply-To: <20241010-extensible-structs-check_fields-v3-2-d2833dfe6edd@cyphar.com>
+	(Aleksa Sarai's message of "Thu, 10 Oct 2024 07:40:35 +1100")
+References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
+	<20241010-extensible-structs-check_fields-v3-2-d2833dfe6edd@cyphar.com>
+Date: Tue, 10 Dec 2024 19:14:07 +0100
+Message-ID: <87y10nz9qo.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scripts/kernel-doc: Get -export option working again
-To: Akira Yokosawa <akiyks@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Greg KH <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>,
- Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <e5c43f36-45cd-49f4-b7b8-ff342df3c7a4@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <e5c43f36-45cd-49f4-b7b8-ff342df3c7a4@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Akira,
+* Aleksa Sarai:
 
+> sched_getattr(2) doesn't care about trailing non-zero bytes in the
+> (ksize > usize) case, so just use copy_struct_to_user() without checking
+> ignored_trailing.
 
-On 12/10/24 3:04 AM, Akira Yokosawa wrote:
-> Since commit cdd30ebb1b9f ("module: Convert symbol namespace to string
-> literal"), exported symbols marked by EXPORT_SYMBOL_NS(_GPL) are
-> ignored by "kernel-doc -export" in fresh build of "make htmldocs".
-> 
-> This is because regex in the perl script for those markers fails to
-> match the new signatures:
-> 
->   - EXPORT_SYMBOL_NS(symbol, "ns");
->   - EXPORT_SYMBOL_NS_GPL(symbol, "ns");
-> 
-> Update the regex so that it matches quoted string.
-> 
-> Note: Escape sequence of \w is good for C identifiers, but can be
-> too strict for quoted strings.  Instead, use \S, which matches any
-> non-whitespace character, for compatibility with possible extension
-> of namespace convention in the future [1].
-> 
-> Fixes: cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
-> Link: https://lore.kernel.org/CAK7LNATMufXP0EA6QUE9hBkZMa6vJO6ZiaYuak2AhOrd2nSVKQ@mail.gmail.com/ [1]
-> Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> This fixes regression in v6.13-rc2.
-> 
-> Quick reproducer:
-> 
->     ./script/kernel-doc -rst -export drivers/iommu/iommufd/device.c
-> 
-> On v6.13-rc2, kernel-doc will say:
-> 
->      drivers/iommu/iommufd/device.c:1: warning: no structured comments found
-> 
+I think this is what causes glibc's misc/tst-sched_setattr test to fail
+on recent kernels.  The previous non-modifying behavior was documented
+in the manual page:
 
-I wondered where those warnings were coming from.
-Thanks for the explanation and fix.
+       If the caller-provided attr buffer is larger than the kernel's
+       sched_attr structure, the additional bytes in the user-space
+       structure are not touched.
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+I can just drop this part of the test if the kernel deems both behaviors
+valid.
 
+Thanks,
+Florian
 
-> With this patch applied, you'll get reST formatted kernel-doc comments. 
-> 
-> Akira
->  
-> ---
->  scripts/kernel-doc | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index f66070176ba3..4ee843d3600e 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -267,7 +267,7 @@ my $doc_inline_sect = '\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)';
->  my $doc_inline_end = '^\s*\*/\s*$';
->  my $doc_inline_oneline = '^\s*/\*\*\s*(@[\w\s]+):\s*(.*)\s*\*/\s*$';
->  my $export_symbol = '^\s*EXPORT_SYMBOL(_GPL)?\s*\(\s*(\w+)\s*\)\s*;';
-> -my $export_symbol_ns = '^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*\w+\)\s*;';
-> +my $export_symbol_ns = '^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*"\S+"\)\s*;';
->  my $function_pointer = qr{([^\(]*\(\*)\s*\)\s*\(([^\)]*)\)};
->  my $attribute = qr{__attribute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)}i;
->  
-> 
-> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-
--- 
-~Randy
 
