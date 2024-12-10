@@ -1,134 +1,187 @@
-Return-Path: <linux-kernel+bounces-440011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08799EB77C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC899EB7B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:12:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5524282149
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A0C282D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEB82111;
-	Tue, 10 Dec 2024 17:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FF0226894;
+	Tue, 10 Dec 2024 17:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gt3CEPNK"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Fo1i+w3T"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891501C07ED
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5902046BC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850585; cv=none; b=g+Vw5u4F+GWTWJyo8gvo6wzgvVaXTVmodxdNT0lrhx0483m8auPAIKdrFyjeiQzQUc72bh+mjkBFK42sXs3ch/CN8+fYItGhghQvMXXu6/eSsezWzdottQmX4jhymBru68d32dafj2RxoTydUqpxh/DnLzFDZRhMucpdj1scCjU=
+	t=1733850636; cv=none; b=cDpYm8XmrrqIl+p5bybEWh3jZPdSExSEBQdvaIehuK6oOQ5Ll88hgAQpMR9/d3wuwovQ+RiGjpHjuztPZJT3ct19ljKwaS7SjMMlf4RAZF5FfEw3mInRPtYiz0L1lVfuiUBm+yLdP2b/VVukm6PvwQzyYLcUn9mwywYTynTlUuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850585; c=relaxed/simple;
-	bh=tKekrqKeGf6d9vYVMyQ3P703Igc2K4qbjZIE5eQv+pY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gYJ61ZPa6EtioZ0uGjLHOTZ3n8vw+d2Qud6YTIir86q769HzVO8+S2JARmaSFR0SRfp1p8sltLAQt0VufM5etcNEkzf5xxj/X7xr7iO+TakYAB3L37yXwMaZJneEwtegdK64uGM+B/NsVh6DYd3g7HmZnPVlr/p5oQ87yYcXb1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gt3CEPNK; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-84192e4788dso192723339f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:09:43 -0800 (PST)
+	s=arc-20240116; t=1733850636; c=relaxed/simple;
+	bh=nYG4Bh/KOUygEwsE3gKVUjg9VDgkI5hhLIDAicMnjio=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=suRznR1wrqWVLkrC3PGgsvJZo3WCUYy6wuZ50Qt1vy0isYoJs773BFhcrqzRltjotZ7VwfwC522RjVAwu2hVt6gzXKM3cLkWvbpK1WtbfmptEYuCXJMnOh2hbKQWyREYLMe1FPPJIvycZp+HKx5chlBNg2BVkLYHCLUNBAvDRHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Fo1i+w3T; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3ea065b79so4489244a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:10:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733850582; x=1734455382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mW0gDbfd7x2YjOT5s67ijl4s8F1BicI07drWQ2jAwxI=;
-        b=Gt3CEPNKO+mh0ZmNvoyBkrcKMecaV+/lUC0lLD8wXt2YbpHiCdf7JA5ZEa4TTzVzVi
-         l2TqiJZyRgdm9XoEHT41RzDHZHEibvGhos3U6JHCHjtSdcz2nm0Ybie1JH9SJWQBR9zr
-         O9ZUe2qD2vAedKRqUNQV7jDuw23mzbuN/i0/w=
+        d=tuxon.dev; s=google; t=1733850633; x=1734455433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A+Q7Wyi2VpUxYoA4m3KALmoe6y3o5M1OmNQXa4v/tj4=;
+        b=Fo1i+w3TJi+119cQoeOTad7/37hS8TCOsKVxQ5/NPLbmUw7h0HJt9tPJdTQTMgMwqC
+         9bOctIBCN4I/yOX51anVUxQBNwSYrOAp2lHKXA52MzkPGScd+bT06LA3c3Q9/kJqmWG0
+         0LTIG1fpZzhfZryQGu290Cd/XIFbr5VHjzkS8roXYYCJ7I+yvg8hqJ2dFshuNWql2Qrt
+         nhtVcvtkIMrX9DAxFsbiTbDOb+TtbYW+Pj9oPYtksfxu2px7ltzB8Li54IJ5ij0lYEF2
+         gkJJtQNG8OkUSSYPyxsChtGMK6HSrNCiYluQmDmrXmrlNi9RaDi++XA7cFA2g/HD5m6P
+         gcdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850582; x=1734455382;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mW0gDbfd7x2YjOT5s67ijl4s8F1BicI07drWQ2jAwxI=;
-        b=icK3NKHh3h3h8p3RVQ37doe4fZDIsw9QgSrMYNxt2wvzfJhO8j2LO0jxmP6SBAu90N
-         M7krZ7C1HFX3+TrT92rbGBKmnEwUYh8t9EIU1brFeAijW9Q+EYBpxXdpE9Z8Egzxa+OT
-         oLxXg8ub5T+UlWFTiJ/+shkcXF3DAaWsQm+ycDiZIUR4s1cnqGoHZo96QQ7GC/laUS0L
-         tyXVXbGUEBfTnR+TP2bm3wVTz67gRnPpTY5xbsUNn8YzXdk5Z5tKx//gyX3AiYR8+xdw
-         fIYsb+R1grtn3iMHlMHWD18JWKDVcMt88YcuFI9JHlXbYprZIT3Wrx2aQkLZygjBfvwa
-         MrIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVh+1lbkm3o6jja9UfM8cfQBqeLMwng9uuJOqmur6ny6ooz9toLwGCuiOBbTPGU9C+cgSGIqz6Umjw7rJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5LNKsXhSxr124z8lNHQMhroGr0VkJCRlAN5M80DwlKAc59Vgu
-	YYble2lZH4NnfRR/VPLbd+zczqMthvgeKQeqZQtyjEmKg4VXTch6AprVfQKeMRs=
-X-Gm-Gg: ASbGncvOvuGFAosk9jXCXpmG2xYPhO9JZBitV0eXCfSqTqEmTboL64mDvj6mkqorv8O
-	mfWsjONok77NtrNCuETMrR2cjNkCKIjwZMglFBqAc8zoEYEDbqTStR7sd3D5a5k82gdaeSK76Tq
-	I46KeD75nqBTJMK844I1PK+YaH7RQuiZsei7Rx4uf+BloyalMdurJ8ew2ATGZEijHFWpXmV0x+L
-	EB0EvtsQIx0LWEPpFRohhgHendBuK8QHPAcfPdTFt32E+mZTAN+kvuaFF39Gz+TDA==
-X-Google-Smtp-Source: AGHT+IGWgeP8na4CqUGSLInUNKTCqSBVH8PPSLnNTomVYr/Tb4GqyreTLn1kP9mkki1218RqwK5WQw==
-X-Received: by 2002:a05:6602:134b:b0:83a:639b:bc44 with SMTP id ca18e2360f4ac-844cb5bc021mr4606839f.3.1733850582516;
-        Tue, 10 Dec 2024 09:09:42 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2c0635f98sm1095839173.9.2024.12.10.09.09.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 09:09:42 -0800 (PST)
-Message-ID: <d139fee4-aadc-4c04-8e1a-1fb8751c7734@linuxfoundation.org>
-Date: Tue, 10 Dec 2024 10:09:41 -0700
+        d=1e100.net; s=20230601; t=1733850633; x=1734455433;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A+Q7Wyi2VpUxYoA4m3KALmoe6y3o5M1OmNQXa4v/tj4=;
+        b=vxU5cZ9J5FpMulTdlAocJBOEg6+iVpT540XbbMpAgDxj40rEUwEXJYnfILC/ca/CA4
+         9aEUF0qnzODHPrmO8S1TNEG5KvM/2NtTtrpsUJlcwGkDXa5gLiRRebx66y0XnhI2Cqit
+         VJB+bDM6+O6I8l0zJj2ZpuMHIq+97uQAqfHN0cOC32pxdOtaRZlJye3q9C3qC+68w+dG
+         8kWTWX//9e8ZJulYHngAjQa25cuJpsQ+WnnVr3OYpywBnYwaFeQ8X1w+ESE8tARDxogR
+         OHn8AJY9FkPqvE+zlOmrx6HBHyeQEzGHsUKEXObxIri6Q9+nWpVVtC1KrugyZVOIKGEu
+         hrZw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3L87xJ90ei/iq9aJa8nuPNFbKdv+FjHBOjSCxmVmnGpPiB7fH80nzj7jszXH2VMH2JipQCrNFXzfZPp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzJ0fs8ZX1UBhGA3aLCFhN6DsUxPRyaC6FKi22aEhaCxrCuMjj
+	qfKwQIj0N3QmJDK/pqq5Kw7lfxCxoKI/6cOP6mYfHWMrj+mN4baNBLGQKBedXjI=
+X-Gm-Gg: ASbGnct8M26S9cIE96MPG9wM+RacyrJn43wihK3uQAIdpWQ9HKlgL8+eqOPU5L4Rix8
+	wB4jgYh6cagUCNb5438qg1otRK7nmLXdThZ907rgM6wjiZ35jKWyMCGhKekSuT5IrPDsFeE7Mm9
+	qfYAim5dZ+vXxMkp2kJQyeTIOFmNRChL9UeC+ILUVzs6R+uI1AzcZepyWMpnYtcRAZT7ZiY912f
+	JzuDB9ha/VFlahqtkNhDhgos5OW0D6UDntaWIv8qIBmjWxqvheGs/bNcsqYEAvdBeaifXUhIfYB
+	Nic+PICS
+X-Google-Smtp-Source: AGHT+IEBCVJ5ksFpp4FwClVaCrJfMHHPabOYnva4BY/zYpG72K/0Fg/nCKLr56XOe4brB+WYlaK2nA==
+X-Received: by 2002:a05:6402:2688:b0:5d2:7199:ae6 with SMTP id 4fb4d7f45d1cf-5d41852f3dcmr6281078a12.9.1733850632877;
+        Tue, 10 Dec 2024 09:10:32 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 09:10:32 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh+dt@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	magnus.damm@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	p.zabel@pengutronix.de,
+	biju.das.jz@bp.renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 12/24] ASoC: renesas: rz-ssi: Use goto label names that specify their actions
+Date: Tue, 10 Dec 2024 19:09:41 +0200
+Message-Id: <20241210170953.2936724-13-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next v3] selftests/zram: gitignore output file
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241122074935.1583747-1-lizhijian@fujitsu.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241122074935.1583747-1-lizhijian@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/22/24 00:49, Li Zhijian wrote:
-> After `make run_tests`, the git status complains:
-> Untracked files:
->      (use "git add <file>..." to include in what will be committed)
->          zram/err.log
-> 
-> This file will be cleaned up when execute 'make clean'
-> 
-> Cc: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> ---
-> Hello,
-> Cover letter is here.
-> 
-> This patch set aims to make 'git status' clear after 'make' and 'make
-> run_tests' for kselftests.
-> ---
-> V3:
->    Add Copyright description
-> V2:
->     split as a separate patch from a small one [0]
->     [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
-> 
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> ---
->   tools/testing/selftests/zram/.gitignore | 2 ++
->   1 file changed, 2 insertions(+)
->   create mode 100644 tools/testing/selftests/zram/.gitignore
-> 
-> diff --git a/tools/testing/selftests/zram/.gitignore b/tools/testing/selftests/zram/.gitignore
-> new file mode 100644
-> index 000000000000..088cd9bad87a
-> --- /dev/null
-> +++ b/tools/testing/selftests/zram/.gitignore
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +err.log
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
+Use goto label names that specify their action. In this way we can have
+a better understanding of what is the action associated with the label
+by just reading the label name.
 
-I am seeing duplicate signature warning on this patch. Please
-fix and send a correct patch.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
-thanks,
--- Shuah
+Changes in v4:
+- collected tags
+
+Changes in v3:
+- s/sh/renesas in patch title
+
+Changes in v2:
+- none
+
+ sound/soc/renesas/rz-ssi.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
+index 74632e2482f8..209b5b8827e5 100644
+--- a/sound/soc/renesas/rz-ssi.c
++++ b/sound/soc/renesas/rz-ssi.c
+@@ -1084,15 +1084,15 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 	/* Error Interrupt */
+ 	ssi->irq_int = platform_get_irq_byname(pdev, "int_req");
+ 	if (ssi->irq_int < 0) {
+-		rz_ssi_release_dma_channels(ssi);
+-		return ssi->irq_int;
++		ret = ssi->irq_int;
++		goto err_release_dma_chs;
+ 	}
+ 
+ 	ret = devm_request_irq(dev, ssi->irq_int, &rz_ssi_interrupt,
+ 			       0, dev_name(dev), ssi);
+ 	if (ret < 0) {
+-		rz_ssi_release_dma_channels(ssi);
+-		return dev_err_probe(dev, ret, "irq request error (int_req)\n");
++		dev_err_probe(dev, ret, "irq request error (int_req)\n");
++		goto err_release_dma_chs;
+ 	}
+ 
+ 	if (!rz_ssi_is_dma_enabled(ssi)) {
+@@ -1136,7 +1136,7 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 	ssi->rstc = devm_reset_control_get_exclusive(dev, NULL);
+ 	if (IS_ERR(ssi->rstc)) {
+ 		ret = PTR_ERR(ssi->rstc);
+-		goto err_reset;
++		goto err_release_dma_chs;
+ 	}
+ 
+ 	reset_control_deassert(ssi->rstc);
+@@ -1152,17 +1152,17 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 					      ARRAY_SIZE(rz_ssi_soc_dai));
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to register snd component\n");
+-		goto err_snd_soc;
++		goto err_pm_put;
+ 	}
+ 
+ 	return 0;
+ 
+-err_snd_soc:
++err_pm_put:
+ 	pm_runtime_put(dev);
+ err_pm:
+ 	pm_runtime_disable(dev);
+ 	reset_control_assert(ssi->rstc);
+-err_reset:
++err_release_dma_chs:
+ 	rz_ssi_release_dma_channels(ssi);
+ 
+ 	return ret;
+-- 
+2.39.2
+
 
