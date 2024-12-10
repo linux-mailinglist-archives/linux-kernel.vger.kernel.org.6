@@ -1,86 +1,65 @@
-Return-Path: <linux-kernel+bounces-440501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087319EBF2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:15:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6343E9EBF30
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:17:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F86161813
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:14:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC05A18894DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2E8225A54;
-	Tue, 10 Dec 2024 23:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lHLPUz2e"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214AD1F1934;
+	Tue, 10 Dec 2024 23:16:57 +0000 (UTC)
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A70E21129E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE94E1EE7B6
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733872474; cv=none; b=XXjVSvssu4hNOx+3tYCvOgZTFNGj2d4rRk7gQCFOo34EBql+1FFEaLKc/YxHOjek+yRUxMewS8f1NS8rx6HdKXHs0f7+orLPsRHfXZVAlntwljrifz7o+xxL3wUqf2qktgwWGmwymRCWR60zQHwyuk4bUxLWatgdwsOqQH6GkzA=
+	t=1733872616; cv=none; b=Ab70qyXhdHIlI+GwHTqpxiEmD2ICL3+1LrjwCMxPqEMmbMry+tdZYED2BCwjsPgBDgKGa2tOkyjMbDM6ndk+p7oETWyJRMMnTzT1N3hb2gsrNY8Vq7QMqliIxeizktMfbTHpf2Wgp9Xsa1nXXge9G9Ag8fix7ZyQZndIBS1sAUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733872474; c=relaxed/simple;
-	bh=3x5TXPzh1y9Vn/sDwfrpCvwrmPWEU4Z2YUHlCg/j1L4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WSY2i33ZN0NvQcJIJ464BCVsqpY41d8fBrWLOb4SiW7ymC27V0z6xirndbKajSJb9CDhs+XR/RkScI3zijbBFD3Q2T7c8KLQuFwofHsYlcvcGekzPpONQ6ekCafGwtqDbIexIhKGVBWGbyJklbbOZwbmQurgSPD/Z/+kXmquHHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lHLPUz2e; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAGefW4023128
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:14:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PS7l0d33ZO6FBTryro+pjfe77l6D5X7/u/fq40BAyts=; b=lHLPUz2eKaNKUox1
-	Ub5dhzdNAOoET8wh+maovCNDPMy6t9eby0VQUopQ/MZLa6olLQwy25+UgpQb8ro5
-	VlaMWxZAETVnPKvlzO71jszhSUnevwYHdclz20ywMSlVphBPRa3l4C1hylijowi6
-	Bk3QIOrIkCQ+2EOFX/Sdw0b2IpZEpF1kH2IJP81FgU3tYlzhsESrVAf/9ob9ocEp
-	ghZvyaVc4lOYnIZDKgvxAUu3jssYTEMSXzRSX3MWUGVMwFilQ0CtwOxrY/ufjUY6
-	/bXYCyJGZj10oYxR+tKJcKdW/M9cw92yDO1a0dD+j2PcKvi8rQ2zfcQIOo+BmC3o
-	GqzWSw==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceett727-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:14:30 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ee36569f4cso6229628a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:14:30 -0800 (PST)
+	s=arc-20240116; t=1733872616; c=relaxed/simple;
+	bh=mdnCGIWXBGUzj1A2GisYnibKroCixl7/CirAUVwRZIM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LtyKM6YWtrTw+j/PtXeDgJpSzrVG4jVRO25TleUefHKPlX4tFooFXOoTpeu7TFMptRV5EqEUZfZaVoYZeSr2Ysbynx82BiEfA1NkUjLDPfE0ZwBCOi7wLgIMToqbtUV/c20OR5zl2p6Tz4JZZsoKBSf6bUeqJYVhbnyXWP3WWtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-4361a50e337so5587945e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:16:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733872469; x=1734477269;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PS7l0d33ZO6FBTryro+pjfe77l6D5X7/u/fq40BAyts=;
-        b=iFx4DDGgnKGmQ9sTWrT5egZZIUxGoUrGAaXkQY7xHjwilv5BDbmJWfoA9RYNi8e1e9
-         4UwuDGyO9mwJ/tDpNwNQcIgI0WQ5ylHL7uUyMEZqTeGIxval/b52jT4wUKAmkEbZC0Ba
-         IKYrUYAQAHZrtd5hLMMDtKVvWnNFeUakXwL6JH1+QyLWBT7UNk+ItWaGnult/G7oYiAd
-         FAIw7S1+JgI346OiJbGjyrhOu0g2l/xBK2Vi9PyiIzFh6xKZX2Xl3uQ19MbOG9Az4Pwz
-         nHt8S8ON4JXYP+BzN1E8wjcyVzitPUd6TCNeZK7zoK9nPzUY9WNIUVdPvwGq6oy6A2Th
-         NeQw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4LNAEaJld18qgctTsKuJd3uAMYCI6MgswvCSQCevnXj7SNHfXaVbWVkhXfXDbwP3X/PAN+OBloqwr5i8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXhjJcJa/xu9KSkmY0lrZR/68QpLb1ASLPZnufqntYxlZWYWD7
-	Ji5ryeZe/VO5jBVWz/6cPF/ZUpl0CpDSysGV8Gr+WhmIRrS0CFlZtxTxkN0om8rwdPac/DHg8HE
-	l59csX7vgSOMzyYIgAAdXxp96WDmlOTdJyv8xkN9u/0A0OK2hlAQlwMmkFJxDHmY=
-X-Gm-Gg: ASbGncsKpOc0ImVWlNba8xmO04UZwr+pbufkxcXl9njowpCS4Fq/KeiyBxab78BaBXT
-	WJ48r6aSeHIqLdYL2NDM3kJnO4rnTNFWUISfj4F9BA7W9cVphA0iJ7bohA7JsshJY0MgWzAszGT
-	eODN2JuMr/qUYENkm5zbe+UQtNjd308EqqY8LuX1k6TrzU5Zo30LG94T13mYGfop/iKqOWMbQka
-	x/BrjWY3lBgHEYN9X5jqJ2KYEfbKAMYE5jlaQ8E8L0hlFNDjPTCZ62Nu8KJZQIpE23hRDRff5hZ
-	ifsjZd29wpa+myDK6k/eGW25X7ThEemwB/qKvWkwqM318vE=
-X-Received: by 2002:a17:90b:2d81:b0:2ee:dd9b:e402 with SMTP id 98e67ed59e1d1-2f127fc6f84mr1521903a91.12.1733872468840;
-        Tue, 10 Dec 2024 15:14:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFBBY7t9Ty+FaaMWRfRUoSNUm5Sp5vin1MZzPlySUpMdXEhND47a5JS9XP+rCTHee3d0P0EmA==
-X-Received: by 2002:a17:90b:2d81:b0:2ee:dd9b:e402 with SMTP id 98e67ed59e1d1-2f127fc6f84mr1521809a91.12.1733872468344;
-        Tue, 10 Dec 2024 15:14:28 -0800 (PST)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef779bace5sm7621993a91.31.2024.12.10.15.14.22
+        d=1e100.net; s=20230601; t=1733872613; x=1734477413;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:cc:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MUd+hg5ESgx0k9OrAj02wmea9+mPnDO7+O2wIkoXbws=;
+        b=vMMVGz6WGclgtKFi85QpvIJmmTsuIlEVw+/1SWTkIW+MtKe+R90Aj3vr7naN7nNsAk
+         PM/Be32MJxjL+PP06886jMX7AEgXAuaJ9iibZrbnru1Ka0dS8flNqvCgbLyeQ/fvIvJG
+         htg8sRHUsG/yRxLKI2aFCfg85+mizsppTgUfk22uQjN1b22VSClZ0twOcunSSMhYVVZ9
+         O11RaGdTmgRrzzAfxgt8ukbvAWJZARYRzSiqHTpAdeEVcUR4lHxyBJufytJmgTuSR4PL
+         svqnTih2gh8VZurmS8bU1PrMmSTXv11GgKFCMXEk1IaArOUBx3qQ7l271IgaXXILyv3i
+         nKGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWb4J1l5BMEhd049s7sXW45AuIXuGft8T3+6QIH85hrSEjhaTOzgrmIiOLjXj7ICsA4E9oBS3TPCfKTvFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYDdETb7EJbrUZ7Rewcahlrklw0hxMbcXFZAfLPkI9AvZ1KKP2
+	rGDiD2xkPf9iK1Rch7w2S2TkNtZtbWp6uTp1W5kv8UlPhSRUic/l
+X-Gm-Gg: ASbGnctkLt0/zlSfTjgKL9fTzdwAe4sZQwvlFuk/cGjL4eORauFprIPfGPOjPXAHVVT
+	h4WL4XgOntF9yWTJBUf0yApQ+bTecyDRZnZKM/Wh0xjWH7IZYN681MEnqeol6ts9iKcpp9pjEB8
+	FE2Wgz5l6sIN3XCQT1nfn3bgivJTsogmFV9btevmy+dew6VBgivdOuyawP3aeU3sBBzLU8Qtxzx
+	XrSxgYmQ3mpltSD0Dcz+6ICKbrvCmXPmNtsuSQrS55X3iHYvLJsm5oS36f6CN0fumKUkeinBp+Y
+	/DgNtgnwFQ==
+X-Google-Smtp-Source: AGHT+IGlqMZ2v2ynN5k+/u9A0gCsL2qzVATXypSkUwAbsz2m8daOxmtnirk+KMRbcaReFwtkcpGAUg==
+X-Received: by 2002:a05:600c:4f11:b0:430:563a:b20a with SMTP id 5b1f17b1804b1-4361c3aa6demr3892305e9.11.1733872612719;
+        Tue, 10 Dec 2024 15:16:52 -0800 (PST)
+Received: from [192.168.0.13] (ip-86-49-44-151.bb.vodafone.cz. [86.49.44.151])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361b6d6ea0sm12232935e9.16.2024.12.10.15.16.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 15:14:27 -0800 (PST)
-Message-ID: <315e9178-5b10-4de0-bdcf-7243e0e355bb@oss.qualcomm.com>
-Date: Tue, 10 Dec 2024 15:14:22 -0800
+        Tue, 10 Dec 2024 15:16:52 -0800 (PST)
+Message-ID: <0d64be76-7afe-416b-96f7-6ceb713c7ce0@ovn.org>
+Date: Wed, 11 Dec 2024 00:16:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,120 +67,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/19] Converge on using secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Russell King
- <linux@armlinux.org.uk>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Lucas De Marchi
- <lucas.demarchi@intel.com>,
-        =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jeroen de Borst <jeroendb@google.com>,
-        Praveen Kaligineedi <pkaligineedi@google.com>,
-        Shailend Chand <shailend@google.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Catalin Marinas
- <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        Marcel Holtmann
- <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
-        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Louis Peens <louis.peens@corigine.com>,
-        Michael Ellerman
- <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-        linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath11k@lists.infradead.org, linux-mm@kvack.org,
-        linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
-        live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
-        oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>
-References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: i.maximets@ovn.org, Peter Zijlstra <peterz@infradead.org>,
+ Joel Fernandes <joel@joelfernandes.org>, LKML
+ <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, vineethrp@google.com,
+ shraash@google.com, marcel.ziswiler@codethink.co.uk
+Subject: Re: [v6.12] WARNING: at kernel/sched/deadline.c:1995
+ enqueue_dl_entity (task blocked for more than 28262 seconds)
+To: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+References: <571b2045-320d-4ac2-95db-1423d0277613@ovn.org>
+ <20241206151819.GA3949140@google.com>
+ <CAO7JXPhdv+Jx_UpAq=-aG-BKwiyjZ2kvuZDM4+GLjbya_=ZJsw@mail.gmail.com>
+ <20241209105514.GK21636@noisy.programming.kicks-ass.net>
+ <CAO7JXPgSYCzu0mtnWqBaS8ihmoQXX3WE_Yb_rEYuMeQn+B6KJg@mail.gmail.com>
+ <20241209125601.GQ35539@noisy.programming.kicks-ass.net>
+ <8ff30c5d-b8ac-4825-874a-d73931b85014@ovn.org>
+ <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
+ <CAO7JXPjGFmfwAVcSaRhtM2Mf=V9P6oQm6H=QfHcFhtkLU8magQ@mail.gmail.com>
+ <10db7c11-5578-4386-88ae-542ffcaac818@ovn.org>
 Content-Language: en-US
-In-Reply-To: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <10db7c11-5578-4386-88ae-542ffcaac818@ovn.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: UC9kIe1q00m9rBQhH8KvysE9f273vkj7
-X-Proofpoint-ORIG-GUID: UC9kIe1q00m9rBQhH8KvysE9f273vkj7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=797
- bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100166
 
-On 12/10/2024 2:02 PM, Easwar Hariharan wrote:
-> This is a series that follows up on my previous series to introduce
-> secs_to_jiffies() and convert a few initial users.[1] In the review for
-> that series, Anna-Maria requested converting other users with
-> Coccinelle. [2] This is part 1 that converts users of msecs_to_jiffies()
-> that use the multiply pattern of either of:
-> - msecs_to_jiffies(N*1000), or
-> - msecs_to_jiffies(N*MSEC_PER_SEC)
+On 12/10/24 10:28, Ilya Maximets wrote:
+> On 12/10/24 03:58, Vineeth Remanan Pillai wrote:
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index fbdca89c677f..1f4b76c1f032 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -1159,8 +1159,6 @@ static inline void update_curr_task(struct
+>>> task_struct *p, s64 delta_exec)
+>>>         trace_sched_stat_runtime(p, delta_exec);
+>>>         account_group_exec_runtime(p, delta_exec);
+>>>         cgroup_account_cputime(p, delta_exec);
+>>> -       if (p->dl_server)
+>>> -               dl_server_update(p->dl_server, delta_exec);
+>>>  }
+>>>
+>>>  static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct
+>>> sched_entity *curr)
+>>> @@ -1210,6 +1208,11 @@ s64 update_curr_common(struct rq *rq)
+>>>         return delta_exec;
+>>>  }
+>>>
+>>> +static inline bool dl_server_active(struct dl_sched_entity *dl_se)
+>> Sorry a small typo in here. it should be struct sched_dl_entity and
+>> not dl_sched_entity. The line should be:
+>>
+>> "static inline bool dl_server_active(struct sched_dl_entity *dl_se)"
 > 
-> where N is a constant, to avoid the multiplication.
-> 
-> The entire conversion is made with Coccinelle in the script added in
-> patch 2. Some changes suggested by Coccinelle have been deferred to
-> later parts that will address other possible variant patterns.
-> 
-> CC: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> Sure.  I can try that.
 
-I have the same question as before: How do you expect these to land?
-Do you now have a maintainer who will take all of them?
-Or do you want individual maintainers to take the ones applicable to them?
+Running with this for about 8 hours and so far so good.
+Will leave the test running for the night, just in case.
 
-/jeff
+Best regards, Ilya Maximets.
+
+> 
+> Note:  I did indeed got lucky with the warning after 1 minute the
+> first time.  The second time I tried the system didn't show any
+> issues up until 6 hours into the test...
+> 
+> Best regards, Ilya Maximets.
+> 
+
 
