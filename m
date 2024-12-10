@@ -1,193 +1,155 @@
-Return-Path: <linux-kernel+bounces-438985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1DC9EA91E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:56:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A4D9EA86A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78FEA1885F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:56:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7542F188FD0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527052309A1;
-	Tue, 10 Dec 2024 06:55:46 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3918122A1D9;
+	Tue, 10 Dec 2024 05:58:33 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE4622D4E8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E498C22619A;
+	Tue, 10 Dec 2024 05:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733813745; cv=none; b=hRRkBvV17U2+kOova6BVEx1GEqArr3P7fh6ssyoHU1oA00NPv6Y24Ea0QDoADHFg1zP5fnvdEjYJGZM8eo5Bh1+TVvFETgo+8W4R97fnpo4yAcxnCOcSq8L4v/174oY4C2ahuUvNwLELTUpQHcWpJTI1Xqd+HKsIa7iZwgyaG38=
+	t=1733810312; cv=none; b=XfA7RheSpUXeOk5uoSS2Dfx0XoDv+Clh7+oXcRPLn3s/drw2HBChpDpTDLJ4hspYkNy4wsxKU4Bkk8hVRvKkQF76BUYiPwMEWkUkpQXNmyqMCLKcuxoJuiGG5bNlik3Eh+7O7qL94O31nJ5VAyFkq3/H8nOaJbLYnEcN0Kezrnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733813745; c=relaxed/simple;
-	bh=evE0s2ghDjlm3qHsBhZYX5Ja8ObhNExQBkbEaOVwAPY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=Ewsdyo2It8hZpRBCRQ5aM1LeUFQdCHhAprYj9fSM3Tc6ivgWk+IAe9PsrvTdUBcukBkVesM8qeYDqjAGL//htZs+cHilBacpOu/o6/GCyifODyNfxfXhaB5IO24egdZczYZS5dKXUTFb58iZP6Q5jXpKzJdqpJtVjDEzZD5qY0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y6qDM43D5z1V5vL;
-	Tue, 10 Dec 2024 14:52:35 +0800 (CST)
-Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
-	by mail.maildlp.com (Postfix) with ESMTPS id A59B61802D1;
-	Tue, 10 Dec 2024 14:55:39 +0800 (CST)
-Received: from [10.84.144.227] (10.84.144.227) by
- kwepemg200007.china.huawei.com (7.202.181.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 10 Dec 2024 14:55:37 +0800
-Message-ID: <fb488379-3965-496b-8c6f-259981f3d7e5@huawei.com>
-Date: Tue, 10 Dec 2024 14:55:36 +0800
+	s=arc-20240116; t=1733810312; c=relaxed/simple;
+	bh=Knj5TIsDQgyLg8p5+cY2aWCAJDz82Z4lK2SWfH0yCD8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h/heFuVo8V6khk0nfkKULcdN5BpokEKT3MeKkCBLBIti1+gGdcfi10obWJcQ/ikDaYGaC8WX2Kj0b9vT3LYWp2tfQEPUEFXKxWS6stdorhYUDaHP6Ks98jQaSd3wGjf78QUMgHPX5F7U0j6OCnotfoWXnpuzhY2UC5KutzpIUAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA4esB5008405;
+	Tue, 10 Dec 2024 05:58:07 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4xaapx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 10 Dec 2024 05:58:06 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Mon, 9 Dec 2024 21:58:05 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Mon, 9 Dec 2024 21:58:02 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <cratiu@nvidia.com>, <gregkh@linuxfoundation.org>
+CC: <stable@vger.kernel.org>, <saeedm@nvidia.com>, <leon@kernel.org>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <roid@nvidia.com>, <netdev@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 6.1.y] net/mlx5e: Don't call cleanup on profile rollback failure
+Date: Tue, 10 Dec 2024 14:55:55 +0800
+Message-ID: <20241210065555.3784562-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Zhang Qiao <zhangqiao22@huawei.com>
-Subject: Re: [PATCH v2] sched/fair: Fix CPU bandwidth limit bypass during CPU
- hotplug
-To: Vishal Chourasia <vishalc@linux.ibm.com>, <linux-kernel@vger.kernel.org>
-CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<vschneid@redhat.com>, <sshegde@linux.ibm.com>, <srikar@linux.ibm.com>,
-	<vineethr@linux.ibm.com>
-References: <20241207052730.1746380-2-vishalc@linux.ibm.com>
-In-Reply-To: <20241207052730.1746380-2-vishalc@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200007.china.huawei.com (7.202.181.34)
+Content-Type: text/plain
+X-Proofpoint-GUID: L2Zj0lm3aKl1qEJa1TRRppk6recvEa5q
+X-Proofpoint-ORIG-GUID: L2Zj0lm3aKl1qEJa1TRRppk6recvEa5q
+X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=6757d86e cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8 a=t7CeM3EgAAAA:8 a=O6WMtLnDkRuORcTRUxwA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-10_02,2024-12-09_05,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 clxscore=1011 malwarescore=0 priorityscore=1501
+ phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2411120000 definitions=main-2412100043
 
-Hi Vishal,
+From: Cosmin Ratiu <cratiu@nvidia.com>
 
+[ Upstream commit 4dbc1d1a9f39c3711ad2a40addca04d07d9ab5d0 ]
 
+When profile rollback fails in mlx5e_netdev_change_profile, the netdev
+profile var is left set to NULL. Avoid a crash when unloading the driver
+by not calling profile->cleanup in such a case.
 
-在 2024/12/7 13:27, Vishal Chourasia 写道:
-> CPU controller limits are not properly enforced during CPU hotplug
-> operations, particularly during CPU offline. When a CPU goes offline,
-> throttled processes are unintentionally being unthrottled across all CPUs
-> in the system, allowing them to exceed their assigned quota limits.
-> 
+This was encountered while testing, with the original trigger that
+the wq rescuer thread creation got interrupted (presumably due to
+Ctrl+C-ing modprobe), which gets converted to ENOMEM (-12) by
+mlx5e_priv_init, the profile rollback also fails for the same reason
+(signal still active) so the profile is left as NULL, leading to a crash
+later in _mlx5e_remove.
 
-I encountered a similar issue where cfs_rq is not in throttled state and the runtime_remaining still
-had plenty remaining, but it was reset to 1 here, causing the runtime_remaining of cfs_rq to be
-quickly depleted and the actual running time slice is smaller than the configured quota limits.
+ [  732.473932] mlx5_core 0000:08:00.1: E-Switch: Unload vfs: mode(OFFLOADS), nvfs(2), necvfs(0), active vports(2)
+ [  734.525513] workqueue: Failed to create a rescuer kthread for wq "mlx5e": -EINTR
+ [  734.557372] mlx5_core 0000:08:00.1: mlx5e_netdev_init_profile:6235:(pid 6086): mlx5e_priv_init failed, err=-12
+ [  734.559187] mlx5_core 0000:08:00.1 eth3: mlx5e_netdev_change_profile: new profile init failed, -12
+ [  734.560153] workqueue: Failed to create a rescuer kthread for wq "mlx5e": -EINTR
+ [  734.589378] mlx5_core 0000:08:00.1: mlx5e_netdev_init_profile:6235:(pid 6086): mlx5e_priv_init failed, err=-12
+ [  734.591136] mlx5_core 0000:08:00.1 eth3: mlx5e_netdev_change_profile: failed to rollback to orig profile, -12
+ [  745.537492] BUG: kernel NULL pointer dereference, address: 0000000000000008
+ [  745.538222] #PF: supervisor read access in kernel mode
+<snipped>
+ [  745.551290] Call Trace:
+ [  745.551590]  <TASK>
+ [  745.551866]  ? __die+0x20/0x60
+ [  745.552218]  ? page_fault_oops+0x150/0x400
+ [  745.555307]  ? exc_page_fault+0x79/0x240
+ [  745.555729]  ? asm_exc_page_fault+0x22/0x30
+ [  745.556166]  ? mlx5e_remove+0x6b/0xb0 [mlx5_core]
+ [  745.556698]  auxiliary_bus_remove+0x18/0x30
+ [  745.557134]  device_release_driver_internal+0x1df/0x240
+ [  745.557654]  bus_remove_device+0xd7/0x140
+ [  745.558075]  device_del+0x15b/0x3c0
+ [  745.558456]  mlx5_rescan_drivers_locked.part.0+0xb1/0x2f0 [mlx5_core]
+ [  745.559112]  mlx5_unregister_device+0x34/0x50 [mlx5_core]
+ [  745.559686]  mlx5_uninit_one+0x46/0xf0 [mlx5_core]
+ [  745.560203]  remove_one+0x4e/0xd0 [mlx5_core]
+ [  745.560694]  pci_device_remove+0x39/0xa0
+ [  745.561112]  device_release_driver_internal+0x1df/0x240
+ [  745.561631]  driver_detach+0x47/0x90
+ [  745.562022]  bus_remove_driver+0x84/0x100
+ [  745.562444]  pci_unregister_driver+0x3b/0x90
+ [  745.562890]  mlx5_cleanup+0xc/0x1b [mlx5_core]
+ [  745.563415]  __x64_sys_delete_module+0x14d/0x2f0
+ [  745.563886]  ? kmem_cache_free+0x1b0/0x460
+ [  745.564313]  ? lockdep_hardirqs_on_prepare+0xe2/0x190
+ [  745.564825]  do_syscall_64+0x6d/0x140
+ [  745.565223]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [  745.565725] RIP: 0033:0x7f1579b1288b
 
-> Consider below for an example,
-> 
-> Assigning 6.25% bandwidth limit to a cgroup
-> in a 8 CPU system, where, workload is running 8 threads for 20 seconds at
-> 100% CPU utilization, expected (user+sys) time = 10 seconds.
-> 
-> $ cat /sys/fs/cgroup/test/cpu.max
-> 50000 100000
-> 
-> $ ./ebizzy -t 8 -S 20        // non-hotplug case
-> real 20.00 s
-> user 10.81 s                 // intended behaviour
-> sys   0.00 s
-> 
-> $ ./ebizzy -t 8 -S 20        // hotplug case
-> real 20.00 s
-> user 14.43 s                 // Workload is able to run for 14 secs
-> sys   0.00 s                 // when it should have only run for 10 secs
-> 
-> During CPU hotplug, scheduler domains are rebuilt and cpu_attach_domain
-> is called for every active CPU to update the root domain. That ends up
-> calling rq_offline_fair which un-throttles any throttled hierarchies.
-> 
-> Unthrottling should only occur for the CPU being hotplugged to allow its
-> throttled processes to become runnable and get migrated to other CPUs.
-> 
-> With current patch applied,
-> $ ./ebizzy -t 8 -S 20        // hotplug case
-> real 21.00 s
-> user 10.16 s                 // intended behaviour
-> sys   0.00 s
-> 
-> Note: hotplug operation (online, offline) was performed in while(1) loop
-> Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
-> Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-> 
-> v1: https://lore.kernel.org/all/20241126064812.809903-2-vishalc@linux.ibm.com
-> 
-> ---
->  kernel/sched/fair.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index fbdca89c677f..e28a8e056ebf 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6684,7 +6684,8 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
->  	list_for_each_entry_rcu(tg, &task_groups, list) {
->  		struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
->  
-> -		if (!cfs_rq->runtime_enabled)
-> +		/* Only unthrottle the CPU being hotplugged */
-> +		if (!cfs_rq->runtime_enabled || cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
->  			continue;
+Fixes: 3ef14e463f6e ("net/mlx5e: Separate between netdev objects and mlx5e profiles initialization")
+Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
+Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-The cpu_of(rq) is  fixed value, so the ret of cpumask_test_cpu() is also a fixed value. We could
-check this before traversing the task_groups list, avoiding unnecessary traversal, is right?
-
-Something like this:
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2d16c8545c71..79e9e5323112 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6687,25 +6687,29 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
-        rq_clock_start_loop_update(rq);
-
-        rcu_read_lock();
--       list_for_each_entry_rcu(tg, &task_groups, list) {
--               struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+       if (!cpumask_test_cpu(cpu_of(rq), cpu_active_mask)) {
-+               list_for_each_entry_rcu(tg, &task_groups, list) {
-+                       struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-
--               if (!cfs_rq->runtime_enabled)
--                       continue;
-+                       if (!cfs_rq->runtime_enabled)
-+                               continue;
-
--               /*
--                * clock_task is not advancing so we just need to make sure
--                * there's some valid quota amount
--                */
--               cfs_rq->runtime_remaining = 1;
--               /*
--                * Offline rq is schedulable till CPU is completely disabled
--                * in take_cpu_down(), so we prevent new cfs throttling here.
--                */
--               cfs_rq->runtime_enabled = 0;
-+                       /*
-+                        * Offline rq is schedulable till CPU is completely disabled
-+                        * in take_cpu_down(), so we prevent new cfs throttling here.
-+                        */
-+                       cfs_rq->runtime_enabled = 0;
-
--               if (cfs_rq_throttled(cfs_rq))
-+                       if (!cfs_rq_throttled(cfs_rq))
-+                               continue;
-+
-+                       /*
-+                        * clock_task is not advancing so we just need to make sure
-+                        * there's some valid quota amount
-+                        */
-+                       cfs_rq->runtime_remaining = 1;
-                        unthrottle_cfs_rq(cfs_rq);
-+               }
-        }
-
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index 385904502a6b..8ee6a81b42b4 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -5980,7 +5980,9 @@ static void mlx5e_remove(struct auxiliary_device *adev)
+ 	mlx5e_dcbnl_delete_app(priv);
+ 	unregister_netdev(priv->netdev);
+ 	mlx5e_suspend(adev, state);
+-	priv->profile->cleanup(priv);
++	/* Avoid cleanup if profile rollback failed. */
++	if (priv->profile)
++		priv->profile->cleanup(priv);
+ 	mlx5e_devlink_port_unregister(priv);
+ 	mlx5e_destroy_netdev(priv);
+ }
 -- 
-Zhang Qiao
->  
->  		/*
+2.25.1
+
 
