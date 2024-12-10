@@ -1,138 +1,153 @@
-Return-Path: <linux-kernel+bounces-440325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005699EBBD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:28:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ED29EBBDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:28:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ED5C168695
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537FB284FE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A68023236C;
-	Tue, 10 Dec 2024 21:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D981232373;
+	Tue, 10 Dec 2024 21:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nz4ozdC6"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEKO/6K9"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093BF232362
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB01231CA0;
+	Tue, 10 Dec 2024 21:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733866069; cv=none; b=hF4ciSTgSF0qO3WTtym3fgBlPe/7n0o0fi2KDjio/p3A8CcTJYrylBJ46blVZacE1hd6tKvIbZUxkIVPq5y0AsxOo6lg5wXxzK0w3XRnLYNmupPDGNrYEyKS8yQy1ueo51kkr5xNu+Y/O3sUILOjJDrjFLP/iq2YDkChsLFG0SU=
+	t=1733866111; cv=none; b=rouv832/Ea6EV6A/jN3yd55KE84KDc+UL2rTbXZNGH3A7nSotIowNgsrOk9aDfe2B3CK5j16e4ugm0jkSrDZBkRHfiuUMkpwELVCF3y38DENky9BqYpfbOxirSvKCfwptt3CL3zVoZUoyYvse3tFn18WXsMoUTdDc/18fq51YRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733866069; c=relaxed/simple;
-	bh=Wj6GJ2swJpdXPIA55sjM7Y0DDbLPXovMHvENa2EydwA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SPjxzr7DWbWCnETP3pd7+TWjBMQXBIZGYF+VpZrDwih3lh16ydCKvJUmbLoiHja/lUJmE/b2QJ31xYwSMNeBcYBVBgU1LbEOiegvMpAaei87x+E0as9huf/+kp3PPefbtdahB/hrFQM2Ub+NZAgeCCN6GUR4zeFtG8qj4h5qPaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nz4ozdC6; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2162c0f6a39so578345ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:27:47 -0800 (PST)
+	s=arc-20240116; t=1733866111; c=relaxed/simple;
+	bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1bX1McvWUwZ8cN2M1JA0hU1xce6foW2JvDZzkDt2Ye9IL1DzH1qDuKNBaLubEx9i/a+HRu77C/EzX3x7RVWerXlW4C3xv+DBcUH2V9Oa2NjcjUpS9yga9ECcR32HZ/jUbCG4ofMjRKBWxofPnlTjQLnwI182q2bBJ/9r29qlZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEKO/6K9; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa69251292dso437328166b.2;
+        Tue, 10 Dec 2024 13:28:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733866067; x=1734470867; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s/YuPzifs9jEt0j1RwPUAZ3kuyk16V3hz+9XJwFbKNE=;
-        b=nz4ozdC6ontgr2MU6OQ/R39a6clr+p2/WzUQioBRErt10N0NOaHA0MG3m0XR/p97Hd
-         Mh82geW7j48sm4JZLTCVUbviodO4qIr9Q+/l6iAzf3WHXpWlEDQTduvjBRZFgIQ5BTgu
-         h+KYWJsSqjgFnBg3SRL6Fm7V+gOVN1Au53XV0=
+        d=gmail.com; s=20230601; t=1733866108; x=1734470908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
+        b=QEKO/6K92mFRsAJhcQ8dyp+YU9qdyfElOEmEvMJdpoazvQpJgm9+pM9Q0RwuXb7CrZ
+         YuQmEHd5hQTqp+fw5toGaLMDhDNIVSWoJkgG3BkS7b8U18f0XC3i3NWpRWk0MFNoxzVu
+         9dRaDBjx6zYLozjCaYvFpzi6+cLKsQAwH6PWbK3n6kujDLcfZoYUFfT1BPRyn5B9shwH
+         hExjteg7q7G21VIpEpapJGoLhI4Nqd4r4WhYoTFntGqA4RFCiBZtSX/F87XWf9P432sz
+         L15sB3lnYLS086AIAlY3AjCoqHK/5K1XfAlIZJWDmsOq5ZTeZtil5UG5NGX01N00X7br
+         FAPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733866067; x=1734470867;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s/YuPzifs9jEt0j1RwPUAZ3kuyk16V3hz+9XJwFbKNE=;
-        b=l4X+W4c1q8q4PFMwyQGVy7zstsDmR9m0VAW8g7MuRTDiqPegGc82nFy7qRQ430mNFg
-         t6QOxVH3l+h9s7E/FTQi7QE7VKbGknZohcW0tny9Hef3qWRjraYg+Kdo7V0FM5SMqHUi
-         u5pHYIycR4Bs5wNGdK7KISrYd7JorkHsVIYs9DLE9KfotxtUlIsR0nD7Vi2wX4DuoIhh
-         1EkNNIy1/icd0yFk2x8u1HU1lecs9vUbPRCxrTJ+URkGOd9gWYPf+kMAUxCCe4+Madjr
-         9uGdso+8Pj8eKPwbMHB+cfYePAwGh7u9tMaQXHfCE3sfStZqDbgGAI51jxW/G/NKkr8v
-         yXlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv1CyfiKPXcFhDieFekmz6S2Yy50J2ah4+uVeHxcvm3bZ1iRQ6bMMm60dTAjFrcrSZNBULEFOhcr6pMGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2PxdDbmC+YeCPKcT8PVuPysK8u5uZ+6VxYhqnHPZh4AWraJ4M
-	6hN5+4OVZr7baUa1Jpv6r4UkIC+OTOMDbX93RM7EoR5AUVAhJricSkBB16BcYFMXUFGa2JThTKQ
-	=
-X-Gm-Gg: ASbGncsowlf7sRYJ2dXPK0ht5ZZ+C2jehS4j7/4r7Eed6DEATTVoqfVyec5+qr0u1YC
-	GpOxt/LNrKCV3GEi2dRNLeZMgmuR5DIVTPp/jL8iOAv4/uwnRh6qhIUCbyeYv2SZZuS1h1hwwmm
-	ipkLg99mRck5mTQsvJB24DhmNbrVRPDN6cICCzekZOmcLhiljKYvGFGNDkxmh7EVbQVPuGWbqWC
-	fNEkIdT4wafEiKXKBnUc1UuYNp8/vcqfvkXVp5HsyV4cT1u3H3YDWd9QZtV+j1kF+3GHDsUZ/lR
-	yrXInh7HCOjwNrc7x5DY
-X-Google-Smtp-Source: AGHT+IHOAzxnXNiY0ZzNBa703/wI0CU6F2qIZBXNP5Kx+nbaQ4B3KRoT9SjXldr3aTHh5Qaf3qo2QQ==
-X-Received: by 2002:a17:903:186:b0:215:8fd3:d1b6 with SMTP id d9443c01a7336-2177a55c01amr3947085ad.23.1733866067088;
-        Tue, 10 Dec 2024 13:27:47 -0800 (PST)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com. [209.85.215.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21779e0f7besm887085ad.115.2024.12.10.13.27.45
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1733866108; x=1734470908;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
+        b=so2fu7tum8TlX8mIULlykuoCVxcQ2HSEPBzrVJL2GS5RWV26rmsmx6AUWH/6mABRAk
+         xGTjENLiAMxResI0LzIHes02ay38+I0bHhknr7x8iMQxq59zo2chuLWbTj2Ib3/zNvLz
+         WeO621ZRp8sAklXU6mrYmE6d5rNa7o1zEkoFAW5dA191w+V1TLLm9+XmkhmW6kGq+XsL
+         kWUHuo4myNQ+XJWxRGJX8ke0O+Yegxe7sBVFI0N6fCDliE+aKr+LM3sERV2FeRVIsrwe
+         YqJoOOuMDoDerY3jMRblH7HPyUNYqTDLLf7oiBPGaRYCpXQTne30DrXjhhYjfce+iysN
+         58GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkqMdDUaz1WkWMvRGc2XfXzJ5+6bk7wFACrRar5vUtQzeI+ii2sfw9MkPnSjjmLx+bN2fWrzEwa+4U@vger.kernel.org, AJvYcCV840Ahcsyey8nIskQHz+1wSczJevrEDGKqBOOmIAhe0ZaETYNfo2qqYcr2j5JAD1+8TcUGtjmOMF+gP9v/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF7TI3idJ83BAvOIGm3S9DR6igulLkEY8KVZRyewTH3Qp4aOi2
+	Kfi/Oj+Q9lRPrPbeli8sqVvDsyO5CY2qa8PdjFgW9e1mDggpbO9+
+X-Gm-Gg: ASbGncuzJw9bLi2BtVB9Fb77a81DWXwEV0JWg94cYQFGPiycTpHT6UmnEAiTJ63q9FJ
+	gxaxIUksJ6CHn9mSe08lQfZF7VfMbN3tRlLj8PskIu9Ris4PW/BR8lAH3qFzEwe5pu99ElSEyMI
+	ZU1lOedxTh3Nuvrl2SlvUS+4vJs1z6wPJLpTDyICwnytQ6Fmd7G0DTIriTDLO7qZ1GCocjKA8yU
+	VcY6r2hHBvRfmdtVuCoooCXYM8yG8ibEnEN3jUKA+U7RFHUs2lSZLck/s0pc5pctjI6wil33a3t
+	sUhBWs7IiBHAUwXzB9NbC0rpMngECh0q
+X-Google-Smtp-Source: AGHT+IF2lPlG/TM42607y3WI0CId/jCN4zyRMixPec0/CK3oZtt3mBHJ2MfDv98RJm/SF+OlckHE/g==
+X-Received: by 2002:a17:906:1ba2:b0:aa6:63e2:535c with SMTP id a640c23a62f3a-aa6b11e7f6emr30829066b.28.1733866107775;
+        Tue, 10 Dec 2024 13:28:27 -0800 (PST)
+Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa695e45fe1sm286058866b.32.2024.12.10.13.28.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 13:27:45 -0800 (PST)
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7fc93152edcso53950a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:27:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUuXKrqTzIUNy2fygDiL5lW9IRYniA5xnbMrZS/SY0lJE7FRIoklpKN4nZy85u55O3tOMBQrL/3Blf8WxY=@vger.kernel.org
-X-Received: by 2002:a17:90a:b389:b0:2ef:ad27:7c1a with SMTP id
- 98e67ed59e1d1-2f12878d1d1mr437693a91.2.1733866064580; Tue, 10 Dec 2024
- 13:27:44 -0800 (PST)
+        Tue, 10 Dec 2024 13:28:27 -0800 (PST)
+Message-ID: <e5a847f7-5e63-4860-8b4a-dfa378989c57@gmail.com>
+Date: Tue, 10 Dec 2024 23:28:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
- <20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org> <Z1isvGLLwr7jmW5k@kekkonen.localdomain>
-In-Reply-To: <Z1isvGLLwr7jmW5k@kekkonen.localdomain>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 10 Dec 2024 22:27:32 +0100
-X-Gmail-Original-Message-ID: <CANiDSCtFQBNjJoLF1VKR_M4zNHQWwWATu3p=-QQS-d3fY+9KUA@mail.gmail.com>
-X-Gm-Features: AZHOrDm_vFiL0dGEzWST540Nxq4R6kmbJ8O_IagFBELPZMZsnuRVzRl-QCxx5C0
-Message-ID: <CANiDSCtFQBNjJoLF1VKR_M4zNHQWwWATu3p=-QQS-d3fY+9KUA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/7] media: ipu-bridge: Fix warning when !ACPI
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] arm64: dts: exynos8895: Add syscon-poweroff and
+ syscon-reboot nodes
+Content-Language: en-US
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241210180216.398165-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241210180216.398165-3-ivo.ivanov.ivanov1@gmail.com>
+ <768b70d3-910a-42f2-a61a-6338a41f41b1@gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <768b70d3-910a-42f2-a61a-6338a41f41b1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 10 Dec 2024 at 22:04, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+On 12/10/24 23:10, Markuss Broks wrote:
+> Hi,
 >
-> Hi Ricardo,
->
-> On Tue, Dec 10, 2024 at 07:55:58PM +0000, Ricardo Ribalda wrote:
-> > One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
-> > throws the following smatch warning:
-> > drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
-> >
-> > Fix it by replacing the condition.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->
-> I've picked this to my tree and I'll take the last one, too, once the rest
-> reaches the media tree.
+> On 12/10/24 8:02 PM, Ivaylo Ivanov wrote:
+>> For Exynos8895, a reboot is handled by setting the bit(SWRESET_SYSTEM[1])
+>> of SWRESET register(PMU + 0x400) and power-off is handled by setting
+>> bit(DATA[8]) of PS_HOLD_CONTROL register (PMU + 0x330c).
+>>
+>> Tested using "reboot" and "poweroff -p" commands.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>   arch/arm64/boot/dts/exynos/exynos8895.dtsi | 15 +++++++++++++++
+>>   1 file changed, 15 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+>> index 90b318b2f..9eb89dd19 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+>> @@ -388,6 +388,21 @@ pmu_system_controller: system-controller@16480000 {
+>>               compatible = "samsung,exynos8895-pmu",
+>>                        "samsung,exynos7-pmu", "syscon";
+>>               reg = <0x16480000 0x10000>;
+>> +
+>> +            poweroff: syscon-poweroff {
+>> +                compatible = "syscon-poweroff";
+>> +                regmap = <&pmu_system_controller>;
+>> +                offset = <0x330c>; /* PS_HOLD_CONTROL */
+>> +                mask = <0x100>; /* reset value */
+>> +            };
+>> +
+>> +            reboot: syscon-reboot {
+>> +                compatible = "syscon-reboot";
+>> +                regmap = <&pmu_system_controller>;
+>> +                offset = <0x400>; /* SWRESET */
+>> +                mask = <0x1>; /* SWRESET_SYSTEM */
+>> +                value = <0x1>; /* reset value */
+>> +            };
+>>           };
+> Aren't those already included with arm/samsung/exynos-syscon-restart.dtsi? I can see that the values for poweroff are different here though, does it not work with the value from exynos-syscon-restart?
+
+Riiight... seems like I've completely omitted that during testing.
+Although the poweroff mask should be different, it's meant to set
+BIT 8. I'll check it tomorrow and send a v2.
 
 Thanks!
+Best regards, Ivo.
 
-If you do not mind, I will keep sending 1/7 when I send v3, to make
-sure it is tested by the CI. I will mark it as duplicate in patchwork.
-
-Thanks!
-
+>>             pinctrl_alive: pinctrl@164b0000 {
 >
-> --
-> Regards,
 >
-> Sakari Ailus
+> - Markuss
+>
 
-
-
--- 
-Ricardo Ribalda
 
