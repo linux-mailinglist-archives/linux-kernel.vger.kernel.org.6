@@ -1,99 +1,135 @@
-Return-Path: <linux-kernel+bounces-440136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884DB9EB954
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:30:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AE29EB95E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8344F188A036
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21AA162BB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA6B1A0B13;
-	Tue, 10 Dec 2024 18:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFCE204560;
+	Tue, 10 Dec 2024 18:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CfICpRmd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAmDTS/g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD5BDF58;
-	Tue, 10 Dec 2024 18:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FB6195FEF;
+	Tue, 10 Dec 2024 18:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733855416; cv=none; b=tO4q50AiKTfX1bIujygV48ZRxazqVUzMol4RyLlWU5seXh//GkHX2nUTtP5++3SE9VTs2VDisCptEnd2FZPxnq5v5IkKvDBLrqGOKJplLjxUfWvqqbeS6PMXoBiAt9+S4+qrzlqZMXCC5xBLxliPjQf9Bplq3dJi7GeHdCGu/xo=
+	t=1733855502; cv=none; b=iCKS4ZqPk8qosMRQjIltgVjhd03gUoWAzvq82Bwu2Q0X7kicQbGB5gn1/DNq926ZGx+H48bCznVd7P1oB56Pl2dF8wG3NLzC5ZI+jsQP3Xe3cSqAEVS+yqSjVEYLnqmrQ8b371q88Qym4cOkV00IPCGYrflOMkiUtIcgWL6a2ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733855416; c=relaxed/simple;
-	bh=jXIPBO8rBfEr3t5k/LZU4uYdY0/haRq+iVX3DtOR7ng=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UcBM/nTIlm06l720sw0M1MLk52omInpqi+vw8nwc3pQy3ZD8ET3sbv2iS3I8qJAcLzExJR9MLpPOK90vJjOxTrdpgNIFigC6Asp/5SzOgQOZc2vwi9/nKhYs/d52/geb27zMYv7ob9VHL84LBhbCHIZrXYGVtUKBUFk2wlj0wLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CfICpRmd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03BE8C4CED6;
-	Tue, 10 Dec 2024 18:30:16 +0000 (UTC)
+	s=arc-20240116; t=1733855502; c=relaxed/simple;
+	bh=yMvDfYdMEC2GbNStQaUd8LmXaxCMcS26AvjUFzyncLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jSMg1OeMHxKsijohOunzGJXsVD7Eh7/i6X3dbBB83CzKJG15yfqnAu43GlJgPhnh0Qt3VuAD2zX77Rlx3AeF7K5/Q/kJhQIIKl7pvH4haLE0sfDkaDxI1rYXoUMC9/BVlo5JRubpQFFThTSOiaau6NrFIcWVZyX001F9H58CiwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAmDTS/g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7542CC4AF09;
+	Tue, 10 Dec 2024 18:31:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733855416;
-	bh=jXIPBO8rBfEr3t5k/LZU4uYdY0/haRq+iVX3DtOR7ng=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CfICpRmd3+kThFNnC78wKScvjuU+n14FYthNCXst7wpOvMSFQG5tDMckpsCnQfq/F
-	 yS9CRb8OFjxhtXvXmQMc6uoC8B4MUeCfasMxyWbp38TFCJfDmBMVS54/EKSgrhEre9
-	 gBw0J29/1CN4fUlJtw/MVf76Z0O3T2px6JZm6QzCzmPjEqEjHYdQpKPNtc3IFnBTo3
-	 UIm0nLl6KAlOoV3gcd6hr3JEKzJdti4RObSJknP3GSyabxzR533k7cBkmCkkpjOeYP
-	 Qrlzv9ZifvU0XdtAt44XYDp+eVF0wVUj8F2W4qcBcGtIw3+XqdSOcU5MYRLLCtab1h
-	 mBT+QJ5vzHIew==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB9EE380A954;
-	Tue, 10 Dec 2024 18:30:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1733855502;
+	bh=yMvDfYdMEC2GbNStQaUd8LmXaxCMcS26AvjUFzyncLc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JAmDTS/gP3xwYtvGgG1Cp1ESfgypsbHpM7wf9vOebwtU3sQlgywaQe9Eydz61g/l8
+	 onyY4yRQ/4TAnTDfJeAAeYvVM2qNn4M8848djWKF5QYvQCnIf05xP8aqLaE4RjNYom
+	 T1VdNMigonKpuU7IbPAE9N3c7/vZf2wSEvUZKvN4SgqNenbR4d05am1+ia/YDD3u0T
+	 zmtyquH4/8rR0eDQFCN5ufdXZ5PP9tfDgkzmEjM+jBxBMCCXPjMlP/ooJydlycfrDZ
+	 7cils4KX1ltw97zK42IkfYUANMs+t2a1syYOOWYR8hmqhXZNpMfySg+K7BmIe1fgbt
+	 YaWZFjPWo/zHQ==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5f2ace8a94aso796496eaf.0;
+        Tue, 10 Dec 2024 10:31:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUgS7zHMWtI5XOLiN/BsKPQigqPSjMb+niDXII72Droa/9gIn4LIAGamVcx6texLIdVNR65YLadgv1Ez3k=@vger.kernel.org, AJvYcCV9tzQiL/Slgi0SXcDkklFZyEq/9ViNgqNf1KOkkwjA0VALouggChBrnRCMarpwuIqwBEnWhWzMxgiH@vger.kernel.org, AJvYcCVX1BNm6ekRR4AaFr9sN6GN/QWrQTmxiuks6qCJoyxv/RwfVo0ZCwCrv6siROYVly9/gjh86Ej/+H9yl3F0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6hOPdsvvOKxFbGYrJ+WVGhgBYZV8x2OiOltU5dDIzXTJ/b8xq
+	plt8nq7Rc8EUgbIZAFr3/Ml1gkN5LOrDSZr6Rc0VfTPaveuMUCvTEqBw5UeUN541gMgAA9lJ327
+	6BN4eHARUSNGsCLb1rsb1PPZfFYY=
+X-Google-Smtp-Source: AGHT+IGrUjOmExbcetYeztZRi2yn7rV87vBJKoza5mnnu0jBPpeX3+Ebs1lT+UBA4sTBULYeIhZEaTbL6G8LbS4Zado=
+X-Received: by 2002:a05:6820:3101:b0:5ee:ebcb:e701 with SMTP id
+ 006d021491bc7-5f2c8eb83f6mr3635752eaf.6.1733855501744; Tue, 10 Dec 2024
+ 10:31:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] bpf: Fix UAF via mismatching bpf_prog/attachment RCU
- flavors
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173385543176.937529.2200344298659513715.git-patchwork-notify@kernel.org>
-Date: Tue, 10 Dec 2024 18:30:31 +0000
-References: <20241210-bpf-fix-actual-uprobe-uaf-v1-1-19439849dd44@google.com>
-In-Reply-To: <20241210-bpf-fix-actual-uprobe-uaf-v1-1-19439849dd44@google.com>
-To: Jann Horn <jannh@google.com>
-Cc: song@kernel.org, jolsa@kernel.org, kpsingh@kernel.org,
- mattbobrowski@google.com, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
- yonghong.song@linux.dev, john.fastabend@gmail.com, sdf@fomichev.me,
- haoluo@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, delyank@fb.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- stable@vger.kernel.org
+References: <20241122-fix-ipu-v2-0-bba65856e9ff@chromium.org> <20241122-fix-ipu-v2-3-bba65856e9ff@chromium.org>
+In-Reply-To: <20241122-fix-ipu-v2-3-bba65856e9ff@chromium.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Dec 2024 19:31:30 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i9SresLT14aWuyodKyi2y3yyC8wLMYzrSD4ec=9WVSvg@mail.gmail.com>
+Message-ID: <CAJZ5v0i9SresLT14aWuyodKyi2y3yyC8wLMYzrSD4ec=9WVSvg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] ACPI: bus: implement acpi_get_physical_device_location
+ when !ACPI
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Fri, Nov 22, 2024 at 10:48=E2=80=AFAM Ricardo Ribalda <ribalda@chromium.=
+org> wrote:
+>
+> Provide an implementation of acpi_get_physical_device_location that can
+> be used when CONFIG_ACPI is not set.
+>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  include/acpi/acpi_bus.h | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index eaafca41cf02..4888231422ea 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -43,9 +43,6 @@ acpi_status
+>  acpi_evaluate_ost(acpi_handle handle, u32 source_event, u32 status_code,
+>                   struct acpi_buffer *status_buf);
+>
+> -acpi_status
+> -acpi_get_physical_device_location(acpi_handle handle, struct acpi_pld_in=
+fo **pld);
+> -
+>  bool acpi_has_method(acpi_handle handle, char *name);
+>  acpi_status acpi_execute_simple_method(acpi_handle handle, char *method,
+>                                        u64 arg);
+> @@ -60,6 +57,9 @@ bool acpi_check_dsm(acpi_handle handle, const guid_t *g=
+uid, u64 rev, u64 funcs);
+>  union acpi_object *acpi_evaluate_dsm(acpi_handle handle, const guid_t *g=
+uid,
+>                         u64 rev, u64 func, union acpi_object *argv4);
+>  #ifdef CONFIG_ACPI
+> +acpi_status
+> +acpi_get_physical_device_location(acpi_handle handle, struct acpi_pld_in=
+fo **pld);
+> +
+>  static inline union acpi_object *
+>  acpi_evaluate_dsm_typed(acpi_handle handle, const guid_t *guid, u64 rev,
+>                         u64 func, union acpi_object *argv4,
+> @@ -1003,6 +1003,8 @@ static inline int unregister_acpi_bus_type(void *bu=
+s) { return 0; }
+>
+>  static inline int acpi_wait_for_acpi_ipmi(void) { return 0; }
+>
+> +#define acpi_get_physical_device_location(handle, pld) (AE_ERROR)
 
-This patch was applied to bpf/bpf.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+This is a function, so static inline please.
 
-On Tue, 10 Dec 2024 17:32:13 +0100 you wrote:
-> Uprobes always use bpf_prog_run_array_uprobe() under tasks-trace-RCU
-> protection. But it is possible to attach a non-sleepable BPF program to a
-> uprobe, and non-sleepable BPF programs are freed via normal RCU (see
-> __bpf_prog_put_noref()). This leads to UAF of the bpf_prog because a normal
-> RCU grace period does not imply a tasks-trace-RCU grace period.
-> 
-> Fix it by explicitly waiting for a tasks-trace-RCU grace period after
-> removing the attachment of a bpf_prog to a perf_event.
-> 
-> [...]
+Analogously in patches [4,6/7].
 
-Here is the summary with links:
-  - bpf: Fix UAF via mismatching bpf_prog/attachment RCU flavors
-    https://git.kernel.org/bpf/bpf/c/ef1b808e3b7c
+And you can merge patches [2-6/7] together into one patch, as far as
+I'm concerned.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> +
+>  #define for_each_acpi_dev_match(adev, hid, uid, hrv)                   \
+>         for (adev =3D NULL; false && (hid) && (uid) && (hrv);)
+>
+>
+> --
 
