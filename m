@@ -1,385 +1,266 @@
-Return-Path: <linux-kernel+bounces-439784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50569EB3ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:51:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE329EB3EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:50:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA6E283F06
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928D0188A7F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27251BDAA0;
-	Tue, 10 Dec 2024 14:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmxbohrR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F441BBBCF;
+	Tue, 10 Dec 2024 14:50:02 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050211BD9FB
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4647A1B6CE1
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842207; cv=none; b=mgw0QQprfe/u2Arf4c/R7imfePg0ZBqH2Ts4mkuqKWbAamtQt0zfAV7kb50nVIkaB2LWE/mAeCrAzjOGN5ATDLMgv7bE0uEVc40e/7XSGyhV1wDdh5IpC/dI3F0EotbV/ydKDIyHpA0tXsgywi/rE0hIFF6Hh8dJjhcOpFiTIg4=
+	t=1733842201; cv=none; b=kgf8SLwgO+wNUR0LIYN5tUPx/rr+f/OuiROQd7yHPAIGEkFyJNTCcoHRAob9nzxWj3ciVl7bZ+wYk9cHi+80ryB9pECi/jrN2JyfLtJ1I5u26iglWOhtxOp45renad9N6DJnurI8GQmqNMiD355xWkLDHPcB0nEAh7x4oWkMjbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842207; c=relaxed/simple;
-	bh=rrTm035FMZ6jPcTCYgwd6AAGCEWqVHAjB1QvrC4DWjE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dKsoNx8YCy84ATlpSmqY3VL2hoquIlKKO0GISSKpXUGu8aRMGBF+aM2182/wOTCPS4StZJryT2k+c1tbGczV1+htgTDiwnhZCCZhVOVCgIqLHreTSgUk5JiySyObLJzGq4lVSojHHhpfR2WQUuZiWZf/Nva9MO2NSPiolLhFmTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmxbohrR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B06C4CED6;
-	Tue, 10 Dec 2024 14:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733842206;
-	bh=rrTm035FMZ6jPcTCYgwd6AAGCEWqVHAjB1QvrC4DWjE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dmxbohrRU36Taua6XH9NdIsZHDe9nVl+CcBrjgbyaUrrYLoqLC4yWqNU7GbAIQ+ep
-	 MWZrtKNcJLJo2Di0csICa9L/WiV+EUjbEb/nkj1q2hiAlM0eNrL8zMpz2w1+J4pzcI
-	 z2uQukAKIdAtEybeZJW5/iRt6sY3urTJ+Wmrj8IBKqos4FVpKztHY/H95zBAS3v2q9
-	 ntfDHH98aGQaxunGx7WGqOFhAqjuMhjeSZZxKbbBzb/JCxDXQMR1TGOFF73Zqa/IDw
-	 gvfFW9OMeqeRpsYA1q3W1cBn1RrydI2B+LhcpS9OQa99J2RpnpWwvpKGg1D7acjhbj
-	 agI5tLItGnFBw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v2 04/11] x86: drop configuration options for early 64-bit CPUs
+	s=arc-20240116; t=1733842201; c=relaxed/simple;
+	bh=egbRlbmlhjY1fckZ53UEb1P9iVDOvrQeu9+7WhhX9Qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=btTLBerjoO/hU8Cot1JL1Pbt8KntCylZI7NX9FVOmK8inFv01WIkieqy1M06WKSKXajlk/YwUDcuZZxZ6R7WPwDqde4M4HFIxpPZzVEWJrOGmM0OoYx4YOP5Qsajtt6jWe57bdMNJpzX1ZrG1naMhECBvsLWUxfxrSckBPx/0Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tL1YR-0005u5-Pz; Tue, 10 Dec 2024 15:49:39 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tL1YQ-002hu8-0r;
+	Tue, 10 Dec 2024 15:49:39 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tL1YQ-008Y8G-2u;
+	Tue, 10 Dec 2024 15:49:38 +0100
 Date: Tue, 10 Dec 2024 15:49:38 +0100
-Message-Id: <20241210144945.2325330-5-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241210144945.2325330-1-arnd@kernel.org>
-References: <20241210144945.2325330-1-arnd@kernel.org>
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengfei Li <pengfei.li_1@nxp.com>, devicetree@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>, imx@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] thermal: imx91: Add support for i.MX91 thermal
+ monitoring unit
+Message-ID: <20241210144938.zf3dkiubqhcxguqv@pengutronix.de>
+References: <20241209-imx91tmu-v1-0-7859c5387f31@nxp.com>
+ <20241209-imx91tmu-v1-2-7859c5387f31@nxp.com>
+ <20241210103646.7gblp7mzxbna5gas@pengutronix.de>
+ <Z1hLlm75iGMogltc@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1hLlm75iGMogltc@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 24-12-10, Frank Li wrote:
+> On Tue, Dec 10, 2024 at 11:36:46AM +0100, Marco Felsch wrote:
+> > Hi,
+> >
+> > On 24-12-09, Frank Li wrote:
 
-The x86 CPU selection menu is confusing for a number of reasons:
+...
 
-When configuring 32-bit kernels, it shows a small number of early 64-bit
-microarchitectures (K8, Core 2) but not the regular generic 64-bit target
-that is the normal default.  There is no longer a reason to run 32-bit
-kernels on production 64-bit systems, so only actual 32-bit CPUs need
-to be shown here.
+> > > +	/* disable the monitor during initialization */
+> > > +	imx91_tmu_enable(tmu, false);
+> > > +	imx91_tmu_start(tmu, false);
+> >
+> > Make use of pm_runtime?
+> 
+> thermal is always on after probe. continue measure tempature. So pm_runtime
+> is not suitable for this case.
 
-When configuring 64-bit kernels, the options also pointless as there is
-no way to pick any CPU from the past 15 years, leaving GENERIC_CPU as
-the only sensible choice.
+There are at least 3 drivers which use pm-runtime including the i.MX6/7
+imx_thermal.c driver.
 
-Address both of the above by removing the obsolete options and making
-all 64-bit kernels run on both Intel and AMD CPUs from any generation.
-Testing generic 32-bit kernels on 64-bit hardware remains possible,
-just not building a 32-bit kernel that requires a 64-bit CPU.
+> > > +	ret = imx91_init_from_nvmem_cells(tmu);
+> > > +	if (ret) {
+> > > +		writel_relaxed(DEFAULT_TRIM1_CONFIG, tmu->base + TRIM1);
+> > > +		writel_relaxed(DEFAULT_TRIM2_CONFIG, tmu->base + TRIM2);
+> > > +	}
+> > > +
+> > > +	/* The typical conv clk is 4MHz, the output freq is 'rate / (div + 1)' */
+> > > +	rate = clk_get_rate(tmu->clk);
+> > > +	div = (rate / 4000000) - 1;
+> >
+> > Would be nice to validate the div value before passing to the HW and if
+> > the target rate of 4MHz can't be reached by the div you you should
+> > return -EINVAL.
+> >
+> > > +
+> > > +	/* Set divider value and enable divider */
+> > > +	writel_relaxed(DIV_EN | FIELD_PREP(DIV_MASK, div), tmu->base + REF_DIV);
+> > > +
+> > > +	/* Set max power up delay: 'Tpud(ms) = 0xFF * 1000 / 4000000' */
+> > > +	writel_relaxed(FIELD_PREP(PUDL_MASK, 100U), tmu->base + PUD_ST_CTRL);
+> > > +
+> > > +	/*
+> > > +	 * Set resolution mode
+> > > +	 * 00b - Conversion time = 0.59325 ms
+> > > +	 * 01b - Conversion time = 1.10525 ms
+> > > +	 * 10b - Conversion time = 2.12925 ms
+> > > +	 * 11b - Conversion time = 4.17725 ms
+> > > +	 */
+> > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x3), tmu->base + CTRL1_CLR);
+> > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x1), tmu->base + CTRL1_SET);
+> > > +
+> > > +	/*
+> > > +	 * Set measure mode
+> > > +	 * 00b - Single oneshot measurement
+> > > +	 * 01b - Continuous measurement
+> > > +	 * 10b - Periodic oneshot measurement
+> > > +	 */
+> >
+> > For the resolution it's fine to have the values directly coded without a
+> > define, but here we can definitly use a define and drop the comment.
+> >
+> > > +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, 0x3), tmu->base + CTRL1_CLR);
+> > > +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, 0x1), tmu->base + CTRL1_SET);
+> >
+> > Why do we set it to periodic mode instead of the single-shot? At the
+> > moment the device doesn't have IRQ support, and so there is no need to
+> > run the measurements in background.
+> 
+> It is "continous measurement".  first clean MODE_MASK, then then 01.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/Kconfig.cpu            | 95 +++++----------------------------
- arch/x86/Makefile               | 16 +-----
- arch/x86/Makefile_32.cpu        |  5 +-
- arch/x86/include/asm/vermagic.h |  4 --
- drivers/misc/mei/Kconfig        |  2 +-
- 5 files changed, 18 insertions(+), 104 deletions(-)
+Still, why? You return the temp value upon a request (get_temp). There
+is no async notification from this driver to others. So it can be left
+to single-shot and do the measurement on request (get_temp).
 
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 42e6a40876ea..8fcb8ccee44b 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -1,9 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- # Put here option for CPU selection and depending optimization
- choice
--	prompt "Processor family"
--	default M686 if X86_32
--	default GENERIC_CPU if X86_64
-+	prompt "x86-32 Processor family"
-+	depends on X86_32
-+	default M686
- 	help
- 	  This is the processor type of your CPU. This information is
- 	  used for optimizing purposes. In order to compile a kernel
-@@ -31,7 +31,6 @@ choice
- 	  - "Pentium-4" for the Intel Pentium 4 or P4-based Celeron.
- 	  - "K6" for the AMD K6, K6-II and K6-III (aka K6-3D).
- 	  - "Athlon" for the AMD K7 family (Athlon/Duron/Thunderbird).
--	  - "Opteron/Athlon64/Hammer/K8" for all K8 and newer AMD CPUs.
- 	  - "Crusoe" for the Transmeta Crusoe series.
- 	  - "Efficeon" for the Transmeta Efficeon series.
- 	  - "Winchip-C6" for original IDT Winchip.
-@@ -42,13 +41,10 @@ choice
- 	  - "CyrixIII/VIA C3" for VIA Cyrix III or VIA C3.
- 	  - "VIA C3-2" for VIA C3-2 "Nehemiah" (model 9 and above).
- 	  - "VIA C7" for VIA C7.
--	  - "Intel P4" for the Pentium 4/Netburst microarchitecture.
--	  - "Core 2/newer Xeon" for all core2 and newer Intel CPUs.
- 	  - "Intel Atom" for the Atom-microarchitecture CPUs.
--	  - "Generic-x86-64" for a kernel which runs on any x86-64 CPU.
- 
- 	  See each option's help text for additional details. If you don't know
--	  what to do, choose "486".
-+	  what to do, choose "Pentium-Pro".
- 
- config M486SX
- 	bool "486SX"
-@@ -114,11 +110,11 @@ config MPENTIUMIII
- 	  extensions.
- 
- config MPENTIUMM
--	bool "Pentium M"
-+	bool "Pentium M/Pentium Dual Core/Core Solo/Core Duo"
- 	depends on X86_32
- 	help
- 	  Select this for Intel Pentium M (not Pentium-4 M)
--	  notebook chips.
-+	  "Merom" Core Solo/Duo notebook chips
- 
- config MPENTIUM4
- 	bool "Pentium-4/Celeron(P4-based)/Pentium-4 M/older Xeon"
-@@ -139,22 +135,10 @@ config MPENTIUM4
- 		-Mobile Pentium 4
- 		-Mobile Pentium 4 M
- 		-Extreme Edition (Gallatin)
--		-Prescott
--		-Prescott 2M
--		-Cedar Mill
--		-Presler
--		-Smithfiled
- 	    Xeons (Intel Xeon, Xeon MP, Xeon LV, Xeon MV) corename:
- 		-Foster
- 		-Prestonia
- 		-Gallatin
--		-Nocona
--		-Irwindale
--		-Cranford
--		-Potomac
--		-Paxville
--		-Dempsey
--
- 
- config MK6
- 	bool "K6/K6-II/K6-III"
-@@ -172,13 +156,6 @@ config MK7
- 	  some extended instructions, and passes appropriate optimization
- 	  flags to GCC.
- 
--config MK8
--	bool "Opteron/Athlon64/Hammer/K8"
--	help
--	  Select this for an AMD Opteron or Athlon64 Hammer-family processor.
--	  Enables use of some extended instructions, and passes appropriate
--	  optimization flags to GCC.
--
- config MCRUSOE
- 	bool "Crusoe"
- 	depends on X86_32
-@@ -258,42 +235,14 @@ config MVIAC7
- 	  Select this for a VIA C7.  Selecting this uses the correct cache
- 	  shift and tells gcc to treat the CPU as a 686.
- 
--config MPSC
--	bool "Intel P4 / older Netburst based Xeon"
--	depends on X86_64
--	help
--	  Optimize for Intel Pentium 4, Pentium D and older Nocona/Dempsey
--	  Xeon CPUs with Intel 64bit which is compatible with x86-64.
--	  Note that the latest Xeons (Xeon 51xx and 53xx) are not based on the
--	  Netburst core and shouldn't use this option. You can distinguish them
--	  using the cpu family field
--	  in /proc/cpuinfo. Family 15 is an older Xeon, Family 6 a newer one.
--
--config MCORE2
--	bool "Core 2/newer Xeon"
--	help
--
--	  Select this for Intel Core 2 and newer Core 2 Xeons (Xeon 51xx and
--	  53xx) CPUs. You can distinguish newer from older Xeons by the CPU
--	  family in /proc/cpuinfo. Newer ones have 6 and older ones 15
--	  (not a typo)
--
- config MATOM
- 	bool "Intel Atom"
- 	help
--
- 	  Select this for the Intel Atom platform. Intel Atom CPUs have an
- 	  in-order pipelining architecture and thus can benefit from
- 	  accordingly optimized code. Use a recent GCC with specific Atom
- 	  support in order to fully benefit from selecting this option.
- 
--config GENERIC_CPU
--	bool "Generic-x86-64"
--	depends on X86_64
--	help
--	  Generic x86-64 CPU.
--	  Run equally well on all x86-64 CPUs.
--
- endchoice
- 
- config X86_GENERIC
-@@ -317,8 +266,8 @@ config X86_INTERNODE_CACHE_SHIFT
- 
- config X86_L1_CACHE_SHIFT
- 	int
--	default "7" if MPENTIUM4 || MPSC
--	default "6" if MK7 || MK8 || MPENTIUMM || MCORE2 || MATOM || MVIAC7 || X86_GENERIC || GENERIC_CPU
-+	default "7" if MPENTIUM4
-+	default "6" if MK7 || MPENTIUMM || MATOM || MVIAC7 || X86_GENERIC || X86_64
- 	default "4" if MELAN || M486SX || M486 || MGEODEGX1
- 	default "5" if MWINCHIP3D || MWINCHIPC6 || MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODE_LX
- 
-@@ -336,35 +285,19 @@ config X86_ALIGNMENT_16
- 
- config X86_INTEL_USERCOPY
- 	def_bool y
--	depends on MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M586MMX || X86_GENERIC || MK8 || MK7 || MEFFICEON || MCORE2
-+	depends on MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M586MMX || X86_GENERIC || MK7 || MEFFICEON
- 
- config X86_USE_PPRO_CHECKSUM
- 	def_bool y
--	depends on MWINCHIP3D || MWINCHIPC6 || MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC3_2 || MVIAC7 || MEFFICEON || MGEODE_LX || MCORE2 || MATOM
--
--#
--# P6_NOPs are a relatively minor optimization that require a family >=
--# 6 processor, except that it is broken on certain VIA chips.
--# Furthermore, AMD chips prefer a totally different sequence of NOPs
--# (which work on all CPUs).  In addition, it looks like Virtual PC
--# does not understand them.
--#
--# As a result, disallow these if we're not compiling for X86_64 (these
--# NOPs do work on all x86-64 capable chips); the list of processors in
--# the right-hand clause are the cores that benefit from this optimization.
--#
--config X86_P6_NOP
--	def_bool y
--	depends on X86_64
--	depends on (MCORE2 || MPENTIUM4 || MPSC)
-+	depends on MWINCHIP3D || MWINCHIPC6 || MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MGEODE_LX || MATOM
- 
- config X86_TSC
- 	def_bool y
--	depends on (MWINCHIP3D || MCRUSOE || MEFFICEON || MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || MK8 || MVIAC3_2 || MVIAC7 || MGEODEGX1 || MGEODE_LX || MCORE2 || MATOM) || X86_64
-+	depends on (MWINCHIP3D || MCRUSOE || MEFFICEON || MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || MVIAC3_2 || MVIAC7 || MGEODEGX1 || MGEODE_LX || MATOM) || X86_64
- 
- config X86_HAVE_PAE
- 	def_bool y
--	depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM || X86_64
-+	depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC7 || MATOM || X86_64
- 
- config X86_CMPXCHG64
- 	def_bool y
-@@ -374,12 +307,12 @@ config X86_CMPXCHG64
- # generates cmov.
- config X86_CMOV
- 	def_bool y
--	depends on (MK8 || MK7 || MCORE2 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MCRUSOE || MEFFICEON || X86_64 || MATOM || MGEODE_LX)
-+	depends on (MK7 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MCRUSOE || MEFFICEON || MATOM || MGEODE_LX || X86_64)
- 
- config X86_MINIMUM_CPU_FAMILY
- 	int
- 	default "64" if X86_64
--	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MCORE2 || MK7 || MK8)
-+	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MK7)
- 	default "5" if X86_32 && X86_CMPXCHG64
- 	default "4"
- 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 5af3172fd51c..8120085b00a4 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -178,20 +178,8 @@ else
- 	# Use -mskip-rax-setup if supported.
- 	KBUILD_CFLAGS += $(call cc-option,-mskip-rax-setup)
- 
--        # FIXME - should be integrated in Makefile.cpu (Makefile_32.cpu)
--        cflags-$(CONFIG_MK8)		+= -march=k8
--        cflags-$(CONFIG_MPSC)		+= -march=nocona
--        cflags-$(CONFIG_MCORE2)		+= -march=core2
--        cflags-$(CONFIG_MATOM)		+= -march=atom
--        cflags-$(CONFIG_GENERIC_CPU)	+= -march=x86-64 -mtune=generic
--        KBUILD_CFLAGS += $(cflags-y)
--
--        rustflags-$(CONFIG_MK8)		+= -Ctarget-cpu=k8
--        rustflags-$(CONFIG_MPSC)	+= -Ctarget-cpu=nocona
--        rustflags-$(CONFIG_MCORE2)	+= -Ctarget-cpu=core2
--        rustflags-$(CONFIG_MATOM)	+= -Ctarget-cpu=atom
--        rustflags-$(CONFIG_GENERIC_CPU)	+= -Ctarget-cpu=x86-64 -Ztune-cpu=generic
--        KBUILD_RUSTFLAGS += $(rustflags-y)
-+        KBUILD_CFLAGS += -march=x86-64 -mtune=generic
-+        KBUILD_RUSTFLAGS += -Ctarget-cpu=x86-64 -Ztune-cpu=generic
- 
-         KBUILD_CFLAGS += -mno-red-zone
-         KBUILD_CFLAGS += -mcmodel=kernel
-diff --git a/arch/x86/Makefile_32.cpu b/arch/x86/Makefile_32.cpu
-index 94834c4b5e5e..af7de9a42752 100644
---- a/arch/x86/Makefile_32.cpu
-+++ b/arch/x86/Makefile_32.cpu
-@@ -24,7 +24,6 @@ cflags-$(CONFIG_MK6)		+= -march=k6
- # Please note, that patches that add -march=athlon-xp and friends are pointless.
- # They make zero difference whatsosever to performance at this time.
- cflags-$(CONFIG_MK7)		+= -march=athlon
--cflags-$(CONFIG_MK8)		+= $(call cc-option,-march=k8,-march=athlon)
- cflags-$(CONFIG_MCRUSOE)	+= -march=i686 $(align)
- cflags-$(CONFIG_MEFFICEON)	+= -march=i686 $(call tune,pentium3) $(align)
- cflags-$(CONFIG_MWINCHIPC6)	+= $(call cc-option,-march=winchip-c6,-march=i586)
-@@ -32,9 +31,7 @@ cflags-$(CONFIG_MWINCHIP3D)	+= $(call cc-option,-march=winchip2,-march=i586)
- cflags-$(CONFIG_MCYRIXIII)	+= $(call cc-option,-march=c3,-march=i486) $(align)
- cflags-$(CONFIG_MVIAC3_2)	+= $(call cc-option,-march=c3-2,-march=i686)
- cflags-$(CONFIG_MVIAC7)		+= -march=i686
--cflags-$(CONFIG_MCORE2)		+= -march=i686 $(call tune,core2)
--cflags-$(CONFIG_MATOM)		+= $(call cc-option,-march=atom,$(call cc-option,-march=core2,-march=i686)) \
--	$(call cc-option,-mtune=atom,$(call cc-option,-mtune=generic))
-+cflags-$(CONFIG_MATOM)		+= -march=atom
- 
- # AMD Elan support
- cflags-$(CONFIG_MELAN)		+= -march=i486
-diff --git a/arch/x86/include/asm/vermagic.h b/arch/x86/include/asm/vermagic.h
-index 75884d2cdec3..5d471253c755 100644
---- a/arch/x86/include/asm/vermagic.h
-+++ b/arch/x86/include/asm/vermagic.h
-@@ -15,8 +15,6 @@
- #define MODULE_PROC_FAMILY "586TSC "
- #elif defined CONFIG_M586MMX
- #define MODULE_PROC_FAMILY "586MMX "
--#elif defined CONFIG_MCORE2
--#define MODULE_PROC_FAMILY "CORE2 "
- #elif defined CONFIG_MATOM
- #define MODULE_PROC_FAMILY "ATOM "
- #elif defined CONFIG_M686
-@@ -33,8 +31,6 @@
- #define MODULE_PROC_FAMILY "K6 "
- #elif defined CONFIG_MK7
- #define MODULE_PROC_FAMILY "K7 "
--#elif defined CONFIG_MK8
--#define MODULE_PROC_FAMILY "K8 "
- #elif defined CONFIG_MELAN
- #define MODULE_PROC_FAMILY "ELAN "
- #elif defined CONFIG_MCRUSOE
-diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig
-index 67d9391f1855..7575fee96cc6 100644
---- a/drivers/misc/mei/Kconfig
-+++ b/drivers/misc/mei/Kconfig
-@@ -3,7 +3,7 @@
- config INTEL_MEI
- 	tristate "Intel Management Engine Interface"
- 	depends on X86 && PCI
--	default GENERIC_CPU || MCORE2 || MATOM || X86_GENERIC
-+	default X86_64 || MATOM
- 	help
- 	  The Intel Management Engine (Intel ME) provides Manageability,
- 	  Security and Media services for system containing Intel chipsets.
--- 
-2.39.5
+> _CLR means clean bits according to mask
+> _SET means set bits according to mask.
 
+I know.
+
+Regards,
+  Marco
+
+> 
+> Frank
+> 
+> >
+> > > +
+> > > +	/*
+> > > +	 * Set Periodic Measurement Frequency to 25Hz:
+> > > +	 * tMEAS_FREQ = tCONV_CLK * PERIOD_CTRL[MEAS_FREQ]. ->
+> > > +	 * PERIOD_CTRL(MEAS_FREQ) = (1000 / 25) / (1000 / 4000000);
+> > > +	 * Where tMEAS_FREQ = Measurement period and tCONV_CLK = 1/fCONV_CLK.
+> > > +	 * This field should have value greater than count corresponds
+> > > +	 * to time greater than summation of conversion time, power up
+> > > +	 * delay, and six times of conversion clock time.
+> > > +	 * tMEAS_FREQ > (tCONV + tPUD + 6 * tCONV_CLK).
+> > > +	 * tCONV is conversion time determined by CTRL1[RESOLUTION].
+> > > +	 */
+> > > +	writel_relaxed(FIELD_PREP(MEAS_FREQ_MASK, 0x27100), tmu->base + PERIOD_CTRL);
+> >
+> > With the single-shot measurements we could remove this part and..
+> >
+> > > +
+> > > +	/* enable the monitor */
+> > > +	imx91_tmu_enable(tmu, true);
+> > > +	imx91_tmu_start(tmu, true);
+> >
+> > this part as well.
+> >
+> > Regards,
+> >   Marco
+> >
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void imx91_tmu_remove(struct platform_device *pdev)
+> > > +{
+> > > +	struct imx91_tmu *tmu = platform_get_drvdata(pdev);
+> > > +
+> > > +	/* disable tmu */
+> > > +	imx91_tmu_start(tmu, false);
+> > > +	imx91_tmu_enable(tmu, false);
+> > > +}
+> > > +
+> > > +static int __maybe_unused imx91_tmu_suspend(struct device *dev)
+> > > +{
+> > > +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
+> > > +
+> > > +	/* disable tmu */
+> > > +	imx91_tmu_start(tmu, false);
+> > > +	imx91_tmu_enable(tmu, false);
+> > > +
+> > > +	clk_disable_unprepare(tmu->clk);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int __maybe_unused imx91_tmu_resume(struct device *dev)
+> > > +{
+> > > +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
+> > > +	int ret;
+> > > +
+> > > +	ret = clk_prepare_enable(tmu->clk);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	imx91_tmu_enable(tmu, true);
+> > > +	imx91_tmu_start(tmu, true);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static SIMPLE_DEV_PM_OPS(imx91_tmu_pm_ops,
+> > > +			 imx91_tmu_suspend, imx91_tmu_resume);
+> > > +
+> > > +static const struct of_device_id imx91_tmu_table[] = {
+> > > +	{ .compatible = "fsl,imx91-tmu", },
+> > > +	{ },
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, imx91_tmu_table);
+> > > +
+> > > +static struct platform_driver imx91_tmu = {
+> > > +	.driver = {
+> > > +		.name	= "i.MX91_thermal",
+> > > +		.pm	= pm_ptr(&imx91_tmu_pm_ops),
+> > > +		.of_match_table = imx91_tmu_table,
+> > > +	},
+> > > +	.probe = imx91_tmu_probe,
+> > > +	.remove = imx91_tmu_remove,
+> > > +};
+> > > +module_platform_driver(imx91_tmu);
+> > > +
+> > > +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
+> > > +MODULE_DESCRIPTION("i.MX91 Thermal Monitor Unit driver");
+> > > +MODULE_LICENSE("GPL");
+> > >
+> > > --
+> > > 2.34.1
+> > >
+> > >
+> > >
+> 
 
