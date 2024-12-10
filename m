@@ -1,118 +1,190 @@
-Return-Path: <linux-kernel+bounces-439864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97409EB528
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:37:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AF29EB52D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA57D18887F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:37:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EDA01884AB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DFF1BBBCA;
-	Tue, 10 Dec 2024 15:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E801BAED6;
+	Tue, 10 Dec 2024 15:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bKt0MkRw"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WGIyULlx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51921B0433;
-	Tue, 10 Dec 2024 15:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E08F1ABEC9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733845052; cv=none; b=GtZ/8ESR8KNHOcmjnFD4wfPW+7111Yr+UqxebyA77CLyqsWSKFkCPjC7DuULNT+4doh3cUEw9fSpZAHpgZ749hq7zW1dN+sPReVC11JCt/eMj1wPGLtBH0XbZ6QNhn7fov1cVSOkpq4/Sxn4IGgIuJ5VopmEzP1pEWyLsMCgc24=
+	t=1733845113; cv=none; b=A8ozBARsAhO8N9o/DwNqjkuZ30xtd6jDXE2SsMZGS0hn9LJyVp0LXRXHH4Yh8Yb0ETy0pIeLG/2qvevjb7n/SwAIXUO3tdTOeF0F20tYsJixYaFCZzriv4kZ/BW+7ZgJ5iXw2xOrVi0gVBcu82SoyrULG8eoC/cHN8H5+1E/VO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733845052; c=relaxed/simple;
-	bh=5UBLnPT6HIvLsS5QH4WOu5G99eHjGBdiyV0YRvJPJ+E=;
+	s=arc-20240116; t=1733845113; c=relaxed/simple;
+	bh=qkaUXye/Hr5o5ZH8Q4e48YdxLYD++aU6miyQ6jV7+w4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fQRVC/vzQ0SU46dUaYDKpXoHTNaJbBCsrscudlVkKXFtq02xVvoAEehOZANA6YKau/YtOMzkJlDNkoDIsUzuYMqrM0JDzIALaMr2e6FRH6/Q8cftx7aoZ5OyVJAI+Y6T9hs+7ffgY7cXftPE9iq+rhtiKS5PrnmcCFn4Ad/WRcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bKt0MkRw; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AFDDB40E0286;
-	Tue, 10 Dec 2024 15:37:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id PWcxWWL22RTk; Tue, 10 Dec 2024 15:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733845044; bh=VPjdw+Eb354bv9tVRWybjMpXb9OUxx59dMw+TfX0QJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bKt0MkRwHOmpStr8nzizXL09CNjus+A2ice6mREZYCgGOksuD9Ix+ByXrhRlSdpYb
-	 z4k7yKLvYV2/pxhfAncP/nGXCI2fdR46a1cOGE2Ai/NZy0oizB8SKJD67WYDyULETe
-	 I8o7YegEhoiwSTYOsz0oAJ4v4hRDuAEEC8FCqpxwcanuNEndQEDDYEPfrnnDS6nWPF
-	 gHn7aaYu5c/v0iRfwctzITY2eHgxHhJY1ww6ZYWLsRnPSW4qSaDvUCcn7zX+K73ThA
-	 5EHGrim/JH8u/8tCI09DN8Cm9ENIEA0G9Clch9OoOM/BMD6q3i1HXoMQsPI3zsEIsM
-	 sE4zSttx/vgKMKq/36BXPP7AM2JgCcZv9PGxxoGgEZx+fi7FxQnfFk9qf/0/2keu52
-	 omfWiMslCr6KxN9m+WgRZCeH9M2YlF4krMIl1eWXsShRJQfjIJ+uQGRuCLOb/ppJaf
-	 y0KZrSPYuHK/98uObXlAnMSTkIfncu3VbslvjyQn3A/fVeaZSrudHanuIE0M/tvyZ6
-	 NQQ7dMh1xgt8im6lwZbrTrXe0WWIMhL8gXJApWWCabrcYdnkWO29juwxt+dsS/cLdF
-	 RAJ5ljElQ5s81AXcZPgFAuYxDtSiHY2Db7AdN1yXSJDB3LKwutduOuV1msoFhHq1Qx
-	 xKW0sAIv3zpVHMqW4+nuiKh4=
-Received: from zn.tnic (p200300eA971F930C329C23Fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:930c:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ADA2440E0288;
-	Tue, 10 Dec 2024 15:37:16 +0000 (UTC)
-Date: Tue, 10 Dec 2024 16:37:10 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Borislav Petkov <bp@kernel.org>,
-	Sean Christopherson <seanjc@google.com>, X86 ML <x86@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	KVM <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] x86/bugs: Add SRSO_USER_KERNEL_NO support
-Message-ID: <20241210153710.GJZ1hgJpVImYZq47Sv@fat_crate.local>
-References: <20241202120416.6054-1-bp@kernel.org>
- <20241202120416.6054-2-bp@kernel.org>
- <20241210065331.ojnespi77no7kfqf@jpoimboe>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9PUBwVjsCXfXPLLZowpUI6NmG4omm1pLJiTNquGRUvz8CYCaOYyWXGa5io2oxd09JRxITWbRA6MEnqQsNxzHApSIQ9ZGJTLd57Co2vryTuoGHWKgVlYCix6fSylswYzpyG0twVTXLOt8hCoXOPAGCEJm/GWYVAolZ1pRyIGzng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WGIyULlx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADrZOr003958;
+	Tue, 10 Dec 2024 15:38:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LlQJnl
+	AfY7TdEgoNcgk9Xd91+IFa/vN6ToMLC6Qp194=; b=WGIyULlx7jsJA1747TYh2b
+	WW5VIdoSMnOjLFFlUHBYgDypmfjEr5hLxjIxJi2Z4eaTgFQGCQC1j6ttfsgfE1/t
+	i60VXYtKCebT6VPxu5xODhIeYNewA5aQe5oJDAdgr4Cymx6UGroSgEtG7RRgb6GT
+	BLNX6NrE0D0C5NJcsXTmgjH+5cWK7xSDHkQj308eWnHsW7X2rQGhtmeOuaOFEH6K
+	dnPeOh0j09GEUxV9jSN4iFU8kZ+dCrC9V4tcnBZYgoIJd674jfYS+GyfrVtKMoER
+	SQvJ77POfEklxMxxj+zt4KwAtvmKTzY3BCev1RF1KtXAfppb39GFuNNLRJEdwS6g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xetk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 15:38:12 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BAFTLAX026294;
+	Tue, 10 Dec 2024 15:38:11 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xetk6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 15:38:11 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADNnQR017428;
+	Tue, 10 Dec 2024 15:38:11 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1kvnp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 15:38:11 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAFc7nA64487848
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 15:38:07 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84ADE20043;
+	Tue, 10 Dec 2024 15:38:07 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2B24020040;
+	Tue, 10 Dec 2024 15:38:04 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.124.213.186])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 10 Dec 2024 15:38:03 +0000 (GMT)
+Date: Tue, 10 Dec 2024 21:08:01 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, sshegde@linux.ibm.com, srikar@linux.ibm.com,
+        vineethr@linux.ibm.com, zhangqiao22@huawei.com
+Subject: Re: [PATCH v3] sched/fair: Fix CPU bandwidth limit bypass during CPU
+ hotplug
+Message-ID: <Z1hgWWpGjqFNxtjg@linux.ibm.com>
+References: <20241210102346.228663-2-vishalc@linux.ibm.com>
+ <20241210144307.GV35539@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241210065331.ojnespi77no7kfqf@jpoimboe>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241210144307.GV35539@noisy.programming.kicks-ass.net>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xZPT2nQvk1JpDzvZqJH7MiJ4pWE_KcOm
+X-Proofpoint-ORIG-GUID: r4ekgwlTMMgriDbZ47kbTOts6t-hJ0M5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100115
 
-On Mon, Dec 09, 2024 at 10:53:31PM -0800, Josh Poimboeuf wrote:
-> The presence of SRSO_USER_KERNEL_NO should indeed change the default,
-> but if the user requests "safe_ret" specifically, shouldn't we give it
-> to them?
+On Tue, Dec 10, 2024 at 03:43:07PM +0100, Peter Zijlstra wrote:
+> On Tue, Dec 10, 2024 at 03:53:47PM +0530, Vishal Chourasia wrote:
+> > CPU controller limits are not properly enforced during CPU hotplug
+> > operations, particularly during CPU offline. When a CPU goes offline,
+> > throttled processes are unintentionally being unthrottled across all CPUs
+> > in the system, allowing them to exceed their assigned quota limits.
+> > 
+> > Consider below for an example,
+> > 
+> > Assigning 6.25% bandwidth limit to a cgroup
+> > in a 8 CPU system, where, workload is running 8 threads for 20 seconds at
+> > 100% CPU utilization, expected (user+sys) time = 10 seconds.
+> > 
+> > $ cat /sys/fs/cgroup/test/cpu.max
+> > 50000 100000
+> > 
+> > $ ./ebizzy -t 8 -S 20        // non-hotplug case
+> > real 20.00 s
+> > user 10.81 s                 // intended behaviour
+> > sys   0.00 s
+> > 
+> > $ ./ebizzy -t 8 -S 20        // hotplug case
+> > real 20.00 s
+> > user 14.43 s                 // Workload is able to run for 14 secs
+> > sys   0.00 s                 // when it should have only run for 10 secs
+> > 
+> > During CPU hotplug, scheduler domains are rebuilt and cpu_attach_domain
+> > is called for every active CPU to update the root domain. That ends up
+> > calling rq_offline_fair which un-throttles any throttled hierarchies.
+> > 
+> > Unthrottling should only occur for the CPU being hotplugged to allow its
+> > throttled processes to become runnable and get migrated to other CPUs.
+> > 
+> > With current patch applied,
+> > $ ./ebizzy -t 8 -S 20        // hotplug case
+> > real 21.00 s
+> > user 10.16 s                 // intended behaviour
+> > sys   0.00 s
+> > 
+> > Note: hotplug operation (online, offline) was performed in while(1) loop
+> > 
+> > Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
+> > Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> 
+> Did you mean this?
+Yes, essentially this.
+I will post another version.
 
-Hardly a valid use case except for debugging but if you're doing that, you can
-change the kernel too.
 
-Because we just fixed this and if some poor soul has left
-spec_rstack_overflow=safe-ret in her /etc/default/grub (it has happened to me
-a bunch on my test boxes), she'll never get her performance back and that
-would be a yucky situation.
+>·· 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 2c4ebfc82917..b6afb8337e73 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6696,6 +6696,9 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
+>  
+>  	lockdep_assert_rq_held(rq);
+>  
+> +	if (cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
+> +		return;
+> +
+>  	/*
+>  	 * The rq clock has already been updated in the
+>  	 * set_rq_offline(), so we should skip updating
 
-> That would be more consistent with how we handle requested
-> mitigations.
 
-Yeah, but if there were a point to this, I guess. We don't really need this
-mitigation as there's nothing to mitigate on the user/kernel transition
-anymore.
+What should be done for the case when the hotplugged CPU's cfs_rq has
+plenty of runtime_remaining?
 
-> Also it doesn't really make sense to add a printk here as the mitigation
-> will be printed at the end of the function.
+I have three choices
+1) set it to 1 (no change required in current code)
+2) skip reset, runtime_remaining will not be touched (similar to current patch)
+3) return excess runtime to the global runtime (will require taking lock)
 
-This is us letting the user know that we don't need Safe-RET anymore and we're
-falling back. But I'm not that hung up on that printk...
+Thanks
+- vishalc
 
-Thx.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
