@@ -1,96 +1,79 @@
-Return-Path: <linux-kernel+bounces-438846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316639EA731
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:33:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA9D9EA734
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D38167EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C159C1888F84
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CD9142659;
-	Tue, 10 Dec 2024 04:33:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6852D23312A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518EF1D6DC9;
+	Tue, 10 Dec 2024 04:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nzEj6mPI"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ECD23312A;
+	Tue, 10 Dec 2024 04:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733805190; cv=none; b=oEZv4aW/V/M5GLfBvvvh0ownLndyoPSLv3zK54Ps41MhVGHZrU6C86njkQPk2MaxLd8efNM4451bS5kuOD+NI6zhuta3IXp3yNReC3tHQ7V5q3kvLQkkno+tGlzNE0dImLOpQlMI1nJvQcXP2XLbieKmIWzlTu9UXiAzIGrPGUM=
+	t=1733805203; cv=none; b=f6mE2u2X3x2YwuYcO7fi5WXXjRl3QIDDo+QiAevbzkTaJmnzdqSHbbuqxfODS/xSQ8gWmgWTgN0y4KanPNWCZvl3rfeQV+0RhHxgFzM6racGDvjwaFm1gxEHJkvoJkOwnckp/gLdpSzqyejsEy49U7xUsfeACbbQ3Wga8Q8PBnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733805190; c=relaxed/simple;
-	bh=8jG1mr07fyqmubOV3BuZf+p8XhgtkdhHcWKMHpGP/dM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lXYWcK2nnRqJB163BxEa6rCwnlGuEroso4Re5cNPQp3qIWKS6aZ/2EeQE4w5DsbgE6ySmwaIbPiGopkXwmUze3WRpQkkw9V6+442kB877rY59+dSILSKHs6p4etKERcEwrR71nEzZ/7W4AJ/ixUyTHEevjMmyomfSz4E6rsOULY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 684D2113E;
-	Mon,  9 Dec 2024 20:33:35 -0800 (PST)
-Received: from a077893.arm.com (unknown [10.163.48.173])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 841DD3F58B;
-	Mon,  9 Dec 2024 20:33:04 -0800 (PST)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64/Kconfig: Drop EXECMEM dependency from ARCH_WANTS_EXECMEM_LATE
-Date: Tue, 10 Dec 2024 10:02:57 +0530
-Message-Id: <20241210043257.715822-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733805203; c=relaxed/simple;
+	bh=t5waVAzNALBU70hsF89/OfqKkEFf6t1GIMsIoR2cszU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSLrHwgF0zzMVhTjjfvdP7GMIqs2fUk2ov0aLQMF8AfrzcajLw5ET4o14HRZbkBQVvb1gOJoubeiwG2MoMM68oBBQGFffn3VB73Jpvt6PSemcd27yO0GImjTav2znyQNfGkiEgQnMuLsJxVdoY+LW2onMOIOeBQ7VHz+KQyT69s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nzEj6mPI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yHQ6nHpSWovH60gzu0oE4BkrgsHEhWRJ/1lstw88FCA=; b=nzEj6mPI7NnBhOWvRt55mC84A2
+	laccC44oUYfbXdTgTqDwaSOyEHTVsRUeeLqzlf1PqGRWb5FRn3HNSU+KslYYfLAeTD+pywD/GsjEq
+	j8DpUZ+6k06F3ZGS1nozCZ7+hDBlpkYLJMQ5kQUUPngTzppxoA/ZPSrhNJTsDRucTd28E4PJdm0aN
+	1H6REVxRnIsxfEQ3OT89PwmB6GaoVwodA1ao7JL8YnnhUD+I3NsuQ+UID2YDpSbKFaQ7YZc5SbZOb
+	BvIYq9guyGLa4PHQO1suhF0/X5o/pCrc+c/vQmrmrmq2qB7Ah1RY+4mt1HAAdGGIOIGnZ45qLq+Vz
+	TVAk+atw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKrvz-0000000ACOO-0LdG;
+	Tue, 10 Dec 2024 04:33:19 +0000
+Date: Mon, 9 Dec 2024 20:33:19 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Matthew Rosato <mjrosato@linux.ibm.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com,
+	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+	svens@linux.ibm.com, borntraeger@linux.ibm.com,
+	farman@linux.ibm.com, clegoate@redhat.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 2/6] s390: enable ARCH_HAS_PHYS_TO_DMA
+Message-ID: <Z1fEj_6beeRdGpJL@infradead.org>
+References: <20241209192403.107090-1-mjrosato@linux.ibm.com>
+ <20241209192403.107090-3-mjrosato@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209192403.107090-3-mjrosato@linux.ibm.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-ARCH_WANTS_EXECMEM_LATE indicates subscribing platform's preference for
-EXECMEM late initialisation without creating a new dependency. Hence this
-just drops EXECMEM dependency while selecting ARCH_WANTS_EXECMEM_LATE.
+On Mon, Dec 09, 2024 at 02:23:59PM -0500, Matthew Rosato wrote:
+> PCI devices on s390 have a DMA offset that is reported via CLP.  In
+> preparation for allowing identity domains, enable ARCH_HAS_PHYS_TO_DMA
+> for s390 and get the dma offset for all PCI devices from the reported
+> CLP value.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-This patch applies on v6.13-rc1
-
-Changes in V2:
-
-- Dropped generic EXECMEM config changes per Catalin
-- Updated the commit message as required
-
-Changes in V1:
-
-https://lore.kernel.org/all/20241209031251.515903-1-anshuman.khandual@arm.com/
-
- arch/arm64/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index b5479c8b454c..b146372bc365 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -113,7 +113,7 @@ config ARM64
- 	select ARCH_WANT_FRAME_POINTERS
- 	select ARCH_WANT_HUGE_PMD_SHARE if ARM64_4K_PAGES || (ARM64_16K_PAGES && !ARM64_VA_BITS_36)
- 	select ARCH_WANT_LD_ORPHAN_WARN
--	select ARCH_WANTS_EXECMEM_LATE if EXECMEM
-+	select ARCH_WANTS_EXECMEM_LATE
- 	select ARCH_WANTS_NO_INSTR
- 	select ARCH_WANTS_THP_SWAP if ARM64_4K_PAGES
- 	select ARCH_HAS_UBSAN
--- 
-2.30.2
+Nothing new should select ARCH_HAS_PHYS_TO_DMA, please fill out the
+bus_dma_region attached to the device instead.
 
 
