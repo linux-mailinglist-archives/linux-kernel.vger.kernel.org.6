@@ -1,70 +1,58 @@
-Return-Path: <linux-kernel+bounces-440412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3F79EBD95
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:17:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828F59EBD7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F2B287179
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2EC286B6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B2324353D;
-	Tue, 10 Dec 2024 22:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E655B23F9F6;
+	Tue, 10 Dec 2024 22:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TK/wDN4X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VFPapy/4"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D853C1EE7D1;
-	Tue, 10 Dec 2024 22:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5307123A566;
+	Tue, 10 Dec 2024 22:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733868452; cv=none; b=rWDDdTWpoHjtoX4AKrgvNc3QncW6Odnz5Rjx2Sypq9jwma2kJljnmfbh+dBqhyHfMn2sqyGPlcovWoI5aaQdVBPAXfO3j8P+PhnOUGu+1mzufpoTd3rXyRNgUf2Ggocq/oxxRuWld90eQCDlrRA4yusUd3VZlmA2IcqDHFdNVVs=
+	t=1733868397; cv=none; b=vGFs+FcRl8xMDJOkPMO4oba7X3QPCjo7FhFSEu5ucZANibglDCObShRs4ypycSsuq+6nUfCBJtd6Mhnw+joBueEYlLqLQUJUiVsusOquMdyAm5ePm+fZHz9QUkP/qah1Xt0dUPxt4cSrhQRrMYNJCsfObgIGJu/cDirmzL1UnWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733868452; c=relaxed/simple;
-	bh=0fQ3Q90Pn0i+PpOwOA0VS4st230oZ1EKiYKxA/3sSK0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o2d75L15qVp7rZM5J2rfa1+/BVicJ6QruLLAhvtAyCx3T4Uv6zqg7qn548yI927yUcQY/gdDqDiWTpdkYOEqEKM7FzW0X5ebEWdRDPGVWmfqGLulu16MgV11pAiebCo+W7mPx05lZRGMmuBADbpcsPdHROWBycIAOWlZpSdcyrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TK/wDN4X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B896C4CED6;
-	Tue, 10 Dec 2024 22:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733868451;
-	bh=0fQ3Q90Pn0i+PpOwOA0VS4st230oZ1EKiYKxA/3sSK0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TK/wDN4XAzYzcaam5iHqAQZjl/nEJ7DrrYhSk99c3QvDbimbj/ctpm9tzlgCU0ZXc
-	 xBAHYeqf0QEmS0GgedFcaOvy59tqTW8JlFyXA3PcCezSqaa2JbaGOpB+Sj0AYsysXF
-	 4yQpepnlvvYq79YShcF/+0DdGJGpEoZ7CLg5YdLy9DXFO9Oetzq2uz/3F+2pBKLX4G
-	 X5l1wS7hhfuVhbrJoGxF9m/om1t0iKHMODdgl6TTj/KrfN6XmAfPKARih8/5c+M29T
-	 qiSteYYaxFjypRHla/AzQtGDmfVzQpSd6+21ixsjEOgx8qwgWc4jkAsoZ5gFsX8aMF
-	 nRF88BUYXbMhQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1733868397; c=relaxed/simple;
+	bh=ncIqpPZya/TXWoopDaHFUdestRVYRZs7odUJTTe3Xlg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bn9Tzn64saex1Diu+9yBvcf3TjP2fv4bldkQ6olhg1RvfZk8JvH8AGC8noZD36gcPSboNRfQwf76+d/pBnG/Ay1O/FpdzsxFPpEm/WeEoOU/85ePlIgjN3mkr3ijJqrLZwgvUpnGpjn9+eexGkI7kObb3U4YRICHJcTZ7x9Whik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VFPapy/4; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=9tWD1xMRpiLjRra+9YFo+krQWdvFYqzGf7KvSAf8HBw=; b=VFPapy/4RMt0824F
+	cGNrUhU7YsStbfUppwo8/UBUFe8V9GippvwDB1poxnMKtt/N7of2YO5d5RwDsggojhafCptbt1QGa
+	hjA8DEq6Qg9JVHkQi4fww7d4LAIilmC9wpqofJHplMbWfsKepB+imovYy2zcpyeFyAYsSd8mrMGl5
+	zFsyg6txYvPIcm1H7ukA9CI9kYK7L9ahA53XF6zBunCQ1sivQ4bsiKiMuLSrmIKtoK7uUQFfJ+S88
+	7pjbP4YUofPALsSJOlbDMP3Zk2Go6g8o/5qfj9DusEinlhGljGB50IQEbJCJGKlvea9YumcN1FPfV
+	GMm+SZlK8zL6XceIQg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tL8NB-004cTz-2Y;
+	Tue, 10 Dec 2024 22:06:29 +0000
+From: linux@treblig.org
+To: rogerq@kernel.org,
+	tony@atomide.com,
+	krzk@kernel.org
+Cc: linux-omap@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	liamwisehart@meta.com,
-	shankaran@meta.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v3 bpf-next 6/6] selftests/bpf: Add __failure tests for set/remove xattr kfuncs
-Date: Tue, 10 Dec 2024 14:06:27 -0800
-Message-ID: <20241210220627.2800362-7-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241210220627.2800362-1-song@kernel.org>
-References: <20241210220627.2800362-1-song@kernel.org>
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] memory: omap-gpmc: deadcode a pair of functions
+Date: Tue, 10 Dec 2024 22:06:28 +0000
+Message-ID: <20241210220628.237604-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,101 +61,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Different LSM hooks should call different versions of set/remove xattr
-kfuncs (with _locked or not). Add __failure tests to make sure the
-verifier can detect when the user uses the wrong kfuncs.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Signed-off-by: Song Liu <song@kernel.org>
+gpmc_get_client_irq() last use was removed by
+commit ac28e47ccc3f ("ARM: OMAP2+: Remove legacy gpmc-nand.c")
+
+gpmc_ticks_to_ns() last use was removed by
+commit 2514830b8b8c ("ARM: OMAP2+: Remove gpmc-onenand")
+
+Remove them.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- .../selftests/bpf/prog_tests/fs_kfuncs.c      |  3 +
- .../bpf/progs/test_set_remove_xattr_failure.c | 56 +++++++++++++++++++
- 2 files changed, 59 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr_failure.c
+ drivers/memory/omap-gpmc.c | 20 --------------------
+ include/linux/omap-gpmc.h  |  4 ----
+ 2 files changed, 24 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-index 41532df79fdd..614335a3ff53 100644
---- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-@@ -9,6 +9,7 @@
- #include <test_progs.h>
- #include "test_get_xattr.skel.h"
- #include "test_set_remove_xattr.skel.h"
-+#include "test_set_remove_xattr_failure.skel.h"
- #include "test_fsverity.skel.h"
- 
- static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
-@@ -286,6 +287,8 @@ void test_fs_kfuncs(void)
- 	if (test__start_subtest("set_remove_xattr"))
- 		test_set_remove_xattr();
- 
-+	RUN_TESTS(test_set_remove_xattr_failure);
-+
- 	if (test__start_subtest("fsverity"))
- 		test_fsverity();
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index 50eb9f49512b..3922cf775da6 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -364,11 +364,6 @@ static unsigned int gpmc_clk_ticks_to_ns(unsigned int ticks, int cs,
+ 	return ticks * gpmc_get_clk_period(cs, cd) / 1000;
  }
-diff --git a/tools/testing/selftests/bpf/progs/test_set_remove_xattr_failure.c b/tools/testing/selftests/bpf/progs/test_set_remove_xattr_failure.c
-new file mode 100644
-index 000000000000..ee9c7df27a93
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_set_remove_xattr_failure.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+static const char xattr_bar[] = "security.bpf.bar";
-+char v[32];
-+
-+SEC("lsm.s/inode_getxattr")
-+__failure __msg("calling kernel function bpf_set_dentry_xattr_locked is not allowed")
-+int BPF_PROG(test_getxattr_failure_a, struct dentry *dentry, char *name)
-+{
-+	struct bpf_dynptr value_ptr;
-+
-+	bpf_dynptr_from_mem(v, sizeof(v), 0, &value_ptr);
-+
-+	bpf_set_dentry_xattr_locked(dentry, xattr_bar, &value_ptr, 0);
-+	return 0;
-+}
-+
-+SEC("lsm.s/inode_getxattr")
-+__failure __msg("calling kernel function bpf_remove_dentry_xattr_locked is not allowed")
-+int BPF_PROG(test_getxattr_failure_b, struct dentry *dentry, char *name)
-+{
-+	bpf_remove_dentry_xattr_locked(dentry, xattr_bar);
-+	return 0;
-+}
-+
-+SEC("lsm.s/inode_setxattr")
-+__failure __msg("calling kernel function bpf_set_dentry_xattr is not allowed")
-+int BPF_PROG(test_inode_setxattr_failure_a, struct mnt_idmap *idmap,
-+	     struct dentry *dentry, const char *name,
-+	     const void *value, size_t size, int flags)
-+{
-+	struct bpf_dynptr value_ptr;
-+
-+	bpf_dynptr_from_mem(v, sizeof(v), 0, &value_ptr);
-+
-+	bpf_set_dentry_xattr(dentry, xattr_bar, &value_ptr, 0);
-+	return 0;
-+}
-+
-+SEC("lsm.s/inode_setxattr")
-+__failure __msg("calling kernel function bpf_remove_dentry_xattr is not allowed")
-+int BPF_PROG(test_inode_setxattr_failure_b, struct mnt_idmap *idmap,
-+	     struct dentry *dentry, const char *name,
-+	     const void *value, size_t size, int flags)
-+{
-+	bpf_remove_dentry_xattr(dentry, xattr_bar);
-+	return 0;
-+}
+ 
+-unsigned int gpmc_ticks_to_ns(unsigned int ticks)
+-{
+-	return gpmc_clk_ticks_to_ns(ticks, /* any CS */ 0, GPMC_CD_FCLK);
+-}
+-
+ static unsigned int gpmc_ticks_to_ps(unsigned int ticks)
+ {
+ 	return ticks * gpmc_get_fclk_period();
+@@ -1295,21 +1290,6 @@ int gpmc_omap_onenand_set_timings(struct device *dev, int cs, int freq,
+ }
+ EXPORT_SYMBOL_GPL(gpmc_omap_onenand_set_timings);
+ 
+-int gpmc_get_client_irq(unsigned int irq_config)
+-{
+-	if (!gpmc_irq_domain) {
+-		pr_warn("%s called before GPMC IRQ domain available\n",
+-			__func__);
+-		return 0;
+-	}
+-
+-	/* we restrict this to NAND IRQs only */
+-	if (irq_config >= GPMC_NR_NAND_IRQS)
+-		return 0;
+-
+-	return irq_create_mapping(gpmc_irq_domain, irq_config);
+-}
+-
+ static int gpmc_irq_endis(unsigned long hwirq, bool endis)
+ {
+ 	u32 regval;
+diff --git a/include/linux/omap-gpmc.h b/include/linux/omap-gpmc.h
+index c9e3843d2dd5..263b915df1fb 100644
+--- a/include/linux/omap-gpmc.h
++++ b/include/linux/omap-gpmc.h
+@@ -66,10 +66,6 @@ extern int gpmc_calc_timings(struct gpmc_timings *gpmc_t,
+ 
+ struct device_node;
+ 
+-extern int gpmc_get_client_irq(unsigned irq_config);
+-
+-extern unsigned int gpmc_ticks_to_ns(unsigned int ticks);
+-
+ extern void gpmc_cs_write_reg(int cs, int idx, u32 val);
+ extern int gpmc_calc_divider(unsigned int sync_clk);
+ extern int gpmc_cs_set_timings(int cs, const struct gpmc_timings *t,
 -- 
-2.43.5
+2.47.1
 
 
