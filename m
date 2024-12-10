@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-439314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2CB9EAD86
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:04:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3169EAD8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:05:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2EC161FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B70285A92
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934FD23DEA3;
-	Tue, 10 Dec 2024 10:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9513823DEB5;
+	Tue, 10 Dec 2024 10:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lrh5JUcX"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="cZKSv3ld"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C1D23DE9D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EB723DE96;
+	Tue, 10 Dec 2024 10:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825030; cv=none; b=MN32wHEAHyIM6T9SXS0F5a59zD0+MTgwjyzbAJSJqH3bw+vMcCqq7oMOj9+1XenbIpdMYiQnFNBk6caP3stK2SeesjR8nEPaVrEYj5KekLG8YKSXRbe04W1yMM8Rt880fTYL4GgVZO2Dw0A18gccKQZDCFiyr5AbrGvB3rOUGMs=
+	t=1733825090; cv=none; b=DgLmDWRgz6iKzTN9u36QG21er0Do6lH5LWJ87PlGtpeUNG45Y5/QfN9F/l0m5MwsOmLRjkxjjsnpG9G8fMr5IbloBhru1TzZVNq38oUW1/P3dsV3J6Et/uQCf8fatkpzeg/vRBr9wU0xl1h1U/CYZcdZqNfS5zyuZvgJ2JPSY5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825030; c=relaxed/simple;
-	bh=2NGaNIcyHT/EketuOy+zLUfHygTrUDmbTfcEm9KU0jM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1FTzpBLp0lGZe71Peh3lnr1ouu8vTTkit5TYXhxja0EBZorOqrxBBE/l67lOy1Ji4/qKo2tgVL7fdS5tNpOAXtpKz+S2vz4msYuYRLUNdZOfhxfax0NysDXkoH+StM9xjogUTSdxKgk5kzWef4ZLk8SPJaZ3T23B64B8XkU3Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lrh5JUcX; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53e3a5fa6aaso2866007e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733825026; x=1734429826; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lW3VZV3IbhiRxa0/ywOK4fnntFU6GL/zecF0WLK1Tbc=;
-        b=lrh5JUcXVISdmm70pOvCWF9/F03b72hl+EQ6Y2Yzi0FEYWrVwXgGlrLsei5mUMy7xx
-         KdcjYWDK1MnHDXmHcyFsKyHhqWyMQ+p/9BITsEd3xDFf3FvTHIcudSxEU8Ez3ADkKeLw
-         nGiaEP11mKsSajoCcTE4Yrj4qtdctEkhAt+SM/CgLbgV4e9J9oaGKzYer89aRE9W+BuP
-         dm8t7OWwiO6JTrPHW23LmuI0HT4YabQbr3FZHOI5ZDIjECiAddex4lbg9PkQ9YP/hvl0
-         XeinXdslyNW4Gg/bFm7FT08tQSKJauKP+1kqmxTZRXvZHK3ALodybJhj3DB1O6P23ZHu
-         brKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733825026; x=1734429826;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lW3VZV3IbhiRxa0/ywOK4fnntFU6GL/zecF0WLK1Tbc=;
-        b=vPOGG7MPtqIYwEKH0CQQ7X9oGfOU7ND0/kp/HL6pHgQubU3oIlPw+I2+qhf1lEVzQR
-         yQ9AQLirJYWw3Ob8vqD232JAu2mFAE34k8OdmWLbthvRO2wUesmcTEgMTXxV+HZSI/j0
-         pa4gWyTPe0qO0G/wPBjCniCqOU4P6YdQ6guKRji8QjmS3g1CmnIU+BfYahDZBq2jKagC
-         6Wzdv5PI9EOxvV4DRuBhaHZ5mxBMg1xSiBLGGt2j7yqqIXfRZT4NVGwOnu6rAsf64xgy
-         OLYRe9nb8Ji2sCGP8ncaJ8ux+8FSRlFgCagqhntV+ebkxNcYi3ZkP1+33iw+am2mzCwH
-         oGMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmQKPkmLZ/X7wOKjnFErEYMluKyBSDz0NHzL6ygEso3p4wsoILku+UOcW8CVCArhAIgfpTfMN5Ga1jfsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7l+Da+QXQWvZOT7PNJ2+ZT24OjXLYaEaflMP6NqWcm0I3NcNo
-	WBCh2hoQNn2N3i4Ri11CfctL/xGL52RcrxC1a/qYdumHapps0+ReiLyBdurWDi0=
-X-Gm-Gg: ASbGncsfJ0FQ5BPUj5MdjghqS1aifJbH/i/lfOYAiCA//D8ZzH3fngqBz6k1usElHoi
-	fL/tsiUjJBP/lR+wWMJdaWaxxyuYOi5DSYn9tDiCfUdrNI+Ok3YLmpdNIWOh38o1EYeYMmEJ7Tk
-	m3cbxT6LZeztsyuatNF4A8JU7D25Feh+bYHLNq5hE/LPcXLSzPoHjVQ7unanDZOWAwx7yNWnNSP
-	a4j4rx8Wg+cRJGraf8oTmTXh819Y/0APyTbCMqUc9n5LB4sHekoVbpch6Ordch9CK71NxY4rmCJ
-	kxW9wpDoBqA0PfrrV1DOXEM8YJrrqPUjPA==
-X-Google-Smtp-Source: AGHT+IFLOuvQG3RQchQX/UAJ3ESoE2sy2dYx5qOOAsytWGp1Si3/uCS5tZiWqNTkcM2CJmX/hxkweA==
-X-Received: by 2002:a05:6512:31d2:b0:540:1c67:fc2f with SMTP id 2adb3069b0e04-540251eb26fmr859248e87.14.1733825025971;
-        Tue, 10 Dec 2024 02:03:45 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53ffa80edcdsm919958e87.169.2024.12.10.02.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 02:03:44 -0800 (PST)
-Date: Tue, 10 Dec 2024 12:03:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Fange Zhang <quic_fangez@quicinc.com>, Li Liu <quic_lliu6@quicinc.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add support for DisplayPort on the QCS615 RIDE
- platform
-Message-ID: <ua7sstdak6b236pm2ovg4jqfvxkyn6b5sbopewmczzrdtezrln@mavmb45hsyrt>
-References: <20241210-add-displayport-support-to-qcs615-devicetree-v1-0-02f84a92c44b@quicinc.com>
+	s=arc-20240116; t=1733825090; c=relaxed/simple;
+	bh=1PNJmzZ2WAVkuKjY9BRcQ8kJoyGcegpzX4I1aJ/V/TQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Y/+PvgceX4uI8+3OKKxZvlr34AS85l6TJrTYCaRxlINyrWa3L0ZhSelFSw61KGT397B0ZJ/dHFXXO/T0JgWIxxJX7VbT9AsHKkoIABQORBLOsre0G0tMcjvK9mdeR9j5tQpKH+psn7JdKuJS6KuVQJ6GU4bHza6rJzgTVkNQtC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=cZKSv3ld; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210-add-displayport-support-to-qcs615-devicetree-v1-0-02f84a92c44b@quicinc.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1733825085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1I7wfU9DCOpusJPrwzxJlCH5FeLkZRrVEv4XdJSr+ME=;
+	b=cZKSv3ldr6gGegwxMIz1JjnH9exKl+mMNrJ4RQH1roYVzEC9pXfABLJzcSgtzuVa0JSSF8
+	c1iw/TrS9tI7hhFaCOFCh/IhydCmy30ki5QEnHhOVVp6Eoca+TWZYRyiStMK2NUXw9Ezrd
+	2sflyZrMlYoTLKjNvZgSOtIXYuLbZx9vJKpF72u3heuMHd/kau7Uuee9VMrjIM6Ol+i90W
+	PaBdIAm/al7Shz38CJtWFzuzk6M0Tl9R+bvlYQNsuMNI/ijHJEzZZ5E5mxIJJIxcCNHfQP
+	p/WNEjV1I8VNdHKS61vkbwh70p6PNYxvURbKsgPgJiBMRZENNXI/YypoAEju1w==
+Date: Tue, 10 Dec 2024 11:04:45 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Peter Geis <pgwipeout@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>, Conor
+ Dooley <conor+dt@kernel.org>, Diederik de Haas <didi.debian@cknow.org>,
+ Johan Jonker <jbx6244@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Liang Chen <cl@rock-chips.com>, Rob Herring
+ <robh@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, shironeko <shironeko@tesaguri.club>
+Subject: Re: [PATCH 4/6] arm64: dts: rockchip: add hevc power domain clock to
+ rk3328
+In-Reply-To: <20241210013010.81257-5-pgwipeout@gmail.com>
+References: <20241210013010.81257-1-pgwipeout@gmail.com>
+ <20241210013010.81257-5-pgwipeout@gmail.com>
+Message-ID: <e32fa593abfa6d08202b4f929e0b4bdb@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Tue, Dec 10, 2024 at 05:11:04PM +0800, Xiangxu Yin wrote:
-> The patches include:
-> 1.ADD DisplayPort controller and phy nodes to Qualcomm QCS615 dtsi file.
-> 2.Add dp-connector, config hpd-gpios which used for Displayport hotplug detect.
-> 3.Config lane mapping through data-lanes prop.
+Hello Peter,
+
+On 2024-12-10 02:30, Peter Geis wrote:
+> There is a race condition at startup between disabling power domains 
+> not
+> used and disabling clocks not used on the rk3328. When the clocks are
+> disabled first, the hevc power domain fails to shut off leading to a
+> splat of failures. Add the hevc core clock to the rk3328 power domain
+> node to prevent this condition.
 > 
-> This patch series depends on below patch series:
-> - dispcc
-> https://lore.kernel.org/all/20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com/
-> - dispcc dts
-> https://lore.kernel.org/lkml/20241108-qcs615-mm-dt-nodes-v1-0-b2669cac0624@quicinc.com/
-> - display
-> https://lore.kernel.org/all/20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com/
-
-
-> - displayport driver
-> https://lore.kernel.org/all/20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com/
-
-No, it doesn't. The DT and the driver can come up separately.
-
+> rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 3-.... 
+> }
+> 1087 jiffies s: 89 root: 0x8/.
+> rcu: blocking rcu_node structures (internal RCU debug):
+> Sending NMI from CPU 0 to CPUs 3:
+> NMI backtrace for cpu 3
+> CPU: 3 UID: 0 PID: 86 Comm: kworker/3:3 Not tainted 6.12.0-rc5+ #53
+> Hardware name: Firefly ROC-RK3328-CC (DT)
+> Workqueue: pm genpd_power_off_work_fn
+> pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : regmap_unlock_spinlock+0x18/0x30
+> lr : regmap_read+0x60/0x88
+> sp : ffff800081123c00
+> x29: ffff800081123c00 x28: ffff2fa4c62cad80 x27: 0000000000000000
+> x26: ffffd74e6e660eb8 x25: ffff2fa4c62cae00 x24: 0000000000000040
+> x23: ffffd74e6d2f3ab8 x22: 0000000000000001 x21: ffff800081123c74
+> x20: 0000000000000000 x19: ffff2fa4c0412000 x18: 0000000000000000
+> x17: 77202c31203d2065 x16: 6c6469203a72656c x15: 6c6f72746e6f632d
+> x14: 7265776f703a6e6f x13: 2063766568206e69 x12: 616d6f64202c3431
+> x11: 347830206f742030 x10: 3430303034783020 x9 : ffffd74e6c7369e0
+> x8 : 3030316666206e69 x7 : 205d383738353733 x6 : 332e31202020205b
+> x5 : ffffd74e6c73fc88 x4 : ffffd74e6c73fcd4 x3 : ffffd74e6c740b40
+> x2 : ffff800080015484 x1 : 0000000000000000 x0 : ffff2fa4c0412000
+> Call trace:
+> regmap_unlock_spinlock+0x18/0x30
+> rockchip_pmu_set_idle_request+0xac/0x2c0
+> rockchip_pd_power+0x144/0x5f8
+> rockchip_pd_power_off+0x1c/0x30
+> _genpd_power_off+0x9c/0x180
+> genpd_power_off.part.0.isra.0+0x130/0x2a8
+> genpd_power_off_work_fn+0x6c/0x98
+> process_one_work+0x170/0x3f0
+> worker_thread+0x290/0x4a8
+> kthread+0xec/0xf8
+> ret_from_fork+0x10/0x20
+> rockchip-pm-domain ff100000.syscon:power-controller: failed to get ack 
+> on
+> domain 'hevc', val=0x88220
 > 
-> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-> 
+> Fixes: 52e02d377a72 ("arm64: dts: rockchip: add core dtsi file for 
+> RK3328 SoCs")
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+
+While I was unable to formally verify this clock assignment,
+i.e. by using the RK3328 TRM or the downstream kernel source
+from Rockchip, it makes perfect sense to me.  Thanks for the
+patch, and please feel free to include:
+
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+
 > ---
-> Xiangxu Yin (2):
->       arm64: dts: qcom: Add DisplayPort support for QCS615
->       arm64: dts: qcom: Enable DisplayPort on QCS615 RIDE platform
 > 
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts |  30 +++++++++
->  arch/arm64/boot/dts/qcom/qcs615.dtsi     | 107 ++++++++++++++++++++++++++++++-
->  2 files changed, 135 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 68586ffc0ad47448d0c00a72ba61db66b127c23a
-> change-id: 20241210-add-displayport-support-to-qcs615-devicetree-1575aa4e299d
+>  arch/arm64/boot/dts/rockchip/rk3328.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Best regards,
-> -- 
-> xiangxuy <quic_xiangxuy@quicinc.com>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+> index 0597de415fe0..7d992c3c01ce 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+> @@ -333,6 +333,7 @@ power: power-controller {
 > 
-
--- 
-With best wishes
-Dmitry
+>  			power-domain@RK3328_PD_HEVC {
+>  				reg = <RK3328_PD_HEVC>;
+> +				clocks = <&cru SCLK_VENC_CORE>;
+>  				#power-domain-cells = <0>;
+>  			};
+>  			power-domain@RK3328_PD_VIDEO {
 
