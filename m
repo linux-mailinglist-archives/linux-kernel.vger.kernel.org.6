@@ -1,164 +1,246 @@
-Return-Path: <linux-kernel+bounces-439741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013A89EB369
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:33:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140989EB36A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2385518842AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4F516304B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC901C07DB;
-	Tue, 10 Dec 2024 14:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8B31AA1F2;
+	Tue, 10 Dec 2024 14:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DYWp09p0"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dtkanh4/"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482561C07DA
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F3F19D082
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841114; cv=none; b=Gqhaa4ZKEdYFaxxxEp4ZfJjUimv0jtbEB67oT/pQsqVqaoKONPfGcS3D5/EArIbOqs1xyBdLwFVcmnigKtNSPaiIw7R/ksjjRSqeip54sC/CasD/ED+o/uRO+63pGAO1RUOLARrVvxd4jmJ1KfJTEhDl9aTcTkT73IPlqS73cuk=
+	t=1733841257; cv=none; b=V+5seSIaWZhFIzEMqSRICwz/4r7C7Yumbm83/7K9Ed+Y2EXM2HORlRSZ2BnSkQnvCzVp76t2v3qLBmKepkt6GSpEWfYme3fcby/ykZXj+RjCNJ/Io8UUe7Z+GqumFEEfs7EKwhTtL2bCjvHKsMnFk3yF2DFMOuHaaGILk9skaB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841114; c=relaxed/simple;
-	bh=RPAX22n2S6+tLLnaPHMOwC8ALJtiHJFwY5JY+BrKUCk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gc7DsiVGfci9a9xQcbNOygnHaJtScJCOVZJPNc7bZJmEIOfkDH1tQmdi7wdF46bvY8g5MIg1KgdtTjYGfO7cUk/4A+6YAqQ1rSLftHDQev65Z2kiskA0XEtDPkz6tzE5GYuvrssbpiTlUJH3/TdPr9EKhRBZvDGVTMdx6qE8E1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DYWp09p0; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7fcd2430636so4145727a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:31:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733841112; x=1734445912; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ElcxclfcYlOMSELtXDxg5j/9v6WDvHeMeZCbap56uk=;
-        b=DYWp09p0yf0O88y2YrfUhMV9BiPUu5Ic8QPqjMkuVWsqxQv2nPfZEk+n8DIZNcV5J2
-         MiRMtW9UaZ0VKo7s72kyyHNmxX9J44agad5VS4rGznV+IWaERNk3YZplG5GYlNpnNtrY
-         UWEjtVn8yycNuskyb/3Vr7wqF0x6PPJ4Yse/l2IgHrI+DDHRQ6L/tPqcpi88oSHXR0kJ
-         DNVrdFvAH5Vv2SR9G3a/6VVTGcbXaOJH4h3f1c1CDhSU4CnVwcU0j8UO7bItJB6lRiaB
-         VH6+jmOxNSJ5ignxSzDUAMDdturZ7nq+XeU8R5m4W1crwZ9g2w3p/LFxxLfaP2MjyZhI
-         p39w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733841112; x=1734445912;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ElcxclfcYlOMSELtXDxg5j/9v6WDvHeMeZCbap56uk=;
-        b=eYiIxx7+10muvjrLB4MReOG/vguKPHDB8VRDw6Vytjy7NxSlEpOAgywZ3WGuYGgccy
-         IDhE+1BJqb6kGn8dSn25WcOz7qrRU6ixJs7zr/excOy0J2OM/Li53EGzs0ZVmBzuxF+N
-         ZwOL0dPVvPC/K7R0ibRaOuWZxAkI1G1ofRoR1idcl4NV9f0YnoyoV2B4pFG+GcBlqEn7
-         +widU4bNJWlm7iGHHGFkoRFDCi+/YATaIf0Nwe8WUXfHJfy3gNPGjiK4HB+JgF8Ildu8
-         707wR2J6ajRXnT+7VbQ5y+UPfqBM/2xnUclEIJdcxbImtOEqAt4HN9QMtLecEeKTS6sa
-         NMZA==
-X-Gm-Message-State: AOJu0Yz8+WYakO0U5Yzf533J+0OnkXKh2S9nwD/4Ty+L4ifpJcSXBtSy
-	L6y/w5iKIH/871ULlvTzBu5Ut/dqeJKu6D80spcuTJ9pRTK7FygTE3ym4tsf4/VWMSEqDx7ZtKD
-	s+lHUgjM6YQ==
-X-Google-Smtp-Source: AGHT+IEpOTuT8NMAUNbej1hpf+sDkoTSGLcFtU+9aZr0RoEarmp1wDzt1YFH6LiLGII43yjvL6beWvbavDLMAg==
-X-Received: from pgbfe10.prod.google.com ([2002:a05:6a02:288a:b0:7fd:460b:daa3])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:7895:b0:1e0:cbcf:8917 with SMTP id adf61e73a8af0-1e1b1ac445amr7412686637.21.1733841112554;
- Tue, 10 Dec 2024 06:31:52 -0800 (PST)
-Date: Tue, 10 Dec 2024 14:31:05 +0000
-In-Reply-To: <20241210143114.661252-1-cmllamas@google.com>
+	s=arc-20240116; t=1733841257; c=relaxed/simple;
+	bh=ku8Tr3vO4h1PCsHD6TJ0Op/SiB/vy8EBsbOZHcdX7I8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dCBXi5k0h2loDChSsziUpzmbdvkaL6ZPzweA+bMXJk9LANSScJLzhluIQjBYicfYkMgWvKuB0Geqfvy8QwPNxem+ObvokQgu+awgboP0/lXoRwtzZrjUpYm5TfZpex8IOoZe4DVZApc97YfvbOTGJc6BHF/i6EZxWzrdJNUaJR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dtkanh4/; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <23536ee9-742d-4867-825c-290d6778c4a6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733841252;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LuTO/DqCv1DN+rgrhzj9hJhz/lVP64ZbBRgPZiZms58=;
+	b=dtkanh4/xntToCKu29lrgUvUupEhAA2xt9rGx4hlewrR2OTDepARCuSTYoPvVOILT/4ZW1
+	Bhflniy/AOjQU8foB8hRxCETQ0dV9W5e5gxSorrVgaeZT8CQe6vCTfP7+IDKHTWCSF+8OT
+	fA2dXscaFj1TcabV4rpFfiZYagEPSc0=
+Date: Tue, 10 Dec 2024 15:34:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241210143114.661252-1-cmllamas@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241210143114.661252-10-cmllamas@google.com>
-Subject: [PATCH v7 9/9] binder: use per-vma lock in page reclaiming
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Subject: Re: [PATCH] RDMA/siw: Remove direct link to net_device
+To: Bernard Metzler <bmt@zurich.ibm.com>, linux-rdma@vger.kernel.org
+Cc: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ zyjzyj2000@gmail.com, syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+References: <20241210130351.406603-1-bmt@zurich.ibm.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20241210130351.406603-1-bmt@zurich.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Use per-vma locking in the shrinker's callback when reclaiming pages,
-similar to the page installation logic. This minimizes contention with
-unrelated vmas improving performance. The mmap_sem is still acquired if
-the per-vma lock cannot be obtained.
+On 10.12.24 14:03, Bernard Metzler wrote:
+> Maintain needed network interface information locally, but
+> remove a direct link to net_device which can become stale.
+> Accessing a stale net_device link was causing a 'KASAN:
+> slab-use-after-free' exception during siw_query_port()
+> call.
+> 
+> Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+> Reported-by: syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=4b87489410b4efd181bf
 
-Cc: Suren Baghdasaryan <surenb@google.com>
-Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/android/binder_alloc.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+Thanks, Bernard.
+The similar problem also exists in rxe.
+The link is https://syzkaller.appspot.com/bug?extid=4b87489410b4efd181bf
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index b2b97ff19ba2..fcfaf1b899c8 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -1143,19 +1143,28 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 	struct vm_area_struct *vma;
- 	struct page *page_to_free;
- 	unsigned long page_addr;
-+	int mm_locked = 0;
- 	size_t index;
- 
- 	if (!mmget_not_zero(mm))
- 		goto err_mmget;
--	if (!mmap_read_trylock(mm))
--		goto err_mmap_read_lock_failed;
--	if (!mutex_trylock(&alloc->mutex))
--		goto err_get_alloc_mutex_failed;
- 
- 	index = mdata->page_index;
- 	page_addr = alloc->vm_start + index * PAGE_SIZE;
- 
--	vma = vma_lookup(mm, page_addr);
-+	/* attempt per-vma lock first */
-+	vma = lock_vma_under_rcu(mm, page_addr);
-+	if (!vma) {
-+		/* fall back to mmap_lock */
-+		if (!mmap_read_trylock(mm))
-+			goto err_mmap_read_lock_failed;
-+		mm_locked = 1;
-+		vma = vma_lookup(mm, page_addr);
-+	}
-+
-+	if (!mutex_trylock(&alloc->mutex))
-+		goto err_get_alloc_mutex_failed;
-+
- 	/*
- 	 * Since a binder_alloc can only be mapped once, we ensure
- 	 * the vma corresponds to this mapping by checking whether
-@@ -1183,7 +1192,10 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 	}
- 
- 	mutex_unlock(&alloc->mutex);
--	mmap_read_unlock(mm);
-+	if (mm_locked)
-+		mmap_read_unlock(mm);
-+	else
-+		vma_end_read(vma);
- 	mmput_async(mm);
- 	binder_free_page(page_to_free);
- 
-@@ -1192,7 +1204,10 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- err_invalid_vma:
- 	mutex_unlock(&alloc->mutex);
- err_get_alloc_mutex_failed:
--	mmap_read_unlock(mm);
-+	if (mm_locked)
-+		mmap_read_unlock(mm);
-+	else
-+		vma_end_read(vma);
- err_mmap_read_lock_failed:
- 	mmput_async(mm);
- err_mmget:
--- 
-2.47.0.338.g60cca15819-goog
+And I delved into this problem, it seems that the wq event was queued in 
+ib_wq for a long time. Then before the event was executed, the netdev 
+was freed. Then this problem occured.
+
+I hope that this commit can fix this problem.^_^
+
+Best Regards,
+Zhu Yanjun
+
+> Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+> ---
+>   drivers/infiniband/sw/siw/siw.h       | 11 +++++++----
+>   drivers/infiniband/sw/siw/siw_cm.c    |  4 ++--
+>   drivers/infiniband/sw/siw/siw_main.c  | 18 ++++++++++++------
+>   drivers/infiniband/sw/siw/siw_verbs.c | 11 ++++++-----
+>   4 files changed, 27 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/infiniband/sw/siw/siw.h b/drivers/infiniband/sw/siw/siw.h
+> index 86d4d6a2170e..c8f75527b513 100644
+> --- a/drivers/infiniband/sw/siw/siw.h
+> +++ b/drivers/infiniband/sw/siw/siw.h
+> @@ -69,16 +69,19 @@ struct siw_pd {
+>   
+>   struct siw_device {
+>   	struct ib_device base_dev;
+> -	struct net_device *netdev;
+>   	struct siw_dev_cap attrs;
+>   
+>   	u32 vendor_part_id;
+> +	struct {
+> +		int ifindex;
+> +		enum ib_port_state state;
+> +		enum ib_mtu mtu;
+> +		enum ib_mtu max_mtu;
+> +	} ifinfo;
+> +
+>   	int numa_node;
+>   	char raw_gid[ETH_ALEN];
+>   
+> -	/* physical port state (only one port per device) */
+> -	enum ib_port_state state;
+> -
+>   	spinlock_t lock;
+>   
+>   	struct xarray qp_xa;
+> diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw/siw_cm.c
+> index 86323918a570..451b50d92f7f 100644
+> --- a/drivers/infiniband/sw/siw/siw_cm.c
+> +++ b/drivers/infiniband/sw/siw/siw_cm.c
+> @@ -1780,7 +1780,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   
+>   		/* For wildcard addr, limit binding to current device only */
+>   		if (ipv4_is_zeronet(laddr->sin_addr.s_addr))
+> -			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
+> +			s->sk->sk_bound_dev_if = sdev->ifinfo.ifindex;
+>   
+>   		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+>   				  sizeof(struct sockaddr_in));
+> @@ -1798,7 +1798,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   
+>   		/* For wildcard addr, limit binding to current device only */
+>   		if (ipv6_addr_any(&laddr->sin6_addr))
+> -			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
+> +			s->sk->sk_bound_dev_if = sdev->ifinfo.ifindex;
+>   
+>   		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+>   				  sizeof(struct sockaddr_in6));
+> diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+> index 17abef48abcd..4db10bdfb515 100644
+> --- a/drivers/infiniband/sw/siw/siw_main.c
+> +++ b/drivers/infiniband/sw/siw/siw_main.c
+> @@ -287,7 +287,6 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+>   		return NULL;
+>   
+>   	base_dev = &sdev->base_dev;
+> -	sdev->netdev = netdev;
+>   
+>   	if (netdev->addr_len) {
+>   		memcpy(sdev->raw_gid, netdev->dev_addr,
+> @@ -354,6 +353,10 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+>   	atomic_set(&sdev->num_mr, 0);
+>   	atomic_set(&sdev->num_pd, 0);
+>   
+> +	sdev->ifinfo.max_mtu = ib_mtu_int_to_enum(netdev->max_mtu);
+> +	sdev->ifinfo.mtu = ib_mtu_int_to_enum(READ_ONCE(netdev->mtu));
+> +	sdev->ifinfo.ifindex = netdev->ifindex;
+> +
+>   	sdev->numa_node = dev_to_node(&netdev->dev);
+>   	spin_lock_init(&sdev->lock);
+>   
+> @@ -381,12 +384,12 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+>   
+>   	switch (event) {
+>   	case NETDEV_UP:
+> -		sdev->state = IB_PORT_ACTIVE;
+> +		sdev->ifinfo.state = IB_PORT_ACTIVE;
+>   		siw_port_event(sdev, 1, IB_EVENT_PORT_ACTIVE);
+>   		break;
+>   
+>   	case NETDEV_DOWN:
+> -		sdev->state = IB_PORT_DOWN;
+> +		sdev->ifinfo.state = IB_PORT_DOWN;
+>   		siw_port_event(sdev, 1, IB_EVENT_PORT_ERR);
+>   		break;
+>   
+> @@ -406,10 +409,13 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+>   	case NETDEV_CHANGEADDR:
+>   		siw_port_event(sdev, 1, IB_EVENT_LID_CHANGE);
+>   		break;
+> +
+> +	case NETDEV_CHANGEMTU:
+> +		sdev->ifinfo.mtu = ib_mtu_int_to_enum(READ_ONCE(netdev->mtu));
+> +		break;
+>   	/*
+>   	 * Todo: Below netdev events are currently not handled.
+>   	 */
+> -	case NETDEV_CHANGEMTU:
+>   	case NETDEV_CHANGE:
+>   		break;
+>   
+> @@ -444,9 +450,9 @@ static int siw_newlink(const char *basedev_name, struct net_device *netdev)
+>   		dev_dbg(&netdev->dev, "siw: new device\n");
+>   
+>   		if (netif_running(netdev) && netif_carrier_ok(netdev))
+> -			sdev->state = IB_PORT_ACTIVE;
+> +			sdev->ifinfo.state = IB_PORT_ACTIVE;
+>   		else
+> -			sdev->state = IB_PORT_DOWN;
+> +			sdev->ifinfo.state = IB_PORT_DOWN;
+>   
+>   		ib_mark_name_assigned_by_user(&sdev->base_dev);
+>   		rv = siw_device_register(sdev, basedev_name);
+> diff --git a/drivers/infiniband/sw/siw/siw_verbs.c b/drivers/infiniband/sw/siw/siw_verbs.c
+> index 986666c19378..3ab9c5170637 100644
+> --- a/drivers/infiniband/sw/siw/siw_verbs.c
+> +++ b/drivers/infiniband/sw/siw/siw_verbs.c
+> @@ -178,14 +178,15 @@ int siw_query_port(struct ib_device *base_dev, u32 port,
+>   
+>   	rv = ib_get_eth_speed(base_dev, port, &attr->active_speed,
+>   			 &attr->active_width);
+> +
+>   	attr->gid_tbl_len = 1;
+>   	attr->max_msg_sz = -1;
+> -	attr->max_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> -	attr->active_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> -	attr->phys_state = sdev->state == IB_PORT_ACTIVE ?
+> +	attr->max_mtu = sdev->ifinfo.max_mtu;
+> +	attr->active_mtu = sdev->ifinfo.mtu;
+> +	attr->phys_state = sdev->ifinfo.state == IB_PORT_ACTIVE ?
+>   		IB_PORT_PHYS_STATE_LINK_UP : IB_PORT_PHYS_STATE_DISABLED;
+>   	attr->port_cap_flags = IB_PORT_CM_SUP | IB_PORT_DEVICE_MGMT_SUP;
+> -	attr->state = sdev->state;
+> +	attr->state = sdev->ifinfo.state;
+>   	/*
+>   	 * All zero
+>   	 *
+> @@ -519,7 +520,7 @@ int siw_query_qp(struct ib_qp *base_qp, struct ib_qp_attr *qp_attr,
+>   	qp_attr->cap.max_send_sge = qp->attrs.sq_max_sges;
+>   	qp_attr->cap.max_recv_wr = qp->attrs.rq_size;
+>   	qp_attr->cap.max_recv_sge = qp->attrs.rq_max_sges;
+> -	qp_attr->path_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> +	qp_attr->path_mtu = sdev->ifinfo.mtu;
+>   	qp_attr->max_rd_atomic = qp->attrs.irq_size;
+>   	qp_attr->max_dest_rd_atomic = qp->attrs.orq_size;
+>   
 
 
