@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-439595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F50B9EB183
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:01:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41219EB17E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:01:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81FE6188CE48
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:01:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54C8287EFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8871AAE1B;
-	Tue, 10 Dec 2024 13:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312361AC43E;
+	Tue, 10 Dec 2024 13:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVMWfMmL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXPI5Hm+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159251AAA38
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C341AB51B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733835638; cv=none; b=endrR3z1GkT69z4Ruyiek70j3Pdq9fRDIBGAol/AYpXq/s6kPjix1KkQHE91LEjiJYvAXPCyPVYihKLPIWYojhXKvu8hA8GqYuZdfGMTtH1f1OM1kpSGUnpxINqbls6/H1l4OsdW+4y6Q45Xy2yzwlgY+3FijNcipDbXUvK+6ng=
+	t=1733835639; cv=none; b=ewPP1ZAyaLdSrCzg3Q8Ra6T+PYy+nXIfj9SsKPK2Lw6SLVp9Tc+9KfhHtQM5vyqj/wf2fPmN0/RhdsnafN8A/NIC10W96x17ylFRwbeaLr3OcBDyRJ+I5RurOqTadQUZM4GwK+IUKL/AgFcnlutZvySujC2U5gPb4UnIt5GfH34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733835638; c=relaxed/simple;
-	bh=ISBoTgWYIESA6GpXTxdGqDkx/HlisCHfZM19fTKF7rg=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=I2GhmMxhdCnAVX8gf8af+z7etpMyPUo7icWxXJhM51i0Gs8uQDsXpnjr5qYn9HKFOHYQaIgYvDrKtvoIIcCuctCkmLRWFV6lqP4Xlmp3e5ommAdp1fTbRwOz9YOWCME/fprRPNrjkAcf6IVrmOA6VcJgudUbtSAaR1TXzoKgBoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVMWfMmL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F1D7C4CED6;
-	Tue, 10 Dec 2024 13:00:36 +0000 (UTC)
+	s=arc-20240116; t=1733835639; c=relaxed/simple;
+	bh=ZafKGw9uvt1OMu6pBOh3V5mAtvLn7UKw27wgRS5EpeQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DE/diL/IWyn8OiUbEXRq1hdUka6aXrH1Uk1IjifRP6u5nVrPvGALQ4EgHZ3bXNBAb3V4wWKp3Ra/WVmbRWeP1Jcout+r2iU5c1iAORwPNXN3figct6nr7+Z8y21E4qRViFib4ZxipQZFoFYo9b1TshNzdLcBULPX4KwEarg4XB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXPI5Hm+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4EA9C4AF09;
+	Tue, 10 Dec 2024 13:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733835637;
-	bh=ISBoTgWYIESA6GpXTxdGqDkx/HlisCHfZM19fTKF7rg=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=GVMWfMmL4PHJ19DrINWTelqYgm/lNwYxpLsrt5eRT5SCTBdlRZpEDo//MogMgLgrW
-	 H7EGshwWHQkNFZAWWIgkW6lfIFuFjAsTRdXzTwaCPs0r5M83F3WWkPw8jAqob3fcpZ
-	 FUAnVDtnYxbb8kCUnu28svGeefq/Tv3kAjV/rjMzOsjgQwjqQX89T335uphHOIbm+U
-	 u2ITQi9l5JC5Va9AMMHA02FZNev2GZseh3V8sbrYF0VYQzJizdnG7bcdhAFgf+j/8B
-	 ZorvtwdTB88X2FhYLJWjmQvA/IXiIcVXnbaO3+3Bk2LzEEdnwxcoo4MgKZegzg8W2Q
-	 x9MThWhjcLdOg==
+	s=k20201202; t=1733835639;
+	bh=ZafKGw9uvt1OMu6pBOh3V5mAtvLn7UKw27wgRS5EpeQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=cXPI5Hm+VKtjdBGKXGv1Qz1jtm+6WVK4bC8hoLtgRgFuDMiITG0zRz3ZbWSrskZq1
+	 FK+c0xOJR2iXqOMdMH0IMGNMK2fLfeaJZTBAGAaIIl88FFRtSBqhrCAfxfgdcLm1WZ
+	 bg+1zYs6B7Mbebhe/r0pODz7uOIpnWrH7m0Z6FuPJxPUFDmoFgQAlQF1cwKImfU4Cd
+	 Qx9bWXr4R88YpPycnSCxFc6gYE939tSNwhc27qIA6WA6h13leoixRNyczYGJbrnfuB
+	 6hGP4cdO2V4YRd32caea79NjZAmqnzFDL4nibtacNqvFl61Gp+0TAnGvS8OjCkBWgz
+	 eabgjjl7JHo9w==
 From: Mark Brown <broonie@kernel.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
  linux-kernel@vger.kernel.org, Philippe Simons <simons.philippe@gmail.com>
-In-Reply-To: <20241206123751.981977-1-simons.philippe@gmail.com>
-References: <20241206123751.981977-1-simons.philippe@gmail.com>
-Subject: Re: [PATCH] regulator: axp20x: AXP717: set ramp_delay
-Message-Id: <173383563638.33920.11775072075614175705.b4-ty@kernel.org>
-Date: Tue, 10 Dec 2024 13:00:36 +0000
+Cc: Hironori KIKUCHI <kikuchan98@gmail.com>, 
+ Chris Morgan <macromorgan@hotmail.com>
+In-Reply-To: <20241208124308.5630-1-simons.philippe@gmail.com>
+References: <20241208124308.5630-1-simons.philippe@gmail.com>
+Subject: Re: [PATCH v2] regulator: axp20x: AXP717: set ramp_delay
+Message-Id: <173383563766.33920.515022843579626283.b4-ty@kernel.org>
+Date: Tue, 10 Dec 2024 13:00:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,13 +60,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Fri, 06 Dec 2024 13:37:51 +0100, Philippe Simons wrote:
+On Sun, 08 Dec 2024 13:43:08 +0100, Philippe Simons wrote:
 > AXP717 datasheet says that regulator ramp delay is 15.625 us/step,
 > which is 10mV in our case.
 > 
 > Add a AXP_DESC_RANGES_DELAY macro and update AXP_DESC_RANGES macro to
 > expand to AXP_DESC_RANGES_DELAY with ramp_delay = 0
 > 
+> For DCDC4, steps is 100mv
 > 
 > [...]
 
