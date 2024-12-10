@@ -1,105 +1,87 @@
-Return-Path: <linux-kernel+bounces-439728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC7AF9EB344
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:29:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901119EB34A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:29:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12243280ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CC41887BE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8A61B041D;
-	Tue, 10 Dec 2024 14:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6301AC450;
+	Tue, 10 Dec 2024 14:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NS/BKt2z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSilVU6e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0521AC450;
-	Tue, 10 Dec 2024 14:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B6C1AAA13
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733840934; cv=none; b=frf/JwLOLmNFhmRkuhvMzMrS5Zu3R0UZEH2vSkf24Ki32JYIafnWr/Diq84mQvL76sowHhEPHvUPa44yhtqkx6WB8QoCEw1v1avsr04Xn9N+WbjRC/ZVpnQgS2mHFZQHSV1DFZtUhQQvekMq3fCcoTQ5AbfjQh8bIpYTM9J42FU=
+	t=1733840969; cv=none; b=MDUqcc/9KOMuebiPm9EcxUpy5vz4NMOiE2xoOwI3asroleNhjgRc5UWr4zwp7wpYO9fW/X65nhqQDZqhv6W8uw3nDDKtGZvOgvcMwRdII5n/PFsubXaW5YVciaQexUqLRSNikywOZjGqpksKMazqMEQLI0w7B4u1VAeS0Iwms8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733840934; c=relaxed/simple;
-	bh=DWw+OzWlI6/cQMJTTEn2TJpQIXKtWjVxENKvKMYJO3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nes6Bzmr169vo31g2vYaFtm2p1X+5MqS6j1OvD/Op6IkDoqgpBC/tdWk7V5olMewIFSK2hZzN5iLLWF2bs8cZTDKEr+24/ICkkLg+/4iHN4r/9Ok58wUkB1MR/BIVgnh/CWuk28CS3NO2yRV7+7oIkHZoYjnlA0i87gLyK4Yn5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NS/BKt2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B7FC4CEDE;
-	Tue, 10 Dec 2024 14:28:48 +0000 (UTC)
+	s=arc-20240116; t=1733840969; c=relaxed/simple;
+	bh=VcHPTYXG7cR9wsKgG47kMNZjM7W7mq+WawPJlZb6SXU=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=dG4OvH3Aeu5K+Bj/UYKcqJDK8ail/XSp9uOarr7TAFYArBsATi1N76VGA0j6JYlx31HD9Zez7jMGvyzPIsrxjgj98MsQRVjS7iSE+KX/qIc6S/KCyqPP7DDBbuXdhpE+zBkoyV2ibuEZR+8YECQAOcxY1vitFf5XlURtzh31Nco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSilVU6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7466CC4CED6;
+	Tue, 10 Dec 2024 14:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733840933;
-	bh=DWw+OzWlI6/cQMJTTEn2TJpQIXKtWjVxENKvKMYJO3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NS/BKt2z0DwgNBbYwpyNnXmyHwVVmU8+1f13iFzBxYW6gJ7qcm0WIZMM/g01BACtw
-	 AxrbeLL+PuvcI/Xp0nIQzpwAeO1vTbUy0VC2lyt5gkC3lTqMr/Q6fp3zI/vjnjhBm2
-	 zZxH5y2JU6Uk9sFUbColjCdhXzXCcS/BL8+4e8n2WlV9Eu15l6p6WbCPBrsQWKPgLv
-	 r2N6HKOUnNK6wfRLIezXBkFHefI2+ZYEmndzY6iHec621ikP3HgdJJD5dRtagC+wDE
-	 9JNsodmXGrjSNFHtK6Qjfci0Tj+jBzL/DhZOSi9mMdTajiXnHIa61p69/5m8Mp+JNl
-	 G3+Trw/6emUmg==
-Date: Tue, 10 Dec 2024 15:28:46 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
-	jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v5 3/5] bpf: Add bpf_fget_task() kfunc
-Message-ID: <20241210-elastisch-flamingo-9271dc82c3a0@brauner>
-References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080CD2C2C0EFC01082EC582993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+	s=k20201202; t=1733840968;
+	bh=VcHPTYXG7cR9wsKgG47kMNZjM7W7mq+WawPJlZb6SXU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VSilVU6e4T5/8cehmJGJLwsARHSYuFyQVgFie/ZE26PKdw0wjTvtUyUxNn7v+Vs7Q
+	 udOAJogo5+tbqAL31ZS7T1bDantx+se4snA3J6Y7c41WMCwl07xmLHJgGjou+AhVTt
+	 pCxxl3yn/4vJ60K0ATNjqMnoS2hg+TLWllRTVpEqMNWmeneWqeSKF7Q+pLJ0q6erY0
+	 gpjkFewCSsAB/TyJOfUHcNlyUO2dwDC7O9aZ9qqLskQMo05eQ0BfPOOvPw3DmfHKeq
+	 ax+4dKZPeID/rxViHvvp7Tf9GpqS/qmupZzzhCIVk97vOrsevIAtFDvwKUCi6USvua
+	 XCEavyhDGfOwQ==
+Date: Tue, 10 Dec 2024 23:29:20 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes: Fixes for v6.13-rc1
+Message-Id: <20241210232920.d10face123275fef39ecfb6b@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB5080CD2C2C0EFC01082EC582993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 10, 2024 at 02:03:52PM +0000, Juntong Deng wrote:
-> This patch adds bpf_fget_task() kfunc.
-> 
-> bpf_fget_task() is used to get a pointer to the struct file
-> corresponding to the task file descriptor. Note that this function
-> acquires a reference to struct file.
-> 
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> ---
->  fs/bpf_fs_kfuncs.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> index 3fe9f59ef867..19a9d45c47f9 100644
-> --- a/fs/bpf_fs_kfuncs.c
-> +++ b/fs/bpf_fs_kfuncs.c
-> @@ -152,6 +152,26 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
->  	return bpf_get_dentry_xattr(dentry, name__str, value_p);
->  }
->  
-> +/**
-> + * bpf_fget_task() - Get a pointer to the struct file corresponding to
-> + * the task file descriptor
-> + *
-> + * Note that this function acquires a reference to struct file.
-> + *
-> + * @task: the specified struct task_struct
-> + * @fd: the file descriptor
-> + *
-> + * @returns the corresponding struct file pointer if found,
-> + * otherwise returns NULL
-> + */
-> +__bpf_kfunc struct file *bpf_fget_task(struct task_struct *task, unsigned int fd)
-> +{
-> +	struct file *file;
-> +
-> +	file = fget_task(task, fd);
-> +	return file;
+Hi Linus,
 
-Why the local variable?
+Probes fixes for v6.13-rc1:
+
+- eprobes: Fix to release eprobe when failed to add dyn_event.
+  This unregisters event call and release eprobe when it fails to add
+  a dynamic event. Found in cleaning up.
+
+
+Please pull the latest probes-fixes-v6.13-rc1 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-fixes-v6.13-rc1
+
+Tag SHA1: 6c325e49ea23bdadf663c85fa87d11294a009e35
+Head SHA1: 494b332064c0ce2f7392fa92632bc50191c1b517
+
+
+Masami Hiramatsu (Google) (1):
+      tracing/eprobe: Fix to release eprobe when failed to add dyn_event
+
+----
+ kernel/trace/trace_eprobe.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
