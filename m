@@ -1,81 +1,73 @@
-Return-Path: <linux-kernel+bounces-439551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7786F9EB0E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:35:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC52B9EB0E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:35:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83490188242E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA64F16A676
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020CF1A3AB8;
-	Tue, 10 Dec 2024 12:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CAC1A2C11;
+	Tue, 10 Dec 2024 12:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gDXlb1FB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aHE6lsUg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02071CD15;
-	Tue, 10 Dec 2024 12:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2587523DE98
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733834097; cv=none; b=PXxJtjIEjmZM9j6mZcQUN7EOdxiI7L2K/JOpUciOrqW3AjdOtcDh9V7gKCWgJoAflXyXzr3L7CnGFFOpYZpZ+zvUw37aRZxaKviXgAaJOBGRk2xMyERR0KGttQAVqYJaDPxdaIEXFZiyfzTekpdXvQbJLDU+2S9We0uDHqP0qeU=
+	t=1733834139; cv=none; b=BqVf8dZh0YUPSFCDAQWfpwAH4U5/JaSR+i1jL6ORtwD+GzRG1sHNIOr6p7zY9aObF58r8ZkpyOZhk60RBibeX0BVzSDTabP5x7uGdJqMA/g3DhxNAY6oqwNEJLtaLF5z3klGPZIsUKN3qzs8G0HGFRInL/xkrlwnTTySxK2TavU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733834097; c=relaxed/simple;
-	bh=QDxIbe/7ztNYW4wJmfh7sjGNiUwud0sWdh3hf47L5x8=;
+	s=arc-20240116; t=1733834139; c=relaxed/simple;
+	bh=ncWhNdT23h4BZB7r2dCD0sWFbOJgD9ZDMZB6zOQ0l34=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bX+hx77m+TffEZHjkgc/W7TzcavTtMDUfLey0fTztYPpCs7oxvl3HkzA+6jikRugus41Rtt5LzaDwlVMB95yrxWtHviZNMsjBkW+4+22uzn2dqf9R2yx13mx0n/2VI4UNOneTScLPUPY/Tg4LTxr5s3KEkFuJeBU5kiUP3vniQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gDXlb1FB; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733834096; x=1765370096;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QDxIbe/7ztNYW4wJmfh7sjGNiUwud0sWdh3hf47L5x8=;
-  b=gDXlb1FBhLJYjq9bRhImAlClclV/MkqZobM/JHfvfV8nqd2YR6drsONX
-   biNgsDDXXSkb30fhA3qFUR8yW8f5521Q5ZEgdGilOuxeGKMBX3Wh1Mhgg
-   WUJhIqKcgD9BpotHqfHnH0fFo0Bbz/wDgNSWH0+YsutdLIbGwZyMiNxag
-   sN5lZmW0+BWQlBiBBbWJA2nh0IewAQUrvqU+IBwnMWPRjG4vjHWFMfmMw
-   vliNzbs0d4sVn8HhU2ip27mc6SHDvKuRn+PbDqIQeNCc2IIywmLB0mZAB
-   V84RvM2I1L7h5sFWc8KRnr2yx9jQIsnwhyVrtRyXfCfsfC0At23h4fpFp
-   Q==;
-X-CSE-ConnectionGUID: rJh4tWy4Tpixr4Ux/P3udA==
-X-CSE-MsgGUID: /v8z0mqfTOmUAbsClr2Ssw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45572575"
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="45572575"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 04:34:55 -0800
-X-CSE-ConnectionGUID: SK8sVVKmTLan1LEA+PqOWA==
-X-CSE-MsgGUID: NdcWuoKYQg+LrgbQ+so+hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="132785209"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 04:34:53 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id C3BCD11F81D;
-	Tue, 10 Dec 2024 14:34:49 +0200 (EET)
-Date: Tue, 10 Dec 2024 12:34:49 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc: git@apitzsch.eu, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Vincent Knecht <vincent.knecht@mailoo.org>
-Subject: Re: [PATCH v3 07/12] media: i2c: imx214: Add vblank and hblank
- controls
-Message-ID: <Z1g1afPM1RRwD_EH@kekkonen.localdomain>
-References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
- <20241207-imx214-v3-7-ab60af7ee915@apitzsch.eu>
- <CAPybu_0Bdc03UrJNO42S1fBTvpuHUUExvkR1ont7VKdw2XBuKg@mail.gmail.com>
- <CAPybu_0Nk+p1rikH_t_zpEHx=KGnXfG+npr-XEnwtA4EnfJjuQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSf8YIecS4+rWgFKXHP2pE75RRxqD+Bx4HXngE8D9U6I/jvtcjSFCA4A4UTOAOXsWHy4Q8OlDDJ3iyIs9tXERTIcyfKgFERivLLAqfw0KDnE/vxmPIInz2t1V+fVrpwTdzcSYMavVn985HKKUwM6PRrgw8XRDgNnxMKQKMLQrhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aHE6lsUg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ncWhNdT23h4BZB7r2dCD0sWFbOJgD9ZDMZB6zOQ0l34=; b=aHE6lsUgVm45ornywatzVk6O4o
+	uNS9a1vhbakQ3wm8q+E20mktT38HG5iff44bClu/h1dRUeJOVDHu8U+AypsSxaG4aPttB6Tjx0QVc
+	TiZ+GfmTB2equN0GXN1avFN5OHW9fOW38hsqNyPn7DGIZzVZnkil0NWUQyfmxUVDr3xNBdXCMtTJm
+	opphwPBk9P4rZR29WVzUyGJofo4o1tkw2TT0Lfg3RV+RCFHVGTb9XnSbzfAoKf/YrXSLHfxmg2qDT
+	C+VNo+E9nnxP4gYQF/WE2jVWQbkHxEyrOJZ3yhZI334XWTVQCRDqVuRji+AYzCWU26sDcHZgtz7V/
+	EdazKacQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKzSP-00000009GaQ-2q5h;
+	Tue, 10 Dec 2024 12:35:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E5C54300402; Tue, 10 Dec 2024 13:35:16 +0100 (CET)
+Date: Tue, 10 Dec 2024 13:35:16 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Atharva Tiwari <evepolonium@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Peter Hilber <peter.hilber@opensynergy.com>,
+	"Christopher S. Hall" <christopher.s.hall@intel.com>,
+	Feng Tang <feng.tang@intel.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86 tsc: avoid system instability in hibernation
+Message-ID: <20241210123516.GP8562@noisy.programming.kicks-ass.net>
+References: <20241210062446.2413-1-evepolonium@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,24 +76,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPybu_0Nk+p1rikH_t_zpEHx=KGnXfG+npr-XEnwtA4EnfJjuQ@mail.gmail.com>
+In-Reply-To: <20241210062446.2413-1-evepolonium@gmail.com>
 
-On Sun, Dec 08, 2024 at 10:19:51PM +0100, Ricardo Ribalda Delgado wrote:
-> > > +               state = v4l2_subdev_get_locked_active_state(&imx214->sd);
-> >
-> > Sakari, I see that other drivers assume that the active is locked in
-> > set_ctrl. Is this correct?
-> 
-> imx214->sd.state_lock = imx214->ctrls.lock;
-> 
-> So I guess it is fine :)
+On Tue, Dec 10, 2024 at 11:54:18AM +0530, Atharva Tiwari wrote:
+> System instability are seen during resume from hibernation when system
+> is under heavy CPU load. This is due to the lack of update of sched
+> clock data, and the scheduler would then think that heavy CPU hog
+> tasks need more time in CPU, causing the system to freeze
+> during the unfreezing of tasks.
 
-Yes, it is.
-
-Please also run this on the set:
-
-$ ./scripts/checkpatch.pl --strict --max-line-length=80
-
--- 
-Sakari Ailus
+Please tell me more.. what crazy things are happening?
 
