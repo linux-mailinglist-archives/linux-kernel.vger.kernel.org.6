@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-440375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F919EBC59
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:58:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684009EBCA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:03:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DED35165463
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7021D1625FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D52240378;
-	Tue, 10 Dec 2024 21:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4A32397AE;
+	Tue, 10 Dec 2024 22:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jhQ6rsEh"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6274E23236A;
-	Tue, 10 Dec 2024 21:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q4SOEP0Y"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F80D2397B1;
+	Tue, 10 Dec 2024 22:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733867769; cv=none; b=Pp4WjV0l0HVO4YvckZNebDoLPRK7dc+mseUsk+2cg9QFINJONN74q7VPbZ6ScLdOIXvGi/ZW5R/o8W8JP+wma4cahLIWYXjtVP/JFvTCYdXm5exAfuMNCZKsOXYVFDq6lzQnA2ZhcDbfrZFemNmkiPdcLmpjKiVpwVfKt00BgOY=
+	t=1733868165; cv=none; b=G4lwQw8GS+PuCiH5F4GjjKYN/ISgtAp5mW6l8OGdDKenjRgLzP/UsCemQKd8K19PFr+mNuTnoRzmIb+OL0AVeWKWSAE72v8uZn+qsX6Phw9VLwgg5ydAhbwYi168Jt4x00B8FfiFfEtJ/gWRqGNSom1BAI+F2BDuPdJpMHS7n90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733867769; c=relaxed/simple;
-	bh=YYfsTx2rAnMr87VKqCAX8bpgiZpeQGkncIQMEpK07sc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bG6FWwKBSDV8zoYP4u9YI8TXVOU0XDTwEiTrfpqBzKftGJ3FJeDZKIFuPXcSoqpwnjL8WvyRbA25DEHlsBfH0bHRrhnauCO5oIgEJwc68wLX9bcv671hJHEAKvu/yFlWPEZo9zpSpfLNFzg/5keZrX5x2yCpHm5LplUN/zXkjWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jhQ6rsEh; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733867761;
-	bh=YYfsTx2rAnMr87VKqCAX8bpgiZpeQGkncIQMEpK07sc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jhQ6rsEhqm6JQD8SWTDPwBfkgM7UYsXdoFE+RzHh81VMZz729WYXBArTeCKRLWlfm
-	 Gi5//PzQKjLTAoPTUCzsjQ8zwCXMupdRdcrQCz7vU6HimDMqpcdjBEaNWNrh0rEyJs
-	 NRw4MAA2IMtEQ1SOcfLRWXkDb8lgVly2eCVwzKF0=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 10 Dec 2024 22:56:01 +0100
-Subject: [PATCH v2 14/14] power: supply: bq24257_charger: use dev_to_psy()
+	s=arc-20240116; t=1733868165; c=relaxed/simple;
+	bh=rtcpjXD/4KgBXkXpOwbxWNhqWuEIw5iVzq1KknY15jU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jqwdW1jRGxhIT8Phhyjp9XEmuFnDHpIasPI2UMZRaGLwN+ZslJ5MAj63stb+OaZQYZRqxH7pRxo+u9rS3llnetVHdZxjfu+bvDlc3anMdhWRSkqSu5OmKao73YeBeNNcXLJUGHM8ld1MxKsnkyYhxXcJnffAZBlThD4lXbKEzp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Q4SOEP0Y; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5C8092047227;
+	Tue, 10 Dec 2024 14:02:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5C8092047227
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1733868156;
+	bh=3tkOAM1zqG9JeFOtral7Lfs9u46U15/2RBF6sWmMcg4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Q4SOEP0Y7h5zO78UBiHUhYnGicCTwnpmdGyeJ2NXra3aSgp4pliiNVajI48sltiC5
+	 krxOdne8IbeYxRwBBWcjRMbkm4dRwXWKZALmzr8Eqfc6Ado8XqXrVleqMCFQbV/jTu
+	 DEly4DyEWnbV/UU33Q7NVotbdGyJFxTE5SxdsOl8=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: [PATCH v3 00/19] Converge on using secs_to_jiffies()
+Date: Tue, 10 Dec 2024 22:02:31 +0000
+Message-Id: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,76 +50,172 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241210-power-supply-dev_to_psy-v2-14-9d8c9d24cfe4@weissschuh.net>
-References: <20241210-power-supply-dev_to_psy-v2-0-9d8c9d24cfe4@weissschuh.net>
-In-Reply-To: <20241210-power-supply-dev_to_psy-v2-0-9d8c9d24cfe4@weissschuh.net>
-To: Sebastian Reichel <sre@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Maximilian Luz <luzmaximilian@gmail.com>, 
- =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- platform-driver-x86@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAHe6WGcC/42NwQ6CMBAFf4X0bAlbQFJP/ofxAO1W1ijVFhoM4
+ d8tGONFE49vkjczMY+O0LNdMjGHgTzZLo58kzDV1t0JOem4mchEAQCCK9sFdJF7VJ73lp/JmGj
+ gWkoNGWwbDcDi/ebQ0LiqD8fXdngfYqH/wJZ8b91jzQdY6LtU/i4F4BkHWdda5YUsoNlfqBvG9
+ ErKWW9Nnyp7ZYs+iH+VIiolgGmqUpZYye/KeZ6fTjplmTIBAAA=
+X-Change-ID: 20241112-converge-secs-to-jiffies-d99d1016bd11
+To: Pablo Neira Ayuso <pablo@netfilter.org>, 
+ Jozsef Kadlecsik <kadlec@netfilter.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
+ Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>, 
+ Haojian Zhuang <haojian.zhuang@gmail.com>, 
+ Robert Jarzmik <robert.jarzmik@free.fr>, 
+ Russell King <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>, 
+ Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>, 
+ Oded Gabbay <ogabbay@kernel.org>, 
+ Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jeroen de Borst <jeroendb@google.com>, 
+ Praveen Kaligineedi <pkaligineedi@google.com>, 
+ Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ James Smart <james.smart@broadcom.com>, 
+ Dick Kennedy <dick.kennedy@broadcom.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
+ Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>, 
+ Jeff Johnson <jjohnson@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Jack Wang <jinpu.wang@cloud.ionos.com>, 
+ Marcel Holtmann <marcel@holtmann.org>, 
+ Johan Hedberg <johan.hedberg@gmail.com>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
+ Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Louis Peens <louis.peens@corigine.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr, 
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+ linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org, 
+ linux-block@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ ath11k@lists.infradead.org, linux-mm@kvack.org, 
+ linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev, 
+ linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org, 
+ live-patching@vger.kernel.org, linux-sound@vger.kernel.org, 
+ oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Easwar Hariharan <eahariha@linux.microsoft.com>, 
+ Jeff Johnson <quic_jjohnson@quicinc.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733867760; l=1965;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=YYfsTx2rAnMr87VKqCAX8bpgiZpeQGkncIQMEpK07sc=;
- b=+jfvoBiDpY9K6pnoLrb7gnIQKqzEb3DlfDqsf6iP7AovaJ+kjrCsZ58aDj31URy+kM0bpLMv9
- LKqphB6enIBACKy//f/CNyuQIpfsuoNgt6i1E9EIOOPOvgFA0vIn/AJ
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Use the new, explicit accessor to go from a 'struct device' to its
-'struct power_supply'.
+This is a series that follows up on my previous series to introduce
+secs_to_jiffies() and convert a few initial users.[1] In the review for
+that series, Anna-Maria requested converting other users with
+Coccinelle. [2] This is part 1 that converts users of msecs_to_jiffies()
+that use the multiply pattern of either of:
+- msecs_to_jiffies(N*1000), or
+- msecs_to_jiffies(N*MSEC_PER_SEC)
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+where N is a constant, to avoid the multiplication.
+
+The entire conversion is made with Coccinelle in the script added in
+patch 2. Some changes suggested by Coccinelle have been deferred to
+later parts that will address other possible variant patterns.
+
+CC: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+
+[1] https://lore.kernel.org/all/20241030-open-coded-timeouts-v3-0-9ba123facf88@linux.microsoft.com/
+[2] https://lore.kernel.org/all/8734kngfni.fsf@somnus/
+
 ---
- drivers/power/supply/bq24257_charger.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in v3:
+- Rebase on next-20241210
+- Fix typo'ed timeout in net/netfilter/nf_conntrack_proto_sctp.c (Stephen Rothwell)
+- Use Coccinelle operation modes for Coccinelle script (Markus Elfring)
+- Remove redundant comments in arch/arm/mach-pxa/sharpsl_pm.c
+  (Christophe Leroy)
+- Remove excess line breaks (Heiko Carstens, Christophe Leroy)
+- Add more detail into the commit messages throughout (Christophe Leroy)
+- Pick up Reviewed-by Thomas Hellström for drm/xe
+- Drop drm/etnaviv patch already queued into etnaviv/next
+- Replace call to [m]secs_to_jiffies(0) with just 0 for livepatch (Dan
+  Carpenter, Christophe Leroy)
+- Split out nfp patch to send to net-next (Christophe Leroy)
+- Pick up Acked-by from Jeff Johnson for ath11k
+- Link to v2: https://lore.kernel.org/r/20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com
+Changes in v2:
+- Exclude already accepted patch adding secs_to_jiffies() https://git.kernel.org/tip/b35108a51cf7bab58d7eace1267d7965978bcdb8
+- Link to v1: https://lore.kernel.org/r/20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com
 
-diff --git a/drivers/power/supply/bq24257_charger.c b/drivers/power/supply/bq24257_charger.c
-index 801d0d2c5f2eae90c9c1cbbbfcfb258d257038d5..1416586f2459109b29fe57a5ee86fa3704013aac 100644
---- a/drivers/power/supply/bq24257_charger.c
-+++ b/drivers/power/supply/bq24257_charger.c
-@@ -759,7 +759,7 @@ static ssize_t bq24257_show_ovp_voltage(struct device *dev,
- 					struct device_attribute *attr,
- 					char *buf)
- {
--	struct power_supply *psy = dev_get_drvdata(dev);
-+	struct power_supply *psy = dev_to_psy(dev);
- 	struct bq24257_device *bq = power_supply_get_drvdata(psy);
- 
- 	return sysfs_emit(buf, "%u\n", bq24257_vovp_map[bq->init_data.vovp]);
-@@ -769,7 +769,7 @@ static ssize_t bq24257_show_in_dpm_voltage(struct device *dev,
- 					   struct device_attribute *attr,
- 					   char *buf)
- {
--	struct power_supply *psy = dev_get_drvdata(dev);
-+	struct power_supply *psy = dev_to_psy(dev);
- 	struct bq24257_device *bq = power_supply_get_drvdata(psy);
- 
- 	return sysfs_emit(buf, "%u\n", bq24257_vindpm_map[bq->init_data.vindpm]);
-@@ -779,7 +779,7 @@ static ssize_t bq24257_sysfs_show_enable(struct device *dev,
- 					 struct device_attribute *attr,
- 					 char *buf)
- {
--	struct power_supply *psy = dev_get_drvdata(dev);
-+	struct power_supply *psy = dev_to_psy(dev);
- 	struct bq24257_device *bq = power_supply_get_drvdata(psy);
- 	int ret;
- 
-@@ -801,7 +801,7 @@ static ssize_t bq24257_sysfs_set_enable(struct device *dev,
- 					const char *buf,
- 					size_t count)
- {
--	struct power_supply *psy = dev_get_drvdata(dev);
-+	struct power_supply *psy = dev_to_psy(dev);
- 	struct bq24257_device *bq = power_supply_get_drvdata(psy);
- 	long val;
- 	int ret;
+---
+Easwar Hariharan (19):
+      netfilter: conntrack: Cleanup timeout definitions
+      coccinelle: misc: Add secs_to_jiffies script
+      arm: pxa: Convert timeouts to use secs_to_jiffies()
+      s390: kernel: Convert timeouts to use secs_to_jiffies()
+      powerpc/papr_scm: Convert timeouts to secs_to_jiffies()
+      mm: kmemleak: Convert timeouts to secs_to_jiffies()
+      accel/habanalabs: Convert timeouts to secs_to_jiffies()
+      drm/xe: Convert timeout to secs_to_jiffies()
+      scsi: lpfc: Convert timeouts to secs_to_jiffies()
+      scsi: arcmsr: Convert timeouts to secs_to_jiffies()
+      scsi: pm8001: Convert timeouts to secs_to_jiffies()
+      xen/blkback: Convert timeouts to secs_to_jiffies()
+      gve: Convert timeouts to secs_to_jiffies()
+      wifi: ath11k: Convert timeouts to secs_to_jiffies()
+      Bluetooth: MGMT: Convert timeouts to secs_to_jiffies()
+      staging: vc04_services: Convert timeouts to secs_to_jiffies()
+      ceph: Convert timeouts to secs_to_jiffies()
+      livepatch: Convert timeouts to secs_to_jiffies()
+      ALSA: line6: Convert timeouts to secs_to_jiffies()
 
+ arch/arm/mach-pxa/sharpsl_pm.c                     |  8 ++++----
+ arch/powerpc/platforms/pseries/papr_scm.c          |  2 +-
+ arch/s390/kernel/lgr.c                             |  2 +-
+ arch/s390/kernel/time.c                            |  4 ++--
+ arch/s390/kernel/topology.c                        |  2 +-
+ drivers/accel/habanalabs/common/device.c           |  2 +-
+ drivers/accel/habanalabs/common/habanalabs_drv.c   |  3 +--
+ drivers/block/xen-blkback/blkback.c                |  2 +-
+ drivers/gpu/drm/xe/xe_device.c                     |  2 +-
+ drivers/net/ethernet/google/gve/gve_tx_dqo.c       |  6 ++----
+ drivers/net/wireless/ath/ath11k/debugfs.c          |  2 +-
+ drivers/scsi/arcmsr/arcmsr_hba.c                   |  2 +-
+ drivers/scsi/lpfc/lpfc_init.c                      | 18 +++++++++---------
+ drivers/scsi/lpfc/lpfc_nportdisc.c                 |  8 ++++----
+ drivers/scsi/lpfc/lpfc_nvme.c                      |  2 +-
+ drivers/scsi/lpfc/lpfc_sli.c                       |  4 ++--
+ drivers/scsi/lpfc/lpfc_vmid.c                      |  2 +-
+ drivers/scsi/pm8001/pm8001_init.c                  |  2 +-
+ .../vc04_services/bcm2835-audio/bcm2835-vchiq.c    |  2 +-
+ fs/ceph/quota.c                                    |  2 +-
+ mm/kmemleak.c                                      |  4 ++--
+ net/bluetooth/mgmt.c                               |  2 +-
+ net/netfilter/nf_conntrack_proto_sctp.c            | 21 ++++++++-------------
+ samples/livepatch/livepatch-callbacks-busymod.c    |  3 +--
+ samples/livepatch/livepatch-shadow-fix1.c          |  3 +--
+ samples/livepatch/livepatch-shadow-mod.c           | 15 +++++----------
+ scripts/coccinelle/misc/secs_to_jiffies.cocci      | 22 ++++++++++++++++++++++
+ sound/usb/line6/toneport.c                         |  2 +-
+ 28 files changed, 78 insertions(+), 71 deletions(-)
+---
+base-commit: 1b2ab8149928c1cea2d7eca30cd35bb7fe014053
+change-id: 20241112-converge-secs-to-jiffies-d99d1016bd11
+
+Best regards,
 -- 
-2.47.1
+Easwar Hariharan <eahariha@linux.microsoft.com>
 
 
