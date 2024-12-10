@@ -1,139 +1,105 @@
-Return-Path: <linux-kernel+bounces-439572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6806E9EB13B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:51:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EF19EB13D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FEFD188C3A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:51:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F33E1886089
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2F91A9B25;
-	Tue, 10 Dec 2024 12:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D621A7AF7;
+	Tue, 10 Dec 2024 12:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c7gKtQZZ"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upUUZI/h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1F81A3AAD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6C21A08A8;
+	Tue, 10 Dec 2024 12:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733835051; cv=none; b=L+R9e6KgrVScLfrVkRpR3LukRde60IYyzjR2x96Wk8B6A5UwZ8N20UDIP7pPmjOZIWjsx8eQQfnQ1+whEA4159OFtaVbZjYYoQHs3A+O7CUa/kPZ/GWDK4+TnjP6x1vot6/ro5GxU10QDHVEbdZy0KJGW2dNA4pA4CGpBCRp80M=
+	t=1733835083; cv=none; b=ATc6LgIySC28UTq0soJ2LJgZYyB9vnXcnm++1okXO3mmKejffXGd0m/DfLFgUyS+DgZ+9o7d9vBjQV4O6VNt9q1Xu2w2iOpKqNb784o3jNRxlhmot1QDxDJqYB3jTTXb9XUm8g5egHruablsrttjBTb7NiAG2RHA/q4aJV9a0C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733835051; c=relaxed/simple;
-	bh=bY/aA+IWQ3QxQ2sZnjjb5W3DKLhLKSXmN8peYI/pr7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JMUjk6g4VCsz1yzj4YDDrRKa4dZVOwGB4kThxFMNr+P7rPF1M9YZJLoTjwotTUj9H4iB7ZecrUEW7Cv6PucIMn6n7GasiHMZfO/qR9bHetAUoZ1ed9gpEIaVx4WOHUL5MrLp6sHDYObXv00FHmvJLKkusuC0P9jdEbytNyRrF9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c7gKtQZZ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9e44654ae3so891842766b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 04:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733835048; x=1734439848; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y7qRHcucb3bJvZLwoVQ1HjlEAIx4MF32wL8i5hALjhQ=;
-        b=c7gKtQZZEwP5pZT1e3RFifBctv/PUanT5oTBJpmb0cnAHLazwA0MwVIeG9noVNbp+2
-         zQP29p8WS7rwVhBMsRpb4CVHnKi7chADGfw6Do9GjceB8oW0ErLa/3QT1ulSaKmkviEU
-         WGBxMgyjMgqM0oS476OyqVb4vMyaLyKtsoJQKawKzcUqXAUCZ9CgM1jmAdGskMpc/1jc
-         AzjR9CDxPoEpkv14KHUPcZGuv/ds4+Tm6Hdi1pyJ58UNA5SJjUAEftUvrFOQ2CJj6vBj
-         H96huddPu6PSHN7UIXmHetguWX56iIKNLlo20kKtaS8b7QrHmRtfF6XKmo70TO+oelJ7
-         91vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733835048; x=1734439848;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y7qRHcucb3bJvZLwoVQ1HjlEAIx4MF32wL8i5hALjhQ=;
-        b=UcE5ef2tWD6VyhXfRwo1VJd2zdwzhIBW5N88FeozuufNSIVDMAiT1fBn+Do0xTJErz
-         neEFa+kwKnok6ck7grcjTTj+XEUSwgVcndGz5UX1EMWYOPbXCBVbpGZpXTIsX8/PiPTL
-         lGNow/vsmuoUkViOIt5P8S5RMuKdNY7HQf4lihUL/3EoTem8SnesNWtoiLYPa/o+/Sze
-         WXUP3pKX52AxsXEhIdPAOn5ukbbAxaZuAj2y1wf85P+fB7lxuL3pY14bEa5Hg1zTRT7s
-         O8Yp16QKTGq3h9wbwm4DO8EKxIyWcwRrJcAKUT7UACkw45e6026ghcnzedNZmFxbMeeS
-         Jikg==
-X-Forwarded-Encrypted: i=1; AJvYcCVv/maUEqi3/cXm1jGnQ0Agt5q3tS3LiMWBAvDiSAzJFRuYLSm52JxJyeRnQ0rm4AUHsQoVFRuDHvJC2Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNEFwwzKOo/JVHtEd57lPjWXv5VsZytH9d5/oB2DXMN38+H4v6
-	QizYScBTybILodfRzIK03OdHCbnwKTDINzjkKNfgKHQLkkajLr/nC3K1f5Dl/rVW0w/GBW4NmTX
-	gXHesmtk7EihcSd5qgoqoSdAj/DAnQMj9M1/zIQ==
-X-Gm-Gg: ASbGnctzfaYfzReUrmN1d3uk+c/3oJGTL3CwEflXhCK8JicMb0gCrGuazTRitdZFX4M
-	qTWqRaD5Cbb89X/QfIGjppWiRiFuFoIiRG0g=
-X-Google-Smtp-Source: AGHT+IGUyenOeDiJ6ElklP7HzZFpKG0ehemH7byFc2hBRRMkI05xaWuzUu/O9qFlx4Kz7Wofw600OMm2prli/4lUsnk=
-X-Received: by 2002:a17:906:30d5:b0:aa6:abb2:31f4 with SMTP id
- a640c23a62f3a-aa6abb2322bmr37782966b.25.1733835047677; Tue, 10 Dec 2024
- 04:50:47 -0800 (PST)
+	s=arc-20240116; t=1733835083; c=relaxed/simple;
+	bh=3Rsh6xFVdXHonSSiiPX02wsrJdpKnfeJXXUWbBhqxXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbvSwrT5rQZy9R83totkpAnibKVJ2wwVdO7yqz24pes15d0mALMPO6WhZFQn9bveEDryxLT/GA6lq/MLBtf1PLBx3Zr6SrzFby0OGfDlnErRDQr8aljKcpjTCxpXxp9sUtC1Sri1DsRyCggVlRkJkX7R0d0bQ8ttV5+sOTMdapk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upUUZI/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F230C4CED6;
+	Tue, 10 Dec 2024 12:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733835082;
+	bh=3Rsh6xFVdXHonSSiiPX02wsrJdpKnfeJXXUWbBhqxXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=upUUZI/hYB+bTZo33EpXNJMM36yaJDkwlw9b/AT9iHEM1xEU/97+oIbhm5a+oH6N0
+	 GTY5tzVu/nO9w49rle21UOjWFfpBJmV4f4yrq6QN98PJUuEBw2DkPJelxUDHND8xet
+	 kknHFro8mMVPaMc9EgIQTJW5rNkF3rklCpl9U0R8ljcArwsfiOozjA+r3Ouxwehvtm
+	 eLYyFWdN5/91sZgcwoKpnteZ7W3bbSNqxotiCDxtGN0TtDvnMsgbavK1ejwkQk+unH
+	 2Nie1Xhsux+FjBzOqCKANWGrQhZyLtbu/PsEmEdtCOqoiybLymUzZPlFE7wKr9Dl4Q
+	 R/uvJ3q4CGA3Q==
+Date: Tue, 10 Dec 2024 12:51:13 +0000
+From: Mark Brown <broonie@kernel.org>
+To: wangweidong.a@awinic.com
+Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
+	rf@opensource.cirrus.com, jack.yu@realtek.com,
+	neil.armstrong@linaro.org, ivprusov@salutedevices.com,
+	zhoubinbin@loongson.cn, quic_pkumpatl@quicinc.com,
+	herve.codina@bootlin.com, masahiroy@kernel.org, nuno.sa@analog.com,
+	yesanishhere@gmail.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yijiangtao@awinic.com
+Subject: Re: [PATCH V1 2/2] ASoC: codecs: Add aw88083 amplifier driver
+Message-ID: <152595a2-2216-4c6c-935d-9c58939bffe0@sirena.org.uk>
+References: <20241210091054.88779-1-wangweidong.a@awinic.com>
+ <20241210091054.88779-3-wangweidong.a@awinic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com> <20241210-qcom-video-iris-v8-16-42c5403cb1a3@quicinc.com>
-In-Reply-To: <20241210-qcom-video-iris-v8-16-42c5403cb1a3@quicinc.com>
-From: Stefan Schmidt <stefan.schmidt@linaro.org>
-Date: Tue, 10 Dec 2024 13:50:36 +0100
-Message-ID: <CAEvtbuus3scTvcjMuxxrfcqnd61+vqM5G=os-aUuM3+SLp2abQ@mail.gmail.com>
-Subject: Re: [PATCH v8 16/28] media: iris: implement vb2 streaming ops
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Nicolas Dufresne <nicolas@ndufresne.ca>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q36hzlD+9c1+gXCv"
+Content-Disposition: inline
+In-Reply-To: <20241210091054.88779-3-wangweidong.a@awinic.com>
+X-Cookie: Leave no stone unturned.
 
-Hello Dikshita,
 
-On Tue, 10 Dec 2024 at 12:07, Dikshita Agarwal
-<quic_dikshita@quicinc.com> wrote:
->
-> +static int iris_hfi_gen1_session_stop(struct iris_inst *inst, u32 plane)
-> +{
-> +       struct hfi_session_flush_pkt flush_pkt;
-> +       struct iris_core *core = inst->core;
-> +       struct hfi_session_pkt pkt;
-> +       u32 flush_type = 0;
-> +       int ret = 0;
+--Q36hzlD+9c1+gXCv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Dec 10, 2024 at 05:10:54PM +0800, wangweidong.a@awinic.com wrote:
+
+> -	aw88081_dev_clear_int_status(aw_dev);
+> +	if (aw88081->devtype == AW88081)
+> +		/* clear inturrupt */
+> +		aw88081_dev_clear_int_status(aw_dev);
 > +
-> +       if ((V4L2_TYPE_IS_OUTPUT(plane) &&
-> +            inst->state == IRIS_INST_INPUT_STREAMING) ||
-> +           (V4L2_TYPE_IS_CAPTURE(plane) &&
-> +            inst->state == IRIS_INST_OUTPUT_STREAMING) ||
-> +           inst->state == IRIS_INST_ERROR) {
-> +               reinit_completion(&inst->completion);
-> +               iris_hfi_gen1_packet_session_cmd(inst, &pkt, HFI_CMD_SESSION_STOP);
-> +               ret = iris_hfi_queue_cmd_write(core, &pkt, pkt.shdr.hdr.size);
-> +               if (!ret)
-> +                       ret = iris_wait_for_session_response(inst, false);
-> +
-> +               reinit_completion(&inst->completion);
-> +               iris_hfi_gen1_packet_session_cmd(inst, &pkt, HFI_CMD_SESSION_RELEASE_RESOURCES);
-> +               ret = iris_hfi_queue_cmd_write(core, &pkt, pkt.shdr.hdr.size);
-> +               if (!ret)
-> +                       ret = iris_wait_for_session_response(inst, false);
-> +       } else if (inst->state == IRIS_INST_STREAMING) {
-> +               if (V4L2_TYPE_IS_OUTPUT(plane))
-> +                       flush_type = HFI_FLUSH_ALL;
-> +               else if (V4L2_TYPE_IS_CAPTURE(plane))
-> +                       flush_type = HFI_FLUSH_OUTPUT;
 
-Below there is also HFI_FLUSH_OUTPUT2 defined. Do we need to handle
-this flush type here as well?
+These if (devtype) statements will get hard to maintain as more device
+types are added (and the diff here is already pretty confusing).  It's
+better to use a switch statement with cases for the devices that need
+specific handling, that way more devices can easily slot in.
 
-[...]
+--Q36hzlD+9c1+gXCv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +#define HFI_FLUSH_OUTPUT                               0x1000002
-> +#define HFI_FLUSH_OUTPUT2                              0x1000003
+-----BEGIN PGP SIGNATURE-----
 
-regards
-Stefan Schmidt
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdYOUAACgkQJNaLcl1U
+h9BiCwf/cRLfKoyKaljJFQk61yjyXDCGGbPIeoRxi2FAt9wvPmapd4upREiw8tkU
+R9BedelQEcGzYxTvWmwPV1PjavIfx6/B7UexJoVJhOg39/OpoXok76ZnvtXeOmdi
+9PXzOnAhNwn3vFvwRS0FKHwzYjJPXrU3fKydYY5o7hYdXGY60NoDU+EktVFv9SQ6
+8Mt8NMNgWCeRmifrrRJ8VwbZ2MmtesmrkdLCFZbufLRVT5LNbDAPZeQkIhpaKwM1
+lVfzsAlW23jq/EhlMhRHbDqTeJBiie2aDP9xE1KxXtKtOl8Rf7qQL38CZOD3Etxk
+Bx6EfpfNv01+FpB1kJxjnSAq2oL4FQ==
+=TcvG
+-----END PGP SIGNATURE-----
+
+--Q36hzlD+9c1+gXCv--
 
