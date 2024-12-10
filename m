@@ -1,219 +1,215 @@
-Return-Path: <linux-kernel+bounces-440091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8048D9EB8A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:50:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769D29EB8AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:51:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D8E1888C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:51:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C560E1B0F2C;
+	Tue, 10 Dec 2024 17:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WWIqCmzZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C0142814CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:50:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFC686358;
-	Tue, 10 Dec 2024 17:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ly8mDFP4"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2E31B4220;
-	Tue, 10 Dec 2024 17:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853024; cv=none; b=bW5f8KVIHCxfBMH0/30WUlUfUckFHu5LQO4q6ovPKcJhyhhYMs5RvWMB+ZjyT6PAqocTv2XZg+72vY6+lsne1w6seFJOidm7C1U5/wRLU7XweyhPJlpolRTEZ6HvevAtTL3cgHUQTtKy0IyfOLlcl6ZIBnaiveEDfyC6r1Lpr80=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853024; c=relaxed/simple;
-	bh=7vTkwIQXZT5QT9ZHSuseGV3gEM9zZq4Sz/Phju4nRyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UnoXLbiJXRXWO4ZC1qYzkES28bCByxYwQQa04ZHDXoLcezKDiQEsnTsc7zuTAlqHQa60Dr1Mihp8r8xocj2G6PU8FjzcuTnBmFqtcTBMa3W11WhmQ1CYX1SZNVFJ3/HJ8f6lq+/a22QLJCM3CQQl/6ARXASbIX+yeo94hQJBIe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ly8mDFP4; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ef95ad9064so2539117b3.2;
-        Tue, 10 Dec 2024 09:50:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733853021; x=1734457821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FLbWVKTQ8/rFg0yCwbeNU+FV507QZWBZJPr5pJawDUw=;
-        b=Ly8mDFP4Yf70FOF/O3HfbaWwlgYhqb941NSR4ayeD42zcRezYDVMUmslfIOKGDt4YH
-         ebSLGmpBzkhAyJRAslvsv4MnW9aQjxtajYjSfK8jwu4b6ZfkLmHfCeP4FGeTzeIV6skq
-         0GphJQYoeDyWGcDJoKy/mcoEQs7nfNy84ROz0VRbBPgHoczVdz0SWYMAsm4pGJN9m8Ex
-         bSxeaiUswCO5NT3sEa2ukrJkEC5vk1WJWqK+dvLH4lPfDTffIpU/nZc2Ns4jCIaAtIRG
-         CxSfNBQl5eQHsJ2V+Tlm4oMrgMxGy/Z9UqJ80P3nIz9o6fli7/NjX36ttDVTSeC2D6C4
-         lrkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853021; x=1734457821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FLbWVKTQ8/rFg0yCwbeNU+FV507QZWBZJPr5pJawDUw=;
-        b=pKa7hs2THMza86rFWf65sZjVIiM4PWzXFWODxsTFyrpnV3kFcLB+RC8t6y+I5QjXiB
-         +8v0xNGfjUO+f2CDd0Fmwn4V+zDmEzPoy/5/EqtGIaSvpiW5kRbPK2jXvKbpf+EvP62Y
-         2BvSxIQ7y/2J4Piu0mqEFdjK4LCRvNPa8UwZ6z0dZDgxyDAo7X5S0UsFDRgqNv/sIqxJ
-         kTZQ+TIhpsSjs0eRpJwAUqGnmMhvReCSoIoIZy5znj/WLAI+V8k4RrjITM0hSXejNzOR
-         2iT47bhmoEr+cI5lVblMV9wajS2sPEWL5+dRtkr9B6XffU0v6wkeCDVq2GAqFRg9OEMe
-         WiyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnrZugrSOJwzH7asJbjE3DCId1IfsL7j3DxUZ80xi4qrwGwP2CkOVIJTvqB85OWA7chVeEpAokqr2A@vger.kernel.org, AJvYcCVzbRKj9Lh//hHqRvJWGbgv1+irIUM2OomsC4HgjEWmT1/PQrJWy0ReVd2qhGsxKvToxbm2/WMy2g+t@vger.kernel.org, AJvYcCWn31XxAdF57KPPosrAzjQESznJ0ittywSQjNWLsa73KXvYqVK1R323BeMShCx3gIez/MFSs3pF9FW9jtG8@vger.kernel.org
-X-Gm-Message-State: AOJu0YytXvgUdzgV82JUt+3ThwmY022x2/3T3tWpQ1VDqUhstmXijqLk
-	kqQP03CoebVbp0C8cFrFS0Vg+ltx9r+Pj17xVm85CKEOm16/zaQ7OLEoVmDkflqYvvEdBR/PecW
-	x4EQC7qGBrtWzk9bAmbDCnRzxuyY=
-X-Gm-Gg: ASbGncugn+mkUB+NpYtg2b3gsM7OygZzGUGM0lPgE5Tc/uYpXMKoSG5y9W216yzW4Sg
-	KIgLBqSZRgEA9ccIUjoQ68c11XQ03RmsTX8U=
-X-Google-Smtp-Source: AGHT+IF/9mYG/lYevIKCWOwIf4rXGPYEsSstWyTBvNb9hulsYECN5/TsyPzeRBtUOX0YyFWqxkRoLjcWWqoDs3JRNUw=
-X-Received: by 2002:a05:690c:3505:b0:6ef:5754:49e5 with SMTP id
- 00721157ae682-6f147f6aab0mr283697b3.2.1733853021569; Tue, 10 Dec 2024
- 09:50:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DF186358;
+	Tue, 10 Dec 2024 17:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733853071; cv=fail; b=Z38dWsYHsoN7ryagNcUGEOBVVg2BRgBc9dLvbtbm4K2R1WfhAmehuFQjI/M7jPnSI3OPw4Wf5GU8ZtjUif1XkDavjkNpn1D3fmVKO91NLLy4z3FgQifKNYd3hJjofv5Eho0tJ8I6sCnOqoDswTkrJ9Axz18dvaQX+G6xZALrI74=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733853071; c=relaxed/simple;
+	bh=7PyoLFftSdKFMWFHGS0oEfqMQcV3GYFRX1hvZjxutV0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jOju2e6iPXUxW/q/Ur5zP2jEfjJS5vcRwvsjxF/QB8qYuwmXUy3MMs8UPbEI1ttU+E69uj6LSq3D9ue7ZD75O4jIHRTQIK6F1HSmkeyCTRGDU6aAZ1VX6ELELhHeDToBGG3x3HWhMkpPQ2ANcQyDkGlXd+vP5hKXk9eNamlIVr8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WWIqCmzZ; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733853069; x=1765389069;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=7PyoLFftSdKFMWFHGS0oEfqMQcV3GYFRX1hvZjxutV0=;
+  b=WWIqCmzZZEslNUuF2T2qbsn+9lJDA9WiRG2U/3IakmirwruTv2PRDkdI
+   Dx7DtonlpBG9UlsP57echrfaN2qSrjaTPv1n3GHB+S9oz62bODQjbvgsw
+   VTj+/MhgAMQi7YcEM2yIkBFX22JKggs/y6nvNwrnEbPVCNNSWUZPWEhVs
+   et6KojA7XKDZYcJel1pd3XWDvjcl+4kTEn7yCQI6jiJRHn+A4kXMXOPFP
+   1GYPy0EjbiUJdN5/opN8zXxH3JqTI2b4sJSeHVvXEQ+13aNOYVdOrWSXz
+   +W45hIGUv2fszO1PsgDltokOXntzNMiTZrqxb20nQul7WXJWTUE/4LGb0
+   Q==;
+X-CSE-ConnectionGUID: OYBLdAHYQ1ee+2jC9SRMIw==
+X-CSE-MsgGUID: VEFD9mg1TICSA3Na18qcTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="38137164"
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="38137164"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 09:51:08 -0800
+X-CSE-ConnectionGUID: vm9t+VvWSg2IEakY6sHFkQ==
+X-CSE-MsgGUID: RRsgZ5CWQ6aWfrQsx3ySkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="100525746"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Dec 2024 09:51:08 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Dec 2024 09:51:07 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Dec 2024 09:51:07 -0800
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.48) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Dec 2024 09:51:07 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yFdVeaXGPMMSSZ6srEH8VDnevc31gcrVPvg4yWM+vOmugcB2aFf9Sn5IWl3JxhMzIctX0KQhW23NWOyqv0lY0m+BpT/0WtRVH6xK6+8feLrx6a5OcYeFRr4VGtGstBYyWSZhJGE5shzQEFuUfUtF1OB0BihVbfOurlwNeSIJCSne3vAhyIrSidQ4dkv+YT2zibbDSb8TzsNlj7jHWX8+fuNDpxVsZb0qYD+BDzulQb8XpP6NtiWwI1VCmwOfbP/CJ9OuQW2yaAFztttSwe8ZQtbtXTVOElx6+dQ/LNyZjJ3HWB2tUs/cRPPq9PR2XGtESa4sbu/WANaDEmCZmt344w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IEhLLuKVtjma12JqPLc52U43MxOPn2bUojz+m6mLkIc=;
+ b=cpOqoO6nYEbfD+lpVzShpnWYzkui18fnTLSDaBRYKYy9RsgYZrEXfMNEYA7c0MY3CQoChLYqDEkT4gETZTUzQym8OOwXq5/FczrLnW32uwokXk5sSeD+lIKy+iUJ1auHFI4phbZ3nC1RpLvu7Vi6H+RMXGvsj3b8xD6kYK9n6czFeMn/lt1FefYTygce68tBIBhZKLyc0B+BUJpY8BSRifH4dj2cVK9Og5szEe9bpU32AgZTZfyfSUv41h1PKnZlqdE0pnVy6SsTX13AGd4pC6zdg7jfav7oOQiRQ3bIBEWNBt+3uiwJit3ohS0Q/cA5MKMHub5hojvGTR7iMIh1kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by CH3PR11MB8561.namprd11.prod.outlook.com (2603:10b6:610:1ad::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.17; Tue, 10 Dec
+ 2024 17:50:58 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.8207.017; Tue, 10 Dec 2024
+ 17:50:58 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: "Meyer, Kyle" <kyle.meyer@hpe.com>, "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+	"bp@alien8.de" <bp@alien8.de>, "james.morse@arm.com" <james.morse@arm.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "rric@kernel.org"
+	<rric@kernel.org>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
+Thread-Topic: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
+Thread-Index: AQHbRzdYr6wewCl8WUSfAZZpbFHGCbLYE+DsgABRaYaAAAfzAIAAEs4AgAE5QuCAAA54YIAF7W4AgAAN+nA=
+Date: Tue, 10 Dec 2024 17:50:58 +0000
+Message-ID: <SJ1PR11MB60835A3F25BBD97A3B135833FC3D2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <SJ1PR11MB60832217752DE71A4ED1054CFC312@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20241210163734.GA3244835@bhelgaas>
+In-Reply-To: <20241210163734.GA3244835@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|CH3PR11MB8561:EE_
+x-ms-office365-filtering-correlation-id: f538461e-8fd5-44fc-2142-08dd19433442
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?9m6R4ROZjb3ZLl0QTPGSqAg2WY+CTFYj6Qto3FQXxseDBTKeuIlVBbhePt/x?=
+ =?us-ascii?Q?MCkfIMyQ4TRtW6sDBTeA4+fYhy7S+QpdlFols9AfyYZasuZFc2Ry9kJnXSQ1?=
+ =?us-ascii?Q?l025AFDMC4vtxnEg5VInnAC9lxIQTal3C7GDk9nwUhhRewdD1EBtPdWJPvh1?=
+ =?us-ascii?Q?C3lYDKWSWGQ75vFq30HIl1XyrxyjLXAhCFy1gdhWusiDFl91RJ2j6N2R5/FP?=
+ =?us-ascii?Q?/PnPGKQ8h8TbxsqU+9DjZonKFCxePI+8GRPT9PrP8DfUI0EMoVF5EVw2Liqr?=
+ =?us-ascii?Q?0y7G35D5lkmcy9zkawzOv4HxS0sIqkuCgTP0pAiEW+gsPntNT4MlF1eOrGmY?=
+ =?us-ascii?Q?E8fy+0Zajca/Le0FMaTb7MIyPV+eri3GbCZYHBGuM22E1KoIB9oe7ZChTTel?=
+ =?us-ascii?Q?Qo+qLVZ5opRWxIf01goIrYeK2XHIs7LT98ONkIALEjAGEz2kvInBI0ykZApS?=
+ =?us-ascii?Q?Q6wVOlBzwO28yoe5RO0i8EIUmzYM/bnsZpp8zL/D3Ifpul7QMA7IZjg+4FzB?=
+ =?us-ascii?Q?J2mBe+jMNLemaR6cACS/3XAQXY2tJqWK4SuvcwVWSdXCyRwefJf4WPoGLQmR?=
+ =?us-ascii?Q?gumXj5PD6JznUdak3N7jSuenLBTjZHr2W+b8C5S2ihQISWYkRQ6ohEf1Gfig?=
+ =?us-ascii?Q?zoRJ8iHbo8yvgm4P+PUQfO079iNXHUpGAK/ehpl+hyqDM5pNSZKFlmLdaC/1?=
+ =?us-ascii?Q?V5npupmVWhlmlh/Zdu8N7CEy5KQaZw4jijFqOdUoalVqAoxUTpgZnUSxSYP7?=
+ =?us-ascii?Q?adZedSfU42YtRFYe86Drqmx+Lkwc3dLajxxAaDPHtFwPnG676LcBATeSSnRL?=
+ =?us-ascii?Q?cjnY9zCnq3FRZ67S1U943qV3W6D5FRPQDgWxvsOWf0hAUEj8G553TS/GYkFz?=
+ =?us-ascii?Q?k0KX5T+dKkfJOZlPGCDF4FQaInitvENhSyH3aU+1wvatE9TLfQ+8/i7QN1m6?=
+ =?us-ascii?Q?SKSpWygl4M5dYevt0RYTJYYgl3Us0AflxBPYyQykg6oORs7iDJcZSDC3u+Va?=
+ =?us-ascii?Q?WFNGD0xdCBhPTLOoiU3vfaUwBktQ4sVP//eEirKNcglMM2Gj5fuA/Oxxvr1a?=
+ =?us-ascii?Q?Ao6lOao8kk3YxyUOdzpEmb26ouhcmwkdlel3zYvuhokn5KrVaYTmDXS6+eSo?=
+ =?us-ascii?Q?R0XR+Gg657XSwZp60xnsWmsNZFsIyy/7j2OaNJp7dVNrZcBF/cSuIHTVXMeE?=
+ =?us-ascii?Q?UT8NL9ajOc3zyfYLN6N+a+2qSCjDLmkG8Ck3yilDvfjJO9R/7kZxjRBdiCmx?=
+ =?us-ascii?Q?8sq4/vbHdk/ZrVUnK2dL0Muo2iKB0bPZRZCLOPZBjjBj6iDs+WA7cATFb80Y?=
+ =?us-ascii?Q?HvUvDCvKWT3DRy1fDpDN6s/ekU28C3y5eyKVJ//+uyep/t+Oe/0BLffTtEWx?=
+ =?us-ascii?Q?VCqzcJ4e2uRiArHRHafcMqE3u9iXPJT/1NfMAowbpzrHn9lhWg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?+LtlLJSbLgjoH8QWC6+97TjtfaCKxtcxBArLZsmky0k9aQcZnN46x4QsYmmg?=
+ =?us-ascii?Q?J8si8i41CV9zUsSHf1wF5oEhLmccFgdwObuyitXd5pRqajF5bxCc9bJdXiOb?=
+ =?us-ascii?Q?SAJF6QqA0PfZE+oLI5wStVtWQL4cOuwnoWicmIDzP8z+LK9QXeJSgqM3i/s4?=
+ =?us-ascii?Q?nXhUnu5PDuqXgbdgKDDdsL9pvgSYVNGiUO3Nha2EINCe/NOwb9t/jCDSAOq0?=
+ =?us-ascii?Q?apDVH/4v16s+Pf11diu9WTLJl9MrKA6+lR+TgG3exQW8gfZ3pIXMveLr9oqS?=
+ =?us-ascii?Q?j1a+xc/vhg165ufHmjHp3y13nkX+vIW/VBYR2OkNRiX+FaDvYsHiYRNsyBxe?=
+ =?us-ascii?Q?aO2dss0hy/B8xv52BWlO/l9IqQJx5J4ilIk8PX0eWdKirhsPRGGZIUOaOxkh?=
+ =?us-ascii?Q?0ZTBF/HvDXlo4skQ3dbADYMfidtLYQWGbvRpWo1kjbhugM0DaAuJUWagNUZj?=
+ =?us-ascii?Q?3HwmazoMeD8M63uDkSeMSKyOMl9V6GnhGv4jdEgqNInwDbKYpMSwFW0Gmutd?=
+ =?us-ascii?Q?oUPLGJOZjutAPHR4SQagTZLV1vnZuCM4Os/YlBQ8pFEhqUv92UPA6hflyIT8?=
+ =?us-ascii?Q?U9nok+SUpIFsDgNFj9hPkL8TY+9lSM6YzLUaLGcggxin97nXmt7Q/k777FPK?=
+ =?us-ascii?Q?iJ5ECP1299SmBl67YZjwzbdhMgReEGQWD7NLVjv5hQiidlZWW4vdx3vB8kYZ?=
+ =?us-ascii?Q?WrS2gE8gcZBrwcjDFy7nU38E3TL/uHZ7Jl3a9T1t/NG92LOtATXjqCYkHsI2?=
+ =?us-ascii?Q?DqHMbVSIPm38wD6tlD7BUuLWAj3gDhNG4xPfq9Ub9uL5Tg731yIzAbOaaMqW?=
+ =?us-ascii?Q?4947ZU2dGZpffjeOkJznDJsyWzii0YnYkwCHzTfNQ0n0VHIJEOM2MrgB8dPc?=
+ =?us-ascii?Q?FFNXt+B5Gw8FPdOeC/kHe/BJD4Mf+vXAT7dT0SXom3gPRTdCfzOJfBfiItkD?=
+ =?us-ascii?Q?6zvHyqR9byoUdGU9RaMBgO8zRlaUqqeVX53NernaTAD+NL775GRZJRCQ1I9G?=
+ =?us-ascii?Q?r5Ku2kRQQy1Uv6OXbHx0MIcBxj4VT/RoQgPsyd33+ZvR8LbJ6WEN9ieh3ccZ?=
+ =?us-ascii?Q?TnhuFeE7p0ob2XAd6u5ErHqwuEkYb0ubDKgpB9Cipua7sbRTu7w52WCZovqG?=
+ =?us-ascii?Q?cWT/d/KZBLkxQmQdnjeUIpja5CyigGjnlQFGm8otn5YbTFGpivqenSYk5nou?=
+ =?us-ascii?Q?aHvSzZtmWprDh8StpAyqxxZaMbF1A49Nxk8l8mXDX8UJjcWipc8BGQSbtyUf?=
+ =?us-ascii?Q?VXSbQoyUc+mVvq1rN92DTTHWpBqIC6iJqEnHfwdV+u+YFQtAIE80s3vBWfJ4?=
+ =?us-ascii?Q?z1Yw2ab0IIw2Ho0A1ki9Fn/UjK/z/fRtTlhbhDEgAQA5vs5JY2dEluWeLhUV?=
+ =?us-ascii?Q?xXakm14Z3+IISdvhXRwJKrKNk2NpEBX/nzHSWpBODMY1BU11KlqfH+lx2Muh?=
+ =?us-ascii?Q?GNN4+Om1DS2ANTIxpRg5+3pTFmW3ekTv/Pdopw5u7ACE6yfJQWrRj8NEfiQb?=
+ =?us-ascii?Q?dJxuyT8I1Nf+4jKTxsiJwoUFXb7EO9mglrV9qWadTK1tym+J5eh1KbV92SHo?=
+ =?us-ascii?Q?dUvKyGWTLoHVb61wjR2o8bUoWxjTQx5+VL+X7yuW?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205171343.308963-1-l.rubusch@gmail.com> <20241205171343.308963-5-l.rubusch@gmail.com>
- <20241208134220.0a8b84f5@jic23-huawei>
-In-Reply-To: <20241208134220.0a8b84f5@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Tue, 10 Dec 2024 18:49:45 +0100
-Message-ID: <CAFXKEHY4LWm9iJnZ---Zixf9GT6u_Ebk-=sDsrqTjGSR4KCM2g@mail.gmail.com>
-Subject: Re: [PATCH v5 04/10] iio: accel: adxl345: add function to switch
- measuring mode
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f538461e-8fd5-44fc-2142-08dd19433442
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2024 17:50:58.6153
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QKGCrtu4qK7N/YgeUMqo4TkKdPL1Zdo5kF/kdqW7nmOCILFoQsTj5mK2tCASn15kBIY4Hs3HxkL1NV9HeTZgmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8561
+X-OriginatorOrg: intel.com
 
-On Sun, Dec 8, 2024 at 2:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Thu,  5 Dec 2024 17:13:37 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Replace the powerup / powerdown functions by a generic function to put
-> > the sensor in STANDBY, or MEASURE mode. When configuring the FIFO for
-> > several features of the accelerometer, it is recommended to put
-> > measuring in STANDBY mode.
+> > What we need here is a function that maps from a PCIe device to a CPU s=
+ocket.
 > >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> Hi Lothar,
+> > Has this problem been encountered before? Is there an existing solution=
+?
 >
-> One trivial comment inline.
->
-> Jonathan
->
-> > ---
-> >  drivers/iio/accel/adxl345_core.c | 44 ++++++++++++++++++++++----------
-> >  1 file changed, 31 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
-45_core.c
-> > index 98ff37271f1..1d020b0d79c 100644
-> > --- a/drivers/iio/accel/adxl345_core.c
-> > +++ b/drivers/iio/accel/adxl345_core.c
-> > @@ -138,6 +138,34 @@ static int adxl345_write_raw_get_fmt(struct iio_de=
-v *indio_dev,
-> >       }
-> >  }
-> >
-> > +/**
-> > + * adxl345_set_measure_en() - Enable and disable measuring.
-> > + *
-> > + * @st: The device data.
-> > + * @en: Enable measurements, else standby mode.
-> > + *
-> > + * For lowest power operation, standby mode can be used. In standby mo=
-de,
-> > + * current consumption is supposed to be reduced to 0.1uA (typical). I=
-n this
-> > + * mode no measurements are made. Placing the device into standby mode
-> > + * preserves the contents of FIFO.
-> > + *
-> > + * Return: Returns 0 if successful, or a negative error value.
-> > + */
-> > +static int adxl345_set_measure_en(struct adxl345_state *st, bool en)
-> > +{
-> > +     unsigned int val =3D 0;
-> > +
-> > +     val =3D (en) ? ADXL345_POWER_CTL_MEASURE : ADXL345_POWER_CTL_STAN=
-DBY;
-> > +     return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
-> > +}
-> > +
-> > +static void adxl345_powerdown(void *ptr)
-> > +{
-> > +     struct adxl345_state *st =3D ptr;
-> > +
-> > +     adxl345_set_measure_en(st, false);
-> > +}
-> > +
-> >  static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
-> >  "0.09765625 0.1953125 0.390625 0.78125 1.5625 3.125 6.25 12.5 25 50 10=
-0 200 400 800 1600 3200"
-> >  );
-> > @@ -158,16 +186,6 @@ static const struct iio_info adxl345_info =3D {
-> >       .write_raw_get_fmt      =3D adxl345_write_raw_get_fmt,
-> >  };
-> >
-> > -static int adxl345_powerup(void *regmap)
-> > -{
-> > -     return regmap_write(regmap, ADXL345_REG_POWER_CTL, ADXL345_POWER_=
-CTL_MEASURE);
-> > -}
-> > -
-> > -static void adxl345_powerdown(void *regmap)
-> > -{
-> > -     regmap_write(regmap, ADXL345_REG_POWER_CTL, ADXL345_POWER_CTL_STA=
-NDBY);
-> > -}
-> > -
-> >  /**
-> >   * adxl345_core_probe() - Probe and setup for the accelerometer.
-> >   * @dev:     Driver model representation of the device
-> > @@ -236,13 +254,13 @@ int adxl345_core_probe(struct device *dev, struct=
- regmap *regmap,
-> >                                    regval, ADXL345_DEVID);
-> >
-> >       /* Enable measurement mode */
-> > -     ret =3D adxl345_powerup(st->regmap);
-> > +     ret =3D adxl345_set_measure_en(st, true);
-> >       if (ret < 0)
-> >               return dev_err_probe(dev, ret, "Failed to enable measurem=
-ent mode\n");
-> >
-> > -     ret =3D devm_add_action_or_reset(dev, adxl345_powerdown, st->regm=
-ap);
-> > +     ret =3D devm_add_action_or_reset(dev, adxl345_powerdown, st);
-> >       if (ret < 0)
-> > -             return ret;
-> > +             return dev_err_probe(dev, ret, "Failed to add action or r=
-eset\n");
-> You will never see that message, though arguably that's an implementation=
- detail.
->
-> The only error that devm_add_action_or_reset() returns is -ENOMEM;
-> dev_err_probe() doesn't print on -ENOMEM because enough screaming occurs =
-at
-> other layers.
->
-> I normally don't bother commenting on this one if it's introduced as one =
-of
-> many messages, but here you are adding just this one so I have commented.
+> There's nothing in PCI itself that connects a device to a CPU.  It
+> sounds like something that might fit with an ACPI NUMA description,
+> e.g., if a CPU and a PCI host bridge had the same ACPI _PXM value, you
+> could conclude that the devices below the host bridge are close to the
+> CPU.
 
-Thank you so much. I highly appreciate all the time you spend on
-reviewing and giving
-feedback!! For me there is no hurry with this driver. I'd prefer to go
-a bit more picky
-feedback, according to your patience. Hopefully, I will learn for
-future patches. Already
-when I take a look on the way from v1 of just this driver. Awesome!
+Bjorn,
 
->
-> >
-> >       return devm_iio_device_register(dev, indio_dev);
-> >  }
->
+Thanks for looking. Kyle already has code that does an ACPI NUMA lookup.
+
+But that doesn't work on system where Linux is compiled with CONFIG_NUMA=3D=
+n,
+booted with numa=3Doff, or on a system where BIOS option for "Unified memor=
+y mode"
+has been selected.
+
+-Tony
 
