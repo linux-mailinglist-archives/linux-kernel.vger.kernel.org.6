@@ -1,205 +1,114 @@
-Return-Path: <linux-kernel+bounces-440423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4B19EBDC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:21:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BC218851AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:20:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866F1F190C;
-	Tue, 10 Dec 2024 22:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eBiwPlTN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB109EBDC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:22:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364122451E5;
-	Tue, 10 Dec 2024 22:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1392028ABB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:22:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330481EE7D8;
+	Tue, 10 Dec 2024 22:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a+1CNP7G"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF7C2451FD
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869245; cv=none; b=pPEGpDlCz4npP9obMTtC3U2eFKpYl3GqrT/t++5yVK1XeydXzd8FuqSvoZA86VEeMVoeWISUTBSKw+K09oWxhSaNvZkQC4gCE0vjyRRVb/ylw+VHHJeNy3fx3fPgKNYIG2vcJz6C/3tCQUTp0Uo0vPE8x/nqhoSkygzVFyF9Ofk=
+	t=1733869351; cv=none; b=HxdiIyJmcoVtPBO8gEGbRpAKdMSmACeiEnsURv+7IbADW9e4u7ysuc1U5IySoaEZ79FL6T8WN8SPVkd5TkMBZ171AWIWR8gJ1cHDGVdlQRSWSgBsSYqZTP1nKC19M754uio4ZynhZt9tRME2m6EQpo4YMBRKs0XhJKJzqHuArME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869245; c=relaxed/simple;
-	bh=NoTqrj1Ys1/BxjrBZyNKiqpzAWbzkPtUgvifUZxoRwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LpIqEzZf0h/iVRRuucXdqO35lwiRLN192uQonMSaZt4ZWZ6rwOH5CJeu2j2wNkEhQPXqHc8P4DS04+SAtciYk3w2n8cWnjbqxzjHR0lepYJUYs6tRdvNbn+oCJ1N0AyVmyAyNxFvk3So+L4mw+j6qYAhXvLQlwSrJoJ8EHwmicM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eBiwPlTN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAGBUKX019511;
-	Tue, 10 Dec 2024 22:20:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NoTqrj1Ys1/BxjrBZyNKiqpzAWbzkPtUgvifUZxoRwQ=; b=eBiwPlTNvm7f3p8Z
-	+7dh9E41m4SwdwZJfb/7H7EoNcNYjzr3nfAWsy0tDdDIPIMjF9l2FGttgSvJ94Ew
-	f85uOGPrjpiYTs8pwlzz9KL8M3KFmYsCN/6Y1ZHKaAe0RIFEIquIvIrZzpHxvhV/
-	hWB8DWjQvRUmvBxzojhCZmnt6jgVlsp2uo0d7yC0hH+Op1VjGozJ3BL8I12pOQQu
-	M5GX01oJG9wV/1wwb/IvByavGFDPM+f86Kq4YCPZRz7oRCxpPVVZeEVm8WW6Lglc
-	KsVgO2cn32u06KvrmUZhi+YXSXICP705BwuNatb/dz+a/s9NemuQaHBFsktLtW5a
-	CH+3ng==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdpgsyfm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 22:20:14 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAMKC5F002577
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 22:20:12 GMT
-Received: from [10.110.54.253] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
- 2024 14:20:12 -0800
-Message-ID: <031570d9-8af1-4d4e-9390-865c3d7a2ee8@quicinc.com>
-Date: Tue, 10 Dec 2024 14:20:11 -0800
+	s=arc-20240116; t=1733869351; c=relaxed/simple;
+	bh=V1x08Augh0N8zS4WoYR8COXWztq7IXbX2aD821/ojaE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=q9xZq+t4n84IYro4B+TEsitnhsRgfk9Anf+v8HYl48ZJVf8FjRZ7PBKhTWwlk8E9XGzjF9fB8Dx3x6qw4S5wy51bkBJKFcmwAwr3bDUemIZCY6jxntiNgbEubwgih5uOiVtiFHf+d4j1H6Pd4QiOFWVtlas3RKYHl28z2tt4mrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a+1CNP7G; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-46779ae3139so10704301cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:22:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733869349; x=1734474149; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=80gtP0ngYWDT9HQaW1nB5mPOKiesHJp4rOBt26DOPw8=;
+        b=a+1CNP7GOZ3E51x33aD+QU1SDuFl3/ff3PxGGCkVFvZw33n8BkoVyAi+H0O2XCMVjO
+         RDLx8CkoUawf4LClqfJiIiS30YJjgmdx7VHUKBtR94NzRnvJSrwUMQovO+2/pH/WIMqf
+         Py8ehtMH/l+VpdpYNPgNnh2mehIvqQ7cdQJQg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733869349; x=1734474149;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=80gtP0ngYWDT9HQaW1nB5mPOKiesHJp4rOBt26DOPw8=;
+        b=XRgruUCa0aqTnVLzAXyWgxezblzNkRV/Lz6jnu3ALu+w6L5INp/ocht6qyzYkRX4+8
+         YdX1EoQAHHijwjLjk9ARjiMODjGYmGOklLMRBKIPGGOOCbNbnPFM1AD8a7Fgpi5P5P4O
+         YT1x1pdlO2vSrOVO2SeS6fqn34fkn23GVFtmLxNV2CJ9oJpG0CvyHQHJfqYM17U/kzps
+         hpO6zlvEgsRLBmKJyCDxhYrUGK4VNKERLWMCP94VXNQJkm9NVzyWP7MbpnDSvBXYfao5
+         QPGiCPEvowS/jj7ySfBN6v+jhhnJ14wtIZfGEWsPUQFcHIs0H3vd867vEkCmCPkehrUd
+         JY/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXKwe/spLvc6yuwdnUrN0GvWj4j1Xe0CbI5KkXaiDjlj3MZxSYdIfHrcQMe+Xp8k6YiXF7TCo74HkfRxEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3NPxhNRO35RdDasqiGG7jPXvAFrK9tZC1VgENmCPOoH23FIqo
+	NLDsoq33Vv647wQaVaGvOk0t3x28uUkGSSKIVn8Lff3QWDGgcjOWWC/lqPfx4A==
+X-Gm-Gg: ASbGncutm4QNuTb4bfkLCPuMHPA4Vv6RnxLECD6Pb4nE/WMUWVXJDRZA7gxX5baHDYm
+	+sv19U+Vq1gf91vMCmxPuCMLJ7xJNTOg7UPYVwMTwdeREXAQsjXbx23a6mxHYpQSdHIQNSNr/6S
+	OvPdvIlYIY86md1NzkcYoCBXnxu3c8OOjjmrcVnlY/128G/NB2oi6eQh0qCSqxZHqHsufcJG4xI
+	RP36idtJGPsFMBLrgvRsa9rEx5U9zV7zTTFUk3a7bmPHiS365v1NHmNPUHo4dx6fwgoa3okuoaI
+	Jea1O6zSYgWFBVqf/NlKU7gAuV6a
+X-Google-Smtp-Source: AGHT+IEqvKN5D2JMUTEWKfZAruKq84kszVloqMpYuEmVddRjUvOcyBbOwyWuSv0w1/0urvG+J2KSgQ==
+X-Received: by 2002:a05:622a:4812:b0:467:5d5d:fabf with SMTP id d75a77b69052e-4678935fbb3mr9472851cf.25.1733869348950;
+        Tue, 10 Dec 2024 14:22:28 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467776034b0sm11232441cf.74.2024.12.10.14.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 14:22:27 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH 0/3] media: uvcvideo: Make sure the ctrl cache is in sync
+ with the device
+Date: Tue, 10 Dec 2024 22:22:21 +0000
+Message-Id: <20241210-uvc-data-backup-v1-0-77141e439cc3@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 00/30] Introduce QC USB SND audio offloading support
-To: Cezary Rojewski <cezary.rojewski@intel.com>
-CC: Takashi Iwai <tiwai@suse.de>, Greg KH <gregkh@linuxfoundation.org>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>,
-        <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Pierre-Louis
- Bossart <pierre-louis.bossart@linux.dev>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <edfeb642-297e-42bb-ad09-cbf74f995514@quicinc.com>
- <2024111655-approve-throwback-e7df@gregkh>
- <2f512d8d-e5f3-4bdd-8172-37114a382a69@quicinc.com>
- <875xoi3wqw.wl-tiwai@suse.de>
- <d0da6552-238a-41be-b596-58da6840efbb@quicinc.com>
- <CF49CA0A-4562-40BC-AA98-E550E39B366A@linux.dev>
- <65273bba-5ec1-44ea-865b-fb815afccc91@intel.com>
- <fbc04c06-c210-416b-9b77-a6bd8a71a637@quicinc.com>
- <9d95e6fa-afcb-4445-9fe3-e0eed95ec953@intel.com>
- <d7c52a11-bd2b-4cce-a0c2-6dc2dadfeaa3@quicinc.com>
- <3d9932fa-dbc3-4393-862f-92916e6e821c@intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <3d9932fa-dbc3-4393-862f-92916e6e821c@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Sq7FuCOCdL55PT_69Hv4Ndwr3u26TRqo
-X-Proofpoint-ORIG-GUID: Sq7FuCOCdL55PT_69Hv4Ndwr3u26TRqo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 clxscore=1015 suspectscore=0 mlxscore=0 priorityscore=1501
- phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100159
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB6/WGcC/x3MQQqAIBBA0avErBtQicKuEi0mHWsIKrQkiO6et
+ HyL/x9IHIUT9NUDkbMk2bcCXVfgFtpmRvHFYJRptNEKr+zQ00k4kVuvA0lR1/pgidlCqY7IQe7
+ /OIzv+wGrpKUWYQAAAA==
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>, stable@kernel.org
+X-Mailer: b4 0.13.0
 
+Hans discovered a bug in the error handling of uvc_ctrl_commit(), lets
+fix it.
 
-On 12/10/2024 7:18 AM, Cezary Rojewski wrote:
-> On 2024-12-06 1:28 AM, Wesley Cheng wrote:
->>
->> On 12/4/2024 2:01 PM, Cezary Rojewski wrote:
->>> On 2024-12-03 9:38 PM, Wesley Cheng wrote:
->>>> Hi Cezary,
->>>>
->>>> On 12/3/2024 8:17 AM, Cezary Rojewski wrote:
->
-> ...
->
->>>>> UAOL is one of our priorities right now and some (e.g.: me) prefer to not pollute their mind with another approaches until what they have in mind is crystalized. In short, I'd vote for a approach where USB device has a ASoC representative in sound/soc/codecs/ just like it is the case for HDAudio. Either that or at least a ASoC-component representative, a dependency for UAOL-capable card to enumerate.
->>>>>
->>>>
->>>> Just to clarify, "struct snd_soc_usb" does have some correlation with our "codec" entity within the QCOM ASoC design.  This would be the q6usb driver.
->>>>
->>>>
->>>>> Currently struct snd_soc_usb does not represent any component at all. Lack of codec representative, component representative and, given my current understanding, mixed dependency of sound/usb on sound/soc/soc-usb does lead to hard-to-understand ASoC solution.
->>>>
->>>>
->>>> IMO the dependency on USB SND is necessary, so that we can leverage all the pre-existing sequences used to identify USB audio devices, and have some ability to utilize USB HCD APIs as well within the offload driver.
->>>
->>> So, while I do not have patches in shape good enough to be shared, what we have in mind is closer to existing HDAudio solution and how it is covered in both ALSA and ASoC.
->>>
->>> A ASoC sound card is effectively a combination of instances of struct snd_soc_component. Think of it as an MFD device. Typically at least two components are needed:
->>>
->>> - platform component, e.g.: for representing DSP-capable device
->>> - codec component, e.g.: for representing the codec device
->>>
->>> USB could be represented by such a component, listed as a dependency of a sound card. By component I literally mean it extending the base struct:
->>>
->>> stuct snd_soc_usb {
->>>      struct snd_soc_component base;
->>>      (...)
->>> };
->>>
->>> In my opinion HDAudio is a good example of how to mesh existing ALSA-based implementation with ASoC. Full, well implemented behaviour of HDAudio codec device drivers is present at sound/pci/hda/patch_*.c and friends. That part of devoid of any ASoC members. At the same time, an ASoC wrapper is present at sound/soc/codecs/hda.c. It will represent each and every HDAudio codec device on the HDAudio bus as a ASoC-component. This follows the ASoC design and thus is easy understand for any daily ASoC user, at least in my opinion.
->>>
->>> Next, the USB Audio Offload streams are a limited resource but I do not see a reason to not treat it as a pool. Again, HDAudio comes into picture. The HDAudio streams are assigned and released with help of HDAudio library, code found in sound/hda/hdac_stream.c. In essence, as long as UAOL-capable streaming is allowed, a pcm->open() could approach a UAOL-lib (? component perhaps?) and perform ->assign(). If no resources available, fallback to the non-offloaded case.
->>>
->>> While I have not commented on the kcontrol part, the above means that our current design does go into a different direction. We'd like to avoid stream-assignment hardcoding i.e.: predefining who owns a UAOL-capable stream if possible.
->>>
->>>
->>
->> Thanks for sharing the implementation for HDA.  I did take a look to the best of my ability on how the HDAudio library was built, and I see the differences that are there with the current proposal.  However, I think modifying the current design to something like that would also require the QCOM ASoC side to change a bit too.  As mentioned by Pierre, I think its worthwhile to see if we can get the initial changes in, which is the major part of the challenge.  For the most part, I think we could eventually refactor soc-usb to behave similarly to what hda_bind.c is doing.  Both entities are the ones that handle linking (or creation in case of HDA) of ASoC components.  The one major factor I can see is that within the HDA implementation vs USB SND is that, for USB, hot plugging is a common practice, and that's a scenario that will probably need more discussion if we do make that shift.
->>
->>
->> Anyway, I just wanted to acknowledge the technical details that are utilized by HDAudio, and that we could potentially get there with USB SoC as well.
->
-> Hello,
->
->
-> After analyzing the USB for some time to get an even better understanding of what's present in this series, I arrived at a conclusion that indeed, the approach present here clearly differs from what I would call _by the book_ approach for hardware-based USB Audio offloading.
->
-> All sections below refer to the public xHCI spec [1].
-> A high-level bullets for the probing procedure:
->
-> 1. xHCI root and resources probe() as they do today
-> 2. xHCI reads HCCPARAMS2 (section 5.3.9) and checks GSC bit
-> 2a. If GSC==0, the UAOL enumeration halts
->
-> 3. xHCI sends GET_EXTPROP_TRB with ECI=1 to retrieve capabilities supported (section 4.6.17 and Table 4-3)
-> 3a. If AUDIO_SIDEBAND bit is not set, the UAOL enumeration halts
->
-> 4. Create a platform_device instance. This instance will act as a bridge between USB and ASoC world. For simplicity, let's call it usb-component, a representative of USB in struct snd_soc_component.
->
-> 5. On the platform_device->probe() the device requests information about resources available from xHCI (section 7.9.1.1), ECI=1, SubType=001
-> 6. Allocate a list of streams per device or list per endpoint supported based on the data retrieved with the followup TRB of SubType=010.
->
+It has been tested with v4l2-compliance -d /dev/video0
 
-Hi Cezary,
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Ricardo Ribalda (3):
+      media: uvcvideo: Return the number of processed controls
+      media: uvcvideo: Do not send events for not changed controls
+      media: uvcvideo: Rollback non processed entities on error
 
-Ah...this is why I mentioned earlier if what you were talking about was the XHCI audio sideband feature mentioned in the xHCI spec, which this series is not.  What you are mentioning is a full HW offload of audio transfers, and that system memory is not utilized for those transfers.  In this case, we're just offloading the work, ie handling of data transfers, to an audio DSP.  This is what Mathias and I clarified on the below discussion:
-https://lore.kernel.org/linux-usb/17890837-f74f-483f-bbfe-658b3e8176d6@linux.intel.com/
+ drivers/media/usb/uvc/uvc_ctrl.c | 54 +++++++++++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 12 deletions(-)
+---
+base-commit: 6c10d1adae82e1c8da16e7ebd2320e69f20b9d6f
+change-id: 20241210-uvc-data-backup-a0a76df9aee9
 
-
-> (things get more complicated here, stopping)
->
-> Now, any time a sound card with bound usb-component would begin PCM operation, starting with substream->open(), the component would first check if the device and/or the endpoint has resources necessary to support offloading. If not, it would fallback to the non-offloaded case.
->
->
-> I do not see implementation for any TRBs I mentioned above here. The HCCPARAMS2 seem to be ignored too. At the same time, I'm unsure about the "interrupters" piece. I believe they make the approach present here somehow work, yet may not be required by the _by the book_ approach at all.
->
->
-
-IMO, the xHCI spec doesn't really go over the audio sideband implementation in detail, so its hard to evaluate what a proper design is to accommodate for it.  I've heard that there was work done on the Windows OS to support this, but other than a brief mention of it, there were no implementation details either.  In this series, the proposal is that the apps/main core is still responsible for handling the control interfaces and power management, and only offloading the handling and completion of transfers.
-
-
-Thanks
-
-Wesley Cheng
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
