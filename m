@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-439347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4301C9EADF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:29:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72EF9EADF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:29:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963E628185C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64FE11888F22
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A481DC982;
-	Tue, 10 Dec 2024 10:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A39E1DC9A6;
+	Tue, 10 Dec 2024 10:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IBalEQ6x"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="AQq1pcMM"
+Received: from st43p00im-ztdg10073201.me.com (st43p00im-ztdg10073201.me.com [17.58.63.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9C623DE9F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3339B23DEA7
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.63.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733826539; cv=none; b=RUgLPYwgmpFssEa8KnhH2X0h0LhuObnmQSvjm+W0Bht7cYbU5zxdgZPi5mVRM2BmwshsT9C2e7mgSKMTgMj//jKbRE/wUj2iFwyh9442eRX7SnGgXO0JgDv+YdceOy6y2/T8gHdl2k9uIrrCvYWxR6unktNypVxD0kaiAUmiViU=
+	t=1733826557; cv=none; b=WDaS4ANZNujhKQMDzzmIJlJcXfCttfNVa5SckO7T08fT/pDkMxnhfGhczUI8VWYCupHvINaxLXa17o2tCrTN667Qy76CEONaf+tc2zW9hnKih/uviSaZ4WW/U5LJf0vDltSnPVoDRR+I/kmIR+ZG5YN2d23RP/3OeWoGfg2cbgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733826539; c=relaxed/simple;
-	bh=AXICE45n8VGEWntYeT3CM4FjrEti+tM9ptF3DZdi79U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4raIDyDoHithKeFR++5sYxUBFsF6NpGFKx/P6yu1krfnOboImIJ9jhG/2Kexz75c+BHuEpZh7mctCMqtiOx2aqASeoxWv8IlETY2psFuXvAufrBvI/Jt/sL9xDPHN30AQajr4ASXxbaIXLRNDgfX6pk/XONKmo/zp+StfS9Vus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IBalEQ6x; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A56D240E028B;
-	Tue, 10 Dec 2024 10:28:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DOxvEddhPsYD; Tue, 10 Dec 2024 10:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733826530; bh=4Ib7E36r4o7wZ6csrTRSfZT/WxIPoKg/kjFQFON/JFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IBalEQ6xbChoSfuN2KL976HgswEqgNvqOF6H/I/OfobbMps+pWMddoEwO9aLYroju
-	 Bv1c9QCIuz3Vm4rTKfCMg7jeyHpt+t2cW9x+/vTGI2D034znsrDTzzs25UTDX59zlu
-	 YCspiSKSuW/T0MOC+aFOg7r5AiWqQFR4nbVeThFxbUma+OQj8hUtSg38+RU7gs78C3
-	 k9md0M2SRwN+/1HNqOVyp+1uQT4JD9+c0aNaTrAO9hFV41PCc9edSZlkFIOxN9jBus
-	 eLEF+G0qA8K1iLXaX4bO70ZFF7isbZ+1cND+eHCBNqC2+lpv9wwsvR/zW8Ar8zkg2w
-	 T+cWQMdypNOlaFHUaw0Au+rt/wxwye4t+0xJ3ssr0YIHASF+GpO9jzVknzUWXlRGEC
-	 pE9s1a9AyMf23IhON14V0o/rHXXd7hIpLaYDnD5HEkjrgfaYDe/us/7pWc8sBog6l1
-	 s8R74rK4UI2Sq/jqTtJc9r4EKuvSWNNIW/JbB3+DFk/pVGKmmWlsfAuVx3aP9ETNe3
-	 mbrPZCYuw2yPYNNvdsDj0ENjKQLYcSm9LaOtlz+gb2gszgSczOQUy3/jTvWgm/VeKV
-	 zsYHSox3i6SEhwN1LvHJMWEkDDsqwikIrYfbyc2FHdF8KfowYedboyDDNl4KYXx4zR
-	 azOHoT/F9IekSbLCrheD89n0=
-Received: from zn.tnic (p200300ea971f9307329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF5E640E0288;
-	Tue, 10 Dec 2024 10:28:40 +0000 (UTC)
-Date: Tue, 10 Dec 2024 11:28:35 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH v6 6/8] x86/sev: Treat the contiguous RMP table as a
- single RMP segment
-Message-ID: <20241210102835.GCZ1gX04evsuTcS01d@fat_crate.local>
-References: <cover.1733172653.git.thomas.lendacky@amd.com>
- <8c40fbc9c5217f0d79b37cf861eff03ab0330bef.1733172653.git.thomas.lendacky@amd.com>
- <20241209194320.GCZ1dIWDMPppdXgzxJ@fat_crate.local>
+	s=arc-20240116; t=1733826557; c=relaxed/simple;
+	bh=fRVkXHtgtj3c1+fA3Njm4bAmaUPEMEzaLzODzHPIQDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VnBZxwVSI9HvkdHQKq1y2upoatH1vq5ifW6L+KQm0X/fvjRAdD9sMa6yDUquFbozTX486uur9gd4659QTfK9sfnEZNjUcaulm0wJVqrJYSp7h3OR8705ysl7PiSx6GMUK8KoKrCi1x4m6GYk7eZ9tqhOgB9SmFjZ9ewIjA/MV3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=AQq1pcMM; arc=none smtp.client-ip=17.58.63.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733826555;
+	bh=SAQCPLZ/4O4cpIzB3DaPnXL/WMcxQBBd3sR7WcIeCQU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 x-icloud-hme;
+	b=AQq1pcMMIIUBTG0YNK+gyWxmkRq/igs5SLFtLV+LlV6GUdbF9FaOhMc5wjoNwD9yI
+	 mdvT140UdjjU6d9qODpG3gwHRsL8hp8wDYVcQTcBhJ7uQbXZlMdYa0EvL1iztHYuCa
+	 xXAGJdycpScoeAqZYgbNifKJ5VJJExE0GWyD5hsUoQTozQICY+OoURRSHxorhcc+UL
+	 wgL5nQ9GzlOKegkwK9LdKrEETYm1NRtZ0H2XdiqrZxyoYm1/Q7gvlu3yjlcqUI4Oep
+	 pk7WzTBBoTbCbh1bAWKi6cWB56Ar9SXE7w1CpzmZxN3unYepdORPNQoaac6Oce+OzX
+	 RhLFxm5Bx0K2w==
+Received: from lunix (st43p00im-dlb-asmtp-mailmevip.me.com [17.42.251.41])
+	by st43p00im-ztdg10073201.me.com (Postfix) with ESMTPSA id 1D7C49C026C;
+	Tue, 10 Dec 2024 10:29:12 +0000 (UTC)
+Date: Tue, 10 Dec 2024 11:29:09 +0100
+From: Lucy Mielke <lucymielke@icloud.com>
+To: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: common: expand documentation for USB functions
+Message-ID: <6nvegfmo6d5ak4soaf5nyifsaasfts4qlsnnpsd4sgpnikc2jd@amfmgdr5n3bi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209194320.GCZ1dIWDMPppdXgzxJ@fat_crate.local>
+X-Proofpoint-GUID: DEkAsDe8nbglDuPl1HF32w5YwVZqyioL
+X-Proofpoint-ORIG-GUID: DEkAsDe8nbglDuPl1HF32w5YwVZqyioL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-10_04,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=432 spamscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412100078
 
-On Mon, Dec 09, 2024 at 08:43:20PM +0100, Borislav Petkov wrote:
-> I think we should collect the deliberation why we're doing this nospec stuff
-> from here:
-> 
-> https://lore.kernel.org/r/79be2e29-6487-dd60-9b6f-3daa48a2e93f@amd.com
-> 
-> into a comment around here for future reference.
-> 
-> This is the best example for those: "uff, why did we do it back then"?
-> questions when we stare at this months, years from now.
+This patch adds documentation for two USB functions:
+- usb_otg_state_string(), which returns a human-readable name for OTG
+  states and
+- usb_get_dr_mode_from_string(), which returns the dual role mode for a
+  given string.
 
-IOW, something short like this which should catch the gist of the idea:
+Signed-off-by: Lucy Mielke <lucymielke@icloud.com>
+---
+ drivers/usb/common/common.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index 3272a73d3594..46abc73cbb87 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -453,6 +453,14 @@ bool snp_probe_rmptable_info(void)
-        return true;
+diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
+index 871cf199b6bf..fc0845f681be 100644
+--- a/drivers/usb/common/common.c
++++ b/drivers/usb/common/common.c
+@@ -41,6 +41,12 @@ const char *usb_ep_type_string(int ep_type)
  }
+ EXPORT_SYMBOL_GPL(usb_ep_type_string);
  
-+/*
-+ * About the array_index_nospec() usage below:
-+ *
-+ * This function can get called by exported functions like
-+ * snp_lookup_rmpentry(), which is used by the KVM #PF handler, among
-+ * others, and since the @pfn passed in cannot always be trusted,
-+ * speculation should be stopped as a protective measure.
++/**
++ * usb_otg_state_string() - returns human readable name of OTG state.
++ * @state: the OTG state to return the human readable name of. If it's not
++ *    any of the states defined in usb_otg_state enum, 'UNDEFINED' will be
++ *    returned.
 + */
- static struct rmpentry_raw *get_raw_rmpentry(u64 pfn)
+ const char *usb_otg_state_string(enum usb_otg_state state)
  {
-        u64 paddr, rst_index, segment_index;
-
+ 	static const char *const names[] = {
+@@ -179,6 +185,14 @@ static const char *const usb_dr_modes[] = {
+ 	[USB_DR_MODE_OTG]		= "otg",
+ };
+ 
++/**
++ * usb_get_dr_mode_from_string() - Get dual role mode for given string
++ * @str: String to find the corresponding dual role mode for
++ *
++ * This function performs a lookup for the given string and returns the
++ * corresponding enum usb_dr_mode. If no match for the string could be found,
++ * 'USB_DR_MODE_UNKNOWN' is returned.
++ */
+ static enum usb_dr_mode usb_get_dr_mode_from_string(const char *str)
+ {
+ 	int ret;
 -- 
-Regards/Gruss,
-    Boris.
+2.47.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
