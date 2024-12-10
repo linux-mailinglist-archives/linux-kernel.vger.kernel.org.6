@@ -1,179 +1,150 @@
-Return-Path: <linux-kernel+bounces-440313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B3E9EBBAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:16:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6B79EBBB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED812840EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1F02833C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBD723024D;
-	Tue, 10 Dec 2024 21:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7808323099A;
+	Tue, 10 Dec 2024 21:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="al3wymTk"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4HkPpMK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C4B23ED4A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D057E23ED4A;
+	Tue, 10 Dec 2024 21:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733865383; cv=none; b=BZHjadB+1DVHw4VdZxg+63UKTumLJzDM64LUf+Cl/VJok/J81PhkQsETjRPf0lfVieLIIWOFPdXAz+V+ueQvtskEOzygzuvW/D2my+FnZhrjRCiLj/AbQ/OW0uuHU6AcG0fb8XukI6xMsLI02aoSH9AsdyTM7KtEKnGZjBHcKKw=
+	t=1733865463; cv=none; b=CHtfTFR5zZ6JOePTH+k/C9s/Di9W3l8J6G6kMnT2eUL76/YHOE/mDIXI1gR4rbFFYxxM6iKq5GDVLL+zih/5dYk+c/Me8FINaxfxjylAyCFm+Q/x4BnMLs3HYjRSZBpSygfqpgVBOY53pFKbGaRNelbkWQi55CzivSeulKptHAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733865383; c=relaxed/simple;
-	bh=Vhk9wUtufHdBKtIffOrgwOkZRLv5EvpKs4LVfDrBxEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gE3CDV09qprEbJSUawsFAjLkBYvXQNSO7pt+40StV8Ni00DZBsc4gXax8+vBlJ15QFTxfYCL8pmZ5WEn/0uit9yokIBcYI7WOAO7v95E8UFTe7aXzuyNHhTWR7d3mZhr4Jq1xwmX7sUZFCsTftK2IydHctD1tqXAKl6G5au3/k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=al3wymTk; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b6e5ee6ac7so60152685a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:16:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1733865378; x=1734470178; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gyk9ndnvoGvMP7pC2cu6SDb/gT8fltkKrw46Jm17ZPc=;
-        b=al3wymTkn9rwggllv/HGWzzVNRndEDEeVUsEJl5ZhCgZjUp+4kX7Of1UXyLeJosXlz
-         ySV1b1qogx1kmsHVJy4cG56EarQyeeew+Aq3zbfEfifz7EgoxOLdoiPu+kWK+MU5n/mL
-         wFH9BDf45N+B54OvwHBs4MwVlXLtfSbjviqifMYXSoJ7Ndi6Lis4lDwKoCgjaHxmJQOS
-         5dqLVbAH7Tbu5NV4rs0vrWuKcuWK1QIPnm2frc2zEmO3ze2A+rOC0NFJ/sfpIbggYkeh
-         vV3T+HwDnvl/M17TR4cYXWuNVHEs8klN4Pf6Up0KOqlwqZu7Uzv4AG01qtKCKCu8XADl
-         J23Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733865378; x=1734470178;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gyk9ndnvoGvMP7pC2cu6SDb/gT8fltkKrw46Jm17ZPc=;
-        b=PzKVtIndnO+yWe65s4FAe3tyQ5G034wVDCxyKWrMKdsE3brwdj0SDLDAExl3DpzSno
-         w0rU/XTU6uW0Kt6FCX4CvdGHLsXzcSO1r5K3PQzhmVIVSzaTx6dd8ZVhcx7XwKIx2tto
-         xOn3auquNVeXYkIukiGfrTf+MOz3FC0z3IqiOShWrCTEtR4eyo8mZBq5Ee7PLQTEcdsD
-         XK1jkV7mO9JBDBVIp7ED/hKCQQOPkOmazQptfHYey8HbuKt2NQnynNBqBoY8D3Oxt9JZ
-         L3r7cWtlV/FykSh8wXV9bObOT6I3i2t1jyN7kuhCUzRXvanh7/BpKBZoZCNT/pAmaf8o
-         dkzA==
-X-Gm-Message-State: AOJu0YwLoRjESC2ez6RQEEL7W24G6Z/4YfZrFTgjeFLVRFdOJOAkelPi
-	+DVcsuk50izT21mnMqp9QB5G2uQeAvV4rloPO7Us8+hcr6AjPSh9hctgRtq0xrg=
-X-Gm-Gg: ASbGncvp/10OiAbJurcQJkpjyigrDLmaNaXD61KcVWfh5ULHHsvYTN6nRBw1uoErQ5A
-	+kjoYW1y1uv3eHW9gkl0G8lydC9a1mFIO8SlVcpZp9ZEKsNnEzBfoU4di4w1MRLH/HiVtbcTQ0O
-	aGhR2hZ0OeT7xT20k+o4bbc7sj9eb7ptjcFvedgIpu9S68daWQ2lGV9qbUBJ85KrZb9R+EbsfPk
-	Q03VCT1pa5tVxJvw+oubPaRlNr+0k1hZnX3xHzF0TuQum6wlwe3
-X-Google-Smtp-Source: AGHT+IGbonnfLU/NBu46yYYQXI1v4DRq430cXoE7IJ5mqfU9VxFIjoQbjkh3PuJphJoRzWCExYATJQ==
-X-Received: by 2002:a05:6214:21a5:b0:6d8:8ca0:a7 with SMTP id 6a1803df08f44-6d934b90095mr6115126d6.30.1733865377709;
-        Tue, 10 Dec 2024 13:16:17 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8eb1ce58bsm51692076d6.49.2024.12.10.13.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 13:16:17 -0800 (PST)
-Date: Tue, 10 Dec 2024 16:16:13 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Yu Zhao <yuzhao@google.com>
-Subject: Re: [PATCH v2 1/2] mm/page_alloc: conditionally split >
- pageblock_order pages in free_one_page() and move_freepages_block_isolate()
-Message-ID: <20241210211613.GC2508492@cmpxchg.org>
-References: <20241210102953.218122-1-david@redhat.com>
- <20241210102953.218122-2-david@redhat.com>
+	s=arc-20240116; t=1733865463; c=relaxed/simple;
+	bh=UyzaenxJMZxUyiuu2tQwx1Mm4Pxn8j1HQU8DNGDLMP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=M65XLYC6OzD6bK/3bXqbYZcRHh2pSmvFyYnnYQUbMXTASxElmCOVUWigBHPVylniWrM1jY5vc0wBXvSCj0ibN/TIEG+c3rmpJQ7BYTr2X87rFsBzDUZLy9Mu/FaLsKJ4+Tn8Zv4NEzg/eR61QeF1a5f5u1II96NbAkfPGrnpvIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4HkPpMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D86C4CED6;
+	Tue, 10 Dec 2024 21:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733865463;
+	bh=UyzaenxJMZxUyiuu2tQwx1Mm4Pxn8j1HQU8DNGDLMP4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=F4HkPpMKBxLyj/NgKupTc4pUVt+fm2OjGPZQkO1uN/W36xBGl9RMESHr7Cfe54S4F
+	 bwPy1fqXGEUp92cPx51vD57EWdhOKol0CRRpWZCe7iOjVdrOLvhNTNmhYYnZbGdJO6
+	 1TCVfyk6YVG5MbGnGMA4Wg30U8bap5dihPbRcfGOmuN0sqjDvKSIxhNMXezt/pk3VA
+	 gLPSdxgm5GpsmPqhlS7WSDVyJf5QEwwxmhgmR0qTtCfCQzyUU0zhcUsfTJj0vCuOUw
+	 k7YMFiGG4NTP+vprh6J+wqHJtfrHSxuxTr8CV3KsZQKZj3Wl9jFyOi+Fz43klZizQZ
+	 5tvS850P34Knw==
+Date: Tue, 10 Dec 2024 15:17:40 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Zhou Shengqing <zhoushengqing@ttyinfo.com>, Len Brown <lenb@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCHv2] PCI/ACPI: _DSM PRESERVE_BOOT_CONFIG function rev id
+ doesn't match with spec.
+Message-ID: <20241210211740.GA3257918@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241210102953.218122-2-david@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0g66WmqeouN6AWADE+J3e-f30wMGyLX-Upk+w7Y+i2OxA@mail.gmail.com>
 
-On Tue, Dec 10, 2024 at 11:29:52AM +0100, David Hildenbrand wrote:
-> @@ -1225,27 +1225,53 @@ static void free_pcppages_bulk(struct zone *zone, int count,
->  	spin_unlock_irqrestore(&zone->lock, flags);
->  }
->  
-> -/* Split a multi-block free page into its individual pageblocks. */
-> -static void split_large_buddy(struct zone *zone, struct page *page,
-> -			      unsigned long pfn, int order, fpi_t fpi)
-> +static bool pfnblock_migratetype_equal(unsigned long pfn,
-> +		unsigned long end_pfn, int mt)
->  {
-> -	unsigned long end = pfn + (1 << order);
-> +	VM_WARN_ON_ONCE(!IS_ALIGNED(pfn | end_pfn, pageblock_nr_pages));
->  
-> +	while (pfn != end_pfn) {
-> +		struct page *page = pfn_to_page(pfn);
-> +
-> +		if (unlikely(mt != get_pfnblock_migratetype(page, pfn)))
-> +			return false;
-> +		pfn += pageblock_nr_pages;
-> +	}
-> +	return true;
-> +}
-> +
-> +static void __free_one_page_maybe_split(struct zone *zone, struct page *page,
-> +		unsigned long pfn, int order, fpi_t fpi_flags)
-> +{
-> +	const unsigned long end_pfn = pfn + (1 << order);
-> +	int mt = get_pfnblock_migratetype(page, pfn);
-> +
-> +	VM_WARN_ON_ONCE(order > MAX_PAGE_ORDER);
->  	VM_WARN_ON_ONCE(!IS_ALIGNED(pfn, 1 << order));
->  	/* Caller removed page from freelist, buddy info cleared! */
->  	VM_WARN_ON_ONCE(PageBuddy(page));
->  
-> -	if (order > pageblock_order)
-> -		order = pageblock_order;
-> +	/*
-> +	 * With CONFIG_MEMORY_ISOLATION, we might be freeing MAX_ORDER_NR_PAGES
-> +	 * pages that cover pageblocks with different migratetypes; for example
-> +	 * only some migratetypes might be MIGRATE_ISOLATE. In that (unlikely)
-> +	 * case, fallback to freeing individual pageblocks so they get put
-> +	 * onto the right lists.
-> +	 */
-> +	if (!IS_ENABLED(CONFIG_MEMORY_ISOLATION) ||
-> +	    likely(order <= pageblock_order) ||
-> +	    pfnblock_migratetype_equal(pfn + pageblock_nr_pages, end_pfn, mt)) {
-> +		__free_one_page(page, pfn, zone, order, mt, fpi_flags);
-> +		return;
-> +	}
+On Tue, Dec 10, 2024 at 08:56:14PM +0100, Rafael J. Wysocki wrote:
+> On Tue, Dec 10, 2024 at 8:50 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Thu, Nov 14, 2024 at 03:04:24AM +0000, Zhou Shengqing wrote:
+> > > Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
+> > > for PCI. Preserve PCI Boot Configuration Initial Revision ID is 2. But
+> > > the code is 1.
+> >
+> > This _DSM function 5 was added in PCI Firmware r3.1, released Dec 13,
+> > 2010.  It's listed in sec 4.6 with Revision 2 (as *all* the defined
+> > functions are, even functions 1-4, which were included in r3.0 with
+> > Revision 1).
+> >
+> > But the actual definition that was added in r3.1 is in sec 4.6.5,
+> > which specifies Revision ID 1.
+> >
+> > PCI Firmware r3.2, released Jan 26, 2015, was the newest available at
+> > the time Ben implemented a78cf9657ba5 ("PCI/ACPI: Evaluate PCI Boot
+> > Configuration _DSM"), and sec 4.6.5 still specified Revision ID 1.
+> >
+> > So I think Ben's addition used the correct Revision ID (1).
+> >
+> > PCI Firmware r3.3, released Jan 20, 2021, changed sec 4.6.5 to say
+> > "lowest valid Revision ID value: 2"
+> >
+> > I think it's a mistake to make the kernel change below because
+> > platforms in the field implemented function 5 with revision 1 (per the
+> > r3.1 and r3.2 specs), and we have no idea whether they implement
+> > function 5 revision 2.
+> >
+> > It's quite likely that newer platforms following r3.3 will implement
+> > function 5 revision 2, but NOT revision 1, and the existing code won't
+> > work for them.
+> >
+> > I think the fix is to try revision 1 and, if that isn't implemented,
+> > we should try revision 2.  The semantics stayed the same, so they
+> > should both work the same.
+> 
+> Or call Function 0 with the new revision and check the result?
 
-Ok, if memory isolation is disabled, we know the migratetypes are all
-matching up, and we can skip the check. However, if memory isolation
-is enabled, but this isn't move_freepages_block_isolate() calling, we
-still do the check unnecessarily and slow down the boot, no?
+IIUC we should always be using acpi_check_dsm() to call function 0 and
+check for the desired function and revision, so we should do that for
+both revision 1 and revision 2.  It looks like we're missing that
+check here, which is a separate problem.
 
-Having a function guess the caller is a bit of an anti-pattern. The
-resulting code is hard to follow, and it's very easy to
-unintentionally burden some cases with unnecessary stuff. It's better
-to unshare paths until you don't need conditionals like this.
+Of the current pci_acpi_dsm_guid uses, these functions lack that check:
 
-In addition to the fastpath, I think you're also punishing the
-move_freepages_block_isolate() case. We *know* we just changed the
-type of one of the buddy's blocks, and yet you're still checking the
-the range again to decide whether to split.
+  pci_acpi_preserve_config
+    acpi_evaluate_dsm_typed(DSM_PCI_PRESERVE_BOOT_CONFIG)
 
-All of this to accomodate hugetlb, which might not even be compiled
-in? Grrrr.
+  acpi_pci_add_bus
+    acpi_evaluate_dsm_typed(DSM_PCI_POWER_ON_RESET_DELAY)
 
-Like you, I was quite surprised to see that GFP_COMP patch in the
-buddy hotpath splitting *everything* into blocks - on the offchance
-that somebody might free a hugetlb page. Even if !CONFIG_HUGETLB. Just
-- what the hell. We shouldn't merge "I only care about my niche
-usecase at the expense of literally everybody else" patches like this.
+  pci_acpi_optimize_delay
+    acpi_evaluate_dsm_typed(DSM_PCI_DEVICE_READINESS_DURATIONS)
 
-My vote is NAK on this patch, and a retro-NAK on the GFP_COMP patch.
+The only other PCI _DSM functions we use do include the check:
 
-The buddy allocator operates on the assumption of MAX_PAGE_ORDER. If
-we support folios of a larger size sourced from other allocators, then
-it should be the folio layer discriminating. So if folio_put() detects
-this is a massive alloc_contig chunk, then it should take a different
-freeing path. Do the splitting in there, then pass valid chunks back
-to the buddy. That would keep the layering cleaner and the cornercase
-overhead out of the allocator fastpath.
+  EDR_PORT_DPC_ENABLE_DSM  acpi_enable_dpc()
+  EDR_PORT_LOCATE_DSM      acpi_dpc_port_get()
+  TPH_ST_DSM_FUNC_INDEX    tph_invoke_dsm()
+  DSM_PCI_DEVICE_NAME      dsm_get_label() (check in device_has_acpi_name())
 
-It would also avoid the pointless and fragile attempt at freeing a
-big, non-buddy chunk through the PCP.
+> > > Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to pci_register_host_bridge()")
+> > > Origin fixes: a78cf9657ba5 ("PCI/ACPI: Evaluate PCI Boot Configuration _DSM")
+> > >
+> > > Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+> > > ---
+> > >  drivers/pci/pci-acpi.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> > > index af370628e583..7a4cad0c1f00 100644
+> > > --- a/drivers/pci/pci-acpi.c
+> > > +++ b/drivers/pci/pci-acpi.c
+> > > @@ -132,7 +132,7 @@ bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
+> > >                */
+> > >               obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
+> > >                                             &pci_acpi_dsm_guid,
+> > > -                                           1, DSM_PCI_PRESERVE_BOOT_CONFIG,
+> > > +                                           2, DSM_PCI_PRESERVE_BOOT_CONFIG,
+> > >                                             NULL, ACPI_TYPE_INTEGER);
+> > >               if (obj && obj->integer.value == 0)
+> > >                       return true;
+> > > --
+> > > 2.39.2
+> > >
 
