@@ -1,189 +1,121 @@
-Return-Path: <linux-kernel+bounces-439905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E249EB5B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:11:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4AA09EB5BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:12:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5745628127F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:11:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E3C162DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855F51BBBFE;
-	Tue, 10 Dec 2024 16:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6DD1BD9D3;
+	Tue, 10 Dec 2024 16:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="ge4vdMT6"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNyKLcLf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA04C23DEA7
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E8723DEA7;
+	Tue, 10 Dec 2024 16:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733847097; cv=none; b=iZ/woxX+7+vw91dygVisnymqDnpbsdrKPlQiaNyHHYsAvNqayrBuoFEZXQLLv+7hDFMB+VzRJwlq2tuPY8qvdLldLLj2QMAXEPj8NFnrSLaKP5b9qb6pkUfXG9W0xMs0cSgY2ugPZ4S168N9prRd4K+iyNVevJglNeRG1af/buw=
+	t=1733847153; cv=none; b=Mn0G+hH8gUEnYNB3dsPTYklhQ3JBhkDk39YmSAFwtX+JEfO0y5jAU2hXYUKgTlOiPcpAlgoZKaRqyvMEhvwFyYbYL87jAXydOK0K201ZMDApli6tuZJdMipdj6Z1zZDVEgMCMtlFTPJesYYU0Pfb1SStfEbLLtGbWAsgggykUdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733847097; c=relaxed/simple;
-	bh=yLgsIJxLXWe//vZnL+rb4anEjoDukn3viJQnX0ujSFQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lOAJNqQmPCJ9IYQZcKQ9wosHYiMGfwCaTIe4El6EXrtXvJmiE7C1yLo0nkXoKvUYSHu/IoSzi8cM4VkowaN8pch81BdeOtLnC7mcLSmYM+1+PVU7aIbq+giGi4CqwxMpFhqoCN0cCwzQRx3h2EF1ttEtK2SZ8XPxl+I8IxbOwQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=ge4vdMT6; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
-	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
-	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yLgsIJxLXWe//vZnL+rb4anEjoDukn3viJQnX0ujSFQ=; b=ge4vdMT6CUBrk7v/fIhpnDVg4V
-	aO+a8vju6O2ZZKXXY8/9HtvEcvGgU3QmrvXG04YpRMCd57D8pUfMvyGgbe2eubxkoGFrlnBfWznrt
-	1tWOHXw7HS22iZ9VW5JRsXRg5YEbtp08E0K/3Eghfr0HwqcBp3E2Ury1oaVZMP+ZO0llIbdUVP8YF
-	tW7B8/z5FYAJ+kwP6HfR4uaO+/I2hAXFuc44nBBDjUqYe39SNsLlDIzOg+6B1LKEkFqI4pG7nqnJs
-	U034AYF8eysvyR4Ie5nCdlATG5CmUv0dKpXaKb14346NvMRlnTo3Zo6ULgCFDK4UyDdXtHvAmmtzl
-	5hDtFIHA==;
-Received: from [194.230.241.203] (helo=[10.10.1.195])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1tL2pa-001S4V-0Q; Tue, 10 Dec 2024 16:11:26 +0000
-Message-ID: <06a86aa50e62911871e95bb36b420cbd4e4fafbc.camel@codethink.co.uk>
-Subject: Re: [v6.12] WARNING: at kernel/sched/deadline.c:1995
- enqueue_dl_entity (task blocked for more than 28262 seconds)
-From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-To: Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Ilya Maximets
-	 <i.maximets@ovn.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Joel Fernandes
-	 <joel@joelfernandes.org>, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar
-	 <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	 <vincent.guittot@linaro.org>, vineethrp@google.com, shraash@google.com
-Date: Tue, 10 Dec 2024 17:11:24 +0100
-In-Reply-To: <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
-References: <571b2045-320d-4ac2-95db-1423d0277613@ovn.org>
-	 <20241206151819.GA3949140@google.com>
-	 <CAO7JXPhdv+Jx_UpAq=-aG-BKwiyjZ2kvuZDM4+GLjbya_=ZJsw@mail.gmail.com>
-	 <20241209105514.GK21636@noisy.programming.kicks-ass.net>
-	 <CAO7JXPgSYCzu0mtnWqBaS8ihmoQXX3WE_Yb_rEYuMeQn+B6KJg@mail.gmail.com>
-	 <20241209125601.GQ35539@noisy.programming.kicks-ass.net>
-	 <8ff30c5d-b8ac-4825-874a-d73931b85014@ovn.org>
-	 <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
-Organization: Codethink
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.54.2 (by Flathub.org) 
+	s=arc-20240116; t=1733847153; c=relaxed/simple;
+	bh=aeFcHfhyyi6Hrc1ORc56BM7zT3V7KDTDRrWatg2IVuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbMz5fstnyxC29siXg347DTABSblSVubi5CCTyE8AhJ42EZnITXaSNMwZIq+sRSSlz/neU50Vlb3YGDQSshOFf65U76nd+kXkBWGMoLtu5lpARwCRz1JMzF0uumzeTXaS3OcikKBY3Oa4nKp7tIGN7lMS16euy3pnlIaJOzQ23A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNyKLcLf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D41C4CED6;
+	Tue, 10 Dec 2024 16:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733847152;
+	bh=aeFcHfhyyi6Hrc1ORc56BM7zT3V7KDTDRrWatg2IVuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tNyKLcLf9TBPZY/+magH1b8HAo631nln+OPc5sR6f4ayS8hvBfvwQPECC9oIm9ag5
+	 LCeTAGJ8duFEitSd1+oL2LJp9rHp5BH4DocBeF2Bv8BdcJtdCaHyWooP0i2kXRRUvq
+	 ZcLqGR+StgEpRHOLLCIw3mPcZElRJNRJuN6fbGm39WIn5xZ55aptvWyx9tlGVKz24c
+	 KMF8WTpz3g1u0nx65+IjO2ma/Pj0w759l4H3HgL3Uh0tj4dNNLLMonbl4+8bAZYCu6
+	 FTJJv/kq4mgaYBi6sPjghLxgc3fEXCou7AiLit1XNSNqte8p5C7RIE05x9BJ4RVNgS
+	 xlERbS1/Oj/2g==
+Date: Tue, 10 Dec 2024 11:12:30 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Saravana Kannan <saravanak@google.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Thierry Reding <treding@nvidia.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	matthias.bgg@gmail.com, elder@kernel.org, ricardo@marliere.net,
+	sumit.garg@linaro.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH AUTOSEL 6.11 08/15] drm: display: Set fwnode for aux bus
+ devices
+Message-ID: <Z1hobuvz2S03L9TF@sashalap>
+References: <20241204221726.2247988-1-sashal@kernel.org>
+ <20241204221726.2247988-8-sashal@kernel.org>
+ <CAGETcx8bhzGZKge4qfpNR8FaTWqbo0-5J9c7whc3pn-RECJs3Q@mail.gmail.com>
+ <CAGETcx-6yHV5xr1j7krY8LShCF5JATX0NSwjeRUL9+3TLCMq9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: marcel.ziswiler@codethink.co.uk
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGETcx-6yHV5xr1j7krY8LShCF5JATX0NSwjeRUL9+3TLCMq9w@mail.gmail.com>
 
-T24gTW9uLCAyMDI0LTEyLTA5IGF0IDIxOjUyIC0wNTAwLCBWaW5lZXRoIFJlbWFuYW4gUGlsbGFp
-IHdyb3RlOgo+IE9uIE1vbiwgRGVjIDksIDIwMjQgYXQgNzozNOKAr1BNIElseWEgTWF4aW1ldHMg
-PGkubWF4aW1ldHNAb3ZuLm9yZz4gd3JvdGU6Cj4gPiAKPiA+IE9uIDEyLzkvMjQgMTM6NTYsIFBl
-dGVyIFppamxzdHJhIHdyb3RlOgo+ID4gPiAKPiA+ID4gRG9lcyBzb21ldGhpbmcgbGlrZSB0aGUg
-YmVsb3cgbWFrZSBzZW5zZT8KPiA+ID4gCj4gPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
-L3NjaGVkLmggYi9pbmNsdWRlL2xpbnV4L3NjaGVkLmgKPiA+ID4gaW5kZXggZDM4MGJmZmVlMmVm
-Li5hYmViZWI2N2RlNGUgMTAwNjQ0Cj4gPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvc2NoZWQuaAo+
-ID4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3NjaGVkLmgKPiA+ID4gQEAgLTY2NCw2ICs2NjQsNyBA
-QCBzdHJ1Y3Qgc2NoZWRfZGxfZW50aXR5IHsKPiA+ID4gwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnTC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkbF9ub25fY29udGVuZGluZyA6
-IDE7Cj4gPiA+IMKgwqDCoMKgwqAgdW5zaWduZWQgaW50wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgZGxfb3ZlcnJ1bsKgwqDCoMKgwqDCoMKgIDogMTsKPiA+ID4gwqDCoMKg
-wqDCoCB1bnNpZ25lZCBpbnTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBk
-bF9zZXJ2ZXLCoMKgwqDCoMKgwqDCoMKgIDogMTsKPiA+ID4gK8KgwqDCoMKgIHVuc2lnbmVkIGlu
-dMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRsX3NlcnZlcl9hY3RpdmXC
-oCA6IDE7Cj4gPiA+IMKgwqDCoMKgwqAgdW5zaWduZWQgaW50wqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgZGxfZGVmZXLCoMKgwqDCoMKgwqDCoMKgwqAgOiAxOwo+ID4gPiDC
-oMKgwqDCoMKgIHVuc2lnbmVkIGludMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIGRsX2RlZmVyX2FybWVkwqDCoMKgIDogMTsKPiA+ID4gwqDCoMKgwqDCoCB1bnNpZ25lZCBp
-bnTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkbF9kZWZlcl9ydW5uaW5n
-wqAgOiAxOwo+ID4gPiBkaWZmIC0tZ2l0IGEva2VybmVsL3NjaGVkL2RlYWRsaW5lLmMgYi9rZXJu
-ZWwvc2NoZWQvZGVhZGxpbmUuYwo+ID4gPiBpbmRleCBkOWQ1YTcwMmYxYTYuLmUyYjU0MmY2ODRk
-YiAxMDA2NDQKPiA+ID4gLS0tIGEva2VybmVsL3NjaGVkL2RlYWRsaW5lLmMKPiA+ID4gKysrIGIv
-a2VybmVsL3NjaGVkL2RlYWRsaW5lLmMKPiA+ID4gQEAgLTE2NDcsNiArMTY0Nyw3IEBAIHZvaWQg
-ZGxfc2VydmVyX3N0YXJ0KHN0cnVjdCBzY2hlZF9kbF9lbnRpdHkgKmRsX3NlKQo+ID4gPiDCoMKg
-wqDCoMKgIGlmICghZGxfc2UtPmRsX3J1bnRpbWUpCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIHJldHVybjsKPiA+ID4gCj4gPiA+ICvCoMKgwqDCoCBkbF9zZS0+ZGxfc2VydmVyX2Fj
-dGl2ZSA9IDE7Cj4gPiA+IMKgwqDCoMKgwqAgZW5xdWV1ZV9kbF9lbnRpdHkoZGxfc2UsIEVOUVVF
-VUVfV0FLRVVQKTsKPiA+ID4gwqDCoMKgwqDCoCBpZiAoIWRsX3Rhc2soZGxfc2UtPnJxLT5jdXJy
-KSB8fCBkbF9lbnRpdHlfcHJlZW1wdChkbF9zZSwgJnJxLT5jdXJyLT5kbCkpCj4gPiA+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlc2NoZWRfY3VycihkbF9zZS0+cnEpOwo+ID4gPiBAQCAt
-MTY2MSw2ICsxNjYyLDcgQEAgdm9pZCBkbF9zZXJ2ZXJfc3RvcChzdHJ1Y3Qgc2NoZWRfZGxfZW50
-aXR5ICpkbF9zZSkKPiA+ID4gwqDCoMKgwqDCoCBocnRpbWVyX3RyeV90b19jYW5jZWwoJmRsX3Nl
-LT5kbF90aW1lcik7Cj4gPiA+IMKgwqDCoMKgwqAgZGxfc2UtPmRsX2RlZmVyX2FybWVkID0gMDsK
-PiA+ID4gwqDCoMKgwqDCoCBkbF9zZS0+ZGxfdGhyb3R0bGVkID0gMDsKPiA+ID4gK8KgwqDCoMKg
-IGRsX3NlLT5kbF9zZXJ2ZXJfYWN0aXZlID0gMDsKPiA+ID4gwqB9Cj4gPiA+IAo+ID4gPiDCoHZv
-aWQgZGxfc2VydmVyX2luaXQoc3RydWN0IHNjaGVkX2RsX2VudGl0eSAqZGxfc2UsIHN0cnVjdCBy
-cSAqcnEsCj4gPiA+IEBAIC0yNDIwLDggKzI0MjIsMTAgQEAgc3RhdGljIHN0cnVjdCB0YXNrX3N0
-cnVjdCAqX19waWNrX3Rhc2tfZGwoc3RydWN0IHJxICpycSkKPiA+ID4gwqDCoMKgwqDCoCBpZiAo
-ZGxfc2VydmVyKGRsX3NlKSkgewo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwID0g
-ZGxfc2UtPnNlcnZlcl9waWNrX3Rhc2soZGxfc2UpOwo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBpZiAoIXApIHsKPiA+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgZGxfc2UtPmRsX3lpZWxkZWQgPSAxOwo+ID4gPiAtwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1cGRhdGVfY3Vycl9kbF9zZShycSwgZGxfc2UsIDApOwo+
-ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoZGxfc2Ut
-PmRsX3NlcnZlcl9hY3RpdmUpIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRsX3NlLT5kbF95aWVsZGVkID0gMTsKPiA+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHVwZGF0ZV9jdXJyX2RsX3NlKHJxLCBkbF9zZSwgMCk7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIGdvdG8gYWdhaW47Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIH0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcnEtPmRsX3NlcnZlciA9
-IGRsX3NlOwo+ID4gCj4gPiBBbmQgSSB0cmllZCB0aGlzIG9uZSBvbiB0b3Agb2YgdjYuMTIsIGJ1
-dCBnb3QgYSB3YXJuaW5nIGFmdGVyIGFib3V0IDEgbWludXRlIChsdWNreT8pLgo+ID4gCj4gSG1t
-IHN0cmFuZ2UsIEkgd2FzIHJ1bm5pbmcgaXQgZm9yIGFib3V0IDEyIGhvdXJzIGFuZCBoYXMgbm90
-IFdBUk5lZAo+IHRpbGwgbm93LiBJIGFtIG9uIDYuMTMtcmMxIGJ1dCBnaXQgbG9nIGRpZCBub3Qg
-c2hvdyBhbnkgZGxzZXJ2ZXIKPiByZWxhdGVkIGNoYW5nZXMgYmV0d2VlbiA2LjEyIGFuZCA2LjEz
-IHRob3VnaC4gSSBhbHNvIGhhdmUgYW5vdGhlcgo+IHBhdGNoIGZvciB0aGUgZG91YmxlIGVucXVl
-dWUgc2NlbmFyaW8gd2Ugd2VyZSBkaXN1c3NpbmcgaW4gdGhpcwo+IHRocmVhZChiZWNhdXNlIG9m
-IHRoZSB3cm9uZyBjaGVjayBpbiB1cGRhdGVfY3VycikuIENvdWxkIHlvdSBwbGVhc2UKPiBhZGQg
-dGhlIGZvbGxvd2luZyBjaGFuZ2VzIHRvIGFib3ZlIHBhdGNoZXMgYW5kIHNlZSBpZiB0aGUgaXNz
-c3VlIGlzCj4gcmVwcm9kdWNpYmxlPwo+IAo+IGRpZmYgLS1naXQgYS9rZXJuZWwvc2NoZWQvZmFp
-ci5jIGIva2VybmVsL3NjaGVkL2ZhaXIuYwo+IGluZGV4IGZiZGNhODljNjc3Zi4uMWY0Yjc2YzFm
-MDMyIDEwMDY0NAo+IC0tLSBhL2tlcm5lbC9zY2hlZC9mYWlyLmMKPiArKysgYi9rZXJuZWwvc2No
-ZWQvZmFpci5jCj4gQEAgLTExNTksOCArMTE1OSw2IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCB1cGRh
-dGVfY3Vycl90YXNrKHN0cnVjdAo+IHRhc2tfc3RydWN0ICpwLCBzNjQgZGVsdGFfZXhlYykKPiDC
-oMKgwqDCoMKgwqDCoCB0cmFjZV9zY2hlZF9zdGF0X3J1bnRpbWUocCwgZGVsdGFfZXhlYyk7Cj4g
-wqDCoMKgwqDCoMKgwqAgYWNjb3VudF9ncm91cF9leGVjX3J1bnRpbWUocCwgZGVsdGFfZXhlYyk7
-Cj4gwqDCoMKgwqDCoMKgwqAgY2dyb3VwX2FjY291bnRfY3B1dGltZShwLCBkZWx0YV9leGVjKTsK
-PiAtwqDCoMKgwqDCoMKgIGlmIChwLT5kbF9zZXJ2ZXIpCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgZGxfc2VydmVyX3VwZGF0ZShwLT5kbF9zZXJ2ZXIsIGRlbHRhX2V4ZWMpOwo+IMKg
-fQo+IAo+IMKgc3RhdGljIGlubGluZSBib29sIGRpZF9wcmVlbXB0X3Nob3J0KHN0cnVjdCBjZnNf
-cnEgKmNmc19ycSwgc3RydWN0Cj4gc2NoZWRfZW50aXR5ICpjdXJyKQo+IEBAIC0xMjEwLDYgKzEy
-MDgsMTEgQEAgczY0IHVwZGF0ZV9jdXJyX2NvbW1vbihzdHJ1Y3QgcnEgKnJxKQo+IMKgwqDCoMKg
-wqDCoMKgIHJldHVybiBkZWx0YV9leGVjOwo+IMKgfQo+IAo+ICtzdGF0aWMgaW5saW5lIGJvb2wg
-ZGxfc2VydmVyX2FjdGl2ZShzdHJ1Y3QgZGxfc2NoZWRfZW50aXR5ICpkbF9zZSkKPiArewo+ICvC
-oMKgwqDCoMKgwqAgcmV0dXJuIGRsX3NlLT5kbF9zZXJ2ZXJfYWN0aXZlOwo+ICt9Cj4gKwo+IMKg
-LyoKPiDCoCAqIFVwZGF0ZSB0aGUgY3VycmVudCB0YXNrJ3MgcnVudGltZSBzdGF0aXN0aWNzLgo+
-IMKgICovCj4gQEAgLTEyMzcsMTEgKzEyNDAsMTYgQEAgc3RhdGljIHZvaWQgdXBkYXRlX2N1cnIo
-c3RydWN0IGNmc19ycSAqY2ZzX3JxKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1
-cGRhdGVfY3Vycl90YXNrKHAsIGRlbHRhX2V4ZWMpOwo+IAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAvKgo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBBbnkgZmFp
-ciB0YXNrIHRoYXQgcnVucyBvdXRzaWRlIG9mIGZhaXJfc2VydmVyIHNob3VsZAo+IC3CoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBhY2NvdW50IGFnYWluc3QgZmFpcl9zZXJ2ZXIgc3Vj
-aCB0aGF0IGl0IGNhbiBhY2NvdW50IGZvcgo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgKiB0aGlzIHRpbWUgYW5kIHBvc3NpYmx5IGF2b2lkIHJ1bm5pbmcgdGhpcyBwZXJpb2QuCj4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIElmIHRoZSBmYWlyX3NlcnZlciBpcyBh
-Y3RpdmUsIHdlIG5lZWQgdG8gYWNjb3VudCBmb3IgdGhlCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAqIGZhaXJfc2VydmVyIHRpbWUgd2hldGhlciBvciBub3QgdGhlIHRhc2sgaXMg
-cnVubmluZyBvbgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBiZWhhbGYgb2Yg
-ZmFpcl9zZXJ2ZXIgb3Igbm90Ogo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKsKg
-IC0gSWYgdGhlIHRhc2sgaXMgcnVubmluZyBvbiBiZWhhbGYgb2YgZmFpcl9zZXJ2ZXIsIHdlIG5l
-ZWQKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICrCoMKgwqAgdG8gbGltaXQgaXRz
-IHRpbWUgYmFzZWQgb24gdGhlIGFzc2lnbmVkIHJ1bnRpbWUuCj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCAqwqAgLSBGYWlyIHRhc2sgdGhhdCBydW5zIG91dHNpZGUgb2YgZmFpcl9z
-ZXJ2ZXIgc2hvdWxkIGFjY291bnQKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICrC
-oMKgwqAgYWdhaW5zdCBmYWlyX3NlcnZlciBzdWNoIHRoYXQgaXQgY2FuIGFjY291bnQgZm9yIHRo
-aXMgdGltZQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKsKgwqDCoCBhbmQgcG9z
-c2libHkgYXZvaWQgcnVubmluZyB0aGlzIHBlcmlvZC4KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAqLwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChwLT5kbF9z
-ZXJ2ZXIgIT0gJnJxLT5mYWlyX3NlcnZlcikKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCBpZiAoZGxfc2VydmVyX2FjdGl2ZSgmcnEtPmZhaXJfc2VydmVyKSkKPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRsX3NlcnZlcl91cGRhdGUoJnJxLT5m
-YWlyX3NlcnZlciwgZGVsdGFfZXhlYyk7Cj4gwqDCoMKgwqDCoMKgwqAgfQoKVGhhdCBpbmRlZWQg
-YWxzbyBmaXhlcyBpdCBmb3IgbWUuCgpodHRwczovL2RyaXZlLmNvZGV0aGluay5jby51ay9zL3M5
-a1pRczJNejZEcEgzWAoKPiBUaGFua3MgZm9yIHlvdXIgdGltZSB0ZXN0aW5nIHRoZSBmaXhlcyA6
-LSkKCllvdSBhcmUgdmVyeSB3ZWxjb21lLiBUaGFua3MgeW91IQoKPiB+VmluZWV0aAoKQ2hlZXJz
-CgpNYXJjZWwK
+On Thu, Dec 05, 2024 at 04:07:45PM -0800, Saravana Kannan wrote:
+>On Thu, Dec 5, 2024 at 4:06 PM Saravana Kannan <saravanak@google.com> wrote:
+>>
+>> On Wed, Dec 4, 2024 at 3:29 PM Sasha Levin <sashal@kernel.org> wrote:
+>> >
+>> > From: Saravana Kannan <saravanak@google.com>
+>> >
+>> > [ Upstream commit fe2e59aa5d7077c5c564d55b7e2997e83710c314 ]
+>> >
+>> > fwnode needs to be set for a device for fw_devlink to be able to
+>> > track/enforce its dependencies correctly. Without this, you'll see error
+>> > messages like this when the supplier has probed and tries to make sure
+>> > all its fwnode consumers are linked to it using device links:
+>> >
+>> > mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) with backlight-lcd0
+>> >
+>> > Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>> > Closes: https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@notapiano/
+>> > Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+>> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> > Reviewed-by: Thierry Reding <treding@nvidia.com>
+>> > Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> > Link: https://lore.kernel.org/r/20241024061347.1771063-2-saravanak@google.com
+>> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>>
+>> As mentioned in the original cover letter:
+>>
+>> PSA: Do not pull any of these patches into stable kernels. fw_devlink
+>> had a lot of changes that landed in the last year. It's hard to ensure
+>> cherry-picks have picked up all the dependencies correctly. If any of
+>> these really need to get cherry-picked into stable kernels, cc me and
+>> wait for my explicit Ack.
+>>
+>> Is there a pressing need for this in 4.19?
+>
+>I copy pasted this into several replies. In all those cases I meant
+>the kernel version mentioned in the subject.
 
+I'll drop this and the other patch you've pointed out, thanks!
+
+-- 
+Thanks,
+Sasha
 
