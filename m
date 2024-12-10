@@ -1,162 +1,173 @@
-Return-Path: <linux-kernel+bounces-439561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AAD9EB10E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:42:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 516F39EB114
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F159C188C8B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB03188C9D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECD11A7262;
-	Tue, 10 Dec 2024 12:42:31 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C471A9B21;
+	Tue, 10 Dec 2024 12:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEGMHE8N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E8119CC1C;
-	Tue, 10 Dec 2024 12:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0071A76B6;
+	Tue, 10 Dec 2024 12:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733834550; cv=none; b=BByPiZ5mbAeMPr6RS6FCxtrwynCGe3dOxqvkGvmmw3xmltb1f1Ae7mgA26iSti8bfBBJjOnuaWTv9X2AYk8Yj8TngB7/lXTLX8n+MmLvPuTp6KaNpBfFWHf9Hffoh+DH+v+UEIK1cZQhhh9El9yFIjQrh41gAJi1uExyRbK2t1o=
+	t=1733834567; cv=none; b=g2gA4qz0mERJ2MVllFs3uYnfr1d0GwGZmeG4yp399cvuyCtPoSOVvkYPACEClqh4ff63n1oLcqYNjS+25BL7hBU+PKmRUUu7ZBAvCPhSUNbMD1VvKJedGGFM0jfVB7BrXsYy7L5hzJT4NDG+gO7h14I0xRXFwoExDyzjFGCXnXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733834550; c=relaxed/simple;
-	bh=wPIrwF3e71i18xK6VAGqAKif4VNxMP81ypBpG4hr5VA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sUtRp6+BRjxt3ZfUdDKR8W2gih17dczOhGMyw9fhvh+pbTRjz1i9FWuhUsXw7vC1LT515ZNQRRwHtFMsS51TOAkcqH9zzvDZjrcdvHgC8371WJiTrDJ02Ks21/37DE/AOdiNJen+0whMn/h/AaZTpnnMLeRZMoR9EHaeCKhrlfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa696d3901bso313214466b.1;
-        Tue, 10 Dec 2024 04:42:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733834546; x=1734439346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wPIrwF3e71i18xK6VAGqAKif4VNxMP81ypBpG4hr5VA=;
-        b=FN7XqSUtk41mldw95AAxce4xj2H4sxpBjJV1PHSUFXwbmUFXZRH9NEZSgqz14U41Sd
-         FCOZtXoSoMPLVITMy+x4Tyhh2OjkUNrmDuv/NzQsFCEHSPDsvwiAxvCWCEEaBnFoIBRj
-         If/hno7NeYiRmPZ0qeP8Nj1Hm5Jv8ByQ8ibKfQPjUX+NpS3OimOfMquO28TOwTLWDMgJ
-         8JgoVLDS5qymJyQPlo0EmYWr/rK2qymGDYYi6jDUX8f/TIbwAefrGi25u/OhnFnssvWS
-         WTQnVsL8vWnVtf7bHMwk8JwgstvNThkoQ/89OhQYhNtPXPvruVBsz5pwushvW2fOqQbg
-         heLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSZB9yo670eQvmhRVqC4IillO+1WzA8GqqyzHoEmcJZOKRVfFivvA82bYLP2KITQs5/dNOQ8BiwJdSE2Rj+g==@vger.kernel.org, AJvYcCX/765fuk+svritWPMCcaQQ1JJt8mMlGMykiqbgtobRL6hPu+WSviEBKJyGz8oFQmYtue2LrKer3/cUmcc+@vger.kernel.org, AJvYcCX2dyv3lWjpwx79GaaEiXkK0ZHgdYQSK1Z4s42rrKxBGn1t2cam1G2wbf+3MSvE6t2Xf8US10C3R86oYVc=@vger.kernel.org, AJvYcCX3OwNcKDvS+XhfygRoYwYkoH14NSVY2M+dmpmA7r3C7qMHA2EbWP9JRQLsaPF0Mm9BnzULpQk4GyCnanT4Ic0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5MvCOvuMINRJM7OorzRYG8pOVjnoOcKHW8h4HNS5cIvAie3AV
-	f/Ip3W1OGrptf2764snXg4RtPC9V+FlUpmM6xprveJBYl+SkQSr73zcrvLerDZo=
-X-Gm-Gg: ASbGncv8YgfTCAN+U9D6j2HWDx/dNFN0B7Z7RojoG6TUnDe+WurvrPgXKYdAYt+5ETl
-	pkQoifjTyJs6sGlSneO1JrDQxbOvwUsMWVqMUM1Qfikpz5Yj9CYhhFbFeS2zw6M7jjqPHAUY+nw
-	GtCgjPFodud6dBN3MXvIOEJJdFj7uTrJdxg7HPtw4J+157rRMMvtteODe0zCgAgfdljAUQLIiZS
-	HJEs8PUUMzD/MzIM//eDEqDt6D6xSEgcKRbtxeagjXAi0KIw8hbZv8LIDiyXQExp2TKWQDS0XnP
-	P5kZ+2VI
-X-Google-Smtp-Source: AGHT+IEjrww550h6+9ARtnHsxMV+l4ipX6EajgcDEdPIFZc/tsffRdVj8uW3pZ9aWEyGeJonRDYJkQ==
-X-Received: by 2002:a17:906:32d9:b0:aa6:93c4:c68f with SMTP id a640c23a62f3a-aa693c4c88fmr595546966b.21.1733834546398;
-        Tue, 10 Dec 2024 04:42:26 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa651cf4a83sm538888666b.62.2024.12.10.04.42.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 04:42:25 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa670ffe302so447792266b.2;
-        Tue, 10 Dec 2024 04:42:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCURXDWzsz9I0HX36Cf6mDPG5NeqoWbl3lpTpUioJkzQW1DAs12sqFtpFPQmhcVfD4aP5s7FlQp3Xe/KldY=@vger.kernel.org, AJvYcCVU1HBnB8gHKW9by9wX+dP48rDyNvKmBxTzHmTLE0zCd0Gz0qVC+xW3rtzvdPLSXMuBbmDKqmLjoJsHu4JWZQ==@vger.kernel.org, AJvYcCVxdqwea3Qb1vniEDGLlZP+3fJjAaN7pnEAsGH+kpN/EXG3RDcvOXTOPlUlwCAiLOGeNyXLyU3ylyxyOO/b@vger.kernel.org, AJvYcCXvPtiAdR/h3qLzN8Z6h0Udk6YZDDQPEAEctsGxn3IVEaybaGZsqF6fyuHFO1ymsa5/vOcvjGWbhYhFj09sgaI=@vger.kernel.org
-X-Received: by 2002:a17:907:9548:b0:aa6:61b7:938f with SMTP id
- a640c23a62f3a-aa661b794bbmr1006237866b.6.1733834545197; Tue, 10 Dec 2024
- 04:42:25 -0800 (PST)
+	s=arc-20240116; t=1733834567; c=relaxed/simple;
+	bh=2XWkD/yfjEhuZbsTfBejcrrLVZU1NcZkJQDTuM2rIMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOF3YNdVfbUu4QacI8+9a1wPuL3ad+DhvcjKBsiKj219XVzdW33zGswqfvHH02SLSydhxC1kFUJNT9HqL31uXqbrR6Kzk2GiOLNDtrzbIMEuTYHoq0u206+BB4f9sLSC328z51q0gwPG+1PK3pQ/EYnlvRmBXZNT53u+z1SpjaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEGMHE8N; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733834566; x=1765370566;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2XWkD/yfjEhuZbsTfBejcrrLVZU1NcZkJQDTuM2rIMc=;
+  b=TEGMHE8Nkzj8JesDi2kzRP5L0DOsX/rolAtv8j8MBnlX9LZ6wv4ATNoB
+   VJnuMDwlxMrOPrxhXY6a0LgI54tTH2QsYNY5B3s6tmpoX6Y2H+hwA/R4b
+   2nesEHhzhHGrVHLH/e2mnSvjt1XYrfbZOQYva5XCuHcm3XRlhZOqiLNnN
+   pI5w6omgDEayJK4rjhm57eZXf5bjK6Mu4b4rFB8eoCUMrN0+JNIRZ/I/7
+   TACX9R7l0gGnsSL4AzBy+elRVcOaTsWRElSPpcDwZ4C/8BuaqejDLLvOY
+   RnP5XXzW2nVnhij5Rq+qqJ98YrMbTmdys0tzapkEU4j/8vz+svuXOL2lb
+   w==;
+X-CSE-ConnectionGUID: 6zLH929YRdyL39hDOSKkug==
+X-CSE-MsgGUID: YNR8bQLmSZWkuQ7w7voVpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45557333"
+X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
+   d="scan'208";a="45557333"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 04:42:45 -0800
+X-CSE-ConnectionGUID: PNJK2U7TRI6GrhJMzjBjFw==
+X-CSE-MsgGUID: 1gEgitiCTumWExA1EmlaFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="95741297"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Dec 2024 04:42:38 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKzZT-0005Xl-2l;
+	Tue, 10 Dec 2024 12:42:35 +0000
+Date: Tue, 10 Dec 2024 20:41:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
+	vbabka@suse.cz, yang@os.amperecomputing.com, riel@surriel.com,
+	david@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, linux@armlinux.org.uk,
+	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com,
+	ysato@users.sourceforge.jp, dalias@libc.org,
+	glaubitz@physik.fu-berlin.de, davem@davemloft.net,
+	andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net,
+	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com,
+	leitao@debian.org, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 11/17] mm: sh: Introduce arch_mmap_hint()
+Message-ID: <202412102044.uIAN0clk-lkp@intel.com>
+References: <20241210024119.2488608-12-kaleshsingh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121204220.2378181-20-samitolvanen@google.com>
- <CAEg-Je-h4NitWb2ErFGCOqt0KQfXuyKWLhpnNHCdRzZdxi018Q@mail.gmail.com>
- <CANiq72m4fea15Z0fFZauz8N2madkBJ0G7Dc094OwoajnXmROOA@mail.gmail.com> <CABCJKudozEhZXLZVxVixsO5YuZg0nOEmgo3=vMyhcrEw+6Xo5w@mail.gmail.com>
-In-Reply-To: <CABCJKudozEhZXLZVxVixsO5YuZg0nOEmgo3=vMyhcrEw+6Xo5w@mail.gmail.com>
-From: Neal Gompa <neal@gompa.dev>
-Date: Tue, 10 Dec 2024 07:41:48 -0500
-X-Gmail-Original-Message-ID: <CAEg-Je-58WxKXOFEDBWmZDpt8E+SaRq+kK7ZnfMER2qtnKUD=w@mail.gmail.com>
-Message-ID: <CAEg-Je-58WxKXOFEDBWmZDpt8E+SaRq+kK7ZnfMER2qtnKUD=w@mail.gmail.com>
-Subject: Re: [PATCH v6 00/18] Implement DWARF modversions
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	"Darrick J. Wong" <djwong@kernel.org>, Donald Zickus <dzickus@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210024119.2488608-12-kaleshsingh@google.com>
 
-On Mon, Nov 25, 2024 at 10:34=E2=80=AFAM Sami Tolvanen <samitolvanen@google=
-.com> wrote:
->
-> On Mon, Nov 25, 2024 at 4:41=E2=80=AFPM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > On Mon, Nov 25, 2024 at 2:29=E2=80=AFPM Neal Gompa <neal@gompa.dev> wro=
-te:
-> > >
-> > > As my Acked-by was removed, I'm sorry to say that there is no point
-> > > for me to provide feedback since it is unwanted.
-> > >
-> > > I hope it lands soon, but I also hope the people here who decided tha=
-t
-> > > a person's efforts aren't worth recording because they don't
-> > > personally know them should reflect on this too. It's a good way to
-> > > keep people from coming into the community for the long term.
-> >
-> > Hopefully this reply helps -- apologies to anyone if I am overstepping.
-> >
-> > On one side, it is true that Acked-by is typically used by people that
-> > is responsible for the code one way or another, because the tag is
-> > meant for them to acknowledge they are OK with the change going in,
-> > and so I can see the argument that restricting it for that purpose
-> > only may help avoid confusion later on reading the log.
-> >
-> > On the other hand, someone being willing to put their name on a patch
-> > is very valuable, whoever they are, and whatever the tag name is.
-> > Moreover, it is also true that, Acked-by may be used here in a "as a
-> > key user downstream, this looks reasonable and satisfies our needs"
-> > sense.
-> >
-> > Finally, sometimes new tags are invented on the fly because there is
-> > no good fit, too.
-> >
-> > Either way, I don't think anyone wanted to disregard your efforts or
-> > to be rude to you in particular, but rather wanted to keep tags usage
-> > aligned to how they view them or how they use them in their subsystem.
-> > The Tested-by was still wanted, so I doubt their goal was to remove
-> > you from the log or to make you feel unwelcomed.
->
-> Thank you for putting this more eloquently than I could, Miguel. Neal,
-> I do appreciate your feedback, and I'm sorry if I didn't make it clear
-> enough in my previous emails. I would very much welcome your
-> Tested-by, or another suitable tag that's acceptable to both you and
-> Masahiro.
->
+Hi Kalesh,
 
-Honestly, I don't think it's worth it if my tag is going to be
-stripped simply because someone thinks I'm "unqualified". If you want
-more people participating in these things, doing stuff like that is
-definitely not the way to do it. It's not like people haven't had a
-chance to know me or even just look me up to know I'm not just blowing
-smoke. I definitely feel like I'm being disregarded. :(
+kernel test robot noticed the following build warnings:
 
-The sole reason I didn't give a Reviewed-by or Tested-by is that I
-didn't want to do any integration work to validate it beyond the
-basics, which would have meant dipping into the Red Hat kernel symbol
-tracking infrastructure. I don't have time for that right now. If
-someone else does, they can be my guest. I just don't feel comfortable
-giving either without *actually* going that far.
+[auto build test WARNING on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kalesh-Singh/mm-Introduce-generic_mmap_hint/20241210-104424
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20241210024119.2488608-12-kaleshsingh%40google.com
+patch subject: [PATCH mm-unstable 11/17] mm: sh: Introduce arch_mmap_hint()
+config: sh-randconfig-001-20241210 (https://download.01.org/0day-ci/archive/20241210/202412102044.uIAN0clk-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241210/202412102044.uIAN0clk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412102044.uIAN0clk-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   arch/sh/mm/mmap.c: In function 'arch_get_unmapped_area':
+>> arch/sh/mm/mmap.c:79:32: warning: unused variable 'vma' [-Wunused-variable]
+      79 |         struct vm_area_struct *vma;
+         |                                ^~~
+>> arch/sh/mm/mmap.c:78:27: warning: unused variable 'mm' [-Wunused-variable]
+      78 |         struct mm_struct *mm = current->mm;
+         |                           ^~
+   arch/sh/mm/mmap.c: In function 'arch_get_unmapped_area_topdown':
+   arch/sh/mm/mmap.c:117:32: warning: unused variable 'vma' [-Wunused-variable]
+     117 |         struct vm_area_struct *vma;
+         |                                ^~~
 
 
+vim +/vma +79 arch/sh/mm/mmap.c
 
---
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+2261b9c7c2357a0 Kalesh Singh      2024-12-09   73  
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   74  unsigned long arch_get_unmapped_area(struct file *filp, unsigned long addr,
+25d4054cc97484f Mark Brown        2024-09-04   75  	unsigned long len, unsigned long pgoff, unsigned long flags,
+25d4054cc97484f Mark Brown        2024-09-04   76  	vm_flags_t vm_flags)
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   77  {
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12  @78  	struct mm_struct *mm = current->mm;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12  @79  	struct vm_area_struct *vma;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   80  	int do_colour_align;
+b80fa3cbb78c0fb Rick Edgecombe    2024-03-25   81  	struct vm_unmapped_area_info info = {};
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   82  
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   83  	if (flags & MAP_FIXED) {
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   84  		/* We do not accept a shared mapping if it would violate
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   85  		 * cache aliasing constraints.
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   86  		 */
+e77414e0aad6a1b Al Viro           2009-12-05   87  		if ((flags & MAP_SHARED) &&
+e77414e0aad6a1b Al Viro           2009-12-05   88  		    ((addr - (pgoff << PAGE_SHIFT)) & shm_align_mask))
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   89  			return -EINVAL;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   90  		return addr;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   91  	}
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   92  
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   93  	if (unlikely(len > TASK_SIZE))
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   94  		return -ENOMEM;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   95  
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   96  	do_colour_align = 0;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   97  	if (filp || (flags & MAP_SHARED))
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   98  		do_colour_align = 1;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12   99  
+2261b9c7c2357a0 Kalesh Singh      2024-12-09  100  	addr = arch_mmap_hint(filp, addr, len, pgoff, flags);
+2261b9c7c2357a0 Kalesh Singh      2024-12-09  101  	if (addr)
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12  102  		return addr;
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12  103  
+b4265f12340f809 Michel Lespinasse 2012-12-11  104  	info.length = len;
+b4265f12340f809 Michel Lespinasse 2012-12-11  105  	info.low_limit = TASK_UNMAPPED_BASE;
+b4265f12340f809 Michel Lespinasse 2012-12-11  106  	info.high_limit = TASK_SIZE;
+b4265f12340f809 Michel Lespinasse 2012-12-11  107  	info.align_mask = do_colour_align ? (PAGE_MASK & shm_align_mask) : 0;
+b4265f12340f809 Michel Lespinasse 2012-12-11  108  	info.align_offset = pgoff << PAGE_SHIFT;
+b4265f12340f809 Michel Lespinasse 2012-12-11  109  	return vm_unmapped_area(&info);
+4a4a9be3ebdbf17 Paul Mundt        2008-11-12  110  }
+ee1acbfabd5270b Paul Mundt        2009-05-07  111  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
