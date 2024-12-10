@@ -1,171 +1,142 @@
-Return-Path: <linux-kernel+bounces-439157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3B59EAB8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:12:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC9C188B782
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:12:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9972327BF;
-	Tue, 10 Dec 2024 09:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WJe3n5QI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30419EAB9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:14:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C80C23279C;
-	Tue, 10 Dec 2024 09:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B96F5289F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:14:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC12C231CB3;
+	Tue, 10 Dec 2024 09:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U9PA05rb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8110A33985
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733821914; cv=none; b=Il43KaVuDMSfE8llMhB5bxCKw1jECAaRgo8MsdG+nCKO1EiI7HK9smjU4hw4yXxD+MCJx3yIh+w5mVSzcSRYRlmX2QGvtSTsydFsPlD6eO+S65BdPXN3dwu3g1PM9URCotFC2h5nv9+UyO7aDnB14XgMyqZZRhNfr9M/0peiKCA=
+	t=1733822035; cv=none; b=cEdPVYHyCIGfsQNmeR8wY2vhAGukqSornYx7qODr1E4P34Gtq0DaEdbLFoN0/Xl2WWoxzuf1pYwFGYfRYPZpHBvLJM0sqH/tC9j9KmLtbrjdpjDxx4yZ0VEF6sSVJ+PB2R050t4lU8UncPcuHdWxjQJJjxH5Np/VjZcMG5obvGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733821914; c=relaxed/simple;
-	bh=D8PsF+RtzIfY7cNNm8iF4+5iJbPhNo9HTmueH723E14=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=qCsPpvzU7VBB3yipQj8cd6OvrxOTl93jV8Yt3xihju7S2ZE1TB1kboots8iF0jfUXQ6LYtA3Qi5vsSiPs0tjAR95xP/XD2bZmYOjtORYCzxxC5+HtCnMhx/6sPomEFTY4gSACXCiZNilHyTyWAQARZ9BLmNVn7eVu87HcoY4BLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WJe3n5QI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA8fXjs014664;
-	Tue, 10 Dec 2024 09:11:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UCysk6a20BpNRzQutQ/mS+KYwubiNDqWonoVAB1MurA=; b=WJe3n5QI20Z0OyBl
-	XF5Db4vb8wBeB3sThGcudCdpT1EZIQnfUgpurfXle6as81F7WZY3E8uicfRhOhXe
-	Q/n9VtC71FSkBpczwuK1OK3N1yiUvAeWbdt7PWcsiv+7yRW65+mM70qd/yVB8X3C
-	x6OEdkxgvcPPewQkuMrKCROMpSoew+2+QyaQc8v4B1PqYo6TOVkYd4SXQTswZLH6
-	fppUMgK7iIbLNnnLMa+XdG4SBvVv8HCAn6kRiIgjGZZmeBvCqZAYGLm9pkQzDG5c
-	yAF2p4eGgFMdaM3sJQSyqZzL89mHdrRes5x8rUaMR3ce9Ovyv/9KIqWcKIudXuYg
-	tz4LHQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dy8tuchd-1
+	s=arc-20240116; t=1733822035; c=relaxed/simple;
+	bh=6Rl7RBY3Oa2zHfOGIECtMA0i5U3bJs6BtQr9QbPTHFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dXpc0Kkwzo78tLb0TB0khKGtF1hg8itVmfgjy/eX4A/j5B+QRacR2oUYDf6xbSzpeSR+3H/USGfI5f0iWZsnlyvOh6SYe9nv193y/5TO7ECM9lMndWlyWXLLzx9I0KOpBzaZxpMQOUE+a+1x/gAHu3QexgQKKHu2K6TLq/MAcWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U9PA05rb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA1jCpd026166;
+	Tue, 10 Dec 2024 09:13:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=4mzlhbrauKtzuT5c2kr1XA1iLimiPdESabUb5K3/R
+	eQ=; b=U9PA05rbT76iEleTxTpFJhoRzTq0Fp79VQUioft61CDB0xvrDTsviOJd3
+	X7iVy2Yk3sjyNLARLLeBe2iiek5GnOVcgpvGy2Q/zIvevccpVgLLo3Gi+QBfg2Ib
+	kLkmQ+xMhomK2biqIczOGz11IZY/bN9JQVzDcAwQAuTLNaH32sMHHMmANevmzIii
+	9bp+EI1nh/nekY56aAavbonI/7bghM01ttxGnUK4P2OxdkOIEAsCD9fvmIMl+JU7
+	/Xqh+RMMEttQ6QSKChK8+ep1FEqoyCUGIU2DCRBZFcS3+gnCKT1BQ2nwuJ1sN2sU
+	Rk8LrpcmjYfdCdx3b8WF1wzgj+C0w==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8p4xe-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 09:11:49 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA9Bmbb018610
+	Tue, 10 Dec 2024 09:13:36 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA97wXJ017393;
+	Tue, 10 Dec 2024 09:13:35 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1jhmb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 09:11:48 GMT
-Received: from robotics-lnxbld017.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Dec 2024 01:11:44 -0800
-From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-Date: Tue, 10 Dec 2024 17:11:06 +0800
-Subject: [PATCH 2/2] arm64: dts: qcom: Enable DisplayPort on QCS615 RIDE
- platform
+	Tue, 10 Dec 2024 09:13:35 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BA9DW3p56754554
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 09:13:32 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E59E220043;
+	Tue, 10 Dec 2024 09:13:31 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1476820040;
+	Tue, 10 Dec 2024 09:13:29 +0000 (GMT)
+Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.ibm.com.com (unknown [9.43.32.79])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 09:13:28 +0000 (GMT)
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+To: ebiederm@xmission.com
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>, Baoquan he <bhe@redhat.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kexec: Initialize ELF lowest address to ULONG_MAX
+Date: Tue, 10 Dec 2024 14:43:14 +0530
+Message-ID: <20241210091314.185785-1-sourabhjain@linux.ibm.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241210-add-displayport-support-to-qcs615-devicetree-v1-2-02f84a92c44b@quicinc.com>
-References: <20241210-add-displayport-support-to-qcs615-devicetree-v1-0-02f84a92c44b@quicinc.com>
-In-Reply-To: <20241210-add-displayport-support-to-qcs615-devicetree-v1-0-02f84a92c44b@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Fange Zhang
-	<quic_fangez@quicinc.com>,
-        Li Liu <quic_lliu6@quicinc.com>,
-        Xiangxu Yin
-	<quic_xiangxuy@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733821897; l=1374;
- i=quic_xiangxuy@quicinc.com; s=20241125; h=from:subject:message-id;
- bh=D8PsF+RtzIfY7cNNm8iF4+5iJbPhNo9HTmueH723E14=;
- b=OTix6su9avP1KN0gGztiGs4Jqg/vi+9Jb1D3q5XWe4EUOXJ9POzAPoa1S3E/QpB6364aIB0y9
- S+Wv1SZRms4Ac48sk/ilhIQl5htoGV3ymjEih7RWCKItPInJOuhhaov
-X-Developer-Key: i=quic_xiangxuy@quicinc.com; a=ed25519;
- pk=F1TwipJzpywfbt3n/RPi4l/A4AVF+QC89XzCHgZYaOc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: n_xhcOaEq5a1Is_eKcvoKSI58IH230r4
-X-Proofpoint-GUID: n_xhcOaEq5a1Is_eKcvoKSI58IH230r4
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: fFJ-KCR_VpFI_xMj5BF-3yEWiruOfqhJ
+X-Proofpoint-ORIG-GUID: fFJ-KCR_VpFI_xMj5BF-3yEWiruOfqhJ
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=779 clxscore=1011 mlxscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100068
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100068
 
-Enable the DisplayPort node, config related regulator, lane mapping,
-hpd-gpios on the Qualcomm QCS615 RIDE platform.
+kexec_elf_load() loads an ELF executable and sets the address of the
+lowest PT_LOAD section to the address held by the lowest_load_addr
+function argument.
 
-Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+To determine the lowest PT_LOAD address, a local variable lowest_addr
+(type unsigned long) is initialized to UINT_MAX. After loading each
+PT_LOAD, its address is compared to lowest_addr. If a loaded PT_LOAD
+address is lower, lowest_addr is updated. However, setting lowest_addr
+to UINT_MAX won't work when the kernel image is loaded above 4G, as the
+returned lowest PT_LOAD address would be invalid. This is resolved by
+initializing lowest_addr to ULONG_MAX instead.
+
+This issue was discovered while implementing crashkernel high/low
+reservation on the PowerPC architecture.
+
+Fixes: a0458284f062 ("powerpc: Add support code for kexec_file_load()")
+Cc: Baoquan he <bhe@redhat.com>
+Cc: Hari Bathini <hbathini@linux.ibm.com>
+CC: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: kexec@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
 ---
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ kernel/kexec_elf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index 694719a09ac46bfa2fe34f1883c0970b9d0902be..0ac543577ec1850d6e4f19ff1d64252b00fffae3 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -44,6 +44,20 @@ dp_connector_out: endpoint {
- 			};
- 		};
- 	};
-+
-+	dp2-connector {
-+		compatible = "dp-connector";
-+		label = "DP2";
-+		type = "mini";
-+
-+		hpd-gpios = <&ioexp 8 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			dp2_connector_in: endpoint {
-+				remote-endpoint = <&mdss_dp0_out>;
-+			};
-+		};
-+	};
- };
+diff --git a/kernel/kexec_elf.c b/kernel/kexec_elf.c
+index d3689632e8b9..3a5c25b2adc9 100644
+--- a/kernel/kexec_elf.c
++++ b/kernel/kexec_elf.c
+@@ -390,7 +390,7 @@ int kexec_elf_load(struct kimage *image, struct elfhdr *ehdr,
+ 			 struct kexec_buf *kbuf,
+ 			 unsigned long *lowest_load_addr)
+ {
+-	unsigned long lowest_addr = UINT_MAX;
++	unsigned long lowest_addr = ULONG_MAX;
+ 	int ret;
+ 	size_t i;
  
- &apps_rsc {
-@@ -291,6 +305,22 @@ &mdss_dsi0_phy {
- 	status = "okay";
- };
- 
-+&mdss_dp0 {
-+	status = "okay";
-+};
-+
-+&mdss_dp0_out {
-+	data-lanes = <3 2 0 1>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000>;
-+	remote-endpoint = <&dp2_connector_in>;
-+};
-+
-+&mdss_dp_phy {
-+	vdda-phy-supply = <&vreg_l11a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-
 -- 
-2.34.1
+2.47.1
 
 
