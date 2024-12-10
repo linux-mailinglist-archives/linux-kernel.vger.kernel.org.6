@@ -1,201 +1,267 @@
-Return-Path: <linux-kernel+bounces-440103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE7A9EB8CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:55:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC039EB8D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:55:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A76283373
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E8C188138F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CDE204681;
-	Tue, 10 Dec 2024 17:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F9D1DE2B4;
+	Tue, 10 Dec 2024 17:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VEOyw5RI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="odh4QGOX"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B431AA786
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A161B4220
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853303; cv=none; b=OyXgCW6LMM3qzXXY5yn//L3IzgCMBdpqQbb/PjZi1vCg22DH6Nh+PlS1YwNt8wd+3mPiBtYEQ9Yh1sfgc1uIYAPiMf40oxyusrFPvcJev1NSTI2M5gRVuqgyzme70A1zIqqohYMTD9bolwuPNoCYF+23lQksOsf87OR4syReSW4=
+	t=1733853341; cv=none; b=T+p84TcnKV/Ucopn2dO5MCu9FtT3Pj4V7QUR7GKSOzgJJCMbPDB4OSBvra34zH+XySsFs+8xFAhAq4WkXhAk9F4LNjkNjIo8h3QaAtXJDs8Y+Hkhppxd2yI4ctqxUws3L6PS/LgC8QWzbgDdvpmSy7d9uKq70/nTjMdZGodEH1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853303; c=relaxed/simple;
-	bh=+JHWoW0txAbFn2WTq8OWQ00Ywq+bWkSXKgMZtrj20gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xg52g8BvQFNzAYqHck+PaFXxoY4BjCCI+hcbmANuFE7Dxr2StW78A2IMlOMMFzkZzWl8Oi3XFmLM9fFPqrs0rF2SQWe0CQkun7YCTDsThemqP2KUPp6wx64splk8g/ww4E6exnGLUMyMJE/6e55UUqa7+2fwyxF08sY4CyAgAgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VEOyw5RI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733853301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zcHZag8gdmNWhHO5Ak8t21hEZGlUPrLrpjy85AhZ5ZQ=;
-	b=VEOyw5RIoQWEAXbFcTr94fOYuf7MoXG8oGWhyn4xNIflM/aSw64kmPfAfXjonC/VQIyWtP
-	QIlwxBQUbXninhfiY1iHOAP7SFtHAI9+J7gXbFmXALpYyYnT6jXDGOQxcwVH2TNrexM4n7
-	9Mk3QSirxgyKvBV+CG03ux1xH5t6stk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-387-svCsZ_rWNimvqZ2XB1hOfQ-1; Tue, 10 Dec 2024 12:54:59 -0500
-X-MC-Unique: svCsZ_rWNimvqZ2XB1hOfQ-1
-X-Mimecast-MFC-AGG-ID: svCsZ_rWNimvqZ2XB1hOfQ
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-434f0d1484bso18653835e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:54:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853298; x=1734458098;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1733853341; c=relaxed/simple;
+	bh=5Lqgn1nZKsEr1Zvz28/OBYcyY8ixJY1MStjrAlmKHLQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LJle7sfk8kJU+P+c4EE1tOwfuza7o5z7u0At0eTOYmhi6HrxVhtxqi8R90dRQVQrnnZFBawivZQJ8vKAVgYO14754D77BPEyaEOL8WsppvC9eHbJ5q9ifMXQjJxkF75SXVwLIaPGQeijKW3NGdaq2upuz9SRlWbBgK8o/clm2UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=odh4QGOX; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-467431402deso6951cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:55:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733853338; x=1734458138; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zcHZag8gdmNWhHO5Ak8t21hEZGlUPrLrpjy85AhZ5ZQ=;
-        b=KA0rdjLDE/iEiBbEfCvMnoSlpWL/+d2hSvQDChZdLOdHgRHhcBR4wC4BkiUhPTYrpH
-         rv7LH2O4P1VvnWysLOSNG5TkpOF7tdSP8so/ej/SLd7P3A+RQuUTD5KXYj/MH6wRg6QY
-         GoOKMG4nIy5BFgb+ZxmxPyPbpaqZkaQqLfEmJLerksN9awHZIp51Q/k6H758FTC2BSSK
-         aCMx0H+ZpQer0s0J9C6QGNR4HBDaM632fL8Qfx5Z8N3XTmbzUQlaJD0zPb/jhpq4L7dO
-         DIVJvAMkmehIJFEBqWxwce33lETV0vviA6ZB6m2ptw2MbFqhiIAfWC0shESjMNpNT0XV
-         p2TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtBKCFfJGo8i7+/16z1G8xsd/tk7CdfnlSCRbi+NGVIzc8VHG4xN2ISurly+WBB/C2ArcrFt6yDBOQHMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSEQFpdtfoYx042rTv39EF1riI7vt+IGw01ah7LUnAWKQyrggP
-	yukpNSg5eNsE6sCDv0mY4QF4C4ptP97emZr80HpYEerXk/xb7DeYpUIfePz358Ki+Bz3Up0btBt
-	dafwtM9V8HNsUU3DnV15r8bWIJmQBWs+X1zjGPARtCBWRzLw5cAuHpmpFHdyQQA==
-X-Gm-Gg: ASbGncu+yGYriT//RcYs9foB0kxngb/HhTxfqUXBRtVpLphJ0dG1NJx8tl9j0Yn8lb6
-	DywXjdu8c22Eb2WlZkBU+gwF2o/ralEwvHykOemL51OzcdL7XqoDWvR5OX92cAAYnVSRiy+3sEN
-	Zf9Ng3RHZZLz9KhZJqobO1tTMLYmFr3Zk3s72itlON+vek7+pittPEHmYNRznPli8w1yxPSmiH+
-	LJF6Fi5XpvR/dUonVW0q1Tm7Kz5R4Xcvw4gnImfy4ah//znCd1+aWHMTrfgkJnAKg+lqoWDv6l9
-	OvJi2UhfkkkQzJNmzMwpzjbZwvjeyA==
-X-Received: by 2002:a05:600c:548d:b0:434:f8a0:9df0 with SMTP id 5b1f17b1804b1-434fff69f6bmr47410945e9.8.1733853298526;
-        Tue, 10 Dec 2024 09:54:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE5h5cFZjv86y3Dziyg3MBclOHJHLgdGo4xsXmVuUJMXKQPSyKhOGL2jS9vx881qRPPMi/Jfw==
-X-Received: by 2002:a05:600c:548d:b0:434:f8a0:9df0 with SMTP id 5b1f17b1804b1-434fff69f6bmr47410635e9.8.1733853297872;
-        Tue, 10 Dec 2024 09:54:57 -0800 (PST)
-Received: from sgarzare-redhat (host-87-12-25-244.business.telecomitalia.it. [87.12.25.244])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-435c1833d67sm24102865e9.5.2024.12.10.09.54.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:54:57 -0800 (PST)
-Date: Tue, 10 Dec 2024 18:54:54 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Cindy Lu <lulu@redhat.com>
-Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 7/8] vhost: Add new UAPI to support change to task mode
-Message-ID: <2on4eblmkzkhecpyiwtauel6hxw6upnlh6wunfxgxvfp45cej3@6z5lzdermzeg>
-References: <20241210164456.925060-1-lulu@redhat.com>
- <20241210164456.925060-8-lulu@redhat.com>
+        bh=tyxl+ttUb9oKqLIiCZsmpPDMeBgG6nRk3s3B134NCU0=;
+        b=odh4QGOXRDWmvRIvmgwewrBmsJ2Y9BbUIoHut6TnGtGg6S2/6BA5pi3cIN4BoF2iqz
+         8/JhpA38J28LoNmW8T7aDjnMEpxZ8WUHf/ox7DDxTaDow1fPVOxR9VXXppL4A5up9lt7
+         00SAwrVsredhVdNK8pB2D1YKmja3JTDzInrOGfvspT687eEt88iyyNF+iG/3lCKDEB6k
+         iK+20Z/4coCY79ru/PMCeKzzM83J9clmdd+0cbCbuKh1gi6OSmGN4XP6Vl4FXHS7HdiB
+         MgjeYX/JKTR95LqH6pPWtMMhyraOeXCmOWpZ2EY+YNDJIT1zWeAk7R+Y1HgoLXm6sp7f
+         0aRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733853338; x=1734458138;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tyxl+ttUb9oKqLIiCZsmpPDMeBgG6nRk3s3B134NCU0=;
+        b=PL4mQwd18IAYMTOy9sMl3FYNGUqdV0G+wgckjpzDE8hHFStyA2jZBpH4erJV+2RoPC
+         vGeYO3BG1imO0p2YNhYeUpVE5sBok2U4U2ZZVpb+rPOEoNiWtsdYJvQYFrMonPUp1cmc
+         646z0Tf5WAaJXjcFEkkgNSctWF1xJhT75B0l2ji9Uisra9h1AbrarMchhlNQ4vpWFXVJ
+         baigzrQJw5S+KQ5WvqbXHwQypXPk/uhicVNpTQ74xlWqh3WzEUklS3k9ovHumIko9hDG
+         9IHzJagc66WgYCp1BDfUogq6nyE5rogX1FiifVWgRyb9CVkRmssDnOFXmH7cGYDtQCaB
+         8AWA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8wM1plhzvi8bW0/1SXYrBY3nvQ0phFkPQ8AXtq8gOU45rKmOKCRErM8zNS2GmLiBhOH+lQWtfjjhl8Ds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVntk6/UjBAQeNS+Nfr2Mq/9Gee6T/EuHaDBRjDOQcXESSjibp
+	XT4WPCf0tnISzL8aqR7EfGc/jTwQFo8wR1yX+OCJ5MtXLhNo8FJqq0AO9ASUNsRfXlO15pI/A6X
+	Y791wnZXEk6dxsQVgrEqBaavYMwZe3ToFmG5a
+X-Gm-Gg: ASbGncsnq9lZxDZlACNascT0M811EMvgIShL5o2xSISdTXw77258k8BhkR+2OScn9Nv
+	BkzWE9SiTrqiL+GQJGLyw7KLgtHvYdlfdYwoDL6u1WsNXtaWEQ4bB0gDXm+YrPlDHHg==
+X-Google-Smtp-Source: AGHT+IG3VpXV1WLM2E+buv1L2blkpVBsdm3XboX8oZHVk8mJpLJ9ElOelY7ne/6rJJPBu93F7oJ1RCJlUW5nZaN1dfk=
+X-Received: by 2002:a05:622a:5a19:b0:466:9b73:8e3c with SMTP id
+ d75a77b69052e-46777658682mr4661321cf.13.1733853338141; Tue, 10 Dec 2024
+ 09:55:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241210164456.925060-8-lulu@redhat.com>
+References: <20241210041515.765569-1-hao.ge@linux.dev> <20241210065304.781620-1-hao.ge@linux.dev>
+In-Reply-To: <20241210065304.781620-1-hao.ge@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 10 Dec 2024 09:55:26 -0800
+Message-ID: <CAJuCfpGVTyKJ5yMQUqvNXRfBnBYj+dhUEqq0YAddtrqcWP27yw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/alloc_tag: Add kasan_alloc_module_shadow when
+ CONFIS_KASAN_VMALLOC disabled
+To: Hao Ge <hao.ge@linux.dev>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, greearb@candelatech.com, 
+	Hao Ge <gehao@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 12:41:46AM +0800, Cindy Lu wrote:
->Add a new UAPI to enable setting the vhost device to task mode.
->The userspace application can use VHOST_SET_INHERIT_FROM_OWNER
->to configure the mode if necessary.
->This setting must be applied before VHOST_SET_OWNER, as the worker
->will be created in the VHOST_SET_OWNER function
+On Mon, Dec 9, 2024 at 10:53=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
 >
->Signed-off-by: Cindy Lu <lulu@redhat.com>
->---
-> drivers/vhost/vhost.c      | 22 +++++++++++++++++++++-
-> include/uapi/linux/vhost.h | 18 ++++++++++++++++++
-> 2 files changed, 39 insertions(+), 1 deletion(-)
+> From: Hao Ge <gehao@kylinos.cn>
 >
->diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->index 3e9cb99da1b5..12c3bf3d1ed4 100644
->--- a/drivers/vhost/vhost.c
->+++ b/drivers/vhost/vhost.c
->@@ -2257,15 +2257,35 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
-> {
-> 	struct eventfd_ctx *ctx;
-> 	u64 p;
->-	long r;
->+	long r = 0;
-> 	int i, fd;
->+	u8 inherit_owner;
+> When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
+> is not enabled, we may encounter a panic during system boot.
 >
-> 	/* If you are not the owner, you can become one */
-> 	if (ioctl == VHOST_SET_OWNER) {
-> 		r = vhost_dev_set_owner(d);
-> 		goto done;
-> 	}
->+	if (ioctl == VHOST_SET_INHERIT_FROM_OWNER) {
->+		/*inherit_owner can only be modified before owner is set*/
->+		if (vhost_dev_has_owner(d)) {
->+			r = -EBUSY;
->+			goto done;
->+		}
->+		if (copy_from_user(&inherit_owner, argp, sizeof(u8))) {
->+			r = -EFAULT;
->+			goto done;
->+		}
->+		/* Validate the inherit_owner value, ensuring it is either 0 or 1 */
->+		if (inherit_owner > 1) {
->+			r = -EINVAL;
->+			goto done;
->+		}
->+
->+		d->inherit_owner = (bool)inherit_owner;
+> Because we haven't allocated pages and created mappings
+> for the shadow memory corresponding to module_tags region,
+> similar to how it is done for execmem_vmalloc.
 >
->+		goto done;
->+	}
-> 	/* You must be the owner to do anything else */
-> 	r = vhost_dev_check_owner(d);
-> 	if (r)
->diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
->index b95dd84eef2d..d7564d62b76d 100644
->--- a/include/uapi/linux/vhost.h
->+++ b/include/uapi/linux/vhost.h
->@@ -235,4 +235,22 @@
->  */
-> #define VHOST_VDPA_GET_VRING_SIZE	_IOWR(VHOST_VIRTIO, 0x82,	
-> \
-> 					      struct vhost_vring_state)
->+
->+/**
->+ * VHOST_SET_INHERIT_FROM_OWNER - Set the inherit_owner flag for the vhost device
->+ *
->+ * @param inherit_owner: An 8-bit value that determines the vhost thread mode
->+ *
->+ * When inherit_owner is set to 1:
->+ *   - The VHOST worker threads inherit its values/checks from
->+ *     the thread that owns the VHOST device, The vhost threads will
->+ *     be counted in the nproc rlimits.
-
-We should mention that this is the default behaviour, so the user does 
-not need to call VHOST_SET_INHERIT_FROM_OWNER if the default is okay.
-
->+ *
->+ * When inherit_owner is set to 0:
->+ *   - The VHOST worker threads will use the traditional kernel thread (kthread)
->+ *     implementation, which may be preferred by older userspace applications that
->+ *     do not utilize the newer vhost_task concept.
->+ */
->+#define VHOST_SET_INHERIT_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
-
-Do we really need a parameter? I mean could we just have an IOCTL to set 
-the old behavior, since the new one is enabled by default?
-
-Not a strong opinion on that, but just an idea to reduce confusion in 
-the user. Anyway, if we want the parameter, maybe we can use int instead 
-of u8, since we don't particularly care about the length.
-
-Thanks,
-Stefano
-
->+
-> #endif
->-- 
->2.45.0
+> The difference is that our module_tags are allocated on demand,
+> so similarly,we also need to allocate shadow memory regions on demand.
+> However, we still need to adhere to the MODULE_ALIGN principle.
 >
+> Here is the log for panic:
+>
+> [   18.349421] BUG: unable to handle page fault for address: fffffbfff809=
+2000
+> [   18.350016] #PF: supervisor read access in kernel mode
+> [   18.350459] #PF: error_code(0x0000) - not-present page
+> [   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PT=
+E 0
+> [   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> [   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+=
+ #3
+> [   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
+> [   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 0=
+0 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <=
+48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
+> [   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
+> [   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff8=
+2a7ceac
+> [   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc=
+0490000
+> [   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff=
+809201d
+> [   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc=
+0490000
+> [   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000=
+000002c
+> [   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlG=
+S:0000000000000000
+> [   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 000000000=
+0771ef0
+> [   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
+0000000
+> [   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
+0000400
+> [   18.362020] PKRU: 55555554
+> [   18.362261] Call Trace:
+> [   18.362481]  <TASK>
+> [   18.362671]  ? __die+0x23/0x70
+> [   18.362964]  ? page_fault_oops+0xc2/0x160
+> [   18.363318]  ? exc_page_fault+0xad/0xc0
+> [   18.363680]  ? asm_exc_page_fault+0x26/0x30
+> [   18.364056]  ? move_module+0x3cc/0x8a0
+> [   18.364398]  ? kasan_check_range+0xba/0x1b0
+> [   18.364755]  __asan_memcpy+0x3c/0x60
+> [   18.365074]  move_module+0x3cc/0x8a0
+> [   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
+> [   18.365841]  ? early_mod_check+0x3dc/0x510
+> [   18.366195]  load_module+0x72/0x1850
+> [   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
+> [   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
+> [   18.367262]  init_module_from_file+0xd1/0x130
+> [   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
+> [   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
+> [   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+> [   18.368938]  idempotent_init_module+0x22c/0x790
+> [   18.369332]  ? simple_getattr+0x6f/0x120
+> [   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
+> [   18.370110]  ? fdget+0x58/0x3a0
+> [   18.370393]  ? security_capable+0x64/0xf0
+> [   18.370745]  __x64_sys_finit_module+0xc2/0x140
+> [   18.371136]  do_syscall_64+0x7d/0x160
+> [   18.371459]  ? fdget_pos+0x1c8/0x4c0
+> [   18.371784]  ? ksys_read+0xfd/0x1d0
+> [   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
+> [   18.372525]  ? do_syscall_64+0x89/0x160
+> [   18.372860]  ? do_syscall_64+0x89/0x160
+> [   18.373194]  ? do_syscall_64+0x89/0x160
+> [   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
+> [   18.373952]  ? do_syscall_64+0x89/0x160
+> [   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
+> [   18.374701]  ? do_syscall_64+0x89/0x160
+> [   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
+> [   18.375416]  ? clear_bhb_loop+0x25/0x80
+> [   18.375748]  ? clear_bhb_loop+0x25/0x80
+> [   18.376119]  ? clear_bhb_loop+0x25/0x80
+> [   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated are=
+a calculation")
+> Reported-by: Ben Greear <greearb@candelatech.com>
+> Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@=
+candelatech.com/
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> ---
+> v2: Add comments to facilitate understanding of the code.
+>     Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_mo=
+dule_shadow
+>     already handles this internally,but to make the code more readable an=
+d user-friendly
+>
+> commit 233e89322cbe ("alloc_tag: fix module allocation
+> tags populated area calculation") is currently in the
+> mm-hotfixes-unstable branch, so this patch is
+> developed based on the mm-hotfixes-unstable branch.
+> ---
+>  lib/alloc_tag.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index f942408b53ef..bd3ee57ea13f 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/seq_buf.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/math.h>
+>
+>  #define ALLOCINFO_FILE_NAME            "allocinfo"
+>  #define MODULE_ALLOC_TAG_VMAP_SIZE     (100000UL * sizeof(struct alloc_t=
+ag))
+> @@ -422,6 +423,17 @@ static int vm_module_tags_populate(void)
+>                         return -ENOMEM;
+>                 }
+>                 vm_module_tags->nr_pages +=3D nr;
+> +
+> +               /*
+> +                * Kasan allocates 1 byte of shadow for every 8 bytes of =
+data.
+> +                * When kasan_alloc_module_shadow allocates shadow memory=
+,
+> +                * it does so in units of pages.
+> +                * Therefore, here we need to align to MODULE_ALIGN.
+> +                */
+> +               if ((phys_end & (MODULE_ALIGN - 1)) =3D=3D 0)
 
+phys_end is calculated as:
+
+unsigned long phys_end =3D ALIGN_DOWN(module_tags.start_addr, PAGE_SIZE) +
+                                           (vm_module_tags->nr_pages
+<< PAGE_SHIFT);
+
+and therefore is always PAGE_SIZE-aligned. PAGE_SIZE is always a
+multiple of MODULE_ALIGN, therefore phys_end is always
+MODULE_ALIGN-aligned and the above condition is not needed.
+
+> +                       kasan_alloc_module_shadow((void *)phys_end,
+> +                                                 round_up(nr << PAGE_SHI=
+FT, MODULE_ALIGN),
+
+Here again, (nr << PAGE_SHIFT) is PAGE_SIZE-aligned and PAGE_SIZE is a
+multiple of MODULE_ALIGN, therefore (nr << PAGE_SHIFT) is always
+multiple of MODULE_ALIGN and there is no need for round_up().
+
+IOW, I think this patch should simply add one line:
+
+                vm_module_tags->nr_pages +=3D nr;
++               kasan_alloc_module_shadow((void *)phys_end, nr <<
+PAGE_SHIFT, GFP_KERNEL);
+
+Am I missing something?
+
+
+> +                                                 GFP_KERNEL);
+>         }
+>
+>         /*
+> --
+> 2.25.1
+>
 
