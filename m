@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-440333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6ED69EBBE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:31:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322AA9EBBE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:31:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9F7188A582
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC0828467E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2AD2343CB;
-	Tue, 10 Dec 2024 21:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336F6237A3F;
+	Tue, 10 Dec 2024 21:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bRCn6R6u"
-Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com [209.85.160.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zKrZ7EJj"
+Received: from mail-qt1-f201.google.com (mail-qt1-f201.google.com [209.85.160.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6CB23237E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1878D23238E
 	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.202
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733866265; cv=none; b=CNnF3trlOwQGvwPPCc5gzH8d37ICr3jhsz53iNVVML5KSC+04JLpmZcfEo/o0XzXkZ7QTBSJwfGIJJAHF2iOaLU+oYmS7p4NgeUFuBOIk2zuPDnzG/+o4/fWGwKGik2jDRHgej6Gg/TZe/2nbwj0zLGR3YXjDyK7/rUF3exVO2U=
+	t=1733866269; cv=none; b=ZSlt2EugJrqCN43pxYjk0fb+gqIcZAaL1BD5GNLmgJgM/vNCAZ0BwX0Hi8hgAmaHwYHy5E0c5siMNqP22wEplK1s+m7yLpbesW3bVBELKzC0vucLY5K4reyYTWqpgGagBQEmp7dRUDb1SnCtSTUVODnkuU53pYteYC/6qbyLinc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733866265; c=relaxed/simple;
-	bh=7BtEdFWcYLngsq2PQODOD5BiLZOIKMRwRSUO9nBBYBg=;
+	s=arc-20240116; t=1733866269; c=relaxed/simple;
+	bh=Fo+jcVx3pAYgTTMoKfson94C1ceVwwTfSgpbPciuP1U=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=E2r1wu2lFiGHM25xP0NIyntmyTdxirYjZOcL80FJZHfDF28Kus1lnKuKj05Z8jZvJe94cFjzJLu1MntBCRcdcFcjE779co7qr1KQ7M/z/a0pDwgiaMmV06oPaP1JSdDA2LxlH5TDQULeH8pka1WQj1OhHbj2iiohR0RspgViOiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bRCn6R6u; arc=none smtp.client-ip=209.85.160.202
+	 To:Cc:Content-Type; b=qh+mVYHQzgVoP8nvMZ74L/v55dbPgju1d5X+g2lV68rMeWVP35kIAru59jm8b0P7RciRbg27QuKthTnvAIVa4FjbS9U9UwZ/Uva9sdtzRGa7ThX6SA83sYKDjYq2cqJY2bQ1t8DTM1lmpj7rczk560MDvGlnKjpUnmFHy6dMDqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zKrZ7EJj; arc=none smtp.client-ip=209.85.160.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com
-Received: by mail-qt1-f202.google.com with SMTP id d75a77b69052e-467518d8bdaso80023251cf.2
+Received: by mail-qt1-f201.google.com with SMTP id d75a77b69052e-46775c891d2so50402971cf.2
         for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:31:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733866263; x=1734471063; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733866264; x=1734471064; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8zF6cyo4V+yV1OddWsDU7llWFhEXM57i4QvxWba9u5g=;
-        b=bRCn6R6u52WUg6LH0+J3obvVxCFUwN94ruyntEcF1gDkU5mD1jv1g/ReJbUzXuZlU6
-         HwD0QM79MojHI8TkJlYlT/gItF8nvnpGdVPb/KKPXUdilblmRJJASv9hX0rlrXXzbxlH
-         QyOxwNa/cV5fd8o++YK/0mGN+qnV5Xe780uu9F9QoLw5/k8QmBh/KsaiOTkdofxO0rOC
-         YHTpBPcn5zigw/oAHoRP37NX0uNMu4qrADEb70B6IGq6qASldJ8hcE7XiBxj72owEBxZ
-         7BR1V/3EOTJF2Xz7ZX+P3HpC6A6GDQu5Vo8MdoLjnhh90WsAhYxeuseagSjlIk2pI/bt
-         MPsA==
+        bh=p+Ew5mGOm8qX6hJiqcK96oIfktQ2zB7aJWIvrQrH8Us=;
+        b=zKrZ7EJjCHzcD2CWQD9GlJWDU5BJqFwcd0CbBENW0tchiXxlhuuoJpTo2mQQ+TMFPd
+         RTiMBUNU4+e98Xswxy4TLPvQXIKAAjf/9KZ8qNLIyBCA/tGfLs/oLvaXqI+dlYoLrnS4
+         xtJ1pBwq8AqjsVMjmVxqpkNK6bCNclIMp6tZuX8uF3G1d7K5sSGEGVxJjbIwvN5RBNG9
+         37x2cdIF0CpWRQGl07wzHRxZ2IdH/DD8HQdsvu2omRa0JILuAhiQHrtheJLd5PzrWNhk
+         vzS5ALET417MeLqJp7AZffXOxW/GtmrZblziyqUz4WOlwSXDmuCF2e7+ho+6gK4yfiyG
+         Rbpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733866263; x=1734471063;
+        d=1e100.net; s=20230601; t=1733866264; x=1734471064;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8zF6cyo4V+yV1OddWsDU7llWFhEXM57i4QvxWba9u5g=;
-        b=XkPp1sNlA1bourdTr21vs6Uj7jGzZ+owfOy3eaMvk+lEc7MMbRO4EB2peIs0xNB2zl
-         Cd/wgVgxxeq8xlKafjpylocBnpNnPCss7dXbzTyTeSWDPABr7kFr1MG09DKbX51LiNmh
-         iHUmSA5aHjaqr8eDAMFsM5GUlUihGv96H+Nd9L1zrcu3PviMhgSi0I2fQZHzeeVS/I/D
-         YqLCSJ/4b9wO09fRh6KSYUaK1HC605faRNrxP28cL20St7IdT86h3EEPbhwriz5feoe4
-         xu4xP0K5Lxxk98nOnbIz7sEO67/RFFphUzD5CI4J6R7cG9mIkC75MpA5pKOmXyc/1DcG
-         9WSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSgNZcitSkM6KduHJ+pd18o0gRC2yl+1fxXcyCUfYJp1s3gBXTC/aFDWzMB0QuUm98QNm+zPe4lx5/MbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw60WnZ6+JmZwCnx+D/MfURAl5AjNgmI/DVJKy7kDp9FWa39xlG
-	4nmT8HSeAj+LDckQxh10jQob5B4qzZ/h/OwHhopC59uELtI8+sYIwXzEjuKYh9/uA5ILBAOt7zT
-	2TDqRKA==
-X-Google-Smtp-Source: AGHT+IHZ1924mCsfRh+0nxIV+XSxlFuKLxmvXW19hSqpR+438olx78Wtep6vn7HuCeERSohDHX/QpTjD62ds
-X-Received: from qtbcc14.prod.google.com ([2002:a05:622a:410e:b0:467:518e:d31b])
- (user=bgeffon job=prod-delivery.src-stubby-dispatcher) by 2002:ac8:58cd:0:b0:466:a3bf:41a7
- with SMTP id d75a77b69052e-467893c594amr7220151cf.51.1733866263282; Tue, 10
+        bh=p+Ew5mGOm8qX6hJiqcK96oIfktQ2zB7aJWIvrQrH8Us=;
+        b=V6brck1ydwqKjPwieRSeUJmo1hMPTqiLSMeU5kXgDrntcCWdtneRd/uuTgtiNUYG9M
+         KRuvcL+Gf8BKq+gl+eGcAqgGDvSQwAMODAR6OpsQKSd4kMmalxAqRM7r0Ygc8cLMVevq
+         U7qpK7UhRXN3hQBb4JLNpYJvrqM9ZFyLr1K9BaJs4jzLPRC84A8HazVseUfxcpRDvIdt
+         8TXaG9vxWIV9rfCDuQUymcnFo86JaPWPUHyPmILtou1Ol/PDaw9pIwkNI9RlVpqIM3/S
+         N+4f5yz1F/EiTPqUPm8iELiUMEjLEW+rP2rE4YOiVnD37yUGAZVSYDuiQZOOfCDQSrfb
+         dLfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNMNSbGQ3UXO2LPMaaLLl+NevhSqSbGdKQpHVE+yYwoPIF3ZeUGMWxchs3DtPSUQ0ujFgLkDQxRu5Dlcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9Ey4f3dB5Fbd2IUjJUOA/oumXrqZi+9qAGZ452753F80e4aD7
+	ISHmCdem/kmvPqyYxvvRlP341z5lLt/mO/xTlkh0teUMfL4psXnW3uDDB1rywl2YVswrSLzIMEI
+	XBEQzyA==
+X-Google-Smtp-Source: AGHT+IHcROXBNbjH71/lURsLY2Z1G5CKon5Ljv9fq9orhUweiNnkkP9Uhr+rnjfYEZKZsBEOScmUDcRF+8Fv
+X-Received: from qtbcg3.prod.google.com ([2002:a05:622a:4083:b0:466:9f81:8c8c])
+ (user=bgeffon job=prod-delivery.src-stubby-dispatcher) by 2002:a05:622a:1389:b0:467:7fbf:d115
+ with SMTP id d75a77b69052e-467892a43f3mr8418101cf.12.1733866263990; Tue, 10
  Dec 2024 13:31:03 -0800 (PST)
-Date: Tue, 10 Dec 2024 16:30:49 -0500
+Date: Tue, 10 Dec 2024 16:30:50 -0500
 In-Reply-To: <20241210213050.2839638-1-bgeffon@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241210213050.2839638-1-bgeffon@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241210213050.2839638-5-bgeffon@google.com>
-Subject: [RFC PATCH 4/5] selftests: mm: Add a new MREMAP_DONTUNMAP self test
+Message-ID: <20241210213050.2839638-6-bgeffon@google.com>
+Subject: [RFC PATCH 5/5] selftests: mm: Add selftest for new_addr hint with MREMAP_MAYMOVE.
 From: Brian Geffon <bgeffon@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>, 
@@ -83,79 +83,163 @@ Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>,
 	Brian Geffon <bgeffon@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add a new selftest which validates that a new_addr as a hint behaves
-in the same way as mmap.
+This selftest tries to validate that a hint will be used with
+MREMAP_MAYMOVE. Given it's just a hint we try to structure the test
+in a way where it will succeed.
+
+To ensure we can validate the behavior we create a single mapping
+and split it by unmapping the middle and we'll use that as a hint
+for MREMAP_MAYMOVE without using MREMAP_FIXED.
 
 Signed-off-by: Brian Geffon <bgeffon@google.com>
 ---
- tools/testing/selftests/mm/mremap_dontunmap.c | 41 ++++++++++++++++++-
- 1 file changed, 40 insertions(+), 1 deletion(-)
+ tools/testing/selftests/mm/mremap_test.c | 113 ++++++++++++++++++++++-
+ 1 file changed, 112 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/mm/mremap_dontunmap.c b/tools/testing/selftests/mm/mremap_dontunmap.c
-index 1d75084b9ca5..ccce97c68019 100644
---- a/tools/testing/selftests/mm/mremap_dontunmap.c
-+++ b/tools/testing/selftests/mm/mremap_dontunmap.c
-@@ -224,6 +224,44 @@ static void mremap_dontunmap_simple_fixed()
- 	ksft_test_result_pass("%s\n", __func__);
+diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
+index 5a3a9bcba640..42ed869e2e01 100644
+--- a/tools/testing/selftests/mm/mremap_test.c
++++ b/tools/testing/selftests/mm/mremap_test.c
+@@ -8,6 +8,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <syscall.h>
+ #include <sys/mman.h>
+ #include <time.h>
+ #include <stdbool.h>
+@@ -270,6 +271,115 @@ static void mremap_expand_merge(FILE *maps_fp, unsigned long page_size)
+ 		ksft_test_result_fail("%s\n", test_name);
  }
  
-+// This test validates MREMAP_DONTUNMAP using a newaddr hint without
-+// MREMAP_FIXED.
-+static void mremap_dontunmap_simple_newaddr_hint()
++/*
++ * This test validates that mremap(2) with MREMAP_MAYMOVE uses the new
++ * address as a hint.
++ */
++static void mremap_maymove_hint(FILE *maps_fp, unsigned long page_size)
 +{
-+	unsigned long num_pages = 5;
++	char *test_name = "mremap MAY_MOVE with hint";
++	void *mapping_a, *mapping_b, *mapping_c, *remapped, *hint;
++	intptr_t base_map_addr = 0x8FF00000;
 +
-+	// This dest hint is intentionally not aligned.
-+	void *new_addr_hint = (void*)0x999900010;
++#if !defined(__i386__) && !defined(__x86_64__)
++	/*
++	 * This test is written with knowledge about the architecture specific behavior of
++	 * get_unmapped_area(). For that reason this specific test is only applicable to x86.
++	 */
++	ksft_test_result_skip("%s\n", test_name);
++	return;
++#endif
 +
-+	void *source_mapping =
-+	    mmap(NULL, num_pages * page_size, PROT_READ | PROT_WRITE,
-+		 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+	BUG_ON(source_mapping == MAP_FAILED, "mmap");
-+	memset(source_mapping, 'a', num_pages * page_size);
++	/*
++	 * To validate the behavior we'll use the following layout:
++	 *
++	 * | mapping a |                   |   mapping b    |   mapping c   |
++	 * | 1 page    | 10 pages unmapped | 2 pages mapped | 1 page mapped |
++	 *
++	 * To guarantee we can get this layout we'll do a single mmap and then
++	 * munmap and mprotect accordingly, this will prevent the test from being
++	 * flaky.
++	 *
++	 * We'll attempt to resize mapping b to 3 pages using MAYMOVE, because
++	 * mapping c is beyond it it'll have to be moved. We will use mapping a
++	 * as the hint to validate it lands just beyond it. The final result:
++	 *
++	 * | mapping a |                  | mapping b      |                  |   mapping c   |
++	 * | 1 page    | 2 pages unmapped | 3 pages mapped | 7 pages unampped | 1 page mapped |
++	 *
++	 */
++	mapping_a = mmap((void*)base_map_addr, 14 * page_size, PROT_READ | PROT_WRITE,
++		     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 +
-+	void *remapped_mapping =
-+	    mremap(source_mapping, num_pages * page_size, num_pages * page_size,
-+		   MREMAP_DONTUNMAP | MREMAP_MAYMOVE,
-+		   new_addr_hint);
-+	BUG_ON(remapped_mapping == MAP_FAILED, "mremap");
++	if (mapping_a == MAP_FAILED) {
++		ksft_print_msg("mmap failed: %s\n", strerror(errno));
++		goto out_fail;
++	}
 +
-+	// And the source mapping will have had its ptes dropped.
-+	BUG_ON(check_region_contains_byte
-+	       (source_mapping, num_pages * page_size, 0) != 0,
-+	       "source should have no ptes");
++	mapping_b = (void*)((intptr_t)mapping_a + 11*page_size);
++	mapping_c = (void*)((intptr_t)mapping_a + 13*page_size);
 +
-+	// And the remapped area will be filled with 'a's.
-+	BUG_ON(check_region_contains_byte
-+	       (remapped_mapping, num_pages * page_size, 'a') != 0,
-+	       "dest should have remapped content");
++	/* unmap the 10 pages after mapping a */
++	munmap((void*)((intptr_t)(mapping_a) + page_size), 10*page_size);
 +
-+	BUG_ON(munmap(source_mapping, num_pages * page_size) == -1,
-+	       "unable to unmap source mapping");
-+	BUG_ON(munmap(remapped_mapping, num_pages * page_size) == -1,
-+	       "unable to unmap source mapping");
-+	ksft_test_result_pass("%s\n", __func__);
++	/* make mapping a and c PROT_NONE to complete the vma splitting */
++	mprotect(mapping_a, page_size, PROT_NONE);
++	mprotect(mapping_c, page_size, PROT_NONE);
++
++	/*
++	 * Validate the split: mapping a, b, and c are mapped with a gap after 'a'.
++	 */
++	if (!is_range_mapped(maps_fp, (unsigned long)mapping_a,
++				  (unsigned long)(mapping_a + page_size))) {
++		ksft_print_msg("mapping 'a' was not mapped at %p\n", mapping_a);
++		goto out_fail;
++	}
++
++	if (is_range_mapped(maps_fp, (unsigned long)mapping_a + page_size,
++				  (unsigned long)mapping_a + 10*page_size)) {
++		ksft_print_msg("unmapped area after mapping 'a' not found\n");
++		goto out_fail;
++	}
++
++	if (!is_range_mapped(maps_fp, (unsigned long)mapping_b,
++				  (unsigned long)(mapping_b + 2*page_size))) {
++		ksft_print_msg("mapping 'b' was not mapped at %p\n", mapping_b);
++		goto out_fail;
++	}
++
++	if (!is_range_mapped(maps_fp, (unsigned long)mapping_c,
++				  (unsigned long)(mapping_c + page_size))) {
++		ksft_print_msg("mapping 'c' was not mapped at %p\n", mapping_c);
++		goto out_fail;
++	}
++
++	/*
++	 * Now try to mremap mapping 'b' using a hint, it will be increased in size
++	 * so that the VMA must be moved. Bypass the glibc wrapper of mremap(2) becuase
++	 * it will attempt to 0 the hint unless MREMAP_DONTUNMAP is set, for reference:
++	 * https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=6c40cb0e9f893d49dc7caee580a055de53562206;hp=54252394c25ddf0062e288d4a6ab7a885f8ae009
++	 */
++	hint = (void*)((intptr_t)mapping_a + 3*page_size);
++	remapped = (void*)syscall(SYS_mremap, mapping_b, 2*page_size, 3*page_size, MREMAP_MAYMOVE, hint);
++	if ((intptr_t)remapped != (intptr_t)hint) {
++		if (remapped == MAP_FAILED)
++			ksft_print_msg("remap of 'b' failed %s\n", strerror(errno));
++		else
++			ksft_print_msg("mapping 'b' was unexpectedly remapped from %p to %p. expected: %p\n",
++				mapping_b, remapped, hint);
++		goto out_fail;
++	}
++
++	munmap(mapping_a, page_size);
++	munmap(remapped, 3 * page_size);
++	munmap(mapping_c, page_size);
++	ksft_test_result_pass("%s\n", test_name);
++	return;
++
++out_fail:
++	ksft_test_result_fail("%s\n", test_name);
 +}
 +
- // This test validates that we can MREMAP_DONTUNMAP for a portion of an
- // existing mapping.
- static void mremap_dontunmap_partial_mapping()
-@@ -348,7 +386,7 @@ int main(void)
- 		ksft_finished();
- 	}
+ /*
+  * Similar to mremap_expand_merge() except instead of removing the middle page,
+  * we remove the last then attempt to remap offset from the second page. This
+@@ -720,7 +830,7 @@ int main(int argc, char **argv)
+ 	char *rand_addr;
+ 	size_t rand_size;
+ 	int num_expand_tests = 2;
+-	int num_misc_tests = 2;
++	int num_misc_tests = 3;
+ 	struct test test_cases[MAX_TEST] = {};
+ 	struct test perf_test_cases[MAX_PERF_TEST];
+ 	int page_size;
+@@ -842,6 +952,7 @@ int main(int argc, char **argv)
  
--	ksft_set_plan(5);
-+	ksft_set_plan(6);
+ 	mremap_expand_merge(maps_fp, page_size);
+ 	mremap_expand_merge_offset(maps_fp, page_size);
++	mremap_maymove_hint(maps_fp, page_size);
  
- 	// Keep a page sized buffer around for when we need it.
- 	page_buffer =
-@@ -359,6 +397,7 @@ int main(void)
- 	mremap_dontunmap_simple();
- 	mremap_dontunmap_simple_shmem();
- 	mremap_dontunmap_simple_fixed();
-+	mremap_dontunmap_simple_newaddr_hint();
- 	mremap_dontunmap_partial_mapping();
- 	mremap_dontunmap_partial_mapping_overwrite();
+ 	fclose(maps_fp);
  
 -- 
 2.47.0.338.g60cca15819-goog
