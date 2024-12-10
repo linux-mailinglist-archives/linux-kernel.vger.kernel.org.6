@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-440494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4829EBF0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:09:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63BA9EBF2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:16:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A062847D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A3A188979C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AB71F1937;
-	Tue, 10 Dec 2024 23:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qnbA+GWZ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6A01F1934;
+	Tue, 10 Dec 2024 23:16:22 +0000 (UTC)
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4174F1AAA2F;
-	Tue, 10 Dec 2024 23:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB8F1CF7B8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733872167; cv=none; b=I+r8iC2mkm8+qNM8BaY/i/Ztw6jcUKdC0DD4lpaUhGCifddEvOJuDhy2MszcmnBx2Ri2oGZKZs3YVizqERBbkuuhw5T4qDJ88+5kdsXJLYBD2iY0d++Fp5dfr2iv1WA7kzEbEHN07zrBBnd0qDk3vY8XrgMkrAoVMeOkPBP+b20=
+	t=1733872582; cv=none; b=ZxSXAT28ZyyUwXkxIsB8ZB3y/9oJXThiw1BEjMBIkJAsHmWj+qT1tbazD5O33TxD+aOdhNKBGDTbh47VAkXJEg9raBZxtCEp+L1iulqcENwOjYKCP1Ym7omOparP5hBU7gtlSqZRz5rORIlpQ/NyeRnAaiCN6pf5J0McCOExIt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733872167; c=relaxed/simple;
-	bh=NBkLuPZICKLNwg7DivKanww+HiXGCWs1s7kCNckO1hY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A9KR70FKgQUpsuiwPGTui6b2CUCka8A46kFpQ/L7fN0a4au5JJvYAkHVkd/M0VhUlul1ynnCd77zcMkyHxgX35SdEe2wiyGSg0ETqWMgZmPNEwSzPLeElaXzRpvcuB93pbWeTEinnTs+ALrVs8ZRVJdb0xUZQgYBF59Bb8FoIVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qnbA+GWZ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WbsUv2uSUD6IdLlUiwGe9UBfCIFkso55xH3tnUJICTk=; b=qnbA+GWZqDmQmtnEbp1wOfXfHH
-	pcMnTWVPMbmvNcTfsE2f5MuCJ3dgfqz+B8U379AMx4Y20MfXo1GMEY8LN5qpWX4C4kPOy+WZimTvW
-	MtvfBXRoXlIQYZ0p1y/81CD4wwrDty/fKRZ9a7DBkU1tQov4BN1UpkDzaxwJWogNK3Y+38mjFvqMw
-	VYVeyXC//lnGcdzqCkxOwGIkjrR/u9krKlx25+tt2O4IBqAIX+E5NDDJF9ZXW6oAwo635lLwxUXnT
-	J8lNtS5ohd7eTI3XB+5kJIU6NpITTL+9VqA++HW78eN1x0G1xrb/konDNe4q9inch0FALGCg0lgmw
-	JW35Zeng==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tL9Lu-0007Hr-QO; Wed, 11 Dec 2024 00:09:14 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Andy Yan <andyshrk@163.com>
-Cc: hjc@rock-chips.com, krzk+dt@kernel.org, s.hauer@pengutronix.de,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, derek.foreman@collabora.com,
- detlev.casanova@collabora.com, Andy Yan <andy.yan@rock-chips.com>
-Subject:
- Re: [PATCH v5 04/18] drm/rockchip: vop2: Fix the windows switch between
- different layers
-Date: Wed, 11 Dec 2024 00:09:13 +0100
-Message-ID: <5109751.mvXUDI8C0e@phil>
-In-Reply-To: <20241209122943.2781431-8-andyshrk@163.com>
-References:
- <20241209122943.2781431-1-andyshrk@163.com>
- <20241209122943.2781431-8-andyshrk@163.com>
+	s=arc-20240116; t=1733872582; c=relaxed/simple;
+	bh=dfvK1PSJB+t7ksWSGvsN4NAaxU4zxU4s5270skPdnhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4YWkat1tKffuz4bDNBRDs9AtqF1QKhAuLpanclMNE4hmS7y/iAoYlB7QtzuAibL0HmdLRjHFMnG+AP6SUPRS6ydqhrE7iv+9rJ0USHclon1RbkNpJA5RTPT616Or4CuSRibLWQEjFd5rpTXpeOq7g6YdVfiQ+k+Be9JwFg07I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 1DE241F983;
+	Tue, 10 Dec 2024 23:21:19 +0100 (CET)
+Date: Tue, 10 Dec 2024 23:21:17 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] dt-bindings: msm/dp: add support for pixel clock to
+ driver another stream
+Message-ID: <56n4r7p63dtzjpafe5wdljwhlkhzahbct5tsocegivvhop4f6a@65pmfavnyqga>
+References: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
 
-Hi Andy,
-
-Am Montag, 9. Dezember 2024, 13:29:17 CET schrieb Andy Yan:
-> From: Andy Yan <andy.yan@rock-chips.com>
+On 2024-12-02 19:31:38, Abhinav Kumar wrote:
+> On some MSM chipsets, the display port controller is capable of supporting
+> two streams. To drive the second stream, the pixel clock for the corresponding
+> stream needs to be enabled. In order to add the bindings for the pixel clock
+> for the second stream, fixup the documentation of some of the bindings to
+> clarify exactly which stream they correspond to, then add the new bindings.
 > 
-> Every layer of vop2 should bind a window, and we also need to make
-> sure that this window is not used by other layer.
+> In addition, to help out with reviews for dp-controller bindings, add myself
+> as the maintainter.
 > 
-> 0x5 is a reserved layer sel value on rk3568, but it will select
-> Cluster3 on rk3588, configure unused layers to 0x5  will lead
-> alpha blending error on rk3588.
+> This change was made on top of [1] which fixes a warning on the sa8775p
+> bindings.
 > 
-> When we bind a window from layerM to layerN, we move the old window
-> on layerN to layerM.
+> [1]: https://patchwork.freedesktop.org/patch/624068/
 > 
-> Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
-> Tested-by: Derek Foreman <derek.foreman@collabora.com>
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+> Abhinav Kumar (4):
+>       dt-bindings: display: msm: dp-controller: document pixel clock stream
+>       dt-bindings: display: msm: dp-controller: document clock parents better
+>       dt-bindings: display/msm: add stream 1 pixel clock binding
+>       dt-bindings: display: msm: dp: update maintainer entry
 
-> +		/*
-> +		 * Find the win bind to this layer in old state
-> +		 */
-> +		for (i = 0; i < vop2->data->win_size; i++) {
-> +			old_win = &vop2->win[i];
-> +			layer_sel_id = (layer_sel >> (4 * (plane->state->normalized_zpos + ofs))) & 0xf;
+Simple nit: any reason why the third patch uses display/msm as subject prefix
+while the other 3 patches separate with a colon and space?
 
-checkpatch is unhappy about the length of this line (104 characters).
-Could you please restructure it (helper var or line break)
-so that it gets below the 100 character mark please?
+- Marijn
 
-Thanks a lot
-Heiko
-
-
+>  .../bindings/display/msm/dp-controller.yaml        | 41 +++++++++++++++++++---
+>  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    |  9 +++--
+>  2 files changed, 43 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+> change-id: 20241202-dp_mst_bindings-7536ffc9ae2f
+> 
+> Best regards,
+> -- 
+> Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
 
