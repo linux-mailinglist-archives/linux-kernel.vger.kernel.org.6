@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-438960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCF39EA8C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:26:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3BD188886C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:26:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED89522CBC6;
-	Tue, 10 Dec 2024 06:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RY2rDCkn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4484D9EA8BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:24:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2F122616F;
-	Tue, 10 Dec 2024 06:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFAE7285F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:24:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421D822B8DB;
+	Tue, 10 Dec 2024 06:24:31 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674CE22616F;
+	Tue, 10 Dec 2024 06:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733812008; cv=none; b=qR309TGjZXGtv5QyLZY6nPk3OJIKnU+bZdARpoieVQ4OyLKKevgBydVPn5aN3HSu0jt4xzV1BMqqURLZEMPvfJ7tj5+GvGCldP/Qq4mYG2WDcbjEbmTLlCma0qcKyNncPcv2/HVNi1bZZHHUqlf/wGzdgyvcknR7Q3bHWjiSYO8=
+	t=1733811870; cv=none; b=r4OuxYDwhI1A99G+h2PCpUMuKkEiKLBYtjVNFU7OlON98uE4qTRmIYJVI6JQEhvs4osjmO250irwSLb/shG7IYsLJo9b3Ay+0ccb1AF2BPCe0AatYFcoZei0zU4TohIhaJF5QH2Uymkt4ZO5Jn2dw96vR8G4UUuUJVk5oJ+ehD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733812008; c=relaxed/simple;
-	bh=3m6Wb9gSs1tZJatfSkdFDNxKn7SG6+JznvNzNtrj1mQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5sPJFoh1S06D1kYiDM2AFWQ2usJsC3kgImpVhKfQ6KYi1axzenqma11KpyaSHIjksT4p3VyqC1OWxDdeC1MyXAsNeKgZzTu168XIcGCUwdiAAzeKjdbq0f+iyzA9gC0rs+Xc/4dc+PrA+LQGODZrHrSUDqvHqtV+hc8riLqwNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RY2rDCkn; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733812007; x=1765348007;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3m6Wb9gSs1tZJatfSkdFDNxKn7SG6+JznvNzNtrj1mQ=;
-  b=RY2rDCknzyLk4FJOPvhWuAz/6jegiG6LCyuTcrTFAsLptTSeD2gHrTx1
-   jwDxkDjuw95RFEPK6mFLF+hMlTboWE65ltmj2Tarud7sZkS24Wn8Yf20W
-   k5On2Q6JjJNAa97VdKUeDT3yr9UcneqTsN2OzuQ9Dzi18qu1n9IH8AmYG
-   AX1hg7rhMOnlisBG0p8LMs7U10nJ+R8mwbo9fk1rmC6hdQjl1EguG52mj
-   9Ly8XVXSxgitEv0RKLVNAnZtft/suzplUoycPYh8N0CY6wplhatZR70sq
-   n3KqJfponyGUc3WzyWxsN/4UGG8yuHZVfb1oVQgjhjJ3UvYyyFTlm94Dw
-   w==;
-X-CSE-ConnectionGUID: gMF4n4nTSZ2gGwKgI2oSwQ==
-X-CSE-MsgGUID: DqugDdrxRceNLgXskukIeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="45152489"
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="45152489"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 22:26:46 -0800
-X-CSE-ConnectionGUID: R/pcuTnvTaifMsxrC608rQ==
-X-CSE-MsgGUID: Ce7BdnX7QJO6a3Y89pSQ+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="132699639"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 22:26:42 -0800
-Date: Tue, 10 Dec 2024 07:23:40 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>, Long Li <longli@microsoft.com>,
-	Yury Norov <yury.norov@gmail.com>
-Subject: Re: [PATCH v2 0/2] MANA: Fix few memory leaks in mana_gd_setup_irqs
-Message-ID: <Z1febCUrMwU2j+GW@mev-dev.igk.intel.com>
-References: <20241209175751.287738-1-mlevitsk@redhat.com>
+	s=arc-20240116; t=1733811870; c=relaxed/simple;
+	bh=elgQcUu4giLbY/22LpwrD3iFr839bc6DYgVWOvMLRDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gc6sLL8z9JongmwBEE9/fH8hZ5qU11M501eMY8YZxmNZySEZDMSExvjaRwx7m/lzUE+7W05NTdjmzCAMbHkalypQvDcC1IHlNo2Dr0kMLWW7/SUHkrrzDKPXVbjxnIG72Vzze598JT3COSiJV08K0fVO2d/22igT5epx4AddDJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y6pXB2ZPmz11MD1;
+	Tue, 10 Dec 2024 14:21:14 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id B437B1402E2;
+	Tue, 10 Dec 2024 14:24:18 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 10 Dec 2024 14:24:17 +0800
+Message-ID: <f046d3f8-a1c8-0174-8db9-24467c038557@hisilicon.com>
+Date: Tue, 10 Dec 2024 14:24:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209175751.287738-1-mlevitsk@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH for-next] RDMA/hns: Support mmapping reset state to
+ userspace
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <leon@kernel.org>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>
+References: <20241014130731.1650279-1-huangjunxian6@hisilicon.com>
+ <20241209190125.GA2367762@nvidia.com>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20241209190125.GA2367762@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-On Mon, Dec 09, 2024 at 12:57:49PM -0500, Maxim Levitsky wrote:
-> Fix 2 minor memory leaks in the mana driver,
-> introduced by commit
+
+
+On 2024/12/10 3:01, Jason Gunthorpe wrote:
+> On Mon, Oct 14, 2024 at 09:07:31PM +0800, Junxian Huang wrote:
+>> From: Chengchang Tang <tangchengchang@huawei.com>
+>>
+>> Mmap reset state to notify userspace about HW reset. The mmaped flag
+>> hw_ready will be initiated to a non-zero value. When HW is reset,
+>> the mmap page will be zapped and userspace will get a zero value of
+>> hw_ready.
 > 
-> 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
-> 
-> Best regards,
-> 	Maxim Levitsky
+> This needs alot more explanation about *why* does userspace need this
+> information and why is hns unique here.
 > 
 
-For next time please add a changleog, like here for example [1].
-It is helpfull for the reviewers.
+Our HW cannot flush WQEs by itself unless the driver posts a modify-qp-to-err
+mailbox. But when the HW is reset, it'll stop handling mailbox too, so the HW
+becomes unable to produce any more CQEs for the existing WQEs. This will break
+some users' expectation that they should be able to poll CQEs as many as the
+number of the posted WQEs in any cases.
 
-[1] https://lore.kernel.org/netdev/20241204140821.1858263-1-saikrishnag@marvell.com/T/#m5fc2fa8b1d2bd1b47cf7ccacd4031d1aa1aa8c2c
+We try to notify the reset state to userspace so that we can generate software
+WCs for the existing WQEs in userspace instead of HW in reset state, which is
+what this rdma-core PR does:
 
-Thanks
+https://github.com/linux-rdma/rdma-core/pull/1504
 
-> Maxim Levitsky (2):
->   net: mana: Fix memory leak in mana_gd_setup_irqs
->   net: mana: Fix irq_contexts memory leak in mana_gd_setup_irqs
+Junxian
+
+> Usually when the HW is reset there are enough existing system calls
+> that will start failing that a driver should not need to do something
+> like this.
 > 
->  drivers/net/ethernet/microsoft/mana/gdma_main.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.26.3
-> 
-> 
+> Jason
 
