@@ -1,173 +1,138 @@
-Return-Path: <linux-kernel+bounces-440159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4369EB991
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:46:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A9CB188627C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:46:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BBF226883;
-	Tue, 10 Dec 2024 18:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yErILQKC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4obryJTV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1859EB992
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:46:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F7A21421C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DF62847A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:46:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A58214203;
+	Tue, 10 Dec 2024 18:46:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1682046BB
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856360; cv=none; b=nToihP1lq9Ei7VpfBG6K0sCpVykDYnOPYCjTM2CQCqJWVlxgIHNYVAMDPOj+zBwnytM1QHXnpl491LQ3fso1ooNmsPLGYaiZwRKRt4qkaRsT2DVjsPccu8ZcWZzphe+1w9uLcldKCXzEtwMvER1wph2+t/Q/cljxMma+BikHW7c=
+	t=1733856385; cv=none; b=V8DqHIlTx7jVPEtgkuew0HIdbRRfGBtn71jHE+/kKo6tcIoWmEJ5R4XPrfCLOZiIIeRm6GNn1aX/HF876qzSce1HJ6AheXK1vFoXOz6E1fRLZyDd5OO+uGMVr9v66DoCzL5MGaZH3dieXqpwYkcG7aeeSRBXcNlCUb+c/OsIwSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856360; c=relaxed/simple;
-	bh=4miuncITiXk84unFNzyl4D3ZJsGhSaGcGXn3L7TveOY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RbYcHO5QJ7PG9h0AAFwVcdC237gxELmQk69x4MTel+y6c5zoDJhIDUN0ww/lkdClTYoQPlY1eMyy5Ti1haYuAFkKBt/oP7noePnrNCh1azLe5eSAVfGnCIi7UfnK3Uh8cunPj+GnuSQihP3gjhU225QAfKR7caMuRZMi2IwJWSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yErILQKC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4obryJTV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733856356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LpSJ/4fjpGCpsxAcyDPRCSRkef4FRPQxJKLbfG0zCN4=;
-	b=yErILQKC+AUJ77ifvDc9m9gUoDZdXlrsXH0ETnrzhvjhRVGDSV9QgcXBu4iashnfP11JXN
-	d9Bjp7t7CSlN1lko1Tpwf4Gf8pODZM/riicDFj6lmSCen2bSm4DqBOrMdT5onm6Q03lMap
-	K3sv73KQyGtJfmVphYC8eLY8uJvuPSH4KObEJbSyZF5ZKl12HDEmu2ihDcDYvfwRdzHBya
-	6Fyj1b6Tu1J7bORGn0wzjIZDXLDGhpW2vUARYCfWdZZj8tgafr/Fn5m22H2/+E7SPWFSfA
-	4gr9SCqlSLcdUrG/u4HEcZeOZu7DbCa6whFhINNocMymJghxMNR874DsDEtBHQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733856356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LpSJ/4fjpGCpsxAcyDPRCSRkef4FRPQxJKLbfG0zCN4=;
-	b=4obryJTVME5TL7a9LpOP0ZEyPrVKEb5+cffU2jME6BBTIpZj9VfVMoPP/dileL87sIdWXl
-	mWZpNRRWb+BHRAAA==
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org
-Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
- Long <longman@redhat.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 05/11] futex: Track the futex hash bucket.
-In-Reply-To: <20241203164335.1125381-6-bigeasy@linutronix.de>
-References: <20241203164335.1125381-1-bigeasy@linutronix.de>
- <20241203164335.1125381-6-bigeasy@linutronix.de>
-Date: Tue, 10 Dec 2024 19:45:56 +0100
-Message-ID: <87a5d3cr6j.ffs@tglx>
+	s=arc-20240116; t=1733856385; c=relaxed/simple;
+	bh=MUj0XiiDJvlffQOyhM77P0HfGWcEWfMtHYWPgxMsvc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UF0nX5Udc9TODqYBX1jL/wJMAcR3KamYZvGU9MWGl1cuE+u3b5saEl1DzreRBoIRTsKkv9bzW6/LC6mJ77lzlhRY4eOFv+xU4EEu+kz2hSaI+gUEbnhOhNZxIGxCEuejdAUyk1+vPvJb2ZX5mK4BZggDX5Bk32VsYXRhHwuLmro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AF0C106F;
+	Tue, 10 Dec 2024 10:46:51 -0800 (PST)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EA8F3F58B;
+	Tue, 10 Dec 2024 10:46:21 -0800 (PST)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	bp@alien8.de,
+	dan.j.williams@intel.com,
+	dave.hansen@linux.intel.com,
+	david@redhat.com,
+	jane.chu@oracle.com,
+	osalvador@suse.de,
+	tglx@linutronix.de
+Subject: [PATCH 0/4] Remove problematic include in <asm/set_memory.h>
+Date: Tue, 10 Dec 2024 18:46:06 +0000
+Message-ID: <20241210184610.2080727-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03 2024 at 17:42, Sebastian Andrzej Siewior wrote:
-> Add futex_hash_get/put() to keep the assigned hash_bucket around while a
-> futex operation is performed. Have RCU lifetime guarantee for
-> futex_hash_bucket_private.
->
-> This is should have the right amount of gets/ puts so that the private
+The need for this series arose from a completely unrelated series [1].
+Long story short, that series causes <linux/mm.h> to include
+<linux/set_memory.h>, which doesn't feel too unreasonable.
 
-This is should have? This either has or not :)
+That works fine on arm64 and probably most other architectures, but not
+on x86 [2]: <asm/set_memory.h> itself includes <linux/mm.h>, creating a
+circular dependency.
 
->  struct futex_hash_bucket *futex_hash(union futex_key *key)
->  {
-> -	struct futex_hash_bucket *fhb;
-> +	struct futex_hash_bucket_private *hb_p = NULL;
->  	u32 hash;
->  
-> -	fhb = current->mm->futex_hash_bucket;
-> -	if (fhb && futex_key_is_private(key)) {
-> -		u32 hash_mask = current->mm->futex_hash_mask;
-> +	if (futex_key_is_private(key)) {
-> +		guard(rcu)();
-> +
-> +		do {
-> +			hb_p = rcu_dereference(current->mm->futex_hash_bucket);
-> +		} while (hb_p && !rcuref_get(&hb_p->users));
+set_memory.h doesn't really need <linux/mm.h>, so removing that include
+seems like the right thing to do. That turned out to be a little more
+involved than expected, hence this series:
 
-This loop really wants an explanation about the potential loop
-duration.
+* Patch 1-2 ensure that code doesn't rely on <asm/set_memory.h>
+  including <linux/mm.h>. The errors that these patches fix are included
+  at the end of this email.
 
-> +void futex_hash_put(struct futex_hash_bucket *hb)
-> +{
-> +	struct futex_hash_bucket_private *hb_p;
-> +
-> +	if (hb->hb_slot == 0)
-> +		return;
-> +	hb_p = container_of(hb, struct futex_hash_bucket_private,
-> +			    queues[hb->hb_slot - 1]);
+* Patch 3 removes an unused function whose declaration relied on
+  <linux/mm.h> being included.
+ 
+* Patch 4 actually remove the include.
 
-Duh. This off by one abuse of hb_slot is really counter intuitive. It
-took me a while to wrap my head around it.
+I've build-tested this series with x86_64_defconfig and allyesconfig. 
 
-The structure has a 4 byte hole, so adding a private flag or such is
-feasible without going over a cache line, unless lockdep or rt is
-enabled, but in that case it expands into a second cache line anyway.
+- Kevin
 
-> +	futex_hash_priv_put(hb_p);
-> +}
-> +
-> +void futex_hash_get(struct futex_hash_bucket *hb)
-> +{
-> +	struct futex_hash_bucket_private *hb_p;
-> +
-> +	if (hb->hb_slot == 0)
-> +		return;
-> +
-> +	hb_p = container_of(hb, struct futex_hash_bucket_private,
-> +			    queues[hb->hb_slot - 1]);
-> +	/* The ref needs to be owned by the caller so this can't fail */
+[1] https://lore.kernel.org/linux-hardening/20241206101110.1646108-1-kevin.brodsky@arm.com/
+[2] https://lore.kernel.org/oe-kbuild-all/202412062006.C23V9ESs-lkp@intel.com/
 
-reference please. This is not twatter. But see below.
+Cc: bp@alien8.de
+Cc: dan.j.williams@intel.com
+Cc: dave.hansen@linux.intel.com
+Cc: david@redhat.com
+Cc: jane.chu@oracle.com
+Cc: osalvador@suse.de
+Cc: tglx@linutronix.de
+---
+Build errors caused by patch 4 and fixed by patch 1-2:
 
-> +	WARN_ON_ONCE(!rcuref_get(&hb_p->users));
-> +}
->  
->  /**
->   * futex_setup_timer - set up the sleeping hrtimer.
-> @@ -599,7 +642,10 @@ int futex_unqueue(struct futex_q *q)
->  	 */
->  	lock_ptr = READ_ONCE(q->lock_ptr);
->  	if (lock_ptr != NULL) {
-> +		struct futex_hash_bucket *hb;
-> +
->  		spin_lock(lock_ptr);
-> +		hb = futex_hb_from_futex_q(q);
->  		/*
->  		 * q->lock_ptr can change between reading it and
->  		 * spin_lock(), causing us to take the wrong lock.  This
-> @@ -622,6 +668,7 @@ int futex_unqueue(struct futex_q *q)
->  		BUG_ON(q->pi_state);
->  
->  		spin_unlock(lock_ptr);
-> +		futex_hash_put(hb);
+  CC      drivers/gpu/drm/i915/gt/intel_ggtt.o
+In file included from arch/x86/include/asm/smp.h:9,
+                 from drivers/gpu/drm/i915/gt/intel_ggtt.c:7:
+arch/x86/include/asm/thread_info.h: In function 'arch_within_stack_frames':
+arch/x86/include/asm/thread_info.h:212:16: error: 'NOT_STACK' undeclared (first use in this function)
+  212 |         return NOT_STACK;
+      |                ^~~~~~~~~
+arch/x86/include/asm/thread_info.h:212:16: note: each undeclared identifier is reported only once for each function it appears in
 
-This is invoked from futex_wait_multiple() which means you are
-are holding the reference count accross schedule(),
+  CC      drivers/virt/coco/sev-guest/sev-guest.o
+drivers/virt/coco/sev-guest/sev-guest.c: In function 'free_shared_pages':
+drivers/virt/coco/sev-guest/sev-guest.c:621:31: error: implicit declaration of function 'PAGE_ALIGN'; did you mean 'PFN_ALIGN'? [-Wimplicit-function-declaration]
+  621 |         unsigned int npages = PAGE_ALIGN(sz) >> PAGE_SHIFT;
+      |                               ^~~~~~~~~~
+      |                               PFN_ALIGN
+  CC      drivers/infiniband/hw/mlx5/ib_rep.o
+drivers/virt/coco/sev-guest/sev-guest.c: In function 'alloc_shared_pages':
+drivers/virt/coco/sev-guest/sev-guest.c:646:51: error: implicit declaration of function 'page_address'; did you mean 'pbe_address'? [-Wimplicit-function-declaration]
+  646 |         ret = set_memory_decrypted((unsigned long)page_address(page), npages);
+      |                                                   ^~~~~~~~~~~~
+      |                                                   pbe_address
+drivers/virt/coco/sev-guest/sev-guest.c:653:16: error: returning 'int' from a function with return type 'void *' makes pointer from integer without a cast [-Wint-conversion]
+  653 |         return page_address(page);
+      |                ^~~~~~~~~~~~~~~~~~
 
-I'm not convinced that this is the right thing to do. Let me look at
-your actual resize implementation...
+---
+Kevin Brodsky (4):
+  x86/smp: Explicitly include <linux/thread_info.h>
+  x86/sev: Explicitly include <linux/mm.h>
+  x86/mm: Remove unused __set_memory_prot()
+  x86/mm: Remove unnecessary include in set_memory.h
 
->  		futex_q_unlock(hb);
-> +		futex_hash_put(hb);
+ arch/x86/include/asm/set_memory.h       |  2 --
+ arch/x86/include/asm/smp.h              |  2 +-
+ arch/x86/mm/pat/set_memory.c            | 13 -------------
+ drivers/virt/coco/sev-guest/sev-guest.c |  1 +
+ 4 files changed, 2 insertions(+), 16 deletions(-)
 
-This pattern is there in a gazillion instances. Can't we have a single
-function doing all of it?
 
-Thanks,
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+-- 
+2.47.0
 
-        tglx
 
