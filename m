@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-440348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73E79EBC05
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:42:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1369EBC06
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478AB188B133
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:42:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AAE6168442
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D4B23D408;
-	Tue, 10 Dec 2024 21:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567652397A4;
+	Tue, 10 Dec 2024 21:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwdYw6fX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lb5+4/8S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DA323A596;
-	Tue, 10 Dec 2024 21:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABABD23A59E;
+	Tue, 10 Dec 2024 21:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733866928; cv=none; b=oN/eZSs48FJqbei580//5TZvb5oldxVv7anGAZsWO8Sefo+g/SPfw1rvoDEi/05C+3O5Yy8M4Y8w7vW8OUNN26bk6v3qjWvm61csdJmovckgVQmsxctQcbwtU9KZdFqhaN1lm4w0RoSklfgKItYBoScaJImNL9w/3WZy+igUDdw=
+	t=1733866928; cv=none; b=QGkJ4aaSEnbt8c0H3Jil2/hGVXMRuLIduibGwoaMIdpcszIjTAJaPlNvN5kHhHaoJw0DmwFSl0/ctvmoPf5Qm1QyVSM/ogh/WQf16FGSzF0BITJ1JcrW1aN397DO5o23V74PCiWFtHoYAq0FxscGLe99yW0+Ye1yBa+OnJ0b+pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733866928; c=relaxed/simple;
-	bh=9qlaJJU5gDo5bAuPmvTR0FrAbcj50IZPIDpRze7PsRE=;
+	bh=YCSJYLc8PV7sGAwwOHp08NgZQlYhY95c9nKRtIl33+Q=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=PcxC1Dc6D+cyemSm751HIglhDTuOlJk8GpLkJlLk8285ZSfBphQlfUmE+9mkbRSfGFYOv4mSEbch3s7v8tfNfMM6rd1Ej0lthWuVy48mmXyh+3Mtscp3qcuVVsD2QeFXDqHD6bFS6CcKL6nkGgzYf5KyhxJWdntY9gjkxGQSZWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwdYw6fX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88FD7C4CED6;
-	Tue, 10 Dec 2024 21:42:06 +0000 (UTC)
+	 Message-Id:Subject; b=SSVdYOeV3lQ7ITYVB7TEP/iLAtHk5BG7e85qU1EqblfpmE7Nyw41+fylfW0Pq8Y6qpfyI1xw9UDhLZxfCtdssi+44iRcczroQPT+TLouviLCKyzt7x+Oa5Qe3SN6B0WqDEmws/s+38unDdPVTwHix+mvF6BsCyosKRqHzzhiuqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lb5+4/8S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6A2C4CED6;
+	Tue, 10 Dec 2024 21:42:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733866926;
-	bh=9qlaJJU5gDo5bAuPmvTR0FrAbcj50IZPIDpRze7PsRE=;
+	s=k20201202; t=1733866928;
+	bh=YCSJYLc8PV7sGAwwOHp08NgZQlYhY95c9nKRtIl33+Q=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=lwdYw6fX/UzDINS0WzcSNG4qwR4KxS518tnfSxkdS1wiU3HK2aTgUTVCIcxYckUwx
-	 Nv+raN3nsb9s6DTvDNLhYni5Rmbn+lDrDQI+wwMux3kWkuS7cIyrbAjrHX9b/XAXFs
-	 QLJWXCMGjpcJwuEaRKAo8fjwynI9JvtV6XIOS0sFR8/LJyDGCZAL0qVHBu9r0mE0/P
-	 WyHB9D7luL16PhXsOVRuO9dFLAYT6LbyNFgyU7FIRScaDdhlzXF6ZjXaUa2rMTd/+O
-	 8FmlimtO5sKqhDKgOLfbiyUbYJv4230M8+8cgvcg/aiNQ6QRtRzHJBk9nc4PF8zMdJ
-	 1p6lND57gIEAQ==
-Date: Tue, 10 Dec 2024 15:42:05 -0600
+	b=Lb5+4/8SkvoLef6ssCM/j0bJe6FRFbgAwxKdwd+UUaq7e/nNNvFjINHGDBd4niJGe
+	 p0sbuhZRLUVb9SdmAEOD/BSeiPDifBspYXugBV64QsSUfm7/o2qI98pBNaPGWOl/Ee
+	 JbKoKMvNsKdVw3Tqf4R/mrMmagiq8omPsbVLYIm+mdaYWZdY8tq8X1Aumv+Y0+xIdD
+	 VPm7DvEA724S3gzP9vqZ+Bd0RVnczL6GFlSweK0cpFE4aGQkEI1jsR0CdtKyxYMhBF
+	 8FashWgzcV1AS3P0ThvTMXfTmnidsOc5tDfZGa3fCr4Z9/6L9sukc3vBmZeqAakA5w
+	 bvcEAUfcr3DJQ==
+Date: Tue, 10 Dec 2024 15:42:06 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,31 +50,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-kernel@vger.kernel.org
-To: Chen-Yu Tsai <wenst@chromium.org>
-In-Reply-To: <20241210092614.3951748-1-wenst@chromium.org>
-References: <20241210092614.3951748-1-wenst@chromium.org>
-Message-Id: <173386568696.497617.3727087837255802552.robh@kernel.org>
-Subject: Re: [PATCH 1/2] arm64: dts: mediatek: mt8173-elm: Fix MT6397 PMIC
- sub-node names
+Cc: linux-arm-msm@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+In-Reply-To: <20241210-x1e80100-disable-smb2360-v2-1-2449be2eca29@linaro.org>
+References: <20241210-x1e80100-disable-smb2360-v2-1-2449be2eca29@linaro.org>
+Message-Id: <173386568810.497638.4312845461558580089.robh@kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100-pmics: Enable all
+ SMB2360 separately
 
 
-On Tue, 10 Dec 2024 17:26:12 +0800, Chen-Yu Tsai wrote:
-> The MT6397 PMIC bindings specify exact names for its sub-nodes. The
-> names used in the current dts don't match, causing a validation error.
+On Tue, 10 Dec 2024 09:36:01 +0100, Stephan Gerhold wrote:
+> At the moment, x1e80100-pmics.dtsi enables two of the SMB2360 PMICs by
+> default and leaves the other two disabled. The third one was originally
+> also enabled by default, but then disabled in commit a237b8da413c ("arm64:
+> dts: qcom: x1e80100: Disable SMB2360_2 by default"). This is inconsistent
+> and confusing. Some laptops will even need SMB2360_1 disabled by default if
+> they just have a single USB-C port.
 > 
-> Fix up the names. Also drop the label for the regulators node, since
-> any reference should be against the individual regulator sub-nodes.
+> Make this consistent by keeping all SMB2360 disabled in x1e80100-pmics.dtsi
+> and enable them separately for all boards where needed. That way it is
+> always clear which ones are available and avoids accidentally trying to
+> read/write from missing chips when some of the PMICs are not present.
 > 
-> Fixes: 689b937bedde ("arm64: dts: mediatek: add mt8173 elm and hana board")
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 > ---
->  arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Changes in v2:
+> - Clarify commit message, there are actually two SMB2360 disabled by
+>   default (3rd and 4th) and not just the third (Aiqun Yu (Maria))
+> - Link to v1: https://lore.kernel.org/r/20241203-x1e80100-disable-smb2360-v1-1-80942b7f73da@linaro.org
+> ---
+>  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts               | 8 ++++++++
+>  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts | 8 ++++++++
+>  arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts    | 8 ++++++++
+>  arch/arm64/boot/dts/qcom/x1e80100-crd.dts                  | 8 ++++++++
+>  arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts      | 8 ++++++++
+>  arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 8 ++++++++
+>  arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi   | 8 ++++++++
+>  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi               | 4 ++++
+>  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                  | 8 ++++++++
+>  9 files changed, 68 insertions(+)
 > 
 
 
@@ -92,54 +111,11 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y mediatek/mt8173-evb.dtb' for 20241210092614.3951748-1-wenst@chromium.org:
+New warnings running 'make CHECK_DTBS=y qcom/x1e001de-devkit.dtb qcom/x1e78100-lenovo-thinkpad-t14s.dtb qcom/x1e80100-asus-vivobook-s15.dtb qcom/x1e80100-crd.dtb qcom/x1e80100-dell-xps13-9345.dtb qcom/x1e80100-lenovo-yoga-slim7x.dtb qcom/x1e80100-qcp.dtb' for 20241210-x1e80100-disable-smb2360-v2-1-2449be2eca29@linaro.org:
 
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vpca15: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vpca7: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vsramca15: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vsramca7: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vcore: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vgpu: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vdrm: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vio18: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vtcxo: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_va28: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vio28: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vusb: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vcama: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vmc: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vmch: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vemc3v3: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp1: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp2: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp3: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp4: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp5: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp6: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vibr: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6397-regulator.yaml#
+arch/arm64/boot/dts/qcom/x1e001de-devkit.dtb: /soc@0/geniqup@bc0000/i2c@b84000/typec-mux@8: failed to match any schema with compatible: ['parade,ps8830']
+arch/arm64/boot/dts/qcom/x1e001de-devkit.dtb: /soc@0/geniqup@bc0000/i2c@b8c000/typec-mux@8: failed to match any schema with compatible: ['parade,ps8830']
+arch/arm64/boot/dts/qcom/x1e001de-devkit.dtb: /soc@0/geniqup@bc0000/i2c@b9c000/typec-mux@8: failed to match any schema with compatible: ['parade,ps8830']
 
 
 
