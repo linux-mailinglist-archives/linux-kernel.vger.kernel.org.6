@@ -1,137 +1,139 @@
-Return-Path: <linux-kernel+bounces-438868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93609EA7BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:24:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F169EA7B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:23:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC00166D9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE8B1889334
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8652F227576;
-	Tue, 10 Dec 2024 05:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1A7226179;
+	Tue, 10 Dec 2024 05:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3QpNI84"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyrLzzFb"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A12D23312A;
-	Tue, 10 Dec 2024 05:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4E523312A;
+	Tue, 10 Dec 2024 05:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808233; cv=none; b=pwETWpXM0BvG4ut1/uvdXQGTOFtmM0cwrf55Ok8UzI9ef7nvsubuVJa1EysqpuJbYx7XNwySD3r6T09h/N2VPalosXZMD/FrDhkJY9Hx2jnUiD9vbZJuMDTVe+rcAH/p87su393S9uNFmNfAfi6xAVtu0ox1QFXKTFrLx2Cjst4=
+	t=1733808226; cv=none; b=gcV/xBifXOO2tdBeg0wMs01DoK4yMot99Z6P6a+SuWlr9rNhGkpVxN5VY+cZDtbObxhhw4e3IQ3S/s02haYwYcRU9IgcFSmXSr+h1hjCsYEksUSfp1lV7Bjq4VvjZ2FFyI7TaOREvwUVsQAr0IrsePhqWcs+Y/EluhERGKeSJZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808233; c=relaxed/simple;
-	bh=+yvIxadNHP2tMjc38a6nuEX5dE9n2JekZyl1HOaVL4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gU8TR4oZCLBljZADDb3OA/YRem3OcDf/tBgUT+Y3U23G8Yin9b3RzNkrIgQ9BHGDTidf/haw67Ssij0YxM8vQxNPj99ayXGVkdbw647bON4Xg5sqRWErxtqCOKPIVswHt3YhOOeKW04h2WakLOOh0oCD7MP0Z71CfR0TBEo2Lm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3QpNI84; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733808231; x=1765344231;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+yvIxadNHP2tMjc38a6nuEX5dE9n2JekZyl1HOaVL4I=;
-  b=h3QpNI84o4cXamOJUIDAXd13JmtZIK3MhiVTm19byiFwozBlXGJX5iXq
-   kgDhAkCzirNxDZzbmpRp6VzjZ/cww01Np/lvhJJt43MVcn/RjFSAQAenz
-   1zSNZlTPrQdHg3Q9p5hsIzIgkRu3+JPdLMpM5m0ifd/dNdvVhB2tIHUSX
-   FedcIQANvrtKsGboHs3RlBw1KbQHiYPYjiYU/G/tgiJcBlxu+5qFWcYDA
-   FtuSAnr6zxe+j1fF+c3syVGxYs8/B4zZ9Z1FbZhuKmc0Be6FvHK65Y/Tq
-   PCeXO/kb0vcbob7z3mNNvkkqNKHRFpPyTIB5T5XExd8rdwvcFJImGuYua
-   Q==;
-X-CSE-ConnectionGUID: jcHuG38MSvmfhHxACGIdfw==
-X-CSE-MsgGUID: zK5g1UIcSmO0VJHHe31/uw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="56616480"
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="56616480"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 21:23:50 -0800
-X-CSE-ConnectionGUID: SyTKH2znT7iIfSGI/sbSmg==
-X-CSE-MsgGUID: 8BL6lDlHTTuI51xf1CTxPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="95134854"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 09 Dec 2024 21:23:45 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKsil-00058Z-1M;
-	Tue, 10 Dec 2024 05:23:43 +0000
-Date: Tue, 10 Dec 2024 13:22:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, NXP S32 Linux <s32@nxp.com>,
-	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-Subject: Re: [PATCH v6 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-Message-ID: <202412101248.CBSpbBCZ-lkp@intel.com>
-References: <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1733808226; c=relaxed/simple;
+	bh=xqYv6QgBXA4t3Jg7VQbQP9HP/CtdPar1I9KrW8+WJg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nay3n8+vGnKImrPmzUGTB1YU57ZIVsQKS4C75qP7fPzlzH8hZ5/Tmd/56AXhVRPoL5+IuliAR4aNrAFn5G0gOP+Fh8SAIczqe/hJyP4MB9ozG0+NFzrs0+aXMwImlcSzxvBRa+P9VDqDRaQqq9zjWJrWleWmR2FUPP3NKZJnsWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyrLzzFb; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7258cf2975fso4450416b3a.0;
+        Mon, 09 Dec 2024 21:23:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733808224; x=1734413024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBU1UAuy5MjYfrWbZjh4/sgnYH98b4q96SgJM7Z+66M=;
+        b=RyrLzzFbhV0/PAuFe1KXkP49GhmrcgvYf2azs8f3u896SOn3fep1fEkpnRnQakhra6
+         XAEyPjbBf2pPAR/Wqox59p2qyTQFcqenK+osRgtEBQ7UT3yBuQEdJC3JV+6ZC9DTSUUd
+         fxpvhv1Y28uCAvFqP8wKfs8n3DfhYc0gq3y5eV/dichK5Q/BLBr7a8rWTzTRaT9PPV3N
+         iuokewb7KBx2fwykyYgBk8qnlgcdQlv8pR8faP8QWY4DZitHRK8svMSRAyCOayl8PlP/
+         lcU9c9bcxn5QGTSndPVh4/OSOICppc3kT4D+teaAhxvJtfedF44k10YRXgQ56M0ohbcw
+         tpdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733808224; x=1734413024;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBU1UAuy5MjYfrWbZjh4/sgnYH98b4q96SgJM7Z+66M=;
+        b=k3ZO42ydTOaIinVnuhJ+XmguzLgNxPLybpC98xJeOISG6k5t65QiST6PXP4op7ok7V
+         E0FQu3u/xlgaM9RWNY+YlSr7vFmt+obHFppt4xB3vkasjLJ0+UiQZpq+fDxt2Cpr+/Dj
+         6AOT46TWpUN6NrsxqkaVkUa/usmN5oKEjrrGw5S7SB+3QlnqaGa9Kx4vK6DZEyUaV7cD
+         +Dv/lQf8CqLeT97WQc3Yn5X4lNldH7djw8FMRn3rciwV70kEIQoBkfJd4gLZm6h5eSau
+         YxDyQif1/zTIl5QorknYu052vlA7ZKBSSgBgn5atylMA8DAr8jYN1PfTeK5tmPsmhNKI
+         vO7w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4R/OgDgCeh/aIqs+NRANC4y81tL403ieP2X7KcW9jYHh0EriUUY7jy4ChUWSjgj3zoBGizYoA8kBj@vger.kernel.org, AJvYcCV8U/X35Jy8CbZ1CqwB2k8e+LS5BDJLY5vUZfpzhEgK6O77HdvT6QUiYgFwC6Kp1c/uJtNINqmQQIYAAfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE0yrrzL1eeA4Pl2vGdwMzWLkgb9JS3SHGAiK1BzBnE3/GTeN4
+	2dEsCRURqPBkZ6LzxdH8uCSKuaAz2VdshS3slPtJ07rU2UAd8D6M
+X-Gm-Gg: ASbGncs3demOJ5H+UdR+SLKRQOWXM8Zu7HMimxwwUO3QM0wLC0QCOQaM/Be6iFejegQ
+	twuykLumEEejE/aY3wgT/M0AWpOqPEQbx0u6MO5NOXUoJu/Bh797RZsC6ljqgoef+IxHVdVYMPp
+	PMo2sJIV4t+IFYq/fORu3yRIwdJ4tmsqqo2eyVc8+8ixxPIPLhFKVAZdH32JvxH1ib+rKgTvsOm
+	lIGLRD58mx5+rcTIYoNC51d1U5B87N7W8S7/EsoOU6XNJ1bndMDNW8JwcCBIrQNmJWJ1FNsFHLH
+	OqKOQATeLeB4siO7Cbx6Fx1BYZWd
+X-Google-Smtp-Source: AGHT+IFRDtAZUHy67YBIFMjYuSZVAM9Ll94FWK+XfQgDXiw8IJ+uc/Rits4ApUB7XKhyFdVb7YNsBw==
+X-Received: by 2002:a05:6a00:c8c:b0:725:f18a:da52 with SMTP id d2e1a72fcca58-7273c8f4d8cmr4767471b3a.4.1733808224007;
+        Mon, 09 Dec 2024 21:23:44 -0800 (PST)
+Received: from [172.19.1.43] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725cb065fbdsm5359995b3a.39.2024.12.09.21.23.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 21:23:43 -0800 (PST)
+Message-ID: <274c7ba7-dd7a-4981-95a8-38ed953a7dbc@gmail.com>
+Date: Tue, 10 Dec 2024 13:23:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ sudeep.holla@arm.com, arnd@arndb.de, peng.fan@nxp.com, conor+dt@kernel.org,
+ krzk+dt@kernel.org, robh@kernel.org, dmitry.torokhov@gmail.com
+References: <20241204021014.5083-1-mjchen0829@gmail.com>
+ <20241204021014.5083-3-mjchen0829@gmail.com>
+ <2a47hwrbl3r6h5umwikt7bd7rp3njj6wnlo5e67f5kl6zhaq7g@cnolynoswb37>
+Content-Language: en-US
+From: Ming-Jen Chen <mjchen0829@gmail.com>
+In-Reply-To: <2a47hwrbl3r6h5umwikt7bd7rp3njj6wnlo5e67f5kl6zhaq7g@cnolynoswb37>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Ciprian,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on abelloni/rtc-next]
-[also build test ERROR on robh/for-next linus/master v6.13-rc2 next-20241209]
-[cannot apply to arm64/for-next/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 2024/12/4 下午 03:49, Krzysztof Kozlowski wrote:
+> On Wed, Dec 04, 2024 at 02:10:14AM +0000, Ming-Jen Chen wrote:
+>> Add YAML bindings for MA35D1 SoC keypad.
+>>
+>> Signed-off-by: Ming-Jen Chen <mjchen0829@gmail.com>
+> 
+> 
+> Repeating same comment third or fourth time is a waste of my time.
+> 
+> NAK.
+> 
+> It seems my or other reviewer's previous comments were not fully
+> addressed. Maybe the feedback got lost between the quotes, maybe you
+> just forgot to apply it. Please go back to the previous discussion and
+> either implement all requested changes or keep discussing them.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-rtc-add-schema-for-NXP-S32G2-S32G3-SoCs/20241206-151308
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-patch link:    https://lore.kernel.org/r/20241206070955.1503412-3-ciprianmarian.costea%40oss.nxp.com
-patch subject: [PATCH v6 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241210/202412101248.CBSpbBCZ-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241210/202412101248.CBSpbBCZ-lkp@intel.com/reproduce)
+I will carefully review the v3 discussion thread to ensure that all
+feedback is properly implemented. Once I’ve addressed the issues, I’d
+like to confirm the next steps with you:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412101248.CBSpbBCZ-lkp@intel.com/
+1. Should I drop v4 entirely and submit a revised patch as v5?
+2. Alternatively, would you prefer me to resend v4 with the necessary
+corrections?
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+Please let me know your preference so I can proceed accordingly and
+ensure a smoother review process.
 
-ERROR: modpost: "__udivdi3" [drivers/rtc/rtc-s32g.ko] undefined!
->> ERROR: modpost: "__divdi3" [drivers/rtc/rtc-s32g.ko] undefined!
+Thank you again for your guidance and understanding.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+Best regards,
+Ming-Jen Chen
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
+
 
