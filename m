@@ -1,137 +1,91 @@
-Return-Path: <linux-kernel+bounces-440504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812169EBF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:17:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D61918892E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:17:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBA11F1937;
-	Tue, 10 Dec 2024 23:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbA3ybWN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD199EBF34
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:18:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D371CF7B8;
-	Tue, 10 Dec 2024 23:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A233B284701
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:18:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD917211265;
+	Tue, 10 Dec 2024 23:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EZsp/FYR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5AB1AAA0F;
+	Tue, 10 Dec 2024 23:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733872632; cv=none; b=fAMMpnSbAjchoeTZAz1WzeD2l3lIGndtokrH3m9l4I6J1ok9MUn/IAlj7BZ/VwU9ggvSKFVSFHPc7Gn5MylkyXos+0wuo6iUGySmJ1q6RnOZvp9fV8z1oXmVYFB718QKBczdM1PPUkKCucA2S8IyM6zLPhktvei0nQSHzXS3y94=
+	t=1733872707; cv=none; b=ZE8bc7AVOofaJQGA2YyBfF0+wHHrZYPplJq7Zbb88nnsS+AngBGYvoI2X8rcKaEl931cVXluaQmctUx1qtgOuz/DYrVkPObjgDNLZ5NsALOc4y8LWVV/ZP/bvlD+O3hLi6sKdU1t/JmovyArfMzjh8ph/xzT9uobyNrusoJdXZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733872632; c=relaxed/simple;
-	bh=pvLgzqvT8heMfxqBWCzQLTJLGu/Nu+xIER9KJT1b1rs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rHrC/1HE1NVthq5isWTDQ9R8jg8wRKJSgSm7QmTqBgOCz+f5qXIhg00tX70xqFIcnLz0zamY46f5liyF8J8gTL+43Ig54ZlDFuGSRCfyhfP6juuSrs4zPfMqzhEdeQMc7WvKOsOW6qmIsnDMmEsYoi6bc20SVhRhecGfBKDfSpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbA3ybWN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18797C4CED6;
-	Tue, 10 Dec 2024 23:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733872631;
-	bh=pvLgzqvT8heMfxqBWCzQLTJLGu/Nu+xIER9KJT1b1rs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NbA3ybWNbtSc32RkGczm1Ssbsu5GtmZMY2/rB7BfoxWxMXhUTk+zB1uAempd/c4Lh
-	 ifqiy4pHzONqB5I8uMiZhjCjttHdmqujjjohGISGYuE3vBiurr5WCVxOKxzfwtW1K6
-	 xuKRaV0lH+bLVXyfpCHp9SWvGIdhp+50Covb1DiMo2GZhiMOjeOhT+VVGMdN9jbn/L
-	 DKgd1DYqJHsP/Ik8NR/XCq7oBIioaUOkE1K5OnT5ZscwSIwO2pwzB/jE5EYQI6P/oc
-	 zWGvKFaBHPcdRqKoQUhveClt/e5X0dk7TlrpzC6FtX5737nzhmpDQZTO4CFyV/q4NF
-	 0CLt+cTS4GspQ==
-Date: Wed, 11 Dec 2024 08:17:04 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
- <rostedt@goodmis.org>, Anil S Keshavamurthy
- <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov
- <oleg@redhat.com>, Tzvetomir Stoyanov <tz.stoyanov@gmail.com>, Naveen N Rao
- <naveen@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
- <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
-Message-Id: <20241211081704.1bb59a96be45f6e9a3d9d45a@kernel.org>
-In-Reply-To: <20241210231241.88c0ed24004b2bda2985ad99@kernel.org>
-References: <173371205755.480397.7893311565254712194.stgit@devnote2>
-	<173371208663.480397.7535769878667655223.stgit@devnote2>
-	<20241209110411.GL21636@noisy.programming.kicks-ass.net>
-	<20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
-	<20241210111528.bb2c66d71fe38be92010264a@kernel.org>
-	<20241210121027.GM8562@noisy.programming.kicks-ass.net>
-	<20241210231241.88c0ed24004b2bda2985ad99@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733872707; c=relaxed/simple;
+	bh=2xopEnnq5/pPO8ebcQ2iA7v0L/YlJ7nHPQG7P9WTTEk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LLfDK2737FEdG3Ka1oU74ObM+/mgXg3fLmC4uR5632DxyapGsM/0J9RKDKJV5WlTtNhMdux6ykK7fSfTOGqYNBDJV6R9BcpkLYOBGjHpR2AWcOmeeX5abWzY073n4skK32xttzv1B9JiTdlpwk1cquYx0i45/9GFZVWBk7iLCqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EZsp/FYR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733872703;
+	bh=2xopEnnq5/pPO8ebcQ2iA7v0L/YlJ7nHPQG7P9WTTEk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=EZsp/FYRIFSmUXEd2TZUjJHZYAZKXEk2H2eiauaA0UN8wgqFeaCBYlQWGoSEpQnD7
+	 jFdNMcnVS6J7H5pUohRFkpVLEQ3EReBmUlNwzAusaBjaYdyLNuZCWTNBgyM3VIq0Z8
+	 S19sh8M7d4kWUgDkqyOWx+khUgj4v2HjctQeWzq4l20nLNfx3UKplW1DPBlbhw7QGD
+	 v3DW2aS/3Xy+tUXoANx3jX/1fWYreKuRbMQy7a3yyQrinMdlewtfJG1VvhnHRjkQNZ
+	 ysMuhjr/vY3P1KqZSsSCTcGJJ01iIKq60GEsMS3pPaLnC5+VULo9xk5YO8yQLcklB/
+	 3LYr+AHwfXYbQ==
+Received: from [192.168.1.90] (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DDF7317E0B54;
+	Wed, 11 Dec 2024 00:18:22 +0100 (CET)
+Message-ID: <b15c0a3b-36dc-49f8-9dfc-4bac5beece9a@collabora.com>
+Date: Wed, 11 Dec 2024 01:18:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Add support for HDMI1 output on RK3588 SoC
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+To: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Dec 2024 23:12:41 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> On Tue, 10 Dec 2024 13:10:27 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On 12/7/24 11:32 PM, Cristian Ciocaltea wrote:
+> The patches provide the basic support to handle the second HDMI output
+> port found on Rockchip RK3588 SoC.
 > 
-> > 
-> > > Wait, this is for checking the jump_label_text_reserved(), but as far as
-> > > I know, the text reserved area of jump_label will be updated when the
-> > > module is loaded or removed. And the static call too, right?
-> > 
-> > Correct.
-> > 
-> > > In that case, what we need is to lock the modules (for the short term,
-> > > can we use rcu_read_lock?) for using both jump_label_text_reserved()
-> > > and static_call_text_reserved()?
-> > 
-> > Yes, rcu_read_lock() is sufficient to observe fully loaded modules. I
-> > don't think you care about placing kprobes on modules that are still
-> > loading (that doesn't really make sense).
-> 
-> Actually, to probe module's __init function, it may put a probe during
-> loading modules (by trace_kprobe.c) which has been done by module
-> notification callback.
-> 
-> trace_kprobe_module_callback()
->  -> register_module_trace_kprobe()
->    -> __register_trace_kprobe()
->       -> register_kprobe()
->          -> check_kprobe_address_safe()
-> 
-> Anyway, unless we run the module notifier callbacks in parallel,
-> it should be safe.
+> For now I enabled it on Radxa ROCK 5B only, the board I've been using to
+> validate this.
 
-Hmm, this is still a problem. We need to acquire jump_label_lock()
-even for the jump_label_text_reserved().
+Please ignore this revision and use v2 [1] instead, as it fixes a pin 
+conflict issue occurring when having CONFIG_SPI_ROCKCHIP_SFC enabled.
 
-If user runs module load and register_kprobe() in parallel, 
-jump_label_module_notify() and check_kprobe_address_safe() may run
-in parallel.
+Thanks,
+Cristian
 
-jump_label_module_notify()
-  -> jump_label_add_module()
-     -> jump_label_sort_entries() <- update mod->jump_entries
-
-check_kprobe_address_safe()
-  -> jump_label_text_reserved()
-      -> __jump_label_mod_text_reserved() <- read mod->jump_entries
-
-So there is a race on mod->jump_entries. jump_label_lock() avoids
-this race.
-(IIRC, module can get the reference in the MODULE_STATE_COMING state.)
-
-On the other hand, static_call_text_reserved() does not need a lock
-because it does not sort the list, nor update the static_call_site::addr.
-
-In conclusion, we need jump_label_lock() as it is, and don't need
-static_call_lock().
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+[1] https://lore.kernel.org/all/20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com/
 
