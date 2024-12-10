@@ -1,148 +1,222 @@
-Return-Path: <linux-kernel+bounces-439133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0927B9EAB42
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:05:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7520E9EAB4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:06:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E32C161AAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:06:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41B5231CB7;
+	Tue, 10 Dec 2024 09:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5ADtMND"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF4828247B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:05:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BD4231C8E;
-	Tue, 10 Dec 2024 09:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0j4pNGwH"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F19230D33
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEF3231CAB;
+	Tue, 10 Dec 2024 09:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733821522; cv=none; b=ZyOyK3+TfgNh8SitzwUHQY+/8yxl3ewy8OWv5s/36WC5ctmmmaSF8vV/ySqLpPQ/UR/enOKDYMqOiQo8ZCxBYB5gP1gqsuOPegkGzVtHtC89A4jo3kz3tlpFxB/2ugC+IKtqYXYpUq+0D2Zy+NKuro/qDpPXJW24aP9lF2FHa9A=
+	t=1733821565; cv=none; b=gTxNJd56GJ+L1dVeUT3JfinoY+2fcUmAX4JlmKhJ9cLz3n0JnwUk5cnWft3BmgxAPgQ47YCr6z+H1d6ciScvipArt1LHHXVqjk0fek4DcBK8pInP3y1tiJ7/jEWFdCVip2wtUe5l+B/ZEoJ8FlBpopCy/XMhKZfW5yxdYP8o/hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733821522; c=relaxed/simple;
-	bh=3NtIMl1DjCiUo8OeDU2MLnM1AfkfRHex0Tmo2GMo9SI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iblestn6ojBU1rxsUgYO4DDzluzcp0SnulwLtixp9aKv82y/7gbTI2Actkhb3xauxO2az6n3FEFvhBl+8hpPYWNNcDrVzheidmhtqp/ZWlX7cQ26z9kEvDwgyF61fB+pxhHoiF2/tNzpMMeI0QMhoWcn35s7TMTEjJ73sBjK3KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0j4pNGwH; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385eed29d17so3648445f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:05:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733821519; x=1734426319; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ep5OKFJpfszekExX4/IRcefemdiT8s+lNUZhAL6lYhw=;
-        b=0j4pNGwH+ea6cCJmstueJN4Zf/3m7JjiuSf+umWQ0PyT6FnPqDqi03YBPx3FmuZDS2
-         uR/Ng2evyBE7dvBLD89C207AqsI9gJ19EZ0cq7sNgVnNshEqqIlehCJAbyu4YV9l7+99
-         jnBa3te3GvTEb7wSJqRJbVJf4++j1ngu1P78rOail6EH1nTkaBShDLDq5y6XwdsckGK8
-         QUrD3OixSgxIiQW3UFS8eeHTk2HpHxgRMpYB71RuHm9wnS0RDKF5ypjD8DchU9mZwQ2S
-         i+G0p6MsulvhkvRIMlcHmN+RMt3EaYNJBjF7N7tcfuf5Cv0jch9PTvjIEAfgVyZLKqk4
-         Ba9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733821519; x=1734426319;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ep5OKFJpfszekExX4/IRcefemdiT8s+lNUZhAL6lYhw=;
-        b=BYblOFWGhQk7Oc8Aj53THMGKy2BMjMHV6jp17EM0FjOLdP0UXp3TfCUqytQKWLXhBr
-         aCpTyaisyK1ZpUI3mcM76PzdhVzTjy/BnpnnaZJb1dMuuWXU6oAoqZLRojEK4SO+gdZo
-         aevZh1QUl9Xvp3RZN6HSi9DWZ9INGZrwTEQe8jyzJ5Z6HLs7KGbpPPT5WETXcjebjl2m
-         Esk/+Qkjk0FEgA6j7R9XeWSLibxIZI4pWfQJooiva5ltHLRJc+7DZZ564i04A4PrRWs2
-         ncVw3ioIrb2rAaZ/XPZQCPQjW1oWySORAKIT5vQsX+k6riewyg6n3s9eTmgONdmA4cni
-         dgnw==
-X-Gm-Message-State: AOJu0Yx3owJejC15/80ofH0aiCQXb7yuuJnaDKjvZOCkJFdeev+xgJKr
-	vezRbQ3cCNEWCCVXKbSboo5mo+AQc+GjMK4TYetiKyMU+lO9Exu60NdeHI6IR+LEuvHbr8V2DXA
-	mzBcHk7GGUwynRX11+4FUpUew6ivWlOh2bxRG
-X-Gm-Gg: ASbGnctrur0k/9GWf9F2Y+t5/dQavShyzsXttier881/GdTLdlFD6y/ntcn/dhwhSin
-	TnCKMoXy+lNZKlKgxKeB68PjyRL838+ZbwHaGaHKOOWMWMLgVWs18ZqFviH24d1723w==
-X-Google-Smtp-Source: AGHT+IGIVjgo6xFN35HYB1TgvILbI9Al6TSHNEWYp3ypNeyi+o9RjYaXrxzLsc97Z2zDVdAJ5OXIaoQOhG2vsZwboeY=
-X-Received: by 2002:a05:6000:156f:b0:374:c4e2:3ca7 with SMTP id
- ffacd0b85a97d-3862b33e3cemr11655971f8f.5.1733821519043; Tue, 10 Dec 2024
- 01:05:19 -0800 (PST)
+	s=arc-20240116; t=1733821565; c=relaxed/simple;
+	bh=UxzPXa/tKxoJipIPRU020pEKj1v70WB+y8JGomD9bMY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=En3rKzZwxULsmtDD3ahtbjZ8EqTQqJBRfLpiwFu092GwuiLgwBNXVWHIEs8RxeDwl6UFqsI+V3FTg5tE3AIjrYraqVigJvLABLuKSkGVoQKzK8Xg1SKAyw8uAVnu/hBw/Hsuf/fouLAW0sh6c7ujkpCMruAQWrWgqrUku/reBVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5ADtMND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBD1C4CEDD;
+	Tue, 10 Dec 2024 09:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733821564;
+	bh=UxzPXa/tKxoJipIPRU020pEKj1v70WB+y8JGomD9bMY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J5ADtMNDjrv8Tdc3EOhcbscAr7atYG+YukrITjlrjnZUe4HyauiBujzjNZ1UujMfJ
+	 VWwFd4rr8iegccUzExq269wO9mHT/OtKtuHcMcGDdpw7YSIhyAitvYNIXgroTtutW3
+	 CSvd7zFO3bnn5qQE0SrtzQGuelkde7EeBJ733US3Ee6iU4BNzgIhqsLzG5n7+z6a7g
+	 unJF6imCcuLorACsmysFxRdFvmjmze0jga2+ZchNVmNrnNpaJHvIE1Y68uvORR63Bm
+	 TIpdbMCYMcUHwW+oAduOLEM8ddnSybG4WTa6peRrfTLoA1rYA8Ej752Fqc+WwUkEUY
+	 3APjn6YR47Duw==
+Received: from 82-132-225-50.dab.02.net ([82.132.225.50] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tKwBu-002CXk-9o;
+	Tue, 10 Dec 2024 09:06:02 +0000
+Date: Tue, 10 Dec 2024 09:05:59 +0000
+Message-ID: <87frmvsya0.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	ryan.roberts@arm.com,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2 46/46] KVM: arm64: nv: Add trap forwarding for FEAT_FGT2 described registers
+In-Reply-To: <20241210055311.780688-47-anshuman.khandual@arm.com>
+References: <20241210055311.780688-1-anshuman.khandual@arm.com>
+	<20241210055311.780688-47-anshuman.khandual@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241210001802.228725-1-fujita.tomonori@gmail.com> <20241210001802.228725-6-fujita.tomonori@gmail.com>
-In-Reply-To: <20241210001802.228725-6-fujita.tomonori@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 10 Dec 2024 10:05:07 +0100
-Message-ID: <CAH5fLgiShKMGo6AYWM-4S8JK+iDA+tUfz9uxkns82g0nLW--NQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] rust: Add warn_on and warn_on_once
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	x86@kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, peterz@infradead.org, hpa@zytor.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org, 
-	kernel@xen0n.name, tangyouling@loongson.cn, hejinyang@loongson.cn, 
-	yangtiezhu@loongson.cn, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@kernel.org, tmgross@umich.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.225.50
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, ryan.roberts@arm.com, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Dec 10, 2024 at 1:19=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> Add warn_on and warn_on_once macros. Wrapping the C's WARN_* and BUG_*
-> macros doesn't work so this uses the assembly code exported by the C
-> side via ARCH_WARN_ASM macro. Like the static branch code, this
-> generates the assembly code for rust dynamically by using the C
-> preprocessor.
->
-> file()! macro doesn't work for the Rust inline assembly in the same
-> way as __FILE__ for the C inline assembly. So the code to handle a
-> file name is different from the C assembly code (similar to the
-> arm64/loongarch assembly).
->
-> ASM_REACHABLE definition works in the same way to get objtool's
-> reachable asm code. The architectures which use objtool (x86 and
-> loongarch) needs it.
->
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+On Tue, 10 Dec 2024 05:53:11 +0000,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> Describe remaining MDCR_EL2 register, and associate that with all FEAT_FGT2
+> exposed system registers it allows to trap.
 
-> +#[macro_export]
-> +#[doc(hidden)]
-> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML)))]
-> +#[cfg(any(target_arch =3D "x86_64", target_arch =3D "riscv64"))]
+MDCR_EL2 register *bits*? How is that related to FGT2 at all?
 
-> +#[macro_export]
-> +#[doc(hidden)]
-> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML)))]
-> +#[cfg(any(target_arch =3D "aarch64", target_arch =3D "loongarch64"))]
+> 
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: kvmarm@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> Changes in V2:
+> 
+> - Dropped check_cntr_accessible_N and CGT_CNTR_ACCESSIBLE_N constructs
+> - SYS_PMEVCNTSVR_EL1(N) access traps have been forwarded to CGT_MDCR_HPMN
+> - Updated check_mdcr_hpmn() to handle SYS_PMEVCNTSVR_EL1(N) registers
+> - Changed behaviour as BEHAVE_FORWARD_RW for CGT_MDCR_EnSPM
+> 
+>  arch/arm64/include/asm/kvm_host.h |   2 +
+>  arch/arm64/kvm/emulate-nested.c   | 158 ++++++++++++++++++++++++++++++
+>  2 files changed, 160 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index c80c07be3358..4cdce62642d1 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -441,6 +441,7 @@ enum vcpu_sysreg {
+>  	PMINTENSET_EL1,	/* Interrupt Enable Set Register */
+>  	PMOVSSET_EL0,	/* Overflow Flag Status Set Register */
+>  	PMUSERENR_EL0,	/* User Enable Register */
+> +	SPMSELR_EL0,	/* System PMU Select Register */
 
-What's the reason for this arch-specific code? The file!()/line!()
-invocations? Could they be passed as an argument to the asm instead so
-that we don't need target_arch cfgs? I understand that they don't work
-exactly the same way, but maybe it could still work?
+How could a system PMU be relevant to a VM?  What is the point of
+bloating the vcpu for something that we will hopefully *never* make
+visible to guests?
 
-> +#[macro_export]
-> +#[doc(hidden)]
-> +#[cfg(all(CONFIG_BUG, CONFIG_UML))]
-> +macro_rules! warn_flags {
-> +    ($flags:expr) =3D> {
-> +        // SAFETY: Just an FFI call.
-> +        unsafe {
-> +            $crate::bindings::warn_slowpath_fmt(
-> +                $crate::c_str!(::core::file!()).as_ptr() as *const ::cor=
-e::ffi::c_char,
-> +                line!() as i32,
-> +                $flags as u32,
-> +                ::core::ptr::null() as *const ::core::ffi::c_char,
+>  
+>  	/* Pointer Authentication Registers in a strict increasing order. */
+>  	APIAKEYLO_EL1,
+> @@ -501,6 +502,7 @@ enum vcpu_sysreg {
+>  	CNTHP_CVAL_EL2,
+>  	CNTHV_CTL_EL2,
+>  	CNTHV_CVAL_EL2,
+> +	SPMACCESSR_EL2, /* System PMU Access Register */
 
-I wonder if this could be written to utilize Location::caller()
-instead so that `#[track_caller]` works?
+Same here. It is pretty striking that these registers are never
+saved/restored or handled as traps, which is a good indication that
+this is pretty pointless.
 
-Alice
+>  
+>  	/* Anything from this can be RES0/RES1 sanitised */
+>  	MARKER(__SANITISED_REG_START__),
+> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
+> index 6c63cbfc11ea..c7d6d2034f27 100644
+> --- a/arch/arm64/kvm/emulate-nested.c
+> +++ b/arch/arm64/kvm/emulate-nested.c
+> @@ -79,6 +79,7 @@ enum cgt_group_id {
+>  	CGT_MDCR_TDRA,
+>  	CGT_MDCR_E2PB,
+>  	CGT_MDCR_TPMS,
+> +	CGT_MDCR_EnSPM,
+>  	CGT_MDCR_TTRF,
+>  	CGT_MDCR_E2TB,
+>  	CGT_MDCR_TDCC,
+> @@ -125,6 +126,7 @@ enum cgt_group_id {
+>  	CGT_CNTHCTL_EL1PCTEN = __COMPLEX_CONDITIONS__,
+>  	CGT_CNTHCTL_EL1PTEN,
+>  
+> +	CGT_SPMSEL_SPMACCESS,
+>  	CGT_CPTR_TTA,
+>  	CGT_MDCR_HPMN,
+>  
+> @@ -351,6 +353,12 @@ static const struct trap_bits coarse_trap_bits[] = {
+>  		.mask		= MDCR_EL2_TPMS,
+>  		.behaviour	= BEHAVE_FORWARD_RW,
+>  	},
+> +	[CGT_MDCR_EnSPM] = {
+> +		.index		= MDCR_EL2,
+> +		.value		= MDCR_EL2_EnSPM,
+> +		.mask		= MDCR_EL2_EnSPM,
+> +		.behaviour	= BEHAVE_FORWARD_RW,
+> +	},
+>  	[CGT_MDCR_TTRF] = {
+>  		.index		= MDCR_EL2,
+>  		.value		= MDCR_EL2_TTRF,
+> @@ -509,6 +517,7 @@ static enum trap_behaviour check_mdcr_hpmn(struct kvm_vcpu *vcpu)
+>  	switch (sysreg) {
+>  	case SYS_PMEVTYPERn_EL0(0) ... SYS_PMEVTYPERn_EL0(30):
+>  	case SYS_PMEVCNTRn_EL0(0) ... SYS_PMEVCNTRn_EL0(30):
+> +	case SYS_PMEVCNTSVR_EL1(0) ... SYS_PMEVCNTSVR_EL1(30):
+>  		idx = (sys_reg_CRm(sysreg) & 0x3) << 3 | sys_reg_Op2(sysreg);
+>  		break;
+>  	case SYS_PMXEVTYPER_EL0:
+> @@ -528,6 +537,22 @@ static enum trap_behaviour check_mdcr_hpmn(struct kvm_vcpu *vcpu)
+>  	return BEHAVE_HANDLE_LOCALLY;
+>  }
+>  
+> +static enum trap_behaviour check_spmsel_spmaccess(struct kvm_vcpu *vcpu)
+> +{
+> +	u64 spmaccessr_el2, spmselr_el2;
+> +	int syspmusel;
+> +
+> +	if (__vcpu_sys_reg(vcpu, MDCR_EL2) & MDCR_EL2_EnSPM) {
+
+I don't mind the test, but I don't see any sanitising of MDCR_EL2 to
+make EnSPM as RES0 when FEAT_SPMU is not implemented, which will be
+100% of the cases.
+
+> +		spmselr_el2 = __vcpu_sys_reg(vcpu, SPMSELR_EL0);
+> +		spmaccessr_el2 = __vcpu_sys_reg(vcpu, SPMACCESSR_EL2);
+
+So these two values are *guaranteed* to be zero. At this stage, what
+is the point?
+
+> +		syspmusel = FIELD_GET(SPMSELR_EL0_SYSPMUSEL_MASK, spmselr_el2);
+> +
+> +		if (((spmaccessr_el2 >> (syspmusel * 2)) & 0x3) == 0x0)
+> +			return BEHAVE_FORWARD_RW;
+
+What about value 0b01, which causes *writes* to be trapped?
+
+> +	}
+> +	return BEHAVE_HANDLE_LOCALLY;
+
+And then what? How do we handle this locally?
+
+Honestly, short of any additional handling, we would be better off
+just injecting an UNDEF back into the guest.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
