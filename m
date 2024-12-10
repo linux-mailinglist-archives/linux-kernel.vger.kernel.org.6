@@ -1,79 +1,111 @@
-Return-Path: <linux-kernel+bounces-438709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A029EA4A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:04:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D869EA4AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B07188938D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165F916726A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435067A0D;
-	Tue, 10 Dec 2024 02:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F01136326;
+	Tue, 10 Dec 2024 02:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ke0EEusi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld/zC4m+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611C2AE93;
-	Tue, 10 Dec 2024 02:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038495FDA7;
+	Tue, 10 Dec 2024 02:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796266; cv=none; b=DucYIF+C0tKIH2jVj9+5IKVlf7xYArmJHsbV/L7AbNVfkCtjjT78QDVee3MRgds+EY+8CzVrtUJzzb+XU4zdc6XnBPuzQTdbkEZMPWoi8qSgQ1/drrSEovxTLnj+t6uw4q28eXXWL7w1KpiafZZjSGpORU2l3ykzr1kBj9Et0N4=
+	t=1733796276; cv=none; b=Hv/x99uORzZ5+sxAaejsYjrvssYxdwXLu6+ATRsSZGUIfEM/fVVz8Y34ivbToyxqIXE3hyvb2/MkTi7FCwbf75xuns8Gso9ku/0BcWjWs/ncGCQQi5sOCxLoOAQv1S5Mviv5VROWuUV6Y/Pd0zKe92LNBMugAuFF6DrQVlVr3MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796266; c=relaxed/simple;
-	bh=7PYDEBrX6UDd5urSI+9ADlPKo36XnpaS1lVqRbWxUHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iie6fYkYVRH7isQ44her4uZ4UccFVSyCTsNSMZrZ2U9c5s1793Dm1Hz7QLWS0M09bMJHT5cRN/Xt5IN3+cPVhKThy2OAP1AVfbndDa59iUGOiuwmlSsagF/BWQ9jdI0IqRdLYXXE6dOndkf+3RTSYr+Z4u/PaqcFlsH2tevsgA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ke0EEusi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=w5+t6XBwCajCiRcvMjJKRNt/CjZXlpUR9jDDCFEx5+I=; b=Ke0EEusi3UFGEbIFQF7YZVHWnV
-	wiIR67w3AUot0oVAdhjtd0uXlMFeTx1JmaVSo6z7D7usFZ5Waj1rbq6Yo2pKw8sq8atVBWcG+fmXS
-	+8+e8U3c4nhU0K512TDMfEzY/nBWGOdN08h+XLlOineYx3ns83H/NzlpupN2HSxUTRd8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKpbm-00Fk4t-4S; Tue, 10 Dec 2024 03:04:18 +0100
-Date: Tue, 10 Dec 2024 03:04:18 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 05/11] net: usb: lan78xx: Simplify
- lan78xx_update_reg
-Message-ID: <2f5d56c0-b512-419e-b0d6-b2b0aeb721c4@lunn.ch>
-References: <20241209130751.703182-1-o.rempel@pengutronix.de>
- <20241209130751.703182-6-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1733796276; c=relaxed/simple;
+	bh=oPZZN+mwOAYFn85jtDrCczgEYZMHPEWfpX3ZfHCQARI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=mTdlF8GrZPslaiCK+DnyxSfsD/heRhbkJQwePwB7h5o7RUZePCHhZwG6qfyabKpaxoHXGhBHxH1fx4Jlv/12U16+VowcFgdv1udreBfPTkli80RauoOwaxEs4iQ7TUIbaFdQKQmoCjFaRI+lIpvgT/4r74LB4TAzPoavBHwxzv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld/zC4m+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC75C4CED1;
+	Tue, 10 Dec 2024 02:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733796274;
+	bh=oPZZN+mwOAYFn85jtDrCczgEYZMHPEWfpX3ZfHCQARI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ld/zC4m+xupGCW2EUBrjZnpcZfmDygF5+GZHa6+zh5zLDZyZSoZHaR00Im0YJlOiU
+	 /yXoCfqnJZumHo237u//g1VqiieSYz55JWo2ei/MAJ+r2FnpQaDjQKEl0fboADJLRW
+	 M52pcYxeYpKf1DGLjfd6ajXgFglkpPsFA1ozUyJqLPNuwJepjuMYhWzPefNYQCz/N1
+	 /q7hrmQKBIkfhdygrZxcuUvzqVAqzfzmS0aJQI/g1ls6grgzG3eo3m3x7tPXxvWkJq
+	 Ka6KkRc058U/p8+UNVLLVE63FDPxnpZlcZCP+KJrk0YUHefc7+kj1umMLuWq+GM2Pi
+	 qvwFXdfgRL0AA==
+Date: Tue, 10 Dec 2024 11:04:28 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov
+ <oleg@redhat.com>, Tzvetomir Stoyanov <tz.stoyanov@gmail.com>, Naveen N Rao
+ <naveen@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
+ <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
+Message-Id: <20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
+In-Reply-To: <20241209110411.GL21636@noisy.programming.kicks-ass.net>
+References: <173371205755.480397.7893311565254712194.stgit@devnote2>
+	<173371208663.480397.7535769878667655223.stgit@devnote2>
+	<20241209110411.GL21636@noisy.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209130751.703182-6-o.rempel@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 09, 2024 at 02:07:45PM +0100, Oleksij Rempel wrote:
-> Simplify `lan78xx_update_reg` by directly returning the result of
-> `lan78xx_write_reg`. This eliminates unnecessary checks and improves
-> code readability.
+On Mon, 9 Dec 2024 12:04:11 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Mon, Dec 09, 2024 at 11:41:26AM +0900, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Use guard() for text_mutex, cpu_read_lock, and jump_label_lock in
+> > the kprobes.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > @@ -853,29 +850,24 @@ static void try_to_optimize_kprobe(struct kprobe *p)
+> >  		return;
+> >  
+> >  	/* For preparing optimization, jump_label_text_reserved() is called. */
+> > -	cpus_read_lock();
+> > -	jump_label_lock();
+> > -	mutex_lock(&text_mutex);
+> > +	guard(cpus_read_lock)();
+> > +	guard(jump_label_lock)();
+> > +	guard(mutex)(&text_mutex);
+> >  
+> 
+> > @@ -1294,62 +1280,55 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
+> >  	int ret = 0;
+> >  	struct kprobe *ap = orig_p;
+> >  
+> > -	cpus_read_lock();
+> > -
+> > -	/* For preparing optimization, jump_label_text_reserved() is called */
+> > -	jump_label_lock();
+> > -	mutex_lock(&text_mutex);
+> 
+> Why does kprobe need jump_label_lock and how does it then not also need
+> static_call_lock ?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Good catch! It has not been updated for static_call_text_reserved().
+We need static_call_lock() here too.
 
-    Andrew
+Thanks!
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
