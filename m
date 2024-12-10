@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-439816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D58E9EB44D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9339EB450
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0839D161289
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:05:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34C5D1676ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37B41B2190;
-	Tue, 10 Dec 2024 15:05:29 +0000 (UTC)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CAA1AA7A3;
+	Tue, 10 Dec 2024 15:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ssco8VSf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DF323DE87;
-	Tue, 10 Dec 2024 15:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6B323DE87
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733843129; cv=none; b=RG8JuJqEWlMA8A1PpDw4MEo4jdjB7pBS+CXYLyjOau5cSPH7kz3xwwpxz31Uo6t+YGU0nWP+bAFVzRHol47tS6lkjv7XytSYAN9DSMBZChsEg5yUguRRTd8UdpvWL3ArtQTwa2dqqzgpXwZvrl+hbtlbBSDTW3+M13Fo5gX1bms=
+	t=1733843166; cv=none; b=hSka/tPf5dkIbWuIl6oq1C6SxsSXn7fyBYnhK+YQ0S4jfi+Fx8KHFZLeA9njMEWDhRoX0LbNkuFSuropnH+YFfmn75bfE2mmaqpcNmMcjbb9igrAlDyYaOkmVHaaIpPpuUsI3R4snmPCksi7dKRDJRDUC6yfL7u0kDihtYgiyMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733843129; c=relaxed/simple;
-	bh=vMyGgUWMCYa9jqjFrSuzP8xhVfxy+uW+SLZCiWm+PtI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BtN/OzDYRxA3WFhkNsde7huesJRH6v32HZ8wGNxt8jBkf3zM2W/PVbWAUQqwMAKjKz30mz1qnMIIUVPPbgAEqNVRRj8eREMj1e6jBeTw5PmldfGZCc8sy4PEqhONjLv45V6uR8v21Fsz8dAwhIOXJxZHVi3nXGeFew3xPnYAUyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4674c597ee5so25941931cf.0;
-        Tue, 10 Dec 2024 07:05:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733843126; x=1734447926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b7MWr+x34y8+HIArGxN7+pSUdFwcwNgnGB9mNkNeiU8=;
-        b=ldHMYRNpmg5B2y7/RsSrMzGpC/W30yOswNGkDr47zacPzP9OnZkDxeS4ZI1WqZpNGa
-         uLRoxsJv8KeAMocBtmkJAyYdJ0SkvbYUx69FjDE9UVlA1JHLfszetYx6Ch+xo1QfVUQ6
-         781vE8G+9ObF1ZChF9Ij/JHGUkwfsWT6iVqPYvc388nqvfp0HNG2b6bjhEHnnQNIYaKD
-         OPl0tdKyMl6yFplKCZVJhZuEBKfWB73EawIzqz4a67PR0EgBS4hLdPM+HtKB9OuTTaLx
-         HDZolGeSq8lTSISFEtMaHVcHHlpNz9pJ67bpD4kWu3HxyCHE6974T9/WZkCfgNhcEt3o
-         pDrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVlniMjIslVQwzC93UnBOQT9CyR2blkDivf58bw1Oe7qk5Xi9JskF+SppLbzkUpEzfT8eHAC/zl4PV@vger.kernel.org, AJvYcCVvzq29d41AgIB6l3qlJbsUdzySnQrROrbNglc8j9TqVIQd3aqbluVcSodzQYrJn5KXjJreo9XX7tvC/W5j@vger.kernel.org, AJvYcCX+2c1KegbjbbiYR11eL4vNmP2dNEhC9n50hsm/jVKC5TOMYpVdFg15hIrF4E9/xtkYH7mGu9cYdLWk@vger.kernel.org, AJvYcCXjmAPUgbgJPLathqrJUfxT+gVn9UdGdXFL0c8Fczi2RWUBaVzx6I0FW8OJS97E9wGWlyOFxIFRfCH9P2+2CyCbXyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDLK4HZvU3OoG3BJPUHl+RtqtDUDpe7hqZxOwDQhzDlRb+5YvN
-	6Js75tur/6iDSu7rkH6qUk94OabUIuBD9POw2gdVWh3USaMG2BEi3ku9Fz7/
-X-Gm-Gg: ASbGncsd+iT+Uxu9hVMbJmr6mcwM+MxQwXGoWdJAqhixg3uJgBXnLcIhFCAiBna/0pv
-	NidO1DkTn5HNChmznILwt11fN2BupFzaLNTNTqQpX6jq4HC2tMnzm5gINEou+B/eQ1KyBPPPxpD
-	+8CHxYqluqvhkxpy5Crw4EpgAlyhEL2Bn99ULje9Fm5NqEfohRKZ2t1ZuGtPIR/vL0g+WetFtHV
-	6r9jF/ECO+Tsr1Xq39GEg0Aq5ByqrFuzxjR8Twy1HtDrSm8vrHV+CeGX/1LQdKf9ZVMDBU9t7Lx
-	u3L1pNQUcnym2f6+Awb3
-X-Google-Smtp-Source: AGHT+IGPTjSZX+qjTB3TaQJB4xiPWgMYlrBkuYve7Iw2M8Of0t/A7ltpVc4+780yYoZfi0Rw0MpXyg==
-X-Received: by 2002:a05:622a:5a8a:b0:467:5e61:c10c with SMTP id d75a77b69052e-4675e61c42amr159056571cf.0.1733843125740;
-        Tue, 10 Dec 2024 07:05:25 -0800 (PST)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com. [209.85.222.178])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4676ba6eb1dsm17037001cf.1.2024.12.10.07.05.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 07:05:25 -0800 (PST)
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b6dd0347dbso100623585a.1;
-        Tue, 10 Dec 2024 07:05:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVGexmVsn+AxOTlF6+excVPHJqQ06sUptX+HdOPCHkVOGY8u90gQuSUNpQ1Qnn5RRXU3ZBSYoevY9E2@vger.kernel.org, AJvYcCW71bqU58ObHqSm4dKfNLBjprYKYE2m4u09fErLLwdlb0JkZga8yDUHOZbscD+wUVqXvdi22UXxl76J@vger.kernel.org, AJvYcCXkxwIUjwihN8V4hGvnwWzL1LfN6jwqypt5ePIZSQx2sgjaZ2lKIrUbgKbjYadHtH0JFq3LwxfRAYZqnlTb05GZSlE=@vger.kernel.org, AJvYcCXnm+6P0db8NkDTWauACZcdl027IJqfFeyPIk2DLrX9kqPCrgz8jxm2lGXBDHhRr2gGmIKEPJpFGc/yV5Bd@vger.kernel.org
-X-Received: by 2002:a05:620a:19a6:b0:7b6:67a6:5adb with SMTP id
- af79cd13be357-7b6bcad4a8dmr2816602085a.21.1733843124497; Tue, 10 Dec 2024
- 07:05:24 -0800 (PST)
+	s=arc-20240116; t=1733843166; c=relaxed/simple;
+	bh=4/+WUdKpk+ARnDD+HpUIu4lUCzl2ggQRiCY35wadzLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUI7PoYMDpZBTWwR5ql3Q7E/S3ENsrv1+YdIVAp4LGxTym59vlL3AQhpwww7b+nzpEh5Gnl7fFD+rDhrX9Oo7NmhTRSzZMmHXOO52toY0Us31pthdpfCHhmp4VrFQvRQkt0quMzgPs2CNfCuoaFgjUavHVaW0BoAXTiorjnEiEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ssco8VSf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733843163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WFDGw5CUUJOAizHZiI+bpfEz7cJP3GL6f3AyTr6K+v8=;
+	b=Ssco8VSfMQ1AyZ443CcIWTLwQHUttZIMCvWqzy62rtmqjkoqP43SK9/fTpCe+mLzWeGZjU
+	bpxWO7HGbq2s9ggPCwRVUpQmFqrMLyy3EGJsIJFLghx86xWk5HAA5B3t8tc2zikMHxX9Ev
+	MBBDeYbMABtE5LCmjUmBeqEqlSlz/ZU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-31-KnybzgjdOXWpwierOZYUtQ-1; Tue,
+ 10 Dec 2024 10:05:59 -0500
+X-MC-Unique: KnybzgjdOXWpwierOZYUtQ-1
+X-Mimecast-MFC-AGG-ID: KnybzgjdOXWpwierOZYUtQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 878B11955F28;
+	Tue, 10 Dec 2024 15:05:57 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.4])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A00C5195605A;
+	Tue, 10 Dec 2024 15:05:52 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 10 Dec 2024 16:05:34 +0100 (CET)
+Date: Tue, 10 Dec 2024 16:05:28 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, mhiramat@kernel.org,
+	peterz@infradead.org, Jann Horn <jannh@google.com>,
+	syzbot <syzbot+2d788f4f7cb660dac4b7@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Subject: Re: [syzbot] [mm?] general protection fault in
+ find_mergeable_anon_vma
+Message-ID: <20241210150528.GA31266@redhat.com>
+References: <4d05caee-d900-42e5-84e1-448cc62435b2@lucifer.local>
+ <emgf7rbacg4jqsnyg2mgmlbbeehc34o33fpnkmlaghb3xynzjx@gmldlwjliwiv>
+ <c946c9d2-aff3-4492-99d1-d50e6e2659f6@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-10-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241126092050.1825607-10-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Dec 2024 16:05:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWSgFwNEiijrnSCOif6VK5Ph1-d9=+NpWJsAbNVkaH0SA@mail.gmail.com>
-Message-ID: <CAMuHMdWSgFwNEiijrnSCOif6VK5Ph1-d9=+NpWJsAbNVkaH0SA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/15] phy: renesas: rcar-gen3-usb2: Fix an error
- handling path in rcar_gen3_phy_usb2_probe()
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
-	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
-	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c946c9d2-aff3-4492-99d1-d50e6e2659f6@lucifer.local>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On 12/09, Lorenzo Stoakes wrote:
 >
-> If an error occurs after the reset_control_deassert(),
-> reset_control_assert() must be called, as already done in the remove
-> function.
->
-> Use devm_add_action_or_reset() to add the missing call and simplify the
-> .remove() function accordingly.
->
-> Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initia=
-lize the bus")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> [claudiu.beznea: removed "struct reset_control *rstc =3D data;" from
->  rcar_gen3_reset_assert()]
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> (As discussed on IRC) how about moving up the dup_mmap_sem lock one level, we
+> can put the mm before the rmap lookup in build_map_info() is able to find it,
+> which should avoid the whole issue?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Not sure I fully understand the problem, but so far I see nothing wrong in
+this idea. However,
 
-Gr{oetje,eeting}s,
+> @@ -1692,9 +1690,11 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
+>  	if (!mm_init(mm, tsk, mm->user_ns))
+>  		goto fail_nomem;
+> 
+> +	uprobe_start_dup_mmap();
+>  	err = dup_mmap(mm, oldmm);
+>  	if (err)
+>  		goto free_pt;
+> +	uprobe_end_dup_mmap();
 
-                        Geert
+If try_module_get(mm->binfmt->module)) fails after that, dup_mm() does
+"goto free_pt;" and in this case ...
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> @@ -1709,6 +1709,7 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
+>  	mm->binfmt = NULL;
+>  	mm_init_owner(mm, NULL);
+>  	mmput(mm);
+> +	uprobe_end_dup_mmap();
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+... we have the unbalanced uprobe_end_dup_mmap().
+
+Also. Perhaps we can change dup_mmap() to set MMF_XXX before uprobe_end_dup_mmap(),
+
+	fail_uprobe_end:
++		if (retval)
++			set_bit(mm->flags, MMF_XXX);
+		uprobe_end_dup_mmap();
+		return retval;
+
+Then build_map_info() can check this flag. I guess we can reuse some of
+MMF_OOM_ bits? May be MMF_UNSTABLE...
+
+Oleg.
+
 
