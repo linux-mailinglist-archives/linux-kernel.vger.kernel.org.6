@@ -1,244 +1,204 @@
-Return-Path: <linux-kernel+bounces-440105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DAE9EB8D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFCF9EB8DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:57:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA797283415
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C172281BD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF030204692;
-	Tue, 10 Dec 2024 17:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7251D8E09;
+	Tue, 10 Dec 2024 17:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o6YvVuuw"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ipkg0sXi"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA0A1C5CAE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CD086329
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853342; cv=none; b=V2UCUuu7QIfNBaiNvEQUg1gqgPVgH3n2T64ReJgPLu5MAbWylQsckSuXNSY8Fw7nurGDecJTwkaW2U4768r8subUaEjJdyKpYXLoZlMwTd6909PTnP8R9YBa5q5oiwGcdHCQ8B76bkNf6wg2QVvKxdSLAU1MQ3b1yAMQyfQBcok=
+	t=1733853450; cv=none; b=TTOuZ1rTxVcSvT91MjOWp6y2LyjxM2EEIK7WexRtBSB2SPAIg9QbPxLbiDMBqdPwmIMLzBynkZKDxvdPth9LxhIGxtEUzXRfTmetB/RhY1bQU++2S17UGW3hm+Fnp9p9D0/HWAQOZDYgvtEwSF2W06S4ACXSKv6ZSJC5hUI30EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853342; c=relaxed/simple;
-	bh=iV6hA0IYWTLQAyvLjwsvTOjyYSVIwGM/w77HmkdSwPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Io5TYxGPQnS1KubxuFQWoondYEYo9NKRMJXfTX/ZKGFtZtZqR29MNSUW+4dki7V7RPvcmjE6bZwkMirsG8fG+YTny2ML8rDZbmWdWYllSOThZZW66Ay++dMgbMAenvtwP1X//VeW0z3TfUCJ6wTcZ0PVzcg9BYCCp9ropdTCUH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o6YvVuuw; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21625b4f978so3865ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:55:39 -0800 (PST)
+	s=arc-20240116; t=1733853450; c=relaxed/simple;
+	bh=q7850sFx0AojKZfepV5IKTTvsWmrtq2q5B1CbYiisnY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m3G2xHg0ypawiriCmK1JH5vOGmmc6jcNc9E9mEh9BIAFL2H87BklG/zQZ0yzJBxAihdRhGHs+EP3ohMLeCeUfokuFLjehq9EEc7rXregIiDKANtkZgd+EvQTf/QoO1445PHnfOxCp+YcBfMPIxdMFtY8nU8kxiWhhGxMVZRswBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ipkg0sXi; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43540bdb448so6802685e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:57:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733853339; x=1734458139; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R0WaAW3kh+VqyYkynbg5Bnnaq2ujjkmV+I+q8jKp9mU=;
-        b=o6YvVuuwTQc3x/NTSjOgUR229ZYckJgkZajd3JUsuBl6J81vq7gv9KkF7ByTLOZgwW
-         pYjVtiJLBnEaBHwte3VV6Y2AQmoIxy9IB4Hr4wr+D1IKGhnEJTbYr9sPuusXnW6YVfBw
-         pbBXHUWOVGjsDXAHodkfV1+GzyY+IyCdofUWTr5JVfDuds9B5Nt7VW7XZQ/JHOn93Xf/
-         CuMbSqYI2a3kY2NFQUrX4Fxc8CxrgAUZPjgTEuMtm7KOoUL5Y2dw7TyRGi1i/2O89NiZ
-         rLQva1s7LqyEnvop6mPsI3wTU3OwrLzFcdkAx3CdorpgysFFm15PUFRHFy4wKgnp+us2
-         gl5A==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733853446; x=1734458246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIHjMml9/i3NudYkhW0WMl6STQ3T0Tp/kjGEjO9vq9I=;
+        b=ipkg0sXisKqWZnf4saPIOz24hfVn8PODk8HtfUwqO1CFOV8mViIDAIA8K/Tv3y7SNd
+         R+MiHhGxneCcMNAoC/f0iTskevz4G2EOSIvXxr0zlwqp6njNG3PwGD62a6B8A/b2i7y1
+         xRtRF5Hg/1ytDUJ0/mScOhN59vbtrVgQIvbC3yuc3n92pdCSUOIl8NSDYGmrF+Bu83SX
+         YCMEvqMHA1jCG56HAweXCW1pBJ2UQOLm6M8VgjYFu0OFaKX440qSobWM7QJYjSkkQyIK
+         7gXZBkbK8PNigIpL6BpTG6tz25vX/Okg0O9dlp4HHtM4AtwgpOay+mfEQrDm9VHJr7Ze
+         GLGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853339; x=1734458139;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R0WaAW3kh+VqyYkynbg5Bnnaq2ujjkmV+I+q8jKp9mU=;
-        b=C8bZPTAivbtpNc4DN+dlqeJFbZDqhGlDYp2OnCE84PufG5eRrH/QX7KD5xM0jtiL5I
-         seeis16zyCTnvNLYjVKRvOewc2+k5ZB9uMTWVQ+30kyVSzrCgZjjPv5iPBZ6ZqcpdLN9
-         oeZTpZPFj4mPf6dnLYpyHAv7ULNnuBOLkLskHQhuDNg/GQQFP7k2y/GdktZ+XY1Ta34V
-         Xn4yX9i5Q7myyK9OrZ1CQVDb/ks3Kpp9n38HR0jWwmuzzIht7XtT55wXXZBSpdmGIsuH
-         dzwdU+McH/Omr6aGd626J8aw9eDqOmTb8H1N+B/fRhGLTSN0+G7hCKThF7ofD4zAjn2q
-         FsrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiBZtNkXcYT9R6FmzEzcNQFO9awL6LLNoCzn8fW98V/PobWcpvDSvBKzmBTbyC6MDHTKyCoK4/CQ8FEpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY+/kY7FRYlRnDEnfJSp/O189H6KkwPpS36GB2RW+HoIPF7mYB
-	MO+8A3mqgzWtlutZmPno5g/LKMM6WWHtg8owbKp6ER/UDMohpDV4WQZC+gRaj9MlP98e8NeQLoU
-	br3LvWtqhqj2y0TsWE2QqVaXDtj4uKSTC/J5c
-X-Gm-Gg: ASbGncvQaPJ/5L6xPAuh2QPNzTFPbPrKdleSCFN8aZasOMNhj96iTdwslScMcj83ZxM
-	MUvgglIXFaR/QqUEuBfi7XT/kQs17W5xC89xOR0vCh9DMRvDJpg6RFFJVIPjSfBeU
-X-Google-Smtp-Source: AGHT+IGLvX826EUtDFzCMbe4Z82/rCvZNBH+2oBWnGrvdZr1UuD+ncWShG6UN2y8G42XtPREcypqHTRZ438FncSXyng=
-X-Received: by 2002:a17:903:144b:b0:215:79b5:aa7e with SMTP id
- d9443c01a7336-21674d58706mr2897555ad.13.1733853339077; Tue, 10 Dec 2024
- 09:55:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733853446; x=1734458246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zIHjMml9/i3NudYkhW0WMl6STQ3T0Tp/kjGEjO9vq9I=;
+        b=ubSwyLmaZca8OtqUoNKrFTawrESqKwiYOarr+zXmNzBP+sf2z/oGxZcu5NAJk/cBIb
+         Mxam6xERFPhpKAqQ1WS4wBC29yoNVHKj8ZL6vOjdNFtW47qD7njoeXhm59+ZqqmOvkHw
+         znSc2HpQZh2NcMEmbZW8gtc5gnAeqQSTgR8IQJSDkixDA95eMMa6DNyfi9tGvW7rovLd
+         I2ITkuqfF8yf7HiS8qY58nBWjfrgCKWRwpZI+g8izADIVGhi1X+ZOJJ4Ty2gek/2OjLa
+         GvV8QlD2MeDD5k0zALEbozVxLw2URXsff8KmS8Jfw5vqqWbQbSg3WID312e6Xm5iTWuJ
+         MqEQ==
+X-Gm-Message-State: AOJu0Yxjso/6zlNskXMVdg0dwtPK0duUb05UAbd9naLB02bAuwGFvgoZ
+	3Nn+Has9TWdlqRawZJDqbnfPIDMuzEkpghO/AevTp8UqxUrN++BTE8bIZfuHFvU=
+X-Gm-Gg: ASbGnctBJOXG1CbXRk6+sjIEwTtxdSrlx/dAuqzgMKbLRWFBCnfGejh5CYyNIuJNF0h
+	Mtkeb32GzX2yaJHM1KP7IrU1fDFCjYJHKM96FYUCX8ZUtjjHQlAEvX5dkM02Spdb0AqX8mYjDwC
+	pTNSmf2WPQbSBX3wpFX5xPxgonAJLIbUQpQ2yA10mjsE+PgNmTfIb9wYRgzQEJ5Rm6v5Xil/xhn
+	jGdwVbG9qtZkvOzGL/bQRY26x3QUso71QNJZGC7J82iC3wpUBO4Ng==
+X-Google-Smtp-Source: AGHT+IHj8QobrzmEZEduyaYU3tAx4inoHt1dQaLHSZB+Hbt42qCHjutA5qEL9cLT3MYUv5BvjiY0cA==
+X-Received: by 2002:a05:600c:5104:b0:434:a7b6:10e9 with SMTP id 5b1f17b1804b1-434fff55649mr53795855e9.17.1733853445973;
+        Tue, 10 Dec 2024 09:57:25 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4c2b:c454:658c:f771])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526ac03sm241103195e9.4.2024.12.10.09.57.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 09:57:25 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] clk: davinci: remove platform data struct
+Date: Tue, 10 Dec 2024 18:57:23 +0100
+Message-ID: <20241210175723.127594-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210024119.2488608-1-kaleshsingh@google.com>
- <20241210024119.2488608-2-kaleshsingh@google.com> <CAHbLzkpCRGF+-WXkHVEutkEGHSWydmpb1CwkvHZRTH-f773J-w@mail.gmail.com>
-In-Reply-To: <CAHbLzkpCRGF+-WXkHVEutkEGHSWydmpb1CwkvHZRTH-f773J-w@mail.gmail.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Tue, 10 Dec 2024 09:55:27 -0800
-Message-ID: <CAC_TJvc5SU_khaBf7NS1VvD+d5PJ4X1DwKWbO92j-dZ+rEuc9A@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable 01/17] mm: Introduce generic_mmap_hint()
-To: Yang Shi <shy828301@gmail.com>
-Cc: akpm@linux-foundation.org, vbabka@suse.cz, yang@os.amperecomputing.com, 
-	riel@surriel.com, david@redhat.com, linux@armlinux.org.uk, 
-	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, 
-	davem@davemloft.net, andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
-	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com, 
-	leitao@debian.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
-	kernel-team@android.com, android-mm@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 9, 2024 at 7:27=E2=80=AFPM Yang Shi <shy828301@gmail.com> wrote=
-:
->
-> On Mon, Dec 9, 2024 at 6:41=E2=80=AFPM Kalesh Singh <kaleshsingh@google.c=
-om> wrote:
-> >
-> > Consolidate the hint searches from both direcitons (topdown and
-> > bottomup) into generic_mmap_hint().
-> >
-> > No functional change is introduced.
-> >
-> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > ---
-> >  include/linux/sched/mm.h |  4 ++++
-> >  mm/mmap.c                | 45 ++++++++++++++++++++++++----------------
-> >  2 files changed, 31 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> > index 928a626725e6..edeec19d1708 100644
-> > --- a/include/linux/sched/mm.h
-> > +++ b/include/linux/sched/mm.h
-> > @@ -201,6 +201,10 @@ unsigned long mm_get_unmapped_area_vmflags(struct =
-mm_struct *mm,
-> >                                            unsigned long flags,
-> >                                            vm_flags_t vm_flags);
-> >
-> > +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
-> > +                               unsigned long len, unsigned long pgoff,
-> > +                               unsigned long flags);
-> > +
-> >  unsigned long
-> >  generic_get_unmapped_area(struct file *filp, unsigned long addr,
-> >                           unsigned long len, unsigned long pgoff,
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index df9154b15ef9..e97eb8bf4889 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -620,6 +620,27 @@ unsigned long vm_unmapped_area(struct vm_unmapped_=
-area_info *info)
-> >         return addr;
-> >  }
-> >
-> > +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
-> > +                               unsigned long len, unsigned long pgoff,
-> > +                               unsigned long flags)
-> > +{
-> > +       struct mm_struct *mm =3D current->mm;
-> > +       struct vm_area_struct *vma, *prev;
-> > +       const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, f=
-lags);
-> > +
-> > +       if (!addr)
-> > +               return 0;
-> > +
-> > +       addr =3D PAGE_ALIGN(addr);
-> > +       vma =3D find_vma_prev(mm, addr, &prev);
-> > +       if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &&
-> > +           (!vma || addr + len <=3D vm_start_gap(vma)) &&
-> > +           (!prev || addr >=3D vm_end_gap(prev)))
-> > +               return addr;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  /* Get an address range which is currently unmapped.
-> >   * For shmat() with addr=3D0.
-> >   *
-> > @@ -637,7 +658,6 @@ generic_get_unmapped_area(struct file *filp, unsign=
-ed long addr,
-> >                           unsigned long flags, vm_flags_t vm_flags)
-> >  {
-> >         struct mm_struct *mm =3D current->mm;
-> > -       struct vm_area_struct *vma, *prev;
-> >         struct vm_unmapped_area_info info =3D {};
-> >         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, f=
-lags);
-> >
-> > @@ -647,14 +667,9 @@ generic_get_unmapped_area(struct file *filp, unsig=
-ned long addr,
-> >         if (flags & MAP_FIXED)
-> >                 return addr;
->
-> It seems you also can move the MAP_FIXED case into generic_mmap_hint(), r=
-ight?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I think that could be done too. we'll need a new name :) Let me take a
-look at it ...
+There are no board files using struct davinci_pll_platform_data anymore.
+The structure itself is currently used to store a single pointer. Let's
+remove the struct definition, the header and rework the driver to not
+require the syscon regmap to be stored in probe().
 
--- Kalesh
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/clk/davinci/pll.c                     | 33 +++----------------
+ include/linux/platform_data/clk-davinci-pll.h | 21 ------------
+ 2 files changed, 4 insertions(+), 50 deletions(-)
+ delete mode 100644 include/linux/platform_data/clk-davinci-pll.h
 
->
-> >
-> > -       if (addr) {
-> > -               addr =3D PAGE_ALIGN(addr);
-> > -               vma =3D find_vma_prev(mm, addr, &prev);
-> > -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr=
- &&
-> > -                   (!vma || addr + len <=3D vm_start_gap(vma)) &&
-> > -                   (!prev || addr >=3D vm_end_gap(prev)))
-> > -                       return addr;
-> > -       }
-> > +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
-> > +       if (addr)
-> > +               return addr;
-> >
-> >         info.length =3D len;
-> >         info.low_limit =3D mm->mmap_base;
-> > @@ -685,7 +700,6 @@ generic_get_unmapped_area_topdown(struct file *filp=
-, unsigned long addr,
-> >                                   unsigned long len, unsigned long pgof=
-f,
-> >                                   unsigned long flags, vm_flags_t vm_fl=
-ags)
-> >  {
-> > -       struct vm_area_struct *vma, *prev;
-> >         struct mm_struct *mm =3D current->mm;
-> >         struct vm_unmapped_area_info info =3D {};
-> >         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, f=
-lags);
-> > @@ -698,14 +712,9 @@ generic_get_unmapped_area_topdown(struct file *fil=
-p, unsigned long addr,
-> >                 return addr;
-> >
-> >         /* requesting a specific address */
-> > -       if (addr) {
-> > -               addr =3D PAGE_ALIGN(addr);
-> > -               vma =3D find_vma_prev(mm, addr, &prev);
-> > -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr=
- &&
-> > -                               (!vma || addr + len <=3D vm_start_gap(v=
-ma)) &&
-> > -                               (!prev || addr >=3D vm_end_gap(prev)))
-> > -                       return addr;
-> > -       }
-> > +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
-> > +       if (addr)
-> > +               return addr;
-> >
-> >         info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
-> >         info.length =3D len;
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
-> >
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 5bbbb3a66477..b284da602f8d 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -19,7 +19,6 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/notifier.h>
+ #include <linux/of.h>
+-#include <linux/platform_data/clk-davinci-pll.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+@@ -840,27 +839,6 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 	return 0;
+ }
+ 
+-static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
+-{
+-	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
+-
+-	/*
+-	 * Platform data is optional, so allocate a new struct if one was not
+-	 * provided. For device tree, this will always be the case.
+-	 */
+-	if (!pdata)
+-		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata)
+-		return NULL;
+-
+-	/* for device tree, we need to fill in the struct */
+-	if (dev->of_node)
+-		pdata->cfgchip =
+-			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+-
+-	return pdata;
+-}
+-
+ /* needed in early boot for clocksource/clockevent */
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
+ CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
+@@ -890,8 +868,8 @@ typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base,
+ static int davinci_pll_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct davinci_pll_platform_data *pdata;
+ 	davinci_pll_init pll_init = NULL;
++	struct regmap *cfgchip;
+ 	void __iomem *base;
+ 
+ 	pll_init = device_get_match_data(dev);
+@@ -903,17 +881,14 @@ static int davinci_pll_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	pdata = davinci_pll_get_pdata(dev);
+-	if (!pdata) {
+-		dev_err(dev, "missing platform data\n");
+-		return -EINVAL;
+-	}
++	if (dev->of_node)
++		cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+ 
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	return pll_init(dev, base, pdata->cfgchip);
++	return pll_init(dev, base, cfgchip);
+ }
+ 
+ static struct platform_driver davinci_pll_driver = {
+diff --git a/include/linux/platform_data/clk-davinci-pll.h b/include/linux/platform_data/clk-davinci-pll.h
+deleted file mode 100644
+index e55dab1d578b..000000000000
+--- a/include/linux/platform_data/clk-davinci-pll.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * PLL clock driver for TI Davinci SoCs
+- *
+- * Copyright (C) 2018 David Lechner <david@lechnology.com>
+- */
+-
+-#ifndef __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__
+-#define __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__
+-
+-#include <linux/regmap.h>
+-
+-/**
+- * davinci_pll_platform_data
+- * @cfgchip: CFGCHIP syscon regmap
+- */
+-struct davinci_pll_platform_data {
+-	struct regmap *cfgchip;
+-};
+-
+-#endif /* __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__ */
+-- 
+2.45.2
+
 
