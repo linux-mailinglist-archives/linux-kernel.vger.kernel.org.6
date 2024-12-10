@@ -1,118 +1,192 @@
-Return-Path: <linux-kernel+bounces-439412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F829EAEE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD439EAEEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 007B4165AA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2254716130E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CD52153D6;
-	Tue, 10 Dec 2024 10:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699CD2080C5;
+	Tue, 10 Dec 2024 10:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RlSpZiIm"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hzZQix6Z"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D44210F6E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E609623DE8F;
+	Tue, 10 Dec 2024 10:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733828292; cv=none; b=tUjzAhglVxWAYmv7UArlyNc9XU+1pF1O8/EtnVInAxCxxj8FWJRtLqJp6LO/U1eVWRY1dMrNU59CokHxfApWAxpnCrTX8/U6G/7CU6xzSMzD8VvA+/2j4Ke616stjtx178umYhH80wSgD/KjRS50TA7Fkm0cfJvIkDnGdP39R6o=
+	t=1733828388; cv=none; b=Abh4TkojCJlellIDPb1ucPfat2mF53WXsSbnW8q35guaK9RH6BxvMUE2hmHloAysMiK8acCnEfam60tOX/n1NGcyXwbRpjUw55Q6f5+2G881H4NFMLNy0hu6Odn56KptX3x/rCN8xYkegNXt98OMAGu+1e97g2uEDLzwYZJLkfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733828292; c=relaxed/simple;
-	bh=fIg3YEalL2M2g2gfhkuZNb95cmhl/Se4u4uhkVU9dPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxx5t6yNHZN8ym0TSBns+31NJ0fcGbHOM8cNonOe80wXvlRjdKGVxZOr47Dk+vCozpg2f6VvMIXsehXADv79AapUyWbXZFDlXxhz4+mocJYUWFgC/uG8HQrRLUiEWoWF+6NZM/7bh38KigczFw6DnXycJUVBTi6nfnLCip1IUZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RlSpZiIm; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30229d5b21cso13317201fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:58:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733828288; x=1734433088; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5ZSfy2xDxDQ8s69afPzdWrhJXHaV4xhzcq4XiywxXg=;
-        b=RlSpZiImkI7a1VsougUJ3dWooDzkka8kwhEl6RylBw0/GNV5hug03My0P0m1zRPIig
-         KDeOExvNa5nwu09WW+SUqzxkDKD1a0qOnFamr5eKmYir5nHaYHxT/FXMMtX1E1jjzpae
-         wb0rRDCg8PaWKvc+uD0MgfIAMR8YZr1VbHBotIr6hUF6+pXSOx51BQPrU8udSMtdY5mi
-         iY9WFImtzNKOzhgAP2EzUBBKP9wP1SHn3Iph9674jf25WmqovFBi1qA8+sxIG5OdyZhJ
-         vq+Z7UljA4nqUZA7Kseq8pacP+jdyovR2oNJvKd5cQCAgYhp/VZKTl9eWsCdjGukoj6j
-         31sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733828288; x=1734433088;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5ZSfy2xDxDQ8s69afPzdWrhJXHaV4xhzcq4XiywxXg=;
-        b=BYiyG70E8hvPPDfJMFtOZ9Zy/E9310cgAgPly3v0K9+Cu9AgQodS2iVBXREI7BWJYS
-         EnzCBRWeA4uZ++WGSs46jsRyog5+7gxzInSI6UyrTR+dKRf5g8u4kJwvK/H4VsdBQnO8
-         dokDRu7PC7LdLe7oudOGfNGjDn7epGk+WLgmcL1hmzn/Lv0C0mmo87dG7u6tpxVy0vij
-         2SNB7cpZpkZoUIbXjJ7bEZDuHfhGsEDwIgDl+bNswT8tqjcX22zT45b1R/iuBSHyoFyo
-         XeWJnDj5jAhHN+Yv+yIIbbdvwk/DUgt0PyVeT4o1gquwjGVp1ATNZVOElcYAgyxfQCgs
-         QDAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUghWRJ+Hr+uSRJSnBTmmzuxoNzrTU+xfLiqex/5hthBy6r5RKK8QyV1oaIUTWduKIlzl33KDH0tQoi6Ew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIfsTORhEIbOcv9qyUp/UlD68BJMuqFai4DBmAVvCoIQIroiiQ
-	dWHAm6doLPq61hjmDXoxE5HpHhbsypiXORL9poN/YskuhsSmGsbL1zQ3ZhDJF2A=
-X-Gm-Gg: ASbGncuK0cl+m1q54mfKAb1bgMQ1E9xRJ8kawtAFKSBt6WBJU48Cc3YKB1mXW8zdxWo
-	O/mQtlYf5sdI9PHr+SLGosR4YxGGOk74AAyjTDcEpJFeJU22IIe7J2VsivYP5H7KACvyfjaNelU
-	yXOoyfT7wc4Yn4/9W4+RtBDTRzHlQXkrNXxn28lp2vbkbozoQ6tb8s5X5480F5AhqLn3NMC++4s
-	T8y2tL20imIIKCxwop9jG+MfM+9wVS7IHzrq83s39VzRt5znMS+JRk5w34qYQZIVfwmnyuY970J
-	S8PLZ+RqRTEJ6JKaSufLkJq2M7FGu4+K6w==
-X-Google-Smtp-Source: AGHT+IE7+ryAMqJtCxAuJvc/qOGq5Ck0ZMSjTv00rqBtwofn1LyRnlQNhWyrc/EQiBZpPjSjCdJE+Q==
-X-Received: by 2002:a05:6512:238f:b0:540:21d6:d681 with SMTP id 2adb3069b0e04-540240c0f47mr1559055e87.19.1733828287631;
-        Tue, 10 Dec 2024 02:58:07 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3855a6b8sm1232351e87.69.2024.12.10.02.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 02:58:06 -0800 (PST)
-Date: Tue, 10 Dec 2024 12:58:04 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Fange Zhang <quic_fangez@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Liu Li <quic_lliu6@quicinc.com>, 
-	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 7/9] drm/msm/dsi: Add support for SM6150
-Message-ID: <3cr32yulhhnruhi5cf4agxxottt4ofnwbnwjqv6ib36ebipswd@qhbuhoejhjld>
-References: <20241210-add-display-support-for-qcs615-platform-v4-0-2d875a67602d@quicinc.com>
- <20241210-add-display-support-for-qcs615-platform-v4-7-2d875a67602d@quicinc.com>
+	s=arc-20240116; t=1733828388; c=relaxed/simple;
+	bh=OGhR91/Td+KLEtKRyb8Sx0ep0UWGrVXaTHWcbPGgqZ0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NcgxgFCSiVzUmXiZ46PJlgSYGDPd57aQM++vuyC0mVq9Z48UPIC6hDMAnf0gVLmWk5YKTtM0UJ8WG+mdjri4QogZDtvd9IA0neKMxgL+6vSbiBfCr4ToMI/opq/mhywmXjJr6srSt0JAWI31aikCMglsSfjK91vCVBR0b2ss5iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hzZQix6Z; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA67gMM032248;
+	Tue, 10 Dec 2024 11:59:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	YsJfbxvRKPhkYD3Gu1Y0Uqfw2QFPw3+5Ki1aYCTWF7o=; b=hzZQix6ZzR2cRc2a
+	Yxh+Fw5/aUCb5N7ysP3gws6H++zlJottB4m/MNK7beWQq2IRun6E0FrNjprKn6nB
+	lzGpYOrentJRtU2XTumE90hurYDu/nE2JBwliyeuS5GMv7JMQaYLEptCutsbzivT
+	Vv/ep4xEPWcsQGeGDoelVfoNNzd5O9l8mZUmBaBiidBZIX1sfVyHs559mn54NLCh
+	7tR04ROk3yJOHnAs1YjK8x6SkgnOROe8F6VX1x7xxR6OEJTJOeikxbCKYkLAX3BY
+	oz4//BKehs7gjksYcxOUUE87St+CVjQUBuEr4WcUjseu+CjqcOh3TUI/1tL6ZBKO
+	VvO8uA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43cek1v78g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:59:36 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C79104004F;
+	Tue, 10 Dec 2024 11:58:37 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 500382444A0;
+	Tue, 10 Dec 2024 11:58:06 +0100 (CET)
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Dec
+ 2024 11:58:06 +0100
+Received: from SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0]) by
+ SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0%13]) with mapi id
+ 15.01.2507.037; Tue, 10 Dec 2024 11:58:06 +0100
+From: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] firmware: arm_scmi: get only min/max clock rates
+Thread-Topic: [PATCH v2 1/2] firmware: arm_scmi: get only min/max clock rates
+Thread-Index: AQHbRapDJ7ccjxlxv0mHV7BZdhy65bLdr4SAgAA7caGAAEGOAIABK5nx
+Date: Tue, 10 Dec 2024 10:58:05 +0000
+Message-ID: <80ea462fbe044781bb4b1e7a80ab8b80@foss.st.com>
+References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
+ <20241203173908.3148794-2-etienne.carriere@foss.st.com>
+ <Z1bHgf_4qqZgSnDt@bogus>
+ <22ff786d1e034169be21ef7dc32c4a3a@foss.st.com>,<Z1cwTWQWamv3lywB@pluto>
+In-Reply-To: <Z1cwTWQWamv3lywB@pluto>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210-add-display-support-for-qcs615-platform-v4-7-2d875a67602d@quicinc.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, Dec 10, 2024 at 02:53:58PM +0800, Fange Zhang wrote:
-> From: Li Liu <quic_lliu6@quicinc.com>
-> 
-> Add support for DSI 2.3.1 (block used on SM6150).
-> 
-> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/dsi/dsi_cfg.c | 2 ++
->  drivers/gpu/drm/msm/dsi/dsi_cfg.h | 1 +
->  2 files changed, 3 insertions(+)
-> 
+On Monday, December 9, 2024, Cristian Marussi wrote:
+> On Mon, Dec 09, 2024 at 01:48:48PM +0000, Etienne CARRIERE - foss wrote:
+> > On Monday, December 9, 2024, Sudeep Holla wrote:
+> > > On Tue, Dec 03, 2024 at 06:39:07PM +0100, Etienne Carriere wrote:
+> > > > Remove limitation of 16 clock rates max for discrete clock rates
+> > > > description when the SCMI firmware supports SCMI Clock protocol v2.=
+0
+> > > > or later.
+> > > >
+> > > > Driver clk-scmi.c is only interested in the min and max clock rates=
+.
+> > > > Get these by querying the first and last discrete rates with SCMI
+> > > > clock protocol message ID CLOCK_DESCRIBE_RATES since the SCMI
+> > > > specification v2.0 and later states that rates enumerated by this
+> > > > command are to be enumerated in "numeric ascending order" [1].
+> > > >
+> > > > Preserve the implementation that queries all discrete rates (16 rat=
+es
+> > > > max) to support SCMI firmware built on SCMI specification v1.0 [2]
+> > > > where SCMI Clock protocol v1.0 does not explicitly require rates
+> > > > described with CLOCK_DESCRIBE_RATES to be in ascending order.
+> > > >
+> > > > Link: https://developer.arm.com/documentation/den0056 [1]
+> > > > Link: https://developer.arm.com/documentation/den0056/a [2]
+> > > > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
+> > > > ---
+>=20
+> Hi,
+>=20
+> > >
+> > > [...]
+> > >
+> > > > +
+> > > > +static int scmi_clock_get_rates_bound(const struct scmi_protocol_h=
+andle *ph,
+> > > > +                                   u32 clk_id, struct scmi_clock_i=
+nfo *clk)
+> > > > +{
+> > >
+> > > This new function seem to have unwraped the scmi_iterator_ops(namely
+> > > prepare_message, update_state and process_response instead of reusing=
+ them.
+> > > Can you please explain why it wasn't possible to reuse them ?
+> >
+> > Since we're interested here only in min and max rates, let's query the
+> > first and last rates only. This can save a bit of useless transactions =
+between
+> > agent and firmware in case there are many clocks with somewhat large
+> > the discrete rate lists.
+> >
+> > I though using the iterator for this specific case would add a bit more
+> > complexity: it's expected to iterate (st->desc_index incremented from t=
+he
+> > common scmi_iterator_run() function) whereas here I propose to send
+> > only 2 messages.
+>=20
+> Yes, indeed the core iterator helpers are meant to issue a 'full scan'
+> retrievieng all the resources that are returned while handling in a
+> common way the underlying machinery common to all messages that, like
+> DESCRIBE_RATES, could possibly return their results in chunks as a
+> multi-part reply...
+>=20
+> ...having said that I can certainly extend the iterators to be configurab=
+le
+> enough to fit this new usecase and retrieve only the desired part of the
+> 'scan' so that can be used for this kind of max/min query or for the
+> bisection case.
+>=20
+> I would avoid to re-introduce ad-hoc code to handle these new usecases
+> that do not fit into the existing iterator logic, since iterators
+> were introduced to remove duplication and unify under common
+> methods...and this new iterator scenario seems to me that has already 2
+> usecases and certainly more protocol could want to perform similar 'lazy
+> partial queries' in the future, so I'd prefer to address this in a more
+> general way upfront if possible...I will think about it and post somethin=
+g
+> next week in the form of some new iterator extensions, if it's fine for y=
+ou.
+>=20
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi Cristian,
+Thanks for looking at this. Any help here is very welcome.
 
--- 
-With best wishes
-Dmitry
+BR,
+Etienne
+
+
+> Thanks,
+> Cristian
+>=20
 
