@@ -1,103 +1,81 @@
-Return-Path: <linux-kernel+bounces-440300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCA59EBB75
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:03:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED589EBB78
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:04:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3542816838D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:03:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0CD285EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC78C22FE01;
-	Tue, 10 Dec 2024 21:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624DC230256;
+	Tue, 10 Dec 2024 21:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSSYuLUe"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NEl7kcqO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7208B22FAF9;
-	Tue, 10 Dec 2024 21:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624F322FAE5;
+	Tue, 10 Dec 2024 21:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733864596; cv=none; b=EeNFLA29DtpxjHEIUIQD0SFCaJZYKICXUlsffGNZ8ESymghVw5ugJQVAgyafW5tsF747afqLv22S+DU6JalGTnVdgB6JMDltAbFbJB5RKHRysyvgYzUhgARgQ3TMrIR6JgTrMJ/hg1o7qC8bakPUuiXEo5LPY82UKu5aPiM/RZk=
+	t=1733864643; cv=none; b=UzRhiw/3GCnqTkQPkP/UiN3TrmRebb//hIQR95KwLi7mTjohaG1c63S9LIJQ7Fj5ucUDChMPF9a7mD1pqC0/v8egBZ4zrcMlYTm15oqVez+P7Z5Y2OiyKUUq72Tv8OWjattWTITN8sPipepRnwQDOTC95m/iCWe+GzEpwHq30no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733864596; c=relaxed/simple;
-	bh=df4BzORNegqiD0+TekPPqkkG3Yc2iDOz+Iuw4KrksTI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bp6gSMYSjmooOfsme6GWifwKHqOJ7d6khNi6ycSFCHMsl+A+pkKVJ/S3HlS1j/NxTAcgKjzlnJc2jPkF6xg7sEqe2niciQSvrCJYvm9LX9IZTR2gGjiwrhimz18LVdPc+ZhiZtm2ftps4zoySm265PtOcf4hWp03R7+yRyjJVRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSSYuLUe; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434f30ba149so19823595e9.0;
-        Tue, 10 Dec 2024 13:03:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733864593; x=1734469393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nm2Mjco+od8VJPNesv7f8taGbBUYsjl37SP0Hd6X4WI=;
-        b=NSSYuLUek7Ldyb3gHNIdmhVCpXG4Y8DKKaf+euS1a0qExym3sOXCKcOFIIl7XvZkkL
-         3KqlIivqxiLztUB2+8V7NFGoAdDl5m6cJRWdVLhBFJClNIIpmDMpWdwjOjIJaZjBOqCD
-         hK4nMq2ZuHKysmiX+FqdvL/6HkPdJdgXHzeJxT8PXAiPBhXdTewgAQK9RAo/+uGii/7j
-         k/xnmDxXl/Fj1VDQjSDN3q82QmE+m1QDeP0cw5XRIBTNIvHRNiV8Z+7M9QUeMRQY7V+j
-         32NojJMWL8SObAPpz4FUHV5CCPthabKEC67q3cu/4fv9T17zb31rGHdP4Le1jydBnG6R
-         w9gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733864593; x=1734469393;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nm2Mjco+od8VJPNesv7f8taGbBUYsjl37SP0Hd6X4WI=;
-        b=MJPqu8G//Qos7vDOgtgg0MBexgZN9nBtbe3pahZzK/ruyEo3Ibxj+T+9NxqLqBiMmb
-         oKqKQ/F9F+0atSn0i1yQaiLgFJU8oe7GEyvgMqL+ptv2a2+aUae0WKTGFDwBtasipqaO
-         /lxLjsps9CzmhxibZSDaXp+EAvl11cFRTLS0ySMFkwkxom2Wlf6d59HZYZh0B/xfWTX/
-         yTWIow7RuJSnIPgrmDP5vigbnmQ0vUFmqNq1MpYphCuyYPpMShUm1DGg+TlNO7CPSA9P
-         mz4KdehZBi8VTUhEv/58mOM5P1oEWDz9Rs73r/mxs0EByb3dQOixUY96VSnert9VY4nq
-         dVGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVITBnU0IHjG4kIUX377JoaC883JmikITanyB1Jw1GPa6NgBebHPYz86+HjmFWJEWO4P11Q3Mxo6qLxQvep@vger.kernel.org, AJvYcCWUHKLmc+MkHaZVc6UgMaO9dCL5b0HH/hYYVAcLnd3aufjCadhuyco67kQk1T4ZlENnrtcGEDbaHdTd@vger.kernel.org, AJvYcCXpF3eCToFVk9h5tzmkeCNuD84oMQMOHXP39eluhC9eDXJArxOSXUMf2CnmXoxkBBRA2aiF1vox@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk1tJQGgbxx2HAsQmA4iJ11/gJBoWbPej5pTRETHZ+hFEYkD6b
-	IuePw8lDUX4UrqMJ/l7lX4ZPGoxeX05pjmnJIgdHDNtBlsCi9p0b
-X-Gm-Gg: ASbGnctnC3bGaQAePl784CJ9aLH/9sKylH8hF9dyHEt3hNC6u9GkXfm6haDxtU7TY5S
-	QwFeb2+X6ZGtvIYIH/+omyMhshTQNG536owKuy0tq9xfHjFmGSfsoG8vKcbkIa9O8PG+siFc8N3
-	bPloX9Ayl5F+UvR1plf/ni2eNueJaJUr8iw1rtLGT1vRJxu0bdR8Fvybtf+59z4K4qecsyX8v0y
-	QCzaT7UgCpU/i08hQnkMsXqQ+s+8lzZayRNAl7w+Yp4Fx/uPJAl3w0zmaSM5T57TgwYHA5nqsqQ
-	U+pFhiElow==
-X-Google-Smtp-Source: AGHT+IEXtT2UlScHLsjoILK+fcmMLa5fdqey9hRCAZXHg3/61m4/0ewYioRKLrqpj0zjb4ItoNJGrg==
-X-Received: by 2002:a05:600c:358b:b0:434:f7e3:bfbd with SMTP id 5b1f17b1804b1-4361c3efb43mr2036915e9.23.1733864592696;
-        Tue, 10 Dec 2024 13:03:12 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621fbbe15sm16620197f8f.92.2024.12.10.13.03.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 13:03:12 -0800 (PST)
-Message-ID: <6758ac90.df0a0220.20ca7f.df40@mx.google.com>
-X-Google-Original-Message-ID: <Z1isjbV2ypR2T2Bh@Ansuel-XPS.>
-Date: Tue, 10 Dec 2024 22:03:09 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v11 4/9] dt-bindings: mfd: Document support for
- Airoha AN8855 Switch SoC
-References: <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-5-ansuelsmth@gmail.com>
- <20241209134459.27110-5-ansuelsmth@gmail.com>
- <20241210205544.g6y7vcyekyfebkoo@skbuf>
+	s=arc-20240116; t=1733864643; c=relaxed/simple;
+	bh=HW6gUWGZLgC6Eh05ba6OQszfv3GouJ3PbIM+/rVXuQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJ0qFfh5SoBfJPrMhDB/2WZezWzquekTDyCAj9fW2hvzz6Pi5V/LsnElvyFk8m96f0Myf7EUtWAtCkq1/xXQCXj0ZH4mkPWrLZhNzX2OepKgKl9xLDTWgc//Abz2dDLvvKwA/Kp+hQVq08meiMWSapdg2pFK2c74mMjKWpGG78w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NEl7kcqO; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733864643; x=1765400643;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HW6gUWGZLgC6Eh05ba6OQszfv3GouJ3PbIM+/rVXuQ0=;
+  b=NEl7kcqOSCcsd/YrQ/K6D15M0/1Z06LKDbAzK4nIqlIgN0R8NZIUzDKm
+   cVIwx0ACLdeIFPvLAxoJ2lOK7wTUrL7lUaXNjwD8GBkjaJv5gKOxpTNAp
+   eblnVjqHUqMbauLsHlGIhbG3IrMpMr+XyTnVK4vG6MCpDvrfryok1/qk9
+   m/Ksl5P+5rk2Fl7jgr5dGJUnjCBh90I25+5zn9y3VN50VabV5oG3bn2Ht
+   TKtMInWFej+ZCnNaHV2MQSSMkxS+VSmeJPz1LHxq1NZOaGHRZQRJZ5l9c
+   nRiSj1QLa+qm65Qy0fBcNHzIvQ6D0dl2RW6OWPGgkdqyz7fMOsjO8n4sZ
+   A==;
+X-CSE-ConnectionGUID: 7jB/RBHQT1e2N9/EL5imQw==
+X-CSE-MsgGUID: NuU5Mx3pRxyMClA1bcFgWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="33956437"
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="33956437"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 13:04:02 -0800
+X-CSE-ConnectionGUID: oYeu5EDDSU+CTCSt0fTasw==
+X-CSE-MsgGUID: JD/8Z31pRGaouGOXvTNVjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="126438011"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 13:03:59 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id CE59F11F81D;
+	Tue, 10 Dec 2024 23:03:56 +0200 (EET)
+Date: Tue, 10 Dec 2024 21:03:56 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 1/7] media: ipu-bridge: Fix warning when !ACPI
+Message-ID: <Z1isvGLLwr7jmW5k@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,63 +84,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210205544.g6y7vcyekyfebkoo@skbuf>
+In-Reply-To: <20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org>
 
-On Tue, Dec 10, 2024 at 10:55:44PM +0200, Vladimir Oltean wrote:
-> On Mon, Dec 09, 2024 at 02:44:21PM +0100, Christian Marangi wrote:
-> > +properties:
-> > +  compatible:
-> > +    const: airoha,an8855-mfd
+Hi Ricardo,
+
+On Tue, Dec 10, 2024 at 07:55:58PM +0000, Ricardo Ribalda wrote:
+> One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
+> throws the following smatch warning:
+> drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
 > 
-> After assisting dt-binding reviews in the past, I get the impression
-> that "mfd" in a compatible string name is not going to be accepted.
-> The bindings should be OS-independent, MFD is a Linux implementation.
-> In principle this could be just "airoha,an8855" for the entire SoC.
->
-
-Ok I will use an8855. The DSA switch has the suffix so it's not a
-problem being that generic.
-
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +
-> > +    mdio {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        mfd@1 {
+> Fix it by replacing the condition.
 > 
-> And the node name could be just "soc@1".
-> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-I tought there was a constraint with node name but this is not the case,
-will change to soc.
-
-> > +            compatible = "airoha,an8855-mfd";
-> > +            reg = <1>;
-> > +
-> > +            efuse {
-> ...
-> > +            };
-> > +
-> > +            ethernet-switch {
-> ...
-> > +            };
-> > +
-> > +            mdio {
-> ...
-> > +            };
-> > +        };
-> > +    };
-> 
-> I hope it's not mandatory to duplicate in the example also the bindings
-> of the children, especially since you link to their own schemas.
-
-I checked other example and some duplicate the example and some
-doesn't... My idea here is to try to add the most complete example
-possible. Especially to how to define efuse and how phy makes use of it.
+I've picked this to my tree and I'll take the last one, too, once the rest
+reaches the media tree.
 
 -- 
-	Ansuel
+Regards,
+
+Sakari Ailus
 
