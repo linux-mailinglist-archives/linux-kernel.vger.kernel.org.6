@@ -1,152 +1,122 @@
-Return-Path: <linux-kernel+bounces-439409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798FA9EAECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:57:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC6B9EAED9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:58:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3EA1188992C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C538188A71F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AD72153E2;
-	Tue, 10 Dec 2024 10:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02E22080F8;
+	Tue, 10 Dec 2024 10:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hc7oKrvn"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="n/dhuxDm"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7649210F5E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10472080E5;
+	Tue, 10 Dec 2024 10:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733828149; cv=none; b=fNhQoO1cBVvERIdbNiKLz+nxt3vl4GH42JPdLBoQjAE6VeM6gM4oCiU9qmQoYLRO3RKLA66rg50/+tyMZPZfuPMNwmGvJEBaH5fQrnvZYvuK12LJyAiQe1ps1GwCUnkW4KbTw+2iAdmWEarqMCjqymGb66UYpQoufXQyMdExSCw=
+	t=1733828258; cv=none; b=KwHxzvA3fJHr0rXB/mkRQlo2EisRh/u8lAg41CO8mJl+ehJIIFaGBbGHCfVIMn1Wa40CxbVZ19m+Jbqyqcqg6kMP8BoJwiqQ0768eLlIOVjbaJkdL55yFFIxaqFePtzoHiTBmk0n+HqMTN2hLVHnNcRtF0ySdE9+5SimN+WBIRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733828149; c=relaxed/simple;
-	bh=dfXHaZApg1kAp8ngob6EwNugQ82l0HdC7g+rjbDHgZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jqoIoLK9f+F54so1Gu3QPC60FC93x43NwEdR4QqwKD5whOJVNvyMO6/VX8glTenrheubK7rx6N3z73c1xraCgMU8BT80rd0ex2VRCpz+5mGB438uvkzAwNa64kiQ0K1j1s5fjaBsxmol49yFTLFBWa1SEPPVXonE0SoDH4FfRiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hc7oKrvn; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3862a921123so2942948f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:55:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733828146; x=1734432946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dfXHaZApg1kAp8ngob6EwNugQ82l0HdC7g+rjbDHgZQ=;
-        b=Hc7oKrvnBTfMx1RQpq+fCnTOZlg0i9ATA2CqHmUpeNxhieXk7wOk9Gw3Ri3lgcrH+s
-         /1wVD0iUIYF9oBI7ILjegYUwaWkPvNYqvZFCQFrudjwxLo2botBNKIB+XBcwzjO8jnwl
-         2L9YRaN1+t7i/l6kZQExjq8S5kMyxGn+GDnsrJmReDJpkaico/uZvHDhkfV+F0rlfJOI
-         cKSHFp1QDOyYi1VSjIxzR0b536+8Gh5K9Ug8n3mwzid0pfsouG3yKTdBSQjywmlyOgt2
-         eE+RyOoMy/4VBvQIsU9HlfDwobRVFBlhw3qeRoujWLWo9mECA2ygXCyAWtjDT0ht1AeW
-         iULw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733828146; x=1734432946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dfXHaZApg1kAp8ngob6EwNugQ82l0HdC7g+rjbDHgZQ=;
-        b=inhq8lNzrMvEoV+DNzwoLI2enoqo2IzaQsRDhIhy98Dleo7gA83c1SV3meGjAnI8UC
-         jPueAM02t1FUclUJ2tBou8AzeJp3DbRHD9OTTvWUuCtI5Vy+yBHiUsH+SdoAbQawCZkx
-         17SdIm11krsQFIFw+N8WUQYVmDR1sHUAm6hGXktHH9N6SpsiP/mOYeEPFOSMoyEB1vZX
-         oLzJEUxmLQZFDua3dhS2AALkMZZQF3n9gf+7h3iZ0cF0ILOWmLi3XeGq8Lsvnl9AEl2B
-         8/MGNZjwikYzEhQA5MKExkKy/VqX3vFTSvwN3JyqxtOKLXJF/+J3h3uN/yPa583RjpTa
-         ni4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWUOpVmzXOi0ZZe1vuRngQHKcxEl7ExZL9Vle7cf89L5JPpptqJfYis/9Npr+X9x/iWSyf28foaZMIIeBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyONFzPz1fCPEKNZ9/Z6CWVAtnogZsDx7N3PdUgDeHisBGybbEi
-	NePSd8s/MgeQCW5QLWWP9xo1eLR0IKIVqqip5iuv3wFMOtMhpFJPR0raZ+NgWjKz5Gw9j3ZDfBa
-	3Jhs4nt1Cl8nv0LN+OmaDJeNRYpRnoW9Lox60
-X-Gm-Gg: ASbGncvxR38QZT6udeW3Ap/oaEgrBNKcKK4lUtAt2xJ0Bm6IyQiPnCv9+QicxN+XLYW
-	ik/BonEdBC5xH3M5UwdTWyI+mPLvRKdZ/BF4u1Z8MZd31D8fmaYVbXRmw/2XBjoumYQ==
-X-Google-Smtp-Source: AGHT+IG0Y9INJmMgnj5Aq1qmzA2XI8kCQB+a+xINu5oEbG4VnKvTmmuaC9cO2DZywjG71233iorWGqYcrsutxnOfz+M=
-X-Received: by 2002:a5d:64c6:0:b0:386:3213:5b9b with SMTP id
- ffacd0b85a97d-38632136068mr10993724f8f.43.1733828145989; Tue, 10 Dec 2024
- 02:55:45 -0800 (PST)
+	s=arc-20240116; t=1733828258; c=relaxed/simple;
+	bh=j1MmgnUHnOiy0oh0HNDkid08LWfd7ytR58QtPYP7wwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M84nkRjmqJ3kXBRMYV3jjRpy7Fa4K8wpdrgBWOKs+12IMzeOYHadzZ3aRxp95w4Bj54397eJCpo3X1iYw2W7kDGkSpUTxucwSne0IJmxHcf/zRx/qKfhkzG+znv8Hrc2cBFTPKhmC584wOXLXvYZZWdBqHDi80O/bk+Q6ptRMuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=n/dhuxDm; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733828252; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=za3DqWLC997CzA35yUW0weA03pexBgrTU4NPXoJrrBU=;
+	b=n/dhuxDmrndTO6007L4nIXf9fOB7b5oZPXelZCnnP/ucIW0mxlyIa+KQFFhT44OvltvZhKdEYXvcXR1ZpweuM2wnvWzYPcRJW0yzIIzoT53+Zc86G51AgnRLOAEd05RHRovwm5WNsPfpkMOeuQTxT9orWAK1D2Yk+DLF3VFdQGM=
+Received: from 30.221.101.48(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WLEr7oq_1733828250 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 10 Dec 2024 18:57:31 +0800
+Message-ID: <f9609fe8-f8c2-4280-acc2-515485adfc1f@linux.alibaba.com>
+Date: Tue, 10 Dec 2024 18:57:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205141533.111830-1-dakr@kernel.org> <20241205141533.111830-9-dakr@kernel.org>
- <CAH5fLgh6qgQ=SBn17biSRbqO8pNtSEq=5fDY3iuGzbuf2Aqjeg@mail.gmail.com> <Z1bKA5efDYxd8sTC@pollux.localdomain>
-In-Reply-To: <Z1bKA5efDYxd8sTC@pollux.localdomain>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 10 Dec 2024 11:55:33 +0100
-Message-ID: <CAH5fLgixvBWSf-3WDRj=Mxtn4ArQLqdKqMF0aSxyC6xVNPfTFQ@mail.gmail.com>
-Subject: Re: [PATCH v4 08/13] rust: pci: add basic PCI device / driver abstractions
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 2/2] net/smc: support ipv4 mapped ipv6 addr
+ client for smc-r v2
+To: Wenjia Zhang <wenjia@linux.ibm.com>, pasic@linux.ibm.com,
+ jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dust Li <dust.li@linux.alibaba.com>
+References: <20241209130649.34591-1-guangguan.wang@linux.alibaba.com>
+ <20241209130649.34591-3-guangguan.wang@linux.alibaba.com>
+ <1fc33d2e-83c1-4651-b761-27188d22fba0@linux.ibm.com>
+Content-Language: en-US
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <1fc33d2e-83c1-4651-b761-27188d22fba0@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 9, 2024 at 11:44=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Fri, Dec 06, 2024 at 03:01:18PM +0100, Alice Ryhl wrote:
-> > On Thu, Dec 5, 2024 at 3:16=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
-> > >
-> > > Implement the basic PCI abstractions required to write a basic PCI
-> > > driver. This includes the following data structures:
-> > >
-> > > The `pci::Driver` trait represents the interface to the driver and
-> > > provides `pci::Driver::probe` for the driver to implement.
-> > >
-> > > The `pci::Device` abstraction represents a `struct pci_dev` and provi=
-des
-> > > abstractions for common functions, such as `pci::Device::set_master`.
-> > >
-> > > In order to provide the PCI specific parts to a generic
-> > > `driver::Registration` the `driver::RegistrationOps` trait is impleme=
-nted
-> > > by `pci::Adapter`.
-> > >
-> > > `pci::DeviceId` implements PCI device IDs based on the generic
-> > > `device_id::RawDevceId` abstraction.
-> > >
-> > > Co-developed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> > > Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> >
-> > > +/// The PCI device representation.
-> > > +///
-> > > +/// A PCI device is based on an always reference counted `device:Dev=
-ice` instance. Cloning a PCI
-> > > +/// device, hence, also increments the base device' reference count.
-> > > +#[derive(Clone)]
-> > > +pub struct Device(ARef<device::Device>);
-> >
-> > It seems more natural for this to be a wrapper around
-> > `Opaque<bindings::pci_dev>`. Then you can have both &Device and
-> > ARef<Device> depending on whether you want to hold a refcount or not.
->
-> Yeah, but then every bus device has to re-implement the refcount dance we
-> already have in `device::Device` for the underlying base `struct device`.
->
-> I forgot to mention this in my previous reply to Boqun, but we even docum=
-ented
-> it this way in `device::Device` [1].
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/rust/kernel/device.rs#n28
 
-We could perhaps write a derive macro for AlwaysRefCounted that
-delegates to the inner type? That way, we can have the best of both
-worlds.
 
-Alice
+On 2024/12/9 22:10, Wenjia Zhang wrote:
+> 
+> 
+> On 09.12.24 14:06, Guangguan Wang wrote:
+>> AF_INET6 is not supported for smc-r v2 client before, even if the
+>> ipv6 addr is ipv4 mapped. Thus, when using AF_INET6, smc-r connection
+>> will fallback to tcp, especially for java applications running smc-r.
+>> This patch support ipv4 mapped ipv6 addr client for smc-r v2. Clients
+>> using real global ipv6 addr is still not supported yet.
+>>
+>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+>> Reviewed-by: Wen Gu <guwen@linux.alibaba.com>
+>> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+>> Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+>> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
+>> ---
+>>   net/smc/af_smc.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+>> index 9d76e902fd77..c3f9c0457418 100644
+>> --- a/net/smc/af_smc.c
+>> +++ b/net/smc/af_smc.c
+>> @@ -1116,7 +1116,10 @@ static int smc_find_proposal_devices(struct smc_sock *smc,
+>>       ini->check_smcrv2 = true;
+>>       ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
+>>       if (!(ini->smcr_version & SMC_V2) ||
+>> -        smc->clcsock->sk->sk_family != AF_INET ||
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +        (smc->clcsock->sk->sk_family == AF_INET6 &&
+>> +         !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
+>> +#endif
+>>           !smc_clc_ueid_count() ||
+>>           smc_find_rdma_device(smc, ini))
+>>           ini->smcr_version &= ~SMC_V2;
+> 
+> @Guangguan, I think Halil's point is valid, and we need to verify if checking on saddr is sufficient before this patch is applied. i.e. what about one peer with ipv4 mapped ipv6 communicates with another peer with a real ipv6 address? Is it possible? If yes, would SMCRv2 be used? I still haven't thought much on this yet, but it is worth to verify. Maybe you already have the answer?
+
+Hi, Wenjia
+
+I have replied the answer to the thread of v2 patch(https://lore.kernel.org/netdev/58075d86-b43a-4d58-bf64-c29418f99143@linux.alibaba.com/)
+
+If there are still any doubts or any other points to clarification, please let me know.
+
+Thanks,
+Guangguan Wang
+
+> 
+> @Jakub, could you please give us some more time to verify the issue mentioned above?
+> 
+> Thanks,
+> Wenjia
 
