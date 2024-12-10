@@ -1,193 +1,111 @@
-Return-Path: <linux-kernel+bounces-440443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1551E9EBDF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:43:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EB69EBDFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:44:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00716168764
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7F8284075
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053691F191E;
-	Tue, 10 Dec 2024 22:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69FF1F1905;
+	Tue, 10 Dec 2024 22:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JiZ4Ne6T"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0KXdhbb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA7C1EE7BE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B0B2451C7;
+	Tue, 10 Dec 2024 22:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733870608; cv=none; b=e7HpzqQf6+/XYNhOKsxgse0Jwy6CTQhwvvGZeFNkKx1r09YpObvKnBRBeLvse9s9fSsfZ1XNpmUqUnj69H8OFQhar0mfOfeNMEoNUFqIT5mglYw5zBnSz3UXA5SD6Fdr2gZbYjEeYJECuwzUYiP98/EhnfHONv/pnJdQdG8DW1I=
+	t=1733870662; cv=none; b=pveLuWutPUGe7dxukpATLIXseQwrhtUsQgWA6c9lFKzVM5KlpSesuYYMoTw9dCfJla93E8VGDyll8HtIpv00dQ0boZx+jVeQcyam4upLyTN/pgl0klJvmKhlmgVEgpfW6dRUEkOX8YP+W6Q1rTge/kmpE+tp2ilwo5B+JFANVnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733870608; c=relaxed/simple;
-	bh=3Eq7AMhO7ZTya8w6ZdwS9S7NprMbQ+yUU2/rRO1Y3Pg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ecUXY+midsSfL7ZjhLT3a9DEZhNCO+BsmftdsVdZtRDUKuo8FZ1lIH/muFfBZgIA2eB3dsuCATqNQyEegDS2MApQ22MUqQw6UEKtIx5ie8xnoQxzjhydN16SeR9LlFJ+kijzBI3QzqIFuhK9XY0iVE0cPaLKhwdQ12QI3/TFUEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JiZ4Ne6T; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2efa0eb9cfeso95610a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:43:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733870606; x=1734475406; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h3X5Qr+8k9X+2hvuHngUho46v83TFcRfFs+gwv7G7uE=;
-        b=JiZ4Ne6TNLrM/aE31ncsSx08z+6zlNM0u+GUEJ71MweMp3c2u2mE9nY5ru2oBsCyn6
-         h+6Q7iR1ixODlAj9RbL1kemHjd3QSRRpmbjZHMXOcBGz/lzlxyuQm3Pa1zjwtu2zP8EB
-         nauvhY1MO3xyXeTT38NNiSV5Gpp55SzAexANS72DOzE97EBkTzJ2iTb2Vbkmr0Q5W6J1
-         +cUjatPAmC+LXQRhVRkkOlZ8zTKKlNlfcfaieg54YQSqdapDBtZTvrG3CgXjxJ0Rp8Ay
-         Uht4Po4lF46eJrRHtTJN7Tol7JqMtjQwUTlZVrS0iEwlghRemZ0Uuvsw/qv80TO1xnRw
-         17Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733870606; x=1734475406;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h3X5Qr+8k9X+2hvuHngUho46v83TFcRfFs+gwv7G7uE=;
-        b=ZZI1p6bVfMYTKA0dtbfQU5ahqWamIdUQ+AphNB/RmxSbvRqGK94BY6SJ/KtulUcJke
-         Ji8KX+Jbtw1eDbvbshTuLnEso00fh+o3vrc27taxOoNphLr7EB258+G2MQFZTGBeeB6X
-         7xYXqXznw2wxZNdZmOinqpfGMdtv+S/O03eYKl37KBrrMrPSo0UgRm7cDEPHlJO7Cq+r
-         F0dGR0at3HMnDANsmL2LW8PDhjRWIrRoZLcsglnY70vQV2T7GcxhUxdygAEx8HWq4too
-         oeRdIqH7DyF7iaqRGRDHqYExVVqYCV4dzm94alIHl3YezGjWMtYVSF9/gtoaGIpFZdMn
-         ZRUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUodzHhYS03GVE5cle/ljuT5K5sF33jT0nSLLYaMNdj2aDYh1b5fsx15ltBhz/WvKt6kH3KQ+Pv0czYetI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp5YVLGvyHRHKXjf2eIl/4oJuC5X9oaDK5f6nA4deFd6bxXFoF
-	v5HD/yJ7khCrGit12u6JTITOFVEZEZPHCvGEqqtr7wJ/qU6CPY0+ETyoyUDOtb6q6NmB+sQBBMP
-	wyw==
-X-Google-Smtp-Source: AGHT+IHYFqYGkifAALeF4QNpnm5GdQyLqJOcPHyuQMgLXtkVCm1AQZ1NNcY7Jl1J9ugq/G8HQT+Vqw7hlFw=
-X-Received: from pjbqb3.prod.google.com ([2002:a17:90b:2803:b0:2e2:9f67:1ca3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1811:b0:2ee:ad18:b310
- with SMTP id 98e67ed59e1d1-2f12881b569mr669555a91.18.1733870605922; Tue, 10
- Dec 2024 14:43:25 -0800 (PST)
-Date: Tue, 10 Dec 2024 14:43:24 -0800
-In-Reply-To: <9e827d41-a054-5c04-6ecb-b23f2a4b5913@amd.com>
+	s=arc-20240116; t=1733870662; c=relaxed/simple;
+	bh=HP4MsNw/hXG7nhPJ0xWXWHKylFCTW4+JsqUQHNFKB2k=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=AQYIT1FMThmmPkR0PdE4M1nAp2tmpe6PKRjLEPxb1nmhjfYCEVJiCqlSMPdQeYxwhadw8GCI2hstRmOOWnLrzld06cHsQdp5dJKgw0Mc9H6JV5/WGHb/9KK64migGkzXjYgLN1AgxNamn2KlQYZsKAHZ/3mJ3ojJtWmF+ni2ync=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0KXdhbb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DCD1C4CED6;
+	Tue, 10 Dec 2024 22:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733870661;
+	bh=HP4MsNw/hXG7nhPJ0xWXWHKylFCTW4+JsqUQHNFKB2k=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=G0KXdhbbJ5rvvoDZqYRO6wYCU/J0eN/NtedIKQgZEPd2HdA2GPfsSOitJG8EW5ruE
+	 DxH6lGL9Jr28NBCy+ZXrSsNn4DVjD0FvcBq1IHIi8pNEFXKvR0PCQrZT9C7+C2x+Zt
+	 cxr1ixqZFf4slma0NhtmDYZ3q3DJxoHTkAmgxWTDbL8Ev4br2lExKoFXnGeQAGzVOf
+	 HzJ+oAHkfu/VaOcs5R0EREvFKR/EWDek4d7n6ZYmLXnQjDdqPaxB/vwJBhXM+eu9jo
+	 EIMrcVv9FF1sRyIKhwGu/JpCsHIZIhFmBYk/dVCi+OK6hJLpBpte73ViEaZLFrwE81
+	 CWJLj4Z6TEJOg==
+Message-ID: <fd2b473bc7c3c70ae0e85b2a6315d9e8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org>
- <Z1hiiz40nUqN2e5M@google.com> <93a3edef-dde6-4ef6-ae40-39990040a497@mailbox.org>
- <9e827d41-a054-5c04-6ecb-b23f2a4b5913@amd.com>
-Message-ID: <Z1jEDFpanEIVz1sY@google.com>
-Subject: Re: [REGRESSION] from 74a0e79df68a8042fb84fd7207e57b70722cf825: VFIO
- PCI passthrough no longer works
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Simon Pilkington <simonp.git@mailbox.org>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, regressions@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241121-ge-ian-debug-imx8-clk-tree-v1-4-0f1b722588fe@bootlin.com>
+References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com> <20241121-ge-ian-debug-imx8-clk-tree-v1-4-0f1b722588fe@bootlin.com>
+Subject: Re: [PATCH 4/5] clk: Add flag to prevent frequency changes when walking subtrees
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Abel Vesa <abel.vesa@linaro.org>, Herve Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ian Ray <ian.ray@ge.com>, Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>, Michael Turquette <mturquette@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Ying Liu <victor.liu@nxp.com>
+Date: Tue, 10 Dec 2024 14:44:19 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Tue, Dec 10, 2024, Tom Lendacky wrote:
-> On 12/10/24 14:33, Simon Pilkington wrote:
-> > On 10/12/2024 16:47, Sean Christopherson wrote:
-> >> Can you run with the below to see what bits the guest is trying to set (or clear)?
-> >> We could get the same info via tracepoints, but this will likely be faster/easier.
-> >>
-> >> ---
-> >>  arch/x86/kvm/svm/svm.c | 12 +++++++++---
-> >>  1 file changed, 9 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> >> index dd15cc635655..5144d0283c9d 100644
-> >> --- a/arch/x86/kvm/svm/svm.c
-> >> +++ b/arch/x86/kvm/svm/svm.c
-> >> @@ -3195,11 +3195,14 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
-> >>  	case MSR_AMD64_DE_CFG: {
-> >>  		u64 supported_de_cfg;
-> >>  
-> >> -		if (svm_get_feature_msr(ecx, &supported_de_cfg))
-> >> +		if (WARN_ON_ONCE(svm_get_feature_msr(ecx, &supported_de_cfg)))
-> >>  			return 1;
-> >>  
-> >> -		if (data & ~supported_de_cfg)
-> >> +		if (data & ~supported_de_cfg) {
-> >> +			pr_warn("DE_CFG supported = %llx, WRMSR = %llx\n",
-> >> +				supported_de_cfg, data);
-> >>  			return 1;
-> >> +		}
-> >>  
-> >>  		/*
-> >>  		 * Don't let the guest change the host-programmed value.  The
-> >> @@ -3207,8 +3210,11 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
-> >>  		 * are completely unknown to KVM, and the one bit known to KVM
-> >>  		 * is simply a reflection of hardware capabilities.
-> >>  		 */
-> >> -		if (!msr->host_initiated && data != svm->msr_decfg)
-> >> +		if (!msr->host_initiated && data != svm->msr_decfg) {
-> >> +			pr_warn("DE_CFG current = %llx, WRMSR = %llx\n",
-> >> +				svm->msr_decfg, data);
-> >>  			return 1;
-> >> +		}
-> >>  
-> >>  		svm->msr_decfg = data;
-> >>  		break;
-> >>
-> >> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-> > 
-> > Relevant dmesg output with some context below. VM locked up as expected.
-> > 
-> > [   85.834971] vfio-pci 0000:0c:00.0: resetting
-> > [   85.937573] vfio-pci 0000:0c:00.0: reset done
-> > [   86.494210] vfio-pci 0000:0c:00.0: resetting
-> > [   86.494264] vfio-pci 0000:0c:00.1: resetting
-> > [   86.761442] vfio-pci 0000:0c:00.0: reset done
-> > [   86.761480] vfio-pci 0000:0c:00.1: reset done
-> > [   86.762392] vfio-pci 0000:0c:00.0: resetting
-> > [   86.865462] vfio-pci 0000:0c:00.0: reset done
-> > [   86.977360] virbr0: port 1(vnet1) entered learning state
-> > [   88.993052] virbr0: port 1(vnet1) entered forwarding state
-> > [   88.993057] virbr0: topology change detected, propagating
-> > [  103.459114] kvm_amd: DE_CFG current = 0, WRMSR = 2
-> > [  161.442032] virbr0: port 1(vnet1) entered disabled state // VM shut down
-> 
-> That is the MSR_AMD64_DE_CFG_LFENCE_SERIALIZE bit. Yeah, that actually
-> does change the behavior of LFENCE and isn't just a reflection of the
-> hardware.
-> 
-> Linux does set that bit on boot, too (if LFENCE always serializing isn't
-> advertised 8000_0021_EAX[2]), so I'm kind of surprised it didn't pop up
-> there.
+Quoting Miquel Raynal (2024-11-21 09:41:14)
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index adfc5bfb93b5a65b6f58c52ca2c432d651f7dd7d..94d93470479e77769e63e9746=
+2b176261103b552 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1927,7 +1927,6 @@ long clk_get_accuracy(struct clk *clk)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_get_accuracy);
+> =20
+> -__maybe_unused
+>  static unsigned long clk_determine(struct clk_core *core, unsigned long =
+rate)
+>  {
+>         struct clk_rate_request req =3D {};
 
-Linux may be running afoul of this, but it would only become visible if someone
-checked dmesg.  Even the "unsafe" MSR accesses in Linux gracefully handle faults
-these days, the only symptom would be a WARN.
+Please add functions in the same patch that uses them. It is hard to
+review this patch when half the context is in another patch.
 
-> I imagine that the above CPUID bit isn't set, so an attempt is made to
-> set the MSR bit.
+> @@ -2272,7 +2271,13 @@ static void clk_calc_subtree(struct clk_core *core)
+>  {
+>         struct clk_core *child;
+> =20
+> -       core->new_rate =3D clk_recalc(core, core->parent->new_rate);
+> +       if (core->flags & CLK_NO_RATE_CHANGE_DURING_PROPAGATION) {
+> +               core->new_rate =3D clk_determine(core, core->rate);
+> +               if (!core->new_rate)
+> +                       core->new_rate =3D clk_recalc(core, core->parent-=
+>new_rate);
+> +       } else {
+> +               core->new_rate =3D clk_recalc(core, core->parent->new_rat=
+e);
+> +       }
+> =20
+>         hlist_for_each_entry(child, &core->children, child_node)
+>                 clk_calc_subtree(child);
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 200135e0f6d00d48b10e843259333b9733c97f38..baef0b442ac1d36ee935cbcaa=
+aa4e2d95fe7654c 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -38,6 +38,8 @@
+>  #define CLK_OPS_PARENT_ENABLE  BIT(12)
+>  /* duty cycle call may be forwarded to the parent clock */
+>  #define CLK_DUTY_CYCLE_PARENT  BIT(13)
+> +/* do not passively change this clock rate during subtree rate propagati=
+on */
+> +#define CLK_NO_RATE_CHANGE_DURING_PROPAGATION BIT(14)
 
-Yep.  And LFENCE_RDTSC _is_ supported, otherwise the supported_de_cfg check would
-have failed.  Which means it's a-ok for the guest to set the bit, i.e. KVM won't
-let the guest incorrectly think it's running on CPU for which LFENCE is serializing.
-
-Unless you (Tom) disagree, I vote to simply drop the offending code, i.e. make
-all supported bits fully writable from the guest.  KVM is firmly in the wrong here,
-and I can't think of any reason to disallow the guest from clearing LFENCE_SERIALIZE.
-
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 6a350cee2f6c..5a82ead3bf0f 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -3201,15 +3201,6 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
-                if (data & ~supported_de_cfg)
-                        return 1;
- 
--               /*
--                * Don't let the guest change the host-programmed value.  The
--                * MSR is very model specific, i.e. contains multiple bits that
--                * are completely unknown to KVM, and the one bit known to KVM
--                * is simply a reflection of hardware capabilities.
--                */
--               if (!msr->host_initiated && data != svm->msr_decfg)
--                       return 1;
--
-                svm->msr_decfg = data;
-                break;
-        }
-
+Why doesn't rate locking work?
 
