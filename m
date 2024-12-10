@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-440485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0959EBEE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:04:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F459EBEF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:07:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2210283F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C771887DDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70881EE7DC;
-	Tue, 10 Dec 2024 23:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616311F1917;
+	Tue, 10 Dec 2024 23:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xj3XEYld"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="N0sZit+X"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161922451C7;
-	Tue, 10 Dec 2024 23:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CFE2451E7;
+	Tue, 10 Dec 2024 23:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733871876; cv=none; b=gRR8nvKal0b77lxpNJ4OEuMIGfEB2V3ncLuaAgeYo9A9M3QuF2VXCXXgpcsqrC6Y/CBhOO06SzRFonaQWlFv1wGJiohp1pUQG6D5J3LH67g6GH+Hisp6kobRmRh7iLZBOuBPmtnLna6HnmAPUw20uatmy+aiFWHgOlAT7gbc7lU=
+	t=1733872035; cv=none; b=l/q0Cf+LOUYlVOn+3TAhGSSLc1Mh6bGAqXu4fy/hvPbVAczMHWT2UlQyf4s7HNWtvuf9WYeP8ZW5Y6zNNY8SoUPx7ITgMNE8E8ET3U2JYZ5GY5YqTUSPlIy2l7tKN0SJyQh5YvLnf/d3C3pUHmTjbRAElX40yvj86ECICiKiAnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733871876; c=relaxed/simple;
-	bh=xQCH/hk9rXI/a+iW/gD9HalgHRqZY+5qDViVohCJxM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umqA9VKBHD77SQK5mfBNeoa426v20UFQSlp7RSNrh5UWefCz4E/4s3/pwmeb9Zv5RrgGe0LQ481LPCyEWafnXZSSRnFsTQtmRAzkx/0nmtXDksDOz/2NX8Q1peyT08IeOxtgQmUc0ToB1qDMEzLXzbGO5DF5dlW6noMocMO0hxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xj3XEYld; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BDE1C4CED6;
-	Tue, 10 Dec 2024 23:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733871875;
-	bh=xQCH/hk9rXI/a+iW/gD9HalgHRqZY+5qDViVohCJxM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xj3XEYld2AI2Cm7U9K1ji/zd5s8p7v9lpfG8nUQN8gPvQLJLiDi/ZpS3BSMKRuQfn
-	 7jsHvT4xWOhXCM8tmGJ9JPT3yMZGxhgFD6yPgJhqoRwrW1qPhD7FItzN/vWn47nhjI
-	 VFyGeVe1Pq+1nAllJfobDOr6R9KdpCc7G44erwIfiVKf4iZBcqj+rTIcZ/Nw29U10F
-	 uG3dnXhVn5kLJOohCk5azbez4ND5JHVdU76HHaSN1abBJ/ipN7pzI8gth+BP5lwaKw
-	 cizgW+9FvhoLvQvy2zSLllOJaxHW6j3ByJAW05R9GLfWmjMKcYvqOJtOlBuUBTeeJV
-	 ThD6hc6wkLR9A==
-Date: Tue, 10 Dec 2024 17:04:33 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Enric Balletbo <eballetb@redhat.com>, devicetree@vger.kernel.org,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Conor Dooley <conor+dt@kernel.org>, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Alberto Ruiz <aruizrui@redhat.com>,
-	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org, NXP S32 Linux <s32@nxp.com>
-Subject: Re: [PATCH v6 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
- SoCs
-Message-ID: <173387187278.766456.7689697615269440552.robh@kernel.org>
-References: <20241206070955.1503412-1-ciprianmarian.costea@oss.nxp.com>
- <20241206070955.1503412-2-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1733872035; c=relaxed/simple;
+	bh=tG+zEB9hq2JUdiypa3J0UW/bkrCDojHcflJ5SShtQyU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WtjJPQD3uAZJs3PFjKXA3oJ7Yy6sEkrPhHWJxDplens+54VEX8MMJ+x0VF1KdxFrgAgth2oTRPHPiZY8ZkQpc9a0Krl5VfMSxrEBxWSdMV9c53CmF8KqqkXrHCi46OJ+Ze3QmtugbF9lM+oOHCq6mSMWV9U0gdVKmc4wjVJ3G6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=N0sZit+X; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733872031;
+	bh=tG+zEB9hq2JUdiypa3J0UW/bkrCDojHcflJ5SShtQyU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=N0sZit+XfJbADE8Df1vccR7w7qaJ0F2CVsi5uewEobNB/2/N5dLLjdxhmASn5OgTg
+	 BJpvHwJRGPCvc1RcML7+PabPEXUgZ0AkTJhc3qTp62ispPwA5BN9OOwxtVAMVgKPYm
+	 5LgB9LlsgSY0RzqBmYLktzuzPaoM8BwrWcOZQz1iePLHs+KFQDbunm33vbs6mr2U4G
+	 lYpyoTFLsPGI+WIm7aJGYoHDi0ItzxkSQ6G2T48u1cHXe9LlgK4bh5E8V8JS8qrqZb
+	 9ansLj0NeBkKnZwL7FaX1GHS+jJpOpQjMjJ4a5MAQGko92RlnlLokWvcp185F1pxQz
+	 qqp/C7bX8VW3w==
+Received: from localhost (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 747F317E09AF;
+	Wed, 11 Dec 2024 00:07:11 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v2 0/4] Add support for HDMI1 output on RK3588 SoC
+Date: Wed, 11 Dec 2024 01:06:13 +0200
+Message-Id: <20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206070955.1503412-2-ciprianmarian.costea@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGXJWGcC/3XMSw7CIBSF4a00dywGKJW2I/dhOuBVubEtBgzRN
+ Oxd7Nzhf5Lz7ZBcRJdgbHaILmPCsNXgpwaMV9vdEbS1gVMuGKeSxEfb9T3xdkVGJBVGa2ms7Ga
+ ol2d0M74P7jbV9pheIX4OPbPf+gfKjFBiVKuGQYuLEvRqwrIoHaI6m7DCVEr5ArNct7SsAAAA
+X-Change-ID: 20241207-rk3588-hdmi1-704cbb7cd75f
+To: Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alexandre ARNOUD <aarnoud@me.com>, kernel@collabora.com, 
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org
+X-Mailer: b4 0.14.2
 
+The patches provide the basic support to handle the second HDMI output
+port found on Rockchip RK3588 SoC.
 
-On Fri, 06 Dec 2024 09:09:52 +0200, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> RTC tracks clock time during system suspend and it is used as a wakeup
-> source on S32G2/S32G3 architecture.
-> 
-> RTC from S32G2/S32G3 is not battery-powered and it is not kept alive
-> during system reset.
-> 
-> Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 72 +++++++++++++++++++
->  1 file changed, 72 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> 
+For now I enabled it on Radxa ROCK 5B only, the board I've been using to
+validate this.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+** IMPORTANT **
+
+The series has a runtime dependency on "phy: phy-rockchip-samsung-hdptx:
+Don't use dt aliases to determine phy-id", a patch submitted recently by
+Heiko [1].  Without applying it, the functionality on both HDMI TX ports
+will break.
+
+Furthermore, please note this is subject to the same limitations as
+HDMI0 when it comes to the supported display modes.  The fixes provided
+via [2] are not applicable to HDMI1, hence I will handle it separately
+as soon as all dependencies are merged.
+
+Thanks,
+Cristian
+
+[1] https://lore.kernel.org/lkml/20241206103401.1780416-3-heiko@sntech.de/
+[2] https://lore.kernel.org/all/20241116-vop2-hdmi0-disp-modes-v1-0-2bca51db4898@collabora.com/
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v2:
+- Override hdmi1 pinctrl-0 on rock-5b as it requires hdmim0_tx1_cec
+  instead of hdmim2_tx1_cec (fixes a pin conflict when enabling
+  CONFIG_SPI_ROCKCHIP_SFC)
+- Link to v1: https://lore.kernel.org/r/20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabora.com
+
+---
+Cristian Ciocaltea (4):
+      drm/rockchip: dw_hdmi_qp: Add support for RK3588 HDMI1 output
+      arm64: dts: rockchip: Add PHY node for HDMI1 TX port on RK3588
+      arm64: dts: rockchip: Add HDMI1 node on RK3588
+      arm64: dts: rockchip: Enable HDMI1 on rock-5b
+
+ arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi  |  62 ++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts |  44 ++++++++-
+ drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c  | 119 +++++++++++++++++++-----
+ 3 files changed, 200 insertions(+), 25 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241207-rk3588-hdmi1-704cbb7cd75f
 
 
