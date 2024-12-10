@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-439252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CBF9EACBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:46:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD909EACC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1864728B1C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50E728C0E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D6F2153E4;
-	Tue, 10 Dec 2024 09:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358F32153FA;
+	Tue, 10 Dec 2024 09:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FEX1WuAf"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PLz7bCwU"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A122153D3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3D878F4E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733823777; cv=none; b=jSrAl4MoW2m7F/WKKiaTqTDtb7ZbyjsZJyxFcvKsH43k+DmuztjXyCDxQs9uVZbRFUiLX9bwjC3cPVcsxOsiSv8zF0PX5T4oDSlNBcx/gVrpfxwv06jlh2pmTGHU/wCCeGXp5qIWRePUwF0Kh/QhTQAsJkEITkW8pXrK1e+QfCA=
+	t=1733823778; cv=none; b=izJV6YsxDIjNh/altvP65JBYcaQRnwfx2NbBzvPhJ5a7IEWviOyrZy5SvXq3YnunGMBICH3rMh247Z1q4F85mCnSM0hpUZ4D5DnVzWwpt9FI3F24bhWGtPUqqgTA8B9FT2wpVm34KDUGdfR15WeWAkUNjkhfFXvE8cA7B+CBHYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733823777; c=relaxed/simple;
-	bh=gv8rUdmSV4UR2dPzdenPsbmaBxNvhydo09k/zl6tPLc=;
+	s=arc-20240116; t=1733823778; c=relaxed/simple;
+	bh=u449lsO4Hxwuzsi+uevB0tOEaOX42zxpyNVYt6QiE+Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sfhaQ0gWiAqwPE80cDsGIsEwN3w3DbRz1BDlzFQwfzG6Z6dJOxvGRNyO5tIJ12EGXv1Wx77IC14vHCMP2xu9UBQ36TSRmYmb81Z9hREPFyLwG+gR5VFzDrb8Nn+rgX5fU08on/IrTPf+pFdYIsBNYJSIS1yhLDTqDXHhwqc+cpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FEX1WuAf; arc=none smtp.client-ip=209.85.222.174
+	 In-Reply-To:To:Cc; b=pjGRvWgJmc9wkv+tGRguZENpTblghnokdC31M97r3rm1pKtHyyBziXulk1vvAwTKFhVal/jS7dLT/R1rl7v/6+1rJoVFxpmoJ7xIX+boysrOpgLu8usisc1zR+/iRt/fJwOq5/KUw0zPalOcN20Q5dALdBHtnjX4ldaJpK3aYAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PLz7bCwU; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b6da2d7884so111325585a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:42:55 -0800 (PST)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46774573043so11779461cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:42:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733823774; x=1734428574; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1733823776; x=1734428576; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aay2950jnBOP0EyAzMLsHhQ9XSwerGPpxxvrerX51do=;
-        b=FEX1WuAfF3HIY3dJGLy7KNWvB6n58yuCwwEFIg6zmlg6mkcUJQAVL9611dzHZSETpr
-         dEOr0dJnzNjDqtN4WxiUHCUbygE72h3pcNAdnh84vfsQtqbLg3DyDkgVgZE+UFBg45fv
-         2gHI21Bl6sVnZc9YPiZAPB8PLWqrH3hfL797s=
+        bh=CWfbsZInLShg4gyqs0rpMPp74K9ThJEcDiTxSB3xYgo=;
+        b=PLz7bCwUPOjzxNjoeP4Zhx6RcnEpz6azTb0zg1/H5aVLr5fPrUKaZbzYNebuPZQrmO
+         /AtSsiJY7cUyiCcvMXyR0aG/m9OoQ7PHBiyMOQcsDsvCdaKgF/+qiAdbmDJG9466jo5Z
+         7Gft6p6Y5qQHem+zOsHlvz9CzAuiqG7kb39xE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733823774; x=1734428574;
+        d=1e100.net; s=20230601; t=1733823776; x=1734428576;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aay2950jnBOP0EyAzMLsHhQ9XSwerGPpxxvrerX51do=;
-        b=hfypPBkARI/oZFly0PMzQDa9lTvfOey6O6E1Ojk705l7BFLlKjWk7NIe6bJQyBbGb+
-         mfyfcUwXVnfvN410NSyOCy5YKIffHkdzPzW1Gvig3wWn4XcufDk1E+Bn2PBArcv+mmHV
-         q/2y3oyywc177L+Ify/HnnUoA2CtOc1Ltp0NIhe5b66uoYEMtd2bsFJ8CG2Ynclay7tu
-         OM7Z90XtaWKVnIaac1+Vtn00SFD1Lj29SyEVova/Y5lxCFGZ0P3FYEoX51K21iHNYQev
-         VfPI9hJeFAhLOvMelfhnevTn+hF+7Cb0er8yP4DmFLALXMxD1lGNXQPch4pjj1WurGH9
-         UIHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaSY9qUJmdTGnWISm/v+oaHhSdwKI5u1AD9aP9GSqWXQG1c81lbtL7RRxC4vTG+/ZgZhOV4N0/ESnFins=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfGeK0CHfvNIPUuIMJUOz7Bix2Bx/qlMqHQL0vWxr7nLQ1jgmx
-	qnCNhOqjQIfXVSypLpOZNu2nvJsk2UrA1frhpgSG1R+M7UAMUi+TTBjcVd0Imw==
-X-Gm-Gg: ASbGncsq4ziIvuDzyBZHTs0bMb8F7ebb3yXGWKbRktYzTHPQJC/MAzsbRuRTT7iOkDw
-	hH3a1CFn+zo5Upq3Z7MUV2qRzZkxtxo59rjpQQcHiYCXm5sAqc38LT6Ut3p+FbfBOZvleztSBaJ
-	zpWSZIpHa2huTRJubH/1AJoXCe6kA8Nq/9bLkQrztZEKVE+/MomDicind8q9jElV9arn64hP/uW
-	H16/jYbimIkY1Ayk3ncZBLi4noO5Qsc+r7oJusDTSHr2jjqXjQyS5T8/w1XJHxDMMgszY5XFaDr
-	5um5CuFNLLvvZQje5d2be6TagdrB
-X-Google-Smtp-Source: AGHT+IHvsVSX4cF7Uq+tXoU3l7S6TpqvBBTt/QzYkHDT411ehQjvH1Xv2+t0pEkiDu6zBFsC1FpPbA==
-X-Received: by 2002:a05:620a:2905:b0:7b6:d241:d4ae with SMTP id af79cd13be357-7b6dcebc84fmr718784185a.42.1733823767088;
-        Tue, 10 Dec 2024 01:42:47 -0800 (PST)
+        bh=CWfbsZInLShg4gyqs0rpMPp74K9ThJEcDiTxSB3xYgo=;
+        b=F75Pl8DK7sKCW5zR+/gFnjR0zVtZgDz+oCEZS6Vpanh/Uhd4q8/j5Myqx1rp86tO+T
+         /UJugM0IRI1Qj5k4S4leXB9QvtEn8iXen1u+4cqsW0zfhklFpeWKvpGAUmjJjOUMqt8+
+         rHl1AIHYvXlgCLt2PL/HjWRXPNyoIW5RPyYasakHgLMQb1MQrgFl4zr7+Ynoe6HOvOJu
+         xPTTch3g32pJbe360TaEpADN3pFXSz2RkWWXov/FfiYP7QXR8wrFowZCCWmxWdVmpTXa
+         8Vi97681p8i1TipDw1DfrJzkyjPZmJZytARjfiN2KHJ9jMHWXML61cq0mHdArGtGYgli
+         wZjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCkEFJJh3q0B9MGles6Yq/Q1gyWKPNnMOr79u/k6iIyOmB5IfUh1UOBxo+E7yn6cDCE52ePD9DRtIFqzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm7/bcJPYYNKdyPu0oMSRUTXpT0kG1UYSgSszwU5ez9oPx45/m
+	bt6yc5VZJMrrRg+0nvWrEzfoVmtBAJIg1Ivaur9cK1Wes6/r8dg0xw6p7dGmOA==
+X-Gm-Gg: ASbGncscM4GZhZCrIBHk6fV3Q4fBYmrcnMjcsIWIjojkCZfh3NcjhqV+Ia+PCYeNu9o
+	6MPI71Ue/QLvJdrqEKfTZKgXjf/K+PqE0qXM7gq0VSmaWZxpB+NgYiQmH+lUmKYApUSkQ/B9ZrG
+	GzldvENeFrh+kMv4V3biUnf9MEDO1HDvqgC4rbCz7h7IbrTiT84smyevzMOFQfQFHdpnK1Hvhv5
+	mInDcsM73C6/NNh3kRk3y4LuxgRcjD6waWQ7pDI7XdPi2ARwP+4LNZWr3i3C+YOY45NldiyvEfu
+	20Rx84MiZAx5MamrVZR0dt94q+dY
+X-Google-Smtp-Source: AGHT+IGuOmp0WbqkpDp2dV3LPmaXUEWbDVLaY4faBYplusjjW5QMSEy+Ggl5P5GPgFHXeQMWUS+EDg==
+X-Received: by 2002:a05:6214:5087:b0:6d8:8d16:7cf3 with SMTP id 6a1803df08f44-6d91e43ce55mr65152556d6.40.1733823775842;
+        Tue, 10 Dec 2024 01:42:55 -0800 (PST)
 Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d92f7c2bc1sm773326d6.83.2024.12.10.01.42.46
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d92f7c2bc1sm773326d6.83.2024.12.10.01.42.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 01:42:46 -0800 (PST)
+        Tue, 10 Dec 2024 01:42:54 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 10 Dec 2024 09:42:41 +0000
-Subject: [PATCH v16 05/18] media: uvcvideo: Handle uvc menu translation
- inside uvc_get_le_value
+Date: Tue, 10 Dec 2024 09:42:42 +0000
+Subject: [PATCH v16 06/18] media: uvcvideo: Handle uvc menu translation
+ inside uvc_set_le_value
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,7 +80,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-uvc-roi-v16-5-e8201f7e8e57@chromium.org>
+Message-Id: <20241210-uvc-roi-v16-6-e8201f7e8e57@chromium.org>
 References: <20241210-uvc-roi-v16-0-e8201f7e8e57@chromium.org>
 In-Reply-To: <20241210-uvc-roi-v16-0-e8201f7e8e57@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -93,151 +93,80 @@ Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
  Yunke Cao <yunkec@google.com>
 X-Mailer: b4 0.13.0
 
-map->get() gets a value from an uvc_control in "UVC format" and converts
-it to a value that can be consumed by v4l2.
+Be consistent with uvc_get_le_value() and do the menu translation there.
 
-Instead of using a special get function for V4L2_CTRL_TYPE_MENU, we
-were converting from uvc_get_le_value in two different places.
-
-Move the conversion to uvc_get_le_value().
+Note that in this case, the refactor does not provide much... but
+consistency is a nice feature.
 
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Tested-by: Yunke Cao <yunkec@google.com>
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 77 +++++++++++++++++-----------------------
- 1 file changed, 32 insertions(+), 45 deletions(-)
+ drivers/media/usb/uvc/uvc_ctrl.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index bab9fdac98e6..77f7058ec966 100644
+index 77f7058ec966..987a9700bed9 100644
 --- a/drivers/media/usb/uvc/uvc_ctrl.c
 +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -862,6 +862,25 @@ static inline void uvc_clear_bit(u8 *data, int bit)
- 	data[bit >> 3] &= ~(1 << (bit & 7));
- }
+@@ -939,14 +939,22 @@ static void uvc_set_le_value(struct uvc_control_mapping *mapping,
+ 	int offset = mapping->offset;
+ 	u8 mask;
  
-+static s32 uvc_menu_to_v4l2_menu(struct uvc_control_mapping *mapping, s32 val)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; BIT(i) <= mapping->menu_mask; ++i) {
-+		u32 menu_value;
-+
-+		if (!test_bit(i, &mapping->menu_mask))
-+			continue;
-+
-+		menu_value = uvc_mapping_get_menu_value(mapping, i);
-+
-+		if (menu_value == val)
-+			return i;
+-	/*
+-	 * According to the v4l2 spec, writing any value to a button control
+-	 * should result in the action belonging to the button control being
+-	 * triggered. UVC devices however want to see a 1 written -> override
+-	 * value.
+-	 */
+-	if (mapping->v4l2_type == V4L2_CTRL_TYPE_BUTTON)
++	switch (mapping->v4l2_type) {
++	case V4L2_CTRL_TYPE_MENU:
++		value = uvc_mapping_get_menu_value(mapping, value);
++		break;
++	case V4L2_CTRL_TYPE_BUTTON:
++		/*
++		 * According to the v4l2 spec, writing any value to a button
++		 * control should result in the action belonging to the button
++		 * control being triggered. UVC devices however want to see a 1
++		 * written -> override value.
++		 */
+ 		value = -1;
++		break;
++	default:
++		break;
 +	}
-+
-+	return val;
-+}
-+
- /*
-  * Extract the bit string specified by mapping->offset and mapping->size
-  * from the little-endian data stored at 'data' and return the result as
-@@ -896,6 +915,16 @@ static s32 uvc_get_le_value(struct uvc_control_mapping *mapping,
- 	if (mapping->data_type == UVC_CTRL_DATA_TYPE_SIGNED)
- 		value |= -(value & (1 << (mapping->size - 1)));
  
-+	/* If it is a menu, convert from uvc to v4l2. */
-+	if (mapping->v4l2_type != V4L2_CTRL_TYPE_MENU)
-+		return value;
-+
-+	switch (query) {
-+	case UVC_GET_CUR:
-+	case UVC_GET_DEF:
-+		return uvc_menu_to_v4l2_menu(mapping, value);
-+	}
-+
- 	return value;
- }
+ 	data += offset / 8;
+ 	offset &= 7;
+@@ -1988,23 +1996,23 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+ 		if (!test_bit(xctrl->value, &mapping->menu_mask))
+ 			return -EINVAL;
  
-@@ -1060,32 +1089,6 @@ static int uvc_ctrl_populate_cache(struct uvc_video_chain *chain,
- 	return 0;
- }
- 
--static s32 __uvc_ctrl_get_value(struct uvc_control_mapping *mapping,
--				const u8 *data)
--{
--	s32 value = mapping->get(mapping, UVC_GET_CUR, data);
+-		value = uvc_mapping_get_menu_value(mapping, xctrl->value);
 -
--	if (mapping->v4l2_type == V4L2_CTRL_TYPE_MENU) {
--		unsigned int i;
--
--		for (i = 0; BIT(i) <= mapping->menu_mask; ++i) {
--			u32 menu_value;
--
--			if (!test_bit(i, &mapping->menu_mask))
--				continue;
--
--			menu_value = uvc_mapping_get_menu_value(mapping, i);
--
--			if (menu_value == value) {
--				value = i;
--				break;
--			}
--		}
--	}
--
--	return value;
--}
--
- static int __uvc_ctrl_load_cur(struct uvc_video_chain *chain,
- 			       struct uvc_control *ctrl)
- {
-@@ -1136,8 +1139,8 @@ static int __uvc_ctrl_get(struct uvc_video_chain *chain,
- 	if (ret < 0)
- 		return ret;
- 
--	*value = __uvc_ctrl_get_value(mapping,
--				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-+	*value = mapping->get(mapping, UVC_GET_CUR,
-+			      uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
- 
- 	return 0;
- }
-@@ -1287,7 +1290,6 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- {
- 	struct uvc_control_mapping *master_map = NULL;
- 	struct uvc_control *master_ctrl = NULL;
--	unsigned int i;
- 
- 	memset(v4l2_ctrl, 0, sizeof(*v4l2_ctrl));
- 	v4l2_ctrl->id = mapping->id;
-@@ -1330,21 +1332,6 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 		v4l2_ctrl->minimum = ffs(mapping->menu_mask) - 1;
- 		v4l2_ctrl->maximum = fls(mapping->menu_mask) - 1;
- 		v4l2_ctrl->step = 1;
--
--		for (i = 0; BIT(i) <= mapping->menu_mask; ++i) {
--			u32 menu_value;
--
--			if (!test_bit(i, &mapping->menu_mask))
--				continue;
--
--			menu_value = uvc_mapping_get_menu_value(mapping, i);
--
--			if (menu_value == v4l2_ctrl->default_value) {
--				v4l2_ctrl->default_value = i;
--				break;
--			}
--		}
--
- 		return 0;
- 
- 	case V4L2_CTRL_TYPE_BOOLEAN:
-@@ -1592,7 +1579,7 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
- 	ctrl->handle = NULL;
- 
- 	list_for_each_entry(mapping, &ctrl->info.mappings, list) {
--		s32 value = __uvc_ctrl_get_value(mapping, data);
-+		s32 value = mapping->get(mapping, UVC_GET_CUR, data);
- 
  		/*
- 		 * handle may be NULL here if the device sends auto-update
+ 		 * Valid menu indices are reported by the GET_RES request for
+ 		 * UVC controls that support it.
+ 		 */
+ 		if (mapping->data_type == UVC_CTRL_DATA_TYPE_BITMASK) {
++			int val = uvc_mapping_get_menu_value(mapping,
++							     xctrl->value);
+ 			if (!ctrl->cached) {
+ 				ret = uvc_ctrl_populate_cache(chain, ctrl);
+ 				if (ret < 0)
+ 					return ret;
+ 			}
+ 
+-			if (!(uvc_get_ctrl_bitmap(ctrl, mapping) & value))
++			if (!(uvc_get_ctrl_bitmap(ctrl, mapping) & val))
+ 				return -EINVAL;
+ 		}
+-
++		value = xctrl->value;
+ 		break;
+ 
+ 	default:
 
 -- 
 2.47.0.338.g60cca15819-goog
