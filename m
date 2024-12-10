@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-439198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30129EAC1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:33:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC199EAC25
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:33:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746C7161F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A8228FC35
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA357223309;
-	Tue, 10 Dec 2024 09:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3F3226539;
+	Tue, 10 Dec 2024 09:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BH/aqBN0"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0vPbmDq"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE9F215771
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD9D223333
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733822948; cv=none; b=WvXjVyf9jCHOiaOvC9U0ka6ekQeMZCtQbHjJICtgdHOhiGFgmism0ZAzkhpT0ssIPs27tLJAf5u6h6sWUNMizDmHjD0wXKz3SdA2t6oEEjjNJtl9EAg3UFf7cnHUX+cgEklwk4OodzbHwm13huYTjkSb9uCoE/vboOqlceXZukA=
+	t=1733822953; cv=none; b=SPDFnfQoIticuEQi4BV8Hqj/5X354EJ0HLkCkmnLvvYBMFxaEyANGfXj/9rOC02PCG+AGVl5JIM/eFc3JzD1lvaY1ekHmPKAacizZPOu7j1g5CD9peXxE0f6S/IixrqeO4ii0S4x7Zcd/5S81yuNICMlcQJC8n7w6ZHyuj6/cIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733822948; c=relaxed/simple;
-	bh=hOZ5NlNngeRjH8z8G2TqenUNXh7uBbdu8kbCPeD0Q80=;
+	s=arc-20240116; t=1733822953; c=relaxed/simple;
+	bh=1l7G3AJzYY0SYn9JnpUenU6kM5eqxuwNxfMwXuxqaYA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HXewW41fx5ddKWYRvqhokQrnLtE1Z1wRi8DdYOztwpSlV/cAn77CajyFmoHGp910gZJ7xWGn54Kg2uBgMRpuM5ygjk8ddp0M26Bg+unMHMvLjCqyGKf6VhRIvHcJL8irbtdTMBgClZsO4oRoJdl/LXAypwdpHOC8M2pBHjb2Fl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BH/aqBN0; arc=none smtp.client-ip=209.85.210.174
+	 MIME-Version; b=fqcQPF6OVOSn1LDbX0v9zQk1LBkEkkCAOTpBruD0yAtKrpJqRQ2QGW/Z7NJQ6eDC5Xn+LBxbyPI0GVdV7B9q1oQzl+SqA56Jmfibt5x1im5ZKRyiZTYPGk0ApsRPkdWEpdvsAUDTGF3+aQqy4mgJcYf3HleykDrEBTIY7T9fAuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0vPbmDq; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-725d9f57d90so1938461b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:29:06 -0800 (PST)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ef6af22ea8so3584915a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:29:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733822946; x=1734427746; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733822951; x=1734427751; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=BSCLGHYqLWfZbOCM52YJejtZzzMrW+w4kb+fWMx8dAg=;
-        b=BH/aqBN0nh092+HSFm1B7czHT3mUDytnmw+cV0hKHiWzhPvVmSqIL0dWrn5OYa4DAK
-         smjDXJSU8bM0dQENBWxQSHrG3mIL3qGV3yPe7xUF8vxoQckdmPxmzcumKT0+vs7YXHIb
-         GyG0eTaUySExEDLouNeYgwt3kyVu0j9XF08V0IHU17qHqUnulsNFRLlYymZuzJLWiyBd
-         PXBsItwmGVb72prT99dANLpjZu7/t97IwS0bCnc4chbbByXjigXDP4Dxffj3M+6rTWGE
-         lyF5seba+y17tA4XgxTvgvRU8C7w725FDDIe0/I6CVh6cOM8eLM79cAGecVM6dWEOToS
-         fwsQ==
+        bh=1vqDO82M+XCnuau+JNGqK2Zehr2Sd7WYRXd6APN34sY=;
+        b=h0vPbmDqiu9kba6EKH8I+DtjaWsC/8RB/fHd2lDpaguEGTu67jp4jKRww46vJX7zg4
+         8JlJHAUjLJJ89fPbH4m9g3TAsBF9X2RBnOtnaYqBqxy9Z+SFNgRDD4/wP7MfED2eR4qb
+         Tp1UJ04582zjYba4QbjIOMu66Z6SqN9n4RkAFqUX5IlyvaU8LJm5JnVVH6P/ux8Kmlko
+         t3aDYrt4znj+SZXURTtDHBQkOCao2+arX1Su9dNsHTQ8UyVslvyt+wjbeHPHlQkDUgC0
+         aB2mmdEN9zMFCQUZCVkbL7d56d0DLha9Uj49OYTlvqpcXHFeELTo7OuFNJDnpdbhfm/1
+         AwGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733822946; x=1734427746;
+        d=1e100.net; s=20230601; t=1733822951; x=1734427751;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BSCLGHYqLWfZbOCM52YJejtZzzMrW+w4kb+fWMx8dAg=;
-        b=ePqvgG0H71HOZ8ki2Q0sPQLf0U/bF4ZcTD9h6fespgpOeuuE17+Y8XuKsT613MmVjy
-         dvWJmcgmNXTbgp5bBq5M4G2JLyNv7K5GqUKNY6aGd9ieZ2RGeUJQJjCk/fhs+CcnxLMk
-         ecNeqQ2bMfz/ejiUiMmoiGFnqKc7xiBLsp7U1GYOYNexV2NQ+0edi0xR+S7BOV+ppjsd
-         TI3IVu2D7SCzv7zc9AN90i9JCiLA5mPe/LT5vD5pq4uf3d/FljVpqKNhUWEvWAi7xgH8
-         5qI4nAPfNGOJGrEqnYRTPyQcmOXAZzftgyoZ1au23KHSZTFOvsZdsAbZLJFDCm18dNgM
-         S0qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbEKrQg4rBVnQ4Fz7jWRud7BTzJ44cs4LWiRDiSeIyD5CfIk90A83TtRXEzGTvlFuYeNBekwQO+Et3UWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfLwv0sf4G7rKPqMEmb1+Pla/VnPuPyQXKFSvpv52eMCh8n7Dc
-	WtML7DM5Mf3rZ0tYBdSpFPVtOhVSZyapmXCnNWl02K6M/Mv6QUDx
-X-Gm-Gg: ASbGnctIj62xEu2pF9R09y0xlnLA6YSuRuUz30Yyfeqol0/3u3NckQAdj5liGsDLE12
-	DGIIxGFBYG+jd4+ZOw6CM9ET0aHu1cjBGimNOGIFE2jP1FBTh+sLz0NTe35RZtCBJ6z8XMXP3F0
-	5OHFbAyHgBNar+dwtGDjia2k+vMTJYZcuI7kunLF0zI21bBQtItswiSfHQZ1UORnRuYGh8r9Elr
-	GfpXdklwcliRon3IZCgoAlefB7dGqbCtjVPJqmLXI3E6ybTphgf8t28/l3jd4OTkH5iGR5q/Rqn
-	gz7eKIu5
-X-Google-Smtp-Source: AGHT+IHV3lqRAPpmlMOBZuYBAiL3Q5xtUsfeTC5YD+b1WYrzaAKgKUOsPSV0U0jw1or5OftGfUdPEw==
-X-Received: by 2002:a05:6a21:78c:b0:1db:ed8a:a607 with SMTP id adf61e73a8af0-1e1870bd7a6mr23599578637.11.1733822946475;
-        Tue, 10 Dec 2024 01:29:06 -0800 (PST)
+        bh=1vqDO82M+XCnuau+JNGqK2Zehr2Sd7WYRXd6APN34sY=;
+        b=cc1lpf3FBhI2HyHQGSpgHEWXDGdeiPKxmoJERbdKb93g22AubViKSeBhZRBi8JpCEZ
+         t86B2c53c5yZknzjew+rIS4oaotEJ2JRptDQfhWzlFFtdcVTrTIAsTeFDZahfn2JVmma
+         quglsxAknGX0pmFCVIiwfFQxq2tOfAYNePzygtusgTvkzIejT+r0dt1dHtNWGm0lbRl6
+         NXMV40HATLPkGo7Ofrx5h6irl7gUZoxzOeBJnYw/BUb7QYYNklQDkQWvIJwIFOBDd9hH
+         x6BpVEZEloFoYHuVCaYvfqJrhUVgzm0PExvzOvW0kHvtXSVnyEWFXgb3cyqjRPFJwi4A
+         N0Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtI1EYK7byrqcwCFvQ2AxGqAzpZknX45UK3Npli2BW1aiSulqsNd5fyw0SBsj1GNeEsDm9Kj5SY8t3mU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRHJn0Xh4TAOg85pUuONb4gniQgYEe0ccAHO84gfVynExhbZta
+	zMWmCO4aV2M0gcA2yPE8G6W9TG+RcoZAVsD5czkIgpLlIUeBrOOC
+X-Gm-Gg: ASbGncuQaGYXTvtrIlEWcb1JpHTO5LRlM+gs5b6bhD3aaMrqyVn2W5cyQ6eXO1B5NsY
+	PYL2MowkVCuqyvZ/g2kaiLQ/rjA16XER0bkl3sIfxzCwirdrKWfBCt/XoI5QZ1aDCggAf7cMqnw
+	5I3zWljKJJA6KW8y3PCmk9WXbDc62E7qKWT/xfejVX7u59Maw9H5EttyJs7GWrjay6r+h6f/wW1
+	rwIWcFRgjmJF7VGSbyiTuBYCpIZ8rxDqQ5Gt3aGG+LeI0QG/ebLEjMNBzWzaRrKDvzCZ59rwq2E
+	oqZrX1rv
+X-Google-Smtp-Source: AGHT+IHZXjaBzRsPyNk7dOYudpCeCcHTvHtx8g1LtmYlWSNCnk4Uj7a71khFvxql+RO1r55gAZOC2Q==
+X-Received: by 2002:a17:90b:384f:b0:2ee:b0f1:ba17 with SMTP id 98e67ed59e1d1-2efcf2c624dmr6555372a91.37.1733822950656;
+        Tue, 10 Dec 2024 01:29:10 -0800 (PST)
 Received: from KASONG-MC4.tencent.com ([43.132.141.21])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd1568f26asm8750095a12.9.2024.12.10.01.29.02
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd1568f26asm8750095a12.9.2024.12.10.01.29.06
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 10 Dec 2024 01:29:05 -0800 (PST)
+        Tue, 10 Dec 2024 01:29:10 -0800 (PST)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -85,9 +85,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Michal Hocko <mhocko@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v2 2/3] mm/swap_cgroup: remove swap_cgroup_cmpxchg
-Date: Tue, 10 Dec 2024 17:28:04 +0800
-Message-ID: <20241210092805.87281-3-ryncsn@gmail.com>
+Subject: [PATCH v2 3/3] mm, swap_cgroup: remove global swap cgroup lock
+Date: Tue, 10 Dec 2024 17:28:05 +0800
+Message-ID: <20241210092805.87281-4-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241210092805.87281-1-ryncsn@gmail.com>
 References: <20241210092805.87281-1-ryncsn@gmail.com>
@@ -102,72 +102,194 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-This function is never used after commit 6b611388b626
-("memcg-v1: remove charge move code").
+commit e9e58a4ec3b1 ("memcg: avoid use cmpxchg in swap cgroup maintainance")
+replaced the cmpxchg/xchg with a global irq spinlock because some archs
+doesn't support 2 bytes cmpxchg/xchg. Clearly this won't scale well.
+
+And as commented in swap_cgroup.c, this lock is not needed for map
+synchronization.
+
+Emulation of 2 bytes xchg with atomic cmpxchg isn't hard, so implement
+it to get rid of this lock. Introduced two helpers for doing so and they
+can be easily dropped if a generic 2 byte xchg is support.
+
+Testing using 64G brd and build with build kernel with make -j96 in 1.5G
+memory cgroup using 4k folios showed below improvement (10 test run):
+
+Before this series:
+Sys time: 10809.46 (stdev 80.831491)
+Real time: 171.41 (stdev 1.239894)
+
+After this commit:
+Sys time: 9621.26 (stdev 34.620000), -10.42%
+Real time: 160.00 (stdev 0.497814), -6.57%
+
+With 64k folios and 2G memcg:
+Before this series:
+Sys time: 8231.99 (stdev 30.030994)
+Real time: 143.57 (stdev 0.577394)
+
+After this commit:
+Sys time: 7403.47 (stdev 6.270000), -10.06%
+Real time: 135.18 (stdev 0.605000), -5.84%
+
+Sequential swapout of 8G 64k zero folios with madvise (24 test run):
+Before this series:
+5461409.12 us (stdev 183957.827084)
+
+After this commit:
+5420447.26 us (stdev 196419.240317)
+
+Sequential swapin of 8G 4k zero folios (24 test run):
+Before this series:
+19736958.916667 us (stdev 189027.246676)
+
+After this commit:
+19662182.629630 us (stdev 172717.640614)
+
+Performance is better or at least not worse for all tests above.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-Acked-by: Chris Li <chrisl@kernel.org>
 ---
- include/linux/swap_cgroup.h |  2 --
- mm/swap_cgroup.c            | 29 -----------------------------
- 2 files changed, 31 deletions(-)
+ mm/swap_cgroup.c | 73 +++++++++++++++++++++++++++++-------------------
+ 1 file changed, 45 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/swap_cgroup.h b/include/linux/swap_cgroup.h
-index ae73a87775b3..d521ad1c4164 100644
---- a/include/linux/swap_cgroup.h
-+++ b/include/linux/swap_cgroup.h
-@@ -6,8 +6,6 @@
- 
- #if defined(CONFIG_MEMCG) && defined(CONFIG_SWAP)
- 
--extern unsigned short swap_cgroup_cmpxchg(swp_entry_t ent,
--					unsigned short old, unsigned short new);
- extern unsigned short swap_cgroup_record(swp_entry_t ent, unsigned short id,
- 					 unsigned int nr_ents);
- extern unsigned short lookup_swap_cgroup_id(swp_entry_t ent);
 diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-index f63d1aa072a1..1770b076f6b7 100644
+index 1770b076f6b7..a0a8547dc85d 100644
 --- a/mm/swap_cgroup.c
 +++ b/mm/swap_cgroup.c
-@@ -45,35 +45,6 @@ static struct swap_cgroup *lookup_swap_cgroup(swp_entry_t ent,
- 	return &ctrl->map[offset];
+@@ -7,19 +7,20 @@
+ 
+ static DEFINE_MUTEX(swap_cgroup_mutex);
+ 
++/* Pack two cgroup id (short) of two entries in one swap_cgroup (atomic_t) */
++#define ID_PER_SC (sizeof(atomic_t) / sizeof(unsigned short))
++#define ID_SHIFT (BITS_PER_TYPE(unsigned short))
++#define ID_MASK (BIT(ID_SHIFT) - 1)
+ struct swap_cgroup {
+-	unsigned short		id;
++	atomic_t ids;
+ };
+ 
+ struct swap_cgroup_ctrl {
+ 	struct swap_cgroup *map;
+-	spinlock_t	lock;
+ };
+ 
+ static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SWAPFILES];
+ 
+-#define SC_PER_PAGE	(PAGE_SIZE/sizeof(struct swap_cgroup))
+-
+ /*
+  * SwapCgroup implements "lookup" and "exchange" operations.
+  * In typical usage, this swap_cgroup is accessed via memcg's charge/uncharge
+@@ -30,19 +31,32 @@ static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SWAPFILES];
+  *    SwapCache(and its swp_entry) is under lock.
+  *  - When called via swap_free(), there is no user of this entry and no race.
+  * Then, we don't need lock around "exchange".
+- *
+- * TODO: we can push these buffers out to HIGHMEM.
+  */
+-static struct swap_cgroup *lookup_swap_cgroup(swp_entry_t ent,
+-					struct swap_cgroup_ctrl **ctrlp)
++static unsigned short __swap_cgroup_id_lookup(struct swap_cgroup *map,
++					      pgoff_t offset)
+ {
+-	pgoff_t offset = swp_offset(ent);
+-	struct swap_cgroup_ctrl *ctrl;
++	unsigned int shift = (offset & 1) ? 0 : ID_SHIFT;
++	unsigned int old_ids = atomic_read(&map[offset / ID_PER_SC].ids);
+ 
+-	ctrl = &swap_cgroup_ctrl[swp_type(ent)];
+-	if (ctrlp)
+-		*ctrlp = ctrl;
+-	return &ctrl->map[offset];
++	return (old_ids & (ID_MASK << shift)) >> shift;
++}
++
++static unsigned short __swap_cgroup_id_xchg(struct swap_cgroup *map,
++					    pgoff_t offset,
++					    unsigned short new_id)
++{
++	unsigned short old_id;
++	unsigned int shift = (offset & 1) ? 0 : ID_SHIFT;
++	struct swap_cgroup *sc = &map[offset / ID_PER_SC];
++	unsigned int new_ids, old_ids = atomic_read(&sc->ids);
++
++	do {
++		old_id = (old_ids & (ID_MASK << shift)) >> shift;
++		new_ids = (old_ids & ~(ID_MASK << shift));
++		new_ids |= ((unsigned int)new_id) << shift;
++	} while (!atomic_try_cmpxchg(&sc->ids, &old_ids, new_ids));
++
++	return old_id;
  }
  
--/**
-- * swap_cgroup_cmpxchg - cmpxchg mem_cgroup's id for this swp_entry.
-- * @ent: swap entry to be cmpxchged
-- * @old: old id
-- * @new: new id
-- *
-- * Returns old id at success, 0 at failure.
-- * (There is no mem_cgroup using 0 as its id)
-- */
--unsigned short swap_cgroup_cmpxchg(swp_entry_t ent,
--					unsigned short old, unsigned short new)
--{
--	struct swap_cgroup_ctrl *ctrl;
--	struct swap_cgroup *sc;
--	unsigned long flags;
--	unsigned short retval;
--
--	sc = lookup_swap_cgroup(ent, &ctrl);
--
--	spin_lock_irqsave(&ctrl->lock, flags);
--	retval = sc->id;
--	if (retval == old)
--		sc->id = new;
--	else
--		retval = 0;
--	spin_unlock_irqrestore(&ctrl->lock, flags);
--	return retval;
--}
--
  /**
-  * swap_cgroup_record - record mem_cgroup for a set of swap entries
-  * @ent: the first swap entry to be recorded into
+@@ -58,21 +72,19 @@ unsigned short swap_cgroup_record(swp_entry_t ent, unsigned short id,
+ 				  unsigned int nr_ents)
+ {
+ 	struct swap_cgroup_ctrl *ctrl;
+-	struct swap_cgroup *sc;
+-	unsigned short old;
+-	unsigned long flags;
+ 	pgoff_t offset = swp_offset(ent);
+ 	pgoff_t end = offset + nr_ents;
++	unsigned short old, iter;
++	struct swap_cgroup *map;
+ 
+-	sc = lookup_swap_cgroup(ent, &ctrl);
++	ctrl = &swap_cgroup_ctrl[swp_type(ent)];
++	map = ctrl->map;
+ 
+-	spin_lock_irqsave(&ctrl->lock, flags);
+-	old = sc->id;
+-	for (; offset < end; offset++, sc++) {
+-		VM_BUG_ON(sc->id != old);
+-		sc->id = id;
+-	}
+-	spin_unlock_irqrestore(&ctrl->lock, flags);
++	old = __swap_cgroup_id_lookup(map, offset);
++	do {
++		iter = __swap_cgroup_id_xchg(map, offset, id);
++		VM_BUG_ON(iter != old);
++	} while (++offset != end);
+ 
+ 	return old;
+ }
+@@ -85,9 +97,13 @@ unsigned short swap_cgroup_record(swp_entry_t ent, unsigned short id,
+  */
+ unsigned short lookup_swap_cgroup_id(swp_entry_t ent)
+ {
++	struct swap_cgroup_ctrl *ctrl;
++
+ 	if (mem_cgroup_disabled())
+ 		return 0;
+-	return lookup_swap_cgroup(ent, NULL)->id;
++
++	ctrl = &swap_cgroup_ctrl[swp_type(ent)];
++	return __swap_cgroup_id_lookup(ctrl->map, swp_offset(ent));
+ }
+ 
+ int swap_cgroup_swapon(int type, unsigned long max_pages)
+@@ -98,14 +114,15 @@ int swap_cgroup_swapon(int type, unsigned long max_pages)
+ 	if (mem_cgroup_disabled())
+ 		return 0;
+ 
+-	map = vcalloc(max_pages, sizeof(struct swap_cgroup));
++	BUILD_BUG_ON(!ID_PER_SC);
++	map = vcalloc(DIV_ROUND_UP(max_pages, ID_PER_SC),
++		      sizeof(struct swap_cgroup));
+ 	if (!map)
+ 		goto nomem;
+ 
+ 	ctrl = &swap_cgroup_ctrl[type];
+ 	mutex_lock(&swap_cgroup_mutex);
+ 	ctrl->map = map;
+-	spin_lock_init(&ctrl->lock);
+ 	mutex_unlock(&swap_cgroup_mutex);
+ 
+ 	return 0;
 -- 
 2.47.1
 
