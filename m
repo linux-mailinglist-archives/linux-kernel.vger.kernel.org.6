@@ -1,267 +1,269 @@
-Return-Path: <linux-kernel+bounces-439168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6B79EABD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:22:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530939EABD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:23:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C291635BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF6428AC12
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598D2232795;
-	Tue, 10 Dec 2024 09:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421C323279C;
+	Tue, 10 Dec 2024 09:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="qkooYq8W"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGyyob1h"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA196232783
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAB419924F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733822554; cv=none; b=uJGu3FZ9q1RLeX4V0XYOX1RcljKOB7afrSeAlY1+v59sh0JpOwdB38GHv0n0eMPaRe1maA4Ij6R2zZpqx1DNBjDweH2/8+oPjSjoC3lo6TYZiogKgvjliPSz3xFnfemQzatOYyrVsD4mXEJWSvcbekuXV1fSKMOpf/tchq8gr3k=
+	t=1733822580; cv=none; b=LCQOFYMQWKFmd+c7eD3iNHyyPZqAx1fVGkxwF54uIjnGTJl/e5cfv8B2d7hpLzaIjaf+MwuPZ6RvwjG62NLP8iuJAsFNhocO3BmZjwrW6VGn6+HSc6EOx1nbAtlr/rYkSc88tnKX79ZcxBhQYoK9V5sGqluxW7wK1T2WlnlywtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733822554; c=relaxed/simple;
-	bh=txIcSIRbJGiLatJ4O2paIA6h6w37GdIaCF/465ySMr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GPQ/0ExN95FZtCLgNTw5nYDIRVvDCqVgXVuw3WxckfLl0TLNV6MVmeAhCGH5FwCUoiO06EmKQKauzaGQmC5/XZBy1Org+clUD6t++ZCBPSSscfHTbxBDZ+50l0ar85Ja+A/8CuO18/KFpdk533uqnqPiNQt07Zm7dzqodv2v2T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=qkooYq8W; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2161eb95317so34045195ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:22:32 -0800 (PST)
+	s=arc-20240116; t=1733822580; c=relaxed/simple;
+	bh=oqYvUPyzOiv39dL27Heb1n/UlEMMz+A/Skeg/UF3fDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oYpEqPULhYx+nirhstc3gjxMe9vPG0JOSshGJ80hNs3gCtksoi3mfP3DwcAPw74qo0CGCvl0pmOLbIEcGkNdsYnAZAda/WeI1VTpxeYBb2epsJqPLKJrkK87hiXAtp6syDTo/Sp/oajGsnwokzF6NibQt7CIDVhZ3dLNAV1lIZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGyyob1h; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7feffe7cdb7so549109a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:22:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1733822552; x=1734427352; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M8cl2ABtE3d2Hox58Hq8BfKUV3nNnUF99dKqOlggt8c=;
-        b=qkooYq8WvTW+tIu99cqd2VeuLqT5YAq44mLVnNV8u1aehPvGuNp6xugnALNlJPg89s
-         f3iDu99faHmOT3rR3IXaJb0sPUf8BDp6m+c62l/BZrI3yhzLqGLTHubFw8Zdy7ZCBtyz
-         5BVPf98fgTsJFdc4TC2XTGPcngZbfLEcmHpQQn5yy9yW0LW6cZlvtcmk758YsRBdeWTC
-         hXQzyQCaykjCJlKf+MdC9UYWDIkxReEYCd6lAF/FBL/2rEnHxP7BTAd7bWbH6bZP2Npp
-         XPmH418lYI9EiFF1YR0Kd6BTD3aBpwX6Y9liivBkRzgcyPp26Z6Y8q4RVurTxNt5ZAxz
-         9x/g==
+        d=gmail.com; s=20230601; t=1733822578; x=1734427378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/m4XN5YD/esnhUESrYFDWpIBpwu3AmP2NdsqTlp2vSw=;
+        b=YGyyob1hCgRo5GFY/mSYa97t3U9OHUpRmJxDeczVgw3e9Q0TFWvjP0zKNkELlynuND
+         KwGHZKDISzhyEamYljNIxrYopmxUxUzkqSUEES9Y7pl8oSV3uglABWwZuqB4A+lezAvN
+         pGghsVnBmqslaAn5qAAwRyPimpwTEAKNtcF9cG7NSia/E+qVNXhbAl85i3i5CiH/Dbem
+         yRcGr0/uxh1mGRyV9O478BJUitFBFNY5hhD1bDwDubeI8sDfEnnn8s+V4XU/PnrUXFjP
+         oJn1eHU03Ya3HioBXX8qhc2CjXRkPVy026wPyA1NLya/JQk2xZG3vmOb0ssxDO/UvaU8
+         Xqqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733822552; x=1734427352;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M8cl2ABtE3d2Hox58Hq8BfKUV3nNnUF99dKqOlggt8c=;
-        b=kMpruLPnvwuxoWQUjkVcaYf0VZOwvu6IAIRmdlY5Q+bgjkj3N5lpa+0AwQCh/lGz45
-         WV6USmyhOSuOPZsrHqGq7oJB2BSdkyl2FpGjz7USZQ2itt2fBaWyi9Awx2ureN7h6ofm
-         fGMEKtjsj/O0i2yeJeuRhQi9/cS03hYLd1wdjK5+kVj+5Zmci7QadgqL0zqSMRHf0UFr
-         x7JUCntMT7JLUSCCV6BOpgYIhhEbRU3FeKFUMjKb1tHyuXpzgyHileHI2DxcD6nuiyEs
-         cuOrE7mdj1q8s55LE0Wd4yZfnCnTzJXGXyUvExmWyx8E2tMCfCYSw4g6GY2ZVWNbiUsi
-         gAPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAZtNmV0Oo0NCdpVs/HpRB5c3H8bQ3VcHbtAstmw4ocPvhJwOlXqYsjSiYz+BjyFz+20XLOXItuhYrNyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRGoC8FQKtDg3QiLP7P0BVTk237H2C9iahAAyRm5fFi0n55+92
-	0JsBo5M2GVU0Y9LCRndxQB5c5AlWI5RkpNcDsmg9h6IxWRFa2DXCR/m8z/BVRA==
-X-Gm-Gg: ASbGnctAgT6JYh84r2cM/KK5oHD44wYqKt5m4ywBDkk2VtjeXG5o091JmuewFi+p7oG
-	p8EVKGQ4Z1QptriAj92WOL3EHi2B/1rnRF3e06NQ+ZyWrmrM0KqBt/DZmQOSZ3F2wNUVSOltN2a
-	sMQ8QMZlXY5qos1V5W5RTW0OYLdKywYI3AsEGVVXhZgaAlYb8NKwmYw28U2vKi9u0fODAk97Gfd
-	d9ghR+mpuMc+1sZGS9mUmtt7dcTEQScbIwO4EP8JY5qxYAlOHADBK/LkfIjiMR9DzPM+EYtyu6B
-	rWZ2FWE6HykxZ8oSGFa2kxhcgA/r
-X-Google-Smtp-Source: AGHT+IFR4RpOio8Ua98EvFQG+NHIjlakZBUY/REjznnr/BHtBjieBarNtOT/+pHkFX6yGtL6+WcDVQ==
-X-Received: by 2002:a17:903:2351:b0:216:46f4:7e5a with SMTP id d9443c01a7336-2166a03f010mr45521535ad.45.1733822551911;
-        Tue, 10 Dec 2024 01:22:31 -0800 (PST)
-Received: from ?IPV6:2401:4900:4451:8982:a0c3:dcc6:3a8d:184? ([2401:4900:4451:8982:a0c3:dcc6:3a8d:184])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216688a6dffsm16838035ad.113.2024.12.10.01.22.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 01:22:31 -0800 (PST)
-Message-ID: <33c61b28-c0b8-478d-8107-c6ed1ff9e466@beagleboard.org>
-Date: Tue, 10 Dec 2024 14:52:22 +0530
+        d=1e100.net; s=20230601; t=1733822578; x=1734427378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/m4XN5YD/esnhUESrYFDWpIBpwu3AmP2NdsqTlp2vSw=;
+        b=AO+QkQ7Fu6eTB/wvREbSOKOkjRTpFdORwC4N/SH1VxnPklNEgqkA286+S3dwz51GMF
+         rw5q4Fyz38mh3GeigqbZS0R06p6NoNpM7Lf+2Gv2gI3I3Io69QuFh8zQUV54gx/l8hP+
+         5B+7UFHpU0dCrAKYNzuAp5/VEPruwp4M6dFMDHUrJr3d9BIEtVJjNQfATRS1SSTUTBal
+         eOEMgXYh1wZxsk2LmYk920QLY4H45AOEOiSe4JrB9ndpcAnESciYZi4MjWuf+qGcr8ZC
+         cC8oA6+TCQzfsYMObrgUnZTB6q6QyJKIYxhbTl06DiXNS32f4ROpADG0/oQcGQWQzsdp
+         2DvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtXOCdomAT3ygjsCnW1usGbGgO/wryELozlS3AMlXl62RxXfbpAPnxSMOpoTIXd440X4kCjUOp9bus5ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYz2pW+Qwo2Kntoddyj0Di1rKU8JaqUWIR2rqnBD+7NqiOiAAi
+	MWAtvi1XNzcBSbFMkvmt5D9GULmnVF20vOTXQ8y9zFS6ZeV7eDZJTfv832Ypss58/D+ArOLVOXc
+	LDG+oy1Gaja4sttziJ1chJQjOEtk=
+X-Gm-Gg: ASbGncte440iQBIbpYZYX5rDk9IeyxP/aqJdGVw+OeuOGstGFwfAO14SUUC9dr93eZ3
+	SC2upG4Q3noyFYcRXgtIW3Xb38l4awL06/MfS
+X-Google-Smtp-Source: AGHT+IFFbv80EL4XFCbYAHhq1w7V1JVq2WEYK9L8i6TdHZ0gT8hn/3D4wY6rnn00Occ2IMF2C0nHoY33btbOXh19c4s=
+X-Received: by 2002:a17:90a:d88e:b0:2ea:61de:38f7 with SMTP id
+ 98e67ed59e1d1-2ef6ab0cf78mr22173714a91.29.1733822578117; Tue, 10 Dec 2024
+ 01:22:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] of: overlay: Add support for export-symbols node
- feature
-To: Herve Codina <herve.codina@bootlin.com>, Andrew Davis <afd@ti.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20241209151830.95723-1-herve.codina@bootlin.com>
-Content-Language: en-US
-From: Ayush Singh <ayush@beagleboard.org>
-In-Reply-To: <20241209151830.95723-1-herve.codina@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241126103513.GK38837@noisy.programming.kicks-ass.net>
+ <20241127070534.62903-1-zhouzihan30@jd.com> <CAHb70uysf8qOTwGCm0-rfR1KxxK9K6bhEwRX4O0QaeqyzM6ODw@mail.gmail.com>
+In-Reply-To: <CAHb70uysf8qOTwGCm0-rfR1KxxK9K6bhEwRX4O0QaeqyzM6ODw@mail.gmail.com>
+From: zihan zhou <15645113830zzh@gmail.com>
+Date: Tue, 10 Dec 2024 17:22:46 +0800
+Message-ID: <CAHb70uz8SZ49MSxyXvZfd-5AF7Y9KuUYbcKaZ_mbXD2zgu_0Yw@mail.gmail.com>
+Subject: Re: [PATCH] sched: Forward deadline for early tick
+To: peterz@infradead.org
+Cc: bsegall@google.com, dietmar.eggemann@arm.com, juri.lelli@redhat.com, 
+	linux-kernel@vger.kernel.org, mgorman@suse.de, mingo@redhat.com, 
+	rostedt@goodmis.org, vincent.guittot@linaro.org, vschneid@redhat.com, 
+	yaozhenguo@jd.com, zhouzihan30@jd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/12/24 20:48, Herve Codina wrote:
-> Hi,
-> 
-> At Linux Plumbers Conference 2024, we (me and Luca Ceresolli) talked
-> about issues we have with runtime hotplug on non-discoverable busses
-> with device tree overlays [1].
-> 
-> On our system, a base board has a connector and addon boards can be
-> connected to this connector. Both boards are described using device
-> tree. The base board is described by a base device tree and addon boards
-> are describe by overlays device tree. More details can be found at [2].
-> 
-> This kind of use case can be found also on:
->    - Grove Sunlight Sensor [3]
->    - mikroBUS [4]
-> 
-> One of the issue we were facing on was referencing resources available
-> on the base board device tree from the addon overlay device tree.
-> 
-> Using a nexus node [5] helps decoupling resources and avoid the
-> knowledge of the full base board from the overlay. Indeed, with nexus
-> node, the overlay need to know only about the nexus node itself.
-> 
-> For instance, suppose a connector where a GPIO is connected at PinA. On
-> the base board this GPIO is connected to the GPIO 12 of the SoC GPIO
-> controller.
-> 
-> The base board can describe this GPIO using a nexus node:
->      soc_gpio: gpio-controller {
->        #gpio-cells = <2>;
->      };
-> 
->      connector1: connector1 {
->          /*
->           * Nexus node for the GPIO available on the connector.
->           * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
->           * controller
->           */
->          #gpio-cells = <2>;
->          gpio-map = <0 0 &soc_gpio 12 0>;
->          gpio-map-mask = <0xf 0x0>;
->          gpio-map-pass-thru = <0x0 0xf>;
->      };
-> 
-> The connector pin A GPIO can be referenced using:
->    <&connector1 0 GPIO_ACTIVE_HIGH>
-> 
-> This implies that the overlay needs to know about exact label that
-> references the connector. This label can be different on a different
-> board and so applying the overlay could failed even if it is used to
-> describe the exact same addon board. Further more, a given base board
-> can have several connectors where the exact same addon board can be
-> connected. In that case, the same overlay cannot be used on both
-> connector. Indeed, the connector labels have to be different.
-> 
-> The export-symbols node introduced by this current series solves this
-> issue.
-> 
-> The idea of export-symbols is to have something similar to the global
-> __symbols__ node but local to a specific node. Symbols listed in this
-> export-symbols are local and visible only when an overlay is applied on
-> a node having an export-symbols subnode.
-> 
-> Using export-symbols, our example becomes:
->      soc_gpio: gpio-controller {
->        #gpio-cells = <2>;
->      };
-> 
->      connector1: connector1 {
->          /*
->           * Nexus node for the GPIO available on the connector.
->           * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
->           * controller
->           */
->          #gpio-cells = <2>;
->          gpio-map = <0 0 &soc_gpio 12 0>;
->          gpio-map-mask = <0xf 0x0>;
->          gpio-map-pass-thru = <0x0 0xf>;
-> 
->          export-symbols {
->            connector = <&connector1>;
->          };
->      };
-> 
-> With that export-symbols node, an overlay applied on connector1 node can
-> have the symbol named 'connector' resolved to connector1. Indeed, the
-> export-symbols node available at connector1 node is used when the
-> overlay is applied. If the overlay has an unresolved 'connector' symbol,
-> it will be resolved to connector1 thanks to export-symbols.
-> 
-> Our overlay using the nexus node can contains:
->     node {
->        foo-gpio = <&connector 0 GPIO_ACTIVE_HIGH>;
->     };
-> It used the GPIO 0 from the connector it is applied on.
-> 
-> A board with two connectors can be described with:
->      connector1: connector1 {
->          ...
->          export-symbols {
->            connector = <&connector1>;
->          };
->      };
-> 
->      connector2: connector2 {
->          ...
->          export-symbols {
->            connector = <&connector2>;
->          };
->      };
-> 
-> In that case, the same overlay with unresolved 'connector' symbol can be
-> applied on both connectors and the correct symbol resolution (connector1
-> or connector2) will be done.
+Hello, may I ask what you think of my latest patch
+(https://lore.kernel.org/all/20241127070534.62903-1-zhouzihan30@jd.com/)?
+ If there are any shortcomings here, I would be happy to continue
+making revisions.
+(I'm sorry, there seems to be a formatting issue with the email I
+sent, so I sent it again)
 
-What is the reason for not using symbols directly as described here [3]?
-
-I do like this approach since it does not pollute the global symbols. 
-Just want to know if there are any other reasons for it.
-
-> 
-> This current series add support for the export-symbols node feature:
->    - Patch 1 describes the export-symbols binding
->    - Patches 2 to 6 prepare and add the support for the export-symbols
->      feature
->    - Patch 7 adds an unittest for the export-symbols feature
-> 
-> Best regards,
-> Hervé
-> 
-> [1] https://lpc.events/event/18/contributions/1696/
-> [2] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
-> [3] https://lore.kernel.org/lkml/20240702164403.29067-1-afd@ti.com/
-> [4] https://lore.kernel.org/lkml/20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org/
-> [5] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
-> 
-> Herve Codina (7):
->    dt-bindings: Add support for export-symbols node
->    of: resolver: Introduce get_phandle_from_symbols_node()
->    of: resolver: Add export_symbols in of_resolve_phandles() parameters
->    of: resolver: Add support for the export symbols node
->    of: overlay: Add export_symbols_name in of_overlay_fdt_apply()
->      parameters
->    of: overlay: Add support for the export symbols node
->    of: unittest: Add tests for export symbols
-> 
->   .../devicetree/bindings/export-symbols.yaml   | 43 ++++++++++
->   drivers/misc/lan966x_pci.c                    |  3 +-
->   drivers/of/of_kunit_helpers.c                 |  2 +-
->   drivers/of/of_private.h                       |  2 +-
->   drivers/of/overlay.c                          | 30 ++++++-
->   drivers/of/resolver.c                         | 80 ++++++++++++++-----
->   drivers/of/unittest-data/Makefile             |  5 ++
->   .../unittest-data/overlay_export_symbols.dtso | 15 ++++
->   .../of/unittest-data/testcases_common.dtsi    |  1 +
->   .../unittest-data/tests-export-symbols.dtsi   | 30 +++++++
->   drivers/of/unittest.c                         | 76 ++++++++++++++++--
->   include/linux/of.h                            |  6 +-
->   12 files changed, 259 insertions(+), 34 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/export-symbols.yaml
->   create mode 100644 drivers/of/unittest-data/overlay_export_symbols.dtso
->   create mode 100644 drivers/of/unittest-data/tests-export-symbols.dtsi
-> 
-
-
-Ayush Singh
+zihan zhou <15645113830zzh@gmail.com> =E4=BA=8E2024=E5=B9=B412=E6=9C=8810=
+=E6=97=A5=E5=91=A8=E4=BA=8C 16:58=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hello, may I ask what you think of my latest patch (https://lore.kernel.o=
+rg/all/20241127070534.62903-1-zhouzihan30@jd.com/)?  If there are any short=
+comings here, I would be happy to continue making revisions.
+>
+> zhouzihan30 <15645113830zzh@gmail.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=882=
+7=E6=97=A5=E5=91=A8=E4=B8=89 15:06=E5=86=99=E9=81=93=EF=BC=9A
+>>
+>> From: zhouzihan <zhouzihan30@jd.com>
+>>
+>> Thank you very much for your reply, which has brought me lots
+>>  of thoughts.
+>>
+>> I have reconsidered this issue and believe that the root cause is that
+>>  the kernel is difficult and unnecessary to implement an ideal eevdf
+>>  due to real hardware:
+>> for example,
+>> an ideal eevdf may bring frequent switching, its cost makes kernel can't
+>>  really do it.
+>>
+>> So I see that the kernel has a very concise and clever implementation:
+>>  update_deadline, which allows each task to use up the request size
+>>  as much as possible in one go.
+>>
+>> Here, the kernel has actually slightly violated eevdf: we are no longer
+>>  concerned about whether a task is eligible for the time being.
+>>
+>> In the prev patch, it was mentioned that due to tick errors, some tasks
+>>  run longer than requested. So if we can do this: when a task vruntime
+>>  approaches the deadline, we check if the task is eligible.
+>> If it is eligible, we follow the previous logic and do not schedule it.
+>> However, if it is ineligible, we schedule it because eevdf has the
+>>  responsibility to not exec ineligible task.
+>>
+>> In other words, the kernel has given the task a "benefit" based on the
+>>  actual situation, and we still have the right to revoke this benefit.
+>>
+>> In this way, it actually brings the kernel closer to an ideal eevdf,
+>> and at the same time, your reply made me realize my mistake:
+>> The deadline update should be updated using the following function,
+>> which is more reasonable:
+>>     vd_i +=3D r_i / w_i
+>> By using it, our scheduler is still fair,
+>>  and each task can obtain its own time according to its weight.
+>>
+>> About tolerance, I think min(vslice/128, tick/2) is better,
+>> as your reply, vslice maybe too big, so use it.
+>>
+>> However, there is still a new issue here:
+>> If a se 1 terminates its deadline prematurely due to ineligible,
+>> and then a se 2 runs, after the end of the run,
+>> se 1 becomes eligible, but its deadline has already been pushed back,
+>> which is not earliest eligible,
+>> so se 1 can't run. This seems to not comply with eevdf specifications.
+>>
+>> But I think this is acceptable. In the past, the logic causes a task to
+>>  run an extra tick (ms), which means other tasks have to wait for an
+>>  extra tick. Now, a task maybe run less time (us), but it will be
+>>  compensated for in the next scheduling. In terms of overall accuracy,
+>>  I think it has improved.
+>>
+>> By the way, we may try to solve this by delaying the deadline update,
+>> which means we schedule a task but not update its deadline,
+>> util next exec it.
+>> I am not sure if it is necessary to implement such complex logic here.
+>> I think it is actually unnecessary,
+>> because the ideal eevdf may not be suitable for the kernel.
+>> It is no need to spend so much to solve the error of few time.
+>> If there is a truly completely accurate system, it should not have
+>>  tick error, and just closes the FORWARD_DEADLINE feature.
+>> Of course, if you think it is necessary, I am willing try to implement i=
+t.
+>>
+>> Signed-off-by: zhouzihan30 <zhouzihan30@jd.com>
+>> ---
+>>  kernel/sched/fair.c     | 41 +++++++++++++++++++++++++++++++++++++----
+>>  kernel/sched/features.h |  7 +++++++
+>>  2 files changed, 44 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 2d16c8545c71..e6e58c7d6d4c 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -1006,8 +1006,10 @@ static void clear_buddies(struct cfs_rq *cfs_rq, =
+struct sched_entity *se);
+>>   */
+>>  static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity =
+*se)
+>>  {
+>> -       if ((s64)(se->vruntime - se->deadline) < 0)
+>> -               return false;
+>> +
+>> +       u64 vslice;
+>> +       u64 tolerance =3D 0;
+>> +       u64 next_deadline;
+>>
+>>         /*
+>>          * For EEVDF the virtual time slope is determined by w_i (iow.
+>> @@ -1016,11 +1018,42 @@ static bool update_deadline(struct cfs_rq *cfs_r=
+q, struct sched_entity *se)
+>>          */
+>>         if (!se->custom_slice)
+>>                 se->slice =3D sysctl_sched_base_slice;
+>> +       vslice =3D calc_delta_fair(se->slice, se);
+>> +
+>> +       next_deadline =3D se->vruntime + vslice;
+>> +
+>> +       if (sched_feat(FORWARD_DEADLINE))
+>> +               tolerance =3D min(vslice>>7, TICK_NSEC/2);
+>> +
+>> +       if ((s64)(se->vruntime + tolerance - se->deadline) < 0)
+>> +               return false;
+>>
+>>         /*
+>> -        * EEVDF: vd_i =3D ve_i + r_i / w_i
+>> +        * when se->vruntime + tolerance - se->deadline >=3D 0
+>> +        * but se->vruntime - se->deadline < 0,
+>> +        * there is two case: if entity is eligible?
+>> +        * if entity is not eligible, we don't need wait deadline, becau=
+se
+>> +        * eevdf don't guarantee
+>> +        * an ineligible entity can exec its request time in one go.
+>> +        * but when entity eligible, just let it run, which is the
+>> +        * same processing logic as before.
+>>          */
+>> -       se->deadline =3D se->vruntime + calc_delta_fair(se->slice, se);
+>> +
+>> +       if (sched_feat(FORWARD_DEADLINE) && (s64)(se->vruntime - se->dea=
+dline) < 0) {
+>> +               if (entity_eligible(cfs_rq, se)) {
+>> +                       return false;
+>> +               } else {
+>> +                       /*
+>> +                        * in this case, entity's request size does not =
+use light=EF=BC=8C
+>> +                        * but considering it is not eligible, we don't =
+need exec it.
+>> +                        * and we let vd_i +=3D r_i / w_i, make schedule=
+r fairness.
+>> +                        */
+>> +                       next_deadline =3D se->deadline + vslice;
+>> +               }
+>> +       }
+>> +
+>> +
+>> +       se->deadline =3D next_deadline;
+>>
+>>         /*
+>>          * The task has consumed its request, reschedule.
+>> diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+>> index 290874079f60..5c74deec7209 100644
+>> --- a/kernel/sched/features.h
+>> +++ b/kernel/sched/features.h
+>> @@ -24,6 +24,13 @@ SCHED_FEAT(RUN_TO_PARITY, true)
+>>   */
+>>  SCHED_FEAT(PREEMPT_SHORT, true)
+>>
+>> +/*
+>> + * For some cases where the tick is faster than expected,
+>> + * move the deadline forward
+>> + */
+>> +SCHED_FEAT(FORWARD_DEADLINE, true)
+>> +
+>> +
+>>  /*
+>>   * Prefer to schedule the task we woke last (assuming it failed
+>>   * wakeup-preemption), since its likely going to consume data we
+>> --
+>> 2.39.3 (Apple Git-146)
+>>
 
