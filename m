@@ -1,68 +1,57 @@
-Return-Path: <linux-kernel+bounces-439727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EF69EB342
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:28:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7AF9EB344
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 357F1280C22
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12243280ECE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD951B3921;
-	Tue, 10 Dec 2024 14:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8A61B041D;
+	Tue, 10 Dec 2024 14:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PkrXsj+x"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NS/BKt2z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B551AF0D8;
-	Tue, 10 Dec 2024 14:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0521AC450;
+	Tue, 10 Dec 2024 14:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733840920; cv=none; b=SGfbkj4iAOWLaYDPTFmDZpqBSI6Uyww2y9tAFnzeMzMSBUJ8ihjGN/JVTXGB1fSXhhcZsY3KGxwqN9HleruRmGSPnQ1OttPyhEFayoNxGWIzQQ+zEa0EfnPbFZrd+oDvHR2QJkBGlusYlBxdfT5YPqQFm6mY0dicj7GF2QssKII=
+	t=1733840934; cv=none; b=frf/JwLOLmNFhmRkuhvMzMrS5Zu3R0UZEH2vSkf24Ki32JYIafnWr/Diq84mQvL76sowHhEPHvUPa44yhtqkx6WB8QoCEw1v1avsr04Xn9N+WbjRC/ZVpnQgS2mHFZQHSV1DFZtUhQQvekMq3fCcoTQ5AbfjQh8bIpYTM9J42FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733840920; c=relaxed/simple;
-	bh=RU1Vgf+j0fJsrviMtllu4sWXsgf1wOi1Qz0j23V/Ipg=;
+	s=arc-20240116; t=1733840934; c=relaxed/simple;
+	bh=DWw+OzWlI6/cQMJTTEn2TJpQIXKtWjVxENKvKMYJO3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6JXJ19OgOK9s1CX19VDMSfO+6+1GnxXAI3lmcxoesPqmwqJt6w6SeSccGnOYou14yUDC7a11wQ0MDXEcBYE7SHmpuOcxEvA8qAOU1WtckeFwuGAprQaBPO5HPbH/2ujLCwBdgFHFAINFMsn634jWn41haNN5lTqfKEeQ345GgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PkrXsj+x; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0A3C2A2F;
-	Tue, 10 Dec 2024 15:28:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733840883;
-	bh=RU1Vgf+j0fJsrviMtllu4sWXsgf1wOi1Qz0j23V/Ipg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nes6Bzmr169vo31g2vYaFtm2p1X+5MqS6j1OvD/Op6IkDoqgpBC/tdWk7V5olMewIFSK2hZzN5iLLWF2bs8cZTDKEr+24/ICkkLg+/4iHN4r/9Ok58wUkB1MR/BIVgnh/CWuk28CS3NO2yRV7+7oIkHZoYjnlA0i87gLyK4Yn5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NS/BKt2z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B7FC4CEDE;
+	Tue, 10 Dec 2024 14:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733840933;
+	bh=DWw+OzWlI6/cQMJTTEn2TJpQIXKtWjVxENKvKMYJO3Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PkrXsj+xbGQQojGflk/EhefDzLgaE/1W6+KWAS0a2k8wzzwBvoA3m2UfOrl3HQ0Lg
-	 17aoXRk/uwkO7FPNGzEILe2TpeaaFnYB4MdOptv1CQXHyFtHffEPmd8IVBSqQjgZyw
-	 adMsSERBMwl82e3MPDzcADj5GOoMUEyUrw5DKzqQ=
-Date: Tue, 10 Dec 2024 16:28:19 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: ti-sn65dsi86: Fix multiple instances
-Message-ID: <20241210142819.GK573@pendragon.ideasonboard.com>
-References: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
+	b=NS/BKt2z0DwgNBbYwpyNnXmyHwVVmU8+1f13iFzBxYW6gJ7qcm0WIZMM/g01BACtw
+	 AxrbeLL+PuvcI/Xp0nIQzpwAeO1vTbUy0VC2lyt5gkC3lTqMr/Q6fp3zI/vjnjhBm2
+	 zZxH5y2JU6Uk9sFUbColjCdhXzXCcS/BL8+4e8n2WlV9Eu15l6p6WbCPBrsQWKPgLv
+	 r2N6HKOUnNK6wfRLIezXBkFHefI2+ZYEmndzY6iHec621ikP3HgdJJD5dRtagC+wDE
+	 9JNsodmXGrjSNFHtK6Qjfci0Tj+jBzL/DhZOSi9mMdTajiXnHIa61p69/5m8Mp+JNl
+	 G3+Trw/6emUmg==
+Date: Tue, 10 Dec 2024 15:28:46 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 3/5] bpf: Add bpf_fget_task() kfunc
+Message-ID: <20241210-elastisch-flamingo-9271dc82c3a0@brauner>
+References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080CD2C2C0EFC01082EC582993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,80 +60,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
+In-Reply-To: <AM6PR03MB5080CD2C2C0EFC01082EC582993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-On Tue, Dec 10, 2024 at 03:18:46PM +0100, Geert Uytterhoeven wrote:
-> Each bridge instance creates up to four auxiliary devices with different
-> names.  However, their IDs are always zero, causing duplicate filename
-> errors when a system has multiple bridges:
+On Tue, Dec 10, 2024 at 02:03:52PM +0000, Juntong Deng wrote:
+> This patch adds bpf_fget_task() kfunc.
 > 
->     sysfs: cannot create duplicate filename '/bus/auxiliary/devices/ti_sn65dsi86.gpio.0'
+> bpf_fget_task() is used to get a pointer to the struct file
+> corresponding to the task file descriptor. Note that this function
+> acquires a reference to struct file.
 > 
-> Fix this by using a unique instance ID per bridge instance.  The
-> instance ID is derived from the I2C adapter number and the bridge's I2C
-> address, to support multiple instances on the same bus.
-> 
-> Fixes: bf73537f411b0d4f ("drm/bridge: ti-sn65dsi86: Break GPIO and MIPI-to-eDP bridge into sub-drivers")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
 > ---
-> On the White Hawk development board:
+>  fs/bpf_fs_kfuncs.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
->     /sys/bus/auxiliary/devices/
->     |-- ti_sn65dsi86.aux.1068
->     |-- ti_sn65dsi86.aux.4140
->     |-- ti_sn65dsi86.bridge.1068
->     |-- ti_sn65dsi86.bridge.4140
->     |-- ti_sn65dsi86.gpio.1068
->     |-- ti_sn65dsi86.gpio.4140
->     |-- ti_sn65dsi86.pwm.1068
->     `-- ti_sn65dsi86.pwm.4140
-> 
-> Discussion after v1:
->   - https://lore.kernel.org/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.1729180470.git.geert+renesas@glider.be
-> 
-> Notes:
->   - While the bridge supports only two possible I2C addresses, I2C
->     translators may be present, increasing the address space.  Hence the
->     instance ID calculation assumes 10-bit addressing.  Perhaps it makes
->     sense to introduce a global I2C helper function for this?
-> 
->   - I think this is the simplest solution.  If/when the auxiliary bus
->     receives support à la PLATFORM_DEVID_AUTO, the driver can be
->     updated.
-
-As I'd like to get a proper solution for this I'm not going to ack this
-patch, but I won't nack it either.
-
-> v2:
->   - Use I2C adapter/address instead of ida_alloc().
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> index 9e31f750fd889745..fb452d1b46995673 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> @@ -480,6 +480,7 @@ static int ti_sn65dsi86_add_aux_device(struct ti_sn65dsi86 *pdata,
->  				       const char *name)
->  {
->  	struct device *dev = pdata->dev;
-> +	const struct i2c_client *client = to_i2c_client(dev);
->  	struct auxiliary_device *aux;
->  	int ret;
+> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> index 3fe9f59ef867..19a9d45c47f9 100644
+> --- a/fs/bpf_fs_kfuncs.c
+> +++ b/fs/bpf_fs_kfuncs.c
+> @@ -152,6 +152,26 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
+>  	return bpf_get_dentry_xattr(dentry, name__str, value_p);
+>  }
 >  
-> @@ -488,6 +489,7 @@ static int ti_sn65dsi86_add_aux_device(struct ti_sn65dsi86 *pdata,
->  		return -ENOMEM;
->  
->  	aux->name = name;
-> +	aux->id = (client->adapter->nr << 10) | client->addr;
->  	aux->dev.parent = dev;
->  	aux->dev.release = ti_sn65dsi86_aux_device_release;
->  	device_set_of_node_from_dev(&aux->dev, dev);
+> +/**
+> + * bpf_fget_task() - Get a pointer to the struct file corresponding to
+> + * the task file descriptor
+> + *
+> + * Note that this function acquires a reference to struct file.
+> + *
+> + * @task: the specified struct task_struct
+> + * @fd: the file descriptor
+> + *
+> + * @returns the corresponding struct file pointer if found,
+> + * otherwise returns NULL
+> + */
+> +__bpf_kfunc struct file *bpf_fget_task(struct task_struct *task, unsigned int fd)
+> +{
+> +	struct file *file;
+> +
+> +	file = fget_task(task, fd);
+> +	return file;
 
--- 
-Regards,
-
-Laurent Pinchart
+Why the local variable?
 
