@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-439632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE959EB207
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:36:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9B59EB209
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:37:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96347169951
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:36:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3619216A195
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6181AA7BF;
-	Tue, 10 Dec 2024 13:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0j65nno"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E519DF4B;
-	Tue, 10 Dec 2024 13:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD84E1A9B5B;
+	Tue, 10 Dec 2024 13:37:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D26C23DEB6;
+	Tue, 10 Dec 2024 13:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733837763; cv=none; b=Gd4Jhr9idVe0MWGDjTcPILFgXoht7bJ0McWnJaUvOT5jh5VaJk6e5qULqSHmpzeu8PxGU6DAvvDbeldzK61JCxktuzJl02nSWwSM7wWDWbaqhCqXyjxK8DY7iefIGKMXuoyUkWl2b9R1YA4Be39qC6Fu7PmEwL9muSvCiJB6jSI=
+	t=1733837869; cv=none; b=NI9y33SkXEIiDSFV79dWx97iLtPPdTpNBUlUAnTz3ZWGmXZLBPhb6Fgn8lfYSOrS9wdWuhIdfyFztPO30/w9zuXPw2Rb+Rb71pKYZ+fHBKj+ZZsfuERLaQpRku5as4/nYHo/tDXYDvR2CFV2K4Cnsp3LD62XjMw7RsUGrlRbW3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733837763; c=relaxed/simple;
-	bh=s2tWExV+CNbckvtXA8OAEn8h1cvGzaeoygyrproyKQA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jN1x5m5u0tFc6GSaiM7GEuaJ2tOTNRChmzGc4zIK4p2nTociLqqNZd5GlXr+EEM3aZu8RJmtbBMJ5BlbwVm9aAIyd+pRuS0hctMncceMZNIM4+Ji446pmD4pEhLNKdF4avO3ynfcGy2iNruTjV/mTp4OKADXgKwc251bzPgiX40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0j65nno; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9A8DC4CED6;
-	Tue, 10 Dec 2024 13:36:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733837763;
-	bh=s2tWExV+CNbckvtXA8OAEn8h1cvGzaeoygyrproyKQA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=N0j65nnoW5difpZWYNUr+Cs8NT76udNun7Mq+hRCK7fBs3RaOnrmGvKj9jsuJawip
-	 6VdcTLjsJS2bPYHl6LMtRxjRC0D5fc17SglMOrggFOp8rYnnQQDlLv3QXrbzC0+ua6
-	 G8D4d04M2HTmXcmvcDm295mN3PCrxGXNnLg8hBHRqSuEgEf4OriR72gQIX+GYPA/+b
-	 Gs/7EmvB2kEXskSCunigRkIRYfZ9JEE78BEUlqgrK5OBoRGWLC9OWhcDQb288zZo2+
-	 QMpcib7tHY3jVLMG7aMAHBBj3L5GpDxq9Kdga2Ij5JU7iF9dFFOmmYdaTnzZExrKmj
-	 tWmeG3wRW+T2A==
-From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@vger.kernel.org, 
- linux-sunxi@googlegroups.com, linux-sunxi@lists.linux.dev, 
- linux-sound@vger.kernel.org, lander@jagmn.com, codekipper@gmail.com
-Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- jernej.skrabec@gmail.com, samuel@sholland.org, andre.przywara@arm.com, 
- wens@csie.org, u.kleine-koenig@baylibre.com
-In-Reply-To: <20241111165600.57219-1-codekipper@gmail.com>
-References: <20241111165600.57219-1-codekipper@gmail.com>
-Subject: Re: [PATCH 0/3] ASoC: sun4i-spdif: Add 24bit support
-Message-Id: <173383776048.46965.5173929465030260982.b4-ty@kernel.org>
-Date: Tue, 10 Dec 2024 13:36:00 +0000
+	s=arc-20240116; t=1733837869; c=relaxed/simple;
+	bh=47XtYOyeaYzt/dyCgYM4l4WCQopsc4ZteTTTSNWrYbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IyJ23dDG5YSa+gCNKV2QJXM0QGS6T873g8fGlKiNBaXDWTiovxJFK9xZWdeSA43NZkbVdu+Vg06RU6Ry3u8Hm2Ta0+yFxU80vUIlh8Tl6Y20GKCQcUHtOsnJG2npkePGB+RlQfRUICSUOpYxh9VzzTzWci1Jv0gPC7FSnyOiTP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EA04106F;
+	Tue, 10 Dec 2024 05:38:14 -0800 (PST)
+Received: from [10.57.91.204] (unknown [10.57.91.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A6D203F58B;
+	Tue, 10 Dec 2024 05:37:44 -0800 (PST)
+Message-ID: <df82b514-e2f7-4edb-b5f3-b91dcb37563a@arm.com>
+Date: Tue, 10 Dec 2024 13:37:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] of: property: Implement
+ of_fwnode_property_present() by of_property_present()
+To: Zijun Hu <zijun_hu@icloud.com>, Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+ Leif Lindholm <leif.lindholm@linaro.org>,
+ Stephen Boyd <stephen.boyd@linaro.org>, Maxime Ripard <mripard@kernel.org>,
+ Grant Likely <grant.likely@secretlab.ca>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241206-of_core_fix-v1-0-dc28ed56bec3@quicinc.com>
+ <20241206-of_core_fix-v1-9-dc28ed56bec3@quicinc.com>
+ <CAL_JsqJvh5pddoVEgaKQvGth0ncgtC9AAGxMEiK__NiZKrjmxA@mail.gmail.com>
+ <dc989762-d868-44ff-968c-6d7be19e41cf@icloud.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <dc989762-d868-44ff-968c-6d7be19e41cf@icloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 11 Nov 2024 17:55:28 +0100, codekipper@gmail.com wrote:
-> I've tested this patch series on the Allwinner H3, A64, H6 and H313 SoCs
-> up to 192KHz.
-> 24bit support is working on my H313 board but 16bit plays a bit slow and
-> I suspect that there is an issue with the clock setups. This is even
-> present without this patch stack. I would look to address this asap,
-> but for now can you please review what's here.
-> BR,
-> CK
+On 2024-12-10 12:44 pm, Zijun Hu wrote:
+> On 2024/12/10 00:48, Rob Herring wrote:
+>> On Thu, Dec 5, 2024 at 6:54 PM Zijun Hu <zijun_hu@icloud.com> wrote:
+>>>
+>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>>
+>>> of_property_read_bool() is deprecated for non-boolean property, but
+>>> of_fwnode_property_present() still uses it.
+>>>
+>>> Fix by using of_property_present() instead of of_property_read_bool().
+>>
+>> of_property_present() just calls of_property_read_bool(). For now. I'm
+>> working on making using of_property_read_bool() on non-boolean a
+>> warning. No point in this change until that happens.
+>>
 > 
-> [...]
+> what about below idea?
+> 
+> replace all of_property_read_bool() usages with of_property_present()
+> then remove the former.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/3] ASoC: sun4i-spdif: Add clock multiplier settings
-      commit: 0a2319308de88b9e819c0b43d0fccd857123eb31
-[2/3] ASoC: sun4i-spdif: Always set the valid data to be the MSB
-      commit: 80ac12ffb3a9e19a2f11eb1975ed31c9a39183c8
-[3/3] ASoC: sun4i-spdif: Add working 24bit audio support
-      commit: 6e750d3ec7410c8d3aa6a006d37142eb837b3c03
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+No, the whole reason of_property_present() was added in the first place 
+is because reading the effective "value" of a boolean property is a 
+semantically different operation from checking whether a property of any 
+type exists. Therefore (ab)using a single function for both purposes, 
+whichever way round, is not an ideal API design. The fact that they both 
+happen to share the same implementation at the moment is, as Rob says, 
+not something we want to be tied to forever.
 
 Thanks,
-Mark
-
+Robin.
 
