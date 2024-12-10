@@ -1,208 +1,140 @@
-Return-Path: <linux-kernel+bounces-439516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11439EB064
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:04:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB11C9EB067
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CCFC169035
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F111889C24
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2B81A3056;
-	Tue, 10 Dec 2024 12:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1F11A23B4;
+	Tue, 10 Dec 2024 12:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XoEkw6lP"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oA0m6Cgy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C5D23DEBA;
-	Tue, 10 Dec 2024 12:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD9C1A3A94;
+	Tue, 10 Dec 2024 12:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733832267; cv=none; b=k2Fp4FLgHJsDqVgbsQeuC+P+3GeCzWZPCB4e8fJ9GovtXZwHk4Zw8J+Q7vE16uyXfAAHrdqOQUABTZOaVAjCOftqNWZJ2hUgl6tYk8EXEJelFFlVq47eQBORblnaWwfCHDvRy8q/Ej+4fV3Dlvpai3uxv2dVbF5F7+Gxz8liNUA=
+	t=1733832275; cv=none; b=UKMixQzrR90TlkzGeOgoOO5iFDXvn3DUsgOPDJNoJao9zDojZ5CZJJl8OYrdtSvG/4UkCxzrU4GfEbIw1n/m7VhHot9XdM6LLytJJnTGRMlT+v55GzHAtVRlVeJpncija7rzBZaR1Of13iPC9EyYsEkl9wdaLG7y2iiSl1QIxZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733832267; c=relaxed/simple;
-	bh=zHIvZOeg5xy93LPPKuXKxIiMOA8gdaqFCgrklSYixNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RrWVj5FAi6R92yTKI5QztfciGyoxyeswAEqSIcxWieTAdoydwLz52YHHMtgTj7McnzkaQtKXreEW8KrkXFOwjToRt0ElWBxF0HQOXiY8zoUUPGWctRdr2pU37ha4OyNfdDc8qQVDp/rrnpzTlXkxSI1J1Lsxa3d9PU2Yk70HeGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XoEkw6lP; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733832260; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=AzdJuUPXgsd+8k2HSMzcMHGonlQsEgs1Lrm1CL/U2eQ=;
-	b=XoEkw6lPCWuSOPsRq+O6FKO9m2gnHxIMrDSNAQZLK3uxFMZLtaTz69wPXglArLJRpYRq254ERRmcwbSjA3Rzy6t2KFnSHxdVjnWtPKEAs6wRlr/Ew6+bN0F2L7zZLpF/IA42wm2ZOQXvXDrLRVxWjeIRgG2zTcCirFUczDdVvm0=
-Received: from 30.166.1.177(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WLEroS4_1733832258 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 10 Dec 2024 20:04:19 +0800
-Message-ID: <5a1ef0d2-be24-4865-8e23-159d001ac6d6@linux.alibaba.com>
-Date: Tue, 10 Dec 2024 20:04:17 +0800
+	s=arc-20240116; t=1733832275; c=relaxed/simple;
+	bh=hezpDc+AUcdmYVJPKOASpHJDutPa15Atoqov8smISWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rftCOnHxWdWcN0t9AwJtwDLmeqfHahDdvUXvLZAVrRIgHGMfDPtOW+pYRw+dGIeS7Oc5euBBsAHf46FTsMEPluFYxYgMhddkgoI+B50S2mT3VqHRvcwVmAYPKaK8ESRXwV/rdv+1lwgOIngDmpRfeUgu1ISeIXODYR4P6Da+nqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oA0m6Cgy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA9kEH9001905;
+	Tue, 10 Dec 2024 12:04:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=vA75UP
+	03QsurDGssRpWZcSqFusQkpZzOyF8/hFKVgXg=; b=oA0m6Cgy9j2oxfWXBcvGt4
+	PR0YVzpvh6e7ZWu6Qn69v8MRmIFkKHbRNDOZBzljtkhzXUIZEPZay0A2Xtlu0wXP
+	LvcVgwh79bsLmUAy/KS0bS7vbBtVz9Xqsgasc767WcnCQ9J3j1A711/akjbUagbq
+	eadN3om5/Zgju3Z9DW2zt363tyvDpSMD6RNMswDChvGAmdfxX8fW33HpYscOPEmL
+	0//qbjOzUcc5iTSumkQvAXpbCLTEf9azvII6R+AYrs3EbghS+bKGKPRu2ZIE8sGh
+	KDVwseaNuywkIo6LzHRrdNIK6GbGnHqvj0kugr5gFhA4nFPS3xbUlM1p1q+Ma22Q
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xdrv6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 12:04:25 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA95Goj023062;
+	Tue, 10 Dec 2024 12:04:24 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wju6sf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 12:04:24 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAC4MaN50463210
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 12:04:22 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A4E62004B;
+	Tue, 10 Dec 2024 12:04:22 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 715D220040;
+	Tue, 10 Dec 2024 12:04:22 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.152.224.66])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 12:04:22 +0000 (GMT)
+Date: Tue, 10 Dec 2024 13:04:20 +0100
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-s390@vger.kernel.org
+Subject: Re: Removing page->index
+Message-ID: <20241210130420.534a6512@p-imbrenda>
+In-Reply-To: <023d1c53-783e-4d6d-a5e9-d15b9e068986@redhat.com>
+References: <Z09hOy-UY9KC8WMb@casper.infradead.org>
+	<cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
+	<20241209183611.1f15595f@p-imbrenda>
+	<023d1c53-783e-4d6d-a5e9-d15b9e068986@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/dwc_pcie: Qualify RAS DES VSEC Capability by Vendor,
- Revision
-To: Bjorn Helgaas <helgaas@kernel.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Krishna chaitanya chundru <quic_krichai@quicinc.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20241209222938.3219364-1-helgaas@kernel.org>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241209222938.3219364-1-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: PTMiC_JsSh-uP8nX3mrxpQjELbvawpTI
+X-Proofpoint-ORIG-GUID: PTMiC_JsSh-uP8nX3mrxpQjELbvawpTI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100089
 
-Hi, Bjorn,
+On Tue, 10 Dec 2024 12:05:25 +0100
+David Hildenbrand <david@redhat.com> wrote:
 
-在 2024/12/10 06:29, Bjorn Helgaas 写道:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> PCI Vendor-Specific (VSEC) Capabilities are defined by each vendor.
-> Devices from different vendors may advertise a VSEC Capability with the DWC
-> RAS DES functionality, but the vendors may assign different VSEC IDs.
-> 
-> Search for the DWC RAS DES Capability using the VSEC ID and VSEC Rev
-> chosen by the vendor.
-> 
-> This does not fix a current problem because Alibaba, Ampere, and Qualcomm
-> all assigned the same VSEC ID and VSEC Rev for the DWC RAS DES Capability.
-> 
-> The potential issue is that we may add support for a device from another
-> vendor, where the vendor has already assigned DWC_PCIE_VSEC_RAS_DES_ID
-> (0x02) for an unrelated VSEC.  In that event, dwc_pcie_des_cap() would find
-> the unrelated VSEC and mistakenly assume it was a DWC RAS DES Capability.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
-> Sample devices that advertise VSEC Capabilities with VSEC ID=0x02 that are
-> unrelated to the DWC RAS DES functionality:
-> 
->    https://community.nxp.com/t5/S32G/S32G3-PCIe-compliance-mode-set-speed-to-5-8Gbit-s/m-p/1875346#M7024
->      00:00.0 PCI bridge: Freescale Semiconductor Inc Device 4300 (prog-if 00 [Normal decode])
->        Capabilities: [70] Express (v2) Root Port (Slot-), MSI 00
->        Capabilities: [158 v1] Vendor Specific Information: ID=0002 Rev=4 Len=100 <?>
-> 
->    https://github.com/google-coral/edgetpu/issues/743
->      0000:00:00.0 PCI bridge: NVIDIA Corporation Device 1ad0 (rev a1) (prog-if 00 [Normal decode])
->        Capabilities: [70] Express (v2) Root Port (Slot-), MSI 00
->        Capabilities: [1d0 v1] Vendor Specific Information: ID=0002 Rev=4 Len=100
-> 
->    https://www.linuxquestions.org/questions/linux-kernel-70/differences-in-'lspci-v'-output-4175495550/
->      00:01.0 PCI bridge: Intel Corporation 5520/5500/X58 I/O Hub PCI Express Root Port 1 (rev 13) (prog-if 00 [Normal decode])
->        Capabilities: [90] Express Root Port (Slot+), MSI 00
->        Capabilities: [160] Vendor Specific Information: ID=0002 Rev=0 Len=00c <?>
-> 
->    https://www.reddit.com/r/linuxhardware/comments/187u87b/the_correct_way_to_identify_the_kernel_driver/
->      04:00.0 Network controller: Realtek Semiconductor Co., Ltd. Device c852 (rev 01)
->        Capabilities: [70] Express Endpoint, MSI 00
->        Capabilities: [170] Vendor Specific Information: ID=0002 Rev=4 Len=100 <?>
-> ---
->   drivers/perf/dwc_pcie_pmu.c | 68 ++++++++++++++++++++-----------------
->   1 file changed, 37 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
-> index 9cbea9675e21..d022f498fa1a 100644
-> --- a/drivers/perf/dwc_pcie_pmu.c
-> +++ b/drivers/perf/dwc_pcie_pmu.c
-> @@ -20,7 +20,6 @@
->   #include <linux/sysfs.h>
->   #include <linux/types.h>
->   
-> -#define DWC_PCIE_VSEC_RAS_DES_ID		0x02
->   #define DWC_PCIE_EVENT_CNT_CTL			0x8
->   
->   /*
-> @@ -100,14 +99,23 @@ struct dwc_pcie_dev_info {
->   	struct list_head dev_node;
->   };
->   
-> -struct dwc_pcie_vendor_id {
-> -	int vendor_id;
-> +struct dwc_pcie_pmu_vsec_id {
-> +	u16 vendor_id;
-> +	u16 vsec_id;
-> +	u8 vsec_rev;
->   };
->   
-> -static const struct dwc_pcie_vendor_id dwc_pcie_vendor_ids[] = {
-> -	{.vendor_id = PCI_VENDOR_ID_ALIBABA },
-> -	{.vendor_id = PCI_VENDOR_ID_AMPERE },
-> -	{.vendor_id = PCI_VENDOR_ID_QCOM },
-> +/*
-> + * VSEC IDs are allocated by the vendor, so a given ID may mean different
-> + * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
-> + */
-> +static const struct dwc_pcie_pmu_vsec_id dwc_pcie_pmu_vsec_ids[] = {
-> +	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
-> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
-> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{ .vendor_id = PCI_VENDOR_ID_QCOM,
-> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
->   	{} /* terminator */
->   };
->   
-> @@ -519,31 +527,28 @@ static void dwc_pcie_unregister_pmu(void *data)
->   	perf_pmu_unregister(&pcie_pmu->pmu);
->   }
->   
-> -static bool dwc_pcie_match_des_cap(struct pci_dev *pdev)
-> +static u16 dwc_pcie_des_cap(struct pci_dev *pdev)
->   {
-> -	const struct dwc_pcie_vendor_id *vid;
-> -	u16 vsec = 0;
-> +	const struct dwc_pcie_pmu_vsec_id *vid;
-> +	u16 vsec;
->   	u32 val;
->   
->   	if (!pci_is_pcie(pdev) || !(pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT))
-> -		return false;
-> +		return 0;
->   
-> -	for (vid = dwc_pcie_vendor_ids; vid->vendor_id; vid++) {
-> +	for (vid = dwc_pcie_pmu_vsec_ids; vid->vendor_id; vid++) {
+> On 09.12.24 18:36, Claudio Imbrenda wrote:
+> > On Wed, 4 Dec 2024 16:58:52 +0100
+> > David Hildenbrand <david@redhat.com> wrote:
 
-How about checking the pdev->vendor with vid->vendor_id before search the vesc cap?
+[...]
 
-+		if (pdev->vendor != vid->vendor_id)
-+			continue;
+> >> I know that Claudio is working on some changes, but not sure how that
+> >> would affect gmap's usage of page->index.  
+> > 
+> > After I'm done, we won't use page->index anymore.
+> > 
+> > The changes I'm working on are massive, it's very impractical to push
+> > everything at once, so I'm refactoring and splitting smaller and more
+> > manageable (and reviewable) series.
+> > 
+> > This means that it will take some time before I'm done (I'm *hoping*
+> > to be done for 6.15)  
+> 
+> Thanks for the information. So for the time being, we could likely 
+> switch to page->private.
+> 
+> One question may be whether these (not-user-space) page tables should at 
+> some point deserve a dedicated memdesc. But likely the question is what 
 
->   		vsec = pci_find_vsec_capability(pdev, vid->vendor_id,
-> -						DWC_PCIE_VSEC_RAS_DES_ID);
-> -		if (vsec)
-> -			break;
-> +						vid->vsec_id);
-> +		if (vsec) {
-> +			pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER,
-> +					      &val);
-> +			if (PCI_VNDR_HEADER_REV(val) == vid->vsec_rev) {
-> +				pci_dbg(pdev, "Detected PCIe Vendor-Specific Extended Capability RAS DES\n");
-> +				return vsec;
-> +			}
-> +		}
->   	}
-> -	if (!vsec)
-> -		return false;
-> -
-> -	pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
-> -	if (PCI_VNDR_HEADER_REV(val) != 0x04)
-> -		return false;
-> -
-> -	pci_dbg(pdev,
-> -		"Detected PCIe Vendor-Specific Extended Capability RAS DES\n");
-> -	return true;
-> +	return 0;
->   }
+maybe? but given that everything is changing all the time, I'm avoiding
+any magic logic in struct page / struct folio.
 
-Best Regards,
-Shuai
+> it will all look like after your rework.
+
+but now that you put my attention on it, I'll try to get rid of
+page->index rather sooner than later.
 
