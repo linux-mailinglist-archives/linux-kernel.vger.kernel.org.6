@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-438761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAB49EA532
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:37:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A935E9EA53B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:38:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F031F285D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:37:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F27C161263
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF9A1CCB21;
-	Tue, 10 Dec 2024 02:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4501A00D1;
+	Tue, 10 Dec 2024 02:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CSB4nOPv"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U+w3bmb0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334D31AAA26;
-	Tue, 10 Dec 2024 02:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3437082B;
+	Tue, 10 Dec 2024 02:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733798190; cv=none; b=sQgztXoog7rxoK1YD34/IVB3zEnYEl3uMwyY2n3b8acoy9O1JGvoGzCqUO4X1ryCNeS9ScLS586uO3zNtvdfdDJ3pS8+UZ8bKkQxOG/ZxIe5+D6zQq1C4NkHGyxmgLfQrPUcqorpvfzhSs5phfslSeBrjhqIeKk3AbO3BDI9KSo=
+	t=1733798284; cv=none; b=a56pPdXAwb7R0mLEQdbqfgczgovqoEv17iUJCE1ThSjwGixejaEXAE02A0OZLthd6LLMafP6SgGoWOC+NgiQ+CYYHgfdNXN1NW9fL6m6CTOxikH5jv2eA4CHzYWNNZzYqr9EMwHccaD7P/wcEtipcnlEf+FnkWObXSSsEUeetz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733798190; c=relaxed/simple;
-	bh=W2CxuNmn8ipTDvv74FKIaUBJEtJ9OD8YuhN9EqWOgS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FH+u08IOP/z4Z70FlxdVKYMqh2PJWlQnC01omfyQvL0iAj3/lT2nyhsg4MhTEFG2zLNLlgDSEy5PCUpts+HrVoJC8lob3MqLPAoY4Vc6GUbMqn+oXd6DnvJj1ZL42WZP7VOygYGLzJPbwQNyv7k3emWxMhnLKzzl+vqZxzZO9wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CSB4nOPv; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA1Bsbg027433;
-	Tue, 10 Dec 2024 02:36:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=RGeWGBjye3Dm9UGrLKEkNObVS/o76qYh178Mz/Gx38g=; b=
-	CSB4nOPviAhOio1qifTupqCMVHbxH+4Kk818neVe0BYIpBgr3bmlt+jWsj7ob73S
-	pYcHUfK47P9Un6P07/UW5d9IF1OkWn3bR2+/uxt0OJBQbaOW7Aq0E9+fKk0kbMaF
-	oK5x6fMl3+bkvV8UZkFTXs35g+VxxBJyqQ/SCBY1KLSNpbWDwWOj/rfexQ0Tvj16
-	giqXvqmqU0t+4nGymFXzzIYQqy5W31in+tFlFc1ZsoksWLT8oVCP3uT5rsw5cqQ/
-	x4nABTViXctkWVrc+ZOSkj16/Sho+GbKIXoEo6OYwkZ0c/whc68DQ+rBUFmYB6CP
-	z2zxrE8/6cPAtRjjABFNXg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43ce894mwg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 02:36:23 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA1jAba035082;
-	Tue, 10 Dec 2024 02:36:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43cctf7y87-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 02:36:22 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BA2aIv1010256;
-	Tue, 10 Dec 2024 02:36:21 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 43cctf7y6u-9;
-	Tue, 10 Dec 2024 02:36:21 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>,
-        Karan Tilak Kumar <kartilak@cisco.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v3] scsi: fnic: Use vcalloc() instead of vmalloc() and memset(0)
-Date: Mon,  9 Dec 2024 21:35:40 -0500
-Message-ID: <173379777403.2787035.14964577709946774001.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241107104300.1252-1-thorsten.blum@linux.dev>
-References: <20241107104300.1252-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1733798284; c=relaxed/simple;
+	bh=IGKdE0OfiyS1U2dYlWNi53Kec8gX52AzHCqyOy0qiYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lFjoAD96O3pmEU+s3WFD9ZAI4v4wTg/V8j4KcPY/usnYuoYtbFSrazi1gRjMDCU2KlUbD8wEM74b1wAIrfxIRKV6fB1k0AEDmRiKgJl0olDrATB0NXjAnWGFF8xuyLcZ+eN0fz2Bj+/P5BgfGuINH6jbpKc7zdHS18gzomHfJKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U+w3bmb0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9FdCJq014037;
+	Tue, 10 Dec 2024 02:37:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GXzvNzx05NSvSGxrZei66rwZlGrKkS52BmFkcznQQ5E=; b=U+w3bmb0UkMr9obN
+	b8O67aSOCCkfJLONzlAP4zkJb4k03ebTzWVcwGYVlUobC2OSI1x5gnIJf+05hmMS
+	qVGyUpWxY+V2AXe2fpc+8w5WItvWhFs9fK4Bd30AAlIJ5dRigUQJEzwHy74GYoQJ
+	h3TZr/HsOiWVxDWsh7mTU6MADO4X3uSd4FaIT8mP/WkFREJe30aPVCGfO/sdDArw
+	CbokgMAtvaV/7cK9ar+N3zYAy7soKDS9L204Z7geKxU/GX5ZlSIlLFE6nP6eUYWX
+	fkfyxuBC9yNyDXTcoRmFu5rBKD7SrTlFXBUpC5+FM+RwsM0/STdcLPKE7ZlDogF3
+	Y4Ng1A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dvyak1rv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 02:37:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA2bpCG012407
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 02:37:51 GMT
+Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 18:37:46 -0800
+Message-ID: <fd8dd19a-a15b-48a3-ab14-9c63e617ed10@quicinc.com>
+Date: Tue, 10 Dec 2024 10:37:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] arm64: dts: qcom: qcs615: add WiFi/BT nodes
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <agross@kernel.org>, <ath11k@lists.infradead.org>,
+        <dmitry.baryshkov@linaro.org>, <konradybcio@kernel.org>,
+        <kvalo@kernel.org>, <linux-media@vger.kernel.org>,
+        <mchehab@kernel.org>, <quic_jjohnson@quicinc.com>,
+        <quic_miaoqing@quicinc.com>, <quic_vgarodia@quicinc.com>,
+        <stanimir.k.varbanov@gmail.com>, <quic_jiaymao@quicinc.com>
+References: <20241203060318.1750927-1-quic_yuzha@quicinc.com>
+ <1ca062dd-8910-4caf-a133-0e5717b43540@oss.qualcomm.com>
+ <649dc6c0-f0e1-4dca-8f93-d0f81803cd70@quicinc.com>
+ <7107275e-1ccf-4f09-ada3-e082833d9364@oss.qualcomm.com>
+Content-Language: en-US
+From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
+In-Reply-To: <7107275e-1ccf-4f09-ada3-e082833d9364@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tYWoVYZk6l9OiMLMSvoq3Jpo26fiH5zt
+X-Proofpoint-ORIG-GUID: tYWoVYZk6l9OiMLMSvoq3Jpo26fiH5zt
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-09_22,2024-12-09_05,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=995 adultscore=0
- phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412100017
-X-Proofpoint-GUID: IgSKjMF346_toCJc9kStgYJOJOUd81-O
-X-Proofpoint-ORIG-GUID: IgSKjMF346_toCJc9kStgYJOJOUd81-O
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ mlxlogscore=821 mlxscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412100017
 
-On Thu, 07 Nov 2024 11:42:59 +0100, Thorsten Blum wrote:
 
-> Use vcalloc() instead of vmalloc() followed by memset(0) to simplify the
-> functions fnic_trace_buf_init() and fnic_fc_trace_init().
+
+On 12/6/2024 8:16 PM, Konrad Dybcio wrote:
+> On 6.12.2024 4:22 AM, Yu Zhang (Yuriy) wrote:
+>>
+>>
+>> On 12/6/2024 1:14 AM, Konrad Dybcio wrote:
+>>> On 3.12.2024 7:03 AM, Yu Zhang(Yuriy) wrote:
+>>>> Add a node for the PMU module of the WCN6855 present on the qcs615
+>>>> board. Assign its LDO power outputs to the existing WiFi/BT module.
+>>>>
+>>>
+>>> subject:
+>>>
+>>> arm64: dts: qcom: qcs615-ride: ....
+>>>
+>>> [...]
+>>>
+>>>> +
+>>>> +    vreg_conn_1p8: vreg_conn_1p8 {
+>>>> +        compatible = "regulator-fixed";
+>>>> +        regulator-name = "vreg_conn_1p8";
+>>>> +        startup-delay-us = <4000>;
+>>>> +        enable-active-high;
+>>>> +        gpio = <&pm8150_gpios 1 GPIO_ACTIVE_HIGH>;
+>>>> +    };
+>>>> +
+>>>> +    vreg_conn_pa: vreg_conn_pa {
+>>>> +        compatible = "regulator-fixed";
+>>>> +        regulator-name = "vreg_conn_pa";
+>>>> +        startup-delay-us = <4000>;
+>>>> +        enable-active-high;
+>>>> +        gpio = <&pm8150_gpios 6 GPIO_ACTIVE_HIGH>;
+>>>> +    };
+>>>
+>>> Are any of these boot-on?
+>>>
+>> Yes, these are used wcn6855-pmu：
+>>       vddio-supply = <&vreg_conn_pa>;
+>>       vddpmu-supply = <&vreg_conn_1p8>;
 > 
-> Compile-tested only.
+> What i meant is, whether these regulators are enabled at boot
+> time (i.e. without software intervention). If that's the case,
+> `regulator-boot-on;` should be added
 > 
-> 
-
-Applied to 6.14/scsi-queue, thanks!
-
-[1/1] scsi: fnic: Use vcalloc() instead of vmalloc() and memset(0)
-      https://git.kernel.org/mkp/scsi/c/5f8822c4a420
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+No need regulator-boot-on, it was triggered by the 
+software(pci_pwrctl_pwrseq_driver).
+> Konrad
+Yu
 
