@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-440130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742F39EB943
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:24:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF63E9EB944
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:24:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79C0165177
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EC828430D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24B7205513;
-	Tue, 10 Dec 2024 18:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF1C2046AF;
+	Tue, 10 Dec 2024 18:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogrout7M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2QKUf3s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A21B1422;
-	Tue, 10 Dec 2024 18:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2243786357;
+	Tue, 10 Dec 2024 18:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733855046; cv=none; b=JSUJBSZEzb3GpyeaYabsB9YAeQCX6sYVZHYRxw5EpQX2hl+LcddmMMKzo4JQgAQ/MIq/xDeyrg5TREmr23RX2s6VC0cp/SGVgDOg0+YQbmF4Qr6pG24cl96+4UsX6GWQOn9Ucepm0c8J6MHLYTkkcFFi1CaFdYiNz2mcO0qkNlM=
+	t=1733855060; cv=none; b=qRFjAm2LcIfaULqzRA1I6CjqYPVpwwBeFUbnxYFK6YBLFqt4sIMbauX6ruhWV4xLZxG8ApsA0Rsqy9LebWJNkCMw6PnIstUWP0Kry7kfUIgJGNG2hk8e627uvBpLtl0ZPhEyVgWvg7ht6SEDZTnPy71+LyF3h7HTbp8WiV1GeaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733855046; c=relaxed/simple;
-	bh=/fyiDo7t3bwOFUjqyiEviTcAYM+EqiEbi3UktkKEp3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iD6vaZAtsAQY0BFhG+PPo5dkKajp/GCLBbslFZtOQxafDqEfbNkE+A/r6jVhR2Ha2puX6+QJ+jdFHwbjStXmyj4Dg8tOV6Wy7ByIfZEwWjOG6torB5eCiCeCYMQCpUzh6kanlgnBrVxBvErq8VGQk37543273E3X5Qs1CL9BEg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogrout7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0DBC4CEE1;
-	Tue, 10 Dec 2024 18:24:05 +0000 (UTC)
+	s=arc-20240116; t=1733855060; c=relaxed/simple;
+	bh=jGy78569S4tV2WAiXrkQv4BrwK/R7Y2sD93xKm9soio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxD94O6g0D5IU9OVnfDChC8h9Z02IgaQ+uSQEFMYo8Q1GP03tq6DUEXu64Nl0YGDuIsA+yBjG88Oz9PSW9YFG4XGQZabj0vVPT7n3Gtu/lmGPY/WgVfaMO3jrYlhWyz4PM5lRP7kQGUV7I1Hl8jOV60hFSY3ELMFYuiz84zq34s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2QKUf3s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34CB6C4CED6;
+	Tue, 10 Dec 2024 18:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733855045;
-	bh=/fyiDo7t3bwOFUjqyiEviTcAYM+EqiEbi3UktkKEp3Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ogrout7MHwnM7F18t0n7uw+pQZL2ymnVhMl1eO/JP1Ds8FX9WrK28LT2aK/7jZzIX
-	 WY71XnrGhnCRPIIJdIMwKZDEfUo8OUe8hcHnFLt1xk/JRfPrrBbbCSqLkLy5dHbmRg
-	 UMy9AqKJGuJdn5brzdCDNAYVDjp7qPJTUfg6NZpiOt3nGTh24ZFmuWAsObWZVvIMUz
-	 oKSxVkwEIWywvMTarqKz8lSF+Hd+J4vx4Mz5TIvf1yC9j0Ii5CWa+gr4zRrOtr1zWF
-	 q+UFauPqIGe6i71/Kjukb2QIZukQ0PBUS9SF6fD+Hcx3vI2b8BKdC1C3kZYUsG9FRv
-	 rYsk3k54BxOrQ==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-29e998c70f9so3317108fac.2;
-        Tue, 10 Dec 2024 10:24:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVOfP4uCdeiuh1ks74MVuQdEv3Um4TnLxd6l4zRfq5JGlcoMjdMv1KDs6RYScMv3FRNXE1rA2WhKrwy1E2f@vger.kernel.org, AJvYcCW9Qucfma5Txv2OkFd+Vs7PTFUOtCJUA9hK4jrQFZwjwAoj19KgO3szVQU09De4ZKT5dURCKEY40RBT@vger.kernel.org, AJvYcCWBF4HDnqAcjF/68XYMehZVQauG3QvDxmeim6DxXpGWYb12/FVwKbFUbmXfusTnOB8+deGTPqojvEel@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy65oTSAA14rIBIuOAJwQ7A68JnDuPp5Rsv/ZfvFauQdmA1XKS1
-	+s1IfwPr2D6rEsfq1rW65ycIuFNHXmz4BKDMePLWNiwP0LUSVbe5oBOGKNVxNu2c5sDTTRQU5I8
-	5qjKo7m1RcoC6TBvAEPCZT7yuVFs=
-X-Google-Smtp-Source: AGHT+IFu8OYVyYTKwdDPzTvaFe9ROtPzqdq6WzuKHAXFFij4IpP0p5z0FzryDr3QH/SZNq5GL/qyp6Z2WfvfgDxBYFA=
-X-Received: by 2002:a05:6870:c08e:b0:29e:4d0e:a2b6 with SMTP id
- 586e51a60fabf-2a012da5ad7mr73511fac.10.1733855044892; Tue, 10 Dec 2024
- 10:24:04 -0800 (PST)
+	s=k20201202; t=1733855059;
+	bh=jGy78569S4tV2WAiXrkQv4BrwK/R7Y2sD93xKm9soio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M2QKUf3siGL7b6NroqQ4bX6UOEldaH4jMa9iaUtMl34MhNafRFDzuJugwjQ19180X
+	 9EPxDAzpNb4Te//KkTwfV/obX9sDN06CaMuyoLm43cj9NElPdlAu1VB4SiXY1Z/+4H
+	 Ji8Zc51ycYvXNCzg0JvOrPNcr5Dn9YTM573oSgzu4wtfizkGSTHJiSTlkWTavoSChr
+	 64ItN0Nb1uIYFkSKkpyMSf7uvZdaqBS3tpgmAYVSHs9j3l6LQ51XqR2uxF5VSEzLpA
+	 zcSoLiwIl+r0xkZ+zuFZD2VQy3VNBttqZ6LIkE8fmQztG9mmLekB/AUsgEGysMEd6+
+	 YoMllr+dBYoXQ==
+Date: Tue, 10 Dec 2024 10:24:17 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Howard Chu <howardchu95@gmail.com>, peterz@infradead.org,
+	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	James Clark <james.clark@linaro.org>
+Subject: Re: [PATCH v9 01/10] perf record --off-cpu: Add --off-cpu-thresh
+ option
+Message-ID: <Z1iHUTN_T4xZcrgj@google.com>
+References: <20241122043840.217453-1-howardchu95@gmail.com>
+ <20241122043840.217453-2-howardchu95@gmail.com>
+ <Z1eGw52LThYh1Gjx@google.com>
+ <CAP-5=fUm6kWmX3FzFYJ_xoBgfgs0zPigyMKLy7VrXvNt1sC+iQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202-sysfs-const-bin_attr-pci-v1-0-c32360f495a7@weissschuh.net>
- <20241202-sysfs-const-bin_attr-pci-v1-4-c32360f495a7@weissschuh.net>
-In-Reply-To: <20241202-sysfs-const-bin_attr-pci-v1-4-c32360f495a7@weissschuh.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 19:23:53 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hQT7R2bMBy2JgXO0DJnoMNJ5JotZWyvvBV0w98fBae4A@mail.gmail.com>
-Message-ID: <CAJZ5v0hQT7R2bMBy2JgXO0DJnoMNJ5JotZWyvvBV0w98fBae4A@mail.gmail.com>
-Subject: Re: [PATCH 4/4] PCI/ACPI: Constify 'struct bin_attribute'
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe <logang@deltatee.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUm6kWmX3FzFYJ_xoBgfgs0zPigyMKLy7VrXvNt1sC+iQ@mail.gmail.com>
 
-On Mon, Dec 2, 2024 at 8:03=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> The sysfs core now allows instances of 'struct bin_attribute' to be
-> moved into read-only memory. Make use of that to protect them against
-> accidental or malicious modifications.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+On Mon, Dec 09, 2024 at 06:24:21PM -0800, Ian Rogers wrote:
+> On Mon, Dec 9, 2024 at 4:09 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hi Howard,
+> >
+> > Sorry for the late review.
+> >
+> > On Thu, Nov 21, 2024 at 08:38:31PM -0800, Howard Chu wrote:
+> > > Specify the threshold for dumping offcpu samples with --off-cpu-thresh,
+> > > the unit is us (microsecond). Default value is 500,000us (500ms, 0.5s).
+> >
+> > I guess we mostly care about more than milli-seconds of off-cpu times.
+> > Can we change the unit to msec?
+> 
+> I wonder if there should be two values, one for the command line and
+> one in the code. I think microseconds make most sense in the code, 1ms
+> being roughly 1000 context switches. On the command line millisecond
+> would align with perf stat's -I option, and as you point out, users
+> aren't usually working at the granularity of a microsecond. Having the
+> code be microsecond oriented allows the option to have a more precise
+> command line option in the future, autotuning, etc.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+I'm fine as long as it has a proper suffix for the unit. :)
 
-> ---
->  drivers/pci/hotplug/acpiphp_ibm.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pci/hotplug/acpiphp_ibm.c b/drivers/pci/hotplug/acpi=
-php_ibm.c
-> index 8f3a0a33f362bc60ba012419b865b8821c075531..b3aa34e3a4a29417bd6942737=
-79dc356be284f1d 100644
-> --- a/drivers/pci/hotplug/acpiphp_ibm.c
-> +++ b/drivers/pci/hotplug/acpiphp_ibm.c
-> @@ -84,7 +84,7 @@ static int ibm_get_attention_status(struct hotplug_slot=
- *slot, u8 *status);
->  static void ibm_handle_events(acpi_handle handle, u32 event, void *conte=
-xt);
->  static int ibm_get_table_from_acpi(char **bufp);
->  static ssize_t ibm_read_apci_table(struct file *filp, struct kobject *ko=
-bj,
-> -                                  struct bin_attribute *bin_attr,
-> +                                  const struct bin_attribute *bin_attr,
->                                    char *buffer, loff_t pos, size_t size)=
-;
->  static acpi_status __init ibm_find_acpi_device(acpi_handle handle,
->                 u32 lvl, void *context, void **rv);
-> @@ -98,7 +98,7 @@ static struct bin_attribute ibm_apci_table_attr __ro_af=
-ter_init =3D {
->                     .name =3D "apci_table",
->                     .mode =3D S_IRUGO,
->             },
-> -           .read =3D ibm_read_apci_table,
-> +           .read_new =3D ibm_read_apci_table,
->             .write =3D NULL,
->  };
->  static struct acpiphp_attention_info ibm_attention_info =3D
-> @@ -353,7 +353,7 @@ static int ibm_get_table_from_acpi(char **bufp)
->   * our solution is to only allow reading the table in all at once.
->   */
->  static ssize_t ibm_read_apci_table(struct file *filp, struct kobject *ko=
-bj,
-> -                                  struct bin_attribute *bin_attr,
-> +                                  const struct bin_attribute *bin_attr,
->                                    char *buffer, loff_t pos, size_t size)
->  {
->         int bytes_read =3D -EINVAL;
->
-> --
-> 2.47.1
->
+Thanks,
+Namhyung
+
 
