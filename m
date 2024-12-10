@@ -1,142 +1,133 @@
-Return-Path: <linux-kernel+bounces-439034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE8E9EA9CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:42:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05029EAA00
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:47:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145FC188778B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B02C16AA37
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446B922D4DA;
-	Tue, 10 Dec 2024 07:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9929D172BD5;
+	Tue, 10 Dec 2024 07:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dYs32Ks4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LJgYH1oN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765B422839A;
-	Tue, 10 Dec 2024 07:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC2B22D4CC;
+	Tue, 10 Dec 2024 07:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733816551; cv=none; b=fMtYkHDY1/YynfxsI/CdhOBWUgJ8d822durEsSCM+1EmVjbqpK2bw828sS6sN4WERgIRK+stn34RljCoC7+SLQuZ8hlKWMi/NNT87/ZbPCepgq+xCLx7AV/TesyqZfO0UPPDYjLxa8PdIGspNx0qdrm/J049Oraua3ToM0w56AM=
+	t=1733816650; cv=none; b=FS4HHdpVtMVyYfzHqavpEPClWl76ksY1xNxpp7qB3gp6vtIwQ3YkbxZKCAXAkENwc1agS+JDtxnfUP2BH8WCHxrF1r9NBqgoCmGkGhkL0bFr6myXr9r+39o6n8FVLgKEPXHAhdYpCJk4N65p4syzujkZNXcZHxAPZoIPh5QLBJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733816551; c=relaxed/simple;
-	bh=8hjTD94y9nFNvIoE44eb2J6vN/+FjBwV0spUClTOLto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CupjfosjZJlzZ7u2mjOTB/SUrJE+2UXqLPwxcnY/b3nx0Mc6HY21qFaL3RW/cjGob77Vz1CIAu7R3R5rWNEV036JAk8I+GQgxuSj1Xpw4bxS4bE1pO/ke/f/I5Xkdlg4fQgWwustCY+zaTsp2PxLQHZjZ/zJcM/y9+PosaE2DPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dYs32Ks4; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733816550; x=1765352550;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8hjTD94y9nFNvIoE44eb2J6vN/+FjBwV0spUClTOLto=;
-  b=dYs32Ks4kxEyPe4gJcRAOo6x4FWE6CxZW6xVbWDxuQsZ4zYOoYT9Gz13
-   0LJ4+Gn2Qt06azlYG+W2zXV2qAM5HUrRPaMvc5wttKMv5rzd4RPfKTDnX
-   V3UCpTQK4aFPEwr0t9YX9erY02DwRwnL7xylFDLnCRtpj3nHcwNAX34Oy
-   XrpYQNM1rVoiUF+zQHf1hvcji+uNNCxj/IUjF5FAN74AZYqgunukpJE34
-   4NiSjRh3zUUk+ANYGTEJPtwyNf3hOn10OYAci7hdNg/BJ0Wbh7nGy1Ie3
-   7zziV6aB2N77oSa2O6zbDTk/f3Dkpr6iZUrilJm/nz6YTsmdfWKvuTK8F
-   g==;
-X-CSE-ConnectionGUID: /WahzK1rTDGtTN/LvNfTqA==
-X-CSE-MsgGUID: dl9O4c0dSw6Vtxg4IJ+MUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="44820329"
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="44820329"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 23:42:27 -0800
-X-CSE-ConnectionGUID: k/NybUJjR3qiT+0izjIHEw==
-X-CSE-MsgGUID: IBChTmGvTRiqnl3u8X09KA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="95772494"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 23:42:24 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 66BA911F71F;
-	Tue, 10 Dec 2024 09:42:21 +0200 (EET)
-Date: Tue, 10 Dec 2024 07:42:21 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 04/15] media: i2c: ds90ub960: Fix logging SP & EQ
- status only for UB9702
-Message-ID: <Z1fw3YPN3F8aeUeW@kekkonen.localdomain>
-References: <20241206-ub9xx-fixes-v4-0-466786eec7cc@ideasonboard.com>
- <20241206-ub9xx-fixes-v4-4-466786eec7cc@ideasonboard.com>
- <Z1a0OiRDw92o1w6_@kekkonen.localdomain>
- <e53c8964-5373-4c1f-ad48-69a474a997fb@ideasonboard.com>
+	s=arc-20240116; t=1733816650; c=relaxed/simple;
+	bh=x1B+56OzNF1Et1otShBVMsgiqmUcBQKPI+IO++J80dI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WOS9qC/btxfiKj8dG+M0RUzzQH0ii11MfZwU7k+o9x1Wm+w/Rs7BbUBKAEo4iZEiPAyqAJFqusuWNWghmBXNP7VfA+7PFv89rdiqUwDrIh6X/NBoQcY2Y683fTPDNq0EP7YqjvPPCQTRehXo/n0NpbCinPcm1IUCgPye35Ujr8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LJgYH1oN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA3ovTr014620;
+	Tue, 10 Dec 2024 07:44:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	az1rJ6tiz65SEHje3OiybSenn4f7/wTaCG7Qyj18s24=; b=LJgYH1oNGtU9+Fte
+	AwlqVQvoJRnFlAQUI7asXN+VE+kV0pxKZggsgChjfzNgUKYJ28VejCtRtOEKfySq
+	dIfWnjHAIJjIaURLfPyUvUNf8DlMWcM7kAtj6KY45o2N+Ldj/1YQrcOv8hbGGkTp
+	T6VHUy1lb0dpYnnEw1lUwj5pCDzviRmpPnhhyvY2sfGTr1u2IRHFWEEvgjZYSabK
+	4jlp9UpLimREKL+XXuBrEaUOjnFJos5Q3fBJSqJPw14Qt1QLta+kLmWHY4uU9BB6
+	yx22R53LsM0WyDg9vq/uVIQ5oLzQFC6zY0rVrHPnSNe8UsmUD7AF6xwktD4HW/qH
+	tViS6Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3n8gss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 07:44:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA7i3H4001706
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 07:44:03 GMT
+Received: from [10.151.40.239] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 23:44:00 -0800
+Message-ID: <13722d17-bfbd-4fd8-b9a0-457a8193bb5e@quicinc.com>
+Date: Tue, 10 Dec 2024 13:13:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e53c8964-5373-4c1f-ad48-69a474a997fb@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/13] dt-bindings: net: wireless: describe the ath12k
+ AHB module
+To: Krzysztof Kozlowski <krzk@kernel.org>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241209165644.1680167-1-quic_rajkbhag@quicinc.com>
+ <20241209165644.1680167-2-quic_rajkbhag@quicinc.com>
+ <a522df49-5628-4ec1-8ea7-d27cb7fa3bff@kernel.org>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <a522df49-5628-4ec1-8ea7-d27cb7fa3bff@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: p56w4NTSt7X2VQbkbqYEo4K1C6N6Q5rX
+X-Proofpoint-ORIG-GUID: p56w4NTSt7X2VQbkbqYEo4K1C6N6Q5rX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ mlxlogscore=704 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412100057
 
-Huomenta,
-
-On Tue, Dec 10, 2024 at 09:38:30AM +0200, Tomi Valkeinen wrote:
-> Hi,
+On 12/10/2024 12:48 PM, Krzysztof Kozlowski wrote:
+> On 09/12/2024 17:56, Raj Kumar Bhagat wrote:
+>> Add device-tree bindings for the ATH12K AHB module found in the IPQ5332
+>> device.
 > 
-> On 09/12/2024 11:11, Sakari Ailus wrote:
-> > Huomenta,
-> > 
-> > On Fri, Dec 06, 2024 at 10:26:40AM +0200, Tomi Valkeinen wrote:
-> > > UB9702 does not have SP and EQ registers, but the driver uses them in
-> > > log_status(). Fix this by separating the SP and EQ related log_status()
-> > > work into a separate function (for clarity) and calling that function
-> > > only for UB960.
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
-> > > Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> > > ---
-> > >   drivers/media/i2c/ds90ub960.c | 90 ++++++++++++++++++++++++-------------------
-> > >   1 file changed, 50 insertions(+), 40 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-> > > index 24198b803eff..94c8acf171b4 100644
-> > > --- a/drivers/media/i2c/ds90ub960.c
-> > > +++ b/drivers/media/i2c/ds90ub960.c
-> > > @@ -2950,6 +2950,54 @@ static const struct v4l2_subdev_pad_ops ub960_pad_ops = {
-> > >   	.set_fmt = ub960_set_fmt,
-> > >   };
-> > > +static void ub960_log_status_ub960_sp_eq(struct ub960_data *priv,
-> > > +					 unsigned int nport)
-> > > +{
-> > > +	struct device *dev = &priv->client->dev;
-> > > +	u8 eq_level;
-> > > +	s8 strobe_pos;
-> > > +	u8 v = 0;
-> > > +
-> > > +	/* Strobe */
-> > > +
-> > > +	ub960_read(priv, UB960_XR_AEQ_CTL1, &v);
-> > 
-> > How about adding __must_check to the ub960_read()?
 > 
-> Actually, this is just moving code around (behind an if), so I'd rather not
-> add more to this patch, especially as this is a fix.
+> Please start using b4... Not tested, so no review.
 > 
-> We'll add the error handling separately on top.
+> 
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> 
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time.
+> 
+> Please kindly resend and include all necessary To/Cc entries.
+> </form letter>
+> 
 
-Works for me.
+Missed to include "devicetree@vger.kernel.org". I have now sent v4 with all
+the list as per - scripts/get_maintainer.pl
 
--- 
-Sakari Ailus
 
