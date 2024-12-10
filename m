@@ -1,111 +1,118 @@
-Return-Path: <linux-kernel+bounces-438755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDA59EA523
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:34:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AFA9EA535
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:37:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280FE282D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E5B162197
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F9119994F;
-	Tue, 10 Dec 2024 02:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4381D5CF8;
+	Tue, 10 Dec 2024 02:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kQRIW98A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RlzU5rmr"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87785233129;
-	Tue, 10 Dec 2024 02:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B269119DFB5;
+	Tue, 10 Dec 2024 02:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733798052; cv=none; b=TdldIH8KOUam/NP+o7akWhBKUJrbI79rpwV8ojYM6nZPC4lt1mBjM+R2Xtecby53ldmhOvyXSpsNtTq9GIPO8i2hbrXt2EQw+nzy5OXDwi6AuXTkcN5fhgGj3Y9mKfkwkHpt2y/0QxqdYW8R3+B5/kNb9R+R/4mP2MhUw3ZF1Qc=
+	t=1733798200; cv=none; b=S36kboRXVoBNxYil4C99TqaxMPNbHKChPpwiXThCQZzoM1xjKjT8pfUvrj6lyPiyXI168zTvPPEtX/5vs4zi9CQ1Mts1EmNxkkc9Ip7SiLnjXIKNkOAGpBDkPkJFaxaUoAYoi2dsECju4DfxDxn8RohcJ7gN6AlB4g97SJRKA0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733798052; c=relaxed/simple;
-	bh=GZudqfN3knEgEEj8Ks3O0UILklj2xj6a778uboW+VFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X10QcB6XzdjW2ItbfzFsxIDr5MHwzl6Z311IIHCWVotWsLoAzgiWSAysv8giTn0bnri30L4DnytqyZ/kkf0NVTV9zNSioglp6/cmNcWCwol6OpIWybrpB6CUxCCcN7vqfH9vG7TCHlbrWR+7JQm8mcNlRSHwRhWkcDVpwC0lYaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kQRIW98A; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733798050; x=1765334050;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GZudqfN3knEgEEj8Ks3O0UILklj2xj6a778uboW+VFQ=;
-  b=kQRIW98AGLQxqk4CTrSVmlwK9uI8qD+OlrjlKwe4m0CROmHkGddykyXd
-   /fRqD8sIQlT4NJbDzHFB+vodYAwizugvSg7QXrxk5GQqu9HJjGkBWKCa8
-   pkuLbAP3B4YQkTqAvcLBP2h73uFt0RTqcWZuSEnkUipLJl2aFMGzuGWiW
-   ZIAbytwuZcVQ0uE721HWbyDu5/WziF4I/SAFew+LtMwwv2PRV1vbI6Vsp
-   xhTfK0V01YXgAm4Cu98TagshRKSpslwsgcGAK+ihw+QZ50H/jxtHWzfvt
-   hhlqzg29kY6Fpr852WWccTfF4A+4+VLX3F4lGiXJF91yilOlts75oLr0o
-   A==;
-X-CSE-ConnectionGUID: P6zjQhPTRBilVGLarp5vXQ==
-X-CSE-MsgGUID: y0MCWSNlSK+Jj9eCmAOMvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="21710090"
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="21710090"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 18:34:09 -0800
-X-CSE-ConnectionGUID: zBqnRLwORRuZtOwqMgXRew==
-X-CSE-MsgGUID: 076kzeA7S+ie0pH465iD1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="96053429"
-Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 18:34:07 -0800
-Message-ID: <db6e522a-1b2c-47ab-8e33-b2e3d9b81c4f@linux.intel.com>
-Date: Tue, 10 Dec 2024 10:34:04 +0800
+	s=arc-20240116; t=1733798200; c=relaxed/simple;
+	bh=U+65QawTMA++yvBpbKoHV/UPNTcbc0hpe1nGaq7rWDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UVecSzjCrEuVQOVch40Pxf9a32xYn//w4NfWu22/Qkes0tzMzZ6dVafns0fVdT+7ld30qmJrkRZWdn/J+r8OjWuuN863VGcpy2sBQaMxQ8uFPH2Qr+PyhF9aesQeGCjKnYNawMWmo41FSmTyesxTCuuFhzA5RztaGY4uOX5SHZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RlzU5rmr; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA1Bv18005036;
+	Tue, 10 Dec 2024 02:36:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=VZ+y8JShapF72EwjS+CeEUo75VrzC1AcESLZgxxUIRw=; b=
+	RlzU5rmrlqOYUiFPmLl2p0XxpeIKCax9fkVI3MzlMzyKj1XDvskjUdCAOxEpDs/E
+	dVz36kKa0XqWyaUIOSuJHeDLYayaG/yL+u/A00jtPLrYl4ts7tNHpfHjsr4U4P9Z
+	dyKTlxVG2x7EZB0dYjoGOniYkV9hB0HKm+lkO23NDzXuAMVK7UC5VkDEzwAPO1Bn
+	ir1JjKDP6mYUfXzXEfMvRiVDHaelQMsSjcfNdsvfm2DzLxhJuf4IkccGvdz2pk+a
+	nX+WFqe1i6C5NvIzaNFXngnhEfYYpUwG9r67uK0hD8ZVgsr3Vk1jjHlEZxecCv7o
+	/A01iFUYhxP7nYmzm8FlSQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cdysvp3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 02:36:19 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9NrR2I035038;
+	Tue, 10 Dec 2024 02:36:19 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43cctf7y72-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 02:36:19 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BA2aIuj010256;
+	Tue, 10 Dec 2024 02:36:18 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 43cctf7y6u-1;
+	Tue, 10 Dec 2024 02:36:18 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Avri Altman <avri.altman@wdc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart Van Assche <bvanassche@acm.org>, Bean Huo <beanhuo@micron.com>
+Subject: Re: [PATCH v5 0/4] Untie the host lock entanglement - part 2
+Date: Mon,  9 Dec 2024 21:35:32 -0500
+Message-ID: <173379777408.2787035.14259305456500332981.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241124070808.194860-1-avri.altman@wdc.com>
+References: <20241124070808.194860-1-avri.altman@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] KVM: TDX: Add a place holder for handler of TDX
- hypercalls (TDG.VP.VMCALL)
-To: Chao Gao <chao.gao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
- reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, isaku.yamahata@intel.com,
- yan.y.zhao@intel.com, michael.roth@amd.com, linux-kernel@vger.kernel.org
-References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
- <20241201035358.2193078-3-binbin.wu@linux.intel.com>
- <Z1bUbfl8vfVvA0zW@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <Z1bUbfl8vfVvA0zW@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-09_22,2024-12-09_05,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=667 adultscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2411120000 definitions=main-2412100017
+X-Proofpoint-ORIG-GUID: L_7hX2j5paIZYLqgXhanzizoh5JEhKZT
+X-Proofpoint-GUID: L_7hX2j5paIZYLqgXhanzizoh5JEhKZT
 
+On Sun, 24 Nov 2024 09:08:04 +0200, Avri Altman wrote:
 
+> Here is the 2nd part in the sequel, watering down the scsi host lock
+> usage in the ufs driver. This work is motivated by a comment made by
+> Bart [1], of the abuse of the scsi host lock in the ufs driver.  Its
+> Precursor [2] removed the host lock around some of the host register
+> accesses.
+> 
+> This part replaces the scsi host lock by dedicated locks serializing
+> access to the clock gating and clock scaling members.
+> 
+> [...]
 
-On 12/9/2024 7:28 PM, Chao Gao wrote:
-[...]
->>
->> #define VMX_EXIT_REASONS \
->> 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
->> @@ -155,7 +156,8 @@
->> 	{ EXIT_REASON_UMWAIT,                "UMWAIT" }, \
->> 	{ EXIT_REASON_TPAUSE,                "TPAUSE" }, \
->> 	{ EXIT_REASON_BUS_LOCK,              "BUS_LOCK" }, \
->> -	{ EXIT_REASON_NOTIFY,                "NOTIFY" }
->> +	{ EXIT_REASON_NOTIFY,                "NOTIFY" }, \
->> +	{ EXIT_REASON_TDCALL,                "TDCALL" }
-> Side topic:
-> Strictly speaking, TDCALL vm-exit handling can happen for normal VMs.
-Oh, yes. TDX CPU architectural specification, TDCALL in VMX non-root mode
-causes VM exit with exit reason TDCALL. So, normal VM could exit with TDCALL.
+Applied to 6.14/scsi-queue, thanks!
 
-> so, KVM may
-> need to handle it by injecting #UD. Of course, it is not necessary for this series.
-Currently, the handling of TDCALL for VMX VMs will return to userspace
-with KVM_EXIT_INTERNAL_ERROR + KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON.
-Since it's not an expected VM Exit reason for normal VMs, maybe it doesn't
-worth a dedicated handler?
+[1/4] scsi: ufs: core: Introduce ufshcd_has_pending_tasks
+      https://git.kernel.org/mkp/scsi/c/e738ba458e75
+[2/4] scsi: ufs: core: Prepare to introduce a new clock_gating lock
+      https://git.kernel.org/mkp/scsi/c/7869c6521f57
+[3/4] scsi: ufs: core: Introduce a new clock_gating lock
+      https://git.kernel.org/mkp/scsi/c/209f4e43b806
+[4/4] scsi: ufs: core: Introduce a new clock_scaling lock
+      https://git.kernel.org/mkp/scsi/c/be769e5cf53b
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
