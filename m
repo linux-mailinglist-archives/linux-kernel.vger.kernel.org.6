@@ -1,227 +1,327 @@
-Return-Path: <linux-kernel+bounces-439357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313329EAE0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:35:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FC79EAE12
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:36:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310C628366B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415B418828A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C2C210F6F;
-	Tue, 10 Dec 2024 10:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fFfNGOVF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jJH3lJ5j"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD942080D6;
+	Tue, 10 Dec 2024 10:35:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915C32080D7
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D9B2080D2
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733826862; cv=none; b=NP7jNXddNVh3b65WkYV65HUSfMA2IqNM1G1quhCmT71gvDaWnxY0uXKB49TR7dJbP0uPmHpZxN7JiASlZ7pM5SO2DwRIJBRuuGEb96xqGknhUbpR5d+huorgAx67SdROEywHgGcpuj+evX6Kd/MRdHg2MEkQt/xgTsTh9l8lHAo=
+	t=1733826905; cv=none; b=q35gfgU2FAMVxcJx//phM0/f6YnCYy4ZSfX3qCNZg+QRahYRbzHqlUbJmpy1KLaHwk5DEUGOB59Ma30mQrmU7Yj+3epPyQfyS8edX7mehWtEwkNNhfE011lJNIp9E/dMmGs4REUBnbinRzlqta4L03cX/U1ielORqSOMpQVdPA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733826862; c=relaxed/simple;
-	bh=kkUkaSLB+A3b5oNaOfn6H7NWYF11wNPQSI4Rqw4dE0Y=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=H8DFwbOWZmFPzJgwpVeVeWvVafj5WA6RGjm0x1vBdTqFLDUqEC36C3pQsuKyVxhMao24lK7LeKFAe6hgu1rXIxqpmGtwR+HeaCOrjBe4ICaGFTkfGJLJscAHLCJknr4wumzBqWH5Ln79bnyuTFe4FWCJIyMNORfg3iP8PcXoxAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fFfNGOVF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jJH3lJ5j; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241210103335.626707225@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733826858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=5aTYhXT8OhSS4alOlqf6d0ntHhzH/LyWqanpwxxQXlo=;
-	b=fFfNGOVFub+E8J2AZOf7i2O/TH5FehToC3RaXPsZTxncbXmNZZyhOtZj4pwNQQ5RRIBT4k
-	AEqnJzX3PoXYhdTgl2v8mRKfGY6AHst4Poni8iN5Ghd06tZFYRrvJLW+261TAzKLCxp3sZ
-	qVrjmXvb3TuJtCe2NgxQPpJQa06s3kMmZqJu4NqNjhPEPNt6zTOVYFTA+5XlmnCcWPxsjE
-	XpbTjKWtpF88WePR0wMHlk9at5abEKqn4a5Cn2VRbuiadBXZYZM9/Qz1id2l1pv7q60qXq
-	WaNJmzEPUv1bF848xdnjbYzSZEWZDWdJO0z6t9Q8muQabC6QasV6gg/a3YZMkg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733826858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=5aTYhXT8OhSS4alOlqf6d0ntHhzH/LyWqanpwxxQXlo=;
-	b=jJH3lJ5jF2dS03ZzbAaTJQ09ze/Ay7KGkYcCQeq1UdDfz+/iz7RL7LhbQDdtj5bEgFjnl/
-	tfHBnqKPemHG/cAw==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: x86@kernel.org,
- Anup Patel <apatel@ventanamicro.com>,
- Vineet Gupta <vgupta@kernel.org>,
- Brian Cain <bcain@quicinc.com>,
- Wei Liu <wei.liu@kernel.org>,
- Steve Wahl <steve.wahl@hpe.com>,
- Joerg Roedel <joro@8bytes.org>,
- Lu Baolu <baolu.lu@linux.intel.com>,
- Juergen Gross <jgross@suse.com>
-Subject: [patch 5/5] genirq: Remove IRQ_MOVE_PCNTXT and related code
-References: <20241210102148.760383417@linutronix.de>
+	s=arc-20240116; t=1733826905; c=relaxed/simple;
+	bh=SZvLZb8LJ83CPH+p6l86Jqxrq52dX/h547WXFvcLcxs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pFXGXFrU2nVmXlwM06ijQYGvCeFn8g1jjd8pJ+f/VWBKchLEzYRqLxS9oP9glIFOzQZA717BjOsEm8Af7ot2Lq52rE8+2jNzVpNo5xQqmYOhkUg32xg028pQ5QkcUr75pxRIEo/Q4PZEv2f7HSlRbwtufDbgbOAkegfure/SAAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a9d3149792so28563605ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:35:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733826902; x=1734431702;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VC+SMiTXtre78bS7Zdr5uFV1mKmHkgEI3uk0Wk9COkg=;
+        b=GZAZBSyXdI0+NOKFFZZUwd88QCJf0wUkAlpSYCN76SBfwFCzB9+2zUpC7Cvf86L2Qs
+         9GeZ2ajSjXUNdkRnC51aKtY9dN54UBjuq59oSTcehEJBQI0x79g+glMluIZBB5nUSxuU
+         0d3oPSlMBA0K5ojxfazL/h+wAvrpkr8nkdl1FxFqZGOERDBOEVPgy58/sij/QCD1O2LY
+         nuYNHe7rdMhog+b4bUxogmhxKyHsCTMR2CAX8R067CZ1MPcatSjkalapbkVYWa2MSg+a
+         +ettN9+F6k3LQV0dH1U+vV52RFC46F3XmaUqYZelkIavn43/zyD9a05EaTMq1qyelWPb
+         RIFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtTAUayI5gFV0zWAgfR0vclseL4zqk+5ASfk0BqMorUmJxcXbL+6mXFfrobQrl5+ykd8xWEHkIhVMRxL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeWJrVNsX/dS7jNiD4ytih3BOpmOCtaMAruNxc0z9on8oL7mtd
+	STTvd3f6KIiF6M+oTvg5jUvHpv8OKBj7FQMjBiLon3lRLGjYy5DK8ZZ4P2ppQWDElFtPqqqPoGi
+	WMXgXhTTuNg8xN7LC53xIgTwSp8to160RNJ5AWR/H5lUfQjXSeY7Dvvw=
+X-Google-Smtp-Source: AGHT+IH97RZpvW5HA6DibJBMkppYalSOHlksJy7dQMgihBd0Ajpp3m0E2QCQhknaa0Mvme2+EV22hlnMk4OqeJa7Szte6fcM5aAe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 10 Dec 2024 11:34:17 +0100 (CET)
+X-Received: by 2002:a05:6e02:1ca7:b0:3a7:776e:93fb with SMTP id
+ e9e14a558f8ab-3a811d9c851mr172747695ab.8.1733826902234; Tue, 10 Dec 2024
+ 02:35:02 -0800 (PST)
+Date: Tue, 10 Dec 2024 02:35:02 -0800
+In-Reply-To: <PUZPR04MB6316E131A563A11DB08B9C54813D2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67581956.050a0220.a30f1.01c8.GAE@google.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] INFO: task hung in
+ process_measurement (2)
+From: syzbot <syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com>
+To: andy.wu@sony.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, hpa@zytor.com, 
+	jmorris@namei.org, linkinjeon@kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	mingo@redhat.com, paul@paul-moore.com, roberto.sassu@huawei.com, 
+	serge@hallyn.com, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, wataru.aoyama@sony.com, x86@kernel.org, 
+	yuezhang.mo@sony.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Now that x86 is converted over to use the IRQCHIP_MOVE_DEFERRED flags,
-remove IRQ*_MOVE_PCNTXT and related code.
+Hello,
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/Kconfig       |    1 -
- include/linux/irq.h    |   12 +-----------
- kernel/irq/chip.c      |   14 --------------
- kernel/irq/debugfs.c   |    1 -
- kernel/irq/internals.h |    2 +-
- kernel/irq/settings.h  |    6 ------
- 6 files changed, 2 insertions(+), 34 deletions(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in process_measurement
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -173,7 +173,6 @@ config X86
- 	select GENERIC_IRQ_RESERVATION_MODE
- 	select GENERIC_IRQ_SHOW
- 	select GENERIC_PENDING_IRQ		if SMP
--	select GENERIC_PENDING_IRQ_CHIPFLAGS	if SMP
- 	select GENERIC_PTDUMP
- 	select GENERIC_SMP_IDLE_THREAD
- 	select GENERIC_TIME_VSYSCALL
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -64,7 +64,6 @@ enum irqchip_irq_state;
-  * IRQ_NOAUTOEN			- Interrupt is not automatically enabled in
-  *				  request/setup_irq()
-  * IRQ_NO_BALANCING		- Interrupt cannot be balanced (affinity set)
-- * IRQ_MOVE_PCNTXT		- Interrupt can be migrated from process context
-  * IRQ_NESTED_THREAD		- Interrupt nests into another thread
-  * IRQ_PER_CPU_DEVID		- Dev_id is a per-cpu variable
-  * IRQ_IS_POLLED		- Always polled by another interrupt. Exclude
-@@ -93,7 +92,6 @@ enum {
- 	IRQ_NOREQUEST		= (1 << 11),
- 	IRQ_NOAUTOEN		= (1 << 12),
- 	IRQ_NO_BALANCING	= (1 << 13),
--	IRQ_MOVE_PCNTXT		= (1 << 14),
- 	IRQ_NESTED_THREAD	= (1 << 15),
- 	IRQ_NOTHREAD		= (1 << 16),
- 	IRQ_PER_CPU_DEVID	= (1 << 17),
-@@ -105,7 +103,7 @@ enum {
- 
- #define IRQF_MODIFY_MASK	\
- 	(IRQ_TYPE_SENSE_MASK | IRQ_NOPROBE | IRQ_NOREQUEST | \
--	 IRQ_NOAUTOEN | IRQ_MOVE_PCNTXT | IRQ_LEVEL | IRQ_NO_BALANCING | \
-+	 IRQ_NOAUTOEN | IRQ_LEVEL | IRQ_NO_BALANCING | \
- 	 IRQ_PER_CPU | IRQ_NESTED_THREAD | IRQ_NOTHREAD | IRQ_PER_CPU_DEVID | \
- 	 IRQ_IS_POLLED | IRQ_DISABLE_UNLAZY | IRQ_HIDDEN)
- 
-@@ -201,8 +199,6 @@ struct irq_data {
-  * IRQD_LEVEL			- Interrupt is level triggered
-  * IRQD_WAKEUP_STATE		- Interrupt is configured for wakeup
-  *				  from suspend
-- * IRQD_MOVE_PCNTXT		- Interrupt can be moved in process
-- *				  context
-  * IRQD_IRQ_DISABLED		- Disabled state of the interrupt
-  * IRQD_IRQ_MASKED		- Masked state of the interrupt
-  * IRQD_IRQ_INPROGRESS		- In progress state of the interrupt
-@@ -233,7 +229,6 @@ enum {
- 	IRQD_AFFINITY_SET		= BIT(12),
- 	IRQD_LEVEL			= BIT(13),
- 	IRQD_WAKEUP_STATE		= BIT(14),
--	IRQD_MOVE_PCNTXT		= BIT(15),
- 	IRQD_IRQ_DISABLED		= BIT(16),
- 	IRQD_IRQ_MASKED			= BIT(17),
- 	IRQD_IRQ_INPROGRESS		= BIT(18),
-@@ -338,11 +333,6 @@ static inline bool irqd_is_wakeup_set(st
- 	return __irqd_to_state(d) & IRQD_WAKEUP_STATE;
- }
- 
--static inline bool irqd_can_move_in_process_context(struct irq_data *d)
--{
--	return __irqd_to_state(d) & IRQD_MOVE_PCNTXT;
--}
--
- static inline bool irqd_irq_disabled(struct irq_data *d)
- {
- 	return __irqd_to_state(d) & IRQD_IRQ_DISABLED;
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -47,13 +47,6 @@ int irq_set_chip(unsigned int irq, const
- 		return -EINVAL;
- 
- 	desc->irq_data.chip = (struct irq_chip *)(chip ?: &no_irq_chip);
--
--	if (IS_ENABLED(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS) && chip) {
--		if (chip->flags & IRQCHIP_MOVE_DEFERRED)
--			irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
--		else
--			irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
--	}
- 	irq_put_desc_unlock(desc, flags);
- 	/*
- 	 * For !CONFIG_SPARSE_IRQ make the irq show up in
-@@ -1129,13 +1122,6 @@ void irq_modify_status(unsigned int irq,
- 	if (irq_settings_is_level(desc))
- 		irqd_set(&desc->irq_data, IRQD_LEVEL);
- 
--	/* Keep this around until x86 is converted over */
--	if (!IS_ENABLED(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS)) {
--		irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
--		if (irq_settings_can_move_pcntxt(desc))
--			irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
--	}
--
- 	tmp = irq_settings_get_trigger_mask(desc);
- 	if (tmp != IRQ_TYPE_NONE)
- 		trigger = tmp;
---- a/kernel/irq/debugfs.c
-+++ b/kernel/irq/debugfs.c
-@@ -109,7 +109,6 @@ static const struct irq_bit_descr irqdat
- 	BIT_MASK_DESCR(IRQD_NO_BALANCING),
- 
- 	BIT_MASK_DESCR(IRQD_SINGLE_TARGET),
--	BIT_MASK_DESCR(IRQD_MOVE_PCNTXT),
- 	BIT_MASK_DESCR(IRQD_AFFINITY_SET),
- 	BIT_MASK_DESCR(IRQD_SETAFFINITY_PENDING),
- 	BIT_MASK_DESCR(IRQD_AFFINITY_MANAGED),
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -421,7 +421,7 @@ irq_init_generic_chip(struct irq_chip_ge
- #ifdef CONFIG_GENERIC_PENDING_IRQ
- static inline bool irq_can_move_pcntxt(struct irq_data *data)
- {
--	return irqd_can_move_in_process_context(data);
-+	return !(data->chip->flags & IRQCHIP_MOVE_DEFERRED);
- }
- static inline bool irq_move_pending(struct irq_data *data)
- {
---- a/kernel/irq/settings.h
-+++ b/kernel/irq/settings.h
-@@ -11,7 +11,6 @@ enum {
- 	_IRQ_NOREQUEST		= IRQ_NOREQUEST,
- 	_IRQ_NOTHREAD		= IRQ_NOTHREAD,
- 	_IRQ_NOAUTOEN		= IRQ_NOAUTOEN,
--	_IRQ_MOVE_PCNTXT	= IRQ_MOVE_PCNTXT,
- 	_IRQ_NO_BALANCING	= IRQ_NO_BALANCING,
- 	_IRQ_NESTED_THREAD	= IRQ_NESTED_THREAD,
- 	_IRQ_PER_CPU_DEVID	= IRQ_PER_CPU_DEVID,
-@@ -142,11 +141,6 @@ static inline void irq_settings_set_nopr
- 	desc->status_use_accessors |= _IRQ_NOPROBE;
- }
- 
--static inline bool irq_settings_can_move_pcntxt(struct irq_desc *desc)
--{
--	return desc->status_use_accessors & _IRQ_MOVE_PCNTXT;
--}
--
- static inline bool irq_settings_can_autoenable(struct irq_desc *desc)
- {
- 	return !(desc->status_use_accessors & _IRQ_NOAUTOEN);
+INFO: task syz.0.15:6594 blocked for more than 143 seconds.
+      Not tainted 6.13.0-rc2-syzkaller-00018-g7cb1b4663150-dirty #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.15        state:D
+ stack:25784 pid:6594  tgid:6585  ppid:6461   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5369 [inline]
+ __schedule+0x17fb/0x4be0 kernel/sched/core.c:6756
+ __schedule_loop kernel/sched/core.c:6833 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6848
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6905
+ rwsem_down_write_slowpath+0xeee/0x13b0 kernel/locking/rwsem.c:1176
+ __down_write_common kernel/locking/rwsem.c:1304 [inline]
+ __down_write kernel/locking/rwsem.c:1313 [inline]
+ down_write+0x1d7/0x220 kernel/locking/rwsem.c:1578
+ inode_lock include/linux/fs.h:818 [inline]
+ process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+ ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0xb9/0x280 security/security.c:3121
+ do_open fs/namei.c:3830 [inline]
+ path_openat+0x2ccd/0x3590 fs/namei.c:3987
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_open fs/open.c:1425 [inline]
+ __se_sys_open fs/open.c:1421 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1421
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f928277fed9
+RSP: 002b:00007f92834c6058 EFLAGS: 00000246
+ ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f9282946080 RCX: 00007f928277fed9
+RDX: 0000000000000008 RSI: 0000000000002000 RDI: 0000000020001b80
+RBP: 00007f92827f3cc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f9282946080 R15: 00007ffee74328d8
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/u8:0/11:
+ #0: 
+ffff88801ac89148
+ (
+(wq_completion)events_unbound){+.+.}-{0:0}
+, at: process_one_work kernel/workqueue.c:3204 [inline]
+, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
+ #1: 
+ffffc90000107d00
+ (
+(linkwatch_work).work
+){+.+.}-{0:0}
+, at: process_one_work kernel/workqueue.c:3205 [inline]
+, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
+ #2: 
+ffffffff8fc9f048
+ (
+rtnl_mutex
+){+.+.}-{4:4}
+, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:281
+1 lock held by khungtaskd/30:
+ #0: 
+ffffffff8e937ae0
+ (
+rcu_read_lock
+){....}-{1:3}
+, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6744
+5 locks held by kworker/u8:4/67:
+ #0: 
+ffff88801baeb148
+ (
+(wq_completion)netns
+){+.+.}-{0:0}
+, at: process_one_work kernel/workqueue.c:3204 [inline]
+, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
+ #1: ffffc9000216fd00
+ (
+net_cleanup_work
+){+.+.}-{0:0}
+, at: process_one_work kernel/workqueue.c:3205 [inline]
+, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
+ #2: 
+ffffffff8fc92bd0
+ (pernet_ops_rwsem
+){++++}-{4:4}
+, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:586
+ #3: ffffffff8fc9f048 (rtnl_mutex){+.+.}-{4:4}
+, at: default_device_exit_batch+0xe9/0xaa0 net/core/dev.c:12059
+ #4: 
+ffffffff8e93cff8
+ (
+rcu_state.exp_mutex
+){+.+.}-{4:4}
+, at: exp_funnel_lock kernel/rcu/tree_exp.h:297 [inline]
+, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:976
+3 locks held by kworker/u8:6/2960:
+ #0: 
+ffff888031920948
+ (
+(wq_completion)ipv6_addrconf
+){+.+.}-{0:0}
+, at: process_one_work kernel/workqueue.c:3204 [inline]
+, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
+ #1: 
+ffffc9000cb6fd00
+ ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
+ #2: ffffffff8fc9f048 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_verify_work+0x19/0x30 net/ipv6/addrconf.c:4755
+1 lock held by dhcpcd/5489:
+ #0: ffffffff8fc9f048 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fc9f048 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:326 [inline]
+ #0: ffffffff8fc9f048 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0xbb0/0x20e0 net/core/rtnetlink.c:4008
+2 locks held by getty/5573:
+ #0: ffff888031f740a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000330b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+5 locks held by syz.0.15/6586:
+1 lock held by syz.0.15/6594:
+ #0: ffff888060c982a0 (&sb->s_type->i_mutex_key#21){++++}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
+ #0: ffff888060c982a0 (&sb->s_type->i_mutex_key#21){++++}-{4:4}, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+5 locks held by syz.1.16/6692:
+1 lock held by syz.1.16/6693:
+ #0: ffff888060c98f80 (&sb->s_type->i_mutex_key
+#21
+){++++}-{4:4}
+, at: inode_lock include/linux/fs.h:818 [inline]
+, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+10 locks held by syz.2.17/6709:
+1 lock held by syz.2.17/6710:
+ #0: 
+ffff888075bb0f80
+ (&sb->s_type->i_mutex_key
+#21
+){++++}-{4:4}
+, at: inode_lock include/linux/fs.h:818 [inline]
+, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+2 locks held by syz-executor/6737:
+ #0: ffffffff90187a68
+ (
+&ops->srcu
+#2
+){.+.+}-{0:0}
+, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+, at: rtnl_link_ops_get+0x22/0x250 net/core/rtnetlink.c:555
+ #1: 
+ffffffff8fc9f048
+ (
+rtnl_mutex){+.+.}-{4:4}
+, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+, at: rtnl_nets_lock net/core/rtnetlink.c:326 [inline]
+, at: rtnl_newlink+0xbb0/0x20e0 net/core/rtnetlink.c:4008
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.13.0-rc2-syzkaller-00018-g7cb1b4663150-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
+ watchdog+0xff6/0x1040 kernel/hung_task.c:397
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 6709 Comm: syz.2.17 Not tainted 6.13.0-rc2-syzkaller-00018-g7cb1b4663150-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:io_serial_in+0x76/0xb0 drivers/tty/serial/8250/8250_port.c:409
+Code: 90 35 57 fc 89 e9 41 d3 e6 48 83 c3 40 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 d1 09 bb fc 44 03 33 44 89 f2 ec <0f> b6 c0 5b 41 5e 41 5f 5d c3 cc cc cc cc 89 e9 80 e1 07 38 c1 7c
+RSP: 0018:ffffc900032c6cd8 EFLAGS: 00000002
+RAX: 1ffffffff34d7400 RBX: ffffffff9a6ba5e0 RCX: 0000000000000000
+RDX: 00000000000003fd RSI: 0000000000000000 RDI: 0000000000000020
+RBP: 0000000000000000 R08: ffffffff85482856 R09: 1ffff11004bed046
+R10: dffffc0000000000 R11: ffffffff85482810 R12: dffffc0000000000
+R13: ffffffff9a3b4f70 R14: 00000000000003fd R15: dffffc0000000000
+FS:  00007ff0221986c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005576d5d24d98 CR3: 0000000034c90000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ serial_in drivers/tty/serial/8250/8250.h:137 [inline]
+ serial_lsr_in drivers/tty/serial/8250/8250.h:159 [inline]
+ wait_for_lsr drivers/tty/serial/8250/8250_port.c:2087 [inline]
+ serial8250_console_fifo_write drivers/tty/serial/8250/8250_port.c:3334 [inline]
+ serial8250_console_write+0x1373/0x1ed0 drivers/tty/serial/8250/8250_port.c:3412
+ console_emit_next_record kernel/printk/printk.c:3122 [inline]
+ console_flush_all+0x869/0xeb0 kernel/printk/printk.c:3210
+ __console_flush_and_unlock kernel/printk/printk.c:3269 [inline]
+ console_unlock+0x14f/0x3b0 kernel/printk/printk.c:3309
+ vprintk_emit+0x730/0xa10 kernel/printk/printk.c:2432
+ _printk+0xd5/0x120 kernel/printk/printk.c:2457
+ __exfat_free_cluster+0x701/0xa00 fs/exfat/fatent.c:213
+ exfat_free_cluster+0x77/0xd0 fs/exfat/fatent.c:234
+ __exfat_truncate+0x745/0xa60 fs/exfat/file.c:235
+ exfat_truncate fs/exfat/file.c:257 [inline]
+ exfat_setattr+0x10fa/0x1a90 fs/exfat/file.c:353
+ notify_change+0xbca/0xe90 fs/attr.c:552
+ do_truncate+0x220/0x310 fs/open.c:65
+ handle_truncate fs/namei.c:3449 [inline]
+ do_open fs/namei.c:3832 [inline]
+ path_openat+0x2e1e/0x3590 fs/namei.c:3987
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_creat fs/open.c:1495 [inline]
+ __se_sys_creat fs/open.c:1489 [inline]
+ __x64_sys_creat+0x123/0x170 fs/open.c:1489
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff02137fed9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff022198058 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007ff021545fa0 RCX: 00007ff02137fed9
+RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000020000000
+RBP: 00007ff0213f3cc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ff021545fa0 R15: 00007fffd20e6358
+ </TASK>
+
+
+Tested on:
+
+commit:         7cb1b466 Merge tag 'locking_urgent_for_v6.13_rc3' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=145653e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c7c9f223bfe8924e
+dashboard link: https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=135868f8580000
 
 
