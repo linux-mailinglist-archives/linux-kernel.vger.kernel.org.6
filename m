@@ -1,216 +1,126 @@
-Return-Path: <linux-kernel+bounces-438792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5349EA609
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:52:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5F69EA60D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:55:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F187516470D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:52:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8B4281A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B451AFB35;
-	Tue, 10 Dec 2024 02:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="Q/t9GxSB"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6E71BC094;
+	Tue, 10 Dec 2024 02:55:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF67C1A2550
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5681A2550;
+	Tue, 10 Dec 2024 02:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733799170; cv=none; b=TJUoJp/KY3wEvUOXGs4NA57ayutKzZ0zU3HfEcbMPgkjvCe9fdukmRxOWCXz/dc0muGOjAsT6vAA2iPv/B9yokDIb24iUCh5NWAYyQvH0gOJazKYe26zWQJ3Vud0LFD/dr5vLKLGhRGJlJ85Bgx/1MUFYxH1YcHsnKmYmwAbVIE=
+	t=1733799303; cv=none; b=LArCJXSVaF62OINl/K3nhEj2A1HRYazScyIJ+R/fF6lVGaXGDVeWd3ATPbU8Y/GesYcpGn7+2hDI8LIyKrRNX2uI2YUe5bsapphgFyzxlyxQeMHU+I7YJ6Do0bKQdNJRROBzDV22r5pSJkIR/byR0009BT7OFtrB+W8om4TNrMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733799170; c=relaxed/simple;
-	bh=SnNjus0bU71PjH40/50iGOzVkychSxX7oJfpDxNQ97Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=idn24d6LtH27lfq48YiRUO/y/OmQelkz1gWcGo+IxuJ4ELvTB5HfLuEAkwsD2axYxAZ2clbiXWVp/EaBFyAUHAj6guIGfEKbTfOF3x5/WkujIm0eFc6IhDKDcQXG7wLtFNfXhnVlcWO4FUvp2c/RZnUCAPiB+CsFkLJftQNfnCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=Q/t9GxSB; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitbyteword.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6efa08f91c8so48300737b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 18:52:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bitbyteword.org; s=google; t=1733799166; x=1734403966; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RO9xPg4/U00W7fHMTYGXY1kJkQI0c6wxXxe1zFQZb/w=;
-        b=Q/t9GxSBg//mTcr2aa4NMnKta+oCMNUqn/o0irR3q2lnr/ev+UbuCWXIz4pGNb/cru
-         HoHlZqlZTfluzhKgM0Mp69cGHEPmmazFryUTPWGc/6VZbZrSnxaWFgW6blvCBoqBngyQ
-         2kSPXyvVsWCEdItzPJL3VMjdyCyux/rcpmw8j6gdr98P733ANP12VCxTeNg1qZ3CSkc3
-         4Nv0r/HEDj/98N+g4LiG6guW8I9pLNbo7vW9tRqM35NYzj0pMI1Wuwpu9gMwS5z/4/rw
-         iFcvIbMXm8/KMczBrSIYMG4hWBP6Rx3i8OzNc6++C4b3ML8HT8OYWO5/0tHh1uQsm75T
-         wBAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733799166; x=1734403966;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RO9xPg4/U00W7fHMTYGXY1kJkQI0c6wxXxe1zFQZb/w=;
-        b=B6UnDPHb+uQ3l9QXnryzTnxsFEnScRiHJCIigCFXYg7xuzFRV5NEgkOGb2UcOfpyJS
-         //pbcahn/I2u26dZnC9SBTPsiGSSC3aqo9okuX0QCmVFC/ygV1TuDyKoSmKgnrzTlG8p
-         94MKMdiUuYDEEur6ObN0aquNwpa+8muFbmuHxIC/5nuSQ+gR4BKonCO3EkMApJ2Qtfi1
-         ErP3soFG+93Bsj8LuMzYXAbIjcc9TKAuSpSxVdKAFRonYC45dIlQuMNnOkZUa65qr36z
-         25zRW6AV+MSgrTEA8SGUHN07GBHpdQJS37lrWrL3QfHnMbLLJ++dJtO+GEIne9muhgH/
-         4IEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOjvl8sLCZt1gdhyuVTJBLhhMliHKJezkHIjDYu4L4ezKZ8ByXheHw1hXaFI6rRvoBHWrdrYAYdjHKbb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXQDhE/GVlrqZTr1gMaTppXX8qYeqYk4cH2eehRC4m8U810RHP
-	Q6SGPtJqtV/mGOJRWxu/ForYSq5JSf8r1eWfkecHGsZ5bgxwFcp6OMqGLTkzrRznk6yMy5jRxOQ
-	j1s0fLz9EkbyiP1ZnAnIQj9WD0dMXu02g1/LjjVzMVJMbs9o/Hr38pA==
-X-Gm-Gg: ASbGncuI0gkkVXWdfTQAUJGUgLTjOEhak2SA8IFfhmk87VifN+oeZvGRtsJs8aNGCXC
-	mIIaTCP0YQZcYxbSUuqDqA2td95/8TDr9Xbk=
-X-Google-Smtp-Source: AGHT+IF0mPpEo726yuSiydrNTtVawpmKRH2Gt8spsE9KrozvJdNmnvL7/fV7qiOesKafHVNQa23BUl0LgEpZfXBgSIc=
-X-Received: by 2002:a05:690c:6011:b0:6ef:593e:285c with SMTP id
- 00721157ae682-6efe3bceb35mr158553077b3.3.1733799166594; Mon, 09 Dec 2024
- 18:52:46 -0800 (PST)
+	s=arc-20240116; t=1733799303; c=relaxed/simple;
+	bh=8P3Z5n9VyHY++xUzrfQ7aEPq+kYAsNopEZVrvCpwDJ0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OnoSxsD5VqVoGvWQnMJgps1NdKwnJIKC28Tg2XBXKnInihgQA/ZbdlKEMjrYSAfVRWh4lRt6g0Dqxa6E00KIgJ3RwOzm67sDJyk1a4nC9Q4mxcyO+o8+3QYDDfYyNAD3Ky6CF/Fwvv+iglsmfK+uSTkYhoxtvzPEIA0JCeml6Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y6jxd4CB5z4f3lVp;
+	Tue, 10 Dec 2024 10:54:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C8C821A1771;
+	Tue, 10 Dec 2024 10:54:49 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYoZ3rVdnCfKpEA--.28113S3;
+	Tue, 10 Dec 2024 10:54:49 +0800 (CST)
+Subject: Re: [PATCH RFC 2/3] lib/sbitmap: don't export sbitmap_get_shallow()
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
+ ming.lei@redhat.com, osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+ <20241209115522.3741093-3-yukuai1@huaweicloud.com>
+ <87f569d6-fb17-4d3b-8075-1a74d11148a9@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <916dba91-07b9-23ef-4d40-21120c7287b3@huaweicloud.com>
+Date: Tue, 10 Dec 2024 10:54:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <571b2045-320d-4ac2-95db-1423d0277613@ovn.org> <20241206151819.GA3949140@google.com>
- <CAO7JXPhdv+Jx_UpAq=-aG-BKwiyjZ2kvuZDM4+GLjbya_=ZJsw@mail.gmail.com>
- <20241209105514.GK21636@noisy.programming.kicks-ass.net> <CAO7JXPgSYCzu0mtnWqBaS8ihmoQXX3WE_Yb_rEYuMeQn+B6KJg@mail.gmail.com>
- <20241209125601.GQ35539@noisy.programming.kicks-ass.net> <8ff30c5d-b8ac-4825-874a-d73931b85014@ovn.org>
-In-Reply-To: <8ff30c5d-b8ac-4825-874a-d73931b85014@ovn.org>
-From: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-Date: Mon, 9 Dec 2024 21:52:35 -0500
-Message-ID: <CAO7JXPijXstA3Eh_LrRGiK26U1Mfn8C1jSXP+4kfTnQRxSax7g@mail.gmail.com>
-Subject: Re: [v6.12] WARNING: at kernel/sched/deadline.c:1995
- enqueue_dl_entity (task blocked for more than 28262 seconds)
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, vineethrp@google.com, 
-	shraash@google.com, marcel.ziswiler@codethink.co.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87f569d6-fb17-4d3b-8075-1a74d11148a9@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHYoZ3rVdnCfKpEA--.28113S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrtFWrZF1rXrW5GrWfGr1Utrb_yoW8Jr4rpF
+	4xtFyUCr95t34j9wn7Xw4DXF93Zws3Gr9xGFnIgryFkr4DJ3Z7Zrn5CFZ5Aa47u3yrZF4f
+	ZFZYy34fCr1UZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Dec 9, 2024 at 7:34=E2=80=AFPM Ilya Maximets <i.maximets@ovn.org> w=
-rote:
->
-> On 12/9/24 13:56, Peter Zijlstra wrote:
-> >
-> > Does something like the below make sense?
-> >
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index d380bffee2ef..abebeb67de4e 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -664,6 +664,7 @@ struct sched_dl_entity {
-> >       unsigned int                    dl_non_contending : 1;
-> >       unsigned int                    dl_overrun        : 1;
-> >       unsigned int                    dl_server         : 1;
-> > +     unsigned int                    dl_server_active  : 1;
-> >       unsigned int                    dl_defer          : 1;
-> >       unsigned int                    dl_defer_armed    : 1;
-> >       unsigned int                    dl_defer_running  : 1;
-> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > index d9d5a702f1a6..e2b542f684db 100644
-> > --- a/kernel/sched/deadline.c
-> > +++ b/kernel/sched/deadline.c
-> > @@ -1647,6 +1647,7 @@ void dl_server_start(struct sched_dl_entity *dl_s=
-e)
-> >       if (!dl_se->dl_runtime)
-> >               return;
-> >
-> > +     dl_se->dl_server_active =3D 1;
-> >       enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
-> >       if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->cu=
-rr->dl))
-> >               resched_curr(dl_se->rq);
-> > @@ -1661,6 +1662,7 @@ void dl_server_stop(struct sched_dl_entity *dl_se=
-)
-> >       hrtimer_try_to_cancel(&dl_se->dl_timer);
-> >       dl_se->dl_defer_armed =3D 0;
-> >       dl_se->dl_throttled =3D 0;
-> > +     dl_se->dl_server_active =3D 0;
-> >  }
-> >
-> >  void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
-> > @@ -2420,8 +2422,10 @@ static struct task_struct *__pick_task_dl(struct=
- rq *rq)
-> >       if (dl_server(dl_se)) {
-> >               p =3D dl_se->server_pick_task(dl_se);
-> >               if (!p) {
-> > -                     dl_se->dl_yielded =3D 1;
-> > -                     update_curr_dl_se(rq, dl_se, 0);
-> > +                     if (dl_se->dl_server_active) {
-> > +                             dl_se->dl_yielded =3D 1;
-> > +                             update_curr_dl_se(rq, dl_se, 0);
-> > +                     }
-> >                       goto again;
-> >               }
-> >               rq->dl_server =3D dl_se;
->
-> And I tried this one on top of v6.12, but got a warning after about 1 min=
-ute (lucky?).
->
-Hmm strange, I was running it for about 12 hours and has not WARNed
-till now. I am on 6.13-rc1 but git log did not show any dlserver
-related changes between 6.12 and 6.13 though. I also have another
-patch for the double enqueue scenario we were disussing in this
-thread(because of the wrong check in update_curr). Could you please
-add the following changes to above patches and see if the isssue is
-reproducible?
+Hi,
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fbdca89c677f..1f4b76c1f032 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1159,8 +1159,6 @@ static inline void update_curr_task(struct
-task_struct *p, s64 delta_exec)
-        trace_sched_stat_runtime(p, delta_exec);
-        account_group_exec_runtime(p, delta_exec);
-        cgroup_account_cputime(p, delta_exec);
--       if (p->dl_server)
--               dl_server_update(p->dl_server, delta_exec);
- }
+在 2024/12/10 2:05, Bart Van Assche 写道:
+> On 12/9/24 7:55 PM, Yu Kuai wrote:
+>> -/**
+>> - * sbitmap_get_shallow() - Try to allocate a free bit from a &struct 
+>> sbitmap,
+>> - * limiting the depth used from each word.
+>> - * @sb: Bitmap to allocate from.
+>> - * @shallow_depth: The maximum number of bits to allocate from a 
+>> single word.
+>> - *
+>> - * This rather specific operation allows for having multiple users with
+>> - * different allocation limits. E.g., there can be a high-priority 
+>> class that
+>> - * uses sbitmap_get() and a low-priority class that uses 
+>> sbitmap_get_shallow()
+>> - * with a @shallow_depth of (1 << (@sb->shift - 1)). Then, the 
+>> low-priority
+>> - * class can only allocate half of the total bits in the bitmap, 
+>> preventing it
+>> - * from starving out the high-priority class.
+>> - *
+>> - * Return: Non-negative allocated bit number if successful, -1 
+>> otherwise.
+>> - */
+>> -int sbitmap_get_shallow(struct sbitmap *sb, unsigned long 
+>> shallow_depth);
+> 
+> Please retain the above comment block by moving it into lib/sbitmap.c.
+> 
 
- static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct
-sched_entity *curr)
-@@ -1210,6 +1208,11 @@ s64 update_curr_common(struct rq *rq)
-        return delta_exec;
- }
+Since the comment must be updated after patch 3, I'll apply the last
+patch and update comment first, and do this cleanup at last.
 
-+static inline bool dl_server_active(struct dl_sched_entity *dl_se)
-+{
-+       return dl_se->dl_server_active;
-+}
-+
- /*
-  * Update the current task's runtime statistics.
-  */
-@@ -1237,11 +1240,16 @@ static void update_curr(struct cfs_rq *cfs_rq)
-                update_curr_task(p, delta_exec);
+Thanks,
+Kuai
 
-                /*
--                * Any fair task that runs outside of fair_server should
--                * account against fair_server such that it can account for
--                * this time and possibly avoid running this period.
-+                * If the fair_server is active, we need to account for the
-+                * fair_server time whether or not the task is running on
-+                * behalf of fair_server or not:
-+                *  - If the task is running on behalf of fair_server, we n=
-eed
-+                *    to limit its time based on the assigned runtime.
-+                *  - Fair task that runs outside of fair_server should acc=
-ount
-+                *    against fair_server such that it can account for this=
- time
-+                *    and possibly avoid running this period.
-                 */
--               if (p->dl_server !=3D &rq->fair_server)
-+               if (dl_server_active(&rq->fair_server))
-                        dl_server_update(&rq->fair_server, delta_exec);
-        }
+> Thanks,
+> 
+> Bart.
+> .
+> 
 
-
-Thanks for your time testing the fixes :-)
-
-~Vineeth
 
