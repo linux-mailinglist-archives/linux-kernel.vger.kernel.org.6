@@ -1,85 +1,39 @@
-Return-Path: <linux-kernel+bounces-439336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3D29EADDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:20:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E26C59EADE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9912F1651DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C22B1654B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76DD1DC9A3;
-	Tue, 10 Dec 2024 10:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YCStdYEl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2A623DEB5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45472080D7;
+	Tue, 10 Dec 2024 10:20:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863DD23DEB5;
+	Tue, 10 Dec 2024 10:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733826018; cv=none; b=ZbmwMfA6mZpfUyRpf7vlzkWo1/H55e3DxTr//bfXhcUc5tN41FdlGHGaUCb9qH5nxRmS7cIQUJu/xXUOPhaen7hyER+Jntu55tu/vUc2OEfSSQ2S5BBSGxmWmyz8q8rgxy6DYla0vBt14hCzNiXP8cukQq9nKJMZi8n11LQXHp4=
+	t=1733826048; cv=none; b=li6cybmmteS14q7j/4GUH8SY67ebgZLL/mdmrQSO2252SEz0Pd/FZ/RiaQz8qWYWX4fy4XKUtANzhArx8Wf0n3GL3EvN/9En0HIfPY96jRNtAIKXozbVkDks2iqXcbqhi8L75hblNFv1787RWqOJ6ZOWBJHcfPUNMsmx4JOGtwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733826018; c=relaxed/simple;
-	bh=hCKMGqv40wXMr2vadxbAoiwrAluRIL2zTopknFGintM=;
+	s=arc-20240116; t=1733826048; c=relaxed/simple;
+	bh=HFMBzk/3OHtaxGCN7f0imP3Rl1I2jxN8hDs0RGXi31A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lu9v644+HeDT5LpAh65HWOT7NYwgafpnBX6uTvaRXpx691n5xWbVyAZ987bgU1/m6dtd2H8wKsCC7AOw1BmKk3MHsmMiBtuyDN2OJezseWk5DMIKWLmEfcb7FO3VdYwTUymvZgN8Tvib787sQISGOSlyg/jhOeX6yHvW0xuEhLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YCStdYEl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733826015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OCF2E9mCYdGeADz8ePCZvEf0wcVUvNdfcznRREMbGlI=;
-	b=YCStdYElXzH4PVXgtxfqnPvNoxAObKAW/QmPhYMrSulWviDXvDVitjbxQ509+afGDNUuiS
-	oTETfSQ19s32iimrTU/Oa+HelaaonCy0J+mBdQn7WxSaGl2s/J2SVqrB4FvVssPID8TfZ9
-	0jNvV+sudz/eKLSBfB1YtDnTPFPOwqo=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-183-TfGpJuiCMPGnv4gTNfOOhA-1; Tue, 10 Dec 2024 05:20:14 -0500
-X-MC-Unique: TfGpJuiCMPGnv4gTNfOOhA-1
-X-Mimecast-MFC-AGG-ID: TfGpJuiCMPGnv4gTNfOOhA
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d8f4a0df93so31309016d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:20:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733826013; x=1734430813;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OCF2E9mCYdGeADz8ePCZvEf0wcVUvNdfcznRREMbGlI=;
-        b=IsDtAc9VHUyHYjmucCOPQfAnQt3xHvkxHtDiVlDagBDATCCQpZ+rrX8a8W8nCOcIzs
-         tmXaQDRVdqRkA9m/8p3GMRvLszrZfyNXCfivJZuN/yqDtF0R1wPvyE79idIobdGghs+1
-         flgt3D8cdP5OnkpA+/iK+HL9zgPnn3JQl+IlzUM9lgv0CVvIO0kXGafGh1KFl7xhG0yN
-         RnV5AR/AqcKHH7Eq2Mrq9VspLZTxXSBfdDF2jWP7vqVSb3442DHTXVS1IPc0vuBKvf8r
-         n0sk7V8EC/kAUL6sBmp00EC+q+Ry0XLQ4zkmcUeajBA9din4+Dgu4BnMmR4q+azIcS56
-         vOGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdWZjkzP6Hv/tts+XF2qR3bj0r5+reQEtV+pY+hu0gOwcUR1nLV5FVKgC5hJj00wtCxf5BRJT6B8YEhuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOXD/cKLwLrOiAzWoUWb+hjhWJW6lLQNjj7I8Jbb56lEze6x6k
-	HjR625TSGvHLjgtcVQObzoYlB/wyd5Mzp1UoOf9fBsmSvKg+RIMspQXmpcTUMXXjz23cXPUQPkZ
-	0tzw/70BZL4OyzgfhvCM9vu4Of2v/POt/bVvUPuv/iJ5D7ZUWY52B5tWF050quT3OJ67Mfw==
-X-Gm-Gg: ASbGncs8wOxXQBQS5indhG+9W4N09c7bq/HGE7GdDhn4CefWslMEiddG/52cAzuuFEH
-	V+kO2fmFIIgnhJ7lqcXQMK3S2ydMRQGkDtKz+BjsN+fPDgJGoyDfDALAMWO46KQl4P32UAXobqo
-	UOA9Jzykksk9gA3dF/PAbpxhTuIN/auabQ0zoikBHS+iQIZ0YoyQ9mT21FpVOzWxxYs+tm4/ck9
-	3FLPU2lhsMvcnUWIiowGaMz7VXJ25ZkATc6fpZmxDRFIs2qGlkStccYghKybv1mc+694qP1gjWR
-	xB8seAXVHeiTjatQqJ7utG0pYQ==
-X-Received: by 2002:ad4:5c49:0:b0:6d4:139c:cef0 with SMTP id 6a1803df08f44-6d91e361a58mr71303026d6.22.1733826013337;
-        Tue, 10 Dec 2024 02:20:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGGoxN0wLBCmDWM78sXt5u4pFuGJDHHmRq9wGyq58trvWfia+wMtQwT+LoUjwJpmMgQS6SKSA==
-X-Received: by 2002:ad4:5c49:0:b0:6d4:139c:cef0 with SMTP id 6a1803df08f44-6d91e361a58mr71302706d6.22.1733826012978;
-        Tue, 10 Dec 2024 02:20:12 -0800 (PST)
-Received: from [192.168.1.14] (host-82-49-164-239.retail.telecomitalia.it. [82.49.164.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da6b651asm58363226d6.69.2024.12.10.02.20.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 02:20:12 -0800 (PST)
-Message-ID: <75967109-85e4-46ce-9952-94dcb98f5513@redhat.com>
-Date: Tue, 10 Dec 2024 11:20:08 +0100
+	 In-Reply-To:Content-Type; b=EY0ygWErTNJeaVsvGkuvNjUzBvTCAQysK2eD/CHNkgt9oZ6icgLy8F6NQTzuYjxM2whqdicJrMVyprPNGk+R8kEwUrGf2BdhleRlc8/kXn+lCX8hBvk2MFjRdsenP5XMKKpJSK8sH/v2cjrpDfmlWZwOiDnULlzkRgSkq/quJek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01449113E;
+	Tue, 10 Dec 2024 02:21:13 -0800 (PST)
+Received: from [10.1.31.84] (e127648.arm.com [10.1.31.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3D8E3F58B;
+	Tue, 10 Dec 2024 02:20:42 -0800 (PST)
+Message-ID: <a3a4852f-5d22-4440-ac0c-f24f97d3b3d4@arm.com>
+Date: Tue, 10 Dec 2024 10:20:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,166 +41,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v4 1/6] virtio_net: correct netdev_tx_reset_queue()
- invocation point
-To: Koichiro Den <koichiro.den@canonical.com>, virtualization@lists.linux.dev
-Cc: mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
- eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, jiri@resnulli.us,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241206011047.923923-1-koichiro.den@canonical.com>
- <20241206011047.923923-2-koichiro.den@canonical.com>
+Subject: Re: [RFC PATCH] cpufreq: userspace: Add fast-switch support for
+ userspace
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, guohua.yan@unisoc.com, ke.wang@unisoc.com
+References: <20241209081429.1871-1-xuewen.yan@unisoc.com>
+ <09acd46b-ec63-46ec-a239-e792c3061e52@arm.com>
+ <CAB8ipk92xYEkZ_+m+xKnn2Z0DNOkum+6cgHUhSd_gbdzjAbOXA@mail.gmail.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241206011047.923923-2-koichiro.den@canonical.com>
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAB8ipk92xYEkZ_+m+xKnn2Z0DNOkum+6cgHUhSd_gbdzjAbOXA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/6/24 02:10, Koichiro Den wrote:
-> When virtnet_close is followed by virtnet_open, some TX completions can
-> possibly remain unconsumed, until they are finally processed during the
-> first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
-> [1]. Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
-> before RX napi enable") was not sufficient to eliminate all BQL crash
-> cases for virtio-net.
+On 12/10/24 03:27, Xuewen Yan wrote:
+> On Mon, Dec 9, 2024 at 6:36 PM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> On 12/9/24 08:14, Xuewen Yan wrote:
+>>> Now, the userspace governor does not support userspace,
+>>> if the driver only use the fast-switch and not add target_index(),
+>>
+>> Which driver does that? Is that actually valid?
+>> No mainline driver from what I can see.
+>>
 > 
-> This issue can be reproduced with the latest net-next master by running:
-> `while :; do ip l set DEV down; ip l set DEV up; done` under heavy network
-> TX load from inside the machine.
-> 
-> netdev_tx_reset_queue() can actually be dropped from virtnet_open path;
-> the device is not stopped in any case. For BQL core part, it's just like
-> traffic nearly ceases to exist for some period. For stall detector added
-> to BQL, even if virtnet_close could somehow lead to some TX completions
-> delayed for long, followed by virtnet_open, we can just take it as stall
-> as mentioned in commit 6025b9135f7a ("net: dqs: add NIC stall detector
-> based on BQL"). Note also that users can still reset stall_max via sysfs.
-> 
-> So, drop netdev_tx_reset_queue() from virtnet_enable_queue_pair(). This
-> eliminates the BQL crashes. As a result, netdev_tx_reset_queue() is now
-> explicitly required in freeze/restore path. This patch adds it to
-> immediately after free_unused_bufs(), following the rule of thumb:
-> netdev_tx_reset_queue() should follow any SKB freeing not followed by
-> netdev_tx_completed_queue(). This seems the most consistent and
-> streamlined approach, and now netdev_tx_reset_queue() runs whenever
-> free_unused_bufs() is done.
-> 
-> [1]:
-> ------------[ cut here ]------------
-> kernel BUG at lib/dynamic_queue_limits.c:99!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
-> Tainted: [N]=TEST
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
-> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> RIP: 0010:dql_completed+0x26b/0x290
-> Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
-> 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
-> d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
-> RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
-> RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
-> RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
-> RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
-> R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
-> FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
-> PKRU: 55555554
-> Call Trace:
->  <IRQ>
->  ? die+0x32/0x80
->  ? do_trap+0xd9/0x100
->  ? dql_completed+0x26b/0x290
->  ? dql_completed+0x26b/0x290
->  ? do_error_trap+0x6d/0xb0
->  ? dql_completed+0x26b/0x290
->  ? exc_invalid_op+0x4c/0x60
->  ? dql_completed+0x26b/0x290
->  ? asm_exc_invalid_op+0x16/0x20
->  ? dql_completed+0x26b/0x290
->  __free_old_xmit+0xff/0x170 [virtio_net]
->  free_old_xmit+0x54/0xc0 [virtio_net]
->  virtnet_poll+0xf4/0xe30 [virtio_net]
->  ? __update_load_avg_cfs_rq+0x264/0x2d0
->  ? update_curr+0x35/0x260
->  ? reweight_entity+0x1be/0x260
->  __napi_poll.constprop.0+0x28/0x1c0
->  net_rx_action+0x329/0x420
->  ? enqueue_hrtimer+0x35/0x90
->  ? trace_hardirqs_on+0x1d/0x80
->  ? kvm_sched_clock_read+0xd/0x20
->  ? sched_clock+0xc/0x30
->  ? kvm_sched_clock_read+0xd/0x20
->  ? sched_clock+0xc/0x30
->  ? sched_clock_cpu+0xd/0x1a0
->  handle_softirqs+0x138/0x3e0
->  do_softirq.part.0+0x89/0xc0
->  </IRQ>
->  <TASK>
->  __local_bh_enable_ip+0xa7/0xb0
->  virtnet_open+0xc8/0x310 [virtio_net]
->  __dev_open+0xfa/0x1b0
->  __dev_change_flags+0x1de/0x250
->  dev_change_flags+0x22/0x60
->  do_setlink.isra.0+0x2df/0x10b0
->  ? rtnetlink_rcv_msg+0x34f/0x3f0
->  ? netlink_rcv_skb+0x54/0x100
->  ? netlink_unicast+0x23e/0x390
->  ? netlink_sendmsg+0x21e/0x490
->  ? ____sys_sendmsg+0x31b/0x350
->  ? avc_has_perm_noaudit+0x67/0xf0
->  ? cred_has_capability.isra.0+0x75/0x110
->  ? __nla_validate_parse+0x5f/0xee0
->  ? __pfx___probestub_irq_enable+0x3/0x10
->  ? __create_object+0x5e/0x90
->  ? security_capable+0x3b/0x70
->  rtnl_newlink+0x784/0xaf0
->  ? avc_has_perm_noaudit+0x67/0xf0
->  ? cred_has_capability.isra.0+0x75/0x110
->  ? stack_depot_save_flags+0x24/0x6d0
->  ? __pfx_rtnl_newlink+0x10/0x10
->  rtnetlink_rcv_msg+0x34f/0x3f0
->  ? do_syscall_64+0x6c/0x180
->  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
->  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
->  netlink_rcv_skb+0x54/0x100
->  netlink_unicast+0x23e/0x390
->  netlink_sendmsg+0x21e/0x490
->  ____sys_sendmsg+0x31b/0x350
->  ? copy_msghdr_from_user+0x6d/0xa0
->  ___sys_sendmsg+0x86/0xd0
->  ? __pte_offset_map+0x17/0x160
->  ? preempt_count_add+0x69/0xa0
->  ? __call_rcu_common.constprop.0+0x147/0x610
->  ? preempt_count_add+0x69/0xa0
->  ? preempt_count_add+0x69/0xa0
->  ? _raw_spin_trylock+0x13/0x60
->  ? trace_hardirqs_on+0x1d/0x80
->  __sys_sendmsg+0x66/0xc0
->  do_syscall_64+0x6c/0x180
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x7f41defe5b34
-> Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
-> f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
-> f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
-> RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
-> RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
-> RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
-> R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
-> R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
->  </TASK>
-> [...]
-> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+> Yes, indeed no mainline driver, It's on our own driver.
 
-IIRC, the above separator used to cause some troubles to backport tools
-and to 'next' tree import, trimming the SoB area below. I'm going to
-remove it while applying the series.
+Fair enough. 
+There seems to be handling for that case in cpufreq anyway.
 
-Cheers,
+> 
+>>> it will cause uerspace not work.
+>>
+>> s/uerspace/userspace
+>> to not work?
+>>
+>>> So add fast-switch support for userspace governor.
+>>>
+>>> Co-developed-by: Guohua Yan <guohua.yan@unisoc.com>
+>>> Signed-off-by: Guohua Yan <guohua.yan@unisoc.com>
+>>> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+>>> ---
+>>>  drivers/cpufreq/cpufreq_userspace.c | 35 +++++++++++++++++++++++++----
+>>>  1 file changed, 31 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/cpufreq/cpufreq_userspace.c b/drivers/cpufreq/cpufreq_userspace.c
+>>> index 2c42fee76daa..3a99197246ed 100644
+>>> --- a/drivers/cpufreq/cpufreq_userspace.c
+>>> +++ b/drivers/cpufreq/cpufreq_userspace.c
+>>> @@ -21,6 +21,30 @@ struct userspace_policy {
+>>>       struct mutex mutex;
+>>>  };
+>>>
+>>> +static int cpufreq_userspace_target_freq(struct cpufreq_policy *policy,
+>>> +                     unsigned int target_freq, unsigned int relation)
+>>> +{
+>>> +     int ret;
+>>
+>> not really necessary
+> 
+> In cpufreq_set(), we need the return value.
 
-Paolo
+Sorry for not being clear enough, I suggested rewriting it
+like this, although personal preference.
+
+---
+static int cpufreq_userspace_target_freq(struct cpufreq_policy *policy,
+			unsigned int target_freq, unsigned int relation)
+{
+	unsigned int idx;
+
+	if (!policy->fast_switch_enabled)
+		return __cpufreq_driver_target(policy, target_freq, relation);
+
+	target_freq = clamp_val(target_freq, policy->min, policy->max);
+	if (!policy->freq_table)
+		return target_freq;
+
+	idx = cpufreq_frequency_table_target(policy, target_freq, relation);
+	policy->cached_resolved_idx = idx;
+	policy->cached_target_freq = target_freq;
+	return !cpufreq_driver_fast_switch(policy, policy->freq_table[idx].frequency);
+}
 
 
