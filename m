@@ -1,151 +1,183 @@
-Return-Path: <linux-kernel+bounces-440218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9BC9EBA5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:54:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0373D9EBA63
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B636283372
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E683283D3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE10B226870;
-	Tue, 10 Dec 2024 19:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52905226892;
+	Tue, 10 Dec 2024 19:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cAsno5oY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EG21YSAt"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AD023ED59;
-	Tue, 10 Dec 2024 19:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2592F226181
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733860480; cv=none; b=hBmt2l57Dq+sIknsA5/P93OJlkBW3L/4GksKrcQ+nbpu+rd45P2jQDo6Ed5XOOmfLdKIM8Qt4CY7jokUsDbdTm6eFoPW4K8Vigw6afNlgyhMFarEt9eILPOM41BXJJUe/lbsup73ekpMCWiE64XatlmhO/Pe2TeaFzkqLWE6RhA=
+	t=1733860571; cv=none; b=uyDY3gZBk+xHqy64YE87QiXL8BAWCbnCBM1192e/0u4NyEEnfUZ41E0Gt7UrNl0+l5OeqEwFPmFSyzKQkxu35Wn3An2WDyCUBo0zQxToIixaxRe8sT3lF8gzqJpgh7EltmJQeRK2fmXIg9L/PSF0XlLKnTdA7SLN9gLnL/3XiEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733860480; c=relaxed/simple;
-	bh=4QD1jq7IN/UMgjwr2EzUkF3AbcDeXPhUr3d1bSOs3Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WglaaIIWV7usW2AxhuJHW6/OScHl/aq4ZyAr8kY2Ztetq/Z/rTkeP15oB6Qmeh1xwdtxrDMDXgfIW0uPn+av/a8kPP3ZGHb/ynsIn5Rvc+4PDLz1BAvndGm7bi+dj78w3VKrmzovGT9eOAdhMJq9KKRQNf0JYsBgjMpE711GND4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cAsno5oY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=qqR4+EDOTOKUygjAju/GpX8orxXt5neI5PHSlKTEs2U=; b=cAsno5oYRVseXjiVyM/UxIK07w
-	qtwmVLePT9tyGDCOACnIbCo40y4bTizPr6kk63/9XWmj/J55i3q114gzkNk4xoRKYXmQOOdNnUIwd
-	e0z5ZPxhUJZrzSP4ACjLwX4i6KMaSWHX+743h08HRYQNDmcTQeeK8YlV1y3hzlnQT+Iw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tL6JH-00FqUX-Bp; Tue, 10 Dec 2024 20:54:19 +0100
-Date: Tue, 10 Dec 2024 20:54:19 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
-	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
- MBa62xx carrier board Device Trees
-Message-ID: <2953e10c-0a57-4d49-b831-3864a07eefd5@lunn.ch>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
- <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
- <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
- <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
- <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
- <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
- <a2a2f201-73a4-4a99-baef-0d593a88c872@lunn.ch>
- <309052f3f69950fe43390505cc7254aee8c8f5c6.camel@ew.tq-group.com>
+	s=arc-20240116; t=1733860571; c=relaxed/simple;
+	bh=e6N+GiKT6QGfW61aH0GmQOtN0oMTDgLGk2yx2uhx9Pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pa5b7LnDFl45PASwTVzKVAIDdvKDrqzFZHsfz1kNVjZxHdBOEsyzVDcw5PoUNJBULE7EY9ETmB0+piJHBJ8Ys1zi4ACqJVYO/TW9VO5xto82YxA3BcnQU8+lTAUPL8+vXaIOVdKUNzjVlPv4gJ7QqViajdzO6u2O2qJSFZhjIFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EG21YSAt; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-728e1799d95so1172311b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:56:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733860569; x=1734465369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rhVnUUt21FbgPDOVIQ39erkKtCV93uZ7UVN8hJAABAg=;
+        b=EG21YSAt3XH3jRunxQRZkV+RmSKTIQ2YMRAj8UoO7TvkgSFs+omu2U5x/awxNE0v5y
+         xxgSaO1Z8BO0OG51bkqPhJRL1EwefcSfh9zFFd5PTjmCjSHEyaEgBYNZJzcHDFCMO1Nq
+         DGHu56pLpEmckiC/ZNy+7tzZHRgPtX/48ngIA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733860569; x=1734465369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rhVnUUt21FbgPDOVIQ39erkKtCV93uZ7UVN8hJAABAg=;
+        b=RhlnNOHgHrgespd+q0WH1P52R5bR+EB0iJQ4hZmimWdhTrWH7H0k2DFdRyycY8erQk
+         RXwykAYRnIHhauY8ksvSqj55KL9PZOojklaFy2XuETOaXktAA80LJnvjbeASFb6b8dRO
+         ycGV2xfFnla6y06iEK+XZH+LmNszixJlJc7rYKYtqDB6EgdG+z7S7bf9ppnXONwlsHFC
+         BdxpbxofyhWO4rfrC0I4qVNXci6JvNC5E3QPoOeIj72hLkQTAvimHRVAWb5wpwCV0QnB
+         FqM7eaB7NcHeuGSZFjR2gTG3vdvmxrY0o8U3Cxow1UAl2qpjZ/L3l2qLIWV6qEPL1+if
+         mEYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXs0mRwyU1hi0FqDORj6ogQeZbJOvWoxTE4rb3deJY+DzJGi26NXd1h+XqADny4Fm+US7e01yB9TTNAweg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAC2JZO5EhEwL6zcZ1Ok96EFdowOaJnuR4+P/hd+LuNItQQ5H/
+	trDbKkCBQzpGUilxb04UR5AgOVGhNzEdCNJ8f+CpBVqsNAQn/+ROECHsGL+afRJE3HRRYZZjkuM
+	=
+X-Gm-Gg: ASbGncupIu+0kbvecT7OG8Y6/j3mrBPV/B9OpB2L1/inDBJMHQ9FMhOSTUsiXahRNFM
+	S8gMFvwW+x0sYamcDCV/7TPYWEQQfDVIyGlJK5Gl5vlh5w5ZVA9s56qdDSi5sUSa6SeRN+xeOX8
+	b4vLyFd67Tws8jDGFKkUKG/ZlY0+jbbGj4RPWrDzfKx0RB8LfW6eqmhrUhZax4Tkvk2vkdhafke
+	HRxc4DASBuo4UF9GK4J6SPZQMLU3GehzM/BpeRhKpcMhXBRlHrZxcrAoh8UT6M0qxqGJZcFTq7m
+	PKrz4iLkDeAC4GRb
+X-Google-Smtp-Source: AGHT+IERCODtF9w69N6jFS6sU7rpUdsj0xS8ab78nhh9e4esn1iw4kizkJxUGrUxEpaPP4wDzuOkng==
+X-Received: by 2002:a05:6a00:3cc2:b0:727:3cd0:112b with SMTP id d2e1a72fcca58-728ed3bed65mr371559b3a.9.1733860569149;
+        Tue, 10 Dec 2024 11:56:09 -0800 (PST)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com. [209.85.216.53])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725df133a56sm5590704b3a.69.2024.12.10.11.56.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 11:56:07 -0800 (PST)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2eed82ca5b4so5116497a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:56:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUrykuRhROorRF9LoPA9a1P3jkJCTvDVgNkvKh7kSuHrnJPhVPsWUmAWD/+jOystEmZab0HIRimH86aX7Y=@vger.kernel.org
+X-Received: by 2002:a17:90b:4c84:b0:2ee:ee77:2263 with SMTP id
+ 98e67ed59e1d1-2f127f50d18mr438841a91.7.1733860566933; Tue, 10 Dec 2024
+ 11:56:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <309052f3f69950fe43390505cc7254aee8c8f5c6.camel@ew.tq-group.com>
+References: <20241122-fix-ipu-v2-0-bba65856e9ff@chromium.org>
+ <20241122-fix-ipu-v2-3-bba65856e9ff@chromium.org> <CAJZ5v0i9SresLT14aWuyodKyi2y3yyC8wLMYzrSD4ec=9WVSvg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0i9SresLT14aWuyodKyi2y3yyC8wLMYzrSD4ec=9WVSvg@mail.gmail.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 10 Dec 2024 20:55:55 +0100
+X-Gmail-Original-Message-ID: <CANiDSCsYcQBzUzjACQdhASarR9Ad4bnD035+DZzJnrQboXVDAA@mail.gmail.com>
+X-Gm-Features: AZHOrDkADV0-JEZsLMswWL8-2MF9FWIqIKoMqh9rPKxVkdv7pvHri8tCHfHVYAw
+Message-ID: <CANiDSCsYcQBzUzjACQdhASarR9Ad4bnD035+DZzJnrQboXVDAA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] ACPI: bus: implement acpi_get_physical_device_location
+ when !ACPI
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 10:56:41AM +0100, Matthias Schiffer wrote:
-> On Mon, 2024-12-09 at 17:14 +0100, Andrew Lunn wrote:
-> > 
-> > > Not our board, but the AM62 SoC. From the datasheet:
-> > > 
-> > > "TXC is delayed internally before being driven to the RGMII[x]_TXC pin. This
-> > > internal delay is always enabled." So enabling the TX delay on the PHY side
-> > > would result in a double delay.
-> > 
-> > phy-mode describes the board. If the board does not have extra long
-> > clock lines, phy-mode should be rgmii-id.
-> > 
-> > The fact the MAC is doing something which no other MAC does should be
-> > hidden away in the MAC driver, as much as possible.
-> 
-> Isn't it kind of a philosophical question whether a delay added by the SoC
-> integration is part of the MAC or not? One could also argue that the MAC IP core
-> is always the same, with some SoCs adding the delay and others not. (I don't
-> know if there are actually SoCs with the same IP core that don't add a delay;
-> I'm just not a big fan of hiding details in the driver that could easily be
-> described by the Device Tree, thus making the driver more generic)
+On Tue, 10 Dec 2024 at 19:31, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Fri, Nov 22, 2024 at 10:48=E2=80=AFAM Ricardo Ribalda <ribalda@chromiu=
+m.org> wrote:
+> >
+> > Provide an implementation of acpi_get_physical_device_location that can
+> > be used when CONFIG_ACPI is not set.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  include/acpi/acpi_bus.h | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> > index eaafca41cf02..4888231422ea 100644
+> > --- a/include/acpi/acpi_bus.h
+> > +++ b/include/acpi/acpi_bus.h
+> > @@ -43,9 +43,6 @@ acpi_status
+> >  acpi_evaluate_ost(acpi_handle handle, u32 source_event, u32 status_cod=
+e,
+> >                   struct acpi_buffer *status_buf);
+> >
+> > -acpi_status
+> > -acpi_get_physical_device_location(acpi_handle handle, struct acpi_pld_=
+info **pld);
+> > -
+> >  bool acpi_has_method(acpi_handle handle, char *name);
+> >  acpi_status acpi_execute_simple_method(acpi_handle handle, char *metho=
+d,
+> >                                        u64 arg);
+> > @@ -60,6 +57,9 @@ bool acpi_check_dsm(acpi_handle handle, const guid_t =
+*guid, u64 rev, u64 funcs);
+> >  union acpi_object *acpi_evaluate_dsm(acpi_handle handle, const guid_t =
+*guid,
+> >                         u64 rev, u64 func, union acpi_object *argv4);
+> >  #ifdef CONFIG_ACPI
+> > +acpi_status
+> > +acpi_get_physical_device_location(acpi_handle handle, struct acpi_pld_=
+info **pld);
+> > +
+> >  static inline union acpi_object *
+> >  acpi_evaluate_dsm_typed(acpi_handle handle, const guid_t *guid, u64 re=
+v,
+> >                         u64 func, union acpi_object *argv4,
+> > @@ -1003,6 +1003,8 @@ static inline int unregister_acpi_bus_type(void *=
+bus) { return 0; }
+> >
+> >  static inline int acpi_wait_for_acpi_ipmi(void) { return 0; }
+> >
+> > +#define acpi_get_physical_device_location(handle, pld) (AE_ERROR)
+>
+> This is a function, so static inline please.
+>
+> Analogously in patches [4,6/7].
+>
+> And you can merge patches [2-6/7] together into one patch, as far as
+> I'm concerned.
 
-It is more about, what does phy-mode = "rgmii"; mean? It means the
-board provides the delay via extra long clock lines. Except for when
-some random MAC driver has a completely different meaning, it is not
-documented it means something else, you have to read the sources and
-the mailing lists, to find out what this particularly MAC driver is
-doing for phy-mode = "rgmii".
+I was trying to avoid some extra ACPI_PTR and a forward declaration...
+But overall I think it looks nicers with static inlines.
 
-Do we really want that. Or should we define that phy-mode = "rgmii"
-means the PCB provides the delay. End of story, no exceptions. And
-that "rgmii-id" means the MAC/PHY pair need to provide the delay? End
-of story, no exceptions.
+I have kept the patches separately. Feel free to squash them if your
+prefer that way
 
-> > Since the MAC driver is forcing the TX delay, it needs to take the
-> > value returned from of_get_phy_mode() and mask out the TX bit before
-> > passing it to the PHY.
-> 
-> Hmm okay, this is what the similar ICSSG/PRUETH driver does. I've always found
-> that solution to be particularly confusing, but if that's how it's supposed to
-> work, I'll have to accept that.
 
-It has to be that why. If the MAC does the delay, the MAC needs to
-ensure the PHY does not do the delays and well, and it achieves that
-by setting PHY_INTERFACE_MODE to indicate the PHY should not add
-delays. Do you have a better idea how this can be done?
+Thanks!
+>
+> > +
+> >  #define for_each_acpi_dev_match(adev, hid, uid, hrv)                  =
+ \
+> >         for (adev =3D NULL; false && (hid) && (uid) && (hrv);)
+> >
+> >
+> > --
 
-> In my opinion the documentation Documentation/networking/phy.rst is not very
-> clear on this matter - the whole section "(RG)MII/electrical interface
-> considerations" talks about whether the PHY inserts the delay or not, so my
-> assumption was that phy-mode describes the PHY side of things and only that.
-> 
-> It gets even more confusing when taking into account
-> Documentation/devicetree/bindings/net/ethernet-controller.yaml, which contains
-> comments like "RGMII with internal RX delay provided by the PHY, the MAC should
-> not add an RX delay in this case", which sounds like there are only the cases
-> "delay is added by the PHY" and "delay is added by the MAC" - the case "delay is
-> part of the board design, neither MAC nor PHY add it" doesn't even appear.
 
-We have tried to improve the documentation. We have also been very
-rigid in reviewing DT bindings, and what these things mean. But it
-seems like many developers don't read reviews other developers get. Go
-search the email archive. How many times have i had this very same
-conversation?
 
-Everybody gets pause wrong. Everybody gets EEE wrong. Everybody gets
-RGMII delays wrong, not matter how many times we tell developers they
-are getting it wrong.... phylink is helping with this, it takes it out
-of developers hands so they cannot get pause or soon EEE wrong.
-
-	Andrew
+--=20
+Ricardo Ribalda
 
