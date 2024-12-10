@@ -1,220 +1,140 @@
-Return-Path: <linux-kernel+bounces-439234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1BD9EAC97
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:42:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536879EABFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:29:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C38316969C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7CF1884D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DAA2153F3;
-	Tue, 10 Dec 2024 09:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5922D3DABE5;
+	Tue, 10 Dec 2024 09:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8I6DDvO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TA0NoiNW"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4062153C7
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59E7238752
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733823408; cv=none; b=MQcfLQeJvpnEsMXcwkKq4MIF5BO4ZxhSFnZT+h2aZhFiStB2g8+ikixXepfKbGJaaUh9a88YEGj5hDV/RFJ8o4MriyXARNzMYabzPbKVo0uZr1kf0mpuHxaMRDGJtfLchyvwi96amQFMP6/2U+36/Ix/H4v8QarwoTy62IUt8MY=
+	t=1733822931; cv=none; b=iiLZ288i815JnwubgVw5hJUVKAFE+McyG0ElfS6xwOFje/6VNOUxgSVzBi7NIT6AWXrvhhHcOmbbl3w9hX4qJUjdscdzDM5yOFkTsGvenpjl5mwZUuZPoSLHd0yl8rVKQ8xmZI8noFxuysBnA17VppnKsm/GfzqyiIAzlNMdpOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733823408; c=relaxed/simple;
-	bh=ms5Uc8LAf++lWOaws/airjvViXaLv32BodTHXY4/0Xw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lPA4QccDKgxJMzLzfa/4CRNa2MgHeCVdBJ8xGTJBSCdwXkNVrcZYJDbeLfpmkLY5hNyuTJ0wSYd3t0yExwPGUotkCMrvhadV/Xcdouzc4kmE6opdNQfsl+M8jTvITHNSRdX5aAv3jPLxvFmWLQJlXZayCHRWrLKLikSjVBX67l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8I6DDvO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733823405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ln7QmybwS+wJD0e1iridJGR/UG992shbcYyS2kThagY=;
-	b=K8I6DDvOBo8oo10nu5Re9438Ci5lkhvjeqGy8pORQM4ru13rTktwbUaCL6CulhOVnPm3yC
-	ccUMZ6uV7H8W4pp7nkdqStPXAka1xabn6L1Lr21HzxXA3ikHFqOluxBR0tYUicQCeFfjlr
-	byLbdyo3ekw9sZgLQnGqOFBn5aguWRE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-418-vQ23K7rIMcGW4hzrIXJzUQ-1; Tue,
- 10 Dec 2024 04:36:41 -0500
-X-MC-Unique: vQ23K7rIMcGW4hzrIXJzUQ-1
-X-Mimecast-MFC-AGG-ID: vQ23K7rIMcGW4hzrIXJzUQ
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7ECDB1955D5A;
-	Tue, 10 Dec 2024 09:36:39 +0000 (UTC)
-Received: from hydra.redhat.com (unknown [10.39.193.39])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2389C1956089;
-	Tue, 10 Dec 2024 09:36:35 +0000 (UTC)
-From: Jocelyn Falempe <jfalempe@redhat.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v3 4/6] drm/i915/gem: Add i915_gem_object_panic_map()
-Date: Tue, 10 Dec 2024 10:28:44 +0100
-Message-ID: <20241210093505.589893-5-jfalempe@redhat.com>
-In-Reply-To: <20241210093505.589893-1-jfalempe@redhat.com>
-References: <20241210093505.589893-1-jfalempe@redhat.com>
+	s=arc-20240116; t=1733822931; c=relaxed/simple;
+	bh=IwZiUC+xzjT5g/3F2kaFOIMCaS5YNKOYuxFdVzfYR5Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CFpKQ/YrdCd21LlT+KuefhYC9h7z6Lp1i1ogPr8wTtuozkmFvV9/bThE69GPXWe1XjIsT2prq1HzKL91BJOMyBM9yYtqpNOOOVBBbbnf9XwJfarQ07bmEiXI4pZ2OKc2RMg0Te5bEG+/yPXUJ22DevDyNm4Q7/URXmjvMfv4h3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TA0NoiNW; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467838e75ffso1256931cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:28:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733822929; x=1734427729; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EQ6Sr1zHlK7eVAViMLQBWWxa4rYYIz/gHEKTD7nWi1Y=;
+        b=TA0NoiNWAXH65z5Fg2SzT0PeNGES0618dgVuvPlZ51EqLvQJRr4QYTe4gS30lnV8lL
+         Ze89GxUl3tyh0B1ZN9wb1Moe6/pMBBOGsl//rbFthelW2LU05Id96zT4/TfeatDnjU2i
+         oI3JYW0orTTaiqm2OqFy54TDq7/foOGhMdIVM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733822929; x=1734427729;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EQ6Sr1zHlK7eVAViMLQBWWxa4rYYIz/gHEKTD7nWi1Y=;
+        b=J9c0e6GtEXTxtWv58StROB+HM//5HfbhgjpWc7ylLXSzju++nV09WIHrunvBbV+LIR
+         rS55S31BGFK5qUU3Ukird6GJ6ULG3RenOPokCUBVKTu9wYGTAEY1rbAOKCKCXVQ9iNwv
+         lO6UEULpG26NH4CM5GXNcYMjtp94LVS/1KMWkJDnp8TgKcOLc9l9ocPla4t+9cO/8iAm
+         YvQW0gAoFYAILSnROuRAolkdb7/B7f2Js5GspRjmmv+7/oyoyBnZhycKO2nZZgZrEkOu
+         RfKRqZ8s3QQmCR9TT5puxViqCC8DNT4XQ/mzkuV5NsY+YUXW0sXkT/qWPeM5IBrHUcZj
+         u2BA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMTZlBTh9UE6Uc5rii6F6Koe4jw4HxCNxz4f4uCtDCQKh1k2ioWy+zOG9irJrbZm7J5Lj/FaTwdk0UXoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvAN/2xeLBBFpl92uPX0zcMd20TxexUukuoDzibQFLeILfS0cT
+	tKIFPp6XD6cbHD6OoKr7FSl28LdNxHsZqiB/Z543n+eJU6XY2uI4+bCtNQyJOw==
+X-Gm-Gg: ASbGncuHaxqZ6jJr24/8ujHaUxptZC6f+rWNkr5E7lrBtaMOneoOlTSS+Y4rElhiLl2
+	UVU9lkfnPnNkdrkpDFK62fOnkb5QXVFAvXf7PfamhdGefTCSozMTWDryl1BUm6nAXCIqPQs52uV
+	vOjsH7f0P4+wlPSnHkuBjC5bt+EWomLfLqaZ+zgLRiQdJrgKt+KKbUe9ovDLTRN/Z6/bRGCGY9J
+	31oj3eI3NpyQIUCa+YpQqcGW5KHUiP574RYmJeA5vz0DxD0uQL82nYj9sWFfz+kZO8sdcKg6HsW
+	bMiUeeVDEZHFehUr+9vywEhKVVNt
+X-Google-Smtp-Source: AGHT+IG4zLpTUeRfCJvNH5jKuYheZyD8tmB9iprUPnqSv4PhKrfbGY9SonvowS8cKS9US1CIu4W15A==
+X-Received: by 2002:a05:622a:1446:b0:467:599f:bdc0 with SMTP id d75a77b69052e-46772013edbmr46291441cf.47.1733822928798;
+        Tue, 10 Dec 2024 01:28:48 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4675dd86ce4sm24343241cf.30.2024.12.10.01.28.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 01:28:47 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 00/11] media: Remove vidioc_g/s_ctrl and
+ vidioc_queryctrl callbacks
+Date: Tue, 10 Dec 2024 09:28:44 +0000
+Message-Id: <20241210-queryctrl-v2-0-c0a33d69f416@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM0JWGcC/23MQQ6CMBCF4auQWVtTioi68h6GBQxTOolQnQKRk
+ N7dytrl//LybRBImALcsg2EFg7sxxTmkAG6ZuxJcZcajDan3Oires8kK07yVCUW58K0FV7KCtL
+ /JWT5s1uPOrXjMHlZd3rJf+s/ZcmVVh1ZWzVoscP2jk78wPNw9NJDHWP8AnVABMWlAAAA
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Mike Isely <isely@pobox.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-Prepare the work for drm_panic support. This is used to map the
-current framebuffer, so the CPU can overwrite it with the panic
-message.
+Most of the drivers use the control framework or can use the superset
+version of these callbacks: vidioc_g/s_ext_ctrl and
+vidioc_query_ext_ctrl.
 
-Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/gpu/drm/i915/display/intel_bo.c    | 10 +++++++++
- drivers/gpu/drm/i915/display/intel_bo.h    |  2 ++
- drivers/gpu/drm/i915/gem/i915_gem_object.h |  2 ++
- drivers/gpu/drm/i915/gem/i915_gem_pages.c  | 25 ++++++++++++++++++++++
- drivers/gpu/drm/xe/display/intel_bo.c      | 11 ++++++++++
- 5 files changed, 50 insertions(+)
+Changes in v2:
+- v4l2_query_ext_ctrl_to_v4l2_queryctrl
+- Fix conversion (Thanks Hans)
+- Link to v1: https://lore.kernel.org/r/20241209-queryctrl-v1-0-deff7acfcdcb@chromium.org
 
-diff --git a/drivers/gpu/drm/i915/display/intel_bo.c b/drivers/gpu/drm/i915/display/intel_bo.c
-index fbd16d7b58d95..5eeb3ba827edf 100644
---- a/drivers/gpu/drm/i915/display/intel_bo.c
-+++ b/drivers/gpu/drm/i915/display/intel_bo.c
-@@ -22,6 +22,11 @@ bool intel_bo_is_shmem(struct drm_gem_object *obj)
- 	return i915_gem_object_is_shmem(to_intel_bo(obj));
- }
- 
-+bool intel_bo_has_iomem(struct drm_gem_object *obj)
-+{
-+	return i915_gem_object_has_iomem(to_intel_bo(obj));
-+}
-+
- bool intel_bo_is_protected(struct drm_gem_object *obj)
- {
- 	return i915_gem_object_is_protected(to_intel_bo(obj));
-@@ -57,3 +62,8 @@ void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj)
- {
- 	i915_debugfs_describe_obj(m, to_intel_bo(obj));
- }
-+
-+void *intel_bo_panic_map(struct drm_gem_object *obj)
-+{
-+	return i915_gem_object_panic_map(to_intel_bo(obj));
-+}
-diff --git a/drivers/gpu/drm/i915/display/intel_bo.h b/drivers/gpu/drm/i915/display/intel_bo.h
-index ea7a2253aaa57..0eb084955e9af 100644
---- a/drivers/gpu/drm/i915/display/intel_bo.h
-+++ b/drivers/gpu/drm/i915/display/intel_bo.h
-@@ -13,6 +13,7 @@ struct vm_area_struct;
- bool intel_bo_is_tiled(struct drm_gem_object *obj);
- bool intel_bo_is_userptr(struct drm_gem_object *obj);
- bool intel_bo_is_shmem(struct drm_gem_object *obj);
-+bool intel_bo_has_iomem(struct drm_gem_object *obj);
- bool intel_bo_is_protected(struct drm_gem_object *obj);
- void intel_bo_flush_if_display(struct drm_gem_object *obj);
- int intel_bo_fb_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
-@@ -23,5 +24,6 @@ struct intel_frontbuffer *intel_bo_set_frontbuffer(struct drm_gem_object *obj,
- 						   struct intel_frontbuffer *front);
- 
- void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj);
-+void *intel_bo_panic_map(struct drm_gem_object *obj);
- 
- #endif /* __INTEL_BO__ */
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-index 3dc61cbd2e11f..f85326a98aefc 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-@@ -694,6 +694,8 @@ i915_gem_object_unpin_pages(struct drm_i915_gem_object *obj)
- int __i915_gem_object_put_pages(struct drm_i915_gem_object *obj);
- int i915_gem_object_truncate(struct drm_i915_gem_object *obj);
- 
-+void *i915_gem_object_panic_map(struct drm_i915_gem_object *obj);
-+
- /**
-  * i915_gem_object_pin_map - return a contiguous mapping of the entire object
-  * @obj: the object to map into kernel address space
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_pages.c b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-index 8780aa2431053..07c33169603c9 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-@@ -355,6 +355,31 @@ static void *i915_gem_object_map_pfn(struct drm_i915_gem_object *obj,
- 	return vaddr ?: ERR_PTR(-ENOMEM);
- }
- 
-+/* Map the current framebuffer for CPU access. Called from panic handler, so no
-+ * need to pin or cleanup.
-+ */
-+void *i915_gem_object_panic_map(struct drm_i915_gem_object *obj)
-+{
-+	enum i915_map_type has_type;
-+	void *ptr;
-+
-+	ptr = page_unpack_bits(obj->mm.mapping, &has_type);
-+
-+	if (ptr)
-+		return ptr;
-+
-+	if (i915_gem_object_has_struct_page(obj))
-+		ptr = i915_gem_object_map_page(obj, I915_MAP_WB);
-+	else
-+		ptr = i915_gem_object_map_pfn(obj, I915_MAP_WB);
-+
-+	if (IS_ERR(ptr))
-+		return NULL;
-+
-+	obj->mm.mapping = page_pack_bits(ptr, I915_MAP_WB);
-+	return ptr;
-+}
-+
- /* get, pin, and map the pages of the object into kernel space */
- void *i915_gem_object_pin_map(struct drm_i915_gem_object *obj,
- 			      enum i915_map_type type)
-diff --git a/drivers/gpu/drm/xe/display/intel_bo.c b/drivers/gpu/drm/xe/display/intel_bo.c
-index 9f54fad0f1c0c..c05feeeec3806 100644
---- a/drivers/gpu/drm/xe/display/intel_bo.c
-+++ b/drivers/gpu/drm/xe/display/intel_bo.c
-@@ -23,6 +23,11 @@ bool intel_bo_is_shmem(struct drm_gem_object *obj)
- 	return false;
- }
- 
-+bool intel_bo_has_iomem(struct drm_gem_object *obj)
-+{
-+	return false;
-+}
-+
- bool intel_bo_is_protected(struct drm_gem_object *obj)
- {
- 	return false;
-@@ -82,3 +87,9 @@ void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj)
- {
- 	/* FIXME */
- }
-+
-+void *intel_bo_panic_map(struct drm_gem_object *obj)
-+{
-+	/* TODO: map the object so CPU can write the panic screen to it */
-+	return NULL;
-+}
+---
+Ricardo Ribalda (11):
+      media: ioctl: Simulate v4l2_queryctrl with v4l2_query_ext_ctrl
+      media: pvrusb2: Convert queryctrl to query_ext_ctrl
+      media: pvrusb2: Remove g/s_ctrl callbacks
+      media: uvcvideo: Remove vidioc_queryctrl
+      media: atomisp: Replace queryctrl with query_ext_ctrl
+      media: atomisp: Remove vidioc_g/s callback
+      media: v4l2: Remove vidioc_queryctrl callback
+      media: v4l2: Remove vidioc_g_ctrl callback
+      media: cx231xx: Replace s_ctrl with s_ext_ctrls
+      media: v4l2: Remove vidioc_s_ctrl callback
+      media: v4l2-core: Introduce v4l2_query_ext_ctrl_to_v4l2_queryctrl
+
+ drivers/media/usb/cx231xx/cx231xx-417.c           | 21 ++++++----
+ drivers/media/usb/pvrusb2/pvrusb2-v4l2.c          | 40 ++++--------------
+ drivers/media/usb/uvc/uvc_v4l2.c                  | 10 -----
+ drivers/media/v4l2-core/v4l2-ctrls-api.c          | 51 +++++++++++++----------
+ drivers/media/v4l2-core/v4l2-dev.c                |  6 +--
+ drivers/media/v4l2-core/v4l2-ioctl.c              | 19 +++++----
+ drivers/staging/media/atomisp/pci/atomisp_ioctl.c | 35 ++++++++--------
+ include/media/v4l2-ctrls.h                        | 12 ++++++
+ include/media/v4l2-ioctl.h                        | 12 ------
+ 9 files changed, 97 insertions(+), 109 deletions(-)
+---
+base-commit: 6c10d1adae82e1c8da16e7ebd2320e69f20b9d6f
+change-id: 20241209-queryctrl-5c3632b7c857
+
+Best regards,
 -- 
-2.47.1
+Ricardo Ribalda <ribalda@chromium.org>
 
 
