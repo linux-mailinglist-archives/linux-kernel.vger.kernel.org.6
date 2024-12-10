@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-438708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0309EA4A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:04:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A029EA4A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EADC71888F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B07188938D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC9812DD8A;
-	Tue, 10 Dec 2024 02:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435067A0D;
+	Tue, 10 Dec 2024 02:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1A+KIg2I"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ke0EEusi"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F23233129;
-	Tue, 10 Dec 2024 02:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611C2AE93;
+	Tue, 10 Dec 2024 02:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796242; cv=none; b=netI3TVfEmB4HM2vMkKbp+fD9uiqEXXYiMuAe+hNqa8GNhOV+3mAU5AzhKfONZS8eFOquJDfxlY02VssZ2XKoP/6k3gZ1E4LLNrfnywqd5oeoLMM3b5OzyQEe8VwmZt08zeyUM9XI7ISQGNAGpth6jcyleMoHjQmizJyfbEUPbQ=
+	t=1733796266; cv=none; b=DucYIF+C0tKIH2jVj9+5IKVlf7xYArmJHsbV/L7AbNVfkCtjjT78QDVee3MRgds+EY+8CzVrtUJzzb+XU4zdc6XnBPuzQTdbkEZMPWoi8qSgQ1/drrSEovxTLnj+t6uw4q28eXXWL7w1KpiafZZjSGpORU2l3ykzr1kBj9Et0N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796242; c=relaxed/simple;
-	bh=Chh94kYftnp/nx0uj3PwDdZ4ZlVGX+bL9pQM95fGQo4=;
+	s=arc-20240116; t=1733796266; c=relaxed/simple;
+	bh=7PYDEBrX6UDd5urSI+9ADlPKo36XnpaS1lVqRbWxUHw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hBSPjU3HnAoNvxczKEP55kw/zU26n1Vadug+Ja0Gj0OZMDVXaRARlECjCClz7Pb0n8a0mpPy/57Qen2w9Ta3Y3hqMFNUWeQCnqXPK+PSTRTwlwkx4gM08hnpsP7mykawEwMAKdIOlSnUH8IB+baZpLpGbsDEt6GQQ3XqaL36bug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1A+KIg2I; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=iie6fYkYVRH7isQ44her4uZ4UccFVSyCTsNSMZrZ2U9c5s1793Dm1Hz7QLWS0M09bMJHT5cRN/Xt5IN3+cPVhKThy2OAP1AVfbndDa59iUGOiuwmlSsagF/BWQ9jdI0IqRdLYXXE6dOndkf+3RTSYr+Z4u/PaqcFlsH2tevsgA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ke0EEusi; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=eFp65tcXcc958C5eOkNA/EA2BFQGeUtwmJa8uPH36oE=; b=1A+KIg2InrbL2T0UCnrP87R6PB
-	UE3GEvwJ21tdUS1r4tq7Q+8IBsVj0we+OTiybgL08fWxRSpw6yG3KWkoeMQrAnpvz0GTgp/R0g8tu
-	QBNOSjW6kM9pXfuBZy1KvWuo8QyuaelXFLYpZN4zPU+prT4k4QhZJQytqetXwRPzmkfA=;
+	bh=w5+t6XBwCajCiRcvMjJKRNt/CjZXlpUR9jDDCFEx5+I=; b=Ke0EEusi3UFGEbIFQF7YZVHWnV
+	wiIR67w3AUot0oVAdhjtd0uXlMFeTx1JmaVSo6z7D7usFZ5Waj1rbq6Yo2pKw8sq8atVBWcG+fmXS
+	+8+e8U3c4nhU0K512TDMfEzY/nBWGOdN08h+XLlOineYx3ns83H/NzlpupN2HSxUTRd8=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1tKpbO-00Fk49-W0; Tue, 10 Dec 2024 03:03:54 +0100
-Date: Tue, 10 Dec 2024 03:03:54 +0100
+	id 1tKpbm-00Fk4t-4S; Tue, 10 Dec 2024 03:04:18 +0100
+Date: Tue, 10 Dec 2024 03:04:18 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Oleksij Rempel <o.rempel@pengutronix.de>
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -51,11 +51,11 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
 	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 04/11] net: usb: lan78xx: Add error handling
- to lan78xx_get_regs
-Message-ID: <8e251cd2-00a2-484f-a628-8abe32fb772a@lunn.ch>
+Subject: Re: [PATCH net-next v1 05/11] net: usb: lan78xx: Simplify
+ lan78xx_update_reg
+Message-ID: <2f5d56c0-b512-419e-b0d6-b2b0aeb721c4@lunn.ch>
 References: <20241209130751.703182-1-o.rempel@pengutronix.de>
- <20241209130751.703182-5-o.rempel@pengutronix.de>
+ <20241209130751.703182-6-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,12 +64,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209130751.703182-5-o.rempel@pengutronix.de>
+In-Reply-To: <20241209130751.703182-6-o.rempel@pengutronix.de>
 
-On Mon, Dec 09, 2024 at 02:07:44PM +0100, Oleksij Rempel wrote:
-> Update `lan78xx_get_regs` to handle errors during register and PHY
-> reads.  Log warnings for failed reads and exit the function early if an
-> error occurs.  This ensures that invalid data is not returned to users.
+On Mon, Dec 09, 2024 at 02:07:45PM +0100, Oleksij Rempel wrote:
+> Simplify `lan78xx_update_reg` by directly returning the result of
+> `lan78xx_write_reg`. This eliminates unnecessary checks and improves
+> code readability.
 > 
 > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
