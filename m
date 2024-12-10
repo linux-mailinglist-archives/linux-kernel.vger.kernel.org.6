@@ -1,136 +1,332 @@
-Return-Path: <linux-kernel+bounces-440430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C169EBDD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:26:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3715F9EBDD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D683616624A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBC1618843FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9057F1EE7DF;
-	Tue, 10 Dec 2024 22:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755892451F3;
+	Tue, 10 Dec 2024 22:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YaT4HUGZ"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2jnrstkL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Eni29Z82"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DDB2451F1;
-	Tue, 10 Dec 2024 22:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262B62451C3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869585; cv=none; b=QTEVnNxJHQ5b0vIbKVleOLWZLqYF4+1OSPEL2bYQkEOTwXVhwIsqFFg+jUiafuAAUvcRafgZWGEorofpvbV2Uf/9ICKTv7AOQDB3PjyTcNgtnRiktwQxVit6EzlsGfVYl5cJ1kZIfMtEdz6I4kXY/fwN0L+GjFnbQyNKM9+N3CE=
+	t=1733869657; cv=none; b=LEugJccNCT+Gd05aH3K3IGawsSuIbRDM2tNgmIHUfvjdjsIaRNSVIP0P0kJJL4uuaW9dbPw9MNMRpGVw6B1+498/IgRqkOTP+gXsd3pIkUw7XT8pwQlFsqNcg25CTVRGamvPzknKQMNN3a1aG/xAbwEhRZi0v6Ljxr4DL7g9C1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869585; c=relaxed/simple;
-	bh=7dyBhkgm4N/DLXAeBBU91aVdSrvgFws4aFL8S4LxIyw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2U4WgD/+OdjOrkgech9cKdN4crX5R4ZdkuIzdLhIS0+S1X043Bo/6m+u2pi7EEXbraHSQnW7cXCaWUN5fx0XCBpwHIDWnlcc+oMOgfLaI04jgvGhDVcBFK4z8elgSjOucYmcdjXtQoc8SVAEyhwHBNj+xU3HWJFQQsROUOxhwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YaT4HUGZ; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434f09d18e2so35620055e9.0;
-        Tue, 10 Dec 2024 14:26:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733869582; x=1734474382; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UAnLPvcXxqQcZMFvRdGiegZqvPuvQ8o1GFTUSOFQNIg=;
-        b=YaT4HUGZ29KbopI4xPnFV5yQ1k3CiVqjDm/2OVTrr8Yfw5Ln2YIw2BhEfnUR/AL10l
-         9hQfs3auWSyaCXaLs+h7OoEB0LzQ6x9l6oNxmNErFwftnxMBleSx6T3z2/DVADz6sETH
-         r5LTskDTQbETsgswj/HaHaT/fwKYI++8jRkP+o4d61vaQ62j6k7b/0IN5gpDeADQfPbB
-         xKNi1S4IiIM1nmWPQ5zgUEDYvGdUv1KDXAKnuarHq/nWVg2/7u2HCDg7KAW3gIGfjJ76
-         k0tMPTnjm+jnIgS2r89rhOWm7AUJ6Ilct0DFaBtQLKxYDOUz138ZJZzzLJbhEny05CGb
-         u5cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733869582; x=1734474382;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UAnLPvcXxqQcZMFvRdGiegZqvPuvQ8o1GFTUSOFQNIg=;
-        b=CSrpfwLfxRDKePVTXdOaTWTgk5VfPFtIK9rIlhAoXW8AE+Xq/roLQBOkrBV9k9MLyH
-         EdDy+KQDw9i7EI5QC7A1hIZ9QgG1habUlPLOLvU6SBlPzloWWFvu2CeeWXUhsB7PfsP7
-         aTYeAaWjNbkbucDNFV5TSTaeKRt5IW+mPQE8+dtLG8M0AyTo2qNV/7k9cyBGglcm14jV
-         dGoqCD5SOtRJFlPark5QrqQm7KCh17p6mNnG7U5dcSMA3PxjZi/jq2IH/goVMNB22CNV
-         HsUsjl8DGia/v4IGVcNohAdNvkJLi8bbBixnQzdhrVRTabK1lVpQGE8eBv2VRQK+/IE9
-         I88A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7HEu3ja6dGw1PQ2nqJ6aqQday7chUpVIE2Sr8DJT2KYecYeFozmNeDRzj62Q9q9YOekzNtyfs2IvvVoMk@vger.kernel.org, AJvYcCUiQDCvLH5U4CfUqTu6jl1pLXDVSzbeqE9At0a8FGvqKfmCnVPQa+Ts2EbHGRFwSwHgA2wOMMjj@vger.kernel.org, AJvYcCXt203kkPm5aK3kEykN08bea2hNwOvtucB7JfuF4BIxmk7CPF/Ck7U8Jr+z2bZOyr3wSH8CCb10jrln@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLsG+pmb5iELhLTDoawhN00tM9yhMV5DFgia2vuIjFRou8QYWS
-	b9HaQGAmKvXwD/SIVwAjtIOP4HzoHLP6IUJwGYTjg8XRX0DNS4uS03WNXA==
-X-Gm-Gg: ASbGnctTl0747H2s8bSZtF6QmB7ke0NrWsfEh5Z5KQbTZdbYWEOYAKu+XlVeSlp7pRg
-	cb/Nf+Ceyy8RS5RE5U2QV8G6lZAi5/y8CeV9gyst23lrVDCmsqlFSYyQn8L0ZUMr/R7PZGOVjyz
-	Z+WeR55rJv+NJnAyinrZH2IuqXBPTFYzm6P4LNazEN55ZuS6osZkeS2y4DaD0/odglY28eQd/fU
-	yk4vv9RbJLt0zhVf7f026BCSWAyq4BY76S2b4pS9+JF71c8Ax87u2wRRw2TANccxRNNN9JlrJm+
-	FPYhwam5nw==
-X-Google-Smtp-Source: AGHT+IEIx73L8V9Xn20US5TZdCSs05hwB1+pqofuOI4Tftmw7ho7qTCb/DpbVER3GSlQTeepdonLzw==
-X-Received: by 2002:a05:6000:1fae:b0:385:e30a:394e with SMTP id ffacd0b85a97d-3864ce862d2mr561573f8f.3.1733869581438;
-        Tue, 10 Dec 2024 14:26:21 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f9da4cd0sm81688025e9.26.2024.12.10.14.26.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 14:26:20 -0800 (PST)
-Message-ID: <6758c00c.050a0220.1dd14c.63cd@mx.google.com>
-X-Google-Original-Message-ID: <Z1jACflOJaLJmhgy@Ansuel-XPS.>
-Date: Tue, 10 Dec 2024 23:26:17 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v11 3/9] dt-bindings: net: dsa: Document support
- for Airoha AN8855 DSA Switch
-References: <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-4-ansuelsmth@gmail.com>
- <20241210204855.7pgvh74irualyxbn@skbuf>
- <6758ab9b.7b0a0220.3347af.914a@mx.google.com>
- <20241210221602.ohyzlic2x3pflmrg@skbuf>
+	s=arc-20240116; t=1733869657; c=relaxed/simple;
+	bh=oI5Wv3SQUuxtwKDGlOH1HmQBxdy7pECKfwozCj9lLsE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MYljI8iovNBvcG0jKBl3FVNKaodlBsuZL3YFjw/E1anX7i5ESqra7rPPg9/1QHigYC6zXdyI+/3G+smSwGBj4Ffpjd10My03n8QE+lFN2NHdkt5bcS4oHHINlU2UQpu8IpbMo2jCFfWvLuqPGEeNlb++XsFc9xBtoaVSQIIXo2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2jnrstkL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Eni29Z82; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733869652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mpDF44urF3ROvcdxwxcr1K36mH6V2lpUOgpiztAj7fE=;
+	b=2jnrstkLM7iHJVuUzgPGuPJS5hXnDQosYdskM2GTnPxRi0436EFxPzeXw0R7t/CoDeS08g
+	iTTjmSwWA3oGlHfHTbFEnEFdd4SkCNgdI55cjEsLK3b4qFd+/appsuSabilFi3c7CRfQ8F
+	L+mzmYM6nKex1WMDUFBaeDxSSzipVilSsfHrBLai6aO1yf5cJAbZxAcJZp+DQZV5n7cKRD
+	mZEbWcy5KWQqP0i1NXnaCnXhe1OL7UeXwfkN3hBXgkJdKLctpODOEteReTh9Cow0tJG+5V
+	wRzlPvigcJAZHzXvuKmyezcsvppPASjdlX1hUrIpQrPqduXA/Kc4DJDNTV5Bbw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733869652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mpDF44urF3ROvcdxwxcr1K36mH6V2lpUOgpiztAj7fE=;
+	b=Eni29Z82OpzO492YenUjDO2hXVbiC14mocwtw34NeMo6V63E4Oy0GjOnRIq4ZN5mn6RdHC
+	24jA29BGHnyD2ECQ==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
+ <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
+ Long <longman@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH v4 06/11] futex: Allow to re-allocate the private hash
+ bucket.
+In-Reply-To: <20241203164335.1125381-7-bigeasy@linutronix.de>
+References: <20241203164335.1125381-1-bigeasy@linutronix.de>
+ <20241203164335.1125381-7-bigeasy@linutronix.de>
+Date: Tue, 10 Dec 2024 23:27:32 +0100
+Message-ID: <8734ivcgx7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210221602.ohyzlic2x3pflmrg@skbuf>
+Content-Type: text/plain
 
-On Wed, Dec 11, 2024 at 12:16:02AM +0200, Vladimir Oltean wrote:
-> On Tue, Dec 10, 2024 at 09:59:04PM +0100, Christian Marangi wrote:
-> > > > +  airoha,ext-surge:
-> > > > +    $ref: /schemas/types.yaml#/definitions/flag
-> > > > +    description:
-> > > > +      Calibrate the internal PHY with the calibration values stored in EFUSE
-> > > > +      for the r50Ohm values.
-> > > 
-> > > Doesn't seem that this pertains to the switch.
-> > 
-> > Do you think this should be placed in each PHY node?
-> 
-> Logically speaking, that's where it belongs.
-> 
-> > I wanted to prevent having to define a schema also for PHY if possible
-> > given how integrated these are. (originally it was defined in DT node
-> > to follow how it was done in Airoha SDK)
-> 
-> Does compatibility with the Airoha SDK dt-bindings matter in any way?
+On Tue, Dec 03 2024 at 17:42, Sebastian Andrzej Siewior wrote:
+> +static void futex_put_old_hb_p(struct futex_hash_bucket_private *hb_p)
+> +{
+> +	unsigned int slots = hb_p->hash_mask + 1;
+> +	struct futex_hash_bucket *hb;
+> +	DEFINE_WAKE_Q(wake_q);
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < slots; i++) {
+> +		struct futex_q *this;
+> +
+> +		hb = &hb_p->queues[i];
+> +
+> +		spin_lock(&hb->lock);
+> +		plist_for_each_entry(this, &hb->chain, list)
+> +			wake_q_add(&wake_q, this->task);
+> +		spin_unlock(&hb->lock);
+> +	}
+> +	futex_hash_priv_put(hb_p);
+> +
+> +	wake_up_q(&wake_q);
 
-No it doesn't, the requirement for nvmem already deviates a lot so changes
-are needed anyway.
+So you wake up all queued waiters and let themself requeue on the new
+hash.
 
--- 
-	Ansuel
+How is that safe against the following situation:
+
+    CPU 0                               CPU 1
+    hb_p_old = mm->futex_hash_bucket;   hbp = mm->futex_hash_bucket;
+    mm->futex_hash_bucket = new;
+                                        // Referrence count succeeds!
+                                        rcuref_get(&hpb->refcnt);
+    futex_put_old_hb_p();
+                                        // Queues on old hash and
+                                        // is lost forever
+                                        queue(hbp);
+
+This scheme simply cannot work unless you take the rwsem read in the
+wait path, which is a horrible idea. Aside of that taking the rwsem in
+various code paths is counterproductive. For a big process where threads
+operate on different locks heavily, you introduce a 'global'
+serialization for no good reason.
+
+I still think that the basic principle for any of this is to hold the
+reference count only accross the actual hash bucket related operations
+and not keep it accross schedule.
+
+That obviously means that the hash bucket pointer is invalid after such
+an operation block and needs re-evaluation if needed again, but that's
+not the end of the world.
+
+Let's look at wait() again:
+
+wait()
+{
+retry:
+        hb = hb_get_and_lock(key);	// Aqcuires a reference
+        ret = futex_get_value_locked();
+        if (ret) {
+        	hb_unlock_and_put(hb);	// Drops the reference
+                ...
+                if (...)
+                	goto retry;
+
+        queue(hb, q, ...);
+       	hb_unlock_and_put(hb);          // Drops the reference
+
+        schedule();
+
+        unqueue(q);                     // Does not require hb
+}
+
+Why does unqueue() work w/o a hash bucket reference?
+
+unqueue(q)
+{
+retry:
+	lock_ptr = READ_ONCE(q->lock_ptr);
+        // Wake up ?
+        if (!lock_ptr)
+                return 0;
+
+        spin_lock(lock_ptr);
+
+        // This covers both requeue and rehash operations
+        if (lock_ptr != q->lock_ptr) {
+        	spin_unlock(lock_ptr);
+                goto retry;
+        }
+
+        __unqueue(q);
+        spin_unlock(lock_ptr);
+}
+
+Nothing in unqueue() requires a reference on the hash. The lock pointer
+logic covers both requeue and rehash operations. They are equivalent,
+no?
+
+wake() is not really different. It needs to change the way how the
+private retry works:
+
+wake_op()
+{
+retry:
+        get_key(key1);
+        get_ket(key2);
+
+retry_private:
+        double_get_and_lock(&hb1, &hb2, &key1, &key2);
+        .....
+        double_unlock_and_put(&hb1, &hb2);
+        .....
+}
+
+Moving retry private before the point where the hash bucket is retrieved
+and locked is required in some other place too. And some places use
+q.lock_ptr under the assumption that it can't change, which probably
+needs reevaluation of the hash bucket. Other stuff like lock_pi() needs
+a seperation of unlocking the hash bucket and dropping the reference.
+
+But that are all minor changes.
+
+All of them can be done on a per function basis before adding the actual
+private hash muck, which makes the whole thing reviewable. This patch
+definitely does not qualify for reviewable.
+
+All you need are implementations for hb_get_and_lock/unlock_and_put()
+plus the double variants and a hash_put() helper. Those implementations
+use the global hash until all places are mopped up and then you can add
+the private magic in exatly those places
+
+There is not a single place where you need magic state fixups in the
+middle of the functions or conditional locking, which turns out to be
+not sufficient.
+
+The required helpers are:
+
+hb_get_and_lock(key)
+{
+        if (private(key))
+        	hb = private_hash(key);		// Gets a reference
+        else
+                hb = hash_bucket(global_hash, key);
+        hb_lock(hb);
+        return hb;
+}
+
+hb_unlock_and_put(hb)
+{
+        hb_unlock(hb);
+        if (private(hb))
+        	hb_private_put(hb);
+}
+
+The double lock/unlock variants are equivalent.
+
+private_hash(key)
+{
+        scoped_guard(rcu) {
+ 	       hash = rcu_deref(current->mm->futex.hash);
+               if (rcuref_get(hash->ref))
+               		return hash_bucket(hash, key);
+	}
+      
+        guard(mutex)(current->mm->futex.hash_mutex);
+
+        // Did reallocation win the race for the mutex ?
+        hash = current->mm->futex.hash;
+        if (!rcuref_get(hash->ref) {
+        	hash = realloc_or_restore_hash();
+                rcuref_get(hash);
+        }
+        return hash_bucket(hash, key);
+}
+
+hb_private_put(hb)
+{
+        hash = priv_hash(hb);
+        hash_putref(hash);
+}
+
+hash_putref(hash)
+{
+        // Has fork dropped the initial reference to signal
+        // that reallocation is required?
+        //
+        // If so, the last user hits the dead state
+        if (!rcuref_put(&hash->ref))
+        	return;
+
+        guard(mutex)(current->mm->futex.hash_mutex);
+	realloc_or_restore_hash();
+}
+
+realloc_or_restore_hash()
+{
+        old_hash = current->mm->futex.hash;
+        new_hash = alloc_hash(current->mm->users);
+        if (!new_hash) {
+                // Make the old hash alive again
+        	rcuref_init(old_hash->ref, 1);
+                return cur_hash;
+        }
+
+        rehash(new_hash, old_hash);
+        rcu_assign_pointer(current->mm->futex.hash, new_hash);
+        rcu_free(old_hash);
+}
+
+rehash(new_hash, old_hash)
+{
+        // old_hash is marked dead, so new waiters cannot queue
+        // themself and are stuck on the hash_mutex.
+
+        for (i = 0; i < old_hash->size; i++) {
+		hb1 = &old_hash->queues[i];
+
+                // Protect the old bucket against unqueue(), as it does
+                // not try to get a reference on the hash bucket. It
+                // solely relies on q->lock_ptr.
+                spin_lock(&hb1->lock);
+
+		plist_for_each_entry_safe(q, tmp, hb1, list) {
+			hb2 = hash_bucket(new_hash, &q->key);
+			// Nesting is safe as this is a one time operation
+                        spin_lock_nested(&hb2->lock);
+
+                        plist_del(&q->list, &hb->chain);
+
+                        // Redirect the lock pointer to the new hash
+                        // bucket. See unqueue().
+			q->lock_ptr = &hb2->lock;
+
+                        plist_add(&q->list, &hb->chain);
+                }
+        }
+}
+
+fork()
+{
+        if (hash_needs_resize())
+        	hash_putref(mm->futex.hash);
+}
+
+That should just work unless I'm missing something important. The charm
+of utilizing rcuref for this is that there is close to zero impact on
+the hotpaths, unless there is actually a reallocation in progress, which
+is a rare event and applications can work around that by allocating the
+appropriate hash size upfront.
+
+Thanks,
+
+        tglx
+
+
 
