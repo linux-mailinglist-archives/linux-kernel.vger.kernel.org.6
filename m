@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-438870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2699EA7C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:25:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CBB39EA7BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE471673BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:24:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF276166F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EF2226187;
-	Tue, 10 Dec 2024 05:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFAB226182;
+	Tue, 10 Dec 2024 05:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SXf6BTqq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XKQwlzaM"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492BD1D9A40;
-	Tue, 10 Dec 2024 05:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB84F22617B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808291; cv=none; b=GrjLwaCSbS4Px0X53OCohhW0e3rL9bpPuPco77jiALvCc3L3fC2hJJ1K7T3T6Lll72s2pOHBCkMdNtXQhYjjXslKEAtTkaqP/ZTml4a8JlTVCPGKWI6LcX5jsD2MyfQj5750i73avyuTNrvLNVE9dZT4dJc7aMEr2q0xig9kU+U=
+	t=1733808243; cv=none; b=R6QzpQ9ZDOclGxN2TJl70SEf4I58PsUZ1vkC4XxmFkAjQgKHgBeYA2BBquL0xwcGe2Tb43uOBN/UissVCL1tDBK6g1OArMd21UJ62uUzwRHA1kdv8pxpO0aPdLJGpHpCyL47MYzOH8I0wT9vIJjbLKKTssQOozjbjXfbnpEXljg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808291; c=relaxed/simple;
-	bh=DAxhrU8nYe3wIVwTN/sHDUPcQXoFKKbHmXYU8frJH4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTCKoZKvZivP+V4GlMSiLa+JSYMjZlhySwRHLAU2ZsSyr4NX7U+43e1RtuKyEAL8gwJeKtq67Tbculv5P6EUae9jpTaosgNQEQe2Q9T1X75NpNv2xx0wAHR3uujr/Z7z8QjMoLmHVdODDJGXYxl37SA4kuIb6ccPb5PrnojnYCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SXf6BTqq; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733808291; x=1765344291;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DAxhrU8nYe3wIVwTN/sHDUPcQXoFKKbHmXYU8frJH4s=;
-  b=SXf6BTqqt3Qnx3YmO1u/cfFRn+xCztCQ5xfxwojDjulJxscLVjgAgzx7
-   Gun9e9QGeJ/MA8cJT6TKI9JvUJTRPauaNipUInZoNkEUK0mNnfBjKedZK
-   wwiCSs2rmSyzJtvImtdCV3ulcPhBGQlYsdhR+Gqd+8XC6QsGZiqfCgVwh
-   AKNUF82JswU1SvYJQhCygzDVZ8caoKE2f7/VKQjGNIwJBDbVdtzGAT0Ld
-   GsDndVgB/l6/GtyX4ISQ6kPWtGB4Wd8x/jjgi2O518Mn46vOeIl6RJ+kj
-   iCXpgt43ngpYR7YDdg5PwzDuPV+HkYVCpKTZzNgw8aB1LaMpohVXOe4qL
-   w==;
-X-CSE-ConnectionGUID: B/JfgfNNTOah+X7GUT2+ug==
-X-CSE-MsgGUID: O4zHj/q/TcKCAKB6+A1B0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45517234"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="45517234"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 21:24:50 -0800
-X-CSE-ConnectionGUID: yT3wQW55SUqvh5zoMS2Sng==
-X-CSE-MsgGUID: atNr2jojQd+IxiaOFRtDGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="95490968"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 09 Dec 2024 21:24:46 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKsjj-00058n-1q;
-	Tue, 10 Dec 2024 05:24:43 +0000
-Date: Tue, 10 Dec 2024 13:23:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Inochi Amaoto <inochiama@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/2] clk: sophgo: Add clock controller support for SG2044
- SoC
-Message-ID: <202412101358.czZY7XmR-lkp@intel.com>
-References: <20241209082132.752775-3-inochiama@gmail.com>
+	s=arc-20240116; t=1733808243; c=relaxed/simple;
+	bh=DIDLzmhhdG7Cj3vMico3q0yUsMaturujWZ978YKG+J4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=qS88zD4XWo/GoTJ0nVYE3VbZ8XdzQ2daXerTNIgfMyB+hvd3JNMDm598STfcPGFp7WrAiECFWRuUbQCOeV4eqKfLayGf6yO9tTerDWeNkVPiIpVWa4l8c55TgCMEiJL5ln2Zrk9u3uR2ebEEjujy/CyFzknTgPcZt++CyTju7i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XKQwlzaM; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241210052357epoutp03c0203957db41479d54bb6ee9f3adc176~PuWfmgNX90272902729epoutp036
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:23:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241210052357epoutp03c0203957db41479d54bb6ee9f3adc176~PuWfmgNX90272902729epoutp036
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733808237;
+	bh=3x+mO/N8Ow4miHRZs3X7DBaWTWDY5T1WFfneEzHHml0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=XKQwlzaMPwdFxWSZu28rwJ+rIrJ/FJezOMRq0usX6RFOcS4vC7OGGz2g1bt2YrA2u
+	 a6s8aOPTjMLI985hqQOAF5qWu+QFBRoQN1mMRhtjlOxG9BR4cTofmZ5aedrfGq5h/s
+	 Nljut9HLJE3uclAZsZXe5MUSqkH6mhjqFtP7icNc=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241210052356epcas1p19d95176afcd50615d8f05dd809025f1e~PuWfDZTpT0391203912epcas1p1W;
+	Tue, 10 Dec 2024 05:23:56 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.36.225]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Y6nG43WYsz4x9Py; Tue, 10 Dec
+	2024 05:23:56 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9C.CC.24218.C60D7576; Tue, 10 Dec 2024 14:23:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241210052356epcas1p3f6a073d2525d6d441e348434363f30fa~PuWeTdLJo0146501465epcas1p3K;
+	Tue, 10 Dec 2024 05:23:56 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241210052356epsmtrp2ca71df2d4ef4e5af4626e0ce64ac1883~PuWeSktmL1281712817epsmtrp2Q;
+	Tue, 10 Dec 2024 05:23:56 +0000 (GMT)
+X-AuditID: b6c32a38-580dc70000005e9a-0d-6757d06c2969
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2D.31.33707.B60D7576; Tue, 10 Dec 2024 14:23:55 +0900 (KST)
+Received: from jangsubyi03 (unknown [10.253.100.135]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241210052355epsmtip18d75139c76f80faca7d716e6c219cbe4~PuWeJYlNc2141621416epsmtip1O;
+	Tue, 10 Dec 2024 05:23:55 +0000 (GMT)
+From: "Jangsub Yi" <jangsub.yi@samsung.com>
+To: "'Christoph Hellwig'" <hch@infradead.org>
+Cc: <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <junwoo80.lee@samsung.com>,
+	<sh8267.baek@samsung.com>, <wkon.kim@samsung.com>
+In-Reply-To: <0b2e01db3410$a05f41c0$e11dc540$@samsung.com>
+Subject: RE: [PATCH] mmc: Add config_host callback to set a mmc queue
+Date: Tue, 10 Dec 2024 14:23:55 +0900
+Message-ID: <000001db4ac3$b5584260$2008c720$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209082132.752775-3-inochiama@gmail.com>
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH5zy9MrK58XqKdq8KPmuKMwnV7FAHbhmEtAfVDB6QBL9uedwJ0SwfJAz6GnnWyTEy0kA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIJsWRmVeSWpSXmKPExsWy7bCmvm7OhfB0g2+/JSxOT1jEZLHrbzOT
+	xeVdc9gsjvzvZ7S4duYEq8XxteEWmy99Y3Fg99i8QsvjzrU9bB59W1YxenzeJBfAEpVtk5Ga
+	mJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQO0X0mhLDGnFCgU
+	kFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFagV5yYW1yal66Xl1piZWhgYGQKVJiQnbHt7zum
+	gu0cFeuvVjYwnmfrYuTkkBAwkdjz8ziQzcUhJLCDUeL1liOMEM4nRomHe2czIzhHG5hhWhZO
+	2sUCkdjJKLH70luolleMEn8/32YHqWIT0JY48m052BIRAV2JswtfgBUxC6xhlGi/tJERJMEp
+	YCWx+PpzMFtYwFXi0bILQDYHB4uAqsSqjSEgYV4BS4nlR6+wQNiCEidnPgGzmQUMJN6fm88M
+	YctLbH87B+o6BYmfT5exQuwNk3hxdjtUjYjE7M42sHckBHo5JJ7POMII0eAisbdtNwuELSzx
+	6vgWdghbSuLzu73QUCqWOPDsEVRNjcSOhq9MELa9RHNrMxvEAj6Jd197WEHulxDglehoE4Iw
+	VSS29qnBTNy4ZxrUmR4SU89dYZ/AqDgLyWezkHw2C8lns5B8sICRZRWjWGpBcW56arFhgQk8
+	tpPzczcxgtOmlsUOxrlvP+gdYmTiYDzEKMHBrCTCy+Edmi7Em5JYWZValB9fVJqTWnyI0RQY
+	1hOZpUST84GJO68k3tDE0sDEzMjEwtjS2ExJnPfMlbJUIYH0xJLU7NTUgtQimD4mDk6pBiZu
+	wdtJjHuTPVYYPNLmV+y1vMnJ3q78OeyzYeKR6jubG7clCO18Il7b/lvP9PSOSbJ/J896bOpw
+	Vkv/A+/fO2Kl0Zq+/WY3Hh2XX+u9tdwnblFQQvcDrpy2NBWZBZc9pmSpXb3yfEvypiUtO37P
+	uOW456nd+vDzd/QesxdZpy5xmLQ/0HrqA2GOly73D3E+mfKqombljr07WXc3PJro3N/le/fs
+	tiu5xqHuz6682mfy/8qa5RxXz/PYPbE8JSH1I+7UkpQfS/64p13rmXnoyIOkM+te/0iMMoxJ
+	0TfftPJ59sWdVms+abe9F5X7lz4hom5GBPvX+M4nWYesEp9N+1z65t+PZx47GMs2L9s1Z8qi
+	I0osxRmJhlrMRcWJAOon9QokBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSnG72hfB0gxVfbCxOT1jEZLHrbzOT
+	xeVdc9gsjvzvZ7S4duYEq8XxteEWmy99Y3Fg99i8QsvjzrU9bB59W1YxenzeJBfAEsVlk5Ka
+	k1mWWqRvl8CVse3vO6aC7RwV669WNjCeZ+ti5OSQEDCRWDhpF0sXIxeHkMB2Rol/71YydTFy
+	ACWkJD58SoEwhSUOHy6GKHnBKLH67SQWkF42AW2JI9+Wg80REdCVOLvwBSNIEbPAJkaJt//W
+	M0N0rGSSOHGyiRmkilPASmLx9eeMILawgKvEo2UXGEE2sAioSqzaGAIS5hWwlFh+9AoLhC0o
+	cXLmEzCbWcBI4tyh/WwQtrzE9rdzmCEeUJD4+XQZK8QRYRIvzm5nhqgRkZjd2cY8gVF4FpJR
+	s5CMmoVk1CwkLQsYWVYxiqYWFOem5yYXGOoVJ+YWl+al6yXn525iBEeNVtAOxmXr/+odYmTi
+	YDzEKMHBrCTCy+Edmi7Em5JYWZValB9fVJqTWnyIUZqDRUmcVzmnM0VIID2xJDU7NbUgtQgm
+	y8TBKdXAtEMphof7XKsqP8cnkYbs7Xtrp6zqKsx1W2CgJrt+8rk7+3a9mbS1ZJkrW8e8+m2z
+	525n6Vqqf1k2sqNJMOSSZ9rLtQHx4kk2Abs6vv3qXbf7tJXF09xvVpmzHDccPm53+Map02wl
+	oh8/XppinND6cifr5qpnCU9cdx6bbj3NUG921Eshzg7hb4lvE5kPfUxNeC6vZNXzo7Slfl+1
+	8P8d0+eampccnr+/s+ZGgwbr5P1n5xYv7dQ7ePqAeN6Zr9s2vpM9ueOc+EfLrb/3794Yt7mn
+	YfpE+0v9pyZIvLQLde2N3D7t3nxJg7sVTlOb+9Is0x/81ZHr3Vp2lXn5l7QdHyZsenxMY5PE
+	xO+Cd8V4rnMrsRRnJBpqMRcVJwIAZf8s/gkDAAA=
+X-CMS-MailID: 20241210052356epcas1p3f6a073d2525d6d441e348434363f30fa
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c
+References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
+	<20241106051347.969-1-jangsub.yi@samsung.com>
+	<ZyxelKdmXXiSVL1g@infradead.org>
+	<000001db30f4$4a749770$df5dc650$@samsung.com>
+	<ZyzYnw0PgpyViFdf@infradead.org>
+	<0b2e01db3410$a05f41c0$e11dc540$@samsung.com>
 
-Hi Inochi,
+> > On Thu, Nov 07, 2024 at 06:06:11PM +0900, ??? wrote:
+> > > Currently, there is no way to configure a request queue on the host
+> side.
+> > > Although there are various exported symbols in
+> > > kernel/block/blk-settings.c that can be used to configure a request
+> > > queue, users cannot utilize them as needed.
+> >
+> > If you actually provided a user and didn't just try to offend the
+> > kernel maintainers by submitting dead code I could explain you in
+> > detail why youre idea is flawed.
+> >
+> If a machine uses both SD and MMC simultaneously, how should timeouts be
+> set
+> 
+> for each? And if different timeout values need to be used depending on the
+> manufacturer of the SD card, how can this be implemented? I believe it is
+> not appropriate to make such changes in the core code. There needs to be a
+> way to configure these settings per host.
+> 
+This is necessary to have separate policies for each device.
+I will also implement the host modifications related to this content 
+and try to upstream it. Please review the core modifications.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on sophgo/for-next]
-[also build test WARNING on sophgo/fixes clk/clk-next robh/for-next linus/master v6.13-rc2 next-20241209]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Inochi-Amaoto/dt-bindings-clock-sophgo-add-clock-controller-for-SG2044/20241209-162418
-base:   https://github.com/sophgo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241209082132.752775-3-inochiama%40gmail.com
-patch subject: [PATCH 2/2] clk: sophgo: Add clock controller support for SG2044 SoC
-config: parisc-randconfig-r053-20241210 (https://download.01.org/0day-ci/archive/20241210/202412101358.czZY7XmR-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412101358.czZY7XmR-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/clk/sophgo/clk-sg2044.c:133:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
->> drivers/clk/sophgo/clk-sg2044.c:149:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
-
-vim +133 drivers/clk/sophgo/clk-sg2044.c
-
-   126	
-   127	static unsigned long sg2044_pll_calc_vco_rate(unsigned long parent_rate,
-   128						      unsigned long refdiv,
-   129						      unsigned long fbdiv)
-   130	{
-   131		u64 numerator = parent_rate * fbdiv;
-   132	
- > 133		do_div(numerator, refdiv);
-   134	
-   135		return numerator;
-   136	}
-   137	
-   138	static unsigned long sg2044_pll_calc_rate(unsigned long parent_rate,
-   139						  unsigned long refdiv,
-   140						  unsigned long fbdiv,
-   141						  unsigned long postdiv1,
-   142						  unsigned long postdiv2)
-   143	{
-   144		u64 numerator, denominator;
-   145	
-   146		numerator = parent_rate * fbdiv;
-   147		denominator = refdiv * (postdiv1 + 1) * (postdiv2 + 1);
-   148	
- > 149		do_div(numerator, denominator);
-   150	
-   151		return numerator;
-   152	}
-   153	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
