@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-440036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C3E9EB7C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:13:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1D69EB7C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:13:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313111888242
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:13:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7898328284F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122AA232377;
-	Tue, 10 Dec 2024 17:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8291423EBE6;
+	Tue, 10 Dec 2024 17:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VqH3JmWO"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JqwHzBsB"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC1222FAE3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4BD232372
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850642; cv=none; b=M5PLojd8jSQKv1AA2VYChdmA5jgSEYOzCy1Gf0Fyn33h0G0BM7eSoGya8dln/1lGgdJwbdhaaWQuVj8+vZEWvnIOlgLKHpbIUiP3F/B2CsvRL13Hcojp2Am+pNxZsXq5NdHYCNLdA6rUfz6kVGHnTpA2RI7JPN9wt+gxe9n6ALk=
+	t=1733850644; cv=none; b=OJ2q4FgPxgCWK62N64ME2c5lOZN6m7Ej+XA+o9npaoFudrsg33WX8ckX27el3UI8ke4jevQLMmnL6xyVW6Ll62bfVF5XslEzxanA885DRRwUohFfC5CFpSB3HmI0y+RU/0TS5jUK2ppcW/vkADO2sBHR4xoNgL5qY0vEvwyWB+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850642; c=relaxed/simple;
-	bh=cB+Bpu7l1dV+zM88HO7Ze3t/5fdXwi7jPTuxAvUk+U8=;
+	s=arc-20240116; t=1733850644; c=relaxed/simple;
+	bh=QfMAQ3ObJOM7gWSlinrrpwhjt1hderzxfmdZZzAXUok=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HXKbjlBHTVxjSlovWYk9mM75iokNUTDlQs2nqUkR/R9hgUA1nl9mjyxvb6c8SHkgteWqzHSnZMTUR/QTmj3oAzT+KQLkFqYXaAw4zw/7P/JDoJIkXmADA9CE5vm653vsjW+pQfHKZoGaEO9tfddSIgh3VUrLjsrWdnhmKstv+iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VqH3JmWO; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=VzpivkZW7JVXP4TmovMN9y4KWbczBVk/q1NlW0xOQBDvXcW4vq66KqMxYYVo8re3nfAbYW7rPHIvZSwbog6RM7ZUCFMPsXBzJB4Lcrv28ta/GDnNa5hNc3I2r8g6NRb6JfMf4p1GzICy5Oc3hNE1Ud+echEH+WH3O9WjEKrweQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JqwHzBsB; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8dd1so9452088a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:10:39 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cfa1ec3b94so7696520a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:10:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733850638; x=1734455438; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733850641; x=1734455441; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z6Hy/pRodMw2d91URONzNaEgR8YWtQs7fLTqCwO7+FQ=;
-        b=VqH3JmWO8a/dlBZKwdVROvo/+MKWvN5DXmrbLUo5A39E3UaP444kOfHcntyoanVGjg
-         5vyCowgmh/B2NTIEPfRrqdv0rMnEf53eif3FLFzpyLecp4R3kKQg69iHg1sFQCWSBeqM
-         HJ8Ui6I6oZMTPq6JmgABmhUfAZP7iJddfzI+mHWvTGonyc819SJ4HtBssjejTKjz7c2z
-         m4puIilvI35SmSnQDwsF/8cyKd+rs81QLiYLKWa7XfKVGFrSQW6YweovrzD/7hrFpmNv
-         zGHqHUvL/jxvurpIGALUpBWfFaERvJ0HBkM9GM/FX8ruLg8wCe3SfYiquALvGyB7mhqC
-         5f1g==
+        bh=6UysEDL+tYPOXb/CerEK2e/yd8/mnBKQO5ExCdaAA4A=;
+        b=JqwHzBsBEtd6G7nP26tKtUetS/eenZbMMrUCRVLkWx99zAOMVKHQFyp8iaVQCf8OyC
+         pK0H6wj5Qz2eWGxAGNMG82okQscg8tl5fVDnO55YWDbGhrh/K1+YOykOomQREU8H9yHs
+         PTSEEQV+ewrbVQFglz+GYna9/XyO6nmPvpQmYCHLs9smQM+ayP85EAhIQlNgmOM2oGSY
+         EUUVRaFxjvpyaDHkAdpcrzmXnvOi+QwqCiU0SxGsaOnTJ1xh7gN9LN+ugcGDiIKJap8t
+         LRbpYIWSPUtH8TcB1Ly1vA2Bk6FHKxqZnE1DZBOe0TyasfNUoUm1xQ31sRez2CrvhUGB
+         hrPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850638; x=1734455438;
+        d=1e100.net; s=20230601; t=1733850641; x=1734455441;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z6Hy/pRodMw2d91URONzNaEgR8YWtQs7fLTqCwO7+FQ=;
-        b=phj0X8ZaOKZEbCwMrqts+0mQ8QZ7iGdZBjn9V6qhJyrlHivqYvXBx/JrCSdO5SQ9y5
-         kxC6jeK6meRiLyPAkNTXFo1tkhJ/2VROOX5yzk5nyMwwKLZO5DAvhx/RWX1JeFJxEUS6
-         ln6ku431GbDOLz+wUH3x5yp2RWzl3Gr16UXkNml47bDEfcu81O4m9G61Gd1q3t68jQqH
-         hN9v2FvbnFgjQygwxV6eTSxIhHI7rAS0p9sYpnbP4fPEMqK2O+Ij9jsHT96rerP1hBJr
-         GHljOF7btqsffTMYxAlZwupp39yVbY08S9OiG7qEiy3LyeWxT7xV3+vz+x57tC+b9fy2
-         LkyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8sLABCsjLgnWUzeBZ3fPyjnEbr5zHj43z9lcFgUQ/461OsS0SLn3Xqm13xRw+rmQ0qm7f6vOnDf7PQms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzriyihgYptvcC6QdLdpwSrCYhsoYdbTS0Fku3EFIABwnR/L6q
-	Au5RKR06V+03J4D59Ubl+ta3I4iOIGgqaBeMQEJhrCQV/TZHK9rRqF56RN6xAuQ=
-X-Gm-Gg: ASbGncuWEpY0bIvy6W4GCUgbfR1wZVe6rjYgC/KiaQDQForeZP6ymZ/wZ9k6D0y7aSG
-	/W8rjVX4Ee3xiFi6IbKf9jxbE25hdVblSXu6blHoaz6uQSWY8UAwQ8GF+Ik5DkAYA+Snwz0s7aG
-	6bqQCbWBSyL7XpcjuWR3KpTNxf21vZvkr/T0zdFhnEjcInxx4rdt24ikVN1L2RWIxVFw/umcQpy
-	diFBIHha6Vkqo5BPHKqsVOsgPSmMUZtKzcIY12NqTzh+zPfOqL1kDTzqAJlz0iTgT1M9LVuQ9V0
-	+aybb2dGiR0=
-X-Google-Smtp-Source: AGHT+IGqcJ6bqhwIIKJrt+yeOZgP79f+Ka5SbVUv4mcFJwjMu+9gX00sz7DE8koWILZTW546alVDvg==
-X-Received: by 2002:a05:6402:1f10:b0:5d0:b4ea:9743 with SMTP id 4fb4d7f45d1cf-5d3be67e142mr17354125a12.8.1733850638421;
-        Tue, 10 Dec 2024 09:10:38 -0800 (PST)
+        bh=6UysEDL+tYPOXb/CerEK2e/yd8/mnBKQO5ExCdaAA4A=;
+        b=voF/4m43zmzbN10mmQASX9BIWY6a6017drkiImkKubbI5hliIy65WdezCBV99j+V7y
+         ETv2FDzMkudT2xFB2QQ3i4WPP7zJxy0SBug1881LkKGETO058urxCI75MZ6mqmu0A8di
+         mXIyerq7wMFujwBeGjwN9PubaxNYzMzA+JmLDDMjoSYTU4Lh5jaklEddGJKqjzvF4WCm
+         Rcmq82E89NCGASajo4KRSkGv1+vp1Hlc6Oj69kEZ2oXknmPhHGFKpuzF3RILv1tGm2qQ
+         PgKShcOhtqAEEmnGz/BI4hrAFOp9r117COWz3oG6ccuHDYNWisbx+ufbJIlzJ2GNZeFb
+         HX0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUYOLZ+W8zxrkAi2PGXjOkEs4qc5lHqZ7WeaE9BnQf8vjH9lPdVzQ2bV8mcvHLpUqfoEq7+VzARhjuJo3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIVONCameJ9mMBJ8j4X8/08rQTnFd7+hfTgAbG4prYESHdM1dH
+	4czP27Sytx2r00dyAlUVLhzCwMEmfXhKHHkZ3FwbrXvWdYvzm8QtbLwSxaUgh6c=
+X-Gm-Gg: ASbGncvFT5FyjvLpOTO4iVX9c9ZLkl9gO8mGsI8791p1gQseW73HB/6v6Fn1jGIu/3Q
+	i80wJKhZXNcjmsSIW7Up0QsM6NlL0kliVrOg7e6MRG2gQJlJklRN9qGiyynwVKzxPJbn0qBsKRH
+	pO3gtUGPAEfcekTs0z1g8pOUgTPfGxsTMHTvsR8lzbBRrlAu9vbQViZJCXyoaQBHhXaT1ienPE3
+	ac1soxxJmMM6jHaNiOwx5qZ1zw3TKx/oKkxY+MLL2nEBbdTuSwm8kwWgpntvfeJdALJEPuhbCag
+	D4Tx9xGo
+X-Google-Smtp-Source: AGHT+IGDKksFRS7v8EJ79Qo0q8lVB55Bo0RkH6EDk6sqVxrrszOEC3HW/n36JzbvJ+iqRQS48HVTZQ==
+X-Received: by 2002:a05:6402:35d1:b0:5d0:a80d:bce9 with SMTP id 4fb4d7f45d1cf-5d3be71c114mr15442107a12.20.1733850640930;
+        Tue, 10 Dec 2024 09:10:40 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.36
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:10:37 -0800 (PST)
+        Tue, 10 Dec 2024 09:10:40 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -91,9 +91,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-kernel@vger.kernel.org,
 	alsa-devel@alsa-project.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v4 14/24] ASoC: renesas: rz-ssi: Enable runtime PM autosuspend support
-Date: Tue, 10 Dec 2024 19:09:43 +0200
-Message-Id: <20241210170953.2936724-15-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 15/24] ASoC: renesas: rz-ssi: Add runtime PM support
+Date: Tue, 10 Dec 2024 19:09:44 +0200
+Message-Id: <20241210170953.2936724-16-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
@@ -107,9 +107,10 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Enable runtime PM autosuspend support. The chosen autosuspend delay is
-zero for immediate autosuspend. In case there are users that need a
-different autosuspend delay, it can be adjusted through sysfs.
+Add runtime PM support to the ssi driver. This assert/de-assert the
+reset lines on runtime suspend/resume. Along with it the de-assertion of
+the reset line from probe function was removed as it is not necessary
+anymore.
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
@@ -124,23 +125,74 @@ Changes in v3:
 Changes in v2:
 - none
 
- sound/soc/renesas/rz-ssi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ sound/soc/renesas/rz-ssi.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
 diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index 878158344f88..eebf2d647ef2 100644
+index eebf2d647ef2..34c2e22b5a67 100644
 --- a/sound/soc/renesas/rz-ssi.c
 +++ b/sound/soc/renesas/rz-ssi.c
-@@ -1140,6 +1140,9 @@ static int rz_ssi_probe(struct platform_device *pdev)
+@@ -1139,14 +1139,13 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 		goto err_release_dma_chs;
  	}
  
- 	reset_control_deassert(ssi->rstc);
-+	/* Default 0 for power saving. Can be overridden via sysfs. */
-+	pm_runtime_set_autosuspend_delay(dev, 0);
-+	pm_runtime_use_autosuspend(dev);
+-	reset_control_deassert(ssi->rstc);
+ 	/* Default 0 for power saving. Can be overridden via sysfs. */
+ 	pm_runtime_set_autosuspend_delay(dev, 0);
+ 	pm_runtime_use_autosuspend(dev);
  	ret = devm_pm_runtime_enable(dev);
  	if (ret < 0) {
  		dev_err(dev, "Failed to enable runtime PM!\n");
+-		goto err_reset;
++		goto err_release_dma_chs;
+ 	}
+ 
+ 	ret = devm_snd_soc_register_component(dev, &rz_ssi_soc_component,
+@@ -1154,13 +1153,11 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 					      ARRAY_SIZE(rz_ssi_soc_dai));
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to register snd component\n");
+-		goto err_reset;
++		goto err_release_dma_chs;
+ 	}
+ 
+ 	return 0;
+ 
+-err_reset:
+-	reset_control_assert(ssi->rstc);
+ err_release_dma_chs:
+ 	rz_ssi_release_dma_channels(ssi);
+ 
+@@ -1182,10 +1179,29 @@ static const struct of_device_id rz_ssi_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, rz_ssi_of_match);
+ 
++static int rz_ssi_runtime_suspend(struct device *dev)
++{
++	struct rz_ssi_priv *ssi = dev_get_drvdata(dev);
++
++	return reset_control_assert(ssi->rstc);
++}
++
++static int rz_ssi_runtime_resume(struct device *dev)
++{
++	struct rz_ssi_priv *ssi = dev_get_drvdata(dev);
++
++	return reset_control_deassert(ssi->rstc);
++}
++
++static const struct dev_pm_ops rz_ssi_pm_ops = {
++	RUNTIME_PM_OPS(rz_ssi_runtime_suspend, rz_ssi_runtime_resume, NULL)
++};
++
+ static struct platform_driver rz_ssi_driver = {
+ 	.driver	= {
+ 		.name	= "rz-ssi-pcm-audio",
+ 		.of_match_table = rz_ssi_of_match,
++		.pm = pm_ptr(&rz_ssi_pm_ops),
+ 	},
+ 	.probe		= rz_ssi_probe,
+ 	.remove		= rz_ssi_remove,
 -- 
 2.39.2
 
