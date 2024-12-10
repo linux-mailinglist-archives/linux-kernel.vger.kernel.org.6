@@ -1,451 +1,117 @@
-Return-Path: <linux-kernel+bounces-439080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18ACB9EAA86
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:25:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3236A9EAA95
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:26:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A1E288754
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:25:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54294188A64D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B415C230981;
-	Tue, 10 Dec 2024 08:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB4C23098A;
+	Tue, 10 Dec 2024 08:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSd92TUn"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tYRAo0o6"
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6322822D4CD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC62230981
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819098; cv=none; b=BNPL07uKmcOnFD2sVgLYl1u6RPuc+vRPl/6YC5XQvcR8i3Q9YgtxQUQ0/UpKls4leqb8wtmUVsQdEm/so6601jSZStXtiZcwpr6BAtuXRKk3flggEzS9NqYS/Z0XPPL17Bx1/Cr0NkNU41CB65Uowsg/Alz9nMLCtu0IVmV/8xc=
+	t=1733819139; cv=none; b=AVbanIXRR0t7A8Zv+/oq6UH8M4GeLDdb44dN3lM5XvY0SEzMMWex5S2L8sxbZITQhDPPGC0xpcPfgrqr/7pcFfWdu47RV4t1Y70fPDnEeJCVHaWFOf3mm9VmUTrAKV3I9lt0XdY2+tP47m3adMR97MLOCdiu/E9ZRNtGi9NCYts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819098; c=relaxed/simple;
-	bh=a4k2aOsm59VS5M5wyApgy+cKGsVGyzu9ZI02V8e1XdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/OklWOEqupZuDu3DLhh6H2k1oUjbkJohmBYHaBrGDj725A9vfpxFukL6e54FuCUESGBz91eE2AmJUS1DMCKSWiz7hK/C0GJXsLScgfRBSmOnnTB+IngeV3RHkO0SmG5qFM227HYSbfxAYK3XpxwS+TbTyRu9iWTV8yMGiKZ0qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSd92TUn; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85c5a913cffso1744828241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:24:56 -0800 (PST)
+	s=arc-20240116; t=1733819139; c=relaxed/simple;
+	bh=Aat58HQ6zWrd5CswpKxWlkheZjFt8yTkkHKsfeZ+9zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cYqcHRDhirakPSEfajdMCmLeQ66fEdF4cGvoNYMZzUfV5Jd20HMrBuhea5Ozl1wZHA2sSodycqZUJlZm+x2ve0oG3I4LelCfOL1by9AqrgUHCwteiil6iHuBeWS6eFR+G4JmkZ0kR+XXCh4c4rqkip1AKJGlfDAKZZbLf9etq0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tYRAo0o6; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so6921933a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:25:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733819095; x=1734423895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8M3NwB48Wmn5pnmtgrNXdB9BnQn/8GWztLli7+mr040=;
-        b=KSd92TUn6eN9BDsy60K7P2gH5vg7DhQL0rT7GnN1u/vh9M67pu5OUvIbfxGzFJz20Y
-         tLi/Ee4OueF1K6M4FHIPrK8ZlbgpzRlfem8u7+07F8NnrKZUvfKYj0ITGZpVQOnyawvt
-         h3HcVrBGp34LbX+4eAMu9gcYfGXALfuOmspNN7ZP/1dpK0DwysMEe9qJDi5/9lRTisVJ
-         R1ORrD7MKhZZl+a2vj/XEbkbQv5bJK5t5mAGyVZnKr61/cYfffELVd2sU3EK6lugmHIv
-         djFyMcFrvp6O+t5cC2ROX0aZo/BNco0AncJMwbthMm8mlw09KyegA9A8Mwhe0mPOvCuq
-         Iflg==
+        d=linaro.org; s=google; t=1733819135; x=1734423935; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HuQWUnaBEntG+4q8CpLCOSV8pyx41H5nC9C794rG3dM=;
+        b=tYRAo0o6RPv1rrvdlV9PscX61aHy+wNKX8dZS0axrHGarM7D3WN3yh/AC6x6zYYyy9
+         S/vn8g1hRLWBVodhqOKwAGaLH+Yu4+TlTTSrwl+km6eSEwb85V/2/xtxSlXkdqrBbzgR
+         25Z2OsZtDkeHDjCu1Q7GHEebN5pPgRp+qzBHZpB+SXwfRsU8c4OZioC0jJMgI9O9fvIN
+         cbSJ5//ec6aDzXe2CfJbEPCsKpjDjbuD8Y2Q6KWtMJ7kKpvjIlnGHiRiYwsM5+sqj6Ao
+         TY6usdrdbG3AI768hEJxd5qx5oiv7m9UPvyaSlM1UtxaAOA18KG+1XY0IcgsHprxFr1O
+         7Prg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733819095; x=1734423895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8M3NwB48Wmn5pnmtgrNXdB9BnQn/8GWztLli7+mr040=;
-        b=MeJO9rx7cgkYFzwkzlqPV7Bwvhw6ZrDTEBD6lVmbPPTuiunaa450jBOKeLqoJm1xNo
-         TAldAVDx/pNTei88j6OjtV0/PH7Ko2XTC4uDbXjVh3y5oGGS62G45y/hhikGqglsaJv9
-         xx3S+o1f8lgHGKP+u4v3LdpU/8k95pgfjhGBgJo9/mx8iVTyq6hZIfUGx5+AKrN6O+tA
-         TcUqSNcPaSzU2orFEUh8Rr7vPVjumtox/HnLwAUbXDjRM83X298e8Hyc7QmSoWsQrXdy
-         O5Tp3sPHrIdeeRpW9xBZE7WsGFNYg1Y7Nd6nlXx7K+UXDrIXNHlD4l8seMlOxUIXg78X
-         RoOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWO2XJKTwuDbIlK4KPtFFK/6777uUN5ACDRneQ12pkjNdnZED4JSLC+jb5QNpXB//XmN2fbqp3kqWud0lM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0e0gIWptWqRKEUIWr0PnhsrT7ATNq8+y1oIBnQe5S8JJQwnTo
-	R0BisIuQJ0lRX1gmOi7XdCqohwvXS/zhtgJueARFQkz8QhUDhBk4rlKzXUol1l47pyT4pa42fP/
-	aVPeIiy0s2kuzgwrDHT2qy0Abx/I=
-X-Gm-Gg: ASbGncvlHCret+iUq6MrVDOkyff/3l1c3ABFoHV+zyQ68CQ2IN4RhlUy5ZtPTEnD3xe
-	yBBcmB3egCSxr3wxVWDi/1Z5ax73nmFlJzOaPNxxeX8p3KcxV0XlkYMUczy6jmXA1iXlRGQ==
-X-Google-Smtp-Source: AGHT+IEc/TEcO8rXYDmQABPTygCPD+BpHnETdkqW9CqNL9aM3LBdnL2wPe+Gy6ay9HIfaLlDy/pZkxNga/zbXngYgAs=
-X-Received: by 2002:a05:6102:158d:b0:4b1:1a11:9628 with SMTP id
- ada2fe7eead31-4b11a119d0emr2083900137.24.1733819095284; Tue, 10 Dec 2024
- 00:24:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733819135; x=1734423935;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HuQWUnaBEntG+4q8CpLCOSV8pyx41H5nC9C794rG3dM=;
+        b=u3rICz6cTEchrt0t/p6DJRvdSXjZVawoUok0iTTPoAQXFZL424d412JVU4KmdfPA1L
+         8EX/o33exmQ+WatnlEDnw3bATenvtTdO1+A13/GNEXPVgwd5OFfCfkbbgIM397Djes3P
+         Px/1w7RKrVTNGwM35f7c9XCzxdNVftp+NNnAQj1HF3Ex+TmHpyvdZlLTOnMv9ZhxKimm
+         Dijfljuhdqy12x37ETYtGz4TlNCfMlqWX/kixp7TEs89mb61VArPi+giNvu8CHOzUwZU
+         VcyrUIsmWr9zk9kKwPzYJ5Cq23zqsAPvBNgtuejE5tFejfga64Oi7Ikj3QxE4nq9gEGA
+         Zbkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhhyihLgUG6X3ohH0JxMufoY52xQ+pzEllF+yVttp5N2fDEBMo/gH6qAS3tiaXVP4Y5QvQ6veEow8BIwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEi0iRROuB4HLIASxwraYU1JYb9UD4nX+XYPHaBl8hywzZFmOi
+	1S4LImN0TRLceobQZjNUdr0WUFj0QksHy4J4TMOwSfLm9H8dhCowAcLxjS3ydOA=
+X-Gm-Gg: ASbGncv7bp0LB2BKxC3z5KsYkP1jcyXCHosCxdMYur/vTAFG0GtZQ9km+Up2MVPWEDm
+	sOjkO3GLCnilstfaXM5mFVXcWiIncyW23v35fQO2gSnOjFMIqLyhOLtYGOMPNV0Tyxke2vcpmFQ
+	fNbfawxm/W4ML2e+3rfIjIl3rRs793kJ0OBHfq6Mb8bmENzIXxktMLrYDt4j51Vhq7Jri0fXM+l
+	uGKSVPdJVBNlrE98N43VrNC73OskyRnqiEt+GIdRGFOTR6Yt5CHG87HTn4jb4EWZg==
+X-Google-Smtp-Source: AGHT+IFPjnoPDqBWxqnWDU/N/e35ObWn19I59FifQGbgV4N+RARB17TMYTb6ZkIT5SxPDFHD1DTUFw==
+X-Received: by 2002:a05:6402:51c9:b0:5d0:d84c:abb3 with SMTP id 4fb4d7f45d1cf-5d418613125mr4286623a12.26.1733819134964;
+        Tue, 10 Dec 2024 00:25:34 -0800 (PST)
+Received: from linaro.org ([2a02:2454:ff21:ef80:53d9:8daa:420f:c0d0])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e4a87ba4sm4433468a12.2.2024.12.10.00.25.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 00:25:34 -0800 (PST)
+Date: Tue, 10 Dec 2024 09:25:28 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-pmics: Enable all SMB2360
+ separately
+Message-ID: <Z1f6-G5fXr-383IK@linaro.org>
+References: <20241203-x1e80100-disable-smb2360-v1-1-80942b7f73da@linaro.org>
+ <01d0b807-6201-43fb-8286-df04d722610f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209083618.2889145-1-chenridong@huaweicloud.com>
- <20241209083618.2889145-2-chenridong@huaweicloud.com> <CAGsJ_4wuy5Nhn0pdoz7YvzTXs9LCUrpxT5c4+Hd7-DGH3yBsog@mail.gmail.com>
- <13223d50-6218-49db-8356-700a1907e224@huawei.com>
-In-Reply-To: <13223d50-6218-49db-8356-700a1907e224@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 10 Dec 2024 16:24:43 +0800
-Message-ID: <CAGsJ_4yWLpd262vOMb11qeQXhXeNFLOKpmEUat3kvJv4wBxi5w@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] mm: vmascan: retry folios written back while
- isolated for traditional LRU
-To: chenridong <chenridong@huawei.com>
-Cc: Chen Ridong <chenridong@huaweicloud.com>, akpm@linux-foundation.org, mhocko@suse.com, 
-	hannes@cmpxchg.org, yosryahmed@google.com, yuzhao@google.com, 
-	david@redhat.com, willy@infradead.org, ryan.roberts@arm.com, 
-	wangkefeng.wang@huawei.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	wangweiyang2@huawei.com, xieym_ict@hotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <01d0b807-6201-43fb-8286-df04d722610f@quicinc.com>
 
-On Tue, Dec 10, 2024 at 2:41=E2=80=AFPM chenridong <chenridong@huawei.com> =
-wrote:
->
->
->
-> On 2024/12/10 12:54, Barry Song wrote:
-> > On Mon, Dec 9, 2024 at 4:46=E2=80=AFPM Chen Ridong <chenridong@huaweicl=
-oud.com> wrote:
-> >>
-> >> From: Chen Ridong <chenridong@huawei.com>
-> >>
-> >> The commit 359a5e1416ca ("mm: multi-gen LRU: retry folios written back
-> >> while isolated") only fixed the issue for mglru. However, this issue
-> >> also exists in the traditional active/inactive LRU. This issue will be
-> >> worse if THP is split, which makes the list longer and needs longer ti=
-me
-> >> to finish a batch of folios reclaim.
-> >>
-> >> This issue should be fixed in the same way for the traditional LRU.
-> >> Therefore, the common logic was extracted to the 'find_folios_written_=
-back'
-> >> function firstly, which is then reused in the 'shrink_inactive_list'
-> >> function. Finally, retry reclaiming those folios that may have missed =
-the
-> >> rotation for traditional LRU.
-> >
-> > let's drop the cover-letter and refine the changelog.
-> >
-> Will update.
->
-> >>
-> >> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> >> ---
-> >>  include/linux/mmzone.h |   3 +-
-> >>  mm/vmscan.c            | 108 +++++++++++++++++++++++++++++-----------=
--
-> >>  2 files changed, 77 insertions(+), 34 deletions(-)
-> >>
-> >> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> >> index b36124145a16..47c6e8c43dcd 100644
-> >> --- a/include/linux/mmzone.h
-> >> +++ b/include/linux/mmzone.h
-> >> @@ -391,6 +391,7 @@ struct page_vma_mapped_walk;
-> >>
-> >>  #define LRU_GEN_MASK           ((BIT(LRU_GEN_WIDTH) - 1) << LRU_GEN_P=
-GOFF)
-> >>  #define LRU_REFS_MASK          ((BIT(LRU_REFS_WIDTH) - 1) << LRU_REFS=
-_PGOFF)
-> >> +#define LRU_REFS_FLAGS         (BIT(PG_referenced) | BIT(PG_workingse=
-t))
-> >>
-> >>  #ifdef CONFIG_LRU_GEN
-> >>
-> >> @@ -406,8 +407,6 @@ enum {
-> >>         NR_LRU_GEN_CAPS
-> >>  };
-> >>
-> >> -#define LRU_REFS_FLAGS         (BIT(PG_referenced) | BIT(PG_workingse=
-t))
-> >> -
-> >>  #define MIN_LRU_BATCH          BITS_PER_LONG
-> >>  #define MAX_LRU_BATCH          (MIN_LRU_BATCH * 64)
-> >>
-> >> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> >> index 76378bc257e3..1f0d194f8b2f 100644
-> >> --- a/mm/vmscan.c
-> >> +++ b/mm/vmscan.c
-> >> @@ -283,6 +283,48 @@ static void set_task_reclaim_state(struct task_st=
-ruct *task,
-> >>         task->reclaim_state =3D rs;
-> >>  }
-> >>
-> >> +/**
-> >> + * find_folios_written_back - Find and move the written back folios t=
-o a new list.
-> >> + * @list: filios list
-> >> + * @clean: the written back folios list
-> >> + * @skip: whether skip to move the written back folios to clean list.
-> >> + */
-> >> +static inline void find_folios_written_back(struct list_head *list,
-> >> +               struct list_head *clean, bool skip)
-> >> +{
-> >> +       struct folio *folio;
-> >> +       struct folio *next;
-> >> +
-> >> +       list_for_each_entry_safe_reverse(folio, next, list, lru) {
-> >> +               if (!folio_evictable(folio)) {
-> >> +                       list_del(&folio->lru);
-> >> +                       folio_putback_lru(folio);
-> >> +                       continue;
-> >> +               }
-> >> +
-> >> +               if (folio_test_reclaim(folio) &&
-> >> +                   (folio_test_dirty(folio) || folio_test_writeback(f=
-olio))) {
-> >> +                       /* restore LRU_REFS_FLAGS cleared by isolate_f=
-olio() */
-> >> +                       if (lru_gen_enabled() && folio_test_workingset=
-(folio))
-> >> +                               folio_set_referenced(folio);
-> >> +                       continue;
-> >> +               }
-> >> +
-> >> +               if (skip || folio_test_active(folio) || folio_test_ref=
-erenced(folio) ||
-> >> +                   folio_mapped(folio) || folio_test_locked(folio) ||
-> >> +                   folio_test_dirty(folio) || folio_test_writeback(fo=
-lio)) {
-> >> +                       /* don't add rejected folios to the oldest gen=
-eration */
-> >> +                       if (lru_gen_enabled())
-> >> +                               set_mask_bits(&folio->flags, LRU_REFS_=
-MASK | LRU_REFS_FLAGS,
-> >> +                                             BIT(PG_active));
-> >> +                       continue;
-> >> +               }
-> >> +
-> >> +               /* retry folios that may have missed folio_rotate_recl=
-aimable() */
-> >> +               list_move(&folio->lru, clean);
-> >> +       }
-> >> +}
-> >> +
-> >>  /*
-> >>   * flush_reclaim_state(): add pages reclaimed outside of LRU-based re=
-claim to
-> >>   * scan_control->nr_reclaimed.
-> >> @@ -1907,6 +1949,25 @@ static int current_may_throttle(void)
-> >>         return !(current->flags & PF_LOCAL_THROTTLE);
-> >>  }
-> >>
-> >> +static inline void acc_reclaimed_stat(struct reclaim_stat *stat,
-> >> +               struct reclaim_stat *curr)
-> >> +{
-> >> +       int i;
-> >> +
-> >> +       stat->nr_dirty +=3D curr->nr_dirty;
-> >> +       stat->nr_unqueued_dirty +=3D curr->nr_unqueued_dirty;
-> >> +       stat->nr_congested +=3D curr->nr_congested;
-> >> +       stat->nr_writeback +=3D curr->nr_writeback;
-> >> +       stat->nr_immediate +=3D curr->nr_immediate;
-> >> +       stat->nr_pageout +=3D curr->nr_pageout;
-> >> +       stat->nr_ref_keep +=3D curr->nr_ref_keep;
-> >> +       stat->nr_unmap_fail +=3D curr->nr_unmap_fail;
-> >> +       stat->nr_lazyfree_fail +=3D curr->nr_lazyfree_fail;
-> >> +       stat->nr_demoted +=3D curr->nr_demoted;
-> >> +       for (i =3D 0; i < ANON_AND_FILE; i++)
-> >> +               stat->nr_activate[i] =3D curr->nr_activate[i];
-> >> +}
-> >
-> > you had no this before, what's the purpose of this=EF=BC=9F
-> >
->
-> We may call shrink_folio_list twice, and the 'stat curr' will reset in
-> the shrink_folio_list function. We should accumulate the stats as a
-> whole, which will then be used to calculate the cost and return it to
-> the caller.
+On Sat, Dec 07, 2024 at 11:57:54PM +0800, Aiqun Yu (Maria) wrote:
+> On 12/4/2024 12:27 AM, Stephan Gerhold wrote:
+> > At the moment, x1e80100-pmics.dtsi enables two of the SMB2360 PMICs by
+> > default and only leaves the third disabled. This was introduced in commit
+> 
+> One correction: it’s not only the third PMIC that is disabled. Both the
+> third (smb2360_2) and fourth (smb2360_3) are disabled. This information
+> is verified from link[1]:
+> [1]https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+> 
 
-Does mglru have the same issue? If so, we may need to send a patch to
-fix mglru's stat accounting as well. By the way, the code is rather
-messy=E2=80=94could it be implemented as shown below instead?
+You're right, I didn't realize there can be a fourth SMB2360 at all. :-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 1f0d194f8b2f..40d2ddde21f5 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1094,7 +1094,6 @@ static unsigned int shrink_folio_list(struct
-list_head *folio_list,
-  struct swap_iocb *plug =3D NULL;
+It doesn't change anything for the patch itself, but I'll fix the commit
+message in v2 just to avoid any confusion.
 
-  folio_batch_init(&free_folios);
-- memset(stat, 0, sizeof(*stat));
-  cond_resched();
-  do_demote_pass =3D can_demote(pgdat->node_id, sc);
-
-@@ -1949,25 +1948,6 @@ static int current_may_throttle(void)
-  return !(current->flags & PF_LOCAL_THROTTLE);
- }
-
--static inline void acc_reclaimed_stat(struct reclaim_stat *stat,
-- struct reclaim_stat *curr)
--{
-- int i;
--
-- stat->nr_dirty +=3D curr->nr_dirty;
-- stat->nr_unqueued_dirty +=3D curr->nr_unqueued_dirty;
-- stat->nr_congested +=3D curr->nr_congested;
-- stat->nr_writeback +=3D curr->nr_writeback;
-- stat->nr_immediate +=3D curr->nr_immediate;
-- stat->nr_pageout +=3D curr->nr_pageout;
-- stat->nr_ref_keep +=3D curr->nr_ref_keep;
-- stat->nr_unmap_fail +=3D curr->nr_unmap_fail;
-- stat->nr_lazyfree_fail +=3D curr->nr_lazyfree_fail;
-- stat->nr_demoted +=3D curr->nr_demoted;
-- for (i =3D 0; i < ANON_AND_FILE; i++)
-- stat->nr_activate[i] =3D curr->nr_activate[i];
--}
--
- /*
-  * shrink_inactive_list() is a helper for shrink_node().  It returns the n=
-umber
-  * of reclaimed pages
-@@ -1981,7 +1961,7 @@ static unsigned long
-shrink_inactive_list(unsigned long nr_to_scan,
-  unsigned long nr_scanned;
-  unsigned int nr_reclaimed =3D 0;
-  unsigned long nr_taken;
-- struct reclaim_stat stat, curr;
-+ struct reclaim_stat stat;
-  bool file =3D is_file_lru(lru);
-  enum vm_event_item item;
-  struct pglist_data *pgdat =3D lruvec_pgdat(lruvec);
-@@ -2022,9 +2002,8 @@ static unsigned long
-shrink_inactive_list(unsigned long nr_to_scan,
-
-  memset(&stat, 0, sizeof(stat));
- retry:
-- nr_reclaimed +=3D shrink_folio_list(&folio_list, pgdat, sc, &curr, false)=
-;
-+ nr_reclaimed +=3D shrink_folio_list(&folio_list, pgdat, sc, &stat, false)=
-;
-  find_folios_written_back(&folio_list, &clean_list, skip_retry);
-- acc_reclaimed_stat(&stat, &curr);
-
-  spin_lock_irq(&lruvec->lru_lock);
-  move_folios_to_lru(lruvec, &folio_list);
-
->
-> Thanks,
-> Ridong
->
-> >> +
-> >>  /*
-> >>   * shrink_inactive_list() is a helper for shrink_node().  It returns =
-the number
-> >>   * of reclaimed pages
-> >> @@ -1916,14 +1977,16 @@ static unsigned long shrink_inactive_list(unsi=
-gned long nr_to_scan,
-> >>                 enum lru_list lru)
-> >>  {
-> >>         LIST_HEAD(folio_list);
-> >> +       LIST_HEAD(clean_list);
-> >>         unsigned long nr_scanned;
-> >>         unsigned int nr_reclaimed =3D 0;
-> >>         unsigned long nr_taken;
-> >> -       struct reclaim_stat stat;
-> >> +       struct reclaim_stat stat, curr;
-> >>         bool file =3D is_file_lru(lru);
-> >>         enum vm_event_item item;
-> >>         struct pglist_data *pgdat =3D lruvec_pgdat(lruvec);
-> >>         bool stalled =3D false;
-> >> +       bool skip_retry =3D false;
-> >>
-> >>         while (unlikely(too_many_isolated(pgdat, file, sc))) {
-> >>                 if (stalled)
-> >> @@ -1957,10 +2020,20 @@ static unsigned long shrink_inactive_list(unsi=
-gned long nr_to_scan,
-> >>         if (nr_taken =3D=3D 0)
-> >>                 return 0;
-> >>
-> >> -       nr_reclaimed =3D shrink_folio_list(&folio_list, pgdat, sc, &st=
-at, false);
-> >> +       memset(&stat, 0, sizeof(stat));
-> >> +retry:
-> >> +       nr_reclaimed +=3D shrink_folio_list(&folio_list, pgdat, sc, &c=
-urr, false);
-> >> +       find_folios_written_back(&folio_list, &clean_list, skip_retry)=
-;
-> >> +       acc_reclaimed_stat(&stat, &curr);
-> >>
-> >>         spin_lock_irq(&lruvec->lru_lock);
-> >>         move_folios_to_lru(lruvec, &folio_list);
-> >> +       if (!list_empty(&clean_list)) {
-> >> +               list_splice_init(&clean_list, &folio_list);
-> >> +               skip_retry =3D true;
-> >> +               spin_unlock_irq(&lruvec->lru_lock);
-> >> +               goto retry;
-
-This is rather confusing. We're still jumping to retry even though
-skip_retry=3Dtrue is set. Can we find a clearer approach for this?
-
-It was somewhat acceptable before we introduced the extracted
-function find_folios_written_back(). However, it has become
-harder to follow now that skip_retry is passed across functions.
-
-I find renaming skip_retry to is_retry more intuitive. The logic
-is that since we are already retrying, find_folios_written_back()
-shouldn=E2=80=99t move folios to the clean list again. The intended semanti=
-cs
-are: we have retris, don=E2=80=99t retry again.
-
-
-> >> +       }
-> >>
-> >>         __mod_lruvec_state(lruvec, PGDEMOTE_KSWAPD + reclaimer_offset(=
-),
-> >>                                         stat.nr_demoted);
-> >> @@ -4567,8 +4640,6 @@ static int evict_folios(struct lruvec *lruvec, s=
-truct scan_control *sc, int swap
-> >>         int reclaimed;
-> >>         LIST_HEAD(list);
-> >>         LIST_HEAD(clean);
-> >> -       struct folio *folio;
-> >> -       struct folio *next;
-> >>         enum vm_event_item item;
-> >>         struct reclaim_stat stat;
-> >>         struct lru_gen_mm_walk *walk;
-> >> @@ -4597,34 +4668,7 @@ static int evict_folios(struct lruvec *lruvec, =
-struct scan_control *sc, int swap
-> >>                         scanned, reclaimed, &stat, sc->priority,
-> >>                         type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
-> >>
-> >> -       list_for_each_entry_safe_reverse(folio, next, &list, lru) {
-> >> -               if (!folio_evictable(folio)) {
-> >> -                       list_del(&folio->lru);
-> >> -                       folio_putback_lru(folio);
-> >> -                       continue;
-> >> -               }
-> >> -
-> >> -               if (folio_test_reclaim(folio) &&
-> >> -                   (folio_test_dirty(folio) || folio_test_writeback(f=
-olio))) {
-> >> -                       /* restore LRU_REFS_FLAGS cleared by isolate_f=
-olio() */
-> >> -                       if (folio_test_workingset(folio))
-> >> -                               folio_set_referenced(folio);
-> >> -                       continue;
-> >> -               }
-> >> -
-> >> -               if (skip_retry || folio_test_active(folio) || folio_te=
-st_referenced(folio) ||
-> >> -                   folio_mapped(folio) || folio_test_locked(folio) ||
-> >> -                   folio_test_dirty(folio) || folio_test_writeback(fo=
-lio)) {
-> >> -                       /* don't add rejected folios to the oldest gen=
-eration */
-> >> -                       set_mask_bits(&folio->flags, LRU_REFS_MASK | L=
-RU_REFS_FLAGS,
-> >> -                                     BIT(PG_active));
-> >> -                       continue;
-> >> -               }
-> >> -
-> >> -               /* retry folios that may have missed folio_rotate_recl=
-aimable() */
-> >> -               list_move(&folio->lru, &clean);
-> >> -       }
-> >> -
-> >> +       find_folios_written_back(&list, &clean, skip_retry);
-> >>         spin_lock_irq(&lruvec->lru_lock);
-> >>
-> >>         move_folios_to_lru(lruvec, &list);
-> >> --
-> >> 2.34.1
-> >>
-> >
-
-Thanks
- Barry
+Thanks,
+Stephan
 
