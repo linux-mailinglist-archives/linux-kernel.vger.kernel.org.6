@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-438754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713929EA522
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:32:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C481638A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:32:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BE819C556;
-	Tue, 10 Dec 2024 02:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cAqRD4Yy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDA59EA523
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:34:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC6715853B;
-	Tue, 10 Dec 2024 02:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280FE282D86
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:34:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F9119994F;
+	Tue, 10 Dec 2024 02:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kQRIW98A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87785233129;
+	Tue, 10 Dec 2024 02:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733797968; cv=none; b=TvvAr+w5KMi4NOVM7eVgvHzb0c2D1/t1KSDPgh+dngFNthLO+fh6TVggdCdDKLpMi/2s+evMIaRcJXlrDdeynRr6SrkdWcMN/F8FabRGSUj3gBHmBzpWGt0p+xbcImRmp9S7XkFCUfVSKWvIf18WEXEvG+5GqaGbeGdAF4dq6Yk=
+	t=1733798052; cv=none; b=TdldIH8KOUam/NP+o7akWhBKUJrbI79rpwV8ojYM6nZPC4lt1mBjM+R2Xtecby53ldmhOvyXSpsNtTq9GIPO8i2hbrXt2EQw+nzy5OXDwi6AuXTkcN5fhgGj3Y9mKfkwkHpt2y/0QxqdYW8R3+B5/kNb9R+R/4mP2MhUw3ZF1Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733797968; c=relaxed/simple;
-	bh=j30q9HH8X4TbDEhzdKwnNpUk3lodfxlzHgfdlELzqGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bXhnCLOtgUzHnCwm0WLgTPP2cU2HoQzCNao/d+xxwgcEGVlyzJIMkMl/FBIBrnpVeBCSGuh/YFUwUaeqk6djhXNQcEMlvsx5cWvXVqdwUlNk75sPXQiamiSwt2VFZ3Ivj8UP7jM63tVAc1EIGoT2J9tMM6oP97sOCp4JhrKesto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cAqRD4Yy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9FL8FL019669;
-	Tue, 10 Dec 2024 02:32:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lJqeaLtgCBnD3wNYTDWnOp8Hlq3CR2e/uDVpXxpueoQ=; b=cAqRD4Yy52AZ69m0
-	ANDFF1xfe+5o0/f675i0ju9L3RlHsfrjDgRiRXPhHNmWqaTTrf3T7D7W5/5lRnpK
-	bSqu0zzx2OajsRAYjRpEjboHkLe6zNVlyLhnsLHVb5fWWjtB7bAUsG3jfN1mklZw
-	5g84dMs/EvzJBy1acGUDOC74MpNAqd7ckPYWHuDn6NItGlS1r0uytYN3FqMGQa0v
-	aw8EC5VlPGuaHKBlsHJuUhFla54DdNmRFqPf4N/YYTJthPMJm7HINVn+x49ZJ0WF
-	808AJSbFlZLxi0nF2VSLO9u5tea4aEx7jMef+n8eKIXYdEj9LemMU9B+P/hpdq0A
-	j5ZMbw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e3419hhx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 02:32:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA2WaUj011859
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 02:32:36 GMT
-Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 18:32:33 -0800
-Message-ID: <1848f4fa-bc38-44b3-a6c2-8c97a765bfb1@quicinc.com>
-Date: Tue, 10 Dec 2024 10:32:31 +0800
+	s=arc-20240116; t=1733798052; c=relaxed/simple;
+	bh=GZudqfN3knEgEEj8Ks3O0UILklj2xj6a778uboW+VFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X10QcB6XzdjW2ItbfzFsxIDr5MHwzl6Z311IIHCWVotWsLoAzgiWSAysv8giTn0bnri30L4DnytqyZ/kkf0NVTV9zNSioglp6/cmNcWCwol6OpIWybrpB6CUxCCcN7vqfH9vG7TCHlbrWR+7JQm8mcNlRSHwRhWkcDVpwC0lYaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kQRIW98A; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733798050; x=1765334050;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GZudqfN3knEgEEj8Ks3O0UILklj2xj6a778uboW+VFQ=;
+  b=kQRIW98AGLQxqk4CTrSVmlwK9uI8qD+OlrjlKwe4m0CROmHkGddykyXd
+   /fRqD8sIQlT4NJbDzHFB+vodYAwizugvSg7QXrxk5GQqu9HJjGkBWKCa8
+   pkuLbAP3B4YQkTqAvcLBP2h73uFt0RTqcWZuSEnkUipLJl2aFMGzuGWiW
+   ZIAbytwuZcVQ0uE721HWbyDu5/WziF4I/SAFew+LtMwwv2PRV1vbI6Vsp
+   xhTfK0V01YXgAm4Cu98TagshRKSpslwsgcGAK+ihw+QZ50H/jxtHWzfvt
+   hhlqzg29kY6Fpr852WWccTfF4A+4+VLX3F4lGiXJF91yilOlts75oLr0o
+   A==;
+X-CSE-ConnectionGUID: P6zjQhPTRBilVGLarp5vXQ==
+X-CSE-MsgGUID: y0MCWSNlSK+Jj9eCmAOMvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="21710090"
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="21710090"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 18:34:09 -0800
+X-CSE-ConnectionGUID: zBqnRLwORRuZtOwqMgXRew==
+X-CSE-MsgGUID: 076kzeA7S+ie0pH465iD1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="96053429"
+Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 18:34:07 -0800
+Message-ID: <db6e522a-1b2c-47ab-8e33-b2e3d9b81c4f@linux.intel.com>
+Date: Tue, 10 Dec 2024 10:34:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,210 +66,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
- are supported
-To: Janusz Dziedzic <janusz.dziedzic@gmail.com>
-CC: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
-        <ath11k@lists.infradead.org>, <jjohnson@kernel.org>,
-        <kvalo@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>, <quic_cjhuang@quicinc.com>,
-        <vbenes@redhat.com>
-References: <20bf2693-ce53-48e9-8b54-7e3273815033@quicinc.com>
- <20241203094820.106225-1-jtornosm@redhat.com>
- <99359cc4-2279-4a8a-80a1-d5475fd5208d@quicinc.com>
- <CAFED-jk--dXAoXJ9ijpnUDeD=WiW4ZeoLb45WXiVpzPvkgX12A@mail.gmail.com>
+Subject: Re: [PATCH 2/7] KVM: TDX: Add a place holder for handler of TDX
+ hypercalls (TDG.VP.VMCALL)
+To: Chao Gao <chao.gao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, isaku.yamahata@intel.com,
+ yan.y.zhao@intel.com, michael.roth@amd.com, linux-kernel@vger.kernel.org
+References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
+ <20241201035358.2193078-3-binbin.wu@linux.intel.com>
+ <Z1bUbfl8vfVvA0zW@intel.com>
 Content-Language: en-US
-From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
-In-Reply-To: <CAFED-jk--dXAoXJ9ijpnUDeD=WiW4ZeoLb45WXiVpzPvkgX12A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jyGnmVV5QJhma9eQEpGALngrdcw1ENFH
-X-Proofpoint-ORIG-GUID: jyGnmVV5QJhma9eQEpGALngrdcw1ENFH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 clxscore=1011 mlxscore=0
- spamscore=0 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100016
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <Z1bUbfl8vfVvA0zW@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 12/9/2024 7:23 PM, Janusz Dziedzic wrote:
-> wt., 3 gru 2024 o 11:57 Yu Zhang (Yuriy) <quic_yuzha@quicinc.com> napisał(a):
+On 12/9/2024 7:28 PM, Chao Gao wrote:
+[...]
 >>
->>
->>
->> On 12/3/2024 5:48 PM, Jose Ignacio Tornos Martinez wrote:
->>>> Which chip do you use?
->>> Since I am not totally sure about the useful information, let me show you
->>> the kernel logs:
->>> $ dmesg | grep ath11k
->>> [    3.659388] ath11k_pci 0000:01:00.0: BAR 0 [mem 0x84200000-0x843fffff 64bit]: assigned
->>> [    3.659405] ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
->>> [    3.659649] ath11k_pci 0000:01:00.0: MSI vectors: 32
->>> [    3.659653] ath11k_pci 0000:01:00.0: wcn6855 hw2.1
->>> [    4.871571] ath11k_pci 0000:01:00.0: chip_id 0x2 chip_family 0xb board_id 0xff soc_id 0x400c0210
->>> [    4.871586] ath11k_pci 0000:01:00.0: fw_version 0x11088c35 fw_build_timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
->>> [    5.241485] ath11k_pci 0000:01:00.0 wlp1s0: renamed from wlan0
->>>
->> yes, you also use wcn6855 hw2.1.
->>> If I try to setup 2 APs with your interface combination I get this:
->>> # iw list | grep -A6 "valid interface combinations:"
->>>        valid interface combinations:
->>>                 * #{ managed } <= 2, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
->>>                   total <= 16, #channels <= 1, STA/AP BI must match, radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz, 80+80 MHz, 160 MHz }
->>>
->>>                 * #{ managed } <= 2, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
->>>                   total <= 3, #channels <= 2, STA/AP BI must match
->>>        HT Capability overrides:
->> 2 combinations are to support DBS and DFS.
->> Combinations is correct. channels=2, max interfaces=3.
->>
-> Small question from my side. If phyX will support 3 bands (2.4/5/6)
-> what this channes<=2 limitation mean here for APs?
->   a) can I setup APs on 2412 and 5180
->   b) or even can setup APs on 2412 and 2462?
->   c) or setup APs on 5180 and 6055?
-> How could I know a or b or c is allowed?
-> 
-all allowed, but recommend more 2.4g + 5g and 2.4g + 6g.
-> BTW, do you plan to share same firmware (with 2 possible APs) for
-> ath12k and WCN7850?
-> 
-WCN7850 use different firmware, when ath11k done will plan about ath12k 
-about it.
+>> #define VMX_EXIT_REASONS \
+>> 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
+>> @@ -155,7 +156,8 @@
+>> 	{ EXIT_REASON_UMWAIT,                "UMWAIT" }, \
+>> 	{ EXIT_REASON_TPAUSE,                "TPAUSE" }, \
+>> 	{ EXIT_REASON_BUS_LOCK,              "BUS_LOCK" }, \
+>> -	{ EXIT_REASON_NOTIFY,                "NOTIFY" }
+>> +	{ EXIT_REASON_NOTIFY,                "NOTIFY" }, \
+>> +	{ EXIT_REASON_TDCALL,                "TDCALL" }
+> Side topic:
+> Strictly speaking, TDCALL vm-exit handling can happen for normal VMs.
+Oh, yes. TDX CPU architectural specification, TDCALL in VMX non-root mode
+causes VM exit with exit reason TDCALL. So, normal VM could exit with TDCALL.
 
-And by the way, if you try in ath11k with 2 aps?
-> BR
-> Janusz
-> 
->> And you want setup sta + sap + sap, right?
->> When up the second sap will meet error? Could you pls share the error logs?
->>
->> I'm not very sure if you add all interface with managed type, and do
->> "ifconfig xxx up" before running hostapd.
->>
->> You can try add second and third interface with
->> "iw dev xx interface add xx type __ap".
->>
->>
->>> # iw dev
->>> phy#0
->>>        Interface wlp1s0_1
->>>                ifindex 6
->>>                wdev 0x4
->>>                addr a2:42:d2:1e:89:a3
->>>                type managed
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>        Interface wlp1s0_0
->>>                ifindex 5
->>>                wdev 0x3
->>>                addr 52:e9:be:33:6a:61
->>>                ssid test-qe-wpa2-psk
->>>                type AP
->>>                channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
->>>                txpower 14.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>        Interface wlp1s0
->>>                ifindex 3
->>>                wdev 0x1
->>>                addr c8:94:02:b5:fe:fb
->>>                type managed
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>> Or even this with no AP up:
->>> # iw dev
->>> phy#0
->>>        Interface wlp1s0_1
->>>                ifindex 6
->>>                wdev 0x4
->>>                addr ca:e5:84:22:10:ec
->>>                type managed
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>        Interface wlp1s0_0
->>>                ifindex 5
->>>                wdev 0x3
->>>                addr 9e:4e:c5:ea:4c:e9
->>>                type AP
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>        Interface wlp1s0
->>>                ifindex 3
->>>                wdev 0x1
->>>                addr c8:94:02:b5:fe:fb
->>>                type managed
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>
->>> If I use the parameter to ignore the feature and configure the interface combination as before:
->>> # iw list | grep -A4 "valid interface combinations:"
->>>        valid interface combinations:
->>>                 * #{ managed } <= 1, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
->>>                   total <= 16, #channels <= 1, STA/AP BI must match, radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz }
->>>
->>>        HT Capability overrides:
->>> # iw dev
->>> phy#1
->>>        Interface wlp1s0_1
->>>                ifindex 7
->>>                wdev 0x100000004
->>>                addr 82:90:89:90:c1:37
->>>                ssid test-qe-wpa3-psk
->>>                type AP
->>>                channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>        Interface wlp1s0_0
->>>                ifindex 6
->>>                wdev 0x100000003
->>>                addr 6a:ef:d0:db:10:f0
->>>                ssid test-qe-wpa2-psk
->>>                type AP
->>>                channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>        Interface wlp1s0
->>>                ifindex 4
->>>                wdev 0x100000001
->>>                addr c8:94:02:b5:fe:fb
->>>                type managed
->>>                txpower 16.00 dBm
->>>                multicast TXQ:
->>>                        qsz-byt qsz-pkt flows   drops   marks   overlmt hashcol tx-bytes        tx-packets
->>>                        0       0       0       0       0       0       0       0               0
->>>
->>> Thanks
->>>
->>> Best regards
->>> Jose Ignacio
->>>
->>
->>
-> 
-> 
-
+> so, KVM may
+> need to handle it by injecting #UD. Of course, it is not necessary for this series.
+Currently, the handling of TDCALL for VMX VMs will return to userspace
+with KVM_EXIT_INTERNAL_ERROR + KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON.
+Since it's not an expected VM Exit reason for normal VMs, maybe it doesn't
+worth a dedicated handler?
 
