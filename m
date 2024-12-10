@@ -1,118 +1,108 @@
-Return-Path: <linux-kernel+bounces-438834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6639EA707
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:09:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230539EA709
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:09:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E8B286A20
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:09:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F9D168DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33662224AE3;
-	Tue, 10 Dec 2024 04:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="N3V/kKSU"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996042248B0;
+	Tue, 10 Dec 2024 04:09:33 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DE241C6C;
-	Tue, 10 Dec 2024 04:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306D82236F0;
+	Tue, 10 Dec 2024 04:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733803760; cv=none; b=XxjES0zE1XFXMlA4GxkZ5h61k++9OAp82u+hcmRoSv4cVy5bRq26hdXyUxV5UtOjN/TjB1IndgbTfJ8vHX326paSNF95bMgonYDAuKU0NsBSKwRPVer+CGW8Ev+E8zj87v3k0poYEn30I+z1xukamhIgQ4PzUwnhqTv4DuKaqGU=
+	t=1733803773; cv=none; b=gP+eQQreutbfXvoam0qhnIWevYfF1gTcy8u+t19Zu16L+ow96jQ3vr4lKsW7htYkdX1Lq5nrZVjJJIIT3svhGa8AdDvkKF6Q8Cou15uuY9327WP7GEwFzr/GbN2WQeIxebkJ2wS/7//SQKnSUFoh9L05QrKaWR5I9VL1JkGtdug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733803760; c=relaxed/simple;
-	bh=UC9488gl9T6A80VUWGtGF6J5sVo17VFJEmTIVqrxb70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8YzaGq3zLoOFeldGcE9zPdncgw72bl+wOSW2t6lCAXf4dU/zX5gOWtRcpmh5NppZg63fp29B1ozOZi6SfDXoKnV4Y18QVeOMhTTLjT4seExgpNY97aEDZaGbAezz9V134/41OvQ3VV8Jy96oBP8tP9WwkvUQaKUq4BQPZfW/WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=N3V/kKSU; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=CU/ceaeuMg6s5VeGV4bWHaOpATNGJK0FHJF/eoUa5PA=; b=N3V/kKSU/FUHhKITh5qPkAIq2L
-	yLkapdBDFcBAJ1sXfuSD9kCS4bPgVOYXuql/AHTZ41R2lwONLMeu6pwdwXLWKzYfbA4cHsjb3h3hc
-	Eh+iypQ4ulOV1WzZZY1XfZl+rZ+rJbaBgtKmhCBZJX8dnujmRhbkzGLetblkNadg0H2U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKrYe-00Fksr-DN; Tue, 10 Dec 2024 05:09:12 +0100
-Date: Tue, 10 Dec 2024 05:09:12 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yijie Yang <quic_yijiyang@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
- node
-Message-ID: <31a87bd9-4ffb-4d5a-a77b-7411234f1a03@lunn.ch>
-References: <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
- <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
- <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
- <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
- <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
- <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
- <4a6a6697-a476-40f4-b700-09ef18e4ba22@lunn.ch>
- <441f37f5-3c33-4c62-b3fe-728b43669e29@quicinc.com>
- <4287c838-35b2-45bb-b4a2-e128b55ddbaf@lunn.ch>
- <2e518360-be24-45d8-914d-1045c6771620@quicinc.com>
+	s=arc-20240116; t=1733803773; c=relaxed/simple;
+	bh=UX8E2EPJLB1vYF4+RHfSF3vHbkDzEU1hPVqGm99rTB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e/ix2BKLiJ8/hgO3Q/mxK/+5BLjYy10/yLJA5LUgse2klec2W8jZvrkW8xF6RvfOIHN9rSreZgIXX/Kp71TrJZGKba1VrpIwb4t7dY1UtK4JrDq2ncDG4CSkTS146vQZdBaxjJ63CYeIlFR9p+ufoYowKklED931JKsWaPymsOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [IPV6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46] (unknown [IPv6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id C9312B2C16CD;
+	Tue, 10 Dec 2024 05:09:25 +0100 (CET)
+Message-ID: <0f707918-49ce-4f04-b8d4-e74462caff5d@freeshell.de>
+Date: Mon, 9 Dec 2024 20:09:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e518360-be24-45d8-914d-1045c6771620@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: dts: starfive: jh7110-pinfunc.h
+To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor@kernel.org>,
+ Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jianlong Huang <jianlong.huang@starfivetech.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241210014903.154551-1-e@freeshell.de>
+ <ZQ2PR01MB1307099548C99CD6650BD57CE63DA@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <ZQ2PR01MB1307099548C99CD6650BD57CE63DA@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> As previously mentioned, using 'rgmii' will enable EMAC to provide the delay
-> while disabling the delay for EPHY. So there's won't be double delay.
+
+
+On 12/9/24 18:14, Hal Feng wrote:
+>> On 10.12.24 09:49, E Shattow wrote:
+>> [PATCH] riscv: dts: starfive: jh7110-pinfunc.h
 > 
-> Additionally, the current implementation of the QCOM driver code exclusively
-> supports this mode, with the entire initialization sequence of EMAC designed
-> and fixed for this specific mode.
+> Describe something in the commit title?
+> 
+>>
+>> Fix a typo in StarFive JH7110 pin function definitions
+>>
+>> Fixes: e22f09e598d12 ("riscv: dts: starfive: Add StarFive JH7110 pin function
+>> definitions")
+>> Signed-off-by: E Shattow <e@freeshell.de>
+> 
+> Acked-by: Hal Feng <hal.feng@starfivetech.com>
+> 
+> Best regards,
+> Hal
+> 
+>> ---
+>>   arch/riscv/boot/dts/starfive/jh7110-pinfunc.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+>> b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+>> index 256de17f5261..ae49c908e7fb 100644
+>> --- a/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+>> +++ b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+>> @@ -89,7 +89,7 @@
+>>   #define GPOUT_SYS_SDIO1_DATA1			59
+>>   #define GPOUT_SYS_SDIO1_DATA2			60
+>>   #define GPOUT_SYS_SDIO1_DATA3			61
+>> -#define GPOUT_SYS_SDIO1_DATA4			63
+>> +#define GPOUT_SYS_SDIO1_DATA4			62
+>>   #define GPOUT_SYS_SDIO1_DATA5			63
+>>   #define GPOUT_SYS_SDIO1_DATA6			64
+>>   #define GPOUT_SYS_SDIO1_DATA7			65
+>>
+>> base-commit: 708d55db3edbe2ccf88d94b5f2e2b404bc0ba37c
+>> --
+>> 2.45.2
+> 
 
-OK. If it is impossible to disable these delays, you need to validate
-phy-mode. Only rgmii-id is allowed. Anybody trying to build a board
-using extra long clock lines is out of luck. It does not happen very
-often, but there are a small number of boards which do this, and the
-definitions of phy-mode are designed to support them.
-
-> I'm not sure if there's a disagreement about the definition or a
-> misunderstanding with other vendors. From my understanding, 'rgmii' should
-> not imply that the delay must be provided by the board, based on both the
-> definition in the dt-binding file and the implementations by other EMAC
-> vendors. Most EMAC drivers provide the delay in this mode.
-
-Nope. You are wrong. I've been enforcing this meaning for maybe the
-last 10 years. You can go search the email archive for netdev. Before
-that, we had a bit of a mess, developers were getting it wrong, and
-reviewing was not as good. And i don't review everything, so some bad
-code does get passed me every so often, e.g. if found out today that
-TI AM62 got this wrong, they hard code TX delays in the MAC, and DT
-developers have been using rgmii-rxid, not rgmii-id, and the MAC
-driver is missing the mask operation before calling phy_connect.
-
-> I confirmed that there is no delay on the qcs615-ride board., and the QCOM
-> EMAC driver will adds the delay by shifting the clock after receiving
-> PHY_INTERFACE_MODE_RGMII.
-
-Which is wrong. Because you cannot disable the delay,
-PHY_INTERFACE_MODE_RGMII should return in EINVAL, or maybe
-EOPNOTSUPP. Your hardware only supports PHY_INTERFACE_MODE_RGMII_ID,
-and you need to mask what you pass to phylib/phylink to make it clear
-the MAC has added the delays.
-
-	Andrew
+Ah... yes I forgot the commit title. Will re-send. Thanks! -E
 
