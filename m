@@ -1,352 +1,205 @@
-Return-Path: <linux-kernel+bounces-439359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BB29EAE0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 211919EAE07
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16DDC168497
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:35:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534781684AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD61199E84;
-	Tue, 10 Dec 2024 10:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B96319CCEA;
+	Tue, 10 Dec 2024 10:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jtpE2uzq"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mw92oLA8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523AE17580;
-	Tue, 10 Dec 2024 10:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFD323DE8F;
+	Tue, 10 Dec 2024 10:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733826885; cv=none; b=FYdCe1fMZoI/SLoKk2W0mxzPBiBdZpJWekfsDF2rLU1eERZktsb+s9Cc/Y/UbqL+h6M7IWeWSDREDr04jbpvu7A7NHICyEPlY6OW9BIpfEs2d2VMLLJ6PnskJ0nHvqYvMWjtrm5qBNqLKaonsaPtVFqneN/F8hl0IVmjLnrSVDY=
+	t=1733826851; cv=none; b=I8Ev4Ye0AiUQWTUYTp5GeJ1B/9pc+7NIm+KpWMiRnXKzMaP0dg2ZDMpkzwPtiAOWcJ6DBUyXohoOWIXRAroSqJ0FiqFr7PrZq8ntG9BaNgckQKtKb4Maz+j44gcb1Zwm+nC6q19ghLtsgns3UpesDiFEfEgc99MQIB6UkXDnDVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733826885; c=relaxed/simple;
-	bh=Nl130zMyT6lEMjvMOZEO65O3vtrgDaTWFueQpoaFY88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JqvfDBLzMElmWIENKQ4M2E5xxAwc4C+GuKGF27UhlZk42FfIrVsTNIrL/zbkR4PDjER3EaQl7U9zxIBtrjGmlg1viSlgoazivpPY0IV33brnOP5s/4VVLcj47nk/th+XD0QZtQwrH4+3X8/D71fDJ4U4CoRqlqbZOrYcUUz7u8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jtpE2uzq; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAACtBT022402;
-	Tue, 10 Dec 2024 11:34:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	5AUqyoGSkf9r8/Q3Kt2TBiaYLw/48j9YljWQXjn/bHk=; b=jtpE2uzqJDaSPA5p
-	t94mhVifyhQcjbNEjUXtxjShPz5aiZPeKnCL0nB5UCvCzabb/vdoPrZPLjLFzcXC
-	m9AhN5oVP0jjbUDdOiiKMxB/xpvnC+ip4QdVqZ/FRxgx4HTrtRnjnzbt0W0Hl/xr
-	TNsQrYlVmxbQIp/y0NNsBkE1kQodgrcjMFnUWXLeEjh4bDYtThCrgWwJIp4MhA5p
-	8RN1oVlEiPMDgQtGvbfa2ZYKRBybzwChExR+oQcauXILGII91wi7svonERkH5gjp
-	7MMTL3tIpDFGB2Ra9e8nHc0BxbeFtHHWtMvi3PSBHyjNNAXmLOCWtWv8GCgP7it0
-	58iXXA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43d26n9ka3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:34:35 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C306B4004B;
-	Tue, 10 Dec 2024 11:33:49 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B7A56242474;
-	Tue, 10 Dec 2024 11:33:32 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Dec
- 2024 11:33:32 +0100
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Dec
- 2024 11:33:32 +0100
-Message-ID: <a8654e63-ff92-4d11-a3f5-75626e6dc6fe@foss.st.com>
-Date: Tue, 10 Dec 2024 11:33:31 +0100
+	s=arc-20240116; t=1733826851; c=relaxed/simple;
+	bh=shJZaFw/E0/b3YLMgrlFnAU3HSKm4vC7XBp0UA4tPEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCdF7NwuvHw0u/6TXBkNvQp0BV5RZmQsd2IA0+xKxE0qST0m2nyH9Tr+EyzdDTyIeizSN341pGV/WO1jgv4pwX946iiiZkZg/wrsJVf5wZPdi9TqYaJZ/yFkrFaI4GJgPUpRFKqBlJv4wdi7By04uWI2mzvpIbjy50Uhs88BMxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mw92oLA8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFA8C4CED6;
+	Tue, 10 Dec 2024 10:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733826851;
+	bh=shJZaFw/E0/b3YLMgrlFnAU3HSKm4vC7XBp0UA4tPEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mw92oLA8HwtU9GlwbINp+ydZIOEulhYmdPyRiNXcMteX+h/0R8IayLpa2bnM8GOBU
+	 YwA4mdI0VZXHoND2peuPphuoFeOjahRjGtyDhb2AsW2BSad83SuBcciqBYMxDxrVBc
+	 Cxp83z/RKgtRExOycjCLMype2dDAIBOhmBndl4VrrGmpANXCMCdYznIZSGA1Vda8vP
+	 HgXfcddmlVyna7U1aIT60kmyPd87CKSlltH/PqHMFA8bK5qAhc0IUv8BwtWwyRvfZM
+	 N7dG6NXXHQKmmkhRYbS366bw8/d0Zf370ftaREaR1FveOXd55ut55qihuNvhGv9YJV
+	 FqbkhXe13NcOQ==
+Date: Tue, 10 Dec 2024 11:34:05 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Erin Shepherd <erin.shepherd@e43.eu>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, stable <stable@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
+ operations as only supporting file handles
+Message-ID: <20241210-holunder-caravan-578662919f10@brauner>
+References: <20241206160358.GC7820@frogsfrogsfrogs>
+ <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+ <Z1ahFxFtksuThilS@infradead.org>
+ <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
+ <Z1b00KG2O6YMuh_r@infradead.org>
+ <CAOQ4uxjcVuq+PCoMos5Vi=t_S1OgJEM5wQ6Za2Ue9_FOq31m9Q@mail.gmail.com>
+ <15628525-629f-49a4-a821-92092e2fa8cb@oracle.com>
+ <d74572123acf8e09174a29897c3074f5d46e4ede.camel@kernel.org>
+ <337ca572-2bfb-4bb5-b71c-daf7ac5e9d56@oracle.com>
+ <20241210-gekonnt-pigmente-6d44d768469f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
- optional operation
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
- <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
- <adqulwb54wvn36mnjq7u23qdiyapadr3ruhqluxab7mg3kowz5@4rexefd5mlwp>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <adqulwb54wvn36mnjq7u23qdiyapadr3ruhqluxab7mg3kowz5@4rexefd5mlwp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241210-gekonnt-pigmente-6d44d768469f@brauner>
 
-
-
-On 12/10/24 00:14, Bjorn Andersson wrote:
-> On Thu, Nov 28, 2024 at 09:42:10AM GMT, Arnaud Pouliquen wrote:
->> This patch updates the rproc_ops structures to include two new optional
->> operations.
->>
->> - The load_fw() op is responsible for loading the remote processor
->> non-ELF firmware image before starting the boot sequence. This ops will
->> be used, for instance, to call OP-TEE to  authenticate an load the firmware
->> image before accessing to its resources (a.e the resource table)
->>
->> - The release_fw op is responsible for releasing the remote processor
->> firmware image. For instance to clean memories.
->> The ops is called in the following cases:
->>  - An error occurs between the loading of the firmware image and the
->>    start of the remote processor.
->>  - after stopping the remote processor.
->>
+On Tue, Dec 10, 2024 at 11:13:16AM +0100, Christian Brauner wrote:
+> On Mon, Dec 09, 2024 at 12:20:10PM -0500, Chuck Lever wrote:
+> > On 12/9/24 12:15 PM, Jeff Layton wrote:
+> > > On Mon, 2024-12-09 at 11:35 -0500, Chuck Lever wrote:
+> > > > On 12/9/24 11:30 AM, Amir Goldstein wrote:
+> > > > > On Mon, Dec 9, 2024 at 2:46 PM Christoph Hellwig <hch@infradead.org> wrote:
+> > > > > > 
+> > > > > > On Mon, Dec 09, 2024 at 09:58:58AM +0100, Amir Goldstein wrote:
+> > > > > > > To be clear, exporting pidfs or internal shmem via an anonymous fd is
+> > > > > > > probably not possible with existing userspace tools, but with all the new
+> > > > > > > mount_fd and magic link apis, I can never be sure what can be made possible
+> > > > > > > to achieve when the user holds an anonymous fd.
+> > > > > > > 
+> > > > > > > The thinking behind adding the EXPORT_OP_LOCAL_FILE_HANDLE flag
+> > > > > > > was that when kernfs/cgroups was added exportfs support with commit
+> > > > > > > aa8188253474 ("kernfs: add exportfs operations"), there was no intention
+> > > > > > > to export cgroupfs over nfs, only local to uses, but that was never enforced,
+> > > > > > > so we thought it would be good to add this restriction and backport it to
+> > > > > > > stable kernels.
+> > > > > > 
+> > > > > > Can you please explain what the problem with exporting these file
+> > > > > > systems over NFS is?  Yes, it's not going to be very useful.  But what
+> > > > > > is actually problematic about it?  Any why is it not problematic with
+> > > > > > a userland nfs server?  We really need to settle that argumet before
+> > > > > > deciding a flag name or polarity.
+> > > > > > 
+> > > > > 
+> > > > > I agree that it is not the end of the world and users do have to explicitly
+> > > > > use fsid= argument to be able to export cgroupfs via nfsd.
+> > > > > 
+> > > > > The idea for this patch started from the claim that Jeff wrote that cgroups
+> > > > > is not allowed for nfsd export, but I couldn't find where it is not allowed.
+> > > > > 
+> > > 
+> > > I think that must have been a wrong assumption on my part. I don't see
+> > > anything that specifically prevents that either. If cgroupfs is mounted
+> > > and you tell mountd to export it, I don't see what would prevent that.
+> > > 
+> > > To be clear, I don't see how you would trick bog-standard mountd into
+> > > exporting a filesystem that isn't mounted into its namespace, however.
+> > > Writing a replacement for mountd is always a possibilty.
+> > > 
+> > > > > I have no issue personally with leaving cgroupfs exportable via nfsd
+> > > > > and changing restricting only SB_NOUSER and SB_KERNMOUNT fs.
+> > > > > 
+> > > > > Jeff, Chuck, what is your opinion w.r.t exportability of cgroupfs via nfsd?
+> > > > 
+> > > > We all seem to be hard-pressed to find a usage scenario where exporting
+> > > > pseudo-filesystems via NFS is valuable. But maybe someone has done it
+> > > > and has a good reason for it.
+> > > > 
+> > > > The issue is whether such export should be consistently and actively
+> > > > prevented.
+> > > > 
+> > > > I'm not aware of any specific security issues with it.
+> > > > 
+> > > > 
+> > > 
+> > > I'm not either, but we are in new territory here. nfsd is a network
+> > > service, so it does present more of an attack surface vs. local access.
+> > > 
+> > > In general, you do have to take active steps to export a filesystem,
+> > > but if someone exports / with "crossmnt", everything mounted is
+> > > potentially accessible. That's obviously a dumb thing to do, but people
+> > > make mistakes, and it's possible that doing this could be part of a
+> > > wider exploit.
+> > > 
+> > > I tend to think it safest to make exporting via nfsd an opt-in thing on
+> > > a per-fs basis (along the lines of this patchset). If someone wants to
+> > > allow access to more "exotic" filesystems, let them argue their use-
+> > > case on the list first.
+> > 
+> > If we were starting from scratch, 100% agree.
+> > 
+> > The current situation is that these file systems appear to be exportable
+> > (and not only via NFS). The proposal is that this facility is to be
+> > taken away. This can easily turn into a behavior regression for someone
+> > if we're not careful.
 > 
-> Why does this difference need to be encoded in rproc_ops? I think we
-> should strive for having a single, simple high level flow of operations
-> through the remoteproc core for which the specifics of each remoteproc
-> instance can be encoded in that driver.
+> So I'm happy to drop the exportfs preliminary we have now preventing
+> kernfs from being exported but then Christoph and you should figure out
+> what the security implications of allowing kernfs instances to be
+> exported areare because I'm not an NFS export expert.
 > 
+> Filesystems that fall under kernfs that are exportable by NFS as I
+> currently understand it are at least:
 > 
-> Perhaps there's a good reason for this, but if so please read and follow
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> to make that reasoning clear in the commit message.
+> (1) sysfs
+> (2) cgroupfs
 > 
-
-The actual sequence to load a remoteproc firmware is
-- get firmware from file system and store the firmware image in Linux kernel memory
-- get resource table from the firmware image and make a copy(
-- parse the resource table and handle the resources
-- load the firmware
-- start the firmware
-
-
-In OP-TEE we support not only one ELF image but n images (for instance a TF-M +
-a zephyr), the segments can be encrypted the OP-TEE load sequence is
- - copy header and meta data of the signed image in a secure memory
- - verify it
- - copy segments in remote processor memory and authenticate segments in place.
- - optionally decrypt the segments
-
-Only at this step the resource table as been authenticated (and decrypted)
-
-So the point is that we need to load the firmware before getting the resource table
-
-
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->> Update vs version V13:
->> - Rework the commit to introduce load_fw() op.
->> - remove rproc_release_fw() call from  rproc_start() as called in
->>   rproc_boot() and rproc_boot_recovery() in case of error.
->> - create rproc_load_fw() and rproc_release_fw() internal functions.
->> ---
->>  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
->>  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
->>  include/linux/remoteproc.h               |  6 ++++++
->>  3 files changed, 35 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index ace11ea17097..8df4b2c59bb6 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->>  	kfree(rproc->cached_table);
->>  	rproc->cached_table = NULL;
->>  	rproc->table_ptr = NULL;
->> +	rproc_release_fw(rproc);
->>  unprepare_rproc:
->>  	/* release HW resources if needed */
->>  	rproc_unprepare_device(rproc);
->> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
->>  		return ret;
->>  	}
->>  
->> +	ret = rproc_load_fw(rproc, firmware_p);
+> Has anyone ever actually tried to export the two and tested what
+> happens? Because I wouldn't be surprised if this ended in tears but
+> maybe I'm overly pessimistic.
 > 
-> It is not clear to me why in the case of OP-TEE we need to invoke the
-> "load operation" here, and in the case of "legacy" ELF loading we do it
-> first thing in rproc_start() (i.e. on the very next line of code being
-> executed).
-
-For the OP-TEE, please refer to my comment above.
-
-The only reason I can see for the legacy ELF is that the resource table could
-contain information to be able to configure some resources to load the firmware.
-In case of OP-TEE this would be managed in OP-TEE.
-
+> Both (1) and (2) are rather special and don't have standard filesystem
+> semantics in a few places.
 > 
+> - cgroupfs isn't actually namespace aware. Whereas most filesystems like
+>   tmpfs and ramfs that are mountable inside unprivileged containers are
+>   multi-instance filesystems, aka allocate a new superblock per
+>   container cgroupfs is single-instance with a nasty implementation to
+>   virtualize the per-container view via cgroup namespaces. I wouldn't be
+>   surprised if that ends up being problematic.
 > 
-> Should we start by renaming rproc_load_segments() rproc_load() and move
-> it out of rproc_start()? (I.e. here?)
+> - Cgroupfs has write-time permission checks as the process that is moved
+>   into a cgroup isn't known at open time. That has been exploitable
+>   before this was fixed.
 > 
-> Perhaps define that rproc_load() is responsible for "loading firmware"
-> (whatever that means) and establishing rproc->cached_table, and
-> rproc->table_ptr?
+> - Even though it's legacy cgroup has a v1 and v2 mode where v1 is even
+>   more messed up than v2 including the release-agent logic which ends up
+>   issuing a usermode helper to call a binary when a cgroup is released.
 > 
-> (Note that this seems like a good cleanup of the spaghetti regardless)
+> - sysfs potentially exposes all kinds of extremly low-level information
+>   to a remote machine.
 > 
-
-It's something that crossed my mind, but I don't know the legacy well enough to
-guarantee that it will work in all drivers.
-
-If you want to go in this direction, perhaps this is something that could be
-addressed in a dedicated pull request? In this case, the ops could become
-load_fw and load_fw_new, similar to how it is done for platform_driver::remove.
-
-
->> +	if (ret)
->> +		return ret;
->> +
->>  	/* boot the remote processor up again */
->>  	ret = rproc_start(rproc, firmware_p);
->> +	if (ret)
->> +		rproc_release_fw(rproc);
+> None of this gives me the warm and fuzzy. But that's just me.
 > 
-> The fact that you rproc_release_fw() in the error path here, right
-> before we unconditionally release_firmware() the actual firmware means
-> that you have 2 different life cycles with very very similar names.
+> Otherwise, I don't understand what it means that a userspace NFS server
+> can export kernfs instances. I don't know what that means and what the
+> contrast to in-kernel NFS server export is and whether that has the same
+> security implications. If so it's even scary that some random userspace
+> NFS server can just expose guts like kernfs.
 > 
-> This will contain bugs, sooner or later.
+> But if both of you feel that this is safe to do and there aren't any
+> security issues lurking that have gone unnoticed simply because no one
+> has really ever exported sysfs or cgroupfs then by all means continue
+> allowing that. I'm rather skeptical.
 
-So we need to find a better way for the ops if we continue in this direction.
-What about introducing rproc_load_new and rproc_release?
-
-> 
->>  
->>  	release_firmware(firmware_p);
->>  
->> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
->>  			goto downref_rproc;
->>  		}
->>  
->> +		ret = rproc_load_fw(rproc, firmware_p);
->> +		if (ret)
->> +			goto downref_rproc;
->> +
->>  		ret = rproc_fw_boot(rproc, firmware_p);
->> +		if (ret)
->> +			rproc_release_fw(rproc);
->>  
->>  		release_firmware(firmware_p);
->>  	}
->> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
->>  	kfree(rproc->cached_table);
->>  	rproc->cached_table = NULL;
->>  	rproc->table_ptr = NULL;
->> +	rproc_release_fw(rproc);
->>  out:
->>  	mutex_unlock(&rproc->lock);
->>  	return ret;
->> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
->>  	if (!rproc->ops->coredump)
->>  		rproc->ops->coredump = rproc_coredump;
->>  
->> -	if (rproc->ops->load)
->> +	if (rproc->ops->load || rproc->ops->load_fw)
->>  		return 0;
->>  
->>  	/* Default to ELF loader if no load function is specified */
->> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
->> index 0cd09e67ac14..2104ca449178 100644
->> --- a/drivers/remoteproc/remoteproc_internal.h
->> +++ b/drivers/remoteproc/remoteproc_internal.h
->> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
->>  	return (val <= (size_t) -1);
->>  }
->>  
->> +static inline void rproc_release_fw(struct rproc *rproc)
->> +{
->> +	if (rproc->ops->release_fw)
->> +		rproc->ops->release_fw(rproc);
->> +}
->> +
->> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
->> +{
->> +	if (rproc->ops->load_fw)
->> +		return rproc->ops->load_fw(rproc, fw);
->> +
->> +	return 0;
->> +}
->> +
->>  #endif /* REMOTEPROC_INTERNAL_H */
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index 2e0ddcb2d792..ba6fd560f7ba 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -381,6 +381,10 @@ enum rsc_handling_status {
->>   * @panic:	optional callback to react to system panic, core will delay
->>   *		panic at least the returned number of milliseconds
->>   * @coredump:	  collect firmware dump after the subsystem is shutdown
->> + * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
->> + *		processor expects to find it.
-> 
-> Why does it matter if it's an ELF or not?
-
-No matter. It was more to differentiate from the legacy one, but it does not
-make sense and adds to the argument that the ops naming is not accurate.
-
-> 
-> In the Qualcomm case, firmware comes in ELF format, Linux loads the
-> LOAD segments and the trusted world then authenticates the content and
-> start the remote processor.
-> 
-> 
-> I think the difference in your case is that you have memory reserved
-> elsewhere, and you want the "load" operation to pass the firmware to the
-> TEE - which means that you need rproc_release_fw() to eventually clean
-> up the state if rproc_start() fails - and upon shutdown.
-
-Yes the OP-TEE is make more stuff:
-- authenticate several firmware images
-- decrypt images if encrypted
-- ensure that the load is done in granted memories
-- manage the memory access rights to enure that the code and data memory
- is never accessible by the Linux.
-
-> 
-> If we improve the definition of rproc_load_segments() to mean
-> "remoteproc (or remoteproc driver) is loading segments", then in your
-> case there's no "loading" operation in Linux. Instead you make that a
-> nop and invoke LOAD_FW and START_FW within your start callback, then you
-> can clean up the remnant state within your driver's start and stop
-> callbacks - without complicating the core framework.
-
-This would not work as I need to load the firmware before calling
-rproc_handle_resources().
-
-I can not use rproc_prepare_device() as it is not called on recovery
-
-Thanks,
-Arnaud
-
-> 
-> Regards,
-> Bjorn
-> 
->> + * @release_fw:	optional function to release the firmware image from memories.
->> + *		This function is called after stopping the remote processor or in case of error
->>   */
->>  struct rproc_ops {
->>  	int (*prepare)(struct rproc *rproc);
->> @@ -403,6 +407,8 @@ struct rproc_ops {
->>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->>  	unsigned long (*panic)(struct rproc *rproc);
->>  	void (*coredump)(struct rproc *rproc);
->> +	int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
->> +	void (*release_fw)(struct rproc *rproc);
->>  };
->>  
->>  /**
->> -- 
->> 2.25.1
->>
+Amir pointed that sysfs can't be exported as it opts out of kernfs
+export_operations being set.
 
