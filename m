@@ -1,206 +1,209 @@
-Return-Path: <linux-kernel+bounces-440055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC82A9EB803
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D72F39EB805
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:18:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B665188761F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:17:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3F61888CB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF531DE2B4;
-	Tue, 10 Dec 2024 17:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44D623024A;
+	Tue, 10 Dec 2024 17:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NFD7ep9t"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ksI05Hv2"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05CA224AEC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6863B1AA1C2
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850933; cv=none; b=FM7dwQKAzxG+GJWzkzu8UqqZxI7mn4KHSdWBjGCqHQw2LLqhuKZtCpoMP411i4e1B5XgBgLIdnzp4PLZI2aPRWSUCuOmn+09Dum1jUH5ZpeDvyTsVdpVQjZgQcEPBJbmRvc6HDndhjrab0pnBpf+v8tcDsoFP8rugQhAYYhvVP0=
+	t=1733850998; cv=none; b=IiTgUU+7ao26cZ5Y51DWAnCw48mvb4K6sAJfN6rCNtqKX7hLtZLhBLxVJOfXuVqGy/lIcJXPjNRSfln046UspsbrR5utGhx2Y+Aa0GvX3xLmf16Ga6vjmmlnKAOp4HUZstsP19GxN5NH+dprifi6n9eZrpdTSAwu0vk6d+Zg+oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850933; c=relaxed/simple;
-	bh=65mBZ/F+s9YxlRJpWUAHAJJBKcnRjWV2qFXtSeoqb0k=;
+	s=arc-20240116; t=1733850998; c=relaxed/simple;
+	bh=4WfZf/VyEMdGyzTnRIwjU/zlxOBfiYZBI1KPIS2oQj8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EGFmxVe47pvhg7ozxDkTzv6gsAUmG1EAk3S9IY5RJSGLEej0HIObmlLzTT/k96BLqeCnDNCzUwwh2+JdPbqud8rNsC0uOYVegP/WEI6i0ZI9tPm0St/6ZlKWX7s1enNJnQdbx7rSWrGAYkZOj4ByN3KFgrIs9uzCfJNAhBR7NUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NFD7ep9t; arc=none smtp.client-ip=209.85.208.41
+	 To:Cc:Content-Type; b=YyRljghy2Mxk9oi5cQ8jpXZKjfXkDBBQNhZpLSMj1m9VnVMXSIEehKR3Gn9ibaU0baSzrPe6bRmuLCv1b3OjRB8KPgKbya8omNGhVlrsbGcEFabjkJKMNIig7QhFf5WBw8D72JKzVu8VzSJgI2juVwFywK3jF/WfwADSqvxXFyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ksI05Hv2; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3c2135f61so9015a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:15:31 -0800 (PST)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4674c22c4afso325831cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:16:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733850930; x=1734455730; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733850995; x=1734455795; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1j7LZ3gidxJvgG/m4KFvrvy2HeW92l/T3DtHZWGqx18=;
-        b=NFD7ep9tvsrHgVkX98Kww8FPNLaOjvkZdFdr05Ksd9+2uuZv10WZ3pMhZVhr632qLt
-         84Pvrn1+t6cMLKfwqyE4A15DwFg/pMaHi5NGKA0AOgZ+UY9tNuqKkjxiX3tGT4+i/Npj
-         He1dm4J/HYFFqTb4lqOKcfICe0EOuIwNdOnLswRjrdmNoH2h9Qol09XZT939PslnLcOl
-         t0YKoLGKxdec2Zt/kCdw6nAg1dM1yzQE17KfcxJNug4GLL3qLzyBVL/U3+jykx3TNm15
-         I9qNoigQrSTGornXNgGirys84N4imGjXJSP7PBlO/b8cBQoWqQO4u2yzLiiNp9Qr19/Y
-         byNA==
+        bh=FaOi4QsOb+J5LPb4Q/0lyWfsbMFf1E6fSqgF/905dAo=;
+        b=ksI05Hv28ZOzBTSdXqacapIDt7reiI83vWJO/Tf0p21vKBRyDyw0obmc+P0eJAepQn
+         38mMqKO2eODZNSeVRpFuLOJNI8mji8hx+e+W8+ms3Us51QTc8jtRdbpeMzK9jKLeEJf5
+         bvW4lueFtDQnFvUwOEU8Tx5PWADFGoJs/zzsnCrpct5KsfcLyxJZzqs+SZTyscBcGXZ+
+         uGa3gqOE5oRPe+EeargYIpKQawQ1cF+dvSxSWg901j3qxWSFCqaUTIYhYVR0LAfb50P+
+         nmgRbcGGx49fybINvU1XXMwmrxPB/86sz6sg0GY7QVwjUjgVTGgd0CSbNs4wmnX6qilY
+         gaig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850930; x=1734455730;
+        d=1e100.net; s=20230601; t=1733850995; x=1734455795;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1j7LZ3gidxJvgG/m4KFvrvy2HeW92l/T3DtHZWGqx18=;
-        b=h5jm9vfYwZRZO79glHXlj0uhfirL69tyKQmD7ScwrjpsHWYkrBr8CkajlifcTmf+nx
-         VAuFOyztAiA6ZQ4ngKpcnD7xjOTR8mr8BSr6YqTVgqVxI86ccSHWjDev4R9rfUGRGbi/
-         ebWegQ0lBp8tsXRJ7b6tRcS6efPwdIBW2pWsP/o1IoVisto/z5WPDmZZ9mFCYCtae9Gb
-         n7IoOzCagV7/kxiQo5IB1HvLhywPi+bQ2kGg7gQTwxab8pb9ASSNUbECjlwmNIGR8dMJ
-         mZKz9xFq+c0R7j9dsnza3eeIStiTkc0rh4kzeHWu2rjcMDqmBtUmD96LmNJ9RCUOrrAw
-         R3GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9ms3t7G6pHo5FmsRDDg9FrF+cgdCyN9WBzQA0tkb72WPEKMZDf+n/Q8v6Ddu/E2jPDf7Uy6Dx5amJD/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ+hZ1tLjuZh5MYAj0nABvdlLOrtQK5IkiUukvL+KYA5UGx89C
-	1DQ1o4U0uApcnHkAVmd36rSOdrKJ2Inlid03bo5xdIXsL4UBFgWS5hp/HZvQexfJ6vQNP/qMJtH
-	jWpSVIC1DCON8uhoILjCT6iPtI04lb1UxD/iM
-X-Gm-Gg: ASbGncvgjoWcCI7AaywKcZ4wPz4KnF8rrPGtC7Ir2qxQWw5NEIlc7ZtyiC7pG6xalRt
-	NFirgg7+Qgk90YJqF+fwcGTfYl9qRwn/szg1n+eyD920x3YiUPSJLK/NXsyMtlMY=
-X-Google-Smtp-Source: AGHT+IHT16w6MB/cAWIgtFbiSkDVdo7XP1VoYlvCUhWiCeYhHyzKjFoNyCYw0JcgMIyZtC6modyN7XVZ+Xm+NXJ7OGE=
-X-Received: by 2002:a50:c2d1:0:b0:5d0:d935:457b with SMTP id
- 4fb4d7f45d1cf-5d41ed02050mr123811a12.0.1733850929585; Tue, 10 Dec 2024
- 09:15:29 -0800 (PST)
+        bh=FaOi4QsOb+J5LPb4Q/0lyWfsbMFf1E6fSqgF/905dAo=;
+        b=nNkTJcGgAQlX1PK+0cybhtQmPc+eJkRp7GfVDu1TjE+T2C+rapJ9WhouusY/RCCYwC
+         s77maFXOQnh5b/IlqiYK/d9/8hqb6s6xSpEJ8ARoFWlxriTOcZ/oLuJihbXXQG83oYog
+         pRqxpwBoGLkN+7buG8jew0O8eyzyk5howra2xXjwO3yVRBRIhyk/HhuBe2QCrD56vuzA
+         JLNuHwLQZFj0E7FOUeuyzhp9a6iVXJ8pmGrz4C34XrAPY1NPIS9ZhcZ5A1/ma8kgOxDk
+         wIA0czudRLfh0uq4ZQzOTs9wqPAHqJTX6+BWauxHMtA/l2pR2VWQh/xnOrKhuXkWB9py
+         fXrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmL5rETmmDsQrcoDGvWHCjq9n/pjcSsBN/SKMVxgrsVqtAdMS3QIU5bkj0ixqQAFppNxlJ+rmPuWBgk3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw20cO2DCEVmVzvJK9ksKkQWygCROExj1MVMKGwKj8bLsx2iTzT
+	NL3LeDPRCma2sxYU9xUI9Cg5RZV67VG4RTuOivgA7iTqx2byL15MO2qIj2AxEA3fR/6xXxNErAV
+	BJHTZWlm+M3vGNYJ2EwisoDpBQhJ3gveMG4/w
+X-Gm-Gg: ASbGnctEIoQtNOJFsa5hYB4dAdDOWLhMAgNhvqlGrHlalL4E1/IyY+QDc8lrX5NHCze
+	/bGtfzirEl4C+N2LmN7KdmEja+flNMcDF8Mnz9H+EslWU40ZdWQEK89H4KmJOGhZCdg==
+X-Google-Smtp-Source: AGHT+IEeFcyZ6T1bdtWsKVYAtVQ8wAtPBjDv42QIMAppf4WlYawq+dIfGHO6dImIpr4LCNCMkgNp3LMCeVKsCbb+cx0=
+X-Received: by 2002:a05:622a:4c18:b0:466:97d6:b245 with SMTP id
+ d75a77b69052e-46776274fdamr4970131cf.22.1733850994869; Tue, 10 Dec 2024
+ 09:16:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1733248985.git.lorenzo.stoakes@oracle.com> <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 10 Dec 2024 18:14:53 +0100
-Message-ID: <CAG48ez12K25yNWaAXqMnC8tfpTQFOwzvPsyE7r8N1NM9wqfzzw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] mm: abstract get_arg_page() stack expansion and mmap
- read lock
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241206225204.4008261-1-surenb@google.com> <20241206225204.4008261-5-surenb@google.com>
+ <6b29b2a5-c244-4930-a5a0-1a24a04e7e35@suse.cz> <CAJuCfpFxAZ-JwN8VqNF14zeBnsPM_pD0+-N2PDq5GcQGR1xqLQ@mail.gmail.com>
+ <643beb6c-4226-46ca-b7e9-292467479aea@suse.cz>
+In-Reply-To: <643beb6c-4226-46ca-b7e9-292467479aea@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 10 Dec 2024 09:16:23 -0800
+Message-ID: <CAJuCfpHR3LXfAZA_oh_2KBtFe6JQPU5T3nYMZd_ooAjRJd8xUQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] mm: make vma cache SLAB_TYPESAFE_BY_RCU
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
+	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
+	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
+	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
+	hughd@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 3, 2024 at 7:05=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> Right now fs/exec.c invokes expand_downwards(), an otherwise internal
-> implementation detail of the VMA logic in order to ensure that an arg pag=
-e
-> can be obtained by get_user_pages_remote().
+On Tue, Dec 10, 2024 at 8:32=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
-> In order to be able to move the stack expansion logic into mm/vma.c in
-> order to make it available to userland testing we need to find an
-> alternative approach here.
+> On 12/10/24 17:20, Suren Baghdasaryan wrote:
+> > On Tue, Dec 10, 2024 at 6:21=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> >>
+> >> On 12/6/24 23:52, Suren Baghdasaryan wrote:
+> >> > To enable SLAB_TYPESAFE_BY_RCU for vma cache we need to ensure that
+> >> > object reuse before RCU grace period is over will be detected inside
+> >> > lock_vma_under_rcu().
+> >> > lock_vma_under_rcu() enters RCU read section, finds the vma at the
+> >> > given address, locks the vma and checks if it got detached or remapp=
+ed
+> >> > to cover a different address range. These last checks are there
+> >> > to ensure that the vma was not modified after we found it but before
+> >> > locking it.
+> >> > vma reuse introduces several new possibilities:
+> >> > 1. vma can be reused after it was found but before it is locked;
+> >> > 2. vma can be reused and reinitialized (including changing its vm_mm=
+)
+> >> > while being locked in vma_start_read();
+> >> > 3. vma can be reused and reinitialized after it was found but before
+> >> > it is locked, then attached at a new address or to a new mm while
+> >> > read-locked;
+> >> > For case #1 current checks will help detecting cases when:
+> >> > - vma was reused but not yet added into the tree (detached check)
+> >> > - vma was reused at a different address range (address check);
+> >> > We are missing the check for vm_mm to ensure the reused vma was not
+> >> > attached to a different mm. This patch adds the missing check.
+> >> > For case #2, we pass mm to vma_start_read() to prevent access to
+> >> > unstable vma->vm_mm. This might lead to vma_start_read() returning
+> >> > a false locked result but that's not critical if it's rare because
+> >> > it will only lead to a retry under mmap_lock.
+> >> > For case #3, we ensure the order in which vma->detached flag and
+> >> > vm_start/vm_end/vm_mm are set and checked. vma gets attached after
+> >> > vm_start/vm_end/vm_mm were set and lock_vma_under_rcu() should check
+> >> > vma->detached before checking vm_start/vm_end/vm_mm. This is require=
+d
+> >> > because attaching vma happens without vma write-lock, as opposed to
+> >> > vma detaching, which requires vma write-lock. This patch adds memory
+> >> > barriers inside is_vma_detached() and vma_mark_attached() needed to
+> >> > order reads and writes to vma->detached vs vm_start/vm_end/vm_mm.
+> >> > After these provisions, SLAB_TYPESAFE_BY_RCU is added to vm_area_cac=
+hep.
+> >> > This will facilitate vm_area_struct reuse and will minimize the numb=
+er
+> >> > of call_rcu() calls.
+> >> >
+> >> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >>
+> >> I'm wondering about the vma freeing path. Consider vma_complete():
+> >>
+> >> vma_mark_detached(vp->remove);
+> >>   vma->detached =3D true; - plain write
+> >> vm_area_free(vp->remove);
+> >>   vma->vm_lock_seq =3D UINT_MAX; - plain write
+> >>   kmem_cache_free(vm_area_cachep)
+> >> ...
+> >> potential reallocation
+> >>
+> >> against:
+> >>
+> >> lock_vma_under_rcu()
+> >> - mas_walk finds a stale vma due to race
+> >> vma_start_read()
+> >>   if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(mm->mm_lock_seq.seq=
+uence))
+> >>   - can be false, the vma was not being locked on the freeing side?
+> >>   down_read_trylock(&vma->vm_lock.lock) - suceeds, wasn't locked
+> >>     this is acquire, but was there any release?
+> >
+> > Yes, there was a release. I think what you missed is that
+> > vma_mark_detached() that is called from vma_complete() requires VMA to
+> > be write-locked (see vma_assert_write_locked() in
+> > vma_mark_detached()). The rule is that a VMA can be attached without
+> > write-locking but only a write-locked VMA can be detached. So, after
 >
-> We do so by providing the mmap_read_lock_maybe_expand() function which al=
-so
-> helpfully documents what get_arg_page() is doing here and adds an
-> additional check against VM_GROWSDOWN to make explicit that the stack
-> expansion logic is only invoked when the VMA is indeed a downward-growing
-> stack.
+> OK but write unlocking means the mm's seqcount is bumped and becomes
+> non-equal with vma's vma->vm_lock_seq, right?
 >
-> This allows expand_downwards() to become a static function.
+> Yet in the example above we happily set it to UINT_MAX and thus effective=
+ly
+> false unlock it for vma_start_read()?
 >
-> Importantly, the VMA referenced by mmap_read_maybe_expand() must NOT be
-> currently user-visible in any way, that is place within an rmap or VMA
-> tree. It must be a newly allocated VMA.
->
-> This is the case when exec invokes this function.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  fs/exec.c          | 14 +++---------
->  include/linux/mm.h |  5 ++---
->  mm/mmap.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++-
->  3 files changed, 58 insertions(+), 15 deletions(-)
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 98cb7ba9983c..1e1f79c514de 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -205,18 +205,10 @@ static struct page *get_arg_page(struct linux_binpr=
-m *bprm, unsigned long pos,
->         /*
->          * Avoid relying on expanding the stack down in GUP (which
->          * does not work for STACK_GROWSUP anyway), and just do it
-> -        * by hand ahead of time.
-> +        * ahead of time.
->          */
-> -       if (write && pos < vma->vm_start) {
-> -               mmap_write_lock(mm);
-> -               ret =3D expand_downwards(vma, pos);
-> -               if (unlikely(ret < 0)) {
-> -                       mmap_write_unlock(mm);
-> -                       return NULL;
-> -               }
-> -               mmap_write_downgrade(mm);
-> -       } else
-> -               mmap_read_lock(mm);
-> +       if (!mmap_read_lock_maybe_expand(mm, vma, pos, write))
-> +               return NULL;
-[...]
-> +/*
-> + * Obtain a read lock on mm->mmap_lock, if the specified address is belo=
-w the
-> + * start of the VMA, the intent is to perform a write, and it is a
-> + * downward-growing stack, then attempt to expand the stack to contain i=
-t.
-> + *
-> + * This function is intended only for obtaining an argument page from an=
- ELF
-> + * image, and is almost certainly NOT what you want to use for any other
-> + * purpose.
-> + *
-> + * IMPORTANT - VMA fields are accessed without an mmap lock being held, =
-so the
-> + * VMA referenced must not be linked in any user-visible tree, i.e. it m=
-ust be a
-> + * new VMA being mapped.
-> + *
-> + * The function assumes that addr is either contained within the VMA or =
-below
-> + * it, and makes no attempt to validate this value beyond that.
-> + *
-> + * Returns true if the read lock was obtained and a stack was perhaps ex=
-panded,
-> + * false if the stack expansion failed.
-> + *
-> + * On stack expansion the function temporarily acquires an mmap write lo=
-ck
-> + * before downgrading it.
-> + */
-> +bool mmap_read_lock_maybe_expand(struct mm_struct *mm,
-> +                                struct vm_area_struct *new_vma,
-> +                                unsigned long addr, bool write)
-> +{
-> +       if (!write || addr >=3D new_vma->vm_start) {
-> +               mmap_read_lock(mm);
-> +               return true;
-> +       }
-> +
-> +       if (!(new_vma->vm_flags & VM_GROWSDOWN))
-> +               return false;
-> +
-> +       mmap_write_lock(mm);
-> +       if (expand_downwards(new_vma, addr)) {
-> +               mmap_write_unlock(mm);
-> +               return false;
-> +       }
-> +
-> +       mmap_write_downgrade(mm);
-> +       return true;
-> +}
+> And this is all done before the vma_complete() side would actually reach
+> mmap_write_unlock(), AFAICS.
 
-Random thought: For write=3D=3D1, this looks a bit like
-lock_mm_and_find_vma(mm, addr, NULL), which needs similar stack
-expansion logic for handling userspace faults. But it's for a
-sufficiently different situation that maybe it makes sense to keep it
-like you did it, as a separate function...
+Ah, you are right. With the possibility of reuse, even a freed VMA
+should be kept write-locked until it is unlocked by
+mmap_write_unlock(). I think the fix for this is simply to not reset
+vma->vm_lock_seq inside vm_area_free(). I'll also need to add a
+comment for vm_lock_seq explaining these requirements.
+Do you agree that such a change would resolve the issue?
+
+>
+> > vma_mark_detached() and before down_read_trylock(&vma->vm_lock.lock)
+> > in vma_start_read() the VMA write-lock should have been released by
+> > mmap_write_unlock() and therefore vma->detached=3Dfalse should be
+> > visible to the reader when it executed lock_vma_under_rcu().
+> >
+> >>   is_vma_detached() - false negative as the write above didn't propaga=
+te
+> >>     here yet; a read barrier but where is the write barrier?
+> >>   checks for vma->vm_mm, vm_start, vm_end - nobody reset them yet so f=
+alse
+> >>     positive, or they got reset on reallocation but writes didn't prop=
+agate
+> >>
+> >> Am I missing something that would prevent lock_vma_under_rcu() falsely
+> >> succeeding here?
+> >>
+>
 
