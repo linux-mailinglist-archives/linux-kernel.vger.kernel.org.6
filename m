@@ -1,95 +1,74 @@
-Return-Path: <linux-kernel+bounces-439494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A3C9EB000
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:36:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CAE9EB008
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:39:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1238162D24
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B951888382
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F50210F45;
-	Tue, 10 Dec 2024 11:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34CD2080F4;
+	Tue, 10 Dec 2024 11:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M/epqt+d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="suW9qEgz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M/epqt+d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="suW9qEgz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eU09mV9o"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9029210F6A;
-	Tue, 10 Dec 2024 11:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF15923DEA1;
+	Tue, 10 Dec 2024 11:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733830581; cv=none; b=VckIfLS+eU8+u2rclmZroYWL3aMrXfWIatiWZRtyxclQD1mPdZV2Rr4mwYrv2Bz8emgpvOASdhD16mEUOsOkxLIxbod+SdYwvjhXTVtRe3NagfUjMdaO/DYiEwKAAR8ijo1rrHP77iNnIQGeuo3XBGWTKs5mby1vH8CX+MkUs/g=
+	t=1733830789; cv=none; b=LWpWImhDlmSQcMjzCXOUCk2ydknUUAZu3xpPf/428vAreEOM99rzHs1WFodFiQ31OZkyQBBf/QqtssgLjJLbOXwL6eNKtYw2jDM7A7Yi1I61An/gUpfH7+18EoYB2abPjvP4vebVZhkHNpzWhjjS2xITwCXQVcaVNpIty+ku/ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733830581; c=relaxed/simple;
-	bh=U1Ecj7hQLvD5BfSnMDr1aYqAwnjNO3Z2EI3/TNHop0I=;
+	s=arc-20240116; t=1733830789; c=relaxed/simple;
+	bh=MTzLSYgqUA+bsOXDpT13CU6rZYFE9WiZ5LWCOFsmbTc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z8NN7ErimsUWdMiqqxbZNSCVdFkoH5EUVptbf0kwhFWtRvN10dj08QYeO4Xx1CAbHOrx1+8y7am4Cc932wY4hXcDBijn7oJrC8xNBIrYQo8VHTxcolAh3npRAzOaL+wK2V+tbYkivThtYc4iUeBjC3enW64SjnTW+rp0b2sR+qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M/epqt+d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=suW9qEgz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M/epqt+d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=suW9qEgz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 84D4321101;
-	Tue, 10 Dec 2024 11:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733830577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
-	b=M/epqt+dfeGjPzB0kjhchXA/rgIcDlm+z1p4Iq+Fh4g62RPA43g+phiU5J5o+/prVpAdyn
-	pYMHSq+FfUMaqVYcvy4AspujnVtcA+67rBWseeNgg3GyXYImwx/d2VatGllitq76FUsq3w
-	xss+ALm4mK+R5MYE1l6Nhz5qNrUJmlg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733830577;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
-	b=suW9qEgzyNbQuM0/Pi8zQwjWnnwV/VbFHNoRJSZVub1W3HKHzgD49aNog9wcFx/1FBp6r7
-	F45/wn+yiJPqprCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="M/epqt+d";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=suW9qEgz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733830577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
-	b=M/epqt+dfeGjPzB0kjhchXA/rgIcDlm+z1p4Iq+Fh4g62RPA43g+phiU5J5o+/prVpAdyn
-	pYMHSq+FfUMaqVYcvy4AspujnVtcA+67rBWseeNgg3GyXYImwx/d2VatGllitq76FUsq3w
-	xss+ALm4mK+R5MYE1l6Nhz5qNrUJmlg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733830577;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
-	b=suW9qEgzyNbQuM0/Pi8zQwjWnnwV/VbFHNoRJSZVub1W3HKHzgD49aNog9wcFx/1FBp6r7
-	F45/wn+yiJPqprCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A1A4138D2;
-	Tue, 10 Dec 2024 11:36:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oBrHEbEnWGexWwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 10 Dec 2024 11:36:17 +0000
-Message-ID: <aafe0538-0c56-469e-b23b-3f22cb8186a0@suse.cz>
-Date: Tue, 10 Dec 2024 12:36:16 +0100
+	 In-Reply-To:Content-Type; b=kuk7TMVvarf5vdFNsJyDQjhjZXGjjxwKBy2kd8TXoLM9/+51fzN3QiHXyvg5++L1pHDw15cCSUw/jitCQgGbquJDRJsTE/XymBzAgUn3y+HVeSFKtYX2Oh/b6Ls1+J+1l3wp7FIAYie68/VBkEfLmVUwrzcGTF70LT2hJn7bPI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eU09mV9o; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAAliFS014132;
+	Tue, 10 Dec 2024 11:39:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=mz1VnT
+	CLKwSTE/XFSlcXZVDFOm23CFsOIfddiKwhVAg=; b=eU09mV9okO50Wj2nAFafab
+	fPg2Q6IIt3XsQ7gSMm/YTIxyBm4Ugnr7RH3kMOf8MLTE7MBLz6ru3scegZiQKD4B
+	Z4swt0HuJILCz+qv/Lr7a4LSVXFArMsg2KQBLiqV8zYQSqSqTJGg8goYcwJ0evzz
+	sslzreMzrj4icg3E3IXZ+yqK3iMcmze6bhbbd68Ksjt1ywQ0FCN8rQoaNagM2+iR
+	WiEtRd/fkDLdji2GntUflXZnMunFk7MAy1exrcycXroRW2SwBOqTNmowjzC4zRNw
+	p0XE8zUKsBBe/2TkQSsLWhCZmIpt6e0FOKvQ7lyYTs15aesqAFr48C46cH1yiySg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq610n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:39:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA81BUa018636;
+	Tue, 10 Dec 2024 11:39:45 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26kbagm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:39:45 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BABde8k55705988
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 11:39:40 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F01D620043;
+	Tue, 10 Dec 2024 11:39:39 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CC56420040;
+	Tue, 10 Dec 2024 11:39:39 +0000 (GMT)
+Received: from [9.155.198.95] (unknown [9.155.198.95])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 11:39:39 +0000 (GMT)
+Message-ID: <1dfd5850-3fd0-4b85-8293-ba4221a5e6ae@linux.ibm.com>
+Date: Tue, 10 Dec 2024 12:39:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,129 +76,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/6] mm: mark vma as detached until it's added into vma
- tree
+Subject: Re: [PATCH v1 1/1] KVM: s390: VSIE: fix virtual/physical address in
+ unpin_scb()
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        borntraeger@de.ibm.com, nrb@linux.ibm.com
+References: <20241210083948.23963-1-imbrenda@linux.ibm.com>
 Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
- mhocko@suse.com, hannes@cmpxchg.org, mjguzik@gmail.com,
- oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com,
- peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
- brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
- minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
- souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@android.com
-References: <20241206225204.4008261-1-surenb@google.com>
- <20241206225204.4008261-4-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241206225204.4008261-4-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20241210083948.23963-1-imbrenda@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 84D4321101
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,oracle.com,suse.com,cmpxchg.org,gmail.com,intel.com,techsingularity.net,redhat.com,stgolabs.net,kernel.org,sina.com,google.com,linux.dev,soleen.com,lwn.net,vger.kernel.org,kvack.org,android.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLk41rrgs15z4i1nmqiwtynpyh)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,linux.dev:email];
-	URIBL_BLOCKED(0.00)[linux.dev:email,suse.cz:mid,suse.cz:dkim,oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: CVlB-01JWvYpwiVx0a7D0SYh7SL6E04g
+X-Proofpoint-GUID: CVlB-01JWvYpwiVx0a7D0SYh7SL6E04g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=943 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100085
 
-On 12/6/24 23:52, Suren Baghdasaryan wrote:
-> Current implementation does not set detached flag when a VMA is first
-> allocated. This does not represent the real state of the VMA, which is
-> detached until it is added into mm's VMA tree. Fix this by marking new
-> VMAs as detached and resetting detached flag only after VMA is added
-> into a tree.
-> Introduce vma_mark_attached() to make the API more readable and to
-> simplify possible future cleanup when vma->vm_mm might be used to
-> indicate detached vma and vma_mark_attached() will need an additional
-> mm parameter.
+On 12/10/24 9:39 AM, Claudio Imbrenda wrote:
+> In commit 77b533411595 ("KVM: s390: VSIE: sort out virtual/physical
+> address in pin_guest_page"), only pin_scb() has been updated. This
+> means that in unpin_scb() a virtual address was still used directly as
+> physical address without conversion. The resulting physical address is
+> obviously wrong and most of the time also invalid.
 > 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Since commit d0ef8d9fbebe ("KVM: s390: Use kvm_release_page_dirty() to
+> unpin "struct page" memory"), unpin_guest_page() will directly use
+> kvm_release_page_dirty(), instead of kvm_release_pfn_dirty(), which has
+> since been removed.
+> 
+> One of the checks that were performed by kvm_release_pfn_dirty() was to
+> verify whether the page was valid at all, and silently return
+> successfully without doing anything if the page was invalid.
+> 
+> When kvm_release_pfn_dirty() was still used, the invalid page was thus
+> silently ignored. Now the check is gone and the result is an Oops.
+> This also means that when running with a V!=R kernel, the page was not
+> released, causing a leak.
+> 
+> The solution is simply to add the missing virt_to_phys()
 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 21660a9ad97a..71990f46aa4e 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -465,6 +465,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
->  	data_race(memcpy(new, orig, sizeof(*new)));
->  	vma_lock_init(new);
->  	INIT_LIST_HEAD(&new->anon_vma_chain);
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +	/* vma is not locked, can't use vma_mark_detached() */
-> +	new->detached = true;
-> +#endif
+Please lower-case the "VSIE" in the subject.
+I know that you're replicating the subject prefix from the patch you're 
+fixing but this looks weird.
 
-It occured me we could probably move the detached setting to vma_lock_init()
-to avoid the #ifdef (also in the ctor in next patch)?
+Thanks for fixing this so quickly.
+Please push this for CI coverage if you haven't already.
 
->  	vma_numab_state_init(new);
->  	dup_anon_vma_name(orig, new);
->  
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 
