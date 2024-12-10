@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-439600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798599EB18A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:02:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA7F9EB193
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:03:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BBA32844A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B29A188D2E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D0E1B87FA;
-	Tue, 10 Dec 2024 13:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E03E1BCA0C;
+	Tue, 10 Dec 2024 13:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikJS7Vp/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZHyQRb0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA151B85D1;
-	Tue, 10 Dec 2024 13:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4C61B85D1;
+	Tue, 10 Dec 2024 13:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733835653; cv=none; b=NTHIPIbGtRfmmXrvuNu3J4OKVYtOehgBCHCE47ppzsN/rIJWdi6Dwnk1oxLbUsBiMnWPNQoQ8HpZihmAnbqySNc/FmNppTMEcMNEwmqvY2ebtV3Rkqwzg5rAX5SrXs0GJlD3SS6KZjacSDGRgJLbT7RdZ2Ti/j69PXvvnYTiJYw=
+	t=1733835657; cv=none; b=G3HZj+KPyMaxIhdRAAG64LF+L1Mw46RM1f181s1pR4T1CNz98murJONjFbNaBRXj6D/WwVRSOxUU05L3L7GgvAReQHQtCMfs/QguFhPZpCVXv2IoeLlmbbCYCb4B7FFhaWvi1nVaq4mThfUaqTLHRXOnPOQBWF5DUHd4mzkmBT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733835653; c=relaxed/simple;
-	bh=MIAxjIrD/lQ/XU1a7Wha9ESXrTCJKMU1xX6Hab/QdPQ=;
+	s=arc-20240116; t=1733835657; c=relaxed/simple;
+	bh=zEwmhiXWSNdbVox4v1ywGDTEkwYo+ZA+AQNMZDvtC0U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=useFASYKbifjBrfWzEkl+VEW6BDkcftA6nu+/Yykq0A8c53G9LQKpnLMUm3qPn9p/g9yfOydaDbrVs7jTUSbV0W4FOf3v/xIuLRJjzXmiW9BOq469u20o9sLWiaJry90azROmHMc8UWJc46u3mV0ZIKPBsrmOgTqY6a728dflKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikJS7Vp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4104C4CED6;
-	Tue, 10 Dec 2024 13:00:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=GOhDLq3yx62Skz64Avy5UAyHcq9p6IwRbqCFaV+LwKEzY3LyNBmPh50JV74iWQeMap5OGD+wH1uC8PK0XdXZuLM8VFHMkgB5aCMJWvquWLL36l0NgQYz6ah7yCBVx7YHVlL4CnZbhU+BY9RN4eb6obO+nxTyjfqyRtyeR2zTpn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZHyQRb0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 982D1C4CEDE;
+	Tue, 10 Dec 2024 13:00:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733835653;
-	bh=MIAxjIrD/lQ/XU1a7Wha9ESXrTCJKMU1xX6Hab/QdPQ=;
+	s=k20201202; t=1733835656;
+	bh=zEwmhiXWSNdbVox4v1ywGDTEkwYo+ZA+AQNMZDvtC0U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ikJS7Vp/nie0FJ5JFNlxCSZpO3Splxs5tL1yMayfWaVGdQpsABgrAx6wDO8Yv/c3H
-	 DbU+1yG+/4HF3e5e+WE+m1/5fWOV9DBynRekfkp6DTGg2ArspwKBnfQfjQl6lgUmLk
-	 3J54ZheUj9qzsq7+J8CcWP7vuAz4y9eRjb3DTb55AKz96E9gPy4boitPH+KS/uOY/U
-	 CEVE4dUwjrB2JDwwJJwEh4vUYUMAFml5O5v64p5/6FHCvFwzqz3FJeOWwnRBOhzwsn
-	 IExFIKQlhgh/ECiO8Ig1m2g9ZBGAlDhuXFCAWWCY22TGVKeVK0+QMdHCi+M6uM4sRF
-	 YfFIhPymfuo6g==
+	b=cZHyQRb09aVdckaqkajo4eVvvzHyNC8KLVkdZP6Yf6i4/uPqc7gFZGQ8MCOo7O2E/
+	 XSaNPzGv8jbL8bfjO6sZuNk65bMm4nqT/3u90zls+2YoVwfujB1EuyToPt09NU6ZHF
+	 JR0gAAp2xG2EF4+JI+W2TsEObUJjuioGJ1tI2WaD1nWBP6OXjgU1ON/KiyeDcibd8J
+	 /uOwC/lHNPX2J4RbKcQVp7DJrj0piWQ6OVXqrZj7nrbvPHNaeglnHhMCBYbiGbEzrD
+	 4R1NkJsJ0z5+R321AlES+nFWpAhpfzBlzvHU949s8THLJNUj2m2vyV8NJ5T4jPZftd
+	 qN4vUGUNWbwBw==
 From: Mark Brown <broonie@kernel.org>
-To: heiko@sntech.de, luis.dearquer@inertim.com, 
- Christian Loehle <christian.loehle@arm.com>
+To: michal.simek@amd.com, linus.walleij@linaro.org, 
+ Mingwei Zheng <zmw12306@gmail.com>
 Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1f2b3af4-2b7a-4ac8-ab95-c80120ebf44c@arm.com>
-References: <1f2b3af4-2b7a-4ac8-ab95-c80120ebf44c@arm.com>
-Subject: Re: [PATCH] spi: rockchip: Fix PM runtime count on no-op cs
-Message-Id: <173383565160.34030.9711673452793299443.b4-ty@kernel.org>
-Date: Tue, 10 Dec 2024 13:00:51 +0000
+ linux-kernel@vger.kernel.org, Jiasheng Jiang <jiashengjiangcool@gmail.com>
+In-Reply-To: <20241207013258.3615645-1-zmw12306@gmail.com>
+References: <20241207013258.3615645-1-zmw12306@gmail.com>
+Subject: Re: [PATCH] spi: zynq-qspi: Add check for clk_enable()
+Message-Id: <173383565535.34030.14188162384074341857.b4-ty@kernel.org>
+Date: Tue, 10 Dec 2024 13:00:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,15 +60,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Fri, 06 Dec 2024 19:50:55 +0000, Christian Loehle wrote:
-> The early bail out that caused an out-of-bounds write was removed with
-> commit 5c018e378f91 ("spi: spi-rockchip: Fix out of bounds array
-> access")
-> Unfortunately that caused the PM runtime count to be unbalanced and
-> underflowed on the first call. To fix that reintroduce a no-op check
-> by reading the register directly.
+On Fri, 06 Dec 2024 20:32:58 -0500, Mingwei Zheng wrote:
+> Add check for the return value of clk_enable() to catch the potential
+> error.
 > 
-> [...]
+> 
 
 Applied to
 
@@ -76,8 +72,8 @@ Applied to
 
 Thanks!
 
-[1/1] spi: rockchip: Fix PM runtime count on no-op cs
-      commit: 0bb394067a792e7119abc9e0b7158ef19381f456
+[1/1] spi: zynq-qspi: Add check for clk_enable()
+      commit: 8332e667099712e05ec87ba2058af394b51ebdc9
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
