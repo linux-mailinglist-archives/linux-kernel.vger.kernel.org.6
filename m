@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-439344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1BC9EADF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:25:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD4C16059E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:25:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE452080C4;
-	Tue, 10 Dec 2024 10:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVgQP069"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87B09EADF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:27:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D39578F40;
-	Tue, 10 Dec 2024 10:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CA82811E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:27:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364081DC98C;
+	Tue, 10 Dec 2024 10:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Muime3ua";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JJNN0vSs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABA878F40;
+	Tue, 10 Dec 2024 10:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733826288; cv=none; b=fl766ADi540Pn6wvf2IjAuP0GvYw3Nhn4SqX2p4BHtN+HOhEwWz2QvX5Okdc8vIHdX6ZgOIcA94zK8CLa7RuaOZTC1jODIeqblsupLMuEAZ2c+OueYJjHkZ8ZZmDR2bBTecK5iZG6i6Adt9SQ5c8yqq46+tEG6cANGRtD0chVRI=
+	t=1733826423; cv=none; b=BrXa51U7Y8gNXZzBwc6yT9TQanOmu+reLxrvE2A8PldcAXhnnkrR54sIrJE90PgqUyuRF7PnDsrdiVJSJDTVpyxh76lvfcK6wFWgDaV6Nq/gPmT2k1z8IgsII4BQ5z18BR1dUqeudW4k9ErtsH8+tj5eXgirI8tLSKwVThDeRjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733826288; c=relaxed/simple;
-	bh=nnrUpE9sFrCkqY4+Ciod2ViinqGnUMmjiXJBjBqznnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oe3yqdDeNjWgtvamgI5lSsVBk0x604ssmg5IF/A2dfHbTF9yakm16Ctas+ESSE7bHUqcE/YthrDVKBzgSIlDxWaXI8ktgTqhEf8Of3KhWvQijCnyEqVYMDg1xcf4As52tV+n76Z/tUlGslKvPCnNbh/jAXs6z/wnV+OIz4S/p7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVgQP069; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB1FC4CED6;
-	Tue, 10 Dec 2024 10:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733826287;
-	bh=nnrUpE9sFrCkqY4+Ciod2ViinqGnUMmjiXJBjBqznnc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cVgQP069u6ajHn9LWdJeisCooqwRwlg6t1ZcQLRZ/k4LFoqzRexUEjE0kD64llX+J
-	 rqESDF1SMkZH1zCuiUrVucajjCFg1QDDgziCGOgwkHdoZKS5DTq8JKrSQMPagzFnfb
-	 /wrm7Gh1mVHJ68LBUTMFerB7JtL/YKbt9zHnaZHHzzQ5gvpnWTCMEJ9Hsjsb4iBbwc
-	 hmCPdqjIdxki1AC3EaRUvJUC7E8D57dAszogH6mfIWgULHPebUUWvINZlGFBxIma9R
-	 1vo5ipK57Qbacf1Wr2rwMmN5+Y//0xrlB5np5saO/NAXNschCvkQd2Rfdn4AYWm7d5
-	 w7c/COuZCEvag==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: [PATCH v2] kbuild: suppress stdout from merge_config for silent builds
-Date: Tue, 10 Dec 2024 19:24:41 +0900
-Message-ID: <20241210102442.3390267-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733826423; c=relaxed/simple;
+	bh=4gosl74ULFrnsTEib88w88LiIg7QTsZ9yU2UBqHLx1o=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=cmctX/9Vt/vQk1Faw17v1MiJITLAWQUYzk/Xzb01mSF27kheXBGmZ2K/XRdDlmyKuHLsfhGc0kdqVI945qoNcE1llGyYXaOf1V/YsyP0XEA0k6mNrmWewl2WyrAhj+vqPhWepfRf/eNANYi0XgjQWW08oJ0fb3YcITSba7MQI9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Muime3ua; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JJNN0vSs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 10 Dec 2024 10:26:59 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733826420;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4X/LVJKLWfgMgbzVrpQU5XKZr9terWqBA5e+j/+HqxU=;
+	b=Muime3uaAM6MXutJdP9/jVk/rmFGVLMHMqNrVl0PXMnhKsdmdAueuxbXbX6itp6uAt4rA8
+	bRxcxIOtvMHo8KE0UQ5t5Emq0ZNjd6HO1/mUQLxoYgGO9XU1m06L2tqtIWo/i7oWVFexvn
+	MRp/mPI0U6UbQX0ti/8Lh6yrFoWZXApBdzEW3vGGw5Xk7JrzaABC8+4wcx12q+n8F65eTs
+	m7+PnlVZTS38xcSaM9mQbsoIyN7VnRWqMpnNcYohMoibM+bD1sJv4iU2reukHMl2MNdCPY
+	nTlCd1UjDd8JOBmVXvtEpTvApV5/w/1GafkV7JKL1BB/gR7272Hsi1lKOFsmEg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733826420;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4X/LVJKLWfgMgbzVrpQU5XKZr9terWqBA5e+j/+HqxU=;
+	b=JJNN0vSsuHSRPhezyfNhCjkjk5Z0UcY0tGyuCzlnBnGR7u+axZy2osCpsWTg56mb+kJsku
+	WyeFx6qI96gpRGAg==
+From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/boot/64: Fix spurious undefined reference when
+ CONFIG_X86_5LEVEL=n, on GCC-12
+Cc: kernel test robot <lkp@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241209094105.762857-2-ardb+git@google.com>
+References: <20241209094105.762857-2-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <173382641945.412.11658975177011805962.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-merge_config does not respect the Make's -s (--silent) option.
+The following commit has been merged into the x86/boot branch of tip:
 
-Let's sink the stdout from merge_config for silent builds.
+Commit-ID:     35aafa1d41cee0d3d50164561bca34befc1d9ce3
+Gitweb:        https://git.kernel.org/tip/35aafa1d41cee0d3d50164561bca34befc1d9ce3
+Author:        Ard Biesheuvel <ardb@kernel.org>
+AuthorDate:    Mon, 09 Dec 2024 10:41:06 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 10 Dec 2024 11:16:32 +01:00
 
-This commit does not cater to the direct invocation of merge_config.sh
-(e.g. arch/mips/Makefile).
+x86/boot/64: Fix spurious undefined reference when CONFIG_X86_5LEVEL=n, on GCC-12
 
-Reported-by: Leon Romanovsky <leon@kernel.org>
-Closes: https://lore.kernel.org/all/e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com/
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Tested-by: Leon Romanovsky <leon@kernel.org>
+In __startup_64(), the bool 'la57' can only assume the 'true' value if
+CONFIG_X86_5LEVEL is enabled in the build, and generally, the compiler
+can make this inference at build time, and elide any references to the
+symbol 'level4_kernel_pgt', which may be undefined if 'la57' is false.
+
+As it turns out, GCC 12 gets this wrong sometimes, and gives up with a
+build error:
+
+   ld: arch/x86/kernel/head64.o: in function `__startup_64':
+   head64.c:(.head.text+0xbd): undefined reference to `level4_kernel_pgt'
+
+even though the reference is in unreachable code. Fix this by
+duplicating the IS_ENABLED(CONFIG_X86_5LEVEL) in the conditional that
+tests the value of 'la57'.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20241209094105.762857-2-ardb+git@google.com
+Closes: https://lore.kernel.org/oe-kbuild-all/202412060403.efD8Kgb7-lkp@intel.com/
 ---
+ arch/x86/kernel/head64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-  - Remove CONFIG_SHELL from Makefile.defconf
-
- scripts/Makefile.defconf | 13 +++++++------
- scripts/kconfig/Makefile |  4 +++-
- 2 files changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/scripts/Makefile.defconf b/scripts/Makefile.defconf
-index 226ea3df3b4b..a44307f08e9d 100644
---- a/scripts/Makefile.defconf
-+++ b/scripts/Makefile.defconf
-@@ -1,6 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0
- # Configuration heplers
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 54f9a8f..22c9ba3 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -186,7 +186,7 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
+ 	pgd = &RIP_REL_REF(early_top_pgt)->pgd;
+ 	pgd[pgd_index(__START_KERNEL_map)] += load_delta;
  
-+cmd_merge_fragments = \
-+	$(srctree)/scripts/kconfig/merge_config.sh \
-+	$4 -m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$2 \
-+	$(foreach config,$3,$(srctree)/arch/$(SRCARCH)/configs/$(config).config)
-+
- # Creates 'merged defconfigs'
- # ---------------------------------------------------------------------------
- # Usage:
-@@ -8,9 +13,7 @@
- #
- # Input config fragments without '.config' suffix
- define merge_into_defconfig
--	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
--		-m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$(1) \
--		$(foreach config,$(2),$(srctree)/arch/$(SRCARCH)/configs/$(config).config)
-+	$(call cmd,merge_fragments,$1,$2)
- 	+$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
- endef
+-	if (la57) {
++	if (IS_ENABLED(CONFIG_X86_5LEVEL) && la57) {
+ 		p4d = (p4dval_t *)&RIP_REL_REF(level4_kernel_pgt);
+ 		p4d[MAX_PTRS_PER_P4D - 1] += load_delta;
  
-@@ -22,8 +25,6 @@ endef
- #
- # Input config fragments without '.config' suffix
- define merge_into_defconfig_override
--	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
--		-Q -m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$(1) \
--		$(foreach config,$(2),$(srctree)/arch/$(SRCARCH)/configs/$(config).config)
-+	$(call cmd,merge_fragments,$1,$2,-Q)
- 	+$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
- endef
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index a0a0be38cbdc..fb50bd4f4103 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -105,9 +105,11 @@ configfiles = $(wildcard $(srctree)/kernel/configs/$(1) $(srctree)/arch/$(SRCARC
- all-config-fragments = $(call configfiles,*.config)
- config-fragments = $(call configfiles,$@)
- 
-+cmd_merge_fragments = $(srctree)/scripts/kconfig/merge_config.sh -m $(KCONFIG_CONFIG) $(config-fragments)
-+
- %.config: $(obj)/conf
- 	$(if $(config-fragments),, $(error $@ fragment does not exists on this architecture))
--	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh -m $(KCONFIG_CONFIG) $(config-fragments)
-+	$(call cmd,merge_fragments)
- 	$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
- 
- PHONY += tinyconfig
--- 
-2.43.0
-
 
