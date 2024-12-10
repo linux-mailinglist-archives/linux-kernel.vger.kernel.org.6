@@ -1,100 +1,84 @@
-Return-Path: <linux-kernel+bounces-440312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AD79EBBAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:15:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B3E9EBBAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55DD283687
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED812840EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAEA23027C;
-	Tue, 10 Dec 2024 21:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBD723024D;
+	Tue, 10 Dec 2024 21:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XMgjCp/h"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="al3wymTk"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C0123ED4A;
-	Tue, 10 Dec 2024 21:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C4B23ED4A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733865337; cv=none; b=h5+ROOCk0/uIlDSs96juwN4uPx8hClB+iaLu7lrufWkrH95WEFuRFd35oKa5po8kM6Jw0cV3hs6JTAvIJHa5me1ijnDAS13nkkJO2zLQo43h3mm6OR/KxMSc6NKmyR+e2P523aXfghKTbobRPGi8yQL8wfi1iYqH/ovJvrR6xqc=
+	t=1733865383; cv=none; b=BZHjadB+1DVHw4VdZxg+63UKTumLJzDM64LUf+Cl/VJok/J81PhkQsETjRPf0lfVieLIIWOFPdXAz+V+ueQvtskEOzygzuvW/D2my+FnZhrjRCiLj/AbQ/OW0uuHU6AcG0fb8XukI6xMsLI02aoSH9AsdyTM7KtEKnGZjBHcKKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733865337; c=relaxed/simple;
-	bh=loF/WZMc4MUUZFW1S1NBMDs3YzeWx6d+kwJy5sZJzZE=;
+	s=arc-20240116; t=1733865383; c=relaxed/simple;
+	bh=Vhk9wUtufHdBKtIffOrgwOkZRLv5EvpKs4LVfDrBxEU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttlb8aqEVZMYsxe5MgiIn425XDtz5Fkd694LwCb1mIgEkmvVhOkWYHkUSJL3avI+nhMz4veLajkI3OK/pWA6woJ3THcEOuOSfocRUiiFE7TE5VnKstMXc5PWnYnvT/0yb5AxCftO5xig2awkyclV1wjfoH05TXoPijrg3R2Tvkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XMgjCp/h; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa6935b4f35so37407666b.0;
-        Tue, 10 Dec 2024 13:15:35 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gE3CDV09qprEbJSUawsFAjLkBYvXQNSO7pt+40StV8Ni00DZBsc4gXax8+vBlJ15QFTxfYCL8pmZ5WEn/0uit9yokIBcYI7WOAO7v95E8UFTe7aXzuyNHhTWR7d3mZhr4Jq1xwmX7sUZFCsTftK2IydHctD1tqXAKl6G5au3/k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=al3wymTk; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b6e5ee6ac7so60152685a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:16:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733865334; x=1734470134; darn=vger.kernel.org;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1733865378; x=1734470178; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H7QDnRhBemOiZezpHGKSoMKm4TcZsXptVa4lYZVMKw4=;
-        b=XMgjCp/hbtV5wxKZJ1yTeKTavlJofuAgGl4vW4GVI1n6EqeVf3788/Vn9w2qnssQCX
-         hKnexHVjCUBqkPYMKV0a51RLLIMxlFbN0WMieU+Dc768y1/T6KAzxBFyq7E49SMWfAFJ
-         12stgWmDI56kG6pmYmGEbVR5oTe2ivR5sqz4VOLP8qVk615F9ziV2BTGaUEZBMFVBP9T
-         6P5qywjgbXsPg0nzpOvkhIM8QaLeIufqEmE83mznQwc2BJpIkdCpBoC1DiATFTycO/aP
-         DBut+TlDhGYdiNjcGTjfI+osqHPUm8ukUr+uL7MrGZeTgJKe1ryChtZ2Vnd5t2C4NdGX
-         mfmw==
+        bh=gyk9ndnvoGvMP7pC2cu6SDb/gT8fltkKrw46Jm17ZPc=;
+        b=al3wymTkn9rwggllv/HGWzzVNRndEDEeVUsEJl5ZhCgZjUp+4kX7Of1UXyLeJosXlz
+         ySV1b1qogx1kmsHVJy4cG56EarQyeeew+Aq3zbfEfifz7EgoxOLdoiPu+kWK+MU5n/mL
+         wFH9BDf45N+B54OvwHBs4MwVlXLtfSbjviqifMYXSoJ7Ndi6Lis4lDwKoCgjaHxmJQOS
+         5dqLVbAH7Tbu5NV4rs0vrWuKcuWK1QIPnm2frc2zEmO3ze2A+rOC0NFJ/sfpIbggYkeh
+         vV3T+HwDnvl/M17TR4cYXWuNVHEs8klN4Pf6Up0KOqlwqZu7Uzv4AG01qtKCKCu8XADl
+         J23Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733865334; x=1734470134;
+        d=1e100.net; s=20230601; t=1733865378; x=1734470178;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H7QDnRhBemOiZezpHGKSoMKm4TcZsXptVa4lYZVMKw4=;
-        b=OTkdgF5JNVU/0gTmbNKGXmLBR+NzO5EeqcpugdYFCObFWyOrHafme3b8DAkVyM52jX
-         jVbg5KoE6IJiN/qJD6B2pc/lbxhJeRMPutD3rK90OBoA7qGHKYPX/RfYjlyhmHWAtRcb
-         SRLLeIYdeiJqbdGS0vnc6ApuuxGFx6Tnvxu6U/HtLhrKlrGmfS9TXzwY9dxD24oIXXV+
-         XpMMURCU6Qv5wec+Dy191xDqoA4oG+/grmvHSFqH8TcE+wHfqGlYQbXXZKTEs27kVu/v
-         g8oiXXbdR/UdDpVH9o+PdIAqHfLiXHeANCbQGczbB0fpRhowurjQ64fAVXxboF0UHO/n
-         KUGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2LAnPxc1Aes6SRcMHLPI5yLK7nlRfGdRPcr7KqqW6twqqAgI8s9cCitdQkcbJvzGjYfaHAOHg1iLL@vger.kernel.org, AJvYcCVTceGi+R131pO1wlBp9chOLAJqP+fSqHbQjsHy/frhyrOYJXokoAM5wkI7By2q79gCtgTwK+ZZ@vger.kernel.org, AJvYcCXdsTkUYm4dLBkRDppf/UPBYYQkBlCxSVSjBea0pUSU6zWxvjzILas3C8dUKuhYVBImMruKeR+S9iZPXcwo@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyIKH7F6dyF6YkCIbK4nQX6tK39mweKoX1NK9GGArOGK0CWPGH
-	fCBhxPxrc5SSsg5ul7OkxHAsZ76WMFkIKUWoaFpY9XdL8A3fwMAg
-X-Gm-Gg: ASbGncsi2F4meM7NIsEF5Cjk4N16VXEot31HBG4Oi5+Fxwh8+7u2Y5PPu0qcSIiUGXH
-	9OhikyOTqxbXhYdT0iF8WaPluoJgAQ064xfYAfCRK9Leukz1q/CYD8PNfMqtvHBW0qvgYWUe/Ik
-	xcPXBmgAn5W4kEsfw4o78I6XakZK2Q0srjJc8Hs1PeRAjeLLT4nZeOPWndQ8k94Dv6XNYpeWcOQ
-	1bVSCi4JUGYtYtf96UIIbK0ttffFKmhVf4Vgyia8g==
-X-Google-Smtp-Source: AGHT+IGxAjFXMAf+F8mEXMc+auUHpdwpbNPCA+k5jUjJE3/MSupwfdCkIxkoOyQU//98Mv9Et2opNA==
-X-Received: by 2002:a17:907:2cc6:b0:a9a:b50:1c4f with SMTP id a640c23a62f3a-aa6b13c92a2mr5523866b.13.1733865333794;
-        Tue, 10 Dec 2024 13:15:33 -0800 (PST)
-Received: from skbuf ([86.127.124.81])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa650ea7369sm596924566b.74.2024.12.10.13.15.31
+        bh=gyk9ndnvoGvMP7pC2cu6SDb/gT8fltkKrw46Jm17ZPc=;
+        b=PzKVtIndnO+yWe65s4FAe3tyQ5G034wVDCxyKWrMKdsE3brwdj0SDLDAExl3DpzSno
+         w0rU/XTU6uW0Kt6FCX4CvdGHLsXzcSO1r5K3PQzhmVIVSzaTx6dd8ZVhcx7XwKIx2tto
+         xOn3auquNVeXYkIukiGfrTf+MOz3FC0z3IqiOShWrCTEtR4eyo8mZBq5Ee7PLQTEcdsD
+         XK1jkV7mO9JBDBVIp7ED/hKCQQOPkOmazQptfHYey8HbuKt2NQnynNBqBoY8D3Oxt9JZ
+         L3r7cWtlV/FykSh8wXV9bObOT6I3i2t1jyN7kuhCUzRXvanh7/BpKBZoZCNT/pAmaf8o
+         dkzA==
+X-Gm-Message-State: AOJu0YwLoRjESC2ez6RQEEL7W24G6Z/4YfZrFTgjeFLVRFdOJOAkelPi
+	+DVcsuk50izT21mnMqp9QB5G2uQeAvV4rloPO7Us8+hcr6AjPSh9hctgRtq0xrg=
+X-Gm-Gg: ASbGncvp/10OiAbJurcQJkpjyigrDLmaNaXD61KcVWfh5ULHHsvYTN6nRBw1uoErQ5A
+	+kjoYW1y1uv3eHW9gkl0G8lydC9a1mFIO8SlVcpZp9ZEKsNnEzBfoU4di4w1MRLH/HiVtbcTQ0O
+	aGhR2hZ0OeT7xT20k+o4bbc7sj9eb7ptjcFvedgIpu9S68daWQ2lGV9qbUBJ85KrZb9R+EbsfPk
+	Q03VCT1pa5tVxJvw+oubPaRlNr+0k1hZnX3xHzF0TuQum6wlwe3
+X-Google-Smtp-Source: AGHT+IGbonnfLU/NBu46yYYQXI1v4DRq430cXoE7IJ5mqfU9VxFIjoQbjkh3PuJphJoRzWCExYATJQ==
+X-Received: by 2002:a05:6214:21a5:b0:6d8:8ca0:a7 with SMTP id 6a1803df08f44-6d934b90095mr6115126d6.30.1733865377709;
+        Tue, 10 Dec 2024 13:16:17 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8eb1ce58bsm51692076d6.49.2024.12.10.13.16.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 13:15:32 -0800 (PST)
-Date: Tue, 10 Dec 2024 23:15:29 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v11 5/9] mfd: an8855: Add support for Airoha
- AN8855 Switch MFD
-Message-ID: <20241210211529.osgzd54flq646bcr@skbuf>
-References: <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-6-ansuelsmth@gmail.com>
- <20241209134459.27110-6-ansuelsmth@gmail.com>
+        Tue, 10 Dec 2024 13:16:17 -0800 (PST)
+Date: Tue, 10 Dec 2024 16:16:13 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Yu Zhao <yuzhao@google.com>
+Subject: Re: [PATCH v2 1/2] mm/page_alloc: conditionally split >
+ pageblock_order pages in free_one_page() and move_freepages_block_isolate()
+Message-ID: <20241210211613.GC2508492@cmpxchg.org>
+References: <20241210102953.218122-1-david@redhat.com>
+ <20241210102953.218122-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,36 +87,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209134459.27110-6-ansuelsmth@gmail.com>
- <20241209134459.27110-6-ansuelsmth@gmail.com>
+In-Reply-To: <20241210102953.218122-2-david@redhat.com>
 
-On Mon, Dec 09, 2024 at 02:44:22PM +0100, Christian Marangi wrote:
-> +int an8855_mii_set_page(struct an8855_mfd_priv *priv, u8 phy_id,
-> +			u8 page) __must_hold(&priv->bus->mdio_lock)
-> +{
-> +	struct mii_bus *bus = priv->bus;
-> +	int ret;
+On Tue, Dec 10, 2024 at 11:29:52AM +0100, David Hildenbrand wrote:
+> @@ -1225,27 +1225,53 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+>  	spin_unlock_irqrestore(&zone->lock, flags);
+>  }
+>  
+> -/* Split a multi-block free page into its individual pageblocks. */
+> -static void split_large_buddy(struct zone *zone, struct page *page,
+> -			      unsigned long pfn, int order, fpi_t fpi)
+> +static bool pfnblock_migratetype_equal(unsigned long pfn,
+> +		unsigned long end_pfn, int mt)
+>  {
+> -	unsigned long end = pfn + (1 << order);
+> +	VM_WARN_ON_ONCE(!IS_ALIGNED(pfn | end_pfn, pageblock_nr_pages));
+>  
+> +	while (pfn != end_pfn) {
+> +		struct page *page = pfn_to_page(pfn);
 > +
-> +	ret = __mdiobus_write(bus, phy_id, AN8855_PHY_SELECT_PAGE, page);
-> +	if (ret < 0)
-> +		dev_err_ratelimited(&bus->dev,
-> +				    "failed to set an8855 mii page\n");
-> +
-> +	/* Cache current page if next mii read/write is for switch */
-> +	priv->current_page = page;
-> +	return ret < 0 ? ret : 0;
+> +		if (unlikely(mt != get_pfnblock_migratetype(page, pfn)))
+> +			return false;
+> +		pfn += pageblock_nr_pages;
+> +	}
+> +	return true;
 > +}
-> +EXPORT_SYMBOL_GPL(an8855_mii_set_page);
+> +
+> +static void __free_one_page_maybe_split(struct zone *zone, struct page *page,
+> +		unsigned long pfn, int order, fpi_t fpi_flags)
+> +{
+> +	const unsigned long end_pfn = pfn + (1 << order);
+> +	int mt = get_pfnblock_migratetype(page, pfn);
+> +
+> +	VM_WARN_ON_ONCE(order > MAX_PAGE_ORDER);
+>  	VM_WARN_ON_ONCE(!IS_ALIGNED(pfn, 1 << order));
+>  	/* Caller removed page from freelist, buddy info cleared! */
+>  	VM_WARN_ON_ONCE(PageBuddy(page));
+>  
+> -	if (order > pageblock_order)
+> -		order = pageblock_order;
+> +	/*
+> +	 * With CONFIG_MEMORY_ISOLATION, we might be freeing MAX_ORDER_NR_PAGES
+> +	 * pages that cover pageblocks with different migratetypes; for example
+> +	 * only some migratetypes might be MIGRATE_ISOLATE. In that (unlikely)
+> +	 * case, fallback to freeing individual pageblocks so they get put
+> +	 * onto the right lists.
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_MEMORY_ISOLATION) ||
+> +	    likely(order <= pageblock_order) ||
+> +	    pfnblock_migratetype_equal(pfn + pageblock_nr_pages, end_pfn, mt)) {
+> +		__free_one_page(page, pfn, zone, order, mt, fpi_flags);
+> +		return;
+> +	}
 
-You could keep the implementation more contained, and you could avoid
-exporting an8855_mii_set_page() and an8855_mfd_priv to the MDIO
-passthrough driver, if you implement a virtual regmap and give it to the
-MDIO passthrough child MFD device.
+Ok, if memory isolation is disabled, we know the migratetypes are all
+matching up, and we can skip the check. However, if memory isolation
+is enabled, but this isn't move_freepages_block_isolate() calling, we
+still do the check unnecessarily and slow down the boot, no?
 
-If this bus supports only clause 22 accesses (and it looks like it does),
-you could expose a 16-bit regmap with a linear address space of 32 MDIO
-addresses x 65536 registers. The bus->read() of the MDIO bus passthrough
-just performs regmap_read(), and bus->write() just performs regmap_write().
-The MFD driver decodes the regmap address into a PHY address and a regnum,
-and performs the page switching locally, if needed.
+Having a function guess the caller is a bit of an anti-pattern. The
+resulting code is hard to follow, and it's very easy to
+unintentionally burden some cases with unnecessary stuff. It's better
+to unshare paths until you don't need conditionals like this.
+
+In addition to the fastpath, I think you're also punishing the
+move_freepages_block_isolate() case. We *know* we just changed the
+type of one of the buddy's blocks, and yet you're still checking the
+the range again to decide whether to split.
+
+All of this to accomodate hugetlb, which might not even be compiled
+in? Grrrr.
+
+Like you, I was quite surprised to see that GFP_COMP patch in the
+buddy hotpath splitting *everything* into blocks - on the offchance
+that somebody might free a hugetlb page. Even if !CONFIG_HUGETLB. Just
+- what the hell. We shouldn't merge "I only care about my niche
+usecase at the expense of literally everybody else" patches like this.
+
+My vote is NAK on this patch, and a retro-NAK on the GFP_COMP patch.
+
+The buddy allocator operates on the assumption of MAX_PAGE_ORDER. If
+we support folios of a larger size sourced from other allocators, then
+it should be the folio layer discriminating. So if folio_put() detects
+this is a massive alloc_contig chunk, then it should take a different
+freeing path. Do the splitting in there, then pass valid chunks back
+to the buddy. That would keep the layering cleaner and the cornercase
+overhead out of the allocator fastpath.
+
+It would also avoid the pointless and fragile attempt at freeing a
+big, non-buddy chunk through the PCP.
 
