@@ -1,173 +1,108 @@
-Return-Path: <linux-kernel+bounces-438954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E347E9EA8B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:22:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB2616140E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:22:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125D522B8D1;
-	Tue, 10 Dec 2024 06:22:45 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6A69EA8BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:23:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791E35967;
-	Tue, 10 Dec 2024 06:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35E1286189
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:23:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2342B22CBC1;
+	Tue, 10 Dec 2024 06:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5zfzZka"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB0522B5BE;
+	Tue, 10 Dec 2024 06:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733811764; cv=none; b=XaJ1huikC0BydbSX77yK48RpgScOQIA5Bu1QE3upYVg/wC6prDGmvgVPbEK8CCcasu7m+CdAEUNrCFOkPHac9ZAdlMn008ZNPXxZu3HJVKirkfGmSGPGJAlLudV1Fb7Vf4OsDjVy1OgrtBaCM+n9wb4RTMF6Ka6FM+X0/lr7LuQ=
+	t=1733811778; cv=none; b=XYUTmGQY0ZITNb5mKXuWKiZ+T9bNtVtvV+wEeDePQVXOB5u150M1YHl/RJUryvJ11V993/vz2zzUBzOCqVYE7PVl2PWE2da/Xq167cLtMwp/NRRx4FY/Y9hNVugJAdLNlmaCpt/qOWcoBdt+vWFummhOdVWF4ovlUfpTp7eKyb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733811764; c=relaxed/simple;
-	bh=gDCaMZ/VAL8kDYF3Kqce5IeF+M27AoZjL3I4Cx6USLE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=q7KCDwWm4q3DZ+INEEHz1tT0ku4IyciRoFvozUvenQhq/GNfpQ7bnpF2Gke4F7YMZaAr7whmh4GuclDBRU49Dg7Oe2NMcN12mS0wF65UuNeBeQekGN616GoUjIbpCAyXxPzhykUl4Gbz2kRq+mV+vb/M5AeqyxDSiRPLjC/Txwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y6pYN6mxRz4f3nbD;
-	Tue, 10 Dec 2024 14:22:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2CF091A018D;
-	Tue, 10 Dec 2024 14:22:37 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgBHI4cr3ldnzcO3EA--.47176S3;
-	Tue, 10 Dec 2024 14:22:36 +0800 (CST)
-Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
- the tag reservation code"
-To: Yu Kuai <yukuai1@huaweicloud.com>, Bart Van Assche <bvanassche@acm.org>,
- axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
- ming.lei@redhat.com, osandov@fb.com, paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
- <20241209115522.3741093-2-yukuai1@huaweicloud.com>
- <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
- <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <7081765f-28d7-f594-1221-6034b9e88899@huaweicloud.com>
-Date: Tue, 10 Dec 2024 14:22:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1733811778; c=relaxed/simple;
+	bh=A2JGInYK6VoTSod8bXikhS00VQVpg9qqwRSBD0DrY8Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSpAFo8IlATRuurX9OM9J1jWXTitA/EYYTAthhcdDX/ACxL6kGWaTJPCUl3uam229WfNI2KMj/gyXV7H4ZPW7RS5d+Q5rXmmI7SjfynMh9kBYb3Kb8zhsuuDWHq0mJABP3UEi7CcfzJnA2BmdNrdE/kTAqfgL79FA99x22Ze0J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b5zfzZka; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2163bd70069so21041795ad.0;
+        Mon, 09 Dec 2024 22:22:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733811776; x=1734416576; darn=vger.kernel.org;
+        h=content-transfer-encoding:signed-off-by:mime-version:message-id
+         :date:subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ktpI8nQhkljY3um5OXLz3jmJOJS/HUeI5zH/9t+BjHA=;
+        b=b5zfzZka5+j0kL82Rq1HkvtGWOPi2otA5jy5xBsf5xnZUsEVyXsjX04e3IgE56sKR6
+         pyyg5Fp0pAYhKLWlPCbpW/pM70shBK+Ieso1uI37taGgJSlV0VBa4alniYdegmzGpdDp
+         WMF1x+ZLsvZBIbNFpnV2ZbtlOmnN6UT1Yi8F1IyFL6M6ggDSQ2GhFXUQWq8uunGFNFCo
+         VLQxsK3fj+KjqFKjc6dev7/t8x0LC3DvmpllBOJpb3MHEdrTtYA0rft6aXoVW5kOumvw
+         mDe2Ca8DgVIwwuRQKMUcJuErg3hQfiXXo5DN1cE56ufXI+BVz+HrvPAEExRjmuy8Dko2
+         J1tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733811776; x=1734416576;
+        h=content-transfer-encoding:signed-off-by:mime-version:message-id
+         :date:subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ktpI8nQhkljY3um5OXLz3jmJOJS/HUeI5zH/9t+BjHA=;
+        b=pcwPFEBz2unfgS9Xf7ZAhXt+diYDAtJSGmMNGma1KsR84qbxSuWsO2VWH0XCQXjgdd
+         DIapHVqe7SZqjalzZljZBCx09rx85VihgLDXVaLNDaRdxrA5Wk7/3/SIQ6FCp87zmUmY
+         8/8TExjxyzfTOQZoCNi0BErk9MY85KBqb+ehAM36nvXMDyU2wSPqOZwFtzyBK4LPir32
+         fAOtbZLD+oK2GJ2Q74PZiPwM7VGUNRqHL9DqYekWi+0/3940XidEKfJpddOwFvI4gek4
+         nmuBBpbV9Rkccy38L7MGLofSMsBnFxUXYXRgAMqgfEc8GFtHwEB0DFXVEYLOwkEfL6UE
+         e9OA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJj/4kThPvX4cCRSOrCJ3pzywAuWf9UAiK6WJ/uvelrGuPa0yaRQ+jMi9nmAmBm4U20x+ry1OFil4k47bb@vger.kernel.org, AJvYcCWYZutgQNoKhYAM8GqmiMEDh/7cEOfOY3gIvPBBN6IyO8QB9ny1HLPyMZuHqXa1rEF3e6JIqwkHz+yN/10=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynC1X50EeECIuenWOMgFHympzjfmeJqcGCnoDJrY2Q761yJ9L0
+	r8nVeLXRp7y7QW5RTD9BCQpW9tCHzbrRfL+3uS2Z27PuxVCa2H2zTSeqhA==
+X-Gm-Gg: ASbGncvYtUAPrC8k/KRnPqX0EZxAJbIbP95xqtxBf+LC0oxiOk4LwnjguMyuSCHgESW
+	iP6CizRGiqbnN04JVYbvS0QrqyPvFdtu/WozH08seNBH+MahUxMu6YtnnTX/x3Ovap1hpmHoGXJ
+	t8IB64fdqYskqBQuQAOWL2uxKpMbvCdIegGAqqLNoEdDDaVTwyuXY0JOtRk0ihKodpkx7cKi8Jf
+	XJp15ghgprJm3igBNSAVkk1E3/T+BUkG51Ry0KAePrGBcaJHnZa7fT7D50WaaMW4cHexQ==
+X-Google-Smtp-Source: AGHT+IGBzXN4c5J6Rxn5zfv9OU5nTYNomwk+ZGkvm6OKz8lD9trxo4nF5I41ffpNVlMQs+jxqCx3Ng==
+X-Received: by 2002:a17:903:2445:b0:216:4e9f:4ed4 with SMTP id d9443c01a7336-2166a0777dfmr56056425ad.36.1733811776240;
+        Mon, 09 Dec 2024 22:22:56 -0800 (PST)
+Received: from kernel-VirtualBox.. ([2401:4900:8899:46e4:646:c8ea:ef7d:d291])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2163d9f8fdasm36506595ad.186.2024.12.09.22.22.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 22:22:55 -0800 (PST)
+From: Atharva Tiwari <evepolonium@gmail.com>
+To: 
+Cc: evepolonium@gmail.com,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] FIPS kernels should default to fips mode
+Date: Tue, 10 Dec 2024 11:52:40 +0530
+Message-ID: <20241210062244.2357-1-evepolonium@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Signed-off-by: Atharva Tiwari <evepolonium@gmail.com>
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHI4cr3ldnzcO3EA--.47176S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw15Zw47KrWrJFW5Ar45GFg_yoW5Kr1rpr
-	48Ja17JryUtr1kWr1UJr1UJFy8Jr1UJwnrJr18XFyxJr1UJr1jqr1rXr1qgr1UJr48Jr4U
-	Jr1jqr9xZrnrJrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
-
-在 2024/12/10 9:50, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2024/12/10 2:02, Bart Van Assche 写道:
->> This is not correct. dd->async_depth can be modified via sysfs.
-> 
-> How about the following patch to fix min_shallow_depth for deadline?
-> 
-> Thanks,
-> Kuai
-> 
-> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-> index a9cf8e19f9d1..040ebb0b192d 100644
-> --- a/block/mq-deadline.c
-> +++ b/block/mq-deadline.c
-> @@ -667,8 +667,7 @@ static void dd_depth_updated(struct blk_mq_hw_ctx 
-> *hctx)
->          struct blk_mq_tags *tags = hctx->sched_tags;
-> 
->          dd->async_depth = q->nr_requests;
-> -
-> -       sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
-> +       sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 
-> dd->async_depth);
->   }
-> 
->   /* Called by blk_mq_init_hctx() and blk_mq_init_sched(). */
-> @@ -1012,6 +1011,47 @@ SHOW_INT(deadline_fifo_batch_show, dd->fifo_batch);
->   #undef SHOW_INT
->   #undef SHOW_JIFFIES
-> 
-> +static ssize_t deadline_async_depth_store(struct elevator_queue *e,
-> +                                         const char *page, size_t count)
-> +{
-> +       struct deadline_data *dd = e->elevator_data;
-> +       struct request_queue *q = dd->q;
-> +       struct blk_mq_hw_ctx *hctx;
-> +       unsigned long i;
-> +       int v;
-> +       int ret = kstrtoint(page, 0, &v);
-> +
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (v < 1)
-> +               v = 1;
-> +       else if (v > dd->q->nr_requests)
-> +               v = dd->q->nr_requests;
-> +
-> +       if (v == dd->async_depth)
-> +               return count;
-> +
-> +       blk_mq_freeze_queue(q);
-> +       blk_mq_quiesce_queue(q);
-> +
-> +       dd->async_depth = v;
-> +       if (blk_mq_is_shared_tags(q->tag_set->flags)) {
-> +               sbitmap_queue_min_shallow_depth(
-> +                       &q->sched_shared_tags->bitmap_tags, 
-> dd->async_depth);
-> +       } else {
-> +               queue_for_each_hw_ctx(q, hctx, i)
-> +                       sbitmap_queue_min_shallow_depth(
-> +                               &hctx->sched_tags->bitmap_tags,
-> +                               dd->async_depth);
-> +       }
-
-Just realized that this is not ok, q->sysfs_lock must be held to protect
-changing hctx, however, the lock ordering is q->sysfs_lock before
-eq->sysfs_lock, and this context already hold eq->sysfs_lock.
-
-First of all, are we in the agreement that it's not acceptable to
-sacrifice performance in the default scenario just to make sure
-functional correctness if async_depth is set to 1?
-
-If so, following are the options that I can think of to fix this:
-
-1) make async_depth read-only, if 75% tags will hurt performance in some
-cases, user can increase nr_requests to prevent it.
-2) refactor elevator sysfs api, remove eq->sysfs_lock and replace it
-with q->sysfs_lock, so deadline_async_depth_store() will be protected
-against changing hctxs, and min_shallow_depth can be updated here.
-3) other options?
-
-Thanks,
-Kuai
+diff --git a/crypto/fips.c b/crypto/fips.c
+index 8a784018ebfc..d7bd7e0ac2cb 100644
+--- a/crypto/fips.c
++++ b/crypto/fips.c
+@@ -14,7 +14,8 @@
+ #include <linux/notifier.h>
+ #include <generated/utsrelease.h>
+ 
+-int fips_enabled;
++int fips_enabled = 1;
++/* LP: #2049082 UBUNTU: SAUCE: FIPS kernels default to FIPS mode */
+ EXPORT_SYMBOL_GPL(fips_enabled);
+ 
+ ATOMIC_NOTIFIER_HEAD(fips_fail_notif_chain);
+-- 
+2.43.0
 
 
