@@ -1,102 +1,76 @@
-Return-Path: <linux-kernel+bounces-439521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A269EB075
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB109EB078
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:07:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1042855C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9E80283731
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686A81A2C29;
-	Tue, 10 Dec 2024 12:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B45A1A2643;
+	Tue, 10 Dec 2024 12:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFRAl5Cg"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="BTJl6VGr"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9651A262A;
-	Tue, 10 Dec 2024 12:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4880E1A2398;
+	Tue, 10 Dec 2024 12:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733832398; cv=none; b=ID0xf05YfI0fU7SYyJi3UkFe15Cb+2u09yGD881eAZ4hFn1mbPFuvL2OuZeJVt2dsa8XUyjIuFxrgmoTRNq+InkhsyMBGK0B5KWxYfgxGxHynSzwyaEuEcrbJ/dhmsHCmwxPtSc48379ODe7RWWpfC8IYA3CJf3Y6l8KTzsdMSg=
+	t=1733832413; cv=none; b=b3j3OXBZTnTtQBfK6gY5Y6cfFGz+qjRBjw5XO73qR6Zq5RRbaL/E0CaX+6nuy1fnQtJG9lNjnfaic0Pmr9Cee/zLskO0PjJBMX5QyJEaFle/8tivNwelHUY/aqqPQPrxzToD+tkVIbUTBLjGsHWdFGcnQwh/EUMq7LuoX1cusAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733832398; c=relaxed/simple;
-	bh=tac7FU1HS14XQp9BMuUMwuSzdZ33pnoQf7dmpahU5IM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jhb3mLawgXTcIaSWJ72P1DKF+lnlKwKsauN7Bt9j+4GiGv9y1Dqn/ViayF6dUG0BpL52i17Zb0ZChL9zMkNlP1cMGgUMRNamFbBnXPsvc3e8ZGFxDXr55GrYR8HvJjqSvo4RNooNCX68pdrUfo1DRk8cZEoOs7iFeeUV2bVXC5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFRAl5Cg; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434f74e59c7so23979415e9.3;
-        Tue, 10 Dec 2024 04:06:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733832395; x=1734437195; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=46aYL8Qujac4/4V9g8K6BMoI6Lwj7kmEE7LxrwnxQWE=;
-        b=DFRAl5Cgv+dEMJGLYK7Cex7eXQw5NnfMpX4ZOkkf2cAa3vwxw/Hcg0RPhZ4hb4y9YZ
-         Z5yJUtqF52wcPImGfMULE4rL4RfToitKywOZrCeTvXfXnYQl+mo7XJORsDPHyV+J8LZv
-         Q/tAI/QZ3Sf5ttuEo/uQUQ6yfFdsfN2f2vZC/PZ+9YdpCl9w6q3QL5KBkgtF8d0ysuPI
-         8Lk+TouRZmwq1oSkvxUFMynRaKbJfwz91fjE1+G9WT0zVdHsv3q5BCFor9S+4WaJv4jh
-         LZef/pZeoVGrZCDKiI1okC2Sj8wZI9po6dD86dyTH4hRsk0SO+IJj5Hdi6CrIkWCmkst
-         BnmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733832395; x=1734437195;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46aYL8Qujac4/4V9g8K6BMoI6Lwj7kmEE7LxrwnxQWE=;
-        b=u9e7HIjruaIdjn+IHGqoATTpWqF64Q6sHP3a1hA7eSBIqknMX5eJTONGpcxluZoTeQ
-         oKzqQJI/UH8nak7xBVmTEMUH8k+Tob4WyT1U/lR/m8HFUjr76MFWxXnCjnnpfR96YtjY
-         CMw+vvJ7jgbFAHC5EkunnRFsB1DKXMaXJzAnf4L2o94oOslUmD8JBobqSfSyddhoUGMy
-         ZqKWfZc5E9z4m17aJ+e9h9lQtPihSTiCOy+fuTRfUCyAoBzNwNf5GH2rj92Ir/IDIAKz
-         Wco8v8sjGWiCD1/RCjarEyhyrZPtE0jE6mJSeafYqhWhzI0HHECjBf8YqYVE9JK8eNOl
-         SkMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdrSjbcAAWI8F+OmwOAvQINC+9Z5u+bFT6SgCxL2niz0QAfZWU/KbLqnO+b/pA3vWH7vl/WWMF@vger.kernel.org, AJvYcCVWhyYzLU5JGBUB+o67uV6wqw1bBWh/oPyol6O8HuTJxbyLaifLetzPJKZ8s2985+bP/4UkQqzsyzCE3zRc@vger.kernel.org, AJvYcCVzCcB+wbFUn+XtZnwDHoXZDLIqzHEUhQgcTuFyQCeGL/f+x9F2keGg8QEhHY1Perv1ZY5zeGdLYrbv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5CYa56CxiD7G5UbQqVrbAHvwSCR9cOqKZbrbA08eovdlk/6lK
-	bs0gk+UC8xUGWfqB0Qovqt1BlDenLuO5nPtnyNBmwpmwX2Vv8k89
-X-Gm-Gg: ASbGncvy5N9yhdluTy7YOajmw2Xj6AeokHD4Pvt+WIsKaGcLhBOs3CPDc1mcHA/WM90
-	OJOcrWGiVD8+26wOEqZD1UShtoNdOcG3EvIvCf/Se/AZOtkHohpiU+2mhpqtgNKQXJ/QSYHWsJp
-	GCQyOmuRi7IyI2EcRNZAE4S8lliGHRbZ1zreEPIIN3zlonjF9eVrJF/aVVIHLGbwdPn5s4r4bty
-	SY44KdnJx3WtPqpmI/pDPPZMc9myojLxThdwATFJ09iDwrSXJBamTSUoU5ExFO4g2769E3Zg9SI
-	o7PxfLC0PA==
-X-Google-Smtp-Source: AGHT+IGpcC8Z7oXmbBOkKTQCK7YHx0j6xObP8W63hf6oMmuAzbltOfilbIotkhxBgXfUoy6iy3NP7Q==
-X-Received: by 2002:a05:600c:3b04:b0:434:a706:c0fb with SMTP id 5b1f17b1804b1-434fff3dcfbmr51803755e9.10.1733832395127;
-        Tue, 10 Dec 2024 04:06:35 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386394dd379sm8026747f8f.24.2024.12.10.04.06.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 04:06:34 -0800 (PST)
-Message-ID: <67582eca.050a0220.3b9b85.2de4@mx.google.com>
-X-Google-Original-Message-ID: <Z1guxUhVSGLHUVUh@Ansuel-XPS.>
-Date: Tue, 10 Dec 2024 13:06:29 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1733832413; c=relaxed/simple;
+	bh=ild0bFZNR6bQk2pXxpDn2lqlMl1RKFsLC+TVBoQgfgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K7TzA1ElVbx+cegqU4voylCoTt13WezRDQ3D+as+WBddqhfC1ilDswMbreLEqm1BwEpG3m+0coMHUokdIp8EOqyeJZS3lCXogZw1zTVu1lrokGef7PsBVk2YkuU4CJgjNCZmN4ghxJf5VJeATW3qjatT9bSNg3sAJXXA50QGoHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=BTJl6VGr; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=w3MisstJK8dyOq6lFAVcaeAn47QK03qMK9BpK32cW6o=; b=BTJl6VGrBZ5FH4AkBifV+eY4L4
+	PhTq1aEhRchWot1oHwSW8R6ZKNYh56Ke8eWzbl57BrPlGAM/ZRI+lxGT/Ccw4LqU5Pu72RRw2WIVX
+	D2eDjUwmpl4UJ0rDABK5ZANVOdrIZngLGAtMsQvP77klMdhVw88CN8p97JHa+/4W6s3b/QiZdJynE
+	bp44UqWOzZ6boVFcIoOf6XfzoNzN7qaPMyM3SOMikvvZ46gf3h0hxJAu1WkR+zrOMF7uu9NTpdpU/
+	mW8HaxXactXXONKhBP2mGsA58RGqZWYgKMJbz2dw9OomLphlX1IcGmtfYbH3CruaWRUxb9CdPsMEF
+	cRUhyo3Q==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tKynf-000T9J-2U;
+	Tue, 10 Dec 2024 20:06:33 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 20:06:32 +0800
+Date: Tue, 10 Dec 2024 20:06:32 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v11 6/9] net: mdio: Add Airoha AN8855 Switch
- MDIO Passtrough
-References: <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-7-ansuelsmth@gmail.com>
- <5aec4a94-3cea-41a4-8500-71472fae51d4@lunn.ch>
+	llvm@lists.linux.dev, upstream@airoha.com,
+	Richard van Schagen <vschagen@icloud.com>
+Subject: Re: [PATCH v7 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
+ engine support
+Message-ID: <Z1guyCJy-Cpo7U11@gondor.apana.org.au>
+References: <20241112015920.22564-1-ansuelsmth@gmail.com>
+ <20241112015920.22564-4-ansuelsmth@gmail.com>
+ <Z1e0LHycNGcWqd2q@gondor.apana.org.au>
+ <67582c1b.050a0220.83ef5.c8df@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,62 +79,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5aec4a94-3cea-41a4-8500-71472fae51d4@lunn.ch>
+In-Reply-To: <67582c1b.050a0220.83ef5.c8df@mx.google.com>
 
-On Tue, Dec 10, 2024 at 02:53:34AM +0100, Andrew Lunn wrote:
-> > +static int an855_phy_restore_page(struct an8855_mfd_priv *priv,
-> > +				  int phy) __must_hold(&priv->bus->mdio_lock)
-> > +{
-> > +	/* Check PHY page only for addr shared with switch */
-> > +	if (phy != priv->switch_addr)
-> > +		return 0;
-> > +
-> > +	/* Don't restore page if it's not set to switch page */
-> > +	if (priv->current_page != FIELD_GET(AN8855_PHY_PAGE,
-> > +					    AN8855_PHY_PAGE_EXTENDED_4))
-> > +		return 0;
-> > +
-> > +	/* Restore page to 0, PHY might change page right after but that
-> > +	 * will be ignored as it won't be a switch page.
-> > +	 */
-> > +	return an8855_mii_set_page(priv, phy, AN8855_PHY_PAGE_STANDARD);
-> > +}
-> 
-> I don't really understand what is going on here. Maybe the commit
-> message needs expanding, or the function names changing.
-> 
-> Generally, i would expect a save/restore action. Save the current
-> page, swap to the PHY page, do the PHY access, and then restore to the
-> saved page.
+On Tue, Dec 10, 2024 at 12:55:02PM +0100, Christian Marangi wrote:
 >
+> The main problem here is that .update only enqueue packet to be
+> processed and we don't wait for it to finish as that would result in
+> really bad performance.
 
-Idea is to save on extra read/write on subsequent write on the same
-page.
+You can return from update prior to finishing the hash.  However,
+you must return -EINPROGRESS in that case.
 
-Idea here is that PHY will receive most of the read (for status
-poll) hence in 90% of the time page will be 0.
+Once the hash has completed then you must export the hash state
+from the hardware into the request object, and then invoke the
+callback to inform the user that the update has finished.
 
-And switch will receive read/write only on setup or fdb/vlan access on
-configuration so it will receive subsequent write on the same page.
-(page 4)
+At that point, the user may call export.
 
-PHY might also need to write on page 1 on setup but never on page 4 as
-that is reserved for switch.
+The user cannot call export prior to the update completing.
 
-Making the read/swap/write/restore adds 2 additional operation that can
-really be skipped 90% of the time.
-
-Also curret_page cache is indirectly protected by the mdio lock.
-
-So in short this function makes sure PHY for port 0 is configured on the
-right page based on the prev page set.
-
-An alternative way might be assume PHY is always on page 0 and any
-switch operation save and restore the page.
-
-Hope it's clear now why this is needed. Is this ok or you prefer the
-alternative way? 
-
+Cheers,
 -- 
-	Ansuel
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
