@@ -1,51 +1,47 @@
-Return-Path: <linux-kernel+bounces-439010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4D99EA977
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:23:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280749EA97D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:23:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18E0286508
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:23:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F84E165419
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8B722CBF3;
-	Tue, 10 Dec 2024 07:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FDF22D4DC;
+	Tue, 10 Dec 2024 07:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TxR6h4p7"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVE1tsBW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C2122CBFF
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E30013B280;
+	Tue, 10 Dec 2024 07:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733815400; cv=none; b=Xou/MHcVCd2OeAtWz7ktGNAxNkqPtugyVpQHkF57XG1CHJZ8lprAHOO559WPTvLC0/DZuIho3XvFuJNo126ki+thmBZ5JgMmVZtzbOpinxHl/tBTxVQt7hxc9pl5lRxrZT+7sPgahauncP4UXWeF3WPsoXJV0AjiFv8K42UIQus=
+	t=1733815430; cv=none; b=Z8gmnrTxQ6uKxC5CLBRGgoamdxVRYN7K+BFkCN1o5XoFk87LvSzI6HuenFrnCG3pMEdntKMQqoVLXgHVUgTcaNM6jY61xF9DbuUHEMeSujo2xODn7sY8NG+WqY5IUw4JUtWPp0SuSrHf2uo3EMUiOQdBo6d6G4yOqZUQ0vF4wfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733815400; c=relaxed/simple;
-	bh=RwcdaKvMoRltDrKKDq6amieJKv8mDl3l5An8pCvOOlk=;
+	s=arc-20240116; t=1733815430; c=relaxed/simple;
+	bh=C+u8g83KCxT/nbDzJu9qW5mBPgHJajxnd1sqC3ctG5s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dqO1TcwMYZTvwteu4ceF5z2nwcyJO1CWkUB9rtnIvlU9tTpxW6SGv/jp/Ay8S94jm7QkKt6F8sEhc287hRzegrk+wD8LmbC27H0gD+p3YqiznfyYvh9yFr7BQ54noMJpKx4Cs+oQ275WT4ospX8NZHzqVzMHvnL2OgmgmiNXai0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TxR6h4p7; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ACCFFC0008;
-	Tue, 10 Dec 2024 07:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733815394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJup6Kt/wB1cEq9cKIKkxDbK2vt8HvtMBETNBzBxQvI=;
-	b=TxR6h4p7DBcdg93eZFIJAeI29MrAgY3+xCMsExXD4gP39rlYMHGXsuEUXv4sNFlHvzDgR6
-	jldEAxbGzMYfQeu4hYfP68mQrviPswWMsAgsu6aAjv9zz5y3bF3BAZojfqQnsAqVmGvFkU
-	TJqmKA8EeDwDBGsNMmdVxRT4ezbB0Cpu6vxZ5D5ey6q6zWvv1eZU8qjBPpdlBXfZLXsLIC
-	4YUVjsgtjmyFglLvfaMn5LQ4fTkkfaHd97qPkaNFeVpa1dupvdeNE+XVOAgoFxjlBTfi/M
-	CNfaYDkgQFhlD/yZKW8HX1ozr41tCygUNu1dej/f7QTzvevBC5D6xjI6yErM6Q==
-Message-ID: <3405febf-63ce-4ce8-80b9-1d0da7436333@bootlin.com>
-Date: Tue, 10 Dec 2024 08:23:13 +0100
+	 In-Reply-To:Content-Type; b=ZaPAy+rgk2Z0BJPLEBhmkXyn6qALPK+34GEf7mS/47Eg40uXwG1CdltphFUpEUnh1WMjUOOU4XU3EtqTx79Ig3ZwFh/anm2oWK8XIENFht46hIQDSEvRGJFW/qKoDMkyeNcfaRPKipWXzLRVNNmFeZ5dh0C9eOGn1GDuvzF+FNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVE1tsBW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECA8C4CED6;
+	Tue, 10 Dec 2024 07:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733815429;
+	bh=C+u8g83KCxT/nbDzJu9qW5mBPgHJajxnd1sqC3ctG5s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bVE1tsBWChJQfIvoakA6dzr78bWNmi7ILz3zm2woT47v0B5zsegAdY4cpD3ErQxjc
+	 TJlJFvyGT+FN8MvurOS3WsOwO6oQh8RZKC/QAdfv+Bg4Kbel81YTwlyVAZCadIAxR0
+	 poMXtexrzCupgpuzZvKVYSHwLCddugBcGAaoeL8oV6e3xPODwHH5MHebA4RMq6m/jO
+	 c69jqffmiFAxnjWM3uZQQlumEoL21/OpBaP8x56z952jZAijwy/fiVnEONkA3QgO/L
+	 gvD5sUJbZq0OyClxeXhw3gf64Vq7DsusAhtmTHmppoZ0jYltOnrx1LVLEdnUhGffoY
+	 KFJbzKFMBiqKA==
+Message-ID: <9df703d9-b2c3-4978-9325-7ad50087e8f1@kernel.org>
+Date: Tue, 10 Dec 2024 08:23:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,64 +49,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/9] memory: ti-aemif: Create aemif_set_cs_timings()
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Herve Codina <herve.codina@bootlin.com>,
- Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20241204094319.1050826-1-bastien.curutchet@bootlin.com>
- <20241204094319.1050826-6-bastien.curutchet@bootlin.com>
- <82276301-970e-427b-9fb2-8866881fb487@kernel.org>
+Subject: Re: [PATCH v1 1/7] dt-bindings: i2c: qcom,i2c-geni: Document DT
+ properties for QUP firmware loading
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
+ andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
+ dianders@chromium.org, agross@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-spi@vger.kernel.org
+Cc: quic_anupkulk@quicinc.com,
+ Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
+ <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
+ <dacfdaf0-329f-4580-94e0-7c3e26b52776@kernel.org>
+ <2d615fdb-a661-4fb5-bde7-46f4690ecdce@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-In-Reply-To: <82276301-970e-427b-9fb2-8866881fb487@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2d615fdb-a661-4fb5-bde7-46f4690ecdce@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Hi Krzysztof,
-
-On 12/9/24 8:41 PM, Krzysztof Kozlowski wrote:
-> On 04/12/2024 10:43, Bastien Curutchet wrote:
->> Create an aemif_set_cs_timings() function to isolate the setting of a
->> chip select timing configuration and ease its exportation.
+On 10/12/2024 05:43, Viken Dadhaniya wrote:
+>>>       maxItems: 1
+>>>   
+>>> +  qcom,load-firmware:
+>>> +    type: boolean
+>>> +    description: Optional property to load SE (serial engine) Firmware from protocol driver.
 >>
->> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
->> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
->> ---
->>   drivers/memory/ti-aemif.c | 65 +++++++++++++++++++++++++++++----------
->>   1 file changed, 49 insertions(+), 16 deletions(-)
-> 
-> ...
-> 
->>   
->>   /**
->>    * struct aemif_cs_timings: structure to hold CS timings
->> @@ -165,6 +165,44 @@ static int aemif_check_cs_timings(struct aemif_cs_timings *timings)
->>   	return 0;
->>   }
->>   
->> +/**
->> + * aemif_set_cs_timings() - Set the timing configuration of a given chip select.
->> + * @aemif: aemif device to configure
->> + * @cs: index of the chip select to configure
->> + * @timings: timings configuration to set
->> + *
->> + * @return: 0 on success, else negative errno.
->> + */
->> +static int aemif_set_cs_timings(struct aemif_device *aemif, u8 cs, struct aemif_cs_timings *timings)
-> 
-> In the future, please stick to 80-char wrapping unless exceeding makes
-> code more readable (see Coding style). I fixed it up while applying.
-> 
+>>
+>> Please wrap code according to coding style (checkpatch is not a coding
+>> style description, but only a tool).
+> Actually i have ran dt-schema for yaml validation. I couldn't get if you 
+> have any comment for description statement OR it's related to code ? 
+> Could you please be more descriptive so i can adopt the suggestions.
 
-Ok, thank you.
+This code is not conforming to coding style in terms of wrapping, what
+dtschema has to do with it? Please read coding style.
+
 
 
 Best regards,
-Bastien
+Krzysztof
 
