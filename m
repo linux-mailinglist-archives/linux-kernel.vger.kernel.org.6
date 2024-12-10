@@ -1,120 +1,407 @@
-Return-Path: <linux-kernel+bounces-438676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482E79EA43D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:23:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FD09EA444
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:26:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA851288E1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1761882525
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BCC7580C;
-	Tue, 10 Dec 2024 01:23:23 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8154670821;
+	Tue, 10 Dec 2024 01:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rt1Zf/92"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9119524B0;
-	Tue, 10 Dec 2024 01:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815B154740
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733793803; cv=none; b=FdGd3ewlQqeKVmKAtjaEanBJe8B+EtGmAfoBEkysxve9IzscaVghWrNFOAn3KHPNuHvIBqK/SmDnPHBzmcsoVuYMgLrUw12DrVJMZhZvZxMfzkXHZZRLxerwtre+5fUrcwirnxh14hTsE5dlrS/3Xsdamf0jdBJQLUz+PPLNuPA=
+	t=1733793990; cv=none; b=sELtn7l3femYqET6V5tY6NlNB3z0byngv9UODQ3pE7nBjz2MeYSq933sQqEM6FO/Iu74nb1JI1xzTb3J1z3mB2oFlKgyeaFmboo/3TzkQCkI2FFwV0gWNhuc4FKot6cmYmo+FenKU4Y/JhBA8eHKU7+VkAzL60YRb1zmzhPeiVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733793803; c=relaxed/simple;
-	bh=+0GegLHvpCFE+64+vAAPPWLqRrXzJ43u5HBeRXzYaxE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cH6pwlV4GqcgiVi0rbxsfLc5xcTqSpGbl4q4nKTFVtptpXxjr+ICJLsog1CY7FqKdlgGPtXY8WxClCHCpT4dXeuSlyd3DFV+rcPHG2hgGg2eicjvztC1ABRZRlhwNFU0BMph6nGitf9Iwco79vms2vnFv7PHrZ38KGhlWxOwbts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y6gw150hyz4f3jd2;
-	Tue, 10 Dec 2024 09:22:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DFCFC1A018D;
-	Tue, 10 Dec 2024 09:23:16 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCXc4cCmFdnk8mjEA--.28167S3;
-	Tue, 10 Dec 2024 09:23:16 +0800 (CST)
-Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
- the tag reservation code"
-To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
- ming.lei@redhat.com, osandov@fb.com, paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
- <20241209115522.3741093-2-yukuai1@huaweicloud.com>
- <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <6585e36e-13a8-8352-2528-b0c2cb995bf4@huaweicloud.com>
-Date: Tue, 10 Dec 2024 09:23:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1733793990; c=relaxed/simple;
+	bh=ixF0VPIzHuVDbPXcy21RqGz9blPuTk29DS13qIWNBj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I9P3U1Te9gwWRGwj64UlsBMt5ShheDsAAxNeM7XZULX4tAD7Z33z9ozxdhdT+OpjGhRnssHP9pwvbrfwmAYlIjEJLm1MSFhDQFlY97dfD3T9NTOcahtdiCkq0X3CgEgITXwLP0j/xclbTqm21/6ZCYsap9sp0PkOwEccmKrul4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Rt1Zf/92; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53df6322ea7so5817215e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 17:26:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733793985; x=1734398785; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KYoNJjutLDL8bWYofjQjJsDnCJogChOFyv9WviJQg9s=;
+        b=Rt1Zf/92lmkIJUyAR4GrRWL8sg1VYSg3kSDbqOhlw+zzIW8o8ipGrVMVYGRL2bIp7k
+         KnvBHIyuULCmTeL+EQA4RV8kCIE4Gq2g1YxbsLGmzUk/ycn74uY+cWm6Selpgd/JyNNF
+         gnQVsHhq/fd7PZLZykyPQCC5ZHfBPEcEUK084=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733793985; x=1734398785;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KYoNJjutLDL8bWYofjQjJsDnCJogChOFyv9WviJQg9s=;
+        b=GFw5b1jRFbVM9Rl157jmD23RVrjdz3qIlTKtYfMxI8KvDB6H7TlcZQJvYIRxme+unn
+         HtZS6RlxqbaEqjF8bhtLb1kgbmGOyFWcHzpd2MHs2DMMVT5F04xAvR+lujit+YQd+3a0
+         rHLeQF0J5PzIgrsTRXzOFjrDg7ClqbGnxHRSs79rsX1yndulWHzws6KSmFUcPpTd/SAb
+         JYnIh3czP96J9FfuE7Dzq4OShyLpL8RxfJnQ4ahAmAvvAIYLdr49zhwV3YUOOE6rczBy
+         QfolE7PFwq5UvyhfkPBUfnAuUPatn9H03Ug0cH4Py3xK+n5lENAtToApvKpSWoAgaNlA
+         WbHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOGVtJeSfpoKkIqW6uiL3z3bkIqoCb5oQSBWNwBes4GhC0hsAenK89WXzt0XQYBtzORQ+n3FZw4uburys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWFnjSxGevbdu/G/QCH+GVUIHvUxWS3XONjzpLmEuxaQ0fYK94
+	WR0Rt2lf3KUcH6EwlmBXBJodj8P5vyU0Mf0W9NT3NJlneLXwCCPruaIGAlzA94opV1jMGf5bePR
+	WPMicwuuvGgmGOhGz0YYXJIudDEGf63jrodzP
+X-Gm-Gg: ASbGnctB7SGW5Wqhy2gKT51bgFAi0UDAplU8O/JVL9hc/pvYXG9OZJPGtm3h0ZVEi4b
+	J9OgD5SOwccGZt6YtpAo70z4PMK8RPC6fqnA=
+X-Google-Smtp-Source: AGHT+IHyN7pTZ9u28W97gA3Nbf8uzvSQca6fKB7G14fCrZ91carrQGgix67OESSQuW+D9/drXbyeNSBcsOanKiZgBD4=
+X-Received: by 2002:a05:6512:39c4:b0:53e:2ed9:8122 with SMTP id
+ 2adb3069b0e04-540240bd4cfmr1082700e87.22.1733793985506; Mon, 09 Dec 2024
+ 17:26:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXc4cCmFdnk8mjEA--.28167S3
-X-Coremail-Antispam: 1UD129KBjvJXoWrtw4kXF18Jw4UKrWxKr4xCrg_yoW8JrWrpw
-	s7Ka4qyryDCr109rn5twnrXr9Yyw43Jr13XF15trZrCrs8JanYvFs5XanFgFW7ZrWxJw4j
-	vFs8JasxZ3Wjv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU13ku3UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20241209192247.3371436-1-dualli@chromium.org> <20241209192247.3371436-2-dualli@chromium.org>
+ <Z1eO-Nu0aowZnv6t@google.com>
+In-Reply-To: <Z1eO-Nu0aowZnv6t@google.com>
+From: Li Li <dualli@chromium.org>
+Date: Mon, 9 Dec 2024 17:26:14 -0800
+Message-ID: <CANBPYPgU9uL9jdxqsri=NwLTJcFpzdB313QsYjSQAuopRppTDw@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 1/1] binder: report txn errors via generic netlink
+To: Carlos Llamas <cmllamas@google.com>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	donald.hunter@gmail.com, gregkh@linuxfoundation.org, arve@android.com, 
+	tkjos@android.com, maco@android.com, joel@joelfernandes.org, 
+	brauner@kernel.org, surenb@google.com, arnd@arndb.de, masahiroy@kernel.org, 
+	bagasdotme@gmail.com, horms@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org, hridya@google.com, 
+	smoreland@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Dec 9, 2024 at 4:44=E2=80=AFPM Carlos Llamas <cmllamas@google.com> =
+wrote:
+>
+> On Mon, Dec 09, 2024 at 11:22:47AM -0800, Li Li wrote:
+> > From: Li Li <dualli@google.com>
+> >
+> > Frozen tasks can't process binder transactions, so sync binder
+> > transactions will fail with BR_FROZEN_REPLY and async binder
+> > transactions will be queued in the kernel async binder buffer.
+> > As these queued async transactions accumulates over time, the async
+> > buffer will eventually be running out, denying all new transactions
+> > after that with BR_FAILED_REPLY.
+> >
+> > In addition to the above cases, different kinds of binder error codes
+> > might be returned to the sender. However, the core Linux, or Android,
+> > system administration process never knows what's actually happening.
+>
+> I don't think the previous two paragraphs provide anything meaninful
+> and the explanation below looks enough IMO. I would just drop the noise.
 
-在 2024/12/10 2:02, Bart Van Assche 写道:
-> 
->> 1) Set min_shallow_depth to 1 will end up setting wake_batch to 1,
->>     deadline has no reason to do this. And this will cause performance
->>     degradation in some high concurrency test, for both IO bandwidth
->>     and cpu usage.
-> 
-> As explained in the commit message, this is done because
-> min_shallow_depth must be less than or equal to shallow_depth.
-> Additionally, mq-deadline is not the only I/O scheduler that sets
-> min_shallow_depth to 1. BFQ does this too.
+That makes sense. I'll remove them. Thanks!
 
-No, BFQ is totally different, one task from bfq can be limited to just
-one request, due to the cgroup policy of bfq.
-> 
->> 2) async_depth is nr_requests, hence shallow_depth will always set to
->>     1 << bt->sb.shift. For consequence, no tag can be reserved.
-> 
-> This is not correct. dd->async_depth can be modified via sysfs.
+>
+> >
+> > Introduce generic netlink messages into the binder driver so that the
+> > Linux/Android system administration process can listen to important
+> > events and take corresponding actions, like stopping a broken app from
+> > attacking the OS by sending huge amount of spamming binder transactions=
+.
+> >
+> > The new binder genl sources and headers are automatically generated fro=
+m
+> > the corresponding binder_genl YAML spec. Don't modify them directly.
+>
+> I assume "genl" comes from "generic netlink". Did you think about using
+> just "netlink". IMO it provides better context about what this is about.
+>
 
-So, I'm trying to understand, there are two cases:
+Yes, "genl" has been widely used in the Linux kernel. But I'm fine to renam=
+e
+it to just "netlink". I'll change it in v10 unless there's other opinions.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=
+=3Dgrep&q=3Dgenl
+https://man7.org/linux/man-pages/man8/genl.8.html
 
-1) the default value of async_depth is nr_requests, and no tag can be
-reserved, right? Do we want to fix this?
-2) User must change async_depth to a lower value to make it work.
+> >
+> > Signed-off-by: Li Li <dualli@google.com>
+> > ---
+> >  Documentation/admin-guide/binder_genl.rst    |  96 +++++++
+>
+> We already have a "binderfs" entry. Perhaps, we should just merge your
+> Documentation with that one and call it "binder" instead?
+> You might want to run this by Christian Brauner though.
+>
 
-Now, I understand why you want to change min_shallow_depth to 1.
-However, I think we should also set min_shallow_depth while writing
-sysfs as well.
+I'm happy to merge it if the doc maintainers like this idea. Or we can do
+it in a separate patch later.
 
-> 
-> Bart.
-> .
-> 
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +Generic Netlink for the Android Binder Driver (Binder Genl)
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +The Generic Netlink subsystem in the Linux kernel provides a generic w=
+ay for
+> > +the Linux kernel to communicate to the user space applications via bin=
+der
+>
+> nit: s/communicate to/communicate with/
 
+Would fix it. Thanks!
+
+>
+> > +driver. It is used to report various kinds of binder transactions to u=
+ser
+> > +space administration process. The driver allows multiple binder device=
+s and
+>
+> The transactions types that I'm familiar with are sync/async. I think
+> you want to say "report transaction errors" or something like that
+> instead?
+>
+
+Yes, it means the transaction error code. I'll make it clearer.
+
+> > +their corresponding binder contexts. Each context has an independent G=
+eneric
+> > +Netlink for security reason. To prevent untrusted user applications fr=
+om
+> > +accessing the netlink data, the kernel driver uses unicast mode instea=
+d of
+> > +multicast.
+> > +
+> > +Basically, the user space code uses the "set" command to request what =
+kind
+>
+> Can you use the actual command? e.g. BINDER_GENL_CMD_SET
+>
+> BTW, why set? what are we setting? Would *_REPORT_SETUP be more
+> appropriate?
+>
+
+Hmm, I intentionally make them short in the netlink YAML file.
+Otherwise the generated code/name is quite long. But if this is
+causing confusion, I'm happy to use a more descriptive (and longer)
+name.
+
+> > +of binder transactions should be reported by the kernel binder driver.=
+ The
+> > +driver then echoes the attributes in a reply message to acknowledge th=
+e
+> > +request. The "set" command also registers the current user space proce=
+ss to
+> > +receive the reports. When the user space process exits, the previous r=
+equest
+> > +will be reset to prevent any potential leaks.
+> > +
+> > +Currently the driver can report binder transactions that "failed" to r=
+each
+> > +the target process, or that are "delayed" due to the target process be=
+ing
+>
+> "Delayed" transaction is an entirely new concept. I suppose it means
+> async + frozen. Why not use that?
+>
+> Also, per this logic it seems that a "delayed" transaction could also be
+> "spam" correct? e.g. the flags are not mutually exclusive.
+
+It depends on the actual implementation. Currently each binder
+transaction only returns one single error code. A "spam" one also
+indicates it's a "delayed" one.
+
+>
+> > +frozen by cgroup freezer, or that are considered "spam" according to e=
+xisting
+> > +logic in binder_alloc.c.
+> > +
+> > +When the specified binder transactions happen, the driver uses the "re=
+port"
+> > +command to send a generic netlink message to the registered process,
+> > +containing the payload struct binder_report.
+> > +
+> > +More details about the flags, attributes and operations can be found a=
+t the
+> > +the doc sections in Documentations/netlink/specs/binder_genl.yaml and =
+the
+> > +kernel-doc comments of the new source code in binder.{h|c}.
+> > +
+> > +Using Binder Genl
+> > +-----------------
+> > +
+> > +The Binder Genl can be used in the same way as any other generic netli=
+nk
+> > +drivers. Userspace application uses a raw netlink socket to send comma=
+nds
+> > +to and receive packets from the kernel driver.
+> > +
+> > +.. note::
+> > +    If the userspace application that talks to the driver exits, the k=
+ernel
+> > +    driver will automatically reset the configuration to the default a=
+nd
+> > +    stop sending more reports to prevent leaking memory.
+>
+> I'm not sure what you mean by preventing memory leaks. What happens when
+> userspace setups the report and doesn't call "recv()"? Is that what we
+> are worried about?
+>
+
+Probably "leaking memory" isn't accurate here. If the user app
+doesn't call recv(), the netlink message would just fail to send.
+There's no memleak. But I think it's a good idea to reset the
+configuration. Let me describe it in a better way.
+
+> > +
+> > +Usage example (user space pseudo code):
+> > +
+> > +::
+> > +
+> > +    // open netlink socket
+> > +    int fd =3D socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
+> > +
+> > +    // bind netlink socket
+> > +    bind(fd, struct socketaddr);
+> > +
+> > +    // get the family id of the binder genl
+> > +    send(fd, CTRL_CMD_GETFAMILY, CTRL_ATTR_FAMILY_NAME,
+> > +            BINDER_GENL_FAMILY_NAME);
+>
+> ok, what is happening here? this is not a regular send(). Is this
+> somehow an overloaded send()? If so, I had a really hard time trying to
+> figuring that out so might be best to rename this.
+>
+
+This pseudo code means a few attributes are sent by a single send().
+
+> > +     if (flags !=3D (flags & (BINDER_GENL_FLAG_OVERRIDE
+> > +                     | BINDER_GENL_FLAG_FAILED
+> > +                     | BINDER_GENL_FLAG_DELAYED
+> > +                     | BINDER_GENL_FLAG_SPAM))) {
+> > +             pr_err("Invalid binder report flags: %u\n", flags);
+> > +             return -EINVAL;
+> > +     }
+>
+> didn't Jakub mentioned this part wasn't needed?
+>
+
+Good catch! I removed them but somehow didn't commit the change.
+
+
+> > +int binder_genl_nl_set_doit(struct sk_buff *skb, struct genl_info *inf=
+o)
+> > +{
+> > +     int portid;
+> > +     u32 pid;
+> > +     u32 flags;
+> > +     void *hdr;
+> > +     struct binder_device *device;
+> > +     struct binder_context *context =3D NULL;
+>
+> nit: would you mind using reverse christmas tree for this variables
+> and also in other functions too?
+>
+
+Sure.
+
+> > +
+> > +     hlist_for_each_entry(device, &binder_devices, hlist) {
+> > +             if (!nla_strcmp(info->attrs[BINDER_GENL_A_CMD_CONTEXT],
+> > +                             device->context.name)) {
+> > +                     context =3D &device->context;
+> > +                     break;
+> > +             }
+> > +     }
+> > +
+> > +     if (!context) {
+> > +             NL_SET_ERR_MSG(info->extack, "Unknown binder context\n");
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     portid =3D nlmsg_hdr(skb)->nlmsg_pid;
+> > +     pid =3D nla_get_u32(info->attrs[BINDER_GENL_A_CMD_PID]);
+> > +     flags =3D nla_get_u32(info->attrs[BINDER_GENL_A_CMD_FLAGS]);
+> > +
+> > +     if (context->report_portid && context->report_portid !=3D portid)=
+ {
+> > +             NL_SET_ERR_MSG_FMT(info->extack,
+> > +                                "No permission to set flags from %d\n"=
+,
+> > +                                portid);
+> > +             return -EPERM;
+> > +     }
+> > +
+> > +     if (binder_genl_set_report(context, pid, flags) < 0) {
+> > +             pr_err("Failed to set report flags %u for %u\n", flags, p=
+id);
+> > +             return -EINVAL;
+> > +     }
+>
+> With the flags check being unnecessary you probably want to fold
+> binder_genl_set_report() here instead.
+>
+
+Sorry, I don't quite understand this request. Can you please explain it?
+
+> > +/**
+> > + * Add a binder device to binder_devices
+> > + * @device: the new binder device to add to the global list
+> > + *
+> > + * Not reentrant as the list is not protected by any locks
+> > + */
+> > +void binder_add_device(struct binder_device *device)
+> > +{
+> > +     hlist_add_head(&device->hlist, &binder_devices);
+> > +}
+>
+> nit: would you mind separating the binder_add_device() logic into a
+> separate "prep" commit?
+>
+
+Sure.
+
+> > +
+> >  static int __init init_binder_device(const char *name)
+> >  {
+> >       int ret;
+> > @@ -6953,6 +7217,7 @@ static int __init init_binder_device(const char *=
+name)
+> >       }
+> >
+> >       hlist_add_head(&binder_device->hlist, &binder_devices);
+> > +     binder_device->context.report_seq =3D (atomic_t)ATOMIC_INIT(0);
+>
+> I don't think this is meant to be used like this.
+>
+> Also, binder_device is kzalloc'ed so no need to init report_seq at all.
+>
+
+I'll remove this unnecessary code.
+
+> >
+>
+>
+> Also, how is userspace going to determine that this new interface is
+> available? Do we need a new entry under binder features? Or is this not
+> a problem?
+
+It's not a problem. The generic netlink command "getfamily" will fail.
+
+>
+> Regards,
+> --
+> Carlos Llamas
 
