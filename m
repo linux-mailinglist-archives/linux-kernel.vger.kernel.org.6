@@ -1,1142 +1,292 @@
-Return-Path: <linux-kernel+bounces-439949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4EA9EB6A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:38:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C869EB67E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408561886D84
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:38:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D7E163461
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C0422FE0C;
-	Tue, 10 Dec 2024 16:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6A722FE10;
+	Tue, 10 Dec 2024 16:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aibDPMIx"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XFvVw340";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NG35JVcA"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCEC1A3BA1;
-	Tue, 10 Dec 2024 16:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733848697; cv=none; b=aDJlaAfAINFChCpQrJyOJEp0vUuzBeiPYtw5yJZBf8Fg6uv1IFBUk7VVwlYU0y2oS4eDWPJzmdd7dWL8rJjDVF16CyA8/AQhDv7Z2cu9dks38EABMwIvgQXa4g0k8+3wIc+aglFtRaUfr1rfE4xNFQyC741cqd+mn16m1c4b2xA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733848697; c=relaxed/simple;
-	bh=S6odGauf/jHo99c+66rKUMowW3K0dJ0QPDh0BxBDfXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/XEUDZI9NZPaqKKP6qGia57vHn+2cTN7GNw/O732xh++rriqXr4nGqCI5JEWE6//mj1j2fnR6MTFDkNM0g/20S7ErfmSeqZclfCl+crjVdAvPozMhi7vHmsKOlXCR9kHa74YBUoJ30lr8HoTQ7Wp4lzW7WRBT5t38ApPK8QuEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aibDPMIx; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-141-199.net.vodafone.it [5.90.141.199])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D2CFD352;
-	Tue, 10 Dec 2024 17:29:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733848176;
-	bh=S6odGauf/jHo99c+66rKUMowW3K0dJ0QPDh0BxBDfXI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aibDPMIx9Z1B8J68+G+9MOARJdqvvy+jrVOZgSjoHTSaIrCcAtWZo3Z3S5iU9E6i/
-	 WE8FA5ZrR/ELb8GhVSLwEAYxwbyYq5wmWWiS5XuEiWTIte+DvsSfnrVKDpp8Yp6FjQ
-	 2iZz0U+OEfmkuVS33zSNBxxpZ5QF/fCE2D4qI0mM=
-Date: Tue, 10 Dec 2024 17:29:59 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: keke.li@amlogic.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
-	laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com
-Subject: Re: [PATCH v4 02/10] media: platform: Add c3 mipi csi2 driver
-Message-ID: <dt7sj27tj2syrsmscu6cejastnpppeicee54ytyju6dyy65nan@evjdokbuw3ma>
-References: <20241205-c3isp-v4-0-cb1868be0105@amlogic.com>
- <20241205-c3isp-v4-2-cb1868be0105@amlogic.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA711BFE0D;
+	Tue, 10 Dec 2024 16:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733848327; cv=fail; b=O6juwoRYnS8smVxtcBCPj3tLF45oEGeCe27WUqV/ZQ6R6vwvVTXC4eIqTWZQdEQeUCDXxwdi7J5nT1BxA2nuaQplP+H7coksRNnmL35RCdMRWb49Tpel45rVIB6To25T2qgJbE9ceto0RiUdMvRXH+RcRju39n9p3Knpb0TyOwQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733848327; c=relaxed/simple;
+	bh=mnS3RW7Wy9fSp/rTuKvj+JZOAUZER1vaPk66xqmgCpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NAz+sHdAluDnVCHHzoHyejSGW/Vg+6DBFKORKw9WrkNUfA0fHcSRxWkkvb4T276BiiOt5VsQizDHg+Jq4AsC2+aMtClt8ye28J791a0Y4DATp1CwMPyTmqgpAGbX9sqHvPWUWbYBGeyDCgP6foyi2yYJmQIEbhtnNHPfYoPgpUQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XFvVw340; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NG35JVcA; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAGR562029925;
+	Tue, 10 Dec 2024 16:31:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=T+ql8G+kOGYFzJuE
+	UkV8hlZWF0u/gd9NDIN4cCMrwUA=; b=XFvVw340PHTGiWumiFSarH7sxfQroVPo
+	zayxe76vJErPms+RshA4DGP8Z1UbiZLrC2QknPMoe1OP2PcZtRMoetqsh8QKO/Iv
+	i5GL2q4Nc5vVKhssvtPCmoakEMm6QaJ78RleZJQtVzFacaxQsO0HdcnotROi1Iug
+	chvQ583aBWsbOjPqXzcCCa5X35LgRpkLYZRFBClHFkRQbEbnLB5ATCzCGQWu/oop
+	ziCEcQRbWhBMCRl3BbZLUYOJEth4w+ozGSPrJICgd+qRXjBHf9X/w1mgxMUaldp2
+	VYciqSPo3vgPsTQEJSPy3rsqGcPqn8s2xVqa9jPLt5jnDoAim9h/GA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43ce89643x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 16:31:34 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAFl6ct034912;
+	Tue, 10 Dec 2024 16:31:23 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2172.outbound.protection.outlook.com [104.47.59.172])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43cctg1d8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 16:31:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wO91dW+7+I1fU/N+Zzl7Z6XDwOD5cyyyvudZPglC6wuc54QxYf7QIQxID3f60c4ZNO+p/4SEWdBzGRPTf9k4Y55R/RcEmb0v0sOm+fJn/WVn/5sIsqE6yl4Lxfrc4EgwELoWWYl/6fFsahYBZ9sR2lAcSM8N1/iPKUgXIW6tL4l/HfAjh3uffAUdnFwZnYtFAZBOkmq4MVOEVJZSIWjn998EHWiVgbq2gNwevi1CnPELFnr4NwhSYCNoYOW3yeNGYAxf7MmbeLPjy5bXH3FKyEH+cERco7Cu7GKWMwr4WtO3AuzCMvdo4NafBM8bu3RP1UWhJiycHyCBQuIzlzsUIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T+ql8G+kOGYFzJuEUkV8hlZWF0u/gd9NDIN4cCMrwUA=;
+ b=MKjX4XwlkUb2IIYl3uL0NsrmqX+wtilr/dfUZLgqBBoBI+achFYuUN/onXUkBBXkmBvDzKqtMldYtwe0SJruBiFm5CzBO1zy78AVygYqhUQnpC64DOgEvwfcJtCmWaxiz7GQm60Zg1cloGYNE4UMSvoUM25unG69SJbS6cxRVvl5dduYkRkfVdgfvBYuaAlHLhEUFKTD6TS4IjyWII+0rDoJozNGc9Kefp/mm/rUBS4Hf0Mylx5iIjLdmyEgDFgPkm6nPEM752YXnTCxRRqMlrfC7+VtgnzNL8UQkjVIvNxdfg200bxmA64SmYwTNh4+K4VKRfWfuKdcgGEOdersXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T+ql8G+kOGYFzJuEUkV8hlZWF0u/gd9NDIN4cCMrwUA=;
+ b=NG35JVcA/+FvrVmHt+F0GLeFWNgJ6io1DffzPFspM3uiCLV7VDa6Pi09oxbRRBFujJiUQ4Le2wRqUa9ZTvem64x/JN4F/VKJciaEdqarEmW14xW2UkZtbTv9HfixW7PWzR72AxsP6W5E2f9t9xkasNAkvZ6yg3cmefUv6Ovr67c=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by DS0PR10MB7405.namprd10.prod.outlook.com (2603:10b6:8:15e::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Tue, 10 Dec
+ 2024 16:31:20 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8251.008; Tue, 10 Dec 2024
+ 16:31:20 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        linux-mm@kvack.org, Peng Zhang <zhangpeng.00@bytedance.com>
+Subject: [PATCH] fork: avoid inappropriate uprobe access to invalid mm
+Date: Tue, 10 Dec 2024 16:31:04 +0000
+Message-ID: <20241210163104.55181-1-lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.47.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P265CA0437.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:e::17) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241205-c3isp-v4-2-cb1868be0105@amlogic.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|DS0PR10MB7405:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e846243-e236-49b0-df18-08dd193813c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x97JMeLRE8vPF92wUIR8bqLIx8xRIJo9mMWbOfmeG7zfZ7nvfJy4Q/IjQgZU?=
+ =?us-ascii?Q?IW6O05L3O5kg45JSHciizShWT+hGQ21OtRUrC8TvroJRUUJlKxW5ZWF3C8uo?=
+ =?us-ascii?Q?WYZSQ1IhRKZbWzANxdtYIxUxW2x+gJ1+TLWS0v0dREeZz+fKomSrOB/pPL+I?=
+ =?us-ascii?Q?E+IKQOP/eA9bP94/i0oITtwoWQe2+DDmbQSMADkF+NHpwvNimXyqTZf7KTED?=
+ =?us-ascii?Q?qfqpC5856bM5bV3XH8+HTW91ghoYkmdPZI17CHdDZs97sbBTPbNKyILWC1TP?=
+ =?us-ascii?Q?4+cSLVjiSQZMQLf7/B/YOm8xjPqOGhzE3v8MRD1V9Ytx+13yKOMT9LRLBr3J?=
+ =?us-ascii?Q?WUZ/6meVDgHcmOTNTVzZDDkCP5ETG4pD++NgXAbJDImyx/9BgXC6qtgBBGFE?=
+ =?us-ascii?Q?ykCsJErVqt3fyjjgTfa9/O1uckLIsQZ2wKxzco1NZ2zhALb8xIJpYmDePuTE?=
+ =?us-ascii?Q?9soaPwkBsEiZ2VKChVzofazsrujXje/J9YbKdPcip8Aa4Y/nQjjZb2oBY6ch?=
+ =?us-ascii?Q?spxr9vMlCWSpJqxOz8Q+CsFXo0QYxG5owlBIlar28bOpvZ7uqWuSg/IGw2Bd?=
+ =?us-ascii?Q?lbyYZH3m3QMKLGTGgJ/DN4weSg3hpImvZpTwErWjFqnZTlfqs4e/ExtkuOH+?=
+ =?us-ascii?Q?g9EfE3lK5NRgoSrZ+yXoIzKWjZTkh/xZE+SVoovTzcFx7PtyFYTun3mrzAS2?=
+ =?us-ascii?Q?EzcycaesHZ9qqU5xHHhVc4IQfP2G6paz8m343TTtQUE8cUamOUAqEuMxe1lq?=
+ =?us-ascii?Q?i0DtUjGCJ1ngUrWNL+ArgLNkEKNFz8oWiX5VtHlsOYNNwIVaiAfmfqFzkvmc?=
+ =?us-ascii?Q?Py422WtsrRcGqp0UnBGWa7tzr8l7nFNFnItYClpSKeAyLiNJJuzhjd2eaatQ?=
+ =?us-ascii?Q?ZoFZ1V1KwkRyQC9EkpMgGsKAYxzgVnAHTe/nxLaR0Fnx+QUrUes7s6nPd8kQ?=
+ =?us-ascii?Q?QVG15sS4Va4laXjcmIx/O4JNVFp60WsMMZowG1uUkaFFokAH1AYSMQRbpog6?=
+ =?us-ascii?Q?VKlXfYSkrTQT4b9DFHioYBt04BC2HmPiJsdgUxkAF5U/kSTiShrA9ZodCgOr?=
+ =?us-ascii?Q?G6+L3CsJaMfT2cplbbolDqJai962Foa3BAvtbKW5ya9oSlsDwdevpau/qm5S?=
+ =?us-ascii?Q?Lw21nbuuqGWdSEp8CFa8wIUFqEyDToQGV4FZRMivhQbKop4ANbsh9ZPsjuKb?=
+ =?us-ascii?Q?Fs02eywGDFeALy/0rOvXrhBbXB3bThyGTejlMXRKUjubn1ALE983F5ZP+rrW?=
+ =?us-ascii?Q?tXaEwy6tx5/AfJCPF9qgEbVUZ3khsRmSMz/BU/vq9RMlueJnKPAe3+nixMpf?=
+ =?us-ascii?Q?bSRGopg8VCiV3ZKQluzJcxtNMpgBSp9du5DnTAo3+dzolGrUjenqBbCZJJGQ?=
+ =?us-ascii?Q?+bcXWA0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0Cg6gI5b2jt0DVN/JJdGgMp7AJTPd0c10RTuNEestQpUEId8JPbMHvdeARwC?=
+ =?us-ascii?Q?GciKZdef3gvxrapXOnlRfBBy+JjulDSiE9PxMybeEACf/Ly5VuiK+U6kWo7N?=
+ =?us-ascii?Q?ims4xHqDdRcEeuNq1+Q6H+yxK8Z4lf9m6r3eZkS8uTPePhesbOv5y9Ayovxw?=
+ =?us-ascii?Q?5x3LiCzhvvA9GE6VfUfT84rBSrMdtoT0XjQ807Atqh7oXY5QANwbFDS44FX0?=
+ =?us-ascii?Q?Izm19650cOwgd1Qm3Qp2DSmQYqqNSoHagF9sOBIO2grBEwKxK5cHFQdgFhkW?=
+ =?us-ascii?Q?n/SYcFxV05JtFCwfc0Vqu3UAPFx1FtlwaCZdyZ7mIer8+sH5x1PjZMtP3SWN?=
+ =?us-ascii?Q?gKUihbtI0ZneCEDL82uQgc6jTQXVkpesUR35kKE16ItGmQDHMH+PPD/bv3/R?=
+ =?us-ascii?Q?2/QIR5t82liD883XPRmyUMdRdZKVuPQ0sXGgt2XvqUZwrifO6yCX/8G4oLLR?=
+ =?us-ascii?Q?Xe1AllHDwZgKjlNFaz7glRJYRqqG6ocGPl8wHXvIj30QfvF+GAmPFVX//QDr?=
+ =?us-ascii?Q?xjQRrZKq3Q/kFhHp98g7OzahEbsHZUUwcxdUmBaxFuT0pZiTQSZeExUe6amj?=
+ =?us-ascii?Q?s6uSLb6ra1QyU9rF4FmT5J4+yMMT/9d3/uGoytM3uQjG1IhfnMnYY/cyxeN4?=
+ =?us-ascii?Q?Ow59mTDyaqO+XVJp6C32MJZYqXCrri5SOcUlFlmA1HKQCtL4t5x5CpwH6YP9?=
+ =?us-ascii?Q?Lp1KbPocpu/0r/RSd4qTGq7pxojd7r02mZCCRk54JWhLiiHcRp6NCGGKy253?=
+ =?us-ascii?Q?8Iy39cGaJ6aBlj7eH1nl6fSQNmwBKXY0w788dpUxL8m1yhIG9qFtMtKCBMDq?=
+ =?us-ascii?Q?plLgrpXBraypX5ZdWEl+UcpjtsOmO0tUOOeEYQYO0dHA6K2r32uN+bMaUNmK?=
+ =?us-ascii?Q?wRkhJFoz15cIvhyUeCJzVrcupcyU7AzClmsKRTGhoNeWO/NN5M3Jksv5L8pe?=
+ =?us-ascii?Q?u6Yz3F5lnHzOJGle9NE8KD0/139otwTfSauJr4uSqL0CsEL3C20kRnS8TYhc?=
+ =?us-ascii?Q?YlF1NhS0LPwwzg62soeXM0fYaBS4LzvTWMlQr9PioMylpUBmOdAJo4IQzIl5?=
+ =?us-ascii?Q?P/n39IQH/rlXtrPgYOcoYY4GN9T8NerEkuZlPRYY2WOzy/VVsbDjA95flqwd?=
+ =?us-ascii?Q?KZi9OV9pG5Gxrq7b3PQlcY4LH/8i7dLmb7IWRDAK9Lu/PdHj/TKAfZQET7pP?=
+ =?us-ascii?Q?VZtBl6+XSaKSZY+lRPqfqLKac0htyYEfh/maffQaPXAihy08bEB9LEAuh39k?=
+ =?us-ascii?Q?fRG5fHOCbQu/aMLI3Ma8DYpLu32q3saRXy8Ipb5/C8RDqQzpnb6ZlcgzzkCn?=
+ =?us-ascii?Q?tVT65YsBkTbGAFjb6UzMgvKV5vvRroy2/12x5XSd7horEnoei26Tjh9TgU44?=
+ =?us-ascii?Q?O5z6tpXGUzRH3XH8Q1L7ax1C3N4wKpKl2xCddIZLqyT41UcVB24OZ2I7wdY/?=
+ =?us-ascii?Q?4uPYLgKlZh7eGDaLuRvw3FWD2iyq34EfW2SjCKMcQLxa3gPk4K/kHKNy1jAO?=
+ =?us-ascii?Q?TDlloBfPMCD3P4Jvk3W3CwnQVC8xW8fMWQsoXqlsoi2XRCyKl1Np8Uc1ZNAr?=
+ =?us-ascii?Q?/YgQbw3BDyWv6yXhk5WpLJz3Jzmhi/+k/Vubkh+emWN8S4j/61VfSfy/6idZ?=
+ =?us-ascii?Q?tA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	irr5SkigilpeR0h9aZcVHieSkLDRb3VwvTC1PiIqm3EzSMwlDDVp/Crmf8xrrpvnC97Wb2lw4/JZoxr+Lj3yesMk1kyaaeEy0unltBvM2UteJkdOAMWCCQTVCJ97gDvhQuHybzOCQN5bmjLnZI3q4pbvMCwiBgy5ds+yEj/l2SPFFiQYDNcOvQxRVSvZ72PbN3lSEB4g7horp/oofbbSg2eWkarHg6f/GZV7Jf3HZtUHhcqF5Afdg/DtXC6jYzaZVIkoZML67Ge6E6kCCZqC1iDgn8D1Vv9LBWZVDEiMCzR1dIlnO6dkoAYqX0ZHIKuzwElJfLKYqflXBEb4RCZf/+4DsDzAVBRC1yJFIVvvHGQjayMYY3xZTj9AhVhqKuVrrSyuOWd0TMNWptSN2LI6QLs+LKmyhbQc7OchVyUHgQWAS7hUvCuwNcyALDvIvaS6IwuRWer7+sWXsbnAngvm2d7vMZsa7Yn36AsB4XnIjFsV+g4XPFmhtKFQWl9TNnIYy06gW/C4iGEJeO4tZpvSiyQAbBvogiLjpH9VW//ameb4b4f44KsKZzA5Ru93JVgHuGeXJipBo7u2PhV04qlrU3kdEpt1mwN32Fc6MvHgW9I=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e846243-e236-49b0-df18-08dd193813c8
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 16:31:20.0908
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rj9FAnzNdHTMrlQ8+bBiwasObtSrSaA1cmFa9zBzfOvk3YgJWYHuB0NfHK6ONmlZ9q9hqPhsEdZPbIuDyL2yGRTGv4wraiUwzTjJ0oF9yQs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7405
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-10_09,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2411120000 definitions=main-2412100122
+X-Proofpoint-GUID: EKKv1JNZei16Cdqyz5u7V6c1_1cfWahE
+X-Proofpoint-ORIG-GUID: EKKv1JNZei16Cdqyz5u7V6c1_1cfWahE
 
-Hi Keke
+If dup_mmap() encounters an issue, currently uprobe is able to access the
+relevant mm via the reverse mapping (in build_map_info()), and if we are
+very unlucky with a race window, observe invalid XA_ZERO_ENTRY state which
+we establish as part of the fork error path.
 
-On Thu, Dec 05, 2024 at 05:04:28PM +0800, Keke Li via B4 Relay wrote:
-> From: Keke Li <keke.li@amlogic.com>
->
-> This driver is used to receive mipi data from image sensor.
+This occurs because uprobe_write_opcode() invokes anon_vma_prepare() which
+in turn invokes find_mergeable_anon_vma() that uses a VMA iterator,
+invoking vma_iter_load() which uses the advanced maple tree API and thus is
+able to observe XA_ZERO_ENTRY entries added to dup_mmap() in commit
+d24062914837 ("fork: use __mt_dup() to duplicate maple tree in
+dup_mmap()").
 
-It's usually nice to have a bit more descriptive commit message.
+This change was made on the assumption that only process tear-down code
+would actually observe (and make use of) these values. However this very
+unlikely but still possible edge case with uprobes exists and unfortunately
+does make these observable.
 
-Something like:
+The uprobe operation prevents races against the dup_mmap() operation via
+the dup_mmap_sem semaphore, which is acquired via uprobe_start_dup_mmap()
+and dropped via uprobe_end_dup_mmap(), and held across
+register_for_each_vma() prior to invoking build_map_info() which does the
+reverse mapping lookup.
 
-Add a driver for the CSI-2 receiver unit found on .. SoC.
+Currently these are acquired and dropped within dup_mmap(), which exposes
+the race window prior to error handling in the invoking dup_mm() which
+tears down the mm.
 
-Create a drivers/media/platform/c3 directory to host the driver
-and the forthcoming support for the Amlogic [precise name here] C3
-ISP.
+We can avoid all this by just moving the invocation of
+uprobe_start_dup_mmap() and uprobe_end_dup_mmap() up a level to dup_mm()
+and only release this lock once the dup_mmap() operation succeeds or clean
+up is done.
 
->
-> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> Signed-off-by: Keke Li <keke.li@amlogic.com>
-> ---
->  MAINTAINERS                                        |   7 +
->  drivers/media/platform/amlogic/Kconfig             |   1 +
->  drivers/media/platform/amlogic/Makefile            |   2 +
->  drivers/media/platform/amlogic/c3/Kconfig          |   3 +
->  drivers/media/platform/amlogic/c3/Makefile         |   3 +
->  .../media/platform/amlogic/c3/mipi-csi2/Kconfig    |  16 +
->  .../media/platform/amlogic/c3/mipi-csi2/Makefile   |   3 +
->  .../platform/amlogic/c3/mipi-csi2/c3-mipi-csi2.c   | 900 +++++++++++++++++++++
->  8 files changed, 935 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 21f855fe468b..9b405a694881 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1224,6 +1224,13 @@ F:	Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
->  F:	drivers/perf/amlogic/
->  F:	include/soc/amlogic/
->
-> +AMLOGIC MIPI CSI2 DRIVER
-> +M:	Keke Li <keke.li@amlogic.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/media/amlogic,c3-mipi-csi2.yaml
+This means that the uprobe code can never observe an incompletely
+constructed mm and resolves the issue in this case.
 
-Possibily moved to the previous patch, not a big deal though
+Reported-by: syzbot+2d788f4f7cb660dac4b7@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/6756d273.050a0220.2477f.003d.GAE@google.com/
+Fixes: d24062914837 ("fork: use __mt_dup() to duplicate maple tree in dup_mmap()")
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ kernel/fork.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-> +F:	drivers/media/platform/amlogic/c3/mipi-csi2/
-> +
->  AMLOGIC RTC DRIVER
->  M:	Yiting Deng <yiting.deng@amlogic.com>
->  M:	Xianwei Zhao <xianwei.zhao@amlogic.com>
-> diff --git a/drivers/media/platform/amlogic/Kconfig b/drivers/media/platform/amlogic/Kconfig
-> index 5014957404e9..458acf3d5fa8 100644
-> --- a/drivers/media/platform/amlogic/Kconfig
-> +++ b/drivers/media/platform/amlogic/Kconfig
-> @@ -2,4 +2,5 @@
->
->  comment "Amlogic media platform drivers"
->
-> +source "drivers/media/platform/amlogic/c3/Kconfig"
->  source "drivers/media/platform/amlogic/meson-ge2d/Kconfig"
-> diff --git a/drivers/media/platform/amlogic/Makefile b/drivers/media/platform/amlogic/Makefile
-> index d3cdb8fa4ddb..c744afcd1b9e 100644
-> --- a/drivers/media/platform/amlogic/Makefile
-> +++ b/drivers/media/platform/amlogic/Makefile
-> @@ -1,2 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> +
-> +obj-y += c3/
->  obj-y += meson-ge2d/
-> diff --git a/drivers/media/platform/amlogic/c3/Kconfig b/drivers/media/platform/amlogic/c3/Kconfig
-> new file mode 100644
-> index 000000000000..098d458747b8
-> --- /dev/null
-> +++ b/drivers/media/platform/amlogic/c3/Kconfig
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +source "drivers/media/platform/amlogic/c3/mipi-csi2/Kconfig"
-> diff --git a/drivers/media/platform/amlogic/c3/Makefile b/drivers/media/platform/amlogic/c3/Makefile
-> new file mode 100644
-> index 000000000000..a468fb782f94
-> --- /dev/null
-> +++ b/drivers/media/platform/amlogic/c3/Makefile
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +obj-y += mipi-csi2/
-> diff --git a/drivers/media/platform/amlogic/c3/mipi-csi2/Kconfig b/drivers/media/platform/amlogic/c3/mipi-csi2/Kconfig
-> new file mode 100644
-> index 000000000000..0d7b2e203273
-> --- /dev/null
-> +++ b/drivers/media/platform/amlogic/c3/mipi-csi2/Kconfig
-> @@ -0,0 +1,16 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +config VIDEO_C3_MIPI_CSI2
-> +	tristate "Amlogic C3 MIPI CSI-2 receiver"
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	depends on VIDEO_DEV
-> +	depends on OF
-> +	select MEDIA_CONTROLLER
-> +	select V4L2_FWNODE
-> +	select VIDEO_V4L2_SUBDEV_API
-> +	help
-> +	  Video4Linux2 driver for Amlogic C3 MIPI CSI-2 receiver.
-> +	  C3 MIPI CSI-2 receiver is used to receive MIPI data from
-> +	  image sensor.
-> +
-> +	  To compile this driver as a module choose m here.
-> diff --git a/drivers/media/platform/amlogic/c3/mipi-csi2/Makefile b/drivers/media/platform/amlogic/c3/mipi-csi2/Makefile
-> new file mode 100644
-> index 000000000000..cc08fc722bfd
-> --- /dev/null
-> +++ b/drivers/media/platform/amlogic/c3/mipi-csi2/Makefile
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +obj-$(CONFIG_VIDEO_C3_MIPI_CSI2) += c3-mipi-csi2.o
-> diff --git a/drivers/media/platform/amlogic/c3/mipi-csi2/c3-mipi-csi2.c b/drivers/media/platform/amlogic/c3/mipi-csi2/c3-mipi-csi2.c
-> new file mode 100644
-> index 000000000000..861fccc4ca9e
-> --- /dev/null
-> +++ b/drivers/media/platform/amlogic/c3/mipi-csi2/c3-mipi-csi2.c
-> @@ -0,0 +1,900 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-> +/*
-> + * Copyright (C) 2024 Amlogic, Inc. All rights reserved
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/device.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +
-> +#include <media/v4l2-async.h>
-> +#include <media/v4l2-common.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-fwnode.h>
-> +#include <media/v4l2-mc.h>
-> +#include <media/v4l2-subdev.h>
-> +
-> +/* C3 CSI-2 submodule definition */
-> +enum {
-> +	SUBMD_APHY,
-> +	SUBMD_DPHY,
-> +	SUBMD_HOST,
-> +};
-> +
-> +#define CSI2_SUBMD_MASK                  GENMASK(17, 16)
-> +#define CSI2_SUBMD_SHIFT                 16
-> +#define CSI2_SUBMD(x)                    (((x) & (CSI2_SUBMD_MASK)) >> (CSI2_SUBMD_SHIFT))
-> +#define CSI2_REG_ADDR_MASK               GENMASK(15, 0)
-> +#define CSI2_REG_ADDR(x)                 ((x) & (CSI2_REG_ADDR_MASK))
-> +#define CSI2_REG_A(x)                    ((SUBMD_APHY << CSI2_SUBMD_SHIFT) | (x))
-> +#define CSI2_REG_D(x)                    ((SUBMD_DPHY << CSI2_SUBMD_SHIFT) | (x))
-> +#define CSI2_REG_H(x)                    ((SUBMD_HOST << CSI2_SUBMD_SHIFT) | (x))
-> +
-> +#define MIPI_CSI2_CLOCK_NUM_MAX                  3
-> +#define MIPI_CSI2_SUBDEV_NAME                    "c3-mipi-csi2"
-> +
-> +/* C3 CSI-2 APHY register */
-> +#define CSI_PHY_CNTL0                            CSI2_REG_A(0x44)
-> +#define CSI_PHY_CNTL0_HS_LP_BIAS_EN              BIT(10)
-> +#define CSI_PHY_CNTL0_HS_RX_TRIM_11              (11 << 11)
-> +#define CSI_PHY_CNTL0_LP_LOW_VTH_2               (2 << 16)
-> +#define CSI_PHY_CNTL0_LP_HIGH_VTH_4              (4 << 20)
-> +#define CSI_PHY_CNTL0_DATA_LANE0_HS_DIG_EN       BIT(24)
-> +#define CSI_PHY_CNTL0_DATA_LANE1_HS_DIG_EN       BIT(25)
-> +#define CSI_PHY_CNTL0_CLK0_LANE_HS_DIG_EN        BIT(26)
-> +#define CSI_PHY_CNTL0_DATA_LANE2_HS_DIG_EN       BIT(27)
-> +#define CSI_PHY_CNTL0_DATA_LANE3_HS_DIG_EN       BIT(28)
-> +
-> +#define CSI_PHY_CNTL1                            CSI2_REG_A(0x48)
-> +#define CSI_PHY_CNTL1_HS_EQ_CAP_SMALL            (2 << 16)
-> +#define CSI_PHY_CNTL1_HS_EQ_CAP_BIG              (3 << 16)
-> +#define CSI_PHY_CNTL1_HS_EQ_RES_MIN              (3 << 18)
-> +#define CSI_PHY_CNTL1_HS_EQ_RES_MED              (2 << 18)
-> +#define CSI_PHY_CNTL1_HS_EQ_RES_MAX              BIT(18)
-> +#define CSI_PHY_CNTL1_CLK_CHN_EQ_MAX_GAIN        BIT(20)
-> +#define CSI_PHY_CNTL1_DATA_CHN_EQ_MAX_GAIN       BIT(21)
-> +#define CSI_PHY_CNTL1_COM_BG_EN                  BIT(24)
-> +#define CSI_PHY_CNTL1_HS_SYNC_EN                 BIT(25)
-> +
-> +/* C3 CSI-2 DPHY register */
-> +#define MIPI_PHY_CTRL	                         CSI2_REG_D(0x00)
-> +#define MIPI_PHY_CTRL_DATA_LANE0_EN              (0 << 0)
-> +#define MIPI_PHY_CTRL_DATA_LANE0_DIS             BIT(0)
-> +#define MIPI_PHY_CTRL_DATA_LANE1_EN              (0 << 1)
-> +#define MIPI_PHY_CTRL_DATA_LANE1_DIS             BIT(1)
-> +#define MIPI_PHY_CTRL_DATA_LANE2_EN              (0 << 2)
-> +#define MIPI_PHY_CTRL_DATA_LANE2_DIS             BIT(2)
-> +#define MIPI_PHY_CTRL_DATA_LANE3_EN              (0 << 3)
-> +#define MIPI_PHY_CTRL_DATA_LANE3_DIS             BIT(3)
-> +#define MIPI_PHY_CTRL_CLOCK_LANE_EN              (0 << 4)
-> +#define MIPI_PHY_CTRL_CLOCK_LANE_DIS             BIT(4)
-> +
-> +#define MIPI_PHY_CLK_LANE_CTRL	                 CSI2_REG_D(0x04)
-> +#define MIPI_PHY_CLK_LANE_CTRL_FORCE_ULPS_ENTER  BIT(0)
-> +#define MIPI_PHY_CLK_LANE_CTRL_FORCE_ULPS_EXIT   BIT(1)
-> +#define MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_HS      (0 << 3)
-> +#define MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_HS_2    BIT(3)
-> +#define MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_HS_4    (2 << 3)
-> +#define MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_HS_8    (3 << 3)
-> +#define MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_HS_16   (4 << 3)
-> +#define MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_EN      BIT(6)
-> +#define MIPI_PHY_CLK_LANE_CTRL_LPEN_DIS          BIT(7)
-> +#define MIPI_PHY_CLK_LANE_CTRL_END_EN            BIT(8)
-> +#define MIPI_PHY_CLK_LANE_CTRL_HS_RX_EN          BIT(9)
-> +
-> +#define MIPI_PHY_DATA_LANE_CTRL1                 CSI2_REG_D(0x0c)
-> +#define MIPI_PHY_DATA_LANE_CTRL1_INSERT_ERRESC   BIT(0)
-> +#define MIPI_PHY_DATA_LANE_CTRL1_HS_SYNC_CHK_EN  BIT(1)
-> +#define MIPI_PHY_DATA_LANE_CTRL1_PIPE_MASK       GENMASK(6, 2)
-> +#define MIPI_PHY_DATA_LANE_CTRL1_PIPE_ALL_EN     (0x1f << 2)
-> +#define MIPI_PHY_DATA_LANE_CTRL1_PIPE_DELAY_MASK GENMASK(9, 7)
-> +#define MIPI_PHY_DATA_LANE_CTRL1_PIPE_DELAY_3    (3 << 7)
-> +
-> +#define MIPI_PHY_TCLK_MISS	                 CSI2_REG_D(0x10)
-> +#define MIPI_PHY_TCLK_MISS_CYCLES_MASK           GENMASK(7, 0)
-> +#define MIPI_PHY_TCLK_MISS_CYCLES_9              (9 << 0)
-> +
-> +#define MIPI_PHY_TCLK_SETTLE	                 CSI2_REG_D(0x14)
-> +#define MIPI_PHY_TCLK_SETTLE_CYCLES_MASK         GENMASK(7, 0)
-> +#define MIPI_PHY_TCLK_SETTLE_CYCLES_31           (31 << 0)
-> +
-> +#define MIPI_PHY_THS_EXIT	                 CSI2_REG_D(0x18)
-> +#define MIPI_PHY_THS_EXIT_CYCLES_MASK            GENMASK(7, 0)
-> +#define MIPI_PHY_THS_EXIT_CYCLES_8               (8 << 0)
-> +
-> +#define MIPI_PHY_THS_SKIP	                 CSI2_REG_D(0x1c)
-> +#define MIPI_PHY_THS_SKIP_CYCLES_MASK            GENMASK(7, 0)
-> +#define MIPI_PHY_THS_SKIP_CYCLES_10              (10 << 0)
-> +
-> +#define MIPI_PHY_THS_SETTLE	                 CSI2_REG_D(0x20)
-> +#define MIPI_PHY_THS_SETTLE_CYCLES_MASK          GENMASK(7, 0)
-> +
-> +#define MIPI_PHY_TINIT	                         CSI2_REG_D(0x24)
-> +#define MIPI_PHY_TINIT_CYCLES_MASK               GENMASK(31, 0)
-> +#define MIPI_PHY_TINIT_CYCLES_20000              (20000 << 0)
-> +
-> +#define MIPI_PHY_TULPS_C	                 CSI2_REG_D(0x28)
-> +#define MIPI_PHY_TULPS_C_CYCLES_MASK             GENMASK(31, 0)
-> +#define MIPI_PHY_TULPS_C_CYCLES_4096             (4096 << 0)
-> +
-> +#define MIPI_PHY_TULPS_S	                 CSI2_REG_D(0x2c)
-> +#define MIPI_PHY_TULPS_S_CYCLES_MASK             GENMASK(31, 0)
-> +#define MIPI_PHY_TULPS_S_CYCLES_256              (256 << 0)
-> +
-> +#define MIPI_PHY_TMBIAS                          CSI2_REG_D(0x30)
-> +#define MIPI_PHY_TMBIAS_CYCLES_MASK              GENMASK(31, 0)
-> +#define MIPI_PHY_TMBIAS_CYCLES_256               (256 << 0)
-> +
-> +#define MIPI_PHY_TLP_EN_W                        CSI2_REG_D(0x34)
-> +#define MIPI_PHY_TLP_EN_W_CYCLES_MASK            GENMASK(31, 0)
-> +#define MIPI_PHY_TLP_EN_W_CYCLES_12              (12 << 0)
-> +
-> +#define MIPI_PHY_TLPOK	                         CSI2_REG_D(0x38)
-> +#define MIPI_PHY_TLPOK_CYCLES_MASK               GENMASK(31, 0)
-> +#define MIPI_PHY_TLPOK_CYCLES_256                (256 << 0)
-> +
-> +#define MIPI_PHY_TWD_INIT	                 CSI2_REG_D(0x3c)
-> +#define MIPI_PHY_TWD_INIT_DOG_MASK               GENMASK(31, 0)
-> +#define MIPI_PHY_TWD_INIT_DOG_0X400000           (0x400000 << 0)
-> +
-> +#define MIPI_PHY_TWD_HS                          CSI2_REG_D(0x40)
-> +#define MIPI_PHY_TWD_HS_DOG_MASK                 GENMASK(31, 0)
-> +#define MIPI_PHY_TWD_HS_DOG_0X400000             (0x400000 << 0)
-> +
-> +#define MIPI_PHY_MUX_CTRL0	                 CSI2_REG_D(0x284)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN3_SRC_MASK        GENMASK(3, 0)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN3_SRC_LANE0       (0 << 0)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN3_SRC_LANE1       BIT(0)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN3_SRC_LANE2       (2 << 0)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN3_SRC_LANE3       (3 << 0)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN2_SRC_MASK        GENMASK(7, 4)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN2_SRC_LANE0       (0 << 4)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN2_SRC_LANE1       BIT(4)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN2_SRC_LANE2       (2 << 4)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN2_SRC_LANE3       (3 << 4)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN1_SRC_MASK        GENMASK(11, 8)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN1_SRC_LANE0       (0 << 8)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN1_SRC_LANE1       BIT(8)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN1_SRC_LANE2       (2 << 8)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN1_SRC_LANE3       (3 << 8)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN0_SRC_MASK        GENMASK(14, 12)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN0_SRC_LANE0       (0 << 12)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN0_SRC_LANE1       BIT(12)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN0_SRC_LANE2       (2 << 12)
-> +#define MIPI_PHY_MUX_CTRL0_SFEN0_SRC_LANE3       (3 << 12)
-> +
-> +#define MIPI_PHY_MUX_CTRL1	                 CSI2_REG_D(0x288)
-> +#define MIPI_PHY_MUX_CTRL1_LANE3_SRC_MASK        GENMASK(3, 0)
-> +#define MIPI_PHY_MUX_CTRL1_LANE3_SRC_SFEN0       (0 << 0)
-> +#define MIPI_PHY_MUX_CTRL1_LANE3_SRC_SFEN1       BIT(0)
-> +#define MIPI_PHY_MUX_CTRL1_LANE3_SRC_SFEN2       (2 << 0)
-> +#define MIPI_PHY_MUX_CTRL1_LANE3_SRC_SFEN3       (3 << 0)
-> +#define MIPI_PHY_MUX_CTRL1_LANE2_SRC_MASK        GENMASK(7, 4)
-> +#define MIPI_PHY_MUX_CTRL1_LANE2_SRC_SFEN0       (0 << 4)
-> +#define MIPI_PHY_MUX_CTRL1_LANE2_SRC_SFEN1       BIT(4)
-> +#define MIPI_PHY_MUX_CTRL1_LANE2_SRC_SFEN2       (2 << 4)
-> +#define MIPI_PHY_MUX_CTRL1_LANE2_SRC_SFEN3       (3 << 4)
-> +#define MIPI_PHY_MUX_CTRL1_LANE1_SRC_MASK        GENMASK(11, 8)
-> +#define MIPI_PHY_MUX_CTRL1_LANE1_SRC_SFEN0       (0 << 8)
-> +#define MIPI_PHY_MUX_CTRL1_LANE1_SRC_SFEN1       BIT(8)
-> +#define MIPI_PHY_MUX_CTRL1_LANE1_SRC_SFEN2       (2 << 8)
-> +#define MIPI_PHY_MUX_CTRL1_LANE1_SRC_SFEN3       (3 << 8)
-> +#define MIPI_PHY_MUX_CTRL1_LANE0_SRC_MASK        GENMASK(14, 12)
-> +#define MIPI_PHY_MUX_CTRL1_LANE0_SRC_SFEN0       (0 << 12)
-> +#define MIPI_PHY_MUX_CTRL1_LANE0_SRC_SFEN1       BIT(12)
-> +#define MIPI_PHY_MUX_CTRL1_LANE0_SRC_SFEN2       (2 << 12)
-> +#define MIPI_PHY_MUX_CTRL1_LANE0_SRC_SFEN3       (3 << 12)
-> +
-> +/* C3 CSI-2 HOST register */
-> +#define CSI2_HOST_N_LANES                        CSI2_REG_H(0x04)
-> +#define CSI2_HOST_N_LANES_MASK                   GENMASK(1, 0)
-> +#define CSI2_HOST_N_LANES_1                      (0 << 0)
-> +#define CSI2_HOST_N_LANES_2                      BIT(0)
-> +#define CSI2_HOST_N_LANES_3                      (2 << 0)
-> +#define CSI2_HOST_N_LANES_4                      (3 << 0)
-> +
-> +#define CSI2_HOST_CSI2_RESETN                    CSI2_REG_H(0x10)
-> +#define CSI2_HOST_CSI2_RESETN_MASK               BIT(0)
-> +#define CSI2_HOST_CSI2_RESETN_ACTIVE             (0 << 0)
-> +#define CSI2_HOST_CSI2_RESETN_EXIT               BIT(0)
-> +
-> +#define MIPI_CSI2_MAX_WIDTH                      2888
-> +#define MIPI_CSI2_MIN_WIDTH                      160
-> +#define MIPI_CSI2_MAX_HEIGHT                     2240
-> +#define MIPI_CSI2_MIN_HEIGHT                     120
-> +#define MIPI_CSI2_DEFAULT_WIDTH                  1920
-> +#define MIPI_CSI2_DEFAULT_HEIGHT                 1080
-> +#define MIPI_CSI2_DEFAULT_FMT                    MEDIA_BUS_FMT_SRGGB10_1X10
+diff --git a/kernel/fork.c b/kernel/fork.c
+index d532f893e977..c2591063dfc1 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -696,11 +696,8 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 	LIST_HEAD(uf);
+ 	VMA_ITERATOR(vmi, mm, 0);
 
-All the above are indentend with spaces and not tabs, I'm surprised
-checkpatch.pl doesn't complain. If it's fine with the tool, it's fine
-with me as well :)
+-	uprobe_start_dup_mmap();
+-	if (mmap_write_lock_killable(oldmm)) {
+-		retval = -EINTR;
+-		goto fail_uprobe_end;
+-	}
++	if (mmap_write_lock_killable(oldmm))
++		return -EINTR;
+ 	flush_cache_dup_mm(oldmm);
+ 	uprobe_dup_mmap(oldmm, mm);
+ 	/*
+@@ -839,8 +836,6 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 		dup_userfaultfd_complete(&uf);
+ 	else
+ 		dup_userfaultfd_fail(&uf);
+-fail_uprobe_end:
+-	uprobe_end_dup_mmap();
+ 	return retval;
 
-> +
-> +/* C3 CSI-2 pad list */
-> +enum {
-> +	MIPI_CSI2_PAD_SINK,
-> +	MIPI_CSI2_PAD_SRC,
-> +	MIPI_CSI2_PAD_MAX
-> +};
-> +
-> +/*
-> + * struct csi_info - MIPI CSI2 information
-> + *
-> + * @clocks: array of MIPI CSI2 clock names
-> + * @clock_rates: array of MIPI CSI2 clock rate
-> + * @clock_num: actual clock number
-> + */
-> +struct csi_info {
-> +	char *clocks[MIPI_CSI2_CLOCK_NUM_MAX];
-> +	u32 clock_rates[MIPI_CSI2_CLOCK_NUM_MAX];
-> +	u32 clock_num;
-> +};
-> +
-> +/*
-> + * struct csi_device - MIPI CSI2 platform device
-> + *
-> + * @dev: pointer to the struct device
-> + * @aphy: MIPI CSI2 aphy register address
-> + * @dphy: MIPI CSI2 dphy register address
-> + * @host: MIPI CSI2 host register address
-> + * @clks: array of MIPI CSI2 clocks
-> + * @sd: MIPI CSI2 sub-device
-> + * @pads: MIPI CSI2 sub-device pads
-> + * @notifier: notifier to register on the v4l2-async API
-> + * @src_sd: source sub-device
-> + * @bus: MIPI CSI2 bus information
-> + * @src_sd_pad: source sub-device pad
-> + * @info: version-specific MIPI CSI2 information
-> + */
-> +struct csi_device {
-> +	struct device *dev;
-> +	void __iomem *aphy;
-> +	void __iomem *dphy;
-> +	void __iomem *host;
-> +	struct clk_bulk_data clks[MIPI_CSI2_CLOCK_NUM_MAX];
-> +
-> +	struct v4l2_subdev sd;
-> +	struct media_pad pads[MIPI_CSI2_PAD_MAX];
-> +	struct v4l2_async_notifier notifier;
-> +	struct v4l2_subdev *src_sd;
-> +	struct v4l2_mbus_config_mipi_csi2 bus;
-> +
-> +	u16 src_sd_pad;
-> +	const struct csi_info *info;
-> +};
-> +
-> +static const u32 c3_mipi_csi_formats[] = {
-> +	MEDIA_BUS_FMT_SBGGR10_1X10,
-> +	MEDIA_BUS_FMT_SGBRG10_1X10,
-> +	MEDIA_BUS_FMT_SGRBG10_1X10,
-> +	MEDIA_BUS_FMT_SRGGB10_1X10,
-> +	MEDIA_BUS_FMT_SBGGR12_1X12,
-> +	MEDIA_BUS_FMT_SGBRG12_1X12,
-> +	MEDIA_BUS_FMT_SGRBG12_1X12,
-> +	MEDIA_BUS_FMT_SRGGB12_1X12,
-> +};
-> +
-> +/* Hardware configuration */
-> +
-> +static void c3_mipi_csi_write(struct csi_device *csi, u32 reg, u32 val)
-> +{
-> +	void __iomem *addr;
-> +
-> +	switch (CSI2_SUBMD(reg)) {
-> +	case SUBMD_APHY:
-> +		addr = csi->aphy + CSI2_REG_ADDR(reg);
-> +		break;
-> +	case SUBMD_DPHY:
-> +		addr = csi->dphy + CSI2_REG_ADDR(reg);
-> +		break;
-> +	case SUBMD_HOST:
-> +		addr = csi->host + CSI2_REG_ADDR(reg);
-> +		break;
-> +	default:
-> +		dev_err(csi->dev, "Invalid sub-module: %lu\n", CSI2_SUBMD(reg));
-> +		return;
-> +	}
-> +
-> +	writel(val, addr);
-> +}
-> +
-> +static void c3_mipi_csi_cfg_aphy(struct csi_device *csi)
-> +{
-> +	c3_mipi_csi_write(csi, CSI_PHY_CNTL0,
-> +			  CSI_PHY_CNTL0_HS_LP_BIAS_EN |
-> +			  CSI_PHY_CNTL0_HS_RX_TRIM_11 |
-> +			  CSI_PHY_CNTL0_LP_LOW_VTH_2 |
-> +			  CSI_PHY_CNTL0_LP_HIGH_VTH_4 |
-> +			  CSI_PHY_CNTL0_DATA_LANE0_HS_DIG_EN |
-> +			  CSI_PHY_CNTL0_DATA_LANE1_HS_DIG_EN |
-> +			  CSI_PHY_CNTL0_CLK0_LANE_HS_DIG_EN |
-> +			  CSI_PHY_CNTL0_DATA_LANE2_HS_DIG_EN |
-> +			  CSI_PHY_CNTL0_DATA_LANE3_HS_DIG_EN);
-> +
-> +	c3_mipi_csi_write(csi, CSI_PHY_CNTL1,
-> +			  CSI_PHY_CNTL1_HS_EQ_CAP_SMALL |
-> +			  CSI_PHY_CNTL1_HS_EQ_RES_MED |
-> +			  CSI_PHY_CNTL1_CLK_CHN_EQ_MAX_GAIN |
-> +			  CSI_PHY_CNTL1_DATA_CHN_EQ_MAX_GAIN |
-> +			  CSI_PHY_CNTL1_COM_BG_EN |
-> +			  CSI_PHY_CNTL1_HS_SYNC_EN);
-> +}
-> +
-> +static void c3_mipi_csi_cfg_dphy(struct csi_device *csi, s64 rate)
-> +{
-> +	u32 val;
-> +	u32 settle;
-> +
-> +	/* Calculate the high speed settle */
-> +	val = DIV_ROUND_UP(1000000000, rate);
-> +	settle = (16 * val + 230) / 10;
-> +
-> +	c3_mipi_csi_write(csi, MIPI_PHY_CLK_LANE_CTRL,
-> +			  MIPI_PHY_CLK_LANE_CTRL_HS_RX_EN |
-> +			  MIPI_PHY_CLK_LANE_CTRL_END_EN |
-> +			  MIPI_PHY_CLK_LANE_CTRL_LPEN_DIS |
-> +			  MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_EN |
-> +			  MIPI_PHY_CLK_LANE_CTRL_TCLK_ZERO_HS_8);
-> +
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TCLK_MISS, MIPI_PHY_TCLK_MISS_CYCLES_9);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TCLK_SETTLE, MIPI_PHY_TCLK_SETTLE_CYCLES_31);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_THS_EXIT, MIPI_PHY_THS_EXIT_CYCLES_8);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_THS_SKIP, MIPI_PHY_THS_SKIP_CYCLES_10);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_THS_SETTLE, settle);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TINIT, MIPI_PHY_TINIT_CYCLES_20000);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TMBIAS, MIPI_PHY_TMBIAS_CYCLES_256);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TULPS_C, MIPI_PHY_TULPS_C_CYCLES_4096);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TULPS_S, MIPI_PHY_TULPS_S_CYCLES_256);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TLP_EN_W, MIPI_PHY_TLP_EN_W_CYCLES_12);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TLPOK, MIPI_PHY_TLPOK_CYCLES_256);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TWD_INIT, MIPI_PHY_TWD_INIT_DOG_0X400000);
-> +	c3_mipi_csi_write(csi, MIPI_PHY_TWD_HS, MIPI_PHY_TWD_HS_DOG_0X400000);
-> +
-> +	c3_mipi_csi_write(csi, MIPI_PHY_DATA_LANE_CTRL1,
-> +			  MIPI_PHY_DATA_LANE_CTRL1_INSERT_ERRESC |
-> +			  MIPI_PHY_DATA_LANE_CTRL1_HS_SYNC_CHK_EN |
-> +			  MIPI_PHY_DATA_LANE_CTRL1_PIPE_ALL_EN |
-> +			  MIPI_PHY_DATA_LANE_CTRL1_PIPE_DELAY_3);
-> +
-> +	/* Set the order of lanes */
-> +	c3_mipi_csi_write(csi, MIPI_PHY_MUX_CTRL0,
-> +			  MIPI_PHY_MUX_CTRL0_SFEN3_SRC_LANE3 |
-> +			  MIPI_PHY_MUX_CTRL0_SFEN2_SRC_LANE2 |
-> +			  MIPI_PHY_MUX_CTRL0_SFEN1_SRC_LANE1 |
-> +			  MIPI_PHY_MUX_CTRL0_SFEN0_SRC_LANE0);
-> +
-> +	c3_mipi_csi_write(csi, MIPI_PHY_MUX_CTRL1,
-> +			  MIPI_PHY_MUX_CTRL1_LANE3_SRC_SFEN3 |
-> +			  MIPI_PHY_MUX_CTRL1_LANE2_SRC_SFEN2 |
-> +			  MIPI_PHY_MUX_CTRL1_LANE1_SRC_SFEN1 |
-> +			  MIPI_PHY_MUX_CTRL1_LANE0_SRC_SFEN0);
-> +
-> +	/* Enable digital data and clock lanes */
-> +	c3_mipi_csi_write(csi, MIPI_PHY_CTRL,
-> +			  MIPI_PHY_CTRL_DATA_LANE0_EN |
-> +			  MIPI_PHY_CTRL_DATA_LANE1_EN |
-> +			  MIPI_PHY_CTRL_DATA_LANE2_EN |
-> +			  MIPI_PHY_CTRL_DATA_LANE3_EN |
-> +			  MIPI_PHY_CTRL_CLOCK_LANE_EN);
-> +}
-> +
-> +static void c3_mipi_csi_cfg_host(struct csi_device *csi)
-> +{
-> +	/* Reset CSI-2 controller output */
-> +	c3_mipi_csi_write(csi, CSI2_HOST_CSI2_RESETN, CSI2_HOST_CSI2_RESETN_ACTIVE);
-> +	c3_mipi_csi_write(csi, CSI2_HOST_CSI2_RESETN, CSI2_HOST_CSI2_RESETN_EXIT);
-> +
-> +	/* Set data lane number */
-> +	c3_mipi_csi_write(csi, CSI2_HOST_N_LANES, csi->bus.num_data_lanes - 1);
-> +}
-> +
-> +static int c3_mipi_csi_start_stream(struct csi_device *csi)
-> +{
-> +	s64 link_freq;
-> +	s64 lane_rate;
-> +
-> +	link_freq = v4l2_get_link_freq(csi->src_sd->ctrl_handler, 0, 0);
-> +	if (link_freq < 0) {
-> +		dev_err(csi->dev, "Unable to obtain link frequency: %lld\n", link_freq);
-> +		return link_freq;
-> +	}
-> +
-> +	lane_rate = link_freq * 2;
-> +	if (lane_rate > 1500000000) {
-> +		dev_err(csi->dev, "Invalid lane rate: %lld\n", lane_rate);
-> +		return -EINVAL;
-> +	}
-> +
-> +	c3_mipi_csi_cfg_aphy(csi);
-> +	c3_mipi_csi_cfg_dphy(csi, lane_rate);
-> +	c3_mipi_csi_cfg_host(csi);
-> +
-> +	return 0;
-> +}
-> +
-> +static int c3_mipi_csi_enable_streams(struct v4l2_subdev *sd,
-> +				      struct v4l2_subdev_state *state,
-> +				      u32 pad, u64 streams_mask)
-> +{
-> +	struct csi_device *csi = v4l2_get_subdevdata(sd);
-> +	u64 sink_streams;
-> +	int ret;
-> +
-> +	pm_runtime_resume_and_get(csi->dev);
-> +
-> +	c3_mipi_csi_start_stream(csi);
-> +
-> +	sink_streams = v4l2_subdev_state_xlate_streams(state, pad,
-> +						       MIPI_CSI2_PAD_SINK,
-> +						       &streams_mask);
-> +	ret = v4l2_subdev_enable_streams(csi->src_sd,
-> +					 csi->src_sd_pad,
-> +					 sink_streams);
+ fail_nomem_anon_vma_fork:
+@@ -1746,9 +1741,11 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
+ 	if (!mm_init(mm, tsk, mm->user_ns))
+ 		goto fail_nomem;
 
-You don't need this (and I think it works "by chance" because it returns 0).
-This function helps translate streams according
-to a routing table, and this driver doesn't support routing. It means
-it only knows about a single stream sent by the remote subdevice (the
-image sensor in this case) from its single pad.
++	uprobe_start_dup_mmap();
+ 	err = dup_mmap(mm, oldmm);
+ 	if (err)
+-		goto free_pt;
++		goto free_pt_end_uprobe;
++	uprobe_end_dup_mmap();
 
-I think you can simply forward the call to the remote subdevice by
-calling enable_streams replacing sink_streams with 0.
+ 	mm->hiwater_rss = get_mm_rss(mm);
+ 	mm->hiwater_vm = mm->total_vm;
+@@ -1758,6 +1755,8 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
 
-> +	if (ret) {
-> +		pm_runtime_put(csi->dev);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int c3_mipi_csi_disable_streams(struct v4l2_subdev *sd,
-> +				       struct v4l2_subdev_state *state,
-> +				       u32 pad, u64 streams_mask)
-> +{
-> +	struct csi_device *csi = v4l2_get_subdevdata(sd);
-> +	u64 sink_streams;
-> +	int ret;
-> +
-> +	sink_streams = v4l2_subdev_state_xlate_streams(state, pad,
-> +						       MIPI_CSI2_PAD_SINK,
-> +						       &streams_mask);
-> +	ret = v4l2_subdev_disable_streams(csi->src_sd,
-> +					  csi->src_sd_pad,
-> +					  sink_streams);
-> +	if (ret)
-> +		dev_err(csi->dev, "Failed to disable %s\n", csi->src_sd->name);
-> +
-> +	pm_runtime_put(csi->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int c3_mipi_csi_cfg_routing(struct v4l2_subdev *sd,
-> +				   struct v4l2_subdev_state *state,
-> +				   struct v4l2_subdev_krouting *routing)
-> +{
-> +	static const struct v4l2_mbus_framefmt format = {
-> +		.width = MIPI_CSI2_DEFAULT_WIDTH,
-> +		.height = MIPI_CSI2_DEFAULT_HEIGHT,
-> +		.code = MIPI_CSI2_DEFAULT_FMT,
-> +		.field = V4L2_FIELD_NONE,
-> +		.colorspace = V4L2_COLORSPACE_RAW,
-> +		.ycbcr_enc = V4L2_YCBCR_ENC_601,
-> +		.quantization = V4L2_QUANTIZATION_FULL_RANGE,
-> +		.xfer_func = V4L2_XFER_FUNC_NONE,
-> +	};
-> +	int ret;
-> +
-> +	ret = v4l2_subdev_routing_validate(sd, routing,
-> +					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = v4l2_subdev_set_routing_with_fmt(sd, state, routing, &format);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
+ 	return mm;
 
-
-I still think you don't need routing at all.
-
-This driver doesn't enable V4L2_SUBDEV_FL_STREAMS, so the
-g_routing/s_routing operations are disallowed by the core:
-https://elixir.bootlin.com/linux/v6.12.4/source/drivers/media/v4l2-core/v4l2-subdev.c#L964
-
-> +
-> +static int c3_mipi_csi_init_routing(struct v4l2_subdev *sd,
-> +				    struct v4l2_subdev_state *state)
-> +{
-> +	struct v4l2_subdev_route routes;
-> +	struct v4l2_subdev_krouting routing;
-> +
-> +	routes.sink_pad = MIPI_CSI2_PAD_SINK;
-> +	routes.sink_stream = 0;
-> +	routes.source_pad = MIPI_CSI2_PAD_SRC;
-> +	routes.source_stream = 0;
-> +	routes.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE;
-> +
-> +	routing.num_routes = 1;
-> +	routing.routes = &routes;
-> +
-> +	return c3_mipi_csi_cfg_routing(sd, state, &routing);
-> +}
-> +
-> +static int c3_mipi_csi_enum_mbus_code(struct v4l2_subdev *sd,
-> +				      struct v4l2_subdev_state *state,
-> +				      struct v4l2_subdev_mbus_code_enum *code)
-> +{
-> +	switch (code->pad) {
-> +	case MIPI_CSI2_PAD_SINK:
-> +		if (code->index >= ARRAY_SIZE(c3_mipi_csi_formats))
-> +			return -EINVAL;
-> +
-> +		code->code = c3_mipi_csi_formats[code->index];
-> +		break;
-> +	case MIPI_CSI2_PAD_SRC:
-> +		struct v4l2_mbus_framefmt *fmt;
-> +
-> +		if (code->index)
-> +			return -EINVAL;
-> +
-> +		fmt = v4l2_subdev_state_get_format(state, code->pad);
-> +		code->code = fmt->code;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int c3_mipi_csi_set_fmt(struct v4l2_subdev *sd,
-> +			       struct v4l2_subdev_state *state,
-> +			       struct v4l2_subdev_format *format)
-> +{
-> +	struct v4l2_mbus_framefmt *fmt;
-> +	unsigned int i;
-> +
-> +	if (format->pad != MIPI_CSI2_PAD_SINK)
-> +		return v4l2_subdev_get_fmt(sd, state, format);
-> +
-> +	fmt = v4l2_subdev_state_get_format(state, format->pad);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(c3_mipi_csi_formats); i++) {
-> +		if (format->format.code == c3_mipi_csi_formats[i]) {
-> +			fmt->code = c3_mipi_csi_formats[i];
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (i == ARRAY_SIZE(c3_mipi_csi_formats))
-> +		fmt->code = c3_mipi_csi_formats[0];
-> +
-> +	fmt->width = clamp_t(u32, format->format.width,
-> +			     MIPI_CSI2_MIN_WIDTH, MIPI_CSI2_MAX_WIDTH);
-> +	fmt->height = clamp_t(u32, format->format.height,
-> +			      MIPI_CSI2_MIN_HEIGHT, MIPI_CSI2_MAX_HEIGHT);
-> +	fmt->colorspace = V4L2_COLORSPACE_RAW;
-> +	fmt->xfer_func = V4L2_XFER_FUNC_NONE;
-> +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
-> +	fmt->quantization = V4L2_QUANTIZATION_FULL_RANGE;
-> +
-> +	format->format = *fmt;
-> +
-> +	/* Synchronize the format to source pad */
-> +	fmt = v4l2_subdev_state_get_format(state, MIPI_CSI2_PAD_SRC);
-> +	*fmt = format->format;
-> +
-> +	return 0;
-> +}
-> +
-> +static int c3_mipi_csi_init_state(struct v4l2_subdev *sd,
-> +				  struct v4l2_subdev_state *state)
-> +{
-> +	struct v4l2_mbus_framefmt *sink_fmt;
-> +	struct v4l2_mbus_framefmt *src_fmt;
-> +
-> +	sink_fmt = v4l2_subdev_state_get_format(state, MIPI_CSI2_PAD_SINK);
-> +	src_fmt = v4l2_subdev_state_get_format(state, MIPI_CSI2_PAD_SRC);
-> +
-> +	sink_fmt->width = MIPI_CSI2_DEFAULT_WIDTH;
-> +	sink_fmt->height = MIPI_CSI2_DEFAULT_HEIGHT;
-> +	sink_fmt->field = V4L2_FIELD_NONE;
-> +	sink_fmt->code = MIPI_CSI2_DEFAULT_FMT;
-> +	sink_fmt->colorspace = V4L2_COLORSPACE_RAW;
-> +	sink_fmt->xfer_func = V4L2_XFER_FUNC_NONE;
-> +	sink_fmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
-> +	sink_fmt->quantization = V4L2_QUANTIZATION_FULL_RANGE;
-> +
-> +	*src_fmt = *sink_fmt;
-> +
-> +	return c3_mipi_csi_init_routing(sd, state);
-> +}
-> +
-> +static const struct v4l2_subdev_pad_ops c3_mipi_csi_pad_ops = {
-> +	.enum_mbus_code = c3_mipi_csi_enum_mbus_code,
-> +	.get_fmt = v4l2_subdev_get_fmt,
-> +	.set_fmt = c3_mipi_csi_set_fmt,
-> +	.enable_streams = c3_mipi_csi_enable_streams,
-> +	.disable_streams = c3_mipi_csi_disable_streams,
-> +};
-> +
-> +static const struct v4l2_subdev_ops c3_mipi_csi_subdev_ops = {
-> +	.pad = &c3_mipi_csi_pad_ops,
-> +};
-> +
-> +static const struct v4l2_subdev_internal_ops c3_mipi_csi_internal_ops = {
-> +	.init_state = c3_mipi_csi_init_state,
-> +};
-> +
-> +/* Media entity operations */
-> +static const struct media_entity_operations c3_mipi_csi_entity_ops = {
-> +	.link_validate = v4l2_subdev_link_validate,
-> +};
-> +
-> +/* PM runtime */
-> +
-> +static int c3_mipi_csi_runtime_suspend(struct device *dev)
-> +{
-> +	struct csi_device *csi = dev_get_drvdata(dev);
-> +
-> +	clk_bulk_disable_unprepare(csi->info->clock_num, csi->clks);
-> +
-> +	return 0;
-> +}
-> +
-> +static int c3_mipi_csi_runtime_resume(struct device *dev)
-> +{
-> +	struct csi_device *csi = dev_get_drvdata(dev);
-> +
-> +	return clk_bulk_prepare_enable(csi->info->clock_num, csi->clks);
-> +}
-> +
-> +static const struct dev_pm_ops c3_mipi_csi_pm_ops = {
-> +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +			    pm_runtime_force_resume)
-> +	RUNTIME_PM_OPS(c3_mipi_csi_runtime_suspend,
-> +		       c3_mipi_csi_runtime_resume, NULL)
-> +};
-> +
-> +/* Probe/remove & platform driver */
-> +
-> +static int c3_mipi_csi_subdev_init(struct csi_device *csi)
-> +{
-> +	struct v4l2_subdev *sd = &csi->sd;
-> +	int ret;
-> +
-> +	v4l2_subdev_init(sd, &c3_mipi_csi_subdev_ops);
-> +	sd->owner = THIS_MODULE;
-> +	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	sd->internal_ops = &c3_mipi_csi_internal_ops;
-> +	snprintf(sd->name, sizeof(sd->name), "%s", MIPI_CSI2_SUBDEV_NAME);
-> +
-> +	sd->entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
-> +	sd->entity.ops = &c3_mipi_csi_entity_ops;
-> +
-> +	sd->dev = csi->dev;
-> +	v4l2_set_subdevdata(sd, csi);
-> +
-> +	csi->pads[MIPI_CSI2_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
-> +	csi->pads[MIPI_CSI2_PAD_SRC].flags = MEDIA_PAD_FL_SOURCE;
-> +	ret = media_entity_pads_init(&sd->entity, MIPI_CSI2_PAD_MAX, csi->pads);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = v4l2_subdev_init_finalize(sd);
-> +	if (ret) {
-> +		media_entity_cleanup(&sd->entity);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void c3_mipi_csi_subdev_deinit(struct csi_device *csi)
-> +{
-> +	v4l2_subdev_cleanup(&csi->sd);
-> +	media_entity_cleanup(&csi->sd.entity);
-> +}
-> +
-> +/* Subdev notifier register */
-> +static int c3_mipi_csi_notify_bound(struct v4l2_async_notifier *notifier,
-> +				    struct v4l2_subdev *sd,
-> +				    struct v4l2_async_connection *asc)
-> +{
-> +	struct csi_device *csi = v4l2_get_subdevdata(notifier->sd);
-> +	struct media_pad *sink = &csi->sd.entity.pads[MIPI_CSI2_PAD_SINK];
-> +	int ret;
-> +
-> +	ret = media_entity_get_fwnode_pad(&sd->entity,
-> +					  sd->fwnode, MEDIA_PAD_FL_SOURCE);
-> +	if (ret < 0) {
-> +		dev_err(csi->dev, "Failed to find pad for %s\n", sd->name);
-> +		return ret;
-> +	}
-> +
-> +	csi->src_sd = sd;
-> +	csi->src_sd_pad = ret;
-> +
-> +	return v4l2_create_fwnode_links_to_pad(sd, sink, MEDIA_LNK_FL_ENABLED |
-> +					       MEDIA_LNK_FL_IMMUTABLE);
-> +}
-> +
-> +static const struct v4l2_async_notifier_operations c3_mipi_csi_notify_ops = {
-> +	.bound = c3_mipi_csi_notify_bound,
-> +};
-> +
-> +static int c3_mipi_csi_async_register(struct csi_device *csi)
-> +{
-> +	struct v4l2_fwnode_endpoint vep = {
-> +		.bus_type = V4L2_MBUS_CSI2_DPHY,
-> +	};
-> +	struct v4l2_async_connection *asc;
-> +	struct fwnode_handle *ep;
-> +	int ret;
-> +
-> +	v4l2_async_subdev_nf_init(&csi->notifier, &csi->sd);
-> +
-> +	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(csi->dev), 0, 0,
-> +					     FWNODE_GRAPH_ENDPOINT_NEXT);
-> +	if (!ep)
-> +		return -ENOTCONN;
-> +
-> +	ret = v4l2_fwnode_endpoint_parse(ep, &vep);
-> +	if (ret)
-> +		goto err_put_handle;
-> +
-> +	csi->bus = vep.bus.mipi_csi2;
-> +	if (csi->bus.num_data_lanes < 1 || csi->bus.num_data_lanes > 4) {
-> +		dev_err(csi->dev, "Unsupported data lanes number\n");
-> +		goto err_put_handle;
-> +	}
-> +
-> +	asc = v4l2_async_nf_add_fwnode_remote(&csi->notifier, ep,
-> +					      struct v4l2_async_connection);
-> +	if (IS_ERR(asc)) {
-> +		ret = PTR_ERR(asc);
-> +		goto err_put_handle;
-> +	}
-> +
-> +	csi->notifier.ops = &c3_mipi_csi_notify_ops;
-> +	ret = v4l2_async_nf_register(&csi->notifier);
-> +	if (ret)
-> +		goto err_cleanup_nf;
-> +
-> +	ret = v4l2_async_register_subdev(&csi->sd);
-> +	if (ret)
-> +		goto err_unregister_nf;
-> +
-> +	fwnode_handle_put(ep);
-> +
-> +	return 0;
-> +
-> +err_unregister_nf:
-> +	v4l2_async_nf_unregister(&csi->notifier);
-> +err_cleanup_nf:
-> +	v4l2_async_nf_cleanup(&csi->notifier);
-> +err_put_handle:
-> +	fwnode_handle_put(ep);
-> +	return ret;
-> +}
-> +
-> +static void c3_mipi_csi_async_unregister(struct csi_device *csi)
-> +{
-> +	v4l2_async_unregister_subdev(&csi->sd);
-> +	v4l2_async_nf_unregister(&csi->notifier);
-> +	v4l2_async_nf_cleanup(&csi->notifier);
-> +}
-> +
-> +static int c3_mipi_csi_ioremap_resource(struct csi_device *csi)
-> +{
-> +	struct device *dev = csi->dev;
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +
-> +	csi->aphy = devm_platform_ioremap_resource_byname(pdev, "aphy");
-> +	if (IS_ERR(csi->aphy))
-> +		return PTR_ERR(csi->aphy);
-> +
-> +	csi->dphy = devm_platform_ioremap_resource_byname(pdev, "dphy");
-> +	if (IS_ERR(csi->dphy))
-> +		return PTR_ERR(csi->dphy);
-> +
-> +	csi->host = devm_platform_ioremap_resource_byname(pdev, "host");
-> +	if (IS_ERR(csi->host))
-> +		return PTR_ERR(csi->host);
-> +
-> +	return 0;
-> +}
-> +
-> +static int c3_mipi_csi_configure_clocks(struct csi_device *csi)
-> +{
-> +	const struct csi_info *info = csi->info;
-> +	int ret;
-> +	u32 i;
-> +
-> +	for (i = 0; i < info->clock_num; i++)
-> +		csi->clks[i].id = info->clocks[i];
-> +
-> +	ret = devm_clk_bulk_get(csi->dev, info->clock_num, csi->clks);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < info->clock_num; i++) {
-> +		if (!info->clock_rates[i])
-> +			continue;
-
-Empty line maybe
-
-> +		ret = clk_set_rate(csi->clks[i].clk, info->clock_rates[i]);
-> +		if (ret) {
-> +			dev_err(csi->dev, "Failed to set %s rate %u\n", info->clocks[i],
-> +				info->clock_rates[i]);
-
-should you devm_clk_bulk_release() ?
-
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int c3_mipi_csi_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct csi_device *csi;
-> +	int ret;
-> +
-> +	csi = devm_kzalloc(dev, sizeof(*csi), GFP_KERNEL);
-> +	if (!csi)
-> +		return -ENOMEM;
-> +
-> +	csi->info = of_device_get_match_data(dev);
-> +	csi->dev = dev;
-> +
-> +	ret = c3_mipi_csi_ioremap_resource(csi);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to ioremap resource\n");
-> +
-> +	ret = c3_mipi_csi_configure_clocks(csi);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to configure clocks\n");
-> +
-> +	platform_set_drvdata(pdev, csi);
-> +
-> +	pm_runtime_enable(dev);
-> +
-> +	ret = c3_mipi_csi_subdev_init(csi);
-> +	if (ret)
-> +		goto err_disable_runtime_pm;
-> +
-> +	ret = c3_mipi_csi_async_register(csi);
-> +	if (ret)
-> +		goto err_deinit_subdev;
-> +
-> +	return 0;
-> +
-> +err_deinit_subdev:
-> +	c3_mipi_csi_subdev_deinit(csi);
-> +err_disable_runtime_pm:
-> +	pm_runtime_disable(dev);
-> +	return ret;
-> +};
-> +
-> +static void c3_mipi_csi_remove(struct platform_device *pdev)
-> +{
-> +	struct csi_device *csi = platform_get_drvdata(pdev);
-> +
-> +	c3_mipi_csi_async_unregister(csi);
-> +	c3_mipi_csi_subdev_deinit(csi);
-> +
-> +	pm_runtime_disable(&pdev->dev);
-> +};
-> +
-> +static const struct csi_info c3_mipi_csi_info = {
-> +	.clocks = {"vapb", "phy0"},
-> +	.clock_rates = {0, 200000000},
-> +	.clock_num = 2
-> +};
-> +
-> +static const struct of_device_id c3_mipi_csi_of_match[] = {
-> +	{ .compatible = "amlogic,c3-mipi-csi2",
-
-Kind of a weird indent. What about
-
-	{
-                .compatible = "amlogic,c3-mipi-csi2",
-	        .data = &c3_mipi_csi_info,
-        },
-
-Nice overall, remove the last remaining bits about routing and next
-version is good to go in my opinion.
-
-Thanks
-  j
-
-
-
-> +	  .data = &c3_mipi_csi_info,
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, c3_mipi_csi_of_match);
-> +
-> +static struct platform_driver c3_mipi_csi_driver = {
-> +	.probe = c3_mipi_csi_probe,
-> +	.remove = c3_mipi_csi_remove,
-> +	.driver = {
-> +		.name = "c3-mipi-csi2",
-> +		.of_match_table = c3_mipi_csi_of_match,
-> +		.pm = pm_ptr(&c3_mipi_csi_pm_ops),
-> +	},
-> +};
-> +
-> +module_platform_driver(c3_mipi_csi_driver);
-> +
-> +MODULE_AUTHOR("Keke Li <keke.li@amlogic.com>");
-> +MODULE_DESCRIPTION("Amlogic C3 MIPI CSI-2 receiver");
-> +MODULE_LICENSE("GPL");
->
-> --
-> 2.47.0
->
->
->
++free_pt_end_uprobe:
++	uprobe_end_dup_mmap();
+ free_pt:
+ 	/* don't put binfmt in mmput, we haven't got module yet */
+ 	mm->binfmt = NULL;
+--
+2.47.1
 
