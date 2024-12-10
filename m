@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-439353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6CC9EAE08
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:34:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2B39EAE09
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E37D168546
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3986D16851F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FAE78F4C;
-	Tue, 10 Dec 2024 10:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7785C2080D6;
+	Tue, 10 Dec 2024 10:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zl9ev07G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cyfeiU1S"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pYsadv+9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+VZCTW49"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766E223DE8F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775D423DEB9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733826859; cv=none; b=onKQpZA9tESrIi3juLBTQb5c1RwyFFtueUkYzWDf09raUGprUInNfGT5qqcUED27fcPx5qDgMwWN3wEaFZwTdNZVKZCKp5DhbNM6h9mc0v2erYnCv3b1laSt25/DFzTlWScz/Pxe7QOmK+hV997lbQ6Pne34ctmslh7Uzyu2CSY=
+	t=1733826859; cv=none; b=dmxrM2iSs6rNTtWp9ot2mF02wEfISU88buRuAtNNY4cPVf8C9vYbuQHlQDKfW3nb+md8sd8AWhP4ZrGY+Qtiyl5pWP1zVcBz3t8WU77wioHsnRsi6WdD0WYBCVTnLEQN3tdreMSi569mFu4Xphugurb0IWgBs1p+YOdMRsgt5pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733826859; c=relaxed/simple;
-	bh=gego9RvxALQhoSTSNVAgb3Dyy5CvdMsla4tRwq1dw/4=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=cQllS69g1q1hpnp49e/5rYidC2oTNqxGxW03idTJ8SPoJSq9hAL0oh0GNRITWXj89AdTWcv68QDmyNOpTkrrRgeF4n6GX8UPtpwkHD9oxuCHZwbuyU22zTFaJjIMOFdWrntbK8TlQ6oC9m0kS9uI5mp26H3TAGQJhEH/vtVTm3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zl9ev07G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cyfeiU1S; arc=none smtp.client-ip=193.142.43.55
+	bh=o60wCU2VnZ8PuDwGNWj2BCybBVp81F0WORBYw7xeBpA=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=UdgQ/bRTBfEKBCyvInEaWzxmpB5PBh5dGGHac6X2YRijAYbzi0TJU5ibsrqj46N6LtPrGlwyJ9v1PxjY+zfLKuNTSYrvENkyFxdEeO44/HwscHn1amQl3sv4ElXxJ3VhhFDfRobm4nr9GG/Na70C5u0ptM0mOZPi5ZZb/X9FTPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pYsadv+9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+VZCTW49; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241210102148.760383417@linutronix.de>
+Message-ID: <20241210103335.373392568@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733826849;
+	s=2020; t=1733826851;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=h9qgpz4lS70aKClBFDEHAAmood6tXGEvuWqydrq2ReA=;
-	b=Zl9ev07GTP0j7eZG9yvSTU2q7ULG2xw4d4XaJIHN5JDyOvuDAU5xj4Pj0oUbsteuZSDYBF
-	a8Q1BWiiGHGdrzSKOB1elHb6x6mfSJh08kfrmkLaNaWSvSJFSI1ITdKAZl/dKuRqiJbLdK
-	VGu4Spblrk6jps2A/Eh3Yaf79JelW2eNXSw9OFx0JFILbKzbYZgJeIT8xDPqP9WI8L54Ng
-	nhB5/ouNKoOFQcDIbDMwHQVd5WNB+5lA+8zDZ/0sh1ar1/iuSpFgo/R9u6CCirANHHLmE6
-	xzbf9nFmkZCXFXEq19SgAH6lefBysxjZoynbj1UFUnnZoB24R/GwC3Ey/UfxWA==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=0GBO+kXAiZqSYt9BqbnxtGix5vHwVBHq9zW5m+OuaGk=;
+	b=pYsadv+9OFHFUr+wRyxUWeLR6mck8wFJshU5OIlBrbLCcICpw8N8VaPcY/YzOPpWnpbugU
+	BoDo6klEIJcwDl1VJh0JRHXYoWkNFlMSlSVbOrxRs2sH4uMI041jr+11Bx7tAQpdYl2pNK
+	BJrUJm7TqbUfesKmP+/5ORmYlEEqEUGKyLyashDG2EaQdx9mBQ0en7nqn8m8Mri48c5JVR
+	dlCUCjLfChSFOHrcq5AWJNZtwrGDsnqptb2W9FM4M8QkdY/dff6G9EaDzgX/eAEMs4bAAe
+	lsmDLRDBMjz1DYmdrN26P5M5nrlwP3DbgQ/I3B7kypYucgEnh///peW3qEz4DQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733826849;
+	s=2020e; t=1733826851;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=h9qgpz4lS70aKClBFDEHAAmood6tXGEvuWqydrq2ReA=;
-	b=cyfeiU1Sl4NRBZCvhhAL/c9FC/uaiuwmvQwE9cdXL8n5sRZMFosa+kU+dIH2/TPZ68w15V
-	Ju9Nn5cQn9PDusAw==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=0GBO+kXAiZqSYt9BqbnxtGix5vHwVBHq9zW5m+OuaGk=;
+	b=+VZCTW49ETrI57GT7tJ4x9pE+mqtMUM/Jb/uNS28y8lJoN/rOUoQvtflcLr7l4bUEaOnYd
+	cFxzAKJuk9oe6qDg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: x86@kernel.org,
@@ -57,60 +60,59 @@ Cc: x86@kernel.org,
  Joerg Roedel <joro@8bytes.org>,
  Lu Baolu <baolu.lu@linux.intel.com>,
  Juergen Gross <jgross@suse.com>
-Subject: [patch 0/5] genirq, x86: Rework deferred interrupt affinity logic
-Date: Tue, 10 Dec 2024 11:34:09 +0100 (CET)
+Subject: [patch 1/5] ARC: Remove GENERIC_PENDING_IRQ
+References: <20241210102148.760383417@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 10 Dec 2024 11:34:10 +0100 (CET)
 
-In a recent discussion about the potential race condition with unmaskable
-MSI interrupts on RISC-V:
+Nothing uses the actual functionality and the MCIP controller sets the
+flags which disables the deferred affinity change. The other interrupt
+controller does not support affinity setting at all.
 
-  https;//lore.kernel.org/all/87r06gq2di.ffs@tglx
-
-it turned out that RISC-V needs the GENERIC_PENDING_IRQ infrastructure to
-close the gap.
-
-It turns out that the logic behind GENERIC_PENDING_IRQ is slighly
-convoluted and backwards for the general case:
-
-   1) The default is to defer, which is not what the majority of interrupt
-      controllers need.
-
-   2) Deferrement is handled as per interrupt flag. That's a pointless
-      exercise as the requirement is actually per interrupt controller.
-
-To ease the conversion of RISC-V, rework the logic to make the deferrement
-based on an interrupt chip flag and convert x86 over, which then allows to
-remove the current double book keeping of the non-deferrement flag.
-
-The conversion is done in two steps with an intermediate config switch as
-RISC-V needs a trivial way to backport the changes.
-
-Thanks,
-
-	tglx
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vineet Gupta <vgupta@kernel.org>
 ---
- arch/arc/Kconfig                    |    1 -
- arch/arc/kernel/mcip.c              |    2 --
- arch/hexagon/Kconfig                |    1 -
- arch/x86/hyperv/irqdomain.c         |    2 +-
- arch/x86/kernel/apic/io_apic.c      |    2 +-
- arch/x86/kernel/apic/msi.c          |    3 ++-
- arch/x86/kernel/hpet.c              |    8 --------
- arch/x86/platform/uv/uv_irq.c       |    2 --
- drivers/iommu/amd/init.c            |    2 +-
- drivers/iommu/amd/iommu.c           |    1 -
- drivers/iommu/intel/irq_remapping.c |    1 -
- drivers/pci/controller/pci-hyperv.c |    1 +
- drivers/xen/events/events_base.c    |    6 ------
- include/linux/irq.h                 |   14 +++-----------
- kernel/irq/Kconfig                  |    4 ++++
- kernel/irq/chip.c                   |    4 +---
- kernel/irq/debugfs.c                |    2 +-
- kernel/irq/internals.h              |    2 +-
- kernel/irq/settings.h               |    6 ------
- 19 files changed, 16 insertions(+), 48 deletions(-)
+ arch/arc/Kconfig       |    1 -
+ arch/arc/kernel/mcip.c |    2 --
+ kernel/irq/debugfs.c   |    1 +
+ 3 files changed, 1 insertion(+), 3 deletions(-)
+
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -24,7 +24,6 @@ config ARC
+ 	# for now, we don't need GENERIC_IRQ_PROBE, CONFIG_GENERIC_IRQ_CHIP
+ 	select GENERIC_IRQ_SHOW
+ 	select GENERIC_PCI_IOMAP
+-	select GENERIC_PENDING_IRQ if SMP
+ 	select GENERIC_SCHED_CLOCK
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_IOREMAP
+--- a/arch/arc/kernel/mcip.c
++++ b/arch/arc/kernel/mcip.c
+@@ -357,8 +357,6 @@ static void idu_cascade_isr(struct irq_d
+ static int idu_irq_map(struct irq_domain *d, unsigned int virq, irq_hw_number_t hwirq)
+ {
+ 	irq_set_chip_and_handler(virq, &idu_irq_chip, handle_level_irq);
+-	irq_set_status_flags(virq, IRQ_MOVE_PCNTXT);
+-
+ 	return 0;
+ }
+ 
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -53,6 +53,7 @@ static const struct irq_bit_descr irqchi
+ 	BIT_MASK_DESCR(IRQCHIP_SUPPORTS_NMI),
+ 	BIT_MASK_DESCR(IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND),
+ 	BIT_MASK_DESCR(IRQCHIP_IMMUTABLE),
++	BIT_MASK_DESCR(IRQCHIP_MOVE_DEFERRED),
+ };
+ 
+ static void
+
 
