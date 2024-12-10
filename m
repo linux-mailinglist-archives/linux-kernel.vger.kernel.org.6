@@ -1,175 +1,110 @@
-Return-Path: <linux-kernel+bounces-439491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1BD9EAFFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA0C9EAFFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C6E18878C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9E418878C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B2A2080ED;
-	Tue, 10 Dec 2024 11:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cSuMrLGi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594EF212D67;
+	Tue, 10 Dec 2024 11:35:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70211DC992;
-	Tue, 10 Dec 2024 11:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0DB2080D2;
+	Tue, 10 Dec 2024 11:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733830542; cv=none; b=XxSABz/nBjDr/pFYBGerYvW5iFr4UV7IBSOqP2kTLfj9m+1GQHF9cPGLqmys5T7CknUFgwY/XY44F/HXgN3Tt+TaS5WnDmZTCU5CNHn6lfZyxvvx+w/nCM7wrEPYW1z2DOJeckwhaTuSTB4dDLA15JZA6KtZt1sjPSESPLpQYm8=
+	t=1733830551; cv=none; b=Ktb/5iwpM3y3/PkwkRNVd3zvz3ZcUXVd4/6E4AGdeC5jgeD1lS9ShV1nNEJoFMAkB0lpsTmhcYFVGyVwfTrR+0puCxoVxSES22JeN9U3Ld545PGkBjlRO5S0fJRLHmlifjKMgzmyETrvMG2lqLzfnY+wm6/NYyMJzElbN24aNaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733830542; c=relaxed/simple;
-	bh=WHDSe6EUA5S0A1igiIW2WwLpfRxVDyrjbYLfxWAG7Ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uU4TCxeK4chtIS7mviQBueC3O5P5dwTFQiXeOHBRoTJ1FeyHpXjQe9LPAEjslZsiRySDfUVe31MW6fy014ICiegLl82rC/auVOJ7Od2JaKfmZLX4Dl5zJq40Mj9J7awRnjSnXpzxrFb9Pk+IkTbS4g0vLyI4FN6jCfombgIb3j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cSuMrLGi; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733830540; x=1765366540;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WHDSe6EUA5S0A1igiIW2WwLpfRxVDyrjbYLfxWAG7Ls=;
-  b=cSuMrLGiD7EZvkooBsFeYDJsbgvIHc/0tkPCUrXS++bjQj/XdSfle+WA
-   oUrcCmGo9dQoE9j/xXN0r2/8NsmWejLgOUuxJ4WniyyWYx2lfCYgw1nAm
-   ZgvU/X3nDRK1v6UCR8KaWQi0KzN4qCCuSQqoZBt+etkfm1G+vORGsUUvM
-   EeWKR33bamAZ7TMcgIHUpi3Ru+T8+Wv2PJ6js9SJsZUHwMf7edjVjlNMT
-   srn/xROAC3+Uq6zoS1BIuIiCz/sxXqV/9xxKHn5VZQq8a/BADlCjEJzna
-   kXvGCE4583csm9jBRiSbMt2UMhhMw6kVTkOvnYm/6srtni85Dr3f/CzUt
-   Q==;
-X-CSE-ConnectionGUID: l+XZeAn1SyWUhGGTLXAzPQ==
-X-CSE-MsgGUID: 4oa3EYlzTnuKC2LcsnDd1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="37953221"
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="37953221"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 03:35:39 -0800
-X-CSE-ConnectionGUID: KnbZnJbTTp+ogeuAnZR5Lw==
-X-CSE-MsgGUID: YdwH9kWVRUewkGlVt+S9DQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="95206413"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 10 Dec 2024 03:35:32 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKyWX-0005TR-0J;
-	Tue, 10 Dec 2024 11:35:29 +0000
-Date: Tue, 10 Dec 2024 19:35:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
-	vbabka@suse.cz, yang@os.amperecomputing.com, riel@surriel.com,
-	david@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, linux@armlinux.org.uk,
-	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com,
-	ysato@users.sourceforge.jp, dalias@libc.org,
-	glaubitz@physik.fu-berlin.de, davem@davemloft.net,
-	andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net,
-	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com,
-	leitao@debian.org, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 04/17] mm: alpha: Introduce arch_mmap_hint()
-Message-ID: <202412102123.Db7EAmhx-lkp@intel.com>
-References: <20241210024119.2488608-5-kaleshsingh@google.com>
+	s=arc-20240116; t=1733830551; c=relaxed/simple;
+	bh=DBCKw02zjg9Ixa3L9GiBlWaE+1cfhfx80IV1vktGJTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ApyUwllu41tfLYdSnK5Tg8bsdxF1tOrwPM9o20jVNPn0FcXeggCW7wE8v9W0c3W8xe01Gb8nwR6bkEqbWAQO21IjP5rTMQMZyYoL2izB8lKPJnxKgjvoMm44mMmy9ZAxUvOARbgUebHD76tXMIt92H4s4LgfFMo7GlRGO2PQKQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y6xVq26WFz4f3l85;
+	Tue, 10 Dec 2024 19:35:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 7EB5B1A058E;
+	Tue, 10 Dec 2024 19:35:45 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgC3Y+CPJ1hnBTauEA--.27259S2;
+	Tue, 10 Dec 2024 19:35:45 +0800 (CST)
+Message-ID: <b78b8183-4dbc-4163-a84b-f74f5af97e84@huaweicloud.com>
+Date: Tue, 10 Dec 2024 19:35:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210024119.2488608-5-kaleshsingh@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [next -v1 3/5] memcg: simplify the mem_cgroup_update_lru_size
+ function
+To: Shakeel Butt <shakeel.butt@linux.dev>, Hugh Dickins <hughd@google.com>
+Cc: Yu Zhao <yuzhao@google.com>, akpm@linux-foundation.org,
+ mhocko@kernel.org, hannes@cmpxchg.org, yosryahmed@google.com,
+ roman.gushchin@linux.dev, muchun.song@linux.dev, davidf@vimeo.com,
+ vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, chenridong@huawei.com, wangweiyang2@huawei.com
+References: <20241206013512.2883617-1-chenridong@huaweicloud.com>
+ <20241206013512.2883617-4-chenridong@huaweicloud.com>
+ <CAOUHufbCCkOBGcSPZqNY+FXcrH8+U7_nRvftzOzKUBS4hn+kuQ@mail.gmail.com>
+ <897b04c9-dba3-44ae-8113-145ca3457cb3@huaweicloud.com>
+ <edab8d46-7c03-4bf5-fe1c-0150cdf4d96a@google.com>
+ <xuhsdsl2bhlrlaghar3ru7nhlhjsmaiyjxayryogylsordbwcx@e2jxsb2qdbhd>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <xuhsdsl2bhlrlaghar3ru7nhlhjsmaiyjxayryogylsordbwcx@e2jxsb2qdbhd>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgC3Y+CPJ1hnBTauEA--.27259S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw1DZr43ZF4xJF4rZw4DCFg_yoWxtFb_Wr
+	ZYqFsrKwsxXanrZw4kKrnY9rWkXw4jvFnrAry0qFsrZr13CF4DGFWDGr4xZrZ8KF4vkF13
+	AFWrJwsI9wnrCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
+	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
+	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v2
+	6r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsU
+	UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Hi Kalesh,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kalesh-Singh/mm-Introduce-generic_mmap_hint/20241210-104424
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20241210024119.2488608-5-kaleshsingh%40google.com
-patch subject: [PATCH mm-unstable 04/17] mm: alpha: Introduce arch_mmap_hint()
-config: alpha-allmodconfig (https://download.01.org/0day-ci/archive/20241210/202412102123.Db7EAmhx-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241210/202412102123.Db7EAmhx-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412102123.Db7EAmhx-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/alpha/kernel/osf_sys.c: In function 'arch_get_unmapped_area':
->> arch/alpha/kernel/osf_sys.c:1280:24: error: 'hint' undeclared (first use in this function); did you mean 'uint'?
-    1280 |                 return hint;
-         |                        ^~~~
-         |                        uint
-   arch/alpha/kernel/osf_sys.c:1280:24: note: each undeclared identifier is reported only once for each function it appears in
 
 
-vim +1280 arch/alpha/kernel/osf_sys.c
+On 2024/12/7 5:20, Shakeel Butt wrote:
+> On Fri, Dec 06, 2024 at 12:24:54AM -0800, Hugh Dickins wrote:
+> [...]
+>> Another thing to understand: it's called before adding folio to list,
+>> but after removing folio from list: when it can usefully compare whether
+>> the emptiness of the list correctly matches lru_size 0.
+> 
+> I think one source of confusion might be that this "emptiness" check has
+> been removed by commit b4536f0c829c because of maintaining the list size
+> per-zone and actual list is shared between zones of a node.
+> 
 
-  1248	
-  1249	unsigned long
-  1250	arch_get_unmapped_area(struct file *filp, unsigned long addr,
-  1251			       unsigned long len, unsigned long pgoff,
-  1252			       unsigned long flags, vm_flags_t vm_flags)
-  1253	{
-  1254		unsigned long limit;
-  1255	
-  1256		/* "32 bit" actually means 31 bit, since pointers sign extend.  */
-  1257		if (current->personality & ADDR_LIMIT_32BIT)
-  1258			limit = 0x80000000;
-  1259		else
-  1260			limit = TASK_SIZE;
-  1261	
-  1262		if (len > limit)
-  1263			return -ENOMEM;
-  1264	
-  1265		if (flags & MAP_FIXED)
-  1266			return addr;
-  1267	
-  1268		/* First, see if the given suggestion fits.
-  1269	
-  1270		   The OSF/1 loader (/sbin/loader) relies on us returning an
-  1271		   address larger than the requested if one exists, which is
-  1272		   a terribly broken way to program.
-  1273	
-  1274		   That said, I can see the use in being able to suggest not
-  1275		   merely specific addresses, but regions of memory -- perhaps
-  1276		   this feature should be incorporated into all ports?  */
-  1277	
-  1278		addr = arch_mmap_hint(filp, addr, len, pgoff, flags);
-  1279		if (addr)
-> 1280			return hint;
-  1281	
-  1282		/* Next, try allocating at TASK_UNMAPPED_BASE.  */
-  1283		addr = arch_get_unmapped_area_1 (PAGE_ALIGN(TASK_UNMAPPED_BASE),
-  1284						 len, limit);
-  1285		if (addr != (unsigned long) -ENOMEM)
-  1286			return addr;
-  1287	
-  1288		/* Finally, try allocating in low memory.  */
-  1289		addr = arch_get_unmapped_area_1 (PAGE_SIZE, len, limit);
-  1290	
-  1291		return addr;
-  1292	}
-  1293	
+Agree.
+Maybe it doesn't have to distinguish between  "size > 0" and "size < 0" now?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Ridong
+>> It cannot do so
+>> when adding if you "simplify" it in the way that you did.
+>>
+
 
