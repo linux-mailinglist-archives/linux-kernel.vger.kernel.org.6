@@ -1,130 +1,135 @@
-Return-Path: <linux-kernel+bounces-438808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0819EA68B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:23:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040559EA68D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:25:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C777188A458
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6483168DC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7611D5CF8;
-	Tue, 10 Dec 2024 03:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="LMi83BZk"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D8CB644;
-	Tue, 10 Dec 2024 03:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13091D5CD4;
+	Tue, 10 Dec 2024 03:25:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4075B644
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733801027; cv=none; b=hCYev8mk35KdCLLFdNwuv+SZ3eo2dMdkMkFmmH0RlU2AhGjWO5AWLSV2Ey12FRRdKk5G+YS7/FIkkwlmXjOXcvxpy7fkov2KHTxDxfSjwzS4YrP3iCutLnfkg/z4sW/OYWHt/pxYTIQsRiIlcDhOfDmSFpT7ARBGcEnh29BaY64=
+	t=1733801130; cv=none; b=pQhJqpGqvDoSmQunAX8AMKALxeXT+92GbscCo1JCNCQ24ERWz2Ozgs8y+o+GeYv0pZmfBYzbvg6VFsreJOr2Xdy3eZqryPwrQapUpGiNdOOoPli6P8b0heWXQimzygmtyI7n3crw5oN/Y2VgiBrNbkaL0Fu6ZRXK2UWLc84zZFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733801027; c=relaxed/simple;
-	bh=zWvfhOhTnJxZw3Q+SmdO4IWJaqD9iWKEoCYSD+OClC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cl01yShwtOw5Ce7opqNoMeDcjIVy0gBy6yXz3rivXewy7wef8tvhKUiw4/bVLZ7Gm6DD5w40SKaW07JAkgKZ8srqPuJ3YcSTfmrCIR8Api0uxkwBaDpEEfCk25FH7R3tkvG4hucESx5cJXaU2gl4px6Me+EX40E7KRAQpNsAyBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=LMi83BZk; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=QRJuG0s9T8kGT7fGW4vO0K9A1EqQPFWHMiDEkxy1xD4=; b=LMi83BZk7wb0+X/dmEn11mzy+6
-	K2Vjr/2OMmRQEqKx+RoIaoOOZUIyn1HxqHNi2bxsNO1HwnE7T9E74EJUhPmlOPbCs7uc34RxBOZsV
-	Tu8oEcxsjlgpCMzMPFydeu8lUXV51fXM3CkqBfIc2PHhvGshRzgNyLcqfePiUdv+gT0r8BS/iMl4C
-	U3mWHy2/0wsU/BjVEbo70ynDD9k/G6JSrv7iCsAc4mT/e7m71IKtEhDG+GJHKg8ZnTqokonv0CHiM
-	T6I83oN+tYXwwtU/+Tpw4M6mqGAqwoLu0oXLaWVO6UagK6Wb3uygeR+ZE2xLYM+0XUS56nRJNlAvp
-	zr3/U7jA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tKqdP-000N6G-2C;
-	Tue, 10 Dec 2024 11:23:25 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 11:23:24 +0800
-Date: Tue, 10 Dec 2024 11:23:24 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com,
-	Richard van Schagen <vschagen@icloud.com>
-Subject: Re: [PATCH v7 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
- engine support
-Message-ID: <Z1e0LHycNGcWqd2q@gondor.apana.org.au>
-References: <20241112015920.22564-1-ansuelsmth@gmail.com>
- <20241112015920.22564-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1733801130; c=relaxed/simple;
+	bh=6s92LB4hy4I65Qor+FdlJMIeq0F3LdVO/k8zzov8Az0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IqWVldq5t3uxHvhIPny2g6WvKpAJbWQB6ahfpEKgEUvTlHTu+AkfqjKrJc27tdjbQsw3dWdPTxbFFPYHXdk7YNFtY6Fvcn2FInCeM/bryLn0Eev+PvmPoZqLdI5dLrvsGM8PkxvNRgColq5VaJpQGjFDDoPuIIP+XtYiXEElnyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDC10339;
+	Mon,  9 Dec 2024 19:25:47 -0800 (PST)
+Received: from [10.163.48.173] (unknown [10.163.48.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0D543F720;
+	Mon,  9 Dec 2024 19:25:16 -0800 (PST)
+Message-ID: <c17a45b9-a3a2-4f9d-8243-399f65fc1a52@arm.com>
+Date: Tue, 10 Dec 2024 08:55:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112015920.22564-4-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/execmem: Make ARCH_WANTS_EXECMEM_LATE depend on
+ EXECMEM
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: kernel test robot <lkp@intel.com>, linux-mm@kvack.org,
+ Paul Gazzillo <paul@pgazz.com>,
+ Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+ oe-kbuild-all@lists.linux.dev, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241209031251.515903-1-anshuman.khandual@arm.com>
+ <202412092048.tTzJ5szH-lkp@intel.com>
+ <f492ac51-9dad-4b18-8cd4-81dc236b3162@arm.com> <Z1ckOoPMSXfNdrXd@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <Z1ckOoPMSXfNdrXd@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 02:59:00AM +0100, Christian Marangi wrote:
->
-> +static int eip93_hash_export(struct ahash_request *req, void *out)
-> +{
-> +	struct eip93_hash_reqctx *rctx = ahash_request_ctx(req);
-> +	struct eip93_hash_export_state *state = out;
-> +	DECLARE_CRYPTO_WAIT(wait);
-> +	int ret;
-> +
-> +	crypto_init_wait(&wait);
-> +	/* Set the req callback for hash_partial_final wait */
-> +	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-> +				   crypto_req_done, &wait);
-> +
-> +	/* Set for partial hash generation */
-> +	rctx->partial_hash = true;
-> +	rctx->export_state = true;
-> +	rctx->state = state;
-> +
-> +	/* Save the first block in state data */
-> +	if (rctx->left_last || rctx->len) {
-> +		struct mkt_hash_block *block;
-> +
-> +		block = list_first_entry(&rctx->blocks,
-> +					 struct mkt_hash_block,
-> +					 list);
-> +
-> +		memcpy(state->data, block->data,
-> +		       SHA256_BLOCK_SIZE - rctx->left_last);
-> +	}
-> +
-> +	/* Call hash_partial_final.
-> +	 * This will send a dummpy 0 length packet. This is done to
-> +	 * wait for every descriptor to being handled and sync the sa_state
-> +	 * from the host. Partial hash and any other data will be copied in
-> +	 * eip93_hash_handle_result()
-> +	 */
-> +	ret = crypto_wait_req(eip93_hash_partial_final(req), &wait);
 
-Sorry, you can't do that here.  Your hash state should have been
-exported when the request previously completed.  The export function
-must not sleep.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+On 12/9/24 22:39, Catalin Marinas wrote:
+> On Mon, Dec 09, 2024 at 07:43:32PM +0530, Anshuman Khandual wrote:
+>> On 12/9/24 18:06, kernel test robot wrote:
+>>> kernel test robot noticed the following build warnings:
+>>>
+>>> [auto build test WARNING on akpm-mm/mm-everything]
+>>>
+>>> url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/mm-execmem-Make-ARCH_WANTS_EXECMEM_LATE-depend-on-EXECMEM/20241209-111533
+>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+>>> patch link:    https://lore.kernel.org/r/20241209031251.515903-1-anshuman.khandual%40arm.com
+>>> patch subject: [PATCH] mm/execmem: Make ARCH_WANTS_EXECMEM_LATE depend on EXECMEM
+>>> config: arm64-kismet-CONFIG_ARCH_WANTS_EXECMEM_LATE-CONFIG_ARM64-0-0 (https://download.01.org/0day-ci/archive/20241209/202412092048.tTzJ5szH-lkp@intel.com/config)
+>>> reproduce: (https://download.01.org/0day-ci/archive/20241209/202412092048.tTzJ5szH-lkp@intel.com/reproduce)
+>>>
+>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>> the same patch/commit), kindly add following tags
+>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202412092048.tTzJ5szH-lkp@intel.com/
+>>>
+>>> kismet warnings: (new ones prefixed by >>)
+>>>>> kismet: WARNING: unmet direct dependencies detected for ARCH_WANTS_EXECMEM_LATE when selected by ARM64
+>>>    WARNING: unmet direct dependencies detected for ARCH_WANTS_EXECMEM_LATE
+>>>      Depends on [n]: EXECMEM [=n]
+>>>      Selected by [y]:
+>>>      - ARM64 [=y]
+>>
+>> Although above mentioned config here has CONFIG_ARCH_WANTS_EXECMEM_LATE=y
+>> and CONFIG_EXECMEM=n (actually absent), could that really happen though ?
+>>
+>> Tried making CONFIG_EXECMEM=n (rather deselecting) but that did now allow
+>> setting CONFIG_EXECMEM=n, it always remained set. Reverting this patch i.e
+>> the current behaviour is also the same (CONFIG_EXECMEM always remains set).
+>>
+>> select ARCH_WANTS_EXECMEM_LATE if EXECMEM
+>>
+>> Above statement seems to be selecting EXECMEM as well but the intent seems
+>> to be a dependency check instead! OR arch selection for a config brings in
+>> all its dependencies as well.
+>>
+>> If the selection is always, should this change be like the following ?
+>>
+>> config ARCH_WANTS_EXECMEM_LATE
+>>  	bool
+>> 	selects EXECMEM
+> 
+> This is wrong. What ARCH_WANTS_EXECMEM_LATE means is that, _if_ EXECMEM
+> is enabled, the arch code require its late initialisation. Currently for
+
+Which implies that even if ARCH_WANTS_EXECMEM_LATE is only applicable when
+EXECMEM is enabled, there is no real dependence on the later for platforms
+that need a certain init behaviour.
+
+> arm64 EXECMEM is selected by KPROBES, BPF_JIT and MODULES. So if you
+
+EXECMEM gets enabled from the above, not via ARCH_WANTS_EXECMEM_LATE as I
+had anticipated earlier.
+
+> don't have any of these on, you don't need EXECMEM either, no point in
+> selecting it above just because arm64 wants a specific behaviour (late
+> initialisation) for EXECMEM.
+
+Right, specific behaviour preference for a function on a platform should
+not necessarily pull in that function itself.
+
+> 
+> If you do want a patch for this, I think for arm64 we simply need to
+> select ARCH_WANTS_EXECMEM_LATE unconditionally. Not much use in having
+> any dependencies really, it just adds to the clutter. And don't change
+> the core Kconfig either.
+
+Sure, will do.
 
