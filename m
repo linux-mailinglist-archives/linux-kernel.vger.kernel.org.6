@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-440276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5452C9EBB29
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:53:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8519EBB2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:53:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692F118886F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0978D1888673
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E69622B5A9;
-	Tue, 10 Dec 2024 20:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597BF22B5AD;
+	Tue, 10 Dec 2024 20:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YSWBX2LS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XjDrULVy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i8/+jfRV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B0A23ED69;
-	Tue, 10 Dec 2024 20:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827D523ED69;
+	Tue, 10 Dec 2024 20:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733863982; cv=none; b=mpQH8ph74QOd17whRZYVrgi40n13MAneRmxHNECJyBfamfuTITtbIS0Lv5dAmLKxAIkE8BzJR8OZ5fmvjWdVQds7rZqPyKue1b2O1c5N5jWU5qJ7BNzbmdLrlrnR3wH0Jn+hxzK/+jat87b7sjbkCbNWBXPdP9KzMghU8+mbJeU=
+	t=1733864021; cv=none; b=of843BJWseePSAwnjaljTqO1H6ecUEG9I1dfgDZpmkWCpZS1Iq4uhnNTuBb057MO0nYB+fe9teijVu4SIQMIhAzH+Z9Wo/EYBpcnRTHIHdt1uOoLA+bnvY8HhyVEjFDvL0JgOq9tVz0QSueMu2JVTqQJ1ddMpMF16ZSC71JbJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733863982; c=relaxed/simple;
-	bh=s0TRnZtFR890JeVCNpOmBcdy1D83EKsIlytGEKLxifE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=MWK4pKHOcdNdoR8PJz5p5ufAWlCI/+Dp2F63qUFGHoQoSjWH0xc91acP5dRM/JSHxSS6s3DuwQ722hK66xlrpCtAr2NwF7Q6WFXpfskFLGPdzdVupOpgvje/SCnvsSy96/NVZc3n0lVH5dJkJGvYmG+tiYXE/4Yd+e14ODRuN+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YSWBX2LS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XjDrULVy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 10 Dec 2024 20:52:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733863978;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MVORK7EsuNGvc3TnrTmkdtEnNvYUCHOONCh3cTVipLY=;
-	b=YSWBX2LSO8UhSe9zCmea9lnhZ9GONfnXyT5G3pYv7SQXqYzMNIRkV5h6Cb3hqunkaoehI3
-	mCw3eKSagiDqw6qYCq7DUtoaCtt8MKQaeMD1Jr8nZe11ByxvkhOpWCGGGD3qQ4rDps4IBk
-	1sqSy5pJARm/Qhha3ugnzdiYn6VZY/2C9W/DtNeo/Ims0yoHdmsDYrLH2trv3vSIgaOeZH
-	cIVYsAtPpbi6EGilOnWW9c+jMflny/vcVJcwlJWO39V7lSWgo1ZVPZsU7CG2EFBc18Yke7
-	RzhJpxKqN44W6B4WNQQMNU0I44wlq3aNXCWpYF9fDTY3GBobU3a2umDPXs7Qhw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733863978;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MVORK7EsuNGvc3TnrTmkdtEnNvYUCHOONCh3cTVipLY=;
-	b=XjDrULVySMdwCDPCv5VtuQugxl5OslXK0RagMYeWAKwThUPj7bnFHqhBBBoojAF+jIy/Sy
-	SJ0dnRXzOncvQeCA==
-From: "tip-bot2 for Raag Jadav" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/cpu: Fix typo in x86_match_cpu()'s doc
-Cc: Raag Jadav <raag.jadav@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241030065804.407793-1-raag.jadav@intel.com>
-References: <20241030065804.407793-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1733864021; c=relaxed/simple;
+	bh=31LfL6mjPS1xsStD1eGVuT27O7F4GBZV6V514vOglIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XgyECGWgA9gKBBfhK7hX3uI7P9B8VjhZMnP02rD7docl1VlHM5rQ+oJvs2QhUstJ1MZSR9pmOueD7SfX8J7SQvt6i/gx/jP7RlHjbVVRATa5RMdZ6smRcCShCuX+YfLloh+cmmeGOMY5WLR0gwnM9MOWGZsNQpmW6kHQ6gIqFzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i8/+jfRV; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733864020; x=1765400020;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=31LfL6mjPS1xsStD1eGVuT27O7F4GBZV6V514vOglIo=;
+  b=i8/+jfRVGLQbOLwg5jQG6zcrvWf9YJ4zbTkvhrx6GqctsmLIOrWiDj3Z
+   zSmtWpcA15mnkQfD4+Ch7XeSZTmyOiv563of1YZnW9WAuLNdBO11LxGu0
+   ILCv9uR/IksZE2l6odF9C5oz8zVENeYTXQnFyurKyKMcH7t+C41O+2BoH
+   rAg7vvuvC0RUZnkX137oSRp77xwKzTjZo+7Afh4u2nwclS9QtHh6kdcon
+   YngI71q08ygblO37/qFyQGCoDVMeomW1Enr/PuD/e9AHkOM17zhbSdHII
+   g8JDKfSvzYTDq/dk443GRI+NaWyrk93GMIuZNc6J32ludunFenzJgiUV5
+   A==;
+X-CSE-ConnectionGUID: T6R20B+gQp+98YtG2KrfGQ==
+X-CSE-MsgGUID: lqeVwX3dTiWRJcktL69gmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="34366428"
+X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
+   d="scan'208";a="34366428"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 12:53:39 -0800
+X-CSE-ConnectionGUID: rKdIPVNVQySlVifuPUcJYA==
+X-CSE-MsgGUID: 6dcOQfZqSXmw5eYrhAUzLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="100583305"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 12:53:37 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 7ED5E11F81D;
+	Tue, 10 Dec 2024 22:53:33 +0200 (EET)
+Date: Tue, 10 Dec 2024 20:53:33 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 3/7] ACPI: bus: implement
+ acpi_get_physical_device_location when !ACPI
+Message-ID: <Z1iqTe5_tiJ_ehzU@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-3-00e409c84a6c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173386397796.412.4053309518488964075.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210-fix-ipu-v3-3-00e409c84a6c@chromium.org>
 
-The following commit has been merged into the x86/cleanups branch of tip:
+Hi Ricardo,
 
-Commit-ID:     3560a023a9b9965803e8a967ee88343879b5dc1b
-Gitweb:        https://git.kernel.org/tip/3560a023a9b9965803e8a967ee88343879b5dc1b
-Author:        Raag Jadav <raag.jadav@intel.com>
-AuthorDate:    Wed, 30 Oct 2024 12:28:04 +05:30
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 10 Dec 2024 21:40:02 +01:00
+On Tue, Dec 10, 2024 at 07:56:00PM +0000, Ricardo Ribalda wrote:
+> Provide an implementation of acpi_get_physical_device_location that can
+> be used when CONFIG_ACPI is not set.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> 
+> dasadsd
 
-x86/cpu: Fix typo in x86_match_cpu()'s doc
+Yes?
 
-Fix typo in x86_match_cpu()'s description.
+Apart from this,
 
-  [ bp: Massage commit message. ]
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20241030065804.407793-1-raag.jadav@intel.com
----
- arch/x86/kernel/cpu/match.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
-index 8e7de73..82e5d29 100644
---- a/arch/x86/kernel/cpu/match.c
-+++ b/arch/x86/kernel/cpu/match.c
-@@ -6,7 +6,7 @@
- #include <linux/slab.h>
- 
- /**
-- * x86_match_cpu - match current CPU again an array of x86_cpu_ids
-+ * x86_match_cpu - match current CPU against an array of x86_cpu_ids
-  * @match: Pointer to array of x86_cpu_ids. Last entry terminated with
-  *         {}.
-  *
+-- 
+Regards,
+
+Sakari Ailus
 
