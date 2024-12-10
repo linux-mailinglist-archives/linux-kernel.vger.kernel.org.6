@@ -1,83 +1,131 @@
-Return-Path: <linux-kernel+bounces-438816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468EE9EA6AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:31:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649069EA6AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56467188A545
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:31:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6308218887F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7811BEF8B;
-	Tue, 10 Dec 2024 03:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D0E1D5CD6;
+	Tue, 10 Dec 2024 03:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="EqmWEt5t"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yonfa6r2"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231CB3C17;
-	Tue, 10 Dec 2024 03:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C5219E971
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733801483; cv=none; b=owd9KCP0DFyuiwsIzQfzSocXfT5iQNN1FjAozfTMTGIrW7SVdCft9Xgl1hPNYedi/1sB2PtlfzTeuS3fnCgeY0tC4V0pBHRJ1HkOGcAua3ZIfcGHBi+FbQuB9bYg0mPOUEOUcWIdq75x6RYL9s4nQX49l+YoBo5WkuI/TSbHNB0=
+	t=1733801510; cv=none; b=t3R1CBSlI/RwC9LibRkqUnD4vtdzL/aY4vH0Uwkjb1KvNh6BXOlqUAhgyGLRHrZq2qEoy8Ffad1nT/Pxl9SlYFSU6O7IopzdFLvJtKs1wTP7gQvvVC4mdNGOL2wGtLKeRIqIJnfnc4+Bz/MHise9wCrkK9BtseEUMB62OCjd/bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733801483; c=relaxed/simple;
-	bh=/xvEaXqGClLSE99ARv0pGP9OeJYBuAOmZF9ym6pK5dQ=;
+	s=arc-20240116; t=1733801510; c=relaxed/simple;
+	bh=FNzKszCuHp8YBw4zUen9q+/Su0cHKgEr5TQylNKG7Rg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QQewkkoWlPyvCaU1b+xn+BTxzc9UOrcBU3Oo3o0JhplkBKtJsJJPVmEViFekQ5bJSLT7cOJS6WumhO5cPO2CUHwrDk3dnUA3dL4I66iQcB0QmcpG/FEgJj+biPyKtKYFRMvFNrflvLt8uJ5VnB73wOEL/2KfvM4vguXlOI+lR7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=EqmWEt5t; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=PdXlbzhXZmgM+/eqQWKKsKXyeZE8Daydu9uXrb9axzY=; b=EqmWEt5txs0xDkJ0tuhuegtQgG
-	DbQGwhpodXCGblVK9YG83Esxtx0iPWhlpdL9ON7iDUGZKisUwys5oymBkcf2lzSppUFa3bXkh+v2i
-	L9YAJPvrTnWK2diPG78AYov+74/BRf9s5zO2G1r7+WzBrMmUTIW/tlZ/6aOJdvUFtmN88xEn0pHpY
-	TVQr295iEmiHe2C5bFsqD4lkKmrCppsnChhF6n9fvbONT9CkunOGuESSCERJRy/UThpw6tecgU0tP
-	WRKL0IhxuML/VbQgpkDp8fcQru8EJpRSquKiwwGkkq8rxhI6d3JTL3hQgIBnQyTNMICtp9y9PxPUp
-	NDVNes6Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tKqky-000NDB-0X;
-	Tue, 10 Dec 2024 11:31:13 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 11:31:12 +0800
-Date: Tue, 10 Dec 2024 11:31:12 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
-	qianweili@huawei.com, linwenkai6@hisilicon.com
-Subject: Re: [PATCH v4 2/2] crypto: hisilicon/sec2 - fix for aead invalid
- authsize
-Message-ID: <Z1e2APBqSnl8ayyu@gondor.apana.org.au>
-References: <20241115102139.3793659-1-huangchenghai2@huawei.com>
- <20241115102139.3793659-3-huangchenghai2@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjK/4CcA17nKstnTiRDiqnAdPEF2h7lKQ4U3uc71NVpwlTqiCUvWAZP6Z8aP7ujoOp0kfez3UdfxzAgq2+VGbKkcoKqMLyjNUiZuHz9fVItB3h53JAE0DF5U6rFv63U7IwVlDqYnnECy1ydr6LBDpGy0Vt3H5vhgmmldyumuwac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yonfa6r2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2163affd184so28305ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 19:31:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733801508; x=1734406308; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vv0YJOP4wsTr0yQs0O9EirzGuPC4EYUuQmTwZ8ZwYDs=;
+        b=Yonfa6r2aTAA7K2Q3rzZ31HLSWfK+rUQeeWpm5Y+rsanQPK5pVWu78frOs/uaV7M1d
+         0O9Sgmz/0HR5j7o0Dm+3vbiMldwpiOVHfRtF9W7NKKT2JPCKK6XJ6lgmKDuQ57mVNx0P
+         ZL+BCVsNYZHT0Z7ruIl27v7c5wGEZiDnrTo1nGP0THLUH9sROLxgAr1ZwMXTt+TutR2g
+         cF2o+NFblT7TutVJnLzY60BV7J+51pm3zH3B0h0kEpDXEBdyG+d6t4w+qv8Z8wcygVAX
+         tjnLt0X/9TopjsP+gYdPGRbgyYri6+nSafDkWbsr8jUkspLwPalUsUYevUqvFdjtfFV8
+         AaiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733801508; x=1734406308;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vv0YJOP4wsTr0yQs0O9EirzGuPC4EYUuQmTwZ8ZwYDs=;
+        b=X0bjSkBCT7hRroxO+BWUlhWlRnK2jq3srwlFVB856hEu5ZSm0TCm07SnG3UZRSKw3K
+         3Wg5xoKOvd099BelrJeO2/hbbkZqukdd2anFu5fgKxRptf9YYgWeLH2xVi5vLIKpP7Lc
+         vnK5aCurSCyLumAtIco6Us2YllECXNxzk3kB9XlYpRm8kWbd7aFGjx3FTi1arsttxN/H
+         uWSIcn6u34N3nZLxunmJ9L96abEK2nBjiMyoDmrQi2i296/nIv9PHvXrUkTqYGu8JEiD
+         6f3ZeQ5wldidRQNui+N2r4fY+ygMxJdl24Ad5dZTLXUX+KRABAG8eWO1ovRwviiungHp
+         Leig==
+X-Forwarded-Encrypted: i=1; AJvYcCUIenDcXJ12cDAQfBrZpl/YSdEZIVkzkRF0b6sBIhd67NOcqXenQq65rtwHPzCeHNG4r2JaP5oWEBr0k7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyWGwzv8LYmZSW8B1Dc50huUV3SJ9xoKmfZ48fymeCPxz/yNdD
+	eNjqyWY8PEa3Moi+siH6g3uHPwJIkojNInvCsCUi5DsDuj5geX0kqdZ/kVDZVQ==
+X-Gm-Gg: ASbGncspOkPg1Bw4JQaC34NQCFCUjkVkMYp3iOfr8nj7HQhumzCDs6brQ3V/usvFGRC
+	4EGeIQjGV39SaQuWB9c1bS8KASu5medGhX8yYtrGe+yZ1onMp/QicoMSN0q/SAtu6td4Vh153vd
+	yTeqgd9b+AgDpepH7bVhfchVV/AqsN9xZDdhggfctZxF++xIv9qOJoJ6y8Fraoz8HThm3kLnSUt
+	yUvXUb1Hrfl0W9BZ13v0FpztolVbYtquyFOh+fNUkxJNK9nuY5anEUA1eckfiS3wZWivlA+Mmw8
+	PhbqLqHp70dO6Rls
+X-Google-Smtp-Source: AGHT+IH+pvo4/VQN7viU5wtrvbWZV7k0OuEnVi1lVzkq1rjMfGLod9qaEdLeCxJfDRPWaSCkHHj1EQ==
+X-Received: by 2002:a17:903:2391:b0:215:44af:313b with SMTP id d9443c01a7336-216718a490bmr1533575ad.0.1733801506645;
+        Mon, 09 Dec 2024 19:31:46 -0800 (PST)
+Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9ef1sm79715295ad.159.2024.12.09.19.31.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 19:31:46 -0800 (PST)
+Date: Tue, 10 Dec 2024 03:31:42 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	donald.hunter@gmail.com, gregkh@linuxfoundation.org,
+	arve@android.com, tkjos@android.com, maco@android.com,
+	joel@joelfernandes.org, brauner@kernel.org, surenb@google.com,
+	arnd@arndb.de, masahiroy@kernel.org, bagasdotme@gmail.com,
+	horms@kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	hridya@google.com, smoreland@google.com, kernel-team@android.com
+Subject: Re: [PATCH net-next v9 1/1] binder: report txn errors via generic
+ netlink
+Message-ID: <Z1e2Hn1ChSXCprwo@google.com>
+References: <20241209192247.3371436-1-dualli@chromium.org>
+ <20241209192247.3371436-2-dualli@chromium.org>
+ <Z1eO-Nu0aowZnv6t@google.com>
+ <CANBPYPgU9uL9jdxqsri=NwLTJcFpzdB313QsYjSQAuopRppTDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241115102139.3793659-3-huangchenghai2@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANBPYPgU9uL9jdxqsri=NwLTJcFpzdB313QsYjSQAuopRppTDw@mail.gmail.com>
 
-On Fri, Nov 15, 2024 at 06:21:39PM +0800, Chenghai Huang wrote:
->
-> +	a_ctx->fallback = false;
+On Mon, Dec 09, 2024 at 05:26:14PM -0800, Li Li wrote:
+> On Mon, Dec 9, 2024 at 4:44 PM Carlos Llamas <cmllamas@google.com> wrote:
+> > > +
+> > > +Usage example (user space pseudo code):
+> > > +
+> > > +::
+> > > +
+> > > +    // open netlink socket
+> > > +    int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
+> > > +
+> > > +    // bind netlink socket
+> > > +    bind(fd, struct socketaddr);
+> > > +
+> > > +    // get the family id of the binder genl
+> > > +    send(fd, CTRL_CMD_GETFAMILY, CTRL_ATTR_FAMILY_NAME,
+> > > +            BINDER_GENL_FAMILY_NAME);
+> >
+> > ok, what is happening here? this is not a regular send(). Is this
+> > somehow an overloaded send()? If so, I had a really hard time trying to
+> > figuring that out so might be best to rename this.
+> >
+> 
+> This pseudo code means a few attributes are sent by a single send().
 
-Is this field still used anywhere? If not please remove it.  It's
-confusing to have two fallback fields.
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Ok, sorry this broke my brain trying to make sense of the arguments to
+send(). You imply that the nlmsghdr, genlmsghdr and so on need to be
+populated accordingly with these arguments.
 
