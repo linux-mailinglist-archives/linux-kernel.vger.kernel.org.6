@@ -1,196 +1,409 @@
-Return-Path: <linux-kernel+bounces-440427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCF89EBDC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:23:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0269EBDCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:23:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5410169203
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:23:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C718D1EE7B3;
+	Tue, 10 Dec 2024 22:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XESxbbh2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE0A28B835
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:23:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D680212D9D;
-	Tue, 10 Dec 2024 22:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YAXYICRv"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB84211277
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333612451F1
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869356; cv=none; b=Nybp7FcQchU+rmNM6iOSr9EI+GgV304+8KNypwH/BbBCa26UOaOdNjxzSCzzmCUcmpLEgvKM8CSxjd1qPFm63WOJWCkKrqPaEKPvfdSz0VFPnaMlb3LJEQUUdW/l3TBF/36fuLefivvxudzWLJSW+SGI7oSPzJAkUtrWvgtJjR8=
+	t=1733869425; cv=none; b=UuqNTOOKRRGYblWVD2Q6K7DvoQR8EMllGznu6mxhDqPQEhqbJM+jBubdxNf0g7WApgRDjCGNPNsfWy4MmcjAAxrFqfVriyKXiZ0S9PS4gRV34c0YmdKPBfSM0FmJbbVI10fJJxm/Sfxt2YgfqTwo/+t+YULG1cWKxF09Eq2ADAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869356; c=relaxed/simple;
-	bh=D0ZexnELTKVfQSmyeA71ynoDvywobwhOrZ/0Katurbk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TOaPcd8kDzEvdOEEuaD9avTb2A4T3vDQk0CWla/wRxCYfrLwh/Oo7SDTYqMtq6chHOyqrvSECs8qVEZtxLDL/T4T5sdTZYNSOzfY8lhZbR5X08v42fOjS4m7U7fAiGZoeYUh1bV6g5J21MPJleOCiNYBsuWvTXKOtXAFz39z8uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YAXYICRv; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46769b34cbfso35129771cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733869354; x=1734474154; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kcafMw9Z0U3vF7FScCVFpDYTrMToPYmiLDGfXKQJyjY=;
-        b=YAXYICRvgicHaSE72QRN8t/j9+S1e+f832n3k+6VXCMXRCYMWSzIl9vtDm2SxcV8sZ
-         CjLym5feYxtUQ79KHOHXhzn97o7QSE/gYcx6evnlaywxy98llZrt8xNnAxwihLKUOXWI
-         UTnzwDRmRs/ojbOWEqBTsCtbiNUONvaSYQWkA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733869354; x=1734474154;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kcafMw9Z0U3vF7FScCVFpDYTrMToPYmiLDGfXKQJyjY=;
-        b=qbBKbz6VR2hitfkLAb6SFencx19z+mjFuQCvE0pgFIt3gbWnHKW3BjiRRW0/CkB13m
-         kB+BbEtM53s4U+7vDGyk/Xhcr0eFkQBrEVjsPyGIq13nk7Bs6A+LO3RdQQCJx7wZl9QR
-         H9I55ovULAeephE07srrlh1R5dcSjcO4P+wFVB23G5xd51PsjTWMUN/kQCUzO00/IMya
-         LqeemOXaRQE1rW2Dmn5kmUtO9SGEI8GUmGJajUefCpAKvu1jCzFusjXC9KFIKbGNDTCd
-         /GtNfh//PXlEsBLvUzgFyWMaZob7MP+Y80RMsqRKo2DPbs3dpZhMEi3KmD9b+CjbFCrq
-         YvmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBnCUsJEGX8wrRQV4jpQJoFu+xrZdoxWLsLoR+ulz9WjxdmUSFN7arvK08sfLY6GntpuvHs26Hsdxr6Ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5okmhP3kFOg0/XyIH01VWeAyhKkfG4siFDnxDodQB95Ei+Dke
-	eBH8V1DRku56kGjv6VSUXVhr/zzxSnd+Y9CvQqVyHMBF2aVey7afLhvvx+EdsQ==
-X-Gm-Gg: ASbGncsLKhlAs9SCQfePYPlAcxAuKCqC0gyN7nzcCDy70tgiCMwjROeqGzqZu0YfqoT
-	KdvMrOK1B1KwPZWCwsF/SHD9yWTEec6WdbEj2jKJNUCeJ8OWRj6wFE18VlHgnljxTgAXvF6eKLr
-	R1zaOK/yk6BHFWmWKIQtqSJJxTGuNFTzOnOxFlyGlAyK76LGShh8gZ6GTjkHyusiryc61UW00WM
-	GxmrTpIKMYboO+cPfHh2Y/dZShYdApVocVOpfqJ0wmqYGhCQWTmoLQbOnMF0bsTooKpzR5axKwJ
-	CASg+YNPEQHg8Uy4vPpHT8TVgo3e
-X-Google-Smtp-Source: AGHT+IGo9/Hxonb35H4V5LFXpS6P8ognfkxmBy4lOIHwm8Bg86/UKY88TGsyICxmZNUCI03BbZfnNQ==
-X-Received: by 2002:a05:622a:1b16:b0:467:60a8:8a9d with SMTP id d75a77b69052e-467892932e9mr12907201cf.8.1733869353966;
-        Tue, 10 Dec 2024 14:22:33 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467776034b0sm11232441cf.74.2024.12.10.14.22.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 14:22:32 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 10 Dec 2024 22:22:24 +0000
-Subject: [PATCH 3/3] media: uvcvideo: Rollback non processed entities on
- error
+	s=arc-20240116; t=1733869425; c=relaxed/simple;
+	bh=u5xXKBqzDK9Z7bCcxflixSulZ82Lkvq4eSH8rpzHC+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pH46gbIBcUEHWcC38XJnGKh5EtoFnM1eL6JhYimeJAHgFt0ANp2Xr8Y6H86aK4okJRLO5WwlT3n0j/pI5e4txUX4Tqm1iYm81SW9HAnEMSixXWE4BwGIEV+UQDxTANjKhzlJnNRQbi0ALK8+61W2acVUbfkfzhMpRTWBn785kJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XESxbbh2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAH39jG002483;
+	Tue, 10 Dec 2024 22:23:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YpFwWOBl++nB05hlq0ygxYs14YljoTL1hDRISGW3ZFg=; b=XESxbbh2HdWE45Hi
+	vcTUFwO7F4tXzH5/WzWcxigqcJAKZDIQ763OlTQOJCWmt0CnRh0hJ4FDfbf2q0/F
+	IlgSuH4AquA8lZ/Q+B3PFZx6/zvkjqVaMGU0VN15VHx/fPL76Z1k8IeUaSbzGpyJ
+	m5cvzhfhUAFdXj0NhhwLL9XXzz4kLqFqx4kkXB8HqTRj/K0eVizNyBrNYft48iNj
+	EtXqLyF+tkGW97TqVwFrFwVp9OPL10EIidPxHPaxqn385oyGOkNwrQhvJPbgsIit
+	lHpp/rTOMgcsg5P7p0IQCxoOagOkjWahRFiZH5cLGeRgVFAzmaw2shBL5iWUvtPp
+	GMApzg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw45q41-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 22:23:33 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAMNW5G000942
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 22:23:32 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
+ 2024 14:23:31 -0800
+Message-ID: <7c1172cb-a2a3-459a-802f-950a3302ba94@quicinc.com>
+Date: Tue, 10 Dec 2024 14:23:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/tests: Add test for
+ drm_atomic_helper_commit_modeset_disables()
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        <quic_abhinavk@quicinc.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>
+References: <20241209-abhinavk-modeset-fix-v2-0-4d008f6ea8d0@quicinc.com>
+ <20241209-abhinavk-modeset-fix-v2-2-4d008f6ea8d0@quicinc.com>
+ <bgtv3oql63btxeqliauvnjtow4ca2m22qana5v3qudaspvejme@ts6jwuggg63x>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <bgtv3oql63btxeqliauvnjtow4ca2m22qana5v3qudaspvejme@ts6jwuggg63x>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-uvc-data-backup-v1-3-77141e439cc3@chromium.org>
-References: <20241210-uvc-data-backup-v1-0-77141e439cc3@chromium.org>
-In-Reply-To: <20241210-uvc-data-backup-v1-0-77141e439cc3@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>, stable@kernel.org
-X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lWIdtW2M_c_xGam2k-PUv9kynkfYYLVv
+X-Proofpoint-GUID: lWIdtW2M_c_xGam2k-PUv9kynkfYYLVv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100160
 
-If we wail to commit an entity, we need to restore the
-UVC_CTRL_DATA_BACKUP for the other uncommitted entities. Otherwise the
-control cache and the device would be out of sync.
 
-Cc: stable@kernel.org
-Fixes: b4012002f3a3 ("[media] uvcvideo: Add support for control events")
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Closes: https://lore.kernel.org/linux-media/fe845e04-9fde-46ee-9763-a6f00867929a@redhat.com/
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_ctrl.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 9496ac970267..93c355b53101 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1825,11 +1825,14 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
- 	unsigned int processed_ctrls = 0;
- 	struct uvc_control *ctrl;
- 	unsigned int i;
--	int ret;
-+	int ret = 0;
- 
- 	if (entity == NULL)
- 		return 0;
- 
-+	if (err_ctrl)
-+		*err_ctrl = NULL;
-+
- 	for (i = 0; i < entity->ncontrols; ++i) {
- 		ctrl = &entity->controls[i];
- 		if (!ctrl->initialized)
-@@ -1854,8 +1857,6 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
- 				dev->intfnum, ctrl->info.selector,
- 				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
- 				ctrl->info.size);
--		else
--			ret = 0;
- 
- 		if (!ret)
- 			processed_ctrls++;
-@@ -1868,12 +1869,19 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
- 		ctrl->dirty = 0;
- 
- 		if (ret < 0) {
--			if (err_ctrl)
-+			if (err_ctrl && !*err_ctrl)
- 				*err_ctrl = ctrl;
--			return ret;
-+			/*
-+			 * If we fail to set a control, we need to rollback
-+			 * the next ones.
-+			 */
-+			rollback = 1;
- 		}
- 	}
- 
-+	if (ret)
-+		return ret;
-+
- 	return processed_ctrls;
- }
- 
-@@ -1904,6 +1912,7 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
- 	struct uvc_video_chain *chain = handle->chain;
- 	struct uvc_control *err_ctrl;
- 	struct uvc_entity *entity;
-+	int ret_out = 0;
- 	int ret = 0;
- 
- 	/* Find the control. */
-@@ -1915,16 +1924,23 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
- 				ctrls->error_idx =
- 					uvc_ctrl_find_ctrl_idx(entity, ctrls,
- 							       err_ctrl);
--			goto done;
-+			/*
-+			 * When we fail to commit an entity, we need to
-+			 * restore the UVC_CTRL_DATA_BACKUP for all the
-+			 * controls in the other entities, otherwise our cache
-+			 * and the hardware will be out of sync.
-+			 */
-+			rollback = 1;
-+
-+			ret_out = ret;
- 		} else if (ret > 0 && !rollback) {
- 			uvc_ctrl_send_events(handle, entity,
- 					     ctrls->controls, ctrls->count);
- 		}
- 	}
- 
--done:
- 	mutex_unlock(&chain->ctrl_mutex);
--	return ret < 0 ? ret : 0;
-+	return ret_out;
- }
- 
- int uvc_ctrl_get(struct uvc_video_chain *chain,
+On 12/10/2024 1:10 PM, Dmitry Baryshkov wrote:
+> On Mon, Dec 09, 2024 at 05:09:25PM -0800, Jessica Zhang wrote:
+>> Add a subtest to check that modeset is called when the connector is
+>> changed
+>>
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/tests/Makefile                |   1 +
+>>   drivers/gpu/drm/tests/drm_atomic_state_test.c | 242 ++++++++++++++++++++++++++
+>>   2 files changed, 243 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/tests/Makefile b/drivers/gpu/drm/tests/Makefile
+>> index 56dab563abd7a7ee7c147bd6b4927e2436b82e1d..0109bcf7faa54993cce337f522eae78f0fa6ffcb 100644
+>> --- a/drivers/gpu/drm/tests/Makefile
+>> +++ b/drivers/gpu/drm/tests/Makefile
+>> @@ -4,6 +4,7 @@ obj-$(CONFIG_DRM_KUNIT_TEST_HELPERS) += \
+>>   	drm_kunit_helpers.o
+>>   
+>>   obj-$(CONFIG_DRM_KUNIT_TEST) += \
+>> +	drm_atomic_state_test.o \
+>>   	drm_buddy_test.o \
+>>   	drm_cmdline_parser_test.o \
+>>   	drm_connector_test.o \
+>> diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..ffc1198ccc9ce103b9bc4c5ca8c83ca7f6ab19cc
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
+>> @@ -0,0 +1,242 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Test cases for the drm_atomic_state helpers
+>> + *
+>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <drm/drm_atomic.h>
+>> +#include <drm/drm_atomic_helper.h>
+>> +#include <drm/drm_atomic_uapi.h>
+>> +#include <drm/drm_kunit_helpers.h>
+>> +#include <drm/drm_probe_helper.h>
+>> +
+>> +#define DRM_TEST_ENC_0 BIT(0)
+>> +#define DRM_TEST_ENC_1 BIT(1)
+>> +#define DRM_TEST_ENC_2 BIT(2)
+>> +
+>> +#define DRM_TEST_CONN_0 BIT(0)
+>> +
+>> +static const struct drm_display_mode drm_atomic_test_mode = {
+>> +	DRM_MODE("1024x768", 0, 65000, 1024, 1048,
+>> +		 1184, 1344, 0, 768, 771, 777, 806, 0,
+>> +		 DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC)
+>> +};
+>> +
+>> +struct drm_atomic_check_priv {
+>> +	struct drm_device drm;
+>> +	struct drm_plane *plane;
+>> +	struct drm_crtc *crtc;
+>> +	struct drm_encoder encoders[3];
+>> +	struct drm_connector connectors[2];
+>> +};
+>> +
+>> +static int modeset_counter;
+>> +
+>> +static void drm_test_encoder_mode_set(struct drm_encoder *encoder,
+>> +				      struct drm_crtc_state *crtc_state,
+>> +				      struct drm_connector_state *conn_state)
+>> +{
+>> +	modeset_counter++;
+>> +}
+>> +
+>> +static const struct drm_encoder_helper_funcs drm_test_encoder_funcs = {
+> 
+> Name is too generic, please use something more test-suite specific.
 
--- 
-2.47.0.338.g60cca15819-goog
+Hey Dmitry,
+
+Thanks for the review, ack for all of these comments.
+
+- Jessica Zhang
+
+> 
+>> +	.atomic_mode_set	= drm_test_encoder_mode_set,
+>> +};
+>> +
+>> +static const struct drm_connector_funcs dummy_connector_funcs = {
+>> +	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
+>> +	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
+>> +	.reset			= drm_atomic_helper_connector_reset,
+>> +};
+>> +
+>> +static int drm_atomic_test_dummy_get_modes(struct drm_connector *connector)
+>> +{
+>> +	drm_connector_helper_get_modes_fixed(connector, &drm_atomic_test_mode);
+>> +	return 1;
+> 
+> return drm_connector_helper_get_modes_fixed()
+> 
+>> +}
+>> +
+>> +static const struct drm_connector_helper_funcs dummy_connector_helper_funcs = {
+>> +	.get_modes	= drm_atomic_test_dummy_get_modes,
+>> +};
+>> +
+>> +static struct drm_atomic_check_priv *
+>> +drm_test_init_drm_components(struct kunit *test, bool has_connectors)
+> 
+> I think this is too generic, please use a file-specific name.
+> 
+>> +{
+>> +	struct drm_atomic_check_priv *priv;
+>> +	struct drm_encoder *enc;
+>> +	struct drm_device *drm;
+>> +	struct device *dev;
+>> +	int ret;
+>> +
+>> +	dev = drm_kunit_helper_alloc_device(test);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+>> +
+>> +	priv = drm_kunit_helper_alloc_drm_device(test, dev,
+>> +						 struct drm_atomic_check_priv,
+>> +						 drm,
+>> +						 DRIVER_MODESET | DRIVER_ATOMIC);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
+>> +	test->priv = priv;
+>> +
+>> +	drm = &priv->drm;
+>> +	priv->plane = drm_kunit_helper_create_primary_plane(test, drm,
+>> +							    NULL,
+>> +							    NULL,
+>> +							    NULL, 0,
+>> +							    NULL);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->plane);
+>> +
+>> +	priv->crtc = drm_kunit_helper_create_crtc(test, drm,
+>> +						  priv->plane, NULL,
+>> +						  NULL,
+>> +						  NULL);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->crtc);
+>> +
+>> +	for (int i = 0; i < ARRAY_SIZE(priv->encoders); i++) {
+>> +		enc = &priv->encoders[i];
+>> +
+>> +		ret = drmm_encoder_init(drm, enc, NULL,
+>> +					DRM_MODE_ENCODER_DSI, NULL);
+>> +		KUNIT_ASSERT_EQ(test, ret, 0);
+>> +
+>> +		enc->possible_crtcs = drm_crtc_mask(priv->crtc);
+>> +	}
+>> +
+>> +	priv->encoders[0].possible_clones = DRM_TEST_ENC_0 | DRM_TEST_ENC_1;
+>> +	priv->encoders[1].possible_clones = DRM_TEST_ENC_0 | DRM_TEST_ENC_1;
+>> +	priv->encoders[2].possible_clones = DRM_TEST_ENC_2;
+>> +
+>> +	if (!has_connectors)
+>> +		goto done;
+>> +
+>> +	struct drm_connector *conn;
+> 
+> Please move next ot other variable definitions.
+> 
+>> +
+>> +	KUNIT_ASSERT_LE(test, ARRAY_SIZE(priv->connectors),
+>> +			ARRAY_SIZE(priv->encoders));
+> 
+> I'd say it's BUILD_BUG_ON
+> 
+>> +
+>> +
+>> +	for (int i = 0; i < ARRAY_SIZE(priv->connectors); i++) {
+>> +		conn = &priv->connectors[i];
+>> +
+>> +		ret = drmm_connector_init(drm, conn, &dummy_connector_funcs,
+>> +					  DRM_MODE_CONNECTOR_DSI, NULL);
+>> +		KUNIT_ASSERT_EQ(test, ret, 0);
+>> +
+>> +		drm_connector_helper_add(conn, &dummy_connector_helper_funcs);
+>> +		drm_encoder_helper_add(&priv->encoders[i], &drm_test_encoder_funcs);
+>> +
+>> +		drm_connector_attach_encoder(conn, &priv->encoders[i]);
+>> +	}
+>> +
+>> +done:
+>> +	drm_mode_config_reset(drm);
+>> +
+>> +	return priv;
+>> +}
+>> +
+>> +static int set_up_atomic_state(struct kunit *test,
+>> +			       struct drm_atomic_check_priv *priv,
+>> +			       struct drm_connector *connector,
+>> +			       struct drm_modeset_acquire_ctx *ctx)
+>> +{
+>> +	struct drm_device *drm = &priv->drm;
+>> +	struct drm_crtc *crtc = priv->crtc;
+>> +	struct drm_atomic_state *state;
+>> +	struct drm_connector_state *conn_state;
+>> +	struct drm_crtc_state *crtc_state;
+>> +	int ret;
+>> +
+>> +	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+>> +
+>> +	if (connector) {
+>> +		conn_state = drm_atomic_get_connector_state(state, connector);
+>> +		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
+>> +
+>> +		ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
+>> +		KUNIT_EXPECT_EQ(test, ret, 0);
+>> +	}
+>> +
+>> +	crtc_state = drm_atomic_get_crtc_state(state, crtc);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
+>> +
+>> +	ret = drm_atomic_set_mode_for_crtc(crtc_state, &drm_atomic_test_mode);
+>> +	KUNIT_EXPECT_EQ(test, ret, 0);
+>> +
+>> +	crtc_state->enable = true;
+>> +	crtc_state->active = true;
+>> +
+>> +	if (connector) {
+>> +		ret = drm_atomic_commit(state);
+>> +		KUNIT_ASSERT_EQ(test, ret, 0);
+>> +	} else {
+>> +		// dummy connector mask
+>> +		crtc_state->connector_mask = DRM_TEST_CONN_0;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+> 
+> Please provide a description of what the test does and what it checks
+> (and why). See how other tests are described.
+> 
+>> +static void drm_test_modeset(struct kunit *test)
+>> +{
+>> +	struct drm_atomic_check_priv *priv;
+>> +	struct drm_modeset_acquire_ctx *ctx;
+>> +	struct drm_connector *old_conn, *new_conn;
+>> +	struct drm_atomic_state *state;
+>> +	struct drm_device *drm;
+>> +	struct drm_connector_state *new_conn_state, *old_conn_state;
+>> +	int ret, initial_modeset_count;
+>> +
+>> +	priv = drm_test_init_drm_components(test, true);
+>> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+>> +
+>> +	drm = &priv->drm;
+>> +	old_conn = &priv->connectors[0];
+>> +	new_conn = &priv->connectors[1];
+>> +
+>> +	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+>> +
+>> +	// first modeset to enable
+>> +	ret = set_up_atomic_state(test, priv, old_conn, ctx);
+>> +	KUNIT_ASSERT_EQ(test, ret, 0);
+>> +
+>> +	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+>> +
+>> +	new_conn_state = drm_atomic_get_connector_state(state, new_conn);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, new_conn_state);
+>> +
+>> +	old_conn_state = drm_atomic_get_connector_state(state, old_conn);
+>> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, old_conn_state);
+>> +
+>> +	ret = drm_atomic_set_crtc_for_connector(old_conn_state, NULL);
+>> +	KUNIT_EXPECT_EQ(test, ret, 0);
+>> +
+>> +	ret = drm_atomic_set_crtc_for_connector(new_conn_state, priv->crtc);
+>> +	KUNIT_EXPECT_EQ(test, ret, 0);
+>> +
+>> +	initial_modeset_count = modeset_counter;
+>> +
+>> +	// modeset_disables is called as part of the atomic commit tail
+>> +	ret = drm_atomic_commit(state);
+>> +	KUNIT_ASSERT_EQ(test, ret, 0);
+>> +	KUNIT_ASSERT_EQ(test, modeset_counter, initial_modeset_count + 1);
+>> +}
+>> +
+>> +static struct kunit_case drm_test_check_modeset_test[] = {
+>> +	KUNIT_CASE(drm_test_modeset),
+>> +	{}
+>> +};
+>> +
+>> +static struct kunit_suite drm_test_check_modeset_test_suite = {
+>> +	.name = "drm_validate_modeset",
+>> +	.test_cases = drm_test_check_modeset_test,
+>> +};
+>> +
+>> +kunit_test_suite(drm_test_check_modeset_test_suite);
+>> +
+>> +MODULE_AUTHOR("Jessica Zhang <quic_jesszhan@quicinc.com");
+>> +MODULE_DESCRIPTION("Test cases for the drm_atomic_helper functions");
+>> +MODULE_LICENSE("GPL");
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
+> -- 
+> With best wishes
+> Dmitry
 
 
