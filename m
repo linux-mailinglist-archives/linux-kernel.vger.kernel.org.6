@@ -1,217 +1,260 @@
-Return-Path: <linux-kernel+bounces-439776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0768A9EB3DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:47:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AEDD9EB3DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135EC188988A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD4A1889ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812451AA7A3;
-	Tue, 10 Dec 2024 14:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654921B3940;
+	Tue, 10 Dec 2024 14:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AR+nFoj5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lc1zlZSL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32E9B676;
-	Tue, 10 Dec 2024 14:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC5578F23;
+	Tue, 10 Dec 2024 14:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842065; cv=none; b=ES3yiejknB2q3KL3rHMQPeUezv9bZ7PS4X8CGp1aS8ZuJrAafKMjKv09sHV4622d7gL8sMTIaRYgCfM1bp+vRYFo1kQwcQjIBN/TvpxMWmNz0byptHpKWPX4ZcoUHNtAYBr6lt36u1PPLV7qAAWHEYkOTGQZG/DYcuz34Rr80I8=
+	t=1733842074; cv=none; b=kibZh5cpn6Uub4eCKBzd1sBButKFJKXcOHwlKKtz43WQ9A3flGaOtKRZY/5Q46/YoS0mEIupZ7NaTImmMiJc2uX0PQfQDX23253z/RonfF2UV92K5eXNSb7nrk4+ayA7TSJjgNt/bviVMlNLOTXu6kd8beQ7wZmVekk31AaNevw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842065; c=relaxed/simple;
-	bh=OSbBVHFSnoLD3d/sFOchTp8lD3nMnqHhclQ+D0oRQ0M=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YSPiMzBUNR+H4QXmOq8NBfxfbGXnn0d7bcWVliu1bMlKDKJMc/EqdB4cYkuo2bGaJPVgM6DJ5ovEHQ21ofFVqE/uPQvRDbB3LKjJsWecQjZnyR7/OaXu0fbiMAofECgnRUyUWC4SWUoWJfNWCQjHScZz6XjlVo6SiijvBU7M2BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AR+nFoj5; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733842064; x=1765378064;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=OSbBVHFSnoLD3d/sFOchTp8lD3nMnqHhclQ+D0oRQ0M=;
-  b=AR+nFoj540ufqvCOFvyqXY07MpxUzgSZWoJYI0up4iDR/5slqLFP/9Dq
-   /tuTm/pRuxU7jz7AiDCBcigp3jcdVBT+XBsLZzvHV2Ps0bekwAnudWlFX
-   Czps6fH+IsXT40xbhq7Of66+sZm8thykyaczWZvL8eQFRKY2jGxqdZd/n
-   2Ia/DvmK3Un4jc+KKTqV4yInjKASXT+OEGtZF9fAJA4B+7kxwodEFrJvi
-   XX1sOJHCeiHsFZTZwZh07+RTrqr25Vs7YWLIG46IBvT9ud2Xb8yMLQEf/
-   QDnukPCu9hJCia7mp3naPT0GkrPDYj2T7m4j3yDNSAtesN8NHorPudD+k
-   g==;
-X-CSE-ConnectionGUID: 6AEVInIuQF2Qr/vIoNWVXA==
-X-CSE-MsgGUID: CsfMOzEQQh6dEgg/Pna/3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="51599691"
-X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
-   d="scan'208";a="51599691"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 06:47:43 -0800
-X-CSE-ConnectionGUID: jm+XQhz/SQOHoUbmyM6beQ==
-X-CSE-MsgGUID: 5fZsAwrkRI+Lruldh+12xQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="100487086"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 06:47:41 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 10 Dec 2024 16:47:38 +0200 (EET)
-To: Armin Wolf <W_Armin@gmx.de>
-cc: linux@weissschuh.net, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: wmi-bmof: Make use of .bin_size()
- callback
-In-Reply-To: <20241206215650.2977-1-W_Armin@gmx.de>
-Message-ID: <ad05e251-37bd-0cc2-8b11-a859e453f476@linux.intel.com>
-References: <20241206215650.2977-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1733842074; c=relaxed/simple;
+	bh=4lW9XNfX+kbAu7CsKaD1PDODoyAj2Ev0VkALIieRNuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OSqI58vvvtmkA6umaKedK5OGhvLn4Nk+tAFWhyHrWoQQdzNuQOWiHeWPC3l8flWCXfoxf6AKkyDPT9n2sKO49j+d5R3xRdNbvTYcydRrw1p129l3bthj9jhp6FYsW65lwnMfqbdCamMc8slEmRgFhGHXRt7IbB60tIeN7aGm40U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lc1zlZSL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DE5C4CED6;
+	Tue, 10 Dec 2024 14:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733842074;
+	bh=4lW9XNfX+kbAu7CsKaD1PDODoyAj2Ev0VkALIieRNuo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lc1zlZSLQ2TgvZbhxgYixVtpBW+y5s3izYCsIWhjtMaTsZMhtfEPL02LPnUnn/0W6
+	 k4+GfsuO82jOIAi0SdII9H20ykIe2KAty7Nj320as4nW7o43REwbbaEtjSxoK5Vect
+	 QIER7PzGvP+pf3//p8oTZhpkt4Q+BC139eGzXFvKRSZp4pJInuo1MrQgphoX/d+ySj
+	 aeaxS9hr5VsrFOpMO6s73vIR1jKTb8WEOxQHdVbWlKoJZpSc87oCl2CEFsWCf8Qf7E
+	 pb58dqYeRc5N6yQROcB3qY745PVF+97ZyMclfd7pZEulMC03g4LgmXCVhFzVf+Nn+u
+	 Kmy+F37gsATPg==
+Message-ID: <42feceb8-512a-4be3-aefa-116bbde000c1@kernel.org>
+Date: Tue, 10 Dec 2024 15:47:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/13] wifi: ath12k: add AHB driver support for IPQ5332
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Balamurugan S <quic_bselvara@quicinc.com>,
+ P Praneesh <quic_ppranees@quicinc.com>
+References: <20241210074159.2637933-1-quic_rajkbhag@quicinc.com>
+ <20241210074159.2637933-9-quic_rajkbhag@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241210074159.2637933-9-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 6 Dec 2024, Armin Wolf wrote:
-
-> Until now the wmi-bmof driver had to allocate the binary sysfs
-> attribute dynamically since its size depends on the bmof buffer
-> returned by the firmware.
+On 10/12/2024 08:41, Raj Kumar Bhagat wrote:
+> From: Balamurugan S <quic_bselvara@quicinc.com>
 > 
-> Use the new .bin_size() callback to avoid having to do this memory
-> allocation.
+> Add Initial Ath12k AHB driver support for IPQ5332. IPQ5332 is AHB
+> based IEEE802.11be 2 GHz 2x2 WiFi device.
 > 
-> Tested on a Asus Prime B650-Plus.
+> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
 > 
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
+> Co-developed-by: P Praneesh <quic_ppranees@quicinc.com>
+> Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
+> Co-developed-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
 > ---
->  drivers/platform/x86/wmi-bmof.c | 75 +++++++++++++++++----------------
->  1 file changed, 38 insertions(+), 37 deletions(-)
+>  drivers/net/wireless/ath/ath12k/ahb.c  | 878 +++++++++++++++++++++++++
+>  drivers/net/wireless/ath/ath12k/ahb.h  |  37 ++
+>  drivers/net/wireless/ath/ath12k/core.h |   4 +
+>  drivers/net/wireless/ath/ath12k/hal.h  |   1 +
+>  drivers/net/wireless/ath/ath12k/hw.h   |   1 +
+>  5 files changed, 921 insertions(+)
+>  create mode 100644 drivers/net/wireless/ath/ath12k/ahb.c
+>  create mode 100644 drivers/net/wireless/ath/ath12k/ahb.h
 > 
-> diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
-> index df6f0ae6e6c7..3e33da36da8a 100644
-> --- a/drivers/platform/x86/wmi-bmof.c
-> +++ b/drivers/platform/x86/wmi-bmof.c
-> @@ -20,66 +20,66 @@
-> 
->  #define WMI_BMOF_GUID "05901221-D566-11D1-B2F0-00A0C9062910"
-> 
-> -struct bmof_priv {
-> -	union acpi_object *bmofdata;
-> -	struct bin_attribute bmof_bin_attr;
-> -};
-> -
-> -static ssize_t read_bmof(struct file *filp, struct kobject *kobj, struct bin_attribute *attr,
-> +static ssize_t bmof_read(struct file *filp, struct kobject *kobj, const struct bin_attribute *attr,
->  			 char *buf, loff_t off, size_t count)
->  {
-> -	struct bmof_priv *priv = container_of(attr, struct bmof_priv, bmof_bin_attr);
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	union acpi_object *obj = dev_get_drvdata(dev);
-> 
-> -	return memory_read_from_buffer(buf, count, &off, priv->bmofdata->buffer.pointer,
-> -				       priv->bmofdata->buffer.length);
-> +	return memory_read_from_buffer(buf, count, &off, obj->buffer.pointer, obj->buffer.length);
->  }
-> 
-> -static int wmi_bmof_probe(struct wmi_device *wdev, const void *context)
-> +static const BIN_ATTR_ADMIN_RO(bmof, 0);
+> diff --git a/drivers/net/wireless/ath/ath12k/ahb.c b/drivers/net/wireless/ath/ath12k/ahb.c
+> new file mode 100644
+> index 000000000000..fcd949faea9f
+> --- /dev/null
+> +++ b/drivers/net/wireless/ath/ath12k/ahb.c
+> @@ -0,0 +1,878 @@
+> +// SPDX-License-Identifier: BSD-3-Clause-Clear
+> +/*
+> + * Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
 > +
-> +static const struct bin_attribute * const bmof_attrs[] = {
-> +	&bin_attr_bmof,
-> +	NULL
+> +#include <linux/dma-mapping.h>
+> +#include <linux/iommu.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+
+You don't use this header.
+
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc.h>
+
+More headers here look unused.
+
+> +#include <linux/soc/qcom/smem.h>
+> +#include <linux/soc/qcom/smem_state.h>
+> +#include "ahb.h"
+> +#include "debug.h"
+> +#include "hif.h"
+> +
+> +static const struct of_device_id ath12k_ahb_of_match[] = {
+> +	{ .compatible = "qcom,ipq5332-wifi",
+> +	  .data = (void *)ATH12K_HW_IPQ5332_HW10,
+> +	},
+> +	{ }
 > +};
 > +
-> +static size_t bmof_bin_size(struct kobject *kobj, const struct bin_attribute *attr, int n)
->  {
-> -	struct bmof_priv *priv;
-> -	int ret;
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	union acpi_object *obj = dev_get_drvdata(dev);
+> +MODULE_DEVICE_TABLE(of, ath12k_ahb_of_match);
+
+This goes to driver struct declaration. It is really unusual to see it
+in some other places.
+
+
 > +
-> +	return obj->buffer.length;
-> +}
-> 
-> -	priv = devm_kzalloc(&wdev->dev, sizeof(struct bmof_priv), GFP_KERNEL);
-> -	if (!priv)
-> -		return -ENOMEM;
-> +static const struct attribute_group bmof_group = {
-> +	.bin_size = bmof_bin_size,
-> +	.bin_attrs_new = bmof_attrs,
-> +};
+> +#define ATH12K_IRQ_CE0_OFFSET 4
 > +
-> +static const struct attribute_group *bmof_groups[] = {
-> +	&bmof_group,
-> +	NULL
-> +};
-> 
-> -	dev_set_drvdata(&wdev->dev, priv);
-> +static int wmi_bmof_probe(struct wmi_device *wdev, const void *context)
+
+
+...
+
+> +
+> +static int ath12k_ahb_probe(struct platform_device *pdev)
 > +{
-> +	union acpi_object *obj;
-> 
-> -	priv->bmofdata = wmidev_block_query(wdev, 0);
-> -	if (!priv->bmofdata) {
-> +	obj = wmidev_block_query(wdev, 0);
-> +	if (!obj) {
->  		dev_err(&wdev->dev, "failed to read Binary MOF\n");
->  		return -EIO;
->  	}
-> 
-> -	if (priv->bmofdata->type != ACPI_TYPE_BUFFER) {
-> +	if (obj->type != ACPI_TYPE_BUFFER) {
->  		dev_err(&wdev->dev, "Binary MOF is not a buffer\n");
-> -		ret = -EIO;
-> -		goto err_free;
-> +		kfree(obj);
-> +		return -EIO;
->  	}
-> 
-> -	sysfs_bin_attr_init(&priv->bmof_bin_attr);
-> -	priv->bmof_bin_attr.attr.name = "bmof";
-> -	priv->bmof_bin_attr.attr.mode = 0400;
-> -	priv->bmof_bin_attr.read = read_bmof;
-> -	priv->bmof_bin_attr.size = priv->bmofdata->buffer.length;
-> -
-> -	ret = device_create_bin_file(&wdev->dev, &priv->bmof_bin_attr);
-> -	if (ret)
-> -		goto err_free;
-> +	dev_set_drvdata(&wdev->dev, obj);
-> 
->  	return 0;
-> -
-> - err_free:
-> -	kfree(priv->bmofdata);
-> -	return ret;
->  }
-> 
->  static void wmi_bmof_remove(struct wmi_device *wdev)
->  {
-> -	struct bmof_priv *priv = dev_get_drvdata(&wdev->dev);
-> +	union acpi_object *obj = dev_get_drvdata(&wdev->dev);
-> 
-> -	device_remove_bin_file(&wdev->dev, &priv->bmof_bin_attr);
-> -	kfree(priv->bmofdata);
-> +	kfree(obj);
->  }
-> 
->  static const struct wmi_device_id wmi_bmof_id_table[] = {
-> @@ -90,6 +90,7 @@ static const struct wmi_device_id wmi_bmof_id_table[] = {
->  static struct wmi_driver wmi_bmof_driver = {
->  	.driver = {
->  		.name = "wmi-bmof",
-> +		.dev_groups = bmof_groups,
->  	},
->  	.probe = wmi_bmof_probe,
->  	.remove = wmi_bmof_remove,
+> +	struct ath12k_base *ab;
+> +	const struct ath12k_hif_ops *hif_ops;
+> +	struct device_node *mem_node;
+> +	enum ath12k_hw_rev hw_rev;
+> +	u32 addr;
+> +	int ret;
+> +
+> +	hw_rev = ath12k_ahb_get_hw_rev(pdev);
+> +	switch (hw_rev) {
+> +	case ATH12K_HW_IPQ5332_HW10:
+> +		hif_ops = &ath12k_ahb_hif_ops_ipq5332;
+> +		break;
+> +	default:
+> +		dev_err(&pdev->dev, "Unsupported device type %d\n", hw_rev);
 
-So do I understand right that this meant to supercede the patch from 
-Thomas?
+You already print once in ath12k_ahb_get_hw_rev() and none of these can
+happen. No need to print impossible conditions at all. No need to print
+impossible things twice.
 
--- 
- i.
+> +		return -EOPNOTSUPP;
+> +	}
+> +
 
+> +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to set 32-bit coherent dma\n");
+> +		return ret;
+> +	}
+> +
+> +	ab = ath12k_core_alloc(&pdev->dev, sizeof(struct ath12k_ahb),
+> +			       ATH12K_BUS_AHB);
+> +	if (!ab) {
+> +		dev_err(&pdev->dev, "failed to allocate ath12k base\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ab->hif.ops = hif_ops;
+> +	ab->pdev = pdev;
+> +	ab->hw_rev = hw_rev;
+> +	platform_set_drvdata(pdev, ab);
+> +
+> +	/* Set fixed_mem_region to true for platforms that support fixed memory
+> +	 * reservation from DT. If memory is reserved from DT for FW, ath12k driver
+> +	 * need not to allocate memory.
+> +	 */
+> +	if (!of_property_read_u32(ab->dev->of_node, "memory-region", &addr)) {
+> +		set_bit(ATH12K_FLAG_FIXED_MEM_REGION, &ab->dev_flags);
+> +
+> +		/* If the platform supports fixed memory, then it should define/
+> +		 * reserve MLO global memory in DT to support Multi Link Operation
+> +		 * (IEEE 802.11be).
+> +		 * If MLO global memory is not reserved in fixed memory mode, then
+> +		 * MLO cannot be supported.
+> +		 */
+> +		mem_node = of_find_node_by_name(NULL, "mlo_global_mem_0");
+
+NAK. Incorrect name, not conforming to coding style. Undocumented ABI.
+
+Drop all calls to of_find_node_by_name() or any other stuff like this.
+
+> +		if (!mem_node)
+> +			ab->single_chip_mlo_supp = false;
+> +	}
+> +
+> +	ret = ath12k_core_pre_init(ab);
+> +	if (ret)
+> +		goto err_core_free;
+
+Best regards,
+Krzysztof
 
