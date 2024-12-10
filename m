@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-440107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E309EB8DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:59:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B529EB8EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:01:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B15281FE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F241889A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B58204560;
-	Tue, 10 Dec 2024 17:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6A2204682;
+	Tue, 10 Dec 2024 18:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYDXsOS+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djCli8sv"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF5386329;
-	Tue, 10 Dec 2024 17:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB18986325;
+	Tue, 10 Dec 2024 18:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853569; cv=none; b=W4wAjjnyumPEfac/GYjjcZoXL7PqduBqtr/C/d2wYHXyhr9wARbmVKjpzcHmAXi/I3Vk9kBDCzj6rfE19vGapXXfFTDwLgDAGimMYIAfAPBGL9IRAzQU/osKHiDQdEXDF1/RlQZlr+s6PiDZhNR8X97zj10c9IA7nSdsyTfQxBs=
+	t=1733853693; cv=none; b=tABy4FVNgNut8+ahae/6lwgYjzx1SSskvpxWxOiSayPTArjuns4zR5Y/dJSPKjxwApQPH48dR2TJWhl7+L8pA8tAjP1RhnW/qNWtqAYlS8rqekHI5MlcjuaaISIrKDnk5Lu9pB3RjpaAfYtT5ZwZCivexvdAW4EJHGy7AMnUjIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853569; c=relaxed/simple;
-	bh=gUkzlMiFdKBnhr92IRCHX0ktYexfnkyYZwL6mPhBhoE=;
+	s=arc-20240116; t=1733853693; c=relaxed/simple;
+	bh=JNsfJ5pdWNc2079cGlyKbP97GYc87y3iN+nIMeKFqCk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mSxEcnYaT5rNBAIwUzgWaP5CBkSeQ374vo1uNKHHBZYb0PDszVbr5i7oOvxY9++N/HsRgZqHwJ27PwBDpU9G0f4Kx3gVWadFDKWfHLjqxbjKxbqB1lQhQ7VoQhMW1hv/34SR3wa/XdlFv4y95kz8xpn0tEGkCFNWJztO/xTdg6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYDXsOS+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB437C4CED6;
-	Tue, 10 Dec 2024 17:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733853568;
-	bh=gUkzlMiFdKBnhr92IRCHX0ktYexfnkyYZwL6mPhBhoE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nYDXsOS++7Yr1cB/sscavqICDcVktb/OKaC7gMFEhIUOGq3771r1HrJIJCsVaE3Yo
-	 GgZGdQkeZixS3CMev38bRnic37iqag8CJKuSEhOA0CfnXY1RcOsmJPlAfCSoz4gk+l
-	 eJbndocJMiUO6P3stSfC/pPXuu9r4LgVlRJkCfOWC2CND+48UFG0WkOI2eVniuAgK5
-	 CWEjT57RlVWRTcLm3Z5aXD01T87Y7GJ/snuUf7/IYnwo+HoqTiLvaxp2K5Njlt4XLz
-	 T8Aykjk5WoF6OZYsT6+hOH38nteVZU1CcbAlFhMaTJrAlP7tHwH8NHnU4IleqvlxXA
-	 o3W5F/m6IZDDw==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3eb4684f3cbso1391592b6e.3;
-        Tue, 10 Dec 2024 09:59:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVn25pEKxiMetsMd6K0KJDThYT8O2uCottS+vtyS985gs2um+rGaJmar/oAdF555mccFSuuvi5V72jZF91c@vger.kernel.org, AJvYcCXoDAGlsq7LKH9uWSwEEmj1UON4mdA1vlFZoLMV1SUIEaUn9rcdft9rpS+uGSz6uJY9vLWKgqbyl8HV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLgf9MEB3teMM8q5xSTSDEhb0L2KchNbSREeFmyAcVse8+DK0s
-	+QqyR52XviB72SHunAl/2XjyXsUhnVKohrtvBrcfxdLihD0dBNRflZPzrdtVB8nriHSWhHCM2JR
-	w1sUtSludeGUUuOs/aYfQpA+jUdM=
-X-Google-Smtp-Source: AGHT+IFm14pb4rSYOuEEFJW8NM2IQuTQWF2FsycXRpWQrvEvlko50wAYJMJ+h+eftM/3To32c0wUDA6Rbpl6+86evTc=
-X-Received: by 2002:a05:6808:1813:b0:3e6:5f3:f0d8 with SMTP id
- 5614622812f47-3eb66e1b502mr3403613b6e.24.1733853568225; Tue, 10 Dec 2024
- 09:59:28 -0800 (PST)
+	 To:Cc:Content-Type; b=NUxTnYO44jquQOjNQejP7aKgrEfSvN1DQQ6uzndxshIV4DKXpS8m1dHMbTBzAk9KISjBgQPPJwJEy8he0i1lA2BInJyV89eu7/pIDtvCZO9gwQjnwgZKvc0PsUHp2F4oZuarGY3ZGZql6JQeaOWMK63h8GPWpeLmoMP0shuJWB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=djCli8sv; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ee94a2d8d0so867288a91.2;
+        Tue, 10 Dec 2024 10:01:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733853691; x=1734458491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JNsfJ5pdWNc2079cGlyKbP97GYc87y3iN+nIMeKFqCk=;
+        b=djCli8svf4Fcokb8aYB+aSwP9d6XkgNVrU4Rr3a0Rlg88odCus0z4VDa72dFuDvOSF
+         Foy2EnqYt7Hixv7+tscnbV0J/iGXFLksE38gIJWhmU6GIqaoLDXMYEFP5h3LX/dMiMuL
+         NjbJt553KZS0dbsbKecq4K8+uDjJ3kmaL3cz06ucEeqixpW3VerulLTfMzm99zjFtBug
+         i4vbZGRXIuYsXhyb8XpymvUF+a7AfZSZXm9HH0yrGGoqUQE2QnJonS3zuWAv8Kaw3OvX
+         Bm6YsoQVNoi5OueF8q/UZv6Jn3VlHhq8FJ/JEBw+AL17YHtDYfLnsiRuC1+wf79uAOlK
+         ENLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733853691; x=1734458491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JNsfJ5pdWNc2079cGlyKbP97GYc87y3iN+nIMeKFqCk=;
+        b=R9hVUwdyuAlm4D6j1nYgC2Df4pRJY0PUcDkC6o3eHwNnCcOLuVdJ2wqls4nz3d2VnC
+         GOKeKqu8A+afGj13Apc3WKwpoko7F7CDQk3gZQELQfEQV5do8G6X1dCmdXG8AwCHBVLk
+         NyJXDR9UXfeW16PI2c3W2GBJi/YKxIWrTmQ/toCcsH8d9s+EtGyVOSDYcm2Rs7EtDG0V
+         zpyW61X8wDK8sNvOuYywl5db7PJU3zDGbNTUgVRHaO5nWNNJR2EqFoAiIuui2Vl6MN6i
+         n2Z3qpRNB/m8HakjiT8shZb52GZKTdRABymLtByk0ykQ0/N3Dk42EyePCt83TrUG7YDO
+         b5og==
+X-Forwarded-Encrypted: i=1; AJvYcCWqcDYHvRkW7CbxZR7rKKCxLNQMq+IwBpnBnbGsOlOVEagI39RZk3DZDTCd6If42v/5gIdjE/OIjxB/tes=@vger.kernel.org, AJvYcCXawQWTxrWaflTK2TN+urCWaQvJUO1p2QE5gorBLGTlzk5Vq952nbZH5x2AICRltigKeFXPgtJXN3VeQLJRlWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYfS7jwfN/J6IPVNK2KsMLzVW6Px2mpVoRhti3dnkafbcR9BNa
+	peAOE4pVVuEY1/aDoRwh1QwVxdlcbcuwzXEHQnR9/rKvBzJN35n0340nbv0F2weBDY7jDWDpBwe
+	yf0B7gng6/pZV1QRbI3ruRFZMY9A=
+X-Gm-Gg: ASbGnctyGPUVzosYBdzZT3KTvB6NPPTf9qz4qzKEUtMlJSgfnCDQVcoiOfUnS34l0Vr
+	ciNozTFn22I5aIjMXIv3+ViYFmvh9mZJ3PGE=
+X-Google-Smtp-Source: AGHT+IEOx4TLwYTEx0tez22Ay9j240MtFpVMbkftbBFXYTPrYlXiCjSnJ2j0pJzk51KujYrWBs+KGwyhX9ukXvtPB3w=
+X-Received: by 2002:a17:90b:3b4c:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-2ef69196c7bmr10125270a91.0.1733853690916; Tue, 10 Dec 2024
+ 10:01:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115035014.1339256-1-tanxiaofei@huawei.com>
-In-Reply-To: <20241115035014.1339256-1-tanxiaofei@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 18:59:16 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0h4-cSFs+ED3ymJKHKkEAproXCtB2t3cP1wcyd6eq=Sgg@mail.gmail.com>
-Message-ID: <CAJZ5v0h4-cSFs+ED3ymJKHKkEAproXCtB2t3cP1wcyd6eq=Sgg@mail.gmail.com>
-Subject: Re: [PATCH] acpi: Fix hed module initialization order when it is built-in
-To: Xiaofei Tan <tanxiaofei@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com, 
-	M.Chehab@huawei.com, roberto.sassu@huawei.com, shiju.jose@huawei.com, 
-	prime.zeng@hisilicon.com, linuxarm@huawei.com
+References: <20240817070955.75717-1-ojeda@kernel.org>
+In-Reply-To: <20240817070955.75717-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 10 Dec 2024 19:01:18 +0100
+Message-ID: <CANiq72ksDpJz2M=qPmx7F+MxpiY5ms8zUpdkTL4BQ+EvOS21Zw@mail.gmail.com>
+Subject: Re: [RFC PATCH] rust: use the hidden variant of `rust-project.json`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Ali Bektas <bektasali@protonmail.com>, Lukas Wirth <lukastw97@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 4:56=E2=80=AFAM Xiaofei Tan <tanxiaofei@huawei.com>=
- wrote:
+On Sat, Aug 17, 2024 at 9:10=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
 >
-> When the module hed is built-in, the init order is determined by
-> Makefile order.
+> This is a patch for the future -- we need to wait until most Rust kernel
+> developers are using a new enough version of rust-analyzer. Thanks Ali
+> & Lukas!
 
-Are you sure?
+For future reference, this has been available starting with Rust
+1.82.0's rust-analyzer.
 
-> That order violates expectations. Because the module
-> hed init is behind evged. RAS records can't be handled in the
-> special time window that evged has initialized while hed not.
-> If the number of such RAS records is more than the APEI HEST error
-> source number, the HEST resources could be occupied all, and then
-> could affect subsequent RAS error reporting.
-
-Well, the problem is real, but does the change really prevent it from
-happening or does it just increase the likelihood of success?
-
-In the latter case, and generally speaking too, it would be better to
-add explicit synchronization between evged and hed.
-
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-> ---
->  drivers/acpi/Makefile | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-> index 61ca4afe83dc..54f60b7922ad 100644
-> --- a/drivers/acpi/Makefile
-> +++ b/drivers/acpi/Makefile
-> @@ -15,6 +15,13 @@ endif
->
->  obj-$(CONFIG_ACPI)             +=3D tables.o
->
-> +#
-> +# The hed.o needs to be in front of evged.o to avoid the problem that
-> +# RAS errors cannot be handled in the special time window of startup
-> +# phase that evged has initialized while hed not.
-> +#
-> +obj-$(CONFIG_ACPI_HED)         +=3D hed.o
-> +
->  #
->  # ACPI Core Subsystem (Interpreter)
->  #
-> @@ -95,7 +102,6 @@ obj-$(CONFIG_ACPI_HOTPLUG_IOAPIC) +=3D ioapic.o
->  obj-$(CONFIG_ACPI_BATTERY)     +=3D battery.o
->  obj-$(CONFIG_ACPI_SBS)         +=3D sbshc.o
->  obj-$(CONFIG_ACPI_SBS)         +=3D sbs.o
-> -obj-$(CONFIG_ACPI_HED)         +=3D hed.o
->  obj-$(CONFIG_ACPI_EC_DEBUGFS)  +=3D ec_sys.o
->  obj-$(CONFIG_ACPI_BGRT)                +=3D bgrt.o
->  obj-$(CONFIG_ACPI_CPPC_LIB)    +=3D cppc_acpi.o
-> --
-> 2.33.0
->
+Cheers,
+Miguel
 
