@@ -1,110 +1,184 @@
-Return-Path: <linux-kernel+bounces-440003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1F79EB767
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:05:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CACD1883BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:05:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E0623278C;
-	Tue, 10 Dec 2024 17:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VV1f8zSK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6062C9EB768
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:06:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A571BC09F;
-	Tue, 10 Dec 2024 17:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC46428222F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:06:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB5232799;
+	Tue, 10 Dec 2024 17:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N0ikOrkL"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8C91BC09F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850329; cv=none; b=d+v5vmitrQDftvmkyMXBJ15yCi9crxmLbJZtzY+Ws32+UyESwt6TN0E+VmLC2oI983ak3at8wGHanYiO38wcbNS0ndTd/IOFC5wwIeCn8BNiS6CihA+EMnz1fWqJWxVP518orLYpcZ71us+olY4ZGVI856ceeBjSHuwECTnguDg=
+	t=1733850409; cv=none; b=oAdsTFtKhUxp3f8Fgy4s1iQ6l7M50R+vXnCFeLNKjP7RWEWd5Dnh4oDV/KXqgR8NDjjqzrnd5PrKqRg0ypB+w0ScwixdQgA9shpUKUr0sO+jHETUE4rvvCGCmJHXULfg9NuWbqexUuo1vIzbxRLlIBFzHK5dQ145BV9MkHTr9B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850329; c=relaxed/simple;
-	bh=vaU+OdFiuVkaJ6PMcJ/NEkM/VLKOJSMZuqjDER3Bpz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPMRM+srIf6FctEWH0RfzoL7e/clMUa/yzEl2WLQ7EI9gw3GHvSUzwuTr3aVbL13pb8vhM3f57fMTZ1DXSvQvF+Wqbab66P/E2J1xLyO112uqzMFGv4NdDvn7DJpW2RN+ujYwG/Z8RtuAIzNkpdcNG2LchidqqnTQP3zVVxLfxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VV1f8zSK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DE7C4CED6;
-	Tue, 10 Dec 2024 17:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733850325;
-	bh=vaU+OdFiuVkaJ6PMcJ/NEkM/VLKOJSMZuqjDER3Bpz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VV1f8zSKGEMXCGTCBnMhrA+rQFBCZl5bL/h2jdGK8Wcsir+Y9G9PPmgXu8oxBWvTE
-	 x7gXi+DeyVO8im7f+lh908tmy23Fbg4xQBZMDTL/nTJ97O7UCmKq+cHZ5gqhKYvd4b
-	 q7g1N0FhbNVhu2h28h503mjPz42ul2my6iEtWOV2XzTn6c3KTZ4gbfYFgYR8F1S50Q
-	 p0vzgyBCJixO3f7edsXewIg6IND5ZdYsEhTbfz7gFGRPvZdvz2ABIpxtBgjgx2H/3r
-	 PPAQitViGoIsCZi25UrbvCf10WC1Kq1+CaIQGRvGBfG8hkkc6sOAmUephMEjXkvagC
-	 DLCikw+OPercg==
-Date: Tue, 10 Dec 2024 17:05:20 +0000
-From: Will Deacon <will@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev
-Subject: Re: [PATCH V2 5/7] arm64/cpufeature: Add field details for
- ID_AA64DFR1_EL1 register
-Message-ID: <20241210170519.GA16075@willie-the-truck>
-References: <20241028053426.2486633-1-anshuman.khandual@arm.com>
- <20241028053426.2486633-6-anshuman.khandual@arm.com>
- <20241210164144.GA16039@willie-the-truck>
- <Z1hyueAQJTroNIRW@J2N7QTR9R3>
+	s=arc-20240116; t=1733850409; c=relaxed/simple;
+	bh=rFN7TvLsCXA3VO1va/jH8l4a57uI2N9NxnTrkX7z2Uk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZbpFXNSZqN2lfWS6g80kGkpMc2pxx+kEUwUEq2jomhp04JOHKazimTLOleZe63DhSoeCMNq+SsXWKzh8Ir1y8eXOowKFN4SabkoNtsYWoTHxc6bf9chE7EMVTKHxXkdRQ957Uv1pqDJwMEdA5+xkutq+d/aWqfVgszmxbVNV9Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N0ikOrkL; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 32654C0006;
+	Tue, 10 Dec 2024 17:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733850398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tqxoxktpoqzZXfIrDIKHGCR9iQyRTGI04sSZ/7C4j1o=;
+	b=N0ikOrkLwxlTixrruieaZ+V7YxUcX0qM6BGOXicQX8UzqgkAe2ukpMdQCQFJp4ujuDtTlv
+	iLFDupZ8U093lzxWIcjzJ3PYhgUwRD72cUdT4FwQ8yf1T9arVi0IYhSoKkCe4ahSygoUsy
+	X4w/F/Je/Tl1DThg585AElxyCDVEOIoZF/6aVdF6kv0elvEsXKS6ckXGgyH5pL0QBAtG+j
+	V0EFaVV7GD07FwrFgfp5IlqaEPa7gnL12Hu9EWTC5+X4jxbqfpVuqac7U9AnKsWa0MO+R7
+	6yBRNd7MOTVkY+97vvAUHIq3BNBtax0+Xz75Ne+GuNkG3UY6+ME0TTFAcqB+cw==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>
+Subject: Re: arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: cast
+ truncates bits from constant value (fffffffff000 becomes fffff000)
+In-Reply-To: <202412091227.KUZgstBB-lkp@intel.com>
+References: <202412091227.KUZgstBB-lkp@intel.com>
+Date: Tue, 10 Dec 2024 18:06:37 +0100
+Message-ID: <87ed2flb6q.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1hyueAQJTroNIRW@J2N7QTR9R3>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On Tue, Dec 10, 2024 at 04:56:25PM +0000, Mark Rutland wrote:
-> On Tue, Dec 10, 2024 at 04:41:44PM +0000, Will Deacon wrote:
-> > On Mon, Oct 28, 2024 at 11:04:24AM +0530, Anshuman Khandual wrote:
-> > > +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
-> > > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
-> > > +	ARM64_FTR_END,
-> > > +};
-> > 
-> > I think I mentioned this on an earlier series, but it would be useful to
-> > see some justification in the commit message as to why some of these
-> > features are considered STRICT vs NONSTRICT and why LOWER_SAFE is
-> > preferred over EXACT.
-> > 
-> > For example, why is EBEP strict whereas other PMU-related fields aren't?
-> > Why is the CTX_CMPs field treated differently to the same field in DFR0?
-> > 
-> > I'm not saying the above table is wrong, it just looks arbitrary without
-> > the justification.
-> 
-> FWIW, Anshuman and I discussed that on the v1 thread, after this v2
-> thread was posted. Anshuman promised to provide some rationale and make
-> some updates in the next version (i.e. v3):
-> 
->   https://lore.kernel.org/linux-arm-kernel/8efe902c-8b9f-494a-b9da-430d8ced32ef@arm.com/
+Hello,
 
-Perfect! I'll wait for the v3, then.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
+> head:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+> commit: 6f14293257309a02a6d451e80e4ef1d78560479e MIPS: Allow using more t=
+han 32-bit addresses for reset vectors when possible
+> date:   6 weeks ago
+> config: mips-randconfig-r112-20241209 (https://download.01.org/0day-ci/ar=
+chive/20241209/202412091227.KUZgstBB-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5=
+92c0fe55f6d9a811028b5f3507be91458ab2713)
+> reproduce: (https://download.01.org/0day-ci/archive/20241209/202412091227=
+.KUZgstBB-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202412091227.KUZgstBB-lkp=
+@intel.com/
 
-Will
+[...]
+
+>    arch/mips/kernel/smp-cps.c: note: in included file (through arch/mips/=
+include/asm/mips-cps.h):
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
+in argument 2 (different address spaces) @@     expected void volatile [nod=
+eref] __iomem *mem @@     got void * @@
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
+ile [noderef] __iomem *mem
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
+in argument 2 (different address spaces) @@     expected void volatile [nod=
+eref] __iomem *mem @@     got void * @@
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
+ile [noderef] __iomem *mem
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
+in argument 2 (different address spaces) @@     expected void volatile [nod=
+eref] __iomem *mem @@     got void * @@
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
+ile [noderef] __iomem *mem
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
+in argument 2 (different address spaces) @@     expected void volatile [nod=
+eref] __iomem *mem @@     got void * @@
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
+ile [noderef] __iomem *mem
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
+>>> arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: cast truncates b=
+its from constant value (fffffffff000 becomes fffff000)
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
+in return expression (different address spaces) @@     expected void * @@  =
+   got void [noderef] __iomem * @@
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void [noderef] =
+__iomem *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
+in return expression (different address spaces) @@     expected void * @@  =
+   got void [noderef] __iomem * @@
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void [noderef] =
+__iomem *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
+in return expression (different address spaces) @@     expected void * @@  =
+   got void [noderef] __iomem * @@
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void *
+>    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void [noderef] =
+__iomem *
+>>> arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: cast truncates b=
+its from constant value (fffffffff000 becomes fffff000)
+
+So I looked for from where this error comes and found that it was caused
+by:
+  write_gcr_co_reset64_base(CM_GCR_Cx_RESET64_BASE_BEVEXCBASE);
+in function check_64bit_reset() (smp-cps.c)
+
+The constant value being CM_GCR_Cx_RESET64_BASE_BEVEXCBASE.
+
+It occurs due to:
+  __raw_writel(val, addr_##unit##_##name());
+in write_##unit##_##name(uint##sz##_t val) (mips-cps.h)
+
+However, check_64bit_reset() is only called when mips_cm_is64 is true,
+whereas in write_##unit##_##name(uint##sz##_t val) __raw_writel is not
+called when mips_cm_is64 is true. This warning is therefore a false
+positive and I do not see any reasonable way to silence it, so I think
+we should simply ignore it unless someone has a better proposal.
+
+Gregory
+
+[...]
+
+
+>
+> vim +329 arch/mips/include/asm/mips-cm.h
+>
+>    326=09
+>    327	/* GCR_Cx_RESET_BASE - Configure where powered up cores will fetch=
+ from */
+>    328	GCR_CX_ACCESSOR_RW(32, 0x020, reset_base)
+>  > 329	GCR_CX_ACCESSOR_RW(64, 0x020, reset64_base)
+>    330	#define CM_GCR_Cx_RESET_BASE_BEVEXCBASE		GENMASK(31, 12)
+>    331	#define CM_GCR_Cx_RESET64_BASE_BEVEXCBASE	GENMASK_ULL(47, 12)
+>    332	#define CM_GCR_Cx_RESET_BASE_MODE		BIT(1)
+>    333=09
+>
+> --=20
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
