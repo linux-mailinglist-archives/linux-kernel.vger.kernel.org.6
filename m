@@ -1,236 +1,154 @@
-Return-Path: <linux-kernel+bounces-439236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5759E9EAC99
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:42:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE12D9EAC09
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39CE8188C805
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:42:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6ED16524C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B892343A0;
-	Tue, 10 Dec 2024 09:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBA123873C;
+	Tue, 10 Dec 2024 09:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HzzJZ3pe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oFjv7dbs"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF82210F61
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F85F3DAC1E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733823412; cv=none; b=q60tqTsb3/m9Vprj49DSo7q/Jgr/hE4ijvGpvIZhy8GnU5HqTtoAKhUTa8Yi/z4wuRNeZClz1KAYrtMKzkNlCgW/ChGYJNl5HWOFBJ/90Jo1LhxU24SxwWS9o89C3xyBsi9bWSHYwi8prfPjb2DYkEOlfh1gXZ4zDFhoXj7fbk4=
+	t=1733822936; cv=none; b=RoIaSG2GnFmQtIY0fpTwEy1Ewk93F2KzdwkwwttMXYGa4AbKXSaS3bUTI/zWkVstuhpbc6iw5KuLXR6VNZdtG1KkvjLsWuH0s+UdSvOckKKJ8a3uvVMeFJqBtnv5leJkrf2m3ICu4u7Y4pbgsMTVEc2uitFcCUyoRbJ/trLJ7cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733823412; c=relaxed/simple;
-	bh=+aIvRKa1y+nM3aRFrs0jGmNsVid+NxEL4P69d6AN5rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IiYh7dkgXkZyOftAQJQqKi0FRWioYc40WmQ/cXm7V5eICIUYEeAD4s1RDSzj87Bdvj2RGd4j9Pf5Dsi02GtM2bPPOHVGKVj7G6s3p6hE5F3o4inzNILeBdUYf6bB95qv4FB497D77fp5azlgNyDx765orXjHKYTHWfv9FkHQZZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HzzJZ3pe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733823409;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4uKV5q8ipSveT5v4CsCghLySmLeYGPu3Ntq0jxSCKrk=;
-	b=HzzJZ3pe4tXtXX6JyLvE2VN/hhjL5oNzQcy1ZhW11pCfpYkDrauzw4G6Ja7bhhbvfh7/KP
-	vpeIrHg5mWJvBPnO6k7CB2Y3JCAY88SlY9uvrfZW3mGEW9lShsdHr/f6RcpiBMs4lr9VYC
-	noXqhgaws3ZSxXdTjhSaZzapKquqW20=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-118-i-BSR-UAO2uk7Hp6W-yqxA-1; Tue,
- 10 Dec 2024 04:36:48 -0500
-X-MC-Unique: i-BSR-UAO2uk7Hp6W-yqxA-1
-X-Mimecast-MFC-AGG-ID: i-BSR-UAO2uk7Hp6W-yqxA
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CA4271956089;
-	Tue, 10 Dec 2024 09:36:46 +0000 (UTC)
-Received: from hydra.redhat.com (unknown [10.39.193.39])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A827E1956089;
-	Tue, 10 Dec 2024 09:36:43 +0000 (UTC)
-From: Jocelyn Falempe <jfalempe@redhat.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v3 6/6] drm/i915: Add drm_panic support for Y-tiling with DPT
-Date: Tue, 10 Dec 2024 10:28:46 +0100
-Message-ID: <20241210093505.589893-7-jfalempe@redhat.com>
-In-Reply-To: <20241210093505.589893-1-jfalempe@redhat.com>
-References: <20241210093505.589893-1-jfalempe@redhat.com>
+	s=arc-20240116; t=1733822936; c=relaxed/simple;
+	bh=QTPQ1DyM59FTFwoOCCInfTij+St4lWshfJMO2MNF9Jk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IWEis0O7JgPLJh18j8VYteeHjTZOAmRbx4sAfCgvV+fLMkyiDpdQwOJWQjG463CuczwukM8iWc2ti4mLlSDOQm6Cf+FHbdSNSmZwf46N49IcBhVwOdWhutnRAWWAueb+jsGd2g7FtZ8AWcBvG4MThd7knpppBA+W2uES2MQNkoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oFjv7dbs; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-467777d7c83so4322711cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:28:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733822934; x=1734427734; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ldrzuJki4Bob493jggNorXy/00Sxo1CNpTeJmfaThng=;
+        b=oFjv7dbs4fTghKaTgXmydmb0q2pp6SL3AQf5k0vgT4+t9iFQxKwg3BNZ1yZn/SPTsR
+         Rhjj+aY69aiclQQEFg8pqNYc1L+yyPB65sq8b4ABJ9LDjjsMgxhxUudgaSUdJWpSSzRM
+         wktubWoFYBaOMz5fMgo1+xtSLTMUS6WZaYKLY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733822934; x=1734427734;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ldrzuJki4Bob493jggNorXy/00Sxo1CNpTeJmfaThng=;
+        b=UlbgKRnEOYUssVo40VhRnrkZKWrstV+Fuxlo6FtObc5CvummEbV/7Z1aIFmiwBfPCx
+         dbRkfhD+1Hg1iUfC/mi7EDx4ETYV0uUxepAy5nVq4CcgBlhuzg5c95t1v/sEO0jIphHJ
+         o/At6gcA51iGBO+g/zIkURbO4F64TmHlWK7g3kjFQ37UbUTANFXWs2XYz/MfNcRMrEgZ
+         HkqjhC+/NLlX/LKJPa6nVGxj++FgIjEW9mPixqGyWKChWZqj3Y4L7gsUn2iRvsv90iir
+         ZA5iptdipH0kPF1/Af3xSbtbQ8cRLAjC+t2WB0iE+rlQe5Wy9aeYJKoob0jhN2Ysjgka
+         5BsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxl7y/1GnO44zQCt3Cf7unUauQOT/1MYhOE12+ncxj70uPY2lu8qQXOAyydT3aLtjgEEBYIC1GyL9Ho3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYoC+7OBOupPH7xCIoiPx7QcP2679/MnKAz3rqJUoGwxHLY0cb
+	yuPq5NrUywKD0DkrUKoHhAEkt1z6kaGBdKvuuJXv1fltoR+ZNglF2QP3aGpcBA==
+X-Gm-Gg: ASbGncvJ3D1xcSLbVrJEGNTfwzRRueVJF8c+8TCoYe+jYwtaE0HTWhqxp+wsm3TCdt3
+	/bJmsDAz+7dfDKHfnzveBge7m6gL5Y16gmJuxesWQX6jgxSgH9AL7Y56+z/hhIExltBJqcqZbw0
+	CPl70Ltm1fzN2+TpR8sJyjPYK0632QXyVdSUGBJkMPteA4R1fo3ZSgnQHyxyJSbUSCMae75vH9n
+	C+/U3cp+TFSzeZmrfFT10ExtTPFODPBcVopHTD3qO+V5Hw2xx7tYEHcSdskfIvv5XdxViIhAQAq
+	ahjUBFqC3BVjqfMcA0wkPG50sM5T
+X-Google-Smtp-Source: AGHT+IGAAxP3Bb8dp8EUNxps8UjQFg2XrkM8eTt6qptwkb9cgt4CUX5Y2k7W1aHCNPf6K0Nheydqdg==
+X-Received: by 2002:a05:622a:118d:b0:467:6092:8414 with SMTP id d75a77b69052e-4676092879amr124695261cf.0.1733822934276;
+        Tue, 10 Dec 2024 01:28:54 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4675dd86ce4sm24343241cf.30.2024.12.10.01.28.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 01:28:53 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 10 Dec 2024 09:28:47 +0000
+Subject: [PATCH v2 03/11] media: pvrusb2: Remove g/s_ctrl callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241210-queryctrl-v2-3-c0a33d69f416@chromium.org>
+References: <20241210-queryctrl-v2-0-c0a33d69f416@chromium.org>
+In-Reply-To: <20241210-queryctrl-v2-0-c0a33d69f416@chromium.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Mike Isely <isely@pobox.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Alderlake and later, it's not possible to disable tiling when DPT
-is enabled.
-So this commit implements Y-Tiling support, to still be able to draw
-the panic screen. The Tile-4 support found in the latest Intel GPU
-will come later.
+The ioctl helpers can emulate g/s_ctrl with g/s_ext_ctrl. Simplify the
+code.
 
-Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- .../gpu/drm/i915/display/intel_atomic_plane.c | 70 +++++++++++++++++--
- .../drm/i915/display/skl_universal_plane.c    | 17 +++--
- 2 files changed, 78 insertions(+), 9 deletions(-)
+ drivers/media/usb/pvrusb2/pvrusb2-v4l2.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-index bafb1421f3b30..a88f09f6227f5 100644
---- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-+++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-@@ -1214,6 +1214,33 @@ intel_cleanup_plane_fb(struct drm_plane *plane,
-  */
- static struct iosys_map panic_map;
- 
-+/* Handle Y-tiling, only if DPT is enabled (otherwise disabling tiling is easier)
-+ * All DPT hardware have 128-bytes width tiling, so Y-tile dimension is 32x32
-+ * pixels for 32bits pixels.
-+ */
-+#define YTILE_WIDTH	32
-+#define YTILE_HEIGHT	32
-+#define YTILE_SIZE (YTILE_WIDTH * YTILE_HEIGHT * 4)
-+
-+static void intel_ytile_set_pixel(struct drm_scanout_buffer *sb, unsigned int x, unsigned int y,
-+				  u32 color)
-+{
-+	u32 offset;
-+	unsigned int swizzle;
-+	unsigned int width_in_blocks = DIV_ROUND_UP(sb->width, 32);
-+
-+	/* Block offset */
-+	offset = ((y / YTILE_HEIGHT) * width_in_blocks + (x / YTILE_WIDTH)) * YTILE_SIZE;
-+
-+	x = x % YTILE_WIDTH;
-+	y = y % YTILE_HEIGHT;
-+
-+	/* bit order inside a block is x4 x3 x2 y4 y3 y2 y1 y0 x1 x0 */
-+	swizzle = (x & 3) | ((y & 0x1f) << 2) | ((x & 0x1c) << 5);
-+	offset += swizzle * 4;
-+	iosys_map_wr(&sb->map[0], offset, u32, color);
-+}
-+
- static void intel_panic_flush(struct drm_plane *plane)
- {
- 	struct intel_plane_state *plane_state = to_intel_plane_state(plane->state);
-@@ -1232,6 +1259,34 @@ static void intel_panic_flush(struct drm_plane *plane)
- 		iplane->disable_tiling(iplane);
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
+index 7c8be6a0cf7c..ad38e1240541 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
+@@ -574,31 +574,6 @@ static int pvr2_querymenu(struct file *file, void *priv, struct v4l2_querymenu *
+ 	return ret;
  }
  
-+static void (*intel_get_tiling_func(u64 fb_modifier))(struct drm_scanout_buffer *sb, unsigned int x,
-+						      unsigned int y, u32 color)
-+{
-+	switch (fb_modifier) {
-+	case I915_FORMAT_MOD_Y_TILED:
-+	case I915_FORMAT_MOD_Y_TILED_CCS:
-+	case I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS_CC:
-+	case I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS:
-+	case I915_FORMAT_MOD_Y_TILED_GEN12_MC_CCS:
-+		return intel_ytile_set_pixel;
-+	case I915_FORMAT_MOD_X_TILED:
-+	case I915_FORMAT_MOD_4_TILED:
-+	case I915_FORMAT_MOD_4_TILED_DG2_RC_CCS:
-+	case I915_FORMAT_MOD_4_TILED_DG2_MC_CCS:
-+	case I915_FORMAT_MOD_4_TILED_DG2_RC_CCS_CC:
-+	case I915_FORMAT_MOD_4_TILED_MTL_RC_CCS:
-+	case I915_FORMAT_MOD_4_TILED_MTL_RC_CCS_CC:
-+	case I915_FORMAT_MOD_4_TILED_MTL_MC_CCS:
-+	case I915_FORMAT_MOD_4_TILED_BMG_CCS:
-+	case I915_FORMAT_MOD_4_TILED_LNL_CCS:
-+	case I915_FORMAT_MOD_Yf_TILED:
-+	case I915_FORMAT_MOD_Yf_TILED_CCS:
-+	default:
-+	/* Not supported yet */
-+		return NULL;
-+	}
-+}
-+
- static int intel_get_scanout_buffer(struct drm_plane *plane,
- 				    struct drm_scanout_buffer *sb)
- {
-@@ -1254,9 +1309,13 @@ static int intel_get_scanout_buffer(struct drm_plane *plane,
- 		ptr = intel_fbdev_get_vaddr(dev_priv->display.fbdev.fbdev);
- 	} else {
- 		/* Can't disable tiling if DPT is in use */
--		if (intel_fb_uses_dpt(fb))
--			return -EOPNOTSUPP;
+-static int pvr2_g_ctrl(struct file *file, void *priv, struct v4l2_control *vc)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int val = 0;
+-	int ret;
 -
-+		if (intel_fb_uses_dpt(fb)) {
-+			if (fb->format->cpp[0] != 4)
-+				return -EOPNOTSUPP;
-+			sb->set_pixel = intel_get_tiling_func(fb->modifier);
-+			if (!sb->set_pixel)
-+				return -EOPNOTSUPP;
-+		}
- 		ptr = intel_bo_panic_map(obj);
- 	}
- 
-@@ -1271,7 +1330,10 @@ static int intel_get_scanout_buffer(struct drm_plane *plane,
- 	sb->map[0] = panic_map;
- 	sb->width = fb->width;
- 	sb->height = fb->height;
--	sb->format = fb->format;
-+	/* Use the generic linear format, because tiling, RC, CCS, CC
-+	 * will be disabled in disable_tiling()
-+	 */
-+	sb->format = drm_format_info(fb->format->format);
- 	sb->pitch[0] = fb->pitches[0];
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/i915/display/skl_universal_plane.c b/drivers/gpu/drm/i915/display/skl_universal_plane.c
-index e2a54547a29d5..71e79b022c9ef 100644
---- a/drivers/gpu/drm/i915/display/skl_universal_plane.c
-+++ b/drivers/gpu/drm/i915/display/skl_universal_plane.c
-@@ -2577,17 +2577,24 @@ static u8 skl_get_plane_caps(struct drm_i915_private *i915,
- 
- static void skl_disable_tiling(struct intel_plane *plane)
+-	ret = pvr2_ctrl_get_value(pvr2_hdw_get_ctrl_v4l(hdw, vc->id),
+-			&val);
+-	vc->value = val;
+-	return ret;
+-}
+-
+-static int pvr2_s_ctrl(struct file *file, void *priv, struct v4l2_control *vc)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int ret;
+-
+-	ret = pvr2_ctrl_set_value(pvr2_hdw_get_ctrl_v4l(hdw, vc->id),
+-			vc->value);
+-	pvr2_hdw_commit_ctl(hdw);
+-	return ret;
+-}
+-
+ static int pvr2_g_ext_ctrls(struct file *file, void *priv,
+ 					struct v4l2_ext_controls *ctls)
  {
--	u32 plane_ctl;
- 	struct intel_plane_state *state = to_intel_plane_state(plane->base.state);
- 	struct drm_i915_private *dev_priv = to_i915(plane->base.dev);
--	u32 stride = state->view.color_plane[0].scanout_stride / 64;
-+	const struct drm_framebuffer *fb = state->hw.fb;
-+	u32 plane_ctl;
- 
- 	plane_ctl = intel_de_read(dev_priv, PLANE_CTL(plane->pipe, plane->id));
--	plane_ctl &= ~PLANE_CTL_TILED_MASK;
- 
--	intel_de_write_fw(dev_priv, PLANE_STRIDE(plane->pipe, plane->id),
--			  PLANE_STRIDE_(stride));
-+	if (intel_fb_uses_dpt(fb)) {
-+		/* if DPT is enabled, keep tiling, but disable compression */
-+		plane_ctl &= ~PLANE_CTL_RENDER_DECOMPRESSION_ENABLE;
-+	} else {
-+		/* if DPT is not supported, disable tiling, and update stride */
-+		u32 stride = state->view.color_plane[0].scanout_stride / 64;
- 
-+		plane_ctl &= ~PLANE_CTL_TILED_MASK;
-+		intel_de_write_fw(dev_priv, PLANE_STRIDE(plane->pipe, plane->id),
-+				  PLANE_STRIDE_(stride));
-+	}
- 	intel_de_write_fw(dev_priv, PLANE_CTL(plane->pipe, plane->id), plane_ctl);
- 
- 	intel_de_write_fw(dev_priv, PLANE_SURF(plane->pipe, plane->id),
+@@ -817,8 +792,6 @@ static const struct v4l2_ioctl_ops pvr2_ioctl_ops = {
+ 	.vidioc_streamoff		    = pvr2_streamoff,
+ 	.vidioc_query_ext_ctrl		    = pvr2_query_ext_ctrl,
+ 	.vidioc_querymenu		    = pvr2_querymenu,
+-	.vidioc_g_ctrl			    = pvr2_g_ctrl,
+-	.vidioc_s_ctrl			    = pvr2_s_ctrl,
+ 	.vidioc_g_ext_ctrls		    = pvr2_g_ext_ctrls,
+ 	.vidioc_s_ext_ctrls		    = pvr2_s_ext_ctrls,
+ 	.vidioc_try_ext_ctrls		    = pvr2_try_ext_ctrls,
+
 -- 
-2.47.1
+2.47.0.338.g60cca15819-goog
 
 
