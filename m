@@ -1,147 +1,200 @@
-Return-Path: <linux-kernel+bounces-440158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0A69EB990
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:46:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E649EB98C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:46:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747A816580A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:46:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B157521422E;
+	Tue, 10 Dec 2024 18:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6S36Kue"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC928284837
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:46:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171BD214209;
-	Tue, 10 Dec 2024 18:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZQr52uRj"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0D3226862;
-	Tue, 10 Dec 2024 18:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EE81D7996;
+	Tue, 10 Dec 2024 18:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856355; cv=none; b=PBu5ZfFgqcbt/FWa2NSj57aWb5FTxGBliKrCvvTbwj47EYuzM3bKNh1+j7x5tJLJBu4pt83w/Xs1HYB7NMd0MHWr0XABr3R2yMcPbyUfCOBUXecjz2RPMz7Gjvucr5EoUsN0qANu7wcE3aPqGoziLjnfNhoQ5TCsZvvoLcTqwJ8=
+	t=1733856345; cv=none; b=ujHfmffvBGB7cTdeyjKhvnhazgk3nk6xiQ8aYHPX7Ud3tHB8seO3/S9jKdl+qKLk7XLQcbvA2kuMmzj8mSb7ffjW2QMCbTXS44LKSgY4C/Nx9VYw/qlAUlVd2KE+MF6ePsvHJemiEirp+Mifw8LHZGo638yPjo9ecUINzsykB2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856355; c=relaxed/simple;
-	bh=nGM6e7q2n+Rg31Ry+dAXzwwRGvB+Bz3Tc3E4fftYX2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T0bE8+N+nF3jPjfil/JJcurTfF+V1dkxTR+eLg2fksrr4YNc6Bg7yLC+bYVVh8tEVpcGmLnNzRgISy0J0iChLdA9mQ9UijLguwG2rjoX078AO+r4JySpbZh5hjfEoI/srzFPfhUYJ/S/5UTGjrgwXcZN5dxa39hYv0lyQbl4P9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZQr52uRj; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id L5EotBIgE01M2L5EotfE5j; Tue, 10 Dec 2024 19:45:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733856342;
-	bh=o/qM869MCmQZkRsPpCevAXNj2FXSE3qMjToZGsvPE8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ZQr52uRj3DCZS904wPu9oO3He4yPgn4PkS2eoS14L924pm6/3GFbuRKA0gVxK62lE
-	 YcpeFbwShTcxSGCoFi59YGdorMjjicdzgbyRG1dMGBxyC0Bt3U9FNUm21MmcLUwSs5
-	 IW6mdXYyCnSEdO1ntkwjXE8H88rjXAbhoMLgm2kxBtZrca8nB2JlVpMujmDE2NDNeg
-	 fM1st214JoIHg3VdZR7yngsugauVnKWR9NMRVuLZSEaZgSnKKkF7tj5qwvIMHB5R/0
-	 dWCDEPJ4f0VCwTI8Z1MWhrwU0WqTYsdXly05mbhwOeKTRBRWDYNeYswTWNb33/mDAP
-	 UXAbWMjvBEO4A==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 10 Dec 2024 19:45:42 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <32201aec-f3d2-49a7-b0ca-2ede10fec103@wanadoo.fr>
-Date: Tue, 10 Dec 2024 19:45:33 +0100
+	s=arc-20240116; t=1733856345; c=relaxed/simple;
+	bh=OB5DgYuePvYBlbGv8W3gJQ1FsMSp+KmUVfAIg9wjr8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQE3T8BGZBrkBOW1P6cXlMzqlTg9F7Tp/lcJZiDDzOHGwygT7PQ/Jbk4sx1w/BFQk8Ewoaal7zvYvPafrmU1vBS/l+RUdDW0gS8VMrh++il6W9zjcgGiePBPo4GzhagwcYirD85FAuH+sOoWORhNfYl+wOLiB5M+mB0Httpumvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6S36Kue; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C80DC4CED6;
+	Tue, 10 Dec 2024 18:45:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733856344;
+	bh=OB5DgYuePvYBlbGv8W3gJQ1FsMSp+KmUVfAIg9wjr8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l6S36KueRi870kpf9AOxkZRG7YV24Ph05U8fJBCcU1qmYjUe5Wo6ro9oCAH96EK8P
+	 u2q9VKDFig43EadBkj4bumesqcumc2XBav6oTqS3cV7Bh31aH11kLtx371WtwSOnlg
+	 C4Vki6vtERNHDxJMdeLSYv8VcYX8a46hJNWX6IMBanfcqd8RYSIwa2ef9y62fBlkO/
+	 ECYwMhopKBWsnOVkPZ/jBgwmeMEuhdisurdadEno6NpuMnD+6YxsqBPXpKPwzyt2y6
+	 2ifO4nGrYvCGaqEaIuFaikHl94gZpT0rJFniFm1orY7KeGSQmzV0d0yFgauSnybni+
+	 7y+EAR299GbKQ==
+Date: Tue, 10 Dec 2024 12:45:42 -0600
+From: Rob Herring <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, p.zabel@pengutronix.de,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com,
+	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
+Message-ID: <20241210184542.GA4077820-robh@kernel.org>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] pinctrl: mediatek: add MT7988 pinctrl driver
-To: Frank Wunderlich <linux@fw-web.de>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sean Wang <sean.wang@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>,
- =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-References: <20241202110045.22084-1-linux@fw-web.de>
- <20241202110045.22084-3-linux@fw-web.de>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241202110045.22084-3-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
 
-Le 02/12/2024 à 12:00, Frank Wunderlich a écrit :
-> From: Daniel Golle <daniel@makrotopia.org>
+On Tue, Nov 26, 2024 at 11:20:36AM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Add pinctrl driver for the MediaTek MT7988 SoC.
+> The RZ/G3S system controller (SYSC) has registers to control signals that
+> are routed to various IPs. These signals must be controlled during
+> configuration of the respective IPs. One such signal is the USB PWRRDY,
+> which connects the SYSC and the USB PHY. This signal must to be controlled
+> before and after the power to the USB PHY is turned off/on.
 > 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> [correctly initialise for the function_desc structure]
-> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> Other similar signals include the following (according to the RZ/G3S
+> hardware manual):
 > 
+> * PCIe:
+> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>   register
+> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+> 
+> * SPI:
+> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>   register
+> 
+> * I2C/I3C:
+> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>   (x=0..3)
+> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+> 
+> * Ethernet:
+> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>   registers (x=0..1)
+> 
+> Add #renesas,sysc-signal-cells DT property to allow different SYSC signals
+> consumers to manage these signals.
+> 
+> The goal is to enable consumers to specify the required access data for
+> these signals (through device tree) and let their respective drivers
+> control these signals via the syscon regmap provided by the system
+> controller driver. For example, the USB PHY will describe this relation
+> using the following DT property:
+> 
+> usb2_phy1: usb-phy@11e30200 {
+> 	// ...
+> 	renesas,sysc-signal = <&sysc 0xd70 0x1>;
+> 	// ...
+> };
+> 
+> Along with it, add the syscon to the compatible list as it will be
+> requested by the consumer drivers. The syscon was added to the rest of
+> system controller variants as these are similar with RZ/G3S and can
+> benefit from the implementation proposed in this series.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
+> 
+> Changes in v2:
+> - none; this patch is new
+> 
+> 
+>  .../soc/renesas/renesas,rzg2l-sysc.yaml       | 23 ++++++++++++++-----
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+> index 4386b2c3fa4d..90f827e8de3e 100644
+> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+> @@ -19,11 +19,13 @@ description:
+>  
+>  properties:
+>    compatible:
+> -    enum:
+> -      - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+> -      - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+> -      - renesas,r9a07g054-sysc # RZ/V2L
+> -      - renesas,r9a08g045-sysc # RZ/G3S
+> +    items:
+> +      - enum:
+> +          - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+> +          - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+> +          - renesas,r9a07g054-sysc # RZ/V2L
+> +          - renesas,r9a08g045-sysc # RZ/G3S
+> +      - const: syscon
+>  
+>    reg:
+>      maxItems: 1
+> @@ -42,9 +44,17 @@ properties:
+>        - const: cm33stbyr_int
+>        - const: ca55_deny
+>  
+> +  "#renesas,sysc-signal-cells":
+> +    description:
+> +      The number of cells needed to configure a SYSC controlled signal. First
+> +      cell specifies the SYSC offset of the configuration register, second cell
+> +      specifies the bitmask in register.
+> +    const: 2
 
-...
+If there's only one possible value, then just fix the size in the users. 
+We don't need #foo-cells until things are really generic. Plus patch 
+8 already ignores this based on the schema. And there's implications to 
+defining them. For example, the pattern is that the consumer property 
+name is renesas,sysc-signals, not renesas,sysc-signal.
 
-> +/* flash */
-> +static int mt7988_snfi_pins[] = { 22, 23, 24, 25, 26, 27 };
-> +static int mt7988_snfi_funcs[] = { 2, 2, 2, 2, 2, 2 };
+Maybe someone wants to create a 'h/w (signal) control' subsystem (and 
+binding) that is just 'read, assert, or deassert a h/w signal'. Perhaps 
+even the reset subsystem could be morphed into that as I think there 
+would be a lot of overlap. Maybe that would cut down on a lot of these 
+syscon phandle properties. I would find that a lot more acceptable than 
+the generic 'syscons' and '#syscon-cells' binding that was proposed at 
+some point.
+
+
 > +
-> +static int mt7988_emmc_45_pins[] = {
-> +	21, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
-> +};
-> +static int mt7988_emmc_45_funcs[] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-> +
-> +static int mt7988_sdcard_pins[] = { 32, 33, 34, 35, 36, 37 };
-> +static int mt7988_sdcard_funcs[] = { 5, 5, 5, 5, 5, 5 };
-> +
-> +static int mt7988_emmc_51_pins[] = { 38, 39, 40, 41, 42, 43,
-> +				     44, 45, 46, 47, 48, 49 };
-> +static int mt7988_emmc_51_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+>  required:
+>    - compatible
+>    - reg
+> +  - "#renesas,sysc-signal-cells"
 
-At least all the _pins arrays could be const.
-Maybe we could also make it possible to have _funcs const as well.
+New required properties are an ABI break.
 
-...
+>  
+>  additionalProperties: false
+>  
+> @@ -53,7 +63,7 @@ examples:
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+>      sysc: system-controller@11020000 {
+> -            compatible = "renesas,r9a07g044-sysc";
+> +            compatible = "renesas,r9a07g044-sysc", "syscon";
 
-> +static struct mtk_pin_soc mt7988_data = {
+What happens on a new kernel and a DT without this change?
 
-const?
-
-> +	.reg_cal = mt7988_reg_cals,
-> +	.pins = mt7988_pins,
-> +	.npins = ARRAY_SIZE(mt7988_pins),
-> +	.grps = mt7988_groups,
-> +	.ngrps = ARRAY_SIZE(mt7988_groups),
-> +	.funcs = mt7988_functions,
-> +	.nfuncs = ARRAY_SIZE(mt7988_functions),
-> +	.eint_hw = &mt7988_eint_hw,
-> +	.gpio_m = 0,
-> +	.ies_present = false,
-> +	.base_names = mt7988_pinctrl_register_base_names,
-> +	.nbase_names = ARRAY_SIZE(mt7988_pinctrl_register_base_names),
-> +	.bias_disable_set = mtk_pinconf_bias_disable_set,
-> +	.bias_disable_get = mtk_pinconf_bias_disable_get,
-> +	.bias_set = mtk_pinconf_bias_set,
-> +	.bias_get = mtk_pinconf_bias_get,
-> +	.pull_type = mt7988_pull_type,
-> +	.bias_set_combo = mtk_pinconf_bias_set_combo,
-> +	.bias_get_combo = mtk_pinconf_bias_get_combo,
-> +	.drive_set = mtk_pinconf_drive_set_rev1,
-> +	.drive_get = mtk_pinconf_drive_get_rev1,
-> +	.adv_pull_get = mtk_pinconf_adv_pull_get,
-> +	.adv_pull_set = mtk_pinconf_adv_pull_set,
-> +};
-
-...
-
-CJ
+Rob
 
