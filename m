@@ -1,155 +1,120 @@
-Return-Path: <linux-kernel+bounces-439642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3E69EB21E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:44:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71D09EB221
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF7616740F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:44:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823D21882A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAA11AA1E4;
-	Tue, 10 Dec 2024 13:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E17219D897;
+	Tue, 10 Dec 2024 13:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="XFWjja7y"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PvLdmeJD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C39023DE8D;
-	Tue, 10 Dec 2024 13:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E63C26AF6
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733838259; cv=none; b=J9uBlspRA43xbGTHmmnDwbXViJP1iel/slWPNI+phDXFNbMso8FqZHtm7mf19OFw/2bBAd5rOaGAlQ6s5gwPUpr42lxMUxKQHYkGbdGst0wHX3M2i0HPlCgqpAHmLzn8cPKoY2NEOZCD4kLJFFpkF0JGUAY4QxUT0J0/ubUwYYE=
+	t=1733838361; cv=none; b=Buo75hZYPL1ofZ+8SpHaQ0pQYueSwZWkkFtP3MyqzlC8E6QxBinYjQsQNxewZVigD5vIQvyp9vXHQhQybX4UcclDdqzgsurTV8U2IlWc6A1O4uwFuc7KMKrRBuO3L7g9I4p0V61IsYlGUl5DlDD5sw9N5y7D5Ba/PuM6IfJf/rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733838259; c=relaxed/simple;
-	bh=2i+Wqaw+wIIX5MFAaDkQu6D44GalB4H+uB+VfiJ0IHw=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=QJBoA8MAtQE7kSEXPvZXlFYxKZSz3dNpkX/iOqi4WSp6gxhkATgmwCTMmf8dvJNst+f8WVuA+389paQ8zUzFSWC9OOJVbELkOzHpO92izzSOnj0vmXzpaBi75K5N7iOyVFpeOIy/u/jad7Iqy8iNsKh/VSg/jod8wSDlKgdMyWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=XFWjja7y; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1733838361; c=relaxed/simple;
+	bh=QjJ2oOV+s0eIvWHc0jZo49maOC7W0Yq4I6oOQU5ELOQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XGYqeCKaQ8HpwmdmlnbX42IZJt2Ax448tUhCc0RTzy2W4+5ywcjT0mkl948vytyV71Zi5aqVgVPAZU20sWv53Ht9qnZGzR20uA3r9V5Gbzg+Go4BXhRogUVuJ85w837XKJfjI8P+Pma/aMUgAHdzNmxGVLj1iYLlMBUeq6q8uOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PvLdmeJD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BABaIWH007025;
+	Tue, 10 Dec 2024 13:45:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eY5oeWVS9dgAaaCFJDNLaO
+	N3x4FGCSlRmZcncbrN5ow=; b=PvLdmeJD4pfAsl9/IUZjgUHoxwO+kNymNm7Chf
+	M4bklfsS/97ABjbdZjsj/KLlBxIiFJDeb3aFGKaqNvElJI9MM7E2extYh9qUXfpN
+	51J7u3hdACJ2IVfUImO9JOK1Jr7I7adu4VBjY5gN1jaxOlDF63TdmOGhznaMNcfT
+	XMCAhHoF0MIQzCEnZ5v0JoSfxMp7mNv9i6zkmAgrrbTCwHJ4n+l6CKn7tAbKG+oP
+	cIbziVVqqqS6wdw/rvLByWLaEVSGtwp/Y+e/qahTqvisgL4Hgc+LE28TkQabJgy7
+	Gm/K8VRvmVTZVQzxSub2G6nEH63XpMo7UKOu5V86uwamV8uA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e21bkjcx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 13:45:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BADjhOW021295
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 13:45:43 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Dec 2024 05:45:40 -0800
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <quic_zhonhan@quicinc.com>
+Subject: [RFC PATCH] sched/core: Enhanced debug logs in do_task_dead()
+Date: Tue, 10 Dec 2024 21:45:13 +0800
+Message-ID: <20241210134513.2179786-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1733838255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HR985HiE65wAXM9O8QvXvTA1gJ8FNQIGOl/hU7K0iww=;
-	b=XFWjja7yGGHwKBg/bK2+h1h7SVh2fqrDrWxnE+tVJmxaRVJsqLZ3mtiwtJY3S2u7Z6nKni
-	bROXKcLWiD3kioD0yKVuF2TCPoCBR9+cXomUeftaxuwCex6/Y/dgyuAi8TeqGax9dwu438
-	rG6imA1HJIVtI7w/34QtStg9qUmod9UIuXm0LRhyS4NB8lE3OdlYk5U0MhYBvn93AReZnI
-	oZyJGqmJuQ6eEHbVQ/hplsYZz3OWa6Zt/GoaYA/ImRmI2sNDZIsjGjPoaS4ds1gu56WQTz
-	nsERVgGNpU2+SLEOWl468F+JYzPjJzuBxgZ1P/ycA6PDNX/FRoUqg+d9tJ+cqw==
-Date: Tue, 10 Dec 2024 14:44:14 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
- Diederik de Haas <didi.debian@cknow.org>, Johan Jonker <jbx6244@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 6/6] arm64: dts: rockchip: Remove address aligned beats
- from rk3328-roc
-In-Reply-To: <CAMdYzYpj3d7Rq0O0QjV4r6HEf_e07R0QAhPT2NheZdQV3TnQ6g@mail.gmail.com>
-References: <20241210013010.81257-1-pgwipeout@gmail.com>
- <20241210013010.81257-7-pgwipeout@gmail.com>
- <2b68c2dd3618e5904a4eac1ec87d29a7@manjaro.org>
- <CAMdYzYpj3d7Rq0O0QjV4r6HEf_e07R0QAhPT2NheZdQV3TnQ6g@mail.gmail.com>
-Message-ID: <6453e714b2a48572ff1e57cd74b0f6d3@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BrtZ-CuHpny4xO7izvPcAZDMVn2_zLx6
+X-Proofpoint-ORIG-GUID: BrtZ-CuHpny4xO7izvPcAZDMVn2_zLx6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=691 priorityscore=1501
+ spamscore=0 impostorscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100102
 
-Hello Peter,
+If BUG() is a NOP, dump the problematic stack for debugging purposes.
 
-On 2024-12-10 12:29, Peter Geis wrote:
-> On Tue, Dec 10, 2024 at 5:45 AM Dragan Simic <dsimic@manjaro.org> 
-> wrote:
->> Thanks for the patch.  Please, see some comments below.
->> 
->> On 2024-12-10 02:30, Peter Geis wrote:
->> > Since commit 8a469ee35606 ("arm64: dts: rockchip: Add txpbl node for
->> > RK3399/RK3328"), the snps,aal, snps,txpbl, and snps,rxpbl nodes have
->> > been unnecessary in the separate device trees. There is also a
->> > performance loss to using snps,aal. Remove these from the rk3328-roc
->> > device tree.
->> >
->> > Signed-off-by: Peter Geis <pgwipeout@gmail.com>
->> >
->> > ---
->> >
->> >  arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi | 3 ---
->> >  1 file changed, 3 deletions(-)
->> >
->> > diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
->> > b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
->> > index 6984387ff8b3..0d476cc2144d 100644
->> > --- a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
->> > +++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
->> > @@ -155,12 +155,9 @@ &gmac2io {
->> >       phy-mode = "rgmii";
->> >       pinctrl-names = "default";
->> >       pinctrl-0 = <&rgmiim1_pins>;
->> > -     snps,aal;
->> 
->> Huh, I see that quite a few RK3328 board dts files specify
->> the snps,aal node.  I wonder was it a "cargo cult" approach
->> at play, :) or was there some real need for it?
->> 
->> Actually, I see now that you added snps,aal to rk3328-roc-
->> cc.dts in the commit 393f3875c385 ("arm64: dts: rockchip:
->> improve rk3328-roc-cc rgmii performance."), so I guess that
->> your further research and testing showed that it actually
->> isn't needed for Ethernet stability?
->> 
->> >       snps,reset-gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
->> >       snps,reset-active-low;
->> >       snps,reset-delays-us = <0 10000 50000>;
->> > -     snps,rxpbl = <0x4>;
->> > -     snps,txpbl = <0x4>;
->> 
->> Unless I'm missing something, the commit 8a469ee35606 ("arm64:
->> dts: rockchip: Add txpbl node for RK3399/RK3328") doesn't add
->> the snps,rxpbl node to the RK3328 SoC dtsi, and the respective
->> driver does nothing about it when the snps,txpbl node is found.
->> 
->> Though, I see that rk3328-rock-pi-e.dts is the only other
->> RK3328 board dts file that specifies the snps,rxpbl node, so
->> it seems that removing the snps,rxpbl node here should be safe,
->> especially because it was you who added it in the same commit
->> mentioned above.  If there were some SoC-level issues, all
->> RK3328 boards would've needed it.
-> 
-> Good Morning,
-> 
-> You'll notice the author of that patch was me. Setting aal, txpbl, and
-> rxpbl was the original fix I came up with for the rk3328, which I
-> applied to the only board I had. Someone else later on isolated it
-> specifically isolated it to just the txpbl and applied it to both the
-> rk3328 and rk3399 directly.
-> 
-> This was just something that was left hanging after that result.
-> 
-> Looking at how rk356x was done, I suspect there's an even more elegant
-> solution. However I don't have the deep level knowledge nor
-> documentation to implement it.
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+---
+If BUG() is a NOP, it should make sense for debugging purposes. However,
+just arising the patch with RFC, because at least for now, I haven't found
+a definition of BUG() as NOP in various architectures. Thanks~
 
-Sure, I noticed that you authored the original Ethernet stability
-fix. :)  With all this in mind, please feel free to include
+ kernel/sched/core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f59f2c0f6e32..fc36a9c5c136 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6774,7 +6774,11 @@ void __noreturn do_task_dead(void)
+ 	__schedule(SM_NONE);
+ 	BUG();
+ 
+-	/* Avoid "noreturn function does return" - but don't continue if BUG() is a NOP: */
++	/*
++	 * Don't continue if BUG() is a NOP to avoid "noreturn function
++	 * does return" and dump stack for this case.
++	 */
++	dump_stack();
+ 	for (;;)
+ 		cpu_relax();
+ }
+-- 
+2.25.1
 
-and I'll prepare a patch or two that clean up any and all leftovers
-in other board dts(i) files.
 
