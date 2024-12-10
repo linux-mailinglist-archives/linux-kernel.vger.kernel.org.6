@@ -1,112 +1,83 @@
-Return-Path: <linux-kernel+bounces-439907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26D69EB5BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:13:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CB79EB5C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 110B7281750
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485F1281F76
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4E41BFE0D;
-	Tue, 10 Dec 2024 16:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0631BAEF8;
+	Tue, 10 Dec 2024 16:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sD1sQ5NL"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWjHv3qI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39B21A0711
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B57C23DEBB;
+	Tue, 10 Dec 2024 16:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733847172; cv=none; b=iI20T+Mt0ROS3RkS1lrH94gC7N2hvJe+rRnI5fFEV3Iw+bBTNfzVz6JbXa6DNmy6BGs1I8hpaY2NRBCW8H8Kq2K0V8QeKPyP1j++uJFzzyJby+XwdJthzBfiK0Hp61rXJDlCZIgJs8f6YdwI3rgMi6+aAPDp+yzbhfD29W6lilU=
+	t=1733847192; cv=none; b=PXWaCln+glcYh2vvf42Qs4GQ88GgaGFByJnYgfV549fQojP7q+kM01MatOXzGtPsFPDuzLodIvALjQ3We7dRsFyytpfWVlGaKUbMXQUi6ljKRuaeFZw6PCIlHjI9MShlClNsbD7//fXsC7xIGPO1fslEVsKZ8CuAJOPhGu2dL0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733847172; c=relaxed/simple;
-	bh=IEEi6Rs914XyJs+OK5nkfUNZ57Kyhb85U4z8bcFbL2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=svK2VSQMspFxpCXSq8JwkinIi5x/DrY76LOZyzg+qBhJmrjnHsOJfVqXaIcPtn+9jL9hQEm9tGaMx3IIsz2j3QDiQAm5FUqwpEzE072wpXkGxq5mchztPxN10BvyQEo6HKcGMRqxUqFJfXcd/Tu4fKin/iCm8+U4ujAQnjOYvbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sD1sQ5NL; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3ea065b79so4396919a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:12:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733847169; x=1734451969; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IEEi6Rs914XyJs+OK5nkfUNZ57Kyhb85U4z8bcFbL2o=;
-        b=sD1sQ5NLqBqIHikLU1Jxpgt5cxV/2vSow+crbeVGudUxrSIppwpDDugwUdWm4dAXr2
-         BRmQZgRePiaoPTBwN7lrMMu60aR8Yl/PSPTQJkizhJDQYrMUZaqGlQKWfrgiUHYk96cU
-         yV7Scumy2/jGwUMmQAJDKppYsCXDMSYcKBt+QBfkDgKVJPraF0Jroux0o4McnEEbx8WF
-         hDx+C7UIZndQ009CTGICrxdig1N1XUiudj15HRcovqAuklY8EG+3IGGIyw9bSZFajqj1
-         xV0Tv+cesK3VIW/VKGQBaRVf02UMd2sabcMXlZ2w8aALbx9hBKy52iSZ+BUeZGAnwdcX
-         2niQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733847169; x=1734451969;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IEEi6Rs914XyJs+OK5nkfUNZ57Kyhb85U4z8bcFbL2o=;
-        b=gM1urx/Gmj7bqLaI1yLD/7s5IQIVy0MPEwlh7DZEZpR0blvBkQhID7Q2QJEm8GWYMM
-         LDAqjBQNZ0gf1inBHHiOP7U7g6IcFY+iNTVGLivAjQpF2WyM2ahwY/B1VQl+NOvmCO4w
-         up5IJQgF06kQeDdTx6lQd3RNC3RTj6PbAIL89xdPFblyO0UdNyIiX15J23TMcyMlOInE
-         iZEajZ55KnHaXerAsUOYTLARD/erfgxOgE2n7x0AWw9OIx2Er7yUQ0DJ+O1j/Zi06Ddw
-         d/PRa2jxc68uhOMdawBPrhg5aa22o/No4EqObEPBpATpCYw+CLOqhJu8h9CGrk0crzCc
-         1yow==
-X-Forwarded-Encrypted: i=1; AJvYcCWv2T/RPZ+XxfowXtJLM6MmO4bZFyqeLNS72/u5etWjIWsf+JBrAuq9LWxeb8iPoXzok+VPyOCxDUuepJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXLUO8wgfp2ja42C9vpvHMz47VyiOTYE9rZBqxf4vvJ0yBmbo6
-	ha7aZExi0gPJ8YqWqaPcFsdDU6zbcaKCufV0FjsLg/I2FI2iF9sFzuqly3pdAu+q+CSMHr9zJc5
-	lzFOsdwmchKn8aVG9gUP8/A/DvGoJTjINPsQI
-X-Gm-Gg: ASbGncv2OwNMI+/h58k1JnpKXgwQAfyvcHNMYMb1FafKEqp0H6L6uO0iSCEAQCDmgXA
-	2Pyk5Gel759tGcOqHx6tmJEyitwF+fp7+CdA=
-X-Google-Smtp-Source: AGHT+IFC/KNyJLyHI2/ye5Ac84Q8Z6BtOd46kGclCv+WlL7f+aQgPRnclsq5M6vaWLh6SgB/Z9DJNBgT1+mVN6Bg9Lc=
-X-Received: by 2002:a05:6402:1e90:b0:5d0:d610:caa2 with SMTP id
- 4fb4d7f45d1cf-5d4185fe2aamr6068148a12.26.1733847168800; Tue, 10 Dec 2024
- 08:12:48 -0800 (PST)
+	s=arc-20240116; t=1733847192; c=relaxed/simple;
+	bh=7PreuL+BnmocFlVQc2B6hkzpUB6uv0LOdMIXrzrjPiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9P3lxeI/EMV3FV3dN01jF0Yz93S9aNOp7yU43MsovvGO+iaPh7gI4vkvycfQcmVUDe7tKjqvUYxyhE0ccuuZUmocz4GWGcGvp4Lc1w9+CluzI+Vva4EOdgMyZpAQpisSmkz8E5Cy72/DNlbNKPunHAf/wvA4tycIVpeFj12NRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWjHv3qI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE031C4CED6;
+	Tue, 10 Dec 2024 16:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733847192;
+	bh=7PreuL+BnmocFlVQc2B6hkzpUB6uv0LOdMIXrzrjPiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hWjHv3qITm7s8ybB3RzHbk6192/o1oY+VrniIS3GiTkOA7lX54iHWEs4Ip2iYh0A2
+	 XjYz3Wp5KgDE9VHdAeRJICoRqsQXfxzNV1oJV8ABq5lzYsC7TI4As5pvETePHsW6AP
+	 liDyNF7KBGku+17BgDqaDP/p8cGJ9qpXdMmitPLpWqETrUDmjGL4cr71wo95A9n5b6
+	 iCwsFahE8aRo+6rPJluswqoBYBeGeK6oqgIqop9StJt97Uf6yaEWUR0/TAmcUTIYSA
+	 o9XJ3toxvKluFdzuOFKXlX66u384EKE+J7Qd+bAdZSF+GJUPKExvoTXiZ2pHbBC/v5
+	 SL/VHNPhA1NQg==
+Date: Tue, 10 Dec 2024 11:13:10 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee@kernel.org>,
+	Chris Morgan <macroalpha82@gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.12 15/36] mfd: axp20x: Allow multiple regulators
+Message-ID: <Z1holqqKpVPMu7zj@sashalap>
+References: <20241204154626.2211476-1-sashal@kernel.org>
+ <20241204154626.2211476-15-sashal@kernel.org>
+ <e34a5b25-95c8-4111-baf1-c5ac4ad66cff@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z1fMaHkRf8cfubuE@xiberoa>
-In-Reply-To: <Z1fMaHkRf8cfubuE@xiberoa>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 10 Dec 2024 17:12:37 +0100
-Message-ID: <CANn89iLgWc6vZZo0tD0XVg0zY-T-eUjKj4r=O_B3QARjFB755Q@mail.gmail.com>
-Subject: Re: [PATCH v2 net] splice: do not checksum AF_UNIX sockets
-To: Frederik Deweerdt <deweerdt.lkml@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Michal Luczaj <mhal@rbox.co>, David Howells <dhowells@redhat.com>, 
-	linux-kernel@vger.kernel.org, xiyou.wangcong@gmail.com, 
-	David.Laight@aculab.com, jdamato@fastly.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <e34a5b25-95c8-4111-baf1-c5ac4ad66cff@arm.com>
 
-On Tue, Dec 10, 2024 at 6:06=E2=80=AFAM Frederik Deweerdt
-<deweerdt.lkml@gmail.com> wrote:
+On Sat, Dec 07, 2024 at 09:34:27PM +0000, Andre Przywara wrote:
+>Hi Sasha,
 >
-> When `skb_splice_from_iter` was introduced, it inadvertently added
-> checksumming for AF_UNIX sockets. This resulted in significant
-> slowdowns, for example when using sendfile over unix sockets.
 >
-> Using the test code in [1] in my test setup (2G single core qemu),
-> the client receives a 1000M file in:
-> - without the patch: 1482ms (+/- 36ms)
-> - with the patch: 652.5ms (+/- 22.9ms)
+>On 04/12/2024 15:45, Sasha Levin wrote:
+>>From: Andre Przywara <andre.przywara@arm.com>
+>>
+>>[ Upstream commit e37ec32188701efa01455b9be42a392adab06ce4 ]
 >
-> This commit addresses the issue by marking checksumming as unnecessary in
-> `unix_stream_sendmsg`
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Frederik Deweerdt <deweerdt.lkml@gmail.com>
-> Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff =
-for MSG_SPLICE_PAGES")
-> ---
+>can you hold back those backports, please? Chris reported a regression
+>in mainline[1]. He is working on a fix, but it doesn't look like to be
+>trivial. In fact we only really need this patch for an upcoming board
+>support, so there isn't an immediate need in stable kernels anyway.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+I'll drop it, thanks!
+
+-- 
+Thanks,
+Sasha
 
