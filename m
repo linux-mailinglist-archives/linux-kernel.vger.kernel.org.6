@@ -1,173 +1,146 @@
-Return-Path: <linux-kernel+bounces-439474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67AE9EAFC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:22:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D229EAFCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75061885E7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC6716AA1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CC22080FB;
-	Tue, 10 Dec 2024 11:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDC819DF9A;
+	Tue, 10 Dec 2024 11:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArgRMC69"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H455Qbf4"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BA72080F0;
-	Tue, 10 Dec 2024 11:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C1023DEB3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733829750; cv=none; b=V5W+MVO1E+eZ1vtv84wWLcz9VpYxF0QG48P3HQZslWFXEERLioFRSBHJoMOJFkRstpB717YyTvJw7nn8xmEbQ3/+PXL/aFS8nqKkS3JTREtJ2L4U1Z5pvoFfTv3qS9jroKp5UK3imlhoRw3W7jzTDyibbMRtEB+LQ3oC4eoQ2v0=
+	t=1733829788; cv=none; b=k7W1tW1Bm9IoQMGfOqmY54yAt4ycv62EYVT04HR2/RNZxyYKr9QMWN2RWyeQVgjY7PB9NONFYJ7rnIUum+t7frDS9YikYPpcfcmtsD2e30rGaUlGVZQpubP31MNBk326EfUZfka3PDM2C+jSUTZ1Oohuew42miOSp5NOFuhSAxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733829750; c=relaxed/simple;
-	bh=V+ILprZMKU3hTxlx44PlWoIeIjwa2pZmntXV2SS84oE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lyzRmWLFqa76L2mojfTySmRxVVsu7dKTvYWWzfz6KKdsuX3OgC+jbDZ9K1IXzKdMqagyiz5qrPNnAVG9Eusn9tjbdbxpZ8Fc+afH1u7GmV7vd0QEwySV/4XGbrabvx3O4U4Wfx1Bo7tvXz1cQqCeGRdNpleg0MUESA1BpHDCqgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ArgRMC69; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee8ecb721dso953612a91.3;
-        Tue, 10 Dec 2024 03:22:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733829748; x=1734434548; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SgG0y341Sck02mPUDWmT12vY0FvtCZ22l4JyW9IBLow=;
-        b=ArgRMC69LwRA9rYAi1786wsRS1EW9wFnQAuBzmVVFuMMwnCFVb6uF5jggkVjFVaizl
-         1xH4l9URC5ZyWP7XylQ4RE88GRCwfN/1nINdociPBRphrbm/WQAC/MSJtG3jY+2ydWQV
-         ZgkNAXehAdCnBzuOaIThAV+UYUU1rqW9P7Wc5EcwT2kGyEnnyAiZXtBB21onoaAO64Pd
-         84mZsYYaGTr6kVXfGOFT70XpWA023l7dPcsgbFVnq2dS4n+cX1CW6f1AUZtbIIHw20Xn
-         6zvpsB7/CVo89bug8eW4C9J7Mm4PAgX3LTcdGH1pf2vSwyqmVzJhh+Q+9c5o8gS5NRar
-         Qrzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733829748; x=1734434548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SgG0y341Sck02mPUDWmT12vY0FvtCZ22l4JyW9IBLow=;
-        b=YVEdwySvnZbywCTBQHKLpAYiv4ZaFOCfhmEfkcZpCZYheCHFQ5yid/Wy5n8rSrbawm
-         MqIsr/1wWp8WS45/WWUO3T1n5yLLpWAPIEcDw8vnJalulVjqlZt+DrPOnzPoMZsTMbad
-         2pJF+hrwOvnwyU0GHnCD/rSGSMPy9XKynHVK1jKtHUIEsxrf+QfZuiooYEcQL+6qwcPT
-         tH5mPLKzxEhKw9k0Pn+K1xuTfbsI4DvMUplSD/3YnSxR/XhAAa7+GIF75UokHit1Keo+
-         Rtq3iIhdebjcQLCf5+68YJxkZ6APqsMM+tiexrcPE0zaOWTtGv65S5dU1QK/GQHkFm3h
-         xPIg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1FuQbU3yiRcx1BvzgV7zCvK2zCKIU0zA5x1JDkEflmidYsNvJlsDMpxeps20IArse4xT0wVm5w4b+Q4o=@vger.kernel.org, AJvYcCWtKBQuNmNJZxXto+fbR2bFg074gF0ctikpA/+CNdy4l+d8ENnvaXbMJL5+mbeUl+JcIGdLQGW2QUHfbuJnC+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrDX0RQ+xJmDxqsVlO0qKAT5Suph6i3VBNaEIyI/4j1ifXsVAu
-	DNqygbDqa9tByQ2xMJ8/pliSKTu8kaZysx/AMhXha4lG6CAf+zENQq/ICIi0eFiA8AmgWmDJ0Lq
-	Ct8irj+Q0PVFPCcMkeZVYRx1gLvY=
-X-Gm-Gg: ASbGncsHXU+0aLoq3LY9iBI1WxXPJJvJE5sx9kOgCfRYAFUGwYHVXySUoI4XK3B1+mE
-	P9MUNrCLR6N5TJ/SUnXwNgGXrXg1MDNZntEE=
-X-Google-Smtp-Source: AGHT+IHN1GBS4IwSD9SxPBjx4NqXatH277WbNemrsELKNmm0wInRfz/RKQEIi2WuTdsL/tVB5b6oso9v+BlE4j3qmeo=
-X-Received: by 2002:a17:90b:1e08:b0:2ee:cbc9:d50b with SMTP id
- 98e67ed59e1d1-2efd4a1266dmr1879889a91.4.1733829748304; Tue, 10 Dec 2024
- 03:22:28 -0800 (PST)
+	s=arc-20240116; t=1733829788; c=relaxed/simple;
+	bh=J2eNYJqW3lDNPqjn7aTbtW601D3/eoVDouHhYJzIUOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vD1fOFAIaNGxcryYAvRoep7u5f0j+Sli33q+muUNVziOL9V9h6gC3P+WGhEYVSWFJlgKC4c8BpnQxWPIiPR/+3G8kqHeAhLBHzsvWChcjE+/g/iTijkzZ2bAnXNPwsw868eI8lxEpKf0q3uP5L50+u8QfvfhDoBpFX/udiCxsiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H455Qbf4; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAA5Q7H016921;
+	Tue, 10 Dec 2024 11:22:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=3Etygb
+	1S5JD3SBkniCuVFCsMk1p5rd6f1kwfYbyymK4=; b=H455Qbf4KJis+OHkeu7tiT
+	HNSnMf8uWPzwoH+ynPjKM9FXQ/jROPkQClL1bymxMZbcHdbfTj5XvvQQVuSaO3Ps
+	UaUIDiSHpR2lo/1NYatrgTkYW7WTh7VZp9ve2+xCV5vH//PEw8WH0298K3sknoAJ
+	oC+cG6dHWtzu9CiwbHfUcTXT6ZcyjGRsiDn6lRYodJblppJqEOWjVx2Dg8Dgxsul
+	UUSyMhWl8uyfm2vASjCkUoQvkivcKUy8TfvbRWoui3FK0q7l1hKW3iDpErYSX3Fj
+	NxitZVlT8OLwpXFT3AFnN5Nl4Yu/kczhLc73H/KiXZOvTSyd4njIGPCkZruwexAg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38ppns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:22:41 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BABMfQA015952;
+	Tue, 10 Dec 2024 11:22:41 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38ppnp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:22:41 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAB04SK016910;
+	Tue, 10 Dec 2024 11:22:40 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12y3gyb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:22:39 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BABMcTn33882460
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 11:22:38 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F30552004B;
+	Tue, 10 Dec 2024 11:22:37 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4BE7020040;
+	Tue, 10 Dec 2024 11:22:36 +0000 (GMT)
+Received: from [9.124.213.130] (unknown [9.124.213.130])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 11:22:36 +0000 (GMT)
+Message-ID: <fe858c1c-4941-460c-98b4-7aa18a7830fe@linux.ibm.com>
+Date: Tue, 10 Dec 2024 16:52:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203051843.291729-1-jtostler1@gmail.com> <CANiq72ksaJcpjHi8=vuWLTLLfik9smaqY9oJXjwtieXgJ6Gy9Q@mail.gmail.com>
- <6c1ccd07-1a42-43bb-9162-0d6401db72fc@de.bosch.com>
-In-Reply-To: <6c1ccd07-1a42-43bb-9162-0d6401db72fc@de.bosch.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 10 Dec 2024 12:22:16 +0100
-Message-ID: <CANiq72keOdXy0LFKk9SzYWwSjiD710v=hQO4xi+5E4xNALa6cA@mail.gmail.com>
-Subject: Re: [PATCH] rust: alloc: Add doctest for `ArrayLayout`
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: jtostler1@gmail.com, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] powerpc: Enable lazy preemption
+To: mpe@ellerman.id.au, maddy@linux.ibm.com
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, bigeasy@linutronix.de,
+        ankur.a.arora@oracle.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20241116192306.88217-1-sshegde@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20241116192306.88217-1-sshegde@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: qFGp4cZyfHY4VQHUpvHeX1Slqnl1i7tr
+X-Proofpoint-ORIG-GUID: DSoq0-uXG7HHhbhJkC-seEbLOJPTlu71
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=604
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100082
 
-On Wed, Dec 4, 2024 at 12:57=E2=80=AFPM Dirk Behme <dirk.behme@de.bosch.com=
-> wrote:
->
-> Slightly off-topic here, but should we try to document that somehow?
->
-> What's about something like [1] below? If it is ok, I can make a proper
-> patch for it :)
 
-Sure, please send it! :)
 
-(In general, I think we should avoid repeating "general Rust
-knowledge", but as long as there is kernel-specific content, like your
-paragraphs below, then it is good to have.)
+On 11/17/24 00:53, Shrikanth Hegde wrote:
+> preempt=lazy has been merged into tip[1]. Lets Enable it for PowerPC.
+> 
+> This has been very lightly tested and as michael suggested could go
+> through a test cycle. If needed, patches can be merged. I have kept it
+> separate for easier bisect.
+> 
+> Lazy preemption support for kvm on powerpc is still to be done.
+> 
+> Refs:
+> [1]: https://lore.kernel.org/lkml/20241007074609.447006177@infradead.org/
+> v1: https://lore.kernel.org/all/20241108101853.277808-1-sshegde@linux.ibm.com/
+> 
+> Changes since v1:
+> - Change for vmx copy as suggested by Sebastian.
+> - Add rwb tags
+> 
+> Shrikanth Hegde (2):
+>    powerpc: Add preempt lazy support
+>    powerpc: Large user copy aware of full:rt:lazy preemption
+> 
+>   arch/powerpc/Kconfig                   | 1 +
+>   arch/powerpc/include/asm/thread_info.h | 9 ++++++---
+>   arch/powerpc/kernel/interrupt.c        | 4 ++--
+>   arch/powerpc/lib/vmx-helper.c          | 2 +-
+>   4 files changed, 10 insertions(+), 6 deletions(-)
+> 
 
-> +``Error`` as its error type.
+Hi mpe, maddy.
 
-I see this first part comes from the `Result` docs we have, right? I
-think the rest makes sense in Doc/ as you have it; on the other hand,
-we try to avoid duplication. We could perhaps move everything to the
-`Result` (or `kernel::error` module) docs, and just link it from Doc/
--- that would give us the ability to easily have intra-doc links on
-the methods like `unwrap()` and to test the examples.
+I see the lazy scheduling related changes are in powerpc tree.
+If there are no objections, can we please add support for lazy 
+preemption so it goes through a cycle?
 
-(I noticed because I was about to suggest linking/qualifying the type
-above, but if we had it in the code docs, we would already get that
-for free.)
-
-> +The ``?``-operator versus ``unwrap(``) and ``expect()``
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Calling a function that returns ``Result`` needs the caller to handle
-> +the returned ``Result``.
-
-A (kernel-specific) example could help here, even if "abstract", e.g.:
-
-    fn f() -> Result {
-        if ... {
-            return Err(EINVAL);
-        }
-
-        Ok(())
-    }
-
-This immediately maps to the usual approach in C code. In fact, you
-could add the C equivalent here for comparison.
-
-Perhaps even give another abstract one where kernel C would need
-`goto` to cleanup.
-
-> +This can be done "manually" by using  ``match``. Using ``match`` to deco=
-de
-> +the ``Result`` is similar to C where all the return value decoding and t=
-he
-> +error handling is done explicitly by writing handling code for each
-> +error to cover. Using ``match`` the error and success handling can be
-> implemented
-> +in all detail as required.
-
-Another one would be great here too, so that they see the verbosity vs. `?`=
-.
-
-> +Instead of the verbose ``match`` the ``?``-operator or
-> ``unwrap()``/``expect()``
-> +can be used to handle the ``Result`` "automatically". However, in the
-> kernel
-> +context, the usage of ``unwrap()`` or ``expect()`` has a side effect
-> which is often
-> +not wanted: The ``panic!`` called when using ``unwrap()`` or
-> ``expect()``. While the
-> +console output from ``panic!`` is nice and quite helpful for debugging
-> the error,
-> +stopping the whole Linux system due to the kernel panic is often not
-> desired.
-
-Perhaps link to any relevant C side docs here.
-
-Perhaps we could also mention briefly other approaches used sometimes,
-e.g. `unwrap_or()` and `unwrap_unchecked()`, ideally linking to the
-Rust book or similar.
-
-Thanks!
-
-Cheers,
-Miguel
+Let me know your thoughts.
 
