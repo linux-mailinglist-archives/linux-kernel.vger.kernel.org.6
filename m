@@ -1,179 +1,262 @@
-Return-Path: <linux-kernel+bounces-440267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8B49EBB06
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2939EBB1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97454283C34
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0FD283E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A65422B5A5;
-	Tue, 10 Dec 2024 20:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A35D22B5A9;
+	Tue, 10 Dec 2024 20:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTT4OdfT"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsFFWUt8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2C4226862;
-	Tue, 10 Dec 2024 20:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B6822ACEB;
+	Tue, 10 Dec 2024 20:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733863743; cv=none; b=uM0Zv1ua2R/t8KkcURV+JWnzE8+mKDUjo9j/qIwPE6UYhUWTI7ZUmzoSc+QyBUFpQEt2Ixk7/X1leJJ6p0NXNWPz5hPlO3dxiVnbTsZRSdee8jLebxsZb7S4vgzkJbEBRJpherpecaOcEWdmC3UMLV5uWCXAmerNldMD8AH5BcY=
+	t=1733863862; cv=none; b=U4TdocZBx/Ngu/h7RULs9Godh1qcEn+0JvLx0JmxUW1qS6P7fdnah5HyxlxPrVT2YJA+Qh5vBsmH/1+kYdrjflezPJipYhzsA56UB37a0LT8raTW66yYlwJa7Qp6nNSuoi38sjTfw8XbCpkuVViyvsTbE2P8Cflq2Kxrom5f3yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733863743; c=relaxed/simple;
-	bh=eC8W6t9huecH7q74kCAQR1oz5UQK9e/WxZ8oJb3G3Go=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcomdticFFFxXqhsvwXKFVEHWRDmPlY/VA5wGfdqr8VflWu3XDBTxZ6w9IJenAhtwEnyTJZPWY67aAwLgyGIAB1KO0+FRGlMF2vsyr3OQ9j8imfogBtkI4xGI35Ndx9bi8M4Lf/OEeWrNFRFggVNSIKSSgIo1ZmkJGYgnF+wrrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTT4OdfT; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3cfa1da14so473483a12.1;
-        Tue, 10 Dec 2024 12:49:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733863739; x=1734468539; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cNaXJ8JhPRuTmwTT3LTe+sP5Z8UoA760Vogy1s7z9Rk=;
-        b=iTT4OdfTGMdsekyXZmM2cynTKa5WfsqDbyZS1ehUn/UGIYhyIdIoILeK8EJ8XqJOuk
-         gRZPNX7jI4kYJkWkRbOWAvH0dziAvJtolCFB0Yb7dTj8f+wmeEFTdwh7sNmTukEyPH9f
-         JDP9gdjw1vOROdW5RG+wBUVmCN8z/rnseZdSoI1KNC4Ame++qicYVpqImW0o3cL9akjr
-         h2V3epK8HoEDGfUbx7J2rEKyQrIAVgpTOeyS0xKlUVRm53YEjBc1h/ghfWVe5gvtLXD/
-         fsXlWEobuAEL2T0S7zIB/IUQUOcPIrQ7MKKrpczceV5SPabjyPvcN46L2F16jIvllY3q
-         lVgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733863739; x=1734468539;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cNaXJ8JhPRuTmwTT3LTe+sP5Z8UoA760Vogy1s7z9Rk=;
-        b=MXW/Whn3SjInK0qUzt4sCwOzeHgb67lCpHJB4jf/fgJOiwP77JakOJNad2gdLtWiSp
-         exnZWsKVwepK4Gy8f7ED74YsrmlD7vsKSdutlSIrFk3QqOwY9Ji0RvZni+TmX7t2cPfj
-         VdYxguP/RhpFG9pv+lzpsMVYAGw2nxqwH7nwbK8DjWAEicgll4mRO4gY0jhJp1qX6Sqi
-         FRXQwXtywcpsJXP7hpXcnEA769qB+jWPlCtRw0/KFLwSo0zjoKfN4WV5NBxdTfugCFTP
-         3bHBHABrW25PDLoD3AY04BXjQ2R/w7zqijpN+FBocM8mpdJLX6kTd5S9sXzSMMcUpwJd
-         i//g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZPBR9cpEXrthASDMsaKMIHarrGuyLMzLJabQ+4juPg+8IbqD6RkadtdsxsMfvmtZaowyiwE2gp/fkmP6c@vger.kernel.org, AJvYcCUpgpcOeDxsSEbz72Jarxo2ak9+Jy5160soo0V137pOTM0cQEOknzNKMWcYK/x9YQqj6Lw64qSdWpp5@vger.kernel.org, AJvYcCXwbj8amZNfPsDrI0HkPLwG/UNohBM6QfM703muQPf805OGkBjRepu1K/7k837c4btEPmKTmz8Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpwQQG5Y+fHyB3bgpe6edhQk2cboT/TYeoNiCkdDYUUrarWVka
-	QstWVppkzPiUBkgWf8Sb3mTYqAQZ8iI3HVwjaY+epofhOUzltsop
-X-Gm-Gg: ASbGnctBOpDQ10+9bTQ0wsh3881V2Zhi+uDsnv0oxzD+J1Q+CHCX6QZglbTAk6tTAej
-	JF4fwZnPMd8NReEbCG1uWSBc0JW14qw2pb9gKuZoIixWY3I0/0w6N09cHCyYHeefh+XVRB7zAM6
-	gDGQcGj17P2lr7pIhpxYNa7C/eVi5Z6YDKZhs96hKQLo3R6SVRBAD6WGMk9AqUIt3i3ydpPXqVl
-	A7SiBIaQUNdu1wkXVyUWUWv4H/W8SEzzl2E5tzPTA==
-X-Google-Smtp-Source: AGHT+IGLMYMcvq7FgOuv7NZ8he4Vn2DR++ElkPFM38fkihjTAen52Se+4+I+zeFNB7FVdS9rJ+bpJw==
-X-Received: by 2002:a05:6402:40cd:b0:5d3:d4cf:feba with SMTP id 4fb4d7f45d1cf-5d43314d465mr45987a12.7.1733863739337;
-        Tue, 10 Dec 2024 12:48:59 -0800 (PST)
-Received: from skbuf ([86.127.124.81])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c74c3d5sm8097292a12.52.2024.12.10.12.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 12:48:58 -0800 (PST)
-Date: Tue, 10 Dec 2024 22:48:55 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v11 3/9] dt-bindings: net: dsa: Document support
- for Airoha AN8855 DSA Switch
-Message-ID: <20241210204855.7pgvh74irualyxbn@skbuf>
-References: <20241209134459.27110-1-ansuelsmth@gmail.com>
- <20241209134459.27110-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1733863862; c=relaxed/simple;
+	bh=dyEwqP/LvOfSb6lgImb0PrZsCaEvBCLNxC8XvejNDrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dHBO3Madm9Vf/5vblhw1XzR2j22bv/bzDSuihYFyRm3UUCms1k8R+lBI0E8WybZ+BtOo1xnwy91IWVlVEUrb0epRL02fmO91zh8MuaQ0KuCqHejqOcQ9zbv6I9n9HFHqhzXglVX8j0J2hACGSDdLQjjAUP7I2X/MP7rgzlLJMVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsFFWUt8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7B9C4CEE2;
+	Tue, 10 Dec 2024 20:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733863862;
+	bh=dyEwqP/LvOfSb6lgImb0PrZsCaEvBCLNxC8XvejNDrc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HsFFWUt8Yn1wHjyYXuteu5LDa/b/JLcpPd7D4pQcsrKTOEN9cX7PlFUa+j1mh2VHm
+	 jXBOUJT42zHmK+pWacPrxzGI8QBGD0yJ/e2ySg+6JN2/lT2WaIZ9Vhstq8UHO5nbO5
+	 Fbjb+16qBIpAyM+W5M7BszVYgPOt9BpdPFru0cuG6mHZ/yQsE+l2zjKtEmtHGYlMhh
+	 Rcz/1U2hhVmCeqAoimpCNkG7eVcHU9QtBM4bjnNtgJJwFWtm661s9HcSkFRJGy/dDj
+	 mcGKEJEjkcQ5yXQw+1U5WYH0Qhyd7FttLQP+Pg6O9h7zK80KE36kNkY/sX7uQrvb2e
+	 VHfmIGEHLsmZA==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-71e1597e3b4so151464a34.3;
+        Tue, 10 Dec 2024 12:51:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUi6G98XXzKoZeEKF5QuxpDM3G6KT4Zd3sdJDvjbOnR0m8UGMXHKF/5AqmwuPMjcO6++8Ebvx/T7bs=@vger.kernel.org, AJvYcCV+O/AoABODF99Tv6f0qa8cUPdqYbHIX10wIQImvThKhMyeGVXNAef9QyNhbJ89v/kAi+V44I+1JbYQ8Eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoB+YRWAm+CzDAo2HIMiE67xW/SoVJDaZdZLxfMHUihvKmqtIY
+	psTsGutEp1hwdq5as0H7/7dSMboJ3w2sqdSgqprjnNTrSzicewfGo/VFmp+01L5CW6SPzNRlZdD
+	AWgRcNmDT+53fmfWfwkld6TOgoRQ=
+X-Google-Smtp-Source: AGHT+IGT9d7iT2gDD2FgF/dK56idJ+pYXy+Fpv94tY9xP3Sd08ivYMCbdZtwuqM6bySxNyrFk7iIJhdTpF3x9R97dnc=
+X-Received: by 2002:a05:6830:2a89:b0:71d:fe25:1a88 with SMTP id
+ 46e09a7af769-71e197f0d99mr213801a34.17.1733863861526; Tue, 10 Dec 2024
+ 12:51:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209134459.27110-4-ansuelsmth@gmail.com>
+References: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com> <20241204140828.11699-5-patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <20241204140828.11699-5-patryk.wlazlyn@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Dec 2024 21:50:50 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jg2pyeYOLZF8BEP3ptEsQT6bsz1H4AzWdp9kJ36Zj00g@mail.gmail.com>
+Message-ID: <CAJZ5v0jg2pyeYOLZF8BEP3ptEsQT6bsz1H4AzWdp9kJ36Zj00g@mail.gmail.com>
+Subject: Re: [PATCH v8 4/4] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, peterz@infradead.org, dave.hansen@linux.intel.com, 
+	gautham.shenoy@amd.com, tglx@linutronix.de, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 02:44:20PM +0100, Christian Marangi wrote:
-> Document support for Airoha AN8855 5-port Gigabit Switch.
-> 
-> It does expose the 5 Internal PHYs on the MDIO bus and each port
-> can access the Switch register space by configurting the PHY page.
+First off, I'd change the subject to something like "x86/smp:
+Eliminate mwait_play_dead_cpuid_hint()" because that's what the patch
+is doing.
 
-typo: configuring
-Also below.
+On Wed, Dec 4, 2024 at 3:08=E2=80=AFPM Patryk Wlazlyn
+<patryk.wlazlyn@linux.intel.com> wrote:
+>
+> The current algorithm* for looking up the mwait hint for the deepest
+> cstate, in mwait_play_dead_cpuid_hint() code works by inspecting CPUID
+> leaf 0x5 and calculates the mwait hint based on the number of reported
+> substates.
 
-> 
-> Each internal PHY might require calibration with the fused EFUSE on
-> the switch exposed by the Airoha AN8855 SoC NVMEM.
+I would just say
 
-This paragraph should be irrelevant to the switch binding.
+"Currently, mwait_play_dead_cpuid_hint() looks up the MWAIT hint of
+the deepest idle state by inspecting CPUID leaf 0x5 with the
+assumption that, if the number of sub-states for a given major C-state
+is nonzero, those sub-states are always represented by consecutive
+numbers starting from 0."
 
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>  This approach depends on the hints associated with them to
+> be continuous in the range [0, NUM_SUBSTATES-1]. This continuity is not
+> documented and is not met on the recent Intel platforms.
+
+And then
+
+"This assumption is not based on the documented platform behavior and
+in fact it is not met on recent Intel platforms."
+
+>
+>  * The current algorithm is implemented in the for loop inspecting edx
+>    in mwait_play_dead_cpuid_hint().
+
+The above sentence does not add any value IMV.
+
+> For example, Intel's Sierra Forest report two cstates with two substates
+> each in cpuid leaf 0x5:
+
+It's "Intel Sierra Forest" and if you said C-states above, please be
+consistent and say C-states here too.
+
+>
+>   Name*   target cstate    target subcstate (mwait hint)
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   C1      0x00             0x00
+>   C1E     0x00             0x01
+>
+>   --      0x10             ----
+>
+>   C6S     0x20             0x22
+>   C6P     0x20             0x23
+>
+>   --      0x30             ----
+>
+>   /* No more (sub)states all the way down to the end. */
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+>    * Names of the cstates are not included in the CPUID leaf 0x5, they ar=
+e
+>      taken from the product specific documentation.
+>
+> Notice that hints 0x20 and 0x21 are skipped entirely for the target
+> cstate 0x20 (C6), being a cause of the problem for the current cpuid
+> leaf 0x5 algorithm.
+
+And here
+
+"Notice that hints 0x20 and 0x21 are not defined for C-state 0x20
+(C6), so the existing MWAIT hint lookup in
+mwait_play_dead_cpuid_hint() based on the CPUID leaf 0x5 contents does
+not work in this case."
+
+> Remove the old implementation of play_dead MWAIT hint calculation based
+> on the CPUID leaf 0x5 in mwait_play_dead_cpuid_hint() and delegate
+> calling of the mwait_play_dead() to the idle driver.
+
+Well, the above is not exactly what's going on.
+
+I'd say something like
+
+"Instead of using MWAIT hint lookup that is not guaranteed to work,
+make native_play_dead() rely on the idle driver for the given platform
+to put CPUs going offline into appropriate idle state and, if that
+fails, fall back to hlt_play_dead().
+
+Accordingly, drop mwait_play_dead_cpuid_hint() altogether and make
+native_play_dead() call cpuidle_play_dead() instead of it
+unconditionally with the assumption that it will not return if it is
+successful.  Still, in case cpuidle_play_dead() fails, call
+hlt_play_dead() at the end."
+
+> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 > ---
->  .../net/dsa/airoha,an8855-switch.yaml         | 105 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml b/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> new file mode 100644
-> index 000000000000..63bcbebd6a29
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> @@ -0,0 +1,105 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/dsa/airoha,an8855-switch.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Airoha AN8855 Gigabit Switch
-> +
-> +maintainers:
-> +  - Christian Marangi <ansuelsmth@gmail.com>
-> +
-> +description: >
-> +  Airoha AN8855 is a 5-port Gigabit Switch.
-> +
-> +  It does expose the 5 Internal PHYs on the MDIO bus and each port
-> +  can access the Switch register space by configurting the PHY page.
-> +
-> +  Each internal PHY might require calibration with the fused EFUSE on
-> +  the switch exposed by the Airoha AN8855 SoC NVMEM.
-> +
-> +$ref: dsa.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: airoha,an8855-switch
-> +
-> +  reset-gpios:
-> +    description:
-> +      GPIO to be used to reset the whole device
-> +    maxItems: 1
-
-Since this affects the whole device, the SoC node (handled by the
-MFD driver) should handle it. Otherwise you expose the code to weird
-race conditions where one child MFD device resets the whole chip after
-the other MFD children have probed, and this undoes their settings.
-
-> +
-> +  airoha,ext-surge:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Calibrate the internal PHY with the calibration values stored in EFUSE
-> +      for the r50Ohm values.
-
-Doesn't seem that this pertains to the switch.
+>  arch/x86/kernel/smpboot.c | 56 +++++----------------------------------
+>  1 file changed, 7 insertions(+), 49 deletions(-)
+>
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index 8a3545c2cae9..82801137486d 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -1272,6 +1272,10 @@ void play_dead_common(void)
+>         local_irq_disable();
+>  }
+>
+> +/*
+> + * We need to flush the caches before going to sleep, lest we have
+> + * dirty data in our caches when we come back up.
+> + */
+>  void __noreturn mwait_play_dead(unsigned int eax_hint)
+>  {
+>         struct mwait_cpu_dead *md =3D this_cpu_ptr(&mwait_cpu_dead);
+> @@ -1317,52 +1321,6 @@ void __noreturn mwait_play_dead(unsigned int eax_h=
+int)
+>         }
+>  }
+>
+> -/*
+> - * We need to flush the caches before going to sleep, lest we have
+> - * dirty data in our caches when we come back up.
+> - */
+> -static inline void mwait_play_dead_cpuid_hint(void)
+> -{
+> -       unsigned int eax, ebx, ecx, edx;
+> -       unsigned int highest_cstate =3D 0;
+> -       unsigned int highest_subcstate =3D 0;
+> -       int i;
+> -
+> -       if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_AMD ||
+> -           boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_HYGON)
+> -               return;
+> -       if (!this_cpu_has(X86_FEATURE_MWAIT))
+> -               return;
+> -       if (!this_cpu_has(X86_FEATURE_CLFLUSH))
+> -               return;
+> -       if (__this_cpu_read(cpu_info.cpuid_level) < CPUID_MWAIT_LEAF)
+> -               return;
+> -
+> -       eax =3D CPUID_MWAIT_LEAF;
+> -       ecx =3D 0;
+> -       native_cpuid(&eax, &ebx, &ecx, &edx);
+> -
+> -       /*
+> -        * eax will be 0 if EDX enumeration is not valid.
+> -        * Initialized below to cstate, sub_cstate value when EDX is vali=
+d.
+> -        */
+> -       if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED)) {
+> -               eax =3D 0;
+> -       } else {
+> -               edx >>=3D MWAIT_SUBSTATE_SIZE;
+> -               for (i =3D 0; i < 7 && edx; i++, edx >>=3D MWAIT_SUBSTATE=
+_SIZE) {
+> -                       if (edx & MWAIT_SUBSTATE_MASK) {
+> -                               highest_cstate =3D i;
+> -                               highest_subcstate =3D edx & MWAIT_SUBSTAT=
+E_MASK;
+> -                       }
+> -               }
+> -               eax =3D (highest_cstate << MWAIT_SUBSTATE_SIZE) |
+> -                       (highest_subcstate - 1);
+> -       }
+> -
+> -       mwait_play_dead(eax);
+> -}
+> -
+>  /*
+>   * Kick all "offline" CPUs out of mwait on kexec(). See comment in
+>   * mwait_play_dead().
+> @@ -1413,9 +1371,9 @@ void native_play_dead(void)
+>         play_dead_common();
+>         tboot_shutdown(TB_SHUTDOWN_WFS);
+>
+> -       mwait_play_dead_cpuid_hint();
+> -       if (cpuidle_play_dead())
+> -               hlt_play_dead();
+> +       /* Below returns only on error. */
+> +       cpuidle_play_dead();
+> +       hlt_play_dead();
+>  }
+>
+>  #else /* ... !CONFIG_HOTPLUG_CPU */
+> --
 
