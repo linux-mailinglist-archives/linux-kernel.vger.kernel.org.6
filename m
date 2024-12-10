@@ -1,211 +1,225 @@
-Return-Path: <linux-kernel+bounces-439808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB969EB42A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:00:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42734164AB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:00:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6FE1B85FA;
-	Tue, 10 Dec 2024 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mLAbg/b7"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C03F9EB426
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:00:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DAA1AAE33;
-	Tue, 10 Dec 2024 14:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEA8E281281
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:59:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C80E1B21A0;
+	Tue, 10 Dec 2024 14:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MB+i4OiZ"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBED1A01D4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842794; cv=none; b=TGBmuYdERLDo1Im3ylGwQecs0KNao3/R4rb7YwZkMrpDYKGC73vXKjxguHeO05PAuEeS1hhJiTnNcDkPDcfQAySXmgeORvF3tU+AUZ5fqJ2NFFENvSDyXTMnNBLhS2n08p368qWm8gUL1hqUpJ1pu5K1WGXn06rjLYhnCDRjruE=
+	t=1733842792; cv=none; b=XHZkmpK8Gmw24f4OPdsJ2lSH8K9Hv7ujjPtH/DHQtePGhlzbWkv2zyB24wFtjJN8aJng1Q/87k1UAFvEdgTEP2epUBNEZKb4yCYDeuVfXz/kHga+01UiRChCW7sDesbsHVd0dErNJrKF+hJYgSagNiIEGCsE9JL4s6pLJUFF/b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842794; c=relaxed/simple;
-	bh=6zwrH7NOfsoHfQqIznKg1azt1RDvRgkouT0IH9qiPds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t2CJ7ugAN2idve59tuAkW3QHd90HZG8rgz5CNPeQ5guqqHUzQautSkP0V3tYp0Qd9g9KLOMHGdDtbcSaQFvRctYqITyQMe9fztWnDQRdqVCg7jYsUM4PI+EYhx6cpOWK3wWcLH+sk90b9V9t5pMuz3FxTW2kKAbs7j/JqIQN1w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mLAbg/b7; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADrYSi007192;
-	Tue, 10 Dec 2024 14:59:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Afsg7V
-	UbuAH53aaPeUSfI9JRaF+ZQPD2bSYYkrMcSHA=; b=mLAbg/b75n3LOq/fpaAKSv
-	UIChmJmuQRl77kBh5TFnhWqiL2cGRk5I1GC495Be4XfrOoXah8qoB/WRONoUBKNi
-	8oFvzvEsbABkliVsYi+MZb+WljI1oHNaUCTg4joR+YM7y9ZGFLjc4TDMMNM8i2V9
-	rRy6RlUliP1HxkUL3Mofq3+UyWL8j5GzCBivc4sJK+0A4uxeHLnDyMM/3hp3Qg1q
-	jRdUnPxrZkVEa8JYuYxgXruqWeuiu+c61irH4ma5ukZGxF76d0arRrrqjT27eRQI
-	nrKLxnclUQ94rbfotBjfMFmZIxXJmJMe1GiTKDh9M7PlsL+YH+gjhvNRR9KePzdA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8qr78-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 14:59:46 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAB2eXn016911;
-	Tue, 10 Dec 2024 14:59:45 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12y4900-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 14:59:45 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAExdEX42533140
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 14:59:40 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB83120040;
-	Tue, 10 Dec 2024 14:59:39 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8FE492004D;
-	Tue, 10 Dec 2024 14:59:39 +0000 (GMT)
-Received: from [9.84.194.138] (unknown [9.84.194.138])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 14:59:39 +0000 (GMT)
-Message-ID: <bdba3042-4654-4e09-9060-57445ccac09c@linux.ibm.com>
-Date: Tue, 10 Dec 2024 15:59:39 +0100
+	s=arc-20240116; t=1733842792; c=relaxed/simple;
+	bh=shPyI2dySTMutp1ANP3EGvaVLrk95ZBKYUsanzim5Ns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fOBw/PQnSe4za2yfyy/Q6Fkbf2lTmG+fOKvc5cMZrE0ULsgsPsRm2K1FFbh7J1mDRgoe8bDtENRLT/VPXdApxyKiFWDGo2vv8Of12n5DeZ+ThK71uom0ojP1RNZ9ZD7dA+OhDiHnOx9KbrMHZCMnQScicAO4Tq/9iaruI2zPyeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MB+i4OiZ; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a7dfcd40fcso118845ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:59:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733842790; x=1734447590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fpDnUVi0ep8YRkyvnKylzOSzQ7B19aMh70gDsd17VKM=;
+        b=MB+i4OiZ+/LiKaSgXuDfjteWMaeY+GaNzRMtf9QoQtXo+zyL8RjFG+jolqBjER0Wnh
+         H8MxKxLZo23RfU2DSv9Iz/QTtZyzbwwXf/F8wZoZxboIIJZKCds4YXVhNVIUw6sjXUJ/
+         BbbzK0hMyafKUgoxjCaZCyx/c4vPXVhJVjhbHrHBeEXDMSAD1921qlgaMxBd6yOdD10k
+         GpYNO1i3lBbANtsr/zD4Wt25/JKJ5LCFbtBbUfR5dEhgd+uRLkyyOU7L0chrbPC52Wye
+         /TsFGJOXfqgdwk8VGnsTW48U+BqBpMSBq6ofdthqfYpx1tXQjsTr8xut8YVagBwRUiFL
+         vXfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733842790; x=1734447590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fpDnUVi0ep8YRkyvnKylzOSzQ7B19aMh70gDsd17VKM=;
+        b=VyRzB8wqAJmOGa7OMNBQ4lQ7urBBiGaI2cKzxaf0r6qgWBf/Vp2aliOj41PQkX01AO
+         g52/6B65SG3dthZMDufwkYQsNTKFtriKRWGOM7bC9N5udYsZ3/eSScPiLgZKhILiGZKD
+         Qfwqwz2rnvbQQPYtd4Myg2rQkrZJHS4thFknCcqp95CvIZ9pE6bJoHwt4RjiPkC/CMga
+         f09R98VJMQBiz5BktEtSD0EeM0KLhkYELwxrQntIF4DVM0sh9yDKcKiWsItKIvpoRleE
+         msKcCjChfFEKCJ6PsSSYYhK/Ke68AVBFLTd4e3GmpU5LNwK0LyjpX1PvhYtH22lab+W1
+         4JWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBlUb0/j7yBVWqU9RBhe39QlEs45Vj1d9tkL9vDUWDajLxNyibgf4NW7ZdT8EyPy93P7jbDb4LakgdVNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJvPbIlaaKqlt48PJW17HYqA1hpnqcAJg0duEiFnv8mjD1P2LW
+	lY1Ps8D33GwFXTxwUtX3EnZzFPJCBUB4phu4AzPRXrVuSABoGBGyfhzqnat/dhUYAwSHGlfwYot
+	gue/uJDPb0CGLrrZzmYHMri90Orp6kmAHHR9I
+X-Gm-Gg: ASbGncsf1ggz5T9mp+JWcoc/xMRpDAPbjpefiiXtFk4abv0APqlxMi1CI3cWntLiEYO
+	jOyvh13ZlbFtKLLueN59SyVJvgeaGMXxKyw==
+X-Google-Smtp-Source: AGHT+IGPpczO1OTll30ttPkCvNvahDxxrTH8u5MAveOnjYrxQ1Ncel+PQfF4kviCb27+mPyb7cfYx2jUVqKLO5pT82s=
+X-Received: by 2002:a05:6e02:3f86:b0:3a7:ab4c:115b with SMTP id
+ e9e14a558f8ab-3a9dda4cca0mr3548625ab.10.1733842790104; Tue, 10 Dec 2024
+ 06:59:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] cxl: Deprecate driver
-To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, ukrishn@linux.ibm.com, manoj@linux.ibm.com,
-        clombard@linux.ibm.com, vaibhav@linux.ibm.com
-References: <20241210054055.144813-1-ajd@linux.ibm.com>
- <20241210054055.144813-2-ajd@linux.ibm.com>
-Content-Language: en-US
-From: Frederic Barrat <fbarrat@linux.ibm.com>
-In-Reply-To: <20241210054055.144813-2-ajd@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: R7fSBkR1R2cVa9KkSkNJz3oqMbgnzCZj
-X-Proofpoint-ORIG-GUID: R7fSBkR1R2cVa9KkSkNJz3oqMbgnzCZj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 mlxscore=0
- malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100112
+References: <20241022001712.9218-1-rui.zhang@intel.com>
+In-Reply-To: <20241022001712.9218-1-rui.zhang@intel.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Tue, 10 Dec 2024 06:59:39 -0800
+Message-ID: <CALMp9eRfairiqHrRj_Woc4udd6toFpv+nxFVtVWBUarcHyhrXQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/acpi: Fix LAPIC/x2APIC parsing order
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: rafael@kernel.org, lenb@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/12/2024 06:40, Andrew Donnellan wrote:
-> The cxl driver is no longer actively maintained and we intend to remove it
-> in a future kernel release.
-> 
-> cxl has received minimal maintenance for several years, and is not
-> supported on the Power10 processor. We aren't aware of any users who are
-> likely to be using recent kernels.
-> 
-> Change its MAINTAINERS status to obsolete, update the sysfs ABI
-> documentation accordingly, add a warning message on device probe, change
-> the Kconfig options to label it as deprecated, and don't build it by
-> default.
-> 
-> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
-
-
-Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
-
-   Fred
-
-
+On Mon, Oct 21, 2024 at 5:17=E2=80=AFPM Zhang Rui <rui.zhang@intel.com> wro=
+te:
+>
+> On some systems, the same CPU (with the same APIC ID) is assigned a
+> different logical CPU id after commit ec9aedb2aa1a ("x86/acpi: Ignore
+> invalid x2APIC entries").
+>
+> This means that Linux enumerates the CPUs in a different order, which
+> violates ACPI specification[1] that states:
+>
+>   "OSPM should initialize processors in the order that they appear in
+>    the MADT"
+>
+> The problematic commit parses all LAPIC entries before any x2APIC
+> entries, aiming to ignore x2APIC entries with APIC ID < 255 when valid
+> LAPIC entries exist. However, it disrupts the CPU enumeration order on
+> systems where x2APIC entries precede LAPIC entries in the MADT.
+>
+> Fix the problem by separately checking LAPIC entries before parsing any
+> LAPIC or x2APIC entries.
+>
+> 1. https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.htm=
+l#madt-processor-local-apic-sapic-structure-entry-order
+>
+> Cc: stable@vger.kernel.org
+> Reported-by: Jim Mattson <jmattson@google.com>
+> Closes: https://lore.kernel.org/all/20241010213136.668672-1-jmattson@goog=
+le.com/
+> Fixes: ec9aedb2aa1a ("x86/acpi: Ignore invalid x2APIC entries")
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> Reviewed-by: Jim Mattson <jmattson@google.com>
+> Tested-by: Jim Mattson <jmattson@google.com>
 > ---
->   Documentation/ABI/{testing => obsolete}/sysfs-class-cxl | 3 +++
->   MAINTAINERS                                             | 4 ++--
->   drivers/misc/cxl/Kconfig                                | 6 ++++--
->   drivers/misc/cxl/of.c                                   | 2 ++
->   drivers/misc/cxl/pci.c                                  | 2 ++
->   5 files changed, 13 insertions(+), 4 deletions(-)
->   rename Documentation/ABI/{testing => obsolete}/sysfs-class-cxl (99%)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-cxl b/Documentation/ABI/obsolete/sysfs-class-cxl
-> similarity index 99%
-> rename from Documentation/ABI/testing/sysfs-class-cxl
-> rename to Documentation/ABI/obsolete/sysfs-class-cxl
-> index cfc48a87706b..8cba1b626985 100644
-> --- a/Documentation/ABI/testing/sysfs-class-cxl
-> +++ b/Documentation/ABI/obsolete/sysfs-class-cxl
-> @@ -1,3 +1,6 @@
-> +The cxl driver is no longer maintained, and will be removed from the kernel in
-> +the near future.
+>  arch/x86/kernel/acpi/boot.c | 50 +++++++++++++++++++++++++++++++++----
+>  1 file changed, 45 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+> index 4efecac49863..c70b86f1f295 100644
+> --- a/arch/x86/kernel/acpi/boot.c
+> +++ b/arch/x86/kernel/acpi/boot.c
+> @@ -226,6 +226,28 @@ acpi_parse_x2apic(union acpi_subtable_headers *heade=
+r, const unsigned long end)
+>         return 0;
+>  }
+>
+> +static int __init
+> +acpi_check_lapic(union acpi_subtable_headers *header, const unsigned lon=
+g end)
+> +{
+> +       struct acpi_madt_local_apic *processor =3D NULL;
 > +
->   Please note that attributes that are shared between devices are stored in
->   the directory pointed to by the symlink device/.
->   For example, the real path of the attribute /sys/class/cxl/afu0.0s/irqs_max is
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 17daa9ee9384..1737a8ff4f2b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6228,8 +6228,8 @@ CXL (IBM Coherent Accelerator Processor Interface CAPI) DRIVER
->   M:	Frederic Barrat <fbarrat@linux.ibm.com>
->   M:	Andrew Donnellan <ajd@linux.ibm.com>
->   L:	linuxppc-dev@lists.ozlabs.org
-> -S:	Supported
-> -F:	Documentation/ABI/testing/sysfs-class-cxl
-> +S:	Obsolete
-> +F:	Documentation/ABI/obsolete/sysfs-class-cxl
->   F:	Documentation/arch/powerpc/cxl.rst
->   F:	arch/powerpc/platforms/powernv/pci-cxl.c
->   F:	drivers/misc/cxl/
-> diff --git a/drivers/misc/cxl/Kconfig b/drivers/misc/cxl/Kconfig
-> index 5efc4151bf58..15307f5e4307 100644
-> --- a/drivers/misc/cxl/Kconfig
-> +++ b/drivers/misc/cxl/Kconfig
-> @@ -9,11 +9,13 @@ config CXL_BASE
->   	select PPC_64S_HASH_MMU
->   
->   config CXL
-> -	tristate "Support for IBM Coherent Accelerators (CXL)"
-> +	tristate "Support for IBM Coherent Accelerators (CXL) (DEPRECATED)"
->   	depends on PPC_POWERNV && PCI_MSI && EEH
->   	select CXL_BASE
-> -	default m
->   	help
-> +	  The cxl driver is deprecated and will be removed in a future
-> +	  kernel release.
+> +       processor =3D (struct acpi_madt_local_apic *)header;
 > +
->   	  Select this option to enable driver support for IBM Coherent
->   	  Accelerators (CXL).  CXL is otherwise known as Coherent Accelerator
->   	  Processor Interface (CAPI).  CAPI allows accelerators in FPGAs to be
-> diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
-> index cf6bd8a43056..e26ee85279fa 100644
-> --- a/drivers/misc/cxl/of.c
-> +++ b/drivers/misc/cxl/of.c
-> @@ -295,6 +295,8 @@ int cxl_of_probe(struct platform_device *pdev)
->   	int ret;
->   	int slice = 0, slice_ok = 0;
->   
-> +	dev_err_once(&pdev->dev, "DEPRECATION: cxl is deprecated and will be removed in a future kernel release\n");
+> +       if (BAD_MADT_ENTRY(processor, end))
+> +               return -EINVAL;
 > +
->   	pr_devel("in %s\n", __func__);
->   
->   	np = pdev->dev.of_node;
-> diff --git a/drivers/misc/cxl/pci.c b/drivers/misc/cxl/pci.c
-> index 3d52f9b92d0d..92bf7c5c7b35 100644
-> --- a/drivers/misc/cxl/pci.c
-> +++ b/drivers/misc/cxl/pci.c
-> @@ -1726,6 +1726,8 @@ static int cxl_probe(struct pci_dev *dev, const struct pci_device_id *id)
->   	int slice;
->   	int rc;
->   
-> +	dev_err_once(&dev->dev, "DEPRECATED: cxl is deprecated and will be removed in a future kernel release\n");
+> +       /* Ignore invalid ID */
+> +       if (processor->id =3D=3D 0xff)
+> +               return 0;
 > +
->   	if (cxl_pci_is_vphb_device(dev)) {
->   		dev_dbg(&dev->dev, "cxl_init_adapter: Ignoring cxl vphb device\n");
->   		return -ENODEV;
+> +       /* Ignore processors that can not be onlined */
+> +       if (!acpi_is_processor_usable(processor->lapic_flags))
+> +               return 0;
+> +
+> +       has_lapic_cpus =3D true;
+> +       return 0;
+> +}
+> +
+>  static int __init
+>  acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned lo=
+ng end)
+>  {
+> @@ -257,7 +279,6 @@ acpi_parse_lapic(union acpi_subtable_headers * header=
+, const unsigned long end)
+>                                processor->processor_id, /* ACPI ID */
+>                                processor->lapic_flags & ACPI_MADT_ENABLED=
+);
+>
+> -       has_lapic_cpus =3D true;
+>         return 0;
+>  }
+>
+> @@ -1029,6 +1050,8 @@ static int __init early_acpi_parse_madt_lapic_addr_=
+ovr(void)
+>  static int __init acpi_parse_madt_lapic_entries(void)
+>  {
+>         int count, x2count =3D 0;
+> +       struct acpi_subtable_proc madt_proc[2];
+> +       int ret;
+>
+>         if (!boot_cpu_has(X86_FEATURE_APIC))
+>                 return -ENODEV;
+> @@ -1037,10 +1060,27 @@ static int __init acpi_parse_madt_lapic_entries(v=
+oid)
+>                                       acpi_parse_sapic, MAX_LOCAL_APIC);
+>
+>         if (!count) {
+> -               count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC=
+,
+> -                                       acpi_parse_lapic, MAX_LOCAL_APIC)=
+;
+> -               x2count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_X2=
+APIC,
+> -                                       acpi_parse_x2apic, MAX_LOCAL_APIC=
+);
+> +               /* Check if there are valid LAPIC entries */
+> +               acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC, acpi_che=
+ck_lapic, MAX_LOCAL_APIC);
+> +
+> +               /*
+> +                * Enumerate the APIC IDs in the order that they appear i=
+n the
+> +                * MADT, no matter LAPIC entry or x2APIC entry is used.
+> +                */
+> +               memset(madt_proc, 0, sizeof(madt_proc));
+> +               madt_proc[0].id =3D ACPI_MADT_TYPE_LOCAL_APIC;
+> +               madt_proc[0].handler =3D acpi_parse_lapic;
+> +               madt_proc[1].id =3D ACPI_MADT_TYPE_LOCAL_X2APIC;
+> +               madt_proc[1].handler =3D acpi_parse_x2apic;
+> +               ret =3D acpi_table_parse_entries_array(ACPI_SIG_MADT,
+> +                               sizeof(struct acpi_table_madt),
+> +                               madt_proc, ARRAY_SIZE(madt_proc), MAX_LOC=
+AL_APIC);
+> +               if (ret < 0) {
+> +                       pr_err("Error parsing LAPIC/X2APIC entries\n");
+> +                       return ret;
+> +               }
+> +               count =3D madt_proc[0].count;
+> +               x2count =3D madt_proc[1].count;
+>         }
+>         if (!count && !x2count) {
+>                 pr_err("No LAPIC entries present\n");
+> --
+> 2.34.1
+>
 
+Does anyone have any thoughts on this patch?
 
