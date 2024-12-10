@@ -1,156 +1,251 @@
-Return-Path: <linux-kernel+bounces-439084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3CE9EAA9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:27:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945759EAAA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:28:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC77168909
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:28:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF2F230D18;
+	Tue, 10 Dec 2024 08:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SJGfHCIh"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C0A285BED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:27:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBFC2309AA;
-	Tue, 10 Dec 2024 08:27:23 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E8D230982
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F354230981;
+	Tue, 10 Dec 2024 08:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819243; cv=none; b=VCZh8TgloYvcHjkgMt4VU2KXOkxsiDxOzkElH9aRJ2jWgQ07IchwNnh11VXR+pKYlUoPJQ2ehFOudPToWyRYbVkm7dw6SJXgIzcQwfx9woQbTsLV61epFiLsD0JbG6/IJnofOvs++q7XF0rLezeXj0B6HZ9YP8Xa8pVTNFdjAaM=
+	t=1733819305; cv=none; b=VMIye3P5kODeDgJihUZdtKaMMAioqTMeS/QI4RGrMt0og13Sw0lR/9NxLtVKeoWK+r87BjN0DGNzwxYG3crX4qmiubHXwuyad8Nvq2OHl4OVJz3Ds30o9UMuE2xaEk6DressYT9gvuVYiniXtFElRxn1UI7VnlhDc0jrEji0ln0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819243; c=relaxed/simple;
-	bh=RGEqFTsyLAWytI7W+/2L934Qp3FUaqeSB9bSIm03mQI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nSTfhcdJJVlUkfiHLtTXOun8KdfqZ84QC/ExHpVp8PlHvLV4gGwEFGzCna3wRXoVaG0B88mIUjwZA+5Bko7S3Y89f/28woOA57Tergs0jgeolpdlyLMBdtX1xAGhSzeJwiE4O+j0XzeJrzncP5mWG4nNjWUYngZ5YagYVNBmolk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a9d075bdc3so46173085ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:27:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733819241; x=1734424041;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gEszRSbd8tWerIRnCbggzUfqai9KrhAu9qVrRUgthsE=;
-        b=BrerQyTL4t+mu55+uvxCSomwRGdjgzrHUmTWoSkcwM/crteH+NJSLbbPGfV49cK6FC
-         Ye/1QkzXfyyVdPW1yzWuYTPD5U2IzFbkff3USoaRUHjdCuUHZejM9WJQolbgxe6dfBqj
-         JPTfANHYszRVJLMA7m76cpv3+QW+P/7YcNW0YnylXOR7kpRn7deH49E/Hi+0q18+21Pk
-         Fe+n+sV544A3wFCLy3xkr2MG5ZRmVow4zQaCOMCR3B6w9tBAWM/KWGDuV61CZQDPOKFz
-         hbMlK6muw7qybp2mkdt+sFR6eJI9EEYDL0GzN8ghiUipHT4V1TlcK2nMREzJz/+iyswi
-         xZ0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQNtYf1X85qq/M6k9jGpOnHlCLEs9LPmcpWOZqpXvNBwABEql2PF42l9sngxKOAm4kwmOkFR2OMraxPhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFSv8carSoQjs+3ahmcEB21J2csrGv+zVXKHmL7199lAQ2nPI/
-	5QAH00yNxkq2qkWZcBi28pDMgj737w1KY3jjEP4UBjj5hewpFFOH7RduUr9XcIG8RHiPVJyf0yE
-	0JfUPSZiG04ZHH0xX3zAKaLHTJI1wfOwyATGMXbUddFgrWthinu5mnAE=
-X-Google-Smtp-Source: AGHT+IHBX2YwuKKiF3YlIjH872Jb10T1FN7R/2rd1aFm4MD74rYJnO0r7c1yeHL8132Q4SDwuC4tN2wH79oeFO1GSSZ1vhk07TcQ
+	s=arc-20240116; t=1733819305; c=relaxed/simple;
+	bh=66MXR0/oHc09p9Kz0kaQudwk3AXN670HjvTIXe3SwAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B5XqG4VRwcf4skcDR8Vpl01zu85EcuJwj/sdDxlKQRdgZelvm3YERgxEudhIo5eIBpSERdP7y1W+oENOoRvGYfiawjRDB0kL28q7VzF7AeslfGUl+w33rCY+eqMYM6TJSzj8gvwfv6uGrPCF7ZusUCpfY8rDUkdIYpG5oT1UDvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SJGfHCIh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA3F4oT017416;
+	Tue, 10 Dec 2024 08:28:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=8WSWOy
+	BcNUItJX264tnEFBP6PfrClcLOGPcVK+msEDs=; b=SJGfHCIhgvq+ox+LY1en3n
+	p9d+yzu08j67OlWv6wBI8Ab50pSensJN+GROmPEey859f0O/hd260yx4myAYONQH
+	wQwycu0r6pJ/KE/qx7B2EnJfKiArEYbsX+w6yEh9NQhQhNsxNJGkCdSCKeObvEAM
+	GU+wvxlai8IjSh1d9gyHOj0HgJTTpWdSFYMKF7iU6hNdFmn0bYK4q0xu958gsOmV
+	M7orfu8FNEXxKL7ThgrZZXoFG3sDMGaQGhQHWwb59Uha4LBRUt1i/NoItQUqi1Zv
+	RBvxsQ+poqdoL06kVjn9IgvHenWsSP5X/QS8YSW4DJXBHXXVRPMeAWlI7v32ihcw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsjcypx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 08:28:08 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BA8OXQA026914;
+	Tue, 10 Dec 2024 08:28:08 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsjcypt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 08:28:07 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA841XH018605;
+	Tue, 10 Dec 2024 08:28:07 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26kanh2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 08:28:07 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BA8S63M28115650
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 08:28:06 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8BFF958056;
+	Tue, 10 Dec 2024 08:28:06 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A43B958052;
+	Tue, 10 Dec 2024 08:28:02 +0000 (GMT)
+Received: from [9.109.198.241] (unknown [9.109.198.241])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 08:28:02 +0000 (GMT)
+Message-ID: <2d9f4b56-3a8f-4fd7-a356-022f973da5e0@linux.ibm.com>
+Date: Tue, 10 Dec 2024 13:58:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1568:b0:3a7:e800:7d37 with SMTP id
- e9e14a558f8ab-3a9dbac588cmr37719775ab.10.1733819240944; Tue, 10 Dec 2024
- 00:27:20 -0800 (PST)
-Date: Tue, 10 Dec 2024 00:27:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6757fb68.050a0220.2477f.005f.GAE@google.com>
-Subject: [syzbot] [net?] [afs?] WARNING in rxrpc_send_data
-From: syzbot <syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dhowells@redhat.com, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    e58b4771af2b Merge branch 'vxlan-support-user-defined-rese..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b9a8f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=ff11be94dfcd7a5af8da
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14cb93e8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a3d4df980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b527c0c7acd8/disk-e58b4771.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/41720c9a36cc/vmlinux-e58b4771.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8888d773b743/bzImage-e58b4771.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5822 at net/rxrpc/sendmsg.c:296 rxrpc_alloc_txqueue net/rxrpc/sendmsg.c:296 [inline]
-WARNING: CPU: 0 PID: 5822 at net/rxrpc/sendmsg.c:296 rxrpc_send_data+0x2969/0x2b30 net/rxrpc/sendmsg.c:390
-Modules linked in:
-CPU: 0 UID: 0 PID: 5822 Comm: syz-executor280 Not tainted 6.13.0-rc1-syzkaller-00332-ge58b4771af2b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:rxrpc_alloc_txqueue net/rxrpc/sendmsg.c:296 [inline]
-RIP: 0010:rxrpc_send_data+0x2969/0x2b30 net/rxrpc/sendmsg.c:390
-Code: 24 48 48 89 de e8 37 38 ab f6 4c 39 f3 b8 00 fe ff ff 41 bf fc ff ff ff 44 0f 44 f8 45 31 f6 e9 71 fd ff ff e8 38 33 ab f6 90 <0f> 0b 90 48 8b 7c 24 28 e8 4a d3 09 f7 e9 46 fd ff ff 89 d9 80 e1
-RSP: 0018:ffffc90003d9f620 EFLAGS: 00010293
-RAX: ffffffff8af43ee8 RBX: ffff88814e6b4e80 RCX: ffff88802b741e00
-RDX: 0000000000000000 RSI: 00000000000000ff RDI: ffff88807d0ea440
-RBP: ffffc90003d9f8d0 R08: ffff88807d0ea43f R09: 0000000000000000
-R10: ffff88807d0ea340 R11: ffffed100fa1d488 R12: ffff88814e6b4e48
-R13: 1ffff11029cd69cf R14: ffff88807d0ea000 R15: 0000000000000000
-FS:  0000555559fc7380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f831d7fb0d0 CR3: 000000007f1c2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- rxrpc_do_sendmsg+0x1569/0x1910 net/rxrpc/sendmsg.c:763
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
- ___sys_sendmsg net/socket.c:2637 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2669
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f831d783ab9
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffd37defc8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f831d783ab9
-RDX: 0000000000008880 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 00007f831d7cd0fd R08: 0000000000000000 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f831d7d213c
-R13: 00007f831d7cd082 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
+ gcc-13+ and FORTIFY_SOURCE
+To: Nathan Chancellor <nathan@kernel.org>, Yury Norov <yury.norov@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        briannorris@chromium.org, kees@kernel.org, gustavoars@kernel.org,
+        steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
+        gjoyce@ibm.com, linux-crypto@vger.kernel.org, linux@weissschuh.net
+References: <20241208161315.730138-1-nilay@linux.ibm.com>
+ <Z1XkhhBqFYtbvQYp@yury-ThinkPad> <20241209193558.GA1597021@ax162>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20241209193558.GA1597021@ax162>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Ldc9jEk1QtghVU4RJxAykfFfcir9OufY
+X-Proofpoint-ORIG-GUID: uByhjdP35Dfqrs2VIJY8vnqYfgIwXmor
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412100061
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 12/10/24 01:05, Nathan Chancellor wrote:
+> On Sun, Dec 08, 2024 at 10:25:21AM -0800, Yury Norov wrote:
+>> On Sun, Dec 08, 2024 at 09:42:28PM +0530, Nilay Shroff wrote:
+>>> So the above statements expands to:
+>>> memcpy(pinst->cpumask.pcpu->bits, pcpumask->bits, nr_cpu_ids)
+>>> memcpy(pinst->cpumask.cbcpu->bits, cbcpumask->bits, nr_cpu_ids)
+>>>
+>>> Now the compiler complains about "error: ‘__builtin_memcpy’ reading
+>>> between 257 and 536870904 bytes from a region of size 256". So the
+>>> value of nr_cpu_ids which gcc calculated is between 257 and 536870904.
+>>> This looks strange and incorrect.
+>>
+>> Thanks for the detour into internals. I did the same by myself, and
+>> spent quite a lot of my time trying to understand why GCC believes
+>> that here we're trying to access memory beyond idx == 256 and up to
+>> a pretty random 536870904.
+>>
+>> 256 is most likely NR_CPUS/8, and that makes sense. But I have no ideas
+>> what does this 536870904 mean. OK, it's ((u32)-64)>>3, but to me it's a
+>> random number. I'm quite sure cpumasks machinery can't be involved in
+>> generating it.
+> 
+> That can also be written as (UINT_MAX - 63) / 8, which I believe matches
+> the ultimate math of bitmap_size() if nbits is UINT_MAX (but I did not
+> fully verify) in bitmap_copy(). I tried building this code with the
+> in-review -fdiagnostics-details option from GCC [1] but it does not
+> really provide any other insight here. UINT_MAX probably comes from the
+> fact that for this configuration, large_cpumask_bits is an indeterminate
+> value for the compiler without link time optimization because it is an
+> extern in kernel/padata.c:
+> 
+> | #if (NR_CPUS == 1) || defined(CONFIG_FORCE_NR_CPUS)
+> | #define nr_cpu_ids ((unsigned int)NR_CPUS)
+> | #else
+> | extern unsigned int nr_cpu_ids;
+> | #endif
+> | ...
+> | #if NR_CPUS <= BITS_PER_LONG
+> |   #define small_cpumask_bits ((unsigned int)NR_CPUS)
+> |   #define large_cpumask_bits ((unsigned int)NR_CPUS)
+> | #elif NR_CPUS <= 4*BITS_PER_LONG
+> |   #define small_cpumask_bits nr_cpu_ids
+> |   #define large_cpumask_bits ((unsigned int)NR_CPUS)
+> | #else
+> |   #define small_cpumask_bits nr_cpu_ids
+> |   #define large_cpumask_bits nr_cpu_ids
+> | #endif
+> 
+> From what I can tell, nothing in this callchain asserts to the compiler
+> that nr_cpu_ids cannot be larger than the compile time value of NR_CPUS
+> (I assume there is a check for this somewhere?), so it assumes that this
+> memcpy() can overflow if nr_cpu_ids is larger than NR_CPUS, which is
+> where that range appears to come from. I am able to kill this warning
+> with
+> 
+> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+> index 9278a50d514f..a1b0e213c638 100644
+> --- a/include/linux/cpumask.h
+> +++ b/include/linux/cpumask.h
+> @@ -836,6 +836,7 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
+>  static __always_inline
+>  void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
+>  {
+> +	BUG_ON(large_cpumask_bits > NR_CPUS);
+>  	bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
+>  }
+>  
+> 
+> although I am sure that is not going to be acceptable but it might give
+> a hint about what could be done to deal with this.
+> 
+> Another option would be taking advantage of the __diag infrastructure to
+> silence this warning around the bitmap_copy() in cpumask_copy(), stating
+> that we know this can never overflow because of <reason>. I think that
+> would be much more palpable than disabling the warning globally for the
+> kernel, much like Greg said.
+> 
+Okay so I think you (and Greg) were suggesting instead of disabling 
+-Wstringop-overread globally or tuning it off for a particular source
+file, lets disable it on gcc-13+ while we invoke bitmap_copy() as shown
+below: 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index d0ed9583743f..e61b9f3ff6a7 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -139,6 +139,18 @@
+ #define __diag_GCC_8(s)
+ #endif
+ 
++#if GCC_VERSION >= 130000
++#define __diag_GCC_13(s)       __diag(s)
++#else
++#define __diag_GCC_13(s)
++#endif
++
++#if GCC_VERSION >= 140000
++#define __diag_GCC_14(s)       __diag(s)
++#else
++#define __diag_GCC_14(s)
++#endif
++
+ #define __diag_ignore_all(option, comment) \
+        __diag(__diag_GCC_ignore option)
+ 
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index 9278a50d514f..6885856e38b0 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -836,7 +836,23 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
+ static __always_inline
+ void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
+ {
++       /*
++        * Silence -Wstringop-overead warning generated while copying cpumask
++        * bits on gcc-13+ and CONFIG_FORTIFY_SOURCE=y. The gcc-13+ emits
++        * warning suggesting "we're trying to copy nbits which potentially
++        * exceeds NR_CPUS. Apparently, this seems false positive and might be
++        * a gcc bug as we know that large_cpumask_bits should never exceed
++        * NR_CPUS.
++        */
++       __diag_push();
++       __diag_ignore(GCC, 13, "-Wstringop-overread",
++               "Ignore string overflow warning while copying cpumask bits");
++       __diag_ignore(GCC, 14, "-Wstringop-overread",
++               "Ignore string overflow warning while copying cpumask bits");
++
+        bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
++
++       __diag_pop();
+ }
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Does the above change look good to everyone?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+--Nilay
 
