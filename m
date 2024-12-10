@@ -1,92 +1,104 @@
-Return-Path: <linux-kernel+bounces-439480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261609EAFDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:27:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D369EAFDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:27:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228ED16AB13
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B890F28570D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0D078F4B;
-	Tue, 10 Dec 2024 11:27:37 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE90D2080E1;
+	Tue, 10 Dec 2024 11:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiCDFFfT"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFD4210F7F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B4423DE9E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733830056; cv=none; b=nS8DYrTXoqlzlbY+vxpqX+5jksOnTs0ebktI8aJ8vssVm+e8jRQZD2C3fVEAQpW5ZFxY3bUClYuG+DxukM5tL4TC7mhitoZ9HzxXq3pAB9G1x+pYCJhFE5kqp18PBwIIqTjWV8aDccceUKGgbpDZvVwD3Q1/Bpb1A4hRpETxtoQ=
+	t=1733830052; cv=none; b=IulYUv3AZ5QwRM+61LhkfTAA80veMK60bAJblwSFcvg2tCRAROxn3f12/8ZKYe1zK1JEOSoPeT7wEzGFmIUm0FuvgEJhdSzM6RPNXbLMINfZw4Axvki8hWRlbW2k+g4A0q32ue8+XyWXIg9y/7BigMP6zsGm/z3lzwqeuK3qrTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733830056; c=relaxed/simple;
-	bh=2Y7GVKRzjAAFsQPZMxgdnplWp/oE3wrhu6tsKdoFzfo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MxniYoxJhfuBDifznLL+kAiCP3EuiM886VQAL0L+sUeUI+TDnzPuOoLof6lmdXgT6uH7jjSFA9Vg9M/EIkmELwPY/yr3QUauK+7M9zQ3ebUhDFuandApXwZ0WsNn732qV/nHSwY6M2EWMODIGtIK4Fqeka304ZYyzgxHpllSfoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a81570ea43so46093965ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:27:34 -0800 (PST)
+	s=arc-20240116; t=1733830052; c=relaxed/simple;
+	bh=Np8EqaGYdQhvBb5+vizpkVTufzxd92IGQexHPSjZWv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s6yiibS2XPWEIT80QwuirOoGJ2IdM1DiLann0gEnvPWEhBzYr3kdLIaAGwxMzmWEZzfCUDbL61ifFcPqcuQvRKyPOxpF6JsPmTakkSjbM1iqNmvBEG6mZ1GNpUe/7rYQnT8lIwXrX1FLu3oywmVyPcS40XAbvIU1qeqq2r52oc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fiCDFFfT; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-725dc290c00so1884274b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:27:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733830050; x=1734434850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tZDhN/U3QLudftKPFdpchqeEa0iIEKjMILodJMS9YwY=;
+        b=fiCDFFfTGZMIHAh8tphd82zV4sQR0GLu++lZRMDBkOFCk7SGaScgGs2V75Z5tscELC
+         Tagz1TgesfNUQzyvW45XIJO9xssRdnpY5lUVw5zgQfWSeh8tnnXft5IlmKFhaYB/+pjK
+         C78Ejkctp3iZGFaYtZHmU6oDz2u53A7TRjrnkPfeyEbzeycFepdFKo0l39GAiyepLOCN
+         RYmpndajHqE3MRcpldXWdERTOjvVtWKN/71S9yGktTZ4pYVzt0vg+a3nS6ry+slV9mPf
+         CZitEbDuJtbZ62nhadtBO0eOYdC082Wgac24dcnwkNtmuk9Q7vLIFhL+Qk+abM1clLDp
+         4SVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733830054; x=1734434854;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GQa5zy5h3PxdT2631sH/nB7PCqJN8CEm2Sf9btMgmq8=;
-        b=pheoEAGu9guMvexPIBE9KOw1kkzsCnLl+3V2P4BDhQMnYfFTNmrJawBcfMDdzzBq1g
-         YYD3DlYzVN2vEOowDGbgkRQ4BYzvZcRPf+8FwnneSkFVQIB5w9e/vBSVEFsqzPkGtfbJ
-         cAYpplX5xvbeLl+KvDXpFAUaSWwaW7ndXp1nzfKlJBqwdWuvUA2KFMz8/Gm1vFHRILOp
-         RIdqjdrmzLy8x+JP2tPj+5hy3MnuftHAPH6QoV65Rjhy/9OIzx/hNJLWCcKLnTxU6t74
-         CEew6iHBTwhAJoc8vWMXYhMWEmH3yGoSdXy24swVkPz4FqpgXW2AegjlA9o5HDOP+x/E
-         sZwg==
-X-Gm-Message-State: AOJu0YxJWD1nTO6aE+38lBV8Km8Q58sKREP9zZi8oJJphRDsmYMljjOa
-	MPcD+FmCXXPRGnMrXfO5U04zVU+vgiCVWnh1Iylgb/5PKSSLLWX6voZiJ0HrHF7cSxSCqTUfMDN
-	bVza2S2Tksda/VpVClwXM83gExHZpQ1M7ezup1pvoeL/ssoibb4vznCs=
-X-Google-Smtp-Source: AGHT+IFBSx/ipR6YW+NvBh1tN0HJDYP1hTEJVQ1j3sYY3oln2HZixK2K2fxsBIVQtBS11mZOuCY54tS39Ww6MRTTq9aJhKfLoabX
+        d=1e100.net; s=20230601; t=1733830050; x=1734434850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tZDhN/U3QLudftKPFdpchqeEa0iIEKjMILodJMS9YwY=;
+        b=drSizpyuw7wbe1KsqA/VGdcHJKjDoQICaxL/BoO1QczgsjkuvCffCvlXsu1WSgOy7E
+         qb8xJuHRDXnyXsFczviGj3KVn8eqRB46YsKxwrStTk3p3qBG2GIvU5J/26peDDwRx384
+         +W06SKaJkqd0KtQ9Jb2fV3UYL7/nZ95dDNL2jY6Z/Nt1H+FllDaT3FWJmBp3FlDpRMup
+         EeGL+JyPQV8A/L7nl8e23K9Hw3xMGBU8PhavyHRjv1L1IS4i0lU2qerPkDubwATHABs2
+         +iqB/PXj0VCHy9eYSavJESPB0LcDaKjEUSN4fF+BjWAJFVJGKfGwhQmD04B0zf/tHg4E
+         0yEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Fg35wzd2FS4aB66h4l4ZK5b/jMZ1X3iQjZMe6Nd36C3mNjXcjujgLS1gudQUO8ViN+YpvslaXGBvIRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweavIoYNRspBAzlBpjWrIq4uLe3/DbnbTO8oN0sY7ybcQv/kg7
+	+YJg34u7jixf1VK3gHdC0vj10pJqCXUcuJNMd8lCwgjT24q/qEbRhl2YNwvByeq/s7GcUuJ9PjZ
+	PW+NrsbqT7rZ3d68wbxjo1v1pbso=
+X-Gm-Gg: ASbGncusQ3q1oBslfEK9Ho1L/kuutrf7c7Gis8Mc+eo0sylePCY/ZZdwFE7Pzjn9ji5
+	scC2BQWIbNuqWLMOrmusEJPDEa6pqfxNowKGKfXUiWZPpEvvxaxhpl5jyee/ZpjMGvw==
+X-Google-Smtp-Source: AGHT+IHUk2eWnLr7l6y2KKd1ehZ+JhgLJtLZ/Cfh2fAVdgrOhBou2huS1JRCOcTsW5qScUut0NgTeTko3KMCQvz0WPQ=
+X-Received: by 2002:a05:6a21:339e:b0:1e0:c166:18ba with SMTP id
+ adf61e73a8af0-1e1b4414b43mr4385767637.12.1733830050307; Tue, 10 Dec 2024
+ 03:27:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168d:b0:3a7:c5b1:a55f with SMTP id
- e9e14a558f8ab-3a811b87e70mr160772235ab.0.1733830054437; Tue, 10 Dec 2024
- 03:27:34 -0800 (PST)
-Date: Tue, 10 Dec 2024 03:27:34 -0800
-In-Reply-To: <67577778.050a0220.a30f1.01bc.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675825a6.050a0220.a30f1.01cc.GAE@google.com>
-Subject: Re: [syzbot] Re: KASAN: use-after-free Read in ocfs2_search_extent_list()
-From: syzbot <syzbot+2313dda4dc4885c93578@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241210110935.104919-2-thorsten.blum@linux.dev>
+In-Reply-To: <20241210110935.104919-2-thorsten.blum@linux.dev>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Tue, 10 Dec 2024 03:27:40 -0800
+Message-ID: <CAMo8BfL6v3zoxmd75zseux3aHKcZVj1FnmO98KcwLcPyQUEYQw@mail.gmail.com>
+Subject: Re: [PATCH] xtensa/simdisk: Use str_write_read() helper in simdisk_transfer()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Chris Zankel <chris@zankel.net>, Jens Axboe <axboe@kernel.dk>, 
+	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, 
+	Himanshu Madhani <himanshu.madhani@oracle.com>, Dan Williams <dan.j.williams@intel.com>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Dec 10, 2024 at 3:10=E2=80=AFAM Thorsten Blum <thorsten.blum@linux.=
+dev> wrote:
+>
+> Remove hard-coded strings by using the str_write_read() helper.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  arch/xtensa/platforms/iss/simdisk.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-***
+Applied to my xtensa tree.
 
-Subject: Re: KASAN: use-after-free Read in ocfs2_search_extent_list()
-Author: dmantipov@yandex.ru
-
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 7cb1b466315004af98f6ba6c2546bb713ca3c237
-
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 395e23920632..841135341898 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -770,6 +770,10 @@ int ocfs2_search_extent_list(struct ocfs2_extent_list *el, u32 v_cluster)
- 	struct ocfs2_extent_rec *rec;
- 	u32 rec_end, rec_start, clusters;
- 
-+	/* Do not search over an invalid extent list. */
-+	if (le16_to_cpu(el->l_next_free_rec) >= le16_to_cpu(el->l_count))
-+		return ret;
-+
- 	for(i = 0; i < le16_to_cpu(el->l_next_free_rec); i++) {
- 		rec = &el->l_recs[i];
- 
+--=20
+Thanks.
+-- Max
 
