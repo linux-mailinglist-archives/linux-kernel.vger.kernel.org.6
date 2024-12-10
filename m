@@ -1,120 +1,259 @@
-Return-Path: <linux-kernel+bounces-439875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEE49EB54C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:44:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D79F9EB54D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:44:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03DEB284B6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1AD166072
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508F3207DF9;
-	Tue, 10 Dec 2024 15:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE97207E02;
+	Tue, 10 Dec 2024 15:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbeFBcL2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mq6LDbTa"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE30F205513
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2673205513
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733845474; cv=none; b=tBsyH46l8w3o7xhxJYoRGlbMzQM+6yAceHsehqsp/E4RXACZuGRwup7XyQbJ4IyLvD5aIy0J3nN7kje+I87+M6SFEYXGKYcFbxlPdsJLLdXf5dr9NHjvXj00B+rWQC28smZEjJECJEF6gsHhNfnG4unAWMIiM7deJhizlQCm6EA=
+	t=1733845488; cv=none; b=uF0CRdKCMfD5ANCcUTsRCUcCdFxsFinkp4ATYmwmf78wb0ZQxUM501PaP3FVOduRxTwDHxUnKjmJExP3XJgeVER4fRdCSc1VmX0HDe+GJDpCTIZRrUJGDflVEqXokJfZGvMtQpZgOaMlJ/1kKg2OU4O8lcWWfGTAZpqcwK+APfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733845474; c=relaxed/simple;
-	bh=QnOwJAo3qEIG/EbKUjinI5a+rADGWNu6gqAoQZuMGaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gg+WGHxpcvUhIIL3UgiPCj6fk4yPqu6+IXPUQvnb4hFDFlf3fi0r49j7Baq6nYipt7aAF+A3R/Ea6KNKPTk1dW6O71UjCrFxeDhBAa4Teg3oYiPg+DaAYtjB9cfIO/xyk1VFdBgf1i/pbSBASOyegt75BYQ4TpHtwa+aaWrRyu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbeFBcL2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D73B8C4CEDF;
-	Tue, 10 Dec 2024 15:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733845474;
-	bh=QnOwJAo3qEIG/EbKUjinI5a+rADGWNu6gqAoQZuMGaM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XbeFBcL2tSMPjXMptCmCaVOB45UyG/n/NNJfg9GgcAblNy6z3IZ1i4AAcF9jFw4oT
-	 7LsYFW8RRzMX0sIATSoGaXFXOukkvT8+0jCmmLNUzaGC7o+y1UF3Ec/oBVnnuEdzeJ
-	 1oGu9E8HvqOVzIWWVJtQFpYd36m/S7Ug9g1aR+J2ZOyGQKRvsmyFIvxyQkzhQtk2vX
-	 ErJXZV+XXBRzX6NHFfiMPBj0M0ESe7Df0zZ0C++jArW8RIZH6RALH9o3I/qBK6bD3r
-	 bRhlJ5IIt/uTUNRTXCrTyZ1ndSgF5nj94uHUDAkFaLcL1a4crOJHU+ZugniJ4JnzR4
-	 bSvUuAxJ1vTkg==
-Date: Tue, 10 Dec 2024 15:44:29 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] arm64/signal: Silence spurious sparse warning storing
- GCSPR_EL0
-Message-ID: <20c12aac-193e-43ae-9418-39db1af4ede9@sirena.org.uk>
-References: <20241210-arm64-gcs-signal-sparse-v1-1-26888bcd6f89@kernel.org>
- <Z1hU0Ii-Sm9NHnhj@J2N7QTR9R3>
+	s=arc-20240116; t=1733845488; c=relaxed/simple;
+	bh=0Qi4vBpbbVjH22ZbyXyDa4bWo1pfWA5pKYV8Gupn/Dg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WxLHWevkOZWypYr2j9VU/aNaDTWk/5+WKB7N8lwT7SRBzSLRQqMAcjUrlBDPjNslaYSz8Q54AUxSqy0xh9CxGMMZFWIkJn9+3ZsOragUSCSCJ+dRrbuiCba6m0Umo1330/6clCXI4ASLNWvCRy4DT2IWpeMlTxPL+Znnu6hGeDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mq6LDbTa; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7b041177-04a4-4faf-af0a-c71ddcb1153c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733845483;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iLHcpdlLdfxtYk/AgZuFXaGjG7lDw8ctjmZTbLUoCAk=;
+	b=mq6LDbTa0TGTuzmZJrkRYVN/MtwcXlIW65/sDr3QX1gVTME1tCi7OfaKFejcdAcdjXeIYA
+	OG5lYJrAaNnwwO0+LyaBlpoGeblTBH26rALzymqyN01IdZ5jGZyvUPul6qww+74wCdMfg7
+	Bj3m4fE8tlR9oKcku9u6EU3uz28eer4=
+Date: Tue, 10 Dec 2024 16:44:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x8GGSUOpIkUcP8JD"
-Content-Disposition: inline
-In-Reply-To: <Z1hU0Ii-Sm9NHnhj@J2N7QTR9R3>
-X-Cookie: Leave no stone unturned.
+Subject: Re: [PATCH] RDMA/siw: Remove direct link to net_device
+To: Bernard Metzler <bmt@zurich.ibm.com>, linux-rdma@vger.kernel.org
+Cc: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ zyjzyj2000@gmail.com, syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+References: <20241210130351.406603-1-bmt@zurich.ibm.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20241210130351.406603-1-bmt@zurich.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
+On 10.12.24 14:03, Bernard Metzler wrote:
+> Maintain needed network interface information locally, but
+> remove a direct link to net_device which can become stale.
+> Accessing a stale net_device link was causing a 'KASAN:
+> slab-use-after-free' exception during siw_query_port()
+> call.
+> 
+> Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+> Reported-by: syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=4b87489410b4efd181bf
+> Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+> ---
+>   drivers/infiniband/sw/siw/siw.h       | 11 +++++++----
+>   drivers/infiniband/sw/siw/siw_cm.c    |  4 ++--
+>   drivers/infiniband/sw/siw/siw_main.c  | 18 ++++++++++++------
+>   drivers/infiniband/sw/siw/siw_verbs.c | 11 ++++++-----
+>   4 files changed, 27 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/infiniband/sw/siw/siw.h b/drivers/infiniband/sw/siw/siw.h
+> index 86d4d6a2170e..c8f75527b513 100644
+> --- a/drivers/infiniband/sw/siw/siw.h
+> +++ b/drivers/infiniband/sw/siw/siw.h
+> @@ -69,16 +69,19 @@ struct siw_pd {
+>   
+>   struct siw_device {
+>   	struct ib_device base_dev;
+> -	struct net_device *netdev;
+>   	struct siw_dev_cap attrs;
+>   
+>   	u32 vendor_part_id;
+> +	struct {
+> +		int ifindex;
+> +		enum ib_port_state state;
+> +		enum ib_mtu mtu;
+> +		enum ib_mtu max_mtu;
+> +	} ifinfo;
+> +
+>   	int numa_node;
+>   	char raw_gid[ETH_ALEN];
+>   
+> -	/* physical port state (only one port per device) */
+> -	enum ib_port_state state;
+> -
+>   	spinlock_t lock;
+>   
+>   	struct xarray qp_xa;
+> diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw/siw_cm.c
+> index 86323918a570..451b50d92f7f 100644
+> --- a/drivers/infiniband/sw/siw/siw_cm.c
+> +++ b/drivers/infiniband/sw/siw/siw_cm.c
+> @@ -1780,7 +1780,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   
+>   		/* For wildcard addr, limit binding to current device only */
+>   		if (ipv4_is_zeronet(laddr->sin_addr.s_addr))
+> -			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
+> +			s->sk->sk_bound_dev_if = sdev->ifinfo.ifindex;
+>   
+>   		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+>   				  sizeof(struct sockaddr_in));
+> @@ -1798,7 +1798,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   
+>   		/* For wildcard addr, limit binding to current device only */
+>   		if (ipv6_addr_any(&laddr->sin6_addr))
+> -			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
+> +			s->sk->sk_bound_dev_if = sdev->ifinfo.ifindex;
+>   
+>   		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+>   				  sizeof(struct sockaddr_in6));
+> diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+> index 17abef48abcd..4db10bdfb515 100644
+> --- a/drivers/infiniband/sw/siw/siw_main.c
+> +++ b/drivers/infiniband/sw/siw/siw_main.c
+> @@ -287,7 +287,6 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+>   		return NULL;
+>   
+>   	base_dev = &sdev->base_dev;
+> -	sdev->netdev = netdev;
+>   
+>   	if (netdev->addr_len) {
+>   		memcpy(sdev->raw_gid, netdev->dev_addr,
+> @@ -354,6 +353,10 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+>   	atomic_set(&sdev->num_mr, 0);
+>   	atomic_set(&sdev->num_pd, 0);
+>   
+> +	sdev->ifinfo.max_mtu = ib_mtu_int_to_enum(netdev->max_mtu);
+> +	sdev->ifinfo.mtu = ib_mtu_int_to_enum(READ_ONCE(netdev->mtu));
+> +	sdev->ifinfo.ifindex = netdev->ifindex;
+> +
+>   	sdev->numa_node = dev_to_node(&netdev->dev);
+>   	spin_lock_init(&sdev->lock);
+>   
+> @@ -381,12 +384,12 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+>   
+>   	switch (event) {
+>   	case NETDEV_UP:
+> -		sdev->state = IB_PORT_ACTIVE;
+> +		sdev->ifinfo.state = IB_PORT_ACTIVE;
+>   		siw_port_event(sdev, 1, IB_EVENT_PORT_ACTIVE);
+>   		break;
+>   
+>   	case NETDEV_DOWN:
+> -		sdev->state = IB_PORT_DOWN;
+> +		sdev->ifinfo.state = IB_PORT_DOWN;
+>   		siw_port_event(sdev, 1, IB_EVENT_PORT_ERR);
+>   		break;
+>   
+> @@ -406,10 +409,13 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+>   	case NETDEV_CHANGEADDR:
+>   		siw_port_event(sdev, 1, IB_EVENT_LID_CHANGE);
+>   		break;
+> +
+> +	case NETDEV_CHANGEMTU:
+> +		sdev->ifinfo.mtu = ib_mtu_int_to_enum(READ_ONCE(netdev->mtu));
+> +		break;
+>   	/*
+>   	 * Todo: Below netdev events are currently not handled.
+>   	 */
+> -	case NETDEV_CHANGEMTU:
+>   	case NETDEV_CHANGE:
+>   		break;
+>   
+> @@ -444,9 +450,9 @@ static int siw_newlink(const char *basedev_name, struct net_device *netdev)
+>   		dev_dbg(&netdev->dev, "siw: new device\n");
+>   
+>   		if (netif_running(netdev) && netif_carrier_ok(netdev))
+> -			sdev->state = IB_PORT_ACTIVE;
+> +			sdev->ifinfo.state = IB_PORT_ACTIVE;
+>   		else
+> -			sdev->state = IB_PORT_DOWN;
+> +			sdev->ifinfo.state = IB_PORT_DOWN;
+>   
+>   		ib_mark_name_assigned_by_user(&sdev->base_dev);
+>   		rv = siw_device_register(sdev, basedev_name);
+> diff --git a/drivers/infiniband/sw/siw/siw_verbs.c b/drivers/infiniband/sw/siw/siw_verbs.c
+> index 986666c19378..3ab9c5170637 100644
+> --- a/drivers/infiniband/sw/siw/siw_verbs.c
+> +++ b/drivers/infiniband/sw/siw/siw_verbs.c
+> @@ -178,14 +178,15 @@ int siw_query_port(struct ib_device *base_dev, u32 port,
+>   
+>   	rv = ib_get_eth_speed(base_dev, port, &attr->active_speed,
+>   			 &attr->active_width);
+> +
+>   	attr->gid_tbl_len = 1;
+>   	attr->max_msg_sz = -1;
+> -	attr->max_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> -	attr->active_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> -	attr->phys_state = sdev->state == IB_PORT_ACTIVE ?
+> +	attr->max_mtu = sdev->ifinfo.max_mtu;
+> +	attr->active_mtu = sdev->ifinfo.mtu;
+> +	attr->phys_state = sdev->ifinfo.state == IB_PORT_ACTIVE ?
+>   		IB_PORT_PHYS_STATE_LINK_UP : IB_PORT_PHYS_STATE_DISABLED;
+>   	attr->port_cap_flags = IB_PORT_CM_SUP | IB_PORT_DEVICE_MGMT_SUP;
+> -	attr->state = sdev->state;
+> +	attr->state = sdev->ifinfo.state;
+>   	/*
+>   	 * All zero
+>   	 *
+> @@ -519,7 +520,7 @@ int siw_query_qp(struct ib_qp *base_qp, struct ib_qp_attr *qp_attr,
+>   	qp_attr->cap.max_send_sge = qp->attrs.sq_max_sges;
+>   	qp_attr->cap.max_recv_wr = qp->attrs.rq_size;
+>   	qp_attr->cap.max_recv_sge = qp->attrs.rq_max_sges;
+> -	qp_attr->path_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> +	qp_attr->path_mtu = sdev->ifinfo.mtu;
 
---x8GGSUOpIkUcP8JD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The followings are my fix to this kind of problem 
+https://syzkaller.appspot.com/bug?extid=4b87489410b4efd181bf
 
-On Tue, Dec 10, 2024 at 02:48:48PM +0000, Mark Rutland wrote:
-> On Tue, Dec 10, 2024 at 12:42:53AM +0000, Mark Brown wrote:
-> > We are seeing a false postive sparse warning in gcs_restore_signal()
-> >=20
-> > arch/arm64/kernel/signal.c:1054:9: sparse: sparse: cast removes address=
- space '__user' of expression
+It seems that it can also fix this problem.
+After I delved into your commit, I wonder what happen if the netdev will 
+be handled in the future after xxx_query_port?
 
-> This isn't a false positive; this is a cross-address space cast that
-> sparse is accurately warning about. That might be *benign*, but the tool
-> is doing exactly what it is supposed to.
+Thanks,
 
-The spuriousness is arguable, from my point of view it's spurious in
-that we don't have the type of the system register we're writing to.
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.c 
+b/drivers/infiniband/sw/rxe/rxe_verbs.c
+index 5c18f7e342f2..7c73eb9115f1 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.c
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
+@@ -57,7 +57,7 @@ static int rxe_query_port(struct ib_device *ibdev,
 
-> > +	write_sysreg_s((unsigned long)(gcspr_el0 + 1), SYS_GCSPR_EL0);
+         if (attr->state == IB_PORT_ACTIVE)
+                 attr->phys_state = IB_PORT_PHYS_STATE_LINK_UP;
+-       else if (dev_get_flags(rxe->ndev) & IFF_UP)
++       else if (rxe && rxe->ndev && (dev_get_flags(rxe->ndev) & IFF_UP))
+                 attr->phys_state = IB_PORT_PHYS_STATE_POLLING;
+         else
+                 attr->phys_state = IB_PORT_PHYS_STATE_DISABLED;
 
-> Only one line here wants a __user pointer, so wouldn't it be simpler to
-> pass 'gcspr_el0' as an integer type, and cast it at the point it's used
-> as an actual pointer, rather than the other way around?
+Zhu Yanjun
 
-> Then you could also simplify gcs_restore_signal(), etc.
+>   	qp_attr->max_rd_atomic = qp->attrs.irq_size;
+>   	qp_attr->max_dest_rd_atomic = qp->attrs.orq_size;
+>   
 
-I find it both safer and clearer to keep values which are userspace
-pointers as userspace pointers rather than working with them as
-integers, using integers just sets off alarm bells. =20
-
-> Similarly in map_shadow_stack(), it'd be simpler to treat cap_ptr as an
-> integer type.
-
-With map_shadow_stack() it's a bit of an issue with letting users
-specify a size but yeah, we could do better there.
-
---x8GGSUOpIkUcP8JD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdYYd0ACgkQJNaLcl1U
-h9BJngf9EZ+7dJoTevRJcuZEVo+biv2jW0Dp3rEnaTFnZbcN3AmR7R4gFeuEdJIi
-v2uoHPbHGqXQIjDpu52mNwGUFhzjUCb0TOyA1hxr1WEGdZIQ8hHbQv1FanC6G97T
-MAb6MgA8xdc3KHhNO3RYYWHFkOBApX4FV/X8JLSfFWVuGkG1zSBbBK8lEIJZfQkH
-bWrtDnX+7ySd9zUrKIq3BfInOwHwCH1EKcVd3Mi2pQL7AO1AJfKWSUVo1tiE+QoV
-6YKXoMahnnkF0Af+fARiCpOXi4+5vg4kj6pBh48M2etz+AkTe0PsmaqBAbBgcXxm
-JauRjQeO7p+2jj5Gu/3cd/aOQw3ozw==
-=FjKv
------END PGP SIGNATURE-----
-
---x8GGSUOpIkUcP8JD--
 
