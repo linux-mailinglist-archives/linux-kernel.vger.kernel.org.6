@@ -1,124 +1,172 @@
-Return-Path: <linux-kernel+bounces-438694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813F99EA471
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:39:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB69F9EA479
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:45:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC1E284231
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5FE164BA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88F570832;
-	Tue, 10 Dec 2024 01:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AE767A0D;
+	Tue, 10 Dec 2024 01:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PuD0xhXq"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T2g4fbmf"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F02E487B0;
-	Tue, 10 Dec 2024 01:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DF42B9BC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733794743; cv=none; b=OD1Tnk1VZKIRf8fOxEpAIddU0FLKS3CfIFE9BFmy6skh9ed6b5HQVHQ5WxQQVKMDtizSqujyBIAJei0WCzJHmP1McbDcgC5VXFP9nn4CGXBFxtm3Vbi8qW2IQoPIoePQ7+T/8Hhey/hNHSpelnaj7EVqJfnsuLdWK694vwcZkS4=
+	t=1733795125; cv=none; b=Ue2Mcm1Si4IZblllRvWpsD/T7ODW69iXX6UJnn5iOqzNeQ+LtepCJvpotb0OPR6u3gvk6KSWzlAtpMuZq+JQSjuwGkhBtD3UxrxF6Y3MUfZHo1q4E3aubhBqinggWkNE2T3NYlkOM+Ie7MhFcajTZCfWca8Y/putbmL7ar3x01E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733794743; c=relaxed/simple;
-	bh=J97hBA7X2LqwNgYn+Bb902hRFy0wUF2meOyIkPm/1ko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dDR1CpnjP9Jrv/23wGx8Xz4LVwuDAvBmmZXi/hovbcMnGGp8uSNSLgbiP7rBJb+UDn3cNjl2UMeaY+W4WsStheo4hA+lSdL0w4kfDud01S/g/8UBvi4CgAaijtT7CQmRVyhGlK3B//MnuFQrZngYErhcS44TBmlWmONgiRhxnaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PuD0xhXq; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733794737; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=BR2mdtTaoSEy+8fSRGvh/KqzQFMgidQP+WKmP5iDzus=;
-	b=PuD0xhXq9ivKKc4pUr2ndWrNxxDcX6n3QzHN9laPB9PCFpwl3I5kCwYGpLpddaS8x88rq7CrFvPZLCU/n+SC+E4d8sbsg172b1zASaSQHC1akQeU2VmsmPp/yiISsM8RRl09BOYr77Ryg/gVb8axndmKtK5p73b/ehWKFLmB8kg=
-Received: from 30.166.1.177(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WLCyrkm_1733794735 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 10 Dec 2024 09:38:56 +0800
-Message-ID: <5139818d-8e1b-44ff-bfb4-18a1aca8afed@linux.alibaba.com>
-Date: Tue, 10 Dec 2024 09:38:54 +0800
+	s=arc-20240116; t=1733795125; c=relaxed/simple;
+	bh=f/VOvLcpFGdSwyD/bwa5x3xxYOFeWx8ZvwNTh873AMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uS1Kh5ZzoWKHwCIQm9ZNQeakXHxacyM7Q+UpKdkz7EfkKWHmL6oPCrnYHpcmwpaNWetTcIuK7o9R9UE9GklJAuykGtc36ByN57E8ZV1M5wb1wjgOVudYcswap9b3Bsu2p4DAR3ZqzeGhGGWjhVxWpblXjuge5LufE55FsMbC4WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T2g4fbmf; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3989d27ba3so3901942276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 17:45:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733795123; x=1734399923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bDeSzNmG0r25Rn5nUf/295MidZQ+oiAWsebYRxIgxz4=;
+        b=T2g4fbmfh40FRTk4XwcgZbHtkxnvcXJvPsN90V61ntLKvrpGeDP1qM0M7q3W3/EaaB
+         jc6aPdFPU/OVeP98Lwxq16a70wfupsa8VkIQya55eMU0OZVh6Zy6elQQrMHukmDbBNjb
+         mNBbWQPHxk92cSCe924txd0edrREHDOeJn7mjemegC5uDImm9U76rYLFW/J0DCGbKx+c
+         0YCscA2Bpyby3rj2TWPmn6WmBaNNjf+sw0HASXyAJ9d69CFH+LSzboLB6FJb8gzqTdZM
+         xFDXa1J7CzuFLBQPWPDerJoLL8YEXFBj7OqzeE2N3v/NMUORyPvlEum/yeTKLcC6o49h
+         +OqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733795123; x=1734399923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bDeSzNmG0r25Rn5nUf/295MidZQ+oiAWsebYRxIgxz4=;
+        b=iZB/73gcR5c1C/kHHoeB6v9CrtLghzq5XjmvPbBO9QnnQeMOFYI7Z65Gc5RgZ6xObl
+         aTYDmefwlbtSE3n2vr2LvenLaI3wH0mUrdhHQzr8M190smeTYXz09geQgDgG2f+z1I1k
+         IXQWvfbHZ9wPqEB55GnwVOE1ZuFHXZdm7LfTrezL/vrq3ySrTLyEWQjkmnmcOhhrSJJa
+         9vZ73pSGmyjuBnacBosmFkpgfjlM/uXS8DzNcfiAz3SuaRK0yFCM9X99TaKV1emOKvXD
+         aHilkMKtb58jCTo9xj8qvd71iPOv3vrHe5OdUAuWe7ea1iCR3b/LP02pAlnW5djnnSlM
+         7c1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwEHkqdi2Dz/gFlbVI01CW7/wTL6YABV8twAq8gJoG6EFp8OrxMpZQTO85NpL+ja9Bk4lNd1z5b3YAq6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhRhrQF5fvabKhrs41vO50gz9cJZBmqssxHtE0ophy7hkRj4/8
+	HO0ItaPx3X9Uj8Z9BXNSLb/DKY8jQHdAg4syrAm44roxJIvdr2is/EDVgIg8EfsD1arUGSNZpCy
+	/ObanERTd3RrtqltWJ+M1aWPeI6O7jBmomT4Sqg==
+X-Gm-Gg: ASbGncvHK91GmyFk9Bb0HV0Zu9I24fwiawXXVtBkr0KHgx/1yWw5tS9Q1tIl7u7JFRG
+	E70NOIBptPxk4H5/Yeh/UEWdOD4PEj6QxGUbW
+X-Google-Smtp-Source: AGHT+IH9FYdZyuYf6+rQs47uyzndT1wVwnYcReW2ltFVfptMntuMiqQM909xz0QThYmGJkZYxK5rC55WkYQfh3JUnOo=
+X-Received: by 2002:a05:6902:150b:b0:e38:b2fb:f57d with SMTP id
+ 3f1490d57ef6-e3a0b12a8c7mr11436978276.28.1733795122949; Mon, 09 Dec 2024
+ 17:45:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 4/5] drivers/perf: add DesignWare PCIe PMU driver
-To: Bjorn Helgaas <helgaas@kernel.org>, Will Deacon <will@kernel.org>
-Cc: ilkka@os.amperecomputing.com, kaishen@linux.alibaba.com,
- yangyicong@huawei.com, Jonathan.Cameron@huawei.com,
- baolin.wang@linux.alibaba.com, robin.murphy@arm.com,
- chengyou@linux.alibaba.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- rdunlap@infradead.org, mark.rutland@arm.com, zhuo.song@linux.alibaba.com,
- renyu.zj@linux.alibaba.com
-References: <20241209224741.GA3206765@bhelgaas>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241209224741.GA3206765@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241203165450.1501219-1-heiko@sntech.de> <20241209150619.33998-1-dse@thaumatec.com>
+ <D67AV178CEBD.3QA9VD4ZPRNQ1@cknow.org> <2203458.KiezcSG77Q@diego>
+ <4e015ea9.960.193ae0c236a.Coremail.andyshrk@163.com> <ay5hbnqqjhopaqof6z7j2rzm2bc6xa2vbzan2ak3if6wzmyip2@kqh7gtrajnm2>
+ <33e2c5db.1300.193ae284b6d.Coremail.andyshrk@163.com>
+In-Reply-To: <33e2c5db.1300.193ae284b6d.Coremail.andyshrk@163.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 10 Dec 2024 03:45:11 +0200
+Message-ID: <CAA8EJprLA09NP0KAztc5eoAMkGcrom84jg_pcbNcwN0FAaSLrw@mail.gmail.com>
+Subject: Re: Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2 controller
+To: Andy Yan <andyshrk@163.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Daniel Semkowicz <dse@thaumatec.com>, Diederik de Haas <didi.debian@cknow.org>, andy.yan@rock-chips.com, 
+	Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
+	krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	neil.armstrong@linaro.org, quentin.schulz@cherry.de, rfoss@kernel.org, 
+	robh@kernel.org, tzimmermann@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 10 Dec 2024 at 03:22, Andy Yan <andyshrk@163.com> wrote:
+>
+>
+> Hi Dmitry,
+>
+> =E5=9C=A8 2024-12-10 09:01:38=EF=BC=8C"Dmitry Baryshkov" <dmitry.baryshko=
+v@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
+> >On Tue, Dec 10, 2024 at 08:50:51AM +0800, Andy Yan wrote:
+> >>
+> >>
+> >> Hi,
+> >>
+> >> At 2024-12-10 07:12:26, "Heiko St=C3=BCbner" <heiko@sntech.de> wrote:
+> >> >Am Montag, 9. Dezember 2024, 17:11:03 CET schrieb Diederik de Haas:
+> >> >> Hi,
+> >> >>
+> >> >> On Mon Dec 9, 2024 at 4:06 PM CET, Daniel Semkowicz wrote:
+> >> >> > On 03.12.24 21:54, Heiko Stuebner wrote:
+> >> >> > > This series adds a bridge and glue driver for the DSI2 controll=
+er found
+> >> >> > > in the rk3588 soc from Rockchip, that is based on a Synopsis IP=
+ block.
+> >> >> > >
+> >> >> >
+> >> >> > I did more tests with different LVDS displays. I tested following
+> >> >> > configurations with DSI/LVDS bridge:
+> >> >> > - 1024x600@60.01
+> >> >> > - 1024x768@60.02
+> >> >> > - 1280x800@60.07
+> >> >> > - 1366x768@60.06
+> >> >> >
+> >> >> > All of them worked without issues, except 1366x768.
+> >> >> > With this resolution, video is blurry, and offset incorrectly
+> >> >> > to the left. There are also repeating errors on the console:
+> >> >> >
+> >> >> >   rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY ir=
+q err at vp3
+> >> >> >
+> >> >> > In correct operation with other resolutions, there is no error.
+> >> >> > I am not sure if this is a problem in your series or rather in VO=
+P2
+> >> >> > driver.
+> >> >
+> >> >This really sounds like something is wrong on the vop side.
+> >> >The interrupt is part of the vop, the divisable by 4 things likely to=
+o.
+> >>
+> >> This is a hardware limitation on vop side:
+> >> The horizontal resolution must be 4 pixel aligned.
+> >
+> >Then mode_valid() and atomic_check() must reject modes that don't fit.
+>
+> We round down to 4 pixel aligned in mode_fixup in our bsp kernel,
+
+What is meant by the "bsp kernel" here? I don't see it being present
+in the mainline kernel. So, if the mode is unsupported, it should be
+rejected.
+
+> because sometimes, some boards do indeed choose a screen that is not 4 pi=
+xel aligned
+> >
+> >>
+> >>
+> >>
+> >
+> >--
+> >With best wishes
+> >Dmitry
 
 
 
-在 2024/12/10 06:47, Bjorn Helgaas 写道:
-> On Mon, Dec 09, 2024 at 03:40:16PM +0000, Will Deacon wrote:
->> On Fri, Dec 06, 2024 at 10:54:57AM -0600, Bjorn Helgaas wrote:
->>> On Fri, Dec 08, 2023 at 10:56:51AM +0800, Shuai Xue wrote:
->>>> This commit adds the PCIe Performance Monitoring Unit (PMU) driver support
->>>> for T-Head Yitian SoC chip. Yitian is based on the Synopsys PCI Express
->>>> Core controller IP which provides statistics feature. The PMU is a PCIe
->>>> configuration space register block provided by each PCIe Root Port in a
->>>> Vendor-Specific Extended Capability named RAS D.E.S (Debug, Error
->>>> injection, and Statistics).
->>>
->>>> +#define DWC_PCIE_VSEC_RAS_DES_ID		0x02
->>>
->>>> +static const struct dwc_pcie_vendor_id dwc_pcie_vendor_ids[] = {
->>>> +	{.vendor_id = PCI_VENDOR_ID_ALIBABA },
->>>> +	{} /* terminator */
->>>> +};
->>>
->>>> +static bool dwc_pcie_match_des_cap(struct pci_dev *pdev)
->>>> +{
->>>> +	const struct dwc_pcie_vendor_id *vid;
->>>> +	u16 vsec;
->>>> +	u32 val;
->>>> +
->>>> +	if (!pci_is_pcie(pdev) || !(pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT))
->>>> +		return false;
->>>> +
->>>> +	for (vid = dwc_pcie_vendor_ids; vid->vendor_id; vid++) {
->>>> +		vsec = pci_find_vsec_capability(pdev, vid->vendor_id,
->>>> +						DWC_PCIE_VSEC_RAS_DES_ID);
->>>
->>> This looks wrong to me, and it promotes a misunderstanding of how VSEC
->>> Capabilities work.  The VSEC ID is defined by the vendor, so we have
->>> to check both the Vendor ID and the VSEC ID before we know what this
->>> VSEC Capability is.
->>
->> Thanks for pointing this out! The code's been merged for a while now,
->> so we'll need to fix what we have rather than revert it, I think.
-> 
-> Yep, for sure.
-> 
->> Any chance you could send a patch with those, please? I'm also not able
->> to test this stuff, but I'm sure Ilkka would help us out.
-> 
-> Posted at https://lore.kernel.org/linux-pci/20241209222938.3219364-1-helgaas@kernel.org
-> 
-> Bjorn
-
-Hi, Bjorn and Will,
-
-Thanks for pointing this out and fix it so quickly, I will also test this patch
-on our platform later.
-
-Best Regards,
-Shuai
-
-
+--=20
+With best wishes
+Dmitry
 
