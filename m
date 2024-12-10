@@ -1,62 +1,86 @@
-Return-Path: <linux-kernel+bounces-438941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24D09EA879
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:05:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220D69EA874
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:05:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56979188CC3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:05:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC72169ADA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A03722B595;
-	Tue, 10 Dec 2024 06:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29D022ACF3;
+	Tue, 10 Dec 2024 06:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="auN4fxTo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C9u5KqNo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB34226185;
-	Tue, 10 Dec 2024 06:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FEC1D5CDB
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733810717; cv=none; b=bqqkMmqoH/XERmymJry82FCTymDi53NUxM3ObUVEIcg+186hMQ5xJVvFV1q05fOwnflqTjYQjBt7VVTiskeWasnFsNr3RdGb60pEX4XGhc/eGn0CQcV71K1qXYJZ0qjIUQHOYRZP5VcDdeM5OSMNJpsMwW6BLUWaTKnU5XdXxK4=
+	t=1733810705; cv=none; b=utAp4qtTty/7Yo2JTOsvbddy0qbTNlGaNJDni8Ih3EvETt3SXwB4JkHmIUvW0tkrit9CtZQW/fpw7WGMOPV6dB3KefaV93BxoGqMyHOX7bJNz68n1Irk3s7qcRFh/vFvqqqKWu/waEmvH9MS8Q1+5Wqh8PZBeckrqvP5fggrwZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733810717; c=relaxed/simple;
-	bh=JWAv+oV4UpPbnkSoMAkg+gonAGAlJCo5/4GD46iDbkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MWDB445r3XPg2ajrha3Z8xelh11Ek7Kw9RxudsLdW5MLWYmACtXuXsy9hYbn3Sky+cDOlP3OFvIrhNdiL8dPzzuDBVW5NcHAYYriZlMbYgJsI3cX+z0v7idFyTTGOMV5ziDPVwEFki7cimaKMs1DqT7sbIOq3Iwmf2agpcHBGmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=auN4fxTo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA44399019385;
-	Tue, 10 Dec 2024 06:04:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1733810705; c=relaxed/simple;
+	bh=/TzYjSJMFsOexNuvmKmRRmEuckGKb+afohwudQiPAcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mCMnM9XCWJ7GzduhIM/0RnE8DJYIIY+wB4TWUrxh8y8E32xES5L4YDWTWZKBooxoL/ipLXCEZqFWu0yDq0mDMh0AgYPXfTeNVmnyBuQLEgSpDJYB6rndz27jLxwYO4qYWoF5PO1mDGpihKc7TfiU7+Db0adHUd+PKHaKX+JnVo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C9u5KqNo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9GpRgL005177
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:05:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	F9I5X03zWu2wdE8Y2j/rTYjds2rycK7ouYV/Tv6i8ZY=; b=auN4fxTodfr8ykCZ
-	kYVk/ucW8cW4njBNSGDC6T8DBYZOmacJNaAb6B2/L/OeURKNtZgsKyFQPnGn19Tn
-	ASPKvIIxr+ZtagpFyb+TMVhF/gwvoOaH5KkT4kTcobQs187C2W86QM6wpi/p0dNf
-	5XHDRcbEclp5zYvpGSHrScZihItC1zbZw9S3jfc8s1wtOAqKCrYmGH9ZvNBoVWCO
-	JB65pN3HoRb7Cx8j04UeJpcRnEqsufSjOd5Ki4zMO5xR5mzAlcS3QLe5LeEMHCjV
-	OmMETUPbITyC0Y2ylnHHu9CLKN/JZsAxdzSCevobPI3k1SPu74Z4EjdVUhuT0AOZ
-	ggLlkQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e341a0qb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 06:04:53 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA64pbl025876
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 06:04:51 GMT
-Received: from [10.217.217.28] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 22:04:44 -0800
-Message-ID: <a6ca16e7-d831-46ea-8aa5-5bb196bf8d18@quicinc.com>
-Date: Tue, 10 Dec 2024 11:34:33 +0530
+	zuT7sexJqrl+drwkywE4TpkVkXimVN+YkzX3PdE2lPg=; b=C9u5KqNovIKxiPE2
+	Qx2IobVsWgK8/w96zZlTOUPmZjO4xax5pIBkg0Y5VXOLYkkdLjVnCihubtdfOptL
+	LHcjG6wt/+JiFBVWQ4JPaBr7TmjtjWKtFR+dwBGiIMHrHBlMjNVeaLp7Z9CYwEHF
+	H77cFovjkCQb01XxrMmhzZODerO0F91hHYtlWCUMkpulGNfResW+ZtfTnHCg1kb5
+	212HZYD//h8JUOz+1BmOnVZKjRpPWbc1RLPSIY3cTIMhTTxoynaoqMgwJYwbosH3
+	Kr2kwaq+pt/4+T+eKVe9Ib+27OcXkqebzGGwi3tRWS6lz5ZJCjZusFRFvWufK4go
+	huJydg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdpgqbg0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:05:02 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-21640607349so26043455ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 22:05:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733810701; x=1734415501;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zuT7sexJqrl+drwkywE4TpkVkXimVN+YkzX3PdE2lPg=;
+        b=DOKCg6NegvGw2kwUPSxPp5mCP5bWqLah9WsIF8I7Vd+pGiHCo+ZmqjEC6lziO+aiRD
+         2rHadNPRWRnNmo/gSQt2ne0HMIie9w3At8Yw/93Hz20vWbTwhqZCYtcOWk/5Qg9cXePY
+         miRRPjKLnf+2hKwecrWBNEQaNilsE4WaTxU6xRgJ4ozqVTBXUhYjmeplnjmLy+47czpZ
+         WVk/JgBTgtEJatB2WfEEhIn7YeSAVx03Xlrm/rNbRv9zhZiW/80Hdl+1ncPsPNdRa/Mh
+         SeYG2yH7nnEtMzMA7L8UHe00c7nVSMd8FI5e1Pa32z1kkkMHVzCpEwwgMjutUGGSafKH
+         A6Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQJGbNKP+CYnQmzYB5egD2LFPhUTLArOEhl2c6SgmcaippqaFn1XaO+bvg/LDfKTd8jBVurWpktZa/UqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgMsP8Z/DJwJKRNzFygQsVXT2Ekpxe4rPJqzBDjVY+htlZia9h
+	NvT71sQAN4uR3RcyS646IwPPNdF9weBHryP6+XSiQ0U+fKNKbBrzQBctSptC/cQhfOhDUgBj3xY
+	aMiwcQxCcNJuEWddHrQr31j9wNDQfxFz4R3YG9bWnoDItUhJT7jwg3hj4PLDMJMM=
+X-Gm-Gg: ASbGncumZkUpmREnT+3X9IeVo7qJcawqcZMNKaxEuL5I6rCin+EklbCCexSbHNwQUCT
+	B7uUrT+d9+DVDYAWGjN1ZL/+kdhCV5eRBElQYF24rHBlxEOmJTbFMmD1AlxHrbIlFBXjs88xjne
+	qz3ugQOm71yq+rIXfTUWJ6/eg7WE0mgs368+W14wu18dCHCjYZ9XvCNEZ5QfVl4+Fcbwn37AvZY
+	nuEHdn8hnPfez6UAQMLSzO3L+eaSBwzreq8QwU3uzVhXcGgtYech+h4OJUVe+BJhnInThzqT8KN
+	9LIVXm7ZOAFZfJo9kx/KUbvTuohBnd7VphnFfA6INlgy/zA=
+X-Received: by 2002:a17:902:eccc:b0:216:49b1:fadc with SMTP id d9443c01a7336-21649b1fd08mr106886795ad.42.1733810700976;
+        Mon, 09 Dec 2024 22:05:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGdZTBCMs7H1WTg5zLzKGDgofWMITKz9UCc3WUTnRaIn+Lttr79ry9IlBjhjDkydSu0LKbL1w==
+X-Received: by 2002:a17:902:eccc:b0:216:49b1:fadc with SMTP id d9443c01a7336-21649b1fd08mr106886535ad.42.1733810700587;
+        Mon, 09 Dec 2024 22:05:00 -0800 (PST)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21618d9beafsm64535765ad.6.2024.12.09.22.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 22:05:00 -0800 (PST)
+Message-ID: <fc745e1c-cfad-4ccf-aa9c-77cb76c2f23d@oss.qualcomm.com>
+Date: Mon, 9 Dec 2024 22:04:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,112 +88,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/4] dt-bindings: iio: adc: Add support for QCOM PMIC5
- Gen3 ADC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "robh+dt@kernel.org >> Rob
- Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <jic23@kernel.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <daniel.lezcano@linaro.org>,
-        <sboyd@kernel.org>, <quic_subbaram@quicinc.com>,
-        <quic_collinsd@quicinc.com>, <quic_amelende@quicinc.com>,
-        <quic_kamalw@quicinc.com>, <amitk@kernel.org>, <lee@kernel.org>,
-        <rafael@kernel.org>, <rui.zhang@intel.com>, <lukasz.luba@arm.com>,
-        <lars@metafoo.de>, <quic_skakitap@quicinc.com>,
-        <neil.armstrong@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>
-References: <20241030185854.4015348-1-quic_jprakash@quicinc.com>
- <20241030185854.4015348-3-quic_jprakash@quicinc.com>
- <ag3wqsjdec7ujcba2jpvhzgcbbc5vnyjyes5ljyyf5b4edw7j3@rj23a25wvoyd>
- <ee8f0b70-77a2-4a5e-85c8-715fd02d4437@quicinc.com>
- <i7opxhkgukcshdcc7j6ai6jt62egag3jgfiqsghakjhgt2ikg6@eap7l64amcci>
+Subject: Re: [PATCH] wifi: ath12k: fix read pointer after free in
+ ath12k_mac_assign_vif_to_vdev()
+To: Aditya Kumar Singh <quic_adisi@quicinc.com>,
+        Kalle Valo
+ <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Rameshkumar Sundaram <quic_ramess@quicinc.com>,
+        Sriram R <quic_srirrama@quicinc.com>
+Cc: Kalle Valo <quic_kvalo@quicinc.com>, linux-wireless@vger.kernel.org,
+        ath12k@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241210-read_after_free-v1-1-969f69c7d66c@quicinc.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 Content-Language: en-US
-From: Jishnu Prakash <quic_jprakash@quicinc.com>
-In-Reply-To: <i7opxhkgukcshdcc7j6ai6jt62egag3jgfiqsghakjhgt2ikg6@eap7l64amcci>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GPeAaFMrVYs_gWsvm_HBa_0eGGCT_3tB
-X-Proofpoint-ORIG-GUID: GPeAaFMrVYs_gWsvm_HBa_0eGGCT_3tB
+In-Reply-To: <20241210-read_after_free-v1-1-969f69c7d66c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: U0PoLsSkhlgKQxtPiBQvl4qE9KBeghL8
+X-Proofpoint-ORIG-GUID: U0PoLsSkhlgKQxtPiBQvl4qE9KBeghL8
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
- spamscore=0 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=750 spamscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2411120000 definitions=main-2412100043
 
-Hi Dmitry,
-
-On 11/15/2024 10:14 PM, Dmitry Baryshkov wrote:
-> On Wed, Nov 13, 2024 at 07:36:13PM +0530, Jishnu Prakash wrote:
->> Hi Dmitry,
->>
->> On 10/31/2024 11:27 PM, Dmitry Baryshkov wrote:
->>> On Thu, Oct 31, 2024 at 12:28:52AM +0530, Jishnu Prakash wrote:
->>>> For the PMIC5-Gen3 type PMICs, ADC peripheral is present in HW for the
->>>> following PMICs: PMK8550, PM8550, PM8550B and PM8550VX PMICs.
->>>>
->>>> It is similar to PMIC5-Gen2, with SW communication to ADCs on all PMICs
->>>> going through PBS(Programmable Boot Sequence) firmware through a single
->>>> register interface. This interface is implemented on an SDAM (Shared
->>>> Direct Access Memory) peripheral on the master PMIC PMK8550 rather
->>>> than a dedicated ADC peripheral.
->>>>
->>>> Add documentation for PMIC5 Gen3 ADC and macro definitions for ADC
->>>> channels and virtual channels (combination of ADC channel number and
->>>> PMIC SID number) per PMIC, to be used by clients of this device.
->>>>
->>>> Co-developed-by: Anjelique Melendez <quic_amelende@quicinc.com>
->>>> Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
->>>> Signed-off-by: Jishnu Prakash <quic_jprakash@quicinc.com>
->>>> ---
->>>> Changes since v3:
->>>> - Added ADC5 Gen3 documentation changes in existing qcom,spmi-vadc.yaml file
->>>>   instead of adding separate file and updated top-level constraints in documentation
->>>>   file based on discussion with reviewers.
->>>
->>> I think it has been better, when it was a separate file. Krzysztof asked
->>> for rationale, not for merging it back. Two different things.
->>
->> Actually I made that change in a separate file due to a misunderstanding at that time - 
->> I thought a separate file was the only way to accommodate a change in the top-level 'reg' and 'interrupts'
->> constraints, but I realized later that they could be updated.
->>
->> From our side, we would prefer to add ADC5 Gen3 documentation in the same file, as it is
->> mostly the same functionality which reuses all the existing properties present in this file.
+On 12/9/2024 9:26 PM, Aditya Kumar Singh wrote:
+> In ath12k_mac_assign_vif_to_vdev(), if arvif is created on a different
+> radio, it gets deleted from that radio through a call to
+> ath12k_mac_unassign_link_vif(). This action frees the arvif pointer.
+> Subsequently, there is a check involving arvif, which will result in a
+> read-after-free scenario.
 > 
-> Export the existing properties and reuse them in the new file. Gen3 (in
-> my opinion) changed the hardware too much. Having all the differences
-> via conditionals bloats the schema and makes it significantly unreadable
-> in my opinion.
-
-I can do something like this - Krzysztof mentioned in my V3 documentation change that I should put duplicated properties in a common schema, so
-I'm thinking of adding a new file named “qcom,spmi-vadc-common.yaml”, which would hold the common properties. This can be used as
-a reference in this existing file (qcom,spmi-vadc.yaml) as well as in the new file I will add for Gen3 ADC(qcom,spmi-adc5-gen3.yaml).
-
-
+> Fix this by moving this check after arvif is again assigned via call to
+> ath12k_mac_assign_link_vif().
 > 
-> But please refer to DT maintainers (Rob/Krzysztof/Conor) for the final
-> opinion.
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00173-QCAHKSWPL_SILICONZ-1
 > 
+> Closes: https://scan5.scan.coverity.com/#/project-view/63541/10063?selectedIssue=1636423
+> Fixes: b5068bc9180d ("wifi: ath12k: Cache vdev configs before vdev create")
+> Signed-off-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
 
-Rob/Krzysztof/Conor - please let me know if you have any objections to the change mentioned above.
-If there's no issue, I'll do this in the next patch series.
-
-
-Thanks,
-Jishnu
-
-
+Acked-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
 
