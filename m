@@ -1,187 +1,125 @@
-Return-Path: <linux-kernel+bounces-440252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001479EBABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:21:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0509EBABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:22:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55946188821B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172781670FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A02C22688F;
-	Tue, 10 Dec 2024 20:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE17C21422F;
+	Tue, 10 Dec 2024 20:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3F/WwR9"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zwwlmy8c"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F359523ED5E;
-	Tue, 10 Dec 2024 20:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B549123ED5E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 20:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733862064; cv=none; b=vDvj94zw+NusH5HUuDBDKqf8z7EeFNtJMQfJDf4AAxHaXGA9JDHsrObIGqPhLKGbLmPAGi0Gg2kYJ+og8U0EPp9axR3GrcDcw3+1HGjsHxXwNjoRKqrqefXl4YiGN5NURQ6vv6lgOiXT4EIblSTKna+/2BURPttRWEfTiysH6bU=
+	t=1733862124; cv=none; b=TCuE4JFN957csUfYG5IG4gEtvJvh9DWHpqDGBRuxSK4PPOUQtKmA4XD7FW19Hn4SomNw8jBVGPNR8v6DsGtZwSv6gF0TgwDsNhAKeMecZiHxEN8n5tSks/fYes8CZPeiPQ5PTepXzCBS3WjiGQtF4eyuHxpUxSLMPJGdk5R4Loo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733862064; c=relaxed/simple;
-	bh=lkz0uC/DOtwC1sGq2Mz4VnOrbm4a84YkgoZEiPPEj7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IOwZoWAYLPJGtU1VvnvmJP8vpU/V6eIFpQ+SIg5lxR+meN1y9Avwr+FS2bn6Ak+ebF/vm3J/abOZ4lu+az7EZHQxYN+hvOtQJLtoPtzit4n+cYNOmUVusGhhZSlS7vsW4yGfFpVmL1tVIc6Oox3oCUGjpXpfmldD1Tgg8ZtWpqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3F/WwR9; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa65f707419so67944366b.2;
-        Tue, 10 Dec 2024 12:21:02 -0800 (PST)
+	s=arc-20240116; t=1733862124; c=relaxed/simple;
+	bh=VdZ9tWWMXQdXRmLsSkUQnr1nqd2BXz3EBB0bhDeyBoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G15EcVqiX1UrJ+2PE4apZxigHfgyugy1bDgPsnfcdqmBlE8lH+WOFZgIp0cp8rf9jhkc8DA/qfWrS00AHL3Zpi7OJFfiG4IeVqpAnJC6AQUJJvcWBeWPI2AZgdcu6UA2P0Mnf4VNudaGTYx6LHJp6EglVnsCrQBXAS4HyA7yEM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zwwlmy8c; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a814c54742so26665ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:22:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733862061; x=1734466861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WudyUJe63c8JFxkj8fmVFDLqePx04Jr1Dyl2u8hD8a0=;
-        b=k3F/WwR9Qa9exkXlJomhVL6TEXPYXYsdbbfwGcRTR/XPkVEAvjpalc1emmjQBa4d/Q
-         S4xKsBlIkdiKhLxZWjsOE0qcMV6TqtfLabq8aQtaCkssBy7dy49MDehIspd4hXb0BhXA
-         McG5FezSjkAy0xHRACKE7+Sft6tsj1+QYmPgOJjhCk373x2zuUre8437G5i0ZQO9m68P
-         y23WHqNJk7o4PYIhTyyVXGWT8ltMpsw4rPaEr0c+MBpZGVFsd5dSkvkchBXFfK/fN1wq
-         vypee9QFN7gOSDP2YEki0j6+d6wCKQ1pV3VjbQ8Jq+ztz182pLo4U95CeQ6gycyCHmOY
-         jhBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733862061; x=1734466861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733862122; x=1734466922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WudyUJe63c8JFxkj8fmVFDLqePx04Jr1Dyl2u8hD8a0=;
-        b=YsuV3mGnE5wVfGizdW79bjM7+ZbLJCTIg2OFdupBzQnUJRfDgMenrIh8vNtw6zBhDI
-         5pRiiV4f/uLdr2iaQR2G4lvnA+pfYBW5omUZDzskdcM8tupbxwtXPsmmmHS3MGojAKUS
-         XiF1dDBK/6/O9PKMrndRLl4bwq+Lpagh4MSPXPSGoV/gEzu7wkIzjKgYFrT6YZQB5sH0
-         SK6KQ7Dv6apeGszz4JpO49XFo5ukLDBVjALL3viHg0UFjhSKSpIQ0RbolW1PW4k/P4A5
-         wizl+J2EkxwzjSWqfPGSO1nvG2UCBqggOSe7xohHRrYLOgmybru/CWT0+QD7N/8Rl1aO
-         cnUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5v9ICoRgxqrIJtATFbWS6417uwQjINa9j3j7jHr0/33keniiOTKAjq1/oWp9K1LQ0hyOoOGae@vger.kernel.org, AJvYcCWHGtiYk/cXce8k1X3rGHz/qtMv8KCCN5jECh0lVDEB1SpCfTeRBzefrKhz+h5gp/Txv07eZR+1XVgEmAZ0@vger.kernel.org, AJvYcCWmP1qTXCEv6LvntlsHS58dGMAJPKVfpz5dHgfuRM4h7YKu9p8Pmc2ZUEMpTDNWSxWs31+EO4tWq5JU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzihFEJMepEFVCgTKWXHIrAIeZOqIXwS+aYIs7/kU6xWYstWrgb
-	DyNy3iQ7BSoscIk4ItiLb8hpDq4fAEgq73uLtGj4qnsU7I9YXwTY
-X-Gm-Gg: ASbGnctMC1YIAdCfIN28/BJJplSqUpD8h64R51KY7/UEFwCANuClGp6LP6jUwnqTYjO
-	3jQQ0raqZBIonGYPAjQ85ECzVgBjKzqFP1C/rnHxXGGYY9ukquSq+8I2gvE0qDCd/BjLR5HrRqA
-	i6/RSRE+Q0QFipO/uX2YIyNwJYD1Fk37KBT3sDPFTbnWrnK6a8cXozWasH+SJyFwsr00ohz+pTz
-	BR/cvXD+YUSmm4xrNEmWufXVgBIqmzVtWP73U9eUQ==
-X-Google-Smtp-Source: AGHT+IGjcxHC/a2dd358/yErtbhd4ej5DXUjk12poPR/JpWsRTPDUnrfaJH4uV6DTzTNXMcURT/RxA==
-X-Received: by 2002:a17:907:1ca7:b0:aa6:9407:34d3 with SMTP id a640c23a62f3a-aa6b133c966mr3485266b.9.1733862061023;
-        Tue, 10 Dec 2024 12:21:01 -0800 (PST)
-Received: from skbuf ([86.127.124.81])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6696acc74sm540561666b.134.2024.12.10.12.20.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 12:21:00 -0800 (PST)
-Date: Tue, 10 Dec 2024 22:20:57 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v11 0/9] net: dsa: Add Airoha AN8855 support
-Message-ID: <20241210202057.x2tds77popzdcak6@skbuf>
-References: <20241209134459.27110-1-ansuelsmth@gmail.com>
+        bh=GvmfWDO1Af0S26U6cj7VCliJRz5OXCapvu0BjHLNBvs=;
+        b=Zwwlmy8cHu+t68oq1s5UeE8xUZ2bhgM07sIg1ZM58FG9Ks1NaXtcFz1djbIPbBDKkM
+         z07NoRb90E0N4SQCZ0Sb2EBkqEF1AqtA2hayxfFmSs7Ce/KhjyDi/JI60l4w8CJvbgsw
+         8xjq1iH9BcdgNu8jhEqVB3ZjnJp8fdl52v+AD+vQdXGsEVQi2b0BIVppAt1+hRWAksAl
+         5CF3TLIPneYwBdE/7RZHzNUKpzvsvbfq6sclTpJtzu3chlZmZ33zj+c395TAoTNmZa51
+         ahZtJ8o9KKKUHzUBrn0xdNkCi1j0ZaQNGntcwag7K65a0BrFfFrILqNwCJ/W9rEYzLgJ
+         QGqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733862122; x=1734466922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GvmfWDO1Af0S26U6cj7VCliJRz5OXCapvu0BjHLNBvs=;
+        b=jEtTUi3/P+aIdHSx2CGRYwCUUiem0u+aeFJQUSVowrWD5O7IrPc/H5RjEhSR4M4BwT
+         8puxV8uiXEN51pERZKPae50Ey3kmovL+0cqGRItLB1HZ61lKMMH6OwHd7fdIuPv8xGWQ
+         0UYmKzWDyyaqNkSjDu2MV1c8SAzri0kh/d8iz/LSO68czk07cpH9WxMVkd99lTKP9Gxy
+         vMD45r0I9RN9kz0zdpz3q9kycz6v8AZ+Z0WocazTsMC5Ew8VYfGgv9S9jSLxYPBxvpXT
+         SdS2tcdwckVVpcQcw02swQeqhZU4TPi3YCI8dQdURyBP9U4VeLbXIax/5qRnI/paMY0V
+         KeuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUgYc4eOi/SELvtkrjABvgpI8SFkBGkhDgCbUoEJ8MCsliy7MoyH6LhC6zmz40ACBfT89VfpdqZoGACwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq28PdoQqwP5VpiHm5SXaGnSSayb4LsKGFxvPKyCbSVmM+MPWD
+	3skixrJmKZY2q0aPNzfZl01uRrgP+HC3n21GXGbbUP1HhwK4bZibg5cy9uDyMr90k2N5+3oE7Y6
+	OWW0aKRMyM3ik4I5DXsY7yvG/ayxXO1L2ulCD
+X-Gm-Gg: ASbGnctudpZ4q9VFrnH4ySyv+5oVDjhOVI8iFh+oTabsstK08Ih5tzwuKreOPUn5nLT
+	B52817bIKHSSgnITEJt/q/E41LJq5SlAr1FcZ
+X-Google-Smtp-Source: AGHT+IHLGIQXkLZux6LSbCvDW6FPEK24Ir2c4mFDudpsdRPS9Pn+YMo+EzV5uv05eEfk+eFqJY9OyH/BHVAMKmUT1R4=
+X-Received: by 2002:a05:6e02:368e:b0:3a7:aa54:ce07 with SMTP id
+ e9e14a558f8ab-3a9f9d277d3mr502585ab.22.1733862121707; Tue, 10 Dec 2024
+ 12:22:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209134459.27110-1-ansuelsmth@gmail.com>
+References: <20241113165558.628856-1-irogers@google.com> <CAP-5=fWK-eeDEvE4+LeeScbHFecmc5+H8WB_5fepfrJJLZsF0Q@mail.gmail.com>
+ <Z1dS6HrfkVS4OeZz@x1> <CAP-5=fUze9j8etq-17L0dWVoYfE-bA+61wrEAXN9vJSCj9dCbw@mail.gmail.com>
+ <Z1g-8ggHQ8MoVNhx@x1> <Z1iTtJcMMsuwI0JX@x1> <CAP-5=fXN-KaVnyciw-YBauS=QSWfi36Aan9eGu1xFV57MDcnNA@mail.gmail.com>
+ <Z1idV3K4RxLdMhT_@x1> <Z1ieEX22EyS-v36o@x1>
+In-Reply-To: <Z1ieEX22EyS-v36o@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 10 Dec 2024 12:21:49 -0800
+Message-ID: <CAP-5=fX5U3rWnSd6BhPq31b48tJb62i4kEYJrf+jeMnNZrL2OQ@mail.gmail.com>
+Subject: Re: [PATCH v1] perf jevents: Fix build issue in '*/' in event descriptions
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Xu Yang <xu.yang_2@nxp.com>, Benjamin Gray <bgray@linux.ibm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 02:44:17PM +0100, Christian Marangi wrote:
-> TEST: lan2: 1588v2 over IPv4, Sync                                  [FAIL]
->         reception failed
-> TEST: lan2: 1588v2 over IPv4, Follow-Up                             [FAIL]
->         reception failed
-> TEST: lan2: 1588v2 over IPv4, Peer Delay Request                    [FAIL]
->         reception failed
-> TEST: lan2: 1588v2 over IPv6, Sync                                  [FAIL]
->         reception failed
-> TEST: lan2: 1588v2 over IPv6, Follow-Up                             [FAIL]
->         reception failed
-> TEST: lan2: 1588v2 over IPv6, Peer Delay Request                    [FAIL]
->         reception failed
-> TEST: VLAN upper: 1588v2 over L2 transport, Follow-Up               [FAIL]
->         reception failed
-> TEST: VLAN upper: 1588v2 over IPv4, Sync                            [FAIL]
->         reception failed
-> ;TEST: VLAN upper: 1588v2 over IPv4, Follow-Up                       [FAIL]
->         reception failed
-> TEST: VLAN upper: 1588v2 over IPv4, Peer Delay Request              [FAIL]
->         reception failed
-> TEST: VLAN upper: 1588v2 over IPv6, Sync                            [FAIL]
->         reception failed
-> TEST: VLAN upper: 1588v2 over IPv6, Follow-Up                       [FAIL]
->         reception failed
-> TEST: VLAN upper: 1588v2 over IPv6, Peer Delay Request              [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv4, Sync   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv4, Follow-Up   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv4, Peer Delay Request   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv6, Sync   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv6, Follow-Up   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv6, Peer Delay Request   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv4, Sync   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv4, Follow-Up   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv4, Peer Delay Request   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv6, Sync   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv6, Follow-Up   [FAIL]
->         reception failed
-> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv6, Peer Delay Request   [FAIL]
->         reception failed
+On Tue, Dec 10, 2024 at 12:01=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Tue, Dec 10, 2024 at 04:58:19PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Dec 10, 2024 at 11:24:28AM -0800, Ian Rogers wrote:
+> > > On Tue, Dec 10, 2024 at 11:17=E2=80=AFAM Arnaldo Carvalho de Melo
+> > > > On Tue, Dec 10, 2024 at 10:15:30AM -0300, Arnaldo Carvalho de Melo =
+wrote:
+> > > > > Probably best to have big patches via perf-tools-next at this poi=
+nt in
+> > > > > time.
+> > > >
+> > > > I'm seeing this after applying:
+> > > >
+> > > > /home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py:434=
+: SyntaxWarning: invalid escape sequence '\*'
+> > > >   return s.replace('*/', '\*\/')
+> > >
+> > > It likely needs to be:
+> > > ```
+> > > return s.replace('*/', r'\*\/')
+> > > ```
+> > > note the r. Could you test for me?
+> >
+> > Sure.
+>
+> Yeah, no more warning, thanks, fixed it up.
 
-Why do these fail? They are dropped on transmit? Could you see with
-ethtool -S where they are dropped? (DSA conduit, CPU port or user port)
-
-> TEST: VLAN over vlan_filtering=1 bridged port: Unicast IPv4 to unknown MAC address   [FAIL]
->         reception succeeded, but should have failed
-> TEST: VLAN over vlan_filtering=1 bridged port: Unicast IPv4 to unknown MAC address, allmulti   [FAIL]
->         reception succeeded, but should have failed
-
-It is unexpected that these fail. The vlan_over_bridged_port() selftest
-sets has_unicast_flt to true or false, depending on whether the driver
-declares IFF_UNICAST_FLT, and depending on that, sets the expectation on
-whether unknown packets should be received.
-
-There may be a bug in the selftest, but I doubt it.
-
-I haven't looked at the patches yet, but from this behavior, it looks
-like you mechanically satisfied the requirements of dsa_switch_supports_uc_filtering()
-such that DSA will set IFF_UNICAST_FLT, but host addresses aren't
-actually correctly handled, or CPU flooding isn't turned off when it
-should (ds->ops->port_set_host_flood?).
-
-> TEST: FDB entry in PVID for VLAN-tagged with other TPID             [FAIL]
->         FDB entry was not learned when it should
-> TEST: Reception of VLAN with other TPID as untagged                 [FAIL]
->         Packet was not forwarded when it should
-> TEST: Reception of VLAN with other TPID as untagged (no PVID)       [FAIL]
->         Packet was forwarded when should not
-
-We discussed off-list about this, a special configuration needs to exist
-to consider as VLAN-tagged only those packets with TPID == bridge vlan_protocol
-(i.e. 802.1Q).
+Thanks for your help!
+Ian
 
