@@ -1,184 +1,114 @@
-Return-Path: <linux-kernel+bounces-439295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BC89EAD55
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:59:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B379EAD5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD32C188E38B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A39451887599
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96479226520;
-	Tue, 10 Dec 2024 09:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8908D23DEB0;
+	Tue, 10 Dec 2024 09:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bhAYBPqK"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KYRNUWD1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9103B2153F5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A5923DEA9;
+	Tue, 10 Dec 2024 09:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733824414; cv=none; b=kGOVnYcSh4DuLZQ67FmSFhFVE7Qh1+g3Qbs9g53+gYH/UQtzdu49SUESF4qUiplpt1cLIHjNzGaTxP71c3m07VwiHIIiawsjErepXpE11kTS8/sw4JUJehAVlUwEFYuDbMMJI9u84QHfehNDS5ZgeftPuR3IqrA7plTYaKWzYuQ=
+	t=1733824546; cv=none; b=V5j1gshw5HsPCLGDEhEREW0GJIug0dNr71vdZ9ktjryvVs5F02CPmFxEwzDIBCN804n/8+TBUwhOaT/2aiQKo3arGMnJlQ+J6fRyIJpJ2VlE92J4MYFekb7Kv37kH+GzflKjLT9/IW/v99C/DUhlwvn4qrxW2y58Io4ex/Vc/uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733824414; c=relaxed/simple;
-	bh=f2wXsLu93ld7H5hW2vfOqoFIUWvM4bM6iQGQZM3hGLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=TsgU779ybLWfMUs3gphNqMHu5XDoJsgtFtZAZmwpC+KsY5C9wofq79UXcgucF3ikI3DnwxlCm+R9YSFQcLvpdJbnAPcbYAYVIiHzNw95hxSbbuk+9p+c69U1AB4LIRwdaNUzSBPG/4RspGqcJsDlmYYJ59Fz2iM3LZ/AVOhTa+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bhAYBPqK; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241210095329epoutp035bcd2e260269e50543269926dd31b615~PyB0zLs0Z0765007650epoutp03K
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:53:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241210095329epoutp035bcd2e260269e50543269926dd31b615~PyB0zLs0Z0765007650epoutp03K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733824409;
-	bh=Au+as8CBZsENQNOVCtoyLwjUW/xu13aSSffNENYc9/8=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=bhAYBPqKAxcqjBIUnoYjaqYNVklyTd9ERldvwTexbyv++egJNM3TN64hxTaGRClnt
-	 hgOCjLmLrXb3URwYTGrOVvrPbnq0eb66kJeqWej207utU0n7GEq+KQ8VNej3sVIzHa
-	 sx8FKF5al7hl/yKYAFmmsrJyfJE9KEDzHhcmuZIA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241210095328epcas5p12771ea8fe08eb534f608317b315752ad~PyB0LS3NP3223232232epcas5p1E;
-	Tue, 10 Dec 2024 09:53:28 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y6vF31Pjsz4x9Q2; Tue, 10 Dec
-	2024 09:53:27 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5B.39.29212.69F08576; Tue, 10 Dec 2024 18:53:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241210095325epcas5p47339f18d446e8da3efa84bbf3c9e10e5~PyBxudcuU2137121371epcas5p4J;
-	Tue, 10 Dec 2024 09:53:25 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241210095325epsmtrp23baf7b30fd10f3a2528d0145247ec01e~PyBxthtCA1022410224epsmtrp2C;
-	Tue, 10 Dec 2024 09:53:25 +0000 (GMT)
-X-AuditID: b6c32a50-801fa7000000721c-d7-67580f96b568
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	06.3F.18729.59F08576; Tue, 10 Dec 2024 18:53:25 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241210095323epsmtip260b68af7f4d84985d469d96fa5179354~PyBvP-Ak21208112081epsmtip2A;
-	Tue, 10 Dec 2024 09:53:23 +0000 (GMT)
-Message-ID: <6b3b314e-20a3-4b3f-a3ab-bb2df21de4f5@samsung.com>
-Date: Tue, 10 Dec 2024 15:23:22 +0530
+	s=arc-20240116; t=1733824546; c=relaxed/simple;
+	bh=nJvw8OjgEfN86aZGgvHDSYHwGzHylDy7C1ifR7QfabE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GA+9sMAWtFq70PILmv6+qW/ZJ6ogphX39KpSTSAukyZ6nM1XI4Oy1rB3iMn9ePJ7ImvzPJ7Ouo44o6boC5REwHfcUcndc2grHTMtCxOv6ko62HMUQIeIIZko0IRM1n5cd9AVe5pu0QbDzHDjyXVklZGQ2mXiu9/xkCsUSpiKdcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KYRNUWD1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C97DC40E0288;
+	Tue, 10 Dec 2024 09:55:32 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id JYr7ihBQ9jxY; Tue, 10 Dec 2024 09:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733824528; bh=wjgFwGsPBT2Mronz4LGT7zyGe+vQt8dAgKVmYFnOZoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KYRNUWD1trLp7EMo7r1jxdZIujeof4zX5hFzGIjutWgJVzAsBVYEPrPM/bU1vK/1Y
+	 ep41Jy1zCPRW4ppWLkYuY36XFrXIk0VsN8SksyZZaV9q286fjJbHfVchMepL7uAWvn
+	 2AEoDUEEqFbgJjTUWI73rCXIaGWKbXHffeivj1PyUIoMvhk4Ya0xQVm1lXHZGywTRi
+	 uybARW2gn/1P8va68mo61RnVgMAvbg+fCZ5eC3njfPUGm95I5z2h2W9/AikvQHJPg7
+	 dkU0O5UVUeAaYnnHgloeVUDv2dWa3VQx2JwgiSAwJGGDIz604r5jAOLTyPONvOH8dP
+	 IZQeBsEb51CLMFLYhCIVCVTk/ugvCAvYicFH4HzU3iEyUk5FMFrspNmZi/K0N6cbZU
+	 dhwhXLlKTfPe9nky/Q1IOJX/Pu9vWMEl13mwcuUSeL/RYjJo0WCDbl+x5wwVlAGc/6
+	 t/ilvAv5VqJaW+OtqKi6Jtk1DjW+ha9ziP66fme4mr16qhYUGwyD4lwh1Y5aRkSkZi
+	 OAcopP1DNku+gJJnbGOS8UQE8mlKWDu9HaEL/gnweHbU2qboHQ76QSovHqmPizgbva
+	 5a0Af5/eA/tHR8sNBHC70nXDuAgx1C8/dfx/AjzkZ4AlNg+nW/nXMr7k6t/v0/54Z/
+	 tcWI8zLOC37uecR5fdAddPA0=
+Received: from zn.tnic (p200300ea971f9307329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 45B5B40E0277;
+	Tue, 10 Dec 2024 09:55:24 +0000 (UTC)
+Date: Tue, 10 Dec 2024 10:55:17 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yazen.ghannam@amd.com
+Subject: Re: [PATCH] EDAC/amd64: Fix possible module load failure on some UMC
+ usage combinations
+Message-ID: <20241210095517.GAZ1gQBcS2BKA30-GO@fat_crate.local>
+References: <20241209215636.2744733-1-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded
- issue during MIDI bind retries
-To: gregkh@linuxfoundation.org, quic_jjohnson@quicinc.com, kees@kernel.org,
-	abdul.rahim@myyahoo.com, m.grzeschik@pengutronix.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
-	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
-	alim.akhtar@samsung.com, stable@vger.kernel.org
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <20241208152322.1653-1-selvarasu.g@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wbZRjed3e9Hgzk6KB8YiJdE0yKgfVcC4cpjDCEZjSBhJRM44QLvRSk
-	tE1bdBBiQAcTVn66wEbYZDiYlm0IFhDsWCgpTNycivoHSmk3wsYE3A8cLoDacqj897xPnvfH
-	877fR6CCWTySKNJbWJOe0YnxQGxoQiKJbQs5qpXWegHd1trPo5d/svFoz/khnP61sxWhpy9d
-	QOgPPunD6RbHIEbPef/E6Ksrt3n0zGgHTnf1VKO0veZHhH7s+ptHV9nneLSttgOjZ9ZHULqz
-	/w6gW8bDUwTKAVstrrx+7jJfOXl/iq9s3JIqmx3vKRvsNqB8MvBiNv+NYkUhy2hYk4jVFxg0
-	RXptkjgzJ+9wnjxeSsVSiXSCWKRnStgkcZoqOza9SOczIRa9w+hKfVQ2YzaLDyQrTIZSCysq
-	NJgtSWLWqNEZZcY4M1NiLtVr4/Ss5VVKKn1F7hPmFxcuVb5mHA05fs+7CSqBO6gOBBCQlMFb
-	J1uxOhBICEgHgFtjV3hc8BjAU3cvAS54CuDmoMcnI7ZTusde5/hrALqtHpwLVgCcvFLJ99cN
-	JpPhdye6UT/GyGi44KjGOT4Ufn12AfPjcDIKzs+e2dbvI4vgH211293C/HPcctv5/gAlrQi0
-	Phzn+VUoGQFnFz5G/GPgJAUXbyj8dACpgC1L3QgniYLDKx2oPxeSywRc/n0AcE7ToGfShXJ4
-	H3wwZedzOBI+Wb2Gc7gAOlrWdvhC6LQ5d/SHYG/nTZ6/L0pKYN/oAa7Xc7B+YwHhthIMP6wR
-	cOpoOF01s1PxBei++DOPw0o4XbPO55bVCOBH7f1IExC179pL+y6X7bvstP/fuRNgNhDJGs0l
-	WrZAbqRi9ey7/128wFAyALYfeUz2l6D38604J0AI4ASQQMVhwUSmWisI1jBl5azJkGcq1bFm
-	J5D7LtSMRoYXGHy/RG/Jo2SJUll8fLws8WA8JY4I/q36nEZAahkLW8yyRtb0bx5CBERWIgw1
-	Gw3e5qdjmfvD7vHJNSt/Zv9VRqW6vipVn/9UteVuXO/aW3YyWXE/7a5C/vT7MmJ+8ODY7bEb
-	KUTOnbX31aHCr4Tzw6L0z3pPewWThxQdoUPqwYoMYUJPU6y54uKFJWGKEGa99FCl3XDmbwY1
-	fPNI5ekn38wtU4UkxuHl43vsz6f2h/UJn3kbb1ZUTuUKTkSNLza/NZeQsYZPTOzNdS0es9Sn
-	/rWhri7WZHl+sQe6JAHlEZT0UU7MD64eXsPLw66u1pXS+eOnjzVJquwZ+V2XdbI97iNfdJTE
-	LaaeqjnS9SArKMQqyB3ZOqONqFLX0yLJtz3PVnOoQGzk8NFRMWYuZKgY1GRm/gHosdzCbQQA
-	AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsWy7bCSvO5U/oh0g3+PzSymT9vIavHm6ipW
-	iwfztrFZ3Fkwjcni1PKFTBbNi9ezWUzas5XF4u7DHywW696eZ7W4vGsOm8WiZa3MFlvarjBZ
-	fDr6n9WicctdVotVnXNYLC5/38lssWDjI0aLSQdFHYQ8Nq3qZPPYP3cNu8exF8fZPfr/GnhM
-	3FPn0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBkvG1wLdvFXPH/4h7GB8R5PFyMHh4SAicTS
-	fZFdjFwcQgK7GSU6lq9l72LkBIpLS7ye1cUIYQtLrPz3nB2i6DWjxJrmj2wgCV4BO4kLLUuZ
-	QWwWAVWJJ3taoeKCEidnPmEBsUUF5CXu35oBNlRYIFPi3qmZbCCDRAT2AG1794AFxGEW6GGS
-	uL7mMRvEin5GiTsHv4GNYhYQl7j1ZD4TyK1sAoYSz07YgIQ5BWwkJr1cygRRYibRtRXiVGag
-	bdvfzmGewCg0C8khs5BMmoWkZRaSlgWMLKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3
-	MYJjVktzB+P2VR/0DjEycTAeYpTgYFYS4eXwDk0X4k1JrKxKLcqPLyrNSS0+xCjNwaIkziv+
-	ojdFSCA9sSQ1OzW1ILUIJsvEwSnVwLR2enIT06wLsW8PlPDlbWILDEl6fvlNTewKm0/N/5+K
-	aszaX7jU8/OuBb/1O951yJ/bXl90Vqx/0dxje7JPL5zTl7Ir8u60bcyXD3nfr3n17pTQl2+N
-	hpILkyb5S9+K32vpfGTe7aZla3heneTViuJ1OBIrP7WVf0ZVaf3ET4wJ2x9tat20KL5jT7fn
-	mYkNEwwjJ9hOOl3xLVJB49L/y3cEF3RmO95wV5Fhvr6uXfy0L8NEPtmsww8ONM2NkgzVyLyU
-	NbvsxbywPVJsOx03vZpZ87T7ye9wLw7z6+m7U27a/b0Y+8Io9vzeaBvWnybvDHg+TNoS8Xvv
-	u+M1fLL7Q5lvP+pvCj4U/58j1bC4ULdDiaU4I9FQi7moOBEAtyi3QkgDAAA=
-X-CMS-MailID: 20241210095325epcas5p47339f18d446e8da3efa84bbf3c9e10e5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241208152338epcas5p4fde427bb4467414417083221067ac7ab
-References: <CGME20241208152338epcas5p4fde427bb4467414417083221067ac7ab@epcas5p4.samsung.com>
-	<20241208152322.1653-1-selvarasu.g@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241209215636.2744733-1-avadhut.naik@amd.com>
 
-Hello Maintainers.
+On Mon, Dec 09, 2024 at 09:55:10PM +0000, Avadhut Naik wrote:
+> Starting Zen4, AMD SOCs have 12 Unified Memory Controllers (UMCs) per
+> socket.
+> 
+> When the amd64_edac module is being loaded, these UMCs are traversed to
+> determine if they have SdpInit (SdpCtrl[31]) and EccEnabled (UmcCapHi[30])
+> bits set and create masks in umc_en_mask and ecc_en_mask respectively.
+> 
+> However, the current data type of these variables is u8. As a result, if
+> only the last 4 UMCs (UMC8 - UMC11) of the system have been utilized,
+> umc_ecc_enabled() will return false. Consequently, the module may fail to
+> load on these systems.
+> 
+> Change the data type of these variables to u16.
 
-Gentle remainder for review.
-
-Thanks,
-Selva
-
-
-On 12/8/2024 8:53 PM, Selvarasu Ganesan wrote:
-> The current implementation sets the wMaxPacketSize of bulk in/out
-> endpoints to 1024 bytes at the end of the f_midi_bind function. However,
-> in cases where there is a failure in the first midi bind attempt,
-> consider rebinding. This scenario may encounter an f_midi_bind issue due
-> to the previous bind setting the bulk endpoint's wMaxPacketSize to 1024
-> bytes, which exceeds the ep->maxpacket_limit where configured TX/RX
-> FIFO's maxpacket size of 512 bytes for IN/OUT endpoints in support HS
-> speed only.
-> This commit addresses this issue by resetting the wMaxPacketSize before
-> endpoint claim.
->
-> Fixes: 46decc82ffd5 ("usb: gadget: unconditionally allocate hs/ss descriptor in bind operation")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+No need to explain what the patch does. The "why" is enough.
+ 
+> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
 > ---
->   drivers/usb/gadget/function/f_midi.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
-> index 837fcdfa3840..5caa0e4eb07e 100644
-> --- a/drivers/usb/gadget/function/f_midi.c
-> +++ b/drivers/usb/gadget/function/f_midi.c
-> @@ -907,6 +907,15 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
->   
->   	status = -ENODEV;
->   
-> +	/*
-> +	 * Reset wMaxPacketSize with maximum packet size of FS bulk transfer before
-> +	 * endpoint claim. This ensures that the wMaxPacketSize does not exceed the
-> +	 * limit during bind retries where configured TX/RX FIFO's maxpacket size
-> +	 * of 512 bytes for IN/OUT endpoints in support HS speed only.
-> +	 */
-> +	bulk_in_desc.wMaxPacketSize = cpu_to_le16(64);
-> +	bulk_out_desc.wMaxPacketSize = cpu_to_le16(64);
-> +
->   	/* allocate instance-specific endpoints */
->   	midi->in_ep = usb_ep_autoconfig(cdev->gadget, &bulk_in_desc);
->   	if (!midi->in_ep)
+>  drivers/edac/amd64_edac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+This looks like it needs a CC:stable and a Fixes: tag, right?
+
+While at it, you can simply make those vars int and be done with it.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
