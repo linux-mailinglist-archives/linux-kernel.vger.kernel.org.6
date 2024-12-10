@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-439989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C3B9EB72D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:54:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BC99EB73B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:56:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A3A165BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E8818811F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD00231CA0;
-	Tue, 10 Dec 2024 16:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="wD3UMRxD";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="BPkmprzB"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706252153DC;
-	Tue, 10 Dec 2024 16:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849631; cv=fail; b=d7NVX1RShL0j+jcJR4+fxQbxvnULAHXQGmgiSQ8qXQ/rQnynU89aaItlFXZruLnf1GxAS5gSB8VvRYsrpuUmaTyFhCabLJkk6Jxac+4HqiJxtomVCeoBWseKKE8LcqQV3YppteyoNYEZpi9a2mEAm1xKYXY4eHPmIs+Kpbh0R1w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849631; c=relaxed/simple;
-	bh=PPV/GHXwYA75Qk+vBJmS5CKvRytPVt2P7mQWbvhA7KA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WqBFrZyuvVeRyp//MmDS9SHf9cNbYj3Gfm58ipJADIw2eeXyreSX1pcSqz/TgpicXNved+8oZFnmJ5eigRn3+4J87xHcd7VN3IWtIHnfHgbYwZseDfIcQKVJf9uDkDONRbqao7QPmyScxPcOO/CfTd0YuqiWT9omHqAvFh5oR1c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=wD3UMRxD; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=BPkmprzB; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 2D403480525;
-	Tue, 10 Dec 2024 11:53:49 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733849628;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=PPV/GHXwYA75Qk+vBJmS5CKvRytPVt2P7mQWbvhA7KA=;
- b=wD3UMRxDuXgwaGrlzzvtlsdAYUd6ZthHn7SPY+6HWtZPuNwRQzCh6+vT6KQv4tzwg3GGo
- uv79hJXIqw7QqvSCQ==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733849628;
-	cv=none; b=uKYreAe9nlsKlDkyS3y2eEjNHuEKJP2uKchljXhQbQ8PsoDv9xuLCHdyuA9tkQROru8IyBt9xQmrF+B2iadVVjODM8dzIoVymeaDQf9pJkEZjRHer80/NbTPBoYFU9R2pEdMthyKIUnigeeSSFrYRViiVHmzgC/3YKzL5t3jF83vbpdigi6gTOEVWTu5+65xYBs3wLfYompsMR/7bQgYeZdHHVtEdXTiQECRwpwxbFog87a4cNWKt32jLdGCDIuvHqEYoNVdj6RQ6SCDc6Zmer7O92S0EgNN1A9A9XV0hf4jMaTp4BK0lA99FIW8h+v83OgFUHitdWATzqe75yy8Wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1733849628; c=relaxed/simple;
-	bh=PPV/GHXwYA75Qk+vBJmS5CKvRytPVt2P7mQWbvhA7KA=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=ZNDdmjHEFbnQrxn73CA8+FXO1RhRXZ+SVueJS1DfPUqXhVhkWTiMztqTf2w8LyIsCOadkQ9hQ3TSB8GFYA+rwzjSz0qc/ucy02/L7EBI87KdIjDoYXE1b1wMoRTI5SjiI+8xZD79NMXLS4cnws2tQvbfvHVxUGPMYffD/FgwbDYcgEwma0ojy5JuuLaMpOWvmWWCQtvGImPfbJ2GMDVmHu+wGHir1app/knB4Zscnw0Lla3sEkQiS9SGYPB3S7xM1S7iBt+mQIAEEh0nPZ8zPrRxVxRPDf8fI6sUgfG6KIs1QZHsGZcVVRAMQv4K3wGIc8PmKDnqIQ/RZTQs3z4i4A==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733849628;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=PPV/GHXwYA75Qk+vBJmS5CKvRytPVt2P7mQWbvhA7KA=;
- b=BPkmprzBZOodw8hR206xK5QG40OfcEf8XX3vi3gw8cmATqc1qUi7rNNtm8f4lgHNVmzsj
- 2UBEwTAYxiMlt4IUVP81fdZkP4C9N5pEcW6eg0kenh/llFU9IDIGZ6naP3sYwkvWyNptipy
- 9+fa1dTFi159z2Sv2qPtHdgtZ4avomBPZ30IIBA4xRwX7y8r7APq7JQIoE4hVgkk2O49vIx
- aJBbHf2JybZpQwmSLYahuoRQXZBSd7sN2seGC4PcheiU/uJT7z8coItuRy3jaE2PQ5hMW5T
- wbjS188+U2AON0y53pIRuGfam7BvGVFJ2X/1lp8dBNQiHfErCBt4ce85gN1A==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id DAD31280015;
-	Tue, 10 Dec 2024 11:53:48 -0500 (EST)
-Message-ID: <d42a3c2b47fbcce8be3c4aa613451ce431c281a8.camel@sapience.com>
-Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
-From: Genes Lists <lists@sapience.com>
-To: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>, Greg
- Kroah-Hartman	 <gregkh@linuxfoundation.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Sakari Ailus	
- <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	akpm@linux-foundation.org, torvalds@linux-foundation.org,
- stable@vger.kernel.org, 	linux-media@vger.kernel.org, bingbu.cao@intel.com,
- Rodrigo Vivi	 <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>,  Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Date: Tue, 10 Dec 2024 11:53:48 -0500
-In-Reply-To: <Z1hbyNXUubokloda@linux.intel.com>
-References: <2024120917-vision-outcast-85f2@gregkh>
-	 <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
-	 <Z1fqitbWlmELb5pj@kekkonen.localdomain> <87seqvzzg6.fsf@intel.com>
-	 <c1805642a6c5da6fef3927c70358c8cb851d2784.camel@sapience.com>
-	 <87bjxjzpwn.fsf@intel.com> <2024121001-senator-raffle-a371@gregkh>
-	 <Z1hbyNXUubokloda@linux.intel.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-bHGp4P46otAfPh8D5/ik"
-User-Agent: Evolution 3.54.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BA9231C8C;
+	Tue, 10 Dec 2024 16:56:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7E81BD004
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733849793; cv=none; b=piuLBPZiiR6QgoQ5v3DgSBb2TPkdhvFrERtRKxBJtKG51GkKohZkI0u8Cd/mffVsUKpGq1UFwn0V2BpJpHHvZJnzGooo7Z60u9flvxLdTYGbQoxyOQdMLQd+fLqi8Of7HgIzwSG9NoAfpijgnFiNirOX9X9XOafmvKNZ8NcDxPU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733849793; c=relaxed/simple;
+	bh=nf893GV9pe9ICJS5zpYSXpY52UVhEnchtBK7YZAzJ+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4F/rg0pilTPAaK7BVhLmkPp9m6yUPleKQwkht89NCIuSZx9e/MSNEq4gbaY+YIr0eE2JzkYCaNNDBqVwon0VwU7kPLJ81F9Vs1TrZuXueUp5p0jjViGDqxBnv4NCBRWq4fvIn4oXo5w0KzFJmxdRZ/eep4I0s9UN/yK+UZPqOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A69091007;
+	Tue, 10 Dec 2024 08:56:58 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 917773F58B;
+	Tue, 10 Dec 2024 08:56:28 -0800 (PST)
+Date: Tue, 10 Dec 2024 16:56:25 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev
+Subject: Re: [PATCH V2 5/7] arm64/cpufeature: Add field details for
+ ID_AA64DFR1_EL1 register
+Message-ID: <Z1hyueAQJTroNIRW@J2N7QTR9R3>
+References: <20241028053426.2486633-1-anshuman.khandual@arm.com>
+ <20241028053426.2486633-6-anshuman.khandual@arm.com>
+ <20241210164144.GA16039@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210164144.GA16039@willie-the-truck>
 
+On Tue, Dec 10, 2024 at 04:41:44PM +0000, Will Deacon wrote:
+> On Mon, Oct 28, 2024 at 11:04:24AM +0530, Anshuman Khandual wrote:
+> > +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
+> > +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
+> > +	ARM64_FTR_END,
+> > +};
+> 
+> I think I mentioned this on an earlier series, but it would be useful to
+> see some justification in the commit message as to why some of these
+> features are considered STRICT vs NONSTRICT and why LOWER_SAFE is
+> preferred over EXACT.
+> 
+> For example, why is EBEP strict whereas other PMU-related fields aren't?
+> Why is the CTX_CMPs field treated differently to the same field in DFR0?
+> 
+> I'm not saying the above table is wrong, it just looks arbitrary without
+> the justification.
 
---=-bHGp4P46otAfPh8D5/ik
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+FWIW, Anshuman and I discussed that on the v1 thread, after this v2
+thread was posted. Anshuman promised to provide some rationale and make
+some updates in the next version (i.e. v3):
 
-On Tue, 2024-12-10 at 16:18 +0100, Stanislaw Gruszka wrote:
->=20
-> The problem will disappear after applying:
-> https://lore.kernel.org/stable/20241209175416.59433-1-
-> stanislaw.gruszka@linux.intel.com/
-> since the allocation will not longer fail.
->=20
-> ...
-> Regards
-> Stanislaw
+  https://lore.kernel.org/linux-arm-kernel/8efe902c-8b9f-494a-b9da-430d8ced32ef@arm.com/
 
-I confirm that (6.12.4 + above patch) now boots without problems.
-
-Thank you for sorting it out.
-
-
-
---=20
-Gene
-
-
---=-bHGp4P46otAfPh8D5/ik
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1hyHAAKCRA5BdB0L6Ze
-22qyAQCiow8EKie6x4WLJm79+9e46CEZ9gd5lJR0bGTh39txpQEAx4xNEdphp9mz
-xnLYva4vWbPImT2BELnv4B97Yw8B6QU=
-=+KY4
------END PGP SIGNATURE-----
-
---=-bHGp4P46otAfPh8D5/ik--
+Mark.
 
