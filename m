@@ -1,286 +1,174 @@
-Return-Path: <linux-kernel+bounces-439322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A329EADA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:11:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6021883777
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:11:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB5623DEA6;
-	Tue, 10 Dec 2024 10:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="NP0seO6Z"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E0D9EADAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:12:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0635623DE8B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5001A283C47
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:12:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44A423DEBE;
+	Tue, 10 Dec 2024 10:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g/WW6Ko4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49DE23DE8B;
+	Tue, 10 Dec 2024 10:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825486; cv=none; b=eW7WjfYdTl+n515xSKFKYLVObqI96m/LAiBl29VA+1ELzF702Y6eqAFoY2sAL4uVxWjQad5TXgIxMmOs4w1xI7+ok3kFO2RuVgOzRzmwSbwxJRMdCU0FYRnHPX7VcIdSfqt38nTLPOY/spjHwoIJLA775xNtzF/hmEia3IpQ7d0=
+	t=1733825543; cv=none; b=dXIr59GAvzJSzusTQDNXusw0ebMEkpsJKArwGBfxtccp6O9FniUNCFF290kY6oEmI61ROe2J1Jv/W6k5EIIh8plJMMIGsuBZfiUE5kOjDXXwrX8fNYyUvWFGGK2fa0wf0DR8S5CBpX0XVcgpLb+6xZ+ajGD9zVbu9TKVR0O8Hfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825486; c=relaxed/simple;
-	bh=Is04EpUqny47P+McpfOwBkWYp5nx/FFC8BY4uWj8p4E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rLm0jvskFge46hk8y4a92jVF8qig8sZD9dy3vGop3Fe2irzfc5KCYLeWv2Hcc1plV5PibWjHgvTVI3HSDZ3KKCqXpZn2Ca17cdshqgax43exYOcwv79EdK/0KMHgEYx5sSbuwaWsYmS+/1VUkR8mlpgFJTwb4Bip8uJXVqnqQLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=NP0seO6Z; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1733825543; c=relaxed/simple;
+	bh=vYg8wU42z6GwnwQ6+y+kBfKrFpVAPNchj09BZz4eGr0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=s0Lj7iWEWRLEClWyft1qeAR6orz0hmtVQK5YBwrDaL8/EN36yOEJQIxea5MPKJhKRt6YwiTtUhLrkDzrjcGVSIxDJkdDpwrjknWoCQgqb3k24V9KeDo2GZI8pWMSblUC1WsFWinbXzFXohZI5D3294ys+abhVWEdGdZ4/+BSxKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g/WW6Ko4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA94bf0014580;
+	Tue, 10 Dec 2024 10:12:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+xSULu1W4jer6gCjVvUYVNZD9AKl7ksD1gp8ZetqYb4=; b=g/WW6Ko4K0egBxut
+	6ATlTnMjlzxR+31CZEPsoOUk4Yr/JJhNEp4g5uVCl4eQQ5eYpmtKPlKD9CPyLP9G
+	sN+jlPgQx5HoVntuAvQLM3DdcgUOZ4LdljB9GouSRP8unETgu9LqshkImXgHhbQU
+	wFWGBJbZI8OcKRun8HQZKOUCts0dPKqbjUsUHXETr5Z5n7CysYdhuKmDOLFbbWXF
+	+rfttMVhJ6MUCqlEVOFfUM09wk3tJyqnBg/cI0qxI29CP5oLsIfo/4r/x4bDULkn
+	mHO2frzqd7hjie7ISfwQtSvJtzC1BdwYiwvOE/BXvQ/mSGTA/j2mg5bxTcO8NB8c
+	XVG3oA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dy8tujgk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 10:12:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAACFwu000891
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 10:12:15 GMT
+Received: from [10.216.28.232] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
+ 2024 02:12:11 -0800
+Message-ID: <aa67ea21-b451-4a1d-b4bf-4912b88c0341@quicinc.com>
+Date: Tue, 10 Dec 2024 15:42:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1733825479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=purajMjFhhk8y5/cpEF3Tr9X2g/M0StBEyNcpYreAGQ=;
-	b=NP0seO6ZkdS2m743DvP2W4u6umphTKJ3vID18ZeBxSHPY0Yo3J+7mkFKSH269V5fr3hvZm
-	T74G377FYPbEDDgtfloYV/kw0OgMQ4wg5UvqGE2V4MaK5sHQZUXBOyaULdn1jfyo/puj2c
-	8Xvj6JMIPwRply5w+fCIm6ZhRmwKpYxZ1e8npoBeJ5zXiEL4V9tkjU1oMrM1zMlh3TcH9x
-	L3BssV0fnPQ8De/3uBS8KENaNxj73YxspCuc3EcZZyUcqlvizwXohOgG10PCmcmoPVZ+q+
-	/0SJNDbGqwoS6ulAFy7hF/4UPKWXILs8u7EVdclE8QdaYJ82hC7QXLG+Ga0hgQ==
-Content-Type: multipart/signed;
- boundary=f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Tue, 10 Dec 2024 11:11:09 +0100
-Message-Id: <D67XU0SO4U6D.2GTDZE4V7RK0J@cknow.org>
-Cc: <kernel@collabora.com>, <linux-kernel@vger.kernel.org>,
- <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <dmitry.osipenko@collabora.com>,
- "Sebastian Reichel" <sebastian.reichel@collabora.com>, "AngeloGioacchino
- Del Regno" <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v5 2/4] dt-bindings: media: Document bindings for HDMI
- RX Controller
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Shreeya Patel" <shreeya.patel@collabora.com>, <heiko@sntech.de>,
- <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
- <p.zabel@pengutronix.de>, <jose.abreu@synopsys.com>,
- <nelson.costa@synopsys.com>, <shawn.wen@rock-chips.com>,
- <nicolas.dufresne@collabora.com>, <hverkuil@xs4all.nl>,
- <hverkuil-cisco@xs4all.nl>
-References: <20241209200120.3228643-1-shreeya.patel@collabora.com>
- <01020193ad040150-e0cf3371-115b-469e-840e-4fa97af5b207-000000@eu-west-1.amazonses.com>
-In-Reply-To: <01020193ad040150-e0cf3371-115b-469e-840e-4fa97af5b207-000000@eu-west-1.amazonses.com>
-X-Migadu-Flow: FLOW_OUT
-
---f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-Hi,
-
-On Mon Dec 9, 2024 at 9:02 PM CET, Shreeya Patel wrote:
-> Document bindings for the Synopsys DesignWare HDMI RX Controller.
->
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> ---
->
-> Changes in v5 :-
-> - Correct the interrupt IRQ number
->
-> Changes in v4 :-
-> - No change
->
-> Changes in v3 :-
-> - Rename hdmirx_cma to hdmi_receiver_cma
-> - Add a Reviewed-by tag
->
-> Changes in v2 :-
-> - Add a description for the hardware
-> - Rename resets, vo1 grf and HPD properties
-> - Add a proper description for grf and vo1-grf phandles
-> - Rename the HDMI Input node name to hdmi-receiver
-> - Improve the subject line
-> - Include gpio header file in example to fix dt_binding_check failure
->
->  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-=
-rx.yaml
->
-> diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml=
- b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
-> new file mode 100644
-> index 000000000000..510e94e9ca3a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
-> @@ -0,0 +1,132 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
-> +
-> +---
-> +$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Synopsys DesignWare HDMI RX Controller
-> +
-> +maintainers:
-> +  - Shreeya Patel <shreeya.patel@collabora.com>
-> +
-> +description:
-> +  Synopsys DesignWare HDMI Input Controller preset on RK3588 SoCs
-
-s/preset/present/ ?
-
-> +  allowing devices to receive and decode high-resolution video streams
-> +  from external sources like media players, cameras, laptops, etc.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: rockchip,rk3588-hdmirx-ctrler
-> +      - const: snps,dw-hdmi-rx
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 3
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: cec
-> +      - const: hdmi
-> +      - const: dma
-> +
-> +  clocks:
-> +    maxItems: 7
-> +
-> +  clock-names:
-> +    items:
-> +      - const: aclk
-> +      - const: audio
-> +      - const: cr_para
-> +      - const: pclk
-> +      - const: ref
-> +      - const: hclk_s_hdmirx
-> +      - const: hclk_vo1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 4
-> +
-> +  reset-names:
-> +    items:
-> +      - const: axi
-> +      - const: apb
-> +      - const: ref
-> +      - const: biu
-> +
-> +  memory-region:
-> +    maxItems: 1
-> +
-> +  hpd-gpios:
-> +    description: GPIO specifier for HPD.
-> +    maxItems: 1
-> +
-> +  rockchip,grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      The phandle of the syscon node for the general register file
-> +      containing HDMIRX PHY status bits.
-> +
-> +  rockchip,vo1-grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      The phandle of the syscon node for the Video Output GRF register
-> +      to enable EDID transfer through SDAIN and SCLIN.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - resets
-> +  - pinctrl-0
-> +  - hpd-gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/power/rk3588-power.h>
-> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
-> +    hdmi_receiver: hdmi-receiver@fdee0000 {
-> +      compatible =3D "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdmi-rx";
-> +      reg =3D <0xfdee0000 0x6000>;
-> +      interrupts =3D <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                   <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                   <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
-> +      interrupt-names =3D "cec", "hdmi", "dma";
-> +      clocks =3D <&cru ACLK_HDMIRX>,
-> +               <&cru CLK_HDMIRX_AUD>,
-> +               <&cru CLK_CR_PARA>,
-> +               <&cru PCLK_HDMIRX>,
-> +               <&cru CLK_HDMIRX_REF>,
-> +               <&cru PCLK_S_HDMIRX>,
-> +               <&cru HCLK_VO1>;
-> +      clock-names =3D "aclk",
-> +                    "audio",
-> +                    "cr_para",
-> +                    "pclk",
-> +                    "ref",
-> +                    "hclk_s_hdmirx",
-> +                    "hclk_vo1";
-> +      power-domains =3D <&power RK3588_PD_VO1>;
-> +      resets =3D <&cru SRST_A_HDMIRX>, <&cru SRST_P_HDMIRX>,
-> +               <&cru SRST_HDMIRX_REF>, <&cru SRST_A_HDMIRX_BIU>;
-> +      reset-names =3D "axi", "apb", "ref", "biu";
-> +      memory-region =3D <&hdmi_receiver_cma>;
-> +      pinctrl-0 =3D <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdm=
-im1_rx_sda &hdmirx_5v_detection>;
-> +      pinctrl-names =3D "default";
-> +      hpd-gpios =3D <&gpio1 22 GPIO_ACTIVE_LOW>;
-
-I just found out it isn't documented in the DTS coding style and that
-the binding is technically not specifically for a Rockchip based
-component, but there is a convention to sort the node properties
-alpha-numerically by property name, with some exceptions.
-
-So would it be useful to apply that convention to the example?
-And possibly to the list of required properties as well?
-
-Cheers,
-  Diederik
-
-> +    };
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: snps,dwc3: Add
+ snps,filter-se0-fsls-eop quirk
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Uttkarsh Aggarwal
+	<quic_uaggarwa@quicinc.com>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
+References: <20241017114055.13971-1-quic_uaggarwa@quicinc.com>
+ <20241017114055.13971-2-quic_uaggarwa@quicinc.com>
+ <gclvciv5cmrcut6qvo3kh3ycutqt5sot5k4i2nwics6myhuxvq@cf6ajwflxdlc>
+ <1129e0a7-6bd0-416e-8c56-6b8d75600c4e@quicinc.com>
+ <f9f66565-6356-4b61-8653-1e9c006b892c@kernel.org>
+ <99810132-85b6-45ee-9933-7a00c3672c47@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <99810132-85b6-45ee-9933-7a00c3672c47@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UY41v4HwgMP5vdunX35jyK2vr4GVxLh2
+X-Proofpoint-GUID: UY41v4HwgMP5vdunX35jyK2vr4GVxLh2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=733 clxscore=1015 mlxscore=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412100076
 
 
---f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+On 11/20/2024 2:53 PM, Krishna Kurapati wrote:
+> 
+> 
+> On 11/7/2024 3:25 PM, Krzysztof Kozlowski wrote:
+>> On 07/11/2024 07:17, Krishna Kurapati wrote:
+>>>
+>>>
+>>> On 10/18/2024 11:57 AM, Krzysztof Kozlowski wrote:
+>>>> On Thu, Oct 17, 2024 at 05:10:54PM +0530, Uttkarsh Aggarwal wrote:
+>>>>> Adding a new 'snps,filter-se0-fsls-eop quirk' DT quirk to dwc3 core 
+>>>>> to set
+>>>>> GUCTL1 BIT 29. When set, controller will ignore single SE0 glitch 
+>>>>> on the
+>>>>> linestate during transmission. Only two or more SE0 is considered as
+>>>>> valid EOP on FS/LS port. This bit is applicable only in FS in 
+>>>>> device mode
+>>>>> and FS/LS mode of operation in host mode.
+>>>>
+>>>> Why this is not device/compatible specific? Just like all other quirks
+>>>> pushed last one year.
+>>>
+>>> Hi Krzysztof,
+>>>
+>>>    Apologies for a late reply from our end.
+>>>
+>>>    In DWC3 core/dwc3-qcom atleast, there have been no compatible 
+>>> specific
+>>> quirks added.
+>>
+> 
+> Sorry again for late reply.
+> 
+>> Nothing stops from adding these, I think.
+>> >
+> Agree, we can take that approach of adding soc specific compatibles to 
+> dwc3 driver instead of adding through bindings.
+> 
+>>> Also since this is a property of the Synopsys controller
+>>> hardware and not QC specific one, can we add it in bindings itself.
+>>> Because this is a property other vendors might also use and adding it
+>>> via compatible might not be appropriate.
+>>
+>> This does no answer my question. I don't see how this is not related to
+>> one specific piece of SoC.
+>>
+>> If you claim this is board-related, not SoC, give some arguments.
+>> Repeating the same is just no helping.
+>>
+> 
+> But my point was that although the issue was found only on some QC 
+> SoC's, the solution still lies in some bits being set in controller 
+> register space and it is part of Synopsys IP. So wouldn't officially we 
+> add that support in bindings and then enable/disable the feature via DT 
+> like we did for other quirks ? If many SoC's need it in future, the 
+> driver needs to add a long list of compatible specific data which 
+> otherwise might be quirks in DT.
+> 
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ1gTwQAKCRDXblvOeH7b
-bsFZAP9ah94RpYjb318hSsjAUcVveSXQNnXUQZtSOiciapqPPwD9HrzGbq5DsPOY
-Dbp0/AwZTuRb8GPhxezjlT57mTULfAc=
-=kg+g
------END PGP SIGNATURE-----
+Hi Krzysztof,
 
---f3aa349fa658de3c6bc38a403667b8482bead4ff85b9abcb6690bf442bc1--
+  Gentle ping to provide your feedback on the last comment.
+
+Regards,
+Krishna,
 
