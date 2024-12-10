@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-439369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5150A9EAE33
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:46:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C27B9EAE82
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:49:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258B21888E9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DDE28371A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA69B12E4A;
-	Tue, 10 Dec 2024 10:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C792212D70;
+	Tue, 10 Dec 2024 10:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="XJbG1lW0"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fRXaVym6"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D98A1DC982;
-	Tue, 10 Dec 2024 10:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBF22080C3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733827555; cv=none; b=NjDXQ4GCgM+YRwrjozbhpfAAwrs9blEIbe51yy5kz5vZK7yNEKw/OBZ/6Xc7E17TPOFnZATE1Howcii8BUHHy2lErWmxG1ov3VUz/IWjgpAthY99hFBkreHrOWc3ZrJ9HcpN1m3+mvUzd+gsc8+0kUTL8+ENKE8UqGiKBHiTcAU=
+	t=1733827609; cv=none; b=WMNSrm6qBCUl/EcLISB2XFTYIP9tlrEWN05QW375U32cliS6qdHf0tURih64xVk2smBhop/P3IKKPcmG+kQXff71vflPOM7K1Q0s9+3O42deKlmjjG2GvNdBRFouyA8i+LFS94tQ5t+7SDqMOJ7ho7X2gBjHjFHRyRHYG27b6lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733827555; c=relaxed/simple;
-	bh=KcuRT9gwOX+t8q9/p363S/BIEnItmU1RXAbOOJJIRJA=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=iDdxNmCaFL4hcwrYiRhAc6IclG/p3Btl4omEsjbK/MbEBsj88VXpvUSbqixie2VoqBYaqY+BU6g7FzAwUG/3Cwp+yj18X1beCaXSTDX+GueLwEaP6Fbj00xk/AkZYfM+99LCQI92rgVJldwkhCuBUytFKpI7lXAh+3PYC42k3dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=XJbG1lW0; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1733827609; c=relaxed/simple;
+	bh=wEMeMdEeBoZpAAdY7KrtLZaCZfrF5v8r20HUxblPpDI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AnjnJEbEKBGMmUK6B1rwf1SQuR8O21O7tjOCGD//ibG5MCulU0rh5lTnAD+rll977F9IQIreTo2gvUOLa3mxSbTum0KNqRCmvWHKMoi0E4c+5AXCzCVAntB814mZetAJ1LerJT09IncCvLxuS9Q39qozHbtcz6RbFy6QvNXSigA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fRXaVym6; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-435004228c0so12622125e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:46:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733827605; x=1734432405; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5QzWabQG8oecrJ7dfjZ8Dm8qolVobLj6x+A4hm/Tig=;
+        b=fRXaVym6BpDjyIM9NeLDFNChswvy2k+8ZJpsos/K3EbzNFhn3XLGcLHFxpc68dn/vd
+         Hd0C8RWX5pje63EFHE5QcDqHFolGVd5PkRuQmwbH+xtuktNoI945JH0Gvs01CnrKhzYI
+         B3oTkRloL7rDwSfa6xOPqfla+Bc4iIv5HLMyxz77GTJICaPp4Y4ajZdq/ho06yChLhkJ
+         JGW9xPdjYaQdhDQ5twoT/aMKjclcVikJH8YVA2qtkSta4Uns9SP977rynOdKHwYr08bb
+         IgSC+UsKMS5NlJOZH7D3QnYbfIO9c3l2nZqmEx9CIeiykmNmwwIbexMnWtYUnHe5TK31
+         u8Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733827605; x=1734432405;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r5QzWabQG8oecrJ7dfjZ8Dm8qolVobLj6x+A4hm/Tig=;
+        b=nqb8HUEEouZ92aDonWc7h98eNat1yytoi1HAAZiyOzmegIzG2UctX8jxLzwUpichyo
+         hy7tuIwK9hdNcL+7BIYEaH/c6hLalAfvIf+YPcOTnUUZaVgKcgQGtlC/68UQophlmJbR
+         KUEnqxVm8lhzunv+gYVeUdHx9VFMixc4+PIvmaW1h0oFDDxgP0Y8NNgtYNpUcnSP6tjE
+         DyVPQJOTa1oV+VsETpeepp0nVw4XFCvnQhiF4JJ2nSMhngKxNaX+h/YJfDCh7i272gLj
+         7Ebkj7Y4SVwzjG1MwYdFtdPytfzaeBArEB4NGBz9/rTMZzo8aQEH7R4kf6nDbe+X0AkT
+         1SIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOrF8pjQahRuL/0mOsEJif2sp6AqCAWI3fVdxdDvc/poDfayhV6oK90rsc/BvJAmfueTlQPI4SR0wTpmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9u6GJWMKoB44LkatO8DDdBZhD3FGGvyR1A79CVgwik4JdWyh9
+	ZHN7rhdGr58RzCJVBu23+vYpYDL16yvGFslAsA+7as7W/A+uMdo5IgSFbyKPl1k=
+X-Gm-Gg: ASbGncukb4BzAbnWEJ8N6g9jyjbJI9PFswCDeKa6OTFtcoPt5Lg0VFU97lJN7/rcwqs
+	YSgf/ztVAG0yVwCdlRQrzd4HOQ/HWwwaYnWkd86XDFrci7xvy0J4kAHaTToyOOcepsq9tmyn0ku
+	dtiQwIJQWL0xHe7gvEt52Ut0X1r+F9hxsXIvxzh7fiuTh/t/2iY6mU9wQp1aCmQK3qHiRkPchXd
+	nrTdFlRmlMcVuCe9UuTUYMPgnx89Byko/ohfNQt+t2/Rr4L3CvDb6MOpKWQMseLeL3I+2VyUSF/
+	Vg==
+X-Google-Smtp-Source: AGHT+IH+NSvi4p/ASxuolUPUb2vVpTEzgdFXaZ1mo13JtI0mPTZ70/EF7ebZDJtB/o9TSjqZPg96pQ==
+X-Received: by 2002:a05:600c:1d12:b0:432:d735:cc71 with SMTP id 5b1f17b1804b1-434fff9c56dmr36631595e9.25.1733827604460;
+        Tue, 10 Dec 2024 02:46:44 -0800 (PST)
+Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f2d08564sm94543645e9.12.2024.12.10.02.46.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 02:46:44 -0800 (PST)
+From: Guillaume Stols <gstols@baylibre.com>
+Subject: [PATCH v2 0/9] Add support for Software mode on AD7606's iio
+ backend driver
+Date: Tue, 10 Dec 2024 10:46:40 +0000
+Message-Id: <20241210-ad7606_add_iio_backend_software_mode-v2-0-6619c3e50d81@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1733827551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=utTTuCvuh3w8J6nQIZy3AvdY9OBVE0hycTiZtgTEi6Y=;
-	b=XJbG1lW0Cdd/1WVz8664gHslMX0L0NGOdEauAEbidL2Gz+zZANyaa5m3Y7MF+Jwx1FK1wx
-	pqqqBhccPr0qh6EnZzwULif0FUZQ66Kxwgzs8vQB8yte7weND74C9EaecXpmqCgEglz0BF
-	qFpD2qwgBraLaXi75Xt3CbLWHoxlNT2gf2NBcVG0NPl8XRo0iAyxPXCf52e4vWk8401iYh
-	o9JK+th0SkNNtJx9t8m+GcLRSdvklGZGjF5jzws2NlAZxVD+uvUfVCoZb28YVZ2bhaxxxB
-	Ur1oPJd18Q8Rtn2REqhJNcictZvuw6q2QD1ubROxoc/dBFmPPYJzGwR097EJOg==
-Date: Tue, 10 Dec 2024 11:45:49 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
- Diederik de Haas <didi.debian@cknow.org>, Johan Jonker <jbx6244@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 6/6] arm64: dts: rockchip: Remove address aligned beats
- from rk3328-roc
-In-Reply-To: <20241210013010.81257-7-pgwipeout@gmail.com>
-References: <20241210013010.81257-1-pgwipeout@gmail.com>
- <20241210013010.81257-7-pgwipeout@gmail.com>
-Message-ID: <2b68c2dd3618e5904a4eac1ec87d29a7@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-B4-Tracking: v=1; b=H4sIABAcWGcC/42PW07DMBBFtxL5GyO/Yif9Yh+ossb2hI4gcbFDo
+ Kqyd0y6AT7vlebcM3dWsRBWdururOBGlfLSgnrqWLzA8oacUstMCWWkECOH5KywHlLyRNkHiO+
+ 4JF/ztH5DQT/nhLy3Lo1Rj0oZzRrqWnCin2Pm9fzIBT+/2tr6KFmAijzmeab11PUQ2q3WelDRK
+ pm0cjJG5UySvTYogx3cZJJmf6wL1TWX2/HBJg/YISuV/J/sJrngA9hRQ496gvElwO2DQsHnJsT
+ O+77/AgwTQtcnAQAA
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com, 
+ aardelean@baylibre.com, adureghello@baylibre.com, 
+ Guillaume Stols <gstols@baylibre.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733827603; l=2383;
+ i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
+ bh=wEMeMdEeBoZpAAdY7KrtLZaCZfrF5v8r20HUxblPpDI=;
+ b=Uoz2u72lAzKmUPyRjbXPKhYVUDzPzSNI6yVgInNJtfthq8mm7mlMJI2bTY/LO7MswF2H/HQBJ
+ qYbdf4vXgu7BYea0dS1f4oLzk5zg7clVIWairpe6IXoqHfebpm777af
+X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
+ pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
-Hello Peter,
+The previous series added iio_backend mode, but the configuration for
+this mode was only possible through GPIOs (Hardware mode). Here, we
+add support for configuring the chip using its registers (Software
+mode).
+The bus access is based on Angelo's ad3552 implementation, that is we
+have a particular compatible for the backend (here axi-adc) version
+supporting the ad7606's register writing, and the ad7606 is defined as a
+child node of the backend in the devicetree.
+Small changes are added to make the code a bit more straightforward to
+understand, and more compact.
 
-Thanks for the patch.  Please, see some comments below.
+Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+---
+Changes in v2:
+- Improved descriptions.
+- dt-bindings: improved descriptions, added exemple and additional
+  property for the custom IP.
+- Reworked some macro commits to avoid changing order and associated
+  diff artifacts.
+- Various cleanups and formatting fixes.
+- Link to v1: https://lore.kernel.org/r/20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com
 
-On 2024-12-10 02:30, Peter Geis wrote:
-> Since commit 8a469ee35606 ("arm64: dts: rockchip: Add txpbl node for
-> RK3399/RK3328"), the snps,aal, snps,txpbl, and snps,rxpbl nodes have
-> been unnecessary in the separate device trees. There is also a
-> performance loss to using snps,aal. Remove these from the rk3328-roc
-> device tree.
-> 
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> 
-> ---
-> 
->  arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-> index 6984387ff8b3..0d476cc2144d 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-> @@ -155,12 +155,9 @@ &gmac2io {
->  	phy-mode = "rgmii";
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&rgmiim1_pins>;
-> -	snps,aal;
+---
+Guillaume Stols (9):
+      iio: adc: ad7606: Fix hardcoded offset in the ADC channels
+      dt-bindings: iio: dac: adi-axi-adc: Add ad7606 variant
+      iio:adc: ad7606: Move the software mode configuration
+      iio: adc: ad7606: Move software functions into common file
+      iio: adc: adi-axi-adc: Add platform children support
+      iio: adc: adi-axi-adc: Add support for AD7606 register writing
+      iio: adc: ad7606: change r/w_register signature
+      iio: adc: ad7606: Change channel macros parameters
+      iio: adc: ad7606: Add support for writing registers when using backend
 
-Huh, I see that quite a few RK3328 board dts files specify
-the snps,aal node.  I wonder was it a "cargo cult" approach
-at play, :) or was there some real need for it?
+ .../devicetree/bindings/iio/adc/adi,axi-adc.yaml   |  53 ++++++
+ drivers/iio/adc/ad7606.c                           | 202 +++++++++++++++++----
+ drivers/iio/adc/ad7606.h                           | 113 ++++++++----
+ drivers/iio/adc/ad7606_bi.h                        |  16 ++
+ drivers/iio/adc/ad7606_par.c                       |  56 ++++++
+ drivers/iio/adc/ad7606_spi.c                       | 145 +--------------
+ drivers/iio/adc/adi-axi-adc.c                      | 175 +++++++++++++++++-
+ 7 files changed, 544 insertions(+), 216 deletions(-)
+---
+base-commit: 5ab39233382c621d3271cc274d1534e1b687f4d3
+change-id: 20241009-ad7606_add_iio_backend_software_mode-567d9c392243
 
-Actually, I see now that you added snps,aal to rk3328-roc-
-cc.dts in the commit 393f3875c385 ("arm64: dts: rockchip:
-improve rk3328-roc-cc rgmii performance."), so I guess that
-your further research and testing showed that it actually
-isn't needed for Ethernet stability?
+Best regards,
+--
+Guillaume Stols <gstols@baylibre.com>
 
->  	snps,reset-gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
->  	snps,reset-active-low;
->  	snps,reset-delays-us = <0 10000 50000>;
-> -	snps,rxpbl = <0x4>;
-> -	snps,txpbl = <0x4>;
-
-Unless I'm missing something, the commit 8a469ee35606 ("arm64:
-dts: rockchip: Add txpbl node for RK3399/RK3328") doesn't add
-the snps,rxpbl node to the RK3328 SoC dtsi, and the respective
-driver does nothing about it when the snps,txpbl node is found.
-
-Though, I see that rk3328-rock-pi-e.dts is the only other
-RK3328 board dts file that specifies the snps,rxpbl node, so
-it seems that removing the snps,rxpbl node here should be safe,
-especially because it was you who added it in the same commit
-mentioned above.  If there were some SoC-level issues, all
-RK3328 boards would've needed it.
-
->  	tx_delay = <0x24>;
->  	rx_delay = <0x18>;
->  	status = "okay";
 
