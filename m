@@ -1,203 +1,146 @@
-Return-Path: <linux-kernel+bounces-439610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15849EB1AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:13:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163119EB1B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:14:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA7B5167EBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30FEA188613A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A161A9B34;
-	Tue, 10 Dec 2024 13:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6451A9B21;
+	Tue, 10 Dec 2024 13:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T98VLWaN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HEGR6d0Y";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T98VLWaN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HEGR6d0Y"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZPl7jk0"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F55B78F44;
-	Tue, 10 Dec 2024 13:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1940919F12A;
+	Tue, 10 Dec 2024 13:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733836404; cv=none; b=d61SxWU5CsYPXGfYgUI6xLwiemSJSdyzgWShckznjTA4Wi6xUBbkcecHM4ifzbsiymRoEJ2cC4Bw06iZ9vnEIdN0vYg2eRawWfc/6OmNFThy2vEJnNgfIosyK+dJ1laDeX2CrcYPSc6Cg/Zhgo5SD2ECSZYXh4AUi3JmV37fhR8=
+	t=1733836459; cv=none; b=Ll/i5G1+GzIvvTK+kJ18EIySonAZaNAQf5gXoWucrIYy+g5tFUweEejiacoj9oLW54vW9s9GeDoHhpk3IaQgOKQ4HNpw2tBuid+wktXt2C51olgvlhRt15fFhOSSMts7UTkChOQji6mEDc977220JlEORWnyy9gnqPspnP9fBek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733836404; c=relaxed/simple;
-	bh=PZnOzf39t6gaH7sQKoanicdhg7iUQ6WsyQ3IGnfGlFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BP608CjB+jKNC+mdq1XpQu8+4EIa2zfyn4Zso23NqdzN8hvxyXjhaPN0d/ZeoNjF+QCZXy+OH0eWbC/IEZFT8F5NMIksDYf7QeiMjyB4Sc4pXh++AXR98cuYb8zlqi3UjhyJtIeVE8Y/97A7Yab6HpsXBOM3R5a9F+6bfHPPtnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T98VLWaN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HEGR6d0Y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T98VLWaN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HEGR6d0Y; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 32521210F3;
-	Tue, 10 Dec 2024 13:13:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733836400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwqILbbF2BW+BlzMAtFgF56DCQYa22CbfGustZGHHIA=;
-	b=T98VLWaNlc8/nU7EkLIzaD4VYdkltpnA+pOqJZ+uln3hDYRMZo+bi7nmhEPWVS22K8gDas
-	xoqJIjwh3xlO8ZpCyEhbQJ1aG6YrhdPk0dLmVKeVeBGowJ3oJ2ZHxgETSD2rqUIYtJvkbb
-	ZSGwfzmg/c9R5BsldjDp9a5nnQ5KvWs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733836400;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwqILbbF2BW+BlzMAtFgF56DCQYa22CbfGustZGHHIA=;
-	b=HEGR6d0Y5q3z4o9TQvI3bNLqz5zoNsRxEEe2G0+42UCCU1FTtr3YUfu94NUhkO5Jd3jNAg
-	0HMD8cSIvqwS3gBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733836400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwqILbbF2BW+BlzMAtFgF56DCQYa22CbfGustZGHHIA=;
-	b=T98VLWaNlc8/nU7EkLIzaD4VYdkltpnA+pOqJZ+uln3hDYRMZo+bi7nmhEPWVS22K8gDas
-	xoqJIjwh3xlO8ZpCyEhbQJ1aG6YrhdPk0dLmVKeVeBGowJ3oJ2ZHxgETSD2rqUIYtJvkbb
-	ZSGwfzmg/c9R5BsldjDp9a5nnQ5KvWs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733836400;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwqILbbF2BW+BlzMAtFgF56DCQYa22CbfGustZGHHIA=;
-	b=HEGR6d0Y5q3z4o9TQvI3bNLqz5zoNsRxEEe2G0+42UCCU1FTtr3YUfu94NUhkO5Jd3jNAg
-	0HMD8cSIvqwS3gBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D323138D2;
-	Tue, 10 Dec 2024 13:13:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oCWJBnA+WGc2ewAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 10 Dec 2024 13:13:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B9A61A0B0D; Tue, 10 Dec 2024 14:13:19 +0100 (CET)
-Date: Tue, 10 Dec 2024 14:13:19 +0100
-From: Jan Kara <jack@suse.cz>
-To: Gou Hao <gouhao@uniontech.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, rostedt@goodmis.org,
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	wenqing.lz@taobao.com, jack@suse.cz, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	gouhaojake@163.com, wangyuli@uniontech.com
-Subject: Re: [PATCH] ext4: make trace_ext4_ext_load_extent print-format
- correctly
-Message-ID: <20241210131319.ckytlh7djftuesmr@quack3>
-References: <20241210071948.12636-1-gouhao@uniontech.com>
+	s=arc-20240116; t=1733836459; c=relaxed/simple;
+	bh=lXeTpCsFNPyXQjhR6NOh1cFZGD6b+AcYziKg1jr1714=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Z4MFMs5JcFjsRUhcHYNpJDBgCO1hFIuUXhNHzjyLi0247V+03TfQGFgL2Qz56tvC4xrUogI247S2/rXVnTJBfpZgpWhZZH7sUFuz8oBhHszxPxGkDAX6oRjN0E8OoDh8l7RxRNcc2wbfsOeWuO6FWL5tFpIU22NL64rbH6k4wWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZPl7jk0; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53f757134cdso3001699e87.2;
+        Tue, 10 Dec 2024 05:14:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733836456; x=1734441256; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R1Psbh7Pq+z4qmSLdi9TiYvyojYMlP7k/gDKwJ7aPII=;
+        b=HZPl7jk0NG57dV+/dW4qwC3r71StITphuAPLCreP6hns2jsm9ia73Ip7lAvnXsY7W1
+         atojPFGw+9TrI8yeGp0sRi4WLUG3oh+xva4Et3lSyl5e3RxxegHuTrp5qvSCn3dkwylv
+         nWmN6U6MjZRWVfrU28OjSoeBgMaOAhmO0Mu9dVg7i90Elo5sXr0/V5NxJLzEoiajzU2F
+         hplmm51bT5BoWeCEFYJSPNUji3nj6v0KU7XO3Dsz7+QVb7ip5oeeMe1FepriREWAnqYb
+         3P5fUTFS1BBVJlb37Mj3FbzWz5NEqrGQ243S6vh/YgnF/6oTsoBSBUDj5VYRwPTsBOAb
+         jBzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733836456; x=1734441256;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R1Psbh7Pq+z4qmSLdi9TiYvyojYMlP7k/gDKwJ7aPII=;
+        b=QpysUpINJ+kiOwjYBrGZZ5Wu2obczSxFHUqiY+jDq4w/saT/oxrZeDTZOjWoFOsciy
+         a9EPprHa1VT/pU+IvjzOuPBOJPMYlsWBTRT7NzXq490wk8IBjRHG7cb79w3jUaDRSkL6
+         OITDMHP3yYsln1Vr6tInqHKSNonZ5+fqy6EGazbvjB+AiHg7o1QmogeVj1x+FtnEE/HO
+         FnobVEWAoGou3E9JNPVNTMWyLSdVw5h6LmSGL1Buz/z87KTYwP1cfqK5gCTLLhcs6z+/
+         pTNnP3peKd2+rl4sI1YnMls/zLZZ3D+5yb3LMS8VBg7dNFzk+JtvaVDOVTNRLy4cH3Dh
+         fRQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBvF/97P2hQbXhEbQ9y+yCiuynlHmrkr4O5AGoBetlKKdcgQjvfqap2Ho26gM5K47Cj4KsNKoDZ6ElFCs3og==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym+y3bEYIgywesqhVnNWnLChi2gouEYp8MVv1C8hBLp0CtKBYO
+	Bt6sQWp3aUnLFsPw1zZy3AKkG6loBGbAOkQHeK6Jr6Ea+FEotwam
+X-Gm-Gg: ASbGncti/stPR265ROS33q7+gO4Pj2CUotI/ESwyjzOdzJ5pdAh9bdOGgCztOjCwcc5
+	UrYfX+33nhCu5rMkQPMHN294GGm2OhCFEBMtLU2hjqfwXs95kqRx2z3ZsbyVoB2bdILIkw0+8KD
+	zeb3eox2uEoKQFLqkhwh3vs0YS5vBMW+bLagaEjrAtc+MF7f6jOxdbyeeVV7895nUFT6+Jc8MPk
+	R92ICCaInUXYt7C5ILlrNrQOJtVCTLEHhs3nQQ0G5h4EmrWy7rw0CjF9kziP5U1xPDTJ5BQx+19
+	mCw1UUdSVt+IddxTMuQ=
+X-Google-Smtp-Source: AGHT+IFOyC8sungLAW+4oANTSzK7oMlje9CM+XSQnUKOAiK4k+YXkmd84+1LyBQAeb5JABsGUoe/Tw==
+X-Received: by 2002:a05:6512:128b:b0:53e:3a94:c2bc with SMTP id 2adb3069b0e04-53e3a94c305mr4366108e87.18.1733836455953;
+        Tue, 10 Dec 2024 05:14:15 -0800 (PST)
+Received: from [172.17.0.1] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53ef5085b8csm1037589e87.3.2024.12.10.05.14.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 05:14:15 -0800 (PST)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH 0/2] DA9052 boot status
+Date: Tue, 10 Dec 2024 14:13:47 +0100
+Message-Id: <20241210-da9052-wdt-v1-0-d026e0158688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210071948.12636-1-gouhao@uniontech.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,goodmis.org,kernel.org,efficios.com,taobao.com,suse.cz,vger.kernel.org,163.com,uniontech.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIs+WGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0MD3ZRESwNTI93ylBLdRHNLE+NEcxNTSwtzJaCGgqLUtMwKsGHRsbW
+ 1AA08E/hcAAAA
+X-Change-ID: 20241210-da9052-wdt-a7943a745987
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Lee Jones <lee@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1263;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=lXeTpCsFNPyXQjhR6NOh1cFZGD6b+AcYziKg1jr1714=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnWD6XNG5uJgzI13lRTcB7KsL6SvcFrzpsI7c9w
+ 5JpZOwQuBOJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ1g+lwAKCRCIgE5vWV1S
+ Mkz3D/9WkXm2dFKQiL2X4VavkcpZvdkAmpijnNHYHE31JEqcG5kL3DZ/fwVmpLHU2DcmDkiZpQ/
+ q3J/pp1l0Qy4OYlS8zyI11JxUONDxZGZjOikTsJExbtrRSXkouNknPH1kU7J6Bjh7tM96vi4kaC
+ Od06a8Jqh1Jq5lHisCfA4qSTHitNsb+xQ2gvemMoVy3nhD2yTj+NryYc/px3mLmo3cqlzndob19
+ hKK1v/ws0etQYGV/7Etl5Fz51pm3gwZ+hHLcDGT2xNVN/6DWdd5Z9mJ6DFUIyWNYirz5OnTucSi
+ HKRhxU2Duz36q2jXDsVMOUxOLVJkuEUPDfa3iB8upTgu36QbfnB8Tw8aF7gdoPmoYgSDrFuGL1R
+ 6s/6TeKdh1EDG1XKCQInAMBOhsRpjaAGdk5OLAZquWiCSBQ/D3QesGAlHH1lv3kh3Nfo4Vx6U/F
+ Xshb9SCmA+5W1jr/jcwZEHCVT3aQkapxeYuiSrFecmdwhgYG3XdMu3dirZXvvIECr6xHCxHIFTK
+ NrYVcHJKzFLjSZr3HjvliyJCxr0mx7lBHqautyItOGMWc34EgxSZKOH9zhvkIUEjunBRc982tOn
+ oRvu86/Tj/RP59BYxXXaEa1Q+m2esK7cFh+6sLtriKJOmeAFv/xvjSGnSFmX4UhoefTJPy/MX6X
+ dTxok5YyHHgicXA==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-On Tue 10-12-24 15:19:48, Gou Hao wrote:
-> In commit '7d7ea89e756e', pass the 3rd param of trace_ext4_ext_load_extent
-> to _RET_IP, without modifying the print-format of it.
-> 
-> before this:
-> 147.827896: ext4_ext_load_extent: dev 8,35 ino 272218 lblk 1135807 pblk 18446744072651077338
-> 
-> after this:
-> 35.118227: ext4_ext_load_extent: dev 8,35 ino 272218 pblk 1135807 caller ext4_find_extent+0x17a/0x320 [ext4]
-> 
-> Fixes: 7d7ea89e756e ("ext4: refactor code to read the extent tree block")
-> Signed-off-by: Gou Hao <gouhao@uniontech.com>
+Make it possible to read out the boot status from the da9052-wdt driver.
 
-Curious nobody notice earlier. Anyway, feel free to add:
+Function verified with `wdctl`.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+root@mfoc:~# wdctl  /dev/watchdog1
+Device:        /dev/watchdog1
+Identity:      DA9052 Watchdog [version 0]
+Timeout:        4 seconds
+Pre-timeout:    0 seconds
+FLAG           DESCRIPTION                   STATUS BOOT-STATUS
+CARDRESET      Card previously reset the CPU      1           1
+KEEPALIVEPING  Keep alive ping reply              1           0
+OVERHEAT       Reset due to CPU overheat          0           0
+POWERUNDER     Power bad/power fault              0           0
+SETTIMEOUT     Set timeout (in seconds)           0           0
 
-								Honza
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+Marcus Folkesson (2):
+      mfd: da9052: store result from fault_log
+      watchdog: da9052_wdt: add support for bootstatus bits
 
-> ---
->  include/trace/events/ext4.h | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> index 156908641..55061c36a 100644
-> --- a/include/trace/events/ext4.h
-> +++ b/include/trace/events/ext4.h
-> @@ -1707,28 +1707,28 @@ DEFINE_EVENT(ext4__map_blocks_exit, ext4_ind_map_blocks_exit,
->  );
->  
->  TRACE_EVENT(ext4_ext_load_extent,
-> -	TP_PROTO(struct inode *inode, ext4_lblk_t lblk, ext4_fsblk_t pblk),
-> +	TP_PROTO(struct inode *inode, ext4_fsblk_t pblk, unsigned long IP),
->  
-> -	TP_ARGS(inode, lblk, pblk),
-> +	TP_ARGS(inode, pblk, IP),
->  
->  	TP_STRUCT__entry(
->  		__field(	dev_t,		dev		)
->  		__field(	ino_t,		ino		)
->  		__field(	ext4_fsblk_t,	pblk		)
-> -		__field(	ext4_lblk_t,	lblk		)
-> +		__field(	unsigned long,	ip		)
->  	),
->  
->  	TP_fast_assign(
->  		__entry->dev    = inode->i_sb->s_dev;
->  		__entry->ino    = inode->i_ino;
->  		__entry->pblk	= pblk;
-> -		__entry->lblk	= lblk;
-> +		__entry->ip	= IP;
->  	),
->  
-> -	TP_printk("dev %d,%d ino %lu lblk %u pblk %llu",
-> +	TP_printk("dev %d,%d ino %lu pblk %llu caller %pS",
->  		  MAJOR(__entry->dev), MINOR(__entry->dev),
->  		  (unsigned long) __entry->ino,
-> -		  __entry->lblk, __entry->pblk)
-> +		  __entry->pblk, (void *)__entry->ip)
->  );
->  
->  TRACE_EVENT(ext4_load_inode,
-> -- 
-> 2.43.0
-> 
+ drivers/mfd/da9052-core.c         | 26 +++++++++++++-------------
+ drivers/watchdog/da9052_wdt.c     | 13 ++++++++++++-
+ include/linux/mfd/da9052/da9052.h |  2 ++
+ 3 files changed, 27 insertions(+), 14 deletions(-)
+---
+base-commit: cdd30ebb1b9f36159d66f088b61aee264e649d7a
+change-id: 20241210-da9052-wdt-a7943a745987
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Marcus Folkesson <marcus.folkesson@gmail.com>
+
 
