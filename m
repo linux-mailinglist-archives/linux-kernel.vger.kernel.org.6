@@ -1,94 +1,132 @@
-Return-Path: <linux-kernel+bounces-439451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56ADB9EAF83
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:15:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138269EAF8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:16:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02EE289C3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9EE16AD02
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE5C225404;
-	Tue, 10 Dec 2024 11:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782CF212D8F;
+	Tue, 10 Dec 2024 11:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xr2bLjiU"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EYnDuM1i"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF3D212D75;
-	Tue, 10 Dec 2024 11:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4743A198823;
+	Tue, 10 Dec 2024 11:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733829017; cv=none; b=O23UpkwweaoCBKvO+ceK/bfwIjZRctMGRi2m8GJpDf8EY8lrxBWLynxEJtxfUVkb9RtjuhTq4f7+WrL6AEvODuFmYmkzRzJ45VwaZpYIZj5Vqy2oB8PHOyZ/lhyLf04yZIXNO3EfslK/LoajfsC7UHHUcc7NSwPMvW0yErPuEl8=
+	t=1733829072; cv=none; b=Ltto2eyJ3S0M7V7KIm06yIQqSq4QWIiVhVdcK2q8Wzk3zLoIYPfhGbFCw6bdi2PhEfTz+owEK6RnamwWRZYH6w7UPERxSIJF50C8N1qR6otomNhUBGBwoKktleIwZ7TMQsfs0sFddzz6vR7fmrKLHYtMozB1cYJ1cu04XB6+S/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733829017; c=relaxed/simple;
-	bh=gf25texq9C3Dmbh/TtwEq/oy9OQsVE27LKR9a8BC02U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jhfN1xeJGFnSMmf254O7V81xz4ztU3wANVGEMkKiCfKVlWkFX/+z9CvGQLqnFx/5N76vYJR1sQzxuSG6289Vm7k6MI+AMKvopH8VA+wSL47g1GximAJY2yBltle/teCaEaxBANpXonmeN+VM/O6rYvHLwBzjK5JrxmtunowsLoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xr2bLjiU; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e9e07hwQlKHQNMUUVWbYd995qemIyLnz5bmr+VEdN5I=; b=Xr2bLjiUdM1UixtWjgQH+yjyyr
-	MwYdCbPcfryKkcqYDfugDtNVtBd7mkR9EZRCfaBdAI78Hf8ClyPV7/hy5VN2H13iSsyG7sYxTpR4R
-	OOlHz1jqVlv2WF7yPc/6hlvs5jCvp/P8m/kyVkJ/KM+0/TBFaFcEJU/VdZXHasb8Gw7PRfFXmxn6M
-	trB8K1nzT3V9x6e2JNYrntmlm92AEnsApGBS6TJ/PVvOfmQLxUweSgCYTeZWe73NhxKALJAwfXzhx
-	25/AZpV7UQ08VtNwzhtScjk0W3cYRR5mA3/pO+Bh+4zMH2yI9RVjmG6mH2NjfnyTtdiBCNsCu17uM
-	XScVQ7VA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKy84-0000000BGNf-2eGP;
-	Tue, 10 Dec 2024 11:10:12 +0000
-Date: Tue, 10 Dec 2024 03:10:12 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Erin Shepherd <erin.shepherd@e43.eu>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	stable <stable@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <Z1ghlNpEOQ8jmZnW@infradead.org>
-References: <20241206160358.GC7820@frogsfrogsfrogs>
- <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
- <Z1ahFxFtksuThilS@infradead.org>
- <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
- <Z1b00KG2O6YMuh_r@infradead.org>
- <CAOQ4uxjcVuq+PCoMos5Vi=t_S1OgJEM5wQ6Za2Ue9_FOq31m9Q@mail.gmail.com>
- <15628525-629f-49a4-a821-92092e2fa8cb@oracle.com>
- <d74572123acf8e09174a29897c3074f5d46e4ede.camel@kernel.org>
- <337ca572-2bfb-4bb5-b71c-daf7ac5e9d56@oracle.com>
- <20241210-gekonnt-pigmente-6d44d768469f@brauner>
+	s=arc-20240116; t=1733829072; c=relaxed/simple;
+	bh=WmM56rWaA+ibYBICkRPOFNZVIlUsUbLa9mtToOsDnk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P6AmrLuefqaB5UQ/tT6jV68IVH27f4f5JYmLRBrIlo2CP/yS5pRVeymWuXimcS2Qzwnne8ML13Ju0R6/PmlDYv8TkOUmze6zogIFYXGHtjPttiW6EgquoWWPxiduogIMTweI4A9Jid+vL4p5gyPqFmzjaaHeWAAaehh0nUI6oqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EYnDuM1i; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA1jC1n026166;
+	Tue, 10 Dec 2024 11:10:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YRWuaf
+	W8QJmSyZR5XykB7q2JyYMIHBo/0XTJs51UPrA=; b=EYnDuM1iAb93Gi23DWUQaB
+	oFri/azhKA6aF5b2QfGNOVQIJvcwZvu8xlgbi/ChyRbkoZX82Zk8uMj+SP0V8D1a
+	W3G5l8+PwZp7jhueSOOW8QroMbto9UailKaq/sjxwVW+nuS4mmPm6J3Z/Hy01Vj9
+	vJg63zXuo8JqKsjnqa9g/FxOt4A7PApndgPWmJx3SPn/j0DGBbK/NPeecYDRkLLb
+	d4tzCoW0Vs/vlH25qiDC1ukEOlhxdod6WNkPmnLQDYHfVpFJMhONVKFv+74g5fk7
+	2iuzeB5gF4jeAeFBZd70YS6ej+pHz73v6zDVoxGgXXsVoKTPa1oq+hUT1+Gwbolg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8pnh5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:10:58 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BAB6eLL004753;
+	Tue, 10 Dec 2024 11:10:58 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8pnh0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:10:57 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA7SM1T032590;
+	Tue, 10 Dec 2024 11:10:56 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d1pn399h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:10:56 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BABAq4L57213196
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 11:10:52 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C673E20049;
+	Tue, 10 Dec 2024 11:10:52 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 729AD20040;
+	Tue, 10 Dec 2024 11:10:52 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 11:10:52 +0000 (GMT)
+Date: Tue, 10 Dec 2024 12:10:50 +0100
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
+        tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        horms@kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dust Li
+ <dust.li@linux.alibaba.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH net-next v3 2/2] net/smc: support ipv4 mapped ipv6 addr
+ client for smc-r v2
+Message-ID: <20241210121050.760b8693.pasic@linux.ibm.com>
+In-Reply-To: <20241209130649.34591-3-guangguan.wang@linux.alibaba.com>
+References: <20241209130649.34591-1-guangguan.wang@linux.alibaba.com>
+	<20241209130649.34591-3-guangguan.wang@linux.alibaba.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210-gekonnt-pigmente-6d44d768469f@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: HzZCdnvSlYq8Pe7LIUi0ijqNtBFtMUaM
+X-Proofpoint-ORIG-GUID: uFmtwOwdKp8UUdBtn5APXoizY2saBQ-B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=493
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100082
 
-On Tue, Dec 10, 2024 at 11:13:16AM +0100, Christian Brauner wrote:
-> So I'm happy to drop the exportfs preliminary we have now preventing
-> kernfs from being exported but then Christoph and you should figure out
-> what the security implications of allowing kernfs instances to be
-> exported areare because I'm not an NFS export expert.
+On Mon,  9 Dec 2024 21:06:49 +0800
+Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
 
-I'm pretty sure you can do all kinds of really stupid things with it,
-and very few if any useful ones.  But the litmus tests is if those are
-things that only the kernel nfs server can do vs things that a userland
-nfs (or other protocol) server could do the open by handle syscalls.
-Because if they aren't specific to the kernel nfs server they are just
-random policy for privileged actions.
+> AF_INET6 is not supported for smc-r v2 client before, even if the
+> ipv6 addr is ipv4 mapped. Thus, when using AF_INET6, smc-r connection
+> will fallback to tcp, especially for java applications running smc-r.
+> This patch support ipv4 mapped ipv6 addr client for smc-r v2. Clients
+> using real global ipv6 addr is still not supported yet.
+> 
+> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+> Reviewed-by: Wen Gu <guwen@linux.alibaba.com>
+> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+> Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
 
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 
