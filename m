@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-438956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759309EA8BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:24:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCF39EA8C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808501888893
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3BD188886C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FA622B8D1;
-	Tue, 10 Dec 2024 06:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED89522CBC6;
+	Tue, 10 Dec 2024 06:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yur6H+di"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RY2rDCkn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1A522616F;
-	Tue, 10 Dec 2024 06:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2F122616F;
+	Tue, 10 Dec 2024 06:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733811834; cv=none; b=pJrRqWzVCA6ueWKlgzima+eFoO2OSDdm0Wk5eqppTwhv29HwLbJXCkUCwsANLSTuW79fCJDd/+MNPADbgWBVGkeXahVUzp60IvJpVXWEXrYVHwHqdC/Uu9mhxX9BzzZEFOaNerT21l35JRsn6zLxs5qEnNNJDlUq9sVVSZh5/dk=
+	t=1733812008; cv=none; b=qR309TGjZXGtv5QyLZY6nPk3OJIKnU+bZdARpoieVQ4OyLKKevgBydVPn5aN3HSu0jt4xzV1BMqqURLZEMPvfJ7tj5+GvGCldP/Qq4mYG2WDcbjEbmTLlCma0qcKyNncPcv2/HVNi1bZZHHUqlf/wGzdgyvcknR7Q3bHWjiSYO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733811834; c=relaxed/simple;
-	bh=xRvvrjUxKz2nWrCJgsnH8yraPNb1mNCoN0ABG8nfzaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=azRtrYxKlZnEwrNndNppcB3aOGOIAKMiaI9sbvWGqRR4KfVcGPVOLyw8codWR/9t7wyflbE/L7oWsLCoaEGLPpkCg7F8//wynSpnPoJxYmycKqJZRpJ5z4bP2XMajzvgCQCGlAmDdLEwsn5dNcxm1uHq12xo9VqIIuuWkMi0jP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yur6H+di; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7258cf2975fso4480002b3a.0;
-        Mon, 09 Dec 2024 22:23:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733811832; x=1734416632; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUZ78Vqtej2xrHt5B10G9F3oL/3KWnxzxs/tzOCC2fY=;
-        b=Yur6H+dicgVPspq+ty150Q8EKVtNVwPJ5sJUhKTYeTj0qSms8qQNuIV2AEGAXJu7JI
-         h5pjtB8o+mI21T3Fdr/vpWEZuUIYw4cf63y8iLGq1LkMu3SVtuX320WquNt1oqU3WYHp
-         c0DJclZ1S29OZurHvhbatWG2IW37M8plfD0jUd4xBTzDIWFdpJqFVUtGEEYq+arAzT7P
-         Ai7ltls6rKpC8U/Mv3UGi8clUmKrkG383hFZTnY8eDMMIaT18afkQAeqA9KPcG0Wtf/a
-         BRv0rcqHCnXAG4J+fOnZSs/tywhPMQckDVou9awL06Ows8OHc72+aBH9kFhuB7D/ICqS
-         asng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733811832; x=1734416632;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HUZ78Vqtej2xrHt5B10G9F3oL/3KWnxzxs/tzOCC2fY=;
-        b=Ol8O/sS5Ch2G5i8trJ4K02Y87tVtxnED5DHZYaA5KZKxyJktcTGBCIESxmMTbaK7/2
-         rNCW60o1CuVesFbVrZTRq/wKZkc+gKTI1fOn2aw7fWXSFL9r8CcuRuw+G6viwzISgegR
-         UCSIV7U/9WNEl6Um7ESLxDmvrVcx0WIvS7PiinXG0Eczr4OjZGMe6UEUqAimAeFg3b45
-         TOsfSTfHh7sIp7Pkqsq2uoJPbTN87i2V7pT7SXY/rEdF/BZwQ8dS0NdriAqM+GL85llg
-         HhmUutuSTAcJV97vwYQxJs9ujWmeZfzx6r1yg/nvlHTY7v9ZbKxrXqSguWfI44d6xGC2
-         5evg==
-X-Forwarded-Encrypted: i=1; AJvYcCUN6iSb9zbzptWdSfVDkmqkmSbVjVUL0ptm67mPV7fZeQVcr6zcuI+w0j37rtNpWEqtMckiQ8aSkey+Zw==@vger.kernel.org, AJvYcCUalCcbkf6KrQhMPqFGdsH8OKbEvg9V7ng0+gHM79o5cscUXgwo/K05bncVfvPDglLgrZzQxiK9ju1JYCdw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+7mt7BAFWD643vm6nGHozoxfegvnJC8hdsHka5CYxKjyHrIIr
-	BIoczs51R04XUZ6fmctwm/YYP6LKxnw5WCh+F59O2zk06iEJZTO7
-X-Gm-Gg: ASbGncvVZWtJONUA9sZFNqcmvUNpvOmd1EbB75axyoZK+N1v/jjmijkC2QQIw0++MvQ
-	WZlzarI2UKga4N7KFRz6U0e7A2xLcUMsbffFNXAyOZEy5AcMC2YGUe0Wq96waCYHbCzUpoasF1H
-	BqGKl/r+1rj1gCy0dSOG25YPzigxJA+8jYrKLu67ejNTZSV9D0t0/VCYU4SwvtNaHGpPDnZxw2z
-	4XkoGHCtCkjoQieM1BMcJ0a3pOxcHqHWVnPzLbNKtiUeuzIHhZNJdTdRV/JthT31662zA==
-X-Google-Smtp-Source: AGHT+IHEc7BDd6s3tGoqndv77nK0dHDhIwoGwxQVsS2Ewy+e6AiBdGdS/mFsjZryLq058Erg2PvpIg==
-X-Received: by 2002:a05:6a20:1589:b0:1e1:6ef2:fbe3 with SMTP id adf61e73a8af0-1e1b1a79c58mr5398021637.5.1733811832231;
-        Mon, 09 Dec 2024 22:23:52 -0800 (PST)
-Received: from kernel-VirtualBox.. ([2401:4900:8899:46e4:646:c8ea:ef7d:d291])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4757691dsm3480120a12.18.2024.12.09.22.23.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 22:23:51 -0800 (PST)
-From: Atharva Tiwari <evepolonium@gmail.com>
-To: 
-Cc: evepolonium@gmail.com,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] THE INITIAL VALUE OF wp_offset MAY BE NOT THE POWER OF 2
-Date: Tue, 10 Dec 2024 11:53:37 +0530
-Message-ID: <20241210062340.2386-1-evepolonium@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733812008; c=relaxed/simple;
+	bh=3m6Wb9gSs1tZJatfSkdFDNxKn7SG6+JznvNzNtrj1mQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5sPJFoh1S06D1kYiDM2AFWQ2usJsC3kgImpVhKfQ6KYi1axzenqma11KpyaSHIjksT4p3VyqC1OWxDdeC1MyXAsNeKgZzTu168XIcGCUwdiAAzeKjdbq0f+iyzA9gC0rs+Xc/4dc+PrA+LQGODZrHrSUDqvHqtV+hc8riLqwNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RY2rDCkn; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733812007; x=1765348007;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3m6Wb9gSs1tZJatfSkdFDNxKn7SG6+JznvNzNtrj1mQ=;
+  b=RY2rDCknzyLk4FJOPvhWuAz/6jegiG6LCyuTcrTFAsLptTSeD2gHrTx1
+   jwDxkDjuw95RFEPK6mFLF+hMlTboWE65ltmj2Tarud7sZkS24Wn8Yf20W
+   k5On2Q6JjJNAa97VdKUeDT3yr9UcneqTsN2OzuQ9Dzi18qu1n9IH8AmYG
+   AX1hg7rhMOnlisBG0p8LMs7U10nJ+R8mwbo9fk1rmC6hdQjl1EguG52mj
+   9Ly8XVXSxgitEv0RKLVNAnZtft/suzplUoycPYh8N0CY6wplhatZR70sq
+   n3KqJfponyGUc3WzyWxsN/4UGG8yuHZVfb1oVQgjhjJ3UvYyyFTlm94Dw
+   w==;
+X-CSE-ConnectionGUID: gMF4n4nTSZ2gGwKgI2oSwQ==
+X-CSE-MsgGUID: DqugDdrxRceNLgXskukIeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="45152489"
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="45152489"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 22:26:46 -0800
+X-CSE-ConnectionGUID: R/pcuTnvTaifMsxrC608rQ==
+X-CSE-MsgGUID: Ce7BdnX7QJO6a3Y89pSQ+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
+   d="scan'208";a="132699639"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 22:26:42 -0800
+Date: Tue, 10 Dec 2024 07:23:40 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>, Long Li <longli@microsoft.com>,
+	Yury Norov <yury.norov@gmail.com>
+Subject: Re: [PATCH v2 0/2] MANA: Fix few memory leaks in mana_gd_setup_irqs
+Message-ID: <Z1febCUrMwU2j+GW@mev-dev.igk.intel.com>
+References: <20241209175751.287738-1-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209175751.287738-1-mlevitsk@redhat.com>
 
-Signed-off-by: Atharva Tiwari <evepolonium@gmail.com>
----
- block/blk-zoned.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Mon, Dec 09, 2024 at 12:57:49PM -0500, Maxim Levitsky wrote:
+> Fix 2 minor memory leaks in the mana driver,
+> introduced by commit
+> 
+> 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
+> 
+> Best regards,
+> 	Maxim Levitsky
+> 
 
-diff --git a/block/blk-zoned.c b/block/blk-zoned.c
-index 263e28b72053..60f8bddf9295 100644
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -1,3 +1,4 @@
-+
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Zoned block device handling
-@@ -530,7 +531,7 @@ static struct blk_zone_wplug *disk_get_and_lock_zone_wplug(struct gendisk *disk,
- 	spin_lock_init(&zwplug->lock);
- 	zwplug->flags = 0;
- 	zwplug->zone_no = zno;
--	zwplug->wp_offset = sector & (disk->queue->limits.chunk_sectors - 1);
-+	zwplug->wp_offset = bdev_offset_from_zone_start(disk->part0, sector);
- 	bio_list_init(&zwplug->bio_list);
- 	INIT_WORK(&zwplug->bio_work, blk_zone_wplug_bio_work);
- 	zwplug->disk = disk;
--- 
-2.43.0
+For next time please add a changleog, like here for example [1].
+It is helpfull for the reviewers.
 
+[1] https://lore.kernel.org/netdev/20241204140821.1858263-1-saikrishnag@marvell.com/T/#m5fc2fa8b1d2bd1b47cf7ccacd4031d1aa1aa8c2c
+
+Thanks
+
+> Maxim Levitsky (2):
+>   net: mana: Fix memory leak in mana_gd_setup_irqs
+>   net: mana: Fix irq_contexts memory leak in mana_gd_setup_irqs
+> 
+>  drivers/net/ethernet/microsoft/mana/gdma_main.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> -- 
+> 2.26.3
+> 
+> 
 
