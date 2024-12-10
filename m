@@ -1,179 +1,159 @@
-Return-Path: <linux-kernel+bounces-439828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8BF9EB46F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:16:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2E59EB477
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:18:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93753169B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:17:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196D1BBBC5;
+	Tue, 10 Dec 2024 15:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J8iHWTWK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9998284024
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:16:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C421946DA;
-	Tue, 10 Dec 2024 15:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fZ+Lmnn5"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F1F23DEBD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E71E1CD15;
+	Tue, 10 Dec 2024 15:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733843761; cv=none; b=s/A2s1fzdwosmeaEHUAVkSPRoh9mCdwuFOzOkTFYrI6z3QA4wg/Ly2V4xTfTIg27ZuVRlzruCvVOQu9JKQTjtN/GR40BgQ34hr0HDaMJBCa6HVhPdxWYZKpwmMNhtmvLmH9ompNR34TlFooy4PaCOJeHbQaJgNhuomGlA7uH/aM=
+	t=1733843862; cv=none; b=lkzPvQEenYQ1yUaCuFo2NE7WKY/vf7/Qpf/lvqeMyKTtUkjDylbhj7oZhQBfT6/WofCQu2lgOKyQQLKG5sOf/prk/Q2dQhUefYTeWY+Sz1WIoeqywFztqJaCGXeIGE+5alrozGZXJH7HHRES+Vo97ldNby9aScQcG2Fdk8ilYEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733843761; c=relaxed/simple;
-	bh=8kN6LxvVCu219DP/ty/ojwWtnjH8wcUqw76Wx1ztkOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0gPoGrSceOczuhdF0e+k1/N20yAEpZnKrtIvSBikLd36m6ic7rNwW3zX+2O06QRx7oMep7oOVPAikr85n3FAWyyzPnD2EDGtEPTnxK8hNcOPzVAeUL8FPCfS0tZ4SlLiqWJEXYAs3d4mF9Nh5VIrgQp7DDPdypD5FIOiLrgvuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fZ+Lmnn5; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d2726c0d45so8707695a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:15:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733843758; x=1734448558; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lccj5szcR2Loq0SLYGfcfm6VfqCNUTcb2r9ZMHJPtZI=;
-        b=fZ+Lmnn5vvzw/VZdakE8tKdcTcfEBkkofECKCYkoHzB1GlaU+629NZIUuHnvubuHkW
-         q0yTCl0sBTO92bvAgiFTaEdh1crM9+H/pekJbTtAiDRzBsJIwdUepxn+yz9WLeJOtXfD
-         XOxrhQJ7pllYH5e6nARarMBQ5KFvrZaJHQJ796aJ9ldeB9GBoN2X1A9eyO5l8pJVR1lH
-         OUDIc/OvREnfKbU6ltcK2SuyA34dQqD4Ruqm83fmxyi46s6xM9fEpf2+hftCg/chhK+j
-         C7P/94aAQ8CMdCXQxJk+vsI9riwBNMPv9xq1f46lD5nHoFalHRK2EbXjK4FPJKt4Z6Iq
-         cR5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733843758; x=1734448558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lccj5szcR2Loq0SLYGfcfm6VfqCNUTcb2r9ZMHJPtZI=;
-        b=JvmMwHMKk5cuV17LBWAO5YK85E5UjZc73NH8IsRPhCX9aA+EBhBYn2V+Uw7+jwJU6w
-         t6AaE/nfbUcWrioLime6xyk1yspIa3L0UnC9jy65swWPytUZZjWXdHbp8oVljNcm4DPj
-         CNtw7H54GKsDIcU43f5uRGnhHv14rTT6RyncZw8HfFcG8kXcX+7atOid/RDCyS5w/2m6
-         zwBU+3/TEJnT2IbdHogCqVMNpugNsA1U6dZy8YQhV+TaLb2N0ylfUuN2iOE7JQ4u67Hz
-         eZAHIwhTWUmM6JjJogD+XlvnEQ3yRtIkW361F4i8oTRsH94Jpr8XvNK46GKJ3eA7W507
-         EhXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIJd8Rmy1ZJ068bey0PqYzRsLUViVJqSOxsfNTPZGbq0iXSLRdju7Oil/431deS0mzzWcohmojLsyHAo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP0gHDkiSJTKNs8npHBNxpF4n+S2Os0Z3JGurgyJVn/68Fct75
-	CjvstCISxoX8eywbnUMdUnxmCacVDWI/3ZiLCYcNsIXCGGOQIB8k/pGSrY13XQ==
-X-Gm-Gg: ASbGncu0yE9jRhx3t5L/AWJi1oGDfDm5OE0DbHf6M4C0E5/UhcX6PnPkmdJHfitaM9S
-	94Ouy2W0PzVT8K6I3cwMYlLlX3C5pQJZUqfwADKCOZbZzwd4CGtf1wBzJSxjE5Xa1XwvN6oewbj
-	tTvyC5WEo+BS+mUNlp5pKjDdhTMC3vkvLWDUvT1jE/cgKMInUxSq7NDBA7+mc60WS11tTLd2vfi
-	Y2vFgvGl08lRPL615xu72XHLzXuNEl/XD23wsCB+XnSCruduEZJkev0pDn74YhRkQdBnm0KYxjG
-	GlathcXzJjGP
-X-Google-Smtp-Source: AGHT+IGQyoODgkoUO+Oc0opjizE3auLPjFl7HcIY2FHdwIvo4FWM24+WSW6gR/vIwAErqWTGt1UzGQ==
-X-Received: by 2002:a17:906:4d2:b0:aa6:aa89:6d5e with SMTP id a640c23a62f3a-aa6aa8971d4mr141516366b.18.1733843758225;
-        Tue, 10 Dec 2024 07:15:58 -0800 (PST)
-Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68f4eb962sm281095666b.3.2024.12.10.07.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 07:15:57 -0800 (PST)
-Date: Tue, 10 Dec 2024 15:15:54 +0000
-From: Quentin Perret <qperret@google.com>
-To: Fuad Tabba <tabba@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Sebastian Ene <sebastianene@google.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/18] KVM: arm64: Change the layout of enum
- pkvm_page_state
-Message-ID: <Z1hbKrUPXdEokXpP@google.com>
-References: <20241203103735.2267589-1-qperret@google.com>
- <20241203103735.2267589-2-qperret@google.com>
- <CA+EHjTxfchr+ggO_z_zrrFTrFpS3oTJXt13t-854xWxYY=oSQQ@mail.gmail.com>
+	s=arc-20240116; t=1733843862; c=relaxed/simple;
+	bh=Wi43FCd/dRAQg29x1UTQvXfGbBTo+bNPgW6UooecDZI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cQt2KSe19A0RCqb0gAWZqBQv4mdrA0fiTtkyutZTXzraX4qqR7WySw5vsWpFGX3Iz2Lhdrd5BV7PqPuHz4LDpheh6b2e6Yc/MtCCw5pUXMnTVDVJFVC7ElxvVIeLQza3PnjkjDsc95PQZXmrIwgQzWG/X14od8V8Z7HqRddg3w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J8iHWTWK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADtdMF019489;
+	Tue, 10 Dec 2024 15:17:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iW0ylusmUm4idK/1N8NKEi
+	Jzigzfo5wNMkGkkJEwHv4=; b=J8iHWTWKUVe3o2nsaXvl4pCzNqGrqARXDlzWzM
+	o3rSRPNeLTaaiZIMc1QE2Cam+gtD0kh+3fKYmuyT8paFR0efpbQlfRBks1VvX70H
+	duEUkq9hp62sazoT06fi9lA3HWwqfxwNTBQEJarxZ2HBY9vIv6CABfZG6VVqH1dt
+	5/K3AryxRV9hSE3ZEwYB1Ub0Fg+xdXeDbvr+CNb8jvgSkcmgKpyJk7S5iWNm+3tG
+	PD+PO3AvJDXn+h6iKna7ENq68jwsZU6xZO04XkniEtpVMsx+SpJEqGvWcGdNnUlY
+	//0cWPzLDRSdOiMy9dxd1hP1cL+Nf7YxBx+OC6PAFGw3FjVg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e341bjwh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 15:17:32 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAFHWo5026060
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 15:17:32 GMT
+Received: from bt-iot-sh01-lnx.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Dec 2024 07:17:27 -0800
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao <quic_rjliao@quicinc.com>
+CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
+        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
+        <quic_mohamull@quicinc.com>
+Subject: [PATCH v4 0/3] Expand firmware-name property to load specific
+Date: Tue, 10 Dec 2024 23:16:32 +0800
+Message-ID: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTxfchr+ggO_z_zrrFTrFpS3oTJXt13t-854xWxYY=oSQQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dohx0REGJxgIzHUW94Wd9g18vtbzLHiK
+X-Proofpoint-ORIG-GUID: dohx0REGJxgIzHUW94Wd9g18vtbzLHiK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
+ spamscore=0 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100114
 
-Hey Fuad,
+Expand the firmware-name property to specify the names of NVM and
+rampatch firmware to load.
 
-On Tuesday 10 Dec 2024 at 12:59:44 (+0000), Fuad Tabba wrote:
-> Hi Quentin,
-> 
-> On Tue, 3 Dec 2024 at 10:37, Quentin Perret <qperret@google.com> wrote:
-> >
-> > The 'concrete' (a.k.a non-meta) page states are currently encoded using
-> > software bits in PTEs. For performance reasons, the abstract
-> > pkvm_page_state enum uses the same bits to encode these states as that
-> > makes conversions from and to PTEs easy.
-> >
-> > In order to prepare the ground for moving the 'concrete' state storage
-> > to the hyp vmemmap, re-arrange the enum to use bits 0 and 1 for this
-> > purpose.
-> >
-> > No functional changes intended.
-> >
-> > Signed-off-by: Quentin Perret <qperret@google.com>
-> > ---
-> >  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h | 17 ++++++++++-------
-> >  1 file changed, 10 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> > index 0972faccc2af..ca3177481b78 100644
-> > --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> > +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> > @@ -24,25 +24,28 @@
-> >   */
-> >  enum pkvm_page_state {
-> >         PKVM_PAGE_OWNED                 = 0ULL,
-> > -       PKVM_PAGE_SHARED_OWNED          = KVM_PGTABLE_PROT_SW0,
-> > -       PKVM_PAGE_SHARED_BORROWED       = KVM_PGTABLE_PROT_SW1,
-> > -       __PKVM_PAGE_RESERVED            = KVM_PGTABLE_PROT_SW0 |
-> > -                                         KVM_PGTABLE_PROT_SW1,
-> > +       PKVM_PAGE_SHARED_OWNED          = BIT(0),
-> > +       PKVM_PAGE_SHARED_BORROWED       = BIT(1),
-> > +       __PKVM_PAGE_RESERVED            = BIT(0) | BIT(1),
-> >
-> >         /* Meta-states which aren't encoded directly in the PTE's SW bits */
-> > -       PKVM_NOPAGE,
-> > +       PKVM_NOPAGE                     = BIT(2),
-> >  };
-> > +#define PKVM_PAGE_META_STATES_MASK     (~(BIT(0) | BIT(1)))
-> >
-> >  #define PKVM_PAGE_STATE_PROT_MASK      (KVM_PGTABLE_PROT_SW0 | KVM_PGTABLE_PROT_SW1)
-> >  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
-> >                                                  enum pkvm_page_state state)
-> >  {
-> > -       return (prot & ~PKVM_PAGE_STATE_PROT_MASK) | state;
-> > +       BUG_ON(state & PKVM_PAGE_META_STATES_MASK);
-> 
-> This is a slight change in functionality, having a BUG_ON instead of
-> just masking out illegal states. Is it necessary?
+This update will support loading specific firmware (nvm and rampatch)
+for certain chips, like the QCA6698 Bluetooth chip, which shares the
+same IP core as the WCN6855 but has different RF components and RAM
+sizes, requiring new firmware files.
 
-Yep, this is arguably a bit zealous. Passing e.g. PKVM_NOPAGE to
-pkvm_mkstate() would be properly bogus, so having a WARN_ON() or
-BUG_ON() in there is still a good thing, but it should be done in a
-separate patch.
+Different connectivity boards may be attached to the same platform. For
+example, QCA6698-based boards can support either a two-antenna or
+three-antenna solution, both of which work on the sa8775p-ride platform.
+Due to differences in connectivity boards and variations in RF
+performance from different foundries, different NVM configurations are
+used based on the board ID.
 
-I'll rework in v3.
+So In firmware-name, if the NVM file has an extension, the NVM file will
+be used. Otherwise, the system will first try the .bNN (board ID) file,
+and if that fails, it will fall back to the .bin file.
 
-> > +       prot &= ~PKVM_PAGE_STATE_PROT_MASK;
-> > +       prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
-> > +       return prot;
-> >  }
-> >
-> >  static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
-> >  {
-> > -       return prot & PKVM_PAGE_STATE_PROT_MASK;
-> > +       return FIELD_GET(PKVM_PAGE_STATE_PROT_MASK, prot);
-> >  }
-> >
-> >  struct host_mmu {
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
+Possible configurations:
+firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
+firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+firmware-name = "QCA6698/hpnv21.bin";
+
+---
+v4:
+  1. Split nvm and rampatch changes to 2 commits
+  2. Code fix according to review comments
+
+v3:
+  1.Expand firmware-name property to specify the nvm and rampatch to
+  load.
+  2.Change the driver to support two items in firmware-name and choose
+  the NVM file according to board id if there is no extension in NVM
+  file.
+  3.Update the dts file to idendify the firmware for QCA6698.
+---
+
+Cheng Jiang (4):
+  dt-bindings: net: bluetooth: qca: Expand firmware-name property
+  Bluetooth: qca: Add support in firmware-name to load board specific
+    nvm
+  Bluetooth: qca: Expand firmware-name to load specific rampatch
+  arm64: dts: qcom: sa8775p-ride: Add firmware-name in BT node
+
+ .../net/bluetooth/qualcomm-bluetooth.yaml     |   5 +-
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi    |   1 +
+ drivers/bluetooth/btqca.c                     | 149 +++++++++++++-----
+ drivers/bluetooth/btqca.h                     |   5 +-
+ drivers/bluetooth/hci_qca.c                   |  22 ++-
+ 5 files changed, 133 insertions(+), 49 deletions(-)
+
+
+base-commit: ebe1b11614e079c5e366ce9bd3c8f44ca0fbcc1b
+-- 
+2.25.1
+
 
