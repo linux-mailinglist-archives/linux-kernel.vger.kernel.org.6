@@ -1,165 +1,129 @@
-Return-Path: <linux-kernel+bounces-439311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0DE9EAD87
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:04:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F469EAD83
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2E1E1885E2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498DD1632B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F32723DEB3;
-	Tue, 10 Dec 2024 10:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="PL/M6RXV"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A046878F57;
+	Tue, 10 Dec 2024 10:02:00 +0000 (UTC)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0AA23DE80;
-	Tue, 10 Dec 2024 10:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B3D23DEA8;
+	Tue, 10 Dec 2024 10:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733824917; cv=none; b=c98AbMF+IF2Vbsbct9N8F8Jbxu6OYoA9HzFm3Nbwv3cpQnNaWZZU4VpIhmMwBCM5GFvCdAPA0J6xMbG24ZYL9CsYKrrwUAvFmuH/LqKz8sA+s4yEXt5ZuabwYg/UtsNGRXHIQFZYacgo7SzAPX1lS4ihngAKmUtTXC50Me0XWTE=
+	t=1733824920; cv=none; b=mZed0Tfi//vJQMWbvIN1EaMa3EBVAibmusifrSTbyiCLv2rWoux0akpHYmnm5wv0ZU+0x8b5B6XQs0X0Jq6AXf9zcg2mKzPRVrc7IfaaC9neV5GyklYJsr71O+NW2ZXGLMR4SpjP5D3PPUZc6HG7wEJxUd/Hft3W6hncHOBOaHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733824917; c=relaxed/simple;
-	bh=qexxCczfr+X2BkZUf8yml6mLKO33dfcfABhJJJmF18c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TnyD4aACjYFc9sKq5rDjMbUjLsoFLSqYjd5m13U3C8IlwUBlYmsTso8rjBy9EyBoetcv7o1rKbGP1sth56XJBu9PpgudSmh2srVetEjgJl9ZzwaD59paVNL4RvN36Yk5LaKPge5BYTQ+bcrcm+KaQvZoOuUkGgbmhZpIC6m1jTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=PL/M6RXV; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7r4xfSODKGy3g81bMhiMFOfk/EfRckjRbt+ZPVGFK4g=; b=PL/M6RXV0ShUZBMUNHiO5ZgItP
-	apLiD0XeIwBENg5C3YZHRvB7etdwsQkW62AKHgcAt5QqwRPGytnr5gjgh9b4FVMT+eIQj5q7oBbrF
-	PvMqnPXqlb8rMfX/A53ximn12OI8ob53r+fgcoasq6nZT0XjAHUyuQPUtbcMLjRe+y18yephfx3cE
-	emwHQ+w6sK7y0D9vOBkLXZqzDyvadoDStZb2HoeRAgXFRBc/BONNTJpmpPQYSFvp7jSb+8Emav+0W
-	Yt5NL6mUE9LpbcgYi1OhE2bpqvMCfT/nG9QC/Rdt5xM7r+gaw1PZGdpr5IP/ERpaobgInwSFN4nEj
-	qXJk9vIA==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tKx3g-0003mj-0a; Tue, 10 Dec 2024 11:01:36 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Yan <andyshrk@163.com>
-Cc: Daniel Semkowicz <dse@thaumatec.com>,
- Diederik de Haas <didi.debian@cknow.org>, andy.yan@rock-chips.com,
- Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- neil.armstrong@linaro.org, quentin.schulz@cherry.de, rfoss@kernel.org,
- robh@kernel.org, tzimmermann@suse.de
-Subject:
- Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2 controller
-Date: Tue, 10 Dec 2024 11:01:34 +0100
-Message-ID: <2117643.K71DO8KEF6@diego>
-In-Reply-To: <2d68155e.1e5b.193ae4616b9.Coremail.andyshrk@163.com>
-References:
- <20241203165450.1501219-1-heiko@sntech.de>
- <CAA8EJprLA09NP0KAztc5eoAMkGcrom84jg_pcbNcwN0FAaSLrw@mail.gmail.com>
- <2d68155e.1e5b.193ae4616b9.Coremail.andyshrk@163.com>
+	s=arc-20240116; t=1733824920; c=relaxed/simple;
+	bh=MIvthA4Nl0uIya4VAI4zbquPEcUw0r+hPY8+Sk51arQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WccFUJrwFQyuCdYk89J7R71s9y9+cLt4qDbkRfyHK4U01kA85VnayIk53NUH7cf0DbcP8PFc9FiHrn3LfyPCl8kPYheAN1HkqpeoiM6pv1Hy/jVjRuLrfaaamrh7GjSf9eJ1juhLRyiNQ4N89DS7F+ugWJefgPEA8JlFDA33ZQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-85c5316f15cso699238241.1;
+        Tue, 10 Dec 2024 02:01:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733824913; x=1734429713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bU21a0wFb5B0tExmN7JfphqZemuXjOPWEnAeMmariLg=;
+        b=wFPIMgITgcRb5gzRmyaLljITo9sWyBzcuIT9SsDDY5nuYu4/Xm6KtGKMP4JLEjSELO
+         LlpNZpG+d/IfWM6TxFQHw3JRFGttErbWVXaUHBKjC4phWXTmSnhY2bMSx7jayVtQeMyB
+         ivRYIdZhsrJbbFyTING173fREpJy6pjcb6qSeoZeSsIBnNDNwHdEfP8/+ezMlw5lq17+
+         mwvMC87NQM1QYLGZf+qEmfrn/SkqUIYBNdobZ30rCcV/1nPsnsParG6rZ7wAPZD8Q50i
+         4D3FBBYBtqLFjzwebTO9CuDnXjXO9EJOh2LcKnA2WS7ndhIoph8m8bPxOOJAhFEakK/E
+         5Fmw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Da3G7PUS2Dv/c3CJL2IRdyHZbY9zVfC4AQuwNm2LSY8pPhH0bEccrb2dTq6ohtAbuN7Htxvo5y5PhgWjtBREWYM=@vger.kernel.org, AJvYcCV6nRchI8llXITmFM0ljTxORpGbebGuxsosWyvBe8Uj/BzvqL9/akAFkoE2ZflVTwYef2U8nxN5hqhj@vger.kernel.org, AJvYcCVH8EFS8f+n8yp7300J6kt9VpShioElidRiZcow4xOEPYmeAqYPzrLGokpOVx1MvlqSZ3DODQm/q1ejeA==@vger.kernel.org, AJvYcCVR4PoBYLTJZMd33LW9tCZg+zLxotMyolw0APTJezQPNhCWFERGYyWLBq2vnUieJThgMEtSfHP1S93f@vger.kernel.org, AJvYcCXABWJv2wwOWoWEIf5mcVx7ghZ8HYo5DQ2wo5is1XgSaHgPbjGcVjwT6Zf1Hs/azO8jelkAME6kw2kHLh4=@vger.kernel.org, AJvYcCXC1/cAIqFMQd18hlnWIYb8HB+Uszz2YYXocClK8Qn/JriEYAOyx+yJEKWAYklOwasRo+IW7REtu5FioNLp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS+0lCLKZY/DbRYeT9FJkTSZimqzB+kay3FTSSRPplOG2IjdAV
+	i+TWw4oAlyCCtMpW6cEhj5b0UszYNoDJSz1YydyAZfIn7Vl+6hi3wLUrKL0Q
+X-Gm-Gg: ASbGnctXvSMDRp7ZUBy4pALvSIez3kvMp2XY9WFTiF/W7UyKQYXj8aXACqXFTyGBzU6
+	i64H9ppolW5fPbzA4/gXOvubFLJ00WBpatAQD5GQbM1fmbee5mqbz++Mbk3TJs1TYnGmwyK5kCN
+	W6ynkMeFtPRD+aJH0pbeF2c66S3Kl9oxwG/MXGNEA8EskaJ+ZoKV9qRcPajbuxk7NjUGT/0jkX3
+	/YSrI9ELr2W/dCvqRK/F5da9K4t6VnztJeA7OuvUMdBdZ4VMHgH3tRlswMm42zf+9niGaABCPow
+	14jZk/le6TGmCLiY
+X-Google-Smtp-Source: AGHT+IE2glzDbFQ8/qA586D6GHtukx1rNvayEpcjtXdeyGqmrc8YCt3NYo6N4RmpUILzbkpad1Uckw==
+X-Received: by 2002:a05:6122:a04:b0:517:167a:5cc6 with SMTP id 71dfb90a1353d-517167a7947mr6532784e0c.6.1733824913077;
+        Tue, 10 Dec 2024 02:01:53 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51886b8c3dasm175951e0c.30.2024.12.10.02.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 02:01:51 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4afdd15db60so971174137.1;
+        Tue, 10 Dec 2024 02:01:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUIG9w9g45XGa068q/dp9pxwsteGkeZ2exItFUpf5CglM3ShM5r2kCTad9ZJ+Ttp9b8hNl80SS6uy1Odwu3@vger.kernel.org, AJvYcCV+2R42JPFPY+Dehwjze5xEyYM4qNb5TA8EzMHHkYx4crWn7UYyE+Wi1on8AI2y+xj+gvLG52AUbHqxKCX1uwG8JFA=@vger.kernel.org, AJvYcCWP6k7ChKg7gsGcefJuG/yBn9xa+0dzexZAH4Mg1xVDLx8gkvejv+4SbApkLICw3Hkb8k0LxG0dwR6u@vger.kernel.org, AJvYcCWSj3CRb7IDn/AByrb+4e5L7SRfxVmoqkRqHKZKGmI8gz8vh8Nw00JdkRcjvmiGrHM/XtbT7ibBSOIf@vger.kernel.org, AJvYcCWiQT8FkXpNUuJY3J4sQdtXI17FjEOVeCkc9bRibNxsRzOBJJHi0A9vv+ao8il1/N/cuuiC2n5PetQxHw==@vger.kernel.org, AJvYcCXOxsheMAYI7/tl3zyhD+yP3p8eSk/sgQG2FMUE3d/8zvNYVBC5eXYo8xsL3Y3Ici5uLlhOQou1f8FQZIA=@vger.kernel.org
+X-Received: by 2002:a05:6102:3583:b0:4af:aaa4:dd9a with SMTP id
+ ada2fe7eead31-4afcaa18834mr13656547137.10.1733824911603; Tue, 10 Dec 2024
+ 02:01:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241113133540.2005850-15-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdU+_NuLp2FuwwcLfJRe2ssMtp=z7fqcsANgYfFehTNJGg@mail.gmail.com> <ed0f6c49-8e39-4cc6-ba93-35a9372bb532@tuxon.dev>
+In-Reply-To: <ed0f6c49-8e39-4cc6-ba93-35a9372bb532@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Dec 2024 11:01:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXgakz=bBrqaUgniLJdOMULBG++zcOJ=U-fizToVv5b6w@mail.gmail.com>
+Message-ID: <CAMuHMdXgakz=bBrqaUgniLJdOMULBG++zcOJ=U-fizToVv5b6w@mail.gmail.com>
+Subject: Re: [PATCH v3 14/25] ASoC: renesas: rz-ssi: Use goto label names that
+ specify their actions
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Dienstag, 10. Dezember 2024, 02:54:09 CET schrieb Andy Yan:
->=20
-> Hi Dmitry,
->=20
-> =E5=9C=A8 2024-12-10 09:45:11=EF=BC=8C"Dmitry Baryshkov" <dmitry.baryshko=
-v@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
-> >On Tue, 10 Dec 2024 at 03:22, Andy Yan <andyshrk@163.com> wrote:
-> >>
-> >>
-> >> Hi Dmitry,
-> >>
-> >> =E5=9C=A8 2024-12-10 09:01:38=EF=BC=8C"Dmitry Baryshkov" <dmitry.barys=
-hkov@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
-> >> >On Tue, Dec 10, 2024 at 08:50:51AM +0800, Andy Yan wrote:
-> >> >>
-> >> >>
-> >> >> Hi,
-> >> >>
-> >> >> At 2024-12-10 07:12:26, "Heiko St=C3=BCbner" <heiko@sntech.de> wrot=
-e:
-> >> >> >Am Montag, 9. Dezember 2024, 17:11:03 CET schrieb Diederik de Haas:
-> >> >> >> Hi,
-> >> >> >>
-> >> >> >> On Mon Dec 9, 2024 at 4:06 PM CET, Daniel Semkowicz wrote:
-> >> >> >> > On 03.12.24 21:54, Heiko Stuebner wrote:
-> >> >> >> > > This series adds a bridge and glue driver for the DSI2 contr=
-oller found
-> >> >> >> > > in the rk3588 soc from Rockchip, that is based on a Synopsis=
- IP block.
-> >> >> >> > >
-> >> >> >> >
-> >> >> >> > I did more tests with different LVDS displays. I tested follow=
-ing
-> >> >> >> > configurations with DSI/LVDS bridge:
-> >> >> >> > - 1024x600@60.01
-> >> >> >> > - 1024x768@60.02
-> >> >> >> > - 1280x800@60.07
-> >> >> >> > - 1366x768@60.06
-> >> >> >> >
-> >> >> >> > All of them worked without issues, except 1366x768.
-> >> >> >> > With this resolution, video is blurry, and offset incorrectly
-> >> >> >> > to the left. There are also repeating errors on the console:
-> >> >> >> >
-> >> >> >> >   rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY=
- irq err at vp3
-> >> >> >> >
-> >> >> >> > In correct operation with other resolutions, there is no error.
-> >> >> >> > I am not sure if this is a problem in your series or rather in=
- VOP2
-> >> >> >> > driver.
-> >> >> >
-> >> >> >This really sounds like something is wrong on the vop side.
-> >> >> >The interrupt is part of the vop, the divisable by 4 things likely=
- too.
-> >> >>
-> >> >> This is a hardware limitation on vop side:
-> >> >> The horizontal resolution must be 4 pixel aligned.
-> >> >
-> >> >Then mode_valid() and atomic_check() must reject modes that don't fit.
-> >>
-> >> We round down to 4 pixel aligned in mode_fixup in our bsp kernel,
-> >
-> >What is meant by the "bsp kernel" here? I don't see it being present
->=20
-> bsp kernel means downstream vendor kernel.
->=20
-> >in the mainline kernel. So, if the mode is unsupported, it should be
->=20
-> Will it be acceptable to add this round down in the mainline mode_fixup?
+Hi Claudiu,
 
-personally I'd like that.
+On Tue, Dec 10, 2024 at 10:56=E2=80=AFAM Claudiu Beznea
+<claudiu.beznea@tuxon.dev> wrote:
+> On 09.12.2024 15:51, Geert Uytterhoeven wrote:
+> > Inside this block there are several return statements.
+> > As we know DMA is not available when we get here, these do not
+> > need to call rz_ssi_release_dma_channels() hence do not use
+> > "goto err_release_dma_chs".
+> > However, this may be missed when making future changes.
+> > So perhaps it may be prudent to make this safer, by moving this inside
+> > the failure branch of the rz_ssi_dma_request() check above?
+>
+> I agree! As this series is already big enough I would prefer to handle it
+> after it is integrated. Keeping it like this doesn't impact the RZ/G3S su=
+pport.
+>
+> Are you OK with this approach?
 
-I.e. the thing in the examoke above is an LVDS display, so has essentially
-fixed resolution. So adapting the resolution may or may not be possible
-(some for DSI or whatever) .
+Fine for me!
 
-Doing that rounding-down AND emitting a dev_warn about that fact would
-be preferrable to me personally, though I don't know if there is some
-different precedent in other parts of DRM.
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Heiko
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
