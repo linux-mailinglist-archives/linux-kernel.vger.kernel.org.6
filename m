@@ -1,252 +1,227 @@
-Return-Path: <linux-kernel+bounces-440095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602AE9EB8B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBAC61670C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:52:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F3520468C;
-	Tue, 10 Dec 2024 17:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="juteAGYA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5D49EB8BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51803204693
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A61DD283363
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:52:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61ECE20469D;
+	Tue, 10 Dec 2024 17:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTMsIiC9"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB5C19F436;
+	Tue, 10 Dec 2024 17:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853135; cv=none; b=EY2Wj0QhEgtsuuTj1F2yW69WmMveaPJlmoJIbNxkz8l7zDAVw74VGKMVgcvW6QiIsD22oCDwzrptgMIOEf/pIUn6G05NEv7CVBw2Bv1w3eok08l4XUBwmh5HhlhbTzNv+7tkPwq0L08iNvau1K5yzelVYEd+S2n2PwBEf585zpM=
+	t=1733853155; cv=none; b=roWeEVFM+NeMNiUUp5HpEr04J1G95CGrWz+5pe4ULtoG9BpOkSj33TNXZyqtkEeEiFMAvaYx0HnyR93LAdiVsEBtiH3peA/RQHT9FTBeif/eLqewzRun7F+IonXsOx5Hpu+B7QDgxDCqaA+DwlCTpoybs+RsdHsrO4cMGq2gETY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853135; c=relaxed/simple;
-	bh=lLbLE1tKKDfeDdO+nD84XWjzeIie3h7aVvVDlDRciV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sj6clUeL/KYXAf2qGudkKmCAl7mLhbyhtjC9g/h7Il4l910uphpGjcChHRRdMQWExhXYKf5SwXRPJapGKE8dz+C4XY+cAWPXQbRq2S+89bnG65KDNTWgIcDllrQqYNpJFCvTBUcM35owWFr3uUNCSh1sjDlDDD/1mMAUq7oabvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=juteAGYA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAHTNdh015737
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ege3SlIBABNYQBfJL/StIBqQ
-	Q+7IZD3RScF6Axrafug=; b=juteAGYAt8FC8DoBSBGM2MPvg6n2crWeIjqMgMyJ
-	Vynt9dOSCdk149k6U/9E9j+4RfSx/VlOQciRABFgG9rbZpM5bRPwM0OnHaTTWMa+
-	HhTaSFp5Ik62QLaLN5rzmW5CZAyjkTCkSNN7qmxdlRzhWdb0+efzFgtOKX+hxWuj
-	zTr4wjIKYXBsOwrfPtYVKA0JWabm9FRJN6RVCDFDixYk6HLUsBwhPFq8lPMy5FuV
-	H3bdrH1uWsXpi+WQx6xtNdkr2D8Ore1CQNNELAtZlZm14BQ9GUICkaf8ni69jLoN
-	PYq3mmSbFC1quAFbkbZbjGEG5DlX85B7F982LXIFUHqxxA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dy8tvxkm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:12 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-20d15285c87so65761255ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:52:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853131; x=1734457931;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1733853155; c=relaxed/simple;
+	bh=AfHqTxfppYa4zmqsSk3YfhyXd9srhWABrl/8mQKprZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z8fKTcEsdz+58bEtpXlRwtshYH21XZvzSRU1rSIZdt7fioAdU3tMLEAFrjWfV1xH2NKlUcx8Cg9nqzFSYO0yNxtd86S13eFkF/Y/oAmUmig0I3zqOjuyQenlofC6h948bg+Kb5uxYgWwBdHFkkHLKxNgzrFuILn1OkbIKW5BVEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTMsIiC9; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fd51285746so1696044a12.3;
+        Tue, 10 Dec 2024 09:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733853153; x=1734457953; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ege3SlIBABNYQBfJL/StIBqQQ+7IZD3RScF6Axrafug=;
-        b=NP3xXCFVgw6F+8RPKnp72wTpCfpsyZ3f0cJIQ4TOlv+ikSRRgSf7ZoCO542fBNZXn6
-         4TIS40hH9S9oMpuNKDo3oeWJ4xQYMiCvVpD3Mfc7GN9ATfrRwer6vf0H8GsuiA2aWsev
-         Tt3l4vdnNRP//Bh8LXzJoSTwvoZ0ydDCr3+CrUS3GgYul4onia1FXqKGLmDh11Iv360V
-         +lJSmdUGV7fFAn4G9GB7fnr5b4Jz34oeN+2YMfJiWNDj7vkUgv9gcWh3dJSn3DFCE+P4
-         6OWQox4LbKGLdFOx0TPMDIceanDo8zZynzhD4kCfXeXs+ef2MSHAKY/ac/fopF7TuReR
-         VUYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdAvay8GN9szJFwTtes8HtUfPOMWDi1hx083t09hfE3fvcgHmFFLZ7fRAAGPFdQp5t/CibRtEJRJNx/7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIuRTUzkhXh5PT7EbHqiyw8BOBTigHEIDDm8s3epq7Ma5kqZX0
-	Cm4bX5Lx6HVpgTpjbLAM10LQpTQLjC6+SM05fLtPFZZYrzkYnbIljzyNWwY/gEyPuAV2M0iemqR
-	FzbAQ3s1g23UTd+fcCp9XOgfdE1n2/KlhWyQYlQUM3PVZZb8nIeig82vpGtr6nKtA/yLoAw0=
-X-Gm-Gg: ASbGncvo/0o0GiOo8d+Dht9RJgrym+g1uY3GNVbC8c4aHKO0RqOyRzOTfZPgi7hHgVB
-	CbLLn+v/HuiYbgd8nRLPXr+nO04WfxlZV3tXmO05XKEXUjjJ5YnKX6MXGlrQGX6k3HSxNsgrNpH
-	MUP6YqyRB//qlIuaGSyEBB1xezI4dUOjogyMth1cCXv/vNl0NEhoPUXgOysE3Zl+RLcJQHaAH3Q
-	hhsDd2YaSSA+A9YpZdu/EF4zufdh2VYIocYACtf6IiVtCW4/+xVGxtPpEotu/h76/bxW+/amVRh
-	SLiWLQ+/e50G3bI2hUlZ3ukrT2MZA1dsClw8Bg==
-X-Received: by 2002:a17:902:d54a:b0:216:45b9:43ad with SMTP id d9443c01a7336-2177854b79dmr294755ad.34.1733853131325;
-        Tue, 10 Dec 2024 09:52:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHxQAT1KyS2RYreNEX6eE08vhGpymLqRJuMeKy20p+JsymYi0fZ8cLbEJRWiRwWdl0yi3dYjw==
-X-Received: by 2002:a17:902:d54a:b0:216:45b9:43ad with SMTP id d9443c01a7336-2177854b79dmr294315ad.34.1733853130888;
-        Tue, 10 Dec 2024 09:52:10 -0800 (PST)
-Received: from hu-bjorande-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21680814d6bsm5989185ad.157.2024.12.10.09.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:52:10 -0800 (PST)
-Date: Tue, 10 Dec 2024 09:52:07 -0800
-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
-        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
-        Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
-        krzk+dt@kernel.org, robh@kernel.org, quic_vdadhani@quicinc.com
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-Message-ID: <Z1h/x+QJD5Uob8GZ@hu-bjorande-lv.qualcomm.com>
-References: <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
- <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
- <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
- <da2ba3df-eb47-4b55-a0c9-e038a3b9da30@quicinc.com>
- <a7186553-d8f6-46d4-88da-d042a4a340e2@oss.qualcomm.com>
- <e9fb294b-b6b8-4034-84c9-a25b83321399@kernel.org>
- <835ac8c6-3fbb-4a0d-aa07-716d1c8aad7c@gmail.com>
- <f1fa2bde-95ce-45e9-ad2d-f1d82ec6303c@kernel.org>
- <8b33f935-04a9-48df-8ea1-f6b98efecb9d@kernel.org>
- <422e6a1e-e76a-4ebc-a0a5-64c47ea57823@gmail.com>
+        bh=LUnM3sY1ce/bdNNMF99TPKIzNqRwIqpuFiC6o4V0bfk=;
+        b=cTMsIiC9EOBi/gwnNtEAysQSDFJybG0xn4M2lykW8q13KIUOQORzR05YYMXohAg9bb
+         uEO7+R47K0LXVttOvXh52Yx+cqPhG6tppKyqb0llGOg6YVeLpiCkr626VI70zO2EW5yj
+         uVY1Flvvog1cyWjfC7e2kCIy33SBd6EPS9DXGwSPyk+UCynpYuH0bB82ZcpjPosKXsaO
+         qN4BESB+X/cvYObpCHcDouSi0aGJ5wqst2ukDkuNvum4XuwVhJzcpzRdCN1iqRxv4suk
+         r6iU1CWMgFzM2QlAWxDTricdkb+WU9WMyHFF6b8XD5kFSPJ5ZnJprWXywlY1zD2Rd9Jo
+         tA7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733853153; x=1734457953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LUnM3sY1ce/bdNNMF99TPKIzNqRwIqpuFiC6o4V0bfk=;
+        b=AlzKJLNpRpKID4Z+RIII1yJ6i6GbmPeRxqIBsjV6/F8QQVnfFw70/ZvVM+VByePeNC
+         BPXdsoQFEMivkrFeB4xuiYvgmBSC1ZcX49iG3miDrl84HyxSieSxjWYo8QSfVu5EDCCh
+         8F2l8JENZylLtXlb5+O4GPTbNc2lASFfhSIwFc1dDt3YjnmjDSYNZdvwwJX6nKdOW8Ws
+         +wHm7uQ447ih3DZAJz/641bs8FgkjJrxFFrpuRJt0Aytx8Ltlq5xf9P8O64/tdHr0sq4
+         0cRA6s11tTjvzi1OEZiG7MZTP67goP8drjNtTuimm0asyJb00loDIkc2x+7sz03d2f2K
+         ky0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUHZ0lM0Bj91nX+zOEKY+aRALLXMwOZtnkazA3Hzsk2YC4Ng5d/vxMqYoTS+KZ3jQ9ZpZKH4Rb8tzN90NfRavAwsHr4@vger.kernel.org, AJvYcCVW8GMnN6GEtS6DsHQ6tQACAWK6GRYAHh5/yD3uAWk81MGyP3rFQlaYVtAk+lcUg6EvXW+p1rDOO5tKwf1+@vger.kernel.org, AJvYcCW6UjC9CZkz8woUmhkUdzPJ8J57o/6Y0tP1+0zDY0Zlof1HO9ONuGINgMFzKfrDUAzdCSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVjc2XHbNudreHUu6NRx22d+amznlbZnZOox2x9y3TizDLZ27A
+	i8UXt5nvn6AeHn1VUxMeTMpwrvrhcvcSukmJGX02AlNAC5fyyJChNw8inqW8Xs+0/ojNXN5eITt
+	CV4xUD26+vu3/PLZ9shIRyNzHCvh18j8e
+X-Gm-Gg: ASbGncv7nNmL/un9RVI43Rxk0nEZV6912ZsmR5vpxBZ62UYoyqQ9IjKtQwn0Bh2JYPs
+	RgQDV1Q47sA2xIhKtOnykoMycYTNEKMzhmvw5BCwODgra1tPAmK4=
+X-Google-Smtp-Source: AGHT+IEfxxJW+7Lq0duKX7dP656zkxMXlKv4FFyC5HB3obQeznxck94Z3DfV+j+jRkhCcbtUZQ8IuCMLuUf2l2LySyM=
+X-Received: by 2002:a17:90b:3143:b0:2ee:3cc1:793a with SMTP id
+ 98e67ed59e1d1-2ef6aad12d2mr25630092a91.29.1733853153081; Tue, 10 Dec 2024
+ 09:52:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <422e6a1e-e76a-4ebc-a0a5-64c47ea57823@gmail.com>
-X-Proofpoint-ORIG-GUID: tM4TeT0YmgH3JYcoyfQfT4YJYYmsjdNn
-X-Proofpoint-GUID: tM4TeT0YmgH3JYcoyfQfT4YJYYmsjdNn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 clxscore=1015 mlxscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100132
+References: <20241210-bpf-fix-uprobe-uaf-v3-1-ce50ae2a2f0f@google.com>
+In-Reply-To: <20241210-bpf-fix-uprobe-uaf-v3-1-ce50ae2a2f0f@google.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 10 Dec 2024 09:52:21 -0800
+Message-ID: <CAEf4BzacBUdttSi9d0Ecud7XEgdMrzsbZa0wmpFceLRwjQ-=dg@mail.gmail.com>
+Subject: Re: [PATCH bpf v3] bpf: Fix theoretical prog_array UAF in __uprobe_perf_func()
+To: Jann Horn <jannh@google.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Delyan Kratunov <delyank@fb.com>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 01:38:28PM +0100, Konrad Dybcio wrote:
-> 
-> 
-> On 12/10/24 13:05, Krzysztof Kozlowski wrote:
-> > On 10/12/2024 12:53, Krzysztof Kozlowski wrote:
-> > > > > > I'm not sure a single property name+description can fit all possible
-> > > > > > cases here. The hardware being "shared" can mean a number of different
-> > > > > 
-> > > > > Existing property does not explain anything more, either. To recap -
-> > > > > this block is SE and property is named "se-shared", so basically it is
-> > > > > equal to just "shared". "shared" is indeed quite vague, so I was
-> > > > > expecting some wider work here.
-> > > > > 
-> > > > > 
-> > > > > > things, with some blocks having hardware provisions for that, while
-> > > > > > others may have totally none and rely on external mechanisms (e.g.
-> > > > > > a shared memory buffer) to indicate whether an external entity
-> > > > > > manages power to them.
-> > > > > 
-> > > > > We have properties for that too. Qualcomm SoCs need once per year for
-> > > > > such shared properties. BAM has two or three. IPA has two. There are
-> > > > > probably even more blocks which I don't remember now.
-> > > > 
-> > > > So, the problem is "driver must not toggle GPIO states", because
-> > > > "the bus controller must not be muxed away from the endpoint".
-> > > > You can come up with a number of similar problems by swapping out
-> > > > the quoted text.
-> > > > 
-> > > > We can either describe what the driver must do (A), or what the
-> > > > reason for it is (B).
-> > > > 
-> > > > 
-> > > > If we go with A, we could have a property like:
-> > > > 
-> > > > &i2c1 {
-> > > > 	externally-handled-resources = <(EHR_PINCTRL_STATE | EHR_CLOCK_RATE)>
-> > > > };
-> > > > 
-> > > > which would be a generic list of things that the OS would have to
-> > > > tiptoe around, fitting Linux's framework split quite well
-> > > > 
-> > > > 
-> > > > 
-> > > > or if we go with B, we could add a property like:
-> > > > 
-> > > > &i2c1 {
-> > > > 	qcom,shared-controller;
-> > > > };
-> > > > 
-> > > > which would hide the implementation details into the driver
-> > > > 
-> > > > I could see both approaches having their place, but in this specific
-> > > > instance I think A would be more fitting, as the problem is quite
-> > > > simple.
-> > > 
-> > > 
-> > > The second is fine with me, maybe missing information about "whom" do
-> > > you share it with. Or maybe we get to the point that all this is
-> > > specific to SoC, thus implied by compatible and we do not need
-> > > downstream approach (another discussion in USB pushed by Qcom: I want
-> > > one compatible and 1000 properties).
-> > > 
-> > > I really wished Qualcomm start reworking their bindings before they are
-> > > being sent upstream to match standard DT guidelines, not downstream
-> > > approach. Somehow these hundreds reviews we give could result in new
-> > > patches doing things better, not just repeating the same issues.
-> > 
-> > This is BTW v5, with all the same concerns from v1 and still no answers
-> > in commit msg about these concerns. Nothing explained in commit msg
-> > which hardware needs it or why the same SoC have it once shared, once
-> > not (exclusive). Basically there is nothing here corresponding to any
-> > real product, so since five versions all this for me is just copy-paste
-> > from downstream approach.
-> 
-> So since this is a software contract and not a hardware
-> feature, this is not bound to any specific SoC or "firmware",
-> but rather to what runs on other cores (e.g. DSPs, MCUs spread
-> across the SoC or in a different software world, like TZ).
-> 
+On Tue, Dec 10, 2024 at 7:34=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
+>
+> Currently, the pointer stored in call->prog_array is loaded in
+> __uprobe_perf_func(), with no RCU annotation and no immediately visible
+> RCU protection, so it looks as if the loaded pointer can immediately be
+> dangling.
+> Later, bpf_prog_run_array_uprobe() starts a RCU-trace read-side critical
+> section, but this is too late. It then uses rcu_dereference_check(), but
+> this use of rcu_dereference_check() does not actually dereference anythin=
+g.
+>
+> Fix it by aligning the semantics to bpf_prog_run_array(): Let the caller
+> provide rcu_read_lock_trace() protection and then load call->prog_array
+> with rcu_dereference_check().
+>
+> This issue seems to be theoretical: I don't know of any way to reach this
+> code without having handle_swbp() further up the stack, which is already
+> holding a rcu_read_lock_trace() lock, so where we take
+> rcu_read_lock_trace() in __uprobe_perf_func()/bpf_prog_run_array_uprobe()
+> doesn't actually have any effect.
+>
+> Fixes: 8c7dcb84e3b7 ("bpf: implement sleepable uprobes by chaining gps")
+> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> Changes in v3:
+> - align semantics with bpf_prog_run_array()
+> - correct commit message: the issue is theoretical
+> - remove stable CC
+> - Link to v2: https://lore.kernel.org/r/20241206-bpf-fix-uprobe-uaf-v2-1-=
+4c75c54fe424@google.com
+>
+> Changes in v2:
+> - remove diff chunk in patch notes that confuses git
+> - Link to v1: https://lore.kernel.org/r/20241206-bpf-fix-uprobe-uaf-v1-1-=
+6869c8a17258@google.com
+> ---
+>  include/linux/bpf.h         | 11 +++--------
+>  kernel/trace/trace_uprobe.c |  6 +++++-
+>  2 files changed, 8 insertions(+), 9 deletions(-)
+>
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index eaee2a819f4c150a34a7b1075584711609682e4c..7fe5cf181511d543b1b100028=
+db94ebb2a44da5d 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -2193,26 +2193,22 @@ bpf_prog_run_array(const struct bpf_prog_array *a=
+rray,
+>   * rcu-protected dynamically sized maps.
+>   */
+>  static __always_inline u32
+> -bpf_prog_run_array_uprobe(const struct bpf_prog_array __rcu *array_rcu,
+> +bpf_prog_run_array_uprobe(const struct bpf_prog_array *array,
+>                           const void *ctx, bpf_prog_run_fn run_prog)
+>  {
+>         const struct bpf_prog_array_item *item;
+>         const struct bpf_prog *prog;
+> -       const struct bpf_prog_array *array;
+>         struct bpf_run_ctx *old_run_ctx;
+>         struct bpf_trace_run_ctx run_ctx;
+>         u32 ret =3D 1;
+>
+>         might_fault();
+> +       RCU_LOCKDEP_WARN(!rcu_read_lock_trace_held(), "no rcu lock held")=
+;
+>
+> -       rcu_read_lock_trace();
+>         migrate_disable();
+>
+>         run_ctx.is_uprobe =3D true;
+>
+> -       array =3D rcu_dereference_check(array_rcu, rcu_read_lock_trace_he=
+ld());
+> -       if (unlikely(!array))
+> -               goto out;
 
-I don't think this is a reasonable distinction, the DeviceTree must
-describe the interfaces/environment that the OS is to operate in.
-Claiming that certain properties of that world directly or indirectly
-comes from (static) "software choices" would make the whole concept of
-DeviceTree useless.
+I think we should keep this unlikely(NULL) check, bpf_prog_run_array()
+has it and see bpf_prog_array_valid() comment below
 
-The fact that a serial engine is shared, or not, is a static property of
-the firmware for a given board, no different from "i2c1 being accessible
-by this OS or not" or the fact that i2c1 is actually implement I2C and
-not SPI (i.e. should this node be enabled in the DeviceTree passed to
-the OS or not).
+pw-bot: cr
 
 
-That said, the commit message still doesn't clearly describe the system
-design or when this property should be set or not, which is what
-Krzysztof has been asking for multiple times.
+>         old_run_ctx =3D bpf_set_run_ctx(&run_ctx.run_ctx);
+>         item =3D &array->items[0];
+>         while ((prog =3D READ_ONCE(item->prog))) {
+> @@ -2227,9 +2223,8 @@ bpf_prog_run_array_uprobe(const struct bpf_prog_arr=
+ay __rcu *array_rcu,
+>                         rcu_read_unlock();
+>         }
+>         bpf_reset_run_ctx(old_run_ctx);
+> -out:
+> +
+>         migrate_enable();
+> -       rcu_read_unlock_trace();
+>         return ret;
+>  }
+>
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index fed382b7881b82ee3c334ea77860cce77581a74d..4875e7f5de3db249af34c539c=
+079fbedd38f4107 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -1402,9 +1402,13 @@ static void __uprobe_perf_func(struct trace_uprobe=
+ *tu,
+>
+>  #ifdef CONFIG_BPF_EVENTS
+>         if (bpf_prog_array_valid(call)) {
 
-Let's circle back and help Mukesh rewrite the commit message such that
-it clearly documents the problem being solved.
+bpf_prog_array_valid() explicitly calls out that it's just an
+opportunistic check and bpf_prog_run_array*() should double check for
+NULL
 
-> Specifying the specific intended use would be helpful though,
-> indeed.
-> 
-> Let's see if we can somehow make this saner.
-> 
-> 
-> Mukesh, do we have any spare registers that we could use to
-> indicate that a given SE is shared? Preferably within the
-> SE's register space itself. The bootloader or another entity
-> (DSP or what have you) would then set that bit before Linux
-> runs and we could skip the bindings story altogether.
-> 
-> It would need to be reserved on all SoCs though (future and
-> past), to make sure the contract is always held up, but I
-> think finding a persistent bit that has never been used
-> shouldn't be impossible.
-> 
-
-Let's not invent a custom one-off "hardware description" passing
-interface.
-
-Regards,
-Bjorn
-
-> Konrad
+> +               const struct bpf_prog_array *array;
+>                 u32 ret;
+>
+> -               ret =3D bpf_prog_run_array_uprobe(call->prog_array, regs,=
+ bpf_prog_run);
+> +               rcu_read_lock_trace();
+> +               array =3D rcu_dereference_check(call->prog_array, rcu_rea=
+d_lock_trace_held());
+> +               ret =3D bpf_prog_run_array_uprobe(array, regs, bpf_prog_r=
+un);
+> +               rcu_read_unlock_trace();
+>                 if (!ret)
+>                         return;
+>         }
+>
+> ---
+> base-commit: 509df676c2d79c985ec2eaa3e3a3bbe557645861
+> change-id: 20241206-bpf-fix-uprobe-uaf-53d928bab3d0
+>
+> --
+> Jann Horn <jannh@google.com>
+>
 
