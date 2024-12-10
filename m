@@ -1,415 +1,211 @@
-Return-Path: <linux-kernel+bounces-438806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C609EA67C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:18:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8DE9EA683
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:22:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1455F168EA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:22:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E9F1CCB21;
+	Tue, 10 Dec 2024 03:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="H9WLvEzV"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020072.outbound.protection.outlook.com [52.101.61.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43118283B20
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:18:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97852248BD;
-	Tue, 10 Dec 2024 03:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hC9n1dz0"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE621F63F4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733800615; cv=none; b=i9dr6cR+W4XmcrUpw76ioyi9lpOf+71h0ZbC3iMmVFX5HhEHGW4U9CRux0qHVV50FREPitvLIj4hB2ZoFB8EbpeNWUki/d+ZhaG/sS0h3nzCF/hSGr93+eSnZqJKD3/jJI1NznGaa+BuzuTAE6FJItGWdBcM2zjiwvn8em60uYk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733800615; c=relaxed/simple;
-	bh=/GoLVPdegz5WfgN44hKf4e74doRXqzMfX0EgQ4Latjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awoSIYiXTvpr2MlgAi4eL7UWFm4q3E/NAOz9fgCspqc9m/c9JuBzwc+KgUPxem9mqcU9H/l2dwF4rDrqPA5R7QF5X3A+RiQp3kvjeEoNqtV+VPVr+XEQRPBN/iUkE0RMEZrlTZ+xhOtTcVfTlTbX9XQ9z4v467OrZLGYFUkCocg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hC9n1dz0; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2155c25e9a4so29645ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 19:16:53 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41617B644
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733800950; cv=fail; b=p9OCFQ2OK4t8Bb+4n/azntro9yf3LogSj4g59HVvodL2trvCG+hzy8b56Z/ATYJkTXxVJuO2rn3Xh2pJFPyE7O15/2uqpV4wvTsQZAkyJYE/6vWONl4ULzrFtiNk2Nlm/8tbzspT8z51odB/ngFhTNeKo7SUxRQM9JMavF4vu7A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733800950; c=relaxed/simple;
+	bh=s4zQ8ilft7ewfQnp5yGsK/1QwJ/mYYJ6kRd39EkMRao=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tdmMUS9TSy3P0rDHfAZOZF/rBBvoGSYmakItsx6111DjbSeXH5rY1yARFbbTHVy3zjmtOu646F0Im5VhB9cMbLHiXM6wEuH99k65HxPEbivhXZmMl0itY2sEtL3MpUV2RKKIr7CtWwe4UCUqRnrIWMx40FboPAMtwhPRIgh3XdE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=H9WLvEzV reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.61.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=irLBnDTwcg8chMHAgNs0I/HaHwVoLp8nR1N/V7VxLXidvVsumTCNtbG6/InFlet9Q+1dCwcasb76go+8nBQwvWhKluZZ7W3UG7NwSQnCZr8JvXyhuSeJAwk7RqSDdXoZ/PGFcxjcWLG4T5o14o265dSg5JY7JHwAPYZngOY2ikL+pUOD7nlwTX/z6EyUssMIakDBULf6neLtw9j48mx9hLrpd3Vf/CsyxTA+SdIYnQeTe/coO2HXpwv99PEX2QkHe1Npd6mjokjHErxvQt7cgwxguR7RfhhTFW8F5e4JIhzevGivnbRkEC+bHiqDTTBc56JiFWa8pSbvx4eXnW92Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P9l9ouLbztcewjrOWo+EsXqGXAY3xTeYVJ/WfNDtNyY=;
+ b=M3hFYjb1ZQyTuhTBZBxQdaVrioSjjzRc7P0W9xl4oWd2X8jbQl+ROPOiibvIUDg6yn4c8vgrQvcYdtHDSufNp7fdAqA+H4zmZXoMB1sN8sm9Jox5KAFFBecwsjyLZY/4Jt82xvajJPsTnSpqBblGjUzsCT9z9Va+07sUyvfIdx3o3OJknRr2HEvPhQ4ObLxH9KVj6iLwwReWmjania2RjVBUdXYb9C0Gv9seOdJOiGAshtYaNTpAGHG+VrPDwQQp4Zuqc0ufmbBgTlXbnrA+6lxiaZT29ThQC8tIYEjwqxsnOKJJJ5PCnjsjncxx1+9YS1xBWLrNQ1DhSi1RKDZh2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733800612; x=1734405412; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NyZAZM+03wgjRqyQcrmh3VsxU1GwZ8Ve990auQ8WFdE=;
-        b=hC9n1dz0GbisN9Qehiq0MltbEuHEzPH2LQvmmgQAUPhaCYoTisjHVJN5IcxPEQrvk9
-         9gE1zWBZQ+tcdWQk3EaLU7xm2y5sBflfhHU+TCSZ3cKyJT9Hqfs+tfaD7Q1lTbTQVgEt
-         WLz0/nHS5u7rp0n0Sb1xPKzQV66+dKPchDQwHP9c/ZVyIYeorbJ5dmdLL2iHZ3Kn/svd
-         rKUEVLUOsYtFegIqCr7/VvXmCaMdFRjerrdCIt65VHoCff8puywX4qmA6SzrzHchUriy
-         nGSVe9HuU38De8npxIMWM/SEYLa0HfXUUNp4YivtnaIlcPsCofbu8XMtt0QfDkKp6d8n
-         5raQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733800612; x=1734405412;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NyZAZM+03wgjRqyQcrmh3VsxU1GwZ8Ve990auQ8WFdE=;
-        b=kAy3O8zdqAQwdY9axvHlTt21+G7xnUBGiMBLT6LGskvHEHx+NgAdiQGuqbM3YZ+fcb
-         JCDpYpqK3yx/zU8YSBkjLhUXAJyNGTBwgUqsHh02N5Ly9CZ4itdc+IBaJtiAVX+f0fbs
-         4IACToj/mo9YP2g2jh7VmUcB+GdDie19Y5s9xx5bpSLPKleGjKJVP91dvcBMTC+5PCHJ
-         J2hN5QxFneXYGpPztsxY4LDaFX9EdpqYZ6dTZJLsA/7zY1fDlm6xdwiYFvexnIuTWgUa
-         ylU8SOnix5ljojmV6hYT+6T7i2fdrsQv5m3p4Ix1RP8xzereJUI8WwC82akQvK4zL8oV
-         YL3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0QIyh7JwwzZrhOqs9rToUQyF/Rv5Vw71MUZPobE5U6WxQZ0PqD4PXMbiT933yULEUSQQd02QNDcyjcIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZzEeO+/skxhYr7lp4eKwiTMD0Ph3pu/gmw81pgyczSvDjxBd3
-	f3HZFZKPWZi5uzjyJRWvLwCuX3FaCQdMqfAX6TRZXOOTPKUYYFMJ20Db/G5Lbg==
-X-Gm-Gg: ASbGncvvjducP3yB9fWJPxe7j7PyQAzRcJfmpw99UBEYuq3iYaZidf9ijbvY+v2Nf+j
-	3OrOsYq4bqZ5u+BWEhJeO4I9EafwokwQq0C5ZGv/JpaMrgO/PlZICZcphfv9+x19vBfcd5KD0Hx
-	oNtVyePlbOjjn6pqjRrkI8QFDDZDLd9m01xKu4/8bb6FJ9li12e2/mOGHjvkXdrntbm2QU4t263
-	jc+fzmErp6+jMwCqPyZXO47hZd4l47YwY7GiW8IT2XGB7yrcnDkXiqqIcppDmTq9NCi24z8TZ9l
-	6X8XjockyaknKFtQ
-X-Google-Smtp-Source: AGHT+IEHk3w35020sNJLvd1ZnWmGKVbCkDvXLIQL62Q4tuEbdvHsGeLIjwgwfhwf2ynqVl+wiEkXNQ==
-X-Received: by 2002:a17:902:ccc9:b0:216:27f5:9dd7 with SMTP id d9443c01a7336-21674d4b288mr853415ad.11.1733800612329;
-        Mon, 09 Dec 2024 19:16:52 -0800 (PST)
-Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef26ff97f2sm10676027a91.11.2024.12.09.19.16.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 19:16:51 -0800 (PST)
-Date: Tue, 10 Dec 2024 03:16:48 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Li Li <dualli@chromium.org>
-Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	donald.hunter@gmail.com, gregkh@linuxfoundation.org,
-	arve@android.com, tkjos@android.com, maco@android.com,
-	joel@joelfernandes.org, brauner@kernel.org, surenb@google.com,
-	arnd@arndb.de, masahiroy@kernel.org, bagasdotme@gmail.com,
-	horms@kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	hridya@google.com, smoreland@google.com, kernel-team@android.com
-Subject: Re: [PATCH net-next v9 1/1] binder: report txn errors via generic
- netlink
-Message-ID: <Z1eyoA-8-XduIEJj@google.com>
-References: <20241209192247.3371436-1-dualli@chromium.org>
- <20241209192247.3371436-2-dualli@chromium.org>
- <Z1eO-Nu0aowZnv6t@google.com>
- <CANBPYPgU9uL9jdxqsri=NwLTJcFpzdB313QsYjSQAuopRppTDw@mail.gmail.com>
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P9l9ouLbztcewjrOWo+EsXqGXAY3xTeYVJ/WfNDtNyY=;
+ b=H9WLvEzVtL+Vn5ngli8buRd1AB4eFi04qZlqyV2pUEc6G6q02tDWPpP5uJdPvi6bZrVOlsTzarLA33xmq0I2wme7Xb+QYhRBfjOrlGiRD91wsZeguDObthsQK81IP6a0NkjnQfbjxohmM+dMH6E6DCDOlwov0R8OSbtqe6tPkOE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from PH0PR01MB7975.prod.exchangelabs.com (2603:10b6:510:26d::15) by
+ PH0PR01MB6277.prod.exchangelabs.com (2603:10b6:510:c::18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.12; Tue, 10 Dec 2024 03:22:24 +0000
+Received: from PH0PR01MB7975.prod.exchangelabs.com
+ ([fe80::6926:a627:118e:8050]) by PH0PR01MB7975.prod.exchangelabs.com
+ ([fe80::6926:a627:118e:8050%3]) with mapi id 15.20.8251.008; Tue, 10 Dec 2024
+ 03:22:21 +0000
+Message-ID: <7e89f00b-0b7a-4ef6-90e6-bb5f1b7946e2@amperemail.onmicrosoft.com>
+Date: Tue, 10 Dec 2024 11:22:09 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64: refactor the rodata=xxx
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+ Huang Shijie <shijie@os.amperecomputing.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, anshuman.khandual@arm.com,
+ corbet@lwn.net, patches@amperecomputing.com, akpm@linux-foundation.org,
+ thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
+ ardb@kernel.org, inux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20241209072020.4743-1-shijie@os.amperecomputing.com>
+ <20241209072020.4743-2-shijie@os.amperecomputing.com>
+ <83d01335-c6be-d17b-511a-378ce3ad0663@gentwo.org>
+Content-Language: en-GB
+From: Shijie Huang <shijie@amperemail.onmicrosoft.com>
+In-Reply-To: <83d01335-c6be-d17b-511a-378ce3ad0663@gentwo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0059.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::19) To PH0PR01MB7975.prod.exchangelabs.com
+ (2603:10b6:510:26d::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANBPYPgU9uL9jdxqsri=NwLTJcFpzdB313QsYjSQAuopRppTDw@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR01MB7975:EE_|PH0PR01MB6277:EE_
+X-MS-Office365-Filtering-Correlation-Id: 292089dd-93ee-465f-eb8b-08dd18c9dbd6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M3NjNW5HTzhBU09VTlJnRnAyNm1NUnl4bS9FZHlpR3RCT1RiMndBTi9GSGVw?=
+ =?utf-8?B?ZVBmMDk5M24rc1hyUlhWai9kcDkvaDJUejM1aElvMnhQeUVNVzBVellHcUZG?=
+ =?utf-8?B?MXR3b21oMk9vUWk3T050Kys4UWY1WnE3QmZMcWVTditGdTN1T1hrbDF6ZXpl?=
+ =?utf-8?B?VkZGSnhhdVo5SUVFUDJXdk81M3ptTmVvR1V5bWU3VXhlaDVrcy9aanFnTHpi?=
+ =?utf-8?B?ZVFEWFN1bk9zSjBKNWE2SnJiMENwTjFiVGNrVW00SmdEN2N0NlF6SFZId01Q?=
+ =?utf-8?B?V3NvMmJaTEFZS2VOZTdpNFA0UTFBQ1RPZjh5dURkeFRCQlVOUW4vcGtpM2dr?=
+ =?utf-8?B?Q0R4eUlqZkRST1dNcGR6a3VMdksreWk5bzBkYks2eXdNMjNHNFlkYjM2ME9j?=
+ =?utf-8?B?eW1QbVo1dGxGRXFoei9FbVhmektKSjBCQ21VWHVXS0oyVHpBTmt1SDdpYnBa?=
+ =?utf-8?B?dkNpUXFkdlhwYkkwNGFJNDVVZVpvY1RpUkZiajNmZUxMQitVVkM1MFVCOHpX?=
+ =?utf-8?B?dCs3WGhrMjZhTTd0V3VYbzQ5OUNtaVRYMW9oeGNEQ2kxTFVmbUhBUDd4ZHlq?=
+ =?utf-8?B?eE9ZSTAyNEhhWW5XZkI5a2xFNStUMzdHQUg4dXQ3UldZQWpLc1BEbU9yVXM1?=
+ =?utf-8?B?azlwamZ2QkpBOWNuR1NvVWMrclp0Z0xwZEk5ZDUvUHIreDQyL05tSjFwaldl?=
+ =?utf-8?B?OFlPT3M4Q25hVHNYQUxoTTZSeGhqTHRUalpkMGdXQVFuQjBvWFpnbHg3b2Zr?=
+ =?utf-8?B?ZCtJVCtqVjByNXFBQWt2dmE1YmVqZzhWY0h3V25sZFY1bFFSbUJyOWhuSnpJ?=
+ =?utf-8?B?dC9WVzU0eGZTL1RIMnpZV2ZXdDJqUzd3U0w1VjBQMWtLaUJOU2VCWnN3TExo?=
+ =?utf-8?B?ZldCV2pUczJxS0FFbXZDQStqWG90NHJ0SVFid2lYdjlZcWJhTkpDc2JOKzFU?=
+ =?utf-8?B?VXNXdkpLcC9KUmFnak1kSlhvb0oxWmRQc0h3WEtXTG9xSWRsOWpPZEhRQkRM?=
+ =?utf-8?B?UVUyZzlsTFdDRXJFRkl1V0x5TjRrNXN3dE5KZXFuVUxaL3ZPK0N5NXV0SCti?=
+ =?utf-8?B?YStSdWIzWmZ5Zy85bkoxMG9nQVdJdUJyeFJYdmJJMFY4QzVKbXZiU2EvdHJp?=
+ =?utf-8?B?UUlKNWxHLytiV1pSUEdHVXlxMzBuTTZ3VVE2NFR5NmM5VUkzeG1zWmJtZk5H?=
+ =?utf-8?B?VFEyWm5NQmhpbDU4WTVSNkhxbGsrVWNHcHdLWHd0bDZFbld3ejVKaWhHekMw?=
+ =?utf-8?B?Y2RpanNHZTRjNnloNUJxeVBTK0l1K0hyaUF1SzR2dUxlMHd2RjFuU3BwVlpk?=
+ =?utf-8?B?RWJvbXVhckhNOW9oMTNnZ2kxR1hTR0R1TWxFakRQOEVYUWdlTXQvckJHK2ZD?=
+ =?utf-8?B?UmdueEhXd0ZnSUZ6VTdOVmZqRVN5M0lPL2ZyYllYWm82eE8zMG9VdUhoZ2l6?=
+ =?utf-8?B?Z1N6V3BVNlhGZm45OExoRVFzTWlLZzVpSUQvMDBKZ016d2ppWlROOXpaQXVS?=
+ =?utf-8?B?T2xYejIxRTZiVUkxaFAvbEZiQ21rQjByWnlJbURHV01DVXdiUHQxTzVhUFo0?=
+ =?utf-8?B?SlV3MkljSDMvY3dKV1pLQm9KazBVRDEyeDhKUjlGU2RDZzRTQ3dYcTFFQW9F?=
+ =?utf-8?B?cWhGdW1wK0RSMEtxS2dFaXVGVTJPeURtNlR1NEZsbFI2clEyQTkwbE9DeFFD?=
+ =?utf-8?B?YzFrZTFBdEthbkh5RHRkMmk5MzhLS1RySlhOREpKYzF3TmV5K2pGNHFCSjdh?=
+ =?utf-8?Q?VUN60ucatzICrnP/r4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB7975.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WjdZWCsyUjBBMENOQTlsUm5vYVpNUVVxazJ0Q3F5UWVjeWc3MTBLVEF3WTZJ?=
+ =?utf-8?B?UEYxejVXaFRwSUN1N0RFZGEwWk5GeFFNMzlUeGFPQlZLd0hER1d1djN5Skx2?=
+ =?utf-8?B?Y1hQZ3FoLzdTb1Z0ay9QLzltb21yOGdKRFBRbTdGUEQ2R1FHczhNa1lQdk5m?=
+ =?utf-8?B?RitobndtVE5oZVpMVDYrdnJZQnlxSEk2emZublVjUjgzQnlkYncwakJ3L3hl?=
+ =?utf-8?B?RGxpZDU2MFhEa3R0ZCtjRzBqanlxb244VmJSUlNGMUVoUlplQ0dqYlZKYmlr?=
+ =?utf-8?B?Vm9xa1k2QldJUTZhaEJJcDBramhBQlNJUVRYdmlOL1ZUNU9YeGFTMkROazlN?=
+ =?utf-8?B?bnpQVUN5VHJvZnhtbWRIbG9pTklzL1k2bGp4cXRqQVZtbVJHS0U5TUFBWThQ?=
+ =?utf-8?B?TEkzQ1BNREEySUlGeWpzNVFVUWlEajE2cldkMUdEdnRjQnBuY1hKeVZ3K1hz?=
+ =?utf-8?B?Y0JxWGRxbWE0OWwvSmREZW5hOExrWGxWditYZEgycjJNNGN0elowZWFIRnBK?=
+ =?utf-8?B?YlFWSk1jQUJpTkxlL1prRllXdHZOSENrNy9yMDVlVWNLS3U3S0REYmZlM1d3?=
+ =?utf-8?B?Yi9YMDJxeWFxWlVtMm01SzI0Z1k0VDhvb2Yva3hyRFZlS2dCQWpTS21vYitv?=
+ =?utf-8?B?VjlFYS9zMWVpcEVHMjJjelp0Z05xb2o0UUl5RG83NWF3UzBGVVhlRUtoM1dG?=
+ =?utf-8?B?bDhUV2ljNnEvTkZNM1VJVzVpQVM4aHA5TVJ1REN0SzJkRUl1eFZGdnNyVmpp?=
+ =?utf-8?B?ZVFlZTF6bm5KMDQyejVsRjE3U255NE1BZzZZeDdNUmRpRkg4aEpESVprSjZU?=
+ =?utf-8?B?Zm5WZmRvb3BoQTFDY2FzaEs0WjRDKzJvN2N0RUFkWDRlMkFKRHpuUVIybkV3?=
+ =?utf-8?B?OG4vYUh6dU80cVE4MExVR1VCc0ZnMk9iZkg4Y25SRmM0RytTTEsrZHNtVU5L?=
+ =?utf-8?B?ODdhRmZKZFM5MlFRS0JOZk5UUStGNEZ5VzBYRjFWQjFFeGFMM1NITTF0UUxJ?=
+ =?utf-8?B?NHpmY3FzekNBSjRqbmVIVEhReFFLRytvYWxwSThaalFvTVc0Y0tRSE1rdWgz?=
+ =?utf-8?B?Vm8vdDVVZ2Ezck0vSHh1M3owdVF1OVNTK3pCUkxFRWdSS2pudjRoNC81WHhL?=
+ =?utf-8?B?MEZxOVZQb2M0UXV1RXRQR2tZZm1ZK2JOVDRtdk92ZkErQXBLZTRYMVpxVzBD?=
+ =?utf-8?B?SEl0U2xSSlo3TExVS3NUT0doczR5UElNbkhCZGpTM2VzT3VUT1prRk85SWdx?=
+ =?utf-8?B?UTFwMVMyMUhEd1ZwSkxZbXBzTTZ5Q3FuQ2VoZUp3MEhwQWEvbWlWbFlxZ2NC?=
+ =?utf-8?B?bkRPVUhTUzNxREx4NDNydmttS3hqc2JwTkpZZ2R2bWdndnF4WVRvdWNRTHNu?=
+ =?utf-8?B?RjU1bjZ4bjB4UDBiSTg5UXZRYUNOZjJ4RG1KeVREWGNEZDI0aGxpRVR3aWJG?=
+ =?utf-8?B?U0Q4ZGtUTERoUitLMTF2ejdsUWZDQ09Db0pnRGdDdDl0VlNPODZxdUhmZFl2?=
+ =?utf-8?B?WEQvNU9rZzJZTFhzWjc0NEErWnAwSW1nZGI1bWdtZUQva2hUYytRbGVxQ1JZ?=
+ =?utf-8?B?SVJBZGRjRTRTYkE2bUxkbDVrVlhKbHRobTlreUtMbnJlRERGdnNmUjJLZis3?=
+ =?utf-8?B?ZGNHZ25xTHNoWGQvU1h4c1YxOEd4SGtxZlZ1Tkg2end6Y0ZvRkpKam8rZUJn?=
+ =?utf-8?B?OE5tUEh5RDFJazJ3VUx0Z2dEVjd5SEw5aDc3WHlCamxmRkE5K3Bla1ZDcmY3?=
+ =?utf-8?B?M29TVWpPQUV3WkNHWU84TENUR2NuWCtaQ0U1dVVLcDN0eGpyeDBOQVlkWS9u?=
+ =?utf-8?B?cXp5WklkU2FkYTVneFBZMkpqWkttUEVJSUMxemlTRk9ZREJWZWNnVnlMdTU5?=
+ =?utf-8?B?QnR3THV4cFZQZkZZKzQwMyt1bEdBZDMrWG1UMjdKUCs0ZDN5SHkzdWlTczRS?=
+ =?utf-8?B?YkxLcVpXWlgyVkpTT2JKVXZzYzZWeXRqVFBjN0lTS09jc3Y3QWcvdWxEc1NR?=
+ =?utf-8?B?ZkJZdVIxTS9TVG9GY1k2QkR4WDYxd3VQR0JuT1E5U2ZtdHF2b3VqNC9ydFlr?=
+ =?utf-8?B?SkhWNVkxTWYrRk9UYzNrU0g5V0ZBWjBkYUQzbXVmVnJkcFhRbEFPRzVJcUp0?=
+ =?utf-8?B?anVCazhrSDlhVmsyQzhCTnlYL1VXRlpaSWhUbU1pb0ZLWWFrb1VHN1cyaGcy?=
+ =?utf-8?Q?QGK82gnTQUtjPU1qEc3U1Rc=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 292089dd-93ee-465f-eb8b-08dd18c9dbd6
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB7975.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 03:22:21.6627
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TStp0OxzMwRrdVJEYxfYte8MpS686i1f8VPBfV1uHRYFUoqaMYu7/A8dCYqQNvM72Nvr7c3QOdXi+q/4JU0fH61Y1tyFANwp1MGfaGUIxEl4vCO4M3KDQKGm4V6Meg5r
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB6277
 
-On Mon, Dec 09, 2024 at 05:26:14PM -0800, Li Li wrote:
-> On Mon, Dec 9, 2024 at 4:44 PM Carlos Llamas <cmllamas@google.com> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 11:22:47AM -0800, Li Li wrote:
-> > > From: Li Li <dualli@google.com>
-> > >
-> > > Frozen tasks can't process binder transactions, so sync binder
-> > > transactions will fail with BR_FROZEN_REPLY and async binder
-> > > transactions will be queued in the kernel async binder buffer.
-> > > As these queued async transactions accumulates over time, the async
-> > > buffer will eventually be running out, denying all new transactions
-> > > after that with BR_FAILED_REPLY.
-> > >
-> > > In addition to the above cases, different kinds of binder error codes
-> > > might be returned to the sender. However, the core Linux, or Android,
-> > > system administration process never knows what's actually happening.
-> >
-> > I don't think the previous two paragraphs provide anything meaninful
-> > and the explanation below looks enough IMO. I would just drop the noise.
-> 
-> That makes sense. I'll remove them. Thanks!
-> 
-> >
-> > >
-> > > Introduce generic netlink messages into the binder driver so that the
-> > > Linux/Android system administration process can listen to important
-> > > events and take corresponding actions, like stopping a broken app from
-> > > attacking the OS by sending huge amount of spamming binder transactions.
-> > >
-> > > The new binder genl sources and headers are automatically generated from
-> > > the corresponding binder_genl YAML spec. Don't modify them directly.
-> >
-> > I assume "genl" comes from "generic netlink". Did you think about using
-> > just "netlink". IMO it provides better context about what this is about.
-> >
-> 
-> Yes, "genl" has been widely used in the Linux kernel. But I'm fine to rename
-> it to just "netlink". I'll change it in v10 unless there's other opinions.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=grep&q=genl
-> https://man7.org/linux/man-pages/man8/genl.8.html
 
-I am familiar with the "genl" e.g. as in genlmsghdr. However, it wasn't
-immediately straight-forward to me the connection as it would have been
-with "netlink".
+On 2024/12/10 1:05, Christoph Lameter (Ampere) wrote:
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -5901,7 +5901,7 @@
+>>   	rodata=		[KNL,EARLY]
+>>   		on	Mark read-only kernel memory as read-only (default).
+>>   		off	Leave read-only kernel memory writable for debugging.
+>> -		full	Mark read-only kernel memory and aliases as read-only
+>> +		noalias	Use more block mappings,may have better performance.
+>>   		        [arm64]
+> Maybe use
+> 		noalias Do not check aliases in order to allow larger kernel page
+>                          sizes on a platforms without FEAT_BBM2 support[arm64])
+>
+> instead?
 
-I don't know what the convention is for this type of generic netlink
-interfaces. Perhaps "genl" is more appropriate, I just know that using
-"netlink" would have been more straight-forward (at least to me).
+The "rodata=noalias" here is equal to original "rodata=on".
 
-Maybe most others that are new to this binder interface will go through
-the same "discovery" process I went through.
+But Yang Shi's patch set works with original "rodata=full" :
 
-> 
-> > >
-> > > Signed-off-by: Li Li <dualli@google.com>
-> > > ---
-> > >  Documentation/admin-guide/binder_genl.rst    |  96 +++++++
-> >
-> > We already have a "binderfs" entry. Perhaps, we should just merge your
-> > Documentation with that one and call it "binder" instead?
-> > You might want to run this by Christian Brauner though.
-> >
-> 
-> I'm happy to merge it if the doc maintainers like this idea. Or we can do
-> it in a separate patch later.
-> 
-> > > +===========================================================
-> > > +Generic Netlink for the Android Binder Driver (Binder Genl)
-> > > +===========================================================
-> > > +
-> > > +The Generic Netlink subsystem in the Linux kernel provides a generic way for
-> > > +the Linux kernel to communicate to the user space applications via binder
-> >
-> > nit: s/communicate to/communicate with/
-> 
-> Would fix it. Thanks!
-> 
-> >
-> > > +driver. It is used to report various kinds of binder transactions to user
-> > > +space administration process. The driver allows multiple binder devices and
-> >
-> > The transactions types that I'm familiar with are sync/async. I think
-> > you want to say "report transaction errors" or something like that
-> > instead?
-> >
-> 
-> Yes, it means the transaction error code. I'll make it clearer.
-> 
-> > > +their corresponding binder contexts. Each context has an independent Generic
-> > > +Netlink for security reason. To prevent untrusted user applications from
-> > > +accessing the netlink data, the kernel driver uses unicast mode instead of
-> > > +multicast.
-> > > +
-> > > +Basically, the user space code uses the "set" command to request what kind
-> >
-> > Can you use the actual command? e.g. BINDER_GENL_CMD_SET
-> >
-> > BTW, why set? what are we setting? Would *_REPORT_SETUP be more
-> > appropriate?
-> >
-> 
-> Hmm, I intentionally make them short in the netlink YAML file.
-> Otherwise the generated code/name is quite long. But if this is
-> causing confusion, I'm happy to use a more descriptive (and longer)
-> name.
+https://lists.infradead.org/pipermail/linux-arm-kernel/2024-November/979770.html
 
-Short is fine. However, what is "SET"? In the future we might add more
-commands to this interface and I can see this name being a problem at
-that point.
 
-> 
-> > > +of binder transactions should be reported by the kernel binder driver. The
-> > > +driver then echoes the attributes in a reply message to acknowledge the
-> > > +request. The "set" command also registers the current user space process to
-> > > +receive the reports. When the user space process exits, the previous request
-> > > +will be reset to prevent any potential leaks.
-> > > +
-> > > +Currently the driver can report binder transactions that "failed" to reach
-> > > +the target process, or that are "delayed" due to the target process being
-> >
-> > "Delayed" transaction is an entirely new concept. I suppose it means
-> > async + frozen. Why not use that?
-> >
-> > Also, per this logic it seems that a "delayed" transaction could also be
-> > "spam" correct? e.g. the flags are not mutually exclusive.
-> 
-> It depends on the actual implementation. Currently each binder
-> transaction only returns one single error code. A "spam" one also
-> indicates it's a "delayed" one.
+IMHO, it's not proper to mention the FEAT_BBM in "rodata=noalias".
 
-I'm absolutely confused as to what is "delayed" then? Isn't it async &&
-frozen?
 
-A spam transaction can be if the caller has >=25% of the target's buffer
-capacity or over 50 transactions, regardless of whether the target is
-frozen or not.
 
-It seems to me these are two independent scenarios and a transaction can
-be either one or both.
+Thanks
 
-> 
-> >
-> > > +frozen by cgroup freezer, or that are considered "spam" according to existing
-> > > +logic in binder_alloc.c.
-> > > +
-> > > +When the specified binder transactions happen, the driver uses the "report"
-> > > +command to send a generic netlink message to the registered process,
-> > > +containing the payload struct binder_report.
-> > > +
-> > > +More details about the flags, attributes and operations can be found at the
-> > > +the doc sections in Documentations/netlink/specs/binder_genl.yaml and the
-> > > +kernel-doc comments of the new source code in binder.{h|c}.
-> > > +
-> > > +Using Binder Genl
-> > > +-----------------
-> > > +
-> > > +The Binder Genl can be used in the same way as any other generic netlink
-> > > +drivers. Userspace application uses a raw netlink socket to send commands
-> > > +to and receive packets from the kernel driver.
-> > > +
-> > > +.. note::
-> > > +    If the userspace application that talks to the driver exits, the kernel
-> > > +    driver will automatically reset the configuration to the default and
-> > > +    stop sending more reports to prevent leaking memory.
-> >
-> > I'm not sure what you mean by preventing memory leaks. What happens when
-> > userspace setups the report and doesn't call "recv()"? Is that what we
-> > are worried about?
-> >
-> 
-> Probably "leaking memory" isn't accurate here. If the user app
-> doesn't call recv(), the netlink message would just fail to send.
-> There's no memleak. But I think it's a good idea to reset the
-> configuration. Let me describe it in a better way.
-> 
-> > > +
-> > > +Usage example (user space pseudo code):
-> > > +
-> > > +::
-> > > +
-> > > +    // open netlink socket
-> > > +    int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
-> > > +
-> > > +    // bind netlink socket
-> > > +    bind(fd, struct socketaddr);
-> > > +
-> > > +    // get the family id of the binder genl
-> > > +    send(fd, CTRL_CMD_GETFAMILY, CTRL_ATTR_FAMILY_NAME,
-> > > +            BINDER_GENL_FAMILY_NAME);
-> >
-> > ok, what is happening here? this is not a regular send(). Is this
-> > somehow an overloaded send()? If so, I had a really hard time trying to
-> > figuring that out so might be best to rename this.
-> >
-> 
-> This pseudo code means a few attributes are sent by a single send().
-> 
-> > > +     if (flags != (flags & (BINDER_GENL_FLAG_OVERRIDE
-> > > +                     | BINDER_GENL_FLAG_FAILED
-> > > +                     | BINDER_GENL_FLAG_DELAYED
-> > > +                     | BINDER_GENL_FLAG_SPAM))) {
-> > > +             pr_err("Invalid binder report flags: %u\n", flags);
-> > > +             return -EINVAL;
-> > > +     }
-> >
-> > didn't Jakub mentioned this part wasn't needed?
-> >
-> 
-> Good catch! I removed them but somehow didn't commit the change.
-> 
-> 
-> > > +int binder_genl_nl_set_doit(struct sk_buff *skb, struct genl_info *info)
-> > > +{
-> > > +     int portid;
-> > > +     u32 pid;
-> > > +     u32 flags;
-> > > +     void *hdr;
-> > > +     struct binder_device *device;
-> > > +     struct binder_context *context = NULL;
-> >
-> > nit: would you mind using reverse christmas tree for this variables
-> > and also in other functions too?
-> >
-> 
-> Sure.
-> 
-> > > +
-> > > +     hlist_for_each_entry(device, &binder_devices, hlist) {
-> > > +             if (!nla_strcmp(info->attrs[BINDER_GENL_A_CMD_CONTEXT],
-> > > +                             device->context.name)) {
-> > > +                     context = &device->context;
-> > > +                     break;
-> > > +             }
-> > > +     }
-> > > +
-> > > +     if (!context) {
-> > > +             NL_SET_ERR_MSG(info->extack, "Unknown binder context\n");
-> > > +             return -EINVAL;
-> > > +     }
-> > > +
-> > > +     portid = nlmsg_hdr(skb)->nlmsg_pid;
-> > > +     pid = nla_get_u32(info->attrs[BINDER_GENL_A_CMD_PID]);
-> > > +     flags = nla_get_u32(info->attrs[BINDER_GENL_A_CMD_FLAGS]);
-> > > +
-> > > +     if (context->report_portid && context->report_portid != portid) {
-> > > +             NL_SET_ERR_MSG_FMT(info->extack,
-> > > +                                "No permission to set flags from %d\n",
-> > > +                                portid);
-> > > +             return -EPERM;
-> > > +     }
-> > > +
-> > > +     if (binder_genl_set_report(context, pid, flags) < 0) {
-> > > +             pr_err("Failed to set report flags %u for %u\n", flags, pid);
-> > > +             return -EINVAL;
-> > > +     }
-> >
-> > With the flags check being unnecessary you probably want to fold
-> > binder_genl_set_report() here instead.
-> >
-> 
-> Sorry, I don't quite understand this request. Can you please explain it?
+Huang Shijie
 
-I mean that without the flags check binder_genl_set_report() is small
-enough and the only caller is this. So you could just delete that
-function and write the code here in binder_genl_nl_set_doit().
 
-> 
-> > > +/**
-> > > + * Add a binder device to binder_devices
-> > > + * @device: the new binder device to add to the global list
-> > > + *
-> > > + * Not reentrant as the list is not protected by any locks
-> > > + */
-> > > +void binder_add_device(struct binder_device *device)
-> > > +{
-> > > +     hlist_add_head(&device->hlist, &binder_devices);
-> > > +}
-> >
-> > nit: would you mind separating the binder_add_device() logic into a
-> > separate "prep" commit?
-> >
-> 
-> Sure.
-> 
-> > > +
-> > >  static int __init init_binder_device(const char *name)
-> > >  {
-> > >       int ret;
-> > > @@ -6953,6 +7217,7 @@ static int __init init_binder_device(const char *name)
-> > >       }
-> > >
-> > >       hlist_add_head(&binder_device->hlist, &binder_devices);
-> > > +     binder_device->context.report_seq = (atomic_t)ATOMIC_INIT(0);
-> >
-> > I don't think this is meant to be used like this.
-> >
-> > Also, binder_device is kzalloc'ed so no need to init report_seq at all.
-> >
-> 
-> I'll remove this unnecessary code.
-> 
-> > >
-> >
-> >
-> > Also, how is userspace going to determine that this new interface is
-> > available? Do we need a new entry under binder features? Or is this not
-> > a problem?
-> 
-> It's not a problem. The generic netlink command "getfamily" will fail.
 
-Cool, and this wouldn't be retried after it has failed right?
 
