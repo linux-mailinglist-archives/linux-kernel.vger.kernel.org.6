@@ -1,141 +1,159 @@
-Return-Path: <linux-kernel+bounces-439332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA429EADD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:19:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1D69EADD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:19:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705F2287FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71681164E43
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475BF190685;
-	Tue, 10 Dec 2024 10:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAA719DF64;
+	Tue, 10 Dec 2024 10:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="tCjew8Fl"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tm+okeDN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB023DEB5;
-	Tue, 10 Dec 2024 10:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23DA13B59E;
+	Tue, 10 Dec 2024 10:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825930; cv=none; b=bQ9P00Q6vTqXYdY4yOKA0HH6LZ/A6y2i+SemXAq82OIizSoy/+GSRX8poLmzcDUUAD8wvboer+lNInhIEBpk1d8f5W04XGngRcLLpBMZ6s0XkQ5ILx5CqRQWBBYVsNKHHuUDdtgEFYSSO1cEOF1wUvZeGNlMmJ7mHkuFkJlkHMM=
+	t=1733825990; cv=none; b=A5BtAEvBShl/LdaTSBHkxN2I/yrANKVqVDVWz5jEpA7LuGnd2XlazWcEUPSWxYYKHGjKcb4GrXltRLSelMEZtVGEDfKolLQ50si5UvWu7rPRSd9x8i5QndjnjkW79HovPIAyIKGq1gTPFUqRi4v9eoxGdGaOWiW/ZDPEozQCLgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825930; c=relaxed/simple;
-	bh=Nj05O/ueN/PMCm5p4N1zDixMdHIiDU9Yqel2bHGFdQE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WBRnNJADJO05k9h23wUr7gD84H17DV+xChSbhcnZF3pDSvYxPwRz1OnmGCbpdp5uVxKVkITwP7nO45/Uq0fU/xzG0OWazimzu6iUKT+GAxw0haNuQ44jqIDSjDQIRI8CZcB2LZLFlphm3nys753JfRNvKil7zgQCTbSBsQ9JTa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=tCjew8Fl; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Fiona Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1733825925; bh=znw9RaPDGdZv374XX1ZIqQi1J1m6y/QWq9gDvavyvQ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=tCjew8FlvciVZ73tkgrEjFvkxLIG2ETPTuX2yUH6sOfN9PSvC/Tj9w/ZjDjk7QETX
-	 eFXJZTRjtazxAW6uSvCx1t6pspw3r7pCn2C9ufb13O6B8PagnPxSEm081u5WfaRxbr
-	 InakM2F118yzlooG9tYTT1g/rsaFukzUYyXlHNmY=
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] rust: document `bindgen` 0.71.0 regression
-Date: Tue, 10 Dec 2024 11:18:44 +0100
-Message-ID: <AE7176FF-D196-4199-AA8C-B16FBC31B417@kloenk.dev>
-In-Reply-To: <20241209212544.1977065-1-ojeda@kernel.org>
-References: <20241209212544.1977065-1-ojeda@kernel.org>
+	s=arc-20240116; t=1733825990; c=relaxed/simple;
+	bh=4zBw2rBdGPUxYyv/E+pmylBx3GTXJPQjSMZlfzVoKbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lhikajIEPWYv7QvBY6FE/uwJhGucu2PpV38cVkvLj9ibHdN+/9PAPIGwLbHsg06hoHTpTNYSI4sUi+LIArpfHgP3sB/4aJWukpnSkJjaujVxGJwVeyJXxcdQ4AV0uiHR0D//DzmI0j8jbc9dLdB92KgAyvisykGGPWFSHBiefHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tm+okeDN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F87AC4CED6;
+	Tue, 10 Dec 2024 10:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733825990;
+	bh=4zBw2rBdGPUxYyv/E+pmylBx3GTXJPQjSMZlfzVoKbU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tm+okeDNUnz4kXYuTINavKc8DJdxX185RQxdmZvFIIION7VtWfrz1zbjdtwA5q5yZ
+	 cb3y5cMiYQPKJ/+sKQYYaiuNRZhZ//giG6p6Lf5qHr5mLmrhAbgZNePwo6OTWhNC6/
+	 Xscfkna5mK8WLTr+WPtP1YoQkxOghuCqiprAj61J1MwUaKZxihRPw7DNrdWH3Z7fYP
+	 BhmbA+hAxlYMjwcNNVNSOh+HDCAZguOShW7NlSIr9MClRjgZXJQ3K41TySjGokNA2Q
+	 tR2Ep/8++NqBpQUMtvFfLT2Vt5QTYkzfiTf257+Uuy3IufB4oOCBsUtp7LfvU4NzU5
+	 HVA1g3RE/kTvg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5401fb9fa03so1673983e87.1;
+        Tue, 10 Dec 2024 02:19:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWhpHei0Kjuvp7nJEJyHJTKDnh1/isJZAbPUZ9zokE/j2QvmxT7k4Jc332sptBNQd8s9LAUew8Zk8oIKIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyomIMCh+Bg2TnWkycVz3MkkFSwm7Q2TBhFDVBmeW5iNTGUfxSa
+	cdsxiM0f/AGs9eDjMXFNH6i/I8Fmo30keC6bIxVG8h1jcKJyRQSRj4NUk01ZroLLCK/Uj7vGCj1
+	KLXZLcVymTHp83XAjQSndLgLxigo=
+X-Google-Smtp-Source: AGHT+IFrfqZ4YCWY8rOW01ZzUgxdEOuDTA/JoLGqSPucyYdZ/cYcuflGrQq9hrHi0H2XGAekXnENvQ7eUdreXmlqF2s=
+X-Received: by 2002:a05:6512:239e:b0:540:231e:44db with SMTP id
+ 2adb3069b0e04-540251e8b76mr825681e87.13.1733825989003; Tue, 10 Dec 2024
+ 02:19:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241208144622.605523-1-masahiroy@kernel.org> <20241208173119.GA3365428@ax162>
+In-Reply-To: <20241208173119.GA3365428@ax162>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 10 Dec 2024 19:19:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT_jmeJT1-LOuezyrmeV3csShTmT7ve1vLX=UqRe4y70w@mail.gmail.com>
+Message-ID: <CAK7LNAT_jmeJT1-LOuezyrmeV3csShTmT7ve1vLX=UqRe4y70w@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: suppress stdout from merge_config for silent builds
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Leon Romanovsky <leon@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-On 9 Dec 2024, at 22:25, Miguel Ojeda wrote:
-
-> `bindgen` 0.71.0 regressed [1] on the "`--version` requires header"
-> issue which appared in 0.69.0 first [2] and was fixed in 0.69.1. It has=
-
-> been fixed again in 0.71.1 [3].
+On Mon, Dec 9, 2024 at 2:31=E2=80=AFAM Nathan Chancellor <nathan@kernel.org=
+> wrote:
 >
-> Thus document it so that, when we upgrade the minimum past 0.69.0 in th=
-e
-> future, we do not forget that we cannot remove the workaround until we
-> arrive at 0.71.1 at least.
+> On Sun, Dec 08, 2024 at 11:46:14PM +0900, Masahiro Yamada wrote:
+> > merge_config does not respect the Make's -s (--silent) option.
+> >
+> > Let's sink the stdout from merge_config for silent builds.
+> >
+> > This commit does not cater to the direct invocation of merge_config.sh
+> > (e.g. arch/mips/Makefile).
+> >
+> > Reported-by: Leon Romanovsky <leon@kernel.org>
+> > Closes: https://lore.kernel.org/all/e534ce33b0e1060eb85ece8429810f087b0=
+34c88.1733234008.git.leonro@nvidia.com/
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> >  scripts/Makefile.defconf | 13 +++++++------
+> >  scripts/kconfig/Makefile |  4 +++-
+> >  2 files changed, 10 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/scripts/Makefile.defconf b/scripts/Makefile.defconf
+> > index 226ea3df3b4b..97bc5161d6bf 100644
+> > --- a/scripts/Makefile.defconf
+> > +++ b/scripts/Makefile.defconf
+> > @@ -1,6 +1,11 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  # Configuration heplers
+> >
+> > +cmd_merge_fragments =3D \
+> > +     $(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
+> > +     $4 -m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$2 \
+> > +     $(foreach config,$3,$(srctree)/arch/$(SRCARCH)/configs/$(config).=
+config)
+> > +
+> >  # Creates 'merged defconfigs'
+> >  # --------------------------------------------------------------------=
+-------
+> >  # Usage:
+> > @@ -8,9 +13,7 @@
+> >  #
+> >  # Input config fragments without '.config' suffix
+> >  define merge_into_defconfig
+> > -     $(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
+> > -             -m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$(1) =
+\
+> > -             $(foreach config,$(2),$(srctree)/arch/$(SRCARCH)/configs/=
+$(config).config)
+> > +     $(call cmd,merge_fragments,$1,$2)
+> >       +$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
+> >  endef
+> >
+> > @@ -22,8 +25,6 @@ endef
+> >  #
+> >  # Input config fragments without '.config' suffix
+> >  define merge_into_defconfig_override
+> > -     $(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
+> > -             -Q -m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$(=
+1) \
+> > -             $(foreach config,$(2),$(srctree)/arch/$(SRCARCH)/configs/=
+$(config).config)
+> > +     $(call cmd,merge_fragments,$1,$2,-Q)
+> >       +$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
+> >  endef
+> > diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+> > index a0a0be38cbdc..fb50bd4f4103 100644
+> > --- a/scripts/kconfig/Makefile
+> > +++ b/scripts/kconfig/Makefile
+> > @@ -105,9 +105,11 @@ configfiles =3D $(wildcard $(srctree)/kernel/confi=
+gs/$(1) $(srctree)/arch/$(SRCARC
+> >  all-config-fragments =3D $(call configfiles,*.config)
+> >  config-fragments =3D $(call configfiles,$@)
+> >
+> > +cmd_merge_fragments =3D $(srctree)/scripts/kconfig/merge_config.sh -m =
+$(KCONFIG_CONFIG) $(config-fragments)
 >
-> Link: https://github.com/rust-lang/rust-bindgen/issues/3039 [1]
-> Link: https://github.com/rust-lang/rust-bindgen/issues/2677 [2]
-> Link: https://github.com/rust-lang/rust-bindgen/blob/main/CHANGELOG.md#=
-v0711-2024-12-09 [3]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Did you mean to drop $(CONFIG_SHELL) here? I noticed you kept it in the
+> other command.
 
-Reviewed-by: Fiona Behrens <me@kloenk.dev>
+For consistency, I will remove CONFIG_SHELL from both.
+Thanks.
 
-> ---
->  init/Kconfig                 | 6 ++++--
->  scripts/rust_is_available.sh | 6 ++++--
->  2 files changed, 8 insertions(+), 4 deletions(-)
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index a20e6efd3f0f..e8d2b5128f87 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1989,8 +1989,10 @@ config BINDGEN_VERSION_TEXT
->  	string
->  	depends on RUST
->  	# The dummy parameter `workaround-for-0.69.0` is required to support =
-0.69.0
-> -	# (https://github.com/rust-lang/rust-bindgen/pull/2678). It can be re=
-moved when
-> -	# the minimum version is upgraded past that (0.69.1 already fixed the=
- issue).
-> +	# (https://github.com/rust-lang/rust-bindgen/pull/2678) and 0.71.0
-> +	# (https://github.com/rust-lang/rust-bindgen/pull/3040). It can be re=
-moved
-> +	# when the minimum version is upgraded past the latter (0.69.1 and 0.=
-71.1
-> +	# both fixed the issue).
->  	default "$(shell,$(BINDGEN) --version workaround-for-0.69.0 2>/dev/nu=
-ll)"
->
->  #
-> diff --git a/scripts/rust_is_available.sh b/scripts/rust_is_available.s=
-h
-> index 93c0ef7fb3fb..d2323de0692c 100755
-> --- a/scripts/rust_is_available.sh
-> +++ b/scripts/rust_is_available.sh
-> @@ -123,8 +123,10 @@ fi
->  # Non-stable and distributions' versions may have a version suffix, e.=
-g. `-dev`.
->  #
->  # The dummy parameter `workaround-for-0.69.0` is required to support 0=
-=2E69.0
-> -# (https://github.com/rust-lang/rust-bindgen/pull/2678). It can be rem=
-oved when
-> -# the minimum version is upgraded past that (0.69.1 already fixed the =
-issue).
-> +# (https://github.com/rust-lang/rust-bindgen/pull/2678) and 0.71.0
-> +# (https://github.com/rust-lang/rust-bindgen/pull/3040). It can be rem=
-oved when
-> +# the minimum version is upgraded past the latter (0.69.1 and 0.71.1 b=
-oth fixed
-> +# the issue).
->  rust_bindings_generator_output=3D$( \
->  	LC_ALL=3DC "$BINDGEN" --version workaround-for-0.69.0 2>/dev/null
->  ) || rust_bindings_generator_code=3D$?
->
-> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-> -- =
 
-> 2.47.1
+
+--=20
+Best Regards
+Masahiro Yamada
 
