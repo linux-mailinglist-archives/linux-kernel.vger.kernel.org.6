@@ -1,163 +1,108 @@
-Return-Path: <linux-kernel+bounces-438624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2222C9EA399
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:24:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3F29EA3AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B20E165A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:23:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC030165A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD03C147;
-	Tue, 10 Dec 2024 00:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0080C1BF58;
+	Tue, 10 Dec 2024 00:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="depne28a"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="OdWQEeVd"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BEF6FB9;
-	Tue, 10 Dec 2024 00:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7C6111A8;
+	Tue, 10 Dec 2024 00:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733790229; cv=none; b=Xo1+6ZP5GyjjHyE18I0mkv3CEhm0QaCaSeO/V8FaINnSl5i3mLfH3IzrH1e2xKU1SP7D8mVEc/xp7HO8m1C1Vv4BJnW0jVNN5BtygZaJk5b1rOn+70Jo8VKjOJvodpFMpFespftO14gBC0zMO5lKyu/lsBKT9F3WaaqAT0ujXAM=
+	t=1733790621; cv=none; b=DL4FMdSD1lUU+vIpoGylaKOT0ai030xxMPRmyvYqmRLryFDbfnZL6SMnBzX7ejhzOzxZwC+vfpptcZw+7WBRBtvki7tzsjGD/MSjtU7mW1QbNwaSsiDeMr3vM+fAUjSqz8zG1/G1qBgW6ZmYWHLzIYHe9AoPdKu1pUN4ryvLqbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733790229; c=relaxed/simple;
-	bh=kApmzV/SzSLrBWhdK94VNwB/+dzHEEFezTowie9+IfQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dAUaB8QiQMGxGxWJU4vL2IRDgwWWKA4MPf8Vlqykd7dxX5m0JTg5ePW7QxJW5PJf3y3l1pV5aZKqWr82qDOVB+pP9I3bVhndvxkNX2rnT7tuOhUIbp60vvGF3YS6X38koMlzZBHCrSDsUmmpE4v/d03flIPvjRyrSCTw4a4y2NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=depne28a; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7242f559a9fso5018367b3a.1;
-        Mon, 09 Dec 2024 16:23:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733790227; x=1734395027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZG0Bwq+MseoC81hdPPvLH0+mmvnEp0X9Csn6ZS4D2+E=;
-        b=depne28aso6ZYdXWmE887xu6ZkcQHl2u1iF/X+JbGEZz9PFqk7z3KuS60qlzvNBlEN
-         zrKhIM0P+0/Eyk3rYtBQxnSudc4M2BRsp8Qc8xLfzHeZoDzjNG1xU/Chv87Lbr61cdPs
-         QtZ4eclxcATd1ZlfZsmdCXr6HqIbuBpB2DHAQcCgdVGMeszkSfbOcIpuTRloQSrq4GOL
-         iSZ8MMG5ugX7QqPOv1Ho2G7O9gVFo7T5zf3pSu7CSzMkpgF+hw5rciyW+YEYXJ/dDQlC
-         ad66iefFANKvbezQ+LKi+U7eRR9WM243GAqgU6ORTWg4b3AW6cfQTm2++33FTaP8Tpbs
-         COOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733790227; x=1734395027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZG0Bwq+MseoC81hdPPvLH0+mmvnEp0X9Csn6ZS4D2+E=;
-        b=vu3Kg1jOOYjIYvusgGpu3nWbR+h2ZpuBHEkE38v9CFTHXOBKZDD1BRsqdSDpmQRsFe
-         8LZm0o120b5KBhQbRRVP8Ykcw3sV0EvQrO2uCoqtBJKRyBgDgC2ZkVeGHn3Mcm1dL6qs
-         N/gaVsFFTVNnve54DebHYbUwPjYTvdWvYbRkBsZMQnAof1fd4ZTbLBN1Zuq/mtvfbyb9
-         H7gqedfEiLIwM7wfIhe4dEnOkucyVkKobTIBCqcZoPvjTR48IcHnblOVooG4agtbNALX
-         p5eE4HewYfQCDWMmsTN1qlU9X1wluyEy1eJh3SSatAhf1o3H35MuucadDc/aJiorE8ep
-         IlUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgQlARiEdzOIfyNgnCh2+icUy/V9ZMUPXeZN/6nfR6uE7hVpxsLSMcWG2OwbBVtZWDB7c=@vger.kernel.org, AJvYcCWBPx+ttQ1IKTszMBrlLhmn+HsKfpQf1fz61fk0HQbWCFvvpaZ+q2DlCC4IYICR00A7RBLhzdN98hY2+77y@vger.kernel.org, AJvYcCWxrHT9EpqkN+akeRaTJBMFjQtIoTeGX159y5spkidVA41R5DqHHEXCnAQ3BLTqnida3Q30OXgPqHJPwUs+nGMPoA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyEPbY3Fek0ykJ6/BUd+76IdA7+oRyLg9d0lZU2BnvYiek7fM+
-	Ol2U3Fa4HAz0IO4XvvpjLclUPFaJ0yF6h2z1ubl/oqHR7vEkZMlkkbKxy5RFQzpLYX8tQfAYdJH
-	On3O1jcX36aQaOIDzB8BEi74TphY=
-X-Gm-Gg: ASbGncu7USdyrO7tqQjwD/PeWYqb1lMMyQKJOT0riTgEChFsk/V4L0Kv6Rwq99sZysZ
-	6kMueWSmpwesFDNVw13xdvy7h9OQlLn4C/auoJotUxHS6rGdYz+M=
-X-Google-Smtp-Source: AGHT+IEEqlsSBYngjr4I5z0qBa7qDAeyOkQYrJ+3t8fJvEGOKj8iNJGzxCVjtHr374G9uWB30FHNlkoNKT4rxGjYCLg=
-X-Received: by 2002:a05:6a00:23c1:b0:725:9f02:4894 with SMTP id
- d2e1a72fcca58-725b818830cmr22999161b3a.24.1733790226031; Mon, 09 Dec 2024
- 16:23:46 -0800 (PST)
+	s=arc-20240116; t=1733790621; c=relaxed/simple;
+	bh=uKLyr/jk/WVRbeBKud2kVo0DJTj9s3mF1BmwR3HvMv8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LZUT2xa/gf6WuQTf1H5dmRT8q5cTo7scw7So99B4kvXKkFK0lkeK7WxykBx8baq6unBPVn1HvGlUu+WAqOu0h6Pd0A3We/s8rvPE9gfWyAPN5Jz615fAgTLPLtg6br8+j9ZK1z9nGxf1z3xZgjnvDly0AVBlAr8dgue7/0zg/To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=OdWQEeVd; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4BA0UEcsC1291922, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1733790614; bh=uKLyr/jk/WVRbeBKud2kVo0DJTj9s3mF1BmwR3HvMv8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=OdWQEeVdNv2nSTSAtd1yQewGIzJt0qI/qTu49RdOWe5cGMmMF9CZIwdlS1awbWUfg
+	 X7HOMacODG+S+mAcy/CbHj5PytmV0RDPhv3Qz6m0qKhzVD7mSNViWK5HXjYC3+16bX
+	 E/tgqGbAUpXripGWIKAlTq1hf+uRCMQLLg2/YZpAdlWhM6QyHfAh2RHw4V51P8l5/T
+	 kQQnB+5CTxJ6DEzUPkKgsFpuatwDLGY9edzGcw6z0Ym2kEuhArRL9QB/KbFY5COdKG
+	 wCMqizywvylvePVbfnTirPv2uIkIzRzad419dZkpqm2PAU2XUGEynf5QN1mFIquAxt
+	 nyMiFSCbIlAzw==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4BA0UEcsC1291922
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 08:30:14 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Dec 2024 08:30:15 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 10 Dec 2024 08:30:14 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Tue, 10 Dec 2024 08:30:14 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: =?iso-8859-2?Q?Micha=B3_Pecio?= <michal.pecio@gmail.com>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: rtw88: missing device IDs in v6.13
+Thread-Topic: rtw88: missing device IDs in v6.13
+Thread-Index: AQHbSiuRS6GXb/siRk+U2hzrP9sqf7LeoBuQ
+Date: Tue, 10 Dec 2024 00:30:14 +0000
+Message-ID: <610cce6b33ef4c6b83d2e0be212c62bb@realtek.com>
+References: <20241209121441.304a9e8b@foxbook>
+In-Reply-To: <20241209121441.304a9e8b@foxbook>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108061500.2698340-1-namhyung@kernel.org> <20241108061500.2698340-3-namhyung@kernel.org>
- <Z1ccoNOl4Z8c5DCz@x1> <Z1cdDzXe4QNJe8jL@x1> <Z1dRyiruUl1Xo45O@x1>
- <CAEf4Bza5B9rSX7cw4K0iC-gW+OeEATLCcQ=6KGfmuxfJ2XOhvA@mail.gmail.com> <CA+JHD91Ai_ObUye4Unz2e2Hku2BH5_+0q3HyUtf7ay23uDnkjQ@mail.gmail.com>
-In-Reply-To: <CA+JHD91Ai_ObUye4Unz2e2Hku2BH5_+0q3HyUtf7ay23uDnkjQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Dec 2024 16:23:33 -0800
-Message-ID: <CAEf4BzZVM=q2yPrt34AyiVJYiB1cAu2Y=4zCKkYFZ0N-Ai6BRg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] perf lock contention: Run BPF slab cache iterator
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users <linux-perf-users@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Stephane Eranian <eranian@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Mon, Dec 9, 2024 at 3:33=E2=80=AFPM Arnaldo Carvalho de Melo
-<arnaldo.melo@gmail.com> wrote:
->
-> On Mon, Dec 9, 2024, 8:00=E2=80=AFPM Andrii Nakryiko <andrii.nakryiko@gma=
-il.com> wrote:
->>
->> On Mon, Dec 9, 2024 at 12:23=E2=80=AFPM Arnaldo Carvalho de Melo
->> <acme@kernel.org> wrote:
->>
->> > and additionally the type is not like the one you added to the barebon=
-es
->> > vmlinux.h:
->>
->> > =E2=AC=A2 [acme@toolbox perf-tools-next]$ git show d82e2e170d1c756b | =
-grep 'struct bpf_iter__kmem_cache {' -A3
->> > +struct bpf_iter__kmem_cache {
->> > +       struct kmem_cache *s;
->> > +} __attribute__((preserve_access_index));
->> > +
->> > =E2=AC=A2 [acme@toolbox perf-tools-next]$
->>
->> > But:
->>
->> > =E2=AC=A2 [acme@toolbox perf-tools-next]$ uname -a
->> > Linux toolbox 6.13.0-rc2 #1 SMP PREEMPT_DYNAMIC Mon Dec  9 12:33:35 -0=
-3 2024 x86_64 GNU/Linux
->> > =E2=AC=A2 [acme@toolbox perf-tools-next]$ pahole bpf_iter__kmem_cache
->> > struct bpf_iter__kmem_cache {
->> >         union {
->> >                 struct bpf_iter_meta * meta;             /*     0     =
-8 */
->> >         };                                               /*     0     =
-8 */
->> >         union {
->> >                 struct kmem_cache * s;                   /*     8     =
-8 */
->> >         };                                               /*     8     =
-8 */
->> >
->> >         /* size: 16, cachelines: 1, members: 2 */
->> >         /* last cacheline: 16 bytes */
->> > };
->>
->> > =E2=AC=A2 [acme@toolbox perf-tools-next]$
->>
->> > Do CO-RE handle this?
->>
->> I don't know exactly what the problem you are running into is, but
->> yes, BPF CO-RE allows handling missing fields, incompatible field type
->> changes, field renames, etc. All without having to break a
->> compilation. See [0] (and one subsection after that) for
->> "documentation" and examples.
->>
->>   [0] https://nakryiko.com/posts/bpf-core-reference-guide/#defining-own-=
-co-re-relocatable-type-definitions
->
->
->>
->  The doubt is the extra layer of unnamed unions in the BTF for the kernel=
- that's not present in the minimal representation shipped with perf.
+Micha=B3 Pecio <michal.pecio@gmail.com> wrote:
+>=20
+> Hi,
+>=20
+> v6.13 gained support for several new RTL88xx variants, but most patches
+> with device IDs haven't made it to -rc1, so the drivers are unusable.
+>=20
+> Would it be possible to forward these rtw-next commits for the next RC?
+>=20
+> 7b5ce65d9018 ("wifi: rtw88: 8821au: Add additional devices to the USB_DEV=
+ICE list")
+> 1ee6ff9ae3c1 ("wifi: rtw88: 8812au: Add more device IDs")
+> d4c4903508f9 ("wifi: rtw88: Add additional USB IDs for RTL8812BU")
+>=20
 
-anonymous unions or structs are transparent to BPF CO-RE relocation,
-so that shouldn't be a problem
+The patches missed the merge window of v6.13, so apparently v6.14 will have=
+ them.
+Next time you submit urgent patches, please reference [1] Kalle mentioned.
 
->
-> - Arnaldo
+[1] https://lore.kernel.org/linux-wireless/5736c7a2cf7843fab0b491d1482bb292=
+@realtek.com/T/#ma50f80cf9c815b78ee483ee3cbe9b987dc5120a9
+
+
 
