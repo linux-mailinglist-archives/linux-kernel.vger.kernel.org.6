@@ -1,153 +1,168 @@
-Return-Path: <linux-kernel+bounces-440326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ED29EBBDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C11E9EBBDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537FB284FE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E1A284E84
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D981232373;
-	Tue, 10 Dec 2024 21:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6EE232375;
+	Tue, 10 Dec 2024 21:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEKO/6K9"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Pu1gGKR/"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB01231CA0;
-	Tue, 10 Dec 2024 21:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B1F232366
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733866111; cv=none; b=rouv832/Ea6EV6A/jN3yd55KE84KDc+UL2rTbXZNGH3A7nSotIowNgsrOk9aDfe2B3CK5j16e4ugm0jkSrDZBkRHfiuUMkpwELVCF3y38DENky9BqYpfbOxirSvKCfwptt3CL3zVoZUoyYvse3tFn18WXsMoUTdDc/18fq51YRI=
+	t=1733866169; cv=none; b=dp2oe5OTLFbFSFyjui/vGfu1qgyQnEJiOgC90rwcjXAB4F8IqMjLj55WteFkm1QxW931pxoIRbUL5joW7hTQIhmw5V16gOGlzd58ajCbZ68+Y2jTFTVqR95nafAOzneZWCSMrHLcAqVJ8w92c1TavJIgQK/c3sqwFpn/Eb3StMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733866111; c=relaxed/simple;
-	bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1bX1McvWUwZ8cN2M1JA0hU1xce6foW2JvDZzkDt2Ye9IL1DzH1qDuKNBaLubEx9i/a+HRu77C/EzX3x7RVWerXlW4C3xv+DBcUH2V9Oa2NjcjUpS9yga9ECcR32HZ/jUbCG4ofMjRKBWxofPnlTjQLnwI182q2bBJ/9r29qlZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEKO/6K9; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa69251292dso437328166b.2;
-        Tue, 10 Dec 2024 13:28:29 -0800 (PST)
+	s=arc-20240116; t=1733866169; c=relaxed/simple;
+	bh=tK2/X1JBOLK9LhfA5nyWkY8TdZ0unpl0tmomD/llBWU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XcBr36KDlimnb6DfA54BpTCQkmcXNC4SS8OvScC3nZDDz1UYmhYGpzhbMoZ8mvZ/Bt/JJBdbgSdl1jBhwaEg9PQEsUBRBeWA1ViZ96nB/vPNjxp9f/pq8PigHx97yDEA3xzXw08OGH3DhtvB24It6pNRy6Y92faWQDgL75NbnkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Pu1gGKR/; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e3983426f80so4754732276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:29:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733866108; x=1734470908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
-        b=QEKO/6K92mFRsAJhcQ8dyp+YU9qdyfElOEmEvMJdpoazvQpJgm9+pM9Q0RwuXb7CrZ
-         YuQmEHd5hQTqp+fw5toGaLMDhDNIVSWoJkgG3BkS7b8U18f0XC3i3NWpRWk0MFNoxzVu
-         9dRaDBjx6zYLozjCaYvFpzi6+cLKsQAwH6PWbK3n6kujDLcfZoYUFfT1BPRyn5B9shwH
-         hExjteg7q7G21VIpEpapJGoLhI4Nqd4r4WhYoTFntGqA4RFCiBZtSX/F87XWf9P432sz
-         L15sB3lnYLS086AIAlY3AjCoqHK/5K1XfAlIZJWDmsOq5ZTeZtil5UG5NGX01N00X7br
-         FAPQ==
+        d=paul-moore.com; s=google; t=1733866167; x=1734470967; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1nM3RAlxJRatFMEsNUSDK4GfiwoTfrUPqBU/Vy4UE4=;
+        b=Pu1gGKR/cmfBok1oY7f2HJEElhjeB6JiUB9DWBHFLzkJVUCTYEooJstac0aOsPZV5V
+         /a+vNbg0LWFE7ILBSALg0SC97hx7LdyCRkmea+kR/Y40g0zBGoA1OVWBBqitYHPGuaz+
+         7Yrk5TEchfW/YQi3r5xvZvWhlWs5AEVdY4iAqLN9+0Tv8EzZXkj8suELRHh6dr1IlzLy
+         w5KcrCk4nkQoh4/waF40L1GKpTdlecJqGULsna1rsOELInQWqyl3v8LDpSyApeBMwgmF
+         NWLYcM2TaXR7ulJ16cq/ff1uLwZDTmoZeUhnAqQhOMCIHSaLl0M/wd3q1Rt6+54ooOXQ
+         /7yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733866108; x=1734470908;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
-        b=so2fu7tum8TlX8mIULlykuoCVxcQ2HSEPBzrVJL2GS5RWV26rmsmx6AUWH/6mABRAk
-         xGTjENLiAMxResI0LzIHes02ay38+I0bHhknr7x8iMQxq59zo2chuLWbTj2Ib3/zNvLz
-         WeO621ZRp8sAklXU6mrYmE6d5rNa7o1zEkoFAW5dA191w+V1TLLm9+XmkhmW6kGq+XsL
-         kWUHuo4myNQ+XJWxRGJX8ke0O+Yegxe7sBVFI0N6fCDliE+aKr+LM3sERV2FeRVIsrwe
-         YqJoOOuMDoDerY3jMRblH7HPyUNYqTDLLf7oiBPGaRYCpXQTne30DrXjhhYjfce+iysN
-         58GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkqMdDUaz1WkWMvRGc2XfXzJ5+6bk7wFACrRar5vUtQzeI+ii2sfw9MkPnSjjmLx+bN2fWrzEwa+4U@vger.kernel.org, AJvYcCV840Ahcsyey8nIskQHz+1wSczJevrEDGKqBOOmIAhe0ZaETYNfo2qqYcr2j5JAD1+8TcUGtjmOMF+gP9v/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF7TI3idJ83BAvOIGm3S9DR6igulLkEY8KVZRyewTH3Qp4aOi2
-	Kfi/Oj+Q9lRPrPbeli8sqVvDsyO5CY2qa8PdjFgW9e1mDggpbO9+
-X-Gm-Gg: ASbGncuzJw9bLi2BtVB9Fb77a81DWXwEV0JWg94cYQFGPiycTpHT6UmnEAiTJ63q9FJ
-	gxaxIUksJ6CHn9mSe08lQfZF7VfMbN3tRlLj8PskIu9Ris4PW/BR8lAH3qFzEwe5pu99ElSEyMI
-	ZU1lOedxTh3Nuvrl2SlvUS+4vJs1z6wPJLpTDyICwnytQ6Fmd7G0DTIriTDLO7qZ1GCocjKA8yU
-	VcY6r2hHBvRfmdtVuCoooCXYM8yG8ibEnEN3jUKA+U7RFHUs2lSZLck/s0pc5pctjI6wil33a3t
-	sUhBWs7IiBHAUwXzB9NbC0rpMngECh0q
-X-Google-Smtp-Source: AGHT+IF2lPlG/TM42607y3WI0CId/jCN4zyRMixPec0/CK3oZtt3mBHJ2MfDv98RJm/SF+OlckHE/g==
-X-Received: by 2002:a17:906:1ba2:b0:aa6:63e2:535c with SMTP id a640c23a62f3a-aa6b11e7f6emr30829066b.28.1733866107775;
-        Tue, 10 Dec 2024 13:28:27 -0800 (PST)
-Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa695e45fe1sm286058866b.32.2024.12.10.13.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 13:28:27 -0800 (PST)
-Message-ID: <e5a847f7-5e63-4860-8b4a-dfa378989c57@gmail.com>
-Date: Tue, 10 Dec 2024 23:28:25 +0200
+        d=1e100.net; s=20230601; t=1733866167; x=1734470967;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u1nM3RAlxJRatFMEsNUSDK4GfiwoTfrUPqBU/Vy4UE4=;
+        b=Y/eIR8oGQm942VOMCSDdWJn/v5E/MNIM2hoLR9/ptKLdyJF8Pw3ghCsuSmxCgl+sL9
+         JMlMxQQQfkGDo4q/xamb68GvZH6mUo/JHQJp81pi7YxRep7+J5VQT8PsT/HOb3DXeTHI
+         6HsFoCLFo94+gfMtbIgKqMzpo45FtZCrDySFC7lLlIRQSXA56CSzg8SpdRBxa50C0+Bk
+         PvCLRpkpKUDT4ROYiqGpc6IshTloPvB6zUNtHJDAejYVVSzkAHoWA4GWGcytwfIayJ32
+         49qiPkWz7hyeTCfisZtTfwpNviAUhfkV+J6lYnS+eCfwaAnnHEQ81HXmx8hFr6UKjg3z
+         AImQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWwqsbYQ2ygUVWlTG08cK4fTjfUSXCS84R7fipFOuoCOS6U9D3aD69yBCecv4tpUMkKTVy34ZekiOCQvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywyZxlikyVC4DW0kJcAh2kuyykWIOYWc7sOpLK1AK6VvXycaMS
+	mEIIp3whrH381fIC+yiPs+yBCiRjilfDKaRVmHV4hLoi8GI7XYujbzBHPu8y+2gxCfaYxBYj090
+	qPmkECq0jExNcXjUb6vn7YGcrIJpz62TwN/nD
+X-Gm-Gg: ASbGncvec6Awm4Kkx7GDotIpuT+BNgQGXbaOmzw8hADXE6h+VCtvRSh2MqOsAqJnB78
+	6h4jvVRwzjYMydawUbfJFAulARG6m/K0MaQ==
+X-Google-Smtp-Source: AGHT+IECEnPx14mb5pxVteT8GUHvp3Itx+8htdnWjvOxPn5JEd20pNHYxb4Q9WCfhZ/kfqo10RVgZLtrYSgYGxf0Jxo=
+X-Received: by 2002:a05:6902:150a:b0:e39:95e8:3196 with SMTP id
+ 3f1490d57ef6-e3c8e67c3fbmr862132276.39.1733866166935; Tue, 10 Dec 2024
+ 13:29:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] arm64: dts: exynos8895: Add syscon-poweroff and
- syscon-reboot nodes
-Content-Language: en-US
-To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241210180216.398165-1-ivo.ivanov.ivanov1@gmail.com>
- <20241210180216.398165-3-ivo.ivanov.ivanov1@gmail.com>
- <768b70d3-910a-42f2-a61a-6338a41f41b1@gmail.com>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <768b70d3-910a-42f2-a61a-6338a41f41b1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241205160925.230119-1-mic@digikod.net> <20241205160925.230119-9-mic@digikod.net>
+In-Reply-To: <20241205160925.230119-9-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 10 Dec 2024 16:29:16 -0500
+Message-ID: <CAHC9VhRk_9EJ0VfsUcOJfskY+dXbjsJW3U_x7ar08MK-8KKtiA@mail.gmail.com>
+Subject: Re: [PATCH v22 8/8] ima: instantiate the bprm_creds_for_exec() hook
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Serge Hallyn <serge@hallyn.com>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/10/24 23:10, Markuss Broks wrote:
-> Hi,
+On Thu, Dec 5, 2024 at 11:10=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> On 12/10/24 8:02 PM, Ivaylo Ivanov wrote:
->> For Exynos8895, a reboot is handled by setting the bit(SWRESET_SYSTEM[1])
->> of SWRESET register(PMU + 0x400) and power-off is handled by setting
->> bit(DATA[8]) of PS_HOLD_CONTROL register (PMU + 0x330c).
->>
->> Tested using "reboot" and "poweroff -p" commands.
->>
->> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> ---
->>   arch/arm64/boot/dts/exynos/exynos8895.dtsi | 15 +++++++++++++++
->>   1 file changed, 15 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
->> index 90b318b2f..9eb89dd19 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
->> @@ -388,6 +388,21 @@ pmu_system_controller: system-controller@16480000 {
->>               compatible = "samsung,exynos8895-pmu",
->>                        "samsung,exynos7-pmu", "syscon";
->>               reg = <0x16480000 0x10000>;
->> +
->> +            poweroff: syscon-poweroff {
->> +                compatible = "syscon-poweroff";
->> +                regmap = <&pmu_system_controller>;
->> +                offset = <0x330c>; /* PS_HOLD_CONTROL */
->> +                mask = <0x100>; /* reset value */
->> +            };
->> +
->> +            reboot: syscon-reboot {
->> +                compatible = "syscon-reboot";
->> +                regmap = <&pmu_system_controller>;
->> +                offset = <0x400>; /* SWRESET */
->> +                mask = <0x1>; /* SWRESET_SYSTEM */
->> +                value = <0x1>; /* reset value */
->> +            };
->>           };
-> Aren't those already included with arm/samsung/exynos-syscon-restart.dtsi? I can see that the values for poweroff are different here though, does it not work with the value from exynos-syscon-restart?
-
-Riiight... seems like I've completely omitted that during testing.
-Although the poweroff mask should be different, it's meant to set
-BIT 8. I'll check it tomorrow and send a v2.
-
-Thanks!
-Best regards, Ivo.
-
->>             pinctrl_alive: pinctrl@164b0000 {
+> From: Mimi Zohar <zohar@linux.ibm.com>
 >
+> Like direct file execution (e.g. ./script.sh), indirect file execution
+> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> the new security_bprm_creds_for_exec() hook to measure and verify the
+> indirect file's integrity.  Unlike direct file execution, indirect file
+> execution is optionally enforced by the interpreter.
 >
-> - Markuss
+> Differentiate kernel and userspace enforced integrity audit messages.
 >
+> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> Link: https://lore.kernel.org/r/20241204192514.40308-1-zohar@linux.ibm.co=
+m
+> Reviewed-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241205160925.230119-9-mic@digikod.net
+> ---
+>
+> I added both a Reviewed-by and a Signed-off-by because I may not be the
+> committer.
+>
+> Changes since v21:
+> * New patch cherry-picked from IMA's patch v3:
+>   https://lore.kernel.org/r/67b2e94f263bf9a0099efe74cce659d6acb16fe9.came=
+l@linux.ibm.com
+> * Fix a typo in comment: s/execvat/execveat/ .
+> ---
+>  include/uapi/linux/audit.h            |  1 +
+>  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
+>  security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
+>  3 files changed, 55 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index 75e21a135483..826337905466 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -161,6 +161,7 @@
+>  #define AUDIT_INTEGRITY_RULE       1805 /* policy rule */
+>  #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+>  #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
+> +#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data inte=
+grity */
 
+FWIW, in the last discussion I believe Mimi preferred the name
+AUDIT_INTEGRITY_USERSPACE.
+
+https://lore.kernel.org/linux-security-module/b6dc4d8b23b822638ab6760558095=
+03060c0bca2.camel@linux.ibm.com
+
+--=20
+paul-moore.com
 
