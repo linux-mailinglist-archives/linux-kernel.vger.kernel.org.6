@@ -1,258 +1,200 @@
-Return-Path: <linux-kernel+bounces-439066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7177B9EAA5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:16:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9E49EAA63
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:16:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FCDF188B5AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 590C02851D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F3E22E415;
-	Tue, 10 Dec 2024 08:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB6822F3A6;
+	Tue, 10 Dec 2024 08:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxQHLMOz"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bTbRmg04"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2059.outbound.protection.outlook.com [40.107.21.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F313594F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733818557; cv=none; b=HkvMaoF/6qacZD1Zqyqq2PFEfxppKYWb8GE1Q31r2S8FbTeSL1WpiBXaYtSWMWfGKwnPBND4+sxEKbnzsc9Harfwrxm38PMQMkpebo6pSgaWH7KejZNP27Ih0e5jZv7r39YaGZyYsSpRAQ82wqyNBu9tOv9tMl7S+bAgLd9wvi8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733818557; c=relaxed/simple;
-	bh=FTvF1YebxeNHRC5kpG45NY3B5GqBTrNmetA5coZUqU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MrZ9fmD9pMu4oGtzIcQlbB7Ne1ckLAUNl/sHMsfGc5PnSiTq9bth4WqM7RhtrRqFzla8iBuWUgzHu+aqRXwJF40ZUSupsXrsDS84dfV8pPeib1X+XibvoPUm6/mQipaZ7vC1aD7z3jYTWdIvVNnMYC6M1O8NGaMc1iwYnplT0sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxQHLMOz; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3023c51146cso1209291fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:15:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733818554; x=1734423354; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDNr0SQs7JARf1tXnEFLADDYHcO1kynEBs5jHdseHtQ=;
-        b=DxQHLMOzXrcHMoYhMBpEOiQDKqhBxJZN4LtoAX+fdXdTSJKUgvz0zyYhObLNte4wZR
-         RO1hJ7Eu5Z3F+GTDqyLXU3J0J8FEnLJVNEDebN/kMK9rMU61usPiNm9qqiESp5jlVKq3
-         YP5bTnrlUNuIjma6i9OsDjsLY8CZS/gEN5F3rPscNzEtSEvA86T4iO3MBZkhQuKpQeHZ
-         /jC6Mozjd0LMAm8eOIJhipe4H9uXuRmOYpbC7eHsxrhZYZQNXt1LrhurrBz+jCNn/cZD
-         5qghqLwtDIDrgFSBw2210NhxVsP128Uiav8IhJb1cUndLLvui/3eeKC2PRe3s/0Zaoyd
-         w9pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733818554; x=1734423354;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yDNr0SQs7JARf1tXnEFLADDYHcO1kynEBs5jHdseHtQ=;
-        b=NjmhYH6YUTWQ8rThLj/EkDPYPOyGSTXfZddc9MqzOa6c79yCojOwsAJCzBqlHYRQQP
-         SWiwogq2Iqo0lKkX/bq6NE7TXEt/fRdPlOtfsx7Tw1d21uSPwskw9ggjjYvnq/9XSYQL
-         36hDCB69C0vHJyAiQBsyUrsREZSGcK05uyuTuu++qNa+Aq0dIht1amEoNmfSr8K5dN4N
-         5Yw53MY7+4GOB52HrqSZzc+d/eYjsrtSOLDrymJ6K5GFOb8HeG031L01LXVbM/qBJXvD
-         aVdT/jMvmAGxnVDdGdT/0kDBD7CyRhRwUWdIRnacS5LnTdCAUbmCpmevhzD1B8pYuvex
-         3C8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3O8/KfjLwWnIwC+EkTBVaYJEhZy6PG1Iq1xx+f7xDL1DAvNGsN729BU25iPvDj3E72bch3y8ZhQ6u/DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycbXyFoXbaRg8v+JXcksJLLedf/xncCox+1w2FgaJNLBB3/Xzi
-	GJN13mXOTtEzQN7rbrSmfXiIpKs4GjozIlTb8qNKnERjvJKPnDMwUk3GLR5m+bK987KpUZZ1VtM
-	HNpb4jlzmdbtECRHQBWdkeh5y2IU=
-X-Gm-Gg: ASbGncvPfcVYSw/aeY7x4ve2SP0aChSL3wqfjiS7jImAmVP95nRNzVlbgpanMR2hXOy
-	DloI1TJEGWD8t5QxdS0Kcj7EM9P5OdZROpq0=
-X-Google-Smtp-Source: AGHT+IEzneTwBmpUpltRe848A10lZV7XqHl+ipUeEsWgFCV/zsCiLt5v8a7s7FlvB0Q2Guoi16YZq8WwKm9pGrze2W4=
-X-Received: by 2002:a05:651c:1986:b0:302:2097:392f with SMTP id
- 38308e7fff4ca-302328381d2mr8186461fa.7.1733818553302; Tue, 10 Dec 2024
- 00:15:53 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248403594F;
+	Tue, 10 Dec 2024 08:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733818606; cv=fail; b=cx3BHpNWqvccTcZEEanIklPIiWOXMWDYq5l2jV12JSalPVdikDsyJKKj4qKQy7MqzNqO+TPABDy8IOYbSdQML8Ja2Zsbrh1nXSl3BkjRin3ZphaMne0GVvKOr9fZ+3jHpPveRkgkXAJyJv2FRIgEe3mZVjzYqRfKXbCvcvnbKsc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733818606; c=relaxed/simple;
+	bh=xoXZQJm0a7qKjTtRLH0EID2PEooSQegcBY3y6RF7P5E=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=i7WIxcWv8vI0tHU/RUInsUx/wF6yxihOytPphmKG6jHNrJPScFjgiUw5PNxUWeocGQnwwXuw/bedSzJqQj4SNYzps5V+KtWcXL9Yct48t3LfG96QFCIknmEOH3pYoucr3Ns4lCkyqBSh+0eqiWa3FhOkpu/thTpi2V/OymKAeXk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bTbRmg04; arc=fail smtp.client-ip=40.107.21.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vrOKnoD6VlXNhi+DnEpA7PBoA2ZaCtRLdjh6tZVujP7hE5aRfq43WYIx9tzRqdIxEdif4l7wjRdPlUlrDIsQQaxmM7OQg14BTVG5eGg65HHYUFbTQku8tbxl+VQB3gqtlOj2TVLPl2z33FeQELDlThSBuRB0ID5r5tcZRfE5pQBw+43AhQutpvvLsM+Ls0dondVc8zvYHIYw/GaA8K930l31w6pKog98DeOdS8rXmtbQw9qmdjQJb7WlHsorf6oKkLzPi6LcvWbu0W3uEkgBz9izhMUc8B9VFGA5B573ZhTjZM6OozaFtV/T1Wk33P1WmRBdMd+/7kmuU2O93iZ97A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gBn+fsQBsW1chsXVuNjtxRRJdFBCrFeqhs1wikOpzR0=;
+ b=F8AYY4TzulrUGo+TSUKckWgkQ+9lREDTOoXY2IoeJAhjp/T4z8k+TWkOAtsncIU+SzmO4RbY4SrC2JeINct7bgvEtrtvskkZaNfXokofdoHyP/9+I/mIZ8z+B77CO57PkcryharpmmtNnk+PXflKpYLyUnyNNdq6nloKoxidbdqfKJzIqmrqYNft05yJHFauhTDyJkISAafWhHWxbqGWH0LIKcbMtr8zlGtaztN5ei1zIN31nryOZMrUou3n9cXrwbbsCcuOGKArJ6tTh903bmpMiaEfxtJqBlxTlA3fW1zvqTRN5WIhyCmEOaWIGmh2aO3gw+OyYrIYxVflfQvMvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gBn+fsQBsW1chsXVuNjtxRRJdFBCrFeqhs1wikOpzR0=;
+ b=bTbRmg04ZhGEjLq8Gsdep1zRD1O+3EGAHJcih25Uha5TOykTDCfb95G3na4tXKN4HcTaHxYNaeSmrU4yK+xhbycPANPcUZJu5db/7wwBLHPqFafUcakFA+VABku1KuZ0atmrYvvu1oSYq0h3FSrWPM6W3q/J7Jz8pTY1FbA28jI2wGBl3HKI3ExS7m5hlY7kOG/jB7hj/t68wg4FbOONRhHG0tQMeAlDPP/52G5Qycsa7dXTl5ZhXWXpybx2Svv7OszHiR91o0Sn5e+TAoTpzxrIXjhE7UEWONLtZpi/mVwZkwyyiqS6nWNRMhyZyaytjpAq+Hw81MCfWpjzfaIBrw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
+ by GV1PR04MB10156.eurprd04.prod.outlook.com (2603:10a6:150:1ad::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Tue, 10 Dec
+ 2024 08:16:40 +0000
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93]) by AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93%5]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
+ 08:16:40 +0000
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: dlemoal@kernel.org,
+	jingoohan1@gmail.com,
+	bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	frank.li@nxp.com,
+	quic_krichai@quicinc.com
+Cc: imx@lists.linux.dev,
+	kernel@pengutronix.de,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] Bug fixes when dwc generic suspend/resume callbacks are used
+Date: Tue, 10 Dec 2024 16:15:55 +0800
+Message-Id: <20241210081557.163555-1-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0050.apcprd02.prod.outlook.com
+ (2603:1096:4:196::11) To AS8PR04MB8676.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42b::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-4-ryncsn@gmail.com>
- <CAJD7tkarH0G_5oYOY56Erz_4kqAEBrqnxkW6Q+jRCAfj+zt6eA@mail.gmail.com>
-In-Reply-To: <CAJD7tkarH0G_5oYOY56Erz_4kqAEBrqnxkW6Q+jRCAfj+zt6eA@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 10 Dec 2024 16:15:36 +0800
-Message-ID: <CAMgjq7CE29aR6kQtBid-NGJM-B+dZZFTZ=ta142xoRi06zs2FQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] mm/swap_cgroup: simplify swap cgroup definitions
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8676:EE_|GV1PR04MB10156:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e04b933-b44a-4ee8-51e0-08dd18f2f913
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/Ih9+/Wk9oYdaK01anTNmPeiG1LW5JPm1msHYdTACpKUrr9NAlNaItY2eavL?=
+ =?us-ascii?Q?JacuzIeGZGuM9M/CtZkES2rJlAKSmzSBDFPbnQdKOahA88F+MIzntclE9Zhn?=
+ =?us-ascii?Q?2QS86BMrhb+6qpLAsH/xaKlk5xrPt1VaUSLDVR6t0C/QiWpMRz2WCbvRRGUu?=
+ =?us-ascii?Q?4WkcIvVXLJGZGKKxFG7g9O0HuoC7dqAoZTsZksChJRvHQcvcvNcDryc3O9AI?=
+ =?us-ascii?Q?XLvKmpM1E9j1SiUqHMsur2KpW6PTQvTyz0CC9dZTbmnUi72uaOpaM8nIRkpf?=
+ =?us-ascii?Q?he8aSBAx0atZ6glHTh5HfMolC2pDQQ4V+w5NmTMAOyxs8zQFGxRTlcPZFmb9?=
+ =?us-ascii?Q?rBFIZqdUAUpSn2JoTrOYNhceLr8dfMpQOaYo3veLuLoJj1r6/slLIaKLg61a?=
+ =?us-ascii?Q?2s7WMw9q8Ry69v46t4Ow4nwjFDJww64tuJjlayySb28bI5EVfIF9X3qsoJoD?=
+ =?us-ascii?Q?5fjgu7h4AzlmwdoaXGYJI/S3zdOpo9CXMDM2JFNDluphFr+xk6yZ3dKfF3mz?=
+ =?us-ascii?Q?BwbUsoiWGwK72ZMYb8qIXvXKLl4LmeojGZD1izZWUhAIf3RL08xo88NmkARg?=
+ =?us-ascii?Q?jXx9UBp2LlbhqU2zQ76zZlfBOLrmc8yA0vStWIagamozmNqhNnZZODbPiYSI?=
+ =?us-ascii?Q?NhQnq4YL+XxI5j8RejY1k7Qjwhx7k084N/qRB9FZEfTYxP0p3nh3/cunW+7I?=
+ =?us-ascii?Q?i4JnthSOLRIKH141fORkvLvyjxS/mUvL9Iwx6SZjO8EN7PvrltCsNVhWKrKn?=
+ =?us-ascii?Q?em4LbwYg4aG0vkpUPiJj2ViYmfvoJBhcboYDer89Xspc7vqfo2gPxJOpHsTo?=
+ =?us-ascii?Q?+dqwrPm5DjF6pB+ZT4kX6aS/lDSa8qy+bHGqjO2WkEOI4MbREyY6MFUFz9pF?=
+ =?us-ascii?Q?6dRUXcqJB2jSfgBy992/xM/cSlSfMwKAemM3mlPej7ROXUjvLQAH00q2EZqf?=
+ =?us-ascii?Q?Mx2qgyyGQ82ahEPv1FpaZuNKcQdIHevGenhVdFVKEl5CoRRL5CNoHiWrtp+v?=
+ =?us-ascii?Q?BdDaW22rx2J9JZVL+rklvr6bQXdca5RckcaQwtUN5Giqal5hA0OtySQbieNq?=
+ =?us-ascii?Q?pZOwYaWAL7Z+MeKreRDlHvYy7sB3Dxwoo6cw3O8/m5KJyuKBbz/jOKqsFY3P?=
+ =?us-ascii?Q?Lu3mF5dDtCb395gy+CrqG7g1LfajO5UDzc8EFNO3Ny/Y5xjaWzL8O2XAUHcp?=
+ =?us-ascii?Q?cTE0DPhL8KEUQDfq2YU49VQJHX04iQ7xVtGVpkICmpJ4GIRr1pXUHrTJN0uB?=
+ =?us-ascii?Q?woKOJm0oBLHsU87tBtQSDE9q3D16IE/134HkmhGc0i3avXX2I7M1Od1NSwFN?=
+ =?us-ascii?Q?oRNP78xpzlGh5oV1vmK/fhu+EJhWDm+yIiyXjoUpWQGCl3FsbPq0qi9bIG6M?=
+ =?us-ascii?Q?LqA2SLCi4R1HQpUVVoXy15qtK5izUGESXkJWpHHR4OgsxYtRIA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8676.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NAIuVjkO47S9A/5tC6fN8uXabzAV9F/Rzp9p2hOwAH1t8AudJWBoR3ObItP8?=
+ =?us-ascii?Q?hEYLl3bfEDJ8uX7oBfjIdebdr/PgS+IhIA6BoMVCe5v78zuEhkAvqYmpzVEE?=
+ =?us-ascii?Q?M+ao091tnhNd15ao+JB1DznNHazAR5ycQTr32ASVynqhLe7ptHkHD2TkVvxr?=
+ =?us-ascii?Q?n7ee+F73IWlN2GyBB5YQ0YHS+EVOo7B3hySp9+Gyh4KA9hPMs5hOJmshCMf+?=
+ =?us-ascii?Q?VIBN6lc0AP5ysKNiH59S+qDt2xWboj5Dya0uNa3U6bde4rFXAK+fdeOXacNT?=
+ =?us-ascii?Q?Jj9gvsGoInaVrpRwigD6ToRDLvrZJee3d1YbkzzkEEMsJUb3T2WW1MwpVNfE?=
+ =?us-ascii?Q?5qxS2zEHqOqLv807Lttnt1mxfwHul4VsI0GIaplJo7X8J8qf3yi08HH/TXDn?=
+ =?us-ascii?Q?rZd56yfo7Q4EF5Mj6Qfx2EDYv3l59P8uh5oTXnfXgXwQ7nfsffsp2xR2u/cF?=
+ =?us-ascii?Q?GMpbzwkS4UW0zyQd+/Dnxci2q+G9yw877riuwlJv+/AKfsnaT5Vf4yxHYPhC?=
+ =?us-ascii?Q?z5TKt6CpOqyaRk7TouaeCmAISBrBUGpcSbXHeZJhUZ1pt8T/Or9by2azNPMV?=
+ =?us-ascii?Q?D7Wdo3ahT21cqy1CupUBwHAEr6qo1L8tf2Per9p5le1kdbcwQIz5gCQToOq7?=
+ =?us-ascii?Q?3jOGk79uK+F8WhfVuWZiGpdoIlxTaWb50g1ybV7Y+z0ADlgvuRmgtDNCLGoE?=
+ =?us-ascii?Q?i1NY08uIylFGC12MG3CZONRtEx6Pn9FNyIMmd6alXJcXyobv0xFyzsaKy9sr?=
+ =?us-ascii?Q?mmvHoR0zJr3uzvIdLSRzoRFbh83q+6LBfrFPexBcH/BM7eyeSHzpJuxlT9G5?=
+ =?us-ascii?Q?mhysGIJSM4f4a2aA1QFmX+NKBAeK2txtsWwzgfFCkU/ORPR7MBl3bZDTpxV+?=
+ =?us-ascii?Q?CqpPTeyely3UVjmSO42MVqUuXJYBFqWRCWeoEvOyxQQXuJ9kvJVL7tBPo8BY?=
+ =?us-ascii?Q?S5qz8jqyX1GwxYUybbVno9hZj1M04jUK0F6t0v/bDMI8eu7m7eW5Z+RtiJet?=
+ =?us-ascii?Q?LBQSIFb0vxwYBkc74+oSNxctlUNz5zSnoMhkZ5zbcr11yEt/k4Uah/H6CKdT?=
+ =?us-ascii?Q?VfAvZ+sOoTfpSR8iSmKNiekjF6c+QxuLOdGwfrvFFMdGDdq2nudM6KC/3jsh?=
+ =?us-ascii?Q?zMDwvYAQY7JMHtWcfSpta3XvVfF48ld4LBcYys5PNmc6kMw+4RHO0Tg7bICF?=
+ =?us-ascii?Q?7Pmr/2P5DodN5DAm1BnNKW2GueyuOnb+PkUkCwiRZ8Z+tmDhrqLo9V/IpLWX?=
+ =?us-ascii?Q?QXRuCkZZxh/dQxWUChezMfmTVDg5ru5pdeBymqRPMKrI47zy9Cc1MAva+PLa?=
+ =?us-ascii?Q?29tiKMz+mb7axfdTU5gDQHJZYoR6R2jHMvFLsZdwXSQp4TvIF13OMJl5FIVl?=
+ =?us-ascii?Q?+vGHXDHjB9OfLTeITYJqLQC9pRv5EoGWAd3F58lkf4d8myrBG/VqlebYh4ol?=
+ =?us-ascii?Q?UVD83aI2O5z21aY3z9TSgnLJ+1M9PZe9pXSzfePSBgR88Tr2FsTXs8jsM+i9?=
+ =?us-ascii?Q?sSqGLkdAo2gcW7cki0AUpbP52vdsbfw9tRXhk9o3t/oInfsT4Qj6w5UA+pvE?=
+ =?us-ascii?Q?ifEXL/Gj/IzOf5ukdq8o5uiPT6WinfRQrzj/pajY?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e04b933-b44a-4ee8-51e0-08dd18f2f913
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8676.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 08:16:40.1302
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rcEAUFrr5aoU6DSBjRAoREgV+t87dji+TDLlX8xzhwdvDuzGjOevZF6JfQVQGzh/6jr3Mwd3Kn9knVMOV1820g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10156
 
-On Tue, Dec 3, 2024 at 3:26=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Remove the intermediate struct swap_cgroup, it just a unsigned short
-> > wrapper, simplify the code.
->
-> Did you actually remove the struct? It doesn't seem like it.
+Some bug fixes when DWC generic suspend/resume callbacks are used.
+Drop the first patch of v3 patch-set, since the use case of this patch had been
+covered by #3 commit "PCI: dwc: Clean up some unnecessary codes in dw_pcie_suspend_noirq()".
+To be simple, re-format the codes, drop the first patch of v3 patch-set, and
+only keep last two patches of v3 in v4 or later
 
-Oops, I forgot to drop these lines of code indeed, I'll send V2
-merging this into patch 4/4 so this commit can be ignored for now.
+Here is the discussion [1] and final solution [2] of the codes clean up commit.
+[1] https://patchwork.kernel.org/project/linux-pci/patch/1721628913-1449-1-git-send-email-hongxing.zhu@nxp.com/
+[2] https://patchwork.kernel.org/project/linux-pci/patch/20241126073909.4058733-1-hongxing.zhu@nxp.com/
 
->
-> >
-> > Also zero the map on initialization to prevent unexpected behaviour as
-> > swap cgroup helpers are suppose to return 0 on error.
->
-> All the callers lookup the id of an already swapped out page, so it
-> should never be uninitialized. Maybe we should WARN if the result of
-> the lookup is 0 in this case?
+v4 changes:
+Drop the first patch("PCI: dwc: Fix resume failure if no EP is connected on some platforms")
+in v3, since it's use-case had been covered by #3 patch of v3.
+Add one Fixes tag into "PCI: dwc: Clean up some unnecessary codes in dw_pcie_suspend_noirq()".
+Refer to Damien's comments, let ret test go inside the "else" and remove the
+initialization of ret to 0 declaration. Thanks.
 
-Yes, just a fallback for robustness.
+v3 changes:
+Regarding the discussion listed above[2].
+Resend the patch-set after adding one more codes clean up patch together.
 
-Lookup returning 0 is expected in some cases, eg. Cgroup V1 will call
-mem_cgroup_swapin_uncharge_swap early when the folio is added to swap
-cache, and erase the record. Then the mem_cgroup_uncharge_swap in
-swapfile.c (called when the swap cache is being dropped and entry is
-freed) won't double uncharge it. So we can't WARN on that.
+v2 changes:
+Thanks for Manivannan's review.
+- Refine the subject of second patch and add
+  "Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>"
+- In first patch, update the commit message and move one comment into
+  proper place.
+  BTW, Manivannan found another potential issue that suspend is entry but
+  the link is in L1SS stat in v1 review. This is a new story. And it's better
+  to be verified and fixed by another commit later.
+v2: https://patchwork.kernel.org/project/linux-pci/cover/1728539269-1861-1-git-send-email-hongxing.zhu@nxp.com/
 
->
-> >
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  mm/swap_cgroup.c | 45 +++++++++++++++++++--------------------------
-> >  1 file changed, 19 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-> > index 1770b076f6b7..a76afdc3666a 100644
-> > --- a/mm/swap_cgroup.c
-> > +++ b/mm/swap_cgroup.c
-> > @@ -12,14 +12,12 @@ struct swap_cgroup {
-> >  };
-> >
-> >  struct swap_cgroup_ctrl {
-> > -       struct swap_cgroup *map;
-> > +       unsigned short  *map;
-> >         spinlock_t      lock;
-> >  };
-> >
-> >  static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SWAPFILES];
-> >
-> > -#define SC_PER_PAGE    (PAGE_SIZE/sizeof(struct swap_cgroup))
-> > -
-> >  /*
-> >   * SwapCgroup implements "lookup" and "exchange" operations.
-> >   * In typical usage, this swap_cgroup is accessed via memcg's charge/u=
-ncharge
-> > @@ -33,18 +31,6 @@ static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_=
-SWAPFILES];
-> >   *
-> >   * TODO: we can push these buffers out to HIGHMEM.
-> >   */
-> > -static struct swap_cgroup *lookup_swap_cgroup(swp_entry_t ent,
-> > -                                       struct swap_cgroup_ctrl **ctrlp=
-)
-> > -{
-> > -       pgoff_t offset =3D swp_offset(ent);
-> > -       struct swap_cgroup_ctrl *ctrl;
-> > -
-> > -       ctrl =3D &swap_cgroup_ctrl[swp_type(ent)];
-> > -       if (ctrlp)
-> > -               *ctrlp =3D ctrl;
-> > -       return &ctrl->map[offset];
-> > -}
-> > -
-> >  /**
-> >   * swap_cgroup_record - record mem_cgroup for a set of swap entries
-> >   * @ent: the first swap entry to be recorded into
-> > @@ -58,20 +44,21 @@ unsigned short swap_cgroup_record(swp_entry_t ent, =
-unsigned short id,
-> >                                   unsigned int nr_ents)
-> >  {
-> >         struct swap_cgroup_ctrl *ctrl;
-> > -       struct swap_cgroup *sc;
-> > +       unsigned short *map;
-> >         unsigned short old;
-> >         unsigned long flags;
-> >         pgoff_t offset =3D swp_offset(ent);
-> >         pgoff_t end =3D offset + nr_ents;
-> >
-> > -       sc =3D lookup_swap_cgroup(ent, &ctrl);
-> > +       ctrl =3D &swap_cgroup_ctrl[swp_type(ent)];
-> > +       map =3D ctrl->map;
-> >
-> >         spin_lock_irqsave(&ctrl->lock, flags);
-> > -       old =3D sc->id;
-> > -       for (; offset < end; offset++, sc++) {
-> > -               VM_BUG_ON(sc->id !=3D old);
-> > -               sc->id =3D id;
-> > -       }
-> > +       old =3D map[offset];
-> > +       do {
-> > +               VM_BUG_ON(map[offset] !=3D old);
-> > +               map[offset] =3D id;
-> > +       } while (++offset !=3D end);
->
-> Why did you change the for loop here?
->
-> >         spin_unlock_irqrestore(&ctrl->lock, flags);
-> >
-> >         return old;
-> > @@ -85,20 +72,26 @@ unsigned short swap_cgroup_record(swp_entry_t ent, =
-unsigned short id,
-> >   */
-> >  unsigned short lookup_swap_cgroup_id(swp_entry_t ent)
-> >  {
-> > +       struct swap_cgroup_ctrl *ctrl;
-> > +
-> >         if (mem_cgroup_disabled())
-> >                 return 0;
-> > -       return lookup_swap_cgroup(ent, NULL)->id;
-> > +
-> > +       ctrl =3D &swap_cgroup_ctrl[swp_type(ent)];
-> > +       pgoff_t offset =3D swp_offset(ent);
-> > +
-> > +       return READ_ONCE(ctrl->map[offset]);
->
-> The READ_ONCE() does not exist today in lookup_swap_cgroup(). Why is it n=
-eeded?
->
-> >  }
-> >
-> >  int swap_cgroup_swapon(int type, unsigned long max_pages)
-> >  {
-> > -       struct swap_cgroup *map;
-> > +       void *map;
-> >         struct swap_cgroup_ctrl *ctrl;
-> >
-> >         if (mem_cgroup_disabled())
-> >                 return 0;
-> >
-> > -       map =3D vcalloc(max_pages, sizeof(struct swap_cgroup));
-> > +       map =3D vzalloc(max_pages * sizeof(unsigned short));
-> >         if (!map)
-> >                 goto nomem;
-> >
-> > @@ -117,7 +110,7 @@ int swap_cgroup_swapon(int type, unsigned long max_=
-pages)
-> >
-> >  void swap_cgroup_swapoff(int type)
-> >  {
-> > -       struct swap_cgroup *map;
-> > +       void *map;
->
-> Why void?
->
-> >         struct swap_cgroup_ctrl *ctrl;
-> >
-> >         if (mem_cgroup_disabled())
-> > --
-> > 2.47.0
-> >
->
+[PATCH v4 1/2] PCI: dwc: Always stop link in the
+[PATCH v4 2/2] PCI: dwc: Clean up some unnecessary codes in
+
+drivers/pci/controller/dwc/pcie-designware-host.c | 28 ++++++++++++++++++----------
+drivers/pci/controller/dwc/pcie-designware.h      |  1 +
+2 files changed, 19 insertions(+), 10 deletions(-)
+
 
