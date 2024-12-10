@@ -1,184 +1,184 @@
-Return-Path: <linux-kernel+bounces-440004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6062C9EB768
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:06:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B119EB79B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:11:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC46428222F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE48162320
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB5232799;
-	Tue, 10 Dec 2024 17:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9A823A56B;
+	Tue, 10 Dec 2024 17:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N0ikOrkL"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="djH8PAyv"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8C91BC09F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8DE23A594;
+	Tue, 10 Dec 2024 17:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850409; cv=none; b=oAdsTFtKhUxp3f8Fgy4s1iQ6l7M50R+vXnCFeLNKjP7RWEWd5Dnh4oDV/KXqgR8NDjjqzrnd5PrKqRg0ypB+w0ScwixdQgA9shpUKUr0sO+jHETUE4rvvCGCmJHXULfg9NuWbqexUuo1vIzbxRLlIBFzHK5dQ145BV9MkHTr9B4=
+	t=1733850629; cv=none; b=nVX5yQm54tOrRyYE6m+7VTDumcoQRHx3c0NRWWZLZJSZbp70ZIMWeojSKSQBGViMHhVamb5CTL1qPhCEPDinuC85Muj43i/nqdb6CrWweBx9Qxu07bjYz5iEeaR81eaYvvcTuP72RK8FUIhEa/jmCJmzsHK4AQp6woEBlS6JZBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850409; c=relaxed/simple;
-	bh=rFN7TvLsCXA3VO1va/jH8l4a57uI2N9NxnTrkX7z2Uk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZbpFXNSZqN2lfWS6g80kGkpMc2pxx+kEUwUEq2jomhp04JOHKazimTLOleZe63DhSoeCMNq+SsXWKzh8Ir1y8eXOowKFN4SabkoNtsYWoTHxc6bf9chE7EMVTKHxXkdRQ957Uv1pqDJwMEdA5+xkutq+d/aWqfVgszmxbVNV9Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N0ikOrkL; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 32654C0006;
-	Tue, 10 Dec 2024 17:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733850398;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tqxoxktpoqzZXfIrDIKHGCR9iQyRTGI04sSZ/7C4j1o=;
-	b=N0ikOrkLwxlTixrruieaZ+V7YxUcX0qM6BGOXicQX8UzqgkAe2ukpMdQCQFJp4ujuDtTlv
-	iLFDupZ8U093lzxWIcjzJ3PYhgUwRD72cUdT4FwQ8yf1T9arVi0IYhSoKkCe4ahSygoUsy
-	X4w/F/Je/Tl1DThg585AElxyCDVEOIoZF/6aVdF6kv0elvEsXKS6ckXGgyH5pL0QBAtG+j
-	V0EFaVV7GD07FwrFgfp5IlqaEPa7gnL12Hu9EWTC5+X4jxbqfpVuqac7U9AnKsWa0MO+R7
-	6yBRNd7MOTVkY+97vvAUHIq3BNBtax0+Xz75Ne+GuNkG3UY6+ME0TTFAcqB+cw==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>
-Subject: Re: arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: cast
- truncates bits from constant value (fffffffff000 becomes fffff000)
-In-Reply-To: <202412091227.KUZgstBB-lkp@intel.com>
-References: <202412091227.KUZgstBB-lkp@intel.com>
-Date: Tue, 10 Dec 2024 18:06:37 +0100
-Message-ID: <87ed2flb6q.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1733850629; c=relaxed/simple;
+	bh=FEWnd3vRw56+0zU9iQm+h5IV4wTiZ4mx1GMYuoKmShg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BOP3SjGJi1EyI0N4wa+q1mHketCK6t1VPyGcGYtIQoKIc3stUA51ydDltvUMoHOZv9ZvywmEPyDSMEjDMtQ8mdzqxEKGtsdnPh/qilcy4FSdx/tEBmZKys0cX1q8if5R+hnwX/M1EJStQ+cNzZzPo86ABd/UINgmMssQ9PTPIhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=djH8PAyv; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733850625;
+	bh=FEWnd3vRw56+0zU9iQm+h5IV4wTiZ4mx1GMYuoKmShg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=djH8PAyv2m0Piy9QfdK2AsmiP3iTCg/H1JJv4rastS0dG3vSRKHmCB0X4ZKWA+nRn
+	 Y1KgCMD/JXS1cnArN4PB59DPTBieyRAEoQlnHR41ekjbnJm+NaQMQbX2lYHY+dSzcY
+	 8zVlRSfIaZKbeoKVktVBMiDaJM0rObgpFiYkFzQA12xMT9laTdOWQIjk6s9PAegBz4
+	 aVRCpkXTKhZ5gPB1mO5cxl/ktAShsZPgy53sTUAE6Pu3iItYn9yf5x8rrZvbM5Vju0
+	 RhNgue7UcvWezuVQHpLVb90Qe6FjBLwVgCE/hEO5626soFEf7yWB7yEWwCFFoZrOjF
+	 pghi4SibnATlw==
+Received: from jupiter.universe (dyndsl-091-248-190-127.ewe-ip-backbone.de [91.248.190.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 265A717E37C5;
+	Tue, 10 Dec 2024 18:10:25 +0100 (CET)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id A401648CC8A; Tue, 10 Dec 2024 18:10:24 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	=?UTF-8?q?Adri=C3=A1n=20Mart=C3=ADnez=20Larumbe?= <adrian.larumbe@collabora.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com
+Subject: [PATCH v4 0/7] Fix RK3588 GPU power domain
+Date: Tue, 10 Dec 2024 18:06:40 +0100
+Message-ID: <20241210171023.141162-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi,
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
-> head:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-> commit: 6f14293257309a02a6d451e80e4ef1d78560479e MIPS: Allow using more t=
-han 32-bit addresses for reset vectors when possible
-> date:   6 weeks ago
-> config: mips-randconfig-r112-20241209 (https://download.01.org/0day-ci/ar=
-chive/20241209/202412091227.KUZgstBB-lkp@intel.com/config)
-> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5=
-92c0fe55f6d9a811028b5f3507be91458ab2713)
-> reproduce: (https://download.01.org/0day-ci/archive/20241209/202412091227=
-.KUZgstBB-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202412091227.KUZgstBB-lkp=
-@intel.com/
+I got a report, that the Linux kernel crashes on Rock 5B when the panthor
+driver is loaded late after booting. The crash starts with the following
+shortened error print:
 
-[...]
+rockchip-pm-domain fd8d8000.power-management:power-controller: failed to set domain 'gpu', val=0
+rockchip-pm-domain fd8d8000.power-management:power-controller: failed to get ack on domain 'gpu', val=0xa9fff
+SError Interrupt on CPU4, code 0x00000000be000411 -- SError
 
->    arch/mips/kernel/smp-cps.c: note: in included file (through arch/mips/=
-include/asm/mips-cps.h):
->    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
-in argument 2 (different address spaces) @@     expected void volatile [nod=
-eref] __iomem *mem @@     got void * @@
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
-ile [noderef] __iomem *mem
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
-in argument 2 (different address spaces) @@     expected void volatile [nod=
-eref] __iomem *mem @@     got void * @@
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
-ile [noderef] __iomem *mem
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
-in argument 2 (different address spaces) @@     expected void volatile [nod=
-eref] __iomem *mem @@     got void * @@
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
-ile [noderef] __iomem *mem
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
-in argument 2 (different address spaces) @@     expected void volatile [nod=
-eref] __iomem *mem @@     got void * @@
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void volat=
-ile [noderef] __iomem *mem
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void *
->>> arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: cast truncates b=
-its from constant value (fffffffff000 becomes fffff000)
->    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
-in return expression (different address spaces) @@     expected void * @@  =
-   got void [noderef] __iomem * @@
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void [noderef] =
-__iomem *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
-in return expression (different address spaces) @@     expected void * @@  =
-   got void [noderef] __iomem * @@
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void [noderef] =
-__iomem *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: incorrect type =
-in return expression (different address spaces) @@     expected void * @@  =
-   got void [noderef] __iomem * @@
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     expected void *
->    arch/mips/include/asm/mips-cm.h:329:1: sparse:     got void [noderef] =
-__iomem *
->>> arch/mips/include/asm/mips-cm.h:329:1: sparse: sparse: cast truncates b=
-its from constant value (fffffffff000 becomes fffff000)
+This series first does some cleanups in the Rockchip power domain
+driver and changes the driver, so that it no longer tries to continue
+when it fails to enable a domain. This gets rid of the SError interrupt
+and long backtraces. But the kernel still hangs when it fails to enable
+a power domain. I have not done further analysis to check if that can
+be avoided.
 
-So I looked for from where this error comes and found that it was caused
-by:
-  write_gcr_co_reset64_base(CM_GCR_Cx_RESET64_BASE_BEVEXCBASE);
-in function check_64bit_reset() (smp-cps.c)
+Last but not least this provides a fix for the GPU power domain failing
+to get enabled - after some testing from my side it seems to require the
+GPU voltage supply to be enabled.
 
-The constant value being CM_GCR_Cx_RESET64_BASE_BEVEXCBASE.
+This introduces devm_of_regulator_get without the _optional suffix, since
+that is more sensible for the Rockchip usecase. Longer explanation can be
+seen in patch 6, which adds the handling to the Rockchip driver. My merge
+suggestion would be that Mark provides an immutable branch.
 
-It occurs due to:
-  __raw_writel(val, addr_##unit##_##name());
-in write_##unit##_##name(uint##sz##_t val) (mips-cps.h)
+The last patch, which updates the RK3588 board files should cover all RK3588
+boards that are currently in Heiko's for-next branch. Any board missing the
+update will behave as before, so it is perfectly fine not to update all DT
+files at once (in case I missed any).
 
-However, check_64bit_reset() is only called when mips_cm_is64 is true,
-whereas in write_##unit##_##name(uint##sz##_t val) __raw_writel is not
-called when mips_cm_is64 is true. This warning is therefore a false
-positive and I do not see any reasonable way to silence it, so I think
-we should simply ignore it unless someone has a better proposal.
+Changes since PATCHv3:
+ * https://lore.kernel.org/linux-rockchip/20241022154508.63563-1-sebastian.reichel@collabora.com/
+ * Rebase to Heiko's for-next branch
+   - update DT patch to handle new RK3588(s) boards
+   - make sure to use a clean topic branch without HDMI-RX code (Heiko Stübner)
+ * Add Tested-by from Heiko Stübner
 
-Gregory
+Changes since PATCHv2:
+ * https://lore.kernel.org/linux-rockchip/20240919091834.83572-1-sebastian.reichel@collabora.com/
+ * Rebase to 6.12-rc1 + devm_of_regulator_get_optional branch (Ulf Hansson, Chen-Yu Tsai)
+  - Introduce devm_of_regulator_get()
+  - Add code to only request regulators for domains needing them
+ * Mention other platforms in the DT binding patch (Rob Murphy)
+ * Update more RK3588 DT files (Jonas Karlman)
 
-[...]
+Changes since PATCHv1:
+ * https://lore.kernel.org/all/20240910180530.47194-1-sebastian.reichel@collabora.com/
+ * Collect Reviewed-by/Acked-by/Tested-by
+ * swap first and second patch to avoid introducing and directly removing a mutex_unlock
+ * fix spelling of indentation
+ * fix double empty line after rockchip_pd_regulator_disable()
 
+Greetings,
 
->
-> vim +329 arch/mips/include/asm/mips-cm.h
->
->    326=09
->    327	/* GCR_Cx_RESET_BASE - Configure where powered up cores will fetch=
- from */
->    328	GCR_CX_ACCESSOR_RW(32, 0x020, reset_base)
->  > 329	GCR_CX_ACCESSOR_RW(64, 0x020, reset64_base)
->    330	#define CM_GCR_Cx_RESET_BASE_BEVEXCBASE		GENMASK(31, 12)
->    331	#define CM_GCR_Cx_RESET64_BASE_BEVEXCBASE	GENMASK_ULL(47, 12)
->    332	#define CM_GCR_Cx_RESET_BASE_MODE		BIT(1)
->    333=09
->
-> --=20
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+-- Sebastian
 
---=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Sebastian Reichel (7):
+  regulator: Add (devm_)of_regulator_get()
+  pmdomain: rockchip: cleanup mutex handling in rockchip_pd_power
+  pmdomain: rockchip: forward rockchip_do_pmu_set_power_domain errors
+  pmdomain: rockchip: reduce indentation in rockchip_pd_power
+  dt-bindings: power: rockchip: add regulator support
+  pmdomain: rockchip: add regulator support
+  arm64: dts: rockchip: Add GPU power domain regulator dependency for
+    RK3588
+
+ .../power/rockchip,power-controller.yaml      |   3 +
+ .../boot/dts/rockchip/rk3588-armsom-sige7.dts |   4 +
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |   2 +-
+ .../boot/dts/rockchip/rk3588-coolpi-cm5.dtsi  |   4 +
+ .../rockchip/rk3588-edgeble-neu6a-common.dtsi |   4 +
+ .../boot/dts/rockchip/rk3588-evb1-v10.dts     |   4 +
+ .../boot/dts/rockchip/rk3588-fet3588-c.dtsi   |   4 +
+ .../rockchip/rk3588-friendlyelec-cm3588.dtsi  |   4 +
+ .../arm64/boot/dts/rockchip/rk3588-jaguar.dts |   4 +
+ .../boot/dts/rockchip/rk3588-nanopc-t6.dtsi   |   4 +
+ .../boot/dts/rockchip/rk3588-ok3588-c.dts     |   4 +
+ .../dts/rockchip/rk3588-orangepi-5-plus.dts   |   4 +
+ .../boot/dts/rockchip/rk3588-quartzpro64.dts  |   4 +
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   |   4 +
+ .../boot/dts/rockchip/rk3588-rock-5b.dts      |   4 +
+ .../arm64/boot/dts/rockchip/rk3588-tiger.dtsi |   4 +
+ .../boot/dts/rockchip/rk3588-toybrick-x0.dts  |   4 +
+ .../boot/dts/rockchip/rk3588-turing-rk1.dtsi  |   4 +
+ .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   |   4 +
+ .../dts/rockchip/rk3588s-gameforce-ace.dts    |   4 +
+ .../dts/rockchip/rk3588s-indiedroid-nova.dts  |   4 +
+ .../dts/rockchip/rk3588s-khadas-edge2.dts     |   4 +
+ .../boot/dts/rockchip/rk3588s-nanopi-r6s.dts  |   4 +
+ .../boot/dts/rockchip/rk3588s-odroid-m2.dts   |   4 +
+ .../boot/dts/rockchip/rk3588s-orangepi-5.dts  |   4 +
+ .../boot/dts/rockchip/rk3588s-rock-5a.dts     |   4 +
+ drivers/pmdomain/rockchip/pm-domains.c        | 190 +++++++++++-------
+ drivers/regulator/devres.c                    |  17 ++
+ drivers/regulator/of_regulator.c              |  21 ++
+ include/linux/regulator/consumer.h            |   6 +
+ 30 files changed, 266 insertions(+), 69 deletions(-)
+
+-- 
+2.45.2
+
 
