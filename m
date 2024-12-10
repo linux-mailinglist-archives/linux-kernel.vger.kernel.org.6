@@ -1,250 +1,295 @@
-Return-Path: <linux-kernel+bounces-439212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9109EAC59
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:36:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C009EAC63
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7481657D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D615169E86
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C21D2080FA;
-	Tue, 10 Dec 2024 09:34:14 +0000 (UTC)
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B34215761;
+	Tue, 10 Dec 2024 09:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvj/jKmt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F162080FE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF17210F6C;
+	Tue, 10 Dec 2024 09:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733823253; cv=none; b=rzySB759upPuUkra5I9uaR7HXOrksWUltmCNbaVXNoaP8t/ww6kEW3Q0O6bsSA9ZthpCWB0MIXzOLintZGkGmFuMEMlYpKPw45gmEZw+HqexMWqVL+QfaiU5TyxFDrARwMm4Ced72DqLBVqCFyAOU1pk6nqJDTfyQ80MPf3q0GA=
+	t=1733823256; cv=none; b=oa8c/obZYZvxlzmHWFKeS8iBa7HwrlkxrzC/dHk0g6A09AZOr7XhKn563E5ANxE7vWyboQDua0yX7llNjHRlDYNDW0iqDxvIXvKLbf23mKUzIGXAyFjKc9tmlkIs7v7lm+ty+ku8RY4xMvXiSUfQ85pkQ3mjPs9QPkFR9oThDTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733823253; c=relaxed/simple;
-	bh=hm6xaqy0QrQUpaxQPDIrAp6Ih60vWvrN039A2BDvyQA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mvAG4ngqc/mulB+u4AyS79PFU0mK6LFAC2NpLwcB1I3nTAfojYBat9PtFFzEB6dz7RbYpOBGUNaXk+OgkbG80qcC0ifx2lAf4CUSrXxMAvr3x0uukjLiYJwIFojamQRokKU5AK02c7xujleUGlzL6qm/Kco0H1V19Xh1+HE+CCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4Y6tpT0KZNzYlTHg;
-	Tue, 10 Dec 2024 17:33:53 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 10 Dec
- 2024 17:34:04 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 10 Dec
- 2024 17:34:03 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <shengyong@oppo.com>
-CC: <bintian.wang@honor.com>, <linux-f2fs-devel@lists.sourceforge.net>,
-	<linux-kernel@vger.kernel.org>, wangzijie <wangzijie1@honor.com>
-Subject: [PATCH v2] f2fs-tools: Check and fix inline xattr inplace
-Date: Tue, 10 Dec 2024 17:34:02 +0800
-Message-ID: <20241210093402.3747909-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733823256; c=relaxed/simple;
+	bh=fSyc22kn9CnPVb3Hnnnmh/D1sKYPGOS4sLStStjP948=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OsiTxuS1F4yeq1dLs0JP//Rl/oHOYe1tPJU11yZHxiOqHWFNO8RVe7ANV9AIYfOMf3GPMdd4WkYQO8lYbmomXTlR+It29EtrP+qwi8GWm/JcboN6gsPSrYUjVFRAaqA0v2PooC31I5gI5MD4qw88r+ZzuyQL9M0Jx1wRx9Uv58g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uvj/jKmt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08BC1C4CED6;
+	Tue, 10 Dec 2024 09:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733823255;
+	bh=fSyc22kn9CnPVb3Hnnnmh/D1sKYPGOS4sLStStjP948=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uvj/jKmt9VZgDRudKliyIkdhykwyISf1FUNTY0tYDbU54OjCq2YEo2o6xokJ55LIE
+	 7LThJXrjHInDm8dDRm2oMhJz1jvFXnsvLIYsUxpypg5/WqLKJt4bJqlVqQezebWSbh
+	 WojhbXyvRS5U4lkulkUQynMO+sOwirEhPuRsuqMnKX9ycju9JwDeLtQtwacc4Rsx9b
+	 dl+HSNlFoRMueJ6WqjfB/NpCVJ6cIwnStMRiMGL6qkugIIkqcamDdV8kyrbEM5J2AZ
+	 BltVIMNldXxKaHqQ4j6bYh/xmeyCGfVDYUcylrNxoEjMLceZI/LKZU6icyVKFpXiy8
+	 vqAiHLlJktUkg==
+Date: Tue, 10 Dec 2024 10:34:07 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh@kernel.org>, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 12/13] rust: platform: add basic platform device /
+ driver abstractions
+Message-ID: <Z1gLD_dZy0XHZ68V@pollux>
+References: <20241205141533.111830-1-dakr@kernel.org>
+ <20241205141533.111830-13-dakr@kernel.org>
+ <20241209223706.GF938291-robh@kernel.org>
+ <2024121014-rage-sneak-1b25@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a011.hihonor.com
- (10.68.31.243)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024121014-rage-sneak-1b25@gregkh>
 
-Currently when we check xattr of inode which dosen't have xnid, we make unnecessary
-memory alloc and copy. Followed by ShengYong's suggestion[1], change the behaviors of
-read_all_xattrs and write_all_xattrs, and add a new function free_xattrs.
+On Tue, Dec 10, 2024 at 08:46:29AM +0100, Greg KH wrote:
+> On Mon, Dec 09, 2024 at 04:37:06PM -0600, Rob Herring wrote:
+> > On Thu, Dec 05, 2024 at 03:14:43PM +0100, Danilo Krummrich wrote:
+> > > Implement the basic platform bus abstractions required to write a basic
+> > > platform driver. This includes the following data structures:
+> > > 
+> > > The `platform::Driver` trait represents the interface to the driver and
+> > > provides `pci::Driver::probe` for the driver to implement.
+> > > 
+> > > The `platform::Device` abstraction represents a `struct platform_device`.
+> > > 
+> > > In order to provide the platform bus specific parts to a generic
+> > > `driver::Registration` the `driver::RegistrationOps` trait is implemented
+> > > by `platform::Adapter`.
+> > > 
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > > ---
+> > >  MAINTAINERS                     |   1 +
+> > >  rust/bindings/bindings_helper.h |   2 +
+> > >  rust/helpers/helpers.c          |   1 +
+> > >  rust/helpers/platform.c         |  13 ++
+> > >  rust/kernel/lib.rs              |   1 +
+> > >  rust/kernel/platform.rs         | 222 ++++++++++++++++++++++++++++++++
+> > >  6 files changed, 240 insertions(+)
+> > >  create mode 100644 rust/helpers/platform.c
+> > >  create mode 100644 rust/kernel/platform.rs
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 7d6bb4b15d2c..365fc48b7041 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -7034,6 +7034,7 @@ F:	rust/kernel/device.rs
+> > >  F:	rust/kernel/device_id.rs
+> > >  F:	rust/kernel/devres.rs
+> > >  F:	rust/kernel/driver.rs
+> > > +F:	rust/kernel/platform.rs
+> > >  
+> > >  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
+> > >  M:	Nishanth Menon <nm@ti.com>
+> > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> > > index 6d7a68e2ecb7..e9fdceb568b8 100644
+> > > --- a/rust/bindings/bindings_helper.h
+> > > +++ b/rust/bindings/bindings_helper.h
+> > > @@ -20,9 +20,11 @@
+> > >  #include <linux/jump_label.h>
+> > >  #include <linux/mdio.h>
+> > >  #include <linux/miscdevice.h>
+> > > +#include <linux/of_device.h>
+> > >  #include <linux/pci.h>
+> > >  #include <linux/phy.h>
+> > >  #include <linux/pid_namespace.h>
+> > > +#include <linux/platform_device.h>
+> > >  #include <linux/poll.h>
+> > >  #include <linux/refcount.h>
+> > >  #include <linux/sched.h>
+> > > diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> > > index 3fda33cd42d4..0640b7e115be 100644
+> > > --- a/rust/helpers/helpers.c
+> > > +++ b/rust/helpers/helpers.c
+> > > @@ -20,6 +20,7 @@
+> > >  #include "kunit.c"
+> > >  #include "mutex.c"
+> > >  #include "page.c"
+> > > +#include "platform.c"
+> > >  #include "pci.c"
+> > >  #include "pid_namespace.c"
+> > >  #include "rbtree.c"
+> > > diff --git a/rust/helpers/platform.c b/rust/helpers/platform.c
+> > > new file mode 100644
+> > > index 000000000000..ab9b9f317301
+> > > --- /dev/null
+> > > +++ b/rust/helpers/platform.c
+> > > @@ -0,0 +1,13 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +#include <linux/platform_device.h>
+> > > +
+> > > +void *rust_helper_platform_get_drvdata(const struct platform_device *pdev)
+> > > +{
+> > > +	return platform_get_drvdata(pdev);
+> > > +}
+> > > +
+> > > +void rust_helper_platform_set_drvdata(struct platform_device *pdev, void *data)
+> > > +{
+> > > +	platform_set_drvdata(pdev, data);
+> > > +}
+> > > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> > > index 7a0e4c82ad0c..cc8f48aa162b 100644
+> > > --- a/rust/kernel/lib.rs
+> > > +++ b/rust/kernel/lib.rs
+> > > @@ -59,6 +59,7 @@
+> > >  pub mod of;
+> > >  pub mod page;
+> > >  pub mod pid_namespace;
+> > > +pub mod platform;
+> > >  pub mod prelude;
+> > >  pub mod print;
+> > >  pub mod rbtree;
+> > > diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> > > new file mode 100644
+> > > index 000000000000..868cfddb75a2
+> > > --- /dev/null
+> > > +++ b/rust/kernel/platform.rs
+> > > @@ -0,0 +1,222 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +//! Abstractions for the platform bus.
+> > > +//!
+> > > +//! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+> > > +
+> > > +use crate::{
+> > > +    bindings, container_of, device, driver,
+> > > +    error::{to_result, Result},
+> > > +    of,
+> > > +    prelude::*,
+> > > +    str::CStr,
+> > > +    types::{ARef, ForeignOwnable},
+> > > +    ThisModule,
+> > > +};
+> > > +
+> > > +/// An adapter for the registration of platform drivers.
+> > > +pub struct Adapter<T: Driver>(T);
+> > > +
+> > > +impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
+> > > +    type RegType = bindings::platform_driver;
+> > > +
+> > > +    fn register(
+> > > +        pdrv: &mut Self::RegType,
+> > > +        name: &'static CStr,
+> > > +        module: &'static ThisModule,
+> > > +    ) -> Result {
+> > > +        pdrv.driver.name = name.as_char_ptr();
+> > > +        pdrv.probe = Some(Self::probe_callback);
+> > > +
+> > > +        // Both members of this union are identical in data layout and semantics.
+> > > +        pdrv.__bindgen_anon_1.remove = Some(Self::remove_callback);
+> > > +        pdrv.driver.of_match_table = T::OF_ID_TABLE.as_ptr();
+> > > +
+> > > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> > > +        to_result(unsafe { bindings::__platform_driver_register(pdrv, module.0) })
+> > > +    }
+> > > +
+> > > +    fn unregister(pdrv: &mut Self::RegType) {
+> > > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> > > +        unsafe { bindings::platform_driver_unregister(pdrv) };
+> > > +    }
+> > > +}
+> > > +
+> > > +impl<T: Driver + 'static> Adapter<T> {
+> > > +    #[cfg(CONFIG_OF)]
+> > > +    fn of_id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
+> > > +        let table = T::OF_ID_TABLE;
+> > > +
+> > > +        // SAFETY:
+> > > +        // - `table` has static lifetime, hence it's valid for read,
+> > > +        // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
+> > > +        let raw_id = unsafe { bindings::of_match_device(table.as_ptr(), pdev.as_ref().as_raw()) };
+> > > +
+> > > +        if raw_id.is_null() {
+> > > +            None
+> > > +        } else {
+> > > +            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
+> > > +            // does not add additional invariants, so it's safe to transmute.
+> > > +            let id = unsafe { &*raw_id.cast::<of::DeviceId>() };
+> > > +
+> > > +            Some(table.info(<of::DeviceId as crate::device_id::RawDeviceId>::index(id)))
+> > > +        }
+> > > +    }
+> > > +
+> > > +    #[cfg(not(CONFIG_OF))]
+> > > +    fn of_id_info(_pdev: &Device) -> Option<&'static T::IdInfo> {
+> > > +        None
+> > > +    }
+> > > +
+> > > +    // Try to retrieve an `IdInfo` from any of the ID tables; if we can't find one for a particular
+> > > +    // table, it means we don't have a match in there. If we don't match any of the ID tables, it
+> > > +    // means we were matched by name.
+> > > +    fn id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
+> > > +        let id = Self::of_id_info(pdev);
+> > > +        if id.is_some() {
+> > > +            return id;
+> > > +        }
+> > > +
+> > > +        None
+> > > +    }
+> > 
+> > These methods are going to have to be duplicated by every bus type which 
+> > can do DT matching (and later ACPI). Can't this be moved to be part of 
+> > the common Driver trait.
+> > 
+> > 
+> > I'll say it again for Greg to comment (doubtful he will look at v3 
+> > again). Really, I think we should also align the probe method interface 
+> > across bus types. That means getting rid of the 'id' in the PCI probe 
+> > (or add it for everyone). Most drivers never need it. The typical case 
+> > is needing nothing or the matched data. In a quick scan[1], there's 
+> > only a handful of cases. So I think probe should match the common 
+> > scenario and make retrieving the id match explicit if needed.
+> 
+> If there's a way for the probe callback to get access to the id that
+> caused it to match, then it's fine with me to remove it.  But is that
+> possible?  Many many drivers encode "stuff" in the id that the driver
+> needs to know (quirks, functions, etc.)
 
-* read_all_xattrs: If xnid dosen't exist and there's no possibility to alloc xnid in next
-   steps, return inline_xattr directly without alloc and memcpy.
-* write_all_xattrs checks whether inline_xattr and new txattr_addr have the same address
-   to avoid copying back.
-* free_xattrs checks whether inline_xattr and new txattr_addr have the same address to
-   free xattr buffer properly.
+The signature would be
 
-After that, instances(except setxattr) where {read|write}_all_xattrs are called can avoid unnecessary
-memory alloc and copy.
+`fn probe(dev: &mut Device, id_info: &Self::IdInfo) -> Result<Pin<KBox<Self>>>`
 
-Use free_xattrs(xattrs) instead of free(xattrs) to free buffer properly.
+where `id_info` is the driver private data.
 
-[1] https://lore.kernel.org/linux-f2fs-devel/502ae396-ae82-44d6-b08d-617e9e9c4092@oppo.com/
+The other fields of struct pci_device_id should also be available from struct
+pci_dev`, i.e. `dev`; just need to add the corresponding accessors for it.
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
-v1: https://lore.kernel.org/linux-f2fs-devel/20241204122317.3042137-1-wangzijie1@honor.com/
-change since v1:
- - Suggestions from ShengYong to change {read|write}_all_xattrs and add free_xattrs
- - If we may need alloc xnid, still alloc xattr buffer in read_all_xattrs
----
- fsck/dump.c  |  4 ++--
- fsck/fsck.c  |  6 +++---
- fsck/fsck.h  |  3 ++-
- fsck/mount.c |  4 ++--
- fsck/xattr.c | 22 ++++++++++++++++++----
- 5 files changed, 27 insertions(+), 12 deletions(-)
+- Danilo
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index dc3c199..cc89909 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -399,7 +399,7 @@ static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk, int
- 	char xattr_name[F2FS_NAME_LEN] = {0};
- 	int ret;
- 
--	xattr = read_all_xattrs(sbi, node_blk, true);
-+	xattr = read_all_xattrs(sbi, node_blk, true, false);
- 	if (!xattr)
- 		return;
- 
-@@ -478,7 +478,7 @@ static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk, int
- 		free(name);
- 	}
- 
--	free(xattr);
-+	free_xattrs(node_blk, xattr);
- }
- #else
- static void dump_xattr(struct f2fs_sb_info *UNUSED(sbi),
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index aa3fb97..982defb 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -844,7 +844,7 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
- 	if (xattr_size == 0)
- 		return 0;
- 
--	xattr = read_all_xattrs(sbi, inode, false);
-+	xattr = read_all_xattrs(sbi, inode, false, false);
- 	ASSERT(xattr);
- 
- 	last_base_addr = (void *)xattr + xattr_size;
-@@ -869,10 +869,10 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
- 		memset(ent, 0, (u8 *)last_base_addr - (u8 *)ent);
- 		write_all_xattrs(sbi, inode, xattr_size, xattr);
- 		FIX_MSG("[0x%x] nullify wrong xattr entries", nid);
--		free(xattr);
-+		free_xattrs(inode, xattr);
- 		return 1;
- 	}
--	free(xattr);
-+	free_xattrs(inode, xattr);
- 	return 0;
- }
- 
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index b581d3e..2897a5e 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -341,9 +341,10 @@ struct hardlink_cache_entry *f2fs_search_hardlink(struct f2fs_sb_info *sbi,
- 						struct dentry *de);
- 
- /* xattr.c */
--void *read_all_xattrs(struct f2fs_sb_info *, struct f2fs_node *, bool);
-+void *read_all_xattrs(struct f2fs_sb_info *, struct f2fs_node *, bool, bool);
- void write_all_xattrs(struct f2fs_sb_info *sbi,
- 		struct f2fs_node *inode, __u32 hsize, void *txattr_addr);
-+void free_xattrs(struct f2fs_node *inode, void *txattr_addr);
- 
- /* dir.c */
- int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
-diff --git a/fsck/mount.c b/fsck/mount.c
-index a189ba7..f6085e9 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -370,7 +370,7 @@ void print_inode_info(struct f2fs_sb_info *sbi,
- 	DISP_u32(F2FS_INODE_NIDS(inode), i_nid[3]);	/* indirect */
- 	DISP_u32(F2FS_INODE_NIDS(inode), i_nid[4]);	/* double indirect */
- 
--	xattr_addr = read_all_xattrs(sbi, node, true);
-+	xattr_addr = read_all_xattrs(sbi, node, true, false);
- 	if (!xattr_addr)
- 		goto out;
- 
-@@ -384,7 +384,7 @@ void print_inode_info(struct f2fs_sb_info *sbi,
- 		}
- 		print_xattr_entry(ent);
- 	}
--	free(xattr_addr);
-+	free_xattrs(node, xattr_addr);
- 
- out:
- 	printf("\n");
-diff --git a/fsck/xattr.c b/fsck/xattr.c
-index 6373c06..3abdcd8 100644
---- a/fsck/xattr.c
-+++ b/fsck/xattr.c
-@@ -18,7 +18,7 @@
- #include "xattr.h"
- 
- void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
--			bool sanity_check)
-+			bool sanity_check, bool may_alloc_xnid)
- {
- 	struct f2fs_xattr_header *header;
- 	void *txattr_addr;
-@@ -30,6 +30,9 @@ void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
- 			return NULL;
- 	}
- 
-+	if (!xnid && !may_alloc_xnid)
-+		return inline_xattr_addr(&inode->i);
-+
- 	txattr_addr = calloc(inline_size + F2FS_BLKSIZE, 1);
- 	ASSERT(txattr_addr);
- 
-@@ -97,7 +100,8 @@ void write_all_xattrs(struct f2fs_sb_info *sbi,
- 	bool xattrblk_alloced = false;
- 	struct seg_entry *se;
- 
--	memcpy(inline_xattr_addr(&inode->i), txattr_addr, inline_size);
-+	if (inline_xattr_addr(&inode->i) != txattr_addr)
-+		memcpy(inline_xattr_addr(&inode->i), txattr_addr, inline_size);
- 
- 	if (hsize <= inline_size)
- 		return;
-@@ -137,6 +141,16 @@ free_xattr_node:
- 	ASSERT(ret >= 0);
- }
- 
-+/*
-+ * Different address between inline_xattr and txattr_addr means
-+ * we newly allocate xattr buffer in read_all_xattrs, free it
-+ */
-+void free_xattrs(struct f2fs_node *inode, void *txattr_addr)
-+{
-+	if (inline_xattr_addr(&inode->i) != txattr_addr)
-+		free(txattr_addr);
-+}
-+
- int f2fs_setxattr(struct f2fs_sb_info *sbi, nid_t ino, int index, const char *name,
- 		const void *value, size_t size, int flags)
- {
-@@ -174,7 +188,7 @@ int f2fs_setxattr(struct f2fs_sb_info *sbi, nid_t ino, int index, const char *na
- 	ret = dev_read_block(inode, ni.blk_addr);
- 	ASSERT(ret >= 0);
- 
--	base_addr = read_all_xattrs(sbi, inode, true);
-+	base_addr = read_all_xattrs(sbi, inode, true, true);
- 	ASSERT(base_addr);
- 
- 	last_base_addr = (void *)base_addr + XATTR_SIZE(&inode->i);
-@@ -257,8 +271,8 @@ int f2fs_setxattr(struct f2fs_sb_info *sbi, nid_t ino, int index, const char *na
- 	/* inode need update */
- 	ASSERT(update_inode(sbi, inode, &ni.blk_addr) >= 0);
- exit:
-+	free_xattrs(inode, base_addr);
- 	free(inode);
--	free(base_addr);
- 	return error;
- }
- 
--- 
-2.25.1
-
+> 
+> If that's not possible, then it needs to stay.
+> 
+> thanks,
+> 
+> greg k-h
 
