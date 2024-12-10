@@ -1,127 +1,147 @@
-Return-Path: <linux-kernel+bounces-440156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D969EB989
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:45:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0A69EB990
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EED92837D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC928284837
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBCB198A02;
-	Tue, 10 Dec 2024 18:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171BD214209;
+	Tue, 10 Dec 2024 18:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JIG3BqeE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZQr52uRj"
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B120335967;
-	Tue, 10 Dec 2024 18:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0D3226862;
+	Tue, 10 Dec 2024 18:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856326; cv=none; b=embBU4D1cmcsxM/MNMiiFEMSEyrWWjlx+W5ESo/Jdt+TK9SxIB+MTYGTRWGDPdP8/0KchgN5NTFZjX0HQawAHB1WRri8H/Ll31NAwNYFgODclMVPmUX2hQCLDBS0aABP5eQT4x+307aChViXN7syxAyKPuXH9M36ypP0t/Itc+M=
+	t=1733856355; cv=none; b=PBu5ZfFgqcbt/FWa2NSj57aWb5FTxGBliKrCvvTbwj47EYuzM3bKNh1+j7x5tJLJBu4pt83w/Xs1HYB7NMd0MHWr0XABr3R2yMcPbyUfCOBUXecjz2RPMz7Gjvucr5EoUsN0qANu7wcE3aPqGoziLjnfNhoQ5TCsZvvoLcTqwJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856326; c=relaxed/simple;
-	bh=olsdmyoTmIU3QYXVIY/p+lmELkDwTdQFw0IaChjqdS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBPpyql54fHhhFWlDSR1WEVXU87/tYy6zbSrn1qhFjX7JF2ix2qHivmfLrfycKMLN3GvOjORGrqkjpjJvlAPcIwJ6c1DTzLpGKO+76SqyUwrIyHZ/7ZrZ5vgCBcCzCMDBtwA2Cr5bpd4/Pf1Rnu1dJ+wguuWvWx2udozVGl8G4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JIG3BqeE; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733856325; x=1765392325;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=olsdmyoTmIU3QYXVIY/p+lmELkDwTdQFw0IaChjqdS0=;
-  b=JIG3BqeEPMOxGizDSBuXd6Dt+N6HED9eTfY9x+KgJ0387yox9r65SWhx
-   NqGHT+zlm5cSAhrnA1UbobIwV5UVgGY3z4zwxLyp3br9HTC75p0+y2MXo
-   HkrPa5dZLq6rTXGvcud0W0+OaGuj3ph/dESdt0s6mOdbYDXGi+AHJn3qt
-   SdBlba2NI8INgrRwTPZKIWlMqDJbMiqfiSb8B4ZG+B3UuURQsFxcbvC7X
-   ZdLz5nLJ52KJTMfLo08ZdyGU/cL4X0qze6XNuBDAgOnGFKA//MbopXhjh
-   d8NEWqclY5ZURik5iIWbaCyzmVKXioHcHu0Ghofbgqej32M+w5AmWZ3UC
-   w==;
-X-CSE-ConnectionGUID: hskI4jBGQseqacAluzCs9Q==
-X-CSE-MsgGUID: YxC+SbUoTNiFQ5PJMx37TQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="37998036"
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="37998036"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 10:45:25 -0800
-X-CSE-ConnectionGUID: xwJAx2YfSxGQy3OsTuV+mg==
-X-CSE-MsgGUID: UVkc0sTeTx61geoqNG5FMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="100537468"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 10 Dec 2024 10:45:19 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tL5ES-0005rl-2p;
-	Tue, 10 Dec 2024 18:45:16 +0000
-Date: Wed, 11 Dec 2024 02:44:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen Wang <unicornxw@gmail.com>, u.kleine-koenig@baylibre.com,
-	aou@eecs.berkeley.edu, arnd@arndb.de, unicorn_wang@outlook.com,
-	conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
-	krzk+dt@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
-	robh@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
-	fengchun.li@sophgo.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 2/3] irqchip: Add the Sophgo SG2042 MSI interrupt
- controller
-Message-ID: <202412110221.35ohPaia-lkp@intel.com>
-References: <c882fe329932409131be76ce47b81a6155595ce4.1733726057.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1733856355; c=relaxed/simple;
+	bh=nGM6e7q2n+Rg31Ry+dAXzwwRGvB+Bz3Tc3E4fftYX2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T0bE8+N+nF3jPjfil/JJcurTfF+V1dkxTR+eLg2fksrr4YNc6Bg7yLC+bYVVh8tEVpcGmLnNzRgISy0J0iChLdA9mQ9UijLguwG2rjoX078AO+r4JySpbZh5hjfEoI/srzFPfhUYJ/S/5UTGjrgwXcZN5dxa39hYv0lyQbl4P9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZQr52uRj; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id L5EotBIgE01M2L5EotfE5j; Tue, 10 Dec 2024 19:45:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733856342;
+	bh=o/qM869MCmQZkRsPpCevAXNj2FXSE3qMjToZGsvPE8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=ZQr52uRj3DCZS904wPu9oO3He4yPgn4PkS2eoS14L924pm6/3GFbuRKA0gVxK62lE
+	 YcpeFbwShTcxSGCoFi59YGdorMjjicdzgbyRG1dMGBxyC0Bt3U9FNUm21MmcLUwSs5
+	 IW6mdXYyCnSEdO1ntkwjXE8H88rjXAbhoMLgm2kxBtZrca8nB2JlVpMujmDE2NDNeg
+	 fM1st214JoIHg3VdZR7yngsugauVnKWR9NMRVuLZSEaZgSnKKkF7tj5qwvIMHB5R/0
+	 dWCDEPJ4f0VCwTI8Z1MWhrwU0WqTYsdXly05mbhwOeKTRBRWDYNeYswTWNb33/mDAP
+	 UXAbWMjvBEO4A==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 10 Dec 2024 19:45:42 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <32201aec-f3d2-49a7-b0ca-2ede10fec103@wanadoo.fr>
+Date: Tue, 10 Dec 2024 19:45:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c882fe329932409131be76ce47b81a6155595ce4.1733726057.git.unicorn_wang@outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/5] pinctrl: mediatek: add MT7988 pinctrl driver
+To: Frank Wunderlich <linux@fw-web.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>,
+ =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+References: <20241202110045.22084-1-linux@fw-web.de>
+ <20241202110045.22084-3-linux@fw-web.de>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241202110045.22084-3-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Chen,
+Le 02/12/2024 à 12:00, Frank Wunderlich a écrit :
+> From: Daniel Golle <daniel@makrotopia.org>
+> 
+> Add pinctrl driver for the MediaTek MT7988 SoC.
+> 
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> [correctly initialise for the function_desc structure]
+> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> 
+> ---
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on fac04efc5c793dccbd07e2d59af9f90b7fc0dca4]
+> +/* flash */
+> +static int mt7988_snfi_pins[] = { 22, 23, 24, 25, 26, 27 };
+> +static int mt7988_snfi_funcs[] = { 2, 2, 2, 2, 2, 2 };
+> +
+> +static int mt7988_emmc_45_pins[] = {
+> +	21, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
+> +};
+> +static int mt7988_emmc_45_funcs[] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+> +
+> +static int mt7988_sdcard_pins[] = { 32, 33, 34, 35, 36, 37 };
+> +static int mt7988_sdcard_funcs[] = { 5, 5, 5, 5, 5, 5 };
+> +
+> +static int mt7988_emmc_51_pins[] = { 38, 39, 40, 41, 42, 43,
+> +				     44, 45, 46, 47, 48, 49 };
+> +static int mt7988_emmc_51_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-interrupt-controller-Add-Sophgo-SG2042-MSI/20241209-151429
-base:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-patch link:    https://lore.kernel.org/r/c882fe329932409131be76ce47b81a6155595ce4.1733726057.git.unicorn_wang%40outlook.com
-patch subject: [PATCH v2 2/3] irqchip: Add the Sophgo SG2042 MSI interrupt controller
-config: alpha-randconfig-r063-20241211 (https://download.01.org/0day-ci/archive/20241211/202412110221.35ohPaia-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412110221.35ohPaia-lkp@intel.com/reproduce)
+At least all the _pins arrays could be const.
+Maybe we could also make it possible to have _funcs const as well.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412110221.35ohPaia-lkp@intel.com/
+...
 
-All warnings (new ones prefixed by >>):
+> +static struct mtk_pin_soc mt7988_data = {
 
->> drivers/irqchip/irq-sg2042-msi.c:273:34: warning: 'sg2042_msi_of_match' defined but not used [-Wunused-const-variable=]
-     273 | static const struct of_device_id sg2042_msi_of_match[] = {
-         |                                  ^~~~~~~~~~~~~~~~~~~
+const?
 
+> +	.reg_cal = mt7988_reg_cals,
+> +	.pins = mt7988_pins,
+> +	.npins = ARRAY_SIZE(mt7988_pins),
+> +	.grps = mt7988_groups,
+> +	.ngrps = ARRAY_SIZE(mt7988_groups),
+> +	.funcs = mt7988_functions,
+> +	.nfuncs = ARRAY_SIZE(mt7988_functions),
+> +	.eint_hw = &mt7988_eint_hw,
+> +	.gpio_m = 0,
+> +	.ies_present = false,
+> +	.base_names = mt7988_pinctrl_register_base_names,
+> +	.nbase_names = ARRAY_SIZE(mt7988_pinctrl_register_base_names),
+> +	.bias_disable_set = mtk_pinconf_bias_disable_set,
+> +	.bias_disable_get = mtk_pinconf_bias_disable_get,
+> +	.bias_set = mtk_pinconf_bias_set,
+> +	.bias_get = mtk_pinconf_bias_get,
+> +	.pull_type = mt7988_pull_type,
+> +	.bias_set_combo = mtk_pinconf_bias_set_combo,
+> +	.bias_get_combo = mtk_pinconf_bias_get_combo,
+> +	.drive_set = mtk_pinconf_drive_set_rev1,
+> +	.drive_get = mtk_pinconf_drive_get_rev1,
+> +	.adv_pull_get = mtk_pinconf_adv_pull_get,
+> +	.adv_pull_set = mtk_pinconf_adv_pull_set,
+> +};
 
-vim +/sg2042_msi_of_match +273 drivers/irqchip/irq-sg2042-msi.c
+...
 
-   272	
- > 273	static const struct of_device_id sg2042_msi_of_match[] = {
-   274		{ .compatible	= "sophgo,sg2042-msi" },
-   275		{}
-   276	};
-   277	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+CJ
 
