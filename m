@@ -1,237 +1,211 @@
-Return-Path: <linux-kernel+bounces-439806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0DD9EB423
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:59:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB969EB42A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188981886357
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:59:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42734164AB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620711B5ED1;
-	Tue, 10 Dec 2024 14:59:34 +0000 (UTC)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6FE1B85FA;
+	Tue, 10 Dec 2024 14:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mLAbg/b7"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D461A01D4;
-	Tue, 10 Dec 2024 14:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DAA1AAE33;
+	Tue, 10 Dec 2024 14:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842773; cv=none; b=E0zoWr25b4dDUGDltrjUcHDENq12H9A6kTKvwVeWQ8U+HUHYGcs5nQlHOwhKf6pABrDsm7ahV9pLddHsuKogP+k6DK457DB6Jzcd65ABMdk9b9BMOCe+UuN0AtzsFHEXT/NSEOTM1oBynXFxTDBvYd0esuxRZxfIEgeaf3vma9Q=
+	t=1733842794; cv=none; b=TGBmuYdERLDo1Im3ylGwQecs0KNao3/R4rb7YwZkMrpDYKGC73vXKjxguHeO05PAuEeS1hhJiTnNcDkPDcfQAySXmgeORvF3tU+AUZ5fqJ2NFFENvSDyXTMnNBLhS2n08p368qWm8gUL1hqUpJ1pu5K1WGXn06rjLYhnCDRjruE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842773; c=relaxed/simple;
-	bh=PDyq3QjbNON06ueCsZwu/mHOjWAeMcOexMiBb+pVMeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O+JQLCQvZcPgvJf0OKBBCxPvO2lLIY6TGLotLknwpjEhL9IbEhTeLm24RPBI1YLm8RZGY/CjzzrRGBuTCaTjf8pO55e00O6O5If7Ax+k9aEouLh9FgxEL4Q2kcVlocRD18j41m4KUvqfK9POELvr30BSV+I1pzVGYa3Ojhlh78s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5160f1870f3so991435e0c.0;
-        Tue, 10 Dec 2024 06:59:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733842770; x=1734447570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=faO2LEB4d7HNsohjeHqWigf+jmzDcTwyV5VFG0HOFDw=;
-        b=T2cn/1R859Edr7GodRc6m+AN8knzGxWrFGAgTKA/KwrIMdGS3gm3o93Om6/j5vc2yA
-         61enQwOFrM+iSQTpv4DRECqs2P3Lj1CprDPd0jTkPl74b8JjQ3tTnqv4Q9Datrpybqj7
-         BxCFe3x4X6McRO/tLGTxnxlU5lbegfnpGuzNhgha+Ed1yPuYQ3mHms+WNgkv5MshpRhl
-         P/lEwJTzzVZC2t+wgSDw4YiWg08dmg2S915ZDYo5a8zWEJwDx5lUg3eS4VksueaRFx7K
-         oPFFS+UmrTEuWkh+a1gWGIKihv9C8P0qGqCTSZE2XjUySGPzxLI72lVYa92SqEbkHJkI
-         bp7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUO8SsdB7mZDv+Ks7EbX3VWlCi807ExHi2/wf/cxVyLNn9TMcl1+ic0IbFa6iBY4k13wjpjSWRiZfxa@vger.kernel.org, AJvYcCVcjglOqciMdVFW05hVtAk3aJIXTjY/1qgJdXiDB9XO2MTFm1MxSQ4ZfnCMe2ou0woUhGsb8c0tZOhm@vger.kernel.org, AJvYcCWiS088ktIuMBW/aRl2xluGGoHkXkwCKk35Jnh+aagGjUYpvHaL0eKw8Ctz9q+yF/Nt8twqlG3Cnx+SPRql@vger.kernel.org, AJvYcCXd+3mc8m3mSyOXWgj2GV/voCVZVCGYJvyC3YOJs0mOwQYw7Y7I3Roz9Xo6m9kFk+JLATgn4DWybio4sxM4JtjULbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzihLH3tIHa0Hr99p+XJ7qZ+lyFfDRlrxwd7SdbYJ27L16KU2HZ
-	qa+57zTj/jI0gStFACpgCaaRkd6AcNQeVL7tqI6xJMZP99eRQ7oxhXnjkj/n
-X-Gm-Gg: ASbGncvLfkqRqdEQQu9oC6b1KwU1NUMLQSGTABlBqs7O7V0cYV1rwTg/BCjOOShBBva
-	NPRKETu8nWZLMSJnDlFo8DJmTfeWfWjvtVoQtV0l60FL77RYj7QhaLlNKQkvh70JLdVK452uGpA
-	CC3cQNgFbvWASOLss9CoFBXWORXxzEi+/M3eEvMmGsoQ7+FZNlKYDHRS8rSv2MaPZsQGdZLgWmX
-	OsYGf2w0f/CLMihmO0FnbqH5ZZvL6IJrmp8vkgz0UnBkUGAWBbu9REssyW9Hp4nDF35covaGeGl
-	l3Cm6jIVIyA5qxMI
-X-Google-Smtp-Source: AGHT+IGF6+9Rultkt9bJpuCmFNR+IDisMr0Y0T6WYAtk9yZ2jbYpsIOQxbZmHIT4zitgqxDvHVoLfw==
-X-Received: by 2002:a05:6122:d24:b0:515:e446:b9f2 with SMTP id 71dfb90a1353d-518885725f3mr4839610e0c.12.1733842770062;
-        Tue, 10 Dec 2024 06:59:30 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eae68d96sm978323e0c.28.2024.12.10.06.59.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 06:59:29 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4afecb2731dso812273137.3;
-        Tue, 10 Dec 2024 06:59:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU5/GN0FRmHq7W3m9NukQB4KCbEZeEiyEVaNvvejFHwoucw6ZmrA0+JPiqqCT0bdmaNqaPuE2kjP0Hq@vger.kernel.org, AJvYcCVfvQawlNSrI/adGudzWfLEfXBOlPEJ+C2Pad/dEfVWpFUT0KTb8TVjHwCad4ZwLtvialohRhMzfHd1@vger.kernel.org, AJvYcCX8OKBSo/8XxtG54m74fGth0m8PScb9b/YpxiVybQYhXTKPkbLXaGIcWzNMncfTgczM1FQjlT3qr2d+L6KGcjQ5ESc=@vger.kernel.org, AJvYcCXMFDHyp7Hort+c7sqnB5yx74HGLXkTgWQPQUZvwmne84Ul2YTaPll0GqNVNjkFc78s2wraFNBFmW+GFg6L@vger.kernel.org
-X-Received: by 2002:a05:6102:54a3:b0:4af:bda1:8109 with SMTP id
- ada2fe7eead31-4b116250734mr4852879137.21.1733842769143; Tue, 10 Dec 2024
- 06:59:29 -0800 (PST)
+	s=arc-20240116; t=1733842794; c=relaxed/simple;
+	bh=6zwrH7NOfsoHfQqIznKg1azt1RDvRgkouT0IH9qiPds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t2CJ7ugAN2idve59tuAkW3QHd90HZG8rgz5CNPeQ5guqqHUzQautSkP0V3tYp0Qd9g9KLOMHGdDtbcSaQFvRctYqITyQMe9fztWnDQRdqVCg7jYsUM4PI+EYhx6cpOWK3wWcLH+sk90b9V9t5pMuz3FxTW2kKAbs7j/JqIQN1w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mLAbg/b7; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADrYSi007192;
+	Tue, 10 Dec 2024 14:59:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Afsg7V
+	UbuAH53aaPeUSfI9JRaF+ZQPD2bSYYkrMcSHA=; b=mLAbg/b75n3LOq/fpaAKSv
+	UIChmJmuQRl77kBh5TFnhWqiL2cGRk5I1GC495Be4XfrOoXah8qoB/WRONoUBKNi
+	8oFvzvEsbABkliVsYi+MZb+WljI1oHNaUCTg4joR+YM7y9ZGFLjc4TDMMNM8i2V9
+	rRy6RlUliP1HxkUL3Mofq3+UyWL8j5GzCBivc4sJK+0A4uxeHLnDyMM/3hp3Qg1q
+	jRdUnPxrZkVEa8JYuYxgXruqWeuiu+c61irH4ma5ukZGxF76d0arRrrqjT27eRQI
+	nrKLxnclUQ94rbfotBjfMFmZIxXJmJMe1GiTKDh9M7PlsL+YH+gjhvNRR9KePzdA
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8qr78-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 14:59:46 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAB2eXn016911;
+	Tue, 10 Dec 2024 14:59:45 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12y4900-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 14:59:45 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAExdEX42533140
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 14:59:40 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB83120040;
+	Tue, 10 Dec 2024 14:59:39 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8FE492004D;
+	Tue, 10 Dec 2024 14:59:39 +0000 (GMT)
+Received: from [9.84.194.138] (unknown [9.84.194.138])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 14:59:39 +0000 (GMT)
+Message-ID: <bdba3042-4654-4e09-9060-57445ccac09c@linux.ibm.com>
+Date: Tue, 10 Dec 2024 15:59:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241126092050.1825607-5-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Dec 2024 15:59:17 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWhGvXhjTV+NYzw2WoDuH6BxQWFdUZC_qkon5vSYsjAhg@mail.gmail.com>
-Message-ID: <CAMuHMdWhGvXhjTV+NYzw2WoDuH6BxQWFdUZC_qkon5vSYsjAhg@mail.gmail.com>
-Subject: Re: [PATCH v2 04/15] soc: renesas: rz-sysc: Add SoC detection support
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
-	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
-	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] cxl: Deprecate driver
+To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, ukrishn@linux.ibm.com, manoj@linux.ibm.com,
+        clombard@linux.ibm.com, vaibhav@linux.ibm.com
+References: <20241210054055.144813-1-ajd@linux.ibm.com>
+ <20241210054055.144813-2-ajd@linux.ibm.com>
+Content-Language: en-US
+From: Frederic Barrat <fbarrat@linux.ibm.com>
+In-Reply-To: <20241210054055.144813-2-ajd@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: R7fSBkR1R2cVa9KkSkNJz3oqMbgnzCZj
+X-Proofpoint-ORIG-GUID: R7fSBkR1R2cVa9KkSkNJz3oqMbgnzCZj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100112
 
-Hi Claudiu,
 
-On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The RZ SYSC controller has registers that keep the SoC ID data. Add
-> driver support to retrieve the SoC ID and register a SoC driver.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+On 10/12/2024 06:40, Andrew Donnellan wrote:
+> The cxl driver is no longer actively maintained and we intend to remove it
+> in a future kernel release.
+> 
+> cxl has received minimal maintenance for several years, and is not
+> supported on the Power10 processor. We aren't aware of any users who are
+> likely to be using recent kernels.
+> 
+> Change its MAINTAINERS status to obsolete, update the sysfs ABI
+> documentation accordingly, add a warning message on device probe, change
+> the Kconfig options to label it as deprecated, and don't build it by
+> default.
+> 
+> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+
+Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
+
+   Fred
+
+
 > ---
->
-> Changes in v2:
-> - this was patch 05/16 in v1
-> - changed patch title and description
-> - added SoC initialization code in its own function
-> - addressed the review comments
-> - introduced struct rz_sysc_soc_id_init_data and adjusted the code
->   accordingly
-> - dropped the RZ/G3S SoC detection code (it will be introduced in
->   a separate patch)
-
-Thanks for your patch!
-
-> --- a/drivers/soc/renesas/rz-sysc.c
-> +++ b/drivers/soc/renesas/rz-sysc.c
-> @@ -211,6 +214,59 @@ static int rz_sysc_signals_init(struct rz_sysc *sysc=
-,
->         return 0;
->  }
->
-> +static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device=
-_id *match)
-> +{
-> +       const struct rz_sysc_init_data *sysc_data =3D match->data;
-> +       const struct rz_sysc_soc_id_init_data *soc_data =3D sysc_data->so=
-c_id_init_data;
-> +       struct soc_device_attribute *soc_dev_attr;
-> +       const char *soc_id_start, *soc_id_end;
-> +       u32 val, revision, specific_id;
-> +       struct soc_device *soc_dev;
-> +       char soc_id[32] =3D {0};
-> +       u8 size;
-
-unsigned int (or size_t?)
-
+>   Documentation/ABI/{testing => obsolete}/sysfs-class-cxl | 3 +++
+>   MAINTAINERS                                             | 4 ++--
+>   drivers/misc/cxl/Kconfig                                | 6 ++++--
+>   drivers/misc/cxl/of.c                                   | 2 ++
+>   drivers/misc/cxl/pci.c                                  | 2 ++
+>   5 files changed, 13 insertions(+), 4 deletions(-)
+>   rename Documentation/ABI/{testing => obsolete}/sysfs-class-cxl (99%)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-cxl b/Documentation/ABI/obsolete/sysfs-class-cxl
+> similarity index 99%
+> rename from Documentation/ABI/testing/sysfs-class-cxl
+> rename to Documentation/ABI/obsolete/sysfs-class-cxl
+> index cfc48a87706b..8cba1b626985 100644
+> --- a/Documentation/ABI/testing/sysfs-class-cxl
+> +++ b/Documentation/ABI/obsolete/sysfs-class-cxl
+> @@ -1,3 +1,6 @@
+> +The cxl driver is no longer maintained, and will be removed from the kernel in
+> +the near future.
 > +
-> +       if (!soc_data || !soc_data->family || !soc_data->offset ||
-> +           !soc_data->revision_mask)
-> +               return -EINVAL;
-
-Cannot happen?
-
+>   Please note that attributes that are shared between devices are stored in
+>   the directory pointed to by the symlink device/.
+>   For example, the real path of the attribute /sys/class/cxl/afu0.0s/irqs_max is
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 17daa9ee9384..1737a8ff4f2b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6228,8 +6228,8 @@ CXL (IBM Coherent Accelerator Processor Interface CAPI) DRIVER
+>   M:	Frederic Barrat <fbarrat@linux.ibm.com>
+>   M:	Andrew Donnellan <ajd@linux.ibm.com>
+>   L:	linuxppc-dev@lists.ozlabs.org
+> -S:	Supported
+> -F:	Documentation/ABI/testing/sysfs-class-cxl
+> +S:	Obsolete
+> +F:	Documentation/ABI/obsolete/sysfs-class-cxl
+>   F:	Documentation/arch/powerpc/cxl.rst
+>   F:	arch/powerpc/platforms/powernv/pci-cxl.c
+>   F:	drivers/misc/cxl/
+> diff --git a/drivers/misc/cxl/Kconfig b/drivers/misc/cxl/Kconfig
+> index 5efc4151bf58..15307f5e4307 100644
+> --- a/drivers/misc/cxl/Kconfig
+> +++ b/drivers/misc/cxl/Kconfig
+> @@ -9,11 +9,13 @@ config CXL_BASE
+>   	select PPC_64S_HASH_MMU
+>   
+>   config CXL
+> -	tristate "Support for IBM Coherent Accelerators (CXL)"
+> +	tristate "Support for IBM Coherent Accelerators (CXL) (DEPRECATED)"
+>   	depends on PPC_POWERNV && PCI_MSI && EEH
+>   	select CXL_BASE
+> -	default m
+>   	help
+> +	  The cxl driver is deprecated and will be removed in a future
+> +	  kernel release.
 > +
-> +       soc_id_start =3D strchr(match->compatible, ',') + 1;
-> +       soc_id_end =3D strchr(match->compatible, '-');
-> +       size =3D soc_id_end - soc_id_start;
-> +       if (size > 32)
-> +               size =3D 32;
-
-sizeof(soc_id) instead of hardcoded 32
-
-> +       strscpy(soc_id, soc_id_start, size);
-
-Doesn't this wipe the last character, as strscpy() always
-NUL-terminates the destination buffer?
-
+>   	  Select this option to enable driver support for IBM Coherent
+>   	  Accelerators (CXL).  CXL is otherwise known as Coherent Accelerator
+>   	  Processor Interface (CAPI).  CAPI allows accelerators in FPGAs to be
+> diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+> index cf6bd8a43056..e26ee85279fa 100644
+> --- a/drivers/misc/cxl/of.c
+> +++ b/drivers/misc/cxl/of.c
+> @@ -295,6 +295,8 @@ int cxl_of_probe(struct platform_device *pdev)
+>   	int ret;
+>   	int slice = 0, slice_ok = 0;
+>   
+> +	dev_err_once(&pdev->dev, "DEPRECATION: cxl is deprecated and will be removed in a future kernel release\n");
 > +
-> +       soc_dev_attr =3D devm_kzalloc(sysc->dev, sizeof(*soc_dev_attr), G=
-FP_KERNEL);
-> +       if (!soc_dev_attr)
-> +               return -ENOMEM;
+>   	pr_devel("in %s\n", __func__);
+>   
+>   	np = pdev->dev.of_node;
+> diff --git a/drivers/misc/cxl/pci.c b/drivers/misc/cxl/pci.c
+> index 3d52f9b92d0d..92bf7c5c7b35 100644
+> --- a/drivers/misc/cxl/pci.c
+> +++ b/drivers/misc/cxl/pci.c
+> @@ -1726,6 +1726,8 @@ static int cxl_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>   	int slice;
+>   	int rc;
+>   
+> +	dev_err_once(&dev->dev, "DEPRECATED: cxl is deprecated and will be removed in a future kernel release\n");
 > +
-> +       soc_dev_attr->family =3D soc_data->family;
+>   	if (cxl_pci_is_vphb_device(dev)) {
+>   		dev_dbg(&dev->dev, "cxl_init_adapter: Ignoring cxl vphb device\n");
+>   		return -ENODEV;
 
-Shouldn't you duplicate family? It's in __initconst, hence freed later.
-
-> +       soc_dev_attr->soc_id =3D devm_kstrdup(sysc->dev, soc_id, GFP_KERN=
-EL);
-> +       if (!soc_dev_attr->soc_id)
-> +               return -ENOMEM;
-> +
-> +       val =3D readl(sysc->base + soc_data->offset);
-> +       revision =3D field_get(soc_data->revision_mask, val);
-> +       specific_id =3D field_get(soc_data->specific_id_mask, val);
-> +       soc_dev_attr->revision =3D devm_kasprintf(sysc->dev, GFP_KERNEL, =
-"%u", revision);
-> +       if (!soc_dev_attr->revision)
-> +               return -ENOMEM;
-> +
-> +       if (soc_data->id && specific_id !=3D soc_data->id) {
-> +               dev_warn(sysc->dev, "SoC mismatch (product =3D 0x%x)\n", =
-specific_id);
-> +               return -ENODEV;
-> +       }
-> +
-> +       dev_info(sysc->dev, "Detected Renesas %s %s Rev %s\n", soc_dev_at=
-tr->family,
-> +                soc_dev_attr->soc_id, soc_dev_attr->revision);
-> +
-> +       soc_dev =3D soc_device_register(soc_dev_attr);
-> +       if (IS_ERR(soc_dev))
-> +               return PTR_ERR(soc_dev);
-> +
-> +       return 0;
-> +}
-> +
->  static struct regmap_config rz_sysc_regmap =3D {
->         .name =3D "rz_sysc_regs",
->         .reg_bits =3D 32,
-> @@ -235,14 +291,15 @@ MODULE_DEVICE_TABLE(of, rz_sysc_match);
->  static int rz_sysc_probe(struct platform_device *pdev)
->  {
->         const struct rz_sysc_init_data *data;
-> +       const struct of_device_id *match;
->         struct device *dev =3D &pdev->dev;
-> -       struct rz_sysc *sysc;
->         struct regmap *regmap;
-> +       struct rz_sysc *sysc;
->         int ret;
->
-> -       data =3D device_get_match_data(dev);
-> -       if (!data || !data->max_register_offset)
-> -               return -EINVAL;
-> +       match =3D of_match_node(rz_sysc_match, dev->of_node);
-> +       if (!match || !match->data)
-
-!match->data cannot happen
-
-> +               return -ENODEV;
->
->         sysc =3D devm_kzalloc(dev, sizeof(*sysc), GFP_KERNEL);
->         if (!sysc)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
