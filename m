@@ -1,162 +1,132 @@
-Return-Path: <linux-kernel+bounces-439130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8EA49EAB33
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:01:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE65D168B20
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:01:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7216022F3BB;
-	Tue, 10 Dec 2024 09:01:26 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6809EAB38
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:02:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AABF1C75F3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E460280EDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:02:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A464230D1A;
+	Tue, 10 Dec 2024 09:02:41 +0000 (UTC)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45B5230D0D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733821286; cv=none; b=ARDMyvzJbp1wRKc87M3d4E147NUdkpcHTwoWPeQBXEk6op80u91bRcfCBGinVxnUxwMdnGPJOZbkPITyRjLnCkkuWWsVBUJMQ80KyRZckZ6CM0vp/daEr14b47rQOXzyz8iSoPyiMNGR83DzQrNWvDI5W14j89PQ7WW6fj9qZRw=
+	t=1733821360; cv=none; b=Zt3lJtS4F4FUy8LkseFmkytiSUF9C3Hg3fYaiMsSTP8vKPWN0KUXFDplEmktIoxIoI0/jetIgAevshUDz64q2T4sVLNf0RoUoNQHi34/l/uPTS/WZxhFNfo0PJotyXNNgVVxlfi1TZftLjEIuI75ofFMI9BW/y2ocEeWG8kaUcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733821286; c=relaxed/simple;
-	bh=gBFwtX62HZzRaai0K+v2rk3fcFBb5+CMCQxsV9IEtl8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HE/0icMTa8c/TogGT+BVPb//u9GARpJpnisZdkFiwW6TiZ+TCgdcRIp/n+nwiAWc3JO7ZzrVNctfSGLSik8oPEac3dl/5pWfEJBiS9oNJ4eyKp+Ep0OeNIfyIDW+PaayAXsnMiTbcWIN6X4+dC0S3DLwKyiUWTFauh+Ysn3KG/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1tKw73-00051L-G9; Tue, 10 Dec 2024 10:01:01 +0100
-Message-ID: <b092fdec6fda26c56b4f2cc5927bbaa4a6d786f9.camel@pengutronix.de>
-Subject: Re: [PATCH v2] serial: imx: Use uart_port_lock_irq() instead of
- uart_port_lock()
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>, gregkh@linuxfoundation.org, 
- jirislaby@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
- kernel@pengutronix.de, festevam@gmail.com, esben@geanix.com, marex@denx.de,
-  ilpo.jarvinen@linux.intel.com, linux@rasmusvillemoes.dk, 
- stefan.eichenberger@toradex.com, l.sanfilippo@kunbus.com, 
- cniedermaier@dh-electronics.com, rickaran@axis.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Date: Tue, 10 Dec 2024 10:00:57 +0100
-In-Reply-To: <20241210034223.1493522-1-xiaolei.wang@windriver.com>
-References: <20241210034223.1493522-1-xiaolei.wang@windriver.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733821360; c=relaxed/simple;
+	bh=gU/nJ5teQLO8Yr0g3gfN2+SqWjZBr2rh+zUl+DWLrVU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D5pvDQj4ex50Ryggnrb8491sil6lM2ZVHfqWVo+gyAYKwHP2EzSo+D2TuMOCygFMQuO5tyFRAaSBZvkKmMSGJ/EizJUk/1PnOeQrdZB80k3n6yXYASB5pQDrnvYBP3QJK9Rgh8YbSAamSxvOREviAGjC7X/kpFN5pj1OfS2Jolg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-518802a1e7eso760720e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:02:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733821357; x=1734426157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0u2asYMwtHNjmsewIhDxVhemB7gjctoxb772Jm7kqe4=;
+        b=rkjn2MYOGUrwK/LuboTugDXSjsDPXCYt9NTggwYKesfLf9Er+Kc0G1OKBa/VtJAAUx
+         A82n/rpvi98RK0cZRk8RpAznStDDka7yE7Nm5a7oPxHMMH1hEicOfvSjqVJKZimeakSN
+         Juo/sMXHv1fZysTIOntW3oMky3mg+G04NYnSUonNTisS53E/tTZUiXCWxbg+4bP3ncaB
+         7kQ1lHlEuaJXCAKauFW93LNH2yzLowwr65ZT+d53WjAFkXKfIuiTVyFtxlwdlSjjW4Ev
+         Q1Szji5fLQLh8clxBYhOyuGTMg8QzmrO0T4MapZkO75K1Yhn3wShjyLuh2CRMbKTMNNK
+         VgNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhGeTSora8uEFajPfbG19FB5DaVJiK0XDQEOutHZc7z53SYFsWshAmedRt+oOi0qsPq4tgzY1N9nCyHrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ0tf4+PJl7NM6LOat8eyGBBlOS+FO/ggy9aK8rhfQLtUfVH0F
+	ND/9+2PWFok3x5LZt9mJorMUXQ3t17st7lfuDKIgrn17fkWvp6rmr4BU3PHT
+X-Gm-Gg: ASbGnctTMorJgKevqMcB3p5ROL+NcVtM9+OEoRPjXjyxoibZo4Hg/1wMmbSQmUl1w9g
+	39d6Eum4UGWAWek7qvtRvCazD/Ss0QZSCx+1n6fUKCo7pesZ7MvwwcqeUz04yw7nvpBtW4icirT
+	Q2WTpOM7Swu9QUIYrtbc4kRDuRJLV7jRJfNT2ERzDxYclIHPxrkIXTaSxGVRMbPEr/2O3tdVV/Z
+	PL3ymT6r4cEflqpqhHuSfJuQbcnxM5FzgG7kUpRGpHjqFa43o47TYb+q5XrhlIiUNxHSD5vZtAX
+	CgQZoFPMTzMPNfnG
+X-Google-Smtp-Source: AGHT+IEvlZJmGe+dYC7LvXWIjfrhp+3pGsTd4mOMhiXIm1losl+bIL1/jCw8xspo8Jh1aPdKQhKSew==
+X-Received: by 2002:a05:6122:3d44:b0:50d:6a43:d525 with SMTP id 71dfb90a1353d-518882f1044mr3921446e0c.1.1733821356691;
+        Tue, 10 Dec 2024 01:02:36 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eae41618sm830333e0c.19.2024.12.10.01.02.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 01:02:36 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4afed12283eso1394064137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:02:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXjeDikWeTEtL15ZgWJ6dS5PiazHitkWa9tCz9cWKHYilPd8C5i3Pkw6cIYSgqAuycYn2rs2mpStmGvXDk=@vger.kernel.org
+X-Received: by 2002:a05:6102:38ca:b0:4af:f5bd:6378 with SMTP id
+ ada2fe7eead31-4b1160555f1mr3406114137.9.1733821356202; Tue, 10 Dec 2024
+ 01:02:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241204162128.25617-1-dpenkler@gmail.com> <CAMuHMdVUnr4iAZmuy8Z3S+sCYN4P26RdpPwXevwiJrh+KN025Q@mail.gmail.com>
+ <ddc720b2-8bb4-4a07-8280-dadeb2de5b26@roeck-us.net> <CAMuHMdUb-tpmTiKV5BFopCWoY96D_HYNG60Kv+wVRKnDFF+COA@mail.gmail.com>
+ <2024121051-snowiness-sampling-2fe2@gregkh>
+In-Reply-To: <2024121051-snowiness-sampling-2fe2@gregkh>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Dec 2024 10:02:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV2Nh6ZZ-0tW0dCt5OoBH5_OrcpON32X1YJBQYgF=eywA@mail.gmail.com>
+Message-ID: <CAMuHMdV2Nh6ZZ-0tW0dCt5OoBH5_OrcpON32X1YJBQYgF=eywA@mail.gmail.com>
+Subject: Re: [PATCH v5] staging: gpib: Fix i386 build issue
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Dave Penkler <dpenkler@gmail.com>, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Dienstag, dem 10.12.2024 um 11:42 +0800 schrieb Xiaolei Wang:
-> When executing 'ehco mem > /sys/power/state', the following
-> deadlock occurs. Since there is output during the serial
-> port entering the suspend process, the suspend will be
-> interrupted, resulting in the nesting of locks. Therefore,
-> use uart_port_lock_irq() instead of uart_port_unlock().
->=20
-> WARNING: inconsistent lock state
-> 6.12.0-rc2-00002-g3c199ed5bd64-dirty #23 Not tainted
-> --------------------------------
-> inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
-> sh/494 [HC0[0]:SC0[0]:HE1:SE1] takes:
-> c4db5850 (&port_lock_key){?.-.}-{3:3}, at: imx_uart_enable_wakeup+0x14/0x=
-254
-> {IN-HARDIRQ-W} state was registered at:
->   lock_acquire+0x104/0x348
->   _raw_spin_lock+0x48/0x84
->   imx_uart_int+0x14/0x4dc
->   __handle_irq_event_percpu+0xac/0x2fc
->   handle_irq_event_percpu+0xc/0x40
->   handle_irq_event+0x38/0x8c
->   handle_fasteoi_irq+0xb4/0x1b8
->   handle_irq_desc+0x1c/0x2c
->   gic_handle_irq+0x6c/0xa0
->   generic_handle_arch_irq+0x2c/0x64
->   call_with_stack+0x18/0x20
->   __irq_svc+0x9c/0xbc
->   _raw_spin_unlock_irqrestore+0x2c/0x48
->   uart_write+0xd8/0x3a0
->   do_output_char+0x1a8/0x1e4
->   n_tty_write+0x224/0x440
->   file_tty_write.constprop.0+0x124/0x250
->   do_iter_readv_writev+0x100/0x1e0
->   vfs_writev+0xc4/0x448
->   do_writev+0x68/0xf8
->   ret_fast_syscall+0x0/0x1c
-> irq event stamp: 31593
-> hardirqs last  enabled at (31593): [<c1150e48>] _raw_spin_unlock_irqresto=
-re+0x44/0x48
-> hardirqs last disabled at (31592): [<c07f32f0>] clk_enable_lock+0x60/0x12=
-0
-> softirqs last  enabled at (30334): [<c012d1d4>] handle_softirqs+0x2cc/0x4=
-78
-> softirqs last disabled at (30325): [<c012d510>] __irq_exit_rcu+0x120/0x15=
-c
->=20
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->=20
->        CPU0
->        ----
->   lock(&port_lock_key);
->   <Interrupt>
->     lock(&port_lock_key);
->=20
-> Fixes: 3c199ed5bd64 ("serial: imx: Grab port lock in imx_uart_enable_wake=
-up()")
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+Hi Greg,
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+On Tue, Dec 10, 2024 at 9:39=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+> On Tue, Dec 10, 2024 at 08:52:08AM +0100, Geert Uytterhoeven wrote:
+> > On Mon, Dec 9, 2024 at 5:18=E2=80=AFPM Guenter Roeck <linux@roeck-us.ne=
+t> wrote:
+> > > The underlying problem is that the code uses a pointer to store the p=
+hysical
+> > > address. That doesn't work if sizeof(pointer) < sizeof(physical addre=
+ss),
+> > > which affects systems with X86_PAE enabled. I have not seen the probl=
+em
+> > > anywhere else.
+> >
+> > I could reproduce the build issue on ARM, with CONFIG_ARM_LPAE=3Dy,
+> > which is not enabled by allmodconfig.
+>
+> So does that mean this patch is incorrect?
 
-> ---
->=20
-> v1:
->   https://patchwork.kernel.org/project/linux-arm-kernel/patch/20241209124=
-732.693834-1-xiaolei.wang@windriver.com/
-> v2:
->   use uart_port_lock_irq() instead of uart_port_lock_irqsave()
->=20
->  drivers/tty/serial/imx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> index 17f70e4bee43..9c59ec128bb4 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -2692,7 +2692,7 @@ static void imx_uart_enable_wakeup(struct imx_port =
-*sport, bool on)
->  {
->  	u32 ucr3;
-> =20
-> -	uart_port_lock(&sport->port);
-> +	uart_port_lock_irq(&sport->port);
-> =20
->  	ucr3 =3D imx_uart_readl(sport, UCR3);
->  	if (on) {
-> @@ -2714,7 +2714,7 @@ static void imx_uart_enable_wakeup(struct imx_port =
-*sport, bool on)
->  		imx_uart_writel(sport, ucr1, UCR1);
->  	}
-> =20
-> -	uart_port_unlock(&sport->port);
-> +	uart_port_unlock_irq(&sport->port);
->  }
-> =20
->  static int imx_uart_suspend_noirq(struct device *dev)
+Purely from an arch-agnostic LPAE PoV, it should be:
 
+    depends on 64BIT || !PHYS_ADDR_T_64BIT
+
+However, that assumes the driver actually works on 64-bit or non-x86.
+Perhaps people keep an old i386 to control their GPIB gear?
+
+The drivers do not use ioremap(), but just cast the PCI resource
+addresses to void * pointers. No idea if that works on x86_64.
+It will probably crash spectacularly on non-x86...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
