@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-439829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF639EB473
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB399EB47A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:18:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37E91886F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AECA118899DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9A71AA78D;
-	Tue, 10 Dec 2024 15:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530AB1BD9C1;
+	Tue, 10 Dec 2024 15:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SYrib5ak"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jNBtmoyW"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E18E23DEBD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634991BD01F;
+	Tue, 10 Dec 2024 15:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733843861; cv=none; b=Efwt+y/dkFJ16gSN7fZIe73AnjunH0YX0/YqCxusu84zeNa/mNnLVtPHX2OmDdRFmKOsJMQ1m1wbMgQMwml987jdneX8ZpYhV3+x/HhUPXJcLR6Esdz582OzgjEvjQG5VcB9m2LqMQkY0UgtwKQWi+KAcei6Yntqkk2RV3ph/OI=
+	t=1733843866; cv=none; b=eSyzuY18jfBEiO1AFyAjdsGrZSA69iD2nnUNGBQoznHT90Hl0B/jFekeLgdWQo4/AEt6/w85zoBnz592acAJupv+ryu6YQK3nc8bBJq56UvHQL/o+Hxh+rFk2QF/6s6UedEXYpSBubZEs252Sq5d1XjfmDYMu3lplLmVXVfSrVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733843861; c=relaxed/simple;
-	bh=RBFYFnn5S9ViV7pUTYK4Q7ziGMwWy4vS6dfXUKlsZR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nUXnMyPQphFJh6iETj90uCNf0roZ+n44tEn4A0s4znpuVsQXq9vpx8IWSCNFvFdOyJhluI3Vx+kOP5HzeIwoPuFouQja6HixCjV+CuYlmDT11CxtYHVG8riiduw7JxbT3+KYFcwqWgWaPtNXZjdjH8P5phLmz3o67WdIcFr2P4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SYrib5ak; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733843858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QsZOAVqzo/LiP1stt2YYZXhh+00BJjoKftbK/7AwUEU=;
-	b=SYrib5akuqqK3d/0psSBbe/PALiarOoX7S+WIqBXhF5fRSO4EL85NHX0EGNmlFe/69cg8w
-	A5fsC8+WMxYvQ2EqsneoRdifNGvVzEyNKF4E5+ADe9K5HR3Vm30VwCgajKoay+fNEfw+bo
-	Af2h948N+vbeeAXbc6j2VO7FbPfq8p4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-661-p913SiZ3OkKyseaNuavc9w-1; Tue,
- 10 Dec 2024 10:17:34 -0500
-X-MC-Unique: p913SiZ3OkKyseaNuavc9w-1
-X-Mimecast-MFC-AGG-ID: p913SiZ3OkKyseaNuavc9w
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	s=arc-20240116; t=1733843866; c=relaxed/simple;
+	bh=SuJIrOyGFcXxLDGJ8cbHS+2PO+8WRg8j0//7WEqJlPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ieyPEvjl0HstmZpwgpdZ3kWpO8S/z+YCyMgGb85i6u9zLG5TlQ5hTN0KOGs9vqYIU8M4I8YchzAcH47ZvXTdThi5xZal4wP4XbLFKF0OFvqPqrzQmd086kRk19nBJib5CHX98kupVJypn8s+2re5wu9xDGpuFwOOSRMJV7+9GF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jNBtmoyW reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CD1BE40E028B;
+	Tue, 10 Dec 2024 15:17:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id CW1tLFe7Nb-2; Tue, 10 Dec 2024 15:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733843845; bh=9NTzeutq/r3ndE+cus3KlB/FLsg7STOMKSUO7w2whpI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jNBtmoyWnrcketINaOAOkDm8MVC4oGCcg9iEE9GlQDiHXjpJ1pCQeyjAUF/xgQ+Nb
+	 ng5JFu3blQ/XC8yodu7tFgOdEJUeOLTRjwuaA4BHoQ2rkwwxsFmjWRpiyNJ23uD7/T
+	 8fbCRvySK3kD85hfpdxnku7TJqiNLRzTtG4IyjOoOEVJOQreCFOQnaiJt6bIPU8I20
+	 xyLRjCNUxlZh9yvHb4BUSZXZvlRnJdZif6TBtzWngvb93jR8JUTWdTun72/cIHt2Ib
+	 ZnZrueTsWtfwkgVy0lkw+BqdnHmZ24osNFY7/nsnzsdIupy5YmCJlj+iXu8otb0syv
+	 FKy0fg3wlTX1J8KIEHUW8tphJIlFWPM9z8d5Vgl6uro9K8c07yMbWivItjiJoonPj1
+	 g+BGHpAIzWnQUJYT5k3qtrxk3v4xdVAIou1wyflgBdU4OHwDBwStUxe3fBY6JsR4Q9
+	 mV1aO44eV4ohlsFDIvTmPk6/iFhc8dQzV0KpzkPaW0+A1Wj4/mpv7oauI/+AWclsdU
+	 rx8uJBKSVBz6HocESlaeRDAczmrwquOKOInJ6yytceN6wJWX4zYin0hN802eeUiYyy
+	 3qxLdRFldWim0HBuHvCQtNuzG01V4wGaTxAs4ZxBSh8bGZvNWKd9bpzHZbLCTp/XXB
+	 onND1u4YNoVKqjSBqjDR8zEg=
+Received: from zn.tnic (p200300ea971f930c329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:930c:329c:23ff:fea6:a903])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35FC4192E3F8;
-	Tue, 10 Dec 2024 15:16:56 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.226.93])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4F3881956096;
-	Tue, 10 Dec 2024 15:16:52 +0000 (UTC)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/entry: Add __init to ia32_emulation_override_cmdline()
-Date: Tue, 10 Dec 2024 16:16:50 +0100
-Message-ID: <20241210151650.1746022-1-vkuznets@redhat.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8A5DF40E0288;
+	Tue, 10 Dec 2024 15:17:20 +0000 (UTC)
+Date: Tue, 10 Dec 2024 16:17:13 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-serial <linux-serial@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: serial 00:06: Runtime PM usage count underflow!
+Message-ID: <20241210151713.GIZ1hbeSzdnQEqei8J@fat_crate.local>
+References: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
+ <ca76fb23-013d-9745-188b-b519096aa784@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ca76fb23-013d-9745-188b-b519096aa784@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-ia32_emulation_override_cmdline() is an early_param() arg and these
-are only needed at boot time. In fact, all other early_param() functions
-in arch/x86 seem to have '__init' annotation and
-ia32_emulation_override_cmdline() is the only exception.
+On Mon, Nov 18, 2024 at 04:14:20PM +0200, Ilpo J=C3=A4rvinen wrote:
+> I think "Runtime PM usage count underflow!" is not related to the probe=
+=20
+> problem you're seeing. Nonetheless, this patch might solve the underflo=
+w:
+>=20
+> --
+> [PATCH 1/1] tty: serial: 8250: Fix another runtime PM usage counter und=
+erflow
+>=20
+> The commit f9b11229b79c ("serial: 8250: Fix PM usage_count for console
+> handover") fixed one runtime PM usage counter balance problem that
+> occurs because .dev is not set during univ8250 setup preventing call to
+> pm_runtime_get_sync(). Later, univ8250_console_exit() will trigger the
+> runtime PM usage counter underflow as .dev is already set at that time.
+>=20
+> Call pm_runtime_get_sync() to balance the RPM usage counter also in
+> serial8250_register_8250_port() before trying to add the port.
+>=20
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Fixes: a11e097504ac ("x86: Make IA32_EMULATION boot time configurable")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/entry/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reported-by: Borislav Petkov (AMD) <bp@alien8.de>
+Tested-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 94941c5a10ac..51efd2da4d7f 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -142,7 +142,7 @@ static __always_inline int syscall_32_enter(struct pt_regs *regs)
- #ifdef CONFIG_IA32_EMULATION
- bool __ia32_enabled __ro_after_init = !IS_ENABLED(CONFIG_IA32_EMULATION_DEFAULT_DISABLED);
- 
--static int ia32_emulation_override_cmdline(char *arg)
-+static int __init ia32_emulation_override_cmdline(char *arg)
- {
- 	return kstrtobool(arg, &__ia32_enabled);
- }
--- 
-2.47.0
+Thx!
 
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
