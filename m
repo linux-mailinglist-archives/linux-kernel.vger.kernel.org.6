@@ -1,124 +1,273 @@
-Return-Path: <linux-kernel+bounces-440216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B359A9EBA55
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:50:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6109EBA57
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE67A16733C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5B61888EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F9F226194;
-	Tue, 10 Dec 2024 19:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C29F22618B;
+	Tue, 10 Dec 2024 19:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcgeKpQ6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gw6vOseD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BBA153BF6;
-	Tue, 10 Dec 2024 19:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC34153BF6;
+	Tue, 10 Dec 2024 19:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733860203; cv=none; b=IpraTqIK766KGAmSPzuHxoe2NJa3cT1xZkK2pz1/Gv/ewSF3rTgUX29g5lggQ0N25sVchBOxTXlStsIR5VYw5GucxQssTlaTm3GuA+OTjwvy15MqdmDhxctVJhLBHT4I8Z1UcvMA2FFwZagyC7GvjGPMT0acXxEQ0CHY/NL2yzg=
+	t=1733860317; cv=none; b=bGGrJr8DqClIfPwp7C25azshXWcA00OtkGRy5F91LneiYA8S5VWJDJljNxxcnrRWiVB94yR89lB7XWMdbq8vtCgYR0bZ0d2vXCK7352B1rSqTL2dUiNLJ+n7InkFSUbCptaorw+rhSSnW/dD3WVa1U0kFm6yKpOC8yIDvqkHnac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733860203; c=relaxed/simple;
-	bh=nXb2KRfSy8/JFRr7iLRBAg1k7V69SNd0c789LpVFGq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GTUTwYalXYkUrEpP7oCQPYBFfQDCTThhwgyQJbIR+P/2Mh3KzcqIIaZ6C7na0/ZTUeyS57xB6boh9Fv1OKquHoBA/QcnnAsqbTB8VazCvfWb+6BTTKuzIUjOrVnAUUepSXR2lrlTUetYEBoKoSCNB1RQjSzzjERZOs/XwTDwbUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcgeKpQ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22067C4CED6;
-	Tue, 10 Dec 2024 19:50:03 +0000 (UTC)
+	s=arc-20240116; t=1733860317; c=relaxed/simple;
+	bh=uVNtA4UP4gYY1Fh3dyi6MlUBu6yIgXwwrtxJO7qjI4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R8aPOdsKNU0GswnSiiGIH2StrE0g158uKUbuaxVVmCplLC6vFV9iEpFZuzGxzaaoskXClFhXdHdBAkGbWIJm0fOsBKHzcCTBZqumgbtmFcySQ5FJTJ1zHFiq83RJF0JS5hSDyZVRWV8CYbmYsssZSLBiMVw1jqy0bDsZ22ZQLf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gw6vOseD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B981AC4CEE2;
+	Tue, 10 Dec 2024 19:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733860203;
-	bh=nXb2KRfSy8/JFRr7iLRBAg1k7V69SNd0c789LpVFGq8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VcgeKpQ6Etbkt5LQKDGNP+cLb912M7CAg03Xl8PySB2KiDZ8GTDoTVdlfyLNbBRGT
-	 JO2l9iEBSXbt6BjyuET/a7a59pc/AMx5wNSgk6ySL21kyEnr8IukB4+cKXm1SITVtO
-	 g/GyF0REa6vrvP2RLOJJGW8+tdC29HxnXCvx4JNdX02LOKrorajnT+DDmFPFkLK7UI
-	 pp6cCG+BPiid7bBU9rDUXLONrUO5l1k5tOr0NkRfSMe+pYigmUz7gEgiua2BE0Hb4l
-	 BrFa176rLqhFroMPhzGuxBnVSa/XPGpDm5Z1/lN/w6SrZS2Q0gmXxUj8fm0iy3TOw3
-	 BkxpQCKYxqu8g==
-Date: Tue, 10 Dec 2024 13:50:01 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCHv2] PCI/ACPI: _DSM PRESERVE_BOOT_CONFIG function rev id
- doesn't match with spec.
-Message-ID: <20241210195001.GA3254053@bhelgaas>
+	s=k20201202; t=1733860316;
+	bh=uVNtA4UP4gYY1Fh3dyi6MlUBu6yIgXwwrtxJO7qjI4c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gw6vOseDnS37P97gPVAjqc6HRdGsQbM11TCHXvR2E2anV7EixzqCnD7+/48Z3uxq2
+	 J6EbTk5m7iiO+pFcx60dBhMyhWdNZpc3BS93bhIQX0cVJbSDHRm1AiBTTnbzY9zM7c
+	 YOolB49NEol5yFL/iUlxewPaU0imzt9oCBQb9qT+sKkow19WgGASJfXkhKYyG4MIyS
+	 GNMp02ZFItp7ui1GM1US0aBfAhH5HAOjF0/22Fq3aQyIctOtvlhSG1AJckvZ1XvnGi
+	 32AanCCnsVnoMiSU3VTXJnOLmbfsKYZnOXzanKP1fUa91KMdD5/uZw/ez9WcgRK2SD
+	 Q8DhsUTQ8ZiUw==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-29e65257182so2949846fac.2;
+        Tue, 10 Dec 2024 11:51:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUgu7gKTgEcHURRfrS945fGikXgjNzLn0O7puV/4QAhI/v7GmABJQYig59KHFsJCL47mSC8NsUMo/g=@vger.kernel.org, AJvYcCV4jzEen/MS0fMrvI6qU+utBiFnlchFR37yhn6z/m3lk1k7FLeWD8QIy5TzvOVD8i/tj5khxiMajVR/3RU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHyArzP4vtEJssx0ZlNe82qD7y1QWGqY//Dtcv0zStEQcSW9Kq
+	NZmSyrOSYz4SDbv7s+K6XH/KKQMPKvfZXos/VMROz91taMwc4byH9//8C3G+0pyuY1HtsLkmPn2
+	wcVqdcWdDi1I0U12IlYLEV+zgg7Y=
+X-Google-Smtp-Source: AGHT+IGze+/0YQKfiA5MqyQLVSRFptaYBpPZOn3z2i8CbXO2eUmQACXiqL02u2AFaRGvh67C/NC+/bmlbcaeaWei+6k=
+X-Received: by 2002:a05:6870:1588:b0:287:471:41eb with SMTP id
+ 586e51a60fabf-2a012bb4c4cmr265506fac.6.1733860315572; Tue, 10 Dec 2024
+ 11:51:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114030424.45074-1-zhoushengqing@ttyinfo.com>
+References: <20241129182232.14987-1-patryk.wlazlyn@linux.intel.com> <20241129182232.14987-2-patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <20241129182232.14987-2-patryk.wlazlyn@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Dec 2024 20:51:44 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jhK51+pkf=Amr=qXWzK3e1xC_tdt0iqQXxVfeE4pcFJQ@mail.gmail.com>
+Message-ID: <CAJZ5v0jhK51+pkf=Amr=qXWzK3e1xC_tdt0iqQXxVfeE4pcFJQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] x86/smp: Allow calling mwait_play_dead with an
+ arbitrary hint
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, peterz@infradead.org, dave.hansen@linux.intel.com, 
+	gautham.shenoy@amd.com, tglx@linutronix.de, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[+cc Ben, original author of a78cf9657ba5]
+First, I would change the subject to something like "x86/smp: Add hint
+parameter to mwait_play_dead()"
 
-On Thu, Nov 14, 2024 at 03:04:24AM +0000, Zhou Shengqing wrote:
-> Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
-> for PCI. Preserve PCI Boot Configuration Initial Revision ID is 2. But
-> the code is 1.
+On Fri, Nov 29, 2024 at 7:22=E2=80=AFPM Patryk Wlazlyn
+<patryk.wlazlyn@linux.intel.com> wrote:
+>
+> Introduce a helper function to allow offlined CPUs to enter FFh idle
+> states with a specific MWAIT hint. The new helper will be used in
+> subsequent patches by the acpi_idle and intel_idle drivers.
 
-This _DSM function 5 was added in PCI Firmware r3.1, released Dec 13,
-2010.  It's listed in sec 4.6 with Revision 2 (as *all* the defined
-functions are, even functions 1-4, which were included in r3.0 with
-Revision 1).
+And the above would become
 
-But the actual definition that was added in r3.1 is in sec 4.6.5,
-which specifies Revision ID 1.  
+"Change mwait_play_dead() into a helper function allowing CPUs going
+offline to enter idle states via MWAIT with a specific hint passed to
+it as an argument.
 
-PCI Firmware r3.2, released Jan 26, 2015, was the newest available at
-the time Ben implemented a78cf9657ba5 ("PCI/ACPI: Evaluate PCI Boot
-Configuration _DSM"), and sec 4.6.5 still specified Revision ID 1.
+Add mwait_play_dead_cpuid_hint() as a wrapper around mwait_play_dead()
+implementing the existing behavior of the code.
 
-So I think Ben's addition used the correct Revision ID (1).
+Subsequently, the new helper will also be used by the acpi_idle and
+intel_idle drivers in idle-state-specific :enter_dead() callbacks."
 
-PCI Firmware r3.3, released Jan 20, 2021, changed sec 4.6.5 to say
-"lowest valid Revision ID value: 2"
-
-I think it's a mistake to make the kernel change below because
-platforms in the field implemented function 5 with revision 1 (per the
-r3.1 and r3.2 specs), and we have no idea whether they implement
-function 5 revision 2.
-
-It's quite likely that newer platforms following r3.3 will implement
-function 5 revision 2, but NOT revision 1, and the existing code won't 
-work for them.
-
-I think the fix is to try revision 1 and, if that isn't implemented,
-we should try revision 2.  The semantics stayed the same, so they
-should both work the same.
-
-> Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to pci_register_host_bridge()")
-> Origin fixes: a78cf9657ba5 ("PCI/ACPI: Evaluate PCI Boot Configuration _DSM")
-> 
-> Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+> No functional change intended.
+>
+> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
 > ---
->  drivers/pci/pci-acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index af370628e583..7a4cad0c1f00 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -132,7 +132,7 @@ bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
->  		 */
->  		obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
->  					      &pci_acpi_dsm_guid,
-> -					      1, DSM_PCI_PRESERVE_BOOT_CONFIG,
-> +					      2, DSM_PCI_PRESERVE_BOOT_CONFIG,
->  					      NULL, ACPI_TYPE_INTEGER);
->  		if (obj && obj->integer.value == 0)
->  			return true;
-> -- 
-> 2.39.2
-> 
+>  arch/x86/include/asm/smp.h |  3 ++
+>  arch/x86/kernel/smpboot.c  | 90 ++++++++++++++++++++------------------
+>  2 files changed, 51 insertions(+), 42 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+> index ca073f40698f..dfd09a1e09bf 100644
+> --- a/arch/x86/include/asm/smp.h
+> +++ b/arch/x86/include/asm/smp.h
+> @@ -114,6 +114,7 @@ void wbinvd_on_cpu(int cpu);
+>  int wbinvd_on_all_cpus(void);
+>
+>  void smp_kick_mwait_play_dead(void);
+> +void mwait_play_dead(unsigned int hint);
+>
+>  void native_smp_send_reschedule(int cpu);
+>  void native_send_call_func_ipi(const struct cpumask *mask);
+> @@ -164,6 +165,8 @@ static inline struct cpumask *cpu_llc_shared_mask(int=
+ cpu)
+>  {
+>         return (struct cpumask *)cpumask_of(0);
+>  }
+> +
+> +static inline void mwait_play_dead(unsigned int eax_hint) { }
+>  #endif /* CONFIG_SMP */
+>
+>  #ifdef CONFIG_DEBUG_NMI_SELFTEST
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index b5a8f0891135..8a3545c2cae9 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -1272,13 +1272,57 @@ void play_dead_common(void)
+>         local_irq_disable();
+>  }
+>
+> +void __noreturn mwait_play_dead(unsigned int eax_hint)
+> +{
+> +       struct mwait_cpu_dead *md =3D this_cpu_ptr(&mwait_cpu_dead);
+> +
+> +       /* Set up state for the kexec() hack below */
+> +       md->status =3D CPUDEAD_MWAIT_WAIT;
+> +       md->control =3D CPUDEAD_MWAIT_WAIT;
+> +
+> +       wbinvd();
+> +
+> +       while (1) {
+> +               /*
+> +                * The CLFLUSH is a workaround for erratum AAI65 for
+> +                * the Xeon 7400 series.  It's not clear it is actually
+> +                * needed, but it should be harmless in either case.
+> +                * The WBINVD is insufficient due to the spurious-wakeup
+> +                * case where we return around the loop.
+> +                */
+> +               mb();
+> +               clflush(md);
+> +               mb();
+> +               __monitor(md, 0, 0);
+> +               mb();
+> +               __mwait(eax_hint, 0);
+> +
+> +               if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT=
+) {
+> +                       /*
+> +                        * Kexec is about to happen. Don't go back into m=
+wait() as
+> +                        * the kexec kernel might overwrite text and data=
+ including
+> +                        * page tables and stack. So mwait() would resume=
+ when the
+> +                        * monitor cache line is written to and then the =
+CPU goes
+> +                        * south due to overwritten text, page tables and=
+ stack.
+> +                        *
+> +                        * Note: This does _NOT_ protect against a stray =
+MCE, NMI,
+> +                        * SMI. They will resume execution at the instruc=
+tion
+> +                        * following the HLT instruction and run into the=
+ problem
+> +                        * which this is trying to prevent.
+> +                        */
+> +                       WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
+> +                       while(1)
+> +                               native_halt();
+> +               }
+> +       }
+> +}
+> +
+>  /*
+>   * We need to flush the caches before going to sleep, lest we have
+>   * dirty data in our caches when we come back up.
+>   */
+> -static inline void mwait_play_dead(void)
+> +static inline void mwait_play_dead_cpuid_hint(void)
+>  {
+> -       struct mwait_cpu_dead *md =3D this_cpu_ptr(&mwait_cpu_dead);
+>         unsigned int eax, ebx, ecx, edx;
+>         unsigned int highest_cstate =3D 0;
+>         unsigned int highest_subcstate =3D 0;
+> @@ -1316,45 +1360,7 @@ static inline void mwait_play_dead(void)
+>                         (highest_subcstate - 1);
+>         }
+>
+> -       /* Set up state for the kexec() hack below */
+> -       md->status =3D CPUDEAD_MWAIT_WAIT;
+> -       md->control =3D CPUDEAD_MWAIT_WAIT;
+> -
+> -       wbinvd();
+> -
+> -       while (1) {
+> -               /*
+> -                * The CLFLUSH is a workaround for erratum AAI65 for
+> -                * the Xeon 7400 series.  It's not clear it is actually
+> -                * needed, but it should be harmless in either case.
+> -                * The WBINVD is insufficient due to the spurious-wakeup
+> -                * case where we return around the loop.
+> -                */
+> -               mb();
+> -               clflush(md);
+> -               mb();
+> -               __monitor(md, 0, 0);
+> -               mb();
+> -               __mwait(eax, 0);
+> -
+> -               if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT=
+) {
+> -                       /*
+> -                        * Kexec is about to happen. Don't go back into m=
+wait() as
+> -                        * the kexec kernel might overwrite text and data=
+ including
+> -                        * page tables and stack. So mwait() would resume=
+ when the
+> -                        * monitor cache line is written to and then the =
+CPU goes
+> -                        * south due to overwritten text, page tables and=
+ stack.
+> -                        *
+> -                        * Note: This does _NOT_ protect against a stray =
+MCE, NMI,
+> -                        * SMI. They will resume execution at the instruc=
+tion
+> -                        * following the HLT instruction and run into the=
+ problem
+> -                        * which this is trying to prevent.
+> -                        */
+> -                       WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
+> -                       while(1)
+> -                               native_halt();
+> -               }
+> -       }
+> +       mwait_play_dead(eax);
+>  }
+>
+>  /*
+> @@ -1407,7 +1413,7 @@ void native_play_dead(void)
+>         play_dead_common();
+>         tboot_shutdown(TB_SHUTDOWN_WFS);
+>
+> -       mwait_play_dead();
+> +       mwait_play_dead_cpuid_hint();
+>         if (cpuidle_play_dead())
+>                 hlt_play_dead();
+>  }
+> --
+
+And honestly I'm wondering why adding a parameter to mwait_play_dead()
+is better than introducing mwait_play_dead_with_hint(), in analogy
+with the existing mwait_idle_with_hints()?
+
+The latter option would allow you to avoid introducing a function that
+is deleted in the same patch series (in patch 4).
 
