@@ -1,202 +1,101 @@
-Return-Path: <linux-kernel+bounces-440352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803C09EBC13
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:44:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF61E9EBC16
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8551316900A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F86188ADC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7CA2397A8;
-	Tue, 10 Dec 2024 21:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5602309AE;
+	Tue, 10 Dec 2024 21:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pc0Ktdl7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="omfAYIDv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B2C1A9B4C;
-	Tue, 10 Dec 2024 21:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFB923ED78;
+	Tue, 10 Dec 2024 21:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733867081; cv=none; b=uQ8wvj9Q5Dpf9Dv8tKZy5fZ/ROO1M7XW/ufECKVFdKZ/w1UmwEPxHSfwddfu2t6Z+GzgqRy9ZyXJY1Ra1elKltOS5bBYOMZ8rqkJ2yeLOgYWB5V/VaF59r8IuNTmj1Js+e/AWVSGQ4XR7UG2tcOGknZOhV5cD5naqXm72icxwlI=
+	t=1733867436; cv=none; b=WBdRPLz2ctDb7mDkCJUhlSnxfhutmQiUlcIZpOYCV4da10Zq1WlbeVBVs5N+HdWwCGG/9XzKVYJcFXcdAEIewwTV0E11yZc6H57xN5gVcHHU/UGPCx5ItZq0VuAqzVPDcvptPMppdj68+JHXaQ85AiMyHoU8mBCeByXjnvmwSTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733867081; c=relaxed/simple;
-	bh=RgFRJO9SxDbTYwqB9l2YEX3eD4HJt7/X9nbJYXoi4Z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SWJae7HM1Ma2QFNw37NV9hdU25oFXR7asDnNGIvcygxoA4ssiWQFlk2U6hlbHVLOjhZua/C9Ld/Ul0swZEQd2ZLWp3Qssyzrr8iCuBs7tfKOpkcKzJlCEgKSnBzybqm3qQLSeGnrvpXiM6LxAeuPqjFptVPsXiL7Y9azD+VLqjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pc0Ktdl7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAG2LLP002749;
-	Tue, 10 Dec 2024 21:44:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	51H1zx6ZjCIKp6pg8lVoWsLVvCUHrUDqc8EXCbYTcrw=; b=Pc0Ktdl7NlBSoUNh
-	M9xDwzn2aqDyAcBTu9PQm4kbWuONOOb+7zzUPiCKQf0tYcY/Tm4GhnKzTT6JUhXz
-	6VROOHpSfSDzuIxthmbxqvNETnjTSIxEzUIEX2KFrO5vgNpHv05mgkqJIdOXn1L7
-	dCwg3Q/iAkoqJM9eVyx3aOAAjYSGGPe2BZZ4YU0OhZ19Q4ckz3yK29ynfbUmND8G
-	SbvVyLH0o72I01hwFntIUl/QfFFaYOE4IZRz/tdapM//PkgilWZv4mDuRXEur0f4
-	7ZTx5d+tiLGDx+HhvI3vVqZKTEQJ7OeWoRkc92AzomFVFlyNW77mNroETtFGQp7J
-	h4SLjA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw45m5f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 21:44:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BALiXNt005768
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 21:44:33 GMT
-Received: from [10.4.85.13] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
- 2024 13:44:31 -0800
-Message-ID: <d26420b8-f62d-4c2a-ae58-a7fa5744ba28@quicinc.com>
-Date: Wed, 11 Dec 2024 08:44:31 +1100
+	s=arc-20240116; t=1733867436; c=relaxed/simple;
+	bh=kYpbn67PrWOlsV/B1/qX/YwX9r+I+iwn6E8e2nl71Y4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kSGno73zBvVtS7gJhS5M5YhHemymmGnLNizTJLUGmYAEEjuuDBXy5CaeI3if5JOasWi53a0I1WdXvkL7cgcxlh1GWZRPrWFQ9+/ip7h5kAHUfnIVKtJia+fKjRRhT/SAAz0DlOCAKlAaQrxKjk01HJPmxvnU9qAjULsSUBistD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=omfAYIDv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD14C4CED6;
+	Tue, 10 Dec 2024 21:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733867436;
+	bh=kYpbn67PrWOlsV/B1/qX/YwX9r+I+iwn6E8e2nl71Y4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=omfAYIDvEwAU2+mwrYoJHtfOjt3drri7yzemlmyHfzNBlJfnsEUEYs4BsJKr4z9xW
+	 XfG/vH3ArYpXiGunJloafkKatNQKy4OiYv2UMxy3nB80P53schyQnWAh1IJ9dAUcym
+	 Y05yuzSS4qsgia7d0VyGM4WxJj/LtTlhAtoUmxcQQMFQOM/6eqer5zY4KApsnUxQD9
+	 8l2ugIqn4eRdxV1hIgdRR7e11E6OMUMX047db/0/a33l8B3/PiBmS6Xqjs7HMdGe2S
+	 oHfS7J3mSz5mpx9/Qsu0DvCYdmMq8S7i6KsXc3tMpc+OnyqEvEHeffS+hMeATbJfkZ
+	 oiFLFQCC/794w==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH 0/5] mm/damon: add sample modules
+Date: Tue, 10 Dec 2024 13:50:25 -0800
+Message-Id: <20241210215030.85675-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/10] qcomtee: implement object invoke support
-Content-Language: en-US
-To: Jens Wiklander <jens.wiklander@linaro.org>
-CC: Sumit Garg <sumit.garg@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
- <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-5-f502ef01e016@quicinc.com>
- <CAHUa44FhZc1ZVgJQrqbDdY1kegNgHrC4VTs66-5CDfY04D6MMw@mail.gmail.com>
-From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-In-Reply-To: <CAHUa44FhZc1ZVgJQrqbDdY1kegNgHrC4VTs66-5CDfY04D6MMw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3lP6DyhHCYupfFmkE1NW4XcyA3Qhp7k5
-X-Proofpoint-GUID: 3lP6DyhHCYupfFmkE1NW4XcyA3Qhp7k5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100155
+
+DAMON provides API for other subsystems or modules in the kernel space.
+The API functions have their own kernel-doc comments, but having working
+example usages would further helps beginners.  There are DAMON modules
+built using DAMON API, including DAMON_{SYSFS,RECLAIM,LRU_SORT}.  But
+those are for real world usage rather than examples.  Add sample DAMON
+modules for exasmple usages of DAMON API for beginners.
+
+Changes from RFC
+(https://lore.kernel.org/20241113162624.48973-1-sj@kernel.org)
+- Add minimum age to prcl
+- Wordsmith commit message
+- Remove module_{license,author,description} that unnecessary for static modules
+
+SeongJae Park (5):
+  samples: add a skeleton of a sample DAMON module for working set size
+    estimation
+  samples/damon/wsse: start and stop DAMON as the user requests
+  samples/damon/wsse: implement working set size estimation and logging
+  samples/damon: introduce a skeleton of a smaple DAMON module for
+    proactive reclamation
+  samples/damon/prcl: implement schemes setup
+
+ MAINTAINERS            |   1 +
+ samples/Kconfig        |   2 +
+ samples/Makefile       |   2 +
+ samples/damon/Kconfig  |  30 +++++++++
+ samples/damon/Makefile |   4 ++
+ samples/damon/prcl.c   | 136 +++++++++++++++++++++++++++++++++++++++++
+ samples/damon/wsse.c   | 116 +++++++++++++++++++++++++++++++++++
+ 7 files changed, 291 insertions(+)
+ create mode 100644 samples/damon/Kconfig
+ create mode 100644 samples/damon/Makefile
+ create mode 100644 samples/damon/prcl.c
+ create mode 100644 samples/damon/wsse.c
 
 
+base-commit: d344b591933d7f56960f43d9c86effd14559f0f2
+-- 
+2.39.5
 
-On 12/10/2024 9:24 PM, Jens Wiklander wrote:
-> On Tue, Dec 3, 2024 at 5:20 AM Amirreza Zarrabi
-> <quic_azarrabi@quicinc.com> wrote:
->>
->> Introduce qcom_tee_object, which represents an object in both QTEE and
->> the kernel. QTEE clients can invoke an instance of qcom_tee_object to
->> access QTEE services. If this invocation produces a new object in QTEE,
->> an instance of qcom_tee_object will be returned.
->>
->> Similarly, QTEE can request services from the kernel by issuing a callback
->> request, which invokes an instance of qcom_tee_object in the kernel.
->> Any subsystem that exposes a service to QTEE should allocate and initialize
->> an instance of qcom_tee_object with a dispatcher callback that is called
->> when the object is invoked.
->>
->> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
->> ---
->>  drivers/tee/Kconfig                    |   1 +
->>  drivers/tee/Makefile                   |   1 +
->>  drivers/tee/qcomtee/Kconfig            |  10 +
->>  drivers/tee/qcomtee/Makefile           |   6 +
->>  drivers/tee/qcomtee/async.c            | 153 ++++++
->>  drivers/tee/qcomtee/core.c             | 928 +++++++++++++++++++++++++++++++++
->>  drivers/tee/qcomtee/qcom_scm.c         |  36 ++
->>  drivers/tee/qcomtee/qcomtee_msg.h      | 217 ++++++++
->>  drivers/tee/qcomtee/qcomtee_private.h  |  47 ++
->>  drivers/tee/qcomtee/release.c          |  66 +++
->>  include/linux/firmware/qcom/qcom_tee.h | 284 ++++++++++
->>  11 files changed, 1749 insertions(+)
->>
-> [snip]
-> 
->> +/**
->> + * DOC: Overview
->> + *
->> + * qcom_tee_object provides object ref-counting, id allocation for objects hosted in
->> + * REE, and necessary message marshaling for Qualcomm TEE (QTEE).
->> + *
->> + * To invoke an object in QTEE, user calls qcom_tee_object_do_invoke() while passing
->> + * an instance of &struct qcom_tee_object and the requested operation + arguments.
->> + *
->> + * After the boot, QTEE provides a static object %ROOT_QCOM_TEE_OBJECT (type of
->> + * %QCOM_TEE_OBJECT_TYPE_ROOT). The root object is invoked to pass user's credentials and
->> + * obtain other instances of &struct qcom_tee_object (type of %QCOM_TEE_OBJECT_TYPE_TEE)
->> + * that represents services and TAs in QTEE, see &enum qcom_tee_object_type.
->> + *
->> + * The object received from QTEE are refcounted. So the owner of these objects can
->> + * issue qcom_tee_object_get(), to increase the refcount, and pass objects to other
->> + * clients, or issue qcom_tee_object_put() to decrease the refcount, and releasing
->> + * the resources in QTEE.
->> + *
->> + * REE can host services accessible to QTEE. A driver should embed an instance of
->> + * &struct qcom_tee_object in the struct it wants to export to QTEE (it is called
->> + * callback object). It issues qcom_tee_object_user_init() to set the dispatch()
->> + * operation for the callback object and set its type to %QCOM_TEE_OBJECT_TYPE_CB_OBJECT.
->> + *
->> + * core.c holds an object table for callback objects. An object id is assigned
->> + * to each callback object which is an index to the object table. QTEE uses these ids
->> + * to reference or invoke callback objects.
->> + *
->> + * If QTEE invoke a callback object in REE, the dispatch() operation is called in the
->> + * context of thread that called qcom_tee_object_do_invoke(), originally.
->> + */
->> +
->> +/**
->> + * enum qcom_tee_object_typ - Object types.
->> + * @QCOM_TEE_OBJECT_TYPE_TEE: object hosted on QTEE.
->> + * @QCOM_TEE_OBJECT_TYPE_CB_OBJECT: object hosted on REE.
->> + * @QCOM_TEE_OBJECT_TYPE_ROOT: 'primordial' object.
->> + * @QCOM_TEE_OBJECT_TYPE_NULL: NULL object.
->> + *
->> + * Primordial object is used for bootstrapping the IPC connection between a REE
->> + * and QTEE. It is invoked by REE when it wants to get a 'client env'.
->> + */
->> +enum qcom_tee_object_type {
->> +       QCOM_TEE_OBJECT_TYPE_TEE,
->> +       QCOM_TEE_OBJECT_TYPE_CB_OBJECT,
-> 
-> The second OBJECT seems redundant. How about QCOM_TEE_OBJECT_TYPE_CB
-> or QCOM_TEE_OBJECT_TYPE_CALLBACK instead?
-> 
-
-Sure. I'll rename to QCOM_TEE_OBJECT_TYPE_CALLBACK.
-
-Best Regards,
-Amir
-
-
->> +       QCOM_TEE_OBJECT_TYPE_ROOT,
->> +       QCOM_TEE_OBJECT_TYPE_NULL,
->> +};
-> [snip]
-> 
-> Cheers,
-> Jens
 
