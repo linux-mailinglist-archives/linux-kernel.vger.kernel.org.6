@@ -1,475 +1,289 @@
-Return-Path: <linux-kernel+bounces-440344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65A69EBBF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:39:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748C89EBBF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:40:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF6A168B39
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:39:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749D3285714
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAAD23A571;
-	Tue, 10 Dec 2024 21:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51684239780;
+	Tue, 10 Dec 2024 21:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="KyA4V8al"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zet/jLE1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171722397A6
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F46237A57
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733866701; cv=none; b=YeOQvwzTQLhh2CWj4sZW/UWU8mI4mpwCaC4P4op7obgeZsUkuobyMHwTNyUvKEXUE+w7pkYqbWJiYWvK11hqbu8StgQpH3cOvYwaEsFFkbNSq1F3wWrt3W6Sn5OsYR3HjunqSd7sQhroOKf23fCtj4t3AA3aCJPdE4DzmXMZyhk=
+	t=1733866824; cv=none; b=Ad8syoy1xhgaz7CrUkUeBvZPUe9128msrxEFjxyCJh6ItJwClerHfg2HqHDXs9bubHZOCSQhfss1m38FvQXDpqAnnTzp8txDTM8R97Mc6fc75yh4+DA2hyNyRbaZ1iwTnghOaU3gG79UtcSu5pvwwfkNQYdH39OLomRt7PJ1q1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733866701; c=relaxed/simple;
-	bh=hE9bjV2sBCy6yetf6MGYbjGzkjGv3G8CKtCSWbCTqi0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cwkxV1Gm+9p+m6J5WKCOARIr5VTJEX3WFgW/JQkS9wxJqXx3IrjgFy4GJbIgqBe1LTztmfv2Td+fBlorkmquKig0xOyodgr3jtCVYDFicAhzNdOgDEXeB7rzxeBYto3BCr24WhIEauQamObi8rK9YwX0Pt8YM2FIkvKcum8k9ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=KyA4V8al; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46741855f9bso31077241cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:38:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1733866698; x=1734471498; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9y/Pmi/E+qcbGw7qvBfkROEFTzGsGqs1ClRtYT08n0=;
-        b=KyA4V8alZaa7RNJr2jA/wGP8j99SA+DrnnwcECWJCKDY5NP9otzUyHHCzviejvWLpc
-         wn5UeVGRUZ7Ul8d91a/P0yUbtc1C6E3w4PbyxOtIh7PfJKqHRrDguGgl2qB96tVrsWMG
-         6MfL5ZOFtV8VKuUgGS1xpiw8Iu4ZCrmdSD05fnEAmpb0yegf78dcvp8bd5tP256Rn2z/
-         sMsbaKlPAad6O3DRoLvo18EfvHE+ztICxmnrabP+oogITnUdCTvLC4bzyLC1uA92W8TZ
-         Ll07W7MxupuMEIB05qZ6Pf7Z6snDL+QthuzCcx9WYTVsWPvjNZWAr03+4DBxQjsdUTrU
-         K54A==
+	s=arc-20240116; t=1733866824; c=relaxed/simple;
+	bh=vvcF0D/NC7Ynf2V/eBwyAkR6hkCW0ZYH/yAZI2Kh5SQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lVMPDkgQEURrAi9m2u3DsS3S/6L0M//vuCImlXJGFz1lIer8WpoQqOyW8kMILbFH4A6BQx2FO8cN08D7evkRUL1jjqHM24sWeXAgEvdFUcDuTM/SoYVzrRGZzk8SMO3C1wP7AfD0JLBW68wVjjtRh3WWi4I6eVrJk2aQ5JohkeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zet/jLE1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733866821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m/tF51eXbb5jrkuUIZarKQ2cXR84PajfTI8ZKBMgFzo=;
+	b=Zet/jLE1o/66YAtctkpDbYdf9Av1hfv/VVEXZGc4bMfEiARvztRpPbQx9bdpza9mZO3rV0
+	3dypE0mjm5ilXraTfic+4i5IM6mc66mlIZZZY39yEqfYCnapQwOmcGEd8gEGrMNxpvafAE
+	BE5PV/2+WQGhFKMR7xOjYuduayFBbQ4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-187-_LRVr9fhP3mNQAVKycZ6mQ-1; Tue, 10 Dec 2024 16:40:19 -0500
+X-MC-Unique: _LRVr9fhP3mNQAVKycZ6mQ-1
+X-Mimecast-MFC-AGG-ID: _LRVr9fhP3mNQAVKycZ6mQ
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385dfa9b758so2419455f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:40:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733866698; x=1734471498;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+9y/Pmi/E+qcbGw7qvBfkROEFTzGsGqs1ClRtYT08n0=;
-        b=XeV/r3BffAkEmSL/RdssPIdSmECDGzZ0XixYWmxijAV6ImhtlrWPc2uoKDOSEPrN0c
-         V43h1d18SzWaz3anfP39nUiWgz9LuZd23OU+bTZtOB1zz7vXimCb6hw7ddjDaAp6eEvY
-         n1c+GmOw4yOegdtwu+R3wSf2FYu08w8fXf1b/bEuLrZAqBSwh7QsG/By6DQNWOXVa4Dp
-         aHeR4pOVR5x1H5coDS8ORhwbma4BwhlZPH0DlMXzJaGR7vGFugT6mxDJzXdV3am3r1Co
-         DnPM5+l1odjovDs1Aodz7qMSVo/ocPVTF4My/SefJopqhWpm/737PHMeGkhnXpEr5g0u
-         UWug==
-X-Gm-Message-State: AOJu0Ywn2R6MZiPcVgW6kbFkSAtllJTwIb7jfPOuuxT802oHG/HrJ7FK
-	WctgIb8gedmpsQaW4AMLW87ogWvdQxFAltzvmwPapuY2gU0vMJMpIDosEgI4Sf4=
-X-Gm-Gg: ASbGncu+r3wrLzNgRuO0eTu0p5N+UD3m4+oQ3+pvS7VfoRzudX9pt+6keZCeKAjKgOp
-	lFnH8R3t8OWcXuvBLYoz1u+nVZRSCU/m9cL4iZoqexZg4dBvOsPPUezfC2hgOB9iI0dNmuwftv/
-	BKNmtdtFmYaejBPn95gneLjcI3aIh9m0gKFnOTRGfb22+M5eU5CKkmH0SDACCEkih6tuff7NJNR
-	zfL0WBPoEbc3GYmUb/HyYNc3F4z9GRdSDTeRBa2m+Vrt/kxp9JJ9H93xQFlcN9Hj7590ZVz3FAf
-	EiKVsEdPRyWMDKESlambnYCiMTB2sRpV1pL/xgw=
-X-Google-Smtp-Source: AGHT+IFxNZ06/2veak16EjkYa8clNKlgcdi7wLb2OYdhSxCOFJs32hkfuiKlgIR8eXNwOyd59R311Q==
-X-Received: by 2002:a05:622a:1815:b0:467:7208:8eeb with SMTP id d75a77b69052e-467893769a8mr9097551cf.37.1733866697811;
-        Tue, 10 Dec 2024 13:38:17 -0800 (PST)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296f61f6sm65978991cf.43.2024.12.10.13.38.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 13:38:17 -0800 (PST)
-From: Gregory Price <gourry@gourry.net>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	nehagholkar@meta.com,
-	abhishekd@meta.com,
-	kernel-team@meta.com,
-	david@redhat.com,
-	nphamcs@gmail.com,
-	gourry@gourry.net,
-	akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	kbusch@meta.com,
-	ying.huang@linux.alibaba.com
-Subject: [RFC v2 PATCH 5/5] migrate,sysfs: add pagecache promotion
-Date: Tue, 10 Dec 2024 16:37:44 -0500
-Message-ID: <20241210213744.2968-6-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241210213744.2968-1-gourry@gourry.net>
-References: <20241210213744.2968-1-gourry@gourry.net>
+        d=1e100.net; s=20230601; t=1733866818; x=1734471618;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m/tF51eXbb5jrkuUIZarKQ2cXR84PajfTI8ZKBMgFzo=;
+        b=xFIcyJfbw7uR6NRH1afFcRdACoSbkESbnRzBDbthM1yLIwoxEAoQ6BoxXkw3XwDEDl
+         i8m3bx8oOEfcWplZAjfNd2Y+GF3iurVOF+7HovsQl6O/d4e+g0UHimRhDuDIvJ64UAbX
+         sBY/i9V+UlEL8TqpbSeIENNFzzxB3CNHXV+j2TofSCtitLdBQ4WnZuo4VejtFxYDWxiJ
+         XS15IfLvAzQqDwUQicm+PXLRUX2ImCz/acm46NGL77qton3v//37U7amDiVcqyIFIEbL
+         BAByq2ce3rm6ES3W6kfm2NPAll+f6AKcGWvLJY8QcytYf9NHtWLHuHlFMnI7HYfeK8PS
+         xXFg==
+X-Gm-Message-State: AOJu0YyZM7hltwI6uTvmvF5cFpuwcBswe3mveC5eO6YigpVHFfQKJF3n
+	wbSnLbpvaPPa4zZW/sRLmy5x+iYWL5/NgFvUXJjkK9u1FdNE/sazG85a8tl0Q4kOwCB9Rbt4v8i
+	k5+m18KTGfbS+1YLRXGI9r30x/Yy93pqMilbwcsJHQxNJpfTeoPuWXFr5OlTTXg==
+X-Gm-Gg: ASbGncumSU0R0NHcWmaouYNN38vSbCtCKYPDcwvmuOjWzK6Df7uIKOB8HtFPY3R3n9H
+	OyLpug2CN4WDEYgBVUfwwCuH+DBWdLQNh/wl5cFYLMtGpH1q8xLN9M7UzEMbNjCLbreifVPSldc
+	dcTLLN9s8Aa8X8BMIfVIZ57LxMZGVGqU+ugXRsw2IHu2rqUTiCHNI/CF7v9cF2bt552ni5zfsv4
+	60yxl9o3t60A3ScenHPhorXlHixOFez+H0X/B+X9XjLrWDMNBjpxcVt7B4o2JfeUcB2GdP3iK0a
+	tpc9Gig=
+X-Received: by 2002:a05:6000:186b:b0:385:fa2e:a354 with SMTP id ffacd0b85a97d-3864cec5a37mr492068f8f.47.1733866818508;
+        Tue, 10 Dec 2024 13:40:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEqTINoip0c57ha4zf1Bq/7M87ePT7gVjq3i20nCGv67CIscyoqQFcWasYGOOy1v37ekxP3Ag==
+X-Received: by 2002:a05:6000:186b:b0:385:fa2e:a354 with SMTP id ffacd0b85a97d-3864cec5a37mr492054f8f.47.1733866818114;
+        Tue, 10 Dec 2024 13:40:18 -0800 (PST)
+Received: from [192.168.3.141] (p5b0c61ad.dip0.t-ipconnect.de. [91.12.97.173])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386220b071dsm16609345f8f.101.2024.12.10.13.40.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 13:40:16 -0800 (PST)
+Message-ID: <d6a79fa6-dcc1-4181-9946-940a91c0b1f2@redhat.com>
+Date: Tue, 10 Dec 2024 22:40:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm/page_alloc: conditionally split >
+ pageblock_order pages in free_one_page() and move_freepages_block_isolate()
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Yu Zhao <yuzhao@google.com>
+References: <20241210102953.218122-1-david@redhat.com>
+ <20241210102953.218122-2-david@redhat.com>
+ <20241210211613.GC2508492@cmpxchg.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241210211613.GC2508492@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-adds /sys/kernel/mm/numa/pagecache_promotion_enabled
+On 10.12.24 22:16, Johannes Weiner wrote:
+> On Tue, Dec 10, 2024 at 11:29:52AM +0100, David Hildenbrand wrote:
+>> @@ -1225,27 +1225,53 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+>>   	spin_unlock_irqrestore(&zone->lock, flags);
+>>   }
+>>   
+>> -/* Split a multi-block free page into its individual pageblocks. */
+>> -static void split_large_buddy(struct zone *zone, struct page *page,
+>> -			      unsigned long pfn, int order, fpi_t fpi)
+>> +static bool pfnblock_migratetype_equal(unsigned long pfn,
+>> +		unsigned long end_pfn, int mt)
+>>   {
+>> -	unsigned long end = pfn + (1 << order);
+>> +	VM_WARN_ON_ONCE(!IS_ALIGNED(pfn | end_pfn, pageblock_nr_pages));
+>>   
+>> +	while (pfn != end_pfn) {
+>> +		struct page *page = pfn_to_page(pfn);
+>> +
+>> +		if (unlikely(mt != get_pfnblock_migratetype(page, pfn)))
+>> +			return false;
+>> +		pfn += pageblock_nr_pages;
+>> +	}
+>> +	return true;
+>> +}
+>> +
+>> +static void __free_one_page_maybe_split(struct zone *zone, struct page *page,
+>> +		unsigned long pfn, int order, fpi_t fpi_flags)
+>> +{
+>> +	const unsigned long end_pfn = pfn + (1 << order);
+>> +	int mt = get_pfnblock_migratetype(page, pfn);
+>> +
+>> +	VM_WARN_ON_ONCE(order > MAX_PAGE_ORDER);
+>>   	VM_WARN_ON_ONCE(!IS_ALIGNED(pfn, 1 << order));
+>>   	/* Caller removed page from freelist, buddy info cleared! */
+>>   	VM_WARN_ON_ONCE(PageBuddy(page));
+>>   
+>> -	if (order > pageblock_order)
+>> -		order = pageblock_order;
+>> +	/*
+>> +	 * With CONFIG_MEMORY_ISOLATION, we might be freeing MAX_ORDER_NR_PAGES
+>> +	 * pages that cover pageblocks with different migratetypes; for example
+>> +	 * only some migratetypes might be MIGRATE_ISOLATE. In that (unlikely)
+>> +	 * case, fallback to freeing individual pageblocks so they get put
+>> +	 * onto the right lists.
+>> +	 */
+>> +	if (!IS_ENABLED(CONFIG_MEMORY_ISOLATION) ||
+>> +	    likely(order <= pageblock_order) ||
+>> +	    pfnblock_migratetype_equal(pfn + pageblock_nr_pages, end_pfn, mt)) {
+>> +		__free_one_page(page, pfn, zone, order, mt, fpi_flags);
+>> +		return;
+>> +	}
 
-When page cache lands on lower tiers, there is no way for promotion
-to occur unless it becomes memory-mapped and exposed to NUMA hint
-faults.  Just adding a mechanism to promote pages unconditionally,
-however, opens up significant possibility of performance regressions.
+Hi Johannes,
 
-Similar to the `demotion_enabled` sysfs entry, provide a sysfs toggle
-to enable and disable page cache promotion.  This option will enable
-opportunistic promotion of unmapped page cache during syscall access.
+> 
+> Ok, if memory isolation is disabled, we know the migratetypes are all
+> matching up, and we can skip the check. However, if memory isolation
+> is enabled, but this isn't move_freepages_block_isolate() calling, we
+> still do the check unnecessarily and slow down the boot, no?
 
-This option is intended for operational conditions where demoted page
-cache will eventually contain memory which becomes hot - and where
-said memory likely to cause performance issues due to being trapped on
-the lower tier of memory.
+Yes, although it's on most machines one additional pageblock check 
+(x86), on some a bit more (e.g., 3 on s390x).
 
-A Page Cache folio is considered a promotion candidates when:
-  0) tiering and pagecache-promotion are enabled
-  1) the folio reside on a node not in the top tier
-  2) the folio is already marked referenced and active.
-  3) Multiple accesses in (referenced & active) state occur quickly.
+As mentioned:
 
-Since promotion is not safe to execute unconditionally from within
-folio_mark_accessed, we defer promotion to a new task_work captured
-in the task_struct.  This ensures that the task doing the access has
-some hand in promoting pages - even among deduplicated read only files.
+"
+In the future, we might want to assume that all pageblocks are equal if
+zone->nr_isolate_pageblock  == 0; however, that will require some
+zone->nr_isolate_pageblock accounting changes, such that we are
+guaranteed to see zone->nr_isolate_pageblock != 0 when there is an
+isolated pageblock.
+"
 
-We use numa_hint_fault_latency to help identify when a folio is accessed
-multiple times in a short period.  Along with folio flag checks, this
-helps us minimize promoting pages on the first few accesses.
+With that boot time wouldn't suffer in any significant way.
 
-The promotion node is always the local node of the promoting cpu.
+> 
+> Having a function guess the caller is a bit of an anti-pattern. The
+> resulting code is hard to follow, and it's very easy to
+> unintentionally burden some cases with unnecessary stuff. It's better
+> to unshare paths until you don't need conditionals like this.
+ > > In addition to the fastpath, I think you're also punishing the
+> move_freepages_block_isolate() case. We *know* we just changed the
+> type of one of the buddy's blocks, and yet you're still checking the
+> the range again to decide whether to split.
 
-Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- .../ABI/testing/sysfs-kernel-mm-numa          | 20 +++++++
- include/linux/memory-tiers.h                  |  2 +
- include/linux/migrate.h                       |  2 +
- include/linux/sched.h                         |  3 +
- include/linux/sched/numa_balancing.h          |  5 ++
- init/init_task.c                              |  1 +
- kernel/sched/fair.c                           | 26 +++++++-
- mm/memory-tiers.c                             | 27 +++++++++
- mm/migrate.c                                  | 59 +++++++++++++++++++
- mm/swap.c                                     |  3 +
- 10 files changed, 147 insertions(+), 1 deletion(-)
+Yes, that's not ideal, and it would be easy to unshare that case (call 
+the "split" function instead of a "maybe_split" function).
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-numa b/Documentation/ABI/testing/sysfs-kernel-mm-numa
-index 77e559d4ed80..b846e7d80cba 100644
---- a/Documentation/ABI/testing/sysfs-kernel-mm-numa
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-numa
-@@ -22,3 +22,23 @@ Description:	Enable/disable demoting pages during reclaim
- 		the guarantees of cpusets.  This should not be enabled
- 		on systems which need strict cpuset location
- 		guarantees.
-+
-+What:		/sys/kernel/mm/numa/pagecache_promotion_enabled
-+Date:		November 2024
-+Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-+Description:	Enable/disable promoting pages during file access
-+
-+		Page migration during file access is intended for systems
-+		with tiered memory configurations that have significant
-+		unmapped file cache usage. By default, file cache memory
-+		on slower tiers will not be opportunistically promoted by
-+		normal NUMA hint faults, because the system has no way to
-+		track them.  This option enables opportunistic promotion
-+		of pages that are accessed via syscall (e.g. read/write)
-+		if multiple accesses occur in quick succession.
-+
-+		It may move data to a NUMA node that does not fall into
-+		the cpuset of the allocating process which might be
-+		construed to violate the guarantees of cpusets.  This
-+		should not be enabled on systems which need strict cpuset
-+		location guarantees.
-diff --git a/include/linux/memory-tiers.h b/include/linux/memory-tiers.h
-index 0dc0cf2863e2..fa96a67b8996 100644
---- a/include/linux/memory-tiers.h
-+++ b/include/linux/memory-tiers.h
-@@ -37,6 +37,7 @@ struct access_coordinate;
- 
- #ifdef CONFIG_NUMA
- extern bool numa_demotion_enabled;
-+extern bool numa_pagecache_promotion_enabled;
- extern struct memory_dev_type *default_dram_type;
- extern nodemask_t default_dram_nodes;
- struct memory_dev_type *alloc_memory_type(int adistance);
-@@ -76,6 +77,7 @@ static inline bool node_is_toptier(int node)
- #else
- 
- #define numa_demotion_enabled	false
-+#define numa_pagecache_promotion_enabled	false
- #define default_dram_type	NULL
- #define default_dram_nodes	NODE_MASK_NONE
- /*
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 29919faea2f1..cf58a97d4216 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -145,6 +145,7 @@ const struct movable_operations *page_movable_ops(struct page *page)
- int migrate_misplaced_folio_prepare(struct folio *folio,
- 		struct vm_area_struct *vma, int node);
- int migrate_misplaced_folio(struct folio *folio, int node);
-+void promotion_candidate(struct folio *folio);
- #else
- static inline int migrate_misplaced_folio_prepare(struct folio *folio,
- 		struct vm_area_struct *vma, int node)
-@@ -155,6 +156,7 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
- {
- 	return -EAGAIN; /* can't migrate now */
- }
-+static inline void promotion_candidate(struct folio *folio) { }
- #endif /* CONFIG_NUMA_BALANCING */
- 
- #ifdef CONFIG_MIGRATION
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index d380bffee2ef..faa84fb7a756 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1356,6 +1356,9 @@ struct task_struct {
- 	unsigned long			numa_faults_locality[3];
- 
- 	unsigned long			numa_pages_migrated;
-+
-+	struct callback_head		numa_promo_work;
-+	struct list_head		promo_list;
- #endif /* CONFIG_NUMA_BALANCING */
- 
- #ifdef CONFIG_RSEQ
-diff --git a/include/linux/sched/numa_balancing.h b/include/linux/sched/numa_balancing.h
-index 52b22c5c396d..cc7750d754ff 100644
---- a/include/linux/sched/numa_balancing.h
-+++ b/include/linux/sched/numa_balancing.h
-@@ -32,6 +32,7 @@ extern void set_numabalancing_state(bool enabled);
- extern void task_numa_free(struct task_struct *p, bool final);
- bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
- 				int src_nid, int dst_cpu);
-+int numa_hint_fault_latency(struct folio *folio);
- #else
- static inline void task_numa_fault(int last_node, int node, int pages,
- 				   int flags)
-@@ -52,6 +53,10 @@ static inline bool should_numa_migrate_memory(struct task_struct *p,
- {
- 	return true;
- }
-+static inline int numa_hint_fault_latency(struct folio *folio)
-+{
-+	return 0;
-+}
- #endif
- 
- #endif /* _LINUX_SCHED_NUMA_BALANCING_H */
-diff --git a/init/init_task.c b/init/init_task.c
-index e557f622bd90..f831980748c4 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -187,6 +187,7 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
- 	.numa_preferred_nid = NUMA_NO_NODE,
- 	.numa_group	= NULL,
- 	.numa_faults	= NULL,
-+	.promo_list	= LIST_HEAD_INIT(init_task.promo_list),
- #endif
- #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
- 	.kasan_depth	= 1,
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a59ae2e23daf..047f02091773 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -42,6 +42,7 @@
- #include <linux/interrupt.h>
- #include <linux/memory-tiers.h>
- #include <linux/mempolicy.h>
-+#include <linux/migrate.h>
- #include <linux/mutex_api.h>
- #include <linux/profile.h>
- #include <linux/psi.h>
-@@ -1842,7 +1843,7 @@ static bool pgdat_free_space_enough(struct pglist_data *pgdat)
-  * The smaller the hint page fault latency, the higher the possibility
-  * for the page to be hot.
-  */
--static int numa_hint_fault_latency(struct folio *folio)
-+int numa_hint_fault_latency(struct folio *folio)
- {
- 	int last_time, time;
- 
-@@ -3534,6 +3535,27 @@ static void task_numa_work(struct callback_head *work)
- 	}
- }
- 
-+static void task_numa_promotion_work(struct callback_head *work)
-+{
-+	struct task_struct *p = current;
-+	struct list_head *promo_list = &p->promo_list;
-+	struct folio *folio, *tmp;
-+	int nid = numa_node_id();
-+
-+	SCHED_WARN_ON(p != container_of(work, struct task_struct, numa_promo_work));
-+
-+	work->next = work;
-+
-+	if (list_empty(promo_list))
-+		return;
-+
-+	list_for_each_entry_safe(folio, tmp, promo_list, lru) {
-+		list_del_init(&folio->lru);
-+		migrate_misplaced_folio(folio, nid);
-+	}
-+}
-+
-+
- void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
- {
- 	int mm_users = 0;
-@@ -3558,8 +3580,10 @@ void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
- 	RCU_INIT_POINTER(p->numa_group, NULL);
- 	p->last_task_numa_placement	= 0;
- 	p->last_sum_exec_runtime	= 0;
-+	INIT_LIST_HEAD(&p->promo_list);
- 
- 	init_task_work(&p->numa_work, task_numa_work);
-+	init_task_work(&p->numa_promo_work, task_numa_promotion_work);
- 
- 	/* New address space, reset the preferred nid */
- 	if (!(clone_flags & CLONE_VM)) {
-diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-index fc14fe53e9b7..4c44598e485e 100644
---- a/mm/memory-tiers.c
-+++ b/mm/memory-tiers.c
-@@ -935,6 +935,7 @@ static int __init memory_tier_init(void)
- subsys_initcall(memory_tier_init);
- 
- bool numa_demotion_enabled = false;
-+bool numa_pagecache_promotion_enabled;
- 
- #ifdef CONFIG_MIGRATION
- #ifdef CONFIG_SYSFS
-@@ -957,11 +958,37 @@ static ssize_t demotion_enabled_store(struct kobject *kobj,
- 	return count;
- }
- 
-+static ssize_t pagecache_promotion_enabled_show(struct kobject *kobj,
-+						struct kobj_attribute *attr,
-+						char *buf)
-+{
-+	return sysfs_emit(buf, "%s\n",
-+			  numa_pagecache_promotion_enabled ? "true" : "false");
-+}
-+
-+static ssize_t pagecache_promotion_enabled_store(struct kobject *kobj,
-+						 struct kobj_attribute *attr,
-+						 const char *buf, size_t count)
-+{
-+	ssize_t ret;
-+
-+	ret = kstrtobool(buf, &numa_pagecache_promotion_enabled);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+
- static struct kobj_attribute numa_demotion_enabled_attr =
- 	__ATTR_RW(demotion_enabled);
- 
-+static struct kobj_attribute numa_pagecache_promotion_enabled_attr =
-+	__ATTR_RW(pagecache_promotion_enabled);
-+
- static struct attribute *numa_attrs[] = {
- 	&numa_demotion_enabled_attr.attr,
-+	&numa_pagecache_promotion_enabled_attr.attr,
- 	NULL,
- };
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index af07b399060b..320258a1aaba 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -44,6 +44,8 @@
- #include <linux/sched/sysctl.h>
- #include <linux/memory-tiers.h>
- #include <linux/pagewalk.h>
-+#include <linux/sched/numa_balancing.h>
-+#include <linux/task_work.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -2710,5 +2712,62 @@ int migrate_misplaced_folio(struct folio *folio, int node)
- 	BUG_ON(!list_empty(&migratepages));
- 	return nr_remaining ? -EAGAIN : 0;
- }
-+
-+/**
-+ * promotion_candidate() - report a promotion candidate folio
-+ *
-+ * @folio: The folio reported as a candidate
-+ *
-+ * Records folio access time and places the folio on the task promotion list
-+ * if access time is less than the threshold. The folio will be isolated from
-+ * LRU if selected, and task_work will putback the folio on promotion failure.
-+ *
-+ * If selected, takes a folio reference to be released in task work.
-+ */
-+void promotion_candidate(struct folio *folio)
-+{
-+	struct task_struct *task = current;
-+	struct list_head *promo_list = &task->promo_list;
-+	struct callback_head *work = &task->numa_promo_work;
-+	struct address_space *mapping = folio_mapping(folio);
-+	bool write = mapping ? mapping->gfp_mask & __GFP_WRITE : false;
-+	int nid = folio_nid(folio);
-+	int flags, last_cpupid;
-+
-+	/*
-+	 * Only do this work if:
-+	 *     1) tiering and pagecache promotion are enabled
-+	 *     2) the page can actually be promoted
-+	 *     3) The hint-fault latency is relatively hot
-+	 *     4) the folio is not already isolated
-+	 *     5) This is not a kernel thread context
-+	 */
-+	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
-+	    !numa_pagecache_promotion_enabled ||
-+	    node_is_toptier(nid) ||
-+	    numa_hint_fault_latency(folio) >= PAGE_ACCESS_TIME_MASK ||
-+	    folio_test_isolated(folio) ||
-+	    (current->flags & PF_KTHREAD)) {
-+		return;
-+	}
-+
-+	nid = numa_migrate_check(folio, NULL, 0, &flags, write, &last_cpupid);
-+	if (nid == NUMA_NO_NODE)
-+		return;
-+
-+	if (migrate_misplaced_folio_prepare(folio, NULL, nid))
-+		return;
-+
-+	/*
-+	 * Ensure task can schedule work, otherwise we'll leak folios.
-+	 * If the list is not empty, task work has already been scheduled.
-+	 */
-+	if (list_empty(promo_list) && task_work_add(task, work, TWA_RESUME)) {
-+		folio_putback_lru(folio);
-+		return;
-+	}
-+	list_add(&folio->lru, promo_list);
-+}
-+EXPORT_SYMBOL(promotion_candidate);
- #endif /* CONFIG_NUMA_BALANCING */
- #endif /* CONFIG_NUMA */
-diff --git a/mm/swap.c b/mm/swap.c
-index 320b959b74c6..57909c349388 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -37,6 +37,7 @@
- #include <linux/page_idle.h>
- #include <linux/local_lock.h>
- #include <linux/buffer_head.h>
-+#include <linux/migrate.h>
- 
- #include "internal.h"
- 
-@@ -469,6 +470,8 @@ void folio_mark_accessed(struct folio *folio)
- 			__lru_cache_activate_folio(folio);
- 		folio_clear_referenced(folio);
- 		workingset_activation(folio);
-+	} else {
-+		promotion_candidate(folio);
- 	}
- 	if (folio_test_idle(folio))
- 		folio_clear_idle(folio);
+I am not 100% sure though, if move_freepages_block_isolate() can always 
+decide "I really have a mixture", but that code is simply quite advanced :)
+
+> 
+> All of this to accomodate hugetlb, which might not even be compiled
+> in? Grrrr.
+
+Jup. But at the same time, it's frequently compiled in but never used 
+(or barely used; I mean, how often do people actually free 1Gig hugetlb 
+pages compared to ordinary pages).
+
+> 
+> Like you, I was quite surprised to see that GFP_COMP patch in the
+> buddy hotpath splitting *everything* into blocks - on the offchance
+> that somebody might free a hugetlb page. Even if !CONFIG_HUGETLB. Just
+> - what the hell. We shouldn't merge "I only care about my niche
+> usecase at the expense of literally everybody else" patches like this.
+
+After talking to Willy, the whole _GFP_COMP stuff might get removed 
+sooner or later again once we hand out frozen refcount in 
+alloc_contig_range(). It might take a while, though.
+
+> 
+> My vote is NAK on this patch, and a retro-NAK on the GFP_COMP patch.
+
+I won't fight for this patch *if* the GFP_COMP patch gets reverted. It 
+improves the situation, which can be improved further.
+
+But if it doesn't get reverted, we have to think about something else.
+
+> 
+> The buddy allocator operates on the assumption of MAX_PAGE_ORDER. If
+> we support folios of a larger size sourced from other allocators, then
+> it should be the folio layer discriminating. So if folio_put() detects
+> this is a massive alloc_contig chunk, then it should take a different
+> freeing path. Do the splitting in there, then pass valid chunks back
+> to the buddy. That would keep the layering cleaner and the cornercase
+> overhead out of the allocator fastpath.
+
+That might be better, although not that completely trivial I assume.
+
+How to handle the "MAX_PAGE_ORDER page is getting freed but one 
+pageblock is isolated" case cleanly is a bit of a head scratcher, at 
+least to me. But I suspect we had it fullt working before the GFF_COMP 
+patch.
+
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
