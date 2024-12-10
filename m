@@ -1,179 +1,102 @@
-Return-Path: <linux-kernel+bounces-439755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0EA9EB394
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:38:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880EC9EB396
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:39:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05496281CA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34BD3281B13
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EB31B4222;
-	Tue, 10 Dec 2024 14:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECFD1AF0D3;
+	Tue, 10 Dec 2024 14:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vo4pWOiW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GeAMpIsL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9151A704C;
-	Tue, 10 Dec 2024 14:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7EE1A2C0B;
+	Tue, 10 Dec 2024 14:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841525; cv=none; b=AjXBET5FtY22whkRCQYAb1UvmOu3pAboGM9hoQnFRo1MeFFmMGvhAfLvre7sUgiQzXSPN7EoWHF5Yws/L7lstnKNj5mt/dNZ10CZInHuGRuAdCdZQVvJf1CtTdBpOKMflNayvN6XupajPcUiaIG+XVyVT2s4sDAr4Kdt/IIvvjU=
+	t=1733841564; cv=none; b=SCIC40IlNocvGW4TIpSATluztGEJ/E+18B8keO4AC+PCcayfYSWxphBru9I+56hG4qae0wx/nyov6++EB1qoJYaiBfE8nZ6htmXD0meH2sxCtSzJtpB7ylqEmmeQQeS7wTEUa4j5Cb7/YAamkAS8elwYnKZMPPdiMhkUfFiZ7RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841525; c=relaxed/simple;
-	bh=4ptCUxlg3CS8R0UKDc4pEafLSFTcKyhRiAR5SRLDvcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FIEs2ejJATF/dRRf7zMgigUCgS1BXI7tckCz4bjuYOFrZGXY96gmhx+uedM5RqFAfHirjNEPiB/EPOHHdtTQYwJ4EWZGqTIcjPjrI2zVzLD3Jfefudc3TgHgoPYTdRe2t1/QUcg2OgzSrIHT96hqoAB9vD6iNWY4CJ59ozJk8vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vo4pWOiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF30C4CED6;
-	Tue, 10 Dec 2024 14:38:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733841525;
-	bh=4ptCUxlg3CS8R0UKDc4pEafLSFTcKyhRiAR5SRLDvcA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Vo4pWOiWSMnqeNGo33PfVZJSLxQ0uefa7VrHqCv3pinOTN79UdAMNguDjN1Be9anB
-	 xgDV0/TEQn7g1IAGJNnl76QyCIHStyd8afga31/p+OGduaGNkBcjKRDPtNvhzq+8C6
-	 TR2GlFFB8HRkMyZ2qUI15VOdOO8hSpX/skTlbtKGVW8ncAVWK0JIL8W1bUAwmbWT05
-	 OSPRA1s/CUITQBqwot8FhO1fcvDyDiGB75WvqY7tetI7MjaqU78EJzDACJzf9P1SJB
-	 G6qwEhheQK2T8qqWAZgBNsu+qjgdoWfDsAG4fHGsQWCa42fwSNWekzOXobcoVZk5r6
-	 u0lObBPlWWlrQ==
-Message-ID: <68d1490a-ba67-480b-943f-afa56e5b8436@kernel.org>
-Date: Tue, 10 Dec 2024 15:38:38 +0100
+	s=arc-20240116; t=1733841564; c=relaxed/simple;
+	bh=K9lzVfeajj0MtskWSsICrfUKtI4Y0SFpgZjQtp5yZhw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EczL8G0byOo2HjSyiMxHUT53MWL3Ianw8ad62JB6ZuzgxDE8gjKVt5vNbArqTkciW2l0mVMrbJXPVOnJryjxFS88c80ozKIROwgK3C1vuD0Z2SxErf3fqCqkkimAGgJkEr7ziBVI0lFn1gIueX913ehPUaqKlTPU/V99Gm2n0Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GeAMpIsL; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733841563; x=1765377563;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=K9lzVfeajj0MtskWSsICrfUKtI4Y0SFpgZjQtp5yZhw=;
+  b=GeAMpIsLcso66uZnLDB66Laz0I0aa/1KRYDDbPNFdEz72CutEMzsCsgy
+   S9I6Jp1rYihjLjh/6dXZ/bB75ZSr1ExBFL/pDPwgW3JjrLImbg2cFWnjd
+   ++VwkMUfbGmuBQAh42Ff36LklUnryIRcSeE0lxEXwmf3AY2L/etxSAoZW
+   iW1axb3vE5ScR3CppbNQLMEiUYFZAunlm+8mlJ0lJ+jXEHO0xuIFQOEIh
+   rA2u5A76ipO8NAJxNhGQqIC+wkmhkSLNQB0iSVJP1XwLfmucBv1PvLxTR
+   jHoCyuusw70py8f0tHuC/DFDGvVqCSTzezkxO7ClhJ92sxGRx6b9N20CT
+   g==;
+X-CSE-ConnectionGUID: m7cK4G3BRKO9hjh0b2nMTw==
+X-CSE-MsgGUID: AR0mEz9IQ9GmVMUCpt3UCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="33917560"
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="33917560"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 06:39:23 -0800
+X-CSE-ConnectionGUID: wWBmzMXhQfeF2Ai7KVE2DQ==
+X-CSE-MsgGUID: 8KKosOuiSJGtNDFfmhoAIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="95262480"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 06:39:20 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: platform-driver-x86@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>
+Cc: Dell.Client.Kernel@dell.com, hdegoede@redhat.com, 
+ linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241208002652.5885-4-kuurtb@gmail.com>
+References: <20241208002652.5885-4-kuurtb@gmail.com>
+Subject: Re: [PATCH v2 1/2] alienware-wmi: Fix X Series and G Series quirks
+Message-Id: <173384155548.12053.6491077559044408958.b4-ty@linux.intel.com>
+Date: Tue, 10 Dec 2024 16:39:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] mfd: Add core driver for Nuvoton NCT6694
-To: Ming Yu <a0282524688@gmail.com>, tmyu0@nuvoton.com, lee@kernel.org,
- linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
- mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
- jdelvare@suse.com, alexandre.belloni@bootlin.com
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org
-References: <20241210104524.2466586-1-tmyu0@nuvoton.com>
- <20241210104524.2466586-2-tmyu0@nuvoton.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241210104524.2466586-2-tmyu0@nuvoton.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 10/12/2024 11:45, Ming Yu wrote:
-> +	nct6694->int_buffer = devm_kcalloc(dev, NCT6694_MAX_PACKET_SZ,
-> +					   sizeof(unsigned char), GFP_KERNEL);
-> +	if (!nct6694->int_buffer)
-> +		return -ENOMEM;
-> +
-> +	nct6694->int_in_urb = usb_alloc_urb(0, GFP_KERNEL);
-> +	if (!nct6694->int_in_urb)
-> +		return -ENOMEM;
-> +
-> +	nct6694->domain = irq_domain_add_simple(NULL, NCT6694_NR_IRQS, 0,
-> +						&nct6694_irq_domain_ops,
-> +						nct6694);
-> +	if (!nct6694->domain)
-> +		return -ENODEV;
-> +
-> +	nct6694->udev = udev;
-> +	nct6694->timeout = NCT6694_URB_TIMEOUT;	/* Wait until urb complete */
-> +	nct6694->cmd_header = cmd_header;
-> +	nct6694->response_header = response_header;
-> +
-> +	mutex_init(&nct6694->access_lock);
-> +	mutex_init(&nct6694->irq_lock);
-> +
-> +	usb_fill_int_urb(nct6694->int_in_urb, udev, pipe,
-> +			 nct6694->int_buffer, maxp, usb_int_callback,
-> +			 nct6694, int_endpoint->bInterval);
-> +	ret = usb_submit_urb(nct6694->int_in_urb, GFP_KERNEL);
-> +	if (ret)
-> +		goto err_urb;
-> +
-> +	dev_set_drvdata(dev, nct6694);
-> +	usb_set_intfdata(iface, nct6694);
-> +
-> +	ret = mfd_add_hotplug_devices(dev, nct6694_dev, ARRAY_SIZE(nct6694_dev));
-> +	if (ret)
-> +		goto err_mfd;
-> +
-> +	dev_info(dev, "Probed device: (%04X:%04X)\n", id->idVendor, id->idProduct);
+On Sat, 07 Dec 2024 21:26:55 -0300, Kurt Borja wrote:
 
-Drop. Duplicating existing messages and interfaces. Your driver is
-supposed to be silent on success.
-
-> +	return 0;
-> +
-> +err_mfd:
-> +	usb_kill_urb(nct6694->int_in_urb);
-> +err_urb:
-> +	usb_free_urb(nct6694->int_in_urb);
-> +	return dev_err_probe(dev, ret, "Probe failed\n");
-
-No, this should go to individual call causing errors so this will be
-informative. Above is not informative at all and kernel already reports
-this, so drop.
-
-> +}
-> +
-> +static void nct6694_usb_disconnect(struct usb_interface *iface)
-> +{
-> +	struct usb_device *udev = interface_to_usbdev(iface);
-> +	struct nct6694 *nct6694 = usb_get_intfdata(iface);
+> Devices that are known to support the WMI thermal interface do not
+> support the legacy LED control interface. Make `.num_zones = 0` and
+> avoid calling alienware_zone_init() if that's the case.
+> 
+> 
 
 
-Best regards,
-Krzysztof
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/2] alienware-wmi: Fix X Series and G Series quirks
+      commit: c1043cdb019ed4d053d673e62b553a5cea1a287d
+[2/2] alienware-wmi: Adds support to Alienware m16 R1 AMD
+      commit: 54a8cada2f3d7efb4a7920807473d89c442d9c45
+
+--
+ i.
+
 
