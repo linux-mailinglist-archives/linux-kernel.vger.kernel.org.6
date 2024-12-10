@@ -1,118 +1,191 @@
-Return-Path: <linux-kernel+bounces-440081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FB79EB87D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:46:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0459EB889
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:46:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D6128292C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB07F1888EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEB219D08F;
-	Tue, 10 Dec 2024 17:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1172D8634A;
+	Tue, 10 Dec 2024 17:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ognOlJet"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hAAHvP4s"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB8123ED5F;
-	Tue, 10 Dec 2024 17:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733852755; cv=none; b=kZ81Pd8rrtjekbbJqm2txKvZY1AnO2WhZb/SiKNf0B7oRL4Ojh/f33Ba53vmI1IX4f/67KVKo82L3YinBa38laKPQaLfhOpxbnjFzZVLiv642ThnCm6Qrm59jWD+61mUbMwsIU1lTAqH3fjSg57PaTs1c1nC0mjDz1rDvoiPLW4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733852755; c=relaxed/simple;
-	bh=K9ZrrKRWQQIVbr41pbEtdsc8zyftS5P/tSVoHmQ3x80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K7EgAnAfYQz2a56lkou4TEpRDyOyVlwSx0WYJ5ci/iWLoyl8tM+lhEmNWI0Pli+Ka3iGITfHVOxTy69Z9f5MRjDp4X6yhkzVuRw9BMkFmfDL23D6GR5pWbs8YLIJ+sysmLBhqcDdB19KQBJybRw+1xJNoRBLIc0u85FRFH7J0qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ognOlJet; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC0E4C4CEE1;
-	Tue, 10 Dec 2024 17:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733852754;
-	bh=K9ZrrKRWQQIVbr41pbEtdsc8zyftS5P/tSVoHmQ3x80=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ognOlJetmLcdW6ulR/hod0BdErAwMo4jMErwozSH4sU7YpC9UDbyNVFErFih0jZdB
-	 ZRLep/YTBAbBExrZ8nfkJz1SusX7jpNRXwlES1RQnutsYNB22esZkLozJKbIMxtc1S
-	 VLltXSOJWcT6JVDT4BghH46HFOM+7uL4b3VRpxCRrBPmkgqXPGpETvFihPcfudpsRC
-	 343phtdFVIC50QW1pyodf5AxD/J6Gv1Pt1AdzkDwsub9BuLccJu0djJe3TaTvXKLfU
-	 YfYRYc1XYdZ0S99hv0Q0tnwN8mmpZLRq9njw+k6YUa/MLns82AE2490ZDVm52gw0Lw
-	 kcfMEEdBbuEsw==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5f2ba68b40aso942047eaf.1;
-        Tue, 10 Dec 2024 09:45:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW7dAfEV2/jjP/g4EzV61TLoWnmgwKa7rnupVDOQTuw7UQF9dklzQgRWC6+iNHdTh78TE1pEPcimj2EijYm@vger.kernel.org, AJvYcCWsyeiHVSXmhN9i1Fej8bzENp6zxmXzfwIrW3xZZUb/715L4YYNoi4SXcvtlGR9zbqV91FHwUiPykOt@vger.kernel.org, AJvYcCXtvt6qDrnhGXMA626LFcmH8KHd8w0+vB1JUyDiPbQj9iz7xJfFblWzlJ7Ef6yVOrgsKw2CHfCiN/zo@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpnn+eR1mrd8wnCePMJitxFniSvGs3G1dwNdRzfc9G9raFq3ts
-	gLtAlI3rnAA2VHGwmssHFKS1dtlRCAiYkA+Y2Pa8rXNRrAztH2ENtgG2td3FEfByJleAS8j8nSl
-	JW+jIyRV3zpRuyQDGptfUOg6wzrs=
-X-Google-Smtp-Source: AGHT+IFyxz3jwxWIkraPx/cZ2fyAWUZZMaIjXnLEJxqqneT1f6/XDyBa3sK2NBPcDXcB4NesMWxLvSqdt6SOkoJaNnQ=
-X-Received: by 2002:a05:6820:199b:b0:5eb:d1ac:21e5 with SMTP id
- 006d021491bc7-5f286b47c8fmr12663379eaf.0.1733852753950; Tue, 10 Dec 2024
- 09:45:53 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B6086329;
+	Tue, 10 Dec 2024 17:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733852780; cv=fail; b=fjlBXBVcKqe+/5F9+4paVmb+xY782AEfYa3JgNw6cDMLqd9blvmuuqqJZQIC6l0EApj4fZy1tx/NsmuiWk29P5bgrvx9DOeOzmQKCnycnswbZgrUO6G3Gq3TVKCmRA41KRlFqikBaPmUY3pji+/QlAJMdXuA5U5+5z41XVPjCcs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733852780; c=relaxed/simple;
+	bh=tIPCxTX2V+IDr8fbh4Sw9GmPI09iT299/z3A0F0ZyEc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fBLX1RP+ra/kwoSGA389NA8QwTUR1yYEhocbgslbge6WKow7rHqG1G4TB6bH8sSgpguXiYZwadlg3hSD5ECiKJgJiPxaMuBPVBPwb9AJUdBIXcajMTzv39TOPlPzswFTq/K1SoJEzg/b/s+7EBALLGhjgJ8/Y05sNvsdicj24jA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hAAHvP4s; arc=fail smtp.client-ip=40.107.92.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hDu86M3DSan61pnqxav4uiMh7WgH1iCO6Gm6c0AGrxBj8/3Wn9DudCvSqf2698C7/CedMTYdtFqDoYt6fdKRHMbj6QJR3yPBv8Kl+8YsXOaB7aF0pm94oBjTfRgI6sft8OMRdQQfAKQcRdooGE97ztYor0tOH08m3bQWwL+TBMk6qlK6pX8Ig2gKhATn5toSPdQfCoPYyWiUjizKQ2w+ijGZ8Dajct23b0RnsgtFed15EZliMtD98iHsF7EUR5i/Wsan3xS38NLrXlpaK3ukH68QusBNhhOdaAzYesVGscOWHYwdnKExTGhUJxBxun+TGOBgmYKXPKcKr6eoAHr1oQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/7TyIOfS5xTmcAqOqxV1VvowkfL/GE2I/pYlSGYQGfE=;
+ b=VGhPjIezgCEoorRsfo3f2KHLnuHGTo6mMU4CClVZ+/c+WICU5mQYSlhiTAHQi+paKdvD7HEEd32f+/lMXTTTXxizsvRTZN2hDNdeyuylHPRi6FSaKLzYYXE9MK0EAcpXxFqAq1Ca+KsNygrw26sbOzgyZFQ/CgGPGgU7069DEC54RiKmbMntcSBXmalxzCpFWFX7hZItHvUaqbGTMM8Hhaxw84oA24OOvmo6JMbPlcozgal67OM4PDwGJDjb3RXw+e+O22C+pfdWVtXN0JF9jNEeRrCuS0x11PXZmL1cz9VwCdx2QHo9dCnXcPVugavi5467oUsGU9GN3skXiE8Fvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/7TyIOfS5xTmcAqOqxV1VvowkfL/GE2I/pYlSGYQGfE=;
+ b=hAAHvP4s4GlT1FrFPKIpsSShN90SLOl2QD/IdXpUAyt0mfTYvcpNTKVQNHn81S7PB3m33REFqgLDhxwf/tHhdk+ZgDCb+l1hDzEQrM4Cx/Y9ljJZdROy9qyOVRNhc51w24uoor9V1ZIIt5lfHaUe5vF0WPIiOU0YIH39MeGNMFLoKGxM3I1sQee+9Mk7y2WD17xnvm9V7aQohP1nq/NyNa5lTpU/bQJOOV+g4MtgyZajfgy7Hl2KXFrKwXL3Kdk4MC/P621u2WXJsyFYSXFWuQOVeDMsWzSp4JusudHDxv2vXzEWzOnXh0MhQTEeJH2wqv4KgxfBhNn7OUXYkRevSg==
+Received: from BLAPR03CA0177.namprd03.prod.outlook.com (2603:10b6:208:32f::30)
+ by PH7PR12MB5594.namprd12.prod.outlook.com (2603:10b6:510:134::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
+ 2024 17:46:13 +0000
+Received: from MN1PEPF0000ECDB.namprd02.prod.outlook.com
+ (2603:10b6:208:32f:cafe::f8) by BLAPR03CA0177.outlook.office365.com
+ (2603:10b6:208:32f::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.13 via Frontend Transport; Tue,
+ 10 Dec 2024 17:46:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MN1PEPF0000ECDB.mail.protection.outlook.com (10.167.242.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8230.7 via Frontend Transport; Tue, 10 Dec 2024 17:46:12 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 10 Dec
+ 2024 09:45:56 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 10 Dec 2024 09:45:56 -0800
+Received: from thinkpad-t480.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 10 Dec 2024 09:45:55 -0800
+From: Johnny Liu <johnliu@nvidia.com>
+To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<skomatineni@nvidia.com>, <luca.ceresoli@bootlin.com>,
+	<mperttunen@nvidia.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Johnny Liu <johnliu@nvidia.com>
+Subject: [PATCH v1 0/5] Support host1x actmon
+Date: Tue, 10 Dec 2024 09:45:49 -0800
+Message-ID: <20241210174554.18869-1-johnliu@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114030424.45074-1-zhoushengqing@ttyinfo.com>
-In-Reply-To: <20241114030424.45074-1-zhoushengqing@ttyinfo.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 18:45:43 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iWiY5B0J988uFD2GK7v8ixTnaYnr8hpCRZ2oJ40HK7hg@mail.gmail.com>
-Message-ID: <CAJZ5v0iWiY5B0J988uFD2GK7v8ixTnaYnr8hpCRZ2oJ40HK7hg@mail.gmail.com>
-Subject: Re: [PATCHv2] PCI/ACPI: _DSM PRESERVE_BOOT_CONFIG function rev id
- doesn't match with spec.
-To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECDB:EE_|PH7PR12MB5594:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c56ee1b-c8c2-486f-7630-08dd194289fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZF0pS2P8vn/6t3tc1JWSKQDzSbn2pRAatAOGhTlLQxUg1M8GvpbxpgpNTC8J?=
+ =?us-ascii?Q?GBLQ6Yxc5QXUt/MOSvqcvJYlNRNCHbHtXxrV1NcBzeDhlUfGWJ9WmUICXn3a?=
+ =?us-ascii?Q?on5Ki3f51b9LyrgWMR0VB4lfjf827KSXntuwBO0x2hMJaPaLG8sbM/xDBmJR?=
+ =?us-ascii?Q?pnWzoX/sUS2UYw/slSgXSxBBcLWqQqnbqKfCHzPzTlxLc8wDZMvj6kLps00O?=
+ =?us-ascii?Q?CdpR0I8LjDngzAoFbsyi53Eiuv/XeH6giMyJWEXWKeSv/1OoQfdjHQKn30my?=
+ =?us-ascii?Q?+rCnRFU8TkhBjHvU72S+Iw5blFNEPAJ1gXLMHrnbiSWXIVvm5Ft/BUuuewrY?=
+ =?us-ascii?Q?enUFXBjOjvPzGxgd0Jly7iyru8rPfb6Wub95GXrKu2hEHjADtWgkxLKTOKV6?=
+ =?us-ascii?Q?ulyVaGLCA6dts52XyVC0wtvOWes76ER6GUbbMXd0pGPq3cGmeLeoycqXjX9R?=
+ =?us-ascii?Q?gLujrM9PBh9bT+pEm/BOg7Dr+YzmfWndNtYifKvWLvVE9pDDSnnk8HrZP33G?=
+ =?us-ascii?Q?/7Yyui3HKvrLlD+Zt9V4DazdzMfndsMBP0QPYUqanmO9go4NUTbWphj2rb78?=
+ =?us-ascii?Q?9qcNULFylo+q/yrSActnxsGejNM/UQ2HIJkCH8bBQu5RP4O5Z4VSz6RfREvz?=
+ =?us-ascii?Q?tjDDYZcnMc8qPCM4g/+49DTDEgIvBAjUzHq5XDGbKxoVNC/CzJpfrKRVNOj9?=
+ =?us-ascii?Q?f8CUxDfRoHkwrkWj0zY7RZqBG0rA3cPLIEixWd3P8yhG1DWGGeMwNED4kobV?=
+ =?us-ascii?Q?EZAHrd6dUBbbbYFhpL6ry85F8GVeQ5qSejm+dqYlFkcLKuEVQKx5ZKG6g0DL?=
+ =?us-ascii?Q?6+rgdtuyv9ILXHg/03P/kdReokQxBkjMlW1dDdlQETyCETnAv40i2Eau4teY?=
+ =?us-ascii?Q?T0bW4D89N8qfh9zirQtQtTNXLbomwPPIlrd1armXNP7wR45QJjKhk8Jx/JNj?=
+ =?us-ascii?Q?ktdrE8em59+2zEQUU5WcDP7pptgAiJ6SLRAOw7pGLj0BX7NqEvguWhP+8Szc?=
+ =?us-ascii?Q?OLD8Y6GV0W4J/XllgyrgcYNx5jUdqVFFwYqYDzyz+e6b9PlXf5Pk8gKlFvGC?=
+ =?us-ascii?Q?I6zlaSTgKPne4RLdbPadf4zhoaC+oown3po+P1p6RqQBpBhLi0lBPmhkLo93?=
+ =?us-ascii?Q?JcanGrLQJFaBKDBBb3otivTU6969D6h3JLmX3EogeSbvP+TvyHILCp2j/eM9?=
+ =?us-ascii?Q?nqWcyjhCDwu5sU1N3HleKL479UMLnxpJtWqOZs/0Znk0g9Uo71xD85uLc8rp?=
+ =?us-ascii?Q?M6lTwe4I4jueTDEMkXcgTAtAGW8wa1qmR333lZOa4vFmvQaqlF2TOPFFX7PK?=
+ =?us-ascii?Q?LQ4U+Ear/Au/A2D6Tq/wgBQRN5hY+if9xNWyXsJcTEuqQw5Qrpowyt66qhVR?=
+ =?us-ascii?Q?I4qvCVCxvl7siLUijFZXdS8oHFp1Uw9TlKrxZu2Z4Z29es7i0PF2wT2lQc22?=
+ =?us-ascii?Q?gWXUpwMLIjfPPh77wnhbkrvf324t7ObW?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 17:46:12.8228
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c56ee1b-c8c2-486f-7630-08dd194289fd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECDB.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5594
 
-The period at the end of the subject doesn't match the common practice.
+Activity monitoring (actmon for short) is a means to dynamically
+measure the utilization of units in the system to help drive software
+power management policies.
 
-On Thu, Nov 14, 2024 at 4:05=E2=80=AFAM Zhou Shengqing
-<zhoushengqing@ttyinfo.com> wrote:
->
-> Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
-> for PCI. Preserve PCI Boot Configuration Initial Revision ID is 2. But
-> the code is 1.
->
-> v2:add Fixes tag.
->
-> Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to p=
-ci_register_host_bridge()")
-> Origin fixes: a78cf9657ba5 ("PCI/ACPI: Evaluate PCI Boot Configuration _D=
-SM")
+In Tegra, Dynamic Voltage and Frequency Scaling (DVFS) is the primary
+dynamic power management mechanism. It uses utilization information
+from various units to select the most efficient frequency and thereby,
+voltage that the unit should operate while providing the requisite
+performance.
 
-What does this mean?
+Johnny Liu (5):
+  dt-bindings: display: tegra: Add actmon information
+  arm64: tegra: Add actmon information
+  gpu: host1x: Support device monitoring with actmon
+  drm/tegra: nvdec: Register the device with actmon
+  drm/tegra: vic: Register the device with actmon
 
->
-> Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-> ---
->  drivers/pci/pci-acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index af370628e583..7a4cad0c1f00 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -132,7 +132,7 @@ bool pci_acpi_preserve_config(struct pci_host_bridge =
-*host_bridge)
->                  */
->                 obj =3D acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge-=
->dev),
->                                               &pci_acpi_dsm_guid,
-> -                                             1, DSM_PCI_PRESERVE_BOOT_CO=
-NFIG,
-> +                                             2, DSM_PCI_PRESERVE_BOOT_CO=
-NFIG,
->                                               NULL, ACPI_TYPE_INTEGER);
->                 if (obj && obj->integer.value =3D=3D 0)
->                         return true;
-> --
+ .../display/tegra/nvidia,tegra20-host1x.yaml  |  45 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  10 +-
+ drivers/gpu/drm/tegra/nvdec.c                 |  82 ++-
+ drivers/gpu/drm/tegra/vic.c                   |  39 +-
+ drivers/gpu/drm/tegra/vic.h                   |   9 +
+ drivers/gpu/host1x/Makefile                   |   1 +
+ drivers/gpu/host1x/actmon.c                   | 558 ++++++++++++++++++
+ drivers/gpu/host1x/actmon.h                   |  46 ++
+ drivers/gpu/host1x/dev.c                      |  71 ++-
+ drivers/gpu/host1x/dev.h                      |  59 +-
+ drivers/gpu/host1x/hw/actmon.h                |  49 ++
+ drivers/gpu/host1x/hw/host1x08.c              |   6 +-
+ drivers/gpu/host1x/hw/hw_host1x08_common.h    |  16 +-
+ drivers/gpu/host1x/hw/intr_general_hw.c       |  83 +++
+ include/linux/host1x.h                        |  30 +-
+ 15 files changed, 1075 insertions(+), 29 deletions(-)
+ create mode 100644 drivers/gpu/host1x/actmon.c
+ create mode 100644 drivers/gpu/host1x/actmon.h
+ create mode 100644 drivers/gpu/host1x/hw/actmon.h
+ create mode 100644 drivers/gpu/host1x/hw/intr_general_hw.c
 
-This looks like a genuine fix, but I think it is PCI material.
+-- 
+2.34.1
+
 
