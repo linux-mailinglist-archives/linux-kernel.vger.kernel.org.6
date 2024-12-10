@@ -1,203 +1,133 @@
-Return-Path: <linux-kernel+bounces-439987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E299EB729
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:53:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA9F29EB72B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:53:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054C3188350B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAB728325D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C931723872F;
-	Tue, 10 Dec 2024 16:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05006230D2C;
+	Tue, 10 Dec 2024 16:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RRdDX4sV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TFGrJV/q";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RRdDX4sV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TFGrJV/q"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujJozhiH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511AF2343CF;
-	Tue, 10 Dec 2024 16:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672E422FE1E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849538; cv=none; b=BAl76jn3sCwhnok8qDQ5+cz6/r+zq7KVKdveN4q/uaU9NgZr3G7z3McPnusx4kkejl4CHaKS1aMLuDQsZ5dgbyvwlmQJ0bwClnMbh4C9u/xUs5nOdRw8LhvO2h4C7PGNqNoi8Rr2XvDql5sKILRZcnq++fr5v7wZJmlHJ5/rRfY=
+	t=1733849578; cv=none; b=SdpJwQdCikA77A9safT0tvmnf1iEF/MC4T2yGjzf7zm0z2Wiao5RPSJEXx/d2xLYIYdhGqpBUsaBQEvamEn6zkk4+4B1geoe6gmJltyF3jmwsB1zO+lgal1HdpFnWqjGdk2rppj8sAkmSDAq+tmYlq/ZpcvgIhf8BGRLYUi2F3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849538; c=relaxed/simple;
-	bh=F768FKvg7FF4b66UZ/Q7WEOc2p7Zd5GIQR2lUzGMMtE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G9+TjuwpqV0RUha+2Jv4z6gBwqVMA6ynVDn76ARPNZ8ZA3/CquAInHAY2fPeG55jLsTIjI8yOejlD75LzbGqrlGKRGzKcOm0IgzcyKDT9G68i+yS+TTeAgHdnngH6Qt8RrDKTbffWYNcWWQ/AhDxrgsuJ5bW1kHJbJWh4l9gXKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RRdDX4sV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TFGrJV/q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RRdDX4sV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TFGrJV/q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 786C31F396;
-	Tue, 10 Dec 2024 16:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733849534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/aIP4i4jvUV/G+qzhtRhmfq3gIeQW3kA9mI6aymWOb0=;
-	b=RRdDX4sVHqwXSpZmO5qyaLk+OT0prHhbpm2RuVO3tADPrjjC51flgdy0bBMhilMgSqfKc4
-	Dv+yE6TghAluhsMrjkHgGNWID+PoJ/WHqwfFkxouFBh0COAXQtRzDSLaPKulw82QS7hBhP
-	+JNegq3x34VwLUziHLi3yWibLzKHsDM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733849534;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/aIP4i4jvUV/G+qzhtRhmfq3gIeQW3kA9mI6aymWOb0=;
-	b=TFGrJV/qKUuxfk4pwQ3vf4hKGth7ZcX/alooGyybcmiPTp3F4ONZLxZLopwxTQX7o9od+3
-	MfCkzXC7nWsDVODA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733849534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/aIP4i4jvUV/G+qzhtRhmfq3gIeQW3kA9mI6aymWOb0=;
-	b=RRdDX4sVHqwXSpZmO5qyaLk+OT0prHhbpm2RuVO3tADPrjjC51flgdy0bBMhilMgSqfKc4
-	Dv+yE6TghAluhsMrjkHgGNWID+PoJ/WHqwfFkxouFBh0COAXQtRzDSLaPKulw82QS7hBhP
-	+JNegq3x34VwLUziHLi3yWibLzKHsDM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733849534;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/aIP4i4jvUV/G+qzhtRhmfq3gIeQW3kA9mI6aymWOb0=;
-	b=TFGrJV/qKUuxfk4pwQ3vf4hKGth7ZcX/alooGyybcmiPTp3F4ONZLxZLopwxTQX7o9od+3
-	MfCkzXC7nWsDVODA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D559C138D2;
-	Tue, 10 Dec 2024 16:52:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lzzyMr1xWGcDRAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 10 Dec 2024 16:52:13 +0000
-Date: Tue, 10 Dec 2024 17:52:13 +0100
-Message-ID: <87wmg732gy.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Cezary Rojewski <cezary.rojewski@intel.com>
-Cc: Wesley Cheng <quic_wcheng@quicinc.com>,
-	<linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>,
-	<linux-input@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>,
-	<srinivas.kandagatla@linaro.org>,
-	<mathias.nyman@intel.com>,
-	<perex@perex.cz>,
-	<conor+dt@kernel.org>,
-	<dmitry.torokhov@gmail.com>,
-	<corbet@lwn.net>,
-	<broonie@kernel.org>,
-	<lgirdwood@gmail.com>,
-	<krzk+dt@kernel.org>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<Thinh.Nguyen@synopsys.com>,
-	<tiwai@suse.com>,
-	<robh@kernel.org>,
-	<gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v30 28/30] ALSA: usb-audio: Add USB offload route kcontrol
-In-Reply-To: <1b77ad01-9621-4d2e-84c0-077032fbc5ef@intel.com>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
-	<20241106193413.1730413-29-quic_wcheng@quicinc.com>
-	<1a361446-7a18-4f49-9eeb-d60d1adaa088@intel.com>
-	<28023a83-04a5-4c62-85a9-ca41be0ba9e1@quicinc.com>
-	<1644aa6b-a4e0-4dbd-a361-276cb95eb534@intel.com>
-	<3e246be8-22a9-4473-8c78-39788ae95650@quicinc.com>
-	<1b77ad01-9621-4d2e-84c0-077032fbc5ef@intel.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1733849578; c=relaxed/simple;
+	bh=bt7l9QQFX2W1SBnh7LutyXggXBhQo8Dk1+MzlBzfQjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PC1zg6OxnoAzhSukuNZGVgDXryeNQwgsUoc+A8135x7MBbVFZbUWtOwRgVaIQeeYa0SBH4qz//MaG+ZNisBb7CogAq4/ciqHBN6717j6CMkj4p6qQCjc/tx/hjl3/SHPvrn3e1vmL/H6UMNsnNHJKLzvbMtHD9yyL1CO1AZwQ0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujJozhiH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF91C4CEDD;
+	Tue, 10 Dec 2024 16:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733849578;
+	bh=bt7l9QQFX2W1SBnh7LutyXggXBhQo8Dk1+MzlBzfQjE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ujJozhiHKizSCMhx02HN0yPwCGKv5N4q+Hf8gguWZaYdrJN3Th8BjVxC3EpCQ6I2N
+	 NPAfxb2Mcttztz8xo1wjtRNrW0oao6+6jrtZlKLIq29pC9bwTTC2S9LgjaCbbSYn3u
+	 O79g7VKiPAAwR/toZKo6uxrMWYTZmZ/Z+rpbb/JHxw0hzgD96aN7GuY+G8XQEKNb+5
+	 up6UBRW6tBUTzdj8GqgpMY+7IWtgSuqiBZSyMF9st9buHicP7CiR76Iys5f7Hr1gzi
+	 0V+3J1XjN3rLV/I5GsI6VEkenY0Kvrt7x7GoZ8AjYR120ggJmDwAqN2eWRTiLFjVir
+	 c/P1YncOkq6cw==
+Date: Tue, 10 Dec 2024 16:52:49 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] arm64/signal: Silence spurious sparse warning storing
+ GCSPR_EL0
+Message-ID: <6d839dfb-0a85-44c5-90cc-2b2426353a5f@sirena.org.uk>
+References: <20241210-arm64-gcs-signal-sparse-v1-1-26888bcd6f89@kernel.org>
+ <Z1hU0Ii-Sm9NHnhj@J2N7QTR9R3>
+ <20c12aac-193e-43ae-9418-39db1af4ede9@sirena.org.uk>
+ <Z1ht7X2LRw34pMJK@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[dt];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[quicinc.com,vger.kernel.org,linaro.org,intel.com,perex.cz,kernel.org,gmail.com,lwn.net,linux.intel.com,synopsys.com,suse.com,linuxfoundation.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
-
-On Tue, 10 Dec 2024 16:24:30 +0100,
-Cezary Rojewski wrote:
-> 
-> On 2024-12-06 9:43 PM, Wesley Cheng wrote:
-> > 
-> > On 12/6/2024 1:09 AM, Cezary Rojewski wrote:
-> 
-> ...
-> 
-> >>>>> +#include <linux/usb.h>
-> >>>>> +
-> >>>>> +#include <sound/core.h>
-> >>>>> +#include <sound/control.h>
-> >>>>> +#include <sound/soc-usb.h>
-> >>>> 
-> >>>> ALSA-components should not be dependent on ASoC ones. It should be done the other way around: ALSA <- ASoC.
-> >>>> 
-> >>> 
-> >>> At least for this kcontrol, we need to know the status of the ASoC state, so that we can communicate the proper path to userspace.  If the ASoC path is not probed or ready, then this module isn't blocked.  It will just communicate that there isn't a valid offload path.
-> >> 
-> >> I'm not asking _why_ you need soc-usb.h header, your reasoning is probably perfectly fine. The code hierarchy is not though. If a sound module is dependent on soc-xxx.h i.e. ASoC symbols, it shall be part of sound/soc/ space.
-> > 
-> > 
-> > That would basically require a significant change in the current design.  Was that requirement documented somewhere, where ALSA components should not be dependent on ASoC?  What was the reasoning for making it one direction, but not the other?
-> 
-> Well, some may call this a common sense. ASoC is founded on
-> ALSA. There are no ALSA-core components which I'm aware of which have
-> a dependency on ASoC components. You may not get compilation problems
-> now, but such approach does not scale and will hit circular dependency
-> problem sooner or later.
-
-In this particular case, I guess we don't have to be too strict.
-As long as it's a dynamic add-on, there is less dependency problem.
-OTOH, if it were linked directly, that can cause an issue, though.
-
-But, which code is put at which place can be reconsidered, yes.  The
-right placing may help better understanding of the code, too.
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4GnNgA4R5gHCruw/"
+Content-Disposition: inline
+In-Reply-To: <Z1ht7X2LRw34pMJK@J2N7QTR9R3>
+X-Cookie: Leave no stone unturned.
 
 
-thanks,
+--4GnNgA4R5gHCruw/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Takashi
+On Tue, Dec 10, 2024 at 04:35:57PM +0000, Mark Rutland wrote:
+> On Tue, Dec 10, 2024 at 03:44:29PM +0000, Mark Brown wrote:
+
+> > The spuriousness is arguable, from my point of view it's spurious in
+> > that we don't have the type of the system register we're writing to.
+
+> All that I'm asking for here is a trivial rewording; make the title say
+> something like:
+
+Yes, I had already removed the references to spurious and false positive
+locally and changed the unsigned long cast to a __force u64 cast.
+
+> > I find it both safer and clearer to keep values which are userspace
+> > pointers as userspace pointers rather than working with them as
+> > integers, using integers just sets off alarm bells. =20
+
+> Having casts strewn throughout the code sets off more alarm bells for
+> me.
+
+With the new code there's only a cast when we store the value to the
+register, which is the point where we're discarding the type safety.
+
+> > > Similarly in map_shadow_stack(), it'd be simpler to treat cap_ptr as =
+an
+> > > integer type.
+
+> > With map_shadow_stack() it's a bit of an issue with letting users
+> > specify a size but yeah, we could do better there.
+
+> I don't follow. The only place where size interacts with cap_ptr is when
+> we initialize cap_ptr, and there we're adding size to an integer type:
+
+> 	cap_ptr =3D (unsigned long __user *)(addr + size -
+> 					   (cap_offset * sizeof(unsigned long)));
+
+Ugh, addr is also not a pointer which I'd not noticed but still.  My
+main thought there was to move the cap_offset change to a second step so
+it was done type safely.
+
+> I was suggesting something along the lines of the diff below.
+
+Yes, I know.
+
+--4GnNgA4R5gHCruw/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdYceEACgkQJNaLcl1U
+h9DMnAf/e7GYV/9VWlVJj2n1GvhEBRh0aqm9VuM+yHZ2lZYm98Zl8gnxzmSS89+Y
+VVinFBnogkqH1XWjjH+DFjROYIZROKu0hawHe4sLqcnGiaZL/zVMTIzL5fFKSR4e
+xFYjXL8FPrXo7UHiNTlHn1s8EAjgnVDcC1so3Rz0a+ZBVlxNJoxFsiNmGssn/Cyh
+88o4ig0epIG7cGSZA8PpCKqfzd0//27M/FZIUjd5dNMtMPiuG2486l28FwOx9I+l
++nGrB5vasHm8QXP+6SnG7zbAsCMoHNnsOGpZ+ECH1x+ce5WgYWVaJ6la3+sYDGgL
+A0s2LZR4PuYO7ND3w4jLX/+edR//AA==
+=p+xW
+-----END PGP SIGNATURE-----
+
+--4GnNgA4R5gHCruw/--
 
