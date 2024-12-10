@@ -1,95 +1,162 @@
-Return-Path: <linux-kernel+bounces-439909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D739EB5C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:13:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D7C9EB5D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:16:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A82281E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D586416690B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520DF1BEF81;
-	Tue, 10 Dec 2024 16:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7892343B5;
+	Tue, 10 Dec 2024 16:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlVzcJ/d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1F51BEF74
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E681A0732;
+	Tue, 10 Dec 2024 16:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733847196; cv=none; b=GqyVSEn0/pIUTdjXZV1jb3nAS+ZRGEz7kdTyJrdGEUWR1C2sUgbjSd+Dkbx5BZfAlbmNdJra0kFIdAAWyHyiE4BDRSqbDO76pjL/efQLcOdTL9KXxUdA+V6WO5MLUrO7IUxe7BIZAKhDAW4zDUbggGjugzaF5juIkpnpfWC+J9k=
+	t=1733847304; cv=none; b=ajtzpWGA1NF9F1eqeIr2DtH2JGt8t6iwomRh4BF5aveA3VvYm747XLVQqyEx44ZX+1njBUmCb8AvnVKkY1TH6W7Gq7Zo1iNzvMYDZ1kdWc5fmCEa4rmAcI19qWacvKrssfrNUCd7DzrTAJZycX0ciwV4h6ZL40LlqZuNiu8gTEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733847196; c=relaxed/simple;
-	bh=17xOSUUtS1137TZ8iRma+L87sDR4HvTq/+mhVWculgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lIWdkM1X6BeqZMZWVM+d2fmqOtJaCfVcpy4Mz9wYFMjp8Go8+MoIeypN2sqz94cmxWRmCzA/YdlDJBE9yuKe8etmx/rgEM66gb58nmsjXMnHcuoLlh3mvNApJTuN2Yz2DlqNS3RafqKscPxP1qHl+ihbF0e6dwOVYX4Z+//g2Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE8ACC4CED6;
-	Tue, 10 Dec 2024 16:13:14 +0000 (UTC)
-Date: Tue, 10 Dec 2024 11:13:13 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
- juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de,
- efault@gmx.de
-Subject: Re: [REGRESSION] Re: [PATCH 00/24] Complete EEVDF
-Message-ID: <20241210111313.514b3f27@batman.local.home>
-In-Reply-To: <98294066b3a0a7a77220e18ab9db5d3c3cb57341.camel@codethink.co.uk>
-References: <20240727102732.960974693@infradead.org>
-	<16f96a109bec0b5849793c8fb90bd6b63a2eb62f.camel@codethink.co.uk>
-	<20241128105817.GC35539@noisy.programming.kicks-ass.net>
-	<4052c4e7ed0e02d11c2219915b08928677c88ab8.camel@codethink.co.uk>
-	<20241129090843.GB15382@noisy.programming.kicks-ass.net>
-	<98294066b3a0a7a77220e18ab9db5d3c3cb57341.camel@codethink.co.uk>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733847304; c=relaxed/simple;
+	bh=kG6+VH1Fq8TC4oAn5+9FCYdYFnloGzXmm+vqfIkitPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=etBRDaKSzZ88VYWPXipmBck0jSlsWHqEhTHlHbKGgX/vPuuKTJgBaJl5DW/pBoRU7ZkGrOuJA7yew+ZuuJP60Ty0zxv3Q95YSc2jal7p4D3QZydnuJFc5f3V278q/HwdZs6PdrNyEObGlYw5+LiHAefOqOat+uCAYtad6a+Cyzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlVzcJ/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED5EC4CEDE;
+	Tue, 10 Dec 2024 16:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733847303;
+	bh=kG6+VH1Fq8TC4oAn5+9FCYdYFnloGzXmm+vqfIkitPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WlVzcJ/ddPEfMG5IxIb+gAHncdPiLO2gsO0aM9yGnlFtLCD+qAkrgCimoapC62yuo
+	 m0ZhRxJeKjqAGGPAmHfdTHkKUuNXipPAJ1Wwj3vnjwWyBNAVbeJqBCSSoYypmpXE76
+	 LVa7NBiPWwInSe53IZ++GtPs9bxQaIQc/idMubE5b1vgBWvv3v2TOieuO0neECOOQb
+	 i1GFCfpBNyWj+80iENvqizcz61MPlgaKS4iKIwYK/TeHK9qwwJljrMOAda3gI4XwLX
+	 Ed00lN/n3WS1TXCf0IvEZQ6AIuLy4jfu7JXQ+hIC5H5V4gV4pby6v4CX12TuGZ0xOh
+	 NcZjuNE4BsUHA==
+Date: Tue, 10 Dec 2024 09:14:58 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nilay Shroff <nilay@linux.ibm.com>
+Cc: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	briannorris@chromium.org, kees@kernel.org, gustavoars@kernel.org,
+	steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
+	gjoyce@ibm.com, linux-crypto@vger.kernel.org, linux@weissschuh.net
+Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
+ gcc-13+ and FORTIFY_SOURCE
+Message-ID: <20241210161458.GA1305110@ax162>
+References: <20241208161315.730138-1-nilay@linux.ibm.com>
+ <Z1XkhhBqFYtbvQYp@yury-ThinkPad>
+ <20241209193558.GA1597021@ax162>
+ <2d9f4b56-3a8f-4fd7-a356-022f973da5e0@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d9f4b56-3a8f-4fd7-a356-022f973da5e0@linux.ibm.com>
 
-On Mon, 02 Dec 2024 19:46:21 +0100
-Marcel Ziswiler <marcel.ziswiler@codethink.co.uk> wrote:
+On Tue, Dec 10, 2024 at 01:58:00PM +0530, Nilay Shroff wrote:
+> Okay so I think you (and Greg) were suggesting instead of disabling 
+> -Wstringop-overread globally or tuning it off for a particular source
+> file, lets disable it on gcc-13+ while we invoke bitmap_copy() as shown
+> below: 
 
-> Unfortunately, once I trigger the failure the system is completely dead and won't allow me to dump the trace
-> buffer any longer. So I did the following instead on the serial console terminal:
+I cannot speak for Greg but yes, this is generally what I had in mind, I
+have a few comments below.
+
+> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> index d0ed9583743f..e61b9f3ff6a7 100644
+> --- a/include/linux/compiler-gcc.h
+> +++ b/include/linux/compiler-gcc.h
+> @@ -139,6 +139,18 @@
+>  #define __diag_GCC_8(s)
+>  #endif
+>  
+> +#if GCC_VERSION >= 130000
+> +#define __diag_GCC_13(s)       __diag(s)
+> +#else
+> +#define __diag_GCC_13(s)
+> +#endif
+> +
+> +#if GCC_VERSION >= 140000
+> +#define __diag_GCC_14(s)       __diag(s)
+> +#else
+> +#define __diag_GCC_14(s)
+> +#endif
+
+You do not need to add __diag_GCC_14 because __diag_GCC_13 covers
+GCC 13 and newer.
+
+>  #define __diag_ignore_all(option, comment) \
+>         __diag(__diag_GCC_ignore option)
+>  
+> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+> index 9278a50d514f..6885856e38b0 100644
+> --- a/include/linux/cpumask.h
+> +++ b/include/linux/cpumask.h
+> @@ -836,7 +836,23 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
+>  static __always_inline
+>  void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
+>  {
+> +       /*
+> +        * Silence -Wstringop-overead warning generated while copying cpumask
+> +        * bits on gcc-13+ and CONFIG_FORTIFY_SOURCE=y. The gcc-13+ emits
+> +        * warning suggesting "we're trying to copy nbits which potentially
+> +        * exceeds NR_CPUS. Apparently, this seems false positive and might be
+> +        * a gcc bug as we know that large_cpumask_bits should never exceed
+> +        * NR_CPUS.
+
+I think the last sentence needs to be either dropped entirely or needs
+to have more assertive language. While this might be a false positive, I
+think it is entirely unreasonable to expect GCC to know that
+large_cpumask_bits when it is nr_cpu_ids is bounded by NR_CPUS because
+it does not have the definition of nr_cpu_ids visible at this point and
+even if it did, it is still a global variable, so it has to assume that
+value could be anything in lieu of an explicit bounds check.
+
+Maybe something like this for the full comment?
+
+/*
+ * Silence instances of -Wstringop-overread that come from the memcpy() in
+ * bitmap_copy() that may appear with GCC 13+, CONFIG_FORTIFY_SOURCE=y, and
+ * and CONFIG_NR_CPUS > 256, as the length of the memcpy() in bitmap_copy() will
+ * not a compile time constant. Without an explicit bounds check on the length
+ * of the copy in this path, GCC will assume the length could be 0 to UINT_MAX,
+ * which would trigger an overread of the source if it were to happen. As
+ * nr_cpu_ids is known to be bounded by NR_CPUS, this copy will always be in
+ * bounds.
+ */
+
+> +        */
+> +       __diag_push();
+> +       __diag_ignore(GCC, 13, "-Wstringop-overread",
+> +               "Ignore string overflow warning while copying cpumask bits");
+> +       __diag_ignore(GCC, 14, "-Wstringop-overread",
+> +               "Ignore string overflow warning while copying cpumask bits");
+
+This __diag_ignore() can be dropped as well.
+
+> +
+>         bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
+> +
+> +       __diag_pop();
+>  }
 > 
-> tail -f /sys/kernel/debug/tracing/trace
-> 
-> Not sure whether there is any better way to go about this. Plus even so we run the serial console at 1.5
-> megabaud I am not fully sure whether it was able to keep up logging what you are looking for.
+> Does the above change look good to everyone?
 
-If the memory of the machine is persistent (it is on several of my
-machines) you can use the persistent ring buffer.
+I think this seems reasonable to me, but it might be good to get some
+feedback from the hardening folks.
 
-Add to the kernel command line (or enable bootconfig that attaches a
-command line to the kernel if you can't change the parameters):
-
-  reserve_mem=20M:12M:trace trace_instance=boot_map^traceoff^traceprintk@trace
-
-The above will create a "boot_map" instance with tracing off on boot
-and trace_printk() going to it. Start tracing:
-
- trace-cmd start -B boot_map -p nop
-
-If or replace "-p nop" with any events or tracers you want, including
-function tracing", then after a crash.
-
-  trace-cmd show -B boot_map
-
-If the memory is persistent and you don't use KASLR (may want to also
-add nokaslr if arm64 supports KASLR it and you use it), you should get
-the trace right up to the crash.
-
-See Documentation/trace/debugging.rst for more details.
-
--- Steve
+Cheers,
+Nathan
 
