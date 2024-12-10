@@ -1,104 +1,154 @@
-Return-Path: <linux-kernel+bounces-440151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322999EB97C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:41:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E3E9EB97F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C481881AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F801881E77
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303AB204695;
-	Tue, 10 Dec 2024 18:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghjmmVNp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8623C17;
-	Tue, 10 Dec 2024 18:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C84204692;
+	Tue, 10 Dec 2024 18:42:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B153C17;
+	Tue, 10 Dec 2024 18:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856072; cv=none; b=eivAjagiHa9HUwhqwRa3BJ8tbgr2oDhOpsZ2DrJ18wN4bTW1ontTv2tP9R7SJFy5VzbH1hKTpL4h7jAdGg1yMnitnr2OcX+dMgc/UFI3srAzOAmxo4uAc1nYXQt9RkZGxQ3+Iu11OJc0cBnLVAsRjYjjr/LqlRv6QbLekMRmemQ=
+	t=1733856159; cv=none; b=gNb86CT3fR/3ifb4JO18VV6Te6Tz4T8hh28TB4aL6WjT31F+qOKdmrwkxz0blf7GtaMQ7Oq8U/RND6601ZagA/r58DyHvxtIgmRzIIwH9hAyYxXi7bSrvWtS89T0g0B7vqOzbonbxIc0Kxh1Z5yxDd3CETTydhlLhdO5T/2N5HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856072; c=relaxed/simple;
-	bh=soLOHidzIgQWMfr23eBt3zFw+UvWx9WIHXuJsix5L+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTHd1KG3WhrwmwsozdbJ/ZWMCuBhhnuwTutsAja80GquogjYCqifn/e27hTUnamw5tD9aY6DQ3gt4OYbbWLHdhh/8w2ebZrj9fwyjNdyBSOmZtMyhmzHf5HWobae//+HC4ouEqFzshMFUrcyI3pahGLb4P3lM1BmS9cFVvdo0b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghjmmVNp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B72EBC4CED6;
-	Tue, 10 Dec 2024 18:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733856072;
-	bh=soLOHidzIgQWMfr23eBt3zFw+UvWx9WIHXuJsix5L+c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ghjmmVNpTMNddgeyuw7kqDKEEv42JqLM3hDifVyzDH/A5n/3mvBZ822CUtIKpoBc5
-	 kZPEw6l6YjwZbwoOx8zeIBa9mIsmkrZu+SQcXmhLiT9accecHTcMo+vVT4CQBLj4ZL
-	 oqcr5LCbOBy2qoOjGw4rB3jfGfgtZ8I8EDTlRUqpqd+u22rc/Dy2fxO+HTeA7n1/PK
-	 vbuirSBit21sM7SSijaCp+ENhyCRjlZ3oJqUxfF9ywKOgcmdAUk8KfVVtvm84nmexT
-	 de+JIoAddSArWV9oh+1psbO/2coCckFWFp1eesCFTIBllphNQo/EpCvv0SCICKnOjM
-	 Cp27W/BmTl8AA==
-Date: Tue, 10 Dec 2024 15:40:59 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] perf-probe: Improbe non-C language support
-Message-ID: <Z1iLO-JHiVj_c1Vp@x1>
-References: <173145727287.2747044.14103970580490941023.stgit@mhiramat.roam.corp.google.com>
+	s=arc-20240116; t=1733856159; c=relaxed/simple;
+	bh=13n6v+T01Xi8fpqVO4hjM7iv1ONrRbl6Glb7UC/yXMA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u2TB6nEC3TSYbLRnC5AruoTZ3uyLv3VNsHrDpyd0BekkJYS/xS+kV49pA4X6UoeFXsMK85bztnPeSktpGpF8/QYe3eyMy5kwCDRkeH/7Lmc5gTXyy/vzuNjjegwBOSg2p0dJZeGWSPzjzKSb0omi58369X2LFXjHluqTW/wTkvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 233CD1063;
+	Tue, 10 Dec 2024 10:43:04 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26DEC3F58B;
+	Tue, 10 Dec 2024 10:42:34 -0800 (PST)
+Message-ID: <e2c80012-bf7a-4420-a478-482aac4903b8@arm.com>
+Date: Tue, 10 Dec 2024 18:42:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173145727287.2747044.14103970580490941023.stgit@mhiramat.roam.corp.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] iommu: document missing def_domain_type return
+To: Matthew Rosato <mjrosato@linux.ibm.com>,
+ Baolu Lu <baolu.lu@linux.intel.com>, joro@8bytes.org, will@kernel.org,
+ gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
+Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+ svens@linux.ibm.com, borntraeger@linux.ibm.com, farman@linux.ibm.com,
+ clegoate@redhat.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org
+References: <20241209192403.107090-1-mjrosato@linux.ibm.com>
+ <20241209192403.107090-6-mjrosato@linux.ibm.com>
+ <3db6f346-0cb4-41f7-b532-91bcb0265849@linux.intel.com>
+ <0e80948b-7593-4b59-bb77-2f78f00ad2c3@linux.ibm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <0e80948b-7593-4b59-bb77-2f78f00ad2c3@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 09:21:13AM +0900, Masami Hiramatsu (Google) wrote:
-> Hi,
+On 10/12/2024 4:26 pm, Matthew Rosato wrote:
+> On 12/9/24 9:57 PM, Baolu Lu wrote:
+>> On 12/10/24 03:24, Matthew Rosato wrote:
+>>> In addition to IOMMU_DOMAIN_DMA, def_domain_type can also return
+>>> IOMMU_DOMAIN_DMA_FQ when applicable, else flush queues will never be
+>>> used.
+>>>
+>>> Signed-off-by: Matthew Rosato<mjrosato@linux.ibm.com>
+>>> ---
+>>>    include/linux/iommu.h | 1 +
+>>>    1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>> index 05279109c732..d0da1918d2de 100644
+>>> --- a/include/linux/iommu.h
+>>> +++ b/include/linux/iommu.h
+>>> @@ -585,6 +585,7 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
+>>>     * @def_domain_type: device default domain type, return value:
+>>>     *        - IOMMU_DOMAIN_IDENTITY: must use an identity domain
+>>>     *        - IOMMU_DOMAIN_DMA: must use a dma domain
+>>> + *              - IOMMU_DOMAIN_DMA_FQ: dma domain with batch invalidation
+>>
+>> In which case must an iommu driver return IOMMU_DOMAIN_DMA_FQ?
+>>
+>> The flush queue is a policy of "when and how to synchronize the IOTLB"
+>> in dma-iommu.c. The iommu driver actually has no need to understand such
+>> policy.
 > 
-> Here is the 3rd version of patches for perf probe to improve non-C language
-> (e.g. Rust, Go) support.
-> 
-> This ported the last patch on top of tmp.perf-tools-next, and add a fix patch
-> for compilation errors.
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git tmp.perf-tools-next
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=tmp.perf-tools-next
+> If you look ahead to the next patch where I implement def_domain_type for s390, I found that if I only ever return IOMMU_DOMAIN_DMA from ops->def_domain_type then when go through iommu_dma_init_domain() we will never call iommu_dma_init_fq() regardless of IOMMU_CAP_DEFERRED_FLUSH because of the if (domain->type == IOMMU_DOMAIN_DMA_FQ) check.  So something isn't right here.
 
+Conceptually I don't think it ever makes sense for a driver to *require* 
+a device to use deferred invalidation. Furthermore it's been the whole 
+design for a while now that drivers should never see nor have to 
+acknowledge IOMMU_DOMAIN_DMA_FQ, it's now just an internal type which 
+exists largely for the sake of making the sysfs interface work really 
+neatly. Also beware that a major reason for overriding 
+iommu_def_domain_type with a paging domain is for untrusted devices, so 
+massaging the result based on iommu_dma_strict is still not necessarily 
+appropriate anyway.
 
-Thanks, applied the first patch to perf-tools-next, the other was folded
-into the patch that introduced those problems, to avoid bisection
-problems.
+It appears the real underlying issue is that, like everyone else in the 
+same situation, you're doing def_domain_type wrong. If and when you 
+can't support IOMMU_DOMAIN_IDENTITY, the expectation is that you make 
+__iommu_alloc_identity_domain() fail, such that if iommu_def_domain_type 
+is then ever set to passthrough, iommu_group_alloc_default_domain() 
+falls back to IOMMU_DOMAIN_DMA by itself, and the user gets told they 
+did a silly thing.
 
-- Arnaldo
- 
-> Thank you,
+What you see apple-dart doing is a hack around the old bus-based 
+iommu_domain_alloc() API where there wasn't enough information at the 
+right point to necessarily do the right thing.
+
+Thanks,
+Robin.
+
+> It looks to me like the following is happening:
 > 
-> ---
+> We first have the iommu_def_domain_type set in iommu_subsys_init or via one of the set_default routines, e.g.:
+> 	if (!iommu_default_passthrough() && !iommu_dma_strict)
+> 		iommu_def_domain_type = IOMMU_DOMAIN_DMA_FQ;
 > 
-> Masami Hiramatsu (Google) (2):
->       perf-probe: Replace unacceptable characters when generating event name
->       perf disasm: Fix compilation error with stubs
+> But when we arrive at iommu_group_alloc_default_domain()...
+> 
+> if we have no ops->def_domain_type() defined we will call __iommu_group_alloc_default_domain using what is in iommu_def_domain_type, which could be IOMMU_DOMAIN_DMA, IOMMU_DOMAIN_DMA_FQ or IOMMU_DOMAIN_IDENTITY based on strict/passthrough settings.  Testing an s390 scenario today without this series applied, we will call __iommu_group_alloc_default_domain with IOMMU_DOMAIN_DMA_FQ, as long as iommu.strict/passthrough is not specified, so then later in dma-iommu:iommu_dma_init_domain() we can use FQ based on IOMMU_CAP_DEFERRED_FLUSH.
+> 
+> but once we add ops->def_domain_type() then we end up calling iommu_group_alloc_default_domain() with a req_type == the return value from ops->def_domain_type(), which by the current definition can only be IOMMU_DOMAIN_DMA or IOMMU_DOMAIN_IDENTITY.  We will then call __iommu_group_alloc_default_domain with that req_type; so without this patch + the DMA_FQ path in patch 6 we would always end up allocating IOMMU_DOMAIN_DMA instead of IOMMU_DOMAIN_DMA_FQ by default, so when we arrive at dma:iommu_dma_init_domain() we won't check for IOMMU_CAP_DEFERRED_FLUSH because of the type.
+> 
+> So unless I'm missing something I think either we have to
+> 1) be more flexible in what ops->default_domain_type() is allowed to return as this patch does
+> or
+> 2) iommu core needs to look at the return from ops->default_domain_type() and decide whether it's OK to convert IOMMU_DOMAIN_DMA->IOMMU_DOMAIN_DMA_FQ based on strict setting.  This removes the decision from the individual drivers and dma-iommu can later decide whether or not to use it or not based on IOMMU_CAP_DEFERRED_FLUSH?  But would also affect other users of def_domain_type() today that perhaps did not want DMA_FQ?  Unsure.  What I mean is something like (untested):
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 6bdede4177ff..275daa7f819d 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1744,9 +1744,11 @@ static int iommu_get_def_domain_type(struct iommu_group *group,
+>                   */
+>                  type = ops->default_domain->type;
+>          } else {
+> -               if (ops->def_domain_type)
+> +               if (ops->def_domain_type) {
+>                          type = ops->def_domain_type(dev);
+> -               else
+> +                       if (type == IOMMU_DOMAIN_DMA && !iommu_dma_strict)
+> +                               type = IOMMU_DOMAIN_DMA_FQ;
+> +               } else
+>                          return cur_type;
+>          }
+>          if (!type || cur_type == type)
 > 
 > 
->  tools/perf/util/disasm.c       |    7 ++++---
->  tools/perf/util/probe-event.c  |   32 +++++++++++++++++++++++++-------
->  tools/perf/util/probe-event.h  |    3 ++-
->  tools/perf/util/probe-finder.c |   15 +++++++++++++++
->  tools/perf/util/probe-finder.h |    5 +++++
->  5 files changed, 51 insertions(+), 11 deletions(-)
-> 
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
