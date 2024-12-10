@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-440016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE339EB808
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:18:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8743D9EB813
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:19:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A902817CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:18:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8568C18888B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B7B23496C;
-	Tue, 10 Dec 2024 17:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3B2234975;
+	Tue, 10 Dec 2024 17:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MQzjBXDp"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="bHzgadTq"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A771237A2F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57666237A5A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850613; cv=none; b=bGWOK/8eHZU6oB3se0VxSIEIEOhB6EY23wR7hMWNdd0OXU+sesGY0LwjOMON3T5jjyrRVBVJLT0B9RjIa+cpBBQTAZnGvpx4TZvbNZBoSM9uGmsShla6BLUC1wuJ/tKIAMYs9l1akufED1LFrilW/m3VC3ju7qsP6VZxzzTF0X0=
+	t=1733850616; cv=none; b=WffwVb/r+YrkNE+ajgj365w2dKqNPj19YZBjBiYTNz2TcnvVL1B7X1OTYIoK98tel288opUf9R/780p4Xu8RNNuIKYeNjNyYDSALVZvbX5S79dvJJ/WBpIVxfjJcmBhAFaNIUkqqBPVGALjOy8kjWahP3NE8cvPnGC9jR5AQBk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850613; c=relaxed/simple;
-	bh=28M0DwDkMWfh/cCYd77FlED8MgZgXdkVNsI9ruq8oCo=;
+	s=arc-20240116; t=1733850616; c=relaxed/simple;
+	bh=OTYVPrJXZsCibJypCZf8QK2KZMdsmtd9T0kWyznh0q0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rPVPnbQd4R09QfeftdfoHt7vWZpEGf8uV+xevi6RTzItbpmSsWeUt4LxbqFsyib8z7lvHNopkmTDKCx9hB/fM4Rjb6DdhW8dtmiJY8hUCGlrNGG0QgSe+ZL1Qq1njfO0lzowyoqma6djGpjR0OiJOuCzezVaZspmbsg4K1+loN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MQzjBXDp; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=OjgOIvRGgnJsKT4sMLekdnJ3MJZOnJ9yFl5xTLbl0UCViOLQDSsRAhhDJUGINuee+YenZdUHwBf0W0UGFE8C3zLAydr8YcSQMix5fFda0VUdAjeEU3T0t+IFbV5l856q93rrwSId5pEo4IhkiQsDveZ67oPqOo4gsugn+r93URo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=bHzgadTq; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cf6f804233so7354853a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:10:10 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d27243ba8bso8671797a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733850609; x=1734455409; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733850613; x=1734455413; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ehtFOxPVmrl0HXvdtrtv9cXQJbKgItgUhCJ0+pIiLcI=;
-        b=MQzjBXDpRt18BnyVhFu9LW0hpGwvvwgHbxOjUiClJRXR5FVfaLIcqTvY+AH+LG3Kym
-         v6A3midGaWsqoE1p7IqYJmQlSfnloI8iql6JSIms2HdJ5zZNEm663ModvEElq7Lihl3M
-         OYgG5fJ3Tm5LgkoTXe0ZwLfAJg0Qb3N8/3+eWq2pg7ZQe24Er7zOp/5n9fCv6pOfwhWX
-         N90AH9dvQZem8yoXZKO9Mbsw0pqeO1fqEn4x4SjZG6fE64Btrjc6mzUPACvHIr8ojC2f
-         yoLrRyr9hGVHj17l9COx+a7NKAeIFVYt3z1bb2wf6AZ1Hlo/+7TMnth9iS9asdpKEm3o
-         7Buw==
+        bh=Y4VjqX7iwW/vu6N1WvzJJpy4sCnLnXPgQs452O7qiog=;
+        b=bHzgadTqkHFD23BtqN2KbvqYcbXCWKNUpmCFiMAvclw4XLSAoYgrzQ3jl0PppOLaGC
+         2guV1KrjMFb/xNpNtSVhLLhizXZkv/WVqDyhAK4+0zvCiKgaN8qASbW/DZ0ESOVWhcYr
+         2mAtA2hpqZtUouIL8PyLmxSVpGapr/QtPWRkV0WIr3etRR7WM4oQ3uj4WFfeig3nJjR3
+         RX4aMNwM5coMXfJy0wXFRf8RLOIrtDJelVmkR+EKSp/qt4GRM9CdKxhpTNeHCUhvtPuu
+         kMcyUIziiPvWZFq77/6D46/4wGYT0Gm8pWaqHjIPImy5VHEVA5Cr+o1puS89MMbcjWzb
+         0nrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850609; x=1734455409;
+        d=1e100.net; s=20230601; t=1733850613; x=1734455413;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ehtFOxPVmrl0HXvdtrtv9cXQJbKgItgUhCJ0+pIiLcI=;
-        b=L/kM5WY8wkoeGxYBRKFvx4oqqyl4j/LiNnSXu5FRmCb8XNMDY3nh/BpG8BL3kZaEz9
-         3h2zjGpbLvPITCgYKgdMBlot7hZB5VNF7i7ox87IkaIqHPBO/rmZDdgdledQoBKJ5xff
-         CxrSikQ1n9da6hAGJYBuMGIfRKvVHBZp7gUqv8AuTm8+sbzbovHQdK6SklO7HikZ6oJv
-         g5QqaHs2wqT9whmmcYXPExPJHAl+/E3k9oBqiHEfk979xlB9LvLTWLUYkqokvysj83II
-         rlkYpv8WH2k4N8Kq5vLBwJwdjlDd95j1WXKXaxrhcHLaZHpHURzXF+M9/ENmbNZBHHmc
-         vatA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOGSvi/NnxAi6AMQC6nWqLNVNVLuXy4OTn1QdsSyLKlD+S4d/4ubp7V/pOK9elFYGisF6uhUSId2ILKNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNUTZX/RUnD7d6SmfCD9umO43F67tgegoQ+rbcqZnal2ydF2ju
-	ofGY17yew+1RyzOlMYjBsfX6xafPSpYbWePtcAMm+Seela416oJ1MT0VRDOLlas=
-X-Gm-Gg: ASbGncu7ULAWFbq3WrxctC6O2rkrchNbrmFLInt59Oi1azENeSHfRaV0psbcEN3DTeJ
-	8AcDf4sPHYDCpsfzUWG/vqMSBuxP1e6IiHDWDCmVym9Oh8uLC3awUQt40vLRSCM1F8iQkwnG80U
-	kigfIIAlyo3S1QgUzT/2E8E/9kllsgTKgtC4M+1yGwankcJ6eej+GwbCw4DGAFbwNGeQZlhKPo8
-	q8YdoePrIP5CSH+WNZr3Q0vWtihBrVu4+or4qP5sTOeiCV3pmxNKwMWj9T4jfjWsfyeAvUi5VXc
-	UxYbPe9A
-X-Google-Smtp-Source: AGHT+IFmnNKXXAN067E1UbwhBJfMpK5O10AWTX9+hlwh80SSPAEOWU+7C2pI3MGNxXbuHtb4mGyh4w==
-X-Received: by 2002:a05:6402:1ed6:b0:5d1:3da:e6c with SMTP id 4fb4d7f45d1cf-5d41853e70cmr5928380a12.10.1733850609561;
-        Tue, 10 Dec 2024 09:10:09 -0800 (PST)
+        bh=Y4VjqX7iwW/vu6N1WvzJJpy4sCnLnXPgQs452O7qiog=;
+        b=G0DUaupXf6PEXe/ecHFCXNZMsx6jIgMaWZXChc6wHBdey28fQgblaMWJAXqvEUTTXP
+         +6uvlcsPRwJbfVVjvUlxMskxICnEg/Telv/S7XbBewXq2Tmfnevn9wDa/7VMX4AP5waI
+         p+qzoJnR01n0kJ7GZ8K8K0Djrt9EO32UfxFn9i8MpaFZJdH7IrfmES8fjyq+NXkKhpAG
+         Ws/CixR6dG7k/PVZe2F/n1ku3gQwSlvbddH2t2QiIyXICNImJdlfHDR1p5nDfcaF3Jyw
+         13YjF5cOI4DmqOovJAx2KY05PW/rIR8pDKogtMsO2WJYRsSmZbv1JHpFld+0Kop1o0Cg
+         134w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+yvzQp28q8ivlJZfkQNJKxZI8J0kJyIyuNNMSqw+th+PrzNSVR0ypcTz6MYNFLBVErjCFfX5h4pzHeHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb1lKJgLZgtWzGEroROuNEWNz0DFbsHZ9+YH8TZCmgVZuTmPyo
+	CphnxEFPhB3zYcwNdUROod72CVJETTGU2Znbe+ITidycNmMT7wcpHnaoGVkhYf0=
+X-Gm-Gg: ASbGncs5UxIZvsn35/LMAnfFJCy8Tz3vrHvT+jeGuJrZ4iIpXBN1Dr9GCXRMWJMgdW6
+	sAfztKSeQx0SPYJvkcsnf1BPksNVby26Mmk8FB5p2cSjvFfFDfGuoZ7BtWHzhfhsxdUwfmUM30o
+	80AG4fDW1GNThCFInP6vPv1W6dteqgw0pEa8nuzhbcphvhMrDtFat+TOagUFYQ9pTLN8SeXD8eR
+	O+xldrO22RVizOcoz1Hreoucq5hzYr/ZWjTDmlFgkaI+ml1GrNK381q/HuQxcFovKIvhXC+Hs5T
+	yb47hBuq
+X-Google-Smtp-Source: AGHT+IF1pww2qqLE9zMCq4Z4/K+bkG+iAYWr1I2S2Beewnfd6QMcuan64k6kobi5emQ4TB2NMs4iTA==
+X-Received: by 2002:a05:6402:13d4:b0:5d3:ba97:527e with SMTP id 4fb4d7f45d1cf-5d4185fea2fmr5584908a12.25.1733850612616;
+        Tue, 10 Dec 2024 09:10:12 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.07
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:10:09 -0800 (PST)
+        Tue, 10 Dec 2024 09:10:11 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -90,11 +90,10 @@ Cc: claudiu.beznea@tuxon.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	alsa-devel@alsa-project.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 02/24] dt-bindings: clock: versaclock3: Document 5L35023 Versa3 clock generator
-Date: Tue, 10 Dec 2024 19:09:31 +0200
-Message-Id: <20241210170953.2936724-3-claudiu.beznea.uj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 03/24] clk: versaclock3: Add support for the 5L35023 variant
+Date: Tue, 10 Dec 2024 19:09:32 +0200
+Message-Id: <20241210170953.2936724-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
@@ -108,12 +107,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-There are some differences b/w 5L35023 and 5P35023 Versa3 clock
-generator variants but the same driver could be used with minimal
-adjustments. The identified differences are PLL2 Fvco, the clock sel
-bit for SE2 clock and different default values for some registers.
+Add support for the 5L35023 variant of the Versa 3 clock generator.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
@@ -126,23 +121,30 @@ Changes in v3:
 - collected tags
 
 Changes in v2:
-- collected tags
+- none
 
- Documentation/devicetree/bindings/clock/renesas,5p35023.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-versaclock3.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-index 42b6f80613f3..162d38035188 100644
---- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-@@ -31,6 +31,7 @@ description: |
- properties:
-   compatible:
-     enum:
-+      - renesas,5l35023
-       - renesas,5p35023
+diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
+index 1398d16df5d0..9fe27dace111 100644
+--- a/drivers/clk/clk-versaclock3.c
++++ b/drivers/clk/clk-versaclock3.c
+@@ -1133,8 +1133,14 @@ static const struct vc3_hw_cfg vc3_5p = {
+ 	.se2_clk_sel_msk = BIT(6),
+ };
  
-   reg:
++static const struct vc3_hw_cfg vc3_5l = {
++	.pll2_vco = { .min = 30000000UL, .max = 130000000UL },
++	.se2_clk_sel_msk = BIT(0),
++};
++
+ static const struct of_device_id dev_ids[] = {
+ 	{ .compatible = "renesas,5p35023", .data = &vc3_5p },
++	{ .compatible = "renesas,5l35023", .data = &vc3_5l },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, dev_ids);
 -- 
 2.39.2
 
