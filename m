@@ -1,305 +1,145 @@
-Return-Path: <linux-kernel+bounces-440167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268C89EB9A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:50:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D731885D52
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:50:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30877207E18;
-	Tue, 10 Dec 2024 18:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="HLsKZhmZ"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08B09EB9A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:51:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D406623ED41;
-	Tue, 10 Dec 2024 18:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BA9282792
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:51:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FA8207E18;
+	Tue, 10 Dec 2024 18:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYlrywhH"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BB223ED41;
+	Tue, 10 Dec 2024 18:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856626; cv=none; b=Wxj9BCWr0werohhBxLRumrV2c0AvibYTUrmoOh5/GySZ/qUGuXxN6A/69BT0owo4TLuXpqynGq2Otsc+RBlxQLTgFq7dmMTHxkOdMc1LAF8StUw2Epu9IEelJxWMv4c2R1w/vglzAeHm5qPt0b1jyprHvtIoXb/H0Je0Uczo1O8=
+	t=1733856692; cv=none; b=kLZmi2cO8GtZyrZRf7KOIJLCSfKVWBj4WyfFDak6DFYKYLljjhmVkcI9oz10nIXI7Qj8A4rjqp55OnEirP+2LLThTI/VdgXl3rOsspsMAIlsEBrrezGbeg928ivh1usoauCrBtdNHDnmBFCcC+3lzZJZaO4a2THIhymKhnZX4AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856626; c=relaxed/simple;
-	bh=jeb8RjObl9n/RpjrBee2UUV1rzl2k9GmIRAso3y1rqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gVynpkFZKBCOzlY3hsNXCzRPrUJgb+MiLWcHVOR+jN6lK+hzOI9MdPQ/fqqNX2R8YqrThF+wb7zQNYMY7oFckN78M0ee0JjSgxygVYTozH9gJ7kVZEsDFz5pLExrav0QSpw3s6ExanwqePLbWGSX6YSuFMOFjhXVn9R2uBNR4Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=HLsKZhmZ; arc=none smtp.client-ip=74.208.4.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1733856574; x=1734461374; i=parker@finest.io;
-	bh=sXGDoDjkGFFSl51u8zxIYJIcqrg3qf0vQUL25ISmdXo=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HLsKZhmZn5EV78icqXKZwd+lbxo6+tUK0g14xjb6HGLXz6inIBXEiEShNnb2zk0c
-	 w/JERmS2bidwQuhgYmZ9+uZfwgprFCP3L4K/IQXyLXpH2i9w7GKAJEhXjbmvWgFTg
-	 Rnd02iyDf9oplvzRUA7iwrPA14ex37NLpFQsbGYT5ltovGzh5tUZW0urijPNDlixx
-	 oxdfezbNhYSy4L78sHkb/OS5XZcKsWGSUqpdysK2AnYlmHRoUUgC6EF1DUxTvvNM5
-	 fwtMgdVUUuxwiBQLJdtFuUS7rD8oN7r9+YX3UW8x0hKtcxog6w8pcR7PRmdViNP4i
-	 RRFJ/eDCu2l8ksVxvQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
- mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 0MGknn-1tPoFQ2dNJ-009LJs; Tue, 10 Dec 2024 19:49:33 +0100
-Date: Tue, 10 Dec 2024 13:49:30 -0500
-From: Parker Newman <parker@finest.io>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, Alexandre
- Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
- from device tree
-Message-ID: <20241210134930.0f963709.parker@finest.io>
-In-Reply-To: <vyzrfrkvwwbi66zemgjywdzpk75mebr47vxaon5jwnn2vprahl@ndzjlez3ywgv>
-References: <bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
-	<20241118084400.35f4697a.parker@finest.io>
-	<984a8471-7e49-4549-9d8a-48e1a29950f6@lunn.ch>
-	<20241119131336.371af397.parker@finest.io>
-	<f00bccd3-62d5-46a9-b448-051894267c7a@lunn.ch>
-	<20241119144729.72e048a5.parker@finest.io>
-	<mpgilwqb5zg5kb4n7r6zwbhy4uutdh6rq5s2yc6ndhcj6gqgri@qkfr4qwjj3ym>
-	<20241204115317.008f497c.parker@finest.io>
-	<uad6id6omswjm7e4eqwd75c52sy5pddtxru3bcuxlukhecvj4u@klzgrws24r2q>
-	<20241206084203.2502ab95.parker@finest.io>
-	<vyzrfrkvwwbi66zemgjywdzpk75mebr47vxaon5jwnn2vprahl@ndzjlez3ywgv>
-Organization: Connect Tech Inc.
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733856692; c=relaxed/simple;
+	bh=lAZTB+5AUs87Gv5Bp400EFKF06lTy9auqfzLDlXibt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iJu4pRSVGNr0Zu16VBQUl6C6PxKtkRoRLxi8q0RSz3tL0X5hlcKWvMqkWwJk9tHqVDL7FT9dacMzLTiPLgJInOvOOWHsIBq42Pfi86gvims/ND31W+rEJuxHduZJmOCnXik993aHuC7Q/0nQiOllfrd7vSN4ZfWs5atqbcaetMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYlrywhH; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e1fcb0e1so3314010f8f.2;
+        Tue, 10 Dec 2024 10:51:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733856689; x=1734461489; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sbWcTejsLTu/yfEmnZUJI7lrVRDEyeRIYi0sBNJufoA=;
+        b=gYlrywhH9uGWkWgkYvdFwD4QndXqKseDOfAXgabNgA7wbW17nvK2xgqtpjVfGEq+oE
+         z74YVld32l9aNhdT7wcvQ0bnsJj/84IP6A37wsF0m8HpzJTW9gDTJmQOrCZ5R5uabR0r
+         tLSoZ1Kb4nlQrhu4NthRQFwYeik1VQnB6ErcJDNPjcx4IagARABKT3m7htZyQL+SeLtg
+         hn+EVXoMpN6CXTBrK7nRqqWKTmaenxvMY76ZHsJQq+1y16dqV8CYEoQiyzp0DJFevRCi
+         n7ON8YqFuofi2WYYz8nci9Luj/VXRdn17Bw1kQnTRNoNAxXjPf3dLCzLhC60eHDl1V5+
+         tCiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733856689; x=1734461489;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sbWcTejsLTu/yfEmnZUJI7lrVRDEyeRIYi0sBNJufoA=;
+        b=TqX5uiZBPk3D7goagN63sqUwQpPixYMgq38MPrHXUb+/+65ANn1IT4PUAX9gJHb7ET
+         oF2pLA85jct6etL3kORaoLtKn0lGUPqoGZRQdac0k2JgqgcZ8V6ZYFvZ/YWaXJ1fD5W3
+         1NvYsMXhjUvaQAr4atizFSZJmKFnexoEaHhQ9yLHXY0mQLLjLyXRgAL/5/5QkfkqvVFS
+         kCreCk34JhKrpVBmAtjp6oQPF6TnsD/+KMTikoNlmoUIM9ly9ofOzC9rKap0d+YIGRJi
+         fi9ziq1sHDz75JKTRzrJBS7mIbeYidFDYJjEqCzYDkdEcyhJ5pb1T4mUDXdabzi36pOU
+         0r9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2RTZsK6H4DmCgJwlxMiby8MOplZSEUGSr2N0rcPmKG+fDien30SjETIFBuPpmnx+F92M=@vger.kernel.org, AJvYcCUeTIBRyjHOU33/jqlXRW2HHiAaIvHezMSnfCp7A84vFxoGctuCfTXYYZa5cgVQbbmVCIWbHQD1YTLvIs0x5w==@vger.kernel.org, AJvYcCXIEgARs8NZYEgB1Bi1ZIQoulw8qY3508ukrOxeXyg0K17pbHMuwmYHR7E6AtlnBE+z0UbgVTOg/ZyyDLkX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaYPsWlYepUyTwt0GOXn2WDa6SQrkzkw2axsm2a0naTeT9wpeM
+	DP+FKxqhfU7Ww7OiYrL2MbFaWbW5t+YJBVyZf4nJctiFNcKv7i6umluvB55uAdXeJEzzB5uORtf
+	tTb+uYSg+zwK/AuKa8j297j4zric=
+X-Gm-Gg: ASbGnctg/xa3n5OYGNmyrgVT2oGFXmnsPR9Ofii1JHc0DBUJ9NFT2wYNG9oW3DURIy3
+	qKobOPPTwlrker+KGqtnZ+B4wCH5xwMcAykxL4gQjoVa+M8iiDUw=
+X-Google-Smtp-Source: AGHT+IEL/YKXKf4bDl5tUFIznsup7O7nfZD38kP19L0CXIrXpOLmVvLwja0xemsUWoCwI3noI6ez88l42gRf8OLITTQ=
+X-Received: by 2002:a05:6000:1a86:b0:385:e8f9:e839 with SMTP id
+ ffacd0b85a97d-3864ced38a4mr149857f8f.56.1733856688725; Tue, 10 Dec 2024
+ 10:51:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080756ABBCCCBF664B374EB993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <20241210-zustehen-skilift-44ba2f53ceca@brauner> <AM6PR03MB50808A2F7DEBB5825473B38F993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB50808A2F7DEBB5825473B38F993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 10 Dec 2024 10:51:17 -0800
+Message-ID: <CAADnVQKK3vmfPmRxLuh6ad94FeioN2JV=v+L-93ZvwdYqR_Kcg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 2/5] selftests/bpf: Add tests for open-coded
+ style process file iterator
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YH2jGO95AdX7oPzjLch72mMQO5TSMAiGw1gFaJeEQ8bYIyNDqgc
- 6uSgtqvI9N/SkrLZTX1E6RaIcOyizSttMBzs8K0GBkymI7PI0gVKjgBjRbWt3v15dHMwrUB
- TDTfMznV2ZtimFGzzYvWbxC4eUDek+mUYN1VTrm0ECvtnu7DTYIgGlzGfwNRmcwPHn31lYI
- dWAAq4hReSBo5+Qe1ui9A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:f1o3tPPtBnU=;vSmAOKOkEElLwW6kf2XQdeBsfMF
- YUVRGvNG7ndwxxTCRvVKx/FNa2Uk71AGWTIFfjo2LzpPv1+BZAx9WkTiVS6J4RYSrkz4eU51c
- 32Auwoj6FUbodmHP2jKZltaXeYzefZ19oTIeJJfXZP8axMGz9Kh0ILZrbrVDt0P6zlRWOCy/u
- w9w2nH7t6KYUXoEeoR45iZ2Wsb6rhPSGUatO3xlpW6OnLEG2r+r8CLQDftt4rSnvi55j3gOmg
- kNltiO1AvMAIxWzl+92m0AdEUACxRGwDRT98o7U3tL/tB0fs7m3eLF70xIu6j8Ft8ryZMfOIe
- NKNVI9zqI3qo0GEHpJ2XG221RutkKlLT7mb3QgPL5NgYrI1W8o049e4f5hsoQ483zsGGD6vI9
- qtzuh89Ie9ldy52m9IMnhCJfDuaWMLvFPwV1QATZWTxWLAKnJ2TS5kjl2Tg9YgWjX3PugEr7H
- RTth/KNa805ChPXzsOYpvVrsKfAQtbsV1LytI36zIHmNTBihX9yKrQpXxF4EwGfXNtYbG5tap
- 1FBFVfjrsNKknJ4l4UhP8qKRdgZ52RM+jXNNNzJ0E0WWcTiDD6Yipt6yyK9oH9qG8bE6YjQBL
- qXVD1fYaEQS7Limq/9B+YNvE2v7DqWjyIOF/FTuA3PBC22mRsapTYi3pw3+NKeGbrDmmsYkER
- 3ewSj/2jNeLfHQS0r24wbE0kHrKlX/QiY6kJIk8poIps92+CbpKrG6oc350RsFIwIu1TS++Yi
- Mx71vH8hU7D984VM1K+gsU8pRwOFGzXz/wpjL32kRWqWfB4/71683mP0Lu4rXOet7Bk6TxmWP
- F7ObvdQTAjCtg89IsysBes7aCmCspujilY1QnZGcNL6c0yUCuQEXMA5Esdh3amv22/fuOf9X7
- zZ7D3j0HNfpYWUZ+PKxBa+ihw4MiE1pG9cK1tJGQxGoqdCNGWwVsfzNcrS+VRMyL33K3vkxei
- tD/wv+p87Khm+pmE+ALTWWPcm+14b43Ago1aY6YRD+4KpoJfoJen0EaguY8Da9n3bqgGws3vk
- /zah2f1Zk6OoHdiiRB4iCWz42O9QGDscsOrbzr+
 
-On Fri, 6 Dec 2024 17:01:01 +0100
-Thierry Reding <thierry.reding@gmail.com> wrote:
-
-> On Fri, Dec 06, 2024 at 08:42:03AM -0500, Parker Newman wrote:
-> > On Wed, 4 Dec 2024 19:06:30 +0100
-> > Thierry Reding <thierry.reding@gmail.com> wrote:
+On Tue, Dec 10, 2024 at 8:23=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
+>
+> >> +SEC("fentry/" SYS_PREFIX "sys_nanosleep")
+> >> +int test_bpf_iter_task_file(void *ctx)
+> >> +{
+> >> +    struct bpf_iter_task_file task_file_it;
+> >> +    struct bpf_iter_task_file_item *item;
+> >> +    struct task_struct *task;
+> >> +
+> >> +    task =3D bpf_get_current_task_btf();
+> >> +    if (task->parent->pid !=3D parent_pid)
+> >> +            return 0;
+> >> +
+> >> +    count++;
+> >> +
+> >> +    bpf_rcu_read_lock();
 > >
-> > > On Wed, Dec 04, 2024 at 11:53:17AM -0500, Parker Newman wrote:
-> > > > On Wed, 4 Dec 2024 17:23:53 +0100
-> > > > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > >
-> > > > > On Tue, Nov 19, 2024 at 02:47:29PM -0500, Parker Newman wrote:
-> > > > > > On Tue, 19 Nov 2024 20:18:00 +0100
-> > > > > > Andrew Lunn <andrew@lunn.ch> wrote:
-> > > > > >
-> > > > > > > > I think there is some confusion here. I will try to summar=
-ize:
-> > > > > > > > - Ihe iommu is supported by the Tegra SOC.
-> > > > > > > > - The way the mgbe driver is written the iommu DT property=
- is REQUIRED.
-> > > > > > >
-> > > > > > > If it is required, please also include a patch to
-> > > > > > > nvidia,tegra234-mgbe.yaml and make iommus required.
-> > > > > > >
-> > > > > >
-> > > > > > I will add this when I submit a v2 of the patch.
-> > > > > >
-> > > > > > > > - "iommus" is a SOC DT property and is defined in tegra234=
-.dtsi.
-> > > > > > > > - The mgbe device tree nodes in tegra234.dtsi DO have the =
-iommus property.
-> > > > > > > > - There are no device tree changes required to to make thi=
-s patch work.
-> > > > > > > > - This patch works fine with existing device trees.
-> > > > > > > >
-> > > > > > > > I will add the fallback however in case there is changes m=
-ade to the iommu
-> > > > > > > > subsystem in the future.
-> > > > > > >
-> > > > > > > I would suggest you make iommus a required property and run =
-the tests
-> > > > > > > over the existing .dts files.
-> > > > > > >
-> > > > > > > I looked at the history of tegra234.dtsi. The ethernet nodes=
- were
-> > > > > > > added in:
-> > > > > > >
-> > > > > > > 610cdf3186bc604961bf04851e300deefd318038
-> > > > > > > Author: Thierry Reding <treding@nvidia.com>
-> > > > > > > Date:   Thu Jul 7 09:48:15 2022 +0200
-> > > > > > >
-> > > > > > >     arm64: tegra: Add MGBE nodes on Tegra234
-> > > > > > >
-> > > > > > > and the iommus property is present. So the requires is safe.
-> > > > > > >
-> > > > > > > Please expand the commit message. It is clear from all the q=
-uestions
-> > > > > > > and backwards and forwards, it does not provide enough detai=
-ls.
-> > > > > > >
-> > > > > >
-> > > > > > I will add more details when I submit V2.
-> > > > > >
-> > > > > > > I just have one open issue. The code has been like this for =
-over 2
-> > > > > > > years. Why has it only now started crashing?
-> > > > > > >
-> > > > > >
-> > > > > > It is rare for Nvidia Jetson users to use the mainline kernel.=
- Nvidia
-> > > > > > provides a custom kernel package with many out of tree drivers=
- including a
-> > > > > > driver for the mgbe controllers.
-> > > > > >
-> > > > > > Also, while the Orin AGX SOC (tegra234) has 4 instances of the=
- mgbe controller,
-> > > > > > the Nvidia Orin AGX devkit only uses mgbe0. Connect Tech has c=
-arrier boards
-> > > > > > that use 2 or more of the mgbe controllers which is why we fou=
-nd the bug.
-> > > > >
-> > > > > Correct. Also, this was a really stupid thing that I overlooked.=
- I don't
-> > > > > recall the exact circumstances, but I vaguely recall there had b=
-een
-> > > > > discussions about adding the tegra_dev_iommu_get_stream_id() hel=
-per
-> > > > > (that this patch uses) around the time that this driver was crea=
-ted. In
-> > > > > the midst of all of this I likely forgot to update the driver af=
-ter the
-> > > > > discussions had settled.
-> > > > >
-> > > > > Anyway, I agree with the conclusion that we don't need a compati=
-bility
-> > > > > fallback for this, both because it would be actively wrong to do=
- it and
-> > > > > we've had the required IOMMU properties in device tree since the=
- start,
-> > > > > so there can't be any regressions caused by this.
-> > > > >
-> > > > > I don't think it's necessary to make the iommus property require=
-d,
-> > > > > though, because there's technically no requirement for these dev=
-ices to
-> > > > > be attached to an IOMMU. They usually are, and it's better if th=
-ey are,
-> > > > > but they should be able to work correctly without an IOMMU.
-> > > > >
-> > > > Thanks for confirming from the Nvidia side! I wasn't sure if they =
-would
-> > > > work without the iommu. That said, if you did NOT want to use the =
-iommu
-> > > > and removed the iommu DT property then the probe will fail after m=
-y patch.
-> > > > Would we not need a guard around the writes to MGBE_WRAP_AXI_ASID0=
-_CTRL as well?
-> > >
-> > > Well... frankly, I don't know. There's an override in the memory
-> > > controller which we set when a device is attached to an IOMMU. That'=
-s
-> > > usually how the stream ID is programmed. If we don't do that it will
-> > > typically default to a special passthrough stream ID (technically th=
-e
-> > > firmware can lock down those register and force them to a specific
-> > > stream ID all the time). I'm not sure what exactly the impact is of
-> > > these ASID registers (there's a few other instances where those are
-> > > needed). They are required if you want to use the IOMMU, but I don't
-> > > know what their meaning is if the IOMMU is not enabled.
-> > >
-> > > There's also different cases: the IOMMU can be disabled altogether, =
-in
-> > > which case no page tables and such exist for any device and no
-> > > translation should happen whatsoever. But there's also the case wher=
-e an
-> > > IOMMU is enabled, but certain devices shouldn't attach to them. I sh=
-ould
-> > > make it very clear that both of these are not recommended setups and=
- I
-> > > don't know if they'll work. And they are mostly untested. I've been
-> > > meaning, but haven't found the time, to test some of these cases.
-> > >
+> > What does the RCU read lock do here exactly?
 > >
-> > Yes I agree, all of those situations are very niche and not recommende=
-d for
-> > a Tegra platform that should always have the iommu enabled anyways. Ad=
-ding an
-> > iommu bypass would probably be outside of the scope of this patch.
-> >
-> > I will not add a patch marking the iommu as required in the device tre=
-e
-> > bindings when I submit v2 unless anyone else feels different.
 >
-> I was able to find a bit more information on this. Starting with
-> Tegra234 it's usually no longer possible to even enable bypass. It can
-> still be done, but it needs to be carefully coordinated between the
-> secure bootloader/firmware and the OS. Basically the secure firmware
-> can lock down the ability to bypass the IOMMU. If the firmware was
-> configured to allow bypass, the driver can then do so by writing the
-> special stream ID 0x7f into the stream ID register.
+> Thanks for your reply.
 >
-> On these newer chips the memory controller override no longer has any
-> effect and writing the per-device stream ID registers is the only way to
-> attach to the IOMMU.
+> This is used to solve the problem previously discussed in v3 [0].
 >
-> There's still the case where you can disable the IOMMU altogether, in
-> which case the IOMMU will still be bypassed, no matter what the firmware
-> did. My understanding is that it doesn't matter in those cases whether
-> we write the stream ID registers or not, they will simply get ignored.
-> With one exception perhaps being the bypass SID. If you write that, then
-> there's a protection mechanism that kicks in.
+> Task ref may be released during iteration.
 >
-> Well, after all this this still isn't entirely clear to me, but I think
-> what it means in a nutshell is that a) we'll want to keep the IOMMU
-> always on for security and because the firmware is by default configured
-> to not allow bypassing, b) IOMMU isn't strictly required because the
-> IOMMU might be completely disabled and c) we shouldn't need to
-> conditionalize the stream ID register writes.
->
-> That said, the tegra_dev_iommu_get_stream_id() function returns a bool
-> specifically to support the latter case. So the intention with the
-> design was that drivers would call that function and only need to write
-> the stream ID register if it returns true. That's not always great
-> because you may want (or need) to rewrite the register after suspend/
-> resume, in which case you probably want to resort to a cached value
-> rather than call that API. On the other hand the API is quite simple, so
-> it could serve as a cache as well.
->
+> [0]:
+> https://lore.kernel.org/bpf/CAADnVQ+0LUXxmfm1YgyGDz=3Dcciy3+dGGM-Zysq84fp=
+AdaB74Qw@mail.gmail.com/
 
-I guess I could add an IS_ENABLED(CONFIG_IOMMU_API) check if
-tegra_dev_iommu_get_stream_id() returns false in probe?
+I think you misunderstood my comment.
 
-That would cover if the IOMMU_API is not enabled but not if the Tegra's
-iommu is disabled in other ways.
+"If this object _was_ RCU protected ..."
 
--Parker
+Adding rcu_read_lock doesn't make 'task' pointer RCU protected.
+That's not how RCU works.
+
+So patch 1 doing:
+
+item->task =3D task;
+
+is not correct.
+
+See bpf_iter_task_vma_new(). It's doing:
+kit->data->task =3D get_task_struct(task);
+to make sure task stays valid while iterating.
+
+pw-bot: cr
 
