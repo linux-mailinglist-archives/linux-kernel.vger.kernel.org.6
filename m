@@ -1,534 +1,528 @@
-Return-Path: <linux-kernel+bounces-440360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48669EBC25
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:54:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE6A9EBC28
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:55:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD691626D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5339E281161
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BFE23236F;
-	Tue, 10 Dec 2024 21:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB3E2397A2;
+	Tue, 10 Dec 2024 21:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMG2zUjE"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CrkpV3dS"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D21323ED78;
-	Tue, 10 Dec 2024 21:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF8F23ED78;
+	Tue, 10 Dec 2024 21:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733867685; cv=none; b=qwh9fe/tsFllz34MEnNkhdztRFazam0izln47A380chnmCo8c3ruhdcx+cf8ZRPoauoc8fUeSqCfSQJzEZxImGPXjz+oGuxiRryYFspL8EY0MvYDMz1ZBrdBJiL3+VC6zRpzpctHZKqiB4U6448d17/5L0URT5lQQaGbIW+G1yA=
+	t=1733867720; cv=none; b=k3F65hnMCODXF5ijDD1buQ9DId5XuQ63RQRAsuDXfdgWIJ/IwXCrsRdhJSN6A1N6z7xNr03GLUIO0JfiSwNuE7uy7BAqBdsuZ225W8Nux1YU/WNdx5/vLT1HGHEQDLx0Wf2wPYY0zkxg9TOiYetNORhS5z1tA3B7YWd4uRqUDpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733867685; c=relaxed/simple;
-	bh=FoodDbJF85HSR7vqFb1SURwVFiFLxlq92hefFSTYsN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h534O8aGMQZN0PDbywHLZ5mjZfWH78bD9UP65AV70BWANCbuJ3HkbbfKl/xN1tvEkrj7Q21kIntku7Yzn9jt816xWV+Qg6e1FkLAx54Z1n+vmJU/tCoU4K2pUlzDQKwl55xiPXepo5Y9EyyKnamb2D0MWDnxhorAU8lg2pkYafI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMG2zUjE; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1733867720; c=relaxed/simple;
+	bh=fQNFb894IqWEp1FEb6M0sqPrvyKYhDT3CdBh0JQJYmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ft4qkSCOzVHTz+6LWYODT7FVCZP8ashkYqOuRbca5f9k6t5LAkA/Q5XeROEi0QGtyTxItcbqAEr4kw/1BcC//WumwEwtBsGYbUjb45J3hQ4+fVp1sURgJpu77g7Rvc4GCBatDs4LluX0vRdZ2AWgQXq+oyLXVKjZhB/pDRyyCKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CrkpV3dS; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ef7640e484so71444527b3.3;
-        Tue, 10 Dec 2024 13:54:42 -0800 (PST)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6eff98e133cso903097b3.3;
+        Tue, 10 Dec 2024 13:55:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733867682; x=1734472482; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CLMeg3KtiYPYLHuefeREp3hhLN8tVuKnI5cE4Kch8vA=;
-        b=AMG2zUjExNyHeDsNLFJigdlTlXt3VZ7YOvgPeGTOsYX5FvZFBVaeQES9AQ/M+GWAfY
-         Lkc8NR3xXEv8AqglcDCgFaYeW/1JVmfbzCt8/qexp/QiAZuwiWATP1kDUkw7afItIc9A
-         EP8zOKjplVohei5Oysfgh5PrB1V9RoEB4k4hHGtGXZ0FquPFPD22ahcb5kO+cO6bUgNF
-         RDaqg4YWsysERVTkcpRs5j/rYv8gGzo9+K7uHbsx1S08ZXOInIsRcmRAsxPfEiAZ4+Mu
-         T0RzklMnDVH1SMptaaW0TwLGMqQUV//VumxfynS9AlisRvqsgcy+pogJ6Ts5Fyxek+SS
-         mHVw==
+        d=gmail.com; s=20230601; t=1733867717; x=1734472517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8E7gXvjrAntpMmUX59kjHa63TxpILYHTXkni1m2LmZY=;
+        b=CrkpV3dSZv5QZldxkjDM6ynUfQtI4ksy2Zg3bshoo7rdR7UKe2CSMQbsVLLv4A5Lho
+         Mb0A+3Gdhp1pJpzNYo1nZfIeUWP3Txf5oW1nK6tz8viKIX886vZHWs+fOb92burL7jk7
+         Y5YZeiPwYOGGB3iy4J+nfTOruDgNmAN+B+C/WqJZ4n6/PGjDkWJTQAEfqqKNJDC0p1ot
+         AtLOi1Z7ETymLWZzdd/dARY6Z7x28QTy0iHbc61PldA+QD+dQ0VnHMLtz4kVdoor8IIe
+         KXJMzjxqykqBl+EfzVVbAYzvqvBmH1hVPEM8Hzjqx1/NCUwJVnrBIisawmb5jSuUgHLz
+         VyoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733867682; x=1734472482;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CLMeg3KtiYPYLHuefeREp3hhLN8tVuKnI5cE4Kch8vA=;
-        b=U5d3DKDQ3Xjqy5P+Me2cL53HYcGADZkTI6oNFsaWit28FrWCnwkwumH60rDMG0mV9K
-         igHw0q2VIAJm++uRkwhb+Yp+PsRdmWQS5yyHkfPmgTHEnZemmsIV9zpSDAGWHfWTzLXo
-         tx8+iE8dlR7xVFJVQJtdPc/VDPPdgmJfSZECAKiyCPe589x15eLrhBp+gWznFzBj2OdW
-         LJ2zJ7Hsy9LYR7pM9tSbgLXZEVbITxGSOpl97K6NLnjrUoqBsty9qL/aa+zGYBBdA6I9
-         KAOkmrHCEYzJpa7B6gadxxBZJLF+DhfWogTo4SpePyODNphTV7ZkGN9ILtIBSx3Vft5j
-         xs1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUDSETVpN622UvDLvrm0FpNjCKlUBblDxfvOK/z8mp/1/dQbtbr2Nbu4OUnYJWF5iH/qX5ohDRyFAwj@vger.kernel.org, AJvYcCVRIDJCGYIoQ8FkMx8dQtZc8DGvJ85bYK/IAnZGelIl/CCJaVPb/9k8bXc7CgaYDeEXazoiLlVuGM/o8RCq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/1B8Dy8VRreMzC8LuHO8zXeX5VpDESWrIhaczmkm4DCX8grFr
-	udAI+katcmWjSi330b1i9D8r9JP/xCAuBo42VfK5cii0dsDxzvlD
-X-Gm-Gg: ASbGncsUNOaMXqxo0C6BUnkwc//ifa5w2WyrQHyX0fkzSQ4xIAnQYJi+Sq802vGPcTU
-	pUOvvPg7ncjONYCelPSWO+JkCtro2vpaX5bZTSm0n61pjxwSxMYxm9WVgxFI//j9ypGo+2424pr
-	N1xxS/I4feFPU/1/CW7iVxA4B4QfaWFvaQ7v02cjaKt+YbxS1Ah+U+5CoUNFERI4FcegrzFhpR3
-	nHyXMuEg4dcE0C1uiZWpPwminKbIKpJu4+o9iBLyGguDVMPcKIRAwxEYCQ9yrOsmNcA5AaH4W0Q
-	AFk34hWKDA4t+iM=
-X-Google-Smtp-Source: AGHT+IEBU9zQf0CAnNhG1S1981KjuQutbNTd3IcROBOXkDqd2I0onmLUpHUjTZWJdHae7O25LE02ng==
-X-Received: by 2002:a05:690c:6e01:b0:6ee:7797:672 with SMTP id 00721157ae682-6f147fd1c9bmr8670717b3.7.1733867681690;
-        Tue, 10 Dec 2024 13:54:41 -0800 (PST)
-Received: from localhost (fwdproxy-nha-113.fbsv.net. [2a03:2880:25ff:71::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6efd3889bfbsm29374367b3.53.2024.12.10.13.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 13:54:40 -0800 (PST)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: gourry@gourry.net
-Cc: rafael@kernel.org,
-	lenb@kernel.org,
-	gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	honggyu.kim@sk.com,
-	ying.huang@linux.alibaba.com,
-	rakie.kim@sk.com,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com,
-	horen.chuang@linux.dev,
-	hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com
-Subject: [RFC PATCH] mm/mempolicy: Weighted interleave auto-tuning
-Date: Tue, 10 Dec 2024 13:54:39 -0800
-Message-ID: <20241210215439.94819-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
+        d=1e100.net; s=20230601; t=1733867717; x=1734472517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8E7gXvjrAntpMmUX59kjHa63TxpILYHTXkni1m2LmZY=;
+        b=t6dpYflwmPvYzkdP33534YLcG1JhISwrEVQicl52nqLu/N3fy8WEtDdYEZU8y0AyNE
+         DTPG5BrzY11pRAxoW6rgIESWF6aUDeKC0W/C4/9v3qlLtWzLvSqKwMNc0YQt3zGapMTN
+         4sI8QZrzJ991eNWUm18YeAIpyiWRJFUKh+czCEEDq3tz+RYTK9vQH79vkZo1e1vOS2d1
+         JUOcmXo2bTFv91MGwp60YKryGWf6+gHK71CRjvUmcqiWKgcrWcSpSKMxAghRp4e5P1BT
+         Hw6rlVewugetMdP0A4XBAdZAidg2UQIQM76rV2WaAzvq72czYDLwNw4xT+q+TsEi8kgb
+         VAWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV66HKGFgZHg74FH4gHLk/Trq9lOK2I2SCPSbS1qKNApdAczIlA0gRm0xgYn3oKfg0SM+L+Tolx2B+O@vger.kernel.org, AJvYcCWWF8JfB25aGxTknhDvNhF3lVbhT4QfccHpuKO1YxTtdbxZE4Wsb0mjNzioTwtctt/RaepUPVr5Cp5HPhf+@vger.kernel.org, AJvYcCXK7GFd/ERsjq/xmY6RRqGdl5KmjJEsMc6E6gWqF286rPxC+b7vFOEu7RdKjbIHH8ZlzS4FHp4w8tYD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQKXz4b2aig0cNh3GQT0SKHJYDu6uwnN2bDsnLdZGPJdBQta+x
+	Y+By7kYH2yur6RzqotYd3n9BlZ3heUyt9rT2qrkrT+dAevhkjhkbKPDXebBLp44fYG5RpP0RjZc
+	4ZgujSER2OBWzF9YHkTs1kMDbqqM=
+X-Gm-Gg: ASbGncufntSvFufJqBTTSIH2lrRJNKvKCXhXzG2YZcWUpoVAWbZ08hcrUa0qHBLr3mB
+	AR829Tc2ZxuaPbAXnOOtS9GWOsuYQ0A9C8hw=
+X-Google-Smtp-Source: AGHT+IE2m73Wn4uOCTfjhwfdf4Bucty+Aaf7n+6sjD0S/DDOIAxYXCR5rwZ5oUgzFyCjf4V6q35Vp/iIyVc3WP9nbGU=
+X-Received: by 2002:a05:690c:6ac1:b0:6e2:ada7:ab3a with SMTP id
+ 00721157ae682-6f148036afamr4427847b3.5.1733867716779; Tue, 10 Dec 2024
+ 13:55:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241205171343.308963-1-l.rubusch@gmail.com> <20241205171343.308963-11-l.rubusch@gmail.com>
+ <20241208163418.2d57f185@jic23-huawei>
+In-Reply-To: <20241208163418.2d57f185@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Tue, 10 Dec 2024 22:54:40 +0100
+Message-ID: <CAFXKEHaLzrBXNV=dgTrX3CatvCT751x8Lh69mCXebLK=Fh4jFw@mail.gmail.com>
+Subject: Re: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark events
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On machines with multiple memory nodes, interleaving page allocations
-across nodes allows for better utilization of each node's bandwidth.
-Previous work by Gregory Price [1] introduced weighted interleave, which
-allowed for pages to be allocated across NUMA nodes according to
-user-set ratios.
+Hi Jonathan,
+Find my answers down below.
+Best,
+L
 
-Ideally, these weights should be proportional to their bandwidth, so
-that under bandwidth pressure, each node uses its maximal efficient
-bandwidth and prevents latency from increasing exponentially.
+On Sun, Dec 8, 2024 at 5:34=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Thu,  5 Dec 2024 17:13:43 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Add a basic setup for FIFO with configurable watermark. Add a handler
+> > for watermark interrupt events and extend the channel for the
+> > scan_index needed for the iio channel. The sensor is configurable to us=
+e
+> > a FIFO_BYPASSED mode or a FIFO_STREAM mode. For the FIFO_STREAM mode no=
+w
+> > a watermark can be configured, or disabled by setting 0. Further featur=
+es
+> > require a working FIFO setup.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> Various comments inline.
+>
+> Thanks,
+>
+> Jonathan
+>
+> > ---
+> >  drivers/iio/accel/adxl345_core.c | 300 +++++++++++++++++++++++++++++++
+> >  1 file changed, 300 insertions(+)
+> >
+> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
+45_core.c
+> > index 3067a70c54e..58ed82d66dc 100644
+> > --- a/drivers/iio/accel/adxl345_core.c
+> > +++ b/drivers/iio/accel/adxl345_core.c
+> > @@ -15,15 +15,28 @@
+> >
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/iio/sysfs.h>
+> > +#include <linux/iio/buffer.h>
+> > +#include <linux/iio/events.h>
+>
+> I'm not seeing any use of this header yet.  Bring it in when you need it.
+>
+> > +#include <linux/iio/kfifo_buf.h>
+> >
+> >  #include "adxl345.h"
+> >
+> > +#define ADXL345_FIFO_BYPASS  0
+> > +#define ADXL345_FIFO_FIFO    1
+> > +#define ADXL345_FIFO_STREAM  2
+> > +
+> > +#define ADXL345_DIRS 3
+> > +
+> >  struct adxl345_state {
+> >       int irq;
+> >       const struct adxl345_chip_info *info;
+> >       struct regmap *regmap;
+> > +     __le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE];
+> >       bool fifo_delay; /* delay: delay is needed for SPI */
+> >       u8 intio;
+> > +     u8 int_map;
+> > +     u8 watermark;
+> > +     u8 fifo_mode;
+> >  };
+> >
+> >  #define ADXL345_CHANNEL(index, reg, axis) {                           =
+       \
+> > @@ -36,6 +49,13 @@ struct adxl345_state {
+> >       .info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE) |         =
+ \
+> >               BIT(IIO_CHAN_INFO_SAMP_FREQ),                           \
+> >       .scan_index =3D (index),                          \
+> > +     .scan_type =3D {                                  \
+> > +             .sign =3D 's',                            \
+> > +             .realbits =3D 13,                         \
+> > +             .storagebits =3D 16,                      \
+> > +             .shift =3D 0,                             \
+>
+> No need to specify shift of 0. It's the 'obvious' default and C will set =
+it to 0
+> for you anyway.
+>
+> > +             .endianness =3D IIO_LE,                   \
+> > +     },                                              \
+> >  }
+> >
+> >  enum adxl345_chans {
+> > @@ -48,6 +68,25 @@ static const struct iio_chan_spec adxl345_channels[]=
+ =3D {
+> >       ADXL345_CHANNEL(2, chan_z, Z),
+> >  };
+> >
+> > +static int adxl345_set_interrupts(struct adxl345_state *st)
+> > +{
+> > +     int ret;
+> > +     unsigned int int_enable =3D st->int_map;
+> > +     unsigned int int_map;
+> > +
+> > +     /* Any bits set to 0 in the INT map register send their respectiv=
+e
+>
+>         /*
+>          * Any bits....
+>
+>
+> > +      * interrupts to the INT1 pin, whereas bits set to 1 send their r=
+espective
+> > +      * interrupts to the INT2 pin. The intio shall convert this accor=
+dingly.
+> > +      */
+> > +     int_map =3D 0xFF & (st->intio ? st->int_map : ~st->int_map);
+> > +
+> > +     ret =3D regmap_write(st->regmap, ADXL345_REG_INT_MAP, int_map);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return regmap_write(st->regmap, ADXL345_REG_INT_ENABLE, int_enabl=
+e);
+> > +}
+>
+>
+> > +/**
+> > + * adxl345_get_samples() - Read number of FIFO entries.
+> > + * @st: The initialized state instance of this driver.
+> > + *
+> > + * The sensor does not support treating any axis individually, or excl=
+ude them
+> > + * from measuring.
+> > + *
+> > + * Return: negative error, or value.
+> > + */
+> > +static int adxl345_get_samples(struct adxl345_state *st)
+> > +{
+> > +     unsigned int regval =3D 0;
+> > +     int ret;
+> > +
+> > +     ret =3D regmap_read(st->regmap, ADXL345_REG_FIFO_STATUS, &regval)=
+;
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     return 0x3f & regval;
+> FIELD_GET() for all stuff like this with appropriate #define for the mask=
+.
+>
+> > +}
+> > +
+> > +/**
+> > + * adxl345_fifo_transfer() - Read samples number of elements.
+> > + * @st: The instance of the state object of this sensor.
+> > + * @samples: The number of lines in the FIFO referred to as fifo_entry=
+,
+> > + * a fifo_entry has 3 elements for X, Y and Z direction of 2 bytes eac=
+h.
+> > + *
+> > + * It is recommended that a multiple-byte read of all registers be per=
+formed to
+> > + * prevent a change in data between reads of sequential registers. Tha=
+t is to
+> > + * read out the data registers X0, X1, Y0, Y1, Z0, Z1 at once.
+>
+> Doesn't match the code which is reading just one register lots of times.
 
-At the same time, we want these weights to be as small as possible.
-Having ratios that involve large co-prime numbers like 7639:1345:7 leads
-to awkward and inefficient allocations, since the node with weight 7
-will remain mostly unused (and despite being proportional to bandwidth,
-will not aid in relieving the pressure present in the other two nodes).
+This is one of my painpoints, regmap_noinc_read() worked here, for a
+linewise reading of FIFO elements. Say, I could read X0, X1, Y0,... Z1
+in one command. Also, I tried here regmap_bulk_read(). At all, I find
+this solution is working, but I'm not sure if there is not a total
+differnt way to do the read out.
 
-This patch introduces an auto-configuration for the interleave weights
-that aims to balance the two goals of setting node weights to be
-proportional to their bandwidths and keeping the weight values low.
-This balance is controlled by a value max_node_weight, which defines the
-maximum weight a single node can take.
+> > + *
+> > + * Return: 0 or error value.
+> > + */
+> > +static int adxl345_fifo_transfer(struct adxl345_state *st, int samples=
+)
+> > +{
+> > +     size_t count;
+> > +     int i, ret;
+> > +
+> > +     count =3D sizeof(st->fifo_buf[0]) * ADXL345_DIRS;
+> > +     for (i =3D 0; i < samples; i++) {
+> > +             ret =3D regmap_noinc_read(st->regmap, ADXL345_REG_XYZ_BAS=
+E,
+> > +                             st->fifo_buf + (i * count / 2), count);
+> > +             if (ret < 0)
+> > +                     return ret;
+>
+> This is where I'd expect to see the delay mentioned below.
 
-Large max_node_weights generally lead to increased weight-bandwidth
-proportionality, but can lead to underutilized nodes (think worst-case
-scenario, which is 1:max_node_weight). Lower max_node_weights reduce the
-effects of underutilized nodes, but may lead to improperly loaded
-distributions.
+I agree with the delay, I'll move it.
 
-This knob is exposed as a sysfs interface with a default value of 32.
-Weights are re-calculated once at boottime and then every time the knob
-is changed by the user, or when the ACPI table is updated.
+> > +     }
+> > +     return ret;
+> > +}
+> > +
+>
+> > +static int adxl345_buffer_predisable(struct iio_dev *indio_dev)
+> > +{
+> > +     struct adxl345_state *st =3D iio_priv(indio_dev);
+> > +     int ret;
+> > +
+> > +     st->int_map =3D 0x00;
+> > +
+> > +     ret =3D adxl345_set_interrupts(st);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     st->fifo_mode =3D ADXL345_FIFO_BYPASS;
+> > +     return adxl345_set_fifo(st);
+> I'd normally expect order in predisable to be reverse of that in postenab=
+le.
+> Why isn't it?  That is why is the set_fifo here after set_interrupts and
+> not before it.  Add a comment.
+>
+> > +}
+> > +
+> > +static const struct iio_buffer_setup_ops adxl345_buffer_ops =3D {
+> > +     .postenable =3D adxl345_buffer_postenable,
+> > +     .predisable =3D adxl345_buffer_predisable,
+> > +};
+> > +
+> > +static int adxl345_get_status(struct adxl345_state *st)
+> > +{
+> > +     int ret;
+> > +     unsigned int regval;
+> > +
+> > +     ret =3D regmap_read(st->regmap, ADXL345_REG_INT_SOURCE, &regval);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     return (0xff & regval);
+>
+> No brackets needed.
+>
+> > +}
+> > +
+> > +static int adxl345_fifo_push(struct iio_dev *indio_dev,
+> > +                               int samples)
+> > +{
+> > +     struct adxl345_state *st =3D iio_priv(indio_dev);
+> > +     int i, ret;
+> > +
+> > +     if (samples <=3D 0)
+> > +             return -EINVAL;
+> > +
+> > +     ret =3D adxl345_fifo_transfer(st, samples);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     for (i =3D 0; i < ADXL345_DIRS * samples; i +=3D ADXL345_DIRS) {
+> > +             /*
+> > +              * To ensure that the FIFO has completely popped, there m=
+ust be at least 5
+> > +              * us between the end of reading the data registers, sign=
+ified by the
+> > +              * transition to register 0x38 from 0x37 or the CS pin go=
+ing high, and the
+> > +              * start of new reads of the FIFO or reading the FIFO_STA=
+TUS register. For
+> > +              * SPI operation at 1.5 MHz or lower, the register addres=
+sing portion of the
+> > +              * transmission is sufficient delay to ensure the FIFO ha=
+s completely
+> > +              * popped. It is necessary for SPI operation greater than=
+ 1.5 MHz to
+> > +              * de-assert the CS pin to ensure a total of 5 us, which =
+is at most 3.4 us
+> > +              * at 5 MHz operation.
+> > +              */
+> > +             if (st->fifo_delay && (samples > 1))
+> > +                     udelay(3);
+>
+> I'm not following why a delay here helps.  At this point you're read mass=
+es of
+> data from the fifo without the delays you mention.
+>
+> > +
+> > +             iio_push_to_buffers(indio_dev, &st->fifo_buf[i]);
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +/**
+> > + * adxl345_event_handler() - Handle events of the ADXL345.
+>
+> Up to you but...
+> Given it's an IIO driver and that we have a very specific meaning
+> for events, maybe just call this adxl345_irq_handler()?
+>
+> > + * @irq: The irq being handled.
+> > + * @p: The struct iio_device pointer for the device.
+> > + *
+> > + * Return: The interrupt was handled.
+> > + */
+> > +static irqreturn_t adxl345_event_handler(int irq, void *p)
+> > +{
+> > +     struct iio_dev *indio_dev =3D p;
+> > +     struct adxl345_state *st =3D iio_priv(indio_dev);
+> > +     u8 int_stat;
+> > +     int samples;
+> > +
+> > +     int_stat =3D adxl345_get_status(st);
+> > +     if (int_stat < 0)
+> > +             return IRQ_NONE;
+> > +
+> > +     if (int_stat =3D=3D 0x0)
+> Doesn't this correspond to 'not our interrupt'?
+> If that's the case return IRQ_NONE is the right way to go and not reset t=
+he
+> interrupt.  You have registered it as maybe shared, and if it is, then th=
+is
+> is a common thing to happen as interrupt from another device.
+>
 
-[1] https://lore.kernel.org/linux-mm/20240202170238.90004-1-gregory.price@memverge.com/
+Here I see actually
++     int_stat =3D adxl345_get_status(st);
++     if (int_stat < 0)
++             return IRQ_NONE; // a bus error, reading register not possibl=
+e
+...and then...
++     if (int_stat =3D=3D 0x0)
++             // interrupt sources were 0, so IRQ not from our sensor
 
-Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-Signed-off-by: Gregory Price <gourry@gourry.net>
-Co-Developed-by: Gregory Price <gourry@gourry.net>
----
- ...fs-kernel-mm-mempolicy-weighted-interleave |  24 +++
- drivers/acpi/numa/hmat.c                      |   1 +
- drivers/base/node.c                           |   7 +
- include/linux/mempolicy.h                     |   4 +
- mm/mempolicy.c                                | 195 ++++++++++++++++--
- 5 files changed, 211 insertions(+), 20 deletions(-)
+I'm unsure if the first IRQ_NONE here is actually correct. I mean, if
+the bus is not working,
+actually any IRQ usage should be considered broken. Is there a way to
+break out of measuring?
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-index 0b7972de04e9..2ef9a87ce878 100644
---- a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-@@ -23,3 +23,27 @@ Description:	Weight configuration interface for nodeN
- 		Writing an empty string or `0` will reset the weight to the
- 		system default. The system default may be set by the kernel
- 		or drivers at boot or during hotplug events.
-+
-+What:		/sys/kernel/mm/mempolicy/weighted_interleave/max_node_weight
-+Date:		December 2024
-+Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-+Description:	Weight limiting / scaling interface
-+
-+		The maximum interleave weight for a memory node. When it is
-+		updated, any previous changes to interleave weights (i.e. via
-+		the nodeN sysfs interfaces) are ignored, and new weights are
-+		calculated using ACPI-reported bandwidths and scaled.
-+
-+		It is possible for weights to be greater than max_node_weight if
-+		the nodeN interfaces are directly modified to be greater.
-+
-+		Minimum weight: 1
-+		Default value: 32
-+		Maximum weight: 255
-+
-+		Writing an empty string will set the value to be the default
-+		(32). Writing a value outside the valid range  will return
-+		EINVAL and will not re-trigger a weight scaling.
-+
-+		Setting max_node_weight to 1 is equivalent to unweighted
-+		interleave.
-diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-index a2f9e7a4b479..83f3858a773f 100644
---- a/drivers/acpi/numa/hmat.c
-+++ b/drivers/acpi/numa/hmat.c
-@@ -20,6 +20,7 @@
- #include <linux/list_sort.h>
- #include <linux/memregion.h>
- #include <linux/memory.h>
-+#include <linux/mempolicy.h>
- #include <linux/mutex.h>
- #include <linux/node.h>
- #include <linux/sysfs.h>
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index eb72580288e6..d45216386c03 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -7,6 +7,7 @@
- #include <linux/init.h>
- #include <linux/mm.h>
- #include <linux/memory.h>
-+#include <linux/mempolicy.h>
- #include <linux/vmstat.h>
- #include <linux/notifier.h>
- #include <linux/node.h>
-@@ -214,6 +215,12 @@ void node_set_perf_attrs(unsigned int nid, struct access_coordinate *coord,
- 			break;
- 		}
- 	}
-+
-+	/* When setting CPU access coordinates, update mempolicy */
-+	if (access == ACCESS_COORDINATE_CPU) {
-+		if (mempolicy_set_node_perf(nid, coord))
-+			pr_info("failed to set node%d mempolicy attrs\n", nid);
-+	}
- }
- EXPORT_SYMBOL_GPL(node_set_perf_attrs);
- 
-diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
-index 931b118336f4..d564e9e893ea 100644
---- a/include/linux/mempolicy.h
-+++ b/include/linux/mempolicy.h
-@@ -11,6 +11,7 @@
- #include <linux/slab.h>
- #include <linux/rbtree.h>
- #include <linux/spinlock.h>
-+#include <linux/node.h>
- #include <linux/nodemask.h>
- #include <linux/pagemap.h>
- #include <uapi/linux/mempolicy.h>
-@@ -177,6 +178,9 @@ static inline bool mpol_is_preferred_many(struct mempolicy *pol)
- 
- extern bool apply_policy_zone(struct mempolicy *policy, enum zone_type zone);
- 
-+extern int mempolicy_set_node_perf(unsigned int node,
-+				   struct access_coordinate *coords);
-+
- #else
- 
- struct mempolicy {};
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index ee32a10e992c..f789280acdcb 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -109,6 +109,7 @@
- #include <linux/mmu_notifier.h>
- #include <linux/printk.h>
- #include <linux/swapops.h>
-+#include <linux/gcd.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/tlb.h>
-@@ -153,24 +154,116 @@ static unsigned int mempolicy_behavior;
-  *
-  * iw_table is RCU protected
-  */
-+static unsigned long *node_bw_table;
-+static u8 __rcu *default_iw_table;
-+static DEFINE_MUTEX(default_iwt_lock);
-+
- static u8 __rcu *iw_table;
- static DEFINE_MUTEX(iw_table_lock);
- 
-+static int max_node_weight = 32;
-+
- static u8 get_il_weight(int node)
- {
--	u8 *table;
-+	u8 *table, *defaults;
- 	u8 weight;
- 
- 	rcu_read_lock();
-+	defaults = rcu_dereference(default_iw_table);
- 	table = rcu_dereference(iw_table);
--	/* if no iw_table, use system default */
--	weight = table ? table[node] : 1;
--	/* if value in iw_table is 0, use system default */
--	weight = weight ? weight : 1;
-+	/* if no iw_table, use system default - if no default, use 1 */
-+	weight = table ? table[node] : 0;
-+	weight = weight ? weight : (defaults ? defaults[node] : 1);
- 	rcu_read_unlock();
- 	return weight;
- }
- 
-+/*
-+ * Convert ACPI-reported bandwidths into weighted interleave weights for
-+ * informed page allocation.
-+ * Call with default_iwt_lock held
-+ */
-+static void reduce_interleave_weights(unsigned long *bw, u8 *new_iw)
-+{
-+	uint64_t ttl_bw = 0, ttl_iw = 0, scaling_factor = 1;
-+	unsigned int iw_gcd = 1, i = 0;
-+
-+	/* Recalculate the bandwidth distribution given the new info */
-+	for (i = 0; i < nr_node_ids; i++)
-+		ttl_bw += bw[i];
-+
-+	/* If node is not set or has < 1% of total bw, use minimum value of 1 */
-+	for (i = 0; i < nr_node_ids; i++) {
-+		if (bw[i]) {
-+			scaling_factor = 100 * bw[i];
-+			new_iw[i] = max(scaling_factor / ttl_bw, 1);
-+		} else {
-+			new_iw[i] = 1;
-+		}
-+		ttl_iw += new_iw[i];
-+	}
-+
-+	/*
-+	 * Scale each node's share of the total bandwidth from percentages
-+	 * to whole numbers in the range [1, max_node_weight]
-+	 */
-+	for (i = 0; i < nr_node_ids; i++) {
-+		scaling_factor = max_node_weight * new_iw[i];
-+		new_iw[i] = max(scaling_factor / ttl_iw, 1);
-+		if (unlikely(i == 0))
-+			iw_gcd = new_iw[0];
-+		iw_gcd = gcd(iw_gcd, new_iw[i]);
-+	}
-+
-+	/* 1:2 is strictly better than 16:32. Reduce by the weights' GCD. */
-+	for (i = 0; i < nr_node_ids; i++)
-+		new_iw[i] /= iw_gcd;
-+}
-+
-+int mempolicy_set_node_perf(unsigned int node, struct access_coordinate *coords)
-+{
-+	unsigned long *old_bw, *new_bw;
-+	unsigned long bw_val;
-+	u8 *old_iw, *new_iw;
-+
-+	/*
-+	 * Bandwidths above this limit causes rounding errors when reducing
-+	 * weights. This value is ~16 exabytes, which is unreasonable anyways.
-+	 */
-+	bw_val = min(coords->read_bandwidth, coords->write_bandwidth);
-+	if (bw_val > (U64_MAX / 10))
-+		return -EINVAL;
-+
-+	new_bw = kcalloc(nr_node_ids, sizeof(unsigned long), GFP_KERNEL);
-+	if (!new_bw)
-+		return -ENOMEM;
-+
-+	new_iw = kzalloc(nr_node_ids, GFP_KERNEL);
-+	if (!new_iw) {
-+		kfree(new_bw);
-+		return -ENOMEM;
-+	}
-+
-+	mutex_lock(&default_iwt_lock);
-+	old_bw = node_bw_table;
-+	old_iw = rcu_dereference_protected(default_iw_table,
-+					   lockdep_is_held(&default_iwt_lock));
-+
-+	if (old_bw)
-+		memcpy(new_bw, old_bw, nr_node_ids*sizeof(unsigned long));
-+	new_bw[node] = bw_val;
-+	node_bw_table = new_bw;
-+
-+	reduce_interleave_weights(new_bw, new_iw);
-+	rcu_assign_pointer(default_iw_table, new_iw);
-+
-+	mutex_unlock(&default_iwt_lock);
-+	synchronize_rcu();
-+	kfree(old_bw);
-+	kfree(old_iw);
-+	return 0;
-+}
-+
- /**
-  * numa_nearest_node - Find nearest node by state
-  * @node: Node id to start the search
-@@ -2001,7 +2094,7 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
- {
- 	nodemask_t nodemask;
- 	unsigned int target, nr_nodes;
--	u8 *table;
-+	u8 *table, *defaults;
- 	unsigned int weight_total = 0;
- 	u8 weight;
- 	int nid;
-@@ -2012,11 +2105,12 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
- 
- 	rcu_read_lock();
- 	table = rcu_dereference(iw_table);
-+	defaults = rcu_dereference(iw_table);
- 	/* calculate the total weight */
- 	for_each_node_mask(nid, nodemask) {
- 		/* detect system default usage */
--		weight = table ? table[nid] : 1;
--		weight = weight ? weight : 1;
-+		weight = table ? table[nid] : 0;
-+		weight = weight ? weight : (defaults ? defaults[nid] : 1);
- 		weight_total += weight;
- 	}
- 
-@@ -2025,8 +2119,8 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
- 	nid = first_node(nodemask);
- 	while (target) {
- 		/* detect system default usage */
--		weight = table ? table[nid] : 1;
--		weight = weight ? weight : 1;
-+		weight = table ? table[nid] : 0;
-+		weight = weight ? weight : (defaults ? defaults[nid] : 1);
- 		if (target < weight)
- 			break;
- 		target -= weight;
-@@ -2409,7 +2503,7 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 	unsigned long nr_allocated = 0;
- 	unsigned long rounds;
- 	unsigned long node_pages, delta;
--	u8 *table, *weights, weight;
-+	u8 *weights, weight;
- 	unsigned int weight_total = 0;
- 	unsigned long rem_pages = nr_pages;
- 	nodemask_t nodes;
-@@ -2458,16 +2552,8 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 	if (!weights)
- 		return total_allocated;
- 
--	rcu_read_lock();
--	table = rcu_dereference(iw_table);
--	if (table)
--		memcpy(weights, table, nr_node_ids);
--	rcu_read_unlock();
--
--	/* calculate total, detect system default usage */
- 	for_each_node_mask(node, nodes) {
--		if (!weights[node])
--			weights[node] = 1;
-+		weights[node] = get_il_weight(node);
- 		weight_total += weights[node];
- 	}
- 
-@@ -3396,6 +3482,7 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
- }
- 
- static struct iw_node_attr **node_attrs;
-+static struct kobj_attribute *max_nw_attr;
- 
- static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
- 				  struct kobject *parent)
-@@ -3413,6 +3500,10 @@ static void sysfs_wi_release(struct kobject *wi_kobj)
- 
- 	for (i = 0; i < nr_node_ids; i++)
- 		sysfs_wi_node_release(node_attrs[i], wi_kobj);
-+
-+	sysfs_remove_file(wi_kobj, &max_nw_attr->attr);
-+	kfree(max_nw_attr->attr.name);
-+	kfree(max_nw_attr);
- 	kobject_put(wi_kobj);
- }
- 
-@@ -3454,6 +3545,63 @@ static int add_weight_node(int nid, struct kobject *wi_kobj)
- 	return 0;
- }
- 
-+static ssize_t max_nw_show(struct kobject *kobj, struct kobj_attribute *attr,
-+			char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", max_node_weight);
-+}
-+
-+static ssize_t max_nw_store(struct kobject *kobj,
-+		struct kobj_attribute *attr, const char *buf, size_t count)
-+{
-+	unsigned long *bw;
-+	u8 *old_iw, *new_iw;
-+	u8 max_weight;
-+
-+	if (count == 0 || sysfs_streq(buf, ""))
-+		max_weight = 32;
-+	else if (kstrtou8(buf, 0, &max_weight) || max_weight == 0)
-+		return -EINVAL;
-+
-+	new_iw = kzalloc(nr_node_ids, GFP_KERNEL);
-+	if (!new_iw)
-+		return -ENOMEM;
-+
-+	mutex_lock(&default_iwt_lock);
-+	bw = node_bw_table;
-+
-+	if (!bw) {
-+		mutex_unlock(&default_iwt_lock);
-+		kfree(new_iw);
-+		return -ENODEV;
-+	}
-+
-+	max_node_weight = max_weight;
-+	old_iw = rcu_dereference_protected(default_iw_table,
-+					   lockdep_is_held(&default_iwt_lock));
-+
-+	reduce_interleave_weights(bw, new_iw);
-+	rcu_assign_pointer(default_iw_table, new_iw);
-+	mutex_unlock(&default_iwt_lock);
-+
-+	synchronize_rcu();
-+	kfree(old_iw);
-+
-+	return count;
-+}
-+
-+static struct kobj_attribute wi_attr =
-+	__ATTR(max_node_weight, 0664, max_nw_show, max_nw_store);
-+
-+static struct attribute *wi_default_attrs[] = {
-+	&wi_attr.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group wi_attr_group = {
-+	.attrs = wi_default_attrs,
-+};
-+
- static int add_weighted_interleave_group(struct kobject *root_kobj)
- {
- 	struct kobject *wi_kobj;
-@@ -3470,6 +3618,13 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
- 		return err;
- 	}
- 
-+	err = sysfs_create_group(wi_kobj, &wi_attr_group);
-+	if (err) {
-+		pr_err("failed to add sysfs [max_node_weight]\n");
-+		kobject_put(wi_kobj);
-+		return err;
-+	}
-+
- 	for_each_node_state(nid, N_POSSIBLE) {
- 		err = add_weight_node(nid, wi_kobj);
- 		if (err) {
--- 
-2.43.5
+> > +             goto err;
+> > +
+> > +     if (int_stat & ADXL345_INT_OVERRUN)
+> > +             goto err;
+> > +
+> > +     if (int_stat & (ADXL345_INT_DATA_READY | ADXL345_INT_WATERMARK)) =
+{
+>
+> I think you only ever enable the INT_WATERMARK?  If so does it
+> make sense to check for DATA_READY as well?
+>
 
+Watermark comes usually with data ready or overrun. I guess for the
+FIFO watermark, just evaluating watermark is probably sufficient. For
+other events, it then might be notification w/ a data ready set.
+Probably better to introduce data ready when it's actually really
+needed?
+
+> > +             samples =3D adxl345_get_samples(st);
+> > +             if (samples < 0)
+> > +                     goto err;
+> > +
+> > +             if (adxl345_fifo_push(indio_dev, samples) < 0)
+> > +                     goto err;
+> > +
+> > +     }
+> > +     return IRQ_HANDLED;
+> > +
+> > +err:
+> > +     adxl345_fifo_reset(st);
+> > +
+> > +     return IRQ_HANDLED;
+> > +}
+> > +
+> >  static const struct iio_info adxl345_info =3D {
+> >       .attrs          =3D &adxl345_attrs_group,
+> >       .read_raw       =3D adxl345_read_raw,
+> >       .write_raw      =3D adxl345_write_raw,
+> >       .write_raw_get_fmt      =3D adxl345_write_raw_get_fmt,
+> > +     .hwfifo_set_watermark =3D adxl345_set_watermark,
+> >  };
+> >
+> >  /**
+> > @@ -222,6 +499,7 @@ int adxl345_core_probe(struct device *dev, struct r=
+egmap *regmap,
+> >       unsigned int data_format_mask =3D (ADXL345_DATA_FORMAT_RANGE |
+> >                                        ADXL345_DATA_FORMAT_FULL_RES |
+> >                                        ADXL345_DATA_FORMAT_SELF_TEST);
+> > +     u8 fifo_ctl;
+> >       int ret;
+> >
+> >       indio_dev =3D devm_iio_device_alloc(dev, sizeof(*st));
+> > @@ -293,6 +571,28 @@ int adxl345_core_probe(struct device *dev, struct =
+regmap *regmap,
+> >       if (ret < 0)
+> >               return dev_err_probe(dev, ret, "Failed to add action or r=
+eset\n");
+> >
+> > +     if (st->irq > 0) {
+> > +             dev_dbg(dev, "initialize for FIFO_STREAM mode\n");
+> > +
+> > +             ret =3D devm_iio_kfifo_buffer_setup(dev, indio_dev, &adxl=
+345_buffer_ops);
+> > +             if (ret)
+> > +                     return ret;
+> > +
+> > +             ret =3D devm_request_threaded_irq(dev, st->irq, NULL, &ad=
+xl345_event_handler,
+> > +                             IRQF_SHARED | IRQF_ONESHOT,
+> > +                             indio_dev->name, indio_dev);
+> > +             if (ret)
+> > +                     return dev_err_probe(dev, ret, "Failed to setup t=
+riggered buffer\n");
+> > +
+> > +     } else {
+> > +             dev_dbg(dev, "initialize for FIFO_BYPASS mode (fallback)\=
+n");
+> > +
+> Given you haven't removed this code from elsewhere, was the driver relyin=
+g
+> on the defaults after reset before this patch?
+>
+> I don't mind having this branch as a form of documentation even if that's
+> true but maybe add a note to the patch description.
+>
+
+I'm not sure if I get you correctly. The driver before only
+implemented "BYPASS" mode. This was the case w/o a defined
+interrupt-name. My intention now is to keep this behavior as fallback.
+If no IRQ is around, i.e. interrupt + interrupt-name, the sensor
+driver will operate the sensor in BYPASS mode.
+
+I was interpreting this also as the "default behavior", you mentioned
+in the dt-binding patch? Is this correct?
+
+What do you mean when the driver is relying on the defaults after reset?
+
+> > +             fifo_ctl =3D ADXL345_FIFO_CTL_MODE(ADXL345_FIFO_BYPASS);
+> > +
+> > +             ret =3D regmap_write(st->regmap, ADXL345_REG_FIFO_CTL, fi=
+fo_ctl);
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +     }
+> >       return devm_iio_device_register(dev, indio_dev);
+> >  }
+> >  EXPORT_SYMBOL_NS_GPL(adxl345_core_probe, IIO_ADXL345);
+>
 
