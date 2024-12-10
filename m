@@ -1,171 +1,125 @@
-Return-Path: <linux-kernel+bounces-439507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF639EB041
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AA09EB043
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F1D167E6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:55:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E673167E8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6965519F421;
-	Tue, 10 Dec 2024 11:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C3D1A00ED;
+	Tue, 10 Dec 2024 11:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2to5tnk"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LATMjj9/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194C319E966;
-	Tue, 10 Dec 2024 11:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7750019CC3E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733831711; cv=none; b=ObdqGXr0W1f4Yw5yj4eHc3MIkD35/uJMl93UWkEunO20bXJlMIIcGdyn7hNI4C65YzqVbCpizYN5yivIU1bUAtRMPTz2KFV39sPrTCKAh/g08CdyWKJnp/qIAQSiPKD8NGVaN/DtCeWUThoNQKr88X4Z9i2RAi7negq/luUscqw=
+	t=1733831776; cv=none; b=sTVTqsodXkySVTzLqQpQ/RhCMqG9IC+f/3KVj4UvrogPsIxPOiJxoXn1f5s8TBP2WQP8Bz3E883v7uEZpiyakFDnBU1vewRuRGVDOyU5AO4ANN5Ps81Mqm/f0P0vZ1ytgmZJ6rqFcSETIIIoYCWTJLTYbSOpk7AVTjTGvRTnGNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733831711; c=relaxed/simple;
-	bh=FFYRaVt398kWlY3AcePts9f2SooVUww1t10zGlceo8M=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/CKsc0itaT5uHK0duc/ma4vLDDgCyM6mg4dtEhvgWpB5trkjz9zyUQSEQzP7ail3sxCIFTT1ojXuRXRbJeUugpxbCyClhri4XoSbTtI5QZo2ah4AIGhKcTwZaAt86C5POF5KX4pTYwdVTewl31ZuSQeNgm4XlCMa8LLLW9jx/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2to5tnk; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385d7f19f20so2496251f8f.1;
-        Tue, 10 Dec 2024 03:55:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733831708; x=1734436508; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GxtTqQBTIL8qkdLSUdzE6PIJ9G6FWWi9p3lyqXCUMq0=;
-        b=K2to5tnkPpV8JIeCEqkwkLfSeazKcfPnphGNJayvq2m2cHB0/xA1gndJm+DQVOljlW
-         aDIK8qUD2aAMURuj2Jfs0PiA+T2wH15NPotA8Yn1AUZDF1YN2Xw54m93vHWEWPUvv90w
-         KWyumzEbbPKjFW4mdpxUWGQQFubjmMZuGaV7YiRR75F3v7MhtoJXkx9CTWqpBBvcL9nU
-         B/EWwZ1MWzemyqcWZ9TNS6rpF4m0LmXoEtm1PfxUKTHT6y/7AJ1fANfuKgCYrwgQhgGo
-         9+p2DBqFOfqjfMQdW2sk0Iv0mMeOKfiCxVeSKsuvTN+cySQvf7l/nWnW0CnxHukd+OfI
-         EAmQ==
+	s=arc-20240116; t=1733831776; c=relaxed/simple;
+	bh=9D30XLU1YqyFDqV1u6rGU63M73Y+CHh8wTylgtao8T4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nhYGgE5wWxlZ/UZoR3Ml0OI1A2f5Si75j3fKprjNAHXmGFOSzQQy5p1ZNvZUT99h/K5WJtyehmW1AW4iDSQ03aQAw9A0ES7/xs00UTa/IAPWAfdqGQGP7GwpjR+hi0GEhjd2mEnvpj8gclidMyeRtMkMJz/9WEasVYeLIRHxzyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LATMjj9/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733831772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9D30XLU1YqyFDqV1u6rGU63M73Y+CHh8wTylgtao8T4=;
+	b=LATMjj9/i2v777yUGdEZ2ie0vGkamrxKQ9CY2/vtiBSsgC4QDC82RzPTxOyt5j4bHZh7Mb
+	l3XdkB2B5lFc3cz63LLclskUYQ+MvNJZiE/Ou22AIKCK8qcJAjkkbEwobyh8usqaaN9SVv
+	quBFjBNEf6HaZONvT5wczQ8JOIXcLoc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-208-vzk30Gn2P0-mE6GmOYXyKA-1; Tue, 10 Dec 2024 06:56:11 -0500
+X-MC-Unique: vzk30Gn2P0-mE6GmOYXyKA-1
+X-Mimecast-MFC-AGG-ID: vzk30Gn2P0-mE6GmOYXyKA
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434f0237cf7so23851615e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:56:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733831708; x=1734436508;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GxtTqQBTIL8qkdLSUdzE6PIJ9G6FWWi9p3lyqXCUMq0=;
-        b=l8QWKFBDOGjpC0oQOiRzojIYCWlTQ5KJonl6H4QCz6CmNbXpNFmjLCrmtUb5jDAnAM
-         eQapDYtaEU7499Qalbj17jO2S/eFrKsB+Pq3zccJRzPi9nUImYbgoJp9LVtA9oTuKK2E
-         BTKK4R/btJZiazhNZj54Wv8uoWi/cBJVcSCbfVYbtFshjUtQ3JS/CfgKTEJiN8GeoGYd
-         qS94g/XxLR5lFvbO1ieoS9OPWzSl15VrcuJZwq+MNSOKKvmR580hwRvL3sqkKx6Apa7h
-         fMVqABSQcpmkG0S7fAMFayxneZXvZpjjgXLwREruP8vFC70MS66FItii9+BJz53jiT/y
-         ftfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPk/VOBYmso5/9M/9Z/K3ZlbIFxsZPivYpBN12wJ+LNY8N0jB5AePFpyEjI5EguG3lENeJkW5ckLeK4nlg@vger.kernel.org, AJvYcCWazWk7Fbb6fRXcepRhQnLlLkbT83vzuw28iodi0NX0F0f1fKakf8lOs23Bd1rSTHcnBTJm+VFzjXTQYt1b@vger.kernel.org, AJvYcCXdvEX8cGIEX3CKjO+sLNpILVj8INwla9PvMzHsZNyNgG9Hvz29LemhB2suyHJH1SL7PAQvuEvESIPL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0MANT6sSNShdqwIikGWZRvnFH05VM8OGsl+/WQa/P1zmxk70W
-	v9OXkFRdvB+2rcGo1URyEHTm8qSgR617uWH/F7xDqlCvnSqyg3ws
-X-Gm-Gg: ASbGnctK/ch31OUMK9DnOwpVMnXyKZm1mA8f590+VHrQe6oqPV9F3VZWBUcmt1kxbhG
-	8XJr+Y/BeJPg1PCZz9uGZRvY2rWrr+39V6O6NKn2mGWgyccNSwOdgHlvNeHHo2ZogcCvsF97+NS
-	K5Z0lzb+338SYsjUS3uFt5aTvP101gP22dqGZurpibR8oWjX9D+0vgDbZLeA1JaqKg+jH3OokEp
-	C02F3X5X6mVNpnxUJrmyejcAyMYEAMyc1HSOUPGOE2ivwi6l43l9rrYwlNbp6nkxYV6DHIe/1G5
-	+NKhq4NyyQ==
-X-Google-Smtp-Source: AGHT+IEqPyQZxvaTdaCGPBbnnyYvA3iFt3x9GqsjfxRLDxoVwreBtdhs6qFT0if4l4gCopK2n/CUaQ==
-X-Received: by 2002:a5d:6d86:0:b0:386:378c:b7ec with SMTP id ffacd0b85a97d-386378cb923mr8329503f8f.58.1733831708190;
-        Tue, 10 Dec 2024 03:55:08 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386329a15b0sm11246137f8f.45.2024.12.10.03.55.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 03:55:07 -0800 (PST)
-Message-ID: <67582c1b.050a0220.83ef5.c8df@mx.google.com>
-X-Google-Original-Message-ID: <Z1gsFv24WRhhdqlb@Ansuel-XPS.>
-Date: Tue, 10 Dec 2024 12:55:02 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com,
-	Richard van Schagen <vschagen@icloud.com>
-Subject: Re: [PATCH v7 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
- engine support
-References: <20241112015920.22564-1-ansuelsmth@gmail.com>
- <20241112015920.22564-4-ansuelsmth@gmail.com>
- <Z1e0LHycNGcWqd2q@gondor.apana.org.au>
+        d=1e100.net; s=20230601; t=1733831769; x=1734436569;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9D30XLU1YqyFDqV1u6rGU63M73Y+CHh8wTylgtao8T4=;
+        b=S4ixxXwa++c5Mvs7EE4E1g3GjgUijWm9CkvuYH4wEBhCcruC3dsQg4+hJEiihMgcql
+         2WJn3idFhq1sFG66f1R2YZyxxEj7hBSRLxgb9yQj+o3vqLy4jeBQUvl+iJxdJQIQFfFM
+         2p73SK7XTYr8GVtxQCtFmvpNKAItFw9YKnp6Uf7NvC6MdW914E0EkLuj1qKf+t/W26ee
+         F+o21GGJjEPFJKDIp/ncSze7mPRqp7V0h+NiJyhdJNW94ek5ibdwKlyd+Duv0Z+OBrvD
+         LjNWEpvA4Iy9vcHe+qTsRKAiU/olhCsUT0i6PiLMoNFEDQEe+nU4t3On2hBkiGrik8/q
+         uSiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoxB1q4HH7BrjarrdPqNxT9jFOy5QQ7NSHqgcWwG15l53SkoYX8uvnKZp4Nn4iDXxA4sBTp2wstLZJLLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkRGMBchpFtDRRLlgo3NDiNvKb1E1WHyDW5NN3Tuf20rm/Tlh9
+	7WRg4mI/nXv+TtPo/2AMyhYKKdbpE9iR25j/xQp9vU7+6jZJlZJfYhOJmNrOEkEdPqD99qOpr7z
+	XfBgF/EBH+vjm64iVQeRtcLDwUiXK1HAXoEEj8rEsi/DmTZJAuLt1In7jfBr2ag==
+X-Gm-Gg: ASbGnctnmsKAYPtGFoDPpSpT8CfvXegGAQTH89yxDo78hXfup+KYBUDPtzzf0MoLpM6
+	Ex4DelSpWgh3g5i0ewIURt58KJQ8YtHUhW+Hq6CKKChRHPgeGLOSYOYz2j7Y2PB+vW8p0MxUpO+
+	isLtjUUPtYgau0zo2C30ydiESv1/wJbQnITTByOWcvVQu8n6KU7qMx2kwC9NHe9nRFFp1lc00VJ
+	X7al9fzx0aDIhNVfqRuYcXs/mCol90riA8z//H7//baGPXSY/YpS3bo7nceygvbqv/K9LB32Crz
+	I2P8A0EkB2aWjpCUjsxEfIV7uQ==
+X-Received: by 2002:a05:600c:1da1:b0:431:54f3:11ab with SMTP id 5b1f17b1804b1-434fffc8aafmr36672305e9.33.1733831769657;
+        Tue, 10 Dec 2024 03:56:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFBbN8A080kEtPt9BMjRTNDgrzEK3dfC71r4vFm7hnAFt6/No3fGb8mFcxtnMlmtMYyN/pmAA==
+X-Received: by 2002:a05:600c:1da1:b0:431:54f3:11ab with SMTP id 5b1f17b1804b1-434fffc8aafmr36672045e9.33.1733831769373;
+        Tue, 10 Dec 2024 03:56:09 -0800 (PST)
+Received: from [192.168.1.14] (host-82-49-164-239.retail.telecomitalia.it. [82.49.164.239])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da119a96sm191300075e9.40.2024.12.10.03.56.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 03:56:08 -0800 (PST)
+Message-ID: <e6a812ba-b7ea-4f8a-8bdd-1306921c318f@redhat.com>
+Date: Tue, 10 Dec 2024 12:56:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1e0LHycNGcWqd2q@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1 1/1] net: phy: Move callback comments from
+ struct to kernel-doc section
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org
+References: <20241206113952.406311-1-o.rempel@pengutronix.de>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241206113952.406311-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 10, 2024 at 11:23:24AM +0800, Herbert Xu wrote:
-> On Tue, Nov 12, 2024 at 02:59:00AM +0100, Christian Marangi wrote:
-> >
-> > +static int eip93_hash_export(struct ahash_request *req, void *out)
-> > +{
-> > +	struct eip93_hash_reqctx *rctx = ahash_request_ctx(req);
-> > +	struct eip93_hash_export_state *state = out;
-> > +	DECLARE_CRYPTO_WAIT(wait);
-> > +	int ret;
-> > +
-> > +	crypto_init_wait(&wait);
-> > +	/* Set the req callback for hash_partial_final wait */
-> > +	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-> > +				   crypto_req_done, &wait);
-> > +
-> > +	/* Set for partial hash generation */
-> > +	rctx->partial_hash = true;
-> > +	rctx->export_state = true;
-> > +	rctx->state = state;
-> > +
-> > +	/* Save the first block in state data */
-> > +	if (rctx->left_last || rctx->len) {
-> > +		struct mkt_hash_block *block;
-> > +
-> > +		block = list_first_entry(&rctx->blocks,
-> > +					 struct mkt_hash_block,
-> > +					 list);
-> > +
-> > +		memcpy(state->data, block->data,
-> > +		       SHA256_BLOCK_SIZE - rctx->left_last);
-> > +	}
-> > +
-> > +	/* Call hash_partial_final.
-> > +	 * This will send a dummpy 0 length packet. This is done to
-> > +	 * wait for every descriptor to being handled and sync the sa_state
-> > +	 * from the host. Partial hash and any other data will be copied in
-> > +	 * eip93_hash_handle_result()
-> > +	 */
-> > +	ret = crypto_wait_req(eip93_hash_partial_final(req), &wait);
-> 
-> Sorry, you can't do that here.  Your hash state should have been
-> exported when the request previously completed.  The export function
-> must not sleep.
->
+On 12/6/24 12:39, Oleksij Rempel wrote:
+> +#if 0 /* For kernel-doc purposes only. */
+> +
+> +/**
+> + * soft_reset - Issue a PHY software reset.
+> + * @phydev: The PHY device to reset.
+> + *
+> + * Returns 0 on success or a negative error code on failure.
 
-Ah that unfortunate but doesn't that goes against the async idea of ahash
-OPs? Anyway is busy loop acceptable here?
+KDoc is not happy about the lack of ':' after 'Returns':
 
-The main problem here is that .update only enqueue packet to be
-processed and we don't wait for it to finish as that would result in
-really bad performance.
+include/linux/phy.h:1099: warning: No description found for return value
+of 'soft_reset'
 
-To export the state with the previous request (.update) we would have to
-wait for each packet to complete or we would export the wrong partial
-hash.
+Thanks!
 
-The process is fast enough so busy loop here should not be problematic
-but waiting for every packet sent to .update on being processed might
-introduce big performance regression.
+Paolo
 
-Thanks for checking this hope you can help me understand this.
-
--- 
-	Ansuel
 
