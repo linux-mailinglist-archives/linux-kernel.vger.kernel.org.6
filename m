@@ -1,227 +1,233 @@
-Return-Path: <linux-kernel+bounces-438810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F269EA690
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:26:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF295163A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:26:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA2A1D6199;
-	Tue, 10 Dec 2024 03:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QYTZycI1"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2082.outbound.protection.outlook.com [40.107.94.82])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F339EA698
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:27:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C4CB644;
-	Tue, 10 Dec 2024 03:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733801201; cv=fail; b=DToKFz7NQNJu2/Wl4MMv0ZS6KpT4hLofUrjqRaRkF9ahzBY4lx5rk0529kfJFTQt03BLvf5W9aA3bbfMfv9qyqT7eMIt7cUjCbTuKvZUvSJqWVFbzD5AkbZlv2kynJg+4RLp8M9PzKu9S1ukjQjYhAkLJ1t1vpllGzgFA2gUZg4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733801201; c=relaxed/simple;
-	bh=KP+NkzxA/tBPO24GhLBcA+QFFWNkU79fBN62awwYmP4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SxnKcIQCBrD2wnlSiVj/XvKN4+cZVoI17MFaS5zoyp2OpZfi9DZM7PC2w/ZgOcRMN8R6VK97RC5a2SXaS+BsuU8DCawWZ+D/oDZyfLkXzVF12j7tpcHWqD3owaesgbymMv0azbV+JIiOA41lg52MFgg/vXqawThZOuJrgP1eYF8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QYTZycI1; arc=fail smtp.client-ip=40.107.94.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kpvwfbl70tZtJXZ4cHQHEWBg8ffwf2mM2GsGj4KWiJbwlxwVJzfHljhXVknV2TUjUPbu4S1M6w25kDV25RVbnDQ/PhdVJbz+yG6M9HTPeCHpuEbQBQQFJA7GRItM2AHgkOpls8J/3qxHS2K1NLoPxtRXZUyy1BxXgVpqNUFJgTvvQWlGZ4UHt1VcFtG/x+d7v0cv73ZZG9YpzZnAhRn1vLX49GlAC8YA/oPix01Pbswj0ghkIJxnHa5v6hAV0d0aQbba6AeV2DuEcacInO1/sKHLvyir8Bb/AmpxCT/GTfSfzIQ82plKpkC9dEGEl0il1/3hxLGnGesluJnnEJaIaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OXi9nxi/yqvcIuAT/67it6IavU439eN6n3iPe1Jk2kk=;
- b=Oih01nG+m7s0ZmdunKAbEhPXah/5XM18lrrrvN8BcLQJjx8TGrJDGg06hCRbsoo+E/Ih4stdGu36OZiWT8oxncG+qp+mFp5ulBuxE4UFIi+EmUMbG+sDKyT7X09UVV1q7pI0xcdtqhganHNhU0SqcTey88b0gFLrarf/8nH35UPo2Yl9LgT1LUKTciGjk/ZaN2+Lins2nn08HgQr+/4yc5gR3HCwAwQQupo6n3fAoC8C+Lja853wFmt6vyCblhX1DwAIiJhsb0xJlQ+Iq+T1kX5UTR8+RkDRxPYZACYqPpo6tVsouaeeyTGD2JApBbQ2XhpTI57gaup3ZPRpBOse0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OXi9nxi/yqvcIuAT/67it6IavU439eN6n3iPe1Jk2kk=;
- b=QYTZycI1NQm8/CdHRvPbynV5WZX2OggtPH1y6a280pNvY4sS2Bq25YggkMyn1dFnErSJ3w6ZvQBe6Sh37JZSWVmt1ZsGp3qlv1YfLEIUkh00IbAn4Xfq02isYLqHdjhgQJyuZ58sXNwPUXl8PZMOpGuBFI3uOWyaLKyJrKSAP70=
-Received: from CH3P220CA0029.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1e8::11)
- by DS0PR12MB8366.namprd12.prod.outlook.com (2603:10b6:8:f9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
- 2024 03:26:36 +0000
-Received: from CH2PEPF00000143.namprd02.prod.outlook.com
- (2603:10b6:610:1e8:cafe::c3) by CH3P220CA0029.outlook.office365.com
- (2603:10b6:610:1e8::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.13 via Frontend Transport; Tue,
- 10 Dec 2024 03:26:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF00000143.mail.protection.outlook.com (10.167.244.100) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Tue, 10 Dec 2024 03:26:36 +0000
-Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Dec
- 2024 21:26:05 -0600
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>, "Gautham R. Shenoy"
-	<gautham.shenoy@amd.com>, Huang Rui <ray.huang@amd.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Perry Yuan
-	<perry.yuan@amd.com>, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, "K
- Prateek Nayak" <kprateek.nayak@amd.com>
-Subject: [PATCH] cpufreq/amd-pstate: Detect preferred core support before driver registration
-Date: Tue, 10 Dec 2024 03:25:57 +0000
-Message-ID: <20241210032557.754-1-kprateek.nayak@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB93285D1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:27:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D991D63CD;
+	Tue, 10 Dec 2024 03:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yn0QGp7Y"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3033B644;
+	Tue, 10 Dec 2024 03:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733801239; cv=none; b=c7bSbybQoLeK0X/G1kZ7a040U2iVQxqJxCjIwDftj90YNjZVJ2MK+wFQL4yqu5DerYq2rQF6sgmHRDQnAc+xdHjMzqnOOCnugSK3lHZDFVPVisIf8yAGhC911OmM0hWJgDYARoYxeU5jDbr6wwXrtNLEoQEbKqZFffH0P+gtb1k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733801239; c=relaxed/simple;
+	bh=LlXvsVxs1ZBGsstwIB3bDPbexaTDwqyvZf6awYEUQxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YaIBMHQdakKgagqHj4mAvVpwt16cPefSGbc+cacGAH1n6sdNNEr01j3mBm9nU5tKbG4iMkAbqV2vplaqfjRevicwEfveSo8w0ms6kJbK75El/kVnWo/jnVaULCaf5w4yiWVprPheuSB/Bm54R9wWokdA/P7NPZHsgJTxz1F0O60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yn0QGp7Y; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3d14336f0so5584595a12.3;
+        Mon, 09 Dec 2024 19:27:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733801236; x=1734406036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zw8KjUeVLCoeUttHvlAE11LYFS9kka7RYPFB87xdCOo=;
+        b=Yn0QGp7YvF8+o3h0o80tR9NWuDMNMUdzL2Ytmazolc9CYX4gE8LRVs2MS3lrHV/Mol
+         rs0tx0Iec3t+XmU/R0djpjWQ135ifnZGr4xpyolR+cfOJtmeUP0B7L+uZbFz0lU1iefx
+         VCElq8KJJNYG0zi6aHYbeuUISEZjcq/215w/FQCFdovVqjP14/YiSxnsLGxGH9Sqmfeq
+         0hJSjn9I34y2tiyzFD99GpqH69YUbwR9uSusg1cmhntNTTMHVm8K+3+DiqPO2PSm1M0A
+         jEWqc703meWTveIaoJy5V1yPrDRq4IYjCcuJwgAAKMX63PbysrxApj0WOaaXUk01d+Nh
+         rW2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733801236; x=1734406036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zw8KjUeVLCoeUttHvlAE11LYFS9kka7RYPFB87xdCOo=;
+        b=vHUvtB6TRIdgLB66HafMp/f3Q5bMw875pM7oqqC0JlDLcmNPkSZrT4Rggp8wydD6+L
+         PeI0hadNttep2ZJIW0ZQRPB3bnSbnM9aY8JXNRlyrx9lMJnZLm2wgpzcM8sD3Z0kzLaA
+         TW/yhPIZb7gTPNBDTk+EqvGaYdqQmQvLgqKWlQF+O1q4FLSDAgVglzQg1ETAR52JjOVE
+         hRh32f3Aem5U2HTNRrkpjb0VBgRsA1xRWwkmTKXUXO1+dLHaq4oZfqJcpJ69y8i6m5nw
+         oV9ENmM0m/VUS5CTQkuVEucBd4OAmIGirX8NKR12xdiid23PovS8usiufDe333vqKyBu
+         QYxA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6fnPF0embCSabuyN9hhDmBHazZWg6WFFHju6BPg0WT2U+VUPmkial0ksLsATGhbH1uIuYOGtBPC1IBQ==@vger.kernel.org, AJvYcCVSro9A6m14PshU1c31GOmo1U+4ke4XZgSgqF7gk1h/C1GSVGsEdXaDBp4GZGfR3IpN1rBV64wcfJVpUJJZ@vger.kernel.org, AJvYcCVkvPxSiuspxzkq6NcS2KBW/OPHq5tN+XlOlrJcxA3BMnqUEz2TWmjHBMjQ1hk9d5Kanj1zHTJV7ZaqtA==@vger.kernel.org, AJvYcCW6h2kuns9R/czE5/I5Wd8l9F0vbbt6baHcT8aOnQb+ha2xeidh0963ft9mqn+D3lwpJFvR0JPaKDacBA==@vger.kernel.org, AJvYcCWFMdPYksuxqu/2CHRjOVGLLEIniVxXrj9SB5T4V1Z9XuxLQPCTeMWXQvywpV+cyY86HjKT0DxPIDM=@vger.kernel.org, AJvYcCWPbYDIlCIBhb3afOvvVuOVR1qgRmKHXzurNkJPU0dQtO3KBG9OM3FAUTK3nw2qXeDo1Idzgr7mcxgmUQ==@vger.kernel.org, AJvYcCXQ0UoNUPG0C4aW3qw+EW4HaK0mjhB4zexj+KT4Rr95HIg7bxeQyP3tF0jGxAPJ2Q3IZO5tkjqbaR/Q/CCr@vger.kernel.org, AJvYcCXs9nnghe582B6ZaMU534jNoE/QrxVdr6J2D4gJwx5OGgXTxwcEi15algqXmiySr0+v/ZI3mlvaCYC9TQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVyaNTxg1hlwMSHkuuQVQabWKYYpQ4UC5JkNULsuyLN/soSyMh
+	akiT27uKOVizDryavkuGK5OvhkE1UmQSegO89nq8j7O5CasU+AURQ1s+G+4lfl54kTslJ/qieOP
+	T+46Kr51diRKOjmFebeXbz0g23gA=
+X-Gm-Gg: ASbGncv9ZqZ0C6gzWXJ9HShVGapp01CZE7d2557Hhgns8vaWG80GVjUod9ruiT2yHs/
+	XzDEjSpT8Ji3pmE58T2cnX/SFy46qpdS4RQFqhA==
+X-Google-Smtp-Source: AGHT+IHf2Fi/42HQsEiQo6WzNdGmDcvEV4I1TbpQP4oAJiq1u3pQn+R3NnSbM/I4gmKvXuY9eOlF5eGp3h/ZPgrcEvo=
+X-Received: by 2002:a05:6402:278f:b0:5d0:fc80:c4d1 with SMTP id
+ 4fb4d7f45d1cf-5d41852f140mr3377986a12.14.1733801235781; Mon, 09 Dec 2024
+ 19:27:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000143:EE_|DS0PR12MB8366:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7727051-467d-4116-ee58-08dd18ca73d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?h0gHpFK9IVBKgo9hOBwAlhGz4aIamfzZ7PfIFASht8RCnPnHiG/WoQjpbL/Q?=
- =?us-ascii?Q?rCzLF0z23cBmuk4k5hQhmB0XSgyt/TZENIwS6noFYDc4t8qBi/DX7ow1qgav?=
- =?us-ascii?Q?+zDdNQNSmPJDDfyrN+4TpUlFfgFNezcO58ahKK22dMRvKQHLa3FHgSOHWP01?=
- =?us-ascii?Q?11Ey6fcjZ2Ak4tuoPT6KbHNDBEAj8lbUJmx+Fr8yK9DfxnNJKyhGMZRSDH/H?=
- =?us-ascii?Q?M2Y+rn2z2L6eowOEOhGeVOmIwsmN5oXg3mMadh6m4JS+XsIaOkYQ43fVKcVv?=
- =?us-ascii?Q?md09ng7w/1t8D7pw4boMLfNRvQlKQGu3JaKShj4iuN0r3qDpMV8FeST7v1fc?=
- =?us-ascii?Q?e+44E9QEFRWrV8qdN86/DdCMADzMrG30AlN0o3xKu7kXC7F3OJGOoB1YarWL?=
- =?us-ascii?Q?F7W/b6Sx9pUdTZv162fJw7GqtbgcjjPDeGInP9iPcU1kEqHxIobnRTki+cKn?=
- =?us-ascii?Q?n61hawsxii11nY1o4vhCiEpWFihdy2/Bd2VZ8IMDhH6WRxGGX4J7LVcFepte?=
- =?us-ascii?Q?5Djf8epe6NbX8c40J6/o/SL9g0KywGjB18n7j+tRrhqDRrAlGnbAbt0gvIVy?=
- =?us-ascii?Q?eAHi4NO4yfDggSJee5fI6jeDaQbbrcB4ymW2rFZmKOTXzyzQNjR5bgS5Kf7u?=
- =?us-ascii?Q?L9vn4ef76nQIpaPpTgVera7Otw0VuX4VLS8VsqAkA2EveEht8b2aMbDUSWmu?=
- =?us-ascii?Q?4xKN3IkzP8TDEOEV5rSTxsBgRZgfm2m4Fpt/+kEwdhU+IozrNeYqlcXE75If?=
- =?us-ascii?Q?Y1l2RbuwRnbWmUfbPfQrAYlW96QPDA9HHrg87oOPEivFLKtBML+qVwdh5A4k?=
- =?us-ascii?Q?2VTyZ0LIXOhDlI2vGgUdo9R6Xp/gJ6Hp9Jcydpe5IauYNwOGrK2wvGhPo60j?=
- =?us-ascii?Q?g2GZbiKX9eT/SHtdrJc7FRcRBmV+nhmv8QqWU72MXzWheXYa0PEkh/M/WQE2?=
- =?us-ascii?Q?xUiYlAcJ1KYav34K/3K3kqAu4xA5u1yTn5OPLbdUk86SRdlLD7JFyCwT+clA?=
- =?us-ascii?Q?n71qOO4eBXkMKKAwheUsU+SFyWsxKhNMVR5yTQRaHXjoMARBCE+RrA6KFluG?=
- =?us-ascii?Q?6cUqO3R4+iwbY4CTaV/Oxr+77QyANi0hbX16aIMXa65y8SMYXAbfQINtqkxr?=
- =?us-ascii?Q?gBfW8KczQKAoUa83ozySTKIkeI0ADzjLAsk7z5XkLaPtdxgOOuEgrkUdbJLW?=
- =?us-ascii?Q?HBurOwnu8BEzAYUreDn4Qay696zHsvn8IyWiIIsXkxrTEP0OOmffQn3IUFtO?=
- =?us-ascii?Q?FWeR8jYz/j4ehdgxC8SXnqnmPjbz4WP7a3pQH4XH1jMR4jwXw9EIgZ2VeOPQ?=
- =?us-ascii?Q?0xxfiNNCZFDt0qHnw8FmmhN1IQEc5X9nZNC77TAoP1xaJEihqNx+nYRW2KCX?=
- =?us-ascii?Q?lVss7R6obHCYzwx6VbzPp1dOMmL6mleMBWcf1Mkp2vYlf8b/NJkNkF3PF8id?=
- =?us-ascii?Q?nku4CQ8pXfUoMG8BidUWoZJ++lwPeAs+?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 03:26:36.1623
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7727051-467d-4116-ee58-08dd18ca73d6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000143.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8366
+References: <20241210024119.2488608-1-kaleshsingh@google.com> <20241210024119.2488608-2-kaleshsingh@google.com>
+In-Reply-To: <20241210024119.2488608-2-kaleshsingh@google.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Mon, 9 Dec 2024 19:27:04 -0800
+Message-ID: <CAHbLzkpCRGF+-WXkHVEutkEGHSWydmpb1CwkvHZRTH-f773J-w@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable 01/17] mm: Introduce generic_mmap_hint()
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, yang@os.amperecomputing.com, 
+	riel@surriel.com, david@redhat.com, linux@armlinux.org.uk, 
+	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, 
+	davem@davemloft.net, andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
+	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com, 
+	leitao@debian.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
+	kernel-team@android.com, android-mm@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Booting with amd-pstate on 3rd Generation EPYC system incorrectly
-enabled ITMT support despite the system not supporting Preferred Core
-ranking. amd_pstate_init_prefcore() called during amd_pstate*_cpu_init()
-requires "amd_pstate_prefcore" to be set correctly however the preferred
-core support is detected only after driver registration which is too
-late.
+On Mon, Dec 9, 2024 at 6:41=E2=80=AFPM Kalesh Singh <kaleshsingh@google.com=
+> wrote:
+>
+> Consolidate the hint searches from both direcitons (topdown and
+> bottomup) into generic_mmap_hint().
+>
+> No functional change is introduced.
+>
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> ---
+>  include/linux/sched/mm.h |  4 ++++
+>  mm/mmap.c                | 45 ++++++++++++++++++++++++----------------
+>  2 files changed, 31 insertions(+), 18 deletions(-)
+>
+> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> index 928a626725e6..edeec19d1708 100644
+> --- a/include/linux/sched/mm.h
+> +++ b/include/linux/sched/mm.h
+> @@ -201,6 +201,10 @@ unsigned long mm_get_unmapped_area_vmflags(struct mm=
+_struct *mm,
+>                                            unsigned long flags,
+>                                            vm_flags_t vm_flags);
+>
+> +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
+> +                               unsigned long len, unsigned long pgoff,
+> +                               unsigned long flags);
+> +
+>  unsigned long
+>  generic_get_unmapped_area(struct file *filp, unsigned long addr,
+>                           unsigned long len, unsigned long pgoff,
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index df9154b15ef9..e97eb8bf4889 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -620,6 +620,27 @@ unsigned long vm_unmapped_area(struct vm_unmapped_ar=
+ea_info *info)
+>         return addr;
+>  }
+>
+> +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
+> +                               unsigned long len, unsigned long pgoff,
+> +                               unsigned long flags)
+> +{
+> +       struct mm_struct *mm =3D current->mm;
+> +       struct vm_area_struct *vma, *prev;
+> +       const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
+gs);
+> +
+> +       if (!addr)
+> +               return 0;
+> +
+> +       addr =3D PAGE_ALIGN(addr);
+> +       vma =3D find_vma_prev(mm, addr, &prev);
+> +       if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &&
+> +           (!vma || addr + len <=3D vm_start_gap(vma)) &&
+> +           (!prev || addr >=3D vm_end_gap(prev)))
+> +               return addr;
+> +
+> +       return 0;
+> +}
+> +
+>  /* Get an address range which is currently unmapped.
+>   * For shmat() with addr=3D0.
+>   *
+> @@ -637,7 +658,6 @@ generic_get_unmapped_area(struct file *filp, unsigned=
+ long addr,
+>                           unsigned long flags, vm_flags_t vm_flags)
+>  {
+>         struct mm_struct *mm =3D current->mm;
+> -       struct vm_area_struct *vma, *prev;
+>         struct vm_unmapped_area_info info =3D {};
+>         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
+gs);
+>
+> @@ -647,14 +667,9 @@ generic_get_unmapped_area(struct file *filp, unsigne=
+d long addr,
+>         if (flags & MAP_FIXED)
+>                 return addr;
 
-Swap the function calls around to detect preferred core support before
-registring the driver via amd_pstate_register_driver(). This ensures
-amd_pstate*_cpu_init() sees the correct value of "amd_pstate_prefcore"
-considering the platform support.
+It seems you also can move the MAP_FIXED case into generic_mmap_hint(), rig=
+ht?
 
-Fixes: 279f838a61f9 ("x86/amd: Detect preferred cores in amd_get_boost_ratio_numerator()")
-Fixes: ff2653ded4d9 ("cpufreq/amd-pstate: Move registration after static function call update")
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
----
-This patch is based on the latest superm1/linux:bleeding-edge and was
-also tested on v6.13-rc2 upstream release. Following is the behavior on
-a 3rd Generation EPYC system with and without this fix:
-
-o v6.13-rc2
-
-    # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
-    amd-pstate
-
-    # cat /proc/sys/kernel/sched_itmt_enabled
-    1
-
-    # echo Y > /sys/kernel/debug/sched/verbose
-    # cat /sys/kernel/debug/sched/domains/cpu0/domain*/flags
-    SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_CPUCAPACITY SD_SHARE_LLC SD_PREFER_SIBLING
-    SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_LLC SD_ASYM_PACKING SD_PREFER_SIBLING
-    ...
-
-o v6.13-rc2 + this patch
-
-    # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
-    amd-pstate
-
-    # cat /proc/sys/kernel/sched_itmt_enabled
-    cat: /proc/sys/kernel/sched_itmt_enabled: No such file or directory
-
-    root@yamuna:/home/amd# echo Y > /sys/kernel/debug/sched/verbose
-    root@yamuna:/home/amd# cat /sys/kernel/debug/sched/domains/cpu0/domain*/flags
-    SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_CPUCAPACITY SD_SHARE_LLC SD_PREFER_SIBLING
-    SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_LLC SD_PREFER_SIBLING
-    ...
-
-System was booted with "amd_pstate=passive" cmdline.
----
- drivers/cpufreq/amd-pstate.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 66fb7aee95d2..cb03f7d6575c 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1862,18 +1862,18 @@ static int __init amd_pstate_init(void)
- 		static_call_update(amd_pstate_set_epp, shmem_set_epp);
- 	}
- 
--	ret = amd_pstate_register_driver(cppc_state);
--	if (ret) {
--		pr_err("failed to register with return %d\n", ret);
--		return ret;
--	}
--
- 	if (amd_pstate_prefcore) {
- 		ret = amd_detect_prefcore(&amd_pstate_prefcore);
- 		if (ret)
- 			return ret;
- 	}
- 
-+	ret = amd_pstate_register_driver(cppc_state);
-+	if (ret) {
-+		pr_err("failed to register with return %d\n", ret);
-+		return ret;
-+	}
-+
- 	dev_root = bus_get_dev_root(&cpu_subsys);
- 	if (dev_root) {
- 		ret = sysfs_create_group(&dev_root->kobj, &amd_pstate_global_attr_group);
-
-base-commit: 1f2f221668b210107f1277901bb757f1d77de842
--- 
-2.34.1
-
+>
+> -       if (addr) {
+> -               addr =3D PAGE_ALIGN(addr);
+> -               vma =3D find_vma_prev(mm, addr, &prev);
+> -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &=
+&
+> -                   (!vma || addr + len <=3D vm_start_gap(vma)) &&
+> -                   (!prev || addr >=3D vm_end_gap(prev)))
+> -                       return addr;
+> -       }
+> +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
+> +       if (addr)
+> +               return addr;
+>
+>         info.length =3D len;
+>         info.low_limit =3D mm->mmap_base;
+> @@ -685,7 +700,6 @@ generic_get_unmapped_area_topdown(struct file *filp, =
+unsigned long addr,
+>                                   unsigned long len, unsigned long pgoff,
+>                                   unsigned long flags, vm_flags_t vm_flag=
+s)
+>  {
+> -       struct vm_area_struct *vma, *prev;
+>         struct mm_struct *mm =3D current->mm;
+>         struct vm_unmapped_area_info info =3D {};
+>         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
+gs);
+> @@ -698,14 +712,9 @@ generic_get_unmapped_area_topdown(struct file *filp,=
+ unsigned long addr,
+>                 return addr;
+>
+>         /* requesting a specific address */
+> -       if (addr) {
+> -               addr =3D PAGE_ALIGN(addr);
+> -               vma =3D find_vma_prev(mm, addr, &prev);
+> -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &=
+&
+> -                               (!vma || addr + len <=3D vm_start_gap(vma=
+)) &&
+> -                               (!prev || addr >=3D vm_end_gap(prev)))
+> -                       return addr;
+> -       }
+> +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
+> +       if (addr)
+> +               return addr;
+>
+>         info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
+>         info.length =3D len;
+> --
+> 2.47.0.338.g60cca15819-goog
+>
+>
 
