@@ -1,165 +1,238 @@
-Return-Path: <linux-kernel+bounces-440381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DFB9EBCB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:03:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6341F9EBD70
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:14:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 553A828358A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:03:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C813283640
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B185623EC0D;
-	Tue, 10 Dec 2024 22:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47872397B4;
+	Tue, 10 Dec 2024 22:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="U3VeWMEj"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7242397AB;
-	Tue, 10 Dec 2024 22:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="k4Dg2g3j"
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708182451F1;
+	Tue, 10 Dec 2024 22:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733868165; cv=none; b=fteyAMN7ht1d4XXr13xLybTTP6PQwRvfLWCXEpzOgU6FtlH0nhs+Xp2uI1mCnpsTL3PXIzamAq8kTeMH8aUCk4LrveSbuyLPeRGpi/wO1tL2Y+zcqeNS/L3bSoeNNgO2q6IX3KvKMLi1xSDrA1WFSXcQHhFIivCGOhtj1/xYy6k=
+	t=1733868236; cv=none; b=eucGV0aKvLpn1Mebk2PfbPdY7nrSmSuU0NgyRgwCNyjEd5pwJTjgxwj872xlZvt/PxmJg6jE8d3rZxePgwv9055c9+REfGC84CxmVb4oa8NsrmpbMhMy/prRhSTr3rNhqRD+DDzgkhfugeJlCF2pVbnBcVQZcqRlVLzOTBkiB0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733868165; c=relaxed/simple;
-	bh=SBfPEYowjaxMuaBy4H9/dtIZretkvlCG/dwNEW+xthU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aJ7LE920d41PhHcUY5pvNQ2DHDaG/G6yQay43uWaUhXtrFEyjRXgt8kXiNimhLWkuTUCAhubqsbQ7Fd5xPz6ULukt1ujynBkafdzTSwAPvqbZF9e/9VQcv32R6znE/+bRVd0aj76WDFxXisHk+t/ljj+io2QBDNYaZne9o7kG9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=U3VeWMEj; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8EC1F2047228;
-	Tue, 10 Dec 2024 14:02:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8EC1F2047228
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733868156;
-	bh=oAoRcxFx6r3qiWDnRBBsiLzbuwo4yEAyTzO1K822O7I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=U3VeWMEj1NoccyfU44IlXr+eH+dIb+Y1FX88FHYXU4q03PECflKzMMc2KhmQfWdxA
-	 2LtcSsTBowp5J1k4JjK8tQOvB5yIwMjDbVNHxvHTREwcCEJZMCYyv+0rZVYLLCY+lW
-	 lVwyzMWVt2MunqqkcT6KDTr1TpTutKDRbWdkcUjw=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Date: Tue, 10 Dec 2024 22:02:32 +0000
-Subject: [PATCH v3 01/19] netfilter: conntrack: Cleanup timeout definitions
+	s=arc-20240116; t=1733868236; c=relaxed/simple;
+	bh=chLVF/n4S2Gt6eJE4eERHqu9z2YYk6cN5qGEAS+WPco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HEeqb2exiccF6FhJvY35QjhucWBIg1ObrX2ZcDoKdT/R8OK7L9aupwjEa7kVQ07YzIb8ppSDi2XKKs3mEJwCoKoDQstsozyy/7kGCbB90QKGlq/k82O77MG/RCY9is5tGg3MDNw0GnyDZA76K50NyybH2/tsE3a4Up+X4hBCoBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=k4Dg2g3j; arc=none smtp.client-ip=80.12.242.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id L8JMt1CCAzLhcL8JMtnHY8; Tue, 10 Dec 2024 23:02:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733868154;
+	bh=vdIWqiL9YeYZIPJs3LWY7CxT8XaVOOt8ra806CiqypQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=k4Dg2g3jch4CBWVmgDqiSXMbtFnM8Ou9fxDwZNVBuQt0wM/FopsqJS25t6tUQm4GS
+	 qx40inpNoxdOPeEp3w0NxlwYnVOO18kKLuO6OeP1GQE4HipP8jnysiKbCM/2NiyFTN
+	 aJYh2vDhWYLrFKr0qQ9Oi2Wh+G5niJcjJdiHgFkwqGDIvujq70CEp07/tkQ4hOzYNP
+	 ilPaBNxfWKv6zTi3oqv3Ke6y37lAoJBSQVHlblWOCvJC4d4cgga9LLGLyH2bVQLjgO
+	 DWSRQ4+5BzyFijUyvfswwGjNeinHRXaIbPjtRWvDHbIu2vpnXQptJdDgyOqRcuM71s
+	 M65I71Ej4GvGA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 10 Dec 2024 23:02:34 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <99cfb914-dc4e-4cb1-b4c7-c8b0e62cc3fa@wanadoo.fr>
+Date: Tue, 10 Dec 2024 23:02:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-converge-secs-to-jiffies-v3-1-ddfefd7e9f2a@linux.microsoft.com>
-References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-In-Reply-To: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>, 
- Jozsef Kadlecsik <kadlec@netfilter.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
- Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>, 
- Russell King <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>, 
- Oded Gabbay <ogabbay@kernel.org>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jeroen de Borst <jeroendb@google.com>, 
- Praveen Kaligineedi <pkaligineedi@google.com>, 
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- James Smart <james.smart@broadcom.com>, 
- Dick Kennedy <dick.kennedy@broadcom.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
- Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>, 
- Jeff Johnson <jjohnson@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Jack Wang <jinpu.wang@cloud.ionos.com>, 
- Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
- Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
- Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Louis Peens <louis.peens@corigine.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr, 
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org, 
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org, 
- ath11k@lists.infradead.org, linux-mm@kvack.org, 
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org, 
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org, 
- oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Easwar Hariharan <eahariha@linux.microsoft.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 6/9] mfd: Add new driver for MAX77705 PMIC
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org
+References: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
+ <20241209-starqltechn_integration_upstream-v11-6-dc0598828e01@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241209-starqltechn_integration_upstream-v11-6-dc0598828e01@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-None of the higher order definitions are used anymore, so remove
-definitions for minutes, hours, and days timeouts. Convert the seconds
-denominated timeouts to secs_to_jiffies()
+Le 09/12/2024 à 12:26, Dzmitry Sankouski a écrit :
+> Add the core MFD driver for max77705 PMIC. We define five sub-devices
+> for which the drivers will be added in subsequent patches.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> 
+> ---
 
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
----
- net/netfilter/nf_conntrack_proto_sctp.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+...
 
-diff --git a/net/netfilter/nf_conntrack_proto_sctp.c b/net/netfilter/nf_conntrack_proto_sctp.c
-index 4cc97f971264ed779434ab4597dd0162586b3736..7c6f7c9f73320dd208bd0940f539bd9e662e62d0 100644
---- a/net/netfilter/nf_conntrack_proto_sctp.c
-+++ b/net/netfilter/nf_conntrack_proto_sctp.c
-@@ -39,20 +39,15 @@ static const char *const sctp_conntrack_names[] = {
- 	[SCTP_CONNTRACK_HEARTBEAT_SENT]		= "HEARTBEAT_SENT",
- };
- 
--#define SECS  * HZ
--#define MINS  * 60 SECS
--#define HOURS * 60 MINS
--#define DAYS  * 24 HOURS
--
- static const unsigned int sctp_timeouts[SCTP_CONNTRACK_MAX] = {
--	[SCTP_CONNTRACK_CLOSED]			= 10 SECS,
--	[SCTP_CONNTRACK_COOKIE_WAIT]		= 3 SECS,
--	[SCTP_CONNTRACK_COOKIE_ECHOED]		= 3 SECS,
--	[SCTP_CONNTRACK_ESTABLISHED]		= 210 SECS,
--	[SCTP_CONNTRACK_SHUTDOWN_SENT]		= 3 SECS,
--	[SCTP_CONNTRACK_SHUTDOWN_RECD]		= 3 SECS,
--	[SCTP_CONNTRACK_SHUTDOWN_ACK_SENT]	= 3 SECS,
--	[SCTP_CONNTRACK_HEARTBEAT_SENT]		= 30 SECS,
-+	[SCTP_CONNTRACK_CLOSED]			= secs_to_jiffies(10),
-+	[SCTP_CONNTRACK_COOKIE_WAIT]		= secs_to_jiffies(3),
-+	[SCTP_CONNTRACK_COOKIE_ECHOED]		= secs_to_jiffies(3),
-+	[SCTP_CONNTRACK_ESTABLISHED]		= secs_to_jiffies(210),
-+	[SCTP_CONNTRACK_SHUTDOWN_SENT]		= secs_to_jiffies(3),
-+	[SCTP_CONNTRACK_SHUTDOWN_RECD]		= secs_to_jiffies(3),
-+	[SCTP_CONNTRACK_SHUTDOWN_ACK_SENT]	= secs_to_jiffies(3),
-+	[SCTP_CONNTRACK_HEARTBEAT_SENT]		= secs_to_jiffies(30),
- };
- 
- #define	SCTP_FLAG_HEARTBEAT_VTAG_FAILED	1
+> diff --git a/drivers/mfd/max77705.c b/drivers/mfd/max77705.c
+> new file mode 100644
+> index 000000000000..bf71d4399b23
+> --- /dev/null
+> +++ b/drivers/mfd/max77705.c
+> @@ -0,0 +1,233 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// Maxim MAX77705 PMIC core driver
+> +//
+> +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/max77705-private.h>
+> +#include <linux/mfd/max77693-common.h>
+> +#include <linux/pm.h>
+> +#include <linux/power/max17042_battery.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/of.h>
+> +
+> +#define I2C_ADDR_FG     0x36
+> +#define	FUEL_GAUGE_NAME "max77705-battery"
+> +
+> +const struct dev_pm_ops max77705_pm_ops;
 
--- 
-2.43.0
+I'm not sure that this is needed.
 
+DEFINE_SIMPLE_DEV_PM_OPS() at the end of the file already define it, IIUC.
+
+...
+
+> +static int max77705_resume(struct device *dev)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(dev);
+> +	struct max77693_dev *max77705 = i2c_get_clientdata(i2c);
+> +
+> +	if (device_may_wakeup(dev))
+> +		disable_irq_wake(max77705->irq);
+> +
+> +	enable_irq(max77705->irq);
+> +
+> +	return 0;
+> +}
+> +DEFINE_SIMPLE_DEV_PM_OPS(max77705_pm_ops, max77705_suspend, max77705_resume);
+> +
+> +static const struct of_device_id max77705_i2c_of_match[] = {
+> +	{ .compatible = "maxim,max77705" },
+> +	{ },
+
+Nitpick: Unneeded ending comma
+
+> +};
+> +MODULE_DEVICE_TABLE(of, max77705_i2c_of_match);
+
+...
+
+> +enum max77705_reg {
+> +	MAX77705_PMIC_REG_PMICID1		= 0x00,
+> +	MAX77705_PMIC_REG_PMICREV		= 0x01,
+> +	MAX77705_PMIC_REG_MAINCTRL1		= 0x02,
+> +	MAX77705_PMIC_REG_BSTOUT_MASK		= 0x03,
+> +	MAX77705_PMIC_REG_FORCE_EN_MASK		= 0x08,
+> +	MAX77705_PMIC_REG_MCONFIG		= 0x10,
+> +	MAX77705_PMIC_REG_MCONFIG2		= 0x11,
+> +	MAX77705_PMIC_REG_INTSRC		= 0x22,
+> +	MAX77705_PMIC_REG_INTSRC_MASK		= 0x23,
+> +	MAX77705_PMIC_REG_SYSTEM_INT		= 0x24,
+> +	MAX77705_PMIC_REG_RESERVED_25		= 0x25,
+> +	MAX77705_PMIC_REG_SYSTEM_INT_MASK	= 0x26,
+> +	MAX77705_PMIC_REG_RESERVED_27		= 0x27,
+> +	MAX77705_PMIC_REG_RESERVED_28		= 0x28,
+> +	MAX77705_PMIC_REG_RESERVED_29		= 0x29,
+> +	MAX77705_PMIC_REG_BOOSTCONTROL1		= 0x4C,
+> +	MAX77705_PMIC_REG_BOOSTCONTROL2		= 0x4F,
+> +	MAX77705_PMIC_REG_SW_RESET		= 0x50,
+> +	MAX77705_PMIC_REG_USBC_RESET		= 0x51,
+> +
+> +	MAX77705_PMIC_REG_END,
+
+Nitpick: Unneeded ending comma
+
+> +};
+
+...
+
+> +enum max77705_fuelgauge_reg {
+> +	STATUS_REG				= 0x00,
+> +	VALRT_THRESHOLD_REG			= 0x01,
+> +	TALRT_THRESHOLD_REG			= 0x02,
+> +	SALRT_THRESHOLD_REG			= 0x03,
+> +	REMCAP_REP_REG				= 0x05,
+> +	SOCREP_REG				= 0x06,
+> +	TEMPERATURE_REG				= 0x08,
+> +	VCELL_REG				= 0x09,
+> +	TIME_TO_EMPTY_REG			= 0x11,
+> +	FULLSOCTHR_REG				= 0x13,
+> +	CURRENT_REG				= 0x0A,
+> +	AVG_CURRENT_REG				= 0x0B,
+> +	SOCMIX_REG				= 0x0D,
+> +	SOCAV_REG				= 0x0E,
+> +	REMCAP_MIX_REG				= 0x0F,
+> +	FULLCAP_REG				= 0x10,
+> +	RFAST_REG				= 0x15,
+> +	AVR_TEMPERATURE_REG			= 0x16,
+> +	CYCLES_REG				= 0x17,
+> +	DESIGNCAP_REG				= 0x18,
+> +	AVR_VCELL_REG				= 0x19,
+> +	TIME_TO_FULL_REG			= 0x20,
+> +	CONFIG_REG				= 0x1D,
+> +	ICHGTERM_REG				= 0x1E,
+> +	REMCAP_AV_REG				= 0x1F,
+> +	FULLCAP_NOM_REG				= 0x23,
+> +	LEARN_CFG_REG				= 0x28,
+> +	FILTER_CFG_REG				= 0x29,
+> +	MISCCFG_REG				= 0x2B,
+> +	QRTABLE20_REG				= 0x32,
+> +	FULLCAP_REP_REG				= 0x35,
+> +	RCOMP_REG				= 0x38,
+> +	VEMPTY_REG				= 0x3A,
+> +	FSTAT_REG				= 0x3D,
+> +	DISCHARGE_THRESHOLD_REG			= 0x40,
+> +	QRTABLE30_REG				= 0x42,
+> +	ISYS_REG				= 0x43,
+> +	DQACC_REG				= 0x45,
+> +	DPACC_REG				= 0x46,
+> +	AVGISYS_REG				= 0x4B,
+> +	QH_REG					= 0x4D,
+> +	VSYS_REG				= 0xB1,
+> +	TALRTTH2_REG				= 0xB2,
+> +	VBYP_REG				= 0xB3,
+> +	CONFIG2_REG				= 0xBB,
+> +	IIN_REG					= 0xD0,
+> +	OCV_REG					= 0xEE,
+> +	VFOCV_REG				= 0xFB,
+> +	VFSOC_REG				= 0xFF,
+> +
+> +	MAX77705_FG_END,
+
+Nitpick: Unneeded ending comma
+
+> +};
+
+...
+
+CJ
 
