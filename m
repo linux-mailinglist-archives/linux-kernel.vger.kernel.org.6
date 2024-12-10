@@ -1,195 +1,132 @@
-Return-Path: <linux-kernel+bounces-438664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070769EA417
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:08:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D2B9EA41C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:09:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083EC18835A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:08:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488DE285A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 01:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E95224D4;
-	Tue, 10 Dec 2024 01:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C311141C72;
+	Tue, 10 Dec 2024 01:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwVXzbxd"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iHuUohg3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E9812E4A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404212E4A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733792904; cv=none; b=mZ7YZV74qZVGdoDTzUyAoQkSUn3LrRPnKWU8tPlwyXTQKcNCiSUyp/D1N9V5F/oG4R1kCOQCH0BU+nu5/FNOp36S0uMYp2w/8Q5h68Kqc+CJbny3hTviuclBjtLxi9ljk7LiU8xMSqYk/9WJGnnZ3mrj2ZGnN35L9ybKojfAXqA=
+	t=1733792991; cv=none; b=fOP9l9jDOM3WE+CXUsmLXHVdjmBDwB+k3eQ6XIF3XxEhwfEgbyheolNVttRsgydXNnB+to/FVoEnb2C30iarHNRF/eGW52F7F2ZgKw9tmCehp9JE7r3hj4WipzSVGnDw7iHKH9CQu2As2QlIeoPVcRQbGPiSYsI/dnx0pwqLG48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733792904; c=relaxed/simple;
-	bh=PIWd8VPMP31XYl+r2SGvHjZUYUh6vaX3fjfKF+nW1oE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPc28RZNQ6fU5+akxiLo4QrIFsGlJLDM9T63yY8e3Swkoadkw+AKwxBHWNoWuC8WL1p+SaT+YtO6Gm0Bs8pbGwq720VgjQsSbd1AUgR/QRmNNtBNBhywOC76OI89/8HibwsSpN6L/Oirm2GvOzAPXH1NzKc8e4egcbRls21eJSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LwVXzbxd; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54020b0dcd2so1359216e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 17:08:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733792901; x=1734397701; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYIU0x1F0X5vDbNZBSV6aS5bWwBkPV0Ut8+9pSrSb6A=;
-        b=LwVXzbxd7VCuz3kGV7+nCzl9xOAqs6rPazFkE4u52NO5ZeEIuCWQDamq71ItvMVtaT
-         3R0SxHmnsgS4TOa6e7hSD5L420IkkOYqdxxqhLTAvh9tNFg09V01qyFCLkJJ60SaLnNj
-         cYGVWhPuY59xWOeAsB0aoXIDes1bW/OlDp29ahq8MfYimKft/gwsZPMmBfQK9GCC676U
-         y74nhuavVZ7ECjcAiu+ItQowfbZEyfdzGruvY7lo5cjYlKpo8+1gcaAEjhzPRwWzo868
-         XMyJ/WlUE7qBicXyalY8b8vNQFO2tCxc38eHDnFHxXa/tV9sOcRFOQY+Nnu9trzXEKIm
-         cpEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733792901; x=1734397701;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYIU0x1F0X5vDbNZBSV6aS5bWwBkPV0Ut8+9pSrSb6A=;
-        b=Nz90N7Dywp3Cgg63rJ77SL91rfEvFk/HyOS4UdVXtzojnTkRhVom5KijsqVnVIwxNd
-         IiCVctQ1/3KiC73/6VPgLxlaAvO3pOIMsXlwgSGQHpRDF+WHxPnfVg0BkPMflJIM9oXJ
-         zfL1IQvaT1b00jMa5qcHXcrjnq73Kt5fHinWiBcj7J1byrldgSUwZlSf6lAyY0FIWtUi
-         dvQFeryboKUZ7SIz8AkB6SiAf4JdeYMN/CPZVGCKjZFKBFyrG3oV6B2rYSjNkW8LEM6q
-         k60hbBbKPWkkJHuWcLaAVGO++fHemsINaIe5QWAtteQNsDfupnCQdfA4c1jrTbEEeL7e
-         X2JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQo83n3/s5kjQu8wPWaOKcZDuOrnqH1FHX0UncGxYxdL6+4vdCLRBaoInFE/I5ZEMma4YRPGYujclCBxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp97X+R/ZHBQd9dwowFO/5/yU+rKBRjyTvqXfVOux2Lj7+asLh
-	0TrSZMZ5svsD7v5TpmsP7w7vbodDpz/TZeaI5Y7ZnPmDxUP9t6ovhGiW34Dg0w8=
-X-Gm-Gg: ASbGncs5lQue3nfP4GsUpV/BrAnjCJjOgnPQIMXiFElQc0yBARmngn9dY2k8S47q/Jb
-	+AHqv3Ed3/sQeNr/FWg8vhDfNtosbtWFvWCDLbZoFZOgynW3x7eRLFfH0iAA3WxIn7s6VmVXlRv
-	4QNYk5anclq40RkBqB/VTq8nzkvzeuadzS5iTwNeJ2mZoFggf8suxTuyWoLfgSHAsuZVfn6JRWU
-	v270VFmRO0um3Ki/p6soYKyzflLe6ZoDUqJBM2uFTaRxUVnx05dSpAhSQYqtLWrxW2+x54cFnBx
-	qOod332SxpLDCsWbbZg29rCO0eO40yGuDQ==
-X-Google-Smtp-Source: AGHT+IERcWHuH6fbZ1xEEAsxNxRCjKgZMrQp9JNEl00w9VagOlGQ26UNCBzBvV7KmpLmeH4h96niYA==
-X-Received: by 2002:a05:6512:2350:b0:53f:a16f:67d5 with SMTP id 2adb3069b0e04-540251ecd9cmr484297e87.16.1733792900776;
-        Mon, 09 Dec 2024 17:08:20 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53fe77cd213sm804997e87.36.2024.12.09.17.08.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 17:08:19 -0800 (PST)
-Date: Tue, 10 Dec 2024 03:08:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Xin Ji <xji@analogixsemi.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, bliang@analogixsemi.com, 
-	qwen@analogixsemi.com, treapking@google.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge:anx7625: Update HDCP status at
- atomic_disable()
-Message-ID: <fy6zvkdidz2srerfq5bshgcshps2wfa4syxwndwesgxcej66ws@nf5svlpkeodh>
-References: <20241209064632.1705578-1-xji@analogixsemi.com>
+	s=arc-20240116; t=1733792991; c=relaxed/simple;
+	bh=phvM2X+UVFDIy/V1s/zNxJxXM3HjDaAybf+KsomAVtA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=mVPhf9nH2LQWHqUBDfCsOUbD3EMuznapUvuu1TqDhLRukPNbiKPN2ZN1Jum0zHh+3kV64YtypyYfaVgRrN5qGvSdXVORVf/T21i0xc79cEE2pgizydHYmz6oqE+A3vJ7ut2mKib7RrVGyn3hhWk4EVmrsAcE5fTWIOt93wzt8dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iHuUohg3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9E6nJN006957;
+	Tue, 10 Dec 2024 01:09:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hihwtORQ3J5gmPYIqkK7Pc
+	irve1YL8nj94uXsgevIfI=; b=iHuUohg3sXHXTGc5+K24/jaOkbBjjRJYfpemFB
+	HOpxUcx7nf+V/N1fpUGgRy0Izh3gWtBTO3TvRGO1rOI9vsuaBjaO2/Dx5FIwdavC
+	MrWnF89mCb8Hi129OZXzjPzoAaak/3wZb0BZw9YmAAbTG2gu5o/MZguP2ofiHIz4
+	MbDSadcCA2g0fG4fItFFZipIKxVDIkPZpT2kACrezSvNYbEGbXsZGUoFKXd8L6sS
+	Lw/gts9ET4ZYvmge9shceZ/JVEaEsau6qYdk3pQb2FtXJHy+iM81sNkE0ENlEE66
+	XOfczQCyBOWNBUv8wNBcK+N7gpo5zENbLvyx+IGqFTizqfmg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e21bhmg3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 01:09:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA19eQm021935
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 01:09:40 GMT
+Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Dec 2024 17:09:40 -0800
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Subject: [PATCH v2 0/2] drm: Allow encoder modeset when connectors are
+ changed
+Date: Mon, 9 Dec 2024 17:09:23 -0800
+Message-ID: <20241209-abhinavk-modeset-fix-v2-0-4d008f6ea8d0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209064632.1705578-1-xji@analogixsemi.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMOUV2cC/z3NwQrCMBAE0F+RPbslWVLbevI/RCQmW7tIE01qE
+ Ur/3Sjo8Q3MzAKZk3CG/WaBxLNkiaGAthtwgw1XRvHFQIqMJtWhvQwS7HzDMXrOPGEvL2xMuzO
+ 99qxaD6V6T1zi7+zxVNynOOI0JLb/MdWpmkhrMhXVbUONRo2Pp7jz7+HwkQRXuTjCur4BThF4N
+ 6sAAAA=
+X-Change-ID: 20241209-abhinavk-modeset-fix-74864f1de08d
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+CC: <quic_abhinavk@quicinc.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <robdclark@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733792980; l=803;
+ i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
+ bh=phvM2X+UVFDIy/V1s/zNxJxXM3HjDaAybf+KsomAVtA=;
+ b=WAkCv7uA4ZzaT1eSCvLdpLv7sfYzZCnvzXaJFDpX3N9rmg108Fq33nJhdN/uI+rYTJowda3jx
+ Lt5TbEW9GmWAMhTNEdRGA7Rbgg0Kbe281rMr8iXioLn99VnEGmVZyJw
+X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
+ pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JOZLLTglOcyhbRzI-L8NOchRySmCInS-
+X-Proofpoint-ORIG-GUID: JOZLLTglOcyhbRzI-L8NOchRySmCInS-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=695 priorityscore=1501
+ spamscore=0 impostorscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100005
 
-On Mon, Dec 09, 2024 at 02:46:32PM +0800, Xin Ji wrote:
-> When user enabled HDCP feature, upper layer will set HDCP content
-> to DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
-> HDCP content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
-> support HDCP feature.
-> 
-> However once HDCP content turn to  DRM_MODE_CONTENT_PROTECTION_ENABLED
-> upper layer will not update the HDCP content to
-> DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
+Call encoder mode_set() when connectors are changed. This avoids issues
+for cases where the connectors are changed but CRTC mode is not.
 
-What is "upper layer"? Is it a kernel or a userspace?
+Changes in v2:
 
-From drm_hdcp_update_content_protection() documentation:
+- Added kunit test
 
-No uevent for DESIRED->UNDESIRED or ENABLED->UNDESIRED,
-as userspace is triggering such state change and kernel performs it without
-fail.This function update the new state of the property into the connector's
-state and generate an uevent to notify the userspace.
+---
+Abhinav Kumar (1):
+      drm: allow encoder mode_set even when connectors change for crtc
 
+Jessica Zhang (1):
+      drm/tests: Add test for drm_atomic_helper_commit_modeset_disables()
 
-> 
-> So when user dynamic change the display resolution, anx7625 driver must
-> call drm_hdcp_update_content_protection() to update HDCP content to
-> DRM_MODE_CONTENT_PROTECTION_UNDESIRED in bridge interface
-> .atomic_disable().
+ drivers/gpu/drm/drm_atomic_helper.c           |   2 +-
+ drivers/gpu/drm/tests/Makefile                |   1 +
+ drivers/gpu/drm/tests/drm_atomic_state_test.c | 242 ++++++++++++++++++++++++++
+ 3 files changed, 244 insertions(+), 1 deletion(-)
+---
+base-commit: 86313a9cd152330c634b25d826a281c6a002eb77
+change-id: 20241209-abhinavk-modeset-fix-74864f1de08d
 
-Why?
-
-> 
-> Signed-off-by: Xin Ji <xji@analogixsemi.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 25 ++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> index a2675b121fe4..a75f519ddcb8 100644
-> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data *ctx)
->  				 TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
->  }
->  
-> +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
-> +{
-> +	struct device *dev = ctx->dev;
-> +
-> +	if (!ctx->connector)
-> +		return;
-> +
-> +	anx7625_hdcp_disable(ctx);
-> +
-> +	ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> +	drm_hdcp_update_content_protection(ctx->connector,
-> +					   ctx->hdcp_cp);
-> +
-> +	dev_dbg(dev, "update CP to UNDESIRE\n");
-> +}
-> +
->  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
->  {
->  	u8 bcap;
-> @@ -2165,11 +2181,8 @@ static int anx7625_connector_atomic_check(struct anx7625_data *ctx,
->  			dev_err(dev, "current CP is not ENABLED\n");
->  			return -EINVAL;
->  		}
-> -		anx7625_hdcp_disable(ctx);
-> -		ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> -		drm_hdcp_update_content_protection(ctx->connector,
-> -						   ctx->hdcp_cp);
-> -		dev_dbg(dev, "update CP to UNDESIRE\n");
-> +
-> +		anx7625_hdcp_disable_and_update_cp(ctx);
-
-No. atomic_check() MAY NOT perform any changes to the hardware. It might
-be just a probe from userspace to check if the mode or a particular
-option can be set in a particular way. There is no guarantee that
-userspace will even try to commit it.
-
->  	}
->  
->  	if (cp == DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> @@ -2449,6 +2462,8 @@ static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
->  
->  	dev_dbg(dev, "drm atomic disable\n");
->  
-> +	anx7625_hdcp_disable_and_update_cp(ctx);
-> +
->  	ctx->connector = NULL;
->  	anx7625_dp_stop(ctx);
->  
-> -- 
-> 2.25.1
-> 
-
+Best regards,
 -- 
-With best wishes
-Dmitry
+Jessica Zhang <quic_jesszhan@quicinc.com>
+
 
