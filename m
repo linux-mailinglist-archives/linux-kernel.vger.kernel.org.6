@@ -1,140 +1,149 @@
-Return-Path: <linux-kernel+bounces-439003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3341A9EA968
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:19:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8459EA972
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48703188A4EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11805163B68
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6C422CBEC;
-	Tue, 10 Dec 2024 07:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826B722CBEC;
+	Tue, 10 Dec 2024 07:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CaR+Yo+V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="VUjc3sa3"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDE41F63F3;
-	Tue, 10 Dec 2024 07:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939AF1FCCE6;
+	Tue, 10 Dec 2024 07:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733815135; cv=none; b=Apt4Jm/2ZoSuZFGfXTB0e6BXX4UI9PsCdioZapJeH77SmK0F81SPDl4m0YVbPogwDGqaepgnzaOsZ4qm/o4UyiJdqt09sJAkOLjgqjwK0G1Z/pPuMDvscrPpuhm+ueWFqeeaA9mP7pdRlkZmqk9/8g5r990YXL5/s4m2bUGLZHU=
+	t=1733815301; cv=none; b=H44odo4ckSHYrP+AwWyqRNSeR4R/zibKxmDs02TX3u56h2hTknRO5IKpAuKckqCH9OyIELq5M6Mv/udlYYVM61iSDJ+Ir/zVhgQ6MqPJnfZTtcrK8HfNALeaPlVlOkyB2bUa4hxywgyzKSd2o7zV3qRWRvyTUZ/Au1oo6TRc3hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733815135; c=relaxed/simple;
-	bh=kpdBOLBn1qHn+stW41aS+i+jt19Ep8DoAEPs//v6D08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iHcptFNTYXeFUmvv+Yg8TIJ1MNixta0RYrxltdXTVYRU4qSlLAerZm8koff30J10xIlXpiYyhhniFpTZHCEO2WZd3VRyxCOQZPDh1sY4W35NzM6cwCUxxS240IpqHvr93GP2JU8YwClryEwLTIO4NZPWsBPG99j0FgzDWSMjzew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CaR+Yo+V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E1D8C4CED6;
-	Tue, 10 Dec 2024 07:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733815135;
-	bh=kpdBOLBn1qHn+stW41aS+i+jt19Ep8DoAEPs//v6D08=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CaR+Yo+Vcj7WV1EsBZ4N9nSp1jc+CQ+wur9Xx+YBqC8r92HWSjSy6yLLucpNyDvVQ
-	 W/cZtzfFX+G65MijvNEPKZc1NHJfLX3Ch51+QeOIpgC2tZc7jxWUSM75LdTfMFxtEZ
-	 AhJxUJpudXVgHmlGeSJWLk8Seh0y/MdEHzw8N7/yCYLlld+yCpZ+imkns3J2kcb2Sh
-	 b1xWZ6rPc0bLRimgcTr50S48h1wNd2FXSc7NV7fSq7EkoHnc9haKRKmlhHl1V0s6ws
-	 0RF9s2qIwI5V9SPyvAiEQlX+93H9PMeSAVnfDWMlDk3iZvLxqcxNZNOZkK02FVs39+
-	 ThdN3dSooM6mQ==
-Message-ID: <a522df49-5628-4ec1-8ea7-d27cb7fa3bff@kernel.org>
-Date: Tue, 10 Dec 2024 08:18:49 +0100
+	s=arc-20240116; t=1733815301; c=relaxed/simple;
+	bh=uwoTQGd50XKRwmHhcyRLGgeWF/OnpXo+mrRXAHkc1/8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MJyDVGdag/FCaI9I7dB2MQk4vMkX6pzIZDX6lo0teYzFK5ZeKE4N7sUbbfKuXJiFfPV3yEc+9DvYTxemaDG0XO4RsaT5Z08dKtRYN2Aga+LTzcoN5qos0WjkaWF8+TnU4yKbJAWhgJDPCL6wfCD0BLIRidy0yDPhh1CBQOF81eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=VUjc3sa3; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1733815197;
+	bh=I6OUNlZ7q6hyKu9YRiOTtA/g+UIxdZdA2a3DziIzYZs=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=VUjc3sa3ejqES2iqegxHVJ0+P1KzWYW25IblXjY9rdAJfQ5g5QSem28gSRwD+KAuf
+	 D/y1Wt/elMjfJIw7SyifxRVTjH9g8E9Kf0l782SvbRI5gDe1EEgm1Sp3lviygW/qtA
+	 7qIFiyU/TEzgqoLAbXA9Si6TAkUaGK+8W05LDsSA=
+X-QQ-mid: bizesmtpsz5t1733815191tzukagc
+X-QQ-Originating-IP: BQZx3pqtbXIOlFbutyZ1NwLboTopXuCOx+OBMpN1wwM=
+Received: from localhost.localdomain ( [125.76.217.162])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 10 Dec 2024 15:19:48 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8042686719195873629
+From: Gou Hao <gouhao@uniontech.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	wenqing.lz@taobao.com,
+	jack@suse.cz
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	gouhaojake@163.com,
+	wangyuli@uniontech.com
+Subject: [PATCH] ext4: make trace_ext4_ext_load_extent print-format correctly
+Date: Tue, 10 Dec 2024 15:19:48 +0800
+Message-Id: <20241210071948.12636-1-gouhao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/13] dt-bindings: net: wireless: describe the ath12k
- AHB module
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20241209165644.1680167-1-quic_rajkbhag@quicinc.com>
- <20241209165644.1680167-2-quic_rajkbhag@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241209165644.1680167-2-quic_rajkbhag@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: NZ/1hDUbhNR86Q+mBKPRG5Glc5Yn2SaZ1azwbDaDUS67mrtt5sjDDj8Y
+	YuNGGQLTpqjOeBYS0LoiI2bhBHd7Lh3s7lKxHDfSPScloYcIobwfOqjXe2FG8zHczxoWNMk
+	FpACm2W/Ku+DeTAlySV+qOKpgKO4dGmbAAqCSygO6m4Hh2pi7ZxgXco05eDi81leukN/OLD
+	h93+Ef0bG4lwbcmdaqMlYpqUlFKPlZu3bRmSWQQcgddbWZBqtwy4dUvLUDgumhnHVCjYJmi
+	KFyvTcL6771vRwn3LAxcSJXcyX7c6Y12Vy5Eysuv3vqmb6gomM4WjvS243oUanNCYDihH8A
+	eMrQk4yZYHhWzi4KNXKsNdLyoGPFBrm9BoaHePTAiqdJeFh3/sIQSbNWwPk0vxX1k305Ej5
+	S6icnavrIaPwqXT5eY8ZT9ZBV3KKEa127oV8g39ZoOTb09zgcXN7bpec4IcXJUN/OEeTRkl
+	Iw4zzybFOYNnrQ7q0oC/zptp1lm6YCCZzCG9coHWPBIplMGLwNNl5Lx3yrpjnHcC3Kcnis5
+	oKPEybopXG4bjjcDYve62ZNi+ndwKVpHvUw1atVVpQgWi3KUZZFIv3aWMbtSq0I4OM60D1z
+	drK2SZAine2sW2kZpDs9aPXJWW7gMEZbJwmHmEI0uf7pA6Wtj9AsoouVZCaZf5iIzvndcKn
+	mVXKd4c4ynkUFWcza861j/ULlfRyyn3o0ri0jSOUfpLFCTRPdNIqEmghdreJNxnWGY+ExTO
+	X2mEdAkHZa4l//uF44J5jmIc+0dVxS/yLzJTcKxaBxC2ppVNzQjES4ueDZ6E0FYXab02qWu
+	E0WBkwTl2RaE8KlclOenBMekPCPiyYwAql/H4ScVgGW2/jmstoPHMKRz1qrOXcH0Qkhx6aG
+	FsLatCFsnZoUJmWU//jgZFfNCcuKvp8kEK0fPbPCyieeIvhzKoCSJJZ0RLHSByO5xnY5RAg
+	0irqdou4REMis4JB0yCdkk7V076b7P4fY9cUG4/cNzGva7NkPUqH2n75JL70O/L/7M101Wj
+	QKvdeYN5iE5lCPX/oExHb7q01RpRs=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-On 09/12/2024 17:56, Raj Kumar Bhagat wrote:
-> Add device-tree bindings for the ATH12K AHB module found in the IPQ5332
-> device.
+In commit '7d7ea89e756e', pass the 3rd param of trace_ext4_ext_load_extent
+to _RET_IP, without modifying the print-format of it.
 
+before this:
+147.827896: ext4_ext_load_extent: dev 8,35 ino 272218 lblk 1135807 pblk 18446744072651077338
 
-Please start using b4... Not tested, so no review.
+after this:
+35.118227: ext4_ext_load_extent: dev 8,35 ino 272218 pblk 1135807 caller ext4_find_extent+0x17a/0x320 [ext4]
 
+Fixes: 7d7ea89e756e ("ext4: refactor code to read the extent tree block")
+Signed-off-by: Gou Hao <gouhao@uniontech.com>
+---
+ include/trace/events/ext4.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
+index 156908641..55061c36a 100644
+--- a/include/trace/events/ext4.h
++++ b/include/trace/events/ext4.h
+@@ -1707,28 +1707,28 @@ DEFINE_EVENT(ext4__map_blocks_exit, ext4_ind_map_blocks_exit,
+ );
+ 
+ TRACE_EVENT(ext4_ext_load_extent,
+-	TP_PROTO(struct inode *inode, ext4_lblk_t lblk, ext4_fsblk_t pblk),
++	TP_PROTO(struct inode *inode, ext4_fsblk_t pblk, unsigned long IP),
+ 
+-	TP_ARGS(inode, lblk, pblk),
++	TP_ARGS(inode, pblk, IP),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	dev_t,		dev		)
+ 		__field(	ino_t,		ino		)
+ 		__field(	ext4_fsblk_t,	pblk		)
+-		__field(	ext4_lblk_t,	lblk		)
++		__field(	unsigned long,	ip		)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->dev    = inode->i_sb->s_dev;
+ 		__entry->ino    = inode->i_ino;
+ 		__entry->pblk	= pblk;
+-		__entry->lblk	= lblk;
++		__entry->ip	= IP;
+ 	),
+ 
+-	TP_printk("dev %d,%d ino %lu lblk %u pblk %llu",
++	TP_printk("dev %d,%d ino %lu pblk %llu caller %pS",
+ 		  MAJOR(__entry->dev), MINOR(__entry->dev),
+ 		  (unsigned long) __entry->ino,
+-		  __entry->lblk, __entry->pblk)
++		  __entry->pblk, (void *)__entry->ip)
+ );
+ 
+ TRACE_EVENT(ext4_load_inode,
+-- 
+2.43.0
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Best regards,
-Krzysztof
 
