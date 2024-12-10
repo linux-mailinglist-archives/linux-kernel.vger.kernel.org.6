@@ -1,204 +1,301 @@
-Return-Path: <linux-kernel+bounces-440204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BDD9EBA28
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:35:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508E29EBA2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:37:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971A228249D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D54164FDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D5222578E;
-	Tue, 10 Dec 2024 19:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687F122617A;
+	Tue, 10 Dec 2024 19:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9lhr7Jq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y154cRYI"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEAD204684
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED79F214229
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733859339; cv=none; b=VOgQYCcBmmWmAI1dDt6Zvlr6TS5KejclIme3w81Hpvfnbbu8CKEDidEaPMbbZExPXH6xNxmer2GhVtVWCyX5TZE0Tl7W/68t0xxnTBVCPUXmdu5h8J9OMDPSSMeD8L7NZlI0m/75boQMZOimzsxxfIf79io6wGrCeurLh0mFwNk=
+	t=1733859438; cv=none; b=LZU8xWe5grMlUPa5jAw120fc7mtz8a+qc7GXku0UM6yf3yKLUI88lW4+EklSULtPxtOxxOtctJ9w8zqXW+iGARE8peDlIjRIQ1K/FLRP6DXrcy9B1gpDOKjkb5cLLnlU7YI0qfuXgWyRH6b9ozdL9ITEVlsCtYf74mHLh0KPVZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733859339; c=relaxed/simple;
-	bh=D4Tzn9/NmXEN0TXG1AxK8mUxfuuCZ+u36vl8FHG0j5g=;
+	s=arc-20240116; t=1733859438; c=relaxed/simple;
+	bh=z7vZt9MdOWhpXJuJAmUf659Zgo3DnJyyFq1DjOKs2Ek=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gpl4r87UYcdTLyij6tbfxd40Efx2FItoJR7WOZq0sbxsa1kB0+VhO0qAnqzmpseisaekXGhny9GtLwUrRMqmgNJwT2mOzpKHMEg21c1M0yBP9IsrLsoOxXybtR123P7xer4JW66aVb5AEZIpAo5ZiqHAyhDVDufHtVzmbHsm5ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9lhr7Jq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733859336;
+	 In-Reply-To:Content-Type; b=K/8PyY6kjljregMS6jyOZBBJBg2AlPEwxl1n5dwPyYKpnCNkC1ZxWjBXD/t6AInc4orrJuJBbiez5c8VlRov6ehv7uRKz7TAQYiAE3EIK40+sif+KFEItpqv3MQlNx1Wx2DoC6u5S0JKc0Xx7Ln34QGlf5q26gkWvb/elTttaOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y154cRYI; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <edac9431-8503-c8ad-2e4c-aaf71c6f4f08@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733859433;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KDnAKXJwYVbACBYDkjpxdvLPwteH3j/a2Tcuj6fTOwc=;
-	b=g9lhr7JqGSSSu1YidPQlr9209o/kqHGP6cR2fIhEbxMtplKw1rTiAqJ6ontzbIKiFzXoNR
-	rr2qBMYQjcUpa/7fkgdzkpPihCcBfZR8gtsyTFtEd7ZpeduWYnqBCb0B/kTdEr/Wj8YU7l
-	IN1tzqfdbklDREhT+5G+QcUwhZzXYcU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-8-_FC-2HxmPa6KajRjku1l1Q-1; Tue, 10 Dec 2024 14:35:35 -0500
-X-MC-Unique: _FC-2HxmPa6KajRjku1l1Q-1
-X-Mimecast-MFC-AGG-ID: _FC-2HxmPa6KajRjku1l1Q
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434efe65e62so20760125e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:35:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733859334; x=1734464134;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KDnAKXJwYVbACBYDkjpxdvLPwteH3j/a2Tcuj6fTOwc=;
-        b=UQSl13q15MMwYW4gU7LUNc7O3TozjXIQaPyjURt93LEsrctYVjSH3oG8CuM5rkSJUi
-         Lfx/bWSnnirHtT3oAdWACNHB0xp0qfLRgvKe2tvB5DyU2uaq53deUUNXE3b+VPvmKC6I
-         WErcQu7DhBaS4b6DZt6RjgmRpB1xDUDFvaKnciRFkhit6XQZaHZ+vBF/RuJnzB+pQtdg
-         ve4Nic09+ouKE+GRaO3LW3pgfGE27QQONnnFLv8UcMNihxpDZOeRAnrcqjvqAHRf4YGZ
-         nXJ8qxG/FK6XD2oGTrfUdqdYZxULIABV05eRjfxzEyEUOlrJos25uSHxWyxP2DV39MVW
-         9oGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkFzA9BlabI71Te1SuwrVxbqVK3cgMLybvzLTPDvGvqmQ9QLsUXkiMR8IAK+vWKbwQWQY+U8a58xOaOV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJQU0Mm3zThhaUJBxHe3tl07v9+Mz3VnGseIPqwOJeQINHYsrX
-	TQHs0c6c2xhrFeZJlm9/0Zgge9Q8jBNTU6wItEfTt6vp6d6jE6/wSzbkB0eS/Okf8pPHwaOj2IC
-	0MP06JrNe6O6snjHva4EItWvZbxZNoHeJMSTazER4wSDzsJGudluWcU6sxVKe9w==
-X-Gm-Gg: ASbGnctOdi72sUBkPVaEtapW9tCOt5Qn6peufbHWFWIn3XwEZSmJvqneIGWuSJ69g4v
-	N/JLHFDioQfomfDdTEGq112X1Rwhro0jl1FXUMxJ6hBEqztHUJiwc0R8oGICa2Ed/kfL+PmKs76
-	nbqCKEqEtEfmEUl2UaoKh3YEZEjuyk8UNW+aXzR1Ubjw/DbxAOM4NnoPC/txsgEwJH9XKC9avDH
-	uV3FiiZBt9nyjbyoQ9NgetN4wDNXwoeH/mqbFP3tsn4GHqf6rjh/Sf+qE9RzFHV2LprrmZrWcYJ
-	PlnWuh4=
-X-Received: by 2002:a05:600c:b86:b0:436:1c04:aa9a with SMTP id 5b1f17b1804b1-4361c374ac1mr630725e9.14.1733859334471;
-        Tue, 10 Dec 2024 11:35:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHBUXHjhtlw8/1QueJHpMGcjVCrJT3F2y9hBP2xWGRVmtvdEvEWnAe3y7oVbtr0ovUSi9vGUA==
-X-Received: by 2002:a05:600c:b86:b0:436:1c04:aa9a with SMTP id 5b1f17b1804b1-4361c374ac1mr630555e9.14.1733859334123;
-        Tue, 10 Dec 2024 11:35:34 -0800 (PST)
-Received: from [192.168.3.141] (p5b0c61ad.dip0.t-ipconnect.de. [91.12.97.173])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-435aab63baesm27114775e9.38.2024.12.10.11.35.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 11:35:32 -0800 (PST)
-Message-ID: <3bd43f87-571a-4bc6-b068-69056ec18d85@redhat.com>
-Date: Tue, 10 Dec 2024 20:35:30 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=BhCfnNDt8T1z96W/sX9sDep1g9z8hvO95MVA/NbMn7c=;
+	b=Y154cRYIdTReKYtRvzz1iYuOa7ebzpIz/KYdFg2urDm1wQGoBm3JHKFSc4CIhbPvVlLocB
+	vBy5P+QuOPwg/FK3Pq0fST2ehqA7fHUv9OZ/HB/21lpPBv56MrqwZHlHZlJtVCpPgBEnsq
+	LzBOkgb7PrCQcxC+EWTNgx26oSnrT0k=
+Date: Wed, 11 Dec 2024 03:36:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fork: avoid inappropriate uprobe access to invalid mm
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- linux-mm@kvack.org, Peng Zhang <zhangpeng.00@bytedance.com>,
- syzbot+2d788f4f7cb660dac4b7@syzkaller.appspotmail.com
-References: <20241210172412.52995-1-lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241210172412.52995-1-lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH v2] mm/alloc_tag: Add kasan_alloc_module_shadow when
+ CONFIS_KASAN_VMALLOC disabled
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, greearb@candelatech.com,
+ Hao Ge <gehao@kylinos.cn>
+References: <20241210041515.765569-1-hao.ge@linux.dev>
+ <20241210065304.781620-1-hao.ge@linux.dev>
+ <CAJuCfpGVTyKJ5yMQUqvNXRfBnBYj+dhUEqq0YAddtrqcWP27yw@mail.gmail.com>
+ <1fe9eca1-68d0-aaf9-f335-4a9a58c8a88e@linux.dev>
+ <CAJuCfpE_8YXOGaF_KufJ+b+b+WSTUCZ6u+7Gd0bPOOWgs0sHRg@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpE_8YXOGaF_KufJ+b+b+WSTUCZ6u+7Gd0bPOOWgs0sHRg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10.12.24 18:24, Lorenzo Stoakes wrote:
-> If dup_mmap() encounters an issue, currently uprobe is able to access the
-> relevant mm via the reverse mapping (in build_map_info()), and if we are
-> very unlucky with a race window, observe invalid XA_ZERO_ENTRY state which
-> we establish as part of the fork error path.
-> 
-> This occurs because uprobe_write_opcode() invokes anon_vma_prepare() which
-> in turn invokes find_mergeable_anon_vma() that uses a VMA iterator,
-> invoking vma_iter_load() which uses the advanced maple tree API and thus is
-> able to observe XA_ZERO_ENTRY entries added to dup_mmap() in commit
-> d24062914837 ("fork: use __mt_dup() to duplicate maple tree in
-> dup_mmap()").
-> 
-> This change was made on the assumption that only process tear-down code
-> would actually observe (and make use of) these values. However this very
-> unlikely but still possible edge case with uprobes exists and unfortunately
-> does make these observable.
-> 
-> The uprobe operation prevents races against the dup_mmap() operation via
-> the dup_mmap_sem semaphore, which is acquired via uprobe_start_dup_mmap()
-> and dropped via uprobe_end_dup_mmap(), and held across
-> register_for_each_vma() prior to invoking build_map_info() which does the
-> reverse mapping lookup.
-> 
-> Currently these are acquired and dropped within dup_mmap(), which exposes
-> the race window prior to error handling in the invoking dup_mm() which
-> tears down the mm.
-> 
-> We can avoid all this by just moving the invocation of
-> uprobe_start_dup_mmap() and uprobe_end_dup_mmap() up a level to dup_mm()
-> and only release this lock once the dup_mmap() operation succeeds or clean
-> up is done.
+Hi Suren
 
-What I understand is: we need to perform the uprobe_end_dup_mmap() after 
-the mmput().
 
-I assume/hope that we cannot see another mmget() before we return here. 
-In that case, this LGTM.
+On 12/11/24 03:20, Suren Baghdasaryan wrote:
+> On Tue, Dec 10, 2024 at 10:46 AM Hao Ge <hao.ge@linux.dev> wrote:
+>> Hi Suren
+>>
+>>
+>> Thanks for your review.
+>>
+>>
+>> On 12/11/24 01:55, Suren Baghdasaryan wrote:
+>>> On Mon, Dec 9, 2024 at 10:53 PM Hao Ge <hao.ge@linux.dev> wrote:
+>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>
+>>>> When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
+>>>> is not enabled, we may encounter a panic during system boot.
+>>>>
+>>>> Because we haven't allocated pages and created mappings
+>>>> for the shadow memory corresponding to module_tags region,
+>>>> similar to how it is done for execmem_vmalloc.
+>>>>
+>>>> The difference is that our module_tags are allocated on demand,
+>>>> so similarly,we also need to allocate shadow memory regions on demand.
+>>>> However, we still need to adhere to the MODULE_ALIGN principle.
+>>>>
+>>>> Here is the log for panic:
+>>>>
+>>>> [   18.349421] BUG: unable to handle page fault for address: fffffbfff8092000
+>>>> [   18.350016] #PF: supervisor read access in kernel mode
+>>>> [   18.350459] #PF: error_code(0x0000) - not-present page
+>>>> [   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PTE 0
+>>>> [   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+>>>> [   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #3
+>>>> [   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>>>> [   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
+>>>> [   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
+>>>> [   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
+>>>> [   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff82a7ceac
+>>>> [   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc0490000
+>>>> [   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff809201d
+>>>> [   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc0490000
+>>>> [   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000000002c
+>>>> [   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlGS:0000000000000000
+>>>> [   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> [   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 0000000000771ef0
+>>>> [   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>> [   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>> [   18.362020] PKRU: 55555554
+>>>> [   18.362261] Call Trace:
+>>>> [   18.362481]  <TASK>
+>>>> [   18.362671]  ? __die+0x23/0x70
+>>>> [   18.362964]  ? page_fault_oops+0xc2/0x160
+>>>> [   18.363318]  ? exc_page_fault+0xad/0xc0
+>>>> [   18.363680]  ? asm_exc_page_fault+0x26/0x30
+>>>> [   18.364056]  ? move_module+0x3cc/0x8a0
+>>>> [   18.364398]  ? kasan_check_range+0xba/0x1b0
+>>>> [   18.364755]  __asan_memcpy+0x3c/0x60
+>>>> [   18.365074]  move_module+0x3cc/0x8a0
+>>>> [   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
+>>>> [   18.365841]  ? early_mod_check+0x3dc/0x510
+>>>> [   18.366195]  load_module+0x72/0x1850
+>>>> [   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
+>>>> [   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
+>>>> [   18.367262]  init_module_from_file+0xd1/0x130
+>>>> [   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
+>>>> [   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
+>>>> [   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+>>>> [   18.368938]  idempotent_init_module+0x22c/0x790
+>>>> [   18.369332]  ? simple_getattr+0x6f/0x120
+>>>> [   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
+>>>> [   18.370110]  ? fdget+0x58/0x3a0
+>>>> [   18.370393]  ? security_capable+0x64/0xf0
+>>>> [   18.370745]  __x64_sys_finit_module+0xc2/0x140
+>>>> [   18.371136]  do_syscall_64+0x7d/0x160
+>>>> [   18.371459]  ? fdget_pos+0x1c8/0x4c0
+>>>> [   18.371784]  ? ksys_read+0xfd/0x1d0
+>>>> [   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
+>>>> [   18.372525]  ? do_syscall_64+0x89/0x160
+>>>> [   18.372860]  ? do_syscall_64+0x89/0x160
+>>>> [   18.373194]  ? do_syscall_64+0x89/0x160
+>>>> [   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
+>>>> [   18.373952]  ? do_syscall_64+0x89/0x160
+>>>> [   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
+>>>> [   18.374701]  ? do_syscall_64+0x89/0x160
+>>>> [   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
+>>>> [   18.375416]  ? clear_bhb_loop+0x25/0x80
+>>>> [   18.375748]  ? clear_bhb_loop+0x25/0x80
+>>>> [   18.376119]  ? clear_bhb_loop+0x25/0x80
+>>>> [   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>>
+>>>> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
+>>>> Reported-by: Ben Greear <greearb@candelatech.com>
+>>>> Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com/
+>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>>> ---
+>>>> v2: Add comments to facilitate understanding of the code.
+>>>>       Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_module_shadow
+>>>>       already handles this internally,but to make the code more readable and user-friendly
+>>>>
+>>>> commit 233e89322cbe ("alloc_tag: fix module allocation
+>>>> tags populated area calculation") is currently in the
+>>>> mm-hotfixes-unstable branch, so this patch is
+>>>> developed based on the mm-hotfixes-unstable branch.
+>>>> ---
+>>>>    lib/alloc_tag.c | 12 ++++++++++++
+>>>>    1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+>>>> index f942408b53ef..bd3ee57ea13f 100644
+>>>> --- a/lib/alloc_tag.c
+>>>> +++ b/lib/alloc_tag.c
+>>>> @@ -10,6 +10,7 @@
+>>>>    #include <linux/seq_buf.h>
+>>>>    #include <linux/seq_file.h>
+>>>>    #include <linux/vmalloc.h>
+>>>> +#include <linux/math.h>
+>>>>
+>>>>    #define ALLOCINFO_FILE_NAME            "allocinfo"
+>>>>    #define MODULE_ALLOC_TAG_VMAP_SIZE     (100000UL * sizeof(struct alloc_tag))
+>>>> @@ -422,6 +423,17 @@ static int vm_module_tags_populate(void)
+>>>>                           return -ENOMEM;
+>>>>                   }
+>>>>                   vm_module_tags->nr_pages += nr;
+>>>> +
+>>>> +               /*
+>>>> +                * Kasan allocates 1 byte of shadow for every 8 bytes of data.
+>>>> +                * When kasan_alloc_module_shadow allocates shadow memory,
+>>>> +                * it does so in units of pages.
+>>>> +                * Therefore, here we need to align to MODULE_ALIGN.
+>>>> +                */
+>>>> +               if ((phys_end & (MODULE_ALIGN - 1)) == 0)
+>>> phys_end is calculated as:
+>>>
+>>> unsigned long phys_end = ALIGN_DOWN(module_tags.start_addr, PAGE_SIZE) +
+>>>                                              (vm_module_tags->nr_pages
+>>> << PAGE_SHIFT);
+>>>
+>>> and therefore is always PAGE_SIZE-aligned. PAGE_SIZE is always a
+>>> multiple of MODULE_ALIGN, therefore phys_end is always
+>> When CONFIG_KASAN_VMALLOC is not enabled
+>>
+>> #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
+> Ah, sorry, I misread this as (PAGE_SIZE >> KASAN_SHADOW_SCALE_SHIFT)
+> and assumed MODULE_ALIGN is always multiple of PAGE_SIZE. Now it makes
+> more sense. However I'm still not sure about this condition:
+>
+> if ((phys_end & (MODULE_ALIGN - 1)) == 0)
+>
+> What if page_end is not MODULE_ALIGN-aligned. We will be skipping
+> kasan_alloc_module_shadow().
 
--- 
-Cheers,
 
-David / dhildenb
+Theoretically, this scenario does not exist.
 
+
+Please refer to the following:
+
+https://elixir.bootlin.com/linux/v6.13-rc2/source/arch/x86/mm/init.c#L1072
+
+They would all comply with MODULE_ALIGN.
+
+
+> For example, say module_tags.start_addr == 0x1018 (4096+24), original
+> phys_end will be 0x1000 (4096) and say we allocated one page (nr ==
+> 1), tags area is [0x1000-0x2000]. phys_end is not MODULE_ALIGN-aligned
+> and we will skip kasan_alloc_module_shadow(). IIUC, this is already
+> incorrect.
+> Now, say the next time we allocate 8 pages. phys_end this time is
+> 0x2000 and the new tags area spans [0x1000-0xA000], we skip
+> kasan_alloc_module_shadow() again. Next time we allocate pages,
+> phys_end is 0xA000 and it again is not MODULE_ALIGN-aligned, we skip
+> again. You see my point?
+>
+>> https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/execmem.h#L11
+>>
+>> and On x86, KASAN_SHADOW_SCALE_SHIFT is set to 3
+>>
+>> https://elixir.bootlin.com/linux/v6.13-rc2/source/arch/x86/include/asm/kasan.h#L7
+>>
+>> As mentioned in my comment, Kasan allocates 1 byte of shadow for every 8
+>> bytes of data
+>>
+>> So, when you allocate a shadow page through kasan_alloc_module_shadow,
+>> it corresponds to eight physical pages in our system.
+>>
+>> So, we need MODULE_ALIGN to ensure proper alignment when allocating
+>> shadow memory for modules using KASAN.
+>>
+>> Let's take a look at the kasan_alloc_module_shadow function again
+>>
+>> As I mentioned earlier,Kasan allocates 1 byte of shadow for every 8
+>> bytes of data.
+>>
+>> Assuming phys_end is set to 0 for the sake of this example, if you
+>> allocate a single shadow page,
+>>
+>> the corresponding address range it can represent would be [0, 0x7FFFF].
+>>
+>> So, it is incorrect to call kasan_alloc_module_shadow every time a page
+>> is allocated, as it can trigger warnings in the system.
+>>
+>> https://elixir.bootlin.com/linux/v6.13-rc2/source/mm/kasan/shadow.c#L599
+>>
+>> Thanks
+>>
+>> Best Regards Hao
+>>
+>>> MODULE_ALIGN-aligned and the above condition is not needed.
+>>>
+>>>> +                       kasan_alloc_module_shadow((void *)phys_end,
+>>>> +                                                 round_up(nr << PAGE_SHIFT, MODULE_ALIGN),
+>>> Here again, (nr << PAGE_SHIFT) is PAGE_SIZE-aligned and PAGE_SIZE is a
+>>> multiple of MODULE_ALIGN, therefore (nr << PAGE_SHIFT) is always
+>>> multiple of MODULE_ALIGN and there is no need for round_up().
+>>>
+>>> IOW, I think this patch should simply add one line:
+>>>
+>>>                   vm_module_tags->nr_pages += nr;
+>>> +               kasan_alloc_module_shadow((void *)phys_end, nr <<
+>>> PAGE_SHIFT, GFP_KERNEL);
+>>>
+>>> Am I missing something?
+>>>
+>>
+>>>> +                                                 GFP_KERNEL);
+>>>>           }
+>>>>
+>>>>           /*
+>>>> --
+>>>> 2.25.1
+>>>>
 
