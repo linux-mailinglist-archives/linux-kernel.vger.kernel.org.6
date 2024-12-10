@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-439083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B7A9EAA9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:27:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30BE6166E8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:27:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE3D230990;
-	Tue, 10 Dec 2024 08:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IG0T+9Xf"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3CE9EAA9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:27:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FB1230982;
-	Tue, 10 Dec 2024 08:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819228; cv=none; b=IH/D9HJWZDNgmQ6//TDS7dwmouiCF1y+5oOnSbnI0fkgqbNhIIxd86yw2jibTv3HA+2E74vqvTUK7fQKaiC16ct54QamRmzVaS6bQoiuVsqgtfIDfq14ah/pOEGq1e+Ynh0lm/oZ/rYmnkaJhYz1K4XilVAkorH41uFUdHCM2sA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819228; c=relaxed/simple;
-	bh=diwroXgDfFNnxf4klVn8zrbSRkjG62ZAQpvqL6XtdtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tzD5S6N7zLyMgk1GlpescHnxHmmraURCqs73F52/lmqh6D6CMny936aer6GjXeDuU+SBdlJG3CYARBnHzO1UuLh5OWTXvSVAt4LE1D1e7NLQrreRw71gT67pWuqsAgGHNy3jv63m4Y2Zqe9RxEMc3YZH2m41ELUGQBlRtTKVKyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IG0T+9Xf; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733819224;
-	bh=diwroXgDfFNnxf4klVn8zrbSRkjG62ZAQpvqL6XtdtE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IG0T+9XfaeyS+RmWBZiQT/og+j3HPF9nFz6CK4NPsOHhgFpI8wvAvqhLY2+AfcFnI
-	 XX3ruDPm/UTsUq9lRFNIrr0laPOLcOAGjFrrjPs3FUH6V1E9hqct5pmHaqcFYb8dkd
-	 6qV4wYMsn0UGuIaSffJVdGrrS7RkAD05iZfEZeAuycO7fFudr600psv6F8GSBFjKjk
-	 4oev1p2SP6tFhqSYtMW818wP6QFxPSdt73LQ7pXlzqyOAiimNfZVX+YUbX++aANZxg
-	 Yz1u6Upz3+nsCf0PG3yhvzHNL40Ij5bWmtoG4nsHgMl7lsvtgkIEk3T0bn5rTHkwsQ
-	 0T6RsQFSn/uHw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C0A285BED
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:27:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBFC2309AA;
+	Tue, 10 Dec 2024 08:27:23 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C026417E1323;
-	Tue, 10 Dec 2024 09:27:03 +0100 (CET)
-Message-ID: <35392d9d-56a3-4db8-b500-6272d0bd275c@collabora.com>
-Date: Tue, 10 Dec 2024 09:27:02 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E8D230982
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733819243; cv=none; b=VCZh8TgloYvcHjkgMt4VU2KXOkxsiDxOzkElH9aRJ2jWgQ07IchwNnh11VXR+pKYlUoPJQ2ehFOudPToWyRYbVkm7dw6SJXgIzcQwfx9woQbTsLV61epFiLsD0JbG6/IJnofOvs++q7XF0rLezeXj0B6HZ9YP8Xa8pVTNFdjAaM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733819243; c=relaxed/simple;
+	bh=RGEqFTsyLAWytI7W+/2L934Qp3FUaqeSB9bSIm03mQI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nSTfhcdJJVlUkfiHLtTXOun8KdfqZ84QC/ExHpVp8PlHvLV4gGwEFGzCna3wRXoVaG0B88mIUjwZA+5Bko7S3Y89f/28woOA57Tergs0jgeolpdlyLMBdtX1xAGhSzeJwiE4O+j0XzeJrzncP5mWG4nNjWUYngZ5YagYVNBmolk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a9d075bdc3so46173085ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:27:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733819241; x=1734424041;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gEszRSbd8tWerIRnCbggzUfqai9KrhAu9qVrRUgthsE=;
+        b=BrerQyTL4t+mu55+uvxCSomwRGdjgzrHUmTWoSkcwM/crteH+NJSLbbPGfV49cK6FC
+         Ye/1QkzXfyyVdPW1yzWuYTPD5U2IzFbkff3USoaRUHjdCuUHZejM9WJQolbgxe6dfBqj
+         JPTfANHYszRVJLMA7m76cpv3+QW+P/7YcNW0YnylXOR7kpRn7deH49E/Hi+0q18+21Pk
+         Fe+n+sV544A3wFCLy3xkr2MG5ZRmVow4zQaCOMCR3B6w9tBAWM/KWGDuV61CZQDPOKFz
+         hbMlK6muw7qybp2mkdt+sFR6eJI9EEYDL0GzN8ghiUipHT4V1TlcK2nMREzJz/+iyswi
+         xZ0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXQNtYf1X85qq/M6k9jGpOnHlCLEs9LPmcpWOZqpXvNBwABEql2PF42l9sngxKOAm4kwmOkFR2OMraxPhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFSv8carSoQjs+3ahmcEB21J2csrGv+zVXKHmL7199lAQ2nPI/
+	5QAH00yNxkq2qkWZcBi28pDMgj737w1KY3jjEP4UBjj5hewpFFOH7RduUr9XcIG8RHiPVJyf0yE
+	0JfUPSZiG04ZHH0xX3zAKaLHTJI1wfOwyATGMXbUddFgrWthinu5mnAE=
+X-Google-Smtp-Source: AGHT+IHBX2YwuKKiF3YlIjH872Jb10T1FN7R/2rd1aFm4MD74rYJnO0r7c1yeHL8132Q4SDwuC4tN2wH79oeFO1GSSZ1vhk07TcQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: mediatek: mt8183-kukui-jacuzzi: Drop
- pp3300_panel voltage settings
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20241030070224.1006331-1-wenst@chromium.org>
- <20241030070224.1006331-2-wenst@chromium.org>
- <CAGXv+5HVy41qee6kwVUeLV_DfA0=wk2X77kv81rBKAZDGE6mww@mail.gmail.com>
- <bbaa0c8f-9702-4252-a674-e46fb51f0a2a@collabora.com>
- <CAGXv+5GHP1M1rKwR8j+bN8GmpxWtpkfLTnvBdkg5wOvWanc-kw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5GHP1M1rKwR8j+bN8GmpxWtpkfLTnvBdkg5wOvWanc-kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1568:b0:3a7:e800:7d37 with SMTP id
+ e9e14a558f8ab-3a9dbac588cmr37719775ab.10.1733819240944; Tue, 10 Dec 2024
+ 00:27:20 -0800 (PST)
+Date: Tue, 10 Dec 2024 00:27:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6757fb68.050a0220.2477f.005f.GAE@google.com>
+Subject: [syzbot] [net?] [afs?] WARNING in rxrpc_send_data
+From: syzbot <syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dhowells@redhat.com, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Il 04/11/24 14:47, Chen-Yu Tsai ha scritto:
-> On Mon, Nov 4, 2024 at 9:19 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 04/11/24 14:00, Chen-Yu Tsai ha scritto:
->>> On Wed, Oct 30, 2024 at 3:02 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
->>>>
->>>> The pp3300_panel fixed regulator is just a load switch. It does not have
->>>> any regulating capabilities. Thus having voltage constraints on it is
->>>> wrong.
->>>>
->>>> Remove the voltage constraints.
->>>>
->>>> Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
->>>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>>
->>> I see that the other three patches were merged and included in the pull
->>> request, but not this one. Were there any concerns?
->>>
->>
->> Sorry I forgot to actually provide an explanation for that - yes, I do have some
->> comment about this one.
->>
->> Despite this being a load switch, it's still switching power from regulator A to
->> target device X, so this is technically still providing 3.3V to device X.
->>
->> Think about how a "regular" full-fledged regulator works: you can (sometimes) set
->> a voltage, and then you can ENABLE the VOUT for said regulator (/rail): this kind
->> of "load switch" does exactly the same as the ENABLE switch for a full-fledged
->> regulator.
-> 
-> But it does not provide regulation. One cannot "set" the voltage on a load
-> switch; one can only set it on its upstream supply, if that supply provides
-> regulation.
-> 
-> IIRC Mark said some years ago that if a regulator doesn't regulate the
-> voltage, then the voltage constraints should not be given. The constraints
-> are then derived from its upstream supply.
-> 
-> That's the guideline I've followed for all the regulator related changes
-> I've done over the years. Does that work for you?
-> 
+Hello,
 
-Ok, let's go with that then.
+syzbot found the following issue on:
 
-There's only one problem - patches 2 to 4 don't apply for whatever reason, is there
-any dependency?
+HEAD commit:    e58b4771af2b Merge branch 'vxlan-support-user-defined-rese..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b9a8f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
+dashboard link: https://syzkaller.appspot.com/bug?extid=ff11be94dfcd7a5af8da
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14cb93e8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a3d4df980000
 
-Cheers,
-Angelo
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b527c0c7acd8/disk-e58b4771.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/41720c9a36cc/vmlinux-e58b4771.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8888d773b743/bzImage-e58b4771.xz
 
->> So, this is switching on and off a power rail that is derived from a source rail,
->> practically creating... well, a "new" rail, with...
->>
->>    VIN=somewhere-3.3v,
->>    VOUT=somewhere-still-3.3v
->>
->> Any objections/doubts/etc? :-)
-> 
-> I agree with most of it, except the part that I laid out above about the
-> load switch not providing regulation.
-> 
->> P.S.: I'm writing fast, sorry if anything appears unclear, feel free to shoot more
->>         questions in case :-)
-> 
-> No, it's pretty clear, and I believe one of the common interpretations
-> I see. Thank you for the quick response.
-> 
-> 
-> Thanks
-> ChenYu
-> 
->> Cheers,
->> Angelo
->>
->>>
->>> ChenYu
->>>
->>>> ---
->>>>    arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi | 2 --
->>>>    1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
->>>> index 783c333107bc..7bbafe926558 100644
->>>> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
->>>> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
->>>> @@ -35,8 +35,6 @@ pp1800_mipibrdg: pp1800-mipibrdg {
->>>>           pp3300_panel: pp3300-panel {
->>>>                   compatible = "regulator-fixed";
->>>>                   regulator-name = "pp3300_panel";
->>>> -               regulator-min-microvolt = <3300000>;
->>>> -               regulator-max-microvolt = <3300000>;
->>>>                   pinctrl-names = "default";
->>>>                   pinctrl-0 = <&pp3300_panel_pins>;
->>>>
->>>> --
->>>> 2.47.0.163.g1226f6d8fa-goog
->>>>
->>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5822 at net/rxrpc/sendmsg.c:296 rxrpc_alloc_txqueue net/rxrpc/sendmsg.c:296 [inline]
+WARNING: CPU: 0 PID: 5822 at net/rxrpc/sendmsg.c:296 rxrpc_send_data+0x2969/0x2b30 net/rxrpc/sendmsg.c:390
+Modules linked in:
+CPU: 0 UID: 0 PID: 5822 Comm: syz-executor280 Not tainted 6.13.0-rc1-syzkaller-00332-ge58b4771af2b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:rxrpc_alloc_txqueue net/rxrpc/sendmsg.c:296 [inline]
+RIP: 0010:rxrpc_send_data+0x2969/0x2b30 net/rxrpc/sendmsg.c:390
+Code: 24 48 48 89 de e8 37 38 ab f6 4c 39 f3 b8 00 fe ff ff 41 bf fc ff ff ff 44 0f 44 f8 45 31 f6 e9 71 fd ff ff e8 38 33 ab f6 90 <0f> 0b 90 48 8b 7c 24 28 e8 4a d3 09 f7 e9 46 fd ff ff 89 d9 80 e1
+RSP: 0018:ffffc90003d9f620 EFLAGS: 00010293
+RAX: ffffffff8af43ee8 RBX: ffff88814e6b4e80 RCX: ffff88802b741e00
+RDX: 0000000000000000 RSI: 00000000000000ff RDI: ffff88807d0ea440
+RBP: ffffc90003d9f8d0 R08: ffff88807d0ea43f R09: 0000000000000000
+R10: ffff88807d0ea340 R11: ffffed100fa1d488 R12: ffff88814e6b4e48
+R13: 1ffff11029cd69cf R14: ffff88807d0ea000 R15: 0000000000000000
+FS:  0000555559fc7380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f831d7fb0d0 CR3: 000000007f1c2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ rxrpc_do_sendmsg+0x1569/0x1910 net/rxrpc/sendmsg.c:763
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:726
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
+ ___sys_sendmsg net/socket.c:2637 [inline]
+ __sys_sendmsg+0x269/0x350 net/socket.c:2669
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f831d783ab9
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffd37defc8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f831d783ab9
+RDX: 0000000000008880 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00007f831d7cd0fd R08: 0000000000000000 R09: 0000000000000006
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f831d7d213c
+R13: 00007f831d7cd082 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
