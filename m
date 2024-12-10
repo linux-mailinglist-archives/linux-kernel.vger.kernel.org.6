@@ -1,159 +1,115 @@
-Return-Path: <linux-kernel+bounces-440397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C22B9EBD6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:13:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD329EBDA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:17:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64AC31881344
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:13:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA47287A98
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E012448AB;
-	Tue, 10 Dec 2024 22:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3881F1901;
+	Tue, 10 Dec 2024 22:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Vt8vx6jK"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0004F241F3C;
-	Tue, 10 Dec 2024 22:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ke3I16qY"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FF92451F1;
+	Tue, 10 Dec 2024 22:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733868172; cv=none; b=K9KCc4sIXvW/q5Hp8Ya08H0QgPwCMXnzkUcnWTK+8KnQiTB9zpkS3rD13zs9UI6MacwP884nS9atVvT8SV6BvvlMnZNc4JYnc2b16ZVXhXE2rm1cceO2L8AJz+zx8YCBh1rzsfQt6FaHdGf7pGQoIBDM9L5Gmpa5QaWNul1dGcM=
+	t=1733868723; cv=none; b=Q8Q7y3MbszE5RAttDmwJSfUaPC5048v5klcqvB9KUkjU9vtmbbB7OkKJMm00hpq0hDtGE0jf0cXSmUj2DEnnNaMWhwHyuKsRutWpnbNkjCGBZuWOrz2Yqx5q4+LoEkebc6B8/QjWm96dO7bTGgCUbIDQuXrDmvEFblNfCVuEIrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733868172; c=relaxed/simple;
-	bh=E6uqxlfwCmnx95jtFhPi6wiH3Bbmndoy9tWcTmWRzgc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sibwa3LubOpJw1FMUsnq5n9xcoaqOjZahcPXnRBvY3ypEHM9/mOwv4wg6yQwAj+/mU5/dtamdzHb8HCxZRxMORHYOmxXltgYkeuOaxKnB+niPkzQw2E8/fhxrAqEGT+3mJJ/6KmVsm0fBNr8rD4+cgsPiy28DGIM5pNsw5oIN2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Vt8vx6jK; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F1ABA20ACD6F;
-	Tue, 10 Dec 2024 14:02:39 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F1ABA20ACD6F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733868160;
-	bh=zXBBaQqpACacMQS0Kj7gcrwl6nw/WBuJMa6i20JWtiI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Vt8vx6jKTs+Ctim/qcZbBmxzvKglLplBaf8u3Ss1TuSPMlqyDk6c0iiPlA+LzR+m0
-	 YPZ/Qdi+1XcZwtu1UmEnzASc3HPTGQ/HgM/xmF7CmRGYf/aXx12mOKI6ka1aNTAUbz
-	 /gGdJ/+VOZh0/gOcfBkHqPOaIC1SiZYddw+BwdBw=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Date: Tue, 10 Dec 2024 22:02:50 +0000
-Subject: [PATCH v3 19/19] ALSA: line6: Convert timeouts to
- secs_to_jiffies()
+	s=arc-20240116; t=1733868723; c=relaxed/simple;
+	bh=C+VGg9Te1RoFWH1QxqbHwOC4+kDj5oMz3gr4BAuLx/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DT9pM9HT3a/bItnhYUv5hLnLbIYNtI9jilReI72IU2XfvGs1cBCAkMso9GFW5p/h9+W6HhK/OV3u+qgsXOskxMJ6U4TIHVGFXMnItiZkXDmJA4kt4QnmUrOEtKJg6Mequ9DeYjXAgj4QmDyQUSquBa3ts467QsFjwuonkgU3RCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ke3I16qY; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733868282;
+	bh=V6UPHcPzwOo+KejU7patriwerwN4iMc1t5g5z34b7zY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ke3I16qYCmxPq1VTjo+MN7jrUgUUPqqq6hRKx7cZb4ycElTRXrP8JQAGFPMaJXDf7
+	 upOQNXnRTp4GwW4c6NZe4Mj1APFmo495a5rlyZ/OsdqE2j4gBICBusp5/s7W7aI1KP
+	 TWDKbuMl0+99dygctfG85qgD5m+YEQKDMHSDr7q9723PVVP2XiJUU0Jcm6tUdxaYdq
+	 OUUyLPcxLR6KfSiKXWuV1rvnlNm2Jjj4zXXnS7k6ez8ulfrvv+gTEIGJN7yq0WuzyQ
+	 +h3QANy3tW9rDMDviHf6nf5SweGrfNa4pHmXA1Q+tsmE1T1zdyH6mipCIae6IRwE2N
+	 t1wbCsKN+5vZA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y7CSp4smtz4wvd;
+	Wed, 11 Dec 2024 09:04:41 +1100 (AEDT)
+Date: Wed, 11 Dec 2024 09:04:45 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Chinner <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>, <linux-xfs@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the xfs tree
+Message-ID: <20241211090445.3ca8dfed@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-converge-secs-to-jiffies-v3-19-ddfefd7e9f2a@linux.microsoft.com>
-References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-In-Reply-To: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>, 
- Jozsef Kadlecsik <kadlec@netfilter.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
- Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>, 
- Russell King <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>, 
- Oded Gabbay <ogabbay@kernel.org>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jeroen de Borst <jeroendb@google.com>, 
- Praveen Kaligineedi <pkaligineedi@google.com>, 
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- James Smart <james.smart@broadcom.com>, 
- Dick Kennedy <dick.kennedy@broadcom.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
- Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>, 
- Jeff Johnson <jjohnson@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Jack Wang <jinpu.wang@cloud.ionos.com>, 
- Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
- Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
- Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Louis Peens <louis.peens@corigine.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr, 
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org, 
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org, 
- ath11k@lists.infradead.org, linux-mm@kvack.org, 
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org, 
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org, 
- oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Easwar Hariharan <eahariha@linux.microsoft.com>
-X-Mailer: b4 0.14.2
+Content-Type: multipart/signed; boundary="Sig_/DzxDu0MsDwEf7IHQ4V8td.m";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-secs_to_jiffies(). As the value here is a multiple of 1000, use
-secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
+--Sig_/DzxDu0MsDwEf7IHQ4V8td.m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
-the following Coccinelle rules:
+Hi all,
 
-@@ constant C; @@
+After merging the xfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-- msecs_to_jiffies(C * 1000)
-+ secs_to_jiffies(C)
+fs/xfs/xfs_trans.c: In function '__xfs_trans_commit':
+fs/xfs/xfs_trans.c:869:40: error: macro "xfs_trans_apply_dquot_deltas" requ=
+ires 2 arguments, but only 1 given
+  869 |         xfs_trans_apply_dquot_deltas(tp);
+      |                                        ^
+In file included from fs/xfs/xfs_trans.c:15:
+fs/xfs/xfs_quota.h:176:9: note: macro "xfs_trans_apply_dquot_deltas" define=
+d here
+  176 | #define xfs_trans_apply_dquot_deltas(tp, a)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-@@ constant C; @@
+Caused by commit
 
-- msecs_to_jiffies(C * MSEC_PER_SEC)
-+ secs_to_jiffies(C)
+  03d23e3ebeb7 ("xfs: don't lose solo dquot update transactions")
 
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
----
- sound/usb/line6/toneport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+$ grep CONFIG_XFS_QUOTA .config
+# CONFIG_XFS_QUOTA is not set
 
-diff --git a/sound/usb/line6/toneport.c b/sound/usb/line6/toneport.c
-index ca2c6f5de407ece21ab69a39ed603e3f10069039..c073b38cd6738176fc6a276d05ed553526573341 100644
---- a/sound/usb/line6/toneport.c
-+++ b/sound/usb/line6/toneport.c
-@@ -386,7 +386,7 @@ static int toneport_setup(struct usb_line6_toneport *toneport)
- 		toneport_update_led(toneport);
- 
- 	schedule_delayed_work(&toneport->line6.startup_work,
--			      msecs_to_jiffies(TONEPORT_PCM_DELAY * 1000));
-+			      secs_to_jiffies(TONEPORT_PCM_DELAY));
- 	return 0;
- }
- 
+I have used the xfs tree from next-20241210 for today.
 
--- 
-2.43.0
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/DzxDu0MsDwEf7IHQ4V8td.m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdYuv0ACgkQAVBC80lX
+0Gz/7gf9FKrMEjYTDhb1Tr3Ux8JlEaOGcSCL2hRuYawoa2tLUPPD1eVN5Cd5++Qe
+giWQreO+vlmeX/4ErB6nnYG5GhWWg11pRAnzDuXDqQH5Pwnn/rZL8lz9+F2w5/nq
+HnhC14fiKDPcUGnYHAkJbcytS11iu8dHvdDCNibrudonNGp1lepB2fmlPIwS1MST
+ufK/YWY97DOWs3fRBzLJD5eHuALg7z1CXpk0LzGaX3wIgwnlWCsIqB73KvjnjhqI
+yFM33fYfCAxrj5HwqI2dFvYD2B+5hWDe+pjY6FNTtX4Nr6zabrzjXaOhfLcCXmdb
+q/ATrcjXLGMTu3EWkrrcVbMfCui1Sg==
+=nCEH
+-----END PGP SIGNATURE-----
+
+--Sig_/DzxDu0MsDwEf7IHQ4V8td.m--
 
