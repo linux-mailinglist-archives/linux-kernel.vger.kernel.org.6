@@ -1,130 +1,565 @@
-Return-Path: <linux-kernel+bounces-439941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198179EB685
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:34:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE479EB68B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29DB82834C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC43B28353C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7145B1BDA97;
-	Tue, 10 Dec 2024 16:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4FA22FE1C;
+	Tue, 10 Dec 2024 16:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="oK4bkqyY"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rpbpZatN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ytWnKGwJ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rpbpZatN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ytWnKGwJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702CF1AA1D2
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699211BDA97
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733848448; cv=none; b=N1s25QCzF+Z7hERhjIdPuZ2zZeZ7owR3mpL81vqiwQ/xLkaxrWRFYJXXyLpqB7jNIXSxN2YgSkqTtygFqr1EPYpcbaeceBADi0XwLt/C1sVn1S/VkrGn0KKqm+1sq+gEZzsr5RmyGL39eJEd14p+giZty2k1MdoUgoatOu1dmPw=
+	t=1733848479; cv=none; b=I3RwJuSJ0ukDr7lVl1J267+TE8NJ9VgMh/041SFfbqgLB2LVwwRAvmCt4fKEHXO00aqTmMPw+qUw33t3LPFvdkmOUGSEcLF5hmItRzWy6EYXd5xBP92giNRc1EN1FXCsJctBSsZBoqs0rNqBCzImR4GgnARcJLuNMaLPfxx3oEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733848448; c=relaxed/simple;
-	bh=sQnuwRWxUOnAEtZKfyXTWmf+zCpmwdFu1sUDT1TVN9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ICMYZtmk+gI153rDD2CQdxWf/xWAraCFnDYrMz39dmAgwdV1M1sd3K+S7BxtrPUSyKj2NOyV2+ELtSPcx1e4rpQksogJHE52iaBnZDTAhjJTc3LEJtcGTwnVjF7ybn8gn6+js891xGAo/BBmagTLDbztN/BnuJDG/UXel14fYvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=oK4bkqyY; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21634338cfdso35673545ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:34:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1733848447; x=1734453247; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MM7mkfPX/z4yVilBxiJBcCR4eR91hwy3WY2ezGvB4AQ=;
-        b=oK4bkqyYuWDw1fTocixksaNeP2BqJ0mjQRSRCe6bwXylBVlXbZbfFn7xNeIxkSMo0S
-         oN2svEUItYgEjNsnGot1m/BblPZOsy2DzhPfamRRgqPyAKjzFzegQJXrM/ZHB8zBO1M7
-         dcYL7ClVS132tmMz3kxnv9yUKz7c0hcmssFHQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733848447; x=1734453247;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MM7mkfPX/z4yVilBxiJBcCR4eR91hwy3WY2ezGvB4AQ=;
-        b=dZPVE8Vb7jPypLMui6aW2m5CNu3ZxXIjhit8Vm0pieAK/zhc7AWFNa5IPgwi0dBKLe
-         z5KYzHgSihlzYPrX02j/uowroLrE/7l15O73QeYGQH9zvtThRPPKLO6tKUxREn8B0RyQ
-         ESu1K6umw4H0PI7i8QqKRd1CEK/A3O/jIs5wovv7S4B1PklVw0F+sneI9q3LekDFC9F+
-         Anh5JiAQneAZPGl4EQY+HXRi9SoFgoH+fGo363s9O/+8+QZFmIBDu4kSDuNqZ2mWB+nd
-         Xfsz6UHXsocNmVAhnt+nuqkmOmF2/W8hhHHyQOaIZSemjnxz6gKaCVFQvnDTWFbdh+0S
-         9FAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKlcrJERm4GYEQp0RjY21AubuMsjNbto4wXyFbMDFnGnJ2r3+SaU0eAIueGQjnGHoHlDgRI6llY8K3RVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeLadHYXqynVAknYPRwbFQIELGuSBz7FH4tTQS1S4vBiZ9NZsS
-	CJgNiFhi3Bv0eJNJicMMqWsT6XgTMpSoE88DQhrKRPbseR15bCCsB2vMEXnDf3I=
-X-Gm-Gg: ASbGncs9PTij0nk+LMf1iaZXqF8knBeFEeXtXZYO6BzuS6npX2C8T/0IyyLrQnZNZA+
-	Oy/6SYtaAil0DV/9p1tIh/NBLgl4ezdYZWgaB7CNa0FhnqN/pzc8hAiEw9Tjo21rxZQY/buh2yD
-	bj7EpeuyVe4WdUiz/7OxpYb8qlApaq5dR5VM7pyxoCVYOJq8CRFYy8SIKSlqjYMLYzGR8xzBBmH
-	xZ4/mzzghrx3XvL4ssjwPUtVEI7eIVzDzKOjWI2u48CXBMrBqmVjR6Med4I+J2MDtz13f80+fk+
-	riwWEnp2q4A04ILf2YIm
-X-Google-Smtp-Source: AGHT+IHN9nygNnSTRx/qg058XotfWs2WH/nks8UlZLQYwvpdFiCk0KpSOEKf5NuVrm6lqzjl4PvC4Q==
-X-Received: by 2002:a17:902:c948:b0:216:66d2:f190 with SMTP id d9443c01a7336-2166a0bc824mr71072565ad.55.1733848446802;
-        Tue, 10 Dec 2024 08:34:06 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21628c448c4sm61023095ad.23.2024.12.10.08.34.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 08:34:06 -0800 (PST)
-Date: Tue, 10 Dec 2024 08:34:03 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Jan Stancek <jstancek@redhat.com>
-Cc: donald.hunter@gmail.com, kuba@kernel.org, stfomichev@gmail.com,
-	pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
-	horms@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] tools: ynl: add main install target
-Message-ID: <Z1hte2LnnPdC6DMm@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jan Stancek <jstancek@redhat.com>, donald.hunter@gmail.com,
-	kuba@kernel.org, stfomichev@gmail.com, pabeni@redhat.com,
-	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1733755068.git.jstancek@redhat.com>
- <59e64ba52e7fb7d15248419682433ec5a732650b.1733755068.git.jstancek@redhat.com>
- <Z1dhiJpyoXTlw5s9@LQ3V64L9R2>
- <CAASaF6wVb=c2mYJDqSdjbGD2hQ9CdbxmEKopVoT3Aniy+xRJ+g@mail.gmail.com>
+	s=arc-20240116; t=1733848479; c=relaxed/simple;
+	bh=nZI7XfU27kPJXdg1x3tUblQVb3NKDoTIh1yr+4o5zzw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=HCAnx/xtUB3HClYLTEjVcJm7INSPapBsIBbpOjPD1fb3aJ72BG2F1gt0dCmL1fMeM+QkEhSlBr+S2cA7d6cP7FbyYvKrN4fCCd9d8gU0JhWmY7LcjiLUJCrZcyibefAzdyoOzrvtI+TkYPdaxnbcaz0KADcy5ZwzoK5N3EhFV+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rpbpZatN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ytWnKGwJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rpbpZatN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ytWnKGwJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 97FAF210F2;
+	Tue, 10 Dec 2024 16:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733848474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jkGpqLCIKMaHKx4zZZuWx31TXzSGMol/+IvVniTOhsU=;
+	b=rpbpZatNFY6ip0fwhXjVAwgH0sADv3kjRFty46fgI96ZYKEmP1KgYx137uQAHvI+UVu6MU
+	TQZzG4cbKE87E4No+fP6avlSiTh8mjNv9kAd1b4Y9tNMJQuXd4xoyKXvRo5WnCLZwbzfew
+	wD9aQJEFN1+nUBhctg1VJMrwZv/P4OM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733848474;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jkGpqLCIKMaHKx4zZZuWx31TXzSGMol/+IvVniTOhsU=;
+	b=ytWnKGwJ1KeRdQbvDslIjx3EgLNZvxWEJVqzo7DQl/YpxHzdfyrtDXdSWiOokbEPAJkBJ4
+	zaf5rzP1CrktI9AQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733848474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jkGpqLCIKMaHKx4zZZuWx31TXzSGMol/+IvVniTOhsU=;
+	b=rpbpZatNFY6ip0fwhXjVAwgH0sADv3kjRFty46fgI96ZYKEmP1KgYx137uQAHvI+UVu6MU
+	TQZzG4cbKE87E4No+fP6avlSiTh8mjNv9kAd1b4Y9tNMJQuXd4xoyKXvRo5WnCLZwbzfew
+	wD9aQJEFN1+nUBhctg1VJMrwZv/P4OM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733848474;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jkGpqLCIKMaHKx4zZZuWx31TXzSGMol/+IvVniTOhsU=;
+	b=ytWnKGwJ1KeRdQbvDslIjx3EgLNZvxWEJVqzo7DQl/YpxHzdfyrtDXdSWiOokbEPAJkBJ4
+	zaf5rzP1CrktI9AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B648313A15;
+	Tue, 10 Dec 2024 16:34:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eE+3HJhtWGccPgAAD6G6ig
+	(envelope-from <colyli@suse.de>); Tue, 10 Dec 2024 16:34:32 +0000
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAASaF6wVb=c2mYJDqSdjbGD2hQ9CdbxmEKopVoT3Aniy+xRJ+g@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: drivers/md/bcache/super.c:108:14: sparse: sparse: restricted
+ __le64 degrades to integer
+From: Coly Li <colyli@suse.de>
+In-Reply-To: <202412071044.tthTVBw4-lkp@intel.com>
+Date: Wed, 11 Dec 2024 00:34:20 +0800
+Cc: Christoph Hellwig <hch@lst.de>,
+ oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <33E9C2B1-BF96-46DD-BE45-00811C986ABD@suse.de>
+References: <202412071044.tthTVBw4-lkp@intel.com>
+To: kernel test robot <lkp@intel.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.992];
+	MIME_GOOD(-0.10)[text/plain];
+	APPLE_MAILER_COMMON(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Tue, Dec 10, 2024 at 02:56:05PM +0100, Jan Stancek wrote:
-> On Mon, Dec 9, 2024 at 10:30 PM Joe Damato <jdamato@fastly.com> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 03:47:17PM +0100, Jan Stancek wrote:
-> > > This will install C library, specs, rsts and pyynl. The initial
-> > > structure is:
-> > >
-> > >       $ mkdir /tmp/myroot
-> > >       $ make DESTDIR=/tmp/myroot install
-> > >
-> > >       /usr
-> > >       /usr/lib64
-> > >       /usr/lib64/libynl.a
-> >
-> > This is super useful thanks for doing this work. I could be missing
-> > something, but it looks like the install target does not install the
-> > generated C headers that user code can include at build time.
-> >
-> > Am I reading that right? Is that intentional? I was thinking that it
-> > would be really useful to have the headers installed, too.
-> 
-> It's not intentional, just noone asked for it yet. We can add those.
-> Would /usr/include/ynl/ work? Or do you/others have a different suggestion?
+I don=E2=80=99t know whom to ask, just try to ask kernel test robot =
+directly.
 
-/usr/include/ynl sounds good to me, but happy to see if other folks
-have suggestions.
+Although this patch was not composed from me, I still wonder who to =
+understand the following warning information and where the problem is.
+e.g. for the following warning,
 
-Thanks for being open to adding this; it'll make developing user
-apps with libynl much easier.
+> sparse warnings: (new ones prefixed by >>)
+>   drivers/md/bcache/super.c:108:24: sparse: sparse: incorrect type in =
+argument 2 (different base types) @@     expected unsigned int nr_keys =
+@@     got restricted __le16 [usertype] keys @@
+>   drivers/md/bcache/super.c:108:24: sparse:     expected unsigned int =
+nr_keys
+>   drivers/md/bcache/super.c:108:24: sparse:     got restricted __le16 =
+[usertype] keys
+>>> drivers/md/bcache/super.c:108:14: sparse: sparse: restricted __le64 =
+degrades to integer
+
+It complains about line 108 which is,
+> cafe563591446cf Kent Overstreet   2013-03-23  107   err =3D "Bad =
+checksum";
+> cafe563591446cf Kent Overstreet   2013-03-23 @108   if (s->csum !=3D =
+csum_set(s))
+> cafe563591446cf Kent Overstreet   2013-03-23  109   goto err;
+
+Here s->sum is __le64, csum_set() is uint64_t, these two types have same =
+length. I don=E2=80=99t see the direct connection between code and =
+warning.
+
+Thanks in advance for the patience to give me a hint.
+
+Coly Li
+
+
+
+> 2024=E5=B9=B412=E6=9C=889=E6=97=A5 12:00=EF=BC=8Ckernel test robot =
+<lkp@intel.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> tree:   =
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git =
+master
+> head:   b5f217084ab3ddd4bdd03cd437f8e3b7e2d1f5b6
+> commit: a702a692cd7559053ea573f4e2c84828f0e62824 bcache: use a =
+separate data structure for the on-disk super block
+> date:   4 years, 10 months ago
+> config: x86_64-randconfig-r133-20240105 =
+(https://download.01.org/0day-ci/archive/20241207/202412071044.tthTVBw4-lk=
+p@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> reproduce (this is a W=3D1 build): =
+(https://download.01.org/0day-ci/archive/20241207/202412071044.tthTVBw4-lk=
+p@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new =
+version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: =
+https://lore.kernel.org/oe-kbuild-all/202412071044.tthTVBw4-lkp@intel.com/=
+
+>=20
+> sparse warnings: (new ones prefixed by >>)
+>   drivers/md/bcache/super.c:108:24: sparse: sparse: incorrect type in =
+argument 2 (different base types) @@     expected unsigned int nr_keys =
+@@     got restricted __le16 [usertype] keys @@
+>   drivers/md/bcache/super.c:108:24: sparse:     expected unsigned int =
+nr_keys
+>   drivers/md/bcache/super.c:108:24: sparse:     got restricted __le16 =
+[usertype] keys
+>>> drivers/md/bcache/super.c:108:14: sparse: sparse: restricted __le64 =
+degrades to integer
+>   drivers/md/bcache/super.c:237:21: sparse: sparse: incorrect type in =
+argument 2 (different base types) @@     expected unsigned int nr_keys =
+@@     got restricted __le16 [usertype] keys @@
+>   drivers/md/bcache/super.c:237:21: sparse:     expected unsigned int =
+nr_keys
+>   drivers/md/bcache/super.c:237:21: sparse:     got restricted __le16 =
+[usertype] keys
+>>> drivers/md/bcache/super.c:237:19: sparse: sparse: incorrect type in =
+assignment (different base types) @@     expected restricted __le64 =
+[usertype] csum @@     got unsigned long long @@
+>   drivers/md/bcache/super.c:237:19: sparse:     expected restricted =
+__le64 [usertype] csum
+>   drivers/md/bcache/super.c:237:19: sparse:     got unsigned long long
+>   drivers/md/bcache/super.c: note: in included file (through =
+drivers/md/bcache/bcache.h):
+>   include/uapi/linux/bcache.h:345:38: sparse: sparse: array of =
+flexible structures
+>   drivers/md/bcache/super.c:574:33: sparse: sparse: incorrect type in =
+assignment (different base types) @@     expected unsigned short =
+[usertype] prio @@     got restricted __le16 [usertype] @@
+>   drivers/md/bcache/super.c:574:33: sparse:     expected unsigned =
+short [usertype] prio
+>   drivers/md/bcache/super.c:574:33: sparse:     got restricted __le16 =
+[usertype]
+>   drivers/md/bcache/super.c:642:27: sparse: sparse: cast to restricted =
+__le16
+>   drivers/md/bcache/super.c:744:32: sparse: sparse: incorrect type in =
+assignment (different base types) @@     expected unsigned int =
+[usertype] invalidated @@     got restricted __le32 [usertype] @@
+>   drivers/md/bcache/super.c:744:32: sparse:     expected unsigned int =
+[usertype] invalidated
+>   drivers/md/bcache/super.c:744:32: sparse:     got restricted __le32 =
+[usertype]
+>   drivers/md/bcache/super.c:1104:26: sparse: sparse: incorrect type in =
+initializer (different base types) @@     expected unsigned int =
+[usertype] rtime @@     got restricted __le32 [usertype] @@
+>   drivers/md/bcache/super.c:1104:26: sparse:     expected unsigned int =
+[usertype] rtime
+>   drivers/md/bcache/super.c:1104:26: sparse:     got restricted __le32 =
+[usertype]
+>   drivers/md/bcache/super.c:1148:32: sparse: sparse: incorrect type in =
+assignment (different base types) @@     expected unsigned int =
+[usertype] invalidated @@     got restricted __le32 [usertype] @@
+>   drivers/md/bcache/super.c:1148:32: sparse:     expected unsigned int =
+[usertype] invalidated
+>   drivers/md/bcache/super.c:1148:32: sparse:     got restricted __le32 =
+[usertype]
+>   drivers/md/bcache/super.c:1502:36: sparse: sparse: incorrect type in =
+assignment (different base types) @@     expected unsigned int =
+[usertype] last_reg @@     got restricted __le32 [usertype] @@
+>   drivers/md/bcache/super.c:1502:36: sparse:     expected unsigned int =
+[usertype] last_reg
+>   drivers/md/bcache/super.c:1502:36: sparse:     got restricted __le32 =
+[usertype]
+>   drivers/md/bcache/super.c: note: in included file (through =
+drivers/md/bcache/bcache.h):
+>   drivers/md/bcache/bset.h:231:36: sparse: sparse: array of flexible =
+structures
+>=20
+> vim +108 drivers/md/bcache/super.c
+>=20
+> cafe563591446cf Kent Overstreet   2013-03-23   61 =20
+> cafe563591446cf Kent Overstreet   2013-03-23   62  static const char =
+*read_super(struct cache_sb *sb, struct block_device *bdev,
+> cafe563591446cf Kent Overstreet   2013-03-23   63        struct page =
+**res)
+> cafe563591446cf Kent Overstreet   2013-03-23   64  {
+> cafe563591446cf Kent Overstreet   2013-03-23   65   const char *err;
+> a702a692cd75590 Christoph Hellwig 2020-01-24   66   struct =
+cache_sb_disk *s;
+> cafe563591446cf Kent Overstreet   2013-03-23   67   struct buffer_head =
+*bh =3D __bread(bdev, 1, SB_SIZE);
+> 6f10f7d1b02b1bb Coly Li           2018-08-11   68   unsigned int i;
+> cafe563591446cf Kent Overstreet   2013-03-23   69 =20
+> cafe563591446cf Kent Overstreet   2013-03-23   70   if (!bh)
+> cafe563591446cf Kent Overstreet   2013-03-23   71   return "IO error";
+> cafe563591446cf Kent Overstreet   2013-03-23   72 =20
+> a702a692cd75590 Christoph Hellwig 2020-01-24   73   s =3D (struct =
+cache_sb_disk *)bh->b_data;
+> cafe563591446cf Kent Overstreet   2013-03-23   74 =20
+> cafe563591446cf Kent Overstreet   2013-03-23   75   sb->offset =3D =
+le64_to_cpu(s->offset);
+> cafe563591446cf Kent Overstreet   2013-03-23   76   sb->version =3D =
+le64_to_cpu(s->version);
+> cafe563591446cf Kent Overstreet   2013-03-23   77 =20
+> cafe563591446cf Kent Overstreet   2013-03-23   78   memcpy(sb->magic, =
+s->magic, 16);
+> cafe563591446cf Kent Overstreet   2013-03-23   79   memcpy(sb->uuid, =
+s->uuid, 16);
+> cafe563591446cf Kent Overstreet   2013-03-23   80   =
+memcpy(sb->set_uuid, s->set_uuid, 16);
+> cafe563591446cf Kent Overstreet   2013-03-23   81   memcpy(sb->label, =
+s->label, SB_LABEL_SIZE);
+> cafe563591446cf Kent Overstreet   2013-03-23   82 =20
+> cafe563591446cf Kent Overstreet   2013-03-23   83   sb->flags =3D =
+le64_to_cpu(s->flags);
+> cafe563591446cf Kent Overstreet   2013-03-23   84   sb->seq =3D =
+le64_to_cpu(s->seq);
+> cafe563591446cf Kent Overstreet   2013-03-23   85   sb->last_mount =3D =
+le32_to_cpu(s->last_mount);
+> cafe563591446cf Kent Overstreet   2013-03-23   86   sb->first_bucket =3D=
+ le16_to_cpu(s->first_bucket);
+> cafe563591446cf Kent Overstreet   2013-03-23   87   sb->keys =3D =
+le16_to_cpu(s->keys);
+> cafe563591446cf Kent Overstreet   2013-03-23   88 =20
+> cafe563591446cf Kent Overstreet   2013-03-23   89   for (i =3D 0; i < =
+SB_JOURNAL_BUCKETS; i++)
+> cafe563591446cf Kent Overstreet   2013-03-23   90   sb->d[i] =3D =
+le64_to_cpu(s->d[i]);
+> cafe563591446cf Kent Overstreet   2013-03-23   91 =20
+> cafe563591446cf Kent Overstreet   2013-03-23   92   pr_debug("read sb =
+version %llu, flags %llu, seq %llu, journal size %u",
+> cafe563591446cf Kent Overstreet   2013-03-23   93   sb->version, =
+sb->flags, sb->seq, sb->keys);
+> cafe563591446cf Kent Overstreet   2013-03-23   94 =20
+> aaf8dbeab586572 Coly Li           2019-11-13   95   err =3D "Not a =
+bcache superblock (bad offset)";
+> cafe563591446cf Kent Overstreet   2013-03-23   96   if (sb->offset !=3D =
+SB_SECTOR)
+> cafe563591446cf Kent Overstreet   2013-03-23   97   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23   98 =20
+> aaf8dbeab586572 Coly Li           2019-11-13   99   err =3D "Not a =
+bcache superblock (bad magic)";
+> cafe563591446cf Kent Overstreet   2013-03-23  100   if =
+(memcmp(sb->magic, bcache_magic, 16))
+> cafe563591446cf Kent Overstreet   2013-03-23  101   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  102 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  103   err =3D "Too many =
+journal buckets";
+> cafe563591446cf Kent Overstreet   2013-03-23  104   if (sb->keys > =
+SB_JOURNAL_BUCKETS)
+> cafe563591446cf Kent Overstreet   2013-03-23  105   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  106 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  107   err =3D "Bad =
+checksum";
+> cafe563591446cf Kent Overstreet   2013-03-23 @108   if (s->csum !=3D =
+csum_set(s))
+> cafe563591446cf Kent Overstreet   2013-03-23  109   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  110 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  111   err =3D "Bad =
+UUID";
+> 169ef1cf6171d35 Kent Overstreet   2013-03-28  112   if =
+(bch_is_zero(sb->uuid, 16))
+> cafe563591446cf Kent Overstreet   2013-03-23  113   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  114 =20
+> 8abb2a5dbadab91 Kent Overstreet   2013-04-23  115   sb->block_size =3D =
+le16_to_cpu(s->block_size);
+> 8abb2a5dbadab91 Kent Overstreet   2013-04-23  116 =20
+> 8abb2a5dbadab91 Kent Overstreet   2013-04-23  117   err =3D =
+"Superblock block size smaller than device block size";
+> 8abb2a5dbadab91 Kent Overstreet   2013-04-23  118   if (sb->block_size =
+<< 9 < bdev_logical_block_size(bdev))
+> 8abb2a5dbadab91 Kent Overstreet   2013-04-23  119   goto err;
+> 8abb2a5dbadab91 Kent Overstreet   2013-04-23  120 =20
+> 2903381fce71004 Kent Overstreet   2013-04-11  121   switch =
+(sb->version) {
+> 2903381fce71004 Kent Overstreet   2013-04-11  122   case =
+BCACHE_SB_VERSION_BDEV:
+> 2903381fce71004 Kent Overstreet   2013-04-11  123   sb->data_offset =3D =
+BDEV_DATA_START_DEFAULT;
+> 2903381fce71004 Kent Overstreet   2013-04-11  124   break;
+> 2903381fce71004 Kent Overstreet   2013-04-11  125   case =
+BCACHE_SB_VERSION_BDEV_WITH_OFFSET:
+> 2903381fce71004 Kent Overstreet   2013-04-11  126   sb->data_offset =3D =
+le64_to_cpu(s->data_offset);
+> cafe563591446cf Kent Overstreet   2013-03-23  127 =20
+> 2903381fce71004 Kent Overstreet   2013-04-11  128   err =3D "Bad data =
+offset";
+> 2903381fce71004 Kent Overstreet   2013-04-11  129   if =
+(sb->data_offset < BDEV_DATA_START_DEFAULT)
+> cafe563591446cf Kent Overstreet   2013-03-23  130   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  131 =20
+> 2903381fce71004 Kent Overstreet   2013-04-11  132   break;
+> 2903381fce71004 Kent Overstreet   2013-04-11  133   case =
+BCACHE_SB_VERSION_CDEV:
+> 2903381fce71004 Kent Overstreet   2013-04-11  134   case =
+BCACHE_SB_VERSION_CDEV_WITH_UUID:
+> 2903381fce71004 Kent Overstreet   2013-04-11  135   sb->nbuckets =3D =
+le64_to_cpu(s->nbuckets);
+> 2903381fce71004 Kent Overstreet   2013-04-11  136   sb->bucket_size =3D =
+le16_to_cpu(s->bucket_size);
+> 2903381fce71004 Kent Overstreet   2013-04-11  137 =20
+> 2903381fce71004 Kent Overstreet   2013-04-11  138   sb->nr_in_set =3D =
+le16_to_cpu(s->nr_in_set);
+> 2903381fce71004 Kent Overstreet   2013-04-11  139   sb->nr_this_dev =3D =
+le16_to_cpu(s->nr_this_dev);
+> 2903381fce71004 Kent Overstreet   2013-04-11  140 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  141   err =3D "Too many =
+buckets";
+> cafe563591446cf Kent Overstreet   2013-03-23  142   if (sb->nbuckets > =
+LONG_MAX)
+> cafe563591446cf Kent Overstreet   2013-03-23  143   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  144 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  145   err =3D "Not =
+enough buckets";
+> cafe563591446cf Kent Overstreet   2013-03-23  146   if (sb->nbuckets < =
+1 << 7)
+> cafe563591446cf Kent Overstreet   2013-03-23  147   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  148 =20
+> 2903381fce71004 Kent Overstreet   2013-04-11  149   err =3D "Bad =
+block/bucket size";
+> 2903381fce71004 Kent Overstreet   2013-04-11  150   if =
+(!is_power_of_2(sb->block_size) ||
+> 2903381fce71004 Kent Overstreet   2013-04-11  151      sb->block_size =
+> PAGE_SECTORS ||
+> 2903381fce71004 Kent Overstreet   2013-04-11  152      =
+!is_power_of_2(sb->bucket_size) ||
+> 2903381fce71004 Kent Overstreet   2013-04-11  153      sb->bucket_size =
+< PAGE_SECTORS)
+> 2903381fce71004 Kent Overstreet   2013-04-11  154   goto err;
+> 2903381fce71004 Kent Overstreet   2013-04-11  155 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  156   err =3D "Invalid =
+superblock: device too small";
+> b0d30981c05f32d Coly Li           2018-08-11  157   if =
+(get_capacity(bdev->bd_disk) <
+> b0d30981c05f32d Coly Li           2018-08-11  158      sb->bucket_size =
+* sb->nbuckets)
+> cafe563591446cf Kent Overstreet   2013-03-23  159   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  160 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  161   err =3D "Bad =
+UUID";
+> 169ef1cf6171d35 Kent Overstreet   2013-03-28  162   if =
+(bch_is_zero(sb->set_uuid, 16))
+> cafe563591446cf Kent Overstreet   2013-03-23  163   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  164 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  165   err =3D "Bad cache =
+device number in set";
+> cafe563591446cf Kent Overstreet   2013-03-23  166   if (!sb->nr_in_set =
+||
+> cafe563591446cf Kent Overstreet   2013-03-23  167      sb->nr_in_set =
+<=3D sb->nr_this_dev ||
+> cafe563591446cf Kent Overstreet   2013-03-23  168      sb->nr_in_set > =
+MAX_CACHES_PER_SET)
+> cafe563591446cf Kent Overstreet   2013-03-23  169   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  170 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  171   err =3D "Journal =
+buckets not sequential";
+> cafe563591446cf Kent Overstreet   2013-03-23  172   for (i =3D 0; i < =
+sb->keys; i++)
+> cafe563591446cf Kent Overstreet   2013-03-23  173   if (sb->d[i] !=3D =
+sb->first_bucket + i)
+> cafe563591446cf Kent Overstreet   2013-03-23  174   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  175 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  176   err =3D "Too many =
+journal buckets";
+> cafe563591446cf Kent Overstreet   2013-03-23  177   if =
+(sb->first_bucket + sb->keys > sb->nbuckets)
+> cafe563591446cf Kent Overstreet   2013-03-23  178   goto err;
+> cafe563591446cf Kent Overstreet   2013-03-23  179 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  180   err =3D "Invalid =
+superblock: first bucket comes before end of super";
+> cafe563591446cf Kent Overstreet   2013-03-23  181   if =
+(sb->first_bucket * sb->bucket_size < 16)
+> cafe563591446cf Kent Overstreet   2013-03-23  182   goto err;
+> 2903381fce71004 Kent Overstreet   2013-04-11  183 =20
+> 2903381fce71004 Kent Overstreet   2013-04-11  184   break;
+> 2903381fce71004 Kent Overstreet   2013-04-11  185   default:
+> 2903381fce71004 Kent Overstreet   2013-04-11  186   err =3D =
+"Unsupported superblock version";
+> 2903381fce71004 Kent Overstreet   2013-04-11  187   goto err;
+> 2903381fce71004 Kent Overstreet   2013-04-11  188   }
+> 2903381fce71004 Kent Overstreet   2013-04-11  189 =20
+> 75cbb3f1d840429 Arnd Bergmann     2018-07-26  190   sb->last_mount =3D =
+(u32)ktime_get_real_seconds();
+> cafe563591446cf Kent Overstreet   2013-03-23  191   err =3D NULL;
+> cafe563591446cf Kent Overstreet   2013-03-23  192 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  193   =
+get_page(bh->b_page);
+> cafe563591446cf Kent Overstreet   2013-03-23  194   *res =3D =
+bh->b_page;
+> cafe563591446cf Kent Overstreet   2013-03-23  195  err:
+> cafe563591446cf Kent Overstreet   2013-03-23  196   put_bh(bh);
+> cafe563591446cf Kent Overstreet   2013-03-23  197   return err;
+> cafe563591446cf Kent Overstreet   2013-03-23  198  }
+> cafe563591446cf Kent Overstreet   2013-03-23  199 =20
+> 4246a0b63bd8f56 Christoph Hellwig 2015-07-20  200  static void =
+write_bdev_super_endio(struct bio *bio)
+> cafe563591446cf Kent Overstreet   2013-03-23  201  {
+> cafe563591446cf Kent Overstreet   2013-03-23  202   struct cached_dev =
+*dc =3D bio->bi_private;
+> 08ec1e6282f2716 Coly Li           2019-06-28  203 =20
+> 08ec1e6282f2716 Coly Li           2019-06-28  204   if =
+(bio->bi_status)
+> 08ec1e6282f2716 Coly Li           2019-06-28  205   =
+bch_count_backing_io_errors(dc, bio);
+> cafe563591446cf Kent Overstreet   2013-03-23  206 =20
+> cb7a583e6a6ace6 Kent Overstreet   2013-12-16  207   =
+closure_put(&dc->sb_write);
+> cafe563591446cf Kent Overstreet   2013-03-23  208  }
+> cafe563591446cf Kent Overstreet   2013-03-23  209 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  210  static void =
+__write_super(struct cache_sb *sb, struct bio *bio)
+> cafe563591446cf Kent Overstreet   2013-03-23  211  {
+> a702a692cd75590 Christoph Hellwig 2020-01-24  212   struct =
+cache_sb_disk *out =3D page_address(bio_first_page_all(bio));
+> 6f10f7d1b02b1bb Coly Li           2018-08-11  213   unsigned int i;
+> cafe563591446cf Kent Overstreet   2013-03-23  214 =20
+> 4f024f3797c43cb Kent Overstreet   2013-10-11  215   =
+bio->bi_iter.bi_sector =3D SB_SECTOR;
+> 4f024f3797c43cb Kent Overstreet   2013-10-11  216   =
+bio->bi_iter.bi_size =3D SB_SIZE;
+> ad0d9e76a412470 Mike Christie     2016-06-05  217   =
+bio_set_op_attrs(bio, REQ_OP_WRITE, REQ_SYNC|REQ_META);
+> 169ef1cf6171d35 Kent Overstreet   2013-03-28  218   bch_bio_map(bio, =
+NULL);
+> cafe563591446cf Kent Overstreet   2013-03-23  219 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  220   out->offset =3D =
+cpu_to_le64(sb->offset);
+> cafe563591446cf Kent Overstreet   2013-03-23  221   out->version =3D =
+cpu_to_le64(sb->version);
+> cafe563591446cf Kent Overstreet   2013-03-23  222 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  223   memcpy(out->uuid, =
+sb->uuid, 16);
+> cafe563591446cf Kent Overstreet   2013-03-23  224   =
+memcpy(out->set_uuid, sb->set_uuid, 16);
+> cafe563591446cf Kent Overstreet   2013-03-23  225   memcpy(out->label, =
+sb->label, SB_LABEL_SIZE);
+> cafe563591446cf Kent Overstreet   2013-03-23  226 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  227   out->flags =3D =
+cpu_to_le64(sb->flags);
+> cafe563591446cf Kent Overstreet   2013-03-23  228   out->seq =3D =
+cpu_to_le64(sb->seq);
+> cafe563591446cf Kent Overstreet   2013-03-23  229 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  230   out->last_mount =3D =
+cpu_to_le32(sb->last_mount);
+> cafe563591446cf Kent Overstreet   2013-03-23  231   out->first_bucket =
+=3D cpu_to_le16(sb->first_bucket);
+> cafe563591446cf Kent Overstreet   2013-03-23  232   out->keys =3D =
+cpu_to_le16(sb->keys);
+> cafe563591446cf Kent Overstreet   2013-03-23  233 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  234   for (i =3D 0; i < =
+sb->keys; i++)
+> cafe563591446cf Kent Overstreet   2013-03-23  235   out->d[i] =3D =
+cpu_to_le64(sb->d[i]);
+> cafe563591446cf Kent Overstreet   2013-03-23  236 =20
+> cafe563591446cf Kent Overstreet   2013-03-23 @237   out->csum =3D =
+csum_set(out);
+> cafe563591446cf Kent Overstreet   2013-03-23  238 =20
+> cafe563591446cf Kent Overstreet   2013-03-23  239   pr_debug("ver =
+%llu, flags %llu, seq %llu",
+> cafe563591446cf Kent Overstreet   2013-03-23  240   sb->version, =
+sb->flags, sb->seq);
+> cafe563591446cf Kent Overstreet   2013-03-23  241 =20
+> 4e49ea4a3d27636 Mike Christie     2016-06-05  242   submit_bio(bio);
+> cafe563591446cf Kent Overstreet   2013-03-23  243  }
+> cafe563591446cf Kent Overstreet   2013-03-23  244 =20
+>=20
+> :::::: The code at line 108 was first introduced by commit
+> :::::: cafe563591446cf80bfbc2fe3bc72a2e36cf1060 bcache: A block layer =
+cache
+>=20
+> :::::: TO: Kent Overstreet <koverstreet@google.com>
+> :::::: CC: Kent Overstreet <koverstreet@google.com>
+>=20
+> --=20
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
 
