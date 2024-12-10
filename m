@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-439021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549C99EA999
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:29:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17849EA9A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37E34166AD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:29:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D74EC166BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1992B22E416;
-	Tue, 10 Dec 2024 07:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A406322F390;
+	Tue, 10 Dec 2024 07:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7pwzmDy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BRqnfbs6"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4551C22D4EF;
-	Tue, 10 Dec 2024 07:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11E922F3AA
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733815728; cv=none; b=Jc56OozG6Zka1N55Vjr65TIZKECDTU3q/Md6T6FsbvkMCpCrzTTSuNjf1K6YCUSyD/C8dyNuyfXOVigQXEsso+UQ2ZuM2R2xoln+eoV6AkDnCDXtxK3I2ss9h8yTH3JkXUkc/wV0mJNq6gmNbzqdyyxfpaS3JxR1QHj69o9OQRM=
+	t=1733815737; cv=none; b=WoaUv9e3tJXmeHDLCQf42wHuhVYFVIWmgvpWDDqhXdJ0fv+V+atHrkHyR5L0UBPJPj+oVj6Sk4AVzyJdJpmYTSaguwO39CTnb+J6w2mNAHDf6fT0wtjOJ2O8VroF/Y8froedmNXfpi1FWsAimOSwTXuiR7nZATCBPlwQqSzruC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733815728; c=relaxed/simple;
-	bh=WfI9MIDmQkfVGJXe1dghmZU3Qae8DM78AtagwgUE1W4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XyufrPJiVCN77h7zgXchVBs1HSzCNv4Ylhg0qM6CXsm6Oyh4Ko166kyYjsWq7KElt2M5bA2JsO4uQQXg3vLFeIm7MUfCCTE6xPGT3a//vs1efJAX1W4H3W5Rgj6x6kDdJwucc5MZLlYCg1Y8OgZ6yzG+AM9WptIiYRK/qgMrt7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7pwzmDy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC741C4CED6;
-	Tue, 10 Dec 2024 07:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733815727;
-	bh=WfI9MIDmQkfVGJXe1dghmZU3Qae8DM78AtagwgUE1W4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T7pwzmDyLKxkvcy1AMP8oM6TPtMbGjHsFKrnvrn8FmfDGEp9WNssBj0rAQruYNCyE
-	 MrIFi7x9zdidTF8JbOuFDlIpj5/B40bQKSlJWPL1x1TYpB7slCtHx7ShQZX6Kycuy6
-	 Io70wRja94fj7FGbi+6ZY78eUZkdIV0oWr+CmYW6Im0A+pJSFLnFjmDJK7szOisbCy
-	 RXtNyJPU8u85O3YJiS7ERvuRFks49ONnOSJXczkYLvMmIp6+0QPWbC/Cz5Haytpf0+
-	 E9r781XYA/WBvX7cK9JfxA6Sz/eX+xdjQPNuJXIrHwSYH/MMPtbUMWywDhGWlfxaEz
-	 injBwl8e2d5gw==
-Message-ID: <e9fb294b-b6b8-4034-84c9-a25b83321399@kernel.org>
-Date: Tue, 10 Dec 2024 08:28:38 +0100
+	s=arc-20240116; t=1733815737; c=relaxed/simple;
+	bh=jcBjzE6y4SuGYTvQrZw6rDbaF2EAFAUFjnWErKsWp2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GS9SKGUt0+sAWp5no1aRHaVNZGX85ATR08XEySrHt8/7mxE8hMheezQnx+YSuek3B7iTnJT8GkaM/SPCoipOm73VyWWiUv6AMLEleK63b8SrgQUj/Hdy0O+54TYkvMKJfG3gI0T5M+CEzR0n3uDVg39p1hsBWWr6TfFPj2gY0+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BRqnfbs6; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434e8aa84f7so26343685e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 23:28:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733815734; x=1734420534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4JB1lq6UZAc6HCGowqpxl9Kk5HX97ITZ41Bl06+0/o=;
+        b=BRqnfbs6f9fz4YDCWL/qdpQePZtiy1oneA/ThGh2qeM3juk2nG/Qx4K64zu4tGlpQH
+         DahNaTbPggMfSMsbmET+i9fbehOzo7pZuel2BTuIcYt5HcHftkqwmd5G4ebrjWi6kttb
+         ypNhBudiyhYK0X0NvuDLgvLMngwOY4xvcWb48e+HbiLGAq85ApkvtdYl8HLDuFRD5phn
+         L5UTWFUxsikZByqf6gzwrr0HwAnEMC4gvIzyWJ+A6B2wUI6XogP8AO3SeSJv4GdDNcVH
+         S02I6njBSS8uSNfQPct2UZpKbNKVC1jBLWsFBLw0oj/UGhv9IXpgkxS/BaXFfNPvBaOd
+         MGQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733815734; x=1734420534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U4JB1lq6UZAc6HCGowqpxl9Kk5HX97ITZ41Bl06+0/o=;
+        b=ZHghlkZm10k7BiEKkQ4PpC8IPN3EuO8zC57SxI3YFZIXSSzR+1KLYh8cssr6vVo7wG
+         40HtFsSGV6P2mqG5bEt0OgAAmuWx5Kh/yvLJ1aPC4y3ZYbLlUSNTRvjxYEBayNpMurD7
+         DhSe8fWdUKFdLkmKXQIqz95Xw0AyW3/sl4XBRkM6D8ZvmyzoDLYj7wZhi7pBoleaxdL6
+         TCygxqVs17tylgQqBxg4HeoWYy1cQ4/8IPAOezCv/69xiq0Q/7fcTY5SgKMNs11/oxbo
+         H8z3WOjT+A+UKGcms67GoMyD5G0+e21ASPa/MSun4CAAisw05qLEw3dobkD9mBjbjKPv
+         +9Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtgh7FbNAN1WKaGsBo2p/QHXs4jyFXO+GyM15Wtc4rjM06vPVsq+VvsYiKNYLGWJ707aBrG2xYP/NTOJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq3Mn/XYFraraFzdqKxDWE/dSNW4VeotTjZgWK440UjlF4YE+c
+	qCJ45W3LDYUiG7VLfCniz2iPXBP/dRGiB6KKEJ0zOI66yM5XB8UzTtD1zyR69pI=
+X-Gm-Gg: ASbGnct3flUzWDzhYQ+iaCzaLRJyRJ7Myxy7jhmUG1nsEHhkgoHrAvVmkwUyiBFRq92
+	83Xnujr9zx+UpRMsjucqU0GH7NKifmV0DZtdmDy7XSTtyBIsOzn8EY6O8ouOX5DMB7i/BzgInLV
+	y3vzaDPZ4LLDNNS7t8/qptcP+zKAmf7kqO5wd2NTqJinhGV0lwCpaG42yQh/5Oo4ZU3GbIgPXeW
+	ibdf9FSEAOPFkRm48VexIu4syXBSpHG/aIuB60ky7RU7ASsTVGdVDGCOXM=
+X-Google-Smtp-Source: AGHT+IErBp3nB27t8Idia9cetAVpCVdYB5xJ411doFQHPuwsK44xALnFKbTnOl7EG470VnVrE5IKHQ==
+X-Received: by 2002:a05:600c:4f02:b0:434:a10f:9b with SMTP id 5b1f17b1804b1-434fff3d8f5mr29019345e9.14.1733815734174;
+        Mon, 09 Dec 2024 23:28:54 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbd42sm216710555e9.38.2024.12.09.23.28.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 23:28:53 -0800 (PST)
+Date: Tue, 10 Dec 2024 10:28:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, philipp.g.hortmann@gmail.com,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH v3] staging: rtl8723bs: remove code depending on cflag
+Message-ID: <21d2d3f7-c94a-454b-92b4-2eb6a4be6ce9@stanley.mountain>
+References: <42d24db0-b403-4c4b-8607-38f3cd55cf63@stanley.mountain>
+ <20241209213528.5917-1-rodrigo.gobbi.7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, konrad.dybcio@linaro.org,
- andersson@kernel.org, andi.shyti@kernel.org, linux-arm-msm@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org,
- devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org,
- dan.carpenter@linaro.org, Frank.Li@nxp.com, konradybcio@kernel.org,
- bryan.odonoghue@linaro.org, krzk+dt@kernel.org, robh@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
- <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
- <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
- <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
- <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
- <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
- <da2ba3df-eb47-4b55-a0c9-e038a3b9da30@quicinc.com>
- <a7186553-d8f6-46d4-88da-d042a4a340e2@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <a7186553-d8f6-46d4-88da-d042a4a340e2@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209213528.5917-1-rodrigo.gobbi.7@gmail.com>
 
-On 02/12/2024 15:04, Konrad Dybcio wrote:
->>>>   >
->>>> IP blocks like SE can be shared. Here we are talking about I2C sharing.
->>>> In future it can be SPI sharing. But design wise it fits better to add
->>>> flag per SE node. Same we shall be adding for SPI too in future.
->>>
->>>
->>> How flag per SE node is relevant? I did not ask to move the property.
->>>
->>>>
->>>> Please let me know your further suggestions.
->>> We do not talk about I2C or SPI here only. We talk about entire SoC.
->>> Since beginning. Find other patch proposals and align with rest of
->>> Qualcomm developers so that you come with only one definition for this
->>> feature/characteristic. Or do you want to say that I am free to NAK all
->>> further properties duplicating this one?
+On Mon, Dec 09, 2024 at 06:33:36PM -0300, Rodrigo Gobbi wrote:
+> > The commit message should answer any kind of reasonable questions
+> > a review is probably going to ask but it doesn't give any information on
+> > this.
 > 
-> I'm not sure a single property name+description can fit all possible
-> cases here. The hardware being "shared" can mean a number of different
-
-Existing property does not explain anything more, either. To recap -
-this block is SE and property is named "se-shared", so basically it is
-equal to just "shared". "shared" is indeed quite vague, so I was
-expecting some wider work here.
-
-
-> things, with some blocks having hardware provisions for that, while
-> others may have totally none and rely on external mechanisms (e.g.
-> a shared memory buffer) to indicate whether an external entity
-> manages power to them.
-
-We have properties for that too. Qualcomm SoCs need once per year for
-such shared properties. BAM has two or three. IPA has two. There are
-probably even more blocks which I don't remember now.
-
+> I'll try to improve this for future patches, tks for pointing that out.
 > 
-> Even here, I'm not particularly sure whether dt is the right place.
-> Maybe we could think about checking for clock_is_enabled()? That's
-> just an idea, as it may fall apart if CCF gets a .sync_state impl.
+> > This commit would easier to review if it were broken up in a different
+> > way.
+> 
+> Ok, in that way, a patch series is the best approach here, right?
 
+I'm not your boss, right?  And I can't tell you what to do and what I'm
+suggesting is more work.  If you just want to send patch 1 from the
+series instead of all three patches, that's fine.  No one is going to
+be annoyed by that.
 
+In patch 1, you would only delete code which is obviously surrounded
+by #ifdef DBG_RX_SIGNAL_DISPLAY_RAW_DATA so the case statement would
+look like:
 
-Best regards,
-Krzysztof
+	case HAL_DEF_DBG_RX_INFO_DUMP:
+		break;
+
+It's basically the same as what you wrote but slightly smaller and
+easier to review.  But yeah, we're not going to merge this as-is.
+
+> Despite the changes in the series being dependent on each other in this case.
+
+Yep.  Patchsets are generally dependent on each other.  The rule is that
+each patch has to make sense on its own.  You can't break the build.  But
+they work on top of each other and they're applied in order.
+
+regards,
+dan carpenter
 
