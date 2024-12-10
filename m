@@ -1,206 +1,248 @@
-Return-Path: <linux-kernel+bounces-439826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB81A9EB467
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:14:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827099EB46E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049B91643F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C471659C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872051B0F12;
-	Tue, 10 Dec 2024 15:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF221A9B3E;
+	Tue, 10 Dec 2024 15:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gXelyY43"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LqfKaP2O";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="U2Ki3Iv1"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB871A76AC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733843684; cv=none; b=jkj8EJteu7LRsFRa/2g8RQFCdX5X67KTI/NO8lswmix3LlrV0N1Vk5MAcdUlLD2QzCwe5TqGUo3+ROiq3WMCvCET8ubys5ljhJ/qfoWfbG0rWsZXWIHZzTwXuHUYl/TKRblEJWnNdzf5h90AZpYL25RrSWRf2oMo3vrr1iB8Kks=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733843684; c=relaxed/simple;
-	bh=7zo20DDr3e1Vl7Jg/vFQRSFliSYtKFd3w6KZiwM6lhA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LkfA/RMuH6XZ4HsTYOD5IiL9UgE/pUCiTZHfzjT0YM16lFidnLflCeIu8bt8yw3kD+SbyQ4Aku2fYOE9Szd9U29blj5Cg2Ac4/7H44QShHXHyi8hpb1lTIzFqZfA0oPUQ04LOJRdMOo4z/UrMYcBIGEUxsUsVRer1+tcEkpgWQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gXelyY43; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434f150e9b5so44605e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:14:41 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EC023DEBD
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733843732; cv=fail; b=c5V21nK3DBdTfy2f5Llx6LIGD+IddvUMKOUwQwHE6Uocengt26QZBypzEAouKfR4yg7kqOz2YdAtWqQTEllrvUb8M1drMeXo2iqTSAEtJ0NQfMz1kDTme9EKkwDNTvDDGgGc+3VkvB19n2OUZMNNzykS5gJMdhwlpirMfpXHBPs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733843732; c=relaxed/simple;
+	bh=hE7dUFXPqZjZ3b+SmqGjOrYdZLgN0kRWtHjS284DyPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=meAF2hMDirxpKye4JSyELMvIIony8miE6BnuWcg2+Gy0SoEtCK8Iw1pHru0fgWcoXOEYG1OITgdiN01H/VfcLbDkRlWfXNO9FJS3IiWl8ryHd7gOdtEaHFPQYXyHbLLYGN2hbEqx2/CVImKRCOoDpF6RE6DWj2lnV0930MFg/2I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LqfKaP2O; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=U2Ki3Iv1; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BACAtrC005416;
+	Tue, 10 Dec 2024 15:15:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=kgKX34TOIJnbeBGGox
+	8cUGNmR5yiOO/5IzdGpx7pVVU=; b=LqfKaP2OSxKw1AKNY8UZ0VAkoQu82wLf77
+	ceOsQLP0ayxULhiJ7M2LyLQHGcmsggx4tiIAS3tofBG5Suiey3hl2bj7rceKUvnh
+	1TBa6DNPUT0BA+Zcjk6EbLu9RlIGb30Lpjc6ZJUyG6bQW36cqvFXU997ztynMSe0
+	HXi9weuZ6AkK6l7rwj0kX6OLZnfzH3NNPoUeH3tHvXyRaN8gzWfZwz/Yx3Oah23l
+	nsVDMAk+2nSNcxTN7pCe1zz1WkItEgcKZ1aAncW/WY5Kl2vNDvtAnGSXpER0NsdV
+	0f8ZyaV2XPj/JPuK7leAZNNzFFIPiuxI78AbCW75xA0rSgTrNQcw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cd9ap2ps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 15:15:07 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADcTIR008576;
+	Tue, 10 Dec 2024 15:15:06 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2048.outbound.protection.outlook.com [104.47.55.48])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43cct8gfff-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 15:15:06 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FlDhFUh/fv/y8uGGm4rg5IpTk7aXMmiwA9y4Al5oCcphCaUXqGG9J0LSebWSOVvrlc5TRlk+ql3slL1Y3gzHrAhX1H8aLZa5F+Sbi4qSbnmjEHv7xH4Pauu9UfX3BV6RO+W3JTEwgCaP3YqOrVciESwnn2YpfMZZHsUfd+xYLd1tlU5X4izAg2tjSoBgAfDtov2hTRv4yzFeZMWeGP1uZaq+akZ8+8uMBP/z2VBCorP+BcJlj3Soc2oXkHCMEz+zswcU/Y7Zti8z6TI0pcnup86OdXbSUJQRL2IB73pBDrS5Fgef58AtxrZwbZtmPN6h+mKwbIJRaYbH/aIVUQr9dQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kgKX34TOIJnbeBGGox8cUGNmR5yiOO/5IzdGpx7pVVU=;
+ b=fuYX055ivmJllKtoRNOg7QPmrX0xXlIYV/cjsO/OB8Z1O0UJcJP2Vjl94qDikgqJl9nso4sscjWvdFu4lvHxvsQQS/jYbW7ceTG46J1xrFT04bG6mneUjPSPAlORjgEzDrhgABFx3+2hKspLWwfmjbxehCO4O61+EVRxsK7/NpMuZr2uMHFu/IsKVslyyyuCu1KhsbbmoM/wHDwzoKXtERCj4Rp5R4I1k4ehwEfogflzeDuhywF0qDQtGzA9gwbWjIqYSeMldkYWxej/Wr7eT/NrD8OfQt1FsKX5jYeDktkznuqGpazWCiBhhYN1ALtPz4vARUIxBeKv8B7vkGHH9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733843680; x=1734448480; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aGp4xmxqvFNS4aKzzUdEFGSpZc9CuS65nIZ2CXfL9DI=;
-        b=gXelyY43tehNLre03YRIg1RLwCwhGH8QRA3CUWqMpygvLl4BonFop6QE8bU0dpcRm4
-         j6KKcsbHQHNNU1M1uGtsMhxD4AwPfdmzkCvzyG0GiItT+mOWfNy7muBekr5VGkoIFh3d
-         kmAfbetbq+KDm4EfkcZNPh+fXP2ZH30eKWPDRPg7fw1KlDyY1tnZtZdi4Uif+J5odmR9
-         MN79gkHD+w4fSZeo2AMrBsvEv2AVMya2gc5UZAB8DaYaL3P8+Dm4i4xWQHA9MwU3JQzB
-         C2vxhsag/hDk/5wZlje5szfUqy73+eLPMhCElIjJi1O2E33SG/JXuNmHTuUXtTnc/42e
-         lvSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733843680; x=1734448480;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aGp4xmxqvFNS4aKzzUdEFGSpZc9CuS65nIZ2CXfL9DI=;
-        b=moh3Ga6DEYiEenq5KRQAXcVXWEmoBiB3xLQhHVzE5gPilHEyhjDwNZRFDTuk+vIkWB
-         O3bnBmBw/bHklIpSzorYaYwulj0UOBLHtFMSZRyLD784GrbEXdxuarHNBr/KdPiofP0K
-         NvkU8EIrZF/SBk0tb7LdQyx7aOvMKw4CAH+uBYgY2ivQcPTzFfJMIye5/FR4QKCYk+/+
-         vYk+c2EsJuYu68PRYk3YMtrgptFrc+hg51fHrDPTG2ZQl5X1olSVUiPNve8eixcEvHtm
-         Wccge5ZpeG422nbGOTXHtttVklnOXcTyCXgyaA6S7dKkpD8gm7SBFvQ+oDHyXhFivdhy
-         O6ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXS91bQR7ehmFQC8Kvk6FEYXO5jqOcfKe3cDzsAHXFm/5MRXpQVOidwQrYThIkqAJc6ZCxam5vlPLhGjSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Z1v4WSncaJySKastnCeDoQ/8dpF4LBbVyreoD/0y4l7MJQAR
-	fW3Y21qHzyq8+6mvXGtxEwOGHTGKR7HwE5zh5HwBQYcAeGob9K1XjQUs/A5wkiegcLpG+51I5da
-	ljdq6NzZ95EaYlrQS2U41/0ZxXSYa7hyzeawq
-X-Gm-Gg: ASbGncvcVRxD4IR8t1xFj5IF68AYlUVT9TPnASjiMFPOZuCAvpev10tI6BWJpdIlWuW
-	aHxGwVMPFRUJ0RRVS20Mp8y3QX+f2qVxUMxL9BNI31yhbIwXWRYqIQU+qUjZY9VX6
-X-Google-Smtp-Source: AGHT+IExtEJYbzPbhtvTj138hbJaUMAGq3rsSDYLbkcmP/S+jYpwTOuL2FE8QW/DEJ3y6pie8o3bjxV+CMjjg3V8Q7Q=
-X-Received: by 2002:a05:600c:6b06:b0:434:9e1d:44ef with SMTP id
- 5b1f17b1804b1-43539dd9773mr1230565e9.7.1733843680024; Tue, 10 Dec 2024
- 07:14:40 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kgKX34TOIJnbeBGGox8cUGNmR5yiOO/5IzdGpx7pVVU=;
+ b=U2Ki3Iv1aLRQDZzme8I6v1n8TRSplhS6fvsc3SW/M5XcHsapguAP7HuiDTZYcYe/rSHF+pU+jBSxSX8Lgg7pB96vDXgpWKqmQEXVtOb9z1aYHOqbEmKurz6bgBwmmdOLPdGONPAbnSU0fmhn7Mb3VrUuTasp8JxlOw3n3seo2CY=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by PH7PR10MB6130.namprd10.prod.outlook.com (2603:10b6:510:1f6::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
+ 2024 15:15:04 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8251.008; Tue, 10 Dec 2024
+ 15:15:03 +0000
+Date: Tue, 10 Dec 2024 15:15:00 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, mhiramat@kernel.org,
+        peterz@infradead.org, Jann Horn <jannh@google.com>,
+        syzbot <syzbot+2d788f4f7cb660dac4b7@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Subject: Re: [syzbot] [mm?] general protection fault in
+ find_mergeable_anon_vma
+Message-ID: <0b5f4e8c-14de-4b8c-974c-379640e82ce9@lucifer.local>
+References: <4d05caee-d900-42e5-84e1-448cc62435b2@lucifer.local>
+ <emgf7rbacg4jqsnyg2mgmlbbeehc34o33fpnkmlaghb3xynzjx@gmldlwjliwiv>
+ <c946c9d2-aff3-4492-99d1-d50e6e2659f6@lucifer.local>
+ <20241210150528.GA31266@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210150528.GA31266@redhat.com>
+X-ClientProxiedBy: LO4P123CA0536.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c5::16) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203103735.2267589-1-qperret@google.com> <20241203103735.2267589-16-qperret@google.com>
-In-Reply-To: <20241203103735.2267589-16-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 10 Dec 2024 15:14:03 +0000
-Message-ID: <CA+EHjTzOjwNyUkS5_zSUiAbiCauLKKgkKU6TM_-+Wsh9A0FdRQ@mail.gmail.com>
-Subject: Re: [PATCH v2 15/18] KVM: arm64: Introduce __pkvm_host_mkyoung_guest()
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|PH7PR10MB6130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c8e87f7-805e-433a-959d-08dd192d6c56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WUiiwDAlXkjbNnkBUiW9OKPfDfa9Pg4jMb/aQC4VkZbp2gHfnQ+6XGZFM+bC?=
+ =?us-ascii?Q?5nil88FzpEU8/CzEnu8h0kNfnPkthYBQMOK9AV61ukYvYzVkNA960H0mAlqt?=
+ =?us-ascii?Q?ioZAC64v/QBdtBwXTGqBPHAy8TfwTtUeaXr+vFSXUw9pR4CTbP9PzBpdUPWh?=
+ =?us-ascii?Q?jOVOEKPyFtbKqkTEO8kWcToBKNXefPUVFwFXnnnAYjvyI5W7ik7jn3E1X0xm?=
+ =?us-ascii?Q?Gesl98EDxzXnmFn0qWVraSwfjK/CbpouKLyWaJBRbdRqRmSYa5QR3Z0uyYp1?=
+ =?us-ascii?Q?kyUVMeJG4RMY8ymQvlD/UvI4OWXRKOJAy1zr1cTv3U+AN/I61fjX5BiXOjRA?=
+ =?us-ascii?Q?irfC3egWo1h1Hi/DTs2QM1SQMV5G6XphNNjQuSeENWTIw+Ab1b3zB+4+NONY?=
+ =?us-ascii?Q?Tswd1W6U3oDlWcFsQLuzXKc4ufcO9lto1b4R4vQvtJ/16cxB9OR4cCf4Ltz1?=
+ =?us-ascii?Q?tiZ6A/eVlkW5mPqgj9kDCHQi8yVVMbSP19ZT3v15HUlkl+I0T+WNM/B6GxYk?=
+ =?us-ascii?Q?/iHeEcNumPV6xZ8THfenEMdSCAo+kTUdzQB/WPGlQD9RBMuZDleG8mZezRHZ?=
+ =?us-ascii?Q?oycNl62Xpd1UZINBf2j0zweXgcQXfWmu081pUDX2Hd1mBubrCqlWTkPakBC/?=
+ =?us-ascii?Q?Zps/aC1s8rFsFBhJ8mT+TcTHpI3ZnR0RhA0JNfL/jrTcWirVcs2Z1hNX50Z2?=
+ =?us-ascii?Q?pbPh44thItW6idCc9rliwNHLiNZj2UunFEvrv0WUk7WItsFcsHDMah32wEpS?=
+ =?us-ascii?Q?oX5/Q+6byYB+g49p2PMqv3Ed3HngEE/hgPovF8ztUT08fkqHNqkKX9xq+yF2?=
+ =?us-ascii?Q?peTjlWqXNaNzHvw0b0yDFNuJVzltxT4e7HMOFgmw+7sdhN/P0WI5pa2wvx2l?=
+ =?us-ascii?Q?nyYydfzaHVUA1Mk4h4f8hYZDKxJIdtjpXqLcQop1BQTOYCgmCwRY6Ve1197A?=
+ =?us-ascii?Q?arn36tjM9M9wUGfUaSYjvCk1P5GAzaDr4yJ0UlUMGgjm9kDyFr0uEFVXBQil?=
+ =?us-ascii?Q?6MUcMR7ghX3ForNysPnjxq+0As5Smeh5HxlXg01fqQgmkYFDexcmYaE2FG4K?=
+ =?us-ascii?Q?nriCsl2G2brKBZGkeXKcz6vN0tcFg0RdCEnOlq9Rxm3X+h2Oiufu9rf+ZOER?=
+ =?us-ascii?Q?9Qb6XTH9I4RLG6xpZMuMo+z57CMy3nY3GbAfK3uCnmNPoW6j835EB8612hJj?=
+ =?us-ascii?Q?9WvfIpHfQe+Xv3FncU+RJ7d91j5ZyQHnQOHnYOK+oHp2cyFeRzw3uviWn4XJ?=
+ =?us-ascii?Q?O//QYTLcWzIKVZrH3pCTLkl+LP90Ab9whI/ZwkSLVL12cO5GdLUxepF4UGGM?=
+ =?us-ascii?Q?KCC20U4V3tsCcBYnvj3gJWyoydkF78whpyMhMtvZqPNANA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?c/EgXp6h+qA8xc1uVO0y2aqgg5mrU9NFi7OUiyop7d0fI3/aAwxfdxItAtnD?=
+ =?us-ascii?Q?yvzqwiM0/hiETONVzLkyZd2BkHa7lfTmMIIZ/r10dsSNA2DhOFz3xFZ0356D?=
+ =?us-ascii?Q?whZcE7Oyr49VomTnXIq+hzPfsmO0fcmfcRtm4r+K4RmzY94nkjhqttLtSdW2?=
+ =?us-ascii?Q?3mlx1eQnt6TA4YB9VTlfx4iMHXF1IoQCg0nbRZYm9oC424694ms61AOnUaI0?=
+ =?us-ascii?Q?xaa7hTnoxSae9ai9X6R0UD6e2al102t5S+qg8MObW0u1w6Z/OCg39qKHlu8d?=
+ =?us-ascii?Q?a6D12Qk+A4ks6RIfSZ490NsD4QGF52IA+ZRM1YrVJFcYZmCncQFQncWT2ULp?=
+ =?us-ascii?Q?d4lVvzF3ZmJauENNobnSLuu6XPlI0l4pndrls+zC6V/GRbqpICVpmCvaN2Kw?=
+ =?us-ascii?Q?soyzCaGG2R0X9pefNB3tk7IwxroY1QpoRWHiYT5Bgt+rkClNOxnI44wcQdzj?=
+ =?us-ascii?Q?7D/YOyNZfu64dFzJSPId2yA9L/j5z+X0TCTuS6YP0Npxq49+PKwZxCtUtPjJ?=
+ =?us-ascii?Q?KEJrHcLegW8TrWn3OySJUReMd52eV45pRg4VK5Ck3h0eJY4YcXApSo35dnqB?=
+ =?us-ascii?Q?EhPvwab98FEPAb8A+IdFL5y/m+uyP98oDmXoOeOpnrGdvmidX5o3PmA8UIUm?=
+ =?us-ascii?Q?33AHd99trGvlrqaOi0+P23aYj6Um30Jy8GwWk+7FXTa0KEn97eM9zBfTkTg2?=
+ =?us-ascii?Q?yrYHHl/Yl/Vl5h4jvxUrGZSdGDXW1WF9RpgUowCMTVpeMKqJSbpLfnqkv/RE?=
+ =?us-ascii?Q?YJ78GwqISfqXSd/UZ01vqXjeis5ANODi/WVA40gTehKEmA/81+Dc7z5Bylln?=
+ =?us-ascii?Q?h+lpJprOHmRzC44UXZGQJATgVtbGcuBtPqPy2mtCcqsnIKbCBA49ZlTuK3fG?=
+ =?us-ascii?Q?SiWVnvJyefpFR8TOXfRY1bm2A6WrAsehzfg4/Gbr3QtYrkSZNRh6prIvorsS?=
+ =?us-ascii?Q?8+Du23W3gkNdGp/G2TLLwFogSW+GgOouVTb3rGVtqXMjFCjXEr69d3wX9RHa?=
+ =?us-ascii?Q?qcgoJXQK9WxJNq+/uwa+PtKq4i0ut+TTFLWMtvCQhBtYGk9FYCfBGt4zibbh?=
+ =?us-ascii?Q?CX6243GcmaVcE6Cpd5FouaFHQmxEy/F5KRRjtI12jav+LUKbOr7CMfKtHnBM?=
+ =?us-ascii?Q?fUWi3fc46ScYFqoWbYfqUV5zO9m0x1QYpLV3TPIegcZzgTk2sZ8yuj9TKS3z?=
+ =?us-ascii?Q?Oyv4WWbcNU4ZxdZg3sU591NtTvjDmV36AlEsieJVgszkn0lBNZrv8xoWAPBu?=
+ =?us-ascii?Q?FaQTlCWkPmkNfyEieDyBkUVxqdF+rKUxZp2xQR8nZdKsKynpD0GLk0Un5yJE?=
+ =?us-ascii?Q?73rgogB8ODZMZoREeOgljRjPZmUYHyNkBzVsEwsVN9MNtp3eODAXNXh9U0nc?=
+ =?us-ascii?Q?u7/m2t9w4JgQ3jfTawv8O5CJ8MTfPGd7hDiKhin2962CY7o3Ye4DgllJv2Uz?=
+ =?us-ascii?Q?zyXgGIQ9xVrNe2kN0hoO86nLhzoxvZsWebZAAM99ZjnLXN3XdpbxvbR2xzIo?=
+ =?us-ascii?Q?zEKGmjVb69ODBjNZP4/lEw+sO8sYYfZw5fZwzwZXmJgAarRB94zE04r4wSTT?=
+ =?us-ascii?Q?+5hWREstZMtKWJ6+ksWPb4AUJr2Zvd53tCn3IDsO3088Q6BjNo0EBcN1ccnx?=
+ =?us-ascii?Q?EA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	oVQTqbgUVS/D6R5y5Ju6824Cq5/V9BDATE3vDPrXS+1KesealvHn6fJfyrNdA5TKI+qheP1RJj4xhBisySyATdf94py9q2YMTJ2O6EapDiPYOMzsDpxsH3Cl58wAlo1/7jtb/WKQJ/sOqNNIOlELZqeI23f+j8xxhhu93xNmUuTE5boNXv9Q3H64SwTVDv6M+DYewNOdNCWCB0ND4skMRmCpLYVja6Y/rQoAWiSwSnKiEYToOoqsryk9WWoQat2lujZ3XPyX20dFhm1Xj0TdRMsaU7Y1Cjxpfcs/9kIH5Ar/No+1oWvUAXyZwU9JKy0xTnUYHIues1F5ZAeUSoznpP46eCBu/3V3tHSJNunIFpwjQkcEF7yQBgP7VHXHfJfs5XqgvnJ+yAkJc2pmHPeUouO9AnKJZm4jO62PnK+5uN21OKorvDCeRtlwtwO6QemUSKFVed2eusjg20BiI67JSzjKx+NAip9rNTCQV7vOzqR1KmisOVlKTCA1g/GVAJSKsPyKVr3RESCmwNi9EQzSy8IDvm6WtnjvPZLTZv1iYTH7hi3JzFLBF9G1BTBSTPVneM7PvBGEgy6Mg4UkRKr2DV9VBH6xpKA4BL2dBHHo39I=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c8e87f7-805e-433a-959d-08dd192d6c56
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 15:15:03.9272
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: b93wrlBUVrnja4v5itnTYv+At4ZSQDB7/Gq6aN+i/J5ct9DEhHWLhi9fojNI4C6k5UzQA0fODm0DCyMHLw62LWNd/nNNqKqcCMha5I+L/Cg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6130
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-10_08,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412100113
+X-Proofpoint-GUID: 0jpFxXkFQhannHa6g_OajpoVhphc2JPc
+X-Proofpoint-ORIG-GUID: 0jpFxXkFQhannHa6g_OajpoVhphc2JPc
 
-Hi Quentin,
+On Tue, Dec 10, 2024 at 04:05:28PM +0100, Oleg Nesterov wrote:
+> On 12/09, Lorenzo Stoakes wrote:
+> >
+> > (As discussed on IRC) how about moving up the dup_mmap_sem lock one level, we
+> > can put the mm before the rmap lookup in build_map_info() is able to find it,
+> > which should avoid the whole issue?
+>
+> Not sure I fully understand the problem, but so far I see nothing wrong in
+> this idea. However,
+>
+> > @@ -1692,9 +1690,11 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
+> >  	if (!mm_init(mm, tsk, mm->user_ns))
+> >  		goto fail_nomem;
+> >
+> > +	uprobe_start_dup_mmap();
+> >  	err = dup_mmap(mm, oldmm);
+> >  	if (err)
+> >  		goto free_pt;
+> > +	uprobe_end_dup_mmap();
+>
+> If try_module_get(mm->binfmt->module)) fails after that, dup_mm() does
+> "goto free_pt;" and in this case ...
+>
+> > @@ -1709,6 +1709,7 @@ static struct mm_struct *dup_mm(struct task_struct *tsk,
+> >  	mm->binfmt = NULL;
+> >  	mm_init_owner(mm, NULL);
+> >  	mmput(mm);
+> > +	uprobe_end_dup_mmap();
+>
+> ... we have the unbalanced uprobe_end_dup_mmap().
 
-On Tue, 3 Dec 2024 at 10:38, Quentin Perret <qperret@google.com> wrote:
->
-> Plumb the kvm_pgtable_stage2_mkyoung() callback into pKVM for
-> non-protected guests. It will be called later from the fault handling
-> path.
->
-> Signed-off-by: Quentin Perret <qperret@google.com>
-> ---
->  arch/arm64/include/asm/kvm_asm.h              |  1 +
->  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
->  arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 19 ++++++++++++++++++
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 20 +++++++++++++++++++
->  4 files changed, 41 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index cb676017d591..6178e12a0dbc 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -70,6 +70,7 @@ enum __kvm_host_smccc_func {
->         __KVM_HOST_SMCCC_FUNC___pkvm_host_relax_guest_perms,
->         __KVM_HOST_SMCCC_FUNC___pkvm_host_wrprotect_guest,
->         __KVM_HOST_SMCCC_FUNC___pkvm_host_test_clear_young_guest,
-> +       __KVM_HOST_SMCCC_FUNC___pkvm_host_mkyoung_guest,
->         __KVM_HOST_SMCCC_FUNC___kvm_adjust_pc,
->         __KVM_HOST_SMCCC_FUNC___kvm_vcpu_run,
->         __KVM_HOST_SMCCC_FUNC___kvm_flush_vm_context,
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> index 554ce31882e6..3ae0c3ecff48 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> @@ -44,6 +44,7 @@ int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
->  int __pkvm_host_relax_guest_perms(u64 gfn, enum kvm_pgtable_prot prot, struct pkvm_hyp_vcpu *vcpu);
->  int __pkvm_host_wrprotect_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
->  int __pkvm_host_test_clear_young_guest(u64 gfn, bool mkold, struct pkvm_hyp_vm *vm);
-> +int __pkvm_host_mkyoung_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu);
->
->  bool addr_is_memory(phys_addr_t phys);
->  int host_stage2_idmap_locked(phys_addr_t addr, u64 size, enum kvm_pgtable_prot prot);
-> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> index 67cb6e284180..de0012a75827 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> @@ -333,6 +333,24 @@ static void handle___pkvm_host_test_clear_young_guest(struct kvm_cpu_context *ho
->         cpu_reg(host_ctxt, 1) = ret;
->  }
->
-> +static void handle___pkvm_host_mkyoung_guest(struct kvm_cpu_context *host_ctxt)
-> +{
-> +       DECLARE_REG(u64, gfn, host_ctxt, 1);
-> +       struct pkvm_hyp_vcpu *hyp_vcpu;
-> +       int ret = -EINVAL;
-> +
-> +       if (!is_protected_kvm_enabled())
-> +               goto out;
-> +
-> +       hyp_vcpu = pkvm_get_loaded_hyp_vcpu();
-> +       if (!hyp_vcpu || pkvm_hyp_vcpu_is_protected(hyp_vcpu))
-> +               goto out;
-> +
-> +       ret = __pkvm_host_mkyoung_guest(gfn, hyp_vcpu);
-> +out:
-> +       cpu_reg(host_ctxt, 1) =  ret;
-> +}
-> +
->  static void handle___kvm_adjust_pc(struct kvm_cpu_context *host_ctxt)
->  {
->         DECLARE_REG(struct kvm_vcpu *, vcpu, host_ctxt, 1);
-> @@ -547,6 +565,7 @@ static const hcall_t host_hcall[] = {
->         HANDLE_FUNC(__pkvm_host_relax_guest_perms),
->         HANDLE_FUNC(__pkvm_host_wrprotect_guest),
->         HANDLE_FUNC(__pkvm_host_test_clear_young_guest),
-> +       HANDLE_FUNC(__pkvm_host_mkyoung_guest),
->         HANDLE_FUNC(__kvm_adjust_pc),
->         HANDLE_FUNC(__kvm_vcpu_run),
->         HANDLE_FUNC(__kvm_flush_vm_context),
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index 0e064a7ed7c4..7605bd7f80b5 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -1541,3 +1541,23 @@ int __pkvm_host_test_clear_young_guest(u64 gfn, bool mkold, struct pkvm_hyp_vm *
->
->         return ret;
->  }
-> +
-> +int __pkvm_host_mkyoung_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu)
-> +{
-> +       struct pkvm_hyp_vm *vm = pkvm_hyp_vcpu_to_hyp_vm(vcpu);
-> +       u64 ipa = hyp_pfn_to_phys(gfn);
-> +       u64 phys;
-> +       int ret;
-> +
-> +       host_lock_component();
-> +       guest_lock_component(vm);
-> +
-> +       ret = __check_host_unshare_guest(vm, &phys, ipa);
+Right yeah we can obviously fix that, good spot though.
 
-While I'm bikeshedding some more, does the name
-__check_host_unshare_guest() make sense? Should it be something like
-__check_host_changeperm_guest(), or something along those lines? (feel
-free to ignore this :) )
+>
+> Also. Perhaps we can change dup_mmap() to set MMF_XXX before uprobe_end_dup_mmap(),
+>
+> 	fail_uprobe_end:
+> +		if (retval)
+> +			set_bit(mm->flags, MMF_XXX);
+> 		uprobe_end_dup_mmap();
+> 		return retval;
+>
+> Then build_map_info() can check this flag. I guess we can reuse some of
+> MMF_OOM_ bits? May be MMF_UNSTABLE...
 
-Thanks,
-/fuad
+Well this was my initial suggestion :) There is some concern as to how this will
+interact with OOM however.
 
-> +       if (!ret)
-> +               kvm_pgtable_stage2_mkyoung(&vm->pgt, ipa, 0);
-> +
-> +       guest_unlock_component(vm);
-> +       host_unlock_component();
-> +
-> +       return ret;
-> +}
-> --
-> 2.47.0.338.g60cca15819-goog
+But I think my original suggestion, modified to fix the issue you rightly raise,
+is a good proximate solution to keep thing simple.
+
+>
+> Oleg.
 >
 
