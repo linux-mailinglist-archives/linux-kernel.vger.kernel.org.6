@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-440174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56539EB9B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:55:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CEF9EB9B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:58:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02B32845E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:55:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33BC7166CCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4F72046B8;
-	Tue, 10 Dec 2024 18:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157912046AE;
+	Tue, 10 Dec 2024 18:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9mBDgZx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="TXiCOse+"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9830323ED41;
-	Tue, 10 Dec 2024 18:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B533D23ED41
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856937; cv=none; b=mXi5H6Z9WrnQcPiuPBRqQu/SECHzg68BEdZy3GekpVAbzzXJgQdkTUBKv6VYOPIKyCWo0PkzYbrsMMwfMnqaVJ7OyAFXtD0bg8LnPpNDuhvg1s/VbtPEVyhRos7tvXSCTIdQuWsR2H8g3Uclb6YidjcVVtxqBVusxfJ84GFZntU=
+	t=1733857097; cv=none; b=oQHTivj6selkoOe5gZDk2hIFvEZHbLv2nBAOFmG9aX1RSCIdgBn0Sta6esmLzWL+Jtw+16vzrxgu4B+zJfX1qf+wfMUQYeOXyU27RI6D9CNi4StScqBSOjl3xLd1j/B5j5z4dntzxP0y5TgSGJMwtgVY+jDMx0BR/9bv+Bc4yjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856937; c=relaxed/simple;
-	bh=Kd+e021LK4yd0D9+Rum9XT5qFFk22kB4JCc5aJmJpZ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dRKP+iwliDcXvCMurLJoyu5jZtJYWywjwMJjLcVUosV4HRauHgnwInNnl7R30GPkyY1ayYt7Pd86L0Lmy0Lu/AWNgy3ba/bFErC2cc1fVOltpEYbA7ItisQusYdLTGbw4KnaLMA+M/UnoXfDDPM2dZ/Q40TT9Hzoyl0S4P0ScfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9mBDgZx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE04C4CEE1;
-	Tue, 10 Dec 2024 18:55:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733856937;
-	bh=Kd+e021LK4yd0D9+Rum9XT5qFFk22kB4JCc5aJmJpZ8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e9mBDgZxxZmlo0u7VGb4Uqmm0ekMvx+2Bzm/fgHCbs5kl2C4GXjNae81aGXXtu8XF
-	 VUt5WFgMoBsLfo4Dn78rnkIhioc1f/wEzpZ0RDXf6v58jbzDzpuTxM8lD0fX6XmzvL
-	 J7f53STZ+c/O+L4naLu5ZymSB0V2EFaPZIhbX3k6O76nkvI4XChU5rY54mpI+wMPZU
-	 tVsIaDdG4nocZR6JTrqnuPXNauDIgBbTP8FlHFtNub1ar4kVAieKXv/YMTnJWUygqZ
-	 REqnBcDeIc1b4TK3ar1B31v17eH1lkFwWuskutZJYneQO2TEFaJGZ0vTHxARM3DHX4
-	 JhHqk+TYaFOOw==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5f2abc195f3so1223811eaf.0;
-        Tue, 10 Dec 2024 10:55:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVFItgzLPK2wkgGQ5RNBLtK2xJjYhoPwDLECZ6jGTdbMs0JWHSE2FU8BYA8wzsqfuyLMR7pFTtlxw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7XiQ+WH7q18cDNYpFzYqpRjRbq6WYzZUWV23jx33yogz/eurv
-	enFkQ4mbr5QtOea3M+hgHKDKrlQ/XPJ2R5PD7s6vP1j5ivKoTkxMuWJqIymUO8pSn7F/EsCM3cm
-	eCZlF187aAU3tixpIVZA8ISW2Nsc=
-X-Google-Smtp-Source: AGHT+IH45EhjFO2CmSd7uTuJxJOCv/ldjGFHF3AlvubEv/20uUyVcuIHcdujmzmfY6mTf3h4zsAy8ERc301Pns7vDfg=
-X-Received: by 2002:a05:6820:1896:b0:5f2:af90:e90 with SMTP id
- 006d021491bc7-5f2da0c2491mr37933eaf.3.1733856936548; Tue, 10 Dec 2024
- 10:55:36 -0800 (PST)
+	s=arc-20240116; t=1733857097; c=relaxed/simple;
+	bh=7JN1ip0ZnnglVsxW2IDoPTTy2fJtNriHVLdpJGUPuWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZYcpPTpBx+Mx4W5HYgE/dvChorqT9EI0IUmRhbaGGRW7di59CNJbynL6LiJGTns78ghhcGQovAG0pYnTZmOu5LDnjubvR+cgep1GaQWGMOMdpqO3SEXFmrv3qkOCVggiXxqxrOM3YhELwb2siSRZ854tDq2qqQrvZGVhhY6TgKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=TXiCOse+; arc=none smtp.client-ip=148.163.129.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id BCD38100094;
+	Tue, 10 Dec 2024 18:57:00 +0000 (UTC)
+Received: from [192.168.100.159] (unknown [50.251.239.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id 2C4AA13C2B1;
+	Tue, 10 Dec 2024 10:57:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 2C4AA13C2B1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1733857020;
+	bh=7JN1ip0ZnnglVsxW2IDoPTTy2fJtNriHVLdpJGUPuWc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TXiCOse+IBAqhG3eXlnw4225a5afvpt4VNn7HqjcOa4P3wUfpHGaNKzpqDU7XjtKv
+	 FyPeImaAYzkOoJ3CVhFO9KiESM0APJntZE4n+/BwBXn9w3ZCSbdFxpD2J+u0xjjrnN
+	 jgUfxzntU0XyAoh4HO2EmJOObW9Gu2uDPqcLYkJ4=
+Message-ID: <00d8ba74-7661-e6ac-8a67-7af1df0f2f0a@candelatech.com>
+Date: Tue, 10 Dec 2024 10:56:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129045750.456251-1-rdunlap@infradead.org>
-In-Reply-To: <20241129045750.456251-1-rdunlap@infradead.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 19:55:25 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gnsFM7YcBqO8Mbkr72ipQxT8nJ=i94z74Q0XM1csnTYw@mail.gmail.com>
-Message-ID: <CAJZ5v0gnsFM7YcBqO8Mbkr72ipQxT8nJ=i94z74Q0XM1csnTYw@mail.gmail.com>
-Subject: Re: [PATCH] kernel.h: add comments for system_states
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2] mm/alloc_tag: Add kasan_alloc_module_shadow when
+ CONFIS_KASAN_VMALLOC disabled
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, Hao Ge <hao.ge@linux.dev>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20241210041515.765569-1-hao.ge@linux.dev>
+ <20241210065304.781620-1-hao.ge@linux.dev>
+ <CAJuCfpGVTyKJ5yMQUqvNXRfBnBYj+dhUEqq0YAddtrqcWP27yw@mail.gmail.com>
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+In-Reply-To: <CAJuCfpGVTyKJ5yMQUqvNXRfBnBYj+dhUEqq0YAddtrqcWP27yw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MDID: 1733857091-9qi64w4nqN4w
+X-MDID-O:
+ us5;ut7;1733857091;9qi64w4nqN4w;<greearb@candelatech.com>;536d06e365f87d56c7a5ab8c2fd573cd
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-On Fri, Nov 29, 2024 at 5:57=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
-> Provide some basic comments about the system_states and what they imply.
-> Also convert the comments to kernel-doc format.
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: linux-pm@vger.kernel.org
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+On 12/10/24 09:55, Suren Baghdasaryan wrote:
+> On Mon, Dec 9, 2024 at 10:53 PM Hao Ge <hao.ge@linux.dev> wrote:
+>>
+>> From: Hao Ge <gehao@kylinos.cn>
+>>
+>> When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
+>> is not enabled, we may encounter a panic during system boot.
+>>
+>> Because we haven't allocated pages and created mappings
+>> for the shadow memory corresponding to module_tags region,
+>> similar to how it is done for execmem_vmalloc.
+>>
+>> The difference is that our module_tags are allocated on demand,
+>> so similarly,we also need to allocate shadow memory regions on demand.
+>> However, we still need to adhere to the MODULE_ALIGN principle.
 
-Fine by me.
+Hello,
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+I applied this patch:
 
-> ---
->  include/linux/kernel.h |   14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
->
-> --- linux-next-20241125.orig/include/linux/kernel.h
-> +++ linux-next-20241125/include/linux/kernel.h
-> @@ -176,9 +176,19 @@ extern int root_mountflags;
->
->  extern bool early_boot_irqs_disabled;
->
-> -/*
-> - * Values used for system_state. Ordering of the states must not be chan=
-ged
-> +/**
-> + * enum system_states - Values used for system_state.
-> + * Ordering of the states must not be changed
->   * as code checks for <, <=3D, >, >=3D STATE.
-> + *
-> + * @SYSTEM_BOOTING:    %0, no init needed
-> + * @SYSTEM_SCHEDULING: system is ready for scheduling; OK to use RCU
-> + * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost run=
-ning
-> + * @SYSTEM_RUNNING:    system is up and running
-> + * @SYSTEM_HALT:       system entered clean system halt state
-> + * @SYSTEM_POWER_OFF:  system entered shutdown/clean power off state
-> + * @SYSTEM_RESTART:    system entered emergency power off or normal rest=
-art
-> + * @SYSTEM_SUSPEND:    system entered suspend or hibernate state
->   */
->  extern enum system_states {
->         SYSTEM_BOOTING,
->
+https://lore.kernel.org/all/20241130001423.1114965-1-surenb@google.com/raw
+
+as well as the v2 patch in this email thread, on top of today's Linus
+kernel (plus local patches that should be un-related to this particular
+issue) and now my system boots when my current mix of kernel debugging is enabled.
+
+Thanks for the fix!
+
+--Ben
+
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
+
+
 
