@@ -1,200 +1,132 @@
-Return-Path: <linux-kernel+bounces-440516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548919EBF89
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:45:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF479EBF95
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D1F286CD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE8E283330
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B70225A2A;
-	Tue, 10 Dec 2024 23:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070E022C369;
+	Tue, 10 Dec 2024 23:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bgtyUdOS"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2m4GfAW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CCE216E0B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC59A22C352;
+	Tue, 10 Dec 2024 23:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733874300; cv=none; b=Ybo9Gv1jKsOYVxQkW0/sYTG3MUuLQ4pvsaAc0NcvzMYQTGPEpxYsL+7Pd7jE3QxzMGjF7HlA5HXKNLWn66RGD146LjOOcl0IXOScfjJmPMm2Y4RHrrgkQDDEv4lBqI/eHwohNOhLObw0B3C1s0lZ73tm1EyPjijDCUvieTkhUJo=
+	t=1733874492; cv=none; b=t10wnUMdxAwF5lrweccM28fyaQBYPBi+tg3CmtHnhGiWTGs/XLdzPjF4hemzClQ72U0I9lossHosQcBbgGp2WS+LjMnx6RC9m3PM/h593cYNMas0TKK4bkjzkwtVkrfVyGUAr5fKsgCt4bf3svW+Z7szRorI/9ww6ZLprx4BCJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733874300; c=relaxed/simple;
-	bh=tmLrRuRjTXHBXDiU8d+vDPEvNjajKnx4EMattycDEDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gLjw6HGTcjYKDV1MiwgO4TU0MUG7MqP0AFo7+GXEPJibq8PPOm7S4sGU+6HJLROiF0leJtbihDSQodPvUhK8YF2bqH9KmtYX/lKG0w2i/j7b1h9iE5Z1m/Ix6P84NjQcmhRbaHF+dvHQA7pc5k6pvuHwetR/bugj3e1UR/jiKhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bgtyUdOS; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54019dfd6f1so484441e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 15:44:56 -0800 (PST)
+	s=arc-20240116; t=1733874492; c=relaxed/simple;
+	bh=hS77lKS+qrbWJBqTrtJwzE+mtelSylzhjNAlP86Biz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRLbzQIR1tPTafX/gc8xWz9pG/5hY5dDkcPUjzi78lP8qxJ2+sLKFM5MQFrZ9SVcJHKJTgv6ufnFH2H7gxsS4gBCzatDCWjDQxCEkGyb6NKqOJRdczlGR9FqZ1mTdACM0La3n69R06tIhQLYlixEQmZ/EO6M0KzOgASq1iC6NPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2m4GfAW; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434e91ac3d4so2716975e9.0;
+        Tue, 10 Dec 2024 15:48:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733874295; x=1734479095; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i2GK2n7E25ECPtAL4qBYMFCHU1IDv9yiMZUmEef7d5c=;
-        b=bgtyUdOSw8t0EKcZdPsSWoyat+5WOZzgMwxGI3+ZTMiFH6Z8mAugEMfa4aLFd1JxNw
-         weSCczLeRJPnMmaYsrc5UJUBi0cgUdfKiJilC3x8nFDtUjFQSwfQnfC/fQBFImhbCZNt
-         Y/+QQ8261ppdO7ALT0MZfSDoq4m4QWka8g51Evm1HbgGpeLfgDwsdkP+RciiPYRzFFVr
-         pkQH3xnfKXxjCahSlUFveAxXxPC38gcNy01Bpw6lKVLseVoym9mTbCeYgRe6nAZ82EOu
-         Hy4+ofAduObuC/nhlGxLmpfOsP30s6caNTkzV2U+3fu2/6x1/0eJtMYhSTp/x0OnOZkR
-         jpSg==
+        d=gmail.com; s=20230601; t=1733874489; x=1734479289; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f8UnOGblbQirPOg8RONWJpR4qniXeIU9augpkXN+BVE=;
+        b=P2m4GfAWKfhlGVNXuN101Kn66EhjOSguKFPnE0u4NzHJvCHN+RH4zEtW7S5CxmJU1Z
+         LS9B8A8VrNTREbxWvWf1anZl9DTaFZvtF3nw1CZJrcUsIT96wuN3nuAljfDJlpXaLmmM
+         BLSVNuYNNnVEWXAWBMRPb9+j7JW9p6ts0njwljuWiNztzfHGqdPsNW+MFGBgVqimz76n
+         UHfCSDxXmbrIcAP0wdoqubLuQR3WFqCzUXgE8fFgUo41/jFj1S9payyIJTb8mSVG5JeH
+         EHxMiHnmx4LBTWTuDpCLD+VBmuNwzNiTVh9HCKEfTj6ceSG5Ooz0sj/G6LsR1jSc2goC
+         kEng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733874295; x=1734479095;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i2GK2n7E25ECPtAL4qBYMFCHU1IDv9yiMZUmEef7d5c=;
-        b=h4Dos42O3zFgooq6gHcKY0pq84YvvTSB1DicF7WFUW3/BCAsnDU57rRZdWxmr9VjAm
-         zpUjNvxu4CGEF97p8KnR31W1Vr7JWpva64pMqECq0pVghjWm97gvui++D1mewBc1xpYq
-         CWFZZjLscxvR+8owmse9uiBTWNiuNvhaL45CPhT4FkZ33DXRi19jVpJdtcsJQ/Fuvvta
-         lVsyn3yCHvoWlcvQhPZygMtPD6M1+YT5mMW2ii/AqxTVkyWrZj40oAwRRjKkPhTUc1fi
-         A6UG8btMRItONifDOuOcBMPA7Nmp83So6QdwpvIHOra2X5ObZ0CH5eAPOCjtZYp5gsmE
-         c7xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuwvNsGI5Mm6XIJDdm7VOmNjBUAqZsKUCH1iREE00VEcRmxRtbeJrLU56fAGWCgN54BepH7HCMimqVAgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcAbfIs2mtQJn6TorVDf0ThTaX1TYYZI3LMe1rIYRHzn/P/efY
-	lFTb2Icz848M2amxIi6emhZQ4Q0Zd8qkPTNkF3QonWH6MN2LCHDrP0xEhzvBp2U=
-X-Gm-Gg: ASbGncuvzxREAhkGvNTei9/Ol3AxuXTyt9yfQ4CbnHFMNvLLP2antQDahlK2+ghHjHg
-	ms2Ak74kSssLmJxe2Ysllf2M6+IHtKKARwHoKjhZ+g6F6anK5DnYieezpROC7K3vbLl/ACteyrm
-	S+tiEgGnz+1LpqeFq+PahpBPrSayw+2mzVT8XRf64wWc2hxUwI6H3t5MSvkwuo43cCEc36nzmsb
-	s3udjgSkTMGqdV3TCuNvY92EhyjsrNgmyB5+9P1RcBATdC9Ooebf1Vz6p3fY07eAye3eQCxLSbb
-	ecOaBmArFlPu/f4QCrywPxy5tkaGh0ln
-X-Google-Smtp-Source: AGHT+IHCkwFGC4hD4vdubzDK0emMtmontaQK9gJJuUmgnTZhSJLFFLnKUal4wI4WeIiBIFbYsxihow==
-X-Received: by 2002:a05:6512:15a8:b0:53f:9c10:beb7 with SMTP id 2adb3069b0e04-5402a5e962dmr69727e87.8.1733874294875;
-        Tue, 10 Dec 2024 15:44:54 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401d02e665sm891456e87.242.2024.12.10.15.44.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 15:44:53 -0800 (PST)
-Message-ID: <124bb490-58d9-4c8c-a83f-7c3d45f61e43@linaro.org>
-Date: Wed, 11 Dec 2024 01:44:45 +0200
+        d=1e100.net; s=20230601; t=1733874489; x=1734479289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f8UnOGblbQirPOg8RONWJpR4qniXeIU9augpkXN+BVE=;
+        b=UukBWDMleNeBYw68b5rleNIBhhuIBi+UideepK2IQhnasjhg8zazo96aVg2XYdY2zG
+         Oal7rC9tj9iDPmjf74agHq3oxQR3MOYhrN0YCHraLPpIj9dK3R+RHp17v5Rj3ROIiilG
+         xGr857LR/DppdT1gz9Lc+i4d850ODfFoyLr5gG1esZfTfx/vxhgT9lrgl+JRCs/vxs02
+         mBpstphlCCQQQLgWDKk8LuGXFnBk+xC9l6zW6806A92CGyI8BlV655gscLug+cIAuwti
+         CLxZLhQOgIcOF843O98dP5YQrHl6i8YxvncrNTToJHZ9/pczoSGfNNIFRd3i3rSLUNvl
+         m1hg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2jNBgfrEaN+xqK4EgqelUlBEWUNOafeOLdiYkpc7y385PYmSaTUomv8pxOd6halHptT/3Ukr5IPL4@vger.kernel.org, AJvYcCUp0Xt+030wzGtTozQXFsSWfa7cGmW1lDdTdbgsIsp+y/Hw/x8R2Xv14d0I0mnlPGU+7lY0x7M+gm5TRd4t@vger.kernel.org, AJvYcCW0HKBmiD2YisjPgqwUMaxOTi46uovBUs6BdU0d5nSPaHTiO7MTCk6PzRtw5wIfoK02t4y6rznH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz615epjPXT3anB0xY6Kioe0njCsN9jsYOxUw5+xiL4gEuplTQg
+	NSivL+9dOViCsjbqtbBYzWExh5RHhOdeII4LPDKXACOE80Xui46Y
+X-Gm-Gg: ASbGncvbCIhZr7VQlMJGAG34UQpPTvd1oGl0Is0pn3KXpOTkgPspDWm3F5vAo9+paVk
+	33kkGc2e5r89aGKeUxpAs4pZCZzB5O1i24M3oB2Cw+/KuOFy1oef4x9+AGX9Vo8AyFZNYqRh0l/
+	xLmw9NyBKhe6bmj/5RX1ZBWVsBrREUO1c3k8aBotcynbfFw0jZA3p6ETr8Z+WkityGfrN+ykG8n
+	+CzoZR6J3V/WVJoED0bqhzodtZDHrg8/AnVuGEEDA==
+X-Google-Smtp-Source: AGHT+IGVFyqOsHq8vJbKENcE96HqDNgEWPNEGfHZbGGsVdmVNjmlG8KgXuPni26CXmKkrEf6w3YBNQ==
+X-Received: by 2002:a05:600c:35c9:b0:436:17f4:9b3d with SMTP id 5b1f17b1804b1-4361c434980mr1530815e9.4.1733874488791;
+        Tue, 10 Dec 2024 15:48:08 -0800 (PST)
+Received: from skbuf ([86.127.124.81])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0d69dfsm203458605e9.14.2024.12.10.15.48.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 15:48:07 -0800 (PST)
+Date: Wed, 11 Dec 2024 01:48:03 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v11 5/9] mfd: an8855: Add support for Airoha
+ AN8855 Switch MFD
+Message-ID: <20241210234803.pzm7fxrve4dastth@skbuf>
+References: <20241209134459.27110-1-ansuelsmth@gmail.com>
+ <20241209134459.27110-1-ansuelsmth@gmail.com>
+ <20241209134459.27110-6-ansuelsmth@gmail.com>
+ <20241209134459.27110-6-ansuelsmth@gmail.com>
+ <20241210211529.osgzd54flq646bcr@skbuf>
+ <6758c174.050a0220.52a35.06bc@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/16] media: qcom: camss: csid: Make TPG optional
-Content-Language: ru-RU
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241205155538.250743-1-quic_depengs@quicinc.com>
- <20241205155538.250743-9-quic_depengs@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241205155538.250743-9-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6758c174.050a0220.52a35.06bc@mx.google.com>
 
-Hi Depeng,
-
-thank you for the changes and updates.
-
-On 12/5/24 17:55, Depeng Shao wrote:
-> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Tue, Dec 10, 2024 at 11:32:17PM +0100, Christian Marangi wrote:
+> Doesn't regmap add lots of overhead tho? Maybe I should really change
+> the switch regmap to apply a save/restore logic?
 > 
-> The Test Pattern Generator TPG has been moved out of the CSID and into a
-> standalone silicon block at the same level as a regular CSIPHY.
+> With an implementation like that current_page is not needed anymore.
+> And I feel additional read/write are ok for switch OP.
 > 
-> Make the TPG calls optional to reflect the fact some CSID blocks will now
-> not implement this feature.
+> On mdio I can use the parent-mdio-bus property to get the bus directly
+> without using MFD priv.
 > 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> What do you think?
 
-Please don't forget to add your Signed-off-by tag, if you pull someone's
-changes.
-
-> ---
->   .../media/platform/qcom/camss/camss-csid.c    | 33 ++++++++++++-------
->   1 file changed, 21 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-> index 6cf8e434dc05..2cb8c37982f8 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csid.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
-> @@ -838,7 +838,7 @@ static void csid_try_format(struct csid_device *csid,
->   		break;
->   
->   	case MSM_CSID_PAD_SRC:
-> -		if (csid->testgen_mode->cur.val == 0) {
-> +		if (!csid->testgen_mode || csid->testgen_mode->cur.val == 0) {
->   			/* Test generator is disabled, */
->   			/* keep pad formats in sync */
->   			u32 code = fmt->code;
-> @@ -1042,6 +1042,7 @@ static int csid_init_formats(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
->   static int csid_set_test_pattern(struct csid_device *csid, s32 value)
->   {
->   	struct csid_testgen_config *tg = &csid->testgen;
-> +	const struct csid_hw_ops *hw_ops = csid->res->hw_ops;
->   
->   	/* If CSID is linked to CSIPHY, do not allow to enable test generator */
->   	if (value && media_pad_remote_pad_first(&csid->pads[MSM_CSID_PAD_SINK]))
-> @@ -1049,7 +1050,10 @@ static int csid_set_test_pattern(struct csid_device *csid, s32 value)
->   
->   	tg->enabled = !!value;
->   
-> -	return csid->res->hw_ops->configure_testgen_pattern(csid, value);
-> +	if (hw_ops->configure_testgen_pattern)
-> +		return -EOPNOTSUPP;
-> +	else
-> +		return hw_ops->configure_testgen_pattern(csid, value);
-
-Last time I reported about the regression here, it is announced as fixed in the
-changelog, but I see it is not, unfortunately.
-
->   }
->   
->   /*
-> @@ -1267,7 +1271,7 @@ static int csid_link_setup(struct media_entity *entity,
->   
->   		/* If test generator is enabled */
->   		/* do not allow a link from CSIPHY to CSID */
-> -		if (csid->testgen_mode->cur.val != 0)
-> +		if (csid->testgen_mode && csid->testgen_mode->cur.val != 0)
->   			return -EBUSY;
->   
->   		sd = media_entity_to_v4l2_subdev(remote->entity);
-> @@ -1366,15 +1370,20 @@ int msm_csid_register_entity(struct csid_device *csid,
->   		return ret;
->   	}
->   
-> -	csid->testgen_mode = v4l2_ctrl_new_std_menu_items(&csid->ctrls,
-> -				&csid_ctrl_ops, V4L2_CID_TEST_PATTERN,
-> -				csid->testgen.nmodes, 0, 0,
-> -				csid->testgen.modes);
-> -
-> -	if (csid->ctrls.error) {
-> -		dev_err(dev, "Failed to init ctrl: %d\n", csid->ctrls.error);
-> -		ret = csid->ctrls.error;
-> -		goto free_ctrl;
-> +	if (csid->res->hw_ops->configure_testgen_pattern) {
-> +		csid->testgen_mode =
-> +			v4l2_ctrl_new_std_menu_items(&csid->ctrls,
-> +						     &csid_ctrl_ops,
-> +						     V4L2_CID_TEST_PATTERN,
-> +						     csid->testgen.nmodes, 0,
-> +						     0, csid->testgen.modes);
-> +
-> +		if (csid->ctrls.error) {
-> +			dev_err(dev, "Failed to init ctrl: %d\n",
-> +				csid->ctrls.error);
-> +			ret = csid->ctrls.error;
-> +			goto free_ctrl;
-> +		}
->   	}
->   
->   	csid->subdev.ctrl_handler = &csid->ctrls;
-
---
-Best wishes,
-Vladimir
+If performance is a relevant factor at all, it will be hard to measure it, other
+than with synthetic tests (various mixes of switch and PHY register access).
+Though since you mention it, it would be interesting to see a comparison of the
+3 arbitration methods. This could probably be all done from the an8855_mfd_probe()
+calling context: read a switch register and a PHY register 100K times and see how
+long it took, then read 2 switch registers and a PHY register 100K times, then
+3 switch registers.... At some point, we should start seeing the penalty of the
+page restoration in Andrew's proposal, because that will be done after each switch
+register read. Just curious to put it into perspective and see how soon it starts
+to make a difference. And this test will also answer the regmap overhead issue.
 
