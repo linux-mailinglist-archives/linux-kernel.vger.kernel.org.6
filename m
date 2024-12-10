@@ -1,315 +1,176 @@
-Return-Path: <linux-kernel+bounces-440093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ED89EB8AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 441709EB8AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFB8B2833B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DD1283200
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E50A1BD9C2;
-	Tue, 10 Dec 2024 17:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AC61C3040;
+	Tue, 10 Dec 2024 17:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="DzHcu05s"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eJaqSrYy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577386336;
-	Tue, 10 Dec 2024 17:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7980C86336
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853113; cv=none; b=evFcUWSDq3hPoaxe4yXyLEs8+ji9z2gvPwvjYDYPurZ8FMVgNbhAIv/VIZ+Nie8Mp7eBCuXIcPn2mpMO9jg5GLjgPX9CLczYZx9kB9a5Bv6Yu8yaWToqG6o+Wn8Tv61pNna33hG6Ti6tiLrTo77gX6cowKft42DJw2nDop0paFA=
+	t=1733853129; cv=none; b=qRqxGBICTmOmS7oaJmFI/JIa5tHqZVTrL4gGNwpBXw1NEVsUyZkjG8y/r6UNqiGjFgbidrNrkdcNGaD8tFrR0f0JYsuUQG7o0rjoANrrqGT3CYN4FhrUYvpBba6Tn7Tayrg3eS8vstuD/Olt8oAH6L6v8vrUD3ALSHfcHL3+3ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853113; c=relaxed/simple;
-	bh=kIUfhctXtHp/HILQ548PNDcOS8oDknHHSfOedoQ6L/s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NflRNxi6S9LNx25/0l4QPHqk+h/fOX5+d2toSxd1bgOQmuM5KJyVKylvRUPfjiGjlkKD1VtTq6Kc8QgR7oD3Z+WDV/C81FDQLBs4+6THTvbLgsNtA04kmUShN2qO1DsGC5R1wuVStbGu5CWRzF16f07L/UlXgYbUl1wIgzkClfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=DzHcu05s; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WoKlAx2lCcPCu7/whr69+RY7ecshkhAuKHIc6JJIKNM=; b=DzHcu05sWfX6pdzjMZLdq+T7DV
-	nmGtLf+z+G+qdBtlrUlkYHGgB34pcga1S7HYighWzIZq8QNsSDuEnY9HW1pTSQG7gXs1jKY3jTK/b
-	0flnPv1NbqbNGrqnaFPONGw8nkz9T8fQYsq045bulbwfSGIeGW1S1bG77vwrI5p1WaqeDk+d41oeg
-	obIoukA/vxqioHKyu3zXQ4B+ui1THJoZ3qHJXzIVKMZOOHiBirycxIxfUGwhVocmY/FnPg8GF8U10
-	h9ubijuPHp+lBnqsBhUTJ/mxTGxrAo+ukmCv4FZ8GuTbiaoGYL8YBq4ghB9YBl4g1+veWQSF8UP3N
-	whgwynhw==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tL4OV-0000DD-Tt; Tue, 10 Dec 2024 18:51:36 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Elaine Zhang <zhangqing@rock-chips.com>,
- =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
-Subject: Re: [PATCH v4 6/7] pmdomain: rockchip: add regulator support
-Date: Tue, 10 Dec 2024 18:51:34 +0100
-Message-ID: <4082877.3daJWjYHZt@diego>
-In-Reply-To: <20241210171023.141162-7-sebastian.reichel@collabora.com>
-References:
- <20241210171023.141162-1-sebastian.reichel@collabora.com>
- <20241210171023.141162-7-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1733853129; c=relaxed/simple;
+	bh=q9A16Y6kO4s41vmJMGS854yDLlp9NiUZZ2qJ/TT+EKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TM6/AzpeXpJAhHTgcBKPZLT0/KckUjL+ku7ACaVqTTBoE0wPWFeIVvo01/T8XcqfHhupts/w25jrxDgx+YXC+rkz5wC5NnxWCMWupHcuQme4V/MR2TGkehjuI8B2gclGaOpyrJYbbSbsz83vDEAm45bO+fOBJ1hhpA2lWYAzD1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eJaqSrYy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733853126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5z++hiDZoK6MQKlJqwcak2mnPX1FBIvWTnRgAgxRHwY=;
+	b=eJaqSrYyp2Foq+sTIRsPU1J9YpZbFgWot1Y9m2sy30tRVK0FxffldwK+yeWl/1eSmEKkx7
+	xzpNI00HgPd6EP173ccatIubHLhLoeTii+HY4YGZl9xwoQndZmYCj4KPpZu9okCY/bximg
+	XA128FPPgR7l+WMkBeTBjK/KERVZmYc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-472-iyeVL6rFMZueqtYR-iscUA-1; Tue, 10 Dec 2024 12:52:05 -0500
+X-MC-Unique: iyeVL6rFMZueqtYR-iscUA-1
+X-Mimecast-MFC-AGG-ID: iyeVL6rFMZueqtYR-iscUA
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434f5b7b4a2so22880455e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:52:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733853124; x=1734457924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5z++hiDZoK6MQKlJqwcak2mnPX1FBIvWTnRgAgxRHwY=;
+        b=A9y8DUWNbCMg+F8WZYLjkbghrd+h9Bet2D9T4CeXU4EZ920wqOPL/FPvGxGTE2umGS
+         u0Wl6PDyWAEtbbKasBrScUMtLSWrDjZsqvwOrneetAgZrkY74EoM9jSTnkC75dkvWDAC
+         zucjmOx0SeqQERzfxmttJmSRfRZuxU0Mg1Ywotn6MLXVpdSQDH/IXvHxa3pOZe6gB83R
+         dtm7PSodvf1sINAmgx+IbWGEA7NR4K0CTDbkCPtL8Ex5gLWVeGz+ljMOJlGSSeGi0pRo
+         VPVpWI9FBL8ROTyfAbWcm6lX2Kr2zhT7JorRr5dzXcpVyOiNEVLdrBji7ZgSyhVjcace
+         CZ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX925yVSMf/MdmM1uJkVrKFpuoRVPXLiDoAMI0K+L6MzQIexZth6W3jd7kzaJzpEAgb8HNAuhfwyK7VJns=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4iNf42tMeh29FYzUzXnfPROyfdMrBWsPF32qPQS2gsxM2fyud
+	+8iQ/wDkj/5TDEIS2YKDDruMcqKkipjvvvHGTHU8ID/Z6dySNizQ5x+UQHo2MTvIWjD5cK2AFE2
+	/mVJde+/KzbjsZTVkmQ/eoh8Sj34NWFkjPrHy5lt/lGYytzptBe94zwvnK322rQ==
+X-Gm-Gg: ASbGncu6Cbp6plgYJ3/Qlu1iNCAiRJvKOr+QTt7gqEClbZo1fdkaAKJg8+WhvtfYHcT
+	mjbumRRGpSmEIwaDLdS4g7OhKmyuBWfxseI7A4vKW9gQiGgnmT8E7xN0YfE+5mT9HFejiUW7gnd
+	NnK6bOY/EZHI5C3mdm9+JPqXhCU8yyaNcRNdDSTDYdFZ9HCSDGg8oNS0H5qpo1rseZavq52ot9n
+	FYDPsiFI69AU4MsdmkHMQfe6fWbo08z4WoC20JeNSpW/w9BSXe/JNBYKxm2wL9lA5/0j2dDjfqr
+	vhTwrQq2EA6YnOmYlhLDeSh5gi7OoQ==
+X-Received: by 2002:a05:600c:358a:b0:434:fd77:5436 with SMTP id 5b1f17b1804b1-434fff500a4mr54092175e9.15.1733853123921;
+        Tue, 10 Dec 2024 09:52:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGWlVeLxQceZVqJYPqW9abSwCI92YZV60MOUnZJwqpD1i3FXk0/EecHfd0I1AsDffr0xedD9A==
+X-Received: by 2002:a05:600c:358a:b0:434:fd77:5436 with SMTP id 5b1f17b1804b1-434fff500a4mr54091875e9.15.1733853123291;
+        Tue, 10 Dec 2024 09:52:03 -0800 (PST)
+Received: from sgarzare-redhat (host-87-12-25-244.business.telecomitalia.it. [87.12.25.244])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436199f6896sm12564785e9.14.2024.12.10.09.52.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 09:52:02 -0800 (PST)
+Date: Tue, 10 Dec 2024 18:51:54 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Cindy Lu <lulu@redhat.com>
+Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 0/8] vhost: Add support of kthread API
+Message-ID: <wxfwmdn73heh5k7dnbaqt5iq23qwz4ltlapetvsqlryhz7mhpt@4e3pw5qm7yom>
+References: <20241210164456.925060-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241210164456.925060-1-lulu@redhat.com>
 
-Am Dienstag, 10. Dezember 2024, 18:06:46 CET schrieb Sebastian Reichel:
-> Some power domains require extra voltages to be applied. For example
-> trying to enable the GPU power domain on RK3588 fails when the SoC
-> does not have VDD GPU enabled. The same is expected to happen for
-> the NPU, which also has a dedicated supply line.
-> 
-> We get the regulator using devm_of_regulator_get(), so a missing
-> dependency in the devicetree is handled gracefully by printing a warning
-> and creating a dummy regulator. This is necessary, since existing DTs do
-> not have the regulator described. They might still work if the regulator
-> is marked as always-on. It is also working if the regulator is enabled
-> at boot time and the GPU driver is probed before the kernel disables
-> unused regulators.
-> 
-> The regulator itself is not acquired at driver probe time, since that
-> creates an unsolvable circular dependency. The power domain driver must
-> be probed early, since SoC peripherals need it. Regulators on the other
-> hand depend on SoC peripherals like SPI, I2C or GPIO. MediaTek does not
-> run into this, since they have two power domain drivers.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+On Wed, Dec 11, 2024 at 12:41:39AM +0800, Cindy Lu wrote:
+>In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+missing something here?
 
+>
+>The vhost now uses vhost_task and operates as a child of the owner thread.
+>This aligns with containerization principles, But it has confused some legacy
+>userspace applications. Therefore, we are reintroducing support
+>for the kthread API.
+>
+>In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),
+>The vhost now use vhost_task and workers working as a child of the owner thread,
+>which aligns with containerization principles. However, this change has caused
+>confusion for some legacy userspace applications.
+>Therefore, we are reintroducing support for the kthread API.
 
-sidenote:
-part of me is asking, why we're limiting regulator handling only to
-specific individual domains when all domains sort of have supplying
-regulators - just ones that normally always stay on.
+This paragraph seems duplicated.
 
-But, the binding is generic, so we can extend that later on in the driver
-if needed. Especially as this fixes a problem that happens right now.
+If you have to resend a v5, recheck the cover for a moment because it's 
+not easy to follow.
 
+>
+>In this patch,
 
-Heiko
+s/patch/series
 
+> a new User API is implemented to allow userspace applications to
+>configure their request mode.
+>
+>Changelog v2:
+> 1. Change the module_param's name to enforce_inherit_owner, and the default value is true.
+> 2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
+>
+>Changelog v3:
+> 1. Change the module_param's name to inherit_owner_default, and the default value is true.
+> 2. Add a structure for task function; the worker will select a different mode based on the value inherit_owner.
+> 3. device will have their own inherit_owner in struct vhost_dev
+> 4. Address other comments
+>
+>Changelog v4:
+> 1. remove the module_param, only keep the UAPI
+> 2. remove the structure for task function; change to use the function pointer in vhost_worker
+> 3. fix the issue in vhost_worker_create and vhost_dev_ioctl
+> 4. Address other comments
+>
+>Tested with QEMU with kthread mode/task mode/kthread+task mode
 
-> ---
->  drivers/pmdomain/rockchip/pm-domains.c | 113 +++++++++++++++++--------
->  1 file changed, 79 insertions(+), 34 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-> index f4e555dac20a..31c71b6fddf1 100644
-> --- a/drivers/pmdomain/rockchip/pm-domains.c
-> +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_clk.h>
->  #include <linux/clk.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/mfd/syscon.h>
->  #include <soc/rockchip/pm_domains.h>
->  #include <dt-bindings/power/px30-power.h>
-> @@ -44,6 +45,7 @@ struct rockchip_domain_info {
->  	int idle_mask;
->  	int ack_mask;
->  	bool active_wakeup;
-> +	bool need_regulator;
->  	int pwr_w_mask;
->  	int req_w_mask;
->  	int clk_ungate_mask;
-> @@ -92,6 +94,8 @@ struct rockchip_pm_domain {
->  	u32 *qos_save_regs[MAX_QOS_REGS_NUM];
->  	int num_clks;
->  	struct clk_bulk_data *clks;
-> +	struct device_node *node;
-> +	struct regulator *supply;
->  };
->  
->  struct rockchip_pmu {
-> @@ -129,7 +133,7 @@ struct rockchip_pmu {
->  	.active_wakeup = wakeup,			\
->  }
->  
-> -#define DOMAIN_M_O_R(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, wakeup)	\
-> +#define DOMAIN_M_O_R(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, wakeup, regulator)	\
->  {							\
->  	.name = _name,					\
->  	.pwr_offset = p_offset,				\
-> @@ -145,6 +149,7 @@ struct rockchip_pmu {
->  	.idle_mask = (idle),				\
->  	.ack_mask = (ack),				\
->  	.active_wakeup = wakeup,			\
-> +	.need_regulator = regulator,			\
->  }
->  
->  #define DOMAIN_M_O_R_G(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, g_mask, wakeup)	\
-> @@ -303,8 +308,8 @@ void rockchip_pmu_unblock(void)
->  }
->  EXPORT_SYMBOL_GPL(rockchip_pmu_unblock);
->  
-> -#define DOMAIN_RK3588(name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, wakeup)	\
-> -	DOMAIN_M_O_R(name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, idle, wakeup)
-> +#define DOMAIN_RK3588(name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, wakeup, regulator)	\
-> +	DOMAIN_M_O_R(name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, idle, wakeup, regulator)
->  
->  static bool rockchip_pmu_domain_is_idle(struct rockchip_pm_domain *pd)
->  {
-> @@ -619,18 +624,57 @@ static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power_on)
->  	return 0;
->  }
->  
-> +static int rockchip_pd_regulator_disable(struct rockchip_pm_domain *pd)
-> +{
-> +	return IS_ERR_OR_NULL(pd->supply) ? 0 : regulator_disable(pd->supply);
-> +}
-> +
-> +static int rockchip_pd_regulator_enable(struct rockchip_pm_domain *pd)
-> +{
-> +	struct rockchip_pmu *pmu = pd->pmu;
-> +
-> +	if (!pd->info->need_regulator)
-> +		return 0;
-> +
-> +	if (IS_ERR_OR_NULL(pd->supply)) {
-> +		pd->supply = devm_of_regulator_get(pmu->dev, pd->node, "domain");
-> +
-> +		if (IS_ERR(pd->supply))
-> +			return PTR_ERR(pd->supply);
-> +	}
-> +
-> +	return regulator_enable(pd->supply);
-> +}
-> +
->  static int rockchip_pd_power_on(struct generic_pm_domain *domain)
->  {
->  	struct rockchip_pm_domain *pd = to_rockchip_pd(domain);
-> +	int ret;
-> +
-> +	ret = rockchip_pd_regulator_enable(pd);
-> +	if (ret) {
-> +		dev_err(pd->pmu->dev, "Failed to enable supply: %d\n", ret);
-> +		return ret;
-> +	}
->  
-> -	return rockchip_pd_power(pd, true);
-> +	ret = rockchip_pd_power(pd, true);
-> +	if (ret)
-> +		rockchip_pd_regulator_disable(pd);
-> +
-> +	return ret;
->  }
->  
->  static int rockchip_pd_power_off(struct generic_pm_domain *domain)
->  {
->  	struct rockchip_pm_domain *pd = to_rockchip_pd(domain);
-> +	int ret;
->  
-> -	return rockchip_pd_power(pd, false);
-> +	ret = rockchip_pd_power(pd, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rockchip_pd_regulator_disable(pd);
-> +	return ret;
->  }
->  
->  static int rockchip_pd_attach_dev(struct generic_pm_domain *genpd,
-> @@ -711,6 +755,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
->  
->  	pd->info = pd_info;
->  	pd->pmu = pmu;
-> +	pd->node = node;
->  
->  	pd->num_clks = of_clk_get_parent_count(node);
->  	if (pd->num_clks > 0) {
-> @@ -1174,35 +1219,35 @@ static const struct rockchip_domain_info rk3576_pm_domains[] = {
->  };
->  
->  static const struct rockchip_domain_info rk3588_pm_domains[] = {
-> -	[RK3588_PD_GPU]		= DOMAIN_RK3588("gpu",     0x0, BIT(0),  0,       0x0, 0,       BIT(1),  0x0, BIT(0),  BIT(0),  false),
-> -	[RK3588_PD_NPU]		= DOMAIN_RK3588("npu",     0x0, BIT(1),  BIT(1),  0x0, 0,       0,       0x0, 0,       0,       false),
-> -	[RK3588_PD_VCODEC]	= DOMAIN_RK3588("vcodec",  0x0, BIT(2),  BIT(2),  0x0, 0,       0,       0x0, 0,       0,       false),
-> -	[RK3588_PD_NPUTOP]	= DOMAIN_RK3588("nputop",  0x0, BIT(3),  0,       0x0, BIT(11), BIT(2),  0x0, BIT(1),  BIT(1),  false),
-> -	[RK3588_PD_NPU1]	= DOMAIN_RK3588("npu1",    0x0, BIT(4),  0,       0x0, BIT(12), BIT(3),  0x0, BIT(2),  BIT(2),  false),
-> -	[RK3588_PD_NPU2]	= DOMAIN_RK3588("npu2",    0x0, BIT(5),  0,       0x0, BIT(13), BIT(4),  0x0, BIT(3),  BIT(3),  false),
-> -	[RK3588_PD_VENC0]	= DOMAIN_RK3588("venc0",   0x0, BIT(6),  0,       0x0, BIT(14), BIT(5),  0x0, BIT(4),  BIT(4),  false),
-> -	[RK3588_PD_VENC1]	= DOMAIN_RK3588("venc1",   0x0, BIT(7),  0,       0x0, BIT(15), BIT(6),  0x0, BIT(5),  BIT(5),  false),
-> -	[RK3588_PD_RKVDEC0]	= DOMAIN_RK3588("rkvdec0", 0x0, BIT(8),  0,       0x0, BIT(16), BIT(7),  0x0, BIT(6),  BIT(6),  false),
-> -	[RK3588_PD_RKVDEC1]	= DOMAIN_RK3588("rkvdec1", 0x0, BIT(9),  0,       0x0, BIT(17), BIT(8),  0x0, BIT(7),  BIT(7),  false),
-> -	[RK3588_PD_VDPU]	= DOMAIN_RK3588("vdpu",    0x0, BIT(10), 0,       0x0, BIT(18), BIT(9),  0x0, BIT(8),  BIT(8),  false),
-> -	[RK3588_PD_RGA30]	= DOMAIN_RK3588("rga30",   0x0, BIT(11), 0,       0x0, BIT(19), BIT(10), 0x0, 0,       0,       false),
-> -	[RK3588_PD_AV1]		= DOMAIN_RK3588("av1",     0x0, BIT(12), 0,       0x0, BIT(20), BIT(11), 0x0, BIT(9),  BIT(9),  false),
-> -	[RK3588_PD_VI]		= DOMAIN_RK3588("vi",      0x0, BIT(13), 0,       0x0, BIT(21), BIT(12), 0x0, BIT(10), BIT(10), false),
-> -	[RK3588_PD_FEC]		= DOMAIN_RK3588("fec",     0x0, BIT(14), 0,       0x0, BIT(22), BIT(13), 0x0, 0,       0,       false),
-> -	[RK3588_PD_ISP1]	= DOMAIN_RK3588("isp1",    0x0, BIT(15), 0,       0x0, BIT(23), BIT(14), 0x0, BIT(11), BIT(11), false),
-> -	[RK3588_PD_RGA31]	= DOMAIN_RK3588("rga31",   0x4, BIT(0),  0,       0x0, BIT(24), BIT(15), 0x0, BIT(12), BIT(12), false),
-> -	[RK3588_PD_VOP]		= DOMAIN_RK3588("vop",     0x4, BIT(1),  0,       0x0, BIT(25), BIT(16), 0x0, BIT(13) | BIT(14), BIT(13) | BIT(14), false),
-> -	[RK3588_PD_VO0]		= DOMAIN_RK3588("vo0",     0x4, BIT(2),  0,       0x0, BIT(26), BIT(17), 0x0, BIT(15), BIT(15), false),
-> -	[RK3588_PD_VO1]		= DOMAIN_RK3588("vo1",     0x4, BIT(3),  0,       0x0, BIT(27), BIT(18), 0x4, BIT(0),  BIT(16), false),
-> -	[RK3588_PD_AUDIO]	= DOMAIN_RK3588("audio",   0x4, BIT(4),  0,       0x0, BIT(28), BIT(19), 0x4, BIT(1),  BIT(17), false),
-> -	[RK3588_PD_PHP]		= DOMAIN_RK3588("php",     0x4, BIT(5),  0,       0x0, BIT(29), BIT(20), 0x4, BIT(5),  BIT(21), false),
-> -	[RK3588_PD_GMAC]	= DOMAIN_RK3588("gmac",    0x4, BIT(6),  0,       0x0, BIT(30), BIT(21), 0x0, 0,       0,       false),
-> -	[RK3588_PD_PCIE]	= DOMAIN_RK3588("pcie",    0x4, BIT(7),  0,       0x0, BIT(31), BIT(22), 0x0, 0,       0,       true),
-> -	[RK3588_PD_NVM]		= DOMAIN_RK3588("nvm",     0x4, BIT(8),  BIT(24), 0x4, 0,       0,       0x4, BIT(2),  BIT(18), false),
-> -	[RK3588_PD_NVM0]	= DOMAIN_RK3588("nvm0",    0x4, BIT(9),  0,       0x4, BIT(1),  BIT(23), 0x0, 0,       0,       false),
-> -	[RK3588_PD_SDIO]	= DOMAIN_RK3588("sdio",    0x4, BIT(10), 0,       0x4, BIT(2),  BIT(24), 0x4, BIT(3),  BIT(19), false),
-> -	[RK3588_PD_USB]		= DOMAIN_RK3588("usb",     0x4, BIT(11), 0,       0x4, BIT(3),  BIT(25), 0x4, BIT(4),  BIT(20), true),
-> -	[RK3588_PD_SDMMC]	= DOMAIN_RK3588("sdmmc",   0x4, BIT(13), 0,       0x4, BIT(5),  BIT(26), 0x0, 0,       0,       false),
-> +	[RK3588_PD_GPU]		= DOMAIN_RK3588("gpu",     0x0, BIT(0),  0,       0x0, 0,       BIT(1),  0x0, BIT(0),  BIT(0),  false, true),
-> +	[RK3588_PD_NPU]		= DOMAIN_RK3588("npu",     0x0, BIT(1),  BIT(1),  0x0, 0,       0,       0x0, 0,       0,       false, true),
-> +	[RK3588_PD_VCODEC]	= DOMAIN_RK3588("vcodec",  0x0, BIT(2),  BIT(2),  0x0, 0,       0,       0x0, 0,       0,       false, false),
-> +	[RK3588_PD_NPUTOP]	= DOMAIN_RK3588("nputop",  0x0, BIT(3),  0,       0x0, BIT(11), BIT(2),  0x0, BIT(1),  BIT(1),  false, false),
-> +	[RK3588_PD_NPU1]	= DOMAIN_RK3588("npu1",    0x0, BIT(4),  0,       0x0, BIT(12), BIT(3),  0x0, BIT(2),  BIT(2),  false, false),
-> +	[RK3588_PD_NPU2]	= DOMAIN_RK3588("npu2",    0x0, BIT(5),  0,       0x0, BIT(13), BIT(4),  0x0, BIT(3),  BIT(3),  false, false),
-> +	[RK3588_PD_VENC0]	= DOMAIN_RK3588("venc0",   0x0, BIT(6),  0,       0x0, BIT(14), BIT(5),  0x0, BIT(4),  BIT(4),  false, false),
-> +	[RK3588_PD_VENC1]	= DOMAIN_RK3588("venc1",   0x0, BIT(7),  0,       0x0, BIT(15), BIT(6),  0x0, BIT(5),  BIT(5),  false, false),
-> +	[RK3588_PD_RKVDEC0]	= DOMAIN_RK3588("rkvdec0", 0x0, BIT(8),  0,       0x0, BIT(16), BIT(7),  0x0, BIT(6),  BIT(6),  false, false),
-> +	[RK3588_PD_RKVDEC1]	= DOMAIN_RK3588("rkvdec1", 0x0, BIT(9),  0,       0x0, BIT(17), BIT(8),  0x0, BIT(7),  BIT(7),  false, false),
-> +	[RK3588_PD_VDPU]	= DOMAIN_RK3588("vdpu",    0x0, BIT(10), 0,       0x0, BIT(18), BIT(9),  0x0, BIT(8),  BIT(8),  false, false),
-> +	[RK3588_PD_RGA30]	= DOMAIN_RK3588("rga30",   0x0, BIT(11), 0,       0x0, BIT(19), BIT(10), 0x0, 0,       0,       false, false),
-> +	[RK3588_PD_AV1]		= DOMAIN_RK3588("av1",     0x0, BIT(12), 0,       0x0, BIT(20), BIT(11), 0x0, BIT(9),  BIT(9),  false, false),
-> +	[RK3588_PD_VI]		= DOMAIN_RK3588("vi",      0x0, BIT(13), 0,       0x0, BIT(21), BIT(12), 0x0, BIT(10), BIT(10), false, false),
-> +	[RK3588_PD_FEC]		= DOMAIN_RK3588("fec",     0x0, BIT(14), 0,       0x0, BIT(22), BIT(13), 0x0, 0,       0,       false, false),
-> +	[RK3588_PD_ISP1]	= DOMAIN_RK3588("isp1",    0x0, BIT(15), 0,       0x0, BIT(23), BIT(14), 0x0, BIT(11), BIT(11), false, false),
-> +	[RK3588_PD_RGA31]	= DOMAIN_RK3588("rga31",   0x4, BIT(0),  0,       0x0, BIT(24), BIT(15), 0x0, BIT(12), BIT(12), false, false),
-> +	[RK3588_PD_VOP]		= DOMAIN_RK3588("vop",     0x4, BIT(1),  0,       0x0, BIT(25), BIT(16), 0x0, BIT(13) | BIT(14), BIT(13) | BIT(14), false, false),
-> +	[RK3588_PD_VO0]		= DOMAIN_RK3588("vo0",     0x4, BIT(2),  0,       0x0, BIT(26), BIT(17), 0x0, BIT(15), BIT(15), false, false),
-> +	[RK3588_PD_VO1]		= DOMAIN_RK3588("vo1",     0x4, BIT(3),  0,       0x0, BIT(27), BIT(18), 0x4, BIT(0),  BIT(16), false, false),
-> +	[RK3588_PD_AUDIO]	= DOMAIN_RK3588("audio",   0x4, BIT(4),  0,       0x0, BIT(28), BIT(19), 0x4, BIT(1),  BIT(17), false, false),
-> +	[RK3588_PD_PHP]		= DOMAIN_RK3588("php",     0x4, BIT(5),  0,       0x0, BIT(29), BIT(20), 0x4, BIT(5),  BIT(21), false, false),
-> +	[RK3588_PD_GMAC]	= DOMAIN_RK3588("gmac",    0x4, BIT(6),  0,       0x0, BIT(30), BIT(21), 0x0, 0,       0,       false, false),
-> +	[RK3588_PD_PCIE]	= DOMAIN_RK3588("pcie",    0x4, BIT(7),  0,       0x0, BIT(31), BIT(22), 0x0, 0,       0,       true, false),
-> +	[RK3588_PD_NVM]		= DOMAIN_RK3588("nvm",     0x4, BIT(8),  BIT(24), 0x4, 0,       0,       0x4, BIT(2),  BIT(18), false, false),
-> +	[RK3588_PD_NVM0]	= DOMAIN_RK3588("nvm0",    0x4, BIT(9),  0,       0x4, BIT(1),  BIT(23), 0x0, 0,       0,       false, false),
-> +	[RK3588_PD_SDIO]	= DOMAIN_RK3588("sdio",    0x4, BIT(10), 0,       0x4, BIT(2),  BIT(24), 0x4, BIT(3),  BIT(19), false, false),
-> +	[RK3588_PD_USB]		= DOMAIN_RK3588("usb",     0x4, BIT(11), 0,       0x4, BIT(3),  BIT(25), 0x4, BIT(4),  BIT(20), true, false),
-> +	[RK3588_PD_SDMMC]	= DOMAIN_RK3588("sdmmc",   0x4, BIT(13), 0,       0x4, BIT(5),  BIT(26), 0x0, 0,       0,       false, false),
->  };
->  
->  static const struct rockchip_pmu_info px30_pmu = {
-> 
+A link to QEMU patches will be nice.
 
+>
+>Cindy Lu (8):
+>  vhost: Add a new parameter in vhost_dev to allow user select kthread
+>  vhost: Add the vhost_worker to support kthread
+>  vhost: Add the cgroup related function
+>  vhost: Add kthread support in function vhost_worker_create
+>  vhost: Add kthread support in function vhost_worker_queue()
+>  vhost: Add kthread support in function vhost_worker_destroy()
 
+What about merging patches 4, 5, 6 in a single patch?
 
+Thanks,
+Stefano
+
+>  vhost: Add new UAPI to support change to task mode
+>  vhost_scsi: Add check for inherit_owner status
+>
+> drivers/vhost/scsi.c       |   8 ++
+> drivers/vhost/vhost.c      | 185 +++++++++++++++++++++++++++++++++----
+> drivers/vhost/vhost.h      |   4 +
+> include/uapi/linux/vhost.h |  18 ++++
+> 4 files changed, 198 insertions(+), 17 deletions(-)
+>
+>-- 
+>2.45.0
+>
 
 
