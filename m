@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-438949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4EF09EA8A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:17:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6779EA896
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83A4A164EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B65A1691B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DCC22B8C6;
-	Tue, 10 Dec 2024 06:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFD122ACF7;
+	Tue, 10 Dec 2024 06:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QT//Xhru"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y462j8qQ"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D38B226182;
-	Tue, 10 Dec 2024 06:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC891D0E28
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733811430; cv=none; b=e4GWkSmF/OQXjMGT92u+uVSr4UBYzKujzmoZBx4nqSK6ttbtYprt2k3n0udbHZn35YkMF+l9ZHGdxJeBr0poGPFwyTFwfw2kcj0QEKAiN7kTMo32yhjzKSwdMYbnne3xfu6YU3DmqfDriqePeU21QazoPflUb8s4TrJ97gaf+uE=
+	t=1733811282; cv=none; b=p9WBJU0y1XHrxYhcaXHrgNEzk4vnJ5tqmx7Kje9ZMkxdYkUN46IuX4EllBjTeJ10xLpIrL4wKHn8S2Z9Y/VL9+8JCZjRKOGxtV/oU1gpZyyx41JaV4sDmth+oiv7xPs6/kWrpKCm0c62EVA3ZO3bwfJTh6QbAuyIJIKsW3ZicEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733811430; c=relaxed/simple;
-	bh=rXuQ1U1NC7bVLF2BcTB7d4Y/ETWhTKJK6BvKDWuC1FQ=;
+	s=arc-20240116; t=1733811282; c=relaxed/simple;
+	bh=H5jhkkBmcSeHnp14FMPbK7KoVdIILqWdySHjtUR3xmE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6QQ7CcF9cQQuVztJRIDj/QdcPhM0HfXk0xyqQNXRCnn9i/3BJanzJTpJ9Q0vbke6H6HfdYTFPHj1sCHcl8oPDmyfHBxdxoTsG3UlVjrJHVq7eA0MC5Vla/NnGHjlCdDgkV71ub/uSTf9Bk+F4PycMpM4HvdotyJJmG0+XK/8l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QT//Xhru; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733811429; x=1765347429;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rXuQ1U1NC7bVLF2BcTB7d4Y/ETWhTKJK6BvKDWuC1FQ=;
-  b=QT//XhruwqNei2/LN4tTpNyaBC/62RZbYwSCoeEpnbnAguA4yCV80TL9
-   vVxv0j+9Dr4QHswe278wPEvxuKvOItStbByZDSo0Rdn1F2S+Zhg1enVc+
-   9ENyw0EH8lub707A3bDDh4njAt9JDW3NWW7DWsy0a5wyLotN3NaaYkbvr
-   8LnZYpJ3A2Um8orsPnskwqdugIfRMgpwgCKtKV+dbh6UrGnPEV7c8BWZ0
-   YLTc+kqvip+KIEf81Tld7mOg6F5wCPa8CS4sQnxzuXbGDTC1br3+8Z4Py
-   L20DCEGKk8EKw8ICKHaTXgnjCw9qW1ceKbrEfHIs7jROVmjgU2OZHCQ3V
-   A==;
-X-CSE-ConnectionGUID: Xc9Z8U3ZTWyr7B01hWq5MA==
-X-CSE-MsgGUID: Wu1E4WrsRbuip5P5YC7ycw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="51549772"
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="51549772"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 22:17:08 -0800
-X-CSE-ConnectionGUID: FSYz5DUbQKS0MeqUrxuXZg==
-X-CSE-MsgGUID: Jq2ngkAuQSK5xsWRxCqkdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="95649257"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 22:17:04 -0800
-Date: Tue, 10 Dec 2024 07:13:53 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>, Long Li <longli@microsoft.com>,
-	Yury Norov <yury.norov@gmail.com>
-Subject: Re: [PATCH v2 1/2] net: mana: Fix memory leak in mana_gd_setup_irqs
-Message-ID: <Z1fcIa7n+hI+v2Nq@mev-dev.igk.intel.com>
-References: <20241209175751.287738-1-mlevitsk@redhat.com>
- <20241209175751.287738-2-mlevitsk@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXbkjTCVJtXdnE3gnPlY1hBlDcEzaAS0r8vyotkXznZnRg+xi423FDBOa52hCOTSkIYSditeKQgP7OObOMl01uK/kr90qDCYb+A2vqH9JshV+t0qrPQ7tjvjzPoegHUxqUXUWPB9oTSOIUOWl2MwuJ8Xy3gC7X3LTTntdJ2j2Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y462j8qQ; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso2875376a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 22:14:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733811280; x=1734416080; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LpAEUHjy0DmUd/FI9eBMVOYYjjorp2l0DbXffRcgJ5E=;
+        b=Y462j8qQlBXq7N6LQIOYblicdfUwWVdQ1LXl3CWvwFP75T80aSAt65FihsUg6oKv2v
+         nBBK8GsG30oBGcfXxZTtrQ/u/qnLwIkyxkcje2EMT8zHnfrEvaMD9sm9eGEk9fSkzQ4x
+         Lw2dBOqRK3Gr2uYRG6BNfkkVRUmYtI2Z4OlMh064295qJg6TaJpY+3Hkfs2TDnW5Qy9f
+         JWlaRTUfXWIc0DKlYKRJRQ7kO4u9ohlQPEYT3MVgd6knd1DGD/Cc9aPk3dwAefbclhIs
+         J/7n36BODFrkyjXI0YR3fqY3R4wRhJiha1DNbM0JOtQjJoCXnNj8TOZBvVSBzzlJvkmH
+         KfDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733811280; x=1734416080;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LpAEUHjy0DmUd/FI9eBMVOYYjjorp2l0DbXffRcgJ5E=;
+        b=TDRglDFU2UNNIuwpeguW4/a5zbkTAFCUvC7tsthU01T5bg+i2CWODrjbEvLF2ZC9FE
+         AfOFx98Yl6TduuK/VIPv46NlaaZLmx4X4T3qAU8Rq+xIDrw1UVeYMz2n2rQpr7jdYa2j
+         KdAzhHXMGzE7o0KRjH+XQ0fp6uVKry5IIlh8J3g0N/AdLL6JYkzsrnZwrY5XsdSMBNP/
+         Tk3iDZGKSOHUeDHHa6kAJ3HbZWhPCmzJaOaXtJC61ZJumjRuCKJKmjvSFNGMkYc+Atlz
+         MBuaKAepdR9vLbx+COyaVGwEI7wQy4diLIu1fhqgeI+RsqAydcQyHzIOOmVItGn1cHoj
+         VuMA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5I7kSdnx2FuXwyi1qStA2ZzLkSJpBSrTLaP7kVC5FpLxZ+Ju5RqjnAmzcqNRF06K/LPV7gYSqD3v2FPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqs8nmtS9Wihcolff9uFd80T9zNs8XH88apTOxXyJh/7+GtFl3
+	l8HPW78blw+sONtx0T1NDYd+xGc14dtp7esFGr1hFnQISvHKRYTB4NG5EnTCqBiSk8m0PBtlV6g
+	=
+X-Gm-Gg: ASbGncsvQl6+nFFif7mK8yW8C1uUuD2KlGquvBXANMI5sx28TRjM69TZvrradPExKbV
+	TuEKXOBgcMxa9tKTbPIQaAP7Ln4IkCAuLD+MORdHuwsOki6pCNSe3Yd1xCg1gGugYaVLUCNXDno
+	7KveRifc3ZsmcBeBXfG8zOvmZVJX9qW2gaSrpNPEjb4Hxo/vqR3pPNKKT+JQTrCGj2zZVxuBs+1
+	vn4qClVoXk3jAMsT2cujT1HGOpdpau3ce7/Dg/cWh9sSoUsRk5z5elp+nHQlgfO
+X-Google-Smtp-Source: AGHT+IEiT5QWdrtrlNLz0y/XTxkbz1jJLbvpAPbUeDX4xD2zua00YW8f3fwqZuwMML6Qot71OABORQ==
+X-Received: by 2002:a17:902:ec8c:b0:216:2bd7:1c27 with SMTP id d9443c01a7336-2162bd71f80mr170672615ad.33.1733811280440;
+        Mon, 09 Dec 2024 22:14:40 -0800 (PST)
+Received: from thinkpad ([120.60.59.140])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2163b1f8697sm37552555ad.261.2024.12.09.22.14.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 22:14:40 -0800 (PST)
+Date: Tue, 10 Dec 2024 11:44:30 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>,
+	Manish Pandey <quic_mapa@quicinc.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com
+Subject: Re: [PATCH 0/3] scsi: ufs-qcom: Enable Dumping of Hibern8, MCQ, and
+ Testbus Registers
+Message-ID: <20241210061430.fmj5d6xyqgtqm3jc@thinkpad>
+References: <20241025055054.23170-1-quic_mapa@quicinc.com>
+ <20241112075000.vausf7ulr2t5svmg@thinkpad>
+ <cb3b0c9c-4589-4b58-90a1-998743803c5a@acm.org>
+ <20241209040355.kc4ab6nfp6syw37q@thinkpad>
+ <3a850d86-5974-4b2d-95be-e79dad33636f@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241209175751.287738-2-mlevitsk@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3a850d86-5974-4b2d-95be-e79dad33636f@acm.org>
 
-On Mon, Dec 09, 2024 at 12:57:50PM -0500, Maxim Levitsky wrote:
-> Commit 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
-> added memory allocation in mana_gd_setup_irqs of 'irqs' but the code
-> doesn't free this temporary array in the success path.
+On Mon, Dec 09, 2024 at 10:35:39AM -0800, Bart Van Assche wrote:
+> On 12/8/24 12:03 PM, Manivannan Sadhasivam wrote:
+> > On Tue, Nov 12, 2024 at 10:10:02AM -0800, Bart Van Assche wrote:
+> > > On 11/11/24 11:50 PM, Manivannan Sadhasivam wrote:
+> > > > On Fri, Oct 25, 2024 at 11:20:51AM +0530, Manish Pandey wrote:
+> > > > > Submitting a series of patches aimed at enhancing the debugging and monitoring capabilities
+> > > > > of the UFS-QCOM driver. These patches introduce new functionalities that will significantly
+> > > > > aid in diagnosing and resolving issues related to hardware and software operations.
+> > > > > 
+> > > > 
+> > > > TBH, the current state of dumping UFSHC registers itself is just annoying as it
+> > > > pollutes the kernel ring buffer. I don't think any peripheral driver in the
+> > > > kernel does this. Please dump only relevant registers, not everything that you
+> > > > feel like dumping.
+> > > 
+> > > I wouldn't mind if the code for dumping  UFSHC registers would be removed.
+> > 
+> > Instead of removing, I'm planning to move the dump to dev_coredump framework.
+> > But should we move all the error prints also? Like all ufshcd_print_*()
+> > functions?
 > 
-> This was caught by kmemleak.
+> Hmm ... we may be better off to check which of these functions can be
+> removed rather than moving all of them to another framework.
 > 
-> Fixes: 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
-> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-> ---
->  drivers/net/ethernet/microsoft/mana/gdma_main.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-> index e97af7ac2bb2..aba188f9f10f 100644
-> --- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-> +++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-> @@ -1375,6 +1375,7 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
->  	gc->max_num_msix = nvec;
->  	gc->num_msix_usable = nvec;
->  	cpus_read_unlock();
-> +	kfree(irqs);
 
-Ther is still memleak in case of jumping to free_irq_vector when
-gc->irq_contexts allocation is failing.
+They are mostly for debugging the errors. I don't see why we should completely
+get rid of them. Moving to devcoredump allows debugging the errors in a
+standardized way and also prevents spamming the kernel ring buffer.
 
-Thanks
->  	return 0;
->  
->  free_irq:
-> -- 
-> 2.26.3
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
