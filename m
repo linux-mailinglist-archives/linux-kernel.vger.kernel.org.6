@@ -1,454 +1,161 @@
-Return-Path: <linux-kernel+bounces-440255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9715B9EBAC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:24:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430A29EBACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:26:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA3028322F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:24:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585CD1888578
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C304F226873;
-	Tue, 10 Dec 2024 20:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ED4226892;
+	Tue, 10 Dec 2024 20:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WTVsmr7M"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9cPzPfu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6C8226860;
-	Tue, 10 Dec 2024 20:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0786C23ED44;
+	Tue, 10 Dec 2024 20:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733862270; cv=none; b=MJOxbvUkpHfpZ74Vmg5gpDa/7GeqHaHHyO0PjAKr7EWWreSaZlet/F+0H3O9MbsaYoWkCK662RP99p9lUdyqaIeAoEwdo/uGNzxHdFvtr0IrUpSo1wx6LCDKykmQmn+dqdKoKRENINjUgO4hwhueurMyLHvTWNKhcDTEcblfRnM=
+	t=1733862389; cv=none; b=GC0d/sr2SHP7aP8tanvs/RFcugOmeGK5T8TQLO+mkkHraSm5KgsGtyORkLTjilgxKrv+RNRCGVFIxaCYGDL7feKfL8BRa1XPXGVzlQi0tpAnvGTnS7YM+YK7g/FLup378pOA5UnrcQ/DWT6LJjtyOV+qbSOmo38sBGV7u8u+Oug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733862270; c=relaxed/simple;
-	bh=Tqy1qmcm+Fw1hPL85YwVGC6Admnl7Ip6PvxqZOOOVG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Md5leQ8+JYTeVOGWnHmh68o6ecundi5zTXR+RTHFDMAiERwE494oYqzq2QESCiwUEcZqSsie0aMI2YcD66eGlF9yA747k47+/P5ChRWm6bBK9Gr3a1IZYaVmZv6IyRGumecGmrKfznHmufKfIbwlT+Am6lF1kdSXRIbmDKGmpr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WTVsmr7M; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADrYsn005957;
-	Tue, 10 Dec 2024 20:24:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=2q8vTx
-	AheHXufmEPBdGNUWKYuQANJMWD5+TNRfKqQPU=; b=WTVsmr7MvAOTRx/sGKglbT
-	O96hFSaycQaOKfXF+thAXy0TvDFWE0hus9Xdr7uTvOkv9xuLm5tGCmdP4Dox+Aaz
-	zx1yzqKtAHM3fTfp3c5WlVH4hgpcK7D/CEzsEyqX//3R/AugrRB6efa6x8oGxVUZ
-	363OHXggD7+aSLf/l5rUw/ws2DnEJo/PrKy/my5TWF6iSZ7u/Cgf6pC6a/7M697b
-	xVMtJYB4pkONVp8isAFCJTx18BlR3MOyozpcEI6Vo6fgqy5XE7NFoEVBn5etz5JQ
-	9GdIiujfTaeSeDBBPgLjpVAZbCX1qQ5TCIEZbMrhUhBky5DC2FHtom2W78ndhlQQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vsa0s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 20:24:09 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BAKEhZ7004397;
-	Tue, 10 Dec 2024 20:24:08 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vsa0q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 20:24:08 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAKGGVi000582;
-	Tue, 10 Dec 2024 20:24:07 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d1pn5by5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 20:24:07 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAKO5Gp56557834
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 20:24:05 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0FA2020049;
-	Tue, 10 Dec 2024 20:24:05 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3EDB220040;
-	Tue, 10 Dec 2024 20:24:02 +0000 (GMT)
-Received: from [9.124.213.130] (unknown [9.124.213.130])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 20:24:02 +0000 (GMT)
-Message-ID: <4f3b49cb-15bc-43ef-b4cb-3af98c8a1c5f@linux.ibm.com>
-Date: Wed, 11 Dec 2024 01:54:00 +0530
+	s=arc-20240116; t=1733862389; c=relaxed/simple;
+	bh=Mr8Qa/vYrrZI/ef3Lx4QEUCO5zvzeKXwDX87KYC582A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F9fvs5/vxRDAsBhnFLZ0StJ5Xo0wsthjQv+JHhU3G6Y76XW7GpRLJgAYDQK+r6sInzeg6IAshOEtKuHUSBOAgsn7WYOuwGdJTVF8mMmG4p2fHl9rVQssNOdEvZ/aANFOHTi8dXoxkFWWJyDgXpURUv/mfxV45gLUhfJaS8Z/xqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9cPzPfu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C29C4CEE3;
+	Tue, 10 Dec 2024 20:26:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733862388;
+	bh=Mr8Qa/vYrrZI/ef3Lx4QEUCO5zvzeKXwDX87KYC582A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=E9cPzPfuL7RlWcx0zJBUDFUu09gSQvZUzF5qETBJw9yn5Ml+lIdMbVZcBXaLcW4tN
+	 4zkiuH/7U3TSZ+4FyXEyH4eyULAGIGobEw0PWSgkGV31vm5o0zJsmyOJFGa9PCGsmI
+	 qMC1AUO7/9IYVLvHoN614iOm9KrWPOn/TJZpIVhdtsKyNo/rIkr+z3HYzvuSJimSdk
+	 +Lf1DRR/YMag/sgXHWLBM4y2XUKRed9vt16Zfhr88aCGvlEr34FAdJh8TZQvZvdx7B
+	 OjuipqDB3VSylCELYBYDPbXUhqLjzv4cwo+yOZuz4MX2IrNhk8Oq/LjEv0jn3YffhT
+	 6BYGvtt5RcvxA==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5ee645cf763so2645057eaf.2;
+        Tue, 10 Dec 2024 12:26:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW8pm1grYE20aA/O1N/mzXIappu5TsG4vWUl0PmOrbbGDF4IBFBGnFn2GnyB/k/Tt3ziS0rJBQZPXQ=@vger.kernel.org, AJvYcCWqHia60c0wNUm8qG86Ad0RYEeDPgmCeG6FTJWtznG93bMhMXg8wp7NHxhXyL+O872f2Wd6M1eemZkgyQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM7akv8d64+lFvdHhngw5LX9Jkc3W0eszq6rf8IrXGWvd+73zf
+	Oun9jMKsUw0O4gXjj8ByTdFRmY9Ta/sUZ89NxOO7WIxqUJl+jPA+OY6ZprDjYdsY3ym4Ze8hZN7
+	tW8N5z9kTJ2VWbXx920VRdWg0BJI=
+X-Google-Smtp-Source: AGHT+IGAyRNiwYKTrTG0yZbrE3WcttNIKtNYMbg2SWTIT69NpV3P18Z9BP+LFfelVuGw/M81CP1lh6zjOKjDWKu5KO0=
+X-Received: by 2002:a4a:ee98:0:b0:5f1:e293:e102 with SMTP id
+ 006d021491bc7-5f2da12c63amr160202eaf.8.1733862387732; Tue, 10 Dec 2024
+ 12:26:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] sched/fair: introduce new scheduler group type
- group_parked
-To: Tobias Huschle <huschle@linux.ibm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, linux-s390@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20241204112149.25872-1-huschle@linux.ibm.com>
- <543d376c-85a7-4628-a38e-52bc117258a5@linux.ibm.com>
- <27c4288d-5617-4195-8424-e6e346acefd0@linux.ibm.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <27c4288d-5617-4195-8424-e6e346acefd0@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZUN6nJxWn9e1I32cRwgH_nzVEJyf0_NC
-X-Proofpoint-ORIG-GUID: Y-PYyUnFS4cURr2wYDEHbSXen2MFm9oc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100144
+References: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com> <20241204140828.11699-4-patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <20241204140828.11699-4-patryk.wlazlyn@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Dec 2024 21:26:16 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hL0QOT17DnsUKONHVy1+Yy84soPWU74gHAxjsozerPgg@mail.gmail.com>
+Message-ID: <CAJZ5v0hL0QOT17DnsUKONHVy1+Yy84soPWU74gHAxjsozerPgg@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] intel_idle: Provide the default enter_dead() handler
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, peterz@infradead.org, dave.hansen@linux.intel.com, 
+	gautham.shenoy@amd.com, tglx@linutronix.de, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 4, 2024 at 3:08=E2=80=AFPM Patryk Wlazlyn
+<patryk.wlazlyn@linux.intel.com> wrote:
+>
+> Recent Intel platforms require idle driver to provide information about
+> the MWAIT hint used to enter the deepest idle state in the play_dead
+> code.
+>
+> Provide the default enter_dead() handler for all of the platforms and
+> allow overwriting with a custom handler for each platform if needed.
 
+My changelog for this patch:
 
-On 12/9/24 13:35, Tobias Huschle wrote:
-> 
-[...]
->> So I gave it a try with using a debugfs based hint to say which CPUs 
->> are parked.
->> It is a hack to try it out. patch is below so one could try something 
->> similar is their archs
->> and see if it help if they have a use case.
->>
->> Notes:
->> 1. Arch shouldn't set cpu_parked for all CPUs at boot. It causes panic.
->> 2. Workload gets unpacked to all CPUs when changing from 40 CPUs to 80 
->> CPUs, but
->>     doesn't get packed when changing the from 80 to 40 CPUs.
-> 
-> With stress-ng -l 100 this can happen, I tested with stress-ng -l 50 and 
-> that worked well in all cases. As mentioned above, the -l 100 case would 
-> need changes to handle the no-hz scenario. I have a patch for that which 
-> works, but it is a bit hacky.
-> If this also happens with non-100% stressors on your end, something 
-> needs ot be fixed code-wise.
-> 
+"A subsequent change is going to make native_play_dead() rely on the
+idle driver to put CPUs going offline into appropriate idle states.
 
-It was happening with 100% stress-ng case. I was wondering since i dont have no-hz full enabled.
-I found out the reason why and one way to do is to trigger active load balance if there are any parked cpus
-in the group. That probably needs a IS_ENABLED check not to hurt the regular case.
+For this reason, provide the default :enter_dead() handler for all of
+the idle states on all platforms supported by intel_idle with an
+option to override it with a custom handler if needed."
 
-Also, I gave a try to include arch_cpu_parked in idle_cpu and friends. It seems to working for me.
-I will attach the code below. It simplifies code quite a bit.
+> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+> ---
+>  drivers/idle/intel_idle.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+> index ac4d8faa3886..c6874a6dbe95 100644
+> --- a/drivers/idle/intel_idle.c
+> +++ b/drivers/idle/intel_idle.c
+> @@ -56,6 +56,7 @@
+>  #include <asm/mwait.h>
+>  #include <asm/spec-ctrl.h>
+>  #include <asm/fpu/api.h>
+> +#include <asm/smp.h>
+>
+>  #define INTEL_IDLE_VERSION "0.5.1"
+>
+> @@ -227,6 +228,16 @@ static __cpuidle int intel_idle_s2idle(struct cpuidl=
+e_device *dev,
+>         return 0;
+>  }
+>
+> +static __cpuidle void intel_idle_enter_dead(struct cpuidle_device *dev,
+> +                                           int index)
+> +{
+> +       struct cpuidle_driver *drv =3D cpuidle_get_cpu_driver(dev);
+> +       struct cpuidle_state *state =3D &drv->states[index];
+> +       unsigned long eax =3D flg2MWAIT(state->flags);
+> +
+> +       mwait_play_dead(eax);
+> +}
+> +
+>  /*
+>   * States are indexed by the cstate number,
+>   * which is also the index into the MWAIT hint array.
+> @@ -1798,6 +1809,7 @@ static void __init intel_idle_init_cstates_acpi(str=
+uct cpuidle_driver *drv)
+>                         state->flags |=3D CPUIDLE_FLAG_TIMER_STOP;
+>
+>                 state->enter =3D intel_idle;
+> +               state->enter_dead =3D intel_idle_enter_dead;
+>                 state->enter_s2idle =3D intel_idle_s2idle;
+>         }
+>  }
+> @@ -2143,10 +2155,12 @@ static void __init intel_idle_init_cstates_icpu(s=
+truct cpuidle_driver *drv)
+>                 if (intel_idle_max_cstate_reached(cstate))
+>                         break;
+>
+> -               if (!cpuidle_state_table[cstate].enter &&
+> -                   !cpuidle_state_table[cstate].enter_s2idle)
+> +               if (!cpuidle_state_table[cstate].enter)
 
-Also, I am thinking to rely on active balance codepath more than the regular pull model.
-so this would be akin to asym packing codepaths. The below code does that too.
+I don't think that the above change belongs to this patch.  If I'm
+mistaken, it should be mentioned in the changelog and the reason for
+making it should be explained.
 
-Feel free to take the bits as necessary if it works.
-
----
-  include/linux/sched/topology.h | 20 ++++++++++
-  kernel/sched/core.c            |  6 ++-
-  kernel/sched/fair.c            | 72 ++++++++++++++++++++++++++++++++--
-  kernel/sched/syscalls.c        |  3 ++
-  4 files changed, 97 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 4237daa5ac7a..cfe3c59bc329 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -270,6 +270,26 @@ unsigned long arch_scale_cpu_capacity(int cpu)
-  }
-  #endif
-  
-+#ifndef arch_cpu_parked
-+/**
-+ * arch_cpu_parked - Check if a given CPU is currently parked.
-+ *
-+ * A parked CPU cannot run any kind of workload since underlying
-+ * physical CPU should not be used at the moment .
-+ *
-+ * @cpu: the CPU in question.
-+ *
-+ * By default assume CPU is not parked
-+ *
-+ * Return: Parked state of CPU
-+ */
-+static __always_inline
-+unsigned long arch_cpu_parked(int cpu)
-+{
-+	return false;
-+}
-+#endif
-+
-  #ifndef arch_scale_hw_pressure
-  static __always_inline
-  unsigned long arch_scale_hw_pressure(int cpu)
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5fbec67d48b2..78ca95aad66b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2437,7 +2437,7 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
-  
-  	/* Non kernel threads are not allowed during either online or offline. */
-  	if (!(p->flags & PF_KTHREAD))
--		return cpu_active(cpu);
-+		return !arch_cpu_parked(cpu) && cpu_active(cpu);
-  
-  	/* KTHREAD_IS_PER_CPU is always allowed. */
-  	if (kthread_is_per_cpu(p))
-@@ -2447,6 +2447,10 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
-  	if (cpu_dying(cpu))
-  		return false;
-  
-+	/* CPU should be avoided at the moment */
-+	if (arch_cpu_parked(cpu))
-+		return false;
-+
-  	/* But are allowed during online. */
-  	return cpu_online(cpu);
-  }
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d5127d9beaea..a6216f63b756 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6898,6 +6898,9 @@ static int sched_idle_rq(struct rq *rq)
-  #ifdef CONFIG_SMP
-  static int sched_idle_cpu(int cpu)
-  {
-+	if (arch_cpu_parked(cpu))
-+		return 0;
-+
-  	return sched_idle_rq(cpu_rq(cpu));
-  }
-  #endif
-@@ -7415,6 +7418,9 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
-  {
-  	int target = nr_cpumask_bits;
-  
-+	if (arch_cpu_parked(target))
-+		return prev_cpu;
-+
-  	if (sched_feat(WA_IDLE))
-  		target = wake_affine_idle(this_cpu, prev_cpu, sync);
-  
-@@ -9198,7 +9204,13 @@ enum group_type {
-  	 * The CPU is overloaded and can't provide expected CPU cycles to all
-  	 * tasks.
-  	 */
--	group_overloaded
-+	group_overloaded,
-+	/*
-+	 * The CPU should be avoided as it can't provide expected CPU cycles
-+	 * even for small amounts of workload.
-+	 */
-+	group_parked
-+
-  };
-  
-  enum migration_type {
-@@ -9880,6 +9892,9 @@ struct sg_lb_stats {
-  	unsigned int nr_numa_running;
-  	unsigned int nr_preferred_running;
-  #endif
-+	unsigned int sum_nr_parked;
-+	unsigned int parked_cpus;
-+
-  };
-  
-  /*
-@@ -10127,6 +10142,9 @@ group_type group_classify(unsigned int imbalance_pct,
-  			  struct sched_group *group,
-  			  struct sg_lb_stats *sgs)
-  {
-+	if (sgs->parked_cpus)
-+		return group_parked;
-+
-  	if (group_is_overloaded(imbalance_pct, sgs))
-  		return group_overloaded;
-  
-@@ -10328,6 +10346,11 @@ static inline void update_sg_lb_stats(struct lb_env *env,
-  		sgs->nr_numa_running += rq->nr_numa_running;
-  		sgs->nr_preferred_running += rq->nr_preferred_running;
-  #endif
-+		if (rq->cfs.h_nr_running) {
-+			sgs->parked_cpus += arch_cpu_parked(i);
-+			sgs->sum_nr_parked += arch_cpu_parked(i) * rq->cfs.h_nr_running;
-+		}
-+
-  		/*
-  		 * No need to call idle_cpu() if nr_running is not 0
-  		 */
-@@ -10422,6 +10445,8 @@ static bool update_sd_pick_busiest(struct lb_env *env,
-  	 */
-  
-  	switch (sgs->group_type) {
-+	case group_parked:
-+		return sgs->sum_nr_parked > busiest->sum_nr_parked;
-  	case group_overloaded:
-  		/* Select the overloaded group with highest avg_load. */
-  		return sgs->avg_load > busiest->avg_load;
-@@ -10633,6 +10658,8 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
-  		nr_running = rq->nr_running - local;
-  		sgs->sum_nr_running += nr_running;
-  
-+		sgs->parked_cpus += arch_cpu_parked(i);
-+		sgs->sum_nr_parked += arch_cpu_parked(i) * rq->cfs.h_nr_running;
-  		/*
-  		 * No need to call idle_cpu_without() if nr_running is not 0
-  		 */
-@@ -10680,6 +10707,8 @@ static bool update_pick_idlest(struct sched_group *idlest,
-  	 */
-  
-  	switch (sgs->group_type) {
-+	case group_parked:
-+		return false;
-  	case group_overloaded:
-  	case group_fully_busy:
-  		/* Select the group with lowest avg_load. */
-@@ -10730,7 +10759,7 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
-  	unsigned long imbalance;
-  	struct sg_lb_stats idlest_sgs = {
-  			.avg_load = UINT_MAX,
--			.group_type = group_overloaded,
-+			.group_type = group_parked,
-  	};
-  
-  	do {
-@@ -10788,6 +10817,8 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
-  		return idlest;
-  
-  	switch (local_sgs.group_type) {
-+	case group_parked:
-+		return idlest;
-  	case group_overloaded:
-  	case group_fully_busy:
-  
-@@ -11039,6 +11070,12 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
-  	local = &sds->local_stat;
-  	busiest = &sds->busiest_stat;
-  
-+	if (busiest->group_type == group_parked) {
-+		env->migration_type = migrate_task;
-+		env->imbalance = busiest->sum_nr_parked;
-+		return;
-+	}
-+
-  	if (busiest->group_type == group_misfit_task) {
-  		if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
-  			/* Set imbalance to allow misfit tasks to be balanced. */
-@@ -11252,6 +11289,13 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
-  		goto out_balanced;
-  
-  	busiest = &sds.busiest_stat;
-+	local = &sds.local_stat;
-+
-+	if (local->group_type == group_parked)
-+		goto out_balanced;
-+
-+	if (busiest->group_type == group_parked)
-+		goto force_balance;
-  
-  	/* Misfit tasks should be dealt with regardless of the avg load */
-  	if (busiest->group_type == group_misfit_task)
-@@ -11273,7 +11317,6 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
-  	if (busiest->group_type == group_imbalanced)
-  		goto force_balance;
-  
--	local = &sds.local_stat;
-  	/*
-  	 * If the local group is busier than the selected busiest group
-  	 * don't try and pull any tasks.
-@@ -11386,6 +11429,9 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
-  		enum fbq_type rt;
-  
-  		rq = cpu_rq(i);
-+		if (arch_cpu_parked(i) && rq->cfs.h_nr_running)
-+			return rq;
-+
-  		rt = fbq_classify_rq(rq);
-  
-  		/*
-@@ -11556,6 +11602,9 @@ static int need_active_balance(struct lb_env *env)
-  {
-  	struct sched_domain *sd = env->sd;
-  
-+	if (arch_cpu_parked(env->src_cpu))
-+		return 1;
-+
-  	if (asym_active_balance(env))
-  		return 1;
-  
-@@ -11588,6 +11637,20 @@ static int should_we_balance(struct lb_env *env)
-  	struct cpumask *swb_cpus = this_cpu_cpumask_var_ptr(should_we_balance_tmpmask);
-  	struct sched_group *sg = env->sd->groups;
-  	int cpu, idle_smt = -1;
-+	int cpus_parked = 0;
-+
-+	if (arch_cpu_parked(env->dst_cpu))
-+		return 0;
-+
-+	for_each_cpu(cpu, sched_domain_span(env->sd)) {
-+		if (arch_cpu_parked(cpu)) {
-+			cpus_parked ++;
-+		}
-+	}
-+
-+	if (cpus_parked && !arch_cpu_parked(env->dst_cpu)) {
-+		return 1;
-+	}
-  
-  	/*
-  	 * Ensure the balancing environment is consistent; can happen
-@@ -12708,6 +12771,9 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
-  
-  	update_misfit_status(NULL, this_rq);
-  
-+	if (arch_cpu_parked(this_cpu))
-+		return 0;
-+
-  	/*
-  	 * There is a task waiting to run. No need to search for one.
-  	 * Return 0; the task will be enqueued when switching to idle.
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index ff0e5ab4e37c..d408d87da563 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -203,6 +203,9 @@ int idle_cpu(int cpu)
-  {
-  	struct rq *rq = cpu_rq(cpu);
-  
-+	if (arch_cpu_parked(cpu))
-+		return 0;
-+
-  	if (rq->curr != rq->idle)
-  		return 0;
-  
--- 
-2.39.3
-
-
-
->>
-
->>
->> Set the hint as 80 initially and set to 40 midway -- *not working*
->> Average:      38   95.27    0.00    0.00    0.00    0.00    0.00 
->> 0.00    0.00    0.00    4.73
->> Average:      39   95.27    0.00    0.00    0.00    0.00    0.00 
->> 0.00    0.00    0.00    4.73
->> Average:      40   95.24    0.00    0.00    0.00    0.00    0.00 
->> 0.00    0.00    0.00    4.76
->> Average:      41   95.25    0.00    0.00    0.00    0.00    0.00 
->> 0.00    0.00    0.00    4.75
-> 
-
-Set the hint as 80 initially and set to 40 midway.
-
-Average:      38   92.11    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    7.89
-Average:      39   92.13    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    7.87
-Average:      40   53.35    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   46.65
-Average:      41   53.39    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   46.61
+>                         break;
+>
+> +               if (!cpuidle_state_table[cstate].enter_dead)
+> +                       cpuidle_state_table[cstate].enter_dead =3D intel_=
+idle_enter_dead;
+> +
+>                 /* If marked as unusable, skip this state. */
+>                 if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUS=
+ABLE) {
+>                         pr_debug("state %s is disabled\n",
+> --
 
