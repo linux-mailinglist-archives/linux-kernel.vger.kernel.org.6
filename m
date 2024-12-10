@@ -1,421 +1,623 @@
-Return-Path: <linux-kernel+bounces-439394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E17F9EAEAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:53:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7FD6161C78
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:53:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F403210F49;
-	Tue, 10 Dec 2024 10:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Rmj4ptRD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9589EAEAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:53:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136AE2080FC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733827714; cv=none; b=NFyxN1CqR04RjWJe96UPh0uSGN7N3SBlQnS3oFsTT4Tl1yBs2NDeMB+ZhuokPJolh8eqEovQTapJASQwqSlvJdUBEzSxy9fAen/TOcO1y99WTmnTgJS1iGtm+HZHOjeYbgOrafCWjqm95awpN3sBJsChMsRD0kbtx5OzZAxigSs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733827714; c=relaxed/simple;
-	bh=udFpJUt2iNXFam6frSHYMGUmPDtnLrv0YuWcLc0RN2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WN+3XAh9YNv8NC3RLHqhC/SoIEXMdXZI02cMZoBp/I2s5ZjAELMve7StLtIrTtM3N6XB7dtEc5zpV1xvLmpJhd6hElIwJ6NMg+hqhcWuJsoik5wcWTt7A2KPQQZt+eQGeWO4UG2Gm4f8RwL1jN9cJ1F+YRKwS5cMonBgZZmfsrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Rmj4ptRD; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E420C40E0289;
-	Tue, 10 Dec 2024 10:48:29 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8SNOvJNl9D2W; Tue, 10 Dec 2024 10:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733827705; bh=rp/HPwcOG6SHLDrX7OsCDAddOzEAQgCXp09fzFS8OpQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rmj4ptRDqAAjHg3x2s5ea2gq/2aXtarJpDvj6V9NrmVIowRztDrUJfDtO/5VF1U4a
-	 /fa0fq0HLLaXrnXHji2Jjs2/tHrNrK8/t1P6imruTElsA3TYgiQhzNbT21PeEWHu5K
-	 fBqG3E7fAjMf7PJ48VSGt5B8SD2AlR6kHWnrwvbaBgay/ETv9ifMQ7wvBIM0MosGA8
-	 FGn1ZB7Pd1n4PO9cOOG82DNRVToEpOglAbQNADE6COSGt0wZfQ/JB21kgVbiueXYiA
-	 fOV364Oc85gEHZtTce4Ri8kmomna28/fYvcputHOl6EaLfNddy+OazdrON5KmBbwYo
-	 46Hkf/PBUh7MY3p2McpvClmRhbv9/FOv/2I5rDANCoaHL9ZuyAeZzF3kczYRpV0ACQ
-	 Q6TbXZ9//UD/OGiiGdJAxzVjGwYDv78vNVlSwUggwmtMgNmsK3QBBpLzvs5FAHkfhD
-	 QroSo85rLca9XIamGN9uNO0ZPe7JY7Ic1qDEhBjgphBvwErQKar6f31cNChF/zDNI8
-	 IPw/+mgo/aH5LDb+sd8ZzbDCKulAKEW97pWFUhnCe1qKtzWSvycVqSw2aufJpfIBOY
-	 kqpzmE0mfJ+jQF5SlXApMDPeZSIZPzpYR6gYo9GZTa+lMaU+Q+oSToISBfurjELtqp
-	 NNUR7ZvVgFAH+1LePS2zw1+Y=
-Received: from zn.tnic (p200300Ea971f9307329C23FFFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189F528A36D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:53:15 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7541E230D30;
+	Tue, 10 Dec 2024 10:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lgLH+rwI"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 93F5B40E0277;
-	Tue, 10 Dec 2024 10:48:15 +0000 (UTC)
-Date: Tue, 10 Dec 2024 11:48:10 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH v6 6/8] x86/sev: Treat the contiguous RMP table as a
- single RMP segment
-Message-ID: <20241210104810.GDZ1gcapB4bTh2Nf-o@fat_crate.local>
-References: <cover.1733172653.git.thomas.lendacky@amd.com>
- <8c40fbc9c5217f0d79b37cf861eff03ab0330bef.1733172653.git.thomas.lendacky@amd.com>
- <20241209194320.GCZ1dIWDMPppdXgzxJ@fat_crate.local>
- <20241210102835.GCZ1gX04evsuTcS01d@fat_crate.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265C6215764
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733827703; cv=none; b=ZHY932WAQ2EKr9D99H2oYfabLc6KqbgWnLe8XZNbucMmGEdj75QfU8NxVhDRkEIHeR4ib5i1zQtSNIEjxuuhbbkDxADaIXc2pKgu6qe4UUTqpQTdKpZvKRWVzOt9ffTLWRdMHEbgefd7e/JQ/CtvNhkx7jjiBBCwThA+2A5sSgk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733827703; c=relaxed/simple;
+	bh=+0ys5UgmQijNoQjl9/lX9fbCGBmLT0hizMSuMKyBuqk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=X3JViBNhxRotZaIe+q5xQGZAj0OPEX3TmTFDhS1XRQkyeBTMfD53z3Q9OQKQx/XXIx4JspTblyTxQiitiP5EswztcFxuhxEXhaa/FH6RJqF+Cgo2x9eGC9zVWJvbuNJbWrLzo1tfXD9Z3RhF4GXl+P8yxL7yrW/HXimsjpEihFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lgLH+rwI; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d8f65ef5abso23132096d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:48:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733827700; x=1734432500; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BWiBzSR7Ex3B8p6+KWz9iImmzK3cw0twXWBORsTvuDo=;
+        b=lgLH+rwI/SVUNIjp8R5r7N6iP0oOkjYakZF7mjvNLSRUIbo8hQXNlFdv2ybFvZfO2B
+         p5LIHmxmDSwT8MHCMO51wf38qNW1jTSaZpJKyHpNMt05OB44ERUGAZyJa5oAC3Jf3/F6
+         9Hyq6lx6PpSQjeWmU0TcfRnsnYJ9huP8Tsiwo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733827700; x=1734432500;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BWiBzSR7Ex3B8p6+KWz9iImmzK3cw0twXWBORsTvuDo=;
+        b=k0SmNHVUG+DJOCRjN7B6TK2tEGHOfoMDPbMINZM0DK8K5UaWt0leXim6O+TZEzmTKR
+         evn2mWblfletJdzo7OZLE2wwBYUcKLeT2Hpfl4dnsq4jqTJh6K08AvE3UB+lN1eemd7u
+         SOEayWxbDYRQZLAJiPzaluatI+Wk3kH4yOiTzOXcD486mMVfqKtk9Ml4EA/ChSLIX85u
+         pQjMQkeepWtcjR/weyQBGV016GOJ1+RMu1inPbUYtn9GnKGH/3+gxcpxFcm3gDSTbzLq
+         YtyrD5s+z56GJIFRvq7WrgPTVLSofpX31ufay/sJC6ooMLy/BmmKAYOVe8SUuYjF9LGG
+         j4EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjCD8qqWudxT0MCay5cSRtUQVpLDVa8ha3YZlOjeDKrtwtehMm7rdc1gXIU80TwyWkPVAc1fhEGcRmn48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjdAOsvQPocJJ1/j+BUkQfYFhRkJr24HxeA18trjo5Vy5IP1AF
+	mZ9MNpVKoCPMruubmKhl9PE6n4EhnKABATrI2trKyFyWm9DJdjhPNaW4JVjpe6mDmW/I6i9uUww
+	=
+X-Gm-Gg: ASbGncuyy/+GyUDDWHHmC1GHL/2IKqHbC+FRB+kLAHzfF3A87M9Uw+wArU8YF4WEee8
+	td+tbWdMcgzaf2q+A2yQTipSIFpe0Pz9Bf/pQTD//hSpFe86M1a5xvGbW2dmlxTMTS3V+BrmSQm
+	Mz/UPudSn3x2sZYO0zW5PlJirDBxs/Aw3UsJwrHOMEh/FFXLJf2nAKNKdas/dnvJMUSkm0JFSVt
+	3p/H9kahGf5Uddl/SDTTCflIz8ZEHEsaz1+OlZE/6xqMjY+Flg9D/rnMF9Z2BAAAYG+xllTQjhW
+	4Cl9zkdvHc268XBUe+II2+/UVz/7
+X-Google-Smtp-Source: AGHT+IESk67BDUndNd+G09mFCmaSmMFk4OCrEAuymf7oV6rqfgOhRr3z3pSuopcNXQ2WJ0/jRhcNJg==
+X-Received: by 2002:ad4:5b88:0:b0:6d8:a1b4:b589 with SMTP id 6a1803df08f44-6d91e4688a0mr58024666d6.49.1733827699767;
+        Tue, 10 Dec 2024 02:48:19 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da66db7csm58498926d6.23.2024.12.10.02.48.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 02:48:19 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 10 Dec 2024 10:48:14 +0000
+Subject: [PATCH] media: uvcvideo: Add quirk for Actions UVC05
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241210102835.GCZ1gX04evsuTcS01d@fat_crate.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241210-uvc-hdmi-suspend-v1-1-01f5dec023ea@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAG0cWGcC/x3MQQqAIBBA0avErBtQqYiuEi1Sp5xFFg5FIN49a
+ fkW/2cQSkwCU5Mh0cPCZ6zQbQMurHEnZF8NRplOG63wfhwGfzDKLRdFj9auWvWjG1S/Qc2uRBu
+ //3JeSvkACfam8GIAAAA=
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-Final version I have now:
+Actions UVC05 is a HDMI to USB dongle that implements the UVC protocol.
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Date: Mon, 2 Dec 2024 14:50:51 -0600
-Subject: [PATCH] x86/sev: Treat the contiguous RMP table as a single RMP segment
+When the device suspends, its firmware seems to enter a weird mode when it
+does not produce more frames.
 
-In preparation for support of a segmented RMP table, treat the contiguous
-RMP table as a segmented RMP table with a single segment covering all
-of memory. By treating a contiguous RMP table as a single segment, much
-of the code that initializes and accesses the RMP can be re-used.
+Add the device to the quirk list to disable autosuspend.
 
-Segmented RMP tables can have up to 512 segment entries. Each segment
-will have metadata associated with it to identify the segment location,
-the segment size, etc. The segment data and the physical address are used
-to determine the index of the segment within the table and then the RMP
-entry within the segment. For an actual segmented RMP table environment,
-much of the segment information will come from a configuration MSR. For
-the contiguous RMP, though, much of the information will be statically
-defined.
+Bus 001 Device 007: ID 1de1:f105 Actions Microelectronics Co. Display
+ capture-UVC05
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               2.00
+  bDeviceClass          239 Miscellaneous Device
+  bDeviceSubClass         2 [unknown]
+  bDeviceProtocol         1 Interface Association
+  bMaxPacketSize0        64
+  idVendor           0x1de1 Actions Microelectronics Co.
+  idProduct          0xf105 Display capture-UVC05
+  bcdDevice            4.09
+  iManufacturer           1 Actions Micro
+  iProduct                2 Display capture-UVC05
+  iSerial                 3 -1005308387
+  bNumConfigurations      1
 
-  [ bp: Touchups, explain array_index_nospec() usage. ]
-
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
-Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Link: https://lore.kernel.org/r/8c40fbc9c5217f0d79b37cf861eff03ab0330bef.1733172653.git.thomas.lendacky@amd.com
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- arch/x86/virt/svm/sev.c | 199 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 180 insertions(+), 19 deletions(-)
+Bus 001 Device 007: ID 1de1:f105 Actions Microelectronics Co. Display capture-UVC05
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               2.00
+  bDeviceClass          239 Miscellaneous Device
+  bDeviceSubClass         2 [unknown]
+  bDeviceProtocol         1 Interface Association
+  bMaxPacketSize0        64
+  idVendor           0x1de1 Actions Microelectronics Co.
+  idProduct          0xf105 Display capture-UVC05
+  bcdDevice            4.09
+  iManufacturer           1 Actions Micro
+  iProduct                2 Display capture-UVC05
+  iSerial                 3 -1005308387
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength       0x028a
+    bNumInterfaces          4
+    bConfigurationValue     1
+    iConfiguration          4 Video
+    bmAttributes         0xc0
+      Self Powered
+    MaxPower                2mA
+    Interface Association:
+      bLength                 8
+      bDescriptorType        11
+      bFirstInterface         0
+      bInterfaceCount         2
+      bFunctionClass         14 Video
+      bFunctionSubClass       3 Video Interface Collection
+      bFunctionProtocol       0 
+      iFunction               5 Display capture-UVC05
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           0
+      bInterfaceClass        14 Video
+      bInterfaceSubClass      1 Video Control
+      bInterfaceProtocol      0 
+      iInterface              5 Display capture-UVC05
+      VideoControl Interface Descriptor:
+        bLength                13
+        bDescriptorType        36
+        bDescriptorSubtype      1 (HEADER)
+        bcdUVC               1.00
+        wTotalLength       0x0033
+        dwClockFrequency       48.000000MHz
+        bInCollection           1
+        baInterfaceNr( 0)       1
+      VideoControl Interface Descriptor:
+        bLength                18
+        bDescriptorType        36
+        bDescriptorSubtype      2 (INPUT_TERMINAL)
+        bTerminalID             1
+        wTerminalType      0x0201 Camera Sensor
+        bAssocTerminal          0
+        iTerminal               0 
+        wObjectiveFocalLengthMin      0
+        wObjectiveFocalLengthMax      0
+        wOcularFocalLength            0
+        bControlSize                  3
+        bmControls           0x00000002
+          Auto-Exposure Mode
+      VideoControl Interface Descriptor:
+        bLength                11
+        bDescriptorType        36
+        bDescriptorSubtype      5 (PROCESSING_UNIT)
+      Warning: Descriptor too short
+        bUnitID                 2
+        bSourceID               1
+        wMaxMultiplier      16384
+        bControlSize            2
+        bmControls     0x00000000
+        iProcessing             0 
+        bmVideoStandards     0x09
+          None
+          SECAM - 625/50
+      VideoControl Interface Descriptor:
+        bLength                 9
+        bDescriptorType        36
+        bDescriptorSubtype      3 (OUTPUT_TERMINAL)
+        bTerminalID             3
+        wTerminalType      0x0101 USB Streaming
+        bAssocTerminal          0
+        bSourceID               2
+        iTerminal               0 
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        1
+      bAlternateSetting       0
+      bNumEndpoints           1
+      bInterfaceClass        14 Video
+      bInterfaceSubClass      2 Video Streaming
+      bInterfaceProtocol      0 
+      iInterface              6 Video Streaming
+      VideoStreaming Interface Descriptor:
+        bLength                            14
+        bDescriptorType                    36
+        bDescriptorSubtype                  1 (INPUT_HEADER)
+        bNumFormats                         1
+        wTotalLength                   0x01c1
+        bEndpointAddress                 0x81  EP 1 IN
+        bmInfo                              0
+        bTerminalLink                       3
+        bStillCaptureMethod                 0
+        bTriggerSupport                     0
+        bTriggerUsage                       0
+        bControlSize                        1
+        bmaControls( 0)                     0
+      VideoStreaming Interface Descriptor:
+        bLength                            11
+        bDescriptorType                    36
+        bDescriptorSubtype                  6 (FORMAT_MJPEG)
+        bFormatIndex                        1
+        bNumFrameDescriptors               11
+        bFlags                              0
+          Fixed-size samples: No
+        bDefaultFrameIndex                  2
+        bAspectRatioX                       0
+        bAspectRatioY                       0
+        bmInterlaceFlags                 0x00
+          Interlaced stream or variable: No
+          Fields per frame: 1 fields
+          Field 1 first: No
+          Field pattern: Field 1 only
+        bCopyProtect                        0
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         1
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                           1920
+        wHeight                          1080
+        dwMinBitRate                 31104000
+        dwMaxBitRate                1990656000
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         333333
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         2
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                           1920
+        wHeight                          1080
+        dwMinBitRate                 31104000
+        dwMaxBitRate                1990656000
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         4
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                           1360
+        wHeight                           768
+        dwMinBitRate                 15667200
+        dwMaxBitRate                 62668800
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         5
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                           1280
+        wHeight                          1024
+        dwMinBitRate                 19660800
+        dwMaxBitRate                 78643200
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         6
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                           1280
+        wHeight                           960
+        dwMinBitRate                 18432000
+        dwMaxBitRate                 73728000
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         7
+        bmCapabilities                   0x00
+          Still image unsupported
+        wWidth                           1280
+        wHeight                           720
+        dwMinBitRate                 13824000
+        dwMaxBitRate                 55296000
+        dwMaxVideoFrameBufferSize     1843200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         8
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                           1024
+        wHeight                           768
+        dwMinBitRate                 11796480
+        dwMaxBitRate                 47185920
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                         9
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                            800
+        wHeight                           600
+        dwMinBitRate                  7200000
+        dwMaxBitRate                 28800000
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                        10
+        bmCapabilities                   0x02
+          Still image unsupported
+          Fixed frame-rate
+        wWidth                            720
+        wHeight                           576
+        dwMinBitRate                  6220800
+        dwMaxBitRate                 24883200
+        dwMaxVideoFrameBufferSize     4147200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                        11
+        bmCapabilities                   0x00
+          Still image unsupported
+        wWidth                            720
+        wHeight                           480
+        dwMinBitRate                  5184000
+        dwMaxBitRate                 20736000
+        dwMaxVideoFrameBufferSize     1843200
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                            38
+        bDescriptorType                    36
+        bDescriptorSubtype                  7 (FRAME_MJPEG)
+        bFrameIndex                        12
+        bmCapabilities                   0x00
+          Still image unsupported
+        wWidth                            640
+        wHeight                           480
+        dwMinBitRate                  4608000
+        dwMaxBitRate                 18432000
+        dwMaxVideoFrameBufferSize      614400
+        dwDefaultFrameInterval         166666
+        bFrameIntervalType                  3
+        dwFrameInterval( 0)            166666
+        dwFrameInterval( 1)            333333
+        dwFrameInterval( 2)            666666
+      VideoStreaming Interface Descriptor:
+        bLength                             6
+        bDescriptorType                    36
+        bDescriptorSubtype                 13 (COLORFORMAT)
+        bColorPrimaries                     1 (BT.709,sRGB)
+        bTransferCharacteristics            1 (BT.709)
+        bMatrixCoefficients                 4 (SMPTE 170M (BT.601))
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+    Interface Association:
+      bLength                 8
+      bDescriptorType        11
+      bFirstInterface         2
+      bInterfaceCount         2
+      bFunctionClass          1 Audio
+      bFunctionSubClass       2 Streaming
+      bFunctionProtocol       0 
+      iFunction               0 
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        2
+      bAlternateSetting       0
+      bNumEndpoints           0
+      bInterfaceClass         1 Audio
+      bInterfaceSubClass      1 Control Device
+      bInterfaceProtocol      0 
+      iInterface              0 
+      AudioControl Interface Descriptor:
+        bLength                 9
+        bDescriptorType        36
+        bDescriptorSubtype      1 (HEADER)
+        bcdADC               1.00
+        wTotalLength       0x0027
+        bInCollection           1
+        baInterfaceNr(0)        3
+      AudioControl Interface Descriptor:
+        bLength                12
+        bDescriptorType        36
+        bDescriptorSubtype      2 (INPUT_TERMINAL)
+        bTerminalID             1
+        wTerminalType      0x0201 Microphone
+        bAssocTerminal          0
+        bNrChannels             1
+        wChannelConfig     0x0000
+        iChannelNames           0 
+        iTerminal               0 
+      AudioControl Interface Descriptor:
+        bLength                 9
+        bDescriptorType        36
+        bDescriptorSubtype      3 (OUTPUT_TERMINAL)
+        bTerminalID             2
+        wTerminalType      0x0101 USB Streaming
+        bAssocTerminal          0
+        bSourceID               3
+        iTerminal               0 
+      AudioControl Interface Descriptor:
+        bLength                 9
+        bDescriptorType        36
+        bDescriptorSubtype      6 (FEATURE_UNIT)
+        bUnitID                 3
+        bSourceID               1
+        bControlSize            1
+        bmaControls(0)       0x03
+          Mute Control
+          Volume Control
+        bmaControls(1)       0x00
+        iFeature                0 
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        3
+      bAlternateSetting       0
+      bNumEndpoints           0
+      bInterfaceClass         1 Audio
+      bInterfaceSubClass      2 Streaming
+      bInterfaceProtocol      0 
+      iInterface              0 
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        3
+      bAlternateSetting       1
+      bNumEndpoints           1
+      bInterfaceClass         1 Audio
+      bInterfaceSubClass      2 Streaming
+      bInterfaceProtocol      0 
+      iInterface              0 
+      AudioStreaming Interface Descriptor:
+        bLength                 7
+        bDescriptorType        36
+        bDescriptorSubtype      1 (AS_GENERAL)
+        bTerminalLink           2
+        bDelay                  1 frames
+        wFormatTag         0x0001 PCM
+      AudioStreaming Interface Descriptor:
+        bLength                11
+        bDescriptorType        36
+        bDescriptorSubtype      2 (FORMAT_TYPE)
+        bFormatType             1 (FORMAT_TYPE_I)
+        bNrChannels             2
+        bSubframeSize           2
+        bBitResolution         16
+        bSamFreqType            1 Discrete
+        tSamFreq[ 0]        48000
+      Endpoint Descriptor:
+        bLength                 9
+        bDescriptorType         5
+        bEndpointAddress     0x83  EP 3 IN
+        bmAttributes            9
+          Transfer Type            Isochronous
+          Synch Type               Adaptive
+          Usage Type               Data
+        wMaxPacketSize     0x00c0  1x 192 bytes
+        bInterval               4
+        bRefresh                0
+        bSynchAddress           0
+        AudioStreaming Endpoint Descriptor:
+          bLength                 7
+          bDescriptorType        37
+          bDescriptorSubtype      1 (EP_GENERAL)
+          bmAttributes         0x01
+            Sampling Frequency
+          bLockDelayUnits         0 Undefined
+          wLockDelay         0x0000
+Device Qualifier (for other device speed):
+  bLength                10
+  bDescriptorType         6
+  bcdUSB               2.00
+  bDeviceClass          239 Miscellaneous Device
+  bDeviceSubClass         2 [unknown]
+  bDeviceProtocol         1 Interface Association
+  bMaxPacketSize0        64
+  bNumConfigurations      1
+Device Status:     0x0001
+  Self Powered
+---
+ drivers/media/usb/uvc/uvc_driver.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index 2899c2e28db9..e50b71c67fab 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -18,6 +18,7 @@
- #include <linux/cpumask.h>
- #include <linux/iommu.h>
- #include <linux/amd-iommu.h>
-+#include <linux/nospec.h>
- 
- #include <asm/sev.h>
- #include <asm/processor.h>
-@@ -77,12 +78,42 @@ struct rmpentry_raw {
-  */
- #define RMPTABLE_CPU_BOOKKEEPING_SZ	0x4000
- 
-+/*
-+ * For a non-segmented RMP table, use the maximum physical addressing as the
-+ * segment size in order to always arrive at index 0 in the table.
-+ */
-+#define RMPTABLE_NON_SEGMENTED_SHIFT	52
-+
-+struct rmp_segment_desc {
-+	struct rmpentry_raw *rmp_entry;
-+	u64 max_index;
-+	u64 size;
-+};
-+
-+/*
-+ * Segmented RMP Table support.
-+ *   - The segment size is used for two purposes:
-+ *     - Identify the amount of memory covered by an RMP segment
-+ *     - Quickly locate an RMP segment table entry for a physical address
-+ *
-+ *   - The RMP segment table contains pointers to an RMP table that covers
-+ *     a specific portion of memory. There can be up to 512 8-byte entries,
-+ *     one pages worth.
-+ */
-+static struct rmp_segment_desc **rmp_segment_table __ro_after_init;
-+static unsigned int rst_max_index __ro_after_init = 512;
-+
-+static unsigned int rmp_segment_shift;
-+static u64 rmp_segment_size;
-+static u64 rmp_segment_mask;
-+
-+#define RST_ENTRY_INDEX(x)	((x) >> rmp_segment_shift)
-+#define RMP_ENTRY_INDEX(x)	((u64)(PHYS_PFN((x) & rmp_segment_mask)))
-+
- /* Mask to apply to a PFN to get the first PFN of a 2MB page */
- #define PFN_PMD_MASK	GENMASK_ULL(63, PMD_SHIFT - PAGE_SHIFT)
- 
- static u64 probed_rmp_base, probed_rmp_size;
--static struct rmpentry_raw *rmptable __ro_after_init;
--static u64 rmptable_max_pfn __ro_after_init;
- 
- static LIST_HEAD(snp_leaked_pages_list);
- static DEFINE_SPINLOCK(snp_leaked_pages_list_lock);
-@@ -190,6 +221,92 @@ static bool __init clear_rmptable_bookkeeping(void)
- 	return true;
- }
- 
-+static bool __init alloc_rmp_segment_desc(u64 segment_pa, u64 segment_size, u64 pa)
-+{
-+	u64 rst_index, rmp_segment_size_max;
-+	struct rmp_segment_desc *desc;
-+	void *rmp_segment;
-+
-+	/* Calculate the maximum size an RMP can be (16 bytes/page mapped) */
-+	rmp_segment_size_max = PHYS_PFN(rmp_segment_size) << 4;
-+
-+	/* Validate the RMP segment size */
-+	if (segment_size > rmp_segment_size_max) {
-+		pr_err("Invalid RMP size 0x%llx for configured segment size 0x%llx\n",
-+		       segment_size, rmp_segment_size_max);
-+		return false;
-+	}
-+
-+	/* Validate the RMP segment table index */
-+	rst_index = RST_ENTRY_INDEX(pa);
-+	if (rst_index >= rst_max_index) {
-+		pr_err("Invalid RMP segment base address 0x%llx for configured segment size 0x%llx\n",
-+		       pa, rmp_segment_size);
-+		return false;
-+	}
-+
-+	if (rmp_segment_table[rst_index]) {
-+		pr_err("RMP segment descriptor already exists at index %llu\n", rst_index);
-+		return false;
-+	}
-+
-+	rmp_segment = memremap(segment_pa, segment_size, MEMREMAP_WB);
-+	if (!rmp_segment) {
-+		pr_err("Failed to map RMP segment addr 0x%llx size 0x%llx\n",
-+		       segment_pa, segment_size);
-+		return false;
-+	}
-+
-+	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
-+	if (!desc) {
-+		memunmap(rmp_segment);
-+		return false;
-+	}
-+
-+	desc->rmp_entry = rmp_segment;
-+	desc->max_index = segment_size / sizeof(*desc->rmp_entry);
-+	desc->size = segment_size;
-+
-+	rmp_segment_table[rst_index] = desc;
-+
-+	return true;
-+}
-+
-+static void __init free_rmp_segment_table(void)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < rst_max_index; i++) {
-+		struct rmp_segment_desc *desc;
-+
-+		desc = rmp_segment_table[i];
-+		if (!desc)
-+			continue;
-+
-+		memunmap(desc->rmp_entry);
-+
-+		kfree(desc);
-+	}
-+
-+	free_page((unsigned long)rmp_segment_table);
-+
-+	rmp_segment_table = NULL;
-+}
-+
-+/* Allocate the table used to index into the RMP segments */
-+static bool __init alloc_rmp_segment_table(void)
-+{
-+	struct page *page;
-+
-+	page = alloc_page(__GFP_ZERO);
-+	if (!page)
-+		return false;
-+
-+	rmp_segment_table = page_address(page);
-+
-+	return true;
-+}
-+
- /*
-  * Do the necessary preparations which are verified by the firmware as
-  * described in the SNP_INIT_EX firmware command description in the SNP
-@@ -197,8 +314,8 @@ static bool __init clear_rmptable_bookkeeping(void)
-  */
- static int __init snp_rmptable_init(void)
- {
--	u64 max_rmp_pfn, calc_rmp_sz, rmptable_size, rmp_end, val;
--	void *rmptable_start;
-+	u64 max_rmp_pfn, calc_rmp_sz, rmptable_segment, rmptable_size, rmp_end, val;
-+	unsigned int i;
- 
- 	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
- 		return 0;
-@@ -227,17 +344,18 @@ static int __init snp_rmptable_init(void)
- 		goto nosnp;
- 	}
- 
-+	if (!alloc_rmp_segment_table())
-+		goto nosnp;
-+
- 	/* Map only the RMP entries */
--	rmptable_start = memremap(probed_rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ,
--				  probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ,
--				  MEMREMAP_WB);
--	if (!rmptable_start) {
--		pr_err("Failed to map RMP table\n");
-+	rmptable_segment = probed_rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ;
-+	rmptable_size    = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
-+
-+	if (!alloc_rmp_segment_desc(rmptable_segment, rmptable_size, 0)) {
-+		free_rmp_segment_table();
- 		goto nosnp;
- 	}
- 
--	rmptable_size = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
--
- 	/*
- 	 * Check if SEV-SNP is already enabled, this can happen in case of
- 	 * kexec boot.
-@@ -248,12 +366,20 @@ static int __init snp_rmptable_init(void)
- 
- 	/* Zero out the RMP bookkeeping area */
- 	if (!clear_rmptable_bookkeeping()) {
--		memunmap(rmptable_start);
-+		free_rmp_segment_table();
- 		goto nosnp;
- 	}
- 
- 	/* Zero out the RMP entries */
--	memset(rmptable_start, 0, rmptable_size);
-+	for (i = 0; i < rst_max_index; i++) {
-+		struct rmp_segment_desc *desc;
-+
-+		desc = rmp_segment_table[i];
-+		if (!desc)
-+			continue;
-+
-+		memset(desc->rmp_entry, 0, desc->size);
-+	}
- 
- 	/* Flush the caches to ensure that data is written before SNP is enabled. */
- 	wbinvd_on_all_cpus();
-@@ -264,9 +390,6 @@ static int __init snp_rmptable_init(void)
- 	on_each_cpu(snp_enable, NULL, 1);
- 
- skip_enable:
--	rmptable = (struct rmpentry_raw *)rmptable_start;
--	rmptable_max_pfn = rmptable_size / sizeof(struct rmpentry_raw) - 1;
--
- 	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/rmptable_init:online", __snp_enable, NULL);
- 
- 	/*
-@@ -287,6 +410,13 @@ static int __init snp_rmptable_init(void)
-  */
- device_initcall(snp_rmptable_init);
- 
-+static void set_rmp_segment_info(unsigned int segment_shift)
-+{
-+	rmp_segment_shift = segment_shift;
-+	rmp_segment_size  = 1ULL << rmp_segment_shift;
-+	rmp_segment_mask  = rmp_segment_size - 1;
-+}
-+
- #define RMP_ADDR_MASK GENMASK_ULL(51, 13)
- 
- bool snp_probe_rmptable_info(void)
-@@ -308,6 +438,11 @@ bool snp_probe_rmptable_info(void)
- 
- 	rmp_sz = rmp_end - rmp_base + 1;
- 
-+	/* Treat the contiguous RMP table as a single segment */
-+	rst_max_index = 1;
-+
-+	set_rmp_segment_info(RMPTABLE_NON_SEGMENTED_SHIFT);
-+
- 	probed_rmp_base = rmp_base;
- 	probed_rmp_size = rmp_sz;
- 
-@@ -317,15 +452,41 @@ bool snp_probe_rmptable_info(void)
- 	return true;
- }
- 
-+/*
-+ * About the array_index_nospec() usage below:
-+ *
-+ * This function can get called by exported functions like
-+ * snp_lookup_rmpentry(), which is used by the KVM #PF handler, among
-+ * others, and since the @pfn passed in cannot always be trusted,
-+ * speculation should be stopped as a protective measure.
-+ */
- static struct rmpentry_raw *get_raw_rmpentry(u64 pfn)
- {
--	if (!rmptable)
-+	u64 paddr, rst_index, segment_index;
-+	struct rmp_segment_desc *desc;
-+
-+	if (!rmp_segment_table)
- 		return ERR_PTR(-ENODEV);
- 
--	if (unlikely(pfn > rmptable_max_pfn))
-+	paddr = pfn << PAGE_SHIFT;
-+
-+	rst_index = RST_ENTRY_INDEX(paddr);
-+	if (unlikely(rst_index >= rst_max_index))
- 		return ERR_PTR(-EFAULT);
- 
--	return rmptable + pfn;
-+	rst_index = array_index_nospec(rst_index, rst_max_index);
-+
-+	desc = rmp_segment_table[rst_index];
-+	if (unlikely(!desc))
-+		return ERR_PTR(-EFAULT);
-+
-+	segment_index = RMP_ENTRY_INDEX(paddr);
-+	if (unlikely(segment_index >= desc->max_index))
-+		return ERR_PTR(-EFAULT);
-+
-+	segment_index = array_index_nospec(segment_index, desc->max_index);
-+
-+	return desc->rmp_entry + segment_index;
- }
- 
- static int get_rmpentry(u64 pfn, struct rmpentry *e)
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index b3c8411dc05c..3205f53acea2 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -3014,6 +3014,15 @@ static const struct usb_device_id uvc_ids[] = {
+ 	  .bInterfaceProtocol	= 0,
+ 	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_PROBE_MINMAX
+ 					| UVC_QUIRK_IGNORE_SELECTOR_UNIT) },
++	/* Actions Microelectronics Co. Display capture-UVC05 */
++	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
++				| USB_DEVICE_ID_MATCH_INT_INFO,
++	  .idVendor		= 0x1de1,
++	  .idProduct		= 0xf105,
++	  .bInterfaceClass	= USB_CLASS_VIDEO,
++	  .bInterfaceSubClass	= 1,
++	  .bInterfaceProtocol	= 0,
++	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_DISABLE_AUTOSUSPEND) },
+ 	/* NXP Semiconductors IR VIDEO */
+ 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+ 				| USB_DEVICE_ID_MATCH_INT_INFO,
+
+---
+base-commit: 6c10d1adae82e1c8da16e7ebd2320e69f20b9d6f
+change-id: 20241210-uvc-hdmi-suspend-bba1058c605f
+
+Best regards,
 -- 
-2.43.0
+Ricardo Ribalda <ribalda@chromium.org>
 
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
