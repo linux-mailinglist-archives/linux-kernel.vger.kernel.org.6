@@ -1,378 +1,272 @@
-Return-Path: <linux-kernel+bounces-439605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CB39EB199
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:04:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E191C9EB1A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292BF188B0AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51106165DD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12AF1A2846;
-	Tue, 10 Dec 2024 13:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FFE1A9B42;
+	Tue, 10 Dec 2024 13:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xIRUm447"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dWkW/IJ0"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA191A7AFD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4C31A0B15;
+	Tue, 10 Dec 2024 13:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733835806; cv=none; b=GsQWGXNOlljSbeJ7o5QC/gsxCqMtrUagDKWRDUSU1vfw2rJshl/624xDJtNIXn1WYpdUG+0ck7sg0j9W3HQSXfQIBe/t7kSnuNcLwPdyo9Vc0Fn8yKx8uFwbEpGFl/sFN4jt32vaSqdsBQ6JWxGLyp4jIV65GqedF9ZLUC1tQlE=
+	t=1733835932; cv=none; b=giUJ7reU0qZX+AJ8R3bv/fAu1hjPd4tXn/+G/VQVyDYi/X/nsfWeOn6+7eF3Xd+gJpefUhnr5gX8qoxc3q8icJysu2h0G4MyN2RJl6vTVaAkVTiJzo1zwWNe2t0zHcEn38OGjCUW8HRS1KfOmW/V/C7xyNAQHityikNEA2zrqdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733835806; c=relaxed/simple;
-	bh=yu6/hKHXgcZjDLWJ011QiMAxT476nxn9P7LRyIB4f5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hddsSJKAZ+G5K6yXx16AI7j59LqEhztPTMW5j3czdoPIWS9HavVaVFK8NH8EDupfwJ/iMMtRy9cgQ6DcPo3/EP3VQf1VZ7MxdfL5ViGEWq5ue0w0AXQadVx8M47mBEEe13jo3kiBwjgiBQjE/OL8tb6Qq4gvdNjgyTpsIEBoKpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xIRUm447; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434fa6bf6e4so34325e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:03:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733835802; x=1734440602; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aujkCb357SQF7t7uQ1hGpLUEmbwkr3OMZRi8Q4Vo/o0=;
-        b=xIRUm447NddMcCDYNGaAY58HlQJQ82Rmq5u0Uwmxpz/DJFcwH0z6sVR3QMci5eOeS7
-         KqBmcc47KSq9QpvUAGlaGTzIOjDpNtM8BLqTy9pPPqYVq9n6pkVhecwsCPw1IY3gWy00
-         J5j6+LPjAkoOYHnDk9+OmZ3Xjcx94DgMP36dtfhzpis0IEiw5l9y+FnUh41Y6I2XFHSi
-         FY8c2z84OgHplQNcmoc9OifWvc5iczXdb3XTJ2BaCpXb07pj8fs/OhwG02us22/JBZwJ
-         PXtBtbQmQscl7idrDRZKHlzSv0XkVrX+CtYLAUCSkNHj502C+oEndcpro9ELqULZRI9Z
-         l2mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733835802; x=1734440602;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aujkCb357SQF7t7uQ1hGpLUEmbwkr3OMZRi8Q4Vo/o0=;
-        b=vYnlQwWz1+9RPE4mbLkmbb56ZFaFldJtQoXTOUFJe0dXRiGwbcuwRR/536vEvLcIG6
-         uaes0Vph2Pt3pPIeMW4Oy9fVSjQfVVONdWcf6M/CYxoScwBqdSf+UM83aPbshfR0LAFl
-         lss91C4re9p8YZwtbyP7B6lMepxs/hMFf+w2vU/cVPDI7jtmlLV8O4JbgcBAn8FGn1lx
-         iGRIjkCux+s5VgdQS+YLZgnJ/PwmJGDvCBjxRpZRPwQDHaelPiJK5D6OmIZwt0dbGZ/R
-         Zs0zc2Fidcm6lXaoQe07SKKeyo3uuCJyEbmuX2Wabo8m0yBIwJqJg9Dqa2lNevTAJCt7
-         JC3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJkS/9dgiOmYyKK6RLTdAx4zP/EUwF5Ayc+cXPCeUbIzqX1nybn+CLnIUEi5ESXS0HrMZDX8/RXXFcVu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3lLvnWCkBm7MsWlBP9Fn4EW3RpCLRnJ3hpkOq9DJ5bbD0mReN
-	T/F/Dx8+Td9YA0DS4Q1L4gkLopQMo6UJ7bgK0pOl8aJ7G0gMJC3otVYewYy9QIdWKFUbS3wty9G
-	m4EZst3IqvzcyxSxF3IbNoYs6Jb1PXXYY3nzzn1ldfuQ0lkK7gA==
-X-Gm-Gg: ASbGncs326e1vzjBunMYO4/AFNWjTuyFQkTbkC5k/gF1uZcKPo0M8GIn17IP9Z0dE9a
-	M8SB1YsqKYB9xCI/RAbV0clOcvDuY5+D7I6Pek8haNvYb2e4UizDct0ezCHwd/Dl3
-X-Google-Smtp-Source: AGHT+IEju+EdVjyKXpNSzt3ZW1EZn9eA80FYvMtoAjBenEmQ5Z6uA1TMlCxxzYwnLC56Dwl6ECANc2md5S/A8F135Mg=
-X-Received: by 2002:a05:600c:35cb:b0:436:1868:b29f with SMTP id
- 5b1f17b1804b1-4361868b697mr424865e9.6.1733835801992; Tue, 10 Dec 2024
- 05:03:21 -0800 (PST)
+	s=arc-20240116; t=1733835932; c=relaxed/simple;
+	bh=ObIvv4aBHq42R6izYAIFAgUT2lfTA0MWQNtfEld2CnM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gHhwV91dnqQVIXZPAbTaodLBFNb1+w67iHz/0fv/IUJtbgs136GZb7SwK61L57x0C1SchOHjLWgbcjOEe8FjQjPCDnm1l4tiIhp2GeEI/F0muhjCv6/3CDbuT5pwZfCR/0KiqrSZUPzIE+coO0lylFymJcYTKtY7Yy39BRQq5jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zurich.ibm.com; spf=pass smtp.mailfrom=zurich.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dWkW/IJ0; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zurich.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zurich.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA2SDY6032428;
+	Tue, 10 Dec 2024 13:05:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=Tmqk0ezcuIeoWDq63ykmLje//L3X4RDn77qpjUnro
+	VQ=; b=dWkW/IJ0sCNEJ1+7OwXVJr76H95F7ofKb/s2blW3AIW9TPjQYBlviZaxg
+	fENyUx3Nfd5jVXBn1W/X8nsLiv4+gqnfoj33FVkz14JB+n4VjHtyZDocphkXtwqj
+	NGjiYvcUAWB6a4IaDs5XdMCMzjwV8whFu8T6tbGaa7aLnsjJ7DYr77SNgtEMZupX
+	likRDK4Hj8AwuL4WzvKC2i4mhF2sDcCDLaw2NwUl9FjCgjjcxxQ07rZPIDJ+frhZ
+	AAAQuFRuXWYG/+yw2QYUIhcgRGSYeXq80W1045vEnolqZt0ruXuVzeFo1oiKRHo6
+	5hSQL1dvyyUJ3xW3ZoFRhbLB4tbFQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq6dkh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 13:05:22 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BAD5Mhl001327;
+	Tue, 10 Dec 2024 13:05:22 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq6dke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 13:05:22 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAAQDZb032727;
+	Tue, 10 Dec 2024 13:05:21 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psbwnh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 13:05:21 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAD5JLv50790864
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 13:05:20 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D061220043;
+	Tue, 10 Dec 2024 13:05:19 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F63120040;
+	Tue, 10 Dec 2024 13:05:19 +0000 (GMT)
+Received: from rims.zurich.ibm.com (unknown [9.4.68.72])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 13:05:19 +0000 (GMT)
+From: Bernard Metzler <bmt@zurich.ibm.com>
+To: linux-rdma@vger.kernel.org
+Cc: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        zyjzyj2000@gmail.com, Bernard Metzler <bmt@zurich.ibm.com>,
+        syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+Subject: [PATCH] RDMA/siw: Remove direct link to net_device
+Date: Tue, 10 Dec 2024 14:03:51 +0100
+Message-Id: <20241210130351.406603-1-bmt@zurich.ibm.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203103735.2267589-1-qperret@google.com> <20241203103735.2267589-5-qperret@google.com>
-In-Reply-To: <20241203103735.2267589-5-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 10 Dec 2024 13:02:45 +0000
-Message-ID: <CA+EHjTx13V1BcyWEAjNSC0JCxr+dSUvutC7z2KSRu_8jwV_Vxw@mail.gmail.com>
-Subject: Re: [PATCH v2 04/18] KVM: arm64: Move host page ownership tracking to
- the hyp vmemmap
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: jGLhd_i-PGUraM-d4GchWu6iJHnGFpdE
+X-Proofpoint-GUID: yW7HGGi5IYCoqZzpE0Gni0e6AkiodKsD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=934 adultscore=0
+ lowpriorityscore=0 clxscore=1011 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100097
 
-Hi Quentin,
+Maintain needed network interface information locally, but
+remove a direct link to net_device which can become stale.
+Accessing a stale net_device link was causing a 'KASAN:
+slab-use-after-free' exception during siw_query_port()
+call.
 
-On Tue, 3 Dec 2024 at 10:37, Quentin Perret <qperret@google.com> wrote:
->
-> We currently store part of the page-tracking state in PTE software bits
-> for the host, guests and the hypervisor. This is sub-optimal when e.g.
-> sharing pages as this forces to break block mappings purely to support
-> this software tracking. This causes an unnecessarily fragmented stage-2
-> page-table for the host in particular when it shares pages with Secure,
-> which can lead to measurable regressions. Moreover, having this state
-> stored in the page-table forces us to do multiple costly walks on the
-> page transition path, hence causing overhead.
->
-> In order to work around these problems, move the host-side page-tracking
-> logic from SW bits in its stage-2 PTEs to the hypervisor's vmemmap.
->
-> Signed-off-by: Quentin Perret <qperret@google.com>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/memory.h |  6 +-
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 94 ++++++++++++++++--------
->  arch/arm64/kvm/hyp/nvhe/setup.c          |  7 +-
->  3 files changed, 71 insertions(+), 36 deletions(-)
->
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> index 88cb8ff9e769..08f3a0416d4c 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> @@ -8,7 +8,7 @@
->  #include <linux/types.h>
->
->  /*
-> - * SW bits 0-1 are reserved to track the memory ownership state of each page:
-> + * Bits 0-1 are reserved to track the memory ownership state of each page:
->   *   00: The page is owned exclusively by the page-table owner.
->   *   01: The page is owned by the page-table owner, but is shared
->   *       with another entity.
+Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+Reported-by: syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=4b87489410b4efd181bf
+Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+---
+ drivers/infiniband/sw/siw/siw.h       | 11 +++++++----
+ drivers/infiniband/sw/siw/siw_cm.c    |  4 ++--
+ drivers/infiniband/sw/siw/siw_main.c  | 18 ++++++++++++------
+ drivers/infiniband/sw/siw/siw_verbs.c | 11 ++++++-----
+ 4 files changed, 27 insertions(+), 17 deletions(-)
 
-Not shown in this patch, but a couple of lines below, you might want
-to update the comment on PKVM_NOPAGE to fix the reference to "PTE's SW
-bits":
+diff --git a/drivers/infiniband/sw/siw/siw.h b/drivers/infiniband/sw/siw/siw.h
+index 86d4d6a2170e..c8f75527b513 100644
+--- a/drivers/infiniband/sw/siw/siw.h
++++ b/drivers/infiniband/sw/siw/siw.h
+@@ -69,16 +69,19 @@ struct siw_pd {
+ 
+ struct siw_device {
+ 	struct ib_device base_dev;
+-	struct net_device *netdev;
+ 	struct siw_dev_cap attrs;
+ 
+ 	u32 vendor_part_id;
++	struct {
++		int ifindex;
++		enum ib_port_state state;
++		enum ib_mtu mtu;
++		enum ib_mtu max_mtu;
++	} ifinfo;
++
+ 	int numa_node;
+ 	char raw_gid[ETH_ALEN];
+ 
+-	/* physical port state (only one port per device) */
+-	enum ib_port_state state;
+-
+ 	spinlock_t lock;
+ 
+ 	struct xarray qp_xa;
+diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw/siw_cm.c
+index 86323918a570..451b50d92f7f 100644
+--- a/drivers/infiniband/sw/siw/siw_cm.c
++++ b/drivers/infiniband/sw/siw/siw_cm.c
+@@ -1780,7 +1780,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+ 
+ 		/* For wildcard addr, limit binding to current device only */
+ 		if (ipv4_is_zeronet(laddr->sin_addr.s_addr))
+-			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
++			s->sk->sk_bound_dev_if = sdev->ifinfo.ifindex;
+ 
+ 		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+ 				  sizeof(struct sockaddr_in));
+@@ -1798,7 +1798,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+ 
+ 		/* For wildcard addr, limit binding to current device only */
+ 		if (ipv6_addr_any(&laddr->sin6_addr))
+-			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
++			s->sk->sk_bound_dev_if = sdev->ifinfo.ifindex;
+ 
+ 		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+ 				  sizeof(struct sockaddr_in6));
+diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+index 17abef48abcd..4db10bdfb515 100644
+--- a/drivers/infiniband/sw/siw/siw_main.c
++++ b/drivers/infiniband/sw/siw/siw_main.c
+@@ -287,7 +287,6 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+ 		return NULL;
+ 
+ 	base_dev = &sdev->base_dev;
+-	sdev->netdev = netdev;
+ 
+ 	if (netdev->addr_len) {
+ 		memcpy(sdev->raw_gid, netdev->dev_addr,
+@@ -354,6 +353,10 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+ 	atomic_set(&sdev->num_mr, 0);
+ 	atomic_set(&sdev->num_pd, 0);
+ 
++	sdev->ifinfo.max_mtu = ib_mtu_int_to_enum(netdev->max_mtu);
++	sdev->ifinfo.mtu = ib_mtu_int_to_enum(READ_ONCE(netdev->mtu));
++	sdev->ifinfo.ifindex = netdev->ifindex;
++
+ 	sdev->numa_node = dev_to_node(&netdev->dev);
+ 	spin_lock_init(&sdev->lock);
+ 
+@@ -381,12 +384,12 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+ 
+ 	switch (event) {
+ 	case NETDEV_UP:
+-		sdev->state = IB_PORT_ACTIVE;
++		sdev->ifinfo.state = IB_PORT_ACTIVE;
+ 		siw_port_event(sdev, 1, IB_EVENT_PORT_ACTIVE);
+ 		break;
+ 
+ 	case NETDEV_DOWN:
+-		sdev->state = IB_PORT_DOWN;
++		sdev->ifinfo.state = IB_PORT_DOWN;
+ 		siw_port_event(sdev, 1, IB_EVENT_PORT_ERR);
+ 		break;
+ 
+@@ -406,10 +409,13 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+ 	case NETDEV_CHANGEADDR:
+ 		siw_port_event(sdev, 1, IB_EVENT_LID_CHANGE);
+ 		break;
++
++	case NETDEV_CHANGEMTU:
++		sdev->ifinfo.mtu = ib_mtu_int_to_enum(READ_ONCE(netdev->mtu));
++		break;
+ 	/*
+ 	 * Todo: Below netdev events are currently not handled.
+ 	 */
+-	case NETDEV_CHANGEMTU:
+ 	case NETDEV_CHANGE:
+ 		break;
+ 
+@@ -444,9 +450,9 @@ static int siw_newlink(const char *basedev_name, struct net_device *netdev)
+ 		dev_dbg(&netdev->dev, "siw: new device\n");
+ 
+ 		if (netif_running(netdev) && netif_carrier_ok(netdev))
+-			sdev->state = IB_PORT_ACTIVE;
++			sdev->ifinfo.state = IB_PORT_ACTIVE;
+ 		else
+-			sdev->state = IB_PORT_DOWN;
++			sdev->ifinfo.state = IB_PORT_DOWN;
+ 
+ 		ib_mark_name_assigned_by_user(&sdev->base_dev);
+ 		rv = siw_device_register(sdev, basedev_name);
+diff --git a/drivers/infiniband/sw/siw/siw_verbs.c b/drivers/infiniband/sw/siw/siw_verbs.c
+index 986666c19378..3ab9c5170637 100644
+--- a/drivers/infiniband/sw/siw/siw_verbs.c
++++ b/drivers/infiniband/sw/siw/siw_verbs.c
+@@ -178,14 +178,15 @@ int siw_query_port(struct ib_device *base_dev, u32 port,
+ 
+ 	rv = ib_get_eth_speed(base_dev, port, &attr->active_speed,
+ 			 &attr->active_width);
++
+ 	attr->gid_tbl_len = 1;
+ 	attr->max_msg_sz = -1;
+-	attr->max_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+-	attr->active_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+-	attr->phys_state = sdev->state == IB_PORT_ACTIVE ?
++	attr->max_mtu = sdev->ifinfo.max_mtu;
++	attr->active_mtu = sdev->ifinfo.mtu;
++	attr->phys_state = sdev->ifinfo.state == IB_PORT_ACTIVE ?
+ 		IB_PORT_PHYS_STATE_LINK_UP : IB_PORT_PHYS_STATE_DISABLED;
+ 	attr->port_cap_flags = IB_PORT_CM_SUP | IB_PORT_DEVICE_MGMT_SUP;
+-	attr->state = sdev->state;
++	attr->state = sdev->ifinfo.state;
+ 	/*
+ 	 * All zero
+ 	 *
+@@ -519,7 +520,7 @@ int siw_query_qp(struct ib_qp *base_qp, struct ib_qp_attr *qp_attr,
+ 	qp_attr->cap.max_send_sge = qp->attrs.sq_max_sges;
+ 	qp_attr->cap.max_recv_wr = qp->attrs.rq_size;
+ 	qp_attr->cap.max_recv_sge = qp->attrs.rq_max_sges;
+-	qp_attr->path_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
++	qp_attr->path_mtu = sdev->ifinfo.mtu;
+ 	qp_attr->max_rd_atomic = qp->attrs.irq_size;
+ 	qp_attr->max_dest_rd_atomic = qp->attrs.orq_size;
+ 
+-- 
+2.38.1
 
-> /* Meta-states which aren't encoded directly in the PTE's SW bits */
-> PKVM_NOPAGE = BIT(2),
-
-> @@ -44,7 +44,9 @@ static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
->  struct hyp_page {
->         u16 refcount;
->         u8 order;
-> -       u8 reserved;
-> +
-> +       /* Host (non-meta) state. Guarded by the host stage-2 lock. */
-> +       enum pkvm_page_state host_state : 8;
->  };
->
->  extern u64 __hyp_vmemmap;
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index caba3e4bd09e..1595081c4f6b 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -201,8 +201,8 @@ static void *guest_s2_zalloc_page(void *mc)
->
->         memset(addr, 0, PAGE_SIZE);
->         p = hyp_virt_to_page(addr);
-> -       memset(p, 0, sizeof(*p));
->         p->refcount = 1;
-> +       p->order = 0;
->
->         return addr;
->  }
-> @@ -268,6 +268,7 @@ int kvm_guest_prepare_stage2(struct pkvm_hyp_vm *vm, void *pgd)
->
->  void reclaim_guest_pages(struct pkvm_hyp_vm *vm, struct kvm_hyp_memcache *mc)
->  {
-> +       struct hyp_page *page;
->         void *addr;
->
->         /* Dump all pgtable pages in the hyp_pool */
-> @@ -279,7 +280,9 @@ void reclaim_guest_pages(struct pkvm_hyp_vm *vm, struct kvm_hyp_memcache *mc)
->         /* Drain the hyp_pool into the memcache */
->         addr = hyp_alloc_pages(&vm->pool, 0);
->         while (addr) {
-> -               memset(hyp_virt_to_page(addr), 0, sizeof(struct hyp_page));
-> +               page = hyp_virt_to_page(addr);
-> +               page->refcount = 0;
-> +               page->order = 0;
->                 push_hyp_memcache(mc, addr, hyp_virt_to_phys);
->                 WARN_ON(__pkvm_hyp_donate_host(hyp_virt_to_pfn(addr), 1));
->                 addr = hyp_alloc_pages(&vm->pool, 0);
-> @@ -382,19 +385,25 @@ bool addr_is_memory(phys_addr_t phys)
->         return !!find_mem_range(phys, &range);
->  }
->
-> -static bool addr_is_allowed_memory(phys_addr_t phys)
-> +static bool is_in_mem_range(u64 addr, struct kvm_mem_range *range)
-> +{
-> +       return range->start <= addr && addr < range->end;
-> +}
-> +
-> +static int range_is_allowed_memory(u64 start, u64 end)
-
-The name of this function "range_*is*_..." implies that it returns a
-boolean, which other functions in this file (and patch) with similar
-names do, but it returns an error instead. Maybe
-check_range_allowed_memory)?
-
->  {
->         struct memblock_region *reg;
->         struct kvm_mem_range range;
->
-> -       reg = find_mem_range(phys, &range);
-> +       /* Can't check the state of both MMIO and memory regions at once */
-
-I don't understand this comment in relation to the code. Could you
-explain it to me please?
-
-> +       reg = find_mem_range(start, &range);
-> +       if (!is_in_mem_range(end - 1, &range))
-> +               return -EINVAL;
->
-> -       return reg && !(reg->flags & MEMBLOCK_NOMAP);
-> -}
-> +       if (!reg || reg->flags & MEMBLOCK_NOMAP)
-> +               return -EPERM;
->
-> -static bool is_in_mem_range(u64 addr, struct kvm_mem_range *range)
-> -{
-> -       return range->start <= addr && addr < range->end;
-> +       return 0;
->  }
->
->  static bool range_is_memory(u64 start, u64 end)
-> @@ -454,8 +463,11 @@ static int host_stage2_adjust_range(u64 addr, struct kvm_mem_range *range)
->         if (kvm_pte_valid(pte))
->                 return -EAGAIN;
->
-> -       if (pte)
-> +       if (pte) {
-> +               WARN_ON(addr_is_memory(addr) &&
-> +                       !(hyp_phys_to_page(addr)->host_state & PKVM_NOPAGE));
-
-nit: since the host state is now an enum, should this just be an
-equality check rather than an &? This makes it consistent with other
-checks of pkvm_page_state in this patch too.
-
->                 return -EPERM;
-> +       }
->
->         do {
->                 u64 granule = kvm_granule_size(level);
-> @@ -477,10 +489,29 @@ int host_stage2_idmap_locked(phys_addr_t addr, u64 size,
->         return host_stage2_try(__host_stage2_idmap, addr, addr + size, prot);
->  }
->
-> +static void __host_update_page_state(phys_addr_t addr, u64 size, enum pkvm_page_state state)
-> +{
-> +       phys_addr_t end = addr + size;
-
-nit: newline
-
-> +       for (; addr < end; addr += PAGE_SIZE)
-> +               hyp_phys_to_page(addr)->host_state = state;
-> +}
-> +
->  int host_stage2_set_owner_locked(phys_addr_t addr, u64 size, u8 owner_id)
->  {
-> -       return host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt,
-> -                              addr, size, &host_s2_pool, owner_id);
-> +       int ret;
-> +
-> +       ret = host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt,
-> +                             addr, size, &host_s2_pool, owner_id);
-> +       if (ret || !addr_is_memory(addr))
-> +               return ret;
-
-Can hyp set an owner for an address that isn't memory? Trying to
-understand why we need to update the host stage2 pagetable but not the
-hypervisor's vmemmap in that case.
-
-> +
-> +       /* Don't forget to update the vmemmap tracking for the host */
-> +       if (owner_id == PKVM_ID_HOST)
-> +               __host_update_page_state(addr, size, PKVM_PAGE_OWNED);
-> +       else
-> +               __host_update_page_state(addr, size, PKVM_NOPAGE);
-> +
-> +       return 0;
->  }
->
->  static bool host_stage2_force_pte_cb(u64 addr, u64 end, enum kvm_pgtable_prot prot)
-> @@ -604,35 +635,38 @@ static int check_page_state_range(struct kvm_pgtable *pgt, u64 addr, u64 size,
->         return kvm_pgtable_walk(pgt, addr, size, &walker);
->  }
->
-> -static enum pkvm_page_state host_get_page_state(kvm_pte_t pte, u64 addr)
-> -{
-> -       if (!addr_is_allowed_memory(addr))
-> -               return PKVM_NOPAGE;
-> -
-> -       if (!kvm_pte_valid(pte) && pte)
-> -               return PKVM_NOPAGE;
-> -
-> -       return pkvm_getstate(kvm_pgtable_stage2_pte_prot(pte));
-> -}
-> -
->  static int __host_check_page_state_range(u64 addr, u64 size,
->                                          enum pkvm_page_state state)
->  {
-> -       struct check_walk_data d = {
-> -               .desired        = state,
-> -               .get_page_state = host_get_page_state,
-> -       };
-> +       u64 end = addr + size;
-> +       int ret;
-> +
-> +       ret = range_is_allowed_memory(addr, end);
-> +       if (ret)
-> +               return ret;
->
->         hyp_assert_lock_held(&host_mmu.lock);
-> -       return check_page_state_range(&host_mmu.pgt, addr, size, &d);
-> +       for (; addr < end; addr += PAGE_SIZE) {
-> +               if (hyp_phys_to_page(addr)->host_state != state)
-> +                       return -EPERM;
-> +       }
-> +
-> +       return 0;
->  }
->
->  static int __host_set_page_state_range(u64 addr, u64 size,
->                                        enum pkvm_page_state state)
->  {
-> -       enum kvm_pgtable_prot prot = pkvm_mkstate(PKVM_HOST_MEM_PROT, state);
-> +       if (hyp_phys_to_page(addr)->host_state & PKVM_NOPAGE) {
-
-Same nit as above regarding checking for PKVM_NOPAGE
-
-Cheers,
-/fuad
-
-
-> +               int ret = host_stage2_idmap_locked(addr, size, PKVM_HOST_MEM_PROT);
->
-> -       return host_stage2_idmap_locked(addr, size, prot);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       __host_update_page_state(addr, size, state);
-> +
-> +       return 0;
->  }
->
->  static int host_request_owned_transition(u64 *completer_addr,
-> diff --git a/arch/arm64/kvm/hyp/nvhe/setup.c b/arch/arm64/kvm/hyp/nvhe/setup.c
-> index cbdd18cd3f98..7e04d1c2a03d 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/setup.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/setup.c
-> @@ -180,7 +180,6 @@ static void hpool_put_page(void *addr)
->  static int fix_host_ownership_walker(const struct kvm_pgtable_visit_ctx *ctx,
->                                      enum kvm_pgtable_walk_flags visit)
->  {
-> -       enum kvm_pgtable_prot prot;
->         enum pkvm_page_state state;
->         phys_addr_t phys;
->
-> @@ -203,16 +202,16 @@ static int fix_host_ownership_walker(const struct kvm_pgtable_visit_ctx *ctx,
->         case PKVM_PAGE_OWNED:
->                 return host_stage2_set_owner_locked(phys, PAGE_SIZE, PKVM_ID_HYP);
->         case PKVM_PAGE_SHARED_OWNED:
-> -               prot = pkvm_mkstate(PKVM_HOST_MEM_PROT, PKVM_PAGE_SHARED_BORROWED);
-> +               hyp_phys_to_page(phys)->host_state = PKVM_PAGE_SHARED_BORROWED;
->                 break;
->         case PKVM_PAGE_SHARED_BORROWED:
-> -               prot = pkvm_mkstate(PKVM_HOST_MEM_PROT, PKVM_PAGE_SHARED_OWNED);
-> +               hyp_phys_to_page(phys)->host_state = PKVM_PAGE_SHARED_OWNED;
->                 break;
->         default:
->                 return -EINVAL;
->         }
->
-> -       return host_stage2_idmap_locked(phys, PAGE_SIZE, prot);
-> +       return 0;
->  }
->
->  static int fix_hyp_pgtable_refcnt_walker(const struct kvm_pgtable_visit_ctx *ctx,
-> --
-> 2.47.0.338.g60cca15819-goog
->
 
