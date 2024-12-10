@@ -1,209 +1,303 @@
-Return-Path: <linux-kernel+bounces-439078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AB79EAA82
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:23:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 075489EAA85
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:24:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009B2188ACA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:23:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DBD188A2DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE49D23098A;
-	Tue, 10 Dec 2024 08:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C562309A9;
+	Tue, 10 Dec 2024 08:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="QFGKfGD+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fHah57zA"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PQX4AYDE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B24922F3A1;
-	Tue, 10 Dec 2024 08:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3096422D4CD;
+	Tue, 10 Dec 2024 08:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819027; cv=none; b=b+dOOXY+PcIFdivtaULOW/hl9lknc3P4LuaIJFWj1g9XL21EoCUj55efN1ARONLrk+g6qP7MMrHAbOahEIO6mP0JU2OKOz4F4GGGpUXCUDpVuOPoUspxdU8uwOQHWTUe6tM/BCRh0eYG+Ta61N5ur8IpDQEGVqBTm1gbtEpWhQE=
+	t=1733819035; cv=none; b=lkvBWb5q3F/XThwWL5e/Vp2Fpg3T5JvIlmg1IAurttCQTcureypGhq+iGFLzbdF18Hz5IlJcfAAa+gKqaMvZLkjFFcu0fxU8PrGBiat0vh4TTYhmwLMmR1Mu/Lg1K2j3/TcgvhfFP08140d5lXOFmUjhuzaLXVgkMOsB7Zx2Pyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819027; c=relaxed/simple;
-	bh=/ah24nBMa9yZF2baCDCd316+4iZJJMEXennJZCcAu7E=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=qLpO672QCXlO0JZjCSCz3gD6v6K4VeUf9p9GPmU7Cn1uomQZ6HwZ/eZX/jk2bc+HZ+0S6qGSam/Ma2F0TJqfs3bRvOeOm1qKidA0LWn7P5NVo8MWVetIVZ0NIn1XcmZFK3/WsQorPXlyAUFeApt3PqdwMr+e8Ipz8QsYzxTZ7RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=QFGKfGD+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fHah57zA; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 335A51140204;
-	Tue, 10 Dec 2024 03:23:44 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 10 Dec 2024 03:23:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733819024;
-	 x=1733905424; bh=Lh11GirIpc36ixloYI6B6okGKgksZrMkp+1sP3UkiYk=; b=
-	QFGKfGD+A8rKAR13pKORswcxTw9SnwNxmAAZ4wC8SAifKGaTqHsotTz2is93+7aw
-	ADLblieYHx/utleucoO14oYvAncjzLEf5UUqPsJC/vfKqlrw6tC6bBIf9J0a6vej
-	Rtl4A7+wZQSbdKLCp3XGE+DFK1bwk4o536TFuRlJyeZ/WbrCTMG9oIrmh0Vwhfr4
-	hLeKzZWt6tiujPluiMJWTqguiQSfhrrCroHH/AhzSrvV6F4KJPN7TILdDsVxOHGd
-	Ij45K9mxCvFW3GE+zFnmWSgc5ztneYzJi0WWQQ1+VGhPxFvnVA7QPGIS7SiWluNH
-	u17YYD60Co1OWJ2psTnr5w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733819024; x=
-	1733905424; bh=Lh11GirIpc36ixloYI6B6okGKgksZrMkp+1sP3UkiYk=; b=f
-	Hah57zAk/ZZ4SxJPpjSWbq9T1cuqnAKG4SYp0aHu5EztfkT3HngOn0y/Qnlgfix9
-	FZ2aHMxxdnCq7X8nHU7ylq+DLyeW4HTmwHyZ+nuwfqWFv6ZiGAm+h8aMDbo7KoOB
-	mL9LAWxz7jC/W91uyrJc2nzoDDDfkHwXWEUlOU7g9Fy5wcTqS6XOhylTA0n5wNOb
-	zuUqyJKcztGdsd6zBrc6AeWMVGzI3W1usyiIUCQiTMos3jl1ecW/5ZE1NAvZqPl9
-	mqk733IIC04/yx9GWhb1EoLHvsoEuz2lTci34p4S4WU1zkL8vrebBywPyhJiZo5Q
-	lJRz2koPjGIU053aJ2+SA==
-X-ME-Sender: <xms:j_pXZ6PuD4arYOKoBscVLl4X0wkAvOAXttHkWDA3d8K6U4KyqYO5Ew>
-    <xme:j_pXZ48paQXknmb5gR4N4EfmlHosoTxGnNhk5E_q0Rc9XYPGyG7gFF3CTXwSwG3k_
-    hiCdDi7LXz7OX8BWsE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeejgdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrg
-    hssegrrhhmrdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihes
-    sghoohhtlhhinhdrtghomhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdr
-    ohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtth
-    hopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdr
-    ohhrgh
-X-ME-Proxy: <xmx:j_pXZxSEURJ9ytKBAcBumtrHG4TM7RJcBtLu8MwDgiNFrDNxBiaJsg>
-    <xmx:j_pXZ6ugsmhZSPlyiKLeX0-IQ40r5tWpoiWTqgsiWI580ukWrcdnJQ>
-    <xmx:j_pXZyfPT7Rq8P5vA9Plx-ANsVDtpLtwkL_HduNlXSneQdX92GrLjA>
-    <xmx:j_pXZ-3Z8sSe1nsFK-ShJS1KGNxx8MPyk2ewgadZYxbBvDZoqiuSDQ>
-    <xmx:kPpXZ_CDy2tvt9Ylh2Gumxy5Lz5CEXqiTnTZKEPbzSW4ZZXnfBTvvx4I>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 58C1F2220072; Tue, 10 Dec 2024 03:23:43 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733819035; c=relaxed/simple;
+	bh=LxVL3dWaIY5BiEszPJpsF/yeGkMBUNkZigOVtbf3bvc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ImAb8sPYKQpwIvsPDVrJxS4KpkddnS+xeV4Bsf8C4bfOulBJROLQSsT0X2FzMni/ufvwcVX/77pNRMt7b5IrqdPHRf9sKLInLA1CrDSeOPgqWgGyobIEjRwIPiI/Bak+n6ixknxu9p8viby4hi/O7SX1qdjUu7cOsaEmUqf8x28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PQX4AYDE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA6GKCH015028;
+	Tue, 10 Dec 2024 08:23:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=MPvKwalamfsowX47Fg6i3O
+	lsKTIsdqMd1PpWR86+a6Q=; b=PQX4AYDEEm/pTwOsBz7aQ/FgJEM7r8L/D0/Emw
+	KJrkIpcIULDf5GQd0U1ehwxQ6FRPJGgE/Q9sMzeztyVPHPZm0sYnJIsqmk2RpzqF
+	2t9FaWBLDrTfCHtm6b00AfQG41R3aEs/udtDPjZbL6LcOT7Cd2Q7fPIXt0u1LZdq
+	joN6kaLe3yWjlI9KhIW9bC19jsgATWapqUjJ0M9rf/WprgYYt78bqUfFeFJZJk5/
+	04Zg30mlxwjZ8CYm3gdCpSIAN0fz7nYXC+s9HPNBRA2pP9aMAPFTmVTrLW/Egvmk
+	2L/y0RT4bETzOtWTquQ2e/rZdGfPZHN2UkAhm7TxRx25kI2A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetqshy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 08:23:49 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA8NlIA005628
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 08:23:47 GMT
+Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Dec 2024 00:23:41 -0800
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Date: Tue, 10 Dec 2024 16:23:21 +0800
+Subject: [PATCH v2] arm64: dts: qcom: Add coresight node for SM8650
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 10 Dec 2024 09:22:51 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ciprian Costea" <ciprianmarian.costea@oss.nxp.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "NXP S32 Linux Team" <s32@nxp.com>, imx@lists.linux.dev,
- "Christophe Lizzi" <clizzi@redhat.com>, "Alberto Ruiz" <aruizrui@redhat.com>,
- "Enric Balletbo" <eballetb@redhat.com>,
- "Bogdan Hamciuc" <bogdan.hamciuc@nxp.com>,
- "Ghennadi Procopciuc" <Ghennadi.Procopciuc@nxp.com>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Message-Id: <fc50d8a7-cc59-42dd-aafd-7da49fadee45@app.fastmail.com>
-In-Reply-To: <42d39f8e-0b59-4185-af1f-f778522608d2@oss.nxp.com>
-References: <20241206070955.1503412-1-ciprianmarian.costea@oss.nxp.com>
- <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
- <2005af5d-bdb7-4675-8f0e-82cb817801af@app.fastmail.com>
- <6f4a0be8-4def-4066-9b44-d43059b7a90d@oss.nxp.com>
- <94cba886-86cb-41f1-96ee-501623add7db@app.fastmail.com>
- <42d39f8e-0b59-4185-af1f-f778522608d2@oss.nxp.com>
-Subject: Re: [PATCH v6 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20241210-sm8650-cs-dt-v2-1-cf24c6c9bddc@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHj6V2cC/1XMQQ7CIBCF4as0s3YMIJDiynuYLhqgdhZtlalE0
+ 3B3sXHj8n/J+zbgmCgynJsNUszEtMw11KEBP/bzLSKF2qCE0lIJhzy11gj0jGHFPljtgh96E1u
+ ol3uKA7127trVHonXJb13Pcvv+oOk+IeyRInKOutO2kjT6svjSZ5mf/TLBF0p5QNZSOFCqgAAA
+ A==
+X-Change-ID: 20241209-sm8650-cs-dt-ad649dcfa5e8
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yuanfang Zhang
+	<quic_yuanfang@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733819021; l=4281;
+ i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
+ bh=LxVL3dWaIY5BiEszPJpsF/yeGkMBUNkZigOVtbf3bvc=;
+ b=82+zkxe9QXPpQNethGni9O/w3u+LVKw4Z6vcDh770Nxdm62ajwMVobHWHpbvhJ/utgMmZnWp+
+ 8TI9i1ifn4UDz5EL9XV1YFEYdWcnGXpeof7Tom/xQTmf5IGC8L+6nk3
+X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
+ pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DTHV9US0lY0LD1JhzgOUyx9mgwlTSRUb
+X-Proofpoint-ORIG-GUID: DTHV9US0lY0LD1JhzgOUyx9mgwlTSRUb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ spamscore=0 adultscore=1 clxscore=1015 impostorscore=0 mlxlogscore=883
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100064
 
-On Mon, Dec 9, 2024, at 18:17, Ciprian Marian Costea wrote:
-> On 12/6/2024 2:41 PM, Arnd Bergmann wrote:
+Add coresight components: Funnel, ETE and ETF for SM8650.
 
->> I think storing 'rtc_hz' as a u32 variable and adding a range
->> check when filling it would help, mainly to save the next reader
->> from having to understand what is going on.
->> 
->
-> The confusion on my end is that I cannot see where 'div_u64() implicitly 
-> casts the dividend 'hz' from 64-bit to 32-bit' by following the method's 
-> implementation [1]
+Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+---
+Changes in v2:
+- Update compatible for funnel and etf.
+- remove unnecessary property: reg-names and arm,primecell-periphid.
+- Link to v1: https://lore.kernel.org/r/20241210-sm8650-cs-dt-v1-1-269693451584@quicinc.com
+---
+ arch/arm64/boot/dts/qcom/sm8650.dtsi | 165 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 165 insertions(+)
 
-I mean passing a 64-bit variable into a function that takes a
-32-bit argument truncates the range.
+diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+index 25e47505adcb790d09f1d2726386438487255824..76620d478e872a2b725693dc32364e2a183572b7 100644
+--- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+@@ -5654,6 +5654,171 @@ compute-cb@12 {
+ 				};
+ 			};
+ 		};
++
++		ete0 {
++			compatible = "arm,embedded-trace-extension";
++
++			cpu = <&cpu0>;
++			qcom,skip-power-up;
++
++			out-ports {
++				port {
++					ete0_out_funnel_ete: endpoint {
++						remote-endpoint = <&funnel_ete_in_ete0>;
++					};
++				};
++			};
++		};
++
++		funnel_ete {
++			compatible = "arm,coresight-static-funnel";
++
++			in-ports {
++				port@0 {
++					reg = <0>;
++
++					funnel_ete_in_ete0: endpoint {
++						remote-endpoint = <&ete0_out_funnel_ete>;
++					};
++				};
++			};
++
++			out-ports {
++				port {
++					funnel_ete_out_funnel_apss: endpoint {
++						remote-endpoint = <&funnel_apss_in_funnel_ete>;
++					};
++				};
++			};
++		};
++
++		funnel@13810000 {
++			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
++
++			reg = <0x0 0x13810000 0x0 0x1000>;
++
++			clocks = <&aoss_qmp>;
++			clock-names = "apb_pclk";
++
++			in-ports {
++				port@0 {
++					reg = <0>;
++
++					funnel_apss_in_funnel_ete: endpoint {
++						remote-endpoint = <&funnel_ete_out_funnel_apss>;
++					};
++				};
++			};
++
++			out-ports {
++				port {
++					funnel_apss_out_funnel_in1: endpoint {
++						remote-endpoint = <&funnel_in1_in_funnel_apss>;
++					};
++				};
++			};
++		};
++
++		funnel@10042000 {
++			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
++
++			reg = <0x0 0x10042000 0x0 0x1000>;
++
++			clocks = <&aoss_qmp>;
++			clock-names = "apb_pclk";
++
++			in-ports {
++				port@4 {
++					reg = <4>;
++
++					funnel_in1_in_funnel_apss: endpoint {
++						remote-endpoint = <&funnel_apss_out_funnel_in1>;
++					};
++				};
++			};
++
++			out-ports {
++				port {
++					funnel_in1_out_funnel_qdss: endpoint {
++						remote-endpoint = <&funnel_qdss_in_funnel_in1>;
++					};
++				};
++			};
++		};
++
++		funnel@10045000 {
++			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
++
++			reg = <0x0 0x10045000 0x0 0x1000>;
++
++			clocks = <&aoss_qmp>;
++			clock-names = "apb_pclk";
++
++			in-ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					reg = <1>;
++
++					funnel_qdss_in_funnel_in1: endpoint {
++						remote-endpoint = <&funnel_in1_out_funnel_qdss>;
++					};
++				};
++			};
++
++			out-ports {
++				port {
++					funnel_qdss_out_funnel_aoss: endpoint {
++						remote-endpoint = <&funnel_aoss_in_funnel_qdss>;
++					};
++				};
++			};
++		};
++
++		funnel@10b04000 {
++			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
++
++			reg = <0x0 0x10b04000 0x0 0x1000>;
++
++			clocks = <&aoss_qmp>;
++			clock-names = "apb_pclk";
++
++			in-ports {
++				port@7 {
++					reg = <7>;
++
++					funnel_aoss_in_funnel_qdss: endpoint {
++						remote-endpoint = <&funnel_qdss_out_funnel_aoss>;
++					};
++				};
++			};
++
++			out-ports {
++				port {
++					funnel_aoss_out_tmc_etf: endpoint {
++						remote-endpoint = <&tmc_etf_in_funnel_aoss>;
++					};
++				};
++			};
++		};
++
++		tmc@10b05000 {
++			compatible = "arm,coresight-tmc", "arm,primecell";
++
++			reg = <0x0 0x10b05000 0x0 0x1000>;
++
++			clocks = <&aoss_qmp>;
++			clock-names = "apb_pclk";
++
++			in-ports {
++				port {
++					tmc_etf_in_funnel_aoss: endpoint {
++						remote-endpoint = <&funnel_aoss_out_tmc_etf>;
++					};
++				};
++			};
++		};
+ 	};
+ 
+ 	thermal-zones {
 
-> But I agree that 'rtc_hz' can be stored into a 32-bit variable with a 
-> range check added when it is taken from the Linux clock API to avoid any
-> unneeded abstractions.
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20241209-sm8650-cs-dt-ad649dcfa5e8
 
-ok
+Best regards,
+-- 
+Yuanfang Zhang <quic_yuanfang@quicinc.com>
 
->> 
->> This is the same as just removing the error handling and
->> relying on unsigned integer overflow semantics.
->> 
->> The usual check we do in time_before()/time_after instead
->> checks if the elapsed time is less than half the available
->> range:
->> 
->> #define time_after(a,b)         \
->>          (typecheck(unsigned long, a) && \
->>           typecheck(unsigned long, b) && \
->>           ((long)((b) - (a)) < 0))
->> 
->
-> Ok. Thanks for the suggestion. I will look into using 
-> 'time_before()/time_after()' API instead of directly checking via 
-> comparison operators.
-
-To be clear: you can't directly use time_before() here because
-that takes an 'unsigned long' argument, so you want the
-same logic, but for u32 values. I have not found an existing
-helper for that, but it's possible I missed it.
-
->> Who sets that alarm though? Are you relying on custom userspace
->> for this, or is that something that the kernel already does
->> that I'm missing?
->
-> The test usage is via 'rtcwake' [2] userspace tool.
-> I've detailed a bit the testing scenario in the cover letter for this 
-> patchset [3]:
->
-> "
-> Following is an example of Suspend to RAM trigger on S32G2/S32G3 SoCs,
-> using userspace tools such as rtcwake:
-> # rtcwake -s 2 -m mem
-> # rtcwake: assuming RTC uses UTC ...
-> # rtcwake: wakeup from "mem" using /dev/rtc0 at Wed Feb  6 06:28:36 2036
-
-Got it. I feel this also needs either some documentation in
-the source code, or some infrastructure in the rtc layer if
-this is a common problem in other drivers as well. If there
-is a maximum time that the system can be suspended for without
-a wakeup, why not just set an earlier wakeup in the kernel
-when you have all the information for it?
-
-Or maybe this should not actually be an 'rtc' driver at all?
-In the old days, we used drivers like
-arch/arm/mach-omap1/timer32k.c to register a handler
-for read_persistent_clock64(), which completely bypasses
-the RTC layer and provides both automatic wakeup and more
-accurate accounting of sleep time. 
-
-Another example was the tegra clocksource driver, which used
-to use read_persistent_clock64() but changed to being
-a CLOCK_SOURCE_SUSPEND_NONSTOP source in 95170f0708f2
-("clocksource/drivers/tegra: Rework for compensation of
-suspend time"). The same seems true for timer-ti-32k.c and
-timer-sprd.c.
-
-Alexandre, Daniel, any recommendations here?
-
-     Arnd
 
