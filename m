@@ -1,292 +1,197 @@
-Return-Path: <linux-kernel+bounces-439477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B829EAFCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:24:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDA59EAFE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0F5165FFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101601885B92
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A305F19D082;
-	Tue, 10 Dec 2024 11:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417D12080DE;
+	Tue, 10 Dec 2024 11:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaA44fPL"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="R3YiOxzu"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2067.outbound.protection.outlook.com [40.107.103.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F7523DE9E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733829846; cv=none; b=kapITr19PxyYUPpvvgn+1tX/jCmi4CHPtGVFtk3dBWG5Mn4LYsjm5LGVaP1xnyGyabefG927pNp9kPE4UFQyu/VW8MOlx69SSr9xPTqE5QZ3kWXnhkxMuQnKt5OZjRitHHEw9B8k3U5QQg9EBAdyyWTgkA5eSvP8rDi+2feLQ5k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733829846; c=relaxed/simple;
-	bh=/IUaWZ0rGpCjDNdYKSki952oONJ0kwsGbQGF1xd+LLM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E3sW+cdG31GwkAJzuLtrDwHWkkh7Evc9+QbEWOOcGq1Gk//79Y2+Tx5euKZDy3DhSfZhVZJhZ6ZQssEmNA0d3URZhnhBsfKSz4PDfvm13+/eUfqG8Ca+bkw3ldZEC0eFwuF9UAVjUDrbRUwPxKdYovcfZSnoptTJxtCwM0/GgKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SaA44fPL; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21628b3fe7dso29455595ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:24:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733829844; x=1734434644; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8UGoutpas92JsX8FcjC0qacdHEx/ZaXacQhRIVlDSN8=;
-        b=SaA44fPL1g6+zJ+S3zTiBk4R6R10A7ooKebh5HnMN8kvYey+M/qTeae9XsQIsnLnqB
-         nKJ9RDarGk8gv5HxSbfLu00GLM9/e7jeAowfJ2t2TYedjKbfuNN5WZaWY0Avl/8KntIn
-         ldhw1QhXMYKooBLfJuc7x8jugobCCPMrwWtNz+qXNNNCOUxQX9ffY9JIoWYtS4X4ER8q
-         sHJMj+a1cThsAEjdQW6DHEc5jxLX7reXB4bkGyd2zMvI6Nc9HucLD5S3q2o+Q+8hmexk
-         iCuxoYFn9vlgiiIv20WxBdCA64n2AGEUsIgEpLv4r+UCof+L2aK3tdBapM+Y9jWHnOxt
-         UlCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733829844; x=1734434644;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8UGoutpas92JsX8FcjC0qacdHEx/ZaXacQhRIVlDSN8=;
-        b=M2IkDWw2+ZCNN7AnnSrqkmw0OOP8UEEkifd9VQX8X1douU15xb6DLbtksaRWfybTSr
-         6uthdpuyU3l4eTn6EkHQQ+RiML8lb2wOkvCfDATLhX/w+eebuZNLPJmgW76n+nscNRi8
-         zAydj9CN2SiQF9oQOcNQJwUk8N26CyWH4UgF3pjoKbjM/RDGE6RlnXVwaXZZJ4Tvgc8q
-         SthwfWQLZo+U0XruFosBHKyOy0aJFsBmVfqscNbMpjWk/GHYd8yD1Zi9Tbt9ULDOX48f
-         8zUDJhEaOLFE+pUf182MqZJ+jQoYq2XnXuET5GVr12P1RI7Y2J/ndYsoVOFsUhruUDho
-         Jq4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUh2HzEpA1lO1raQAP82fooP1GujVhd6bV8EDcezEbwc0KlOcpY+KpUFJPxHirgQckmBWoY37r01k5V3js=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw21qhT5kAlvnVZOczk/eNuZ0DGL6aVkkYTlerqw7k00rGzNlkT
-	vUzlfOwy3x/3gf5I1S7AugjrbxRaKdkeTCvMBPCuHIrPX7vYonLUusoTPhaAXak=
-X-Gm-Gg: ASbGncuXmdQFOtvxorHBAj9yyw8csGNoXz+RfQpTvKKustWIrKnUx/TcFCGYtkV5+SN
-	HkZ8g+dUg/Of/waYvcLuWkF0aZPi/c90FsALkihg+z8iAuprN6TDjFDa7bjbWIMUra416BYomYq
-	NVfaEsb9XYyNOr7sdJ68PGrYnpyY70osmsNzjPsZ2/EbCy//aW8EMmC8LYmlSax1R8jUTNiULvx
-	cr3hLS5+fy3Sl4HDNIsodrNCAizftlTXWhDCCfp5hzxrVRuEXgj0nnMTt1yYw+bNZXl4absOAUB
-	JF2gVlSmkzW1wTNi3A==
-X-Google-Smtp-Source: AGHT+IGiz/D9najtT9t/UixnDdA6unMcIi6JYedk03ywVeQ4usrtQBzvEIe8806CC2ZVdG7YA0HiDQ==
-X-Received: by 2002:a17:903:1787:b0:211:e812:3948 with SMTP id d9443c01a7336-2161393ebe6mr251699985ad.0.1733829844336;
-        Tue, 10 Dec 2024 03:24:04 -0800 (PST)
-Received: from [10.172.23.24] ([206.237.119.150])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21659e7b7eesm28202085ad.9.2024.12.10.03.24.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 03:24:03 -0800 (PST)
-Message-ID: <a1ef0b7bd9d2491ad346fb2a55b4279c4bd2f1fe.camel@gmail.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in
- ocfs2_search_extent_list
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: syzbot <syzbot+2313dda4dc4885c93578@syzkaller.appspotmail.com>, 
- jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
- linux-kernel@vger.kernel.org,  mark@fasheh.com,
- ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Date: Tue, 10 Dec 2024 19:23:59 +0800
-In-Reply-To: <67577778.050a0220.a30f1.01bc.GAE@google.com>
-References: <67577778.050a0220.a30f1.01bc.GAE@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0F41DC9BD;
+	Tue, 10 Dec 2024 11:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733830109; cv=fail; b=A2rDWFJQU5ZDpelCpaV8ZsLtB3cy7WrT4rg7EOdijpEunNaKlGoC7eKryUWhDM2Ji/D4duUc8ri//uAQ0WBOhBChp9zHZ9mvdegWrEFS0WE2npH+Fk7LOhvvNjb3UwXn4VbfwXlNzOeot911jiKiX3hP3pGioJFduRg40tYGJu0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733830109; c=relaxed/simple;
+	bh=oEflPgDNFo6QWeqYEMMyOfF8TftqRAp/58UIe9VrR+I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ckvQmacSykRilXtVfi6vQuaD+wnbB72qkUE+C7pSLA738QzmCqqPe1mkP8Nn88Z84jqgWRJo3HLOyYWn8cy9JzX4Qdei4jc6FxBwaHuPHvDaJltQmuu9bt2G2lp5o9bRQRdXxA1dDMwHMKl3iwjCBdDTmiF82PZxKYzZxa/JTEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=R3YiOxzu; arc=fail smtp.client-ip=40.107.103.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z/wnqVgcxatHyEYl3wn+e2Z0FYyqmZ3e8ehW7BxXxqxuQlcfsQGd3/E7nQ/jbNhpTWq8RRNpmyezRnTfL0ejdKsNwc6XOMzfdQzAZV9Xmcm0MP++B8CLSVUS8zhCfCpPbcoj4tJkeTsOhdS4nKtWASfHTUQm7Hi2uczxitt1cP4yMEhnG3ZLWg2e2wk5gXuCfCPDEuR/yX11M+OCB4dMK2lONBYnKuXhFZJpN1wjJR5K7IhBt2TQaT0ftp0DZVodYgP/iI6cSk8HFSybbuDY1OzSK1FnmbfYpbH/nWR+16gL1LKsHjNKLEV32p0+Bp4diqVAmp+i2kcqKUhnEjS8+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RPG8a5D19tiOViJ6A4p259Hlf2GhDvtSUoJzOLyTPn0=;
+ b=prF4/+Pn5BBbxVB+Xw4pVgAky4A0fAU/5uJHJszrf5L2wuf9BwrnXkmK95S3+7GzFqggCkSKr4pSfeZ2vSyPVFPf+jW8ttgv24e0f/+LHgbEmld+0728zdfpTfqHkT9mjsengAmPU8OzSsymwKYgIyr14lLFLX2P67e6a1BYr88XaMZnrSfeS0oP0X3FPsjW+y+FQ4PILr6+AinQS5ELAd7AD+7fNrO4eklq4HyX4zVnlcEuizD/l6tbvymWPwPI0ig3MToN8rEQLmDGtAMEAvCeddkZmLOSWD+02gzkjkXF4on/GM+Fh1vWVbJfKOAvQfTfDJNDpKn9rbg1x0gvZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RPG8a5D19tiOViJ6A4p259Hlf2GhDvtSUoJzOLyTPn0=;
+ b=R3YiOxzuBVcE/zZXumbXJZkw8JPtorezzUiMtqZH3Cm26Mdcj6JhvZ70qQ2GVtBlxiUOuSDgnl69w9+Et62HY8YEF70P0KGeku4rwySLaX7tiMVyYyvseW6xccO8dlUmMtuYpzHoErPicjkIpIlNql8NjqLBNeE/gBi9Cc8n/RkSsRjDAMLNLWmxaNsmuebdpgSaGd/O46darE30swm5Q5Cm3xQqH7unokVaXU5H0tPqdBhvBjTZUlVjACyccJFu/bJLjmj6rJHY4nrCHQJotvQAyHocV/EbkJHaNGmdttDw4urZVwFfXa8ETMMhPw1tROplOJKTjD26luwffF8OUw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by PA4PR04MB7935.eurprd04.prod.outlook.com (2603:10a6:102:b8::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.20; Tue, 10 Dec
+ 2024 11:28:24 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%6]) with mapi id 15.20.8230.010; Tue, 10 Dec 2024
+ 11:28:24 +0000
+From: haibo.chen@nxp.com
+To: broonie@kernel.org,
+	bbrezillon@kernel.org,
+	frieder.schrempf@exceet.de
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	han.xu@nxp.com,
+	chengminglin@mxic.com.tw,
+	stable@vger.kernel.org,
+	haibo.chen@nxp.com,
+	jason.hui.liu@nxp.com
+Subject: [PATCH] spi: spi-mem: check the dummy buswidth only for rx mode
+Date: Tue, 10 Dec 2024 19:27:12 +0800
+Message-Id: <20241210112712.483893-1-haibo.chen@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0032.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::18) To DU0PR04MB9496.eurprd04.prod.outlook.com
+ (2603:10a6:10:32d::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|PA4PR04MB7935:EE_
+X-MS-Office365-Filtering-Correlation-Id: 916ef4b5-1810-4e6b-e43b-08dd190dc205
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FMizqfeZSLof4j4PHMIHTAnHWye/CdpnLSj1vlFItEGUrVxDU2+OfX4lD2Xx?=
+ =?us-ascii?Q?j4Oslvvq1CvtXh+tEKT44KEyymojv7FVz2IYwWkRY4T3Qhpy3KBbetwvdG9U?=
+ =?us-ascii?Q?rzp41kE4JXT0qGNuw1R4Za2EIW1oOofp82Cuvm9S89zqteatMx2xMkgf0spA?=
+ =?us-ascii?Q?vqwsQeBcLyeWx1RFjiSmLpUIuXw1bLtuWbkGIGsem/UYk+ZIfDKcjiFVb7op?=
+ =?us-ascii?Q?1Z4N43jNbz8aOy79IPk+H8DtH0IjC9MtMm355rj9pWyP9IXSpj2h3dHU6TKJ?=
+ =?us-ascii?Q?7QnJTVwpD/xBxjf8W68myfbDIbhOuVzrJqYzgmfV3q6Dr0stwwaf3Hh/LiRy?=
+ =?us-ascii?Q?K/vOBfFiYOeWvMnXDj1BwtFumAVD52kjsuofDW8Iqc89wsjHNiGcuwBUB4n3?=
+ =?us-ascii?Q?/k71aOHkh4G0mi2aCypZSlPj8VP2vX9JoHtkkighCW+1PnYn/3nUQ6jgnAjN?=
+ =?us-ascii?Q?hRRqqaJMRCjHTsRmi10lLcHyJCfxh2n77RV7/BcmnP7OBwYoKnZ0oUSPe0Hc?=
+ =?us-ascii?Q?5d/daEYyLdsRpabdVAcsCLCRgbVEdXoOs6ErhtrhpLUUph4qbrujiG/52iIT?=
+ =?us-ascii?Q?PC6RpyS1FnTN16xJD9MP/mOGwKy9vIXt/SSQMflja1+V04G1rSaUVQ4PlmK7?=
+ =?us-ascii?Q?1KnDiu9fKLsbz32Zo4ZHvEuMgGlSQdFQ+rcWSNWBmW/dV5LhF/BsdkR8FTI5?=
+ =?us-ascii?Q?TubBwqgjQCZAA/E3mMx4PnC7eOnOQySH8I8zMKBf2U+uL5/PBztqEk70Zs3x?=
+ =?us-ascii?Q?Ck59rWHKZmKS3hGi2Awt6ngWP91nQ4cGb1yK7VDIZfrko1XM+ouDMadawxm7?=
+ =?us-ascii?Q?8W0e1tfVxLI9uuuTH5un9Hv4VCXMdEd+ZTqeXLOreMIZPOoFr9FEStOgyOqw?=
+ =?us-ascii?Q?kXfdcuw/iKHsZ0KSZfnnR95An7j+q8hIw5Rod1S+iwv2DvmnLt7CAkDsDDoa?=
+ =?us-ascii?Q?6a9mj220mkTupX9UCpATOAESQ8DADxW09UE0MKEhusap7BwkZlv5LImXDmMO?=
+ =?us-ascii?Q?h7X6ZUiCr++xw6kazh43cTYFkDvOjGI4SyWzEZ2otEyDw3JcmJhkLYDazFAL?=
+ =?us-ascii?Q?a11efe8KuqieGAY5N+Pul4aBNROZUIUYlMgSkRTflaEkIwHOuzkphteYlkmx?=
+ =?us-ascii?Q?ribpw0LEwvF59NkZec5X/td2tBb5nNyXxt8VALeAitHSBxtF8VzXZFsmc3H+?=
+ =?us-ascii?Q?gx3BG/q4AigzrvJaORP9SZqDRxyAPjZ28fYppbclq1hieoevDzTvcIiaJDqC?=
+ =?us-ascii?Q?Bje2gIW38S65MEPmqacJcF6fWI5qXsA81SWF9Q4ZkJaXtYn8npwPWI11Txdl?=
+ =?us-ascii?Q?8j+f0Hl4qe/xK9azE54OpnKaMSni/fe0u7ldBI2ZFC183ESkXRHqTqA5Bs8K?=
+ =?us-ascii?Q?LVI3v/lZt3c90IiKbwGXWGeeh44BuLZynFFi0mbaYz3aDs9TqQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tClDLe8V9I8EQJtg1gQKaC46G5nogxMwsHvLocQqurQxJU3AAzT1kQ5vlu6F?=
+ =?us-ascii?Q?Ger+rPS+7y3uD1dImfPdRvW/YV+P+uXHMiEP7b8AAJ8rLvPluQQxOQb4fhjq?=
+ =?us-ascii?Q?05ce08k+yQfh7rH48e23BfA3Xur88LPsZQK+rLKP1I8kLINgtksh88L+kJ82?=
+ =?us-ascii?Q?3zTxCGWKjXGBrPWPIwwCL8YGGKKgYwpCB4xNudnJ7tTPzBIg07hk/QLJ0EMX?=
+ =?us-ascii?Q?QSVn6XmOmW8sculccY7V0LT1hPBSXg0U8PNHczY2+ADNpAhj0VxzN9mBJjGx?=
+ =?us-ascii?Q?9unfBk4ptD9hjzqM9RXlWHuG4n1HQ0XcdgSFf6gjdJjxCGTffxXEBsQVPZ4l?=
+ =?us-ascii?Q?DNP1MIlwO4NDRpDGn33dfMRBeLfM3Ppjx6DVSps2/SENfS7K3fB9Rx5d9u7D?=
+ =?us-ascii?Q?w2uJAp17SPGXZP6Z7JY/addNBXd0MJvigSmeyhohVjR2jJalW9lsRNFRQm9m?=
+ =?us-ascii?Q?mM5QwhcC+g/2hvf2TavL+WYL9dTuvgIRIXK4JjBV8Ci+DETgenGGGCesz/Kt?=
+ =?us-ascii?Q?nvik9ed5c955/VG6Wyeg5USVkB722SVAP7JmRDFz6Co/wb3KaZEoRIeaDvjl?=
+ =?us-ascii?Q?51ZcnCKvqsfOEhXyRBCyOQ2XGtljBQDJY6sdbpgIDQO2Latqoq74QGLFbZzt?=
+ =?us-ascii?Q?04SoazieX67l7snbSTT5tWFoZ1lZPpOGfryQ6WOZFXiUug+VYir2hSwiscdj?=
+ =?us-ascii?Q?SjhNFBlwLoALVuCx0KGSocFFueNloTfqMaLxeE9P1s4dR1k3LpbDbm1aHinR?=
+ =?us-ascii?Q?40EzaiREttu6OpdC7UgesuhYtaPf1y82JybIdoJLKRV7ezaPrMGcFWIYsiFe?=
+ =?us-ascii?Q?ciobb3WlgbBIBzkWmO0KAIlk7s6vj9YNqH+zHWgfW3/7GsNtxo0Kz7rQvznj?=
+ =?us-ascii?Q?YB0nm4pczSm4iKBzysq7h+HM74IB3ZuhO16m+TaOKWSr8mXdwORZ8b91AZMQ?=
+ =?us-ascii?Q?Y2OcaUQVfGAJwcAvTRmWj9cUE9qoGS31pdylAbxN8FW3ycRIqVD4+mQhYKwi?=
+ =?us-ascii?Q?SICc6vTLyH1dD9e5jwCPQ9tChsdQAzzlKK78OPb8EJh9JOidD23ArmKYbAOK?=
+ =?us-ascii?Q?G/nn4ngRC/WmXmLuRY1Rwc40IFtpdsOvB5pP+vhyFlIqZzsB7gItVTOlUX6a?=
+ =?us-ascii?Q?mGt41T0P5ePCPmoIzsWnE8N6y8+luY1dyzjdQ/L0fBWwMoBp6CsIAmhL1rGL?=
+ =?us-ascii?Q?rl2a3TNE2pH3CfhzbS+40Bwm2eBz1kTy+aEB+W41cLFP2z6tg9EdvIrzAitv?=
+ =?us-ascii?Q?BmF/vPl9FKI8yN9mj+vpyhvwN3YY1FCx1XYfXxzaHngcC2z2Zmzp2mqjP0lX?=
+ =?us-ascii?Q?BPbyMd+xLOYPAOEtySPu8UUrNfYAnUn8EJbZdZoZrFvF+1AufT3LQErPc+Xe?=
+ =?us-ascii?Q?eImjBf13fTpPXAIvoRAI/ckTghMCJ5XnJBny9gjmzCFywTSiSp2WP0sMtY4L?=
+ =?us-ascii?Q?Qz3Ga5WA9rbD7+jDtdKYIsAD7vLM7elq/uMtckl0mlLLSlmRoeIblnPLiQ1l?=
+ =?us-ascii?Q?fqpVz1A0dN5VNzuQyY9ASb9kaGHlY3aCy3oaWM4j3Tpwht+rNk75sRYxvEGM?=
+ =?us-ascii?Q?qoqulUh+/rKMLV3xIhiaYhbd/oEkQ0swL5mM46cX?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 916ef4b5-1810-4e6b-e43b-08dd190dc205
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 11:28:23.9377
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wQmHEjaf9JOj6nXO6EgUVuVwe5O7hOjlDM5dQnnibyLT37lkNU/cAYdwzWVHeLcPXOD0HjKSpDRyrvAAcFoKBg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7935
 
-On Mon, 2024-12-09 at 15:04 -0800, syzbot wrote:
+From: Haibo Chen <haibo.chen@nxp.com>
 
-Add a sanity check for corrupted file system images.
+Dummy usually used for rx, so combine the dummy buswidth check only
+for rx mode.
 
-#syz test: upstream 5076001689e4
+Find issue after commit 98d1fb94ce75 ("mtd: spi-nor: core: replace
+dummy buswidth from addr to data") on imx8mn-ddr4-evk board. On this
+board, rx=4, tx=1, without the upper commit, chose SNOR_CMD_READ_1_1_4,
+after this commit, chose SNOR_CMD_READ(1_1_1). This is because when
+dummy buswidth = 4, spi_check_buswidth_req(mem, op->dummy.buswidth, true)
+do not return the expected result.
 
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 2cc5c99fe941..60c84049f3e4 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1358,6 +1358,21 @@ void ocfs2_refresh_inode(struct inode *inode,
- 	spin_unlock(&OCFS2_I(inode)->ip_lock);
- }
-=20
-+static int has_extents(struct ocfs2_dinode *di)
-+{
-+	/* inodes flagged with other stuff in id2 */
-+	if (di->i_flags & (OCFS2_SUPER_BLOCK_FL | OCFS2_LOCAL_ALLOC_FL |
-+			   OCFS2_CHAIN_FL | OCFS2_DEALLOC_FL))
-+		return 0;
-+	/* i_flags doesn't indicate when id2 is a fast symlink */
-+	if (S_ISLNK(di->i_mode) && di->i_size && di->i_clusters =3D=3D 0)
-+		return 0;
-+	if (di->i_dyn_features & OCFS2_INLINE_DATA_FL)
-+		return 0;
-+
-+	return 1;
-+}
-+
- int ocfs2_validate_inode_block(struct super_block *sb,
- 			       struct buffer_head *bh)
- {
-@@ -1386,6 +1401,15 @@ int ocfs2_validate_inode_block(struct super_block *s=
-b,
-=20
- 	rc =3D -EINVAL;
-=20
-+	if (has_extents(di) &&
-+	    le16_to_cpu(di->id2.i_list.l_next_free_rec) > le16_to_cpu(di->id2.i_l=
-ist.l_count)) {
-+		rc =3D ocfs2_error(sb, "corrupted dinode #%llu: next_free_rec is %u, cou=
-nt is %u\n",
-+				 (unsigned long long)bh->b_blocknr,
-+				 le16_to_cpu(di->id2.i_list.l_next_free_rec),
-+				 le16_to_cpu(di->id2.i_list.l_count));
-+		goto bail;
-+	}
-+
- 	if (!OCFS2_IS_VALID_DINODE(di)) {
- 		rc =3D ocfs2_error(sb, "Invalid dinode #%llu: signature =3D %.*s\n",
- 				 (unsigned long long)bh->b_blocknr, 7,
+Combine the cmd.buswidth and addr.buswidth check to tx is reasonable,
+but for dummy buswidth, need to check the rx mode.
 
+Fixes: c36ff266dc82 ("spi: Extend the core to ease integration of SPI memory controllers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+---
+ drivers/spi/spi-mem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+index abc6792e738c..bc9f09a9e5a0 100644
+--- a/drivers/spi/spi-mem.c
++++ b/drivers/spi/spi-mem.c
+@@ -150,7 +150,7 @@ static bool spi_mem_check_buswidth(struct spi_mem *mem,
+ 		return false;
+ 
+ 	if (op->dummy.nbytes &&
+-	    spi_check_buswidth_req(mem, op->dummy.buswidth, true))
++	    spi_check_buswidth_req(mem, op->dummy.buswidth, false))
+ 		return false;
+ 
+ 	if (op->data.dir != SPI_MEM_NO_DATA &&
+-- 
+2.34.1
 
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:=C2=A0=C2=A0=C2=A0 5076001689e4 Merge tag 'loongarch-fixes-6.=
-13-1' of git://g..
-> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D120f68df98000=
-0
-> kernel config:=C2=A0 https://syzkaller.appspot.com/x/.config?x=3D50c7a614=
-69ce77e7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2313dda4dc4885c=
-93578
-> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 15.0.6=
-, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://syzkaller.appspot.com/x/=
-repro.syz?x=3D13b29330580000
-> C reproducer:=C2=A0=C2=A0 https://syzkaller.appspot.com/x/repro.c?x=3D17b=
-29330580000
->=20
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7=
-feb34a89c2a/non_bootable_disk-50760016.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/76ef343a98c8/vmlinu=
-x-50760016.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e42b3235bcc3/b=
-zImage-50760016.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/893e4e85ff=
-3d/mount_0.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+2313dda4dc4885c93578@syzkaller.appspotmail.com
->=20
-> loop0: detected capacity change from 0 to 32768
-> JBD2: Ignoring recovery information on journal
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: use-after-free in ocfs2_search_extent_list+0x155/0x200 fs/ocf=
-s2/alloc.c:776
-> Read of size 4 at addr ffff888049800000 by task syz-executor307/5410
->=20
-> CPU: 0 UID: 0 PID: 5410 Comm: syz-executor307 Not tainted 6.13.0-rc1-syzk=
-aller-00036-g5076001689e4 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
-16.3-2~bpo12+1 04/01/2014
-> Call Trace:
-> =C2=A0<TASK>
-> =C2=A0__dump_stack lib/dump_stack.c:94 [inline]
-> =C2=A0dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> =C2=A0print_address_description mm/kasan/report.c:378 [inline]
-> =C2=A0print_report+0x169/0x550 mm/kasan/report.c:489
-> =C2=A0kasan_report+0x143/0x180 mm/kasan/report.c:602
-> =C2=A0ocfs2_search_extent_list+0x155/0x200 fs/ocfs2/alloc.c:776
-> =C2=A0ocfs2_get_clusters_nocache+0x21a/0xbf0 fs/ocfs2/extent_map.c:438
-> =C2=A0ocfs2_get_clusters+0x5bd/0xbd0 fs/ocfs2/extent_map.c:621
-> =C2=A0ocfs2_extent_map_get_blocks+0x24c/0x7d0 fs/ocfs2/extent_map.c:668
-> =C2=A0ocfs2_bmap+0x2b7/0x780 fs/ocfs2/aops.c:474
-> =C2=A0bmap+0xa8/0xe0 fs/inode.c:1997
-> =C2=A0jbd2_journal_bmap+0x12d/0x2b0 fs/jbd2/journal.c:926
-> =C2=A0do_readahead fs/jbd2/recovery.c:88 [inline]
-> =C2=A0jread+0x435/0xc80 fs/jbd2/recovery.c:165
-> =C2=A0do_one_pass+0x3cd/0x3aa0 fs/jbd2/recovery.c:646
-> =C2=A0jbd2_journal_skip_recovery+0x95/0x240 fs/jbd2/recovery.c:366
-> =C2=A0jbd2_journal_wipe+0xc9/0x110 fs/jbd2/journal.c:2517
-> =C2=A0ocfs2_journal_wipe+0xab/0x2a0 fs/ocfs2/journal.c:1192
-> =C2=A0ocfs2_check_volume fs/ocfs2/super.c:2413 [inline]
-> =C2=A0ocfs2_mount_volume+0xb86/0x1940 fs/ocfs2/super.c:1817
-> =C2=A0ocfs2_fill_super+0x476e/0x5760 fs/ocfs2/super.c:1084
-> =C2=A0mount_bdev+0x20a/0x2d0 fs/super.c:1693
-> =C2=A0legacy_get_tree+0xee/0x190 fs/fs_context.c:662
-> =C2=A0vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-> =C2=A0do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-> =C2=A0do_mount fs/namespace.c:3847 [inline]
-> =C2=A0__do_sys_mount fs/namespace.c:4057 [inline]
-> =C2=A0__se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-> =C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> =C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fdc66ec71aa
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 8=
-4 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01
-> 48
-> RSP: 002b:00007ffee9a2de18 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffee9a2de30 RCX: 00007fdc66ec71aa
-> RDX: 0000000020004440 RSI: 0000000020000040 RDI: 00007ffee9a2de30
-> RBP: 0000000000000004 R08: 00007ffee9a2de70 R09: 0000000000004431
-> R10: 00000000000008c0 R11: 0000000000000282 R12: 00000000000008c0
-> R13: 00007ffee9a2de70 R14: 0000000000000003 R15: 0000000001000000
-> =C2=A0</TASK>
->=20
-> The buggy address belongs to the physical page:
-> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4980=
-0
-> flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)
-> page_type: f0(buddy)
-> raw: 04fff00000000000 ffff88805ffd7230 ffff88805ffd7230 0000000000000000
-> raw: 0000000000000000 000000000000000a 00000000f0000000 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner info is not present (never set?)
->=20
-> Memory state around the buggy address:
-> =C2=A0ffff8880497fff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> =C2=A0ffff8880497fff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > ffff888049800000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^
-> =C2=A0ffff888049800080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> =C2=A0ffff888049800100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ=C2=A0for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status=C2=A0for how to communicate with syzbot.
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
-
---=20
-Julian Sun <sunjunchao2870@gmail.com>
 
