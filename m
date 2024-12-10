@@ -1,153 +1,153 @@
-Return-Path: <linux-kernel+bounces-438962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB58E9EA8CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EA29EA8D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B586B169CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:30:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A9E163F92
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CA822CBF0;
-	Tue, 10 Dec 2024 06:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F01722CBD6;
+	Tue, 10 Dec 2024 06:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="X3A75VpC"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010010.outbound.protection.outlook.com [52.101.229.10])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3G5NnlQk"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2081.outbound.protection.outlook.com [40.107.237.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818D522CBDA;
-	Tue, 10 Dec 2024 06:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435F114A0AA;
+	Tue, 10 Dec 2024 06:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733812254; cv=fail; b=ui7Lk064Xx2Z0rolTLbZStmuLh0tXYwe9b9ox1ZTbjpoHqIoUrLZFqrMD/++UA3bDCr8J76kmRWY+ELXxFjXaK+ma3O20EbQBW9y580irfr2IedQhkBLAwnH4ZNnr/VMq0mDnLjz3Tr3BxuKopiDCOmWiLEMDrX+rUxVrVX7PwU=
+	t=1733812678; cv=fail; b=nWjdnepj4268WwXH3efY4kVVP927fdyP5x7T3hijlgZBbO0CDXa/VSCIdX/vdVIOsSZlc2hBnYUmXCmaQbE0B0zwlmRYcgfJPq2E4cOcnXOvl6e5/W4Whz32DLikSOGFR19DTIuwQGmiZWH38wCDjlBqFCjExdXw41/w/yIxvZs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733812254; c=relaxed/simple;
-	bh=oU7XWgG9TS2PVzEhSXIGZnKAm0ZD7ym0YeZXizCHgqs=;
+	s=arc-20240116; t=1733812678; c=relaxed/simple;
+	bh=mPpENjrvlweAt/aifB4R+Qc9hLVgiMZBmqKxmXW6HH8=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uVVlZCdi1P6/cuk5oWX04hhyMuuVCkUNKuVwbclsUWzybyQW5tWuNnIIE96A1USvuuWvfX5DRF0oOL2VUkPzR2yOP74CYm3sggzez0QLmpGBz700cDkUfn2zWSkY8Je0QRdaB3+VhL252+ji1lkkmeXyrgk5QB3nS6a25RqfTIU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=X3A75VpC; arc=fail smtp.client-ip=52.101.229.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	 Content-Type:MIME-Version; b=Ctm/t3Z7A8BWByYAGENXJYYzF0mXSyPo/c/s7PaOorlRWkPKtaHCkwAcadN9N60ps3RROzW5xRPSQOix0Tm6gbs9PKVlvl3QhLkCVw2aci6m33vmqjVQpPm4t40GGrG/x37EPpumNcf55GuHp9Cl0oO0F7IbptZ/fo4Lz2bkF50=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3G5NnlQk; arc=fail smtp.client-ip=40.107.237.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EKj+XKwU3ty2A+XST/44qkvEX+NpSHjI/+bY3Z7RW0IW/yn5+vlEJ8rwmFL7paI42s/p49ppdfhcX04XAekWQ9omUstKOAsrh3VtOOAEBA6ruOHx30AnZ9uJYe9uMHTxe+h5QyaokjPevKTzuwqK0dq0MEIWEM25wt0HZDL+3rxqhcZZCpkLAPQIXcCkK+4Y7UwWAPdmW5rOqJey/6Z+a6HWTj+gstwcbgtXYcUR2Q+dIkSST6ekXORY7GoNBZa+Z9LaULIa0rrRVpH+TXMkcQQy3fONPklXaerxUjGzE0UfD/KrTfji3Cjd1a/3OJIEIMwd1PqWGmKeQ9PmFNGCzA==
+ b=lIbhjQGKKNV6h/m8MmMUpvuY/1EAWwpezmtuiMbuEZ5P19eDjqBatJiBNbzQdoquYAgLtFHGoRQ6QYQ011OjXAr83slXhxyEEftVcSR9lBdRPe30dmAhxE+tnCqelrs903GeZ/GB1NY0NXlZzBtsmAU16g6V4Ko/JpFpGr550YYqLMV9W2qxYrg+6zs8uKF2VdUnigrcF2YYVVKKLZp5GQ6C172rQnZM0xuCvqoNHqgbhcCOoRq1XFWaUivA7Xg/mKFuxSOD1Yct1BfgwrYgFR8nB1IZtWpZU88PUz2cmVT/PndXmJfNSY4Pugql64v5EIWz+1S9VLl8EJk5Gr0sEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KbPi9KMoOv97yNkYUf1EaIRHMYvAKExTh2cg42BfyTw=;
- b=Axjna0FQYu0rji+WndgDckrxQY4iqmM3PD665Y+82Fz0Gc52mECRB2/Na+SHGUH9BjrjWEQbp7Nmxzjg6nTzcme1Dq8k6TlFVNS790QeRDIKrg8v2OPKSREv7xrVXgLeNfGlV+MKfwkeqy/pB94QVSw8wlrXv5aGBrjSJiD8ezH6eZZq1uz/BaM28uJw/QnUV1ku2pMRftHkagb9wAzAmT7gkcGY7Q0lyBu6eHq/sOolTRkXZLuoFNwxT3vSJO/KiMp5IVCYl1WYeHR0+bW9sqfgNY7p67mVeuMtiJSV1SgRvLGhFszxKySHxRCr8BvVCSyhfwh00WTTeZNfkZLESw==
+ bh=J+ZeVIcAbmThO/E4IByAPqxvkwi5C2mNesWKHR/yeEg=;
+ b=FKzuCelxLGXIKGSfIXJ1lphnhNhuM1TDTD7UTpOzfDiKH1hS2SP/fLqeysB1LdIeLA1i30uidrYNpup327WS4RIE3exDAOGF1a9Ns1sDNn+1P2iZpIiQJuomHLxmHLUJBBuIhIiKJZsf4W7kW7915c1yBs0nQWRKRS8BvxcB+QEq/ndwlY5HamehMDxB7q5dovTUXjzuturoRO25Wl97VEXxX82IIZZ10b0gh2xQE5LIeNxqPraqgxBon6x4DT9t85DhAjnZP0Pq8Az27jMdi4A3KXdUzBWgg0rn/lfOtw8uOK4InClvKqH5s5F9QfBgMeQUmYW/5Kg0LZ/Qio7G0Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KbPi9KMoOv97yNkYUf1EaIRHMYvAKExTh2cg42BfyTw=;
- b=X3A75VpCqrJ7Ir5K4COfJKB6WMLnC/pDsYd2gi8cXVLc3dHeQ7SfiZspKGdYeMCSkbf9vcEhYu9qEuyrigIa4oP+fgbiwaX/mQDKx+FJ8NCpbGFQbVWYjZ1AJbsK09zm/2XgXF5QSF30x0xXP3C483yguO9ma/B1UB/j6MvhzdI=
-Received: from TYWPR01MB11030.jpnprd01.prod.outlook.com
- (2603:1096:400:390::11) by OS3PR01MB8905.jpnprd01.prod.outlook.com
- (2603:1096:604:17d::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Tue, 10 Dec
- 2024 06:30:41 +0000
-Received: from TYWPR01MB11030.jpnprd01.prod.outlook.com
- ([fe80::a78e:aecb:953:b562]) by TYWPR01MB11030.jpnprd01.prod.outlook.com
- ([fe80::a78e:aecb:953:b562%4]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
- 06:30:41 +0000
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: nikita.yoush <nikita.yoush@cogentembedded.com>, Andrew Lunn
-	<andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Dege
-	<michael.dege@renesas.com>, Christian Mardmoeller
-	<christian.mardmoeller@renesas.com>, Dennis Ostermann
-	<dennis.ostermann@renesas.com>, nikita.yoush
-	<nikita.yoush@cogentembedded.com>
-Subject: RE: [PATCH net] net: renesas: rswitch: fix initial MPIC register
- setting
-Thread-Topic: [PATCH net] net: renesas: rswitch: fix initial MPIC register
- setting
-Thread-Index: AQHbShBamNhgnf/qzk2YLfenMc9CVbLfBTCA
-Date: Tue, 10 Dec 2024 06:30:41 +0000
+ bh=J+ZeVIcAbmThO/E4IByAPqxvkwi5C2mNesWKHR/yeEg=;
+ b=3G5NnlQkomBDQZh3UybWkv2N7ujBgn97QarICKb9kZgSnoFxWeF9tqhzTePm1mip3CMMZWJWWW1Jesx0acX0DAn1RbvzsAZYAUEUTpeCdCYAaaPHAzRaS3hKgMT8LiXJVbLtI9duKBwPRg9OB/UUcoV0V4muklzuAsQ7xpuGtTY=
+Received: from SN7PR12MB7201.namprd12.prod.outlook.com (2603:10b6:806:2a8::22)
+ by DM6PR12MB4420.namprd12.prod.outlook.com (2603:10b6:5:2a7::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
+ 2024 06:37:52 +0000
+Received: from SN7PR12MB7201.namprd12.prod.outlook.com
+ ([fe80::b25:4657:e9:cbc3]) by SN7PR12MB7201.namprd12.prod.outlook.com
+ ([fe80::b25:4657:e9:cbc3%6]) with mapi id 15.20.8207.014; Tue, 10 Dec 2024
+ 06:37:52 +0000
+From: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
+To: Rob Herring <robh@kernel.org>
+CC: "bhelgaas@google.com" <bhelgaas@google.com>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>,
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "jingoohan1@gmail.com"
+	<jingoohan1@gmail.com>, "Simek, Michal" <michal.simek@amd.com>, "Gogada,
+ Bharat Kumar" <bharat.kumar.gogada@amd.com>
+Subject: RE: [PATCH v2 1/2] dt-bindings: PCI: amd-mdb: Add AMD Versal2 MDB
+ PCIe Root Port Bridge
+Thread-Topic: [PATCH v2 1/2] dt-bindings: PCI: amd-mdb: Add AMD Versal2 MDB
+ PCIe Root Port Bridge
+Thread-Index: AQHbRX/9tKefBNodzkOGfTPvQMzdCrLUl76AgAD++PCACXYaAA==
+Date: Tue, 10 Dec 2024 06:37:52 +0000
 Message-ID:
- <TYWPR01MB11030BB4AC02261FF655A13CFD83D2@TYWPR01MB11030.jpnprd01.prod.outlook.com>
-References: <20241209075951.163924-1-nikita.yoush@cogentembedded.com>
-In-Reply-To: <20241209075951.163924-1-nikita.yoush@cogentembedded.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
+ <SN7PR12MB72014E558437E5B6E630E72E8B3D2@SN7PR12MB7201.namprd12.prod.outlook.com>
+References: <20241203123608.2944662-1-thippeswamy.havalige@amd.com>
+ <20241203123608.2944662-2-thippeswamy.havalige@amd.com>
+ <20241203144101.GA1756254-robh@kernel.org>
+ <SN7PR12MB7201C658D71FDB5D8FD891838B372@SN7PR12MB7201.namprd12.prod.outlook.com>
+In-Reply-To:
+ <SN7PR12MB7201C658D71FDB5D8FD891838B372@SN7PR12MB7201.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
+ header.d=none;dmarc=none action=none header.from=amd.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB11030:EE_|OS3PR01MB8905:EE_
-x-ms-office365-filtering-correlation-id: de294c08-a22c-43c4-3963-08dd18e42b59
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-traffictypediagnostic: SN7PR12MB7201:EE_|DM6PR12MB4420:EE_
+x-ms-office365-filtering-correlation-id: e1728bf6-f7de-4b8c-4e14-08dd18e52c18
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|366016|7416014|1800799024|376014|38070700018;
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?fop7tFjIL0rBlcCVx0EJKpCt1ahHhCIS2I3qp/pcyHmJLt3a9/7u9j1AVvmc?=
- =?us-ascii?Q?vvVuHNLVyI2x7miCVkNS5AoFzkAjteZXEiYQ5hKSI7J76zlHJtNF6iTnaBSd?=
- =?us-ascii?Q?7qpyWH6eOwzU/wvbC+W91Oyljkryg8dPGgHA8F/eVWKj12ub8z3YdnUh4Tqd?=
- =?us-ascii?Q?iUWpjpoD8y1JmQ4IQ1mkNzAQG5OUPOWIPb69G0cetxk1Sw8hQQHJI72PtbFJ?=
- =?us-ascii?Q?L4lk9Y1VxKKoi/VW9efVNLi54tyJVFsCotPHuQ2Q7V9Vb/8WmEquo7Eko9u5?=
- =?us-ascii?Q?Rls5GzIBalYdDqUMRozwhytMLceB5urDsw/e9gV63DKj56jvkws/vFhXeNJp?=
- =?us-ascii?Q?bPmQuJ0tzZ3Hr1yE+swm6G24dI/ZQXolizFoXV+VC8fXCrTa1tMv0sjXwnea?=
- =?us-ascii?Q?DJlu5/PNp+/dmtN+Qr645sjYGEf7nmNsMV5GH8gWrK7u6ReVelGfb15BrMBU?=
- =?us-ascii?Q?HhUM/kENkgbkReeoI1HX/hYdM+1Iz4hmQpPDpFFHjEl6oPn2a4cIO22ts9xR?=
- =?us-ascii?Q?Pv2BxCsOiZS+muyYvHw5f5yJoLwY096EGnalXd8XyvzYgjxtg1ApH3Pi5b+C?=
- =?us-ascii?Q?wGeRqHHhxJ6hsauKAOeM2tbV9hcY1C+KS+Of2cuu5ft8SBGtZD/RPn43x0e0?=
- =?us-ascii?Q?v2Qutg5wLJM9Bz9qKAIWBygo9mbG72eayMcRc44iIfbX0nkEUm6h4CXhzWcI?=
- =?us-ascii?Q?pkMSAK+xg8eHSiEBqhNsesaDxInp8ivVul5kZA+oTgA8ZBUKnAU/3DvX2qZE?=
- =?us-ascii?Q?0y5Wq9gg9LVR2yPZky9yIdkqEjo15h7yg4ErnZugOT42pI7B8NpZo0kg6dcV?=
- =?us-ascii?Q?n5tD28tJFdxnWM3PjSXrdiMl66h+GRvp2JCtsQrXTg8ahmcB8OHOC4wQnt8r?=
- =?us-ascii?Q?EyDNxM1p1oEdWoyPASoaS/kIWGdCLaD+Hwfo0qEumYoZMg2LfLCn/6OxrdMk?=
- =?us-ascii?Q?sy+NZMoHXstgXr+Or/TCEpvH8y105HNuTp08k+H478B9LaFPW3GO+Aw1Xf+r?=
- =?us-ascii?Q?9ucU1Pl/NUdHr+3DsCZe5l3ePOQMUxLPr30oQqWi09OPt/OP031/5U6EDdgJ?=
- =?us-ascii?Q?mbS9Paf9Rr4FSNE9zrbuGKZd6nBKcV9avTHj3Jz7hXtQqDhgQL8TKy4KZcAG?=
- =?us-ascii?Q?nD4pdlofmBSGGCvl+eNKBiOBUaalAvkNF7+j3Klmno7EikiSIXfocutCc05n?=
- =?us-ascii?Q?eCVgH1hwgFdwppdqswDjO7fJhEqagr+5CbScBKhkE0hEg373c9z96Rrv4p4v?=
- =?us-ascii?Q?K3KlzO1lPcW1FTKbbLQS94ay5HXBtr/oue6tHaDDMYNQdQ9J8oH+kchSAMQp?=
- =?us-ascii?Q?Mjpx+d8bn3rAdSF3ZP/d4eHXrh4tHCXRyLOYQyP5V8Y5ERyLMUlpzmpZLt24?=
- =?us-ascii?Q?PxErWBCz4mKNG4OX45QSztffPobEW6z4rebZxzSCEWzITJxsxg=3D=3D?=
+ =?us-ascii?Q?grO79wZKPTwGwcbe5WW2jNiQwEXm7E4ydB61ybQNqIFs+nW5C42vr8XrOTns?=
+ =?us-ascii?Q?B1jYmGWaIr5d9m2e3UMtq9drvh2Pho3SgngF20dKYyyNfhalIldufQX1vIFT?=
+ =?us-ascii?Q?tE1nwyOEj7KUlbOeicg049xTBnET/NiUDYsY/2BLxE+vvGG5KnE7VwqQVxdD?=
+ =?us-ascii?Q?zwSP6LuICE0oNipqxta/h0jpH8I1SFB6t81BNUtDamPRFF9Auf7viH94LdXl?=
+ =?us-ascii?Q?9oo8t8SFshyH9UmCmgWA89zbeny8Zd3sMvhX+/kiJ89Tgyn7VLBVg4HPT6MM?=
+ =?us-ascii?Q?4dMBVEAgfpxvxVYkmnENslc3CnUTzf4tcvoe5Had04GKfYcSvuFtkgf+7ATD?=
+ =?us-ascii?Q?4cyOa3tq6pbKBDpLjCF71/Gs1kqIVK+RiJ6EsPznxOxJ7Ymw+50jPifqFDhJ?=
+ =?us-ascii?Q?ykI0tgw46bZ//9vehABUdL+cU5a369CoTBTYrMYhfTIjFoVg58F9xvx3zIZ/?=
+ =?us-ascii?Q?MhlkWs989LpSMhifUMwB2sJfe9+e/ZqNms2l9Ae6vYtDFqhy0DAHUJJmu6tQ?=
+ =?us-ascii?Q?74/rLmT8ZDsQzbgm02HIcfeVZjG2lKlClDAZcLBhQcTWg4bDnMZ5hmiJMaGi?=
+ =?us-ascii?Q?frGJV2vkWRCXXVANp+Xf+yJMayyPzCU5l6ReDrsTPyDHoT2PcTsOQgsTq58N?=
+ =?us-ascii?Q?Z4VtDjP/CMHBpyDsoywWFEfpzI8ZsxsFrKTORHMV1iYbR28OVB3NqVMGkTt7?=
+ =?us-ascii?Q?ufNpLU2RD/0ltnMDrhQYm0w70EpVOKiEJgDWInAnInnRRJh+iSzPAy8Uopd4?=
+ =?us-ascii?Q?cf9hwD5guOGKDIdOPGy2qlRCVBMI/sOL3/v7tjd6eFSzgnRupAaDreDYE4yF?=
+ =?us-ascii?Q?3H8B0QYRa+sWblxSw/p1Y8C0hRsryiYoIZ9Gpz7TpZEZ5UZZbQGgZXav2JMw?=
+ =?us-ascii?Q?jwL8PZMaotDeAvjnQeeS430C9Mqs+LS9bzashxB6YwzF392s/UzMnTENMutN?=
+ =?us-ascii?Q?P0gHPW5X5EqoYl9NrWGie6PpSy8q00ijdAB0YwY/0PV/8lwo/52Ein6oDlhU?=
+ =?us-ascii?Q?udqkPluahpiLHSGl3thQMgm7ng2wYNgvCBwBCQfsbZHFJYfIZBOqRtYGMxEM?=
+ =?us-ascii?Q?sIp0EosvkwRCqXkh0xsg/0IM17sE0rfHhkhEDD2IvhVyteHvl2IaCU/b5TRA?=
+ =?us-ascii?Q?AcAf5kqNV59awYDg7f+FeYNLVpaIBaoywD8Jg1M93+IVF9tVCUFlXTBSsrwY?=
+ =?us-ascii?Q?JwPz+ELruGBZrDKBFGixkJQdSTKdxPrqYXVidz1cnDt/qKIvQGmy/pdR8Xpk?=
+ =?us-ascii?Q?uW8h0MwAxaJCMuewhLjwQzUmCuIwCh+LIZJ7iwY5oIYU3XItjq9L9eMxObwj?=
+ =?us-ascii?Q?v9CoCNG2vyYQccBeABl+dxqBBiLgUQWOLSKtzQFtep50QJvEQ91kPZe2jcpb?=
+ =?us-ascii?Q?OPULyTs=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11030.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(7416014)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB7201.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?/YKAfbUYIB4zzgddz5xdbCKU9CHijorb9lR3fcSkkVW3mIid3+uIGpb5V7Ll?=
- =?us-ascii?Q?l3i5RCplL4dubmdEqqAqycz046buJvWdK9Ke9J4YSOHLTOfq7q3zBg5A/kI0?=
- =?us-ascii?Q?KTmn4b3CG4YHuwy3QcKiDSbnBPms0/G2ZROKce+PC1hnfTgqyjU6em2MVegq?=
- =?us-ascii?Q?qLCnCxw91k0kpmL3pdKb2dBj6t/w1FcHngVqbLuW7DIfBT0zJOutaDhIGvc6?=
- =?us-ascii?Q?I+y1yEmTI3pDrfJJgt3MRTSil5dgaP5eXWf/F7eB0U/O+fRyPG8XB3+MyHNR?=
- =?us-ascii?Q?ne2Ahcxj4fWEzMQvBHkaoEqtdEkkcQ9/0E1GxHr3CqLbkDOeNdH+VvEm2/hv?=
- =?us-ascii?Q?ZUa/80+PztD9tfS9H4EctiGY1kgDXgFGFhn1Q/IZ9RUfEhcNyDnQ2DoOQr3z?=
- =?us-ascii?Q?SNrWslIjS7BbKu9QhmqHunkN98h4yUYYLCfbnr/M9urUOYEahg8PYqKRU1oI?=
- =?us-ascii?Q?Dno/X7LRZq0f3Vy6mtC07r+aoqwOGEoj9yyvvl2QD+1WQeZzmJ3LlIi7yBFe?=
- =?us-ascii?Q?QZ3M+tj/+fAO5FnVrkIu+JJ08oQEfUeMiybTWr5xYtV+7vm9wHXZjjHcS7Cn?=
- =?us-ascii?Q?9DrMYkxXAKOy3H9GEs/MmCS4kGdZF5Cy1kTyLUdiQXRmeYPPLPUqt7GNvDkx?=
- =?us-ascii?Q?OPCi0LJ7iwllNMDbXKFRfaw3cpVVR1Tf96JxjiEBJ/JUCpOefaBYS99STJaw?=
- =?us-ascii?Q?R+a6Ocw7DrdcstaqTH+SX9u79IePlxW8ZBswAwW+FzkH3PtR2LKXKZygUT0i?=
- =?us-ascii?Q?JUo4N51Rez/KicL/c6YYij4+RExWUd6yKfj5REyFoyQSTkRlLwAA7Q+UmC8z?=
- =?us-ascii?Q?4XkTopK0VCP+y3MxjVwqfnSS8i1RK+zmMUHwmkOjeYRaR8fsMHaopO+Gbrlb?=
- =?us-ascii?Q?WKl5Wrd1fNgqqvQy2QamwQuo86CUIMbxC2+NuZ0gtY+8e9MC8QO3o5wQG6BI?=
- =?us-ascii?Q?K7sngjv9y7XMTUs1cPq9oEzR9kK+EdohcIFz0OzwWRexb0oAgFKoEaBfN4xh?=
- =?us-ascii?Q?sHl2ImpJ2yjXOh+G6Xz+D2RdSxYvshyMgrOEgBZCqOZmkuzlA7zFXpnvPyY0?=
- =?us-ascii?Q?GMy7d24fB7QGmUtXPVqAn6c48kVcwzJVIgFgePguap91vRZ6QFO1Oyq2u+Uh?=
- =?us-ascii?Q?l2YBR/Oz+RT508eWjgt/YPRSGFzy22NZNSRjer1VH4lWbc0mCiNcVu3vwWAc?=
- =?us-ascii?Q?KGtLUEZthcAnncV2rTUIoQa1GPq8lL1gSYysAfcEzMXFvXodliDB+JJOj4hq?=
- =?us-ascii?Q?CNOpo4oRxm4j1fyvR6qKmNy1A6d+yaLFTSfeprpSE833vLruqX6ZlxpQlSeH?=
- =?us-ascii?Q?KBUoaEvYlwU73SculfPEeJrv4NfSc3OP1vI9CXLIVx3jPR/NV9Kphi7xK4vV?=
- =?us-ascii?Q?Ypg+Pa78K0NNoml2K3DNoSp8EfH79gOSXSeX9eXSpBTrOVUt6B/KLErUxLBm?=
- =?us-ascii?Q?uwtzp/bA91C+X3LR1eAIHNuC29rOGy1mFf5PI+io5J1Kvxc5Q0DKase1laKf?=
- =?us-ascii?Q?hbPEiQ9QkSrFFlBOG36yaDLbO9obXYKiwHqJ7lL4Z6QPimR0abNc1UW4S4G0?=
- =?us-ascii?Q?/EFpEz9O5aAKe2aYT/ceDcC0iUp2jU13itG2iftjxGGiCwnS9mxi5Kkd5r9L?=
- =?us-ascii?Q?ild1M4zLSha6uGCyexoqHiUEo/ZpZ7DVdZ+Fr35BGTcNislha5NTL3jAOthw?=
- =?us-ascii?Q?xKJwUg=3D=3D?=
+ =?us-ascii?Q?uVsY/mUdnuH0LpvAqywWoxQqBHdEJovow35ZdT6QTbYsQiQDxvGwNbmQMFp5?=
+ =?us-ascii?Q?xG6GmDu7RSuIqEEpjWrt/my6hZVo0k+9MLO09XK2ZS8w2UnCdT6258A1bgrB?=
+ =?us-ascii?Q?tlqci+G+/mnjeJmO7En4uHruYCD08GJp9Nv9V3qG9qJVhnFLvVg6O5wAn0ms?=
+ =?us-ascii?Q?LTebCbokFlOcL3MtwwbWKRJw0S8z6PMbM7eezQz52B9bLuB05oGZHs7vPatQ?=
+ =?us-ascii?Q?XM60kWd4XC4qnNGFNfjzMqzknC4+VeYdfzXpkQJl7XcviP/GA6CY5cydz9k+?=
+ =?us-ascii?Q?Bvq5fvJ/LOpfu112fAGC9oLOySbB2sxjL/zuxu1a8XICsdclcpUNKXhIdnXn?=
+ =?us-ascii?Q?n70IoR9dUX1+oQKouqXkuzy70uU1D1HiEH0PKzdnNTggPF6QNRjlJLp65aaD?=
+ =?us-ascii?Q?c5z2NMEpZLCNE9G4uTnILrh+l7PyBsOadTn686WuB4vH6Yah304d9maZr90a?=
+ =?us-ascii?Q?VD0MlsN9F4iEgukMaFsSUA06yRMV4DCgD1Rw0UWyxsgjQ+Wvkh12jJQgWO8f?=
+ =?us-ascii?Q?giLU12B/OPXeL8PrVRfjxVw4y5H97w+3Y8CekSa5Qhdif2CHimEXYkr3zk8H?=
+ =?us-ascii?Q?T5xfbn0zv5eeuNecBbzB2KaE5NhK9tTDHgHf+yzxFuC3TN6XGT/3f1HJ7WgA?=
+ =?us-ascii?Q?e7X+SgvbRExy1IDq92POdvYC4IHzxxcQ72MzhM9PYj7iHy8nBZxK46u/FOpU?=
+ =?us-ascii?Q?hTWAyYG/e1LK7ghuZpTelu9ua7aw8OvZKIfhCto8uMQzowNND7purO5f30Zs?=
+ =?us-ascii?Q?oUHhi1SVoammR4iweS453TMIbsdfqOP7PrQ+6vbgktVUqTKdDarHvAnDi6c0?=
+ =?us-ascii?Q?kCLo4uYflJ0yen/fwpXtsq75P/aWb1/0zpZw7HFXZ2DlLax4JlfPipiqXAW+?=
+ =?us-ascii?Q?Sdb3mriCsTOEh7tX7dHuoxDIb0m2aKAIXwAovxrLGISezThA6AHcVsBgDhIn?=
+ =?us-ascii?Q?et2qx6fal5zHCEJfHm44FTY2gTnOiGwRsh+yW50Yi/NoT0c+ROMdfPzw4BSG?=
+ =?us-ascii?Q?pvzDRCxbr0bAViBpjrgeC1Y26WZhaRxQAz5MXNFWTdgdalA/lUREYUbbebUU?=
+ =?us-ascii?Q?zmMS93miGX6DNYEt4FlWj3SxPzX3D73vik/CU0f0NiHXziP939fa4qAPQxn9?=
+ =?us-ascii?Q?Y1yel9BPVIDjmY6hLYGbARCBhUsoic655ok3WdJHGoYYpSGEP/CNz5x51C02?=
+ =?us-ascii?Q?VKl+Um/UdGSXKBqisTTkQJKGu3Hh8Ntex43GkjPzeKBVTGJ+wFmgN/Z2Otol?=
+ =?us-ascii?Q?DPefVzpTefnIwtkxs3yJ5PLC5gItkgx0/U0Ruzb1Ec+LxqbTm4UXOzug6LrC?=
+ =?us-ascii?Q?zRzTDdAQZAUGIbOzLymfjYWTVIMJtCPB1c/n2AgCCM9Ip/3vz9zzPecaY18M?=
+ =?us-ascii?Q?bN3eqMWz2yXcO0Dn/p8GGjdGZdXx9yVXsXvadOdsCSjOrjuJKi50eCToPX5V?=
+ =?us-ascii?Q?O+Eyk+VKFeAkeTLaOn+QjnbFEsC2gt/mhG7B6IGDMCWV4BfLBpLonhxXjoL1?=
+ =?us-ascii?Q?EQCIqBU0B+UatF7gAX9ya07MWMGaqrf07ClLZs+xOmI+ljg6pchMIvE622Zp?=
+ =?us-ascii?Q?KKDtXFDfws3uVlqkMPA=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -156,130 +156,260 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
+X-OriginatorOrg: amd.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11030.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de294c08-a22c-43c4-3963-08dd18e42b59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2024 06:30:41.4902
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB7201.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1728bf6-f7de-4b8c-4e14-08dd18e52c18
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2024 06:37:52.2624
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XmswS9/L/kfUIB4yY2r5NuV71Hyk8mMhEyNDsMZ+rzKHPFGW1qerwZaN1b5ZKn44SBpU8UChF6S9W0FBJlYYOnaAPT6sT4leRhj6LlOg5yUfDtjL/DDrxq6fKXzIivJC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8905
+X-MS-Exchange-CrossTenant-userprincipalname: xDQrsW2ZNzYRYMTsI3RWsU17Kpq8+n6EycMFaNxNJ9O5uJGJs1HShUf8DP29apjQRKqeldByLau/Md1GFzfyTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4420
 
-Hello Nikita-san,
+Hi Robh,
 
-> From: Nikita Yushchenko, Sent: Monday, December 9, 2024 5:00 PM
->=20
-> MPIC.PIS must be set per phy interface type.
-> MPIC.LSC must be set per speed.
->=20
-> Do that strictly per datasheet, instead of hardcoding MPIC.PIS to GMII.
->=20
-> Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet S=
-witch"")
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Thank you for your comments. I mistakenly mentioned Bjorn in my earlier mes=
+sage.
+My apologies for the oversight.
 
-Thank you for the patch! I could not apply this patch on net.git / main bra=
-nch
-and the branch + your patches [1] though, this patch looks good. So,
+Regards,
+Thippeswamy H
 
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-[1]
-https://patchwork.kernel.org/project/netdevbpf/list/?series=3D915669
-
-Best regards,
-Yoshihiro Shimoda
-
-
-> ---
->  drivers/net/ethernet/renesas/rswitch.c | 27 ++++++++++++++++++++------
->  drivers/net/ethernet/renesas/rswitch.h | 14 ++++++-------
->  2 files changed, 28 insertions(+), 13 deletions(-)
+> -----Original Message-----
+> From: Havalige, Thippeswamy
+> Sent: Wednesday, December 4, 2024 12:02 PM
+> To: Rob Herring <robh@kernel.org>
+> Cc: bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com;
+> manivannan.sadhasivam@linaro.org; krzk+dt@kernel.org; conor+dt@kernel.org=
+;
+> linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; jingoohan1@gmail.com; Simek, Michal
+> <michal.simek@amd.com>; Gogada, Bharat Kumar
+> <bharat.kumar.gogada@amd.com>
+> Subject: RE: [PATCH v2 1/2] dt-bindings: PCI: amd-mdb: Add AMD Versal2 MD=
+B
+> PCIe Root Port Bridge
 >=20
-> diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/etherne=
-t/renesas/rswitch.c
-> index 7f17b9656cc3..6ca5f72193eb 100644
-> --- a/drivers/net/ethernet/renesas/rswitch.c
-> +++ b/drivers/net/ethernet/renesas/rswitch.c
-> @@ -1124,25 +1124,40 @@ static int rswitch_etha_wait_link_verification(st=
-ruct rswitch_etha *etha)
+> Hi Bjorn,
 >=20
->  static void rswitch_rmac_setting(struct rswitch_etha *etha, const u8 *ma=
-c)
->  {
-> -	u32 val;
-> +	u32 pis, lsc;
->=20
->  	rswitch_etha_write_mac_address(etha, mac);
->=20
-> +	switch (etha->phy_interface) {
-> +	case PHY_INTERFACE_MODE_SGMII:
-> +		pis =3D MPIC_PIS_GMII;
-> +		break;
-> +	case PHY_INTERFACE_MODE_USXGMII:
-> +	case PHY_INTERFACE_MODE_5GBASER:
-> +		pis =3D MPIC_PIS_XGMII;
-> +		break;
-> +	default:
-> +		pis =3D FIELD_GET(MPIC_PIS, ioread32(etha->addr + MPIC));
-> +		break;
-> +	}
-> +
->  	switch (etha->speed) {
->  	case 100:
-> -		val =3D MPIC_LSC_100M;
-> +		lsc =3D MPIC_LSC_100M;
->  		break;
->  	case 1000:
-> -		val =3D MPIC_LSC_1G;
-> +		lsc =3D MPIC_LSC_1G;
->  		break;
->  	case 2500:
-> -		val =3D MPIC_LSC_2_5G;
-> +		lsc =3D MPIC_LSC_2_5G;
->  		break;
->  	default:
-> -		return;
-> +		lsc =3D FIELD_GET(MPIC_LSC, ioread32(etha->addr + MPIC));
-> +		break;
->  	}
->=20
-> -	iowrite32(MPIC_PIS_GMII | val, etha->addr + MPIC);
-> +	rswitch_modify(etha->addr, MPIC, MPIC_PIS | MPIC_LSC,
-> +		       FIELD_PREP(MPIC_PIS, pis) | FIELD_PREP(MPIC_LSC, lsc));
->  }
->=20
->  static void rswitch_etha_enable_mii(struct rswitch_etha *etha)
-> diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/etherne=
-t/renesas/rswitch.h
-> index 741b089c8523..abcf2aac49cd 100644
-> --- a/drivers/net/ethernet/renesas/rswitch.h
-> +++ b/drivers/net/ethernet/renesas/rswitch.h
-> @@ -725,13 +725,13 @@ enum rswitch_etha_mode {
->=20
->  #define EAVCC_VEM_SC_TAG	(0x3 << 16)
->=20
-> -#define MPIC_PIS_MII		0x00
-> -#define MPIC_PIS_GMII		0x02
-> -#define MPIC_PIS_XGMII		0x04
-> -#define MPIC_LSC_SHIFT		3
-> -#define MPIC_LSC_100M		(1 << MPIC_LSC_SHIFT)
-> -#define MPIC_LSC_1G		(2 << MPIC_LSC_SHIFT)
-> -#define MPIC_LSC_2_5G		(3 << MPIC_LSC_SHIFT)
-> +#define MPIC_PIS		GENMASK(2, 0)
-> +#define MPIC_PIS_GMII		2
-> +#define MPIC_PIS_XGMII		4
-> +#define MPIC_LSC		GENMASK(5, 3)
-> +#define MPIC_LSC_100M		1
-> +#define MPIC_LSC_1G		2
-> +#define MPIC_LSC_2_5G		3
->=20
->  #define MPSM_PSME		BIT(0)
->  #define MPSM_MFF		BIT(2)
-> --
-> 2.39.5
-
+> > -----Original Message-----
+> > From: Rob Herring <robh@kernel.org>
+> > Sent: Tuesday, December 3, 2024 8:11 PM
+> > To: Havalige, Thippeswamy <thippeswamy.havalige@amd.com>
+> > Cc: bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com;
+> > manivannan.sadhasivam@linaro.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; linux-pci@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux- kernel@vger.kernel.org;
+> > jingoohan1@gmail.com; Simek, Michal <michal.simek@amd.com>; Gogada,
+> > Bharat Kumar <bharat.kumar.gogada@amd.com>
+> > Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: amd-mdb: Add AMD Versal2
+> > MDB PCIe Root Port Bridge
+> >
+> > On Tue, Dec 03, 2024 at 06:06:07PM +0530, Thippeswamy Havalige wrote:
+> > > Add AMD Versal2 MDB (Multimedia DMA Bridge) PCIe Root Port Bridge.
+> > >
+> > > Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> > > ---
+> > > Changes in v2:
+> > > -------------
+> > > - Modify patch subject.
+> > > - Add pcie host bridge reference.
+> > > - Modify filename as per compatible string.
+> > > - Remove standard PCI properties.
+> > > - Modify interrupt controller description.
+> > > - Indentation
+> > > ---
+> > >  .../bindings/pci/amd,versal2-mdb-host.yaml    | 132 ++++++++++++++++=
+++
+> > >  1 file changed, 132 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
+> > > b/Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
+> > > new file mode 100644
+> > > index 000000000000..75795bab8254
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yam
+> > > +++ l
+> > > @@ -0,0 +1,132 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pci/amd,mdb-pcie.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: AMD Versal2 MDB(Multimedia DMA Bridge) Host Controller
+> > > +
+> > > +maintainers:
+> > > +  - Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> > > +
+> > > +allOf:
+> > > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: amd,versal2-mdb-host
+> > > +
+> > > +  reg:
+> > > +    items:
+> > > +      - description: MDB PCIe controller 0 SLCR
+> >
+> > SLCR is not defined anywhere.
+> Thanks for review, Here SLCR refers to mdb_pcie_slcr should I modify it t=
+o lower
+> case?
+> >
+> > > +      - description: configuration region
+> > > +      - description: data bus interface
+> > > +      - description: address translation unit register
+> > > +
+> > > +  reg-names:
+> > > +    items:
+> > > +      - const: mdb_pcie_slcr
+> > > +      - const: config
+> > > +      - const: dbi
+> > > +      - const: atu
+> >
+> > DWC based it seems. You need to reference the DWC schema.
+> - Thanks for the review, Here should I add both dwc and pci-host-bridge h=
+ost bridge
+> schema.
+> > > +
+> > > +  ranges:
+> > > +    maxItems: 2
+> > > +
+> > > +  msi-map:
+> > > +    maxItems: 1
+> > > +
+> > > +  bus-range:
+> > > +    maxItems: 1
+> >
+> > Already defined in the common schema. Plus you obviously didn't test
+> > anything with this because bus-range must be exactly 2 entries. 1 is no=
+t valid.
+> - Thanks for the review, Will remove it in next patch.
+> >
+> > > +
+> > > +  "#address-cells":
+> > > +    const: 3
+> > > +
+> > > +  "#size-cells":
+> > > +    const: 2
+> >
+> > Both of these are also already defined in the pci-host-bridge.yaml.
+> Thanks for the review, Will update in next patch.
+> >
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupt-map-mask:
+> > > +    items:
+> > > +      - const: 0
+> > > +      - const: 0
+> > > +      - const: 0
+> > > +      - const: 7
+> > > +
+> > > +  interrupt-map:
+> > > +    maxItems: 4
+> > > +
+> > > +  "#interrupt-cells":
+> > > +    const: 1
+> > > +
+> > > +  interrupt-controller:
+> > > +    description: identifies the node as an interrupt controller
+> > > +    type: object
+> > > +    properties:
+> > > +      interrupt-controller: true
+> > > +
+> > > +      "#address-cells":
+> > > +        const: 0
+> > > +
+> > > +      "#interrupt-cells":
+> > > +        const: 1
+> > > +
+> > > +    required:
+> > > +      - interrupt-controller
+> > > +      - "#address-cells"
+> > > +      - "#interrupt-cells"
+> > > +
+> > > +    additionalProperties: false
+> >
+> > Move this before 'properties'.
+> - Thanks for the review, I will update in next patch.
+> >
+> > > +
+> > > +required:
+> > > +  - reg
+> > > +  - reg-names
+> > > +  - interrupts
+> > > +  - interrupt-map
+> > > +  - interrupt-map-mask
+> > > +  - msi-map
+> > > +  - ranges
+> >
+> > Already required by common schema.
+> Thanks for the review, will update in next patch.
+> >
+> > > +  - "#interrupt-cells"
+> > > +  - interrupt-controller
+> > > +
+> > > +unevaluatedProperties: false
+> > > +
+> > > +examples:
+> > > +
+> >
+> > Drop blank line.
+> Thanks for the review, will update in next patch.
+> >
+> > > +  - |
+> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > > +
+> > > +    soc {
+> > > +        #address-cells =3D <2>;
+> > > +        #size-cells =3D <2>;
+> > > +        pci@ed931000 {
+> >
+> > pcie@...
+> Thanks for the review, will update in next patch.
+> >
+> > > +            compatible =3D "amd,versal2-mdb-host";
+> > > +            reg =3D <0x0 0xed931000 0x0 0x2000>,
+> > > +                  <0x1000 0x100000 0x0 0xff00000>,
+> > > +                  <0x1000 0x0 0x0 0x100000>,
+> > > +                  <0x0 0xed860000 0x0 0x2000>;
+> > > +            reg-names =3D "mdb_pcie_slcr", "config", "dbi", "atu";
+> > > +            ranges =3D <0x2000000 0x00 0xa8000000 0x00 0xa8000000
+> > > + 0x00
+> > 0x10000000>,
+> > > +                     <0x43000000 0x1100 0x00 0x1100 0x00 0x00 0x1000=
+000>;
+> > > +            interrupts =3D <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
+> > > +            interrupt-parent =3D <&gic>;
+> > > +            interrupt-map-mask =3D <0 0 0 7>;
+> > > +            interrupt-map =3D <0 0 0 1 &pcie_intc_0 0>,
+> > > +                            <0 0 0 2 &pcie_intc_0 1>,
+> > > +                            <0 0 0 3 &pcie_intc_0 2>,
+> > > +                            <0 0 0 4 &pcie_intc_0 3>;
+> > > +            msi-map =3D <0x0 &gic_its 0x00 0x10000>;
+> > > +            #address-cells =3D <3>;
+> > > +            #size-cells =3D <2>;
+> > > +            #interrupt-cells =3D <1>;
+> > > +            device_type =3D "pci";
+> > > +            pcie_intc_0: interrupt-controller {
+> > > +                #address-cells =3D <0>;
+> > > +                #interrupt-cells =3D <1>;
+> > > +                interrupt-controller;
+> > > +           };
+> > > +        };
+> > > +    };
+> > > --
+> > > 2.34.1
+> > >
+> Regards,
+> Thippeswamy H
 
