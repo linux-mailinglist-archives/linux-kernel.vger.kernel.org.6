@@ -1,162 +1,179 @@
-Return-Path: <linux-kernel+bounces-439919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23F39EB608
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:20:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220CD1884A01
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:20:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F6C1BD9F9;
-	Tue, 10 Dec 2024 16:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a39Xg+HA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014839EB60D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:21:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DDB1AAA0E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF199282E5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:21:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4D11BC09A;
+	Tue, 10 Dec 2024 16:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4nylvokc"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801E51AAA0E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733847641; cv=none; b=fprYnpAYorwhZgoDTz7UCnGGjXHr9Ocsea1cq/k7Buq4DxAY0116sKCiHjYG6ouTlfSdIWP13hmGCL92dmFliA57JpjAql0gVhmBqTJij53NoBlrvuZLbFT5AHAdnW3JLHoJmSH1XqLvPBxm35TiU/mFcbnVZ+NhgLpBBxYcmaY=
+	t=1733847662; cv=none; b=bbwHtYFWhNrkPBKQtzOU+451B+0KwGg1i3g/DeONJKeqVtLAsXs702TiILbEtByYw0O3Y9xE9T4cdi8LDN52kp1B5PU3ZnwCdMDIL6YcOiOsUG+GR9bREE4shJWBbGDYpPfS9hjsO+Wm1O0CkhYwQy7WlnMLMYplbm4YgOqmfPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733847641; c=relaxed/simple;
-	bh=SwFKuuyDrUKR3aTUFbR7hOjvNKoNeq17ciZQCDPGEf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iVIAS/MEgtdWxhnpCR6MzBwTjpGfo5LhD1uRzhF3GLDuF2Rnc5mKzls3g7xE6VtZGktyCbzSLGkWJR0iRaSQ+HVB8TPg+z1d8Yk2nE1ilyqUYohNCQWbPYlvZw3530L9qqpELUA/oimEr/1JisJ3fkXo0b586ydyJR5qwyhj1A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a39Xg+HA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733847638;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rY9ynKcb4HkcQm4ahyj78rsPHrAzL68gixkqyxtJ3R0=;
-	b=a39Xg+HA2MvVTlNrhLvrVmU8Kx/K/f12Z1vFP2Hm2LbcELLMPP6C104072FbRSel2XFXw6
-	3hmT7kgnlT+aLu2Snxv6rDMy6dwIIu2xKxdtgBfk8xqh6U4yDFKBoX+yhb1U4r8nZahhED
-	wW0PgNzbU9oXHO65L+imLwHamW7JtMQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-Q0JOOeMfM-ycNizlGY1wPg-1; Tue, 10 Dec 2024 11:20:37 -0500
-X-MC-Unique: Q0JOOeMfM-ycNizlGY1wPg-1
-X-Mimecast-MFC-AGG-ID: Q0JOOeMfM-ycNizlGY1wPg
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43619b135bcso2820695e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:20:36 -0800 (PST)
+	s=arc-20240116; t=1733847662; c=relaxed/simple;
+	bh=WCz5g5BOqJlIYebnOOzSEgEWhNJnw8cMCnPXPn40gB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QO+gF0fq/j/tk3wknUeoN2lm715qcD51jxi/hMxZPKwJgwZC7uiQkYffRkfMwLXuMfF4mrDV9qXfZGX+YTOtVXc5iMU4Ht/vFjVLPXp98KOLRvRMdT7731jGDwHBA5mDrAhl+tewsAxNJA4yAu/gVncQpIRVZvuj5Rvan8W5K5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4nylvokc; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-467431402deso198801cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:21:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733847659; x=1734452459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M2hiMkjjjVlbn+YVdVeNdJ0jmHrRa7EL5H/2Jru6fxk=;
+        b=4nylvokc8cX/q6hJUpBb1owBUtyQqV9ScwA/wXbBQFEu1YDgdbpFk0V4biNXRO3962
+         oXt/zAXkfs6W8sd03CUb6Wt8O8R8hYsaXn1h+m1MkkyMsRt8K4N5yOEerNuAZqTZdLGt
+         OJuAa0EAnbuVqVPXu749PFxmc8qpjbJzATOPwFVX3wjRtyxZv/qulrBTrDZK1baJHU51
+         XYfb3LKoKbz3Q7D7dupPl9bIoaR2Lfm7+4ztsU4flpyXlW2HbZsc41JxU464vQ45+RtG
+         0r7jQyTun1d05fRVTp1MQW4XPC/XsEn/c/MuGKOPNb5QPIbPH4p4auj3kaz0wS5XeKRR
+         N0fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733847636; x=1734452436;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rY9ynKcb4HkcQm4ahyj78rsPHrAzL68gixkqyxtJ3R0=;
-        b=iqUpUW8UoRFPR4N13b4uyvpCpj55Cd038tItjHyoVcAVBeBO2aPWt7uql/ChvdsUtm
-         Icfchg38qvu1K891Bd71U3YUCXDImmwTIrpDJF9Y/vuUn6r6l+ZQZeE7KiSUgReJ72sz
-         /FuNhY1ACOYgbWCPaDeDMyhkvOANxXihsKbcCFHACFbAGSuRbuP7b1485H/tmjIK/pLv
-         Z79c7JtZdpk1sk5mGZhyyced2c5+6dR8Rk2LQQkejikEwEB2VDuQTSoMV9xcqK0ihiAg
-         JTQDg0ZrP7xS/wND4hpu0FzErG2bD+EGpyade3e74ri0T/SRenGYzxPszqm4jYWeu3ea
-         yOjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGtkz+RHbtXsDd0V6IwKegUm4GE3SZ6BqqVurtim7LAEcWh68S+ndDRMg5tgu7du+uJUoLzQVEme/FZDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHUUxz+/wlrJkBGDj0QdgUQQvhFlhCjgvz6sx7YbQMF5wacPrp
-	EoBy40x15zWVQylGC4cpnjXIdHMp2AUo8HF1DAj29rRSTMIQ+vC0BQE5tKETkTsHifk06uAHqpT
-	FTE9ZXxbDHFSg44cf8u1jDvXPqVkdtHGjIrZieGNHVQ5j72F4d+1sHIpHP4r+sg==
-X-Gm-Gg: ASbGnctaNSBWYM7wvewHVgfEnU9ZJn16lqM9sCRMV4HoYvDBBgbM8PLcAywtU24+EXh
-	/ku2v7O+2EKlv7JEHJ9mI5J2KUdKwM3PpHr9wijJLOGEQdbJB2U8ACcK6puqbt7LTkDSPNEHiko
-	oP2SbrjL+kZduYIwLOZldnMYt9cOtMyrWePyMAjxB9vtv+8BEWT/JjzZoXoQrFOuBffaq4QCvDl
-	igtWDghM0bAkFK/z17+mQXIeGtfXx2lIlvoBymdPdNIxjLbTl95PIwC8g==
-X-Received: by 2002:a05:600c:46c7:b0:431:6153:a258 with SMTP id 5b1f17b1804b1-434ddeb5afemr143960815e9.13.1733847635984;
-        Tue, 10 Dec 2024 08:20:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEXIjd0UITMZZ1RM704dGj2qdkRrCQvXjXoueuBP7gFX4aGt9NVwuRrpIaPAkDiHyRSI9zcPA==
-X-Received: by 2002:a05:600c:46c7:b0:431:6153:a258 with SMTP id 5b1f17b1804b1-434ddeb5afemr143960625e9.13.1733847635615;
-        Tue, 10 Dec 2024 08:20:35 -0800 (PST)
-Received: from [192.168.10.28] ([151.81.118.45])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434d526b577sm236701455e9.3.2024.12.10.08.20.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 08:20:34 -0800 (PST)
-Message-ID: <6423ec9d-46a2-43a3-ae9a-8e074337cd84@redhat.com>
-Date: Tue, 10 Dec 2024 17:20:33 +0100
+        d=1e100.net; s=20230601; t=1733847659; x=1734452459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M2hiMkjjjVlbn+YVdVeNdJ0jmHrRa7EL5H/2Jru6fxk=;
+        b=b47WKg7Oa+2wn1ZxGWI3HIoCNJU7nkbeU4PMR45496iS2WWQ0TYRev2VLyDpSTAYF5
+         XqAWv79ZuHGYlC+zo3mWZ+zoO0bbgvQxJxGVQN/e/FF8P1gKwA4rILWGH6rntOEPMaDJ
+         OVL96lX9QhSzuvWE3fRBYKJaNzED8IKBPY+a9kw4y5DUBgUB98Tt/N1Iw8AYNj59CLvk
+         RYjkT3LHw7hEoy5jwaUaAR5gTYitgwvbYYFOn8XA26jjyDfAeyzk6niem4I9c4dTrO3b
+         ip/2ylRHv4ADdkIJlNtZixODCpDkARumWEitRIK5hRVRNihcuKvruERARQUM1ORSKc5d
+         TfkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpnI9MunvxbIrfEzwpPOIsj3YZoddA1H0BGy6Jnfy138+dim+o3ibSSnzaUxl29VIMgS1SFA9C4AQneJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDDgwvflFoIsJYdZq5SYp0kyJ+yOpq5yu0Pfyq41tMUOIq7c+0
+	c7Appnp6LNZrp8bBc4WWmdxMOgaGOk2B9Zx3AHInPj8ExVyMaJZl1smr+FICKkcWwsszKw4rMfn
+	YxFAB8m2MwCFNtEIiq/UaVVz/IA2CJuKTd5N2
+X-Gm-Gg: ASbGnctR6bqiGIVWOQ+rghmXx6Sz9WACBS1T0J6teFqOhnjl11XQReQEHLCcWR8VogI
+	KVq3naeve/xzWudxJEqMqPTQraaFAPDqW0ABWFofi+xI0UXwfACiGKg0XntJpgY8w6g==
+X-Google-Smtp-Source: AGHT+IEK52d7RE1NdbydIAQRmCAaAzJc6Wse0Ga444Vy7SdCxJyRTZz+lZVsbT/20lTHNDne5D6oKbW6pS20DgMSCSQ=
+X-Received: by 2002:a05:622a:5a19:b0:466:9b73:8e3c with SMTP id
+ d75a77b69052e-46777658682mr4146491cf.13.1733847659152; Tue, 10 Dec 2024
+ 08:20:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] KVM: x86: Refactor __kvm_emulate_hypercall() into
- a macro
-To: Adrian Hunter <adrian.hunter@intel.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>, Binbin Wu
- <binbin.wu@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>,
- Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20241128004344.4072099-1-seanjc@google.com>
- <20241128004344.4072099-7-seanjc@google.com>
- <90577aad-552a-4cf8-a4a3-a4efcf997455@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <90577aad-552a-4cf8-a4a3-a4efcf997455@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241206225204.4008261-1-surenb@google.com> <20241206225204.4008261-5-surenb@google.com>
+ <6b29b2a5-c244-4930-a5a0-1a24a04e7e35@suse.cz>
+In-Reply-To: <6b29b2a5-c244-4930-a5a0-1a24a04e7e35@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 10 Dec 2024 08:20:48 -0800
+Message-ID: <CAJuCfpFxAZ-JwN8VqNF14zeBnsPM_pD0+-N2PDq5GcQGR1xqLQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] mm: make vma cache SLAB_TYPESAFE_BY_RCU
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
+	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
+	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
+	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
+	hughd@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/28/24 09:38, Adrian Hunter wrote:
-> 
-> For TDX, there is an RFC relating to using descriptively
-> named parameters instead of register names for tdh_vp_enter():
-> 
-> 	https://lore.kernel.org/all/fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com/
-> 
-> Please do give some feedback on that approach.  Note we
-> need both KVM and x86 maintainer approval for SEAMCALL
-> wrappers like tdh_vp_enter().
-> 
-> As proposed, that ends up with putting the values back into
-> vcpu->arch.regs[] for __kvm_emulate_hypercall() which is not
-> pretty:
+On Tue, Dec 10, 2024 at 6:21=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 12/6/24 23:52, Suren Baghdasaryan wrote:
+> > To enable SLAB_TYPESAFE_BY_RCU for vma cache we need to ensure that
+> > object reuse before RCU grace period is over will be detected inside
+> > lock_vma_under_rcu().
+> > lock_vma_under_rcu() enters RCU read section, finds the vma at the
+> > given address, locks the vma and checks if it got detached or remapped
+> > to cover a different address range. These last checks are there
+> > to ensure that the vma was not modified after we found it but before
+> > locking it.
+> > vma reuse introduces several new possibilities:
+> > 1. vma can be reused after it was found but before it is locked;
+> > 2. vma can be reused and reinitialized (including changing its vm_mm)
+> > while being locked in vma_start_read();
+> > 3. vma can be reused and reinitialized after it was found but before
+> > it is locked, then attached at a new address or to a new mm while
+> > read-locked;
+> > For case #1 current checks will help detecting cases when:
+> > - vma was reused but not yet added into the tree (detached check)
+> > - vma was reused at a different address range (address check);
+> > We are missing the check for vm_mm to ensure the reused vma was not
+> > attached to a different mm. This patch adds the missing check.
+> > For case #2, we pass mm to vma_start_read() to prevent access to
+> > unstable vma->vm_mm. This might lead to vma_start_read() returning
+> > a false locked result but that's not critical if it's rare because
+> > it will only lead to a retry under mmap_lock.
+> > For case #3, we ensure the order in which vma->detached flag and
+> > vm_start/vm_end/vm_mm are set and checked. vma gets attached after
+> > vm_start/vm_end/vm_mm were set and lock_vma_under_rcu() should check
+> > vma->detached before checking vm_start/vm_end/vm_mm. This is required
+> > because attaching vma happens without vma write-lock, as opposed to
+> > vma detaching, which requires vma write-lock. This patch adds memory
+> > barriers inside is_vma_detached() and vma_mark_attached() needed to
+> > order reads and writes to vma->detached vs vm_start/vm_end/vm_mm.
+> > After these provisions, SLAB_TYPESAFE_BY_RCU is added to vm_area_cachep=
+.
+> > This will facilitate vm_area_struct reuse and will minimize the number
+> > of call_rcu() calls.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> I'm wondering about the vma freeing path. Consider vma_complete():
+>
+> vma_mark_detached(vp->remove);
+>   vma->detached =3D true; - plain write
+> vm_area_free(vp->remove);
+>   vma->vm_lock_seq =3D UINT_MAX; - plain write
+>   kmem_cache_free(vm_area_cachep)
+> ...
+> potential reallocation
+>
+> against:
+>
+> lock_vma_under_rcu()
+> - mas_walk finds a stale vma due to race
+> vma_start_read()
+>   if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(mm->mm_lock_seq.sequen=
+ce))
+>   - can be false, the vma was not being locked on the freeing side?
+>   down_read_trylock(&vma->vm_lock.lock) - suceeds, wasn't locked
+>     this is acquire, but was there any release?
 
-If needed we can revert this patch, it's not a big problem.
+Yes, there was a release. I think what you missed is that
+vma_mark_detached() that is called from vma_complete() requires VMA to
+be write-locked (see vma_assert_write_locked() in
+vma_mark_detached()). The rule is that a VMA can be attached without
+write-locking but only a write-locked VMA can be detached. So, after
+vma_mark_detached() and before down_read_trylock(&vma->vm_lock.lock)
+in vma_start_read() the VMA write-lock should have been released by
+mmap_write_unlock() and therefore vma->detached=3Dfalse should be
+visible to the reader when it executed lock_vma_under_rcu().
 
-Paolo
-
+>   is_vma_detached() - false negative as the write above didn't propagate
+>     here yet; a read barrier but where is the write barrier?
+>   checks for vma->vm_mm, vm_start, vm_end - nobody reset them yet so fals=
+e
+>     positive, or they got reset on reallocation but writes didn't propaga=
+te
+>
+> Am I missing something that would prevent lock_vma_under_rcu() falsely
+> succeeding here?
+>
 
