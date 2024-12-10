@@ -1,149 +1,225 @@
-Return-Path: <linux-kernel+bounces-439493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D647B9EAFFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:36:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A3C9EB000
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 103CA1620F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1238162D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44B72080DD;
-	Tue, 10 Dec 2024 11:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F50210F45;
+	Tue, 10 Dec 2024 11:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NDtbtCyE"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M/epqt+d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="suW9qEgz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M/epqt+d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="suW9qEgz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF70D2080C5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9029210F6A;
+	Tue, 10 Dec 2024 11:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733830573; cv=none; b=lG0L2XdfPguN32W2MhLkEXDJOYNJzeOaV08CJq+4cwPqh1YA/bwDVFN1YwCtvsx+d59jsl26/zaacZjTP1ZNXFLv9axeROYs/4E9ZJRF7/NrnV8QIXBUQbnh2MKrX0upYR+S0uqOaEJHqUNAKLtONFFJKXasJ42hQya3q1LnAPM=
+	t=1733830581; cv=none; b=VckIfLS+eU8+u2rclmZroYWL3aMrXfWIatiWZRtyxclQD1mPdZV2Rr4mwYrv2Bz8emgpvOASdhD16mEUOsOkxLIxbod+SdYwvjhXTVtRe3NagfUjMdaO/DYiEwKAAR8ijo1rrHP77iNnIQGeuo3XBGWTKs5mby1vH8CX+MkUs/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733830573; c=relaxed/simple;
-	bh=oaPGkXtDmGIa1Utt4YEVi0gnj9eQn5kXOq7ajCUrVo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RWlTStSSnNDROcLXpWF7FRs6TSKgP5bDf/ktiSm9hP8Bcu2cat2HYWhAEvzsdheicnegzd08rUX3LcLVnL1e0LKX6lBPWeDXUPiM1Ep/BODYqFnSgI8crStgYFncgWsbPQqlKqngXYCyFv8Uvn+uzNVzIaS+lWARw1opIaBixnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NDtbtCyE; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a2033562so49442095e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:36:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733830569; x=1734435369; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JqKUzXwjX0F7r+Pi0kkbJdiIPF6Jc1OuE2o60vzqu8c=;
-        b=NDtbtCyEr6r6lpzHOg/KXedr7lxmsHJMUrSu/Uxt9KuFqj3rrCOPGJVOcwmlzkRY6o
-         UABuh+tKfwgTcdVR80nZ2eLpjgUKr/0IE4XWcatrv9M1bJsQEgevVRAHtwv2x3wEBi12
-         qYvpUkwQVqPdNVp8XD717kPdTN0xpjzlndOi0TfOEywAfHL2HexIj/6OP0zxXruC7hr4
-         0qOA1Mkx/f8iLF5uZFaONGh/TAixHut0krx4XhxWrt/MEnjFMheW0EzSejoH0gbzYpLi
-         QrW+I2QLzm8swEqDqno8L788TGjG7G4bYYBj2UjcqniVUO92hZKtCSsJSS9/KXA09Wn+
-         AA1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733830569; x=1734435369;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JqKUzXwjX0F7r+Pi0kkbJdiIPF6Jc1OuE2o60vzqu8c=;
-        b=vEle7uuNPgeA6XICSajVXop9WWKpjWGdw1hOOLaTcY1AY1QHV5bY4rj1fgZ+brVuWN
-         VnY0pHq3uMkRuGEu1Kglo0uitqIJ7VESTPXvB2T02HFLgRD7rKORSYdRwLqLcxElXiSr
-         S5AwpYQHBea+szOygS8Y/tcDJwg1n3C1yq+1inrtO5Ag2uaW8eb9wEnmop+LYBv+/SKF
-         4kAE6CJgpmc7CLNtUhOaQuSGmzegCVujQfb7I1MOJ/K/ToexnRXUS2gC/QO7lDAguTCV
-         q1r1d/mBWWqlAJjTIXXr8Rmo65t6XW6b91mMT1f7+NJY0J5XCNaQHJm/IjcLKrZ5LtMS
-         ICSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyFJFHCFCb0bFjv43aEEeEZjdu5c5UxK7FLqecMqSsXYxEjQWVYHXI7cxJTlXDOw8Y9T7tvd5u3yky45s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2U9uaFMFmUJMcU++37hAZTuoJX4IA4kbkA2SWxBgqX2EIAXkq
-	XqegAh7iSz2vO6UxJZD7Yu0HgxNR5Z2KKA3/f7xJdv25q2Ah8E8i3/bEKzVBC7c=
-X-Gm-Gg: ASbGncsy5f2z7k38ReQ+b/fgwwEVg/T0PWhmKMqG3mOdQ2Z0lqHFzhSnld8EIeyNsw8
-	YLbgtxF3m5Hc9NmLkp8N2Fq/wqVhWei6Gsri972pEGSskCqQ90js6FO7fmjJ9pSN8JjF8pWjn6u
-	/2MG8RsrdHww4lcnDKH4njJ7kqmmA8kowZ5RRZ9vOhgxunKx30RhT2bVEvjg3DfsKRmKC65YiqB
-	G4axPYYzranrboE5+gDW+EezlY7OOvo228Wn9/yfiLseoukC/5as3O2eNj4t1Rf+7BwafYn94Kp
-	smryWe0+
-X-Google-Smtp-Source: AGHT+IGh7g2pVXebpfQV4PmKNUur7y2GP5+AqT7SSiHWrmQPOSvjOJ9wNL9tjTeTIPE0PA3lkSPX8g==
-X-Received: by 2002:a7b:cd15:0:b0:436:aaf:7eb9 with SMTP id 5b1f17b1804b1-4360aaf8122mr11447515e9.20.1733830569176;
-        Tue, 10 Dec 2024 03:36:09 -0800 (PST)
-Received: from localhost (p5dc6838f.dip0.t-ipconnect.de. [93.198.131.143])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434eba653a0sm113983275e9.22.2024.12.10.03.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 03:36:08 -0800 (PST)
-Date: Tue, 10 Dec 2024 12:36:06 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Chanwoo Choi <chanwoo@kernel.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Andy Shevchenko <andy@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH] extcon: Switch back to struct platform_driver::remove()
-Message-ID: <2rfj7ohbduvtnjga4bnmjfb7m2bn7j7nnjhvakr63mqf2htzvf@n7wrknk5yfyi>
-References: <20241127091036.444330-2-u.kleine-koenig@baylibre.com>
- <CAGTfZH3Lv1Cn7dNgA7GL6f4OW=ENXS9mG+p03NAUbbNMg05DtQ@mail.gmail.com>
+	s=arc-20240116; t=1733830581; c=relaxed/simple;
+	bh=U1Ecj7hQLvD5BfSnMDr1aYqAwnjNO3Z2EI3/TNHop0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z8NN7ErimsUWdMiqqxbZNSCVdFkoH5EUVptbf0kwhFWtRvN10dj08QYeO4Xx1CAbHOrx1+8y7am4Cc932wY4hXcDBijn7oJrC8xNBIrYQo8VHTxcolAh3npRAzOaL+wK2V+tbYkivThtYc4iUeBjC3enW64SjnTW+rp0b2sR+qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M/epqt+d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=suW9qEgz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M/epqt+d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=suW9qEgz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 84D4321101;
+	Tue, 10 Dec 2024 11:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733830577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
+	b=M/epqt+dfeGjPzB0kjhchXA/rgIcDlm+z1p4Iq+Fh4g62RPA43g+phiU5J5o+/prVpAdyn
+	pYMHSq+FfUMaqVYcvy4AspujnVtcA+67rBWseeNgg3GyXYImwx/d2VatGllitq76FUsq3w
+	xss+ALm4mK+R5MYE1l6Nhz5qNrUJmlg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733830577;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
+	b=suW9qEgzyNbQuM0/Pi8zQwjWnnwV/VbFHNoRJSZVub1W3HKHzgD49aNog9wcFx/1FBp6r7
+	F45/wn+yiJPqprCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="M/epqt+d";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=suW9qEgz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733830577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
+	b=M/epqt+dfeGjPzB0kjhchXA/rgIcDlm+z1p4Iq+Fh4g62RPA43g+phiU5J5o+/prVpAdyn
+	pYMHSq+FfUMaqVYcvy4AspujnVtcA+67rBWseeNgg3GyXYImwx/d2VatGllitq76FUsq3w
+	xss+ALm4mK+R5MYE1l6Nhz5qNrUJmlg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733830577;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hFu9401+IvDJjs4N9L/SvxLlufhJYXIIH4OTS622MBQ=;
+	b=suW9qEgzyNbQuM0/Pi8zQwjWnnwV/VbFHNoRJSZVub1W3HKHzgD49aNog9wcFx/1FBp6r7
+	F45/wn+yiJPqprCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A1A4138D2;
+	Tue, 10 Dec 2024 11:36:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oBrHEbEnWGexWwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 10 Dec 2024 11:36:17 +0000
+Message-ID: <aafe0538-0c56-469e-b23b-3f22cb8186a0@suse.cz>
+Date: Tue, 10 Dec 2024 12:36:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tulza6hxfbxjqqub"
-Content-Disposition: inline
-In-Reply-To: <CAGTfZH3Lv1Cn7dNgA7GL6f4OW=ENXS9mG+p03NAUbbNMg05DtQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/6] mm: mark vma as detached until it's added into vma
+ tree
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
+ mhocko@suse.com, hannes@cmpxchg.org, mjguzik@gmail.com,
+ oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com,
+ peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+ brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+ minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
+ souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ kernel-team@android.com
+References: <20241206225204.4008261-1-surenb@google.com>
+ <20241206225204.4008261-4-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241206225204.4008261-4-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 84D4321101
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[infradead.org,oracle.com,suse.com,cmpxchg.org,gmail.com,intel.com,techsingularity.net,redhat.com,stgolabs.net,kernel.org,sina.com,google.com,linux.dev,soleen.com,lwn.net,vger.kernel.org,kvack.org,android.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLk41rrgs15z4i1nmqiwtynpyh)];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,linux.dev:email];
+	URIBL_BLOCKED(0.00)[linux.dev:email,suse.cz:mid,suse.cz:dkim,oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On 12/6/24 23:52, Suren Baghdasaryan wrote:
+> Current implementation does not set detached flag when a VMA is first
+> allocated. This does not represent the real state of the VMA, which is
+> detached until it is added into mm's VMA tree. Fix this by marking new
+> VMAs as detached and resetting detached flag only after VMA is added
+> into a tree.
+> Introduce vma_mark_attached() to make the API more readable and to
+> simplify possible future cleanup when vma->vm_mm might be used to
+> indicate detached vma and vma_mark_attached() will need an additional
+> mm parameter.
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
---tulza6hxfbxjqqub
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] extcon: Switch back to struct platform_driver::remove()
-MIME-Version: 1.0
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 21660a9ad97a..71990f46aa4e 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -465,6 +465,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
+>  	data_race(memcpy(new, orig, sizeof(*new)));
+>  	vma_lock_init(new);
+>  	INIT_LIST_HEAD(&new->anon_vma_chain);
+> +#ifdef CONFIG_PER_VMA_LOCK
+> +	/* vma is not locked, can't use vma_mark_detached() */
+> +	new->detached = true;
+> +#endif
 
-Hello,
+It occured me we could probably move the detached setting to vma_lock_init()
+to avoid the #ifdef (also in the ctor in next patch)?
 
-On Sun, Dec 08, 2024 at 09:49:16PM +0900, Chanwoo Choi wrote:
-> On Wed, Nov 27, 2024 at 6:30=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@baylibre.com> wrote:
-> > diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extc=
-on-usbc-cros-ec.c
-> > index 805a47230689..529ac5898e38 100644
-> > --- a/drivers/extcon/extcon-usbc-cros-ec.c
-> > +++ b/drivers/extcon/extcon-usbc-cros-ec.c
-> > @@ -525,12 +525,12 @@ MODULE_DEVICE_TABLE(of, extcon_cros_ec_of_match);
-> >
-> >  static struct platform_driver extcon_cros_ec_driver =3D {
-> >         .driver =3D {
-> > -               .name  =3D "extcon-usbc-cros-ec",
-> > +               .name =3D "extcon-usbc-cros-ec",
->=20
-> If there is  no change, this line is changed.
-> Please don't touch this line.
-
-I'm not 100% sure I understand what you say here. I guess you oppose to
-fix the coding style as a side product of my patch.
-
-Note that it's probably easiest to just not apply my patch as Linus
-Torvalds fixed all .remove_new in his tree generating conflicts if
-subsystems take similar patches.
-
-Best regards
-Uwe
-
---tulza6hxfbxjqqub
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdYJ6QACgkQj4D7WH0S
-/k7MeggAndfpB9zUQxBfBWgzl0ledQrTVIXFgRRuBtLVgRKnIgoINvwEkDoXYGzN
-K5K2+PBUpPAsJYou7fuYCLbwDzgZZSqM1VWqrTerFkewCisXRkRL7myI4a7lSrX+
-4TeYdGeRc9Cw4JDKnatMWGhLWKd5jI8YIQFhGwlAulaXs2jFa2I3ms8D3efs/w35
-6wobhFbFA9ejcwBNs92teAYD0iuKqYiU6DHmguGnBLRYbPsFzcOg8egRmHoBfho1
-UHmFRUdFmFoHIilSSgtNXER/hNrtCE2T5HRuAwv87+tPi04mBXCGFoemIkB+ojmp
-YLqZkPtoX2Hb7PdpZG4X+loX/0u5OA==
-=VQHZ
------END PGP SIGNATURE-----
-
---tulza6hxfbxjqqub--
+>  	vma_numab_state_init(new);
+>  	dup_anon_vma_name(orig, new);
+>  
 
