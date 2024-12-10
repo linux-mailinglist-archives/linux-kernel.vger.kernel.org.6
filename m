@@ -1,160 +1,120 @@
-Return-Path: <linux-kernel+bounces-439809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669839EB42C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:00:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE4F16B246
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:00:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4489D1B6525;
-	Tue, 10 Dec 2024 15:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r5QTC2uH"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CB89EB431
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:01:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D23C1AAA38;
-	Tue, 10 Dec 2024 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00EFB28355B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:01:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C451B0F12;
+	Tue, 10 Dec 2024 15:01:15 +0000 (UTC)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FD62594;
+	Tue, 10 Dec 2024 15:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842823; cv=none; b=EKGnyBGn0deq1rain7xvfivibZFlchEiu+heQe6CdtWKGhMY9L5KJ/AnI1EMO4Cbo6Z3TXKEqN2Srf2KX27Mlo4O4EyWsJ+gv7vIE1eU0jTGggAuIc7hGF3PVuBeKUKgsRD5V4EfI3xUf1gPue9Z71oWmFUYfJyxuyubXEsNVbg=
+	t=1733842874; cv=none; b=floDrbMU5cEE8YQ8rPfPUFmkIby9BE9ib8h0mjF4iu++AvfPPl+FFkO9/O8mDaLc9DEk4vMzzHDg7DFzbJfP/770FfXt3iYCVts05vrGmIxuWrMQSpR3vFBI2xmEsHVHLHPjno0Wg1DgaFPSZ/pcihx6RECCCsne5SVVz7NuJBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842823; c=relaxed/simple;
-	bh=GL1junYsyzA1VSizXEiCYuYBKw/hxXCS28XsnjC6IyQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lCe8Nva7bBY8kKKsA3tw1NJSBdt9p3S0ir9ePLY3RqZHhn7SqHjzr/v4eWIkme4kxRnzLDlXZCt7heQAJOT8104io5Vtq3ivAZnlN7AnMbE1m0YaORR9E1W40DPzZW/KZ4waU1ojEixEHxxa+ryzFRinMpgRM3Hscp+AQ1dT69Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r5QTC2uH; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADrXV5007142;
-	Tue, 10 Dec 2024 15:00:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=SJU8SN
-	WmHaZ9llf7g2WxAqh6wC7z21api+tXgzpzdqE=; b=r5QTC2uHS9YD2jK6/eDeym
-	gNe9ahdqYTmqn264Utu93rRZrakCqHj49qGhY/2dEF4Hiz4zTDwxaXHMtRCPWCm2
-	jDXMZXd46A8GuyXSr16w/Jq6p9mqpUOb01Z4JYXA0mK4DZKR2T/AUrOplsz3dxeT
-	TFPjkRBXeOo2AgyJo3QsJyTytOMWl02HsDTZxZMUJZw831PlbNjLcQeadNiq8l/v
-	cpNxjgdWhS43Jy5dypllZhMKi+QYx1FFgFvVHsfcJxeQVMoWOQaBb61OeCEIjVJ7
-	UeyJ6ovHLuLAgi0klmUnbmTzO8xp9SwXLqk3T9beTbZTSBuhVbMi3WiPm1l3Z2vw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8qr9w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 15:00:18 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADB4e9023015;
-	Tue, 10 Dec 2024 15:00:17 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wjut15-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 15:00:17 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAF0BuG35258810
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 15:00:11 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D6AA92004B;
-	Tue, 10 Dec 2024 15:00:11 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 88A4B2004F;
-	Tue, 10 Dec 2024 15:00:11 +0000 (GMT)
-Received: from [9.84.194.138] (unknown [9.84.194.138])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 15:00:11 +0000 (GMT)
-Message-ID: <944fe21c-4d53-4eae-98af-60706184eda9@linux.ibm.com>
-Date: Tue, 10 Dec 2024 16:00:11 +0100
+	s=arc-20240116; t=1733842874; c=relaxed/simple;
+	bh=Gbrs4HMREk++bBNvRKFa9obhcsJ8EL4dFjyddT1oPpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lfNH3X9lB1ynoRfHVZIQPPZve/hH5LZE9vzbRYDLmdofnD+QsY3g/B0ZpfKgrF84DSYrC0oUCWzBH1g8PmbTaZwB7RCCHO4G1SU947+qkhGFLfBBDbPwySZ1v039RRKW6Ft0PxElulfqkAzGbfT3D9hKV++JjkgiiMqRh8Two5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d884e8341bso40430526d6.0;
+        Tue, 10 Dec 2024 07:01:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733842871; x=1734447671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=su4ECPmlI/KJGGcBixaQRsa9uITkLBdQfjVXoqcpzmA=;
+        b=Bml+ZaUEkYM9eh3g+B8gV5mQb/sz5a+BV6QSPR2aMiHZN0S8GAv5akX31SFKqeGkm4
+         CrkBAfs3Ljumu7nVME5Gjl2QbZHoJbJR4DG+Q3zKBN4MpwX7nLonhu0B4lR6ouyRR5tu
+         frgLj3lqTuWO+CT64ZG03u7ZxMm7Z13xTc0M1rdkMsXk3Nk6i8IpQdf3F+wjArqrFUXY
+         xmwQXwMCSufE2FqH/yrmmU91qAplnlforultVv1Ne8lKk1ey/LynRIzQWB6nrFNRN3Ts
+         1uW3czU89MEhTPN/cB2Ygpvt4FVG5/PR5bB+oAAtYozjOmTkkFHQ2Z23CLr0WvdnoGRh
+         HGyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9n++7MRpkgoYDmbIGxpkHyn6Tz1LV36mpX/S1avQD8lURD4MGnnWql1gxnullaP8dvQ5Pnty0JRXT@vger.kernel.org, AJvYcCUmhGIMijiJELg5G16ikJ+5subamhTpQ+UvlRje/oSrOiYlz4uAek6QTlIkuQl3vLJwDogK0dmrffZM@vger.kernel.org, AJvYcCWvFeuTCJKP+3gAabkTYx9C3xMksSJ0t5bnRAOf7Vq3aHDdFuzIS+4ry3VYlkVIMbulI819KLnxDpl+zNXE1Nfi95U=@vger.kernel.org, AJvYcCXki350NZE241+rkKM7Hb39ZddTCqfn1HCUWMBTKB1g3TAUB7hpDvsJai+O/6Qrd4nX1sFyj2h7K+Mn12NL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKEg5r793pgTEdj0j1nzFSzGUCAPSg1CU/HjiWBP5Pah1v0RLw
+	ciplyejmHYrI79CoNurOF0yeXzaWdTboSpsXJqqRLMkbbSIDYo017NsMZ7fe
+X-Gm-Gg: ASbGncvmrbLh5Gnmy0J2Z7H7JyJjw+ycakovtZkBzlY12zgvUNSj02UrlwvI63NRqDR
+	PeRiBm8IjCWQiBvml8X7HRgCantxc0cyQFSmszoAEzHk8Ii5gWvbU0xU6ywTPGH1dBlyrL25feO
+	vKKHub7fowXrpbN6Z5W2PvaaBYGGmhfvgZEekyJsRtioBbyC0KTxa9E5c4roMV6SB0nMxJJ/Srb
+	bN4ERff3CX1CUn5t9bHvn8A9YMd7fsxpv6BW0iJUw2J4adrzuYiOBC25fb8t1IcLOVroTDuj/CP
+	lBjjMTxK6fX4dnTm1dR3
+X-Google-Smtp-Source: AGHT+IHoyFkZy7UZupaT3LlsvFJUaHaTkvU9XdPmCESzW72IHeVg2w3a7l9Ac4PR7jUghfdAzSm06g==
+X-Received: by 2002:ad4:5d6c:0:b0:6d8:821d:7370 with SMTP id 6a1803df08f44-6d8e72065aamr224079966d6.49.1733842870842;
+        Tue, 10 Dec 2024 07:01:10 -0800 (PST)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8fd5b9e89sm35553776d6.127.2024.12.10.07.01.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 07:01:10 -0800 (PST)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b6e8814842so33294985a.0;
+        Tue, 10 Dec 2024 07:01:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVXg9CwntAdOeTASnDGqL369CONDiyqWatPPcLqbHSqcZXvtxTp/JG97+rHMB6IGZP+C/NrpdKYWJRS@vger.kernel.org, AJvYcCVXsrYpKICmXPRN/506wQHp0Nq+epRWgVvCyUezkC4yPmSkSzyxpuXCNjtN5T1RqekiyrlYcP0qYVSz@vger.kernel.org, AJvYcCVwRSYFbCzD6d0JlbveYowxFjIjJzs8FJnkj8vRX1v47/pVWuadt2fH8KC0XGKNjuAcb42lrQS9Z5OaZRdGInd6e2g=@vger.kernel.org, AJvYcCX+U+iyd9NA2QIF86Rig/yhsNgAj89wSrWid+UZio4EKPt6DpTPZE2ToyDuT1KEfsG/aEYhaCzZUoijYq4h@vger.kernel.org
+X-Received: by 2002:a05:6102:2909:b0:4af:4945:9a1c with SMTP id
+ ada2fe7eead31-4afcaac87abmr16665622137.19.1733842859094; Tue, 10 Dec 2024
+ 07:00:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] scsi/cxlflash: Deprecate driver
-To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, ukrishn@linux.ibm.com, manoj@linux.ibm.com,
-        clombard@linux.ibm.com, vaibhav@linux.ibm.com
-References: <20241210054055.144813-1-ajd@linux.ibm.com>
- <20241210054055.144813-3-ajd@linux.ibm.com>
-Content-Language: en-US
-From: Frederic Barrat <fbarrat@linux.ibm.com>
-In-Reply-To: <20241210054055.144813-3-ajd@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: qL-RSgeW01Rz__y-PTiTZ6gLquCQc8JI
-X-Proofpoint-ORIG-GUID: qL-RSgeW01Rz__y-PTiTZ6gLquCQc8JI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 mlxscore=0
- malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=737
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100112
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241126092050.1825607-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Dec 2024 16:00:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVmceCBgp4XAJTKQcpiGHEgnuT9jEfrqQLBCtAZxZvB6A@mail.gmail.com>
+Message-ID: <CAMuHMdVmceCBgp4XAJTKQcpiGHEgnuT9jEfrqQLBCtAZxZvB6A@mail.gmail.com>
+Subject: Re: [PATCH v2 05/15] soc: renesas: rz-sysc: Move RZ/G3S SoC detection
+ to the SYSC driver
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
+	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
+	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/12/2024 06:40, Andrew Donnellan wrote:
-> We intend to remove the cxlflash driver in an upcoming release. It is
-> already marked as Obsolete in MAINTAINERS.
-> 
-> The cxlflash driver has received minimal maintenance for some time, and
-> the CAPI Flash hardware that uses it is no longer commercially available.
-> 
-> Add a warning message on probe and change Kconfig to label the driver as
-> deprecated and not build the driver by default.
-> 
-> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
-
-
-Reviewed-by: Frederic Barrat <fbarrat@linux.ibm.com>
-
-   Fred
-
+On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Now that we have SoC detection in the RZ SYSC driver, move the RZ/G3S
+> SoC detection to it. The SYSC provides SoC ID in its own registers.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->   drivers/scsi/cxlflash/Kconfig | 6 ++++--
->   drivers/scsi/cxlflash/main.c  | 2 ++
->   2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/cxlflash/Kconfig b/drivers/scsi/cxlflash/Kconfig
-> index 5533bdcb0458..c424d36e89a6 100644
-> --- a/drivers/scsi/cxlflash/Kconfig
-> +++ b/drivers/scsi/cxlflash/Kconfig
-> @@ -4,10 +4,12 @@
->   #
->   
->   config CXLFLASH
-> -	tristate "Support for IBM CAPI Flash"
-> +	tristate "Support for IBM CAPI Flash (DEPRECATED)"
->   	depends on PCI && SCSI && (CXL || OCXL) && EEH
->   	select IRQ_POLL
-> -	default m
->   	help
-> +	  The cxlflash driver is deprecated and will be removed in a future
-> +	  kernel release.
-> +
->   	  Allows CAPI Accelerated IO to Flash
->   	  If unsure, say N.
-> diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-> index 60d62b93d624..62806f5e32e6 100644
-> --- a/drivers/scsi/cxlflash/main.c
-> +++ b/drivers/scsi/cxlflash/main.c
-> @@ -3651,6 +3651,8 @@ static int cxlflash_probe(struct pci_dev *pdev,
->   	int rc = 0;
->   	int k;
->   
-> +	dev_err_once(&pdev->dev, "DEPRECATION: cxlflash is deprecated and will be removed in a future kernel release\n");
-> +
->   	dev_dbg(&pdev->dev, "%s: Found CXLFLASH with IRQ: %d\n",
->   		__func__, pdev->irq);
->   
+>
+> Changes in v2:
+> - this was handled though patch 05/16 in v1
+> - provide SoC specific init data through the SoC specific driver
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
