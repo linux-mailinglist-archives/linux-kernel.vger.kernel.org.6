@@ -1,164 +1,267 @@
-Return-Path: <linux-kernel+bounces-438825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82E39EA6CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD52E9EA6D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C22167C32
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:48:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E7016805C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AC21D79A3;
-	Tue, 10 Dec 2024 03:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C151D88BE;
+	Tue, 10 Dec 2024 03:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lt1sFw6E"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="medW845Y"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2081.outbound.protection.outlook.com [40.107.236.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47223A8F7;
-	Tue, 10 Dec 2024 03:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733802485; cv=none; b=I02JxfeJM28lhA1/fUP0C896V4utyX2ZLugnCB68lzJbMcgb0MuZ0XvqgKbf6hpjKcyzlY/YVf2vVzIKNEpzLkliK2z+JyvfnckICdd7HlyN7oLWYOF/EUThqmmnTta79uDt8FpGAO8HD5XyLQG34Q7Bb93EMsNh8dntw5euPz8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733802485; c=relaxed/simple;
-	bh=txrG3+eIYDqM1S678lEJawTVP1ldIQoIKi/h+tQfDsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bzUMBkAfs2UXJKxgJNjgYSy6vwa+N/FU7Z2KYJvEFxCjYSk77zz8HLZeYxdQQGZf9dfbpboKTGTze9PXxvfWlnl1mEVFZFRu/O/KxwyZv6ttbmVVVfL9l5ltk1xfLaki4njpG7OlJnY66YpyTCInqXYCwWDn19DUQMqGXQf+kIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lt1sFw6E; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Gop96010830;
-	Tue, 10 Dec 2024 03:47:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0sp+NriK9XK3JaCzsb/sGmpDPHE14rYe/jnqALky9D4=; b=lt1sFw6E8behZiVy
-	3skjjFT3HaEwRyoJAO88EPsZiXkT6W6Udi65HIszP1ZmIywMkPrPUfCrc/+/zZBH
-	P8TeH+x/mHM1g4pFIVv7fLttanp6zxrZYpXkThb3gJhi5w3coxyS/E1+B4dIbd6Z
-	tWyi6dIruXm1H3nzmTiExPKJxTNZDfG4HYbIlBiE5RRRt+Gu1fYFhnjEsss0HBKc
-	bL4NXROnGTpVFs7t5Wk9YCdC0Wlo/WGheME7ZL1Hoz2Uu8+F1SaNjm6uiEittXy0
-	p5sEXgIdt48OVnsBRCbgUuiekl5tTQI3BMYgvJ9dhwuF21sR8UYzJAX1pQJi8Y2u
-	G4JqVg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetq5p8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 03:47:55 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA3lsu2015327
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 03:47:54 GMT
-Received: from [10.64.16.135] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 19:47:51 -0800
-Message-ID: <8c9f35dd-3176-4d76-b3b4-06ba25d898ec@quicinc.com>
-Date: Tue, 10 Dec 2024 11:47:49 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0994913635E;
+	Tue, 10 Dec 2024 03:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733802849; cv=fail; b=Tn0kxrGh3wNl/K41d09Yp1bfAyit6N3d61Ip5c00Ih+2cjBsjTrK3f8ICdhhg3IHikHMtLvsfrK67jTNfyuxUgWOlJAjrSRDtv+TW86YTXwGuU4h5zrTUnSLmLNlRAlwf85C8OblRWEknpz6JD4Mv55j5fsl+3EK8p80icfUGh8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733802849; c=relaxed/simple;
+	bh=eCFI2UH4Ei4QM2KkmiN/8syHrW2YaqkDpSsjiWkZTUY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=g558YujluhrenybY5Ujyi/sZkNK6lmeFxdVJf9368TGYPaJsWo4ApJ7lp04U9jegkjZf/Zl9eU5q2o3fbobjYSB1by+t+UjDrrF+OpusKbNLRaX+x4VsVWMluiUvnesA2LEvH4taISF4LQNhqYoFBXlSLvU1zAVrwx1QX11RniM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=medW845Y; arc=fail smtp.client-ip=40.107.236.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V+SWbyiIUg2wsJS/0o6OHPpDRg2gVrxZQQJH044dM5ZdVGnonjjOtHCIf9jtRQxFieyIbau7Iww7my+PolUkHBrjlfFvOwemwpXysPeZWCYWfw6feO7qtsFOmZz2U7zvPqG6meLxOIhHF0+tBxe759P/d58zEALy3YRiNlbSFEde2Iafgn02ggl/ddKIVPHhDeFud5j32qRv7fMDS5rsCCAAOJ/UWs/BLAeopsidawHVuiFzn3Ak1zS6gEKhSEbdoUFBvnzfWASq3UAWdUfSVM/Cjg6uKoDVqEZaSKuf6UQ4nQA5NB21eWyzRnD3QqJQWrQqiHpkRU1sMoANUx4YEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PYh108nlZg3seWkGCpzqJte5pGK7CtoGAzfkP+O4zy8=;
+ b=Xw+lGfDaGOX5NiqDFud/DZT0Kye+uPd4WiI01hxwdnBn9N7G0Fpvbx4sNvJTSoRXxiLOeETeFD3qBVlz4v6Lk3XvGML7Jyu+sx4ZV+7Ld057wkIoGCBRI+h7r/q988XFOvRCbVOkiifIfxg7/eQ3tpVlfH9jkghbfI5GSzPmgdUQOkvqt5k38C4zlV9RCLqav5OfBC6kV6n7q7JhRHnhgJmzPUY+v3xuqizt2GGrlGQ3qP4/T19oK6ZDE0wYWvve9o7uFz0yjimNqFxFnf4zn8+tzVQtxE4LzPhUYS6uCqO2Ib9EITIzUVKY572MLhUvvzjcSwgnIam/aMhEJr2koA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PYh108nlZg3seWkGCpzqJte5pGK7CtoGAzfkP+O4zy8=;
+ b=medW845YcQD6Zmo1cRUT/GZAcrCaYJsJ6uRYrfxdnNbLQqfwFu23NnjiKS8wIod3SHcfx5AuIpwdtrKozPlfGLqm5AzUFw3/4KssrQ91qxywTsa94/nTBzdCsVXWl6K0pmU2ZiK0KUdve85kxXmiM5bbGau+RSk8WumKfifh9/c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CY8PR12MB7732.namprd12.prod.outlook.com (2603:10b6:930:87::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
+ 2024 03:54:03 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
+ 03:54:03 +0000
+Message-ID: <9613611b-9417-4d96-912c-019220afc02f@amd.com>
+Date: Mon, 9 Dec 2024 21:54:00 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpufreq/amd-pstate: Detect preferred core support before
+ driver registration
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Huang Rui <ray.huang@amd.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Perry Yuan <perry.yuan@amd.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+References: <20241210032557.754-1-kprateek.nayak@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241210032557.754-1-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7P220CA0016.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:806:123::21) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/msm/dpu: filter out too wide modes if no 3dmux is
- present
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241209-no_3dmux-v3-1-48aaa555b0d3@quicinc.com>
-From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-In-Reply-To: <20241209-no_3dmux-v3-1-48aaa555b0d3@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dwBLimgYi_zaqjlbn0BGVRXooJALkntk
-X-Proofpoint-ORIG-GUID: dwBLimgYi_zaqjlbn0BGVRXooJALkntk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=889
- bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100025
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CY8PR12MB7732:EE_
+X-MS-Office365-Filtering-Correlation-Id: f31c7a34-16aa-4a8e-9e7e-08dd18ce4986
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RTFxZHFybXExaEZHYlVLdjljczY0cHZjSDVNZER1SnM3ckxCSjV5TCtnczd2?=
+ =?utf-8?B?YnRFMW5KdlY3cUIvTmVFblF2RXo0OW0vK3dWOEJzSWxTUms3TnM2Nkl6dmdH?=
+ =?utf-8?B?QXdhdFhiMXBMMzRmSk1tc054UDNsWnBCZmhWaDMvcWFtTGxQZHZTd3FzZGp6?=
+ =?utf-8?B?QWF3V2h1emVZMVBVc3dGQ3RTWEExYWNobitlbFJJcy9jWmFDeENCRXdQWU9r?=
+ =?utf-8?B?N1dPVC9XQm9RbzJiUUJzeWRpaGRqVDhDUTVqTW1lcDd3SU5PY3o0eHZla3dZ?=
+ =?utf-8?B?bEpVYURsNXZXQyttUytjYTdIUXJoWDZDbU1JK1FWQVB1M0J1QU1CK0pON3g4?=
+ =?utf-8?B?NXBSQXo1aUx4Rk8xNDBmWXVrUm02eWR1OHNUQ1djNlJrUERGS2dyaW1jMlBF?=
+ =?utf-8?B?L25ZOGZZK2c5MEtUL3BzejhpY3ZaczYvVXFicjloK2JTSXdQTUdaTDVmbkg3?=
+ =?utf-8?B?R29BL2RhOE1yTThDT1Q2RVdWanljTDJSVXB0VDhhaXBBUWoreUFleHpSclZC?=
+ =?utf-8?B?NVdtamtDcWxtbm15dmpoajhBN3BKQVA0ZjY0ZEE4NXY4Z0tNYVlVOGF0Qm9q?=
+ =?utf-8?B?WkIvYUdiRmIyaGdWRUNLS1FRbGRUN29sM1l5VlBEbmhmTVlxWllBTmZCVnNF?=
+ =?utf-8?B?T053amJ2eDZjcnFtT0VlZS8xOU1RUFFTLys2dElYN3d4bDRGQmcwOTMySWJI?=
+ =?utf-8?B?Z2g3ZUtkUHlaQ3lreUM0SXBOOEtjczJSejkyaG9sbGRFUm8wRnJWQWtBQ1Uw?=
+ =?utf-8?B?WmJjQ2VMZ0h5YjJVTEdveTgvQnZORnhBSFZwenprUFJQNFFDcHZZM090SExW?=
+ =?utf-8?B?VHRXdnVBMElucWpxanhCWFRtbFVwNHd5TlhkeGd1emMyeWhITGI3RGVsOThR?=
+ =?utf-8?B?VkVvMmd5K0tEOU5IbnVjK0ptOXcxeDNRM2VJZnZLRStCWHBhQ0FlaGpEbjNK?=
+ =?utf-8?B?ODJtTUkvWlpIQTNLZHJuV05CYW9ZTUUydzNIM3dOaFRoUzFhTFowQ2llWXBz?=
+ =?utf-8?B?MTVkSHF3MktWb2VCTUNJOFgzM0Vld1NwUGkwZjRBUlNCRTloU0U2SGFpNk9V?=
+ =?utf-8?B?cFptblVhRHd3dDVVVHJPOTZ1VHlvWER3MmVEdUlrNk9WZUtDS0hqazdpVElv?=
+ =?utf-8?B?c2F0NzllU0JaVnNWcHgvcmgzQ1JXUkZhOGJUYkUvWFd5SHM4VEFva3haMytz?=
+ =?utf-8?B?ZlR4SkpJb2pOSDArTytpK1Nlb1lGQ0NaRmJudld6WExPU1daM2R6dDB1L3ZP?=
+ =?utf-8?B?QndBZk5rRDRHRWQ5TEowTWxScmRxNG1kd3lnN1dCcWNLMGR1Z2E3Rk5xQnFq?=
+ =?utf-8?B?L0lJbFNzbkszTVBMSXFTZ2o0OHFYSzhtMk1DWElKNURXbitJcm1LTDhmdm9w?=
+ =?utf-8?B?THhoSFlPRXc0dExKOTRCVXJ1bVZQZGRLdk9vTFlnejBvM1ZZbXRwN2J6a2FC?=
+ =?utf-8?B?ZHVTNkRCVFV0eVMzSWU2eklEMnNOYUNSVHlKOE1DMlkrRGtuczZFdndhWEJV?=
+ =?utf-8?B?U1VRSWd1Q0E0cEpNRys2cDNUdVRjSElqRTdrL0JWdXBYakpVY3RCTXN1ay9G?=
+ =?utf-8?B?RVRHSjJZMmtGbU9ZSk44NHRJSldOS0RvSjBPM0puY013Y2NXRFgxMjR5YmRC?=
+ =?utf-8?B?cFBOa3VObW14S0VSR2ZkZEkwZEwyRkluWHBtTEc3VFAwWmNvRjV0UzFOVWtH?=
+ =?utf-8?B?S3V4OVFYU1FmNTkwc3FkejA0WktMWmNsaDdzL1BreENpNHozaU9kcStRcVBJ?=
+ =?utf-8?B?amRiUWFBM0dMaWUvMEsrS3Z4UStZNk9COFl4eGxqNTN6M0FmL2hLK3pIM2M4?=
+ =?utf-8?B?V2lxU2xKUk9EQ0U5a2ZhUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RmFoS2k2b2Rpc0w1OUU4UVJtY0NpbHdJbVJBRGs4aXpBcXl1LzZ4S2hKUmNi?=
+ =?utf-8?B?UEdRdHVDZzN0NlFGK1JnQ0JDQlZRejBXT0QrdXFZZW8yQ3BBWXVFMHdyVDFw?=
+ =?utf-8?B?ekcweFN5WFNKL0NCVkZHWGlvVzFpWDI3Ym5zRUt4U2EyaE0wKzRXM1NIeUVY?=
+ =?utf-8?B?SU5CeWlXNmRlenUrVGxxWWVtb2l1alVaQjVzZWdZM2k2bUxtRWY1TlU3OEw4?=
+ =?utf-8?B?N3F2Mkt0NE1mekNhSkIzYXJpdUlpWmZxMW5WNG1qUVU2TDZ2Vyt5NDBVVDh4?=
+ =?utf-8?B?K08vNTU3Z05zQ0k2M1cxLy96dy9McERudWx2eXlFRHpodkQ0aC82N1dWdmVz?=
+ =?utf-8?B?N2pCQTNkSVYzeW1vWHgyZTZ1Z3BldjVYOHEyTStoQUZVVjhXb2FpN1pmeUdG?=
+ =?utf-8?B?RzdiYjVPS3E5V3J3aFhBaTJxNkk5Z0w1U25ncEFnY3JjUTRZSnZqVlorWVV2?=
+ =?utf-8?B?eHhkNTRLZ2YzWGZWNnhOUWc2Q3RScHBVVXB2Y0VFQjFZQVJBS3JnQU4wMXpV?=
+ =?utf-8?B?Uk92M1pwTVpVTmQwMmJlMU1mT3gva05YVDRjQWtRaUlPSzI0TUh4Vi9XTXFj?=
+ =?utf-8?B?aDBrYWs1Rm1rSXVVOEtrZmFITjl2TGs1SjNTODg4empmT0ovekZoZklpZkhq?=
+ =?utf-8?B?UkMrVTJIUDBNdVFSTktBY3F2OTArY0Joc0ZRc0lOa2NiUCtoeDlOWUt1K3RT?=
+ =?utf-8?B?MjRIaVFLcmY1ckNzTkxRL0ZhbWFUNVM3cVRma2tTNGhBK2NvUnV0N1BjN29P?=
+ =?utf-8?B?Y2ovZ3hQRHJMdFVBT2ozZ0s5blJXZ0xyVWlDczcyZ0NMVkJXa3BITEJDczRj?=
+ =?utf-8?B?VXI3RHVwbVNyZ0gwNEpmU1MwYlRZTGx3N2crZHJNTTNRQ1hXc2w3MG4xUzVh?=
+ =?utf-8?B?blJEcytLMW9vaGRDVnQ5RUlWbGFzWW9BaW0yL0xhbnVMSU1oVUUyL2VMdkVo?=
+ =?utf-8?B?YnQzVTBKeUgyZ0FBYlhLVHN5NHpRQ2NEcm4vVjRxUlNqdDhoSFJiYllLQ0hk?=
+ =?utf-8?B?U09hTDE3TUdRNGpBZ1RRalNzamNWTGRLb2JFelVEVXBPV2M2MkVtV0dxejIr?=
+ =?utf-8?B?VC9zSGZ4OW5ENHhMZGxUN1A1UFB4U09aaFlITDdlVXhDWG92czIrWmVwSVVF?=
+ =?utf-8?B?WWdkVTdMZnRXN3haV3hvMm56TWJjNkJJajJEcHdsQTBGT0luTEhXQ3FmL0I5?=
+ =?utf-8?B?M2U5aDJFdUtpcURRVnMyYzdxWU1zK0VFOE5hdkMxeVFzWmk0U1VzSmE1aDZn?=
+ =?utf-8?B?NGZpQ1B5clJ6TlpGTGF2WTE0Z1JQR2VXMG9pMDltc1YwNk5ITmMxMnlUVVVO?=
+ =?utf-8?B?clpDOVVpNVgzTXlJcVV5cEkzWXZ0VE5HeCtMVno4UndIamNDOXZBYk1SZEhG?=
+ =?utf-8?B?b3lvdzBjckNNREp4U2wweFFscGtTeENrbitaT2YrbzFOUDhpcUtHR3Rxa1or?=
+ =?utf-8?B?YjNKSTBDK2hwTlJhY3VIREdHMUduTnpYOEVlWVlWa04rWlMrK3BLaHFYcWJN?=
+ =?utf-8?B?ZWN6WDhqVGYxTHRJa2xzbnZGV3RRVW9NZjZiNGoyTkhNdXZmVm52WnBvUm90?=
+ =?utf-8?B?ZmVzYUFxUlUrVWJFeWZFcEdCVlZNcUJHYWNXeXMrZWNZM25wV09vUmN5ZkFT?=
+ =?utf-8?B?d3kybEU3SWJFM2xCeTNheVUyN0VZdmp6SG1kVnlUZDJEaE5TaGF3TDcxZkVt?=
+ =?utf-8?B?Uk1wQ0VPamg2bDF1aUt2dnRsT2s4YUQvakhLM3hteDBqN2VjZkE4M0tINFBv?=
+ =?utf-8?B?SnpZUGVNME1aZmtxMUQ2Mnlac0l2WDV1cmtRQVBjYVp3Qk13MUE5akx4WTJR?=
+ =?utf-8?B?NSthVmRaeVRXNytrMGp3OWJ6UDB6Rzl1Z0w2d0RVNGFvZ2YrV3hiTnJGQjI1?=
+ =?utf-8?B?ZWVxNDhqZjhEL2o1cVNObjRnSXdCWXdoY0ZyWnZPVVd0a2xHTk9lTHpmQ2NN?=
+ =?utf-8?B?RVg2cHQwRUh4bEdPNExDNDc0eG53YVJrUmo4czY1anNqRExKby9GRnJpQ2Jt?=
+ =?utf-8?B?NmNlNmRKSmU2d2VQamR4UDRhU0dwUGdzVFA1ZUsxcG13Sk1PckYwN1E4NEtF?=
+ =?utf-8?B?cmNhdjZSVExFeXJ5dlcxUVc5a2NxVkhmaUwveHIzQ3hETEZQZ1dJYUNuYmd0?=
+ =?utf-8?Q?vK8P0c2Uptno55dSWWHw6/4AT?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f31c7a34-16aa-4a8e-9e7e-08dd18ce4986
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 03:54:03.3918
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WgoOmPQipgoqgdJ3EBazh9d5ff/TJ3/XS5TmJemv9m+N177a2s5hmpNsdIRFNEv1yrT7VwohS7Y1C+asxkY6Ew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7732
 
+On 12/9/2024 21:25, K Prateek Nayak wrote:
+> Booting with amd-pstate on 3rd Generation EPYC system incorrectly
+> enabled ITMT support despite the system not supporting Preferred Core
+> ranking. amd_pstate_init_prefcore() called during amd_pstate*_cpu_init()
+> requires "amd_pstate_prefcore" to be set correctly however the preferred
+> core support is detected only after driver registration which is too
+> late.
+> 
+> Swap the function calls around to detect preferred core support before
+> registring the driver via amd_pstate_register_driver(). This ensures
+> amd_pstate*_cpu_init() sees the correct value of "amd_pstate_prefcore"
+> considering the platform support.
+> 
+> Fixes: 279f838a61f9 ("x86/amd: Detect preferred cores in amd_get_boost_ratio_numerator()")
+> Fixes: ff2653ded4d9 ("cpufreq/amd-pstate: Move registration after static function call update")
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
+Thanks for the fix.  I'll apply this to my fixes branch, do some further 
+testing and will include this in a future 6.13-fixes PR.
 
-On 12/10/2024 5:18 AM, Abhinav Kumar wrote:
-> On chipsets such as QCS615, there is no 3dmux present. In such
-> a case, a layer exceeding the max_mixer_width cannot be split,
-> hence cannot be supported.
-> 
-> Filter out the modes which exceed the max_mixer_width when there
-> is no 3dmux present. Also, add a check in the dpu_crtc_atomic_check()
-> to return failure for such modes.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Acked-by: Mario Limonciello <mario.limonciello@amd.com>
+
 > ---
-> Note: this was only compile tested, so its pending validation on QCS615
-> ---
-> Changes in v3:
-> - Move && to previous line
-> - Link to v2: https://lore.kernel.org/r/20241209-no_3dmux-v2-1-fcad057eb92e@quicinc.com
+> This patch is based on the latest superm1/linux:bleeding-edge and was
+> also tested on v6.13-rc2 upstream release. Following is the behavior on
+> a 3rd Generation EPYC system with and without this fix:
 > 
-> Changes in v2:
-> - replace MODE_BAD with MODE_BAD_HVALUE to indicate the failure better
-> - Link to v1: https://lore.kernel.org/r/20241206-no_3dmux-v1-1-72ad2677a323@quicinc.com
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> o v6.13-rc2
 > 
-Tested-by: Xiangxu Yin <quic_xiangxuy@quicinc.com> # QCS615
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index 9f6ffd344693ecfb633095772a31ada5613345dc..ad3462476a143ec01a3b8817a2c85b0f50435a9e 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -732,6 +732,13 @@ static int _dpu_crtc_check_and_setup_lm_bounds(struct drm_crtc *crtc,
->  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
->  	int i;
->  
-> +	/* if we cannot merge 2 LMs (no 3d mux) better to fail earlier
-> +	 * before even checking the width after the split
-> +	 */
-> +	if (!dpu_kms->catalog->caps->has_3d_merge &&
-> +	    adj_mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
-> +		return -E2BIG;
+>      # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+>      amd-pstate
+> 
+>      # cat /proc/sys/kernel/sched_itmt_enabled
+>      1
+> 
+>      # echo Y > /sys/kernel/debug/sched/verbose
+>      # cat /sys/kernel/debug/sched/domains/cpu0/domain*/flags
+>      SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_CPUCAPACITY SD_SHARE_LLC SD_PREFER_SIBLING
+>      SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_LLC SD_ASYM_PACKING SD_PREFER_SIBLING
+>      ...
+> 
+> o v6.13-rc2 + this patch
+> 
+>      # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+>      amd-pstate
+> 
+>      # cat /proc/sys/kernel/sched_itmt_enabled
+>      cat: /proc/sys/kernel/sched_itmt_enabled: No such file or directory
+> 
+>      root@yamuna:/home/amd# echo Y > /sys/kernel/debug/sched/verbose
+>      root@yamuna:/home/amd# cat /sys/kernel/debug/sched/domains/cpu0/domain*/flags
+>      SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_CPUCAPACITY SD_SHARE_LLC SD_PREFER_SIBLING
+>      SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_LLC SD_PREFER_SIBLING
+>      ...
+> 
+> System was booted with "amd_pstate=passive" cmdline.
+> ---
+>   drivers/cpufreq/amd-pstate.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 66fb7aee95d2..cb03f7d6575c 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1862,18 +1862,18 @@ static int __init amd_pstate_init(void)
+>   		static_call_update(amd_pstate_set_epp, shmem_set_epp);
+>   	}
+>   
+> -	ret = amd_pstate_register_driver(cppc_state);
+> -	if (ret) {
+> -		pr_err("failed to register with return %d\n", ret);
+> -		return ret;
+> -	}
+> -
+>   	if (amd_pstate_prefcore) {
+>   		ret = amd_detect_prefcore(&amd_pstate_prefcore);
+>   		if (ret)
+>   			return ret;
+>   	}
+>   
+> +	ret = amd_pstate_register_driver(cppc_state);
+> +	if (ret) {
+> +		pr_err("failed to register with return %d\n", ret);
+> +		return ret;
+> +	}
 > +
->  	for (i = 0; i < cstate->num_mixers; i++) {
->  		struct drm_rect *r = &cstate->lm_bounds[i];
->  		r->x1 = crtc_split_width * i;
-> @@ -1251,6 +1258,12 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
->  {
->  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
->  
-> +	/* if there is no 3d_mux block we cannot merge LMs so we cannot
-> +	 * split the large layer into 2 LMs, filter out such modes
-> +	 */
-> +	if (!dpu_kms->catalog->caps->has_3d_merge &&
-> +	    mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
-> +		return MODE_BAD_HVALUE;
->  	/*
->  	 * max crtc width is equal to the max mixer width * 2 and max height is 4K
->  	 */
+>   	dev_root = bus_get_dev_root(&cpu_subsys);
+>   	if (dev_root) {
+>   		ret = sysfs_create_group(&dev_root->kobj, &amd_pstate_global_attr_group);
 > 
-> ---
-> base-commit: af2ea8ab7a546b430726183458da0a173d331272
-> change-id: 20241206-no_3dmux-521a55ea0669
-> 
-> Best regards,
+> base-commit: 1f2f221668b210107f1277901bb757f1d77de842
 
 
