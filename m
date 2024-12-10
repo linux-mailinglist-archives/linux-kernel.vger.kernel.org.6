@@ -1,87 +1,116 @@
-Return-Path: <linux-kernel+bounces-438748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105429EA512
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:25:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57D79EA515
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:26:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1451518856B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 733441696D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E3B14A60F;
-	Tue, 10 Dec 2024 02:25:44 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A481990BA;
+	Tue, 10 Dec 2024 02:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iQ7C8HtA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75B7233159;
-	Tue, 10 Dec 2024 02:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EBD155308;
+	Tue, 10 Dec 2024 02:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733797544; cv=none; b=gZ2tShAvM15Mo/QCwkQoAQWDVT94+PdiqLkTZCAv3rbLo/aaQ3BB7SACl/nLXQla/mKZPMd+NxbRx9JDitibbjNn34du+ZqZkzG31l5TRy7NmHWrVihDkpFBogirvmaZ5BAaw+HDsrWzbRSnD1sYVt9jQyXg+/Da3qfpOe8s9bU=
+	t=1733797558; cv=none; b=Wn0eUEo9lsu7muA++dOTTMsRt/Y5mpYc0QXKkfSl0PS8bYzhVU7iN7Nf9pXDU+amfWNi589eOmxfXzvByvnj3wP2nIlKT4r+BkVtOctdsv4tgnpJe/vo1sLIwAC++LfWfhwrzb6bairufqaUVFL11OjS5RNgHZfG2r+xK5Nsw5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733797544; c=relaxed/simple;
-	bh=U1ZIGWbN5GTBVBOSCn+zZFDwiwb3aTnpStLINUF9ZaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nVQEBA3tVktsGhaAnQQWHExPHL0hOQimJhx7KWF/821stLZk1QymRYVHHfmSMJEEg/XGvrNOn1Pmehmy5zD9p9D4KnIRY+tEXBukpJwClu00dD9H54C0mV8TpxS6Pt5noJgTK/AhvLOfMdb+v65QOWYU17VVFN0D8gZsHQoKG6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y6jFb5bVNzhZX2;
-	Tue, 10 Dec 2024 10:23:15 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id ECCD8180357;
-	Tue, 10 Dec 2024 10:25:38 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 10 Dec 2024 10:25:36 +0800
-Message-ID: <b35ed617-0508-91f1-972b-801932320264@huawei.com>
-Date: Tue, 10 Dec 2024 10:25:35 +0800
+	s=arc-20240116; t=1733797558; c=relaxed/simple;
+	bh=vrmMGZ0rLWOX1HqgYVdWR06cM7mrtTkRHR/8XO3AgSU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=IYPxD1eZq2QZoIEtBry4BqC+wu5+R6ax0duwY2aCjSJkZpskEcc6Et5LdGmtIqc2NlFj7LOpIYc6Sb/BWcXNc+OLHfQWRQxzkhIeYJjSVcNXAjjTHBq+cnacpdymz2KFBYY8I+dLKDnNR4kQscEWQ9psnojGnCVJthV350sEyDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iQ7C8HtA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A0EC4CED1;
+	Tue, 10 Dec 2024 02:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1733797557;
+	bh=vrmMGZ0rLWOX1HqgYVdWR06cM7mrtTkRHR/8XO3AgSU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iQ7C8HtAzngyAoej1wcnrdv1021FAE6v+JEh8PE4vTzRSH6GOvJ1EIlrus3tPKrVT
+	 S3SyATmAOScJ+L6qsj0+QsC8YAf52LPGIPs4dykn+7ROADsRhsfSBdNGQlQN/Znq4/
+	 xts+hsodSvqWjhLm+b7kaaLNoEB5HQ9k+nBVbrKA=
+Date: Mon, 9 Dec 2024 18:25:57 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Suren Baghdasaryan <surenb@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, SeongJae Park <sj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-Id: <20241209182557.8794e5b886e4ca91994ed0d7@linux-foundation.org>
+In-Reply-To: <20241209170829.11311e70@canb.auug.org.au>
+References: <20241209170829.11311e70@canb.auug.org.au>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH 2/2] mm, rmap: handle anon_vma_fork() NULL check inline
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>
-CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<akpm@linux-foundation.org>, <Liam.Howlett@oracle.com>,
-	<lokeshgidra@google.com>, <lorenzo.stoakes@oracle.com>, <rppt@kernel.org>,
-	<aarcange@redhat.com>, <Jason@zx2c4.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-References: <20241209132549.2878604-1-ruanjinjie@huawei.com>
- <20241209132549.2878604-3-ruanjinjie@huawei.com>
- <Z1byK9X59RHFJMHZ@casper.infradead.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <Z1byK9X59RHFJMHZ@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 9 Dec 2024 17:08:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-
-On 2024/12/9 21:35, Matthew Wilcox wrote:
-> On Mon, Dec 09, 2024 at 09:25:49PM +0800, Jinjie Ruan wrote:
->> Check the anon_vma of pvma inline so we can avoid the function call
->> overhead if the anon_vma is NULL.
+> Hi all,
 > 
-> This really gets you 1% perf improvement?  On what hardware?
-
-Yes，the total improvement of this two patches is about 1% on our
-last-generation arm64 server platform.
-
-During the test of Unixbench single-core process creation, the trace
-result shows that the two functions are frequently invoked, and a large
-number of check NULL and returned.
-
+> After merging the mm tree, today's linux-next build (powerpc allyesconfig)
+> failed like this:
 > 
+> In file included from mm/damon/vaddr.c:736:
+> mm/damon/tests/vaddr-kunit.h: In function 'damon_test_three_regions_in_vmas':
+> mm/damon/tests/vaddr-kunit.h:92:1: error: the frame size of 3280 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+>    92 | }
+>       | ^
 > 
+> Presumably caused by commit
+> 
+>   062111898568 ("mm: move per-vma lock into vm_area_struct")
+> 
+
+How about this?
+
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: mm/damon/tests/vaddr-kunit.h: reduce stack consumption
+Date: Mon Dec  9 06:20:01 PM PST 2024
+
+After "mm: move per-vma lock into vm_area_struct" we're hitting
+
+mm/damon/tests/vaddr-kunit.h: In function 'damon_test_three_regions_in_vmas':
+mm/damon/tests/vaddr-kunit.h:92:1: error: the frame size of 3280 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+
+Fix by moving all those vmas off the stack.
+
+
+Closes: https://lkml.kernel.org/r/20241209170829.11311e70@canb.auug.org.au
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: SeongJae Park <sj@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/damon/tests/vaddr-kunit.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/mm/damon/tests/vaddr-kunit.h~mm-damon-tests-vaddr-kunith-reduce-stack-consumption
++++ a/mm/damon/tests/vaddr-kunit.h
+@@ -68,7 +68,7 @@ static void damon_test_three_regions_in_
+ 	static struct mm_struct mm;
+ 	struct damon_addr_range regions[3] = {0};
+ 	/* 10-20-25, 200-210-220, 300-305, 307-330 */
+-	struct vm_area_struct vmas[] = {
++	static const struct vm_area_struct vmas[] = {
+ 		(struct vm_area_struct) {.vm_start = 10, .vm_end = 20},
+ 		(struct vm_area_struct) {.vm_start = 20, .vm_end = 25},
+ 		(struct vm_area_struct) {.vm_start = 200, .vm_end = 210},
+_
+
 
