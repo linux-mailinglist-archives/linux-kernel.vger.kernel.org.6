@@ -1,262 +1,182 @@
-Return-Path: <linux-kernel+bounces-439915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C787E9EB5EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:18:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9439F9EB5F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:18:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2028E188B8CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25CF9165E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745871BC09A;
-	Tue, 10 Dec 2024 16:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC5B1C1F15;
+	Tue, 10 Dec 2024 16:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNrXjuY5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PJJY4BcB"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C754A19D884
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733847430; cv=none; b=ND4lAbxrJThGYDgePPXXV1gunHRtZfZUVRP7cM28sCNS/DAFTgAJuwS1tAjI08nI8G25fzJWXLgmoRD9mqKdgD1oWxrUyWdvFtZXUiXieuRlS/5l2VVSMhK8WQpuoP1uCoE8vy6j0kEXpz6sM+uYNmMh37tA7suli3QOslgd90Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733847430; c=relaxed/simple;
-	bh=GDzQs+SNHNin4mfGV3zy+lXixMavnp1hCZwuygPgoxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hWE8pRRo5xTfiPWAImqCVDbnebRC6D9R830Q+TAnZGX58bbH5yiyDc8FG3MzEub7+Zmwi+1ha7lwTpanUHIeWmxRqlLMI3GFdB+fOlUjbv8zjwE3dj/G16pIBh5RZUQ5Ng0NdwGIZKaBSE0D/GZZLUahBsCTUViQ8dDFERZ9TEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNrXjuY5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733847427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XfALtMUh9MOAw5Gj55FoOho3EnhbH5ZZei5PUEAPRnI=;
-	b=dNrXjuY5XNBxgaTad9Hvpk6+U6OTl/zMYIWsL3cEzE78AOxetLPiCmaOnO7Nx7cL4cEZXF
-	Y3apPX79NJv2adb56Ky1V9eM6LIOHoekPYYFgRBr9fdV6Rr+wQOv9pCX+zORiNevOtmnmA
-	idxnJRH1CBsV493gPau4ivOOWkrQR4g=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-xv3tllK5NkujtfaWQZYDzQ-1; Tue, 10 Dec 2024 11:17:06 -0500
-X-MC-Unique: xv3tllK5NkujtfaWQZYDzQ-1
-X-Mimecast-MFC-AGG-ID: xv3tllK5NkujtfaWQZYDzQ
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-434f15b4b6fso17746025e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:17:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733847425; x=1734452225;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XfALtMUh9MOAw5Gj55FoOho3EnhbH5ZZei5PUEAPRnI=;
-        b=sUkQtIxwCzYHFxKwkt+sRSb4gx/GabsJE42LxY0qR0vE4oaVc887ENGf0tWl43wdJg
-         efSUCbw/Mwppms+tIKElGNIqiJ7tDpaCPNBHA5g0xy/G6ZvrA95ckSJgfaENTJq9daDz
-         qivjy/HOrd39dpbUJ8da8akFgg10l5vp7sZC3PtQepSnt1hF71W0kLB0NCEmVqOjpSl0
-         V1vrHCWCPWV+gsuQscCTxH5MCj7HRGTb27SjwpUuk7Q+D3aMIGdtTLW59Tvvn6Gp720t
-         HNDmUL36XjNndU3ihCNeROdee0iZBYFHssouvzQpFI1/PEKwsy4E1SdXRrPLCEtuGqbD
-         7Aow==
-X-Forwarded-Encrypted: i=1; AJvYcCXMgf3gua9xJNziYI2cI9pPiIcwAGIcQ7Wij5/SvLqe/PkEVjgAw282pBHnAlUiMhXuf3FnxvE42dpTqQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZRg43w10hyzBHfIurFO/PQyz6jpPcA+VcXTc+azaaHES1k3X3
-	OEZ769lT1lAT4Q7VhyPGPAqvtangVj9IjkZ+GFO+1zo5LthBZuqL09zZUS1TRF+VhsOLkiSOsEM
-	IE2gXUZrBxmXoWFo+NKmoFFY646mSzRz5g8FHhJlYUx2dwH1c3EqrDwvCvQ21IA==
-X-Gm-Gg: ASbGncuzcl1WNJS9SM5hBuE7Uw0tUe5INw48QKjGWSRVCbkdlZVM2TEKc/Bajisa6el
-	8UB8XANsLJxqfV77Z39hC6XBwyFA7Zjk4wQ+q13c/6hJyheOMlzKyLCo6w9Cgim7+M9hlITH3VH
-	3G7Zt5jIPV0+CJwwPVUUv3Sx4Jz/bbh47gpaKKBHreE6q43Bj8NpKvTczb9LmFpuXaYwSDou1EX
-	cojfuXmzArTZda+IWdvJYxdqTDRJEcWgVVU/X2h/rBnxq9Xla+pA6EqSw==
-X-Received: by 2002:a05:600c:4f4b:b0:434:f1d5:1453 with SMTP id 5b1f17b1804b1-434ffeb5ebcmr51348735e9.0.1733847425514;
-        Tue, 10 Dec 2024 08:17:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHZ41cKUASYdlnT5C/Fo8FLlLNEWT6Pp6oUkVkOg8hdXW7xQ9cJLD9eFTzfIB4uvA0mvURE+w==
-X-Received: by 2002:a05:600c:4f4b:b0:434:f1d5:1453 with SMTP id 5b1f17b1804b1-434ffeb5ebcmr51348465e9.0.1733847425137;
-        Tue, 10 Dec 2024 08:17:05 -0800 (PST)
-Received: from [192.168.10.28] ([151.81.118.45])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4361968eed5sm11796975e9.42.2024.12.10.08.17.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 08:17:04 -0800 (PST)
-Message-ID: <ff1d01ff-5aa3-4ef7-a523-6bf4d29be6b6@redhat.com>
-Date: Tue, 10 Dec 2024 17:17:03 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F651B423F;
+	Tue, 10 Dec 2024 16:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733847465; cv=fail; b=dkOJL+UVe8Pkt8KlS+ewROKu1hN6NIPfuOVylLjp8MFHrt4Iwf04BwhAOLbOBbx62qiqrsJ0HM0PmWSYCY3M1bWsJkWJn6YfULpiEix0wdM7iAu/h0PB27C/Qpz6TQy3GZuMp597VchvegY4CwrQiwhOs7G9R6i0JrPK2n5ASu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733847465; c=relaxed/simple;
+	bh=J5OJl7H1gZpx7UO0jWKHyqP0MMYPRHloDX39SC+bM+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ipv1KGg2lZ/2UXElWRO8N91kdkCvutZ+PnZzklOi/gEaDI2DH2ZZ3d/T+hgBLKgF1Ho4AOeOd2waM4ZiSvwdwV/TbbEteQyF5zlGKdQdDInve5dwbgt5B38/46ZhqzZwZMe+MkVu5AqzaYnTCvwdMe5qBtOVv4Cv8/dd/nWtPI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PJJY4BcB; arc=fail smtp.client-ip=40.107.223.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s9i1u6zpMAQQgWO9nRhen1IWF91cRMwaG0N8hP5PIksC0rhnut3GqaKpPR80aR7L0/adPSw8BLy2M19fdAsofbbHcX9oknhYobMlHRFePYHsNmngzznFup/6dPMtAUW8/87m6l+v0F2S7UJyhKm4xVwobhXmW47/lPYMaKTVzJ0v12/YrEiEqSAhhUqDEtRu9p8fRyZpiZ42Ju6NYh5KgbsjOWRrQd4IgyPouzwGg+tRzh73WVQUlqMMfM01vJye1TEbKt6tcrQpbwLaxmbRK05I3gsXnYjxH1keYc8kxtv0pp7upGnXfa7VgI7oJp2NgjmplhHYufo6et1SDyGclw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J5OJl7H1gZpx7UO0jWKHyqP0MMYPRHloDX39SC+bM+E=;
+ b=dCkjOLHZxEaYFMdhdNq5wHwX+cdx0cA4ofDvq8LutAahFAfGN6dEbGwzfqVs233/pRAcvx45HFbE55fCKUPUKKE3vfo2x03tIQY/YzG7Ep95yFaZ6cIKGW/xWua3JND+85zqzVs/c3I749Fdv2+vZBG9qWfAVfRos2GWWJASZgCXf4/d71TszrwsgMBPDskPT2nR8Ey/ISPD3WBoFZsLwWLEJJJg6eeAahpphZqfzEnci0hUs3i0j+YYxWyXTDuCUQhVQjRz3e8Y73cKugJ7XPw6ItYlgKPdMDciBHHCS55FG4DBRMbxgdaiM6i+0Q9M6Dm5QytJ9YJJBMrBOS3TPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J5OJl7H1gZpx7UO0jWKHyqP0MMYPRHloDX39SC+bM+E=;
+ b=PJJY4BcBIfIfIJTtZlyGhT3z7XBpY/IACsuuMuOlnEO2EZ07BreREmkxuuZ9xjlzzq6aEBiliJQicU1+A7Rin5n14KPz+cg+5O+eclEs5plr+1EQoccx2IJzxVzZhcFhh+RiB49oTGayiGK8rIgNk5bncj57A9tz3mB1RdJn/fto810DTn1kKNAOdHqdNK0U6Tdf4fsQfgRdFEzEpcqZxYSE73qXmuvby5uKMksB9bmlEGb/tHM2WMvE0CU2SHg8l+gWViJAP868cfv6yOgFenRbwmGkXRJDUhsSOTY+jVzln8SqwZRVWLzUX9i5XLQFFoIGNOQGQxJPqVnwGf6dkQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ LV2PR12MB5917.namprd12.prod.outlook.com (2603:10b6:408:175::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Tue, 10 Dec
+ 2024 16:17:38 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%3]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
+ 16:17:37 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Yu Zhao <yuzhao@google.com>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v1] mm/page_alloc: don't call pfn_to_page() on possibly
+ non-existent PFN in split_large_buddy()
+Date: Tue, 10 Dec 2024 11:17:36 -0500
+X-Mailer: MailMate (1.14r6065)
+Message-ID: <9EE9FD55-991E-48D9-9DE2-DA7F7E850352@nvidia.com>
+In-Reply-To: <20241210093437.174413-1-david@redhat.com>
+References: <20241210093437.174413-1-david@redhat.com>
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0289.namprd13.prod.outlook.com
+ (2603:10b6:208:2bc::24) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] KVM: x86: Refactor __kvm_emulate_hypercall() into
- a macro
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>, Binbin Wu
- <binbin.wu@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>,
- Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>
-References: <20241128004344.4072099-1-seanjc@google.com>
- <20241128004344.4072099-7-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20241128004344.4072099-7-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|LV2PR12MB5917:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5b5fd8a3-04bd-4a25-e400-08dd193629e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G5ipUqfkMZ4ql14HXwA8kOYfyal9AnsMQwrFkP3bIwnul+10iFTCdkAVF1GQ?=
+ =?us-ascii?Q?KtGDg0V1soHA+BgHzPzL5mDtuESy33lDcwv9mLaJ0Zv4KpQfD//pvuNZDFiB?=
+ =?us-ascii?Q?PgxuHfB0N4JAuqTRZDfsAbglXF7Avg+Ris0koRcxrr0EbUtso6QIrMS37h5S?=
+ =?us-ascii?Q?ePVeQwHBSUhyWmhx1anI6Odnf1A0KHbdoN1vcnc24pGHIP0QYb12QOK7nQz9?=
+ =?us-ascii?Q?Lhu1kCmwgXv62ezTtqXGMQ0jF+C+G7x4BidANmXXTX2ruERABq1Q1T1J802m?=
+ =?us-ascii?Q?fUu4YDdWjIMJkRL7bGNFnqWQja25hIiuFwlJEr20HIooGuWdZ/uFnim/Q0n0?=
+ =?us-ascii?Q?RnmdvOppkKWDcSI3bNvEzjmVVJeCMINOaDS/n7Ed1A7NmPPRTis12DroetYC?=
+ =?us-ascii?Q?dc9OTzmcJ+qBHw/34i4Jy2jnqHZkunuWIJUTP6sATfwX6CmCLxWRTbrdZWay?=
+ =?us-ascii?Q?6++YB575pv+Vi4Ja/WPVzJAqaT0107mIzZbR3I2rJ+sDfDiAbXOOBSvXMc0g?=
+ =?us-ascii?Q?Gjdt285h4X2ATwhJfs++Ajdgfc0IuyGeH32zFVmmUo3kw3p+qNGD41nvX/nr?=
+ =?us-ascii?Q?5rDIW64STkfWC6gEtcYOZxobb2bY475WmzUTR+cEqaHkTnydgqdL4ohigy5e?=
+ =?us-ascii?Q?8fUTUdL9ZSOVntOEwBquW2WD7ChCxaU3AfSX3Gcr+tmNmCkcDF/AYRQbAJgf?=
+ =?us-ascii?Q?ZBcCe5d+kLdiUvawL3gW032QnQKPguti91RMdDHGQfeMzIUQNPd9MA1drDsi?=
+ =?us-ascii?Q?aiOosLGOzZaBjbzi8XF4BviNQ/TDsswi91zj9en9XWLp+SlRp2fzaMTr6U10?=
+ =?us-ascii?Q?3S/F8+0QufRYAJfk8tCqGUwiJx5yU8uj59U6l+g8VAAT5f2jqDVvDwSAl2gH?=
+ =?us-ascii?Q?KBkhnsbYkESYOdEKzkTuUo6hHMzLkQ6G5wotdjvXhAzZweABccP2rNU9fEZx?=
+ =?us-ascii?Q?zet4i+PdpN9lXVUfkOm/IluFL8srulAnyKNuobqBFj76Futh2Vym77cM+1Ri?=
+ =?us-ascii?Q?FljpVzjNJdbIOhY3Spj4BvS4HwtJDLUmaeuCVTkQJXD73MOeS4nYnHLFfo8N?=
+ =?us-ascii?Q?4Le8n1Ipu6mbt5E1tnOXWC57bXfTNg5yyXWGE2sMTw7iBeFxNNluszqkoG9h?=
+ =?us-ascii?Q?UlYZkhdC52PNwA1wXvOg8HKetljP/YqaG5SkACXorm9fpiGv8pmg6X8Oq1FT?=
+ =?us-ascii?Q?CEavLUihUFrvUq7Le1P7lNIqetIph/5I3yf63fiVQnkU3UOcHmCb4qGGv8GD?=
+ =?us-ascii?Q?AAXqUYHo1efP/mYXf39T8YYRlmgi6IWWy7wx7lrTZ5SI6j5yioLZq2IPhYyr?=
+ =?us-ascii?Q?rOcHywpcA9kCEMzsC98J4Y5kJgbUoBi5I1Ifw8QFKE50Bg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iXJH+0hWCxScNzNFDahJgfcf01TYgU/7JTxivzD3D1KWwJoCsoZsvN2l/4we?=
+ =?us-ascii?Q?FLhJEol8RKAZ9heBmyHEp7Jdq4AIbQSu4lAl+HXA7Tm6gCX0yclRHa6eMsHP?=
+ =?us-ascii?Q?/lUXILCE2fqypDf2ZzeY9N8BZjaIX7qWW4+RTHZz8Oir75Y/ObuWF0RfuhNe?=
+ =?us-ascii?Q?6h582MdhXHgpyN4TuBsul9WZQw9QvZEOXwm9AzYRvXCGqzD9c/17YiDWymdC?=
+ =?us-ascii?Q?aLSpaGybv4brCb1irr6TjwrXLsvNMWn1BlbV6G3LOFLCn99oVmB53JkSdF04?=
+ =?us-ascii?Q?9JN68WbNEgnnl2OCW/LkCU0u9wCR1ZhI5TBdUFLxqyMxh4GFiU3GmV7a5FDx?=
+ =?us-ascii?Q?JKO5S2VPo2YOPjYHy9U1i3Oxwn6IM6WbxjNWnIWPRu7T0MSPXTwrqFjpZ08S?=
+ =?us-ascii?Q?NbH3vNeV/UN3yZAwNISIS/edSRX7xeeGLUIGraVPeK20nGG7RBvYyHGc2hvi?=
+ =?us-ascii?Q?N+w08+lUjAANePZAtHyu5XUbQuLlLjtyXakMWihkBwvPriTYVpuEWqpKyCUF?=
+ =?us-ascii?Q?nh+t4pK15GazqTPQF5scCKPcq5D/SC/tTWNH6PuDEsfy9zHlQxlE8kIcXele?=
+ =?us-ascii?Q?CDaJxSo4l3WdQhEQAfaiF6KXMwBTV9T7m0ls4sRfCmQY7BIJbt6Nvmm8EyoL?=
+ =?us-ascii?Q?kHyclWIoGAZoVg9Y6SL4IB3+UJNWBEWQpJz0Mzw9zHgPF5Oybss/lNhNgyGw?=
+ =?us-ascii?Q?XvjTkYbjfCWB3pFxUF7pUw7wad1GV7JIn04z9gTh3N+feDen2n/MgeiYD/mL?=
+ =?us-ascii?Q?M/wcWTIXkLmx/dRBtEVl5eFNUY6PtKpkdA3K8AhAHigtbcC8GpdT7X5DA9bn?=
+ =?us-ascii?Q?opEBhXn4iybqOLx7aYvgSnhJ+Vo/USkYKydo8JSMgaORLFR0x6M9zRtowKmL?=
+ =?us-ascii?Q?7tlhWUfvCBHJIQgalLmOWVov5fJ7p4yQ5HVS0Zxl25n5G4O2Q+kLPi8vg9Lv?=
+ =?us-ascii?Q?9wwXDvlNrwh9KEn2jvH10LL/6882bbMjO579FuLmeOfTQLyJb67ebq/cJIIE?=
+ =?us-ascii?Q?MQTAZifv6zdP+t+R6wV4g+qFSOvMbTeoGY5YkwjGPA5I4pkAW2og5q8dpoTp?=
+ =?us-ascii?Q?/5OSom8lZd9AE0ZwyTjg8B83yUTwHcSCV5cyH1zxBROko/oH6lat69unU+he?=
+ =?us-ascii?Q?vMH62/Ou4+Ztkas1m2TzmXZ2snQkv5FUOj2WqLRcvE9lvsNp5X9sbTdkFaZs?=
+ =?us-ascii?Q?JxsnAvRXXMmvV0PZ7vXpBomHWQxuNRao5ZLL6J+OawhUi8NkinGkeAIMbYjM?=
+ =?us-ascii?Q?8F6PL9SGo8JohLKc967Rhk8E3CJwLAU4JXPSZ5t5uj3XgZnociKoi2B5uKrl?=
+ =?us-ascii?Q?i5H7RgDNaga+885fMPR/vhoULGHGl5slNbWOT517YQ0IE/HHcdaOMl/3rk2o?=
+ =?us-ascii?Q?Ucgi2xAwoRZ+AMeyjKpx7YQRlYSMARiZYmiOFTbJQ0A24QIpYaTybV1KhQwW?=
+ =?us-ascii?Q?8f5MNEfgRyXvZ90Q3Wm8PmHjeMMKRvQ8ntK9tj21wfXKj+ehF4Og3uj+ht1s?=
+ =?us-ascii?Q?LeDvt6OuYbr846lQ1rJjnTq8lx3Fv2TTX/HcHNC3Nn7y1VaGapNznDiYZHXp?=
+ =?us-ascii?Q?wxfJmNt+O18YbOP3JadY7D+h2QYdtU6La5RgZ2ZQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b5fd8a3-04bd-4a25-e400-08dd193629e0
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 16:17:37.9027
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M0sUzS4Ma8P59opKAn5tZNhaMafi3oefC+Uk042uEi6F5uBYB0AYXCYdtrQR6H27
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5917
 
-On 11/28/24 01:43, Sean Christopherson wrote:
-> Rework __kvm_emulate_hypercall() into a macro so that completion of
-> hypercalls that don't exit to userspace use direct function calls to the
-> completion helper, i.e. don't trigger a retpoline when RETPOLINE=y.
-> 
-> Opportunistically take the names of the input registers, as opposed to
-> taking the input values, to preemptively dedup more of the calling code
-> (TDX needs to use different registers).  Use the direct GPR accessors to
-> read values to avoid the pointless marking of the registers as available
-> (KVM requires GPRs to always be available).
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> ---
->   arch/x86/kvm/x86.c | 29 +++++++++--------------------
->   arch/x86/kvm/x86.h | 25 ++++++++++++++++++++-----
->   2 files changed, 29 insertions(+), 25 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 39be2a891ab4..fef8b4e63d25 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9982,11 +9982,11 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
->   	return kvm_skip_emulated_instruction(vcpu);
->   }
->   
-> -int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -			    unsigned long a0, unsigned long a1,
-> -			    unsigned long a2, unsigned long a3,
-> -			    int op_64_bit, int cpl,
-> -			    int (*complete_hypercall)(struct kvm_vcpu *))
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl,
-> +			      int (*complete_hypercall)(struct kvm_vcpu *))
->   {
->   	unsigned long ret;
->   
-> @@ -10073,32 +10073,21 @@ int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->   
->   out:
->   	vcpu->run->hypercall.ret = ret;
-> -	complete_hypercall(vcpu);
->   	return 1;
->   }
-> -EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
-> +EXPORT_SYMBOL_GPL(____kvm_emulate_hypercall);
->   
->   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->   {
-> -	unsigned long nr, a0, a1, a2, a3;
-> -	int op_64_bit;
-> -	int cpl;
-> -
->   	if (kvm_xen_hypercall_enabled(vcpu->kvm))
->   		return kvm_xen_hypercall(vcpu);
->   
->   	if (kvm_hv_hypercall_enabled(vcpu))
->   		return kvm_hv_hypercall(vcpu);
->   
-> -	nr = kvm_rax_read(vcpu);
-> -	a0 = kvm_rbx_read(vcpu);
-> -	a1 = kvm_rcx_read(vcpu);
-> -	a2 = kvm_rdx_read(vcpu);
-> -	a3 = kvm_rsi_read(vcpu);
-> -	op_64_bit = is_64_bit_hypercall(vcpu);
-> -	cpl = kvm_x86_call(get_cpl)(vcpu);
-> -
-> -	return __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl,
-> +	return __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
-> +				       is_64_bit_hypercall(vcpu),
-> +				       kvm_x86_call(get_cpl)(vcpu),
->   				       complete_hypercall_exit);
->   }
->   EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index 28adc8ea04bf..ad6fe6159dea 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -617,11 +617,26 @@ static inline bool user_exit_on_hypercall(struct kvm *kvm, unsigned long hc_nr)
->   	return kvm->arch.hypercall_exit_enabled & BIT(hc_nr);
->   }
->   d -
-> -int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -			    unsigned long a0, unsigned long a1,
-> -			    unsigned long a2, unsigned long a3,
-> -			    int op_64_bit, int cpl,
-> -			    int (*complete_hypercall)(struct kvm_vcpu *));
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl,
-> +			      int (*complete_hypercall)(struct kvm_vcpu *));
-> +
-> +#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, complete_hypercall)	\
-> +({												\
-> +	int __ret;										\
-> +												\
-> +	__ret = ____kvm_emulate_hypercall(_vcpu,						\
-> +					  kvm_##nr##_read(_vcpu), kvm_##a0##_read(_vcpu),	\
-> +					  kvm_##a1##_read(_vcpu), kvm_##a2##_read(_vcpu),	\
-> +					  kvm_##a3##_read(_vcpu), op_64_bit, cpl,		\
-> +					  complete_hypercall);					\
-> +												\
-> +	if (__ret > 0)										\
-> +		complete_hypercall(_vcpu);							\
+On 10 Dec 2024, at 4:34, David Hildenbrand wrote:
 
-So based on the review of the previous patch this should become
+> In split_large_buddy(), we might call pfn_to_page() on a PFN that might
+> not exist. In corner cases, such as when freeing the highest pageblock in
+> the last memory section, this could result with CONFIG_SPARSEMEM &&
+> !CONFIG_SPARSEMEM_EXTREME in __pfn_to_section() returning NULL and
+> and __section_mem_map_addr() dereferencing that NULL pointer.
+>
+> Let's fix it, and avoid doing a pfn_to_page() call for the first
+> iteration, where we already have the page.
+>
+> So far this was found by code inspection, but let's just CC stable as
+> the fix is easy.
+>
+> Fixes: fd919a85cd55 ("mm: page_isolation: prepare for hygienic freelists")
+> Reported-by: Vlastimil Babka <vbabka@suse.cz>
+> Closes: https://lkml.kernel.org/r/e1a898ba-a717-4d20-9144-29df1a6c8813@suse.cz
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Yu Zhao <yuzhao@google.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-	__ret = complete_hypercall(_vcpu);
-
-Applied with this change to kvm-coco-queue, thanks.
-
-Paolo
-
-> +	__ret;											\
-> +})
->   
->   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
->   
-
+Best Regards,
+Yan, Zi
 
