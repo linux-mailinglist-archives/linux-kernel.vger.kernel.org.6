@@ -1,235 +1,151 @@
-Return-Path: <linux-kernel+bounces-439415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCC69EAEF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:02:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5129EAEF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D316D1880552
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264DC169755
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F399A19CC1C;
-	Tue, 10 Dec 2024 11:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686711DC985;
+	Tue, 10 Dec 2024 11:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l6PspFLi"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNrwsugp"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78ECA198823
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A12F78F47;
+	Tue, 10 Dec 2024 11:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733828545; cv=none; b=W8CNzlyeod81x5AfSv8EyveOxCFSSRYm6svpXF2PmI9RwPDY7CLvVdwau9qmAuTqpTY1oGN5gi857H+VZeq3tDfQ+iY9p69GlXPVHhJdywEwzEFtLG8tGGVfflqGma6I+MadW5tbCEFA+Cq96ScG+ZhHw7X9WMf5iYOoSYNl0gg=
+	t=1733828660; cv=none; b=ulca3u7D82ikrLOshDkl5JqcB41grrx4o4/dcqHindajqkfNd5HZpmp7N71mj64LXpcX1bvrhf0wZNaVsIS7ZPOo7YvqiwuwHNgQAKducl0zRovF4hkCmcCHsrH2CSC2P7sggBa04MAkYExJpVtuIpCOSdt4Xadqpd47qZydvXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733828545; c=relaxed/simple;
-	bh=DNo6FDFuEfWbaNhgVAj/2RWAC5OMfkXtgieNFFRPoWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQNe2RuAnjFgV6Qxs+y8yMCnKl8bsVeN+g4f3x2Dpq653hev/kn/n6ISlSzir4OWe4yJq6R9Yad+VreS5au23D5NTxTKW2cd/chzjaQLDmHFNxp9R0GSYB3Z96bCoENUzuPZzgV/FI+gBwKPESCkZsAlcEtrXh0Dwofu5kSSYGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l6PspFLi; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-540215984f0so1704282e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:02:23 -0800 (PST)
+	s=arc-20240116; t=1733828660; c=relaxed/simple;
+	bh=FU67rLrViZPdR8qhmmKTXQUYgujidzzYPHnHn8k9EMc=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=TV2KBID+FvwalUvwzMN8A0lhwKOTK6lclIk78OXeW7m0/8cYj515CAae9ax0WyoT75ObonjBz2dbpVORZoj1ECPgpFAUYKOmJnDpcHiHzYeBjkH7f1VIBvxUxbPvYgMSBvM2n4gk/QfwngN6ekQ81s542DdCLKLW1z1H5f/Kj9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNrwsugp; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-725ce7b82cbso3309344b3a.0;
+        Tue, 10 Dec 2024 03:04:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733828541; x=1734433341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLSLnG5Y+Q5zBa0vxq3CyVrMI+PkK9k80FsG1LPecs4=;
-        b=l6PspFLi8+2zMzKIuQ6gfct3OyHyQEOSn200eQxnzVnaR/Cd5EiQCwpy1esOW8DLaV
-         PW7V3AA8OBtCVChzlWZSc6RzqLNqiU2tAN5ZGF66bnxIBlVF5E56l0zbVJ2eajjylJ0k
-         naEZRj2FKwegmA/MS+/YEkzrE9W5lJgJ3+Qn+OSaj3wpCdw0f7OQk7QjMB+Vd4tfxpHC
-         nVny+4nkyXFS6KLwoAnVl8WV8dqaRDaU+qtSA3KzhlEhwScDeMtW9RW8Kan5BKjpkp/7
-         znbkj9/ct+thhq7u3blvFz9IXF7de9Yy6gKv89uy8Pz7GGdCo1zd7rGaYLtVYO6iqSwm
-         b0Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733828541; x=1734433341;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733828659; x=1734433459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NLSLnG5Y+Q5zBa0vxq3CyVrMI+PkK9k80FsG1LPecs4=;
-        b=XxISrAlWtkJZP0GQsqw315NFjl8mm8kSERxQSVZ+6OzeJyZMNJ2MVdj7A7QuiMIeY/
-         +lRsH15CUH4yV4/iCaFbksXs4W63Lp+cPpgvi8MHtQ+uTEekHXuNPaSwX7tKFqgB9jWl
-         qo9+zg1x5k0bG37YUGZNd5+ZFW4Z7Rwz+0RfJMa10T43wkPGpaxhSPWm6IYeCYNiSTIH
-         I3DXWoj2FyZ3sTRCUqod1EMzjFOZCeIA8XsiLPm8GTHuQBZNlQO7j/W3HB7qpXN1WZaU
-         +Hf8e3gGaPDUZ9j46boAryTlJfVyfSchaLrXc6WBtKHYtYTLC2f8JZbribkxzLhx0w8n
-         QQEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLnPdcXVMDCf9sJT6RYsN9exrBM876tzLg//jNzuHSpqWcjFJaPZKHsoiQs1x/tUZcRCmds79Ngr6boKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykXOuIpfW3kQV8UJnggZyuTOB1ke8qpleSYwlb89SUEbR+EzAU
-	AR9ded1zfCJZ8cfxyPANUwJIL90qYGNTbkBnlnXMMQYwc9Zr5ECCn12f18brGEY=
-X-Gm-Gg: ASbGncu/WkB38f+gH3iV1b6Drrjkusl8xz8iL6WXDQLn7ucIQNXjlInvStM3gt8toVE
-	ZQg5xcBSXcMKBjuJPFyWxMBjt5HeckJvOa5h4N3+FQu82NjZ/Baql9j6o02Tvqv6BS8vqGv4W90
-	cEfT6INkK2bUMQQ1L7A9ZY0hdp9cr0lTXFP8OOhz9XV2cKkiHjGK16oFp6EAZnXF2IbL7RoIMnw
-	BEhhLVbU6UjmImJwERHsi73yGyadGiuZZ8+F3y4N5lSLG9Jp7o5QMkxCJFTpv6IpgCoyGwfh1Re
-	hTf1t+GyckHFI/6oLzFvq+25/S0+vr8wkA==
-X-Google-Smtp-Source: AGHT+IGd9pUHyOFytE8kKcuQvQX5JanFuKXTkqWjRgdaLSxeotjVnnczl7OXF6dV39l7CqIuih4Vog==
-X-Received: by 2002:a05:6512:104b:b0:53e:362e:ed6 with SMTP id 2adb3069b0e04-5402410d24emr1565097e87.50.1733828541548;
-        Tue, 10 Dec 2024 03:02:21 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e39ce0551sm1148049e87.29.2024.12.10.03.02.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 03:02:20 -0800 (PST)
-Date: Tue, 10 Dec 2024 13:02:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Fange Zhang <quic_fangez@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Liu Li <quic_lliu6@quicinc.com>, 
-	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 9/9] arm64: dts: qcom: Add display support for QCS615
- RIDE board
-Message-ID: <cfdyvcxdkmf4sv5f75koflayyx74wd3tuscdl7byp5peaag5ty@yhr3275jhftn>
-References: <20241210-add-display-support-for-qcs615-platform-v4-0-2d875a67602d@quicinc.com>
- <20241210-add-display-support-for-qcs615-platform-v4-9-2d875a67602d@quicinc.com>
+        bh=d53c0Q7cNW97XGoMSTKLDLwhm+ZDEx0sfAqw8S7aAq4=;
+        b=BNrwsugpxdpFk9AKGgIoy8xLuHVJZCPuVKduRKb5sueyT6Kit4tJaTzHEbBjWAMCEa
+         PdE55bdE3lk+p5ocJF4S6nNFP7pO2ZztAHKJGF1pPKNfTGcDVvx9EUrLHKBMPX4hMhEM
+         KJnKQ18TXJXd8Eh4vA9AJ4xhj9ri/SAhLXVtmhr7tC6R3hyMTZ3kqEHw8Bup8zgXrxTY
+         vSi6EUkQPfjmyPeviD7WGkBqOvv2GQjxGuvF4pqwTPx/jisElehjfqfvHe4EahANO9Ry
+         74B4FYxsKke89gH+nzMrQNZXPbWMshZhctCecFpqGNReg3Nv41moATkVQkRbkTZ1Ia5Y
+         9OJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733828659; x=1734433459;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d53c0Q7cNW97XGoMSTKLDLwhm+ZDEx0sfAqw8S7aAq4=;
+        b=Xj1Wil4X6UoobyvYGcSM97St+rpZ8NKwGlS8ePrKUyAaMihra3K8upW9XUG1vfiOCb
+         hXbJWhBhQ1e46xraj7+SaCQB8jK/4knpaGNJDpW+4XKfINJnwFav8sFBR8oxhPRroMIn
+         pRXVgw48smy6MiJRFaPtkjsENajP8iPqXNufrTBec09fJsDrHelA/9331vyleZj3UPpK
+         2gGng6cQkq5VgwO5JXJbxNGl/mgHb2OYcw/4kFBAs+va0BZbYLdnMahqtKDFw1b+rhbv
+         0iJZwDAa2BldHROLoqW+mOqrlo8oHH4zMcQ6MFAZu7JfkzjziKaKfe5o1JawGGnnVHsq
+         VjXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV27N9kbZKE7PY/Gb9wtTIYuQ6rPv8Mu1GOKgSC0OGc3UNj3F0gLR5d61yWOiE4p+NB0lDJA0t04u80o88=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4cw0/Dup3sJIztoj9rBgFfzupjjlBjcr131wrWTIERhHZBUKA
+	GDu9fEzqUFsU14gWKkYPxn4tfs240TWuhC0n8e59E8qg1qoYOtcW
+X-Gm-Gg: ASbGncvWk+aByznWjMm/UE8olJPNfk5I4ctpupmRGOmylrbHWguU5AlPWB6GEGUAHw0
+	gsCt07dFUxhdRyvAAfdP5+fpG3dJ7iuXTRDv+hedhGbpkrM7aHoHW/kpt5T6Yovxv9gIAZEJQTt
+	GxH8bmaJsTa0UHoN9CNHICGSot7ctcYoy1igHpPH0nxVeooWpP3Za4hPx0gYnqGh2Khur72RWig
+	ZZT2ySlKjbB6S3x8wu1uvXUKaFD3zjWAUhwe0qBxmbpBl4qiup9J9HnlGzQ1diJ4eqENl6PxqG6
+	BOFciKKzrEeUscbd+2bO
+X-Google-Smtp-Source: AGHT+IHiq76zZeabk5JBiqlxqVtJh6w677/EJMhuF87IpvjsfK2g86Eal5qMcqbdAM/t8J0FQTTuUw==
+X-Received: by 2002:a05:6a20:3d82:b0:1e1:a434:2964 with SMTP id adf61e73a8af0-1e1b1a71ad5mr6301486637.2.1733828658547;
+        Tue, 10 Dec 2024 03:04:18 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd157d79e5sm8892284a12.75.2024.12.10.03.04.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 03:04:18 -0800 (PST)
+Message-ID: <e5c43f36-45cd-49f4-b7b8-ff342df3c7a4@gmail.com>
+Date: Tue, 10 Dec 2024 20:04:15 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210-add-display-support-for-qcs615-platform-v4-9-2d875a67602d@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Masahiro Yamada <masahiroy@kernel.org>
+From: Akira Yokosawa <akiyks@gmail.com>
+Subject: [PATCH] scripts/kernel-doc: Get -export option working again
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 10, 2024 at 02:54:00PM +0800, Fange Zhang wrote:
-> From: Li Liu <quic_lliu6@quicinc.com>
-> 
-> Add display MDSS and DSI configuration for QCS615 RIDE board.
-> QCS615 has a DP port, and DP support will be added in a later patch.
-> 
-> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 89 ++++++++++++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> index a25928933e2b66241258e418c6e5bc36c306101e..694719a09ac46bfa2fe34f1883c0970b9d0902be 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> @@ -32,6 +32,18 @@ xo_board_clk: xo-board-clk {
->  			#clock-cells = <0>;
->  		};
->  	};
-> +
-> +	dp-connector {
-> +		compatible = "dp-connector";
-> +		label = "DP";
-> +		type = "mini";
-> +
-> +		port {
-> +			dp_connector_out: endpoint {
-> +				remote-endpoint = <&anx_7625_out>;
-> +			};
-> +		};
-> +	};
->  };
->  
->  &apps_rsc {
-> @@ -202,6 +214,83 @@ &gcc {
->  		 <&sleep_clk>;
->  };
->  
-> +&i2c2 {
-> +	clock-frequency = <400000>;
-> +	status = "okay";
-> +
-> +	ioexp: gpio@3e {
-> +		compatible = "semtech,sx1509q";
-> +		reg = <0x3e>;
-> +		interrupt-parent = <&tlmm>;
-> +		interrupts = <58 0>;
+Since commit cdd30ebb1b9f ("module: Convert symbol namespace to string
+literal"), exported symbols marked by EXPORT_SYMBOL_NS(_GPL) are
+ignored by "kernel-doc -export" in fresh build of "make htmldocs".
 
-Use IRQ flags instead of just 0 (here and further on). Also it might be
-better to use interrupts-extended instead.
+This is because regex in the perl script for those markers fails to
+match the new signatures:
 
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		semtech,probe-reset;
-> +	};
-> +
-> +	i2c-mux@77 {
-> +		compatible = "nxp,pca9542";
-> +		reg = <0x77>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
+  - EXPORT_SYMBOL_NS(symbol, "ns");
+  - EXPORT_SYMBOL_NS_GPL(symbol, "ns");
 
-Add empty line before device nodes (here and furher on).
+Update the regex so that it matches quoted string.
 
-> +		i2c@0 {
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			anx7625@58 {
-> +				compatible = "analogix,anx7625";
-> +				reg = <0x58>;
-> +				interrupt-parent = <&ioexp>;
-> +				interrupts = <0 0>;
-> +				enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
-> +				reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
-> +				wakeup-source;
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						anx_7625_in: endpoint {
-> +							remote-endpoint = <&mdss_dsi0_out>;
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +						anx_7625_out: endpoint {
-> +							remote-endpoint = <&dp_connector_out>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdss {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0 {
-> +	vdda-supply = <&vreg_l11a>;
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0_out {
-> +	remote-endpoint = <&anx_7625_in>;
-> +	data-lanes = <0 1 2 3>;
-> +};
-> +
-> +&mdss_dsi0_phy {
-> +	vdds-supply = <&vreg_l5a>;
-> +	status = "okay";
-> +};
-> +
->  &qupv3_id_0 {
->  	status = "okay";
->  };
-> 
-> -- 
-> 2.34.1
-> 
+Note: Escape sequence of \w is good for C identifiers, but can be
+too strict for quoted strings.  Instead, use \S, which matches any
+non-whitespace character, for compatibility with possible extension
+of namespace convention in the future [1].
 
+Fixes: cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
+Link: https://lore.kernel.org/CAK7LNATMufXP0EA6QUE9hBkZMa6vJO6ZiaYuak2AhOrd2nSVKQ@mail.gmail.com/ [1]
+Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+---
+This fixes regression in v6.13-rc2.
+
+Quick reproducer:
+
+    ./script/kernel-doc -rst -export drivers/iommu/iommufd/device.c
+
+On v6.13-rc2, kernel-doc will say:
+
+     drivers/iommu/iommufd/device.c:1: warning: no structured comments found
+
+With this patch applied, you'll get reST formatted kernel-doc comments. 
+
+Akira
+ 
+---
+ scripts/kernel-doc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+index f66070176ba3..4ee843d3600e 100755
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -267,7 +267,7 @@ my $doc_inline_sect = '\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)';
+ my $doc_inline_end = '^\s*\*/\s*$';
+ my $doc_inline_oneline = '^\s*/\*\*\s*(@[\w\s]+):\s*(.*)\s*\*/\s*$';
+ my $export_symbol = '^\s*EXPORT_SYMBOL(_GPL)?\s*\(\s*(\w+)\s*\)\s*;';
+-my $export_symbol_ns = '^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*\w+\)\s*;';
++my $export_symbol_ns = '^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*"\S+"\)\s*;';
+ my $function_pointer = qr{([^\(]*\(\*)\s*\)\s*\(([^\)]*)\)};
+ my $attribute = qr{__attribute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)}i;
+ 
+
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
