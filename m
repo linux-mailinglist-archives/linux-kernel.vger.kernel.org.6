@@ -1,160 +1,150 @@
-Return-Path: <linux-kernel+bounces-439590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28419EB174
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:00:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF619EB172
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54AD3188123D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:00:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2496516AFE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5001A9B5E;
-	Tue, 10 Dec 2024 13:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105361A725A;
+	Tue, 10 Dec 2024 13:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NVX9X9wN"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAxlVYaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326541A0B15
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 13:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453C41A0BC0;
+	Tue, 10 Dec 2024 13:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733835625; cv=none; b=beJJr3xasCInb9qStRhsvbMXmLlzFzxxNu1M0jt864irpISkBpl+IkaejIYwYEE/fvrNQ6m3RUjpDbmq//gne8q/xQ/mM3qOXIcSAB2zoY/uhwjwmC+NIY0PyxCw/aCpCsBE5IZk3OXEVYtnju5sV4kqEnSrT3JpRgX28zO9kq8=
+	t=1733835623; cv=none; b=ap1WjUDKr1jst5rPZ10rS7PUO8ftehBU336T9/0E75Yiu2NFB4ICx7yY1EgSvrtbfNUqqadU7G7Sd4AcYjDTI+L/o9PmZRfF82MAM30fEhYt7b4+i9pk5h1nlnVoXzRMCpnFwwCkIuy8cfauFnIYyc5Kjliw6fPTZTJb1DjECN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733835625; c=relaxed/simple;
-	bh=c8cbwyGc6qrvJi5SHhLFBunv5BEzFDk3njGVg7z2Hvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j9NVmLoSe9ve60seUmyekrfpAfqaabO1J3l/tfakbm+3EjB7PxDlCbNpYjqkQ1r7VOA2tm7ZXONZWoerxZTOeI5dfWnLy7HGR9vjAJFJk9ZnuFnzmpCeF2vHLZJe39W2ohuXhDx1jxZz8tT3uQfczj7TOvOAecDW5B8+SYP9SaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NVX9X9wN; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434fa6bf6e4so33895e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:00:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733835621; x=1734440421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXgN7N+sfvyWYJUrx20Eam6+/moqssT/bJkQiBA9Rqc=;
-        b=NVX9X9wNJRN6GNVxhLIVUAedQZBOzbW84B8g4Kx/oo/sxcitEmSGPmIXa/k0Rt6Yg5
-         cTPDWJXHa7VD/9wD9vXtImuWsOFPPJAHSuuJBq1ie5Fqh1XoQpFlygBRw3z3eAKTS73r
-         R3t1/a1qiVxmxf7ycwQbo4YP+vY3emE8dwo4YZ3aSKRaZOiXiGMKhesp6QCLgXjqXfsM
-         sdjw7ipAiUmst/2U8AvUjHQet9Oiu2ilHdy70+wNe40oBNKPPASKX73TIti/1ys9YWTv
-         v+Hs5/5kadclyBSkOny3JlFTQJv25x6EQVN5WlXj0J4vOiHrXN/XIkZodl9lICPK+q75
-         eP3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733835621; x=1734440421;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hXgN7N+sfvyWYJUrx20Eam6+/moqssT/bJkQiBA9Rqc=;
-        b=xVDEaq8zLLLzeOUFl2WsnPdEb5otXfPh00tLZlY+wJLKDvsmnJPT4/RodjCGrqixAF
-         neqQ2oAt+h1gYmrGEHOVk50vPO/dMyn78LOwofGllRneccSQ7OfHbZxaSGM8+xooLcty
-         QfkMeIEo/rKw6KogC8jihkkGKNYaUhEOsEn7TgbiuBBsESrTHEn+IT99emlS9EhHMwsB
-         +2O5CKEi/g6+gQbz/omAppY/F3/fSmh1t5anwkjSu/MCoGun6c0by4HdMwbRyUTJuK1e
-         KVX5zBC+2nFfphun4YcmhVPcO04cUHWHHd5VrD8G7AXVOvkNK61eezed2+fukysm1eP3
-         hBtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSLX+uEs79ppBC+z8aUXSwnpW/LPFgJNY4cXF3iNnn97uHbokfsHNEqJd8nKGjmplCma15XkZ6nJV1Fj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeSrCSMj8yeO8M4LpliUKI3AUHJOJNTmmQzNVqJp2cEycOyoX1
-	iXx/ZeRA0oi4y1SHRWglkVmJoZiNj1S9i5OCBog6KBGgjMkMl40bCSOkfZsdK+cFHud8NZgQB2D
-	IHYfmkW8jT6fPOkoSjuiA09KFuLQNPJRb1KZ2
-X-Gm-Gg: ASbGncvZ5NLG5zpLG/kJflZv80WS6BdCzao3zjT7BYV1zvwkM4Ld75BWKeQn3EFp5eE
-	NwDos/dKSQ2yp3Da/SYePW6qN82k3uPkTKyffDBmRuttSJLm94SdMRnsdrRcwL+c3
-X-Google-Smtp-Source: AGHT+IGaGhDWDnawra1F1/dbQTTbNMD9zXwWoIQ2OEhqZyNYqK9fVKTHmmaCrYxgr29shZgJAAHaKKezDZL8LZSStsI=
-X-Received: by 2002:a05:600c:6b06:b0:434:9e1d:44ef with SMTP id
- 5b1f17b1804b1-43539dd9773mr1029035e9.7.1733835621326; Tue, 10 Dec 2024
- 05:00:21 -0800 (PST)
+	s=arc-20240116; t=1733835623; c=relaxed/simple;
+	bh=p9Ww/rO7ZyXsPFuMy9KT1BeDWK1Ezu+jV9hVjPJEsD4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uUn49vUk+5RvJy/ouXpO5EjQn2E+tSLGfPqhPXc14UF5vys6Z5aDHewTBfzWheg/TnBe4q05IA+h1gi5XduA9Mb+3SUuVMSVygBGzpq/iSSwLwNUCaED6hz3ckUI4VapcqgT3r89mDgJl3WCp+VAB33AGpuZ7MikUSzHlBkFjXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAxlVYaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42864C4CED6;
+	Tue, 10 Dec 2024 13:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733835622;
+	bh=p9Ww/rO7ZyXsPFuMy9KT1BeDWK1Ezu+jV9hVjPJEsD4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rAxlVYaY65ty604W3LIhqPvaUjzu9kw/TCslECiIBllIgrlvtxMk5QWw29vCQ+GEN
+	 hMlL6F4XOsSQ3joeSPAEb3orXtCK79Er5wKePT/spXpI3ulyYQzLcVAQPxyoNLHdVM
+	 YRbIWYqEu+UFfuw1R+vIYI8HPYM0qoeUSQ+ZSc9kC2VadhF1YfMScsJ6Fg83ygA80a
+	 lYmiw+8hc6dcOb9uuYzojaojM38+X9r3x0DB/kQPD1TU9fglAEkSLK+/zW5WyAySSZ
+	 nt+C51xPCUCazPwUPQf5HyFYYKkRq9/HOWUUBYLqOzFliD5tbUcWTQAZtWCRF9uI8T
+	 SR3JUYd3fTVrQ==
+From: Mark Brown <broonie@kernel.org>
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Marek Vasut <marex@denx.de>, 
+ Andrew Davis <afd@ti.com>
+Cc: patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241203200001.197295-1-afd@ti.com>
+References: <20241203200001.197295-1-afd@ti.com>
+Subject: Re: [PATCH 01/21] ASoC: ad193x: Remove use of i2c_match_id()
+Message-Id: <173383562098.33694.17429584672866095878.b4-ty@kernel.org>
+Date: Tue, 10 Dec 2024 13:00:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203103735.2267589-1-qperret@google.com> <20241203103735.2267589-2-qperret@google.com>
-In-Reply-To: <20241203103735.2267589-2-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 10 Dec 2024 12:59:44 +0000
-Message-ID: <CA+EHjTxfchr+ggO_z_zrrFTrFpS3oTJXt13t-854xWxYY=oSQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/18] KVM: arm64: Change the layout of enum pkvm_page_state
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-Hi Quentin,
+On Tue, 03 Dec 2024 13:59:41 -0600, Andrew Davis wrote:
+> The function i2c_match_id() is used to fetch the matching ID from
+> the i2c_device_id table. This is often used to then retrieve the
+> matching driver_data. This can be done in one step with the helper
+> i2c_get_match_data().
+> 
+> This helper has a couple other benefits:
+>  * It doesn't need the i2c_device_id passed in so we do not need
+>    to have that forward declared, allowing us to remove those or
+>    move the i2c_device_id table down to its more natural spot
+>    with the other module info.
+>  * It also checks for device match data, which allows for OF and
+>    ACPI based probing. That means we do not have to manually check
+>    those first and can remove those checks.
+> 
+> [...]
 
-On Tue, 3 Dec 2024 at 10:37, Quentin Perret <qperret@google.com> wrote:
->
-> The 'concrete' (a.k.a non-meta) page states are currently encoded using
-> software bits in PTEs. For performance reasons, the abstract
-> pkvm_page_state enum uses the same bits to encode these states as that
-> makes conversions from and to PTEs easy.
->
-> In order to prepare the ground for moving the 'concrete' state storage
-> to the hyp vmemmap, re-arrange the enum to use bits 0 and 1 for this
-> purpose.
->
-> No functional changes intended.
->
-> Signed-off-by: Quentin Perret <qperret@google.com>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> index 0972faccc2af..ca3177481b78 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> @@ -24,25 +24,28 @@
->   */
->  enum pkvm_page_state {
->         PKVM_PAGE_OWNED                 = 0ULL,
-> -       PKVM_PAGE_SHARED_OWNED          = KVM_PGTABLE_PROT_SW0,
-> -       PKVM_PAGE_SHARED_BORROWED       = KVM_PGTABLE_PROT_SW1,
-> -       __PKVM_PAGE_RESERVED            = KVM_PGTABLE_PROT_SW0 |
-> -                                         KVM_PGTABLE_PROT_SW1,
-> +       PKVM_PAGE_SHARED_OWNED          = BIT(0),
-> +       PKVM_PAGE_SHARED_BORROWED       = BIT(1),
-> +       __PKVM_PAGE_RESERVED            = BIT(0) | BIT(1),
->
->         /* Meta-states which aren't encoded directly in the PTE's SW bits */
-> -       PKVM_NOPAGE,
-> +       PKVM_NOPAGE                     = BIT(2),
->  };
-> +#define PKVM_PAGE_META_STATES_MASK     (~(BIT(0) | BIT(1)))
->
->  #define PKVM_PAGE_STATE_PROT_MASK      (KVM_PGTABLE_PROT_SW0 | KVM_PGTABLE_PROT_SW1)
->  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
->                                                  enum pkvm_page_state state)
->  {
-> -       return (prot & ~PKVM_PAGE_STATE_PROT_MASK) | state;
-> +       BUG_ON(state & PKVM_PAGE_META_STATES_MASK);
+Applied to
 
-This is a slight change in functionality, having a BUG_ON instead of
-just masking out illegal states. Is it necessary?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Cheers,
-/fuad
+Thanks!
 
+[01/21] ASoC: ad193x: Remove use of i2c_match_id()
+        commit: 8c491103c946fb760005044a74c82d7cf6c6f6b4
+[02/21] ASoC: adau1761: Remove use of i2c_match_id()
+        commit: 56731c80fc3b17850e49913cec262c2bcaa88dcb
+[03/21] ASoC: adau1781: Remove use of i2c_match_id()
+        commit: f9812846ffdb1f5686154cae18ca8cc765232967
+[04/21] ASoC: adau1977: Remove use of i2c_match_id()
+        commit: d6ba6f50fae4170a8b7058da81dc2644913a5216
+[05/21] ASoC: alc5623: Remove use of i2c_match_id()
+        commit: b5e8f7abbb73d0f71ec8742c990c7e1ffa44a554
+[06/21] ASoC: alc5632: Remove use of i2c_match_id()
+        commit: 99816f3fa964380a50ccc898b08cc7d9dd58c764
+[07/21] ASoC: max98088: Remove use of i2c_match_id()
+        commit: ebf572bfefcd27584e1b32b0dd51ba71f3fe33d6
+[08/21] ASoC: max98090: Remove use of i2c_match_id()
+        commit: db2aaa0943803fbba606e3b59b5cf900eced2a5c
+[09/21] ASoC: max98095: Remove use of i2c_match_id()
+        commit: a8bb9855de4c5ca5b586814b7f8cc4a77d9e8b9c
+[10/21] ASoC: pcm186x: Remove use of i2c_match_id()
+        commit: b9f99efcc59ae86bcf238719e29427e9519b3878
+[11/21] ASoc: pcm6240: Remove use of i2c_match_id()
+        commit: 0a7bd3dba60a967032ce8c05b4d81350f01ecc8a
+[12/21] ASoC: ssm2602: Remove use of i2c_match_id()
+        commit: 6c978c1baeb8449114e8cb35c68832e903f713d8
+[13/21] ASoC: tas2562: Remove use of i2c_match_id()
+        commit: eb4b5da0ecf61135533574285bacb9dab4fc4703
+[14/21] ASoC: tas2781: Remove use of i2c_match_id()
+        commit: af4cffb250ec9e26a76c90cf753f1a6630811eed
+[15/21] ASoC: tas5720: Remove use of i2c_match_id()
+        commit: 06c61070173803a5341be31ff5281d15cc133e5d
+[16/21] ASoC: tlv320adc3xxx: Remove use of i2c_match_id()
+        commit: 55cf63cc8d951246ec35195ae5a1628beb9c9da3
+[17/21] ASoC: tlv320aic31xx: Remove use of i2c_match_id()
+        commit: f742875ee2534473ca4bf5ce1e120bebdf8d624d
+[18/21] ASoC: tlv320aic3x: Remove use of i2c_match_id()
+        commit: 2a169c459d9614dd6edebd8d34ab096b09f134ac
+[19/21] ASoC: tpa6130a2: Remove use of i2c_match_id()
+        commit: cb47dcedef8dee9e9e64598612b2a301f70a7fdb
+[20/21] ASoC: wm8904: Remove use of i2c_match_id()
+        commit: 77f3bfeacb939b47e1ffcda000cdf3c52af70e0f
+[21/21] ASoC: wm8985: Remove use of i2c_match_id()
+        commit: 7d57d1ce9398bb59fa0b251aa2ffa6eafef5cff4
 
-> +       prot &= ~PKVM_PAGE_STATE_PROT_MASK;
-> +       prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
-> +       return prot;
->  }
->
->  static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
->  {
-> -       return prot & PKVM_PAGE_STATE_PROT_MASK;
-> +       return FIELD_GET(PKVM_PAGE_STATE_PROT_MASK, prot);
->  }
->
->  struct host_mmu {
-> --
-> 2.47.0.338.g60cca15819-goog
->
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
