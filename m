@@ -1,409 +1,239 @@
-Return-Path: <linux-kernel+bounces-440428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0269EBDCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:23:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEEC9EBDCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5410169203
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86ADE1883B68
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C718D1EE7B3;
-	Tue, 10 Dec 2024 22:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XESxbbh2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE361EE7CE;
+	Tue, 10 Dec 2024 22:25:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333612451F1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5772451F1;
+	Tue, 10 Dec 2024 22:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869425; cv=none; b=UuqNTOOKRRGYblWVD2Q6K7DvoQR8EMllGznu6mxhDqPQEhqbJM+jBubdxNf0g7WApgRDjCGNPNsfWy4MmcjAAxrFqfVriyKXiZ0S9PS4gRV34c0YmdKPBfSM0FmJbbVI10fJJxm/Sfxt2YgfqTwo/+t+YULG1cWKxF09Eq2ADAQ=
+	t=1733869536; cv=none; b=aDSbh64Oszhp4sauhXTTd2x9RuK5fVHw1WGtL6cQQlgIbqDfEDJDs928zcIz/fuZx7gk/bLstbeplYN8kYL4ho2kcaWWNJBFe1rmlihkz7+AZHcxwPjOpz/+du0itIesS9vkcj7oBfaSlRU7DbGUesMNCgGUuQmMG74yFTJ56hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869425; c=relaxed/simple;
-	bh=u5xXKBqzDK9Z7bCcxflixSulZ82Lkvq4eSH8rpzHC+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pH46gbIBcUEHWcC38XJnGKh5EtoFnM1eL6JhYimeJAHgFt0ANp2Xr8Y6H86aK4okJRLO5WwlT3n0j/pI5e4txUX4Tqm1iYm81SW9HAnEMSixXWE4BwGIEV+UQDxTANjKhzlJnNRQbi0ALK8+61W2acVUbfkfzhMpRTWBn785kJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XESxbbh2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAH39jG002483;
-	Tue, 10 Dec 2024 22:23:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YpFwWOBl++nB05hlq0ygxYs14YljoTL1hDRISGW3ZFg=; b=XESxbbh2HdWE45Hi
-	vcTUFwO7F4tXzH5/WzWcxigqcJAKZDIQ763OlTQOJCWmt0CnRh0hJ4FDfbf2q0/F
-	IlgSuH4AquA8lZ/Q+B3PFZx6/zvkjqVaMGU0VN15VHx/fPL76Z1k8IeUaSbzGpyJ
-	m5cvzhfhUAFdXj0NhhwLL9XXzz4kLqFqx4kkXB8HqTRj/K0eVizNyBrNYft48iNj
-	EtXqLyF+tkGW97TqVwFrFwVp9OPL10EIidPxHPaxqn385oyGOkNwrQhvJPbgsIit
-	lHpp/rTOMgcsg5P7p0IQCxoOagOkjWahRFiZH5cLGeRgVFAzmaw2shBL5iWUvtPp
-	GMApzg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw45q41-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 22:23:33 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAMNW5G000942
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 22:23:32 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
- 2024 14:23:31 -0800
-Message-ID: <7c1172cb-a2a3-459a-802f-950a3302ba94@quicinc.com>
-Date: Tue, 10 Dec 2024 14:23:31 -0800
+	s=arc-20240116; t=1733869536; c=relaxed/simple;
+	bh=O3OJbBLmg2fsTkk7oAuJubmyRerENRw8xeQZIlNz7zw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=skzMHnrd/jW1TpSAo9LZOmG1d3fo1kkjN82syHEqykqUZKax/rbORXRYxcHg4FK0mxLqP1pfYFoDbzfPFOgEjbkt1WboPbsB8NYgAd2gwzL0kLHTnI86HfqPGJt/SE8WGH75Nw9qp8Utqv69pK4JTMNB9A2IIfbcatTjTe8DeK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4948DC4CED6;
+	Tue, 10 Dec 2024 22:25:35 +0000 (UTC)
+Date: Tue, 10 Dec 2024 17:25:33 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [PATCH] tracing: Fix trace output when pointer hash is disabled
+Message-ID: <20241210172533.04bcd5f7@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/tests: Add test for
- drm_atomic_helper_commit_modeset_disables()
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        <quic_abhinavk@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>
-References: <20241209-abhinavk-modeset-fix-v2-0-4d008f6ea8d0@quicinc.com>
- <20241209-abhinavk-modeset-fix-v2-2-4d008f6ea8d0@quicinc.com>
- <bgtv3oql63btxeqliauvnjtow4ca2m22qana5v3qudaspvejme@ts6jwuggg63x>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <bgtv3oql63btxeqliauvnjtow4ca2m22qana5v3qudaspvejme@ts6jwuggg63x>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lWIdtW2M_c_xGam2k-PUv9kynkfYYLVv
-X-Proofpoint-GUID: lWIdtW2M_c_xGam2k-PUv9kynkfYYLVv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100160
 
+From: Steven Rostedt <rostedt@goodmis.org>
 
+The "%p" in the trace output is by default hashes the pointer. An option
+was added to disable the hashing as reading trace output is a privileged
+operation (just like reading kallsyms). When hashing is disabled, the
+iter->fmt temp buffer is used to add "x" to "%p" into "%px" before sending
+to the svnprintf() functions.
 
-On 12/10/2024 1:10 PM, Dmitry Baryshkov wrote:
-> On Mon, Dec 09, 2024 at 05:09:25PM -0800, Jessica Zhang wrote:
->> Add a subtest to check that modeset is called when the connector is
->> changed
->>
->> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->> ---
->>   drivers/gpu/drm/tests/Makefile                |   1 +
->>   drivers/gpu/drm/tests/drm_atomic_state_test.c | 242 ++++++++++++++++++++++++++
->>   2 files changed, 243 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/tests/Makefile b/drivers/gpu/drm/tests/Makefile
->> index 56dab563abd7a7ee7c147bd6b4927e2436b82e1d..0109bcf7faa54993cce337f522eae78f0fa6ffcb 100644
->> --- a/drivers/gpu/drm/tests/Makefile
->> +++ b/drivers/gpu/drm/tests/Makefile
->> @@ -4,6 +4,7 @@ obj-$(CONFIG_DRM_KUNIT_TEST_HELPERS) += \
->>   	drm_kunit_helpers.o
->>   
->>   obj-$(CONFIG_DRM_KUNIT_TEST) += \
->> +	drm_atomic_state_test.o \
->>   	drm_buddy_test.o \
->>   	drm_cmdline_parser_test.o \
->>   	drm_connector_test.o \
->> diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..ffc1198ccc9ce103b9bc4c5ca8c83ca7f6ab19cc
->> --- /dev/null
->> +++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
->> @@ -0,0 +1,242 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Test cases for the drm_atomic_state helpers
->> + *
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <drm/drm_atomic.h>
->> +#include <drm/drm_atomic_helper.h>
->> +#include <drm/drm_atomic_uapi.h>
->> +#include <drm/drm_kunit_helpers.h>
->> +#include <drm/drm_probe_helper.h>
->> +
->> +#define DRM_TEST_ENC_0 BIT(0)
->> +#define DRM_TEST_ENC_1 BIT(1)
->> +#define DRM_TEST_ENC_2 BIT(2)
->> +
->> +#define DRM_TEST_CONN_0 BIT(0)
->> +
->> +static const struct drm_display_mode drm_atomic_test_mode = {
->> +	DRM_MODE("1024x768", 0, 65000, 1024, 1048,
->> +		 1184, 1344, 0, 768, 771, 777, 806, 0,
->> +		 DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC)
->> +};
->> +
->> +struct drm_atomic_check_priv {
->> +	struct drm_device drm;
->> +	struct drm_plane *plane;
->> +	struct drm_crtc *crtc;
->> +	struct drm_encoder encoders[3];
->> +	struct drm_connector connectors[2];
->> +};
->> +
->> +static int modeset_counter;
->> +
->> +static void drm_test_encoder_mode_set(struct drm_encoder *encoder,
->> +				      struct drm_crtc_state *crtc_state,
->> +				      struct drm_connector_state *conn_state)
->> +{
->> +	modeset_counter++;
->> +}
->> +
->> +static const struct drm_encoder_helper_funcs drm_test_encoder_funcs = {
-> 
-> Name is too generic, please use something more test-suite specific.
+The problem with using iter->fmt, is that the trace_check_vprintf() that
+makes sure that trace events "%pX" pointers are not dereferencing freed
+addresses (and prints a warning if it does) also uses the iter->fmt to
+save to and use to print out for the trace file. When the hash_ptr option
+is disabled, the "%px" version is added to the iter->fmt buffer, and that
+then is passed to the trace_check_vprintf() function that then uses the
+iter->fmt as a temp buffer. Obviously this caused bad results.
 
-Hey Dmitry,
+This was noticed when backporting the persistent ring buffer to 5.10 and
+added this code without the option being disabled by default, so it failed
+one of the selftests because the sched_wakeup was missing the "comm"
+field:
 
-Thanks for the review, ack for all of these comments.
+     cat-907     [006] dN.4.   249.722403: sched_wakeup: comm= pid=74 prio=120 target_cpu=006
 
-- Jessica Zhang
+Instead of showing:
 
-> 
->> +	.atomic_mode_set	= drm_test_encoder_mode_set,
->> +};
->> +
->> +static const struct drm_connector_funcs dummy_connector_funcs = {
->> +	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
->> +	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
->> +	.reset			= drm_atomic_helper_connector_reset,
->> +};
->> +
->> +static int drm_atomic_test_dummy_get_modes(struct drm_connector *connector)
->> +{
->> +	drm_connector_helper_get_modes_fixed(connector, &drm_atomic_test_mode);
->> +	return 1;
-> 
-> return drm_connector_helper_get_modes_fixed()
-> 
->> +}
->> +
->> +static const struct drm_connector_helper_funcs dummy_connector_helper_funcs = {
->> +	.get_modes	= drm_atomic_test_dummy_get_modes,
->> +};
->> +
->> +static struct drm_atomic_check_priv *
->> +drm_test_init_drm_components(struct kunit *test, bool has_connectors)
-> 
-> I think this is too generic, please use a file-specific name.
-> 
->> +{
->> +	struct drm_atomic_check_priv *priv;
->> +	struct drm_encoder *enc;
->> +	struct drm_device *drm;
->> +	struct device *dev;
->> +	int ret;
->> +
->> +	dev = drm_kunit_helper_alloc_device(test);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
->> +
->> +	priv = drm_kunit_helper_alloc_drm_device(test, dev,
->> +						 struct drm_atomic_check_priv,
->> +						 drm,
->> +						 DRIVER_MODESET | DRIVER_ATOMIC);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
->> +	test->priv = priv;
->> +
->> +	drm = &priv->drm;
->> +	priv->plane = drm_kunit_helper_create_primary_plane(test, drm,
->> +							    NULL,
->> +							    NULL,
->> +							    NULL, 0,
->> +							    NULL);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->plane);
->> +
->> +	priv->crtc = drm_kunit_helper_create_crtc(test, drm,
->> +						  priv->plane, NULL,
->> +						  NULL,
->> +						  NULL);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->crtc);
->> +
->> +	for (int i = 0; i < ARRAY_SIZE(priv->encoders); i++) {
->> +		enc = &priv->encoders[i];
->> +
->> +		ret = drmm_encoder_init(drm, enc, NULL,
->> +					DRM_MODE_ENCODER_DSI, NULL);
->> +		KUNIT_ASSERT_EQ(test, ret, 0);
->> +
->> +		enc->possible_crtcs = drm_crtc_mask(priv->crtc);
->> +	}
->> +
->> +	priv->encoders[0].possible_clones = DRM_TEST_ENC_0 | DRM_TEST_ENC_1;
->> +	priv->encoders[1].possible_clones = DRM_TEST_ENC_0 | DRM_TEST_ENC_1;
->> +	priv->encoders[2].possible_clones = DRM_TEST_ENC_2;
->> +
->> +	if (!has_connectors)
->> +		goto done;
->> +
->> +	struct drm_connector *conn;
-> 
-> Please move next ot other variable definitions.
-> 
->> +
->> +	KUNIT_ASSERT_LE(test, ARRAY_SIZE(priv->connectors),
->> +			ARRAY_SIZE(priv->encoders));
-> 
-> I'd say it's BUILD_BUG_ON
-> 
->> +
->> +
->> +	for (int i = 0; i < ARRAY_SIZE(priv->connectors); i++) {
->> +		conn = &priv->connectors[i];
->> +
->> +		ret = drmm_connector_init(drm, conn, &dummy_connector_funcs,
->> +					  DRM_MODE_CONNECTOR_DSI, NULL);
->> +		KUNIT_ASSERT_EQ(test, ret, 0);
->> +
->> +		drm_connector_helper_add(conn, &dummy_connector_helper_funcs);
->> +		drm_encoder_helper_add(&priv->encoders[i], &drm_test_encoder_funcs);
->> +
->> +		drm_connector_attach_encoder(conn, &priv->encoders[i]);
->> +	}
->> +
->> +done:
->> +	drm_mode_config_reset(drm);
->> +
->> +	return priv;
->> +}
->> +
->> +static int set_up_atomic_state(struct kunit *test,
->> +			       struct drm_atomic_check_priv *priv,
->> +			       struct drm_connector *connector,
->> +			       struct drm_modeset_acquire_ctx *ctx)
->> +{
->> +	struct drm_device *drm = &priv->drm;
->> +	struct drm_crtc *crtc = priv->crtc;
->> +	struct drm_atomic_state *state;
->> +	struct drm_connector_state *conn_state;
->> +	struct drm_crtc_state *crtc_state;
->> +	int ret;
->> +
->> +	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
->> +
->> +	if (connector) {
->> +		conn_state = drm_atomic_get_connector_state(state, connector);
->> +		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
->> +
->> +		ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
->> +		KUNIT_EXPECT_EQ(test, ret, 0);
->> +	}
->> +
->> +	crtc_state = drm_atomic_get_crtc_state(state, crtc);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
->> +
->> +	ret = drm_atomic_set_mode_for_crtc(crtc_state, &drm_atomic_test_mode);
->> +	KUNIT_EXPECT_EQ(test, ret, 0);
->> +
->> +	crtc_state->enable = true;
->> +	crtc_state->active = true;
->> +
->> +	if (connector) {
->> +		ret = drm_atomic_commit(state);
->> +		KUNIT_ASSERT_EQ(test, ret, 0);
->> +	} else {
->> +		// dummy connector mask
->> +		crtc_state->connector_mask = DRM_TEST_CONN_0;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
-> 
-> Please provide a description of what the test does and what it checks
-> (and why). See how other tests are described.
-> 
->> +static void drm_test_modeset(struct kunit *test)
->> +{
->> +	struct drm_atomic_check_priv *priv;
->> +	struct drm_modeset_acquire_ctx *ctx;
->> +	struct drm_connector *old_conn, *new_conn;
->> +	struct drm_atomic_state *state;
->> +	struct drm_device *drm;
->> +	struct drm_connector_state *new_conn_state, *old_conn_state;
->> +	int ret, initial_modeset_count;
->> +
->> +	priv = drm_test_init_drm_components(test, true);
->> +	KUNIT_ASSERT_NOT_NULL(test, priv);
->> +
->> +	drm = &priv->drm;
->> +	old_conn = &priv->connectors[0];
->> +	new_conn = &priv->connectors[1];
->> +
->> +	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
->> +
->> +	// first modeset to enable
->> +	ret = set_up_atomic_state(test, priv, old_conn, ctx);
->> +	KUNIT_ASSERT_EQ(test, ret, 0);
->> +
->> +	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
->> +
->> +	new_conn_state = drm_atomic_get_connector_state(state, new_conn);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, new_conn_state);
->> +
->> +	old_conn_state = drm_atomic_get_connector_state(state, old_conn);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, old_conn_state);
->> +
->> +	ret = drm_atomic_set_crtc_for_connector(old_conn_state, NULL);
->> +	KUNIT_EXPECT_EQ(test, ret, 0);
->> +
->> +	ret = drm_atomic_set_crtc_for_connector(new_conn_state, priv->crtc);
->> +	KUNIT_EXPECT_EQ(test, ret, 0);
->> +
->> +	initial_modeset_count = modeset_counter;
->> +
->> +	// modeset_disables is called as part of the atomic commit tail
->> +	ret = drm_atomic_commit(state);
->> +	KUNIT_ASSERT_EQ(test, ret, 0);
->> +	KUNIT_ASSERT_EQ(test, modeset_counter, initial_modeset_count + 1);
->> +}
->> +
->> +static struct kunit_case drm_test_check_modeset_test[] = {
->> +	KUNIT_CASE(drm_test_modeset),
->> +	{}
->> +};
->> +
->> +static struct kunit_suite drm_test_check_modeset_test_suite = {
->> +	.name = "drm_validate_modeset",
->> +	.test_cases = drm_test_check_modeset_test,
->> +};
->> +
->> +kunit_test_suite(drm_test_check_modeset_test_suite);
->> +
->> +MODULE_AUTHOR("Jessica Zhang <quic_jesszhan@quicinc.com");
->> +MODULE_DESCRIPTION("Test cases for the drm_atomic_helper functions");
->> +MODULE_LICENSE("GPL");
->>
->> -- 
->> 2.34.1
->>
-> 
-> -- 
-> With best wishes
-> Dmitry
+  <idle>-0       [004] dNs6.    49.076464: sched_wakeup: comm=sshd-session pid=896 prio=120 target_cpu=0040
+
+To fix this, change trace_check_vprintf() to modify the iter->fmt instead
+of copying to it. If the fmt passed in is not the iter->fmt, first copy
+the entire fmt string to iter->fmt and then iterate the iter->fmt. When
+the format needs to be processed, perform the following like actions:
+
+  save_ch = p[i];
+  p[i] = '\0';
+  trace_seq_printf(&iter->seq, p, str);
+  p[i] = save_ch;
+
+Cc: stable@vger.kernel.org
+Fixes: efbbdaa22bb78 ("tracing: Show real address for trace event arguments")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 82 ++++++++++++++++++++++++++------------------
+ 1 file changed, 49 insertions(+), 33 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index be62f0ea1814..ceae68b7466d 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3711,8 +3711,10 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ {
+ 	long text_delta = 0;
+ 	long data_delta = 0;
+-	const char *p = fmt;
+ 	const char *str;
++	char *p;
++	char save_ch;
++	char *buf = NULL;
+ 	bool good;
+ 	int i, j;
+ 
+@@ -3737,6 +3739,19 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 	if (iter->fmt == static_fmt_buf)
+ 		goto print;
+ 
++	if (fmt != iter->fmt) {
++		int len = strlen(fmt);
++		while (iter->fmt_size < len + 1) {
++			/*
++			 * If we can't expand the copy buffer,
++			 * just print it.
++			 */
++			if (!trace_iter_expand_format(iter))
++				goto print;
++		}
++		strscpy(iter->fmt, fmt, iter->fmt_size);
++	}
++	p = iter->fmt;
+ 	while (*p) {
+ 		bool star = false;
+ 		int len = 0;
+@@ -3748,14 +3763,6 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 		 * as well as %p[sS] if delta is non-zero
+ 		 */
+ 		for (i = 0; p[i]; i++) {
+-			if (i + 1 >= iter->fmt_size) {
+-				/*
+-				 * If we can't expand the copy buffer,
+-				 * just print it.
+-				 */
+-				if (!trace_iter_expand_format(iter))
+-					goto print;
+-			}
+ 
+ 			if (p[i] == '\\' && p[i+1]) {
+ 				i++;
+@@ -3788,10 +3795,11 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 		if (!p[i])
+ 			break;
+ 
+-		/* Copy up to the %s, and print that */
+-		strncpy(iter->fmt, p, i);
+-		iter->fmt[i] = '\0';
+-		trace_seq_vprintf(&iter->seq, iter->fmt, ap);
++		/* Print up to the %s */
++		save_ch = p[i];
++		p[i] = '\0';
++		trace_seq_vprintf(&iter->seq, p, ap);
++		p[i] = save_ch;
+ 
+ 		/* Add delta to %pS pointers */
+ 		if (p[i+1] == 'p') {
+@@ -3837,6 +3845,8 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 			good = trace_safe_str(iter, str, star, len);
+ 		}
+ 
++		p += i;
++
+ 		/*
+ 		 * If you hit this warning, it is likely that the
+ 		 * trace event in question used %s on a string that
+@@ -3849,41 +3859,47 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 		if (WARN_ONCE(!good, "fmt: '%s' current_buffer: '%s'",
+ 			      fmt, seq_buf_str(&iter->seq.seq))) {
+ 			int ret;
++#define TEMP_BUFSIZ 1024
++
++			if (!buf) {
++				char *buf = kmalloc(TEMP_BUFSIZ, GFP_KERNEL);
++				if (!buf) {
++					/* Need buffer to read address */
++					trace_seq_printf(&iter->seq, "(0x%px)[UNSAFE-MEMORY]", str);
++					goto print;
++				}
++			}
++			if (len >= TEMP_BUFSIZ)
++				len = TEMP_BUFSIZ - 1;
+ 
+ 			/* Try to safely read the string */
+ 			if (star) {
+-				if (len + 1 > iter->fmt_size)
+-					len = iter->fmt_size - 1;
+-				if (len < 0)
+-					len = 0;
+-				ret = copy_from_kernel_nofault(iter->fmt, str, len);
+-				iter->fmt[len] = 0;
+-				star = false;
++				ret = copy_from_kernel_nofault(buf, str, len);
++				buf[len] = 0;
+ 			} else {
+-				ret = strncpy_from_kernel_nofault(iter->fmt, str,
+-								  iter->fmt_size);
++				ret = strncpy_from_kernel_nofault(buf, str, 1024);
+ 			}
+ 			if (ret < 0)
+ 				trace_seq_printf(&iter->seq, "(0x%px)", str);
+ 			else
+-				trace_seq_printf(&iter->seq, "(0x%px:%s)",
+-						 str, iter->fmt);
+-			str = "[UNSAFE-MEMORY]";
+-			strcpy(iter->fmt, "%s");
++				trace_seq_printf(&iter->seq, "(0x%px:%s)", str, buf);
++			trace_seq_puts(&iter->seq, "[UNSAFE-MEMORY]");
+ 		} else {
+-			strncpy(iter->fmt, p + i, j + 1);
+-			iter->fmt[j+1] = '\0';
++			save_ch = p[j + 1];
++			p[j + 1] = '\0';
++			if (star)
++				trace_seq_printf(&iter->seq, p, len, str);
++			else
++				trace_seq_printf(&iter->seq, p, str);
++			p[j + 1] = save_ch;
+ 		}
+-		if (star)
+-			trace_seq_printf(&iter->seq, iter->fmt, len, str);
+-		else
+-			trace_seq_printf(&iter->seq, iter->fmt, str);
+ 
+-		p += i + j + 1;
++		p += j + 1;
+ 	}
+  print:
+ 	if (*p)
+ 		trace_seq_vprintf(&iter->seq, p, ap);
++	kfree(buf);
+ }
+ 
+ const char *trace_event_format(struct trace_iterator *iter, const char *fmt)
+-- 
+2.45.2
 
 
