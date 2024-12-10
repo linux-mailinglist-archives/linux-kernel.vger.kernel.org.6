@@ -1,67 +1,71 @@
-Return-Path: <linux-kernel+bounces-440438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E459EBDEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:38:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 860E89EBDF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B019281A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:38:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51E4A2828F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FBF1F193C;
-	Tue, 10 Dec 2024 22:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914CA1F1902;
+	Tue, 10 Dec 2024 22:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzVrKZVN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="quE/vhoI"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECB11F190E;
-	Tue, 10 Dec 2024 22:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4D51D014E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733870325; cv=none; b=d25RupwDaW0hQna2RW2N25HqQkwmlMQh1gYmQFjacvltGm97/WpSZFq5YO3ATaeFPNeYeFLYa8Tx6aaN31QxgummdonVDDfFMZ3LZfd3sO9We7wSB4dCEWvbfoQQwXnD+DSKg3q7kmjyFv+SEXTYKmTAPtgG03bfZKRy/s1xT18=
+	t=1733870354; cv=none; b=n1sY6LH42c4veMpJ09tbjNmDJPw0aB30SKQ4U4U2sfK7mntQ0FtgGhDoADaYRcAoAaGrqSJqk69f+GGfc0KMO+lL65MP2FMkQqS8c/SkPujsOn1lUC1JUpIQv4GeK4yVFaV+/8qj3Bma/NstIzRLKS2L3xdnLMSogOTANnpiGLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733870325; c=relaxed/simple;
-	bh=Pj68NnG+ybo7R+I0+KAmmUzmxouhp3o3i9jOI5/YzPw=;
+	s=arc-20240116; t=1733870354; c=relaxed/simple;
+	bh=O++82/VkfCl3c2Ppr1UMi8Dgi7ke022oDTm813+GREQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIO7OvQoThyyY/CIHladDkyr6h3tWDt18bsd1Aucalnh29aK+Q2iVkYAm9hztxFi6WeUylCUMySBhB2jedqm0fGBUrmcZXhNIzeXP5TPc1tfTnmUmIDRfKpaBeWGIoCS0K5j4hppRPXDTRQT7KxieCKLD3nfmrpB+ghHV3ZbImk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzVrKZVN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA5EDC4CED6;
-	Tue, 10 Dec 2024 22:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733870324;
-	bh=Pj68NnG+ybo7R+I0+KAmmUzmxouhp3o3i9jOI5/YzPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JzVrKZVNRJiLoSUEuo1TpKdQM2qzf9EH6SeE4GOi2QcOGR1RIkMx9T7LRdl+O7QSX
-	 pBFkX0x/F1kfejU11v+oadbwE0JW8sZt4YSsXplhZRM5PFhmb+gHUKdPpyXja6ffBw
-	 RIbh5cUNxGalxpDbm3N+fjMsvKaO89GzMCJq7vBxJDhjyoXiR9p2xSQ0ahqD1Fb27D
-	 aM2aLjG5Gs77Vf47t9fMGRJ67Vg+lRr1cVvVwWOy4aIgiLtPZusIuomYKAZnuzpldX
-	 kiR521E9weditQmzRp1uJgiEkNI5pkJIseU+tqCFr776RGoplT61bQ2/wikKX68c7N
-	 btIz1q3EhvvcQ==
-Date: Tue, 10 Dec 2024 23:38:36 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 08/13] rust: pci: add basic PCI device / driver
- abstractions
-Message-ID: <Z1jC7NnmwidLPT9Z@pollux>
-References: <20241205141533.111830-1-dakr@kernel.org>
- <20241205141533.111830-9-dakr@kernel.org>
- <CAH5fLgh6qgQ=SBn17biSRbqO8pNtSEq=5fDY3iuGzbuf2Aqjeg@mail.gmail.com>
- <Z1bKA5efDYxd8sTC@pollux.localdomain>
- <CAH5fLgixvBWSf-3WDRj=Mxtn4ArQLqdKqMF0aSxyC6xVNPfTFQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=snTqkmflQx7DnlveUuy45MYuFDWf8n+O192l9WKRYQ67+St+et5IdzRj7DxBMEXrFIMSMrixtFdg6JesJb1Kzx+NctUUAmn8tKhqXTIN0NF78Rssq05/p2mqiCF6vqdqW+s8DGCEWGQoQkdtopGYX/DUuKq1tzmnsR4ODRrQiV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=quE/vhoI; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=6Z6f8By0er5Bpt2mZnEJVSkHMXAxhgYlT24keL+DlzQ=; b=quE/vhoIfs0hRTKXaHNBdDpod1
+	jn1GMuKF6WkW5VoOjLc1PszLeOj0LwrASzHgrtD07Y8a79AJhLUBTynZ7VO7PhVrdllur3+ovt7oo
+	zufumRE2Xsuk5TyJ575TlZlHwQp5cQp/ibzWJNENC/80HEhN8gco7euk0ChjUg86ftRoaHTrRvyZC
+	U7HLNXBUuAQOFdzPpYGFWUoZAGbU8vyg6whZFWmGsypGcqu4jafpuM0LFzkDZ3dOMLvpygz8UUHGo
+	nLQyR5BmJ1485xvZMwI+7SUV9eKxXiOm7eJsX5V2CdO2fTgOQ0qGi5/lbjQWMteVY7lND5duPHWE3
+	xrbD8FDw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tL8sV-00000003jqh-1IyZ;
+	Tue, 10 Dec 2024 22:38:51 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7F9E130035F; Tue, 10 Dec 2024 23:38:50 +0100 (CET)
+Date: Tue, 10 Dec 2024 23:38:50 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+	mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, minchan@google.com, jannh@google.com,
+	shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+Message-ID: <20241210223850.GA2484@noisy.programming.kicks-ass.net>
+References: <20241111205506.3404479-1-surenb@google.com>
+ <20241111205506.3404479-4-surenb@google.com>
+ <ZzLgZTH9v5io1Elx@casper.infradead.org>
+ <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,61 +75,98 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgixvBWSf-3WDRj=Mxtn4ArQLqdKqMF0aSxyC6xVNPfTFQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
 
-On Tue, Dec 10, 2024 at 11:55:33AM +0100, Alice Ryhl wrote:
-> On Mon, Dec 9, 2024 at 11:44 AM Danilo Krummrich <dakr@kernel.org> wrote:
+On Tue, Nov 12, 2024 at 07:18:45AM -0800, Suren Baghdasaryan wrote:
+> On Mon, Nov 11, 2024 at 8:58 PM Matthew Wilcox <willy@infradead.org> wrote:
 > >
-> > On Fri, Dec 06, 2024 at 03:01:18PM +0100, Alice Ryhl wrote:
-> > > On Thu, Dec 5, 2024 at 3:16 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> > > >
-> > > > Implement the basic PCI abstractions required to write a basic PCI
-> > > > driver. This includes the following data structures:
-> > > >
-> > > > The `pci::Driver` trait represents the interface to the driver and
-> > > > provides `pci::Driver::probe` for the driver to implement.
-> > > >
-> > > > The `pci::Device` abstraction represents a `struct pci_dev` and provides
-> > > > abstractions for common functions, such as `pci::Device::set_master`.
-> > > >
-> > > > In order to provide the PCI specific parts to a generic
-> > > > `driver::Registration` the `driver::RegistrationOps` trait is implemented
-> > > > by `pci::Adapter`.
-> > > >
-> > > > `pci::DeviceId` implements PCI device IDs based on the generic
-> > > > `device_id::RawDevceId` abstraction.
-> > > >
-> > > > Co-developed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> > > > Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> > > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > >
-> > > > +/// The PCI device representation.
-> > > > +///
-> > > > +/// A PCI device is based on an always reference counted `device:Device` instance. Cloning a PCI
-> > > > +/// device, hence, also increments the base device' reference count.
-> > > > +#[derive(Clone)]
-> > > > +pub struct Device(ARef<device::Device>);
-> > >
-> > > It seems more natural for this to be a wrapper around
-> > > `Opaque<bindings::pci_dev>`. Then you can have both &Device and
-> > > ARef<Device> depending on whether you want to hold a refcount or not.
+> > On Mon, Nov 11, 2024 at 12:55:05PM -0800, Suren Baghdasaryan wrote:
+> > > When a reader takes read lock, it increments the atomic, unless the
+> > > top two bits are set indicating a writer is present.
+> > > When writer takes write lock, it sets VMA_LOCK_WR_LOCKED bit if there
+> > > are no readers or VMA_LOCK_WR_WAIT bit if readers are holding the lock
+> > > and puts itself onto newly introduced mm.vma_writer_wait. Since all
+> > > writers take mmap_lock in write mode first, there can be only one writer
+> > > at a time. The last reader to release the lock will signal the writer
+> > > to wake up.
 > >
-> > Yeah, but then every bus device has to re-implement the refcount dance we
-> > already have in `device::Device` for the underlying base `struct device`.
+> > I don't think you need two bits.  You can do it this way:
 > >
-> > I forgot to mention this in my previous reply to Boqun, but we even documented
-> > it this way in `device::Device` [1].
+> > 0x8000'0000 - No readers, no writers
+> > 0x1-7fff'ffff - Some number of readers
+> > 0x0 - Writer held
+> > 0x8000'0001-0xffff'ffff - Reader held, writer waiting
 > >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/device.rs#n28
+> > A prospective writer subtracts 0x8000'0000.  If the result is 0, it got
+> > the lock, otherwise it sleeps until it is 0.
+> >
+> > A writer unlocks by adding 0x8000'0000 (not by setting the value to
+> > 0x8000'0000).
+> >
+> > A reader unlocks by adding 1.  If the result is 0, it wakes the writer.
+> >
+> > A prospective reader subtracts 1.  If the result is positive, it got the
+> > lock, otherwise it does the unlock above (this might be the one which
+> > wakes the writer).
+> >
+> > And ... that's it.  See how we use the CPU arithmetic flags to tell us
+> > everything we need to know without doing arithmetic separately?
 > 
-> We could perhaps write a derive macro for AlwaysRefCounted that
-> delegates to the inner type? That way, we can have the best of both
-> worlds.
+> Yes, this is neat! You are using the fact that write-locked == no
+> readers to eliminate unnecessary state. I'll give that a try. Thanks!
 
-Sounds interesting, how exactly would this work?
+The reason I got here is that Vlastimil poked me about the whole
+TYPESAFE_BY_RCU thing.
 
-(I'll already send out a v5, but let's keep discussing this.)
+So the normal way those things work is with a refcount, if the refcount
+is non-zero, the identifying fields should be stable and you can
+determine if you have the right object, otherwise tough luck.
 
-> 
-> Alice
+And I was thinking that since you abuse this rwsem you have, you might
+as well turn that into a refcount with some extra.
+
+So I would propose a slightly different solution.
+
+Replace vm_lock with vm_refcnt. Replace vm_detached with vm_refcnt == 0
+-- that is, attach sets refcount to 1 to indicate it is part of the mas,
+detached is the final 'put'.
+
+RCU lookup does the inc_not_zero thing, when increment succeeds, compare
+mm/addr to validate.
+
+vma_start_write() already relies on mmap_lock being held for writing,
+and thus does not have to worry about writer-vs-writer contention, that
+is fully resolved by mmap_sem. This means we only need to wait for
+readers to drop out.
+
+vma_start_write()
+	add(0x8000'0001); // could fetch_add and double check the high
+			  // bit wasn't already set.
+	wait-until(refcnt == 0x8000'0002); // mas + writer ref
+	WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
+	sub(0x8000'0000);
+
+vma_end_write()
+	put();
+
+vma_start_read() then becomes something like:
+
+	if (vm_lock_seq == mm_lock_seq)
+	  return false;
+
+	cnt = fetch_inc(1);
+	if (cnt & msb || vm_lock_seq == mm_lock_seq) {
+	  put();
+	  return false;
+	}
+
+	return true;
+	
+vma_end_read() then becomes:
+	put();
+
+
+and the down_read() from uffffffd requires mmap_read_lock() and thus
+does not have to worry about writers, it can simpy be inc() and put(),
+no?
 
