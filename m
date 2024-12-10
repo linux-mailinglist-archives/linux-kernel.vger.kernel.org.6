@@ -1,381 +1,359 @@
-Return-Path: <linux-kernel+bounces-439637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630F99EB215
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:41:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4429EB217
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5070B16BB8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:41:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CEC188D658
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703031AA1D9;
-	Tue, 10 Dec 2024 13:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576FB1AA1EC;
+	Tue, 10 Dec 2024 13:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="dQSfkEkC"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H6f0gvZh"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82E61A0BD7;
-	Tue, 10 Dec 2024 13:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2EF23DE8D;
+	Tue, 10 Dec 2024 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733838068; cv=none; b=CmOIgQgutEdcJl7xxTevlMI5lfI5IWgWpDyobPUwwY8/IS4uSKNRwcttiumKxMH8LQ/8Suymr1ryNSpQA2ZKuXEv5rjiztzDDqI9aOCNnl3dhGWeai4VbjOvnezkCvRJLsFxLK6bDjomrx3Aqbrd3Wx1ecJ3CHSp3s82Mt4y4Ow=
+	t=1733838106; cv=none; b=Ipj76fPy1dwPaPHw8m5Jk+GRqd806MJ1NoF7KyueXS6DbdhwhC+DbuHkH8nlBC+XExvhbXRL4YdRpDxJ9vHjhH2rt3/ae1hcAnAlIoA4YHZXrx2ZjtAitoQ1V4jIRlIz2gvIQT+xqMXNykGhDbAQqvZM03qAka3zB9PwxYXxByg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733838068; c=relaxed/simple;
-	bh=er9MhDVaQDQrzLSDKHJCvqXCQI3FrnSRvLqaOSeZInM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fEx2BXtnbsD9OhT3r/hKoGAGVX9DTWRl5tJjmW4P0MateaLNQnKTRzuROzJ/Tr124xLFHLuh7mNHduYrhQPBwuvzpt6PlFNnZMQNCHDG3DhlBI2UQ9tKXOt0Yg4e6EdfBtY5ed2WBd/81XDc1kgw/LHzl++PAWPwnckPYK75nZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=dQSfkEkC; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lZcgT+vJ9C3s9qzW0yb7NVL4KoS8lmtWTXUD97cMEvI=; b=dQSfkEkCIgw/LXfXWYmjN5QbTd
-	tqQ9uUYOMwMxVQ5cdeoiPJt2CzyqSJy/BHKT50nqivofYeZ3HY3V+3psmkkdUzDcqYIwifiszaUtl
-	hEbYJEr6z2cmg8AiouHPv70+mLeKSvcttncu+twPdg+wAvgmwkMjqdvhE5szSw2arkyhN9sr9T2Sm
-	LEWyr94HYNVhUFm1cvv3m5l9frVNmmiaV0BNIuiKRYzQSiFecpF22IfNpAtHnBjEoxSOV/famuSuc
-	Oz4HrTjkfSH468+YKoLmfZtRpRYSFnzlpspNA/oA6zOKGRZ6dKdiHgbaSIntjnhpZLU907pNhauc6
-	9yR9xHOA==;
-Received: from [89.212.21.243] (port=37530 helo=[192.168.69.52])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <andrej.picej@norik.com>)
-	id 1tL0U3-002cws-31;
-	Tue, 10 Dec 2024 14:41:03 +0100
-Message-ID: <aa2de99d-21f4-4843-83b7-5d2db78be86f@norik.com>
-Date: Tue, 10 Dec 2024 14:41:01 +0100
+	s=arc-20240116; t=1733838106; c=relaxed/simple;
+	bh=EOCTGealcIBIJ5RYhGWN005zEfzz6Why3C6vHAiug2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AkAGGgXngLYKF95wuyvTd6TimMqOMK9cgbcgKP6sNEfH+L7VBlHqzJZ7DKMB/iJULJVL3CjYkmb4DHn9WLsMeA7SErg9z+HIofCklfn3jGltYg0NCN8VMWBDJanFAMD81L9Icc5DHZ5AGYT+BAqp9p/OaMAdK1MC5X1qD1n4apM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H6f0gvZh; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 89487752;
+	Tue, 10 Dec 2024 14:41:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733838069;
+	bh=EOCTGealcIBIJ5RYhGWN005zEfzz6Why3C6vHAiug2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H6f0gvZhZbpGNz207Stpb5kVE8VAHXUEav0q2IvICffuOdKLUdsLrAHSXN4IQk4nd
+	 Tm34qfOUikrEyHOyyATSlfuXAeEN6z1VLXG06E9lReKzIM9BIGhx8ib5ZpDmeWdp+I
+	 +XLExWZLJRigSz6nM+OUfWfW0/zGKrMf3QHzvOxU=
+Date: Tue, 10 Dec 2024 15:41:26 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Jai Luthra <jai.luthra@ideasonboard.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Vinay Varma <varmavinaym@gmail.com>
+Subject: Re: [PATCH v3 3/3] media: i2c: imx219: Scale the pixel rate for
+ analog binning
+Message-ID: <20241210134126.GI573@pendragon.ideasonboard.com>
+References: <20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com>
+ <20241125-imx219_fixes-v3-3-434fc0b541c8@ideasonboard.com>
+ <Z0Xc6FYyYdLTUfll@kekkonen.localdomain>
+ <umnnd72lotwgm46bv43bn3vdvcuqxf3idurp63hbilosx3gs4o@gp63z27qtlxp>
+ <Z1hC-V8LZcXO_Qzo@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing
- optional properties
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, marex@denx.de, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- upstream@lists.phytec.de
-References: <20241210091901.83028-1-andrej.picej@norik.com>
- <20241210091901.83028-3-andrej.picej@norik.com>
- <irpmhq7vxjra6vhmdh7p63ajj57n3h2c4br3ija2jmwtoewist@zyxfmx6k5m4e>
-Content-Language: en-US
-From: Andrej Picej <andrej.picej@norik.com>
-Autocrypt: addr=andrej.picej@norik.com; keydata=
- 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
- xtT/8OxBOVSHvA==
-In-Reply-To: <irpmhq7vxjra6vhmdh7p63ajj57n3h2c4br3ija2jmwtoewist@zyxfmx6k5m4e>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
-X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z1hC-V8LZcXO_Qzo@kekkonen.localdomain>
 
-
-
-On 10. 12. 24 12:43, Dmitry Baryshkov wrote:
-> On Tue, Dec 10, 2024 at 10:19:00AM +0100, Andrej Picej wrote:
->> Add a optional properties to change LVDS output voltage. This should not
->> be static as this depends mainly on the connected display voltage
->> requirement. We have three properties:
->> - "ti,lvds-termination-ohms", which sets near end termination,
->> - "ti,lvds-vod-swing-data-microvolt" and
->> - "ti,lvds-vod-swing-clock-microvolt" which both set LVDS differential
->> output voltage for data and clock lanes. They are defined as an array
->> with min and max values. The appropriate bitfield will be set if
->> selected constraints can be met.
->>
->> If "ti,lvds-termination-ohms" is not defined the default of 200 Ohm near
->> end termination will be used. Selecting only one:
->> "ti,lvds-vod-swing-data-microvolt" or
->> "ti,lvds-vod-swing-clock-microvolt" can be done, but the output voltage
->> constraint for only data/clock lanes will be met. Setting both is
->> recommended.
->>
->> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
->> ---
->> Changes in v5:
->> - specify default values in sn65dsi83_parse_lvds_endpoint,
->> - move sn65dsi83_parse_lvds_endpoint for channel B up, outside if,
->> Changes in v4:
->> - fix typo in commit message bitfiled -> bitfield
->> - use arrays (lvds_vod_swing_conf and lvds_term_conf) in private data, instead
->> of separate variables for channel A/B
->> - add more checks on return value of "of_property_read_u32_array"
->> Changes in v3:
->> - use microvolts for default array values 1000 mV -> 1000000 uV.
->> Changes in v2:
->> - use datasheet tables to get the proper configuration
->> - since major change was done change the authorship to myself
->> ---
->>   drivers/gpu/drm/bridge/ti-sn65dsi83.c | 142 +++++++++++++++++++++++++-
->>   1 file changed, 139 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
->> index 57a7ed13f996..f9578b38da28 100644
->> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
->> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
->> @@ -132,6 +132,16 @@
->>   #define  REG_IRQ_STAT_CHA_SOT_BIT_ERR		BIT(2)
->>   #define  REG_IRQ_STAT_CHA_PLL_UNLOCK		BIT(0)
->>   
->> +enum sn65dsi83_channel {
->> +	CHANNEL_A,
->> +	CHANNEL_B
->> +};
->> +
->> +enum sn65dsi83_lvds_term {
->> +	OHM_100,
->> +	OHM_200
->> +};
->> +
->>   enum sn65dsi83_model {
->>   	MODEL_SN65DSI83,
->>   	MODEL_SN65DSI84,
->> @@ -147,6 +157,8 @@ struct sn65dsi83 {
->>   	struct regulator		*vcc;
->>   	bool				lvds_dual_link;
->>   	bool				lvds_dual_link_even_odd_swap;
->> +	int				lvds_vod_swing_conf[2];
->> +	int				lvds_term_conf[2];
->>   };
->>   
->>   static const struct regmap_range sn65dsi83_readable_ranges[] = {
->> @@ -237,6 +249,36 @@ static const struct regmap_config sn65dsi83_regmap_config = {
->>   	.max_register = REG_IRQ_STAT,
->>   };
->>   
->> +static const int lvds_vod_swing_data_table[2][4][2] = {
->> +	{	/* 100 Ohm */
->> +		{ 180000, 313000 },
->> +		{ 215000, 372000 },
->> +		{ 250000, 430000 },
->> +		{ 290000, 488000 },
->> +	},
->> +	{	/* 200 Ohm */
->> +		{ 150000, 261000 },
->> +		{ 200000, 346000 },
->> +		{ 250000, 428000 },
->> +		{ 300000, 511000 },
->> +	},
->> +};
->> +
->> +static const int lvds_vod_swing_clock_table[2][4][2] = {
->> +	{	/* 100 Ohm */
->> +		{ 140000, 244000 },
->> +		{ 168000, 290000 },
->> +		{ 195000, 335000 },
->> +		{ 226000, 381000 },
->> +	},
->> +	{	/* 200 Ohm */
->> +		{ 117000, 204000 },
->> +		{ 156000, 270000 },
->> +		{ 195000, 334000 },
->> +		{ 234000, 399000 },
->> +	},
->> +};
->> +
->>   static struct sn65dsi83 *bridge_to_sn65dsi83(struct drm_bridge *bridge)
->>   {
->>   	return container_of(bridge, struct sn65dsi83, bridge);
->> @@ -435,12 +477,16 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
->>   		val |= REG_LVDS_FMT_LVDS_LINK_CFG;
->>   
->>   	regmap_write(ctx->regmap, REG_LVDS_FMT, val);
->> -	regmap_write(ctx->regmap, REG_LVDS_VCOM, 0x05);
->> +	regmap_write(ctx->regmap, REG_LVDS_VCOM,
->> +			REG_LVDS_VCOM_CHA_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_A]) |
->> +			REG_LVDS_VCOM_CHB_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_B]));
->>   	regmap_write(ctx->regmap, REG_LVDS_LANE,
->>   		     (ctx->lvds_dual_link_even_odd_swap ?
->>   		      REG_LVDS_LANE_EVEN_ODD_SWAP : 0) |
->> -		     REG_LVDS_LANE_CHA_LVDS_TERM |
->> -		     REG_LVDS_LANE_CHB_LVDS_TERM);
->> +		     (ctx->lvds_term_conf[CHANNEL_A] ?
->> +			  REG_LVDS_LANE_CHA_LVDS_TERM : 0) |
->> +		     (ctx->lvds_term_conf[CHANNEL_B] ?
->> +			  REG_LVDS_LANE_CHB_LVDS_TERM : 0));
->>   	regmap_write(ctx->regmap, REG_LVDS_CM, 0x00);
->>   
->>   	le16val = cpu_to_le16(mode->hdisplay);
->> @@ -576,10 +622,100 @@ static const struct drm_bridge_funcs sn65dsi83_funcs = {
->>   	.atomic_get_input_bus_fmts = sn65dsi83_atomic_get_input_bus_fmts,
->>   };
->>   
->> +static int sn65dsi83_select_lvds_vod_swing(struct device *dev,
->> +	u32 lvds_vod_swing_data[2], u32 lvds_vod_swing_clk[2], u8 lvds_term)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i <= 3; i++) {
->> +		if (lvds_vod_swing_data_table[lvds_term][i][0] >= lvds_vod_swing_data[0] &&
->> +		lvds_vod_swing_data_table[lvds_term][i][1] <= lvds_vod_swing_data[1] &&
->> +		lvds_vod_swing_clock_table[lvds_term][i][0] >= lvds_vod_swing_clk[0] &&
->> +		lvds_vod_swing_clock_table[lvds_term][i][1] <= lvds_vod_swing_clk[1])
->> +			return i;
->> +	}
->> +
->> +	dev_err(dev, "failed to find appropriate LVDS_VOD_SWING configuration\n");
->> +	return -EINVAL;
->> +}
->> +
->> +static int sn65dsi83_parse_lvds_endpoint(struct sn65dsi83 *ctx, int channel)
->> +{
->> +	struct device *dev = ctx->dev;
->> +	struct device_node *endpoint;
->> +	int endpoint_reg;
->> +	/* Set so the property can be freely selected if not defined */
->> +	u32 lvds_vod_swing_data[2] = { 0, 1000000 };
->> +	u32 lvds_vod_swing_clk[2] = { 0, 1000000 };
->> +	u32 lvds_term;
->> +	u8 lvds_term_conf = 0x1;
->> +	int lvds_vod_swing_conf = 0x1;
+On Tue, Dec 10, 2024 at 01:32:41PM +0000, Sakari Ailus wrote:
+> On Wed, Nov 27, 2024 at 03:07:14PM +0530, Jai Luthra wrote:
+> > On Nov 26, 2024 at 14:36:24 +0000, Sakari Ailus wrote:
+> > > On Mon, Nov 25, 2024 at 08:36:27PM +0530, Jai Luthra wrote:
+> > > > When the analog binning mode is used for high framerate operation,
+> > > > the pixel rate is effectively doubled. Account for this when setting up
+> > > > the pixel clock rate, and applying the vblank and exposure controls.
+> > > > 
+> > > > The previous logic only used analog binning for 8-bit modes, but normal
+> > > > binning limits the framerate on 10-bit 480p [1]. So with this patch we
+> > > > switch to using special binning (with 2x pixel rate) for all formats of
+> > > > 480p mode and 8-bit 1232p.
+> > > > 
+> > > > [1]: https://github.com/raspberrypi/linux/issues/5493
+> > > > 
+> > > > Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
+> > > > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+> > > > Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
+> > > > Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
+> > > > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> > > > ---
+> > > >  drivers/media/i2c/imx219.c | 120 ++++++++++++++++++++++++++++-----------------
+> > > >  1 file changed, 76 insertions(+), 44 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> > > > index 970e6362d0ae3a9078daf337155e83d637bc1ca1..39b85cdee58318b080c867afd68ca33d14d3eda7 100644
+> > > > --- a/drivers/media/i2c/imx219.c
+> > > > +++ b/drivers/media/i2c/imx219.c
+> > > > @@ -149,6 +149,12 @@
+> > > >  #define IMX219_PIXEL_ARRAY_WIDTH	3280U
+> > > >  #define IMX219_PIXEL_ARRAY_HEIGHT	2464U
+> > > >  
+> > > > +enum binning_mode {
+> > > > +	BINNING_NONE = IMX219_BINNING_NONE,
+> > > > +	BINNING_X2 = IMX219_BINNING_X2,
+> > > > +	BINNING_ANALOG_X2 = IMX219_BINNING_X2_ANALOG,
+> > > > +};
+> > > > +
+> > > >  /* Mode : resolution and related config&values */
+> > > >  struct imx219_mode {
+> > > >  	/* Frame width */
+> > > > @@ -337,6 +343,10 @@ struct imx219 {
+> > > >  
+> > > >  	/* Two or Four lanes */
+> > > >  	u8 lanes;
+> > > > +
+> > > > +	/* Binning mode */
+> > > > +	enum binning_mode bin_h;
+> > > > +	enum binning_mode bin_v;
+> > > >  };
+> > > >  
+> > > >  static inline struct imx219 *to_imx219(struct v4l2_subdev *_sd)
+> > > > @@ -362,6 +372,36 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
+> > > >  	return imx219_mbus_formats[i];
+> > > >  }
+> > > >  
+> > > > +static u32 imx219_get_format_bpp(const struct v4l2_mbus_framefmt *format)
+> > > > +{
+> > > > +	switch (format->code) {
+> > > > +	case MEDIA_BUS_FMT_SRGGB8_1X8:
+> > > > +	case MEDIA_BUS_FMT_SGRBG8_1X8:
+> > > > +	case MEDIA_BUS_FMT_SGBRG8_1X8:
+> > > > +	case MEDIA_BUS_FMT_SBGGR8_1X8:
+> > > > +		return 8;
+> > > > +
+> > > > +	case MEDIA_BUS_FMT_SRGGB10_1X10:
+> > > > +	case MEDIA_BUS_FMT_SGRBG10_1X10:
+> > > > +	case MEDIA_BUS_FMT_SGBRG10_1X10:
+> > > > +	case MEDIA_BUS_FMT_SBGGR10_1X10:
+> > > > +	default:
+> > > > +		return 10;
+> > > > +	}
+> > > > +}
+> > > > +
+> > > > +static int imx219_get_rate_factor(struct imx219 *imx219)
+> > > > +{
+> > > > +	switch (imx219->bin_v) {
+> > > > +	case BINNING_NONE:
+> > > > +	case BINNING_X2:
+> > > > +		return 1;
+> > > > +	case BINNING_ANALOG_X2:
+> > > > +		return 2;
+> > > 
+> > > FWIW, what the CCS driver does is that it exposes different horizontal
+> > > blanking ranges for devices that use analogue binning. The rate is really
+> > > about reading pixels and with analogue binning the rate is the same, it's
+> > > just that fewer pixels are being (digitally) read (as they are binned). I
+> > > wonder if this would be a workable approach for this sensor, too. Of course
+> > > if the LLP behaves differently for this sensor, then we should probably
+> > > just accept that.
+> > 
+> > IMX219 seems to be odd in this case, as the LLP doesn't change during 
+> > analog binning. Shared some more details in this thread:
+> > 
+> > https://lore.kernel.org/linux-media/20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com/T/#m1da4206e91db12b8e377dc686935195fc5f4bb68
 > 
-> Magic values
-
-Can you please elaborate.
-
-I can use:
-u8 lvds_term_conf = OHM_200;
-
-What about lvds_vod_swing_conf? Should I create additional define for 
-it? But this doesn't solve a hidden meaning? Maybe additional comment 
-above? Would like to avoid using voltages for it, since then we are 
-reverse engineering the table in datasheet to match the default reg value.
-
+> Ack.
 > 
->> +	int ret = 0;
->> +	int ret_data;
->> +	int ret_clock;
->> +
->> +	if (channel == CHANNEL_A)
->> +		endpoint_reg = 2;
->> +	else
->> +		endpoint_reg = 3;
->> +
->> +	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, endpoint_reg, -1);
->> +	if (!of_property_read_u32(endpoint, "ti,lvds-termination-ohms", &lvds_term)) {
-> 
-> The code has been better before:
-> provide default for lvds_term, read the property (keeping the default in
-> case of an error), then use the lvds_term to set up lvds_term_conf, as
-> expected.
+> > > > +	}
+> > > > +	return -EINVAL;
+> > > > +}
+> > > > +
+> > > >  /* -----------------------------------------------------------------------------
+> > > >   * Controls
+> > > >   */
+> > > > @@ -373,10 +413,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+> > > >  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
+> > > >  	const struct v4l2_mbus_framefmt *format;
+> > > >  	struct v4l2_subdev_state *state;
+> > > > +	int rate_factor;
+> > > 
+> > > u32?
+> > > 
+> > 
+> > Fixed.
+> > 
+> > > >  	int ret = 0;
+> > > >  
+> > > >  	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
+> > > >  	format = v4l2_subdev_state_get_format(state, 0);
+> > > > +	rate_factor = imx219_get_rate_factor(imx219);
+> > > >  
+> > > >  	if (ctrl->id == V4L2_CID_VBLANK) {
+> > > >  		int exposure_max, exposure_def;
+> > > > @@ -405,7 +447,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+> > > >  		break;
+> > > >  	case V4L2_CID_EXPOSURE:
+> > > >  		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
+> > > > -			  ctrl->val, &ret);
+> > > > +			  ctrl->val / rate_factor, &ret);
+> > > 
+> > > Isn't the exposure in lines? It shouldn't be affected by the rate change,
+> > > shouldn't it?
+> > > 
+> > 
+> > From the sensor datasheet the unit of FRAME_LENGTH register is updated 
+> > to 2xLines when analog binning is used. And exposure and vertical 
+> > blanking values are also in units of FRAME_LENGTH. This is also 
+> > consistent with the behavior seen while testing.
+> > 
+> > > >  		break;
+> > > >  	case V4L2_CID_DIGITAL_GAIN:
+> > > >  		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
+> > > > @@ -422,7 +464,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+> > > >  		break;
+> > > >  	case V4L2_CID_VBLANK:
+> > > >  		cci_write(imx219->regmap, IMX219_REG_VTS,
+> > > > -			  format->height + ctrl->val, &ret);
+> > > > +			  (format->height + ctrl->val) / rate_factor, &ret);
+> > > 
+> > > The same for vertical blanking.
+> > > 
+> > > >  		break;
+> > > >  	case V4L2_CID_HBLANK:
+> > > >  		cci_write(imx219->regmap, IMX219_REG_HTS,
+> > > > @@ -463,7 +505,8 @@ static const struct v4l2_ctrl_ops imx219_ctrl_ops = {
+> > > >  
+> > > >  static unsigned long imx219_get_pixel_rate(struct imx219 *imx219)
+> > > >  {
+> > > > -	return (imx219->lanes == 2) ? IMX219_PIXEL_RATE : IMX219_PIXEL_RATE_4LANE;
+> > > > +	return ((imx219->lanes == 2) ? IMX219_PIXEL_RATE :
+> > > > +		IMX219_PIXEL_RATE_4LANE) * imx219_get_rate_factor(imx219);
+> > > >  }
+> > > >  
+> > > >  /* Initialize control handlers */
+> > > > @@ -592,29 +635,12 @@ static int imx219_set_framefmt(struct imx219 *imx219,
+> > > >  {
+> > > >  	const struct v4l2_mbus_framefmt *format;
+> > > >  	const struct v4l2_rect *crop;
+> > > > -	unsigned int bpp;
+> > > > -	u64 bin_h, bin_v;
+> > > > +	u32 bpp;
+> > > >  	int ret = 0;
+> > > >  
+> > > >  	format = v4l2_subdev_state_get_format(state, 0);
+> > > >  	crop = v4l2_subdev_state_get_crop(state, 0);
+> > > > -
+> > > > -	switch (format->code) {
+> > > > -	case MEDIA_BUS_FMT_SRGGB8_1X8:
+> > > > -	case MEDIA_BUS_FMT_SGRBG8_1X8:
+> > > > -	case MEDIA_BUS_FMT_SGBRG8_1X8:
+> > > > -	case MEDIA_BUS_FMT_SBGGR8_1X8:
+> > > > -		bpp = 8;
+> > > > -		break;
+> > > > -
+> > > > -	case MEDIA_BUS_FMT_SRGGB10_1X10:
+> > > > -	case MEDIA_BUS_FMT_SGRBG10_1X10:
+> > > > -	case MEDIA_BUS_FMT_SGBRG10_1X10:
+> > > > -	case MEDIA_BUS_FMT_SBGGR10_1X10:
+> > > > -	default:
+> > > > -		bpp = 10;
+> > > > -		break;
+> > > > -	}
+> > > > +	bpp = imx219_get_format_bpp(format);
+> > > >  
+> > > >  	cci_write(imx219->regmap, IMX219_REG_X_ADD_STA_A,
+> > > >  		  crop->left - IMX219_PIXEL_ARRAY_LEFT, &ret);
+> > > > @@ -625,28 +651,8 @@ static int imx219_set_framefmt(struct imx219 *imx219,
+> > > >  	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
+> > > >  		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
+> > > >  
+> > > > -	switch (crop->width / format->width) {
+> > > > -	case 1:
+> > > > -	default:
+> > > > -		bin_h = IMX219_BINNING_NONE;
+> > > > -		break;
+> > > > -	case 2:
+> > > > -		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
+> > > > -		break;
+> > > > -	}
+> > > > -
+> > > > -	switch (crop->height / format->height) {
+> > > > -	case 1:
+> > > > -	default:
+> > > > -		bin_v = IMX219_BINNING_NONE;
+> > > > -		break;
+> > > > -	case 2:
+> > > > -		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
+> > > > -		break;
+> > > > -	}
+> > > > -
+> > > > -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
+> > > > -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
+> > > > +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, imx219->bin_h, &ret);
+> > > > +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, imx219->bin_v, &ret);
+> > > 
+> > > Please run:
+> > > 
+> > > $ ./scripts/checkpatch.pl --strict --max-line-length=80
+> > > 
+> > 
+> > Oops, fixed in next revision.
+> > 
+> > > >  
+> > > >  	cci_write(imx219->regmap, IMX219_REG_X_OUTPUT_SIZE,
+> > > >  		  format->width, &ret);
+> > > > @@ -851,6 +857,27 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+> > > >  		int exposure_max;
+> > > >  		int exposure_def;
+> > > >  		int hblank;
+> > > > +		int pixel_rate;
+> > > > +		u32 bpp = imx219_get_format_bpp(format);
+> > > > +		enum binning_mode binning = BINNING_NONE;
+> > > > +
+> > > > +		/*
+> > > > +		 * For 8-bit formats, analog horizontal binning is required,
+> > > > +		 * else the output image is garbage.
+> > > > +		 * For 10-bit formats, analog horizontal binning is optional,
+> > > > +		 * but still useful as it doubles the effective framerate.
+> > > > +		 * We can only use it with width <= 1624, as for higher values
+> > > > +		 * there are blocky artefacts.
+> > > 
+> > > This comment would benefit from rewrapping.
+> > > 
+> > 
+> > Fixed.
+> > 
+> > > > +		 *
+> > > > +		 * Vertical binning should match the horizontal binning mode.
+> > > > +		 */
+> > > > +		if (bin_h == 2 && (format->width <= 1624 || bpp == 8))
+> > > > +			binning = BINNING_ANALOG_X2;
+> > > > +		else
+> > > > +			binning = BINNING_X2;
+> > > > +
+> > > > +		imx219->bin_h = (bin_h == 2) ? binning : BINNING_NONE;
+> > > > +		imx219->bin_v = (bin_v == 2) ? binning : BINNING_NONE;
+> > > 
+> > > It'd be also nice to move the state information to sub-device state.
+> > 
+> > I'm not sure I follow, do you mean the framework should store the 
+> > binning mode, similar to how crop rectangle and interval are stored in 
+> > v4l2_subdev_state?
 
-Ok, will revert back.
+Not the binning mode (or binning factor) as such, but v4l2_subdev_state
+stores the format and selection rectangles, and the binning factors
+should then be computed at stream on time. The imx219 structure should
+not store any state data that is not related to the current hardware
+state.
 
-> 
->> +		if (lvds_term == 100)
->> +			lvds_term_conf = OHM_100;
->> +		else
->> +			lvds_term_conf = OHM_200;
->> +	}
->> +
->> +	ctx->lvds_term_conf[channel] = lvds_term_conf;
->> +
->> +	ret_data = of_property_read_u32_array(endpoint,
->> +			"ti,lvds-vod-swing-data-microvolt", lvds_vod_swing_data,
->> +			ARRAY_SIZE(lvds_vod_swing_data));
->> +	if (ret_data != 0 && ret_data != -EINVAL) {
->> +		ret = ret_data;
->> +		goto exit;
->> +	}
->> +
->> +	ret_clock = of_property_read_u32_array(endpoint,
->> +			"ti,lvds-vod-swing-clock-microvolt", lvds_vod_swing_clk,
->> +			ARRAY_SIZE(lvds_vod_swing_clk));
->> +	if (ret_clock != 0 && ret_clock != -EINVAL) {
->> +		ret = ret_clock;
->> +		goto exit;
->> +	}
->> +
->> +	/* If any of the two properties is defined. */
->> +	if (!ret_data || !ret_clock) {
->> +		lvds_vod_swing_conf = sn65dsi83_select_lvds_vod_swing(dev,
->> +			lvds_vod_swing_data, lvds_vod_swing_clk,
->> +			lvds_term_conf);
->> +		if (lvds_vod_swing_conf < 0) {
->> +			ret = lvds_vod_swing_conf;
->> +			goto exit;
->> +		}
->> +	}
->> +
->> +	ctx->lvds_vod_swing_conf[channel] = lvds_vod_swing_conf;
->> +	ret = 0;
->> +exit:
->> +	of_node_put(endpoint);
->> +	return ret;
->> +}
->> +
->>   static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
->>   {
->>   	struct drm_bridge *panel_bridge;
->>   	struct device *dev = ctx->dev;
->> +	int ret;
->> +
->> +	ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_A);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_B);
->> +	if (ret < 0)
->> +		return ret;
->>   
->>   	ctx->lvds_dual_link = false;
->>   	ctx->lvds_dual_link_even_odd_swap = false;
->> -- 
->> 2.34.1
->>
-> 
+> Yes, please. This is done to the CCS driver as part of the metadata set
+> (which we can hopefully merge in not too distant future)
+> <URL:https://git.retiisi.eu/?p=~sailus/linux.git;a=shortlog;h=refs/heads/metadata>.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
