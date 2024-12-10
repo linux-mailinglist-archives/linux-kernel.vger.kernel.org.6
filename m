@@ -1,89 +1,123 @@
-Return-Path: <linux-kernel+bounces-438744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474BC9EA504
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:16:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1067F9EA506
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:17:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0315B28828A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78D8A167985
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112541A2550;
-	Tue, 10 Dec 2024 02:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D5D70821;
+	Tue, 10 Dec 2024 02:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsDLJ3K/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1q8qSzY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC7E19E980;
-	Tue, 10 Dec 2024 02:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476C527456;
+	Tue, 10 Dec 2024 02:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796893; cv=none; b=TTWjg9yTs92qAPy2KDemj4fVRKpGtCPXEGV6bRZQFnO1hmbfZ1NmvB7Y1jWGN/gL7rIXZ2UYA/LJyUmkZ+m6zfp3VZw2luZ6i8cqiBeJkShrwekWiVtaMS9Dx4/CDhesPDTWsSDpv4xEIL/JgnRPaQvh5L3/sxhGA99PO9ZhWQE=
+	t=1733796934; cv=none; b=eX6LKGIgFWZ0EUe4qYFWPcpJQKj65ersIWvNrMXDReGhU79SlBc05GIR4H69K/8p1nia8mphbaq+fWfRCAPcBLGzydZKd71ORCby9NT11n3JVChFHfgMFDeVgN+7GK3pLYkLll+ixEw3fIwOqnVZOSDRAkVWWplHvIA3mkoG9Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796893; c=relaxed/simple;
-	bh=iEeMLAK3s8QRc68c6ccD44gGmo9G8TQpEajkRE0lQ2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AGQu1Cyos4n03r6PTBoFL+3hB22Ra/Cxak0GdLx1zGskV7pJdaq98mqIIlg0zfvGcMsfTOx+HhtGhWFDrWVY9ZMX1wEN6TOgnttlxzh1Nbmf03pcG3Cd5ZVsbJQcaS0ni4+aWaVNjI7WRkeenTLqt25jjDWfnZYQlB36kGhZ29s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XsDLJ3K/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79896C4CED1;
-	Tue, 10 Dec 2024 02:14:52 +0000 (UTC)
+	s=arc-20240116; t=1733796934; c=relaxed/simple;
+	bh=T0hvG2GmhG1Kb6rsSuzQcmRDHQN0V2Tfv7B9VFr1efw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=MM8ELfRMl47R9kDeGwdHEUie/JUTB8Qgy4uPft9ed9xsWomQWJ4xkzQmwu+jaHflyqsMoVYzgyaCS87gaIxwH/UDbz043lDoBvtGfVuHylwqc9Ux+37rmtXAXEaBavX6vI18IuCsML1GqLoie9Z4eFlshpk1SKZsbDVjXKYnLtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1q8qSzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EDF2C4CED1;
+	Tue, 10 Dec 2024 02:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733796892;
-	bh=iEeMLAK3s8QRc68c6ccD44gGmo9G8TQpEajkRE0lQ2U=;
+	s=k20201202; t=1733796933;
+	bh=T0hvG2GmhG1Kb6rsSuzQcmRDHQN0V2Tfv7B9VFr1efw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XsDLJ3K/QUSm+36BJd30KiYIC+fj/XSMRabmqa+stzHqNNHE4SLoAfmYw6Dub8jeL
-	 iYFumsF7Hhp4ZZJ6aKu0+2j+ZJlKwkmGZZywUL/ZZGSmVTnYtkuCeba1erTfQgzTls
-	 xib6BeGelBB7yUIlUzGR6zG7Hmj6KNbPWFXfpRY5vG6y3t05/tNHLRk4R7hMC1tyBS
-	 2iunX+GRXaFsDLQGiElWPMYl+lJ1vY52FzyYrjz9HNsiZmcD8lz74B7YTI0fkO+s/h
-	 dIuhkc3Dk0KeyheyCnIXDIgWJhBzva3MkVwo122PW1Mfkvf1YF4ON2tn9mwBvYUuV3
-	 2a2tRKIs0nDGA==
-Date: Mon, 9 Dec 2024 18:14:51 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- florian.fainelli@broadcom.com, heiko.stuebner@cherry.de, fank.li@nxp.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v3 net] net: phy: micrel: Dynamically control external
- clock of KSZ PHY
-Message-ID: <20241209181451.56790483@kernel.org>
-In-Reply-To: <20241206012113.437029-1-wei.fang@nxp.com>
-References: <20241206012113.437029-1-wei.fang@nxp.com>
+	b=i1q8qSzY3Jm9ZEAa0fX/9WRMcweVQuuABsYBiq10rKLKMrW7xWlrlXoUvhELciWCd
+	 vmMQixleDUd968KHkH7xpi//mz39mIe9iX/F03mLx4vaJT8+n51kZ2LOPkjHiNwB/2
+	 2DJjXR76IY9fzk73gErO0IhOSaRkYOfE2234XHrt0+15CRw6yPOOwMCJJEdgGKGxRF
+	 MODlTJtQfqRRXluRt9y631ApC43XLQY4ATcdut2oaKkvG+8XrIu296jq4JmSLaCDP0
+	 2Mda3SkWWe2JTHpPCBe5kLucd2cIbGU3TtTGBHbtGePyJ2Ufo3NGr8FNBKBn82hN2r
+	 8+rBaqY7o8caQ==
+Date: Tue, 10 Dec 2024 11:15:28 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov
+ <oleg@redhat.com>, Tzvetomir Stoyanov <tz.stoyanov@gmail.com>, Naveen N Rao
+ <naveen@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
+ <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
+Message-Id: <20241210111528.bb2c66d71fe38be92010264a@kernel.org>
+In-Reply-To: <20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
+References: <173371205755.480397.7893311565254712194.stgit@devnote2>
+	<173371208663.480397.7535769878667655223.stgit@devnote2>
+	<20241209110411.GL21636@noisy.programming.kicks-ass.net>
+	<20241210110428.aa5446ca9b2153c21f8fcdf9@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri,  6 Dec 2024 09:21:13 +0800 Wei Fang wrote:
-> On the i.MX6ULL-14x14-EVK board, enet1_ref and enet2_ref are used as the
-> clock sources for two external KSZ PHYs. However, after closing the two
-> FEC ports, the clk_enable_count of the enet1_ref and enet2_ref clocks is
-> not 0. The root cause is that since the commit 985329462723 ("net: phy:
-> micrel: use devm_clk_get_optional_enabled for the rmii-ref clock"), the
-> external clock of KSZ PHY has been enabled when the PHY driver probes,
-> and it can only be disabled when the PHY driver is removed. This causes
-> the clock to continue working when the system is suspended or the network
-> port is down.
-> 
-> To solve this problem, the clock is enabled when phy_driver::resume() is
-> called, and the clock is disabled when phy_driver::suspend() is called.
-> Since phy_driver::resume() and phy_driver::suspend() are not called in
-> pairs, an additional clk_enable flag is added. When phy_driver::suspend()
-> is called, the clock is disabled only if clk_enable is true. Conversely,
-> when phy_driver::resume() is called, the clock is enabled if clk_enable
-> is false.
+On Tue, 10 Dec 2024 11:04:28 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-Sorry that nobody replied to you but yes, I believe the simpler fix you
-proposed here:
-https://lore.kernel.org/all/PAXPR04MB8510D36DDA1B9E98B2FB77B488362@PAXPR04MB8510.eurprd04.prod.outlook.com/
-is better for net. In net-next we can try to keep the clock enabled
-and/or try to fix the imbalance in resume calls that forces you to track
-manually if the clock was enabled.
+> On Mon, 9 Dec 2024 12:04:11 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Mon, Dec 09, 2024 at 11:41:26AM +0900, Masami Hiramatsu (Google) wrote:
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > 
+> > > Use guard() for text_mutex, cpu_read_lock, and jump_label_lock in
+> > > the kprobes.
+> > 
+> > > @@ -853,29 +850,24 @@ static void try_to_optimize_kprobe(struct kprobe *p)
+> > >  		return;
+> > >  
+> > >  	/* For preparing optimization, jump_label_text_reserved() is called. */
+> > > -	cpus_read_lock();
+> > > -	jump_label_lock();
+> > > -	mutex_lock(&text_mutex);
+> > > +	guard(cpus_read_lock)();
+> > > +	guard(jump_label_lock)();
+> > > +	guard(mutex)(&text_mutex);
+> > >  
+> > 
+> > > @@ -1294,62 +1280,55 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
+> > >  	int ret = 0;
+> > >  	struct kprobe *ap = orig_p;
+> > >  
+> > > -	cpus_read_lock();
+> > > -
+> > > -	/* For preparing optimization, jump_label_text_reserved() is called */
+> > > -	jump_label_lock();
+> > > -	mutex_lock(&text_mutex);
+> > 
+> > Why does kprobe need jump_label_lock and how does it then not also need
+> > static_call_lock ?
+> 
+> Good catch! It has not been updated for static_call_text_reserved().
+> We need static_call_lock() here too.
+
+Wait, this is for checking the jump_label_text_reserved(), but as far as
+I know, the text reserved area of jump_label will be updated when the
+module is loaded or removed. And the static call too, right?
+
+In that case, what we need is to lock the modules (for the short term,
+can we use rcu_read_lock?) for using both jump_label_text_reserved()
+and static_call_text_reserved()?
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
