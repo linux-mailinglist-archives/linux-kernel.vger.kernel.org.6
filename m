@@ -1,176 +1,252 @@
-Return-Path: <linux-kernel+bounces-440094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441709EB8AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602AE9EB8B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DD1283200
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBAC61670C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AC61C3040;
-	Tue, 10 Dec 2024 17:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F3520468C;
+	Tue, 10 Dec 2024 17:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eJaqSrYy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="juteAGYA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7980C86336
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51803204693
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853129; cv=none; b=qRqxGBICTmOmS7oaJmFI/JIa5tHqZVTrL4gGNwpBXw1NEVsUyZkjG8y/r6UNqiGjFgbidrNrkdcNGaD8tFrR0f0JYsuUQG7o0rjoANrrqGT3CYN4FhrUYvpBba6Tn7Tayrg3eS8vstuD/Olt8oAH6L6v8vrUD3ALSHfcHL3+3ho=
+	t=1733853135; cv=none; b=EY2Wj0QhEgtsuuTj1F2yW69WmMveaPJlmoJIbNxkz8l7zDAVw74VGKMVgcvW6QiIsD22oCDwzrptgMIOEf/pIUn6G05NEv7CVBw2Bv1w3eok08l4XUBwmh5HhlhbTzNv+7tkPwq0L08iNvau1K5yzelVYEd+S2n2PwBEf585zpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853129; c=relaxed/simple;
-	bh=q9A16Y6kO4s41vmJMGS854yDLlp9NiUZZ2qJ/TT+EKg=;
+	s=arc-20240116; t=1733853135; c=relaxed/simple;
+	bh=lLbLE1tKKDfeDdO+nD84XWjzeIie3h7aVvVDlDRciV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TM6/AzpeXpJAhHTgcBKPZLT0/KckUjL+ku7ACaVqTTBoE0wPWFeIVvo01/T8XcqfHhupts/w25jrxDgx+YXC+rkz5wC5NnxWCMWupHcuQme4V/MR2TGkehjuI8B2gclGaOpyrJYbbSbsz83vDEAm45bO+fOBJ1hhpA2lWYAzD1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eJaqSrYy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733853126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5z++hiDZoK6MQKlJqwcak2mnPX1FBIvWTnRgAgxRHwY=;
-	b=eJaqSrYyp2Foq+sTIRsPU1J9YpZbFgWot1Y9m2sy30tRVK0FxffldwK+yeWl/1eSmEKkx7
-	xzpNI00HgPd6EP173ccatIubHLhLoeTii+HY4YGZl9xwoQndZmYCj4KPpZu9okCY/bximg
-	XA128FPPgR7l+WMkBeTBjK/KERVZmYc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-472-iyeVL6rFMZueqtYR-iscUA-1; Tue, 10 Dec 2024 12:52:05 -0500
-X-MC-Unique: iyeVL6rFMZueqtYR-iscUA-1
-X-Mimecast-MFC-AGG-ID: iyeVL6rFMZueqtYR-iscUA
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434f5b7b4a2so22880455e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:52:04 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sj6clUeL/KYXAf2qGudkKmCAl7mLhbyhtjC9g/h7Il4l910uphpGjcChHRRdMQWExhXYKf5SwXRPJapGKE8dz+C4XY+cAWPXQbRq2S+89bnG65KDNTWgIcDllrQqYNpJFCvTBUcM35owWFr3uUNCSh1sjDlDDD/1mMAUq7oabvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=juteAGYA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAHTNdh015737
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ege3SlIBABNYQBfJL/StIBqQ
+	Q+7IZD3RScF6Axrafug=; b=juteAGYAt8FC8DoBSBGM2MPvg6n2crWeIjqMgMyJ
+	Vynt9dOSCdk149k6U/9E9j+4RfSx/VlOQciRABFgG9rbZpM5bRPwM0OnHaTTWMa+
+	HhTaSFp5Ik62QLaLN5rzmW5CZAyjkTCkSNN7qmxdlRzhWdb0+efzFgtOKX+hxWuj
+	zTr4wjIKYXBsOwrfPtYVKA0JWabm9FRJN6RVCDFDixYk6HLUsBwhPFq8lPMy5FuV
+	H3bdrH1uWsXpi+WQx6xtNdkr2D8Ore1CQNNELAtZlZm14BQ9GUICkaf8ni69jLoN
+	PYq3mmSbFC1quAFbkbZbjGEG5DlX85B7F982LXIFUHqxxA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dy8tvxkm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 17:52:12 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-20d15285c87so65761255ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:52:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853124; x=1734457924;
+        d=1e100.net; s=20230601; t=1733853131; x=1734457931;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5z++hiDZoK6MQKlJqwcak2mnPX1FBIvWTnRgAgxRHwY=;
-        b=A9y8DUWNbCMg+F8WZYLjkbghrd+h9Bet2D9T4CeXU4EZ920wqOPL/FPvGxGTE2umGS
-         u0Wl6PDyWAEtbbKasBrScUMtLSWrDjZsqvwOrneetAgZrkY74EoM9jSTnkC75dkvWDAC
-         zucjmOx0SeqQERzfxmttJmSRfRZuxU0Mg1Ywotn6MLXVpdSQDH/IXvHxa3pOZe6gB83R
-         dtm7PSodvf1sINAmgx+IbWGEA7NR4K0CTDbkCPtL8Ex5gLWVeGz+ljMOJlGSSeGi0pRo
-         VPVpWI9FBL8ROTyfAbWcm6lX2Kr2zhT7JorRr5dzXcpVyOiNEVLdrBji7ZgSyhVjcace
-         CZ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCX925yVSMf/MdmM1uJkVrKFpuoRVPXLiDoAMI0K+L6MzQIexZth6W3jd7kzaJzpEAgb8HNAuhfwyK7VJns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4iNf42tMeh29FYzUzXnfPROyfdMrBWsPF32qPQS2gsxM2fyud
-	+8iQ/wDkj/5TDEIS2YKDDruMcqKkipjvvvHGTHU8ID/Z6dySNizQ5x+UQHo2MTvIWjD5cK2AFE2
-	/mVJde+/KzbjsZTVkmQ/eoh8Sj34NWFkjPrHy5lt/lGYytzptBe94zwvnK322rQ==
-X-Gm-Gg: ASbGncu6Cbp6plgYJ3/Qlu1iNCAiRJvKOr+QTt7gqEClbZo1fdkaAKJg8+WhvtfYHcT
-	mjbumRRGpSmEIwaDLdS4g7OhKmyuBWfxseI7A4vKW9gQiGgnmT8E7xN0YfE+5mT9HFejiUW7gnd
-	NnK6bOY/EZHI5C3mdm9+JPqXhCU8yyaNcRNdDSTDYdFZ9HCSDGg8oNS0H5qpo1rseZavq52ot9n
-	FYDPsiFI69AU4MsdmkHMQfe6fWbo08z4WoC20JeNSpW/w9BSXe/JNBYKxm2wL9lA5/0j2dDjfqr
-	vhTwrQq2EA6YnOmYlhLDeSh5gi7OoQ==
-X-Received: by 2002:a05:600c:358a:b0:434:fd77:5436 with SMTP id 5b1f17b1804b1-434fff500a4mr54092175e9.15.1733853123921;
-        Tue, 10 Dec 2024 09:52:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGWlVeLxQceZVqJYPqW9abSwCI92YZV60MOUnZJwqpD1i3FXk0/EecHfd0I1AsDffr0xedD9A==
-X-Received: by 2002:a05:600c:358a:b0:434:fd77:5436 with SMTP id 5b1f17b1804b1-434fff500a4mr54091875e9.15.1733853123291;
-        Tue, 10 Dec 2024 09:52:03 -0800 (PST)
-Received: from sgarzare-redhat (host-87-12-25-244.business.telecomitalia.it. [87.12.25.244])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436199f6896sm12564785e9.14.2024.12.10.09.52.01
+        bh=ege3SlIBABNYQBfJL/StIBqQQ+7IZD3RScF6Axrafug=;
+        b=NP3xXCFVgw6F+8RPKnp72wTpCfpsyZ3f0cJIQ4TOlv+ikSRRgSf7ZoCO542fBNZXn6
+         4TIS40hH9S9oMpuNKDo3oeWJ4xQYMiCvVpD3Mfc7GN9ATfrRwer6vf0H8GsuiA2aWsev
+         Tt3l4vdnNRP//Bh8LXzJoSTwvoZ0ydDCr3+CrUS3GgYul4onia1FXqKGLmDh11Iv360V
+         +lJSmdUGV7fFAn4G9GB7fnr5b4Jz34oeN+2YMfJiWNDj7vkUgv9gcWh3dJSn3DFCE+P4
+         6OWQox4LbKGLdFOx0TPMDIceanDo8zZynzhD4kCfXeXs+ef2MSHAKY/ac/fopF7TuReR
+         VUYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdAvay8GN9szJFwTtes8HtUfPOMWDi1hx083t09hfE3fvcgHmFFLZ7fRAAGPFdQp5t/CibRtEJRJNx/7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIuRTUzkhXh5PT7EbHqiyw8BOBTigHEIDDm8s3epq7Ma5kqZX0
+	Cm4bX5Lx6HVpgTpjbLAM10LQpTQLjC6+SM05fLtPFZZYrzkYnbIljzyNWwY/gEyPuAV2M0iemqR
+	FzbAQ3s1g23UTd+fcCp9XOgfdE1n2/KlhWyQYlQUM3PVZZb8nIeig82vpGtr6nKtA/yLoAw0=
+X-Gm-Gg: ASbGncvo/0o0GiOo8d+Dht9RJgrym+g1uY3GNVbC8c4aHKO0RqOyRzOTfZPgi7hHgVB
+	CbLLn+v/HuiYbgd8nRLPXr+nO04WfxlZV3tXmO05XKEXUjjJ5YnKX6MXGlrQGX6k3HSxNsgrNpH
+	MUP6YqyRB//qlIuaGSyEBB1xezI4dUOjogyMth1cCXv/vNl0NEhoPUXgOysE3Zl+RLcJQHaAH3Q
+	hhsDd2YaSSA+A9YpZdu/EF4zufdh2VYIocYACtf6IiVtCW4/+xVGxtPpEotu/h76/bxW+/amVRh
+	SLiWLQ+/e50G3bI2hUlZ3ukrT2MZA1dsClw8Bg==
+X-Received: by 2002:a17:902:d54a:b0:216:45b9:43ad with SMTP id d9443c01a7336-2177854b79dmr294755ad.34.1733853131325;
+        Tue, 10 Dec 2024 09:52:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHxQAT1KyS2RYreNEX6eE08vhGpymLqRJuMeKy20p+JsymYi0fZ8cLbEJRWiRwWdl0yi3dYjw==
+X-Received: by 2002:a17:902:d54a:b0:216:45b9:43ad with SMTP id d9443c01a7336-2177854b79dmr294315ad.34.1733853130888;
+        Tue, 10 Dec 2024 09:52:10 -0800 (PST)
+Received: from hu-bjorande-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21680814d6bsm5989185ad.157.2024.12.10.09.52.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:52:02 -0800 (PST)
-Date: Tue, 10 Dec 2024 18:51:54 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Cindy Lu <lulu@redhat.com>
-Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 0/8] vhost: Add support of kthread API
-Message-ID: <wxfwmdn73heh5k7dnbaqt5iq23qwz4ltlapetvsqlryhz7mhpt@4e3pw5qm7yom>
-References: <20241210164456.925060-1-lulu@redhat.com>
+        Tue, 10 Dec 2024 09:52:10 -0800 (PST)
+Date: Tue, 10 Dec 2024 09:52:07 -0800
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+        konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+        Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
+        krzk+dt@kernel.org, robh@kernel.org, quic_vdadhani@quicinc.com
+Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
+ flag
+Message-ID: <Z1h/x+QJD5Uob8GZ@hu-bjorande-lv.qualcomm.com>
+References: <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
+ <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
+ <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
+ <da2ba3df-eb47-4b55-a0c9-e038a3b9da30@quicinc.com>
+ <a7186553-d8f6-46d4-88da-d042a4a340e2@oss.qualcomm.com>
+ <e9fb294b-b6b8-4034-84c9-a25b83321399@kernel.org>
+ <835ac8c6-3fbb-4a0d-aa07-716d1c8aad7c@gmail.com>
+ <f1fa2bde-95ce-45e9-ad2d-f1d82ec6303c@kernel.org>
+ <8b33f935-04a9-48df-8ea1-f6b98efecb9d@kernel.org>
+ <422e6a1e-e76a-4ebc-a0a5-64c47ea57823@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210164456.925060-1-lulu@redhat.com>
+In-Reply-To: <422e6a1e-e76a-4ebc-a0a5-64c47ea57823@gmail.com>
+X-Proofpoint-ORIG-GUID: tM4TeT0YmgH3JYcoyfQfT4YJYYmsjdNn
+X-Proofpoint-GUID: tM4TeT0YmgH3JYcoyfQfT4YJYYmsjdNn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 clxscore=1015 mlxscore=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412100132
 
-On Wed, Dec 11, 2024 at 12:41:39AM +0800, Cindy Lu wrote:
->In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),
+On Tue, Dec 10, 2024 at 01:38:28PM +0100, Konrad Dybcio wrote:
+> 
+> 
+> On 12/10/24 13:05, Krzysztof Kozlowski wrote:
+> > On 10/12/2024 12:53, Krzysztof Kozlowski wrote:
+> > > > > > I'm not sure a single property name+description can fit all possible
+> > > > > > cases here. The hardware being "shared" can mean a number of different
+> > > > > 
+> > > > > Existing property does not explain anything more, either. To recap -
+> > > > > this block is SE and property is named "se-shared", so basically it is
+> > > > > equal to just "shared". "shared" is indeed quite vague, so I was
+> > > > > expecting some wider work here.
+> > > > > 
+> > > > > 
+> > > > > > things, with some blocks having hardware provisions for that, while
+> > > > > > others may have totally none and rely on external mechanisms (e.g.
+> > > > > > a shared memory buffer) to indicate whether an external entity
+> > > > > > manages power to them.
+> > > > > 
+> > > > > We have properties for that too. Qualcomm SoCs need once per year for
+> > > > > such shared properties. BAM has two or three. IPA has two. There are
+> > > > > probably even more blocks which I don't remember now.
+> > > > 
+> > > > So, the problem is "driver must not toggle GPIO states", because
+> > > > "the bus controller must not be muxed away from the endpoint".
+> > > > You can come up with a number of similar problems by swapping out
+> > > > the quoted text.
+> > > > 
+> > > > We can either describe what the driver must do (A), or what the
+> > > > reason for it is (B).
+> > > > 
+> > > > 
+> > > > If we go with A, we could have a property like:
+> > > > 
+> > > > &i2c1 {
+> > > > 	externally-handled-resources = <(EHR_PINCTRL_STATE | EHR_CLOCK_RATE)>
+> > > > };
+> > > > 
+> > > > which would be a generic list of things that the OS would have to
+> > > > tiptoe around, fitting Linux's framework split quite well
+> > > > 
+> > > > 
+> > > > 
+> > > > or if we go with B, we could add a property like:
+> > > > 
+> > > > &i2c1 {
+> > > > 	qcom,shared-controller;
+> > > > };
+> > > > 
+> > > > which would hide the implementation details into the driver
+> > > > 
+> > > > I could see both approaches having their place, but in this specific
+> > > > instance I think A would be more fitting, as the problem is quite
+> > > > simple.
+> > > 
+> > > 
+> > > The second is fine with me, maybe missing information about "whom" do
+> > > you share it with. Or maybe we get to the point that all this is
+> > > specific to SoC, thus implied by compatible and we do not need
+> > > downstream approach (another discussion in USB pushed by Qcom: I want
+> > > one compatible and 1000 properties).
+> > > 
+> > > I really wished Qualcomm start reworking their bindings before they are
+> > > being sent upstream to match standard DT guidelines, not downstream
+> > > approach. Somehow these hundreds reviews we give could result in new
+> > > patches doing things better, not just repeating the same issues.
+> > 
+> > This is BTW v5, with all the same concerns from v1 and still no answers
+> > in commit msg about these concerns. Nothing explained in commit msg
+> > which hardware needs it or why the same SoC have it once shared, once
+> > not (exclusive). Basically there is nothing here corresponding to any
+> > real product, so since five versions all this for me is just copy-paste
+> > from downstream approach.
+> 
+> So since this is a software contract and not a hardware
+> feature, this is not bound to any specific SoC or "firmware",
+> but rather to what runs on other cores (e.g. DSPs, MCUs spread
+> across the SoC or in a different software world, like TZ).
+> 
 
-missing something here?
+I don't think this is a reasonable distinction, the DeviceTree must
+describe the interfaces/environment that the OS is to operate in.
+Claiming that certain properties of that world directly or indirectly
+comes from (static) "software choices" would make the whole concept of
+DeviceTree useless.
 
->
->The vhost now uses vhost_task and operates as a child of the owner thread.
->This aligns with containerization principles, But it has confused some legacy
->userspace applications. Therefore, we are reintroducing support
->for the kthread API.
->
->In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),
->The vhost now use vhost_task and workers working as a child of the owner thread,
->which aligns with containerization principles. However, this change has caused
->confusion for some legacy userspace applications.
->Therefore, we are reintroducing support for the kthread API.
+The fact that a serial engine is shared, or not, is a static property of
+the firmware for a given board, no different from "i2c1 being accessible
+by this OS or not" or the fact that i2c1 is actually implement I2C and
+not SPI (i.e. should this node be enabled in the DeviceTree passed to
+the OS or not).
 
-This paragraph seems duplicated.
 
-If you have to resend a v5, recheck the cover for a moment because it's 
-not easy to follow.
+That said, the commit message still doesn't clearly describe the system
+design or when this property should be set or not, which is what
+Krzysztof has been asking for multiple times.
 
->
->In this patch,
+Let's circle back and help Mukesh rewrite the commit message such that
+it clearly documents the problem being solved.
 
-s/patch/series
+> Specifying the specific intended use would be helpful though,
+> indeed.
+> 
+> Let's see if we can somehow make this saner.
+> 
+> 
+> Mukesh, do we have any spare registers that we could use to
+> indicate that a given SE is shared? Preferably within the
+> SE's register space itself. The bootloader or another entity
+> (DSP or what have you) would then set that bit before Linux
+> runs and we could skip the bindings story altogether.
+> 
+> It would need to be reserved on all SoCs though (future and
+> past), to make sure the contract is always held up, but I
+> think finding a persistent bit that has never been used
+> shouldn't be impossible.
+> 
 
-> a new User API is implemented to allow userspace applications to
->configure their request mode.
->
->Changelog v2:
-> 1. Change the module_param's name to enforce_inherit_owner, and the default value is true.
-> 2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
->
->Changelog v3:
-> 1. Change the module_param's name to inherit_owner_default, and the default value is true.
-> 2. Add a structure for task function; the worker will select a different mode based on the value inherit_owner.
-> 3. device will have their own inherit_owner in struct vhost_dev
-> 4. Address other comments
->
->Changelog v4:
-> 1. remove the module_param, only keep the UAPI
-> 2. remove the structure for task function; change to use the function pointer in vhost_worker
-> 3. fix the issue in vhost_worker_create and vhost_dev_ioctl
-> 4. Address other comments
->
->Tested with QEMU with kthread mode/task mode/kthread+task mode
+Let's not invent a custom one-off "hardware description" passing
+interface.
 
-A link to QEMU patches will be nice.
+Regards,
+Bjorn
 
->
->Cindy Lu (8):
->  vhost: Add a new parameter in vhost_dev to allow user select kthread
->  vhost: Add the vhost_worker to support kthread
->  vhost: Add the cgroup related function
->  vhost: Add kthread support in function vhost_worker_create
->  vhost: Add kthread support in function vhost_worker_queue()
->  vhost: Add kthread support in function vhost_worker_destroy()
-
-What about merging patches 4, 5, 6 in a single patch?
-
-Thanks,
-Stefano
-
->  vhost: Add new UAPI to support change to task mode
->  vhost_scsi: Add check for inherit_owner status
->
-> drivers/vhost/scsi.c       |   8 ++
-> drivers/vhost/vhost.c      | 185 +++++++++++++++++++++++++++++++++----
-> drivers/vhost/vhost.h      |   4 +
-> include/uapi/linux/vhost.h |  18 ++++
-> 4 files changed, 198 insertions(+), 17 deletions(-)
->
->-- 
->2.45.0
->
-
+> Konrad
 
