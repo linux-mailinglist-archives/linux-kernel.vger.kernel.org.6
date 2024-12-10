@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-440221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1E29EBA68
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:56:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9829EBA69
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 20:56:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E43671679B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0ACC283D5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC91226873;
-	Tue, 10 Dec 2024 19:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEA122837B;
+	Tue, 10 Dec 2024 19:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="luzU6aTT"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ws4Sj/MV"
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF3C227577
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13FA228364
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733860576; cv=none; b=pYiJegu3SucZ0m6x5T0y+5TaxvEx2sAtUPAgH6ozdTB5BLDC4wsI1Iu4/La1LnPqC9d+wK9nyzvgaHf14J0XiYQ3nafn43C2TqW3pLl6bFMEm8yHvedfLsZolaVfRySpi1kd/+jRX5PFH3VDjj+k+zRLKP0VCaNrhR+Gnrk96Oc=
+	t=1733860577; cv=none; b=kgpRvYzQABHeqGhG30+R1rwknG4kPWvrXsnZBNRTBB5z44S9vH1RGQ9dLQxQpVniaq4vmnXVk8MbOQubM18TvZvzXbxTtYsxEF+aB2x8OuNA2lN6IPEGkM6ERdjdGJHn/0Sjp5C5TSdtDYTLr/WHv3BGotU8wATA6l6mo4bZPX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733860576; c=relaxed/simple;
-	bh=sdF7tOeLaLfCdiDlVogKRTgQV5yx9VBAgCr2khnDCdU=;
+	s=arc-20240116; t=1733860577; c=relaxed/simple;
+	bh=JEumEao6OwtFIq3N27scJvmQPpmiw+AAjw5tpWVO+jU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MFLYt0Iy0zgljVLoWRAdTxS81eHABhhITgoIf/R1y6evirx2G5MRsgkredS2ygdY/mwvuF6n6NF1IcQ4OJHK9jvfZi+7e/igUfqnDyhwJ2bRsip4sRsFWM1onEejinOffeLaYcALddaZwW/Ssp3LkfreNmgjVIRuPSsMwdHt0XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=luzU6aTT; arc=none smtp.client-ip=209.85.222.41
+	 In-Reply-To:To:Cc; b=GkOIFrAL+LLHzUNhBusnJPgx1tNBMD/kF9o6s8GkhDDkp4Bo0ie8t7bZSVbf3R48MlH+zl49h8njIiTr74vSkgXhdAS2GeI/4nnQNB9A6mdnIqC2vjOhhG1N5OLAySPyLFd7ehG8uHIky2pouybAGQUi0WsrnT7r1FkC3/V0uyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ws4Sj/MV; arc=none smtp.client-ip=209.85.222.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-85ba92b3acfso1429367241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:56:13 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-85ba8b1c7b9so3032723241.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:56:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733860572; x=1734465372; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1733860575; x=1734465375; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CTX31YxAcEET+qmrwOGI7rmuqifx9R2Evse3TExOMoA=;
-        b=luzU6aTTSezSex1ALcfr8qm/Cw43J8blTOlKNcRbTvmt2thKSm04esfPknpK/p4PlZ
-         lzXIXwS80VEBJYaklDfFc3P70PWXSZiRXWH/+ATNeATzC93i5+9o11+s04HJoVVxLXct
-         lg+PTzl62ZYA9JYwTeo2CZIxc5S4oZSVr1tGc=
+        bh=/FC4QnqJ94HTxVX1/4qkFrZziKxV3eN8ciCJ+f2BMLY=;
+        b=Ws4Sj/MVvQsDZ4JUz9UwtCUys0nLv5tjhXrxEueNLtG3HUN0QaVVC7sqvLLuf1BLsC
+         VRCNlSBoXBWcofxTdC7Lw69wE82O+3lURT/ZrEgdPjOj1lKbKohYLM+VA7GQcazKjctp
+         02Aoc3IwuphW2yVTskgPEYHo+iqHeEICVgWEg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733860572; x=1734465372;
+        d=1e100.net; s=20230601; t=1733860575; x=1734465375;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CTX31YxAcEET+qmrwOGI7rmuqifx9R2Evse3TExOMoA=;
-        b=LXCXr16D+g68ajzFzlQkjHHLD3vmrQRWdlcLZdmLlSv5yC6dgFcAnLZXrocm7QQdss
-         J2tEFqKfYU2vIJPb0uAtl0y2PogVF0dqQpbxPtywAwVv75R/c+De67mJFnB9DJ3WZ04z
-         Z/jmzJfMY14zxceSxPaN6xjSqcMkTufPdkRHa0wh1IPpJLVUIvScfMaJfOnfx8erz59J
-         Aj0FBpVXEPmMfneiqrP6ZTYYe3sU833RjNFiOCgcuZ/oD+nGSziQRBt1JOb0ksM0eXE3
-         wCmG5VbAKqrJIHIK1wTLdICZspw2ZQ4WpdhKr+y/zSiXykgqVLKZMfTKl9ATtEB58ggg
-         Mnqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWl3/bY7lR53senFEPqlryQK7HGCsgYR+pGKRkEVSHGCQDsi3jDMOWVEghUwnIq45R6XkFSKSEw7UlLBTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykbfCjxsXf3FV0YY9c+4j1BLhFKAxnWLIOcjvc6qwpGobLOHLY
-	dKRcvqqkjxAa9U4zdlkAgtOLoE3mrY8bteC53EalNPZ+MAz4aBeVnRC1Y8aubA==
-X-Gm-Gg: ASbGncuHyS/UsmaEAEuaZYlq0RsEd0suVg4Tmozr/5RCsBXea25SsGd2fpARmoo0CnJ
-	NQNIB/jA2U9F5hw//gOhPW9x8J7/vOXyMoZgXfdSZlvXsqUMKzB0iCaTMeplHDaD9ggaNbxwpv+
-	ETUjTH3yhDG0KMx9r+DilVoJPlVjf6kyeFkEVdzwqEqYPWOlZimZetIVaLBQ5/QlpxKz07EvacM
-	R+iHfZ/ANktCB87qYS5qasxSdVuYkUpmAbZr/4Wms15AD33STQDTnZ4G66Wg953grAQlQkeH4WT
-	o3D75pGMbm43KGgreEYKXBW00ICW
-X-Google-Smtp-Source: AGHT+IFOlLOc71KptU+gM+mbs7OSqZvI0F+Ca1OaQ7iYQclHhw5OIq3pXc1ymxgCi+mj9I6EK0fVEA==
-X-Received: by 2002:a05:6102:418b:b0:4b1:1971:383f with SMTP id ada2fe7eead31-4b128fee492mr811079137.8.1733860572588;
-        Tue, 10 Dec 2024 11:56:12 -0800 (PST)
+        bh=/FC4QnqJ94HTxVX1/4qkFrZziKxV3eN8ciCJ+f2BMLY=;
+        b=w2RBloPWuf6IC9RedoI8sESQqGekS5nc+o+AxdzhQDYd+Apz0eXsuRhYbtsI+xv32R
+         FFFaw+/yUtymBFaOfeZ4SOBRDXfz7MIw3OWY8321ciq3sTx7N0hqyqBClkXjXJGR+Yta
+         V5WxoY7HW2upLbX/oqiapEjdVCO2dx7bIqDmdecISCXwglW+OReooAvuI1MVis96fhyW
+         XUnVTBedcuiC+IOi6pgwrx0hDU0Qg7scZuSNas02S4jBTFzQGNYTR9xm51d0aJjq2GBc
+         DAUepbOWJ0iYo+tq6h4+XsC4ikKlkr8r4DXWPzKEAyFm/0fBaoHS0f2Nu6WWC08M7d+t
+         9p+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVKREkMfKmmXMGW+8nblWf3lPxYoQvtxjgwQzyerkkxZBeoG9SiFDQIBe9cvZbmZ/ifRpWxpMR+0Dty2NA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7uT9BBCVJXNGKBv01vBbOA4aDVfvdZoxO+n4hb0pX/GYyGZZb
+	2v/EO0rIkKHvh5V0UGCVpEHcGZ/QpZ0Txgoki1C+jG6G2EsuFLxobEhOmxgbFg==
+X-Gm-Gg: ASbGnct2Bkr85C8RSUuzQWXcdzjN8eimwY7KK1XUwIlfwcR8Z7wrjfzO89fu50Wk9ia
+	+aSZ/EX0B3Kpm8sBrP8xj5cepjH34bpHuy1YgQXI+bL0LLazU5D60FQlm3TymjgwDJRiJDUb0Ae
+	x5XmQma3B/F8XrUIbmnmXYsfM2BeHF0XrPB+k8lcwZZR+3NWEdiZ1mbFzhB0T31//FqBU9psSEL
+	KiGba60hpp3qyyCZl+57P9CjJ4kRR/xjYor86NytnfVD4ITjwS5pEZOBWsAg8cM6qiXs9Z33RWf
+	QafbFh9Ek03MapgBr5peuFcSxmYk
+X-Google-Smtp-Source: AGHT+IF9huJ4RGbON6vnfjO82QKXcufJ1oPqeqqPWduurqVjnR4pau4FlzjogA7CTu3zPtWKx5FO2A==
+X-Received: by 2002:a05:6102:34a:b0:4af:fa96:1ff with SMTP id ada2fe7eead31-4b1ca3daba8mr12220137.6.1733860574875;
+        Tue, 10 Dec 2024 11:56:14 -0800 (PST)
 Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2ba7dc70sm1279522241.15.2024.12.10.11.56.07
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2ba7dc70sm1279522241.15.2024.12.10.11.56.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 11:56:11 -0800 (PST)
+        Tue, 10 Dec 2024 11:56:13 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 10 Dec 2024 19:55:58 +0000
-Subject: [PATCH v3 1/7] media: ipu-bridge: Fix warning when !ACPI
+Date: Tue, 10 Dec 2024 19:55:59 +0000
+Subject: [PATCH v3 2/7] ACPI: bus: implement for_each_acpi_dev_match when
+ !ACPI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +80,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org>
+Message-Id: <20241210-fix-ipu-v3-2-00e409c84a6c@chromium.org>
 References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
 In-Reply-To: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -89,38 +90,34 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
  Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
- acpica-devel@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>, 
- kernel test robot <lkp@intel.com>
+ acpica-devel@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
-throws the following smatch warning:
-drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
+Provide an implementation of for_each_acpi_dev_match that can be used
+when CONFIG_ACPI is not set.
 
-Fix it by replacing the condition.
+The condition `false && hid && uid && hrv` is used to avoid "variable
+not used" warnings.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/pci/intel/ipu-bridge.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/acpi/acpi_bus.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-index a0e9a71580b5..be82bc3e27d0 100644
---- a/drivers/media/pci/intel/ipu-bridge.c
-+++ b/drivers/media/pci/intel/ipu-bridge.c
-@@ -774,7 +774,7 @@ static int ipu_bridge_ivsc_is_ready(void)
+diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+index b2e377b7f337..eaafca41cf02 100644
+--- a/include/acpi/acpi_bus.h
++++ b/include/acpi/acpi_bus.h
+@@ -1003,6 +1003,9 @@ static inline int unregister_acpi_bus_type(void *bus) { return 0; }
  
- 		for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
- #else
--		while (true) {
-+		while (false) {
- 			sensor_adev = NULL;
- #endif
- 			if (!ACPI_PTR(sensor_adev->status.enabled))
+ static inline int acpi_wait_for_acpi_ipmi(void) { return 0; }
+ 
++#define for_each_acpi_dev_match(adev, hid, uid, hrv)			\
++	for (adev = NULL; false && (hid) && (uid) && (hrv);)
++
+ #endif				/* CONFIG_ACPI */
+ 
+ #endif /*__ACPI_BUS_H__*/
 
 -- 
 2.47.0.338.g60cca15819-goog
