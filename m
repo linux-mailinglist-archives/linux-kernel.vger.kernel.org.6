@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-439650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29529EB230
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:49:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D5F9EB23B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E1E161239
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B0C188D654
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0EB1AA1C9;
-	Tue, 10 Dec 2024 13:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EAC1AA783;
+	Tue, 10 Dec 2024 13:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxc8ezmA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yf/VLn2I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9571E515;
-	Tue, 10 Dec 2024 13:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4451E515;
+	Tue, 10 Dec 2024 13:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733838592; cv=none; b=AtD4RiFFgrMtYG5AcyooG5C3d0rATV6wxlOfCvIpxY17w3MEll1SXv5uhGJg3aD6Glvbnyl0LhOpeEzU6MVYD4KuxPScDzmtQ6kvT+McFY05HSpChipdMYCI6Ssvsazlp8umIetM3rl4GPEcfyRWDgvtckwqh1vGzQ36Se5Wbnw=
+	t=1733838662; cv=none; b=QgYTyH/ba9TZzFOC4JoGSCOD7/xnswXl9hNm6wZ8Wubc7Y5UeuSW6WFB8skzwkX6ftO9Mjrd9+BG+SZX6jrVnOEac4TeZ2MooY9cvCjtYopd8QwOMu5mrJtLZE+cgHmIcsFjFvLUYRXRPlbxXuOrTxySrGTUlD6MGyO3Q55RND8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733838592; c=relaxed/simple;
-	bh=e0jZuI/DKh2/Xu1++9G8Hh1Ryx/GiiP7Fc2SzdCbW/o=;
+	s=arc-20240116; t=1733838662; c=relaxed/simple;
+	bh=ZXg1bGozVdzn4a1tzlvDLtBv4mWbQKIU/XP6jeBIDvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QR2aSdvfO7dZNOsDjRkE5oBDLqHWWVkjjwzHyjz/SzdgQDEmKnllcRFst70g0U9rwDBETJ988+/XCJ/qD7NGsV7s+h6GyVTeR6TJVMhm3uaIBcx9bEeVLazH3N9LcJgBn1l/9Z/tO2aTgfyvrQRVCg0LOo3qwpyCuL4rD9UMaR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxc8ezmA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20BCC4CED6;
-	Tue, 10 Dec 2024 13:49:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bqz6aH7Fn4JBy3lOvF+4aWs8EHGs+nskYxyR6U2Q23auIDb34LbTuzzllkxnULI1B6HBAbLYEaMtpz6eW4U8xTTF/zmEJt3l2ZgY3kKHsldKXRjPzK8Pggf0rpaZYKF+IpVj6V8bZ8Kt8Pyg/YqTZYXaBGI1OjFrxUVuhVrq09I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yf/VLn2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C58C4CED6;
+	Tue, 10 Dec 2024 13:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733838591;
-	bh=e0jZuI/DKh2/Xu1++9G8Hh1Ryx/GiiP7Fc2SzdCbW/o=;
+	s=k20201202; t=1733838661;
+	bh=ZXg1bGozVdzn4a1tzlvDLtBv4mWbQKIU/XP6jeBIDvc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nxc8ezmAQKuVvEC4VDxSFSlaB/KhNZSOwO0U5V0DM1Zzjdjs64Vf89mZd6WE+vD3c
-	 gcMBush/8NmtIkKoKKABT2qJF5dk4V4XEHL6t4ej5lDfsouIKKlE9tQhAYPi9+jqgK
-	 segniSDhLUt34iiHcDJMoKF6sYlZVrDPAVtMT9e20g646XY+cR8rMOHFA7g4z8lBHo
-	 t31lsTHyqBR+lkDSsq+OlUKcxdycDqAkNHS5B75SN1zl24Bd7Xvs0qI/8gNqnM73xk
-	 FbSkK/kTbKhbSPtfMCFt/7/yDbfC92s9Kfv5EhJh7eRz2d2g/2kKA1QfHsjuetLPx0
-	 r3IOU8hNLpCrA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tL0cc-0000000039o-1jgo;
-	Tue, 10 Dec 2024 14:49:54 +0100
-Date: Tue, 10 Dec 2024 14:49:54 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Leif Lindholm <leif.lindholm@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Ricardo Salveti <ricardo@foundries.io>,
-	Marc Zyngier <maz@kernel.org>, linux-efi@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: UEFI EBS() failures on Lenovo T14s
-Message-ID: <Z1hHAtAcgivajR7i@hovoldconsulting.com>
-References: <Z0gn1N3IsP8r3gTA@hovoldconsulting.com>
- <CAMj1kXGjiA1HydMaY82MQsYvkchpN7v7CMOB5i3NEdqcYGn19Q@mail.gmail.com>
- <Z0g_HL01eqXu4cwQ@hovoldconsulting.com>
- <CAMj1kXFtr7ejEjjSRj9dcRa7YbO0SR5OR3pm+K6OvbX2=RfhAQ@mail.gmail.com>
- <CAMj1kXHS_TY=jfBT=dqUQSXf2pBXbt12uaLsMw-FLX3uU_X6uA@mail.gmail.com>
- <Z0iCNJVWNzBzdq0C@hovoldconsulting.com>
+	b=Yf/VLn2IQhrXOEzbHiLZVrJssWuYF5wdEhW0xeWpZnpKA5ogq7bmRblmgPOoIPExb
+	 qDmFeAJsOhFmvg0N8uuL+IpFFeLdmUXKNtt3zQNIy5mHNEEXSYHX4BbLa6cxzh7SVM
+	 3Fj7X0jnC1pipSs1zsUOkP7Jd5r0jLEEEWudF1d+cH7SQwKvghPYc+4HEjGYEcxLC7
+	 TQ2GNtjGAnkN9RNJSFrEprr6Ri7FngS8zf38cVNimyVvSfa/GuCJZ2YleDRGEFoiGQ
+	 JUs7rG7AUMKGfPAIDS7ylefYJM5qU+wqsAWuURPi0BwNpx3MyzbEGtmMlYMWeSZ0e0
+	 nuu81ImImT/ng==
+Date: Tue, 10 Dec 2024 13:50:52 +0000
+From: Will Deacon <will@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-pm@vger.kernel.org, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, catalin.marinas@arm.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	pbonzini@redhat.com, vkuznets@redhat.com, rafael@kernel.org,
+	daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de,
+	lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com,
+	mtosatti@redhat.com, sudeep.holla@arm.com, cl@gentwo.org,
+	maz@kernel.org, misono.tomohiro@fujitsu.com, maobibo@loongson.cn,
+	zhenglifeng1@huawei.com, joao.m.martins@oracle.com,
+	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v9 05/15] arm64: barrier: add support for
+ smp_cond_relaxed_timeout()
+Message-ID: <20241210135052.GB15607@willie-the-truck>
+References: <20241107190818.522639-1-ankur.a.arora@oracle.com>
+ <20241107190818.522639-6-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,52 +68,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z0iCNJVWNzBzdq0C@hovoldconsulting.com>
+In-Reply-To: <20241107190818.522639-6-ankur.a.arora@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Nov 28, 2024 at 03:46:12PM +0100, Johan Hovold wrote:
-
-> From 1464360c7c16d1a6ce454bf88ee5815663f27283 Mon Sep 17 00:00:00 2001
-> From: Johan Hovold <johan+linaro@kernel.org>
-> Date: Wed, 27 Nov 2024 16:05:37 +0100
-> Subject: [PATCH] hack: efi/libstub: fix t14s exit_boot_services() failure
+On Thu, Nov 07, 2024 at 11:08:08AM -0800, Ankur Arora wrote:
+> Support a waited variant of polling on a conditional variable
+> via smp_cond_relaxed_timeout().
 > 
-> The UEFI firmware on the Lenovo ThinkPad T14s is broken and
-> ExitBootServices() often fails and prevents the kernel from starting:
+> This uses the __cmpwait_relaxed() primitive to do the actual
+> waiting, when the wait can be guaranteed to not block forever
+> (in case there are no stores to the waited for cacheline.)
+> For this we depend on the availability of the event-stream.
 > 
-> 	EFI stub: Exiting boot services...
-> 	EFI stub: Exit boot services failed.
+> For cases when the event-stream is unavailable, we fallback to
+> a spin-waited implementation which is identical to the generic
+> variant.
 > 
-> One bootloader entry may fail to start almost consistently (once in a
-> while it may start), while a second entry may always work even when the
-> kernel, dtb and initramfs images are copies of the failing entry on the
-> same ESP.
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> ---
+>  arch/arm64/include/asm/barrier.h | 54 ++++++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
 > 
-> This can be worked around by starting and exiting a UEFI shell from the
-> bootloader or by starting the bootloader manually via the Boot Menu
-> (F12) before starting the kernel.
-> 
-> Notably starting the kernel automatically from the shell startup.nsh
-> does not work, while calling the same script manually works.
-> 
-> Experiments have revealed that allocating an event before calling
-> ExitBootServices() can make the call succeed. When providing a
-> notification function there apparently is no need to actually signal the
-> event group and CloseEvent() could also be called directly.
+> diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
+> index 1ca947d5c939..ab2515ecd6ca 100644
+> --- a/arch/arm64/include/asm/barrier.h
+> +++ b/arch/arm64/include/asm/barrier.h
+> @@ -216,6 +216,60 @@ do {									\
+>  	(typeof(*ptr))VAL;						\
+>  })
+>  
+> +#define __smp_cond_load_timeout_spin(ptr, cond_expr,			\
+> +				     time_expr_ns, time_limit_ns)	\
+> +({									\
+> +	typeof(ptr) __PTR = (ptr);					\
+> +	__unqual_scalar_typeof(*ptr) VAL;				\
+> +	unsigned int __count = 0;					\
+> +	for (;;) {							\
+> +		VAL = READ_ONCE(*__PTR);				\
+> +		if (cond_expr)						\
+> +			break;						\
+> +		cpu_relax();						\
+> +		if (__count++ < smp_cond_time_check_count)		\
+> +			continue;					\
+> +		if ((time_expr_ns) >= time_limit_ns)			\
+> +			break;						\
+> +		__count = 0;						\
+> +	}								\
+> +	(typeof(*ptr))VAL;						\
+> +})
 
-As feared, this does not really fix anything and probably just works
-by changing timing or alignment or similar.
+This is a carbon-copy of the asm-generic timeout implementation. Please
+can you avoid duplicating that in the arch code?
 
-When trying to find a workaround for the EBS() failure I had moved
-loading of the dtb and initamfs images from systemd-boot to the stub as
-that seemed to increase the chance of getting the kernel to start.
-
-When I tried moving the loading back to the bootloader the other day I
-saw EBS() fail with the event hack still in place in the stub. This time
-it did not seem to fail gracefully however, and the machine was reset by
-the hypervisor after a timeout.
-
-And now I'm occasionally seeing EBS() fail also when the stub is loading
-the images.
-
-Johan
+Will
 
