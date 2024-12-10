@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-439761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97E29EB3A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:42:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30469EB3B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:43:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162B71882952
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:43:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8562C1B3F30;
+	Tue, 10 Dec 2024 14:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p3wO6h5V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F8828393F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:42:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235361B6539;
-	Tue, 10 Dec 2024 14:42:03 +0000 (UTC)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BC81B394E;
-	Tue, 10 Dec 2024 14:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A421AA1E5
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841722; cv=none; b=ocsx7YGLkHcreYxSbAzT1iG/SkD1/795NPIIXucKFgNyipZiGqb+gskdJxFBA/KqW+9gKsrWa48px/Dr/5kpgMbpIR8LW7cpVB+0UHESEtV0sD3VqhqpL+qjVBqOcAsK9tKC9wNSWkP8rOtO4nYjoOTnF5Ur2MdZ1jhgM/fX4lY=
+	t=1733841797; cv=none; b=inLszIdh1GYjWvfB9vFJMQjGVr7oQjir7e1/ueXGkCTulsVUgVVwOmfHcsqEgMYhFTfQ/dkcD++aC9Wwv3oVoXB4SnV5ccrlKGrG3Nqun/LjstmrAxm5d8nYFgz28/4VTCRkogC/7S85B/3UKt0ZPaq3PURqe3s8yBOvG/6/mSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841722; c=relaxed/simple;
-	bh=zF3aOE1qhKSMRnq/y0n1k9zWj237rQ3rpoCWa9+1JVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+4Tr1UXjo/9wqRn6pyUY9aZMLQrTvjc++WSkhdDh/oNMo6YajBjUGV8L4Zm2Z00aC2DTX7wnLvGWowL9AZAGtOftcZRM8Tn7S1QsRaQgvzLK/Xc6NH5OLmBHcXhwPi2DRAoeHx1GidpUlxl2pjtTqEySiCpZg/y+g6veqxqdqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51878cf85a7so655581e0c.0;
-        Tue, 10 Dec 2024 06:42:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733841718; x=1734446518;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sEeS7eW3dOMIbCnO2yWME8t863RN9RbwOU3IJRVX0qU=;
-        b=rNDKx3hQIXBPSvlR3UlPBZr5Z6mn/S+gL/x2wEqVk3OCbZKZ6kpgLknmkqrmfo2/Qk
-         FnU/N9IViQuSCPmfCi3rCsdoEu5l7ZDBzBZGW5Parf635/HMjzk9TM9r2+V3bPVuCk0+
-         TkZBXH93ywfg7FUAc/KouUyAKfaYZaa5kX9zFRagQ+LrZKgv6V+cWvkFg158OpXq0Ix8
-         8n+UaBxX8rquD+tYMs0CiQEdMge7cFcODxzw5+LG/22jJtQxQliJlijMUMz/z9wfNj8g
-         29mGoa/L89nHPPqvaLzg68HsBCHPYxvgyp/5GplOF612IL0d/4W89qUAgAzRMBsdHgch
-         EgpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZfZGSJNOkj9WUjH94i12iyS0SQOz1sxFaPDgHIQOfyAAqemWniduUXC+PGEnW3gDsPIYbXh1At+In@vger.kernel.org, AJvYcCV2DXd8yICH/QssrhlGAaUQoVtJxlAGaqivbZi3TG61NMJRky9acurplxEns9dRcPZQ5P5ilSwOR28P@vger.kernel.org, AJvYcCVaxI5MTozbQzTCZwkdlDwG7BSTq/CL42Tb5oLHq6XhchvJQdk4gY3EfqO9TZ0aM0Hcf2lLRhh7MkB35Lsp2lLbgfw=@vger.kernel.org, AJvYcCXgxQlF/8UJ2QoZCBTW7/ydm9dehyC6+NJCq4/X2FZVTlstM6wDwujKP3yhKHedSpabnL70YXt6eTG8stqG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw55u+ExcE2EIo4mfwaf/HTod3jbm9VnPuxdZBjY8816MCShYwt
-	dRTzdV+I5h5vaq40g+Z2GUYUuXFQbU6FgIgYYdKQiR0xQXFYohcerqyVIt3i
-X-Gm-Gg: ASbGncszLQgXAR0TbJJlHRr9cwU49hez7a5TTzAxUO+wydr24Znw5ym8kRiV5p41cCT
-	15WJC9Q9Cj1+gqRreNNpyfvIunRVNY2aTa0aWNfhZ/59kqYhZxdG/J8Ii+fUnSEqEI7eK02B/XP
-	iO3N7JknXOh4HTzxto5ExLzEgXJEDYv1TeIO8xprpk3L7vE8wQ7oLGFsJnxsXbZosPS5KKxYw7S
-	SglhH2WdEavjDDM1w4V4pmGJuB8HBuAXYgSwXrYTdyfQuSEB7GYb4WTIKf0sco++MBWAolJIKnC
-	Bw6KVEae5ZzLlkY+
-X-Google-Smtp-Source: AGHT+IFeFae9WjSBSYnTv5iCaRYYZyAQuApIUWMeI9o4EZOXys6cNzh7eCBzlNSPl72AW2TtBNeTiA==
-X-Received: by 2002:a05:6122:829d:b0:516:1582:f72e with SMTP id 71dfb90a1353d-5161582f8e1mr10713330e0c.2.1733841717579;
-        Tue, 10 Dec 2024 06:41:57 -0800 (PST)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-518837c8955sm237672e0c.17.2024.12.10.06.41.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 06:41:56 -0800 (PST)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85c4b4cf73aso909923241.2;
-        Tue, 10 Dec 2024 06:41:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0tXVkXMLhNru09tHw+5etQf4H/rHiKVX0DdUQAoUPQFQ8qL5UBbP5hIMLvJFnXAb7U+aRa7tRW/WLBNqa@vger.kernel.org, AJvYcCUkntAFtTIau+T/aQMssfl/sidfSkU+LedOzC0+EhEf080R29Sw57Ak12dgJ243OwtKmd1EQk+wGSPS@vger.kernel.org, AJvYcCVNlsNMNJdLrFIT2eNrvBhCTcR7GsBsGeVSXunPnF5YPvIs4US6BeOVvQ2cEy71BqHVmMZnzBnKS0c3@vger.kernel.org, AJvYcCVoIaA4rvUMCP2cFtpjdmhUA9+B449V2WDC6lU2Qjgx0Zp2vJVRr7CzeUpmr3DKkgJACDqhnrfh2BFsyr2Neeak0Us=@vger.kernel.org
-X-Received: by 2002:a05:6122:169d:b0:518:97c2:f21a with SMTP id
- 71dfb90a1353d-51897c2f7dcmr1218484e0c.6.1733841716153; Tue, 10 Dec 2024
- 06:41:56 -0800 (PST)
+	s=arc-20240116; t=1733841797; c=relaxed/simple;
+	bh=0trgOj30h1yasTTGBPN5ycKbphYuSOjKMHbGdekQ3go=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uLPnxARUIJJdDNrnVewQryr1fPOjcBMxcoav3pxGm82cPZXev6ph8FvSHijdBb23Ti5hwmDG5woxJt3URroNFwGjrXffJtaY/FtLNls8mt3hPEuuHhODMAQH46QsGqG7SbzEeTp+jvG+/63S2/UfrvWn15XC4uVMR3L7eoYhnZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p3wO6h5V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D49FEC4CEE1;
+	Tue, 10 Dec 2024 14:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733841797;
+	bh=0trgOj30h1yasTTGBPN5ycKbphYuSOjKMHbGdekQ3go=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p3wO6h5VLghsMj2EP9nb0xYybw/T6xatks4eADnNc4Ti+2U1NAPRpzOGpw7gJ1Fre
+	 5+pRdA1/BoUzpJObEVXmul9fE03I4O2O7I+yTLjbOf7avEebUd+0IBiD2t0r1wN8jc
+	 YYg2nSpTBYpgKqg2wZFhb+9Jz5R363TRjdlX9fUU=
+Date: Tue, 10 Dec 2024 15:42:41 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] driver core: auxiliary bus: add device creation helper
+Message-ID: <2024121051-untoasted-update-2d04@gregkh>
+References: <20241210-aux-device-create-helper-v1-1-5887f4d89308@baylibre.com>
+ <2024121048-latticed-etching-8961@gregkh>
+ <1jseqvwqs6.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241126092050.1825607-4-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Dec 2024 15:41:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUWUw-cAkZ612J0o+0uJ2B8BqC87Q9SjWxay126xqxeDQ@mail.gmail.com>
-Message-ID: <CAMuHMdUWUw-cAkZ612J0o+0uJ2B8BqC87Q9SjWxay126xqxeDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/15] soc: renesas: rz-sysc: Enable SYSC driver for RZ/G3S
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, 
-	yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1jseqvwqs6.fsf@starbuckisacylon.baylibre.com>
 
-On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable SYSC driver for RZ/G3S. This is necessary for USB support.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Tue, Dec 10, 2024 at 03:34:17PM +0100, Jerome Brunet wrote:
+> On Tue 10 Dec 2024 at 15:05, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Tue, Dec 10, 2024 at 02:43:12PM +0100, Jerome Brunet wrote:
+> >> Add an function helper to create a device on the auxiliary bus.
+> >> This should avoid having the same code repeated in the different drivers
+> >> registering auxiliary devices.
+> >> 
+> >> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> >> Cc: Arnd Bergmann <arnd@arndb.de>
+> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> >> ---
+> >> The suggestion for this change was initially discussed here: [1]
+> >> 
+> >> I was not sure if the managed variant should return the auxiliary device or
+> >> just the error. This initial version returns the auxiliary device, allowing
+> >> it to be further (ab)used. Please let me know if you prefer to just return
+> >> the error code instead.
+> >> 
+> >> Also the non managed variant of the helper is not exported but it could
+> >> easily be, if necessary.
+> >> 
+> >> [1]: https://lore.kernel.org/linux-clk/df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org
+> >> ---
+> >>  drivers/base/auxiliary.c      | 89 +++++++++++++++++++++++++++++++++++++++++++
+> >>  include/linux/auxiliary_bus.h |  4 ++
+> >>  2 files changed, 93 insertions(+)
+> >
+> > We can't add new functions like this without a real user of it.  Please
+> > submit that at the same time.
+> 
+> Sure. There is some prep work ongoing in the user. It will get used once
+> that's done. I'll resubmit once this is ready, assuming the rest is fine.
+> 
+> >
+> > And are you ok with sharing the id range with multiple aux bus
+> > implementations?
+> >
+> 
+> In the initial discussion, a global id was thought to sufficient [2]
+> It also helps to make things simpler on the user side, which is good I think.
+> 
+> Do you think we've overlooked something ?
+> 
+> [2]: https://lore.kernel.org/linux-clk/c9556de589e289cb1d278d41014791a6.sboyd@kernel.org
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+No, it is ok, you just don't document it as such, so it might look a bit
+odd for many users.
 
-Gr{oetje,eeting}s,
+thanks,
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+greg k-h
 
