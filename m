@@ -1,324 +1,211 @@
-Return-Path: <linux-kernel+bounces-439424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F2B9EAF1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:07:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38859EAEFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:05:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA676286834
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B3D188B158
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA372080ED;
-	Tue, 10 Dec 2024 11:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0D11DC9BD;
+	Tue, 10 Dec 2024 11:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S/0vHfj5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CGdaKAF2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEECF212D96;
-	Tue, 10 Dec 2024 11:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140A3197A92
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733828800; cv=none; b=YnPPCAJ9pfdqmabjh/vyur18wWjdw2fsVhutusFGiutbpH754FpkpQCXPRkcRXRRDyuPNOa6RrpHATWOVsiG30zMrhGMY9Jia89atWDIQxXsHHldz2TeeVE/hrAdB4av0FFksoCWx2vhyMz2hH4ofcDAGTdhzflK3jDAJ0nSu84=
+	t=1733828737; cv=none; b=GBZhx2n/jEWKqzHhiHoAV55HhzPi4VlWYt3PQWmvzbEA0d8g8EEKU/Gft4Rx6qGrvUmkh+neULVbjaYZ4aasHHkzIlPEJptFPG/PzGJQFfdcNu+eTBLzLBL5zWtWQJo6BIgPgU+UbcTOIVc7xVlu9DUoUHxAbn5A++H523YdUUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733828800; c=relaxed/simple;
-	bh=pXlI2be3NSxKkFF/yjKAHLnHfb0ajxlbAf1AdFNFifQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=CEWIrSlZ8QTyKTFcVXTVdiTa66fFZQEwwisk7clLrJtV91DTdqmrXDpOnDj6W+tGbSDxjzjSlC6hVnUA0xJivW7u8jXpzi/IDysNZMfUw4f9ZR24LRlTKiSj8saM1T2yH9R8N/1gYDXljBzbm7Vt3028awCUPgqdtyoTr8wbbWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S/0vHfj5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA3FvAA014559;
-	Tue, 10 Dec 2024 11:06:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bz2lUMjiQhDe1uqS06DXdmjbtqwEL8OFi7q1kOYPm34=; b=S/0vHfj5KzNdIbtU
-	Ex6PmYDozcTeaHat/2XiN5EZafARVwWWoPJl0K+4Wox0qEll5rgWuSfyiZqsGpD0
-	a/edBCenx3yBh2TSw2J4XenxqZKgSCddodESa30d2I8ANDW9OGNCXOeYMBkO2daw
-	sG7rSrdZ0fWDLDVzbZjn8ou34iBBN76eFSJUcGCA7ZRy8XSaLxN2ga0Yg1n5X0RE
-	kgp9HRsY51PQ9WCjaWBK2yA/qJ9qoIAhkFa5tGL7gkneexVd9hb90FSetoWLtMOk
-	EH05F8wuCL6VzsTX5tcrZjx4rTuMLO+m42b+eVFbodTZ/U2k6tEEhHPdsCn8Znp3
-	mZ7U0Q==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dvyamawf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:06:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAB6Eh4026244
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:06:14 GMT
-Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Dec 2024 03:06:08 -0800
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Date: Tue, 10 Dec 2024 16:35:10 +0530
-Subject: [PATCH v8 06/28] media: iris: implement boot sequence of the
- firmware
+	s=arc-20240116; t=1733828737; c=relaxed/simple;
+	bh=uA/N6Wn5xabsbCvqy7kd7JKyi5RRQzrR8OPXV/sLFRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q6n1rexxS3/5MylsBqjq25+bdG7XxYcx8jnVfn/dXtOnX1KR2AuE4SMG590pN/TBeMDsESJRzkz+UgaRpT+u5dgCoz+lDAgEjs4+9KYHYitSdzSBXwXNo/HtIDEvzEKhIrOloXPA3vz1mLvCg8tyouWYEgPW7WVPdCcxzuTMGDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CGdaKAF2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733828734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fZcVe/5zuZ/V5Y6RxXliwxtDw1Xl/IijHe7b33hj10Q=;
+	b=CGdaKAF2BRbCRoxP1XipN/grAQ09/9APT6nW1OPMUW3BCQAZrXFu+PrLwFPVodak9j3dqg
+	59kICho4v45gofqGIQoe7RDayox6eJbqWMNK13Rmzdx4F+MwuGZerHfi668ZXYgUYIO4wO
+	PU+mU++HO80rFxbxTjPjY96LvNEDoUQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-438--CjxS-CvMzKnkVCaLAR_4g-1; Tue, 10 Dec 2024 06:05:29 -0500
+X-MC-Unique: -CjxS-CvMzKnkVCaLAR_4g-1
+X-Mimecast-MFC-AGG-ID: -CjxS-CvMzKnkVCaLAR_4g
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4359206e1e4so4565155e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:05:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733828728; x=1734433528;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fZcVe/5zuZ/V5Y6RxXliwxtDw1Xl/IijHe7b33hj10Q=;
+        b=iqaQrxI4jRTaSHms0pqzwTMsUb7T3w+C5seI5+Z6bWyoNFhfDvuP+wBZ14iYnjM6IN
+         mKCPTHhg+dQjkDVoWxryE0TRjimZOgFawY6B4ENgxfejqRC1JeE7qbPhc5S8WOKDL+tT
+         KCECQJFOFcYREX0wS1quC+0MP1pFj0MkXLQcrch3WidMWyrCYqCVsd2lwVGjWQ5jHg1w
+         YHpN7rue1PuQdp7o1hxz19ZT/+EgN3XxmAeSXXLZke7D8XuBirk/Tj5/6YSv0Wsnv6oO
+         lMsTXQbURjFK5eF1UYg/EcxMmLRDK427H3VGGYdPjKdhtU/P4UOaxy50Ub9Qlv5E55WP
+         LBqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUC0rMOALFyFLFt10ubVxcOqNml1jAAmk/KmOR5y1S+wUJyWgl88yiXjA89Y+pkQrZDNFGXegofF7ojGkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOyajCre14rBirLI0cdqKGMi2AR91Y9Ap7aOZjodIdL4S5D0k1
+	c+juvAnB4SrTj915e7rEtmfRWCSEXtzK21YM3PtKEhThl9ev4ajJUpOxngz9y1B+A1wDbt/oVhW
+	GtFG01LawWu50loOBXdVrsOYlwlJA+4tq3slInAFFYUG5n4YJ6lXR4tt5pzshRQ==
+X-Gm-Gg: ASbGncs3uxG/YNVl8q6g9XozzOkTSRc1tGhmbypl9E1tBCtsVweXj/B5ZL7z+QzR0xh
+	KbvILK1zQzt/IBYxTU+cAaUdYboOCONfbC8Lu3UbynqXu32JEJB0WXcgcJWjAFtLpv2aXXJFHq/
+	4KUwq4CMfMcQRT+6Z5+lO0QKsMd/STI9VaEMsy7zDX/59hLhQsCvvuB2/tJcdjT/59CtqWxPYfc
+	IQNMSWKEo2eQV2SGNNm4D42xGs+jbxSusH6HHDuismBAVp7sxZ+Z0N5J3HJ+WqlUzrpHNq0qgQ6
+	EbeNOY5KL/+TFCwOrc2NWBHWG/R2Ibg7ryzd+36lxJv6/hWr4q9YB6arG63Oiy0+XiYGzNTwETJ
+	s2HYrRg==
+X-Received: by 2002:a05:600c:458c:b0:434:9ec0:9e4e with SMTP id 5b1f17b1804b1-434fffba059mr44053875e9.30.1733828727889;
+        Tue, 10 Dec 2024 03:05:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGmMiNJbY1TFcSyI+tm1/HJE4vK538VL1akxE/9NqvyW5iMwBw380e0W+Rgkka8ZcfpLKokug==
+X-Received: by 2002:a05:600c:458c:b0:434:9ec0:9e4e with SMTP id 5b1f17b1804b1-434fffba059mr44053235e9.30.1733828727234;
+        Tue, 10 Dec 2024 03:05:27 -0800 (PST)
+Received: from ?IPV6:2003:cb:c723:b800:9a60:4b46:49f9:87f3? (p200300cbc723b8009a604b4649f987f3.dip0.t-ipconnect.de. [2003:cb:c723:b800:9a60:4b46:49f9:87f3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862190975fsm15434782f8f.68.2024.12.10.03.05.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 03:05:26 -0800 (PST)
+Message-ID: <023d1c53-783e-4d6d-a5e9-d15b9e068986@redhat.com>
+Date: Tue, 10 Dec 2024 12:05:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Removing page->index
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-s390@vger.kernel.org
+References: <Z09hOy-UY9KC8WMb@casper.infradead.org>
+ <cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
+ <20241209183611.1f15595f@p-imbrenda>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241209183611.1f15595f@p-imbrenda>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241210-qcom-video-iris-v8-6-42c5403cb1a3@quicinc.com>
-References: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com>
-In-Reply-To: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: Hans Verkuil <hverkuil@xs4all.nl>,
-        Sebastian Fricke
-	<sebastian.fricke@collabora.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Nicolas Dufresne
-	<nicolas@ndufresne.ca>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,
-        Jianhua Lu <lujianhua000@gmail.com>,
-        "Stefan
- Schmidt" <stefan.schmidt@linaro.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733828732; l=6471;
- i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=pXlI2be3NSxKkFF/yjKAHLnHfb0ajxlbAf1AdFNFifQ=;
- b=xYRPwB4SnEmOIvKx3hk5IdEtHyIj0hJEsJT/N0SgDmp2WiGZYWb0m4AXfmECRbGtwDfoik/BF
- jagr9V9RGAmBBYUQb6EuQs6lT41PtkCsRZD5Yq4OPZzygbIVpfus1rH
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kzrL2cfB1sWa6YA_aOIEqbwvaLOuM98j
-X-Proofpoint-ORIG-GUID: kzrL2cfB1sWa6YA_aOIEqbwvaLOuM98j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 priorityscore=1501 suspectscore=0 clxscore=1011
- malwarescore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100083
 
-Set memory region to firmware and implement boot sequence.
+On 09.12.24 18:36, Claudio Imbrenda wrote:
+> On Wed, 4 Dec 2024 16:58:52 +0100
+> David Hildenbrand <david@redhat.com> wrote:
+> 
+>> On 03.12.24 20:51, Matthew Wilcox wrote:
+>>> I've pushed out a new tree to
+>>> git://git.infradead.org/users/willy/pagecache.git shrunk-page
+>>> aka
+>>> http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/shrunk-page
+>>>
+>>> The observant will notice that it doesn't actually shrink struct page
+>>> yet.  However, we're getting close.  What it does do is rename
+>>> page->index to page->__folio_index to prevent new users of page->index
+>>> from showing up.
+>>
+>> BTW, I was wondering how often we convert a page to a folio to then
+>> access folio->index / folio->mapping and not actually having a folio (in
+>> the future).
+>>
+>> I suspect this will need quite some changes to get it right, and I would
+>> count that as "less obvious".
+>>
+>> Calling PageAnon() on anything mapped into user space page tables might
+>> be one such case, for example.
+>>
+>>>
+>>> There are (I believe) three build failures in that tree:
+>>>
+>>>    - fb_defio
+>>>    - fbtft
+>>>    - s390's gmap (and vsie?  is that the same thing?)
+>>
+>> Not completely (vsie (nested VMs) uses shadow gmap, ordinary VMs use
+>> ordinary gmap) , but they are very related (-> KVM implementation on s390x).
+>>
+>> I know that Claudio is working on some changes, but not sure how that
+>> would affect gmap's usage of page->index.
+> 
+> After I'm done, we won't use page->index anymore.
+> 
+> The changes I'm working on are massive, it's very impractical to push
+> everything at once, so I'm refactoring and splitting smaller and more
+> manageable (and reviewable) series.
+> 
+> This means that it will take some time before I'm done (I'm *hoping*
+> to be done for 6.15)
 
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- drivers/media/platform/qcom/iris/Makefile          |  1 +
- drivers/media/platform/qcom/iris/iris_core.c       |  7 ++
- .../platform/qcom/iris/iris_platform_common.h      |  1 +
- .../platform/qcom/iris/iris_platform_sm8550.c      |  3 +
- drivers/media/platform/qcom/iris/iris_vpu_common.c | 89 ++++++++++++++++++++++
- drivers/media/platform/qcom/iris/iris_vpu_common.h | 13 ++++
- 6 files changed, 114 insertions(+)
+Thanks for the information. So for the time being, we could likely 
+switch to page->private.
 
-diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
-index 6906caa2c481..792f1d6ac8f3 100644
---- a/drivers/media/platform/qcom/iris/Makefile
-+++ b/drivers/media/platform/qcom/iris/Makefile
-@@ -6,5 +6,6 @@ iris-objs += iris_core.o \
-              iris_platform_sm8550.o \
-              iris_probe.o \
-              iris_vidc.o \
-+             iris_vpu_common.o \
- 
- obj-$(CONFIG_VIDEO_QCOM_IRIS) += iris.o
-diff --git a/drivers/media/platform/qcom/iris/iris_core.c b/drivers/media/platform/qcom/iris/iris_core.c
-index 8c7d53c57086..5ad66ac113ae 100644
---- a/drivers/media/platform/qcom/iris/iris_core.c
-+++ b/drivers/media/platform/qcom/iris/iris_core.c
-@@ -6,6 +6,7 @@
- #include "iris_core.h"
- #include "iris_firmware.h"
- #include "iris_state.h"
-+#include "iris_vpu_common.h"
- 
- void iris_core_deinit(struct iris_core *core)
- {
-@@ -39,10 +40,16 @@ int iris_core_init(struct iris_core *core)
- 	if (ret)
- 		goto error_queue_deinit;
- 
-+	ret = iris_vpu_boot_firmware(core);
-+	if (ret)
-+		goto error_unload_fw;
-+
- 	mutex_unlock(&core->lock);
- 
- 	return 0;
- 
-+error_unload_fw:
-+	iris_fw_unload(core);
- error_queue_deinit:
- 	iris_hfi_queues_deinit(core);
- error:
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-index 42c1fe8e4fa6..7e661e8928bd 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-+++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-@@ -44,6 +44,7 @@ struct iris_platform_data {
- 	const char *fwname;
- 	u32 pas_id;
- 	struct tz_cp_config *tz_cp_config_data;
-+	u32 core_arch;
- };
- 
- #endif
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-index 96d9d6e816a0..4f40bfeeecf1 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-@@ -7,6 +7,8 @@
- #include "iris_hfi_gen2.h"
- #include "iris_platform_common.h"
- 
-+#define VIDEO_ARCH_LX 1
-+
- static const struct icc_info sm8550_icc_table[] = {
- 	{ "cpu-cfg",    1000, 1000     },
- 	{ "video-mem",  1000, 15000000 },
-@@ -47,4 +49,5 @@ struct iris_platform_data sm8550_data = {
- 	.fwname = "qcom/vpu/vpu30_p4.mbn",
- 	.pas_id = IRIS_PAS_ID,
- 	.tz_cp_config_data = &tz_cp_config_sm8550,
-+	.core_arch = VIDEO_ARCH_LX,
- };
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-new file mode 100644
-index 000000000000..959ed46e8f47
---- /dev/null
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-@@ -0,0 +1,89 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <linux/iopoll.h>
-+
-+#include "iris_core.h"
-+#include "iris_vpu_common.h"
-+
-+#define CPU_BASE_OFFS				0x000A0000
-+
-+#define CPU_CS_BASE_OFFS			(CPU_BASE_OFFS)
-+
-+#define CTRL_INIT				(CPU_CS_BASE_OFFS + 0x48)
-+#define CTRL_STATUS				(CPU_CS_BASE_OFFS + 0x4C)
-+
-+#define CTRL_ERROR_STATUS__M			0xfe
-+
-+#define QTBL_INFO				(CPU_CS_BASE_OFFS + 0x50)
-+#define QTBL_ENABLE				BIT(0)
-+
-+#define QTBL_ADDR				(CPU_CS_BASE_OFFS + 0x54)
-+#define CPU_CS_SCIACMDARG3			(CPU_CS_BASE_OFFS + 0x58)
-+#define SFR_ADDR				(CPU_CS_BASE_OFFS + 0x5C)
-+#define UC_REGION_ADDR				(CPU_CS_BASE_OFFS + 0x64)
-+#define UC_REGION_SIZE				(CPU_CS_BASE_OFFS + 0x68)
-+
-+#define CPU_CS_H2XSOFTINTEN			(CPU_CS_BASE_OFFS + 0x148)
-+#define HOST2XTENSA_INTR_ENABLE			BIT(0)
-+
-+#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
-+
-+static void iris_vpu_setup_ucregion_memory_map(struct iris_core *core)
-+{
-+	u32 queue_size, value;
-+
-+	/* Iris hardware requires 4K queue alignment */
-+	queue_size = ALIGN(sizeof(struct iris_hfi_queue_table_header) +
-+		(IFACEQ_QUEUE_SIZE * IFACEQ_NUMQ), SZ_4K);
-+
-+	value = (u32)core->iface_q_table_daddr;
-+	writel(value, core->reg_base + UC_REGION_ADDR);
-+
-+	/* Iris hardware requires 1M queue alignment */
-+	value = ALIGN(SFR_SIZE + queue_size, SZ_1M);
-+	writel(value, core->reg_base + UC_REGION_SIZE);
-+
-+	value = (u32)core->iface_q_table_daddr;
-+	writel(value, core->reg_base + QTBL_ADDR);
-+
-+	writel(QTBL_ENABLE, core->reg_base + QTBL_INFO);
-+
-+	if (core->sfr_daddr) {
-+		value = (u32)core->sfr_daddr + core->iris_platform_data->core_arch;
-+		writel(value, core->reg_base + SFR_ADDR);
-+	}
-+}
-+
-+int iris_vpu_boot_firmware(struct iris_core *core)
-+{
-+	u32 ctrl_init = BIT(0), ctrl_status = 0, count = 0, max_tries = 1000;
-+
-+	iris_vpu_setup_ucregion_memory_map(core);
-+
-+	writel(ctrl_init, core->reg_base + CTRL_INIT);
-+	writel(0x1, core->reg_base + CPU_CS_SCIACMDARG3);
-+
-+	while (!ctrl_status && count < max_tries) {
-+		ctrl_status = readl(core->reg_base + CTRL_STATUS);
-+		if ((ctrl_status & CTRL_ERROR_STATUS__M) == 0x4) {
-+			dev_err(core->dev, "invalid setting for uc_region\n");
-+			break;
-+		}
-+
-+		usleep_range(50, 100);
-+		count++;
-+	}
-+
-+	if (count >= max_tries) {
-+		dev_err(core->dev, "error booting up iris firmware\n");
-+		return -ETIME;
-+	}
-+
-+	writel(HOST2XTENSA_INTR_ENABLE, core->reg_base + CPU_CS_H2XSOFTINTEN);
-+	writel(0x0, core->reg_base + CPU_CS_X2RPMH);
-+
-+	return 0;
-+}
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-new file mode 100644
-index 000000000000..bafcf46520fd
---- /dev/null
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef __IRIS_VPU_COMMON_H__
-+#define __IRIS_VPU_COMMON_H__
-+
-+struct iris_core;
-+
-+int iris_vpu_boot_firmware(struct iris_core *core);
-+
-+#endif
+One question may be whether these (not-user-space) page tables should at 
+some point deserve a dedicated memdesc. But likely the question is what 
+it will all look like after your rework.
 
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
