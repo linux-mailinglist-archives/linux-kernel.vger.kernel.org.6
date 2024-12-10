@@ -1,274 +1,111 @@
-Return-Path: <linux-kernel+bounces-439957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BFA9EB6B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:41:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E3A9EB6C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 17:43:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5CA2162F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:43:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CB122FE17;
+	Tue, 10 Dec 2024 16:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P2f+7EHd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A18283938
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:41:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7EF22FE18;
-	Tue, 10 Dec 2024 16:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qaAvYq7l"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09984234960;
-	Tue, 10 Dec 2024 16:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0320D2153DC;
+	Tue, 10 Dec 2024 16:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733848851; cv=none; b=pweoQsT80nT9wadjYq1TqKAi/Jg/MTlvv2FHpb6qJ/uIb3fpuj23yPrnI5kBtIjfr9tD563Y+WbdIQP6Zuhj1whzoQB5XeVDBzTMdnG+XForB6SoHI4cPpHTdoD4ZR6GDX8nfDr/Q5VQZTqhllPM59ejKIGPBJ5iExeQ9jafyY4=
+	t=1733849020; cv=none; b=EpHaxPRhGggfePbNzRgALqTeOG07sS3evPMjbdv4sJnXyK7rpqRDyGSIappaIuznXMeXJGcagKb+FfunUVkvVcuJURnTOSEMASScfHqUWq89jifycDx5zS0OVdP7BlVl0aDC4KsxN5yTTW03E20FqjNMT4npbHTp0jfxE6gAd6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733848851; c=relaxed/simple;
-	bh=bNrc3/QIRuMRADX4i6xidePb7Se8rnZoHFgWuntFk6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFCpfv8qG8c8jO7gPWUGOy46hsi4Cvj5OLubgtaa4VigQlAnJG2D/0JX00wI6U6zUG600ZXsKVOagBRzOoc08pZJlhMpbNTEtnELf2g/AzNlZM50ryBOpyY1WMFPgZsoQwL3JD0ngSDGwJZ4pQV8ZGPOO2pO8OXU7uc6B34DNhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qaAvYq7l; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.16.84.29] (unknown [131.107.8.93])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 564502047222;
-	Tue, 10 Dec 2024 08:40:49 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 564502047222
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733848849;
-	bh=jrmNUEzHaPbfzPastsRVKoN7SSf1AJHpgCYDuVUBkcs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qaAvYq7lyqspuQZ7OkIAAqOTvmA+2X29R4IObrDpeT1/2dvBSeRobjCAh6lzuXTIB
-	 mCRwtak/ZzDJ5+IqnZv+ZWmlbSk5oi8gPenZI/luDYlvBia7HUu+Z7kvfxa3KjhD8E
-	 TnsRBHVn/f7nO8STVaJc0gW220fXwfN8VhaB3pdg=
-Message-ID: <fec1aeb7-ea07-4363-9e6a-50b0c778e855@linux.microsoft.com>
-Date: Tue, 10 Dec 2024 08:40:49 -0800
+	s=arc-20240116; t=1733849020; c=relaxed/simple;
+	bh=ZvD8OXAxS0yJUidLsVdKZA2YjRg0YV+PscUgOu6Lb0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CY7QUoDxFpcdEpMHbg3aNF9U+IL3vjUtUUN5x4oyYcfZf7ZvJxDZUkSb3HFsjXRWQ9dxAp1iy7pZpqshiqZ3U1oX78QafpKG16dBkgLkJPdK7ypoJLd9A/i3RrqaLuLON7RNja4vu0uzgphTxoMw4S0jjOU0Rj0uLpxG4pJSUYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P2f+7EHd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733849017;
+	bh=ZvD8OXAxS0yJUidLsVdKZA2YjRg0YV+PscUgOu6Lb0o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P2f+7EHdLGnKfNttoyErGAHVKOkcbZYdTUqhR94eUUmgoSubDuhoWi8sw+pvIHTMi
+	 79wczl8rZgzbO+eqoS+wMfGx+nepQ3YSlURpIFQvu3M8SmthMFrhCzjY1EgtmLFUQP
+	 A4Eqm309guTngUUWjbtN4jUzvDWPCOIsVWbJF3qOKRKQi8czMfmkwDkOr8DCPDdIQC
+	 yfQJIWhqpsk82JENzFd1MaAFcBOns1jRW+ghnExJ57jlphvqNsrz5fTc+6S9Mgcodt
+	 1I/3tjxZypiRLPuB8wimrjGsi0lEfiZwxOMvlmEhHZN8C3EbXbrWKFB1e+rR3wGqiW
+	 OhXRu9RG3tTng==
+Received: from jupiter.universe (dyndsl-091-248-190-127.ewe-ip-backbone.de [91.248.190.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0407D17E37AF;
+	Tue, 10 Dec 2024 17:43:37 +0100 (CET)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 68DCA48CC8A; Tue, 10 Dec 2024 17:43:36 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Andy Yan <andyshrk@163.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com
+Subject: [PATCH v1 0/2] Rockchip W552793DBA-V10 panel support
+Date: Tue, 10 Dec 2024 17:41:29 +0100
+Message-ID: <20241210164333.121253-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] hyperv: Move hv_current_partition_id to arch-generic
- code
-To: Michael Kelley <mhklinux@outlook.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "arnd@arndb.de" <arnd@arndb.de>,
- "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
- "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
- "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
- "mukeshrathor@microsoft.com" <mukeshrathor@microsoft.com>
-References: <1733523707-15954-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1733523707-15954-2-git-send-email-nunodasneves@linux.microsoft.com>
- <SN6PR02MB4157E39FBEFB18EB9A695EECD4332@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157E39FBEFB18EB9A695EECD4332@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/7/2024 7:01 PM, Michael Kelley wrote:
-> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, December 6, 2024 2:22 PM
->>
->> Make hv_current_partition_id available in both x86_64 and arm64.
->> This feature isn't specific to x86_64 and will be needed by common
->> code.
->>
->> While at it, replace the BUG()s with WARN()s. Failing to get the id
->> need not crash the machine (although it is a very bad sign).
->>
->> Signed-off-by: Nuno Das Neves <nudasnev@microsoft.com>
->> ---
->>  arch/arm64/hyperv/mshyperv.c    |  3 +++
->>  arch/x86/hyperv/hv_init.c       | 25 +------------------------
->>  arch/x86/include/asm/mshyperv.h |  2 --
->>  drivers/hv/hv_common.c          | 23 +++++++++++++++++++++++
->>  include/asm-generic/mshyperv.h  |  2 ++
->>  5 files changed, 29 insertions(+), 26 deletions(-)
->>
->> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
->> index b1a4de4eee29..5050e748d266 100644
->> --- a/arch/arm64/hyperv/mshyperv.c
->> +++ b/arch/arm64/hyperv/mshyperv.c
->> @@ -19,6 +19,9 @@
->>
->>  static bool hyperv_initialized;
->>
->> +u64 hv_current_partition_id = HV_PARTITION_ID_SELF;
->> +EXPORT_SYMBOL_GPL(hv_current_partition_id);
->> +
-> 
-> Instead of adding a definition of hv_current_partition_id on
-> the arm64 side, couldn't the definition on the x86 side in
-> hv_init.c be moved to hv_common.c (or maybe somewhere
-> else that is specific to running in the root partition, per my
-> comments in the cover letter), so there is only one definition
-> shared by both architectures?
-> 
-Yes, that's a better idea.
+Hi,
 
->>  int hv_get_hypervisor_version(union hv_hypervisor_version_info *info)
->>  {
->>  	hv_get_vpreg_128(HV_REGISTER_HYPERVISOR_VERSION,
->> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
->> index 95eada2994e1..950f5ccdb9d9 100644
->> --- a/arch/x86/hyperv/hv_init.c
->> +++ b/arch/x86/hyperv/hv_init.c
->> @@ -35,7 +35,7 @@
->>  #include <clocksource/hyperv_timer.h>
->>  #include <linux/highmem.h>
->>
->> -u64 hv_current_partition_id = ~0ull;
->> +u64 hv_current_partition_id = HV_PARTITION_ID_SELF;
->>  EXPORT_SYMBOL_GPL(hv_current_partition_id);
->>
->>  void *hv_hypercall_pg;
->> @@ -394,24 +394,6 @@ static void __init hv_stimer_setup_percpu_clockev(void)
->>  		old_setup_percpu_clockev();
->>  }
->>
->> -static void __init hv_get_partition_id(void)
->> -{
->> -	struct hv_get_partition_id *output_page;
->> -	u64 status;
->> -	unsigned long flags;
->> -
->> -	local_irq_save(flags);
->> -	output_page = *this_cpu_ptr(hyperv_pcpu_output_arg);
->> -	status = hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, output_page);
->> -	if (!hv_result_success(status)) {
->> -		/* No point in proceeding if this failed */
->> -		pr_err("Failed to get partition ID: %lld\n", status);
->> -		BUG();
->> -	}
->> -	hv_current_partition_id = output_page->partition_id;
->> -	local_irq_restore(flags);
->> -}
->> -
->>  #if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
->>  static u8 __init get_vtl(void)
->>  {
->> @@ -606,11 +588,6 @@ void __init hyperv_init(void)
->>
->>  	register_syscore_ops(&hv_syscore_ops);
->>
->> -	if (cpuid_ebx(HYPERV_CPUID_FEATURES) & HV_ACCESS_PARTITION_ID)
->> -		hv_get_partition_id();
->> -
->> -	BUG_ON(hv_root_partition && hv_current_partition_id == ~0ull);
->> -
->>  #ifdef CONFIG_PCI_MSI
->>  	/*
->>  	 * If we're running as root, we want to create our own PCI MSI domain.
->> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
->> index 5f0bc6a6d025..9eeca2a6d047 100644
->> --- a/arch/x86/include/asm/mshyperv.h
->> +++ b/arch/x86/include/asm/mshyperv.h
->> @@ -44,8 +44,6 @@ extern bool hyperv_paravisor_present;
->>
->>  extern void *hv_hypercall_pg;
->>
->> -extern u64 hv_current_partition_id;
->> -
->>  extern union hv_ghcb * __percpu *hv_ghcb_pg;
->>
->>  bool hv_isolation_type_snp(void);
->> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
->> index 7a35c82976e0..819bcfd2b149 100644
->> --- a/drivers/hv/hv_common.c
->> +++ b/drivers/hv/hv_common.c
->> @@ -278,11 +278,34 @@ static void hv_kmsg_dump_register(void)
->>  	}
->>  }
->>
->> +static void __init hv_get_partition_id(void)
->> +{
->> +	struct hv_get_partition_id *output_page;
->> +	u64 status;
->> +	unsigned long flags;
->> +
->> +	local_irq_save(flags);
->> +	output_page = *this_cpu_ptr(hyperv_pcpu_output_arg);
->> +	status = hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, output_page);
->> +	if (!hv_result_success(status)) {
->> +		local_irq_restore(flags);
->> +		WARN(true, "Failed to get partition ID: %lld\n", status);
->> +		return;
->> +	}
->> +	hv_current_partition_id = output_page->partition_id;
->> +	local_irq_restore(flags);
->> +}
->> +
->>  int __init hv_common_init(void)
->>  {
->>  	int i;
->>  	union hv_hypervisor_version_info version;
->>
->> +	if (ms_hyperv.priv_high & HV_ACCESS_PARTITION_ID)
->> +		hv_get_partition_id();
-> 
-> hv_get_partition_id() uses the hyperv_pcpu_output_arg, and at
-> this point, hyperv_pcpu_output_arg isn't set. That setup
-> is done later in hv_common_init().
-> 
->> +
->> +	WARN_ON(hv_root_partition && hv_current_partition_id == HV_PARTITION_ID_SELF);
->> +
-> 
-> Since the hypercall will fail cleanly if the calling VM doesn't
-> have the HV_ACCESS_PARTITION_ID privilege, could the
-> above be simplified to just this?
-> 
-> 	if (hv_root_partition)
-> 		hv_get_partition_id():
-> 
-> A non-root partition VM doesn't need to get the partition ID, while a
-> root partition should have the privilege. If the hypercall fails, there's
-> already a WARN, so there's no value in doing another WARN. Also if
-> the hypercall succeeds, it presumably returns a specific partitionID, not
-> HV_PARTITION_ID_SELF, so we know we have what we want.
-> 
-> There's already an "if (hv_root_partition)" statement for setting up
-> the hyperv_pcpu_output_arg. The call to hv_get_partition_id() could
-> go under that existing "if" *after* the hyperv_pcpu_output_arg is
-> set. :-)
-> 
-Thank you, that makes sense. I'll make the changes you suggested for v2.
+This has been tested in combination with the series from Heiko Stübner
+enabling DSI support for the RK3588 [0] [1] on the RK3588 EVB1.
 
-Nuno
+[0] https://lore.kernel.org/linux-rockchip/20241209231021.2180582-1-heiko@sntech.de/
+[1] https://lore.kernel.org/linux-rockchip/20241203164934.1500616-1-heiko@sntech.de/
 
-> Michael
-> 
->>  	/* Get information about the Hyper-V host version */
->>  	if (!hv_get_hypervisor_version(&version))
->>  		pr_info("Hyper-V: Host Build %d.%d.%d.%d-%d-%d\n",
->> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
->> index 8fe7aaab2599..8c4ff6e9aae7 100644
->> --- a/include/asm-generic/mshyperv.h
->> +++ b/include/asm-generic/mshyperv.h
->> @@ -60,6 +60,8 @@ struct ms_hyperv_info {
->>  extern struct ms_hyperv_info ms_hyperv;
->>  extern bool hv_nested;
->>
->> +extern u64 hv_current_partition_id;
->> +
->>  extern void * __percpu *hyperv_pcpu_input_arg;
->>  extern void * __percpu *hyperv_pcpu_output_arg;
->>
->> --
->> 2.34.1
+Thanks for having a look.
+
+Greetings,
+
+-- Sebastian
+
+Sebastian Reichel (2):
+  dt-bindings: display: panel: Add Raydium RM67200
+  drm/panel: add Raydium RM67200 panel driver
+
+ .../display/panel/raydium,rm67200.yaml        |  72 +++
+ drivers/gpu/drm/panel/Kconfig                 |   8 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ drivers/gpu/drm/panel/panel-raydium-rm67200.c | 503 ++++++++++++++++++
+ 4 files changed, 584 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/raydium,rm67200.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-raydium-rm67200.c
+
+-- 
+2.45.2
 
 
