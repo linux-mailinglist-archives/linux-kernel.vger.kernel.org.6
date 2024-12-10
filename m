@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-439527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CE39EB089
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:11:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54589EB08C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:12:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E76F1692A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77DC42832A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DF01A239B;
-	Tue, 10 Dec 2024 12:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DE1A38E1;
+	Tue, 10 Dec 2024 12:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nOHM7UND"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MswdCLup"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3F11A2398;
-	Tue, 10 Dec 2024 12:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F93C1A2543;
+	Tue, 10 Dec 2024 12:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733832694; cv=none; b=ly0qk9VqptnUzg/ohUg2CKxhUcUOxoOSpgVf1Iz4lo64WLCQSWM+tLuibuywohOKZGcykS4vI8NE6kQjQgoLuOw0H9Jfi5NoY+YU9WY7eCpCpDLqLNK7BjlQbk4G+SYhbFyxxksDc9uPnr82ud3XLZnSH7m4syuXKtb/hDSWyGw=
+	t=1733832714; cv=none; b=OJN6IxSz8q8s2gctaZ6Q+RwDFpEsys9HlBj54NimVgz821zb+3NQTQcqHiLI85JvIngDbqOncJTntfZ4IxGMpUJRWBxTMK6/QxAfdJD+/abYqs9PCeJ1IiMk8f90xa23W/pjoSbisKIViZ3mrJ9voeRbfY3iJDlWiiBst3cZ9oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733832694; c=relaxed/simple;
-	bh=5QcZLHny0olE30ytkp4MH8IjgwzPeDI6yCw7Kv0u32s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u8sxigPmc+bqXptxRFUV4gvTlBnxNozZeq8V3VDof9XDlQO78I0uopLFdhNlb3GvMkAsJjf8y3BCkLz2zrfcXtiRoH21Y5imyZ9ZvmW4higRjVviBrYINW3xA6MLEd9NdYGgIgz7R7DCNDdAaGT2kcX83+YOndW1iUHOzgOC7uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nOHM7UND; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-728ea1573c0so66946b3a.0;
-        Tue, 10 Dec 2024 04:11:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733832692; x=1734437492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2SbFr1LH1Hb+rihMpff4bIPu/Em9rs2b4NG+Lm1rqxg=;
-        b=nOHM7UND3K4apnh7qaoWYrwsqJy4XkVa6Dc5qRRgpti7yMRqNOdC0dwbf3gFczwQBR
-         pbBvZfWtcefDpsumDtHTAhK0ZQCMOq6XoC4oBEwaDtrzl8P/ymOC7NHBLMohYOMdL4Hl
-         8C4XpFiFOc7qXtP+ZvmwKt9oNG/AcSLhhrAG5BVXz6zzRF1Lyr0u4MFPIzuw4UxBo2Bn
-         qU4Ym4jCuvLtA2lnU4clUYijhrnm4qTSC/EotvVQWi8MpfFf7xSn+hUiflFon/LIzgxx
-         unAdJcU+hhG5OHYHEzd/7ucdtPFKbLYuRjRlnhpJpco8kXzJ3VOTk3u9vQ4f5SVH8EHt
-         f3Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733832692; x=1734437492;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2SbFr1LH1Hb+rihMpff4bIPu/Em9rs2b4NG+Lm1rqxg=;
-        b=XVraU5rvTs1fKeW4C1vxKdP2CKTJ8ouxAm9208Nndm1V4d+DF/KCK0X8lB1AfpqQq0
-         w6m8rX3O57s4tL0Zlm8stW5VUoaPOmALwu9A10J5mKfdTQ3Cvad5oQ53nyMDRWh+768X
-         XM6TCZuAr68GHFIUrNJONpOMk/01NrWjWliKVfrM/fxwj63eKT2Z7QX2N0B9Y72uGW0S
-         YBIR4Dw98ssKfomlb+zv8i3I2rhdGEdDNJsm7rkyY7tqkZd+CW1IjpD7abrzoM9FFbZe
-         RX5T3pl7vs1896rFbthtP8ONd+ul3RdICqedsgq5Gf8yXCk47nlPqNbZXagzNfOwoVvd
-         zlCg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3UC0rilfqvJGQHqzr1xAeQHVLJpaKdjgXrX9ahVi7E1uC3Md9Qd6xB0Rbiwtl9ZWvoMCZwwUv7Y0izCE=@vger.kernel.org, AJvYcCUocE1yGVmyFbm3SsPI70Ng3W7t2HorbsgUTy8BKAOc4uCxc/Fd0RqEAf9gYZ/LiiU5uvwc3ZPL4XOSD4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdD3jI7Q8j17hrVTURsu0Lr9+Af2aPKM9H13qQnG6RDo1FtfUR
-	oRjHZsHlfTfF28EiXHNK4AVjQIHACTHpujFbBXcn640v72FBmpZc
-X-Gm-Gg: ASbGncvMbl21sez4TBGsHzknmg5h1tGRrFiO2IQ/i14f+12ezprBRe5EpsFZSf/8gvG
-	Y753lhtUIjdf2WYxgcuwsrIpYeXkQZ0xF8r6vq54aIM02e7W2/KANaFdIx6JCzTm6Oms+naf45D
-	F8HXompVaCJkGeYBGjtetfiVrjv+F9WVo7MhJl710w8E7UlNN9o3zbeq3lYzHP6Y1zgpPfaaaXZ
-	dsTEf0EcgKd23Sr3gM//z9tnZLcPfEhnzu3HxohrkCnO5iHrgfLS5SRPrwBTtHYriQ=
-X-Google-Smtp-Source: AGHT+IH+CqGieM7HRhOP1D3Ye7Ty1n33UunTr12BrSks4jwDDtU29vqdMfAogEVH/6S/6l/Zcv19Zg==
-X-Received: by 2002:a05:6a00:3027:b0:725:df1a:285 with SMTP id d2e1a72fcca58-725df1a17a1mr15934686b3a.12.1733832692014;
-        Tue, 10 Dec 2024 04:11:32 -0800 (PST)
-Received: from localhost.localdomain ([221.221.237.217])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725f1fba027sm3065316b3a.3.2024.12.10.04.11.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 04:11:31 -0800 (PST)
-From: Yang Zhao <etoyz688@gmail.com>
-To: 
-Cc: Yang Zhao <etoyz688@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Jiawei Wang <me@jwang.link>,
-	"end.to.start" <end.to.start@mail.ru>,
-	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: amd: yc: Fix bug where quirks code was skipped due to early return.
-Date: Tue, 10 Dec 2024 20:11:02 +0800
-Message-ID: <20241210121106.497223-1-etoyz688@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733832714; c=relaxed/simple;
+	bh=g1NX+UaHYsK6+AS0s/2UNjJ7a94oKsYs9nC815dM1OM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r2k6ag9WOb9ha9xEyhzoQ+iQe9obW0MN+XSak8Eg44ZghYLRWPTVpW2XrvZQX19GZIrgyC6aogI7dYTj97XH0mznQxwNjIAkcbRNm6Ok3wEM72xIhm+98WOySI3VqGs/hRkxy9dnYEQwWlcjaCgHeQrdBABN8l2OdVRL9NAztjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MswdCLup; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4429E40E0288;
+	Tue, 10 Dec 2024 12:11:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id llGAsyoEd3LA; Tue, 10 Dec 2024 12:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733832706; bh=i/3yRVyHYMrtGKIn725golo/qtHHQO1tJKcxTjhXisk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MswdCLupvdWATuCg9v7NVayAuqvfr7wZW9FvvVhw3Ydskr3ziwXEXsLJKWbghGLku
+	 txQcelmcJ498z7sWwlkvlI0hJDA2ihS6x4ElodThpZEYw8Cwpb50PmqGm3JjzQTYF5
+	 YA7GTWJUUl0127LoGB1Sh46+OWIjx3btfGxOD1a0muE7y0V6+UCGDfjXTpZx/j04KT
+	 WV5JGTE13ccbqVHCWuBmwBAnxPcJIrgZXdDJxBVlZDvuWTf/T2YdHiIHx7rurur/+s
+	 W+FDcI4J8L/BeQLufY/pDbdUjyxululDXYSw04yNFz/BM++g2zVu9AHMxB/NFLJRmW
+	 6qbbR1NESTNiz0ykA/oYYnpYJuQ03MaFK8L9t2MWVkkdlcQZ0v2rq7MHx49i5MNX2g
+	 CHrGRqFbWHxFdqywOCe0VLKkUpdvhj/eOF1wDtVqNM+5oRuo0jCMkhYPm//OVFpuJx
+	 WvVOZLj8js6/s2C1gPrlhMZezhhtI3gENkk9cxsZk00uVvtUbOnWSO78Sj5hyuWyJX
+	 nqPJlbbPVE6FxCJ+L0walVXg6O0G982/BlIEKVCDa5Gkgy0AI3Qc3TEj8BR/hJBRnN
+	 C1Yg0AFNPjfmJ9iFthGSdl8h5lAExKIrPATY9XJ/YVkQPOgHVIdbINfysYM5JdGUxf
+	 q2ya2/v8fOFp/rLqFVO5vgUw=
+Received: from zn.tnic (p200300ea971f930C329c23FfFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:930c:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 23F2E40E028B;
+	Tue, 10 Dec 2024 12:11:35 +0000 (UTC)
+Date: Tue, 10 Dec 2024 13:11:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v15 06/13] x86/sev: Prevent GUEST_TSC_FREQ MSR
+ interception for Secure TSC enabled guests
+Message-ID: <20241210121127.GBZ1gv74Q6IRtAS1pl@fat_crate.local>
+References: <20241203090045.942078-1-nikunj@amd.com>
+ <20241203090045.942078-7-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241203090045.942078-7-nikunj@amd.com>
 
-Replaced the early return with DMI quirks code.
-This ensures that DMI quirks are executed.
+On Tue, Dec 03, 2024 at 02:30:38PM +0530, Nikunj A Dadhania wrote:
+> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> index af28fb962309..59c5e716fdd1 100644
+> --- a/arch/x86/coco/sev/core.c
+> +++ b/arch/x86/coco/sev/core.c
+> @@ -1473,6 +1473,14 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
+>  	if (regs->cx == MSR_IA32_TSC && (sev_status & MSR_AMD64_SNP_SECURE_TSC))
+>  		return __vc_handle_msr_tsc(regs, write);
+>  
+> +	/*
+> +	 * GUEST_TSC_FREQ should not be intercepted when Secure TSC is
+> +	 * enabled. Terminate the SNP guest when the interception is enabled.
+> +	 */
+> +	if (regs->cx == MSR_AMD64_GUEST_TSC_FREQ && (sev_status & MSR_AMD64_SNP_SECURE_TSC))
+> +		return ES_VMM_ERROR;
+> +
+> +
 
-Fixes: 4095cf872084 ("ASoC: amd: yc: Fix for enabling DMIC on acp6x via _DSD entry")
-Signed-off-by: Yang Zhao <etoyz688@gmail.com>
----
- sound/soc/amd/yc/acp6x-mach.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+If you merge this logic into the switch-case, the patch becomes even easier
+and the code cleaner:
 
-diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
-index e38c5885dadf..9dfbcd00b897 100644
---- a/sound/soc/amd/yc/acp6x-mach.c
-+++ b/sound/soc/amd/yc/acp6x-mach.c
-@@ -23,7 +23,7 @@ SND_SOC_DAILINK_DEF(acp6x_pdm,
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 050170eb28e6..35d9a3bb4b06 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -1446,6 +1446,13 @@ static enum es_result __vc_handle_msr_tsc(struct pt_regs *regs, bool write)
+ 	if (!(sev_status & MSR_AMD64_SNP_SECURE_TSC))
+ 		goto read_tsc;
  
- SND_SOC_DAILINK_DEF(dmic_codec,
- 		    DAILINK_COMP_ARRAY(COMP_CODEC("dmic-codec.0",
--						  "dmic-hifi")));
-+							      "dmic-hifi")));
- 
- SND_SOC_DAILINK_DEF(pdm_platform,
- 		    DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_yc_pdm_dma.0")));
-@@ -583,13 +583,12 @@ static int acp6x_probe(struct platform_device *pdev)
- 
- 	if (is_dmic_enable && wov_en)
- 		platform_set_drvdata(pdev, &acp6x_card);
--	else
--		return 0;
--
--	/* check for any DMI overrides */
--	dmi_id = dmi_first_match(yc_acp_quirk_table);
--	if (dmi_id)
--		platform_set_drvdata(pdev, dmi_id->driver_data);
-+	else {
-+		/* check for any DMI overrides */
-+		dmi_id = dmi_first_match(yc_acp_quirk_table);
-+		if (dmi_id)
-+			platform_set_drvdata(pdev, dmi_id->driver_data);
-+	}
- 
- 	card = platform_get_drvdata(pdev);
- 	if (!card)
-@@ -601,8 +600,8 @@ static int acp6x_probe(struct platform_device *pdev)
- 	ret = devm_snd_soc_register_card(&pdev->dev, card);
- 	if (ret) {
- 		return dev_err_probe(&pdev->dev, ret,
--				"snd_soc_register_card(%s) failed\n",
--				card->name);
-+				     "snd_soc_register_card(%s) failed\n",
-+				     card->name);
- 	}
- 	return 0;
- }
++	/*
++	 * GUEST_TSC_FREQ should not be intercepted when Secure TSC is
++	 * enabled. Terminate the SNP guest when the interception is enabled.
++	 */
++	if (regs->cx == MSR_AMD64_GUEST_TSC_FREQ)
++		return ES_VMM_ERROR;
++
+ 	if (write) {
+ 		WARN_ONCE(1, "TSC MSR writes are verboten!\n");
+ 		return ES_UNSUPPORTED;
+@@ -1472,6 +1479,7 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
+ 	case MSR_SVSM_CAA:
+ 		return __vc_handle_msr_caa(regs, write);
+ 	case MSR_IA32_TSC:
++	case MSR_AMD64_GUEST_TSC_FREQ:
+ 		return __vc_handle_msr_tsc(regs, write);
+ 	default:
+ 		break;
+
 -- 
-2.47.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
