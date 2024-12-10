@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-439503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B479EB028
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:48:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 535AC9EB034
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D25A1882458
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81EC81886ABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633FB19F11F;
-	Tue, 10 Dec 2024 11:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D032A19F131;
+	Tue, 10 Dec 2024 11:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUlgVH/Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcFQ21cF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFA519924F;
-	Tue, 10 Dec 2024 11:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258D19CC3E;
+	Tue, 10 Dec 2024 11:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733831278; cv=none; b=Az4Q4gF1n4UqpE74M+7qzUNYHwlv464xHPon8weOEMYGL7dq5xThs1oBRdWHB0oGlNTuO3ueBV9HVhnJq44MNOG5Lxr5gwyOSmnwxYk9UQ7nzVSKbOQ1IuB2mUZXYwtI+i6ac/XZPjoi4a6Uh34+D9BQuD0D/I4pObcNruI2gM0=
+	t=1733831458; cv=none; b=iMWn02Ik5/Z8dr4gdJneWf1+60TrEk0mQlrp5eebySl1CTDYfHOilzdfVaSUnGwrzPgY9W8P7DQDWNea5+ZOH5mDu0Xa21gO8l2NFQa5JmpEHl2g4c43lbh0pn0M6WH8Ai0YvFPljYNPIed9uohB5Lyd3C163aXwfi3EcCcaKq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733831278; c=relaxed/simple;
-	bh=rzjp/TyXIjzKiZW1IwrY6tCvrOTe5liapYdopftQ+4A=;
+	s=arc-20240116; t=1733831458; c=relaxed/simple;
+	bh=UftqhzXvgN2MMWDpkardkQ1oOP2GYVoU2rwluZ1ObVA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JM0Uu6ufE3P1jkHPLRLacIqsbJBxYep1MtdRJFpBJMO3su/S77fxDabQnt5IyE9G5It+JqZhcrmPRcJb4/OHaXdIuTJ0gh3cE94E9Bqsv/doPSSExiUY3bX4ebsbO4iqzKjdMDCKXAmWQk31TLOAcySgN/a30nfnYt8OlBcgDEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUlgVH/Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B388EC4CED6;
-	Tue, 10 Dec 2024 11:47:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=jf9ngdFMIz8vPF+Q30HNejAPxBJ/xcPCMPcWOEhsTSf1k0WVKA+j5NmwixIlUdOk9OiOg28yrcQOmBU9X/omGl/1gKQsjkalIvsiGmNVpK2P5MlCLaZKFKOXrbXSJL+wGj0oY2vmuwaIie0h9AD/BFKBVX8M6H3ZPV9rT+SKS2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcFQ21cF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58824C4CED6;
+	Tue, 10 Dec 2024 11:50:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733831278;
-	bh=rzjp/TyXIjzKiZW1IwrY6tCvrOTe5liapYdopftQ+4A=;
+	s=k20201202; t=1733831457;
+	bh=UftqhzXvgN2MMWDpkardkQ1oOP2GYVoU2rwluZ1ObVA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WUlgVH/Y66Lxis+Z70rcXNgHpmrvqRrAoDbGTY5Vrny52YhDpeV6eHOuNLhHKUmHO
-	 f1Eb5l32s+d+B+R1R8ki0fvWgjm7z/E0fWLuzwHW8E+JAV4V/mfFf1+EFIPSOOT0dJ
-	 fmMxdwExiXAra/0adHF14oFwZzaJnqZg3cdhs9x9C5y2bXtIgThzttRltOJ43TSojy
-	 uqH5eyMDolaaNfrRsvmiDjQ68ZqDt7/9LUcrsA6xLTDq9aSstPXd/Cy98P/vLruB/6
-	 ZBtndUS5PTVAu4XHfyvioxDKk6GHGdGfER8i+57yF1D2bzqJJNGCxb3vtFW6ia1/mH
-	 q/dEQdY2H7Jnw==
-Message-ID: <1cbaa7a3-e26a-4f8e-a7e0-8f148d516b75@kernel.org>
-Date: Tue, 10 Dec 2024 12:47:50 +0100
+	b=ZcFQ21cFhuPSI51r9BX6E7Oz8n9QgxBhjVjwdr3zSp0AK01GXuUVx+oMHUg9tzgtK
+	 YJQ6SApdP7PgPhwqTGEDMDxixT0AvZ0ZGMAIKEfwyKNzMgINTtcWmyq5DttSFKAFQ2
+	 LzAYsmTPgY2EmV3U6RDjbYQzxlnOJMgZB84tmJxH66f9BaHpP9alEA+yPRsce4qqOr
+	 4czyJMeCjidvWmWCScLfTvX6/qr4QwriHNchrmGA/QPS+rVeGt7bYjGggA7Q4JAm6F
+	 SvVESMYuQ8xl41vZjAoh7zryEexG+cfG7xMvzuzzWeBriLDtzTj78iyclPMXryVMXz
+	 aaeRKVtQF3nGw==
+Message-ID: <d3f1d92b-cc08-4a7d-a48f-89081a615c48@kernel.org>
+Date: Tue, 10 Dec 2024 12:50:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: usb: snps,dwc3: Add
- snps,filter-se0-fsls-eop quirk
-To: Krishna Kurapati <quic_kriskura@quicinc.com>,
- Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- quic_ppratap@quicinc.com, quic_jackp@quicinc.com
-References: <20241017114055.13971-1-quic_uaggarwa@quicinc.com>
- <20241017114055.13971-2-quic_uaggarwa@quicinc.com>
- <gclvciv5cmrcut6qvo3kh3ycutqt5sot5k4i2nwics6myhuxvq@cf6ajwflxdlc>
- <1129e0a7-6bd0-416e-8c56-6b8d75600c4e@quicinc.com>
- <f9f66565-6356-4b61-8653-1e9c006b892c@kernel.org>
- <99810132-85b6-45ee-9933-7a00c3672c47@quicinc.com>
- <aa67ea21-b451-4a1d-b4bf-4912b88c0341@quicinc.com>
+Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
+ Ride-r3
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
+ <20241119174954.1219002-6-quic_wasimn@quicinc.com>
+ <9e351979-be01-4d38-9b94-cc23efac4c3f@kernel.org>
+ <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
+ <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
+ <c639ca40-9e4f-4882-8441-57413e835422@kernel.org>
+ <Z1c9wMxQ5xSqvPmf@hu-wasimn-hyd.qualcomm.com>
+ <8cf9edc0-a0cb-4fd0-b10e-2138784dfba3@kernel.org>
+ <iu6ssjczkdfkhfy2n6vxf3f3c2pepsepslzvnh5z4susxgxgqa@engwsvhu533x>
+ <5782d7c6-1a75-4f15-8942-387742e0ae09@kernel.org>
+ <Z1gIsrWAT3QftC4c@hu-wasimn-hyd.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,88 +115,49 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <aa67ea21-b451-4a1d-b4bf-4912b88c0341@quicinc.com>
+In-Reply-To: <Z1gIsrWAT3QftC4c@hu-wasimn-hyd.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 10/12/2024 11:12, Krishna Kurapati wrote:
-> 
-> 
-> On 11/20/2024 2:53 PM, Krishna Kurapati wrote:
->>
->>
->> On 11/7/2024 3:25 PM, Krzysztof Kozlowski wrote:
->>> On 07/11/2024 07:17, Krishna Kurapati wrote:
->>>>
->>>>
->>>> On 10/18/2024 11:57 AM, Krzysztof Kozlowski wrote:
->>>>> On Thu, Oct 17, 2024 at 05:10:54PM +0530, Uttkarsh Aggarwal wrote:
->>>>>> Adding a new 'snps,filter-se0-fsls-eop quirk' DT quirk to dwc3 core 
->>>>>> to set
->>>>>> GUCTL1 BIT 29. When set, controller will ignore single SE0 glitch 
->>>>>> on the
->>>>>> linestate during transmission. Only two or more SE0 is considered as
->>>>>> valid EOP on FS/LS port. This bit is applicable only in FS in 
->>>>>> device mode
->>>>>> and FS/LS mode of operation in host mode.
+On 10/12/2024 10:24, Wasim Nazir wrote:
+> On Tue, Dec 10, 2024 at 08:25:34AM +0100, Krzysztof Kozlowski wrote:
+>> On 10/12/2024 00:25, Dmitry Baryshkov wrote:
+>>>>>>>> 9100 & 9075 are different from “safe” perspective. They differ in
+>>>>>>>> changes related to thermal which will be added later in devicetree.
+>>>>>>>
+>>>>>>> Since this can't be inferred from just looking at the changes, please
+>>>>>>> make sure to add that to the commit message
+>>>>>>
+>>>>>> Any include of other DTS is clear sign something is odd here. Including
+>>>>>> multiple times without any added nodes is showing these are not real
+>>>>>> products/boards .
 >>>>>
->>>>> Why this is not device/compatible specific? Just like all other quirks
->>>>> pushed last one year.
+>>>>> We're adding DTS to reuse the common board changes, with plans to
+>>>>> include the differences in upcoming patches. To provide more clarity, I
+>>>>> will include patches in this series to highlight the differences between
+>>>>> the 9100 and 9075 boards.
 >>>>
->>>> Hi Krzysztof,
->>>>
->>>>    Apologies for a late reply from our end.
->>>>
->>>>    In DWC3 core/dwc3-qcom atleast, there have been no compatible 
->>>> specific
->>>> quirks added.
+>>>> Sure, still do not include DTS. Just like C files don't include C files.
 >>>
+>>> So, is the solution simple, rename .dts to .dtsi and include it from
+>>> both .dts files?
 >>
->> Sorry again for late reply.
->>
->>> Nothing stops from adding these, I think.
->>>>
->> Agree, we can take that approach of adding soc specific compatibles to 
->> dwc3 driver instead of adding through bindings.
->>
->>>> Also since this is a property of the Synopsys controller
->>>> hardware and not QC specific one, can we add it in bindings itself.
->>>> Because this is a property other vendors might also use and adding it
->>>> via compatible might not be appropriate.
->>>
->>> This does no answer my question. I don't see how this is not related to
->>> one specific piece of SoC.
->>>
->>> If you claim this is board-related, not SoC, give some arguments.
->>> Repeating the same is just no helping.
->>>
->>
->> But my point was that although the issue was found only on some QC 
->> SoC's, the solution still lies in some bits being set in controller 
->> register space and it is part of Synopsys IP. So wouldn't officially we 
->> add that support in bindings and then enable/disable the feature via DT 
->> like we did for other quirks ? If many SoC's need it in future, the 
->> driver needs to add a long list of compatible specific data which 
->> otherwise might be quirks in DT.
+>> For example. This leads to more questions - what is common here? We do
+>> not create shared DTSI files just because someone wants, but to really
+>> note shared components or shared designs.
 >>
 > 
-> Hi Krzysztof,
+> We can reuse the common dtsi for ride boards, i.e., sa8775p-ride.dtsi,
+> and then add board-specific changes in the corresponding files.
+
+
+So you will create shared DTSI because "someone wants"? Did you read the
+question above and valid reasons/answers to it?
+
+
 > 
->   Gentle ping to provide your feedback on the last comment.
-You got clear comments yet you still do not accept them. Nothing
-changed, this is implied by compatible. The only reason this is not
-compatible implied is that this is board specific. I asked for arguments
-for this. Did you provide them? No. Instead we keep discussing same over
-and over again.
-
-You bring downstream arguments - one compatible and hundreds of
-properties - and it is tiring to discuss over and over. There were
-already multiple guidelines written and multiple comments for multiple
-patches on the exact same topic.
-
-I don't find nice being pushed over this and pinged for every little
-disagreement with standard Devicetree rules and guidelines.
-
+> If this approach is acceptable, I can proceed with sending the
+> next patch series. I hope this will help clarify things further.
 
 Best regards,
 Krzysztof
