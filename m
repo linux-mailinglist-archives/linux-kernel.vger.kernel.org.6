@@ -1,114 +1,155 @@
-Return-Path: <linux-kernel+bounces-439297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B379EAD5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:00:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A39451887599
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:58:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8908D23DEB0;
-	Tue, 10 Dec 2024 09:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KYRNUWD1"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DF49EAD42
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:58:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A5923DEA9;
-	Tue, 10 Dec 2024 09:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733824546; cv=none; b=V5j1gshw5HsPCLGDEhEREW0GJIug0dNr71vdZ9ktjryvVs5F02CPmFxEwzDIBCN804n/8+TBUwhOaT/2aiQKo3arGMnJlQ+J6fRyIJpJ2VlE92J4MYFekb7Kv37kH+GzflKjLT9/IW/v99C/DUhlwvn4qrxW2y58Io4ex/Vc/uQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733824546; c=relaxed/simple;
-	bh=nJvw8OjgEfN86aZGgvHDSYHwGzHylDy7C1ifR7QfabE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GA+9sMAWtFq70PILmv6+qW/ZJ6ogphX39KpSTSAukyZ6nM1XI4Oy1rB3iMn9ePJ7ImvzPJ7Ouo44o6boC5REwHfcUcndc2grHTMtCxOv6ko62HMUQIeIIZko0IRM1n5cd9AVe5pu0QbDzHDjyXVklZGQ2mXiu9/xkCsUSpiKdcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KYRNUWD1; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C97DC40E0288;
-	Tue, 10 Dec 2024 09:55:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JYr7ihBQ9jxY; Tue, 10 Dec 2024 09:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733824528; bh=wjgFwGsPBT2Mronz4LGT7zyGe+vQt8dAgKVmYFnOZoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KYRNUWD1trLp7EMo7r1jxdZIujeof4zX5hFzGIjutWgJVzAsBVYEPrPM/bU1vK/1Y
-	 ep41Jy1zCPRW4ppWLkYuY36XFrXIk0VsN8SksyZZaV9q286fjJbHfVchMepL7uAWvn
-	 2AEoDUEEqFbgJjTUWI73rCXIaGWKbXHffeivj1PyUIoMvhk4Ya0xQVm1lXHZGywTRi
-	 uybARW2gn/1P8va68mo61RnVgMAvbg+fCZ5eC3njfPUGm95I5z2h2W9/AikvQHJPg7
-	 dkU0O5UVUeAaYnnHgloeVUDv2dWa3VQx2JwgiSAwJGGDIz604r5jAOLTyPONvOH8dP
-	 IZQeBsEb51CLMFLYhCIVCVTk/ugvCAvYicFH4HzU3iEyUk5FMFrspNmZi/K0N6cbZU
-	 dhwhXLlKTfPe9nky/Q1IOJX/Pu9vWMEl13mwcuUSeL/RYjJo0WCDbl+x5wwVlAGc/6
-	 t/ilvAv5VqJaW+OtqKi6Jtk1DjW+ha9ziP66fme4mr16qhYUGwyD4lwh1Y5aRkSkZi
-	 OAcopP1DNku+gJJnbGOS8UQE8mlKWDu9HaEL/gnweHbU2qboHQ76QSovHqmPizgbva
-	 5a0Af5/eA/tHR8sNBHC70nXDuAgx1C8/dfx/AjzkZ4AlNg+nW/nXMr7k6t/v0/54Z/
-	 tcWI8zLOC37uecR5fdAddPA0=
-Received: from zn.tnic (p200300ea971f9307329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A51228D950
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:58:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B30215782;
+	Tue, 10 Dec 2024 09:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MC+g9xfI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 45B5B40E0277;
-	Tue, 10 Dec 2024 09:55:24 +0000 (UTC)
-Date: Tue, 10 Dec 2024 10:55:17 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yazen.ghannam@amd.com
-Subject: Re: [PATCH] EDAC/amd64: Fix possible module load failure on some UMC
- usage combinations
-Message-ID: <20241210095517.GAZ1gQBcS2BKA30-GO@fat_crate.local>
-References: <20241209215636.2744733-1-avadhut.naik@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D464A23DEB3;
+	Tue, 10 Dec 2024 09:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733824555; cv=none; b=ApijAFsDQgT/YEM8FUY8fUnusw0TAjw1z8qkC9i7KLK7NxUMrRCCGYVETqs7G+Ij5BBXBDUuc7dpLbff/ax4DnIEgsrS9Xtuu4bD7J3Uc59SzQTUndlYlZxn+2UIey+WwPeGS3w5tE6XgZNrrC2iya6z41oP5w10LPMJB7lM//s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733824555; c=relaxed/simple;
+	bh=+l6+PgCSsvhi/o5m5hkIbcumue3jqzFt3YigC1EsKH8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fcd986zN02W+8hmx5DgF8Lv29F+mR2toNrqgju4VLkPBmAQjLw70fnfsaw9ih0/+geiLGlw7mRS7zvMlPVBY+9TOAqq/YazWGGigJmNCu2/Jkcqd03dcQy+23hF/NOvM5hFOaE8aSMmhWXykRSQwl0CqVSn/PWs5UPObUxSRcYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MC+g9xfI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 41F23C4CED6;
+	Tue, 10 Dec 2024 09:55:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733824555;
+	bh=+l6+PgCSsvhi/o5m5hkIbcumue3jqzFt3YigC1EsKH8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=MC+g9xfIa/vfC5Johpv/CHpfwOPUN8V4JCPTV8aMPQz3EMsEJN+O5gXi5blrsf7dZ
+	 0B9e3DuM67uhWGfS053qp6sFTPOVeEWuNp7LPbj2/zl1RSZ2kLusqjdlrDnsfJmzSO
+	 JJQX+lM3WgkQdSoCl2l4ie7BpiGsbzmQHCU0TRRKX08UkPU5Wo9r7EmsW35dqtx8xY
+	 F+wEwjtOmE/SbL0RYpClLxJNycb36AWpdYl2CmTKaWvcdYg/QjVyT1iFWsr3BYVKcu
+	 NZUCRoOMtAolAJFmpk3hizZk/+pjF8fZnGVjMchvbUtXWNZTQ3Q+3ydVKWjR8HEDtO
+	 B1WGEQLwgAjSQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DEDE77181;
+	Tue, 10 Dec 2024 09:55:55 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH 0/4] PCI/pwrctrl: Rework pwrctrl driver integration and add
+ driver for PCI slot
+Date: Tue, 10 Dec 2024 15:25:23 +0530
+Message-Id: <20241210-pci-pwrctrl-slot-v1-0-eae45e488040@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241209215636.2744733-1-avadhut.naik@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAsQWGcC/x3MwQpAQBCA4VfRnE3tDlFeRQ4as0yJbVYoeXeb4
+ 3f4/weSmEqCrnjA5NSk+5bhywJ4GbdZUKdsIEe1J+8wsmK8jA9bMa37gY7YCTeVbylAzqJJ0Pt
+ f9sP7fgk5qKRiAAAA
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Lukas Wunner <lukas@wunner.de>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2923;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=+l6+PgCSsvhi/o5m5hkIbcumue3jqzFt3YigC1EsKH8=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnWBAjLpiuUdDrkByW3wrJIXuZYkU8mJgsiJzhU
+ moZyrwXFKmJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ1gQIwAKCRBVnxHm/pHO
+ 9eJVCACgiwSSquLOVEVQYPD4+QUxVEWIGX3jVgoeLnDkOqrNl+SEPzdULv2NRW205l0ezlh5x4R
+ pa7c+K9LqxvlqnOGsuW/930KDR6j5UZN36pS+cVirgomWjlKWX7s+ngGk9/EFKw9Y6FAXDmqsZ7
+ roQAqJvCSIBdwLbIp8d8NSH/xI+PsgTKzzsUT5dFQQK5ci4OcZGE8AZURjBaEcr7YvCSo+T81KC
+ CD8zB7PZWrb2092TfjUSKlGTCKjYN0uBVOdGXNqm5B6Q0YJ06ltNKYpRlb1Tr3rnswCjwIbfILF
+ QBypsKmxk5/6mEHiHqCCc2rrIFotOkO4+7c+S+QdbIrnVGmq
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-On Mon, Dec 09, 2024 at 09:55:10PM +0000, Avadhut Naik wrote:
-> Starting Zen4, AMD SOCs have 12 Unified Memory Controllers (UMCs) per
-> socket.
-> 
-> When the amd64_edac module is being loaded, these UMCs are traversed to
-> determine if they have SdpInit (SdpCtrl[31]) and EccEnabled (UmcCapHi[30])
-> bits set and create masks in umc_en_mask and ecc_en_mask respectively.
-> 
-> However, the current data type of these variables is u8. As a result, if
-> only the last 4 UMCs (UMC8 - UMC11) of the system have been utilized,
-> umc_ecc_enabled() will return false. Consequently, the module may fail to
-> load on these systems.
-> 
-> Change the data type of these variables to u16.
+Hi,
 
-No need to explain what the patch does. The "why" is enough.
- 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> ---
->  drivers/edac/amd64_edac.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This series reworks the PCI pwrctrl integration (again) by moving the creation
+and removal of pwrctrl devices to pci_scan_device() and pci_destroy_dev() APIs.
+This is based on the suggestion provided by Lukas Wunner [1][2]. With this
+change, it is now possible to create pwrctrl devices for PCI bridges as well.
+This is required to control the power state of the PCI slots in a system. Since
+the PCI slots are not explicitly defined in devicetree, the agreement is to
+define the supplies for PCI slots in PCI bridge nodes itself [3].
 
-This looks like it needs a CC:stable and a Fixes: tag, right?
+Based on this, a pwrctrl driver to control the supplies of PCI slots are also
+added in patch 4. With this driver, it is now possible to control the voltage
+regulators powering the PCI slots defined in PCI bridge nodes as below:
 
-While at it, you can simply make those vars int and be done with it.
+```
+pcie@0 {
+	compatible "pciclass,0604"
+	...
 
-Thx.
+	vpcie12v-supply = <&vpcie12v_reg>;
+	vpcie3v3-supply = <&vpcie3v3_reg>;
+	vpcie3v3aux-supply = <&vpcie3v3aux_reg>;
+};
+```
 
+To make use of this driver, the PCI bridge DT node should also have the
+compatible "pciclass,0604". But adding this compatible triggers the following
+checkpatch warning:
+
+WARNING: DT compatible string vendor "pciclass" appears un-documented --
+check ./Documentation/devicetree/bindings/vendor-prefixes.yaml
+
+For fixing it, I added patch 3. But due to some reason, checkpatch is not
+picking the 'pciclass' vendor prefix alone, and requires adding the full
+compatible 'pciclass,0604' in the vendor-prefixes list. Since my perl skills are
+not great, I'm leaving it in the hands of Rob to fix the checkpatch script.
+
+[1] https://lore.kernel.org/linux-pci/Z0yLDBMAsh0yKWf2@wunner.de
+[2] https://lore.kernel.org/linux-pci/Z0xAdQ2ozspEnV5g@wunner.de
+[3] https://github.com/devicetree-org/dt-schema/issues/145
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (4):
+      PCI/pwrctrl: Move creation of pwrctrl devices to pci_scan_device()
+      PCI/pwrctrl: Move pci_pwrctrl_unregister() to pci_destroy_dev()
+      dt-bindings: vendor-prefixes: Document the 'pciclass' prefix
+      PCI/pwrctrl: Add pwrctrl driver for PCI Slots
+
+ .../devicetree/bindings/vendor-prefixes.yaml       |  2 +-
+ drivers/pci/bus.c                                  | 43 ----------
+ drivers/pci/probe.c                                | 34 ++++++++
+ drivers/pci/pwrctrl/Kconfig                        | 11 +++
+ drivers/pci/pwrctrl/Makefile                       |  3 +
+ drivers/pci/pwrctrl/core.c                         |  2 +-
+ drivers/pci/pwrctrl/slot.c                         | 93 ++++++++++++++++++++++
+ drivers/pci/remove.c                               |  2 +-
+ 8 files changed, 144 insertions(+), 46 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241210-pci-pwrctrl-slot-02c0ec63172f
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
