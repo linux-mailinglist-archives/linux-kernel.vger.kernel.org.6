@@ -1,96 +1,139 @@
-Return-Path: <linux-kernel+bounces-440118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49EFF9EB914
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:10:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CCD9EB917
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:12:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5FDA28126D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:10:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875051889A5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2212046A9;
-	Tue, 10 Dec 2024 18:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F772046A4;
+	Tue, 10 Dec 2024 18:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hii1bNp/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rAjs3hp+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1919A204696;
-	Tue, 10 Dec 2024 18:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134FA86320;
+	Tue, 10 Dec 2024 18:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733854224; cv=none; b=f+Xh2sZRnc8bbFgYuACz6V1e5DCRT/Y8SANWoHiT/Sggdt7CzsBsasVuC7A3SBJx+K6Jo3qc9y8dRReFGEVh/AHVWaVjYmiQq9pnaJMeaUoty+ZCKlNCMpv3rtkov9/aIa+4FKkTfWzbfffHP95YKC7q0jnza3cNA0i8RukadR4=
+	t=1733854356; cv=none; b=jbsX0zdTTnufKAQI615/2Q/AJkPI858/0kjyn9CrHs6G3vQuib/JBy1RJlyu+ULIjJxwy5tiu69+WEFoHuhFvMYZNr/gR892YzyF3IUY/f4OoEiQQyiRev/X8fquPy5w7D4AEAZK+NqRgy/RLMoJDuYHyAGCasirc/FMTiNQU14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733854224; c=relaxed/simple;
-	bh=lp1TUjNspJzYk33DGagyaO+1G26pRYTDVB5oy+2mDH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQlYv5oeZhWxLLJc4olqKL0EgjXf4gA/HpyYogo44eqlKX1QXh29IdBrTEzjLUfPqUudFMh6kh+YLfuci4mWNKP6HKutps8cWvIjFVzY8u0/ODTkkTEcS/Ywh+RHdQvtLEan8gx66aXNxfEe32BDzxhWcZ6If2L+2rmsJzTj1gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hii1bNp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FBC2C4CED6;
-	Tue, 10 Dec 2024 18:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733854223;
-	bh=lp1TUjNspJzYk33DGagyaO+1G26pRYTDVB5oy+2mDH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hii1bNp/rQgWLNCGXs3EIRYEzrbQYZybIR9Ek2te83yvTMMOwRCkMqt+m3oSeYGyF
-	 yertm6LsIGhmmxR8TKAPiDRv5cvQPvQw20TmQEhALw1AUaw+9Xt+xLuLI4xmgyI/Pd
-	 dlr0vKErUvcc1FVRG4NaICzNtFhDdy2xHBvSZjOgKvi+k+qH2xvbujn97Tn6bBc3xb
-	 YA477U4k1jwJvcJZPKgbZm+lYMxvQrcmkw+Xx6ZXTzr3b/QpqvaDjYE+zRmkt8YNkS
-	 QlTR2pWHhZUb9/DDMQ6Hh3MFe7APleAIVSlZA1tFECc7xDyOkg/uDZNUORTFSpX8mG
-	 ytv06FbrGB5eQ==
-Date: Tue, 10 Dec 2024 10:10:21 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
-	Ian Rogers <irogers@google.com>, thomas.falcon@intel.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] libperf: evlist: Fix --cpu argument on hybrid
- platform
-Message-ID: <Z1iEDRT-44aynAR3@google.com>
-References: <20241114160450.295844-1-james.clark@linaro.org>
- <20241114160450.295844-2-james.clark@linaro.org>
- <Z1hHc-Q-TKgagORu@x1>
- <eb8301ec-50af-4414-89e7-5d49585bda47@linaro.org>
- <Z1hLEQwYE3ymbrIr@x1>
+	s=arc-20240116; t=1733854356; c=relaxed/simple;
+	bh=t7CrIq08hMEBB7V/Ly4XFysngLUOyFusWVp18WQWAkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bBN5Lzx5z++SgdNmRD/DhmY/o8iuCkn41oQADbdombeLQDFGLar5h2dHYkX80jZ7nenFenvGagXMCdy3PDp34rrHABcJKzz8RQe5pN8gwfIsZakL95E5lQ8cGUukNzpCKVDeU+HOuaLMr53Zs4yUAZjFyeT6aRg9FT6iTz/hDxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rAjs3hp+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=b7oDiXPiJY9WwPRA3kiAOcynjvwhmPmForwOjuK8hWc=; b=rAjs3hp+lI4OjrmZk7Z+PbPkh6
+	jzmlgWIEjpWKseQfQqNMyju0umSChmh5qjSqz4/tR1r9Xl+t9/vPwnX5l8h2J/vNp1ULsJMD3shOc
+	JD+qRo928zNTzoMmZhP+eBzbADv32tsCAfmudF/aenfcTF8TYOFY1mUevSkpygjsAmXqriKH2Wa50
+	NZiVt6O75tekZcAwCmBn4DHeLXqhxe4DL67tHE91BE3BQ5P0u0eFVB7HMSS+pQIw75z1IGAzvfEj3
+	PITH8BHgdJl9B3xl3DAs8ixcczVug8lwwbK0S79lGy45JlwI3EKz5pvtATl82/ZRG1UmdoxlZD3Ev
+	sJkuMhwA==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tL4if-00000003iCn-2WLk;
+	Tue, 10 Dec 2024 18:12:26 +0000
+Message-ID: <dcc786a8-744c-4829-9d1a-1764ad85479a@infradead.org>
+Date: Tue, 10 Dec 2024 10:12:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z1hLEQwYE3ymbrIr@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scripts/kernel-doc: Get -export option working again
+To: Akira Yokosawa <akiyks@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Greg KH <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>,
+ Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <e5c43f36-45cd-49f4-b7b8-ff342df3c7a4@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <e5c43f36-45cd-49f4-b7b8-ff342df3c7a4@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 10, 2024 at 11:07:13AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, Dec 10, 2024 at 01:56:21PM +0000, James Clark wrote:
-> > On 10/12/2024 1:51 pm, Arnaldo Carvalho de Melo wrote:
-> > > James, the second patch isn't applying to perf-tools/perf-tools.
->  
-> > The second one applies on
-> > https://lore.kernel.org/linux-perf-users/20241113011956.402096-1-irogers@google.com/T/#m2a3587fb83e6ab2d970bae25982ae9d6c8d9e5cd
-> > because that also does an evlist__remove() which gets fixed up.
+Hi Akira,
+
+
+On 12/10/24 3:04 AM, Akira Yokosawa wrote:
+> Since commit cdd30ebb1b9f ("module: Convert symbol namespace to string
+> literal"), exported symbols marked by EXPORT_SYMBOL_NS(_GPL) are
+> ignored by "kernel-doc -export" in fresh build of "make htmldocs".
 > 
-> Right, I have to test that series on the ARM machines I have access to,
-> but there is a question from a tester that is waiting for a reply, I'll
-> see if I can reproduce that problem as well.
+> This is because regex in the perl script for those markers fails to
+> match the new signatures:
 > 
-> > But the first one is ok to go in on its own.
+>   - EXPORT_SYMBOL_NS(symbol, "ns");
+>   - EXPORT_SYMBOL_NS_GPL(symbol, "ns");
+> 
+> Update the regex so that it matches quoted string.
+> 
+> Note: Escape sequence of \w is good for C identifiers, but can be
+> too strict for quoted strings.  Instead, use \S, which matches any
+> non-whitespace character, for compatibility with possible extension
+> of namespace convention in the future [1].
+> 
+> Fixes: cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
+> Link: https://lore.kernel.org/CAK7LNATMufXP0EA6QUE9hBkZMa6vJO6ZiaYuak2AhOrd2nSVKQ@mail.gmail.com/ [1]
+> Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> This fixes regression in v6.13-rc2.
+> 
+> Quick reproducer:
+> 
+>     ./script/kernel-doc -rst -export drivers/iommu/iommufd/device.c
+> 
+> On v6.13-rc2, kernel-doc will say:
+> 
+>      drivers/iommu/iommufd/device.c:1: warning: no structured comments found
+> 
+
+I wondered where those warnings were coming from.
+Thanks for the explanation and fix.
+
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+
+> With this patch applied, you'll get reST formatted kernel-doc comments. 
+> 
+> Akira
 >  
-> Agreed.
+> ---
+>  scripts/kernel-doc | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+> index f66070176ba3..4ee843d3600e 100755
+> --- a/scripts/kernel-doc
+> +++ b/scripts/kernel-doc
+> @@ -267,7 +267,7 @@ my $doc_inline_sect = '\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)';
+>  my $doc_inline_end = '^\s*\*/\s*$';
+>  my $doc_inline_oneline = '^\s*/\*\*\s*(@[\w\s]+):\s*(.*)\s*\*/\s*$';
+>  my $export_symbol = '^\s*EXPORT_SYMBOL(_GPL)?\s*\(\s*(\w+)\s*\)\s*;';
+> -my $export_symbol_ns = '^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*\w+\)\s*;';
+> +my $export_symbol_ns = '^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*"\S+"\)\s*;';
+>  my $function_pointer = qr{([^\(]*\(\*)\s*\)\s*\(([^\)]*)\)};
+>  my $attribute = qr{__attribute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)}i;
+>  
+> 
+> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
 
-Ok, I'll pick this one to perf-tools and leave the patch 2 go into
-perf-tools-next.
-
-Thanks,
-Namhyung
-
+-- 
+~Randy
 
