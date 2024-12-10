@@ -1,89 +1,159 @@
-Return-Path: <linux-kernel+bounces-439552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC52B9EB0E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:35:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95CD9EB0E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA64F16A676
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962AE188C2D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CAC1A2C11;
-	Tue, 10 Dec 2024 12:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906EE1A725A;
+	Tue, 10 Dec 2024 12:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aHE6lsUg"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d9xlXarJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2587523DE98
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 12:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7077B23DE98;
+	Tue, 10 Dec 2024 12:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733834139; cv=none; b=BqVf8dZh0YUPSFCDAQWfpwAH4U5/JaSR+i1jL6ORtwD+GzRG1sHNIOr6p7zY9aObF58r8ZkpyOZhk60RBibeX0BVzSDTabP5x7uGdJqMA/g3DhxNAY6oqwNEJLtaLF5z3klGPZIsUKN3qzs8G0HGFRInL/xkrlwnTTySxK2TavU=
+	t=1733834148; cv=none; b=iAYwRv55jgGcd2FnGcDypco8e1DKkIPk/nDpwvfWRO5w2DnjWg//VfyidQExzrCe+hKMAU0QTE4D5AXiFS8OAOBA1LXwGdIgZRpk0cQVImpoF7br5TbQLd5JvOGegE7X4xkmJDBtTbkjCLL2ke9pz/XMuU3qH25+T2bLKY+lxLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733834139; c=relaxed/simple;
-	bh=ncWhNdT23h4BZB7r2dCD0sWFbOJgD9ZDMZB6zOQ0l34=;
+	s=arc-20240116; t=1733834148; c=relaxed/simple;
+	bh=7Psu0x3enpcD7yIPJ0wKAaBMSHHi4eUz22y/I2aELKs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pSf8YIecS4+rWgFKXHP2pE75RRxqD+Bx4HXngE8D9U6I/jvtcjSFCA4A4UTOAOXsWHy4Q8OlDDJ3iyIs9tXERTIcyfKgFERivLLAqfw0KDnE/vxmPIInz2t1V+fVrpwTdzcSYMavVn985HKKUwM6PRrgw8XRDgNnxMKQKMLQrhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aHE6lsUg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ncWhNdT23h4BZB7r2dCD0sWFbOJgD9ZDMZB6zOQ0l34=; b=aHE6lsUgVm45ornywatzVk6O4o
-	uNS9a1vhbakQ3wm8q+E20mktT38HG5iff44bClu/h1dRUeJOVDHu8U+AypsSxaG4aPttB6Tjx0QVc
-	TiZ+GfmTB2equN0GXN1avFN5OHW9fOW38hsqNyPn7DGIZzVZnkil0NWUQyfmxUVDr3xNBdXCMtTJm
-	opphwPBk9P4rZR29WVzUyGJofo4o1tkw2TT0Lfg3RV+RCFHVGTb9XnSbzfAoKf/YrXSLHfxmg2qDT
-	C+VNo+E9nnxP4gYQF/WE2jVWQbkHxEyrOJZ3yhZI334XWTVQCRDqVuRji+AYzCWU26sDcHZgtz7V/
-	EdazKacQ==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKzSP-00000009GaQ-2q5h;
-	Tue, 10 Dec 2024 12:35:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E5C54300402; Tue, 10 Dec 2024 13:35:16 +0100 (CET)
-Date: Tue, 10 Dec 2024 13:35:16 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Atharva Tiwari <evepolonium@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	"Christopher S. Hall" <christopher.s.hall@intel.com>,
-	Feng Tang <feng.tang@intel.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86 tsc: avoid system instability in hibernation
-Message-ID: <20241210123516.GP8562@noisy.programming.kicks-ass.net>
-References: <20241210062446.2413-1-evepolonium@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rXlkctSU9YTqw4+mn0S1lSyPu0lWT5jcLSrwqFMAfwpzLTdKmkXKGEu+WSjm9FH7Fa4AspGL9CH+qX99gJ+/LfX35ONww4fYBfn5OuRNhb9+F9kUPe+ccNgubEPeqCKl/PmD5ic57ZcyrBTyge7h2UaNAqwqF9trF0fMrFTYPxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d9xlXarJ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733834146; x=1765370146;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7Psu0x3enpcD7yIPJ0wKAaBMSHHi4eUz22y/I2aELKs=;
+  b=d9xlXarJAK6sNQjaPcCqxjFETUgzIPRF0tMgs5gbR8t6DDTAAE8kcs9p
+   hEBf63AYLfz/ArwVp5ZSbJ5IZYlZxwoiVvDVwzgYbGn01onYoxQ6cJtx2
+   GH7mjFbamwqxpVIzyoDYii/ljs0bfPqFgHEt0nwSpjxP2gciQamoRgVRG
+   HSSgsfFZux/f4/c40s60u3iWj21qOOu9lTTGwmZZ8fhmuC1M8RS1Wyc01
+   DRtPpv42R806Oeh0Zina9FylWkJlWUawVvUT22/FnoW8w8U/JIEWmYZ2F
+   Uy9znC29R5bUyEanDp90URmHba0KckghIXXateVnV2/IPJs6CUKJZgFlu
+   Q==;
+X-CSE-ConnectionGUID: sxVA71DFQJeXJzS/6aV64w==
+X-CSE-MsgGUID: 5GdaBGG8RFyKcsU00Gar7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="56655151"
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="56655151"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 04:35:46 -0800
+X-CSE-ConnectionGUID: pUqky3emT/+Cpey+W3mFmQ==
+X-CSE-MsgGUID: 4JGFZDGWQq2MYpcHNcWaug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="100207306"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 04:35:43 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 3A44711F81D;
+	Tue, 10 Dec 2024 14:35:41 +0200 (EET)
+Date: Tue, 10 Dec 2024 12:35:41 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: git@apitzsch.eu
+Cc: Ricardo Ribalda <ribalda@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Vincent Knecht <vincent.knecht@mailoo.org>
+Subject: Re: [PATCH v3 06/12] media: i2c: imx214: Check number of lanes from
+ device tree
+Message-ID: <Z1g1neVF6CG7vfFF@kekkonen.localdomain>
+References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
+ <20241207-imx214-v3-6-ab60af7ee915@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241210062446.2413-1-evepolonium@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241207-imx214-v3-6-ab60af7ee915@apitzsch.eu>
 
-On Tue, Dec 10, 2024 at 11:54:18AM +0530, Atharva Tiwari wrote:
-> System instability are seen during resume from hibernation when system
-> is under heavy CPU load. This is due to the lack of update of sched
-> clock data, and the scheduler would then think that heavy CPU hog
-> tasks need more time in CPU, causing the system to freeze
-> during the unfreezing of tasks.
+Hi André,
 
-Please tell me more.. what crazy things are happening?
+On Sat, Dec 07, 2024 at 09:47:55PM +0100, André Apitzsch via B4 Relay wrote:
+> From: André Apitzsch <git@apitzsch.eu>
+> 
+> The imx214 camera is capable of either two-lane or four-lane operation.
+> 
+> Currently only the four-lane mode is supported, as proper pixel rates
+> and link frequences for the two-lane mode are unknown.
+> 
+> Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> ---
+>  drivers/media/i2c/imx214.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 07926f7257877155548f7bcf0e7ee80037b4ce6c..f1c72db0775eaf4810f762e8798d301c5ad9923c 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -199,7 +199,6 @@ struct imx214 {
+>  
+>  /*From imx214_mode_tbls.h*/
+>  static const struct cci_reg_sequence mode_4096x2304[] = {
+> -	{ IMX214_REG_CSI_LANE_MODE, IMX214_CSI_4_LANE_MODE },
+>  	{ IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+>  	{ IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
+>  	{ IMX214_REG_EXPOSURE_RATIO, 1 },
+> @@ -272,7 +271,6 @@ static const struct cci_reg_sequence mode_4096x2304[] = {
+>  };
+>  
+>  static const struct cci_reg_sequence mode_1920x1080[] = {
+> -	{ IMX214_REG_CSI_LANE_MODE, IMX214_CSI_4_LANE_MODE },
+>  	{ IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+>  	{ IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
+>  	{ IMX214_REG_EXPOSURE_RATIO, 1 },
+> @@ -788,6 +786,13 @@ static int imx214_start_streaming(struct imx214 *imx214)
+>  		return ret;
+>  	}
+>  
+> +	ret = cci_write(imx214->regmap, IMX214_REG_CSI_LANE_MODE,
+> +			IMX214_CSI_4_LANE_MODE, NULL);
+> +	if (ret) {
+> +		dev_err(imx214->dev, "%s failed to configure lanes\n", __func__);
+
+You can drop the function name here.
+
+> +		return ret;
+> +	}
+> +
+>  	ret = cci_multi_reg_write(imx214->regmap, imx214->cur_mode->reg_table,
+>  				  imx214->cur_mode->num_of_regs, NULL);
+>  	if (ret < 0) {
+> @@ -948,6 +953,13 @@ static int imx214_parse_fwnode(struct device *dev)
+>  		goto done;
+>  	}
+>  
+> +	/* Check the number of MIPI CSI2 data lanes */
+> +	if (bus_cfg.bus.mipi_csi2.num_data_lanes != 4) {
+> +		ret = dev_err_probe(dev, -EINVAL,
+> +				    "only 4 data lanes are currently supported\n");
+> +		goto done;
+> +	}
+> +
+>  	for (i = 0; i < bus_cfg.nr_of_link_frequencies; i++)
+>  		if (bus_cfg.link_frequencies[i] == IMX214_DEFAULT_LINK_FREQ)
+>  			break;
+> 
+
+-- 
+Sakari Ailus
 
