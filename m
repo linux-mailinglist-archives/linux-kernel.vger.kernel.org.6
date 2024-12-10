@@ -1,83 +1,85 @@
-Return-Path: <linux-kernel+bounces-439746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8A59EB378
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:35:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 776A49EB37F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B701885BD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB33188417B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FFD1AF0D3;
-	Tue, 10 Dec 2024 14:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080171A704C;
+	Tue, 10 Dec 2024 14:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BzPpNhLS"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2078.outbound.protection.outlook.com [40.107.21.78])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ffa+KiBl"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2073.outbound.protection.outlook.com [40.107.93.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898061AA1F2;
-	Tue, 10 Dec 2024 14:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE87A19D082
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.73
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841289; cv=fail; b=tJ8cnFCyRS4BBAozPIXo2XeHz2nYo+vJwKWbQHeB3sIvLaca/N6CYA9lL2rmBGxO5E2RaBKwf/zqdpvJV0QRzB/lAqo65GAnMEP8gt7aUbkljqNZGkSocv3dSa1zHfJGeFYfRWkWc4lZ5H4W7mnESDJRleczFJEyQSBvPxPW4EQ=
+	t=1733841390; cv=fail; b=bqJA/dkbycbU2up7VWsbA+oSvbpCgh99dLw/lLCr1KW/WLUAwJA4zFiOorWDoB0Jb8vxVH5b6yMUwUX9OGF3SUfIueXpEvYlXJgBIIJRhGcSbabAKYHDHamG6sBxtxL6Xg/J/6V2aLYQkmM+v/DKhdIDzaagXyAVcIcxRl75ZHY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841289; c=relaxed/simple;
-	bh=uoXp8943+IB+uWEYVDeq+E1aF7xpEtbzek8LF+WI4Po=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=q4lkLB6Nndu7Br5thvc1EoZHr0IggCmsK9yhd8oelxcy+SbRZbkh73+0t+X8+ADF91DOndHm43vuKk/H1vNwhc4hxJzt0I7PmJi6bQ65CMqxnVThtXIjWvRupYeU4kYZseuFZZBH6oWYd+SFd8Eo5sR97PIzWUkK/+GE3lftmwE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BzPpNhLS; arc=fail smtp.client-ip=40.107.21.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1733841390; c=relaxed/simple;
+	bh=v9vnGQl02Gv1PYSiKvumNGuOJmCawUC/YTVUw/aSevM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=R9kNKglLmx9X6RsyEkAg+sfzL+THQpcRxc+oY8jA9PZqYciQtDC8Wljyo8D2VAhO60xjKdvx8Js4aiYDLMlvYx8bW+eqplardNJhZFiDAIxsKffYQh1iTqFpyksjK2rAGXS+1zRq69TcqjXXT1J3WvPHAxix/fpXcRD8rUd+Yjw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ffa+KiBl; arc=fail smtp.client-ip=40.107.93.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b3R5efRmAQZt2J3dMgPhVpqOYmRL3uUHL+hkpiDak5h50BdNsrgB4tPmt7cqSvEojr5ivVMpEQeFn66pLOcaoLAnKlC+pweihUGDQ7bcxmdPFi/ypdMm9eT29ZDDZBRwfhtLwLGoTBFMJe6AkoO3fe2tHS2Ue1VnlnWQDBrpFeE1v+J7TGxm22nA3vV2ZQBWe8uPIAtnz8ifOidBksSddXYD7ZJVO0Ix+hZYkY0LeOiUVF3jZsvRjBiTOuRT+KDIUO7SbR9Ly6DMtf5FhhVyPsIKGZYmcmMUskKUdx7cTjtrsNV3z3EKByLor+XhBM4hEHAa6I5No6prJFjeSOx7eQ==
+ b=cFNSbj4JoKRJvb12Wmx5gs5jFMEbWSXA5roaJLTGbo++Q9Yh6sjKfhq6xEIKTzKyquFQgfGEk+0TEJdoC0vHyUTabD4R0Brhd1I6MPEvAV816oLvcD9oju4hQd389wQ6NmuGD+n/nLRuT+YOrxTJ0gWxaVVw1jg6doBAMyXuUXZeGA3GATp08gfrJT8IxTM1cDsv/tGrJnJTL/qHe+JmSdqCPUCGjynWsPfGT4tBnRhBjzFskfCkro2lRU0E1EEqH4W6e7FvGI7OFwtUN67Ha4/+tkPUexF33NXFs0jdL5E7sX9nW2d8gg2vFP5MukzMS22RIwnQGt4HzD9zXHuRvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fDRYjrrJ8T5W4x64JHEScZFnezzOX5UxQ4qNKMnXAqY=;
- b=C1J1AfV1g+JqdO8woABprqkp31w0Sc7lMllEDXxa8PX9X8EHXtaA/cLJmhTEndH910LUcHBKEuluEY5zV2na/23QXtZ8xoEIGat7zb4PyKi/TNIiXlNQvQx1tnnrVlaR+R+vd6lsofPXECetydADyFl5M5SVBTZeALXtFG1XQKZfsZWzYD7d5w3g/N9/dE0FB1nQQioWaiPv+L+5TevrrIm1OLsAZELK2Vv9KRdhHa4NM7us7S3jzK85qrA5f12dgk81kkud6zb9kdRMbdd1V7mKya4wheyXRZdBUbNBsIAQbjV0iNQ6i75T+oUKO6C5NuYu1z3jyLVCrq2uYfS5DQ==
+ bh=fnv16CYlXa7YX3HMQsnTpqA0EfMHkQGuL5Yz27NKfCA=;
+ b=XkD1ctFtmfR/v4WaY/pFgdf0h7i+R56ZdBYpo0Bqgbf2H30iN1086brU+zIwzJB7g5QgL4ndwwgrgkscre6gaml5MLgCUpqP93oHjlMipRhAkuo6o+SgqmNC7wCRHUkdbrBv54Ded0hP1C4itsZ0aNtR4QrVBhzMVX4+5a9txgKP1khwnRzD2Y8X6KsacHrkfaa/xSff+zuBC62SptoNqeVnj7CZmfVyfNSB+FS9gnGFsJCE5OQblySRHNDkZ18sSqPgQRvw35dDCjIKjfWWQ8GS1ORZ6fEmZol71BxFvZ7LFqekLQaOcPW+IHYUb8hwadWWGTUlFTx3QAqjZ7Wtxg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fDRYjrrJ8T5W4x64JHEScZFnezzOX5UxQ4qNKMnXAqY=;
- b=BzPpNhLSrQ//P6n8lzTEhdTa2Tz7rHLfViCzPg0dCDEtIjtWESoQJ6Qpm1ctsjymLbRRpbuXEp6ae78BnAtOKSPQfPqd3YE4FbZQmQ6hbwcSmffv1KE7ASpgz9Bo7oMv0BPo/zloXFVeuBW4zXE5A1gyUYoD8QMDr8QFXogMRcvzxz4H0/yW1+YVCWujKa1iLQXRBBtdAhmgSMWxCx4cW6exS2Fo/gmthxGEMpKl7petMcwtVxxG6dBMHQAtQ+uiQrVI1XQzn/5DAUqk56d3YYPkHGJOn8Jo1wjgTL2Ik665IZ/gO3L0g5UEmB95gLx7DSy5h8MfZ/azZCS8GxUQ7w==
+ bh=fnv16CYlXa7YX3HMQsnTpqA0EfMHkQGuL5Yz27NKfCA=;
+ b=ffa+KiBllTYlfkriJO+WE1LMSDa6s+fcX/tdi0i2t7OrwhGMe2714ZeILB3Im7SYhGh6g+38d1o+dvPdQR9r+Sgfz04Wf4t67nc3L6rsh+cKR8PwyhA/TNV/RcTwAJTDQHHvpQPcygdXUAhl95iAlJGl3YFz6Ca8tRAiNhU/Qu0=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AS8PR04MB8199.eurprd04.prod.outlook.com (2603:10a6:20b:3f6::21) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by IA1PR12MB6355.namprd12.prod.outlook.com (2603:10b6:208:3e1::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Tue, 10 Dec
- 2024 14:34:43 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8230.010; Tue, 10 Dec 2024
- 14:34:41 +0000
-Date: Tue, 10 Dec 2024 16:34:38 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Jonas Gorski <jonas.gorski@bisdn.de>
-Cc: Roopa Prabhu <roopa@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Ido Schimmel <idosch@nvidia.com>,
-	Hans Schultz <schultz.hans@gmail.com>,
-	"Hans J. Schultz" <netdev@kapio-technology.com>,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] net: bridge: handle ports in locked mode for ll
- learning
-Message-ID: <20241210143438.sw4bytcsk46cwqlf@skbuf>
-References: <20241210140654.108998-1-jonas.gorski@bisdn.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210140654.108998-1-jonas.gorski@bisdn.de>
-X-ClientProxiedBy: VI1PR0102CA0074.eurprd01.prod.exchangelabs.com
- (2603:10a6:803:15::15) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.14; Tue, 10 Dec
+ 2024 14:36:24 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8230.010; Tue, 10 Dec 2024
+ 14:36:24 +0000
+Message-ID: <aa44a331-dbd9-f9b3-4c79-e5ba448b54cb@amd.com>
+Date: Tue, 10 Dec 2024 08:36:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v6 6/8] x86/sev: Treat the contiguous RMP table as a
+ single RMP segment
+Content-Language: en-US
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
+ Nikunj A Dadhania <nikunj@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+References: <cover.1733172653.git.thomas.lendacky@amd.com>
+ <8c40fbc9c5217f0d79b37cf861eff03ab0330bef.1733172653.git.thomas.lendacky@amd.com>
+ <20241209194320.GCZ1dIWDMPppdXgzxJ@fat_crate.local>
+ <20241210102835.GCZ1gX04evsuTcS01d@fat_crate.local>
+ <20241210104810.GDZ1gcapB4bTh2Nf-o@fat_crate.local>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20241210104810.GDZ1gcapB4bTh2Nf-o@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0190.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:3c4::27) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,125 +87,421 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS8PR04MB8199:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14bb7f0b-87f2-4ec5-9a89-08dd1927c8a9
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|IA1PR12MB6355:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8d31c98-0f4d-4127-f56a-08dd192805ac
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MXrc0X62MRaL3e8MaEClOY+keelqLLcbTOZ+o+I2oJqfx80Mg14WslB12F5z?=
- =?us-ascii?Q?b1erp2YmiqeDH38XWNm3WOJxABh+PIs3hVhIkolPV3cysUEMwNhSz7G1f2DN?=
- =?us-ascii?Q?pTrX18pHRmYA+7XIoeFyHA5iMwrCjomZg6xE0y+FJVRwX2U6ewTY5nimQOYs?=
- =?us-ascii?Q?HaMJzda7pEUQi+n+ghMg5zrX7RkfvlQOiVzWC4ZB/MNGnUOoOVl3NcnT9rlD?=
- =?us-ascii?Q?jQKiiprKA3FOIf1l2XprUpLL588RnyGw9rghHOArVWwlimKgI+d3nTEbv7XK?=
- =?us-ascii?Q?Xyv6k6eW/C/W+Gy2DZmHe87b4Q3joXQyiz/kdD3Ldc1WWxrwWQeGnZye2ryK?=
- =?us-ascii?Q?qfFD2CZg0/1nExmmJ/eQTGYA9/zJy3NmwccSnite2ZXHmA071efWtk5GjOTd?=
- =?us-ascii?Q?y/88NF+OuFI9ocauhWujZflrOreK3zKzFJZQZcKY3XxKtNr1vxNSkFP4H3LC?=
- =?us-ascii?Q?AnPot8dICPuJ8B+nZ5EUrkAkzi3ZOPPmj5Y1YU4RY80cInM6vcyvlO/HeAF+?=
- =?us-ascii?Q?Bw1ZgUbf9x0Upnf1w/lYWfGigdT1SA98vgIr2XFZe4OLwcd16gESo70ah6yE?=
- =?us-ascii?Q?b+aIJgzTUKfqiy1RJjTglyR82y/l8yf9dsdn7D+D7+dmTRTMD80yKPilpL6P?=
- =?us-ascii?Q?pfCsBA3gkbuJ7C92JqOk4PrFnu1OgV09C/uXDLz7cMIx2wPQr79Xu1jQtsXo?=
- =?us-ascii?Q?EgtGnzf9vt/BdZTnB4tnXkbrWN0f9uMy1P2Fp1tS6iGqkgY4X71W8eyu/cMF?=
- =?us-ascii?Q?JG/t4sDXzJLAB+BHZCXK6ryMj4uhDfIzrS3d8cjcvGUiRP6k33XMfxiKnbXm?=
- =?us-ascii?Q?ZiX45l2f0C5iyVfE/YyM3YLQ+G0gkMLSqU29HEnb9duuu6SD84pPmNWpHHHY?=
- =?us-ascii?Q?SBf6XqYvQwhmRfsIIDkHDN4jk1DJBfrRprVCili8QLZ5Go95OYGUsZoZtrPP?=
- =?us-ascii?Q?JosAydEjFMfjrzvydnviIOPQKMUq13WYoRzOrppm0cySa7tPZDhxLWIcF/7A?=
- =?us-ascii?Q?ulqMPm5/iWg46u90O2RhocMRQ/znyBbduoxhMrzWz9fP69XwKFA4diGQD39U?=
- =?us-ascii?Q?kBnpFT1kp1jlnSrQQgWTe9/aq4oegfle48Xj+x6yTMF+b4Wmb5eziE3Bn55u?=
- =?us-ascii?Q?nzAWU62qkJPEHc7GMx1eOPmfv4n/3gCrypx7syxiwmjTXu/14aXvbfO4cIEq?=
- =?us-ascii?Q?kY7opEcbEEpCmOVqRr/NYEyXcqB1oeftEoL1E8Po+Q8O+kK3Ha44YoWuO+Mz?=
- =?us-ascii?Q?2Jvnrixtm6h4bmzhQGL9LBm+xtrF7VriauRwkMxaeq2FxoCSxPisbSbT13Af?=
- =?us-ascii?Q?e/s=3D?=
+	=?utf-8?B?dkp1V1ZFSCtUM1V6NVMyR0hrUVBBNGswdGIxUXdwV1hLbHNaN25jZ3NRb1l6?=
+ =?utf-8?B?dGQzdXFxWWZuSlZxWWdIN1lvbStQRXhTaFowbmtqYi8raWlDY1M5bk1YTTIw?=
+ =?utf-8?B?K3VBWER3Y0Y0OVJSTGJkcm13ekttTi8xNlpxOFk0WDJkQWEyZ0FCNkJMbTFQ?=
+ =?utf-8?B?czhIYnAvVnBlVk1PQ1R0REE4VnlNUGlDL3JSNGtlRXR2QzVUSFl3WHNFTzFJ?=
+ =?utf-8?B?blZYQUZrdHVYbFNHeXVJUGtqVmxOZDFtVElPMWMrYjQ0MkJDdXFwNzlZL1l6?=
+ =?utf-8?B?MDNVQmJNTlphc2dqWkk3NjRhNzBxRjNaRHlScGg4WnVJZmlzYldGbVVKSlVy?=
+ =?utf-8?B?QmF2OVRibWtrZk12TW9FRDBEY0FJMkkyNWd1ZkJvRkl1K0RjMnRHWmF2UFBR?=
+ =?utf-8?B?a2dJdzhxZVFVVzRoYkNIb0pDREpicm9TWGVvK1poTFB3YWFKcGxBeGEzamlY?=
+ =?utf-8?B?dTZyUzZFOFVXZU1Qa01ITjRRbE1QVnp1M2ZuSnQ1Y1BDV1lZcVQ4RzNzdmpi?=
+ =?utf-8?B?U3BocDNCWGd6bmdEOEQzZ1dPeE1FY1lwSkt3Mlpya1Y0bXB1dDhhNVlxejFj?=
+ =?utf-8?B?cHNWWkw2OVp0L0hCaG5mbmdCL3RHbzZsaXBiSHFxVElQRCtiaGJReTJZQjRM?=
+ =?utf-8?B?SzVPSndJOHM4TnA5OXU1dDFDN0ozbGdjQ1JBbmRBczV5bWNPR3JlTUZiejVh?=
+ =?utf-8?B?NTZMRHRQZGI5bFZZeTNIdWZaTUtJclJmSlJHTUk0NUJJZFhlSGxCWU1pd1pr?=
+ =?utf-8?B?NlhaMU9MbHI5eDRGY2MyY3BGSkx5Wm5xdGpaL3N2di91OS9EOFJZbEdMbFhJ?=
+ =?utf-8?B?dFFHKzhLWUdIcFZwYXYrS01VTEpVNGJ5ZnBPbUU2L3ZYOENiM2ZPMGhWdUIr?=
+ =?utf-8?B?TEp3cGFVdDBXRENCQmlQTVR6VlZXMTJ5WWV6ZXdLdERpSVp1dFhpNzlKbDYr?=
+ =?utf-8?B?cnV2czZpdUxjR1FtUDQzWTRQcGMrVnlrTjZ4cWJKenhvTk1OVCtQdnpYazEv?=
+ =?utf-8?B?RVk3RFpGZ2N4R0FsNnFVcVR4VHFsN2tWUVdKamRKNVhudnRhNkZjWCs3VXM2?=
+ =?utf-8?B?R2hMbmRIUmRwaWtpTTczbUZyR2tVNHp6Q2tIR1c1ZUZseGNIeWZPRlduYysv?=
+ =?utf-8?B?THh0a3drWmRBam5wOVE4Vy9iVlZ0Ri85Tk9WQU9xa1BvMWNXeXJ2dEphbFd0?=
+ =?utf-8?B?d2wrWDMyK3VxRTZBQ3o3V3Q1SkhpL25qNDBaQnp5SGJxTzgyMjZUV3FaNUFH?=
+ =?utf-8?B?SWtNY1kzMzRWU0ZOV0VreUMrbnJacGJDQlRkWFlpZkgwU2tKVnJnV3RBZFk5?=
+ =?utf-8?B?bGVwcGlPajFmTk5iazQxTkJJVDZyK1hPWFZlMDRtc3p4RGpFNWhLbDZpeHpx?=
+ =?utf-8?B?TVd4Mis2QnIwMDFYWUFuOUpkQlQxODNSTk5MVk1RSGhFRDEzdUlIa3ZISGlX?=
+ =?utf-8?B?QTdNZW1lbkVZT3VrWWE4MEpvSWcyekN6OWFaZWNxSlhQSWlUcGtpL3MzK1di?=
+ =?utf-8?B?SUNjMkl2K0liRHgxVE5MUjM0emRIcDU0NjJmNHdBeEx0Vy8vVU9MVzRSSFU3?=
+ =?utf-8?B?cWl2MGoxUDFOVERvUlF3OVozbDVuTXBWU29iWjQ3blJmeVFYNzFtYXQ4ais2?=
+ =?utf-8?B?TitVWU9CQzVqNi9GdU1WUU5uZktrQUZNVE10MWJUdnhLMVZrUTlHdk4vejFO?=
+ =?utf-8?B?ZHdHckMrendTaXJkb0FzUlRNM1FrRDFPeDFLQXI5WWoxTHJqMnduYzRVRllv?=
+ =?utf-8?B?QVBkYU5STGdOb2t2NjFEM1V4TFdaR3VoYVJwRTM5YXl0bGZaR1V6NHg1TVhF?=
+ =?utf-8?Q?taVKicnVRAnGitk81pQqOQyQYi3yI3k4c8rgc=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rHzsUjVdViRFnLtPWrFHMuH1MtCLeexRw/cH/mVg8RK5UDtVuFuXKlPuVWUO?=
- =?us-ascii?Q?gVRIz75vTN3nZc1gBVJbEkU7Tz6rMYeDdHjp+yQMGJFwmTxJc1T9wRWwm8X2?=
- =?us-ascii?Q?zSweoUaExC7wg62HZMahqc7rvyAuw7V6vcKPp/QvGEZyhHPbdUBNjH5osVls?=
- =?us-ascii?Q?oHDCA/RDsIhEEre6bdhVq6+Xup3YjOfcToAgomM9Tpcxi3KwOuHGdjtw6xoB?=
- =?us-ascii?Q?YjEkywUkgs8GeNxixpsTsha2F8kXgZPpeBggi89cZjH3E3Y0dEXM9IVR/ljj?=
- =?us-ascii?Q?WO1pQWLim3PZSfwKgQylUpJk8IFqX2Z7/UzaC5R+MDWQxwQj2wu8o5SbI2ty?=
- =?us-ascii?Q?t4asogYQWxwictkDVlMssrfP0TkB8l/nBKBprz5M0rCko8Nm8gXsMz+cvAa7?=
- =?us-ascii?Q?cF8cQpyRjIodELh1yMXfMbJbjq16Sso6XlkMvVgxma1Zz2Xf+l+RN8Vf4fye?=
- =?us-ascii?Q?9vdyIJ+4tWpqYRzXWOSZhyzgiY+nNNqU9yUuboyR9OF7nlIY3pdRBBfi1oNJ?=
- =?us-ascii?Q?j/f6REfH3m73TrANO0fA5foYFYGnW6pgDA7VUmSql893mGCQJ/1+o/Uyn9eq?=
- =?us-ascii?Q?DbvK3OEd6uk/Bvkns2/OisWFWRffKmnYeevusezewvtTI4rIHCpE5lqYp31K?=
- =?us-ascii?Q?N4BWbl64qOrQiwQTh/uGOV97wVCn2GRZP0GyQnwkKXOhG4zxO0UHp49BkInA?=
- =?us-ascii?Q?JmowFQTDQ+0SjuLFzXn1MDoDyraM6to6xasTjAHjZzJheG+WMVmNzaOlxyrh?=
- =?us-ascii?Q?tBG1ciJ/wpEpoGMwQ7JfPt3wK2qabaV//7iG87gHbDEzBrC1B+HJLIrGZQdE?=
- =?us-ascii?Q?LDO2h8yq94sRj4212Ohe1l9DLqVgATLd7cHaD7lxIDsvOeydQihvefBcVlJ+?=
- =?us-ascii?Q?xXAAU7Om/Mp1vB4dt2XQoHIu5cZ1d6amv4nZRrXJrcGKSVX4K1Es1uiBQMN8?=
- =?us-ascii?Q?Gp/xQTRYPM3CfmVKENcaUku9IUelloXPK8X8Q7dKnB5DwLttHEEGyou0o5W6?=
- =?us-ascii?Q?IBaFCl3tFXhlxauNUy25tI7mNzJf3BXMKa03+9DctREiJ4oIQjWMC/N/q6Q1?=
- =?us-ascii?Q?W9lZoksQyjOP3VDVXpwD4+VAbO52UwkcjWQw7318ufvuOkiw5jUBElDBFsLG?=
- =?us-ascii?Q?5nN6oJinW1AdKVMNgcAwfRWyioS9Kn5T5lVMdiAp9NQ0IIYLhwuP5utD0aZz?=
- =?us-ascii?Q?EMsHkHB1J7ud0j3GhHstnFHGsHJ8+F0BfHLxA7g2Z8mfrSQBZ2imQ8csOCTW?=
- =?us-ascii?Q?CRRCkD/Y6U1U92X3FXbH/CF09CUErc0TnWdgvS7OreisMAkNpezVJ5p47M0B?=
- =?us-ascii?Q?2CjwWm1EPVmfbVFcVY62IwNRMfprpEquNj6gqiBV09p17Zx3wQI9skCblvL5?=
- =?us-ascii?Q?TI1t5cpSFVc0Bcd5tWM401I1L6prCF8G6O0dRHtlenSjmXD+hYrdJnVEIiZH?=
- =?us-ascii?Q?TuNaSu8v2u4JjMPpeh8RW2XybNGI83D4ix87ewMqy6Zv5nPrZoY0RQFHUXka?=
- =?us-ascii?Q?8n2RlQxPufwqv3pJa6TsJFjb91QjNV9qbbDRqb4uE9umtsuiAfKoFGe8R2ci?=
- =?us-ascii?Q?eIoNPvrcHuYZ02RqiG8AN3vIfAjEets28Kss5NP/+AZg0dHHaOjKm7FTuFcX?=
- =?us-ascii?Q?mA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14bb7f0b-87f2-4ec5-9a89-08dd1927c8a9
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+	=?utf-8?B?cytob2RiV21NWWN3V2R6VUN1cEYxN0NTVHJpSjlMQW1pRks5ZjB6QjRyNHor?=
+ =?utf-8?B?TUUwNHJobWZlU3NBTnl3N200N1pVVVROckUrWmx0ZTJyeGxBY3p3R3IyeXEx?=
+ =?utf-8?B?Nlh4d0VJbWJXb2hQWWEvR2srUmVCTDBMNmFJZTZNdHI0NEJ3M2pmTGtRekd5?=
+ =?utf-8?B?VlRhYTh5RFhFVzBncU9TeFJrdFRxblowTktMVitlOEFveXVORXdheTlPTkJM?=
+ =?utf-8?B?a2FERUJHcHBtTTZqeUlJMmVWS1lqZllqQzNScXpSeTUrMFBHc0tzZ1BDWTlG?=
+ =?utf-8?B?cy9sQXNPTjNYOENiemU5cUJZWG9xQzcwV1EyT1BYVmt2MWFQTVUycWFUcGhr?=
+ =?utf-8?B?TzdjZSttRjRURllmcUdZMU1HcWFrTHJZSTArTko1UHJ6dGo3QkViUUc0bXlY?=
+ =?utf-8?B?V1FLdHRJMjZsVmRHSlE4b2VGTFl0aXI5R3ErOHN6bGh0UjluUEt1dWxXNnF3?=
+ =?utf-8?B?WW41aEhvWG5HSGxtS3dRRndra2x5b3lsVTlMSmVhellsY1VNcUNRRjJZMytZ?=
+ =?utf-8?B?KzNPa1dRTzBQN2sxajJmZUJRSGs0NVUwMGtaN0lpUCtyQU1ReDZ3bjg1d05O?=
+ =?utf-8?B?Smp1YXVKeXhUU29hRmVsbHhZZ3FrOUhSZTcvY0U4SGVDRjhJSU11Y01HMVFH?=
+ =?utf-8?B?UDlCWGdUWThjdkhLa0tTRUhSOTQzb1ZXTWN0aFRUVWNzVEF5ZEhINzdUcC85?=
+ =?utf-8?B?TkVpN0VRTnNxZkc4QW91eUdTMzBWSDMrVnEvcTVXMnlGdXVnQ0xuaW5EZE9v?=
+ =?utf-8?B?SWhXUlZoN2VwTi9QZ2E0M0xOZTBQV1loTmxtWVN0ZHFHUllQSEFZM2pwWGk4?=
+ =?utf-8?B?MmFFUEdHcnhrUjlwdmlMYWJLaGJaNG9XaHR2dFZ0RVZ1dktFTHBVYWZXdHhX?=
+ =?utf-8?B?T2c4cFpYRHAwZmdST0RQNkVuZUtWbEEwY0xqcTVuZzNCWVNlL1ZVd052Qyta?=
+ =?utf-8?B?ekhzSUZZZzh0ZUtMMDJLQ1hhREtLV0xkS29pNnVRSGZnTGx0Rk1WUEt0MWJD?=
+ =?utf-8?B?azdNK0t6Tm9iM1ZSdENYa0ExOVE4dnorY0krMjMvUk1teGI5OC91ZWRIOGdE?=
+ =?utf-8?B?Ti9RcEk0RlIyR2VqQlh6VE9kdFZ0WnpXdUhScEtUa3d2OGNkaE5uNEdHY2x0?=
+ =?utf-8?B?bllmMjlLUmVvZWxKZkwzbVZteHVobHBCQSs1RnVUZ2xuNkt0QjFQWENDeVFQ?=
+ =?utf-8?B?NDd3akpOZk1rR2R4QzBleUFpNk5PV2RhUVFxVFBRSDF2dFNJR0Fob0RjSzZs?=
+ =?utf-8?B?ZFBGdnNPcXBZc1YxQW42RUxPMVlUQWJPRm43d1FMU1NxdlBzU29lUUdFczJX?=
+ =?utf-8?B?alh3eWpwSW1xc2xRbXdVYjRXNXZxQW5wR2dqeThOVTBRZVFBSlRCY2FoUjZ0?=
+ =?utf-8?B?MkFNdENBNG03bGg0NGl1Yi9PVmNCcy9vdEVVY3BZZjRsczVSMkRqUld2Njdn?=
+ =?utf-8?B?VHhDRzdESWkzeTIwQnJ1d0ovU3c0RENDbjJHV3hWVThSdHFQOUhhVGltbEJm?=
+ =?utf-8?B?Z0hHNFdGYWtnRkpBMFRBbC9yZ2NOMXROMG9xaTRHOEN0NnkzRFRCR0dFb0FZ?=
+ =?utf-8?B?RGdud3d5YVNyYzY5QVlOMnhGWDMrSGxGc2YwRnFPSTdYcDFxZDdFejl6R2Ev?=
+ =?utf-8?B?MVI2R1p6dFZaeXZ3dVVRTzhjdjRlVG1iNkhXWU4vdkwyRFJIRzdQN0E4TkNv?=
+ =?utf-8?B?U2ltcDVPNDJvRVZHRXp3dzhMcHcxb0c2WS9aOHo3c3FPaGltdWM1cTA5T0dq?=
+ =?utf-8?B?djV3ZGdYN212LzBUcDJWNzhSSGp2L0pyODg4TUNvVGxNRFM2MTJBdFkrMC9F?=
+ =?utf-8?B?cXdlZGZZd0RLdlBmbzVlcGZxQ2Z6VHgrSERiaUlRTzdmTXUwWnRnaFJZYm5F?=
+ =?utf-8?B?Z0RwWW5rZ0l3bHF1dVo5ZFgzWFFUb2VIMlM0YW9ydVZaMnU0Y0NpSG5ESVp3?=
+ =?utf-8?B?OEZrZDhBRG1lN1N0R0pka01NTmE4T0FhV0xENjBOY0VteGhqcDNYWlJmSEhS?=
+ =?utf-8?B?d1ZIWW83UWM3Q25IRnRjZEhOMUdYYjJTWFpMaTRHbGUzbUdKd2lJWkhxYklO?=
+ =?utf-8?B?ei96amNHKzJnaFNxUnlrT2RMcjFvRk15Mjh2SnVlM2QzSWFIZzRyUlVuVi9W?=
+ =?utf-8?Q?oKT5GDuCYxoOOrdxzDFFDNNAS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8d31c98-0f4d-4127-f56a-08dd192805ac
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 14:34:41.8784
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 14:36:24.3107
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FgEccHfvkIVHrldTWP+sGj54pYwTE/OGb3U6dl1dwguW5suQEL2P3375SaWOGDwseAf7Gm+UyStarh20AZ/ECw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8199
+X-MS-Exchange-CrossTenant-UserPrincipalName: JpKYJcs3dDvUxYUwwP3ytXaPH8MsyKMXQv+eeA56bKJ0XfWfV4/I7mHxExg4LAU+GVDgKFe0rRnm3CIg74M5hQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6355
 
-On Tue, Dec 10, 2024 at 03:06:53PM +0100, Jonas Gorski wrote:
+On 12/10/24 04:48, Borislav Petkov wrote:
+> Final version I have now:
+
+Looks good, thanks!
+
+Tom
+
 > 
-> When support for locked ports was added with commit a21d9a670d81 ("net:
-> bridge: Add support for bridge port in locked mode"), learning is
-> inhibited when the port is locked in br_handle_frame_finish().
+> From: Tom Lendacky <thomas.lendacky@amd.com>
+> Date: Mon, 2 Dec 2024 14:50:51 -0600
+> Subject: [PATCH] x86/sev: Treat the contiguous RMP table as a single RMP segment
 > 
-> It was later extended in commit a35ec8e38cdd ("bridge: Add MAC
-> Authentication Bypass (MAB) support") where optionally learning is done
-> with locked entries.
+> In preparation for support of a segmented RMP table, treat the contiguous
+> RMP table as a segmented RMP table with a single segment covering all
+> of memory. By treating a contiguous RMP table as a single segment, much
+> of the code that initializes and accesses the RMP can be re-used.
 > 
-> Unfortunately both missed that learning may also happen on frames to
-> link local addresses (01:80:c2:00:00:0X) in br_handle_frame(), which
-> will call __br_handle_local_finish(), which may update the fdb unless
-> (ll) learning is disabled as well.
+> Segmented RMP tables can have up to 512 segment entries. Each segment
+> will have metadata associated with it to identify the segment location,
+> the segment size, etc. The segment data and the physical address are used
+> to determine the index of the segment within the table and then the RMP
+> entry within the segment. For an actual segmented RMP table environment,
+> much of the segment information will come from a configuration MSR. For
+> the contiguous RMP, though, much of the information will be statically
+> defined.
 > 
-> This can be easily observed by e.g. EAPOL frames to 01:80:c2:00:00:03 on
-> a port causing the source mac to be learned, which is then forwarded
-> normally, essentially bypassing any authentication.
+>   [ bp: Touchups, explain array_index_nospec() usage. ]
 > 
-> Fix this by moving the BR_PORT_LOCKED handling into its own function,
-> and call it from both places.
-> 
-> Fixes: a21d9a670d81 ("net: bridge: Add support for bridge port in locked mode")
-> Fixes: a35ec8e38cdd ("bridge: Add MAC Authentication Bypass (MAB) support")
-> Signed-off-by: Jonas Gorski <jonas.gorski@bisdn.de>
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
+> Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> Link: https://lore.kernel.org/r/8c40fbc9c5217f0d79b37cf861eff03ab0330bef.1733172653.git.thomas.lendacky@amd.com
 > ---
-> Sent as RFC since I'm not 100% sure this is the right way to fix.
-
-It was decided that this is expected behavior.
-https://man7.org/linux/man-pages/man8/bridge.8.html
-       locked on or locked off
-              Controls whether a port is locked or not. When locked,
-              non-link-local frames received through the port are
-              dropped unless an FDB entry with the MAC source address
-              points to the port. The common use case is IEEE 802.1X
-              where hosts can authenticate themselves by exchanging
-              EAPOL frames with an authenticator. After authentication
-              is complete, the user space control plane can install a
-              matching FDB entry to allow traffic from the host to be
-              forwarded by the bridge. When learning is enabled on a
-                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-              locked port, the no_linklocal_learn bridge option needs to
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-              be on to prevent the bridge from learning from received
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-              EAPOL frames. By default this flag is off.
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  arch/x86/virt/svm/sev.c | 199 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 180 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
+> index 2899c2e28db9..e50b71c67fab 100644
+> --- a/arch/x86/virt/svm/sev.c
+> +++ b/arch/x86/virt/svm/sev.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/cpumask.h>
+>  #include <linux/iommu.h>
+>  #include <linux/amd-iommu.h>
+> +#include <linux/nospec.h>
+>  
+>  #include <asm/sev.h>
+>  #include <asm/processor.h>
+> @@ -77,12 +78,42 @@ struct rmpentry_raw {
+>   */
+>  #define RMPTABLE_CPU_BOOKKEEPING_SZ	0x4000
+>  
+> +/*
+> + * For a non-segmented RMP table, use the maximum physical addressing as the
+> + * segment size in order to always arrive at index 0 in the table.
+> + */
+> +#define RMPTABLE_NON_SEGMENTED_SHIFT	52
+> +
+> +struct rmp_segment_desc {
+> +	struct rmpentry_raw *rmp_entry;
+> +	u64 max_index;
+> +	u64 size;
+> +};
+> +
+> +/*
+> + * Segmented RMP Table support.
+> + *   - The segment size is used for two purposes:
+> + *     - Identify the amount of memory covered by an RMP segment
+> + *     - Quickly locate an RMP segment table entry for a physical address
+> + *
+> + *   - The RMP segment table contains pointers to an RMP table that covers
+> + *     a specific portion of memory. There can be up to 512 8-byte entries,
+> + *     one pages worth.
+> + */
+> +static struct rmp_segment_desc **rmp_segment_table __ro_after_init;
+> +static unsigned int rst_max_index __ro_after_init = 512;
+> +
+> +static unsigned int rmp_segment_shift;
+> +static u64 rmp_segment_size;
+> +static u64 rmp_segment_mask;
+> +
+> +#define RST_ENTRY_INDEX(x)	((x) >> rmp_segment_shift)
+> +#define RMP_ENTRY_INDEX(x)	((u64)(PHYS_PFN((x) & rmp_segment_mask)))
+> +
+>  /* Mask to apply to a PFN to get the first PFN of a 2MB page */
+>  #define PFN_PMD_MASK	GENMASK_ULL(63, PMD_SHIFT - PAGE_SHIFT)
+>  
+>  static u64 probed_rmp_base, probed_rmp_size;
+> -static struct rmpentry_raw *rmptable __ro_after_init;
+> -static u64 rmptable_max_pfn __ro_after_init;
+>  
+>  static LIST_HEAD(snp_leaked_pages_list);
+>  static DEFINE_SPINLOCK(snp_leaked_pages_list_lock);
+> @@ -190,6 +221,92 @@ static bool __init clear_rmptable_bookkeeping(void)
+>  	return true;
+>  }
+>  
+> +static bool __init alloc_rmp_segment_desc(u64 segment_pa, u64 segment_size, u64 pa)
+> +{
+> +	u64 rst_index, rmp_segment_size_max;
+> +	struct rmp_segment_desc *desc;
+> +	void *rmp_segment;
+> +
+> +	/* Calculate the maximum size an RMP can be (16 bytes/page mapped) */
+> +	rmp_segment_size_max = PHYS_PFN(rmp_segment_size) << 4;
+> +
+> +	/* Validate the RMP segment size */
+> +	if (segment_size > rmp_segment_size_max) {
+> +		pr_err("Invalid RMP size 0x%llx for configured segment size 0x%llx\n",
+> +		       segment_size, rmp_segment_size_max);
+> +		return false;
+> +	}
+> +
+> +	/* Validate the RMP segment table index */
+> +	rst_index = RST_ENTRY_INDEX(pa);
+> +	if (rst_index >= rst_max_index) {
+> +		pr_err("Invalid RMP segment base address 0x%llx for configured segment size 0x%llx\n",
+> +		       pa, rmp_segment_size);
+> +		return false;
+> +	}
+> +
+> +	if (rmp_segment_table[rst_index]) {
+> +		pr_err("RMP segment descriptor already exists at index %llu\n", rst_index);
+> +		return false;
+> +	}
+> +
+> +	rmp_segment = memremap(segment_pa, segment_size, MEMREMAP_WB);
+> +	if (!rmp_segment) {
+> +		pr_err("Failed to map RMP segment addr 0x%llx size 0x%llx\n",
+> +		       segment_pa, segment_size);
+> +		return false;
+> +	}
+> +
+> +	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
+> +	if (!desc) {
+> +		memunmap(rmp_segment);
+> +		return false;
+> +	}
+> +
+> +	desc->rmp_entry = rmp_segment;
+> +	desc->max_index = segment_size / sizeof(*desc->rmp_entry);
+> +	desc->size = segment_size;
+> +
+> +	rmp_segment_table[rst_index] = desc;
+> +
+> +	return true;
+> +}
+> +
+> +static void __init free_rmp_segment_table(void)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < rst_max_index; i++) {
+> +		struct rmp_segment_desc *desc;
+> +
+> +		desc = rmp_segment_table[i];
+> +		if (!desc)
+> +			continue;
+> +
+> +		memunmap(desc->rmp_entry);
+> +
+> +		kfree(desc);
+> +	}
+> +
+> +	free_page((unsigned long)rmp_segment_table);
+> +
+> +	rmp_segment_table = NULL;
+> +}
+> +
+> +/* Allocate the table used to index into the RMP segments */
+> +static bool __init alloc_rmp_segment_table(void)
+> +{
+> +	struct page *page;
+> +
+> +	page = alloc_page(__GFP_ZERO);
+> +	if (!page)
+> +		return false;
+> +
+> +	rmp_segment_table = page_address(page);
+> +
+> +	return true;
+> +}
+> +
+>  /*
+>   * Do the necessary preparations which are verified by the firmware as
+>   * described in the SNP_INIT_EX firmware command description in the SNP
+> @@ -197,8 +314,8 @@ static bool __init clear_rmptable_bookkeeping(void)
+>   */
+>  static int __init snp_rmptable_init(void)
+>  {
+> -	u64 max_rmp_pfn, calc_rmp_sz, rmptable_size, rmp_end, val;
+> -	void *rmptable_start;
+> +	u64 max_rmp_pfn, calc_rmp_sz, rmptable_segment, rmptable_size, rmp_end, val;
+> +	unsigned int i;
+>  
+>  	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
+>  		return 0;
+> @@ -227,17 +344,18 @@ static int __init snp_rmptable_init(void)
+>  		goto nosnp;
+>  	}
+>  
+> +	if (!alloc_rmp_segment_table())
+> +		goto nosnp;
+> +
+>  	/* Map only the RMP entries */
+> -	rmptable_start = memremap(probed_rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ,
+> -				  probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ,
+> -				  MEMREMAP_WB);
+> -	if (!rmptable_start) {
+> -		pr_err("Failed to map RMP table\n");
+> +	rmptable_segment = probed_rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ;
+> +	rmptable_size    = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
+> +
+> +	if (!alloc_rmp_segment_desc(rmptable_segment, rmptable_size, 0)) {
+> +		free_rmp_segment_table();
+>  		goto nosnp;
+>  	}
+>  
+> -	rmptable_size = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
+> -
+>  	/*
+>  	 * Check if SEV-SNP is already enabled, this can happen in case of
+>  	 * kexec boot.
+> @@ -248,12 +366,20 @@ static int __init snp_rmptable_init(void)
+>  
+>  	/* Zero out the RMP bookkeeping area */
+>  	if (!clear_rmptable_bookkeeping()) {
+> -		memunmap(rmptable_start);
+> +		free_rmp_segment_table();
+>  		goto nosnp;
+>  	}
+>  
+>  	/* Zero out the RMP entries */
+> -	memset(rmptable_start, 0, rmptable_size);
+> +	for (i = 0; i < rst_max_index; i++) {
+> +		struct rmp_segment_desc *desc;
+> +
+> +		desc = rmp_segment_table[i];
+> +		if (!desc)
+> +			continue;
+> +
+> +		memset(desc->rmp_entry, 0, desc->size);
+> +	}
+>  
+>  	/* Flush the caches to ensure that data is written before SNP is enabled. */
+>  	wbinvd_on_all_cpus();
+> @@ -264,9 +390,6 @@ static int __init snp_rmptable_init(void)
+>  	on_each_cpu(snp_enable, NULL, 1);
+>  
+>  skip_enable:
+> -	rmptable = (struct rmpentry_raw *)rmptable_start;
+> -	rmptable_max_pfn = rmptable_size / sizeof(struct rmpentry_raw) - 1;
+> -
+>  	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/rmptable_init:online", __snp_enable, NULL);
+>  
+>  	/*
+> @@ -287,6 +410,13 @@ static int __init snp_rmptable_init(void)
+>   */
+>  device_initcall(snp_rmptable_init);
+>  
+> +static void set_rmp_segment_info(unsigned int segment_shift)
+> +{
+> +	rmp_segment_shift = segment_shift;
+> +	rmp_segment_size  = 1ULL << rmp_segment_shift;
+> +	rmp_segment_mask  = rmp_segment_size - 1;
+> +}
+> +
+>  #define RMP_ADDR_MASK GENMASK_ULL(51, 13)
+>  
+>  bool snp_probe_rmptable_info(void)
+> @@ -308,6 +438,11 @@ bool snp_probe_rmptable_info(void)
+>  
+>  	rmp_sz = rmp_end - rmp_base + 1;
+>  
+> +	/* Treat the contiguous RMP table as a single segment */
+> +	rst_max_index = 1;
+> +
+> +	set_rmp_segment_info(RMPTABLE_NON_SEGMENTED_SHIFT);
+> +
+>  	probed_rmp_base = rmp_base;
+>  	probed_rmp_size = rmp_sz;
+>  
+> @@ -317,15 +452,41 @@ bool snp_probe_rmptable_info(void)
+>  	return true;
+>  }
+>  
+> +/*
+> + * About the array_index_nospec() usage below:
+> + *
+> + * This function can get called by exported functions like
+> + * snp_lookup_rmpentry(), which is used by the KVM #PF handler, among
+> + * others, and since the @pfn passed in cannot always be trusted,
+> + * speculation should be stopped as a protective measure.
+> + */
+>  static struct rmpentry_raw *get_raw_rmpentry(u64 pfn)
+>  {
+> -	if (!rmptable)
+> +	u64 paddr, rst_index, segment_index;
+> +	struct rmp_segment_desc *desc;
+> +
+> +	if (!rmp_segment_table)
+>  		return ERR_PTR(-ENODEV);
+>  
+> -	if (unlikely(pfn > rmptable_max_pfn))
+> +	paddr = pfn << PAGE_SHIFT;
+> +
+> +	rst_index = RST_ENTRY_INDEX(paddr);
+> +	if (unlikely(rst_index >= rst_max_index))
+>  		return ERR_PTR(-EFAULT);
+>  
+> -	return rmptable + pfn;
+> +	rst_index = array_index_nospec(rst_index, rst_max_index);
+> +
+> +	desc = rmp_segment_table[rst_index];
+> +	if (unlikely(!desc))
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	segment_index = RMP_ENTRY_INDEX(paddr);
+> +	if (unlikely(segment_index >= desc->max_index))
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	segment_index = array_index_nospec(segment_index, desc->max_index);
+> +
+> +	return desc->rmp_entry + segment_index;
+>  }
+>  
+>  static int get_rmpentry(u64 pfn, struct rmpentry *e)
 
