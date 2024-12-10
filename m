@@ -1,85 +1,125 @@
-Return-Path: <linux-kernel+bounces-440362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805F39EBC2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:55:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C419EBC48
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D5A1631C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F6C169C10
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 21:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D3B230D2B;
-	Tue, 10 Dec 2024 21:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B2C232373;
+	Tue, 10 Dec 2024 21:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRVeJlIg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="MJA/f3mZ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC5E232373;
-	Tue, 10 Dec 2024 21:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540E2397B4;
+	Tue, 10 Dec 2024 21:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733867736; cv=none; b=na1Ilu2SKcfnn/YGpJaP6xS7KJmzQ+SX6Ue340Nf91XT7rz2DrfJSs8YtJQoIvcUfVyYWiABy8htouZXGO15Pb+2AjEXMoCptu8Ux2BMoZRCKWV1LZcCWIHDHnUUcTyANYLGeoSQ7aP+LTu0lv0iFw3tZeTAlGoQw/qKM7iILGc=
+	t=1733867765; cv=none; b=pl48QQwsaytsO/TecJfFUZc3EZ+lkslkUlF+bpFLEk0VWslgZOzfHATxo0deLU4mbrjNqkrWG72QB7BrtN+liy6mfWiqNV3M7YSl2ZqNjMx6PsCRDG8XP8fnDB06/hyZKIr0k8txEs6cQhbYJsgMcQxFv3DZdDXkoAh4ZCMAjxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733867736; c=relaxed/simple;
-	bh=JGzm5kn0zW/cTRR818QpfYPr3GrBn5g7uRFlG1i+UB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrnYBjr0OgEe6G+Tjooo3VJdRP8Ibbb4497sZOCbTQihsOaay2JSc9KYKiF5nQ5bdltahnY2d9tVmWcO5eMKZPb01NCchsyd0iJYauBaSpD80t8wc9DoANBBg/Q+ncd8EBS9Y3Sbudlqa7U+oOCAmXyn5oGWx5+r3TF/OPTkfwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRVeJlIg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1668EC4CED6;
-	Tue, 10 Dec 2024 21:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733867736;
-	bh=JGzm5kn0zW/cTRR818QpfYPr3GrBn5g7uRFlG1i+UB4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bRVeJlIgFWdH778YlGN0wImA7G8elslk5iJjiWW7nCCqfaZLbfhsbCGqUaQdF1/g8
-	 p3kOnian/9WkZZsERBtRad+UKwWAYQYB5nWrzwpFYcmpdY1f75uI1TLW4QsfQm7ffN
-	 vYuWpZzXP7hwwtfJyT2RePWTvETnx+ldF40CDRMk+JQXl0vnZRrEGGUvHsIKyff+Ed
-	 n9BO/bIjAksXzURBTv4E2Qj709YoldpeaM8Yd43VsqDXJpFTuMdY6wFnKbfrGpw6w9
-	 y75/pF8UEh8PRDzqx93QKxd5N5xPZ9cOHm2ECiWGBxy2rHNA/VvPcvCjswW6XdTF13
-	 d9kA8n52GawDA==
-Date: Tue, 10 Dec 2024 15:55:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: soc: renesas: Document Renesas RZ/G3E
- SoC variants
-Message-ID: <20241210215534.GA531298-robh@kernel.org>
-References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
- <20241206212559.192705-3-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1733867765; c=relaxed/simple;
+	bh=+YGDTxSdhaw3xsmyw2NeAbWf1IMK70o61+V3BPkda4g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Skuq08KKD/acvjyArLbcJlJlIX0UAdA6mRS+vLK6gjSCA3SHu8jZPcSv/tJyPEyrLxY9TREvKNOStJBHmyYu1uM7rF9dknzarHNXkgu+VTtsyIiw2g2FEP/VTXvOCp6hYkjCukFXTGv8lnP6zvOYdCZIEy9yyDJqiAq1ne5cRgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=MJA/f3mZ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733867760;
+	bh=+YGDTxSdhaw3xsmyw2NeAbWf1IMK70o61+V3BPkda4g=;
+	h=From:Subject:Date:To:Cc:From;
+	b=MJA/f3mZus7LGmITbekVCbVJcAq66HjeoBRycllq6OXKgNhFkDMetAmGc/ylxxeyB
+	 Sqocn5X5O5dmy2t+iRl2Qfd9iL/foLK3L00hFfBRYAa2M5yUZ6uQ0RTJuqQTmCiVGo
+	 9fSnB+QXcQ6HB1NtzqiRWOVeJ5QQ1yVLdr1takgo=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 00/14] power: supply: introduce and use
+ power_supply_for_each_psy() and dev_to_psy()
+Date: Tue, 10 Dec 2024 22:55:47 +0100
+Message-Id: <20241210-power-supply-dev_to_psy-v2-0-9d8c9d24cfe4@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206212559.192705-3-john.madieu.xa@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOO4WGcC/4WNQQ6CMBBFr0K6dgytoMDKexhCKkztJIY2HSgSw
+ t2tXMDle8l/fxOMgZBFk20iYCQmNyZQp0z0Vo8vBBoSC5WrQqq8Au8WDMCz9+8VBozd5DrPK5j
+ nxegCpdFXLdLaBzT0OcqPNrElnlxYj6Mof/Z/M0rIwdTlgLWUt7Ks7gsSM/d2tucRJ9Hu+/4FA
+ nF92MMAAAA=
+X-Change-ID: 20241208-power-supply-dev_to_psy-fb3fa4e1fa6a
+To: Sebastian Reichel <sre@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Maximilian Luz <luzmaximilian@gmail.com>, 
+ =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ platform-driver-x86@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733867760; l=2215;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=+YGDTxSdhaw3xsmyw2NeAbWf1IMK70o61+V3BPkda4g=;
+ b=793fnRywIoSyimqnJL1i3d3U3yWCVUS+umSPizyk46isXeCOD3C7UAfLJbrTq5wRhSyjrZ0g8
+ XXbJ7zf0/MaDvmFyCYcGt9NvAOLqxrWRtQ+d7ustVNRTi7sQZLM6LTe
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Fri, Dec 06, 2024 at 10:25:56PM +0100, John Madieu wrote:
-> Document RZ/G3E (R9A09G047) SoC variants.
+Add two new functions with easier to use and safer APIs.
+Switch over a bunch of in-tree users.
 
-Your subject could be improved so that it doesn't match this one:
+The first commit is not directly related but fits the general theme of
+the series.
 
-https://lore.kernel.org/all/20241203105005.103927-3-biju.das.jz@bp.renesas.com/
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Remove slipped in 'struct power_supply_ext'
+- Link to v1: https://lore.kernel.org/r/20241208-power-supply-dev_to_psy-v1-0-f95de9117558@weissschuh.net
 
-Which threw off my tools...
+---
+Thomas Weißschuh (14):
+      power: supply: mm8013: use accessor for driver data
+      power: supply: core: introduce power_supply_for_each_psy()
+      power: supply: core: use power_supply_for_each_psy()
+      power: supply: ab8500: use power_supply_for_each_psy()
+      power: supply: apm_power: use power_supply_for_each_psy()
+      power: supply: core: remove power_supply_for_each_device()
+      power: supply: core: introduce dev_to_psy()
+      power: supply: core: use dev_to_psy()
+      power: supply: sysfs: use dev_to_psy()
+      power: supply: ab8500: use dev_to_psy()
+      power: supply: surface_battery: use dev_to_psy()
+      power: supply: bq2415x_charger: use dev_to_psy()
+      power: supply: bq24190_charger: use dev_to_psy()
+      power: supply: bq24257_charger: use dev_to_psy()
 
-> 
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> ---
->  .../devicetree/bindings/soc/renesas/renesas,r9a09g057-sys.yaml   | 1 +
->  1 file changed, 1 insertion(+)
+ drivers/power/supply/ab8500_btemp.c       |  5 +--
+ drivers/power/supply/ab8500_chargalg.c    |  5 +--
+ drivers/power/supply/ab8500_charger.c     |  5 +--
+ drivers/power/supply/ab8500_fg.c          | 33 ++++++++--------
+ drivers/power/supply/apm_power.c          |  6 +--
+ drivers/power/supply/bq2415x_charger.c    | 24 +++++------
+ drivers/power/supply/bq24190_charger.c    |  4 +-
+ drivers/power/supply/bq24257_charger.c    |  8 ++--
+ drivers/power/supply/mm8013.c             |  2 +-
+ drivers/power/supply/power_supply_core.c  | 66 ++++++++++++++++++-------------
+ drivers/power/supply/power_supply_sysfs.c |  8 ++--
+ drivers/power/supply/surface_battery.c    |  4 +-
+ include/linux/power_supply.h              |  4 +-
+ 13 files changed, 92 insertions(+), 82 deletions(-)
+---
+base-commit: 94ba531bf9cb3c4ef725ffc37b8ed09006533f25
+change-id: 20241208-power-supply-dev_to_psy-fb3fa4e1fa6a
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
