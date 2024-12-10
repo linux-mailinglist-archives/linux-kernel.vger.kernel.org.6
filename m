@@ -1,175 +1,217 @@
-Return-Path: <linux-kernel+bounces-439775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0040F9EB3DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0768A9EB3DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6FF1881EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:47:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135EC188988A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99361A9B3F;
-	Tue, 10 Dec 2024 14:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812451AA7A3;
+	Tue, 10 Dec 2024 14:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bisdn-de.20230601.gappssmtp.com header.i=@bisdn-de.20230601.gappssmtp.com header.b="VFTPkYYW"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AR+nFoj5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F588B676
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32E9B676;
+	Tue, 10 Dec 2024 14:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842050; cv=none; b=JzNPK4Z3uayqymAozuWndLkVOyV/UmUJpTc2dZmpEBIcManB++ul/76JSataCoUKCYMEbLJzS9qfbrdTKctHuDMHYR/inJXJroaZsxNdfxTNfD4yly/6uU/X8PCYUotTwnPKp7iWFhPPzI0wFaI3mm3cU02hPe/4hDcc3eAtQPY=
+	t=1733842065; cv=none; b=ES3yiejknB2q3KL3rHMQPeUezv9bZ7PS4X8CGp1aS8ZuJrAafKMjKv09sHV4622d7gL8sMTIaRYgCfM1bp+vRYFo1kQwcQjIBN/TvpxMWmNz0byptHpKWPX4ZcoUHNtAYBr6lt36u1PPLV7qAAWHEYkOTGQZG/DYcuz34Rr80I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842050; c=relaxed/simple;
-	bh=fnM7XdZPmq4dQ8q57DyE5z4e346R3Iv66K4+vOj/nSc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VahlkUPjpttRbxXtgd1l+SOkfTi9kJAQkxQj6A5DtggDUEDcIuKceHSNOhNCXGV4XxqbbRLvtFw3p3ZdovIfA16O4D6VaakFUK2OPnoj4YFgA/6EhkvjESicjsEfvwtgzIr3Mp+mIfVFgWeZevp48WPtj8x5ObfWsv/1eE14Ny4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bisdn.de; spf=none smtp.mailfrom=bisdn.de; dkim=pass (2048-bit key) header.d=bisdn-de.20230601.gappssmtp.com header.i=@bisdn-de.20230601.gappssmtp.com header.b=VFTPkYYW; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bisdn.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bisdn.de
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4677cbea36dso204201cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:47:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bisdn-de.20230601.gappssmtp.com; s=20230601; t=1733842047; x=1734446847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rzs1DO8cqSom2w5LB1plSfwZm2SKsh6MLmfHHtdFuyU=;
-        b=VFTPkYYWezuuze83ttZ5iiTb4aXwTZCJ+7Gm8AZ/UcEDkqu3udqenCAhgJHdWy084Q
-         3cllSCvujBtiCqPtQXKKxdp1aQ1vnsWW+0ozQlDewywSJ+wK0NIrqropyuBB/F9ykCE9
-         oMunlkOl9NA8kTNvp8jWBguBdXYdxIDl78Kl5526VdJrnfF+C80J/rISX2uzud8WVrfL
-         vqKDu4EmxXD7t9Q8rmuXwgf9+4639e+YZOizwdx7hT0kO37uOtC7mrtRyIEytGxlP4Vw
-         RD4STEdN7ACZoQP/7AQrEXfwZsfjtWueGYgqWXlTbEF9qL8yFYo6OgdkGCMcCx2Iwmqv
-         qWPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733842047; x=1734446847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rzs1DO8cqSom2w5LB1plSfwZm2SKsh6MLmfHHtdFuyU=;
-        b=GmvBCOHDx4jeGlEES3SS08LzDL37ZiHNG/KB4+TOiZn7NYLzf2Oh0uSOGWtkIwWv7k
-         hltGE7hR4dPkjT92gOlQcQch+0ZxGXwxsqs4eHEt/f0KxqzV5mU/akIc8qQjUrHGV/kX
-         mNNbKv8Y39QGkLRXuzA02SU+p//KQbPVU9ig81lvS7gz9vcUhtCnb5GEvaD4qkAGLfjP
-         VueMERHRUd87p2EyeA371fz8YyAa7cX6OKcfGP4Ztxh/9XoJOb+Xfl0ebD77BiCEQi9Z
-         kIKROvtPwHQcHQ+lGy4cjFY2GPC2EccbTGX/d8wYUyhjzHEZ/mXUDv/79NBJvv0xpBsX
-         H0dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdwy+bdz7FTUbhFlmJqetVKItaZgIpnrSEDK5QgPaFnVCiTeqAcMgHQ9B2IWOYwSR7UqdETEmOC8R78io=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpJk14puwQXwA5TuFo/ljBRXiPnZ8lKQTkmYUDdb+dwVNyt5TM
-	4hrNqXqrymkXbaiVKzYfE6bsIwpZbadhdCUikfoMmY7DHDQX2lnFxgDv6ogE9KMRB0m6j1CP1Ji
-	o4e3OfGYQsGfFQC9Na5X1EMpbiHbvd0KpcEspkr38OY1g7/As8Csls/djzBVtWa9e309FaB6uX7
-	pAHNDrLjYZwk582N4sRoHj8ROc3v+ImQ==
-X-Gm-Gg: ASbGnctnXE/2LLCGWUPPGaJwJrZ1wmBRCFRv9WkQIna0QLSgFU1VxNiMMpJuc5Z2djC
-	pK7wVcARH8nUl2CXeXNCZ7q/Z3v+srT8apg==
-X-Google-Smtp-Source: AGHT+IGsh2nFo1NsXdN/9EcCCJOyiewT7PU4OIYHkIeQY6kKt2wkQpzsETMHpFlZJixwWx1bhe0I8N/7iUts9Fm2jEI=
-X-Received: by 2002:a05:622a:110e:b0:461:6599:b9a with SMTP id
- d75a77b69052e-467746ad834mr24853361cf.11.1733842047128; Tue, 10 Dec 2024
- 06:47:27 -0800 (PST)
+	s=arc-20240116; t=1733842065; c=relaxed/simple;
+	bh=OSbBVHFSnoLD3d/sFOchTp8lD3nMnqHhclQ+D0oRQ0M=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YSPiMzBUNR+H4QXmOq8NBfxfbGXnn0d7bcWVliu1bMlKDKJMc/EqdB4cYkuo2bGaJPVgM6DJ5ovEHQ21ofFVqE/uPQvRDbB3LKjJsWecQjZnyR7/OaXu0fbiMAofECgnRUyUWC4SWUoWJfNWCQjHScZz6XjlVo6SiijvBU7M2BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AR+nFoj5; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733842064; x=1765378064;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=OSbBVHFSnoLD3d/sFOchTp8lD3nMnqHhclQ+D0oRQ0M=;
+  b=AR+nFoj540ufqvCOFvyqXY07MpxUzgSZWoJYI0up4iDR/5slqLFP/9Dq
+   /tuTm/pRuxU7jz7AiDCBcigp3jcdVBT+XBsLZzvHV2Ps0bekwAnudWlFX
+   Czps6fH+IsXT40xbhq7Of66+sZm8thykyaczWZvL8eQFRKY2jGxqdZd/n
+   2Ia/DvmK3Un4jc+KKTqV4yInjKASXT+OEGtZF9fAJA4B+7kxwodEFrJvi
+   XX1sOJHCeiHsFZTZwZh07+RTrqr25Vs7YWLIG46IBvT9ud2Xb8yMLQEf/
+   QDnukPCu9hJCia7mp3naPT0GkrPDYj2T7m4j3yDNSAtesN8NHorPudD+k
+   g==;
+X-CSE-ConnectionGUID: 6AEVInIuQF2Qr/vIoNWVXA==
+X-CSE-MsgGUID: CsfMOzEQQh6dEgg/Pna/3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="51599691"
+X-IronPort-AV: E=Sophos;i="6.12,222,1728975600"; 
+   d="scan'208";a="51599691"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 06:47:43 -0800
+X-CSE-ConnectionGUID: jm+XQhz/SQOHoUbmyM6beQ==
+X-CSE-MsgGUID: 5fZsAwrkRI+Lruldh+12xQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="100487086"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.56])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 06:47:41 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 10 Dec 2024 16:47:38 +0200 (EET)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: linux@weissschuh.net, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: wmi-bmof: Make use of .bin_size()
+ callback
+In-Reply-To: <20241206215650.2977-1-W_Armin@gmx.de>
+Message-ID: <ad05e251-37bd-0cc2-8b11-a859e453f476@linux.intel.com>
+References: <20241206215650.2977-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210140654.108998-1-jonas.gorski@bisdn.de> <20241210143438.sw4bytcsk46cwqlf@skbuf>
-In-Reply-To: <20241210143438.sw4bytcsk46cwqlf@skbuf>
-From: Jonas Gorski <jonas.gorski@bisdn.de>
-Date: Tue, 10 Dec 2024 15:47:11 +0100
-Message-ID: <CAJpXRYTGbrM1rK8WVkLERf5B_zdt20Zf+MB67O5M0BT0iJ+piw@mail.gmail.com>
-Subject: Re: [PATCH RFC] net: bridge: handle ports in locked mode for ll learning
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Roopa Prabhu <roopa@nvidia.com>, Nikolay Aleksandrov <razor@blackwall.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Ido Schimmel <idosch@nvidia.com>, Hans Schultz <schultz.hans@gmail.com>, 
-	"Hans J. Schultz" <netdev@kapio-technology.com>, bridge@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-Am Di., 10. Dez. 2024 um 15:34 Uhr schrieb Vladimir Oltean
-<vladimir.oltean@nxp.com>:
->
-> On Tue, Dec 10, 2024 at 03:06:53PM +0100, Jonas Gorski wrote:
-> >
-> > When support for locked ports was added with commit a21d9a670d81 ("net:
-> > bridge: Add support for bridge port in locked mode"), learning is
-> > inhibited when the port is locked in br_handle_frame_finish().
-> >
-> > It was later extended in commit a35ec8e38cdd ("bridge: Add MAC
-> > Authentication Bypass (MAB) support") where optionally learning is done
-> > with locked entries.
-> >
-> > Unfortunately both missed that learning may also happen on frames to
-> > link local addresses (01:80:c2:00:00:0X) in br_handle_frame(), which
-> > will call __br_handle_local_finish(), which may update the fdb unless
-> > (ll) learning is disabled as well.
-> >
-> > This can be easily observed by e.g. EAPOL frames to 01:80:c2:00:00:03 o=
-n
-> > a port causing the source mac to be learned, which is then forwarded
-> > normally, essentially bypassing any authentication.
-> >
-> > Fix this by moving the BR_PORT_LOCKED handling into its own function,
-> > and call it from both places.
-> >
-> > Fixes: a21d9a670d81 ("net: bridge: Add support for bridge port in locke=
-d mode")
-> > Fixes: a35ec8e38cdd ("bridge: Add MAC Authentication Bypass (MAB) suppo=
-rt")
-> > Signed-off-by: Jonas Gorski <jonas.gorski@bisdn.de>
-> > ---
-> > Sent as RFC since I'm not 100% sure this is the right way to fix.
->
-> It was decided that this is expected behavior.
-> https://man7.org/linux/man-pages/man8/bridge.8.html
->        locked on or locked off
->               Controls whether a port is locked or not. When locked,
->               non-link-local frames received through the port are
->               dropped unless an FDB entry with the MAC source address
->               points to the port. The common use case is IEEE 802.1X
->               where hosts can authenticate themselves by exchanging
->               EAPOL frames with an authenticator. After authentication
->               is complete, the user space control plane can install a
->               matching FDB entry to allow traffic from the host to be
->               forwarded by the bridge. When learning is enabled on a
->                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->               locked port, the no_linklocal_learn bridge option needs to
->               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->               be on to prevent the bridge from learning from received
->               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->               EAPOL frames. By default this flag is off.
->               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On Fri, 6 Dec 2024, Armin Wolf wrote:
 
-Huh, indeed. Unexpected decision, didn't think that this was
-intentional. I wonder what the use case for that is.
+> Until now the wmi-bmof driver had to allocate the binary sysfs
+> attribute dynamically since its size depends on the bmof buffer
+> returned by the firmware.
+> 
+> Use the new .bin_size() callback to avoid having to do this memory
+> allocation.
+> 
+> Tested on a Asus Prime B650-Plus.
+> 
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/wmi-bmof.c | 75 +++++++++++++++++----------------
+>  1 file changed, 38 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
+> index df6f0ae6e6c7..3e33da36da8a 100644
+> --- a/drivers/platform/x86/wmi-bmof.c
+> +++ b/drivers/platform/x86/wmi-bmof.c
+> @@ -20,66 +20,66 @@
+> 
+>  #define WMI_BMOF_GUID "05901221-D566-11D1-B2F0-00A0C9062910"
+> 
+> -struct bmof_priv {
+> -	union acpi_object *bmofdata;
+> -	struct bin_attribute bmof_bin_attr;
+> -};
+> -
+> -static ssize_t read_bmof(struct file *filp, struct kobject *kobj, struct bin_attribute *attr,
+> +static ssize_t bmof_read(struct file *filp, struct kobject *kobj, const struct bin_attribute *attr,
+>  			 char *buf, loff_t off, size_t count)
+>  {
+> -	struct bmof_priv *priv = container_of(attr, struct bmof_priv, bmof_bin_attr);
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	union acpi_object *obj = dev_get_drvdata(dev);
+> 
+> -	return memory_read_from_buffer(buf, count, &off, priv->bmofdata->buffer.pointer,
+> -				       priv->bmofdata->buffer.length);
+> +	return memory_read_from_buffer(buf, count, &off, obj->buffer.pointer, obj->buffer.length);
+>  }
+> 
+> -static int wmi_bmof_probe(struct wmi_device *wdev, const void *context)
+> +static const BIN_ATTR_ADMIN_RO(bmof, 0);
+> +
+> +static const struct bin_attribute * const bmof_attrs[] = {
+> +	&bin_attr_bmof,
+> +	NULL
+> +};
+> +
+> +static size_t bmof_bin_size(struct kobject *kobj, const struct bin_attribute *attr, int n)
+>  {
+> -	struct bmof_priv *priv;
+> -	int ret;
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	union acpi_object *obj = dev_get_drvdata(dev);
+> +
+> +	return obj->buffer.length;
+> +}
+> 
+> -	priv = devm_kzalloc(&wdev->dev, sizeof(struct bmof_priv), GFP_KERNEL);
+> -	if (!priv)
+> -		return -ENOMEM;
+> +static const struct attribute_group bmof_group = {
+> +	.bin_size = bmof_bin_size,
+> +	.bin_attrs_new = bmof_attrs,
+> +};
+> +
+> +static const struct attribute_group *bmof_groups[] = {
+> +	&bmof_group,
+> +	NULL
+> +};
+> 
+> -	dev_set_drvdata(&wdev->dev, priv);
+> +static int wmi_bmof_probe(struct wmi_device *wdev, const void *context)
+> +{
+> +	union acpi_object *obj;
+> 
+> -	priv->bmofdata = wmidev_block_query(wdev, 0);
+> -	if (!priv->bmofdata) {
+> +	obj = wmidev_block_query(wdev, 0);
+> +	if (!obj) {
+>  		dev_err(&wdev->dev, "failed to read Binary MOF\n");
+>  		return -EIO;
+>  	}
+> 
+> -	if (priv->bmofdata->type != ACPI_TYPE_BUFFER) {
+> +	if (obj->type != ACPI_TYPE_BUFFER) {
+>  		dev_err(&wdev->dev, "Binary MOF is not a buffer\n");
+> -		ret = -EIO;
+> -		goto err_free;
+> +		kfree(obj);
+> +		return -EIO;
+>  	}
+> 
+> -	sysfs_bin_attr_init(&priv->bmof_bin_attr);
+> -	priv->bmof_bin_attr.attr.name = "bmof";
+> -	priv->bmof_bin_attr.attr.mode = 0400;
+> -	priv->bmof_bin_attr.read = read_bmof;
+> -	priv->bmof_bin_attr.size = priv->bmofdata->buffer.length;
+> -
+> -	ret = device_create_bin_file(&wdev->dev, &priv->bmof_bin_attr);
+> -	if (ret)
+> -		goto err_free;
+> +	dev_set_drvdata(&wdev->dev, obj);
+> 
+>  	return 0;
+> -
+> - err_free:
+> -	kfree(priv->bmofdata);
+> -	return ret;
+>  }
+> 
+>  static void wmi_bmof_remove(struct wmi_device *wdev)
+>  {
+> -	struct bmof_priv *priv = dev_get_drvdata(&wdev->dev);
+> +	union acpi_object *obj = dev_get_drvdata(&wdev->dev);
+> 
+> -	device_remove_bin_file(&wdev->dev, &priv->bmof_bin_attr);
+> -	kfree(priv->bmofdata);
+> +	kfree(obj);
+>  }
+> 
+>  static const struct wmi_device_id wmi_bmof_id_table[] = {
+> @@ -90,6 +90,7 @@ static const struct wmi_device_id wmi_bmof_id_table[] = {
+>  static struct wmi_driver wmi_bmof_driver = {
+>  	.driver = {
+>  		.name = "wmi-bmof",
+> +		.dev_groups = bmof_groups,
+>  	},
+>  	.probe = wmi_bmof_probe,
+>  	.remove = wmi_bmof_remove,
 
-Ah well, then disregard my patch.
+So do I understand right that this meant to supercede the patch from 
+Thomas?
 
-Best Regards,
-Jonas
-
---=20
-BISDN GmbH
-K=C3=B6rnerstra=C3=9Fe 7-10
-10785 Berlin
-Germany
-
-
-Phone:=20
-+49-30-6108-1-6100
-
-
-Managing Directors:=C2=A0
-Dr.-Ing. Hagen Woesner, Andreas=20
-K=C3=B6psel
-
-
-Commercial register:=C2=A0
-Amtsgericht Berlin-Charlottenburg HRB 141569=20
-B
-VAT ID No:=C2=A0DE283257294
+-- 
+ i.
 
 
