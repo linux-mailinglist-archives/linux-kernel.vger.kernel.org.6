@@ -1,230 +1,144 @@
-Return-Path: <linux-kernel+bounces-439306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB2E9EAD5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:00:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125D09EAD67
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:01:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF042907BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2E01629E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A103E212D6B;
-	Tue, 10 Dec 2024 09:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4EC210F69;
+	Tue, 10 Dec 2024 09:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="N9hfPxR3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lLSEVIYs"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="GCIv+E3q"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F08212D60;
-	Tue, 10 Dec 2024 09:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D5D210F60
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 09:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733824622; cv=none; b=l6siaLlcQnGg+5BPHH8N0N4Bds9j/O3wzWhF9npphgYJcgNPs84CrM3MbCoO5Do6B5hCoxcT2aS8LwcwO7I4QrqinQ6MENH79991BmG+3FeT6qNUXC7wi/S/ZSWGWnbZLRk8SRTDzmOJWBtJkeMO92mEoGCneEs++4Dq1B9SzsY=
+	t=1733824615; cv=none; b=mSCcL173HSR8uxOKTxXlOB1OcMSF9c5Ndz0MDkAyucHIhogXoN7xVchlKWVBr1I+ryTaLtjm+nCzbAwBgoktECwW22urYeBwMw2XKRrpBAOYxffiapiE3Ap6daIV/J3euU/WcaLkntagR8/eDdwRc7pDYlS/W+eOTi+LqEtS6a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733824622; c=relaxed/simple;
-	bh=/TeuGAbZ26vSbNhjubofgZnnehIACA5UrhaAhnM3RD8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QHixMekA2jpfEkCj4ebb+6RQNnz3qHEoVfeuCx4P7IjDWCURbY4Wpo9c6jnJOrnj5rcZG3dfFLMdnh9Ull8Iac1SMS0F2CQtgK8vtfLIKJnLbn+qbBoqYDNPTjxrXyPpppiZV/VwsLOdw+XfOzjXvdalmjpy4JGtfalY/EOTpiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=N9hfPxR3; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lLSEVIYs reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1733824615; c=relaxed/simple;
+	bh=xK73O0f7blSrEgwODgrtk4L4kIN4+OvcHPN1VpbRQfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WnLTxLyNunjWWnZst92mPq+7TgnfjybNu4sTTIOBXVmFf4rO83sQ/gNh1khw0ZZW9mqxV0BgBwXgZbVdqPpdQ0Uasz7IkPOuTjAZta7ls92DWRwNwFRrZ6Uwc/202ksdiKIsTtW4PKsMmgtFsxi/OsKaUsRdc2Hg/fG8SkPLyQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=GCIv+E3q; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-723f37dd76cso4750435b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 01:56:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733824619; x=1765360619;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=LPh0yVGEQ9vWISI1i/TYH0JhPJ9KKecMDH0Xpu48hcc=;
-  b=N9hfPxR3BBsqJFXfN5JzGh1juxmDc6mli1GCpsAP296F2BioSDc0LC4z
-   IqUYDBHsM4HSKrozybuPIw83SLeTVE+ClyNomh/T1lMw2YIkRY/DXzLSy
-   gKGLWyltYYwudf0x/jMLEjoWmZJ2QTfyGqqqLHDHfXKU0KNXgbdwPGKg3
-   DqW5ujJyUXTVFT7V693G41TkwS14um9Amp9/NgMapTbwYQLHr3QlmOfCh
-   rDaqMDPJWk/zUg5v/ZKMnjOTn4QnNwFnqPZmQXNZkFfb9iME4FzEFIRUs
-   CWeGpiZ+JHtId+lvlGJUiN3GULZ0XNIOAC8m+6OOZhWJlIdkTa6eP874c
-   Q==;
-X-CSE-ConnectionGUID: L4jbIdFJRearAlIyQVVXcQ==
-X-CSE-MsgGUID: pmEQQ7tuSc27gjXA3zX56g==
-X-IronPort-AV: E=Sophos;i="6.12,222,1728943200"; 
-   d="scan'208";a="40507636"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 10 Dec 2024 10:56:50 +0100
-X-CheckPoint: {67581062-5-98002871-E6E29D66}
-X-MAIL-CPID: 3E6B7F7F1FE94745951728CD9D1DD495_3
-X-Control-Analysis: str=0001.0A682F1A.67581062.0054,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5BA3D167FF3;
-	Tue, 10 Dec 2024 10:56:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733824605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPh0yVGEQ9vWISI1i/TYH0JhPJ9KKecMDH0Xpu48hcc=;
-	b=lLSEVIYs5+7Y+CXHWwxGjqyRow8kmqPCwwfsqJRbU0dGB3uPArrRjNJZIt8AQsDkjzL/s8
-	GKke8uKjGNfjS2wkeVbymV+A15exlcdlbbXcWEYCAxm4iQAV3x5DUbCZqllq3Y6WQtzpWe
-	ijW/PsTwD08MBNJc36SVETUAei4hL92vI2Wl/lfM9LJHE3CPe/8t1C9fQM/joAekRntcJG
-	zkKg4f26O8tuJ7dZHeLkJBhKbkjt38lr98UbV6CvVJbrxfP4L77DjDqe6tWjYe4qARu9ot
-	4+XqcHL6rmyYfckuo8ljhOet1+EiN43ItM5YUOXUWzWMrQyw/2q37MCyoyW8AA==
-Message-ID: <309052f3f69950fe43390505cc7254aee8c8f5c6.camel@ew.tq-group.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
- MBa62xx carrier board Device Trees
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, Felipe Balbi <balbi@kernel.org>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, Hari
- Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
-Date: Tue, 10 Dec 2024 10:56:41 +0100
-In-Reply-To: <a2a2f201-73a4-4a99-baef-0d593a88c872@lunn.ch>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
-	 <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
-	 <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
-	 <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
-	 <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
-	 <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
-	 <a2a2f201-73a4-4a99-baef-0d593a88c872@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1733824613; x=1734429413; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kVRuXdDQ8ceHGh69+Xr1H0loAqY9s+XHZx32Oyfx7ZA=;
+        b=GCIv+E3qS45vlgMGyv4j+vcl47FfHL3AdiK9t9WN5AJHv7NFePcR7Zdh7jCxQC2iCy
+         vqLqOBKVhZ6z0SegiTTELEdvpue3vNZULVDGeMo9SrP7tbtxLXHpbJvs6TjvcHsnIiiB
+         GVaELQKS7wE5YD3cRZDsINVO5uJKgSzUgrb9ZhfbCh1am65Jm+T+UBOYKKU0sP2utT2Q
+         NXPDlzj226TyltQZVjilhUrnraPtX7hm+eg37OqawNTsUrZMH5iT4lo0C+OG3YlX8em7
+         WHhe+Cz8cN48IK2y9MXpt75fGHlfzuWt0vmgaOdsXqygFn9TIYv42CMnMbxITfu/dYnI
+         qbDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733824613; x=1734429413;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kVRuXdDQ8ceHGh69+Xr1H0loAqY9s+XHZx32Oyfx7ZA=;
+        b=uz3r0y3hRUvGsA0FyF/VHkA+/3qLBBFG32Uz4NjvJlCQU9l5a2BjlSd/mfPOEZ8oKl
+         BsrH781TCPg+bXqKfzQ25fj3RGEyHnWCyT28pqgXubUbjH84+OP4sclIuBBvV5qW2kkW
+         kbzgv0drXyaoaOwAMlaxaVpvyrtW/eMl+Rr3eLVfubFf1ox4k8Oc+xeSs4cgdL8BIvcq
+         0dxWIkYhTLZL2YFd6RZT3uwYvJkAV+yx3NMWbmhHjIUm16Ff7zI1X9UzoPonsypV6+Kx
+         o/bsZWHrACivnx/BQWWWqcnzUdUdB3AP7hxSplNmJk2//p8xP8p+qm7tQIB+nZlu/zaf
+         xaAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG2+Si99/31HD5NmzyhzbNlpa8fSgyii0SXLZHhQaXhjJWGtBS7Q5r4qDAeUNkwylBQNE7AvhNVLgoI+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtBvf55kZISGBS54IBaFJITEho+y5Et5AiEFSsrdCRs2DHj4yG
+	nO9iUDwHknfSr7QkaBrW+r3wp0ZW5+DbsN31g2r3mURsoKoMqLj9dukxt8hgYw==
+X-Gm-Gg: ASbGnctDGw/WkdWsPIt/xx/eL+B6TwnpL1N2V/AT3lC7EBTKZS5u8r1TaMsgdB+aKcv
+	ybZn7GC524MXTSZavNJuQP5mlP/AoHoV7Rsiu1n3Uu1aPtE3ap25GmSdFoR/aZJXrUV+0QAifsB
+	HdKl+VygPVng7bBDKBIkS1ulgZULVQpWdfLxuHuuw/5b5xWEgUxrMzmoAgNqv7aAR5a5JtXreSu
+	SefB+q3dCHLERBh1Gc0wFIG2OVWxnCAOmI63F/xO52ep1SRTH0K0H2o+l4fitTi1/DQNzVewjL5
+	4lhqV7A59RIy3CLAZ/eVAsrstN1G
+X-Google-Smtp-Source: AGHT+IHe+Tktbs6gzSr+HibLWo7BRUgyGJ8rAz95UU0Btgi1QAR6b+87ABh2JIWUw8KcY0eLIvyJqA==
+X-Received: by 2002:a05:6a20:4322:b0:1e1:a0b6:9861 with SMTP id adf61e73a8af0-1e1b1aa024fmr4818821637.12.1733824613547;
+        Tue, 10 Dec 2024 01:56:53 -0800 (PST)
+Received: from ?IPV6:2401:4900:4451:8982:a0c3:dcc6:3a8d:184? ([2401:4900:4451:8982:a0c3:dcc6:3a8d:184])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725df133a56sm4784841b3a.69.2024.12.10.01.56.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 01:56:52 -0800 (PST)
+Message-ID: <bab9f277-a366-48ec-acdd-0896c8307ad9@beagleboard.org>
+Date: Tue, 10 Dec 2024 15:26:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] of: overlay: Add support for export-symbols node
+ feature
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Davis <afd@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20241209151830.95723-1-herve.codina@bootlin.com>
+ <33c61b28-c0b8-478d-8107-c6ed1ff9e466@beagleboard.org>
+ <20241210104141.39acffb1@bootlin.com>
+Content-Language: en-US
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <20241210104141.39acffb1@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-12-09 at 17:14 +0100, Andrew Lunn wrote:
->=20
-> > Not our board, but the AM62 SoC. From the datasheet:
-> >=20
-> > "TXC is delayed internally before being driven to the RGMII[x]_TXC pin.=
- This
-> > internal delay is always enabled." So enabling the TX delay on the PHY =
-side
-> > would result in a double delay.
->=20
-> phy-mode describes the board. If the board does not have extra long
-> clock lines, phy-mode should be rgmii-id.
->=20
-> The fact the MAC is doing something which no other MAC does should be
-> hidden away in the MAC driver, as much as possible.
+On 10/12/24 15:11, Herve Codina wrote:
+> Hi Ayush,
+> 
+> On Tue, 10 Dec 2024 14:52:22 +0530
+> Ayush Singh <ayush@beagleboard.org> wrote:
+> 
+> ...
+>>
+>> What is the reason for not using symbols directly as described here [3]?
+>>
+>> I do like this approach since it does not pollute the global symbols.
+>> Just want to know if there are any other reasons for it.
+>>
+> 
+> Modifying the __symbols__ node at runtime (adding / removing properties in
+> it) exposes memory leaks if __symbols__ already exist in the live DT.
+> This __symbols__ node exist if the dtb was compiled with '-@' or if you
+> chain the overlay (i.e. __symbols__ node created by the first overlay).
 
-Isn't it kind of a philosophical question whether a delay added by the SoC
-integration is part of the MAC or not? One could also argue that the MAC IP=
- core
-is always the same, with some SoCs adding the delay and others not. (I don'=
-t
-know if there are actually SoCs with the same IP core that don't add a dela=
-y;
-I'm just not a big fan of hiding details in the driver that could easily be
-described by the Device Tree, thus making the driver more generic)
+Yeah, that is a problem, specially in a setup which might involve 
+hot-plugging.
 
+> 
+> I think also that some conflicts can appears. What happens if you want to
+> add a new label but this label is already present for some other purpose?
 
->=20
-> The MAC driver should return -EINVAL with phy-mode rgmii, or
-> rmgii-rxid, because the MAC driver is physically incapable of being
-> used on a board which has extra long TX clock lines, which 'rmgii' or
-> rgmii-rxid would indicate.
->=20
-> Since the MAC driver is forcing the TX delay, it needs to take the
-> value returned from of_get_phy_mode() and mask out the TX bit before
-> passing it to the PHY.
+I do not think that actually is a problem. As described in the original 
+patch [0], the symbol and connector overlay is supposed to be applied as 
+a group (overwriting any conflicting symbols in the process).
 
-Hmm okay, this is what the similar ICSSG/PRUETH driver does. I've always fo=
-und
-that solution to be particularly confusing, but if that's how it's supposed=
- to
-work, I'll have to accept that.
+The reason why this is not a problem is that `__symbols__` are only used 
+to resolve the phandles (overlays do not support path references yet), 
+but do not really have a purpose in the livetree (at least far as I 
+know, but I can be wrong).
 
-In my opinion the documentation Documentation/networking/phy.rst is not ver=
-y
-clear on this matter - the whole section "(RG)MII/electrical interface
-considerations" talks about whether the PHY inserts the delay or not, so my
-assumption was that phy-mode describes the PHY side of things and only that=
-.
+> 
+> Best regards,
+> Hervé
 
-It gets even more confusing when taking into account
-Documentation/devicetree/bindings/net/ethernet-controller.yaml, which conta=
-ins
-comments like "RGMII with internal RX delay provided by the PHY, the MAC sh=
-ould
-not add an RX delay in this case", which sounds like there are only the cas=
-es
-"delay is added by the PHY" and "delay is added by the MAC" - the case "del=
-ay is
-part of the board design, neither MAC nor PHY add it" doesn't even appear.
+[0]: https://lore.kernel.org/lkml/20240702164403.29067-1-afd@ti.com/
 
->=20
-> Now, it could be that history has got in the way. There are boards out
-> there which have broken DT but work. Fixing the MAC driver to do the
-> correct thing will break those boards. Vendors with low quality code
-> which works, but not really.
->=20
-> ~/linux/arch/arm64/boot/dts/ti$ grep rgmii k3-am625-*
-> k3-am625-beagleplay.dts:	phy-mode =3D "rgmii-rxid";
-> k3-am625-sk.dts:	phy-mode =3D "rgmii-rxid";
->=20
-> Yep, these two have broken DT, they don't describe the board
-> correctly.
->=20
-> O.K. Can we fix this for you board? Yes, i think we can. If you take
-> rmgii-rxid, aka PHY_INTERFACE_MODE_RGMII_RXID, and mask out the TX,
-> you still get PHY_INTERFACE_MODE_RGMII_RXID. If you take rgmii-id,
-> a.k.a. PHY_INTERFACE_MODE_RGMII_ID and mask out the TX, you get
-> PHY_INTERFACE_MODE_RGMII_RXID, which is what you want.
->=20
-> Please produce a patch to the MAC driver, explaining the horrible mess
-> the vendor made, and how this fixes it, but should also not break
-> other boards.
-
-I can make this change, but "am65-cpsw-nuss" currently supports 6 different
-compatible strings, many of which are used for multiple SoC families.
-
-Maybe someone from TI could chime in and say whether all of these have the =
-fixed
-TXC delay, or at least the current compatible strings are already specific
-enough to tell whether the SoC adds a delay?
-
-
->=20
-> > No such defaults exist in the DP83867 driver. If any rgmii-*id mode is =
-used, the
-> > corresponding delays *must* be specified in the DTB:
-> >=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/net/phy/dp83867.c#n532
->=20
-> That is bad, different to pretty every other PHY driver :-(
->=20
-> If you want, you could patch this driver as well, make it default to
-> 2ns if delays are asked for.
-
-Makes sense, I'll write a patch for that as well.
-
-Best regards,
-Matthias
-
-
->=20
->     Andrew
->=20
-> ---
-> pw-bot: cr
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+Ayush Singh
 
