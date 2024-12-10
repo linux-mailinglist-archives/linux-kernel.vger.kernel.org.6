@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-439096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B02F9EAABB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:32:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1DAB188A6CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:32:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049FB2309A1;
-	Tue, 10 Dec 2024 08:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ovDlKYiX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 653299EAAC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:32:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C889C230982;
-	Tue, 10 Dec 2024 08:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819534; cv=none; b=OA9l81YiPdFvxebMrz1JRuRjpduAhrrJwHzy4vFW0nObP99muirDgTScKl7TO8aRfInZeVD3avMHyTwDZ135nCy6I4HUPDcOBh7UiVPGMa1vjYJpv8WMD6v7CUj15nBcp34bVLv11DWyLMRjRhKAXlN8BxGclnFaFrEw4FukYzY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819534; c=relaxed/simple;
-	bh=n8e/j3rajoB9/ZiaEY3WAVPbJONb+u5IOygQbHZsF7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B0m19Pg8a4Q0OKxx51tCJEdDpg8tnBETfmAuwh0c/l2cPybK98uTudHq9ylcwOfXdafuPoHFdEibsDU2zSPIR0tNSTLqykv87zZXLaRS7Jz9W6WxoAII9IFfccfddS5v2oIad3U8uI1/Z0QNFAqdKnHlv7o000PBzThswqmjhv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ovDlKYiX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733819531;
-	bh=n8e/j3rajoB9/ZiaEY3WAVPbJONb+u5IOygQbHZsF7w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ovDlKYiXXO3tJGCZbcwjFkT7+kuztqhqvUzkNwz4//El+zn0w8vaFlLH31ubbHBfq
-	 59v2QCYKJ/4wPkLeJkMwEN8Gps5YykbQTjEzQHXBmh+1f82AWjCtXjFp4PCHboYqTD
-	 l/8+2dJ1N4a2HCR8yfGEwxNp14LFIY5IIJzRPRlYeEQ7tQ95odIBbh//PCIlBJTHeF
-	 d/vVrKE7ylie7Ja1PEwgrZBweFwdlkdMivwLclU3t0cEpCRWSOhFdWKK86cje1vOne
-	 qs9nBnfObv18qodQCJ9m9y75TgrfUmp7HEhD8QpNNT133B+va9Pz9D2Lwq2G3fb6jZ
-	 NorrQGudizMFQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24503282614
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:32:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086F5230D1D;
+	Tue, 10 Dec 2024 08:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkIaCSTG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5808817E14EA;
-	Tue, 10 Dec 2024 09:32:10 +0100 (CET)
-Message-ID: <d65fc527-5919-4454-865c-4731944e48a7@collabora.com>
-Date: Tue, 10 Dec 2024 09:32:09 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD11230982;
+	Tue, 10 Dec 2024 08:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733819541; cv=none; b=MfZZm4N+ASZOUXvjfD2XgyB/ouazgJ1FDhcv2Ej1Pvg2TkaNZ/7L51BoQVDCivZte+rKotEpFIqHEtY3z+WSw0+bHQBS4zjd/oS//NHuMJoSsv08fvP7hj2BMv6Fh3UPheEBejOJaKCZ4zvHE5fv4YNKyN6EKxkca39GL8A1YfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733819541; c=relaxed/simple;
+	bh=vMDpWY8p1Mqt7CgYt7jryIgWQ2wJWWPZrL2HtUX3z2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m8l7FOLbvrD++EHSG9XBwzLckoYfnjyEoFlL5zDJN9oBdu4zJ8tEHIfTjTlOfqKUFo+hAH6XGfcPx5Ds6M8JbRB+cRDUvkpLGq9noylW4eqCLVmPdVXqOqWeepySUW+DohKvV8FEOS6N64O8cVB2udx8d/ItJSeEsAXq8RE4haA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkIaCSTG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B399C4CED6;
+	Tue, 10 Dec 2024 08:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733819538;
+	bh=vMDpWY8p1Mqt7CgYt7jryIgWQ2wJWWPZrL2HtUX3z2E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lkIaCSTGYzo4zU95T5u+1DqU8HhBs53wnUxKl5n9cSwEPeuxdcjlvJI1sCYKGBXJd
+	 v61HLwDBs1fbBsowu9sMe8o1QTXCHX8cm1N8GvJE4gsLEewzBH43uil/aziCkVXaxz
+	 3yl/M2l9dJvVhZG8tOPBbWc9om0xtmE2LtGFvn3oceS0YtqMDRRxPetRAGoHs/gAKQ
+	 5IvAEZBzFoJqNY+f8vGN+cl/UrMxXO8cALywzuBjfINN39BkvZnv7Xz/J4BF8/M4ek
+	 7fle9PAGaBe4lvN9xmXJFKWQjmCf1masNH/wOMGDlAnVeCuVw54Bj1wajCyGCvIXUS
+	 6nXp4psFP6BbQ==
+Date: Tue, 10 Dec 2024 09:32:16 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] backlight: dwi_bl: Add Apple DWI backlight driver
+Message-ID: <w5niokvjfwajnzz3muccb45jsvqzg7lql7g5tg5s6iat3mtqkk@qu2a5zcp3rs7>
+References: <20241209075908.140014-1-towinchenmi@gmail.com>
+ <20241209075908.140014-3-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mailbox: mediatek: Add mtk-apu-mailbox driver
-To: =?UTF-8?B?S2FybCBMaSAo5p2O5pm65ZiJKQ==?= <Karl.Li@mediatek.com>
-Cc: =?UTF-8?B?Q2h1bmd5aW5nIEx1ICjlkYLlv6DnqY4p?= <Chungying.Lu@mediatek.com>,
- =?UTF-8?B?QW5keSBUZW5nICjphKflpoLlro8p?= <Andy.Teng@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?Q2hpZW4tQ2hpaCBUc2VuZyAo5pu+5bu65pm6KQ==?=
- <Chien-Chih.Tseng@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>
-References: <20241024092608.431581-1-karl.li@mediatek.com>
- <20241024092608.431581-4-karl.li@mediatek.com>
- <083c8f7b-0969-4ca3-8a91-35f5767c5f32@collabora.com>
- <CAGXv+5Fw+qZhTTgJq0QdiQHgiQP2ByR1tgae2+k4erx+0fp61g@mail.gmail.com>
- <a3c3280478bf86eb97a422782ce60ec4eaa35224.camel@mediatek.com>
- <0f98405c40530d81c342af06dea593e7babedeac.camel@mediatek.com>
- <cf75f3c3932ddc50f5697bc4f394bd77fc16cd39.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <cf75f3c3932ddc50f5697bc4f394bd77fc16cd39.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241209075908.140014-3-towinchenmi@gmail.com>
 
-Il 05/12/24 08:32, Karl Li (李智嘉) ha scritto:
-> On Thu, 2024-12-05 at 07:05 +0000, Karl Li (李智嘉) wrote:
->> Dead maintainers,
+On Mon, Dec 09, 2024 at 03:58:34PM +0800, Nick Chan wrote:
+> Add driver for backlight controllers attached via Apple DWI 2-wire
+> interface, which is found on some Apple iPhones, iPads and iPod touches
+> with a LCD display.
+> 
 
-LOL :-D
+Nothing improved here.
 
-> "Dear" maintainers. Really sorry for the typo...
->>
->> I hope you're doing well. Just a warm reminder that we're following
->> up
->> on these patch and really appreciate any feedback you might have.
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  drivers/video/backlight/Kconfig  |  12 +++
+>  drivers/video/backlight/Makefile |   1 +
+>  drivers/video/backlight/dwi_bl.c | 126 +++++++++++++++++++++++++++++++
+>  3 files changed, 139 insertions(+)
+>  create mode 100644 drivers/video/backlight/dwi_bl.c
+> 
+> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+> index 3614a5d29c71..e64cc3d51ac5 100644
+> --- a/drivers/video/backlight/Kconfig
+> +++ b/drivers/video/backlight/Kconfig
+> @@ -166,6 +166,18 @@ config BACKLIGHT_EP93XX
+>  	  To compile this driver as a module, choose M here: the module will
+>  	  be called ep93xx_bl.
+>  
+> +config BACKLIGHT_APPLE_DWI
+> +	tristate "Apple DWI 2-Wire Interface Backlight Driver"
+> +	depends on ARCH_APPLE || COMPILE_TEST
+> +	default y
+> +	help
+> +          Say Y to enable the backlight driver for backlight controllers
+> +          attached via the Apple DWI 2-wire interface which is found in some
+> +          Apple iPhones, iPads and iPod touches.
+> +
+> +	  To compile this driver as a module, choose M here: the module will
+> +	  be called dwi_bl.
+> +
+>  config BACKLIGHT_IPAQ_MICRO
+>  	tristate "iPAQ microcontroller backlight driver"
+>  	depends on MFD_IPAQ_MICRO
+> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+> index 8fc98f760a8a..0a569d7f0210 100644
+> --- a/drivers/video/backlight/Makefile
+> +++ b/drivers/video/backlight/Makefile
+> @@ -28,6 +28,7 @@ obj-$(CONFIG_BACKLIGHT_BD6107)		+= bd6107.o
+>  obj-$(CONFIG_BACKLIGHT_CLASS_DEVICE)	+= backlight.o
+>  obj-$(CONFIG_BACKLIGHT_DA903X)		+= da903x_bl.o
+>  obj-$(CONFIG_BACKLIGHT_DA9052)		+= da9052_bl.o
+> +obj-$(CONFIG_BACKLIGHT_APPLE_DWI)	+= dwi_bl.o
 
-I already gave you feedback on this patch.
+Nothing improved here.
 
-Cheers,
-Angelo
+Best regards,
+Krzysztof
 
->>
->> Thanks you in advance for your review.
->>
->> Regards,
->> Karl
->>
 
