@@ -1,153 +1,155 @@
-Return-Path: <linux-kernel+bounces-440434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3543F9EBDE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:32:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2BB9EBDE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:32:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA66167F72
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:32:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5073E16A350
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 22:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E491F1907;
-	Tue, 10 Dec 2024 22:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCA41F1917;
+	Tue, 10 Dec 2024 22:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hp1euByq"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5CLeXqF"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B72451EE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE132451EE;
+	Tue, 10 Dec 2024 22:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733869935; cv=none; b=Ux6wLHEaA5L0E79eoGtR6tlg+YNLcWLn9qHauC3ABTKPmR5lMNOKA/CDPuWNpYqqY77QEIZxJzrL/6E3F2R5op919CwWv7Bumrf/YSimFs7P3Kb3E44OIrH9hF4M1AhN/HNANzY+jrPBHaMSG9DCq3D3CtsJozu9scqE1Jn91VM=
+	t=1733869945; cv=none; b=oMY3cJwVv7lc78zunZePQufzfpi4PyUKrw3gmi+NmMbOfoQY+VXI4tnrJCDD3GxgBy1cJLnzQH0EXIGLqpPbh1MAebSqH889eXFa+wxzzfz2ATaSdquuCQ19yJNfsXRPAm9l26mWAqIFP80UjmipzBLxpsIVZiSgNIWeyOlcDvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733869935; c=relaxed/simple;
-	bh=5sAckLh2O+Xqp/B3w/FFV+cbSlpNec1FrjP1mHYiP74=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OthbS2/NGVzdsu+FhHIaUA6Fhv9SzMqz5y7iZ+K5XN0exOdtSooU3D8jcnEEXPE6oyz0OohoMODA+yx5otw7o0YehMiuZ2huGWv0SqxTtG3IEJ3NLdjQI2TTWjcIosqCo01zLK2Lru2Fb3EmNu0JYX7H6DD+cIHIkOdhw9M0gqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Hp1euByq; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2164b662090so25736645ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:32:13 -0800 (PST)
+	s=arc-20240116; t=1733869945; c=relaxed/simple;
+	bh=hgMJx2VtJ+BbwJuND9+Surw/NGbnfW1t9z8fyk7Lwpw=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdnC11SuYXaPMeq5OnLpiJoqla9QpZO8TsYvsuK8yUjQWOXsceKqJ1XcN9I8S0auSTnAA+kqICL+OWPsrlha55b8EpTsMBMfnE2WM+e5b40vBRzLroQIrw/adBrpn6WA6sC3j+ZmJ/rGWr0hlRD94t0OavDU/sU8WXHKRXAkdfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5CLeXqF; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3862b364538so48322f8f.1;
+        Tue, 10 Dec 2024 14:32:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733869932; x=1734474732; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bbiia8j7j6jNdjJNl2DYQMz55vjkekkDfU83OLWkpH8=;
-        b=Hp1euByqmK84QDuMKywicw7Xsl96neP0hhR1ilBpsLceJRXiXgk8KoYRLNl1BmKCpC
-         SOi16q1UinbG87+j3x1zkVbwRzqTCfIaI4nGrys8xF+fjFFxcsECgcCmbMOEDIHpp5eo
-         dAYk5K624IiM1IEYOj0tVAEhG79TZKDK1VNSY=
+        d=gmail.com; s=20230601; t=1733869942; x=1734474742; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnO56ocUjPfv+bgOKk5gIkhPUA621URHfVhC+NJz7p4=;
+        b=U5CLeXqFf4tHcprr2O6oChNC4XUwEqBLmSuYDg4pDG664k9T2LCC7lRYkDuSPn8M8k
+         C2Klleznh+7UM8y2d4JM4lrBZNOgUWCjZOo3o2TG+7IKX4VMg0XfP36zxuf3c7NVeWkX
+         nKOslg7BVSeqHQE7t+2xqMPyK3s/rlc27LRN/xNTUfvUeaXhga6taC25izzvm+iQ6EIH
+         QETUJuW1alZjKZQHZ90cjnXXvDW7WfpvyEkg3CklPM9a58cdtpVOUABduePedQu+n6bT
+         IuI/xh1lwkZsK8xQ9ROlICJhv/2FywmfWcy2CZkMaGnU1uhGS8bRYHSxuRPl3KwXe9fe
+         atyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733869932; x=1734474732;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bbiia8j7j6jNdjJNl2DYQMz55vjkekkDfU83OLWkpH8=;
-        b=LJiWC0FxAF9mnlJVOjx4caUIR9uqTpas7moXVxmqGNVtmPdv05Y3VIJkZRB2yEZ/WH
-         FtiNUiAr74Q8qlRRC2nHbSdUKBOCaiae1CXeYzrF9kUTUuAvKfyhfACppBHhfb6H6y9g
-         OxZ4jWAsxP83hzYQ+pgM7QsyO095KPbiPT1TfqY+GL+A22zSam0DaKJTcWgZ8tF+o3+Y
-         0izI12sHBs4GOSO9qHXd1XhNssxLQwdKJXRJMbHtkFOs3RYqjhRn3BQfTmdDXz2wLlVu
-         abzrazp+zBOLBQKn4mPE9r9qKjgQYHA2jcwkdCSGGxOE6mRnfWgXeMTrflU0RZPuQEa/
-         1i1A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ryfdrmfwura0VJ7LdBddxCjPZlmYqwept3/Aydxz/SL2qsJFKIkx6XEftNqphXV0ExzMPbz6BqpEEY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDPlXpzuSkDExZoh4dMeNI5vspfktTKIPokO0zva3ihW62f4dj
-	BLO8n6/gaU28W5ROwRQOrZf8/d2wY1Goalt2O67XvluNADG019YL28GaLIaQxq7evBbqx3vP01I
-	=
-X-Gm-Gg: ASbGnctrggO47voKApGdGZFkTK/owZZie04ww74iw8GmbiHvjnbDj7Cw3caBtsGcLwU
-	b4KSjtfsQdQ3byFIuKn38Hn4cckdRLVOzqQw0iFJfQvchsMQg/rrgMltFMfDUbHcxijgQ+gGJYK
-	wjc7QprJhAhmn7+fmtNTXRVlvy1/2J8R3/TICCT2VoyO/gM4XYq2KbnlCiehKvPiUoCjeWSzi3Y
-	h0vL0Vt7yqK365cKqKi2cnkT9dDD7clma6AHGa+YG/9WsLukJw0uzUChTqfabqGMcVDXBivXcdt
-	E0Om4yyQ7tYCKJ7J
-X-Google-Smtp-Source: AGHT+IF67RIouGpuSANEFYOSiWIHlEkHjALSV95Y4zlM1C1/fo81QT3vOlfK2B8wUoZJUg/ukQELWw==
-X-Received: by 2002:a17:902:f683:b0:216:4a06:e87a with SMTP id d9443c01a7336-21778505a23mr15444705ad.40.1733869932595;
-        Tue, 10 Dec 2024 14:32:12 -0800 (PST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com. [209.85.216.53])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216413a6c92sm47494855ad.249.2024.12.10.14.32.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 14:32:11 -0800 (PST)
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ee74291415so4397815a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:32:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVePwaPqw8Bl3zkO+0NZSu/VHeX7aQxr7V8I2Vamx4cqCTjO9x7Z+Ck2GP1C+rTnvSyJFVBBKLu7I5yR7c=@vger.kernel.org
-X-Received: by 2002:a17:90b:4b12:b0:2ee:c797:e27f with SMTP id
- 98e67ed59e1d1-2f12804fc63mr899384a91.36.1733869929209; Tue, 10 Dec 2024
- 14:32:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733869942; x=1734474742;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QnO56ocUjPfv+bgOKk5gIkhPUA621URHfVhC+NJz7p4=;
+        b=ha9Kqp+tmvIqOFomIx5xSbEUXv5NFCvJXbeaEvjUH42T4kGMawc50FE5wHKusUg3rd
+         FGCNx9FdjpCHngMgsKEQKl6AifyIM+56XJzVj8Ce9PuVl4Zwj5Zj2U1M7GEo+Ei5k3cI
+         PmxUYHwyz88xX4JFBhGwGkpxUcfm6CFifA42mGM4Fd9Uv91vKrNGfJ97+5HgTc4JJQ6v
+         w/QHM9TEQpKcfe6qyo7WC4LkZFeyJaF+83xrOpdEXf4rGMxCTCg3+cT6rDyVYgTMsPuU
+         oynrcCYyuNuEafv9FD+sWpph1YWH7/Ifh+qXKMxDW4ZPn1+jm9ZiMXCg9oP4c9LZlDaC
+         AS9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFndzAnyrUAN69rZXMOco3OUB81o33Ml162R1+t46oXuROKYNT/QBVpnXN7cGDGhLThjV/LqDnjMte8Hfo@vger.kernel.org, AJvYcCVMBzA6pTnznmTGth2j6SCPfUsAcIkWSOR/kiStwrkFoM4oFhJr7ALj/C+yqK8nTG+h7LrNW168HBF2@vger.kernel.org, AJvYcCWDaEJzrHtK1Y6aKMnh8OgLzeYN3LU/ZZONpTzVwuBmNxTP3yITPJj69qUbvcYUUeEleqBWnTc0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRsHZR8LRsoT3F1kQgw1sh8N7wbcpnV4ZD1/6OtoiXarFk+GE4
+	RnfLcGWTV+zSGrGgznDZSQQVqLT9FD1zniyXDRuYLu2r8kKs6FKH
+X-Gm-Gg: ASbGncu5c5X+1vCcwDkMfs+0SH/BmOEImOU+yX/gRB4G1CF20EfVsieXOawye2b2WHz
+	h8TzRLmcP5pF1wAkkuzFomgBSzf/4B6ZPZnPnq3x7JZCmzgeq0GNTmyfYxtioPL3wRlsUDA4fi4
+	imA/Xts2SFK3tJqKBjfF17XkDmve5xUptVqZgfOeFgZa8tn6ILrdpIOEivL/xP1i+z3IUMvgfPg
+	nFIoXPdq/zOubtGTKsRXH988RhXwpHDnDZLvwjjAUN6swb4pVl1mDMr0SjUA1uw1Ylgj7/CnVHg
+	OwidhRO2/Q==
+X-Google-Smtp-Source: AGHT+IG1bSXHS0bpB9SrnpgSiy3t2o7skv79APs7LVWlF3TOUod3SzTBdm60dVBBJHjBYfbo6u0icA==
+X-Received: by 2002:a05:6000:1a85:b0:386:3c93:70ff with SMTP id ffacd0b85a97d-3864de9e47emr286354f8f.8.1733869941960;
+        Tue, 10 Dec 2024 14:32:21 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f8836dbbsm62231295e9.0.2024.12.10.14.32.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 14:32:20 -0800 (PST)
+Message-ID: <6758c174.050a0220.52a35.06bc@mx.google.com>
+X-Google-Original-Message-ID: <Z1jBccAhjYjXTNRV@Ansuel-XPS.>
+Date: Tue, 10 Dec 2024 23:32:17 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v11 5/9] mfd: an8855: Add support for Airoha
+ AN8855 Switch MFD
+References: <20241209134459.27110-1-ansuelsmth@gmail.com>
+ <20241209134459.27110-1-ansuelsmth@gmail.com>
+ <20241209134459.27110-6-ansuelsmth@gmail.com>
+ <20241209134459.27110-6-ansuelsmth@gmail.com>
+ <20241210211529.osgzd54flq646bcr@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
- <20241210-fix-ipu-v3-4-00e409c84a6c@chromium.org> <Z1irAT0KVwqhBSSZ@kekkonen.localdomain>
-In-Reply-To: <Z1irAT0KVwqhBSSZ@kekkonen.localdomain>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 10 Dec 2024 23:31:57 +0100
-X-Gmail-Original-Message-ID: <CANiDSCsLOODLhGrpPwOQ1j+coSb9yHYi=wjGpZ+F7VbA7AM0og@mail.gmail.com>
-X-Gm-Features: AZHOrDm5Mc-6e5PYz70Xt3CVLGWF-rWtXL2uCKjRJio5ykJKaQ08kVB9D3kD-OE
-Message-ID: <CANiDSCsLOODLhGrpPwOQ1j+coSb9yHYi=wjGpZ+F7VbA7AM0og@mail.gmail.com>
-Subject: Re: [PATCH v3 4/7] ACPI: header: implement acpi_device_handle when !ACPI
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210211529.osgzd54flq646bcr@skbuf>
 
-On Tue, 10 Dec 2024 at 21:56, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
->
-> Hi Ricardo,
->
-> On Tue, Dec 10, 2024 at 07:56:01PM +0000, Ricardo Ribalda wrote:
-> > Provide an implementation of acpi_device_handle that can be used when
-> > CONFIG_ACPI is not set.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  include/linux/acpi.h | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> > index 05f39fbfa485..59a5d110ff54 100644
-> > --- a/include/linux/acpi.h
-> > +++ b/include/linux/acpi.h
-> > @@ -787,6 +787,12 @@ const char *acpi_get_subsystem_id(acpi_handle handle);
-> >  #define acpi_dev_hid_uid_match(adev, hid2, uid2)     (adev && false)
-> >
-> >  struct fwnode_handle;
-> > +struct acpi_device;
-> > +
-> > +static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
+On Tue, Dec 10, 2024 at 11:15:29PM +0200, Vladimir Oltean wrote:
+> On Mon, Dec 09, 2024 at 02:44:22PM +0100, Christian Marangi wrote:
+> > +int an8855_mii_set_page(struct an8855_mfd_priv *priv, u8 phy_id,
+> > +			u8 page) __must_hold(&priv->bus->mdio_lock)
 > > +{
-> > +     return NULL;
+> > +	struct mii_bus *bus = priv->bus;
+> > +	int ret;
+> > +
+> > +	ret = __mdiobus_write(bus, phy_id, AN8855_PHY_SELECT_PAGE, page);
+> > +	if (ret < 0)
+> > +		dev_err_ratelimited(&bus->dev,
+> > +				    "failed to set an8855 mii page\n");
+> > +
+> > +	/* Cache current page if next mii read/write is for switch */
+> > +	priv->current_page = page;
+> > +	return ret < 0 ? ret : 0;
 > > +}
-> >
-> >  static inline bool acpi_dev_found(const char *hid)
-> >  {
-> >
->
-> Please remove the extra forward declaration of struct acpi_device a few
-> lines below this.
+> > +EXPORT_SYMBOL_GPL(an8855_mii_set_page);
+> 
+> You could keep the implementation more contained, and you could avoid
+> exporting an8855_mii_set_page() and an8855_mfd_priv to the MDIO
+> passthrough driver, if you implement a virtual regmap and give it to the
+> MDIO passthrough child MFD device.
+> 
+> If this bus supports only clause 22 accesses (and it looks like it does),
+> you could expose a 16-bit regmap with a linear address space of 32 MDIO
+> addresses x 65536 registers. The bus->read() of the MDIO bus passthrough
+> just performs regmap_read(), and bus->write() just performs regmap_write().
+> The MFD driver decodes the regmap address into a PHY address and a regnum,
+> and performs the page switching locally, if needed.
 
-Instead I have moved the function under the forward declaration. Let
-me know if you disagree.
+Doesn't regmap add lots of overhead tho? Maybe I should really change
+the switch regmap to apply a save/restore logic?
 
->
-> With that,
->
-> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->
-> --
-> Regards,
->
-> Sakari Ailus
+With an implementation like that current_page is not needed anymore.
+And I feel additional read/write are ok for switch OP.
 
+On mdio I can use the parent-mdio-bus property to get the bus directly
+without using MFD priv.
 
+What do you think?
 
 -- 
-Ricardo Ribalda
+	Ansuel
 
