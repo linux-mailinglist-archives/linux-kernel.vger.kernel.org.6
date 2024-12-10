@@ -1,211 +1,439 @@
-Return-Path: <linux-kernel+bounces-439753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED529EB389
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:38:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751B31883B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:37:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD6F1B6CF3;
-	Tue, 10 Dec 2024 14:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DTY8dtjJ"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1349EB388
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:37:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2321B4221
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733841460; cv=fail; b=AupzZqIgrtWPtWZ3Xe8zPQZ1Dr+8CunZdZHNL8dK04HIQXOWaTSh3VXemETcg1IMJYJ8LyiDOshNVXVBHWDBhYixPF5MqlM2o8cQXFRAg2RrRtGU7dzIQgJOeusKAeUSOQomzxE5L2OMPSWmR39zZEFXEK3g4Rv515vEBSN7xcI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733841460; c=relaxed/simple;
-	bh=fK/5p4e6tWHL9V1EaFAnJMn0Wk3/CwmbMs3HDRMWEdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gRHZtZrUCI3+G1KfnGYJPxvyBHZFJxPm4c81viv0uVLZrSZVRTeD4d1uU5syiweIu4aEoB1T2FYPF44knDD704GSJQZ6n4ibDxfVl7YxxYMrahxYUdOoxuBRejulME1frkeRhXiVSDVJ2ayhmQubz/RpYBdCcQyAa0wVozq9Q6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DTY8dtjJ; arc=fail smtp.client-ip=40.107.93.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D/Nkk1hMp3psyJqQ1A5g1orJrEYOEZzbYx086xYXwywcKhg1sB74i7punU0zj2oM7Mo4l4CWLUi/6X55LzoBEJQ40966ANHWfHTfxT34sghzEFTeEfAuqEuhJwYSskhM1oRsHX0VXPkouVpHVRHFDTgR6oJG2F66D1YKNFlPnnNsdD9m7R9ZtSsgdydKh28vUW/zfzYys5v1FjSoAU48eVKYuCyO7za5se/61+u8s7B5g4b1auLQions0Pjca+VMKh+BOcawZ37B+wXhIWhIpPVkp4xohGmLWwdtSJ3qJAg3f2V1HpOekLbu1LYNLtHgG/xHRJoKlumEtgS+fl+yDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TY5B9DTJiLep1GTgQ53ODyS73LhOa9grM3xNmy2JI0M=;
- b=Tnk69mTKapRh/dLuy6ZDc86eD52kJgKq3knEWfy7O4ZXv5mhWRWBHO1bDm0HCruTGSVKYSLA/On3FsEMXvIJ31YtRh3s0lZ64xuBb2W58ZIXFc2DhP2WAt+PtkTlZBRyOQgHFC5Ie36OUJ+bORFKUR4of8Vs1a1z0GNFtNAEkGa0dYJh4+uyeJjaJ7BUYLH7G4B6oogk4oOYSllVp2cm8XBCq/O76QkIEK9n9SlsLHY8Lg7e4a3x1Fart8CBa8v+JU/MxqCOnsZUmMvY8ntYt8sBU9esruZxF2yo49yLzwfb3VI96X58k3RpLrQpbdcSGxPJnIu8ifb4D4qtA35o+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TY5B9DTJiLep1GTgQ53ODyS73LhOa9grM3xNmy2JI0M=;
- b=DTY8dtjJxPFRG5hO2DrFtYN/zXdb4mPBJ4wPB8G6pgG6dg1q8h3XVUl9Des870GlgT/3BenALipIJLb2xIe2T7EyxcFNdrN6TSZFJS2TREyHSBf7OOcAzFkuDiNl807arZ0ENZeFqTrJN84JonVJl27fJO3sq4q2jMIGFFvwFaIjdSYW/iRXmDItqz1kCyG6s2fBOLS2blHXmmYiuCHIXL6nsVuLrBYCwj6T/hiuumMaykM8l2L1Q/6z6HC73T1SMoX88tKUWRhGMeI6B+YT7KoIovNklK+WkMpj1ckO8/NOLCMCu3V8o22BFuBCwKITZCalCIbxO916bC0JdYz+cg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by CH3PR12MB8307.namprd12.prod.outlook.com (2603:10b6:610:12f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
- 2024 14:37:31 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%3]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
- 14:37:31 +0000
-Date: Tue, 10 Dec 2024 15:37:27 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: David Vernet <void@manifault.com>
-Cc: tj@kernel.org, sched-ext@meta.com, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org, ihor.solodrai@pm.me
-Subject: Re: [PATCH] scx: Fix maximal BPF selftest prog
-Message-ID: <Z1hSJ_ixBomdOJeR@gpd3>
-References: <20241209152924.4508-1-void@manifault.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209152924.4508-1-void@manifault.com>
-X-ClientProxiedBy: FR2P281CA0112.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9d::14) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A63281841
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:37:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1701B3933;
+	Tue, 10 Dec 2024 14:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+kfIN9f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D291A704C;
+	Tue, 10 Dec 2024 14:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733841456; cv=none; b=hLiG4w17I52nc9TYG1FP3e2p1GZ4M9kr7igtK1/D0d2t3hc655j4HbQrVEzQH0tyLdq6wdjC1UzdLDJoQx408fntA+8UgbkhLSRaLktsF7Yo0OKf3s9meUc07n5+AF9hGezl5+msOjuuVfNBkHsSI2aNx4j/Qofh5dmEnZzac6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733841456; c=relaxed/simple;
+	bh=FWcePg+GluBvZ898xyCFwEYhWE6m0NH3BK+Gv6nnVrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBKGpCUrBqWYrj9j8Af7KtMcjA+rZI+0lAl079DTkG+tw1bcgoLCSXKWJuJEfg+6egsv+4ZieYQHI+nc7gDcsImtmTIeRxMDj0ZnNPznOYnfc+CvxQTvstcJjTnTAWbclHvvU/59BetpYW7/2TCIruEEFOVHw8Pn1sQuG+JwYbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+kfIN9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B460BC4CED6;
+	Tue, 10 Dec 2024 14:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733841456;
+	bh=FWcePg+GluBvZ898xyCFwEYhWE6m0NH3BK+Gv6nnVrs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z+kfIN9fKGsk6iD9RaeSr967r8KqlMYqMYpLr7K6ihvn41ALkpw55iJnIfrD3dG4u
+	 53rCJTchn4qqt2ZgLdqG9+8V9ys0c704sJJYEBm2LhCi/yIhrN+TTw1I942/y1PqQD
+	 KQKp9+ePJ9YRb4iJTpA+qaeR9bsloGIwfHur03isFwqoeDotWxHLKwjvjpI8Ihbafz
+	 0Eo98Y25lSanLSFLN4j+4BTlqeAc6exdqtMfg2/0ah/sp0kGGRTBDkOZMqksLE9JaI
+	 7w6nZ5JOUfDZM5CLL/WJzIxDJJdGggRmK9wTNTpbgeYajmPV3ZipHZAA1r9AX6fhv/
+	 Y5DelZKv718mA==
+Date: Tue, 10 Dec 2024 15:37:28 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 2/5] selftests/bpf: Add tests for open-coded
+ style process file iterator
+Message-ID: <20241210-zustehen-skilift-44ba2f53ceca@brauner>
+References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080756ABBCCCBF664B374EB993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|CH3PR12MB8307:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd19625f-b1dc-4856-b176-08dd19282d91
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?czhJJdJ6y8qhG1xyN1/flfMEJBWtL7NteQCAS7P1OkFTqkm2/8HOFCFsJt07?=
- =?us-ascii?Q?pyN5INo3SvIikbPKhL005wE13VlcFgOLCfiBJwiHsvJxKQAxaWISszqREtM2?=
- =?us-ascii?Q?ze5w4XCLMxA1SCvHRR1I/fgCPQgepkOEsgyHpDXVrFRct+2fcbaPh9TlBkcx?=
- =?us-ascii?Q?QXDDevMHRm59alYLCKr/qB7RlBPO9jwNsqPTc6jgtJK3OqwcvtSi1z0Qollj?=
- =?us-ascii?Q?1anJkAsfLbTNaCR7qX8R3KB4FjJg8UY9Gs9fgwoyzfcASetpKxtoa4WGvSoz?=
- =?us-ascii?Q?RoH5JnWl/uIHs78az7Y5wXhHrzWT+XJ+E56h3tUXyBjGmVc+i8NY8XZ6VqC4?=
- =?us-ascii?Q?j5OfPFdUso+5yijqxxGy828mAm0VzbQx2Vc0P0Jado/fyXDnSguC0tjZgn70?=
- =?us-ascii?Q?s0wxNSVZCdvFQ0d4mnQZs7H+OmnVKIN+dETBN/lTrLYDfRv/bauICiEwpAgY?=
- =?us-ascii?Q?JHr6ZOLvwJearAkmU8GuINjHS35vdyYbp+K/t8HC/4vl5/SrqDlOz5Fav7oc?=
- =?us-ascii?Q?WtIs5DpDPjZH9LXsQxuNXwPPJQMiMpnY3JMGnAbBjLRCrdDV7obbWxRvs6lv?=
- =?us-ascii?Q?jCtyDsi0ae1vv+irh+BGaHVZSfzcw8lzGFS9l8maeC4yILOCMq6tFZIkbZx/?=
- =?us-ascii?Q?9s2NfYG5VzH8SzEySex6fQ1rRj0bu1W+GxZs9IgNLBqjk/O2wJfGjNZy9/ZF?=
- =?us-ascii?Q?EZhUciM5NRCMCjUw9zR2btiDyt14HSmCf+dMXsGpFQlmLzFc6lb0o/9qzV5c?=
- =?us-ascii?Q?wRVeeHLbpH23yal4tB3aRDrso5/wLimaXd3OJ4kqfEbxp4OfmnO1QpY0el1u?=
- =?us-ascii?Q?7ageGLjNMcFiEaxUB2+/oJ3xodWbdl9yUdsqqJIrvj05KtfvHSQbuq1GFntK?=
- =?us-ascii?Q?O3LXZYEkcroElA65JfKWsCNoKmZZbbP+Fn3xjSBajtQP2TY7mhaSBx7kuPmp?=
- =?us-ascii?Q?s89w4sFRXp1FDmZfgE/DLFJK4CmWLp6BrSIQL426eUq3p35okBu6e20Cgjtf?=
- =?us-ascii?Q?cFIIwwng99oYt+Rg3c8nD4dGL6HHiywvsYEsNypjZsw1uV3r8NzB+PJV4YQO?=
- =?us-ascii?Q?lPC0qDOeyfkLoQJFybsTJzbbxv4QesKXrsO5aS90UFUFL9lWTU8roRXfSBMl?=
- =?us-ascii?Q?tIR27+WRlObTN1vwEGI29Nx8aypsquictAxvFCylPrbEff6urWUxJ/uW5f+y?=
- =?us-ascii?Q?c0dWV6215ARIcU3KYtp9MhnkSlrkcXHGpij4FN5DzUj8kzQ5OtyJgsID++Uy?=
- =?us-ascii?Q?svgOfl383ZpzEnL+W74WOm+QSVntkXBgugfgh5KlPlalvxwJvsn1spMyfLzV?=
- =?us-ascii?Q?VQuuFgW0n2STs/5mK8ZHQX5tS1WbH27k34ADxtUYaImd0g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?d+KnxsMbh4weS+4NRqT5miNkzDkPhamr2yct19yer31ZGSD4nfUas2bj1s2V?=
- =?us-ascii?Q?3ag3RgdCLdFF9MAAmSYom9uB0EH1g6mHvrwHmJ5vY2JMzCfoucy4K4hKs0tP?=
- =?us-ascii?Q?SMc8VeIdU4J6uh49JpY6DE+IezpGSRdLbIYpPkM/CYC4oIBj4WSqZ6mEdv4D?=
- =?us-ascii?Q?9JfSCDG4kM8CAS15xXUPxiA2keOKildgmc1+Dx/CXrjJEung/+k8I6/zG/kR?=
- =?us-ascii?Q?9yoXo7beqrF5dU1mweUDjjTCVyi7Ud8uo+sEp9Iq4RM4cyDKLvHqQk2Ca635?=
- =?us-ascii?Q?6agx9OYKk+76z5GevNeZSfEvHcOhfW2cYDjzb4H0aEME/DvVYQ3pvw7Blt13?=
- =?us-ascii?Q?f6tvmU5MbaBrBFshHCThKu8qGvwDXKUO9eEW0IL2J8zJl9DCjipkSyIOfcpL?=
- =?us-ascii?Q?99b4mQogrn9QW4v5F1HOxu6Va/9ofSmStbNZ2WnLgA0id9nYwT0zcMY0xk2N?=
- =?us-ascii?Q?5u2lFv+VN3ZbBuH7O5LgY/5ANINzBgjkOxd2fqUeu0Uy+t+p6V4+jDqaS6wg?=
- =?us-ascii?Q?kEaLzqBw4f7HGy+hwF3RYgEwgD9kg4XO/bn5pgNLAW+EyJ2CmqBbgI5JIr3b?=
- =?us-ascii?Q?SGByhtTMBNXfnbFv4ORxnwHMZLhXac22OHQDoX6ONjP7OP27B+oAZu4R5+01?=
- =?us-ascii?Q?o43bDksdo193jZuTxSxaXsyC55TxPjWT7XsidklvX/DGcfSG8QAiB65ZSuda?=
- =?us-ascii?Q?egXSl2lQ+NjZtY3aHGRgpYoveJaKiMLLRZCtDKwSgMX4G3uYpVfwshzrBstl?=
- =?us-ascii?Q?4iCYZNuP/zxfDOSypZBP7OOrxV0hbkLuej4If7bv18SnQpcx3PSyvyRXXxnZ?=
- =?us-ascii?Q?66tKHEaxOTl09YW5IvWBiVWbGlaOd0sG+Nlsi2NsIq11Vqos3TUADjlLXY6d?=
- =?us-ascii?Q?ZCfAeFKs4iosM4PWHfCB9aK2s5lQMVsFhO5YICeZLM1kv3b5zDySZpKNow8r?=
- =?us-ascii?Q?ElX2XwTy0l3LJLSJHuFOMVw2XOPvClEBCeZd32sl37pqpLIYAFqJhVUxuojn?=
- =?us-ascii?Q?jMlqc8XrTK6JZvVqUChoisaLI3MSoJVSrH2BzS6Mb4ulYMrd3RCKAo47by8W?=
- =?us-ascii?Q?8ALVEN4G0XJoZLR8re+bbnkriXZ7BQ7uOB6KkyBTLFGf8fegcqJQkk2tqRWF?=
- =?us-ascii?Q?PKRuYUGxoiIXoLU1Ets+rph7/s8CreGBLKwv4S5fb7jid01A00Opi8Ce+MK1?=
- =?us-ascii?Q?gEszn0Hr/uau4o7oK8eLsS9ShtB3DGhtZ+4MlgCPu9gotiQwVcYOHQ3F1Z8J?=
- =?us-ascii?Q?bV6sk+EWxiuCgVhDuwC4jAu+O0QnmwnusXZDnb4BHW0EiBg+bxm1DPdOGxIe?=
- =?us-ascii?Q?iBUT8yWzYOUKcytyGTf5D2iQf/2n6z6vOTvTvFye7NDvCfGWg6vp71XJSVTL?=
- =?us-ascii?Q?Aco9YaSPU8546ODhdfBNz3CkUJeWrPL7xIJa5fgmev1KCJP1jU/6+3hjInGe?=
- =?us-ascii?Q?cm7iXaKKAN58B/707IZlwAfWglKiVfkahvHfTuoiVbbKR9OrxqSpFCUCyFG3?=
- =?us-ascii?Q?vbxfpKLsqRoxkCwWFBdTdNJNZq3MTOyn3RuLAFJnmDiLNimSRi+94Dx9ec0u?=
- =?us-ascii?Q?BecH8JLGnALAzB76J+yNe0QQLYnp4WMnOsYjstoT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd19625f-b1dc-4856-b176-08dd19282d91
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 14:37:31.2384
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rAK6L6hNfyvRPElCAwMn8STwy5OkME8xldgAprf0kjj/rjPMtg3e4j8ZfJCYUUEtwd2wU3CqI3SLFCp4Kl7KMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8307
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB5080756ABBCCCBF664B374EB993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-On Mon, Dec 09, 2024 at 09:29:24AM -0600, David Vernet wrote:
-> maximal.bpf.c is still dispatching to and consuming from SCX_DSQ_GLOBAL.
-> Let's have it use its own DSQ to avoid any runtime errors.
+On Tue, Dec 10, 2024 at 02:03:51PM +0000, Juntong Deng wrote:
+> This patch adds test cases for open-coded style process file iterator.
 > 
-> Signed-off-by: David Vernet <void@manifault.com>
-
-Looks good to me.
-
-Tested-by: Andrea Righi <arighi@nvidia.com>
-
+> Test cases related to process files are run in the newly created child
+> process. Close all opened files inherited from the parent process in
+> the child process to avoid the files opened by the parent process
+> affecting the test results.
+> 
+> In addition, this patch adds failure test cases where bpf programs
+> cannot pass the verifier due to uninitialized or untrusted
+> arguments, or not in RCU CS, etc.
+> 
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
 > ---
->  tools/testing/selftests/sched_ext/maximal.bpf.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  .../testing/selftests/bpf/bpf_experimental.h  |   7 ++
+>  .../testing/selftests/bpf/prog_tests/iters.c  |  79 ++++++++++++
+>  .../selftests/bpf/progs/iters_task_file.c     |  88 ++++++++++++++
+>  .../bpf/progs/iters_task_file_failure.c       | 114 ++++++++++++++++++
+>  4 files changed, 288 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/iters_task_file_failure.c
 > 
-> diff --git a/tools/testing/selftests/sched_ext/maximal.bpf.c b/tools/testing/selftests/sched_ext/maximal.bpf.c
-> index 4c005fa71810..430f5e13bf55 100644
-> --- a/tools/testing/selftests/sched_ext/maximal.bpf.c
-> +++ b/tools/testing/selftests/sched_ext/maximal.bpf.c
-> @@ -12,6 +12,8 @@
+> diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
+> index cd8ecd39c3f3..ce1520c56b55 100644
+> --- a/tools/testing/selftests/bpf/bpf_experimental.h
+> +++ b/tools/testing/selftests/bpf/bpf_experimental.h
+> @@ -588,4 +588,11 @@ extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym
+>  extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
+>  extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
 >  
->  char _license[] SEC("license") = "GPL";
->  
-> +#define DSQ_ID 0
+> +struct bpf_iter_task_file;
+> +struct bpf_iter_task_file_item;
+> +extern int bpf_iter_task_file_new(struct bpf_iter_task_file *it, struct task_struct *task) __ksym;
+> +extern struct bpf_iter_task_file_item *
+> +bpf_iter_task_file_next(struct bpf_iter_task_file *it) __ksym;
+> +extern void bpf_iter_task_file_destroy(struct bpf_iter_task_file *it) __ksym;
 > +
->  s32 BPF_STRUCT_OPS(maximal_select_cpu, struct task_struct *p, s32 prev_cpu,
->  		   u64 wake_flags)
->  {
-> @@ -20,7 +22,7 @@ s32 BPF_STRUCT_OPS(maximal_select_cpu, struct task_struct *p, s32 prev_cpu,
+>  #endif
+> diff --git a/tools/testing/selftests/bpf/prog_tests/iters.c b/tools/testing/selftests/bpf/prog_tests/iters.c
+> index 3cea71f9c500..cfe5b56cc027 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/iters.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/iters.c
+> @@ -1,6 +1,8 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
 >  
->  void BPF_STRUCT_OPS(maximal_enqueue, struct task_struct *p, u64 enq_flags)
+> +#define _GNU_SOURCE
+> +#include <sys/socket.h>
+>  #include <sys/syscall.h>
+>  #include <sys/mman.h>
+>  #include <sys/wait.h>
+> @@ -16,11 +18,13 @@
+>  #include "iters_num.skel.h"
+>  #include "iters_testmod.skel.h"
+>  #include "iters_testmod_seq.skel.h"
+> +#include "iters_task_file.skel.h"
+>  #include "iters_task_vma.skel.h"
+>  #include "iters_task.skel.h"
+>  #include "iters_css_task.skel.h"
+>  #include "iters_css.skel.h"
+>  #include "iters_task_failure.skel.h"
+> +#include "iters_task_file_failure.skel.h"
+>  
+>  static void subtest_num_iters(void)
 >  {
-> -	scx_bpf_dsq_insert(p, SCX_DSQ_GLOBAL, SCX_SLICE_DFL, enq_flags);
-> +	scx_bpf_dsq_insert(p, DSQ_ID, SCX_SLICE_DFL, enq_flags);
+> @@ -291,6 +295,78 @@ static void subtest_css_iters(void)
+>  	iters_css__destroy(skel);
 >  }
 >  
->  void BPF_STRUCT_OPS(maximal_dequeue, struct task_struct *p, u64 deq_flags)
-> @@ -28,7 +30,7 @@ void BPF_STRUCT_OPS(maximal_dequeue, struct task_struct *p, u64 deq_flags)
->  
->  void BPF_STRUCT_OPS(maximal_dispatch, s32 cpu, struct task_struct *prev)
+> +static int task_file_test_process(void *args)
+> +{
+> +	int pipefd[2], sockfd, err = 0;
+> +
+> +	/* Create a clean file descriptor table for the test process */
+> +	close_range(0, ~0U, 0);
+> +
+> +	if (pipe(pipefd) < 0)
+> +		return 1;
+> +
+> +	sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+> +	if (sockfd < 0) {
+> +		err = 2;
+> +		goto cleanup_pipe;
+> +	}
+> +
+> +	usleep(1);
+> +
+> +	close(sockfd);
+> +cleanup_pipe:
+> +	close(pipefd[0]);
+> +	close(pipefd[1]);
+> +	return err;
+> +}
+> +
+> +static void subtest_task_file_iters(void)
+> +{
+> +	const int stack_size = 1024 * 1024;
+> +	struct iters_task_file *skel;
+> +	int child_pid, wstatus, err;
+> +	char *stack;
+> +
+> +	skel = iters_task_file__open_and_load();
+> +	if (!ASSERT_OK_PTR(skel, "open_and_load"))
+> +		return;
+> +
+> +	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
+> +		goto cleanup_skel;
+> +
+> +	skel->bss->parent_pid = getpid();
+> +	skel->bss->count = 0;
+> +
+> +	err = iters_task_file__attach(skel);
+> +	if (!ASSERT_OK(err, "skel_attach"))
+> +		goto cleanup_skel;
+> +
+> +	stack = (char *)malloc(stack_size);
+> +	if (!ASSERT_OK_PTR(stack, "clone_stack"))
+> +		goto cleanup_attach;
+> +
+> +	/* Note that there is no CLONE_FILES */
+> +	child_pid = clone(task_file_test_process, stack + stack_size, CLONE_VM | SIGCHLD, NULL);
+> +	if (!ASSERT_GT(child_pid, -1, "child_pid"))
+> +		goto cleanup_stack;
+> +
+> +	if (!ASSERT_GT(waitpid(child_pid, &wstatus, 0), -1, "waitpid"))
+> +		goto cleanup_stack;
+> +
+> +	if (!ASSERT_OK(WEXITSTATUS(wstatus), "run_task_file_iters_test_err"))
+> +		goto cleanup_stack;
+> +
+> +	ASSERT_EQ(skel->bss->count, 1, "run_task_file_iters_test_count_err");
+> +	ASSERT_OK(skel->bss->err, "run_task_file_iters_test_failure");
+> +
+> +cleanup_stack:
+> +	free(stack);
+> +cleanup_attach:
+> +	iters_task_file__detach(skel);
+> +cleanup_skel:
+> +	iters_task_file__destroy(skel);
+> +}
+> +
+>  void test_iters(void)
 >  {
-> -	scx_bpf_dsq_move_to_local(SCX_DSQ_GLOBAL);
-> +	scx_bpf_dsq_move_to_local(DSQ_ID);
+>  	RUN_TESTS(iters_state_safety);
+> @@ -315,5 +391,8 @@ void test_iters(void)
+>  		subtest_css_task_iters();
+>  	if (test__start_subtest("css"))
+>  		subtest_css_iters();
+> +	if (test__start_subtest("task_file"))
+> +		subtest_task_file_iters();
+>  	RUN_TESTS(iters_task_failure);
+> +	RUN_TESTS(iters_task_file_failure);
 >  }
->  
->  void BPF_STRUCT_OPS(maximal_runnable, struct task_struct *p, u64 enq_flags)
-> @@ -123,7 +125,7 @@ void BPF_STRUCT_OPS(maximal_cgroup_set_weight, struct cgroup *cgrp, u32 weight)
->  
->  s32 BPF_STRUCT_OPS_SLEEPABLE(maximal_init)
->  {
-> -	return 0;
-> +	return scx_bpf_create_dsq(DSQ_ID, -1);
->  }
->  
->  void BPF_STRUCT_OPS(maximal_exit, struct scx_exit_info *info)
-> -- 
-> 2.46.1
-> 
+> diff --git a/tools/testing/selftests/bpf/progs/iters_task_file.c b/tools/testing/selftests/bpf/progs/iters_task_file.c
+> new file mode 100644
+> index 000000000000..81bcd20041d8
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/iters_task_file.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include "vmlinux.h"
+> +#include <bpf/bpf_tracing.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include "bpf_misc.h"
+> +#include "bpf_experimental.h"
+> +#include "task_kfunc_common.h"
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +int err, parent_pid, count;
+> +
+> +extern const void pipefifo_fops __ksym;
+> +extern const void socket_file_ops __ksym;
+> +
+> +SEC("fentry/" SYS_PREFIX "sys_nanosleep")
+> +int test_bpf_iter_task_file(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +	struct bpf_iter_task_file_item *item;
+> +	struct task_struct *task;
+> +
+> +	task = bpf_get_current_task_btf();
+> +	if (task->parent->pid != parent_pid)
+> +		return 0;
+> +
+> +	count++;
+> +
+> +	bpf_rcu_read_lock();
 
--Andrea
+What does the RCU read lock do here exactly?
+
+> +	bpf_iter_task_file_new(&task_file_it, task);
+> +
+> +	item = bpf_iter_task_file_next(&task_file_it);
+> +	if (item == NULL) {
+> +		err = 1;
+> +		goto cleanup;
+> +	}
+> +
+> +	if (item->fd != 0) {
+> +		err = 2;
+> +		goto cleanup;
+> +	}
+> +
+> +	if (item->file->f_op != &pipefifo_fops) {
+> +		err = 3;
+> +		goto cleanup;
+> +	}
+> +
+> +	item = bpf_iter_task_file_next(&task_file_it);
+> +	if (item == NULL) {
+> +		err = 4;
+> +		goto cleanup;
+> +	}
+> +
+> +	if (item->fd != 1) {
+> +		err = 5;
+> +		goto cleanup;
+> +	}
+> +
+> +	if (item->file->f_op != &pipefifo_fops) {
+> +		err = 6;
+> +		goto cleanup;
+> +	}
+> +
+> +	item = bpf_iter_task_file_next(&task_file_it);
+> +	if (item == NULL) {
+> +		err = 7;
+> +		goto cleanup;
+> +	}
+> +
+> +	if (item->fd != 2) {
+> +		err = 8;
+> +		goto cleanup;
+> +	}
+> +
+> +	if (item->file->f_op != &socket_file_ops) {
+> +		err = 9;
+> +		goto cleanup;
+> +	}
+> +
+> +	item = bpf_iter_task_file_next(&task_file_it);
+> +	if (item != NULL)
+> +		err = 10;
+> +cleanup:
+> +	bpf_iter_task_file_destroy(&task_file_it);
+> +	bpf_rcu_read_unlock();
+> +	return 0;
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/iters_task_file_failure.c b/tools/testing/selftests/bpf/progs/iters_task_file_failure.c
+> new file mode 100644
+> index 000000000000..c3de9235b888
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/iters_task_file_failure.c
+> @@ -0,0 +1,114 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include "vmlinux.h"
+> +#include <bpf/bpf_tracing.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include "bpf_misc.h"
+> +#include "bpf_experimental.h"
+> +#include "task_kfunc_common.h"
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +SEC("syscall")
+> +__failure __msg("expected an RCU CS when using bpf_iter_task_file")
+> +int bpf_iter_task_file_new_without_rcu_lock(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +	struct task_struct *task;
+> +
+> +	task = bpf_get_current_task_btf();
+> +
+> +	bpf_iter_task_file_new(&task_file_it, task);
+> +
+> +	bpf_iter_task_file_destroy(&task_file_it);
+> +	return 0;
+> +}
+> +
+> +SEC("syscall")
+> +__failure __msg("expected uninitialized iter_task_file as arg #1")
+> +int bpf_iter_task_file_new_inited_iter(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +	struct task_struct *task;
+> +
+> +	task = bpf_get_current_task_btf();
+> +
+> +	bpf_rcu_read_lock();
+> +	bpf_iter_task_file_new(&task_file_it, task);
+> +
+> +	bpf_iter_task_file_new(&task_file_it, task);
+> +
+> +	bpf_iter_task_file_destroy(&task_file_it);
+> +	bpf_rcu_read_unlock();
+> +	return 0;
+> +}
+> +
+> +SEC("syscall")
+> +__failure __msg("Possibly NULL pointer passed to trusted arg1")
+> +int bpf_iter_task_file_new_null_task(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +	struct task_struct *task = NULL;
+> +
+> +	bpf_rcu_read_lock();
+> +	bpf_iter_task_file_new(&task_file_it, task);
+> +
+> +	bpf_iter_task_file_destroy(&task_file_it);
+> +	bpf_rcu_read_unlock();
+> +	return 0;
+> +}
+> +
+> +SEC("syscall")
+> +__failure __msg("R2 must be referenced or trusted")
+> +int bpf_iter_task_file_new_untrusted_task(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +	struct task_struct *task;
+> +
+> +	task = bpf_get_current_task_btf()->parent;
+> +
+> +	bpf_rcu_read_lock();
+> +	bpf_iter_task_file_new(&task_file_it, task);
+> +
+> +	bpf_iter_task_file_destroy(&task_file_it);
+> +	bpf_rcu_read_unlock();
+> +	return 0;
+> +}
+> +
+> +SEC("syscall")
+> +__failure __msg("Unreleased reference")
+> +int bpf_iter_task_file_no_destory(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +	struct task_struct *task;
+> +
+> +	task = bpf_get_current_task_btf();
+> +
+> +	bpf_rcu_read_lock();
+> +	bpf_iter_task_file_new(&task_file_it, task);
+> +
+> +	bpf_rcu_read_unlock();
+> +	return 0;
+> +}
+> +
+> +SEC("syscall")
+> +__failure __msg("expected an initialized iter_task_file as arg #1")
+> +int bpf_iter_task_file_next_uninit_iter(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +
+> +	bpf_iter_task_file_next(&task_file_it);
+> +
+> +	return 0;
+> +}
+> +
+> +SEC("syscall")
+> +__failure __msg("expected an initialized iter_task_file as arg #1")
+> +int bpf_iter_task_file_destroy_uninit_iter(void *ctx)
+> +{
+> +	struct bpf_iter_task_file task_file_it;
+> +
+> +	bpf_iter_task_file_destroy(&task_file_it);
+> +
+> +	return 0;
+> +}
+> -- 
+> 2.39.5
+> 
 
