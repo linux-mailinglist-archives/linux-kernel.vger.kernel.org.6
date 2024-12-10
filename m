@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-439630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B849EB204
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:35:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F094B188B62D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:35:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850CB1AA1C9;
-	Tue, 10 Dec 2024 13:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="SlQ/id5d"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5494A9EB205
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:36:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B4023DEB6;
-	Tue, 10 Dec 2024 13:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733837750; cv=pass; b=h9MzbKTNS6LkOxGcfaJ7l+jZHohPAShn+5JXXwDQb7+FPl7D7atOXUKWWmGMzK38q0vZd4IpTo7vaMCmLD3FTQuTFgcp0Lvr1QPKCblz9N6vKT7aIBKPR9ViWVkEYWxqgyc9S2WRJgGgQCHAldLd+nJvUa25LhsehX4SOObg+E8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733837750; c=relaxed/simple;
-	bh=t5sG9BvKzQF+6KKzdapCOjebiVq4LKTYmKMf1k5AFKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXCPNKlL/Yvi+bp2NHJFl7FSxf6DZGEAF3GIxywlRMGAkDQoZJs3u52H2Gin9sHDNUX4yMyAy+L38zkQifA1OrCGsdcvUhPX8bjmMPx4nzCF7q8IRKz1vGUEFHVjdagfgNjVylnZrzQGjAsH+xPMvtByar1gcbxwFIdkkflnZNU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=SlQ/id5d; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A662846F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:36:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53C91AA1C6;
+	Tue, 10 Dec 2024 13:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nt6Lu3/d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4Y709Q0WwxzyTW;
-	Tue, 10 Dec 2024 15:35:37 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1733837738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LSV8eL4SlUrCerozsKMYo3rboGRFa/MNUGUGK/YYrFs=;
-	b=SlQ/id5d8UaiFBkZWBfWrf+eBGn9RFw99qdKO/xDiw0AsLha01DEFf/DMhKfbKAw72MWiv
-	3B5tBTrr0Xd4jJ8+FPkFSwbaeMzqkhuThfKELiLXqdlWxRoOCE8LzQFkCtxk3TExJNqhO9
-	cxirrPYHwUf0J+ODwPAjf/49sEZoRr0=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1733837738; a=rsa-sha256; cv=none;
-	b=xN6Kh4VCqq5KLM3QzcUvioQodE5RlUFQKuzhk8agEsNjsfKirvwcxktmMcxqAtP6Ez6rEF
-	bsJ5KXxblVW6smi3+Mlk1pUKZx5YSlRpLIt3wt79bVpzItrhz8GABup1e231I+QJU6cHlp
-	PMcdp0ZRuQflYgQnSpFVmxd+6/xnstM=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1733837738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LSV8eL4SlUrCerozsKMYo3rboGRFa/MNUGUGK/YYrFs=;
-	b=lOoGUe/qpg6aNmROXVtUJ0Uy2JjiR+60aMgP+LkXDwDfr+p4oiD+3mbowzSf3ID0tZBH5M
-	fL3FTb3/2eZ6KSUEHXnpB/cfbts0b2B5xwr/YZD/Y7It93OzoGea9T2F7O+r854BpDiJJ1
-	3YeHlnUTHcQERy8oWV9Xn9ADroi+n/0=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id A6EF2634C96;
-	Tue, 10 Dec 2024 15:35:35 +0200 (EET)
-Date: Tue, 10 Dec 2024 13:35:35 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com, manivannan.sadhasivam@linaro.org,
-	sakari.ailus@linux.intel.com, mchehab@kernel.org,
-	kieran.bingham@ideasonboard.com, naush@raspberrypi.com
-Subject: Re: [PATCH v2] drivers: media: imx296: Add standby delay during probe
-Message-ID: <Z1hDpzB6LOZYH8vA@valkosipuli.retiisi.eu>
-References: <20241115142021.574402-1-aardelean@baylibre.com>
- <20241115180717.10820-1-aardelean@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8C71A42C4;
+	Tue, 10 Dec 2024 13:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733837759; cv=none; b=dqfLqTW1dn95Um4ZtPAX59OyVUaAi9hm329UJo5F9wmuasllH/BQpm83MHDRKbY6K8HTk2tGszvta0F0dyKmNSOjTVR6SNqAYOLhhLxN8wtYD3AThGgMsyIM0G1hM7De0KbRYhU7GR9AfPNSVFhc+EfL+AA9pdCEMBRNWAKycl8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733837759; c=relaxed/simple;
+	bh=b2I0+eKk4iK9OnVnulSzlYA0NLcSmfUjvE0er6c4iww=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OODo/nCYLBdVeY1qEUb5wiVxNX7hRiSirbgGy4Tk6ze6mET2fWWVc1dGWxg8q1K9k2RYrqeSwlth2N5fDJ7fM4TWHzT3Zzcs2VmkN8hY3cTDLDk1DDPO+xeuaBwO1sArjjlPkBwaYmXxyBxdHWVFPO/G1kix730g4IAhbs/j4gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nt6Lu3/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD34EC4CED6;
+	Tue, 10 Dec 2024 13:35:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733837758;
+	bh=b2I0+eKk4iK9OnVnulSzlYA0NLcSmfUjvE0er6c4iww=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=nt6Lu3/dIXv//XgupGVTniobw37MR1F2itWDNVH8bY13QPrlj9SUF0qTMBS/3GRav
+	 WBV+isYER+30vTCC4Gtt3lRAFjlpJROLjV0ZCtaFY1SS+PK/pAN9oLC7eUnJwEhP+W
+	 iLBvCFRpArPQzIWjymSS1xunV3pXjD3VeWbOg7PBzALqbJIg2nB7tyyF4y2+PPGsO4
+	 MOxcO3EmsqRAqEjiwbDH78Gwk6CGDUULRaKZptjFQPipQZRwcXHnRrMMjFBPynWe86
+	 lhMJKb2q0h6G8WtoZJAwERUnHRTGRnxqhDToi8DmsgSbg8fyOCerbcgmZKaZdky/yk
+	 3Jzazp9hkDi4g==
+From: Mark Brown <broonie@kernel.org>
+To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-sound@vger.kernel.org, Chancel Liu <chancel.liu@nxp.com>
+In-Reply-To: <20241126115440.3929061-1-chancel.liu@nxp.com>
+References: <20241126115440.3929061-1-chancel.liu@nxp.com>
+Subject: Re: [PATCH 0/4] Add function to constrain rates
+Message-Id: <173383775650.46965.9428255940556546352.b4-ty@kernel.org>
+Date: Tue, 10 Dec 2024 13:35:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115180717.10820-1-aardelean@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-Hi Alexandru,
-
-On Fri, Nov 15, 2024 at 08:07:17PM +0200, Alexandru Ardelean wrote:
-> From: Naushir Patuck <naush@raspberrypi.com>
+On Tue, 26 Nov 2024 20:54:36 +0900, Chancel Liu wrote:
+> Platforms like i.MX93/91 only have one audio PLL. Some sample rates are
+> not supported. If the PLL source is used for 8kHz series rates, then
+> 11kHz series rates can't be supported. Add common function to constrain
+> rates according to different clock sources.
 > 
-> Add a 2-5ms delay when coming out of standby and before reading the
-> sensor info register durning probe, as instructed by the datasheet. This
-> standby delay is already present when the sensor starts streaming.
+> In ASoC drivers switch to this new function.
 > 
-> During a cold-boot, reading the IMX296_SENSOR_INFO register would often
-> return a value of 0x0000, if this delay is not present before.
-> 
-> Fixes: cb33db2b6ccfe ("media: i2c: IMX296 camera sensor driver")
-> Tested-by: Alexandru Ardelean <aardelean@baylibre.com>
-> Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+> [...]
 
-Thanks for the patch.
+Applied to
 
-You always need to Cc: stable if you have a Fixes: tag nowadays. I'll add
-it this time.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-Sakari Ailus
+Thanks!
+
+[1/4] ASoC: fsl_utils: Add function to constrain rates
+      commit: 820bcaeb1ff5705ba907563e554f17d0deecc3fa
+[2/4] ASoC: fsl_micfil: Switch to common sample rate constraint function
+      commit: daf7a173fc7c4b652f3fe69d3b5aa520976a7d63
+[3/4] ASoC: fsl_xcvr: Add sample rate constraint
+      commit: b622b677d255b41cbfce20b66535723933a6b640
+[4/4] ASoC: fsl_sai: Add sample rate constraint
+      commit: 4edc98598be43634f87af5d3876ebec6c274d2cb
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
