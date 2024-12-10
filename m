@@ -1,241 +1,279 @@
-Return-Path: <linux-kernel+bounces-438799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0559EA621
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:01:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 375AA9EA671
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 04:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F80D188BC1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:01:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DF71888571
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCBF1CB9EB;
-	Tue, 10 Dec 2024 03:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E711D7E46;
+	Tue, 10 Dec 2024 03:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TXHZmwBD";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Mm6b50kb"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p1lJXf1F"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB0D8F6D;
-	Tue, 10 Dec 2024 03:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733799703; cv=fail; b=bSRQtB/F+SC1zJMyoKEF9/oFJNJNj1YDhio+8rGEaBH5K97R/GZyZke2GTkYPPnXYyKIVYbUu9l+H6dsdvJnHuCTSxJGnTeWObEpfNtokwBXNVI24fHTmWdDQvdXMPENtm39qK6zG2ufluYb6p8iQusLfI6QDRA0qSEGB/F6q7Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733799703; c=relaxed/simple;
-	bh=NmngPX7ySfORIkUgMDjlMpp9MBPfqcDFw/HN+tLlYm0=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=BEFf0hMWyxx1HpQVazCNhBAtU9ALu4KtY/WU4Z4BrOXaJ5i8hTEO4CfoBCgHT3Bey5RzgDJRJgLp8NHRPeEoXjnVLQ5pAdm5aXm7sgtuwNWkd6/X9K2Q++28nrbPwk07s+kq0RlQSFXkNTA8pJQWO2T1Z2dywZ7HOvb6/ZSeaPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TXHZmwBD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Mm6b50kb; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA1BvQh005043;
-	Tue, 10 Dec 2024 03:00:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=DFnN3//pDIcFv5T5F+
-	qit1z5bgh5rVnTug0rGbIoDLw=; b=TXHZmwBDSvqst0flfZmDqnSCqJi2pdJSDd
-	CobGWdD6Ere0tmH1EZJ+F7TSsjj+FgT0CgHo6K/Y0sEFFsoZRB90zJfk0ERwd/y5
-	3tVh2II/9ulhqHzgzqegOBm4CSKpSb6cxrtdZD+ivMqWVYEaIvnmtfIIO+9bCsWq
-	RsYgMyCrwNZjDuq2PWNTq+uYvznYXTGw0iRUAkdzpqMZI+6zlYhO5G4PnNLzeBNM
-	yX9IwRAoriT9qIZ9URSN/jClZljz0+hSNbk0+HVDBT+xrm4/QOYeVNgrAhBd9Sgu
-	50QcvYWysO4jKq9/OODrRa5yvD2ObNs3eWFXON1aE2WCqC/MZXzg==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cdysvpm9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 03:00:55 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA1NWxK019340;
-	Tue, 10 Dec 2024 03:00:54 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2175.outbound.protection.outlook.com [104.47.55.175])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43cct82scf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 03:00:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Krs5SXKhwo/qLqyHd9SOchYjCRAt52z62PdgiMYvE6x1UGmcUf4yFO53VhmQDH2eJq5Dgb4y2SVIN1GIJXG1yoeET9iNtKei421yGzq4JZvku6DbHfYnEYq+2qbPZJe8NOr53mniQ0H4BUxaKfcadT+KPviRWKaG6WkdVSNbMJ+CseX1bB4fB4RbtXqYAiOlnT/H/8ui+j4eob2+075wIyDtKrIgAwFBv1Y9WoE/YhZd9tIZZyz1/tsxMqeBLhyCmxShrV8xzPDwgTOW4NQ8HOPSiMJg2WyziJuYsMKTuH4Wfo4pHTMGJwWlNr6dmQy06HY2C9gsoLGF+R8y4hWTIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DFnN3//pDIcFv5T5F+qit1z5bgh5rVnTug0rGbIoDLw=;
- b=fRj6DtxXbIxxoUachmfM8t2daJaxFuA7W4j7QEbVmz9IS6TvoK/y2zrSELg0+00dFuyexwPtCdz+RDYbwyqs1TszBTWo1EkAUHbo9ro+EnZsITuN0Si50xljNEaa/7cCkpJNfbgHF5KM+59cMB/UujW0SF93Tvih21DnSEjhMYFMynScjlJ6ZPYy0CNoDgjZy9hsXQN4j9qb9rTXxeulg6+ccsl7yUBB/Cy8exjeX+T411kN6AooGL1DzL3w3FZ/ubahrW5tkihPOEPbwejPd+vARF2beFOiRuZ3mpF+ot/JoQGcF9sKnXpNXiFYaNwRGY4tBd4nNbAzOQ6IerOj4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DFnN3//pDIcFv5T5F+qit1z5bgh5rVnTug0rGbIoDLw=;
- b=Mm6b50kbXDABpBaCXWfof6nt8DEhdgq/Nu/WavfB98/vHps+0kfSCcy3X65ZuwXJEQ9YQAW4Wg5g10I0VcL7t6nY36vrojLSC+KWi5pTvyqfrYaDLBuAk1NWTtORPzylab45Gp5dxIBDQnr6lr++SzNOCegf3hTrYdtT1FHxGoY=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by SJ0PR10MB5566.namprd10.prod.outlook.com (2603:10b6:a03:3d0::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
- 2024 03:00:50 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%5]) with mapi id 15.20.8230.016; Tue, 10 Dec 2024
- 03:00:50 +0000
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Adam Radford <aradford@gmail.com>,
-        "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
- <martin.petersen@oracle.com>,
-        Khalid Aziz <khalid@gonehiking.org>,
-        Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>,
-        "Manoj N. Kumar" <manoj@linux.ibm.com>,
-        Uma Krishnan
- <ukrishn@linux.ibm.com>,
-        Oliver Neukum <oliver@neukum.org>, Ali Akcaagac
- <aliakc@web.de>,
-        Jamie Lenehan <lenehan@twibble.org>,
-        Finn Thain
- <fthain@linux-m68k.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        James
- Smart <james.smart@broadcom.com>,
-        Ram Vegesna <ram.vegesna@broadcom.com>,
-        Satish Kharat <satishkh@cisco.com>,
-        Sesidhar Baddela
- <sebaddel@cisco.com>,
-        Karan Tilak Kumar <kartilak@cisco.com>,
-        HighPoint
- Linux Team <linux@highpoint-tech.com>,
-        Brian King <brking@us.ibm.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena
- <sumit.saxena@broadcom.com>,
-        Shivasharan S
- <shivasharan.srikanteshwara@broadcom.com>,
-        Chandrakanth patil
- <chandrakanth.patil@broadcom.com>,
-        GOTO Masanori <gotom@debian.or.jp>,
-        YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
-        Jack Wang
- <jinpu.wang@cloud.ionos.com>,
-        Nilesh Javali <njavali@marvell.com>,
-        Manish Rangankar <mrangankar@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com, Michael Reed <mdr@sgi.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        megaraidlinux.pdl@broadcom.com
-Subject: Re: [PATCH] scsi: Constify struct pci_device_id
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <fc61b1946488c1ea8f7a17a06cf40fbd05dcc6de.1733590049.git.christophe.jaillet@wanadoo.fr>
-	(Christophe JAILLET's message of "Sat, 7 Dec 2024 17:48:28 +0100")
-Organization: Oracle Corporation
-Message-ID: <yq1zfl4i6nk.fsf@ca-mkp.ca.oracle.com>
-References: <fc61b1946488c1ea8f7a17a06cf40fbd05dcc6de.1733590049.git.christophe.jaillet@wanadoo.fr>
-Date: Mon, 09 Dec 2024 22:00:48 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0381.namprd03.prod.outlook.com
- (2603:10b6:408:f7::26) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32581A0BE1;
+	Tue, 10 Dec 2024 03:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733800606; cv=none; b=MeqQYYxyTyuS6RHYWRAzFH1rnMPEjg//9p3YGoSdFn+SVIYx0WjiBsyL0GovHK1e9W6GYbDbdSksOohKQnOnsIgp0ipg55R+7AxnFrtiRUBr7njNic/ZGFNlYhlEJf7yYNviPSbuYAbitBeWk8y4IdU/7os71QaMqzizXMrPVrs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733800606; c=relaxed/simple;
+	bh=9EW/QOf0hhPvlzLP4Stc7bfw3D1VEFhkUkMZQaLI+zo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H+wJst5BPWqOkkeO+kylot7AWETo6Gzrd8c6UCZAMjf35api7KWLg5M4vsYwN/icW5DinyeuEjT56AFePEXzBzY/+imO0IJN5NjjDfSWqPstuxDvxmjWuUTP6nu5O0N9FtJk/wdQv+LK5UU5Y9McA2VLIoVse/xmiB4KM5yp0Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p1lJXf1F; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Hwv6b025063;
+	Tue, 10 Dec 2024 03:16:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4sQTYmOOMV2fJH7Jfipzho
+	nArhFKbHg+QSFEubXQeH0=; b=p1lJXf1FAtdXiqh7sC7xUQu7Z1BIV4CtT+emOC
+	+VsfIqiEK0g4A4cohn63BzkxV/1svFUAZrLc+iGQEbW80ilgS1I9y1xrbe0W8qSz
+	FRR8Yeia4eW4pOo/c59GpE2WWTjHtE8a7/Y2tz+y6LvL8lZqTJJ7zwjfSmpIKxdc
+	QNQ8THkriLyymNyyJly/CL+zjNRqSemib8d0RSrZGcze7vKXBiI8mPkqCjRrvJ4q
+	887ifeHR4npUSwFpdGwe3tf2niJa5Hf5puDrANRyaOe0gkt81Sglm6GS9a21H+Xd
+	KBn+z6u5cCGa5c0tTk/W9eV/neLE91k+fSVREyEdPBQa27FA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cek1xv4f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 03:16:17 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA3G9nO005301
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 03:16:09 GMT
+Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Dec 2024 19:16:04 -0800
+From: Jie Gan <quic_jiegan@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v7 0/5] Coresight: Add Coresight TMC Control Unit driver
+Date: Tue, 10 Dec 2024 11:15:39 +0800
+Message-ID: <20241210031545.3468561-1-quic_jiegan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|SJ0PR10MB5566:EE_
-X-MS-Office365-Filtering-Correlation-Id: 062956b0-9734-4d08-0efa-08dd18c6da5e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5Z5dfz9F6rCG8UZ2di6AhhTiY8ku1iIvuWFY8f00BAyzA8Ofpnj50ntu+rjw?=
- =?us-ascii?Q?Aka2abx1eeTgfghtJ3pAdD3zZcXWsJd29FQ3nn40qGdZU/SL22xuv904Ssex?=
- =?us-ascii?Q?JqOCtyJk+kisi3XGxt6fpM/O5b1fz4ifY6gk6DGOUmOFU0HaA2zSXLrFqOOL?=
- =?us-ascii?Q?GSrv6I4WjLJGKGk1BrGybMocyLwvkS00xYHEwVE6IX+VgGnxPwPTa0K9tTfJ?=
- =?us-ascii?Q?bSJ6rYTOWiRRLg0ZdwoDIx5TCVlFczABqWl74YSc4B4AJ17QJ6z6tTpqSQT6?=
- =?us-ascii?Q?vwGyiqFLEzhlAySjr23oonNb7wpu64pf6eOAIhv5d1XIG7v4Dhc/bedAmwIU?=
- =?us-ascii?Q?X1S/V1Y2VIWbf+snJ0oHkaPks55IjbX47wW0dtUZQgBinXBB8goZIZ6lE1RY?=
- =?us-ascii?Q?2J0AyP+pM0kokmamwbKz2uX2vgMG73DeEqybCzVyQJEKQH9fW68KDIhfePUk?=
- =?us-ascii?Q?rdX/Q244qtF+wdjzsuODoaf/Qgj5QCTWiffbplbaNUtR1n31i3ljE8XH3EzZ?=
- =?us-ascii?Q?O8ZlisBo+r9JCvQanfWjrr/EfGjoRmfGrINWG9XVlNiTVynt1/RD+sSh3Nyi?=
- =?us-ascii?Q?uHP6lmXIqm85EMLwLJ0QTVkI4y9osVyeA2CS0rkhZz6dkX44vD0wQjvFwdQe?=
- =?us-ascii?Q?SP8c7ZmXHlzwDvZFMTXm9JJ7+F7la/T7TD99fH3MiPWNh/2qkrn05ctvjE3X?=
- =?us-ascii?Q?toj6Saf0Wb0xSdV8SZjboKhbFmJiyyw4k8VUsdDwjo1rzQaBTMUWZGjISLHD?=
- =?us-ascii?Q?Jvj5MMjUZF2i8PUoTNOGnAgR8QZglHJ7GkU7gzaf1EO7StrfRmwYeCVFvUar?=
- =?us-ascii?Q?el903uXnNvY53CAveeq42E+LecCDFFhoWYkHOhwGjwafv/dTAY/ctY9P4Y+p?=
- =?us-ascii?Q?SYiJkAwh9lGhmLo8V+jM8qzkjvx3xVbFtcrjorHHJW6+8ibyrlnsR7/BhMW3?=
- =?us-ascii?Q?9AQIg/HZ5T2E2wdoZ4zFcCZRpBIt6xFCvxfamV6yistn4As2bLQXf/SKJi2/?=
- =?us-ascii?Q?c4uDjvHbJ9bkTyjVO9Tsf23Wq7nUV9S1tqmPGPKlEpjPxFjAPCpL4zSDcck8?=
- =?us-ascii?Q?qvFFhhEtXxOf3w4XfITHoLfoe2wYWy7pVja0/oRzojk/C+Zk3/Qosf1fX/B7?=
- =?us-ascii?Q?xRbomrDPsfb71CvrwqMRgvyg/6z2hgTYYYLO8dimY/sCtvrXExkwE1kpZbT4?=
- =?us-ascii?Q?pMGNPQsRheQ3PQOTWXKobYWnLV2MCFRfq4K0ggtl4rEd17Anm+V3khUGy5Rt?=
- =?us-ascii?Q?mO3lBZ/TVtRGPMfImo15/zn/Nc4kMX+EwCYBmjcuGVz54RCyYu379c8XuV1V?=
- =?us-ascii?Q?89hWnbA+m1CO63udpGbFjuLLyqOmN6cvOulvsY81MKSBsg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NAxMaE3wFOAeMbGFK65k68ktsoP2GGCbdW5h990niGZhI8TL4ZDcwkOOW4ZQ?=
- =?us-ascii?Q?o87DwYOJ7RBAYTl5ICuMnLhvQUhxgz9ZgYx+n4dNXBSfIP/gc2EnNHpDDH0F?=
- =?us-ascii?Q?OIYWTCEmT12VONTdsxQ67qAGQU+vg33xsHVBty1UpysUA7Y66lAm5jMkfHvl?=
- =?us-ascii?Q?cPcF1/MOsuddyrdWBYfd0nqojQjTUXQbhfI+YASKXyfn6Vs2CT6VN0jOHZAK?=
- =?us-ascii?Q?QrMB3PS/fF1ygQYV5brzNK/ieVz9CAl3uIMCB2aq4JnVufA9XhIUNFrbhxfL?=
- =?us-ascii?Q?z7dF0XfwUDnMwdw0XRznj/J53WgjLzkns6RRaMMXQAnmW/GjRo2f7xZH7gkV?=
- =?us-ascii?Q?0LWRkshLx7x93oH046UQSyHuo1DLNkeyCLsED1bK/YyUcoM70/vUSHdqv4Pr?=
- =?us-ascii?Q?mj/x6uKea3Ygzq5QYHzpPFjoGPRE1gLQ5V3JSOXAkWcSNEoDY7ad/RKFwppJ?=
- =?us-ascii?Q?ZMct9aYpUhKES8Zmev06QbEw3Ul3zk5Z+4/zr/wm7OW/rDbXQUcofdhcrzMs?=
- =?us-ascii?Q?gLWiyP/ih19PHX3y0HfYIjKuRkaseDF++AtvRiZLt2qvZH4jGe3b99bLrQNT?=
- =?us-ascii?Q?Im19DdPFpMrmtB7giM/tgUfSv5gM0RutYR44eB4hFV06uS7ccDlrWrhA4caY?=
- =?us-ascii?Q?C/m2m+P9yG43GSp9TcBGUK3+EqfJmy0z3kKsz8pDRRsfbkjbu6xA01XrzqjZ?=
- =?us-ascii?Q?KaACVGhF4kxK4H+PphSaNN5fesgo0f6At9lPdy5nWVY2dg24m/RrmgUJg8N0?=
- =?us-ascii?Q?O2Y4zVdgXxt8/qxGTFOYT3JxSTzE71Q8M7pFXfe35uQ4mkpZdrA2SvyE91tR?=
- =?us-ascii?Q?oicagPh6O9gLqfvqwJF9giyPl+8MeNHUmgWgaykoLrk+ewEanrxByzV8vqfM?=
- =?us-ascii?Q?HBkpbky4Bof6cmYhbaHgDp9HvYhNRc60qg6OqRkq7Yl30R1JOKYAqeH2MTiq?=
- =?us-ascii?Q?7bCGOZ+KWEdIv0JUWUW41WmU5QwkJq+9FPF3/MiltBoE0STWV2Fm1MVg4LkK?=
- =?us-ascii?Q?AiGjSCJtLzPaw7kPWCUbklFlkg2rELx5TvjfMEr5wWABEpSFUTeiQ+8brFGw?=
- =?us-ascii?Q?OBk2soBPBT8PEjZ58lQH9jl44z1b7t4mk905dcggyJSDUqYnk/Lln6jwk+KI?=
- =?us-ascii?Q?u2Dh6utqo6bZKgORqXy9hnEpHJmNSeSb5QDbFB0qZbyr5XPsBG4h2cjKASsx?=
- =?us-ascii?Q?8GiTdmmAVomlal5Ba/ovvRJklKQMckGOPQcGIzqWuEYFXFjKyoJZsNoPsb23?=
- =?us-ascii?Q?4rzuAJ9bGEfaoBcz3gF7NHQvpfLPykDiOrtPCXpXAO5o1zPKQCqm1CnU8GL1?=
- =?us-ascii?Q?KEc9kq7eSbl8sCY7/cjRCVpFeJoj5M5CHA5gYiOu/O6GXO2ziV1U1EZtkGci?=
- =?us-ascii?Q?A0Z03o/t3zRPAdF9I4e6SNDdVNW/agDi6wzOACJMxTJIe7LN+RYU9zpf3GvZ?=
- =?us-ascii?Q?YoHxnuqU2SW6228an84ZNGkdiGJN1q/n8np8XaGP1IBsV6uD67ZLJa66VZmk?=
- =?us-ascii?Q?T5zl/5ORO0fOv0PdKJfGkxjzHz6o50CY3em27MDCYxc/w/VGNlaxFofRD4xW?=
- =?us-ascii?Q?/Q01NlrrAH2ucxSEguk7RVcERmDsJH7KJrlBCH7zOjNx0jMqGUlfbW13+mBE?=
- =?us-ascii?Q?bg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	3SfVJw93FnzxIDNZT2GhdhBnQkLGpIVNk/RxbJyz2Mu+07o7JirbeKXJkYV5UGB9bxJDnuSJodnyDG47L+1syMNdOKHaV4Wioa+lZ/PwY2sDiToGldPreXxbOPJVBEOlMsa1eYhsuybJmghjtCaJnq0V6VVFd7J688ALzHC+AzE+4r1vsX1Po966nTyS9ThQK5Noc0BTZBO0kqs+5ptlm7GGpIcJma7zoq8zYRM27oNRHfyyfRMb2xfkn032BH+O6mlWizQi1DjBmACr8+AFJV7GDRkPAuLbCbrh4f6onhZHz5YSun4quO0KgAwjMssi8PkDMjBoG8gQbUVRvw41S5Xw8k1BNeGB7KGYUrN0LtxFJSPSKnlWy2c7ysrTqPB0v3DNNPSHGsv7+drwD3f16xTYNlP1V/BGiy6V0963+VUrXATN8JpNSpU+zmDjBGzMcyJxvE8LUUIItwppx//wcLmLJsl5rxV4Yi7vLiMWy9z5qTU4ETHLG5BBsg0PXllX2QryRvFMGxYa4UrIpxZcunsij+Fs3IyYdbJMDGmdndrI6pWXZxYDXw8aBXYq0JeX7cPYc2WZqPynXV2rwIhPHZYAZIdk3fKiqx9+xHmRsME=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 062956b0-9734-4d08-0efa-08dd18c6da5e
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 03:00:50.4988
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ka7sLvseODG3NCD7K1t6rnmWze1BvHwjCFH2PaAsP3AzXOqH1vAQgKNZa+/YoB2BgsMCFzUH3I+8N78ZgsR6UHsC+KFx3QXY7p2XFhDCfq8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5566
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cNT8FxpSE2f-CGhNior-CbHmYhUEhF-f
+X-Proofpoint-ORIG-GUID: cNT8FxpSE2f-CGhNior-CbHmYhUEhF-f
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-09_22,2024-12-09_05,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- adultscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412100020
-X-Proofpoint-ORIG-GUID: ggBOL2UYQ8sjlB7sVNiILFMtjb-FVPbj
-X-Proofpoint-GUID: ggBOL2UYQ8sjlB7sVNiILFMtjb-FVPbj
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100022
 
+The Coresight TMC Control Unit(CTCU) device hosts miscellaneous configuration
+registers to control various features related to TMC ETR device.
 
-Christophe,
+The CTCU device works as a helper device physically connected to the TMC ETR device.
+---------------------------------------------------------
+             |ETR0|             |ETR1|
+              . \                 / .
+              .  \               /  .
+              .   \             /   .
+              .    \           /    .
+---------------------------------------------------
+ETR0ATID0-ETR0ATID3     CTCU    ETR1ATID0-ETR1ATID3
+---------------------------------------------------
+Each ETR has four ATID registers with 128 bits long in total.
+e.g. ETR0ATID0-ETR0ATID3 registers are used by ETR0 device.
 
-> 'struct pci_device_id' is not modified in these drivers.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
+Based on the trace id which is programed in CTCU ATID register of
+specific ETR, trace data with that trace id can get into ETR's buffer
+while other trace data gets ignored. The number of CTCU ATID registers
+depends on the number of defined TMC ETR devices. For example, two TMC
+ETR devices need eight ATID registers. ETR0 with ETR0ATID0-ETR0ATID3
+and ETR1 with ETR1ATID0-ETRATID3.
 
-Applied to 6.14/scsi-staging, thanks!
+The significant challenge in enabling the data filter function is how
+to collect the trace ID of the source device. The introduction of
+trace_id callback function addresses this challenge. The callback function
+collects trace ID of the device and return it back. The trace ID will be
+stored in the structure called cs_sink_data and transmitted to helper
+and sink devices.
+
+The cs_sink_data structure is created to address how to transmit
+parameters needs by coresight_enable_path/coresight_disbale_path
+functions.
+
+Here is an example of the struct cs_sink_data:
+struct cs_sink_data {
+        struct perf_output_handle  *handle; //used by perf mode
+        struct coresight_device    *sink;   //used to retrieve atid_offset
+        u32                        traceid; //traceid needed by CTCU
+};
+
+The atid_offset mentioned before is the offset to ATID register in CTCU
+device.
+
+Enabling the source device will configure one bit in the ATID register based
+on its trace ID.
+Disabling the source devices will reset the bit in the AITD register
+based on its trace ID.
+
+Useage:
+Enable:
+STM device with trace ID 5 and ETR0 is activated.
+Bitmap before the enablement:
+ETR0ATID0:
+31..................543210
+==========================
+0000000000000000000000...0
+==========================
+
+Bitmap after the enablement:
+31..................543210
+==========================
+0000000000000...0000100000
+==========================
+
+The bit 5 of the ETR0ATID0 register is configured to 1 when enabling the
+STM device.
+
+Disable:
+STM device with trace ID 5 and ETR0 is activated.
+Bitmap before the disablement:
+ETR0ATID0:
+31................6543210
+=========================
+000000000010111...0100000
+=========================
+
+Bitmap after the disablement
+ETR0ATID0:
+31................6543210
+=========================
+000000000010111...0000000
+=========================
+
+The bit 5 of the ETR0ATID0 register is reset to 0 when disabling the STM
+device.
+
+---
+Changes in V2:
+1. Rename the device to Coresight Control Unit.
+2. Introduce the trace_id function pointer to address the challeng how to
+   properly collect the trace ID of the device.
+3. Introduce a new way to define the qcom,ccu-atid-offset property in
+device tree.
+4. Disabling the filter function blocked on acquiring the ATID-offset,
+   which will be addressed in a separate patch once it’s ready.
+Link to V1 - https://lore.kernel.org/lkml/20240618072726.3767974-1-quic_jiegan@quicinc.com/T/#t
+
+Changes in V3:
+1. Rename the device to Coresight TMC Control Unit(CTCU).
+2. Introduce a new way to define the platform related configs. The new
+   structure, qcom_ctcu_config, is used to store configurations specific
+   to a platform. Each platform should have its own qcom_ctcu_config structure.
+3. In perf mode, the ETM devices allocate their trace IDs using the
+   perf_sink_id_map. In sysfs mode, the ETM devices allocate their trace
+   IDs using the id_map_default.
+4. Considering the scenario where both ETR devices might be enabled simultaneously
+   with multiple sources, retrieving and using trace IDs instead of id_map is more effective
+   for the CTCU device in sysfs mode. For example, We can configure one ETR as sink for high
+   throughput trace data like ETM and another ETR for low throughput trace data like STM.
+   In this case, STM data won’t be flushed out by ETM data quickly. However, if we use id_map to
+   manage the trace IDs, we need to create a separate id_map for each ETR device. Addtionally, We
+   would need to iterate through the entire id_map for each configuration.
+5. Add support for apb's clock name "apb". If the function fails to obtain the clock with
+   the name "apb_pclk", it will attempt to acquire the clock with the name "apb".
+Link to V2 - https://lore.kernel.org/linux-arm-msm/20240705090049.1656986-1-quic_jiegan@quicinc.com/T/#t
+
+Changes in V4:
+1. Add TMC description in binding file.
+2. Restrict the number of ports for the CTCU device to a range of 0 to 1 in the binding file,
+   because the maximum number of CTCU devices is 2 for existing projects.
+Link to V3 - https://lore.kernel.org/linux-arm-kernel/20240812024141.2867655-1-quic_jiegan@quicinc.com/
+
+Changes in V5:
+1. Fix the format issue for description paragrah in dt binding file.
+2. Previous discussion for why use "in-ports" property instead of "ports".
+Link to V4 - https://lore.kernel.org/linux-arm-msm/20240828012706.543605-1-quic_jiegan@quicinc.com/
+
+Changes in V6:
+1. Collected reviewed-by tag from Rob for dt-binding patch.
+2. Rebased on tag next-20241008.
+3. Dropped all depends-on tags.
+Link to V5 - https://lore.kernel.org/linux-arm-msm/20240909033458.3118238-1-quic_jiegan@quicinc.com/
+
+Changes in V7:
+1. Rebased on tag next-20241204.
+2. Fix format issue for dts patch.
+   - Padding the address part to 8 digits
+Link to V6 - https://lore.kernel.org/linux-arm-msm/20241009112503.1851585-1-quic_jiegan@quicinc.com/
+
+Jie Gan (5):
+  Coresight: Add support for new APB clock name
+  Coresight: Add trace_id function to retrieving the trace ID
+  dt-bindings: arm: Add Coresight TMC Control Unit hardware
+  Coresight: Add Coresight TMC Control Unit driver
+  arm64: dts: qcom: Add CTCU and ETR nodes for SA8775p
+
+ .../bindings/arm/qcom,coresight-ctcu.yaml     |  84 +++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 153 +++++++++
+ drivers/hwtracing/coresight/Kconfig           |   8 +
+ drivers/hwtracing/coresight/Makefile          |   1 +
+ drivers/hwtracing/coresight/coresight-core.c  |  59 +++-
+ drivers/hwtracing/coresight/coresight-ctcu.c  | 292 ++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-ctcu.h  |  21 ++
+ drivers/hwtracing/coresight/coresight-etb10.c |   3 +-
+ .../hwtracing/coresight/coresight-etm-perf.c  |  37 ++-
+ .../coresight/coresight-etm3x-core.c          |  30 ++
+ .../coresight/coresight-etm4x-core.c          |  29 ++
+ drivers/hwtracing/coresight/coresight-priv.h  |  13 +-
+ drivers/hwtracing/coresight/coresight-stm.c   |  22 ++
+ drivers/hwtracing/coresight/coresight-sysfs.c |  24 +-
+ .../hwtracing/coresight/coresight-tmc-etf.c   |   3 +-
+ .../hwtracing/coresight/coresight-tmc-etr.c   |   6 +-
+ drivers/hwtracing/coresight/coresight-tpda.c  |  20 ++
+ drivers/hwtracing/coresight/coresight-trbe.c  |   4 +-
+ drivers/hwtracing/coresight/ultrasoc-smb.c    |   3 +-
+ include/linux/coresight.h                     |  16 +-
+ 20 files changed, 800 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+ create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.c
+ create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.h
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.34.1
+
 
