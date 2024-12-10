@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-439026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A440D9EA9A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:32:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CBD9EA9AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:32:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 905151883B43
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A0A285FC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 07:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964C222CBE0;
-	Tue, 10 Dec 2024 07:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EA322F395;
+	Tue, 10 Dec 2024 07:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lppgcg9E"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nNRq3IaS"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB7B22B8D1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B417722E407
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 07:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733815943; cv=none; b=gRkirZW1ZSwvQUOUhXtp8NypWmXcVfwyUWGCIEYN/kBVmZLCYJKzh2A/rmtXUbBclI0KY8giIWucTomF29IO5BRrSUvfGeTmhzD5oWwgVay2hMeucWOV9rkziKQXcYeSqqVRQoJd6cuHrqGE4A3AGEHJcLyT29yE57odqMIJFxI=
+	t=1733815946; cv=none; b=ESD1tyfC5mkZyq+K6Qdv33JeFPgBC2DjJW/BhYVqiKOI0fTpYZljBYZEfFA6wOzI6B7KnfFH5PxdlPBjiWwa6CdrVAyv//S/uei99hNb0MNwDj4m0JlnoOt11QCdAPT94NDxOODxUaErbg17ztoqPkCc1znBk505vG1gl7hZGjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733815943; c=relaxed/simple;
-	bh=hsirGFiU8BzwJ9k9bRXj/aFU0gO5K783nFnr1XHXDe4=;
+	s=arc-20240116; t=1733815946; c=relaxed/simple;
+	bh=NOfDh6XWMXA3bQDZgyXinaVUDZBBis7f4DQlXXXEj18=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X47Xl5nUVzSik8dFwKoapJf8DzfUxqDuGK+KSXfE4xTQusPvE5uhHN5zygqyVZxV83so117dffQ5pJt/cjiR4/hP+D5vixTc91LfNdIU/W0x8px1+iicJbI/ejxSR97erPWnHwBKZqwH+8qTpfGBtVeMolnK8+UN0BP99ztQgGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lppgcg9E; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=sPybOntjzjZ7UnmQzjfPp7EOw028vjM4Yr5gCynLHjyOcAt939jKzZt/cNs51bu6IxQcAAMB9yWq7d3f747qRFiF+C+rDO0jqk5BGoF0zZpDmrbnsk7oKV/jrn3Pypcz2EcAUJ7ihJ2tAUgIDvf7KXYsmpsQ7kPNelrLnDQcWz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nNRq3IaS; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2161eb94cceso23072655ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 23:32:21 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21644aca3a0so21283325ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 23:32:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733815941; x=1734420741; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1733815944; x=1734420744; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fU9h1qciZfo1eCFrj9RBOWdEPoZjJk9V1VI96TtLyqU=;
-        b=lppgcg9E3wpJVG8vWlDCF3+oOe0ZFP9+e2+dkAGLqdwpnRp/a9Czf7o6P4VqnTQpqM
-         wNcox/86N2wR+8S9IdkuDWepzl6qXBG0BkpOmEAC5SLbX+ahxGTHdgyYSB7rwKWgdyMc
-         E0kwS23XrCdplorg3eDJ1mFoGBaZ0ttr7vDSA=
+        bh=oIYaaljMW1uOvyE52JKpg1mRNjsi/3D4cn4UsNQnmlk=;
+        b=nNRq3IaSCDLph7zpnboRZ1+zFRDvhhk7V0FKhrFDr39iKyHno9vLzL+r4PWE15tXP5
+         IS+2L49n+YGoPTZVK8axS49mFkGdK4HKUHbn5e0/Kv6RRj3DtKUH2L1Aq6Svrn8djXkf
+         D4W7pHiLAxgjJMivWGHR9LiwWR5ZrgazL7Ar4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733815941; x=1734420741;
+        d=1e100.net; s=20230601; t=1733815944; x=1734420744;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fU9h1qciZfo1eCFrj9RBOWdEPoZjJk9V1VI96TtLyqU=;
-        b=RVGfF4PEN+Wlebn4obouVA84RsDzWUx2jtPnaO2p8VYGJBL/8QZydlz/CvuIqX7OGI
-         32WPjevmjKkwSydFfFnx111IGSNHsRa3BhibVIWs0sYFcwPUlACASQnmlIZh/KNQDpvt
-         rXeXEWQMwYFbw43bgPoBByPlXw5fZCNmMV20d9DLgZvMAuAOCXT+t8NZVIgnqM5eiXZw
-         vo9i6YDqQuUXqWQSi1IU3wrI+nfuWFwwlRmuj79m4JNydgf4JWMp0llr3TBH1tjCZJnt
-         DmTGdS1/4+YZux7EHsT+/27U+d/36oC9yorn0PiWMz2wYL8PPD9HeKrhS4GdVbIqtIvW
-         6yfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsYm8z+RDrm6ZucO0X1Ws7TnW16ITaa73e9WPMRnXzsOq6Pyv+9Yz/rsuKlmGmr78Z0cztFKK9abNY+pk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycSiW+7qfOjQs1/HWSmppfyCwm33THDdpM7+MwQgBMSxRqYfkS
-	ebaqL+V4Kntu1HmOLtI4/gL59zwLzVf4d5Bj5l+STart+NiCbU0T1biL6QASNA==
-X-Gm-Gg: ASbGncvkjx2zxJ94iSUBhhfctQVppiKD7uaXK72RUVSk67MsmhuaZHrF9WpuVUcGV6O
-	EUsSuIxyDI20fgE9d/ei9/fnReNQCctkkoyVkxYDXmCVpK1nOL8H0PkFgz7k4hyRoqlmFrVA6W+
-	9r+2d7/tj2VEAB9eBbVafVn7mo9KjVsbIqsUPmAHUQZi7x1a4vErEx7oJbXwhqgGARdsDyvpRWT
-	Xi0whDZSWFXKXZPvmM4zY77V3ymaiN9n1LGX2pGW5bOgQxGQL+QcMQ4GdEboB7krZXiyy3m
-X-Google-Smtp-Source: AGHT+IHPmON+PwbNAPPZYDE53KwGnbvTApGQhaNGbUZe2uB605PBpV+ZcftSN2qQ7es0oLZxPl5QBA==
-X-Received: by 2002:a17:902:ecc1:b0:216:3876:2cff with SMTP id d9443c01a7336-21638762fcamr152395915ad.54.1733815940983;
-        Mon, 09 Dec 2024 23:32:20 -0800 (PST)
+        bh=oIYaaljMW1uOvyE52JKpg1mRNjsi/3D4cn4UsNQnmlk=;
+        b=wxkbpMEhR9D5uCqBoHSispCHu0VtuEhkWAG2Pr+OSyv7dQyU6rJJAdvWh8ylY18seR
+         nJzhCZpU87VXr2AlmoywN1SpsqNxlgMs5sxO0k2g+bqejMRSyQ/EDZeWmNYH2DVTWR3p
+         uqwh7j+uSn7heg0uo3PpnC57oz2Czq7Ngeg9+6llMLlXFvLizwPN0MfF5FQFqV+tXn66
+         FmR7R9JDsFOKeGUGOeRJoi7tWwr1yCvI4lfiVrODVGAtZgvegOD+sUaYr9Y3yF6VVtDb
+         Yl5j9fSMgNztbBDXJdvO/KuSgb6XU0RwHY/4FLh+kHF7I+BlPc/nOeyKn7uBX6EfXtOh
+         NIwA==
+X-Forwarded-Encrypted: i=1; AJvYcCU72MfgFmlbNDbXhFvZ3v2Y8wX9eK4A0kKou6TcjtmBPICfMNZgmnYeNvfEYseHUo5Vr9gcf/8bDo9TS+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf6ppHUeBYLWZhkVxPPKFn9pMSfRS975NvE80BsoVy5zssXKHv
+	gszjHwk9r4DWiMLa+ulamiKDMTB8yuhtjC6t15f+AJmwMwq7g3wE4xFHyKU8Kg==
+X-Gm-Gg: ASbGncvPkB7VScI0lxBwqvDP/vbZLX8EuEg0h1j2h5hxbaif/Vyx87/AGt0dMJKiQzH
+	w8n+tg8y1CBwP493qDWi2AeAEcjxr6mkICt0OIDcCvB4hfyhgt5G1YXFk82MQIGhmTv2CelGnNm
+	XL0b9cLFA5XZS+5MGnU8w/0Jn/n5jAX8o/xqliQZl9HgkpZ80wOM7fkyw5N7p7kq+hBLH99hdId
+	U8YQyGsoE3Ch57RKe1K0zB2h6UhfA33Ziis4Hn+Nhu0Dd6QU9FcWNls0Dlo9kqq9Sgwx7lh
+X-Google-Smtp-Source: AGHT+IEljjpPjIkRAq9lZ+wjZ9Q+4usk5mFRZZW08ysh+jkDMPJ/btZlL9SUPYyzmbG9svkENmEq7A==
+X-Received: by 2002:a17:902:ce88:b0:216:55a1:35a with SMTP id d9443c01a7336-2166a0097c0mr55964065ad.30.1733815943958;
+        Mon, 09 Dec 2024 23:32:23 -0800 (PST)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:89ce:2db9:f7d5:156d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f09146sm83693295ad.199.2024.12.09.23.32.18
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f09146sm83693295ad.199.2024.12.09.23.32.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 23:32:20 -0800 (PST)
+        Mon, 09 Dec 2024 23:32:23 -0800 (PST)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Chaotian Jing <chaotian.jing@mediatek.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
@@ -84,9 +84,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	devicetree@vger.kernel.org,
 	Frank Wunderlich <frank-w@public-files.de>,
 	Andy-ld Lu <andy-ld.lu@mediatek.com>
-Subject: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Document compatibles that need two register ranges
-Date: Tue, 10 Dec 2024 15:32:10 +0800
-Message-ID: <20241210073212.3917912-2-wenst@chromium.org>
+Subject: [PATCH v2 2/2] mmc: mtk-sd: Limit getting top_base to SoCs that require it
+Date: Tue, 10 Dec 2024 15:32:11 +0800
+Message-ID: <20241210073212.3917912-3-wenst@chromium.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241210073212.3917912-1-wenst@chromium.org>
 References: <20241210073212.3917912-1-wenst@chromium.org>
@@ -98,47 +98,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Besides the MT8183's MMC controller and all its compatible derivatives,
-the recently added MT7986 and MT8196 also require two register ranges.
-This is based on the actual device trees.
+Currently the mtk-sd driver tries to get and map the second register
+base, named top_base in the code, regardless of whether the SoC model
+actually has it or not. This produces confusing big error messages on
+the platforms that don't need it:
 
-Properly enforce this in the binding.
+    mtk-msdc 11260000.mmc: error -EINVAL: invalid resource (null)
 
-Fixes: 4a8bd2b07d88 ("dt-bindings: mmc: mtk-sd: Add mt7988 SoC")
-Fixes: 58927c9dc4ab ("dt-bindings: mmc: mtk-sd: Add support for MT8196")
-Cc: Frank Wunderlich <frank-w@public-files.de>
-Cc: Andy-ld Lu <andy-ld.lu@mediatek.com>
+Limit it to the platforms that actually require it, based on their
+device tree entries, and properly fail if it is missing.
+
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- Documentation/devicetree/bindings/mmc/mtk-sd.yaml | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/mmc/host/mtk-sd.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-index f86ebd81f5a5..0debccbd6519 100644
---- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-@@ -235,11 +235,19 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: mediatek,mt8183-mmc
-+            enum:
-+              - mediatek,mt7986-mmc
-+              - mediatek,mt7988-mmc
-+              - mediatek,mt8183-mmc
-+              - mediatek,mt8196-mmc
-     then:
-       properties:
-         reg:
-           minItems: 2
-+    else:
-+      properties:
-+        reg:
-+          maxItems: 1
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index e2c385853eef..1bb7044f4ca1 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -414,6 +414,7 @@ struct mtk_mmc_compatible {
+ 	u8 clk_div_bits;
+ 	bool recheck_sdio_irq;
+ 	bool hs400_tune; /* only used for MT8173 */
++	bool needs_top_base;
+ 	u32 pad_tune_reg;
+ 	bool async_fifo;
+ 	bool data_tune;
+@@ -587,6 +588,7 @@ static const struct mtk_mmc_compatible mt7986_compat = {
+ 	.clk_div_bits = 12,
+ 	.recheck_sdio_irq = true,
+ 	.hs400_tune = false,
++	.needs_top_base = true,
+ 	.pad_tune_reg = MSDC_PAD_TUNE0,
+ 	.async_fifo = true,
+ 	.data_tune = true,
+@@ -627,6 +629,7 @@ static const struct mtk_mmc_compatible mt8183_compat = {
+ 	.clk_div_bits = 12,
+ 	.recheck_sdio_irq = false,
+ 	.hs400_tune = false,
++	.needs_top_base = true,
+ 	.pad_tune_reg = MSDC_PAD_TUNE0,
+ 	.async_fifo = true,
+ 	.data_tune = true,
+@@ -653,6 +656,7 @@ static const struct mtk_mmc_compatible mt8196_compat = {
+ 	.clk_div_bits = 12,
+ 	.recheck_sdio_irq = false,
+ 	.hs400_tune = false,
++	.needs_top_base = true,
+ 	.pad_tune_reg = MSDC_PAD_TUNE0,
+ 	.async_fifo = true,
+ 	.data_tune = true,
+@@ -2887,9 +2891,13 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	if (IS_ERR(host->base))
+ 		return PTR_ERR(host->base);
  
-   - if:
-       properties:
+-	host->top_base = devm_platform_ioremap_resource(pdev, 1);
+-	if (IS_ERR(host->top_base))
+-		host->top_base = NULL;
++	host->dev_comp = of_device_get_match_data(&pdev->dev);
++
++	if (host->dev_comp->needs_top_base) {
++		host->top_base = devm_platform_ioremap_resource(pdev, 1);
++		if (IS_ERR(host->top_base))
++			return PTR_ERR(host->top_base);
++	}
+ 
+ 	ret = mmc_regulator_get_supply(mmc);
+ 	if (ret)
+@@ -2951,7 +2959,6 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	msdc_of_property_parse(pdev, host);
+ 
+ 	host->dev = &pdev->dev;
+-	host->dev_comp = of_device_get_match_data(&pdev->dev);
+ 	host->src_clk_freq = clk_get_rate(host->src_clk);
+ 	/* Set host parameters to mmc */
+ 	mmc->ops = &mt_msdc_ops;
 -- 
 2.47.0.338.g60cca15819-goog
 
