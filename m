@@ -1,79 +1,109 @@
-Return-Path: <linux-kernel+bounces-438736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09C49EA4F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:14:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6909A9EA4F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 03:15:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F41286855
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8B4188BD99
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 02:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641971D89ED;
-	Tue, 10 Dec 2024 02:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E4D1DA0FE;
+	Tue, 10 Dec 2024 02:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="svUVIH94"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpU9+oN8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348BE1D89E3;
-	Tue, 10 Dec 2024 02:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897FB199234;
+	Tue, 10 Dec 2024 02:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733796744; cv=none; b=e1OBu1voKR6Zi0VqnXG2ToawoTzYNK9JfE3k4G/VQ+/ahkMa1CGvMyTRR2eQfyB/4rod3zYKWMtwW4DKscJoeUVSzEApl32yDx7FOgtFW+reGlwbqVvF+QY8+3Y/0MZnga7i+TRCO/yLzYR4PUSzI0u0eSUF7npskn6F3MXFezc=
+	t=1733796752; cv=none; b=VT9gctDI9qGtIamB+wyKs4iGGArHCav+CcBVhlnrjEBalcfI9oyS9YLdwrbO+8uaRwqaZqaRgRzvjj6xufLw48xYWGNiBa+wdAiaKe8JyeSXgoxkhg1lQuNRNAzy6eJQSilw6wKdDC2omlcIraPw0J2ZgzuVNwqzb6dm6dvlihg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733796744; c=relaxed/simple;
-	bh=3oe+kW+81rhk92Q8T6VuCdh3CFJRUA6sivllRxaKECs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4LziVOGkmbQZwwsIie/QkP/m89zw4mwLktLEE4QD5dtOnaY8Aa0I3AOUBnzHwxj/fpWLGDTbMDVA2bnQF9ARr7tW9ooQzjy6kjSv0ctUTSStTdOttWTntOZLqnpv2bQsQoQMo3vKSWb2Z/6iylQLkP35tkCFfE4idNGOWaJY6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=svUVIH94; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=LhNyKCoYf7g5GFa8lww0Ss6AXMB0IAjxmPxAijXGzEA=; b=svUVIH94NcD8UyyxRttKyhvyTw
-	u078WaANVygJT3dl1Ou1DvHZa+kPs8isMsce+uEB3PkV5mv5fAw+taUIz1AkdYGZVN8AHOi86DLbJ
-	a6Md6yscS5tgHFEh9TZXGU1zspmGdN5OehXOmzhHeRmnjK9iAok4PZ/EByo9nAkwwcYc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKpjV-00Fk9k-CB; Tue, 10 Dec 2024 03:12:17 +0100
-Date: Tue, 10 Dec 2024 03:12:17 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 10/11] net: usb: lan78xx: Rename
- lan78xx_phy_wait_not_busy to lan78xx_mdiobus_wait_not_busy
-Message-ID: <9d9ebf3c-5cf1-4367-8a1b-0c286c9be44c@lunn.ch>
-References: <20241209130751.703182-1-o.rempel@pengutronix.de>
- <20241209130751.703182-11-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1733796752; c=relaxed/simple;
+	bh=MTl3WOEWmkU7N1ZYT3IdZA3wW+cclx8nbkw1UKe91tQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kuQIODleyK2Olgh+NnIu4+/e1O3lrCR7RCasZU1EKeudtz46aIWgYX918NRE+lJBvPgQ8Nq4OrwyIFsJ7QoAur2uNngJEsePjr+SVAA544aNGlpkrZWRD4OqMjdAbiaO+8P6/jC0DVQwrSB2pY6tXf9ASa8Yu7EzhNbZaXUaSXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpU9+oN8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54480C4CED1;
+	Tue, 10 Dec 2024 02:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733796751;
+	bh=MTl3WOEWmkU7N1ZYT3IdZA3wW+cclx8nbkw1UKe91tQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QpU9+oN8zT0DNK8zNUKYTS76uR1ss49VVkNT9tc4bj+HWlMFTEDfac7o/2eDCibZf
+	 AXblBIeittXLrHGgVb+EUHFMa8hEZCnva5pXafIkhI1qw7yXW+M7wJ/RkqaTLYWjzu
+	 7T7L4+S6QlfgfEEIj18WnojQYBmI182iki37gjaSiRWjhf4mqQOlw9KePX3CPe0b6D
+	 bVkGltqCsZJHlSfpQSFEpkruIdfkaCYQIu6CDKZ81TKpspZYgo0sjw88cooRvqD1+y
+	 wFM4a4U+RJ2vwXEhl9Y53aeI4nV0r311XLJPK10Smr0z+NiNUXDy8SrzxaMd1fe0Gx
+	 AGEPeY4SBJMDg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arch@vger.kernel.org
+Subject: [PATCH v21 17/20] selftests/ftrace: Add a test case for repeating register/unregister fprobe
+Date: Tue, 10 Dec 2024 11:12:26 +0900
+Message-ID: <173379674599.973433.10962280538397238549.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <173379652547.973433.2311391879173461183.stgit@devnote2>
+References: <173379652547.973433.2311391879173461183.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209130751.703182-11-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 09, 2024 at 02:07:50PM +0100, Oleksij Rempel wrote:
-> Rename `lan78xx_phy_wait_not_busy` to `lan78xx_mdiobus_wait_not_busy`
-> for clarity and accuracy, as the function operates on the MII bus rather
-> than a specific PHY. Update all references to reflect the new name.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This test case repeats define and undefine the fprobe dynamic event to
+ensure that the fprobe does not cause any issue with such operations.
 
-    Andrew
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ .../test.d/dynevent/add_remove_fprobe_repeat.tc    |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+new file mode 100644
+index 000000000000..b4ad09237e2a
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+@@ -0,0 +1,19 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Generic dynamic event - Repeating add/remove fprobe events
++# requires: dynamic_events "f[:[<group>/][<event>]] <func-name>[%return] [<args>]":README
++
++echo 0 > events/enable
++echo > dynamic_events
++
++PLACE=$FUNCTION_FORK
++REPEAT_TIMES=64
++
++for i in `seq 1 $REPEAT_TIMES`; do
++  echo "f:myevent $PLACE" >> dynamic_events
++  grep -q myevent dynamic_events
++  test -d events/fprobes/myevent
++  echo > dynamic_events
++done
++
++clear_trace
+
 
