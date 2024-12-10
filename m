@@ -1,303 +1,451 @@
-Return-Path: <linux-kernel+bounces-439079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075489EAA85
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:24:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DBD188A2DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:24:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C562309A9;
-	Tue, 10 Dec 2024 08:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PQX4AYDE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18ACB9EAA86
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 09:25:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3096422D4CD;
-	Tue, 10 Dec 2024 08:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A1E288754
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 08:25:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B415C230981;
+	Tue, 10 Dec 2024 08:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSd92TUn"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6322822D4CD
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 08:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819035; cv=none; b=lkvBWb5q3F/XThwWL5e/Vp2Fpg3T5JvIlmg1IAurttCQTcureypGhq+iGFLzbdF18Hz5IlJcfAAa+gKqaMvZLkjFFcu0fxU8PrGBiat0vh4TTYhmwLMmR1Mu/Lg1K2j3/TcgvhfFP08140d5lXOFmUjhuzaLXVgkMOsB7Zx2Pyk=
+	t=1733819098; cv=none; b=BNPL07uKmcOnFD2sVgLYl1u6RPuc+vRPl/6YC5XQvcR8i3Q9YgtxQUQ0/UpKls4leqb8wtmUVsQdEm/so6601jSZStXtiZcwpr6BAtuXRKk3flggEzS9NqYS/Z0XPPL17Bx1/Cr0NkNU41CB65Uowsg/Alz9nMLCtu0IVmV/8xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819035; c=relaxed/simple;
-	bh=LxVL3dWaIY5BiEszPJpsF/yeGkMBUNkZigOVtbf3bvc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ImAb8sPYKQpwIvsPDVrJxS4KpkddnS+xeV4Bsf8C4bfOulBJROLQSsT0X2FzMni/ufvwcVX/77pNRMt7b5IrqdPHRf9sKLInLA1CrDSeOPgqWgGyobIEjRwIPiI/Bak+n6ixknxu9p8viby4hi/O7SX1qdjUu7cOsaEmUqf8x28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PQX4AYDE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA6GKCH015028;
-	Tue, 10 Dec 2024 08:23:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=MPvKwalamfsowX47Fg6i3O
-	lsKTIsdqMd1PpWR86+a6Q=; b=PQX4AYDEEm/pTwOsBz7aQ/FgJEM7r8L/D0/Emw
-	KJrkIpcIULDf5GQd0U1ehwxQ6FRPJGgE/Q9sMzeztyVPHPZm0sYnJIsqmk2RpzqF
-	2t9FaWBLDrTfCHtm6b00AfQG41R3aEs/udtDPjZbL6LcOT7Cd2Q7fPIXt0u1LZdq
-	joN6kaLe3yWjlI9KhIW9bC19jsgATWapqUjJ0M9rf/WprgYYt78bqUfFeFJZJk5/
-	04Zg30mlxwjZ8CYm3gdCpSIAN0fz7nYXC+s9HPNBRA2pP9aMAPFTmVTrLW/Egvmk
-	2L/y0RT4bETzOtWTquQ2e/rZdGfPZHN2UkAhm7TxRx25kI2A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetqshy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 08:23:49 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA8NlIA005628
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 08:23:47 GMT
-Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Dec 2024 00:23:41 -0800
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Date: Tue, 10 Dec 2024 16:23:21 +0800
-Subject: [PATCH v2] arm64: dts: qcom: Add coresight node for SM8650
+	s=arc-20240116; t=1733819098; c=relaxed/simple;
+	bh=a4k2aOsm59VS5M5wyApgy+cKGsVGyzu9ZI02V8e1XdY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H/OklWOEqupZuDu3DLhh6H2k1oUjbkJohmBYHaBrGDj725A9vfpxFukL6e54FuCUESGBz91eE2AmJUS1DMCKSWiz7hK/C0GJXsLScgfRBSmOnnTB+IngeV3RHkO0SmG5qFM227HYSbfxAYK3XpxwS+TbTyRu9iWTV8yMGiKZ0qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSd92TUn; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85c5a913cffso1744828241.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 00:24:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733819095; x=1734423895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8M3NwB48Wmn5pnmtgrNXdB9BnQn/8GWztLli7+mr040=;
+        b=KSd92TUn6eN9BDsy60K7P2gH5vg7DhQL0rT7GnN1u/vh9M67pu5OUvIbfxGzFJz20Y
+         tLi/Ee4OueF1K6M4FHIPrK8ZlbgpzRlfem8u7+07F8NnrKZUvfKYj0ITGZpVQOnyawvt
+         h3HcVrBGp34LbX+4eAMu9gcYfGXALfuOmspNN7ZP/1dpK0DwysMEe9qJDi5/9lRTisVJ
+         R1ORrD7MKhZZl+a2vj/XEbkbQv5bJK5t5mAGyVZnKr61/cYfffELVd2sU3EK6lugmHIv
+         djFyMcFrvp6O+t5cC2ROX0aZo/BNco0AncJMwbthMm8mlw09KyegA9A8Mwhe0mPOvCuq
+         Iflg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733819095; x=1734423895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8M3NwB48Wmn5pnmtgrNXdB9BnQn/8GWztLli7+mr040=;
+        b=MeJO9rx7cgkYFzwkzlqPV7Bwvhw6ZrDTEBD6lVmbPPTuiunaa450jBOKeLqoJm1xNo
+         TAldAVDx/pNTei88j6OjtV0/PH7Ko2XTC4uDbXjVh3y5oGGS62G45y/hhikGqglsaJv9
+         xx3S+o1f8lgHGKP+u4v3LdpU/8k95pgfjhGBgJo9/mx8iVTyq6hZIfUGx5+AKrN6O+tA
+         TcUqSNcPaSzU2orFEUh8Rr7vPVjumtox/HnLwAUbXDjRM83X298e8Hyc7QmSoWsQrXdy
+         O5Tp3sPHrIdeeRpW9xBZE7WsGFNYg1Y7Nd6nlXx7K+UXDrIXNHlD4l8seMlOxUIXg78X
+         RoOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO2XJKTwuDbIlK4KPtFFK/6777uUN5ACDRneQ12pkjNdnZED4JSLC+jb5QNpXB//XmN2fbqp3kqWud0lM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0e0gIWptWqRKEUIWr0PnhsrT7ATNq8+y1oIBnQe5S8JJQwnTo
+	R0BisIuQJ0lRX1gmOi7XdCqohwvXS/zhtgJueARFQkz8QhUDhBk4rlKzXUol1l47pyT4pa42fP/
+	aVPeIiy0s2kuzgwrDHT2qy0Abx/I=
+X-Gm-Gg: ASbGncvlHCret+iUq6MrVDOkyff/3l1c3ABFoHV+zyQ68CQ2IN4RhlUy5ZtPTEnD3xe
+	yBBcmB3egCSxr3wxVWDi/1Z5ax73nmFlJzOaPNxxeX8p3KcxV0XlkYMUczy6jmXA1iXlRGQ==
+X-Google-Smtp-Source: AGHT+IEc/TEcO8rXYDmQABPTygCPD+BpHnETdkqW9CqNL9aM3LBdnL2wPe+Gy6ay9HIfaLlDy/pZkxNga/zbXngYgAs=
+X-Received: by 2002:a05:6102:158d:b0:4b1:1a11:9628 with SMTP id
+ ada2fe7eead31-4b11a119d0emr2083900137.24.1733819095284; Tue, 10 Dec 2024
+ 00:24:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241210-sm8650-cs-dt-v2-1-cf24c6c9bddc@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHj6V2cC/1XMQQ7CIBCF4as0s3YMIJDiynuYLhqgdhZtlalE0
- 3B3sXHj8n/J+zbgmCgynJsNUszEtMw11KEBP/bzLSKF2qCE0lIJhzy11gj0jGHFPljtgh96E1u
- ol3uKA7127trVHonXJb13Pcvv+oOk+IeyRInKOutO2kjT6svjSZ5mf/TLBF0p5QNZSOFCqgAAA
- A==
-X-Change-ID: 20241209-sm8650-cs-dt-ad649dcfa5e8
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yuanfang Zhang
-	<quic_yuanfang@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733819021; l=4281;
- i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
- bh=LxVL3dWaIY5BiEszPJpsF/yeGkMBUNkZigOVtbf3bvc=;
- b=82+zkxe9QXPpQNethGni9O/w3u+LVKw4Z6vcDh770Nxdm62ajwMVobHWHpbvhJ/utgMmZnWp+
- 8TI9i1ifn4UDz5EL9XV1YFEYdWcnGXpeof7Tom/xQTmf5IGC8L+6nk3
-X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
- pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DTHV9US0lY0LD1JhzgOUyx9mgwlTSRUb
-X-Proofpoint-ORIG-GUID: DTHV9US0lY0LD1JhzgOUyx9mgwlTSRUb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=1 clxscore=1015 impostorscore=0 mlxlogscore=883
- bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100064
+References: <20241209083618.2889145-1-chenridong@huaweicloud.com>
+ <20241209083618.2889145-2-chenridong@huaweicloud.com> <CAGsJ_4wuy5Nhn0pdoz7YvzTXs9LCUrpxT5c4+Hd7-DGH3yBsog@mail.gmail.com>
+ <13223d50-6218-49db-8356-700a1907e224@huawei.com>
+In-Reply-To: <13223d50-6218-49db-8356-700a1907e224@huawei.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 10 Dec 2024 16:24:43 +0800
+Message-ID: <CAGsJ_4yWLpd262vOMb11qeQXhXeNFLOKpmEUat3kvJv4wBxi5w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] mm: vmascan: retry folios written back while
+ isolated for traditional LRU
+To: chenridong <chenridong@huawei.com>
+Cc: Chen Ridong <chenridong@huaweicloud.com>, akpm@linux-foundation.org, mhocko@suse.com, 
+	hannes@cmpxchg.org, yosryahmed@google.com, yuzhao@google.com, 
+	david@redhat.com, willy@infradead.org, ryan.roberts@arm.com, 
+	wangkefeng.wang@huawei.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	wangweiyang2@huawei.com, xieym_ict@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add coresight components: Funnel, ETE and ETF for SM8650.
+On Tue, Dec 10, 2024 at 2:41=E2=80=AFPM chenridong <chenridong@huawei.com> =
+wrote:
+>
+>
+>
+> On 2024/12/10 12:54, Barry Song wrote:
+> > On Mon, Dec 9, 2024 at 4:46=E2=80=AFPM Chen Ridong <chenridong@huaweicl=
+oud.com> wrote:
+> >>
+> >> From: Chen Ridong <chenridong@huawei.com>
+> >>
+> >> The commit 359a5e1416ca ("mm: multi-gen LRU: retry folios written back
+> >> while isolated") only fixed the issue for mglru. However, this issue
+> >> also exists in the traditional active/inactive LRU. This issue will be
+> >> worse if THP is split, which makes the list longer and needs longer ti=
+me
+> >> to finish a batch of folios reclaim.
+> >>
+> >> This issue should be fixed in the same way for the traditional LRU.
+> >> Therefore, the common logic was extracted to the 'find_folios_written_=
+back'
+> >> function firstly, which is then reused in the 'shrink_inactive_list'
+> >> function. Finally, retry reclaiming those folios that may have missed =
+the
+> >> rotation for traditional LRU.
+> >
+> > let's drop the cover-letter and refine the changelog.
+> >
+> Will update.
+>
+> >>
+> >> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> >> ---
+> >>  include/linux/mmzone.h |   3 +-
+> >>  mm/vmscan.c            | 108 +++++++++++++++++++++++++++++-----------=
+-
+> >>  2 files changed, 77 insertions(+), 34 deletions(-)
+> >>
+> >> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> >> index b36124145a16..47c6e8c43dcd 100644
+> >> --- a/include/linux/mmzone.h
+> >> +++ b/include/linux/mmzone.h
+> >> @@ -391,6 +391,7 @@ struct page_vma_mapped_walk;
+> >>
+> >>  #define LRU_GEN_MASK           ((BIT(LRU_GEN_WIDTH) - 1) << LRU_GEN_P=
+GOFF)
+> >>  #define LRU_REFS_MASK          ((BIT(LRU_REFS_WIDTH) - 1) << LRU_REFS=
+_PGOFF)
+> >> +#define LRU_REFS_FLAGS         (BIT(PG_referenced) | BIT(PG_workingse=
+t))
+> >>
+> >>  #ifdef CONFIG_LRU_GEN
+> >>
+> >> @@ -406,8 +407,6 @@ enum {
+> >>         NR_LRU_GEN_CAPS
+> >>  };
+> >>
+> >> -#define LRU_REFS_FLAGS         (BIT(PG_referenced) | BIT(PG_workingse=
+t))
+> >> -
+> >>  #define MIN_LRU_BATCH          BITS_PER_LONG
+> >>  #define MAX_LRU_BATCH          (MIN_LRU_BATCH * 64)
+> >>
+> >> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >> index 76378bc257e3..1f0d194f8b2f 100644
+> >> --- a/mm/vmscan.c
+> >> +++ b/mm/vmscan.c
+> >> @@ -283,6 +283,48 @@ static void set_task_reclaim_state(struct task_st=
+ruct *task,
+> >>         task->reclaim_state =3D rs;
+> >>  }
+> >>
+> >> +/**
+> >> + * find_folios_written_back - Find and move the written back folios t=
+o a new list.
+> >> + * @list: filios list
+> >> + * @clean: the written back folios list
+> >> + * @skip: whether skip to move the written back folios to clean list.
+> >> + */
+> >> +static inline void find_folios_written_back(struct list_head *list,
+> >> +               struct list_head *clean, bool skip)
+> >> +{
+> >> +       struct folio *folio;
+> >> +       struct folio *next;
+> >> +
+> >> +       list_for_each_entry_safe_reverse(folio, next, list, lru) {
+> >> +               if (!folio_evictable(folio)) {
+> >> +                       list_del(&folio->lru);
+> >> +                       folio_putback_lru(folio);
+> >> +                       continue;
+> >> +               }
+> >> +
+> >> +               if (folio_test_reclaim(folio) &&
+> >> +                   (folio_test_dirty(folio) || folio_test_writeback(f=
+olio))) {
+> >> +                       /* restore LRU_REFS_FLAGS cleared by isolate_f=
+olio() */
+> >> +                       if (lru_gen_enabled() && folio_test_workingset=
+(folio))
+> >> +                               folio_set_referenced(folio);
+> >> +                       continue;
+> >> +               }
+> >> +
+> >> +               if (skip || folio_test_active(folio) || folio_test_ref=
+erenced(folio) ||
+> >> +                   folio_mapped(folio) || folio_test_locked(folio) ||
+> >> +                   folio_test_dirty(folio) || folio_test_writeback(fo=
+lio)) {
+> >> +                       /* don't add rejected folios to the oldest gen=
+eration */
+> >> +                       if (lru_gen_enabled())
+> >> +                               set_mask_bits(&folio->flags, LRU_REFS_=
+MASK | LRU_REFS_FLAGS,
+> >> +                                             BIT(PG_active));
+> >> +                       continue;
+> >> +               }
+> >> +
+> >> +               /* retry folios that may have missed folio_rotate_recl=
+aimable() */
+> >> +               list_move(&folio->lru, clean);
+> >> +       }
+> >> +}
+> >> +
+> >>  /*
+> >>   * flush_reclaim_state(): add pages reclaimed outside of LRU-based re=
+claim to
+> >>   * scan_control->nr_reclaimed.
+> >> @@ -1907,6 +1949,25 @@ static int current_may_throttle(void)
+> >>         return !(current->flags & PF_LOCAL_THROTTLE);
+> >>  }
+> >>
+> >> +static inline void acc_reclaimed_stat(struct reclaim_stat *stat,
+> >> +               struct reclaim_stat *curr)
+> >> +{
+> >> +       int i;
+> >> +
+> >> +       stat->nr_dirty +=3D curr->nr_dirty;
+> >> +       stat->nr_unqueued_dirty +=3D curr->nr_unqueued_dirty;
+> >> +       stat->nr_congested +=3D curr->nr_congested;
+> >> +       stat->nr_writeback +=3D curr->nr_writeback;
+> >> +       stat->nr_immediate +=3D curr->nr_immediate;
+> >> +       stat->nr_pageout +=3D curr->nr_pageout;
+> >> +       stat->nr_ref_keep +=3D curr->nr_ref_keep;
+> >> +       stat->nr_unmap_fail +=3D curr->nr_unmap_fail;
+> >> +       stat->nr_lazyfree_fail +=3D curr->nr_lazyfree_fail;
+> >> +       stat->nr_demoted +=3D curr->nr_demoted;
+> >> +       for (i =3D 0; i < ANON_AND_FILE; i++)
+> >> +               stat->nr_activate[i] =3D curr->nr_activate[i];
+> >> +}
+> >
+> > you had no this before, what's the purpose of this=EF=BC=9F
+> >
+>
+> We may call shrink_folio_list twice, and the 'stat curr' will reset in
+> the shrink_folio_list function. We should accumulate the stats as a
+> whole, which will then be used to calculate the cost and return it to
+> the caller.
 
-Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
----
-Changes in v2:
-- Update compatible for funnel and etf.
-- remove unnecessary property: reg-names and arm,primecell-periphid.
-- Link to v1: https://lore.kernel.org/r/20241210-sm8650-cs-dt-v1-1-269693451584@quicinc.com
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 165 +++++++++++++++++++++++++++++++++++
- 1 file changed, 165 insertions(+)
+Does mglru have the same issue? If so, we may need to send a patch to
+fix mglru's stat accounting as well. By the way, the code is rather
+messy=E2=80=94could it be implemented as shown below instead?
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 25e47505adcb790d09f1d2726386438487255824..76620d478e872a2b725693dc32364e2a183572b7 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -5654,6 +5654,171 @@ compute-cb@12 {
- 				};
- 			};
- 		};
-+
-+		ete0 {
-+			compatible = "arm,embedded-trace-extension";
-+
-+			cpu = <&cpu0>;
-+			qcom,skip-power-up;
-+
-+			out-ports {
-+				port {
-+					ete0_out_funnel_ete: endpoint {
-+						remote-endpoint = <&funnel_ete_in_ete0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		funnel_ete {
-+			compatible = "arm,coresight-static-funnel";
-+
-+			in-ports {
-+				port@0 {
-+					reg = <0>;
-+
-+					funnel_ete_in_ete0: endpoint {
-+						remote-endpoint = <&ete0_out_funnel_ete>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					funnel_ete_out_funnel_apss: endpoint {
-+						remote-endpoint = <&funnel_apss_in_funnel_ete>;
-+					};
-+				};
-+			};
-+		};
-+
-+		funnel@13810000 {
-+			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
-+
-+			reg = <0x0 0x13810000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port@0 {
-+					reg = <0>;
-+
-+					funnel_apss_in_funnel_ete: endpoint {
-+						remote-endpoint = <&funnel_ete_out_funnel_apss>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					funnel_apss_out_funnel_in1: endpoint {
-+						remote-endpoint = <&funnel_in1_in_funnel_apss>;
-+					};
-+				};
-+			};
-+		};
-+
-+		funnel@10042000 {
-+			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
-+
-+			reg = <0x0 0x10042000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port@4 {
-+					reg = <4>;
-+
-+					funnel_in1_in_funnel_apss: endpoint {
-+						remote-endpoint = <&funnel_apss_out_funnel_in1>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					funnel_in1_out_funnel_qdss: endpoint {
-+						remote-endpoint = <&funnel_qdss_in_funnel_in1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		funnel@10045000 {
-+			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
-+
-+			reg = <0x0 0x10045000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					funnel_qdss_in_funnel_in1: endpoint {
-+						remote-endpoint = <&funnel_in1_out_funnel_qdss>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					funnel_qdss_out_funnel_aoss: endpoint {
-+						remote-endpoint = <&funnel_aoss_in_funnel_qdss>;
-+					};
-+				};
-+			};
-+		};
-+
-+		funnel@10b04000 {
-+			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
-+
-+			reg = <0x0 0x10b04000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port@7 {
-+					reg = <7>;
-+
-+					funnel_aoss_in_funnel_qdss: endpoint {
-+						remote-endpoint = <&funnel_qdss_out_funnel_aoss>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					funnel_aoss_out_tmc_etf: endpoint {
-+						remote-endpoint = <&tmc_etf_in_funnel_aoss>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc@10b05000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+
-+			reg = <0x0 0x10b05000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port {
-+					tmc_etf_in_funnel_aoss: endpoint {
-+						remote-endpoint = <&funnel_aoss_out_tmc_etf>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	thermal-zones {
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 1f0d194f8b2f..40d2ddde21f5 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1094,7 +1094,6 @@ static unsigned int shrink_folio_list(struct
+list_head *folio_list,
+  struct swap_iocb *plug =3D NULL;
 
----
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-change-id: 20241209-sm8650-cs-dt-ad649dcfa5e8
+  folio_batch_init(&free_folios);
+- memset(stat, 0, sizeof(*stat));
+  cond_resched();
+  do_demote_pass =3D can_demote(pgdat->node_id, sc);
 
-Best regards,
--- 
-Yuanfang Zhang <quic_yuanfang@quicinc.com>
+@@ -1949,25 +1948,6 @@ static int current_may_throttle(void)
+  return !(current->flags & PF_LOCAL_THROTTLE);
+ }
 
+-static inline void acc_reclaimed_stat(struct reclaim_stat *stat,
+- struct reclaim_stat *curr)
+-{
+- int i;
+-
+- stat->nr_dirty +=3D curr->nr_dirty;
+- stat->nr_unqueued_dirty +=3D curr->nr_unqueued_dirty;
+- stat->nr_congested +=3D curr->nr_congested;
+- stat->nr_writeback +=3D curr->nr_writeback;
+- stat->nr_immediate +=3D curr->nr_immediate;
+- stat->nr_pageout +=3D curr->nr_pageout;
+- stat->nr_ref_keep +=3D curr->nr_ref_keep;
+- stat->nr_unmap_fail +=3D curr->nr_unmap_fail;
+- stat->nr_lazyfree_fail +=3D curr->nr_lazyfree_fail;
+- stat->nr_demoted +=3D curr->nr_demoted;
+- for (i =3D 0; i < ANON_AND_FILE; i++)
+- stat->nr_activate[i] =3D curr->nr_activate[i];
+-}
+-
+ /*
+  * shrink_inactive_list() is a helper for shrink_node().  It returns the n=
+umber
+  * of reclaimed pages
+@@ -1981,7 +1961,7 @@ static unsigned long
+shrink_inactive_list(unsigned long nr_to_scan,
+  unsigned long nr_scanned;
+  unsigned int nr_reclaimed =3D 0;
+  unsigned long nr_taken;
+- struct reclaim_stat stat, curr;
++ struct reclaim_stat stat;
+  bool file =3D is_file_lru(lru);
+  enum vm_event_item item;
+  struct pglist_data *pgdat =3D lruvec_pgdat(lruvec);
+@@ -2022,9 +2002,8 @@ static unsigned long
+shrink_inactive_list(unsigned long nr_to_scan,
+
+  memset(&stat, 0, sizeof(stat));
+ retry:
+- nr_reclaimed +=3D shrink_folio_list(&folio_list, pgdat, sc, &curr, false)=
+;
++ nr_reclaimed +=3D shrink_folio_list(&folio_list, pgdat, sc, &stat, false)=
+;
+  find_folios_written_back(&folio_list, &clean_list, skip_retry);
+- acc_reclaimed_stat(&stat, &curr);
+
+  spin_lock_irq(&lruvec->lru_lock);
+  move_folios_to_lru(lruvec, &folio_list);
+
+>
+> Thanks,
+> Ridong
+>
+> >> +
+> >>  /*
+> >>   * shrink_inactive_list() is a helper for shrink_node().  It returns =
+the number
+> >>   * of reclaimed pages
+> >> @@ -1916,14 +1977,16 @@ static unsigned long shrink_inactive_list(unsi=
+gned long nr_to_scan,
+> >>                 enum lru_list lru)
+> >>  {
+> >>         LIST_HEAD(folio_list);
+> >> +       LIST_HEAD(clean_list);
+> >>         unsigned long nr_scanned;
+> >>         unsigned int nr_reclaimed =3D 0;
+> >>         unsigned long nr_taken;
+> >> -       struct reclaim_stat stat;
+> >> +       struct reclaim_stat stat, curr;
+> >>         bool file =3D is_file_lru(lru);
+> >>         enum vm_event_item item;
+> >>         struct pglist_data *pgdat =3D lruvec_pgdat(lruvec);
+> >>         bool stalled =3D false;
+> >> +       bool skip_retry =3D false;
+> >>
+> >>         while (unlikely(too_many_isolated(pgdat, file, sc))) {
+> >>                 if (stalled)
+> >> @@ -1957,10 +2020,20 @@ static unsigned long shrink_inactive_list(unsi=
+gned long nr_to_scan,
+> >>         if (nr_taken =3D=3D 0)
+> >>                 return 0;
+> >>
+> >> -       nr_reclaimed =3D shrink_folio_list(&folio_list, pgdat, sc, &st=
+at, false);
+> >> +       memset(&stat, 0, sizeof(stat));
+> >> +retry:
+> >> +       nr_reclaimed +=3D shrink_folio_list(&folio_list, pgdat, sc, &c=
+urr, false);
+> >> +       find_folios_written_back(&folio_list, &clean_list, skip_retry)=
+;
+> >> +       acc_reclaimed_stat(&stat, &curr);
+> >>
+> >>         spin_lock_irq(&lruvec->lru_lock);
+> >>         move_folios_to_lru(lruvec, &folio_list);
+> >> +       if (!list_empty(&clean_list)) {
+> >> +               list_splice_init(&clean_list, &folio_list);
+> >> +               skip_retry =3D true;
+> >> +               spin_unlock_irq(&lruvec->lru_lock);
+> >> +               goto retry;
+
+This is rather confusing. We're still jumping to retry even though
+skip_retry=3Dtrue is set. Can we find a clearer approach for this?
+
+It was somewhat acceptable before we introduced the extracted
+function find_folios_written_back(). However, it has become
+harder to follow now that skip_retry is passed across functions.
+
+I find renaming skip_retry to is_retry more intuitive. The logic
+is that since we are already retrying, find_folios_written_back()
+shouldn=E2=80=99t move folios to the clean list again. The intended semanti=
+cs
+are: we have retris, don=E2=80=99t retry again.
+
+
+> >> +       }
+> >>
+> >>         __mod_lruvec_state(lruvec, PGDEMOTE_KSWAPD + reclaimer_offset(=
+),
+> >>                                         stat.nr_demoted);
+> >> @@ -4567,8 +4640,6 @@ static int evict_folios(struct lruvec *lruvec, s=
+truct scan_control *sc, int swap
+> >>         int reclaimed;
+> >>         LIST_HEAD(list);
+> >>         LIST_HEAD(clean);
+> >> -       struct folio *folio;
+> >> -       struct folio *next;
+> >>         enum vm_event_item item;
+> >>         struct reclaim_stat stat;
+> >>         struct lru_gen_mm_walk *walk;
+> >> @@ -4597,34 +4668,7 @@ static int evict_folios(struct lruvec *lruvec, =
+struct scan_control *sc, int swap
+> >>                         scanned, reclaimed, &stat, sc->priority,
+> >>                         type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
+> >>
+> >> -       list_for_each_entry_safe_reverse(folio, next, &list, lru) {
+> >> -               if (!folio_evictable(folio)) {
+> >> -                       list_del(&folio->lru);
+> >> -                       folio_putback_lru(folio);
+> >> -                       continue;
+> >> -               }
+> >> -
+> >> -               if (folio_test_reclaim(folio) &&
+> >> -                   (folio_test_dirty(folio) || folio_test_writeback(f=
+olio))) {
+> >> -                       /* restore LRU_REFS_FLAGS cleared by isolate_f=
+olio() */
+> >> -                       if (folio_test_workingset(folio))
+> >> -                               folio_set_referenced(folio);
+> >> -                       continue;
+> >> -               }
+> >> -
+> >> -               if (skip_retry || folio_test_active(folio) || folio_te=
+st_referenced(folio) ||
+> >> -                   folio_mapped(folio) || folio_test_locked(folio) ||
+> >> -                   folio_test_dirty(folio) || folio_test_writeback(fo=
+lio)) {
+> >> -                       /* don't add rejected folios to the oldest gen=
+eration */
+> >> -                       set_mask_bits(&folio->flags, LRU_REFS_MASK | L=
+RU_REFS_FLAGS,
+> >> -                                     BIT(PG_active));
+> >> -                       continue;
+> >> -               }
+> >> -
+> >> -               /* retry folios that may have missed folio_rotate_recl=
+aimable() */
+> >> -               list_move(&folio->lru, &clean);
+> >> -       }
+> >> -
+> >> +       find_folios_written_back(&list, &clean, skip_retry);
+> >>         spin_lock_irq(&lruvec->lru_lock);
+> >>
+> >>         move_folios_to_lru(lruvec, &list);
+> >> --
+> >> 2.34.1
+> >>
+> >
+
+Thanks
+ Barry
 
