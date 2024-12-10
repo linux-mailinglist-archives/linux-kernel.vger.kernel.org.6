@@ -1,225 +1,160 @@
-Return-Path: <linux-kernel+bounces-439807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C03F9EB426
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:00:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669839EB42C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 16:00:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE4F16B246
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:00:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4489D1B6525;
+	Tue, 10 Dec 2024 15:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r5QTC2uH"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEA8E281281
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:59:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C80E1B21A0;
-	Tue, 10 Dec 2024 14:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MB+i4OiZ"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBED1A01D4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D23C1AAA38;
+	Tue, 10 Dec 2024 15:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733842792; cv=none; b=XHZkmpK8Gmw24f4OPdsJ2lSH8K9Hv7ujjPtH/DHQtePGhlzbWkv2zyB24wFtjJN8aJng1Q/87k1UAFvEdgTEP2epUBNEZKb4yCYDeuVfXz/kHga+01UiRChCW7sDesbsHVd0dErNJrKF+hJYgSagNiIEGCsE9JL4s6pLJUFF/b4=
+	t=1733842823; cv=none; b=EKGnyBGn0deq1rain7xvfivibZFlchEiu+heQe6CdtWKGhMY9L5KJ/AnI1EMO4Cbo6Z3TXKEqN2Srf2KX27Mlo4O4EyWsJ+gv7vIE1eU0jTGggAuIc7hGF3PVuBeKUKgsRD5V4EfI3xUf1gPue9Z71oWmFUYfJyxuyubXEsNVbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733842792; c=relaxed/simple;
-	bh=shPyI2dySTMutp1ANP3EGvaVLrk95ZBKYUsanzim5Ns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fOBw/PQnSe4za2yfyy/Q6Fkbf2lTmG+fOKvc5cMZrE0ULsgsPsRm2K1FFbh7J1mDRgoe8bDtENRLT/VPXdApxyKiFWDGo2vv8Of12n5DeZ+ThK71uom0ojP1RNZ9ZD7dA+OhDiHnOx9KbrMHZCMnQScicAO4Tq/9iaruI2zPyeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MB+i4OiZ; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a7dfcd40fcso118845ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:59:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733842790; x=1734447590; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fpDnUVi0ep8YRkyvnKylzOSzQ7B19aMh70gDsd17VKM=;
-        b=MB+i4OiZ+/LiKaSgXuDfjteWMaeY+GaNzRMtf9QoQtXo+zyL8RjFG+jolqBjER0Wnh
-         H8MxKxLZo23RfU2DSv9Iz/QTtZyzbwwXf/F8wZoZxboIIJZKCds4YXVhNVIUw6sjXUJ/
-         BbbzK0hMyafKUgoxjCaZCyx/c4vPXVhJVjhbHrHBeEXDMSAD1921qlgaMxBd6yOdD10k
-         GpYNO1i3lBbANtsr/zD4Wt25/JKJ5LCFbtBbUfR5dEhgd+uRLkyyOU7L0chrbPC52Wye
-         /TsFGJOXfqgdwk8VGnsTW48U+BqBpMSBq6ofdthqfYpx1tXQjsTr8xut8YVagBwRUiFL
-         vXfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733842790; x=1734447590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fpDnUVi0ep8YRkyvnKylzOSzQ7B19aMh70gDsd17VKM=;
-        b=VyRzB8wqAJmOGa7OMNBQ4lQ7urBBiGaI2cKzxaf0r6qgWBf/Vp2aliOj41PQkX01AO
-         g52/6B65SG3dthZMDufwkYQsNTKFtriKRWGOM7bC9N5udYsZ3/eSScPiLgZKhILiGZKD
-         Qfwqwz2rnvbQQPYtd4Myg2rQkrZJHS4thFknCcqp95CvIZ9pE6bJoHwt4RjiPkC/CMga
-         f09R98VJMQBiz5BktEtSD0EeM0KLhkYELwxrQntIF4DVM0sh9yDKcKiWsItKIvpoRleE
-         msKcCjChfFEKCJ6PsSSYYhK/Ke68AVBFLTd4e3GmpU5LNwK0LyjpX1PvhYtH22lab+W1
-         4JWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBlUb0/j7yBVWqU9RBhe39QlEs45Vj1d9tkL9vDUWDajLxNyibgf4NW7ZdT8EyPy93P7jbDb4LakgdVNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJvPbIlaaKqlt48PJW17HYqA1hpnqcAJg0duEiFnv8mjD1P2LW
-	lY1Ps8D33GwFXTxwUtX3EnZzFPJCBUB4phu4AzPRXrVuSABoGBGyfhzqnat/dhUYAwSHGlfwYot
-	gue/uJDPb0CGLrrZzmYHMri90Orp6kmAHHR9I
-X-Gm-Gg: ASbGncsf1ggz5T9mp+JWcoc/xMRpDAPbjpefiiXtFk4abv0APqlxMi1CI3cWntLiEYO
-	jOyvh13ZlbFtKLLueN59SyVJvgeaGMXxKyw==
-X-Google-Smtp-Source: AGHT+IGPpczO1OTll30ttPkCvNvahDxxrTH8u5MAveOnjYrxQ1Ncel+PQfF4kviCb27+mPyb7cfYx2jUVqKLO5pT82s=
-X-Received: by 2002:a05:6e02:3f86:b0:3a7:ab4c:115b with SMTP id
- e9e14a558f8ab-3a9dda4cca0mr3548625ab.10.1733842790104; Tue, 10 Dec 2024
- 06:59:50 -0800 (PST)
+	s=arc-20240116; t=1733842823; c=relaxed/simple;
+	bh=GL1junYsyzA1VSizXEiCYuYBKw/hxXCS28XsnjC6IyQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lCe8Nva7bBY8kKKsA3tw1NJSBdt9p3S0ir9ePLY3RqZHhn7SqHjzr/v4eWIkme4kxRnzLDlXZCt7heQAJOT8104io5Vtq3ivAZnlN7AnMbE1m0YaORR9E1W40DPzZW/KZ4waU1ojEixEHxxa+ryzFRinMpgRM3Hscp+AQ1dT69Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r5QTC2uH; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADrXV5007142;
+	Tue, 10 Dec 2024 15:00:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SJU8SN
+	WmHaZ9llf7g2WxAqh6wC7z21api+tXgzpzdqE=; b=r5QTC2uHS9YD2jK6/eDeym
+	gNe9ahdqYTmqn264Utu93rRZrakCqHj49qGhY/2dEF4Hiz4zTDwxaXHMtRCPWCm2
+	jDXMZXd46A8GuyXSr16w/Jq6p9mqpUOb01Z4JYXA0mK4DZKR2T/AUrOplsz3dxeT
+	TFPjkRBXeOo2AgyJo3QsJyTytOMWl02HsDTZxZMUJZw831PlbNjLcQeadNiq8l/v
+	cpNxjgdWhS43Jy5dypllZhMKi+QYx1FFgFvVHsfcJxeQVMoWOQaBb61OeCEIjVJ7
+	UeyJ6ovHLuLAgi0klmUnbmTzO8xp9SwXLqk3T9beTbZTSBuhVbMi3WiPm1l3Z2vw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8qr9w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 15:00:18 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADB4e9023015;
+	Tue, 10 Dec 2024 15:00:17 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wjut15-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 15:00:17 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAF0BuG35258810
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 15:00:11 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D6AA92004B;
+	Tue, 10 Dec 2024 15:00:11 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 88A4B2004F;
+	Tue, 10 Dec 2024 15:00:11 +0000 (GMT)
+Received: from [9.84.194.138] (unknown [9.84.194.138])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Dec 2024 15:00:11 +0000 (GMT)
+Message-ID: <944fe21c-4d53-4eae-98af-60706184eda9@linux.ibm.com>
+Date: Tue, 10 Dec 2024 16:00:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022001712.9218-1-rui.zhang@intel.com>
-In-Reply-To: <20241022001712.9218-1-rui.zhang@intel.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Tue, 10 Dec 2024 06:59:39 -0800
-Message-ID: <CALMp9eRfairiqHrRj_Woc4udd6toFpv+nxFVtVWBUarcHyhrXQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/acpi: Fix LAPIC/x2APIC parsing order
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: rafael@kernel.org, lenb@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] scsi/cxlflash: Deprecate driver
+To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, ukrishn@linux.ibm.com, manoj@linux.ibm.com,
+        clombard@linux.ibm.com, vaibhav@linux.ibm.com
+References: <20241210054055.144813-1-ajd@linux.ibm.com>
+ <20241210054055.144813-3-ajd@linux.ibm.com>
+Content-Language: en-US
+From: Frederic Barrat <fbarrat@linux.ibm.com>
+In-Reply-To: <20241210054055.144813-3-ajd@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: qL-RSgeW01Rz__y-PTiTZ6gLquCQc8JI
+X-Proofpoint-ORIG-GUID: qL-RSgeW01Rz__y-PTiTZ6gLquCQc8JI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=737
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100112
 
-On Mon, Oct 21, 2024 at 5:17=E2=80=AFPM Zhang Rui <rui.zhang@intel.com> wro=
-te:
->
-> On some systems, the same CPU (with the same APIC ID) is assigned a
-> different logical CPU id after commit ec9aedb2aa1a ("x86/acpi: Ignore
-> invalid x2APIC entries").
->
-> This means that Linux enumerates the CPUs in a different order, which
-> violates ACPI specification[1] that states:
->
->   "OSPM should initialize processors in the order that they appear in
->    the MADT"
->
-> The problematic commit parses all LAPIC entries before any x2APIC
-> entries, aiming to ignore x2APIC entries with APIC ID < 255 when valid
-> LAPIC entries exist. However, it disrupts the CPU enumeration order on
-> systems where x2APIC entries precede LAPIC entries in the MADT.
->
-> Fix the problem by separately checking LAPIC entries before parsing any
-> LAPIC or x2APIC entries.
->
-> 1. https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.htm=
-l#madt-processor-local-apic-sapic-structure-entry-order
->
-> Cc: stable@vger.kernel.org
-> Reported-by: Jim Mattson <jmattson@google.com>
-> Closes: https://lore.kernel.org/all/20241010213136.668672-1-jmattson@goog=
-le.com/
-> Fixes: ec9aedb2aa1a ("x86/acpi: Ignore invalid x2APIC entries")
-> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-> Reviewed-by: Jim Mattson <jmattson@google.com>
-> Tested-by: Jim Mattson <jmattson@google.com>
+
+
+On 10/12/2024 06:40, Andrew Donnellan wrote:
+> We intend to remove the cxlflash driver in an upcoming release. It is
+> already marked as Obsolete in MAINTAINERS.
+> 
+> The cxlflash driver has received minimal maintenance for some time, and
+> the CAPI Flash hardware that uses it is no longer commercially available.
+> 
+> Add a warning message on probe and change Kconfig to label the driver as
+> deprecated and not build the driver by default.
+> 
+> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+
+Reviewed-by: Frederic Barrat <fbarrat@linux.ibm.com>
+
+   Fred
+
 > ---
->  arch/x86/kernel/acpi/boot.c | 50 +++++++++++++++++++++++++++++++++----
->  1 file changed, 45 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-> index 4efecac49863..c70b86f1f295 100644
-> --- a/arch/x86/kernel/acpi/boot.c
-> +++ b/arch/x86/kernel/acpi/boot.c
-> @@ -226,6 +226,28 @@ acpi_parse_x2apic(union acpi_subtable_headers *heade=
-r, const unsigned long end)
->         return 0;
->  }
->
-> +static int __init
-> +acpi_check_lapic(union acpi_subtable_headers *header, const unsigned lon=
-g end)
-> +{
-> +       struct acpi_madt_local_apic *processor =3D NULL;
+>   drivers/scsi/cxlflash/Kconfig | 6 ++++--
+>   drivers/scsi/cxlflash/main.c  | 2 ++
+>   2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/cxlflash/Kconfig b/drivers/scsi/cxlflash/Kconfig
+> index 5533bdcb0458..c424d36e89a6 100644
+> --- a/drivers/scsi/cxlflash/Kconfig
+> +++ b/drivers/scsi/cxlflash/Kconfig
+> @@ -4,10 +4,12 @@
+>   #
+>   
+>   config CXLFLASH
+> -	tristate "Support for IBM CAPI Flash"
+> +	tristate "Support for IBM CAPI Flash (DEPRECATED)"
+>   	depends on PCI && SCSI && (CXL || OCXL) && EEH
+>   	select IRQ_POLL
+> -	default m
+>   	help
+> +	  The cxlflash driver is deprecated and will be removed in a future
+> +	  kernel release.
 > +
-> +       processor =3D (struct acpi_madt_local_apic *)header;
+>   	  Allows CAPI Accelerated IO to Flash
+>   	  If unsure, say N.
+> diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
+> index 60d62b93d624..62806f5e32e6 100644
+> --- a/drivers/scsi/cxlflash/main.c
+> +++ b/drivers/scsi/cxlflash/main.c
+> @@ -3651,6 +3651,8 @@ static int cxlflash_probe(struct pci_dev *pdev,
+>   	int rc = 0;
+>   	int k;
+>   
+> +	dev_err_once(&pdev->dev, "DEPRECATION: cxlflash is deprecated and will be removed in a future kernel release\n");
 > +
-> +       if (BAD_MADT_ENTRY(processor, end))
-> +               return -EINVAL;
-> +
-> +       /* Ignore invalid ID */
-> +       if (processor->id =3D=3D 0xff)
-> +               return 0;
-> +
-> +       /* Ignore processors that can not be onlined */
-> +       if (!acpi_is_processor_usable(processor->lapic_flags))
-> +               return 0;
-> +
-> +       has_lapic_cpus =3D true;
-> +       return 0;
-> +}
-> +
->  static int __init
->  acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned lo=
-ng end)
->  {
-> @@ -257,7 +279,6 @@ acpi_parse_lapic(union acpi_subtable_headers * header=
-, const unsigned long end)
->                                processor->processor_id, /* ACPI ID */
->                                processor->lapic_flags & ACPI_MADT_ENABLED=
-);
->
-> -       has_lapic_cpus =3D true;
->         return 0;
->  }
->
-> @@ -1029,6 +1050,8 @@ static int __init early_acpi_parse_madt_lapic_addr_=
-ovr(void)
->  static int __init acpi_parse_madt_lapic_entries(void)
->  {
->         int count, x2count =3D 0;
-> +       struct acpi_subtable_proc madt_proc[2];
-> +       int ret;
->
->         if (!boot_cpu_has(X86_FEATURE_APIC))
->                 return -ENODEV;
-> @@ -1037,10 +1060,27 @@ static int __init acpi_parse_madt_lapic_entries(v=
-oid)
->                                       acpi_parse_sapic, MAX_LOCAL_APIC);
->
->         if (!count) {
-> -               count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC=
-,
-> -                                       acpi_parse_lapic, MAX_LOCAL_APIC)=
-;
-> -               x2count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_X2=
-APIC,
-> -                                       acpi_parse_x2apic, MAX_LOCAL_APIC=
-);
-> +               /* Check if there are valid LAPIC entries */
-> +               acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC, acpi_che=
-ck_lapic, MAX_LOCAL_APIC);
-> +
-> +               /*
-> +                * Enumerate the APIC IDs in the order that they appear i=
-n the
-> +                * MADT, no matter LAPIC entry or x2APIC entry is used.
-> +                */
-> +               memset(madt_proc, 0, sizeof(madt_proc));
-> +               madt_proc[0].id =3D ACPI_MADT_TYPE_LOCAL_APIC;
-> +               madt_proc[0].handler =3D acpi_parse_lapic;
-> +               madt_proc[1].id =3D ACPI_MADT_TYPE_LOCAL_X2APIC;
-> +               madt_proc[1].handler =3D acpi_parse_x2apic;
-> +               ret =3D acpi_table_parse_entries_array(ACPI_SIG_MADT,
-> +                               sizeof(struct acpi_table_madt),
-> +                               madt_proc, ARRAY_SIZE(madt_proc), MAX_LOC=
-AL_APIC);
-> +               if (ret < 0) {
-> +                       pr_err("Error parsing LAPIC/X2APIC entries\n");
-> +                       return ret;
-> +               }
-> +               count =3D madt_proc[0].count;
-> +               x2count =3D madt_proc[1].count;
->         }
->         if (!count && !x2count) {
->                 pr_err("No LAPIC entries present\n");
-> --
-> 2.34.1
->
+>   	dev_dbg(&pdev->dev, "%s: Found CXLFLASH with IRQ: %d\n",
+>   		__func__, pdev->irq);
+>   
 
-Does anyone have any thoughts on this patch?
 
