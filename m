@@ -1,302 +1,340 @@
-Return-Path: <linux-kernel+bounces-439457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D81E9EAF93
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:16:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E67D09EAF9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:17:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9967F28862D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:16:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7295A16AB7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430F622331C;
-	Tue, 10 Dec 2024 11:12:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD0A212D96;
+	Tue, 10 Dec 2024 11:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n1gF6xR/"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD862153C4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B842153C4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733829125; cv=none; b=oTtOtcyD3Ndk8IXlcmj/w5KkbMAhwoicmEErgg+WPlTI/WESDXe4rDybDjsITHhn+qgYs0GB6aYredrh0KPHmVtNm6GBwRHYL6Tietc9HKpR51c2btKdV04/7jfFJg3CEB1DhVH5DPtej709xDnNSM7vdPX8OGIx5knOrNX1PHg=
+	t=1733829181; cv=none; b=GN549t3m1mdMrodQgXitIntRji2ZtUYUhPjV8gWNgyHq+KoUlUwMJcHoDVkIxf9aLtFRfxrQhKHcXrevormrl9ffImZrRA6OspFFlyVm4ekiD2ag+0/TzY9Nfa/TGJGOx6QIiJZEKG8D7pAqPQolNhD0o5aRRX/5n/7p8z2HQFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733829125; c=relaxed/simple;
-	bh=BmzoH1M10+FFRkbLtdYn106smTBNy8U1h3uup8KBlgA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OX9lxnq2Sr9gMuKyE2briZIU8UAuAkbD4nwxBNuak323B5TxvCQqieaMvRji/wvtUgnwQBzD6wfI16j2dpy5N+J3De4N+DW5ncfXgvZ2VIs36WH6dBheFiEAW3F4sWoUhp6F/QIAHgSZ2d2Uf9kAVFXk6dAZ0i/VoqH+kZBw7Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a9c9b37244so57562775ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:12:03 -0800 (PST)
+	s=arc-20240116; t=1733829181; c=relaxed/simple;
+	bh=1ez6JKpbc19hr5G+vxzfMtuWoR/oAEwd1qBGWFeo8GU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UwSyac5kZpku9suD4TvkbufwcsZfFzrnXmGgkeD6J2zUFZFBdhyTC/RrOdNYCa4DRhj9601rv7QGfh6iEmNFpgLG/oeKS7a3QhhQX8S13+izRy7W5WKC2qI2qHS7PmT0yXEmYneRy81JzpO12m9F10IQyBzPKfcpoKIHhi4dix8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n1gF6xR/; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53f22fd6887so2810853e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733829177; x=1734433977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jM2UJEgjc8RBmLmsAyCqR8R3DpIhNsSpaN8ovhxmvb4=;
+        b=n1gF6xR/+prxE/0fGcQDRDBUS3ALe+pCaUrJgu9kOOX2AViW0WpvJN2rrNA4/iSZAC
+         77XoB+V3NyuKZjZsOVnbKbP9ojQ3Y92K5dfqBWzEg9e5MvUoA8hyo3ZufOHZFpsyTEo6
+         ynIxJL/bd2YquAZjq/FLnNizkaQIbXP+VVyQmudLnXk5ENT1yxicphykyCUejyUQdZkC
+         j6Ab5yGGbiizFeQpCMOyJl3tye4y24QcMW7wEGTS4/DW6+VsJB75ao8TSTYP/Nlw5trI
+         gZRfrUDLqAa14GKrS19zFNiRDgi4FaIfM3mE1ZnEqk7DSXS3xED+EmgP9o8ypsgVyzwk
+         tiCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733829123; x=1734433923;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1733829177; x=1734433977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h0vZeA6LrehhBKYMPBA1rUywOznFzo6QHFxVxjqhmoE=;
-        b=CPYz/9bDsArGkr/Fch4wW/7qmAtKQ7SuiDOiB6yXyd6sxHZVPQpjfbkw+uJ4lRm/Cy
-         3y42/5I6IGiZu/SUOqKeynKV/8frTpZJbgu88QiMTOW2geW4k/NgDiAaXHtoJTF86wBq
-         txVuOXVUF/eKUiVkEsD9xOW63XHg5KY8/0V6AO5e3hFONDeJ2DyUf1yyOooas1cssoto
-         huihdaWExUtwZA4Gdy3S6InI54yjI3anpRcPYDGXgyvaXLAybCEeuc+Nsi36MoCTa2TX
-         lXeS7dkjVqDbw56mSvRUvvtSx3gjb6DgtTq7CXYVCZ0MbistmgWB2w0eOBfpoocgWdwA
-         Luhg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/5/o6/o+r340VW018e2lw8XXoByvl2Zu4KYPav0dvrGNk9P09zE8ffWlwU+d+UEg+wKMOC4PBy8A6H6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcUKew8YbzKlATem0lwUZvZVK7S1FgG84vPE4cHC1gIWiH1iwj
-	gJG+6Vz/SvTDPafZZmRVy8xcEAJ1QCTKOrdEvPzClwOkK5kwSc61N4sr86s2ozeCTGETYsE8vh6
-	wwxWYx+pvATv23L9fI18RqobW/+IP+uxLdu+4KQ4lu/6VuHsipZNFkiY=
-X-Google-Smtp-Source: AGHT+IGPv3zmRuGp6rUmUq4ZsB7nuvBRi7Cy0gtN27fIqaf71MI4xeesvbt5TClDiKwXKBcgtMhJhE19e6gJuRRk4bD/i0iJK1Lz
+        bh=jM2UJEgjc8RBmLmsAyCqR8R3DpIhNsSpaN8ovhxmvb4=;
+        b=osG2Q3ODGl/TT7St3vpL4PYfJMgh9EJAto6P61dRLiZS5C2QEljdPAoGbkegNcPMne
+         EmlzEolM2FvAaB8SDgAqIhuVRN5XftEPvL2s8kyz7hxS67ViUShYKiVkRi3e+P6vEB7O
+         FE0AJs7/y2XR5r5+TIs4z69gpzWyfRC4veJqpdetpUTvJlpxChUEwUapakb9otJaq0HQ
+         6yFv2EJAOWEE/VzBamV8GI9xqR3BBRFuYdk7f9VeP07rcSD5vKlIyzoJbo3WgDac1tIm
+         hEnf616tWAetxyiKLyoNRBb1i/383oqZjo1XEa6lkRRCgMCOU8bbj3UQtRhLN7taBwiU
+         tQ7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUcj+4zUebWTICuliAScaDQT+2UsqXYVeTUBtkqN6JPrjJwCd4W8Rf90WW5ZfTYQ2Brtk343merLPCFgks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4P/8ZPISGvgSp4utUbrDcAOtlAEUXkzpiFsF+TVOk6TPbf2pT
+	FxM4vRjs1aoQFzn3dFPQgJf5Wjd/hzJIBdHucZSWWtrwUkW3Y99uvheGIed3dXU=
+X-Gm-Gg: ASbGncsfId7Q8iCIB4Dk9mtWXlRqUNsp9duR5EK04i8E2ibExgwfZdvmAlinAVWiWwZ
+	YpaHBVSoctfEllTtKadW9vIzF3RR/AYPr9mgjas+FFnt580x+WJZjZa0fdqzo4H4QjgmL4aMFgw
+	CfSCiee+7hXuS94LX+yj8wfdDJbt9wm+lw9l2BADtCNl78Pv6NESrxOM/SvVwzj9JWvxFQdDh2c
+	ZUYhX//6OsETJodLUmu3EwSl1UKAJYLIun4Dw4g0KhSYew71VKMlbqLOuBRzohSfsGLWP+nIDs1
+	+1cya6GlSg+RUkBrRHp5EwxdkVh/UMg3Sg==
+X-Google-Smtp-Source: AGHT+IHPCSnrDauNjnHW1FedAONmhH37jtKICkQNI/YwVBNvFHQEUYDTNkhvkHVwFeENoFrPZbIvxQ==
+X-Received: by 2002:a05:6512:3b85:b0:53d:d0c5:4ca9 with SMTP id 2adb3069b0e04-53e2c2bea7bmr6727347e87.26.1733829176821;
+        Tue, 10 Dec 2024 03:12:56 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5402542edf0sm231753e87.126.2024.12.10.03.12.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 03:12:54 -0800 (PST)
+Date: Tue, 10 Dec 2024 13:12:53 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_jiaymao@quicinc.com, quic_shuaz@quicinc.com, 
+	quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
+Subject: Re: [PATCH v3 2/3] Bluetooth: qca: Expand firmware-name to load
+ specific nvm and rampatch
+Message-ID: <h7a537yfel7oq4hh4lz5mo4qt6bsy5az6xl4crusxlmoa5een3@iuvk5ckcta2y>
+References: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
+ <20241205102213.1281865-3-quic_chejiang@quicinc.com>
+ <w7r4itwyrh3jva3rx3kmsm4kqtawqkgkneqrlin4hpjkqb3deo@2qmjd3ijzqn3>
+ <541a5682-5b99-4793-84ee-a7c9168cb9a0@quicinc.com>
+ <CAA8EJppmTSovZKTPb+syrc0Vvfu8U=HoP18tW072OEZ5nYyOgg@mail.gmail.com>
+ <4ef61f91-f1ae-4593-9522-2229680a9707@quicinc.com>
+ <fb7exdibh4f5r3io6m34i7lqqe7qo2kk357bfdzcdbie6cppui@mqwwq5w4c57j>
+ <f7dd3758-c1c8-43bb-9a5c-4674077a5e1b@quicinc.com>
+ <CAA8EJpqRAqH-+3xYpSyF3cqFoF9bDbEKSqx5o5XrLZMgati41A@mail.gmail.com>
+ <1e0fc6f8-9f5d-4f62-a379-ea9b0161fc84@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214a:b0:3a3:4175:79da with SMTP id
- e9e14a558f8ab-3a811dbaedamr127676175ab.13.1733829122943; Tue, 10 Dec 2024
- 03:12:02 -0800 (PST)
-Date: Tue, 10 Dec 2024 03:12:02 -0800
-In-Reply-To: <20241210104439.1770-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67582202.050a0220.a30f1.01cb.GAE@google.com>
-Subject: Re: [syzbot] [block?] possible deadlock in blk_mq_submit_bio
-From: syzbot <syzbot+5218c85078236fc46227@syzkaller.appspotmail.com>
-To: boqun.feng@gmail.com, hdanton@sina.com, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ming.lei@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1e0fc6f8-9f5d-4f62-a379-ea9b0161fc84@quicinc.com>
 
-Hello,
+On Tue, Dec 10, 2024 at 10:00:51AM +0800, Cheng Jiang (IOE) wrote:
+> Hi Dmitry,
+> 
+> On 12/10/2024 12:04 AM, Dmitry Baryshkov wrote:
+> > On Mon, 9 Dec 2024 at 15:59, Cheng Jiang (IOE)
+> > <quic_chejiang@quicinc.com> wrote:
+> >>
+> >> Hi Dmitry,
+> >>
+> >> On 12/9/2024 6:49 PM, Dmitry Baryshkov wrote:
+> >>> On Mon, Dec 09, 2024 at 05:03:55PM +0800, Cheng Jiang (IOE) wrote:
+> >>>> Hi Dmitry,
+> >>>>
+> >>>> On 12/6/2024 4:34 PM, Dmitry Baryshkov wrote:
+> >>>>> On Fri, 6 Dec 2024 at 05:05, Cheng Jiang (IOE)
+> >>>>> <quic_chejiang@quicinc.com> wrote:
+> >>>>>>
+> >>>>>> Hi Dmitry,
+> >>>>>>
+> >>>>>> On 12/5/2024 8:00 PM, Dmitry Baryshkov wrote:
+> >>>>>>> On Thu, Dec 05, 2024 at 06:22:12PM +0800, Cheng Jiang wrote:
+> >>>>>>>> The firmware-name property has been expanded to specify the names of NVM
+> >>>>>>>> and rampatch firmware for certain chips, such as the QCA6698 Bluetooth
+> >>>>>>>> chip. Although it shares the same IP core as the WCN6855, the QCA6698
+> >>>>>>>> has different RF components and RAM sizes, necessitating new firmware
+> >>>>>>>> files. This change allows for the configuration of NVM and rampatch in
+> >>>>>>>> DT.
+> >>>>>>>>
+> >>>>>>>> Different connectivity boards may be attached to the same platform. For
+> >>>>>>>> example, QCA6698-based boards can support either a two-antenna or
+> >>>>>>>> three-antenna solution, both of which work on the sa8775p-ride platform.
+> >>>>>>>> Due to differences in connectivity boards and variations in RF
+> >>>>>>>> performance from different foundries, different NVM configurations are
+> >>>>>>>> used based on the board ID.
+> >>>>>>>
+> >>>>>>> Two separate commits, one for NVM, another one for RAM patch.
+> >>>>>>>
+> >>>>>> Ack.
+> >>>>>>>>
+> >>>>>>>> Therefore, in the firmware-name property, if the NVM file has an
+> >>>>>>>> extension, the NVM file will be used. Otherwise, the system will first
+> >>>>>>>> try the .bNN (board ID) file, and if that fails, it will fall back to
+> >>>>>>>> the .bin file.
+> >>>>>>>>
+> >>>>>>>> Possible configurations:
+> >>>>>>>> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
+> >>>>>>>> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+> >>>>>>>> firmware-name = "QCA6698/hpnv21.bin";
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> >>>>>>>> ---
+> >>>>>>>>  drivers/bluetooth/btqca.c   | 154 ++++++++++++++++++++++++++----------
+> >>>>>>>>  drivers/bluetooth/btqca.h   |   5 +-
+> >>>>>>>>  drivers/bluetooth/hci_qca.c |  21 ++++-
+> >>>>>>>>  3 files changed, 134 insertions(+), 46 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> >>>>>>>> index dfbbac922..e8b89b8cc 100644
+> >>>>>>>> --- a/drivers/bluetooth/btqca.c
+> >>>>>>>> +++ b/drivers/bluetooth/btqca.c
+> >>>>>>>> @@ -272,6 +272,31 @@ int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
+> >>>>>>>>  }
+> >>>>>>>>  EXPORT_SYMBOL_GPL(qca_send_pre_shutdown_cmd);
+> >>>>>>>>
+> >>>>>>>> +static int qca_get_alt_nvm_path(char *path, size_t max_size)
+> >>>>>>>
+> >>>>>>> int is usually for errors, the code suggests bool return type.
+> >>>>>>>
+> >>>>>> Ack.
+> >>>>>>>> +{
+> >>>>>>>> +    char fwname[64];
+> >>>>>>>> +    const char *suffix;
+> >>>>>>>> +
+> >>>>>>>> +    suffix = strrchr(path, '.');
+> >>>>>>>> +
+> >>>>>>>> +    if (!suffix)
+> >>>>>>>> +            return 0;
+> >>>>>>>> +
+> >>>>>>>> +    strscpy(fwname, path, strlen(path));
+> >>>>>>>
+> >>>>>>> 64 bytes ought to be enough for anybody, correct?
+> >>>>>>>
+> >>>>>> Yes, in current driver, the max f/w path length is 64.
+> >>>>>>
+> >>>>>>>> +    fwname[suffix - path] = 0;
+> >>>>>>>
+> >>>>>>> with path = "qcom/sc7180/Oh.My.Device/name" this is broken.
+> >>>>>>>
+> >>>>>> Let me test this and fix in next patch.
+> >>>>>>>> +
+> >>>>>>>> +    snprintf(fwname, sizeof(fwname), "%s.bin", fwname);
+> >>>>>>>> +
+> >>>>>>>> +    /* If nvm file is already the default one, return false to
+> >>>>>>>> +     * skip the retry.
+> >>>>>>>> +     */
+> >>>>>>>> +    if (strcmp(fwname, path) == 0)
+> >>>>>>>> +            return 0;
+> >>>>>>>> +
+> >>>>>>>> +    snprintf(path, max_size, "%s", fwname);
+> >>>>>>>> +    return 1;
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>  static int qca_tlv_check_data(struct hci_dev *hdev,
+> >>>>>>>>                             struct qca_fw_config *config,
+> >>>>>>>>                             u8 *fw_data, size_t fw_size,
+> >>>>>>>> @@ -564,6 +589,19 @@ static int qca_download_firmware(struct hci_dev *hdev,
+> >>>>>>>>                                         config->fwname, ret);
+> >>>>>>>>                              return ret;
+> >>>>>>>>                      }
+> >>>>>>>> +            }
+> >>>>>>>> +            /* For nvm, if desired nvm file is not present and it's not the
+> >>>>>>>> +             * default nvm file(ends with .bin), try to load the default nvm.
+> >>>>>>>> +             */
+> >>>>>>>> +            else if (config->type == TLV_TYPE_NVM &&
+> >>>>>>>> +                     qca_get_alt_nvm_path(config->fwname, sizeof(config->fwname))) {
+> >>>>>>>
+> >>>>>>> Please, don't rewrite the config. The file may be not present now, but
+> >>>>>>> it will reappear later (e.g. when rootfs gets mounted).
+> >>>>>>>
+> >>>>>> This tries to load a default NVM file if the board-specific NVM is not found.
+> >>>>>> It is called when request_firmware fails. It's safe to rewrite the config->fwname
+> >>>>>> here since we have already tried to load the board-specific NVM. The config
+> >>>>>> is a local variable in qca_uart_setup and will return after downloading the NVM.
+> >>>>>
+> >>>>> Please read my question before answering it.
+> >>>>>
+> >>>> Sorry, I'm not clear about your question. Could you please explain it in more detail?
+> >>>> I'm not quite sure how the situation you mentioned affects this code flow if you mean
+> >>>> not downloading another NVM file.
+> >>>>
+> >>>> The board-specific NVM and the default NVM should be in the same folder and should
+> >>>> appear simultaneously.
+> >>>>
+> >>>> From the Bluetooth firmware load flow perspective, the firmware is loaded either
+> >>>> when the kernel module is inserted (insmod) or when Bluetooth is turned off and
+> >>>> then on again via a user-space command. If the firmware is not found at this time,
+> >>>> the ROM code is used instead. It does not attempt to load the firmware automatically,
+> >>>> even if the firmware appears later.
+> >>>
+> >>> I was thinking about the following scenario:
+> >>>
+> >>> - BT firmware is attempted to load during driver probe, /lib/firmware is
+> >>>   not fully populated, so the config is rewritten to use the default
+> >>> - rootfs is fully mounted and populated with the board-specific file
+> >>> - BT interface is being turned on. It is expected that the
+> >>>   board-specific file will be loaded, however because the config was
+> >>>   changed in one of the previous steps, the driver still loads the
+> >>>   default one.
+> >>>
+> >>> That said, the driver should perform the fallback, etc, but the config
+> >>> should stay intact even in the fallback case.
+> >>>
+> >> Thank you for the detail explanation. Current flow of BT enable in driver
+> >> likes this:
+> >>
+> >> Enable the soc(Assert BT_EN) -->  read the SOC info --> Change baud rate -->
+> >> get rampatch file name (based on soc info or dts) --> download rampatch -->
+> >> get nvm file name(based on soc info or dts) --> download nvm file -->
+> >> download default nvm (if the board-specific file not found).
+> >>
+> >> Every time the driver probe or the BT interface is turned on, it follows the
+> >> flow described above. The rampatch and NVM file names are reconstructed by
+> >> the SoC information each time, so the driver always attempts to download the
+> >> board-specific file first.
+> >>
+> >> Here is the log, there is no hpnv21.b206 and re-insmod the driver.
+> > 
+> > You are re-insmodding the driver. I was talking about a different scenario:
+> > - there is no BDF
+> > - modprobe the driver
+> > - wait for the hci0 to become available
+> > - hciconfig hci0 down
+> > - provide BDF
+> > - hciconfig hci0 up
+> > 
+> > Check the dmesg. If everything is implemented correctly, second
+> > hciconfig command should load the firmware files again (because BT was
+> > unpowered in between). Second time it should load the proper board
+> > file instead of loading the default or falling back to the ROM.
+> > 
+> Yes, the 'hciconfig hci0 up' will load the proper board file, since it also follows 
+> the flow described above. 
+> 
+> Here is the dmesg:
+> 
+> sh-5.1# mv hpnv21.b206 hpnv21.b2069                 -- Remove the board specific nvm
+> sh-5.1# rmmod hci_uart
+> sh-5.1# insmod /lib/modules/6.6.52-dirty/kernel/drivers/bluetooth/hci_uart.ko
+> sh-5.1# dmesg|grep -i bluetooth
+> 
+> [54781.019527] Bluetooth: HCI UART driver ver 2.3
+> [54781.019538] Bluetooth: HCI UART protocol H4 registered
+> [54781.019589] Bluetooth: HCI UART protocol LL registered
+> [54781.019612] Bluetooth: HCI UART protocol QCA registered
+> [54781.020893] Bluetooth: hci0: setting up wcn6855
+> [54781.087027] Bluetooth: hci0: QCA Product ID   :0x00000013
+> [54781.087037] Bluetooth: hci0: QCA SOC Version  :0x400c0210
+> [54781.087039] Bluetooth: hci0: QCA ROM Version  :0x00000201
+> [54781.087042] Bluetooth: hci0: QCA Patch Version:0x000038e6
+> [54781.104087] Bluetooth: hci0: QCA controller version 0x02100201
+> [54781.104097] Bluetooth: hci0: QCA Downloading qca/QCA6698/hpbtfw21.tlv
+> [54781.794628] Bluetooth: hci0: QCA Downloading qca/QCA6698/hpnv21.b206
+> [54781.794671] bluetooth hci0: Direct firmware load for qca/QCA6698/hpnv21.b206 failed with error -2
+> [54781.794677] Bluetooth: hci0: QCA Downloading qca/QCA6698/hpnv21.bin
+> [54781.958319] Bluetooth: hci0: QCA setup on UART is completed
+> [54781.981490] Bluetooth: MGMT ver 1.22
+> 
+> No board specific nvm found, use the default one.
+> Disable hci0 and add the board specific nvm, then enable hci0.
+> 
+> sh-5.1# hciconfig hci0 down
+> sh-5.1# mv hpnv21.b2069 hpnv21.b206
+> sh-5.1# hciconfig hci0 up
+> sh-5.1# dmesg|grep -i bluetooth
+> [54834.686170] Bluetooth: hci0: setting up wcn6855
+> [54834.750997] Bluetooth: hci0: QCA Product ID   :0x00000013
+> [54834.751006] Bluetooth: hci0: QCA SOC Version  :0x400c0210
+> [54834.751010] Bluetooth: hci0: QCA ROM Version  :0x00000201
+> [54834.751013] Bluetooth: hci0: QCA Patch Version:0x000038e6
+> [54834.761826] Bluetooth: hci0: QCA controller version 0x02100201
+> [54834.761833] Bluetooth: hci0: QCA Downloading qca/QCA6698/hpbtfw21.tlv
+> [54835.450621] Bluetooth: hci0: QCA Downloading qca/QCA6698/hpnv21.b206
+> [54835.614015] Bluetooth: hci0: QCA setup on UART is completed
+> 
+> Load the board-specific nvm when enable hci0.
 
-syzbot has tested the proposed patch but the reproducer is still triggering=
- an issue:
-possible deadlock in __submit_bio
+Ack, thanks for the confirmation.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-WARNING: possible circular locking dependency detected
-6.13.0-rc1-syzkaller-00011-gc018ec9dd144 #0 Not tainted
-------------------------------------------------------
-syz.0.15/7623 is trying to acquire lock:
-ffff0000ca7b1de8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: __submit_bio=
-+0x1a0/0x4f8 block/blk-core.c:629
+Please post the next iteration, I'll R-B it.
 
-but task is already holding lock:
-ffff0000d771a0b0 (&tree->tree_lock){+.+.}-{4:4}, at: hfsplus_find_init+0x14=
-4/0x1bc fs/hfsplus/bfind.c:28
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&tree->tree_lock){+.+.}-{4:4}:
-       __mutex_lock_common+0x218/0x28f4 kernel/locking/mutex.c:585
-       __mutex_lock kernel/locking/mutex.c:735 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:787
-       hfsplus_find_init+0x144/0x1bc fs/hfsplus/bfind.c:28
-       hfsplus_cat_write_inode+0x1a4/0xd48 fs/hfsplus/inode.c:589
-       hfsplus_write_inode+0x15c/0x4dc fs/hfsplus/super.c:161
-       write_inode fs/fs-writeback.c:1525 [inline]
-       __writeback_single_inode+0x5a0/0x15a4 fs/fs-writeback.c:1745
-       writeback_single_inode+0x18c/0x554 fs/fs-writeback.c:1801
-       sync_inode_metadata+0xc4/0x12c fs/fs-writeback.c:2871
-       hfsplus_file_fsync+0xe4/0x4c8 fs/hfsplus/inode.c:316
-       vfs_fsync_range fs/sync.c:187 [inline]
-       vfs_fsync+0x154/0x18c fs/sync.c:201
-       __loop_update_dio+0x248/0x420 drivers/block/loop.c:204
-       loop_set_status+0x538/0x7f4 drivers/block/loop.c:1289
-       lo_ioctl+0xf10/0x1c48
-       blkdev_ioctl+0x3a8/0xa8c block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __arm64_sys_ioctl+0x14c/0x1cc fs/ioctl.c:892
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
-       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #1 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}:
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:818 [inline]
-       hfsplus_file_fsync+0xd8/0x4c8 fs/hfsplus/inode.c:311
-       vfs_fsync_range fs/sync.c:187 [inline]
-       vfs_fsync+0x154/0x18c fs/sync.c:201
-       __loop_update_dio+0x248/0x420 drivers/block/loop.c:204
-       loop_set_status+0x538/0x7f4 drivers/block/loop.c:1289
-       lo_ioctl+0xf10/0x1c48
-       blkdev_ioctl+0x3a8/0xa8c block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __arm64_sys_ioctl+0x14c/0x1cc fs/ioctl.c:892
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
-       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #0 (&q->q_usage_counter(io)#17){++++}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain kernel/locking/lockdep.c:3904 [inline]
-       __lock_acquire+0x34f0/0x7904 kernel/locking/lockdep.c:5226
-       lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1254/0x2070 block/blk-mq.c:3093
-       __submit_bio+0x1a0/0x4f8 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x3bc/0xcbc block/blk-core.c:739
-       submit_bio_noacct+0xc6c/0x166c block/blk-core.c:868
-       submit_bio+0x374/0x564 block/blk-core.c:910
-       submit_bh_wbc+0x3f8/0x4c8 fs/buffer.c:2814
-       submit_bh fs/buffer.c:2819 [inline]
-       block_read_full_folio+0x7d0/0x950 fs/buffer.c:2446
-       hfsplus_read_folio+0x28/0x38 fs/hfsplus/inode.c:28
-       filemap_read_folio+0x108/0x318 mm/filemap.c:2366
-       do_read_cache_folio+0x368/0x5c0 mm/filemap.c:3826
-       do_read_cache_page mm/filemap.c:3892 [inline]
-       read_cache_page+0x6c/0x15c mm/filemap.c:3901
-       read_mapping_page include/linux/pagemap.h:1005 [inline]
-       __hfs_bnode_create+0x3dc/0x6d4 fs/hfsplus/bnode.c:440
-       hfsplus_bnode_find+0x200/0xe60 fs/hfsplus/bnode.c:486
-       hfsplus_brec_find+0x134/0x4a0 fs/hfsplus/bfind.c:172
-       hfsplus_brec_read+0x38/0x128 fs/hfsplus/bfind.c:211
-       hfsplus_find_cat+0x140/0x4a0 fs/hfsplus/catalog.c:202
-       hfsplus_iget+0x34c/0x584 fs/hfsplus/super.c:83
-       hfsplus_fill_super+0xa5c/0x16f8 fs/hfsplus/super.c:504
-       get_tree_bdev_flags+0x38c/0x494 fs/super.c:1636
-       get_tree_bdev+0x2c/0x3c fs/super.c:1659
-       hfsplus_get_tree+0x28/0x38 fs/hfsplus/super.c:640
-       vfs_get_tree+0x90/0x28c fs/super.c:1814
-       do_new_mount+0x278/0x900 fs/namespace.c:3507
-       path_mount+0x590/0xe04 fs/namespace.c:3834
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount fs/namespace.c:4034 [inline]
-       __arm64_sys_mount+0x4d4/0x5ac fs/namespace.c:4034
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
-       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-other info that might help us debug this:
-
-Chain exists of:
-  &q->q_usage_counter(io)#17 --> &sb->s_type->i_mutex_key#20 --> &tree->tre=
-e_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&tree->tree_lock);
-                               lock(&sb->s_type->i_mutex_key#20);
-                               lock(&tree->tree_lock);
-  rlock(&q->q_usage_counter(io)#17);
-
- *** DEADLOCK ***
-
-2 locks held by syz.0.15/7623:
- #0: ffff0000cb7e60e0 (&type->s_umount_key#51/1){+.+.}-{4:4}, at: alloc_sup=
-er+0x1b0/0x834 fs/super.c:344
- #1: ffff0000d771a0b0 (&tree->tree_lock){+.+.}-{4:4}, at: hfsplus_find_init=
-+0x144/0x1bc fs/hfsplus/bfind.c:28
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 7623 Comm: syz.0.15 Not tainted 6.13.0-rc1-syzkaller-000=
-11-gc018ec9dd144 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
-gle 09/13/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:484 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2074
- check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain kernel/locking/lockdep.c:3904 [inline]
- __lock_acquire+0x34f0/0x7904 kernel/locking/lockdep.c:5226
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5849
- bio_queue_enter block/blk.h:75 [inline]
- blk_mq_submit_bio+0x1254/0x2070 block/blk-mq.c:3093
- __submit_bio+0x1a0/0x4f8 block/blk-core.c:629
- __submit_bio_noacct_mq block/blk-core.c:710 [inline]
- submit_bio_noacct_nocheck+0x3bc/0xcbc block/blk-core.c:739
- submit_bio_noacct+0xc6c/0x166c block/blk-core.c:868
- submit_bio+0x374/0x564 block/blk-core.c:910
- submit_bh_wbc+0x3f8/0x4c8 fs/buffer.c:2814
- submit_bh fs/buffer.c:2819 [inline]
- block_read_full_folio+0x7d0/0x950 fs/buffer.c:2446
- hfsplus_read_folio+0x28/0x38 fs/hfsplus/inode.c:28
- filemap_read_folio+0x108/0x318 mm/filemap.c:2366
- do_read_cache_folio+0x368/0x5c0 mm/filemap.c:3826
- do_read_cache_page mm/filemap.c:3892 [inline]
- read_cache_page+0x6c/0x15c mm/filemap.c:3901
- read_mapping_page include/linux/pagemap.h:1005 [inline]
- __hfs_bnode_create+0x3dc/0x6d4 fs/hfsplus/bnode.c:440
- hfsplus_bnode_find+0x200/0xe60 fs/hfsplus/bnode.c:486
- hfsplus_brec_find+0x134/0x4a0 fs/hfsplus/bfind.c:172
- hfsplus_brec_read+0x38/0x128 fs/hfsplus/bfind.c:211
- hfsplus_find_cat+0x140/0x4a0 fs/hfsplus/catalog.c:202
- hfsplus_iget+0x34c/0x584 fs/hfsplus/super.c:83
- hfsplus_fill_super+0xa5c/0x16f8 fs/hfsplus/super.c:504
- get_tree_bdev_flags+0x38c/0x494 fs/super.c:1636
- get_tree_bdev+0x2c/0x3c fs/super.c:1659
- hfsplus_get_tree+0x28/0x38 fs/hfsplus/super.c:640
- vfs_get_tree+0x90/0x28c fs/super.c:1814
- do_new_mount+0x278/0x900 fs/namespace.c:3507
- path_mount+0x590/0xe04 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount fs/namespace.c:4034 [inline]
- __arm64_sys_mount+0x4d4/0x5ac fs/namespace.c:4034
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-loop0: detected capacity change from 1024 to 3
-Dev loop0: unable to read RDB block 3
- loop0: unable to read partition table
-loop0: partition table beyond EOD, truncated
-loop_reread_partitions: partition scan of loop0 (=EF=BF=BDRt=EF=BF=BD=0B*=
-=EF=BF=BD3=0C!6{=06bO=EF=BF=BD0=EF=BF=BD=7F=EF=BF=BD=17.=EF=BF=BDQ=CA=9D=EF=
-=BF=BD=03=EF=BF=BD	H=EF=BF=BD"Uqd\=EF=BF=BD'=EF=BF=BDLz=EF=BF=BD8=EF=BF=BD=
-=08=EF=BF=BD=EF=BF=BD=EF=BF=BDw1=EF=BF=BDA=08H=EF=BF=BD=EF=BF=BD=10=EF=BF=
-=BD=19=EF=BF=BD=EF=BF=BD) failed (rc=3D-5)
-
-
-Tested on:
-
-commit:         c018ec9d block: rnull: Initialize the module in place
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux=
--block.git for-6.14/block
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D124c68f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbd60186d08e947a=
-5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D5218c85078236fc46=
-227
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-userspace arch: arm64
-
-Note: no patches were applied.
+-- 
+With best wishes
+Dmitry
 
