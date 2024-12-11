@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-440939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313629EC6B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:15:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1219EC6B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD6B1887732
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7D818893ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670A71D7E46;
-	Wed, 11 Dec 2024 08:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504ED1D8A0B;
+	Wed, 11 Dec 2024 08:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGvB4xdy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e4+wwgNi"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B9F1D6DB6
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD141D31B5;
+	Wed, 11 Dec 2024 08:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733904890; cv=none; b=FtYRaNOvbmawk//ehSsJDcuwgG9poJODeHpOtsLNhmOJmGvN5Us0BNNUP/OP6vT4OGQaBzKskBw+lT+yH18z/QkLI9pFjzTM5yJqSfu3x5Dcly54bpo/LMQP6N96aaR9JD/xx2WtfHm6zcMAzuVmVfF1Fs2X2fkvDCT0yfRRF7g=
+	t=1733904901; cv=none; b=fGLAnG/PZwStm0ODl8l9zE91f9p/Ssp3jeWQxJF16PpZn9OmoAtpgxINEFP+Z3JoYrAEIduGnzheErW7TBNCpghw1lHfBeAFTG5gHa5GAPQDAI3vMzLjuSrh6vqah8BX+AlHZk88CIDf4d/vFxe8xhnIqLl8XBFUwVuUZTVfrR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733904890; c=relaxed/simple;
-	bh=Lw1rJMQtogGQEBRwFuD9lAbQ0MR4ONoVv23htZqM95M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elzbkDNV/QQIYr4cvQNFYolYwdsdCACfyzar7LEzOrT4hnWGUnWORSoXzo/SYaWM1Kbt2WcEgKq/gunUgeM2yq2gMr7EVMSctXiNdei8x5KEbEtkLSiDkUo/mp9cGm1GhH2emUGvwMKXHtVEVqvWln4deITJD4YJZ1cZ5cbYEWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGvB4xdy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FAF5C4CEDF;
-	Wed, 11 Dec 2024 08:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733904890;
-	bh=Lw1rJMQtogGQEBRwFuD9lAbQ0MR4ONoVv23htZqM95M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JGvB4xdy/19SRQBWMV46mqrQSY1rGQ0/Ieb3+kH1kK6w+uMJhIPGSou0+sg1zhcwf
-	 4mT0kG+BIcUY4Ndqxcm4fSSAdOdcNtnXQQaKAmNS93ddnRqk+5kXYUq2wRt9YTv/HI
-	 OK0e06lcXV1aqAhamgvQ3nhYbJ1TgF9LvHbthi2QzkmeAJH22NYXTl7bdxDzuJfDKx
-	 7zG8ojFIEuxbR3ey5x+V5PKlY7ZFG0ZaU3xhZIPc+dECTO+JuJ5Jn8dMH6yRljIBfS
-	 uUNJZMFFDZs8Ph6hZ70hkGedQ0oTNdL4ZNsi+iQpml0vyBJykVL/+k1eJyVLVExdFA
-	 iEEJZCGQQXuCw==
-Date: Tue, 10 Dec 2024 22:14:48 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Changwoo Min <multics69@gmail.com>
-Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
-	changwoo@igalia.com, kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] sched_ext: Implement scx_bpf_now_ns()
-Message-ID: <Z1lJ-AzRlFIv4OuP@slm.duckdns.org>
-References: <20241209061531.257531-1-changwoo@igalia.com>
- <20241209061531.257531-5-changwoo@igalia.com>
+	s=arc-20240116; t=1733904901; c=relaxed/simple;
+	bh=OZKCHU/pdesGjb7/BWoBPfGjp7Xwwe+OZIygNrVP4z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a8TaH+vVOYzkDI9uvWQpWNziMsJ8ZvIcFQVGveOjGuLLVhRlE6Mg2+lPA9uZb7vc3CRl76rXmeDlRuyz7uSLgd4iHbcVd+2ttkT0Ew4/rzodOhkzlskk4eSCf80BxF2Tt2FbPiNrRhYR58OzbogKFGLYV+0WKdPJQekiAasD/xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e4+wwgNi; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so10088395a12.3;
+        Wed, 11 Dec 2024 00:14:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733904898; x=1734509698; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=05XXHLAL1GWs9/FdDgMkTRmUvgatN3ljXIIVcYbLoys=;
+        b=e4+wwgNih5at2jtAWca2quPkuc6ijp3EM8AAb2P+gI5Wy7aI8yixVqfUpeoBqD92Et
+         PS7R3Rw9ZuOq18DYD1tSf+mWMl2Ofw6DAFAk47qP+ofCjqD92zpXAjcpwrvl0shpf8wD
+         3No1bjDCBgTP7fZrdu/gNp+KkVcm8DUMm19sII8Aqf9FFl5hqWzEfLmBodCepUcGhcQP
+         DGLLpY7kT8M7lemxtYfgepr5c01NahwTTm695PKds5il5pfaUMyUu+aZ4duzl+yx4sl8
+         zOlz5OThJvOLOGOk81ldd0ou7SUNh6EHOLtWrhy2AO/T1uWS7BrjSVblQW1mCo80FikT
+         4Iqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733904898; x=1734509698;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=05XXHLAL1GWs9/FdDgMkTRmUvgatN3ljXIIVcYbLoys=;
+        b=mFsF2+aKY5E3L12gkO7WhoQ3tJgcXul80svf7J1kPo50XHEOAUKs/WdxAE4USv/4gI
+         QpuIw+bksqojeoAbENWgY8a8xEGjddT8RTMsB+ktwojRWvg5C0e3CMluZnE+0COx/QUD
+         ixxcWwXCQxu25nENB6iOhOMzkyXXwOueSc6ETv6m/sdbL6Ksh3QdZtHVccZ3tdw3GBxR
+         5g0lDnjt/Tp3lzEjmctEa7ikIFJjYE5KBr+T3QUPuYc3uZGU2z0Vov8Sl5i9NQfLURkR
+         wtu+4dm+C7vzudpbMMyasXLCnIVb8RYySYxPboqtPpSVFhM30OuYGHKh2MbBtak474Ug
+         /abw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxipIjYDpkktVtFQiHWVTWQaD0n/HfozeZ/W9fDT7zzSe+kbxC13eJGygie+s8kyLRktbnUjkWHijXxLc=@vger.kernel.org, AJvYcCV3QHsmAO3ENQoq2RjNJeBV/38wF64zX/Ccbe3M09uzzdDgnLbf+5dnoRshOIRKE2GHWyM8cPdtkEAYM3c5@vger.kernel.org, AJvYcCV4xeSX/SagTNgKupZ7U8YBNUJsEdH4PTwCCLveQedtqOIwFfiyK9+rgNiF4GyluyY9g9KePz1yPSYw@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEkOzwc8uOwMaeytRvutMICheO278jaRySokeLaZHWmf8pkbvw
+	1lF9ocCmtMOFtj8u2vbz/iELld4A28AnEB1Os5dhETy8vNTvCRHL
+X-Gm-Gg: ASbGncun6lzjAzabjILZx4g0cYAIUPqMsY2GzGJfhy3yX8wOe1lSjESLM8+c4k2AdRP
+	bCyWj0MvFJKtSBhqigliyuL6QU9m6XznWlCs8MN1navq8ua0cNldfjFLdeo8FIPGWh6os2Gh48y
+	q9l8pdsB6yKZbDKXbAdaNigzHEEODMxS/HowEnm2NWA8Xgto9WZmD2lXwZVnjyUdxR5s4pgePY0
+	6K+n7VPB4ICWO3Ag3vBFXcTtoqru99ZACaGuBMVnOVekDrY6A==
+X-Google-Smtp-Source: AGHT+IFsenM32FRUt0A9qhL2Wv9XuhKKZYu9aGb2En7SV5Vb6M5lSX0nBPskTbG1y2SOMxIxowZ7ZA==
+X-Received: by 2002:a17:906:3089:b0:aa6:92de:ddae with SMTP id a640c23a62f3a-aa6b115bd48mr177853166b.16.1733904897999;
+        Wed, 11 Dec 2024 00:14:57 -0800 (PST)
+Received: from foz.lan ([95.90.158.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa675581337sm546245266b.120.2024.12.11.00.14.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 00:14:57 -0800 (PST)
+Date: Wed, 11 Dec 2024 09:14:53 +0100
+From: Mauro Carvalho Chehab <maurochehab@gmail.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Robert Moore
+ <robert.moore@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Dan Carpenter
+ <dan.carpenter@linaro.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 1/7] media: ipu-bridge: Fix warning when !ACPI
+Message-ID: <20241211091147.717e53a4@foz.lan>
+In-Reply-To: <20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+	<20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209061531.257531-5-changwoo@igalia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Em Tue, 10 Dec 2024 19:55:58 +0000
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-I'd roll the preceding two patches into this one.
+> One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
+> throws the following smatch warning:
+> drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
+> 
+> Fix it by replacing the condition.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/pci/intel/ipu-bridge.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+> index a0e9a71580b5..be82bc3e27d0 100644
+> --- a/drivers/media/pci/intel/ipu-bridge.c
+> +++ b/drivers/media/pci/intel/ipu-bridge.c
+> @@ -774,7 +774,7 @@ static int ipu_bridge_ivsc_is_ready(void)
+>  
+>  		for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
+>  #else
+> -		while (true) {
+> +		while (false) {
+>  			sensor_adev = NULL;
+>  #endif
 
-On Mon, Dec 09, 2024 at 03:15:29PM +0900, Changwoo Min wrote:
-...
-> 3) Monotonically non-decreasing clock for the same CPU: scx_bpf_now_ns()
->  guarantees the clock never goes backward when comparing them in the same
->  CPU. On the other hand, when comparing clocks in different CPUs, there
->  is no such guarantee -- the clock can go backward. It provides a
->  monotonically *non-decreasing* clock so that it would provide the same
->  clock values in two different scx_bpf_now_ns() calls in the same CPU
->  during the same period of when the rq clock is valid.
+The better would be to just remove all #if and handle ACPI compatibility
+with COMPILE_TEST inside acpi headers.
 
-We probably should provide helpers to calculate deltas between timestamps
-and use them consitently in SCX scheds. e.g. ops.runnable() and
-ops.running() can run on different CPUs and it'd be useful and common to
-calculate the delta between the two points in time.
+Besides that, t sounds that patch 2 makes this hack unneeded, as you added
+a false check at the for macro:
 
-...
-> +__bpf_kfunc u64 scx_bpf_now_ns(void)
-> +{
-> +	struct rq *rq;
-> +	u64 clock;
-> +
-> +	preempt_disable();
-> +
-> +	/*
-> +	 * If the rq clock is valid, use the cached rq clock
-> +	 * whenever the clock does not go backward.
-> +	 */
-> +	rq = this_rq();
-> +	clock = rq->scx.clock;
-> +
-> +	if (!(rq->scx.flags & SCX_RQ_CLK_VALID) ||
-> +	    (rq->scx.prev_clock >= clock)) {
+	#define for_each_acpi_dev_match(adev, hid, uid, hrv)			\
+	for (adev = NULL; false && (hid) && (uid) && (hrv);)
 
-The clocks usually start at zero but it'd still be a good idea to use
-time_after64() and friends when comparing the ordering between timestamps.
+Please place only one set of subsystem maintainers at the To: line,
+directing to the one(s) you expect to merge this series.
 
-> +		/*
-> +		 * If the rq clock is invalid or goes backward,
-> +		 * start a new rq clock period with a fresh sched_clock_cpu().
-> +		 *
-> +		 * The cached rq clock can go backward because there is a
-> +		 * race with a timer interrupt. Suppose that a timer interrupt
+In this particular case, the one to be added should be the ACPI
+maintainers.
 
-This is not limited to timer interrupts, right? This kfunc can be called
-from anywhere including tracepoints for code running in IRQ.
-
-> +		 * occurred while running scx_bpf_now_ns() *after* reading the
-> +		 * rq clock and *before* comparing the if condition. The timer
-> +		 * interrupt will eventually call a BPF scheduler's ops.tick(),
-> +		 * and the BPF scheduler can call scx_bpf_now_ns(). Since the
-> +		 * scheduler core updates the rq clock before calling
-> +		 * ops.tick(), the scx_bpf_now_ns() call will get the fresh
-> +		 * clock. After handling the timer interrupt, the interrupted
-
-This might be easier to explain with two column table explaning what each
-party is doing in what order.
-
-> +		 * scx_bpf_now_ns() will be resumed, so the if condition will
-> +		 * be compared. In this case, the clock, which was read before
-> +		 * the timer interrupt, will be the same as rq->scx.prev_clock.
-> +		 * When such a case is detected, start a new rq clock period
-> +		 * with a fresh sched_clock_cpu().
-> +		 */
-> +		clock = sched_clock_cpu(cpu_of(rq));
-> +		scx_rq_clock_update(rq, clock);
-
-Hmmm... what happens if e.g. a timer ends up performing multiple operations
-each going through rq pin/unpin?
-
-Thanks.
-
--- 
-tejun
+Regards,
+Mauro
 
