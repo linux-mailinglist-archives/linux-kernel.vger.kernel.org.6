@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-441525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 184FD9ECFAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:26:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307439ECFB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB26D188B795
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16336188A5CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8AE1BDAB5;
-	Wed, 11 Dec 2024 15:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0801C548E;
+	Wed, 11 Dec 2024 15:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BLKgsUF/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6gYo1gK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF41B1B6D0D;
-	Wed, 11 Dec 2024 15:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3997117736;
+	Wed, 11 Dec 2024 15:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733930748; cv=none; b=o1/9BwqB5V8+TiHvE4Q97tPVZBpakBY6lMws2kxmznEZjl5roqnN2J5da6tDFiNuxFuKOoc4Ynij0dEOWS0e8xN12HLdhhacJz9pKSRYxFtt0o9lf9X26n+CJx2JUDfDTr5bg/kpk0m0Fk0u3veT+LD8aamyO6tkRIU7WL3rmfI=
+	t=1733930828; cv=none; b=iQaL59P4PZKT1AOw+gLdVfx/OKIyi9cI67Ui/J+XUWzjn5HwUdOaqE1v+D3tkt/kNvGOatKDfx+Xa06sqG7zrB+bwjRDY9FNR8IuT9CNX5vfjTNGpd61ekTKgV99C7Gt6U6h8cXLMa8Q/eWFNSdWfkJ83z75qaBAYr4J/cs2LpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733930748; c=relaxed/simple;
-	bh=PX0Dak1GrNxWpNhFmQrRSn4HhzzLwAXXKZWfOHdy07c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iFv5hypgRZEP7wuudBnp5bVU69M0DYy2uIk7s4VI4k/6krJDdTQzNZiwfpDVQuNOlz5rfcbSm8/AViVCw0m2+lQlFtqrxflVVk5BVEFXwJG42UbSfgbpGR/njWrAp6RCb6hAHJYY+BdSPaQWrDV0wioXhuguTSfVZSRK/H6Ekms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BLKgsUF/; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733930746; x=1765466746;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PX0Dak1GrNxWpNhFmQrRSn4HhzzLwAXXKZWfOHdy07c=;
-  b=BLKgsUF/wbMyTGyowKR6w+3rieVTd8ha3flvuryhF1JiDRHuGWWi77pB
-   lxRa/o25IEnIlFcR9cylPVAYPCfJFd+69HMnFaNxIx4beiuXGJf5e7y2P
-   jjIZHif8PIqoGpu2AsC/bDw58eAOkRgGOiFna0G59EkXpyIutwGxL8nb9
-   mhZQAiGpC/MyJCj+KuROP2V6ohJqW+xB961Pd3I6qajaXR5mb1WsadoEB
-   Jmnz4zIbQnIB852ljMk8Z9HX8m8GR+ZQ0VYg6MRCXYFm3cBHCrQyvxumq
-   aw6+qAnFmvJxu/BwukHLRgRSOvBXRypu83MPnkW97ykF8iRcg+bQZOOSW
-   g==;
-X-CSE-ConnectionGUID: qgV54QVtS8C7rcxkisT06g==
-X-CSE-MsgGUID: PyP866H5QiSc3zjJIIYzAA==
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="35876300"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Dec 2024 08:25:44 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 11 Dec 2024 08:25:31 -0700
-Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 11 Dec 2024 08:25:31 -0700
-Message-ID: <fb11338b-986f-4a9a-a0dd-e8f4e63941aa@microchip.com>
-Date: Wed, 11 Dec 2024 08:25:32 -0700
+	s=arc-20240116; t=1733930828; c=relaxed/simple;
+	bh=BKIP6Fts7P9VMVBcKntIxvtkkTHt1ZG9kg8V7SXwY/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yf0b45wD7aRWrysJ4jMgUCticRpPxqJfCaTZ7arN3cGFIxJYwCU4MhfcgL1OJI09HPj24wmzguOaWNKiJo6k355TSW+Orar5Mnfx/1I3sRZAvGLsBvzEpj+go1G9zRTylv9OuMc6MNMPpeEU5N679VST1NG/kKCBkbPLXHlMnW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6gYo1gK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 967EAC4CED2;
+	Wed, 11 Dec 2024 15:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733930826;
+	bh=BKIP6Fts7P9VMVBcKntIxvtkkTHt1ZG9kg8V7SXwY/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C6gYo1gKS1TNb34aBzsmRZ3OY5SEP9rvNWACpNpHnclMjKTxwiyPLxhoftQhiGAme
+	 tLFm0boXwqIO2PVppDOclyPQ5aiEuigwFJTyZQj3A4oiE+SiXmDTtek8iYBzrzBx8q
+	 vwH49vHmbS95ScOZV9vx/LvkPnYkt08tQg5+UA7Pfl01ufiifSKUoUiV9WZoV5NVYV
+	 Rn9EuR4TeX/M8Pyoe3pEmpItrEDp0BryTSl9oYTK9NHCgcVdaYkGqNRPwb7tXg9wAQ
+	 4/0Z9AeITSZ07I3lYUsSiJu4jgLAs6+RqOJ1jlDUR/qS39YLWNwUEAMF75vNfRf2BZ
+	 g4kkIVa/kR3VA==
+Date: Wed, 11 Dec 2024 09:27:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 14/16] rust: platform: add basic platform device /
+ driver abstractions
+Message-ID: <20241211152704.GA2906470-robh@kernel.org>
+References: <20241210224947.23804-1-dakr@kernel.org>
+ <20241210224947.23804-15-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/13] dt-bindings: clock: Add SAMA7D65 PMC compatible
- string
-To: Rob Herring <robh@kernel.org>
-CC: <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<arnd@arndb.de>, <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
-	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>
-References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
- <5252a28531deaee67af1edd8e72d45ca57783464.1733505542.git.Ryan.Wanner@microchip.com>
- <20241210164638.GA3770349-robh@kernel.org>
-From: Ryan Wanner <ryan.wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <20241210164638.GA3770349-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210224947.23804-15-dakr@kernel.org>
 
-On 12/10/24 09:46, Rob Herring wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Tue, Dec 10, 2024 at 11:46:41PM +0100, Danilo Krummrich wrote:
+> Implement the basic platform bus abstractions required to write a basic
+> platform driver. This includes the following data structures:
 > 
-> On Fri, Dec 06, 2024 at 12:59:52PM -0700, Ryan.Wanner@microchip.com wrote:
->> From: Dharma Balasubiramani <dharma.b@microchip.com>
->>
->> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
->> since the SAMA7D65 PMC shares the same properties and clock requirements
->> as the SAMA7G5.
->>
->> Export MCK3 and MCK5 to be accessed and referenced in DT to assign to
->> the clocks property for sama7d65 SoC.
->>
->> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
->> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> The `platform::Driver` trait represents the interface to the driver and
+> provides `platform::Driver::probe` for the driver to implement.
 > 
-> Missing Conor's ack.
-I removed the ack because I have changed the original patch that was
-acked. Should the ack not have been removed even though the original
-patch as been changed?
+> The `platform::Device` abstraction represents a `struct platform_device`.
+> 
+> In order to provide the platform bus specific parts to a generic
+> `driver::Registration` the `driver::RegistrationOps` trait is implemented
+> by `platform::Adapter`.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  MAINTAINERS                     |   1 +
+>  rust/bindings/bindings_helper.h |   2 +
+>  rust/helpers/helpers.c          |   1 +
+>  rust/helpers/platform.c         |  13 +++
+>  rust/kernel/lib.rs              |   1 +
+>  rust/kernel/platform.rs         | 193 ++++++++++++++++++++++++++++++++
+>  6 files changed, 211 insertions(+)
+>  create mode 100644 rust/helpers/platform.c
+>  create mode 100644 rust/kernel/platform.rs
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
