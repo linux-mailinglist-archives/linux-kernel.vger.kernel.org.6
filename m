@@ -1,145 +1,215 @@
-Return-Path: <linux-kernel+bounces-441594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF529ED07E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDF9E1881F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:55:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6C41DACB1;
-	Wed, 11 Dec 2024 15:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aD4w8jRI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975669ED086
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAD11DA116;
-	Wed, 11 Dec 2024 15:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D3B28D9C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:55:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B371DA633;
+	Wed, 11 Dec 2024 15:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="heDTfIA/"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C381D934C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932485; cv=none; b=ukkQipPxLwUvBQ8CD+N3HYSpStgmt6GR2uUboFjtUBmgmyQim7xmhZ7Csxt4ccF7olGb245NyaCtGSacOD09ItbWhrUa5SPg7Vrt2NFr0+7YSp5HULYWvUGcEMOGRVOarfRUsWp/pLy04+bsWnr7lHOOpB4PTpiJyPyRClGAjS0=
+	t=1733932508; cv=none; b=SDSpKIIJYBiufXH3m0VXr50N1RtQsQa7rx+5kCbq4L49KZjt5oVGN808kIxsT5nghcevJoC9I/RD0f9n3CQGHTR0CuEMUxsf4hqhsWzMF33YBC7u4QD+gqcLAg+hHal9ltGB6OTBp03DAx9kTIOb3NGm1KDDsbVFMlPdBoM0OI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932485; c=relaxed/simple;
-	bh=fAtpFU5o1h8YJcA6IRudumE4PM0E6ftZoO/iy29wxhs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=mF3JaZkZuluhWg1lJ9iY6JqDS0sN5vH8Z7O4jHjEU1xWBio+JmdxAG6oas8fKONDOA3OeCQVoJLOG1RLmu92dOcXemJzP1Zzg24XMm9B6DKO88o3MA3Vu1XJ81/ZbUYqMuwTKFEZ+xkvvoyDvfWlzCc6PR7jFSfvoWcSFNFZsTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aD4w8jRI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A3CC4CED4;
-	Wed, 11 Dec 2024 15:54:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733932485;
-	bh=fAtpFU5o1h8YJcA6IRudumE4PM0E6ftZoO/iy29wxhs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aD4w8jRIi5OxX3I7JaG5HNrTi7cZ86UlXSCIeMWi56us7kfrgQXGR21qKlLLZlN8B
-	 BaF4Fv+I9qAMl9qycu8PLBXFwR/ViNMo0jC3v7pVPQMVFgR4m5p2qMn0XgsVN1hhCg
-	 dox1hXfIBlE/djXlGOVaPrmO8xKNUvn/+BeMUOvBkiee9zI3VPYzfac/37iZy2ki92
-	 XnA90BNTCDLMNcd7nL7c/tBw/corbCM1wO6ILKR8P9+Gli48mDcNzN7r7+saycF4tT
-	 BQuks1MCZ+PfFYxQJCDSlr6jNy754ivvaaBD7yUQuue6Ma/uuXZV5be0YiOg07rSid
-	 5z9lf23U/zbxg==
-Date: Wed, 11 Dec 2024 09:54:43 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1733932508; c=relaxed/simple;
+	bh=5yTQkTiLNlgzxMTI/87+m6H6CgU6XoaZc9oMqNk1wn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tCDG+AGRjj60e19OObmp0IHpIHlrun4c/ZGqA+wROCM5XyGe0TbcU0mfDwtz9pgzbUFg+HuEX1gn/ZJ15H+eOFeJSwJWQ9pP4JBX+1+hM6TThlSYee2c5yf8xv+Z9s17OMfvV0HeyR3vwx76L7ZJCk2SuEQVK49QfQJvnBbohV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=heDTfIA/; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-71e1728c307so603363a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:55:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733932506; x=1734537306; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cM4xWNbBQiQSKcdY0A3fSeeNjHX/5IOfsxpBhHQV0Y0=;
+        b=heDTfIA/JlWQESXRhU7fC/dWe9DVllk8GCnefxLngY3wJ0KzthA+tb50EzP0MqhabO
+         AvN5WdRDoN60df8YDV/jwntZWrtHKoZUSsxQl/fl/3pmBzRmLfDZ3kB8K0LMjWnfymmb
+         c5yxeDRayPv7OfJyA6yOecmyOWPb5MlWyiItY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733932506; x=1734537306;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cM4xWNbBQiQSKcdY0A3fSeeNjHX/5IOfsxpBhHQV0Y0=;
+        b=Xu1MjdHeeYAAC60jxco/V4Ohs/5KVRIwZnev6YrvCCuRc274xe3USq8BkMzWhV+6a/
+         4IBZ8BdpDnTK6cIvnxtsZOogfx62EsVxokqeV7dTOXrkQL6A7lmDTeqHrp350+NLcxNR
+         cAcc8DSZ1MIjjtLM0OLBMVUvs4FfP4k+RLNMCbiFdb5cMWxvpXqFeHhD82k/jDzbcR7s
+         a5M5ctcJ2mLduxi6N1T4ONMzeRCmTziDDI1RisHUUL3lOXPMeUhaJjT7lXhpE4TPehOT
+         ArAnlmKJD6OpVzodubVzyewsceEdSJKIYEwTc0ysNlms7bC/JQbSaAqT0QPxjDqZfHOS
+         nmSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/Rhg2H1/91+iGUDvLV2H628ePZUfKuZ8pILocsOhYpRqdsv/X5CVO1BUT7PKLvW7O8PQqSQDbRzHAO60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC+pm12Sw8KvSG4N9ZNs+apVL0x3iknrwywZHPviE9LE8mImiA
+	yYSj1C4M2sadksCZGsTIpEDuAlr9l/N3vN5zhH9Q+oHBqk68kxmcmnhfFv9Q4NZyvu1a8UrS+d9
+	MWCzU/8pm3oDkBcaePexdV1x7Ttze0lI7vvv1
+X-Gm-Gg: ASbGncuSYSGlnrE1BsEteWpFRDGdNU2uGj5yQal+GAxOxWYyq3wFHJ3Ub4yVx8b/Iwj
+	GedsDb/a7CrAwYCTt+QyFv2GLWORTiy7CuxLGncYrk5RTqZBma197IuJMGRAt6tsg7w==
+X-Google-Smtp-Source: AGHT+IEx/8qyRNCpAGNyBiIPDTaO6ywfXdqcQHAcz/L6po3vkqyog9ldUzPG1MyazfliKkJNK0LiFAhyClCexcxNoJQ=
+X-Received: by 2002:a05:6830:6f0b:b0:71d:641b:8295 with SMTP id
+ 46e09a7af769-71e19b469b3mr2387272a34.28.1733932506288; Wed, 11 Dec 2024
+ 07:55:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: "moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
- michal.simek@xilinx.com, monstr@monstr.eu, git@xilinx.com
-To: Michal Simek <michal.simek@amd.com>
-In-Reply-To: <cover.1733920873.git.michal.simek@amd.com>
-References: <cover.1733920873.git.michal.simek@amd.com>
-Message-Id: <173393224728.3091150.11085112233542602601.robh@kernel.org>
-Subject: Re: [PATCH 00/15] ARM: zynq: Sync DTs with U-Boot
+References: <20241209064632.1705578-1-xji@analogixsemi.com> <fy6zvkdidz2srerfq5bshgcshps2wfa4syxwndwesgxcej66ws@nf5svlpkeodh>
+In-Reply-To: <fy6zvkdidz2srerfq5bshgcshps2wfa4syxwndwesgxcej66ws@nf5svlpkeodh>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Wed, 11 Dec 2024 23:54:54 +0800
+Message-ID: <CAEXTbpeC9DpLxHm2fw7hWKGfpxhUy5ZgHXtGJ0=WSxRrVa845w@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/bridge:anx7625: Update HDCP status at atomic_disable()
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	bliang@analogixsemi.com, qwen@analogixsemi.com, treapking@google.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Dimitry,
 
-On Wed, 11 Dec 2024 13:41:19 +0100, Michal Simek wrote:
-> Hi,
-> 
-> over years there were some changes pushed to U-Boot which were never merged
-> back to Linux. U-Boot introduced new option OF_UPSTREAM and start to sync
-> up DTs from Linux back to U-Boot.
-> This series is addressing differences.
-> There are still 3 more differences but they should be addressed separately.
-> 
-> Thanks,
-> Michal
-> 
-> 
-> Michal Simek (14):
->   ARM: zynq: Remove deprecated device_type property
->   ARM: zynq: DT: List OCM memory for all platforms
->   ARM: zynq: Mark boot-phase-specific device nodes
->   ARM: zynq: Do not define address/size-cells for nand-controller
->   ARM: zynq: Wire smcc with nand/nor memories on zc770 platform
->   ARM: zynq: Add ethernet phy reset information to DT(zc702)
->   ARM: zynq: Define u-boot bootscrip addr via DT
->   ARM: zynq: Point via nvmem0 alias to eeprom on zc702/zc706
->   ARM: zynq: Define rtc alias on zc702/zc706
->   ARM: zynq: Rename i2c?-gpio to i2c?-gpio-grp
->   ARM: zynq: Fix fpga region DT nodes name
->   ARM: zynq: Enable QSPIs on platforms
->   ARM: zynq: Add sdhci to alias node
->   ARM: zynq: Remove ethernet0 alias from Microzed
-> 
-> Sai Krishna Potthuri (1):
->   ARM: zynq: Replace 'io-standard' with 'power-source' property
-> 
->  arch/arm/boot/dts/xilinx/zynq-7000.dtsi       | 33 ++++++-
->  arch/arm/boot/dts/xilinx/zynq-cc108.dts       | 41 ++++++++-
->  arch/arm/boot/dts/xilinx/zynq-microzed.dts    | 10 ++-
->  arch/arm/boot/dts/xilinx/zynq-parallella.dts  |  1 -
->  arch/arm/boot/dts/xilinx/zynq-zc702.dts       | 87 +++++++++++++------
->  arch/arm/boot/dts/xilinx/zynq-zc706.dts       | 67 +++++++++++---
->  arch/arm/boot/dts/xilinx/zynq-zc770-xm010.dts | 39 ++++++++-
->  arch/arm/boot/dts/xilinx/zynq-zc770-xm011.dts | 31 +++++++
->  arch/arm/boot/dts/xilinx/zynq-zc770-xm012.dts | 35 ++++++++
->  arch/arm/boot/dts/xilinx/zynq-zc770-xm013.dts | 41 ++++++++-
->  arch/arm/boot/dts/xilinx/zynq-zed.dts         | 43 ++++++++-
->  .../boot/dts/xilinx/zynq-zturn-common.dtsi    |  8 ++
->  arch/arm/boot/dts/xilinx/zynq-zybo-z7.dts     | 10 ++-
->  arch/arm/boot/dts/xilinx/zynq-zybo.dts        |  9 +-
->  14 files changed, 404 insertions(+), 51 deletions(-)
-> 
+Thanks for the review.
+
+On Wed, Dec 11, 2024 at 5:44=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Mon, Dec 09, 2024 at 02:46:32PM +0800, Xin Ji wrote:
+> > When user enabled HDCP feature, upper layer will set HDCP content
+> > to DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
+> > HDCP content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
+> > support HDCP feature.
+> >
+> > However once HDCP content turn to  DRM_MODE_CONTENT_PROTECTION_ENABLED
+> > upper layer will not update the HDCP content to
+> > DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
+>
+> What is "upper layer"? Is it a kernel or a userspace?
+
+I think Xin meant userspace, but sounds like there are some
+misunderstanding around the HDCP status.
+>
+> >From drm_hdcp_update_content_protection() documentation:
+>
+> No uevent for DESIRED->UNDESIRED or ENABLED->UNDESIRED,
+> as userspace is triggering such state change and kernel performs it witho=
+ut
+> fail.This function update the new state of the property into the connecto=
+r's
+> state and generate an uevent to notify the userspace.
+>
+>
+> >
+> > So when user dynamic change the display resolution, anx7625 driver must
+> > call drm_hdcp_update_content_protection() to update HDCP content to
+> > DRM_MODE_CONTENT_PROTECTION_UNDESIRED in bridge interface
+> > .atomic_disable().
+>
+> Why?
+>
+> >
+> > Signed-off-by: Xin Ji <xji@analogixsemi.com>
+> > ---
+> >  drivers/gpu/drm/bridge/analogix/anx7625.c | 25 ++++++++++++++++++-----
+> >  1 file changed, 20 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/dr=
+m/bridge/analogix/anx7625.c
+> > index a2675b121fe4..a75f519ddcb8 100644
+> > --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
+> > +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> > @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_dat=
+a *ctx)
+> >                                TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
+> >  }
+> >
+> > +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ct=
+x)
+> > +{
+> > +     struct device *dev =3D ctx->dev;
+> > +
+> > +     if (!ctx->connector)
+> > +             return;
+> > +
+> > +     anx7625_hdcp_disable(ctx);
+> > +
+> > +     ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
+> > +     drm_hdcp_update_content_protection(ctx->connector,
+> > +                                        ctx->hdcp_cp);
+> > +
+> > +     dev_dbg(dev, "update CP to UNDESIRE\n");
+> > +}
+> > +
+> >  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
+> >  {
+> >       u8 bcap;
+> > @@ -2165,11 +2181,8 @@ static int anx7625_connector_atomic_check(struct=
+ anx7625_data *ctx,
+> >                       dev_err(dev, "current CP is not ENABLED\n");
+> >                       return -EINVAL;
+> >               }
+> > -             anx7625_hdcp_disable(ctx);
+> > -             ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
+> > -             drm_hdcp_update_content_protection(ctx->connector,
+> > -                                                ctx->hdcp_cp);
+> > -             dev_dbg(dev, "update CP to UNDESIRE\n");
+> > +
+> > +             anx7625_hdcp_disable_and_update_cp(ctx);
+>
+> No. atomic_check() MAY NOT perform any changes to the hardware. It might
+> be just a probe from userspace to check if the mode or a particular
+> option can be set in a particular way. There is no guarantee that
+> userspace will even try to commit it.
+
+So, we should move the hdcp status update from .atomic_check() to
+.atomic_enable() and .atomic_disable(), right? That is, enable HDCP
+for the chip at .atomic_enable() if it is DESIRED and disable it at
+.atomic_disable() if we enabled it previously.
+
+Maybe we can keep some of the checks in .atomic_check(), but I doubt
+if those logics actually make sense.
+>
+> >       }
+> >
+> >       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_ENABLED) {
+> > @@ -2449,6 +2462,8 @@ static void anx7625_bridge_atomic_disable(struct =
+drm_bridge *bridge,
+> >
+> >       dev_dbg(dev, "drm atomic disable\n");
+> >
+> > +     anx7625_hdcp_disable_and_update_cp(ctx);
+> > +
+> >       ctx->connector =3D NULL;
+> >       anx7625_dp_stop(ctx);
+> >
+> > --
+> > 2.25.1
+> >
+>
 > --
-> 2.43.0
-> 
-> 
-> 
+> With best wishes
+> Dmitry
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y xilinx/zynq-cc108.dtb xilinx/zynq-microzed.dtb xilinx/zynq-parallella.dtb xilinx/zynq-zc702.dtb xilinx/zynq-zc706.dtb xilinx/zynq-zc770-xm010.dtb xilinx/zynq-zc770-xm011.dtb xilinx/zynq-zc770-xm012.dtb xilinx/zynq-zc770-xm013.dtb xilinx/zynq-zed.dtb xilinx/zynq-zybo-z7.dtb xilinx/zynq-zybo.dtb' for cover.1733920873.git.michal.simek@amd.com:
-
-arch/arm/boot/dts/xilinx/zynq-parallella.dtb: ethernet@e000b000: ethernet-phy@0: Unevaluated properties are not allowed ('marvell,reg-init' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/cdns,macb.yaml#
-arch/arm/boot/dts/xilinx/zynq-zc702.dtb: ethernet@e000b000: Unevaluated properties are not allowed ('phy-reset-active-low', 'phy-reset-gpio' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/cdns,macb.yaml#
-
-
-
-
-
+Regards,
+Pin-yen
 
