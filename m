@@ -1,101 +1,101 @@
-Return-Path: <linux-kernel+bounces-441125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFD59EC9F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:08:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94F69EC881
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D16D1667DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7666F188520F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53051DF755;
-	Wed, 11 Dec 2024 10:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OiejW2qi"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9935D2210D2;
+	Wed, 11 Dec 2024 09:10:44 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D374E236F98
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C480C1F8691;
+	Wed, 11 Dec 2024 09:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733911697; cv=none; b=uqeaADJ1RBCiTqvTPUOR+uOHi2CRxKLRcaGuc/3Fg+hnQqQbt7Sgo+eZnabHdsUUuQKx4OoqlDkxSoUSDvLt0E5H9YfuWPMYzZPpHk1UVsumE8cs7sqFlmsOpJ+B1YoBd11Nc/X/3DVN37xWY3h1lhLU8WiqF1kAExucjVUlbKM=
+	t=1733908244; cv=none; b=rhz1ff35IpdCxdQ6y/hVwfwb5V9Is8lFZpEtbr1lcs3dD248phTl8Jx+RtHO6tNE2kFFjTnpIZ2IXqcdC+OQNGPUtknr1KOq4lQ6c20oB4PY+W2iTmG/AW9CBX68dYDDDtYJu5y6UpsNIG4xAhXd0U/Rj05Nnn0RsXnptZoABiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733911697; c=relaxed/simple;
-	bh=bqJUjrkI55mmiDYGdlE0rAGK2L5PYVFKaQq0z6N9hvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRV0rYn4YKwkVp7CB8i9axt9Vk8tuC0cv3GbHbtz2jWg3rk/gdA31xbANYQ43MJsWrUlo3/1+868H8V1VtBA4xhQP+Y1n8w7ZfabJ2/w+lqpAdVwH4j8Yv50tHeatRL5xBNNt1Wo+QYtQe5BVh2XM+UZQjcp1rDYFj8CLkEcaxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OiejW2qi; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso371456a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733911695; x=1734516495; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vI92TzbYXb83Ifwlj5p+PZoYU+BaLo97B2EHtHKRH8=;
-        b=OiejW2qiL7YH7RWwK3LGZa8/Kb5kOTjYHskVadqgDCLeLUGOgRoM1wtFqCYXOzjoaZ
-         lXUHs/voSUPH1tmVbdChyiPGvAIsKVAep6Lf8G7xHeJeGpeHCd/HM25VJzv4fVXWZm47
-         PYN90TASVhdxK5pf51dMLCGnQ0iT9q0NdEC8c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733911695; x=1734516495;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6vI92TzbYXb83Ifwlj5p+PZoYU+BaLo97B2EHtHKRH8=;
-        b=Y0LvLq3y5UZRAGuOAW+6DCz+zk5WyPFL3NNrlnrKtDFS7ePTkB54ieh1HhqXw4AVMK
-         plS69q7KEfS929eE2Ryllu7IVT7tQdU9WxoLp4eU+dU7aga17PedxNHjX6dtz1c/Ocjj
-         LbGLtuNYWjK4WEl2WlG0SGtwH2MhEj22zxCudEbE9FGUDENeDrsK+3HNtXtsNWdjy4Zq
-         u71tc2Ff686IbOrKiNtqp8fTJOGgh3AOtqcprdeeJUcp1uocB5c77Hwkavry6gMN886y
-         nIuOyaY7diSUyYBr1DWcEd2T4OHCgX0RziocmQZ4OaVgn9wOnUJrlZ663Zt2oZXPdL6W
-         8+Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmhdd6mI44dcW1EwXnbmEhqBBTXVLyWqJN7wX5mkQfkz8a0cyD4HBih0kZON03GR4xiB8pZAGOgxTIelw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/21OLfuuup7rbVKitM2lkI5AfqOV07AOmwYJIXIXz98KaUkBK
-	iO0f80wk6MLbgTI8+jwaMpwwJkK/MGWUF4zvqCCrqplymFzJTkwu24z74expKQ==
-X-Gm-Gg: ASbGncu3iERBCn5eYx6XeRGOQONwYY4im/qZnfZPehzY2C/Z2okkcf59cmpWKjWxT9p
-	J6QKK3S3YhS80DmhLqpO9jJ5fGfgsEaac4s0dDVi1wTcHJoRI/GAnGfvsxiM4YsFq4kH2QHz7Lq
-	/+R3w1WV5lmw6Z4878xODILug2dglUx1Gg5QifZ5JLBYhR4Q8kVsKYetbBoPphMSYnGVsmjpsM+
-	iG4jSsDgMbkBu0XC2mhZizbsVo6GZpFkVJxBtOxaUOpVPHkQBl49WXtgA==
-X-Google-Smtp-Source: AGHT+IHSLi0X5Fvs2Z69ghKCEVQLK9DegAx2XqrIMEwoa3s/1ZFlmuvl7RgffwwihL7mRPnKBmKeCg==
-X-Received: by 2002:a17:90b:1811:b0:2ef:9247:240e with SMTP id 98e67ed59e1d1-2f12881abb4mr3073526a91.18.1733911695104;
-        Wed, 11 Dec 2024 02:08:15 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:d087:4c7f:6de6:41eb])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef85e30d12sm7601017a91.28.2024.12.11.02.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 02:08:14 -0800 (PST)
-Date: Wed, 11 Dec 2024 19:08:10 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] zram: use zram_read_from_zspool() in writeback
-Message-ID: <20241211100810.GE2091455@google.com>
-References: <20241211082534.2211057-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1733908244; c=relaxed/simple;
+	bh=a3K64jJA2uqJMe1HS7E60k7y1DffRW1euJVCcFm1q9Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SP5lqzRclCyl2URuna+ixTwFoMO8dfmBwAb232XvNKwWuXFy5vq46Ek0FKKo6pit+sX1vK8r1ecBbY4FeMPg5NbuhWLIpeD7ZkYnE13iTh/PsnyT4D7a6/OQ3EcFaF0AtrfuETkL1CHjIyreA3d4V0+M4mE8S302jGcWXaGPjic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5lpTm000975;
+	Wed, 11 Dec 2024 09:10:21 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy3kysv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 11 Dec 2024 09:10:21 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 11 Dec 2024 01:10:19 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 11 Dec 2024 01:10:17 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <rtm@csail.mit.edu>, <gregkh@linuxfoundation.org>,
+        <almaz.alexandrovich@paragon-software.com>
+CC: <patches@lists.linux.dev>, <stable@vger.kernel.org>,
+        <ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 6.1.y] fs/ntfs3: Fixed overflow check in mi_enum_attr()
+Date: Wed, 11 Dec 2024 18:08:11 +0800
+Message-ID: <20241211100811.2069894-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211082534.2211057-1-senozhatsky@chromium.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 5NpboHxqjj25SPvjgNMWaF6Wh2cWABDp
+X-Proofpoint-ORIG-GUID: 5NpboHxqjj25SPvjgNMWaF6Wh2cWABDp
+X-Authority-Analysis: v=2.4 cv=D7O9KuRj c=1 sm=1 tr=0 ts=675956fd cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=GFCt93a2AAAA:8 a=t7CeM3EgAAAA:8 a=fATKHIbVh68Ky4GJMjkA:9 a=0UNspqPZPZo5crgNHNjb:22
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-11_08,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
+ adultscore=0 priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0
+ clxscore=1011 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2411120000 definitions=main-2412110068
 
-On (24/12/11 17:25), Sergey Senozhatsky wrote:
-> We only can read pages from zspool in writeback, zram_read_page()
-> is not really right in that context not only because it's a more
-> generic function that handles ZRAM_WB pages, but also because it
-> requires us to unlock slot between slot flag check and actual page
-> read.  Use zram_read_from_zspool() instead and do slot flags check
-> and page read under the same slot lock.
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 
+[ Upstream commit 652cfeb43d6b9aba5c7c4902bed7a7340df131fb ]
 
-Andrew, sorry for the noise, please ignore this mini-series.  Let me
-re-send it combined with v2 of `zram: split page type read/write handling`
-series [1]
+Reported-by: Robert Morris <rtm@csail.mit.edu>
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+---
+ fs/ntfs3/record.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/linux-kernel/20241210105420.1888790-1-senozhatsky@chromium.org
+diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
+index 7ab452710572..826a756669a3 100644
+--- a/fs/ntfs3/record.c
++++ b/fs/ntfs3/record.c
+@@ -273,7 +273,7 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
+ 		if (t16 > asize)
+ 			return NULL;
+ 
+-		if (t16 + le32_to_cpu(attr->res.data_size) > asize)
++		if (le32_to_cpu(attr->res.data_size) > asize - t16)
+ 			return NULL;
+ 
+ 		if (attr->name_len &&
+-- 
+2.25.1
+
 
