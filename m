@@ -1,63 +1,53 @@
-Return-Path: <linux-kernel+bounces-441528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08D19ECFB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:29:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF33A9ECFB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2D21889076
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:29:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F86166C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531111CB9E2;
-	Wed, 11 Dec 2024 15:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B6F1D63C8;
+	Wed, 11 Dec 2024 15:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHgXlIQS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qysWSzRh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42261AA1C4;
-	Wed, 11 Dec 2024 15:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71181AA1C4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733930944; cv=none; b=nwppIAcZs8siE4NGyApd3SDw3lQa32sTXBJiu0jUDZeJ1abAOT0uOsamPjsrvbYt5k3kFFNhyx7+97aqVKdAzFlM0riWLFxMU5VwtJaiojB0kOHZv6yLDLoi4OmSzYg2+h0f0EIs2zDq8jnqdvHwXGXcevy99VopAaBlkrkqxh4=
+	t=1733930949; cv=none; b=uWyehWto2zSpJuRmQzdyx0Ck3hPOgXTYhbEauGDyVpw6BgmO9jaOsmS382USTXUeQDsJzFTSmQDB0U1hVs9HF/aLTrKBtj6tdt7qCEt3UM3X4pCh90uIsD+QCRmNdqBpeP/PnzyVJ9wjqZ60ANf9Or9N2tJWiRAp7qxWiTJz1KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733930944; c=relaxed/simple;
-	bh=TAkXGoru7IboFNheO16srMs+Hv5/y72CCn02eUzuyLM=;
+	s=arc-20240116; t=1733930949; c=relaxed/simple;
+	bh=rkwQDpMysmHivnLSIZ3GemthozTMlUPliRC4tSjcAEU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5mVkS/tdNlBlJel+bnsUYfYpE3Vm25DT0seMj7A+ZuINeJQ/n43MdtsZU7CyQglQ1X0/7A2VGY/4fC6ecgoZeNNLGf4TcYFUEsMK/wYs0BkP82kNAIt80b+Ly7aNOouuzxjGX9gY0eINHawDyzGl6b9EImfEU1wnCESHMJWzxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHgXlIQS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D080C4CED2;
-	Wed, 11 Dec 2024 15:29:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=d59tce3MDgFkk+MscUQiuT6k8koQr+ypZNFlDnqUI3cRwCdzmaaONt1zxYTKHk1gIAzBpRh0AeBhAJxocx8D6oZ7X1JIAR2dpbGX0YS2tyeN2dPZhMNC0pB2wy2stx/g99Z7cpf/yCXG/klvdCx0yut2fqTo6qsOiUp0p63iEcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qysWSzRh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ED31C4CED2;
+	Wed, 11 Dec 2024 15:29:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733930944;
-	bh=TAkXGoru7IboFNheO16srMs+Hv5/y72CCn02eUzuyLM=;
+	s=k20201202; t=1733930948;
+	bh=rkwQDpMysmHivnLSIZ3GemthozTMlUPliRC4tSjcAEU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YHgXlIQS5eH2JmCMGpmZPM3HedoUkg84SHg9kmruUuiNuDtG8QDl7H9t36d5WxEr5
-	 aXrrnqQPNu6bNZvZ9mVaybvDJFw3N6gl8it+sISL8MZFDk5IQIadFCvyYky3GRWpK/
-	 QHgF9I/k74OIcP2X/f1ghbYfyNdIOjgF65uSPv5RwonYOB4RHY26yWOG17CJy1l7Uk
-	 RNZGin55Y5nDXqx2JBI/1yuTAXYr77znMJsV3ecZFqUU1jW2b2nDQ7StuVWthpA/Xs
-	 1UZ2YWHIr+edDF9GGvVGCVwK6Jfo/guMgaO9dYAxSf5qRbN81YGMPtqyT2cPw8nQoV
-	 zeik5zrE7WbKA==
-Date: Wed, 11 Dec 2024 09:29:02 -0600
-From: Rob Herring <robh@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 15/16] samples: rust: add Rust platform sample driver
-Message-ID: <20241211152902.GB2906470-robh@kernel.org>
-References: <20241210224947.23804-1-dakr@kernel.org>
- <20241210224947.23804-16-dakr@kernel.org>
+	b=qysWSzRhG6kGtZEyZB9pS+uPvFDbrukqYpUnBXNYB7gIpF1cNCh0QmwJQuSndgw/y
+	 FURauapPHfIid4f0VHDGvXFR5VYmU3UGxS+ibKndauCCyc5c13GLpInCZIYmGGtlmu
+	 RUxVn7X34lNVVE243hNaEDPEDc06xsrT0UoXOC4Dz4MjFG1AXCf/HMozC3dXSGdxj7
+	 wwzMHP0jG4ma7iUrvtrVcgqd3UUa6vo7SdWB9MZYA22X+VJHWXKyhUJhYM8KBZjkI0
+	 NepsWXC5mJwLKrNtnO3IJ6vnNlodMZR4zxmSbfPXzeJ8aBbiT0Zk8VHJ7UNimeOtzJ
+	 IKPrOvEBM9VUw==
+Date: Wed, 11 Dec 2024 05:29:07 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Changwoo Min <multics69@gmail.com>
+Cc: void@manifault.com, kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
+	Changwoo Min <changwoo@igalia.com>
+Subject: Re: [PATCH] MAINTAINERS: add me as reviewer for sched_ext
+Message-ID: <Z1mvw1proKmPUvsD@slm.duckdns.org>
+References: <20241211083945.832294-1-changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,24 +56,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210224947.23804-16-dakr@kernel.org>
+In-Reply-To: <20241211083945.832294-1-changwoo@igalia.com>
 
-On Tue, Dec 10, 2024 at 11:46:42PM +0100, Danilo Krummrich wrote:
-> Add a sample Rust platform driver illustrating the usage of the platform
-> bus abstractions.
+On Wed, Dec 11, 2024 at 05:39:45PM +0900, Changwoo Min wrote:
+> Add me as a reviewer for sched_ext. I have been actively working on
+> the project and would like to help review patches and address related
+> kernel issues/features.
 > 
-> This driver probes through either a match of device / driver name or a
-> match within the OF ID table.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  MAINTAINERS                                  |  1 +
->  drivers/of/unittest-data/tests-platform.dtsi |  5 ++
->  samples/rust/Kconfig                         | 10 ++++
->  samples/rust/Makefile                        |  1 +
->  samples/rust/rust_driver_platform.rs         | 49 ++++++++++++++++++++
->  5 files changed, 66 insertions(+)
->  create mode 100644 samples/rust/rust_driver_platform.rs
+> Signed-off-by: Changwoo Min <changwoo@igalia.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Applied to sched_ext/for-6.13-fixes.
+
+Thanks.
+
+-- 
+tejun
 
