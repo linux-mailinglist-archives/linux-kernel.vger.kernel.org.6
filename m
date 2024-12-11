@@ -1,168 +1,109 @@
-Return-Path: <linux-kernel+bounces-442038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3859ED740
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:31:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B769ED742
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:32:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBFB281C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD12188A181
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF0420B7F4;
-	Wed, 11 Dec 2024 20:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED62820CCC2;
+	Wed, 11 Dec 2024 20:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FOOviwwc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dV4d06UF"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94A42594B5;
-	Wed, 11 Dec 2024 20:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3032594B5;
+	Wed, 11 Dec 2024 20:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733949052; cv=none; b=Zfxx+7o0vRxE7unbHVV7apaCWMKnzAtSPw8ZEXd5t90Vexrpfp43YiVhRSYh999xoLKnkqkj789gs6ANBcUZMlYQ/pUJR6PgGFR0zMvMd+O+fP6pO/KSIfSXjwykJjsCrh6QaTk8EWQNGH4i4gGR/6617N7dk1TcO7e1SpzQqS0=
+	t=1733949161; cv=none; b=ILSy5IBpPbLnR9qQcDN1UeUZT1LHzcIW7CAUWsk2x/gxihphqA1hh5wD8QWQo4EWrw3cwZfFdRfScx5c4MWdKFxGyvWudTUoJp1ZW/mkPPW8HeGexse67fj+Mo6/GCBg6SLjH/aunFjv9wkEkCO9tHzDrM5y8z28M22wfci1K5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733949052; c=relaxed/simple;
-	bh=XCXXh9j93NsjIe52hhBIM9bIsa2zlatKw6Lg9gLo1j8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Rpf+W30KH8/K25SRrIDg3aBV6TJlhp6VZKuNxlQHTo6BubNUd1Momw4IBIFPprs9o3hoBW4oxA+lWXMZNqTRFjjdHmQoN+d5c0jUvVkB0/AcoaZNjgqmb3kc0blOVDkRcbaJ7aPk1otUyvb6H2fhyI8+vlTDZYEN23lLUOzxOfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FOOviwwc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHD2De029009;
-	Wed, 11 Dec 2024 20:30:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SaUEmMPR5hAVeKcLyli8tiJit5WQFU76fMSw576M9vk=; b=FOOviwwcu3tQT3IE
-	M48fcNg42D0XPkylqilyTuoan+ZuC6RvZA3sN+QVUrLR/SKec1kEm8nDT1Xv6zA/
-	zzPHxhuA0nDePQdRGuTFCJMXtHRn8KSlbOmha6Se4jp9bond42oDJKf0y4fLYsPL
-	A+YRYLRkqArypyCr4BfnK0FM3ZXN1O0pA05pGb0ZReuaKt/XWUfTl9okxhtN6U6L
-	eBXHs5P/Kb4ukNTqfuvdH1FScXkePU5XN9g8/ezMkV2XsLnRphyBwsPdJmxlP6M4
-	/cVCcIa9zfnPbLjq5riBAU8YVdF/VU7FsN6gvCmb0W4WzJ9PMAopbECzPDUUKhJY
-	rQgF+g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd4xrtd7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 20:30:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBKUXg8012320
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 20:30:33 GMT
-Received: from [10.216.57.155] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 12:30:27 -0800
-Message-ID: <38f94094-c8ff-4c5a-aba5-6cc5acb81aa6@quicinc.com>
-Date: Thu, 12 Dec 2024 02:00:24 +0530
+	s=arc-20240116; t=1733949161; c=relaxed/simple;
+	bh=pCrWNNBi554r6fF0yAoa4pQOPYVe5E43HR+EADonklY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B5CxP250NWkoLFOif2ceSfAix/0uSZH/RKbhiA/8BGVlL8Mb260cdn5VpfQe2qf6aB8Blt3Wi23mqN7ylWjKAc+NZDFAe6tvOJL3/VXsmYDrJ91N9z0+FkDmRSbZ1EgOZjEdMyx0K8E/EhztyjsuHrE1WM8bGEWRjCi3Tcps1AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dV4d06UF; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 91AEE40E0286;
+	Wed, 11 Dec 2024 20:32:35 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id kyvswteMX4sA; Wed, 11 Dec 2024 20:32:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733949151; bh=6eD4Z40sb6Gr6OGjyS3lwQNEdVFubwhsek6uZmA3iKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dV4d06UFZsmvyqfdidcNGtOHj0krL2ODfCAW4eKI4vSub0YeaBtbL4k9HgcWCJpYq
+	 kp2dmv1tylCLRKlUZl193quAlv61Yqs4IXaL+/8hTd/sUUIcdJS+RSRkX7uEFQHU9M
+	 XRf/DIkuHjXBDw9bAWVyPG/pek9Y8Nvm1FXsfrwo0/e4DG5SWt/tWAxR4nhZadXN2M
+	 tCU5flicQOCNvfikY9K095QmnZrLnzo/UKleLePtTnaYrrByenuDEKkzzuXpiyuGwK
+	 lSYAnDsHC/kuwFSo9S3GzXMvruzfzdO5m5hQg78MkqQccNhaGYANI5TU50pBTGVvHF
+	 n87du4npP/BugN7QmaXsYV1jRvgSeyYJSS9NIYEJolibXcYwAra0E8x2XwHfoQ/G4Q
+	 kh4ngUit8vX2ZVMVMhbiGoiLfEqHemuOvIksI/xr5jKLnddwaV0TMZPY+inMg/tXVP
+	 zsRFq+0UkZRvAKaLvSbiUT4HW3e3vEV4pbtEmUl7w40unRSwtZCNSz+ZH5biQZ12V9
+	 WTKG5bx69zJpUXGXb6XCNDhFYOg6BlRlVrRl59Wv16MNmCloPuCAB6J7TLxX09TEbY
+	 Ewm6/F43sqq/EXHAwA18cMvWsgv3wpBgRWWxmeqsQQTeTfVPn4rfd1uRkxvBbTkcGa
+	 WzjehDuic0DA3N1wGlZYWxMU=
+Received: from zn.tnic (p200300Ea971F93ce329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:93ce:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 98EA640E0169;
+	Wed, 11 Dec 2024 20:32:20 +0000 (UTC)
+Date: Wed, 11 Dec 2024 21:32:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v15 07/13] x86/sev: Mark Secure TSC as reliable
+ clocksource
+Message-ID: <20241211203214.GDZ1n2zvfqjYj4TpzB@fat_crate.local>
+References: <20241203090045.942078-1-nikunj@amd.com>
+ <20241203090045.942078-8-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: qcs615: Add gpu and gmu nodes
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jie Zhang <quic_jiezh@quicinc.com>
-References: <20241126-qcs615-gpu-dt-v1-0-a87782976dad@quicinc.com>
- <20241126-qcs615-gpu-dt-v1-2-a87782976dad@quicinc.com>
- <573d254c-9478-400a-9811-d8de7eba6dcb@oss.qualcomm.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <573d254c-9478-400a-9811-d8de7eba6dcb@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pdNQlLHZDcohJTwOCTwOJWpFeFr-bAFy
-X-Proofpoint-GUID: pdNQlLHZDcohJTwOCTwOJWpFeFr-bAFy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 mlxlogscore=962 phishscore=0 adultscore=0
- suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110143
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241203090045.942078-8-nikunj@amd.com>
 
-On 12/6/2024 1:16 AM, Konrad Dybcio wrote:
-> On 26.11.2024 3:06 PM, Akhil P Oommen wrote:
->> From: Jie Zhang <quic_jiezh@quicinc.com>
->>
->> Add gpu and gmu nodes for qcs615 chipset.
->>
->> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
->> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 86 ++++++++++++++++++++++++++++++++++++
->>  1 file changed, 86 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index 8df26efde3fd6c0f85b9bcddb461fae33687dc75..f6a3fbbda962f01d6cf2d5c156ea1d1d846f310a 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -387,6 +387,11 @@ smem_region: smem@86000000 {
->>  			no-map;
->>  			hwlocks = <&tcsr_mutex 3>;
->>  		};
->> +
->> +		pil_gpu_mem: pil-gpu@97715000 {
->> +			reg = <0x0 0x97715000 0x0 0x2000>;
->> +			no-map;
->> +		};
->>  	};
->>  
->>  	soc: soc@0 {
->> @@ -508,6 +513,87 @@ qup_uart0_rx: qup-uart0-rx-state {
->>  			};
->>  		};
->>  
->> +		gpu: gpu@5000000 {
->> +			compatible = "qcom,adreno-612.0", "qcom,adreno";
->> +			reg = <0x0 0x05000000 0x0 0x90000>;
->> +			reg-names = "kgsl_3d0_reg_memory";
->> +
->> +			clocks = <&gpucc GPU_CC_GX_GFX3D_CLK>,
->> +				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
->> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
->> +				 <&gpucc GPU_CC_CX_GMU_CLK>,
->> +				 <&gpucc GPU_CC_CXO_CLK>,
->> +				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
-> 
-> This one belongs under the adreno_smmu node
+On Tue, Dec 03, 2024 at 02:30:39PM +0530, Nikunj A Dadhania wrote:
+> diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
+> index 774f9677458f..fa0bc52ef707 100644
+> --- a/arch/x86/mm/mem_encrypt_amd.c
+> +++ b/arch/x86/mm/mem_encrypt_amd.c
+> @@ -541,6 +541,10 @@ void __init sme_early_init(void)
+>  	 * kernel mapped.
+>  	 */
+>  	snp_update_svsm_ca();
+> +
+> +	/* Mark the TSC as reliable when Secure TSC is enabled */
+> +	if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
+> +		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
 
-Yeah, right. Unlike downstream, smmu is a supplier of gpu here.
+What happens if someone writes MSR 0x10 on some CPU and thus makes the TSCs on
+the host unsynchronized and that CPU runs a SecureTSC guest?
 
--Akhil
+That guest would use RDTSC and get wrong values and turn the guest into
+a mess, right?
 
-> 
-> Konrad
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
