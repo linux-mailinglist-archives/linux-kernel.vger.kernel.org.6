@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-441230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417029ECB79
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:41:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F579ECB7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:42:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536DB165EC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:41:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E19283496
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D225A211A37;
-	Wed, 11 Dec 2024 11:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35783211A2A;
+	Wed, 11 Dec 2024 11:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWj+zK/a"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prW8fMoh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76E4238E27;
-	Wed, 11 Dec 2024 11:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C97C238E27;
+	Wed, 11 Dec 2024 11:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733917301; cv=none; b=iiY0sC1cgRoXf+Y1eVClBafnDod3WdkGkBbiglOvtnhx2Y5DnpnOmFB1K7wjfcoCCH5DmpZOl6q9oJslrOwLquOzuH0ULAxtULv6KjDcbvDIy66BrXmbbnueFu2IBN0ziGFqM6MviR7dWkPeH1jXMyO1Tz172IrKgzeKctYrkAA=
+	t=1733917343; cv=none; b=NUu3uJun+GWsFTrq/0JXwiDL/rulDspNfM9oQVKQifjcNNfVyd+7sFJKWppvqyjsL1NWNH6LecmsBzzcD/Kz6HTf37vq8scEH017gaxbU60uBPAYD+gwYvpiiXxjxhzR+StDPhxI5nqMGN11lco8XS3iLIlbltuAHFP1DW5m1D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733917301; c=relaxed/simple;
-	bh=1mhHRf1Ma1uEypkWhhQBKWHLQA7xnihYcYLQFZydAQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eAkC2Z52Ym8XQuvo9YHo6n6f8Y+AiZ+1ocB8C9Hr20qTCAjwLmBlWrGZjRgd6gYzChZiUr3eMlsYJC+YCPnTrcoZIx9F7Z5EuTg4shwDP3y51j9PVQN1/MulSqC1KnlUp0ZekOSzndrqY5JbkgahEniLJOGzqjvY/HWEEKO2EU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWj+zK/a; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ee8ecb721dso1140609a91.3;
-        Wed, 11 Dec 2024 03:41:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733917299; x=1734522099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O/+snhFpulgjg/b9milrZ1XE3OxDySVi/UqtwUb6x78=;
-        b=iWj+zK/axtl3hChs+3pl73aN08aM+BmeMawWCKn5AZWLJPzkbFMy3v1EBL5ZA6EZN1
-         aiOuoCuTOPDtnhNYmfOMYO0h2d+1sIQe+qs6gnkHMkElTknR8iSeAJroVXQlqtLU9YTP
-         UL//dPtXF0/tiRM6217biYnRE2Y6iR395puHi+zEJxBFopziWnFAqmQPTL5n6FydImIH
-         oD84+6LdJRo5E5NxK+Ys7coU8xVi5Y+CvZvaHfKTje08nbPtoMaa5Rdx40ngdgJ2OKgO
-         CJQUs43UVseJcNMqvncnTwe+8a3/ytDsSb8TOc8InWJbT3H6RB1c2Iun39/EfaUvyb/z
-         pg7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733917299; x=1734522099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O/+snhFpulgjg/b9milrZ1XE3OxDySVi/UqtwUb6x78=;
-        b=JOX1lAnz16gAJRHnZInOjXdkDnZA+WNtY/4IW6EY1eXwkMJwu0dhZbPtG8MyRBNLiP
-         M6rGlpKzkmI8pkOzwQ2iO7o/eWX0co4XDeGG8faJtQpokJKeoeR3kKGzPfkoMpYqnSOS
-         KzTNTKwN4/yD3xnYOz/gyif5VGycCFxuDXETWmLgFBi+DLpN0oGB0HiOWdt+rwohinmS
-         lXrNFXFR5peh1SMEXYV1Do47VYZpZKw7rDIjU6Zq/IlwWVEdDqJu6XBlHrE9BE3FKf/m
-         yMowzhJYVSDm5FhbD7I58IjSCpLaWd/+4qfOiJb1qD5FoTIV1Cc9PMoHisOwOfnI1sHY
-         ECNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxOFz5NdvogZSJ5Ln9E4TdRgaBDYEOAwYtoxvWUWYyVSNh4ha+7+wZL2SVHtzgpiOllKeaQjUIj3xb8L6H81o=@vger.kernel.org, AJvYcCWgw7KpWqirLVOAq0kHLauji86C3p2JHnfdeLCSzWS3UkOoGBJtPA28OVo3vVnvomAcBugkvo7pscrM6JWu@vger.kernel.org, AJvYcCWyxiu8vZqMPh4tc4meZN7qBfsJtlHB1u2oKHbhiPQxMrTn/ORvcLLab5uSNhaRm3kVzr2lDNzffaIT@vger.kernel.org, AJvYcCXfLMkUidy12xM6utmiA3TnJNxZy4oz7ouxqNLY+RBRcJIhOBhvo3kxAkZYEdJc1SlBg46I0grRljco@vger.kernel.org
-X-Gm-Message-State: AOJu0YziuVeC0YU3C/NDqw3DQNbck7h3IdYs2jHaUSgzvjkWpsxNqjXD
-	qMGnfPmkbq2rIUHCHtZ+YFr9f36/exlbsewVQVYwbLhX1BlBQaK/qds8PffKA0CDe22cdIGPB/3
-	hgNfRPapoJBC44ij/KoEW97MfALw=
-X-Gm-Gg: ASbGncs8ZvST444CMCkWcaym6k4O+2fo+t5kbg3+BNwg4D9WrB9uGupFqHJWSlwf+3B
-	ZHr+A2ySD3/RON54rXZ22Vf4zlxY75NpDnYc=
-X-Google-Smtp-Source: AGHT+IHaaP1PLWt8qXFf6NILDDcKKeQTWVOrXdIHgPTZI1P4nTIGd0AzO5ffZ4lvYAVw4J6pFlGFuJKgHZ4K79IvwiQ=
-X-Received: by 2002:a17:90b:1a92:b0:2ee:35a1:c291 with SMTP id
- 98e67ed59e1d1-2f127fbeba0mr1510079a91.3.1733917299136; Wed, 11 Dec 2024
- 03:41:39 -0800 (PST)
+	s=arc-20240116; t=1733917343; c=relaxed/simple;
+	bh=yedsCnzVN74BVIIARNATqyJIu4NbvsCe8HTrkCpphMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lV9Z+WNkSSaXfewmtUiXdetTmzreQa+dTxfLpoOCnuZQaxyTKCPcG/FeL2caFOe7nejk8BxozOAxTrrEw3+enc2+NAPWcsCvHyO/GSIWboLqKGAh0BuiBsq6iF1Sl4da9JUSdN11orl5qRRyMKJw8KLIri13wQrP+s04BJO8Lhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prW8fMoh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0909BC4CED2;
+	Wed, 11 Dec 2024 11:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733917343;
+	bh=yedsCnzVN74BVIIARNATqyJIu4NbvsCe8HTrkCpphMA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=prW8fMohAf8HEEmGWWarvi6CXE3aB8pEsbfCs2fqiF76+pyZbFFpz3wByAildGDgd
+	 0CC/UI3QjptdF7xpSTJmkqgufOXLQrWDBpIK7ql/DNIMFZCQQPCrmXaizavSWIFA19
+	 jhK5HfLmN+3K/86DRdHr7xcn7+cNjbDYS15liX30EArh8wW99MscUJSuhDHlyZuy/G
+	 W8WJmH831FMEOzFQYBrVUJLAL1gc2yMV4ssb0nm6pp3lYCtIBrMWFdpgxwTsvFUCaA
+	 rnMKvVMxMI5+vGMV4drhz9Nr9gIcN3VE3Q9ozoUBtS3LD+4VWK7R1Gg/+XM/Jh0sCT
+	 4wP5JphFsvqkw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tLL6o-000000002JR-1ZW6;
+	Wed, 11 Dec 2024 12:42:26 +0100
+Date: Wed, 11 Dec 2024 12:42:26 +0100
+From: Johan Hovold <johan@kernel.org>
+To: "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>, Marc Zyngier <maz@kernel.org>,
+	Xilin Wu <wuxilin123@gmail.com>, Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/8] arm64: dts: qcom: x1e80100-dell-xps13-9345: Fix USB
+ QMP PHY supplies
+Message-ID: <Z1l6omxQoKKAyqSS@hovoldconsulting.com>
+References: <20241210-x1e80100-usb-qmp-supply-fix-v1-0-0adda5d30bbd@linaro.org>
+ <20241210-x1e80100-usb-qmp-supply-fix-v1-5-0adda5d30bbd@linaro.org>
+ <CAMcHhXpvwR50GCkTvtkmWW4mvV5o9vbMvrvqLiEkJpKDHP_REA@mail.gmail.com>
+ <CY5PR19MB61475B208EC527ED7143B536BA3E2@CY5PR19MB6147.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210224947.23804-1-dakr@kernel.org> <20241210224947.23804-2-dakr@kernel.org>
- <2024121112-gala-skincare-c85e@gregkh> <2024121111-acquire-jarring-71af@gregkh>
- <2024121128-mutt-twice-acda@gregkh> <2024121131-carnival-cash-8c5f@gregkh>
-In-Reply-To: <2024121131-carnival-cash-8c5f@gregkh>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 11 Dec 2024 12:41:26 +0100
-Message-ID: <CANiq72nMkzHLb9gi_i6RbQYkzP-1W5QbtGVx+z1f8nfp3y_CwQ@mail.gmail.com>
-Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY5PR19MB61475B208EC527ED7143B536BA3E2@CY5PR19MB6147.namprd19.prod.outlook.com>
 
-On Wed, Dec 11, 2024 at 12:05=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
->
-> Or does the Rust side not have KBUILD_MODNAME?
+On Wed, Dec 11, 2024 at 11:35:37AM +0000, Tudor, Laurentiu wrote:
+> 
+> Internal Use - Confidential
 
-We can definitely give access to it at compile-time with e.g. `env!`:
+Looks like you need to fix your mail setup for when you're interacting
+with the community and mailing lists.
 
-    pr_info!("{}\n", env!("KBUILD_MODNAME"));
+> > -----Original Message-----
+> > From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> > Sent: Tuesday, December 10, 2024 10:45 PM
+> >
+> > On Tue, 10 Dec 2024 at 10:07, Stephan Gerhold <stephan.gerhold@linaro.org>
+> > wrote:
+> > >
+> > > On the X1E80100 CRD, &vreg_l3e_1p2 only powers &usb_mp_qmpphy0/1
+> > (i.e.
+> > > USBSS_3 and USBSS_4). The QMP PHYs for USB_0, USB_1 and USB_2 are
+> > > actually powered by &vreg_l2j_1p2.
+> > >
+> > > Since x1e80100-dell-xps13-9345 mostly just mirrors the power supplies
+> > > from the x1e80100-crd device tree, assume that the fix also applies here.
+> >
+> > Though I can't verify schematics (perhaps Laurentiu can?)can confirm USBs
+> > still work as expected with this change.
+> 
+> Yep, just checked the schematics and can confirm.
 
-Cheers,
-Miguel
+Thanks for confirming.
+
+Johan
 
