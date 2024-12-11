@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-442081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F20C9ED7C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:57:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C53409ED7D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:58:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996E0281632
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B45F168831
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C944B2368F2;
-	Wed, 11 Dec 2024 20:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAF12288C3;
+	Wed, 11 Dec 2024 20:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AYiKK+jJ"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hE7GtBCl"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945EC237FDC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF95C229685
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733950521; cv=none; b=M7vaVpEiCC1hiaWwUynFcTK4ahYe082e/tzWSGhsLGED803T4ujnm8Jl5+UFOoSwfR5FSTDC4W26Uaq3iYQ7li+uf56CvUdZxVFK1+bCvJiHZgALlpn4m1unPbQJJf2PWcat1K+g5pn/Pd2GSGOZ29mrpNuhYLj2/MBvR4/y1bk=
+	t=1733950523; cv=none; b=bTauJBLnfO1vEWnaRGN+bLvxVb7uxN3wwE+/VPBfBJiuhNd1OC2Vzd9cMLehmMB18r6UkTIlzpOp6VUMN9ZsqJZXcoL78mJ2G6lbyu9wfAbMP38iZJd5mLzc2DA2mDjC8jnXWSKI4MfTHc9NP1HNCatB+OUV6Qtjeam7zPuwJrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733950521; c=relaxed/simple;
-	bh=UYLHEbjpteKpyTByveXONKGEj0AkeqixpmnNB5HL0qY=;
+	s=arc-20240116; t=1733950523; c=relaxed/simple;
+	bh=PTJfYKdBGpwH9pcTz0bvWoTFNmHgjQKdz5cWv2rkdwE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=md9/mlYIbBHLeErbz86ZmdWOYnmRhZbkfHhatUp6VOBLcsx6CgR6nXy/kzhqsKZOcOqy4WplDrBCz1eI8rqc0jbvV64NR9L6CmVO5RJ0uIsFmekqwQ8pcdW9ZPMdkd0PKqbHmrCeePasd2B5v6mSo26bXg6T3VhxOvwv7j+dGLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AYiKK+jJ; arc=none smtp.client-ip=209.85.210.50
+	 In-Reply-To:To:Cc; b=WXU3X3oACLpTw0Uwp34YiC/fQ9LE2jWVd8c94YsBlKVJxuU6n1l0SKOClZ5ViPId90NRhPUkRGx27MCRwRgbAkpvIkFQ40MZmTj/7yxnOGB8sC56UavKV/EaYeCQj4EtoISmauQ8rq161zxv9E6n5I+Mum6mhxbn4zug9Rb3Pu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hE7GtBCl; arc=none smtp.client-ip=209.85.210.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-71e287897ceso317604a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:55:19 -0800 (PST)
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71deb3745easo917986a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:55:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733950519; x=1734555319; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733950521; x=1734555321; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uaEMmQKe1eBEWaXARPDE8+THkZylgN8yfkMSg0+UhvI=;
-        b=AYiKK+jJ/az7aaeTWOCYBM4v3KFL+b5u2VvytUCbTV7OQSR0S96Chx6a0nk4Bg5Soi
-         emoFqlngYRp4mMBUVYXIhepj0jvABNMMiNobPIAWLl3u7N+ttyi1Rthv9laFoKnLYCna
-         WnycJpeVDiCjO8V2rFKOJID7oOK32ZEEJtWxPJKhLUhfxwMFX7HoTEivZGIk/m3kYRY0
-         48Ax4lFjudn9dlIssudfVhWpINJ//jh5MzRkJjNCQBdKYmzkEiGwfzSduWBbAeN7z5zk
-         6nl+bHnvofRWPFrmHXTgGi9VGYkt5f6qNuH8tsVcEup3Njg4Km7EKoMsWdvcypg7Rh8D
-         yQzA==
+        bh=/dUWQVk2bfRYwGLIDUzweNbNW5RzAk7U0S7NeccQg/Q=;
+        b=hE7GtBClNq/kw+XuIX8ycI0KuWSRElaI+voBscq3k0dlbc4UBGv12gkFh6I/6vgi90
+         VWeQs9iHMBgHG2aszAoriBSmSSBvW0DXUYuxNWeW19OBOvxem0yisIx2eBphiV3UTd2X
+         vmuP7fu3Y9ukohy5xxAadfdJjaSAi1NsGr/kL5xhaljVEVE+jkz0qqxAqL05EX4YR6WH
+         c6e6htLbdY6RchSLILGgQl3q3t6vPnfzufuIZhTizFh0jCzUrZQM2Iau6Pzkc1CScjDL
+         wHC/qXysW2X2SIcVPKhrl7N/FWWdxF0tXOD+OnO5d3lHFWgt9gSrjIOvsRtD0vlXQsCX
+         /0Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733950519; x=1734555319;
+        d=1e100.net; s=20230601; t=1733950521; x=1734555321;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uaEMmQKe1eBEWaXARPDE8+THkZylgN8yfkMSg0+UhvI=;
-        b=pK576cYcQ4Sx9WQPMHr/oyVsaaebNE4etnXuwfsj6MKGVyrUAa697itGzUZT/Wfm2H
-         KabZuZE0Zgw72Ph2jeVo//Gc4/HeR1ptnOFbkuhonPF7k7BSokfpLp+bomGDojwLKV1W
-         uwwWsmZGDuJazTvzHfcyZDoxAfDCguZDTL0SRyhA+t5jAKtQbRv3ys9SHKrmaJeNcd5N
-         qH3Vg2KscDrgGnN2z+tFl/DMnDfYAOHHoKgzlXAL8zI1psfs5+EADosSzJNoRVinGyk+
-         XJbA4C+XdsggLOLP3tFlKmQgA7V4jCryaGpQM6vJmH9eGdEtSK5s+tEUyO5LLppOanb8
-         HNgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTm85MhbyIWjT/r/IRDJQYTBY4LzWq6V3T7HYMGgjrmFJe6ndVR6cmzwG5bsnHk1ou8LYH5FilZmDwAKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYV/fH+eqs3/rQ8xXp7QSlH5mQGl6W7gH4iQIagjTJFsIXS9xX
-	a6lBZXttFu+CVF10gkNWEXwbnIrn/HY3kqdh7290iw4mwYesWb2k+UjSqPhBpYA=
-X-Gm-Gg: ASbGncsGmMsbjMqMvuGtLuPbQfzrwQk3oExe4pOy0EANkC72zHxqDfHgk/QBIwHDKCn
-	C3G4am3r+QRyC1V0+IgYTxoqRIpCn35EUgrG/5bzKq3U+fqBpc1gHpbaOrBb+14ecan7Jg3QTn5
-	vjAYaUsrmU7OCIcfH2jzOy1URvzF3Uo7ncYqCrRxKODFlFTbTmnbI496D+34ZQxkKPvE9laiOVb
-	Hx3/jHeatGXCpsf19iclrsv2rlDaTIPlXKMoitLeRqW+djDOS7ode/rPA+JWNzQZ4kY82EYjdvw
-	ibWR3YULNQ==
-X-Google-Smtp-Source: AGHT+IGUzdKsvaTRtHxTiEWjKj3hLdxdeJfviWcxZcSQceDS7JqJbsC6BjcFiXkD92kELNmUCpnaNQ==
-X-Received: by 2002:a05:6830:903:b0:71d:54cd:5289 with SMTP id 46e09a7af769-71e29c4298bmr622234a34.21.1733950518930;
-        Wed, 11 Dec 2024 12:55:18 -0800 (PST)
+        bh=/dUWQVk2bfRYwGLIDUzweNbNW5RzAk7U0S7NeccQg/Q=;
+        b=B3HIe23avgMTNx/qOLGlg5SVOIVnD4lvvjssZar4pdBubLMRcEL9GUInSYt4spdcdu
+         vHXcfcGDb9svRX+PNu7IXo4Gs6j/H7BkPA8554S7XKP3PolyngnIa7cSerclRlAMbes9
+         owcQSYi+rkVEiTmHr+Ov+X08FSm5B2LbQsVU3E8lSn8x4rzHvA24w4wGpy46QQSp6UX2
+         xEtVURomYAV9d6fFkxa4iIpJpYgls6zpSqV1FyjsSnPppXtDdI8V1so+5AlSDmsK4joh
+         CXUfUVDeNKj80VP3FYharsHaekwlt2iAE7RggAI77Zc3pNsfIpYkPDj2zFvJuT2sBtMu
+         X3Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUCtl0Yd95KMUC/PaDCyjemVnI0Ma6HV5pin2QfKxw3IryAeLTMm2JG8mg+N4kW4MY7wFmvK1Ip0rbe7Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv/pV0lWE0OOx5EOGzyBOT66JCNAFTMbiEk3kvr+Nm+QveuMcb
+	AFuzne+SqMyM1Zx2c0eUx18YPbXneYJjyONtxHnd/ftaikjfN9ZdzeOZdzeeaEY=
+X-Gm-Gg: ASbGncur/XAKufhzy1zICVcr2eYP6Uzg8XyZVhF8WyN+7DEOuwBZ3FGb9SaHEMtZMHm
+	eqgdnDAihtJI4Rz8L4oi1gBxVfYnKSuntSOB6is4ck7LQiy3dxeSAN1rZJ28Y6q8HxLbDEn+3Ri
+	FjrhS45WBamvThRQFzUb+HMCtop73gCG4kqL8EDgB2L4eNFAdK1wfyi0razW3dKIH479BB7OHYM
+	gBodCVo8+ad7BTCO1OI9uvOcP/GNc4iVnE0UY7pYriWIXy868X9gHzDOshOQmpQrGP0ysvwQfDX
+	zr2tA4hIzQ==
+X-Google-Smtp-Source: AGHT+IFkwqE9NeuzPSJABYVR8sPjY32nx1fs0VxalgjIVAvgimK8wt5SxqxergECQMEez9To3l0WaA==
+X-Received: by 2002:a05:6830:648e:b0:71d:f239:c0b7 with SMTP id 46e09a7af769-71e29bd5721mr568395a34.12.1733950520886;
+        Wed, 11 Dec 2024 12:55:20 -0800 (PST)
 Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71def651fb2sm1888288a34.27.2024.12.11.12.55.16
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71def651fb2sm1888288a34.27.2024.12.11.12.55.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 12:55:17 -0800 (PST)
+        Wed, 11 Dec 2024 12:55:19 -0800 (PST)
 From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 11 Dec 2024 14:54:49 -0600
-Subject: [PATCH v6 12/17] doc: iio: ad7944: describe offload support
+Date: Wed, 11 Dec 2024 14:54:50 -0600
+Subject: [PATCH v6 13/17] dt-bindings: iio: adc: adi,ad4695: add SPI
+ offload properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241211-dlech-mainline-spi-engine-offload-2-v6-12-88ee574d5d03@baylibre.com>
+Message-Id: <20241211-dlech-mainline-spi-engine-offload-2-v6-13-88ee574d5d03@baylibre.com>
 References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
 In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
 To: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
@@ -95,73 +96,82 @@ Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
  Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
  David Lechner <dlechner@baylibre.com>
 X-Mailer: b4 0.14.2
 
-Add a section to the ad7944 documentation describing how to use the
-driver with SPI offloading.
+Add a pwms property to the adi,ad4695 binding to specify an optional PWM
+output connected to the CNV pin on the ADC.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Also add #trigger-source-cells property to allow the BUSY output to be
+used as a SPI offload trigger source to indicate when a sample is ready
+to be read.
+
+Macros are added to adi,ad4695.h for the cell values to help with
+readability since they are arbitrary values.
+
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
 
-v6 changes: none
+v6 changes:
+* Drop $ref to trigger-source.yaml
+* Add maxItems to pwms property
 
-v5 changes: new patch in v5
+v5 changes:
+* Added macros for cell values
+
+v4 changes: new patch in v4
 ---
- Documentation/iio/ad7944.rst | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml | 13 +++++++++++++
+ include/dt-bindings/iio/adc/adi,ad4695.h                  |  7 +++++++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/Documentation/iio/ad7944.rst b/Documentation/iio/ad7944.rst
-index 0d26e56aba8862a8d2ff541012bb4681d05c7bb5..e6dbe4d7f58cffd9f700f931ad2641d336526129 100644
---- a/Documentation/iio/ad7944.rst
-+++ b/Documentation/iio/ad7944.rst
-@@ -46,6 +46,8 @@ CS mode, 3-wire, without busy indicator
- To select this mode in the device tree, set the ``adi,spi-mode`` property to
- ``"single"`` and omit the ``cnv-gpios`` property.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
+index 7d2229dee4441e20a7bafc9165fe309ac2e9eada..cbde7a0505d2b5df22c54ca4556878bf22e9b4b1 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
+@@ -84,6 +84,10 @@ properties:
+     description: The Reset Input (RESET). Should be configured GPIO_ACTIVE_LOW.
+     maxItems: 1
  
-+This is the only wiring configuration supported when using `SPI offload support`_.
++  pwms:
++    description: PWM signal connected to the CNV pin.
++    maxItems: 1
 +
- CS mode, 4-wire, without busy indicator
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   interrupts:
+     minItems: 1
+     items:
+@@ -106,6 +110,15 @@ properties:
+       The first cell is the GPn number: 0 to 3.
+       The second cell takes standard GPIO flags.
  
-@@ -106,7 +108,6 @@ Unimplemented features
- ----------------------
- 
- - ``BUSY`` indication
--- ``TURBO`` mode
- 
- 
- Device attributes
-@@ -147,6 +148,27 @@ AD7986 is a fully-differential ADC and has the following attributes:
- In "chain" mode, additional chips will appear as additional voltage input
- channels, e.g. ``in_voltage2-voltage3_raw``.
- 
-+SPI offload support
-+===================
++  '#trigger-source-cells':
++    description: |
++      First cell indicates the output signal: 0 = BUSY, 1 = ALERT.
++      Second cell indicates which GPn pin is used: 0, 2 or 3.
 +
-+To be able to achieve the maximum sample rate, the driver can be used with the
-+`AXI SPI Engine`_ to provide SPI offload support.
++      For convenience, macros for these values are available in
++      dt-bindings/iio/adc/adi,ad4695.h.
++    const: 2
 +
-+.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/pulsar_adc/index.html
-+
-+When SPI offload is being used, some attributes will be different.
-+
-+* ``trigger`` directory is removed.
-+* ``in_voltage0_sampling_frequency`` attribute is added for setting the sample
-+  rate.
-+* ``in_voltage0_sampling_frequency_available`` attribute is added for querying
-+  the max sample rate.
-+* ``timestamp`` channel is removed.
-+* Buffer data format may be different compared to when offload is not used,
-+  e.g. the ``in_voltage0_type`` attribute.
-+
-+If the ``turbo-gpios`` property is present in the device tree, the driver will
-+turn on TURBO during buffered reads and turn it off otherwise.
+   "#address-cells":
+     const: 1
  
- Device buffers
- ==============
+diff --git a/include/dt-bindings/iio/adc/adi,ad4695.h b/include/dt-bindings/iio/adc/adi,ad4695.h
+index 9fbef542bf670015c5b34bfbe1336e7e295bf8ab..fea4525d2710cbf58cd4236d3276bad4cb318df9 100644
+--- a/include/dt-bindings/iio/adc/adi,ad4695.h
++++ b/include/dt-bindings/iio/adc/adi,ad4695.h
+@@ -6,4 +6,11 @@
+ #define AD4695_COMMON_MODE_REFGND	0xFF
+ #define AD4695_COMMON_MODE_COM		0xFE
+ 
++#define AD4695_TRIGGER_EVENT_BUSY	0
++#define AD4695_TRIGGER_EVENT_ALERT	1
++
++#define AD4695_TRIGGER_PIN_GP0		0
++#define AD4695_TRIGGER_PIN_GP2		2
++#define AD4695_TRIGGER_PIN_GP3		3
++
+ #endif /* _DT_BINDINGS_ADI_AD4695_H */
 
 -- 
 2.43.0
