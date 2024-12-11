@@ -1,73 +1,96 @@
-Return-Path: <linux-kernel+bounces-440963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F299E9EC722
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:27:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E2A188C2B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:27:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791361D9591;
-	Wed, 11 Dec 2024 08:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pRzeh9JN"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33EBA9EC724
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:27:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080C01D61AF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CB382873B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:27:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F131DC05D;
+	Wed, 11 Dec 2024 08:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzNMiVir"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26E41D6195;
+	Wed, 11 Dec 2024 08:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733905628; cv=none; b=kZYVCl8RktwfZbYgwpb4fP0FuKJv/Ab2HXXLpZyWU1InDFs6Wg7zgzhD3lajYJ2mYhALpYpqze9dnH/16GNHZUusVvb1nG59WCxuI8X27dm39Chnr4ixKDpJHQgWsUv4VJkN2oa5Px5h/jpJf3X2ZUJ454Zz+CUFDhV7FJtRQSA=
+	t=1733905645; cv=none; b=LOsS3O/yj5pHuM83G0bOsS9X1w/EC4OCDqpHuqFyLxalL3DaGuEQuBNPrdbYHdx1Fk5bcdBTBR7dyuIx1eUo8Baaq3t5GLt3iOJCdCdvkgnvb4jTs5J3dXM6taIMM03PSnVh5TGfxo/i1S06offJfx8WsMOfONd8jIAAblNkLwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733905628; c=relaxed/simple;
-	bh=o+pLegHIssaXl/O+UV3tjufgzcMHs+H1Zwi+3ngSXfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ThMzPstN4ubvo/zq76zHDbUiPwHSDaTKxgBmF/iWKNsymEk/Q2fVTKRStSl5FOEApPVUTuPk8TcYenf/YZuSwGuP43/yAj/0ml/5Z9RUg4aALAlMbcE6DT0bSPqyyvT28LCWvfVJpY7ofX9ZdhWSgyepRvKnBnWNATbe/wpvDls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pRzeh9JN; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733905622; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=qu6ZJQXtM8l423+WKxjZ38oMaUAOb4QcnD0R42mJevo=;
-	b=pRzeh9JNCkbU6PEnL3l9Ymj6+pEUgnWZJ0erxTD4JOXljuZmwVxvJqQG9MzP5Aehw9GdYsC3/HqO8L1ku7RcTRrG+aUE13+425GU0BmGcRkYjF+4ejJhfAqEklBAFLRU6yEddo2xqkBaMCXi/vC93uZsK3B5nf7WUgQu+xm36+M=
-Received: from 30.221.130.195(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WLHfMid_1733905621 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Dec 2024 16:27:02 +0800
-Message-ID: <5ac4956d-10c2-4243-8396-cea01c4d72be@linux.alibaba.com>
-Date: Wed, 11 Dec 2024 16:27:01 +0800
+	s=arc-20240116; t=1733905645; c=relaxed/simple;
+	bh=HibHtx1M2eii5R14Ci3rh94eU2NfEr5ZCecDbmdZLwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sA8QDP8SuXOAnVyQEOHS70TV2ONAdqdzYO6BFnqNErNRXyjzjwzVIcEspX0z+0o1pJ7phIcLUce7ECxnyXat28EhBiF1Skb99C5rrfvmRPEn0YENkPqfNMyj7hvMQdb4LU20SbBmtFuRzdM7MW1rZnpCHGLa6N+M7A7SQMhbsXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzNMiVir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B5D7C4CED2;
+	Wed, 11 Dec 2024 08:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733905645;
+	bh=HibHtx1M2eii5R14Ci3rh94eU2NfEr5ZCecDbmdZLwY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UzNMiVir+UO6iRoZPY3I5NbFRfyrvIconF1XKYFt5SnzVqbm0Im+DQbkVB0aSne03
+	 8JfprfvP6fWRWiykFJ6V/J9P0FcbF3H8Cs9Oxcu/sab02hQ1fNweu/XY5by8Li4fT0
+	 kD0rIokJUmt2P+Gvs3yNwUkiJtw3dgEh8aDvyBmF1xxrjIwDKaSH2ygzZkLqRMEESt
+	 q1jfl7Sd24si9Pbz+b+C6qH5ev1tg53CEJhSgjC3iphGVrwvwkrvkG0wZyWzgyanmz
+	 Yfrzlh5yA2YbLq9PtFQmUFq1Xn7MnI2EX1jqOr0egaxiztbzjwsx6tFgLgAiVEIYBd
+	 j4o3sZFoxnV0w==
+Date: Wed, 11 Dec 2024 09:27:19 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
+ <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, "Rafael J.
+ Wysocki" <rafael.j.wysocki@intel.com>, Dan Carpenter
+ <dan.carpenter@linaro.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 1/7] media: ipu-bridge: Fix warning when !ACPI
+Message-ID: <20241211092719.2dce65dd@foz.lan>
+In-Reply-To: <Z1isvGLLwr7jmW5k@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+	<20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org>
+	<Z1isvGLLwr7jmW5k@kekkonen.localdomain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: erofs: update Yue Hu's email address
-To: Yue Hu <zbestahu@163.com>, xiang@kernel.org, chao@kernel.org,
- linux-erofs@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, Yue Hu <zbestahu@gmail.com>
-References: <20241211080918.8512-1-zbestahu@163.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20241211080918.8512-1-zbestahu@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+Em Tue, 10 Dec 2024 21:03:56 +0000
+Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 
-
-On 2024/12/11 16:09, Yue Hu wrote:
-> From: Yue Hu <zbestahu@gmail.com>
+> Hi Ricardo,
 > 
-> The current email address is no longer valid, use my gmail instead.
+> On Tue, Dec 10, 2024 at 07:55:58PM +0000, Ricardo Ribalda wrote:
+> > One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
+> > throws the following smatch warning:
+> > drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
+> > 
+> > Fix it by replacing the condition.
+> > 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>  
 > 
-> Signed-off-by: Yue Hu <zbestahu@gmail.com>
+> I've picked this to my tree and I'll take the last one, too, once the rest
+> reaches the media tree.
 
-Acked-by: Gao Xiang <xiang@kernel.org>
+I prefer not merging it via media tree, except if we get an explicit ack
+to do so from ACPI maintainers, as most of the stuff here are at ACPI
+ headers.
 
 Thanks,
-Gao Xiang
+Mauro
 
