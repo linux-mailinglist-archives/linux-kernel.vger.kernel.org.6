@@ -1,654 +1,138 @@
-Return-Path: <linux-kernel+bounces-441298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011BA9ECC72
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FF29ECC7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B36285D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCED1676E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB7C23FD06;
-	Wed, 11 Dec 2024 12:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487B323FD27;
+	Wed, 11 Dec 2024 12:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6Q/DwlT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jLH76Wpd"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD0323FD05;
-	Wed, 11 Dec 2024 12:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E782A23FD26
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733921167; cv=none; b=S/aUGSA0uCRlC0dr1XeCe0Xv9PjvkHSNmbvHYPRztacSZ1wxM8Pkoi5gmUapylMegJBNSlHZWZU9QKaZkHfBWslC/5a/Qq8xfkaRezdi2jjZmISXt0HDKHQEu1uL5YvyqRYb/8el0OjYqtyw0jqsFjvH5YjScEajF8owWIR9waE=
+	t=1733921186; cv=none; b=DzaJpRVyijp/CJPlq9XCXj1GC3656r1QDI5wKGiFJsYwjyZ4fJoFU+uSWrCBRpaXbdmoKof6c+tYBAxP0Mhw94BYShA3NbtMSmC5dN0uL/vWZTGTdSQ4Ibiir79D27MNKz6gruV9hK0AVRhdlPbYhqhm9BqamfoW6YP0KFFdjcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733921167; c=relaxed/simple;
-	bh=XsQvw05l+MBKEe/OKXoMtCsjqTCUKENBllGOtwUyk9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbNqaoQ8Fut5YHURzl9p25S0XFOWvxYgogEeGyyKM3+7mxSpjnbybkmxLwzmxb8h4sVo5K9NGrELMvQZa6elYzSQ+mro3iSi01Hz5CrMd0VsRmkrmbrTWDJQuxqsAEgZ5vEUloLAHzRmQI1VbLoZdIS8IgwcbPb5OzUbwoNWH9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6Q/DwlT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB52DC4CED2;
-	Wed, 11 Dec 2024 12:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733921166;
-	bh=XsQvw05l+MBKEe/OKXoMtCsjqTCUKENBllGOtwUyk9Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p6Q/DwlTGe5OkvLAIpwvVkRcMbf6XssAOG4upS+/LYwfipH5phdUQha3us8aauUJv
-	 qhgPWeAq5QkvjOGN0IkT7sMdJ1d9M8xB/0nA6h7KCHLZfvJHY5AHndy/n07kwucwiu
-	 d8R2tHkV3RZbt5RiUL86faGRndQmWvwv5EZlLoNdg3RMIo9qsnDxEoAE6TwydID5yr
-	 7sgiLT3sjsVIysvxsbRsM7vBFPfnpHM2QF3+cfl/P6PVR/euMhIQzh3lossZCdzH+n
-	 vmndyvvQQsqr/T61FucYVE6/7hPJOG2QudbHFcfcOsJ4IFJ7w9aHaSoTF8y/mSBzdJ
-	 k1iXBDSDNnSAg==
-Date: Wed, 11 Dec 2024 12:45:56 +0000
-From: Lee Jones <lee@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v6 2/7] mfd: nxp-siul2: add support for NXP SIUL2
-Message-ID: <20241211124454.GE7139@google.com>
-References: <20241113101124.1279648-1-andrei.stefanescu@oss.nxp.com>
- <20241113101124.1279648-3-andrei.stefanescu@oss.nxp.com>
+	s=arc-20240116; t=1733921186; c=relaxed/simple;
+	bh=ljytafcL4yuL6A3mBTqsDzIsfHaoog36bhny0bY+VLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1Q6qg5HNA4oi4Vt9s97d1I/Vqgx6HB7far7Vo2obKfGnSY4K5f+PjIyQurMFCbGh6BeVb7yUCMaCrPInWPJX6sxxZxKd1OYXkRgJ5Z4JpEtpuoH/TL4bHF+2wUSd6XfkuxA5ETeOX9RRYhJJ7tDtlJ3jsm/4aiLiEAONt7IJCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jLH76Wpd; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso71607081fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 04:46:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733921183; x=1734525983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fMRrLT8PBkUb9uwSo3UZOKSbeLIunajxVCGqM67QreU=;
+        b=jLH76Wpd0C0oMGqzQv4/KNkLyf+MP0zmD+BLvtwo0hYDG57HDm+0OIh/SRbPkjIWDM
+         Y30SOYh2eu9Rham1AE6QsuYzNVJQR4SEiBNwLWa17mDli8DFhtXcALgj+0RyKKSMdgLr
+         CcsDTLiKF95tDavEA59gnrS0fjlCOU0bb2HH9iYQambCbjzWcPMvTtpaNWV2hsB7R5Av
+         SNatHInKJuVN5Op7nXO10fwbDJr/GpcDRivwrIToC3qRA0cL888EFyjlNWQujClQxV31
+         uTxAcuRROaE8Rt70yiwYJUz5/3jq2DT06WSwB8ShrS1wdhPqzDImkk8LpWUlGlmQZnOP
+         QtYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733921183; x=1734525983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fMRrLT8PBkUb9uwSo3UZOKSbeLIunajxVCGqM67QreU=;
+        b=C6Mr4/m0n8dpx/zxqOESGJRw0sA+rrFCUSDuJ5MJ61tKp2nY8CLQ/W0mPkAMGdcMhG
+         OkedyRb7wccM+VWw+o8wicOTUakcMJ5VJ4IzK05broncngR6T4MRGnCwC03NcVHEERz8
+         4htRplduxcOwpVzH8f+PBH2nx0SFKqeF1XjsSbZy1HqCu9h2ulHSs7cVkAyvk20o3jOd
+         5x+KtorOcWZY0eIOJNW2q9C580jiEcYKhR6mghQDz+hbgu9OcMdyRxH2CubOosIg4Tvb
+         dJHGxk7Q2tf8/sdTJrNoNMlMPEd7okhUaydL14bjhLx2BXW2SaDQVrLrpQDnvp8rSsRH
+         owXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCxEwFVh+wUlkZRKgBJhrd8ke7W5ELS1Hfv6L3tKVpux4TbN6R+BgfMt+Rx8d1Vrtwtub0KhLXGHnFqJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVKJkx6lG2ms3hQM29Jat2Pv01DIlbWS1nLGNKfeynEtfY+rzk
+	CtaSemqT5qJHXJWB0El7SFRkYqXKkGQaAwBPLRYjgZeVyGPuMJGekGmmQQdmEDZXOk6/lL8vs2D
+	+pbYF2Hwjc7tSsSnwdCvXsKxNgBOYHThmCdBAWx5RB15VxWcd
+X-Gm-Gg: ASbGncuK0kHMwDqISfTpNkGNL/fF8F46ZIg4Ty/j055qdvY0dZsB5obh9sK+fA9kEM9
+	SVALhoNBLkJr6ekG7O3fEIcgTtmbJ3oNvOumjksVklxqhTn0zJa5Dzz/IdIHI7/HU8B5oIg==
+X-Google-Smtp-Source: AGHT+IGSGpq67S3KPhxv0QaGyYpi7Ds7VIRtelTKmN8kUlCb5EZQ5DwEZ8oJuL//LObkvog2EV/g3poagrgtfeFDHng=
+X-Received: by 2002:a2e:9fcb:0:b0:302:2620:ec89 with SMTP id
+ 38308e7fff4ca-30240cfb673mr9672121fa.19.1733921182952; Wed, 11 Dec 2024
+ 04:46:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241113101124.1279648-3-andrei.stefanescu@oss.nxp.com>
+References: <CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com>
+ <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain> <CA+G9fYv5gW1gByakU1yyQ__BoAKWkCcg=vGGyNep7+5p9_2uJA@mail.gmail.com>
+ <bd95d7249ff94e31beb11b3f71a64e87@AcuMS.aculab.com>
+In-Reply-To: <bd95d7249ff94e31beb11b3f71a64e87@AcuMS.aculab.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 11 Dec 2024 13:46:11 +0100
+Message-ID: <CAMRc=Mf8CmKs-_FddnLFU7aoOAPU6Xv8MqyZo8x9Uv-Eu+hs_g@mail.gmail.com>
+Subject: Re: arm64: include/linux/compiler_types.h:542:38: error: call to
+ '__compiletime_assert_1050' declared with attribute error: clamp() low limit
+ min greater than high limit max_avail
+To: David Laight <David.Laight@aculab.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>, 
+	Linux Regressions <regressions@lists.linux.dev>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	"netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Johannes Berg <johannes.berg@intel.com>, 
+	"toke@kernel.org" <toke@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	"kernel@jfarr.cc" <kernel@jfarr.cc>, "kees@kernel.org" <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mark,
+On Fri, Dec 6, 2024 at 3:20=E2=80=AFAM David Laight <David.Laight@aculab.co=
+m> wrote:
+>
+> From: Naresh Kamboju
+> > Sent: 05 December 2024 18:42
+> >
+> > On Thu, 5 Dec 2024 at 20:46, Dan Carpenter <dan.carpenter@linaro.org> w=
+rote:
+> > >
+> > > Add David to the CC list.
+> >
+> > Anders bisected this reported issue and found the first bad commit as,
+> >
+> > # first bad commit:
+> >   [ef32b92ac605ba1b7692827330b9c60259f0af49]
+> >   minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
+>
+> That 'just' changed the test to use __builtin_constant_p() and
+> thus gets checked after the optimiser has run.
+>
+> I can paraphrase the code as:
+> unsigned int fn(unsigned int x)
+> {
+>         return clamp(10, 5, x =3D=3D 0 ? 0 : x - 1);
+> }
+> which is never actually called with x <=3D 5.
+> The compiler converts it to:
+>         return x < 0 ? clamp(10, 5, 0) : clamp(10, 5, x);
+> (Probably because it can see that clamp(10, 5, 0) is constant.)
+> And then the compile-time sanity check in clamp() fires.
+>
+> The order of the arguments to clamp is just wrong!
+>
+>         David
+>
 
-Seeing as the vast majority of this 400 line driver pertains to Regmap
-handling (!), would you be kind enough to cast your expert eye over it
-please?
+The build is still failing with today's next, should the offending
+commit be reverted?
 
-On Wed, 13 Nov 2024, Andrei Stefanescu wrote:
-
-> SIUL2 (System Integration Unit Lite) is a hardware module which
-> implements various functionalities:
-> - reading SoC information
-> - pinctrl
-> - GPIO (including interrupts)
-> 
-> This commit only adds support for pinctrl&GPIO(one cell). Further
-> commits will add nvmem functionality(a second cell).
-
-It's not an MFD until it has more than one device.
-
-Please add that now or it cannot be accepted.
-
-[pausing my review here for the time being]
-
-> There are multiple register types in the SIUL2 module:
-> - MIDR (MCU ID Register)
-> 	* contains information about the SoC.
-> - Interrupt related registers
-> 	* There are 32 interrupts named EIRQ. An EIRQ
-> 	  may be routed to one or more GPIOs. Not all
-> 	  GPIOs have EIRQs associated with them
-> - MSCR (Multiplexed Signal Configuration Register)
-> 	* handle pinmuxing and pinconf
-> - IMCR (Input Multiplexed Signal Configuration Register)
-> 	* are part of pinmuxing
-> - PGPDO/PGPDI (Parallel GPIO Pad Data Out/In Register)
-> 	* Write/Read the GPIO value
-> 
-> There are two SIUL2 modules in the S32G SoC. This driver handles
-> both because functionality is shared between them. For example:
-> some GPIOs in SIUL2_0 have interrupt capability but the registers
-> configuring this are in SIUL2_1.
-> 
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> ---
->  drivers/mfd/Kconfig           |  12 +
->  drivers/mfd/Makefile          |   1 +
->  drivers/mfd/nxp-siul2.c       | 410 ++++++++++++++++++++++++++++++++++
->  include/linux/mfd/nxp-siul2.h |  55 +++++
->  4 files changed, 478 insertions(+)
->  create mode 100644 drivers/mfd/nxp-siul2.c
->  create mode 100644 include/linux/mfd/nxp-siul2.h
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index f9325bcce1b9..fc590789e8b3 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1098,6 +1098,18 @@ config MFD_NTXEC
->  	  certain e-book readers designed by the original design manufacturer
->  	  Netronix.
->  
-> +config MFD_NXP_SIUL2
-> +	tristate "NXP SIUL2 MFD driver"
-> +	select MFD_CORE
-> +	select REGMAP_MMIO
-> +	depends on ARCH_S32 || COMPILE_TEST
-> +	help
-> +	  Select this to get support for the NXP SIUL2 (System Integration
-> +	  Unit Lite) module. This hardware block contains registers for
-> +	  SoC information, pinctrl and GPIO functionality. This will
-> +	  probe a MFD driver which will contain cells for a combined
-> +	  pinctrl&GPIO driver and nvmem drivers for the SoC information.
-> +
->  config MFD_RETU
->  	tristate "Nokia Retu and Tahvo multi-function device"
->  	select MFD_CORE
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 2a9f91e81af8..7b19ea014221 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -226,6 +226,7 @@ obj-$(CONFIG_MFD_INTEL_PMC_BXT)	+= intel_pmc_bxt.o
->  obj-$(CONFIG_MFD_PALMAS)	+= palmas.o
->  obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
->  obj-$(CONFIG_MFD_NTXEC)		+= ntxec.o
-> +obj-$(CONFIG_MFD_NXP_SIUL2) 	+= nxp-siul2.o
->  obj-$(CONFIG_MFD_RC5T583)	+= rc5t583.o rc5t583-irq.o
->  obj-$(CONFIG_MFD_RK8XX)		+= rk8xx-core.o
->  obj-$(CONFIG_MFD_RK8XX_I2C)	+= rk8xx-i2c.o
-> diff --git a/drivers/mfd/nxp-siul2.c b/drivers/mfd/nxp-siul2.c
-> new file mode 100644
-> index 000000000000..7751992e4df3
-> --- /dev/null
-> +++ b/drivers/mfd/nxp-siul2.c
-> @@ -0,0 +1,410 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * SIUL2(System Integration Unit Lite) MFD driver
-> + *
-> + * Copyright 2024 NXP
-> + */
-> +#include <linux/init.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/nxp-siul2.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +
-> +#define S32G_NUM_SIUL2 2
-> +
-> +#define S32_REG_RANGE(start, end, name, access)		\
-> +	{						\
-> +		.reg_name = (name),			\
-> +		.reg_start_offset = (start),		\
-> +		.reg_end_offset = (end),		\
-> +		.reg_access = (access),			\
-> +		.valid = true,				\
-> +	}
-> +
-> +#define S32_INVALID_REG_RANGE		\
-> +	{				\
-> +		.reg_name = NULL,	\
-> +		.reg_access = NULL,	\
-> +		.valid = false,		\
-> +	}
-> +
-> +static const struct mfd_cell nxp_siul2_devs[] = {
-> +	{
-> +		.name = "s32g-siul2-pinctrl",
-> +	}
-> +};
-> +
-> +/**
-> + * struct nxp_siul2_reg_range_info: a register range in SIUL2
-> + * @reg_name: the name for the register range
-> + * @reg_start_offset: the first valid register offset
-> + * @reg_end_offset: the last valid register offset
-> + * @reg_access: the read/write access tables if not NULL
-> + * @valid: whether the register range is valid or not
-> + */
-> +struct nxp_siul2_reg_range_info {
-> +	const char *reg_name;
-> +	unsigned int reg_start_offset;
-> +	unsigned int reg_end_offset;
-> +	const struct regmap_access_table *reg_access;
-> +	bool valid;
-> +};
-> +
-> +static const struct regmap_range s32g2_siul2_0_imcr_reg_ranges[] = {
-> +	/* IMCR0 - IMCR1 */
-> +	regmap_reg_range(0, 4),
-> +	/* IMCR3 - IMCR61 */
-> +	regmap_reg_range(0xC, 0xF4),
-> +	/* IMCR68 - IMCR83 */
-> +	regmap_reg_range(0x110, 0x14C)
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul2_0_imcr = {
-> +	.yes_ranges = s32g2_siul2_0_imcr_reg_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_0_imcr_reg_ranges)
-> +};
-> +
-> +static const struct regmap_range s32g2_siul2_0_pgpd_reg_ranges[] = {
-> +	/* PGPD*0 - PGPD*5 */
-> +	regmap_reg_range(0, 0xA),
-> +	/* PGPD*6 - PGPD*6 */
-> +	regmap_reg_range(0xE, 0xE),
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul2_0_pgpd = {
-> +	.yes_ranges = s32g2_siul2_0_pgpd_reg_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_0_pgpd_reg_ranges)
-> +};
-> +
-> +static const struct regmap_range s32g2_siul2_1_irq_reg_ranges[] = {
-> +	/* DISR0 */
-> +	regmap_reg_range(0x10, 0x10),
-> +	/* DIRER0 */
-> +	regmap_reg_range(0x18, 0x18),
-> +	/* DIRSR0 */
-> +	regmap_reg_range(0x20, 0x20),
-> +	/* IREER0 */
-> +	regmap_reg_range(0x28, 0x28),
-> +	/* IFEER0 */
-> +	regmap_reg_range(0x30, 0x30),
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul2_1_irq = {
-> +	.yes_ranges = s32g2_siul2_1_irq_reg_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_irq_reg_ranges),
-> +};
-> +
-> +static const struct regmap_range s32g2_siul2_1_irq_volatile_reg_range[] = {
-> +	/* DISR0 */
-> +	regmap_reg_range(0x10, 0x10)
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul2_1_irq_volatile = {
-> +	.yes_ranges = s32g2_siul2_1_irq_volatile_reg_range,
-> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_irq_volatile_reg_range),
-> +};
-> +
-> +static const struct regmap_range s32g2_siul2_1_mscr_reg_ranges[] = {
-> +	/* MSCR112 - MSCR122 */
-> +	regmap_reg_range(0, 0x28),
-> +	/* MSCR144 - MSCR190 */
-> +	regmap_reg_range(0x80, 0x138)
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul2_1_mscr = {
-> +	.yes_ranges = s32g2_siul2_1_mscr_reg_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_mscr_reg_ranges),
-> +};
-> +
-> +static const struct regmap_range s32g2_siul2_1_imcr_reg_ranges[] = {
-> +	/* IMCR119 - IMCR121 */
-> +	regmap_reg_range(0, 8),
-> +	/* IMCR128 - IMCR129 */
-> +	regmap_reg_range(0x24, 0x28),
-> +	/* IMCR143 - IMCR151 */
-> +	regmap_reg_range(0x60, 0x80),
-> +	/* IMCR153 - IMCR161 */
-> +	regmap_reg_range(0x88, 0xA8),
-> +	/* IMCR205 - IMCR212 */
-> +	regmap_reg_range(0x158, 0x174),
-> +	/* IMCR224 - IMCR225 */
-> +	regmap_reg_range(0x1A4, 0x1A8),
-> +	/* IMCR233 - IMCR248 */
-> +	regmap_reg_range(0x1C8, 0x204),
-> +	/* IMCR273 - IMCR274 */
-> +	regmap_reg_range(0x268, 0x26C),
-> +	/* IMCR278 - IMCR281 */
-> +	regmap_reg_range(0x27C, 0x288),
-> +	/* IMCR283 - IMCR286 */
-> +	regmap_reg_range(0x290, 0x29C),
-> +	/* IMCR288 - IMCR294 */
-> +	regmap_reg_range(0x2A4, 0x2BC),
-> +	/* IMCR296 - IMCR302 */
-> +	regmap_reg_range(0x2C4, 0x2DC),
-> +	/* IMCR304 - IMCR310 */
-> +	regmap_reg_range(0x2E4, 0x2FC),
-> +	/* IMCR312 - IMCR314 */
-> +	regmap_reg_range(0x304, 0x30C),
-> +	/* IMCR316 */
-> +	regmap_reg_range(0x314, 0x314),
-> +	/* IMCR 318 */
-> +	regmap_reg_range(0x31C, 0x31C),
-> +	/* IMCR322 - IMCR340 */
-> +	regmap_reg_range(0x32C, 0x374),
-> +	/* IMCR343 - IMCR360 */
-> +	regmap_reg_range(0x380, 0x3C4),
-> +	/* IMCR363 - IMCR380 */
-> +	regmap_reg_range(0x3D0, 0x414),
-> +	/* IMCR383 - IMCR393 */
-> +	regmap_reg_range(0x420, 0x448),
-> +	/* IMCR398 - IMCR433 */
-> +	regmap_reg_range(0x45C, 0x4E8),
-> +	/* IMCR467 - IMCR470 */
-> +	regmap_reg_range(0x570, 0x57C),
-> +	/* IMCR473 - IMCR475 */
-> +	regmap_reg_range(0x588, 0x590),
-> +	/* IMCR478 - IMCR480*/
-> +	regmap_reg_range(0x59C, 0x5A4),
-> +	/* IMCR483 - IMCR485 */
-> +	regmap_reg_range(0x5B0, 0x5B8),
-> +	/* IMCR488 - IMCR490 */
-> +	regmap_reg_range(0x5C4, 0x5CC),
-> +	/* IMCR493 - IMCR495 */
-> +	regmap_reg_range(0x5D8, 0x5E0),
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul2_1_imcr = {
-> +	.yes_ranges = s32g2_siul2_1_imcr_reg_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_imcr_reg_ranges)
-> +};
-> +
-> +static const struct regmap_range s32g2_siul2_1_pgpd_reg_ranges[] = {
-> +	/* PGPD*7 */
-> +	regmap_reg_range(0xC, 0xC),
-> +	/* PGPD*9 */
-> +	regmap_reg_range(0x10, 0x10),
-> +	/* PDPG*10 - PGPD*11 */
-> +	regmap_reg_range(0x14, 0x16),
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul2_1_pgpd = {
-> +	.yes_ranges = s32g2_siul2_1_pgpd_reg_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_pgpd_reg_ranges)
-> +};
-> +
-> +static const struct nxp_siul2_reg_range_info
-> +s32g2_reg_ranges[S32G_NUM_SIUL2][SIUL2_NUM_REG_TYPES] = {
-> +	/* SIUL2_0 */
-> +	{
-> +		[SIUL2_MPIDR] = S32_REG_RANGE(4, 8, "SIUL2_0_MPIDR", NULL),
-> +		/* Interrupts are to be controlled from SIUL2_1 */
-> +		[SIUL2_IRQ] = S32_INVALID_REG_RANGE,
-> +		[SIUL2_MSCR] = S32_REG_RANGE(0x240, 0x3D4, "SIUL2_0_MSCR",
-> +					     NULL),
-> +		[SIUL2_IMCR] = S32_REG_RANGE(0xA40, 0xB8C, "SIUL2_0_IMCR",
-> +					     &s32g2_siul2_0_imcr),
-> +		[SIUL2_PGPDO] = S32_REG_RANGE(0x1700, 0x170E,
-> +					      "SIUL2_0_PGPDO",
-> +					      &s32g2_siul2_0_pgpd),
-> +		[SIUL2_PGPDI] = S32_REG_RANGE(0x1740, 0x174E,
-> +					      "SIUL2_0_PGPDI",
-> +					      &s32g2_siul2_0_pgpd),
-> +	},
-> +	/* SIUL2_1 */
-> +	{
-> +		[SIUL2_MPIDR] = S32_REG_RANGE(4, 8, "SIUL2_1_MPIDR", NULL),
-> +		[SIUL2_IRQ] = S32_REG_RANGE(0x10, 0xC0, "SIUL2_1_IRQ",
-> +					    &s32g2_siul2_1_irq),
-> +		[SIUL2_MSCR] = S32_REG_RANGE(0x400, 0x538, "SIUL2_1_MSCR",
-> +					     &s32g2_siul2_1_mscr),
-> +		[SIUL2_IMCR] = S32_REG_RANGE(0xC1C, 0x11FC, "SIUL2_1_IMCR",
-> +					     &s32g2_siul2_1_imcr),
-> +		[SIUL2_PGPDO] = S32_REG_RANGE(0x1700, 0x1716,
-> +					      "SIUL2_1_PGPDO",
-> +					      &s32g2_siul2_1_pgpd),
-> +		[SIUL2_PGPDI] = S32_REG_RANGE(0x1740, 0x1756,
-> +					      "SIUL2_1_PGPDI",
-> +					      &s32g2_siul2_1_pgpd),
-> +	},
-> +};
-> +
-> +static const struct regmap_config nxp_siul2_regmap_irq_conf = {
-> +	.val_bits = 32,
-> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.cache_type = REGCACHE_FLAT,
-> +	.use_raw_spinlock = true,
-> +	.volatile_table = &s32g2_siul2_1_irq_volatile,
-> +};
-> +
-> +static const struct regmap_config nxp_siul2_regmap_generic_conf = {
-> +	.val_bits = 32,
-> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.cache_type = REGCACHE_FLAT,
-> +	.use_raw_spinlock = true,
-> +};
-> +
-> +static const struct regmap_config nxp_siul2_regmap_pgpdo_conf = {
-> +	.val_bits = 16,
-> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-> +	.reg_bits = 32,
-> +	.reg_stride = 2,
-> +	.cache_type = REGCACHE_FLAT,
-> +	.use_raw_spinlock = true,
-> +};
-> +
-> +static const struct regmap_config nxp_siul2_regmap_pgpdi_conf = {
-> +	.val_bits = 16,
-> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-> +	.reg_bits = 32,
-> +	.reg_stride = 2,
-> +	.cache_type = REGCACHE_NONE,
-> +	.use_raw_spinlock = true,
-> +};
-> +
-> +static int nxp_siul2_init_regmap(struct platform_device *pdev,
-> +				 void __iomem *base, unsigned int siul)
-> +{
-> +	const struct regmap_config *regmap_configs[SIUL2_NUM_REG_TYPES] = {
-> +		[SIUL2_MPIDR]	= &nxp_siul2_regmap_generic_conf,
-> +		[SIUL2_IRQ]	= &nxp_siul2_regmap_irq_conf,
-> +		[SIUL2_MSCR]	= &nxp_siul2_regmap_generic_conf,
-> +		[SIUL2_IMCR]	= &nxp_siul2_regmap_generic_conf,
-> +		[SIUL2_PGPDO]	= &nxp_siul2_regmap_pgpdo_conf,
-> +		[SIUL2_PGPDI]	= &nxp_siul2_regmap_pgpdi_conf,
-> +	};
-> +	const struct nxp_siul2_reg_range_info *tmp_range;
-> +	struct regmap_config tmp_conf;
-> +	struct nxp_siul2_info *info;
-> +	struct nxp_siul2_mfd *priv;
-> +	void __iomem *reg_start;
-> +	int i;
-> +
-> +	priv = platform_get_drvdata(pdev);
-> +	info = &priv->siul2[siul];
-> +
-> +	for (i = 0; i < SIUL2_NUM_REG_TYPES; i++) {
-> +		if (!s32g2_reg_ranges[siul][i].valid)
-> +			continue;
-> +
-> +		tmp_range = &s32g2_reg_ranges[siul][i];
-> +		tmp_conf = *regmap_configs[i];
-> +		tmp_conf.name = tmp_range->reg_name;
-> +		tmp_conf.max_register =
-> +			tmp_range->reg_end_offset - tmp_range->reg_start_offset;
-> +
-> +		if (tmp_conf.cache_type != REGCACHE_NONE)
-> +			tmp_conf.num_reg_defaults_raw =
-> +				tmp_conf.max_register / tmp_conf.reg_stride;
-> +
-> +		if (tmp_range->reg_access) {
-> +			tmp_conf.wr_table = tmp_range->reg_access;
-> +			tmp_conf.rd_table = tmp_range->reg_access;
-> +		}
-> +
-> +		reg_start = base + tmp_range->reg_start_offset;
-> +		info->regmaps[i] = devm_regmap_init_mmio(&pdev->dev, reg_start,
-> +							 &tmp_conf);
-> +		if (IS_ERR(info->regmaps[i]))
-> +			return dev_err_probe(&pdev->dev,
-> +					     PTR_ERR(info->regmaps[i]),
-> +					     "regmap %d init failed: %ld\n", i,
-> +					     PTR_ERR(info->regmaps[i]));
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int nxp_siul2_parse_dtb(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct of_phandle_args pinspec;
-> +	struct nxp_siul2_mfd *priv;
-> +	void __iomem *base;
-> +	char reg_name[16];
-> +	int i, ret;
-> +
-> +	priv = platform_get_drvdata(pdev);
-> +
-> +	for (i = 0; i < priv->num_siul2; i++) {
-> +		ret = snprintf(reg_name, ARRAY_SIZE(reg_name), "siul2%d", i);
-> +		if (ret < 0 || ret >= ARRAY_SIZE(reg_name))
-> +			return ret;
-> +
-> +		base = devm_platform_ioremap_resource_byname(pdev, reg_name);
-> +		if (IS_ERR(base))
-> +			return dev_err_probe(&pdev->dev, PTR_ERR(base),
-> +					     "Failed to get MEM resource: %s\n",
-> +					     reg_name);
-> +
-> +		ret = nxp_siul2_init_regmap(pdev, base, i);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
-> +						       i, &pinspec);
-> +		if (ret)
-> +			return ret;
-> +
-> +		of_node_put(pinspec.np);
-> +
-> +		if (pinspec.args_count != 3)
-> +			return dev_err_probe(&pdev->dev, -EINVAL,
-> +					     "Invalid pinspec count: %d\n",
-> +					     pinspec.args_count);
-> +
-> +		priv->siul2[i].gpio_base = pinspec.args[1];
-> +		priv->siul2[i].gpio_num = pinspec.args[2];
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int nxp_siul2_probe(struct platform_device *pdev)
-> +{
-> +	struct nxp_siul2_mfd *priv;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->num_siul2 = S32G_NUM_SIUL2;
-> +	priv->siul2 = devm_kcalloc(&pdev->dev, priv->num_siul2,
-> +				   sizeof(*priv->siul2), GFP_KERNEL);
-> +	if (!priv->siul2)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +	ret = nxp_siul2_parse_dtb(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
-> +				    nxp_siul2_devs, ARRAY_SIZE(nxp_siul2_devs),
-> +				    NULL, 0, NULL);
-> +}
-> +
-> +static const struct of_device_id nxp_siul2_dt_ids[] = {
-> +	{ .compatible = "nxp,s32g2-siul2" },
-> +	{ .compatible = "nxp,s32g3-siul2" },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, nxp_siul2_dt_ids);
-> +
-> +static struct platform_driver nxp_siul2_mfd_driver = {
-> +	.driver = {
-> +		.name		= "nxp-siul2-mfd",
-> +		.of_match_table	= nxp_siul2_dt_ids,
-> +	},
-> +	.probe = nxp_siul2_probe,
-> +};
-> +
-> +module_platform_driver(nxp_siul2_mfd_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("NXP SIUL2 MFD driver");
-> +MODULE_AUTHOR("Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>");
-> diff --git a/include/linux/mfd/nxp-siul2.h b/include/linux/mfd/nxp-siul2.h
-> new file mode 100644
-> index 000000000000..238c812dba29
-> --- /dev/null
-> +++ b/include/linux/mfd/nxp-siul2.h
-> @@ -0,0 +1,55 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later
-> + *
-> + * S32 SIUL2 core definitions
-> + *
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#ifndef __DRIVERS_MFD_NXP_SIUL2_H
-> +#define __DRIVERS_MFD_NXP_SIUL2_H
-> +
-> +#include <linux/regmap.h>
-> +
-> +/**
-> + * enum nxp_siul2_reg_type - an enum for SIUL2 reg types
-> + * @SIUL2_MPIDR - SoC info
-> + * @SIUL2_IRQ - IRQ related registers, only valid in SIUL2_1
-> + * @SIUL2_MSCR - used for pinmuxing and pinconf
-> + * @SIUL2_IMCR - used for pinmuxing
-> + * @SIUL2_PGPDO - writing the GPIO value
-> + * @SIUL2_PGPDI - reading the GPIO value
-> + */
-> +enum nxp_siul2_reg_type {
-> +	SIUL2_MPIDR,
-> +	SIUL2_IRQ,
-> +	SIUL2_MSCR,
-> +	SIUL2_IMCR,
-> +	SIUL2_PGPDO,
-> +	SIUL2_PGPDI,
-> +
-> +	SIUL2_NUM_REG_TYPES
-> +};
-> +
-> +/**
-> + * struct nxp_siul2_info - details about one SIUL2 hardware instance
-> + * @regmaps: the regmaps for each register type for a SIUL2 hardware instance
-> + * @gpio_base: the first GPIO in this SIUL2 module
-> + * @gpio_num: the number of GPIOs in this SIUL2 module
-> + */
-> +struct nxp_siul2_info {
-> +	struct regmap *regmaps[SIUL2_NUM_REG_TYPES];
-> +	u32 gpio_base;
-> +	u32 gpio_num;
-> +};
-> +
-> +/**
-> + * struct nxp_siul2_mfd - driver data
-> + * @siul2: info about the SIUL2 modules present
-> + * @num_siul2: number of siul2 modules
-> + */
-> +struct nxp_siul2_mfd {
-> +	struct nxp_siul2_info *siul2;
-> +	u8 num_siul2;
-> +};
-> +
-> +#endif /* __DRIVERS_MFD_NXP_SIUL2_H */
-> -- 
-> 2.45.2
-> 
-
--- 
-Lee Jones [李琼斯]
+Bartosz
 
