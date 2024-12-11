@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-441008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7659EC7DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:55:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ADB9165CD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:55:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177E51E9B3C;
-	Wed, 11 Dec 2024 08:55:10 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28A99EC7DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:56:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ECC1D7E46;
-	Wed, 11 Dec 2024 08:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26ABC2883A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:56:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05261E9B34;
+	Wed, 11 Dec 2024 08:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JETgEpM4"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A686C1C5CD7
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907309; cv=none; b=rrD1ieEKpceYj89S7V/i3K5OvTNelLWBR3mWKPHxBsyKgg7BesvPO/U2Yf0npP7qcC+4p02FcfUxW872G+droYZKN44WntQuTTlijGLVgACQteRaXRbh/diXj6vu+d9ex6fGH1YAsq09eEk0lJMqA1KYi2Y/ERpIRjXfgaV6gog=
+	t=1733907357; cv=none; b=klYOWz4eW8f8F+nCrrnyTXKJekKe25Lgwgb1xcP8hx1pGk1TkZOWqOCmtF2TCns162iQb8f0cj7OdY46vgHbtgUhNejIldzCnNlxZHmHzSeeUY1UEmYpPfpjk2rU5egtNmZuuUxPbJNtVsWpL/KIRiMKQ8HO2eYIq9a8l8irqLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907309; c=relaxed/simple;
-	bh=8OcxFQjesMKrNcqlMUpJalJTHgVAGWvP/Xjl+AhSYjc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZYg6TlpZFPrwiTImP4OTeXozW3Qs3u7Q9vae+CoTm1kq8OwBdMTOl0Azs9uQx06/8dOXi2QOV1laypbk4eR6cFahYCZJ8u4FRoqRGiHxyxVAK9O0Rb45qjI/dXFJhAV3Y3ECMWezCj1Nh6xbqy/lEXUZqi15PbSrVVC2EmLFPyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Y7TQW529zz9v7JS;
-	Wed, 11 Dec 2024 16:33:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 22DC1140516;
-	Wed, 11 Dec 2024 16:54:50 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAX1zdRU1lnYzk5Aw--.9641S2;
-	Wed, 11 Dec 2024 09:54:49 +0100 (CET)
-Message-ID: <5401699f8b00ea09367353dc075b5c569ca68d9b.camel@huaweicloud.com>
-Subject: Re: [syzbot] Monthly integrity report (Dec 2024)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: syzbot <syzbot+list2eccd137a466e6acfa54@syzkaller.appspotmail.com>, 
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com, "Yuezhang.Mo@sony.com"
- <Yuezhang.Mo@sony.com>
-Date: Wed, 11 Dec 2024 09:54:37 +0100
-In-Reply-To: <67547425.050a0220.2477f.0019.GAE@google.com>
-References: <67547425.050a0220.2477f.0019.GAE@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1733907357; c=relaxed/simple;
+	bh=nB6qolEkW1OV7UB5hv4ubcEoCCGO7cmTbJXTfiskK0E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rSHqF1jtTXMhxATKDOeJ6Y22SoM21kBKwx0lzDeSPf5ZNHkCl+hePFDYVMSxCoHiTs/BLOQA1jchmBOvrWmM5ViRPwFsogDI/5M/ICpX9fWrQqeElCzc8jVrm7qvmT7X4uIiYhzv2tbGLxtWLtULbXgCm0eFKuVUP3CWa74lIDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JETgEpM4; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e0e224cbso3262115f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:55:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733907354; x=1734512154; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CNYFBgU80onPgPmOy3VgL9Wo04wi/d0lespX6ZHjY6o=;
+        b=JETgEpM4f3P+ZR3L67fy9V8BDeD7tVvRgLm4MQ8PbyElRQtMALQzQyU8ORq5NWIXd3
+         Gk3DVCAQHWs/yQaU9quDOymvvsQJQoxCy6exbg9xp9eS38AbXLcIDmmYyCTbwpBz0m7n
+         qA3z+DMIr6Ic/43HiiPDy4fcRr9fxgQmHjdUo4Whf/4miIZSX0DGZVWe1Z1cHWPkX+kc
+         3h396vSDAtgmBU7vM1tjhb7+MXxjj7c3JDdgHWpZHKEQCusk+XJ7TVollbWPjkvJMQM+
+         twDzMD75w+6TIMc8QzAobG99/83ezzDyBUUhUhLN0PIEpgKdCfPZUOQr71VTUh7rFh1j
+         OixQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733907354; x=1734512154;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CNYFBgU80onPgPmOy3VgL9Wo04wi/d0lespX6ZHjY6o=;
+        b=Z6mSpBrep03hSUrR5XlQeZT8IT5JZdA/EheK6C+wbsmZN0QRThs4H2IiX6e52Miazt
+         p/M5kkxirImLiqN1YYmGTn9rkl7VZFlgXydlnF488ZebNroF8b3VEgzG7otbdMDEkW9h
+         th2tTw8XcN/4MJqDLzbLZdk3iqGcJzRIVKotcIxyHzlEK4mBXuCtL2jws4Ispj8VKivt
+         HIBEkWJjwskkyQHbB8/PP03yxJo8kNwmwslfOCeEPtMzHUeDrXokHqJKFT34USxCfy4n
+         f0EzjAb727KUzRH96Vxg0MRI4pfeleJRtSYvJZ9SR71ueWhlSBdCAUuJDOPgv7ebEcPW
+         N/YA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9zO4Tk73bjZYtRkAp8ShX/VxygiJNhVMh53R4sMordSiQDk8cSFjb2YTd6jpvntPg1Sk8hJ2NBmXMpkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQRmwZ5KyLyucORFrdpxfcFKhkIcoZ+YDC8GmeJQAMEgMMD0D/
+	8oRAdeGTUHCilAwoRPeFY889TYR7Gg5J8JU3sbvgpY/dMHvmnv6yn2pGTbFldHc=
+X-Gm-Gg: ASbGncsRUJkaOe8s/sRny1Q8XyXs6EtkWJa6U1mfNoUHaugV9spj16TOr57OsfpFxSy
+	cgqZ7DWeJXmJGN165ntwqEjQkX5NnEEE0vtXMoOohA3m6Ts9jryjLOYJHW3MVtVjjFWKVNLYuYi
+	a4Soqll70nmQptMIn92cu4GNjSzrg4j6L5z5AXtNZUUuYpZ2IcG8/SXQHoHltzGr+p1TKswmPul
+	ZQJG1jeWdXXKZ9bCID02n+PByB4pmmCn12pW21bvm89mVik88IhnN4=
+X-Google-Smtp-Source: AGHT+IHrmu2DR2E7aQ2oR0iKyyta3/WNVHfEmAFuLJs4FzC35Y1JlcrBeBL7pt9CkfFjARUp/NL0dA==
+X-Received: by 2002:a5d:598b:0:b0:385:f560:7911 with SMTP id ffacd0b85a97d-3864ce4aeeemr1437480f8f.10.1733907353849;
+        Wed, 11 Dec 2024 00:55:53 -0800 (PST)
+Received: from pop-os.. ([209.198.129.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbd72sm257204185e9.44.2024.12.11.00.55.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 00:55:53 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org,
+	namhyung@kernel.org,
+	acme@kernel.org,
+	mhiramat@kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Leo Yan <leo.yan@arm.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Dima Kogan <dima@secretsauce.net>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] perf probe: Fix uninitialized variable
+Date: Wed, 11 Dec 2024 08:55:22 +0000
+Message-Id: <20241211085525.519458-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAX1zdRU1lnYzk5Aw--.9641S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFWxWr43ZF4rGF4rurWUCFg_yoW8XFykpr
-	WFkr4xKrsYyF10kFy0g3W2yw10grZY9345Xrn0qry0yFsxCFnIgr1FvrWkur4kur4fC3Z3
-	twn0yw18Zw1xZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVbkUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBGdY+PUB8QABsL
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2024-12-07 at 08:13 -0800, syzbot wrote:
-> Hello integrity maintainers/developers,
->=20
-> This is a 31-day syzbot report for the integrity subsystem.
-> All related reports/information can be found at:
-> https://syzkaller.appspot.com/upstream/s/integrity
->=20
-> During the period, 0 new issues were detected and 0 were fixed.
-> In total, 3 issues are still open and 8 have already been fixed.
->=20
-> Some of the still happening issues:
->=20
-> Ref Crashes Repro Title
-> <1> 433     No    INFO: task hung in process_measurement (2)
->                   https://syzkaller.appspot.com/bug?extid=3D1de5a37cb85a2=
-d536330
-> <2> 32      Yes   KMSAN: uninit-value in ima_add_template_entry (2)
->                   https://syzkaller.appspot.com/bug?extid=3D91ae49e1c1a26=
-34d20c0
+Changes since V1:
 
-Hi Yuezhang
+ * Split into a fixes commit and tidyup
+ * Pick up tags
 
-it seems that the patch causing the report above is:
+James Clark (2):
+  perf probe: Fix uninitialized variable
+  perf probe: Rename err label
 
-6630ea49103c exfat: move extend valid_size into ->page_mkwrite()
+ tools/perf/util/probe-event.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Currently, didn't develop a fix for it. Could you please have a look?
-
-Thanks
-
-Roberto
-
-> <3> 2       Yes   INFO: task hung in ima_file_free (4)
->                   https://syzkaller.appspot.com/bug?extid=3D8036326eebe7d=
-0140944
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> To disable reminders for individual bugs, reply with the following comman=
-d:
-> #syz set <Ref> no-reminders
->=20
-> To change bug's subsystems, reply with:
-> #syz set <Ref> subsystems: new-subsystem
->=20
-> You may send multiple commands in a single email message.
+-- 
+2.34.1
 
 
