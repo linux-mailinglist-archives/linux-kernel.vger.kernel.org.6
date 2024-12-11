@@ -1,185 +1,135 @@
-Return-Path: <linux-kernel+bounces-440905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8F19EC640
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:59:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A2D9EC643
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB251886E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:59:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85043165789
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02751E9B36;
-	Wed, 11 Dec 2024 07:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED421D79B0;
+	Wed, 11 Dec 2024 07:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hfa9xS2W"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yh7EW2kp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677611D0E28;
-	Wed, 11 Dec 2024 07:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BFE1C760A;
+	Wed, 11 Dec 2024 07:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733903905; cv=none; b=tZ2rvxH1z8du6kHhGnct5JVlxJe9gl5kQLjW4gSEO8LLumMIQTXMIQ211xuuRv+B8i/HYfZTKzs26OESPYbuC3d25g4VsMQ4jlbnlR/xG+QJvMiW/znBog8PWDojOaU0lAHGJ96T5nZI5upZ90fH64B/bnh79lDc2P4j+/28NXo=
+	t=1733903940; cv=none; b=CbO4iRwzMun0XhiMaQipQc9depQPK5z83HLmbJJHeDP0uFGgT2VcyY3aEzfxRymVoCnXjQZ/8rw4I6+EAZcsnEY0gqXcYl1Kmw9pLsvwMR12t81Lx7Qfgg7moqQNgMEMGs/8/rBNoTzqS2jN7n7PF5z1oCSub+9h2lEXnefoHeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733903905; c=relaxed/simple;
-	bh=tMpv5LeOHSfLNp3qLGN7hTotuOB8L59eDUlqDg/ma1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ArnbxUoib3RQvPacjbw1BoyXmAMdNGvUhvvR5rHjP69xxUtsFeF+bXNNW0Cwd2VMWtso3oXouGMSEZiQA2NTPzkzmlge9AFy2eYp/D0GnqKOokOZub7zVXwdoMQt581uvEsSMhlXKTT1N04Q118wwyq59r/OSkRRdwnJOgOh5Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hfa9xS2W; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB1SJLP025987;
-	Wed, 11 Dec 2024 07:58:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=4qMIY5BJghurRRbbx
-	ix/ChndzugGNuMDrQpQehDbW88=; b=hfa9xS2WGCf2FD36hdCE5gxOlCGugJXNe
-	7teJ3Vs7EDE6Io3vXmK4e+MTQGVXVQN1wYwlrBJqVSi31ymizvxDERsoeTKi36ep
-	5vR/L+js7Cmk/M976XWEgMO22qmnpTgUmMD6WdEE5FPQCrHeqsPEit5QWBveZMFc
-	Qx7734mDSYQlhU0etmtnAkO8ErApNcRPUdhGKoyFRsgr4u88tsn3USp10eXq0Wif
-	hf3cjAmbj441621f8XztNJxYA9qJlB3yZeWtVFqUb5dgVvHS1t4W4pZerbwAzBir
-	ZO935FHrzfzvFm5XO/cF4xa9rvNTqBWKzpQM+jzJxW9UGL3ggxkgA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqb3yp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 07:58:14 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BB7sHo6002061;
-	Wed, 11 Dec 2024 07:58:13 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqb3yn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 07:58:13 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5kEJs032739;
-	Wed, 11 Dec 2024 07:58:12 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psgf7d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 07:58:12 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BB7wBqR64422356
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 07:58:11 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1209F20043;
-	Wed, 11 Dec 2024 07:58:11 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5256920040;
-	Wed, 11 Dec 2024 07:58:09 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.39.30.217])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 11 Dec 2024 07:58:09 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
-        John Garry <john.g.garry@oracle.com>, dchinner@redhat.com,
-        Nirjhar Roy <nirjhar@linux.ibm.com>
-Subject: [RFC v2 6/6] ext4: make extsize work with EOF allocations
-Date: Wed, 11 Dec 2024 13:27:55 +0530
-Message-ID: <57264a45aabcf8d789278e09da5db297d2e6b192.1733901374.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1733901374.git.ojaswin@linux.ibm.com>
-References: <cover.1733901374.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1733903940; c=relaxed/simple;
+	bh=nKdwgQDMHYy/FWDmzfRtOGZOPchDY10KI7885OTpYnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghToZVY6OfUMkhPiVaua5j0SeKIhj1SGnZi8mtDzkaMCR9H3eWdxrEEQsNhV+dNji4tav8z2U1w/9MmKxp6inb3ZDfqjxhtFU/v/gKnJZAiZJefp7AEADuJOZUvsM22SeAt48l+E44UagJWO+02SjQSPHAa3AfqbtkvzGyN88nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yh7EW2kp; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733903939; x=1765439939;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nKdwgQDMHYy/FWDmzfRtOGZOPchDY10KI7885OTpYnE=;
+  b=Yh7EW2kpHHZqgDdeSeOv4xsBhcR184xhf04htjpELXPkHR62byJCHr7I
+   XK2pkPNxG3xfJkRqQYBUg16sR0AIKth/y0Bv6ng1+0vRme7X00RgsECPm
+   73GXjxfEfZk+SIqAMIT+/M72T7rOIvOq+X3c6VPiSyEqa1RorBrbvFhIF
+   3anjq0QCaHsu//j5nnIC6oaaWMQFHKfXchqL9qTHkN3AYO9HuY2iOo5/V
+   YNslrWLz4DGJdmYCnrqkUY5geUE8MCYCGWxnhaJ4a6KMVqdO3NAiECRZK
+   ZR9P0+1qKCsKA+UQnM0zP0PCw5WZECX3nSRqJv2DA1BzPbHL7nH6JBX6o
+   Q==;
+X-CSE-ConnectionGUID: PYgDUudTT7aLzWoEsGAdjw==
+X-CSE-MsgGUID: mnMC7c0JSPmEBeZXfDcEqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45676065"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="45676065"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 23:58:58 -0800
+X-CSE-ConnectionGUID: KZD06ebBQvqEVdy+PuLNHQ==
+X-CSE-MsgGUID: wW9CCKjLTPqRhEUzKDIw4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="95539871"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 23:58:55 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 38E6B11F71F;
+	Wed, 11 Dec 2024 09:58:53 +0200 (EET)
+Date: Wed, 11 Dec 2024 07:58:53 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 4/7] ACPI: header: implement acpi_device_handle when
+ !ACPI
+Message-ID: <Z1lGPWHYTdfcxFPL@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-4-00e409c84a6c@chromium.org>
+ <Z1irAT0KVwqhBSSZ@kekkonen.localdomain>
+ <CANiDSCsLOODLhGrpPwOQ1j+coSb9yHYi=wjGpZ+F7VbA7AM0og@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bckmckhFq7qMo8N5MAMiIA3mggTcN_lC
-X-Proofpoint-GUID: lPj7xrGTsT-2TUMthEIgt0gxaPnwaFKK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
- suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110056
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiDSCsLOODLhGrpPwOQ1j+coSb9yHYi=wjGpZ+F7VbA7AM0og@mail.gmail.com>
 
-Make extsize hints work with EOF allocations. We deviate from XFS here
-because in case we have blocks left past EOF, we don't truncate them.
-There are 2 main reasons:
+On Tue, Dec 10, 2024 at 11:31:57PM +0100, Ricardo Ribalda wrote:
+> On Tue, 10 Dec 2024 at 21:56, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+> >
+> > Hi Ricardo,
+> >
+> > On Tue, Dec 10, 2024 at 07:56:01PM +0000, Ricardo Ribalda wrote:
+> > > Provide an implementation of acpi_device_handle that can be used when
+> > > CONFIG_ACPI is not set.
+> > >
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  include/linux/acpi.h | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> > > index 05f39fbfa485..59a5d110ff54 100644
+> > > --- a/include/linux/acpi.h
+> > > +++ b/include/linux/acpi.h
+> > > @@ -787,6 +787,12 @@ const char *acpi_get_subsystem_id(acpi_handle handle);
+> > >  #define acpi_dev_hid_uid_match(adev, hid2, uid2)     (adev && false)
+> > >
+> > >  struct fwnode_handle;
+> > > +struct acpi_device;
+> > > +
+> > > +static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
+> > > +{
+> > > +     return NULL;
+> > > +}
+> > >
+> > >  static inline bool acpi_dev_found(const char *hid)
+> > >  {
+> > >
+> >
+> > Please remove the extra forward declaration of struct acpi_device a few
+> > lines below this.
+> 
+> Instead I have moved the function under the forward declaration. Let
+> me know if you disagree.
 
-1. Since the user is opting for extsize allocations, chances are
-that they will use the blocks in future.
+The same order in which the functions are found in the actual
+implementation would be my suggestion. Rafael could also have an opinion.
 
-2. If we start truncating all EOF blocks in ext4_release_file like
-XFS, then we will have to always truncate blocks even if they
-have been intentionally preallocated using fallocate w/ KEEP_SIZE
-which might cause confusion for users. This is mainly because
-ext4 doesn't have a way to distinguish if the blocks beyond EOF
-have been allocated intentionally. We can work around this by
-using an ondisk inode flag like XFS (XFS_DIFLAG_PREALLOC) but
-that would be an overkill. It's much simpler to just let the EOF
-blocks stick around.
-
-NOTE:
-One thing that changes in this patch is that for direct IO we need to
-pass the EXT4_GET_BLOCKS_IO_CREATE_EXT even if we are allocating beyond
-i_size.
-
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/inode.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index d511282ebdcc..d292e39a050a 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -756,7 +756,6 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 		 * ext4_extents.h here?
- 		 */
- 		int max_unwrit_len = ((1UL << 15) - 1);
--		loff_t end;
- 
- 		align = orig_map->m_lblk % extsize;
- 		len = orig_map->m_len + align;
-@@ -765,18 +764,6 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 		extsize_map.m_len =
- 			max_t(unsigned int, roundup_pow_of_two(len), extsize);
- 
--		/*
--		 * For now allocations beyond EOF don't use extsize hints so
--		 * that we can avoid dealing with extra blocks allocated past
--		 * EOF. We have inode lock since extsize allocations are
--		 * non-delalloc so i_size can be accessed safely
--		 */
--		end = (extsize_map.m_lblk + (loff_t)extsize_map.m_len) << inode->i_blkbits;
--		if (end > inode->i_size) {
--			flags = orig_flags & ~EXT4_GET_BLOCKS_EXTSIZE;
--			goto set_map;
--		}
--
- 		/* Fallback to normal allocation if we go beyond max len */
- 		if (extsize_map.m_len >= max_unwrit_len) {
- 			flags = orig_flags & ~EXT4_GET_BLOCKS_EXTSIZE;
-@@ -3641,10 +3628,13 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
- 	 * i_disksize out to i_size. This could be beyond where direct I/O is
- 	 * happening and thus expose allocated blocks to direct I/O reads.
- 	 *
--	 * NOTE for extsize hints: We only support it for writes inside
--	 * EOF (for now) to not have to deal with blocks past EOF
-+	 * NOTE: For extsize hint based EOF allocations, we still need
-+	 * IO_CREATE_EXT flag because we will be allocating more than the write
-+	 * hence the extra blocks need to be marked unwritten and split before
-+	 * the I/O.
- 	 */
--	else if (((loff_t)map->m_lblk << blkbits) >= i_size_read(inode))
-+	else if (((loff_t)map->m_lblk << blkbits) >= i_size_read(inode) &&
-+		 !ext4_should_use_extsize(inode))
- 		m_flags = EXT4_GET_BLOCKS_CREATE;
- 	else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
- 		m_flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
 -- 
-2.43.5
-
+Sakari Ailus
 
