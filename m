@@ -1,164 +1,115 @@
-Return-Path: <linux-kernel+bounces-440983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7F79EC776
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:39:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E90D9EC779
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:40:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A4D16A5A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28AA7188B5CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9911DE4F4;
-	Wed, 11 Dec 2024 08:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486DA1DBB38;
+	Wed, 11 Dec 2024 08:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNfr05fu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYJp3v96"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D6E33F6;
-	Wed, 11 Dec 2024 08:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6491C5CD7
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733906344; cv=none; b=pU3Z87virwaVxjZ01PcGJP5NeWHIObD9gowL606t/JPH1AxptyFoYFIhBalLIsLu/LrUZnCDCrIlTgfIcdA/qr5e4BcFM0usozYzR5cxhEmQS7RNHpiBh7owyNIOwWynWbklEIjZWAP3bXunypV84ZZqyBB51gr326th4R5dshA=
+	t=1733906393; cv=none; b=ec1GjNIS9EYXL3VoX1yAVKsB05S9QD+7DTIG6Bg/heeRXJJ8BIKknh1BgBuDZImP7a4tpjlBjwP97tq0HDUTVZHuoPGGoPTIgJhEVLvgNvPZsPsmNuwCz7Ow6QJfQxATU9/HcATtf7xPsUicOtv/sgI3+rJF09XqLfL/KqUlcyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733906344; c=relaxed/simple;
-	bh=9/wdAYu8m8NQcYmRnB+o16mQ4ZhC8zf6dEc+9ZBWrqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i+VNla2/L7onElzreyVa1JcgM6YkFRG07/qYN1PqrvFPNPlbrbZDxipR5/cgkqoGNB3e25QrTEbJDZMrN+IzhvE3Ug+tlrbHg+JkB8p2QPxlv4W30qSlc8JOf3/RGIxL1ykyDn8DFJS9NWwkmUKFBgFvsRjAcmc602CgDDbYhD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNfr05fu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37644C4CEE0;
-	Wed, 11 Dec 2024 08:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733906343;
-	bh=9/wdAYu8m8NQcYmRnB+o16mQ4ZhC8zf6dEc+9ZBWrqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DNfr05fuEpdiArm2BBifYadSg+UE4XuMp/Cu1CqQkBlUvamsLO4r4R8ZIDZW4kYSe
-	 wnDB922Ix1weO1kbQH4DaLcbfNVQrv3cdfzV7L9+lCJ/YhMx5/ncVhNJnwQiKSyzss
-	 qdvp3clzcW1a4ElQ/qPdD66E2b83h5I7Tg/5xud/NUNpJDSah2wCxcMMwriDRvXedX
-	 ix4GMszTPpU4XDsA0VRaJVSMfAFDAvvHgze56efgJkuV0Ryt3eXcVTvhD2EKLPKTMj
-	 f4selDix7kT+twnDGl3qOt5RXH5qUbh/PNZZVODSo3ZBzRsW1qeiq/NTso6V3II4Hn
-	 8pKXEk2gPloHQ==
-Message-ID: <1ecf2e8c-86cd-4ba2-832b-014a05a80d26@kernel.org>
-Date: Wed, 11 Dec 2024 09:38:54 +0100
+	s=arc-20240116; t=1733906393; c=relaxed/simple;
+	bh=6Cb2eXYbnDnF9MbV7D6DmbWpJZ3pLF6UlxkEtHzazGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TsVqCmZgyVbj1QEu3nQJk7pBq4BhnSEqKwOXodCat2dbaVOaDzAqIidg66isf/PCSQGWvFiKwNzOoGQB/aoKbdIeaezoruwYJFXb5ou60eoBfpqf2LqegeF04TGovLyASzu3lfFAh1LxRw8kBUV+rGcRAtk2H42/pG0D4nAm0gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYJp3v96; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-216728b1836so14893855ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:39:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733906391; x=1734511191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a9kKrqfGW0A54dxn1v83SDxNjg3jBwrNlLRh958PFM4=;
+        b=ZYJp3v96jIffcQUojr0zsw35kBwWkHPTo8IzHj5r2IGBVxQ/Xq9751EYIh2XjXpPOQ
+         rVAtPMYl/XidZAgsERNjK1Z0wG1CC9M8aUYCl3MMwVaGAyHPnJcGiNuXiUhYcpUuQIsr
+         TGg3CBS/SWN0oGbm/1wUF/0LnFofl0D+hVdX3uEpe2x7FVXHdgb+TX62pktEtI3olrMv
+         uGa/4iPCCj1vfrSJh3ytzmad/Y8HMwRAAnuoRuNX8xXnTTtNmh9l7fvDnbK/SDvgUkKK
+         myT6/8iC1b7tiODAmMOdSVaaQjgeGCbLTFy8Q6FHRUkOfGvPrKKGXPVcbZfuhCKa0fqa
+         /6MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733906391; x=1734511191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a9kKrqfGW0A54dxn1v83SDxNjg3jBwrNlLRh958PFM4=;
+        b=PJksZGrIkYpG8U2XZoQwEfaihPbk2VNFKcBxXGrMxXd+x5KH/5hoNMfxiduNwZ+Phb
+         8mdb4TL6Z+6/3OQU/bP4HTNsxAl5jjAhPQB05+hj+ygZl2WK0Fy9FHJP4fMBiEADwlA3
+         HfQPMt77EuV/IEzQKg3b28XD0qW3/VQ7AD9A9q0TSzWzMnzFcR0XjFAu0amV91dPQsok
+         Uodx9B+pIzJgKWSguj9OnZyISq9mVM/VLxJJ46G3iLZj6rzShq3LYOW28xTqIZyxYhqu
+         rpZmwhpw7vk/HozchB+fiEYSH8xfZXLbEpT0QzbSx1J9QvmPHlbC9fjCxr5LXdZoPfw2
+         c9Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyzXxLGk/dbPe5nIu9uSMAGFqTBReiCwF3ZpXRKbn0PSYMTx9lgXNoqIue5bTl2xG5SiyoSgkC4ISvC5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5ljObMDGrZ6oUPHpdArYW1m+0KAMa+uKChxIeUDU8f53kFpun
+	YFVhzaj0NdUFOVnNeAe1NE4vzV6GqFNUsLrEloBYWNdgY52Xmnss
+X-Gm-Gg: ASbGncunf6sRXgIZ7aTiqWv7ODH+Wl7aiQo7lJ/23EE31aPVJpe8HgPzrZIBTadq92o
+	1UDLbz0PrcleVKeJKDAV7AqCQMBMn5H80HIsSxv1vD4tSS8pQaI4QM8piSvOpxukIy5fMaJnZ3Y
+	6qioRBlHPrxYd1DBgjyhPefsqwqmY6P7JWxTZsEat/1ASx1n8DHcXCbpQCwByc+/ArKHsIX9bvA
+	wcW1vzhUNI419mDQ7BuvZea73WHtZ2ba7OJ+vsVrfca4zaOVduNlgGpFIgNXCqJjg4JgYXaATEr
+	qKaMEh+Wzw==
+X-Google-Smtp-Source: AGHT+IH2WdpnBVNj09+ru8TRkcBQGhbYSw4uxyGvy2N4W9/3sv//NspxuQ95dh6osnLM+HprckO9Dg==
+X-Received: by 2002:a17:902:ccce:b0:216:3dc5:1240 with SMTP id d9443c01a7336-21778508c51mr31249635ad.45.1733906391544;
+        Wed, 11 Dec 2024 00:39:51 -0800 (PST)
+Received: from localhost ([58.29.143.236])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21631118cedsm67195655ad.150.2024.12.11.00.39.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 00:39:51 -0800 (PST)
+From: Changwoo Min <multics69@gmail.com>
+X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
+To: tj@kernel.org,
+	void@manifault.com
+Cc: kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	Changwoo Min <changwoo@igalia.com>
+Subject: [PATCH] MAINTAINERS: add me as reviewer for sched_ext
+Date: Wed, 11 Dec 2024 17:39:45 +0900
+Message-ID: <20241211083945.832294-1-changwoo@igalia.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 01/25] virt: geniezone: enable gzvm-ko in defconfig
-To: Liju-clr Chen <liju-clr.chen@mediatek.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Yingshiuan Pan <Yingshiuan.Pan@mediatek.com>,
- Ze-yu Wang <Ze-yu.Wang@mediatek.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-mediatek@lists.infradead.org, Shawn Hsiao <shawn.hsiao@mediatek.com>,
- PeiLun Suei <PeiLun.Suei@mediatek.com>,
- Chi-shen Yeh <Chi-shen.Yeh@mediatek.com>,
- Kevenny Hsieh <Kevenny.Hsieh@mediatek.com>
-References: <20241114100802.4116-1-liju-clr.chen@mediatek.com>
- <20241114100802.4116-2-liju-clr.chen@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241114100802.4116-2-liju-clr.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14/11/2024 11:07, Liju-clr Chen wrote:
-> From: Yingshiuan Pan <yingshiuan.pan@mediatek.com>
-> 
+Add me as a reviewer for sched_ext. I have been actively working on
+the project and would like to help review patches and address related
+kernel issues/features.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching.
+Signed-off-by: Changwoo Min <changwoo@igalia.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e930c7a58b1..788681fb209e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20902,6 +20902,7 @@ F:	kernel/sched/
+ SCHEDULER - SCHED_EXT
+ R:	Tejun Heo <tj@kernel.org>
+ R:	David Vernet <void@manifault.com>
++R:	Changwoo Min <changwoo@igalia.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ W:	https://github.com/sched-ext/scx
+-- 
+2.47.1
 
-> Add config in defconfig to enable gzvm driver by default
-
-This we see from the diff. You must explain why we want it.
-
-> 
-> Signed-off-by: Yingshiuan Pan <yingshiuan.pan@mediatek.com>
-> Signed-off-by: Yi-De Wu <yi-de.wu@mediatek.com>
-> Signed-off-by: Liju Chen <liju-clr.chen@mediatek.com>
-> ---
->  arch/arm64/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index d13218d0c30f..0f63d4837b61 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1733,3 +1733,5 @@ CONFIG_CORESIGHT_STM=m
->  CONFIG_CORESIGHT_CPU_DEBUG=m
->  CONFIG_CORESIGHT_CTI=m
->  CONFIG_MEMTEST=y
-> +CONFIG_VIRT_DRIVERS=y
-> +CONFIG_MTK_GZVM=m
-
-Does not look like placed correctly, according to savedefconfig.
-
-I still do not see any reason to have it enabled.
-
-Your patches have weird order or this is just wrong. There is no such
-thing as "MTK_GZVM". Use git grep, if you do not believe me.
-
-
-Best regards,
-Krzysztof
 
