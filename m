@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-442399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0AC9EDC3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:53:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B4D9EDC3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:54:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB98282F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A55F16792F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C881F2C5D;
-	Wed, 11 Dec 2024 23:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9C31F37D2;
+	Wed, 11 Dec 2024 23:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="BtFb0JiA"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ppXO5a6M"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED1C1F0E3F;
-	Wed, 11 Dec 2024 23:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD261F2388
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733961212; cv=none; b=BYDuMtK8SpeaK20MgUoVF7kuDVZPA0ZiE7UrqGPCrQNcYjtWe9kb/hXOS0bSoLe2JpKDryG54NNdy9cZ2Nyu6MvSIzZtvGCyTcFm1NYXSE70u+88XXknFPgR2qGx6DY6fs9UM/Gx1gm9v8SrOHIkl0LDQCSjQAO2H/6P2Wdtopc=
+	t=1733961241; cv=none; b=gOYouT5LAc9PwQoBtSXwpqQJX5ta71wsYxrHpRwO1Ha/1cf7pdh7HnLDKN67mDhyuXS/v5mOiBOxLLWe3Qo43VaIjxhcqIRcgLuZVB+TQpR6KP5SGRJfl8NdMfSyTlMWDfOYJnyN/Uz9imkQsotjAgiqdynhQiU+dzwjnt6NQis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733961212; c=relaxed/simple;
-	bh=Z0qFz66WY89Gie8Jf7Vxb27a5pOyS61O6jv2c3z8Kwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JvAPOTIOEiei7dSYWNxuamsOq7CtEETgFZ9jPA5b+HDY+7SueFJZX3DUmJf7uJIRtTZMZRXAUcVQNbXnYO2+Kk/5XuYACOinrVoRoEv2e9rxcYk+9LftwJ+/pfDHzDUbufoYEoHhiaR1qmUnkiF9Nn0eHN/E6E4j7JelYwpz2Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=BtFb0JiA; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=qMiEpycpET3Y3oNa+qzI9tLw4Jim77ikPqU3nrk3vKs=; b=BtFb0JiAU1ItkLVi
-	PJ+Y/ubCSr1WD3leYshfATnSNQe5c79YXeumayX94Hg9e91bPr9G6IQY9XHmeX5w/NXk1ilk9s0Yz
-	pJrYD675UwjUZF3KdlnwKsZWXAd7Ku5sZZi98gwfqhqKuAqRcH2vSy3V/eOfKVt+KrfpuCSkVHZhH
-	ssGpzUYKfmZNiYjL7u/jPls6kKVwuXof9cDvbvq2f7yafTheuNEm347ZIvDlJPjxYpoGwanMkXfwz
-	/qhxVSamKyLsd/aSwmjLwXBCN6JLMspSrufXhlSXr7MBhzENYE7hUN0JuYAybPmagcHCy1p4KVS0g
-	7CHnpPlizw4w7H36Bw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tLWWF-004tTE-33;
-	Wed, 11 Dec 2024 23:53:27 +0000
-Date: Wed, 11 Dec 2024 23:53:27 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, cassel@kernel.org,
-	p.zabel@pengutronix.de, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ata: sata_gemini: Remove unused
- gemini_sata_reset_bridge()
-Message-ID: <Z1ol91qRiLu4vZES@gallifrey>
-References: <20241211011201.261935-1-linux@treblig.org>
- <CACRpkdaarPM3vx6vAVhdSv+KHDZq6MTDo0JpQYGj1gJnaE7OrQ@mail.gmail.com>
- <Z1oI6cAAhGrcIVw9@gallifrey>
- <d74c3d02-e4e2-4f78-bf30-3940f50af39b@kernel.org>
+	s=arc-20240116; t=1733961241; c=relaxed/simple;
+	bh=stoC1G8iblU8O30Rj/lDT0olK4BzpBBbuTHrpwSS1QI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uZbBL6ugxdeExKmyh7zBNgAK4is1fpEx8AlLIAcQJImg5rO0+Cia76emZYdKvW7kUMHLrErGGXqBEf23RiNLdVfmfH8hAetE2JxpPURDDsKYsr68LwJxkG+09GZlrf+R2xNTIozhjHr9yZ9bJtL/6w9Jzvo0XUtMZedNlfGnbGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=ppXO5a6M; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6BF2C2C02B3;
+	Thu, 12 Dec 2024 12:53:51 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1733961231;
+	bh=4b/0gkfN184TVJOckeIG7K3tpwmKYJFz5jFNpK3jJS0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ppXO5a6M9r/vOK7DwBNsrNxLqRDLjeXFzKkR2VLHBGYSl72Y1JyZiJPiUVrqe5buZ
+	 BJLycwwTQQmylyCM6DP8rWrlQsYtuFmqMttyJqXZmQhwNNSv90GqGitOqQ7SJFqmgM
+	 l9MzTljuTd8oGXTRvDvov5P0sOakQHbzUdXoimbaabEkJlEl0d6EkIi2K0B5D/IGEg
+	 UPmM4KUsb4ONbCp0nhc+GyZsIZT4cVYIpSUjTFByWX/8ZingB4v0l8a2ikMhPh6Efc
+	 CS/MLFuB1ad4csa36yswEsd0RGiUO126luunkGcBLqmzeJy26EnSIVh5h6X7YzSl0d
+	 QLoRDOfr/JK/Q==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B675a260f0000>; Thu, 12 Dec 2024 12:53:51 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 20AE713ED7B;
+	Thu, 12 Dec 2024 12:53:51 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 1B2E72807DF; Thu, 12 Dec 2024 12:53:51 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	tsbogend@alpha.franken.de,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	markus.stockhausen@gmx.de
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 0/4] RTL9300 MDIO driver
+Date: Thu, 12 Dec 2024 12:53:38 +1300
+Message-ID: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d74c3d02-e4e2-4f78-bf30-3940f50af39b@kernel.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 23:53:01 up 217 days, 11:07,  1 user,  load average: 0.00, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=675a260f a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=RZcAm9yDv7YA:10 a=_n84Z-pW24laMXaj73kA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-* Damien Le Moal (dlemoal@kernel.org) wrote:
-> On 12/12/24 06:49, Dr. David Alan Gilbert wrote:
-> > * Linus Walleij (linus.walleij@linaro.org) wrote:
-> >> On Wed, Dec 11, 2024 at 2:12 AM <linux@treblig.org> wrote:
-> >>
-> >>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >>>
-> >>> gemini_sata_reset_bridge() was added in 2017 by the initial
-> >>> commit be4e456ed3a5 ("ata: Add driver for Faraday Technology FTIDE010")
-> >>> but has never been used.
-> >>>
-> >>> Remove it.
-> >>>
-> >>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> >>
-> >> Right it was never used because the corresponding reset in
-> >> the low-level PATA driver didn't work so I patched it out before
-> >> submitting.
-> > 
-> > Ah right.
-> > 
-> >> But should you not also remove sata0_reset and
-> >> sata1_reset from struct sata_gemini and the code fetching
-> >> the two reset lines? And even #include <linux/reset.h>?
-> > 
-> > Oh I see, I was just looking for entirely unreferenced functions
-> > but that takes a little more following to notice.
-> > 
-> > I'm happy to do that; are you OK with it as a follow up patch or
-> > do you want a v2? (And can you test it, I don't have the hardware).
-> 
-> I already applied your previous patch. But I can replace it. So either an
-> incremental patch or a v2 is fine with me. Thanks.
+This series adds a driver for the MDIO controller on the RTL9300 family
+of devices. The controller is a little unique in that we can't access
+the SMI interfaces directly. Instead we associate the SMI interface with
+a switch port and use the port number to address the SMI bus in
+software.
 
-Follow up patch posted as
+Chris Packham (4):
+  dt-bindings: net: Add Realtek MDIO controller
+  dt-bindings: mfd: Add MDIO interface to rtl9301-switch
+  mips: dts: realtek: Add MDIO controller
+  net: mdio: Add RTL9300 MDIO driver
 
-Subject: [PATCH] ata: sata_gemini: Remove remaining reset glue
-Date: Wed, 11 Dec 2024 23:52:50 +0000
-Message-ID: <20241211235250.136985-1-linux@treblig.org>
+ .../bindings/mfd/realtek,rtl9301-switch.yaml  |  15 +
+ .../bindings/net/realtek,rtl9301-mdio.yaml    |  82 ++++++
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       |   8 +
+ drivers/net/mdio/Kconfig                      |   7 +
+ drivers/net/mdio/Makefile                     |   1 +
+ drivers/net/mdio/mdio-realtek-rtl.c           | 264 ++++++++++++++++++
+ 6 files changed, 377 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/realtek,rtl9301=
+-mdio.yaml
+ create mode 100644 drivers/net/mdio/mdio-realtek-rtl.c
 
-Thanks,
+--=20
+2.47.1
 
-Dave
-
-> > 
-
-> > Dave
-> > 
-> >> Yours,
-> >> Linus Walleij
-> 
-> 
-> -- 
-> Damien Le Moal
-> Western Digital Research
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
