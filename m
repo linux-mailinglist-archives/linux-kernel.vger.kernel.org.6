@@ -1,109 +1,95 @@
-Return-Path: <linux-kernel+bounces-441443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DC49ECE76
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:22:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93D19ECE79
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:22:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57ECF16710C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA3D18895EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A56C15CD74;
-	Wed, 11 Dec 2024 14:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D7B15CD74;
+	Wed, 11 Dec 2024 14:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpFM8mJz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIBTgR/4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F1A246322;
-	Wed, 11 Dec 2024 14:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F50D1CD3F;
+	Wed, 11 Dec 2024 14:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733926944; cv=none; b=muHf2JxAhSyeHWrHbI5s7SR3PFuAa6IHKYgAt1CnEzGw1bxxGlqB+VtHl7FGWRkfemk/Zx78UJNgcHFXflTbKEwpDAf56bF6Yu4VzxHsJoIlr4JHMQMqoEK0qZx8KgGMH0BiIEl4DpD8w5ZYtWNjNE89G8UPJ1vIJ8c+lv1/kYw=
+	t=1733926953; cv=none; b=tZkbwJxkUTqqfrOBAU8Dof0s5LnsOeiDPL87RbFKXVUHgPt1uTfXZnvTyXjToqWd8q8ygj23bVj+HL+FFsOOy+GCRLnq9WqxI8WB0dVl5gQktMDzFwkl3PLKwJFA6cjb7o3yQksrl+bYkCs2nnGtsKGkNqsMN2z5JTAJ6foEAaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733926944; c=relaxed/simple;
-	bh=haNvrp7vfLxxotz4/f+JScoeb3XX4wNKAxfWcxSqFSU=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=khiTEHYqYsxOcSdaCoJ91H1LAzSeWB8fYeqVCzLWrBJitB5UreBgbqsmAQykPVle1WTbk+9mYk3tBx2g1cnG6NfRmq5+qJmTk8DemAlDGLVrx+EzV3/dDMNsnhoNw9g/eEf2PjU8jwXqtL34REJHiNpaONO+cL5fCeNveVjk/Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpFM8mJz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAC9C4CED2;
-	Wed, 11 Dec 2024 14:22:23 +0000 (UTC)
+	s=arc-20240116; t=1733926953; c=relaxed/simple;
+	bh=9GFGBRoKYbX3/BHaisqy6VQSKKdmiRV5MR8dYdoSLoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMMtWzDX0fQxNk+InmoN5Uy8mhugKnercc2bTEHybKrzyFMZwrAnqkSQaWDMWIsXdM+dopNBx4HEWkFYn9zbXEIBpkOMLJaety2eDcBPpnRW326uvl2XidTT+fQyIw3iGKmhE0OT2FaWHvw+U5zEEMfo0Kpv2WGNDPqMFtjwlP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIBTgR/4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82021C4CED2;
+	Wed, 11 Dec 2024 14:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733926943;
-	bh=haNvrp7vfLxxotz4/f+JScoeb3XX4wNKAxfWcxSqFSU=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=YpFM8mJzXRhEs+FqLTxtHNEGG2DKcKeAwuq1HPK0wXYU9j/dZEHoevZx3MRZTxyMo
-	 s90bq26S+hbpUO3OJGID3nPDojFva11XbuJ58eNei6CMaQvrJDkivahehw4AgifRje
-	 ucOju9dWI6XNTf6y2ji+DJwCgcr7FAVXXkQZrIatyGvi9fAqrE9x3a4+VhriOSrHHg
-	 wLUgnT4UoVn07/W3m61gLyZOdiFEyk80Z4oXYnPIB08WZcw847W11FMZU5QSOVq26Y
-	 2OrKQwb+eUCTJc0+tMYjMbn6QVfqL9Zyfm/EHhRzVe6UGL5c8mFXeYE9vRvpRGMd89
-	 1y+8ithTqsI0g==
-Date: Wed, 11 Dec 2024 08:22:21 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733926953;
+	bh=9GFGBRoKYbX3/BHaisqy6VQSKKdmiRV5MR8dYdoSLoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uIBTgR/4TwdzUGIzjJSjfptLWKWzXyBwEpMSwF8RNgMfq2JFTt/M6QzE04K8Hp1wL
+	 I0WIipmMKes18WEkjok3ZQ5SWfpPmE06iyPG29rVDOL/3xVqNowImTU9/X6+xmr8Ba
+	 ikCj4U1w1OZ6iy5gwnFgR0OsTZlu0J5mfpGAjgIN4JMOtDOLgkxRwy+wZNUbLfz/8J
+	 8OKCWMqd29XdE1DKkryYzrkkZS5CNN3LZDcXrgcc6UKcParRnqg033OEOSX8rGorX0
+	 ypPzlLLmo399cFBB3ZbtyCKIFwdHuw+TFVx5B9Gz+chr91XWfpTxeN5ALv/e8vPl4P
+	 nz+UNpDYVZILA==
+Date: Wed, 11 Dec 2024 14:22:28 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Weizhao Ouyang <o451686892@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kselftest/arm64: abi: fix SVCR detection
+Message-ID: <804c336a-30c7-4d4c-b8dd-24912de39808@sirena.org.uk>
+References: <20241211111639.12344-1-o451686892@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, broonie@kernel.org, javierm@redhat.com, 
- devicetree@vger.kernel.org, linux-spi@vger.kernel.org, krzk+dt@kernel.org, 
- linux-kernel@vger.kernel.org
-To: Iker Pedrosa <ikerpedrosam@gmail.com>
-In-Reply-To: <20241211134023.222473-1-ikerpedrosam@gmail.com>
-References: <20241211134023.222473-1-ikerpedrosam@gmail.com>
-Message-Id: <173392694152.2841548.6324601669086826713.robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: devicetree: explain how to get CS
- active-high
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bJ96iDhLkg2PwTh5"
+Content-Disposition: inline
+In-Reply-To: <20241211111639.12344-1-o451686892@gmail.com>
+X-Cookie: Every path has its puddle.
 
 
-On Wed, 11 Dec 2024 14:40:17 +0100, Iker Pedrosa wrote:
-> The current documentation does not clearly explain how to invert the SPI
-> CS signal to make it active-high. This makes it very difficult to
-> understand.
-> 
-> This patch adds a simple explanation on how to set the CS line in
-> active-high and adds an example to make it easier for users who need
-> that setup for their SPI peripherals.
-> 
-> Link: https://forums.raspberrypi.com/viewtopic.php?t=378222
-> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
-> ---
->  .../bindings/spi/spi-controller.yaml          | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
+--bJ96iDhLkg2PwTh5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-My bot found errors running 'make dt_binding_check' on your patch:
+On Wed, Dec 11, 2024 at 07:16:39PM +0800, Weizhao Ouyang wrote:
+> When using svcr_in to check ZA and Streaming Mode, we should make sure
+> that the value in x2 is correct, otherwise it may trigger an Illegal
+> instruction if FEAT_SVE and !FEAT_SME.
 
-yamllint warnings/errors:
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/spi/spi-controller.example.dts:82.33-34 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/spi/spi-controller.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1506: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+Thanks for spotting this.
 
-doc reference errors (make refcheckdocs):
+--bJ96iDhLkg2PwTh5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241211134023.222473-1-ikerpedrosam@gmail.com
+-----BEGIN PGP SIGNATURE-----
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdZoCMACgkQJNaLcl1U
+h9BIUQf6A/rU3f0f91Pf47ZodZLzOxU/d/asQ8duMWLaCfvdxZLW1fzCLXCl85tn
+2ExRdxuvM9yNmk//Wi/Tvs2aRebFCS/m5H5GUdaelrDDFFamRaLD263wPPg6CF8E
+Yi06wd4eQdzm8m9THHEqno2sluJIwfUJbaoF6F/ne8VYSUWROVE4Wr3UY4OWU+Un
+Z+8jIecDVaxSCeAlcwGDQR6po6YDopwXqmcOcZ87YndXecqnIBFPuhVD/zYQpNAL
+XEW1GVqElH8THyIuOk7cNmZ5dgQ9p002FPW6fQ5FlM6HhX0AA/8wlPK/yPoE+URN
+HBPjGuZ+8xKYm7AADFPoYvqjuPrdZw==
+=xbKO
+-----END PGP SIGNATURE-----
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--bJ96iDhLkg2PwTh5--
 
