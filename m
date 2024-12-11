@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-440544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E429EC09A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:19:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8432B9EC09D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:20:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07B0280E00
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:19:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1E1169534
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7F9AD5E;
-	Wed, 11 Dec 2024 00:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAF0125B9;
+	Wed, 11 Dec 2024 00:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jroSMsnP"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0lGhSeCB"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4CA10A3E;
-	Wed, 11 Dec 2024 00:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7375B65C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733876381; cv=none; b=nyulSW+94Q8LW6X1ec+Rg6Tud27KF4TWqzc8wMcqtNoSaInlGFOry0eB+wk1pcplLJCJleRgkqmxVAbnJWUYue7OXAWkpMNQSjMT4/Q1RJekklY09LCDaTCvCkkutjLKfeVEKIbSBlEb4Gwt8qBXweOTkmVN6aPRQ0UV9sXzFAA=
+	t=1733876407; cv=none; b=MUlbzdAUrvutAH/uLW0EkdXKpHFxhMfwPukalfRAWTcldja/DBM1AI2l9iLUe2gZmfth+3UDhIG1dmIMdvHonlzTYVW0J2etp0Z5YuDEuimm1covcQe8odXuAfA05DyWLZ7fGNn7KtGqSqK/kk7JqjfNh2klcHX68zBjSRJ8X7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733876381; c=relaxed/simple;
-	bh=HTAmNFE3ZOktqaS7Zef0Avhslg/Cf3+5WSXYHPVehCI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jVslroXTIRfToIWOO8zhEY81pxzC2qI6M3dc9LBI6cnc4khLFZI/Zqzlsq7D5+H7BUL3CGDROIWsFSJi9R03JTofPu8bgVwTeALRsYLiokGAKDrx8Zp8G2/aAmr4n/wrp4KTcTVkYsNnwAQacUiFISea18D1e4PbTSDd+UVBpE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jroSMsnP; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=eRCoVqRYb+rcP/0YVRkGDnmWTuf9gOXvCLMoBU51x1s=; b=jroSMsnPZKMkPx5k
-	2YZjGgHt42aaN0PCEPtVBBuFzH6GWJuBWXmmxkTmUTfevH1mxBSmpiajf4hUlmjQtlFhezUs0+g/S
-	xef0r5miZbN1uz51Je00gTxQMx1DinP8AD+s0zkI7QHerrvOUWSAJN1xZ96toW5jMFj/qmn741zp0
-	iTnG+sbBVZvvT6/qy7M1CaT1tmLnR100Gq7Me0IvoGn6Fwv2KpSQOlQKeaO3JYTvG3IFukPJQTK1C
-	lUTHSNZyJod1QQRy8gkQkL2L6YTdwJxto/uUA2ZMPHo9gMl7nCEXLUDMGUbYMt5juO+RH/YWd5ELA
-	UK+kARPMbDirxwUeYw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tLARt-004dta-1w;
-	Wed, 11 Dec 2024 00:19:29 +0000
-From: linux@treblig.org
-To: jeroendb@google.com,
-	pkaligineedi@google.com,
-	shailend@google.com,
-	netdev@vger.kernel.org
-Cc: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] gve: Remove unused gve_adminq_set_mtu
-Date: Wed, 11 Dec 2024 00:19:27 +0000
-Message-ID: <20241211001927.253161-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733876407; c=relaxed/simple;
+	bh=FJNDkRivl5n3c3f0lOliUISNZyJAuRgGaTVNaOSMOMc=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FhdiMX2O5SJwIq3efcUl5U9E18ZzFZP2M+j0UWpOWIE/7KOduOBks4mzWLYqb2Qk4aMFpi9gcPDpusRQ51nib3LT9aIFUZQyzRerAYnber9MRA/twwLTbdidpGb6aDi08UeIw4d/WSY87AHVMeAcLx45qh+MOYn8NiCOBpCUP3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0lGhSeCB; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21619108a6bso35339945ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:20:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733876405; x=1734481205; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zRC9yEkE9g7vVhAefcxCRjeWRe/ODE9AB6GWqjMTtzM=;
+        b=0lGhSeCBL1rZ1VXzTQyVZl+BJk5Is6MUziDctBUR2/Dpf7XQLAHunh70K3Ho7A6ROR
+         R2QlhgxkRbkV6+FMCzvESc92QC8S1R55jgyMV8BkZiqgdq4KdTMFFGsRzpCJZ6G5SGWh
+         TcaqwWK1DEXMignO5Zm7FI2P/0iz3M8auXZ9YL53R30HYrylr5lD5sRVX7cCeUgo4JiW
+         L6Sf2Sodfe0NQtquFBFaxrAYQdTyuit58iPn3EyvtFb1ShQ+ZHGYsUViIwgJuEZz17U7
+         4R2CyDIFjOfA6UAgpXrAzNPKbquDPbFWTpE7IjNmD/lWUXo7q5x31m8/D28JPwjmyUv6
+         NpsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733876405; x=1734481205;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zRC9yEkE9g7vVhAefcxCRjeWRe/ODE9AB6GWqjMTtzM=;
+        b=uuBKN6PbNSri/HhSQVgivF3927uKVSQQzAJq7qg4z6QwgrDxnv1CZBhCZSqw84HiOZ
+         lIfT235zvfC8pq8sPer3irhtVmaqUrUPh5OTjm5j+3OggWiYXN2HI0bREkgAS4pocQMr
+         ZgWbUpT7Cp3fbW3N1TP00zMuPVojjRmT8rNWd6HJAVlg5RdVcb4pIKo2D3O5rAzfhMda
+         BJ4SrR8SFjnVjjYS3Fi1eJStvpCnDolMxbBWJ2gGlbXHsFphc1WHg+CKxJdkoGwwIfdu
+         bCPFlfQbS+5L5IsaFM90OFgVn/mW2ncS6T3rjqicBC/4alz6r8Z77FIKlZHrbDzBBgiE
+         kaaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzdTCAhF5CkPzZg+eKvJduYV44ZNszYqieGhYPUcMSM/z2yb/T2ZA4YM6V809Xnvebl6Iu43587capoBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNxUlvTDrw/ae+ZKqWGHbqm8Y/JfdQHyBtrO4W/WugNUDgEmAR
+	kXQTSooC0YiEtXOOhIsAOvfiIo2xr/ROucIxiqP3LN9AM8a2DgxbK+usz0Rat9U=
+X-Gm-Gg: ASbGnctgTxx6XaAzDtvxuLPlEy1/xXRUKcRWcvrBCmOidxRTZlqguXMp6BzgSOczSAY
+	GCkHtXZShb7LZcs472atDAHKpeqFSu45S6Mc+lV6jbfBO6XlzeJFQNNKiV2l9T94UXmHV8Le5Z9
+	wuOmGAD95zUL7ARLSK3pIZlUPgIGBpgJ+x91WpMLX6V5jAb5fMcOUDJ8bL35rv0xiCU1rKb7Rvb
+	71KcAHeCNjbMBEBOn98OtCS4Rz7CiYzQLDyY0JVgsDW6yEtAGlx
+X-Google-Smtp-Source: AGHT+IFmcRdR0HCB2a3gaNUahUkUF+BtT/p6ITp1NBqQs83IckQiXsxBMl0idj1mc28sf0T45oP52Q==
+X-Received: by 2002:a17:902:db0b:b0:212:6187:6a76 with SMTP id d9443c01a7336-2177851fac3mr15669435ad.14.1733876405035;
+        Tue, 10 Dec 2024 16:20:05 -0800 (PST)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216364e471asm54499955ad.92.2024.12.10.16.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 16:20:04 -0800 (PST)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Andreas Kemnade <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, devicetree@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ akemnade@kernel.org
+In-Reply-To: <20241205204413.2466775-1-akemnade@kernel.org>
+References: <20241205204413.2466775-1-akemnade@kernel.org>
+Subject: Re: [PATCH RESEND 0/2] ARM: ti/omap: gta04: properly specify GTA04
+ touchscreen properties
+Message-Id: <173387640426.1968502.1994971041924318982.b4-ty@baylibre.com>
+Date: Tue, 10 Dec 2024 16:20:04 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-355e8
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-The last use of gve_adminq_set_mtu() was removed by
-commit 37149e9374bf ("gve: Implement packet continuation for RX.")
+On Thu, 05 Dec 2024 21:44:11 +0100, akemnade@kernel.org wrote:
+> From: Andreas Kemnade <akemnade@kernel.org>
+> 
+> Specify touchscreen in a way that no userspace configuration is needed.
+> 
+> Note: if the devicetree patch is in without the input patch, things
+> will be broken in a different way.
+> 
+> [...]
 
-Remove it.
+Applied, thanks!
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/ethernet/google/gve/gve_adminq.c | 14 --------------
- drivers/net/ethernet/google/gve/gve_adminq.h |  1 -
- 2 files changed, 15 deletions(-)
+[1/2] Input: tsc2007 - accept standard properties
+      commit: 6ef4ea3c944b9fc5d78317d1172cdcd10f9724f1
+[2/2] ARM: dts: ti/omap: omap3-gta04: use proper touchscreen properties
+      commit: 77f40f1983c40f6dba0a5eef125a037498de8268
 
-diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
-index 060e0e674938..aa7d723011d0 100644
---- a/drivers/net/ethernet/google/gve/gve_adminq.c
-+++ b/drivers/net/ethernet/google/gve/gve_adminq.c
-@@ -1128,20 +1128,6 @@ int gve_adminq_unregister_page_list(struct gve_priv *priv, u32 page_list_id)
- 	return gve_adminq_execute_cmd(priv, &cmd);
- }
- 
--int gve_adminq_set_mtu(struct gve_priv *priv, u64 mtu)
--{
--	union gve_adminq_command cmd;
--
--	memset(&cmd, 0, sizeof(cmd));
--	cmd.opcode = cpu_to_be32(GVE_ADMINQ_SET_DRIVER_PARAMETER);
--	cmd.set_driver_param = (struct gve_adminq_set_driver_parameter) {
--		.parameter_type = cpu_to_be32(GVE_SET_PARAM_MTU),
--		.parameter_value = cpu_to_be64(mtu),
--	};
--
--	return gve_adminq_execute_cmd(priv, &cmd);
--}
--
- int gve_adminq_report_stats(struct gve_priv *priv, u64 stats_report_len,
- 			    dma_addr_t stats_report_addr, u64 interval)
- {
-diff --git a/drivers/net/ethernet/google/gve/gve_adminq.h b/drivers/net/ethernet/google/gve/gve_adminq.h
-index 863683de9694..228217458275 100644
---- a/drivers/net/ethernet/google/gve/gve_adminq.h
-+++ b/drivers/net/ethernet/google/gve/gve_adminq.h
-@@ -612,7 +612,6 @@ int gve_adminq_destroy_rx_queues(struct gve_priv *priv, u32 queue_id);
- int gve_adminq_register_page_list(struct gve_priv *priv,
- 				  struct gve_queue_page_list *qpl);
- int gve_adminq_unregister_page_list(struct gve_priv *priv, u32 page_list_id);
--int gve_adminq_set_mtu(struct gve_priv *priv, u64 mtu);
- int gve_adminq_report_stats(struct gve_priv *priv, u64 stats_report_len,
- 			    dma_addr_t stats_report_addr, u64 interval);
- int gve_adminq_verify_driver_compatibility(struct gve_priv *priv,
+Best regards,
 -- 
-2.47.1
+Kevin Hilman <khilman@baylibre.com>
 
 
