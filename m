@@ -1,133 +1,132 @@
-Return-Path: <linux-kernel+bounces-442167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B649ED8C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:39:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C61B9ED8EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:45:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CDCC283212
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74DFB188EDBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7790B1F237C;
-	Wed, 11 Dec 2024 21:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB2E1EE014;
+	Wed, 11 Dec 2024 21:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGiodUnE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAF71EC4D6;
-	Wed, 11 Dec 2024 21:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="KMdXaTrS"
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2661EC4DC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733952858; cv=none; b=YNEuYG4QmRJhblTdoziOyeiKzKOUY0//acGQd4N0dGsnxTCH3ZdlIQ+wq7G1Ebo6Tq5121FDTcHIy2e0XIq4Lx4uI8Qvk5LjrbiqXgS1ZWRfzBAC6wvgPf8TBrdog27uamB02dBWmdE5Ya4ccL1dIXy6sfOTfxm8RN/KCQtt9Ok=
+	t=1733952907; cv=none; b=Cmejk4NsQX/8OiJMQosSqM+t/IszV3bTxFJifif3MNDkS98KcY5CJDfQXDCALQ3Q3eKCFxMjUP+WDYCt08QiLUWrpgplzhmOf6BgH5mECS635LrxTOF/UgtoYEi2AzrzEmVbAzqtATPSErafoieg+CwU1JJ62UZW4/weQv9QQKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733952858; c=relaxed/simple;
-	bh=A4SsJa/gV21qeqY5SupSQf+YT6zTnX33XWVSHXjPKLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9ArUbntPqDMnLwQSFoStcfl4R0e47WpHtomt3PbfR3CjqBvLpx75QwxYzIYe3o6F8ybhasYLW2amph6c+iNJA5RlBQfLX7ZDbOALJuVVhCwo2yFkjLTry6ZEJ5hIdn1puUpe/jIzAPuoqPlfb3XM747Ed5OmKdLylJmMvHfzE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGiodUnE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731DAC4CED2;
-	Wed, 11 Dec 2024 21:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733952857;
-	bh=A4SsJa/gV21qeqY5SupSQf+YT6zTnX33XWVSHXjPKLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qGiodUnETIVdlukXlYOxY5nBS8nYII7/A7aVBVY0mCY7ks8RUzNdDi2051tUWc4hF
-	 bPRduByAPOoINo6L1VyQZ2taADNS5SmUeRduni+lqMGoh6+yUeohi8GT7H8na9Z6KK
-	 TWlIrR6x6m6GyWWu1/5jZTQDAygYOW9JDWjWnUlFBomEFP695vOa2HD2Shjn5785ki
-	 qMdh0zoevPYStzIF9xFofWBQKwOREhsFfowu4PBQNtHPpGethamkGVgvV6aOWkH9aU
-	 jqvlfkBU0cxj4M/JyAWIzQKxAjWrVPJd7e+TwGGrvKQeeJv9XXlWBN/UYJFGzCIF1a
-	 Qz20EKMWmRrDw==
-Date: Wed, 11 Dec 2024 21:34:11 +0000
-From: Will Deacon <will@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Julius Werner <jwerner@chromium.org>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	Roxana Bradescu <roxabee@google.com>,
-	bjorn.andersson@oss.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Besar Wicaksono <bwicaksono@nvidia.com>,
-	D Scott Phillips <scott@os.amperecomputing.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org,
-	james.morse@arm.com
-Subject: Re: [PATCH 0/6] arm64: errata: Add Qualcomm CPUs to the Spectre
- mitigation lists
-Message-ID: <20241211213410.GB17486@willie-the-truck>
-References: <20241209174430.2904353-1-dianders@chromium.org>
- <20241210155604.GA15918@willie-the-truck>
- <CAD=FV=U5xraosVuDGXxBN5Ajo0n=s50JZqtgQGPs1C9jM3YaFw@mail.gmail.com>
+	s=arc-20240116; t=1733952907; c=relaxed/simple;
+	bh=jpWuQs4TCVzE3AWJX5bTnxbDG/l1C6uLoxMwR8YzVZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=a3NV1qBQ12M75b2OIApYPWZJz/Jrf/ygL/x673bzs94EM5wWHCpYm4X0lGCB6ATd868WPpBiQQkc5ayyZ7tdZ6ZmSaOeESJ8/rRfXpd8MErSm/uKcE8HfTn3hbNc121XmeSvb5QtlFENTNHdiCLXY6viTZmvFAOH/dJjgD4mn74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=KMdXaTrS; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1733952895; bh=jpWuQs4TCVzE3AWJX5bTnxbDG/l1C6uLoxMwR8YzVZM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=KMdXaTrS/PNMwJajihaMsUdoElDd8Fp9EoJpegg303HpDzViXoIp/vtjTA9gOgQi4
+	 VUjjfPXBTYitdf8xALC1XkJsqQjFGirvO64dwgiw/fqbC3dk117wSN3aOGn+SAmjoq
+	 srGanuO9UkjNr799xqwJoG0EbQq0uSdl+/RbLpqxzzkAJ9F+xVPcGGQIBKz7/OmrwR
+	 3hYd8We1sUHpnQI/wnbX+Iy5ZmKvYeFuF0XFuV/M0z6hmoEaGg2GY/nwDg/K5YYhte
+	 +7ashebrqG/ArBBnKajBdB2ngfE+ANUPREC/3qp9bpBuewMZqH/CJE0PmZULtBAExP
+	 QrdZPQFpsgaXi33lJBlWCpxGnht7Ly3ErMr2oFAMs8mABEKLrvLwJN3gJy8EzjqKbm
+	 85nQormRvgiWPyIm5cucegked5ELMzhLhqoAm+s/k4ss+sXhq1skZw5CtTPdSoYuKX
+	 qoh+4vX6m+/fhkWSpG2UkjVB5C0NqWv7jev4u8ypkKBdoPzKVTVARBIl8vVOfgSYDF
+	 +Oj721eFkmEBgzBhIjx6Jkuf9Pkk+hY/25kOFi977zr9Azib+a3T1z3fzoiEHABxSs
+	 2fID3XWZcSkxkdKSCFqKSp2sSQsDlyRbZ1+Fq8V28LqrdeTXWxWhIX769JEXDwQ6TM
+	 Py+O36oJIGc6xcIIC4t4CCBg=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 85B9E16013E;
+	Wed, 11 Dec 2024 22:34:55 +0100 (CET)
+Message-ID: <90c892fe-e56c-49b0-b8a3-8a7d6d18fb41@ijzerbout.nl>
+Date: Wed, 11 Dec 2024 22:34:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=U5xraosVuDGXxBN5Ajo0n=s50JZqtgQGPs1C9jM3YaFw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v9,1/6] drm/panic: Move drawing functions to drm_draw
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ John Ogness <john.ogness@linutronix.de>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
+ Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241204160014.1171469-2-jfalempe@redhat.com>
+Content-Language: en-US
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20241204160014.1171469-2-jfalempe@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 10, 2024 at 08:53:46AM -0800, Doug Anderson wrote:
-> On Tue, Dec 10, 2024 at 7:56 AM Will Deacon <will@kernel.org> wrote:
-> > On Mon, Dec 09, 2024 at 09:43:10AM -0800, Douglas Anderson wrote:
-> > >
-> > > Since Qualcomm CPUs are all derivatives of ARM cores they all have
-> > > unique MIDR values. This means that the tables listing necessary
-> > > Spectre mitigations need special entries for them. However, those
-> > > entries are not present and that means that some Spectre mitigations
-> > > are lacking for Qualcomm CPUs.
-> > >
-> > > I've made an attempt at **GUESSING** what the right patches should be
-> > > to enable mitigations for Qualcomm CPUs. This is mostly me searching
-> > > the web to figure out what ARM cores various Qualcomm cores are based
-> > > off of.
-> > >
-> > > These patches get more and more sketchy as the series progresses and I
-> > > have noted that the later patces DON'T EVEN COMPILE. I have included
-> > > them to make it obvious that I think these cores are affected even if
-> > > I don't have all the right information to mitigate them. Hopefully
-> > > Qualcomm can come and fix this mess for me.
-> > >
-> > > I'll note that I am certainly no expert on Spectre. Mostly I ended up
-> > > here running `lscpu` on a device and noticing that it thought that it
-> > > wasn't affected by Spectre v2 when I thought it was.
-> >
-> > Whilst only Qualcomm can say definitively whether or not they are
-> > affected (and what values of 'k' are required for the loop-based
-> > workarounds), I can't help but wonder whether the current mitigation
-> > code is structured the wrong way around in this case.
-> >
-> > It looks to me like we don't have a way to identify a "vulnerable" CPU
-> > for Spectre-BHB; either a CPU has some sort of mitigation or it's
-> > unaffected. That means that there's very little incentive for vendors
-> > to add their CPUs to one of the lists -- if they do nothing, userspace
-> > is told that everything is golden and they don't pay the performance
-> > hit of a workaround!
-> >
-> > So I think we should consider turning this on its head and assume that
-> > CPUs we don't know about are vulnerable, having a list of unaffected
-> > cores that predate the introduction of CSV2.3 which can be queried by
-> > is_spectre_bhb_affected(). We can do that without the assistance of the
-> > CPU vendors.
-> >
-> > Does that make sense, or did I miss something?
-> 
-> It makes sense to me. I'm not sure I'd be the best person to actually
-> implement that, though. Maybe someone CCed on this thread could take a
-> stab at it? It seems like folks from ARM would know the most about the
-> various mitigations and which pre-CSV2.3 cores were safe.
-
-I think we could start with an empty list tbh. If you take a stab at it,
-I'm happy to review it. Folks with knowledge about the specific CPUs
-can send patches on top.
-
-Will
+Op 04-12-2024 om 16:45 schreef Jocelyn Falempe:
+> Move the color conversions, blit and fill functions to drm_draw.c,
+> so that they can be re-used by drm_log.
+> drm_draw is internal to the drm subsystem, and shouldn't be used by
+> gpu drivers.
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>
+> v5:
+>   * Export drm_draw symbols, so they can be used if drm_client_lib is built as module.
+>
+> v6:
+>   * rebase and solve conflict with "drm/panic: Add ABGR2101010 support"
+>
+> v9:
+>   * Rename drm_draw.h to drm_draw_internal.h (Jani Nikula)
+>
+>   drivers/gpu/drm/Kconfig             |   5 +
+>   drivers/gpu/drm/Makefile            |   1 +
+>   drivers/gpu/drm/drm_draw.c          | 233 +++++++++++++++++++++++++
+>   drivers/gpu/drm/drm_draw_internal.h |  56 ++++++
+>   drivers/gpu/drm/drm_panic.c         | 257 +++-------------------------
+>   5 files changed, 318 insertions(+), 234 deletions(-)
+>   create mode 100644 drivers/gpu/drm/drm_draw.c
+>   create mode 100644 drivers/gpu/drm/drm_draw_internal.h
+>
+> [...]
+> diff --git a/drivers/gpu/drm/drm_draw.c b/drivers/gpu/drm/drm_draw.c
+> new file mode 100644
+> index 000000000000..cb2ad12bce57
+> --- /dev/null
+> +++ b/drivers/gpu/drm/drm_draw.c
+> @@ -0,0 +1,233 @@
+> +[...]
+> +void drm_draw_fill24(struct iosys_map *dmap, unsigned int dpitch,
+> +		     unsigned int height, unsigned int width,
+> +		     u16 color)
+> +{
+> +	unsigned int y, x;
+> +
+> +	for (y = 0; y < height; y++) {
+> +		for (x = 0; x < width; x++) {
+> +			unsigned int off = y * dpitch + x * 3;
+> +
+> +			/* write blue-green-red to output in little endianness */
+> +			iosys_map_wr(dmap, off, u8, (color & 0x000000FF) >> 0);
+> +			iosys_map_wr(dmap, off + 1, u8, (color & 0x0000FF00) >> 8);
+> +			iosys_map_wr(dmap, off + 2, u8, (color & 0x00FF0000) >> 16);
+> +		}
+> +	}
+> +}
+>
+u16 is not wide enough for a 24bit color
+-- 
+Kees
 
