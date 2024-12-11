@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-441454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263BE9ECE96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:30:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA2B9ECEAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:32:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F8328104F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4654218899DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C536915B554;
-	Wed, 11 Dec 2024 14:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B82A1DD877;
+	Wed, 11 Dec 2024 14:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="d2UhremK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IbNGuJt/"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cn+DWU9z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B77C24632A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3E91DBB36;
+	Wed, 11 Dec 2024 14:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733927448; cv=none; b=dSSRx44vo6F41hQLPcrvNOe+PJRgxVRrsrE1YsWMT2IQtIhLpeoD1Pf+U33oJ+fs6hh4j2UvotL/Tx/Pm4tDLUe2aP/Ep8cKGjS2Sal36dJLdUsh8WVSz4S1kaKFho0dIarP3VlOO0SImcUmWQw0M6Ro70wACIxm51J2467QN9U=
+	t=1733927456; cv=none; b=S7Z1XgGXZah9ATJWcMm1IybxlcAJWEGglWMBk22MANaQoMy3YVV8BeXn2E85FuwZr0/ayV/GK+CP4IVzqtsnkv+2ilK4jHQxU+cYTkKy4bEHMrUeLfBgiZoSwWoBMhugBsP8PWQViB9GVXIgHuV7FL9h6nHEneArIxZJOT7MBQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733927448; c=relaxed/simple;
-	bh=nk9913aeWjtq5YBt0cVltxl3l1Q9VRPinFITp1bT/Rs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=XaOV7CY/4fMCx1pWI6UDxjmVew4jqj0QueDpgFXSG1eIWbBXVkGjxg8Ezj1JiuyQqhOVnmX8lJqGtZbbB6qI4ynSL4CXK6xWu53xCFfcObtRdzY5Yp9zXNFWcEL3/l5UTtb0sXfEDHet+ZnmI5b60TfC6EPbFnsd7LYLofG3icY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=d2UhremK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IbNGuJt/; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2578311400FC;
-	Wed, 11 Dec 2024 09:30:45 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 11 Dec 2024 09:30:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733927445;
-	 x=1734013845; bh=JTP3OPECQyV1SzxOkgeH7HPscSun1SYrJfiExm+YsY0=; b=
-	d2UhremKMqQVpwt6dyUivFCbkKlUlacN/Jj8tBNZUZpfjb30SHVTyDAO+mByeNW4
-	L+jaR/IMTbVTWsnB3yIQqu5Su75C8ukqiB8sXIQw6E/fhy3i6yO1zcDcKGu1Oo+I
-	XCcYtjt3lTSTHj/Ti3zfkHoV+za2l7oOaOd3JZx8yuhIIs58Gh9UTWOBtXH4z/rL
-	6Ndx8oPwj2HTXN78FQYbF8vvFcFs0WQW//djqA8s523Jm2CJvNhibKHBUd14ddGq
-	+v/P7NUerMYuF1ZhjV4TYxLhPgYTu3QFChsidL15hsO64AKnH9TRMJx3AqyHHsss
-	9v3x1QwW2zrkWkmb+rzkUw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733927445; x=
-	1734013845; bh=JTP3OPECQyV1SzxOkgeH7HPscSun1SYrJfiExm+YsY0=; b=I
-	bNGuJt/s/P57Ze0tDP3fn+4FGvy6B5p80I01viN8974e6ojcYGJCF2VSnijDXbSl
-	Ds4uRJ5aguHht9qZwsffxSblj7r76loA+HT/5JRO0lyDpoSdFn+mbQYbUZH/vUVP
-	2XWjfkgrvEXQLXRYl4DGRrz/rWtByARlgXz4Akiqb/3soT7OoFeuYE6/WDyw4e+m
-	JBxaIjdEGgk0LrG2G5mA377wRFoKQye3Eo2ZrfLxnbcBgkCdamIfwTV8UHkhVaF6
-	MNCMj46+HOAPGTR2qaRpWeH7tGWrnvJtevDcJf1pi7I3Y1DjHkxZsfDO7L2Hsst6
-	kYygU3dgk/SI0oTq8UAXw==
-X-ME-Sender: <xms:E6JZZ_NQVjENYuzeFTohShHOJo8Got9K40_LwokaBkglNcmxGHwWZw>
-    <xme:E6JZZ5_ldDCeofx5bz0NorjCgVK7MxBG7qxOZ68pDXk38HuD2n8ZDJkVmD4Zzscsi
-    dhYly-hu2DCxbxeH3Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkedtgdeigecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduiedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtg
-    homhdprhgtphhtthhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphht
-    thhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheprhhosh
-    htvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhr
-    rgguvggrugdrohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhn
-    ugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghlrhhkfihllhhmsheskhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:E6JZZ-T2BjCydPWt6oWqZLp-rQiQV0uMfUtI8DK90S3TYLJUbxpUQw>
-    <xmx:E6JZZztj20v4pEJoF3ZkKz-ERhZAMh1eLbtvSjNKQdagyvZqsnjCWA>
-    <xmx:E6JZZ3cGOEjSXWtKvcpTTvL2_3mFVUB0mY-kjvcOK3Ds_vlTaUnAzQ>
-    <xmx:E6JZZ_1GRL69c-IehVNSHabYfG-X8-3MtOazQOmbm6otd98ppqcC_A>
-    <xmx:FaJZZ_8Zgn6NGJZ0rSNeuiLDxSQ0Y5mvclfAi3bSug8TSC_du8v0bUeh>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4EA812220075; Wed, 11 Dec 2024 09:30:43 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733927456; c=relaxed/simple;
+	bh=sf7J34p1Pkgecwlqi0r21A5mwW0XxASsI9vA7F+tTXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+Rqn0FdMWnV2oDa/6pma33/28N6BbqUalGl3C0ChmmM85TqM6/mO2Cbj4rlA5X4f4gzOeF2CfRWoX2jZwxmjKKq97EEMtpBR8UIyeAE23quStVM5VPXOaXQfiU7DV2LJZmDG4eO11pXwxnbukW+Shhl0+bsOvbnwFzzoCzRSpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cn+DWU9z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C011C4CED7;
+	Wed, 11 Dec 2024 14:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733927455;
+	bh=sf7J34p1Pkgecwlqi0r21A5mwW0XxASsI9vA7F+tTXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cn+DWU9zl9GpkkoxEqCTeyb7BGrEYTypixBsHMeE/OtdnJzNWe77iqFyRuaJcyFoa
+	 Ua7/8PXPk1vhC/o/JUg/+udsySvAXM8M8mh55hRQXIEearsPOFXkoZp2l7Tx3MfDJx
+	 narR0WuypGXUu4dRaf3nvKKcbsNJnZtu0clytarY=
+Date: Wed, 11 Dec 2024 15:30:52 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
+Message-ID: <2024121102-promotion-other-e7dc@gregkh>
+References: <2024121112-gala-skincare-c85e@gregkh>
+ <2024121111-acquire-jarring-71af@gregkh>
+ <2024121128-mutt-twice-acda@gregkh>
+ <2024121131-carnival-cash-8c5f@gregkh>
+ <Z1mEAPlSXA9c282i@cassiopeiae>
+ <Z1mG14DMoIzh6xtj@cassiopeiae>
+ <2024121109-ample-retrain-bde0@gregkh>
+ <Z1mUG8ruFkPhVZwj@cassiopeiae>
+ <2024121121-gimmick-etching-40fb@gregkh>
+ <Z1mgATmU2WgYwCGZ@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 11 Dec 2024 15:30:22 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-rt-devel@lists.linux.dev,
- "Ard Biesheuvel" <ardb@kernel.org>, "Clark Williams" <clrkwllms@kernel.org>,
- "Jason Baron" <jbaron@akamai.com>, "Josh Poimboeuf" <jpoimboe@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Russell King" <linux@armlinux.org.uk>,
- "Steven Rostedt" <rostedt@goodmis.org>
-Message-Id: <001c1d0e-a0fd-47f4-be35-0fd808f3b01a@app.fastmail.com>
-In-Reply-To: <20241211140402.yf7gMExr@linutronix.de>
-References: <20241210160556.2341497-1-arnd@kernel.org>
- <20241210160556.2341497-3-arnd@kernel.org>
- <20241211134811.wM_UADhQ@linutronix.de>
- <20241211140402.yf7gMExr@linutronix.de>
-Subject: Re: [PATCH 2/4] ARM: Disable HIGHPTE on PREEMPT_RT kernels
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1mgATmU2WgYwCGZ@cassiopeiae>
 
-On Wed, Dec 11, 2024, at 15:04, Sebastian Andrzej Siewior wrote:
-> On 2024-12-11 14:48:11 [+0100], To Arnd Bergmann wrote:
->> I guess if you have boxes with 4GiB+ and can proof that the performance
->> improves without HIGHPTE (since you don't have to map the page table).
->> The question is then how much of low mem has to be used instead and when
->> does it start to hurt.
->
-> Some numbers have been been documented in commit
->    14315592009c1 ("x86, mm: Allow highmem user page tables to be 
-> disabled at boot time")
->
-> and I would like cite:
-> | We could probably handwave up an argument for a threshold at 16G of total
-> | RAM.
->
-> which means HIGHPTE would make sense with >= 16GiB of memory.
+On Wed, Dec 11, 2024 at 03:21:53PM +0100, Danilo Krummrich wrote:
+> > Really?  You can't have something in a required "register()" type function?
+> > Something for when the driver "instance" is created as part of
+> > pci::Driver?  You do that today in your sample driver for the id table:
+> > 	const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
+> > 
+> > Something else called DRIVER_NAME that you could then set:
+> > 	const DRIVER_NAME: env!(KBUILD_MODNAME);
+> 
+> Sure, that's possible. But that means that the driver has to set it explicitly
+> -- even when e.g. module_pci_driver! is used.
+> 
+> In C you don't have that, because there it's implicit within the
+> pci_register_driver() macro. (Regardless of whether it's a single module for a
+> single driver or multiple drivers per module.)
+> 
+> Anyways, like I mentioned, given that we have `env!(KBUILD_MODNAME)` (which we
+> still need to add), there are other options to make it work similarly, e.g. add
+> a parameter to `pci::Adapter` and bake this into `module_pci_driver!`.
 
-Very useful, thanks!
+Ok, I'm all for that, just don't modify the module rust functions for it :)
 
-On x86, that means we can definitely remove HIGHPTE along with
-CONFIG_HIGHMEM64G on x86.
+> For this particular option, it would mean that for modules registering multiple
+> drivers a corresponding name would need to be passed explicitly.
 
-On 32-bit ARM, we still need to support LPAE for systems that
-require 64-bit addressing. LPAE supports 36 bits of addressing
-(up to 64GB), but the largest actual size I've seen mentioned
-is 16GB (Hisilicon HiP04, Calxeda Midway servers) and I'm
-certain nobody actually requires these to perform well
-given that they are no longer useful for the workloads they
-were designed for.
+True.
 
-There are also a small number of embedded systems with 8GB
-(Ti Keystone2, NVidia Tegra3, Marvell Armada XP), but they
-are rare enough that turning off HIGHPTE is completely safe.
+> > Also, I think you will want this for when a single module registers
+> > multiple drivers which I think can happen at times, so you could
+> > manually override the DRIVER_NAME field.
+> 
+> My proposal above would provide this option, but do we care? In C no one ever
+> changes the name. There is zero users of __pci_register_driver(), everyone uses
+> pci_register_driver() where the name is just KBUILD_MODNAME. Same for
+> __platform_driver_register().
 
-      Arnd
+You are right.  But I see other drivers messing with that field, oh no,
+wait, that's just the EDAC layer doing really odd things (a known issue
+as that layer does very many odd things.)
+
+So nevermind, multiple drivers per module isn't going to be an issue, if
+you all can move it to a macro (best yet, like what Alice pointed out),
+that would be fine with me.
+
+thanks,
+
+greg k-h
 
