@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-441593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5008D9ED07D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF529ED07E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C3028CFDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:55:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDF9E1881F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5701DA103;
-	Wed, 11 Dec 2024 15:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6C41DACB1;
+	Wed, 11 Dec 2024 15:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9zmu5P3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aD4w8jRI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F7B1D90BE;
-	Wed, 11 Dec 2024 15:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAD11DA116;
+	Wed, 11 Dec 2024 15:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932484; cv=none; b=rDhglPfALyt9xMrMFE2m4TPhfvhZw4tVBeYXMGKUsA/7Eo+RbAWdljmDF5HwCiT5nMm5SsBBayhaiUiZrpYtWaoXiDda7keEf54y7l5DeAdJxIKJOZqnaVZY84W/dX332zW6oVoaK7bFHLQ/vDPZZiQOEscW4J2QM9JXX+DNRvI=
+	t=1733932485; cv=none; b=ukkQipPxLwUvBQ8CD+N3HYSpStgmt6GR2uUboFjtUBmgmyQim7xmhZ7Csxt4ccF7olGb245NyaCtGSacOD09ItbWhrUa5SPg7Vrt2NFr0+7YSp5HULYWvUGcEMOGRVOarfRUsWp/pLy04+bsWnr7lHOOpB4PTpiJyPyRClGAjS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932484; c=relaxed/simple;
-	bh=v/DcyveB11fw5qcYWD8enqaiqYJO/XngtDn0iydnhxg=;
+	s=arc-20240116; t=1733932485; c=relaxed/simple;
+	bh=fAtpFU5o1h8YJcA6IRudumE4PM0E6ftZoO/iy29wxhs=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=KlfHCWOpD4y2O1Rs59yheT+XR6WwNekppTHaJ7WBv6EtzO8B5dK6n+hgnxl6YmLhKFSqjfQBZsengjoCpT9mZArtWhDXjxZpZfJdz8uXgfOgXwX+3CE0G5O4ydghOUnGNvXz2eyQD8X+S9gJs8D9bNg1kajMQqbyvnmdhbJUOns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9zmu5P3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2669C4CED2;
-	Wed, 11 Dec 2024 15:54:42 +0000 (UTC)
+	 Message-Id:Subject; b=mF3JaZkZuluhWg1lJ9iY6JqDS0sN5vH8Z7O4jHjEU1xWBio+JmdxAG6oas8fKONDOA3OeCQVoJLOG1RLmu92dOcXemJzP1Zzg24XMm9B6DKO88o3MA3Vu1XJ81/ZbUYqMuwTKFEZ+xkvvoyDvfWlzCc6PR7jFSfvoWcSFNFZsTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aD4w8jRI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A3CC4CED4;
+	Wed, 11 Dec 2024 15:54:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733932483;
-	bh=v/DcyveB11fw5qcYWD8enqaiqYJO/XngtDn0iydnhxg=;
+	s=k20201202; t=1733932485;
+	bh=fAtpFU5o1h8YJcA6IRudumE4PM0E6ftZoO/iy29wxhs=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=C9zmu5P38EYxAXwMrW4WrhACHpaGBnAPZDKKSq7wJz+gkIoH7LgSkgkr6vms/xyZf
-	 V5AXnZ+NfBHNQwwQEIrcSjI+l+edVTvyIpUKY2UKb9khnoHDsNbe742I6N7dDZFBCx
-	 xI/KyWzV9gM8cnOI8jVm+TNqL+QQzdPy+AeYyzj1VUmA5dIpmAHvtuhIkKAicztXDc
-	 EXs8JEZAaFP8rj/SPLV4EnjqCHqZIoTWOeIy266NYsl4M2MYOLW+EaCvnF2SQaOtJU
-	 TrCms1tWoxg3AJJuyXDJ4USLPrxK2oxAW9ad+EfrBC7oYDH7Brd6M3BbKiMLNzFmXc
-	 jNmWNfXTkjOJA==
-Date: Wed, 11 Dec 2024 09:54:41 -0600
+	b=aD4w8jRIi5OxX3I7JaG5HNrTi7cZ86UlXSCIeMWi56us7kfrgQXGR21qKlLLZlN8B
+	 BaF4Fv+I9qAMl9qycu8PLBXFwR/ViNMo0jC3v7pVPQMVFgR4m5p2qMn0XgsVN1hhCg
+	 dox1hXfIBlE/djXlGOVaPrmO8xKNUvn/+BeMUOvBkiee9zI3VPYzfac/37iZy2ki92
+	 XnA90BNTCDLMNcd7nL7c/tBw/corbCM1wO6ILKR8P9+Gli48mDcNzN7r7+saycF4tT
+	 BQuks1MCZ+PfFYxQJCDSlr6jNy754ivvaaBD7yUQuue6Ma/uuXZV5be0YiOg07rSid
+	 5z9lf23U/zbxg==
+Date: Wed, 11 Dec 2024 09:54:43 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,46 +50,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
- tingweiz@qti.qualcomm.com, fenglinw@qti.qualcomm.com, 
- devicetree@vger.kernel.org, kernel@quicinc.com, 
- Bjorn Andersson <andersson@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Tingguo Cheng <quic_tingguoc@quicinc.com>
-In-Reply-To: <20241211-bug-fix-qcs615-ride-dts-lpm-power-issue-v1-1-a08d12c415f0@quicinc.com>
-References: <20241211-bug-fix-qcs615-ride-dts-lpm-power-issue-v1-1-a08d12c415f0@quicinc.com>
-Message-Id: <173393224448.3091083.12048612703550946062.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: qcom: qcs615-ride: Fixing power issue in
- LPM
+Cc: "moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+ michal.simek@xilinx.com, monstr@monstr.eu, git@xilinx.com
+To: Michal Simek <michal.simek@amd.com>
+In-Reply-To: <cover.1733920873.git.michal.simek@amd.com>
+References: <cover.1733920873.git.michal.simek@amd.com>
+Message-Id: <173393224728.3091150.11085112233542602601.robh@kernel.org>
+Subject: Re: [PATCH 00/15] ARM: zynq: Sync DTs with U-Boot
 
 
-On Wed, 11 Dec 2024 17:16:15 +0800, Tingguo Cheng wrote:
-> Change all LPM to HPM for regulators init-mode and disallowed setting
-> mode. LPM mode provides at most 10/30mA current for consumers such as
-> UFS,eMMC,PCIe. That caused problems because consumers take much more
-> than that. At the same time, a lot of drivers didn't set load in code
-> that makes it impossible for regulator framework to know exaclty when
-> to switch mode.
+On Wed, 11 Dec 2024 13:41:19 +0100, Michal Simek wrote:
+> Hi,
 > 
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-> ---
-> At the beginning, The QCS615-ride device gets some power issues when
-> enabling peripherals on the board as well as in the SoC. After figuring
-> out the root cause which pointed to that drivers should tell the regula
-> tor framework the required current the devices need separately, so the
-> regulator framework can get to know when to switch modes to satisfy the
-> requirment. But a lot of drivers did not set load for peripherals. Some
-> did setting and some did not, which sometimes caused problem when LPM
-> of regulators is allowed. E.g. LDO12 supplies UFS and USB. UFS sets the
-> load of AmA(HPM), while USB PHY does not set any(0mA LPM). In this case,
-> USB can encounter insufficient power supply when UFS's going to sleep.
+> over years there were some changes pushed to U-Boot which were never merged
+> back to Linux. U-Boot introduced new option OF_UPSTREAM and start to sync
+> up DTs from Linux back to U-Boot.
+> This series is addressing differences.
+> There are still 3 more differences but they should be addressed separately.
 > 
-> There is some discussion about this:
-> https://lore.kernel.org/all/5tbevb5wv2s43pccytv4qol4yhq4s7iw2mmqp23vt3ujqd6xev@hkioqmwoitbd/
-> ---
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 52 +++++---------------------------
->  1 file changed, 8 insertions(+), 44 deletions(-)
+> Thanks,
+> Michal
+> 
+> 
+> Michal Simek (14):
+>   ARM: zynq: Remove deprecated device_type property
+>   ARM: zynq: DT: List OCM memory for all platforms
+>   ARM: zynq: Mark boot-phase-specific device nodes
+>   ARM: zynq: Do not define address/size-cells for nand-controller
+>   ARM: zynq: Wire smcc with nand/nor memories on zc770 platform
+>   ARM: zynq: Add ethernet phy reset information to DT(zc702)
+>   ARM: zynq: Define u-boot bootscrip addr via DT
+>   ARM: zynq: Point via nvmem0 alias to eeprom on zc702/zc706
+>   ARM: zynq: Define rtc alias on zc702/zc706
+>   ARM: zynq: Rename i2c?-gpio to i2c?-gpio-grp
+>   ARM: zynq: Fix fpga region DT nodes name
+>   ARM: zynq: Enable QSPIs on platforms
+>   ARM: zynq: Add sdhci to alias node
+>   ARM: zynq: Remove ethernet0 alias from Microzed
+> 
+> Sai Krishna Potthuri (1):
+>   ARM: zynq: Replace 'io-standard' with 'power-source' property
+> 
+>  arch/arm/boot/dts/xilinx/zynq-7000.dtsi       | 33 ++++++-
+>  arch/arm/boot/dts/xilinx/zynq-cc108.dts       | 41 ++++++++-
+>  arch/arm/boot/dts/xilinx/zynq-microzed.dts    | 10 ++-
+>  arch/arm/boot/dts/xilinx/zynq-parallella.dts  |  1 -
+>  arch/arm/boot/dts/xilinx/zynq-zc702.dts       | 87 +++++++++++++------
+>  arch/arm/boot/dts/xilinx/zynq-zc706.dts       | 67 +++++++++++---
+>  arch/arm/boot/dts/xilinx/zynq-zc770-xm010.dts | 39 ++++++++-
+>  arch/arm/boot/dts/xilinx/zynq-zc770-xm011.dts | 31 +++++++
+>  arch/arm/boot/dts/xilinx/zynq-zc770-xm012.dts | 35 ++++++++
+>  arch/arm/boot/dts/xilinx/zynq-zc770-xm013.dts | 41 ++++++++-
+>  arch/arm/boot/dts/xilinx/zynq-zed.dts         | 43 ++++++++-
+>  .../boot/dts/xilinx/zynq-zturn-common.dtsi    |  8 ++
+>  arch/arm/boot/dts/xilinx/zynq-zybo-z7.dts     | 10 ++-
+>  arch/arm/boot/dts/xilinx/zynq-zybo.dts        |  9 +-
+>  14 files changed, 404 insertions(+), 51 deletions(-)
+> 
+> --
+> 2.43.0
+> 
+> 
 > 
 
 
@@ -107,42 +131,12 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/qcs615-ride.dtb' for 20241211-bug-fix-qcs615-ride-dts-lpm-power-issue-v1-1-a08d12c415f0@quicinc.com:
+New warnings running 'make CHECK_DTBS=y xilinx/zynq-cc108.dtb xilinx/zynq-microzed.dtb xilinx/zynq-parallella.dtb xilinx/zynq-zc702.dtb xilinx/zynq-zc706.dtb xilinx/zynq-zc770-xm010.dtb xilinx/zynq-zc770-xm011.dtb xilinx/zynq-zc770-xm012.dtb xilinx/zynq-zc770-xm013.dtb xilinx/zynq-zed.dtb xilinx/zynq-zybo-z7.dtb xilinx/zynq-zybo.dtb' for cover.1733920873.git.michal.simek@amd.com:
 
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@100000: 'clock-names' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-gcc.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: efuse@780000: compatible:0: 'qcom,qcs615-qfprom' is not one of ['qcom,apq8064-qfprom', 'qcom,apq8084-qfprom', 'qcom,ipq5332-qfprom', 'qcom,ipq6018-qfprom', 'qcom,ipq8064-qfprom', 'qcom,ipq8074-qfprom', 'qcom,ipq9574-qfprom', 'qcom,msm8226-qfprom', 'qcom,msm8916-qfprom', 'qcom,msm8974-qfprom', 'qcom,msm8976-qfprom', 'qcom,msm8996-qfprom', 'qcom,msm8998-qfprom', 'qcom,qcm2290-qfprom', 'qcom,qcs404-qfprom', 'qcom,sc7180-qfprom', 'qcom,sc7280-qfprom', 'qcom,sc8280xp-qfprom', 'qcom,sdm630-qfprom', 'qcom,sdm670-qfprom', 'qcom,sdm845-qfprom', 'qcom,sm6115-qfprom', 'qcom,sm6350-qfprom', 'qcom,sm6375-qfprom', 'qcom,sm8150-qfprom', 'qcom,sm8250-qfprom', 'qcom,sm8450-qfprom', 'qcom,sm8550-qfprom', 'qcom,sm8650-qfprom']
-	from schema $id: http://devicetree.org/schemas/nvmem/qcom,qfprom.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: efuse@780000: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/nvmem/qcom,qfprom.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/efuse@780000: failed to match any schema with compatible: ['qcom,qcs615-qfprom', 'qcom,qfprom']
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: interrupt-controller@b220000: compatible:0: 'qcom,qcs615-pdc' is not one of ['qcom,qdu1000-pdc', 'qcom,sa8255p-pdc', 'qcom,sa8775p-pdc', 'qcom,sar2130p-pdc', 'qcom,sc7180-pdc', 'qcom,sc7280-pdc', 'qcom,sc8180x-pdc', 'qcom,sc8280xp-pdc', 'qcom,sdm670-pdc', 'qcom,sdm845-pdc', 'qcom,sdx55-pdc', 'qcom,sdx65-pdc', 'qcom,sdx75-pdc', 'qcom,sm4450-pdc', 'qcom,sm6350-pdc', 'qcom,sm8150-pdc', 'qcom,sm8250-pdc', 'qcom,sm8350-pdc', 'qcom,sm8450-pdc', 'qcom,sm8550-pdc', 'qcom,sm8650-pdc', 'qcom,x1e80100-pdc']
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/qcom,pdc.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/interrupt-controller@b220000: failed to match any schema with compatible: ['qcom,qcs615-pdc', 'qcom,pdc']
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: power-controller@c300000: '#power-domain-cells' does not match any of the regexes: '^(cx|mx|ebi)$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,aoss-qmp.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: mailbox@17c00000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['qcom,qcs615-apss-shared', 'qcom,sdm845-apss-shared'] is too short
-	['qcom,qcs615-apss-shared', 'qcom,sdm845-apss-shared'] is too long
-	'qcom,qcs615-apss-shared' is not one of ['qcom,ipq5018-apcs-apps-global', 'qcom,ipq5332-apcs-apps-global', 'qcom,ipq8074-apcs-apps-global', 'qcom,ipq9574-apcs-apps-global']
-	'qcom,qcs615-apss-shared' is not one of ['qcom,qcs404-apcs-apps-global']
-	'qcom,qcs615-apss-shared' is not one of ['qcom,msm8974-apcs-kpss-global', 'qcom,msm8976-apcs-kpss-global']
-	'qcom,qcs615-apss-shared' is not one of ['qcom,msm8998-apcs-hmss-global', 'qcom,sdm660-apcs-hmss-global', 'qcom,sm4250-apcs-hmss-global', 'qcom,sm6115-apcs-hmss-global', 'qcom,sm6125-apcs-hmss-global']
-	'qcom,qcs615-apss-shared' is not one of ['qcom,sc7180-apss-shared', 'qcom,sc8180x-apss-shared', 'qcom,sm8150-apss-shared']
-	'qcom,qcs615-apss-shared' is not one of ['qcom,msm8916-apcs-kpss-global', 'qcom,msm8939-apcs-kpss-global', 'qcom,msm8953-apcs-kpss-global', 'qcom,msm8994-apcs-kpss-global', 'qcom,sdx55-apcs-gcc']
-	'qcom,qcs615-apss-shared' is not one of ['qcom,ipq6018-apcs-apps-global', 'qcom,msm8996-apcs-hmss-global', 'qcom,qcm2290-apcs-hmss-global', 'qcom,sdm845-apss-shared']
-	'qcom,ipq6018-apcs-apps-global' was expected
-	'qcom,msm8916-apcs-kpss-global' was expected
-	'qcom,msm8994-apcs-kpss-global' was expected
-	'syscon' was expected
-	from schema $id: http://devicetree.org/schemas/mailbox/qcom,apcs-kpss-global.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/mailbox@17c00000: failed to match any schema with compatible: ['qcom,qcs615-apss-shared', 'qcom,sdm845-apss-shared']
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: rsc@18200000: clock-controller:compatible:0: 'qcom,qcs615-rpmh-clk' is not one of ['qcom,qdu1000-rpmh-clk', 'qcom,sa8775p-rpmh-clk', 'qcom,sar2130p-rpmh-clk', 'qcom,sc7180-rpmh-clk', 'qcom,sc7280-rpmh-clk', 'qcom,sc8180x-rpmh-clk', 'qcom,sc8280xp-rpmh-clk', 'qcom,sdm670-rpmh-clk', 'qcom,sdm845-rpmh-clk', 'qcom,sdx55-rpmh-clk', 'qcom,sdx65-rpmh-clk', 'qcom,sdx75-rpmh-clk', 'qcom,sm4450-rpmh-clk', 'qcom,sm6350-rpmh-clk', 'qcom,sm8150-rpmh-clk', 'qcom,sm8250-rpmh-clk', 'qcom,sm8350-rpmh-clk', 'qcom,sm8450-rpmh-clk', 'qcom,sm8550-rpmh-clk', 'qcom,sm8650-rpmh-clk', 'qcom,x1e80100-rpmh-clk']
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/rsc@18200000/clock-controller: failed to match any schema with compatible: ['qcom,qcs615-rpmh-clk']
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: usb@a6f8800: compatible:0: 'qcom,qcs615-dwc3' is not one of ['qcom,ipq4019-dwc3', 'qcom,ipq5018-dwc3', 'qcom,ipq5332-dwc3', 'qcom,ipq6018-dwc3', 'qcom,ipq8064-dwc3', 'qcom,ipq8074-dwc3', 'qcom,ipq9574-dwc3', 'qcom,msm8953-dwc3', 'qcom,msm8994-dwc3', 'qcom,msm8996-dwc3', 'qcom,msm8998-dwc3', 'qcom,qcm2290-dwc3', 'qcom,qcs404-dwc3', 'qcom,qcs8300-dwc3', 'qcom,qdu1000-dwc3', 'qcom,sa8775p-dwc3', 'qcom,sar2130p-dwc3', 'qcom,sc7180-dwc3', 'qcom,sc7280-dwc3', 'qcom,sc8180x-dwc3', 'qcom,sc8180x-dwc3-mp', 'qcom,sc8280xp-dwc3', 'qcom,sc8280xp-dwc3-mp', 'qcom,sdm660-dwc3', 'qcom,sdm670-dwc3', 'qcom,sdm845-dwc3', 'qcom,sdx55-dwc3', 'qcom,sdx65-dwc3', 'qcom,sdx75-dwc3', 'qcom,sm4250-dwc3', 'qcom,sm6115-dwc3', 'qcom,sm6125-dwc3', 'qcom,sm6350-dwc3', 'qcom,sm6375-dwc3', 'qcom,sm8150-dwc3', 'qcom,sm8250-dwc3', 'qcom,sm8350-dwc3', 'qcom,sm8450-dwc3', 'qcom,sm8550-dwc3', 'qcom,sm8650-dwc3', 'qcom,x1e80100-dwc3', 'qcom,x1e80100-dwc3-mp']
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/usb@a6f8800: failed to match any schema with compatible: ['qcom,qcs615-dwc3', 'qcom,dwc3']
+arch/arm/boot/dts/xilinx/zynq-parallella.dtb: ethernet@e000b000: ethernet-phy@0: Unevaluated properties are not allowed ('marvell,reg-init' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/cdns,macb.yaml#
+arch/arm/boot/dts/xilinx/zynq-zc702.dtb: ethernet@e000b000: Unevaluated properties are not allowed ('phy-reset-active-low', 'phy-reset-gpio' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/cdns,macb.yaml#
 
 
 
