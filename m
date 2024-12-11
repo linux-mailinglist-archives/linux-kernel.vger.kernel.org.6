@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-441535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760BD9ECFEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:38:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96D89ECFF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:39:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D8C163984
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:38:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D852821E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7531D5ACE;
-	Wed, 11 Dec 2024 15:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA601D61A1;
+	Wed, 11 Dec 2024 15:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c/wjrEaD"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSUWq7fD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC551A4F22
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24E01C1F34
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931495; cv=none; b=QdXW1+YFQbKReVvzq/ObXQ3Q7NwhLXsnSxoEQhT9z0GzqlCZ9v2VaWtH91uYkaL6xYZgYxS+K9whvQxUL8TaAzakjeb6h+Pa9cjrhEM6p6ppYuNNAwMKI7ycUrB5dKmgrFSH/EUpmnegSGUeLQt2iYSCJBHGQ6JfR2IJim8UUdg=
+	t=1733931526; cv=none; b=kF4+uWoRd+ZvgLdhxeOzaP44KASD+FRVGjj/zPrp2qr+dI/1xSgjNZOTKg+v/EK//WDfV0qVJSxSevSRoFaOp4vQOZ8zu6tUzJyiv9UDBzhEpGUNruXDS4ezsW+Oqyvy0pnuoAwwy+loMTs25Fkmv/PrvAyVU9MQT4RdxlgO0M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931495; c=relaxed/simple;
-	bh=9s0N/sC2onGljsBGBckykPqI3PZYxylUdQrBTFxK9CE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OyMIG3lOF6wUatLZeVts6MPfYxoxD7cliJX1mf3GpJ1RRFN39rmXCKlng2JxkhTp4aJ4BnBwu7kUUX2tR9P1gnyn5YA2lZLlHPeZEMZdgXYuZbLdttWYVZUYnGTswX8lmuN3SMXLiDcRy9TMtZJdkipY8s8Kznema35QPKSxcQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c/wjrEaD; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d414b8af7bso5222897a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:38:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733931491; x=1734536291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dZL+QjDd50ix4QcrkrbPUTc5iKTneISn5uygpbVvMxE=;
-        b=c/wjrEaDykD/k1KrNFoia+blJ2VdlB/+Oetb3X/R65JNWE+PgoY+DJbVOWaDFDBtX3
-         dYJqQIvctkQzhw0M5sXyznOFO8lXjgEgy1zCNgrVZdRuJlchz2CRq0nUPdrpmkOCIhOC
-         CY9bNlJDAtJp1Xg6u2VbIYmisDU5jhF7byPAJF6XSqSVZDrQu9CoO/uyha4ehPCiuaQj
-         9Af0ivuKN11/+a+gqlH0+Myf9nIixpMiUgJbzfpMrcBwoj0NdeBadBnXW+VubmhDxnCY
-         3NYFC1CmR+XdpVE+HX/1j63/Xx2HQ2wgAuKtGIm8Du+pkHVJhU567lG8hlQ/1bP+519b
-         /RbQ==
+	s=arc-20240116; t=1733931526; c=relaxed/simple;
+	bh=a0hv9mFPITU2NDP0pqXzJbW7Mb2xRwyfM5fwAm1ROFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DhQXe1fb25HAoyuQGHJGcoo1pOSuCsOhozb6iPcgkbahjOLipDGIUVdnZM/y3EWkSumez7qGW7Ncyd/SMUaJ2ifBQvmVlbzHQZAVcUS8RZdTVDgPZLn+YEaguQe68voDL7vK3ZORnueanQJnwi6XlgzbOoedHmwhIpe6XxXXdMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSUWq7fD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733931524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a0hv9mFPITU2NDP0pqXzJbW7Mb2xRwyfM5fwAm1ROFg=;
+	b=MSUWq7fDHkclKlkSToV6wokgWBdmDC2OWU+Tkq9iyYVPNHd7Bocd8x7yrnKbRiPEgWK+yb
+	Fm5oplioij7y9DPzmJxyiXdPTfJX2qFv9NZiFR+ozqFORBTuqOw6/dQBTmMnF0C0pmpoKg
+	Yp8iDGh0xktO3UFXVLdmJaiqNyzy9Lo=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-jMgcB5l-NW-hTrw_Q2Fziw-1; Wed, 11 Dec 2024 10:38:42 -0500
+X-MC-Unique: jMgcB5l-NW-hTrw_Q2Fziw-1
+X-Mimecast-MFC-AGG-ID: jMgcB5l-NW-hTrw_Q2Fziw
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e3c7d56aa74so2420886276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:38:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733931491; x=1734536291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dZL+QjDd50ix4QcrkrbPUTc5iKTneISn5uygpbVvMxE=;
-        b=T8y1uG0BWCRhvtnluJrkO7/7WpTsI8i0JA93vsQHuXKEC+x2BftHi2SJCeFN+xvPXm
-         pUJRb8KyY6f8UutDsQOdzRs7C3SU9q4FGF1aMwd8KD7+WWxD/cJKj4FXYp4bfXFmF8ek
-         S91tMVlHN5t6eWfPdvGCUKh7BoXDiWJI7ttQYE86xvW/FdVAczFKYIb+51UpCq3fiwxm
-         OT2RRadW3B4hL5X3oC1PldAPyJHdkDyEjwsz8pBML68Dun0AueNRybgyHqH/NLqZUw3r
-         wexmv+QtWyNA3eOBzs52qxCipCNvM1f5opPprn85bLKj3I0p4FanSiv8mFwR/q7iVn8X
-         ZdvA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+7tCADea5KqSh60s8xnnENM1f5mtuDSht18GRaECkPk8+0ncb+jpXhoDrcC5jKYHIZ0ndjgqiUVK4PLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGmK3hzr0AeR+C9vj0TUWB5KILUI87eZkJ8TZQjhFnSV7r70Mx
-	+T7Hy4oRxgMJe7BTWqjlMKnFSbsW8PiMhxN7iZ2J8mEhd9IXaukMljDH55jIj3s=
-X-Gm-Gg: ASbGnct5c8TdxaFS94Dg3W9SMp3/HP1s6O6FuyaouPmiXQBofR3OVTaJKdWZFT1CSf/
-	xWzN54cOxBClsq6SItWxQkW4ORegN/fDU+ogru7i26p73a3QMRQUm2POaycXSQ6pebJpAYMbLPv
-	vggXObhOsXSLPEJjwz4a3QK9c5VGcpSssstQC9lSs5UQQ/1ktemkztQtAvIw+wn2lOXDfzj52uK
-	M0AcNQ4e594JMnqAtUCpJQFfsEpgJpRvTkKX+ZkAWtICnLW8r7Iubzmz30UYx6SqUI=
-X-Google-Smtp-Source: AGHT+IGOtavSVi2ZpcjL+dW0dFdaXE7oxFgtmAh3UdBELTKBJeoCykev5SGGl/1KKB6JGd1rlD2VFQ==
-X-Received: by 2002:a05:6402:35d5:b0:5d0:d1e0:8fb2 with SMTP id 4fb4d7f45d1cf-5d445b3cf63mr41326a12.11.1733931490622;
-        Wed, 11 Dec 2024 07:38:10 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3c4a42052sm7861107a12.55.2024.12.11.07.38.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 07:38:10 -0800 (PST)
-Message-ID: <37523d35-c569-4bef-97aa-46b71236b1eb@linaro.org>
-Date: Wed, 11 Dec 2024 15:38:09 +0000
+        d=1e100.net; s=20230601; t=1733931521; x=1734536321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a0hv9mFPITU2NDP0pqXzJbW7Mb2xRwyfM5fwAm1ROFg=;
+        b=DTWlajmCq+/8hFeb+MgYUeDG+JmfUfUvZgSj2TG7skkLksdoer4jtESzMb3fU6PfYK
+         abxqQwkrw3eKsueBaWGXX6DFb/RfguqH6KrEfoht/DjoXN8jCikpFoVU2HsLlextDP8z
+         AEVU1rpz9iEAFzXPc2FUpkl//36CHA2bnQT9Drj3Y6i1I2Q6TnHpiUH3KdOCZ6qIYQbZ
+         kPHvliXW5PDjtyZ8GuaXVWoIJUSoUzMSdjH2pfij5VSfpK/a+P/67Y0QeNjkyyVhGdRb
+         PTEUI+4Q24tGYfzS7/eFeEbCQKAd1jftU9gaM9Fkyd/1/c4MPB7Mhjk5LSoJk1WAAoWZ
+         YQgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNuN0zQRc+d3uEK6jTdo1adnzR6MEae3xIC68zz2Wsh9KGDnkVhv689pLbHD8apON7LkRqbIiGX9KSIeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwImovCdA2K7fSDSI/EJ9eTwbORNo+PxvWU2UMdaACgimw+oBsI
+	+745Ao7bpqPcOcW8cveBEUeXMV9DXjjDEArz4xXX0FyRBg++NzhGL88vA9iOcLNq+pJp/4pd6UM
+	OPWpKLId3JngiRw80kRLcVvzqwtabMBhuSCk/5BgNP4sOGQs6TlzRsLSmhaxdxZbvjJ72n0lXyR
+	FWBfVZtEN6BdMLjGlbb5p5hVHEWYSIfZiiPe9M
+X-Gm-Gg: ASbGncueh0JMx4XrOEwxlZ+Svn9nCVkF3K7QNVwUemQmEiPxOX893JfrFLtEOPTrSIs
+	s5BYCixYUYrQ/3tJY+fCIKtQmrLPC2g8okA==
+X-Received: by 2002:a05:6902:100b:b0:e39:95e8:31be with SMTP id 3f1490d57ef6-e3c8e4249f0mr2855080276.8.1733931521392;
+        Wed, 11 Dec 2024 07:38:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE394UlHqCYe1P7sHFdWBBxDdJetIc75Ei4upOeKARHA2ACI/wc9W2mPBcu4AH1Pm2Pwz68qrAYfHGPQSHdD8g=
+X-Received: by 2002:a05:6902:100b:b0:e39:95e8:31be with SMTP id
+ 3f1490d57ef6-e3c8e4249f0mr2855042276.8.1733931521054; Wed, 11 Dec 2024
+ 07:38:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/16] media: qcom: camss: csiphy-3ph: Remove redundant
- PHY init sequence control loop
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
- <20241211140738.3835588-3-quic_depengs@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241211140738.3835588-3-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241210143423.101774-1-sgarzare@redhat.com> <20241210143423.101774-4-sgarzare@redhat.com>
+ <20241210144025.GG1888283@ziepe.ca> <50a2e1d29b065498146f459035e447851a518d1a.camel@HansenPartnership.com>
+ <20241210150413.GI1888283@ziepe.ca> <CAGxU2F6yzqb0o_pQDakBbCj3RdKy_XfZfzGsiywnYL65g6WeGg@mail.gmail.com>
+ <20241211150048.GJ1888283@ziepe.ca>
+In-Reply-To: <20241211150048.GJ1888283@ziepe.ca>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Wed, 11 Dec 2024 16:38:29 +0100
+Message-ID: <CAGxU2F5NSqMbA1Lep3+16GoZXR23q0OP8dFVVRJ6DG5sF20R3Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, linux-coco@lists.linux.dev, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Peter Huewe <peterhuewe@gmx.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, 
+	x86@kernel.org, Joerg Roedel <jroedel@suse.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho <cclaudio@linux.ibm.com>, 
+	Dov Murik <dovmurik@linux.ibm.com>, Tom Lendacky <thomas.lendacky@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/2024 14:07, Depeng Shao wrote:
-> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> 
-> Adding a new CSIPHY init sequence using downstream as a reference prompted
-> me to look at why we are splitting up the init sequence into chunks.
-> 
-> Right now we declare CSI PHY init sequences as an array of five equally
-> sized writes with a hard-coded control loop to iterate through each of the
-> five indexes. One bug in this model is that if you don't have an even
-> number of writes, you can't init the PHY as you wish.
-> 
-> In downstream the original code has something of the character
-> phy_init_seq[MAX_LANES][MAX_PARAMS] which in upstream we have translated
-> into phy_init_seq[5][SOME_NUMBER_OF_EQUAL_WRITES];
-> 
-> What the code does is take a pointer to the first index of the
-> r = &phy_init_seq[0][0]; and then literally does write(r, value); r++;
-> 
-> The controlling loop that hard-codes '5' in-lieu of MAX_LANES does no
-> special sleep, fabric-coherence sync or even a printk() to justify its
-> existence. Our compilers are optimising all of this away anyway so lets
-> drop.
-> 
-> Reduce the array declaration down to one flat aggregate init and let the
-> code just step through. As a happy side-effect we can then also handle
-> odd-number writes as the number of elements in the init sequence will no
-> longer have to be evenly divisible.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-> Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
+On Wed, Dec 11, 2024 at 4:00=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Wed, Dec 11, 2024 at 09:19:04AM +0100, Stefano Garzarella wrote:
+>
+> > > After that, there is no meaningful shared code here, and maybe the
+> > > TPM_CHIP_FLAG_IRQ hack can be avoided too.
+> >
+> > IIUC you are proposing the following steps:
+> > - extend tpm_class_ops to add a new send_recv() op and use it in
+> > tpm_try_transmit()
+>
+> Yes, that seems to be the majority of your shared code.
+>
+> > - call the code in tpm_platform_probe() directly in sev
+>
+> Yes
 
-A new version of this patch is required to ensure 7280 is handled
+Thanks for confirming!
 
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/commit/4c831fd58aa7629f994b5f4d8533b154a74d35cc
+>
+> > This would remove the intermediate driver, but at this point is it
+> > worth keeping tpm_platform_send() and tpm_platform_recv() in a header
+> > or module, since these are not related to sev, but to MSSIM?
+>
+> Reuse *what* exactly? These are 10 both line funtions that just call
+> another function pointer. Where exactly is this common MSSIM stuff?
 
----
-bod
+Except for the call to pops->sendrcv(buffer) the rest depends on how
+the TCG TPM reference implementation [1] expects the request/response
+to be formatted (we refer to this protocol with MSSIM).
+
+This format doesn't depend on sev, and as James said, OpenHCL for
+example will have to use the same format (e.g. buffer defined by
+struct tpm_send_cmd_req, filled with TPM_SEND_COMMAND, etc.), so
+basically rewrite a similar function, because it also emulates the
+vTPM using the TCG TPM reference implementation.
+
+Now, I understand it's only 10 lines of code, but that code is
+strictly TCG TPM dependent, so it might make sense to avoid having to
+rewrite it for every implementation where the device is emulated by
+TCG TPM.
+
+>
+> Stated another way, by adding send_Recv() op to tpm_class_ops you have
+> already allowed reuse of all the code in tpm_platform_send/recv().
+
+Partially, I mean the buffer format will always be the same for all
+platforms (e.g. sev, OpenHCL, etc.), but how we read/write will be
+different.
+That is why I was saying to create a header with helpers that create
+the request/parse the response as TCG TPM expects.
+
+Thanks,
+Stefano
+
+[1] https://github.com/TrustedComputingGroup/TPM
+
 
