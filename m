@@ -1,262 +1,99 @@
-Return-Path: <linux-kernel+bounces-441825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB78D9ED494
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:18:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20269ED499
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:18:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7C6281159
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32150188AFAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F725202F61;
-	Wed, 11 Dec 2024 18:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C503A204080;
+	Wed, 11 Dec 2024 18:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLy7dPYs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mO/4ozg6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916F824632E;
-	Wed, 11 Dec 2024 18:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF38201266;
+	Wed, 11 Dec 2024 18:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733941082; cv=none; b=HTdxLaqZxEQvFRLX00gTOk5XXJ/etde5SEMfeFJfigce1xlhTxqhCrYUQRwjuvIqqHLfAgyV3baV9Pc2UAr7O1DR8ludoc34aADhxZlkzHhuRMRRR7P2/fvtchKVeeuKJF/kz0i1z5A0ppfkvE/AY8V8SgjK3dt+7Aer9hqpy94=
+	t=1733941109; cv=none; b=aeLkn0tF64lm0Sq+2x212cYUJ9cAveEDvPC1vQNezRRNkw9Xjz1jrQN3mPEd/eMOd2Pzi+n5iK4Y8EpZSqUIGgkLf6ksGSm3cfjWYWcB3QSWT3Zc0Ns45PY2nD7gUGjcYY6Cbeswra1GXZFk7ciCXYGn36qaoTHPDxV7hnXl9Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733941082; c=relaxed/simple;
-	bh=cTj5NqGqt72Aw6Mxqli2L0cy84pWlTnt8jx1QPfk++w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g8uBitcWHKabv/56gJEIYr2srbiUS8no4/fBodKOXb52cg45k89PUXXq0OBKCnV5G72zV/4hdE60mZSEUhkcz2xo8bM8js7RLvyWqoaqcjsiX5dkwzESbR5JZgxyRKgMf7Fd1aQLEbLN3Shws5hKmCI4vs+IUcffh97FExuKtDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLy7dPYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0856AC4CED2;
-	Wed, 11 Dec 2024 18:17:59 +0000 (UTC)
+	s=arc-20240116; t=1733941109; c=relaxed/simple;
+	bh=0Ha0iFDk7Ri2O+rZLVr8uvjg5fh5VNVFuhQutjRlXDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7eRfzb10jFgYWlOOj8BxR/dZaP9RlbQPlbr1thMzxIbcRjeHuslqoNEDKQd5aYx7UDZyhh7nvrYD++CVdPP1bHXXC9r9R6UC+SeX6ZN3vpJ5c65XnPCQq37rtw+sFu/rhBW0C6+x/pH2YaNMpqP401S2TsH2kDi6Jp9qLm0NvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mO/4ozg6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8559BC4CED2;
+	Wed, 11 Dec 2024 18:18:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733941082;
-	bh=cTj5NqGqt72Aw6Mxqli2L0cy84pWlTnt8jx1QPfk++w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eLy7dPYsbBPS+WJoa2iEqd709a0juoTOo9JqxNgRMkYf1x2GJpk70KRrn/gBnukoN
-	 hmUp65LVgsWRSh88kIR8G7/37UB30i0lDXETIhHMO3p2YG4PG8vHT7tIMjMTRtuUmr
-	 BH9mwkaU0R1u3vg9bLnuj7OI6Umew/iQxsGTKXC51V/M9uHMOm6JH3N9fquGIylSu2
-	 ee3lbdzHb79tDm8CCRnCG59JiaGmevMIjEM2sT+dh272tAK+B5AUoH9raItGr0AIDY
-	 rp6QdRkfrJjKLCFnQfvQc6PW9LdibmLWRbiSV3LZe+ozESwx+Uf3p/bwUiiYrpNnWu
-	 KFN/dmSexrNXQ==
-Date: Wed, 11 Dec 2024 18:17:54 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Peter Rosin <peda@axentia.se>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iio: iio-mux: kzalloc instead of devm_kzalloc to
- ensure page alignment
-Message-ID: <20241211181754.52e0f627@jic23-huawei>
-In-Reply-To: <97fd092da34bcdcf0a7f79c6079a04ce@gmail.com>
-References: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
-	<20241202-iio-kmalloc-align-v1-2-aa9568c03937@gmail.com>
-	<20241208181531.47997ab4@jic23-huawei>
-	<97fd092da34bcdcf0a7f79c6079a04ce@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1733941107;
+	bh=0Ha0iFDk7Ri2O+rZLVr8uvjg5fh5VNVFuhQutjRlXDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mO/4ozg6DJKMCxmeI6euSHEGop6RmQKa5U5tCu4Es5X2566kyxtggE7ev8DMZ6ksE
+	 1q9XSOvGt+0U6WImq8H+LhapO2ODdBrrmmjjuMkLurHtNU88dMZnMLxl9dzqMfdOju
+	 B3Ya0zfJO+5QWEzDRsc5Xvw+RiEzrvbIeOjtPVbMZDS1fqA8Xk7IZak9kl1rbFQ1LC
+	 9yLWAX6riZx1ObNjGP1pxJdhF32gQOk45S+s7yazjq3eF/tns4AncFI1UtX8NLXfB0
+	 O3PaV0Fo1QwI0xrD11634AL860vvNi7zzzqfRltn003+YCBq0DhNzOnqDqt+NogEih
+	 XzIYCOG2NVxbA==
+Date: Wed, 11 Dec 2024 10:18:27 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>,
+	John Garry <john.g.garry@oracle.com>
+Subject: Re: [RFC 3/3] xfs_io: add extsize command support
+Message-ID: <20241211181827.GC6678@frogsfrogsfrogs>
+References: <cover.1733902742.git.ojaswin@linux.ibm.com>
+ <6448e3adc13eff8b152f7954c838eb9315c91574.1733902742.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6448e3adc13eff8b152f7954c838eb9315c91574.1733902742.git.ojaswin@linux.ibm.com>
 
-On Mon, 09 Dec 2024 11:39:55 +0100
-Matteo Martelli <matteomartelli3@gmail.com> wrote:
+On Wed, Dec 11, 2024 at 01:24:04PM +0530, Ojaswin Mujoo wrote:
+> extsize command is currently only supported with XFS filesystem.
+> Lift this restriction now that ext4 is also supporting extsize hints.
+> 
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-> On Sun, 8 Dec 2024 18:15:31 +0000, Jonathan Cameron <jic23@kernel.org> wrote:
-> > On Mon, 02 Dec 2024 16:11:08 +0100
-> > Matteo Martelli <matteomartelli3@gmail.com> wrote:
-> >   
-> > > During channel configuration, the iio-mux driver allocates a page with
-> > > devm_kzalloc(PAGE_SIZE) to read channel ext_info. However, the resulting
-> > > buffer points to an offset of the page due to the devres header sitting
-> > > at the beginning of the allocated area. This leads to failure in the
-> > > provider driver when sysfs_emit* helpers are used to format the ext_info
-> > > attributes.
-> > > 
-> > > Switch to plain kzalloc version. The devres version is not strictly
-> > > necessary as the buffer is only accessed during the channel
-> > > configuration phase. Rely on __free cleanup to deallocate the buffer.
-> > > Also, move the ext_info handling into a new function to have the page
-> > > buffer definition and assignment in one statement as suggested by
-> > > cleanup documentation.
-> > > 
-> > > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>  
-> > This seems fine to me, but the diff ended up a bit complex, so I'd like
-> > Peter to take a look as well before I apply it.  
-> 
-> For a simpler diff I could go for devm_get_free_pages()+devm_free_pages(),
-> but since devres doesn't seem necessary in this case, I think this patch
-> provides a cleaner solution at the end.
+Seems pretty straightforward to me.  Are you planning to add an extsize
+option to chattr?
 
-The approach is fine I think, I'd just like a second opinion so will
-give Peter some time to get to it before applying.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-> 
-> > 
-> > Do you have a board that is hitting this?  If so, a fixes tag is definitely
-> > appropriate. I think it is probably appropriate even it not.  
-> 
-> I am not sure if any existing board is affected as I encountered this
-> issue while experimenting with consumer drivers, thus using a custom DT
-> on top of sun50i-a64-pine64.dts just for testing. The following DT files
-> might be affected but only if the iio channel controlled by the iio_mux
-> multiplexer owns an ext_info attribute which is also exposed on sysfs.
-> 
-> $ grep -Rl 'io-channel-mux' arch
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dts
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjade.dts
-> arch/arm/boot/dts/microchip/at91-tse850-3.dts
-> arch/arm/boot/dts/microchip/at91-natte.dtsi
-> arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rk2023.dtsi
-> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg353x.dtsi
-> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg503.dts
-> arch/arm64/boot/dts/rockchip/rk3326-odroid-go3.dts
-> arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-h.dtb
-> arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-h.dts
-> 
-> I am also not sure what would be the reference commit for the Fixes tag.
-> The related ext_info attributes handling was introduced in the first
-> commit of the iio_mux implementation. If that applies, following the
-> corresponding Fixes tag.
-> 
-> Fixes: 7ba9df54b091 ("iio: multiplexer: new iio category and iio-mux driver")
-That works I think.
+--D
 
-Thanks,
-
+> ---
+>  io/open.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > 
-> > Jonathan
-> >   
+> diff --git a/io/open.c b/io/open.c
+> index a30dd89a1fd5..2582ff9b862e 100644
+> --- a/io/open.c
+> +++ b/io/open.c
+> @@ -997,7 +997,7 @@ open_init(void)
+>  	extsize_cmd.args = _("[-D | -R] [extsize]");
+>  	extsize_cmd.argmin = 0;
+>  	extsize_cmd.argmax = -1;
+> -	extsize_cmd.flags = CMD_NOMAP_OK;
+> +	extsize_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
+>  	extsize_cmd.oneline =
+>  		_("get/set preferred extent size (in bytes) for the open file");
+>  	extsize_cmd.help = extsize_help;
+> -- 
+> 2.43.5
 > 
-> Best regards,
-> Matteo
-> > > ---
-> > >  drivers/iio/multiplexer/iio-mux.c | 84 +++++++++++++++++++++------------------
-> > >  1 file changed, 46 insertions(+), 38 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-> > > index 2953403bef53bbe47a97a8ab1c475ed88d7f86d2..c309d991490c63ba4299f1cda7102f10dcf54982 100644
-> > > --- a/drivers/iio/multiplexer/iio-mux.c
-> > > +++ b/drivers/iio/multiplexer/iio-mux.c
-> > > @@ -7,6 +7,7 @@
-> > >   * Author: Peter Rosin <peda@axentia.se>
-> > >   */
-> > >  
-> > > +#include <linux/cleanup.h>
-> > >  #include <linux/err.h>
-> > >  #include <linux/iio/consumer.h>
-> > >  #include <linux/iio/iio.h>
-> > > @@ -237,49 +238,18 @@ static ssize_t mux_write_ext_info(struct iio_dev *indio_dev, uintptr_t private,
-> > >  	return ret;
-> > >  }
-> > >  
-> > > -static int mux_configure_channel(struct device *dev, struct mux *mux,
-> > > -				 u32 state, const char *label, int idx)
-> > > +static int mux_configure_chan_ext_info(struct device *dev, struct mux *mux,
-> > > +				       int idx, int num_ext_info)
-> > >  {
-> > >  	struct mux_child *child = &mux->child[idx];
-> > > -	struct iio_chan_spec *chan = &mux->chan[idx];
-> > >  	struct iio_chan_spec const *pchan = mux->parent->channel;
-> > > -	char *page = NULL;
-> > > -	int num_ext_info;
-> > >  	int i;
-> > >  	int ret;
-> > >  
-> > > -	chan->indexed = 1;
-> > > -	chan->output = pchan->output;
-> > > -	chan->datasheet_name = label;
-> > > -	chan->ext_info = mux->ext_info;
-> > > -
-> > > -	ret = iio_get_channel_type(mux->parent, &chan->type);
-> > > -	if (ret < 0) {
-> > > -		dev_err(dev, "failed to get parent channel type\n");
-> > > -		return ret;
-> > > -	}
-> > > -
-> > > -	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_RAW))
-> > > -		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
-> > > -	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_SCALE))
-> > > -		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
-> > > -
-> > > -	if (iio_channel_has_available(pchan, IIO_CHAN_INFO_RAW))
-> > > -		chan->info_mask_separate_available |= BIT(IIO_CHAN_INFO_RAW);
-> > > -
-> > > -	if (state >= mux_control_states(mux->control)) {
-> > > -		dev_err(dev, "too many channels\n");
-> > > -		return -EINVAL;
-> > > -	}
-> > > -
-> > > -	chan->channel = state;
-> > > +	char *page __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
-> > > +	if (!page)
-> > > +		return -ENOMEM;
-> > >  
-> > > -	num_ext_info = iio_get_channel_ext_info_count(mux->parent);
-> > > -	if (num_ext_info) {
-> > > -		page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
-> > > -		if (!page)
-> > > -			return -ENOMEM;
-> > > -	}
-> > >  	child->ext_info_cache = devm_kcalloc(dev,
-> > >  					     num_ext_info,
-> > >  					     sizeof(*child->ext_info_cache),
-> > > @@ -318,8 +288,46 @@ static int mux_configure_channel(struct device *dev, struct mux *mux,
-> > >  		child->ext_info_cache[i].size = ret;
-> > >  	}
-> > >  
-> > > -	if (page)
-> > > -		devm_kfree(dev, page);
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int mux_configure_channel(struct device *dev, struct mux *mux, u32 state,
-> > > +				 const char *label, int idx)
-> > > +{
-> > > +	struct iio_chan_spec *chan = &mux->chan[idx];
-> > > +	struct iio_chan_spec const *pchan = mux->parent->channel;
-> > > +	int num_ext_info;
-> > > +	int ret;
-> > > +
-> > > +	chan->indexed = 1;
-> > > +	chan->output = pchan->output;
-> > > +	chan->datasheet_name = label;
-> > > +	chan->ext_info = mux->ext_info;
-> > > +
-> > > +	ret = iio_get_channel_type(mux->parent, &chan->type);
-> > > +	if (ret < 0) {
-> > > +		dev_err(dev, "failed to get parent channel type\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_RAW))
-> > > +		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
-> > > +	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_SCALE))
-> > > +		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
-> > > +
-> > > +	if (iio_channel_has_available(pchan, IIO_CHAN_INFO_RAW))
-> > > +		chan->info_mask_separate_available |= BIT(IIO_CHAN_INFO_RAW);
-> > > +
-> > > +	if (state >= mux_control_states(mux->control)) {
-> > > +		dev_err(dev, "too many channels\n");
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	chan->channel = state;
-> > > +
-> > > +	num_ext_info = iio_get_channel_ext_info_count(mux->parent);
-> > > +	if (num_ext_info)
-> > > +		return mux_configure_chan_ext_info(dev, mux, idx, num_ext_info);
-> > >  
-> > >  	return 0;
-> > >  }
-> > >   
-> >   
 > 
-
 
