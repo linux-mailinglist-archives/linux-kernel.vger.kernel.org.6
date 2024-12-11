@@ -1,123 +1,140 @@
-Return-Path: <linux-kernel+bounces-441267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5749ECC12
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:29:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D7C9ECC1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:34:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE94162AF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:34:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31E8229128;
+	Wed, 11 Dec 2024 12:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVkmv4vF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8AFC2821F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:29:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD08225A5F;
-	Wed, 11 Dec 2024 12:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ekav7q+u"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA9A1C175C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A43238E23;
+	Wed, 11 Dec 2024 12:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733920174; cv=none; b=cjOd1ITEDs153gOVznXkgTiFCB3528F4Blsh1mBfzVD+lxmdAffjBARquZeVkmcmJ21qVmUu8510ZrSy1iXvmWEuHrWvaODZjch3QjraeWX1QTvWyNf1x7gMExHzW3nDJ7fEEh/JjOKrE9+nopjuMFqPGryvi4XxMkKGeSGERJ4=
+	t=1733920480; cv=none; b=aBBXjFNaaV3Gweq6Z6oniULA3uAIkP0qOZxjQe9ao3LxrMHwZgLeWqyUQS7Pk7qqpKL87CDw0WfwtlFq/Ov3nGMN+YrQEazv4zyo8gka/S7geMZgLRAIh2mqEvWbd43DKR+RbksqvWaUoVbQNxeiZibpPKP3G+1em1xNEJheezQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733920174; c=relaxed/simple;
-	bh=YEw/IRYYRv/+z+aIG9Q+90G+HCvcHBe1Et0PZYVkGhc=;
+	s=arc-20240116; t=1733920480; c=relaxed/simple;
+	bh=ulryPB7pzGBhA0b8mB5egtFHagiv/GS/PHdpk4cIb4Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fAELGyt3+j/MZ2+PY2SgXZIzd34yHD8T+PZYSKV7Lu0ldFDc4XdFTappRWalm02mtaFWu3SV9ciQLfjch78ssoM4G9FZVW7IaxtnGkZzsUFaLvbe1EItWuMa4MRFHFxAcel35QwuacdBuUcDz1E0bRG8cZDEEw444XU6JLdWBzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ekav7q+u; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-436202dd730so2562035e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 04:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733920171; x=1734524971; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4q1I1Yh84bKu8NCVCn6hfhSIWeIgmZ50vGMDpFsxBHQ=;
-        b=Ekav7q+ufLl3fuWLREiCJGSstwg9iN8bF+06/HnGxcpTnMBpy9xC0dBe0vDwyJ50bi
-         dfuPuscO4nO2AOynyAp3BKRJHhcKGtTCBPPvKDqEWPbMGp0NxpfXxWHZXsC/nDHckkIa
-         APyp35geaWmbms2cJB/UKitcdDzHkhwr+jaEWO/sct6ZRUdhqspqEv15sEenALsvJcEG
-         xkYvG6qaivMMZmH20EVyojtAf2CA9AK3Vv2xhnVDFR/ZweJMjt4/2mRFb4RqJ2laEqIn
-         hzjjFUoRoKa1PAVNqtate1hO9jf9Xcbeg/RSpfqFdHCmvfh2Z8GY7U5ghhKyIWENz3AQ
-         JjsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733920171; x=1734524971;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4q1I1Yh84bKu8NCVCn6hfhSIWeIgmZ50vGMDpFsxBHQ=;
-        b=FFj70Wu6nY2GR6jwRNWnvhlmg+Z+dRsD4WORX4JA5jJWqg4B7ZljihrOshGhgfVqut
-         TnMXZa8m79NMS6I1SiVPlNtWuA/Ms3RNK02yZLLHWkDYrE//eszEIGgSCRaXrA7Ggfxj
-         kcSMUTS2SEAh3FsLsNpfoCwq4ZocBh/nE45Uruou7q/88BWfWyEfgdOYMMm2QDYFqLmi
-         OMcQA8mAOSWphg7SE0W0ItfmIy98Khis2PYa9lQyIUZ3ncXIVEe+NM8M/lR6ML9jJR3R
-         gHBkgBVF9iMgMxNdXyNNa6H48P0BkX4Vf2lnZI1sWSBQaik8INOMpk0yKeieyvZRuem7
-         slDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBBsIKMB5+svkyN1GUd9KuEX6gxgzr+iXiva9mhmSgnl0ySaUxTrG1DZd28XMZe8L6L+16AlVTVqzmIfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywig9a0HqouMndoxcquvt0cySUv0tddLMCMuOxNOlsoPVF2X7xV
-	1szFcNTesiecsGCpeVu0cQYmSVPP5HubuWIETf3/Qa2xN6nfw0yXQ1rSQ2DlzJc=
-X-Gm-Gg: ASbGnctkKmJ740MmN1Rrkh9blDPNTwJI0VZEUk389Mhs4KRjB39DjcI6QA7Lw5fv6ro
-	8J7x5WkQ9q1uWD5RW8n50oNMPZtrjNv3WDQ9Dv3/MVrDYASdpVHy52cd/NlspE7ajjXcapB7BBI
-	qZK+DXsX2MPXJ/a2NU5bUtOHFPpf4Hy5jC+toCSErjAMVRnaK3a50sidgbS0xUffd1ksLnu71z1
-	fhmF/etpaEnWy6nlpKb2pc38uEUypos6pU8PDmd8utoxaXsVIT4wvb59I4=
-X-Google-Smtp-Source: AGHT+IE0TgsU6/73zikWtGl+XcC9OJmbSxFiscCQo7i68052biLcQRUNTqXnT2vH4aEJK/3SFna9UA==
-X-Received: by 2002:a5d:64e6:0:b0:386:424e:32d5 with SMTP id ffacd0b85a97d-3864ce556f4mr2228673f8f.14.1733920171168;
-        Wed, 11 Dec 2024 04:29:31 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361d541eccsm20564675e9.10.2024.12.11.04.29.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 04:29:30 -0800 (PST)
-Date: Wed, 11 Dec 2024 15:29:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Esteban Blanc <eblanc@baylibre.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtc: tps6594: Fix integer overflow on 32bit systems
-Message-ID: <e434930a-f30d-427f-9cc6-41562a31d8dc@stanley.mountain>
-References: <1074175e-5ecb-4e3d-b721-347d794caa90@stanley.mountain>
- <CAHp75VfssNnd9zvNu+N9xc74RO+qBPC_qhF5ed_G8p5HJ8LWvw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRED3ws5LNgLUxvcnilSiGEDBTDRsTvXjOXEh3dtKZfGFL6sdJmVBQpcZV/XYnZk50xNHfh/N5XCfbQiatp0HvY8baFGTrMbWqGJ390PLsZ0KN8+Tv/3CC1eU3DfMDvpyuzYhvF8ki2CgSTguwTmsogEb9qkVqQFlL5S79WYrKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVkmv4vF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26CCAC4CED2;
+	Wed, 11 Dec 2024 12:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733920479;
+	bh=ulryPB7pzGBhA0b8mB5egtFHagiv/GS/PHdpk4cIb4Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WVkmv4vFHehVM3ULff8r93aH+iezaodkWsAnbXBKlPlYpZkcPnUueEaaWNuAoc9m1
+	 U0w4NnifFN/var1L2/UybnbQ46YjGk0SJtSuE4Q4xp/XC9jwnWEEC37LOe1S8TToOq
+	 kXOIXpD/lPeTOk/PhgERZZS1XtQE6Trx/J1yP834623aPWo7RMdB5xiOVuGSjIS6P5
+	 RLlZcjxjFaucY73h9ePrHZR8mn8xGBlXMCvPoMDTQka8EoY77Yj0sEB7hicHxfSlWo
+	 013b1NjOuUx5sDi/CdDdUot+TyOV7VKd3VWZWh9QDJvErZLfwetigV/Z8OmT2dBw8w
+	 9/A/bpy+KWwOQ==
+Date: Wed, 11 Dec 2024 13:34:31 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
+Message-ID: <Z1mG14DMoIzh6xtj@cassiopeiae>
+References: <20241210224947.23804-1-dakr@kernel.org>
+ <20241210224947.23804-2-dakr@kernel.org>
+ <2024121112-gala-skincare-c85e@gregkh>
+ <2024121111-acquire-jarring-71af@gregkh>
+ <2024121128-mutt-twice-acda@gregkh>
+ <2024121131-carnival-cash-8c5f@gregkh>
+ <Z1mEAPlSXA9c282i@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VfssNnd9zvNu+N9xc74RO+qBPC_qhF5ed_G8p5HJ8LWvw@mail.gmail.com>
+In-Reply-To: <Z1mEAPlSXA9c282i@cassiopeiae>
 
-On Wed, Dec 11, 2024 at 01:51:31PM +0200, Andy Shevchenko wrote:
-> On Wed, Dec 11, 2024 at 11:32 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > The problem is this multiply in tps6594_rtc_set_offset()
-> >
-> >         tmp = offset * TICKS_PER_HOUR;
-> >
-> > The "tmp" variable is an s64 but "offset" is a long in the
-> > (-277774)-277774 range.  On 32bit systems a long can hold numbers up to
-> > approximately two billion.  The number of TICKS_PER_HOUR is really large,
-> > (32768 * 3600) or roughly a hundred million.  When you start multiplying
-> > by a hundred million it doesn't take long to overflow the two billion
-> > mark.
-> >
-> > Probably the safest way to fix this is to change the type of
-> > TICKS_PER_HOUR to long long because it's such a large number.
+On Wed, Dec 11, 2024 at 01:22:33PM +0100, Danilo Krummrich wrote:
+> On Wed, Dec 11, 2024 at 12:05:10PM +0100, Greg KH wrote:
+> > On Wed, Dec 11, 2024 at 11:59:54AM +0100, Greg KH wrote:
+> > > On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
+> > > > On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
+> > > > > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummrich wrote:
+> > > > > > In a subsequent patch we introduce the `Registration` abstraction used
+> > > > > > to register driver structures. Some subsystems require the module name on
+> > > > > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
+> > > > > > the module name to `Module::init`.
+> > > > > 
+> > > > > Nit, we don't need the NAME of the PCI driver (well, we do like it, but
+> > > > > that's not the real thing), we want the pointer to the module structure
+> > > > > in the register_driver call.
+> > > > > 
+> > > > > Does this provide for that?  I'm thinking it does, but it's not the
+> > > > > "name" that is the issue here.
+> > > > 
+> > > > Wait, no, you really do want the name, don't you.  You refer to
+> > > > "module.0" to get the module structure pointer (if I'm reading the code
+> > > > right), but as you have that pointer already, why can't you just use
+> > > > module->name there as well as you have a pointer to a valid module
+> > > > structure that has the name already embedded in it.
+> > > 
+> > > In digging further, it's used by the pci code to call into lower layers,
+> > > but why it's using a different string other than the module name string
+> > > is beyond me.  Looks like this goes way back before git was around, and
+> > > odds are it's my fault for something I wrote a long time ago.
+> > > 
+> > > I'll see if I can just change the driver core to not need a name at all,
+> > > and pull it from the module which would make all of this go away in the
+> > > end.  Odds are something will break but who knows...
+> > 
+> > Nope, things break, the "name" is there to handle built-in modules (as
+> > the module pointer will be NULL.)
+> > 
+> > So what you really want is not the module->name (as I don't think that
+> > will be set), but you want KBUILD_MODNAME which the build system sets.
 > 
-> ...
+> That's correct, and the reason why I pass through this name argument.
 > 
-> > -#define TICKS_PER_HOUR (32768 * 3600)
-> > +#define TICKS_PER_HOUR (32768 * 3600LL)
+> Sorry I wasn't able to reply earlier to save you some time.
 > 
-> Hmm... And why signed?
+> > You shouldn't need to pass the name through all of the subsystems here,
+> > just rely on the build system instead.
+> > 
+> > Or does the Rust side not have KBUILD_MODNAME?
+> 
+> AFAIK, it doesn't (or didn't have at the time I wrote the patch).
+> 
+> @Miguel: Can we access KBUILD_MODNAME conveniently?
 
-It needs to be signed for negatives.  That's deliberate.
+Actually, I now remember there was another reason why I pass it through in
+`Module::init`.
 
-regards,
-dan carpenter
+Even if we had env!(KBUILD_MODNAME) already, I'd want to use it from the bus
+abstraction code, e.g. rust/kernel/pci.rs. But since this is generic code, it
+won't get the KBUILD_MODNAME from the module that is using the bus abstraction.
+
+> 
+> > 
+> > thanks,
+> > 
+> > greg k-h
 
