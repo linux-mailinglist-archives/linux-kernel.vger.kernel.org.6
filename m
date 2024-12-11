@@ -1,209 +1,131 @@
-Return-Path: <linux-kernel+bounces-442331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644649EDB09
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:13:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571859EDB05
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:12:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6F11889CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CEF21883E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C1A1F2C23;
-	Wed, 11 Dec 2024 23:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117E61F2C20;
+	Wed, 11 Dec 2024 23:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IT+nonDH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmeWeDr6"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D32195;
-	Wed, 11 Dec 2024 23:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38A11EC4FF;
+	Wed, 11 Dec 2024 23:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733958815; cv=none; b=eC+UPWPhsqrUGxCUP9uJz7Qyx8KbcanoNA5g9vIjwaAKAKPeTJ4Uv2GjuFlEPG/PTdCZysBBIddh+GMGOP0dZ8g8MoJym/LK/7cCCLAznFrCyoRpwNJNVKbkWdv6u6HbRrfX9PBQ9ZTqB2MU/BTyQ0M12wIb1R/gv9pYrjrDRqY=
+	t=1733958756; cv=none; b=HWaU49HJK2mC0aBc7alwGmkStbphVmqeqq03m1V2Xz0u4N7NrTJBVxSlyHBU9uoW0oBpv16EcPIUr2QYqZq5/9nnxOHGZQTJsp0RL87tgVpAk59E4FmemTCj59DVfnn0nuoYCljfVSHcYLCoUKWkCSuArhhsRD79vor3wi3MXD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733958815; c=relaxed/simple;
-	bh=Fs0YvPZYFfeum0uMpaC2y/EnUl1y1ZIuYN+2dIo5QeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TfdHvzB9pnXk/IkCrwcZ7ubHq3nBkp+zwB+mTucdsMfOyPK0PyrGujMN6ojeBwtKDtpSpU+nEitSQylOrLWTZ19V+Bl9e0Zs9RLgmDlJ/pwXghc2VXv03bb3Kl7pHoLAIaNyJQTeR7++QRmFh9g0Cp3Bkp4IawBMOneSWb+sAUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IT+nonDH; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733958814; x=1765494814;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fs0YvPZYFfeum0uMpaC2y/EnUl1y1ZIuYN+2dIo5QeY=;
-  b=IT+nonDHXkE/IjwH3/1hVLjyzOcgCe0B+FN41NTwIpw+/dd0Sey4eMlb
-   bscur/qI80NXQs8c4rbXbSfXYF5KRyxistCFCJJKEgvLA4Pv445CfNmPt
-   jWsKIUav2xNMUkFDsoqAtlwF/kaXKH2WZuz3BUtKtSNHvG9axa7blpgab
-   TTCTATDjTFctYzHgGAfbdlrxPNJuif7sqAzn4refAAMkH+AegI25HkmtZ
-   dldGIfAL9/HeqlHONtRYyVTnoRiLW6KtNQ9UGDJ1OPPSTpbahq1XD253C
-   v058k51pvmjLqnaO7f6I96ops3RyrRJbhDLW8jnBB0bFHFot9aWHIeeq5
-   Q==;
-X-CSE-ConnectionGUID: dDBtzksxSFuig1a5cZUnDw==
-X-CSE-MsgGUID: 17Ts8s5fSYiYdEYbqhfSkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="38046231"
-X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
-   d="scan'208";a="38046231"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 15:13:33 -0800
-X-CSE-ConnectionGUID: GR6vQ/SaRQiFUeoopuAIzQ==
-X-CSE-MsgGUID: nwFvvL8HQwSfClzTThLOiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="100950648"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 11 Dec 2024 15:13:28 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLVtV-0007C9-0z;
-	Wed, 11 Dec 2024 23:13:25 +0000
-Date: Thu, 12 Dec 2024 07:12:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	linux-efi@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	stable@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
-	Brian Nguyen <nguyenbrian@microsoft.com>,
-	Jacob Pan <panj@microsoft.com>, Allen Pais <apais@microsoft.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	KONDO =?utf-8?B?S0FaVU1BKOi/keiXpOOAgOWSjOecnyk=?= <kazuma-kondo@nec.com>,
-	Kees Cook <kees@kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Aditya Garg <gargaditya08@live.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] efi: make the min and max mmap slack slots configurable
-Message-ID: <202412120620.ZY2X03AR-lkp@intel.com>
-References: <20241209162449.48390-1-hamzamahfooz@linux.microsoft.com>
+	s=arc-20240116; t=1733958756; c=relaxed/simple;
+	bh=EAhbE5FnzPrjYNKQthkW7n6a3bm7zIYVzKfWffn+RC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RBqS5QF8yu7ON3JSG8l8njwCa5lVFNP31vrmtISRiTWAGLChHMTjz+hzJfK0aIhF0XpIwcHgI3ZoJz3dt1Bm2Ykh8pJZL0oYwc7bSaggD1n48Ha842htWFvw2KEo/Wc0tGUm6X0T5H2NWUDVUZk8SPUgrRxarShkrAzTEb6Sw9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmeWeDr6; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385ed7f6605so3298342f8f.3;
+        Wed, 11 Dec 2024 15:12:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733958753; x=1734563553; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H0G/tFvxt07BfyGaMcXOJ1EEDxLzNA9gUV0WXr7dWt8=;
+        b=bmeWeDr6M+tDpHxrzDca1w4nZnNStkiMQvdGA1CMqcWEXszGCJoN068GyFWL50q7Bc
+         vF1VEX1gx4aUZp/UyAaNExNtNKkrzp/ggBzv71AaDrPOr2i4r+fARkDC9a842N2uaIyK
+         pMi6p+TqXYhjhA55Fn+ZVkGPUaTccugu1on7+vQNGVbQxdkO8bqFTD8uTIAUylNjldRh
+         YBvCqzVU/Eb+1791v4/mTTThzNJ6kIlw3UUJMfAbcaFWnz68PMyw3fKwjHjKqtkIFbxH
+         ZrytkbA96Rk9JngVyh4KcT3YKWVnnQf/MMvANmfjdEgx059BjXDWz+XMmu73nDde1UHt
+         VCwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733958753; x=1734563553;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H0G/tFvxt07BfyGaMcXOJ1EEDxLzNA9gUV0WXr7dWt8=;
+        b=DEfbvZPggqEJx/CPuGYjIV7tjHDzQgsY8oywLgJxoDzTjm+8X4MLCiX1n7fb+qHBbv
+         KX+FhJ8RkQtkiJhjPOuCWaUt0H7vGa/k079gv+Pp92MEaWXqgPLrL+fgo00++1uRXlg6
+         ltPM2Cnp2lgu7IKs1CTRXRpxu1qvWV6hpJLkk6VnPf5acju2801fvDg+p9fUKDq0bEyk
+         CWZ0PGLlY1PYuPOyJ82CblgC+RAJvAu55RW9rwFEAKmORN3t4hvrYp9WnjPGJ3LA3wlI
+         2zitg/Qb/oPZuO1N/Qi8XFHIXcFycD17Tz3mTsgH8otnkxJkp7TsNsjL08EKa52bAW/X
+         Ui/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ4FbzneGiG2Y6C841Y9sXD1tL+UzmhpP4mJtCKDqpR56qcUpFNBEdvu51M66Mr/cSRFABCs4L+dtTpFCEl/vd@vger.kernel.org, AJvYcCV5SvG/akYCNRKus+7iIihafVbtoXjYgVAyAiT2spmKNchHz4aVRaExfFORNCxVDqmDOfZQO2vraxz9pvc5@vger.kernel.org, AJvYcCX/VfdYgFIYXu5bVn1TLRwv4In92/4Cy57YUOKbPLK+Jugg8a2TZH1rPwuvCwYFQHmAXSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3ZEzGb4CuJs1G/rn3afbHVjEZ8GRVBW8nv6nuU2Bjb43xEQqy
+	E8KrTW/hoTmPt1NIp/MWNrCqBlxitrmwXxSPxW/Hp2M6BNGpqVkMQPj/Qg==
+X-Gm-Gg: ASbGncugv6L/YoiwTc5ZCiEz/ihBJaognPF1/D6LX6WeSQiS12/Un6hCt4LilnznsWN
+	XdMGGqTGaQb/6Yj8WZ3D+rMuBnW7l/xEqPrAaS/Ajvw+jJkZ2Mup58O59MoccDxpn9lOmlebxXi
+	1hqo/pBqtJ2Pp2sV/ygxHHhskGr6DtcLMfHny2Qdfl0KrOMgb4p/WIVUqVgwIsoguV/4Tljaf9D
+	ZDxIPRPV4491+WKhToL48nvxjXpWIZQnWmMX7Pr2fKwKvJKg/0tbZnb7nCuYTaY1fns+xTKVRNA
+	JxdVNRmotmvqx828Xjb0zxU=
+X-Google-Smtp-Source: AGHT+IFDEYUGEXXWANtZGVvGV93et6FVrxvSd5oSyDoZDY/bBfBGHmy3MYjduVrqTIfsaEDluJiOTQ==
+X-Received: by 2002:a05:6000:1449:b0:385:f409:b42 with SMTP id ffacd0b85a97d-3864cea44c2mr4278755f8f.53.1733958752995;
+        Wed, 11 Dec 2024 15:12:32 -0800 (PST)
+Received: from ?IPV6:2a02:8012:e013:0:1ab3:1f25:931:4d97? ([2a02:8012:e013:0:1ab3:1f25:931:4d97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0be4sm273633405e9.28.2024.12.11.15.12.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 15:12:32 -0800 (PST)
+Message-ID: <2b75550c-0dc7-4bcc-ac60-9ad4402c17f8@gmail.com>
+Date: Wed, 11 Dec 2024 23:12:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209162449.48390-1-hamzamahfooz@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] KVM: VMX: Handle vectoring error in
+ check_emulate_instruction
+To: Sean Christopherson <seanjc@google.com>, Ivan Orlov <iorlov@amazon.com>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com,
+ pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, x86@kernel.org, pdurrant@amazon.co.uk,
+ dwmw@amazon.co.uk
+References: <20241111102749.82761-1-iorlov@amazon.com>
+ <20241111102749.82761-4-iorlov@amazon.com> <Z1nWykQ3e4D5e2C-@google.com>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <Z1nWykQ3e4D5e2C-@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Hamza,
+On 12/11/24 18:15, Sean Christopherson wrote:
+> Hmm, this should probably be "pf_mmio", not just "mmio".  E.g. if KVM is emulating
+> large swaths of guest code because unrestricted guest is disabled, then can end up
+> emulating an MMIO access for "normal" emulation.
+> 
+> Hmm, actually, what if we go with this?
+> 
+>    static inline bool kvm_can_emulate_event_vectoring(int emul_type)
+>    {
+> 	return !(emul_type & EMULTYPE_PF) ||
+> 	       (emul_type & EMULTYPE_WRITE_PF_TO_SP);
+>    }
+> 
 
-kernel test robot noticed the following build warnings:
+Hm, by the way, what is the desired behaviour if EMULTYPE_ALLOW_RETRY_PF 
+is set? Is it correct that we return an internal error if it is set 
+during vectoring? Or KVM may try to unprotect the page and re-execute?
 
-[auto build test WARNING on efi/next]
-[also build test WARNING on linus/master v6.13-rc2 next-20241211]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+If so, we may need something like
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hamza-Mahfooz/efi-make-the-min-and-max-mmap-slack-slots-configurable/20241210-002724
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git next
-patch link:    https://lore.kernel.org/r/20241209162449.48390-1-hamzamahfooz%40linux.microsoft.com
-patch subject: [PATCH] efi: make the min and max mmap slack slots configurable
-config: x86_64-buildonly-randconfig-002-20241210 (https://download.01.org/0day-ci/archive/20241212/202412120620.ZY2X03AR-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241212/202412120620.ZY2X03AR-lkp@intel.com/reproduce)
+static inline bool kvm_can_emulate_event_vectoring(int emul_type)
+{
+	return !(emul_type & EMULTYPE_PF) ||
+	       (emul_type & ~(EMULTYPE_PF));
+}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412120620.ZY2X03AR-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/firmware/efi/libstub/mem.c:23: warning: Function parameter or struct member 'n' not described in 'efi_get_memory_map'
-
-
-vim +23 drivers/firmware/efi/libstub/mem.c
-
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10   7  
-1d9b17683547348 Heinrich Schuchardt 2020-02-18   8  /**
-1d9b17683547348 Heinrich Schuchardt 2020-02-18   9   * efi_get_memory_map() - get memory map
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  10   * @map:		pointer to memory map pointer to which to assign the
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  11   *			newly allocated memory map
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  12   * @install_cfg_tbl:	whether or not to install the boot memory map as a
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  13   *			configuration table
-1d9b17683547348 Heinrich Schuchardt 2020-02-18  14   *
-1d9b17683547348 Heinrich Schuchardt 2020-02-18  15   * Retrieve the UEFI memory map. The allocated memory leaves room for
-8e602989bc52479 Hamza Mahfooz       2024-12-09  16   * up to CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS additional memory map entries.
-1d9b17683547348 Heinrich Schuchardt 2020-02-18  17   *
-1d9b17683547348 Heinrich Schuchardt 2020-02-18  18   * Return:	status code
-1d9b17683547348 Heinrich Schuchardt 2020-02-18  19   */
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  20  efi_status_t efi_get_memory_map(struct efi_boot_memmap **map,
-8e602989bc52479 Hamza Mahfooz       2024-12-09  21  				bool install_cfg_tbl,
-8e602989bc52479 Hamza Mahfooz       2024-12-09  22  				unsigned int *n)
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10 @23  {
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  24  	int memtype = install_cfg_tbl ? EFI_ACPI_RECLAIM_MEMORY
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  25  				      : EFI_LOADER_DATA;
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  26  	efi_guid_t tbl_guid = LINUX_EFI_BOOT_MEMMAP_GUID;
-8e602989bc52479 Hamza Mahfooz       2024-12-09  27  	unsigned int nr = CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS;
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  28  	struct efi_boot_memmap *m, tmp;
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  29  	efi_status_t status;
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  30  	unsigned long size;
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  31  
-8e602989bc52479 Hamza Mahfooz       2024-12-09  32  	BUILD_BUG_ON(!is_power_of_2(CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS) ||
-8e602989bc52479 Hamza Mahfooz       2024-12-09  33  		     !is_power_of_2(CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS) ||
-8e602989bc52479 Hamza Mahfooz       2024-12-09  34  		     CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS >=
-8e602989bc52479 Hamza Mahfooz       2024-12-09  35  		     CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
-8e602989bc52479 Hamza Mahfooz       2024-12-09  36  
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  37  	tmp.map_size = 0;
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  38  	status = efi_bs_call(get_memory_map, &tmp.map_size, NULL, &tmp.map_key,
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  39  			     &tmp.desc_size, &tmp.desc_ver);
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  40  	if (status != EFI_BUFFER_TOO_SMALL)
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  41  		return EFI_LOAD_ERROR;
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  42  
-8e602989bc52479 Hamza Mahfooz       2024-12-09  43  	do {
-8e602989bc52479 Hamza Mahfooz       2024-12-09  44  		size = tmp.map_size + tmp.desc_size * nr;
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  45  		status = efi_bs_call(allocate_pool, memtype, sizeof(*m) + size,
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  46  				     (void **)&m);
-8e602989bc52479 Hamza Mahfooz       2024-12-09  47  		nr <<= 1;
-8e602989bc52479 Hamza Mahfooz       2024-12-09  48  	} while (status == EFI_BUFFER_TOO_SMALL &&
-8e602989bc52479 Hamza Mahfooz       2024-12-09  49  		 nr <= CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
-8e602989bc52479 Hamza Mahfooz       2024-12-09  50  
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  51  	if (status != EFI_SUCCESS)
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  52  		return status;
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  53  
-8e602989bc52479 Hamza Mahfooz       2024-12-09  54  	if (n)
-8e602989bc52479 Hamza Mahfooz       2024-12-09  55  		*n = nr;
-8e602989bc52479 Hamza Mahfooz       2024-12-09  56  
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  57  	if (install_cfg_tbl) {
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  58  		/*
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  59  		 * Installing a configuration table might allocate memory, and
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  60  		 * this may modify the memory map. This means we should install
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  61  		 * the configuration table first, and re-install or delete it
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  62  		 * as needed.
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  63  		 */
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  64  		status = efi_bs_call(install_configuration_table, &tbl_guid, m);
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  65  		if (status != EFI_SUCCESS)
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  66  			goto free_map;
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  67  	}
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  68  
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  69  	m->buff_size = m->map_size = size;
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  70  	status = efi_bs_call(get_memory_map, &m->map_size, m->map, &m->map_key,
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  71  			     &m->desc_size, &m->desc_ver);
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  72  	if (status != EFI_SUCCESS)
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  73  		goto uninstall_table;
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  74  
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  75  	*map = m;
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  76  	return EFI_SUCCESS;
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  77  
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  78  uninstall_table:
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  79  	if (install_cfg_tbl)
-171539f5a90e3fd Ard Biesheuvel      2022-09-15  80  		efi_bs_call(install_configuration_table, &tbl_guid, NULL);
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  81  free_map:
-eab3126571ed1e3 Ard Biesheuvel      2022-06-03  82  	efi_bs_call(free_pool, m);
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  83  	return status;
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  84  }
-f57db62c67c1c9d Ard Biesheuvel      2020-02-10  85  
+So it returns true if EMULTYPE_PF is not set or if it's not the only set 
+bit.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kind regards,
+Ivan Orlov
 
