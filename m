@@ -1,115 +1,256 @@
-Return-Path: <linux-kernel+bounces-440985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E90D9EC779
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:40:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD0D9EC77A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28AA7188B5CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D8816A731
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486DA1DBB38;
-	Wed, 11 Dec 2024 08:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72511DC99A;
+	Wed, 11 Dec 2024 08:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYJp3v96"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRLfvgLQ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6491C5CD7
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200BA1C5CD7
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733906393; cv=none; b=ec1GjNIS9EYXL3VoX1yAVKsB05S9QD+7DTIG6Bg/heeRXJJ8BIKknh1BgBuDZImP7a4tpjlBjwP97tq0HDUTVZHuoPGGoPTIgJhEVLvgNvPZsPsmNuwCz7Ow6QJfQxATU9/HcATtf7xPsUicOtv/sgI3+rJF09XqLfL/KqUlcyE=
+	t=1733906401; cv=none; b=mNkCcjV7tAKnyEeC8Bn2urBPhVTJYkOvLuBXpYVS4OQCRbSv1MTahkWW+4l8mbv7WXgiiLC6WW2Ti53yIjQGlx/nmA7Je1BUBMN8BAEBSKdmQBhYQAX21G5G6G64P6EjKkKtodAIOqMTpHY1n+hRcrCeGQUjbcQECikUl8vsTb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733906393; c=relaxed/simple;
-	bh=6Cb2eXYbnDnF9MbV7D6DmbWpJZ3pLF6UlxkEtHzazGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TsVqCmZgyVbj1QEu3nQJk7pBq4BhnSEqKwOXodCat2dbaVOaDzAqIidg66isf/PCSQGWvFiKwNzOoGQB/aoKbdIeaezoruwYJFXb5ou60eoBfpqf2LqegeF04TGovLyASzu3lfFAh1LxRw8kBUV+rGcRAtk2H42/pG0D4nAm0gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYJp3v96; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-216728b1836so14893855ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:39:52 -0800 (PST)
+	s=arc-20240116; t=1733906401; c=relaxed/simple;
+	bh=kIWrg3KSpOyDbnrZlH2FQiv66peDmFlBUHq7UQwtICs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQpG00xOcxPVii8yc1zPEsN1ChJgwRy3NYodBZW5zNeKXl8F8bBcsdfPjktdKB3I9Q4iYZczr6rZ+2qpbuw7QTonWmcoNB/1Kc3OG3BCzuiwKlqVMh7C2va4Ydn8+DTtljhx/l0z/XYNaGPcHLUwzCN0PilzKYF4tNg2r9sAuYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRLfvgLQ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43618283d48so8681965e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:39:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733906391; x=1734511191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a9kKrqfGW0A54dxn1v83SDxNjg3jBwrNlLRh958PFM4=;
-        b=ZYJp3v96jIffcQUojr0zsw35kBwWkHPTo8IzHj5r2IGBVxQ/Xq9751EYIh2XjXpPOQ
-         rVAtPMYl/XidZAgsERNjK1Z0wG1CC9M8aUYCl3MMwVaGAyHPnJcGiNuXiUhYcpUuQIsr
-         TGg3CBS/SWN0oGbm/1wUF/0LnFofl0D+hVdX3uEpe2x7FVXHdgb+TX62pktEtI3olrMv
-         uGa/4iPCCj1vfrSJh3ytzmad/Y8HMwRAAnuoRuNX8xXnTTtNmh9l7fvDnbK/SDvgUkKK
-         myT6/8iC1b7tiODAmMOdSVaaQjgeGCbLTFy8Q6FHRUkOfGvPrKKGXPVcbZfuhCKa0fqa
-         /6MA==
+        d=linaro.org; s=google; t=1733906397; x=1734511197; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WiN5zNmlr+UoYjkxWV6ZTSSbXqyBYacLtMs961cCxng=;
+        b=NRLfvgLQCN6wCgdeJaxtq/o4CeJIi8uz/VJjYxdVnPNdFILdlEUolJCnwaO4vBq4Ll
+         eiqrzWMgPXtehRcq4IA7wT1j3/Ecl1FcBrJn4MGB9GuEaZNyQ01K2UBdODupMQfbr4yh
+         4k8HYglzDSQrVROx5EWtnQToXn9AgBuBmEHZv5bBJLeGl7wyZegberfwyNKD6OxjOfA+
+         A3rtCUw2mCu9WdDeSrxgPImraU5++Ay5P3idweDuYvVdLyYqW+/Ii/sLf38tCoRldjp8
+         oqtyiL2g1/NMhlyVC/iiMl4/bAn5vxYr7XnBL1Y+T6D6FrO70dPXN7NCeCN80YU+XpCM
+         he1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733906391; x=1734511191;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a9kKrqfGW0A54dxn1v83SDxNjg3jBwrNlLRh958PFM4=;
-        b=PJksZGrIkYpG8U2XZoQwEfaihPbk2VNFKcBxXGrMxXd+x5KH/5hoNMfxiduNwZ+Phb
-         8mdb4TL6Z+6/3OQU/bP4HTNsxAl5jjAhPQB05+hj+ygZl2WK0Fy9FHJP4fMBiEADwlA3
-         HfQPMt77EuV/IEzQKg3b28XD0qW3/VQ7AD9A9q0TSzWzMnzFcR0XjFAu0amV91dPQsok
-         Uodx9B+pIzJgKWSguj9OnZyISq9mVM/VLxJJ46G3iLZj6rzShq3LYOW28xTqIZyxYhqu
-         rpZmwhpw7vk/HozchB+fiEYSH8xfZXLbEpT0QzbSx1J9QvmPHlbC9fjCxr5LXdZoPfw2
-         c9Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyzXxLGk/dbPe5nIu9uSMAGFqTBReiCwF3ZpXRKbn0PSYMTx9lgXNoqIue5bTl2xG5SiyoSgkC4ISvC5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5ljObMDGrZ6oUPHpdArYW1m+0KAMa+uKChxIeUDU8f53kFpun
-	YFVhzaj0NdUFOVnNeAe1NE4vzV6GqFNUsLrEloBYWNdgY52Xmnss
-X-Gm-Gg: ASbGncunf6sRXgIZ7aTiqWv7ODH+Wl7aiQo7lJ/23EE31aPVJpe8HgPzrZIBTadq92o
-	1UDLbz0PrcleVKeJKDAV7AqCQMBMn5H80HIsSxv1vD4tSS8pQaI4QM8piSvOpxukIy5fMaJnZ3Y
-	6qioRBlHPrxYd1DBgjyhPefsqwqmY6P7JWxTZsEat/1ASx1n8DHcXCbpQCwByc+/ArKHsIX9bvA
-	wcW1vzhUNI419mDQ7BuvZea73WHtZ2ba7OJ+vsVrfca4zaOVduNlgGpFIgNXCqJjg4JgYXaATEr
-	qKaMEh+Wzw==
-X-Google-Smtp-Source: AGHT+IH2WdpnBVNj09+ru8TRkcBQGhbYSw4uxyGvy2N4W9/3sv//NspxuQ95dh6osnLM+HprckO9Dg==
-X-Received: by 2002:a17:902:ccce:b0:216:3dc5:1240 with SMTP id d9443c01a7336-21778508c51mr31249635ad.45.1733906391544;
-        Wed, 11 Dec 2024 00:39:51 -0800 (PST)
-Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21631118cedsm67195655ad.150.2024.12.11.00.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 00:39:51 -0800 (PST)
-From: Changwoo Min <multics69@gmail.com>
-X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
-To: tj@kernel.org,
-	void@manifault.com
-Cc: kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	Changwoo Min <changwoo@igalia.com>
-Subject: [PATCH] MAINTAINERS: add me as reviewer for sched_ext
-Date: Wed, 11 Dec 2024 17:39:45 +0900
-Message-ID: <20241211083945.832294-1-changwoo@igalia.com>
-X-Mailer: git-send-email 2.47.1
+        d=1e100.net; s=20230601; t=1733906397; x=1734511197;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WiN5zNmlr+UoYjkxWV6ZTSSbXqyBYacLtMs961cCxng=;
+        b=g2a6ncfofieD9PWt5fN1fA/Gvvuo3WPvfV5XS5iHuBbFvBc8mUnJCeCWqzcbmRtAMz
+         MULNSY1Vi6cXlXjcFcoo6mJ19NLLLGeLRK+srTu6/o6j2U6Vp3wtF4CF/DqpxyXUparK
+         auPChmsuPaLCo3riQrXYie/pnpHiUZab1tUH8cOI1HvEvpy7xLOO4B3zMd7wooGJ1LL3
+         pH7BJIr85u2bU3QYy/7fuaIEmc7LPlSVuZVgUnv9ClOr1L5Khk/VcCns0Ax6Crz+le+j
+         tyl+DWbiZdwtSVeV35b3q2y0b/pEes52Ooe8se5X4/0bzF0jV8L9FWhDAOHjQXxzFchv
+         DetQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKOUeoZDeLbHaBgOxcWWBbHv4psO4zX5Y/h6yPS3Yf1eeKc+zNux7s3EfAYL15jvU6HRIT13TKjKqggcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuZ62QsBBhu+SKvzd5Qses4mtvyLm8tvNRDR9QofqtsA/cR0Im
+	d3BOB5dxTqHbrY1wGVgxAvP4qeklfqtqjj/SlkwFKDbVOfms2Bhb8ATdSx7kXUs=
+X-Gm-Gg: ASbGnctJglTT7QhM8Xxu03KWuY3MC0dc9gODbgX2+hoYPcL5pKxixl5GcXR0G4Qyz36
+	Qm6ULQ3/wxrwmd+jSAxu6ABWKrRBblrVV9iyu+ko6TpXVyTfCsHLwO2D3YuCR1s459ZSC7rER5k
+	KNnemM2eb5DvIOoHbWoS0vY3H7s3XvJCF+rZoVZaAGznT9WkPU9pW/2xxpoWayElaJnkkN2gE2l
+	eJO4JCI7GaagceuFalBx++aob0hcLgjQDAq9qcSETSHZSvsy205dOXXokXZpRX8ug==
+X-Google-Smtp-Source: AGHT+IG632TmiPJaoyDGB4vW7o1ATYlaVMdaB35oacxOuyQFo3BTQkCwZSwUNZR2kkZt9Hh4Xgp1tQ==
+X-Received: by 2002:a05:600c:1c1c:b0:434:a350:207c with SMTP id 5b1f17b1804b1-4361c3f4cbcmr12594755e9.23.1733906397395;
+        Wed, 11 Dec 2024 00:39:57 -0800 (PST)
+Received: from [192.168.68.163] ([209.198.129.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a609esm763361f8f.40.2024.12.11.00.39.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 00:39:56 -0800 (PST)
+Message-ID: <9003cbc9-bc53-4fb7-a35e-d416c22df4ca@linaro.org>
+Date: Wed, 11 Dec 2024 08:39:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf probe: Fix uninitialized variable
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-perf-users <linux-perf-users@vger.kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>,
+ Dima Kogan <dima@secretsauce.net>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20241209171222.1422577-1-james.clark@linaro.org>
+ <20241211075510.ea7924b5b80bf0d95993086b@kernel.org>
+ <CA+JHD90Brn_jLxPPMr1M0RB6+ms1O3+OvOPWJ0wkUe+MXYpH1A@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CA+JHD90Brn_jLxPPMr1M0RB6+ms1O3+OvOPWJ0wkUe+MXYpH1A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add me as a reviewer for sched_ext. I have been actively working on
-the project and would like to help review patches and address related
-kernel issues/features.
 
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..788681fb209e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20902,6 +20902,7 @@ F:	kernel/sched/
- SCHEDULER - SCHED_EXT
- R:	Tejun Heo <tj@kernel.org>
- R:	David Vernet <void@manifault.com>
-+R:	Changwoo Min <changwoo@igalia.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- W:	https://github.com/sched-ext/scx
--- 
-2.47.1
+On 11/12/2024 12:43 am, Arnaldo Carvalho de Melo wrote:
+> On Tue, Dec 10, 2024, 7:55 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+>> Hi,
+>>
+>> On Mon,  9 Dec 2024 17:12:21 +0000
+>> James Clark <james.clark@linaro.org> wrote:
+>>
+>>> Since the linked fixes: commit, err is returned uninitialized due to the
+>>> removal of "return 0". Initialize err to fix it, and rename err to out
+>>> to avoid confusion because buf is still supposed to be freed in non
+>>> error cases.
+>>>
+>>> This fixes the following intermittent test failure on release builds:
+>>>
+>>>   $ perf test "testsuite_probe"
+>>>   ...
+>>>   -- [ FAIL ] -- perf_probe :: test_invalid_options :: mutually exclusive
+>> options :: -L foo -V bar (output regexp parsing)
+>>>   Regexp not found: \"Error: switch .+ cannot be used with switch .+\"
+>>>   ...
+>>>
+>>> Fixes: 080e47b2a237 ("perf probe: Introduce quotation marks support")
+>>> Signed-off-by: James Clark <james.clark@linaro.org>
+>>> ---
+>>>   tools/perf/util/probe-event.c | 20 ++++++++++----------
+>>>   1 file changed, 10 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/tools/perf/util/probe-event.c
+>> b/tools/perf/util/probe-event.c
+>>> index 6d51a4c98ad7..35af6570cf9b 100644
+>>> --- a/tools/perf/util/probe-event.c
+>>> +++ b/tools/perf/util/probe-event.c
+>>> @@ -1370,7 +1370,7 @@ int parse_line_range_desc(const char *arg, struct
+>> line_range *lr)
+>>>   {
+>>>        char *buf = strdup(arg);
+>>>        char *p;
+>>> -     int err;
+>>> +     int err = 0;
+>>
+>> I think only this is required, and others are just cleanups by renaming
+>> err -> out (usually for-next).
+>> But Arnaldo is OK to combine these changes, I'm OK too.
+>>
+>> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>>
+> 
+> I agree, almost mentioned that, but since you mentioned this, yes, I'd
+> prefer to have as small as possible a patch.
+> 
+> - Arnaldo
+> 
+> 
+
+Sure, I'll split it
+
+>> Thank you,
+>>
+>>>
+>>>        if (!buf)
+>>>                return -ENOMEM;
+>>> @@ -1383,20 +1383,20 @@ int parse_line_range_desc(const char *arg,
+>> struct line_range *lr)
+>>>                if (p == buf) {
+>>>                        semantic_error("No file/function name in '%s'.\n",
+>> p);
+>>>                        err = -EINVAL;
+>>> -                     goto err;
+>>> +                     goto out;
+>>>                }
+>>>                *(p++) = '\0';
+>>>
+>>>                err = parse_line_num(&p, &lr->start, "start line");
+>>>                if (err)
+>>> -                     goto err;
+>>> +                     goto out;
+>>>
+>>>                if (*p == '+' || *p == '-') {
+>>>                        const char c = *(p++);
+>>>
+>>>                        err = parse_line_num(&p, &lr->end, "end line");
+>>>                        if (err)
+>>> -                             goto err;
+>>> +                             goto out;
+>>>
+>>>                        if (c == '+') {
+>>>                                lr->end += lr->start;
+>>> @@ -1416,11 +1416,11 @@ int parse_line_range_desc(const char *arg,
+>> struct line_range *lr)
+>>>                if (lr->start > lr->end) {
+>>>                        semantic_error("Start line must be smaller"
+>>>                                       " than end line.\n");
+>>> -                     goto err;
+>>> +                     goto out;
+>>>                }
+>>>                if (*p != '\0') {
+>>>                        semantic_error("Tailing with invalid str '%s'.\n",
+>> p);
+>>> -                     goto err;
+>>> +                     goto out;
+>>>                }
+>>>        }
+>>>
+>>> @@ -1431,7 +1431,7 @@ int parse_line_range_desc(const char *arg, struct
+>> line_range *lr)
+>>>                        lr->file = strdup_esq(p);
+>>>                        if (lr->file == NULL) {
+>>>                                err = -ENOMEM;
+>>> -                             goto err;
+>>> +                             goto out;
+>>>                        }
+>>>                }
+>>>                if (*buf != '\0')
+>>> @@ -1439,7 +1439,7 @@ int parse_line_range_desc(const char *arg, struct
+>> line_range *lr)
+>>>                if (!lr->function && !lr->file) {
+>>>                        semantic_error("Only '@*' is not allowed.\n");
+>>>                        err = -EINVAL;
+>>> -                     goto err;
+>>> +                     goto out;
+>>>                }
+>>>        } else if (strpbrk_esq(buf, "/."))
+>>>                lr->file = strdup_esq(buf);
+>>> @@ -1448,10 +1448,10 @@ int parse_line_range_desc(const char *arg,
+>> struct line_range *lr)
+>>>        else {  /* Invalid name */
+>>>                semantic_error("'%s' is not a valid function name.\n",
+>> buf);
+>>>                err = -EINVAL;
+>>> -             goto err;
+>>> +             goto out;
+>>>        }
+>>>
+>>> -err:
+>>> +out:
+>>>        free(buf);
+>>>        return err;
+>>>   }
+>>> --
+>>> 2.34.1
+>>>
+>>
+>>
+>> --
+>> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>>
+> 
 
 
