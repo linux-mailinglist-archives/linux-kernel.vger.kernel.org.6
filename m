@@ -1,119 +1,137 @@
-Return-Path: <linux-kernel+bounces-442212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACF79ED961
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:10:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD2D9ED963
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:11:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF0018854BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4872822C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADE41F0E3D;
-	Wed, 11 Dec 2024 22:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32B81F0E49;
+	Wed, 11 Dec 2024 22:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ODfY97rD"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cweY9EX4"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B252F195
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1670195;
+	Wed, 11 Dec 2024 22:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733955016; cv=none; b=rb5WaDIsLQ81tU3lf4gcsCzSV6Iz8Li3iy+Kqj7WyTfFt0nVIsHvIAfyCvdxQdgQGJ5qME6FTzqbusjbvdd2tSVRRKCOuenIWhv5cRmPXNxnPmH8jD+BI9k0zkr3b7DWqvji7o2Tq/yNXjJ0z5507iJbRyBtxyVmKQ+oaacIKxo=
+	t=1733955094; cv=none; b=lnKYH6VOUU6wOzBdOLm+FgGPPJBe5WvkX8E+27VFWuu4/6oYzmUV6T81zCE+TRF0MO3DLlhcAqexhJF4o9Yjn1ZHMIo1cmfjp0HPJ/YNnSQjMXt7xP4Wn7DcgOvZFbdrYzqTRzHhNS0I73qttfHcu383afyp4Dljtf2kEd8YgLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733955016; c=relaxed/simple;
-	bh=AlL2O1EIgUE9bnaKZu5Rn4kyJtZlWnTKc4Qwvhn6E/E=;
+	s=arc-20240116; t=1733955094; c=relaxed/simple;
+	bh=A1CP0y8qufsTH63rfAbY1UQ1Ic6oDiVPgvXlnvvzgaI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bKyrqbwSDmCYDPLow+K5tJJhM8hdl5zKV4xUfBCVCMb56XQayjcSooDPiL8DegH77nzOMaSk2vUxhdQwp8KM6dD0OcV7/yhL7Y9WuT8CdvRqfI2KVi0/jiscYf75BzyfXRNamtWG2dwQbdHQZrW9Lynaj4BsdlgKsHHecDZFn/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ODfY97rD; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d27243ba8bso11113957a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:10:14 -0800 (PST)
+	 To:Cc:Content-Type; b=e6gD0uvaQmT16cLpkMCXDHXfL8vsnA90Y/UjePxw8lgNcsGp8F0RLWBSIHcmAsRDjn6E0ULQZ/WR7mQKPSrsLdrryRlYCp8+dQeFHFsNFXDg399KiWjXaUWjgmM1FkZtQwjudVaAmEBd8WJj7bCYdSSFhbANuUi47W9ri7KrHhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cweY9EX4; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ef66a7ac14so11992257b3.0;
+        Wed, 11 Dec 2024 14:11:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733955013; x=1734559813; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZL9CiMnrGdnrcr1vSHJtSdZm/E/kDweDxeUHMXuh494=;
-        b=ODfY97rDSCUYNT9V5dpVVduaw9pTOyO8SxpCWxt3/LhfCsbfyFjjbobTpuT8g+Xksi
-         +Sn5ZbrR/0FM5YiFwVscADa96sMiIdJTrC8vTTzcGJpUglpfpyTB4QfaO5rkS5mgxywD
-         +pS92aJk32KzBc86aecJCgmAenmni4ST61Ass=
+        d=gmail.com; s=20230601; t=1733955092; x=1734559892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CrWVKhbzfs4twWa/I2no+Z1ykCjI6Rc4hMwetgQg/E0=;
+        b=cweY9EX4QBhQKqP1x+p0+g6MV6hqgcqt3ABI3kD4b29d7tdGjqryrOh1YA77YRSugB
+         WejZa6aa+BcJv9J7XzzV9q4Ki/klUUAQxfhSt+Uzi0mOdpT9B87pvwiCJyyyEtc++JAD
+         3YBmqNXBfPD8YMQ2TPcjZAOGuWuTFY3MQM/nPGKk5UpWLHs9zoWsbXbBzc43KJu44uro
+         mjjP9ucbI3LYW5ZTgijJtmFG7/BCHInB92LX0MpM6lpvksiB4BB6fbj3TktLJEt5aJSA
+         O4887J2SLd7CUJpW3AcezXANaAr94w7d+weTBLnfReJ4nAxYUvQ1AIB3KqV4n+KmDtvx
+         MdDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733955013; x=1734559813;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZL9CiMnrGdnrcr1vSHJtSdZm/E/kDweDxeUHMXuh494=;
-        b=rQL6kHm44rnfAURfp/tGzrWz+Ks6cgOhvJ8kgmwLBPBc9sRBbj+9OQLne62h+PiKZM
-         qnmPxTwfCWF/OEHmyEg3OTftpJBBpJNpZ+0tBzvr61K1NF69gn11pd3l/49016uU1ZhL
-         R6lmaJipw++jCiBnejbDaWGdSAjg5UmeSnHdeLCP6B8ouzFXgnIGLK8f9EfWg2i940St
-         H8Pju52N7+uXTr1q81bUrf9RacOvc0UPCSB2gIMat6vxWNYQo+ZlNCliHTX9qzLiaPEw
-         IZApcpXsQnar8GH1EDsx9K9jUEwLq2zwkxPMYffUlQn4jUjr2trAipaVWI09u8++wtDE
-         lpGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgB5mkGfH568uuXx77wDgBkCLn2XNPijzNBf0V34nh3IRi22GByTwJKO0FboUlllX6rl8WAEWy9g8IulI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEtQmDeBO+x+jg5Q7f97bzdl7u/q8WW3jU8XweUh33QrdvRQwm
-	YHbEgOj+qPuTiBz+w1N1K21kJ88eQR4qz8VrVZkL1mXeSc/dSm8kzCZBN5twaK2CpAothmgALun
-	M8/Q=
-X-Gm-Gg: ASbGnct1MtDAGmk1ynsPgJtwptwSJTlxQ+f7i1IpUt8PF61sN5OH/xNp+HE0L+GA+5M
-	+uImko41dQWEudv6cIdWw9sJJkScp2Mzy+nJ2M17Kh++/yLJXee4WtiCHX+aeO1AOefRUhhz0zI
-	bpITjbpeN9N7MxpgXYEAbt5+A/2TzlCtrHNVMhoudTmaj3FgiMoNQ+xysFzvo4+M3o8CWlWpmUL
-	OXhq5vYB1MJbGZbrP3tF3HMqBsIhQ/mtdVBF3FEx2h+ayOMoUDAXm+CkTQYKO4Xdo/fGXw04Fg6
-	pls646dT9aCBByLp9c3mM7Mjid4m
-X-Google-Smtp-Source: AGHT+IHMl3lOjNCmQL+aQO88WyGpc6vBLWlMA4DMu/PfWBmgKNhlEY9H1aKqSoKRzFgHgpTVthn92A==
-X-Received: by 2002:a05:6402:3806:b0:5d0:e826:f10a with SMTP id 4fb4d7f45d1cf-5d433048aa2mr4627725a12.6.1733955012806;
-        Wed, 11 Dec 2024 14:10:12 -0800 (PST)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c74c3d5sm9576391a12.52.2024.12.11.14.10.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 14:10:12 -0800 (PST)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9ec267b879so1426395166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:10:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWFg8fX3ICsv1JdCls7DkYhqTw6GEocBOcIGDUUO/fpm5h6jUL0Qjfr4xrGwJvoBLhE14bM0nTF/d99dmM=@vger.kernel.org
-X-Received: by 2002:a17:906:308f:b0:aa6:995d:9ee8 with SMTP id
- a640c23a62f3a-aa6b10f5d50mr453569866b.5.1733955011150; Wed, 11 Dec 2024
- 14:10:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733955092; x=1734559892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CrWVKhbzfs4twWa/I2no+Z1ykCjI6Rc4hMwetgQg/E0=;
+        b=aihTxgyhkD0q683e9Pn5jlAzdEI1CsLXxZUeHEi/TIZwbHsqu/qsM+qoODgtVL9jzA
+         J1k8bEZ4BB6HHG9gKozMiRQnGZ3RvbHEz7+enwsOJIFwo3xs4f1fEQhnR/ccmMJUgZz4
+         vmkl+86BBKCVKL3egcbZbLCOMdRKy6M14MaMq3OM4Z3m5yn/iZPBkRQiPeypaVwJWWar
+         vXX1lfk2dTGm9/HKJniEdsLH5ZxAM2M+WfTgFA5Glce89BBVBNlmFOTZJ1peBQztVngU
+         zrIOgbYVCDZrBn7aOXwmMbN/UZsuc2ekhU/YkQG9sqeqd2d+V2d3e41FaJnNUlUlfLN8
+         czcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv1Hz4wWpVYA43blToHVvCISxZXw9V8sYux7Z71qj6mWqTnuFfhLMhZJtSfKvrT5bJG9r1qwweMiSJkaA=@vger.kernel.org, AJvYcCWnR+7fTweTykTwx96CSj/8zKQZRGljVmyBlqgvcnouQXBv6qxttPqJC6WBJ7PFxm/TbcCRY+KBBk0pzcV5oIbaSg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/NAxWyrc9c2jvNOEHK+k7BZ4R+yOeUQ5AS0kzTqrsFCwH+1Ol
+	OQCRIkM+cMqRL8h45ODQG/+ZgVY4hqx7qF65XqKqm3H8zQEXkueHWz5XS0HXm4QYuP8syzlH529
+	1fT4pkOTdNeBxihQHneL0OTgH8WyNdvOL
+X-Gm-Gg: ASbGnctDjGFMpueRy/ZhFovNepcwkblZs5TxXS3teLwzdy+hhCJAwNGMieU5+p8xV7L
+	TuMKCmVqa2/r8hj6k6afPp+FZg3+YpGewVg==
+X-Google-Smtp-Source: AGHT+IFxjVI5K/wxmDSwhx3r/bS4cmQcwEylrVCOJcSTQZv6a2cmMDO9NGwoykUYLpuZMtoZl4jEN7Q6PyBiPK2XhMw=
+X-Received: by 2002:a05:690c:3391:b0:6ee:8515:6730 with SMTP id
+ 00721157ae682-6f1cd5c77f8mr8378887b3.17.1733955091883; Wed, 11 Dec 2024
+ 14:11:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z1mzu4Eg6CPURra3@google.com> <87v7vqyzh4.fsf@mailhost.krisman.be>
- <Z1nG-PSEe6tPOZIG@google.com> <87cyhyuhow.fsf@mailhost.krisman.be>
- <CAHk-=wice8YV5N1jjyz42uNi-eZTvG-G2M46qaN7T9VsSaCP_Q@mail.gmail.com>
- <CAHk-=wiC3evUXq8QTcOBFTMu1wsUR_dYiS8eGxy0Hh7VbL55yA@mail.gmail.com>
- <875xnqudr1.fsf@mailhost.krisman.be> <CAHk-=wi+ZB4fNiMTHOYo2__-NnBXryQwxJ_bHN+cUDsfBBt_MA@mail.gmail.com>
- <Z1oJ7PgRvLyctn0X@google.com> <CAHk-=whB_YjwB4sGsRGJx8AbxR8wRAJBfy+x2KhsAQ4QssZpMg@mail.gmail.com>
- <Z1oLq7817UOuCJQa@google.com>
-In-Reply-To: <Z1oLq7817UOuCJQa@google.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Dec 2024 14:09:54 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi2-tEcS=iO+aVdb1QYxPdoPgA8K3sBXGaL5VH6qCvFaA@mail.gmail.com>
-Message-ID: <CAHk-=wi2-tEcS=iO+aVdb1QYxPdoPgA8K3sBXGaL5VH6qCvFaA@mail.gmail.com>
-Subject: Re: Unicode conversion issue
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "hanqi@vivo.com" <hanqi@vivo.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>
+References: <20241126223257.22465-1-howardchu95@gmail.com> <20241126223257.22465-2-howardchu95@gmail.com>
+ <Z1jBDHeEnPrsL7DQ@google.com>
+In-Reply-To: <Z1jBDHeEnPrsL7DQ@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 11 Dec 2024 14:11:22 -0800
+Message-ID: <CAH0uvogDJN8YhDx4QMDTakUZohv7yAa_UreMCRg+RiZuTNhgJw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] perf trace: Add tests for BTF general augmentation
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Dec 2024 at 14:01, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> Ok, well understood. I'll work on how we can implement the linear search for
-> case-folding. Meanwhile, yea, quite late so, may I ask for its revert?
+Hello Namhyung,
 
-Yes, I'll revert.
+On Tue, Dec 10, 2024 at 2:30=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello,
+>
+> On Tue, Nov 26, 2024 at 02:32:56PM -0800, Howard Chu wrote:
+> > Currently, we only have perf trace augmentation tests for enum
+> > arguments. This patch adds tests for more general syscall arguments,
+> > such as struct pointers, strings, and buffers.
+> >
+> > These tests utilize the perf config system to configure the perf trace
+> > output, as suggested by Arnaldo Carvalho de Melo <acme@kernel.org>
+> >
+> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > Suggested-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/tests/shell/trace_btf_general.sh | 81 +++++++++++++++++++++
+> >  1 file changed, 81 insertions(+)
+> >  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
+> >
+> > diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/t=
+ests/shell/trace_btf_general.sh
+> > new file mode 100755
+> > index 000000000000..903310b355c4
+> > --- /dev/null
+> > +++ b/tools/perf/tests/shell/trace_btf_general.sh
+> > @@ -0,0 +1,81 @@
+> > +#!/bin/bash
+> > +# perf trace BTF general tests
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +err=3D0
+> > +set -e
+> > +
+> > +. "$(dirname $0)"/lib/probe.sh
+> > +skip_if_no_perf_trace || exit 2
+>
+> The kernel might not have BPF/BTF support.  I think you can check if
+> /sys/kernel/btf/vmlinux is there and skip the test if not.
 
-Also, given that there are case-folded hashes out there, I guess we're
-stuck with them, and might as well use them for lookup.
+My bad, I will add the check to it.
 
-But think of all the random path-based decisions that applications do,
-and that ignorable characters basically invalidate - because people
-can insert characters that "don't matter" and bypass all those checks.
-
-It's a security nightmare.
-
-            Linus
+Thanks,
+Howard
 
