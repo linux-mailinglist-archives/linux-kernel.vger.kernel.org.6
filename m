@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-442245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56919ED9BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:32:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDFD9ED9BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754A916632B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6B2E1881FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1523195;
-	Wed, 11 Dec 2024 22:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05171E9B3E;
+	Wed, 11 Dec 2024 22:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N7wxCJg9"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTGqiXy5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFBC172767
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CB4172767
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956320; cv=none; b=UwO3QQdRJ9J+kgDqI4IyGE2t00iUcgR7YecfaRF/mE4tBW2GLPRMKDMPgqMYpxtnOJgBNpiAO5nIYPVD5tzMVNuvWUdPMOcNXoZA4+DPT+uSuTPnpjlYAA5Pt3fpb9jnSL7hFWad2oe3eB/uQr0ZT0K+7gCUJtLGgvDnM8NVAXo=
+	t=1733956332; cv=none; b=Na6jEx7i9G5T+l3zgcQmzH9y0AmBD2xsBregPDH2BZc4gDb96Bdjey0A43v+xpT1KSwjPRNpN28yroD9Fz3jEHeyIFEA6Qm4djL9nR/Jeyr0lpklhUQNNQU12a1PfxcDFkKCLsxE/YO0efj2hVNsLmhnZwm0yTioLzKsJJFDnEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956320; c=relaxed/simple;
-	bh=NHbSAVasy0M5518vl1c8RnaP4kK4Vq9FshCC3WUmEd8=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pS8kkLacsGUatyrwah/JF4zK5EYnbX5YICD798KFxkfblW6fxlDW/2Y8EylFi6SbR0867lnI61JEV05nnq+xTCu3jgeDmEXyxBc+djzQugWrsvRKVahguQsSeiM1Xt8LDaGc7XJZUKf8rqUhR/FUlawnLnFnmolOK9hei/b5xAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=N7wxCJg9; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4676f1a43dfso11414321cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:31:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733956317; x=1734561117; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NHbSAVasy0M5518vl1c8RnaP4kK4Vq9FshCC3WUmEd8=;
-        b=N7wxCJg9A3sKkUOw68tbcdKVX+7OYPjOyxZj8DsBs20SA2HBFwFh3+ZXKmw9vNBfLa
-         sWGyGzbIidavutlAOM++iTZLCPUW7Fd1mqzRylt1ulVq4JqqEgjOwskZKeE4UgmtRLtE
-         Hd2+vVE7UIvQbtuTmZ8butYrRq6IcobIU/YF0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733956317; x=1734561117;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NHbSAVasy0M5518vl1c8RnaP4kK4Vq9FshCC3WUmEd8=;
-        b=fPjntccjMGGKz8tHD6JaHlmwGC/Gn61CfuM6cDAYxXUXn4WsbNLD/LqRg2qHlRE8q3
-         MjJzpuph+BPoQMJQuY87xTIqclCR7NSY5vVNtZFonCRNMYPEeX9b4dMRfMbPFdgWtowi
-         CaCXAXfxrzP1vhCDMIDR50lc5lgB2mnHN/FMQcCRMJG2wf0iXx+E9luxKKPjUhijizJv
-         Y2kdjLajtOoXHrgC6U5ML87yH5ebfbHB92uWOJW70dHXDn0LXyIKuJbqu5bqBJbl1l4l
-         Yhb2+AF6wbx//oayEdW0NMoSo4EDqbpUQ9PkkxGi/3nWGH/UxPa3/BDdSUbF2boBuDBo
-         xGyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCCNj7lz9xwiYM85Sol2J5xubhQuG1t9kot2yD27+CFJ6SOsDX5fqzfZ5iYxnbWm2I1tMVy4U6tCt1HlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye8texnDMqerAxRFijzRnn5M2pPoFxi6J+pOhEOsjX3dPY9Q0h
-	hTKsn0Ca7ibh+XHqDRpVVa/N3bzBTWlvUl96CSHzAyO4yBbWvUkhWKQjT9+CuHJXufD19S/pmpv
-	GzpTtP/uBXDvE/vzWX94TvyYi7Un142IeRFOF
-X-Gm-Gg: ASbGncv6taFhmvynKLAy+tQa1xfo1AtRBKDYC3qO404HQLynk6hCY2l5aAb7czpmtzx
-	hV8eIBR5PufmTaNs49/VVNOBa2AgnFdC3FS7WE/+qj3L3Lklhy0QT6dRm7HOlHSA=
-X-Google-Smtp-Source: AGHT+IH0phbrtePElXJxDxj9HI12gSYY0Q06etMElvaeqdDYhA8EkdDjpS2cR8ruv8dvm22YKh6KLSLREA129gVkVUA=
-X-Received: by 2002:ac8:7d95:0:b0:466:93b9:8356 with SMTP id
- d75a77b69052e-467968a1451mr15126531cf.22.1733956317709; Wed, 11 Dec 2024
- 14:31:57 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 11 Dec 2024 14:31:57 -0800
+	s=arc-20240116; t=1733956332; c=relaxed/simple;
+	bh=YitCwK6c+33A6aC+Ygx3OE8d+hQaCuKW3MFcVWF5360=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=sDJ4oOU8M7Xhjn41ASMwT6SQHmsCgo7G6yFLG++Bu33niSwITWVRWNzuUhBQOfyvb95B0DOpO6+eHhYHK83xyHJyO/ex64dIC285YTJE6HpOYCPBOc889EDUigIHtr8XMQ6mwKmC2+aQxElaM2KSgVjJ1Ic+ow3tMJxACV+I9XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTGqiXy5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4454C4CED2;
+	Wed, 11 Dec 2024 22:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733956331;
+	bh=YitCwK6c+33A6aC+Ygx3OE8d+hQaCuKW3MFcVWF5360=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=uTGqiXy5bmDgJRGblbXGYidOuhp/B6l9GzJ5CwQc4h89NX0dFGFGNGyNrA8ShzB6y
+	 6RT8dcqVEw1SsssusH27Ml7A/KryBQEuPfbJznOp52WKzE3alcSxFUgeDHI8F+rLT6
+	 wOkne/dlATfk7333bXBjysUA4stsIyDnFqEBWD43Zf99ZlO9R+UFvENwVkvjZ5wODH
+	 ieN7Jx5cicu9C5le0ZhyMjXourWjhhtmOTo0SNsx0j0kXX13WP5DXXcwfH/S00gJ/Z
+	 YA7d3n3kTWyNNmmwcDdmI+4a6g2nIBHa42LyNOefUddswo6iSqQ/jsEWK6u2acokTI
+	 BPXSJf66CMZlQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFD5380A965;
+	Wed, 11 Dec 2024 22:32:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241202-fd-dp-audio-fixup-v2-10-d9187ea96dad@linaro.org>
-References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-10-d9187ea96dad@linaro.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
-Date: Wed, 11 Dec 2024 14:31:57 -0800
-Message-ID: <CAE-0n50T1yJEhx+NbcoNbEZ6Q8Bx7asOHHx=bOY_uKNaQ-y8xQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/14] drm/msm/dp: drop obsolete audio headers access
- through catalog
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
-Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH -next] irqchip/sifive-plic: Make use of __assign_bit() API
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <173395634775.1729195.14916770545645743784.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 22:32:27 +0000
+References: <20240902130824.2878644-1-lihongbo22@huawei.com>
+In-Reply-To: <20240902130824.2878644-1-lihongbo22@huawei.com>
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: linux-riscv@lists.infradead.org, tglx@linutronix.de,
+ paul.walmsley@sifive.com, samuel.holland@sifive.com,
+ linux-kernel@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2024-12-02 02:06:40)
-> Drop obsolete functions to access audio packet headers. The dp_audio.c
-> now writes them using msm_dp_write_link() directly.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+Hello:
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+This patch was applied to riscv/linux.git (fixes)
+by Thomas Gleixner <tglx@linutronix.de>:
+
+On Mon, 2 Sep 2024 21:08:24 +0800 you wrote:
+> We have for some time the __assign_bit() API to replace
+> open coded
+>     if (foo)
+>         __set_bit(n, bar);
+>     else
+>         __clear_bit(n, bar);
+> 
+> [...]
+
+Here is the summary with links:
+  - [-next] irqchip/sifive-plic: Make use of __assign_bit() API
+    https://git.kernel.org/riscv/c/40d7af5375a4
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
