@@ -1,214 +1,154 @@
-Return-Path: <linux-kernel+bounces-442005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9F69ED6BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:46:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB809ED6C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:46:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99799282054
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD3BD165FE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B357B20127C;
-	Wed, 11 Dec 2024 19:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7571DE3C0;
+	Wed, 11 Dec 2024 19:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p1Gt0BMo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uV2GEkDk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p1Gt0BMo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uV2GEkDk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="JS9BChA6"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082B31DE3C0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A352E1C4A0E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733946360; cv=none; b=bAmocd0FLi69+X5jT6610U6l2e+nFTIOzgtFxwk7VcRFSLhR8lZSItzjgsNuYIyCrPTCagcTSSryhSY3rdTPHszxd9Am2y/EJjMDk1ss94qhwdac+AS3IUF+p/9XL+MA2hhHJhZxTLlilD8dPsLOv9BcctLcG1qtYCB70QyViL8=
+	t=1733946400; cv=none; b=AiO388SO/O/Wr0b05M2HJLeoyy+tPI93rRmYEY660ipZx3pa9I4bWfvuxbhuoNmClYzNlX5N0HgkJwD9lcHdW+Rjztm2+N0d0ih7qQ47GekCEy9WUE1VKelSzGij0oApKiLX2YMAf/pqkNOA/YYtXDAowamAi5ATkKnLByKpBG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733946360; c=relaxed/simple;
-	bh=924aZzizko0aU8CLlyCFsUIoWb+nEVtW+bDNMX9Pomw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HayLTT9ZLNBLihaeBFVZuR/cDtOPooUoR3NgaOBDwpkCWmwyJauhVoxV2QRZvhjR1buqJi9n/TO/n8ceIslyfwCXJCnIEbRhmEG5wSkV8FHa7C3lxDrRluHlw8PI/ZhqVgmv20VC/pV9VSCj6QbSEB7gUyACoMNYaM6fzxdc1SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p1Gt0BMo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uV2GEkDk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p1Gt0BMo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uV2GEkDk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 378891F38D;
-	Wed, 11 Dec 2024 19:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733946357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
-	b=p1Gt0BMoNegn9/bsi/7F04zMVbAUtcYk8s1pLSyZXLbb1iA5A6SyHQiumY0Y8Mg//sSdZt
-	gL7wckfXzX10mN1UuxizzP31aqDtF6BlAU7TjlMkyB77Rh0fAm1sBikv8sL9Rc0eDmmr8h
-	RAsnAMFsa6H9kSGWJ15Ixc4s7tj7FAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733946357;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
-	b=uV2GEkDkTMVGB7AFJIrhj9OnE6gYAVosHOSre4v1s2YdUYsYpdcDXhSHv9P+dB/CeOy5bU
-	4FJTPRmUJKywKiDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733946357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
-	b=p1Gt0BMoNegn9/bsi/7F04zMVbAUtcYk8s1pLSyZXLbb1iA5A6SyHQiumY0Y8Mg//sSdZt
-	gL7wckfXzX10mN1UuxizzP31aqDtF6BlAU7TjlMkyB77Rh0fAm1sBikv8sL9Rc0eDmmr8h
-	RAsnAMFsa6H9kSGWJ15Ixc4s7tj7FAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733946357;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
-	b=uV2GEkDkTMVGB7AFJIrhj9OnE6gYAVosHOSre4v1s2YdUYsYpdcDXhSHv9P+dB/CeOy5bU
-	4FJTPRmUJKywKiDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED7F51344A;
-	Wed, 11 Dec 2024 19:45:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xBW+LfTrWWfLEgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 11 Dec 2024 19:45:56 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>,  "hanqi@vivo.com" <hanqi@vivo.com>,
- "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: Unicode conversion issue
-In-Reply-To: <Z1nG-PSEe6tPOZIG@google.com> (Jaegeuk Kim's message of "Wed, 11
-	Dec 2024 17:08:08 +0000")
-Organization: SUSE
-References: <Z1mzu4Eg6CPURra3@google.com> <87v7vqyzh4.fsf@mailhost.krisman.be>
-	<Z1nG-PSEe6tPOZIG@google.com>
-Date: Wed, 11 Dec 2024 14:45:51 -0500
-Message-ID: <87cyhyuhow.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1733946400; c=relaxed/simple;
+	bh=eQUvQmYviyvZsCQXnQAF3Bb7U4tghcJBDEIK2cr6SyM=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=E5ZWZdbZ6i3h5XdqNrMmOtyAsrpnRzVnBzAAWRgmwdCfrcpOcAE5O/aBMmkvUijrh+SBkzpUPiebubvULdRPZBYONNJJTo2c7NriFP8MJ5HsvUZ+6pjBDMLK8shztNOMjt1eoxAh4yw+v5GMhLrSqflwsOQnmMBJthwSG0apNcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=JS9BChA6; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f13acbe29bso111758a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 11:46:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1733946398; x=1734551198; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FTiBfu3LCijHwOIB1klB+vWcYLMQe6opMPGWa86HSek=;
+        b=JS9BChA6VNS5aUv4bi2L8d3+4R9y9soAyuFSDd8mFqOZ8vv7jF6K7OqDP2P7xEI2sx
+         cH8Nil8D6KEihsxkjkFfgN9rogL6NWCkBl/dDuhsha6WoyVUwqdeiPLJn+qEM5N3xpFE
+         DF37Pve5+FlnowBs7KCjm9fJ8E7JlqRxfGaYWIarIBjr/MALcLOqfSLeCxRblgH2JN/x
+         9j4ynkk4tpIua4/+D20HvwV3OBt2tusPlabKum85GLf85KmE0bQMgQgUeDkdX91WiWHH
+         UX1QHMHkOgIxAKbEXldQYqcWUl+5fN0m1XwLJ25YNQLTWkISlrS4rj89IhLUY2qIlJ5J
+         3E4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733946398; x=1734551198;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FTiBfu3LCijHwOIB1klB+vWcYLMQe6opMPGWa86HSek=;
+        b=qUBSnLbbh3EzmlhEvLMOB+Oj5sIJC6yY8fKMa4lDIwEZLmPqmIJmFwy+9Rmf9EEP8s
+         uyTZkgVpMxmImoSOAaAgUWvGqGDUiOu290EnagoKvsJI3gaf1qzAvR+qxjpdOeSWNxtr
+         ny72OnKxtvHphYfukz1J6OM72MVPSYyLhW1kJcAI0Jo4HIu7UBblgW6qpzoRdvCY3YLU
+         o5w9NYpqhdmdBILDD5tuYYq7ZyEiwkY0JdRXiIgmSBHECRyXR6U10VGoi+UE2PKOy2Uh
+         L4zp/5hhAkzH0+7vCAKFK01GuZkhx0OFXIW+fmeB3Ed7gZ4WP9yP2RsPyOLEDbHpHt9y
+         Nl1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWWajtnkisD9NzgSqjJOpCU9nTMg91QQ4AK73KRzP5S2YWqJVDN91T6j0taY1lIR7Cfe79dZznKwTbNXSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfMaNl4cVjRK5c1S5ybWtejNXMUhz4lY5jQk4TwTb86DlzVIC5
+	nlbCbwia2JRXAbR3zUykBOBLvVXlRiXzMLS4cTiVvzBw3HnFlorHmhR1UrRZia0=
+X-Gm-Gg: ASbGnctwiubIj4hsbsnxcLbV7LlijBA7v6Q4Jdk/zbGFIZcfa2bDXnttzq3Y60Wk+Ub
+	CS+ytDPwK+AuDA1SetloLBLw9mul6xbIjjBD2jVsawCfU9wEHpWwd2qijHxFlFb7xpK8R2CswCM
+	XXEgK617Tr7+9Yo3JD/7DQT0UO3cKbrDg25GJfwYltMuEKWWmJRrZBnXy/XGPazRj3y+3IEjjTB
+	eJcrEkR+Fdr1/6Lr0CuPVaY+Dmbon7bsCpMSU9qqVjSkzo=
+X-Google-Smtp-Source: AGHT+IFnTOMb6O5sg4/hZzOJTSZlpikmzRhprbval79dvoemRTgwDyiy/kr+8d0qfhl4JQpSLR1kZg==
+X-Received: by 2002:a17:90b:3c02:b0:2ee:5c9b:35c0 with SMTP id 98e67ed59e1d1-2f13abee2a2mr834848a91.9.1733946397459;
+        Wed, 11 Dec 2024 11:46:37 -0800 (PST)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45f7eaedsm11923684a91.2.2024.12.11.11.46.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 11:46:36 -0800 (PST)
+Date: Wed, 11 Dec 2024 11:46:36 -0800 (PST)
+X-Google-Original-Date: Wed, 11 Dec 2024 11:46:35 PST (-0800)
+Subject:     Re: [PATCH 2/2] drivers/perf: riscv: Do not allow invalid raw event config
+In-Reply-To: <20241209-pmu_event_fixes-v1-2-d9525e90072c@rivosinc.com>
+CC: Paul Walmsley <paul.walmsley@sifive.com>, atishp@atishpatra.org,
+  anup@brainfault.org, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+  mchitale@ventanamicro.com, samuel.holland@sifive.com, linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org, Atish Patra <atishp@rivosinc.com>
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: Atish Patra <atishp@rivosinc.com>
+Message-ID: <mhng-1c6ec679-02bc-4aa3-9b23-bb4c5f5f9b81@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	HAS_ORG_HEADER(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_FIVE(0.00)[5]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Jaegeuk Kim <jaegeuk@kernel.org> writes:
+On Mon, 09 Dec 2024 16:04:46 PST (-0800), Atish Patra wrote:
+> The SBI specification allows only lower 48bits of hpmeventX to be
+> configured via SBI PMU. Currently, the driver masks of the higher
+> bits but doesn't return an error. This will lead to an additional
+> SBI call for config matching which should return for an invalid
+> event error in most of the cases.
+>
+> However, if a platform(i.e Rocket and sifive cores) implements a
+> bitmap of all bits in the event encoding this will lead to an
+> incorrect event being programmed leading to user confusion.
+>
+> Report the error to the user if higher bits are set during the
+> event mapping itself to avoid the confusion and save an additional
+> SBI call.
+>
+> Suggested-by: Samuel Holland <samuel.holland@sifive.com>
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
+>  drivers/perf/riscv_pmu_sbi.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+> index 3473ba02abf3..fb6eda90f771 100644
+> --- a/drivers/perf/riscv_pmu_sbi.c
+> +++ b/drivers/perf/riscv_pmu_sbi.c
+> @@ -507,7 +507,7 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+>  {
+>  	u32 type = event->attr.type;
+>  	u64 config = event->attr.config;
+> -	int ret;
+> +	int ret = -ENOENT;
+>
+>  	/*
+>  	 * Ensure we are finished checking standard hardware events for
+> @@ -536,8 +536,11 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+>
+>  		switch (config >> 62) {
+>  		case 0:
+> -			ret = RISCV_PMU_RAW_EVENT_IDX;
+> -			*econfig = config & RISCV_PMU_RAW_EVENT_MASK;
+> +			/* Return error any bits [48-63] is set  as it is not allowed by the spec */
+> +			if (!(config & ~RISCV_PMU_RAW_EVENT_MASK)) {
+> +				*econfig = config & RISCV_PMU_RAW_EVENT_MASK;
+> +				ret = RISCV_PMU_RAW_EVENT_IDX;
+> +			}
+>  			break;
+>  		case 2:
+>  			ret = (config & 0xFFFF) | (SBI_PMU_EVENT_TYPE_FW << 16);
+> @@ -554,7 +557,6 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+>  		}
+>  		break;
+>  	default:
+> -		ret = -ENOENT;
+>  		break;
+>  	}
 
-> On 12/11, Gabriel Krisman Bertazi wrote:
->> Jaegeuk Kim <jaegeuk@kernel.org> writes:
->>=20
->> > Hi Linus/Gabriel,
->> >
->> > Once Android applied the below patch [1], some special characters star=
-ted to be
->> > converted differently resulting in different length, so that f2fs cann=
-ot find
->> > the filename correctly which was created when the kernel didn't have [=
-1].
->> >
->> > There is one bug report in [2] where describes more details. In order =
-to avoid
->> > this, could you please consider reverting [1] asap? Or, is there any o=
-ther
->> > way to keep the conversion while addressing CVE? It's very hard for f2=
-fs to
->> > distinguish two valid converted lengths before/after [1].
->>=20
->> I got this report yesterday. I'm looking into it.
->>=20
->> It seems commit 5c26d2f1d3f5 ("unicode: Don't special case ignorable
->> code points") has affected more than ignorable code points, because that
->> U+2764 is not marked as Ignorable in the unicode database.
->>=20
->> I still think the solution to the original issue is eliminating
->> ignorable code points, and that should be fine.  Let me look at why this
->> block of characters is mishandled.
+This doesn't have a Fixes, is it 
 
-I was struggling to reproduce it, until I copy-pasted the character
-directly from the bugzilla:
+    Fixes: f0c9363db2dd ("perf/riscv-sbi: Add platform specific firmware event handling")
 
-The character the user has is =E2=9D=A4=EF=B8=8F, which is different than j=
-ust =E2=9D=A4.  This
-is a combination of:
-
-U+2764 + U+FE0F  (Heavy Black Heart + Variation Selector-16)
-
-Variation Selector-16 is an ignorable character with zero length,
-exactly what we wanted to ignore with that patch.  What I didn't
-consider in the original submission was that, differently from other
-ignorable code-points, this block might be used intentionally in a filename.
-
-> Thank you so much. If it takes some time to find the root cause, may I
-> propose the revert first to unblock production? The problem is quite seve=
-re
-> as users cannot access their files.
-
-We have 3 ways forward.
-
-1) The first is to revert the patch and fix the original issue in a
-different way.  That would be: We would restore the original database
-and treat Ignorable codepoints as folding to themselves only when doing
-string comparisons, but not when calculating hashes.  This way, the hash
-will be the same, but filenames with Ignorable codepoints will be
-handled as byte sequences.
-
-2) We keep the original patch and add support in fsck to update the
-hashes in volumes like the above.
-
-3) We regenerate the database to Ignore codepoints in the code-block
-FE00..FE0F.  That would be the simplest, solution, but there might be
-more cases that need fixing later.
-
-At this point, I'd be pending torwards 1 or 3.  Both of them can be done
-after reverting my original patch, so I'm fine with that.  Thoughts?
-
-> Thank you so much. If it takes some time to find the root cause, may I
-> propose the revert first to unblock production? The problem is quite
-> severe as users cannot access their files.
-
-I don't oppose this, considering the case at hand.  I'll base the new patch
-on top of the revert.
-
---=20
-Gabriel Krisman Bertazi
+?
 
