@@ -1,189 +1,203 @@
-Return-Path: <linux-kernel+bounces-441714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1AE29ED2EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:00:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 025AB9ED2FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F59F281562
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2740F281C3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461711DE2A9;
-	Wed, 11 Dec 2024 17:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D30B1DE3BC;
+	Wed, 11 Dec 2024 17:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="RkFTJSix"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="paYsb7ic"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906031DDC09
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A81B85DF
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936404; cv=none; b=uip5cDQhYsGNOijeI6KAzTE3Ztl2eHYI4iookgxlCHeNBHg2wck0r+tHH4Yk4sFiVKNjg+aC6XMg387FSrb2tOFkBdrkoSzzZ7pZSw+6tuA+CZhC4g5Ah0PO/PdFHURUCmToizu692EoKGGIzDXAIUPPjFJk6QBm1bA7UzLFmmQ=
+	t=1733936480; cv=none; b=PKmNxN7Ts136ZOqVC8+29l+oO2ox4l8oqhNhl+TllbiHf9ALH/KFDItQ0P3o/R9HzvY+vQWHxlNZxL+Nq/055C3cynJSG6zHaV+2rQI/B6+QZhkamszexLB4tyx3XG/7Ax0ellQJY18GABOK4rdTnuxzhJT1xn4stuwFAonkFtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936404; c=relaxed/simple;
-	bh=IZxCC/20iwP/7bKPshvoeShLuu3TwAqQL3G2CrRUJqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBJe8TmUTB0Ka4uXIxaozr7b8jLM/prNlA6HdIKer3feWJYYf5d4d0uQGAiyv6oVAKC2B7UgvR6DZCleuGsTY2N4nD5pEo/CJ5f2odQmbaOiPrG0EXM+wpKjyS05wLcM2WIVcK6J02i+l0uwyCpVf0zm7OEVY2NUnGz2FaalwZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=RkFTJSix; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-216728b1836so19952165ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:00:02 -0800 (PST)
+	s=arc-20240116; t=1733936480; c=relaxed/simple;
+	bh=/ZbyPvlmWHc3e07gfoe3MkLTRtGvzbwhy3G+ln2u+LI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=db0V5CQbpNw4G7FP5hgK5f8qJl92vLfBMk0H0/WW4JegEXQ9vLFVbuZvRVdj44KnrRS/B6YK2jwLED/8dU4bCh+3sC0n5G6hhzxYpCiZjSI0TE1tb4W3jsrDs9dCUaG9K8O9cx1BaEPB7R078PIRjfJ+JvovYkWeoGm7cfyf7X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=paYsb7ic; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b6d6fe8b16so304467585a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:01:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1733936402; x=1734541202; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcWqO7y57cWM6CWwmLstYLccTGjvJS+PAY2Pr1FYpjA=;
-        b=RkFTJSixL7Tf0fU5HCVAKDkLBsLl45b1Mi8zY0oxvMZcDu/BqNUaEVtQyfg+mPsgTG
-         Jx41LgdeDDNf6Xop73cLHuY+fQTI0h2M9apZVCtRu7pq+glKn+rA547GsoZi7e6tJSbt
-         y290IDRucG5vFtgVi1VtCNW+VsfMD3V4NLPr1jb9wP09zFhkj1cA8Fk6OTj4Yf+9UznT
-         Pc03CCMQ7fLT91pgPRwUhyaK98ERTP4OIjES9lGb2djEemDDXGGJregYFCRknJrQc7eX
-         nEUvPs8ToukG+OWRSinZBlK0Qx7uV954oz3VQ0LyIL00Aykgz9tFZQNTK7kTo7vSZ49e
-         KbOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733936402; x=1734541202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733936478; x=1734541278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZcWqO7y57cWM6CWwmLstYLccTGjvJS+PAY2Pr1FYpjA=;
-        b=EJkkhWUCfo58HPYeM2ncPXkvb+L3jsbmui/t6twRYeokw5elI4kDJYZuILPIayvqeT
-         7oXzjjR+wSbATF5nHQ1pLLuIOvSXJhEYsth0/qr7wGp4m5/Q9hnZH4WzegfBBl6L92sQ
-         niqQT6KmKMSCdfHXyvr13nZ9g6voxWlmrEWUUdeZsZZLNbB8iuhtwiSvrIAxMH54ymsg
-         SSxcUyeI1FMyQMafrcJJwJjDoKeypjrh01st6yA9OO8utYvXFGGV1wnJpDVjfe0aNyeB
-         zJQTGtjRo7S5+436Lz3I1vyltf8WQ5NqLlYg3kkhECYHhuOe0qHIWw5BJZI5/a4iPt/k
-         nU3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWLuKk/zrQ9VnFezW2JLa2x4O6sBQpebG5bUGozBv3N/FlRx1R2y2PWe20Vcsed4az7sXi3F8V6R+dm0VI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWK0IDJM/iz0v8iSXaON+HRNgT5aSa6n64oARs1jt7s6SNWoTu
-	bjYbgh9iq/96ei11rH2T6xmrOiD4grThB78YhO6vrdNrjUh7AKTC422ZPhEWuzLJLfSbnVaPdjX
-	I
-X-Gm-Gg: ASbGncvo4Z4MX6/HVoay6R/ClEmWIgdAJ81YfED7ojBtTUfjMHcfgipYupTPXfx2Hum
-	xhZTeH5dQsaEqGRaU5t876yZWv9ywFNo+Xe+TOY9uHimLb7/qbe5qax/+iERPcrk4Ce+IFbHRkD
-	6alQZQMaAZvWlvp2PNLfU0LJxeMb0hbUWgZC/ifijNkAk3XE+aq6iSps7o2aBgR5P46dE12Jr3W
-	Jt0tupBIPN9XbO0HU65Pj/HgsTOY0SmKa9sSKmPn6HEDFttodQBntSGYNixvwXulWPsyaeA/Hg+
-	yg==
-X-Google-Smtp-Source: AGHT+IHKMDJy+8aMTo0L9V3kptUu4ExSspBRWYnaTTDSkbDRcqUrBQ6wSExEs1ilCcg4ibGX1mWAlw==
-X-Received: by 2002:a17:902:e74d:b0:216:4b66:1f1f with SMTP id d9443c01a7336-2178aee74e6mr7394085ad.54.1733936401569;
-        Wed, 11 Dec 2024 09:00:01 -0800 (PST)
-Received: from x1 (75-164-218-15.ptld.qwest.net. [75.164.218.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2166ef8b8d7sm35272785ad.67.2024.12.11.09.00.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 09:00:01 -0800 (PST)
-Date: Wed, 11 Dec 2024 08:59:59 -0800
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: bigunclemax@gmail.com
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Yangtao Li <frank.li@vivo.com>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: thead: Fix TH1520 emmc and shdci clock rate
-Message-ID: <Z1nFD5XHGzhYMVXj@x1>
-References: <20241210083029.92620-1-bigunclemax@gmail.com>
+        bh=DWR8Jat9HqWQD4tgYwKhNycvduSOkRomQGq1rzYJLCw=;
+        b=paYsb7ic3ZgFlwB5YtYMpxRFJmB/U/JRNzPti21jXHQ8JpkKVxL2mXiWaprmpweDsI
+         ehbH9yEThqwTG8yz2iMYW5TBiLozRPM1aNrHZW2zltj3TLEgeyIoVbkCpKXmAVj1mqJV
+         tjW1CbE71fJpqg/9WY2cGTCSCaMn1Ds5RZAdNulLUV8YcrseAxh3xnxs2mWFqnDrKroS
+         uKKvgFph1dAmRrv5vaKm4Dlgf17O6vA6bhQwc4qllLeaHMH+DpOXaWr/BnZNV4xlKkUq
+         RxkHqc18SZIwuLmINMKyLEAcmVP9tDkfkf8Hmkadp8KQjKntOxnJcONJbJOfjshtsB2x
+         IZSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733936478; x=1734541278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DWR8Jat9HqWQD4tgYwKhNycvduSOkRomQGq1rzYJLCw=;
+        b=bh2oowJ3No2scyw3ejQXlrCkiJyyxqLy7+flzeQufQCofY42lRaLbcwdiLb6Ol7XXC
+         nz3vRvzhqr4z7RhH39CvKzsmhOzHBKWi910ciDCCgM/aKUcfk3kkkvZw4/sjbROKcwBh
+         +rAGFTUvJPyfAzwSHKzfKRF+V7nDRtMjNLEGU1KjAsB8sSM/H15VsAdPxusg5F0vdVVG
+         cShIUHFihnQ6SHae+CoSnJkkDEgp8cKuLqAGSMvxOEWCD4AJkQvH/sK/lhEh13g8/5pk
+         hbrwP/gyO6aVXijswTM77VI+8trfrjs6YxZ4H+D3mJw7tgYvkt1AX9iY403BIrY5kKQm
+         V8gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkzp7jP6oNSS+7WeZExdRfieIj150hRAT4+o7Ymzm0ypIqTgWWRNvAkiLTGixzk8YVnhUaRmKzuNARaNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb+l5mSfVyhrMIYiVF3VVAUlESTUrZs5R04hE9JLethRBooKuE
+	gzh9qy5PYEfbFNMEJNZSTVpXw8AbIu3RKhcLe3NyIymX81HIEJY0Ky1cEqsTRuf3ibFVp0thQ2L
+	SfiLmlfBEhkkZL5T6BB5VbO6RCuiOIGRfWYxR
+X-Gm-Gg: ASbGncuaZt6xVOrCVzIEhJE6RA4d5yzOSuA9JnT+2TpEo9ZukNqLZ+GtLTQTyoxK9dt
+	/Lc3qWaYs5dOTlfzGWL2SPI6XSJgV94wU
+X-Google-Smtp-Source: AGHT+IGpw/zsckT4h9+kIHBMmJKYloAZQjEK4AQAEQl8yxWUFUcCtydY97rkPoueLrkZMwCwaCVxH/io1qSKn8f+tas=
+X-Received: by 2002:a05:6214:b6d:b0:6d8:b3a7:759e with SMTP id
+ 6a1803df08f44-6d934c10eb0mr49278136d6.46.1733936477556; Wed, 11 Dec 2024
+ 09:01:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210083029.92620-1-bigunclemax@gmail.com>
+References: <20241211105336.380cb545@fangorn> <CAJD7tkboc5a4MDHvF7K4zx5WP0DE4rsGW_24s16Hx+Vvy2RQLQ@mail.gmail.com>
+ <768a404c6f951e09c4bfc93c84ee1553aa139068.camel@surriel.com>
+In-Reply-To: <768a404c6f951e09c4bfc93c84ee1553aa139068.camel@surriel.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 11 Dec 2024 09:00:41 -0800
+X-Gm-Features: AbW1kvYHmQoq0lrIhLl4tU96ViOyzQC6VHiYAXY8dGp-cFK14P1Q9i_02Qg3ru8
+Message-ID: <CAJD7tkYpk4kZChj9f-2EMp0XET6OUNbHqfVBgdFTEMnN+iomww@mail.gmail.com>
+Subject: Re: [PATCH] memcg: allow exiting tasks to write back data to swap
+To: Rik van Riel <riel@surriel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 11:30:27AM +0300, bigunclemax@gmail.com wrote:
-> From: Maksim Kiselev <bigunclemax@gmail.com>
-> 
-> In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
-> is 198Mhz which is got through frequency division of source clock
-> VIDEO PLL by 4 [1].
-> 
-> But now the AP_SUBSYS driver sets the CLK EMMC SDIO to the same
-> frequency as the VIDEO PLL, equal to 792 MHz. This causes emmc/sdhci
-> to work 4 times slower.
-> 
-> Let's fix this issue by adding fixed factor clock that divides
-> VIDEO PLL by 4 for emmc/sdhci.
-> 
-> Link: https://github.com/revyos/thead-kernel/blob/7563179071a314f41cdcdbfd8cf6e101e73707f3/drivers/clk/thead/clk-light-fm.c#L454
-> 
-> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
-> Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
-> ---
->  drivers/clk/thead/clk-th1520-ap.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-> index 17e32ae08720..1015fab95251 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -779,6 +779,13 @@ static struct ccu_div dpu1_clk = {
->  	},
->  };
->  
-> +static CLK_FIXED_FACTOR_HW(emmc_sdio_ref_clk, "emmc-sdio-ref",
-> +			   &video_pll_clk.common.hw, 4, 1, 0);
-> +
-> +static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
-> +	{ .hw = &emmc_sdio_ref_clk.hw },
-> +};
-> +
->  static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, BIT(4), 0);
->  static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, BIT(5), 0);
->  static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
-> @@ -798,7 +805,7 @@ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", p
->  		0x150, BIT(12), 0);
->  static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
->  static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), 0);
-> -static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", video_pll_clk_pd, 0x204, BIT(30), 0);
-> +static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
->  static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
->  static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
->  static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0x204, BIT(23), 0);
-> @@ -1059,6 +1066,10 @@ static int th1520_clk_probe(struct platform_device *pdev)
->  		return ret;
->  	priv->hws[CLK_PLL_GMAC_100M] = &gmac_pll_clk_100m.hw;
->  
-> +	ret = devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, priv);
->  	if (ret)
->  		return ret;
-> -- 
-> 2.45.2
-> 
+On Wed, Dec 11, 2024 at 8:34=E2=80=AFAM Rik van Riel <riel@surriel.com> wro=
+te:
+>
+> On Wed, 2024-12-11 at 08:26 -0800, Yosry Ahmed wrote:
+> > On Wed, Dec 11, 2024 at 7:54=E2=80=AFAM Rik van Riel <riel@surriel.com>
+> > wrote:
+> > >
+> > > +++ b/mm/memcontrol.c
+> > > @@ -5371,6 +5371,15 @@ bool
+> > > mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
+> > >         if (!zswap_is_enabled())
+> > >                 return true;
+> > >
+> > > +       /*
+> > > +        * Always allow exiting tasks to push data to swap. A
+> > > process in
+> > > +        * the middle of exit cannot get OOM killed, but may need
+> > > to push
+> > > +        * uncompressible data to swap in order to get the cgroup
+> > > memory
+> > > +        * use below the limit, and make progress with the exit.
+> > > +        */
+> > > +       if ((current->flags & PF_EXITING) && memcg =3D=3D
+> > > mem_cgroup_from_task(current))
+> > > +               return true;
+> > > +
+> >
+> > I have a few questions:
+> > (a) If the task is being OOM killed it should be able to charge
+> > memory
+> > beyond memory.max, so why do we need to get the usage down below the
+> > limit?
+> >
+> If it is a kernel directed memcg OOM kill, that is
+> true.
+>
+> However, if the exit comes from somewhere else,
+> like a userspace oomd kill, we might not hit that
+> code path.
 
-Reviewed-by: Drew Fustini <dfustini@tenstorrent.com>
+Why do we treat dying tasks differently based on the source of the kill?
 
-Thanks for fixing this. Reads are over 3 times faster now.
+>
+> > Looking at the other thread with Michal, it looks like it's because
+> > we
+> > have to go into reclaim first before we get to the point of force
+> > charging for dying tasks, and we spend too much time in reclaim. Is
+> > that correct?
+> >
+> > If that's the case, I am wondering if the real problem is that we
+> > check  mem_cgroup_zswap_writeback_enabled() too late in the process.
+> > Reclaim ages the LRUs, isolates pages, unmaps them, allocates swap
+> > entries, only to realize it cannot swap in swap_writepage().
+> >
+> > Should we check for this in can_reclaim_anon_pages()? If zswap
+> > writeback is disabled and we are already at the memcg limit (or zswap
+> > limit for that matter), we should avoid scanning anon memory to begin
+> > with. The problem is that if we race with memory being freed we may
+> > have some extra OOM kills, but I am not sure how common this case
+> > would be.
+>
+> However, we don't know until the attempted zswap write
+> whether the memory is compressible, and whether doing
+> a bunch of zswap writes will help us bring our memcg
+> down below its memory.max limit.
 
-6.13-rc1:
+If we are at memory.max (or memory.zswap.max), we can't compress pages
+into zswap anyway, regardless of their compressibility.
 
-  debian@lpi4amain:~$ dd bs=1M count=512 if=/dev/zero of=zero_512M.bin oflag=direct
-  512+0 records in
-  512+0 records out
-  536870912 bytes (537 MB, 512 MiB) copied, 11.8457 s, 45.3 MB/s
+So what I am saying is, if we are already at the limit (pages cannot
+go into zswap), and writeback is disabled (pages cannot go into
+swapfiles), then we should probably avoid scanning the anon LRUs and
+spending all those wasted cycles trying to isolate, unmap, and reclaim
+them only to fail at the last step.
 
-  debian@lpi4amain:~$ dd bs=1M if=zero_512M.bin iflag=direct of=/dev/null
-  512+0 records in
-  512+0 records out
-  536870912 bytes (537 MB, 512 MiB) copied, 6.60576 s, 81.3 MB/s
+>
+> >
+> > (b) Should we use mem_cgroup_is_descendant() or mm_match_memcg() in
+> > case we are reclaiming from an ancestor and we hit the limit of that
+> > ancestor?
+> >
+> I don't know if we need or want to reclaim from any
+> other memcgs than those of the exiting process itself.
+>
+> A small blast radius seems like it could be desirable,
+> but I'm open to other ideas :)
 
-6.13-rc1 with patch:
+The exiting process is part of all the ancestor cgroups by the hierarchy.
 
-  debian@lpi4amain:~$ dd bs=1M count=512 if=/dev/zero of=zero_512M.bin oflag=direct
-  512+0 records in
-  512+0 records out
-  536870912 bytes (537 MB, 512 MiB) copied, 11.5359 s, 46.5 MB/s
+If we have the following hierarchy:
+root
+   |
+  A
+   |
+  B
 
-  debian@lpi4amain:~$ dd bs=1M if=zero_512M.bin iflag=direct of=/dev/null
-  512+0 records in
-  512+0 records out
-  536870912 bytes (537 MB, 512 MiB) copied, 2.03638 s, 264 MB/s
+Then a process in cgroup B could be getting OOM killed due to hitting
+the limit of A, not B. In which case, reclaiming from A helps us get
+below the limit. We can check if the cgroup is an ancestor and it hit
+its limit, but maybe that's an overkill.
 
--Drew
+>
+> > (c) mem_cgroup_from_task() should be called in an RCU read section
+> > (or
+> > we need something like rcu_access_point() if we are not dereferencing
+> > the pointer).
+> >
+> I'll add this in v2.
+>
+> --
+> All Rights Reversed.
 
