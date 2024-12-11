@@ -1,141 +1,260 @@
-Return-Path: <linux-kernel+bounces-442305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156DB9EDA66
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:51:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31A79EDA68
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E11167B6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B4C1886525
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC571F237B;
-	Wed, 11 Dec 2024 22:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FBB1F0E22;
+	Wed, 11 Dec 2024 22:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IkMvmag8"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAM6/sS/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D3C1DD885
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65BE195;
+	Wed, 11 Dec 2024 22:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957470; cv=none; b=OThvtQpsZw4zxV2zYWY4ZyjvNL7qSXfmCOnf0s+b5LqexCjcwp12ey86gNCqshWhTonuBjVMFTJ4gHO62HD/LHowUIxDwm/8l7Vwpk7SsS5ofCkPgjaISQ50BGaPWGFjkTX9c7n4obuHUfT/+tfoM0GHOhuy/5YUegLLr0VaNOo=
+	t=1733957558; cv=none; b=ueHMAO7MHA3x9cMjiMz3Z0RWiCpFGrvVtZKmn4Khz1L5aE96Favk3R5cdtt7vZ6xpekX/rOTImLa5CAGbbzejEY9PFE/1VF/MPdcK1NLc0gMeGrWwPyawjcnp0mQafdyjp1bQkIWmbhVeR1rsOLMXutFkiM/H5ijTJ9O7vEbdqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957470; c=relaxed/simple;
-	bh=FPSw2nF/lJm2UWC2sCJezAEzDmgl9FQYGt/yXj/bTk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DAeCG4cS9USBx4Ep7bdRFvXjSntQ6ky+3ex+7TX3VrqZfllTQ1SM0S6zGPZrEd5tz5HbeEDOpNxhGRp2ek0jmhf2ozUTg09EgeK1lOe+6ABYbyDsnVPBkQmZiQjcM2F+uBh5ld5akyvF+kkrLRUS98hYJXJdVQM3KxDCM7QUEes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IkMvmag8; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53e389d8dc7so5460753e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:51:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733957465; x=1734562265; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wKgmtaCixVS2eTp9TrZ+8kVzXwyvmutreSuRkttynvI=;
-        b=IkMvmag89aMHktcgnpoEMPTecMUFOpFJ8KJHuc7GdO3lK4v1OrOYSQDk2Ej527FFMR
-         bwyVr5iKlZf8ik4s8J+cnj5mW/9en8ClzQkp60qt+fsK/Y/ahJ8RmdXzI4qfsPmJk5+f
-         gONEo21rWe30csPX9KEZRyjFq9D/Q8yjXsch4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733957465; x=1734562265;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wKgmtaCixVS2eTp9TrZ+8kVzXwyvmutreSuRkttynvI=;
-        b=atncuO8cq9z6ZpkAViFKPuHxR9GDLzNLUvEQlAO+iIIhPTN2Ys3isHv845mw+hIDse
-         +BPgDVyANNtdOW2Q9H+dnvTHK3u/D02O2Egz+oZ/RXC1aviOaRnlenxp9cRFTN8+Ym9j
-         syH6hcpf0Irz1DLU3GKSSsDg0HrYmcFbRWkwP4is85KpTqgsbn6wXQ8gd+hxH2jxaIA/
-         YCx6RPGdZVRZGUzbjZZpYYpbKmuvL414MEuFBMIio8nv+3dhAE2O9m2o7ScBLCXLueDj
-         9NQl/hv9z10DKjN7YU+bBZEh4R4CISCxWrIQA7LnyUorLf99AA4gpg0H+9X06M8Vo1Oo
-         IE8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUOLwI0S2Hr8p92hG7UhvH5KNnBy/Utxz41It24gGdKLj31CCtKHmaupbUJn1n1yQ772Q5HGYypcRBPJcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3KsN3cjSpX6v+jLFvcsr1jA/CsJwrZBmL40KjTaq+uG2oEQT8
-	cF8ZbH5pbw8Dc3vbUdPdj28Z7uJ0ZSlvG7q9+agBE5JdE+y/rwqhgoF2BV6aaOyTgsWKBA0qVZm
-	M+8s2
-X-Gm-Gg: ASbGncuI+G/4Z8I1nHsMc78I2/fmHzRjTfYdUeKrdNkXo1jcH2gemqGzPoRmD6zwSLi
-	NgX7cunV/GerqFW3fy/rV+hF7d6EgesxdmifP8EXjUtdaFhTxTzrubmEO/iJr7fds8JrbbIFlN/
-	irgVjS8HY9XNXMpa0bOBmXTOStCG+r44Pje7RJpUEzGEFRTNyKMK2ipl8acrpBh6RO3Bek/ncDz
-	HHguxTbDH65F0wOctmd2LpEiGAMgMKipWjw+7xYgWdfcWFTuoq37RQhECsXXD/IpVOsQTqLPd3V
-	ooMxyIOim5IQVxzB2c02uw==
-X-Google-Smtp-Source: AGHT+IHXxOJ9gIHqikyDE7oivpASeJKk3nQ+J5RMP7ynv7AHANGE/MMJXZ61CJFCW5BvOm5D4+3Srg==
-X-Received: by 2002:a05:6512:1188:b0:53f:8c46:42b3 with SMTP id 2adb3069b0e04-5402a5d3f22mr1415782e87.12.1733957464653;
-        Wed, 11 Dec 2024 14:51:04 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401f432380sm1124812e87.101.2024.12.11.14.51.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 14:51:03 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3003d7ca01cso48284351fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:51:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX+ZMwrY0HpzPKLBieT7niyX+Cf6WHksSsN4BjKak91dKRv2l1xOZ1zcI7tHQP06UNBYTiDv4ogmUc7D08=@vger.kernel.org
-X-Received: by 2002:a05:6512:3d11:b0:540:17ac:b379 with SMTP id
- 2adb3069b0e04-5402a5e5682mr1002664e87.25.1733957462810; Wed, 11 Dec 2024
- 14:51:02 -0800 (PST)
+	s=arc-20240116; t=1733957558; c=relaxed/simple;
+	bh=b5VyzikGKIB0cjxAiPQdaJJ6qbpuXhnHUPZygNDS1TE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujYBMYtR0aqozLfVHSZpiR4Lk9QwqZq06lW05HOl2J5QTz8uoLNGrtpuJi83NCxJ9/PTTJawNA7Gv9dny2nDYEjsSOqALvThfDQOIlvuRwj/S6uWG8SzLyUGNsY9+u9Lie6oRVnR7sg7f3z9a+G3YZe0r7Qghw6lHAL33F0lc2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAM6/sS/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B2FC4CED2;
+	Wed, 11 Dec 2024 22:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733957558;
+	bh=b5VyzikGKIB0cjxAiPQdaJJ6qbpuXhnHUPZygNDS1TE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gAM6/sS/DDkUGCT1cwQVT9xI2FYkZwN7H6NXxQn09QDARo3xDo4ZuZaZQXgN+QBak
+	 8WL5xib2RyfIaxsiNeNcXq/Te9IpzA9gjsn8HfXAufwOQgz0mtr3eOneSuzGprKUdX
+	 V3WK+24vnVeNQvO/8UpDsEEiyvoozILw5Zsf6zi5YziRih2D2cNUzkDqeEWwlsowqu
+	 V8UfZDbRUlymxGii92Ox21eo6Q0YcevhF0+2C3Q/HCxs/G145raK24mQZVVcbrfDj9
+	 et+GAdugkuOhJ4WaL+CpaPc0EkYSNhMEWd7FxqKg7wZq68fjZFJXbBVQZg9zJuOR59
+	 Ekjz7jiu6Dsfg==
+Date: Wed, 11 Dec 2024 19:52:35 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: Re: [RFC/PATCH] perf trace: Add --syscall-period option
+Message-ID: <Z1oXs1xjCG1Ee27p@x1>
+References: <20241211222110.2430610-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211-check-state-before-dump-v2-1-62647a501e8c@quicinc.com>
-In-Reply-To: <20241211-check-state-before-dump-v2-1-62647a501e8c@quicinc.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 11 Dec 2024 14:50:51 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=V33utY6rby5e+RkRfUQQ40g2Bq3xr=G9q3if8TNoq1kg@mail.gmail.com>
-X-Gm-Features: AZHOrDlpR97b9ybDcxqzZ165UcoKpL_oopMC2BgdmlXON_-hpEKkrEAlm1wccLg
-Message-ID: <CAD=FV=V33utY6rby5e+RkRfUQQ40g2Bq3xr=G9q3if8TNoq1kg@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/msm/dpu: check dpu_plane_atomic_print_state() for
- valid sspp
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211222110.2430610-1-namhyung@kernel.org>
 
-Hi,
+On Wed, Dec 11, 2024 at 02:21:10PM -0800, Namhyung Kim wrote:
+> This option is to implement the event sampling for system calls.
+> The period is given in msec as it shows the time in msec.
+> 
+>   # perf trace -C 0 --syscall-period 100 sleep 1
+>            ? (         ): fleetspeakd/1828559  ... [continued]: futex())                                            = -1 ETIMEDOUT (Connection timed out)
+>        0.050 (100.247 ms): gnome-shell/572531 recvmsg(fd: 10<socket:[3355761]>, msg: 0x7ffef8b39d20)                = 40
+>      100.357 (100.149 ms): pipewire-pulse/572245 read(fd: 5<anon_inode:[eventfd]>, buf: 0x7ffc0b9dc8f0, count: 8)      = 8
+>      200.553 (100.268 ms): NetworkManager/3424 epoll_wait(epfd: 19<anon_inode:[eventpoll]>, events: 0x5607b85bb880, maxevents: 6) = 0
+>      300.876 (         ): mon/4932 poll(ufds: 0x7fa392784df0, nfds: 1, timeout_msecs: 100)            ...
+>      400.901 ( 0.025 ms): TaskCon~ller #/620145 futex(uaddr: 0x7f3fc596fa00, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+>      300.876 (100.123 ms): mon/4932  ... [continued]: poll())                                             = 0 (Timeout)
+>      500.901 ( 0.012 ms): evdefer/2/2335122 futex(uaddr: 0x5640baac5198, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+>      602.701 ( 0.017 ms): Compositor/1992200 futex(uaddr: 0x7f1a51dfdd40, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+>      705.589 ( 0.017 ms): JS Watchdog/947933 futex(uaddr: 0x7f4cac1d4240, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+>      812.667 ( 0.027 ms): fix/1985151 futex(uaddr: 0xc0008f7148, op: WAKE|PRIVATE_FLAG, val: 1)             = 1
+>      912.807 ( 0.017 ms): Xorg/572315 setitimer(value: 0x7ffc375d6ba0)                                      = 0
+> 
+> The timestamp is kept in a per-cpu array and the allowed task is saved
+> in a hash map.
 
-On Wed, Dec 11, 2024 at 11:51=E2=80=AFAM Abhinav Kumar
-<quic_abhinavk@quicinc.com> wrote:
->
-> Similar to the r_pipe sspp protect, add a check to protect
-> the pipe state prints to avoid NULL ptr dereference for cases when
-> the state is dumped without a corresponding atomic_check() where the
-> pipe->sspp is assigned.
->
-> Fixes: 31f7148fd370 ("drm/msm/dpu: move pstate->pipe initialization to dp=
-u_plane_atomic_check")
-> Reported-by: Stephen Boyd <swboyd@chromium.org>
-> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/67
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
-> To: Rob Clark <robdclark@gmail.com>
-> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> To: Sean Paul <sean@poorly.run>
-> To: Marijn Suijten <marijn.suijten@somainline.org>
-> To: David Airlie <airlied@gmail.com>
-> To: Simona Vetter <simona@ffwll.ch>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: freedreno@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Stephen Boyd <swboyd@chromium.org>
-> ---
-> Changes in v2:
-> - move pstate->stage out of the pipe->sspp check
-> - add reported-by credits for Stephen
-> - Link to v1: https://lore.kernel.org/r/20241209-check-state-before-dump-=
-v1-1-7a9d8bc6048f@quicinc.com
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
+Interesting concept, and one that is done just on the BPF part, so I
+think we should at least warn a user that is running this on a build
+without BPF skels.
 
-Tested-by: Douglas Anderson <dianders@chromium.org>
+Will try it tomorrow,
+
+- Arnaldo
+ 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/Documentation/perf-trace.txt       |  6 ++
+>  tools/perf/builtin-trace.c                    |  5 ++
+>  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 67 ++++++++++++++++++-
+>  3 files changed, 76 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
+> index 6e0cc50bbc13fc7f..9f338a8c5357a67e 100644
+> --- a/tools/perf/Documentation/perf-trace.txt
+> +++ b/tools/perf/Documentation/perf-trace.txt
+> @@ -241,6 +241,12 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
+>  	printing using the existing 'perf trace' syscall arg beautifiers to map integer
+>  	arguments to strings (pid to comm, syscall id to syscall name, etc).
+>  
+> +--syscall-period::
+> +	Trace a system call in the given period (in msec).  This implements
+> +	sampling for syscalls in order to reduce the monitoring overhead.
+> +	For example, setting the sysall period to 100 (msec) means it will
+> +	sample a syscall and next one after 100 msec.
+> +
+>  
+>  PAGEFAULTS
+>  ----------
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 3c46de1a8d79bfe6..789eb0ffd5f90b61 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -185,6 +185,7 @@ struct trace {
+>  	} stats;
+>  	unsigned int		max_stack;
+>  	unsigned int		min_stack;
+> +	unsigned long		sample_period_ms;
+>  	int			raw_augmented_syscalls_args_size;
+>  	bool			raw_augmented_syscalls;
+>  	bool			fd_path_disabled;
+> @@ -5219,6 +5220,7 @@ int cmd_trace(int argc, const char **argv)
+>  		     "start"),
+>  	OPT_BOOLEAN(0, "force-btf", &trace.force_btf, "Prefer btf_dump general pretty printer"
+>  		       "to customized ones"),
+> +	OPT_ULONG(0, "syscall-period", &trace.sample_period_ms, "syscall sampling period in ms"),
+>  	OPTS_EVSWITCH(&trace.evswitch),
+>  	OPT_END()
+>  	};
+> @@ -5326,6 +5328,9 @@ int cmd_trace(int argc, const char **argv)
+>  				bpf_program__set_autoattach(prog, /*autoattach=*/false);
+>  		}
+>  
+> +		if (trace.sample_period_ms)
+> +			trace.skel->rodata->sample_period = trace.sample_period_ms * NSEC_PER_MSEC;
+> +
+>  		err = augmented_raw_syscalls_bpf__load(trace.skel);
+>  
+>  		if (err < 0) {
+> diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> index 4a62ed593e84edf8..12272620dcd73700 100644
+> --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> @@ -113,6 +113,22 @@ struct pids_filtered {
+>  	__uint(max_entries, 64);
+>  } pids_filtered SEC(".maps");
+>  
+> +struct sample_timestamp {
+> +	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+> +	__type(key, int);
+> +	__type(value, __u64);
+> +	__uint(max_entries, 1);
+> +} sample_timestamp SEC(".maps");
+> +
+> +struct sample_filtered {
+> +	__uint(type, BPF_MAP_TYPE_HASH);
+> +	__type(key, pid_t);
+> +	__type(value, bool);
+> +	__uint(max_entries, MAX_CPUS);
+> +} sample_filtered SEC(".maps");
+> +
+> +const volatile __u64 sample_period;
+> +
+>  struct augmented_args_payload {
+>  	struct syscall_enter_args args;
+>  	struct augmented_arg arg, arg2; // We have to reserve space for two arguments (rename, etc)
+> @@ -428,6 +444,44 @@ static bool pid_filter__has(struct pids_filtered *pids, pid_t pid)
+>  	return bpf_map_lookup_elem(pids, &pid) != NULL;
+>  }
+>  
+> +static bool sample_filter__allow_enter(__u64 timestamp, pid_t pid)
+> +{
+> +	int idx = 0;
+> +	__u64 *prev_ts;
+> +	bool ok = true;
+> +
+> +	/* default behavior */
+> +	if (sample_period == 0)
+> +		return true;
+> +
+> +	prev_ts = bpf_map_lookup_elem(&sample_timestamp, &idx);
+> +
+> +	if (prev_ts) {
+> +		if ((*prev_ts + sample_period) > timestamp)
+> +			return false;
+> +		*prev_ts = timestamp;
+> +	} else {
+> +		bpf_map_update_elem(&sample_timestamp, &idx, &timestamp, BPF_ANY);
+> +	}
+> +
+> +	bpf_map_update_elem(&sample_filtered, &pid, &ok, BPF_ANY);
+> +
+> +	return true;
+> +}
+> +
+> +static bool sample_filter__allow_exit(pid_t pid)
+> +{
+> +	/* default behavior */
+> +	if (sample_period == 0)
+> +		return true;
+> +
+> +	if (!bpf_map_lookup_elem(&sample_filtered, &pid))
+> +		return false;
+> +
+> +	bpf_map_delete_elem(&sample_filtered, &pid);
+> +	return true;
+> +}
+> +
+>  static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+>  {
+>  	bool augmented, do_output = false;
+> @@ -526,7 +580,9 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+>  SEC("tp/raw_syscalls/sys_enter")
+>  int sys_enter(struct syscall_enter_args *args)
+>  {
+> +	pid_t pid = getpid();
+>  	struct augmented_args_payload *augmented_args;
+> +
+>  	/*
+>  	 * We start len, the amount of data that will be in the perf ring
+>  	 * buffer, if this is not filtered out by one of pid_filter__has(),
+> @@ -537,7 +593,10 @@ int sys_enter(struct syscall_enter_args *args)
+>  	 * initial, non-augmented raw_syscalls:sys_enter payload.
+>  	 */
+>  
+> -	if (pid_filter__has(&pids_filtered, getpid()))
+> +	if (pid_filter__has(&pids_filtered, pid))
+> +		return 0;
+> +
+> +	if (!sample_filter__allow_enter(bpf_ktime_get_ns(), pid))
+>  		return 0;
+>  
+>  	augmented_args = augmented_args_payload();
+> @@ -561,9 +620,13 @@ int sys_enter(struct syscall_enter_args *args)
+>  SEC("tp/raw_syscalls/sys_exit")
+>  int sys_exit(struct syscall_exit_args *args)
+>  {
+> +	pid_t pid = getpid();
+>  	struct syscall_exit_args exit_args;
+>  
+> -	if (pid_filter__has(&pids_filtered, getpid()))
+> +	if (pid_filter__has(&pids_filtered, pid))
+> +		return 0;
+> +
+> +	if (!sample_filter__allow_exit(pid))
+>  		return 0;
+>  
+>  	bpf_probe_read_kernel(&exit_args, sizeof(exit_args), args);
+> -- 
+> 2.47.0.338.g60cca15819-goog
 
