@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-442255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE1E9ED9D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:34:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA579ED9D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61181281B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C2F2810E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCBD1F8681;
-	Wed, 11 Dec 2024 22:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6081FA246;
+	Wed, 11 Dec 2024 22:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjfwijMb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukw4RNgG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6791F4E57;
-	Wed, 11 Dec 2024 22:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03951F63F7;
+	Wed, 11 Dec 2024 22:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956345; cv=none; b=HOA+kLRATcm6rdnFeUUu44fRHPtKRlg0lfjD0MUu0BfHuLBuM8PBQFoTpUUEzVujmwycPFTazTZPNCJRg8WaAfEluIKUC8bGjsLSakAFYGfe170sbzneRBfeNl2juosA5qf72i37fi86M8WPaQJkor6TFBMQalaqjUGX6o1MyCo=
+	t=1733956345; cv=none; b=VC2zkfU5eluwla6okr58Eqq0iHWkMu49AZMHEWmeoUoCVmBw/ETAekYbWmBoAEPBPV9G8/fxqIsDvrBDoS2uMnxLxrOppNQoU6MkGYUdJKWE2Wv0EhsHnk8wzDj6MCbhygyBWkr4UzzvxV6LgiKIdmT8etgZxM6qhqsYM03+Mi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733956345; c=relaxed/simple;
-	bh=NGdHSLNI0l4aBJ0f/wN2z7bSGQikMSaNjVw2lkQNoSI=;
+	bh=5vmuvjk6RoBwup6k71p7vUifjXpsm4ye3iQ3ZPNS1h8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DHbudQZ1J5ne/WjFWu34AlpgeC1loquMnY///N7cr1WseQnFp24sjtcIi8pHZfNT37BzM2w2cg6Ym5C6RwPkftQZteG4wORQlXXR3ldrtIn7g26mCoHx0wKWIstRDIGmOVhx6QsQXZoJSrrNTm8HFwzxhVgfbF8t/sMrMmJPXk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjfwijMb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C33C4CED3;
-	Wed, 11 Dec 2024 22:32:24 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=PC7nIfz/aeoVD89/0g2lFKtxlJxquzFDW1sD/oJo3ALi6/zRyUSn8MZqo5sNQFfPvvQmi77I8MN7LxbcVagehSHNIQZAxCGi2YeXE0jyYMYeUIRMSWyaJY0zEXdc6WNytHpUTmWqh78ZE/M2zr7kZixFwvxOFxLjbflk8Abjlp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukw4RNgG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B5B7C4CEDD;
+	Wed, 11 Dec 2024 22:32:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733956344;
-	bh=NGdHSLNI0l4aBJ0f/wN2z7bSGQikMSaNjVw2lkQNoSI=;
+	s=k20201202; t=1733956345;
+	bh=5vmuvjk6RoBwup6k71p7vUifjXpsm4ye3iQ3ZPNS1h8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BjfwijMbLAHcxokg+pJC2/UdLPu8w5NNJmdVSAOq2BH6ThTgopYBX0+fTtZ0X5Kuy
-	 NfKs4ecBx8K7owJiX4gaHbZBZVEBE69mG9OnadEwoaVEg/YlWV4VJLxNr+lfzV/GM4
-	 iA1E8xJfJ2sY3w+RU6+3M4tkCTnE8gjvlGNhbmRMLplxytpDE2GUi7CltDLER9CJyH
-	 af7l45Q1lRTiP73iaTZ93p0r8Fdwq1sRnbHHxXRYZbnkmrZjFr7m4xdrLOhsG8VX23
-	 P33IqFJvqHyO4uQPBwp0R1LbM7vOM2Cv0K1r4G6XH+u5VBDgJKVnd2C0jB45rqkTCf
-	 vX12KmEy4LCbw==
+	b=ukw4RNgGUAE64Vy8haez74NtEENstVoiZz1flviLBxKzhRlBl2kuOB7APXGu/A33C
+	 vir40lDc+ClGeNwoNXK0pk/wbGAzsrXjTDC3Qq/PoOCf4zdCrsFX20ZNZK7ft7MeaX
+	 ww2MiiRkM+1i1mZDuLVyvnXmoAFbUQLtZ7S18oR0YZvc9IqRxiCwH92b8sopDQBhWj
+	 bT4UYfWguF5pPx6D115kdCN0f1HvcH1cQ8461TWb96e2OT7m4shrtT6k1nNnoma396
+	 qnKr515hAbUDQ9sqAasxTQ2V069viPoGiT7QVutdwPI6tigI5XmCYZcmNdClwgP9xa
+	 07JHF1fDQrLmQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC8A380A965;
-	Wed, 11 Dec 2024 22:32:41 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD59380A965;
+	Wed, 11 Dec 2024 22:32:42 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,54 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v3 0/4] Optimize bpf_csum_diff() and homogenize for
- all archs
+Subject: Re: [PATCH] pinctrl: k210: Modify the wrong "#undef"
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173395636024.1729195.5884060368915845974.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Dec 2024 22:32:40 +0000
-References: <20241026125339.26459-1-puranjay@kernel.org>
-In-Reply-To: <20241026125339.26459-1-puranjay@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: linux-riscv@lists.infradead.org, aou@eecs.berkeley.edu, ast@kernel.org,
- akpm@linux-foundation.org, andrii@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com,
- edumazet@google.com, haoluo@google.com, deller@gmx.de, kuba@kernel.org,
- James.Bottomley@HansenPartnership.com, jolsa@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- linux-parisc@vger.kernel.org, martin.lau@linux.dev, mykolal@fb.com,
- netdev@vger.kernel.org, palmer@dabbelt.com, pabeni@redhat.com,
- paul.walmsley@sifive.com, puranjay12@gmail.com, shuah@kernel.org,
- song@kernel.org, sdf@fomichev.me, yonghong.song@linux.dev
+ <173395636174.1729195.16129052745847104611.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 22:32:41 +0000
+References: <20241113012029.3204-1-zhangjiao2@cmss.chinamobile.com>
+In-Reply-To: <20241113012029.3204-1-zhangjiao2@cmss.chinamobile.com>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: linux-riscv@lists.infradead.org, dlemoal@kernel.org,
+ linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to riscv/linux.git (fixes)
-by Daniel Borkmann <daniel@iogearbox.net>:
+This patch was applied to riscv/linux.git (fixes)
+by Linus Walleij <linus.walleij@linaro.org>:
 
-On Sat, 26 Oct 2024 12:53:35 +0000 you wrote:
-> Changes in v3:
-> v2: https://lore.kernel.org/all/20241023153922.86909-1-puranjay@kernel.org/
-> - Fix sparse warning in patch 2
+On Wed, 13 Nov 2024 09:20:29 +0800 you wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 > 
-> Changes in v2:
-> v1: https://lore.kernel.org/all/20241021122112.101513-1-puranjay@kernel.org/
-> - Remove the patch that adds the benchmark as it is not useful enough to be
->   added to the tree.
-> - Fixed a sparse warning in patch 1.
-> - Add reviewed-by and acked-by tags.
+> Here shuld be undef "K210_PC_DEFAULT", not "DEFAULT".
 > 
-> [...]
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>  drivers/pinctrl/pinctrl-k210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [bpf-next,v3,1/4] net: checksum: move from32to16() to generic header
-    https://git.kernel.org/riscv/c/db71aae70e3e
-  - [bpf-next,v3,2/4] bpf: bpf_csum_diff: optimize and homogenize for all archs
-    https://git.kernel.org/riscv/c/6a4794d5a3e2
-  - [bpf-next,v3,3/4] selftests/bpf: don't mask result of bpf_csum_diff() in test_verifier
-    https://git.kernel.org/riscv/c/b87f584024e1
-  - [bpf-next,v3,4/4] selftests/bpf: Add a selftest for bpf_csum_diff()
-    https://git.kernel.org/riscv/c/00c1f3dc66a3
+  - pinctrl: k210: Modify the wrong "#undef"
+    https://git.kernel.org/riscv/c/7e86490c5dee
 
 You are awesome, thank you!
 -- 
