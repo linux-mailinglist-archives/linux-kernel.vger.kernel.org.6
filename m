@@ -1,153 +1,175 @@
-Return-Path: <linux-kernel+bounces-441176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7279C9ECAA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:50:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D049ECAA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:51:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA21E18845E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:50:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BBD28A1DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41A11A8410;
-	Wed, 11 Dec 2024 10:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB9D1F0E48;
+	Wed, 11 Dec 2024 10:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="aIaVL2ZT"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPOT7iMp"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E996F239BA1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF94239BD1;
+	Wed, 11 Dec 2024 10:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733914245; cv=none; b=dVcDHCJY2cYPQGLygiMcWyVejIsR4gTXHVin3OUwiq2d/2tptXftpIyRI6Pbt3Oc/lYdw8rbRItAZQ3XhezYCAoxbmP4wi+7l4zah8L+juvcVebnkBA12EY1/n+4LLSnlKtRXvXi1nZemQ3qgMhgYyqXnXScH/fG6TycS16NET0=
+	t=1733914267; cv=none; b=G30NUSyvwFr06XE2v9E9ZkHZa4BLEq7QIGxRrpfTWCKmgQ61lIwccFxKvrZsWXUqBcjMKP2lRGIsaTF/qQG7bYrhhSmxd5ZARKdTKgOGH+tIsIp7lr0qxmcl9chFqNiyVkqdZY5a9ppiyqFCXxJX0PL4J8F8ptn5VrJgYgsBAdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733914245; c=relaxed/simple;
-	bh=83IKX2ACj6MG1iwn5040sUxhxKeKXmtr+kfA2OBidGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZrkMzdnGQEWMsMHx5Sk/XuAE9S8jrpu6AUPi33tdqmTSKAKB4w3g45FNs22234Uae0q4pzbjqxViY7TCx2nBlsE+01litgC9/Do/sXRarxkWWdgZyP8/94yu96mSdI/sdK/yZ/KVFntdiFnt1V2whigTiC7JczlBRMiDvomRrpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=aIaVL2ZT; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d2726c0d45so10317918a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:50:41 -0800 (PST)
+	s=arc-20240116; t=1733914267; c=relaxed/simple;
+	bh=Ksk5GQlLTE9G/be0wD6j9Sj8kt6j5Ht+2opyZU37J5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLPd/8JVVcgVBifyGn137iirPuMiTD1tuasVYk4ZZFMd3Umaj4AIaqIGaCI7r3L3X35kWLsgla96GeRG3fIPjt7Nri+vtJ3yiE5lZHXiLQXMxchLj14+U3gTGkwr2K07PKg2TQOV/mMoupEhpNuvxLiMZ9fprntDEsziI1Dc/Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPOT7iMp; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa69251292dso529171266b.2;
+        Wed, 11 Dec 2024 02:51:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733914240; x=1734519040; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Y8njlP7LsGVb9kxDxnrRdURSlrkZgl27jEGhSqeYyQ=;
-        b=aIaVL2ZT8tI41L2LzjZP0xyuWG2zCa4XfWl5HVYsYjPJNTjjfDJ5tqmKqFk43o0kA2
-         R9PZZHljqRewSjz6gs+rp8e4JY2s7LvV+HM2NbGLJfYf26/pUGptVEHYnr66cUwmEz+V
-         oDWWDhVVcZBWDwq/bfQIVi9CnlYaQfJk9W1M71UlCJlVZrvhaLUP7rndxRZJDbVWzCJu
-         d+YzZGhEzuwds84Ung1HAj+BEVZZoqI/nwrrUOx7tsuFprWx1GhLMW49tdLImF6MxMBo
-         6og5rgyxYwd9t3qqCnzIfPEbHsEGyp6dt2I34eKrtnSNM/IQpB4UGprDzAwMqz/LZECF
-         hR0w==
+        d=gmail.com; s=20230601; t=1733914264; x=1734519064; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GX/1WZMZrEFw0JXFhurobNKgpPuqP1bqjRL4XCmzGz0=;
+        b=fPOT7iMpr5d2n9rPJ8eeB5clhh1SLToMX1umtUfgRExZlwnTsIy3zquH8P4qep2DXj
+         589TACyG2oDim74LwJWBhtVhjNrGehI6TFSi+xS7/m7FnZ1JuddLVM07UEPXwYirNHOO
+         Trp7Y4ZX5TL5M7z7O3ocj05tIlPJdrPqarv30cPUV+TMaoYtFdeQPXHyeF5zoa5v4Eu5
+         cgmiYe5QLF6+N68xmLxqIoznn8Iph9xJeqeFi+lL2WtYtidKYoC9SJ4U2xSOLjPXDRsU
+         i/dGkJaUXhmRAbPyX02GhryIhqNNZEhspZZmHVbbKUnAXRLqZohzQQ6C8QYFPJgrfp3E
+         6sQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733914240; x=1734519040;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Y8njlP7LsGVb9kxDxnrRdURSlrkZgl27jEGhSqeYyQ=;
-        b=SBufyz9aft8IYb6UORqaSjkTOYM464rXXWnyeM65yUVF6nXaftEEOZFmFPHBKke14C
-         vaEOs8nkqoL9XIdEQeDZuOMzZIKemzdnM/DdJSMHlFRpw3LnOXIVA1bn6w3Gsh7wQvoD
-         ATVTiHNo4wAC3LMPQH6I3kmX7YANFN5hPKK1EDV+qrjUhu8WByJI5L2c3mjOoUafvr6o
-         9f3kGjo2pjThpFxZlITbdRPmOD11WP8c/ParJzdsgL9DFFH2ksu+okaZdvdpCuB5uNFH
-         F/nT63dQPKvFDrm8aVUv2YpD31ZjhGe8oMu7l9jL3hTbZeZVaEKt6xT2rF47CIMvo1aw
-         Zrvw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+NEV7KXWNzxiCH/QCKi2KamtoQMR9DlQnbdAsj0bHPFVS7E31Q+mXhohqGgag2AzNQ/7cnls0FcEYddE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2UiOlUFnSHgpXU2uwhRBT+t2dv/eN8dVjo1F1B6quv7feEsI1
-	ln30Y8j8odUZpJJn9UHeCyHxwvuBGi8OWPSz0loFaQTlwpdKvecezS+KPhwAldM=
-X-Gm-Gg: ASbGncvcygbMkhZH/nAcXUmAMt1dMOW6kwJBVupB+cV9a1+bdhLLdwsPdyIWno6/jox
-	OHoxM42pRBVxhgv01/jVDQkvgR9KS8ro0WpkElLlQ67F1BOpAChOSOLYLM/FP/PCdubc2hNqJIL
-	2hoFsN2J48X13HU4qW56tCnuCrtskyAf3PC+7tyPaspVtudW1XMHKtWb9WlgYAxomvlnUvTxiyg
-	ZiNBUPz3z1BxukOSvSpJ2FQKLs9qOLtzbMKt3qsugIBPhQQT8A9LqYZYqmGHUU=
-X-Google-Smtp-Source: AGHT+IE3ug4r7LsUmk8McDRInWzkTaVZpznCtb2SmbeZOgpxZz5NZUAREifnl9FpXa/ZmpNshEjJZQ==
-X-Received: by 2002:a05:6402:3806:b0:5d3:d917:dd90 with SMTP id 4fb4d7f45d1cf-5d433048b25mr2102350a12.6.1733914240144;
-        Wed, 11 Dec 2024 02:50:40 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ebbd67c0sm5444007a12.46.2024.12.11.02.50.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 02:50:39 -0800 (PST)
-Message-ID: <a1b60809-cf72-4d4d-91f4-468a47900ca5@tuxon.dev>
-Date: Wed, 11 Dec 2024 12:50:37 +0200
+        d=1e100.net; s=20230601; t=1733914264; x=1734519064;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GX/1WZMZrEFw0JXFhurobNKgpPuqP1bqjRL4XCmzGz0=;
+        b=iqwsB0oHFhInSv6mFTD2pzoTSb1Xis7IKBP1mHy/+zGrh5guRJSnudOQ8jKZ+isaZv
+         e4NVgResnsDTSRs3Phq5NGHqR+NofFWLoNcRwndPEMwK3sSPVb+/e7FPgzUMeV9dU5nw
+         7S33CNCKY6+rH/qGK1wI5oSRT4QkVCKVjc/t+qGV0TyxOJvwT1fvsgbyEjGypLPpdZ6Q
+         oZiGoTgV5UY+L1gKFMGOt6lmEsXNOn7a6Dp5EdcZGwxRmP7SLy044sDXqhMpA8ugkGUd
+         ai8MpUEtuMaBMj26JvIM+lDR3HDxEPOiuVP0Mv8LTxjsOA9H+l0fMf6Cp24H7781MCNr
+         U44g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHHd8hx55uXvwHEW3caclO/Q9/I6ghesZvjo+SvCOxXomUsBhRRbFdfkp3Chs/uiY3NUaQToKwIl+EHidy@vger.kernel.org, AJvYcCWD+reM4UDhKUIzbYObyKDcbenVgBiHGLLck0t+nk+vjFFLdrVDvVnEwUKaDyDETZkVlOOcVrAQ@vger.kernel.org, AJvYcCXFxM53PJH1qAG5QPk3IbPcwG8t7AWGGPQYEMom/vh0INu0J9WgXUP55+YRVKujMfigtUk1hdDXSJjC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpTUtTlM4I9rpjuVl8IMYHr/DYg5YTIcr47XupUA+c1QEPEd/l
+	W2ao6MKGm5YBNuI6IjciJQct4QCHIKxjZj/lQj1aQvsJrxRCTa8N
+X-Gm-Gg: ASbGncv8blCgW3IaZ+qdSGYCYun0W4x3ZsgKVh4wtlS1jK+MN1UFokXHBlUL3JePkwo
+	Kmx4SC0hWvMgc4TSSgSu8SHmlP8RK9f+tnEK2OhnBaHAAfXdm5oGVB1GxsKWLIAZSl3Tl34Zumq
+	722BYNW3HIgsiFQlXAokahk39Y4hhb5+CPVkW8vCoM2fMUpjx/u4KpoR1ZV00ZwPqAuYOA4X6Il
+	meD4sbE4S096sIiRNTH2cCsE9QoA1nGL1sk2tzv/jN/dbuoBA==
+X-Google-Smtp-Source: AGHT+IGaTNOAYs445X35p8C+/vkCaXdBe1C4Aw01aMs405nbpDjnnn5dg1Q3ScPc562xQ2jSrpX7WQ==
+X-Received: by 2002:a05:6402:3806:b0:5d0:c9e6:309d with SMTP id 4fb4d7f45d1cf-5d43306db5fmr2026538a12.1.1733914264077;
+        Wed, 11 Dec 2024 02:51:04 -0800 (PST)
+Received: from debian ([2a00:79c0:67c:dd00:303:6c5b:4b07:6715])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ce5b776esm7280138a12.29.2024.12.11.02.51.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 02:51:02 -0800 (PST)
+Date: Wed, 11 Dec 2024 11:51:00 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: dp83822: Add support
+ for GPIO2 clock output
+Message-ID: <20241211105100.GA4424@debian>
+References: <20241211-dp83822-gpio2-clk-out-v2-0-614a54f6acab@liebherr.com>
+ <20241211-dp83822-gpio2-clk-out-v2-1-614a54f6acab@liebherr.com>
+ <hayqmsohcpdg43yh5obmkbxpw3stckxpmm3myhqfsf62jdpquh@ndwfhr3gqm3b>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/8] arm64: dts: renesas: r9a08g045: Update
- #power-domain-cells = <1>
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, magnus.damm@gmail.com, ulf.hansson@linaro.org,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
- <20240422105355.1622177-9-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com>
- <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev>
- <CAMuHMdXOztsoKp=9-TDXirJN8voRy0O5mYXcVy=Uz-GX0B2N_Q@mail.gmail.com>
- <CAMuHMdXXTRUiToA3r8+xgS0uUrrfOF8iZA58_na0V9+JB6hg6Q@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdXXTRUiToA3r8+xgS0uUrrfOF8iZA58_na0V9+JB6hg6Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <hayqmsohcpdg43yh5obmkbxpw3stckxpmm3myhqfsf62jdpquh@ndwfhr3gqm3b>
 
-Hi, Geert,
+Am Wed, Dec 11, 2024 at 10:43:40AM +0100 schrieb Krzysztof Kozlowski:
+> On Wed, Dec 11, 2024 at 09:04:39AM +0100, Dimitri Fedrau wrote:
+> > The GPIO2 pin on the DP83822 can be configured as clock output. Add
+> > binding to support this feature.
+> > 
+> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > ---
+> >  .../devicetree/bindings/net/ti,dp83822.yaml         |  7 +++++++
+> >  include/dt-bindings/net/ti-dp83822.h                | 21 +++++++++++++++++++++
+> >  2 files changed, 28 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ti,dp83822.yaml b/Documentation/devicetree/bindings/net/ti,dp83822.yaml
+> > index 784866ea392b2083e93d8dc9aaea93b70dc80934..4a4dc794f21162c6a61c3daeeffa08e666034679 100644
+> > --- a/Documentation/devicetree/bindings/net/ti,dp83822.yaml
+> > +++ b/Documentation/devicetree/bindings/net/ti,dp83822.yaml
+> > @@ -96,6 +96,13 @@ properties:
+> >        - master
+> >        - slave
+> >  
+> > +  ti,gpio2-clk-out:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description: |
+> > +       DP83822 PHY only.
+> > +       Muxing option for GPIO2 pin. See dt-bindings/net/ti-dp83822.h for
+> > +       applicable values. When omitted, the PHY's default will be left as is.
+> 
+> 1. Missing constraints, this looks like enum.
+> 2. Missing explanation of values.
+> 3. This should be most likely a string.
+> 4. Extend your example with this. 
+>
+Ok, will fix it.
 
-On 11.12.2024 12:31, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+> > +
+> >  required:
+> >    - reg
+> >  
+> > diff --git a/include/dt-bindings/net/ti-dp83822.h b/include/dt-bindings/net/ti-dp83822.h
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..d569c90618b7bcae9ffe44eb041f7dae2e74e5d1
+> > --- /dev/null
+> > +++ b/include/dt-bindings/net/ti-dp83822.h
+> > @@ -0,0 +1,21 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+> > +/*
+> > + * Device Tree constants for the Texas Instruments DP83822 PHY
+> > + *
+> > + * Copyright (C) 2024 Liebherr-Electronics and Drives GmbH
+> > + *
+> > + * Author: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_TI_DP83822_H
+> > +#define _DT_BINDINGS_TI_DP83822_H
+> > +
+> > +/* IO_MUX_GPIO_CTRL - Clock source selection */
+> > +#define DP83822_CLK_SRC_MAC_IF			0x0
+> > +#define DP83822_CLK_SRC_XI			0x1
+> > +#define DP83822_CLK_SRC_INT_REF			0x2
+> > +#define DP83822_CLK_SRC_RMII_MASTER_MODE_REF	0x4
+> > +#define DP83822_CLK_SRC_FREE_RUNNING		0x6
+> > +#define DP83822_CLK_SRC_RECOVERED		0x7
 > 
-> On Thu, Aug 1, 2024 at 7:34 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Thu, Aug 1, 2024 at 7:28 PM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
->>> On 01.08.2024 19:13, Geert Uytterhoeven wrote:
->>>> On Mon, Apr 22, 2024 at 12:54 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> Update CPG #power-domain-cells = <1> and move all the IPs to be part of the
->>>>> IP specific power domain as the driver has been modified to support
->>>>> multiple power domains.
->>>>>
->>>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> Now the watchdog fixes are in v6.11-rc1, I will queue this in
->>>> renesas-devel for v6.12.
->>>
->>> Only the RZ/G3S support has been merged.
->>>
->>> The watchdog fixes that allows us to use this patch were submitted as RFC
->>> but got no input from Ulf, yet.
->>
->> Oops, postponing.
-> 
-> The watchdog fix is now commit bad201b2ac4e238c ("watchdog: rzg2l_wdt:
-> Power on the watchdog domain in the restart handler") in v6.13-rc2,
-> so it is time to revisit this (and rebase my renesas-dts-for-v6.1
-> branch to v6.13-rc2)?
+> These are not really bindings but some register values. Hex numbers
+> indicate that. Don't store register values as bindings, because this
+> is neither necessary nor helping.
+>
+Ok, got it. Have seen similar in <dt-bindings/net/ti-dp83867.h> or
+<dt-bindings/net/ti-dp83869.h>, is it wrong there ?
 
-In the meantime, we got some input from HW team that particular order might
-need to be followed b/w MSTOP and CPG setup that doesn't align with having
-MSTOP handled through power domains. There are some contradictions (AFAICT)
-b/w that and the conclusions that one might draw from the HW manual, so we
-are in the process of clarifying.
-
-For that I would propose to postpone it until further clarifications.
-
-Thank you,
-Claudiu
-
-> 
-> Thanks!
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Best regards,
+Dimitri Fedrau
 
