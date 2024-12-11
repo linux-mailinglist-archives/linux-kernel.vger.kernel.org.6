@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-441242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018839ECBA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:59:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72F2188B57D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:59:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1343225A3C;
-	Wed, 11 Dec 2024 11:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pl5T2ult"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B1C9ECBA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:59:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D81DA634;
-	Wed, 11 Dec 2024 11:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93588285F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:59:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4E52210E7;
+	Wed, 11 Dec 2024 11:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMBJ15UY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B467B1DA634;
+	Wed, 11 Dec 2024 11:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733918371; cv=none; b=id+i0RCyxusVjaQQAwxVG0e/NZL12SI+urwqpZiR7XSUYkbOYm0+XOe7zLaI+E/ETXHiLOpA3fZK8bmjSxddbyDmny/MXi02CvRQxUjh4lufgqEVEVOEpt+mWNZ2ridHMGKeZUXQwgnu3heC+H0IoP9Ae734DYF0Tl+V7pMXbPc=
+	t=1733918375; cv=none; b=AlXWOlSakneUMcQ8QRqLbUE7S1DWmtDdHM42yC6OYvxxxYO6VfKzmihZ8+Hxzvy+VkW7daOxrNQAh+D1AKB0vNDx9xxGAgebneL8+yUuTGRlN4Lfz/y3iR1Pg8pSw/aLiQmHCeE58fpFj8vYvAYUqyyxqtaK/jA7iNZLfU8G5Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733918371; c=relaxed/simple;
-	bh=I6wZVNs22wQMqttdoXVPOQc2PvNhdU0A7mQSIPBVFYE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t+jUVlpMzkPudgj64G34iNKHj+brnEmUQ/6RbHxwlqkBLjkhb3kxFuepxVy6c1zRyNwlHN4wLkgQN48jwbmOfNvMXcKB1mPgqlBb7Y2bnloUprl8ll1SLDMJSPU6/N9t/uw3C43mvlH4Z7G9w30MI5wZjub0R/mtsnb0qYOGO8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pl5T2ult; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB308ud016161;
-	Wed, 11 Dec 2024 11:59:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hY1t1N2sMbvghIafaPKPju
-	O22QsxZgIAGYAQ3X7NipA=; b=pl5T2ult2bgpt0B9ExDS0ZUKDE95UIbnF2SxHL
-	eV3catX6Kr9HOlccvX9HWfk2rWxgRLnS2snkGMUAdexGE1yx+nzJzjA5DY2Sidlg
-	9QlsIXgHuvHr8fBbCDwT0zIP6FDkZc59M6572gJT7lIt73TBq8qTVmu6Fg8k2W+U
-	uwX4C4RGzCWq3Vxl7bsMB+/MVcKP3Av3Ammn50865pkWQbg3U2+wTzfb8SxQRmaP
-	HxmHkd+dCWESZqHj42ftBpw4ArsVTLCCg12fvbxGBSV1tXJS+LrlZ+4f5GcetHFL
-	OwXMSI4kqEp8oSCGAvKkVXVTxaJrRpjd7RZJtZag6VscSgxA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3ncyru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 11:59:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBBxRLf012567
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 11:59:27 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Dec 2024 03:59:25 -0800
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Prashanth K
-	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
-Subject: [PATCH] usb: gadget: f_uac2: Fix incorrect setting of bNumEndpoints
-Date: Wed, 11 Dec 2024 17:29:15 +0530
-Message-ID: <20241211115915.159864-1-quic_prashk@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733918375; c=relaxed/simple;
+	bh=MNkBA6TIZGvG0Roqh9owptn5qC3KsvWV8eG6jC0NJlU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RaZ4FwLl8UT4dQU3dOzJ9DD1umOIuzhwR+Z/J6i6jnpuap2Smukupd9KVKOUmIoBQIIiB85baTEu+pB9pdij7tCVG1vYvfN48G/XXzsLGzKlIh7RfXGnXoKwbsv+v+/anu18To+XYpf1n4i09LghHAXU/85Sdxa9YpRVXQ1wr3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMBJ15UY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7D6C4CEE0;
+	Wed, 11 Dec 2024 11:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733918375;
+	bh=MNkBA6TIZGvG0Roqh9owptn5qC3KsvWV8eG6jC0NJlU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dMBJ15UYkDC/eYnczfESv5opqwm0EnpWmXVK+LMGDSqZ1P9Yn4z+XMvkr7iKWEUh4
+	 t+yIjBQ9DIIjHnUQuy718busqMpZMbIqGneq0hIBH/kH0AzvQnnS7SfGkvonzMIIrO
+	 plrfhenxeWU1/VfED2g4GvfM4X8k6RwbKK9pfV0BjPs9GP6GoPstULMGWYRi7Ws4A7
+	 gHYHT6iJ8NNlAoYuuS3zA3AGzNlztbJysn5je6QBFTMXSRj8JXB3T8wcU0+/kO/NxB
+	 V74o9NZCYQTZmaS6NRLtAvidYaubmdpK3KJBRpjWOIz3lCVDPjuS6DM906VM6uJi30
+	 dyLRsHSq5BGFA==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71e0d4f2874so428337a34.2;
+        Wed, 11 Dec 2024 03:59:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUMQJFOnfTsnDtT5uV9ZP236qSRd+mDNKEjDvWW7Tdl+XyFxMlSOyynde5mhu5+16RotCIhDE/cSAA=@vger.kernel.org, AJvYcCW8ShasSgG7bQnBthY7Oh0NxwoqYq1ndkXgjYZqx1yttMf6Xl2PRfP+2vxeok+p329p7riAVlFz3c2Wgj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2vozm6n0RZD/jI4OVgbxAj1BEBE9DuoBLN1Kfvn3NG32ScNE+
+	Qi5ra9DLLvptZGv9fqDzVSj/emM1F+iAnqgDJugYRIm2KbjAhqClFTeD2eLxWcF8YTy/PVusGEK
+	lNzaWKs2dL5/xrNizwyX7I9COVQE=
+X-Google-Smtp-Source: AGHT+IENekl+hCD5HhEEY9wNj8jUl9RU7uJ+CBX7y3We2HOmIlquZ6N4zE+5e0b2LivS5aqdyboY6z9FE7cexSMSf9Y=
+X-Received: by 2002:a05:6830:670b:b0:71d:f343:5f5b with SMTP id
+ 46e09a7af769-71e197e2e59mr1288502a34.12.1733918374423; Wed, 11 Dec 2024
+ 03:59:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nW7eMYvWMyMIYOr_V8V1HqY84IAUFcvJ
-X-Proofpoint-ORIG-GUID: nW7eMYvWMyMIYOr_V8V1HqY84IAUFcvJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- mlxlogscore=476 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412110087
+References: <5861970.DvuYhMxLoT@rjwysocki.net> <2989520.e9J7NaK4W3@rjwysocki.net>
+ <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com> <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
+ <f16b11fa-bb2d-4e7e-81f9-80cf3a1f7a6c@arm.com>
+In-Reply-To: <f16b11fa-bb2d-4e7e-81f9-80cf3a1f7a6c@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 11 Dec 2024 12:59:23 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hyWN8hzw2k7JjO9Ap4Nx-sqpXYwzHQPo-dOxr+nxA4GA@mail.gmail.com>
+Message-ID: <CAJZ5v0hyWN8hzw2k7JjO9Ap4Nx-sqpXYwzHQPo-dOxr+nxA4GA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for EAS
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently afunc_bind sets std_ac_if_desc.bNumEndpoints to 1 if
-controls (mute/volume) are enabled. During next afunc_bind call,
-bNumEndpoints would be unchanged and incorrectly set to 1 even
-if the controls aren't enabled.
+On Wed, Dec 11, 2024 at 12:44=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 12/11/24 11:29, Rafael J. Wysocki wrote:
+> > On Wed, Dec 11, 2024 at 11:33=E2=80=AFAM Christian Loehle
+> > <christian.loehle@arm.com> wrote:
+> >>
+> >> On 11/29/24 16:00, Rafael J. Wysocki wrote:
+> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>
+> >>> Make it possible to use EAS with cpufreq drivers that implement the
+> >>> :setpolicy() callback instead of using generic cpufreq governors.
+> >>>
+> >>> This is going to be necessary for using EAS with intel_pstate in its
+> >>> default configuration.
+> >>>
+> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>> ---
+> >>>
+> >>> This is the minimum of what's needed, but I'd really prefer to move
+> >>> the cpufreq vs EAS checks into cpufreq because messing around cpufreq
+> >>> internals in topology.c feels like a butcher shop kind of exercise.
+> >>
+> >> Makes sense, something like cpufreq_eas_capable().
+> >>
+> >>>
+> >>> Besides, as I said before, I remain unconvinced about the usefulness
+> >>> of these checks at all.  Yes, one is supposed to get the best results
+> >>> from EAS when running schedutil, but what if they just want to try
+> >>> something else with EAS?  What if they can get better results with
+> >>> that other thing, surprisingly enough?
+> >>
+> >> How do you imagine this to work then?
+> >> I assume we don't make any 'resulting-OPP-guesses' like
+> >> sugov_effective_cpu_perf() for any of the setpolicy governors.
+> >> Neither for dbs and I guess userspace.
+> >> What about standard powersave and performance?
+> >> Do we just have a cpufreq callback to ask which OPP to use for
+> >> the energy calculation? Assume lowest/highest?
+> >> (I don't think there is hardware where lowest/highest makes a
+> >> difference, so maybe not bothering with the complexity could
+> >> be an option, too.)
+> >
+> > In the "setpolicy" case there is no way to reliably predict the OPP
+> > that is going to be used, so why bother?
+> >
+> > In the other cases, and if the OPPs are actually known, EAS may still
+> > make assumptions regarding which of them will be used that will match
+> > the schedutil selection rules, but if the cpufreq governor happens to
+> > choose a different OPP, this is not the end of the world.
+>
+> "Not the end of the world" as in the model making incorrect assumptions.
+> With the significant power-performance overlaps we see in mobile systems
+> taking sugov's guess while using powersave/performance (the !setpolicy
+> case) at least will make worse decisions.
+> See here for reference, first slide.
+> https://lpc.events/event/16/contributions/1194/attachments/1114/2139/LPC2=
+022_Energy_model_accuracy.pdf
 
-Fix this by resetting the value of bNumEndpoints to 0 on every
-afunc_bind call.
+I've never said it won't make worse decisions, but whoever decides
+which governor to use should be able to check which one is better.
 
-Fixes: eaf6cbe09920 ("usb: gadget: f_uac2: add volume and mute support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
----
- drivers/usb/gadget/function/f_uac2.c | 1 +
- 1 file changed, 1 insertion(+)
+> What about the config space, are you fine with everything relying on
+> CONFIG_CPU_FREQ_GOV_SCHEDUTIL?
 
-diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
-index ce5b77f89190..9b324821c93b 100644
---- a/drivers/usb/gadget/function/f_uac2.c
-+++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -1185,6 +1185,7 @@ afunc_bind(struct usb_configuration *cfg, struct usb_function *fn)
- 		uac2->as_in_alt = 0;
- 	}
- 
-+	std_ac_if_desc.bNumEndpoints = 0;
- 	if (FUOUT_EN(uac2_opts) || FUIN_EN(uac2_opts)) {
- 		uac2->int_ep = usb_ep_autoconfig(gadget, &fs_ep_int_desc);
- 		if (!uac2->int_ep) {
--- 
-2.25.1
+Yes, that's fine.
 
+I think that schedultil should be the default governor for EAS, but I
+don't see why it should be regarded as the only one possible and so
+enforced.
 
