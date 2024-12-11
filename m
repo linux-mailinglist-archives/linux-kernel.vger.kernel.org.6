@@ -1,88 +1,109 @@
-Return-Path: <linux-kernel+bounces-442112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388519ED822
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:09:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0B89ED827
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15985162EEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9898018848D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193EE20B81C;
-	Wed, 11 Dec 2024 21:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60A820C030;
+	Wed, 11 Dec 2024 21:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qav6MAm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FLX8jkCF"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECB1259498;
-	Wed, 11 Dec 2024 21:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8581DC9BB
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733951335; cv=none; b=inlRj4CHF6rZlKK8kbySJRgCGkbfF/yPVvnzmrf086dAEJFQkSp7jIJe4ADyTu8fdtMNoM+C895vaqqhl7fjH25+4V7zKqwQDV6pWGh3dBoFjdxlm8+OljPuNFv6pP+PSYhpXsZzAX+/EGnE9mfUmF5WtV+E3VanQyG1SUPjQt4=
+	t=1733951365; cv=none; b=OqwVVqx3qSfRYaVH8gyr2FfUTCF8xwRyZpHUoM7Xuc7ll3+u1JgLaZkMt8g7PTYWVm98iU9063b+vUIm2NL6g7x6y/riG8quhGK2YDfBqnIxUC/lJ6HvE2u2mtFGgbAcw5L4U7tapvs0D08wi16pzODJ9gPYhKPmxstIBm6Vfdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733951335; c=relaxed/simple;
-	bh=n3mGI7Wt8nt1KnqU9h5UNwpt6C2Cfg4J3xCsGHL+n68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RuZ29l2AOuQX7nJ105YvnOUrOUfEGF3dQ24aOEfhhyKgGJDJN8Lxw2Hv1sNs9jgIWLFQqKefYD8SRWswA+1KzcFhXYWnkmgDFkk5TOvJa5KnPDN1eTvpZUaMcgEXMOB0SfDiZlemYJM1syPMSH+k8DgmR66KMa71CWEyscMsK/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qav6MAm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A652C4CED2;
-	Wed, 11 Dec 2024 21:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733951335;
-	bh=n3mGI7Wt8nt1KnqU9h5UNwpt6C2Cfg4J3xCsGHL+n68=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qav6MAm1mnzI5DFjzb6P9JtdL1B+5N4sIy1Yi5LFPEpmfLYOyk4abOzgcPbF/ywM/
-	 qKqo3S2M/U1xFOWZxiuneMv95yUitPv8AeiWOv5SdNMOcKEmcuwUzC69U8mv05eYb+
-	 OPWKHgDZb6JasOEUj42DsK3U7VgEBVHJRvuEoNJuOjF+fi/nwUrmELNUW33T2LKeX4
-	 atkErFvnjayPWsrx3sQc8RweJAClgvJn97saH0w52X8DNZ7seOE6JfvYi8vtYK8ieU
-	 42xCBs5pbLK+XUbADg3Ak1XkP18pfm5mOWqjOD7BknWGpNnALQ0Bv5Kv+oMI5RDjVy
-	 EaX0bv9hh91DQ==
-Date: Wed, 11 Dec 2024 15:08:53 -0600
-From: Rob Herring <robh@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/5] soc: renesas: Add system controller support for
- RZ/G3E SoC
-Message-ID: <20241211210853.GA3708218-robh@kernel.org>
-References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1733951365; c=relaxed/simple;
+	bh=Ca8kqVvAVdINGWA1VQnxrxlJaZR1N1d7Xc+tsgI0o3k=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fsnXLt9yf6rOBlJdem//99y/F1uJ7TqYbC7dMqFfrO7e2MX/0xqDWQZLJHtPAE8/4W1WeXVP2gOkt/YmK5yoSLoEml/C6DHeFLZZWJzawKixz2f46t1rKRqQ7iTHSEMEUE/ZR/XeHkHckC0IOCtFCi8up89jHkt8A6D51+wy9to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FLX8jkCF; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ef7f8acc33so65937367b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:09:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733951362; x=1734556162; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pQDqVSakcr3mxA+wnwNeXmA0JdxuRMpWtJWg3CDfgIg=;
+        b=FLX8jkCFhRuXrU7QylKC97gLdnErAU2u5l++JsXFYXZMunPWKoN0aFIp3bPRnpnA6n
+         u8Q7LdYqHut0ejhn7GcCfv+psp8UJXikckcA3bi6HF8YD9BtFun0VSFvsyEG9MfApL5P
+         mxiTZBm6T6JEOxkN5AnhEiOfxtJHT8jDJxnXM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733951362; x=1734556162;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pQDqVSakcr3mxA+wnwNeXmA0JdxuRMpWtJWg3CDfgIg=;
+        b=jHfsYjodfkoeEbmpo0LIiQ7Car6Yj2hIunFT1xBNmfuYhjT4wI2uYXm4sguPAumkJN
+         cmAsA3hHfzKICzJH5Z/ys5EKu712znb5+zyg/ecZbrYlF2MuKF5wEA84N8APPoVI6y5u
+         SLG+uKYIe/GbmjaENsoM3F6vm6f+idhK+HHen2rGW1xs5qfsq/0XSc2iNqRoQSAv4ZTx
+         VGvqxOnNJ4yeIeEu5hLkIT7+sjVDyGReVIINxn+Sabt25a8hNA/MDcflAULXCDBqu9YQ
+         k6KyqqmseXPOziCGXRXeqh6PqJJwrQtkCAtS+aalPL6vANdNQvwDCpnowPosJx/rG11b
+         RgWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXb4Ijc0EnYqqLqEi07uP/+b4Sv8yFfyjWQsrTx8F/V7iR9xAWgzy20dryzHEsmHc4NoYlmGq1ILYPo+lI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwP/YDRy8sBjnXuZbes+rpawKjx8MsIj2Ml7SCIG1zERJDE+wi
+	IF9fzA0rEKSWSfebidQg0EIi57nlVx9Ui9NgMQFOu/aEbUdFBXG5qieGvPw96nxKrtM7MlV7r09
+	S4gwbHWT4mAFKx8Sm7JJXpMvzEwR68gP+8TRO
+X-Gm-Gg: ASbGnctm5GrwxNNzFhznkdSkcOPMyqXrY8s5PAdbozUzsOOjU7MWlm18UUnGZpAPxnX
+	KWbtqmUT/dhEYq2AOa6KjlbO1iTFOfVJyi2tcJP4TfUEUqKFEVFNLXSIEpJymT/U=
+X-Google-Smtp-Source: AGHT+IHQYD+rGSnTOhQP00f7jJc0s1qfCuYpNpAifu02eUFcwunSxMKsHSx1sXnfiWl+na08kVCW69bpJsghQkOvSbs=
+X-Received: by 2002:a05:690c:64c4:b0:6ef:70ae:ca16 with SMTP id
+ 00721157ae682-6f19e86a455mr10895707b3.39.1733951362509; Wed, 11 Dec 2024
+ 13:09:22 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 13:09:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-5-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-5-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 13:09:21 -0800
+Message-ID: <CAE-0n53hKPr2WsGWTy24qfsSO4TbmtnY5bOQQ51UuW4RPUz0Dg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/14] drm/msm/dp: move I/O functions to global header
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Dec 06, 2024 at 10:25:54PM +0100, John Madieu wrote:
-> This patch series adds support for the RZ/G3E system controller and extends
-> the existing RZ/V2H(P) system controller to support syscon. The RZ/G3E
-> system controller allows detecting various SoC features like core count,
-> NPU availability, and CA55 PLL configuration.
-> 
-> Key features:
-> - Syscon support for both RZ/V2H and RZ/G3E system controllers
-> - Detection of quad/dual core configuration
-> - Detection of Ethos-U55 NPU presence
-> - Validation of CA55 PLL frequency setting
-> - SoC-specific extended identification through callbacks
+Quoting Dmitry Baryshkov (2024-12-02 02:06:35)
+> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
+> index 13486c9c8703748e69e846be681951368df0a29e..2c500dc0898edfe1d6bdac2eedf3c1b78056cf6b 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
+> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
+[...]
+> +
+> +static inline u32 msm_dp_read_p0(struct msm_dp_catalog *msm_dp_catalog,
+> +                              u32 offset)
+> +{
+> +       /*
+> +        * To make sure interface reg writes happens before any other operation,
+> +        * this function uses writel() instread of writel_relaxed()
 
-This series and some other questions about syscon prompted me to look 
-into syscon driver a bit. Consider this resulting series[1] in context 
-with your changes.
+It's readl_relaxed() below.
 
-Rob
-
-[1] https://lore.kernel.org/all/20241211-syscon-fixes-v1-3-b5ac8c219e96@kernel.org/
+> +        */
+> +       return readl_relaxed(msm_dp_catalog->p0_base + offset);
+> +}
 
