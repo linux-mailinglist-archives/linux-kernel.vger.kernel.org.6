@@ -1,211 +1,322 @@
-Return-Path: <linux-kernel+bounces-442059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F119ED774
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:47:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EBA9ED776
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCAB91674B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18FEF188942B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C08622689C;
-	Wed, 11 Dec 2024 20:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54AE20ADC5;
+	Wed, 11 Dec 2024 20:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHV2rwch"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XP/QQoT0"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668DD2036F6;
-	Wed, 11 Dec 2024 20:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595832036F6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733950031; cv=none; b=pqIUDbT5cl/INj/oofnuAA5QHbd4/eFLZHryhVB0D912N3vz2145R8WGbz+rqFet7JUTs2iFCZBx11mdaiMLyK8iSahdA1bYk+Px9LuuUt/+XOklHWP+5d7jaxTZW5Q/UV0AmY+pGO+EjQouBZYRQUSDHMN4goHWWEK9Z87zEWQ=
+	t=1733950050; cv=none; b=LBXT7ir+vFlOnKLeQ+Dhy0dlt667PnuAcCC0Ep5xn9Dv6m1E8u/qX2vGjFPzt8wxL/YifJYuq2GblBQYT77EJkx5O0hkifdO33lEDk5XLW/Pm75w/m12wHb2Kmcx9jm6J+sr1CbgWLTLMGBv6N6scVFvF7NzYGBxn0yfwGjwFEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733950031; c=relaxed/simple;
-	bh=aknAFx8VaUwPVga7KKu4RUZNHyfZuQaVaB1D3qt7qZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ohjzOWKYRnDh+qpHVoOjxyriUiGulEFGNBKnmMOaK7eQz5PaGCY9Y9PN7blJ/Y9ocgRFF6wU/a2O3YRXtUQ1QbBipQK93xPvoXhpgPxLwaKvjbjLOM/rOTJXy+ECiGUMJcDhCv8jqB+CzFSlAow4iKR/PDEOgzyw2Enn0HFUP9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHV2rwch; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69C9C4CED2;
-	Wed, 11 Dec 2024 20:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733950030;
-	bh=aknAFx8VaUwPVga7KKu4RUZNHyfZuQaVaB1D3qt7qZ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=QHV2rwch1gz59dvCZw7JoUC2YzoswfWi76w8T8rY/qqAxs688/XXJGJBv3TAGBpp5
-	 yYDg7ahXE+Ejki3N83rRS6ysfCK9v4XlLwwJKhPfR5ZijS8wQz1PZivpNbKNKsjjVO
-	 6TZ/b/cqGF6d++KC6QfNhZDi8Uf+GPB7+ztgmftdPXVN8grzfNMmcs0ahHNWYtPb1T
-	 CEVOOHbJohTaHYVWKW3au0/ZZAj4WVzR4vfIPB7cOgTpuWJqlR6at7IDrEgPlyDyTV
-	 Lfnn/lZNreZYil7ihPnRBzUtwkpcbUhqE+9g8PNO0JN9WCv5peVnziOvr8E8RZMVay
-	 vTUKhHoSbndtg==
-Date: Wed, 11 Dec 2024 14:47:09 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jian-Hong Pan <jhp@endlessos.org>,
-	Alex Williamson <alex.williamson@redhat.com>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"David E. Box" <david.e.box@linux.intel.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH v13] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
- child and parent's L1SS configuration
-Message-ID: <20241211204709.GA3305716@bhelgaas>
+	s=arc-20240116; t=1733950050; c=relaxed/simple;
+	bh=SVXI7B4tQFbrr4uL1gPWa7TxmcpWGgeMMwIzdJtp/VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dv3f1Wz5F0YgGR4fK6poHSkkqkhRSOtl8D2bdL1bZ0s19tF2MjCtSQHj8aS359/IOZsWS+YQQQT72txLmxPQe0wai+H0zOAu5W1C1vH/L5DWYMyXo7wu7+ZcVsuyvPeJtcAFU1ZkTMkMZL546GAPbaLfQOAK/a0a9IxZYSYMerM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XP/QQoT0; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fdc6e04411so1823943a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:47:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733950046; x=1734554846; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXW56JDFSeahHkq9DCvmGpFWzpWQTdGbuHyzCs7XuxU=;
+        b=XP/QQoT0nLj+sFak7hSUojDZMKU5yzU11jrt2Z/uTzT7W5FTi3uXsa8JoDUZaAqiLM
+         gd/Yr1dnsAfx9mNp0kECPoeRFUUu13vRhduHko83wv7UAgFNp2dSGs6Aus93x1Fdk+7j
+         3XGxGZZC46j26lRbYYuYLj5Asb6nQgMH9efZERPkdfI3Hnv2tTdSNuHz7pYi1M+4y3sQ
+         190rMsXd56FPkNLkIyApGnhjgtBboHQgoHBte5iHTv6BZxluUr319xuW4ou4H0NAQMFA
+         jtEXTihJWhH0yFoZaNAqAAFz8BplJ+waP918eHli5FspMKSSP53pslJPDfKFi73uhA4q
+         lYLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733950046; x=1734554846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JXW56JDFSeahHkq9DCvmGpFWzpWQTdGbuHyzCs7XuxU=;
+        b=uYfZzI8aSZMha4sYj4D/xsuoSO9sIh+DhULbDX91v2WXMpd4EZVwlJQMn2ZsYQz51E
+         kdYweE+WAtf5aiY+opuVkFaK9ErDXStxOpxEVz/nO8UpuapRmNWaZ8ePqggSrMr3gtTl
+         jQdtrkjoR/8rkkU+ES+4Jqmm8KCDMX2xazpuqw+rBNWPw2vAjCpy2kmHpI4konQJFDPW
+         pk84oZgh7YYJff8R0SgmOHX5B+RPEaJyP231DJgOOF1PJ64AT7j3J8lyGPLL+fHztSkz
+         JwIkrxG/Lk6h/NBe+LMPB0x4WbRlcpICQKbpjQl09f3f5/mWetOe41ZC2uGeUxPyrpkY
+         r4OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvZdiNHoRaFAH3huxCpYysa7gV8x9/aWOtBIkC4WTYww1f8uU2rVklq5zKRZzeiOGMegviK4HVzFyoUjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/Q1mebXDmswjjPVVD3h1L/afh5iEusPO0e+Pu5UmjbALkfUjU
+	4P6F5Y7q8+CHnvhnpyJc87jkh4bzNCvS1ZPjHw5yup1M5OOoJYlt
+X-Gm-Gg: ASbGnctx3ZZsgR62HHLb6Qo6iOxVqSLILxK87EsiPT4wXeyEx9+wsZS6UcTXUEk2SuW
+	3Jiwdy2prxkRnLMxRUBcXG9HM2DurO7lNYAkT0w+YjbPDeFNXRYrkf/ef4vw5F7HGGd1BB5o+TF
+	HRJPDxSqth3gcSDCvgcbnPlH6dj1o9IJ0jFRtPpiFBTfbWUS8pundAcHWaa0/rGxfaWQOmvGrdy
+	lZS2/IwsGOAcP6nUgvqh8C9I8gkZgOYWemcKFvXd205EmJrlgHB/A==
+X-Google-Smtp-Source: AGHT+IH2KYO+HZRq6TW/3DEvDjNzj7umUXBq0pORHBOAazfQ94IC2gF8iV2GRBVTdM/bTKMpiwKzCw==
+X-Received: by 2002:a17:90b:1c88:b0:2ee:d63f:d73 with SMTP id 98e67ed59e1d1-2f127fbad41mr6332439a91.11.1733950045885;
+        Wed, 11 Dec 2024 12:47:25 -0800 (PST)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef7315fd3asm9679277a91.44.2024.12.11.12.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 12:47:25 -0800 (PST)
+Date: Wed, 11 Dec 2024 12:47:22 -0800
+From: Yury Norov <yury.norov@gmail.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] sched_ext: Introduce NUMA aware idle cpu kfunc
+ helpers
+Message-ID: <Z1n6WgfTBBBIH2of@yury-ThinkPad>
+References: <20241209104632.718085-1-arighi@nvidia.com>
+ <20241209104632.718085-5-arighi@nvidia.com>
+ <Z1nPPhe_83lBTna4@yury-ThinkPad>
+ <Z1n0KLQcA-F2DVa8@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241115072200.37509-3-jhp@endlessos.org>
+In-Reply-To: <Z1n0KLQcA-F2DVa8@gpd3>
 
-[+to Alex, +cc kvm]
+On Wed, Dec 11, 2024 at 09:20:56PM +0100, Andrea Righi wrote:
+> On Wed, Dec 11, 2024 at 09:43:26AM -0800, Yury Norov wrote:
+> > On Mon, Dec 09, 2024 at 11:40:58AM +0100, Andrea Righi wrote:
+> > > Add the following kfunc's to provide scx schedulers direct access to
+> > > per-node idle cpumasks information:
+> > > 
+> > >  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
+> > >  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
+> > >  s32 scx_bpf_pick_idle_cpu_node(int node,
+> > >                                 const cpumask_t *cpus_allowed, u64 flags)
+> > >  int scx_bpf_cpu_to_node(s32 cpu)
+> > > 
+> > > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> > > ---
+> > >  kernel/sched/ext.c                       | 96 +++++++++++++++++++++++-
+> > >  tools/sched_ext/include/scx/common.bpf.h |  4 +
+> > >  tools/sched_ext/include/scx/compat.bpf.h | 19 +++++
+> > >  3 files changed, 117 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> > > index d0d57323bcfc..ea7cc481782c 100644
+> > > --- a/kernel/sched/ext.c
+> > > +++ b/kernel/sched/ext.c
+> > > @@ -433,6 +433,7 @@ struct sched_ext_ops {
+> > >  	 * - scx_bpf_select_cpu_dfl()
+> > >  	 * - scx_bpf_test_and_clear_cpu_idle()
+> > >  	 * - scx_bpf_pick_idle_cpu()
+> > > +	 * - scx_bpf_pick_idle_cpu_node()
+> > >  	 *
+> > >  	 * The user also must implement ops.select_cpu() as the default
+> > >  	 * implementation relies on scx_bpf_select_cpu_dfl().
+> > > @@ -955,6 +956,8 @@ static struct cpumask *get_idle_cpumask_node(int node)
+> > >  	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
+> > >  		return idle_masks[0]->cpu;
+> > >  
+> > > +	if (node < 0 || node >= num_possible_nodes())
+> > > +		return NULL;
+> > 
+> > 1. This sanity should go before the check above.
+> > 2. In-kernel users don't need to do sanity checks. BPF users should,
+> >    but for them you need to move it in BPF wrapper.
+> > 3. -1 is a valid parameter, means NUMA_NO_NODE. 
+> 
+> Ok, but what would you return with NUMA_NO_NODE, in theory we should return
+> a global system-wide cpumask, that doesn't exist with the per-node
+> cpumasks. Maybe just return cpu_none_mask? That's what I've done in the
+> next version, that seems safer than returning NULL.
+ 
+To begin with, you can just disallow NUMA_NO_NODE for this interface.
+Put a corresponding comment or warning, and you're done.
 
-On Fri, Nov 15, 2024 at 03:22:02PM +0800, Jian-Hong Pan wrote:
-> PCI devices' parameters on the VMD bus have been programmed properly
-> originally. But, cleared after pci_reset_bus() and have not been restored
-> correctly. This leads the link's L1.2 between PCIe Root Port and child
-> device gets wrong configs.
+On the other hand, you can treat it as 'I don't care' hint and return
+a cpumask for any node that has idle CPUs.
 
-17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for
-suspend/resume") appeared in v6.9 and added a bug in the save/restore
-path: we save the device L1SS state, but restore both the device L1SS
-state and the parent's L1SS state (when the parent state may be junk)
-afterwards.
+Returning cpu_none_mask?.. OK, it's possible, but what does that
+bring? User will have to traverse empty mask just to find nothing.
+I'd rather disallow NUMA_NO_NODE than returning something useless.
 
-Jian-Hong sees this on VMD, which makes sense because vmd uses
-pci_reset_bus() when enabling the VMD domain.
+> > >  	return idle_masks[node]->cpu;
+> > >  }
+> > >  
+> > > @@ -963,6 +966,8 @@ static struct cpumask *get_idle_smtmask_node(int node)
+> > >  	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
+> > >  		return idle_masks[0]->smt;
+> > >  
+> > > +	if (node < 0 || node >= num_possible_nodes())
+> > > +		return NULL;
+> > >  	return idle_masks[node]->smt;
+> > >  }
+> > >  
+> > > @@ -7469,6 +7474,16 @@ __bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
+> > >  	return nr_cpu_ids;
+> > >  }
+> > >  
+> > > +/**
+> > > + * scx_bpf_cpu_to_node - Return the NUMA node the given @cpu belongs to
+> > > + */
+> > > +__bpf_kfunc int scx_bpf_cpu_to_node(s32 cpu)
+> > > +{
+> > > +	if (cpu < 0 || cpu >= nr_cpu_ids)
+> > > +		return -EINVAL;
+> > > +	return cpu_to_node(cpu);
+> > > +}
+> > 
+> > I believe this wrapper should be declared somewhere in
+> > kernel/sched/topology.c, and better be a separate patch.
+> 
+> Maybe kernel/bpf/helpers.c? And name it bpf_cpu_to_node()?
 
-But this should be a problem for any device reset, so I added you,
-Alex, in case you've seen this with the resets VFIO does?
+Sure, even better
+ 
+> > > +
+> > >  /**
+> > >   * scx_bpf_get_possible_cpumask - Get a referenced kptr to cpu_possible_mask
+> > >   */
+> > > @@ -7499,11 +7514,32 @@ __bpf_kfunc void scx_bpf_put_cpumask(const struct cpumask *cpumask)
+> > >  	 */
+> > >  }
+> > >  
+> > > +/**
+> > > + * scx_bpf_get_idle_cpumask_node - Get a referenced kptr to the idle-tracking
+> > > + * per-CPU cpumask of a target NUMA node.
+> > > + *
+> > > + * Returns an empty cpumask if idle tracking is not enabled, if @node is not
+> > > + * valid, or running on a UP kernel.
+> > > + */
+> > > +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
+> > > +{
+> > > +	if (!static_branch_likely(&scx_builtin_idle_enabled)) {
+> > > +		scx_ops_error("built-in idle tracking is disabled");
+> > > +		return cpu_none_mask;
+> > > +	}
+> > > +	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
+> > > +		scx_ops_error("per-node idle tracking is disabled");
+> > > +		return cpu_none_mask;
+> > > +	}
+> > 
+> > Nub question: is it possible that scx_builtin_idle_per_node is enable,
+> > but scx_builtin_idle_enabled not? From my naive perspective, we can't
+> > enable per-node idle masks without enabling general idle masks. Or I
+> > mislead it?
+> 
+> In theory a BPF scheduler could set SCX_OPS_BUILTIN_IDLE_PER_NODE (without
+> SCX_OPS_KEEP_BUILTIN_IDLE) in .flags while implementing ops.update_idle().
+> 
+> In this way we would have scx_builtin_idle_enabled==false and
+> scx_builtin_idle_per_node==true, which doesn't make much sense, so we
+> should probably handle this case in validate_ops() and trigger an error.
+> 
+> Good catch!
+> 
+> > 
+> > > +
+> > > +	return get_idle_cpumask_node(node) ? : cpu_none_mask;
+> > > +}
+> > >  /**
+> > >   * scx_bpf_get_idle_cpumask - Get a referenced kptr to the idle-tracking
+> > >   * per-CPU cpumask of the current NUMA node.
+> > >   *
+> > > - * Returns NULL if idle tracking is not enabled, or running on a UP kernel.
+> > > + * Returns an emtpy cpumask if idle tracking is not enabled, or running on a UP
+> > > + * kernel.
+> > >   */
+> > >  __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(void)
+> > >  {
+> > > @@ -7515,12 +7551,35 @@ __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(void)
+> > >  	return get_curr_idle_cpumask();
+> > >  }
+> > >  
+> > > +/**
+> > > + * scx_bpf_get_idle_smtmask_node - Get a referenced kptr to the idle-tracking,
+> > > + * per-physical-core cpumask of a target NUMA node. Can be used to determine
+> > > + * if an entire physical core is free.
+> > > + *
+> > > + * Returns an empty cpumask if idle tracking is not enabled, if @node is not
+> > > + * valid, or running on a UP kernel.
+> > > + */
+> > > +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
+> > > +{
+> > > +	if (!static_branch_likely(&scx_builtin_idle_enabled)) {
+> > > +		scx_ops_error("built-in idle tracking is disabled");
+> > > +		return cpu_none_mask;
+> > > +	}
+> > > +	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
+> > > +		scx_ops_error("per-node idle tracking is disabled");
+> > > +		return cpu_none_mask;
+> > > +	}
+> > 
+> > Can you add vertical spacing between blocks?
+> 
+> You mean a blank between the two blocks, right?
 
-We also save/restore for suspend, but I suppose we don't notice the
-problem there because in that case we save state for *all* devices,
-so the parent state should be valid when we restore.
+Yes
 
-> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
-> bridge and NVMe device should have the same LTR1.2_Threshold value.
-> However, they are configured as different values in this case:
+> Anyway, ...
 > 
-> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
->   ...
->   Capabilities: [200 v1] L1 PM Substates
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=0us LTR1.2_Threshold=0ns
->     L1SubCtl2: T_PwrOn=0us
+> > 
+> > Also, because you use this construction more than once, I think it
+> > makes sense to make it a helper.
 > 
-> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
->   ...
->   Capabilities: [900 v1] L1 PM Substates
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=0us LTR1.2_Threshold=101376ns
->     L1SubCtl2: T_PwrOn=50us
+> With a proper error check in validate_ops() we can just get rid of the
+> scx_builtin_idle_enabled block and simply check scx_builtin_idle_per_node.
 
-I think T_PwrOn should also be the same for both devices, FWIW.
+But still, having a helper is better than opencoding the same 4-lines
+pattern again and again
 
-In fact, I think L1SS should be configured identically for both ends
-of the link, with the exceptions of Link Activation and
-Common_Mode_Restore_Time, which are RsvdP for the Upstream Port.
-
-> Here is VMD mapped PCI device tree:
+> > > +
+> > > +	return get_idle_smtmask_node(node) ? : cpu_none_mask;
+> > > +}
+> > > +
+> > >  /**
+> > >   * scx_bpf_get_idle_smtmask - Get a referenced kptr to the idle-tracking,
+> > >   * per-physical-core cpumask of the current NUMA node. Can be used to determine
+> > >   * if an entire physical core is free.
+> > >   *
+> > > - * Returns NULL if idle tracking is not enabled, or running on a UP kernel.
+> > > + * Returns an empty cumask if idle tracking is not enabled, or running on a UP
+> > > + * kernel.
+> > >   */
+> > >  __bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask(void)
+> > >  {
+> > > @@ -7569,6 +7628,35 @@ __bpf_kfunc bool scx_bpf_test_and_clear_cpu_idle(s32 cpu)
+> > >  		return false;
+> > >  }
+> > >  
+> > > +/**
+> > > + * scx_bpf_pick_idle_cpu_node - Pick and claim an idle cpu from a NUMA node
+> > > + * @node: target NUMA node
+> > > + * @cpus_allowed: Allowed cpumask
+> > > + * @flags: %SCX_PICK_IDLE_CPU_* flags
+> > > + *
+> > > + * Pick and claim an idle cpu in @cpus_allowed from the NUMA node @node.
+> > > + * Returns the picked idle cpu number on success. -%EBUSY if no matching cpu
+> > > + * was found.
+> > > + *
+> > > + * Unavailable if ops.update_idle() is implemented and
+> > > + * %SCX_OPS_KEEP_BUILTIN_IDLE is not set or if %SCX_OPS_KEEP_BUILTIN_IDLE is
+> > > + * not set.
+> > > + */
+> > > +__bpf_kfunc s32 scx_bpf_pick_idle_cpu_node(int node, const struct cpumask *cpus_allowed,
+> > > +				      u64 flags)
+> > > +{
+> > 
+> > Sanity checks here?
 > 
-> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
->  | ...
->  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
->               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
+> Indeed, thanks!
 > 
-> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
-> restores NVMe's state before and after reset. Then, when it restores the
-> NVMe's state, ASPM code restores L1SS for both the parent bridge and the
-> NVMe in pci_restore_aspm_l1ss_state(). The NVMe's L1SS is restored
-> correctly. But, the parent bridge's L1SS is restored with a wrong value 0x0
-> because the parent bridge's L1SS wasn't saved by pci_save_aspm_l1ss_state()
-> before reset.
-> 
-> To avoid pci_restore_aspm_l1ss_state() restore wrong value to the parent's
-> L1SS config like this example, make pci_save_aspm_l1ss_state() save the
-> parent's L1SS config, if the PCI device has a parent.
-> 
-> Link: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6SdS4eG9oGpEX1wmnMLkQ@mail.gmail.com/
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218394
-> Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspend/resume")
-> Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: David E. Box <david.e.box@linux.intel.com>
-> ---
-> v9:
-> - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instead.
-> 
-> v10:
-> - Drop the v9 fix about drivers/pci/controller/vmd.c
-> - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_state()
->   and pci_restore_aspm_l1ss_state()
-> 
-> v11:
-> - Introduce __pci_save_aspm_l1ss_state as a resusable helper function
->   which is same as the original pci_configure_aspm_l1ss
-> - Make pci_save_aspm_l1ss_state invoke __pci_save_aspm_l1ss_state for
->   both child and parent devices
-> - Smooth the commit message
-> 
-> v12:
-> - Update the commit message
-> 
-> v13:
-> - Tweak the commit message to make it more like a general fix
-> - When pci_alloc_dev() prepares the pci_dev, it sets the pci_dev's bus.
->   So, let pci_save_aspm_l1ss_state() access pdev's bus directly.
-> - Add comment in pci_save_aspm_l1ss_state() to describe why it does not
->   save both the PCIe device and the parent's L1SS config like
->   pci_restore_aspm_l1ss_state() directly.
-> 
->  drivers/pci/pcie/aspm.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 28567d457613..0bcd060aab32 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -79,7 +79,7 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
->  			ERR_PTR(rc));
->  }
->  
-> -void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-> +static void __pci_save_aspm_l1ss_state(struct pci_dev *pdev)
->  {
->  	struct pci_cap_saved_state *save_state;
->  	u16 l1ss = pdev->l1ss;
-> @@ -101,6 +101,22 @@ void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
->  	pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
->  }
->  
-> +void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *parent = pdev->bus->self;
-> +
-> +	__pci_save_aspm_l1ss_state(pdev);
-> +
-> +	/*
-> +	 * Save parent's L1 substate configuration, if the parent has not saved
-> +	 * state. It avoids pci_restore_aspm_l1ss_state() restore wrong value to
-> +	 * parent's L1 substate configuration. However, the parent might be
-> +	 * nothing, if pdev is a PCI bridge.
-> +	 */
-> +	if (parent && !parent->state_saved)
-> +		__pci_save_aspm_l1ss_state(parent);
-> +}
-> +
->  void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
->  {
->  	struct pci_cap_saved_state *pl_save_state, *cl_save_state;
-> -- 
-> 2.47.0
-> 
+> -Andrea
 
