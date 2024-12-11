@@ -1,73 +1,78 @@
-Return-Path: <linux-kernel+bounces-441597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D929ED087
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED829ED088
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64701642F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5562D1885BA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47E11D6DBB;
-	Wed, 11 Dec 2024 15:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13301D9350;
+	Wed, 11 Dec 2024 15:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jOB9dOe+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ulUOh6HO"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055C1D619D
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BC71D90AC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932538; cv=none; b=qHS+kaW8JWdayvarZ0XGFW2+QbOqK/Is2spPVexhwMkBz7wEZnBWGS+yZcbUMiOpnY/A0+Z74vV43+HK+EvBYo+yyV+3kOS580VR2Kb6vh8ZuoIHmtvSwep/fBRoHndxx7nzbZyLOkEybFd9YAbSayXwPddNeCN4y/myk2NMRqw=
+	t=1733932547; cv=none; b=KCuiBCRRF+DkQglHtRzWNe/uNbc9INFSlF8axCruRGDkkJ/zcq3c6KpoH9Oio3yKi18Wb++lZiTpObYSduRDP3E9wBMvCbrUUWK53+fMnEbi0Uv5/0nlR+YS00elDBSkHydCbkFg1GLICe+hBjQwWOaxhYqSbs8eaUtMIR2dAwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932538; c=relaxed/simple;
-	bh=HmOxCZxjCiU378CSb7oKJA9Sc+js1sJTAFxOWMlCJmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CviuH4nRHI9BnFsMVQBVG4LuQIY02/7jEvjF8UKGhnSB6KdNzQtZQ2DX4k0NcLIbq3gEuwiluDlTFZzrOJ72JSTXj5PD5eEKkY9VCQtPOpUTlgiIG/kABd3SvQkstnNfVuc7p1CRkS8YLYJp8RTFBhl4r1pezvOxOh1WFULn55E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jOB9dOe+; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733932535; x=1765468535;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=HmOxCZxjCiU378CSb7oKJA9Sc+js1sJTAFxOWMlCJmE=;
-  b=jOB9dOe+Rc/6Vm8vUriZqd+4CXexpI8EKw5v9SeGzNKZrAJOdFMeCyD2
-   UJw8G5AvCohYfBMRh/nyrvjSSLmtuJJKLepbd3YLT/846v2yaf1eXDcrm
-   LZekh8xQJzuB9S+sySApCZz6E9bPz26JLDKFv72+TBE1Kx9c7tZLeIOC8
-   uC+7yHhkeR8dVE4EDYscKYEERuntBrr6TFvlf8EC9+BX4pxNGaJxJF5Q8
-   nhuFssu6Uo40gTed8+XIlR96V38zl965izaP6WI8KIBpCxgEEuS2aANQr
-   VJKa3Sz+LKN6gx0gQZi7kNMtNVJmOuklZntd91pvErJ4bCcPNUpmbqTYu
-   A==;
-X-CSE-ConnectionGUID: m5I0yyY8Sq6uErtKy6NFtw==
-X-CSE-MsgGUID: qIiuIMnCTqWG3ToyOzLGWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="44988549"
-X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
-   d="scan'208";a="44988549"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 07:55:35 -0800
-X-CSE-ConnectionGUID: UHIfsOldR3+nqNbRXD6RFA==
-X-CSE-MsgGUID: J0U5wcbMRZSxJwP6ZlSaoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="133238907"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 11 Dec 2024 07:55:34 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLP3j-0006pp-1K;
+	s=arc-20240116; t=1733932547; c=relaxed/simple;
+	bh=2bk3rd6Unupi94gDlp38KUWBsvkJXx2o6I8uEdDqUIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=USPdBBI5sgWECG1S2ZIMZ4sWn6KatESXe+N7ZJOxDq4g5HjpUeHR3bQ9th5KI2oQQp28XCtUv5uiAWMqEMzUCV/51IY9NlGNtAd3nOnKBLS6ZPtccOvxcPbIXOLOi+8qFOs2TYSnrc/AY0vVUkZxMbxLI9y7ySQPVyNpkFU1vVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ulUOh6HO; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nNWhv5561LH+95ZybovZ5QdJpH0cPUFUZxKRgUtXR3E=; b=ulUOh6HOqEKJ/+/0ZTK/7V4JHs
+	IYfIm3L3Fkn9lb8DFP5UyS6eX3eSLbEgzX29gw5Me/d9xkMQ//Hn+bJbR3pT4jN4rErOXi4eKbQGp
+	+OL+TBvpdG0l8l54bTeNZTfTEWl3xU5wsNCqV5TyfESZ5fsf+soeB60fmIsNqlJ4tbD1/59jcMOnH
+	SBoNQaErwL41M+p5wwp9jRoe3pWupX74UV5NihoTveX9a8DSi484J4WXGHkXi9QEvGeMz9AT0w79t
+	FFAyGZ3nPdkV4s5LaWpBgIO4/oM9EO+F2DWiUnOMCtOt5as48fE1m8hqzLQxacQ758xMBbNzsjrcd
+	L3MGkrlA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47116)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tLP3o-000493-1m;
+	Wed, 11 Dec 2024 15:55:36 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tLP3j-0004Rn-1O;
 	Wed, 11 Dec 2024 15:55:31 +0000
-Date: Wed, 11 Dec 2024 23:55:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Arinzon <darinzon@amazon.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Shay Agroskin <shayagr@amazon.com>
-Subject: drivers/net/ethernet/amazon/ena/ena_netdev.c:77 ena_tx_timeout()
- warn: inconsistent indenting
-Message-ID: <202412112324.Ybl6uMc0-lkp@intel.com>
+Date: Wed, 11 Dec 2024 15:55:31 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-mm@kvack.org, linux-rt-devel@lists.linux.dev,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 2/4] ARM: Disable HIGHPTE on PREEMPT_RT kernels
+Message-ID: <Z1m18yn67dsJRVWA@shell.armlinux.org.uk>
+References: <20241210160556.2341497-1-arnd@kernel.org>
+ <20241210160556.2341497-3-arnd@kernel.org>
+ <20241211134811.wM_UADhQ@linutronix.de>
+ <20241211140402.yf7gMExr@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,69 +81,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241211140402.yf7gMExr@linutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   f92f4749861b06fed908d336b4dee1326003291b
-commit: 071271f39ce833a3534d1fbd47174d1bed6d9326 net: ena: Add more information on TX timeouts
-date:   10 months ago
-config: arm-randconfig-r073-20241209 (https://download.01.org/0day-ci/archive/20241211/202412112324.Ybl6uMc0-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+On Wed, Dec 11, 2024 at 03:04:02PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2024-12-11 14:48:11 [+0100], To Arnd Bergmann wrote:
+> > I guess if you have boxes with 4GiB+ and can proof that the performance
+> > improves without HIGHPTE (since you don't have to map the page table).
+> > The question is then how much of low mem has to be used instead and when
+> > does it start to hurt.
+> 
+> Some numbers have been been documented in commit
+>    14315592009c1 ("x86, mm: Allow highmem user page tables to be disabled at boot time")
+> 
+> and I would like cite:
+> | We could probably handwave up an argument for a threshold at 16G of total
+> | RAM.
+> 
+> which means HIGHPTE would make sense with >= 16GiB of memory.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412112324.Ybl6uMc0-lkp@intel.com/
+However, there is more to consider.
 
-smatch warnings:
-drivers/net/ethernet/amazon/ena/ena_netdev.c:77 ena_tx_timeout() warn: inconsistent indenting
+32-bit Arm works out at the same for this:
 
-vim +77 drivers/net/ethernet/amazon/ena/ena_netdev.c
+    Assuming 768M of lowmem we have 196608 potential lowmem PTE
+    pages. Each page can map 2M of RAM in a PAE-enabled configuration,
+    meaning a maximum of 384G of RAM could potentially be mapped using
+    lowmem PTEs.
 
-    47	
-    48	static void ena_tx_timeout(struct net_device *dev, unsigned int txqueue)
-    49	{
-    50		enum ena_regs_reset_reason_types reset_reason = ENA_REGS_RESET_OS_NETDEV_WD;
-    51		struct ena_adapter *adapter = netdev_priv(dev);
-    52		unsigned int time_since_last_napi, threshold;
-    53		struct ena_ring *tx_ring;
-    54		int napi_scheduled;
-    55	
-    56		if (txqueue >= adapter->num_io_queues) {
-    57			netdev_err(dev, "TX timeout on invalid queue %u\n", txqueue);
-    58			goto schedule_reset;
-    59		}
-    60	
-    61		threshold = jiffies_to_usecs(dev->watchdog_timeo);
-    62		tx_ring = &adapter->tx_ring[txqueue];
-    63	
-    64		time_since_last_napi = jiffies_to_usecs(jiffies - tx_ring->tx_stats.last_napi_jiffies);
-    65		napi_scheduled = !!(tx_ring->napi->state & NAPIF_STATE_SCHED);
-    66	
-    67		netdev_err(dev,
-    68			   "TX q %d is paused for too long (threshold %u). Time since last napi %u usec. napi scheduled: %d\n",
-    69			   txqueue,
-    70			   threshold,
-    71			   time_since_last_napi,
-    72			   napi_scheduled);
-    73	
-    74		if (threshold < time_since_last_napi && napi_scheduled) {
-    75			netdev_err(dev,
-    76				   "napi handler hasn't been called for a long time but is scheduled\n");
-  > 77				   reset_reason = ENA_REGS_RESET_SUSPECTED_POLL_STARVATION;
-    78		}
-    79	schedule_reset:
-    80		/* Change the state of the device to trigger reset
-    81		 * Check that we are not in the middle or a trigger already
-    82		 */
-    83		if (test_and_set_bit(ENA_FLAG_TRIGGER_RESET, &adapter->flags))
-    84			return;
-    85	
-    86		ena_reset_device(adapter, reset_reason);
-    87		ena_increase_stat(&adapter->dev_stats.tx_timeout, 1, &adapter->syncp);
-    88	}
-    89	
+because, presumably, x86 uses 8 bytes per PTE entry, whereas on Arm we
+still use 4 bytes, but because we keep two copies of a PTE (one for
+hardware, the other for the kernel) it works out that we're the same
+there - one PTE page can also map 2M of RAM.
+
+However, what is quite different is the L1 page tables. On x86,
+everything is nice and easy, and each page table is one 4k page.
+On 32-bit Arm, this is not the case - we need to grab a 16k page for
+the L1, and the more immovable allocations we have in lowmem, the
+harder it will be to satisfy this. Failing to grab a 16k page
+leads to fork() failing and an unusable system.
+
+So, we want to keep as many immovable allocations out of lowmem as
+possible - which is an additional constraint x86 doesn't have, and
+shouldn't be overlooked without ensuring that the probability of it
+happening remains acceptably low.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
