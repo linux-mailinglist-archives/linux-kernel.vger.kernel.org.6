@@ -1,169 +1,118 @@
-Return-Path: <linux-kernel+bounces-441241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6EA9ECB9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:57:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018839ECBA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3A6D16811E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72F2188B57D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EE1225A49;
-	Wed, 11 Dec 2024 11:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1343225A3C;
+	Wed, 11 Dec 2024 11:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+TbqgQC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pl5T2ult"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBAE1DA634;
-	Wed, 11 Dec 2024 11:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D81DA634;
+	Wed, 11 Dec 2024 11:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733918259; cv=none; b=On1FVhxYh4E13rYS7oDfynj7JG8xcC8XvcsB4oEw4yMSJ4LAvFyufiWqnpjQ7YFMFhUr8ixkJMCOCAwJiigxYNY9+J4rw3XGXZ3CbdviKQSwQgHz8HHzmC/JrtL7q6EdUteOsI5mLZgUCizmB/reyOwQaA2rHH7fL6l1KtIwnbM=
+	t=1733918371; cv=none; b=id+i0RCyxusVjaQQAwxVG0e/NZL12SI+urwqpZiR7XSUYkbOYm0+XOe7zLaI+E/ETXHiLOpA3fZK8bmjSxddbyDmny/MXi02CvRQxUjh4lufgqEVEVOEpt+mWNZ2ridHMGKeZUXQwgnu3heC+H0IoP9Ae734DYF0Tl+V7pMXbPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733918259; c=relaxed/simple;
-	bh=dneghv6loQ5U+SXkgktB72Tmq3utNISUvQRuKuSfFMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9AOVyUdMw20Zi/yVKbpy4ggARBnsL0ykzOYG4DfDFfIOGStFDmQLByZSudSWXR6eAcYQOBn9t8laJkJHJ2PsdsDQIEuHCAnkLedECrslHHpMV9KkkJvLhDyuncKnWad0f+VnvDiVCxC8HKfYtfudKP4TX32DgdMeE8PYPb6lN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+TbqgQC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A26CC4CED2;
-	Wed, 11 Dec 2024 11:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733918259;
-	bh=dneghv6loQ5U+SXkgktB72Tmq3utNISUvQRuKuSfFMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c+TbqgQCbrb/j/wnaZuMqei32/+bZaXrWhTmPJRiXZDo5l1oDTBnBy8BZKNUPzanX
-	 0DTipxmCduSSvo5AmhUjRZc6L0EiIT3Qme3cp5oU4wFTgYdVgghzASOuCOXtUVhjz0
-	 uwwlq2LBcNIigKZFVjHuWm/jQaiWyQ2S63npCfz4EKbXjp8ME1b31y15JEnI6uHE78
-	 KqXItBOX5TddV/ypMEeMLKr23tZZzXcrkua9Hv9bbFOSPV1nt7U6lJOFKTa+usoAu2
-	 9URgiWKlUBOp8umAQvc4anRmk1NdXTfhMd1X6v1Wz5IVG5AzRrbDe7Nrj14uzUPIJb
-	 feAVuH5EA9XlQ==
-Date: Wed, 11 Dec 2024 11:57:17 +0000
-From: Lee Jones <lee@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <20241211115717.GC7139@google.com>
-References: <20241210-miscdevice-file-param-v3-0-b2a79b666dc5@google.com>
- <20241210-miscdevice-file-param-v3-2-b2a79b666dc5@google.com>
+	s=arc-20240116; t=1733918371; c=relaxed/simple;
+	bh=I6wZVNs22wQMqttdoXVPOQc2PvNhdU0A7mQSIPBVFYE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t+jUVlpMzkPudgj64G34iNKHj+brnEmUQ/6RbHxwlqkBLjkhb3kxFuepxVy6c1zRyNwlHN4wLkgQN48jwbmOfNvMXcKB1mPgqlBb7Y2bnloUprl8ll1SLDMJSPU6/N9t/uw3C43mvlH4Z7G9w30MI5wZjub0R/mtsnb0qYOGO8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pl5T2ult; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB308ud016161;
+	Wed, 11 Dec 2024 11:59:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hY1t1N2sMbvghIafaPKPju
+	O22QsxZgIAGYAQ3X7NipA=; b=pl5T2ult2bgpt0B9ExDS0ZUKDE95UIbnF2SxHL
+	eV3catX6Kr9HOlccvX9HWfk2rWxgRLnS2snkGMUAdexGE1yx+nzJzjA5DY2Sidlg
+	9QlsIXgHuvHr8fBbCDwT0zIP6FDkZc59M6572gJT7lIt73TBq8qTVmu6Fg8k2W+U
+	uwX4C4RGzCWq3Vxl7bsMB+/MVcKP3Av3Ammn50865pkWQbg3U2+wTzfb8SxQRmaP
+	HxmHkd+dCWESZqHj42ftBpw4ArsVTLCCg12fvbxGBSV1tXJS+LrlZ+4f5GcetHFL
+	OwXMSI4kqEp8oSCGAvKkVXVTxaJrRpjd7RZJtZag6VscSgxA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3ncyru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 11:59:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBBxRLf012567
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 11:59:27 GMT
+Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 11 Dec 2024 03:59:25 -0800
+From: Prashanth K <quic_prashk@quicinc.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        Prashanth K
+	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
+Subject: [PATCH] usb: gadget: f_uac2: Fix incorrect setting of bNumEndpoints
+Date: Wed, 11 Dec 2024 17:29:15 +0530
+Message-ID: <20241211115915.159864-1-quic_prashk@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241210-miscdevice-file-param-v3-2-b2a79b666dc5@google.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nW7eMYvWMyMIYOr_V8V1HqY84IAUFcvJ
+X-Proofpoint-ORIG-GUID: nW7eMYvWMyMIYOr_V8V1HqY84IAUFcvJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ mlxlogscore=476 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412110087
 
-On Tue, 10 Dec 2024, Alice Ryhl wrote:
+Currently afunc_bind sets std_ac_if_desc.bNumEndpoints to 1 if
+controls (mute/volume) are enabled. During next afunc_bind call,
+bNumEndpoints would be unchanged and incorrectly set to 1 even
+if the controls aren't enabled.
 
-> Providing access to the underlying `struct miscdevice` is useful for
-> various reasons. For example, this allows you access the miscdevice's
-> internal `struct device` for use with the `dev_*` printing macros.
-> 
-> Note that since the underlying `struct miscdevice` could get freed at
-> any point after the fops->open() call (if misc_deregister is called),
-> only the open call is given access to it. To use `dev_*` printing macros
-> from other fops hooks, take a refcount on `miscdevice->this_device` to
-> keep it alive. See the linked thread for further discussion on the
-> lifetime of `struct miscdevice`.
-> 
-> Link: https://lore.kernel.org/r/2024120951-botanist-exhale-4845@gregkh
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/miscdevice.rs | 30 ++++++++++++++++++++++--------
->  1 file changed, 22 insertions(+), 8 deletions(-)
+Fix this by resetting the value of bNumEndpoints to 0 on every
+afunc_bind call.
 
-Reviewed-by: Lee Jones <lee@kernel.org>
+Fixes: eaf6cbe09920 ("usb: gadget: f_uac2: add volume and mute support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
+---
+ drivers/usb/gadget/function/f_uac2.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> index 0cb79676c139..75a9d26c8001 100644
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@ -97,14 +97,14 @@ fn drop(self: Pin<&mut Self>) {
->  
->  /// Trait implemented by the private data of an open misc device.
->  #[vtable]
-> -pub trait MiscDevice {
-> +pub trait MiscDevice: Sized {
->      /// What kind of pointer should `Self` be wrapped in.
->      type Ptr: ForeignOwnable + Send + Sync;
->  
->      /// Called when the misc device is opened.
->      ///
->      /// The returned pointer will be stored as the private data for the file.
-> -    fn open(_file: &File) -> Result<Self::Ptr>;
-> +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
->  
->      /// Called when the misc device is released.
->      fn release(device: Self::Ptr, _file: &File) {
-> @@ -182,24 +182,38 @@ impl<T: MiscDevice> VtableHelper<T> {
->  /// The file must be associated with a `MiscDeviceRegistration<T>`.
->  unsafe extern "C" fn fops_open<T: MiscDevice>(
->      inode: *mut bindings::inode,
-> -    file: *mut bindings::file,
-> +    raw_file: *mut bindings::file,
->  ) -> c_int {
->      // SAFETY: The pointers are valid and for a file being opened.
-> -    let ret = unsafe { bindings::generic_file_open(inode, file) };
-> +    let ret = unsafe { bindings::generic_file_open(inode, raw_file) };
->      if ret != 0 {
->          return ret;
->      }
->  
-> +    // SAFETY: The open call of a file can access the private data.
-> +    let misc_ptr = unsafe { (*raw_file).private_data };
-> +
-> +    // SAFETY: This is a miscdevice, so `misc_open()` set the private data to a pointer to the
-> +    // associated `struct miscdevice` before calling into this method. Furthermore, `misc_open()`
-> +    // ensures that the miscdevice can't be unregistered and freed during this call to `fops_open`.
-> +    let misc = unsafe { &*misc_ptr.cast::<MiscDeviceRegistration<T>>() };
-> +
->      // SAFETY:
-> -    // * The file is valid for the duration of this call.
-> +    // * This underlying file is valid for (much longer than) the duration of `T::open`.
->      // * There is no active fdget_pos region on the file on this thread.
-> -    let ptr = match T::open(unsafe { File::from_raw_file(file) }) {
-> +    let file = unsafe { File::from_raw_file(raw_file) };
-> +
-> +    let ptr = match T::open(file, misc) {
->          Ok(ptr) => ptr,
->          Err(err) => return err.to_errno(),
->      };
->  
-> -    // SAFETY: The open call of a file owns the private data.
-> -    unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
-> +    // This overwrites the private data with the value specified by the user, changing the type of
-> +    // this file's private data. All future accesses to the private data is performed by other
-> +    // fops_* methods in this file, which all correctly cast the private data to the new type.
-> +    //
-> +    // SAFETY: The open call of a file can access the private data.
-> +    unsafe { (*raw_file).private_data = ptr.into_foreign().cast_mut() };
->  
->      0
->  }
-> 
-> -- 
-> 2.47.1.613.gc27f4b7a9f-goog
-> 
-
+diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
+index ce5b77f89190..9b324821c93b 100644
+--- a/drivers/usb/gadget/function/f_uac2.c
++++ b/drivers/usb/gadget/function/f_uac2.c
+@@ -1185,6 +1185,7 @@ afunc_bind(struct usb_configuration *cfg, struct usb_function *fn)
+ 		uac2->as_in_alt = 0;
+ 	}
+ 
++	std_ac_if_desc.bNumEndpoints = 0;
+ 	if (FUOUT_EN(uac2_opts) || FUIN_EN(uac2_opts)) {
+ 		uac2->int_ep = usb_ep_autoconfig(gadget, &fs_ep_int_desc);
+ 		if (!uac2->int_ep) {
 -- 
-Lee Jones [李琼斯]
+2.25.1
+
 
