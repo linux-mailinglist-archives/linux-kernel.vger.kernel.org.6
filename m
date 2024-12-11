@@ -1,107 +1,112 @@
-Return-Path: <linux-kernel+bounces-441332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033FC9ECCF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:15:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517AF9ECCF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:15:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774CC284DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B6F188ACAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61287229153;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66895229154;
 	Wed, 11 Dec 2024 13:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qjLT3ahG"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evV3VxJN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CB8225A5F
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB98229127;
+	Wed, 11 Dec 2024 13:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733922933; cv=none; b=cokHBzuGcyXMGNfszJjq0GmkWBo/I1rnUCBNERRmyNIMZsNy7i3om61pt6gmi4ClYrTV5CO4OpCsydBi/amMnf8jleNXavI4uc3Yrzik3txUu7mtop3INWFNJMu8zEHOLdyKkL1tRnjFKHAuebYSGhpnZPk8j4TYWow8wO4qseo=
+	t=1733922933; cv=none; b=Iqdn0amwJAqI5tPbpuPNtOvkbmvwMEqmOOWiY9AvcV1+CP2kuQ0JSHdKCGASvADtrju+1LMgQ03mDbam7wnlVaUl2KaaBb8Kv333ZTodlABVK8KnezNlXjFqcQp2iiVGoVgUQDBp099Wzay6ld9ccyzbdvSQpfftXZDW5MZ2jow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733922933; c=relaxed/simple;
-	bh=jUViW32COeGoeYELh9LbBlj4465oJrhfN7e+K2CTTdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ku1KaeGh65QIIM9Uspc7L4CNWt2plCIo0SeZkX3nlA4vyR6cGFXMDUpiA3vRtx5ImMpQvaF6FPmTE5kwVNqs1CPHrEObWJuQaa6b1GYZpws0AfJjyCTlXNC7RcR2DHY1uNcLe2bE+ydosxaklp4E/thGT7ZPJd+Inbfd3c158E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qjLT3ahG; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3d0205bd5so6203264a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:15:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733922930; x=1734527730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2wwyxsApnY4hDVPBOHJhItY5Jgr+I4T7A0sablhlGmg=;
-        b=qjLT3ahGjn3eV8pVibROAMaRsVIcgYOEdLyRb6jQWxEZuzTqhKUqQ42MvK64iG+kws
-         hRo1nTr2srA0QpZ/JdEp3u4inEkM7qQshpvWJCcbceQ49s2lQTsP0GYC4QlZ61SZ/bZB
-         0nGd1MIqB8l0vYEYrWhkEKZB+Qu5wGhOajHW4x7L+P5+ipaVMU0IV/SE5FdbsIhfgd8e
-         7eGTiFfUbVJkiKXx0NLs8A871P+07wF7ypis8275KaZx2nqHiUQOT5CY92uB5e5WfC5T
-         dbXZwtOL5WBGgZ/xeQ9dPtcRjqyY2c7krCOSxdxtMoNxEsOf2kBb+mgtG3JDewNFGT6M
-         GGSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733922930; x=1734527730;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wwyxsApnY4hDVPBOHJhItY5Jgr+I4T7A0sablhlGmg=;
-        b=Ub2MPOdDWjJDWiB0BRss/Yth9DmUkT6cCfVKZ+8zU8pyJih3nF8sckneVg64v6Viuf
-         y9urYKgK9Ylpgusl4IxsXV0l7GLQETK+AJ+7EXcrVonwrT4GfZkyuPGd+VPuJTNF41Ag
-         8sAdO2re8IWXRydBqggX1oOyeJ+cIEpcZUcdxwKGYyO2cKDZA3Nv55niHSxgmHdIGqX0
-         3H1+haYIxA6H5ZuRUjo5zFfWu5Iw6UgEPb41BPmgbXXFSMvqENxUwM4+9sVzHWmPU2g/
-         UtTgZxU/x0NIP1DlzwuoE68H0Z8fLY2ULdfMq5fhluePDQUDedm78AnOCpArjjs72aDX
-         i9iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxDIvasrxz9zXJvuzDwReum0OO5P3lWGDcc1WsCUYIVzDAXJeexYkFbS+PyVzyBHMZFzks+NFGSBfALro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBJbs69FQbhQxBH5D2/s4fiHZqO6+GLk8WsmNwo1f/tZ3PL3E9
-	UiqTV6fZ3qVzXclNIUY02E6CqQYY4lECbqRKHw+5+f0vEPod9DbAZoH7MFZ2DdGBZPrg1NHIYxZ
-	K
-X-Gm-Gg: ASbGnctniKVgG5RSU3QcVkS4KR5qYuIDOJDRrirBn9oaMU/4r2wuR2zH9liC8+BIhpB
-	xScDe9mGiaHww5Cr0sqrHd1iGheus1FzRNEQnrjWPB/4onlcBHannRUAYQC6XucHnQ7B2p223lX
-	J45FN72KhAU1p7lftlBIWCrBisscFVJvGZ7ORvzoIWE+LQSc1dfNKoKh8A2tjMDA1NJgwyFOpZj
-	N5yECbPZ1bp6qSmXjxO3fWCk4yHPK79rGzM5tMg3QzcNnCbQsEmRM2CZANgIFP4DY8=
-X-Google-Smtp-Source: AGHT+IEQ3VuB9AehLYFtF0JsGB2XRiyuFHW63nuUHnZmuZQ3vdkrpWWLByAocPF8PI57hfUSLB2v1Q==
-X-Received: by 2002:a05:6402:2553:b0:5d1:2534:57bf with SMTP id 4fb4d7f45d1cf-5d433170532mr2909736a12.32.1733922930525;
-        Wed, 11 Dec 2024 05:15:30 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a25ce7sm8914783a12.5.2024.12.11.05.15.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 05:15:29 -0800 (PST)
-Message-ID: <19ac5167-017c-45a4-b9ef-9b9e11b216c2@linaro.org>
-Date: Wed, 11 Dec 2024 13:15:28 +0000
+	bh=6JTy6JZ21XP+nWSIAbj540zAQnm35RfeBlsbwpOE+PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHpYMlVIJgxn8Pp0G9AbqX5jaZLLOpkE/sbxpkxiw5m+T4eJOmQD0zhZoyLwZYqnvbcAa+LlRmfCdSgTgpu7U+3Cz84fLREvKwK+/wDURvfwoc8hJ4jJB8r+iSuHdbNHAmKwSw+dkfjtbCoSb+gpj2NX7zIh47peO6Hct498O+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evV3VxJN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF718C4CEE0;
+	Wed, 11 Dec 2024 13:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733922933;
+	bh=6JTy6JZ21XP+nWSIAbj540zAQnm35RfeBlsbwpOE+PA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=evV3VxJNdiTsewn917nD6KOqkNsL3Af2zWs0IRRm+NMas5XolrG2k1/2McoWSGUi7
+	 WmXrdZvo51Jk86CpwNMfBZdD/dS1Rd0ccKP5mgha0HYf2by+zdT9Is2jacb54kxtxc
+	 3gGdejVmr8u1DaAlz1H9fVqiRoS8/MSkF96LxKge53cZzIcCyWE3nEPbDMqqUJMWTo
+	 Wxdt5Zl/wydOmrQgqmNdY8S1y8BpSJ3ELZ9nJEq1nY4GxmH8WXWywM3I4pwB+HXN4I
+	 BRpCFPZCcQHQN9m00pgdRRmfR+WqQo2c2mbbb3zb12uZhVzpaE4JGwPO8birD2FtO/
+	 +MvHsdrwFVCnQ==
+Date: Wed, 11 Dec 2024 10:15:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, namhyung@kernel.org,
+	mhiramat@kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf probe: Fix uninitialized variable
+Message-ID: <Z1mQcsDCw0d8djjx@x1>
+References: <20241211085525.519458-1-james.clark@linaro.org>
+ <20241211085525.519458-2-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] clk: qcom: Support attaching GDSCs to multiple
- parents
-To: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-0-7e302fd09488@linaro.org>
- <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-3-7e302fd09488@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-3-7e302fd09488@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211085525.519458-2-james.clark@linaro.org>
 
-On 11/12/2024 00:27, Bryan O'Donoghue wrote:
->   takes care of hooking up the GDSC to the clock-controller.
+On Wed, Dec 11, 2024 at 08:55:23AM +0000, James Clark wrote:
+> Since the linked fixes: commit, err is returned uninitialized due to the
+> removal of "return 0". Initialize err to fix it.
+> 
+> This fixes the following intermittent test failure on release builds:
+> 
+>  $ perf test "testsuite_probe"
+>  ...
+>  -- [ FAIL ] -- perf_probe :: test_invalid_options :: mutually exclusive options :: -L foo -V bar (output regexp parsing)
+>  Regexp not found: \"Error: switch .+ cannot be used with switch .+\"
+>  ...
 
-This should read "hooking up the power-domain to the clock-controller"
+So Namhyung, this one should go to perf-tools, I can pick the second on
+perf-tools-next, so that we keep perf-tools as small as possible.
 
-I will update the commit log.
-
----
-bod
+- Arnaldo
+ 
+> Fixes: 080e47b2a237 ("perf probe: Introduce quotation marks support")
+> Tested-by: Namhyung Kim <namhyung@kernel.org>
+> Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  tools/perf/util/probe-event.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index 6d51a4c98ad7..eaa0318e9b87 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -1370,7 +1370,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  {
+>  	char *buf = strdup(arg);
+>  	char *p;
+> -	int err;
+> +	int err = 0;
+>  
+>  	if (!buf)
+>  		return -ENOMEM;
+> -- 
+> 2.34.1
 
