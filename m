@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-440726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4CC9EC361
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F8F89EC362
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D876618899D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66AB51887A40
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92C320E332;
-	Wed, 11 Dec 2024 03:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A274E20DD60;
+	Wed, 11 Dec 2024 03:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cfv38t8t"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GE/aW2v0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8732B6F073;
-	Wed, 11 Dec 2024 03:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F186F073
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 03:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733888271; cv=none; b=Q88UZCH7PJ6JxIQLgUgI+kLCIrDBccd8NLb8Gkoi+H5lKNMSo6m69ssAC1MK+9uF2/6daPnTDLyaIRAogw5PnKvSlnKiOHDGSmrzmXYtVw3J6u6LmJfPovyQUF0pTyrK1C2YV1s3bebcXrO7VtEJvGixzQprdHLIUn/MXJv/A18=
+	t=1733888305; cv=none; b=dVhut4kXtV3QPv208fVE+6jsA+3WTwwqYETYVrFsqrzQlD/2It2uyDO5rqwjJymS+dprrDghFiQfWr2hjGA31JM58yJgriCy60cJ0NEjKGxSHV32H/QpNdsVsEsMp+jTPxQDRRf/9S58z2pvZWrDqsVq5ct9fI0bIIqvyMFeRHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733888271; c=relaxed/simple;
-	bh=pvFWXE2hs8lq6/Mc9l8s9asR9Zm9++I8EfFfWcC/TYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rCh/pytwcJOAhWcTKhkeqh0zPBUw/tNC6bD7uSoWfFXWEu7+0rtjkX6CFzJvQynZBdLJHjrjlGcDj4Yc0/02xRPP4ODNyHfb7QkOM736w02xaYd30A9lDUEdxDgRQciy0RzziEd2PSzc1WE3N5os2BdPA6nX9P6DhfMfYIx16JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Cfv38t8t; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1733888254;
-	bh=lZMIngKSzjN1JhQCXEwcUiLV6SSg33k3Md8+L29HuLM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Cfv38t8tDE1kApDGXFc0klXPtm9IIJRWgO+V3i3Fhp61UFHEHgIFIJQpBon70sPfV
-	 iK/kvGI+1NavbemPOYfq2cU5P7AXByF6Zq4NuMMKbnwQ23Ws8n0ZGFfvSwDkEtlkL6
-	 6W4L9wweagPd4k++GWXrEfTBFVbXaLuF7EvI3f9mEUq3RhjT4bjzPYe/OB8aHjjZom
-	 BbSRRItPnFbFYNSsUHqcoLiuoRy7TObTo8yiEmAMYE5OAorwxXSk5P09lqV7zK52zp
-	 XjeTFT0fw8+KXNbnu15g7+NAv3JMwYD0Q37xM0Ul4axgDZrFp4H/00kUtxK6mXB2R5
-	 M9l5AcdxJXtYA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y7Lrt3sY5z4wcy;
-	Wed, 11 Dec 2024 14:37:34 +1100 (AEDT)
-Date: Wed, 11 Dec 2024 14:37:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the vfs-brauner tree
-Message-ID: <20241211143701.5cfc95a7@canb.auug.org.au>
+	s=arc-20240116; t=1733888305; c=relaxed/simple;
+	bh=jcfySY+U3MqIkiFsB1y5SqVlWq6DyDBCIMMJSImQk38=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Tjpmkwpc8cgkrdG4sy/Q8ENZhaEFzdUhwXKPIBpc0r2qCnWqJ+dtBfq0n3VBGiJBJsHTrPW3dkbv6E5fYKJv/anxjCItWmpL4FMDGAQ+Y29BT1gBH49mgXYtUQlZxOopPmakyy94XM16gxXheAST7f0SxxJ0qM1Ce2jTzFcaIBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GE/aW2v0; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733888304; x=1765424304;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=jcfySY+U3MqIkiFsB1y5SqVlWq6DyDBCIMMJSImQk38=;
+  b=GE/aW2v0Eu1gJan7HUnhM4ctnFLf7sttab27N4D3yNrpe9nc9TiheH7+
+   r9+4dvwtUTEqx9WrbL5sqe0ltos6Q5RZjv3SyRme6Xu3FQgEDwvjyhCBq
+   TRGqU71TNfdEJEqotyGgWa/f9RhlwVC7wJzNZZwM2TNhAl0JPp9JACjAT
+   Wkx2buONOa5u60HrSCZCXdnmXFHQ+3xjOOuTbSLEGADw9NEJ9VDomJGhY
+   pUIjiAy1hlCRebNs1it91d07GvvYEmb8wfrc2ZgARKxbbZYx5pIMQ4ms/
+   lmedMkSGxy4qJ4eJlqgOu1WbYDipYowoNTOSEtKvWhlNF18pkLTryPRm5
+   A==;
+X-CSE-ConnectionGUID: q/oMAGyXT9S4/DYAA4Y/Aw==
+X-CSE-MsgGUID: aGQ5+LlPSJSCvUoi55jcyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="34395461"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="34395461"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 19:38:24 -0800
+X-CSE-ConnectionGUID: 8naVvrPEStWgg9sXD9s15Q==
+X-CSE-MsgGUID: Lg2LVxaNRsePYP/Wb8PURg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="100460776"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 10 Dec 2024 19:38:16 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLDYD-0006ET-0T;
+	Wed, 11 Dec 2024 03:38:13 +0000
+Date: Wed, 11 Dec 2024 11:37:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michael Chan <michael.chan@broadcom.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+	Andy Gospodarek <andrew.gospodarek@broadcom.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Simon Horman <horms@kernel.org>
+Subject: drivers/net/ethernet/broadcom/bnxt/bnxt.c:5333:6-25: WARNING:
+ atomic_dec_and_test variation before object free at line 5336.
+Message-ID: <202412111151.G84SK1aw-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/d4/.Rsteb0gN8Z+Hdsz_+pu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---Sig_/d4/.Rsteb0gN8Z+Hdsz_+pu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7cb1b466315004af98f6ba6c2546bb713ca3c237
+commit: 1f6e77cb9b328f2ec145e73be97cab6fec838678 bnxt_en: Add bnxt_l2_filter hash table.
+date:   11 months ago
+config: sparc64-randconfig-r061-20241210 (https://download.01.org/0day-ci/archive/20241211/202412111151.G84SK1aw-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.2.0
 
-Hi all,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412111151.G84SK1aw-lkp@intel.com/
 
-After merging the vfs-brauner tree, today's linux-next build (powerpc
-allyesconfig) produced these warnings:
+cocci warnings: (new ones prefixed by >>)
+>> drivers/net/ethernet/broadcom/bnxt/bnxt.c:5333:6-25: WARNING: atomic_dec_and_test variation before object free at line 5336.
 
-samples/vfs/mountinfo.c: In function 'show_propagation':
-samples/vfs/mountinfo.c:104:36: warning: format '%llu' expects argument of =
-type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long u=
-nsigned int'} [-Wformat=3D]
-  104 |                 printf(" shared:%llu", sm->mnt_peer_group);
-      |                                 ~~~^   ~~~~~~~~~~~~~~~~~~
-      |                                    |     |
-      |                                    |     __u64 {aka long unsigned i=
-nt}
-      |                                    long long unsigned int
-      |                                 %lu
-samples/vfs/mountinfo.c:106:36: warning: format '%llu' expects argument of =
-type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long u=
-nsigned int'} [-Wformat=3D]
-  106 |                 printf(" master:%llu", sm->mnt_master);
-      |                                 ~~~^   ~~~~~~~~~~~~~~
-      |                                    |     |
-      |                                    |     __u64 {aka long unsigned i=
-nt}
-      |                                    long long unsigned int
-      |                                 %lu
-samples/vfs/mountinfo.c:108:52: warning: format '%llu' expects argument of =
-type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long u=
-nsigned int'} [-Wformat=3D]
-  108 |                         printf(" propagate_from:%llu", sm->propagat=
-e_from);
-      |                                                 ~~~^   ~~~~~~~~~~~~=
-~~~~~~
-      |                                                    |     |
-      |                                                    |     __u64 {aka=
- long unsigned int}
-      |                                                    long long unsign=
-ed int
-      |                                                 %lu
-samples/vfs/mountinfo.c: In function 'dump_mountinfo':
-samples/vfs/mountinfo.c:144:42: warning: format '%llx' expects argument of =
-type 'long long unsigned int', but argument 4 has type '__u64' {aka 'long u=
-nsigned int'} [-Wformat=3D]
-  144 |                 printf("0x%lx 0x%lx 0x%llx ", mnt_ns_id, mnt_id, bu=
-f->mnt_parent_id);
-      |                                       ~~~^                       ~~=
-~~~~~~~~~~~~~~~~
-      |                                          |                         =
- |
-      |                                          long long unsigned int    =
- __u64 {aka long unsigned int}
-      |                                       %lx
+vim +5333 drivers/net/ethernet/broadcom/bnxt/bnxt.c
 
-Introduced by commits
+  5330	
+  5331	void bnxt_del_l2_filter(struct bnxt *bp, struct bnxt_l2_filter *fltr)
+  5332	{
+> 5333		if (!atomic_dec_and_test(&fltr->refcnt))
+  5334			return;
+  5335		spin_lock_bh(&bp->ntp_fltr_lock);
+> 5336		hlist_del_rcu(&fltr->base.hash);
+  5337		if (fltr->base.flags) {
+  5338			clear_bit(fltr->base.sw_id, bp->ntp_fltr_bmap);
+  5339			bp->ntp_fltr_count--;
+  5340		}
+  5341		spin_unlock_bh(&bp->ntp_fltr_lock);
+  5342		kfree_rcu(fltr, base.rcu);
+  5343	}
+  5344	
 
-  0c8f746452aa ("samples: add a mountinfo program to demonstrate statmount(=
-)/listmount()")
-  ee8c840a4a35 ("samples: fix missing nodiratime option and handle propagat=
-e_from correctly")
-
-I am not sure why these warnings only turned up today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/d4/.Rsteb0gN8Z+Hdsz_+pu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdZCN0ACgkQAVBC80lX
-0GwQrwf/SRsuluApeAMe2MeyRuXdBrS6iU/EH1SrXR0vtb3WzFSGExp76PtRjTsL
-jh7gDutKaDveX2WPVDbI0//+TMAjjn7vhtgeeLUF4zs0F+2VrJW3ZyIyO4i1ODZA
-zdZLhQo7MVDMKz+h6bbWYAPUVw/XyF1FSSNwgCwMXp6OEDq31B1KPM4Mgld8vyHl
-Wj61Ppe/So4GBOw2M3hEeCe/OuJJt92cMa4pVkxpXxminjsdpPLjGcWPO3M61NNo
-fnaJE5o6GE2KttlkblfXGHS97J7+M4EK91+FdZigXZTDrq7GLJ5sp63mqD0HwkKh
-g81V38rCzozLuBUFXVC5TIVZXHKoTw==
-=HUcr
------END PGP SIGNATURE-----
-
---Sig_/d4/.Rsteb0gN8Z+Hdsz_+pu--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
