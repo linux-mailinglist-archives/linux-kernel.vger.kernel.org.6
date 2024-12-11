@@ -1,327 +1,207 @@
-Return-Path: <linux-kernel+bounces-441497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58059ECF40
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:03:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7574F9ECF47
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:04:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C21188B430
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:04:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E437C1D6DA4;
+	Wed, 11 Dec 2024 15:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYm2p65y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3288281304
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:03:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC93246345;
-	Wed, 11 Dec 2024 15:03:24 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6B8246343
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C52E1A4F22;
+	Wed, 11 Dec 2024 15:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733929404; cv=none; b=V/DQ2kdGQKzaAVzMGjtV4Uz1EiEkCJZRDoNdDVW4LsDaHRzUbYk8lWHUHzC6LXA835EuCgXN2KgLJjo5GH4uO1bA8AYlSWKNAdC9vy4s8KmNlNvyDxZeuwlkE5hX/HFQq6DUrgOiUzN584w0DEVj/Yomtm0/VaxrmX5nygduRZ4=
+	t=1733929414; cv=none; b=knuq9wAeLUFnA85UfG2lPXBZNrvzpB5VKNYAB7wGNPOSEGzupLm1gUJJmnDLBqerYykraqoo11rk/Wau1Z8pXl5fO5R4yx52+hzHAU6osnjIQBk8h/ZlubZUpf2fgf9ndgsX6Mf/b3jHQ4MCHGlQvSTJUyWksDBJ2knUJBaQQGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733929404; c=relaxed/simple;
-	bh=72fBofn+xdG07xDvo1qlPnC3RLog+1xW3t8UQlnV9/M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CY/uwV46sLTCeEksS8FgdHYfTNi6G2GQoALJHFtmepaz9j2OOy8coe+mVXna2mJjUqnzDX6+T/t3OFR7iD30Mt5NvIJemj+uYDx2IJFJQwvAuKz1Uzp85PRqkoVTE7bDoxnQoFYlVZ5F30xn1fRFGYp/ybb45jxC4SJGlU8CKkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a9cefa1969so34017635ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:03:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733929401; x=1734534201;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lzf3zyjh8yyoO6NOfnI/w5F7So6Jak72pTsto521oxQ=;
-        b=NAHWhAsPSMHPtFoeaXWJYf3SmBYYCeWoM9EXmC1Q8qu97mco2j/Q+OY+mrCfA5cVxZ
-         qh5PSqBjZ5KLL9x+1aCIw/GRujPOwKnS7bDCxrspezeDB2RjWv1TcDJ7TygARvkX50SD
-         9GmjPZZ0UVLYn5jfvb2jY7THpq25ksz4SrUFcBGSdhsEK6Na07VdWWrEQic33wFugYSm
-         u9XR/8QdUGPTeC0g6b9Cr47kXN9trT4YPAe2JtOp14ID1ETJ6wjSIB76Dvgk82L5oeEv
-         ykIcvuZWCzz42fWTcTYHAH7FI6Ga9ltZWoh6M1R8CeTI3bNAEbrWGA5ppmeCORyo36eQ
-         f5eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQjJLCpDJFtlEN/VexkpaSLqxXsRwOkTlqgVHBRpz0j41X1MjiPixk1ZmRAABvj3Sr+uHgC/bIgoE2yR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHNJEJJVW6KkTEgvQqGRRVB5BBQiGcfVBycb2pCxF9gRvJ8LBF
-	Ty2KXah2oclYfDDNnAEBS295nEnMZ88/Fj4+FS1SbeIPwmqOZDrWJyOQOFDxYK0R+0rsLXhLiqY
-	9gMph4CG3MQfXUd1wwF+MSeCAbjT71HZ1qNi5jd61MOu3YbhgrTcA7VM=
-X-Google-Smtp-Source: AGHT+IFXPYsrMp5ueX0n+s/0motvbSIxP84n5bms/B0vUpqBGtXmTiaMFUi6jBoLGj2ScKRcswBDyl+q702OVBjNBi6AOvV65/si
+	s=arc-20240116; t=1733929414; c=relaxed/simple;
+	bh=++gHfME6FjD30uzJSwWqEax28nPvJc+pk7lRQ5VJ+9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QTHGHZfFYY26FWADG5NQEvQitYJJ1PSaJYXKeXNv1tSJJsDCbEJ2LvvyW9qv6OH/Lix/potCBkDPiGLsdGJf/Q0SFHBALVvIIPgjE120Vg8Kyrl6PKMXVK40iPAAZJmh6Qtl70+sBxSesJfmWMSE5uyqYXdafRxEj+LycFoO5Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYm2p65y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1FE0C4CEDF;
+	Wed, 11 Dec 2024 15:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733929413;
+	bh=++gHfME6FjD30uzJSwWqEax28nPvJc+pk7lRQ5VJ+9Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hYm2p65yRbO4It9+v+O19mfMGKLsXujECBYjOJYqVxhZAdzSZSorQYzhImGVbdzdO
+	 zXtaCDAzITTmkh7p9emHVE2cN96YxQiaLOAo05u7IM7MTgHtPyV9ob4a4Al+yQHBno
+	 U03UTKNhXzdLk7QJvfeob/Ti0mlPR5tAkW/jwK2vcSmoyZBYJ+BYgvrMTqPvi7m6rL
+	 tGn2Zn6sAs02ISJM30cvXCvx4Oo3QtUNbZFYzu/17A9xu3LWBcPSI8NO5djFunp9AV
+	 q2fTa+4OH/lxD9Fl8SZxZFsE5GtX//VNDQZ7sjd1ybcZnNWh4i37F76jAnkWf317l6
+	 Nxck1W0/HXQjw==
+Date: Wed, 11 Dec 2024 16:03:25 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
+Message-ID: <Z1mpvRDnlZN9Mc5o@cassiopeiae>
+References: <2024121131-carnival-cash-8c5f@gregkh>
+ <Z1mEAPlSXA9c282i@cassiopeiae>
+ <Z1mG14DMoIzh6xtj@cassiopeiae>
+ <2024121109-ample-retrain-bde0@gregkh>
+ <Z1mUG8ruFkPhVZwj@cassiopeiae>
+ <CAH5fLgh3rwS1sFmrhx3zCaSBbAJfhJTV_kbyCVX6BhvnBZ+cQA@mail.gmail.com>
+ <Z1mh2rPC3ZOjg-pO@cassiopeiae>
+ <CAH5fLgjg82x5EiWa1BTC7DpbhteBm5Or8XtpLAL0hQz+huXMCw@mail.gmail.com>
+ <Z1mnFoap_AnPPNfu@cassiopeiae>
+ <CAH5fLgiyGjhpVDNkRHtYhk7jY0oJZmPYx3TJRnBvpt1H+-6Y-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a4:b0:3a7:99a5:a207 with SMTP id
- e9e14a558f8ab-3aa056cb760mr33289415ab.5.1733929401449; Wed, 11 Dec 2024
- 07:03:21 -0800 (PST)
-Date: Wed, 11 Dec 2024 07:03:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6759a9b9.050a0220.1ac542.000d.GAE@google.com>
-Subject: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in btrfs_cow_block
-From: syzbot <syzbot+8517da8635307182c8a5@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgiyGjhpVDNkRHtYhk7jY0oJZmPYx3TJRnBvpt1H+-6Y-g@mail.gmail.com>
 
-Hello,
+On Wed, Dec 11, 2024 at 03:55:47PM +0100, Alice Ryhl wrote:
+> On Wed, Dec 11, 2024 at 3:52 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > On Wed, Dec 11, 2024 at 03:45:53PM +0100, Alice Ryhl wrote:
+> > > On Wed, Dec 11, 2024 at 3:29 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> > > >
+> > > > On Wed, Dec 11, 2024 at 02:34:54PM +0100, Alice Ryhl wrote:
+> > > > > On Wed, Dec 11, 2024 at 2:31 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> > > > > >
+> > > > > > On Wed, Dec 11, 2024 at 02:14:37PM +0100, Greg KH wrote:
+> > > > > > > On Wed, Dec 11, 2024 at 01:34:31PM +0100, Danilo Krummrich wrote:
+> > > > > > > > On Wed, Dec 11, 2024 at 01:22:33PM +0100, Danilo Krummrich wrote:
+> > > > > > > > > On Wed, Dec 11, 2024 at 12:05:10PM +0100, Greg KH wrote:
+> > > > > > > > > > On Wed, Dec 11, 2024 at 11:59:54AM +0100, Greg KH wrote:
+> > > > > > > > > > > On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
+> > > > > > > > > > > > On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
+> > > > > > > > > > > > > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummrich wrote:
+> > > > > > > > > > > > > > In a subsequent patch we introduce the `Registration` abstraction used
+> > > > > > > > > > > > > > to register driver structures. Some subsystems require the module name on
+> > > > > > > > > > > > > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
+> > > > > > > > > > > > > > the module name to `Module::init`.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Nit, we don't need the NAME of the PCI driver (well, we do like it, but
+> > > > > > > > > > > > > that's not the real thing), we want the pointer to the module structure
+> > > > > > > > > > > > > in the register_driver call.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Does this provide for that?  I'm thinking it does, but it's not the
+> > > > > > > > > > > > > "name" that is the issue here.
+> > > > > > > > > > > >
+> > > > > > > > > > > > Wait, no, you really do want the name, don't you.  You refer to
+> > > > > > > > > > > > "module.0" to get the module structure pointer (if I'm reading the code
+> > > > > > > > > > > > right), but as you have that pointer already, why can't you just use
+> > > > > > > > > > > > module->name there as well as you have a pointer to a valid module
+> > > > > > > > > > > > structure that has the name already embedded in it.
+> > > > > > > > > > >
+> > > > > > > > > > > In digging further, it's used by the pci code to call into lower layers,
+> > > > > > > > > > > but why it's using a different string other than the module name string
+> > > > > > > > > > > is beyond me.  Looks like this goes way back before git was around, and
+> > > > > > > > > > > odds are it's my fault for something I wrote a long time ago.
+> > > > > > > > > > >
+> > > > > > > > > > > I'll see if I can just change the driver core to not need a name at all,
+> > > > > > > > > > > and pull it from the module which would make all of this go away in the
+> > > > > > > > > > > end.  Odds are something will break but who knows...
+> > > > > > > > > >
+> > > > > > > > > > Nope, things break, the "name" is there to handle built-in modules (as
+> > > > > > > > > > the module pointer will be NULL.)
+> > > > > > > > > >
+> > > > > > > > > > So what you really want is not the module->name (as I don't think that
+> > > > > > > > > > will be set), but you want KBUILD_MODNAME which the build system sets.
+> > > > > > > > >
+> > > > > > > > > That's correct, and the reason why I pass through this name argument.
+> > > > > > > > >
+> > > > > > > > > Sorry I wasn't able to reply earlier to save you some time.
+> > > > > > > > >
+> > > > > > > > > > You shouldn't need to pass the name through all of the subsystems here,
+> > > > > > > > > > just rely on the build system instead.
+> > > > > > > > > >
+> > > > > > > > > > Or does the Rust side not have KBUILD_MODNAME?
+> > > > > > > > >
+> > > > > > > > > AFAIK, it doesn't (or didn't have at the time I wrote the patch).
+> > > > > > > > >
+> > > > > > > > > @Miguel: Can we access KBUILD_MODNAME conveniently?
+> > > > > > > >
+> > > > > > > > Actually, I now remember there was another reason why I pass it through in
+> > > > > > > > `Module::init`.
+> > > > > > > >
+> > > > > > > > Even if we had env!(KBUILD_MODNAME) already, I'd want to use it from the bus
+> > > > > > > > abstraction code, e.g. rust/kernel/pci.rs. But since this is generic code, it
+> > > > > > > > won't get the KBUILD_MODNAME from the module that is using the bus abstraction.
+> > > > > > >
+> > > > > > > Rust can't do that in a macro somehow that all pci rust drivers can pull
+> > > > > > > from?
+> > > > > >
+> > > > > > The problem is that register / unregister is encapsulated within methods of the
+> > > > > > abstraction types. So the C macro trick (while generally possible) isn't
+> > > > > > applicable.
+> > > > > >
+> > > > > > I think we could avoid having an additional `name` parameter in `Module::init`,
+> > > > > > but it would still need to be the driver resolving `env!(KBUILD_MODNAME)`
+> > > > > > passing it into the bus abstraction.
+> > > > > >
+> > > > > > However, similar to what Alice suggested in another thread, we could include
+> > > > > > this step in the `module_*_driver!` macros.
+> > > > > >
+> > > > > > Modules that don't use this convenience macro would need to do it by hand
+> > > > > > though. But that's probably not that big a deal.
+> > > > >
+> > > > > I think we can do it in the core `module!` macro that everyone has to use.
+> > > >
+> > > > How? The `module!` macro does not know about the registration instances within
+> > > > the module structure.
+> > >
+> > > You could have the module! macro emit something along these lines:
+> > >
+> > > impl ModuleName for {type_} {
+> > >     const NAME: &'static CStr = c_str!(env!("KBUILD_MODNAME"));
+> > > }
+> > >
+> > > Then you can do `<Self as ModuleName>::NAME` to obtain the name elsewhere.
+> >
+> > Where {type_} would need to be the driver's `Driver` structure?
+> >
+> > We'd then need to define the bus adapter as:
+> >
+> > `pub struct Adapter<T: Driver + ModuleName>(T)`
+> >
+> > But the question stands I guess, how would the module macro know {type_}?
+> 
+> If you look at the macro implementation in rust/macros/module.rs you
+> will find many uses of {type_} throughout the expansion. It's whatever
+> is passed to the macro using the `type:` argument.
 
-syzbot found the following issue on:
+Oh, I see. So, this means that module / driver author would still need to create
+the "connection" by listing the correspong driver types in the module! macro,
+right?
 
-HEAD commit:    b5f217084ab3 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1055f020580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=8517da8635307182c8a5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+If so, I think it'd be better to do it in the `module_*_driver!` macro and let
+people implement the trait by hand for modules with multiple drivers (which
+should be pretty rare).
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The reason is that I think that otherwise we're probably encoding too much
+semantics into the `module!` macro that isn't obvious and people need to
+understand.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b5f21708.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/858a023f110b/vmlinux-b5f21708.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4b03d6afaab4/bzImage-b5f21708.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8517da8635307182c8a5@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-BTRFS: device fsid ed167579-eb65-4e76-9a50-61ac97e9b59d devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5315)
-BTRFS info (device loop0): first mount of filesystem ed167579-eb65-4e76-9a50-61ac97e9b59d
-BTRFS info (device loop0): using sha256 (sha256-avx2) checksum algorithm
-BTRFS info (device loop0): rebuilding free space tree
-BTRFS info (device loop0): disabling free space tree
-BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE (0x1)
-BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE_VALID (0x2)
-BTRFS info (device loop0): balance: start -d -m
-BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
-BTRFS info (device loop0): relocating block group 5242880 flags data|metadata
-==================================================================
-BUG: KASAN: slab-use-after-free in do_perf_trace_btrfs_cow_block include/trace/events/btrfs.h:1082 [inline]
-BUG: KASAN: slab-use-after-free in perf_trace_btrfs_cow_block+0x398/0x780 include/trace/events/btrfs.h:1082
-Read of size 8 at addr ffff888011f09000 by task syz.0.0/5315
-
-CPU: 0 UID: 0 PID: 5315 Comm: syz.0.0 Not tainted 6.13.0-rc1-syzkaller-00316-gb5f217084ab3 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:489
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- do_perf_trace_btrfs_cow_block include/trace/events/btrfs.h:1082 [inline]
- perf_trace_btrfs_cow_block+0x398/0x780 include/trace/events/btrfs.h:1082
- trace_btrfs_cow_block include/trace/events/btrfs.h:1082 [inline]
- btrfs_cow_block+0x9d9/0xa40 fs/btrfs/ctree.c:757
- btrfs_search_slot+0xc01/0x3180 fs/btrfs/ctree.c:2156
- btrfs_update_root+0xf6/0xc70 fs/btrfs/root-tree.c:144
- commit_fs_roots+0x4cd/0x720 fs/btrfs/transaction.c:1509
- btrfs_commit_transaction+0xfa7/0x3720 fs/btrfs/transaction.c:2428
- relocate_block_group+0xc09/0xd40 fs/btrfs/relocation.c:3760
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3494
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4278
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4655
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3670
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc4b797fed9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc4b8866058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fc4b7b45fa0 RCX: 00007fc4b797fed9
-RDX: 0000000020000180 RSI: 00000000c4009420 RDI: 0000000000000006
-RBP: 00007fc4b79f3cc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fc4b7b45fa0 R15: 00007ffc798d71d8
- </TASK>
-
-Allocated by task 5315:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
- __alloc_extent_buffer+0x33/0x170 fs/btrfs/extent_io.c:2617
- alloc_extent_buffer+0x1ad/0x2740 fs/btrfs/extent_io.c:3019
- btrfs_init_new_buffer fs/btrfs/extent-tree.c:5019 [inline]
- btrfs_alloc_tree_block+0x28e/0x1440 fs/btrfs/extent-tree.c:5132
- btrfs_force_cow_block+0x526/0x1da0 fs/btrfs/ctree.c:573
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xc01/0x3180 fs/btrfs/ctree.c:2156
- btrfs_insert_empty_items fs/btrfs/ctree.c:4354 [inline]
- btrfs_insert_empty_item fs/btrfs/ctree.h:669 [inline]
- btrfs_insert_item+0x1a0/0x3b0 fs/btrfs/ctree.c:4383
- create_reloc_root+0x60f/0x9a0 fs/btrfs/relocation.c:741
- btrfs_init_reloc_root+0x338/0x4f0 fs/btrfs/relocation.c:817
- record_root_in_trans+0x2c9/0x360 fs/btrfs/transaction.c:450
- btrfs_record_root_in_trans+0x164/0x190 fs/btrfs/transaction.c:496
- select_reloc_root+0x27e/0xfd0 fs/btrfs/relocation.c:2101
- do_relocation+0x329/0x1a50 fs/btrfs/relocation.c:2326
- relocate_tree_block fs/btrfs/relocation.c:2658 [inline]
- relocate_tree_blocks+0xf34/0x1dd0 fs/btrfs/relocation.c:2712
- relocate_block_group+0x755/0xd40 fs/btrfs/relocation.c:3680
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3494
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4278
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4655
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3670
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 8:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2338 [inline]
- slab_free mm/slub.c:4598 [inline]
- kmem_cache_free+0x195/0x410 mm/slub.c:4700
- rcu_do_batch kernel/rcu/tree.c:2567 [inline]
- rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
- handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- ipv6_get_lladdr+0x295/0x3d0 net/ipv6/addrconf.c:1936
- mld_newpack+0x337/0xaf0 net/ipv6/mcast.c:1755
- add_grhead net/ipv6/mcast.c:1850 [inline]
- add_grec+0x1492/0x19a0 net/ipv6/mcast.c:1988
- mld_send_initial_cr+0x228/0x4b0 net/ipv6/mcast.c:2234
- mld_dad_work+0x44/0x500 net/ipv6/mcast.c:2260
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
- __call_rcu_common kernel/rcu/tree.c:3086 [inline]
- call_rcu+0x167/0xa70 kernel/rcu/tree.c:3190
- release_extent_buffer+0x206/0x2c0 fs/btrfs/extent_io.c:3230
- btrfs_force_cow_block+0xf9c/0x1da0 fs/btrfs/ctree.c:659
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xc01/0x3180 fs/btrfs/ctree.c:2156
- btrfs_update_root+0xf6/0xc70 fs/btrfs/root-tree.c:144
- commit_fs_roots+0x4cd/0x720 fs/btrfs/transaction.c:1509
- btrfs_commit_transaction+0xfa7/0x3720 fs/btrfs/transaction.c:2428
- relocate_block_group+0xc09/0xd40 fs/btrfs/relocation.c:3760
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3494
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4278
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4655
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3670
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888011f09000
- which belongs to the cache btrfs_extent_buffer of size 416
-The buggy address is located 0 bytes inside of
- freed 416-byte region [ffff888011f09000, ffff888011f091a0)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11f09
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88803fe35640 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000080008 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5315, tgid 5314 (syz.0.0), ts 76027898168, free_ts 75595688995
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2408
- allocate_slab+0x5a/0x2f0 mm/slub.c:2574
- new_slab mm/slub.c:2627 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
- __slab_alloc+0x58/0xa0 mm/slub.c:3905
- __slab_alloc_node mm/slub.c:3980 [inline]
- slab_alloc_node mm/slub.c:4141 [inline]
- kmem_cache_alloc_noprof+0x268/0x380 mm/slub.c:4160
- __alloc_extent_buffer+0x33/0x170 fs/btrfs/extent_io.c:2617
- alloc_extent_buffer+0x1ad/0x2740 fs/btrfs/extent_io.c:3019
- btrfs_init_new_buffer fs/btrfs/extent-tree.c:5019 [inline]
- btrfs_alloc_tree_block+0x28e/0x1440 fs/btrfs/extent-tree.c:5132
- btrfs_force_cow_block+0x526/0x1da0 fs/btrfs/ctree.c:573
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xc01/0x3180 fs/btrfs/ctree.c:2156
- btrfs_insert_empty_items fs/btrfs/ctree.c:4354 [inline]
- btrfs_insert_empty_item fs/btrfs/ctree.h:669 [inline]
- btrfs_insert_item+0x1a0/0x3b0 fs/btrfs/ctree.c:4383
-page last free pid 4722 tgid 4722 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0xdef/0x1130 mm/page_alloc.c:2657
- __slab_free+0x31b/0x3d0 mm/slub.c:4509
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
- getname_flags+0xb7/0x540 fs/namei.c:139
- do_readlinkat+0xd8/0x3a0 fs/stat.c:561
- __do_sys_readlink fs/stat.c:599 [inline]
- __se_sys_readlink fs/stat.c:596 [inline]
- __x64_sys_readlink+0x7f/0x90 fs/stat.c:596
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888011f08f00: 00 00 00 00 00 00 fc fc fc fc 00 00 00 00 00 00
- ffff888011f08f80: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888011f09000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff888011f09080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888011f09100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> 
+> Alice
 
