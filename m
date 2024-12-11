@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-441994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0439ED696
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:37:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528769ED698
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACCD1884736
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CDE188526A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9486C209F22;
-	Wed, 11 Dec 2024 19:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72121DDC29;
+	Wed, 11 Dec 2024 19:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xxwi7ZEZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sg+b7QDN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D915F1C3022
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821EF1C461F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733945837; cv=none; b=ldrAsZ54Hwu7/S0bLdhCG/WgGjmTsZDkMY5w7nN0KU5MMFDAZApUTcWrQjoPF6BkS9lrclKPR3wARCw8p419b0Q9o4KiK4P0sdd2Iss9Xa6cttj/P94I5LZuQW84rC2B69CCtNMkphHqHGIw+b9DkIeZQTx7cDACLP/KE6z3u/g=
+	t=1733945838; cv=none; b=MryOGxXFSKeWoYTFnZjaymNc5H/wbOIbijJtNqlKI219NKwhWlvYlkOpHYKNjW02Oo1CrW7y2FGe9xGrr7RdpjGevhCAEVUkRcpwXQO4DpEH66YMu6A+57uiEO0TmMXtLD46S6p0B95hz0MoEqW3ITZRJBZZEpECPGuBLrtohvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733945837; c=relaxed/simple;
-	bh=lVK40u0NyAfMbrlw+Wot+Edtg9b69WswtVo/MNtnMCE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ole2I2L+uOAwSOgjd/a2ZMz3rX0ttrWWftM8Qe/xX+q1Iw45yBWNg6Tu78VBkUWrD9+86g8uN8Q1hxqrlwJA6TqMyO+iLbuCGf+mi7KXz00ujR5fhWK0XVAN7NJcOs2ZlmhKKV5aQQuA1GEwUzHqQVWwJ02ECWS+NwjFiz8bSTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xxwi7ZEZ; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1733945838; c=relaxed/simple;
+	bh=gsaF2mp6+IFXG0g59HGoFlRenIZvGwM/zs6wchiu/aQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tz8e0cnds5lO37ePzosDczk87nRvJsz50Kq4J9Dg/eEpZG8LZ3L2Fb0yx71nrbycPfup7Y2WQUUWLEvNGv3QwcB9OJXYdJro4yZncSr2SQoYbNeGuhwUDaIdn5s3F0BvN+JgL5fJ4BNylVVq4UKpr6f2qP9KwUX/rSn/Ax74rR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sg+b7QDN; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733945833;
+	s=mimecast20190719; t=1733945835;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=i8/gFxZSvxzNzKpmlho1MeQRhcbvE6K9wGI4pejJiGQ=;
-	b=Xxwi7ZEZ8kwUfo+Mww6qa4R68Kumz21mXRWpKanNHkwB5sm6JS3CByBhkzGEniAGIPtQrU
-	y+CXtl+68zaVF/WGCci+QTMaZhwDXRR55zS8Beto3sSaXQahxhfBpLB6n6osQIlmgpWFzx
-	JtHIBITZnB7maG0rlV1FjG+hZfP+f0I=
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jCr0ZS2R3dDRLHGaXzPRHv9yEgb4A4mVvp8VJCXI81M=;
+	b=Sg+b7QDN0U1nwpEJNb5Ii4sSB9wN5BUnsMRMMtIpB6DPTBBZUx5wSCNGX+KVLEyyM5arPb
+	xr7SqRlpLVJitCGT33Q1RcBAhhUHlCZVXOBB/Wdw/eBdZjgc+C/VrppDa/1uMxwGk5GMJ0
+	P8VvnhESjESyHwn7vyw7xN+EnnHuK6Y=
 Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-364-o-w4vmeXM9-yvenBzSaQOQ-1; Wed,
- 11 Dec 2024 14:37:10 -0500
-X-MC-Unique: o-w4vmeXM9-yvenBzSaQOQ-1
-X-Mimecast-MFC-AGG-ID: o-w4vmeXM9-yvenBzSaQOQ
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-197-Q2fhomCGNlaIt0r6kdwOlA-1; Wed,
+ 11 Dec 2024 14:37:12 -0500
+X-MC-Unique: Q2fhomCGNlaIt0r6kdwOlA-1
+X-Mimecast-MFC-AGG-ID: Q2fhomCGNlaIt0r6kdwOlA
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8098E1955DCB;
-	Wed, 11 Dec 2024 19:37:09 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 452311944B17;
+	Wed, 11 Dec 2024 19:37:11 +0000 (UTC)
 Received: from starship.lan (unknown [10.22.82.46])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 242731956048;
-	Wed, 11 Dec 2024 19:37:07 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C43281956048;
+	Wed, 11 Dec 2024 19:37:09 +0000 (UTC)
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: kvm@vger.kernel.org
 Cc: linux-kselftest@vger.kernel.org,
@@ -62,63 +64,155 @@ Cc: linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	x86@kernel.org,
 	Maxim Levitsky <mlevitsk@redhat.com>
-Subject: [PATCH 0/4] KVM: selftests: dirty_log_test: fixes for running the test nested
-Date: Wed, 11 Dec 2024 14:37:02 -0500
-Message-Id: <20241211193706.469817-1-mlevitsk@redhat.com>
-Content-Type: text/plain; charset="utf-8"
+Subject: [PATCH 1/4] KVM: VMX: read the PML log in the same order as it was written
+Date: Wed, 11 Dec 2024 14:37:03 -0500
+Message-Id: <20241211193706.469817-2-mlevitsk@redhat.com>
+In-Reply-To: <20241211193706.469817-1-mlevitsk@redhat.com>
+References: <20241211193706.469817-1-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-As a part of the effort to start running kvm selftests nested, this patch=0D
-series contains several fixes to the dirty_log_test, which allows this test=
-=0D
-to run nested very well.=0D
-=0D
-I also included a mostly nop change to KVM, to reverse the order in which=0D
-the PML log is read to align more closely to the hardware. It should=0D
-not affect regular users of the dirty logging but it fixes a unit test=0D
-specific assumption in the dirty_log_test dirty-ring mode.=0D
-=0D
-Patch 4 fixes a very rare problem, which is hard to reproduce with standard=
-=0D
-test parameters, but due to some weird timing issue, it=0D
-actually happened a few times on my machine which prompted me to investigat=
-e=0D
-it.=0D
-=0D
-The issue can be reproduced well by running the test nested=0D
-(without patch 4 applied) with a very short iteration time and with a=0D
-few iterations in a loop like this:=0D
-=0D
-while ./dirty_log_test -i 10 -I 1 -M dirty-ring ; do true ; done=0D
-=0D
-Or even better, it's possible to manually patch the test to not wait at all=
-=0D
-(effectively setting iteration time to 0), then it fails pretty fast.=0D
-=0D
-Best regards,=0D
-       Maxim Levitsky=0D
-=0D
-Maxim Levitsky (4):=0D
-  KVM: VMX: read the PML log in the same order as it was written=0D
-  KVM: selftests: dirty_log_test: Limit s390x workaround to s390x=0D
-  KVM: selftests: dirty_log_test: run the guest until some dirty ring=0D
-    entries were harvested=0D
-  KVM: selftests: dirty_log_test: support multiple write retires=0D
-=0D
- arch/x86/kvm/vmx/vmx.c                       | 32 +++++---=0D
- arch/x86/kvm/vmx/vmx.h                       |  1 +=0D
- tools/testing/selftests/kvm/dirty_log_test.c | 79 +++++++++++++++++---=0D
- 3 files changed, 91 insertions(+), 21 deletions(-)=0D
-=0D
--- =0D
-2.26.3=0D
-=0D
+X86 spec specifies that the CPU writes to the PML log 'backwards'
+or in other words, it first writes entry 511, then entry 510 and so on,
+until it writes entry 0, after which the 'PML log full' VM exit happens.
+
+I also confirmed on the bare metal that the CPU indeed writes the entries
+in this order.
+
+KVM on the other hand, reads the entries in the opposite order, from the
+last written entry and towards entry 511 and dumps them in this order to
+the dirty ring.
+
+Usually this doesn't matter, except for one complex nesting case:
+
+KVM reties the instructions that cause MMU faults.
+This might cause an emulated PML log entry to be visible to L1's hypervisor
+before the actual memory write was committed.
+
+This happens when the L0 MMU fault is followed directly by the VM exit to
+L1, for example due to a pending L1 interrupt or due to the L1's
+'PML log full' event.
+
+This problem doesn't have a noticeable real-world impact because this
+write retry is not much different from the guest writing to the same page
+multiple times, which is also not reflected in the dirty log. The users of
+the dirty logging only rely on correct reporting of the clean pages, or
+in other words they assume that if a page is clean, then no writes were
+committed to it since the moment it was marked clean.
+
+However KVM has a kvm_dirty_log_test selftest, a test that tests both
+the clean and the dirty pages vs the memory contents, and can fail if it
+detects a dirty page which has an old value at the offset 0 which the test
+writes.
+
+To avoid failure, the test has a workaround for this specific problem:
+
+The test skips checking memory that belongs to the last dirty ring entry,
+which it has seen, relying on the fact that as long as memory writes are
+committed in-order, only the last entry can belong to a not yet committed
+memory write.
+
+However, since L1's KVM is reading the PML log in the opposite direction
+that L0 wrote it, the last dirty ring entry often will be not the last
+entry written by the L0.
+
+To fix this, switch the order in which KVM reads the PML log.
+
+Note that this issue is not present on the bare metal, because on the
+bare metal, an update of the A/D bits of a present entry, PML logging and
+the actual memory write are all done by the CPU without any hypervisor
+intervention and pending interrupt evaluation, thus once a PML log and/or
+vCPU kick happens, all memory writes that are in the PML log are
+committed to memory.
+
+The only exception to this rule is when the guest hits a not present EPT
+entry, in which case KVM first reads (backward) the PML log, dumps it to
+the dirty ring, and *then* sets up a SPTE entry with A/D bits set, and logs
+this to the dirty ring, thus making the entry be the last one in the
+dirty ring.
+
+Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+---
+ arch/x86/kvm/vmx/vmx.c | 32 +++++++++++++++++++++-----------
+ arch/x86/kvm/vmx/vmx.h |  1 +
+ 2 files changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 0f008f5ef6f0..6fb946b58a75 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6211,31 +6211,41 @@ static void vmx_flush_pml_buffer(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	u64 *pml_buf;
+-	u16 pml_idx;
++	u16 pml_idx, pml_last_written_entry;
++	int i;
+ 
+ 	pml_idx = vmcs_read16(GUEST_PML_INDEX);
+ 
+ 	/* Do nothing if PML buffer is empty */
+-	if (pml_idx == (PML_ENTITY_NUM - 1))
++	if (pml_idx == PML_LAST_ENTRY)
+ 		return;
++	/*
++	 * PML index always points to the next available PML buffer entity
++	 * unless PML log has just overflowed, in which case PML index will be
++	 * 0xFFFF.
++	 */
++	pml_last_written_entry = (pml_idx >= PML_ENTITY_NUM) ? 0 : pml_idx + 1;
+ 
+-	/* PML index always points to next available PML buffer entity */
+-	if (pml_idx >= PML_ENTITY_NUM)
+-		pml_idx = 0;
+-	else
+-		pml_idx++;
+-
++	/*
++	 * PML log is written backwards: the CPU first writes the entity 511
++	 * then the entity 510, and so on, until it writes the entity 0 at which
++	 * point the PML log full VM exit happens and the logging stops.
++	 *
++	 * Read the entries in the same order they were written, to ensure that
++	 * the dirty ring is filled in the same order the CPU wrote them.
++	 */
+ 	pml_buf = page_address(vmx->pml_pg);
+-	for (; pml_idx < PML_ENTITY_NUM; pml_idx++) {
++
++	for (i = PML_LAST_ENTRY; i >= pml_last_written_entry; i--) {
+ 		u64 gpa;
+ 
+-		gpa = pml_buf[pml_idx];
++		gpa = pml_buf[i];
+ 		WARN_ON(gpa & (PAGE_SIZE - 1));
+ 		kvm_vcpu_mark_page_dirty(vcpu, gpa >> PAGE_SHIFT);
+ 	}
+ 
+ 	/* reset PML index */
+-	vmcs_write16(GUEST_PML_INDEX, PML_ENTITY_NUM - 1);
++	vmcs_write16(GUEST_PML_INDEX, PML_LAST_ENTRY);
+ }
+ 
+ static void vmx_dump_sel(char *name, uint32_t sel)
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 43f573f6ca46..d14401c8e499 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -331,6 +331,7 @@ struct vcpu_vmx {
+ 
+ 	/* Support for PML */
+ #define PML_ENTITY_NUM		512
++#define PML_LAST_ENTRY		(PML_ENTITY_NUM - 1)
+ 	struct page *pml_pg;
+ 
+ 	/* apic deadline value in host tsc */
+-- 
+2.26.3
 
 
