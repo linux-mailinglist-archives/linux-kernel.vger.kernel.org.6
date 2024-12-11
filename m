@@ -1,251 +1,197 @@
-Return-Path: <linux-kernel+bounces-442222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995A29ED988
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B3179ED989
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007122826D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36702824FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7C71F0E42;
-	Wed, 11 Dec 2024 22:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DBD1F0E46;
+	Wed, 11 Dec 2024 22:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFT22pza"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="K5XQ3o/f"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE621A841F;
-	Wed, 11 Dec 2024 22:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35EB1A841F;
+	Wed, 11 Dec 2024 22:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733955671; cv=none; b=qoDPeu+Sc5nF69hU7h+eIV1iJQM6jezVjvq/NrvyyhmoiMfr9lw8kmJzcB67Xh33Hel5lxQnrNl9E9kEenOfETYPLQEXwCHbi0EBGa0Q5EabJYbnJm9B9Z5/VCTTx8B4MTBf+7l8nTtrp8DAV2/mOzhvRsF9VgnSK9NG03eY9FQ=
+	t=1733955736; cv=none; b=MVg3ObkC97WEfXdaVxsABmiWXPOmbSGMi2DRnjcwLtZ65asYo8VqmGFVm3UpUTAU+CanUMw5gy2GpkWP6GuBXTpRaQibsIg1erfpuWqBE/lfVo3lwkgd0ejTefqr1L4IMsz98DhObjM8nnLVvNMCdSxB7xnSC8QGmnm1kQNAu5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733955671; c=relaxed/simple;
-	bh=2aWjkE72XNSGas1TDBOKmfPrJHgAjt2hlTgdtD23gs4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HXyowGXPMZeuxq87EZB8TPdT45wj9X/gmbimE9+GdtW54xMfj0kUBIv+jG+ztHp/TMWMPy6HNJ+C4paoYnGWXKc1X56JdaYsZXEM+fvRiYKEsg6O84v8cHvyGSHV5vqLeKlM4ZdxVTohBj4kRk1fG7YvEyM/P1Bl3TBdT1TZ7UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFT22pza; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02700C4CED2;
-	Wed, 11 Dec 2024 22:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733955671;
-	bh=2aWjkE72XNSGas1TDBOKmfPrJHgAjt2hlTgdtD23gs4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZFT22pzasaQ2Tpwxv7BRL/FyrY7WIMD9EBtMomgqqnidD5cJS3QGYqpuI+n5imHyP
-	 MyqXAKUKc7d5rENV8mIqjva29FoLyY4d3c+NxhDITa1S+y2rmjM/wHGR7Yjo4lu3Eg
-	 3wCfaQ+7cRzh4p7tmCCwPD1KDwgqp6ndQ/gVoeKme7Lzyz9goQAaefaEtd7P6dVWuN
-	 S0sIVsWos066jVOEHhraP4YSEGRzAw0cwBHGFUAmpuyn8yHh/BVAeOT9C7/zZjKEBB
-	 oeef/uqLDZS7OiTCJapx4Dfhas5nbMjvNYDR3pDrKSYTsm0XRneVbCStPnwMereUx9
-	 OgcFENAMhg8BQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [RFC/PATCH] perf trace: Add --syscall-period option
-Date: Wed, 11 Dec 2024 14:21:10 -0800
-Message-ID: <20241211222110.2430610-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	s=arc-20240116; t=1733955736; c=relaxed/simple;
+	bh=GWtWUSQZPiNLXSEnknV2wpkOsZJTI15wEinuB1XcrCk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W8dqV7CBZBDcfMJ3G3lIVIS4LOhIcVJ5jadhfFD606lchyBpHHlGEHtdoj8CT9cvNzCCJwFF9GAGt6VskrWZG9hAfGcaZ3YbAH2x7mhsJsKf488ru8DtqMX1Hx8HdCauLqdHmEKKwmMuyYuQ0WouwGcbYi8oB+f8aYt1Y7nM2Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=K5XQ3o/f; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 240E3A03B8;
+	Wed, 11 Dec 2024 23:22:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=nz4TyTapXzMqxCqKapCIOkriVuwdNpBfQogyQAqNO5U=; b=
+	K5XQ3o/flOfsIMGkB0/xwZWBo0yU57mh6R0LLA5a9Kps0ubENp2mRsdi0DKUl2Hv
+	w75bGzwlvDSMj4dlKoQUKXmkujGO6ehbsVPsdnfzxh9q1xgftI3dShXSH0H+CZWt
+	6Ext/LxKqOkxFhRHE2ZEIveAojinCCKqzuxzq5MmDrlNWR10cOJ3N/XAi0CVS+KS
+	Gi+1JaLD37SzTDJC4jl8YHiB34hohS8g5sWsEi7CWHcs7wwVahBDu8ChVkcv00xm
+	n06I/jVIUJ8Pd2douQcv0P/h0oVpGIgDB6A+rK2+y5hE7QxbgaS5/MuYSfdvnVpm
+	gJleH+K30yGqKJ8oSYA1lhzmUYHCxw8A8wqMvLK3+9uLnajr3dYFndyQtUheJmXO
+	Ztnl4pbF5HnxkC5A9dSsbZq9ReaBqoHHq8Q47W90heGN/9hU1dctTIHxZtNMz8CH
+	JoElni/DlBxEbj2i1saW3UomxRjYePDrH7IDzH0WA5f5+wCX/BUiJAebht5juJia
+	29nfIBUPU45KUvcBYuzjK7c+ensyzAdxPef+q9DZE9pxqwUOU9MK1vQ8vNucUOl4
+	DYb2ayR7KDgPYyQZjtbPasiEI9PaCRglUuz7uPEo18/k3pJ9wgfe6wywAvP49no5
+	1eSVKByaUcCBu7+p0inCp16dOhfP5g6I4adBbLBjXas=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, "Liam
+ Girdwood" <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Jaroslav
+ Kysela" <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH] ASoC: sun4i-codec: Use new devm clk and reset APIs
+Date: Wed, 11 Dec 2024 23:22:05 +0100
+Message-ID: <20241211222205.1915027-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1733955729;VERSION=7982;MC=3794370839;ID=394182;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D9485562726B
 
-This option is to implement the event sampling for system calls.
-The period is given in msec as it shows the time in msec.
+Clean up error handling by using the new devm_
+clock and reset functions. This should make it
+easier to add new code, as we can eliminate the
+"goto ladder" in probe().
 
-  # perf trace -C 0 --syscall-period 100 sleep 1
-           ? (         ): fleetspeakd/1828559  ... [continued]: futex())                                            = -1 ETIMEDOUT (Connection timed out)
-       0.050 (100.247 ms): gnome-shell/572531 recvmsg(fd: 10<socket:[3355761]>, msg: 0x7ffef8b39d20)                = 40
-     100.357 (100.149 ms): pipewire-pulse/572245 read(fd: 5<anon_inode:[eventfd]>, buf: 0x7ffc0b9dc8f0, count: 8)      = 8
-     200.553 (100.268 ms): NetworkManager/3424 epoll_wait(epfd: 19<anon_inode:[eventpoll]>, events: 0x5607b85bb880, maxevents: 6) = 0
-     300.876 (         ): mon/4932 poll(ufds: 0x7fa392784df0, nfds: 1, timeout_msecs: 100)            ...
-     400.901 ( 0.025 ms): TaskCon~ller #/620145 futex(uaddr: 0x7f3fc596fa00, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-     300.876 (100.123 ms): mon/4932  ... [continued]: poll())                                             = 0 (Timeout)
-     500.901 ( 0.012 ms): evdefer/2/2335122 futex(uaddr: 0x5640baac5198, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-     602.701 ( 0.017 ms): Compositor/1992200 futex(uaddr: 0x7f1a51dfdd40, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-     705.589 ( 0.017 ms): JS Watchdog/947933 futex(uaddr: 0x7f4cac1d4240, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-     812.667 ( 0.027 ms): fix/1985151 futex(uaddr: 0xc0008f7148, op: WAKE|PRIVATE_FLAG, val: 1)             = 1
-     912.807 ( 0.017 ms): Xorg/572315 setitimer(value: 0x7ffc375d6ba0)                                      = 0
-
-The timestamp is kept in a per-cpu array and the allowed task is saved
-in a hash map.
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 ---
- tools/perf/Documentation/perf-trace.txt       |  6 ++
- tools/perf/builtin-trace.c                    |  5 ++
- .../bpf_skel/augmented_raw_syscalls.bpf.c     | 67 ++++++++++++++++++-
- 3 files changed, 76 insertions(+), 2 deletions(-)
+ sound/soc/sunxi/sun4i-codec.c | 41 ++++++-----------------------------
+ 1 file changed, 7 insertions(+), 34 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
-index 6e0cc50bbc13fc7f..9f338a8c5357a67e 100644
---- a/tools/perf/Documentation/perf-trace.txt
-+++ b/tools/perf/Documentation/perf-trace.txt
-@@ -241,6 +241,12 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
- 	printing using the existing 'perf trace' syscall arg beautifiers to map integer
- 	arguments to strings (pid to comm, syscall id to syscall name, etc).
+diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+index 3d6156fefe75..b0ca293979d7 100644
+--- a/sound/soc/sunxi/sun4i-codec.c
++++ b/sound/soc/sunxi/sun4i-codec.c
+@@ -2273,7 +2273,7 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 	}
  
-+--syscall-period::
-+	Trace a system call in the given period (in msec).  This implements
-+	sampling for syscalls in order to reduce the monitoring overhead.
-+	For example, setting the sysall period to 100 (msec) means it will
-+	sample a syscall and next one after 100 msec.
-+
+ 	/* Get the clocks from the DT */
+-	scodec->clk_apb = devm_clk_get(&pdev->dev, "apb");
++	scodec->clk_apb = devm_clk_get_enabled(&pdev->dev, "apb");
+ 	if (IS_ERR(scodec->clk_apb)) {
+ 		dev_err(&pdev->dev, "Failed to get the APB clock\n");
+ 		return PTR_ERR(scodec->clk_apb);
+@@ -2286,8 +2286,7 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 	}
  
- PAGEFAULTS
- ----------
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 3c46de1a8d79bfe6..789eb0ffd5f90b61 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -185,6 +185,7 @@ struct trace {
- 	} stats;
- 	unsigned int		max_stack;
- 	unsigned int		min_stack;
-+	unsigned long		sample_period_ms;
- 	int			raw_augmented_syscalls_args_size;
- 	bool			raw_augmented_syscalls;
- 	bool			fd_path_disabled;
-@@ -5219,6 +5220,7 @@ int cmd_trace(int argc, const char **argv)
- 		     "start"),
- 	OPT_BOOLEAN(0, "force-btf", &trace.force_btf, "Prefer btf_dump general pretty printer"
- 		       "to customized ones"),
-+	OPT_ULONG(0, "syscall-period", &trace.sample_period_ms, "syscall sampling period in ms"),
- 	OPTS_EVSWITCH(&trace.evswitch),
- 	OPT_END()
- 	};
-@@ -5326,6 +5328,9 @@ int cmd_trace(int argc, const char **argv)
- 				bpf_program__set_autoattach(prog, /*autoattach=*/false);
- 		}
+ 	if (quirks->has_reset) {
+-		scodec->rst = devm_reset_control_get_exclusive(&pdev->dev,
+-							       NULL);
++		scodec->rst = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
+ 		if (IS_ERR(scodec->rst)) {
+ 			dev_err(&pdev->dev, "Failed to get reset control\n");
+ 			return PTR_ERR(scodec->rst);
+@@ -2323,22 +2322,6 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
-+		if (trace.sample_period_ms)
-+			trace.skel->rodata->sample_period = trace.sample_period_ms * NSEC_PER_MSEC;
-+
- 		err = augmented_raw_syscalls_bpf__load(trace.skel);
+-	/* Enable the bus clock */
+-	if (clk_prepare_enable(scodec->clk_apb)) {
+-		dev_err(&pdev->dev, "Failed to enable the APB clock\n");
+-		return -EINVAL;
+-	}
+-
+-	/* Deassert the reset control */
+-	if (scodec->rst) {
+-		ret = reset_control_deassert(scodec->rst);
+-		if (ret) {
+-			dev_err(&pdev->dev,
+-				"Failed to deassert the reset control\n");
+-			goto err_clk_disable;
+-		}
+-	}
+-
+ 	/* DMA configuration for TX FIFO */
+ 	scodec->playback_dma_data.addr = res->start + quirks->reg_dac_txdata;
+ 	scodec->playback_dma_data.maxburst = quirks->dma_max_burst;
+@@ -2356,7 +2339,7 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 				     &sun4i_codec_dai, 1);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register our codec\n");
+-		goto err_assert_reset;
++		return ret;
+ 	}
  
- 		if (err < 0) {
-diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-index 4a62ed593e84edf8..12272620dcd73700 100644
---- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-+++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-@@ -113,6 +113,22 @@ struct pids_filtered {
- 	__uint(max_entries, 64);
- } pids_filtered SEC(".maps");
+ 	ret = devm_snd_soc_register_component(&pdev->dev,
+@@ -2364,20 +2347,20 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 					      &dummy_cpu_dai, 1);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register our DAI\n");
+-		goto err_assert_reset;
++		return ret;
+ 	}
  
-+struct sample_timestamp {
-+	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-+	__type(key, int);
-+	__type(value, __u64);
-+	__uint(max_entries, 1);
-+} sample_timestamp SEC(".maps");
-+
-+struct sample_filtered {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, pid_t);
-+	__type(value, bool);
-+	__uint(max_entries, MAX_CPUS);
-+} sample_filtered SEC(".maps");
-+
-+const volatile __u64 sample_period;
-+
- struct augmented_args_payload {
- 	struct syscall_enter_args args;
- 	struct augmented_arg arg, arg2; // We have to reserve space for two arguments (rename, etc)
-@@ -428,6 +444,44 @@ static bool pid_filter__has(struct pids_filtered *pids, pid_t pid)
- 	return bpf_map_lookup_elem(pids, &pid) != NULL;
+ 	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register against DMAEngine\n");
+-		goto err_assert_reset;
++		return ret;
+ 	}
+ 
+ 	card = quirks->create_card(&pdev->dev);
+ 	if (IS_ERR(card)) {
+ 		ret = PTR_ERR(card);
+ 		dev_err(&pdev->dev, "Failed to create our card\n");
+-		goto err_assert_reset;
++		return ret;
+ 	}
+ 
+ 	snd_soc_card_set_drvdata(card, scodec);
+@@ -2385,17 +2368,10 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err_probe(&pdev->dev, ret, "Failed to register our card\n");
+-		goto err_assert_reset;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err_assert_reset:
+-	if (scodec->rst)
+-		reset_control_assert(scodec->rst);
+-err_clk_disable:
+-	clk_disable_unprepare(scodec->clk_apb);
+-	return ret;
  }
  
-+static bool sample_filter__allow_enter(__u64 timestamp, pid_t pid)
-+{
-+	int idx = 0;
-+	__u64 *prev_ts;
-+	bool ok = true;
-+
-+	/* default behavior */
-+	if (sample_period == 0)
-+		return true;
-+
-+	prev_ts = bpf_map_lookup_elem(&sample_timestamp, &idx);
-+
-+	if (prev_ts) {
-+		if ((*prev_ts + sample_period) > timestamp)
-+			return false;
-+		*prev_ts = timestamp;
-+	} else {
-+		bpf_map_update_elem(&sample_timestamp, &idx, &timestamp, BPF_ANY);
-+	}
-+
-+	bpf_map_update_elem(&sample_filtered, &pid, &ok, BPF_ANY);
-+
-+	return true;
-+}
-+
-+static bool sample_filter__allow_exit(pid_t pid)
-+{
-+	/* default behavior */
-+	if (sample_period == 0)
-+		return true;
-+
-+	if (!bpf_map_lookup_elem(&sample_filtered, &pid))
-+		return false;
-+
-+	bpf_map_delete_elem(&sample_filtered, &pid);
-+	return true;
-+}
-+
- static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
- {
- 	bool augmented, do_output = false;
-@@ -526,7 +580,9 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
- SEC("tp/raw_syscalls/sys_enter")
- int sys_enter(struct syscall_enter_args *args)
- {
-+	pid_t pid = getpid();
- 	struct augmented_args_payload *augmented_args;
-+
- 	/*
- 	 * We start len, the amount of data that will be in the perf ring
- 	 * buffer, if this is not filtered out by one of pid_filter__has(),
-@@ -537,7 +593,10 @@ int sys_enter(struct syscall_enter_args *args)
- 	 * initial, non-augmented raw_syscalls:sys_enter payload.
- 	 */
+ static void sun4i_codec_remove(struct platform_device *pdev)
+@@ -2404,9 +2380,6 @@ static void sun4i_codec_remove(struct platform_device *pdev)
+ 	struct sun4i_codec *scodec = snd_soc_card_get_drvdata(card);
  
--	if (pid_filter__has(&pids_filtered, getpid()))
-+	if (pid_filter__has(&pids_filtered, pid))
-+		return 0;
-+
-+	if (!sample_filter__allow_enter(bpf_ktime_get_ns(), pid))
- 		return 0;
+ 	snd_soc_unregister_card(card);
+-	if (scodec->rst)
+-		reset_control_assert(scodec->rst);
+-	clk_disable_unprepare(scodec->clk_apb);
+ }
  
- 	augmented_args = augmented_args_payload();
-@@ -561,9 +620,13 @@ int sys_enter(struct syscall_enter_args *args)
- SEC("tp/raw_syscalls/sys_exit")
- int sys_exit(struct syscall_exit_args *args)
- {
-+	pid_t pid = getpid();
- 	struct syscall_exit_args exit_args;
- 
--	if (pid_filter__has(&pids_filtered, getpid()))
-+	if (pid_filter__has(&pids_filtered, pid))
-+		return 0;
-+
-+	if (!sample_filter__allow_exit(pid))
- 		return 0;
- 
- 	bpf_probe_read_kernel(&exit_args, sizeof(exit_args), args);
+ static struct platform_driver sun4i_codec_driver = {
 -- 
-2.47.0.338.g60cca15819-goog
+2.34.1
+
 
 
