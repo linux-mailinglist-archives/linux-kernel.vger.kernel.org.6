@@ -1,101 +1,120 @@
-Return-Path: <linux-kernel+bounces-441038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94F69EC881
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:10:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135339EC9FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7666F188520F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCFC167F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9935D2210D2;
-	Wed, 11 Dec 2024 09:10:44 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D461DEFF8;
+	Wed, 11 Dec 2024 10:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BB70WKd3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C480C1F8691;
-	Wed, 11 Dec 2024 09:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373A51A8406;
+	Wed, 11 Dec 2024 10:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908244; cv=none; b=rhz1ff35IpdCxdQ6y/hVwfwb5V9Is8lFZpEtbr1lcs3dD248phTl8Jx+RtHO6tNE2kFFjTnpIZ2IXqcdC+OQNGPUtknr1KOq4lQ6c20oB4PY+W2iTmG/AW9CBX68dYDDDtYJu5y6UpsNIG4xAhXd0U/Rj05Nnn0RsXnptZoABiQ=
+	t=1733911856; cv=none; b=KWZ+nD5li9NKGj47+8jxysuOb4Sf73pTEic4BohybErs6Qi3woyvUHn9qi4n+rsHQYRU2LW318y/rDxRsVljwJbZBSTPC7Zf7jL8E1Jewu+3M8rkto95nOYVARgnBkCux8jYVN5vPKOZLDnBkHnt5yiekaUYhDqpTawl9jZAAlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908244; c=relaxed/simple;
-	bh=a3K64jJA2uqJMe1HS7E60k7y1DffRW1euJVCcFm1q9Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SP5lqzRclCyl2URuna+ixTwFoMO8dfmBwAb232XvNKwWuXFy5vq46Ek0FKKo6pit+sX1vK8r1ecBbY4FeMPg5NbuhWLIpeD7ZkYnE13iTh/PsnyT4D7a6/OQ3EcFaF0AtrfuETkL1CHjIyreA3d4V0+M4mE8S302jGcWXaGPjic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5lpTm000975;
-	Wed, 11 Dec 2024 09:10:21 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy3kysv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 11 Dec 2024 09:10:21 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Wed, 11 Dec 2024 01:10:19 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Wed, 11 Dec 2024 01:10:17 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <rtm@csail.mit.edu>, <gregkh@linuxfoundation.org>,
-        <almaz.alexandrovich@paragon-software.com>
-CC: <patches@lists.linux.dev>, <stable@vger.kernel.org>,
-        <ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6.1.y] fs/ntfs3: Fixed overflow check in mi_enum_attr()
-Date: Wed, 11 Dec 2024 18:08:11 +0800
-Message-ID: <20241211100811.2069894-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733911856; c=relaxed/simple;
+	bh=sNNiv+krDX57PlrYyuWWXeuKjkBe0UFYHO9uiQNqXG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cSBd1yx69aK4ZFEqUy/ivipQdS5YSF+80mZZyvXNtYuYpYRCk8OOhoy0aTQVodANlhhHdFed0Am8/7MlOXkpuT4ni5B6wxs/GrcjRXKTc9obB5AaYFLhkJfNt9eThdHmA9YFsLqrh6OaYOueZdVNggOQaT2ira8mmLjlCgABPAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BB70WKd3; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733911855; x=1765447855;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sNNiv+krDX57PlrYyuWWXeuKjkBe0UFYHO9uiQNqXG0=;
+  b=BB70WKd3mJXjInV3bUIyLKvewQm9YpG1PtFnTh2Geecmaaut4fwMB/vx
+   r51DUUWd47mAGmeJg7w6a35qHiZmLDdObkFX3laGA2UJGGO4AXR4XqeJl
+   6TX+Aezl4asA6pN+YHd+Dbuaqkxo2d2lDwEWvcIMacXd4Rotx5ZIzBLHu
+   3vw89eUpSa/TBa1JwjzlqU2clVqzdGKH2oMGf2GngrHxXvXeLxeSOGjtA
+   5cqEz1Gzktfd3VQVS+zOEvKLGxRsXuQ/Ehb/RIIlvxPMqaWgG2FbZpSE0
+   FcU4NcfpWoFazEzSYtIQ/eePyowr6yujjyWesyVfaLNONkYgTWqNmVel2
+   A==;
+X-CSE-ConnectionGUID: s69Z9zIAQa+M129nli7WUw==
+X-CSE-MsgGUID: DNXS+8jXTgC/f9/10D886A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="51691219"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="51691219"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 02:10:54 -0800
+X-CSE-ConnectionGUID: Nrl286v4QTazqEvqznmoJQ==
+X-CSE-MsgGUID: fIyu/4MPR3acJyQWLcffgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="126675079"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa001.fm.intel.com with SMTP; 11 Dec 2024 02:09:43 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 11 Dec 2024 12:09:42 +0200
+Date: Wed, 11 Dec 2024 12:09:42 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev, akuchynski@google.com,
+	pmalani@chromium.org, jthies@google.com,
+	dmitry.baryshkov@linaro.org, badhri@google.com,
+	rdbabiera@google.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/7] usb: typec: Print err when displayport fails to
+ enter
+Message-ID: <Z1lk5pf-tGeNd342@kuha.fi.intel.com>
+References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
+ <20241206153813.v4.3.I6cff9d767b0f8ab6458d8940941e42c920902d49@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 5NpboHxqjj25SPvjgNMWaF6Wh2cWABDp
-X-Proofpoint-ORIG-GUID: 5NpboHxqjj25SPvjgNMWaF6Wh2cWABDp
-X-Authority-Analysis: v=2.4 cv=D7O9KuRj c=1 sm=1 tr=0 ts=675956fd cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=GFCt93a2AAAA:8 a=t7CeM3EgAAAA:8 a=fATKHIbVh68Ky4GJMjkA:9 a=0UNspqPZPZo5crgNHNjb:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-11_08,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0
- clxscore=1011 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2411120000 definitions=main-2412110068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206153813.v4.3.I6cff9d767b0f8ab6458d8940941e42c920902d49@changeid>
 
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+On Fri, Dec 06, 2024 at 03:38:14PM -0800, Abhishek Pandit-Subedi wrote:
+> Print the error reason for typec_altmode_enter so users can understand
+> why displayport failed to enter.
+> 
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> ---
+> 
+> (no changes since v1)
+> 
+>  drivers/usb/typec/altmodes/displayport.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
+> index 3245e03d59e6..e292780ec309 100644
+> --- a/drivers/usb/typec/altmodes/displayport.c
+> +++ b/drivers/usb/typec/altmodes/displayport.c
+> @@ -252,7 +252,8 @@ static void dp_altmode_work(struct work_struct *work)
+>  	case DP_STATE_ENTER:
+>  		ret = typec_altmode_enter(dp->alt, NULL);
+>  		if (ret && ret != -EBUSY)
+> -			dev_err(&dp->alt->dev, "failed to enter mode\n");
+> +			dev_err(&dp->alt->dev, "failed to enter mode: %d\n",
+> +				ret);
 
-[ Upstream commit 652cfeb43d6b9aba5c7c4902bed7a7340df131fb ]
+One line is enough.
 
-Reported-by: Robert Morris <rtm@csail.mit.edu>
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- fs/ntfs3/record.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  		break;
+>  	case DP_STATE_ENTER_PRIME:
+>  		ret = typec_cable_altmode_enter(dp->alt, TYPEC_PLUG_SOP_P, NULL);
 
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-index 7ab452710572..826a756669a3 100644
---- a/fs/ntfs3/record.c
-+++ b/fs/ntfs3/record.c
-@@ -273,7 +273,7 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
- 		if (t16 > asize)
- 			return NULL;
- 
--		if (t16 + le32_to_cpu(attr->res.data_size) > asize)
-+		if (le32_to_cpu(attr->res.data_size) > asize - t16)
- 			return NULL;
- 
- 		if (attr->name_len &&
+thanks,
+
 -- 
-2.25.1
-
+heikki
 
