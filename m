@@ -1,133 +1,159 @@
-Return-Path: <linux-kernel+bounces-441114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451459EC9CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:58:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C439EC9CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9EDA188922C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:58:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7035A1889DB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0A11EC4D1;
-	Wed, 11 Dec 2024 09:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3730B1EC4D5;
+	Wed, 11 Dec 2024 09:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1Cojbxx"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TfnDwz7P"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1D21DFE26
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF68F1DFE26
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733911086; cv=none; b=NXP4KZcOn1F9C5Y5pHFcN9bJ+x5N+Ld9zD6V6+2wVImNVlhu8I9OkZDU+ou6M7uaRTBjFOu65A2UKteFP3Kq+j7xKGIuZc1D3Sxjb7VhxYLDyCRACFjWkFWJQ8zU02IIyVPXyln4XP7LhSj0eK1ERurgwKWzolp33A6QNp925Do=
+	t=1733911094; cv=none; b=eP1z3Cp7UUBeKos5Iy/WflkJKn4J6I1ZpdI2dfbJIRBv2vLj/yDJUjlYfRj7nJYM5WzTEWUBUqqjqokdnBNaRuG1JQMH8yHDgG3Jpid0htnxOuiNLdUEbamtdb8MGOxDYpOe0VZXFCMtAwNab06egJiU4xVj9OExl0pjCadXHpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733911086; c=relaxed/simple;
-	bh=hb10IRqDEB3bAd6YS4FDT3teoGsks7yB4MJQiDSV2mw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=SuxhuIP7hP+TVXc21LITu/SCIL8Cqnc5W5bNb4QIgJDoTCwpOfbyUHYRR6TzU9qRlpON6J0oTtYnuYyqXJqxJhSMe3GS7ZR7S2tGxT9i5Kypg6peD6fHGdy31H5nE6ElISsg8nSnB9bkT/BZxZvrV8n2qzVCiCmN2Ts5KOA2d0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1Cojbxx; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a1fe2b43so65716445e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:58:03 -0800 (PST)
+	s=arc-20240116; t=1733911094; c=relaxed/simple;
+	bh=y55wIex4pQa90iKPixPdpPl4dg3F27VPnM0gGblWQU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsc644qNFOIc4PZtgV9/P6/VWWm3twnFxnE749xJo7Ym7IWssLvIw51aR73d6SEKgoUlJVuRf9h/CnIFlHW4LFBHF/BA6Q7iPdmmmaGZV02V6bJZjUj4w2iKiVITd0GvYdaB8/DvVivMFzw0QiK8gTK5u6gsNfE7tHNCWD3Vd2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TfnDwz7P; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa696d3901bso502292066b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:58:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733911082; x=1734515882; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tciY6+uBVxS9wS+R1/VFJQBrmgOsGnFvaLr4XYlcAbM=;
-        b=l1CojbxxX8p1hseAOj2Yeqg1Ardqttds6KVeIVxiuHP4yBES2AclWfGgGV3cuO+3As
-         RHFQxjZn3bIal8TyTEAYHlVf6o4p4P5JtWWK6XNVaAwbrRk0lFuv9UuA6/C/1yJfexyr
-         qUeaN30++I0GE5tsTcw+fQg+FYqZlsRhp4QkRpZSWinFY67kxC/sDlnQUvsZW4VZrX63
-         fhBytDLrTVWDcmFzObUW6D5SVLYlO7/hiqWWm/beyyC5SOgFAHR48v2g1V5ZlW3PztxX
-         f+e7CtlupPQ/2YJnZmHig4eIHFWYqHSVHs3ZxGVbkxKyfKCF2QdkybBk1Cv+h9rQ77Qw
-         odEw==
+        d=google.com; s=20230601; t=1733911091; x=1734515891; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NoxTFED1OV6IIvC50S+pNWi2oVo0JYbWqlKUFL/WbNs=;
+        b=TfnDwz7P/Es/1+oaRhrBdgIW6swgsVmB63F0CKqhNnsCTQI8srKuh1IrCxVYzmHFZ2
+         vzy4ughepjnl1jJVytDqG6V9fsW6ok/kvwagCcDfIbdgAcyLK0FirT8Jij1vndvmr6sB
+         8wl3GO3+/sZxIzXihGYJ2aotX7QrOn7XvAQYEDZt/MYwrcWr6/aPcS+Si1IhoSPHyZll
+         Q3DwuT1tOnGDhhmqh4q5t0boYfM9EXFJxpybOaabb/bGKhTyx7TYdtezBnGZwpIqCHfg
+         pAfvYJAHj91P3A1vQpCfgkEsotg6OQ2tsUzLKwHReezNPEQw3XJaVwhYqnOgyc2jOKJb
+         oyEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733911082; x=1734515882;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tciY6+uBVxS9wS+R1/VFJQBrmgOsGnFvaLr4XYlcAbM=;
-        b=wV8CgA8CF4YfzsLTYERoKJ+mFzxxSFsTw6cPqPQwaeJKFdEojk6B8AmvcqelqjbuPu
-         Kr+OlJniLaYMDkE/kUbJjuOga+Oy01EfdapDd0TSBqC541ft8uUSFQ9QD+lvOl4+TBT2
-         9UZ/+eW+Uckxf4RfwwaFfdnmKCvbF+4cclCKtuiAXPLgSGTI5S6UBfpiZN2Y+bEtZgMu
-         fpAOw/Hg2MhbIRwvHwm4nevUFr9+aYhw7S188HhUUgs4U1pDlLo+5/2U4XhyyPdtMTTi
-         gCGsonvoow1WrQ25QLxdu1LK+yM3AiRzECymik5ST3G47QOldlf/U7Shed92p4jbT65a
-         8NlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWblm055CSII1HBW3F7i5c68RqIKXTbfUKhGt/WChLdsc6/ALLPyNb3ejA/Rut2YHyW5U4qOgs0yBWU2h0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsiIeVdM3wxcxKF8QRpmNtAUHW9wZt+J1CzioDZaQqjPwTX5MU
-	kQR0T0Ve2uGKY0ju77yoMAQADPU3/y52y03bv9USKFDjYDGwk/wiIxBqaMKhh2E=
-X-Gm-Gg: ASbGnctSWdNyOiyIfk56k/xh6MDSE8Jq+yiq8yOmporhz0kwgk5aB7bxyzkKZQ4bzJI
-	n1UUat9g1auKfsJiUNjnnm1G5KCoVLpc9UAkD7Uk4uApbahmxYgEy/1D6sS894JNDPCLzsrHfBj
-	g3a/xBhcrcEUJIBAedB9520DoXWXdcu7f/4xhpMPB6i9/nq6Y4lHmVPPjz6qkTELOKygwU3/AfX
-	1LG3C46mIIYHnJ8E+v967fui9zhoMdvvi0auHesqIJfZ5P6NqZ8WHxFzp6VV6P0hQ==
-X-Google-Smtp-Source: AGHT+IEqpF1I20Q/eEs3dVdKFEOXVx9vJrnzLjJoaCFt3LKT8qvifeskFJfoMTfYbt9FbaUwAwk2zQ==
-X-Received: by 2002:a05:600c:4e47:b0:434:f5c0:3288 with SMTP id 5b1f17b1804b1-4361c43dc3dmr14271985e9.29.1733911081849;
-        Wed, 11 Dec 2024 01:58:01 -0800 (PST)
-Received: from [192.168.68.163] ([209.198.129.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878248f587sm911405f8f.11.2024.12.11.01.58.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 01:58:01 -0800 (PST)
-Message-ID: <6f441be9-7731-45dd-a131-39cc2e34dc1a@linaro.org>
-Date: Wed, 11 Dec 2024 09:58:00 +0000
+        d=1e100.net; s=20230601; t=1733911091; x=1734515891;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NoxTFED1OV6IIvC50S+pNWi2oVo0JYbWqlKUFL/WbNs=;
+        b=MRCSjZbMod7EYJ4HtR3NFdZEdozm2AW902Dhymgqqjx4L8trYYiHZO3yWtOz8WhrSS
+         VR+/izrOmW6vG2Grz1K2MupkjFohjrsy0COkwb7bgBVwbrI6g/BSGOusgwhgFG3zi2Mo
+         Z1n2viNSwgAIEaIa3QCqjXrcHBnANE2Vi5PmWmopNQ3qZGbl57kgKubaQr/TmyPHBT5W
+         YV0d72NDPoosHnaP3oGXnKr77dPvkK4B89xEOEUhIVxBjkHLTE5mEtAOaveyNb4vJrQf
+         2dftStal6dmLnuPFfIHMYbfp6oltxcf39wlWXNCGmIWodXz9hdHPma3L3j8dqur3tbeh
+         jA9g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2jizj1delKyCUtHEzbdUle3BvCUmLaYeB9+THtcxJmszPd565qvj/fQnGi5Ltc9nI6VYUUP8p9jQkcB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK0wfLrNA8bJPvgvmiqGEscax1SHpD8noJ6CaCdnlVz5nNzRRt
+	/Q0xJ+9HYTAn19rubS+JDhZRO3ThuCwYOKa/S0y7DJviwg+W58ouTB5lcxSJRA==
+X-Gm-Gg: ASbGncvYb+dbF8AND+R5Kpl7I6EO/ArBoR2niDIgxu/YsJ3BC+4275SnEtTy0BNWrCh
+	1b5Cl3Nfz/9Ver8jyvoxAb9srdKprCHJFa4oZkpPKalVpr4AoURvYsWMW3ZIJlnQBS78u51LIss
+	A/1b5pn/2kbwVir72FICxtiQsBoIH5ipdtNV4ehXrpch0xTKUyxyV05ypUU605KMtnTXjtA/it2
+	dH+6hR6lGzpHiVwQ6HrpUcttmf4clkk90TzKbwrkdWhhkayhpddoOeVIIDzuAzQEGEF3RCMh5r1
+	LaYLepfIKByv
+X-Google-Smtp-Source: AGHT+IF/0ntKZsypMhJqLoHZz7Y4KeXzGESSzQOBIbmcxUlmHH3DEZpbKATmONAsAAvwZztD3FrYtg==
+X-Received: by 2002:a17:907:7707:b0:aa6:79fa:b483 with SMTP id a640c23a62f3a-aa6b0f1f0c0mr192342966b.0.1733911090953;
+        Wed, 11 Dec 2024 01:58:10 -0800 (PST)
+Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68880b3f7sm432885166b.92.2024.12.11.01.58.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 01:58:10 -0800 (PST)
+Date: Wed, 11 Dec 2024 09:58:07 +0000
+From: Quentin Perret <qperret@google.com>
+To: Fuad Tabba <tabba@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/18] KVM: arm64: Introduce __pkvm_host_share_guest()
+Message-ID: <Z1liL3BtoPnSyvlh@google.com>
+References: <20241203103735.2267589-1-qperret@google.com>
+ <20241203103735.2267589-11-qperret@google.com>
+ <CA+EHjTwHSyQ1FJc7axbLNuBxSWpRVE6brb34nO+F59=QRmfQEg@mail.gmail.com>
+ <Z1hhHRdpCZcLs046@google.com>
+ <CA+EHjTw4GX3j_ssN-tWnf780xkvyKO5mBN6fnvXeWvQcBDmcNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf inject: Fix use without initialization of local
- variables
-To: Ian Rogers <irogers@google.com>
-References: <20241211060831.806539-1-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241211060831.806539-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+EHjTw4GX3j_ssN-tWnf780xkvyKO5mBN6fnvXeWvQcBDmcNg@mail.gmail.com>
 
-
-
-On 11/12/2024 6:08 am, Ian Rogers wrote:
-> Local variables were missing initialization and command line
-> processing didn't provide default values.
+On Tuesday 10 Dec 2024 at 15:51:01 (+0000), Fuad Tabba wrote:
+> On Tue, 10 Dec 2024 at 15:41, Quentin Perret <qperret@google.com> wrote:
+> > > Initially I thought the comment was related to the warning below,
+> > > which confused me.
+> >
+> > It actually is about the warning below :-)
+> >
+> > > Now I think what you're trying to say is that we'll
+> > > allow the share, and the (unrelated to the comment) warning is to
+> > > ensure that the PKVM_PAGE_SHARED_OWNED is consistent with the share
+> > > count.
+> >
+> > So, the only case where the host should ever attempt do use
+> > __pkvm_host_share_guest() on a page that is already shared is for a page
+> > already shared *with an np-guest*. The page->host_share_guest_count being
+> > elevated is the easiest way to check that the page is indeed in that
+> > state, hence the warning.
+> >
+> > If for example the host was trying to share with an np-guest a page that
+> > is currently shared with the hypervisor, that check would fail. We can
+> > discuss whether or not we would want to allow it, but for now there is
+> > strictly no need for it so I went with the restrictive option. We can
+> > relax that constraint later if need be.
+> >
+> > > I think what you should have here, which would work better with the
+> > > comment, is something like:
+> > >
+> > >                 /* Only host to np-guest multi-sharing is tolerated */
+> > > +               if (pkvm_hyp_vcpu_is_protected(vcpu))
+> > > +                       return -EPERM;
+> > >
+> > > That would even make the comment unnecessary.
+> >
+> > I would prefer not adding this here, handle___pkvm_host_share_guest() in
+> > hyp-main.c already does that for us.
 > 
-> Fixes: 64eed019f3fc ("perf inject: Lazy build-id mmap2 event insertion")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->   tools/perf/builtin-inject.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+> I understand now, and I agree that an additional check isn't
+> necessary. Could you clarify the comment though? It's the word "only"
+> that threw me off, since to me it implied that the check was enforcing
+> the word "only". Maybe:
 > 
-> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-> index d6989195a061..11e49cafa3af 100644
-> --- a/tools/perf/builtin-inject.c
-> +++ b/tools/perf/builtin-inject.c
-> @@ -2367,10 +2367,10 @@ int cmd_inject(int argc, const char **argv)
->   	};
->   	int ret;
->   	const char *known_build_ids = NULL;
-> -	bool build_ids;
-> -	bool build_id_all;
-> -	bool mmap2_build_ids;
-> -	bool mmap2_build_id_all;
-> +	bool build_ids = false;
-> +	bool build_id_all = false;
-> +	bool mmap2_build_ids = false;
-> +	bool mmap2_build_id_all = false;
->   
->   	struct option options[] = {
->   		OPT_BOOLEAN('b', "build-ids", &build_ids,
+> >                 /* Tolerate host to np-guest multi-sharing. */
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+I guess 'only' is somewhat important, it is the _only_ type of
+multi-sharing that we allow and the check enforces precisely that. The
+WARN_ON() will be triggered for any other type of multi-sharing, so we
+are really checking that _only_ np-guest multi-sharing goes through.
 
+Perhaps the confusing part is that the code as-is relies on WARN_ON()
+being fatal for the enforcement. Would it help if I changed the 'break'
+statement right after to 'fallthrough' so we proceed to return -EPERM?
+In practice we won't return anything as the hypervisor will panic, but
+I presume it is better from a logic perspective.
+
+Cheers,
+Quentin
 
