@@ -1,52 +1,89 @@
-Return-Path: <linux-kernel+bounces-441571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3C39ED047
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:47:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54E29ED04A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17CD016AA96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C82C416B624
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1791D619D;
-	Wed, 11 Dec 2024 15:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78791D88BB;
+	Wed, 11 Dec 2024 15:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRyMOFYj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TuAWOjKb"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57971D5CC6
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F491A2557
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931965; cv=none; b=r8Y1Tk2MnQ/hubGB/a4DkFMK9PtWR72LLgVDHj/qzIVUBmPYJmV7ZuBog1+wPiEN9/RPOyxMTB+L2ffMGfhYFJ6X/njWpuonH+mz//N53GyC1TvtEdXrLRdtklabVm+g+MdkurkUA+MHsox1ayopX9AcJEzhXozVplIkcPTF8YU=
+	t=1733931983; cv=none; b=OH70lAosrDs6YF0Csz9CjrAlme3cEuMj+lLN5ZBenmc3XHN0VuBcYaX/YqFJjBnbcPuV4rQ2OSNZolU/Qsv28uJnJQYUW3XmcLxLpy/n2yWRjbZvAsNUZ2I9TTTdtySlfF2vgQw4jczFLu36nHoS4QSOrR/Gn1dX3qPXXp1XjCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931965; c=relaxed/simple;
-	bh=6lGx5QexARWN3SzIAahwI8CDbjfI3RBnrClOPVKH2DE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XEn7DQUqNux3Ia2u7U05QiY4p3wliWJ3QvQaPohEClJjUtOWCGo7PJTxYkR8LYhKiwgRRvjK7ReEv7GWvcX4/k2yT71rRWpqZ/jQmAuHPxkW9YxoyTPc0H2/zhYU0d2q2yHx3Lbznk8zHy8VzPVh3h8htffcpl6MJtZakes9baM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRyMOFYj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16018C4CED2;
-	Wed, 11 Dec 2024 15:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733931965;
-	bh=6lGx5QexARWN3SzIAahwI8CDbjfI3RBnrClOPVKH2DE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=uRyMOFYj09K3He+yBr6hUnerBL4V5JN5UNlvhrbMb/W6wWsDPCEKbijTL4KLHTRyo
-	 IF6CizqAEq8ZbVjTkvqUgN6b6uTrmc+fNV8ce3MDVMR7RV2wmDwuBQWBwk7z1A96nj
-	 yPwtzcwhnDwb2l5s2wikHM2sp8cOOP9AhRxFLBp5rD0d++1li5wxGs0eK61j01PnM3
-	 yFGICCtwCaX2wxvCWNU8vlf8Guo+bLrsbnQdZvSmrXTztf+Vj37+DkXTmJwXDrdHs3
-	 AutXuAXzRK1v5kK28OYCJkEcUc977zGDziXkSMI+LAdLSHVBMSKSHOuaUuG/BJ/Fsn
-	 jtyQ9Idk+Jt1w==
-Date: Wed, 11 Dec 2024 15:46:03 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	krisman@suse.de
-Subject: Unicode conversion issue
-Message-ID: <Z1mzu4Eg6CPURra3@google.com>
+	s=arc-20240116; t=1733931983; c=relaxed/simple;
+	bh=IC53HRb8V9iRnpBWfxbNXmj/88s49PLXKEG+dC8i5fY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kn4E4rrGrM3bs0c99C24IlLNPi5Z3xm7xKyGf/RuKhvTJu6G705z7QVJbTooC+heL9sALAyqK4pj3V0COewoHhXxc6hSFgFMYak07kWBQmP7CI+Bagq0Z+iloNUVSMhlNkux2rj/TGTjgLh5yYurC1HpcqK8Z8jvLr7pBA3Unxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TuAWOjKb; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3862ca8e0bbso4259630f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:46:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733931979; x=1734536779; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B2rrjtFYCNa+l0opUFsEhFJAlzA2QKbBJlwN52j4330=;
+        b=TuAWOjKbpPy1WmYPC4QZoR6IIcNGO5jcCDJUEUioo4LO88WGvAZZ9yiuZNd153rJUc
+         nfdgz7608NiY2ucd26uUcJtFpmY7wFAFyRuD/vZIhWyrvtn0xaPyZPEkNmwWzYaF4XOP
+         UypRU+V2sygDqHleFs5uZOnB2xOIlMkWTieulWJ6M820yELaobg4nFpLtsKvv5MjYuSp
+         FfnCm1lMUJsoDNvugqo4cXn/J16HAKUT4sPgjOtvO6KarJ4oMAJigVSpVqIJgzI6pTPE
+         7SYum6XlkdLh05jU0RVfSYMrQJd8zgcTRkgoB+frcB1ZGVYbCPG7ucfAqtc8mh/WWgPt
+         OPGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733931979; x=1734536779;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B2rrjtFYCNa+l0opUFsEhFJAlzA2QKbBJlwN52j4330=;
+        b=quJCGIq0QZmTMvP11t5RiVVOnSVkxeEpBUBBS4uxgY3Z4odRaioALL4eOFuJEm6pUR
+         oNnIiH2vioCgJ/DBIggFZzDHry2XH6UOQCwZUaZ+yBf86EfANTg1tMjIl6i8IUGzJecC
+         fm8LrHqieULb3BepUKUDA5mMnY25g4d1yBVJCBi0H8hxgJ1nbaM++oQRvEkHW6BBqwcS
+         6DsXn5J0/LoW3MM3jixaG9H7iQr/OlMRFRj7zIlE2BI5yc2jd8PHxm9dZWiD99wPX0ww
+         iqBJA+9OHxQ2WtG0swRL2haTfBonHUAGD3Om8HQ4wny6WRfdzvmDKllRzvyHTjW5Jm1W
+         Pp9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWjr9ioaxLsa+FCB5yfsUMMdj5oQ+NdfQdhhVzv3FPw7+AKUfFObSQ4eXPvz5YypXLWUkCrnX4X2N8PImQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+dLGVC2CaXHbapzZ6n5MgWjENP+dq3MC+7+/Ff+031PUEvrNM
+	gEe7pG+3gh2lgZTr8oYtCIExdXkFecGwnKS0DHjp4L/vyVkdKalqjSoy8bgJdww=
+X-Gm-Gg: ASbGncsILeWWpFZtHhZ/LCrADd+uXWHO9wydxXF2DP1CxStr2gaT4Vj+aaLw4RlMkJV
+	B6hOyEBT5eXqg8Vi04yXZvdPWFMS7+ZlCcUUxf0rBLfkSNnDAPkAGcw8jwa0sWg3KvGMnbcZTn7
+	ThENrnmAAbqZvd9d9Nt32BKBDBpnDgskS3VZ2rrTsRmjZxJYuzB2TJbiBi5wAIQp1IJnIlHCx82
+	Dyi2P9pKkHSokIMChh1JorWg138qtZsMUPq/6kC1gwYbkJSpg3kn1vAl3Y=
+X-Google-Smtp-Source: AGHT+IElAjFrQA1BOKFF5sD8uSomr+adDjCh2fxba5+aLmeIQZ30HWVdJYlj+iWlHcRAJRttZ0NMfA==
+X-Received: by 2002:a05:6000:1ac8:b0:386:3213:5ba1 with SMTP id ffacd0b85a97d-3864ce97262mr3126317f8f.24.1733931979554;
+        Wed, 11 Dec 2024 07:46:19 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878251dba9sm1532151f8f.98.2024.12.11.07.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 07:46:18 -0800 (PST)
+Date: Wed, 11 Dec 2024 18:46:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Meghana Malladi <m-malladi@ti.com>
+Cc: vigneshr@ti.com, matthias.schiffer@ew.tq-group.com, robh@kernel.org,
+	u.kleine-koenig@baylibre.com, javier.carrasco.cruz@gmail.com,
+	diogo.ivo@siemens.com, horms@kernel.org, pabeni@redhat.com,
+	kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+	andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com, Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com
+Subject: Re: [PATCH net v4 1/2] net: ti: icssg-prueth: Fix firmware load
+ sequence.
+Message-ID: <304870d9-10c7-43b3-8255-8f2b0422d759@stanley.mountain>
+References: <20241211135941.1800240-1-m-malladi@ti.com>
+ <20241211135941.1800240-2-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,18 +92,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241211135941.1800240-2-m-malladi@ti.com>
 
-Hi Linus/Gabriel,
+On Wed, Dec 11, 2024 at 07:29:40PM +0530, Meghana Malladi wrote:
+> -static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+> +static int prueth_emac_start(struct prueth *prueth, int slice)
+>  {
+>  	struct icssg_firmwares *firmwares;
+>  	struct device *dev = prueth->dev;
+> -	int slice, ret;
+> +	int ret;
+>  
+>  	if (prueth->is_switch_mode)
+>  		firmwares = icssg_switch_firmwares;
+> @@ -177,16 +177,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>  	else
+>  		firmwares = icssg_emac_firmwares;
+>  
+> -	slice = prueth_emac_slice(emac);
+> -	if (slice < 0) {
+> -		netdev_err(emac->ndev, "invalid port\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	ret = icssg_config(prueth, emac, slice);
+> -	if (ret)
+> -		return ret;
+> -
+>  	ret = rproc_set_firmware(prueth->pru[slice], firmwares[slice].pru);
+>  	ret = rproc_boot(prueth->pru[slice]);
 
-Once Android applied the below patch [1], some special characters started to be
-converted differently resulting in different length, so that f2fs cannot find
-the filename correctly which was created when the kernel didn't have [1].
+This isn't introduced by this patch but eventually Colin King is going to
+get annoyed with you for setting ret twice in a row.
 
-There is one bug report in [2] where describes more details. In order to avoid
-this, could you please consider reverting [1] asap? Or, is there any other
-way to keep the conversion while addressing CVE? It's very hard for f2fs to
-distinguish two valid converted lengths before/after [1].
+>  	if (ret) {
+> @@ -208,7 +198,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>  		goto halt_rtu;
+>  	}
+>  
+> -	emac->fw_running = 1;
+>  	return 0;
+>  
+>  halt_rtu:
+> @@ -220,6 +209,78 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>  	return ret;
+>  }
+>  
+> +static int prueth_emac_common_start(struct prueth *prueth)
+> +{
+> +	struct prueth_emac *emac;
+> +	int ret = 0;
+> +	int slice;
+> +
+> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
+> +		return -EINVAL;
+> +
+> +	/* clear SMEM and MSMC settings for all slices */
+> +	memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
+> +	memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
+> +
+> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
+> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
+> +
+> +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+> +		icssg_init_fw_offload_mode(prueth);
+> +	else
+> +		icssg_init_emac_mode(prueth);
+> +
+> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
+> +		emac = prueth->emac[slice];
+> +		if (emac) {
+> +			ret |= icssg_config(prueth, emac, slice);
+> +			if (ret)
+> +				return ret;
 
-[1] 5c26d2f1d3f5 ("unicode: Don't special case ignorable code points")
-[2] https://bugzilla.kernel.org/show_bug.cgi?id=219586
+Here we return directly.
+
+> +		}
+> +		ret |= prueth_emac_start(prueth, slice);
+
+Here we continue.  Generally, I would expect there to be some clean up
+on this error path like this:
+
+		ret = prueth_emac_start(prueth, slice);
+		if (ret)
+			goto unwind_slices;
+
+	...
+
+	return 0;
+
+unwind_slices:
+	while (--slice >= 0)
+		prueth_emac_stop(prueth, slice);
+
+	return ret;
+
+I dread to see how the cleanup is handled on this path...
+
+Ok.  I've looked at it and, nope, it doesn't work.  This is freed in
+prueth_emac_common_stop() but partial allocations are not freed.
+Also the prueth_emac_stop() is open coded as three calls to
+rproc_shutdown() which is ugly.
+
+I've written a blog which describes a system for writing error
+handling code.  If each function cleans up after itself by freeing
+its own partial allocations then you don't need to have a variable
+like "prueth->prus_running = 1;" to track how far the allocation
+process went before failing.
+https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/
+
+regards,
+dan carpenter
+
 
