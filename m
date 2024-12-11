@@ -1,77 +1,54 @@
-Return-Path: <linux-kernel+bounces-441107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414199EC9B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:50:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684819EC9B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A8F169C83
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8094C168A29
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3710E236FAC;
-	Wed, 11 Dec 2024 09:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C4D1E9B1F;
+	Wed, 11 Dec 2024 09:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="agtTFFEE"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pyixXY4y"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1198236FA9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6795236FA9;
+	Wed, 11 Dec 2024 09:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733910627; cv=none; b=f+okGtN0BF1pYUh+AJLF9y+Hcj+B1fLSwtxZUzrVvwYG9Y0WFIWGb98fSk0feyDQSzl26V3SOGs5z0CEBjai5XIkMzyGL6oADF1mccgU0Olv/m5xmgn4CXFllqx6uwghsLl7pLidUOtE6Oj0sbsv/KakYpsTjNJJB05+j4adlmY=
+	t=1733910731; cv=none; b=h/mhF9jlt6EoSU+hA/7TahIeqP8xtC9uLTJ1kgAT7B2NMOXH0rt4kC5I1OrgEoxhqOH7V0axRzJ8xIyXBqwQ2f9nylOzdXAm9G9xEPer3IZZK4clBWevAvT529tWA0ViMo06wRb3AcO3ESvIEvJS9PrXRLgbT0gJNTBLEeN8zfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733910627; c=relaxed/simple;
-	bh=79Y2J60i/jBcsrblqYc4FLqObVvr3StOVIJMFYlmu80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=PoN+ZUQgkf2FvzLmKGelczpheabazi5Fe9GuAQMU09j/6+iOJYscqjvQ7bWpZMpOKT/bDsCHeSjm97Uf+fs37HYcBpuEuIkvjHspLtRiCKpbKZcJjSUFoj4okBzL+w/TGABMVRa+5FdmNgdnkiw/gqxdFAEa21upAnhJCjES6uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=agtTFFEE; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434f80457a4so2637005e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:50:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733910624; x=1734515424; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VGWXQh2y/a4pUNmJ5UgKe43cJc98Qm0WVvIS6JUL+7c=;
-        b=agtTFFEETsRHylNhX8OINKR3lyouyEtfM1oEBoPaNFHpMzYdt6P9AMyYp+froBvCiN
-         Om4n9unPF5nwc9lPoJJbndcqNxWB8FiKZcmQPf/OBiFr84jL8B88fGFUtaPwDW+oLiK5
-         ijUMFvZIhzJyVT8zhCLyunBR6AViL4dbbOlKQxnq4j3mpydx/cgkUh1HE5MTqq6+CBbH
-         Y+2QJrf9+lepzN3zhbwbSFqXl1JSQzOHlUiDMJJof2/rwe7bt9OzX5xSfg7RNuUVpzSw
-         vlx3rS6466AZV39a20B3fxFMPbrIGTF4HbbXSTi845PCyr6Rx0l/T8OmDtH+VfAOHbb6
-         kUUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733910624; x=1734515424;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VGWXQh2y/a4pUNmJ5UgKe43cJc98Qm0WVvIS6JUL+7c=;
-        b=E5ciQaR+vGjDPgP2IpbMzu/YFdTs/Wh7vjlgCK3Gg47T4x+pkOzIP6U7Ygwd0/WVDE
-         tKzk42t3KUpp0CgT9Z2BbPlC2Mdp5F0+H3YTYbuxiDkRp6Old8wl9BiwdJ2fE8GArjZB
-         EikpdnbJdazQBeQ9ZD5tEyHxJEf8rNvGII4Y2jMtRYk5Z+4Z8+STV1NGjvnfJZ6Ver+Y
-         es3Xegxw6XSEsiy8J0sbtAXEgjvYK01VnCM3g61YynDLaYjQvZG9eDYEuNgQJFRPF2zF
-         iMY+Wv1ze63xk1+YSX8e93WeHBs2kdAARXoNP1ZCyNJu5S73nWwc0UXYjRHzkScIf0H4
-         F0jA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Ra1k34/8YFZli24Moz2ZqEB602t9/E4IqcK8JT03oDM0aIet1J8S97F5TZWbJz4bUApEcAAqdsiMpu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjBGWpIHzwguF7N1EHz1f53FX4vkCrLriNGRWq5QenOPXUZlzP
-	geBea1ybxIqA8U802b48m6k6hTQGiMoTK3egUyo7lfT486blHx1VOJhc3j0iV9M=
-X-Gm-Gg: ASbGncuvZmKMHUQ4cDn/8ZDGHvIWju10WBRauHWP1ibxIt2iNMEJDDyLWrNhRr3htZb
-	4FKcXqB2um6YPbnVH6WHIW7alNc/y2AdU2KDONTW/Xk5aqsb2QMrbobBrbbrDc0r58u9wzy/MqJ
-	izXUZNtgW7rh/drrePG+2u1yT3jHEITYP34KbfWqQWZU1ZCbmUS/HCUeV9RBBHzvynK0o665Qwt
-	NiOqgDROdEDgxsP7UreSqP0lhFUv9OVcUW3hB/oYRS48fcx5NtfhV1UUgmy5LDSlw==
-X-Google-Smtp-Source: AGHT+IFkmAYF/4ple1UJDkLPOCeYZOjR8X/YoiUVeI4zDyJ0l2Wc/JKpoP9the1ZI3JMJKeQfZNidQ==
-X-Received: by 2002:a05:600c:3b9b:b0:434:fc5d:179c with SMTP id 5b1f17b1804b1-4361cd65b6bmr14401705e9.13.1733910624039;
-        Wed, 11 Dec 2024 01:50:24 -0800 (PST)
-Received: from [192.168.68.163] ([209.198.129.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434faeda409sm87538405e9.7.2024.12.11.01.50.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 01:50:23 -0800 (PST)
-Message-ID: <7c118b40-3b31-46d0-8967-e7c35f6a4868@linaro.org>
-Date: Wed, 11 Dec 2024 09:50:22 +0000
+	s=arc-20240116; t=1733910731; c=relaxed/simple;
+	bh=KQa0YljSDyn4f2yMLEHD4sXJuIGsikdtCBRivJW4u+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I4pmMX9RWN3hNebFhmbP1bVlAqYOP0e+OdcDr+6+dPdGcl5VWbZJJGI3PyQ5BOwMWknEWXtHVmYm5Q45YMd2r9cbEDQ8DWD+IND8lqYLyi5mIkgq1wuJtBOdY5Oe6H3awSQhv6gKUGMgIqW4j69yyGv794Np8VsAP+Sodke9TVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pyixXY4y; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733910727;
+	bh=KQa0YljSDyn4f2yMLEHD4sXJuIGsikdtCBRivJW4u+8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pyixXY4yVLNRRp7l8Dm2uhUoxDDMaLYCUO/5v86h/IyllVT8vjBOMCX7DXuOpUAUV
+	 0DiTqMQFUF2iKae6huS8FOqPbSGjvqbXXSYXEpNoF74EpubmiSiAFF0tDOXL+Pzy64
+	 hjPHIg8LQgSXNytwthlq5gegWpuD04K6LxjhrAm5xxN8VmSzXc3osGt3F9arUiVWXn
+	 TDf7tlcvO/ehpOBt0tcB4n+szHA9ZC8FtmPBe5AbwafWyKSBz1SRmxSnsNfdWnzapp
+	 nOqs6NXyz7v9TzFul8L1vc7qt8e+D/vNUXds0ggK1usjzDbbao1yzT1M9wJvU3Ogku
+	 lMCUxeCWJYozA==
+Received: from [192.168.1.90] (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 228AB17E35EA;
+	Wed, 11 Dec 2024 10:52:07 +0100 (CET)
+Message-ID: <a0cf9b40-8ac2-4d6a-a26c-bafa85096440@collabora.com>
+Date: Wed, 11 Dec 2024 11:52:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,72 +56,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf test stat: Avoid hybrid assumption when
- virtualized
-To: Ian Rogers <irogers@google.com>
-References: <20241211061010.806868-1-irogers@google.com>
+Subject: Re: [PATCH v2 0/4] Add support for HDMI1 output on RK3588 SoC
+To: Alexandre ARNOUD <aarnoud@me.com>
+Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com>
+ <BC29D61C-317D-4F82-AF42-EA3D705B0632@me.com>
 Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241211061010.806868-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <BC29D61C-317D-4F82-AF42-EA3D705B0632@me.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi Alex,
 
-
-On 11/12/2024 6:10 am, Ian Rogers wrote:
-> The cycles event will fallback to task-clock in the hybrid test when
-> running virtualized. Change the test to not fail for this.
+On 12/11/24 11:42 AM, Alexandre ARNOUD wrote:
+> Hello Cristian,
 > 
-> Fixes: a6b8bb2addd0 ("perf test: Add a test for default perf stat command")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->   tools/perf/tests/shell/stat.sh | 10 +++++++---
->   1 file changed, 7 insertions(+), 3 deletions(-)
+>> On 11 Dec 2024, at 12:06 AM, Cristian Ciocaltea <cristian.ciocaltea@collabora.com> wrote:
+>>
+>> Changes in v2:
+>> - Override hdmi1 pinctrl-0 on rock-5b as it requires hdmim0_tx1_cec
+>>  instead of hdmim2_tx1_cec (fixes a pin conflict when enabling
+>>  CONFIG_SPI_ROCKCHIP_SFC)
+>> - Link to v1: https://lore.kernel.org/r/20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabora.com
+>>
+>> ---
+>> Cristian Ciocaltea (4):
+>>      drm/rockchip: dw_hdmi_qp: Add support for RK3588 HDMI1 output
+>>      arm64: dts: rockchip: Add PHY node for HDMI1 TX port on RK3588
+>>      arm64: dts: rockchip: Add HDMI1 node on RK3588
+>>      arm64: dts: rockchip: Enable HDMI1 on rock-5b
+>>
+>> arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi  |  62 ++++++++++++
+>> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts |  44 ++++++++-
+>> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c  | 119 +++++++++++++++++++-----
+>> 3 files changed, 200 insertions(+), 25 deletions(-)
+>> ---
+>> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+>> change-id: 20241207-rk3588-hdmi1-704cbb7cd75f
 > 
-> diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-> index 5a2ca2bcf94d..60cea07350e1 100755
-> --- a/tools/perf/tests/shell/stat.sh
-> +++ b/tools/perf/tests/shell/stat.sh
-> @@ -165,9 +165,13 @@ test_hybrid() {
->   
->     if [ "$pmus" -ne "$cycles_events" ]
->     then
-> -    echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
-> -    err=1
-> -    return
-> +     # If virtualized the software task-clock event will be used.
-> +     if ! perf stat -- true 2>&1 | grep -q "task-clock"
-> +     then
-> +       echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
-> +       err=1
-> +       return
-> +     fi
->     fi
->     echo "hybrid test [Success]"
->   }
+> Tested-by: Alexandre ARNOUD <aarnoud@me.com>
+> 
+> Works perfectly on Rock-5B, thanks for your work.
 
-Hi Ian,
+Thanks for your quick test report on the series, which helped
+identifying the pin conflict issue which I missed initially.
 
-Isn't the distinction between task-clock and cpu-clock whether the event 
-is per-cpu or not?
-
-$ perf stat -C 1 -- true 2>&1 | grep cpu-clock
-               1.49 msec cpu-clock       #    0.917 CPUs utilized
-
-$ perf stat -- true 2>&1 | grep task-clock
-               0.30 msec task-clock      #    0.366 CPUs utilized
-
-The test uses per-task mode so this change makes it always pass, even 
-when the number of cycles events doesn't match the PMUs.
-
-Thanks
-James
-
+Regards,
+Cristian
 
