@@ -1,186 +1,147 @@
-Return-Path: <linux-kernel+bounces-441562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6099ED01E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:44:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D119ED024
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:45:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF60282E4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15A641889A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DE01D61A2;
-	Wed, 11 Dec 2024 15:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423A21D5CF5;
+	Wed, 11 Dec 2024 15:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXQLhsR5"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LudMsiQs"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773421D5CF4;
-	Wed, 11 Dec 2024 15:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA4C1D5CF4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931705; cv=none; b=j50IZm4YPCx45ZKRrbU0w9t9zROyKeRRmofTegH0m3i/aXbp41dbt8h+VC9sUzGpEHZswRtKdLDPOLVcrNPxVwb5PiGqSQLSmx1me8N40UtxYhFWy15B/UPZRbHAk7R41JWUSmSNn4cX2ef2gixVzcvyF6z5izgFvkUWHZg8Q+8=
+	t=1733931720; cv=none; b=ggl/uQ43ZsZViOjeRCgdzH3mxvsJJK7WVAn4UHBloXwb8lAnz2VIAmaBh3i7/En4uGl/4SFSRjQvT/Y1txjdiHdFYOyhphvE619qhKJEfxSjGFTwlAyBh5NDk7IKgR4cZNV0LCDBMlbgwWhGzMRJolSfYcDj1KYGnoDm7+iG5tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931705; c=relaxed/simple;
-	bh=NOZBo1+JNL4bPIBugXKrBr3qkhzKzwYQr3Ic7KNnheo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kKV6eKbrLSfQjYzIWc/FM7KO4xbRqScywbuf9tf7zNDY5+OdItRBxo47UyW5W/MnJgcikD0z0f+eGp/9pCHY8mHbICDWFY2pSIaO2CNK9naB/BdvgJEFFcFzpKauN7FtprGcYn7Eh9/y5i8Y9F0zCF+F83LKynMfnNuL90vIOmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXQLhsR5; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3023c51146cso9404221fa.1;
-        Wed, 11 Dec 2024 07:41:43 -0800 (PST)
+	s=arc-20240116; t=1733931720; c=relaxed/simple;
+	bh=9WXVRx/C0BrKo7ppuXd8NFYWBvQIlT4HwsewDeKEJjc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Fm0L7/ht21HnYMwnTQALag5i79Q+MhBMw9huCs7lkyq/NrNpE2b408vA8+Pcp72IWVOsSwq+zO/ghSGN/RhDq1ayNzW1TZQDG5jcI/nl8uAx/E5u5ZtIUn0fvIprAZb3aySlkZCn1Waux6mq3b+BV5bW/ngUCUC7W1Nhu0+wHkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LudMsiQs; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cf3e36a76so61472685ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:41:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733931702; x=1734536502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5ff9cb+2nLD8JalOVi1PdsyNf0i1E46g/pErfpxjw4A=;
-        b=PXQLhsR5vaY0R/7Kx78kZTMOHnuWC3+ZkhRE6Qlx9WXcFXNby8rY3GpFdWWmlZ3yv9
-         o0Ay9LRVonafM2aByJL9tuIMzKpTtFMASNPpuLWLKLpNPQ9tdH7x+EdujlCxm4jTViK5
-         xS6TQze19ZfL3HtgCZPB2PVwDVmqYEXjw9NsBDfaH5+WAde+MujLz6FcxhXQr/lqJ1P6
-         U81fQ186DvtXYgwNJ/mmDLuzRK1xEtc80lfi4aLpirERw6azLyrg0kXmOYeRo9Un4xnX
-         IazQ66VmT7U0g3CqVB43OZfgMkdiLOdEDt3sghunypAF7MVehbYTIs6i9EvJmyWd4rM3
-         hCjw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733931716; x=1734536516; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=//mDW/gsbivh5WLVGk2+QEkus5s+/UGSEuoa5vork+c=;
+        b=LudMsiQsgXUK4rADU+ylntIbxa9NCQLzKgITqHHgfRW6KR7ETmJrlQ7v+SxvJlZb5r
+         qZkp5Qq4uaXN3L+4NxQOICnRRqYhuy6Kbnaj0iXSTSyFdVbdV6o9mB+5afYBx+EHJ9ES
+         3aVgnqk0D0VUtrvL57LaD2DQcV3Dx39nr5mEW1maO+xBsMTUXXwa/R7fUBI7d/uQUHIL
+         cqKytdJobnEm39yvAy9zLlmv6Jt6lGOEZljpMMGp/jrWEMdkuEuzbAzN1ZxYnXPoRju6
+         LyjPylyyxPusouw4EcVCs4pZHWdnz13Wb3z0A+WeFkJ13fLvSc8viD9WO/EyMzUfvGny
+         T9fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733931702; x=1734536502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5ff9cb+2nLD8JalOVi1PdsyNf0i1E46g/pErfpxjw4A=;
-        b=q9prTEcDpa5xy93zbQpnBBOWdOqMe/BxuB5zKcnnjoo2rMTCGrnRrexGHxfAZJcKNb
-         YpoxV+n61J0dCNGtSNsuAzM3JciI9VJ0Ind80hbLQlnmw/pCFrpBY0wBhvYpuYRVKf6Q
-         7F5ymi1hWtHOwirHxN8W6eDphAZNVR0GEU4yXeGveqAjZ5HtB4lYS3SenZmFbqJaJ6Pt
-         1o5nHn47VljtojO1YcvYjNtyGoY3HvKsE8T8VD95Bt7HzPwDJsaHXVlSq8OwAPHCT6cJ
-         mh8dmzBMGOeOPJB2BzHo6UmiuECXRpW8WUYQCnvSzzM3kBU6vzSp8hv3hxlosxfaliw2
-         CgEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYMhJvVIhDxzX2wsRzBvvgpx1qjCNDNa2q1d35wx+HOAgwuui/lfzA6UzirsAkeFcPnLrCi1pJkA6qvLlN4Rc=@vger.kernel.org, AJvYcCXCk444+YE3jDwiRgaskmAl34xn9MVBBslxC9mNqoH3KFjGvxGQvpEzEhPZSHnUwvXy5VxO1AA+/s3dK+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtoNe934rMpZ5vDV7DPJwvmZvGTa3rWEqZ6LTUrRShi6k1X58U
-	e9LwrGnS3Yzz5gEz6BLB28sqZf5/R2zbAy+UxMaS3cwD3vhJxrtVyk//MAcrDdC4iR4frMAiO6R
-	8L/vPbRzvAq1vKd8NJ+ojx+ZTiH+ZLKkL8Zs=
-X-Gm-Gg: ASbGnct1jVGIk261Jjv3BoEEGeDhwabNEG5Dn/4X9SM6CcaeZ4d/Pcm1Cxz/vcMJWOs
-	OGRwicbpm0hyo1gOM4qQc3/gNPC+k2sfCoI4BCrfYukvugMhf83k=
-X-Google-Smtp-Source: AGHT+IEhS065GR8GCdLWIHmfihcTZwj5WW5a8mAJYES5//bs1giVZolIENRsdb3Xm9KdMTKYbCfEwCFOjZQsFAeoU8c=
-X-Received: by 2002:a2e:a5c4:0:b0:2ff:bc33:b6d6 with SMTP id
- 38308e7fff4ca-30241bc9872mr12985781fa.0.1733931701353; Wed, 11 Dec 2024
- 07:41:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733931716; x=1734536516;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=//mDW/gsbivh5WLVGk2+QEkus5s+/UGSEuoa5vork+c=;
+        b=t///ND/Yv6/M6iJYEp0NZxgbEIAmdLAJu/SE8i9E2sRIEXUILICep5aWMIMZ4dC2wy
+         h5nzwTbYbOJWR5mXPBTi7p2QpP0pej+ACgOpUYeI64sZ4uXDpcSk/gPszd6yCoRiKqnw
+         gly0IS3sH3wr+WxzSG2WLCZPpQ62cSNalND958u3I39Rz4VphzdD9psK//C5Z7nxCAlK
+         xY5XrPFYQk2lhcxKLsxg4Rt+mN8/4CrenjfMYrAb+h7RzdZ/vb1OLP3yCVSwdWL/k5uv
+         pVck90doKNANevCfC73vordJ4WgVVf8rSslaiAdPQkA3+C5ztn7kLH2YLLOVP7kgqZbE
+         +8JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUOPbIOtgQfue0CJzsaTDjlSJAwpAp4pM2huk5MLyO6dvKrb7Tn4Y0mg9suDSFPB8vIeCEKad9nysb6BA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSCtnrQMSCDHPDHe12m6dCdSrhT4L53vvdPns7cI22LXlcxpPU
+	bbxGQmZV1ipmccsBHDmUu/i+WhkMwamVXVNSGYoSZIYv4rsTazH+5aoILr3u2oc=
+X-Gm-Gg: ASbGncvgpWpyVWYSxZYAB+Sl61jcDErSPH0thbIj1XajJTvMGYyOZeYThtVXhuGc909
+	tC3SJWAQbEMQC+RcEAwo+ZG9EsOJ7FRzVeVqN/IqjIuWAFr4CyRqFdJiYQRdVCW71oyHJBoNBn6
+	/fCllQA0PXPNNua105yrkIIaqvULvdm5aTyFxbegghbyNsyjesrjyUYZ4xY46LRENrPomf44gLl
+	MKdm3nfsGoaQxqer8aU32X8D11XGxGvNFD+A6gqLyu/BsLl4eis
+X-Google-Smtp-Source: AGHT+IGgFiqQwkckid54v7HaXWCbBV/jyXAb4y5c25/cFVUIUVFXXoOTd9qO/0TbDhMvaeZjSbFGWg==
+X-Received: by 2002:a17:902:cf0a:b0:215:854c:a71a with SMTP id d9443c01a7336-21778532306mr57358265ad.34.1733931716599;
+        Wed, 11 Dec 2024 07:41:56 -0800 (PST)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2162e21321asm74338275ad.279.2024.12.11.07.41.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 07:41:56 -0800 (PST)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Dhruva Gole
+ <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis
+ <sebin.francis@ti.com>, Markus Schneider-Pargmann <msp@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] pmdomain: ti_sci: collect and send low-power
+ mode constraints
+In-Reply-To: <CAPDyKFo9N8M73Z6Ltsbnd-WR-jYAqBedAHndViSD7YaKKYgBsA@mail.gmail.com>
+References: <20241206-lpm-v6-10-constraints-pmdomain-v6-0-833980158c68@baylibre.com>
+ <CAPDyKFo9N8M73Z6Ltsbnd-WR-jYAqBedAHndViSD7YaKKYgBsA@mail.gmail.com>
+Date: Wed, 11 Dec 2024 07:41:55 -0800
+Message-ID: <7ho71ifcqk.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-rust-xarray-bindings-v11-0-58a95d137ec2@gmail.com>
- <20241203-rust-xarray-bindings-v11-2-58a95d137ec2@gmail.com> <CAH5fLgjPir8LfzfouBd3PYBvfCkWgQEw+im-=Vo7z8kBmFLtrw@mail.gmail.com>
-In-Reply-To: <CAH5fLgjPir8LfzfouBd3PYBvfCkWgQEw+im-=Vo7z8kBmFLtrw@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 11 Dec 2024 10:41:05 -0500
-Message-ID: <CAJ-ks9=oyLSkqAsAkO5VSM9js2G2AFvvrA-qHRKNYnsZyUx=mA@mail.gmail.com>
-Subject: Re: [PATCH v11 2/2] rust: xarray: Add an abstraction for XArray
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Dec 11, 2024 at 10:04=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
+Ulf Hansson <ulf.hansson@linaro.org> writes:
+
+> On Fri, 6 Dec 2024 at 23:13, Kevin Hilman <khilman@baylibre.com> wrote:
+>>
+>> The latest (10.x) version of the firmware for the PM co-processor (aka
+>> device manager, or DM) adds support for a "managed" mode, where the DM
+>> firmware will select the specific low power state which is entered
+>> when Linux requests a system-wide suspend.
+>>
+>> In this mode, the DM will always attempt the deepest low-power state
+>> available for the SoC.
+>>
+>> However, Linux (or OSes running on other cores) may want to constrain
+>> the DM for certain use cases.  For example, the deepest state may have
+>> a wakeup/resume latency that is too long for certain use cases.  Or,
+>> some wakeup-capable devices may potentially be powered off in deep
+>> low-power states, but if one of those devices is enabled as a wakeup
+>> source, it should not be powered off.
+>>
+>> These kinds of constraints are are already known in Linux by the use
+>> of existing APIs such as per-device PM QoS and device wakeup APIs, but
+>> now we need to communicate these constraints to the DM.
+>>
+>> For TI SoCs with TI SCI support, all DM-managed devices will be
+>> connected to a TI SCI PM domain.  So the goal of this series is to use
+>> the PM domain driver for TI SCI devices to collect constraints, and
+>> communicate them to the DM via the new TI SCI APIs.
+>>
+>> This is all managed by TI SCI PM domain code.  No new APIs are needed
+>> by Linux drivers.  Any device that is managed by TI SCI will be
+>> checked for QoS constraints or wakeup capability and the constraints
+>> will be collected and sent to the DM.
+>>
+>> This series depends on the support for the new TI SCI APIs (v10) and
+>> was also tested with this series to update 8250_omap serial support
+>> for AM62x[2].
+>>
+>> [1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
+>> [2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
+>>
+>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+>> ---
+>> Changes in v6:
+>> - fix build warning on arm32 when building with W=1 and CONFIG_PM_SLEEP=n
+>> - rebase onto v6.13-rc1
+>> - fix latency units: convert usecs (PM QoS) to msecs (TI SCI)
+>> - all dependencies are now merged in v6.13-rc1
+>> - Link to v5: https://lore.kernel.org/r/20241101-lpm-v6-10-constraints-pmdomain-v5-0-3011aa04622f@baylibre.com
 >
-> > +    fn iter(&self) -> impl Iterator<Item =3D core::ptr::NonNull<T::Poi=
-ntedTo>> + '_ {
-> > +        // TODO: Remove when https://lore.kernel.org/all/2024091321304=
-1.395655-5-gary@garyguo.net/ is applied.
-> > +        const MAX: core::ffi::c_ulong =3D core::ffi::c_ulong::MAX;
->
-> I think you can use kernel::ffi::c_ulong already. Enough things were
-> merged in 6.13 for that to work. If you import kernel::ffi::c_ulong at
-> the top of this file, then you can just do c_ulong::MAX in the
-> function calls below.
+> v6 applied for next and by amending patch1 to deal with the sorting of
+> include files, thanks!
 
-This isn't about using kernel::ffi::c_ulong; it's about using
-usize::MAX. I'll clarify the comment and change this to use
-kernel::ffi::c_ulong for now.
+Thank you for the fixuup.
 
-> > +        let mut index =3D 0;
-> > +
-> > +        // SAFETY: `self.xa` is always valid by the type invariant.
-> > +        iter::once(unsafe {
-> > +            bindings::xa_find(self.xa.get(), &mut index, MAX, bindings=
-::XA_PRESENT)
-> > +        })
-> > +        .chain(iter::from_fn(move || {
-> > +            // SAFETY: `self.xa` is always valid by the type invariant=
-.
-> > +            Some(unsafe {
-> > +                bindings::xa_find_after(self.xa.get(), &mut index, MAX=
-, bindings::XA_PRESENT)
-> > +            })
-> > +        }))
-> > +        .map_while(|ptr| core::ptr::NonNull::new(ptr.cast()))
->
-> You use core::ptr::NonNull in many places. Consider importing it.
-
-Will do.
-
-> > +    /// Stores an entry in the array.
-> > +    ///
-> > +    /// May drop the lock if needed to allocate memory, and then reacq=
-uire it afterwards.
-> > +    ///
-> > +    /// On success, returns the entry which was previously at the give=
-n index.
-> > +    ///
-> > +    /// On failure, returns the entry which was attempted to be stored=
-.
-> > +    pub fn store(
-> > +        &mut self,
-> > +        index: usize,
-> > +        value: T,
-> > +        gfp: alloc::Flags,
-> > +    ) -> Result<Option<T>, (T, Error)> {
->
-> We can see in your examples that this return type is inconvenient.
-> Perhaps it would be better to make a new error type containing a T and
-> an Error, and implement From so that the question mark can convert
-> directly to Error (throwing away the T).
-
-Will do.
-
-> > +// SAFETY: It is safe to send `XArray<T>` to another thread when the u=
-nderlying `T` is `Send`
-> > +// because XArray is thread-safe and all mutation operations are synch=
-ronized.
-> > +unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
-> > +
-> > +// SAFETY: It is safe to send `&XArray<T>` to another thread when the =
-underlying `T` is `Sync`
-> > +// because it effectively means sharing `&T` (which is safe because `T=
-` is `Sync`); additionally, it
-> > +// needs `T` to be `Send` because any thread that has a `&XArray<T>` m=
-ay lock it and get a
-> > +// `Guard<T>` on that thread, so the thread may ultimately access `T` =
-using a mutable reference, for
-> > +// example, using `get_mut` or `remove`.
-> > +unsafe impl<T: ForeignOwnable + Send + Sync> Sync for XArray<T> {}
->
-> I don't think Sync is needed due to the spinlock.
-
-Agreed. How's this phrasing for the comment?
-
-// SAFETY: It is safe to send `&XArray<T>` to another thread when the
-underlying `T` is `Send`
-// because any thread that has a `&XArray<T>` may lock it and get a
-`Guard<T>` on that thread, so
-// the thread may ultimately access `T` using a mutable borrow, for
-example, using `get_mut` or
-// `remove`. It is not necessary for `T` to be `Sync` because access
-to immutable borrows of `T` is
-// also synchronized through `Guard<T>`.
+Kevin
 
