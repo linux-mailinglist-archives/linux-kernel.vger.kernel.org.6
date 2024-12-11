@@ -1,79 +1,203 @@
-Return-Path: <linux-kernel+bounces-440772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7D49EC3FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:29:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8534B9EC400
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:33:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64BC1889B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E6316839E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E506C1BFE00;
-	Wed, 11 Dec 2024 04:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o++OoVAr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A29F2AE90;
-	Wed, 11 Dec 2024 04:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EC01BD027;
+	Wed, 11 Dec 2024 04:32:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88556136
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 04:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733891343; cv=none; b=Dhls3rZJUmmZCczS0aE+pyBqN68fWS5eNUcXM5GlECOTkT2YWcDIoyUEj8sca4iw5dydseoaCkxczHEbs/GrGYtiX9nzoHwccMuI3D0F5OqQrTiMLM1bkYckdYneqQgLEOhNnqz1E/zNT4f27If2YytAS+n9byjCC2/1nsv2J9A=
+	t=1733891577; cv=none; b=kIpl8fGhCDDYeD7cd7mJcaDdzo/pMhZXY+pjoniJ5dYMnHQNa3of3mjUtewhPNrSQSfKkSDbqwK/A1uwW9/dfSBxFHkKkPQirVQk34CgEU7wYYRiSz/bymnB6d+Mq7RE/+3Zf/avG9gQFQkmWOB5KdDER+1h42v3A+9zIvP2D2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733891343; c=relaxed/simple;
-	bh=E1dy64TF2jE9VaJGfyq7vKYKplc7baGwNatUEErEEuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSGweWzF8Tq8eSST1Rg2Y8nwOIVavrIbvgr/dRuL0Pgy9NaKAznrWiDNBcng37dixV26HEIlVTqFNT0AOotEV3ilfPSnZlhpjUaHrWUQj5VRzSz/YNSnz76/5jLtkaAFzbuaea8mRXnJy4spy1k7HaRnO3wbcVddV5J9xbn1xBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o++OoVAr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831F1C4CED2;
-	Wed, 11 Dec 2024 04:29:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733891342;
-	bh=E1dy64TF2jE9VaJGfyq7vKYKplc7baGwNatUEErEEuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o++OoVArxfvdrBv3oDLK4K2NYG+wiwiRqheMr+ju9Cc9CQroY3RX4PCQbbe4yCPac
-	 AKT5tVN5BmMDc9f0OtIG694JrNz3aYUZTM9ZU0RXKKidj82Iu2+48giEkgOGnbGWqH
-	 wbYGoh6ZV7cS2umWsJddD8XdljiEFj5IpJtrn4UipKjjcgX/fKqwfy/b4O+uCt2RPl
-	 a6RaU1CxCNZ1c1xq5Q44XQQ7Jovu2OGbPrVz0yQOlZ/zySBut0fzm3qNwmQieE5uxK
-	 ttr5Gap8iaB0fpenV5qy/CDtt9ikYnCmehlCbw2uFkqSxKY4boORG3EtL7NXsm3i2T
-	 nbPoaMV/2Az/A==
-Date: Tue, 10 Dec 2024 20:29:01 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v1 0/3] module: Don't fail module loading when setting
- ro_after_init section RO failed
-Message-ID: <Z1kVDQXQYPrZYxuK@bombadil.infradead.org>
-References: <cover.1733427536.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1733891577; c=relaxed/simple;
+	bh=NUK3jR8qNd4aOTWycj86Dbw7wtn4nFZ4Q8YBK/qOy/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ue22esf5YDyPAW+kd7ysbZOp/zLZUsIhk6pRNsl2XXAJoRQP1vyZ3dZUMb2/5chnkQhi+gO2sIZbmzPDdPOKjcbMNa70B9YRUU4bZovlKfo9NPiTy5Lp+MstRN5wTmMNV7w/LOnKqzACxkG2p2u8zDRE4UtOXOZBxrP8Hy1SXr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9AD7B1007;
+	Tue, 10 Dec 2024 20:33:16 -0800 (PST)
+Received: from [10.162.16.49] (a077893.blr.arm.com [10.162.16.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 287173F720;
+	Tue, 10 Dec 2024 20:32:44 -0800 (PST)
+Message-ID: <a382200e-00c4-405a-a417-f4c09bd91fb7@arm.com>
+Date: Wed, 11 Dec 2024 10:02:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1733427536.git.christophe.leroy@csgroup.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 5/7] arm64/cpufeature: Add field details for
+ ID_AA64DFR1_EL1 register
+To: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev
+References: <20241028053426.2486633-1-anshuman.khandual@arm.com>
+ <20241028053426.2486633-6-anshuman.khandual@arm.com>
+ <20241210164144.GA16039@willie-the-truck>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20241210164144.GA16039@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 08:46:14PM +0100, Christophe Leroy wrote:
-> This series reworks module loading to avoid leaving the module in a
-> stale state when protecting ro_after_init section fails.
+
+
+On 12/10/24 22:11, Will Deacon wrote:
+> On Mon, Oct 28, 2024 at 11:04:24AM +0530, Anshuman Khandual wrote:
+>> This adds required field details for ID_AA64DFR1_EL1, and also drops dummy
+>> ftr_raz[] array which is now redundant. These register fields will be used
+>> to enable increased breakpoint and watchpoint registers via FEAT_Debugv8p9
+>> later.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> cc: Mark Brown <broonie@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/kernel/cpufeature.c | 21 ++++++++++++++++-----
+>>  1 file changed, 16 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index 718728a85430..bd4d85f5dd92 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -530,6 +530,21 @@ static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
+>>  	ARM64_FTR_END,
+>>  };
+>>  
+>> +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
+>> +	ARM64_FTR_END,
+>> +};
 > 
-> Once module init has succeded it is too late to cancel loading.
-> If setting ro_after_init data section to read-only fails, all we can
-> do is to inform the user through a warning. This is what patch 2 does.
+> I think I mentioned this on an earlier series, but it would be useful to
+> see some justification in the commit message as to why some of these
+> features are considered STRICT vs NONSTRICT and why LOWER_SAFE is
+> preferred over EXACT.
+
+I have updated the commit message regarding STRICT vs NONSTRICT as Mark had
+mentioned earlier (see below). But just wondering about FTR_LOWER_SAFE. All
+similar fields have been marked as FTR_LOWER_SAFE.
+
 > 
-> Then patch 3 tries to go a bit further by testing the ability to write
-> protect ro-after-init section prior to initialising the module.
+> For example, why is EBEP strict whereas other PMU-related fields aren't?
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+IIUC there are two types of fields here.
 
-  Luis
+- Feature presence     (EBEP, ITE, ABLE etc)		---> FTR_STRICT
+- Debug resource count (WRPs, BRPs, CTX_CMPs etc)	---> FTR_NONSTRICT
+
+> Why is the CTX_CMPs field treated differently to the same field in DFR0?
+
+There is mismatch not only for CTX_CMPs but for WRPs and BRPs as well. As
+mentioned earlier, being resource count type, I believe these should be
+marked as FTR_NONSTRICT in existing DFR0 as well. I could send a patch
+fixing DFR0 first.
+
+> 
+> I'm not saying the above table is wrong, it just looks arbitrary without
+> the justification.
+
+Please find the updated version (v3) for this patch here for reference.
+
+--------------
+[PATCH] arm64/cpufeature: Add field details for ID_AA64DFR1_EL1 register
+
+This adds required field details for ID_AA64DFR1_EL1, and also drops dummy
+ftr_raz[] array which is now redundant. These register fields will be used
+to enable increased breakpoint and watchpoint registers via FEAT_Debugv8p9
+later. The register fields have been marked as FTR_STRICT, unless there is
+a known variation in practice.
+
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ arch/arm64/kernel/cpufeature.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 6ce71f444ed8..0dc22fde104e 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -534,6 +534,21 @@ static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
+ 	ARM64_FTR_END,
+ };
+ 
++static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
++	ARM64_FTR_END,
++};
++
+ static const struct arm64_ftr_bits ftr_mvfr0[] = {
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, MVFR0_EL1_FPRound_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, MVFR0_EL1_FPShVec_SHIFT, 4, 0),
+@@ -720,10 +735,6 @@ static const struct arm64_ftr_bits ftr_single32[] = {
+ 	ARM64_FTR_END,
+ };
+ 
+-static const struct arm64_ftr_bits ftr_raz[] = {
+-	ARM64_FTR_END,
+-};
+-
+ #define __ARM64_FTR_REG_OVERRIDE(id_str, id, table, ovr) {	\
+ 		.sys_id = id,					\
+ 		.reg = 	&(struct arm64_ftr_reg){		\
+@@ -796,7 +807,7 @@ static const struct __ftr_reg_entry {
+ 
+ 	/* Op1 = 0, CRn = 0, CRm = 5 */
+ 	ARM64_FTR_REG(SYS_ID_AA64DFR0_EL1, ftr_id_aa64dfr0),
+-	ARM64_FTR_REG(SYS_ID_AA64DFR1_EL1, ftr_raz),
++	ARM64_FTR_REG(SYS_ID_AA64DFR1_EL1, ftr_id_aa64dfr1),
+ 
+ 	/* Op1 = 0, CRn = 0, CRm = 6 */
+ 	ARM64_FTR_REG(SYS_ID_AA64ISAR0_EL1, ftr_id_aa64isar0),
+-- 
+2.25.1
+--------------
+Changes in V3:
+ 
+- Updated commit message regarding FTR_STRICT
+- Updated ID_AA64DFR1_EL1.ABLE as FTR_NONSTRICT
 
