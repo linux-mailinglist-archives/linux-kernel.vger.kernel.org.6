@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-441245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624799ECBB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:03:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF4A9ECBB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:05:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3361681E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:05:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F4721505B;
+	Wed, 11 Dec 2024 12:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="z+m6LVNC"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DE6285D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:03:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AFD21127F;
-	Wed, 11 Dec 2024 12:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJypURUV"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1B61EC4E3;
-	Wed, 11 Dec 2024 12:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9285F238E2A;
+	Wed, 11 Dec 2024 12:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733918591; cv=none; b=uMSMTBHBwKGJp6QxjPXsAOPVrEMf0A3+sgxT3dRLPqNGh6+9oq158G8enbbHmvUPW5yQC5azLtS2xKTNYMvb0NhsBlx2tafoZ021cAwyR2VmOVvfBa5eIRGeUh/2kumH7nTrKKbb2csc3hvBUASWmR6dbAh5qlLNhhOJKggo35A=
+	t=1733918699; cv=none; b=mFpkOQZVPsavfYZJoiJq2B5ThHfwYdzqMcj4OEPIi517jRO16wNo71OArFHC6nkiTvsceS98TBBL/YE5t2AXl6yc9kOJpfv0H3VbQ3puzPMd6DjzTJFO1YBQwuLa9DpthyTHA4CBuZpgixLhSej6N8WOtlfOWebxDX3ubfIQasA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733918591; c=relaxed/simple;
-	bh=U/FA17bRARhz/OH9vDb0zhfRRZAWzAU9QR5iGTQ83s0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XqZW7y36/JQI2VsydLQ/dnlk/ncivBwJNJGZtSDZqvOFCfDTv2VryTdnh39Rk8U7h7fxRJHcD0XsZPeNoRoSnpejL6weQ0cQSQYeFQs74FRZA3dvFqB33vUu83c35hv+4W++I+kTYSJ3i1wcXkaOUUo6EhbFjyYV4k81iOPTBjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJypURUV; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-216401de828so27849135ad.3;
-        Wed, 11 Dec 2024 04:03:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733918590; x=1734523390; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+80OGSZHS3zxkO7V3dRKVOrQn9UKerL0YbqvYsgrGwU=;
-        b=dJypURUVZUw84ANd6oIIlUezrR/0bZMavEFHt26uqXTxrPpjgnmkmiMljhiVNirKRG
-         tzQM8/zeDfXREX5uwYWkOpcWlzsq+amfgogOVShY9vCh9s+oRaRXoi69gAGJskFkayj1
-         VoUgo7NyCfbyfEAm0z+F0y6QC8Wae1Zm2S3VzfhPs5I4A8Gnw/Uci2i4wz5GrqUxEE8H
-         u0KxoKX1/yOcDWuwdqB3MDQyOu7Dmk/QUffGJf3xapR7QDreEMv9OJ3U+r+dR7CVFpV6
-         Hz8nZXyr8XKHG73nJk5499FAq0nZMDfoA5PkN5n3P3YaGzXxYd/z2IrSYxHFWT1i4Ule
-         y3kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733918590; x=1734523390;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+80OGSZHS3zxkO7V3dRKVOrQn9UKerL0YbqvYsgrGwU=;
-        b=tLbBZXGzppbNyytFzTZzo8zy8GOrjrxXAie/PGGYAjk/NIyg7PrChFpMR7NJu5z7Ra
-         Yr2FIJ9LQj+7339C/cfdfqyaG1C/INuL9jwaA4ml1LGVlezlJrBfqlSi7La5n2sId7Dy
-         aJLVhPAEJ0B5Q66eiVUpgsypDnzbnAxlXJYKn1fzxpQPsAiB5zg2OMFquJfc4JIOw29K
-         TgcmnxrrPu+bHJin9woJewbgpf/vkFzn7Fqbr3ZlvLZFMFPqJWUH3NQ/oTJcFDYtVLvD
-         rfhFY4dDLTYzIUIiJeXkFJlzNscPfIeS9FjNnO98djMymD5QBQVdFSyAlhm2nAahMYZ+
-         SL/g==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Zev+WOXMgBdEJw/VQWvr3fLkqrvtdkYZHhWhSarGAgcK9p+8k2D8o9J2todeEkhvcl5fCppMfJDc@vger.kernel.org, AJvYcCXO9scwew3qBIsJUbp29kLECVj5kgnZRipUXSGkb0cZweVKmj2YqqSoezdS4+R2d2nyrOJB109Tex/Nfeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7ogCwaNiMWjMG9BXlIPUjQVhKfmZ+NdJAv6T4k1DY4doaQKl1
-	qWgJ7YaKD51GRSEFqzO1n7DZh28BMet28O5kVggeKsINAQX5hL2cOTdJMw==
-X-Gm-Gg: ASbGncsaq2NhqbTDTEXDcbfrYqRwLNgB0a+0IKKnci54TMgVkcGLeFRE+9UmvEesm5n
-	s/Yv43NztKHCECoIF3SVBNam1da6Rbx7vk/P0BcBuO0cVAjLnYoy3NST7y0LT4/306Si2dKRMVX
-	3YOoEHO3lPDq3UugIK+OVOyQhf6pA+1fmjFC67Z90U4vDbBiNhUEjwFSn2QXa9y5AAaqnWahtux
-	duzGIqbfZTQZPbS/b9mb3ZeOTPaME3zatI0Zx1x0M4cwm9op/CH0nbVZwfzr79ocC9Jfg==
-X-Google-Smtp-Source: AGHT+IEdLkpKBOvRX2kHF0FNDcluqyXnJ3fTjrYfoCfbvfFbotXiPXlANf1ywQumS/ppqpMhN9Bwzw==
-X-Received: by 2002:a17:902:dacc:b0:216:46f4:7e5a with SMTP id d9443c01a7336-2177854a024mr38150645ad.45.1733918589432;
-        Wed, 11 Dec 2024 04:03:09 -0800 (PST)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f0cf61sm105149725ad.188.2024.12.11.04.03.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 04:03:08 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: dchinner@redhat.com,
-	cem@kernel.org
-Cc: djwong@kernel.org,
-	chandanbabu@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>,
-	Dave Chinner <david@fromorbit.com>
-Subject: [PATCH v3] xfs: fix the entry condition of exact EOF block allocation optimization
-Date: Wed, 11 Dec 2024 20:03:04 +0800
-Message-ID: <20241211120304.3244443-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
+	s=arc-20240116; t=1733918699; c=relaxed/simple;
+	bh=1Yd5D9BJyOtyfIb8dJrBUAsYwwwWUWP+TpbR9XJzO0A=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VK2mT07T1sozj7iUNjfBZMsz8+UU67BKBPva2WO4Unv8BjXEDA2WqVyNErhdM6km0JFN8kRRfZXbOwGvTplRy7xh0N1MeIugGxbSp0dKWyrolKGw01rU2mdGduCNAaqHZ16in4HSQr3C57PKxCc6VYXEn4UsPkmohPba/TQjmyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=z+m6LVNC; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733918697; x=1765454697;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1Yd5D9BJyOtyfIb8dJrBUAsYwwwWUWP+TpbR9XJzO0A=;
+  b=z+m6LVNCl/Ad2Gup/EXr01DmMGjsicJoeEmAEjNvXjag4KZliKl2s84U
+   Ek7ju0+XRFxnRMmeQvC8nx2pE8caMWas3N2MvSB91cT7urJ/l2LEyAM46
+   ADMM/AHElYSu1Z2G6+Xxfi/4u0+SP/P+9MRiDNcrsByhQ0GHEhkAV49mJ
+   j8OstjBi7izithstgdBE7qYWiJGpEqdwJdqJ+Y3orLbg9jmks2j8tJFeB
+   38a6JN4Xi4nxiELKetH5qzxNZXkEaPVfFRGOT2gOd5lvLtjKleBobg8ME
+   GKnQUwmLYPCfiFAmyfNtSorsdjUzY1tkOi1f1+QK4S9X0bWFHRDGHSy5r
+   A==;
+X-CSE-ConnectionGUID: Ptjd/tA+SRiWFGe/ObcJTg==
+X-CSE-MsgGUID: v4RVO+SvRWyQH0g/1OUQug==
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="39094712"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Dec 2024 05:04:56 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 11 Dec 2024 05:04:16 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 11 Dec 2024 05:04:13 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <balakrishnan.s@microchip.com>
+CC: <alexandre.belloni@bootlin.com>, <andrei.simion@microchip.com>,
+	<broonie@kernel.org>, <claudiu.beznea@tuxon.dev>, <conor+dt@kernel.org>,
+	<devicetree@vger.kernel.org>, <krzk+dt@kernel.org>, <lgirdwood@gmail.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+	<robh@kernel.org>
+Subject: Re: [PATCH v2] ASoC: dt-bindings: sound: atmel-at91sam9g20ek: convert to json-schema
+Date: Wed, 11 Dec 2024 14:03:17 +0200
+Message-ID: <20241211120316.22494-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241211-sound-atmel-at91sam9g20ek-v2-1-86a0e31e6af9@microchip.com>
+References: <20241211-sound-atmel-at91sam9g20ek-v2-1-86a0e31e6af9@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,58 +78,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-When we call create(), lseek() and write() sequentially, offset != 0
-cannot be used as a judgment condition for whether the file already
-has extents.
+Hi,
 
-Furthermore, when xfs_bmap_adjacent() has not given a better blkno,
-it is not necessary to use exact EOF block allocation.
+On 11.12.2024 11:46, Balakrishnan Sambath wrote:
+> Convert atmel-at91sam9g20ek-wm8731-audio DT binding to yaml
+> based json-schema.Change file name to match json-scheme naming.
+> 
+> Signed-off-by: Balakrishnan Sambath <balakrishnan.s@microchip.com>
+> ---
+> Changes in v2:
+> - Add missing CODEC pin options to 'atmel,audio-routing' items.
+> - Drop 'minItems' from 'atmel,audio-routing' since enum defines valid connections.
+> - Add subsystem tag to subject.
+> - Add blank line between properties and fix typo.
+> - Add audio complex description.
+> - Link to v1: https://lore.kernel.org/lkml/20240214-at91sam9g20ek-wm8731-yaml-v1-1-33333e17383b@microchip.com
+> ---
+>  .../bindings/sound/atmel,at91sam9g20ek-wm8731.yaml | 70 ++++++++++++++++++++++
+>  .../sound/atmel-at91sam9g20ek-wm8731-audio.txt     | 26 --------
+>  2 files changed, 70 insertions(+), 26 deletions(-)
 
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
-Changelog:
-- V3: use ap->eof to mark whether to use the EXACT allocation algorithm
-- V2: https://lore.kernel.org/linux-xfs/Z1I74KeyZRv2pBBT@dread.disaster.area/
-- V1: https://lore.kernel.org/linux-xfs/ZyFJm7xg7Msd6eVr@dread.disaster.area/T/#t
----
- fs/xfs/libxfs/xfs_bmap.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+I recommend you to remove from title the word 'sound'.
+You can check the commit history of the Documentation/devicetree/bindings/sound/
+before you write the commit title.
 
-diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-index 5255f93bae31..2b95279303d3 100644
---- a/fs/xfs/libxfs/xfs_bmap.c
-+++ b/fs/xfs/libxfs/xfs_bmap.c
-@@ -3566,12 +3566,12 @@ xfs_bmap_btalloc_at_eof(
- 	int			error;
- 
- 	/*
--	 * If there are already extents in the file, try an exact EOF block
--	 * allocation to extend the file as a contiguous extent. If that fails,
--	 * or it's the first allocation in a file, just try for a stripe aligned
--	 * allocation.
-+	 * If there are already extents in the file, and xfs_bmap_adjacent() has
-+	 * given a better blkno, try an exact EOF block allocation to extend the
-+	 * file as a contiguous extent. If that fails, or it's the first
-+	 * allocation in a file, just try for a stripe aligned allocation.
- 	 */
--	if (ap->offset) {
-+	if (ap->eof) {
- 		xfs_extlen_t	nextminlen = 0;
- 
- 		/*
-@@ -3739,7 +3739,8 @@ xfs_bmap_btalloc_best_length(
- 	int			error;
- 
- 	ap->blkno = XFS_INO_TO_FSB(args->mp, ap->ip->i_ino);
--	xfs_bmap_adjacent(ap);
-+	if (!xfs_bmap_adjacent(ap))
-+		ap->eof = false;
- 
- 	/*
- 	 * Search for an allocation group with a single extent large enough for
--- 
-2.41.1
+Best Regards,
+Andrei Simion
+
+
 
 
