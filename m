@@ -1,88 +1,131 @@
-Return-Path: <linux-kernel+bounces-441640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0979A9ED127
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:21:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211159ED136
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:22:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F5728168F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30882164906
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA86C1DC197;
-	Wed, 11 Dec 2024 16:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3006C1DDA15;
+	Wed, 11 Dec 2024 16:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Kdrjb58K"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMQuRzB3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE9D1494CC;
-	Wed, 11 Dec 2024 16:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D92D1DD0F6;
+	Wed, 11 Dec 2024 16:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733934062; cv=none; b=mQfVV6UONpqvJUxK5tmUHaHySlChlgtc/tlG/4oet2KxsQSE04ToDiv6ceajXgPkLkgA/wWSOArCcJk/GOqS95W36LhFltTuCus+2EUNoofUxUsz5dZXelyFHGyWTbxUYETiLp8jbnFq+lU0p0aJwl0YbUWvgB+QsbyYWsgUFns=
+	t=1733934137; cv=none; b=a9UXN7cQtn6WpCGSwQ68pVzsW+f88SCnLin3m/fKOXDpaTpOUMJeNf6GR8SM7MY6Gti7hS2kRvKxZqRPvSsHl2TtMNbz4RrQvSQe0RHVvoJL/S/AQwYIfpka8H0mxgNAvBIRlrIYwd9q0iMGcGzc84LVRE5jsAXHmiFv0FL02hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733934062; c=relaxed/simple;
-	bh=uw//hqCMM9HWMKRSt26zVjTfbz+Xet06m8v6VdA23xA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KYowNGXaTc8cfCyVTCX74Nri3bamIB7e73psqGWGGrEOCvPB7xTaZUixBLnjvMPZKJcJQdOlOzCKOykGTVqeDm9qhabv7wPMVKSygPlDO3VQji99HasoFRPtla805QCXhWvYfxQAzxolv3nVfM2vnkn5uUVaUrZgd21yCd+9bEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Kdrjb58K; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7Z0DEBri/4e5qFRB3rmrvUGG+X5H123cydH6+EWO8RM=; b=Kdrjb58K4q8Bm96epMm2s8XLJl
-	ztCAyzNHmLDocRWJds2Q5zw/fWs7ZHgnB/2iZrgGsPKoGSIp59/dDvdvFU1vFoLxVWGsKqW/cvAAQ
-	GISE51OMZIMXJlbwa349fFXGh9fAIxZ2sZekuO2omVdttECtNX2zTW4//8AmT+GkJZR4uhmn6zuks
-	Np41yo/BBoNJ2WRHzmPfPrZeOXg52VE7XJDsIITJTxGo0QxMzNo2rbDDlf4DhWIBK1HnyqZJ7uuHv
-	+jx2/Y5xovAo/ya5h9TrIhCg9yAOkvRxmgSNkjdqlO9v8ssVDq5f5a/VmGKZMSa9LH0dog8nNKZ1N
-	yFqKXTfQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLPSK-00000007HCV-0JfZ;
-	Wed, 11 Dec 2024 16:20:56 +0000
-Date: Wed, 11 Dec 2024 16:20:56 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Add a prctl to disable ".." traversal in path resolution
-Message-ID: <20241211162056.GF3387508@ZenIV>
-References: <20241211142929.247692-1-mjg59@srcf.ucam.org>
- <20241211.154841-core.hand.fragrant.rearview-Ajjgdy5TrwhO@cyphar.com>
+	s=arc-20240116; t=1733934137; c=relaxed/simple;
+	bh=1o4nKAvHbdeD/mN69tGs7tgkNmaWAZnJ3IKqTY1yIi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d3DUGdOgDFMefn8vYsOu4eUcOgUyAo8WT37LPyUKa2XIGrxKEZsZocjQCSm0R5fNS4VD9fQM3+5M5J5U870eT4lW5cufmC3wflJC7modZ1qC70UzvfqrM/DEv1+xBnBJJ1Jbbe712t9+B6XsEAeNRDBsXLb3xJDYFOF3Pn/mEwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMQuRzB3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9BDC4CED2;
+	Wed, 11 Dec 2024 16:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733934137;
+	bh=1o4nKAvHbdeD/mN69tGs7tgkNmaWAZnJ3IKqTY1yIi8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sMQuRzB32XkehBIDiJx6QPHK0y7kHVd6CYYeC01SuLDRPOQKu9LL48ckjNB677ODB
+	 LJkbbmjOuPxJ3tsxPg6WHIx2ieHzXTJDdY0YT7LS4GYEtR0kj0eTyi+pDwsVIRN8pn
+	 2NWDgPn/efDSlvYaBx3z9FN0Pc7i/N7QNB2y06WvdF3hYJn3h3GuDyilNrEfVWWMnJ
+	 dxokOJvu55tX6XUSe734hvdxxHcmYpYhr8fTyRuM/0q2+KLk2CIQqfTAfVBrUVkuyc
+	 vK0yoXyJoMrkGtu/u9t8Z70frYkfdi9Yriy/dkiQrajZal4ZI2ALdqjHWGrYP9oGu4
+	 mxWuFdBl3drKg==
+Date: Wed, 11 Dec 2024 17:22:07 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Xiaofei Tan <tanxiaofei@huawei.com>
+Cc: <rafael@kernel.org>, <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <jonathan.cameron@huawei.com>,
+ <M.Chehab@huawei.com>, <roberto.sassu@huawei.com>, <shiju.jose@huawei.com>,
+ <prime.zeng@hisilicon.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH] acpi: Fix hed module initialization order when it is
+ built-in
+Message-ID: <20241211172207.513957e2@sal.lan>
+In-Reply-To: <20241115035014.1339256-1-tanxiaofei@huawei.com>
+References: <20241115035014.1339256-1-tanxiaofei@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211.154841-core.hand.fragrant.rearview-Ajjgdy5TrwhO@cyphar.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 02:56:59AM +1100, Aleksa Sarai wrote:
+Em Fri, 15 Nov 2024 11:50:14 +0800
+Xiaofei Tan <tanxiaofei@huawei.com> escreveu:
 
-> I think RESOLVE_BENEATH is usually more along the lines of what programs
-> that are trying to restrict themselves would want (RESOLVE_IN_ROOT is
-> what extraction tools want, on the other hand) as it only blocks ".."
-> components that move you out of the directory you expect.
+Please always copy my @kernel.org address for upstream work.
+
+> When the module hed is built-in, the init order is determined by
+> Makefile order. That order violates expectations. Because the module
+> hed init is behind evged. RAS records can't be handled in the
+> special time window that evged has initialized while hed not.
+> If the number of such RAS records is more than the APEI HEST error
+> source number, the HEST resources could be occupied all, and then
+> could affect subsequent RAS error reporting.
+
+IMO, it is a lot better to use a late init call. Please see:
+	include/linux/init.h
+
+This would be done by, for instance, using late_initcall().
+
+Now, what we have is:
+
+	acpi-y                          += evged.o
+	obj-$(CONFIG_ACPI_HED)          += hed.o
+
+Where ACPI_HED being a tri-state.
+
+It sounds to me, that even, with your patch, if you build
+HED as a module, you'll still have a problem.
+
+Shouldn't be ACPI_HED be changed from tristate to bool?
+
+Regards,
+Mauro
+
 > 
-> It also blocks absolute symlinks, which this proposal does nothing about
-> (it even blocks magic-links, which can be an even bigger issue depending
-> on what kind of program we are talking about). Alas, RESOLVE_BENEATH
-> requires education...
-
-So does this prctl, when you get to that - any references to "service manager"
-that might turn it on are contradicted by the "after startup" bit in the
-original posting.
-
-IOW, I very much doubt that this problem is amenable to cargo-culting.
-
-_If_ somebody wants to collect actual information about the use patterns,
-something like prctl that would spew a stack trace when running into
-.. would be an obvious approach, but I would strongly object to even
-inserting a tracepoint of that sort into the mainline kernel.
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+> ---
+>  drivers/acpi/Makefile | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+> index 61ca4afe83dc..54f60b7922ad 100644
+> --- a/drivers/acpi/Makefile
+> +++ b/drivers/acpi/Makefile
+> @@ -15,6 +15,13 @@ endif
+>  
+>  obj-$(CONFIG_ACPI)		+= tables.o
+>  
+> +#
+> +# The hed.o needs to be in front of evged.o to avoid the problem that
+> +# RAS errors cannot be handled in the special time window of startup
+> +# phase that evged has initialized while hed not.
+> +#
+> +obj-$(CONFIG_ACPI_HED)		+= hed.o
+> +
+>  #
+>  # ACPI Core Subsystem (Interpreter)
+>  #
+> @@ -95,7 +102,6 @@ obj-$(CONFIG_ACPI_HOTPLUG_IOAPIC) += ioapic.o
+>  obj-$(CONFIG_ACPI_BATTERY)	+= battery.o
+>  obj-$(CONFIG_ACPI_SBS)		+= sbshc.o
+>  obj-$(CONFIG_ACPI_SBS)		+= sbs.o
+> -obj-$(CONFIG_ACPI_HED)		+= hed.o
+>  obj-$(CONFIG_ACPI_EC_DEBUGFS)	+= ec_sys.o
+>  obj-$(CONFIG_ACPI_BGRT)		+= bgrt.o
+>  obj-$(CONFIG_ACPI_CPPC_LIB)	+= cppc_acpi.o
 
