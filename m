@@ -1,152 +1,112 @@
-Return-Path: <linux-kernel+bounces-442055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F4B9ED766
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:42:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FFF9ED769
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:43:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D43F166A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:42:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F7D1888D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D4C211A0B;
-	Wed, 11 Dec 2024 20:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF0F211A0E;
+	Wed, 11 Dec 2024 20:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rVWUf29r"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="t3lZNbt0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665D20ADC5
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4499115746E;
+	Wed, 11 Dec 2024 20:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733949760; cv=none; b=WauNtG6f4kML0QKKTWBEBK8DU+EEAtWpBoc466YA/OIfw7yKmzF8iSX+VcMJhx52RKZhsq4ZfGmHs/RjNOKT/9RohXpYklT/6EQ8zV/2dzYXr6bsQJmbmJqsTgrV3m8o6ukdmi9SgoQYTLB+7tIBGGPK+jCYDjIuN3iNjVsdJB0=
+	t=1733949815; cv=none; b=Qc9oMpr5soHwW223s9FVZuwk45P6P7IZJs48ujoJvVsL+zjbYF9WoCDtCe14TkUcPlfJowFosL4sVLQS7OvD3XITZgzp/k0XMcQeagobFujnXq3sJs4bMEU2u7W9gZ5anU38pLIc8hvNJciggv2ngXTXtmEKpVJ09sGtdBXRC94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733949760; c=relaxed/simple;
-	bh=zt+gFce7p9BmlGHKA/G5UtDVOqnwFe3Mu9Nc5y11DvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTW5L8YJO+AV6kmiSHHVceF41aSRJnhirJwAoGM1xDcFd23ISwSUsO8xr9ZR2zmczqijbYMRFnj47Z0X7Cj9xq4MQPMAYYugI0FbvwTddBuoP/9YIszB3dshrzYTTyST+MbSuoekSs7sFmWE++Eo4ZHCRuRxboGT6PG30OdLCTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rVWUf29r; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d932b5081eso14131686d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:42:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1733949757; x=1734554557; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9QqbNdfAl0+PnKaqyg/McU4dzsm66c1ARzs60VG3n/Q=;
-        b=rVWUf29rgfOHsIWkogKVYykvGQDi1cCGzo5rNxJvYOdlxcfUDC8UT/CuWfUL1+klRQ
-         ivsbxQKUfdxq5suQ4HcnL/NN+JC47xc0w7eEowRr2wes473c92MhYJAnBSb34s4/sAL6
-         wbuPkDvClYJwwMcTg5+2/UEr7x9LgCAJrzXFG9BUZLLRtZHfyMFwO6pAL1Xj7LJyz2vG
-         NEIFPsr+uNYMaLZdOBdBT8VQN705g7eGhKYWRUkPYW5sU2CS1NILxuIhp9BKgLfKkI6w
-         1ZAXOp47GUJ18rD8Qnus47B+x9twXFESGiORtkrLN1VQ1OFAEUG4jpuD7z88YlbDVZjK
-         WSBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733949757; x=1734554557;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9QqbNdfAl0+PnKaqyg/McU4dzsm66c1ARzs60VG3n/Q=;
-        b=Hc/TxvaFa4gQZGaoHn5wj+9VtUl7yHS6I5C++SzM6igelOkuDYhh8caJsRapDMIDln
-         d05NUdowY9eKu11aUMtWK2BKl7dsElvYLZ12r9YrujZN3zbXrvAVR+toK4Cc7TY9w/i+
-         T93eQYyeLoFofYqYO7q8odbIN0eRiZsLrLDsU5QM8bTs6T5PdClrADuZqQYo71p0owxz
-         CKIBkpXTEEQhlLeEDrSHZCH3F14HKh7zTVzedU3+XHCwg5oiMBBBVlNlI4p5KAP2oVNP
-         hJmRPfZqa9ZKT7t7CDHX8oNJ1kXHSCwAhE1rCuH2QhM1vg7xsxw/jqJrChn18xTE6TQx
-         rC2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWN7NKtCpWi09KdxL1WwBe44gvckL4M5oRaNRsGdzshPDQ40dccIpu55oWoWUGih4Qt1Ti2Neumjn9XTzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEEFbK1HQCPT4r1/Uvukg8d0irWq5rvy+yhqZTacNNcPmgLfnl
-	7z0dX+0oOrAemI8/aXCSWinc8IcZ4ZytGu2QEm3xO6DQqPChhcE26v4Qk03fdQ==
-X-Gm-Gg: ASbGnctI7YvuqqpfGjQ7+v/A6s3SKbMlU50D1W/WY6+o0xT1x+uaFL56Tz1F9wnvV6w
-	M0+yGbrT2cF6PYzgyGY5l2M9x0dj1x7aey13E9sSzPyCUL8JRSQJVTaB6uOVjAAyFGPp2elEA7K
-	cPFr6W6fib6eMfpviuKzBJc4W3WwGUVyKmVGOtbB8fJ+xhpjIaJiKUXGcZsKe5/XUhXTDeHHg0q
-	h9lePHKlwonBePRbD6z8S/vs5oBUDeYUJorN8xRL4Cy8mTs6zvOxCc=
-X-Google-Smtp-Source: AGHT+IF9wfnACETnd7h+8oR2ewgyIJnzStpbi5TxIuMnorvz2Mi4NfAoRC3aWnanTSJRpGzamD/DJA==
-X-Received: by 2002:a05:6214:258e:b0:6d8:83bd:5cfb with SMTP id 6a1803df08f44-6dae38e22f9mr10593686d6.10.1733949757648;
-        Wed, 11 Dec 2024 12:42:37 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::5dad])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d907713550sm43096176d6.6.2024.12.11.12.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 12:42:37 -0800 (PST)
-Date: Wed, 11 Dec 2024 15:42:33 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, rbm@suse.com,
-	skhan@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] lib/math: Add int_sqrt test suite
-Message-ID: <ad95d09e-ddbe-4d43-bf22-00c2008823d8@rowland.harvard.edu>
-References: <20241211203425.26136-1-luis.hernandez093@gmail.com>
+	s=arc-20240116; t=1733949815; c=relaxed/simple;
+	bh=peNxnft8Rk4uOKWn1r2Cpb791kC/5zpQd4LClny23SY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mW8E0C03oIfs+LwkTDY5wduc1oldRwhwWfWVlTBM+BzL3Bt8Ds53lCoW+1IxlTNyfWPMuwlkUH2yWZRvhbhiLzxEi0lEoyb/JpVcqUGdumS++F/bzPsZR5UZz64ClfyYE1n7Ncylr2//8bfQ7Sn/yMjiqowD0/b/5/ZUWRlcWdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=t3lZNbt0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733949803;
+	bh=bsDljuDBjuJYvqrYMEZIWjCshRIG0H3v1815+7ANi2A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=t3lZNbt0HcNZwg6wM7zLvcan5aWXQ1pBBnU/QaHXuXCA5UdyCgv4QzaAFNwpMEF43
+	 xxWxCvckSEfOnjL3bjjleb6kvWbhecKXOepHeBBPQRck1TSxrcctfERct1sK3c+7Xa
+	 e54qpCCQLJ/U3vIoE2a94bQlrMKZrXLW8hFAQdfTlDST9DXyjf1avMn75fgfvkyYsm
+	 +pEVIpepyPSot1fG+re8EmQ3szkQO39qBfXOuMu8R7XyIZrjWOxlmJHalS5PYqfD1k
+	 0i8cInfrQBdSdQ3MXehK1HStO1ZuEpe4T0u1rnBZdr9hA41W3ER/D7YJlzAMDJKsA8
+	 9weGNsh/tmDeg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y7ncW5tBdz4wb1;
+	Thu, 12 Dec 2024 07:43:23 +1100 (AEDT)
+Date: Thu, 12 Dec 2024 07:43:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the pm tree
+Message-ID: <20241212074326.207d3373@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211203425.26136-1-luis.hernandez093@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_//utZjtgztGbimUBysg4f8n9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Dec 11, 2024 at 03:34:24PM -0500, Luis Felipe Hernandez wrote:
-> Adds test suite for integer based square root function.
-> 
-> The test suite is designed to verify the correctness of the int_sqrt()
-> math library function.
-> 
-> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-> ---
+--Sig_//utZjtgztGbimUBysg4f8n9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't know why you CC'ed linux-usb for this patch.  But as long as you 
-did...
+Hi all,
 
-> diff --git a/lib/math/tests/int_sqrt_kunit.c b/lib/math/tests/int_sqrt_kunit.c
-> new file mode 100644
-> index 000000000000..a94c68816a1a
-> --- /dev/null
-> +++ b/lib/math/tests/int_sqrt_kunit.c
-> @@ -0,0 +1,60 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <kunit/test.h>
-> +#include <linux/limits.h>
-> +#include <linux/math.h>
-> +#include <linux/module.h>
-> +#include <linux/string.h>
-> +
-> +struct test_case_params {
-> +	unsigned long x;
-> +	unsigned long expected_result;
-> +	const char *name;
-> +};
-> +
-> +static const struct test_case_params params[] = {
-> +	{ 0, 0, "edge case: square root of 0" },
-> +	{ 1, 1, "perfect square: square root of 1" },
-> +	{ 2, 1, "non-perfect square: square root of 2" },
-> +	{ 3, 1, "non-perfect square: sqaure root of 3" },
+In commit
 
-s/sqau/squa/
+  f9320cd0fa4b ("ACPICA: events/evxfregn: don't release the ContextMutex th=
+at was never acquired")
 
-> +	{ 4, 2, "perfect square: square root of 4" },
-> +	{ 5, 2, "non-perfect square: square  root of 5" },
+Fixes tag
 
-s/square  root/square root/
+  Fixes: c27f3d011b08 ("Fix race in GenericSerialBus (I2C) and GPIO OpRegio=
+n parameter handling")
 
-> +	{ 6, 2, "non-perfect square: square root of 6" },
-> +	{ 7, 2, "non-perfect square: square root of 7" },
-> +	{ 8, 2, "non-perfect square: square root of 8" },
-> +	{ 9, 3, "perfect square: square root of 9" },
-> +	{ 16, 4, "perfect square: square root of 16" },
-> +	{ 81, 9, "perfect square: square root of 81" },
-> +	{ 256, 16, "perfect square: square root of 256" },
-> +	{ 2147483648, 46340, "large input: square root of 2147483648" },
-> +	{ 4294967295, 65535, "edge case: ULONG_MAX for 32-bit" },
-> +};
+has these problem(s):
 
-For the higher numbers (16, 81, etc.), you should test N-1 (and maybe 
-also N+1) as well as N.
+  - Subject does not match target commit subject
+    Just use
+        git log -1 --format=3D'Fixes: %h ("%s")'
 
-Alan Stern
+i.e.
+
+Fixes: c27f3d011b08 ("ACPICA: Fix race in generic_serial_bus (I2C) and GPIO=
+ op_region parameter handling")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//utZjtgztGbimUBysg4f8n9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdZ+W4ACgkQAVBC80lX
+0GxeYAgAkp7WRCunPY6knu1gQTAEmKVQHe0PjGFe07t3BKjNZQsxGGyVCbjWwj0w
+4/LbG+xMmKhjk/Awx2GYY2pPOyeZq4ouxN0H5vVFYh3S7RuiUhXOelbcNba5VqGm
+l+LoPaG8fEwgonp08/bvHYGVTZGE40JOs8Xp6Qdt+xBfbL1DFTIg2tQX9GLlx2pr
+bXl/h5IW4vof63y6cgdcLy2PquPyky0QM8Hk3paIpWlAGv9uT3U+eUs3exWcZKQ2
+0a+SYBTkPa0fqr2aUPTiegnJDy0q4J4RVt6BVWQXWH7I6ZlX72bUc/ZYYidD7Kxh
+4JOquUSVq6jSqt0ktPtBfj/maKNuig==
+=5NVR
+-----END PGP SIGNATURE-----
+
+--Sig_//utZjtgztGbimUBysg4f8n9--
 
