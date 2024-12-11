@@ -1,138 +1,127 @@
-Return-Path: <linux-kernel+bounces-441720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC519ED308
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4BE9ED334
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAABD163A1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C378166ECB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11091DDC11;
-	Wed, 11 Dec 2024 17:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5481DE896;
+	Wed, 11 Dec 2024 17:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="avWXRrWP"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v6qnJvjp"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F5024634F
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936605; cv=pass; b=qKcgulT5T3UDVy8cCd8vq5vypjGT+uI2ag/6jK8LW6P9o1V/Qwppfyqzjrqp4wIaoIt7xpC0gGqvVJrZRNs4a+Tu5M4s3Nmzy3LI3E+XDWRRhepweCJbw3x2+pbJ7abpXrop5KppgxDwXtCDxLITdILvKUNSg5lVG3kWtRN39Ec=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936605; c=relaxed/simple;
-	bh=7xn/7yhgoP+YU/GPG0LL5MbbdwmSJNFaJKAdhgcU5cQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDyyeSYwPs6NS3K07WAl5pzDoQQnS0USa0wft+b0gCyLzl8RRukv7X2tfoCz7s65brgCJ2lmc+7xpkNRdSEiRAQ4OlUiemvZTEL9hPfsT56wFK8aLVBybDvPTs5mYfxMQbkiVAi1cFlinix+9q95uMtCkUbM+XbQj0eiVqp3iOs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=avWXRrWP; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733936582; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dK8JK0kbZKxjv++k/4k8p7Z8/goU52BzSiOI7dcXMBedTlx4EVtlGaOnSMrmhWquQS/sVY605pf2Mpo7BXIiwdvibpHO+zgioeyuIhlpClqVG4K85fdvG8wVp6FTzZBxJh8qUjV77OQGjEy2srpsQczxmW5YbrtbQnE8SyKbJho=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733936582; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PjTBpQFNQ1d0TWGoaimrCIzB0pWOahz/CZSyOIvp154=; 
-	b=O6pHPgjgG+Rl/a457dDuPNFUrSDRr0BCE8zb1b+MYSsqLkp4BluHYz9Fpa2kHPBSmPkdEUNl4m7UgK1dWA2QaMSyKWJ+0uPbZ6rLr4N/l43Al0WY+Ashq6q7O6vWXjAy9hTO5K6wA6VHc6T6Nt2k7RTbs9OHDAvoD23Y4Mnjztg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733936582;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=PjTBpQFNQ1d0TWGoaimrCIzB0pWOahz/CZSyOIvp154=;
-	b=avWXRrWPJJ2KIYsuoCAgAAqw17RPDmHcGgelskmqiTKZhBorxW36JAoGiiUZIarL
-	NcLmG8FlBTqFrGigU1pCPfKpXqu9T1B4d6yinLtQ+1QNN8N1jCVTfd6tCvTexHqoCid
-	o/n0kPH4eO/pCM+cm3OiTwvXH12QqXtFny9Q4FsI=
-Received: by mx.zohomail.com with SMTPS id 1733936578719892.8241132723481;
-	Wed, 11 Dec 2024 09:02:58 -0800 (PST)
-Date: Wed, 11 Dec 2024 17:02:54 +0000
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Mihail Atanassov <mihail.atanassov@arm.com>
-Cc: nd@arm.com, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v4 2/2] Documentation/gpu: Add fdinfo meanings of
- drm-*-internal memory tags
-Message-ID: <bvqjlomae7w34nawaqtrnthqvcypjui4cperriorzlv7uhngxb@4pqbagnew7in>
-References: <20241211163436.381069-1-adrian.larumbe@collabora.com>
- <20241211163436.381069-3-adrian.larumbe@collabora.com>
- <85010ca7-0c34-4be6-9dfa-5be742ded25d@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F211B6CE5;
+	Wed, 11 Dec 2024 17:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733937430; cv=none; b=ddLVvMZ4EUiSB4JaZrKibbkVnX8VE9wIDTI8XN3DXuG5BRHoruuPdokWfS6v1lg8ghq59gL0YeaOk0GeOXJ+48e6zau/XVzf+mwKSo13C7zDoKb6sfYqzyaMSpy2aiCeyox+b7UAnp1v62VbcloLt9BiBzb3g5mMbmrm0D7ZRCc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733937430; c=relaxed/simple;
+	bh=4SIngLCG3yDTZDjdiqP/MeS4m5QT1yFJ7WboilOjKAg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ub+J0l2Fz6RwPUFp4ipCcBYWyJWEowg5TIlwJP4xAWjZ0FDxsPaujDzqWxAf7odfPQEYt2BlHtky007mHpj6idPoQFK9b4r33B9NAaaIa+pheuZGwZT4c2hJYHuIPkrMp2Hd/EYJNcte1vfr20w5T6cCIhBmg2M9Pl9jD5RmTFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v6qnJvjp; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1733937426; x=1734542226; i=markus.elfring@web.de;
+	bh=Zimhx757dBpdou4rx5e/nznxFtFPCTlQ5e0cfAPltok=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=v6qnJvjpkgpHTv6HYjXsd6z6cx6k0ry9OmGjycMhonDtA3LIpWMlrKeX0TJJrWc9
+	 b5RnQVvzOnI0zMn34rsQbWdfywsTE1cgbc2aJrlTP7CPXLRDySltMDJUdQ83p5h1G
+	 A2l+/8F2JZdZqdnSO1bVOY6+2Z2n4K7xlkpbQY1GlBiGSjbFQA/BNcvliixvA0svO
+	 mR5BqasEQQxvwy11fCAMVbRedYR+gYD/pHfqzvvYtCc6Jq+K3cI5vmBogitPb7k9g
+	 /jv9oqmDM09bQRP+CGHCa6l8ncKxPlRy1A6the/2NHxNySMX/zSH4clpSXJ46E/Ja
+	 XdSFh5dAmFfGA+WDWg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.70.80]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MC0LJ-1tSske3A8j-00DtHC; Wed, 11
+ Dec 2024 18:02:49 +0100
+Message-ID: <384bdbaf-15f1-4cad-8f77-371ccb67d952@web.de>
+Date: Wed, 11 Dec 2024 18:02:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <85010ca7-0c34-4be6-9dfa-5be742ded25d@arm.com>
+User-Agent: Mozilla Thunderbird
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, s32@nxp.com,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Chester Lin <chester62515@gmail.com>,
+ Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
+ Fabio Estevam <festevam@gmail.com>,
+ Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jacky Bai
+ <ping.bai@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Larisa Grigore <larisa.grigore@nxp.com>, Lee Jones <lee@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Matthias Brugger <mbrugger@suse.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+ Alberto Ruiz <aruizrui@redhat.com>, Christophe Lizzi <clizzi@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20241113101124.1279648-7-andrei.stefanescu@oss.nxp.com>
+Subject: Re: [PATCH v6 6/7] pinctrl: s32cc: implement GPIO functionality
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241113101124.1279648-7-andrei.stefanescu@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sYQziQhyPbFUeFB9qpQjC6BoEwbQQIqiifnylPG79vzwLT8YREC
+ A5NTtxja5YTyknXGZ2YbsK1H/54rERWQj4ZjfGj8XSAYu5Fb9eyv67oSNno6v9VPWpl3wGH
+ TC9pQEdGJcQDSsYFNXJm8ngnb8oVIdklg9juHxF+KmtYp7UF2qombbq7aViWfgL9Ji4JojI
+ EOMaWZM3Ldv4Ni/sqgIIA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dPdIMoIfvhE=;NSNfNEnZExuiF2FdcTNoV1kkvk3
+ WFn8x9RNaJ0eX7pkmhHcXRqbJtQKwLpy2rDW0BQDNwHjqAhnC+0s3xinL8mFXutTF/ziip2wW
+ gInALZvO53Hj3QoOdyHJxcVpP4hgERpulptvxAwt3Si2POjyT/zpQYC3iI5GX0kv9c6pPOho2
+ lS7vq1qJDM7mCleD0Q5s3FFqEXYjrm/4vgy/z/xyX2/RXZa6fK7Dpb+8VX+OWR4JTsT6z8jDy
+ cRA9gavnDwh+uR21C5aE09P/y780O7rwomNLmlgWDqaDvsAg6t972guVoxDmT95PSPmEBAtJR
+ 2axAexMy22hlgTHhYbbU1Gg4f4Z6Pg1XAbdajOx6gr2XNI5mrSPBCMJkZCktIICAFRvtHbZ+f
+ TRjIdF9chwd6OtVltoPBKEuzGjN7y2aIUmL1GSDb8l9mOW3iY1FVU68CtFonJaiVMz+pvzmoS
+ wEB2lt0HuyWm4jlxaekyz+fSe/bUz2WGsxgDq4xuH4B1+eC8Ajrqs34J+/5FRlZtmh8dkVJd0
+ ySYs2mMORwfcRXe7OZux2rKXsZxyKkHZzPNqvk3NogeK/Q8birOZMv5wB+AVk6XXDhFwHQtE4
+ +HEJkHIv02uM8/xsOJ2Xz/jdAAbEnB75pHpV7DBUyaZVzv/mluvWX2UxBSxGfG4hIJyZvk0zB
+ TcUtu2SdZ/3GSyqpZ7pU20LY8cA0k7vIIgB2BoPX6KgkfqzDpxpNuM/eeaF6kt1wSqvZPbeXw
+ w9VUY58aHeJcNx+ldLuXhXB1DbM3pj2uEBap/6G8h+LXONvdCQJrfr3FzSg4qX6NBsfklVArv
+ TLMqvcc0579n0cn90M/p7n6Ho5rj+lsz1uSCcX75w0/EZIrTPL9l00nO6k4fi+mSQLUk7DPeP
+ eDomF5OMVllIMTmOINKcsTDd3fFlq6KuKNtNTgcX9gCxHzkVcfoNtY1tarEhNyMS/ZP1VGJtr
+ uGJjuH0/2Ax732mGIwJ+vrFpF4zCmO5cM95osLqlG3SXvRtp+qZf/gn8CD+yWIy0nhbyEefYW
+ xWgWbvKTrhyTVobhQ0pWImf1uDNaXT0y0EhYDlwgoP1WRXBXy364fLVcqBDULr5ogzGX9gNz9
+ k4pSxbCcI=
 
-Hi Mihail,
+=E2=80=A6
+> +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
+=E2=80=A6
+> +static void s32_gpio_free(struct gpio_chip *gc, unsigned int gpio)
+> +{
+=E2=80=A6
+> +	spin_lock_irqsave(&ipctl->gpio_configs_lock, flags);
+> +
+> +	list_for_each_entry_safe(gpio_pin, tmp, &ipctl->gpio_configs, list) {
+=E2=80=A6
+> +	}
+> +
+> +unlock:
+> +	spin_unlock_irqrestore(&ipctl->gpio_configs_lock, flags);
+> +}
 
-On 11.12.2024 16:40, Mihail Atanassov wrote:
-> Hi Adrián,
-> 
-> On 11/12/2024 16:34, Adrián Larumbe wrote:
-> > A previous commit enabled display of driver-internal kernel BO sizes
-> > through the device file's fdinfo interface.
-> > 
-> > Expand the description of the relevant driver-specific key:value pairs
-> > with the definitions of the new drm-*-internal ones.
-> > 
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > ---
-> >   Documentation/gpu/panthor.rst | 14 ++++++++++++++
-> >   1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
-> > index 3f8979fa2b86..c6d8236e3665 100644
-> > --- a/Documentation/gpu/panthor.rst
-> > +++ b/Documentation/gpu/panthor.rst
-> > @@ -26,6 +26,10 @@ the currently possible format options:
-> >        drm-cycles-panthor:     94439687187
-> >        drm-maxfreq-panthor:    1000000000 Hz
-> >        drm-curfreq-panthor:    1000000000 Hz
-> > +     drm-total-internal:     10396 KiB
-> > +     drm-shared-internal:    0
-> 
-> You give an example of `drm-shared-internal`...
-> 
-> > +     drm-active-internal:    10396 KiB
-> > +     drm-resident-internal:  10396 KiB
-> >        drm-total-memory:       16480 KiB
-> >        drm-shared-memory:      0
-> >        drm-active-memory:      16200 KiB
-> > @@ -44,3 +48,13 @@ driver by writing into the appropriate sysfs node::
-> >   Where `N` is a bit mask where cycle and timestamp sampling are respectively
-> >   enabled by the first and second bits.
-> > +
-> > +Possible `drm-*-internal` key names are: `total`, `active` and `resident`.
-> 
-> ... but don't list it as a valid key name here.
+How do you think about to apply another call =E2=80=9Cscoped_guard(spinloc=
+k_irqsave, &ipctl->gpio_configs_lock)=E2=80=9D here?
 
-I do mention slightly further below that that key:value pair is at the time being unused,
-but I've thought of a possible interpretation that could be part of another commit.
-
-> > +These values convey the sizes of the internal driver-owned shmem BO's that
-> > +aren't exposed to user-space through a DRM handle, like queue ring buffers,
-> > +sync object arrays and heap chunks. Because they are all allocated and pinned
-> > +at creation time, `drm-resident-internal` and `drm-total-internal` should always
-> > +be equal. `drm-active-internal` shows the size of kernel BO's associated with
-> > +VM's and groups currently being scheduled for execution by the GPU.
-> > +`drm-shared-memory` is unused at present, but in the future it might stand for
-> > +the size of the Firmware regions, since they do not belong to an open file context.
-> 
-> -- 
-> Mihail Atanassov <mihail.atanassov@arm.com>
-
-Adrian Larumbe
+Regards,
+Markus
 
