@@ -1,307 +1,248 @@
-Return-Path: <linux-kernel+bounces-441155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAACB9ECA72
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:37:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829039ECA74
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517A4168594
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:36:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9998188D205
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81984210F51;
-	Wed, 11 Dec 2024 10:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C6820896B;
+	Wed, 11 Dec 2024 10:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dua7mdOG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="or+FgScz"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BE11EC4DF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9291BCA0A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733913413; cv=none; b=LhL3X6KTpaBWpDeJqQ1GqW5r8JhqqOS3HB1dWhzA307B1RXWWxpxjaVXdrt+r888LZvT5iIKUH7FiR4GW7OZMU9baUwp47DIMP6FY7z7C9HRrHtjPpjId1yAAgLD1pNmE7pvwPJqYu/HcWr3dnsVXp4qnl/qi8KyD37qDdy1ass=
+	t=1733913456; cv=none; b=kxQXS048Q52WaC8s8lYTFb7qreafL7hkNrMrtSDqyhnq2PQYFvYgW1I3PbwpgZy04a9gQVOvn929Z3zq6Rq9ZAT8VFFFWLkOMsk5bX4Sa/mWIjWA7z2W1RKF7uiMXfcjYzgFRppkk4GBxmjILqluGoB9mY4Mmorh9eboNO6w53U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733913413; c=relaxed/simple;
-	bh=QG/yThXs98ZZa/JDiLiljMIT/owvMMXupz//RaU8MQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C4uaDdqcBIp0CkT7pAQyryYu3sPK5O3hdBQVHJPTIwpKXhhZqp7hPaohbEUB8bZ5Iv9B/reQmnioaqKIOf79Nu4neuO+PfmCXXe8IFrxOX3XEDclWE9h7sXgcnGBK4hG0HoeiocgqK7qObz9+X+o3YSoXCNeCSdIiFXl75C+S3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dua7mdOG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733913410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CdWb5fGJ5FPtZXDeWsQdCsjlD9SXlRl5cU56yteBmMc=;
-	b=dua7mdOGxPPnI+MyNwbiBEChQte+6guwdnGAvC1GTiZNBHmRnWxRDmti1JwfFas5/TJRo0
-	zDGFumJqagJoNyGr9Hc3naybFvm/WOrMXqYsfyJyN8eE9pRKHwEoMDe3Ba/sQV4+f+QHEH
-	BI4WClKPug9jJ8wL14GJVVPjhqmKRMQ=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-XrrF3xqyN5iqJB6SITacaw-1; Wed, 11 Dec 2024 05:36:48 -0500
-X-MC-Unique: XrrF3xqyN5iqJB6SITacaw-1
-X-Mimecast-MFC-AGG-ID: XrrF3xqyN5iqJB6SITacaw
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-aa683e90dd3so275736866b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:36:48 -0800 (PST)
+	s=arc-20240116; t=1733913456; c=relaxed/simple;
+	bh=WUrp+/ldgDUnGVJX3Q2NimbLGUJ0ujuKpZbkVmi+/hI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qQtkLw0qfPHszVADBH0YiUlZnRRGHqcvBnA62DH3X7/j5XNVzlaNuWqVUu8eGFg+4CvV3LTCqGFZgxfdVKSfPuKXy+9UxM9UyfXvB18QmmQSI4xofgMI2cpz84KxLW7pr7fMg2EvGT9YDRn5m23UYcsu8uY02ZM4rqQhxCXaRww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=or+FgScz; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3862f3ccf4fso2216374f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:37:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733913453; x=1734518253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T2QnY3nqUlMVid18sCVnINWo37cTCiIN8hI1LuQ+kCo=;
+        b=or+FgSczonFU/QZYV7Y3HnJHYtuG0C9MsZMlcqH4l3TmIrkcGkuJkj+ubCg2qClV8G
+         d5RrGNbrb0vVSPqBzEC3yRmbaR8UrvJMc0BXd4t3amC/jsTOP33q/bMebG5PQ+Vfie9F
+         Den/0/7pLNhU6CA8AO1TpDp0RbhaMt3cBD1JWC48+t3hh92MQqy2jJTEokjLE35xckbq
+         ++CaeH5QFhoUj+yZIJFpWwl1tN/Xwn68ko0x6TQuuL4E5gAuRc/GOqXYFAZMXLs8cyot
+         k5S/NTI3tlJsd2nfhzdt9JOCjhfPm2HJwLvvN2C1DaAJwZy4BXpYjobsYc6YWqYuEDD3
+         vIvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733913407; x=1734518207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CdWb5fGJ5FPtZXDeWsQdCsjlD9SXlRl5cU56yteBmMc=;
-        b=Lu32mbqfCvzvWHEf1CalA0VthdYFnIMAzDJ2r2SgU3TPvthEnJDux56wnemm6wNdVN
-         lX7QHq34goh9yJiIkJGdV8kTjrzlwO7qnO2mZQY7Pssm941h+sIcptLorIjpX1cYOSVQ
-         sv18epKd2JycOVSSbcxPHtFilW2S7Bmu5y/34DsW3hqDPnme98gzsZmMRNLLCPzs3edU
-         /Q4UEPhI0QebPy8gBKnAv1wNbDwmmjnkqhrxA/c2CJMwg9T6YVwRkabpzqtTIBvOyZwh
-         XwzatcLg2Y7aTwyMaE6I75yGpXvRbWAB2Br24KDWomQDHX8+9nSst/FYD1pi8LcLfWra
-         kzcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq5hjS24g/G21NXXrQNsqZYTmVPi+Hp7K3SYWwwyOmxNd2xsL9025So7z2oTpEmWOgacYHH6gqxho0OQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDRHelCPSEGmKj2cQ/tH3BLjAAhi9ifyRA68YmWF2bbGL8dcKq
-	AVbLBav4koh0CCND8zaSx0bVSLE35x9f5KLjpZ3uL/eCgdMa9ohkHBmVRfrgQhrJIOA9pMHsAYx
-	vgI33ijpP1WmHsgOCEmcl82VBFw2IUUA7Us7Os5qZ4hmUtot7V5Do1xAOU5R91oSWSofYjHPzB+
-	YPmcWC3+g2kwGVoWTDyB5kurt6wlr1+uMMj2Gh
-X-Gm-Gg: ASbGncuk+P7bzrPRIpc6II6/l5ia1U2F7TxOzdRP8PEBwrFaK1Sh7ZBvbnqWyV706R4
-	dmJcehS9yUuWDCNjIcGH7r03X1hqsbxIshy8=
-X-Received: by 2002:a17:907:7806:b0:aa6:86d1:c3fe with SMTP id a640c23a62f3a-aa6b10f597fmr203511866b.4.1733913407332;
-        Wed, 11 Dec 2024 02:36:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFU21SkbNdBsy36aA1H/6vo5DKeaZdo5uu/Ns2PdBzpkF9S514ffAr8hMu6zEVqCTGc7M8X45QJz4+hYhOF3/s=
-X-Received: by 2002:a17:907:7806:b0:aa6:86d1:c3fe with SMTP id
- a640c23a62f3a-aa6b10f597fmr203509266b.4.1733913406879; Wed, 11 Dec 2024
- 02:36:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733913453; x=1734518253;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T2QnY3nqUlMVid18sCVnINWo37cTCiIN8hI1LuQ+kCo=;
+        b=lGnXwUw6I/gT2+CDk5zd/sMWHY5wzzNvhgpY+tjId0hIpKz/KSrDSBJXmR0JPWn3ru
+         muO0NyQaVyFOkVKUl3LWqEfireaU2m1q4b0R/YQPoSxINbNE54532QelcpcQyeXhSXGV
+         VbxVVIskwYjsd5pkOBKgFj8SQwJCDTXRI1v7JDxguGplN+3uBTU7alsGFB12Rv6LHEiA
+         wpPObvsggbxmDaU6TLoYyf54YNovgTWYQHsw9l2KbKQx69qPW40ZNEpIA87E0PF3d4EI
+         5eTRVNbo3e+mT3HOWMKYxBeyxBdWfJbyp5ou4JRIxk+AZkd1/aXRw5cU2VrCbBk1kZFD
+         bsUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX458rgmSF+lyO5OEV5WynTvPko2nTNX5ZV0QJmfNEEkW/2SZDbnyZj5YYO2t4PgzA2+FGUemD4+eGNz8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy8LrtGYtKohsOYyfubV2QittuD6eR3PmxniX/yKJoAc/quvhM
+	HmOxVrt/23zJMZUGHjELRLmtuS/UxpihjIvH2sJBQueYoCVFVH7Q5UravrMYVwqbzs+wvpbFVsV
+	F7LzcosfL9fo4Ig==
+X-Google-Smtp-Source: AGHT+IH/c3Iu+nJ9Nv0o3TiAxZrdEhPU30LKeX5h/Df7IZ4hvGTeYRO+lhCWtq/FRJTRbo1Jx+ZfHKRQsIVq+/M=
+X-Received: from wmfx19.prod.google.com ([2002:a05:600c:2d13:b0:434:9fab:eb5])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:178b:b0:385:f092:e16 with SMTP id ffacd0b85a97d-3864ceab3f6mr1868994f8f.55.1733913452975;
+ Wed, 11 Dec 2024 02:37:32 -0800 (PST)
+Date: Wed, 11 Dec 2024 10:37:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <yvmwdvnfzqz3efyoypejvkd4ihn5viagy4co7f4pquwrlvjli6@t7k6uihd2pp3>
- <87ldxvuwp9.fsf@linux.dev> <CAO8a2SjWXbVxDy4kcKF6JSesB=_QEfb=ZfPbwXpiY_GUuwA8zQ@mail.gmail.com>
- <87mshj8dbg.fsf@orpheu.olymp> <CAO8a2SjHq0hi22QdmaTH2E_c1vP2qHvy7JWE3E1+y3VhEWbDaw@mail.gmail.com>
- <87zflj6via.fsf@orpheu.olymp> <CAO8a2SgMLurHP=o_ENbvOFMci8bcX0TP_18rbjrYJSbmV9CrMA@mail.gmail.com>
- <CAO8a2ShzHuTizjY+T+RNr28XLGOJPNoXJf1rQUburMBVwJywMA@mail.gmail.com>
-In-Reply-To: <CAO8a2ShzHuTizjY+T+RNr28XLGOJPNoXJf1rQUburMBVwJywMA@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 11 Dec 2024 12:36:35 +0200
-Message-ID: <CAO8a2ShL4MccFRfVOsmq+pc6AxyVYvZbL=cQRDSDRQC8044pLQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] ceph: ceph: fix out-of-bound array access when
- doing a file read
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, Xiubo Li <xiubli@redhat.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAFFrWWcC/2XRzWrDMAwH8FcpPs9Dkr932nuMHezYbgNrU5IRN
+ krefWpT1hQfLfz7S0gXMZWxL5N4213EWOZ+6ocTPxBfdqI7xNO+yD5zQRCQBkdKzscoqwfEUEN
+ Nygj+eR5L7X9uMR+f/D700/cw/t5SZ7xWn/2MEqWimE3kIF/K+34Y9l/ltRuO4how0xa5FRGjm
+ FQxgVzuVGyQeiAecEWKUU62ww5izTE0SG8RrUgzgoDROzA+atUgs0V2ReaKNKCvYHKh1CD7jxA
+ QVmQlyOwDqJBsNa7t5LZIr8gxAiyKqrd8B9Mg/0BI906eUUkKNZkcrW3HC1t0X0Rg5JBcql3OR rd3QtiqcL8ujyd1rpU3kSJf64kty/IHUn8w3XcCAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5009; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=11pTYMTSjcFgpGSBp79ExVExpqHUXRE/LVnE2f2asAg=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnWWtXaB+TtU9GC9bEJlYbOkV7yAW44AYxwLIdY
+ kJilAsBWqmJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1lrVwAKCRAEWL7uWMY5
+ RjoGD/9T86lVgm8PmdgyLpmX6TmenyGZJpOCn0Cb4+gZotZqvrSsTbfQ6KPYx34pC+cxJfgRXdx
+ dzpY89pK8NNBBPTXDNMaqeDyHNDwHP0O9j5Sjh46nKmaCWP/cvLiuAhLA7EVCwXhQ1aPbAlYPRz
+ rEvNzID+2rpmPE15edL/ZSJ8/2GS0AMLiR37yz5rCPxzR6HSbfiyn1u9V1wqEXR5VNxeaokJ1qD
+ sd3tbTQAbuTtoOoi4T+RvnYheWntd5IVj6lSciZL0ELx8Heyc1saGtIBBhDr9/r+zq7FK3RnZv3
+ IflhXZ0Ug2J/WPnPHzBlvnR7G6HlzkhAAbu+wFOZtq6tcDQauEztnxgsT/4Cy7N2uYnczyYit/o
+ 8MM/xesLQ7lp+Y5b2jyzQ9DrfxbWRkws6fkpYLdmHhPmtCbW49m880OnFsRuJjoaxzAsPs3b3o6
+ YVyPuoK9BAUTUoBqCGqY56sL9i0ZX8SXqtgnlDT2wim7oqwsergdivAtxiOn5Ujv6dmDaJ0L09c
+ o2lJTr374LTbqsBORd/4pQRF6ayPSklTCH3h6PmHTGiX54ZYRZJLoWoZBoWRjykknEqOcfT2VZg
+ czosFNO0er/Eot5wxASryeyBgrvKY2TD48DCdI/2b1VwG6fQ56VDBxAXGP3x9Eefm3XskJbZpjX TXFZkuvd4BacsLQ==
+X-Mailer: b4 0.13.0
+Message-ID: <20241211-vma-v11-0-466640428fc3@google.com>
+Subject: [PATCH v11 0/8] Rust support for mm_struct, vm_area_struct, and mmap
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Folks, this is the fix please add your reviews:
+This updates the vm_area_struct support to use the approach we discussed
+at LPC where there are several different Rust wrappers for
+vm_area_struct depending on the kind of access you have to the vma. Each
+case allows a different set of operations on the vma.
 
-https://marc.info/?l=3Dceph-devel&m=3D173367895206137&w=3D2
+Patch 8 in particular could use review.
 
-On Thu, Nov 28, 2024 at 9:31=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
-wrote:
->
-> This patch does three things:
->
-> 1. The allocated pages are bound to the request, simplifying the
-> memory management especially on the bad path.
-> 2. ret is checked at the earliest point instead of being carried
-> through the loop.
-> 3. The overflow bug is fixed.
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 4b8d59ebda00..9522d5218c04 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
->         if (ceph_inode_is_shutdown(inode))
->                 return -EIO;
->
-> -       if (!len)
-> +       if (!len || !i_size)
->                 return 0;
->         /*
->          * flush any page cache pages in this range.  this
-> @@ -1086,7 +1086,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
->                 int num_pages;
->                 size_t page_off;
->                 bool more;
-> -               int idx;
-> +               int idx =3D 0;
->                 size_t left;
->                 struct ceph_osd_req_op *op;
->                 u64 read_off =3D off;
-> @@ -1127,7 +1127,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
->
->                 osd_req_op_extent_osd_data_pages(req, 0, pages, read_len,
->                                                  offset_in_page(read_off)=
-,
-> -                                                false, false);
-> +                                                false, true);
->
->                 op =3D &req->r_ops[0];
->                 if (sparse) {
-> @@ -1160,7 +1160,15 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
->                 else if (ret =3D=3D -ENOENT)
->                         ret =3D 0;
->
-> -               if (ret > 0 && IS_ENCRYPTED(inode)) {
-> +               if (ret < 0) {
-> +                       ceph_osdc_put_request(req);
-> +
-> +                       if (ret =3D=3D -EBLOCKLISTED)
-> +                               fsc->blocklisted =3D true;
-> +                       break;
-> +               }
-> +
-> +               if (IS_ENCRYPTED(inode)) {
->                         int fret;
->
->                         fret =3D ceph_fscrypt_decrypt_extents(inode, page=
-s,
-> @@ -1186,10 +1194,8 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
->                         ret =3D min_t(ssize_t, fret, len);
->                 }
->
-> -               ceph_osdc_put_request(req);
-> -
->                 /* Short read but not EOF? Zero out the remainder. */
-> -               if (ret >=3D 0 && ret < len && (off + ret < i_size)) {
-> +               if (ret < len && (off + ret < i_size)) {
->                         int zlen =3D min(len - ret, i_size - off - ret);
->                         int zoff =3D page_off + ret;
->
-> @@ -1199,13 +1205,11 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
->                         ret +=3D zlen;
->                 }
->
-> -               idx =3D 0;
-> -               if (ret <=3D 0)
-> -                       left =3D 0;
-> -               else if (off + ret > i_size)
-> -                       left =3D i_size - off;
-> +               if (off + ret > i_size)
-> +                       left =3D (i_size > off) ? i_size - off : 0;
->                 else
->                         left =3D ret;
-> +
->                 while (left > 0) {
->                         size_t plen, copied;
->
-> @@ -1221,13 +1225,8 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
->                                 break;
->                         }
->                 }
-> -               ceph_release_page_vector(pages, num_pages);
->
-> -               if (ret < 0) {
-> -                       if (ret =3D=3D -EBLOCKLISTED)
-> -                               fsc->blocklisted =3D true;
-> -                       break;
-> -               }
-> +               ceph_osdc_put_request(req);
->
->                 if (off >=3D i_size || !more)
->                         break;
->
-> On Thu, Nov 28, 2024 at 9:09=E2=80=AFPM Alex Markuze <amarkuze@redhat.com=
-> wrote:
-> >
-> > Good catch, I'm reworking the ergonomics of this function, this ret
-> > error code is checked and carried through the loop and checked every
-> > other line.
-> >
-> > On Thu, Nov 28, 2024 at 8:53=E2=80=AFPM Luis Henriques <luis.henriques@=
-linux.dev> wrote:
-> > >
-> > > Hi!
-> > >
-> > > On Thu, Nov 28 2024, Alex Markuze wrote:
-> > > > On Thu, Nov 28, 2024 at 7:43=E2=80=AFPM Luis Henriques <luis.henriq=
-ues@linux.dev> wrote:
-> > > >>
-> > > >> Hi Alex,
-> > > >>
-> > > >> [ Thank you for looking into this. ]
-> > > >>
-> > > >> On Wed, Nov 27 2024, Alex Markuze wrote:
-> > > >>
-> > > >> > Hi, Folks.
-> > > >> > AFAIK there is no side effect that can affect MDS with this fix.
-> > > >> > This crash happens following this patch
-> > > >> > "1065da21e5df9d843d2c5165d5d576be000142a6" "ceph: stop copying t=
-o iter
-> > > >> > at EOF on sync reads".
-> > > >> >
-> > > >> > Per your fix Luis, it seems to address only the cases when i_siz=
-e goes
-> > > >> > to zero but can happen anytime the `i_size` goes below  `off`.
-> > > >> > I propose fixing it this way:
-> > > >>
-> > > >> Hmm... you're probably right.  I didn't see this happening, but I =
-guess it
-> > > >> could indeed happen.
-> > > >>
-> > > >> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > >> > index 4b8d59ebda00..19b084212fee 100644
-> > > >> > --- a/fs/ceph/file.c
-> > > >> > +++ b/fs/ceph/file.c
-> > > >> > @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *ino=
-de,
-> > > >> > loff_t *ki_pos,
-> > > >> >         if (ceph_inode_is_shutdown(inode))
-> > > >> >                 return -EIO;
-> > > >> >
-> > > >> > -       if (!len)
-> > > >> > +       if (!len || !i_size)
-> > > >> >                 return 0;
-> > > >> >         /*
-> > > >> >          * flush any page cache pages in this range.  this
-> > > >> > @@ -1200,12 +1200,11 @@ ssize_t __ceph_sync_read(struct inode *i=
-node,
-> > > >> > loff_t *ki_pos,
-> > > >> >                 }
-> > > >> >
-> > > >> >                 idx =3D 0;
-> > > >> > -               if (ret <=3D 0)
-> > > >> > -                       left =3D 0;
-> > > >>
-> > > >> Right now I don't have any means for testing this patch.  However,=
- I don't
-> > > >> think this is completely correct.  By removing the above condition=
- you're
-> > > >> discarding cases where an error has occurred (i.e. where ret is ne=
-gative).
-> > > >
-> > > > I didn't discard it though :).
-> > > > I folded it into the `if` statement. I find the if else construct
-> > > > overly verbose and cumbersome.
-> > > >
-> > > > +                       left =3D (ret > 0) ? ret : 0;
-> > > >
-> > >
-> > > Right, but with your patch, if 'ret < 0', we could still hit the firs=
-t
-> > > branch instead of that one:
-> > >
-> > >                 if (off + ret > i_size)
-> > >                         left =3D (i_size > off) ? i_size - off : 0;
-> > >                 else
-> > >                         left =3D (ret > 0) ? ret : 0;
-> > >
-> > > Cheers,
-> > > --
-> > > Lu=C3=ADs
-> > >
+To: Miguel Ojeda <ojeda@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+To: John Hubbard <jhubbard@nvidia.com>
+To: Liam R. Howlett <Liam.Howlett@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Arnd Bergmann <arnd@arndb.de>
+To: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>
+Cc: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
+Cc: Benno Lossin <benno.lossin@proton.me>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: rust-for-linux@vger.kernel.org
+Cc: Alice Ryhl <aliceryhl@google.com>
+
+Changes in v11:
+- Add accessor for the vm_mm field of vm_area_struct.
+- Pass the file to MiscDevice::mmap for consistency with
+  https://lore.kernel.org/r/20241210-miscdevice-file-param-v3-1-b2a79b666dc=
+5@google.com
+- Link to v10: https://lore.kernel.org/r/20241129-vma-v10-0-4dfff05ba927@go=
+ogle.com
+
+Changes in v10:
+- Update docs for `set_io`.
+- Check address in `zap_page_range_single`.
+- Completely redo the last patch.
+- Link to v9: https://lore.kernel.org/r/20241122-vma-v9-0-7127bfcdd54e@goog=
+le.com
+
+Changes in v9:
+- Be more explicit about VmAreaNew being used with f_ops->mmap().
+- Point out that clearing VM_MAYWRITE is irreversible.
+- Use __vm_flags to set the flags.
+- Use as_ and into_ prefixes for conversions.
+- Update lock_vma_under_rcu docs and commit msg
+- Mention that VmAreaRef::end is exclusive.
+- Reword docs for zap_page_range_single.
+- Minor fixes to flag docs.
+- Add way to access current->mm without a refcount increment.
+- Link to v8: https://lore.kernel.org/r/20241120-vma-v8-0-eb31425da66b@goog=
+le.com
+
+Changes in v8:
+- Split series into more commits to ease review.
+- Improve read locks based on Lorenzo's doc: either the mmap or vma lock
+  can be used.
+- Get rid of mmap write lock because it's possible to avoid the need for
+  it.
+- Do not allow invalid flag combinations on VmAreaNew.
+- Link to v7: https://lore.kernel.org/r/20241014-vma-v7-0-01e32f861195@goog=
+le.com
+
+Changes in v7:
+- Make the mmap read/write lock guards respect strict owner semantics.
+- Link to v6: https://lore.kernel.org/r/20241010-vma-v6-0-d89039b6f573@goog=
+le.com
+
+Changes in v6:
+- Introduce VmArea{Ref,Mut,New} distinction.
+- Add a second patchset for miscdevice.
+- Rebase on char-misc-next (currently on v6.12-rc2).
+- Link to v5: https://lore.kernel.org/r/20240806-vma-v5-1-04018f05de2b@goog=
+le.com
+
+Changes in v5:
+- Rename VmArea::from_raw_vma to from_raw.
+- Use Pin for mutable VmArea references.
+- Go through `ARef::from` in `mmgrab_current`.
+- Link to v4: https://lore.kernel.org/r/20240802-vma-v4-1-091a87058a43@goog=
+le.com
+
+Changes in v4:
+- Pull out ARef::into_raw into a separate patch.
+- Update invariants and struct documentation.
+- Rename from_raw_mm to from_raw.
+- Link to v3: https://lore.kernel.org/r/20240801-vma-v3-1-db6c1c0afda9@goog=
+le.com
+
+Changes in v3:
+- Reorder entries in mm.rs.
+- Use ARef for mmput_async helper.
+- Clarify that VmArea requires you to hold the mmap read or write lock.
+- Link to v2: https://lore.kernel.org/r/20240727-vma-v2-1-ab3e5927dc3a@goog=
+le.com
+
+Changes in v2:
+- mm.rs is redesigned from scratch making use of AsRef
+- Add notes about whether destructors may sleep
+- Rename Area to VmArea
+- Link to v1: https://lore.kernel.org/r/20240723-vma-v1-1-32ad5a0118ee@goog=
+le.com
+
+---
+Alice Ryhl (8):
+      mm: rust: add abstraction for struct mm_struct
+      mm: rust: add vm_area_struct methods that require read access
+      mm: rust: add vm_insert_page
+      mm: rust: add lock_vma_under_rcu
+      mm: rust: add mmput_async support
+      mm: rust: add VmAreaNew for f_ops->mmap()
+      rust: miscdevice: add mmap support
+      task: rust: rework how current is accessed
+
+ rust/helpers/helpers.c    |   1 +
+ rust/helpers/mm.c         |  50 ++++++
+ rust/kernel/lib.rs        |   1 +
+ rust/kernel/miscdevice.rs |  37 ++++
+ rust/kernel/mm.rs         | 323 ++++++++++++++++++++++++++++++++++
+ rust/kernel/mm/virt.rs    | 439 ++++++++++++++++++++++++++++++++++++++++++=
+++++
+ rust/kernel/task.rs       | 284 ++++++++++++++++++------------
+ 7 files changed, 1018 insertions(+), 117 deletions(-)
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20240723-vma-f80119f9fb35
+
+Best regards,
+--=20
+Alice Ryhl <aliceryhl@google.com>
 
 
