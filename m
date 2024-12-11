@@ -1,161 +1,113 @@
-Return-Path: <linux-kernel+bounces-441703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C329ED2CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:53:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4079C9ED2CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4981642A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4B401641AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F2A1DE2A0;
-	Wed, 11 Dec 2024 16:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRnyGKFv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6F71DDC36;
+	Wed, 11 Dec 2024 16:54:23 +0000 (UTC)
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247A01DDC36
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551031D63CA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733935973; cv=none; b=jMPBVAg709GQ+IRoBiV+8rPdv1x/q+yjSscwntHUu+NPZJrs7ve/1Mk0pN+pzr5NE3WfcTuJxwdwqje9WreFJQkx5bKnmgDqR7WBT5mWPkcJ847Gx31xjigAM04rnwm50wrJEeD0vWRwQLlHiLidpPNZOcIEPn2xvE6CkBsYITo=
+	t=1733936062; cv=none; b=X3QyTNp1bkPkSV8Sa2pTirxlkYfefZeNC+ZXAgH4D6/pQCCIQjZ5f0p8UTVaQohxQ72Wk27aX+wRAzqYMzehsPrYMmIea2/7IeZY+LWNj+QTOjQGBEVPEaAIALME3igw8WVS4ZZ7pc5Zs6rrkJnyLDFxzNhxq4QxtTwb6oEq86w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733935973; c=relaxed/simple;
-	bh=wAVbop7TdJ/MDscbnuJebtK0QRx/SGfR8noM2AUSjwg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cd4SrO3M+cF+dS/EFildTpzo38t1VWsXPOV/TjQ1uKQ5y03H8Xx5cutMvPY5zxhQuEkecyGxEJU1vrKMNfBi46TISr5LbJUE5hIOp4Uscii+L+awACQY0rWVhaq0w2f6/0xQnqPLl1o5B9vNnZpDws1I7ZqSTU0aVGgIESHMSeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRnyGKFv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6803C4CED2;
-	Wed, 11 Dec 2024 16:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733935972;
-	bh=wAVbop7TdJ/MDscbnuJebtK0QRx/SGfR8noM2AUSjwg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HRnyGKFv7ltn2J5aIhUJipuG0pg5Xueu22dXzWyFOnN2tQ732FxaF7ygku45scGxn
-	 iFNJrYh9jyW7yoQRyhCkqhrmTaDDf9jdQKO5oz9968s64iR6d7tGCWTkMEfx6MmY10
-	 mYtSNJgWLhDOcWI7TxEXiLkHiljPPfxfJfxxwBP7fLNmQ5eKU6MIuIZHfqZPSFS7Sx
-	 3Fqz/9muX/I1V4HXxsx4Guk4qbdZXpc0r/xdZ9W9PBAQ9Pfg4xq+jBFmi/Vj9WxhT7
-	 WoeT3b1ixMXh0tD3bVaBR83r6QEt5inQW3xfrA60MzVto6SlfnN3xJIRDS1SLR+J8b
-	 R93LpRdcl8jjQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tLPxC-002kk5-A3;
-	Wed, 11 Dec 2024 16:52:50 +0000
-Date: Wed, 11 Dec 2024 16:52:49 +0000
-Message-ID: <86pllyrwke.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	corbet@lwn.net,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org,
-	liunx-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@vger.kernel.org
-Subject: Re: [RFC PATCH v1 3/5] arm64: Add errata and workarounds for systems with broken BBML2
-In-Reply-To: <20241211154611.40395-4-miko.lenczewski@arm.com>
-References: <20241211154611.40395-1-miko.lenczewski@arm.com>
-	<20241211154611.40395-4-miko.lenczewski@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733936062; c=relaxed/simple;
+	bh=8HuJ8xPWO5zce5HAfGMjGydQ75aJcx/rc1sAeiC+a/s=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=cCP1kcWT1S6y3fuyChgeyYHqwe0+74svbG/55x/nanhfs4HaH7HoyolPdlkN25A1AZDE0INdgNbTG84gkG+3dEwYMZBR/46d3CNxBuyEuO6I1P2jCLcjZK9er9A7d3heg6xlxKVYMfG9gWDhj341AVW1Om9ULlnuE5TKIdFYkj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: from mail.steuer-voss.de (localhost [127.0.0.1])
+	by mail.steuer-voss.de (Postfix) with ESMTP id 87082256B;
+	Wed, 11 Dec 2024 17:54:13 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: miko.lenczewski@arm.com, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, liunx-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Date: Wed, 11 Dec 2024 17:54:13 +0100
+From: Nikolaus Voss <nv@vosn.de>
+To: Marek Vasut <marex@denx.de>
+Cc: Liu Ying <victor.liu@oss.nxp.com>, Alexander Stein
+ <alexander.stein@ew.tq-group.com>, Liu Ying <victor.liu@nxp.com>, Luca
+ Ceresoli <luca.ceresoli@bootlin.com>, Fabio Estevam <festevam@denx.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nikolaus.voss@haag-streit.com, miquel.raynal@bootlin.com
+Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+In-Reply-To: <a07188ac-0bca-4ae2-8bec-c4ec504af46e@denx.de>
+References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
+ <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
+ <000b34cdd1591c82265ce1f9848828d1@vosn.de>
+ <2c950130-84b4-4a81-84a2-b5e08af43616@oss.nxp.com>
+ <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
+ <808d4092a9e97b95480d47c1bd84d930@vosn.de>
+ <b86666cc-da63-405d-9036-96cb4e69dafb@denx.de>
+ <21ea39dba5e35e99ea499b4408cb1bdf@vosn.de>
+ <897b3787-8246-4509-94a1-129488297150@denx.de>
+ <2d1b404288a6f0b99f26b697df1ff975@vosn.de>
+ <a07188ac-0bca-4ae2-8bec-c4ec504af46e@denx.de>
+User-Agent: Roundcube Webmail/1.5.0
+Message-ID: <72f924e5f881b66c3e187890d0a200ca@vosn.de>
+X-Sender: nv@vosn.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 11 Dec 2024 15:45:04 +0000,
-Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
->=20
-> There are systems which claim support for BBML2, but whose
-> implementation of this support is broken. Add a Kconfig erratum for each
-> of these systems, and a cpufeature workaround that forces the supported
-> BBM level on these systems to 0.
->=20
-> Signed-off-by: Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com>
-> ---
->  Documentation/arch/arm64/silicon-errata.rst |  32 ++++
->  arch/arm64/Kconfig                          | 164 ++++++++++++++++++++
->  arch/arm64/kernel/cpufeature.c              |  32 +++-
->  3 files changed, 227 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 100570a048c5..9ef8418e8410 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1127,6 +1127,170 @@ config ARM64_ERRATUM_3194386
-> =20
->  	  If unsure, say Y.
-> =20
-> +config ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-> +	bool
-> +
-> +config ARM64_ERRATUM_3696250
-> +	bool "Neoverse-N2: workaround for broken BBM level 2 support"
-> +	default y
-> +	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-> +	help
-> +	  Affected Neoverse-N2 cores (r0p0, r0p1, r0p2, r0p3) declare
+Hi Marek,
 
-So you list a number of affected revisions...
+On 09.12.2024 22:46, Marek Vasut wrote:
+> On 12/9/24 9:46 AM, Nikolaus Voss wrote:
+>>>>>> and store the panel's timing in EDID EEPROM.
+>>>>> Oh, that is a new one. Does the EDID EEPROM store the entirety of
+>>>>> 'struct display_timing {}' somehow , or is that a custom format ?
+>>>> 
+>>>> Well, sort of ;-). VESA has taken care of this 30 years ago
+>>>> (https://en.wikipedia.org/wiki/Extended_Display_Identification_Data).
+>>>> 
+>>>> DRM handles this with drm_get_edid() and siblings, e.g. :
+>>> 
+>>> EDID can not encode all the information in struct display_timing {} ,
+>>> or can it ?
+>>> 
+>>> I think what you would be missing are bus_flags , bus_format and
+>>> possibly the single/dual link and channel (odd/even) mapping, won't
+>>> you ?
+>> 
+>> Yes, that's right. I use the vendor block for bus_flags and bus_format
+>> now, but that's not standard and not portable of course.
+>> 
+>> My first idea was to store the DT overlay in the display EEPROM but
+>> a standard 1k EEPROM is too small for that.
+> Understood. I had the same problem, in the end I went for custom
+> encoding in the EEPROM but the amount of panels was limited in my
+> case.
+> 
+> Indeed, DTO does not fit the EEPROM and EDID is not really fitting too
+> well to DPI/LVDS panels, it has too many fields that are specific to
+> regular pluggable panels and not useful on DPI/LVDS ones.
 
-[...]
+The curse of backward-compatibility ;-). Nevertheless, we are doing well
+with EDID for years now. 95% is implemented in standard kernel, you just
+need a few quirks.
 
-> +static bool has_bbml2(const struct arm64_cpu_capabilities *entry,
-> +		      int scope)
-> +{
-> +	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT)) {
-> +		static const struct midr_range broken_bbml2_list[] =3D {
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_X4),
-> +			MIDR_ALL_VERSIONS(MIDR_CORTEX_X925),
-> +			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
-> +			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
-> +			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
-> +			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
-> +			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3),
-> +			{}
-
-... and yet you flag all versions as broken? So which one is it? If it
-is really the case that all versions are broken, then the text should
-be simplified. Otherwise, this should really list the broken versions.
-
-The other thing is that I find it incredibly dangerous to rely on
-some config option to disable a feature that will absolutely eat your
-data if it is broken. I'd rather see the whole BBM-L2 being behind an
-option, and unconditionally check for b0rken CPUs.
-
-Specially when it looks like there isn't a single CPU on the planet
-that implemented the feature correctly... :-/
-
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+-- 
+Nikolaus Voss
 
