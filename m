@@ -1,150 +1,210 @@
-Return-Path: <linux-kernel+bounces-441345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998159ECD1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:25:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7EF9ECD1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA3F1886E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:25:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56165188650D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410B4229151;
-	Wed, 11 Dec 2024 13:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDA823FD06;
+	Wed, 11 Dec 2024 13:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dFUYik6k";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/rI/mNGe";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dFUYik6k";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/rI/mNGe"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jiiwCirL"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5467223FD06;
-	Wed, 11 Dec 2024 13:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B03229127
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733923497; cv=none; b=q/onTB0xPYLcEPtYnd2YgqFC+sSV0czthOtWiHR2WfpJEcyyBvSNBMpVCJG6JYlA+ZBCNGj699SPThSQWYechZJniQ3svjf5pI4ntdXfiGje3oBmU8iquOc5LOxcSInQxhZ/UhZcu0af8FvYylFkYr2FMx6rhDKgNwH2w/rUL5A=
+	t=1733923529; cv=none; b=W1tDBy+gs9EX2pjsiLPPtp66fGGJ3MsbLJtLKBdJpzbiPC03Wez8CXuGvba3SHd8G26vbF5mQjtbrhXwWkTOSydY/okU2fhwVuaRjKyA0ZBs8KbrrYm9pVrqXUEZWoxqlwJSzDIjBdyeljx7GuL6BFzJV1C0D8y0mgKzUtinxMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733923497; c=relaxed/simple;
-	bh=/G0epAGa2I4eS7VibmqWScj9bycsGNh6b10XOlNoZVI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qeDlAaCw2iMTQd1cVYx7AaiY8/Y1o8Bo9DLgSsZHny8LTipcMgEO1Zd5EUgwfjLOhITfYilru5sWJjycLtfUfl/DkAsl0HD3RciEIGUhFQiBONez3EUtG2FxMZnt9LPC6bT64UYWouUKQg8Rru63PCyJ7eOVk75CH+sPdyLJSxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dFUYik6k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/rI/mNGe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dFUYik6k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/rI/mNGe; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3CF8D1F38C;
-	Wed, 11 Dec 2024 13:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733923493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SguABdKfnUIGO2u23hE0MzTCimieiDIf1ANX09Bwk8=;
-	b=dFUYik6kb1+7E4zk8A/LCGc7oVxic5aOvwK43pyVHWVc5xk4Hu16Lu52/OetSvlLajLrQA
-	UNqjFqdFE90aUTRXijtAnQE0BgcUBCtikkJI6ciOosSoswuknSeyVxsnRB/HAjROtAVk8v
-	FQNuo7NuFifklQPIpDjgRy8Phl/aLf0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733923493;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SguABdKfnUIGO2u23hE0MzTCimieiDIf1ANX09Bwk8=;
-	b=/rI/mNGeaI1ebPXdqzigSJC0oVlJGm3doxrlTuwsXZ5hUZxbKxI7qjwyOFuuMVoAKUCVIH
-	X4p5fZaOOv0tuPCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dFUYik6k;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/rI/mNGe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733923493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SguABdKfnUIGO2u23hE0MzTCimieiDIf1ANX09Bwk8=;
-	b=dFUYik6kb1+7E4zk8A/LCGc7oVxic5aOvwK43pyVHWVc5xk4Hu16Lu52/OetSvlLajLrQA
-	UNqjFqdFE90aUTRXijtAnQE0BgcUBCtikkJI6ciOosSoswuknSeyVxsnRB/HAjROtAVk8v
-	FQNuo7NuFifklQPIpDjgRy8Phl/aLf0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733923493;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SguABdKfnUIGO2u23hE0MzTCimieiDIf1ANX09Bwk8=;
-	b=/rI/mNGeaI1ebPXdqzigSJC0oVlJGm3doxrlTuwsXZ5hUZxbKxI7qjwyOFuuMVoAKUCVIH
-	X4p5fZaOOv0tuPCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 13BEC13983;
-	Wed, 11 Dec 2024 13:24:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UQWFA6WSWWdpGAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 11 Dec 2024 13:24:53 +0000
-Date: Wed, 11 Dec 2024 14:24:52 +0100
-Message-ID: <87zfl21hej.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: sonicvibes: Use str_on_off() helper in snd_sonicvibes_proc_read()
-In-Reply-To: <20241210172428.139643-2-thorsten.blum@linux.dev>
-References: <20241210172428.139643-2-thorsten.blum@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1733923529; c=relaxed/simple;
+	bh=F7ClRSDPlmowTlTkYA2vtwRH/X0CYiJxPiRuh6lXYdo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kDj53idhspIBkLEDoE4D9jRIff/ShwiGigxfIuIEiwz5davjBjCNr5PkApSuCHpXPUpupQg0AkZYy/Uoc0QAp35dVOY5d850oLsACrkAfPsLZcNMUbvH391hruqNQgQZ348RB41Jimz9UwU3utXiW/8+IEvnGDJsZDweySZFAnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jiiwCirL; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-728ea1e0bdbso1309495b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:25:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733923526; x=1734528326; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=52qsJbrEZBJTL67kYW0LzbQH1uz/zTKWXiiEV8CLW5g=;
+        b=jiiwCirLVcSDzUznPwnq5orItEpouivq+veabgM6hG/c4RtINN/C0wJj0+nGyAtdAp
+         LoDXc4bZQT58825+ghJWYMKNFaerYWm4P/tHMdT+9PwtFDlIGLoeN1/2IP/5yJg0pAS3
+         LEddRTOSqjUsvAwgkM1IJYMfKMH/8Z2zX22LKA+mSnqIAyH2YXLTIgz2UnHPf4XW/1r5
+         XlgUKsGEaEvNZztb/De04RlZrLlUzs653D7iXEDXSq/zqgx5U/PyT6+9zRbU2+sxZsu6
+         5DD7YPhxeoAFmTSK6Igxlda/sz1Uk2/x7EyLaD4tbzQdCMqoBixO5N4C1w5XTsDCZgMs
+         /pJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733923526; x=1734528326;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=52qsJbrEZBJTL67kYW0LzbQH1uz/zTKWXiiEV8CLW5g=;
+        b=fH4brRK4u8bGAos1wD+9TVcT0e/VnnwEk5NRQR18cLeNsdfK37BwKl9lHt53RUWtf8
+         3TynYzSkE6hqEeKSWOboZYMjfMz87cHvQDIGHGzs2oi7GcWkYe9zUBR5bPlmbgeC5OZX
+         YI0ZiKSHrrR/Fc53JUfdwm4JG4Qj4jfmStnrs46JCIcU/qEquLW2ZF5aL8Q9NMRe8I5p
+         HlJuB5fp1vwa2ZYqPXnNGPFU9suYRDprAkTB8SigSMrh0tXGM9h8i/Ctjo/Nxr49bOrS
+         BEOokLqBIFx+oo2j003n9i/X8CMK2u8gci7SudNzJcMDLBs0tXr0GCKrQ1z3u333qlDB
+         l0vA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbf4LA0zRA7VQsTPNi7gspSw80LlITzKTO5VFs/kpBMox6vUBvERpxygp1uU7BTt+6WAs7VeCkkulxSrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4zZTHETDQk/iLmumD/wzTBNzs2Io2TeRWMRqbsLoADVmbGdXy
+	unLKHPdo2/HZjFuxqbIUzL40znd8U9O0rJKE5lQ37pjZ8Y81Hr/emj/dciJDIlY0lQ4hqcYCZ7P
+	cxTHTj3svqdxLeCRcbCR0WvNjRuiOC7ZrQaRJSQ==
+X-Gm-Gg: ASbGncuL1QnvrR6qxcV6gqszCa1z65748St9NEVi2oh9TzpWDSZmZNhq0NcKIGb3jdC
+	iNXm3EymWGPECiMTI4YFArkbj7fj3Jhi1OZxIJ0mYbmla+Nwqi+3gMRHbyN8N7Hl6
+X-Google-Smtp-Source: AGHT+IGTCHkH/wdKKewfl7Mq3kAimCKhjttvHwdMKbWRkk/0ABXJnggUAYQVK6V95ADdRM3Tir/W2Qni7OFgz2q4CqY=
+X-Received: by 2002:a05:6a20:d50c:b0:1e1:3a97:bdb0 with SMTP id
+ adf61e73a8af0-1e1c12aabc8mr5272462637.9.1733923526475; Wed, 11 Dec 2024
+ 05:25:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 3CF8D1F38C
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <5861970.DvuYhMxLoT@rjwysocki.net> <2989520.e9J7NaK4W3@rjwysocki.net>
+ <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com> <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 11 Dec 2024 14:25:14 +0100
+Message-ID: <CAKfTPtAdo7OADEFuMeg1PpO=rk=bXmiw1Avj7frsoNWZuceewA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for EAS
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Dec 2024 18:24:26 +0100,
-Thorsten Blum wrote:
-> 
-> Remove hard-coded strings by using the str_on_off() helper function.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On Wed, 11 Dec 2024 at 12:29, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Wed, Dec 11, 2024 at 11:33=E2=80=AFAM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+> >
+> > On 11/29/24 16:00, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > Make it possible to use EAS with cpufreq drivers that implement the
+> > > :setpolicy() callback instead of using generic cpufreq governors.
+> > >
+> > > This is going to be necessary for using EAS with intel_pstate in its
+> > > default configuration.
+> > >
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >
+> > > This is the minimum of what's needed, but I'd really prefer to move
+> > > the cpufreq vs EAS checks into cpufreq because messing around cpufreq
+> > > internals in topology.c feels like a butcher shop kind of exercise.
+> >
+> > Makes sense, something like cpufreq_eas_capable().
+> >
+> > >
+> > > Besides, as I said before, I remain unconvinced about the usefulness
+> > > of these checks at all.  Yes, one is supposed to get the best results
+> > > from EAS when running schedutil, but what if they just want to try
+> > > something else with EAS?  What if they can get better results with
+> > > that other thing, surprisingly enough?
+> >
+> > How do you imagine this to work then?
+> > I assume we don't make any 'resulting-OPP-guesses' like
+> > sugov_effective_cpu_perf() for any of the setpolicy governors.
+> > Neither for dbs and I guess userspace.
+> > What about standard powersave and performance?
+> > Do we just have a cpufreq callback to ask which OPP to use for
+> > the energy calculation? Assume lowest/highest?
+> > (I don't think there is hardware where lowest/highest makes a
+> > difference, so maybe not bothering with the complexity could
+> > be an option, too.)
+>
+> In the "setpolicy" case there is no way to reliably predict the OPP
+> that is going to be used, so why bother?
+>
+> In the other cases, and if the OPPs are actually known, EAS may still
+> make assumptions regarding which of them will be used that will match
+> the schedutil selection rules, but if the cpufreq governor happens to
+> choose a different OPP, this is not the end of the world.
 
-Thanks, applied now.
+Should we add a new cpufreq governor fops to return the guest estimate
+of the compute capacity selection ? something like
+cpufreq_effective_cpu_perf(cpu, actual, min, max)
+EAS needs to estimate what would be the next OPP; schedutil uses
+sugov_effective_cpu_perf() and other governor could provide their own
 
+>
+> Yes, you could have been more energy-efficient had you chosen to use
+> schedutil, but you chose otherwise and that's what you get.
 
-Takashi
+Calling sugov_effective_cpu_perf() for another governor than schedutil
+doesn't make sense. and do we handle the case when
+CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not selected
+
+>
+> > >
+> > > ---
+> > >  kernel/sched/topology.c |   10 +++++++---
+> > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > >
+> > > Index: linux-pm/kernel/sched/topology.c
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > --- linux-pm.orig/kernel/sched/topology.c
+> > > +++ linux-pm/kernel/sched/topology.c
+> > > @@ -217,6 +217,7 @@ static bool sched_is_eas_possible(const
+> > >       bool any_asym_capacity =3D false;
+> > >       struct cpufreq_policy *policy;
+> > >       struct cpufreq_governor *gov;
+> > > +     bool cpufreq_ok;
+> > >       int i;
+> > >
+> > >       /* EAS is enabled for asymmetric CPU capacity topologies. */
+> > > @@ -251,7 +252,7 @@ static bool sched_is_eas_possible(const
+> > >               return false;
+> > >       }
+> > >
+> > > -     /* Do not attempt EAS if schedutil is not being used. */
+> > > +     /* Do not attempt EAS if cpufreq is not configured adequately *=
+/
+> > >       for_each_cpu(i, cpu_mask) {
+> > >               policy =3D cpufreq_cpu_get(i);
+> > >               if (!policy) {
+> > > @@ -261,11 +262,14 @@ static bool sched_is_eas_possible(const
+> > >                       }
+> > >                       return false;
+> > >               }
+> > > +             /* Require schedutil or a "setpolicy" driver */
+> > >               gov =3D policy->governor;
+> > > +             cpufreq_ok =3D gov =3D=3D &schedutil_gov ||
+> > > +                             (!gov && policy->policy !=3D CPUFREQ_PO=
+LICY_UNKNOWN);
+> > >               cpufreq_cpu_put(policy);
+> > > -             if (gov !=3D &schedutil_gov) {
+> > > +             if (!cpufreq_ok) {
+> > >                       if (sched_debug()) {
+> > > -                             pr_info("rd %*pbl: Checking EAS, schedu=
+til is mandatory\n",
+> > > +                             pr_info("rd %*pbl: Checking EAS, unsuit=
+able cpufreq governor\n",
+> > >                                       cpumask_pr_args(cpu_mask));
+> > >                       }
+> > >                       return false;
+> >
+> > The logic here looks fine to me FWIW.
+> >
+> >
 
