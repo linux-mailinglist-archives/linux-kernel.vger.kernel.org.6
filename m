@@ -1,199 +1,126 @@
-Return-Path: <linux-kernel+bounces-441088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302E29EC93F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:36:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4AA9EC93B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFF7188BA3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:36:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4CF188B7D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BA11A83E5;
-	Wed, 11 Dec 2024 09:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963871C5F0C;
+	Wed, 11 Dec 2024 09:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y/pp1H2q"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiExNU8d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A561A83E1;
-	Wed, 11 Dec 2024 09:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D4D1A841C;
+	Wed, 11 Dec 2024 09:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733909777; cv=none; b=DLRlIgMnz1rfIPgLayn7s0WbUGcX2bPjqM0aDEqga32nMAYDgI7mgMLFOZP9wc7GvZ5jLYVC4W/Lw/YnII42/LkSD0e622qgauAjVKuSJcz+12T9ZPt+PGcLiKZuD9kKhArW+bUj6nOuAWCmpe95g5G9UsS+fDSJicoZHuIjdjk=
+	t=1733909751; cv=none; b=hYFdhxMffK64bkb6RdPjt0uzQ4jP95dPV+jfuPSpVUm8ZgtFSi/nO2doCEwS3xNao/eN7Hk+neNhVRdGTXtpHGz1hxoV/zWc/BN1c0LJU0ylwMxu3SL+NmmqEsYMtbpmvGG40y2LQhjZuY6Ta6kgpnREhChS1L/NExhzJg1fMIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733909777; c=relaxed/simple;
-	bh=3x9nmfPFSyjJD8cJTggM9pdMGEg0mHaTpfHvrYUgg3k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=V0DbeHkcIcitJuLPWc7mNyYXmjYQtuyDefVFaDlxdosPvGiko3/gavDnstp4RBUaLrOydehkpTi1PQKKULYNaAyLIPu7y45sJOxbOVW/ouHb2bO+jSwLF88TV6DaT25Wm+pKnJjI3YyW0p1n/uxzphkAUoblQBZwhEVyat3NZGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y/pp1H2q; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB8d06f019422;
-	Wed, 11 Dec 2024 09:36:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=qWyv3ADAxqhL8voe/0/BZQ
-	u1nx/AkuQo8AMGpdZHP+c=; b=Y/pp1H2quoaJ6rmssTWWc4udA9jaxHrUAOoeie
-	jvBoW5fEoutMbfUUfqNnSSSu1BkTMB8xXysLHkH7rAfiXI0qVXvOMFQy7IFm1tjF
-	UvjGWAFeoN4lMUq6Man4UXK0FuQlZd0w39H6jxrDmdB3AhZLongRBlLkKrWZMIrA
-	Lfs6wW/1612LnJt6b1QmmVPXqDn0RMKCl+b9xXWWF81mekOIXE3GP0wTi2srjt+6
-	qhDgG9EdUYRKshXp/h+LhrB+AehCnLv+lYSSqV4ZNWdUDt1LleDGkJl3CoF3kIu/
-	QW8974O7yvva96GacII8KQ5q7sGvet5ci/54z0SdNmThP5Mg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f7dpg5ws-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:36:08 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB9a78n020188
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:36:07 GMT
-Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Dec 2024 01:36:01 -0800
-From: Lijuan Gao <quic_lijuang@quicinc.com>
-Date: Wed, 11 Dec 2024 17:35:46 +0800
-Subject: [PATCH] arm64: dts: qcom: qcs615: Add CPU capacity and DPC
- properties
+	s=arc-20240116; t=1733909751; c=relaxed/simple;
+	bh=iLFw43OnoXzWnqMuVnmSTPFH2Xr7CNIIsPaMJUmIUvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pBkA8ujWQjj8yLyciaRw8R7jidzAuDo1rUKY24VQzVfrqfI2zbOvuQBm+nls/ViWzyZ8T3sT0Zs0MYzE5mMQQYYOg979leOUvnAoub5CZK0pzDjYgHFYpyveRiGjW92+DaTDTP2mlHG9L8l/VZGsW2SGTrwCmIXhWBdacjmS954=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiExNU8d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF4F2C4CED2;
+	Wed, 11 Dec 2024 09:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733909750;
+	bh=iLFw43OnoXzWnqMuVnmSTPFH2Xr7CNIIsPaMJUmIUvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MiExNU8dJp4RuFxEc6MEegk5hw5t8sC9v94SeKS6W+/wpBfA9L2Aly+iaIPeqxFau
+	 RXvplC/NV4cZiaziOrSA3lnbM7NPL9J4E2p/ze9McR1CTnYrnUcAQjlYWv/WygOdbS
+	 ULZupA2+6BZbQJHsXjZdPaJ7onl+0T+HHT8xvx5S/aVMpUALQTZFO65BlTCGhRAwpl
+	 M+27eShzZhiz0fXXksV11LS+GbKSZA1pAqtUW8p4LBL53YpCIEIA+pXLsXwA24Z4vo
+	 rZn8PLGuHWXPcaA7Hk2yXjEmHhXEtvJyP8Dj32CpFPVwcxTCP+ALV2/fp/mpEfjadi
+	 xQVcJdYH+1w5w==
+Date: Wed, 11 Dec 2024 10:35:47 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Pengfei Li <pengfei.li_1@nxp.com>, Marco Felsch <m.felsch@pengutronix.de>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: thermal: fsl,imx91-tmu: add bindings
+ for NXP i.MX91 thermal module
+Message-ID: <u2y3owsp442geue2knfhnx4zhrzefmky6bl47nxaaqhw7dhpb3@vkc6z7c5hwv2>
+References: <20241210-imx91tmu-v2-0-5032aad4d88e@nxp.com>
+ <20241210-imx91tmu-v2-1-5032aad4d88e@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241211-add_cpu_capacity_and_dpc_properties-v1-1-03aaee023a77@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAPFcWWcC/x3NSwrDMAwA0asErWuITUg/VylFKJbSauMIOS0tI
- XeP6XI2bzao4ioVbt0GLh+tupQW8dRBflF5SlBuDalPQ0wxBmLGbG/MZJR1/SEVRraM5ouJrw0
- LFx7HdOZpnvorNMlcZv3+L/fHvh8Wuol6dQAAAA==
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Lijuan Gao
-	<quic_lijuang@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733909760; l=2894;
- i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
- bh=3x9nmfPFSyjJD8cJTggM9pdMGEg0mHaTpfHvrYUgg3k=;
- b=KHAAqp0nKLTqUHy7icxGoXUvxEK+EMVy3H3Y8OshpmTfZDxjAEW/XD1Kk2t+q8WbZ8eaYxlHK
- w33BVa4Xy9vA1c3Wm3KgmZ1QzKQbk0X7VeMnWD5iFfnKYYQ0y6EhS3O
-X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
- pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: aoBs9U8cGcVEQQDpWrudbr0ISk2jtDOx
-X-Proofpoint-ORIG-GUID: aoBs9U8cGcVEQQDpWrudbr0ISk2jtDOx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015
- mlxlogscore=765 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110072
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241210-imx91tmu-v2-1-5032aad4d88e@nxp.com>
 
-Add "capacity-dmips-mhz" and "dynamic-power-coefficient" to the QCS615 SoC.
-They are used to build the energy model, which in turn is used by EAS to
-take placement decisions.
+On Tue, Dec 10, 2024 at 04:27:02PM -0500, Frank Li wrote:
+> +description:
+> +  i.MX91 features a new temperature sensor. It includes programmable
+> +  temperature threshold comparators for both normal and privileged
+> +  accesses and allows a programmable measurement frequency for the
+> +  Periodic One-Shot Measurement mode. Additionally, it provides
+> +  status registers for indicating the end of measurement and threshold
+> +  violation events.
+> +
 
-Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Missing ref to thermal-sensor.yaml
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index c0e4b376a1c6..5d2034a10f2e 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -29,6 +29,8 @@ cpu0: cpu@0 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd0>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_0>;
- 			#cooling-cells = <2>;
- 
-@@ -47,6 +49,8 @@ cpu1: cpu@100 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd1>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_100>;
- 
- 			l2_100: l2-cache {
-@@ -64,6 +68,8 @@ cpu2: cpu@200 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd2>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_200>;
- 
- 			l2_200: l2-cache {
-@@ -81,6 +87,8 @@ cpu3: cpu@300 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd3>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_300>;
- 
- 			l2_300: l2-cache {
-@@ -98,6 +106,8 @@ cpu4: cpu@400 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd4>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_400>;
- 
- 			l2_400: l2-cache {
-@@ -115,6 +125,8 @@ cpu5: cpu@500 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd5>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <100>;
- 			next-level-cache = <&l2_500>;
- 
- 			l2_500: l2-cache {
-@@ -132,6 +144,8 @@ cpu6: cpu@600 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd6>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1740>;
-+			dynamic-power-coefficient = <404>;
- 			next-level-cache = <&l2_600>;
- 			#cooling-cells = <2>;
- 
-@@ -150,6 +164,8 @@ cpu7: cpu@700 {
- 			enable-method = "psci";
- 			power-domains = <&cpu_pd7>;
- 			power-domain-names = "psci";
-+			capacity-dmips-mhz = <1740>;
-+			dynamic-power-coefficient = <404>;
- 			next-level-cache = <&l2_700>;
- 
- 			l2_700: l2-cache {
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: fsl,imx91-tmu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  nvmem-cells:
+> +    items:
+> +      - description: Phandle to the trim control 1 provided by ocotp
+> +      - description: Phandle to the trim control 2 provided by ocotp
+> +
+> +  nvmem-cell-names:
+> +    items:
+> +      - const: trim1
+> +      - const: trim2
+> +
+> +  "#thermal-sensor-cells":
+> +    enum: [0, 1]
 
----
-base-commit: 91e71d606356e50f238d7a87aacdee4abc427f07
-change-id: 20241211-add_cpu_capacity_and_dpc_properties-8d6627dbfb09
+Why this is flexible? How many sensors do you have there?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#thermal-sensor-cells'
+
+Use consistent quotes, either ' or "
+
+> +
+> +additionalProperties: false
+
+This should be unevaluatedProperties: false after referencing mentioned
+earlier thermal-sensor yaml
 
 Best regards,
--- 
-Lijuan Gao <quic_lijuang@quicinc.com>
+Krzysztof
 
 
