@@ -1,173 +1,171 @@
-Return-Path: <linux-kernel+bounces-442116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D40B9ED82C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:10:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE839ED82E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:10:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3AEB18847B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5581D281218
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1D02036F6;
-	Wed, 11 Dec 2024 21:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589E92288D0;
+	Wed, 11 Dec 2024 21:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="YTLRNuVm"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/3i7tgJ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B73259498
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0BD1C4A36;
+	Wed, 11 Dec 2024 21:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733951421; cv=none; b=Qfv+4yfGa2VLaD6PtEu50DEBl2Csh4LnmSPJoV2doHjE16I3+CbDA4pdySuaLY0IFFHGwbJ1YdzjfpwoOtuq0OQq2urQv+vC0SjpceSrcF2USC8MnhLmJ+NBVvqUGGaT5wYOqwWFtNvyeOI66zlteB0g0Fvo7dyo7EI2utsFHo0=
+	t=1733951430; cv=none; b=tT2ZQP4BdiVf05Z6bpfJ8TQowEsC706onPPfYeD9SmueGbYncBfyo+25rHfyMihaEJfE7afdD1BjXdmC3cDdAifEiSRzSefhSMmr2xm9A9nBmAbFMvZAXTgktY4skybXuBRL2XFoasu+H8oMczTYG6qHHKCRoH86zM7WAJGt37w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733951421; c=relaxed/simple;
-	bh=KPDl96YIWMcrRrcV+lg6vfhyXr3+vPgXEuHTonWRiRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N9IgOMtM4XyQ0F2J4WPOerrJ5qOFas1dZqpXkhtfC3MvXb4VkISyoIhmAvyHHsZAxEy7YXJBypLmh4xIrEFfNR2fNIzomCr2+9G+hvWiJoVnJkEfPJCnDPLmoJH8p6a7SmB/U0106FLyNVCp9RuzySsB+vuyxsvwhVZSDqwkrtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=YTLRNuVm; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7265c18d79bso3573561b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:10:18 -0800 (PST)
+	s=arc-20240116; t=1733951430; c=relaxed/simple;
+	bh=OrSrCRThbnz38HRK4gbxPzXWxGq7zO/a92bWosVgsHM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cy4VQsoWPVSda8egGq3L37TsTcn+74UjShCA51C2oUjCu3JUHXGb/5Q2191lhD1Yc6UaANXJZMxEM5FC+WBwp3IX05J/TPGSGJe6N2F74MbXOTFDQDzzltVtN1/FjK2uAmGTLZYZRxkQ5EXw/WrI0Xa82IVo2eEk5JxQU4/xdO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V/3i7tgJ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso8529315e9.2;
+        Wed, 11 Dec 2024 13:10:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733951418; x=1734556218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LUJ6E1dccY/UenqZ3HoN/Mh8eiUDPyCKSbZAwA4cbhs=;
-        b=YTLRNuVmHCFKsSk1n8GejXzACNJIZ3n8Bux74qt18xllikvTPxOzwBugWsaanX726T
-         mT3S1q55T9pQzG5L9NAp7r28WIwleAMmBozXNKlfkTx92thycHRXk1HLsud8GfkSHWQt
-         Cx59qzQreQ9u3b+6G5LAgtjjD5f/CHkfolTq8su/Sm2qKm33EDEiZ/boVUIVKOdMy97R
-         5GLXsKd0UcJbCrRJpI+DsbyQfJGI6mWTWl7P9p5Hra9DJHGYkxGq0hTYXtj0R1uEWS/W
-         YeFxOIgjgEcHTM4tJDR+OWOsR5YKV4fT+5QuSwVtzWb5+VmXKWri9EIFljPTKAlVqaJG
-         vL1A==
+        d=gmail.com; s=20230601; t=1733951427; x=1734556227; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yZz00LLpT83ITUjYV+X2dbIbEBxGxb+OmoGdlRCf7RU=;
+        b=V/3i7tgJngYS9pDOasUwJpN3K6d8ax7/cyaeqKGQc/J67YA5/URqZ5tMVFdZFhjSFZ
+         i82IbxTBJOHHKfPV7YjFNo+ob/GwJDhyOWMNUzx/Yr+r2U/jbB41wQEn+0+xwAr7NaKx
+         A9fLD6zu64tfzXc9cAAncxsp1tyI5GuzQMd6S+G5ZSh4nrfV/GE3AHAfC5Coc1C2/QCt
+         sQOFO7GPVj5svHUBIKprz8bOObNjI+GLb8+qGvlBXL+e3kZocaSHwNNdvLP8Z7i9C0pI
+         QeuWqKzEQdwdedi99WUSLPUo8fj2KEehNLAdwmoqsQGA7HGQrst2S9fWdp45dLIT8bcz
+         6W6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733951418; x=1734556218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LUJ6E1dccY/UenqZ3HoN/Mh8eiUDPyCKSbZAwA4cbhs=;
-        b=c8IM1dARJuIW7Gc3WFv9SC8j6CH2+JzBeAwBa7NO6+PXBpjzwaJc7LyLximjWLHgkM
-         0LZtcgF/jtgY2CVqTIzburkUs72mV7gDKuqkkmBc2i4mf3erOzJuvbiJ+ZGAMijxFAZB
-         atv//WM/FDEFxOISQHmHzAHA3HExn0LnqwOcBU9J4hESRMzKq+1FouqD1VLu/3exLUN1
-         zyzinybRPr7BEeUkB8fFGWkDJdkJynZH0FFRPNXxBy1xaacfil+EXO0A5EzsfatUptjg
-         SWzck94s+ltcJJ2VZPrbcxEzjBTVMrEu6FySm3XFRLKzfpUveASmajvhxUSrR4eTGvu9
-         p6gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNFCNjPlr3kRfNKT0EkMF66RT/vaoj24ohVDo/QTdWT2mqwVvKMWtT8gIS5Ie/dYUDGOx6Zb56hyeudOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpqgIIlh8mSnqHsmNDm5LCUh0dsuC8NbkpHoFLsoiuh5kNmUjr
-	M9YUqdyo4tVbkHmHDNe5dNM/xEZTHAwoou8Yg8xtINVxaAObHsEQ8QJg0EAFwYsMVNBu1g4yK6m
-	sONCOdAkOnU8mm4asu71VnTXeJjuZ69XARWsbmw==
-X-Gm-Gg: ASbGncul7qs5AGIaYjTc2+/+vYFh5ImukcMvkUJSduUf/6JtzltzN4sG6c4V+npR8+g
-	e7/WSw3LiSigLZku2vkivvJJnz/18KI9f/g==
-X-Google-Smtp-Source: AGHT+IGbytb2z6LDDkYKhPGNyqyAm3jA1eJq1+JKml7I0nFmrZCCwIKb2tSKtD6WnDFHkiV+jENJ+KJKRSAidtP2wIY=
-X-Received: by 2002:a05:6a00:a8f:b0:728:ecab:521c with SMTP id
- d2e1a72fcca58-728faa19073mr995943b3a.6.1733951417743; Wed, 11 Dec 2024
- 13:10:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733951427; x=1734556227;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yZz00LLpT83ITUjYV+X2dbIbEBxGxb+OmoGdlRCf7RU=;
+        b=PAYifbIJAPNhofsEUnpaz3O9OR6DNqK88ly0x6gYZvr8+1SGjDvWkqgT4EUFnLrjXW
+         jXiJ0Bx5J3kPkfpwjcb/+fVruwLfSMcSuyquMHpqZ2dZ9gqzSeVJLRbzcMiTHEySA8ja
+         z7Q9qXhct6XGYZRkKkyQmv6xfs/T5bHsUKKd9nFnff/oHw8cTOcYLImSB1ig7shXHg7W
+         y39uy3bH4fCG0YhAq9m9KTWfpYn6adUQLMLuvwIYxQHQV0tjmmxcg4vFyh2fPeEYpjbH
+         dhK4e/wq0jdRcmFgJGvsHZEuJmSZ//oLWbd+/TghfYcV/lVdHf3rxqaul3JLad1tYTwm
+         u9RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUA1CC2IeskGNn5n/IfmdNDaQ96QbFnOQHF2emymnnFE+QU3RDQFiOiB6Q/62nwIw32Wek=@vger.kernel.org, AJvYcCV6rVExQL5ZltGZYZHYmLGxQ2Pq7eOOkwONJ3VFRLFWH0MiptwIHWYB43xKkQOar+726oYtPFbIa4ClYIWD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrz0gUkLtGR30rQWf0KZydpQgpplbxxfJ1PaIlbGDVAQqJXRC7
+	IC7WtmLz4arx5L/Prm0z5P5Y09aQ1q7xUc+NNDfrCuQK8S2dikla
+X-Gm-Gg: ASbGnct3pKmAh0oeP/esMJNYuQeA39FGAS3wAWT5aE9Y618/2jtGZtXVDnKAjiPneJO
+	PcIsrcm1XiWaA8NhG0JQI91kylWyuxtgXAW94ulSpZZS0fPuygFopzIf+G9cKVLm/VPH+3jqaKo
+	m7Zbb6f5dHtdQ4JVLK6SwceCz9EckCe3wol5FCaIxa6jk8+odgLoS+Ejee/fOMg0+CYt7zV/6Rq
+	qHVf0tFO7E7m9a4zL0NMoSyoqwrl9rstEQICzzMfmzZL1J+JZMGMJtdViUEaiY=
+X-Google-Smtp-Source: AGHT+IEoFF9lfFi/tcgC2R9iqPaNL1Un1IvsKyFFFNVGF8Q2i3Q3Ttd2SniT7E4tri3YhTDfR23Oqg==
+X-Received: by 2002:a05:600c:4446:b0:434:fa73:a907 with SMTP id 5b1f17b1804b1-4361c3723acmr35152305e9.13.1733951426556;
+        Wed, 11 Dec 2024 13:10:26 -0800 (PST)
+Received: from krava (85-193-35-130.rib.o2.cz. [85.193.35.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361e323828sm17329325e9.0.2024.12.11.13.10.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 13:10:26 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 11 Dec 2024 22:10:24 +0100
+To: Laura Nao <laura.nao@collabora.com>
+Cc: olsajiri@gmail.com, alan.maguire@oracle.com, bpf@vger.kernel.org,
+	chrome-platform@lists.linux.dev, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on
+Message-ID: <Z1n_wGj0CGjh_gLP@krava>
+References: <Z1LvfndLE1t1v995@krava>
+ <20241210135501.251505-1-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209-pmu_event_fixes-v1-2-d9525e90072c@rivosinc.com> <mhng-1c6ec679-02bc-4aa3-9b23-bb4c5f5f9b81@palmer-ri-x1c9a>
-In-Reply-To: <mhng-1c6ec679-02bc-4aa3-9b23-bb4c5f5f9b81@palmer-ri-x1c9a>
-From: Atish Kumar Patra <atishp@rivosinc.com>
-Date: Wed, 11 Dec 2024 13:10:07 -0800
-Message-ID: <CAHBxVyF445KnZfT9rPhTwKA76_GT0eT3+p=ot1oLQzUb7j7d7w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drivers/perf: riscv: Do not allow invalid raw event config
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, atishp@atishpatra.org, anup@brainfault.org, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, mchitale@ventanamicro.com, 
-	samuel.holland@sifive.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241210135501.251505-1-laura.nao@collabora.com>
 
-On Wed, Dec 11, 2024 at 11:46=E2=80=AFAM Palmer Dabbelt <palmer@dabbelt.com=
-> wrote:
->
-> On Mon, 09 Dec 2024 16:04:46 PST (-0800), Atish Patra wrote:
-> > The SBI specification allows only lower 48bits of hpmeventX to be
-> > configured via SBI PMU. Currently, the driver masks of the higher
-> > bits but doesn't return an error. This will lead to an additional
-> > SBI call for config matching which should return for an invalid
-> > event error in most of the cases.
-> >
-> > However, if a platform(i.e Rocket and sifive cores) implements a
-> > bitmap of all bits in the event encoding this will lead to an
-> > incorrect event being programmed leading to user confusion.
-> >
-> > Report the error to the user if higher bits are set during the
-> > event mapping itself to avoid the confusion and save an additional
-> > SBI call.
-> >
-> > Suggested-by: Samuel Holland <samuel.holland@sifive.com>
-> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> > ---
-> >  drivers/perf/riscv_pmu_sbi.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.=
-c
-> > index 3473ba02abf3..fb6eda90f771 100644
-> > --- a/drivers/perf/riscv_pmu_sbi.c
-> > +++ b/drivers/perf/riscv_pmu_sbi.c
-> > @@ -507,7 +507,7 @@ static int pmu_sbi_event_map(struct perf_event *eve=
-nt, u64 *econfig)
-> >  {
-> >       u32 type =3D event->attr.type;
-> >       u64 config =3D event->attr.config;
-> > -     int ret;
-> > +     int ret =3D -ENOENT;
-> >
-> >       /*
-> >        * Ensure we are finished checking standard hardware events for
-> > @@ -536,8 +536,11 @@ static int pmu_sbi_event_map(struct perf_event *ev=
-ent, u64 *econfig)
-> >
-> >               switch (config >> 62) {
-> >               case 0:
-> > -                     ret =3D RISCV_PMU_RAW_EVENT_IDX;
-> > -                     *econfig =3D config & RISCV_PMU_RAW_EVENT_MASK;
-> > +                     /* Return error any bits [48-63] is set  as it is=
- not allowed by the spec */
-> > +                     if (!(config & ~RISCV_PMU_RAW_EVENT_MASK)) {
-> > +                             *econfig =3D config & RISCV_PMU_RAW_EVENT=
-_MASK;
-> > +                             ret =3D RISCV_PMU_RAW_EVENT_IDX;
-> > +                     }
-> >                       break;
-> >               case 2:
-> >                       ret =3D (config & 0xFFFF) | (SBI_PMU_EVENT_TYPE_F=
-W << 16);
-> > @@ -554,7 +557,6 @@ static int pmu_sbi_event_map(struct perf_event *eve=
-nt, u64 *econfig)
-> >               }
-> >               break;
-> >       default:
-> > -             ret =3D -ENOENT;
-> >               break;
-> >       }
->
-> This doesn't have a Fixes, is it
->
->     Fixes: f0c9363db2dd ("perf/riscv-sbi: Add platform specific firmware =
-event handling")
->
+On Tue, Dec 10, 2024 at 02:55:01PM +0100, Laura Nao wrote:
+> Hi Jiri,
+> 
+> Thanks for the feedback!
+> 
+> On 12/6/24 13:35, Jiri Olsa wrote:
+> > On Fri, Nov 15, 2024 at 06:17:12PM +0100, Laura Nao wrote:
+> >> On 11/13/24 10:37, Laura Nao wrote:
+> >>>
+> >>> Currently, KernelCI only retains the bzImage, not the vmlinux
+> >>> binary. The
+> >>> bzImage can be downloaded from the same link mentioned above by
+> >>> selecting
+> >>> 'kernel' from the dropdown menu (modules can also be downloaded the
+> >>> same
+> >>> way). I’ll try to replicate the build on my end and share the
+> >>> vmlinux
+> >>> with DWARF data stripped for convenience.
+> >>>
+> >>
+> >> I managed to reproduce the issue locally and I've uploaded the
+> >> vmlinux[1]
+> >> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of
+> >> the
+> >> modules[3] and its btf data[4] extracted with:
+> >>
+> >> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko >
+> >> cros_kbd_led_backlight.ko.raw
+> >>
+> >> Looking again at the logs[5], I've noticed the following is reported:
+> >>
+> >> [    0.415885] BPF: 	 type_id=115803 offset=177920 size=1152
+> >> [    0.416029] BPF:
+> >> [    0.416083] BPF: Invalid offset
+> >> [    0.416165] BPF:
+> >>
+> >> There are two different definitions of rcu_data in '.data..percpu',
+> >> one
+> >> is a struct and the other is an integer:
+> >>
+> >> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
+> >> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
+> >>
+> >> [115801] VAR 'rcu_data' type_id=115572, linkage=static
+> >> [115803] VAR 'rcu_data' type_id=1, linkage=static
+> >>
+> >> [115572] STRUCT 'rcu_data' size=1152 vlen=69
+> >> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64
+> >> encoding=(none)
+> >>
+> >> I assume that's not expected, correct?
+> > 
+> > yes, that seems wrong.. but I can't reproduce with your config
+> > together with pahole 1.24 .. could you try with latest one?
+> 
+> I just tested next-20241210 with the latest pahole version (1.28 from
+> the master branch[1]), and the issue does not occur with this version
+> (I can see only one instance of rcu_data in the BTF data, as expected).
+> 
+> I can confirm that the same kernel revision still exhibits the issue
+> with pahole 1.24.
+> 
+> If helpful, I can also test versions between 1.24 and 1.28 to identify
+> which ones work.
 
-I was not sure if a Fixes tag was worth it as the current
-behavior(masking off the higher bits) is there from the beginning of
-the driver.
-perf tool throws a warning as well if a user tries to set any of the
-upper 16 bits as event attributes is set to 0-47.
+I managed to reproduce finally with gcc-12, but had to use pahole 1.25,
+1.24 failed with unknown attribute
 
-If it should be backported, this is the correct fixes tag.
-Fixes: e9991434596f ("RISC-V: Add perf platform driver based on SBI
-PMU extension")
+	[95096] VAR 'rcu_data' type_id=94868, linkage=static
+	[95098] VAR 'rcu_data' type_id=4, linkage=static
+	type_id=95096 offset=177088 size=1152 (VAR 'rcu_data')
+	type_id=95098 offset=177088 size=1152 (VAR 'rcu_data')
 
+will try to check what's going on
 
-> ?
+jirka
 
