@@ -1,99 +1,180 @@
-Return-Path: <linux-kernel+bounces-440564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DBA9EC108
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:43:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B5A188AA16
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:43:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37B03BBC9;
-	Wed, 11 Dec 2024 00:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pG+BKg9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8089EC10D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:46:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D772A1CF;
-	Wed, 11 Dec 2024 00:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60112281DD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:46:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D614D8A3;
+	Wed, 11 Dec 2024 00:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KjCTQrhB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAE81F5EA;
+	Wed, 11 Dec 2024 00:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733877790; cv=none; b=Z2z9L7+z4Tirq9F5UDJKFU3Do2pktxGpFBFHWiOY59KLnxvKi5HVpDSuOxMvynuMta7EBengXEzT/1ACogON5tDZjP1jttrh8iv8+ac72+gW1z+wTiIi3VXIzsjBjlD+rBRppJUvZ5dxd4EqoQJBYzSTbxvFH0IJp2HXAU9GHk8=
+	t=1733878006; cv=none; b=AtWsIhr/uSXpNGGDpkNronxlZ8arxtwDXz/yBBcWA1RGFwUNIMi9d3loxhkO3IwGzrB3v0vFnUEG3F2OlJYYDRgYNa+Xaqf0PgjgdX6an3a8eYzRuQPT53A7lMeTc9YjIBppwI2Q6SyhMSIJYMgQsqo+ZnPfdryCl3CZIrjFgNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733877790; c=relaxed/simple;
-	bh=NgVez8nReWQlSrD2wR+9xnrrekmBUArkj9umbfrXTF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GCpL/AXunVBJ+9+fjEKxV8YhIesuXQdXSP6UrUeqJ9vIaJGL2oAMimJXME2ERZBzSkPz2qsJfJ4/G4f9AIfEAdYuHQTWEiEM4YlxsUBImZreyr1s0fbjblSAMUx7Q9v/9DN2ulwZn0Q1E0qFqrqq5Ed3lem11KXOYKQgL6FJQ4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pG+BKg9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A9EAC4CED6;
-	Wed, 11 Dec 2024 00:43:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733877789;
-	bh=NgVez8nReWQlSrD2wR+9xnrrekmBUArkj9umbfrXTF0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pG+BKg9JU+q5lYb8UWPUOfOa2unJCPTPaYl4i003XvIpDyMqQD4KQHnTwV1i+wPaP
-	 6pZ1/sCNgnaWmkRz7Nn+Q4GNJoSNX0RxxBbd67snXEjcytav4+Hy+NqbYRfHcGizN4
-	 zVT870Sde5f5u8aAE2irXkONA6NBdDRea+KwsBQWfWCchBpgbxxhWjLdZWtHoVMuA7
-	 F5TUoQR+xBE4RZvmo3XJpI/+EC46Sx/7XIgasuXot1fFyk5BaXnNLT/+8n3g6qbGlt
-	 yfBsiWf5wNWxbvUzUnzGlqsMvh61B+KfGUqtORJsJG5K4k1VsNO1Qcxh7V5MuonkZ5
-	 KQCDRO97PcF/g==
-Date: Tue, 10 Dec 2024 16:43:08 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "andrew@lunn.ch" <andrew@lunn.ch>, "hkallweit1@gmail.com"
- <hkallweit1@gmail.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
- "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
- <edumazet@google.com>, "pabeni@redhat.com" <pabeni@redhat.com>,
- "florian.fainelli@broadcom.com" <florian.fainelli@broadcom.com>,
- "heiko.stuebner@cherry.de" <heiko.stuebner@cherry.de>, "fank.li@nxp.com"
- <fank.li@nxp.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v3 net] net: phy: micrel: Dynamically control external
- clock of KSZ PHY
-Message-ID: <20241210164308.6af97d00@kernel.org>
-In-Reply-To: <PAXPR04MB85104EC1BFE4075DF1A27B93883D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20241206012113.437029-1-wei.fang@nxp.com>
-	<20241209181451.56790483@kernel.org>
-	<PAXPR04MB85104EC1BFE4075DF1A27B93883D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1733878006; c=relaxed/simple;
+	bh=1H3cIATD0dXLlSVUR/ldxmWO5MYq4IIJi3J0Hk+r9dY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=This7hUD2SpQwiQYcWKzJ+68txULhjMeyPBxPMLVfx4RcNOQgzrxQBmYyZpukzXTv9flvk+Nf/x3CZ+1ZRQwZ8IiP8mZVdaSQZtCG8abITtdIGneuf3mOPZPAHv/SzFq2VMB4+htoatatFw5JlzlnuW2M/u8LE7feE3mrTbSlSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KjCTQrhB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADXbp4014608;
+	Wed, 11 Dec 2024 00:46:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pOvQ4kEW5+JbIoo3oLAx3A6GmkI7mBSEDvoz1mE4eXw=; b=KjCTQrhBUH38ytjN
+	RUtbiO/IEO49nRXsFTPDMtuOEqVqcvodDRVk5i8iitWNs2a8WE6Q1ZwVJo7OQi7y
+	cXvEum9l7opxX4RhHY4nXSUoZsL2bnmNBCwwS2+i05Q2THqox6sGVMGx7mueioXY
+	PnJ24Hy3X644/kanKm5OxEu7Os4VR507b4b6Wm9pTB6GcvB/TTJC5aJ+0XbD6rzn
+	nSCS2LnaRLNzK70P7nXChTrJVcaCll0nh3ht+BLRbF9pxgvZaw1g9vaoNCmRVKt9
+	/HP8JdX0Ahy2FZwpmOoN0CqY5JBJvx+jsnKQqYu0uoY2F/nhObKJp11xoPFcKtLd
+	4MFU3Q==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3nb71x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 00:46:25 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB0kPcP029536
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 00:46:25 GMT
+Received: from [10.64.16.135] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
+ 2024 16:46:18 -0800
+Message-ID: <527baded-f348-48a8-81cd-3f84c0ff1077@quicinc.com>
+Date: Wed, 11 Dec 2024 08:46:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on
+ QCS615
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Kuogee
+ Hsieh" <quic_khsieh@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "Kishon
+ Vijay Abraham I" <kishon@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_lliu6@quicinc.com>,
+        <quic_fangez@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-gpio@vger.kernel.org>
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef@quicinc.com>
+ <CAA8EJppOR_UXoVpMt-dhfWdCz3UNfsXGdz8X9NqpaSmYj3AZDg@mail.gmail.com>
+ <5ea14162-567b-462d-be02-b73b954b7507@quicinc.com>
+ <5whv4z7u6fkfwlv5muox5dmv6fow4mga76ammapw7wph7vwv3f@xibcjdfqorgf>
+ <iqcofcntirmlwcpyfr4yabymqfcgyrij57bibf337tmxpa73t6@npkt6wquenf6>
+From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+In-Reply-To: <iqcofcntirmlwcpyfr4yabymqfcgyrij57bibf337tmxpa73t6@npkt6wquenf6>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ygGzruQ_LQRZ7QNeIARNz0cm5J1Cy4Os
+X-Proofpoint-ORIG-GUID: ygGzruQ_LQRZ7QNeIARNz0cm5J1Cy4Os
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412110004
 
-On Tue, 10 Dec 2024 02:45:57 +0000 Wei Fang wrote:
-> The simple fix could only fix the commit 985329462723 ("net: phy: micrel: use
-> devm_clk_get_optional_enabled for the rmii-ref clock"), because as the commit
-> message said some clock suppliers need to be enabled so that the driver can get
-> the correct clock rate.
+
+
+On 12/10/2024 11:09 PM, Dmitry Baryshkov wrote:
+> On Thu, Dec 05, 2024 at 08:31:24PM +0200, Dmitry Baryshkov wrote:
+>> On Thu, Dec 05, 2024 at 09:26:47PM +0800, Xiangxu Yin wrote:
+>>>
+>>>
+>>> On 11/29/2024 10:33 PM, Dmitry Baryshkov wrote:
+>>>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+>>>>>
+>>>>> Extended DP support for QCS615 USB or DP phy. Differentiated between
+>>>>> USBC and DP PHY using the match table’s type, dynamically generating
+>>>>> different types of cfg and layout attributes during initialization based
+>>>>> on this type. Static variables are stored in cfg, while parsed values
+>>>>> are organized into the layout structure.
+>>>>
+>>>> We didn't have an understanding / conclusion whether
+>>>> qcom,usb-ssphy-qmp-usb3-or-dp PHYs are actually a single device / PHY
+>>>> or two PHYs being placed next to each other. Could you please start
+>>>> your commit message by explaining it? Or even better, make that a part
+>>>> of the cover letter for a new series touching just the USBC PHY
+>>>> driver. DP changes don't have anything in common with the PHY changes,
+>>>> so you can split the series into two.
+>>>>
+>>> Before implement DP extension, we have discussed with abhinav and krishna about whether use combo, usbc or separate phy.
+>>
+>> What is "DP extension"?
+>>
+I'm sorry confusion casued by my description. It's means extend DP implemnt for USBC phy driver.
+>>>
+>>> We identified that DP and USB share some common controls for phy_mode and orientation.
+>>> Specifically, 'TCSR_USB3_0_DP_PHYMODE' controls who must use the lanes - USB or DP,
+>>> while PERIPH_SS_USB0_USB3PHY_PCS_MISC_TYPEC_CTRL controls the orientation.
+>>> It would be more efficient for a single driver to manage these controls. 
+>>
+>> The question is about the hardware, not about the driver.
+>>
+>>> Additionally, this PHY does not support Alt Mode, and the two control registers are located in separate address spaces. 
+>>> Therefore, even though the orientation for DP on this platform is always normal and connected to the video output board, 
+>>> we still decided to base it on the USBC extension.
+>>
+>> Could you please clarify, do usb3-or-dp PHYs support DP-over-USB-C? I
+>> thought that usbc-or-dp platforms support that, but they don't
+>> support DP+USB pin configuration. Note, the question is broader than
+>> just QCS615, it covers the PHY type itself.
+>>
+>> Also, is TCSR configuration read/write or read-only? Are we supposed to
+>> set the register from OS or are we supposed to read it and thus detemine
+>> the PHY mode?
 > 
-> But the problem is that the simple fix cannot fix the 99ac4cbcc2a5 ("net: phy:
-> micrel: allow usage of generic ethernet-phy clock"). The change is as follows,
-> this change just enables the clock when the PHY driver probes. There are no
-> other operations on the clock, such as obtaining the clock rate. So you still think
-> a simple fix is good enough for net tree?
+> Any updates on these two topics?
+> 
+Still confirming detail info with HW & design team.
+I’ll update the information that has been confirmed so far.
+This phy support DP-over-USB-C,but it's not support alt-mode which 2 lane work for DP, other 2 lane work for USB.
+TCSR phy mode is read/write reg and we can read for determine phy mode.
 
-I may be missing something but if you don't need to disable the generic
-clock you can put the disable into the if () block for rmii-ref ?
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 3ef508840674..8bbd2018f2a6 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -2214,6 +2214,8 @@ static int kszphy_probe(struct phy_device *phydev)
-                                   rate);
-                        return -EINVAL;
-                }
-+
-+               clk_disable_unprepare(clk);
-        } else if (!clk) {
-                /* unnamed clock from the generic ethernet-phy binding */
-                clk = devm_clk_get_optional_enabled(&phydev->mdio.dev, NULL);
 
