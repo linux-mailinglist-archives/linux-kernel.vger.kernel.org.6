@@ -1,97 +1,83 @@
-Return-Path: <linux-kernel+bounces-441655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27AE9ED1AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:29:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190001882145
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:29:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B211DE2A2;
-	Wed, 11 Dec 2024 16:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/6Dagzc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA28C9ED1AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:29:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6381DDC2C;
-	Wed, 11 Dec 2024 16:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D396A285E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:29:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1241D9A6F;
+	Wed, 11 Dec 2024 16:28:52 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E5B1DD873;
+	Wed, 11 Dec 2024 16:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733934503; cv=none; b=PfrYFcEf16LeffSjq8btuuep2kfGpIHBipg5Fubl2beDcQh2t264HAFLmwfAGQcut0f2ImKairk7noIAef5oqPRyt6Ewi6HNGDbI3bkXnCv97ZO1D2WVuAvTVZaCtlPslxZ9WFUYf0PPj7GY44rrahc7o18i8qMtyH503NVSkKg=
+	t=1733934532; cv=none; b=nqFoebT4nwEgYoGJj6D1tZrvysNC4t6ng6XEzWR4hOzbvum62R1zAeY6vzL7ySMu56zVpdZyePz6CUicEbKU+dLdw5NNAeXsAr2n6WeuQdn6rhs/hDvAF0ikpkVqN8s0ckVXHPjiSKuQqvt/H1iRutK3ikpJUoQZd9KWD/+LrUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733934503; c=relaxed/simple;
-	bh=LXPkCuR2SivnRYq9dCkjsf2KZvGLOYoks6cx+5KrVNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+adJxnWRqzJl3f18ZFIoCeUd0duPg1xb5MR6ddbXpKoswkJ59GSy3p6cENNtaJ1v3yg0jyqPxSZ1anWsbbMBdhyUiop2dgCsRVrvGup+6Q5iWSfqw2oeSH4Kih9Q6HE0zCgyERvF+XSxk1nRMrGzG5cjIThlEbNY9ZOBYpKccU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/6Dagzc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94745C4CEDF;
-	Wed, 11 Dec 2024 16:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733934502;
-	bh=LXPkCuR2SivnRYq9dCkjsf2KZvGLOYoks6cx+5KrVNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K/6DagzcvgXPGBIjb2VKXo5Vd8TVb2h1SAsb2coJAuauL0I658hRF/AzJdyz48E8P
-	 1K/CnVd+HuPTKt3MQkX58EdS+Bh3LX5JcgRSTN0phemolAyHs/DJ4F85mbJWxRugN1
-	 oEDBhekCL491PJ74fmsNYkY4Yn2holKMFnBPC5LwI45s+C02d33+2wuzJplt0iFHD6
-	 Dc2N2yCquH//fIvkOMHXVGZEAofYIAtuguXiiAkrTECRHH09TIzwyBArW/mZsU2nGG
-	 xu8zW4wKPDP/H4wwacscWTNaTtPQW3Ycks7C+3RGTzF001nmUCjb5fPwqjfdwE0EZz
-	 cMA3o+jQ/xKhw==
-Date: Wed, 11 Dec 2024 16:28:17 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH V2 02/46] arm64/sysreg: Update register fields for
- ID_AA64MMFR4_EL1
-Message-ID: <f27091f1-879a-4434-8124-2d1e27241078@sirena.org.uk>
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-3-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1733934532; c=relaxed/simple;
+	bh=OQRzu+e6XwhsooUrpJyOmagNflsiCNtMo0gU3jCRydA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Wc1UyG1pMpuSuwsN6fmw3JrbeAjfa6knDI30neBMaE+7/iYKFYqKUziPblmwbILQVSeWrzQBD8JZECUmLDjWPF8LRVlBPZGDlWj9V1enxyPQsL8urNOdx8ht+f4GrKx1ogNvQHn7HsRGzTCOcQpxoiJaiKlyxZoWmuO83dzt/3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tLPZU-000000000Vm-20UB;
+	Wed, 11 Dec 2024 11:28:20 -0500
+Message-ID: <c6cd075de18a277116a8908de6e0e4841a2dcae8.camel@surriel.com>
+Subject: Re: [PATCH] mm: allow exiting processes to exceed the memory.max
+ limit
+From: Rik van Riel <riel@surriel.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Roman Gushchin	
+ <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Muchun
+ Song	 <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	cgroups@vger.kernel.org
+Date: Wed, 11 Dec 2024 11:28:19 -0500
+In-Reply-To: <Z1cyExTkg3OoaJy5@tiehlicka>
+References: <20241209124233.3543f237@fangorn> <Z1cyExTkg3OoaJy5@tiehlicka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AuImAyBVAiYKZd95"
-Content-Disposition: inline
-In-Reply-To: <20241210055311.780688-3-anshuman.khandual@arm.com>
-X-Cookie: Every path has its puddle.
+Sender: riel@surriel.com
 
+On Mon, 2024-12-09 at 19:08 +0100, Michal Hocko wrote:
+> On Mon 09-12-24 12:42:33, Rik van Riel wrote:
+> > It is possible for programs to get stuck in exit, when their
+> > memcg is at or above the memory.max limit, and things like
+> > the do_futex() call from mm_release() need to page memory in.
+> >=20
+> > This can hang forever, but it really doesn't have to.
+>=20
+> Are you sure this is really happening?
 
---AuImAyBVAiYKZd95
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The stuck is happening, albeit not stuck forever, but exit
+taking hours before finally completing.
 
-On Tue, Dec 10, 2024 at 11:22:27AM +0530, Anshuman Khandual wrote:
-> This updates ID_AA64MMFR4_EL1 register as per the definitions based on
-> DDI0601 2024-09.
+However, the fix may be to just allow the exiting task
+to bypass "zswap no writeback" settings and write some
+of the memory of its own cgroup to swap to get out of
+the livelock:
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+https://lkml.org/lkml/2024/12/11/10102
 
---AuImAyBVAiYKZd95
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdZvaEACgkQJNaLcl1U
-h9Dt8wf/Xkj06W8/tQXbtUdCh+cZdMzvCYsmFjs77GpeWcGAMwMMXAakKXLvdIaZ
-Y8MeZMkUNJbkjjQHFfvq769HABUCe5pvxstBlcm5RwkLw779YKyPfHhKBj804gnP
-ygoSQuth62S2cQ98ZxCS0X1uKsLuMO7bufZc7FH8OeBCBSY2pm9TnqAMbnpXyb01
-/0po6atZiUVhyFENAG12VmiVbyFN2xH5ePDRmvwV6OlGLkuHfnxYBbnxhyTDhwp7
-24tWFW+aSQKpCHgfwIndNpqkXtdEFjc+LE8S4T1i1KEd877lYfPn5oe39LeEZCou
-FvWw3dF3ew82JkVHikP0R6DqLMWRhg==
-=jJAi
------END PGP SIGNATURE-----
-
---AuImAyBVAiYKZd95--
+--=20
+All Rights Reversed.
 
