@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-440681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DD69EC2D7
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539B49EC2D8
 	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08616166023
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6CA1188831A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FA520A5F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA22B20A5F2;
 	Wed, 11 Dec 2024 03:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPYDExPx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEQZvE8B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4591FECAA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3312451C5;
 	Wed, 11 Dec 2024 03:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733886446; cv=none; b=NtfH3BZ8bScStE2to5H4GSvO5HOAjuyU56Epaps9KeUfznyW5N3KMr/KW2lGBiZQ78uZK5Zo+iVtI6xO+Ink5WGDQXv0pCk/yzKPhQPN0BN2tzR68YDquA96cxWbIvBbtBEie5eALyMgwiDsEoZTluBK8K8zCmyzR/Kfos79g1E=
+	t=1733886446; cv=none; b=ZYrG+4cc2cUNhZwRtbOdPO8O2MLC4Lq+fOOhPPOBpyqggGWlhhvrgCmmYtQJBIxRQgKg6ctBLei9vMvYNIGYVUDXHlM6Pvy2CtYjbpHC8hMV2QW8Fbfg/9w5Oto5QzqjUEYjilNAybKF1tEUF7pZx4ow6KZnEPs4HOjKOZk75gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733886446; c=relaxed/simple;
-	bh=YnY9okmLhb2rO8nDQHC9+5DkEpZ8pF35PzYJ12Pfjgg=;
+	bh=Z6X7dtscopNLoz8nldaGstB4IaOylCRwJyOS1rJBRL8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rcdWQJDt2K88Q0bkUG+tWFw8nWFeVPTodEA+1PyHX7tE9GcQ09hPmbU2NfknGbcO19Y72XDy0xraFM96ESHkEW3/iFiJ75X63tPcmbS34ysZYV7SVbiMQwbpOp0v1DPlBKmpKEkt2z0RARpV2cEi7oujdZAijhHAz7Cjpdv5fok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPYDExPx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 96E58C4CEE0;
+	 In-Reply-To:To:Cc; b=VNLQgSanAJ/dSJUTuAH4HzSMLQybdMxgrzDj8sZw5uc8bA/946Oy7BVVUGCQSp8SQLohFaA/YipQ3LtCym100MtSIJk5cFpBqEfe9L8BrP4DsLW4ZpgMaNSjZaeaRwxgRypsGdEXMpD1dvfccifoiTT6ufFS8B6zr1YIJMzViik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEQZvE8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A63C4C4CEE8;
 	Wed, 11 Dec 2024 03:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733886445;
-	bh=YnY9okmLhb2rO8nDQHC9+5DkEpZ8pF35PzYJ12Pfjgg=;
+	bh=Z6X7dtscopNLoz8nldaGstB4IaOylCRwJyOS1rJBRL8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PPYDExPxVc7BRKjZcuurAIpEm7akLs9ii7geehDLqw0RGyjbT5eLeK32npeh1aWAA
-	 hV2cdh7ZJlbIZlwIuk5FBEPK+cYye5G7tUDSY8e/kd9OjR4OK3pknAALQHhglIp+fl
-	 DbxMWCjv9BrvAfF+7rn31G0IrHC0A9Evv0IBhfa1EEhVlkpvEhTS5U0ljMG9fyKFiG
-	 qCi7NH4YnYB18FiOF/qsHe+8CVGw3DmdtxaR8zbHHwg5jxnGQn9xqmJSYTsgb56ad0
-	 uksBIWZxfBv+V3rn7r4F5hdUrd21bnqKivzrAjD/32P3P6l0OxuwpuU949efiWiULY
-	 UPhFu8saFzygA==
+	b=OEQZvE8BBM6PtI7CrFIFlGfd/cAROEDjV1Ez7QpvyteHQHLf9CFKaPNzP70SnLcKI
+	 KYUIaWEOLUDV/GmjSkXTrLyNHKOtH4XpfSPTW+rTs0wQH06DU3wHmvudISnHK1urU7
+	 dSgJkA2bgR5gRjynQnFcgpQ6zD62U06bLiaAYa0eYhkdRgkcQp6JoZDEvjdE70POxt
+	 AN8W4aVVLlqiWVqZ3jsdywL3bgfkldOEFoFKxDm4UHYtw04RoWSEWqCGgsW6pBc3Do
+	 oMr7I2180W95Pvf3+VlsE+0I6d2jc4/lY3P8oy1CrtfFxIhamqfwlUxmnAn5ngwPBb
+	 zOnfK52KkEWAQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B78E77183;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97684E77180;
 	Wed, 11 Dec 2024 03:07:25 +0000 (UTC)
 From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Date: Tue, 10 Dec 2024 19:07:08 -0800
-Subject: [PATCH v2 2/3] usb: typec: tcpm: Add support for parsing
- pd-revision DT property
+Date: Tue, 10 Dec 2024 19:07:09 -0800
+Subject: [PATCH v2 3/3] usb: typec: tcpm: Add new AMS for Get_Revision
+ response
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-get_rev_upstream-v2-2-d0094e52d48f@google.com>
+Message-Id: <20241210-get_rev_upstream-v2-3-d0094e52d48f@google.com>
 References: <20241210-get_rev_upstream-v2-0-d0094e52d48f@google.com>
 In-Reply-To: <20241210-get_rev_upstream-v2-0-d0094e52d48f@google.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -67,11 +67,11 @@ Cc: Kyle Tso <kyletso@google.com>, RD Babiera <rdbabiera@google.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-usb@vger.kernel.org, Amit Sunil Dhamne <amitsd@google.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733886444; l=3819;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733886444; l=4930;
  i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=ZW21PLDCuXrKmljq+jN/SmgnnmS/lrVcV0OJXDrQ1ss=;
- b=+Ck5oNB/ElrMm+RfnlnYn1wZ5E8R/15GJ7yUCc8n6abVyxyB6HjMQWBkp15kAfU+8HbBb2ZB6
- 1YTydniyDJGAUNUOlqdWm7kr5T4x83B22cRV5EjF3X7/iwh6H26ll11
+ bh=YvUI3CfbZ7WfPHWV3UO69yuWSZoIOQnnvLn9UUmlros=;
+ b=twZ9Jg43zeC+dNyfJ/GALSE7oL41cdMQiWpprn4cLvNLH3jh8ty5Ew4EenHBCJ7nptF9YdgGp
+ JsaKD+KOGDTDI5AXMGEPXBWth+BM86m0mMv2gKPlMRbhzwmGF0K+uGt
 X-Developer-Key: i=amitsd@google.com; a=ed25519;
  pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
 X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
@@ -81,110 +81,159 @@ Reply-To: amitsd@google.com
 
 From: Amit Sunil Dhamne <amitsd@google.com>
 
-Add support for parsing "pd-revision" DT property in TCPM and store PD
-revision and version supported by the Type-C connnector.
+This commit adds a new AMS for responding to a "Get_Revision" request.
+Revision message consists of the following fields:
 
-It should be noted that the PD revision is the maximum possible revision
-supported by the port. This is different from the 2 bit revision set in
-PD msg headers. The purpose of the 2 bit revision value is to negotiate
-between Rev 2.X & 3.X spec rev as part of contract negotiation, while
-this is used for Get_Revision AMS after a contract is in place.
+ +----------------------------------------------------+
+ |         Header             |         RMDO          |
+ |  No. of data objects = 1   |                       |
+ +----------------------------------------------------+
+
+ While RMDO consists of:
+  * B31..28     Revision Major
+  * B27..24     Revision Minor
+  * B23..20     Version Major
+  * B19..16     Version Minor
+  * B15..0      Reserved, shall be set to zero.
+
+As per the PD spec ("8.3.3.16.2.1 PR_Give_Revision State"), a request is
+only expected when an explicit contract is established and the port is
+in ready state. This AMS is only supported for PD >= 3.0.
 
 Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
 Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
 ---
- drivers/usb/typec/tcpm/tcpm.c | 46 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+ drivers/usb/typec/tcpm/tcpm.c | 41 ++++++++++++++++++++++++++++++++++++++++-
+ include/linux/usb/pd.h        | 22 ++++++++++++++++++++--
+ 2 files changed, 60 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 6021eeb903fec53316dfa2d6b825c334d55b7cab..59621cfaee3d67a36f3ad6870bd1aa92d382f33a 100644
+index 59621cfaee3d67a36f3ad6870bd1aa92d382f33a..460dbde9fe2239b10c43cfb12dce92c736b1cea9 100644
 --- a/drivers/usb/typec/tcpm/tcpm.c
 +++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -310,6 +310,13 @@ struct pd_data {
- 	unsigned int operating_snk_mw;
+@@ -185,7 +185,8 @@
+ 	S(UNSTRUCTURED_VDMS),			\
+ 	S(STRUCTURED_VDMS),			\
+ 	S(COUNTRY_INFO),			\
+-	S(COUNTRY_CODES)
++	S(COUNTRY_CODES),			\
++	S(REVISION_INFORMATION)
+ 
+ #define GENERATE_ENUM(e)	e
+ #define GENERATE_STRING(s)	#s
+@@ -225,6 +226,7 @@ enum pd_msg_request {
+ 	PD_MSG_CTRL_NOT_SUPP,
+ 	PD_MSG_DATA_SINK_CAP,
+ 	PD_MSG_DATA_SOURCE_CAP,
++	PD_MSG_DATA_REV,
  };
  
-+struct pd_revision_info {
-+	u8 rev_major;
-+	u8 rev_minor;
-+	u8 ver_major;
-+	u8 ver_minor;
-+};
-+
- /*
-  * @sink_wait_cap_time: Deadline (in ms) for tTypeCSinkWaitCap timer
-  * @ps_src_wait_off_time: Deadline (in ms) for tPSSourceOff timer
-@@ -567,6 +574,9 @@ struct tcpm_port {
- 
- 	/* Timer deadline values configured at runtime */
- 	struct pd_timings timings;
-+
-+	/* Indicates maximum (revision, version) supported */
-+	struct pd_revision_info pd_rev;
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *dentry;
- 	struct mutex logbuffer_lock;	/* log buffer access lock */
-@@ -7036,7 +7046,9 @@ static void tcpm_port_unregister_pd(struct tcpm_port *port)
- 
- static int tcpm_port_register_pd(struct tcpm_port *port)
- {
--	struct usb_power_delivery_desc desc = { port->typec_caps.pd_revision };
-+	u16 pd_revision = port->typec_caps.pd_revision;
-+	u16 pd_version = port->pd_rev.ver_major << 8 | port->pd_rev.ver_minor;
-+	struct usb_power_delivery_desc desc = { pd_revision, pd_version };
- 	struct usb_power_delivery_capabilities *cap;
- 	int ret, i;
- 
-@@ -7331,6 +7343,29 @@ static int tcpm_fw_get_snk_vdos(struct tcpm_port *port, struct fwnode_handle *fw
- 	return 0;
+ enum adev_actions {
+@@ -1244,6 +1246,24 @@ static u32 tcpm_forge_legacy_pdo(struct tcpm_port *port, u32 pdo, enum typec_rol
+ 	}
  }
  
-+static void tcpm_fw_get_pd_revision(struct tcpm_port *port, struct fwnode_handle *fwnode)
++static int tcpm_pd_send_revision(struct tcpm_port *port)
 +{
-+	int ret;
-+	u8 val[4];
++	struct pd_message msg;
++	u32 rmdo;
 +
-+	ret = fwnode_property_count_u8(fwnode, "pd-revision");
-+	if (!ret || ret != 4) {
-+		tcpm_log(port, "Unable to find pd-revision property or incorrect array size");
-+		return;
-+	}
-+
-+	ret = fwnode_property_read_u8_array(fwnode, "pd-revision", val, 4);
-+	if (ret) {
-+		tcpm_log(port, "Failed to parse pd-revision, ret:(%d)", ret);
-+		return;
-+	}
-+
-+	port->pd_rev.rev_major = val[0];
-+	port->pd_rev.rev_minor = val[1];
-+	port->pd_rev.ver_major = val[2];
-+	port->pd_rev.ver_minor = val[3];
++	memset(&msg, 0, sizeof(msg));
++	rmdo = RMDO(port->pd_rev.rev_major, port->pd_rev.rev_minor,
++		    port->pd_rev.ver_major, port->pd_rev.ver_minor);
++	msg.payload[0] = cpu_to_le32(rmdo);
++	msg.header = PD_HEADER_LE(PD_DATA_REVISION,
++				  port->pwr_role,
++				  port->data_role,
++				  port->negotiated_rev,
++				  port->message_id,
++				  1);
++	return tcpm_pd_transmit(port, TCPC_TX_SOP, &msg);
 +}
 +
- /* Power Supply access to expose source power information */
- enum tcpm_psy_online_states {
- 	TCPM_PSY_OFFLINE = 0,
-@@ -7669,11 +7704,18 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 		goto out_destroy_wq;
+ static int tcpm_pd_send_source_caps(struct tcpm_port *port)
+ {
+ 	struct pd_message msg;
+@@ -3547,6 +3567,17 @@ static void tcpm_pd_ctrl_request(struct tcpm_port *port,
+ 				   PD_MSG_CTRL_NOT_SUPP,
+ 				   NONE_AMS);
+ 		break;
++	case PD_CTRL_GET_REVISION:
++		if (port->negotiated_rev >= PD_REV30 && port->pd_rev.rev_major)
++			tcpm_pd_handle_msg(port, PD_MSG_DATA_REV,
++					   REVISION_INFORMATION);
++		else
++			tcpm_pd_handle_msg(port,
++					   port->negotiated_rev < PD_REV30 ?
++					   PD_MSG_CTRL_REJECT :
++					   PD_MSG_CTRL_NOT_SUPP,
++					   NONE_AMS);
++		break;
+ 	default:
+ 		tcpm_pd_handle_msg(port,
+ 				   port->negotiated_rev < PD_REV30 ?
+@@ -3791,6 +3822,14 @@ static bool tcpm_send_queued_message(struct tcpm_port *port)
+ 				tcpm_ams_finish(port);
+ 			}
+ 			break;
++		case PD_MSG_DATA_REV:
++			ret = tcpm_pd_send_revision(port);
++			if (ret)
++				tcpm_log(port,
++					 "Unable to send revision msg, ret=%d",
++					 ret);
++			tcpm_ams_finish(port);
++			break;
+ 		default:
+ 			break;
+ 		}
+diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
+index d50098fb16b5d2e2d9e39c55db4329224115e8b1..3068c3084eb6176d7d9184c3959a4110282a9fa0 100644
+--- a/include/linux/usb/pd.h
++++ b/include/linux/usb/pd.h
+@@ -33,7 +33,9 @@ enum pd_ctrl_msg_type {
+ 	PD_CTRL_FR_SWAP = 19,
+ 	PD_CTRL_GET_PPS_STATUS = 20,
+ 	PD_CTRL_GET_COUNTRY_CODES = 21,
+-	/* 22-31 Reserved */
++	/* 22-23 Reserved */
++	PD_CTRL_GET_REVISION = 24,
++	/* 25-31 Reserved */
+ };
  
- 	tcpm_fw_get_timings(port, tcpc->fwnode);
-+	tcpm_fw_get_pd_revision(port, tcpc->fwnode);
+ enum pd_data_msg_type {
+@@ -46,7 +48,9 @@ enum pd_data_msg_type {
+ 	PD_DATA_ALERT = 6,
+ 	PD_DATA_GET_COUNTRY_INFO = 7,
+ 	PD_DATA_ENTER_USB = 8,
+-	/* 9-14 Reserved */
++	/* 9-11 Reserved */
++	PD_DATA_REVISION = 12,
++	/* 13-14 Reserved */
+ 	PD_DATA_VENDOR_DEF = 15,
+ 	/* 16-31 Reserved */
+ };
+@@ -453,6 +457,20 @@ static inline unsigned int rdo_max_power(u32 rdo)
+ #define EUDO_TBT_SUPPORT		BIT(14)
+ #define EUDO_HOST_PRESENT		BIT(13)
  
- 	port->try_role = port->typec_caps.prefer_role;
- 
- 	port->typec_caps.revision = 0x0120;	/* Type-C spec release 1.2 */
--	port->typec_caps.pd_revision = 0x0300;	/* USB-PD spec release 3.0 */
++/*
++ * Request Message Data Object (PD Revision 3.1+ only)
++ * --------
++ * <31:28> :: Revision Major
++ * <27:24> :: Revision Minor
++ * <23:20> :: Version Major
++ * <19:16> :: Version Minor
++ * <15:0>  :: Reserved, Shall be set to zero
++ */
 +
-+	if (port->pd_rev.rev_major)
-+		port->typec_caps.pd_revision = port->pd_rev.rev_major << 8 |
-+					       port->pd_rev.rev_minor;
-+	else
-+		port->typec_caps.pd_revision = 0x0300;	/* USB-PD spec release 3.0 */
++#define RMDO(rev_maj, rev_min, ver_maj, ver_min)			\
++	(((rev_maj) & 0xf) << 28 | ((rev_min) & 0xf) << 24 |		\
++	 ((ver_maj) & 0xf) << 20 | ((ver_min) & 0xf) << 16)
 +
- 	port->typec_caps.svdm_version = SVDM_VER_2_0;
- 	port->typec_caps.driver_data = port;
- 	port->typec_caps.ops = &tcpm_ops;
+ /* USB PD timers and counters */
+ #define PD_T_NO_RESPONSE	5000	/* 4.5 - 5.5 seconds */
+ #define PD_T_DB_DETECT		10000	/* 10 - 15 seconds */
 
 -- 
 2.47.0.338.g60cca15819-goog
