@@ -1,207 +1,119 @@
-Return-Path: <linux-kernel+bounces-440831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1029EC4F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E79799EC504
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9089E188746C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:42:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1364B1887C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37FB1C548D;
-	Wed, 11 Dec 2024 06:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4231C5CC7;
+	Wed, 11 Dec 2024 06:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C6lNLLYu"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/0q+uk4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E0F1C07E4
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AD546BF;
+	Wed, 11 Dec 2024 06:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733899328; cv=none; b=GOn4e0lmTkt+NdwNsrO+UKRo7VTlHpI7XEej7U6HbVqfFAxqaROJY/EYS+OzgALTWJU8Gy3/s9KeTwS0siuSXp0stxgXV3IQeRj29bSlCSCRjb8bvio6LcmH8jEY/Wuul/dD3Kocr2bDhWItuOWXGzgLnT8u/EZ5R4ksl4ARMtw=
+	t=1733899689; cv=none; b=qum5FSDcYq0OAP0J4FqhQdWgqB9kttJ9QTuqACghuDMJBmEdj8EYvlsxopKmK1gNWJpbodCe5n6tbOskZAVXa5+e7jl3feu9eLGSijT36KifnWQSumwhf8I90g+dbuWs1SEK+HcaToaQ5dbP3MWFnhVjeWLnQ9VwvImBIWUSZTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733899328; c=relaxed/simple;
-	bh=fFveP77bj++EtRJvy3YCVpCGVLLJJ20B4rPICaCeOGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z/NG9Smavsf4711lzNKAdBOc5cpokSj8MbBXFnJi3jJj1TWyyhGnfjt6XpL69oEHNWVHSVtJ/SCxmXciGRlRgXkGlRam83nGJWAF/FhdpZHMYYt2P1bsyPMmV6KOtiTyxejyj4z6kMI2y0DLTHzRZeJyw7BGJUlVQbIQmmbZmoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C6lNLLYu; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2156e078563so47997135ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:42:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733899325; x=1734504125; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SH3wSIT4qOX2QKfL+TrwrsCejAN9yTnzSj4WW/yKpJg=;
-        b=C6lNLLYuAi3iOkTWhHraGef9VKzoFa2fR73ZBzgK2WoDEYteR2UNmNFvBAdr0KjT96
-         CJP1UcaTA1cT6eqPBdY8+mZbTMX01MGuYbfjbYCPM9ezwTLtg1btDEbnrbC14bM1zvz+
-         YumdvNHhM0zhY2Qlo60fizSY7rl/xXowIwff9aF6dvwsxH6pcMICig24vNeo3Q2q+N89
-         u9XI5Z9KZ2BtdgSZPUeKcltSutLBubeTxnKYVBn1H7V5U5yCou+/9XJoOoXIYYRq7wA/
-         aQEVc2c6v3XiKvxYeflBAjubag1r/e9NXl/ps+W9XVKkHkhgaG18LIAkmCz0v4AuBTmB
-         akLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733899325; x=1734504125;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SH3wSIT4qOX2QKfL+TrwrsCejAN9yTnzSj4WW/yKpJg=;
-        b=iyHBVuwwNUS4UTOnhs02X7OBKQ+k4cURd40KqllE5KKvmqLYtYrSLCx7TLDPNx3uh6
-         Fwff8A1C1xmkmAojzLiaOOZzL9qPmT8+OkjN5452e8c9eXCgM3OXD0wu3RTYx0USJh9b
-         IJQK1l3TWLjYZ8Y2xQhFuZvG/EEGZ0G+t4sj+/kks8UmXsA6JVDbMdlUk+YegSSlIZxj
-         i73eGO2fT8buhvU7AgXb5QTNDQIHMbq4zj0K6VyjmW52myI7YSJInjOFxqiAhJCCYbu0
-         dYB512CSy6VSlZqZ0kXsjfSP+KYw0L6MOz+QyYe3/HXssrj3EGcdhU95j4XFf0RzEtxB
-         M+bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwxn4ffrKoLlXr+b2w/ZuFsQVkGwuKtVZGZFP9PCuuwxE/nhT97LQhQ1by+ksmwoh+JsytnTIWQocDubE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO7WIJgrXqkBZTDEcdzSoeUP7DiL81Cd+cyZSGojs2oTWWXFuO
-	fubtMlFp2H+5MWvemrdLhQL4LUVHGxpWqaNhQqkA5EaN/ykKIHUvsi4Dk97MLg==
-X-Gm-Gg: ASbGncuNVhbHpwQkUTXaY4vwPO9MEdHJS42g9IonaJe6DFYQiFYwyAm6GvJ0SlMSIs7
-	zOSLE+/Lhb421PdbTPFc2EbNE5XdkFQoLs93WmG6NspqygWSI0Lrj+dt7rGhI7XBsuFL2fxevgv
-	sdfdW0xo15IJvdeJmL4tVH6HJCpAIGxwYBS0xujeXloYtz7He2iOqgkxiibxhioGrkUrrOV5N6H
-	IITopPoIf1/Ms1UtpgEQg7A7uxnBz33FM2/UInm5Ey+62JnTH71UuZj84I5/LY=
-X-Google-Smtp-Source: AGHT+IH9UlXRucX87GfmhnSoQKYdfmBeTDDM2mlEgeF1Kko5nxbNbCHi9DSPm8qDL6kLUq2gp73FUQ==
-X-Received: by 2002:a17:903:32c3:b0:216:48f4:4f1a with SMTP id d9443c01a7336-2177851dc1fmr29082555ad.16.1733899324633;
-        Tue, 10 Dec 2024 22:42:04 -0800 (PST)
-Received: from thinkpad ([120.60.55.53])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21618d9beafsm82495805ad.6.2024.12.10.22.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 22:42:04 -0800 (PST)
-Date: Wed, 11 Dec 2024 12:11:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Vivek Pernamitta <quic_vpernami@quicinc.com>
-Cc: quic_krichai@quicinc.com, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] bus: mhi: host: pci_generic: Add support for QDU100
- device
-Message-ID: <20241211064155.gqlbi3leoaaz3w6b@thinkpad>
-References: <20241209-qdu100_us-v4-1-f9010b2a09a2@quicinc.com>
+	s=arc-20240116; t=1733899689; c=relaxed/simple;
+	bh=OXcuGUST6PRMVKw++DvXhy9nNIvoCMMSwx2WhM7mMpE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T5mxEFsi/dxY7xkV7Fqw3UnS1dc/r3ln9y4obcRYQjlEimQi3Tm1n2R2sv2dx5BHL9TGNtOtxoGUwdW9xKq19qRoIkN2VQyLdIkFNY8zxro+3tH/EXyilnkGNYTcOJz7tIuD7DcrM2Xp3f9TJe0FKUp9wdT78o3kmosyCyYkDFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/0q+uk4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C46DEC4CED2;
+	Wed, 11 Dec 2024 06:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733899688;
+	bh=OXcuGUST6PRMVKw++DvXhy9nNIvoCMMSwx2WhM7mMpE=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=N/0q+uk4pcblU+kTaaEjyJHlXZoWqczJyXf6kd0KyqJeZWja5iW/ZFcCsfCX61h93
+	 p3bx2wZac38j/yWcivf/sdKyLKHzm9kGiO6LqIu6y86Hp89hRBV8H8NPIlljRSn/Nj
+	 KApbLe1O0cBhAVsaUmb3oDUPKNhZQTPO+UfAPeG9sGxLGGDWlCrz3vak5gglj0qSn/
+	 Vtti01Oz5Pw2cq8vZgYRwDx1Zf9KjsSO/kXmQU8mx5SMzVbCqwJuKP8aMKIvKNFHLp
+	 aDg9eJK3jbRBuBZf1VSI/rlQL41TXbinZ1qnVf54BiZpFfKv486M1B2QURiv+w90j3
+	 03FkEpnuyWRBg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DF3E77180;
+	Wed, 11 Dec 2024 06:48:08 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH RFC 0/3] Pinctrl: Add Amlogic pinctrl driver
+Date: Wed, 11 Dec 2024 14:47:48 +0800
+Message-Id: <20241211-amlogic-pinctrl-v1-0-410727335119@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241209-qdu100_us-v4-1-f9010b2a09a2@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJQ1WWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0ND3cTcnPz0zGTdgsy85JKiHF0jo9REM0MLI4MUgxQloK6CotS0zAq
+ widFKQW7OSrG1tQCTIDtuZgAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733899686; l=1432;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=OXcuGUST6PRMVKw++DvXhy9nNIvoCMMSwx2WhM7mMpE=;
+ b=FCAXcPi+2/pdauQ4NMuHxESiRUOmogABmpyrp0hwKtO3ielhPDS+1E/wKrJ4TTlFKTKZDGwDt
+ um+UAOvzQjIDnQFdm51p4MCGAvMyKCjf+u4yv8ye9qDZAgNmUxQiOuK
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Mon, Dec 09, 2024 at 11:09:50AM +0530, Vivek Pernamitta wrote:
-> Add MHI controller configuration for QDU100 device.
-> 
-> The Qualcomm X100 5G RAN Accelerator card is designed to enhance Open vRAN
-> servers by offloading CPUs from intensive 5G baseband functions.
-> 
-> Link: https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
-> 
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> ---
-> changes from V3:
-> - Removed IP_SW1 and IP_SW2 support currently, will add once
->   SW_IP1/2 channels support are added to mhi-net driver.
-> - Removed qdu100 edl images, as EDL images are not needed.
-> - Added space inbetween kernel_ulong_t and mhi_qcom_qdu100_info.
-> - QDU100 XBL FW images were pushed to linux-firmware git repo
->   https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/qcom/qdu100
-> 
-> changes from V2:
-> - updated commit text.
-> 
-> changes from V1:
-> - Changing naming convention from modem_qcom_qdu100*
->   to mhi_qcom_qdu100*.
-> - Updated commit text.
-> - Fixed and corrected by passing mhi_pci_dev_info struct
->   instead of mhi_controller_config.
-> ---
-> 
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 55 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 07645ce2119a71c9277356e962252b840379cd81..dee9fa9e7ae441fbc9a86e53694568c0ba192002 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -245,6 +245,58 @@ struct mhi_pci_dev_info {
->  		.channel = ch_num,		\
->  	}
->  
-> +static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
-> +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
-> +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
-> +	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
-> +	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
-> +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
-> +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
-> +	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
-> +	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
-> +	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
-> +};
-> +
-> +static struct mhi_event_config mhi_qcom_qdu100_events[] = {
-> +	/* first ring is control+data ring */
-> +	MHI_EVENT_CONFIG_CTRL(0, 64),
-> +	/* SAHARA dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(1, 256),
-> +	/* Software channels dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(2, 64),
-> +	MHI_EVENT_CONFIG_SW_DATA(3, 256),
-> +	MHI_EVENT_CONFIG_SW_DATA(4, 256),
-> +	/* Software IP channels dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(5, 512),
-> +	MHI_EVENT_CONFIG_SW_DATA(6, 512),
-> +	MHI_EVENT_CONFIG_SW_DATA(7, 512),
-> +};
-> +
-> +static const struct mhi_controller_config mhi_qcom_qdu100_config = {
-> +	.max_channels = 128,
-> +	.timeout_ms = 120000,
-> +	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
-> +	.ch_cfg = mhi_qcom_qdu100_channels,
-> +	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
-> +	.event_cfg = mhi_qcom_qdu100_events,
-> +};
-> +
-> +static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
-> +	.name = "qcom-qdu100",
-> +	.fw = "qcom/qdu100/xbl_s.melf",
+Add pinctrl driver support for Amloigc SoCs
 
-Can you first push this fw to linux-firmware? I haven't enforced this
-requirement earlier, but that was my mistake.
+Base on the previous discussion,
+https://lore.kernel.org/r/20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com
+The existed meson driver failed to meet the requirement of the current dt-binding.
+So we start this new pinctrl driver to solve problem.
 
-> +	.edl_trigger = true,
-> +	.config = &mhi_qcom_qdu100_config,
-> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> +	.dma_data_width = 32,
-> +	.sideband_wake = false,
-> +};
-> +
->  static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
->  	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
->  	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
-> @@ -822,6 +874,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
->  	/* NETPRISMA FCUN69 (SDX6X) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
->  		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
-> +	/* QDU100, x100-DU */
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
-> +		.driver_data = (kernel_ulong_t) &mhi_qcom_qdu100_info },
+The advantage of this version: Once the source file and binding document
+are added, adding dts node will be only operation for subsequent Amlogic SoCs
+(such as A4, A5).
 
-Did you read the comment on top of mhi_pci_id_table[]?
+The code in DTS file is also readable when using GPIO, as below:
+reset-gpios = <&gpiob 6 GPIO_ACTIVE_LOW>;
 
-- Mani
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Xianwei Zhao (3):
+      dt-bindings: pinctrl: Add support for Amlogic SoCs
+      pinctrl: Add driver support for Amlogic SoCs
+      arm64: dts: amlogic: a4: add pinctrl node
 
+ .../bindings/pinctrl/amlogic,pinctrl.yaml          |  150 +++
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |  146 +++
+ drivers/pinctrl/Kconfig                            |   18 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-amlogic.c                  | 1190 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/amlogic,pinctrl.h      |   68 ++
+ 6 files changed, 1573 insertions(+)
+---
+base-commit: 171aa289a6fe65faffeb92a1fda283c055435a62
+change-id: 20241211-amlogic-pinctrl-22ea61820d0d
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+
 
