@@ -1,100 +1,135 @@
-Return-Path: <linux-kernel+bounces-441718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFBA9ED303
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:02:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9070B9ED305
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:03:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E6B188B668
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E92F169063
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9681DDC00;
-	Wed, 11 Dec 2024 17:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77F11DAC90;
+	Wed, 11 Dec 2024 17:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyvMZCPx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="k4IbfY3s";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="k4IbfY3s"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885CF1D90AC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06E71D934B;
+	Wed, 11 Dec 2024 17:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936559; cv=none; b=IN9hKi04eNG8oruaxQHysC9ibFeBuKne3R21QODXeRQex5EUUDDz5UKxfyzc79Vgy1XPPZc3D3saZIfrsQWM8WX/6ItW/lbGnD7FLZt7RgWaSw+cujlbZl8aco3tD63kXjS6xv7n/7IgCB7ery2QnzFD5qciPqhtHO3QuLE/3is=
+	t=1733936574; cv=none; b=JQ4JEgZwaMLcibKd7y/xfDJ80iqV1WnQJ7NAsYqLDy80yiQEFsxC9jafBaRnjhIioOI7Muo0vVSBIfOIaYKv/WfUlEHToBVtMnE1AIfo8/phPOAHeLN/hp7o5ZPrEOKzB9cGSUerDsERkldtNJeaafufsqKqLOKDTKvhm3hSfvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936559; c=relaxed/simple;
-	bh=36gnEpfDrioD/V0+iPsv47agMkaRn3A9ZW37XyV8FYA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=l1tfQjnypWW53fxkpvsEfcsjyLQ9Wfvh0uu4g2QrwQwd5OwP8caczuLiZe8E3TFfvAZUVsf5I/aWgT4yo6c2ew/IVHGM8pin9t3lbGHkY+b7DfmL0Wcqar8gm2s7MpTcrMnYh1Lwf8fI+tQth+r6G2o+7uiSd4pbNP//60ZEa3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyvMZCPx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD23C4CED2;
-	Wed, 11 Dec 2024 17:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733936559;
-	bh=36gnEpfDrioD/V0+iPsv47agMkaRn3A9ZW37XyV8FYA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=eyvMZCPxXLUhZ2Dvd2urOuVKlk7eW5YJMBFGiR7BX6wtZZIsNOfsaCyeJ8bRGajpd
-	 xN6HWoFVRBXpUO7aeu3H+mh/eUeAL9zH+ybNHnZdWMPwNpUeRbVsEsSa8jWc52zfP6
-	 8p5cAYrvL0U2gdGjk9Fc+8jkba9h3xaO+8ZE7aSSjPvpQwRhOcuGwv1KvrzRzYWRj8
-	 ChfHsxx6n0qHheO3nyDUrV+3OzYQgUR/i9tVTkXe/L26Ot+oVhbTxpINMTq26IMBae
-	 kciKADP6gt+mQMJ+89R5CRbdUDM6oHnh7AbaeqZ+PXm7UB/fyN/mg8Q08J31kkrcMw
-	 fEwAXnSUMNZag==
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <20241211133558.884669-1-rf@opensource.cirrus.com>
-References: <20241211133558.884669-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH] regmap: regmap_multi_reg_read(): make register list
- const
-Message-Id: <173393655818.519837.3526009062975748002.b4-ty@kernel.org>
-Date: Wed, 11 Dec 2024 17:02:38 +0000
+	s=arc-20240116; t=1733936574; c=relaxed/simple;
+	bh=9FBHdM5vw9ed3NmvDQfzEc4hChmQSrZEU3I0PFW8D/Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hrnV4kZosW2np7jwTrhQxM0jld8YiOb83REP4Q6tATsv4PuaNpQc+yFs/GqP7IeG4sWiee4zfsuPrr+0NnQvTeKzZL8sX1Ajg5G+SFIMCeL4Qr9H1xJd8vv7h2mTGGifdtlVoJamyEKFocttYvsXGOBS6IqDbaQgmaRBICc3Mzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=k4IbfY3s; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=k4IbfY3s; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1733936571;
+	bh=9FBHdM5vw9ed3NmvDQfzEc4hChmQSrZEU3I0PFW8D/Q=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=k4IbfY3sBVufrN53CdC4Ny5AyHCQkg/t0Nl+Wt8Jcz5p6KVOZ4xlf1ICtQ91P55DR
+	 LfVYdF1rjx7vtiwO8D8Pd7t/lSUB43dYZxHxQ6syYRXP1pQ7AMre393eoOqEbbYQrL
+	 YSRocspkK6EAga3ISIZ5LqXC1KI4l4V9VxEZHsaA=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id E16DC128B0EE;
+	Wed, 11 Dec 2024 12:02:51 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id haiLfIhCz8St; Wed, 11 Dec 2024 12:02:51 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1733936571;
+	bh=9FBHdM5vw9ed3NmvDQfzEc4hChmQSrZEU3I0PFW8D/Q=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=k4IbfY3sBVufrN53CdC4Ny5AyHCQkg/t0Nl+Wt8Jcz5p6KVOZ4xlf1ICtQ91P55DR
+	 LfVYdF1rjx7vtiwO8D8Pd7t/lSUB43dYZxHxQ6syYRXP1pQ7AMre393eoOqEbbYQrL
+	 YSRocspkK6EAga3ISIZ5LqXC1KI4l4V9VxEZHsaA=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3EB6A128B0ED;
+	Wed, 11 Dec 2024 12:02:50 -0500 (EST)
+Message-ID: <9083d4cd50649ea1971e31445c554f44e8d12bf9.camel@HansenPartnership.com>
+Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>, Stefano Garzarella
+	 <sgarzare@redhat.com>, linux-coco@lists.linux.dev
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>,  Peter Huewe <peterhuewe@gmx.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org,  x86@kernel.org,
+ Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>,  Jarkko
+ Sakkinen <jarkko@kernel.org>, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho
+ <cclaudio@linux.ibm.com>, Dov Murik <dovmurik@linux.ibm.com>
+Date: Wed, 11 Dec 2024 12:02:49 -0500
+In-Reply-To: <f8c6c1e0-a42d-6fa6-a10e-925592d7992f@amd.com>
+References: <20241210143423.101774-1-sgarzare@redhat.com>
+	 <20241210143423.101774-4-sgarzare@redhat.com>
+	 <f8c6c1e0-a42d-6fa6-a10e-925592d7992f@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Dec 2024 13:35:58 +0000, Richard Fitzgerald wrote:
-> Mark the list of registers passed into regmap_multi_reg_read() as a
-> pointer to const. This allows the caller to define the register list
-> as const data.
+On Wed, 2024-12-11 at 10:30 -0600, Tom Lendacky wrote:
+> On 12/10/24 08:34, Stefano Garzarella wrote:
+[...]
+> > +static bool is_svsm_vtpm_send_command_supported(void)
+> > +{
+> > +       struct svsm_call call = {};
+> > +       u64 send_cmd_mask = 0;
+> > +       u64 platform_cmds;
+> > +       u64 features;
+> > +       int ret;
+> > +
+> > +       call.caa = svsm_get_caa();
+> > +       call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
+> > +
+> > +       ret = svsm_perform_call_protocol(&call);
+> > +
+> > +       if (ret != SVSM_SUCCESS)
+> > +               return false;
+> > +
+> > +       features = call.rdx_out;
+> > +       platform_cmds = call.rcx_out;
+> > +
+> > +       /* No feature supported, it must be zero */
+> > +       if (features)
+> > +               return false;
 > 
-> This requires making the same change to _regmap_bulk_read(), which is
-> called by regmap_multi_reg_read().
+> I think this check should be removed. The SVSM currently returns all
+> zeroes for the features to allow for future support. If a new feature
+> is added in the future, this then allows a driver that supports that
+> feature to operate with a version of an SVSM that doesn't have that
+> feature implemented. It also allows a version of the driver that
+> doesn't know about that feature to work with an SVSM that has that
+> feature.
 > 
-> [...]
+> A feature added to the vTPM shouldn't alter the behavior of something
+> that isn't using or understands that feature.
 
-Applied to
+I actually don't think this matters, because I can't see any reason to
+use the SVSM features flag for the vTPM.  The reason is that the TPM
+itself contains a versioned feature mechanism that external programs
+already use, so there's no real need to duplicate it.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+That said, I'm happy with either keeping or removing this.
 
-Thanks!
+Regards,
 
-[1/1] regmap: regmap_multi_reg_read(): make register list const
-      commit: eb708cd631a8dca17ff004ccc39bbeb096c1db22
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+James
 
 
