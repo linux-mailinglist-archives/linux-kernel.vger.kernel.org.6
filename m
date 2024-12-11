@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-441570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21D29ED03A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:46:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3C39ED047
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:47:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892DD288A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:46:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17CD016AA96
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D77D1DA62E;
-	Wed, 11 Dec 2024 15:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1791D619D;
+	Wed, 11 Dec 2024 15:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k30l5vjG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRyMOFYj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46381D9A6F;
-	Wed, 11 Dec 2024 15:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57971D5CC6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931944; cv=none; b=b9IyjJBRfVmWEQGT3bbD+gSu2SNLva/cjV4MnST8+pV20Xs7WjVZDi7XYsn5aZfmYieCqjD7yXz5IMURvSmQkym2tZ6nxUo6Db6jRS9ZvNMDzswDqFMD8Emg73q1wHZHokDZpzzfYuAPq2nhODFEFUs61Moe1zbiYaXRGpTMMH8=
+	t=1733931965; cv=none; b=r8Y1Tk2MnQ/hubGB/a4DkFMK9PtWR72LLgVDHj/qzIVUBmPYJmV7ZuBog1+wPiEN9/RPOyxMTB+L2ffMGfhYFJ6X/njWpuonH+mz//N53GyC1TvtEdXrLRdtklabVm+g+MdkurkUA+MHsox1ayopX9AcJEzhXozVplIkcPTF8YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931944; c=relaxed/simple;
-	bh=PwwMZGkK4SSHChHwBFdQwXcUukP/uWJujvZw7L2Qc0Q=;
+	s=arc-20240116; t=1733931965; c=relaxed/simple;
+	bh=6lGx5QexARWN3SzIAahwI8CDbjfI3RBnrClOPVKH2DE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BcZPMFC3kZsKng666tTXeEI/178sZk3wfbfWzWLDMRSMlv9km7roDFJShk1bWqGPuCl/a6ZP6s+sgEhFSDScRvOeTcq4lFTGcVkJ5QZDgdMYE9muVVoDzt6eC51s3RAvf3r/U3HGWfoell2F0G5IyKj45qtrJRQbpCeQsBZPS74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k30l5vjG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C48DC4CED7;
-	Wed, 11 Dec 2024 15:45:44 +0000 (UTC)
+	 Content-Disposition; b=XEn7DQUqNux3Ia2u7U05QiY4p3wliWJ3QvQaPohEClJjUtOWCGo7PJTxYkR8LYhKiwgRRvjK7ReEv7GWvcX4/k2yT71rRWpqZ/jQmAuHPxkW9YxoyTPc0H2/zhYU0d2q2yHx3Lbznk8zHy8VzPVh3h8htffcpl6MJtZakes9baM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRyMOFYj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16018C4CED2;
+	Wed, 11 Dec 2024 15:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733931944;
-	bh=PwwMZGkK4SSHChHwBFdQwXcUukP/uWJujvZw7L2Qc0Q=;
+	s=k20201202; t=1733931965;
+	bh=6lGx5QexARWN3SzIAahwI8CDbjfI3RBnrClOPVKH2DE=;
 	h=Date:From:To:Cc:Subject:From;
-	b=k30l5vjGrlLUjrAU92+0WXq+MxZZllGYPpBfk+uaO++Gc+x0N6claUhYx1E+JYMLI
-	 XPk0o6RS+hOs48cfZnGKId3HMJPZ9YpeomGuQLZEIaDvyxdMVr8CO0kHZUW+MDtg+p
-	 Z6vyYNRxmL+Xa6GR1GVdGASvrKti+tBrNIqX55bneN+4Y+mnII6Ojw5QTIDZnPBVV0
-	 +e6DXiyvP/vkerTJsdX7xpCjkSY1jQWOqG50jmSm/jhIesoGcOAe1uj0hIFM4n8HWC
-	 Yk7/eFb8ELuCML3M5DF5hWKEEw6pB0IadQaHZ9e6ja+ztYcqaxLCYIy1bKJYB+cBYa
-	 meFWDvGDW12sA==
-Date: Wed, 11 Dec 2024 12:45:41 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1 next] tools build: Remove the libunwind feature tests
- from the ones detected when test-all.o builds
-Message-ID: <Z1mzpfAUi8zeiFOp@x1>
+	b=uRyMOFYj09K3He+yBr6hUnerBL4V5JN5UNlvhrbMb/W6wWsDPCEKbijTL4KLHTRyo
+	 IF6CizqAEq8ZbVjTkvqUgN6b6uTrmc+fNV8ce3MDVMR7RV2wmDwuBQWBwk7z1A96nj
+	 yPwtzcwhnDwb2l5s2wikHM2sp8cOOP9AhRxFLBp5rD0d++1li5wxGs0eK61j01PnM3
+	 yFGICCtwCaX2wxvCWNU8vlf8Guo+bLrsbnQdZvSmrXTztf+Vj37+DkXTmJwXDrdHs3
+	 AutXuAXzRK1v5kK28OYCJkEcUc977zGDziXkSMI+LAdLSHVBMSKSHOuaUuG/BJ/Fsn
+	 jtyQ9Idk+Jt1w==
+Date: Wed, 11 Dec 2024 15:46:03 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	krisman@suse.de
+Subject: Unicode conversion issue
+Message-ID: <Z1mzu4Eg6CPURra3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,70 +56,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-We have a tools/build/feature/test-all.c that has the most common set of
-features that perf uses and are expected to have its development files
-available when building perf.
+Hi Linus/Gabriel,
 
-When we made libwunwind opt-in we forgot to remove them from the list of
-features that are assumed to be available when test-all.c builds, remove
-them.
+Once Android applied the below patch [1], some special characters started to be
+converted differently resulting in different length, so that f2fs cannot find
+the filename correctly which was created when the kernel didn't have [1].
 
-Before this patch:
+There is one bug report in [2] where describes more details. In order to avoid
+this, could you please consider reverting [1] asap? Or, is there any other
+way to keep the conversion while addressing CVE? It's very hard for f2fs to
+distinguish two valid converted lengths before/after [1].
 
-  $ rm -rf /tmp/b ; mkdir /tmp/b ; make -C tools/perf O=/tmp/b feature-dump ; grep feature-libunwind-aarch64= /tmp/b/FEATURE-DUMP
-  feature-libunwind-aarch64=1
-  $
-
-Even tho this not being test built and those header files being
-available:
-
-  $ head -5 tools/build/feature/test-libunwind-aarch64.c
-  // SPDX-License-Identifier: GPL-2.0
-  #include <libunwind-aarch64.h>
-  #include <stdlib.h>
-
-  extern int UNW_OBJ(dwarf_search_unwind_table) (unw_addr_space_t as,
-  $
-
-After this patch:
-
-  $ grep feature-libunwind- /tmp/b/FEATURE-DUMP
-  $
-
-Now an audit on what is being enabled when test-all.c builds will be
-performed.
-
-Fixes: 176c9d1e6a06f2fa ("tools features: Don't check for libunwind devel files by default")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/build/Makefile.feature | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index b2884bc23775e986..9cde51104c2d70ec 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -90,13 +90,6 @@ FEATURE_TESTS_EXTRA :=                  \
-          libbfd-liberty                 \
-          libbfd-liberty-z               \
-          libopencsd                     \
--         libunwind-x86                  \
--         libunwind-x86_64               \
--         libunwind-arm                  \
--         libunwind-aarch64              \
--         libunwind-debug-frame          \
--         libunwind-debug-frame-arm      \
--         libunwind-debug-frame-aarch64  \
-          cxx                            \
-          llvm                           \
-          clang                          \
--- 
-2.47.0
-
+[1] 5c26d2f1d3f5 ("unicode: Don't special case ignorable code points")
+[2] https://bugzilla.kernel.org/show_bug.cgi?id=219586
 
