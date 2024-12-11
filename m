@@ -1,60 +1,89 @@
-Return-Path: <linux-kernel+bounces-440820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18D69EC4B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:25:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7909EC4BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:27:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E61188B613
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13590168AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDA51C549E;
-	Wed, 11 Dec 2024 06:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E92C1C1F22;
+	Wed, 11 Dec 2024 06:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Hj5YnUae"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHJhCKvM"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC331C462D;
-	Wed, 11 Dec 2024 06:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6715D1BD01F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733898289; cv=none; b=EPN4bkLh1PNTVTUifBmsZQsXojWu54owLfAuEv8SMHvr3pVZAIB4Kja92jfmUN/X2S91aY5b+455NFBCgNDtHQTsqUksXC+04NLYnaaCjOU+J6zFSMWXgOpI209b2j0ea+h2sD/Usw1JuVoFCEs1gQh1b7n5YYfQCuHnwCoMvRA=
+	t=1733898413; cv=none; b=IrXfJEB9MP2zUADIJIt99DmVdjOS6ZVq3E/9ZFOhOMXK1Gb8FZVl8EwENMY9p4RoYcP818WY7612IxmEK/lmmFwr7SUB/UQboXogwIdC2zP+a2pn9OiMN7HRYhtXjOtDh+RpDlvl/yMJGxnuqKRtxYrC5sR/gT4/Gnl5UFJRwaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733898289; c=relaxed/simple;
-	bh=y7aZHwpgi27v8ZTlv7YlS3FJfZiEfiPR2Bpm7+DPGJo=;
+	s=arc-20240116; t=1733898413; c=relaxed/simple;
+	bh=05PHLQJWbD7M/t63+dY39KfUKzzoM1vGvU6jkxiAC44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+5eMNwFiW6oDw4XrpcHDCLOr4DdUpyX2OeBNCZcWuFKhrbAeHsv89ZI+yFDdk3HRCdcwj/UPTxxKXJ5/h6eLi7GSJXtkUcnE6Jrpz1sKEXItdKEXL1gGdp2lSBnN0YG4zin3wddV4KiT37ryJub65nIwGGOZqME8ia65mt/T1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Hj5YnUae; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733898280;
-	bh=y7aZHwpgi27v8ZTlv7YlS3FJfZiEfiPR2Bpm7+DPGJo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hj5YnUaeQAs5jb6PfRT6vy2lo43gPnqlBH3DYu+Hr07ugu7fe47ya0s4kPR8GNWnf
-	 BrA8qk/QLBD1RFKO9Evifp10s7ZtUYAWLVrbE1JDSUW2W7nR5eOMQMHXFI5UA4c+O7
-	 m/UDbyxHeTGtFCZq0WpwFugz9bC5T1qKeZ/SW4ow=
-Date: Wed, 11 Dec 2024 07:24:40 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Ihor Solodrai <ihor.solodrai@pm.me>
-Cc: Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Kui-Feng Lee <kuifeng@fb.com>, 
-	Alan Maguire <alan.maguire@oracle.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] kbuild, bpf: Enable reproducible BTF generation
-Message-ID: <3b834807-9f20-4f04-b788-f45dfac5cb1f@t-8ch.de>
-References: <20241211-pahole-reproducible-v1-1-22feae19bad9@weissschuh.net>
- <REDzg-0aL2-Qw7QvYCKTfsLGh6E6Iq8dgWJPo5a94ym2x5DiUkwdHA-naUtaDO7HJgvOr6zd201E5P_WAquOyOFIiUij6Bi183EyxPusDuo=@pm.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uLa0XsR6UpxnnqLsI/7hnFGWMMZHdG4Sx8t8+7k3jRLN3ZaYeC0uAGvJJj/MTCclqHUkh835JUAjY9iWHYxC5LFZoGpWKDtUOSTPQFx7vTFkHCzHq7kY3j8ufT/+0X1l1jik9GNeyp9kSbo4NABqR+8bjPKsYN+BDfImTKmtCFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dHJhCKvM; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-728e78c4d7bso303128b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733898412; x=1734503212; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g5uPtyeRCfhjHuSQG2EKYCWUSTJ57FDJopWrsPxMoIA=;
+        b=dHJhCKvMSL0zPSiwgoxaEEgDUpO2q+mB+KgrotAGbshjdv/WvsHamW3WqkiKGztf18
+         xOIwuxXp6goKZKcYieZBRxGocQ4IW+4F+BD7uRsS7p30VWcFI2lw2qF3OMl+yGi8WLgX
+         e7i4/dC/BuSPY4PiWXH4WZyivCpNGa+nLOZLwlypXlJjJuGtgRzb8j6z5Ed4goCoD6lE
+         eHOtCBpEIg0VjwdlgZXau47GVZjO/W7WHy6TfB1y1gGbeDKVNa+KPVK4g0BdGrRyRze1
+         i342AFcVm5pDZhaqOojqTYCsrm+9VK66yl++7RiyjmkQHZn3IRxO/qUw0nvxhg2/SSY0
+         QpLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733898412; x=1734503212;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g5uPtyeRCfhjHuSQG2EKYCWUSTJ57FDJopWrsPxMoIA=;
+        b=kCpDInK1yaxAZopNlpvnQcmkGwqeUk8qrc2RNR9kNVWWWySPel9axnbgb/c7gONxq7
+         yupv9NoBNfu8U3A4YGrH5varjEG4zfdMguXGkMMlBVYZFJOsIAqWUL3PU76vIfR4aXIe
+         2pRGiA2NcJGrmeJE1kX3Avd7W1BUR32+sn5OxKOkDYMUuxucLbx003BveouVb4GSETu1
+         aYJKsfknIcu8X5SmbZ/NMMHJbRrTqcPuK3lGASt7t2vW8CJQ1avlpAPqMUnUK2aL9ciD
+         bcAum1Xw6zUY9AJExlB5RqKvRZUwplYcZBaOJHQO9SVpfLCNGpWwhiQKT313xS8ltKDs
+         v84g==
+X-Forwarded-Encrypted: i=1; AJvYcCXyW0Dk4jWtAeOxUkLiI+3XjoQ2pjErK4sLNfW9b2bPo1OVagepjaA5bk87/NsxBRJLbidDYDKvPJKZGGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTl6Q1GrA8pndTwXqhFMkLmh1mkQ2BKGGKYTLLWfC+YlToFKGy
+	LcAxzJlrRCzz4D64rhi2b4XFfowF3Nc6vH4pFAKpepPt0dtk00uWCX6ZULpjRA==
+X-Gm-Gg: ASbGnctSSSocwjjPgnwn/m8ecT3/ympF4EkB6C/lBFbxlsc3FWXM5fVYKnxAVnRKXJK
+	VaFUrDthVIJMkyuW2FMKc1nGOMaCeyk/x6/c1MHRRqL73FTkZy/RvUEFd1bzvkKz1Pd/dlWGYRC
+	0+79a9e2MDMwHYLsbQz2ZtzWjeXTJzUCfSpvP3fEWk0HCrnl97SIO2T5baM3sypdbAHA8f4WL3K
+	qQyjLwKj253RH9qrJKhyEpVO0bq3wfBq45IwH5rmsuThduqz7pLR4jbi/xq/28=
+X-Google-Smtp-Source: AGHT+IHcHIWCw3Wv6NHmzmx6YmsGHvWhwwPQ0jWBK0ivIaEUDWwhrrMbjDmLqm+k/dugJWGGhd1D3g==
+X-Received: by 2002:a05:6a00:3996:b0:725:f3fa:8c6e with SMTP id d2e1a72fcca58-728edb8ea7dmr2564604b3a.7.1733898411754;
+        Tue, 10 Dec 2024 22:26:51 -0800 (PST)
+Received: from thinkpad ([120.60.55.53])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725d732ad17sm6806896b3a.45.2024.12.10.22.26.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 22:26:51 -0800 (PST)
+Date: Wed, 11 Dec 2024 11:56:45 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, dmitry.baryshkov@linaro.org,
+	abel.vesa@linaro.org, neil.armstrong@linaro.org,
+	andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: qcs615: add pcie phy max current
+ property
+Message-ID: <20241211062645.3eut7ibjqymm6ayt@thinkpad>
+References: <20241204105249.3544114-1-quic_ziyuzhan@quicinc.com>
+ <20241204105249.3544114-4-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,91 +93,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <REDzg-0aL2-Qw7QvYCKTfsLGh6E6Iq8dgWJPo5a94ym2x5DiUkwdHA-naUtaDO7HJgvOr6zd201E5P_WAquOyOFIiUij6Bi183EyxPusDuo=@pm.me>
+In-Reply-To: <20241204105249.3544114-4-quic_ziyuzhan@quicinc.com>
 
-Hi Ihor,
-
-On 2024-12-11 00:17:02+0000, Ihor Solodrai wrote:
-> On Tuesday, December 10th, 2024 at 3:23 PM, Thomas Weißschuh <linux@weissschuh.net> wrote:
+On Wed, Dec 04, 2024 at 06:52:49PM +0800, Ziyue Zhang wrote:
+> Add vdda-pll-max-microamp for vdda-pll-supply. The value of this property
+> is from the power grid guide. It is the maximum current the regulator can
+> provide. The property will be parsed by PCIe PHY driver to set the current
+> load.
 > 
-> > 
-> > 
-> > Pahole v1.27 added a new BTF generation feature to support
-> > reproducibility in the face of multithreading.
-> > Enable it if supported and reproducible builds are requested.
-> > 
-> > As unknown --btf_features are ignored, avoid the test for the pahole
-> > version to keep the line readable.
-> > 
-> > Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and generate BTF with multithreading.")
-> > Fixes: 72d091846de9 ("kbuild: avoid too many execution of scripts/pahole-flags.sh")
-> > Link: https://lore.kernel.org/lkml/4154d202-5c72-493e-bf3f-bce882a296c6@gentoo.org/
-> > Link: https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v1-1-3eaafb1842da@weissschuh.net/
-> > Signed-off-by: Thomas Weißschuh linux@weissschuh.net
-> > 
-> > ---
-> > scripts/Makefile.btf | 1 +
-> > 1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
-> > index c3cbeb13de503555adcf00029a0b328e74381f13..da23265bc8b3cf43c0a1c89fbc4f53815a290e13 100644
-> > --- a/scripts/Makefile.btf
-> > +++ b/scripts/Makefile.btf
-> > @@ -22,6 +22,7 @@ else
-> > 
-> > # Switch to using --btf_features for v1.26 and later.
-> > pahole-flags-$(call test-ge, $(pahole-ver), 126) = -j$(JOBS) --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func,decl_tag_kfuncs
-> > +pahole-flags-$(if $(KBUILD_BUILD_TIMESTAMP),y) += --btf_features=reproducible_build
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Hi Thomas,
-> 
-> There are a couple of issues with reproducible_build flag which I
-> think are worth mentioning here. I don't know all the reasons behind
-> adding this now, and it's optional too, so feel free to discard my
-> comments.
-> 
-> Currently with this flag, the BTF output is deterministic for a given
-> order of DWARF compilation units. So the BTF will be the same for the
-> same vmlinux binary. However, if the vmlinux is rebuilt due to an
-> incremental change in a source code, my understanding is that there is
-> no guarantee that DWARF CUs will be in the same order in the binary.
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> index 18f131ae9e07..6d93ef0d886b 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -215,6 +215,7 @@ &pcie {
+>  &pcie_phy {
+>  	vdda-phy-supply = <&vreg_l5a>;
+>  	vdda-pll-supply = <&vreg_l12a>;
+> +	vdda-pll-max-microamp = <165000>;
+>  
 
-The goal behind reproducible builds is to produce bit-by-bit idential
-binaries. If the CUs are in a different order then that requirement
-would have been broken there already.
+Min uV of this regulator is 1800000:
+https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/tree/arch/arm64/boot/dts/qcom/qcs615-ride.dts?h=for-next#n151
 
-For an incremental build a full relink with *all* CUs is done, not only
-the changed once, so the order should always be the same.
+How can you set 165000?
 
-> At the same time, reproducible_build slows down BTF generation by
-> 30-50%, maybe more depending on the kernel config.
+- Mani
 
-If a user explicitly requests reproducibility then they should get it,
-even if it is slower.
-
-> Hopefully these problems will be solved in upcoming pahole releases.
-
-I don't see it as big problem. This is used for release builds, not
-during development.
- 
-> Question: why KBUILD_BUILD_TIMESTAMP flag? Isn't it more appropriate
-> to use a separate flag for this particular feature?
-
-Adding an additional variable would need to be documented and would
-makes the feature harder to use. KBUILD_BUILD_TIMESTAMP already needs to
-be set by the user if they are building for reproducibility.
-
-> > ifneq ($(KBUILD_EXTMOD),)
-> > module-pahole-flags-$(call test-ge, $(pahole-ver), 126) += --btf_features=distilled_base
-> > 
-> > ---
-> > base-commit: 7cb1b466315004af98f6ba6c2546bb713ca3c237
-> > change-id: 20241124-pahole-reproducible-2b879ac8bdab
-> > 
-> > Best regards,
-> > --
-> > Thomas Weißschuh linux@weissschuh.net
-> > 
-> > 
-> 
+-- 
+மணிவண்ணன் சதாசிவம்
 
