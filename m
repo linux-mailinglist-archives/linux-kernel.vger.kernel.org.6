@@ -1,140 +1,113 @@
-Return-Path: <linux-kernel+bounces-442121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D682B9ED83A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:13:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BF4188621D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:13:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96D11DC9AB;
-	Wed, 11 Dec 2024 21:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZmv8dAT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D0E9ED83E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:14:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548CE259498
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330A92825E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:14:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C0220B81C;
+	Wed, 11 Dec 2024 21:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GHayRsOZ"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6B32EAE5
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733951627; cv=none; b=eFbRuttno+ZEZkZQK6No+QXU/HENzWedp2fomBMMVwbB1tdna2JDs+T/RnTSKkFedRbz6i5nbXkyJ++fQtGycf+qgB/UOBeVzqHuVBgbZU14+G7IXFlHO/xUE/dFyWyK/iw74RQdNoQUMJOQwMl+h+1bbWuDC0KZVHqXsoZwX5Q=
+	t=1733951684; cv=none; b=BBM5q2J0HO6gCOzJqL1HsP1MPcmtg4TUfWD5GJWMPRET6YObItGK94JSD/+s4XR4J6d2em5bw+lFL4baPyZip1be1YZCAL7CIPVidLB1uj6USbC6Zl5h1z7TmhnWeefdGgXMzaaFctHc7qxlrTEF1III+9TJU9x+C936s5aFjlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733951627; c=relaxed/simple;
-	bh=R0JdPraaSL7KlAmHlhieAz1Gj/RXBEtylhQ3Qyfszvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gnt7ovlPZeYk2F9Lp0tWV25zr16qCCfzn8c0lEysWJjD3AYS8qwMkMuDtMt3lrMcKintLr6UQ/9qXHefkEzYLKlYBfzcMyc5GsF1hqmx5Q8Zc6DO7RzSl2P8vKFD0BmttnrhYYm9d3m/WAJB4luXLZ/T1owFZjF4RvzV9NlsA3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZmv8dAT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9537CC4CED2;
-	Wed, 11 Dec 2024 21:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733951626;
-	bh=R0JdPraaSL7KlAmHlhieAz1Gj/RXBEtylhQ3Qyfszvw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bZmv8dATqzl2y1i9+qOHbjA2gO20/eNHNBT+FQlRaDQc82/XxxX9IYUj4iBqRSrIu
-	 Q60ZkL8izx06QFtKRZmFtksf0BUBS/taFKGQA2eKK5zrem7ol8Ds8kANme8qFrIyxX
-	 KBsJ2OXJ7eCU+LAYy93Hft6SvUEwzWeI88Ao4nL0LhQ7BDEf4yAiP7zrcxlNAUavIN
-	 lgs1+G7aWRwO4LpwyVOGfmgIYBNCmyP9FB+3+l2Gr/u1RmyU/ebvfLQQM8SKhtfvMT
-	 hbd82wkgXkHZat3JLBBazHAmt/T7fkah9tJAc1s27bdya8tcIz6DNav77pCFmTfpx7
-	 DCVe6DVgGe39Q==
-Date: Wed, 11 Dec 2024 21:13:44 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"hanqi@vivo.com" <hanqi@vivo.com>, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: Unicode conversion issue
-Message-ID: <Z1oAiAAKzAmV5M2h@google.com>
-References: <Z1mzu4Eg6CPURra3@google.com>
- <87v7vqyzh4.fsf@mailhost.krisman.be>
- <Z1nG-PSEe6tPOZIG@google.com>
- <87cyhyuhow.fsf@mailhost.krisman.be>
- <CAHk-=wice8YV5N1jjyz42uNi-eZTvG-G2M46qaN7T9VsSaCP_Q@mail.gmail.com>
- <CAHk-=wiC3evUXq8QTcOBFTMu1wsUR_dYiS8eGxy0Hh7VbL55yA@mail.gmail.com>
+	s=arc-20240116; t=1733951684; c=relaxed/simple;
+	bh=pQxLX0OpRdmEKLujU7po1ZyE+Iuv7dvTeQ5pTjG0L2s=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DFoeFtYKwQSq7b89K86WVz86SmUnNubucuPqlYxPPMw8I5cUqI2jiU8pnCnr2/V329+Z6uYXcrjiL/MKVWpxgoYGOoDaIWvER9HW51EwkTw4P1Rmdy8uDbvPP6NPR4oepUed1l+0E2aB4fGlyK9YsmRWqRzO4xRyBGv4dT7RFqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GHayRsOZ; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e3988fdb580so5861635276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:14:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733951681; x=1734556481; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ezBwnwc54xrxIW8WnnX9hiVaqGX6VzJ/z+kaEQox7Lk=;
+        b=GHayRsOZLwwS0Fv39Tz+Iq0puNCt/lLqmHxaV8CstxgKlAN7/z+IbBTNanMfgzeYhA
+         IlRwbhYqfwHZq1Dhllh8hDEKxcilGpIkwg0EpYEa/e+vd99bO6gW3f3vawRB2sxyS2DR
+         ORGg0xZ/+OGlpXneALwlOFJylERyACw6djoSk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733951681; x=1734556481;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ezBwnwc54xrxIW8WnnX9hiVaqGX6VzJ/z+kaEQox7Lk=;
+        b=EkW5k5OJpIgXEo5rHwQdALkcjwZj2ouJ9eFWmG82USBK57DTWBebyGsbRCqD7YC82l
+         sbYiIfSZpSW5NdIZpejLTYg1N0iL/t01aCKfZN8H9z7+gcvKpxQco1jEmX5ILnQAbK7j
+         dMlxxn6l2DZtRccai1PXahbUbIroz/5CT/6mHo3ssA85uVgL4PIUmEa73UerWoo1ZFi3
+         FGbfEeyNJesfxJenpXxxvxtaT6l1ObYQpQK6qWa/6fpPK6b1OpkAFas9B1+rFsGSyjt/
+         G9V3UyNZBbDvw1v7XKiTZVd39iLnDU9WpkRPDKqPtb9Ks67Dkx3z381Y24VulifN7Vs0
+         35kA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsfkVqM0vCtOQcD3RuYKdqesdIaQ68gYQfHni8ned1N88y1nELqEVRc9tYub7UiWQKnSZJI0CHlH3MwJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+wbIlIJF6BpX6q3AufOt8xLZag3iNlIIW/ZyJbU+XXJymYJMp
+	dOk4Sxww0df1Z3XpAvrAAyi3icuFYi2xfiLOh2HfYVUXpZs0DI89NSpocO1+iRwPtoZJHW4JGQe
+	Pdi8EXdgUSwjnA1CFclN2AjZXOYNoAFyHuT4+
+X-Gm-Gg: ASbGncuiSA+zoY7ARsSURAOrlU7vMCwsP6NT4bMhKawgsVBwATQ3LUOhPD3qTDBNIEh
+	XO2P9AVxYEk7HyFHHHrgsMFiaJkbgNq1Irzf/Zekh2IC/EjEuVvW9cu1Wl8bia9c=
+X-Google-Smtp-Source: AGHT+IGVGcprZk95xhhOtOKM+7JPgPvLrPlsxoiz5xiivClwV1s7VtMi2gtLbOTTJ+cbuh16Xk9oGKjJ+Ksx04T7VN4=
+X-Received: by 2002:a05:6902:1447:b0:e3a:5820:febb with SMTP id
+ 3f1490d57ef6-e3da1df70c1mr852810276.32.1733951681689; Wed, 11 Dec 2024
+ 13:14:41 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 13:14:41 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiC3evUXq8QTcOBFTMu1wsUR_dYiS8eGxy0Hh7VbL55yA@mail.gmail.com>
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-6-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-6-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 13:14:41 -0800
+Message-ID: <CAE-0n52+nKDyzUPzg_uFsLXRh4XQW+TngD6PyuvetTKXthi_tg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/14] drm/msm/dp: move/inline AUX register functions
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/11, Linus Torvalds wrote:
-> On Wed, 11 Dec 2024 at 11:58, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > The problem is that all the filesystems basically do some variation of
-> >
-> >         if (IS_CASEFOLDED(dir) ..) {
-> >
-> >                 len = utf8_casefold(sb->s_encoding, orig_name,
-> >                         new_name, MAXLEN);
-> >
-> > and then they use that "new_name" for both hashing and for comparisons.
-> 
-> Oh, actually, f2fs does pass in the original name to
-> generic_ci_match(), so I think this is solvable.
-> 
-> The solution involves just telling f2fs to ignore the hash if it has
-> seen odd characters.
+Quoting Dmitry Baryshkov (2024-12-02 02:06:36)
+> diff --git a/drivers/gpu/drm/msm/dp/dp_aux.c b/drivers/gpu/drm/msm/dp/dp_aux.c
+> index bc8d46abfc619d669dce339477d58fb0c464a3ea..46e8a2e13ac1d1249fbad9b50a6d64c52d51cf38 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_aux.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_aux.c
+> @@ -45,6 +46,73 @@ struct msm_dp_aux_private {
+>         struct drm_dp_aux msm_dp_aux;
+>  };
+>
+> +static int msm_dp_aux_clear_hw_interrupts(struct msm_dp_aux_private *aux)
 
-But, the hash is not just used when matching the dentry, but gives a block
-location withiin multi-level hash tables for faster lookup as well. If the
-filename length is also changed by the unicode patch, utf8_strncasecmp_folded()
-will also give an error?
+Can you make this return void as well?
 
-> 
-> So I think f2fs could actually do something like this:
-> 
->   --- a/fs/f2fs/dir.c
->   +++ b/fs/f2fs/dir.c
->   @@ -67,6 +67,7 @@ int f2fs_init_casefolded_name(const struct inode *dir,
->                         /* fall back to treating name as opaque byte sequence */
->                         return 0;
->                 }
->   +             fname->ignore_hash = utf8_oddname(fname->usr_fname);
->                 fname->cf_name.name = buf;
->                 fname->cf_name.len = len;
->         }
->   @@ -231,7 +232,7 @@ struct f2fs_dir_entry
-> *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
->                         continue;
->                 }
-> 
->   -             if (de->hash_code == fname->hash) {
->   +             if (fname->ignore_hash || de->hash_code == fname->hash) {
->                         res = f2fs_match_name(d->inode, fname,
->                                               d->filename[bit_pos],
->                                               le16_to_cpu(de->name_len));
->   --- a/fs/f2fs/f2fs.h
->   +++ b/fs/f2fs/f2fs.h
->   @@ -521,6 +521,7 @@ struct f2fs_filename {
-> 
->         /* The dirhash of this filename */
->         f2fs_hash_t hash;
->   +     bool ignore_hash;
-> 
->    #ifdef CONFIG_FS_ENCRYPTION
->         /*
-> 
-> where that "utf8_oddname()" is the one that goes "this filename
-> contains unhashable characters".
-> 
-> I didn't look very closely at what ext4 does, but it seems to already
-> have a pattern for "don't even look at the hash because it's not
-> reliable", so I think ext4 can do something similar.
-> 
-> So then all you actually need is that utf8_oddname() that recognizes
-> those ignored code-points.
-> 
-> So I take it all back: option (1) actually doesn't look that bad, and
-> would make reverting commit 5c26d2f1d3f5 ("unicode: Don't special case
-> ignorable code points") unnecessary.
-> 
->                 Linus
+> +{
+> +       struct msm_dp_catalog *msm_dp_catalog = aux->catalog;
+> +
+> +       msm_dp_read_aux(msm_dp_catalog, REG_DP_PHY_AUX_INTERRUPT_STATUS);
+> +       msm_dp_write_aux(msm_dp_catalog, REG_DP_PHY_AUX_INTERRUPT_CLEAR, 0x1f);
+> +       msm_dp_write_aux(msm_dp_catalog, REG_DP_PHY_AUX_INTERRUPT_CLEAR, 0x9f);
+> +       msm_dp_write_aux(msm_dp_catalog, REG_DP_PHY_AUX_INTERRUPT_CLEAR, 0);
+> +
+> +       return 0;
+> +}
 
