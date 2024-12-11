@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-441929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA249ED5C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:07:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5BF9ED5D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F67216A4AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B066188B9D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E1223A1A1;
-	Wed, 11 Dec 2024 18:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBFC23A1AB;
+	Wed, 11 Dec 2024 18:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2dpDUTf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3n4rofN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF65825332C;
-	Wed, 11 Dec 2024 18:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9E2253D37;
+	Wed, 11 Dec 2024 18:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943232; cv=none; b=KTiKF6vzAR3sRHrBfhhxA3ib20cANl8fZHUqmFW/XAEcDO2+ZiPst5uTqi6VO2F5Xfwq/wWd+7LccBiERTJ2YooFFz4OqDOF6kZKP/PgHu9HE23iEZpD5gAHGx7Vow210B6ykaUuI/2wcrKKHvmbW4T5PsYXnT60Hml1GaFPKxk=
+	t=1733943239; cv=none; b=PMh76sUn+h8Bab7khZbtGw+SQ5byhp8zJ+CiTEp1lmr190WJeo3KJdKsIr+ghurDT86M9QEva6uTy4sk0mggmMR5Oy/ZdR6t5sb5SZDNFexzkWKONwlVUm6GMUe1ayMvEqjMU0aNwXjNuzD7Y/FQHsM/vB3+xg3LDNtq1nkaPFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943232; c=relaxed/simple;
-	bh=OrkWIbXM0KdIPk8HRXIAI3tRb8LvmxPMYzRl1CeF+lI=;
+	s=arc-20240116; t=1733943239; c=relaxed/simple;
+	bh=hE7o4tTWZINIJU8nthSiHxq0NPPs3Ub6Bz6t/xJ16Cw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S8hVeYR9KJCUqQsw4mRfZzCeEWwbP0ajqweOjEkR+u1tW/o9poJ0xl/2LsAmBz1Ft9ysN6wIM46DXHYQgACLxb48fgIOSU7fPgo4TtfISoq2jHARQ+Z4b9B7NEz9mzxBwGWnP40TNhtJRNkGafR+0mZmHOS8adyZG+9obFU9fDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X2dpDUTf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A40DFC4CEDD;
-	Wed, 11 Dec 2024 18:53:49 +0000 (UTC)
+	 MIME-Version; b=X1xmkFpDzVNP6MTC3uvojfqD1JoLCqlmwfkN+jFoKg/LrZj4hCz78jLYtPYrqJhwSsP3XqJ6Ccz3rRJW2FG8QXeNP++T4vqNWHoEJTea1Rgqzl8CDwBtG3sNOknhSepgaEdPABZYqJTnZeyNssQ7qQn4+AHFecNPHwjcJ3PSwJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3n4rofN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E581AC4CED4;
+	Wed, 11 Dec 2024 18:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733943230;
-	bh=OrkWIbXM0KdIPk8HRXIAI3tRb8LvmxPMYzRl1CeF+lI=;
+	s=k20201202; t=1733943239;
+	bh=hE7o4tTWZINIJU8nthSiHxq0NPPs3Ub6Bz6t/xJ16Cw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X2dpDUTfm92rBgzFiiS/oasqsvuJnwOy3gBZV6xSP8aL+5n8O51FxqF4guMJbmOK3
-	 WlGn/zS50mrgr/5Uy08/CA+Bb1PzBf1f7XJ6R6zextZZFU2lDjaEORUXwONIecxWUn
-	 evWDAitR/Is+R9DclZPC0k7tWUQUNOiwLR2EGd3xz43Y2PXPGkLIyCliSRjKE/q+Ah
-	 cbECsc+pVrOzfL1jy/BSWiEOmjEKh/+shAEJLJwP/5tJMyAqyXU5SgLGjpeb39stHy
-	 D2vetDGhPpOKGPjESSiY3cNDpyLAOLtBYRfmqnqTNgsxsfvDdydB+mhMB5n2w1KoOq
-	 R+oLTCWc0Qo7w==
+	b=G3n4rofNBtQXj0NP+14FM60+KLoK2iDzPZsb2Y620slfSojdWrJ7Nlq146Qeqph53
+	 bSjBsLVcPZdW0x7+23sU10uTd+9RBh5tuv/JmEwcO9pPkxW0lAhg5hQIZg2bZCjuYG
+	 lOk5poVv1QnPP1J7JHNtF9//xRsA3CGCGm4HbohdgZ1epEZlO1bxvzx2YIaAJlpxq2
+	 2IpT9xHiT9EWcfcOgsHwTzn6B5jWuNgjH/YmoQ/YAxOsvzqUJp3NpiVvdVi/FHAzSL
+	 l9izW2yDqnbGKZl8apWUxommIifs+hRQShuvTR4OWiEiENhutkfLyVlJpjMYyexjDJ
+	 te5XMH1sz96+w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Ming Lei <ming.lei@redhat.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Luck Tony <tony.luck@intel.com>,
-	Jens Axboe <axboe@kernel.dk>,
+Cc: Magnus Lindholm <linmag7@gmail.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 15/15] blk-mq: register cpuhp callback after hctx is added to xarray table
-Date: Wed, 11 Dec 2024 13:53:07 -0500
-Message-ID: <20241211185316.3842543-15-sashal@kernel.org>
+	mdr@sgi.com,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 02/10] scsi: qla1280: Fix hw revision numbering for ISP1020/1040
+Date: Wed, 11 Dec 2024 13:53:43 -0500
+Message-ID: <20241211185355.3842902-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241211185316.3842543-1-sashal@kernel.org>
-References: <20241211185316.3842543-1-sashal@kernel.org>
+In-Reply-To: <20241211185355.3842902-1-sashal@kernel.org>
+References: <20241211185355.3842902-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,74 +64,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.119
+X-stable-base: Linux 5.15.173
 Content-Transfer-Encoding: 8bit
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Magnus Lindholm <linmag7@gmail.com>
 
-[ Upstream commit 4bf485a7db5d82ddd0f3ad2b299893199090375e ]
+[ Upstream commit c064de86d2a3909222d5996c5047f64c7a8f791b ]
 
-We need to retrieve 'hctx' from xarray table in the cpuhp callback, so the
-callback should be registered after this 'hctx' is added to xarray table.
+Fix the hardware revision numbering for Qlogic ISP1020/1040 boards.  HWMASK
+suggests that the revision number only needs four bits, this is consistent
+with how NetBSD does things in their ISP driver. Verified on a IPS1040B
+which is seen as rev 5 not as BIT_4.
 
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Peter Newman <peternewman@google.com>
-Cc: Babu Moger <babu.moger@amd.com>
-Cc: Luck Tony <tony.luck@intel.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Link: https://lore.kernel.org/r/20241206111611.978870-2-ming.lei@redhat.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Magnus Lindholm <linmag7@gmail.com>
+Link: https://lore.kernel.org/r/20241113225636.2276-1-linmag7@gmail.com
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-mq.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/scsi/qla1280.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 542b28a2e6b0f..fd289f2f83db1 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3665,16 +3665,11 @@ static int blk_mq_init_hctx(struct request_queue *q,
- {
- 	hctx->queue_num = hctx_idx;
- 
--	if (!(hctx->flags & BLK_MQ_F_STACKING))
--		cpuhp_state_add_instance_nocalls(CPUHP_AP_BLK_MQ_ONLINE,
--				&hctx->cpuhp_online);
--	cpuhp_state_add_instance_nocalls(CPUHP_BLK_MQ_DEAD, &hctx->cpuhp_dead);
--
- 	hctx->tags = set->tags[hctx_idx];
- 
- 	if (set->ops->init_hctx &&
- 	    set->ops->init_hctx(hctx, set->driver_data, hctx_idx))
--		goto unregister_cpu_notifier;
-+		goto fail;
- 
- 	if (blk_mq_init_request(set, hctx->fq->flush_rq, hctx_idx,
- 				hctx->numa_node))
-@@ -3683,6 +3678,11 @@ static int blk_mq_init_hctx(struct request_queue *q,
- 	if (xa_insert(&q->hctx_table, hctx_idx, hctx, GFP_KERNEL))
- 		goto exit_flush_rq;
- 
-+	if (!(hctx->flags & BLK_MQ_F_STACKING))
-+		cpuhp_state_add_instance_nocalls(CPUHP_AP_BLK_MQ_ONLINE,
-+				&hctx->cpuhp_online);
-+	cpuhp_state_add_instance_nocalls(CPUHP_BLK_MQ_DEAD, &hctx->cpuhp_dead);
-+
- 	return 0;
- 
-  exit_flush_rq:
-@@ -3691,8 +3691,7 @@ static int blk_mq_init_hctx(struct request_queue *q,
-  exit_hctx:
- 	if (set->ops->exit_hctx)
- 		set->ops->exit_hctx(hctx, hctx_idx);
-- unregister_cpu_notifier:
--	blk_mq_remove_cpuhp(hctx);
-+ fail:
- 	return -1;
- }
- 
+diff --git a/drivers/scsi/qla1280.h b/drivers/scsi/qla1280.h
+index e7820b5bca38c..c0a9251b2bed2 100644
+--- a/drivers/scsi/qla1280.h
++++ b/drivers/scsi/qla1280.h
+@@ -117,12 +117,12 @@ struct device_reg {
+ 	uint16_t id_h;		/* ID high */
+ 	uint16_t cfg_0;		/* Configuration 0 */
+ #define ISP_CFG0_HWMSK   0x000f	/* Hardware revision mask */
+-#define ISP_CFG0_1020    BIT_0	/* ISP1020 */
+-#define ISP_CFG0_1020A	 BIT_1	/* ISP1020A */
+-#define ISP_CFG0_1040	 BIT_2	/* ISP1040 */
+-#define ISP_CFG0_1040A	 BIT_3	/* ISP1040A */
+-#define ISP_CFG0_1040B	 BIT_4	/* ISP1040B */
+-#define ISP_CFG0_1040C	 BIT_5	/* ISP1040C */
++#define ISP_CFG0_1020	 1	/* ISP1020 */
++#define ISP_CFG0_1020A	 2	/* ISP1020A */
++#define ISP_CFG0_1040	 3	/* ISP1040 */
++#define ISP_CFG0_1040A	 4	/* ISP1040A */
++#define ISP_CFG0_1040B	 5	/* ISP1040B */
++#define ISP_CFG0_1040C	 6	/* ISP1040C */
+ 	uint16_t cfg_1;		/* Configuration 1 */
+ #define ISP_CFG1_F128    BIT_6  /* 128-byte FIFO threshold */
+ #define ISP_CFG1_F64     BIT_4|BIT_5 /* 128-byte FIFO threshold */
 -- 
 2.43.0
 
