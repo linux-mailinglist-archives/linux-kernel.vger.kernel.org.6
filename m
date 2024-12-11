@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-440543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C019EC097
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:17:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5DC169918
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:17:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06969CA4E;
-	Wed, 11 Dec 2024 00:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Vtmg4+Vt"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E429EC09A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:19:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D4DA95C;
-	Wed, 11 Dec 2024 00:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07B0280E00
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:19:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7F9AD5E;
+	Wed, 11 Dec 2024 00:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jroSMsnP"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4CA10A3E;
+	Wed, 11 Dec 2024 00:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733876236; cv=none; b=RJt8rFSfyO0allooD/62NNWdpve5HlTPTCxHLFKrZjr6Z42Q8GJnNYCj9NJIJKKfkXCn06WWae9mhkcfI2o8IT1NL6kDf/OF+vEpkwHRGAIXPAge7uyG/q6OraGtadJdmUxs1oiJlcHyhto/ShZlB1gmW7TYO0ZkGONOfsR5ygI=
+	t=1733876381; cv=none; b=nyulSW+94Q8LW6X1ec+Rg6Tud27KF4TWqzc8wMcqtNoSaInlGFOry0eB+wk1pcplLJCJleRgkqmxVAbnJWUYue7OXAWkpMNQSjMT4/Q1RJekklY09LCDaTCvCkkutjLKfeVEKIbSBlEb4Gwt8qBXweOTkmVN6aPRQ0UV9sXzFAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733876236; c=relaxed/simple;
-	bh=ChQuXlxcg6hRLHbp9EFuFK2D6u/tqKUDbAe7p/pByuU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FrT71b2cLNry8gt4H0py3FSfj6McXqeB+Mx6kY35EXq40fqpZDHZZGNNu9rytipd3q/uxMWzfjIl5Bx8ZwK+LZKJiDGTyv82XJcvq10NcHM1+MgL4WBVMou7xuoKFPBz0gsdoz0yT3q/l954JRnGLOaUbWNyPMIaOb32baji/RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Vtmg4+Vt; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1733876225; x=1734135425;
-	bh=ChQuXlxcg6hRLHbp9EFuFK2D6u/tqKUDbAe7p/pByuU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Vtmg4+VtXzFhezCK1jLZaflDPyqSjH7z54rPB5oPep4t+b2zGPZk1Y6aWdbDkTG/3
-	 lTqnRYVIlZ4lL3vMwbzXtMJJVf4PK/nXqBdYy47ynjRJ1PTcfYGguAIPSVWgCf1ELE
-	 TQycIz+ptBCuwIebMIsv2g2UxwdtVLvlwm3ar3kycPaRueV+2PU50+K2fbbIt5GhAO
-	 BAOJcgS1QGKhwmLTUygLFHAXdQUKxGFlNwa6pndBoPkrkEPS7B5o57mxOwnx/ldoYp
-	 YO5s0OtVdRLo8S0kHHZVGNpIqSu9znT2FaZtr7Kn9KGau76et+kwnfNWtVwfWczDQ5
-	 P8RY9KjJBt0Hg==
-Date: Wed, 11 Dec 2024 00:17:02 +0000
-To: =?utf-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-From: Ihor Solodrai <ihor.solodrai@pm.me>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Kui-Feng Lee <kuifeng@fb.com>, Alan Maguire <alan.maguire@oracle.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] kbuild, bpf: Enable reproducible BTF generation
-Message-ID: <REDzg-0aL2-Qw7QvYCKTfsLGh6E6Iq8dgWJPo5a94ym2x5DiUkwdHA-naUtaDO7HJgvOr6zd201E5P_WAquOyOFIiUij6Bi183EyxPusDuo=@pm.me>
-In-Reply-To: <20241211-pahole-reproducible-v1-1-22feae19bad9@weissschuh.net>
-References: <20241211-pahole-reproducible-v1-1-22feae19bad9@weissschuh.net>
-Feedback-ID: 27520582:user:proton
-X-Pm-Message-ID: 5d2a7ed76ef656598100a56bd46c9c3d33d2a969
+	s=arc-20240116; t=1733876381; c=relaxed/simple;
+	bh=HTAmNFE3ZOktqaS7Zef0Avhslg/Cf3+5WSXYHPVehCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jVslroXTIRfToIWOO8zhEY81pxzC2qI6M3dc9LBI6cnc4khLFZI/Zqzlsq7D5+H7BUL3CGDROIWsFSJi9R03JTofPu8bgVwTeALRsYLiokGAKDrx8Zp8G2/aAmr4n/wrp4KTcTVkYsNnwAQacUiFISea18D1e4PbTSDd+UVBpE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jroSMsnP; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=eRCoVqRYb+rcP/0YVRkGDnmWTuf9gOXvCLMoBU51x1s=; b=jroSMsnPZKMkPx5k
+	2YZjGgHt42aaN0PCEPtVBBuFzH6GWJuBWXmmxkTmUTfevH1mxBSmpiajf4hUlmjQtlFhezUs0+g/S
+	xef0r5miZbN1uz51Je00gTxQMx1DinP8AD+s0zkI7QHerrvOUWSAJN1xZ96toW5jMFj/qmn741zp0
+	iTnG+sbBVZvvT6/qy7M1CaT1tmLnR100Gq7Me0IvoGn6Fwv2KpSQOlQKeaO3JYTvG3IFukPJQTK1C
+	lUTHSNZyJod1QQRy8gkQkL2L6YTdwJxto/uUA2ZMPHo9gMl7nCEXLUDMGUbYMt5juO+RH/YWd5ELA
+	UK+kARPMbDirxwUeYw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tLARt-004dta-1w;
+	Wed, 11 Dec 2024 00:19:29 +0000
+From: linux@treblig.org
+To: jeroendb@google.com,
+	pkaligineedi@google.com,
+	shailend@google.com,
+	netdev@vger.kernel.org
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] gve: Remove unused gve_adminq_set_mtu
+Date: Wed, 11 Dec 2024 00:19:27 +0000
+Message-ID: <20241211001927.253161-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tuesday, December 10th, 2024 at 3:23 PM, Thomas Wei=C3=9Fschuh <linux@we=
-issschuh.net> wrote:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
->=20
->=20
-> Pahole v1.27 added a new BTF generation feature to support
-> reproducibility in the face of multithreading.
-> Enable it if supported and reproducible builds are requested.
->=20
-> As unknown --btf_features are ignored, avoid the test for the pahole
-> version to keep the line readable.
->=20
-> Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and generate B=
-TF with multithreading.")
-> Fixes: 72d091846de9 ("kbuild: avoid too many execution of scripts/pahole-=
-flags.sh")
-> Link: https://lore.kernel.org/lkml/4154d202-5c72-493e-bf3f-bce882a296c6@g=
-entoo.org/
-> Link: https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v1-1-3eaa=
-fb1842da@weissschuh.net/
-> Signed-off-by: Thomas Wei=C3=9Fschuh linux@weissschuh.net
->=20
-> ---
-> scripts/Makefile.btf | 1 +
-> 1 file changed, 1 insertion(+)
->=20
-> diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
-> index c3cbeb13de503555adcf00029a0b328e74381f13..da23265bc8b3cf43c0a1c89fb=
-c4f53815a290e13 100644
-> --- a/scripts/Makefile.btf
-> +++ b/scripts/Makefile.btf
-> @@ -22,6 +22,7 @@ else
->=20
-> # Switch to using --btf_features for v1.26 and later.
-> pahole-flags-$(call test-ge, $(pahole-ver), 126) =3D -j$(JOBS) --btf_feat=
-ures=3Dencode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consi=
-stent_func,decl_tag_kfuncs
-> +pahole-flags-$(if $(KBUILD_BUILD_TIMESTAMP),y) +=3D --btf_features=3Drep=
-roducible_build
+The last use of gve_adminq_set_mtu() was removed by
+commit 37149e9374bf ("gve: Implement packet continuation for RX.")
 
-Hi Thomas,
+Remove it.
 
-There are a couple of issues with reproducible_build flag which I
-think are worth mentioning here. I don't know all the reasons behind
-adding this now, and it's optional too, so feel free to discard my
-comments.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/net/ethernet/google/gve/gve_adminq.c | 14 --------------
+ drivers/net/ethernet/google/gve/gve_adminq.h |  1 -
+ 2 files changed, 15 deletions(-)
 
-Currently with this flag, the BTF output is deterministic for a given
-order of DWARF compilation units. So the BTF will be the same for the
-same vmlinux binary. However, if the vmlinux is rebuilt due to an
-incremental change in a source code, my understanding is that there is
-no guarantee that DWARF CUs will be in the same order in the binary.
-
-At the same time, reproducible_build slows down BTF generation by
-30-50%, maybe more depending on the kernel config.
-
-Hopefully these problems will be solved in upcoming pahole releases.
-
-Question: why KBUILD_BUILD_TIMESTAMP flag? Isn't it more appropriate
-to use a separate flag for this particular feature?
-
-Thanks.
-
->=20
-> ifneq ($(KBUILD_EXTMOD),)
-> module-pahole-flags-$(call test-ge, $(pahole-ver), 126) +=3D --btf_featur=
-es=3Ddistilled_base
->=20
-> ---
-> base-commit: 7cb1b466315004af98f6ba6c2546bb713ca3c237
-> change-id: 20241124-pahole-reproducible-2b879ac8bdab
->=20
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh linux@weissschuh.net
->=20
->=20
+diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
+index 060e0e674938..aa7d723011d0 100644
+--- a/drivers/net/ethernet/google/gve/gve_adminq.c
++++ b/drivers/net/ethernet/google/gve/gve_adminq.c
+@@ -1128,20 +1128,6 @@ int gve_adminq_unregister_page_list(struct gve_priv *priv, u32 page_list_id)
+ 	return gve_adminq_execute_cmd(priv, &cmd);
+ }
+ 
+-int gve_adminq_set_mtu(struct gve_priv *priv, u64 mtu)
+-{
+-	union gve_adminq_command cmd;
+-
+-	memset(&cmd, 0, sizeof(cmd));
+-	cmd.opcode = cpu_to_be32(GVE_ADMINQ_SET_DRIVER_PARAMETER);
+-	cmd.set_driver_param = (struct gve_adminq_set_driver_parameter) {
+-		.parameter_type = cpu_to_be32(GVE_SET_PARAM_MTU),
+-		.parameter_value = cpu_to_be64(mtu),
+-	};
+-
+-	return gve_adminq_execute_cmd(priv, &cmd);
+-}
+-
+ int gve_adminq_report_stats(struct gve_priv *priv, u64 stats_report_len,
+ 			    dma_addr_t stats_report_addr, u64 interval)
+ {
+diff --git a/drivers/net/ethernet/google/gve/gve_adminq.h b/drivers/net/ethernet/google/gve/gve_adminq.h
+index 863683de9694..228217458275 100644
+--- a/drivers/net/ethernet/google/gve/gve_adminq.h
++++ b/drivers/net/ethernet/google/gve/gve_adminq.h
+@@ -612,7 +612,6 @@ int gve_adminq_destroy_rx_queues(struct gve_priv *priv, u32 queue_id);
+ int gve_adminq_register_page_list(struct gve_priv *priv,
+ 				  struct gve_queue_page_list *qpl);
+ int gve_adminq_unregister_page_list(struct gve_priv *priv, u32 page_list_id);
+-int gve_adminq_set_mtu(struct gve_priv *priv, u64 mtu);
+ int gve_adminq_report_stats(struct gve_priv *priv, u64 stats_report_len,
+ 			    dma_addr_t stats_report_addr, u64 interval);
+ int gve_adminq_verify_driver_compatibility(struct gve_priv *priv,
+-- 
+2.47.1
 
 
