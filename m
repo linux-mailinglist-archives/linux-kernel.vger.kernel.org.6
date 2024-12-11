@@ -1,162 +1,120 @@
-Return-Path: <linux-kernel+bounces-440750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCBB9EC3AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:48:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0C49EC3AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:47:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E502518860EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:47:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94882285BD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625692358AD;
-	Wed, 11 Dec 2024 03:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B2E21C166;
+	Wed, 11 Dec 2024 03:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kc2cuFuH"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nGJg517l"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F15216606;
-	Wed, 11 Dec 2024 03:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D5420C026
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 03:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733888613; cv=none; b=Lzi/Rlbwj10reobTn6gIyO5gwjICHNouG9E6ZeUpXpFRbvQrWdjLcDwB5DlAgwMbloMwQRiJjXQRMv4AYoZGw5LuPa8Lle4wQcN/NjZNpXYpnS/NzreOkHfmQ7y3RSpAl14CmzznSb377gxghrXJMtGDacZk4kVGeHNvWJ479Ps=
+	t=1733888634; cv=none; b=blmoqmcllN90FUbOsJ57mMeDcxqJS5JsJL7ZV4mcZGIoX3uO+CguRHjRD+FzLf71me/hmruzJCgGDcZqma6SbAR0Sc12WAVNLVOWNlUGZqWHQmcb19eUdglLF4JBIjx3JwbEISdE6BndnkZcbKUSfZyc8hpkPhaC78qgvw2TQgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733888613; c=relaxed/simple;
-	bh=FvFYPTnLGoS3l29r5HECoJIln4Fn2udEW3QBykqJqx0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VSeGFTr0CBvusb5T0o27kgQA9RfklFkJzPMxxXiYjDvEZ4qsBcfj/CHWc8rEp2ENBF92daDWCn/5g2/BcbhynUgN8Yld5P6cy046MjHy9vMmLOfDsVBDnVTs2/XkxVDYuAB+ylFXiRISMB+35mC3QozZUWTWRYTonyrU/b/OhMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kc2cuFuH; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a813899384so18927925ab.1;
-        Tue, 10 Dec 2024 19:43:31 -0800 (PST)
+	s=arc-20240116; t=1733888634; c=relaxed/simple;
+	bh=3qmb6n2k5jyQxy/EaKqykA7/FzwxzB6BLnxQE1aCQSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EVY2CjXgY8EClD2kGa4jKjOmyJ9SKROvoewpuayEfuRNOGuNvfYta9Q+K4fswiZWwEefgyzYrJX18WCm7x6lTxqyU2DswYzWOB6CPffdUSc7ouZeztL9eBxja4QkPiKPUIDbEBjqf7zDSD9wOZ7j9Wasd9sQU4E/IN71+VpsKd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nGJg517l; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2165cb60719so21953095ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:43:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733888611; x=1734493411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4cH1mM7zgDjQ29maw8yzbllsYQuAR43E0lxlHNTTv4o=;
-        b=kc2cuFuHUN1oNuSJZFpQLmrfqmyYRTLfPdtbD9PgFHxnQH35VNjji4+vKnk9beJ6rq
-         FUj8QlDce1Y5uAbMBJOSAhN2dd2p8enYfzX7q+Zdc7Yg3bBcwkt9aUh1r7qfujjq0leS
-         17ZJsqvudb1e/ajhRkO2EQtJeoAdJjbT8CVfFE7PutWdK5kgMqHiKoQTAhrC7HLGWebT
-         3of0fXMFbOo+7C0omXUNrZ1tW0hGT4oSir+2cqanQbj1M7vNr0hM56AgF3broXjwPGME
-         wTbIpbiFomrhYioQ/DjwUMt9tdecHd7HxDpAv0Ktk5CXAZcTknuXhz90mzqAW9ATLyaE
-         tgKw==
+        d=chromium.org; s=google; t=1733888632; x=1734493432; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Ay9jjGFrKSAl3bI/vTKsN5E9jw7DK63y+NCGY7vvAw=;
+        b=nGJg517l6V4UWgTEodc72v8VfS3oS/FjYTWt2aVCEIGe8HGcMUTpha8hBw4I0oDTa0
+         DwajsHuF9qquFnp+MMRmVxPfbm1mWmFRIeMyGyDq81oYYrjvtQxm8XfkPj/VjVjag0T+
+         USr0sLv74EC/S3kd3dlaiLqT6nJnQC7S4VL9c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733888611; x=1734493411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4cH1mM7zgDjQ29maw8yzbllsYQuAR43E0lxlHNTTv4o=;
-        b=vcneptcffBGAf+MG9RBQXqUl1oM0WCSdhXgAzl1QlYl0Ar4Dnhk3Na60fNTJye4caO
-         NntyHN4M9FbVLlvXYHYCYVNMtFLp0E8egERqo2LBAHlvtkB+qpmujWV6345H4QQliZti
-         jp3eZZth6xXjpaDbcjt6zgcw6an3wkxO26VpONv5V2hy9szZjynEoIJ0KTe7yITmqxD6
-         Ue1HmDhNNaEwkB9AKOgIIP1KDR+raF1ryOs7F+gqnsmurAK5kzrI3qgOYqs2pSaqx+P4
-         uPPfW04+I2YaUib+CLbOSceo6bOiB9/y7ePv3UWa3Y7t+QFjFizz7farWQr7G3G6XmWf
-         w6lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcBXdpNS1c3iRR75UinMkLT7u5espjdGIsWzUgCQg+ibPXM2O3dKnt3UsZFsDZJN+OaWjnkKKrs9ev2vf4@vger.kernel.org, AJvYcCUfoKU+EF5Lf+T2nJAam/ARkbis7WLhNP4cSsfPuH9/KDSeOghqGmW93lKpTZjVJEuwmtyruuOqnM5LEq38@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH61F694lsp+fhvQ6RkTVVsPPK8mH7zM9+FQH2ibqQ2FT3b7WB
-	zVxpwYFpk87pjyc8MEVtIffNmtwuMwoUUf/uFHxLPfQDqQmzuEOKKEMYZ2aKgFYi1Y+UzTbg7UZ
-	zzWmkRRBQPta6DNRnfaSwAVWnP2qdrg==
-X-Gm-Gg: ASbGncuYkSah3jrLKyMzRmIKf6U8XTO53mrzcVuLFuuOIfgJUiGDsyNPWTGy7gAi7S2
-	mFD9KWAY57am8Cw/OiDc8Z4Q3YF6URrSMobc=
-X-Google-Smtp-Source: AGHT+IGyFs2ybV2TpGqUFfLsmDGPrsekx8uabC3DOBZW5+y8ecKLujGvlTe7kk+e78b8/IN04qEwyEGNin5DhKkcZs4=
-X-Received: by 2002:a05:6e02:1d8a:b0:3a7:1a65:2fbc with SMTP id
- e9e14a558f8ab-3aa0933d97dmr15169745ab.23.1733888611229; Tue, 10 Dec 2024
- 19:43:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733888632; x=1734493432;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Ay9jjGFrKSAl3bI/vTKsN5E9jw7DK63y+NCGY7vvAw=;
+        b=MfviVkl5+vG/DimOI6X5I1eXurLTMdGn5FKeLEMk6QCayZPRsInPIy0QHRyNK0lcmG
+         W/y8Gblq8XtWZCrNzqow0UlZUMmekILE16/aqsu/sdQ2qjaTPY5k3/FaUG+b7BA1Xv8m
+         h7HmpSg6uf3ZfXgjVLvDAoAfbUdNh+cJD9TVQ5KnnLDvvs3hqCBKTHrEmXyfAf9lMu8Z
+         +NRntxIdCJ0D5ZQeHAj0W5dwLrs3+2Qtwn/gL2TW/Pc6lF+2O7ZKrwbL2uvv5OwFnFzx
+         eVQyx6xftyR/Rh5Bc0jBykyIYXYHNxvHvEjogat1uHOFUUz//wb81bM9A0b0RmBPOvWt
+         cqnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpM7irJSI7/kuUzO4KeFEdKR4Rp8U9B270Y1k8m3WPL9+BcTeR0zDv0Tk0sGE4xIHRXVX9SpS+1F8WWGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtwByyEXdrH9PlxSRw65ON7WkSO33+ri7RyVFjE7B002h5CD7/
+	M+S53m7w8nlzlwmRTV21jCTNvXYxqou+shtwHUn0dZzAwitt3Uvy/FBYTxmCR63HWLBZd1mH7a4
+	=
+X-Gm-Gg: ASbGnctR+opkhz+hEV/PVdsE1vteXIa80JxXb9QIL61Z5N29PHC7c37oLcuTKoovzBs
+	G5Om5AjptmkTSc47+l7H0GlBPSHpK1VIOdTK1gv76SOZdEhPx8XmLnnq3auTXrijogdfG2YAv7w
+	7bBCURoU/ZUT8PU5HGjtSnrRc8X87W/PZn+one3adbot/TCxmWhSstW2cKZFKGXzdAKquh3td1N
+	1abHzdQIgisgqOlkrxSfFFwczItVh8vn7MM4qRv32Y7Bm0P5ioa8cby3A==
+X-Google-Smtp-Source: AGHT+IG7fmSiS1eRU5dgXKaz1kWycM3+vaUeoUL62BZ1R6/arQU36zJoWoargKVw37KjdCddDfFz3Q==
+X-Received: by 2002:a17:902:f60e:b0:216:2bd7:1c49 with SMTP id d9443c01a7336-21778535677mr27648725ad.29.1733888632547;
+        Tue, 10 Dec 2024 19:43:52 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:4d97:9dbf:1a3d:bc59])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f26c6csm97547695ad.233.2024.12.10.19.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 19:43:52 -0800 (PST)
+Date: Wed, 11 Dec 2024 12:43:48 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] zram: cond_resched() in writeback loop
+Message-ID: <20241211034348.GA2091455@google.com>
+References: <20241210105420.1888790-1-senozhatsky@chromium.org>
+ <20241210105420.1888790-2-senozhatsky@chromium.org>
+ <20241210165456.288ed82b8a66a08ac36a4d15@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
- <CAF6AEGtKfWOGpd1gMfJ96BjCqwERZzBVmj5GzmjKxw8_vmSrJg@mail.gmail.com>
- <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com> <iyknardi445n4h74am22arpgc4vlchh6z6cvkbff2xg76pd655@nozwz7snt476>
- <1219b46d-2aea-4377-a8ca-024039ee1499@quicinc.com>
-In-Reply-To: <1219b46d-2aea-4377-a8ca-024039ee1499@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 10 Dec 2024 19:43:19 -0800
-Message-ID: <CAF6AEGs4EebrwyQZviNXqB2=3h2wgZpmbrdGHuEU4z1D014GRA@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Pavan Kondeti <quic_pkondeti@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Elliot Berman <quic_eberman@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210165456.288ed82b8a66a08ac36a4d15@linux-foundation.org>
 
-On Tue, Dec 10, 2024 at 7:08=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicin=
-c.com> wrote:
->
-> On 12/11/2024 6:43 AM, Bjorn Andersson wrote:
-> > On Tue, Dec 10, 2024 at 02:22:27AM +0530, Akhil P Oommen wrote:
-> >> On 12/10/2024 1:24 AM, Rob Clark wrote:
-> >>> On Mon, Dec 9, 2024 at 12:20=E2=80=AFAM Akhil P Oommen <quic_akhilpo@=
-quicinc.com> wrote:
-> >>>>
-> >>>> When kernel is booted in EL2, SECVID registers are accessible to the
-> >>>> KMD. So we can use that to switch GPU's secure mode to avoid depende=
-ncy
-> >>>> on Zap firmware. Also, we can't load a secure firmware without a
-> >>>> hypervisor that supports it.
-> >>>
-> >>> Shouldn't we do this based on whether zap node is in dtb (and not dis=
-abled)?
-> >>
-> >> This is better, isn't it? Otherwise, multiple overlays should be
-> >> maintained for each soc/board since EL2 can be toggled from bootloader=
-.
-> >> And this feature is likely going to be more widely available.
-> >>
+On (24/12/10 16:54), Andrew Morton wrote:
+> > Writeback loop can run for quite a while (depending on
+> > wb device performance, compression algorithm and the
+> > number of entries we writeback), so we need to do
+> > cond_resched() there, similarly to what we do in
+> > recompress loop.
+> > 
+> > ...
 > >
-> > The DeviceTree passed to the OS needs to describe the world that said O=
-S
-> > is going to operate in. If you change the world you need to change the
-> > description.
-> > There are several other examples where this would be necessary
-> > (remoteproc and watchdog to name two examples from the Qualcomm upstrea=
-m
-> > world).
->
-> But basic things work without those changes, right? For eg: Desktop UI
+> > --- a/drivers/block/zram/zram_drv.c
+> > +++ b/drivers/block/zram/zram_drv.c
+> > @@ -889,6 +889,8 @@ static ssize_t writeback_store(struct device *dev,
+> >  next:
+> >  		zram_slot_unlock(zram, index);
+> >  		release_pp_slot(zram, pps);
+> > +
+> > +		cond_resched();
+> >  	}
+> >  
+> >  	if (blk_idx)
+> 
+> Should this be treated as a hotfix?  With a -stable backport?
+> 
+> If so, we'd need to explain our reasoning in the changelog.  "Fixes a
+> watchdog lockup splat when running <workload>".  And a Fixes: would be
+> nice if appropriate.
 
-It isn't really so much about whether certain use-cases can work with
-a sub-optimal description of the hw (where in this case "hw" really
-means "hw plus how the fw allows things to look to the HLOS").. It is
-more about the hw/fw/whatever providing an accurate description of
-what things look like to the HLOS.
-
-I'm leaning more towards the hw+fw providing HLOS an accurate view...
-and the fact that that carries over into other areas of dtb (ie. it
-isn't the only thing that slbounce needs to patch, as I previously
-mentioned) reinforces my view there.  This seems like a thing to fix
-in fw/bootloader tbh.
-
-BR,
--R
-
-
->
-> >
-> > So, if we can cover this by zap-shader being enabled or disabled, that
-> > sounds like a clean and scaleable solution.
->
-> I think we are focusing too much on zap shader. If the driver can
-> determine itself about access to its register, shouldn't it be allowed
-> to use that?
->
-> -Akhil
->
-> >
-> > Regards,
-> > Bjorn
->
+Good point.  This fixes commit from 2018, I guess no one runs writebacks
+on preempt-none systems, but I don't see why this should be in -stable.
+I'll send updated patch in a bit.
 
