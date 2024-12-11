@@ -1,263 +1,371 @@
-Return-Path: <linux-kernel+bounces-441413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84529ECDFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 669289ECDFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCE9516AC89
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7438316AB6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A5223694B;
-	Wed, 11 Dec 2024 14:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266D32336BD;
+	Wed, 11 Dec 2024 14:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mZObXEFT"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2046.outbound.protection.outlook.com [40.107.100.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8eFhFY0"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C40236938;
-	Wed, 11 Dec 2024 14:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733925887; cv=fail; b=St+lrjxVMyXYJTwVkw2m/TC/pRuvavVU916vJULiHTsrN+liE+EphyrDQVfk/bEzAFpcBz3dpuryhQ8Y9aHt1DeJqXH43WCaSd5FlX8hFnga/HiFZxBhSszsc6zlkQm6D5TN+zUxrOKZxmlbPdszJtdh2eUIa5szdnx4bAjbHuc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733925887; c=relaxed/simple;
-	bh=gdkQli2PIrhXO8cWuvVeXeELGGsmGoD4r+j7n3AxLkM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LywOZhnWGH2QEyRGnPVbUXiOuNZGDace8PoR+0BhHYJNGStCOj1MqdQ2pQuVviyOAQoZc7Gzo90toNMepoLYlVMqcrFsfMPpqol0XHr37YiRIZf6IB71qxSrNXGFrTo0pGwF8H/KplqoYUr09dfKhyhvk2DZa9uSfX/0ssX5n6k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mZObXEFT; arc=fail smtp.client-ip=40.107.100.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wVV5a3BA75Gd5MI7oDgkj276Qk5e4hWOUSqNw1qqV8nHjMycHu+1P4AsXUZFp9beagW1MrcwVdBR+96GV1K69H0ojfKw4BnpTvEcauvjrrf+gloNbj2RJ+6bTsASAW4h6CXnyFpR3Fwl6vsE1rDiuIUXqAd1iIlRRisOJVTLbuOBcpOltkwtz0Z9czkFFw+pkHYDPUvkhyWkxuzRcijZ9aBfYT8g/UfebArXGbnv97+sWcD0uqVtBAqoeO1ZxaDIPrhUeonDl5F5HJQuzHP3DMeQxKPjaGE/sLbrPJBRYORS+S+kLTl/oMB2eP7Klu+OoKhNglbSvJ3/etbT0UztDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SvwiMYvFWz94YGz1OTLJvAJ1VyxaiP2jEdIJA0x5qQ0=;
- b=IAWVPTFIuHmnNh1RQhy3xM2Zr7Mv2+DBy53cfvOlqYPsZQkifF+6HSgCnZHFbzzphcEqrB7ZmSynFPmEGJCfc3a+iS8yM1vRoEskIjcynbNgDARVFvFJqocIfbpznX1w8AHFC2fK+Y7BLH6hZM1btUZm2YpPni2kNtfe/9+9Ea+9IlKJAa4kE8TRILATrjnzKWSBGmm4tz/X3YkB62278/31n7tumN2XKPbdA7DdL2F6WDFIYfBxp1Ne4lSGpubYA1uegEFnoea/8ZLRUAUxW5JfVwLeq78cwwyXl5LQfXDZaNshkw6Gjaij3rw86izri/XWSisl6XLTCrWIiEcguw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SvwiMYvFWz94YGz1OTLJvAJ1VyxaiP2jEdIJA0x5qQ0=;
- b=mZObXEFT3d0cm9zp6eARMvIPsbVeCT8WGQtvlmpUpaVxR+fRfCBaVbhikTMgteHG3zQC4ns/3hNma/j0zRC9uYu6yqAIWcfiT+CvOw3k+yx9xbQnhZl0SGPKuiq10WTIRZBh8pPwFlJDJx+y89bu66KqymUm+7BeGd3BNuXD7Zw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
- by MW4PR12MB6976.namprd12.prod.outlook.com (2603:10b6:303:20a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Wed, 11 Dec
- 2024 14:04:41 +0000
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30%5]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
- 14:04:41 +0000
-Message-ID: <344eb4b3-1073-4c65-a8ba-fee943776627@amd.com>
-Date: Wed, 11 Dec 2024 15:04:28 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/15] ARM: zynq: Add ethernet phy reset information to
- DT(zc702)
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
- git@xilinx.com, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-References: <cover.1733920873.git.michal.simek@amd.com>
- <9e18d59ca339804320d2a5e3c7362aefa3bb7c99.1733920873.git.michal.simek@amd.com>
- <8395fb6b-d7a5-4e2c-9eb3-4984b8c775c4@lunn.ch>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- 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
- 3i3l5DA=
-In-Reply-To: <8395fb6b-d7a5-4e2c-9eb3-4984b8c775c4@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR07CA0245.eurprd07.prod.outlook.com
- (2603:10a6:802:58::48) To SJ2PR12MB8109.namprd12.prod.outlook.com
- (2603:10b6:a03:4f5::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50FB236906
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733925909; cv=none; b=cexeXh6wZcUNArtkkP5ebplXHBlCod3ynSl1X+X+VjerL/HwdtO7/ZQIGJPvO7FqwqjDyHXIG+v4RagQbRDkrgmxpGblDasQU2c/nrXVXNFBWG7nxq+kysI6s1mzYIB56OVADWiucK+2dGvveAXtWkzmCc7mS4HI08npyI4PrKY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733925909; c=relaxed/simple;
+	bh=8uxRDDa1ZrtEWRikgId2kWfLFhA3SOQppnPWVAk7eDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ComejnrEYMZ33zjfDFMTEEWioAZyEeaAx12egEd+o1N8ZUdccyN4mpFRim4I/m2Rd0QXsgyg8cXcmNpxiKABEOVhLexWZfhxyL9ud/HJ9Hbo21/xQ4rGVqLZWMgVczvjeFr+C3DwCCien5E5VeVTRZfKv43v1H1Bi9UlUbWgDDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8eFhFY0; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3003943288bso51113221fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:05:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733925904; x=1734530704; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=il8+9vjQz+0CNwk2YpjhN7coIV5zrH9Hso1s2Wky8S0=;
+        b=s8eFhFY06gE2wwFboJ9UdlEdhqKi6FHU7n3uW41JEgtF2pqOg3QIkZyOtYxzf0YhNe
+         6i20Nb4jN3EFehDcAYb9/7LKtTVAfneJVOFaEVNhpPjm/Ka2UDOGvJzuQZVFr1jny6UQ
+         a4jnKdrv6sa3E+S+yIHTmOWFwwpZlKMt+V+A2nsODtxrtcv/VC1n03EMflL33maXKf5+
+         woeRv8H1h6s9v04jyYhLnc/Oi0Q9xEusKfTZPdvwnAw6NSPgntc3j13zZhvb73RI73iv
+         xK5GlwOuMJYbtoX2icls0LlOBhOoJ5giEQ9YAGpeBQGveQHzNNcXXvvjWQO61OEKBt32
+         /tIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733925904; x=1734530704;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=il8+9vjQz+0CNwk2YpjhN7coIV5zrH9Hso1s2Wky8S0=;
+        b=sBeoQVB8rdELyy03GBSfCrTe5GGnuTxGOZSym2VFfXH+tdRf7OvgB6gcfRFnec6lio
+         sGkyJhYs/A0oRu9h0vyRomFnTANxzkTSZPlaMJUllJSz49rn7JL8Bhp1JNYdQflJgWp9
+         6UVEWtq50VKdxyaDTX4F+mNyI17QwOj4rA/SrSCVwFM8z2Mx8XxK2gepGG2g9lPFFE9B
+         GD4/sTupvLbbGVuGvs+N+jOg8DVbffOTPRYXDr1GfQ+sCMxA385nbD8BpvU2um8b2EVt
+         HyBuOIkqCIPeUxcYTh/BIT2gkx23KvdvgbNMWyIoRfSWZC40kuFvHedJqboa0jpzeCT/
+         sNNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJyxPMKxiTd460Ei4g55P3ymFlqZvF6zuQfPLHSqt7l9WBfmazEXZyqP8EfzQtIbAnNMtq9oHYBgm855A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Buc8uauqEgHLZn3+/R8a9OI8m/dMPMY471bG/bihwf/aINkZ
+	lCtEuW3DR+99DXYGldId72AnSaoyhdHmYW2pzqHCraW5HUPW/Y2JgIGSIiAeViQ=
+X-Gm-Gg: ASbGncu5rQPlyxzfOvIgT282F6HN4AG1XJE3B4qMOaGn7qMLSwlGNPoW3hfL8Z7FTED
+	qeE7BkkFgy55nTwyVsy39CSStPydS+fdYOPa6SqxQ4ssAo8lI3ebLQYFROeJAW8fu9r0aWWWOXj
+	ga3znOjBGsH3W4k74j5W2gp6QAm20Odb9/KPL93sS6YYaSCDR7mBHqeRgrH/bRmftq9eLrb/sOn
+	Zzh06QRapxKY4YfmF7sX9+djuSygzLP8tRUqkDoDyEh9TJqE/RTvd5AjVJTrgVhrsm66P8queuG
+	7rounEA6EawlIaBcSswe
+X-Google-Smtp-Source: AGHT+IFRBij+feIMREHq2gXiREyAd6JxtEPmcIQ8OM73icqJN5D6gRtYHPA7dg913pOv8z8zgawRZg==
+X-Received: by 2002:a05:651c:154e:b0:300:160f:7c76 with SMTP id 38308e7fff4ca-30240d89514mr12681681fa.25.1733925903243;
+        Wed, 11 Dec 2024 06:05:03 -0800 (PST)
+Received: from rayden (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30041e2d03asm13756101fa.58.2024.12.11.06.05.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 06:05:02 -0800 (PST)
+Date: Wed, 11 Dec 2024 15:04:59 +0100
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 08/10] tee: add Qualcomm TEE driver
+Message-ID: <20241211140459.GA471738@rayden>
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+ <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-8-f502ef01e016@quicinc.com>
+ <CAHUa44GqyaouPquw+DE1ASRwVOBw5xDstcpaNpmLmQbXmp6CuQ@mail.gmail.com>
+ <62f80fb7-ea13-4ae1-a438-8d6b2d5a2f15@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|MW4PR12MB6976:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01586b78-3b23-470f-bd61-08dd19ecc1e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bWdxeEg3SHVOTmtUN2VuMy9HK0JhZ2lvekhpaXlNbytZR2d1NjNRTW1SdmtT?=
- =?utf-8?B?dkpQRzBWc1d6RG5zempCL0hieTNORjRMNkdrNmJYdHdveXAyRnVtN1pRVjdT?=
- =?utf-8?B?VThUejlKWXg0OHpDbnBSMktXd1AyUmg2Z2k2ejJjNW0zREFCZTh3Ui96RDlu?=
- =?utf-8?B?KzBPY0p5Y2hSeFp1eWl2c0NJQk9Xc1lyVGpFZXBRaVVLbyszTnhMeXR5WFJi?=
- =?utf-8?B?V3RMQlhMTnFnajJZVUpGMHAzYjZvS053cU5vK0NoRk9XQURlbHpMbVJ1cVJK?=
- =?utf-8?B?MXJEZXpFZ1QwRnVBZzBaa3N5VWtFcUFLNXROanFMTUZpcGlpLysyb01FUzlE?=
- =?utf-8?B?ZXBFOEZWbDc4SkwrZmlvYUdZZEo4bUJmK2ZoVkJFWk1aSW1HMXFzZGRQNFZs?=
- =?utf-8?B?Z3JSMG04V2NXU0xkSHhlcUtQUTE5WEszS1FLcVlteU10Wm9idWVIU0JwTHU5?=
- =?utf-8?B?bnJYUjc0cUo0QWFWVGxianJoZnBsSXJPdFY3RDBGOVZGL01tSURRdEI3MlNp?=
- =?utf-8?B?dUtLOUpvVkNkcUxpR0dPNkNzS2Z3OGoyUTBKZGJBcUdtL2FQNUFUR3k1aFJm?=
- =?utf-8?B?SUlkeXFBMGsrQ25Pbm4wejQ1bVBtNmJiVWx3dS9xRkc2OGxHQlpsdVJwR2sw?=
- =?utf-8?B?ZFU4R1NicStsUG8zZExlMUNaeFdBNHJTQlVmcStLUlI2T3hXbmhSM29lU1Fz?=
- =?utf-8?B?cjFyaW1mdEt5OTF3SUliRjZHU2pYL3dmMDJhOW9BVjBTc3ZTTEJ0dVp4ZHVo?=
- =?utf-8?B?d1ZLbUVTUjZuNk1DT3RzSDJiQXpkL2VqK29yT1lmZStXNlNKRzNxdEwrQk1S?=
- =?utf-8?B?MmhnaEJlTGRKdTIxSHhyb2x3Si82VmgvRzJvQ1oyZDQ4UnF0ZWVkaWVGdGJx?=
- =?utf-8?B?dzhWS3RpVitqcThGbTJVTlZKckovQVFZQVBFdi80ZkdMNWEvclNEeEZkbzRz?=
- =?utf-8?B?RHhxazVSWkQ4NkdYRFU1eU5HeEtTczVwa05WL282eFplV2VyTnN1K0ZGWGpN?=
- =?utf-8?B?UjlZcGM0cVQ3RU1pSDRqd01FcjcrRU9pMDVKNkRwVGhnZm5NYkZ4T1VxYzRm?=
- =?utf-8?B?STdrUUxBYlZ4bjUxejdjWHlIbUdiclJycFc0ZURUbDlNOGhGM2J3WDVDeXo0?=
- =?utf-8?B?QU5TMVgweXR0c1hwVlJsd0xkcGdON25sM1gvSk1tNldUUTUvdmN1bHg3MWhq?=
- =?utf-8?B?WlBKQ3Vya04xMmZpZGJOcXN1a1UzelduSGczNkhBYzJOSzdQSEwrbVorOWw4?=
- =?utf-8?B?VWRTRjZVaTIvMGg4a05ZbDQ3WmVISU5JSWlzbkx3SU9TeDF3VXBJRVd3SEVK?=
- =?utf-8?B?TTlWSEMxRnB5YmZzV3paejIrSWFXTEszQlVvSWJWVDhnSTRiOEZOdTRwWVk0?=
- =?utf-8?B?eFVTbkcrYmZJTFlUd3VSM3k1ejI5dlVUaXNtcmFGL2FUbjVSc01sVEU5ZE5Y?=
- =?utf-8?B?eGhrdTFJNmFyeXRzTTFCQ3QweXdHZWRjakVSVUc3MGh0Z1N4alBrWEZTc0lo?=
- =?utf-8?B?K08xS1AzcTFwVUdBZmw5UHljWWlYT0NaV2Fqbm5YWkEyV1FET3JaWHBiMUV6?=
- =?utf-8?B?dGV4OWNlTEEvVDZUWEFBb2N0czE3VjJ0cDJzUDdPOUdkN3U3UGlxaG40Rjh6?=
- =?utf-8?B?b1FRWURqenVBMGpydGZlR1VwbjVnaWVJMm50ei9vRkxDbFA5U2s2UnZrdXU4?=
- =?utf-8?B?U2ZNS1BQeHpoQS9GZzBSY2w2NlB6MDBNN3NJNUllVVpSK0RqOERSbmFkb0oy?=
- =?utf-8?B?SDdGdDNlNUFHMFF3TFVSR0c0OTdUcGZFMTllaVRDY1VSMm1VZlpiaGJnYjNn?=
- =?utf-8?Q?rfDflSSTVyv+Mjql7S0KuwO/gphwlVEjw2vcw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NzFBbXBpcWNJNWl6cVl1WmtpL1RQb09BWktqazc1c3JnRUQzeUNEb2h4VkNp?=
- =?utf-8?B?VldiSHlmZ0pvOEZTK1dPMWl0ZzNMbC9hZ0I1WkRxaXJoQmlQYjNKcWxUNGlL?=
- =?utf-8?B?T2JtVXNKQUFEanRlUFI5YVc3SlVLa0FqUEJtandNTThlRWF0QkJ4TmJFUmls?=
- =?utf-8?B?bWFMZ3pvRFhwVXYrSGRjKytEb3Z6dmlJYVMyd0JkUVdXMHVINDFYMzhRZFNa?=
- =?utf-8?B?aFVYWDhjWHl6aUJzMHEzbHRDdzc5aVVDYzhYNGNnMzVjLzdnNW5VMkU1VjNU?=
- =?utf-8?B?QlFGMFM5NFhwb2NMK0pFeFk0NzZYd3NLM2RPTVE2d21LSElCd2UzV3d6a1hQ?=
- =?utf-8?B?NVdyQk54UVhuajIzQ3JBTmNxejhNL3dsa0xoeGRZYWIwcXk5Vk10eStEV09I?=
- =?utf-8?B?Q2h3ODg4QWgvaVhmeUtxanB2U0FJMXVoYjF4akdCTTJ0OWRCRW5UY09Tanhw?=
- =?utf-8?B?MGhaQTkzdFhjV1d1eXB6a3dMck1DSEE4WFJjUFFEUmk3dXg4RVhQNDlZdEVU?=
- =?utf-8?B?SU8zMHU5aFdLREZ1QkJYZWxJOFoxbmZaSEpxeVZ5cS9tbWlUSnMrUGh2Z1A3?=
- =?utf-8?B?aDNrSXN3NzV3MXVIbEZzR01MajN6UW5GcGNhOHRDVld6aUhBd2NWRjZvUStK?=
- =?utf-8?B?MExma3owRVZYM0J1MjRXWEtsMjdrYzJOZ2lqRkZGZzNWSWlxdkVrdGxLdVR1?=
- =?utf-8?B?ZXhrcnJHZXhBVHdyOTZsMng4QkpvMDFyTDhSb3FMOVplZzJSYTZFSXdsTlVO?=
- =?utf-8?B?RzVaTXQzR3IxL1FXRTdneXBGTXNBN1lic1dIS2w5ZUQveWFtMUtxdjV3cUtR?=
- =?utf-8?B?S25pRTEvSHFNSXovZktWRGsrbUExRi9LVU5aUUMzcDNnOER2M3krS2VqT3hl?=
- =?utf-8?B?STVVb2hWdXdGUm9KcEhWWkZqRVlzMDZ3Z3dJS2F5NUtxL0VzdTlMS3VBQW9R?=
- =?utf-8?B?TTArQUwvTlVWUllkUFBwOHhqam5NZTk3YWdtQ2p5ZmhmRHN6QUc2a0RubENm?=
- =?utf-8?B?akdUZ1Q5Rm0rMDYrdTVXRWpBaG00TGRYeVR6UUE4MHFoZUxkZFJoWnBYMWlU?=
- =?utf-8?B?RFB4enJ1RDU3MWg5c0dxSEx5Qm9kM3VOTHhKMytXeXdqdVNOS0xMVkJ5eE5v?=
- =?utf-8?B?S29TazdxL3F2ZGFlRit5SlFOY0hmWnMyUjVucVRFUWU3RzVQRFRwQ0x2WC9G?=
- =?utf-8?B?dEZOQkN6SzVpeHlGSmdNRDJicFFmc3lDcVpXVU5LbHliUWxURnpMYTIyaC9E?=
- =?utf-8?B?NGtSTHNoWTBMRHBvTE5EQjhJQWRyYUs2aHVSQ09COURwdEJDT1dEZlRqWUhO?=
- =?utf-8?B?MnZnSjFBS01ZT1RTcWxSQXJLWkNtSi93cnB5OU50ZGhhWXMyNzNUN1Avc2Rk?=
- =?utf-8?B?TXIycERaUFdqVUxTeEJINlVZUkM2UmxWOXNJSUJVNmJHMzBPdUhLWC9zRnFN?=
- =?utf-8?B?NDV2b2ZDemE1MUk1azArVGorbUJMVnBIemZIeFBCelcrZVYyTmh4VW5mb3Ur?=
- =?utf-8?B?ekJJaHpyb1RRY3phMVJwN0JzZ0UyeGlKREZHVm5QWWRIUU1mSHRIaWRlN01X?=
- =?utf-8?B?Q2tzbmFReUlQY04yUnlha2NaZzY2Z2p6NWp3TTdKQ0d5bXdFVmp4bktqZnRh?=
- =?utf-8?B?WjA1YnY4T1lSd2laSTVCem8rajg4Z01yMm8wSlcyaGs1SVpDZmcweTZpa3V3?=
- =?utf-8?B?WTRHeTcyRTZLV0xVVDZNNlA3TGhhdTZCZ1NvQVI3KzFGdlBsVE5NYjh0MFdH?=
- =?utf-8?B?ak1QNlBlaE5wcmZmT3BQZ0JFMzZybmhDYXZwTlhZUWlSU1owNDVmdVBXSGMv?=
- =?utf-8?B?R0NNRGpDOWpvM3NUUXZaazhQZHQ5YTBMQ3d1RjdmcXFHSHhZWjcvU3B6U0NL?=
- =?utf-8?B?Z3dmWnF3bzNOVUJmTkhSSklxN20xT1BneWRTRTQzdEk0Yk1WZmNVeHExRE85?=
- =?utf-8?B?RWdOb1ZKenNvUVZVTUlOaHpzVGpBQWk1TTRSRVFIRW5TS3ViOTVKanF3RWc3?=
- =?utf-8?B?UHV5cXZHMCtzeVM5dGx6RDNicnFyRXRCa2J6M0tOZVEyQU9KaTJhV2xOU1N1?=
- =?utf-8?B?SWE4YXJiTHpkcXI2c3BCUVl1MkFkdnNQQ1V5NFRyQ0FBMGMwdk5TcGYvcmRi?=
- =?utf-8?Q?ZB+xvD1goMjkRxV7z0RjSuoyn?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01586b78-3b23-470f-bd61-08dd19ecc1e7
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 14:04:41.6086
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gLwEfL2Wujnv42uSjuwe03XSvaXqVjiHsys4Vgf506O+ElGn0K4udONtvWsaP3Ry
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6976
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <62f80fb7-ea13-4ae1-a438-8d6b2d5a2f15@quicinc.com>
 
-Hi Andrew,
+Hi Amirreza,
 
-On 12/11/24 14:45, Andrew Lunn wrote:
-> On Wed, Dec 11, 2024 at 01:41:26PM +0100, Michal Simek wrote:
->> Added phy reset gpio information for gem0.
->>
->> Signed-off-by: Michal Simek <michal.simek@amd.com>
->> ---
->>
->>   arch/arm/boot/dts/xilinx/zynq-zc702.dts | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/xilinx/zynq-zc702.dts b/arch/arm/boot/dts/xilinx/zynq-zc702.dts
->> index 424e78f6c148..975385f4ac01 100644
->> --- a/arch/arm/boot/dts/xilinx/zynq-zc702.dts
->> +++ b/arch/arm/boot/dts/xilinx/zynq-zc702.dts
->> @@ -79,6 +79,8 @@ &gem0 {
->>   	phy-handle = <&ethernet_phy>;
->>   	pinctrl-names = "default";
->>   	pinctrl-0 = <&pinctrl_gem0_default>;
->> +	phy-reset-gpio = <&gpio0 11 0>;
->> +	phy-reset-active-low;
+On Wed, Dec 11, 2024 at 01:30:22PM +1100, Amirreza Zarrabi wrote:
+[snip]
+> >> +/**
+> >> + * struct qcom_tee_context - Clients or supplicants context.
+> >> + * @tee_context: TEE context.
+> >> + * @qtee_objects_idr: QTEE objects in this context.
+> >> + * @reqs_idr: Requests currently being processed.
+> >> + * @lock: mutex for @reqs_idr and @qtee_objects_idr.
+> >> + * @req_srcu: srcu for exclusive access to requests.
+> >> + * @req_c: completion used when supplicant is waiting for requests.
+> >> + * @released: state of this context.
+> >> + * @ref_cnt: ref count.
+> >> + */
+> >> +struct qcom_tee_context {
+> > 
+> > Other drivers call their conterpart of this struct *_context_data.
+> > Using the same pattern here makes it easier to recognize the struct in
+> > the rest of the code.
+> > 
 > 
-> Hi Michal
+> Ack.
 > 
-> Could you point me at code which actually implements these two
-> properties.
+> >> +       struct tee_context *tee_context;
+> >> +
+> >> +       struct idr qtee_objects_idr;
+> >> +       struct idr reqs_idr;
+> >> +       /* Synchronize access to @reqs_idr, @qtee_objects_idr and updating requests state. */
+> >> +       struct mutex lock;
+> >> +       struct srcu_struct req_srcu;
+> > 
+> > Why do you use this synchronization primitive? I don't know enough
+> > about this primitive to tell if you use it for the right purpose so
+> > perhaps you can help me understand which properties you need.
+> > 
+> 
+> Sure, let me explain it bellow in the qcom_tee_user_object_dispatch,
+> where it is acually used.
+> 
+> >> +       struct completion req_c;
+> >> +
+> >> +       int released;
+> >> +
+> >> +       struct kref ref_cnt;
+> > 
+> > Why does this struct need a different lifetime than struct tee_context?
+> > 
+> 
+> This is a side effect of how QTEE objects and callback objects are released:
+> 
+>   - When a tee_context is closed, we release all QTEE objects in that context.
+>     QTEE specifies that object releases are asynchronous. So, we queue the
+>     releases in a workqueue and immediately return from the release callback,
+>     allowing the TEE subsystem to continue.
+> 
+>   - When the workqueue sends a release for a QTEE object, QTEE may respond
+>     by requesting the release of a callback object or an operation on a callback
+>     object. This requires a valid struct qcom_tee_context. That's why we keep this
+>     until all callback objects are gone.
+> 
+> The alternative is to keep a list of callback objects in this context and
+> flag them as orphans. The refcount seems easier :).
 
-I have tracked it down and it was only used from 2016 to 2018 in Xilinx 
-downstream Linux repository. After that it was removed.
+It would be even easier if it was already dealt with by the TEE
+subsystem. :-)
 
-If you are interested
-https://gitenterprise.xilinx.com/Linux/linux-xlnx/commit/6f43a25c416e532530eaed897acff6f5249907e4
+It looks like we have the same problem as with the tee_shm objects when
+the tee_context should go away. Would it work to add another callback,
+close_contex(), to tee_driver_ops to be called from
+teedev_close_context()? The release() callback would still be called as
+usual when the last reference is gone, but the backend TEE driver would
+get a notification earlier with core_contex() that it's time to start
+releasing resources.
+
+[snip]
+> >> +/**
+> >> + * qcom_tee_supp_pop_entry() - Pop the next request in a context.
+> > 
+> > When you pop something you'd expect it to be removed also.
+> >
+> 
+> I'll rename it to more apporpriate name.
+> 
+> >> + * @ctx: context from which to pop a request.
+> >> + * @ubuf_size: size of available buffer for MEMBUF parameters.
+> >> + * @num_params: number of entries for TEE parameter array.
+> >> + *
+> >> + * It does not remove the request from &qcom_tee_context.reqs_idr.
+> >> + * It checks if @num_params is large enough to fit the next request arguments.
+> >> + * It checks if @ubuf_size is large enough to fit IB buffer arguments from QTEE.
+> >> + * It updates request state to %QCOM_TEE_REQ_PROCESSING state.
+> >> + *
+> >> + * Return: On success return a request or NULL and ERR_PTR on failure.
+> >> + */
+> >> +static struct qcom_tee_user_req *qcom_tee_supp_pop_entry(struct qcom_tee_context *ctx,
+> >> +                                                        size_t ubuf_size, int num_params)
+> >> +{
+> >> +       struct qcom_tee_user_req *ureq;
+> >> +       struct qcom_tee_arg *u;
+> >> +       int i, id;
+> >> +
+> >> +       guard(mutex)(&ctx->lock);
+> >> +
+> >> +       /* Find the a QUEUED request. */
+> > 
+> > Is it _a_ or _the_?
+> > 
+> >> +       idr_for_each_entry(&ctx->reqs_idr, ureq, id)
+> >> +               if (ureq->state == QCOM_TEE_REQ_QUEUED)
+> >> +                       break;
+> > 
+> > Will this always result in a FIFO processing?
+> > 
+> 
+> It not a FIFO. I understand your concerns.
+> I'll replace it with a list.
+> 
+> >> +
+> >> +       if (!ureq)
+> >> +               return NULL;
+> >> +
+> >> +       u = ureq->args;
+> >> +       /* (1) Is there enough TEE parameters? */
+> >> +       if (num_params < qcom_tee_args_len(u))
+> >> +               return ERR_PTR(-EINVAL);
+> >> +
+> >> +       /* (2) Is there enough space to pass input buffers? */
+> >> +       qcom_tee_arg_for_each_input_buffer(i, u) {
+> >> +               ubuf_size = size_sub(ubuf_size, u[i].b.size);
+> >> +               if (ubuf_size == SIZE_MAX)
+> >> +                       return ERR_PTR(-EINVAL);
+> >> +
+> >> +               ubuf_size = round_down(ubuf_size, 8);
+> >> +       }
+> >> +
+> >> +       /* Ready to process request 'QUEUED -> PROCESSING'. */
+> >> +       ureq->state = QCOM_TEE_REQ_PROCESSING;
+> >> +
+> >> +       return ureq;
+> >> +}
+> >> +
+> >> +/* User object dispatcher. */
+> >> +static int qcom_tee_user_object_dispatch(struct qcom_tee_object_invoke_ctx *oic,
+> >> +                                        struct qcom_tee_object *object, u32 op,
+> >> +                                        struct qcom_tee_arg *args)
+> >> +{
+> >> +       struct qcom_tee_user_object *uo = to_qcom_tee_user_object(object);
+> >> +       struct qcom_tee_user_req *ureq __free(kfree);
+> >> +       struct qcom_tee_context *ctx = uo->ctx;
+> >> +       int errno;
+> >> +
+> >> +       ureq = kzalloc(sizeof(*ureq), GFP_KERNEL);
+> >> +       if (!ureq)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       init_completion(&ureq->c);
+> >> +       ureq->object_id = uo->object_id;
+> >> +       ureq->op = op;
+> >> +       ureq->args = args;
+> >> +
+> >> +       /* Queue the request. */
+> >> +       if (qcom_tee_request_enqueue(ureq, ctx))
+> >> +               return -ENODEV;
+> >> +
+> >> +       /* Wakeup supplicant to process it. */
+> >> +       complete(&ctx->req_c);
+> >> +
+> >> +       /* Wait for supplicant to process the request. */
+> >> +       /* Supplicant is expected to process request in a timely manner. We wait as KILLABLE,
+> > 
+> > requests
+> > 
+> >> +        * in case supplicant and invoke thread both running from a same user process, otherwise
+> > 
+> > the same
+> > 
+> >> +        * the process stuck on fatal signal.
+> > 
+> > might get stuck on a fatal signal?
+> > 
+> >> +        */
+> > 
+> > Please combine into one comment.
+> > 
+> 
+> Ack.
+> 
+> >> +       if (!wait_for_completion_state(&ureq->c, TASK_KILLABLE | TASK_FREEZABLE)) {
+> >> +               errno = ureq->errno;
+> >> +               /* On SUCCESS, end_cb_notify frees the request. */
+> >> +               if (!errno)
+> >> +                       oic->data = no_free_ptr(ureq);
+> >> +       } else {
+> >> +               enum qcom_tee_req_state prev_state;
+> >> +
+> >> +               errno = -ENODEV;
+> >> +
+> >> +               scoped_guard(mutex, &ctx->lock) {
+> >> +                       prev_state = ureq->state;
+> >> +                       /* Replace ureq with '__empty_ureq' to keep req_id reserved. */
+> >> +                       if (prev_state == QCOM_TEE_REQ_PROCESSING)
+> >> +                               idr_replace(&ctx->reqs_idr, &__empty_ureq, ureq->req_id);
+> >> +                       /* Remove ureq as supplicant has never seen this request. */
+> >> +                       else if (prev_state == QCOM_TEE_REQ_QUEUED)
+> >> +                               idr_remove(&ctx->reqs_idr, ureq->req_id);
+> >> +               }
+> >> +
+> >> +               /* Wait for exclusive access to ureq. */
+> >> +               synchronize_srcu(&ctx->req_srcu);
+> > 
+> > I'm sorry, I don't follow.
+> >
+> 
+> I'll try to compare it to the optee.
+> 
+> In optee, clients and the supplicant run in two different contexts. If the
+> supplicant is available, the client will wait for it to finish processing
+> the queued request. The supplicant is guaranteed to be timely and responsive.
+
+Yeah, or at least trusted to be timely and responsive.
 
 > 
-> What is more normal is a reset-gpios property in the PHY node, or a
-> reset-gpios in the MDIO node.
+> In QCOMTEE:
+> 
+>   1. There are multiple supplicants. Any process that implements a callback
+>      object is considered a supplicant. The general assumption of timeliness
+>      or responsiveness may not apply. We allow the client to at least receive fatal
+>      signals (this design can be extended later if a timeout is required).
+> 
+>   2. A client can implement a callback object and act as both a client and
+>      a supplicant simultaneously. To terminate such a process, we need to be
+>      able to accept fatal signals.
 
-Thanks for review. This patch should be dropped from this series.
+We accept tee-supplicant to be killed so this is similar.
 
-Thanks,
-Michal
+> 
+> srcu is specifically used to protect the args array. After returning from
+> qcom_tee_user_object_dispatch, the args array might not be valid. We need to
+> ensure no one is accessing the args array before the retun, hence synchronize_srcu.
+> Whenever we read the contents of args, we do it within an srcu read lock.
+> 
+> For example, qcomtee_user_object_pop, which picks a request for the supplicant
+> to process, will hold the srcu read lock when marshaling the args array
+> to the TEE subsystem's params array.
+> 
+> An alternative to the srcu would be to use "context lock" ctx->lock and
+> hold it throughout the qcomtee_user_object_pop function, even when marshaling
+> the args array to the TEE subsystem's params array.
+> 
+> Using ctx->lock is easier to follow, but since it's shared by everyone in
+> a context and marshaling can be heavy depending on the type of objects,
+> I thought srcu would be more performant.
+> 
+> In other words, srcu just moves the marshaling of objects outside of ctx->lock.
+> What do you think about keeping srcu or replacing it with ctx->lock?
+
+Let's continue the comparison with OP-TEE where struct optee_supp_req
+plays the role of struct qcom_tee_user_req in QCOMTEE. You can say that
+access rights to the optee_supp_req follows with the owner. The
+supp->mutex is in principle only held while changing owner. Couldn't the
+ctx->lock be used in a similar way, avoiding it while marshalling
+objects?
+
+I'm open to be persuaded if you think that srcu is a better choice.
+
+Cheers,
+Jens
 
