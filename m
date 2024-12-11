@@ -1,159 +1,101 @@
-Return-Path: <linux-kernel+bounces-441124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8414A9EC9F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:08:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BFD59EC9F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3B6188664B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D16D1667DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F081DF755;
-	Wed, 11 Dec 2024 10:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53051DF755;
+	Wed, 11 Dec 2024 10:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q900rVDd"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OiejW2qi"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCA4236FA9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D374E236F98
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733911676; cv=none; b=Bl0SP6Azxu6a4xEQs7U/ZKSaHgSbJBc+kYI8oivTRzzbPD/9Q5ZJMMplGwFhqHL0U0Hj5j5TFyp0O3jrt13jgUoPGOjpxOWaqPVVrlJcffi2LUca2z80YPCuaUfwdDZ+1MdpiwMHkzbxGrKk3xuDIqmodh0dP03hWSpESwgG8zs=
+	t=1733911697; cv=none; b=uqeaADJ1RBCiTqvTPUOR+uOHi2CRxKLRcaGuc/3Fg+hnQqQbt7Sgo+eZnabHdsUUuQKx4OoqlDkxSoUSDvLt0E5H9YfuWPMYzZPpHk1UVsumE8cs7sqFlmsOpJ+B1YoBd11Nc/X/3DVN37xWY3h1lhLU8WiqF1kAExucjVUlbKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733911676; c=relaxed/simple;
-	bh=IzJHcTYEe6dNyeAoXCkYo1Oyp5gniRm+ej/UyY7tdNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UHDIIhTPcG7CJkrV4ZTv+iaK3J888Od9CjPF7TfPSMs5aCrBobf3pOmo55nytqTOvvRmahIw2fiAFMrYWvkbtMjoLV3Ckyqk6BPeplTfvI/3LnctYosOMhS91yk3/R5X304qND32KWLsAHnSCNxkKY/HVTDJHeI6zec7Gw7S/94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q900rVDd; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-435b0df5dbdso28415e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:07:54 -0800 (PST)
+	s=arc-20240116; t=1733911697; c=relaxed/simple;
+	bh=bqJUjrkI55mmiDYGdlE0rAGK2L5PYVFKaQq0z6N9hvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRV0rYn4YKwkVp7CB8i9axt9Vk8tuC0cv3GbHbtz2jWg3rk/gdA31xbANYQ43MJsWrUlo3/1+868H8V1VtBA4xhQP+Y1n8w7ZfabJ2/w+lqpAdVwH4j8Yv50tHeatRL5xBNNt1Wo+QYtQe5BVh2XM+UZQjcp1rDYFj8CLkEcaxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OiejW2qi; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso371456a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733911673; x=1734516473; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1c2ofmQLNeYYeju/JrDqhCfX9sIwSgC4rLZyCHsseg=;
-        b=q900rVDd5Odql8902tc1eo201XowNQj6kNLhsWEO2S+SuNyDFb1kskc0r/nrAIpCyP
-         ghAb4TFRRMiR6isgyOH29zojClWQS9WjGFwZmsX9fKS5iVIaF2h5iEmWG0kwbQf0wLlP
-         PMST0vzJWV7R783jPWb1sx0rT7sgojUf09GwOMio1v9b2BCgcUzoT/NVJSzD+q1XEVbo
-         LeUhA3pwauvUlj3issB/zn8U9d9R/5ON/xTheCJHd1Blw8ELvlcxSirQF82dzLM6ZzrW
-         EWzSGRSPccbvfMijKREzXlDmwZwZ+CrQZLqurWLkLU0HRiLpwEriaXo9en1cAHh4IM39
-         n1gQ==
+        d=chromium.org; s=google; t=1733911695; x=1734516495; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6vI92TzbYXb83Ifwlj5p+PZoYU+BaLo97B2EHtHKRH8=;
+        b=OiejW2qiL7YH7RWwK3LGZa8/Kb5kOTjYHskVadqgDCLeLUGOgRoM1wtFqCYXOzjoaZ
+         lXUHs/voSUPH1tmVbdChyiPGvAIsKVAep6Lf8G7xHeJeGpeHCd/HM25VJzv4fVXWZm47
+         PYN90TASVhdxK5pf51dMLCGnQ0iT9q0NdEC8c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733911673; x=1734516473;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x1c2ofmQLNeYYeju/JrDqhCfX9sIwSgC4rLZyCHsseg=;
-        b=E3gqlpB4/NIsEfMd8K7aTJo1bIVsx9IzYCgkgUBlWru4ZcWoqhOMtxcWyZv1ezcx+B
-         aoHSRUF0tTBdpIhFIj49OYGXrcGjhV5aA7hE+5Nad4X76hDP1ynmDMi7oXIfsV7unU4w
-         8FXoxAG1BR+zR4YRCeij2h7v883UgrNFLlbvRQPMtmQkMk1p9UoDyv7jwl4F8PceQIWv
-         Xoe9Iga07v54fSJOt2nDJ9imTxk36WPBwJswbwAjpiSWZAVjCKOa0ZPqCkTJlYJnIZls
-         DaIrynkUoY5culfuG1gh3nbGCrTzDezFRd1o/RKz2kKjztQcaknBgIMqb1yt3DvES3BV
-         VwBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXY68MrzS4DVizgrnurEomHf2MXIvvYENNC7PPDNTU1qLh1HWMf5jgMkIPs1mqBPA03QcZJ8tywdNwKv8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9dGLq+6jzINBK5HzRJ+eY+hKDEl+3M5ESMyD3iqnnJxxHZTaq
-	YLYU5MLj45qT7Irp9w3r/85ZRPbyt5QrxIseJsJRgIgwvJhQ+u3vLjLPD1vY3vUlMl6pjHTquAh
-	A9BR//3tEHxZBc7nMoWpDMMGvlFBo5JKF5GA7
-X-Gm-Gg: ASbGncuNLRAT3tCHr6xpooAYzk0Zg7V71tzdSM1wxbuGtObk0R8OQrE0bfx/cZG2ZcL
-	M7dRi6G2i51hW0Atkb9UyX45O4J9lJUN6NPCFJHSR9GlFp4ZEbwgZGoQTuloT4Z9X
-X-Google-Smtp-Source: AGHT+IGEK/kmaBbvJg7dQQuM7x7JBMiV8OyKxexKpfiXpXx2u22fSrw6Y0U2iME6zU8KhU7EMyWrc0PbCi5O2GMxpU4=
-X-Received: by 2002:a05:600c:2105:b0:434:9fac:3408 with SMTP id
- 5b1f17b1804b1-4361c0f4f80mr1026945e9.2.1733911672546; Wed, 11 Dec 2024
- 02:07:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733911695; x=1734516495;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6vI92TzbYXb83Ifwlj5p+PZoYU+BaLo97B2EHtHKRH8=;
+        b=Y0LvLq3y5UZRAGuOAW+6DCz+zk5WyPFL3NNrlnrKtDFS7ePTkB54ieh1HhqXw4AVMK
+         plS69q7KEfS929eE2Ryllu7IVT7tQdU9WxoLp4eU+dU7aga17PedxNHjX6dtz1c/Ocjj
+         LbGLtuNYWjK4WEl2WlG0SGtwH2MhEj22zxCudEbE9FGUDENeDrsK+3HNtXtsNWdjy4Zq
+         u71tc2Ff686IbOrKiNtqp8fTJOGgh3AOtqcprdeeJUcp1uocB5c77Hwkavry6gMN886y
+         nIuOyaY7diSUyYBr1DWcEd2T4OHCgX0RziocmQZ4OaVgn9wOnUJrlZ663Zt2oZXPdL6W
+         8+Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmhdd6mI44dcW1EwXnbmEhqBBTXVLyWqJN7wX5mkQfkz8a0cyD4HBih0kZON03GR4xiB8pZAGOgxTIelw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/21OLfuuup7rbVKitM2lkI5AfqOV07AOmwYJIXIXz98KaUkBK
+	iO0f80wk6MLbgTI8+jwaMpwwJkK/MGWUF4zvqCCrqplymFzJTkwu24z74expKQ==
+X-Gm-Gg: ASbGncu3iERBCn5eYx6XeRGOQONwYY4im/qZnfZPehzY2C/Z2okkcf59cmpWKjWxT9p
+	J6QKK3S3YhS80DmhLqpO9jJ5fGfgsEaac4s0dDVi1wTcHJoRI/GAnGfvsxiM4YsFq4kH2QHz7Lq
+	/+R3w1WV5lmw6Z4878xODILug2dglUx1Gg5QifZ5JLBYhR4Q8kVsKYetbBoPphMSYnGVsmjpsM+
+	iG4jSsDgMbkBu0XC2mhZizbsVo6GZpFkVJxBtOxaUOpVPHkQBl49WXtgA==
+X-Google-Smtp-Source: AGHT+IHSLi0X5Fvs2Z69ghKCEVQLK9DegAx2XqrIMEwoa3s/1ZFlmuvl7RgffwwihL7mRPnKBmKeCg==
+X-Received: by 2002:a17:90b:1811:b0:2ef:9247:240e with SMTP id 98e67ed59e1d1-2f12881abb4mr3073526a91.18.1733911695104;
+        Wed, 11 Dec 2024 02:08:15 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:d087:4c7f:6de6:41eb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef85e30d12sm7601017a91.28.2024.12.11.02.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 02:08:14 -0800 (PST)
+Date: Wed, 11 Dec 2024 19:08:10 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] zram: use zram_read_from_zspool() in writeback
+Message-ID: <20241211100810.GE2091455@google.com>
+References: <20241211082534.2211057-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203103735.2267589-1-qperret@google.com> <20241203103735.2267589-11-qperret@google.com>
- <CA+EHjTwHSyQ1FJc7axbLNuBxSWpRVE6brb34nO+F59=QRmfQEg@mail.gmail.com>
- <Z1hhHRdpCZcLs046@google.com> <CA+EHjTw4GX3j_ssN-tWnf780xkvyKO5mBN6fnvXeWvQcBDmcNg@mail.gmail.com>
- <Z1liL3BtoPnSyvlh@google.com>
-In-Reply-To: <Z1liL3BtoPnSyvlh@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Wed, 11 Dec 2024 10:07:16 +0000
-Message-ID: <CA+EHjTw+3oAcp3ujjPmbcu42=95nw8WA=rZHYFL91ZK_Wfs_vA@mail.gmail.com>
-Subject: Re: [PATCH v2 10/18] KVM: arm64: Introduce __pkvm_host_share_guest()
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211082534.2211057-1-senozhatsky@chromium.org>
 
-On Wed, 11 Dec 2024 at 09:58, Quentin Perret <qperret@google.com> wrote:
->
-> On Tuesday 10 Dec 2024 at 15:51:01 (+0000), Fuad Tabba wrote:
-> > On Tue, 10 Dec 2024 at 15:41, Quentin Perret <qperret@google.com> wrote:
-> > > > Initially I thought the comment was related to the warning below,
-> > > > which confused me.
-> > >
-> > > It actually is about the warning below :-)
-> > >
-> > > > Now I think what you're trying to say is that we'll
-> > > > allow the share, and the (unrelated to the comment) warning is to
-> > > > ensure that the PKVM_PAGE_SHARED_OWNED is consistent with the share
-> > > > count.
-> > >
-> > > So, the only case where the host should ever attempt do use
-> > > __pkvm_host_share_guest() on a page that is already shared is for a page
-> > > already shared *with an np-guest*. The page->host_share_guest_count being
-> > > elevated is the easiest way to check that the page is indeed in that
-> > > state, hence the warning.
-> > >
-> > > If for example the host was trying to share with an np-guest a page that
-> > > is currently shared with the hypervisor, that check would fail. We can
-> > > discuss whether or not we would want to allow it, but for now there is
-> > > strictly no need for it so I went with the restrictive option. We can
-> > > relax that constraint later if need be.
-> > >
-> > > > I think what you should have here, which would work better with the
-> > > > comment, is something like:
-> > > >
-> > > >                 /* Only host to np-guest multi-sharing is tolerated */
-> > > > +               if (pkvm_hyp_vcpu_is_protected(vcpu))
-> > > > +                       return -EPERM;
-> > > >
-> > > > That would even make the comment unnecessary.
-> > >
-> > > I would prefer not adding this here, handle___pkvm_host_share_guest() in
-> > > hyp-main.c already does that for us.
-> >
-> > I understand now, and I agree that an additional check isn't
-> > necessary. Could you clarify the comment though? It's the word "only"
-> > that threw me off, since to me it implied that the check was enforcing
-> > the word "only". Maybe:
-> >
-> > >                 /* Tolerate host to np-guest multi-sharing. */
->
-> I guess 'only' is somewhat important, it is the _only_ type of
-> multi-sharing that we allow and the check enforces precisely that. The
-> WARN_ON() will be triggered for any other type of multi-sharing, so we
-> are really checking that _only_ np-guest multi-sharing goes through.
->
-> Perhaps the confusing part is that the code as-is relies on WARN_ON()
-> being fatal for the enforcement. Would it help if I changed the 'break'
-> statement right after to 'fallthrough' so we proceed to return -EPERM?
-> In practice we won't return anything as the hypervisor will panic, but
-> I presume it is better from a logic perspective.
-
-It would, but then we wouldn't be tolerating np-guest multisharing,
-but like you said, it's not like we're tolerating it now anyway.
-
-I wonder if it would be better simply not to allow multisharing at all for now.
-
-Cheers,
-/fuad
+On (24/12/11 17:25), Sergey Senozhatsky wrote:
+> We only can read pages from zspool in writeback, zram_read_page()
+> is not really right in that context not only because it's a more
+> generic function that handles ZRAM_WB pages, but also because it
+> requires us to unlock slot between slot flag check and actual page
+> read.  Use zram_read_from_zspool() instead and do slot flags check
+> and page read under the same slot lock.
 
 
-> Cheers,
-> Quentin
+Andrew, sorry for the noise, please ignore this mini-series.  Let me
+re-send it combined with v2 of `zram: split page type read/write handling`
+series [1]
+
+[1] https://lore.kernel.org/linux-kernel/20241210105420.1888790-1-senozhatsky@chromium.org
 
