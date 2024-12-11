@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-442125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E6C9ED84E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:19:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CD79ED84F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AD7A163DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3382E164018
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459B91E9B34;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3C81EC4C3;
 	Wed, 11 Dec 2024 21:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n/9VC+Hq"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="USR/TH+Y"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226B91C07E4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2265C86326
 	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733951949; cv=none; b=mN5i/vjXuOFJLUn2E1BPpUjvzPiHpsX22pkRDyzY6UbCY44M0Xajd6HNjcCdQIDx/8hRAfgzsUr1qSyueBlwoSmwVeskZ7i889eyoeBNB43UX831zv9LjybHER354Rr20P6GnSAj044y4Ic8na5UrAKs/yy0CWv/z5Vr1H+2uhk=
+	t=1733951950; cv=none; b=mZTDUszur1oWJP2Tmss6aUcKgD/RSK9KbJb9+XNSZlgnXRKoLHB+tO+ODDoa5LoX93kg1EnL02F2HIPxgAbNB8GzsOveoiHe8GXd3I5EXjHdnlOHL4kjpoeQsviZrlZZ2kqjq+rwFdVI+5EBtwW4joFnvhEXyeh6BvhXNjeyUVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733951949; c=relaxed/simple;
-	bh=S7/HrgG+BmhmmegVnh/3esYwG2OEDHW4+ltlL604FiE=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=WF5P5Me1tXOb1hEOKZZRzX5KtXiyTW0w0AC+qDMYkgNVHJhuVvJoiQl2oa7925epDOUh07FROt7sIvItISlLhJDnGipzAHMY0zR+PNYzYsY1uK6G+7wAeapf01X797nMmRhzI+mcTvgkrksnsJ8RIpJRd0Hk1X/bHLc1EL8vEqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n/9VC+Hq; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1733951950; c=relaxed/simple;
+	bh=Rl6nZALK8gL3omcCA9vPA6xqpms+IlATC5HTCrF0mTk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=CX7GL1VCzMvnIZPG7SYG0LEjZlr99Ginlk8SSnY31wvYzrhO1Z+FtEn6+nZlp+1GHlcyeOzPqviAR4gfnBnkh/PREHTILepV1b4NbCyiOGGMNC37r7R9WLZnxpDrqMwJlxLWZuR73BmEpalmOZcFhs7SDcBuxiYBiE7Gihd68ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=USR/TH+Y; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHDO0d002411;
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHD07v028096;
 	Wed, 11 Dec 2024 21:18:59 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Aj/zp2/T6DzcCENEe1lXgl
-	tCmZ7QwaGn3NNpQozcrf0=; b=n/9VC+HqOdBjwJ92LLRwlfCjRTv2jYOY1JYMyC
-	pK35J5j1pDl8ItKh9DitRmeX0XKWcnzhS7BUa04vvp1u6wOnTe6ZzonXBdU5ccu2
-	dcy3vYCGqLQVyKrLRqPOkEgk3MrzaELSm2kKqcvMlljZf0AP46OiksxDG20DrN83
-	DKy1f0jckKrIUtXph3CqK9ijRmxaP+7PslxWSucIRbSr+4A6Kw2DnTyQoJmMmAhb
-	isDlovYuoB220DIl+BhGaBKUO87ChPNPIfuov2LwxuE2PYlV7JQoRwJ+NlSOvwcs
-	RlZY8WpFeH0687mSSDSSPj0iMtZ67Ps0EYGAUm6tuBC/kQ8g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eyg63d7g-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/7zM4rSt6bAaKjC0n7Ru3DTNZnvxw0jAvOpQGmRKvp0=; b=USR/TH+YLB9wDqpW
+	PK9IYY2KQLvktwKlPpalsrRXDBDDsoggfWMV7X+ijDIB81NiqZD9av+GiJ8a1oyi
+	k4SFaGBScXOZ6UM1lySKww+Wky+DzAtQOb3Kv1R4vc4qtwVoXlUbZFd8mJLkeHEa
+	aWGj+fj6Ypl4oNxRMCyWmTXA+8cRLewLBXZHD6Lnisfh+cQkVvlabbXV7vP4yuUb
+	y8PIw6eRx1GJQBJpgl5aT9q1LSRi9klnYGDujIyMN9JrbMnj+J8hmncWlf2Hv0Nx
+	C2ntZQzcd6knQhG4tXjrbUv2hL7l7JbGWWafXDpN4tHbjL8L5If60HJfN/2t13md
+	yTti4w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd4xrwbu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 21:18:58 +0000 (GMT)
+	Wed, 11 Dec 2024 21:18:59 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBLIvar007938
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBLIw6x024679
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 21:18:57 GMT
+	Wed, 11 Dec 2024 21:18:58 GMT
 Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.9; Wed, 11 Dec 2024 13:18:57 -0800
 From: Jessica Zhang <quic_jesszhan@quicinc.com>
-Subject: [PATCH v3 0/2] drm: Allow encoder modeset when connectors are
- changed
-Date: Wed, 11 Dec 2024 13:18:41 -0800
-Message-ID: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
+Date: Wed, 11 Dec 2024 13:18:42 -0800
+Subject: [PATCH v3 1/2] drm: allow encoder mode_set even when connectors
+ change for crtc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,11 +67,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALEBWmcC/4WOwQrCMBBEf0VydmWzRhs9+R9SJDZbu0gbTWpRp
- P9uKih48vgG5s08VeIonNR29lSRB0kSugzL+UxVjetODOIzK0IymnAD7thI54YztMFz4h5quUN
- h7NrU2jNar3L1EjnHb+2+zFzH0ELfRHZfGW5wRaQ1mQWtbEGFBg3Xm1SHz8JuIumqRRXaSdpI6
- kN8vK8ONKn/vBoIEIxHtPWanfX4YyzHcXwBbs+XUf8AAAA=
-X-Change-ID: 20241209-abhinavk-modeset-fix-74864f1de08d
+Message-ID: <20241211-abhinavk-modeset-fix-v3-1-0de4bf3e7c32@quicinc.com>
+References: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
+In-Reply-To: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard
 	<mripard@kernel.org>,
@@ -81,63 +80,64 @@ CC: <quic_abhinavk@quicinc.com>, <dri-devel@lists.freedesktop.org>,
         <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
         <robdclark@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>
 X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733951937; l=1325;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733951937; l=1508;
  i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
- bh=S7/HrgG+BmhmmegVnh/3esYwG2OEDHW4+ltlL604FiE=;
- b=R3ZX9cCYnxdQMGwsvOeE+fMyC+3qwOtd9C3AiTKQLR5ARLb8/YUB3k8zP5TyrM8SfucsHlk6d
- pFT5XNf+OAeB5FxzpoMKS+55b2iJvfICnRmE3WNEVskn3urVnAvxtcm
+ bh=FRonWyPJVDhXxcF8DDyfc1TmR1l2G7jWVtfh1WOIoiQ=;
+ b=UBj2kA8PoSA0SlZcFQfudmtf4O+783DNuLnnb0t/eXa67Txn6c19NLX6Qk2wfr8oi7VGCMG5k
+ 5p+CFOtnpvkB2qzROS3xqTF9NRlq0BLU2EPfX8pKvO4qhZJXlQhGDZt
 X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
  pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cu1h1pabrPe8aYOwhMpu1MeQnN1OV6TT
-X-Proofpoint-ORIG-GUID: cu1h1pabrPe8aYOwhMpu1MeQnN1OV6TT
+X-Proofpoint-ORIG-GUID: wwkApUXqoDyIKY2Nsh3NITjAem5q1bZ9
+X-Proofpoint-GUID: wwkApUXqoDyIKY2Nsh3NITjAem5q1bZ9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- mlxlogscore=627 phishscore=0 suspectscore=0 mlxscore=0 clxscore=1015
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 phishscore=0 adultscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2411120000 definitions=main-2412110149
 
-Call encoder mode_set() when connectors are changed. This avoids issues
-for cases where the connectors are changed but CRTC mode is not.
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
+In certain use-cases, a CRTC could switch between two encoders
+and because the mode being programmed on the CRTC remains
+the same during this switch, the CRTC's mode_changed remains false.
+In such cases, the encoder's mode_set also gets skipped.
+
+Skipping mode_set on the encoder for such cases could cause an issue
+because even though the same CRTC mode was being used, the encoder
+type could have changed like the CRTC could have switched from a
+real time encoder to a writeback encoder OR vice-versa.
+
+Allow encoder's mode_set to happen even when connectors changed on a
+CRTC and not just when the mode changed.
+
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 ---
-Changes in v3:
-- BUILD_BUG_ON() for encoders and connectors array size check (Dmitry)
-- Added more descriptive, file-specific names for helper functions
-  (Dmitry)
-- Added comment to test documenting what the test does (Dmitry)
-- Return drm_connector_helper_get_modes_fixed() directly for encoder
-  get_modes() instead of returning 1 (Dmitry)
-- Move local variable declarations to top of function (Dmitry)
-- Link to v2: https://lore.kernel.org/r/20241209-abhinavk-modeset-fix-v2-0-4d008f6ea8d0@quicinc.com
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 5186d2114a503701e228e382cc45180b0c578d0c..32902f77f00dd8b85f03811e6d6da99b6d538afe 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1376,7 +1376,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 		mode = &new_crtc_state->mode;
+ 		adjusted_mode = &new_crtc_state->adjusted_mode;
+ 
+-		if (!new_crtc_state->mode_changed)
++		if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+ 			continue;
+ 
+ 		drm_dbg_atomic(dev, "modeset on [ENCODER:%d:%s]\n",
 
-- Added kunit test
-
----
-Abhinav Kumar (1):
-      drm: allow encoder mode_set even when connectors change for crtc
-
-Jessica Zhang (1):
-      drm/tests: Add test for drm_atomic_helper_commit_modeset_disables()
-
- drivers/gpu/drm/drm_atomic_helper.c           |   2 +-
- drivers/gpu/drm/tests/Makefile                |   1 +
- drivers/gpu/drm/tests/drm_atomic_state_test.c | 244 ++++++++++++++++++++++++++
- 3 files changed, 246 insertions(+), 1 deletion(-)
----
-base-commit: 86313a9cd152330c634b25d826a281c6a002eb77
-change-id: 20241209-abhinavk-modeset-fix-74864f1de08d
-
-Best regards,
 -- 
-Jessica Zhang <quic_jesszhan@quicinc.com>
+2.34.1
 
 
