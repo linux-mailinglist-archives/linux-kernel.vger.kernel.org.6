@@ -1,98 +1,124 @@
-Return-Path: <linux-kernel+bounces-440590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4A99EC15D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:14:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6026166F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:13:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4551126C18;
-	Wed, 11 Dec 2024 01:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iS/3PWM9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A439EC16D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:20:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9D52770B;
-	Wed, 11 Dec 2024 01:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2A6284D5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:20:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EB883CDA;
+	Wed, 11 Dec 2024 01:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W8FXk+lK"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AB113AA2D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733879636; cv=none; b=DUGz12uxEB1NCDFo0fvteHiGLePuzFzAgQmnirQM3yVFknq4s13NHFDa+tndB6xusqAzvl9ACwjhieAv7NtEWgYgFKvFUqjp1BhSM91i3x/NwyWhNUyc9keygXfa1vIV/TpDbOySNjPusuzzgCLD21FudlENG4EwJXrnX3XHbco=
+	t=1733880008; cv=none; b=p6STk9qT04uxN/K7Nnu9cKd3x3akK2UZzO3rWsi11ZE8g9XoOjJV8WOFv5ZQFhs6E4uKbLHk3xSVF6swLF38H8QhQxHUJsUKrnMljbXGBkhlzIb82wWflotB2vLFD1O8CiThPDVodojdaSWNfVi2f3dSK54rDpdaN4Jafxcjrt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733879636; c=relaxed/simple;
-	bh=WXYFL2lzpahBm9B+v7DU3pKQd5XfIBdEGGOSasUIPzI=;
+	s=arc-20240116; t=1733880008; c=relaxed/simple;
+	bh=mRSuzZVVbGNPLYAFIDAQ/M5Cl46LgpkiPDn60FS2ntg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+ukUg2/oeqZUJFqTsbfvs8fCu+tKYEUue2uU1/vRlQSplphm81TnzYi4xWVQxNwdZ7e3Hwi0sqQqhon8zT1BPtUH/jsVgJvH/80dEenrBSjOJ+HwhvRHC5ltBjpuxbjLF+JlILcZeNwOxjJZhATGxmSNQ9jealKWzoU1x3v3oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iS/3PWM9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91169C4CED6;
-	Wed, 11 Dec 2024 01:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733879635;
-	bh=WXYFL2lzpahBm9B+v7DU3pKQd5XfIBdEGGOSasUIPzI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iS/3PWM9TNlHS7RGLrXMkZAdwOkldLNzoXEaOeoqgBMx5ECYOict+BBcv0x/hvTYJ
-	 4+N5Jv0yQTjXHhbj7h3A0h7YsYbbnYIg6B2GI584k/gTZd94F72j47lunKkC/DGK0m
-	 5E9yQokf1WvYnWUltojmWOiab1zudFtSzncq1sQ8T7o79V5iGjAjddaa6r1DsDCmHM
-	 j8EDEhMAf71gMbVt0NY9r55TRtxtYbetNeJBxWBozJIOKi/86G10z+mka3ccWpMWT4
-	 CsLknvFUygFyYVCakkAfqMcUNKGKcFegooKAU+uMGGCMdFfjWeZBx5dHpRkB0cwQJx
-	 VvXsLHYhlowdA==
-Date: Tue, 10 Dec 2024 19:13:52 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Pavan Kondeti <quic_pkondeti@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Elliot Berman <quic_eberman@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-Message-ID: <iyknardi445n4h74am22arpgc4vlchh6z6cvkbff2xg76pd655@nozwz7snt476>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
- <CAF6AEGtKfWOGpd1gMfJ96BjCqwERZzBVmj5GzmjKxw8_vmSrJg@mail.gmail.com>
- <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BwIbyvAbxfET0AF74DJ20uyVAuzrSpVZTgUdXy1EAIHlY2yEktAFRSjrlD/yK4zvd5MTGFh68KyJWbL/Sj+Ed5SJscalSW3FjYEErTLMopYgOeqJrADVssmNl3X64EV2ev7S24bVNUq83RcsmCVJ9QcZGkrOC+bksoMgUz24y1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W8FXk+lK; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 11 Dec 2024 01:19:24 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733880002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lUWYOlVWAIm6Lu6fcrGntawOmoLD0WlWfvbhYPm4nUs=;
+	b=W8FXk+lKMiAvd1qSu7C7CfCIAfqGcVvenTagBYFoGooOJe0rWM/zAQcnjKZ6cGjpvKZVaX
+	Fo4NODKoEk96GZ+AeNFle4IH+Ee51HEGkzXTBKBVgmiakBgid4S1LtkCUBodKMfW0fEtfC
+	hiRmtXj1100sh5MnnQo93YurtIsGFro=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] mm, swap_cgroup: remove global swap cgroup lock
+Message-ID: <Z1jonM_FxZfhX6Vt@google.com>
+References: <20241210092805.87281-1-ryncsn@gmail.com>
+ <20241210092805.87281-4-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com>
+In-Reply-To: <20241210092805.87281-4-ryncsn@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Dec 10, 2024 at 02:22:27AM +0530, Akhil P Oommen wrote:
-> On 12/10/2024 1:24 AM, Rob Clark wrote:
-> > On Mon, Dec 9, 2024 at 12:20 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
-> >>
-> >> When kernel is booted in EL2, SECVID registers are accessible to the
-> >> KMD. So we can use that to switch GPU's secure mode to avoid dependency
-> >> on Zap firmware. Also, we can't load a secure firmware without a
-> >> hypervisor that supports it.
-> > 
-> > Shouldn't we do this based on whether zap node is in dtb (and not disabled)?
+On Tue, Dec 10, 2024 at 05:28:05PM +0800, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 > 
-> This is better, isn't it? Otherwise, multiple overlays should be
-> maintained for each soc/board since EL2 can be toggled from bootloader.
-> And this feature is likely going to be more widely available.
+> commit e9e58a4ec3b1 ("memcg: avoid use cmpxchg in swap cgroup maintainance")
+> replaced the cmpxchg/xchg with a global irq spinlock because some archs
+> doesn't support 2 bytes cmpxchg/xchg. Clearly this won't scale well.
 > 
+> And as commented in swap_cgroup.c, this lock is not needed for map
+> synchronization.
+> 
+> Emulation of 2 bytes xchg with atomic cmpxchg isn't hard, so implement
+> it to get rid of this lock. Introduced two helpers for doing so and they
+> can be easily dropped if a generic 2 byte xchg is support.
+> 
+> Testing using 64G brd and build with build kernel with make -j96 in 1.5G
+> memory cgroup using 4k folios showed below improvement (10 test run):
+> 
+> Before this series:
+> Sys time: 10809.46 (stdev 80.831491)
+> Real time: 171.41 (stdev 1.239894)
+> 
+> After this commit:
+> Sys time: 9621.26 (stdev 34.620000), -10.42%
+> Real time: 160.00 (stdev 0.497814), -6.57%
+> 
+> With 64k folios and 2G memcg:
+> Before this series:
+> Sys time: 8231.99 (stdev 30.030994)
+> Real time: 143.57 (stdev 0.577394)
+> 
+> After this commit:
+> Sys time: 7403.47 (stdev 6.270000), -10.06%
+> Real time: 135.18 (stdev 0.605000), -5.84%
+> 
+> Sequential swapout of 8G 64k zero folios with madvise (24 test run):
+> Before this series:
+> 5461409.12 us (stdev 183957.827084)
+> 
+> After this commit:
+> 5420447.26 us (stdev 196419.240317)
+> 
+> Sequential swapin of 8G 4k zero folios (24 test run):
+> Before this series:
+> 19736958.916667 us (stdev 189027.246676)
+> 
+> After this commit:
+> 19662182.629630 us (stdev 172717.640614)
+> 
+> Performance is better or at least not worse for all tests above.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-The DeviceTree passed to the OS needs to describe the world that said OS
-is going to operate in. If you change the world you need to change the
-description.
-There are several other examples where this would be necessary
-(remoteproc and watchdog to name two examples from the Qualcomm upstream
-world).
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-So, if we can cover this by zap-shader being enabled or disabled, that
-sounds like a clean and scaleable solution.
-
-Regards,
-Bjorn
+Thanks!
 
