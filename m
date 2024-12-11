@@ -1,74 +1,71 @@
-Return-Path: <linux-kernel+bounces-441452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6D49ECE92
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:29:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA5A9ECE95
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 364AC1882DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10B9167C12
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3981632CA;
-	Wed, 11 Dec 2024 14:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B560E18628F;
+	Wed, 11 Dec 2024 14:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oaorEDpZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BFwD8Ztm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntd0UbJa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3926D38DE9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA61938DE9;
+	Wed, 11 Dec 2024 14:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733927387; cv=none; b=eqFcGKAgrWmk/pnbFGTdXJP52V95wnhBQN8O0ij5NKWd7qXxeKzvcjCOMHiLEVD39xAtxTTBoCSPG4wTE0I+O7CAuICHqREkR7jf1CXQ6kA3W8JIhuExrlxJpOdojWL2r4NXMvBUhzQZNlKVf1AjZkmNI3sbQvNm4GgsOx2gkWo=
+	t=1733927395; cv=none; b=et/Ott+mIsdjiOCHJJPzBRwDFxSemq7rLkSIXqjPoi54v8fg4YmMLvMvcRliwZ7qXUXNsm/OLV1F9fFGnYd3GCTG85jr8a5DKTyVy7HSN9c35UPSEFeQJH0fHiQtOV8UwS9vuxd8iI666KdO77XI//Bb+5i9CStu93WMa9wRg4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733927387; c=relaxed/simple;
-	bh=VYnDkKDEgNRMvHk30Ty1wbkQtydCavhWBQSP6IHkfj4=;
+	s=arc-20240116; t=1733927395; c=relaxed/simple;
+	bh=2Xk8uWMzIczoxMHUC2h5gjfThEIC8deVCG2F5mgdBhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpevOH3Xh93MyiUAjfarF7lQ3xL56gzrp5dSlix+ir4vuQ9S6l/WaJOrJ8VLPbDh6qP58egD16qqTlg9iaFIZAnb70fXrOfLXof+KaaUbdBx3KSDUhoyU02cOlC7MWDnY7yJ7ucX15g6A9/mp3DRMKNPYRWmeWYFOOQoE9Vh66k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oaorEDpZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BFwD8Ztm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 11 Dec 2024 15:29:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733927384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VOYpxZqhqq/1CTP1KVnyG6EjZzQVJC8nCc0zAYnT2Ps=;
-	b=oaorEDpZ5pd/zIm5/szMN1cUc953JQSng7kwU3JeVF8zP9wfx/dfGjVKrqAYgCpYOA3LYv
-	+VmluxpmYYG2DYuK44a13pjzQ0w4wH68F4v1juE/Vy0sb4S5U0MkSRimdlecca2Afh31Zf
-	wzRGzagYDThICL3GF6836nP0YQbKMyq94EeEfmKSMvZ8/0gIJYIkL9jIM01t6nAh5Z5YRG
-	uu/9J+/R663w+MBQqVVTLbCpYETvho0i91WGOCEKnt/xaKMjVLyqutG8W0oBZXUuoolEr7
-	Aj7igL5KExaO10gulUVR7UxAvoez8118eazQwB5vdSus5OAYy/ytygrgjMllsw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733927384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VOYpxZqhqq/1CTP1KVnyG6EjZzQVJC8nCc0zAYnT2Ps=;
-	b=BFwD8ZtmoJb0Q7PAOBgonmnOLnsQK4bfFGatcd76wYSBrZPXGpwZB45nz6+f+aH2Bxs4lD
-	HibuAKfKRRMPIrDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org,
-	linux-rt-devel@lists.linux.dev, Ard Biesheuvel <ardb@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 4/4] mm: drop HIGHPTE support altogether
-Message-ID: <20241211142943.cp0Wcuxk@linutronix.de>
-References: <20241210160556.2341497-1-arnd@kernel.org>
- <20241210160556.2341497-5-arnd@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZMPGWMTi+3eMVXer8yTuB661ssUGWN1brN2jq5e9xbV3JtVsYVJP8bRN1HV1+/P3s3w64bEKRAl1pQL5g809ccldsBivwArcLz1zSMCTTwbdNujYwedOdj2JD2LRZpUC42ObiMpe5xMLCX1MtCtL+z/3FNl5Cw7eo6KQeDBOfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntd0UbJa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117C2C4CED2;
+	Wed, 11 Dec 2024 14:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733927394;
+	bh=2Xk8uWMzIczoxMHUC2h5gjfThEIC8deVCG2F5mgdBhk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ntd0UbJau4aamE/mSy5+MxOy+ScxNY3aIPC9N+yvSldfQ0gd0sQeNKdG3pT9s/et/
+	 Ayzy1nk4TMSsSZpMcCFJGKz1zLogNlzwaIJ5fHjUgGEY8ttFRt5kXG7+UlQtWUBsFa
+	 dXYYK0wMKQ3JBaFz2vvGDnAvQYk3xuYhIxBXwIjeRglQX1/BdlSvPFl14CTRia77Qn
+	 TJYQiqt4FuE0ZXVUblan0faGQQdBLOmPNXRYfhyJF15GBZVYy3kZxc9rC1jPSK4Bj/
+	 K+y6VpLi/8iVDVY88JsUh95iqoyhGHBH+npoGlvwaLWp6mmgD+Oy32WS5bGJ91ws9W
+	 wqdlIDwPCfSmg==
+Date: Wed, 11 Dec 2024 15:29:46 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
+Message-ID: <Z1mh2rPC3ZOjg-pO@cassiopeiae>
+References: <20241210224947.23804-2-dakr@kernel.org>
+ <2024121112-gala-skincare-c85e@gregkh>
+ <2024121111-acquire-jarring-71af@gregkh>
+ <2024121128-mutt-twice-acda@gregkh>
+ <2024121131-carnival-cash-8c5f@gregkh>
+ <Z1mEAPlSXA9c282i@cassiopeiae>
+ <Z1mG14DMoIzh6xtj@cassiopeiae>
+ <2024121109-ample-retrain-bde0@gregkh>
+ <Z1mUG8ruFkPhVZwj@cassiopeiae>
+ <CAH5fLgh3rwS1sFmrhx3zCaSBbAJfhJTV_kbyCVX6BhvnBZ+cQA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,20 +74,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241210160556.2341497-5-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgh3rwS1sFmrhx3zCaSBbAJfhJTV_kbyCVX6BhvnBZ+cQA@mail.gmail.com>
 
-On 2024-12-10 17:05:56 [+0100], Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Dec 11, 2024 at 02:34:54PM +0100, Alice Ryhl wrote:
+> On Wed, Dec 11, 2024 at 2:31 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > On Wed, Dec 11, 2024 at 02:14:37PM +0100, Greg KH wrote:
+> > > On Wed, Dec 11, 2024 at 01:34:31PM +0100, Danilo Krummrich wrote:
+> > > > On Wed, Dec 11, 2024 at 01:22:33PM +0100, Danilo Krummrich wrote:
+> > > > > On Wed, Dec 11, 2024 at 12:05:10PM +0100, Greg KH wrote:
+> > > > > > On Wed, Dec 11, 2024 at 11:59:54AM +0100, Greg KH wrote:
+> > > > > > > On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
+> > > > > > > > On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
+> > > > > > > > > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummrich wrote:
+> > > > > > > > > > In a subsequent patch we introduce the `Registration` abstraction used
+> > > > > > > > > > to register driver structures. Some subsystems require the module name on
+> > > > > > > > > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
+> > > > > > > > > > the module name to `Module::init`.
+> > > > > > > > >
+> > > > > > > > > Nit, we don't need the NAME of the PCI driver (well, we do like it, but
+> > > > > > > > > that's not the real thing), we want the pointer to the module structure
+> > > > > > > > > in the register_driver call.
+> > > > > > > > >
+> > > > > > > > > Does this provide for that?  I'm thinking it does, but it's not the
+> > > > > > > > > "name" that is the issue here.
+> > > > > > > >
+> > > > > > > > Wait, no, you really do want the name, don't you.  You refer to
+> > > > > > > > "module.0" to get the module structure pointer (if I'm reading the code
+> > > > > > > > right), but as you have that pointer already, why can't you just use
+> > > > > > > > module->name there as well as you have a pointer to a valid module
+> > > > > > > > structure that has the name already embedded in it.
+> > > > > > >
+> > > > > > > In digging further, it's used by the pci code to call into lower layers,
+> > > > > > > but why it's using a different string other than the module name string
+> > > > > > > is beyond me.  Looks like this goes way back before git was around, and
+> > > > > > > odds are it's my fault for something I wrote a long time ago.
+> > > > > > >
+> > > > > > > I'll see if I can just change the driver core to not need a name at all,
+> > > > > > > and pull it from the module which would make all of this go away in the
+> > > > > > > end.  Odds are something will break but who knows...
+> > > > > >
+> > > > > > Nope, things break, the "name" is there to handle built-in modules (as
+> > > > > > the module pointer will be NULL.)
+> > > > > >
+> > > > > > So what you really want is not the module->name (as I don't think that
+> > > > > > will be set), but you want KBUILD_MODNAME which the build system sets.
+> > > > >
+> > > > > That's correct, and the reason why I pass through this name argument.
+> > > > >
+> > > > > Sorry I wasn't able to reply earlier to save you some time.
+> > > > >
+> > > > > > You shouldn't need to pass the name through all of the subsystems here,
+> > > > > > just rely on the build system instead.
+> > > > > >
+> > > > > > Or does the Rust side not have KBUILD_MODNAME?
+> > > > >
+> > > > > AFAIK, it doesn't (or didn't have at the time I wrote the patch).
+> > > > >
+> > > > > @Miguel: Can we access KBUILD_MODNAME conveniently?
+> > > >
+> > > > Actually, I now remember there was another reason why I pass it through in
+> > > > `Module::init`.
+> > > >
+> > > > Even if we had env!(KBUILD_MODNAME) already, I'd want to use it from the bus
+> > > > abstraction code, e.g. rust/kernel/pci.rs. But since this is generic code, it
+> > > > won't get the KBUILD_MODNAME from the module that is using the bus abstraction.
+> > >
+> > > Rust can't do that in a macro somehow that all pci rust drivers can pull
+> > > from?
+> >
+> > The problem is that register / unregister is encapsulated within methods of the
+> > abstraction types. So the C macro trick (while generally possible) isn't
+> > applicable.
+> >
+> > I think we could avoid having an additional `name` parameter in `Module::init`,
+> > but it would still need to be the driver resolving `env!(KBUILD_MODNAME)`
+> > passing it into the bus abstraction.
+> >
+> > However, similar to what Alice suggested in another thread, we could include
+> > this step in the `module_*_driver!` macros.
+> >
+> > Modules that don't use this convenience macro would need to do it by hand
+> > though. But that's probably not that big a deal.
 > 
-> With both x86 and arm having dropped CONFIG_HIGHPTE support, no
-> architecture is left using it, so remove the remnants in common code.
-> 
-> It is likely that further cleanups are possible in the page table
-> code but those are not obvious from the config options.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> I think we can do it in the core `module!` macro that everyone has to use.
 
-Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+How? The `module!` macro does not know about the registration instances within
+the module structure.
 
-Sebastian
+> 
+> Alice
 
