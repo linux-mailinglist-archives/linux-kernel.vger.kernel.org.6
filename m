@@ -1,130 +1,76 @@
-Return-Path: <linux-kernel+bounces-440672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3911E9EC2B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:02:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537039EC2B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:03:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E121659FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC6F1884ADD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A951FDE31;
-	Wed, 11 Dec 2024 03:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06F31FCCF2;
+	Wed, 11 Dec 2024 03:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmcE4/lj"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OsoHKIn9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F7D195;
-	Wed, 11 Dec 2024 03:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191A983CDA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 03:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733886098; cv=none; b=ZQpQk5iefKYSH4lEV1e7TEkKZp4ymeRcFYp6v3PymiIrw7XdbgWvaeuzhupCMlC/jvuNZ9HB/QA7sZZk7+NqjT9MhQFjF8HcNsiWV+xqaveFHWb9FhpBtLbMvYvRqJQsUL8RUzrHuyBBVPFsjlNIwxt1qifUHDV1to0JvT5rWk8=
+	t=1733886197; cv=none; b=kCWagNdKNK9dhODbbwjcdBemBSLpeB89hU9Gz6yNjLt5oviiG5eWpgG7oBqk4ZFeK4B2t0NHUnHUBSc45LedhSi3nI68jd1mkmOzxZoM+/EP4k+zT8N8LJb2106d9sXBi3QRK82lkYgXeZjxch0qHfADJD3q4nfYm+TZ4EGQR1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733886098; c=relaxed/simple;
-	bh=08Gv+rg+muCd4b+QXxh4lSp3ciy5sU1jyZsQ2rNGCQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qexHXYE5iMTL/9RBIRlxKnZ36TRzcGRdBz+8OOPsDeI9VH9lqz7NMWj0lylpamMDnulUoJZWydJfCMilRXrFweN0gC/1fGUGBkIBlD1ypvHjxhJqYjvGzuLEzLPmbV1ltTRWfThEiCoLVD8yfR3M3AOOYe5MCSNztrViL46LtHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmcE4/lj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 097C6C4CED6;
-	Wed, 11 Dec 2024 03:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733886097;
-	bh=08Gv+rg+muCd4b+QXxh4lSp3ciy5sU1jyZsQ2rNGCQs=;
+	s=arc-20240116; t=1733886197; c=relaxed/simple;
+	bh=E/lhZPj4DeLvxLut2s0Qf5o8AxJ++i7JicIASmQPprM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ICoHQo3DU4ByT0v8euAttGEYlbEFCHNA6nCmAjm++OLi2AbrAtZK++AVOpdhMpBZz5Mqc4HOKq+8UyJkw7hOxTRptDyv4eLisNHBbxb7ifN6RSYbnoTyzHUE0q9uqddyyG0P69/ZvzTvRcnImV3VeODTXjENqwe6++xJeoi1bsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OsoHKIn9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F85AC4CEDD;
+	Wed, 11 Dec 2024 03:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1733886196;
+	bh=E/lhZPj4DeLvxLut2s0Qf5o8AxJ++i7JicIASmQPprM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EmcE4/ljfCRY3RJanBjxtPhT62/nJjxk7ELO0ZGNbc2mhHWfd391knNb2HOuZGhSx
-	 1e9fTFNcZABywOnqpoRKAEZbgjlix3qU4Qd2lcLQX3AgcLKJ4vrIgfKpyVm37bJMAM
-	 wiwQScSc5AP2YRJa64ls0Q4PrRlmeIvzeFuzlqiXSS0E4b38+g1f5LgHQjP+e4bxxF
-	 EWfJBUd/sx64BPsSVOGtlrnzPfoqLHGXyBoBKFxBYI5CCDVF2OYRXR0K/LPrQzVMJu
-	 IZkEdyC65OkC/1hbUFTVO1xckc1Src7rjo3nhww+SaTgc+dkPD8qefo1Jh9IYKWx27
-	 gFWQHpinQ+82w==
-Date: Tue, 10 Dec 2024 19:01:33 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, Jeff Johnson
- <jeff.johnson@oss.qualcomm.com>, Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Julia Lawall
- <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack
- <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Ofir
- Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>, Lucas De
- Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- James Smart <james.smart@broadcom.com>, Dick Kennedy
- <dick.kennedy@broadcom.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Roger Pau =?UTF-8?B?TW9ubsOp?=
- <roger.pau@citrix.com>, Jens Axboe <axboe@kernel.dk>, Kalle Valo
- <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel
- Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
- <sbranden@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>, Ilya
- Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jiri
- Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr Mladek
- <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Louis Peens
- <louis.peens@corigine.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, cocci@inria.fr,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org, linux-mm@kvack.org,
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
- oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen
- <anna-maria@linutronix.de>
-Subject: Re: [PATCH v3 00/19] Converge on using secs_to_jiffies()
-Message-ID: <20241210190133.44818a76@kernel.org>
-In-Reply-To: <20241210185040.96c81a25f098f59191223c9f@linux-foundation.org>
-References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-	<315e9178-5b10-4de0-bdcf-7243e0e355bb@oss.qualcomm.com>
-	<20241210153604.cf99699f264f12740ffce5c7@linux-foundation.org>
-	<20241210173548.5d32efe0@kernel.org>
-	<20241210183130.81111d05148c41278a299aad@linux-foundation.org>
-	<20241210184129.41aaf371@kernel.org>
-	<20241210185040.96c81a25f098f59191223c9f@linux-foundation.org>
+	b=OsoHKIn9VCz7vgsKsHyR8kX1EGIqgwW0ponS/2Bp5xzI7EmjLcuQzBfoVsHmwnwPx
+	 v6qwHlkD/CsX70xmOPrNFN290BY0/5SHjv2eT3O98byuTS/jdaNrvHxTSZsxma1cD0
+	 ouMz29p/CpPTZq9V9FZiTk2SZs7QHdLvenEb7cJU=
+Date: Tue, 10 Dec 2024 19:03:15 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Junjie Fu <fujunjie1@qq.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, willy@infradead.org,
+ sj@kernel.org
+Subject: Re: [PATCH] mempolicy.h: Remove unnecessary header file inclusions
+ with no test failure
+Message-Id: <20241210190315.5eeffc66cbbc23269f492275@linux-foundation.org>
+In-Reply-To: <tencent_FEC6C2E299EBF3F95E516ADED98362A4F805@qq.com>
+References: <tencent_FEC6C2E299EBF3F95E516ADED98362A4F805@qq.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Dec 2024 18:50:40 -0800 Andrew Morton wrote:
-> > > Very unlikely, and any such conflict will be trivial.  
-> > 
-> > Agreed, mainly I don't understand why we'd make an exception
-> > and take the patchset via a special tree.  
-> 
-> It saves work for everyone?
-> 
-> The patches are super-simple.  If a maintainer chooses to merge one of
-> them, Stephen tells us and I drop the mm.git copy.  It's all so easy.
+On Wed, 11 Dec 2024 10:52:30 +0800 Junjie Fu <fujunjie1@qq.com> wrote:
 
-If it's just to save work - we're fine.
-Please don't apply the networking changes.
+> Due to my previous patch not including pagemap.h in fs/aio.c, a test
+> failure occurred. In this patch, it has been fixed.
+> 
+> Previous patch address:
+> https://lore.kernel.org/all/tencent_08B979048FE091821B290B18AE97E70DC507@qq.com/
+> 
+
+The previous patch had a changelog.  This one effectively has none.
+
+So, please resend, with a full standalone changelog.
+
+Prepare that changelog in a manner which is suitable for inclusion into
+the permanent kernel record.  References to earlier versions of the
+patch are uninteresting in that context.
 
