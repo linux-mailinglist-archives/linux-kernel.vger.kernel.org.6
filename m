@@ -1,100 +1,102 @@
-Return-Path: <linux-kernel+bounces-440858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20519EC584
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:28:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E719EC591
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:29:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6728E2851C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:27:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966A2167F8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE251C5F10;
-	Wed, 11 Dec 2024 07:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3661C68A6;
+	Wed, 11 Dec 2024 07:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OL9hKZZi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5K+ilQN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240FE1C5F00
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70E21C5F0B;
+	Wed, 11 Dec 2024 07:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733902075; cv=none; b=JBJg+ivpx5R8LBmftZsPdFSaRvG0jnFxlhOJj1TSBINg3H9J5B2L5Jg0uK0OCNzZSIZC+iTgBOzb6XzQyAC2TZJMEVIY+3dUqGpGAuPZo3mGBJFre2Z5Rmjc1CAkXBLYZ5eBU8zKYzqV7ha4vvDiydNpghRO71BsEh2gZT6YqH0=
+	t=1733902174; cv=none; b=SzsIGDoAQ+2/7IwK46d6Pjaes+u5ZvavvljCB0s1XpSxEWjVyqBxQWTq+rvVL2A6cIDhnzuz8bq5hD6UxID1tUlh2REURsUdGkfp3PpFppfKeo5D/NA1JK+g5gZ6/mIbZsq97bv6n8LvsF2YoqcQvyQkTUTowjstQNWKIE2Fj7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733902075; c=relaxed/simple;
-	bh=VwvathRKpZR7sNLqziBMOuaT44TXv9VMLztB/oCKC64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F513AUZCtAYM1D2eJbWtDd+JFNe6duj7spmA4YWf702kf7ZOAza52u3IOUsGXrGKjWRaJz/YwJ8fYcteE3ZmRVxniUoleodX2/mUYjWvA9l9YrIKJh15lQipQAA7fDuhQCQYsfhaFbhOuUlddcNqWTfH5C/qp7EA6JCska/u1GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OL9hKZZi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B1B7C4CED2;
-	Wed, 11 Dec 2024 07:27:54 +0000 (UTC)
+	s=arc-20240116; t=1733902174; c=relaxed/simple;
+	bh=z7Dc5FJTPUHHlOFfQcHtMzEV5zoZUD9OFcQgozB76GM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RT4XBsj6zNl1ssq5vju7VcASa4NLt1tMRzSthZz0LyoZXJda+QlL5R7/Q5npcjAcM5fBE1waduJlcqC4F6aCpuRxFbZ7/hGQSsfIt0s88zCymm0hEWewCi4lCrUN5a/oZLQYa8XyDzWmdbsLBwIcfiHL2dhsUeR41ZgfQ5Ou+dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5K+ilQN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 206BAC4CED2;
+	Wed, 11 Dec 2024 07:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733902074;
-	bh=VwvathRKpZR7sNLqziBMOuaT44TXv9VMLztB/oCKC64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OL9hKZZi+BQ9apLiCQZ/VafTdW3WuWnN2bW1usu014riCU1wJHj3tM1zkKey1O0Il
-	 xMLXs/KhxniZ6RNcA7ulZA/nMo8lGyrnw53sbAqLQBTfOixgZMFkyRvW9yE2cuIDbz
-	 EzSJ7tu09lj5Qsk/Rr/jTraxQD411nKfB4iFiES7QTKFyOBqNFN529mzrwn41yluBF
-	 Nkpf4NF0MMDSs9CIdZD0ojqpCsKazMgP0yomRW43wLM9+Dj43CNRU/ozNc7t6p6/ym
-	 19dGsWqHgbR/RZ0G/KmKQ550OC5fUyyEgFVm2QYEVh07chK9eKtRaa+Ok8gPu4rUbN
-	 wMZWZ4KCoAuJQ==
-Date: Tue, 10 Dec 2024 21:27:53 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Changwoo Min <multics69@gmail.com>
-Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
-	changwoo@igalia.com, kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] sched_ext: Relocate scx_enabled() related code
-Message-ID: <Z1k--b0f1RLARJ65@slm.duckdns.org>
-References: <20241209061531.257531-1-changwoo@igalia.com>
- <20241209061531.257531-2-changwoo@igalia.com>
+	s=k20201202; t=1733902174;
+	bh=z7Dc5FJTPUHHlOFfQcHtMzEV5zoZUD9OFcQgozB76GM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=X5K+ilQNlazLd30L97mBpacv/8NDaG0qLsrf+wTSVOW+2+D3K6z08LRR32fsa/vGt
+	 /LFj2UII0FEYMWAt5y/QGwvXZ0sZIKx6z7QvMax4B9WY6bKhLRAlN3ojLvpiyj6PHL
+	 Ca6dUnHe5yWYwpCiHXOvRu++h9oJztJ7OPDilD6sg1RyWVo5y1CFM135F1Bw2BXBRF
+	 VmMzzMplK+k/HHXQnEhzXx0LtF0EHhaA3LV28QbPccHGIEIu6YXATFriQSl5XSS8Q+
+	 5hRLRHFvqWkCivR+t2ISXvG15FZ02mmc5+uAlcpmemw9xi86GSvouraMHskoTOrDEi
+	 YyMRvzHpMXdLQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4010E7717D;
+	Wed, 11 Dec 2024 07:29:33 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Subject: [PATCH 0/2] power: supply: gpio-charger: add support for default
+ charge current limit
+Date: Wed, 11 Dec 2024 08:29:08 +0100
+Message-Id: <20241211-default-charge-current-limit-v1-0-7819ba06ee2a@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209061531.257531-2-changwoo@igalia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEQ/WWcC/x3MSwqFMAxA0a1Ixgba4oe+rYiDolED2idpFUHcu
+ 8Hh5cC9IZEwJfgVNwidnPgfNWxZwLCEOBPyqA3OuMo643GkKRxrRlVRHQ4RihlX3jhj4wO1vqp
+ NYwPoYhea+Pr2Xf88L+ON9wBuAAAA
+X-Change-ID: 20241209-default-charge-current-limit-69ae7945061a
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733902172; l=780;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=z7Dc5FJTPUHHlOFfQcHtMzEV5zoZUD9OFcQgozB76GM=;
+ b=QN+vCWDtq5aI6nCehjbU2+5I8rT3UTY0ytF/rlzS2w5tLUv2ivyxP4cP4PAz5Vj2PmXyH5Cef
+ 1A1I1Q2ehIlBvjV4jcrNPfjkFwYeQYJwheKvL3xQK4rOC8GXJXDHt7Y
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
-On Mon, Dec 09, 2024 at 03:15:26PM +0900, Changwoo Min wrote:
-> scx_enabled() will be used in scx_rq_clock_update/stale() in the
-> following patch, so relocate the scx_enabled() related code to the
-> proper location.
-> 
-> Signed-off-by: Changwoo Min <changwoo@igalia.com>
-> ---
->  kernel/sched/sched.h | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 76f5f53a645f..440ecedf871b 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1717,6 +1717,19 @@ struct rq_flags {
->  
->  extern struct balance_callback balance_push_callback;
->  
-> +#ifdef CONFIG_SCHED_CLASS_EXT
-> +extern const struct sched_class ext_sched_class;
-> +
-> +DECLARE_STATIC_KEY_FALSE(__scx_ops_enabled);	/* SCX BPF scheduler loaded */
-> +DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
-> +
-> +#define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
-> +#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
-> +#else /* !CONFIG_SCHED_CLASS_EXT */
-> +#define scx_enabled()		false
-> +#define scx_switched_all()	false
-> +#endif /* !CONFIG_SCHED_CLASS_EXT */
+The driver defaults to smallest current limitation for safety reasons. Add
+support for setting default current limitation via DT.
 
-I wonder whether a better place for the above is include/linux/sched/ext.
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+---
+Dimitri Fedrau (2):
+      dt-bindings: power: supply: gpio-charger: add support for  default charge current limit
+      power: supply: gpio-charger: add support for  default charge current limit
 
-Thanks.
+ .../devicetree/bindings/power/supply/gpio-charger.yaml      |  4 ++++
+ drivers/power/supply/gpio-charger.c                         | 13 +++++++++++++
+ 2 files changed, 17 insertions(+)
+---
+base-commit: 88e4a7dc04b7828315292eb3acaa466c9c123d8b
+change-id: 20241209-default-charge-current-limit-69ae7945061a
 
+Best regards,
 -- 
-tejun
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
+
 
