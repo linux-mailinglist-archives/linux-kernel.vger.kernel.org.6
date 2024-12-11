@@ -1,197 +1,137 @@
-Return-Path: <linux-kernel+bounces-441599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8639ED08E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:57:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94769ED092
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:57:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38CDD18828E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFD928E853
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32114246345;
-	Wed, 11 Dec 2024 15:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FB01D9A70;
+	Wed, 11 Dec 2024 15:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sGY5ulO2"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cVqfmndc"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D70246353
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9E91D9665
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932614; cv=none; b=Zk1GzBI/5TqUVqSylCKAc6dgartPTwLWaeFEp+x2hTUZwrkDvkDkVc3QERkwS71Wy9/IPTkpDfV/Cn7W/IV8/RxHyIq7lsUr9Cm3iuOWmLsPN6dWIllzIIvayASihCGu9V7txgFy/mpoyXIXHVbcYapZuFyd0CXjjk2Ogswrgts=
+	t=1733932620; cv=none; b=jgqMlcEqNOqEZi5KDEjG/Ixcy/u/MLUlt9Mbz4dENILpAWLWC00lkZMbcrftgOD3uiupwaWmRS4bYV+2nnsCV4X9Q4egacpXtjytnzGwuGwUZJTWhVjw1TeuAXRRVMSlzKQrVyaPFS777gwZuvHzA6v3Ye6U93RFClXkHCIh+v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932614; c=relaxed/simple;
-	bh=KxTYuT0vkTL+6lVCC0QaDEDlT7tZIBhtwtLSD+T02wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNuljXZPy+bPHCEx40rvlyvVjpkblkAq7+lw3zjOOct+ANtK/KQbLWRau56Ash0nNyhnfC5XG2viXu7Pc04gDnxnKuztidGjaa/XUdXPKpqOOwV/LBBhldLTQ6D8p1yI/saw2SUewqBx6OpttR8ZjYlfd5SGHTftf+cvZhZsmTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sGY5ulO2; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1733932620; c=relaxed/simple;
+	bh=Rv+K7hKMlEcxfuBPqiseeoq83C5g31oqxKPW9FfS0H8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q8sk4SET8/6IKYFCshIEficqBuykfxkL0ZDaE31xS8Uf/FJQZLDWfwqysw/dY6yH0KyBobpxhu1Q3ICEO0GzR8/QETf4MgCLlSvXvy1ZKE7r4V/U/MagKNQdPzB8XkOQhfrx2dlTSaVjyAjFeHnhY23k0Aw4km2hFzmkvl3oAnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cVqfmndc; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-725ef0397aeso3212823b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:56:52 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-436202dd730so4284845e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:56:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733932612; x=1734537412; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xiuNCg1ODadPaFJsjkbY0AkkT/7XxAvNyr8sRXru+xc=;
-        b=sGY5ulO2PLRZIs0p+p1b1TMMCgD+QkAecrJqPLWj4jIMQ4RfkYN65OXNgG79kBU9oP
-         DTp8j8cfFiNS9pBEEqi9IBs3AQTE9VzCYD7JgUj0jfHbZ5WwU5eq2fbtHrQkRA950vjX
-         IQUs8z+P1uEQTGNaxhCxRCIt24vGhhvYbTqc/C+D0ldBGQCZwuR+nvNFPKmdJ1q4D5t/
-         IU6i0E1ZhQ2gQ47/bOR+GyobUSLokr2dgfgO9NnV228iYwoyFJAzLts34prj1L8st6+p
-         cqPdiYrwa5ucniPoc0ka1Yvg2q/vfCplU8eJTOP5OBXY2pE5g1YFrcV/1iEi5jm8DQ0u
-         zqkA==
+        d=linaro.org; s=google; t=1733932617; x=1734537417; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nkg3+gqCHZyZ6Sl2qTzJB3+MN185d7FZdzLmb7C7pz0=;
+        b=cVqfmndcU8ORqb/WAs3hyt8lTr4dUf+4XymZz6uPD/WxWt8yHla3SV8YlD0CU6a4Gy
+         3TpqlHJOfkOj4V3RMYw1FKEtzg1zGBg14Ii7subePb5KL3GWfBuCNVaIOzkJ0ge9xh6a
+         6yEV9b6z9jRLIEzdSQFx56dn/7bq5KAGWechEwBvG7MW9yPpwhfjdUrcZTE+KWYrg1W0
+         VY4fHsKfaw89qhDLaXDa3vkCvrkaIXF5DGLvRTtTAqspKxZz/feNwrfL76YlmX84WepO
+         kFi1NUhB6srZ/IuzW+ObeXZ+EGgjerXDDcTEn2DcObGEY1miOIFJ9G6fuuAE183gQ0ry
+         Hz0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733932612; x=1734537412;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1733932617; x=1734537417;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xiuNCg1ODadPaFJsjkbY0AkkT/7XxAvNyr8sRXru+xc=;
-        b=sW+q4pvjUel5spfhbhZ/r5hwhVr2lfeXLi/njj0efFWc/Lh2E9JBngUMbZLCQk8WoY
-         NxzUG6+DFuTTR/aPElqjOTC5TXBFUKusymM4KNyhZmXk6eNILM0oJ3D77Yjx7rpDEy1k
-         f6xwMx5UchQ4ka+q7xZftKnwwIegKC6PIH+dwWzrOtJ+cx30DE8L0/YQJ3Hs6PmxDqo9
-         WeEoy757gj1P81e2hL7ikncpLJuOUvrAt4xvFO43Am6CI2rvwrkYKvvMkfBwRrJjw4Bk
-         Z225GuvqlQSo63WaO6h2UiW//jwTLtJfUMkaPO+i59UYbSrBeItBXP+2yiCdCBYbuZR3
-         2uJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHSmzc15lnQP7FGET6bj/yHoJqBbWs1ubNU7QdOnqvqCfmu7rXDkTTGgrZMdzJ6fNWkCTXANL4Q3FpD78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqk6s4e4uk0dXHddASdGqUEXLKbcHXUXu3XwnFUW6kLDnb5tt+
-	gFK3Al8/IrefWfAXf/q2x0vq86q+mG1OBsspgUoA8KMu3ziRLt6pdC/whztRaw==
-X-Gm-Gg: ASbGncvWIVxfhOPsVIIgBhAkpBSaq9OTQAfK/L4wYKxAJ1DNcB81/3f7xl/viAYIfU1
-	e21lGRBCjttGxh+NmnNQSxinyt+Yv2nea44qAMaC+s8fl+QZXPEYWlSPhiA79HuqkQVonmjQ36h
-	nvnhHUXWJS1P/nAxSyGlYgsBmOqS/SjtxeyRS3SMKuzsqoDALO4T9P18pqogc1ihcuy9r5x4Nvg
-	8uLt9UkLqKdyhsCHltI+rp6w9yXA1ccE/4maFfLmWvYMs8E+RtKediBoXcaUjI=
-X-Google-Smtp-Source: AGHT+IG79oEDGy15sALBwwOM26SFeKz9htGCpyYhhFB6RC1ODZSEyo3vCfl28XJ5iJEsPUIZnGagvQ==
-X-Received: by 2002:a05:6a20:9f88:b0:1e1:ab63:c5e8 with SMTP id adf61e73a8af0-1e1cdaa7654mr641573637.26.1733932612149;
-        Wed, 11 Dec 2024 07:56:52 -0800 (PST)
-Received: from thinkpad ([120.60.55.53])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd157d2bf4sm9446322a12.74.2024.12.11.07.56.49
+        bh=nkg3+gqCHZyZ6Sl2qTzJB3+MN185d7FZdzLmb7C7pz0=;
+        b=cFXGJNzbeuRjZtCU0lJZi3mz40EO8AoVJOZL/I1LGrLP707emHgQQhyDchiGkhH+IY
+         XbhAPERsQp0t1p5gnlnP0plpcqmeomI1uzw+cOQxxgBEzJK011eLIV3MLSu4Fxztnwzl
+         /2SzK3Xj8SHnNjzjQPNp9szxmMh3ivu5iPq5kOMg/Cd/C8rt9PBvYHkDC8IJ7yBtBcca
+         hyl42sdEctLLo5OPYrJCEOojBkJxSfO2Qa67kuav5oV5OzeKUJhxdpSXa4yohn1YkCKF
+         haQFYf0sR9aQxtTUW5LZWDT+bgfWorhyZUjwVM8gc5M0p7t2zxjXkfEKHI+OjDosFr1R
+         NFmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUAGNLS1qbSxslN+ZxXgrwrOAAYnsgHXJUfS7QB+jukMtaAeNw/BiR3zwCkM0Q8rT1Lo3A0h/YR+cNEvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Szs3FsH6r57WLlyzMCqthb462HteHxBi3oPxSXChhmHok62R
+	SwU11WInNog8s96CK6x8DW8TbRVWzJjQZMcsbMaaoGa2qtbni8M6+H6cP49ovuk=
+X-Gm-Gg: ASbGnctHWCa8h5HJ8udSs8RII+mmuEhL08I3GLndMfrXx7nB9e9/7UxMYXkFmqKcEhd
+	Um49kx4rlXCih3hbyhHT6k8MhdyhBDyExVziQLu0qdnXGp303gu0HwojGe6UjFUkx1UJFiUK6bP
+	64PVttdeZGX2mC5LoI33yKtER3f5BymrNqghdJ92qDiOdNDc7rPv0Bp1DXPUp4uL6bLNz8U0QtM
+	2RS7rEFG+YE43s00XySEmXcN1q0PMVvx6hm9ITLdEaADrkmDma6AAr7wkA=
+X-Google-Smtp-Source: AGHT+IHswNBtDtvurvta3UIe1snbeW4EpMGUksBi4IExyjMEcI6lUxkxBWzCbW9NdBKAwxVrirF4eA==
+X-Received: by 2002:a05:600c:3541:b0:431:93dd:8e77 with SMTP id 5b1f17b1804b1-4362286bc7bmr2392765e9.31.1733932616850;
+        Wed, 11 Dec 2024 07:56:56 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514ec8sm1598464f8f.75.2024.12.11.07.56.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 07:56:51 -0800 (PST)
-Date: Wed, 11 Dec 2024 21:26:37 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc: Vivek Pernamitta <quic_vpernami@quicinc.com>, quic_krichai@quicinc.com,
-	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] bus: mhi: host: pci_generic: Add support for QDU100
- device
-Message-ID: <20241211155637.yooehsxb6oskl464@thinkpad>
-References: <20241209-qdu100_us-v4-1-f9010b2a09a2@quicinc.com>
- <20241211064155.gqlbi3leoaaz3w6b@thinkpad>
- <540fa0c1-2e84-0c11-87e9-09198d6f270f@quicinc.com>
+        Wed, 11 Dec 2024 07:56:56 -0800 (PST)
+Date: Wed, 11 Dec 2024 18:56:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Julian Anastasov <ja@ssi.bg>
+Cc: Simon Horman <horms@verge.net.au>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+	David Laight <David.Laight@aculab.com>
+Subject: [PATCH v2 net] ipvs: Fix clamp() order in ip_vs_conn_init()
+Message-ID: <Z1m2RVCy-lkXdDUa@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <540fa0c1-2e84-0c11-87e9-09198d6f270f@quicinc.com>
 
-On Wed, Dec 11, 2024 at 08:24:18AM -0700, Jeffrey Hugo wrote:
-> On 12/10/2024 11:41 PM, Manivannan Sadhasivam wrote:
-> > On Mon, Dec 09, 2024 at 11:09:50AM +0530, Vivek Pernamitta wrote:
-> > > Add MHI controller configuration for QDU100 device.
-> > > 
-> > > The Qualcomm X100 5G RAN Accelerator card is designed to enhance Open vRAN
-> > > servers by offloading CPUs from intensive 5G baseband functions.
-> > > 
-> > > Link: https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
-> > > 
-> > > Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> > > ---
-> > > changes from V3:
-> > > - Removed IP_SW1 and IP_SW2 support currently, will add once
-> > >    SW_IP1/2 channels support are added to mhi-net driver.
-> > > - Removed qdu100 edl images, as EDL images are not needed.
-> > > - Added space inbetween kernel_ulong_t and mhi_qcom_qdu100_info.
-> > > - QDU100 XBL FW images were pushed to linux-firmware git repo
-> > >    https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/qcom/qdu100
-> > > 
-> > > changes from V2:
-> > > - updated commit text.
-> > > 
-> > > changes from V1:
-> > > - Changing naming convention from modem_qcom_qdu100*
-> > >    to mhi_qcom_qdu100*.
-> > > - Updated commit text.
-> > > - Fixed and corrected by passing mhi_pci_dev_info struct
-> > >    instead of mhi_controller_config.
-> > > ---
-> > > 
-> > > ---
-> > >   drivers/bus/mhi/host/pci_generic.c | 55 ++++++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 55 insertions(+)
-> > > 
-> > > diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> > > index 07645ce2119a71c9277356e962252b840379cd81..dee9fa9e7ae441fbc9a86e53694568c0ba192002 100644
-> > > --- a/drivers/bus/mhi/host/pci_generic.c
-> > > +++ b/drivers/bus/mhi/host/pci_generic.c
-> > > @@ -245,6 +245,58 @@ struct mhi_pci_dev_info {
-> > >   		.channel = ch_num,		\
-> > >   	}
-> > > +static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
-> > > +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
-> > > +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
-> > > +	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
-> > > +	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
-> > > +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
-> > > +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
-> > > +	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
-> > > +	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
-> > > +	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
-> > > +	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
-> > > +	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
-> > > +	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
-> > > +	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
-> > > +	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
-> > > +	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
-> > > +};
-> > > +
-> > > +static struct mhi_event_config mhi_qcom_qdu100_events[] = {
-> > > +	/* first ring is control+data ring */
-> > > +	MHI_EVENT_CONFIG_CTRL(0, 64),
-> > > +	/* SAHARA dedicated event ring */
-> > > +	MHI_EVENT_CONFIG_SW_DATA(1, 256),
-> > > +	/* Software channels dedicated event ring */
-> > > +	MHI_EVENT_CONFIG_SW_DATA(2, 64),
-> > > +	MHI_EVENT_CONFIG_SW_DATA(3, 256),
-> > > +	MHI_EVENT_CONFIG_SW_DATA(4, 256),
-> > > +	/* Software IP channels dedicated event ring */
-> > > +	MHI_EVENT_CONFIG_SW_DATA(5, 512),
-> > > +	MHI_EVENT_CONFIG_SW_DATA(6, 512),
-> > > +	MHI_EVENT_CONFIG_SW_DATA(7, 512),
-> > > +};
-> > > +
-> > > +static const struct mhi_controller_config mhi_qcom_qdu100_config = {
-> > > +	.max_channels = 128,
-> > > +	.timeout_ms = 120000,
-> > > +	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
-> > > +	.ch_cfg = mhi_qcom_qdu100_channels,
-> > > +	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
-> > > +	.event_cfg = mhi_qcom_qdu100_events,
-> > > +};
-> > > +
-> > > +static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
-> > > +	.name = "qcom-qdu100",
-> > > +	.fw = "qcom/qdu100/xbl_s.melf",
-> > 
-> > Can you first push this fw to linux-firmware? I haven't enforced this
-> > requirement earlier, but that was my mistake.
-> 
-> Mani, this is already done.  There is a handy link in the change log. Did
-> you miss that, or is there something still missing?
-> 
+We recently added some build time asserts to detect incorrect calls to
+clamp and it detected this bug which breaks the build.  The variable
+in this clamp is "max_avail" and it should be the first argument.  The
+code currently is the equivalent to max = min(max_avail, max).
 
-Oops. I missed it indeed. Please ignore my above comment.
+There probably aren't very many systems out there where we actually can
+hit the minimum value so this doesn't affect runtime for most people.
 
-- Mani
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Closes: https://lore.kernel.org/all/CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com/
+Suggested-by: David Laight <David.Laight@ACULAB.COM>
+Fixes: 4f325e26277b ("ipvs: dynamically limit the connection hash table")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+v2: In the commit message, I said max() but it should have been min().
+    I added a note that this bug probably doesn't affect too many
+    people in real life.  I also added David Laight as a Suggested-by
+    because he did all the work root causing this bug and he already
+    sent a similar patch last week.
 
+    Added Bartosz's tested by tags.
+
+ net/netfilter/ipvs/ip_vs_conn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_conn.c
+index 98d7dbe3d787..9f75ac801301 100644
+--- a/net/netfilter/ipvs/ip_vs_conn.c
++++ b/net/netfilter/ipvs/ip_vs_conn.c
+@@ -1495,7 +1495,7 @@ int __init ip_vs_conn_init(void)
+ 	max_avail -= 2;		/* ~4 in hash row */
+ 	max_avail -= 1;		/* IPVS up to 1/2 of mem */
+ 	max_avail -= order_base_2(sizeof(struct ip_vs_conn));
+-	max = clamp(max, min, max_avail);
++	max = clamp(max_avail, min, max);
+ 	ip_vs_conn_tab_bits = clamp_val(ip_vs_conn_tab_bits, min, max);
+ 	ip_vs_conn_tab_size = 1 << ip_vs_conn_tab_bits;
+ 	ip_vs_conn_tab_mask = ip_vs_conn_tab_size - 1;
 -- 
-மணிவண்ணன் சதாசிவம்
+2.45.2
 
