@@ -1,164 +1,103 @@
-Return-Path: <linux-kernel+bounces-441399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E01B9ECDC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F24C9ECE20
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24A60285A4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:57:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED77C28307A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1022368F2;
-	Wed, 11 Dec 2024 13:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF835239BBB;
+	Wed, 11 Dec 2024 14:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EzK9TjPJ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Z6SyTGKq"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2245038DE9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CD723692A;
+	Wed, 11 Dec 2024 14:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733925463; cv=none; b=pYnfM2JTSYc8nDYt5eXUmi/xxu0O9Be99jh7iWzoVmMMnMD67h+pv9eGibgdMyBpcpGb5FgIXdeM48NFR6g4wK5Xui2vekudH0Oxa4Dm+wR0k0vsfUNwQ2w+HyOFRoQ866dExTH7RMVXZtjndMmzFwu9qiytLTF8+Boy+q2/wAU=
+	t=1733926145; cv=none; b=fbMR+MBSv4kWTV814Bo8E2vbD0xJwOxKYdAhFeLL9A7WvqPE80jD148sYDdrXEtJBhiKVoEe6e6bt/aD+E5i4YP4iUyTMxqQ9hH2CgS6tQ8J15XQHfFrw88Bog2nEX54kpE/ePX1ELDIOPKhfDDOYPG8QJighiGDEaoXjZXTHg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733925463; c=relaxed/simple;
-	bh=VDR/LFkNhR6c+K0FS5fF1XjxZAJmm0jHxt2NQS8CF3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5Ux9TvPFBO4hzX2inCA72GkjHi00G0ovRlJNoQq8H0HylZbLpU4YINp0G2s22Hduv535E6B0hwP5Hb2bTcwtocc4pbM2+pOZ4t+n4Or05tOj0SGd8KYEolrF5V5F+7ziFvDj+8iSWa6fUAsu9v89XSxemj5jU+QJoCQE8OfiSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EzK9TjPJ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434e69857d9so4404625e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:57:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733925460; x=1734530260; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mwRyufZV4Hv4BKUozZCvb8TTCpopa4m9EKT2fS3FdAQ=;
-        b=EzK9TjPJf4p9YNiCcinbbsZc9eOyC31xRpwKlqNj6vPaudvGrB756CRAxwtJre4hB2
-         GmKB8lKxbgkNZYAkBT7trWg4tuwauU7P12QG+o/BPwafGWiA5a0TTtwHTATwH7AyP0/n
-         A6tOw0JigkJRIo5ltbjLDbQHr8Sw/puUciiJwNN9CRXOyh4TJuVkiKbYA7z5JrKmO8tb
-         mKqG66OcsxeYYjpkUCEB1ysEcvpaz6py6sARKm6iIgrzQRnyv2rH5qN5ZdsnNdlxM9l3
-         IblOH7HMPKjcNBRPb4DipTd36ipSXWPMIUkvooiZaUy38jWQw7SxnHsn4n2ZK8fldIgl
-         b7sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733925460; x=1734530260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mwRyufZV4Hv4BKUozZCvb8TTCpopa4m9EKT2fS3FdAQ=;
-        b=NkGF+gqOgXs+IfkTSLmc+KN0xkOhqZHac/NW8CoHlORQjpUNyRcK8rPsL4n3oBjp+Y
-         YWWDIdiGwSo6esoanAKKJUh4OwLGS/j3vEZVOZEj83XrA4hvhexSwS/AjzpvmhH8yHHB
-         YUfAtv0YsAdwzAAlwhXO80LGGmzJYbD5QcDhuF8z9eeUcySts5Rcpbqw93a61QG9mNCq
-         eJVKe3xO4GH5/wZciSpuKgu+fEIqlz16QYHiI2jd6BavX+gJ1UipifLntJC5XN7qHQF8
-         gxBuq+9RgAUQbnIMfp2ujJWN5km1paCKPP1q1+5HL/7K+mnALZoOPF9P8hsrPgwiCLn4
-         Yfyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVx/hoblx6364PhfEqUp6E+PS7pNLBfgnmuZ+ALwiiDBF53H+UgSgvzU+GMeyvUk3ytSWVQQwZCuL9VwWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynMFZkLiv5Y1rOk636znFvRZ0TuGj9vu/XU7Rb07CBsrc1csmG
-	r9RAF1qWMHLkLzZdIl93v4VHcT6Hxy8o/qj1vFFzD4KVS386lpe3VHj0WNlcgbo=
-X-Gm-Gg: ASbGncsG5d3woSios5IlKU/TNNJSb98Kj7J8p3T42w/hx+VRSLJX0YVBUJmvxo3dylE
-	rroYYuhEe6/VxA5K7inpsXdgL0VKGFlT/xnlXb6eriVT4fYB4W27jBva5LxY5GCODY2WlT5fDTf
-	SREWGxKvrdgfe7sVhxKm/AJ/MTZ2qtkukYAF9+hYOcgCgaD0TUJm2RDo1VlSF1U8VMZsY5C2paz
-	qgzY7IGzrQx8zb3tu18foIgHNVPqOHc37qRyA0LkguD2TmCT/92
-X-Google-Smtp-Source: AGHT+IHHGvcjsAaWoQmNtBBOZEdx4io9usowsti1WQThV36SDH9Hnc+lVGaPEvltgGcV3XhTkCAoMw==
-X-Received: by 2002:a05:600c:1616:b0:436:185f:dfae with SMTP id 5b1f17b1804b1-4361c5a3918mr21096715e9.6.1733925460593;
-        Wed, 11 Dec 2024 05:57:40 -0800 (PST)
-Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4a31sm1355432f8f.30.2024.12.11.05.57.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 05:57:40 -0800 (PST)
-Date: Wed, 11 Dec 2024 15:57:38 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: [PATCH v3 2/3] Revert "arm64: dts: qcom: x1e80100-crd: enable
- otg on usb ports"
-Message-ID: <Z1maUvW26Cl/VXLr@linaro.org>
-References: <20241210111444.26240-1-johan+linaro@kernel.org>
- <20241210111444.26240-3-johan+linaro@kernel.org>
+	s=arc-20240116; t=1733926145; c=relaxed/simple;
+	bh=UwZCp54eb/+4kEFaokpoh9DVzhZfjWZQTTCKH1CwyxQ=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dk/T+brYrP2UU/4x5vqN3nHGLkkQWLTsJX1qHDxW2qHaB0VHKOn7KdMXbAt39w9TCcQGoXXZFWp4En+LEhQ9Ty/deB2YDwFWr3ZdSxBoUD2DgocOE+PL8uzIHrCUIKR4N7SkMfHd+oGsmilx/YTLYilIk9WYOYG42w3ljEJkPMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Z6SyTGKq; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1733925830; bh=GV/PffgiRhk7TTiNDAMw/6C+sGFhBffZzyUrbe1OAJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Z6SyTGKqaOcfCkBX1A8P5Ty/Z+hqs+8t6FtxACa95s9V9yguAbugpdI9By94HuTnq
+	 DmlgjV3InKPKkDXi0ehCAPHjQt/TmZf0604BRdqC5opO6SGpEilPS1kl0DrOdza5QW
+	 pSU///jI1WKyl8q+st7UGlMo0Dv/xRZU25CQEX3o=
+Received: from jckeep-Lenovo-XiaoXinAir-14IIL-2020 ([124.240.55.41])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id E6A1C4F3; Wed, 11 Dec 2024 21:57:42 +0800
+X-QQ-mid: xmsmtpt1733925462t7if6hf4c
+Message-ID: <tencent_C3D31BDA67AD3F485B2E4D3498E930CD9F09@qq.com>
+X-QQ-XMAILINFO: M1JY6XCfJolWm27/3V1TyRgFW0HHQOl9GdLTb8+8plyiqbGBKIIUdNXwX5J2bO
+	 bVxr+nvVjYbwh+76V2pfUU+qZ8sNfxXb3NW+osft6NjorCaVsTnh0I8CkYh44noRqXZLoe0+l+Iv
+	 ihou4/J7VvLIEGNLgEfcgv/10KnljCcSC3InF+o8XPjO7dBEmzT6JsuNer/89R8IdSaVb4DokQFo
+	 wYQTVRMAibeBheAjk+OMlG9GPPB90CtWdclMze9WMlvBmFx18DqErBMEdMAMl6C1clu9heunZjZC
+	 R6brjfmX0W/Mw/k0jExStdDnLH3eEJMSzia0ZhAAyS6uCrfMHR8cYh8vZxiyPo4MdameAfnQxso9
+	 eRBkB5kx0PoKxwHxXUC71tfGfRTcT89DSCvI70BccQfXW0OQyYwf+j4PvTviNYIm8dlgfxYd+vio
+	 kkfxkJmcutBDhFkShBVjnephJ7hBDNFvOmlLOYQyYA6O3UgLDLDbuzv8J0rKgIwKBu0ZYO+qDeQ8
+	 qOthiqxWEV0FvixXBPfkANRyxbV2FuvangimrgQ9fauYKoKY6gr31C1BB8uWrs1f/rjhZ/NXamkQ
+	 Hn90hs9BlCzBq9SqLcJ2JTJ6muriwFMkWKRxlFef+R5B5VoRri2/juLVOjr91FCxLoLLICD1CGeS
+	 s4IDl0GRVTKnR6UnlCNRi8qvmkii7c/vYLQIRoe1WlQFAG6MOo6fu3L+jsquQ0UKZZMl7xqCNRkJ
+	 QadjQbnDMbURiyvEpGELbWdIRnNzAxrWXsMgaAy/Uf+1kyniiN7H+nzaN60abJcAcWizYtxF2g6o
+	 psthqMcadsh0fiCI+Mrd6JWXaArGhTfFDm4GVOH2ZGX3v31G0ra1XNuswfoKCrEF/1RQPFrJHNe3
+	 9+vfwB2wQOCrR4WyhteNVrPgir4CfGQPtyTe6l/UzxgztqJwH6j4+fsgHNSAaxJZ3GeQwtUcqB7W
+	 q5hYgBeoDg7BsJGBPL7AbQhDYKqK5EaX8XSNRSX+Y=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+Date: Wed, 11 Dec 2024 21:57:42 +0800
+From: Guangbo Cui <2407018371@qq.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] Add UIO (Userspace I/O) device rust abstraction
+X-OQ-MSGID: <Z1maVqm36mCGO8Sl@jckeep-Lenovo-XiaoXinAir-14IIL-2020>
+References: <tencent_6FBA3773CF74B276166B63D292CB2E8D3D07@qq.com>
+ <2024121150-stretch-password-2179@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241210111444.26240-3-johan+linaro@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024121150-stretch-password-2179@gregkh>
 
-On 24-12-10 12:14:43, Johan Hovold wrote:
-> This reverts commit 2dd3250191bcfe93b0c9da46624af830310400a7.
-> 
-> A recent change enabling OTG mode on the x1e81000 CRD breaks suspend.
-> Specifically, the device hard resets during resume if suspended with all
-> controllers in device mode (i.e. no USB device connected).
-> 
-> The corresponding change on the T14s also led to SuperSpeed hotplugs not
-> being detected.
-> 
-> With retimer (and orientation detection) support not even merged yet,
-> let's revert at least until we have stable host mode in mainline.
-> 
-> Fixes: 2dd3250191bc ("arm64: dts: qcom: x1e80100-crd: enable otg on usb ports")
-> Reported-by: Abel Vesa <abel.vesa@linaro.org>
-> Cc: Jonathan Marek <jonathan@marek.ca>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Very cool!  But can we also see this with a "real" UIO driver as well?
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Sure, I will look for a suitable UIO driver to start with. I’ve been quite
+busy recently and might not have enough time to dedicate to it, but I will
+continue working on it.
 
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> index 199f6b42aa11..66360390ae7d 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> @@ -1840,6 +1840,10 @@ &usb_1_ss0 {
->  	status = "okay";
->  };
->  
-> +&usb_1_ss0_dwc3 {
-> +	dr_mode = "host";
-> +};
-> +
->  &usb_1_ss0_dwc3_hs {
->  	remote-endpoint = <&pmic_glink_ss0_hs_in>;
->  };
-> @@ -1868,6 +1872,10 @@ &usb_1_ss1 {
->  	status = "okay";
->  };
->  
-> +&usb_1_ss1_dwc3 {
-> +	dr_mode = "host";
-> +};
-> +
->  &usb_1_ss1_dwc3_hs {
->  	remote-endpoint = <&pmic_glink_ss1_hs_in>;
->  };
-> @@ -1896,6 +1904,10 @@ &usb_1_ss2 {
->  	status = "okay";
->  };
->  
-> +&usb_1_ss2_dwc3 {
-> +	dr_mode = "host";
-> +};
-> +
->  &usb_1_ss2_dwc3_hs {
->  	remote-endpoint = <&pmic_glink_ss2_hs_in>;
->  };
-> -- 
-> 2.45.2
-> 
+> Heck, even a conversion of something "simple" like the uio_dfl.c or
+> uio_cif.c would be nice to see (you have to do this on top of the
+> platform or pci rust bindings, see the list for the most recent round of
+> them).  Seeing how this will be used is kind of key to ensure that we
+> know the bindings work properly.
+
+Yes, this patch is on the top of the latest platform rust bindings. 
+
+Best regards,
+Guangbo Cui
+
 
