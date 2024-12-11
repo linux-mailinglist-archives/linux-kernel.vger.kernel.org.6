@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-442175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B529ED8E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:44:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD469ED8F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:46:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1ED128402C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83073161D21
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87771EC4CF;
-	Wed, 11 Dec 2024 21:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263761EC4CA;
+	Wed, 11 Dec 2024 21:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="CvdvOtc8"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3D9Zf4p"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831941D31B5;
-	Wed, 11 Dec 2024 21:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF37C259498;
+	Wed, 11 Dec 2024 21:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733953446; cv=none; b=e2C5fLHeRDi6VsB+lC6u29VCfhBz2E4q9CI00avWQ+0xJteRvQIIlTfsPqFTmUrzABoKVpPhkVU/F/KA06FBZKolZWBgRuAbpQrFGHnsivpr0yFLBafy+cXLw+J2ShxEZqBTnYxei8ogc7pozPmS3QFc4CDYSTMwGCu9mArGPeo=
+	t=1733953551; cv=none; b=cDQA0CoG8wdKxzs0JYlF4rMV2h7lxOQdrGmD6ibkEEEbwY2ITDAEvVnSUNv9ClYo4xLeUwm567XOdWmAL+pmFJyS6tVyPAHtog6Cv7CblJYmxL5HY9/qj5inXS/dhGE4yXnnTDtOhaRQGU6huR8cbxx3lfbr71LhosOt55ReViI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733953446; c=relaxed/simple;
-	bh=5U2ASdnepTwaFLctQvB/+gwnMmMlZoNUvW0ixyaRRwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oINL2O0sYSBsmCfL+iO/jFHIXKQ77sG5jQyUhIKS23wZ6Ek7FVNtDBMyFos/Wh5KOFz2Ywp0LjspSDNSiQRXFCGlHLopDUcaIilyeppM1IRjnPBlEbFv01p1gE02xBDYqVtfYH1v/YBJeun2Um5RTMWx5AdkCR7/aLsROYcHo6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=CvdvOtc8; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=SH2ZF9/CPWAZaJVDW9f7/B3MNvwfJzYb5XVZa+4d5is=; b=CvdvOtc8y8uYK6ff
-	H3D9KMk/yfsVIFtRLSEB4A7S33DVtiTd2bfRtEBHM8tF7jIUZF9lYkd1FAX9k0Ud/duHDBca2AJUp
-	KBwe7aGb3iiaCuP5sZ3f6pzH38JxznmMrkCOVcEeIG4JqgJ41a4hMR39+uRGUhRr4cV4eLlOb6syR
-	vVpnH56vmFjlF4dvY2I5eXeFDQTeKrgnzNmhPXphOa0UINvtR06qpCDLkX+q9exiV2yg/7QHwyRi8
-	xSXQ2erftN6nVvfW30rGxHf7m9Rlzgmwqp24OYHvrTkvtdRh6ASG1b6JceGspM+UHGDeJAgYj9PZW
-	rPNOS43gKk58eEaZXQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tLUUy-004rVE-04;
-	Wed, 11 Dec 2024 21:44:00 +0000
-Date: Wed, 11 Dec 2024 21:43:59 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: rogerq@kernel.org, tony@atomide.com, krzk@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memory: omap-gpmc: deadcode a pair of functions
-Message-ID: <Z1oHn6D2PuJGV-3y@gallifrey>
-References: <20241210220628.237604-1-linux@treblig.org>
- <202412111932.lp8jHbeT-lkp@intel.com>
- <Z1l_85Cq10KbRWl2@gallifrey>
+	s=arc-20240116; t=1733953551; c=relaxed/simple;
+	bh=uZxErtAMqBRDn+WZll10y/bkFTDcTuIEHN0JHfb5GqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y9ESx4Z5y/+AsX9CyARyS15FjWLMNf/OaA1NEZIuYRZyQvZlwSbR8rHKz+BawYrY68e4g9A793g7LrR77tCOic+6kqlz8shbnAMwXxdyA3zM/mRPCKb8H/D9hzEQODuNtVjbbcPjaWhkVsZd7ibGgrxyj/XFIHfr56tomDkG3tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3D9Zf4p; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-435f8f29f8aso14997635e9.2;
+        Wed, 11 Dec 2024 13:45:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733953548; x=1734558348; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kKHGYhS/cBN9KevNGUo8edo38c3cn7FpEtFnnmWm5xE=;
+        b=W3D9Zf4pRGkXziYgoVZJng90TrqmS2zBYiimMc6TQBMg2Y9Jep1NH5H87ZdoJ0M8oP
+         uFn2/h+z6pxvyZjl4FtOUfzCPxrZIeT/B0om8OSfULWloBqDUZaHB9hESqf5euW/ARx1
+         fmjmC1FR29OuQ0uVEF9dgr+IbRkgF7rvIPw6mSM32r0qRUQRtTels30rSsEyXS6jjC+d
+         qZJ7EkjM76T5FmswUkXetdkn7Nu8+eH8iJNXru4OsDkxEq/Ge1eXPhIXqJmibjOR7/7Z
+         askuRMnJk5H9OH/sW8bVKW58bVg8H8hbdU2+esTODohwhnPcbIRPU4IH11yhqojdhbvO
+         Do3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733953548; x=1734558348;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kKHGYhS/cBN9KevNGUo8edo38c3cn7FpEtFnnmWm5xE=;
+        b=t3K6nSk2nowfwftaAPYfOncqu1rkR8lnn15438HPqeXJzRq0hIq/s6APc009ezcekc
+         4sViBdhxmJy4Y94hL6+wO9jX7huXiypIGWnvh27zlxpGD2YkP4WbQwXBSi90O9k2OuPz
+         8NPkiAI34MndpMkfGUrkcMZlzaNKQkRhGUGimS4AovpR3Yzj42WX5Zu6kh1AFLfMSLF/
+         EujMakUNauHBubSOsdo5pUVpAzIBUBVKE/rj9DZ8WGPlh8l/TT+tixkGJvCzGq6AvzAY
+         C7afcogZA/HittvBOBbIGKLt0zQlPcfw7qtwnhOAfjL5Za7RwysmUQ7nk3VH1RCrk56s
+         dhFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpb00K3LXQxhsHhCeQfP69Y2Jgw2QDQizDrOdHbZJb/vw1jyTedNMnh3Ongwt7wsXG+9xI+gUF+wOZXJhz@vger.kernel.org, AJvYcCWvLA7KZ2A2kAZ0iuCls+SHXRYe8v5xhlB0+dSdEnBetoMIrz54FR1yNi/x1wy9UdJA7p0=@vger.kernel.org, AJvYcCXQNfq/DfPygTOx2Q7Ie74O4h7ek7MDU4g0Cxr7aXwFy1X5Zmkl+6wqSJkQrQ2wz7gFn3EWHfec9kuXa2IGKBb1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/q9rU/74TaTMHOU1e/u+sVwOdUyGzA6uIgQE++O5yAU+KdbMz
+	reUpy2ngA01GTZof1jR+vCXinqE9E/blOnIPheTvKF1+v/lWnVGE
+X-Gm-Gg: ASbGncvqgXFiZ6hdmIyFKrpBMIm9EIbARjQ1w8UQx6D8mwICXHu2PYEWJ2N6YbV7dKT
+	xKzjyJ8pduzdmG+LHSx+XiGO7/3V7HlDniK6eSNjefWcmKbGlheBFSPUgpNvDSJr/BM/PsTpS6Y
+	ZPHT7Uz8z+Y/JR/nzp0D/3vA2jfEemch1l4pInsu/l+egJ4ZqPKP/pRC2SUwjJXXcMBFwmAc+Bp
+	Bcg6xrozd2YTVluUSsYuXlInUOFgrdJdBON4RUUAKwgvtfIWzU96G5NOblgkzP3L+emWjZhdQOA
+	XDCOIJC0IHdm5hfFESUX8BE=
+X-Google-Smtp-Source: AGHT+IH6R1p/+7YyxKtU/3Pv+FwIn+it1MCc11BigiVlTByBTldrdq5Oc6JbbUCqjWW52cCOGaoVsA==
+X-Received: by 2002:a5d:6daa:0:b0:385:f17b:de54 with SMTP id ffacd0b85a97d-3864ce894d5mr4038779f8f.5.1733953547810;
+        Wed, 11 Dec 2024 13:45:47 -0800 (PST)
+Received: from ?IPV6:2a02:8012:e013:0:1ab3:1f25:931:4d97? ([2a02:8012:e013:0:1ab3:1f25:931:4d97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782527520sm2145157f8f.109.2024.12.11.13.45.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 13:45:47 -0800 (PST)
+Message-ID: <fba03de3-f44b-4a2d-a15a-4071c5b09427@gmail.com>
+Date: Wed, 11 Dec 2024 21:45:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <Z1l_85Cq10KbRWl2@gallifrey>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 21:43:18 up 217 days,  8:57,  1 user,  load average: 0.00, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] Enhance event delivery error handling
+To: Sean Christopherson <seanjc@google.com>, Ivan Orlov <iorlov@amazon.com>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com,
+ pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, x86@kernel.org, pdurrant@amazon.co.uk,
+ dwmw@amazon.co.uk
+References: <20241111102749.82761-1-iorlov@amazon.com>
+ <Z1nX8aCfZMvJ4co4@google.com>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <Z1nX8aCfZMvJ4co4@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-* Dr. David Alan Gilbert (linux@treblig.org) wrote:
-> * kernel test robot (lkp@intel.com) wrote:
-> > Hi,
-> > 
-> > kernel test robot noticed the following build warnings:
+On 12/11/24 18:20, Sean Christopherson wrote:
+> On Mon, Nov 11, 2024, Ivan Orlov wrote:
+>> Currently, the situation when guest accesses MMIO during vectoring is
+>> handled differently on VMX and SVM: on VMX KVM returns internal error,
+>> when SVM goes into infinite loop trying to deliver an event again and
+>> again.
+>>
+>> This patch series eliminates this difference by returning a KVM internal
+>> error when guest performs MMIO during vectoring for both VMX and SVM.
+>>
+>> Also, introduce a selftest test case which covers the error handling
+>> mentioned above.
+>>
+>> V1 -> V2:
+>> - Make commit messages more brief, avoid using pronouns
+>> - Extract SVM error handling into a separate commit
+>> - Introduce a new X86EMUL_ return type and detect the unhandleable
+>> vectoring error in vendor-specific check_emulate_instruction instead of
+>> handling it in the common MMU code (which is specific for cached MMIO)
+>>
+>> Ivan Orlov (6):
+>>    KVM: x86: Add function for vectoring error generation
+>>    KVM: x86: Add emulation status for vectoring during MMIO
+>>    KVM: VMX: Handle vectoring error in check_emulate_instruction
+>>    KVM: SVM: Handle MMIO during vectroing error
+>>    selftests: KVM: extract lidt into helper function
+>>    selftests: KVM: Add test case for MMIO during vectoring
 > 
-> Good bot!
+> Minor nits throughout, but unless you disagree with my suggestions, I'll fix them
+> up when applying, i.e. no need to post a v3.
 > 
-> > [auto build test WARNING on krzk-mem-ctrl/for-next]
-> > [also build test WARNING on linus/master v6.13-rc2 next-20241211]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/linux-treblig-org/memory-omap-gpmc-deadcode-a-pair-of-functions/20241211-062027
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git for-next
-> > patch link:    https://lore.kernel.org/r/20241210220628.237604-1-linux%40treblig.org
-> > patch subject: [PATCH] memory: omap-gpmc: deadcode a pair of functions
-> > config: i386-buildonly-randconfig-002-20241211 (https://download.01.org/0day-ci/archive/20241211/202412111932.lp8jHbeT-lkp@intel.com/config)
-> > compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412111932.lp8jHbeT-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202412111932.lp8jHbeT-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> > >> drivers/memory/omap-gpmc.c:361:21: warning: 'gpmc_clk_ticks_to_ns' defined but not used [-Wunused-function]
-> >      361 | static unsigned int gpmc_clk_ticks_to_ns(unsigned int ticks, int cs,
-> >          |                     ^~~~~~~~~~~~~~~~~~~~
-> 
-> Ooh, right, I'll clean that out as well and send a v2.
 
-OK, slightly more complicated, I've posted it as 20241211214227.107980-1-linux@treblig.org
-gpmc_clk_ticks_to_ns is still used, but only inside a function which is ifdef'd, so I've
-moved it inside the ifdef.
+Hi Sean,
 
-Dave
+Thanks a lot for the review :)
 
-> Dave
-> 
-> > 
-> > 
-> > vim +/gpmc_clk_ticks_to_ns +361 drivers/memory/omap-gpmc.c
-> > 
-> > a3551f5b0c3ca7a arch/arm/mach-omap2/gpmc.c Adrian Hunter 2010-12-09  360  
-> > 3950fffdf0c088d drivers/memory/omap-gpmc.c Baoyou Xie    2016-08-28 @361  static unsigned int gpmc_clk_ticks_to_ns(unsigned int ticks, int cs,
-> > 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  362  					 enum gpmc_clk_domain cd)
-> > 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  363  {
-> > 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  364  	return ticks * gpmc_get_clk_period(cs, cd) / 1000;
-> > 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  365  }
-> > 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  366  
-> > 
-> > -- 
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
-> 
+I don't have any conceptual disagreement with your suggestions, so 
+please feel free to fix them when applying the patches. Thanks!
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Kind regards,
+Ivan Orlov
 
