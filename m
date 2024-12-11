@@ -1,196 +1,163 @@
-Return-Path: <linux-kernel+bounces-441799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A6C9ED42D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:56:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60829ED430
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:56:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1309E283E81
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:56:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB8B188BB07
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238D22036F5;
-	Wed, 11 Dec 2024 17:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20387204F79;
+	Wed, 11 Dec 2024 17:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOMh91Nt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l5IIFg55"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59024202F8B;
-	Wed, 11 Dec 2024 17:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B259D202F8B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733939722; cv=none; b=p0Zwaxg10C+LmjzwhJE4Y5m7CxaqZ+YNH9iX6LpMg9Xwqb2r3xECQSrMoE6F3aUIzQRCStrCwUiU09cUeScIcqe3Aq+JtG7pG90Eyp0wO4zUX6+6XZMy4/U716FB22lgNvxjN7mf42BZvuXRZ+xDw6rGMe43ssALygEsAslEz0k=
+	t=1733939737; cv=none; b=eUpeaneShaO05/jmoYnUAfc07n0vJvcg6xfc7B4ydXNCXieDrLyo1CQ1wsTAvdtTCiJSJepY7vvGNM40AiMcVZ9wSPgVFxcLn2Bu4Gf4MfJFkoswgQSRVA4BrDKkoeCQsgb4fMqJ1sIanSzW0zf9BuO/pFiRNtjZjMh8FRL58jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733939722; c=relaxed/simple;
-	bh=YXnChH557clDWDb3jcusaiok67MTcpiBTGjKwVBCGpI=;
+	s=arc-20240116; t=1733939737; c=relaxed/simple;
+	bh=kDPd8U5uK5R4uekTRa3wapZvJ0AawT6vwbSHt7TAt+U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YB1Zo5cLmH65VgF9W8/939V/5kGCULTZZN50dZBbDMMtEYnpZLgMa0ab9m3TxH3c2nXs7xpmr/+Stgc9lxoKrrNjlZjHtZFutN941HizGxGKANtlA6iqAsE0mdY7ZCm2aM8KE74tnodblzItmE0Hfb/33csPfsdJZ29thMNlkNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOMh91Nt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA43EC4CED2;
-	Wed, 11 Dec 2024 17:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733939721;
-	bh=YXnChH557clDWDb3jcusaiok67MTcpiBTGjKwVBCGpI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qOMh91NtnRCy/vn0Ez/Z9asD6xQ2FEYCi2+xvqN5mxtH5E8bY0gqcZMRsldfvx9o4
-	 ZIZHOZAacDUhIMqOFByKZBDeX8yJVc/Gpvg4LN0CiB2gZXWWFTnXRWy4smOJ7iegs5
-	 Tvt9fA6JvtIfDsjIMqJVaSpDcKyTpYwe6/pq1sHRsRN3gVG7KVNZJG/RBTriuFpdlt
-	 hzFModzbStO+X6K5L/+NceQpoFWtkKYBy0WnQbwBwTVf/fzBcpYA+jAQYMuqkJyxgL
-	 6SDnfn8t4dYMZERZrBOCjLdshK9lqtpmKJDmQNywhg2Uj2t7uRw3bvkO3i6fVHQX04
-	 CtPCBTS9xnMhQ==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-71e10e6a1ceso461024a34.0;
-        Wed, 11 Dec 2024 09:55:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU/TX/A/VZTX2To6Sa6wbiOONjnjOEhgjzeGPQhS706bww+zFix0NSLQRtBPquyNZxVlT5cxUN3Elys05c=@vger.kernel.org, AJvYcCUi5HE97KH2OV/sRHD1B5d3zhRHlxofBY7+WeBqthw24/3AqRJEOQEGCQAkKH8xJtX2eGe34K21UA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5EfRvBs7uJMt3POksI8CzUE2ZuOxHTYmsy1qCJxC3TwPvrk4H
-	q6EZoFrhU/KKNqH+0mt38nV8g7lBw4UNFvoKfsrPEBudDqK8tmJWBiF1dZgBXcGsD1us1NawDYu
-	EM5mFdl2mpkNyERSwAtof9LsHwk4=
-X-Google-Smtp-Source: AGHT+IHgFpDok5Z9icu9THpfdFq4QAxY1inlJflsNV45n6IxLUiWiXPSHPcFm614cyU/XCwJazCjGTnHKOkSk8CvHMk=
-X-Received: by 2002:a05:6830:903:b0:718:123e:922d with SMTP id
- 46e09a7af769-71e29bf2cbbmr263539a34.18.1733939721083; Wed, 11 Dec 2024
- 09:55:21 -0800 (PST)
+	 To:Cc:Content-Type; b=H7vlfjZ/KBk2X4w4eUBfuUdVeZ2QZ2IikRmupAQj+hZrB1TNuotS6ULVmQxPimaXxtPAGERUckjlVw4gRdFJmudaQ1PU6iSrp8IxyZbCO7CxstpU2gd8d/5aXneTViymj41kbDHjpUnV0q+EmWfoCOT4Obc0Ab6090MIV0Au2JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l5IIFg55; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3eb4ac63dc2so1929067b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:55:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733939735; x=1734544535; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6NxV4GoHK/ahyIflRv/mOazvo62QwExn028Ncg5fkKE=;
+        b=l5IIFg55BcHfsKZKMfFFC1xMkRFJlHPIzqDAy0AeLEKD/XacZuS06CGwGSMFFoOyNN
+         NDCWoaNbAEOflz8e6IEoNhh5ryh3GBbswZvzGmsYC52N7YoRCTbco25zsMW6WWqEr9VO
+         gfHjH8KSINNuT/SVVx4jGyMHq3BCPMOkEHPI353CQ0S5PotmBmhS1HbOspmC9dRwYBGB
+         s1Ut/b4dGWhiv3DY1KqjG+cJW1APZ7X1CTr+TU5wkZb6pFWl2ubF9i5s/jr9snibtRd7
+         BjG8sSg/qmTl5MKcAw7RZ56ZVTZeTT5dW8cfMwujOs9c2u23giLJ086sfocEgEMm9p0K
+         B0wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733939735; x=1734544535;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6NxV4GoHK/ahyIflRv/mOazvo62QwExn028Ncg5fkKE=;
+        b=jG6rRN3nw9E0rQBmYZ0TafSZCbN+AuYh9lDN1IkhXtqzuu8I2FaPZyRPFeTGX/KOFn
+         4QpKexQ+ky/tb2+TOyuUZxaO+uUaNHBxRImxsimNk6e++WafTi9TZ1mmXC10F7tf68ES
+         4iwjfkc23dB0MpJ9C0UlwWFt+QJe3zQMNkArC7yOrz3IZ6VGYa6V7Tes2MydJDHRV08P
+         YYx1TlgVlPldzX2pDokXuI5ir8FzM6ahel9lCOGPdryFTVC2X5yj3jl9YvX/W+RCprtg
+         NmaXgByCAcjqsohZ96TGDIpNeJoqCDgL9hNOP53Jh9TO/mLPPrIPayN92Z/6yCuPX05R
+         0nZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVilGUgZI79LTbuT8KrZm0HYe6buXOjy8Rer2H1oyiPNtdqOK5RZEQjvRWjoGU2LACu1rX2iO28T9E8vsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAVKgrdBYkngBjw9XCGQtrw7NHSLeF2qxf//MbTIgLdnrU867p
+	ygepZxDP9rVvhBE8gI+NW9OSiLg+RvYYvDUFe26RJBoUcbQ+bFufeJuENCxYgP5IBtFqE6V7WgT
+	Zfw/J7ORXs3p8bEuC0Mm2ltrTPgoADIPOnwgvOg==
+X-Gm-Gg: ASbGncuDJD3hb1Wy3ZRcYSxI99Je7hFgi8t0yPeGU9jIMaOc79FbAwSxZT7vpQR7YzZ
+	2sWX2QSny6npwLHfz2IesDapc5upJKRpmHHs=
+X-Google-Smtp-Source: AGHT+IF4vtTjbxANqGCquCOW86vWqQwnJkVwBIy0+PKUY3mXo9+jIK2tbaAnXdNFAA6ijnfwpTtlzsC6XGNl2/h4Y9Q=
+X-Received: by 2002:a05:6808:189c:b0:3e6:6097:847d with SMTP id
+ 5614622812f47-3eb85a8b199mr2732633b6e.7.1733939734907; Wed, 11 Dec 2024
+ 09:55:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5861970.DvuYhMxLoT@rjwysocki.net> <2989520.e9J7NaK4W3@rjwysocki.net>
- <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com> <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
- <CAKfTPtAdo7OADEFuMeg1PpO=rk=bXmiw1Avj7frsoNWZuceewA@mail.gmail.com>
- <CAJZ5v0h5yt5z=dHLJjQhQQChsnr+krcxzBdb6VXj9W4gMY_PSA@mail.gmail.com> <CAKfTPtBJsDPGeRdqk0Ag8dPFxYn0r0ow_xb4s+=Y=QzLWiX9uQ@mail.gmail.com>
-In-Reply-To: <CAKfTPtBJsDPGeRdqk0Ag8dPFxYn0r0ow_xb4s+=Y=QzLWiX9uQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 11 Dec 2024 18:55:09 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0j-o=03hWrSkk2nx9uWctKaRSJmRNXY6d=e0b46_+fNzA@mail.gmail.com>
-Message-ID: <CAJZ5v0j-o=03hWrSkk2nx9uWctKaRSJmRNXY6d=e0b46_+fNzA@mail.gmail.com>
-Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for EAS
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christian Loehle <christian.loehle@arm.com>, 
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>
+References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
+ <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org> <CADrjBPoZqbAM=2zOdgXD_dTrgh-J7yE+OX_JSVJ42Lmzb-DPEw@mail.gmail.com>
+In-Reply-To: <CADrjBPoZqbAM=2zOdgXD_dTrgh-J7yE+OX_JSVJ42Lmzb-DPEw@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 11 Dec 2024 17:55:23 +0000
+Message-ID: <CADrjBPpv7Y-v4w-ZjsM52wPXM1G=v028BxmJA=_zb4ksDq21EQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
+ notifier if required
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	Roy Luo <royluo@google.com>, kernel-team@android.com, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 6:08=E2=80=AFPM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Wed, 11 Dec 2024 at 17:38, Rafael J. Wysocki <rafael@kernel.org> wrote=
+Hi Andr=C3=A9,
+
+On Sat, 7 Dec 2024 at 21:31, Peter Griffin <peter.griffin@linaro.org> wrote=
 :
-> >
-> > On Wed, Dec 11, 2024 at 2:25=E2=80=AFPM Vincent Guittot
-> > <vincent.guittot@linaro.org> wrote:
-> > >
-> > > On Wed, 11 Dec 2024 at 12:29, Rafael J. Wysocki <rafael@kernel.org> w=
-rote:
-> > > >
-> > > > On Wed, Dec 11, 2024 at 11:33=E2=80=AFAM Christian Loehle
-> > > > <christian.loehle@arm.com> wrote:
-> > > > >
-> > > > > On 11/29/24 16:00, Rafael J. Wysocki wrote:
-> > > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > >
-> > > > > > Make it possible to use EAS with cpufreq drivers that implement=
- the
-> > > > > > :setpolicy() callback instead of using generic cpufreq governor=
-s.
-> > > > > >
-> > > > > > This is going to be necessary for using EAS with intel_pstate i=
-n its
-> > > > > > default configuration.
-> > > > > >
-> > > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > ---
-> > > > > >
-> > > > > > This is the minimum of what's needed, but I'd really prefer to =
-move
-> > > > > > the cpufreq vs EAS checks into cpufreq because messing around c=
-pufreq
-> > > > > > internals in topology.c feels like a butcher shop kind of exerc=
-ise.
-> > > > >
-> > > > > Makes sense, something like cpufreq_eas_capable().
-> > > > >
-> > > > > >
-> > > > > > Besides, as I said before, I remain unconvinced about the usefu=
-lness
-> > > > > > of these checks at all.  Yes, one is supposed to get the best r=
-esults
-> > > > > > from EAS when running schedutil, but what if they just want to =
-try
-> > > > > > something else with EAS?  What if they can get better results w=
-ith
-> > > > > > that other thing, surprisingly enough?
-> > > > >
-> > > > > How do you imagine this to work then?
-> > > > > I assume we don't make any 'resulting-OPP-guesses' like
-> > > > > sugov_effective_cpu_perf() for any of the setpolicy governors.
-> > > > > Neither for dbs and I guess userspace.
-> > > > > What about standard powersave and performance?
-> > > > > Do we just have a cpufreq callback to ask which OPP to use for
-> > > > > the energy calculation? Assume lowest/highest?
-> > > > > (I don't think there is hardware where lowest/highest makes a
-> > > > > difference, so maybe not bothering with the complexity could
-> > > > > be an option, too.)
-> > > >
-> > > > In the "setpolicy" case there is no way to reliably predict the OPP
-> > > > that is going to be used, so why bother?
-> > > >
-> > > > In the other cases, and if the OPPs are actually known, EAS may sti=
-ll
-> > > > make assumptions regarding which of them will be used that will mat=
-ch
-> > > > the schedutil selection rules, but if the cpufreq governor happens =
-to
-> > > > choose a different OPP, this is not the end of the world.
-> > >
-> > > Should we add a new cpufreq governor fops to return the guest estimat=
-e
-> > > of the compute capacity selection ? something like
-> > > cpufreq_effective_cpu_perf(cpu, actual, min, max)
-> > > EAS needs to estimate what would be the next OPP; schedutil uses
-> > > sugov_effective_cpu_perf() and other governor could provide their own
-> >
-> > Generally, yes.  And documented for that matter.
-> >
-> > But it doesn't really tell you the OPP, but the performance level that
-> > is going to be set for the given list of arguments IIUC.  An energy
 >
-> Yes, the governor return what performance level it will select and asl
-> to the cpufreq driver so EAS can directly map it to an OPP and a cost
+> Hi Andr=C3=A9,
 >
-> > model is needed to find an OPP for the given perf level.  Or generally
-> > the cost of it for that matter.
-> >
-> > > > Yes, you could have been more energy-efficient had you chosen to us=
-e
-> > > > schedutil, but you chose otherwise and that's what you get.
-> > >
-> > > Calling sugov_effective_cpu_perf() for another governor than scheduti=
-l
-> > > doesn't make sense.
-> >
-> > It will work for intel_pstate in the "setpolicy" mode to a reasonable
-> > approximation AFAICS.
-> >
-> > > and do we handle the case when
-> > > CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not selected
-> >
-> > I don't think it's necessary to handle it.
+> Firstly, thanks for all your work getting USB on Pixel 6 / gs101
+> working upstream :)
 >
-> I don't think that CI and others will be happy to possibly get an
-> undeclared function. Or you put a dependency of other governors with
-> CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
+> On Fri, 6 Dec 2024 at 16:31, Andr=C3=A9 Draszik <andre.draszik@linaro.org=
+> wrote:
+> >
+> > gs101's SS phy needs to be configured differently based on the
+> > connector orientation, as the SS link can only be established if the
+> > mux is configured correctly.
+> >
+> > The code to handle programming of the mux is in place already, this com=
+mit
+> > now adds the missing pieces to subscribe to the Type-C orientation
+> > switch event.
+> >
+> > Note that for this all to work we rely on the USB controller
+> > re-initialising us. It should invoke our .exit() upon cable unplug, and
+> > during cable plug we'll receive the orientation event after which we
+> > expect our .init() to be called.
+> >
+> > Above reinitialisation happens if the DWC3 controller can enter runtime
+> > suspend automatically. For the DWC3 driver, this is an opt-in:
+> >     echo auto > /sys/devices/.../11110000.usb/power/control
+> > Once done, things work as long as the UDC is not bound as otherwise it
+> > stays busy because it doesn't cancel / stop outstanding TRBs. For now
+> > we have to manually unbind the UDC in that case:
+> >      echo "" > sys/kernel/config/usb_gadget/.../UDC
+> >
+> > Note that if the orientation-switch property is missing from the DT,
+> > the code will behave as before this commit (meaning for gs101 it will
+> > work in SS mode in one orientation only). Other platforms are not
+> > affected either way.
+> >
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Tested-by: Peter Griffin <peter.griffin@linaro.org>
+>
+> Notes on testing:
+>
+> I tested this series with the corresponding DT using a Pixel 6 device
+> with 2 different USB hubs and also plugging directly into my laptop.
+> I've tried various combinations of plugging / unplugging from both
+> ends of the USB cable and changing cable orientation. With the latest
+> series the disconnect/reconnect always seems robustly detected and
+> Pixel is enumerated as a USB device by the host, adb connection to the
+> phone is possible even with the cable orientation changing between
+> disconnect/reconnect.
+>
+> One thing I did notice during testing is that in one cable orientation
+> Pixel is detected as a `SuperSpeed USB device` by the host and in the
+> other cable orientation it is detected as a `high-speed USB device`.
+> Which suggests there is still a latent bug in the phy
+> re-configuration.
 
-Do you mean CONFIG_CPU_FREQ_GOV_SCHEDUTIL?  Because
-CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is only about whether or not schedutil
-is the default governor.
+You can disregard this last point, I had a typo in my test setup :( I
+just confirmed that it is detected as SuperSpeed in both orientations.
 
-I think that it is fine to require CONFIG_CPU_FREQ_GOV_SCHEDUTIL for EAS.
+Thanks,
+
+Peter
 
