@@ -1,107 +1,143 @@
-Return-Path: <linux-kernel+bounces-442023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3039ED6F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F21119ED6F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63160282C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:02:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7182C282D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC57207A25;
-	Wed, 11 Dec 2024 20:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46459209F57;
+	Wed, 11 Dec 2024 20:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jg0B22eu"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCFqnATY"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC3C20A5F9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BD72594B3;
+	Wed, 11 Dec 2024 20:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733947311; cv=none; b=d1BNSJY8cgyiwwZ7Y2VeG55a4QQeHR/7q03LJ12WYtVWMCU30EZEr7Cq2AFiKplZaA0wsvwy1NArew8mA4Xlyef4+VwsdGtdIOLhNihVWZ4dd6naGegt3OffOikYZg9IqVktieZC5KqaoQjPgR0sSNWaTSbwl9b0O4WyF3XK6Fk=
+	t=1733947421; cv=none; b=NfYa9v3o12nDwkIph2ZWqLXyWLOXYyq8lV4zGewa3hdvaxpcrGmOXT7YW6HC5CrISxiNnT4FXdhRkbIvcV4emQbk1E5xUQXDU0H80iyIZkobsArAPp5RpQ9SUMuR9Ao6YET+8/ncdCmYfeiZu/owkouSO0nETVHbkU2arlKUcA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733947311; c=relaxed/simple;
-	bh=jvNr/mm/KISVeWk0aeIVt8GN7pPxb3OnVWvrYZ/AUP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NyveCLdklAMbuhNww2v+aVajcdbuMI9MOcxxopL1pzHWTpRaCf8P9lzAKEKQnt8+71G4hQuRgZqO0KIcBtf/FNVxsXwl5PBsHo0/T9ra6U7E9W5ULfuEwfDCtG9L1PWl5dxwHU4pEmchm7FVWnql16q/lvsntCf3FI8zst8mSVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jg0B22eu; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so8428245e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:01:49 -0800 (PST)
+	s=arc-20240116; t=1733947421; c=relaxed/simple;
+	bh=c+2c10RP4eGxCZIDeYuweNxkKIm5rRVnujDbzoBRRQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lctoM4N7lcm6ZYW7jl5o4qzwzVcDffFXvi7oSwjSzpMKkuyx9hwxdGNH5gAUadxodukULkm51tnGi9NFG8bGQ/OmorILGKC8hMf7X8AkII6JQvImRFMEYPIEDjIoUP9X3IYBv6F2fASw/UOjXJWF0HeuDO3SLncEFJ9KILuKcw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCFqnATY; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso5162569a91.0;
+        Wed, 11 Dec 2024 12:03:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733947308; x=1734552108; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xy0r5zhlEBX198RCSafsNFSDYJdvGKEyDvKJy8g2liM=;
-        b=jg0B22eumMYUyqOgM/L33WsAEh1yCzGlyoXvB8ii+CcN8jNeZy17LQjq1ChEB9UtpQ
-         iDUDTmlZW83nIfTEyWEegc/FkjW4uxZC4K8BfPB0kyymdIGHFq6YHpyiwT4adUEL//ue
-         egFRKu4UIYMpI1e0r9EdaKwQ9HsBZz7OumDyEpiETh5SXUJnMAK+2TpRmtUy+gtPJMcK
-         E4C7RI3C9c+4PwLeO0ttxfS2tWIFETsSDQ/I++FsrFkSRAjCQz3Tzu9Eo0dD7QE6IvQK
-         4p965UAJ9T6DubtazY28+1uoEcJTSby8vEBm4Oq6ULYd8WvSEUyCbHT2VsMlJoz1zl8U
-         bs3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733947308; x=1734552108;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733947419; x=1734552219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Xy0r5zhlEBX198RCSafsNFSDYJdvGKEyDvKJy8g2liM=;
-        b=CLDRnh4h0bffLy8XywBQiJDniMdjbQfnVR1V/a2KD8qHciyGHbljZ0NmTIOTb31ZB2
-         ySp8pPHVjHaJp/OuihWgFQgEtxLY6jDaIqGiZMztPjZC2uReDRlJbxtilQN4YrhhJf6h
-         Il1apxus0zDa18SD1dOxeIrHvXw1jlbboJWgK5KH5p97OFLJdqYyjL0UQDvdk6Wl5ggi
-         N4sVbuPAswWZpnJPhEKCFhxxoydu3MTtuHF5WmTdKI2wZYobrzwSJFCtREZrjMXb5lm1
-         fsnWKLLi+9Q0VB5P8G7dC4DfIgJGI0RrTJCow1RTPm0vCsDxi4peUK5YTYdBUa5uavOt
-         cnow==
-X-Forwarded-Encrypted: i=1; AJvYcCWe2dIzAC8eQsTVwEy3XEvtxOPvtWVl13Snz6PcLAHlXQH0yUo0wI7GWE8hQ+uT7XptYNxEk5q4viIonVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLIf8rYjVKspB0pHAf9tfsACliGZfEsDGXdX5teueFV+a16hB+
-	hvEuciwwlhRgmLVkyHCiKZU3vgVNbx3p1uXo6i9WP+w34LRng0nECfmbT3CDuvo=
-X-Gm-Gg: ASbGnctxOtRsXEqvTYE4+SSRgERzfrIigZAQHI9KisqqjWC1L1kaNpwpacvRn9Mf2Y9
-	GpWnzK572vffsLDaTVVqr+Ywcrbk3JsE1zDmhQrc8TLmnlYu0sa15FoWx4Y5nlNBDDFyHCaj7XT
-	EyDYF0tpuoug2YVJusLI/+sJfYhaco1gYsQAiOrMAAgzkZsZU1Ah7MT9+gYn7xe65upnVZr/qCm
-	clRLJuFIqMNgl3L693n0OrioS46hTnzYzKvbolElsdVuf1WEJ472qFW5H8=
-X-Google-Smtp-Source: AGHT+IEOphev5W0KGJg+nO81TIAt1Rqh9pfXsnfrArp+4ViyI3T7Wf3ChJSDYoItEG2a8bgxut2RoQ==
-X-Received: by 2002:a05:6000:186b:b0:386:4a24:1916 with SMTP id ffacd0b85a97d-387877c2690mr705067f8f.55.1733947307320;
-        Wed, 11 Dec 2024 12:01:47 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824bf19dsm1966698f8f.53.2024.12.11.12.01.46
+        bh=zjpNgAxO5KyvvV+aPXyUgI2o0mazz3K0LzFSUucmqIA=;
+        b=YCFqnATYSunrFPR/xMGodMXv0YD20QQJzz0i18a6NchhuOlfzVxnorFb6WppvXl3GR
+         22/9j8azIvanopYeQveeX2JdPPEAz3hl5Qn2OyCOBSoKzhr1sv//KgDzzLT7feyfPt31
+         oX+OYRXjWlUZBIx1+MCN8OeuYmfuT4p654PGYCOZcnYqVY6Np0oUDHeSGLLvTwjVzT7L
+         jLMkWnTqabn5Cd8/FI/YSq8xl5xUAHNDdwoUBKzZ23sSWeczGfpFcL54OsHu3Hdeh490
+         O6Fspf7J+PKl+1Fe0T3XHUrjGCpavXhefsi9hBaNaL1CNzf4TQAHd1WrwpqUkblEavyh
+         29CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733947419; x=1734552219;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zjpNgAxO5KyvvV+aPXyUgI2o0mazz3K0LzFSUucmqIA=;
+        b=hY8HXfA7D/7GDfZF4oMOOANWz/VOjwdJEMZE7CcIihbLDwAzM0H2FM7Q16Mj24Pj+B
+         f5R7RLyb0Wm/abfVbz7VlvPYslifcywyGPWUGfOcodxPeRyyMP3/31uiIuy5KRswq9MF
+         mH7CWKpnEBhg5MBkt/lTFELWZZwqPOmkUQfVDlCvBZc5Mpv29Nx6DBaM8CYUkYlzj+lb
+         zlJjc9619XXsAhcsbA8lpTnQrUXMsK0E6hRuc8cz9E8BEQ549X1unDhCPkovqTP5lIQA
+         5/ZvbeRK1hNAdyEWbfSjrl0u4DXu/hsoaFOgd1UnEZNoqdM/i3Kf+BDQ7x0X27TtxZis
+         JoFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlAvoBTFcVbVz13RahuG6BwISuYr2TnzcBn1PrNU3mTLu78p2Jy8XL6ZwIoQloqKV3TFbcfPvNBn3Bc1dv@vger.kernel.org, AJvYcCWALotstSXHoGkEkj6hO0u+Bvs5pZdoQIgGfbmASbRX+r5E2r8sbDP96GiEysZ3dOIIg+iZrMGCmCedJrc6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymt/RyOYSBzNa1KjAVtGicd68DO5kuCN6rZX75VYqo16+gDYK8
+	ZmDIY3ZOI2AX8rsvMeVSeQHpk55bWublur+o+ZeycEwShc6904cT
+X-Gm-Gg: ASbGncsghyzoOcsnzexkpxJaP8y/lFEd0fOHdWcIG7sU8A3F787jaDXCBiiQoo9xHOr
+	l5kJlAWgb71ZZz2T3G4ktuUlQ73bl8iJx0A20HZ9ius6lqpq3i1+4TKug0DEkZPv7F/Id4N4px8
+	O+7x7+cSrry126ZF2psHHlt8ZXnQxs3uCcrm9V5Y2i0tMv94xaq7+Gx375mTc3u1wZb+B4uW8Je
+	JDaq3A6qvMMYUZfA8tWNVzmWSCjN4Wgh9gxhzBPhk0s9LOuU1TUyYt0ZtjW9+D6KSntsw==
+X-Google-Smtp-Source: AGHT+IFkpFW//odQIKH7vFlXlfPhvueJRWLMq59qElOmOHMBZNOyfMpmd6lTVOFk+xCH3IcDg/u63A==
+X-Received: by 2002:a17:90b:1c87:b0:2ee:aa28:79aa with SMTP id 98e67ed59e1d1-2f127f7e587mr6242980a91.6.1733947418716;
+        Wed, 11 Dec 2024 12:03:38 -0800 (PST)
+Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:a69f:44ab:93c9:b027])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4757691dsm6158725a12.18.2024.12.11.12.03.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 12:01:46 -0800 (PST)
-Date: Wed, 11 Dec 2024 23:01:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: eisantosh95@gmail.com
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Rohit Chavan <roheetchavan@gmail.com>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: gpib: Wrapped macro in parentheses to ensure
- the correct evaluation order
-Message-ID: <292b38bb-6dc7-4ea0-889c-deefadc1b3f6@stanley.mountain>
-References: <20241211192209.22493-1-eisantosh95@gmail.com>
+        Wed, 11 Dec 2024 12:03:38 -0800 (PST)
+From: Leo Stone <leocstone@gmail.com>
+To: syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com
+Cc: asmadeus@codewreck.org,
+	ericvh@gmail.com,
+	ericvh@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com,
+	lucho@ionkov.net,
+	syzkaller-bugs@googlegroups.com,
+	torvalds@linux-foundation.org,
+	v9fs-developer@lists.sourceforge.net,
+	v9fs@lists.linux.dev,
+	viro@zeniv.linux.org.uk,
+	Leo Stone <leocstone@gmail.com>
+Subject: Re: WARNING in __alloc_frozen_pages_noprof
+Date: Wed, 11 Dec 2024 12:02:40 -0800
+Message-ID: <20241211200240.103853-1-leocstone@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <675963eb.050a0220.17f54a.0038.GAE@google.com>
+References: <675963eb.050a0220.17f54a.0038.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211192209.22493-1-eisantosh95@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024 at 12:52:04AM +0530, eisantosh95@gmail.com wrote:
-> From: Santosh Mahto <eisantosh95@gmail.com>
-> 
-> ERROR found by checkpatch.pl script
-> 
-> Signed-off-by: Santosh Mahto <eisantosh95@gmail.com>
-> ---
+syzbot creates a pipe and writes some data to it. It then creates a v9fs
+mount using the pipe as transport. The data in the pipe specifies an ACL
+of size 9 TB (9895604649984 bytes) for the root inode, causing kmalloc
+to fail.
 
-Checkpatch isn't always right.  Adding parentheses breaks the build.
+KMALLOC_MAX_SIZE is probably too loose of an upper bound for the size of
+an ACL, but I didn't see an existing limit for V9FS like in e.g. NFS:
 
-regards,
-dan carpenter
+include/linux/nfsacl.h:
+>/* Maximum number of ACL entries over NFS */
+>#define NFS_ACL_MAX_ENTRIES     1024
+>
+>#define NFSACL_MAXWORDS         (2*(2+3*NFS_ACL_MAX_ENTRIES))
+>#define NFSACL_MAXPAGES         ((2*(8+12*NFS_ACL_MAX_ENTRIES) + PAGE_SIZE-1) \
+>                                 >> PAGE_SHIFT)
+>        
+>#define NFS_ACL_MAX_ENTRIES_INLINE      (5)
+>#define NFS_ACL_INLINE_BUFSIZE  ((2*(2+3*NFS_ACL_MAX_ENTRIES_INLINE)) << 2)
+
+#syz test
+
+---
+ fs/9p/acl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/9p/acl.c b/fs/9p/acl.c
+index eed551d8555f..1b9681d58f8d 100644
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -28,6 +28,8 @@ static struct posix_acl *v9fs_fid_get_acl(struct p9_fid *fid, const char *name)
+ 		return ERR_PTR(size);
+ 	if (size == 0)
+ 		return ERR_PTR(-ENODATA);
++	if (size > KMALLOC_MAX_SIZE)
++		return ERR_PTR(-ERANGE);
+ 
+ 	value = kzalloc(size, GFP_NOFS);
+ 	if (!value)
+-- 
+2.43.0
 
 
