@@ -1,211 +1,278 @@
-Return-Path: <linux-kernel+bounces-440780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA129EC424
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:10:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45ECD9EC429
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709311886263
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:10:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FD3167444
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756631C07E3;
-	Wed, 11 Dec 2024 05:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Krq5QyUj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24A71BDAA0;
-	Wed, 11 Dec 2024 05:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD781C07FE;
+	Wed, 11 Dec 2024 05:14:18 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB05D1C07C4;
+	Wed, 11 Dec 2024 05:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733893809; cv=none; b=ly4Fdlpa76yZFxYxce4L5SwtEqh6TNAohsqPYWhQgfn4rEp9/dA5gWUSmJoLkD8WuKic9LzaDemT9p/k1ygcGMJPTsZnZlYgTWw4+DMQtQc888V5zIRCPwcz20FFQnEeBSFs0BIBLyc5UC7WWjucsry+A70FBjQwc7YTrCO5D8Q=
+	t=1733894057; cv=none; b=on6s9ItDjVU1xHoruI3YTiKtM7twyHE9J+NmXmF5hCFqcgpa/syoTxuACFTytnagxKGx+wSkjoVY+7Y2hd2tW4RB/VCRPLV/NZsygT3eRWJe4m4WEUeB5aLs2ncy2dT8hhz54p+Zc17EKxEud1Rofp98CVlEAGFM+1yhGH21JCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733893809; c=relaxed/simple;
-	bh=YdX1dc6xsEAC92Xthg31J1U7TalgtZEvoo0qN6qkuRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ekfyuBpTAV2uQz/4HXr885CXchoBDRUOkQpbWZftuKURo6tSaHpwdfcZytfBq+xERm69E3ZE8KA4xLfAg+B3FSTx1XyhasoLRPlNR44GsMv9xfrsE0a95DJe35j5cAaDZ8+JdCIRueJAiBEITw5Yo1L3IWNScht9x7gr4vpvjM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Krq5QyUj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CE6C4CEE2;
-	Wed, 11 Dec 2024 05:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733893809;
-	bh=YdX1dc6xsEAC92Xthg31J1U7TalgtZEvoo0qN6qkuRY=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=Krq5QyUjf0EEDOcYntNfcf80ez+thWwtLj9n9hk958Ra4O9siL3nA5Pl422U1BnkO
-	 PDTfyQZfZNf2j37VR/Gqp6GtY10s/DB7Vo8OOwnqvqN2ZVR6+UfLMOIGfhTD7un6L1
-	 iIsLH18Wuy46+8gGFu+x7GjchFROyL+aVk7JOZ5gkIRYbXrAoA0WhCU2mO0TMSr2eE
-	 P0bVwxOtLgcG7Pd2stswbU/WnAFcD6PjAp5WafJ3m+P6X9BdeNmwJzqZbi5+pN0BNU
-	 jomzrEkdjjPbPJWuIx0poiGw9LuozeaReYS79yYq6jWf6zJEuFU3vb4Q1P0k+f23KW
-	 hJxlr/TtS1CNA==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3003943288bso45902991fa.0;
-        Tue, 10 Dec 2024 21:10:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVsfWoS2qfwrNAocnYCAlI3bCd6GiKsOox86Oi2l/f+nn/nHWdMgmYF2/KhZLxnyv2MEFzZ4gb6+fVyUD1e@vger.kernel.org, AJvYcCWBLk0qeH7KZAlmPowYVTkq60gwEfSU97UaApHkdHh0MhznFUvPKnckuH0P7kF2Ts73wKEr+DYueHDQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1YpNq2V9BfuKZV62n9k5BtpgGQKRRrVmufWygAxgQi1hiZnr4
-	xW+k3AfRBmOtQkxpWvzJa9U6lT6S5xiW70KUV+2fJf1OIUAlkeL45GbI5KUiZiXzqK6kUbzEIXz
-	7lmsOC7AjFhbVmwXOgtU+6dliJ5I=
-X-Google-Smtp-Source: AGHT+IF6N4Na/k+b/kefNQKbmVXbyAnVl/Bv7G3C8f7c+yra9jFGmNFSnmVvDOEzo13KT4U9uvLIdgjGdQPdboaPjQY=
-X-Received: by 2002:a05:651c:b2a:b0:300:3a15:8f15 with SMTP id
- 38308e7fff4ca-30240d23617mr5158551fa.14.1733893807383; Tue, 10 Dec 2024
- 21:10:07 -0800 (PST)
+	s=arc-20240116; t=1733894057; c=relaxed/simple;
+	bh=xOKJ7qt0WfS0XyDsy5u7icGNxiFNPCNQRKosTSntKOk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pcPCd6RKH79z4Wno8EkVVHvSmvpEBm4jlUqF60eQH8mgYqZI7lO4pZFhHQOukAA3c+8GFwuEcUdpgeNn7NvVmScBXIU1qfYCGpJF5N27J+UC3BTlzZFbVzXI3vgtmSQcsdYd56GHlpKIZu0JU4kvkXAuVZ6+nyHRKrE/SE3ox48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.18:7884.121043416
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.243.18])
+	by 189.cn (HERMES) with SMTP id 1E938100208;
+	Wed, 11 Dec 2024 13:10:21 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-pd459 with ESMTP id 4e5728c57c8d4093b2d6a3afacd6fde7 for krzk@kernel.org;
+	Wed, 11 Dec 2024 13:10:22 CST
+X-Transaction-ID: 4e5728c57c8d4093b2d6a3afacd6fde7
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: Song Chen <chensong_2000@189.cn>
+To: krzk@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	lee@kernel.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH v2] regulator:s5m8767: Fully convert to GPIO descriptors
+Date: Wed, 11 Dec 2024 13:10:19 +0800
+Message-Id: <20241211051019.176131-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210092614.3951748-1-wenst@chromium.org> <173386568696.497617.3727087837255802552.robh@kernel.org>
-In-Reply-To: <173386568696.497617.3727087837255802552.robh@kernel.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Wed, 11 Dec 2024 13:09:54 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65D9cdTRoEwwpTUcRZBnrdJ+6UZ-osN1vpUP_JxtJMr8Q@mail.gmail.com>
-Message-ID: <CAGb2v65D9cdTRoEwwpTUcRZBnrdJ+6UZ-osN1vpUP_JxtJMr8Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: mediatek: mt8173-elm: Fix MT6397 PMIC
- sub-node names
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 5:43=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
->
-> On Tue, 10 Dec 2024 17:26:12 +0800, Chen-Yu Tsai wrote:
-> > The MT6397 PMIC bindings specify exact names for its sub-nodes. The
-> > names used in the current dts don't match, causing a validation error.
-> >
-> > Fix up the names. Also drop the label for the regulators node, since
-> > any reference should be against the individual regulator sub-nodes.
-> >
-> > Fixes: 689b937bedde ("arm64: dts: mediatek: add mt8173 elm and hana boa=
-rd")
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> >  arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
->
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->   pip3 install dtschema --upgrade
->
->
-> New warnings running 'make CHECK_DTBS=3Dy mediatek/mt8173-evb.dtb' for 20=
-241210092614.3951748-1-wenst@chromium.org:
->
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vpca15: Une=
-valuated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vpca7: Unev=
-aluated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vsramca15: =
-Unevaluated properties are not allowed ('regulator-compatible' was unexpect=
-ed)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vsramca7: U=
-nevaluated properties are not allowed ('regulator-compatible' was unexpecte=
-d)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vcore: Unev=
-aluated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vgpu: Uneva=
-luated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vdrm: Uneva=
-luated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: buck_vio18: Unev=
-aluated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vtcxo: Uneva=
-luated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_va28: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vio28: Uneva=
-luated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vusb: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vcama: Uneva=
-luated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vmc: Unevalu=
-ated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vmch: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vemc3v3: Une=
-valuated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp1: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp2: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp3: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp4: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp5: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vgp6: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
-> arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: regulators: ldo_vibr: Uneval=
-uated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/mediatek=
-,mt6397-regulator.yaml#
+This converts s5m8767 regulator driver to use GPIO descriptors.
 
-Ack. I already prepared another series to address these.
+---
+v1 - v2:
+1, reedit commit message.
+2, remove development code.
+3, print error msg in dev_err_probe.
+4, doesn't set gpiod directions until successfully requesting
+   all gpiods. It's pretty much equivalent with original code.
 
-ChenYu
+Signed-off-by: Song Chen <chensong_2000@189.cn>
+---
+ drivers/regulator/s5m8767.c      | 106 ++++++++++++++-----------------
+ include/linux/mfd/samsung/core.h |   4 +-
+ 2 files changed, 48 insertions(+), 62 deletions(-)
+
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index d25cd81e3f36..b23df037336b 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -5,7 +5,7 @@
+ 
+ #include <linux/cleanup.h>
+ #include <linux/err.h>
+-#include <linux/of_gpio.h>
++#include <linux/of.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -35,8 +35,8 @@ struct s5m8767_info {
+ 	u8 buck2_vol[8];
+ 	u8 buck3_vol[8];
+ 	u8 buck4_vol[8];
+-	int buck_gpios[3];
+-	int buck_ds[3];
++	struct gpio_desc *buck_gpios[3];
++	struct gpio_desc *buck_ds[3];
+ 	int buck_gpioindex;
+ };
+ 
+@@ -272,9 +272,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
+ {
+ 	int temp_index = s5m8767->buck_gpioindex;
+ 
+-	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+ 
+ 	return 0;
+ }
+@@ -283,9 +283,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
+ {
+ 	int temp_index = s5m8767->buck_gpioindex;
+ 
+-	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+ 
+ 	return 0;
+ }
+@@ -486,16 +486,19 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
+ 			struct sec_platform_data *pdata,
+ 			struct device_node *pmic_np)
+ {
+-	int i, gpio;
++	int i;
++	char label[32];
+ 
+ 	for (i = 0; i < 3; i++) {
+-		gpio = of_get_named_gpio(pmic_np,
+-					"s5m8767,pmic-buck-dvs-gpios", i);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
+-			return -EINVAL;
+-		}
+-		pdata->buck_gpios[i] = gpio;
++		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
++		pdata->buck_gpios[i] = devm_fwnode_gpiod_get_index(
++					iodev->dev,
++					of_fwnode_handle(pmic_np),
++					"s5m8767,pmic-buck-dvs",
++					i, GPIOD_OUT_LOW, label);
++		if (IS_ERR(pdata->buck_gpios[i]))
++			return dev_err_probe(iodev->dev, PTR_ERR(pdata->buck_gpios[i]),
++						"can't get GPIO\n");
+ 	}
+ 	return 0;
+ }
+@@ -504,16 +507,19 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
+ 			struct sec_platform_data *pdata,
+ 			struct device_node *pmic_np)
+ {
+-	int i, gpio;
++	int i;
++	char label[32];
+ 
+ 	for (i = 0; i < 3; i++) {
+-		gpio = of_get_named_gpio(pmic_np,
+-					"s5m8767,pmic-buck-ds-gpios", i);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
+-			return -EINVAL;
+-		}
+-		pdata->buck_ds[i] = gpio;
++		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
++		pdata->buck_ds[i] = devm_fwnode_gpiod_get_index(
++					iodev->dev,
++					of_fwnode_handle(pmic_np),
++					"s5m8767,pmic-buck-ds",
++					i, GPIOD_OUT_LOW, label);
++		if (IS_ERR(pdata->buck_ds[i]))
++			return dev_err_probe(iodev->dev, PTR_ERR(pdata->buck_ds[i]),
++						"can't get GPIO\n");
+ 	}
+ 	return 0;
+ }
+@@ -788,57 +794,37 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
+ 						pdata->buck4_gpiodvs) {
+ 
+-		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
+-			!gpio_is_valid(pdata->buck_gpios[1]) ||
+-			!gpio_is_valid(pdata->buck_gpios[2])) {
++		if (IS_ERR(pdata->buck_gpios[0]) ||
++			IS_ERR(pdata->buck_gpios[1]) ||
++			IS_ERR(pdata->buck_gpios[2])) {
+ 			dev_err(&pdev->dev, "GPIO NOT VALID\n");
+ 			return -EINVAL;
+ 		}
+ 
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
+-					"S5M8767 SET1");
+-		if (ret)
+-			return ret;
+-
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
+-					"S5M8767 SET2");
+-		if (ret)
+-			return ret;
+-
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
+-					"S5M8767 SET3");
+-		if (ret)
+-			return ret;
+-
+ 		/* SET1 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[0],
++		gpiod_direction_output(pdata->buck_gpios[0],
+ 				(s5m8767->buck_gpioindex >> 2) & 0x1);
+ 		/* SET2 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[1],
++		gpiod_direction_output(pdata->buck_gpios[1],
+ 				(s5m8767->buck_gpioindex >> 1) & 0x1);
+ 		/* SET3 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[2],
++		gpiod_direction_output(pdata->buck_gpios[2],
+ 				(s5m8767->buck_gpioindex >> 0) & 0x1);
+ 	}
+ 
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
+-	if (ret)
+-		return ret;
++	if (IS_ERR(pdata->buck_ds[0]) ||
++		IS_ERR(pdata->buck_ds[1]) ||
++		IS_ERR(pdata->buck_ds[2])) {
++		dev_err(&pdev->dev, "GPIO NOT VALID\n");
++		return -EINVAL;
++	}
+ 
+ 	/* DS2 GPIO */
+-	gpio_direction_output(pdata->buck_ds[0], 0x0);
++	gpiod_direction_output(pdata->buck_ds[0], 0x0);
+ 	/* DS3 GPIO */
+-	gpio_direction_output(pdata->buck_ds[1], 0x0);
++	gpiod_direction_output(pdata->buck_ds[1], 0x0);
+ 	/* DS4 GPIO */
+-	gpio_direction_output(pdata->buck_ds[2], 0x0);
++	gpiod_direction_output(pdata->buck_ds[2], 0x0);
+ 
+ 	regmap_update_bits(s5m8767->iodev->regmap_pmic,
+ 			   S5M8767_REG_BUCK2CTRL, 1 << 1,
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 750274d41fc0..c06fff66e755 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -79,8 +79,8 @@ struct sec_platform_data {
+ 	struct sec_opmode_data		*opmode;
+ 	int				num_regulators;
+ 
+-	int				buck_gpios[3];
+-	int				buck_ds[3];
++	struct gpio_desc		*buck_gpios[3];
++	struct gpio_desc		*buck_ds[3];
+ 	unsigned int			buck2_voltage[8];
+ 	bool				buck2_gpiodvs;
+ 	unsigned int			buck3_voltage[8];
+-- 
+2.25.1
+
 
