@@ -1,111 +1,104 @@
-Return-Path: <linux-kernel+bounces-442288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246499EDA40
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:41:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BE04167A4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:41:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AF31F2C2D;
-	Wed, 11 Dec 2024 22:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AotVFeh7"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE429EDA3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:41:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD2B1F2399
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F6A328211C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:41:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0D1F4E5F;
+	Wed, 11 Dec 2024 22:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f9HKNs6d"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D2C1F2395
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956577; cv=none; b=n4+w2BZ/5ktP3R9CSdyY3nokNz9mNE/ldaIZ8mGPByATN6ZsfaxpJ2Eh+P+tcFmGg//P19R8sN5jFz1zks12IFF5BqOhGmGslZWvGjLa6635v4EmPASrMjmv5XjoHPWndBUXL6ah6L/OWgYq6kXLk39HxeAkdrJeB2AnoQWalfE=
+	t=1733956543; cv=none; b=pjVDQM6ZkqWzSbbfqzM/ZLSZ+DgA8gMS3qywQcNroPTljgsXVG+2xcp4onEtR8Voyx1zbbvnsgAdZDqN43dYzA0T8E1SZGmuZe1zrHZq71SLdZDfIfywnIvs6xWuMR6yh6RFlXX1UsJAbcoxfdaAk9Cx2rG5SfmoEvncd2fEChg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956577; c=relaxed/simple;
-	bh=46uNigFnqQ+HGjFJ1/cgRpYGSgDGzUb7F5mIc33pXPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f5ICT2U+0qsD3WHtgJ/VzFz9yS/axRKcXWcusiWdEoK4mLhQCLtmIXSkampPunWtLXjeqyxnuebatdM0dMlLm/ZGYM05BPwEAw7ToUfi4Z1T2d7L5M8OWSUDDvSVsKih4QKIPlvPRYW0ksxKubqvpM61CgCKaARhkWE/awtO4g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AotVFeh7; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0Z5EkRMXSAAd6VugPHXUkDoDDuWALwNmWHDkbsYItPc=; b=AotVFeh7Uqefi7l5uxK5YZHyxa
-	LJqoG7294B3siZZpD5zpe1Trm8d4i4ZBxNwapkO6TuelRgWreIJkHj6Lc8G6hHTJIJ+jFzokKg9kE
-	XLBjBZGlZwbBSVh9C5pSBXyjDlUcwKETMbMrkap0J2DlitMy2g9Rg2oKDJ+O7GGxSVYFMzcHQ9Lk2
-	yrHvPIhqhkAXpdFHM6rmE/w6TCqQ5v2KvCtvoN1iwA8mPl4LREPlr99zmhDCPe4M5mh5G46FDrT2w
-	gfTjqDi+YwTDPNOM+o1bGL0gYOfAR/8D6y4WznmkH2KPVettO1IUwoh63VZBF5F4VmO9fLvRnH/ga
-	smdqt0Sg==;
-Received: from [179.118.189.35] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tLVJ1-0025cH-AI; Wed, 11 Dec 2024 23:35:43 +0100
-Message-ID: <6221fc3d-0b1a-4e91-9e34-a32f3c77b63f@igalia.com>
-Date: Wed, 11 Dec 2024 19:35:36 -0300
+	s=arc-20240116; t=1733956543; c=relaxed/simple;
+	bh=lt4zBLD00go+8ZTh4scuZr6KDyf46ul1zxnocObd+bg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=L/0uHCRvOBYyvPk/nGWL6/zrwwzvedgYLiQ+eiKBBawIG3IvnyfMBjpcN05ZAkS/9j82ZIIXZeSNc5Q4+FnIKjNKlm3pvYDfZh6GP3mmfUkgEvCFz9Z0dzLbx9SjGdKVkx7qXTJiWdD8KNc8O5jtHMScDG/D/IqpnuASvi0/NvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f9HKNs6d; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2efc4196ca0so3271798a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:35:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733956541; x=1734561341; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVG8ahP/XXrJwp/ghgbGxkrwSNTwBGi72igr84vZWsw=;
+        b=f9HKNs6drD3an/kEN0U0KNQZ2s8TSHVJn8UBfCQG3ol9STtymLOxDq7PVvsX3vyp66
+         gwZQIlx6pVpYU1qaakSdbjLDxf5iTEKcBlCAeUHx4HF6EUFy8tGr6bBMVB0RHvU+lOSi
+         henWblFsm84YO8qsL1mjNV7rUwWDNXWCJfHBlLObyo9xWUhjB9ly0Z7O7SxOAv5+WmxG
+         XtSNODavZ354qcn4xqceJdcijWA/ODdy65/W7T4CyLF2xuodYWftbeZC2P1o836waytB
+         KinTQYoIqD2Kl/cTtzegT/bksVOTJ+e570OXSb203TeA+2lfA8qkAcTy0SgIbTC5hiAM
+         /AGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733956541; x=1734561341;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVG8ahP/XXrJwp/ghgbGxkrwSNTwBGi72igr84vZWsw=;
+        b=evJOWvY1mWhR1x0cUZ9UtXYm6th/rt+zvd0bgDkYROKHsku321SFO7CFr5MnjYbJ0o
+         0eUEMrwlM9LI8ZFssRud3Vxlk8Dksw5V6z61443ELmkt3x+KMgNIsoMem/iTxs2SdgyU
+         CULKPTBb4UqNCoyel8QNLn68va26NrX4ba59oOPjC1MSBY3tJB9YSIk0vv7f8nXVVttc
+         WdCSAZL1+HUvxRLqWryiSoCodH4kuKUu5lsU6HdJigfOy2lsnizhfK8LouQpyAmPzgif
+         bsU+2lY03v3TDBuIgTGSqkMUnPqfOvQpgqkGtonnC2Aex0Vd7K6jyHtDtdQPS7uFKn7o
+         a54g==
+X-Forwarded-Encrypted: i=1; AJvYcCWASW0+O5NazbRjhpXUtzCmQ+ZEsISt1Rq94aGow5CaajJPLGWnrBqN7yDh2kiQ2dYF2uU/y08ZwtVuOIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwMStzE2MPrJuQ/eYP0CydeLp3GiPgP5mpqDMNfemrPoDEkwUR
+	8CX5deAqO7FCy6VW+StriVhYGkbFi50te+0RX8L0P07Sregge6JcspeCbXC92eTDS8iUodkpe5D
+	C+g==
+X-Google-Smtp-Source: AGHT+IGOKgLtrZFpctzdhq5n5IysWDqxKWjxJrTJsdkk765OEG8e8e8bmISVxnp1jIvzrNIQtklA1qJsYYY=
+X-Received: from pjbqx4.prod.google.com ([2002:a17:90b:3e44:b0:2ea:3a1b:f48f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e48:b0:2ee:741c:e9f4
+ with SMTP id 98e67ed59e1d1-2f1392938a2mr2342276a91.11.1733956540841; Wed, 11
+ Dec 2024 14:35:40 -0800 (PST)
+Date: Wed, 11 Dec 2024 14:35:39 -0800
+In-Reply-To: <20241211203816.GHZ1n4OFXK8KS4K6dC@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/2] drm/atomic: Ease async flip restrictions
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, Simon Ser <contact@emersion.fr>,
- joshua@froggi.es, Xaver Hugl <xaver.hugl@gmail.com>,
- Daniel Stone <daniel@fooishbar.org>, ville.syrjala@linux.intel.com,
- kernel-dev@igalia.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-References: <20241211-tonyk-async_flip-v10-0-6b1ff04847c2@igalia.com>
- <ouyulceg7zrnjirg2yf4qbgp5pfovz4y6hq5v6e573yx7ih5qe@uqqne6yq27wl>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <ouyulceg7zrnjirg2yf4qbgp5pfovz4y6hq5v6e573yx7ih5qe@uqqne6yq27wl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20241202120416.6054-1-bp@kernel.org> <20241202120416.6054-2-bp@kernel.org>
+ <20241210065331.ojnespi77no7kfqf@jpoimboe> <20241210153710.GJZ1hgJpVImYZq47Sv@fat_crate.local>
+ <20241211075315.grttcgu2ht2vuq5d@jpoimboe> <20241211203816.GHZ1n4OFXK8KS4K6dC@fat_crate.local>
+Message-ID: <Z1oTu37PmOvK6OlN@google.com>
+Subject: Re: [PATCH v2 1/4] x86/bugs: Add SRSO_USER_KERNEL_NO support
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	KVM <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Dmitry,
-
-Em 11/12/2024 16:35, Dmitry Baryshkov escreveu:
-> On Wed, Dec 11, 2024 at 12:25:07AM -0300, André Almeida wrote:
->> Hi,
->>
->> The goal of this work is to find a nice way to allow amdgpu to perform
->> async page flips in the overlay plane as well, not only on the primary
->> one. Currently, when using the atomic uAPI, this is the only type of
->> plane allowed to do async flips, and every driver accepts it.
->>
->> This patchset re-uses the per-plane function atomic_async_check() to
->> this purpose, so drivers can allow different plane types. There's a
->> `bool flip` parameter so the atomic_async_check() can do different
->> decisions if it's a complete page flip or a plane update.
->>
->> igt test: https://lore.kernel.org/igt-dev/20241211031820.115844-1-andrealmeid@igalia.com/
->>
->> Changelog
->>   v9: https://lore.kernel.org/r/20241101-tonyk-async_flip-v9-0-681814efbfbe@igalia.com
->>   - Add a 'flip' flag to indicate where the atomic_async_check() is being called from.
+On Wed, Dec 11, 2024, Borislav Petkov wrote:
+> Btw, Sean, how should we merge this?
 > 
-> I think something went wrong. There is no changelog for v10 and also no
-> tags that you've got for v9.
-> 
+> Should I take it all through tip and give you an immutable branch?
 
-I have type the numbers wrongly, this is the changelog for v10, but I 
-forgot the tags, I will send a v11 with the correct changelog and tags.
+Hmm, that should work.  I don't anticipate any conflicts other than patch 2
+(Advertise SRSO_USER_KERNEL_NO to userspace), which is amusingly the most trivial
+patch.
 
-Thanks!
+Patch 2 is going to conflict with the CPUID/cpu_caps rework[*], but the conflict
+won't be hard to resolve, and I'm pretty sure that if I merge in your branch after
+applying the rework, the merge commit will show an "obviously correct" resolution.
+Or if I screw it up, an obviously wrong resolution :-)
 
+Alternatively, take 1, 3, and 4 through tip, and 2 through my tree, but that
+seems unnecessarily convoluted.
+
+[*] https://lore.kernel.org/all/20241128013424.4096668-40-seanjc@google.com
 
