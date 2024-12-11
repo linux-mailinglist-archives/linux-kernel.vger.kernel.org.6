@@ -1,190 +1,187 @@
-Return-Path: <linux-kernel+bounces-441465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF8B9ECEB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:33:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E288D9ECEBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B032B188477F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8246B161FEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4011165F09;
-	Wed, 11 Dec 2024 14:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEFA1802AB;
+	Wed, 11 Dec 2024 14:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XfUvfzl8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i3w8yVhU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hxmncq2B"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11D1246339
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C68824632A;
+	Wed, 11 Dec 2024 14:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733927550; cv=none; b=Mkkowj2ciedW42kM7UTdY6jE44EnABj/LVTZ+zBkKwKNAHARFlQwr13uV+3Icyg5IaZcIBUreYiQx2YX1SUf/jIJavNwggSgN82rZkeyRRmkbUu8zILadSho21qDq0oYeLvgz7Sik5eoCa0DbkiCARbzE1n4r0VZSmNxG3p1k7I=
+	t=1733927694; cv=none; b=MKW3wzd6WNarJJ6CnrPXhjSxzwrznVwk84BksXesFfJDTCucRZk03tnQ7D7ygyLYtY2GMqEsSYLVwvsBu1kZHR752Ugmtrs94duQKlOE69Hr2+1YtBTo3eSs8ZYFtnDc3DNKjwW4x9N4OEYgOFc+Uoai1my1LJhNiVGrvo/fLmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733927550; c=relaxed/simple;
-	bh=ubreD6o75Obi0At7rCfZ4l8LMVxOvAQSAIrvhbl1NRE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sSHVc7yE//+vBrafwhWxjHXVqE/r4DeTXvD5YdTGLK0x5UE5ROdhglrdDYsKGAhAcAHWrEz9CCoeGkYfMrgodlE+W9z+TBRqLrzIfkdereEERgpuPrgCiGrqwjV20RURTlVpbWiOoIjP6bKDOZjqIewhX7AnVeSsOh7PViZS7bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XfUvfzl8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i3w8yVhU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733927546;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KLHi+wfBxGcNACtF1+k3uQkS3DPsMTWdU1cqHleTHL0=;
-	b=XfUvfzl8yNaRGytn0DqIltlPD8ctn8VecYapVoFON5dzqoSSYfGipZUaZ4RDVkz0GpE2K1
-	cTFu6L73ZHwJXKOC2Yx5Yov1fyWzGuOKCpEGpPDmY9oFuByi+VjbX6tWRDlXWucxJDDbEH
-	spo9so76xq+K3ghYmVa5yV9JfiSazy2fL0dm5k3ruPsfeu+uRrN4NO6J78la7JdfLZZu8L
-	qR6KsmizgyZxbDaHEjCvQhWjy+ROPZH0Mz012bhxVuL3BKXN4UuVMdKM5Y8wveBYjQkJZv
-	6AtnCFwp+g4z8lcQqAT4EGhRhECuuHMNERu08Z7QbtqCPrUBVCEX92lZPE26hg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733927546;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KLHi+wfBxGcNACtF1+k3uQkS3DPsMTWdU1cqHleTHL0=;
-	b=i3w8yVhUpNSg9CiWOqr/7BejEAQ9R0Iu5kGsoh2x/Bsq/o74owcZ4lmSF7ri1CYKIIVCXu
-	Y+CVpfGIdp2JvlAQ==
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org
-Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
- Long <longman@redhat.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 06/11] futex: Allow to re-allocate the private hash
- bucket.
-In-Reply-To: <8734ivcgx7.ffs@tglx>
-References: <20241203164335.1125381-1-bigeasy@linutronix.de>
- <20241203164335.1125381-7-bigeasy@linutronix.de> <8734ivcgx7.ffs@tglx>
-Date: Wed, 11 Dec 2024 15:32:26 +0100
-Message-ID: <87msh2b891.ffs@tglx>
+	s=arc-20240116; t=1733927694; c=relaxed/simple;
+	bh=PjeEch/fWRIE1ieMm8WmubAeLB5sjfg3ePsAhVLH6rI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRRo7ne1RlTHCKlOx5Cc4qn7g3fe8bu2Xv0FTjdYf8chRZUwZE6R08pk+S5dedAELSAnpSD5G3A1jyEWgSv5uHOIfVx/g7oQWmOH7pY0DyPrm0w8X2TfMnw/qls+6KjW+gcv0oXeCuiZl+sowXBfK6kAHi7sz5kac7gbi2CNf4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Hxmncq2B; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BBEYUX83100973
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 11 Dec 2024 08:34:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733927670;
+	bh=09tWTzLXgMYVzmambtubWygnDCYSWR6GEUqpPaUWrbc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Hxmncq2BDa8GLasoIUoLyn7fB7uhn0EstcLgRuxa7x0Hhl0xz0z0Bjrc7S8ty+XdO
+	 N0E9CdAOnzHzgQirTCjwtaeZnNozlXKnNkUjuMe3x43V+D3OHVTu+kM8EPYDib9YRj
+	 VmzfXm9hK48iEw3xcVMoirqoJNluC/4y5GE+CpF4=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BBEYTCH025829;
+	Wed, 11 Dec 2024 08:34:29 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 11
+ Dec 2024 08:34:29 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 11 Dec 2024 08:34:29 -0600
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BBEYSx6052706;
+	Wed, 11 Dec 2024 08:34:29 -0600
+Date: Wed, 11 Dec 2024 20:04:28 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Vivek yadav <linux.ninja23@gmail.com>, <linux-newbie@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <daniel.lezcano@linaro.org>,
+        <lpieralisi@kernel.org>, <krzk@kernel.org>, <christian.loehle@arm.com>,
+        <quic_sibis@quicinc.com>, <cristian.marussi@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <vigneshr@ti.com>, <khilman@ti.com>, <sebin.francis@ti.com>,
+        <khilman@baylibre.com>
+Subject: Re: Fwd: ARM64: CPUIdle driver is not select any Idle state other
+ then WFI
+Message-ID: <20241211143428.kaoovhiwar74dy6x@lcpd911>
+References: <CAO6a-9_aPLCx2CqecQBGbK78_=+-tT44RepPkrBjpkWSvjj4Tg@mail.gmail.com>
+ <CAO6a-98cdSvyd7jgAyGNmsC2nxmRSyr3GppxvZU9yHU1xqwz3g@mail.gmail.com>
+ <20241211055052.gbxnyqpui3t3zpw5@lcpd911>
+ <20241211121825.GA2054801@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241211121825.GA2054801@bogus>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Dec 10 2024 at 23:27, Thomas Gleixner wrote:
-> Why does unqueue() work w/o a hash bucket reference?
->
-> unqueue(q)
-> {
+On Dec 11, 2024 at 12:18:25 +0000, Sudeep Holla wrote:
+> On Wed, Dec 11, 2024 at 11:20:52AM +0530, Dhruva Gole wrote:
+[...]
+> > >
+> > >
+> > > Hi @all,
+> > >
+> > > I am working on one custom SoC. Where I add one CPUIdle state for
+> > > ``arm,cortex-a55`` processor.
+> >
+> > Any further luck on this?
+> >
+> > I have also been working on something similar[1] but on an A53 core on
+> > TI-K3 AM62x processor.
+> 
+> Does upstream DTS have support for this platform to understand it better ?
+> Even reference to any complete DT file for the platform will help.
 
-This actually needs a
+Yes, you can ref to the AM625 (CPU layout) DT here:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/ti/k3-am625.dtsi
 
-        guard(rcu);
+The board/starter kit DT is:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/ti/k3-am625-sk.dts
 
-to protect against a concurrent rehashing.
+The patches for idle state are not upstream, and only exist in this
+patch of mine here:
+https://github.com/DhruvaG2000/v-linux/commit/0fd088d624276a2e72b8dc6660d261ab6d194f4b
 
-> retry:
-> 	lock_ptr = READ_ONCE(q->lock_ptr);
->         // Wake up ?
->         if (!lock_ptr)
->                 return 0;
->
->         spin_lock(lock_ptr);
->
->         // This covers both requeue and rehash operations
->         if (lock_ptr != q->lock_ptr) {
->         	spin_unlock(lock_ptr);
->                 goto retry;
->         }
->
->         __unqueue(q);
->         spin_unlock(lock_ptr);
-> }
->
-> Nothing in unqueue() requires a reference on the hash. The lock pointer
-> logic covers both requeue and rehash operations. They are equivalent,
-> no?
->
-> wake() is not really different. It needs to change the way how the
-> private retry works:
->
-> wake_op()
-> {
-> retry:
->         get_key(key1);
->         get_ket(key2);
->
-> retry_private:
->         double_get_and_lock(&hb1, &hb2, &key1, &key2);
->         .....
->         double_unlock_and_put(&hb1, &hb2);
->         .....
-> }
->
-> Moving retry private before the point where the hash bucket is retrieved
-> and locked is required in some other place too. And some places use
-> q.lock_ptr under the assumption that it can't change, which probably
-> needs reevaluation of the hash bucket. Other stuff like lock_pi() needs
-> a seperation of unlocking the hash bucket and dropping the reference.
->
-> But that are all minor changes.
->
-> All of them can be done on a per function basis before adding the actual
-> private hash muck, which makes the whole thing reviewable. This patch
-> definitely does not qualify for reviewable.
->
-> All you need are implementations for hb_get_and_lock/unlock_and_put()
-> plus the double variants and a hash_put() helper. Those implementations
-> use the global hash until all places are mopped up and then you can add
-> the private magic in exatly those places
->
-> There is not a single place where you need magic state fixups in the
-> middle of the functions or conditional locking, which turns out to be
-> not sufficient.
->
-> The required helpers are:
->
-> hb_get_and_lock(key)
-> {
->         if (private(key))
->         	hb = private_hash(key);		// Gets a reference
->         else
->                 hb = hash_bucket(global_hash, key);
->         hb_lock(hb);
->         return hb;
-> }
->
-> hb_unlock_and_put(hb)
-> {
->         hb_unlock(hb);
->         if (private(hb))
->         	hb_private_put(hb);
-> }
->
-> The double lock/unlock variants are equivalent.
->
-> private_hash(key)
-> {
->         scoped_guard(rcu) {
->  	       hash = rcu_deref(current->mm->futex.hash);
+[...]
+> > See this chunk in the kernel cpuidle driver:
+> > 	if (broadcast && tick_broadcast_enter()) {
+> >
+> > When I dug deeper into tick_broadcast_enter it always returns something
+> > non zero and hence in my case it was entering the if block and tried to
+> > find a deepest state. Then the deepest state would always return WFI and
+> > not the idle-state I had added.
+> >
+> > What we found out was on our kernel we end up using
+> >
+> > kernel/time/tick-broadcast-hrtimer.c
+> >
+> > This always seems to be keeping atleast 1 CPU busy and prevents idle.
+> > If we remove the local-timer-stop it was helping us, but we still need
+> > to dig into the full impact of what that entails and I am still
+> > interested in finding out how so many other users of similar idle-state
+> > implementation are able to do so without trouble.
+> >
+> 
+> Interesting. So if the platform is functional removing local-timer-stop,
+> I am bit confused. Either there is something else that is getting it out
 
-This actually requires:
+Yes it was interesting to us too, as to how the RCU didn't kick in and
+system continued to function as though nothing was wrong.
 
-     if (!hash)
-                return global_hash;
+> from the idle state so, it should be fine and it could be just some
 
-otherwise this results in a NULL pointer dereference, aka. unpriviledged
-DoS when a single threaded process invokes sys_futex(...) directly.
+It's probably UART keypresses or some userspace processes that get
+scheduled that bring the CPUs back out of TF-A's cpu_standby.
+Is it possible that EL1 interrupts can bring EL3 out of WFI? Is yes then
+it explains the behaviour. The arch timer could also be continuing to
+tick and bringing the CPUs out of ATF WFI.
 
-That begs the question whether current->mm->futex.hash should be
-initialized with &global_hash in the first place and &global_hash having
-a reference count too, which never can go to zero. That would simplify
-the whole logic there.
+> misconfiguration.
+> 
+> > Arm64 recommends to use arch_timer instead of external timers. Once we
+> > enter el3, timer interrupts to el1 is blocked and hence it's equivalent
+> > to local-timer-stop, so it does make sense to keep this property, but
+> > then how are others able to enter idle-states for all plugged CPUs at
+> > the same time?
+> >
+> 
+> Some systems have system timer that can take over as broadcast timer when
+> CPUs enter deeper idle states where the local timers are stopped.
 
-Thanks,
+In CPUIdle we're not really clock gating anything so the timer does keep
+ticking. So in this particular case it might make sense to remove the
+local-timer-stop property from the idle-state.
 
-        tglx
+However we're looking into taking this further and putting interconnect
+and few other PLLs in bypass which could cause arch timer for eg. to
+tick slower. In this case would it still make sense to omit the
+property? We may even have some usecases planned where we may turn OFF
+the CPU once it is in TF-A cpu_standby/ WFI. What would be the right
+approach in such scenarios?
+
+Could you provide any examples where the local-timer-stop property is
+being used and an alternative timer can be configured once we enter the
+idle-state where CPU CTX maybe lost or clocks maybe bypass? It would be
+great if you could share some example implementation if you're aware.
+
+I took a look at QCom / NXP DT's but I couldn't exactly figure out how
+they were setting up alternate timers once CPU hit idle-state.
+
+PS. If it helps atall here's also my hack TF-A code where we enter just
+CPU RET state for now:
+https://github.com/DhruvaG2000/tfa-dev/commit/2d4b441d2f4c6d9ee0d6a62d93920ee8ab77dd42#diff-4fa4f4f6a5faa221390928a8079f76392536559f66e420a0182dba8e5966f4c6R232
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
