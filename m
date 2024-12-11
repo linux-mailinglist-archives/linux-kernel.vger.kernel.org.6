@@ -1,68 +1,106 @@
-Return-Path: <linux-kernel+bounces-442004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28449ED6BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:45:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362B8165D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:45:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CBB20371B;
-	Wed, 11 Dec 2024 19:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1ypOQiC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9F69ED6BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:46:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8D82594A3;
-	Wed, 11 Dec 2024 19:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99799282054
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:46:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B357B20127C;
+	Wed, 11 Dec 2024 19:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p1Gt0BMo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uV2GEkDk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p1Gt0BMo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uV2GEkDk"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082B31DE3C0
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733946300; cv=none; b=dT/BoPqaQSmSYRBHSi6PpBw0Nb8sriR0rIvow+bve6QZ22RvtqkXW7TuMcr/KyZjO9oCCTMbtHwt017RY7Xt+sG46A20BIsi+2OCOmbEev1LqLE63EjXa8Ei9i4QGdlDRIOIEwnhOYvlfhrrncPLnb060jaqXsXM52CDdsRamsU=
+	t=1733946360; cv=none; b=bAmocd0FLi69+X5jT6610U6l2e+nFTIOzgtFxwk7VcRFSLhR8lZSItzjgsNuYIyCrPTCagcTSSryhSY3rdTPHszxd9Am2y/EJjMDk1ss94qhwdac+AS3IUF+p/9XL+MA2hhHJhZxTLlilD8dPsLOv9BcctLcG1qtYCB70QyViL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733946300; c=relaxed/simple;
-	bh=Vg5J7bpAvisbUNV39Kztftl751Y5mcACEYs59HWtPXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fpx4q33okgOohDgPJ2xpr3MJxET6fKdnwXgEIMhxuAzBmyUtI7sg3XuRejMgERQm3+GoT+pxBuLfT3lPbhS7fbGP06ciYgZOUeuks9TCNEoLVXDLfyrh1W9fBAxNra8UWxnkOiSA1m986ekJd+p4UiaNgxNqHDSiN1GTSv9WjZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1ypOQiC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1AEC4CED2;
-	Wed, 11 Dec 2024 19:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733946300;
-	bh=Vg5J7bpAvisbUNV39Kztftl751Y5mcACEYs59HWtPXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U1ypOQiCKPrkxaqswbp3KsfOLkxNoA6awtMlQRFcChWZUsahcP+A3nGj2WHwkqIw1
-	 gs5LLOAOy2AwfWCaz44UwA7wTxXf5+H3gbT501YuCHjtEgDopPWCECGYe7bg8ti274
-	 KSiROl4NJHcg4Nigwp85tkIc62G2VZ76JgHmHhtp2t99+orRlr7Hvn04LN/PScfS9F
-	 TE0h1BvNO3GzC+LnCv7Y8JvBt+sdaU6gThk9Jtn0OXyp0sSAu4MasfXbKtEHzP+xrk
-	 lZSq/rUuuCp0Afapu7crxZ1Gp2PTdNnu7+RQYm+30oc5mkkOwApTpVAnRmAUZVQ90A
-	 tMDkzv31rGnBw==
-Date: Wed, 11 Dec 2024 11:44:57 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Quentin Monnet <qmo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Nick Terrell <terrelln@fb.com>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Guilherme Amadio <amadio@gentoo.org>, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] bpftool: Fix the static linkage failure
-Message-ID: <Z1nruXG6U0yYA5fK@google.com>
-References: <20241211093114.263742-1-leo.yan@arm.com>
+	s=arc-20240116; t=1733946360; c=relaxed/simple;
+	bh=924aZzizko0aU8CLlyCFsUIoWb+nEVtW+bDNMX9Pomw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HayLTT9ZLNBLihaeBFVZuR/cDtOPooUoR3NgaOBDwpkCWmwyJauhVoxV2QRZvhjR1buqJi9n/TO/n8ceIslyfwCXJCnIEbRhmEG5wSkV8FHa7C3lxDrRluHlw8PI/ZhqVgmv20VC/pV9VSCj6QbSEB7gUyACoMNYaM6fzxdc1SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p1Gt0BMo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uV2GEkDk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p1Gt0BMo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uV2GEkDk; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 378891F38D;
+	Wed, 11 Dec 2024 19:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733946357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
+	b=p1Gt0BMoNegn9/bsi/7F04zMVbAUtcYk8s1pLSyZXLbb1iA5A6SyHQiumY0Y8Mg//sSdZt
+	gL7wckfXzX10mN1UuxizzP31aqDtF6BlAU7TjlMkyB77Rh0fAm1sBikv8sL9Rc0eDmmr8h
+	RAsnAMFsa6H9kSGWJ15Ixc4s7tj7FAk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733946357;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
+	b=uV2GEkDkTMVGB7AFJIrhj9OnE6gYAVosHOSre4v1s2YdUYsYpdcDXhSHv9P+dB/CeOy5bU
+	4FJTPRmUJKywKiDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733946357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
+	b=p1Gt0BMoNegn9/bsi/7F04zMVbAUtcYk8s1pLSyZXLbb1iA5A6SyHQiumY0Y8Mg//sSdZt
+	gL7wckfXzX10mN1UuxizzP31aqDtF6BlAU7TjlMkyB77Rh0fAm1sBikv8sL9Rc0eDmmr8h
+	RAsnAMFsa6H9kSGWJ15Ixc4s7tj7FAk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733946357;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8OrGjd8V05kU8sW3+usnPdy6Ph16o9wcMZjh9kKN8X0=;
+	b=uV2GEkDkTMVGB7AFJIrhj9OnE6gYAVosHOSre4v1s2YdUYsYpdcDXhSHv9P+dB/CeOy5bU
+	4FJTPRmUJKywKiDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED7F51344A;
+	Wed, 11 Dec 2024 19:45:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xBW+LfTrWWfLEgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Wed, 11 Dec 2024 19:45:56 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>,  "hanqi@vivo.com" <hanqi@vivo.com>,
+ "Theodore Ts'o" <tytso@mit.edu>
+Subject: Re: Unicode conversion issue
+In-Reply-To: <Z1nG-PSEe6tPOZIG@google.com> (Jaegeuk Kim's message of "Wed, 11
+	Dec 2024 17:08:08 +0000")
+Organization: SUSE
+References: <Z1mzu4Eg6CPURra3@google.com> <87v7vqyzh4.fsf@mailhost.krisman.be>
+	<Z1nG-PSEe6tPOZIG@google.com>
+Date: Wed, 11 Dec 2024 14:45:51 -0500
+Message-ID: <87cyhyuhow.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,45 +108,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241211093114.263742-1-leo.yan@arm.com>
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	HAS_ORG_HEADER(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[5]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Wed, Dec 11, 2024 at 09:31:11AM +0000, Leo Yan wrote:
-> This series follows up on the discussion in [1] for fixing the static
-> linkage issue in bpftool.
-> 
-> Patch 01 introduces a new feature for libelf-zstd.  If this feature
-> is detected, it means the zstd lib is required by libelf.
-> 
-> Patch 02 is a minor improvement for linking the zstd lib in the perf.
-> 
-> Patch 03 fixes the static build failure by linking the zstd lib when
-> the feature-libelf-zstd is detected.
-> 
-> [1] https://lore.kernel.org/linux-perf-users/Z1H9-9xrWM4FBbNI@mini-arch/T/#m2300b127424e9e2ace7da497a20d88534eb6866f
-> 
-> 
-> Leo Yan (3):
->   tools build: Add feature test for libelf with ZSTD
->   perf: build: Minor improvement for linking libzstd
->   bpftool: Link zstd lib required by libelf
+Jaegeuk Kim <jaegeuk@kernel.org> writes:
 
-Tested-by: Namhyung Kim <namhyung@kernel.org>
+> On 12/11, Gabriel Krisman Bertazi wrote:
+>> Jaegeuk Kim <jaegeuk@kernel.org> writes:
+>>=20
+>> > Hi Linus/Gabriel,
+>> >
+>> > Once Android applied the below patch [1], some special characters star=
+ted to be
+>> > converted differently resulting in different length, so that f2fs cann=
+ot find
+>> > the filename correctly which was created when the kernel didn't have [=
+1].
+>> >
+>> > There is one bug report in [2] where describes more details. In order =
+to avoid
+>> > this, could you please consider reverting [1] asap? Or, is there any o=
+ther
+>> > way to keep the conversion while addressing CVE? It's very hard for f2=
+fs to
+>> > distinguish two valid converted lengths before/after [1].
+>>=20
+>> I got this report yesterday. I'm looking into it.
+>>=20
+>> It seems commit 5c26d2f1d3f5 ("unicode: Don't special case ignorable
+>> code points") has affected more than ignorable code points, because that
+>> U+2764 is not marked as Ignorable in the unicode database.
+>>=20
+>> I still think the solution to the original issue is eliminating
+>> ignorable code points, and that should be fine.  Let me look at why this
+>> block of characters is mishandled.
 
-Thanks,
-Namhyung
+I was struggling to reproduce it, until I copy-pasted the character
+directly from the bugzilla:
 
-> 
->  tools/bpf/bpftool/Makefile             | 8 ++++++++
->  tools/build/Makefile.feature           | 1 +
->  tools/build/feature/Makefile           | 4 ++++
->  tools/build/feature/test-all.c         | 4 ++++
->  tools/build/feature/test-libelf-zstd.c | 9 +++++++++
->  tools/perf/Makefile.config             | 8 +++++++-
->  6 files changed, 33 insertions(+), 1 deletion(-)
->  create mode 100644 tools/build/feature/test-libelf-zstd.c
-> 
-> -- 
-> 2.34.1
-> 
+The character the user has is =E2=9D=A4=EF=B8=8F, which is different than j=
+ust =E2=9D=A4.  This
+is a combination of:
+
+U+2764 + U+FE0F  (Heavy Black Heart + Variation Selector-16)
+
+Variation Selector-16 is an ignorable character with zero length,
+exactly what we wanted to ignore with that patch.  What I didn't
+consider in the original submission was that, differently from other
+ignorable code-points, this block might be used intentionally in a filename.
+
+> Thank you so much. If it takes some time to find the root cause, may I
+> propose the revert first to unblock production? The problem is quite seve=
+re
+> as users cannot access their files.
+
+We have 3 ways forward.
+
+1) The first is to revert the patch and fix the original issue in a
+different way.  That would be: We would restore the original database
+and treat Ignorable codepoints as folding to themselves only when doing
+string comparisons, but not when calculating hashes.  This way, the hash
+will be the same, but filenames with Ignorable codepoints will be
+handled as byte sequences.
+
+2) We keep the original patch and add support in fsck to update the
+hashes in volumes like the above.
+
+3) We regenerate the database to Ignore codepoints in the code-block
+FE00..FE0F.  That would be the simplest, solution, but there might be
+more cases that need fixing later.
+
+At this point, I'd be pending torwards 1 or 3.  Both of them can be done
+after reverting my original patch, so I'm fine with that.  Thoughts?
+
+> Thank you so much. If it takes some time to find the root cause, may I
+> propose the revert first to unblock production? The problem is quite
+> severe as users cannot access their files.
+
+I don't oppose this, considering the case at hand.  I'll base the new patch
+on top of the revert.
+
+--=20
+Gabriel Krisman Bertazi
 
