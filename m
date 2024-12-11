@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-441231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F579ECB7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:42:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8AA9ECB81
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:44:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E19283496
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:42:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21DB6165F8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35783211A2A;
-	Wed, 11 Dec 2024 11:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prW8fMoh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C97C238E27;
-	Wed, 11 Dec 2024 11:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472B7211A2A;
+	Wed, 11 Dec 2024 11:44:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942CD238E27;
+	Wed, 11 Dec 2024 11:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733917343; cv=none; b=NUu3uJun+GWsFTrq/0JXwiDL/rulDspNfM9oQVKQifjcNNfVyd+7sFJKWppvqyjsL1NWNH6LecmsBzzcD/Kz6HTf37vq8scEH017gaxbU60uBPAYD+gwYvpiiXxjxhzR+StDPhxI5nqMGN11lco8XS3iLIlbltuAHFP1DW5m1D0=
+	t=1733917441; cv=none; b=SgXVy0yYXf1OONvOwbNh/KlMLCkjwuWEWbynJ0YsojS12YT4sbfb2JqsBBOvqOD5TXUFPiYFgXEW3DAJGYbCHQ7DFl9ow+WF08j/iNv63a6KOoY2hbFOYpJY3sd7NAQW3kUReGOsMOoyVOA0aPE9/rY3UEbhST0/y+sn22ohOac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733917343; c=relaxed/simple;
-	bh=yedsCnzVN74BVIIARNATqyJIu4NbvsCe8HTrkCpphMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lV9Z+WNkSSaXfewmtUiXdetTmzreQa+dTxfLpoOCnuZQaxyTKCPcG/FeL2caFOe7nejk8BxozOAxTrrEw3+enc2+NAPWcsCvHyO/GSIWboLqKGAh0BuiBsq6iF1Sl4da9JUSdN11orl5qRRyMKJw8KLIri13wQrP+s04BJO8Lhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prW8fMoh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0909BC4CED2;
-	Wed, 11 Dec 2024 11:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733917343;
-	bh=yedsCnzVN74BVIIARNATqyJIu4NbvsCe8HTrkCpphMA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=prW8fMohAf8HEEmGWWarvi6CXE3aB8pEsbfCs2fqiF76+pyZbFFpz3wByAildGDgd
-	 0CC/UI3QjptdF7xpSTJmkqgufOXLQrWDBpIK7ql/DNIMFZCQQPCrmXaizavSWIFA19
-	 jhK5HfLmN+3K/86DRdHr7xcn7+cNjbDYS15liX30EArh8wW99MscUJSuhDHlyZuy/G
-	 W8WJmH831FMEOzFQYBrVUJLAL1gc2yMV4ssb0nm6pp3lYCtIBrMWFdpgxwTsvFUCaA
-	 rnMKvVMxMI5+vGMV4drhz9Nr9gIcN3VE3Q9ozoUBtS3LD+4VWK7R1Gg/+XM/Jh0sCT
-	 4wP5JphFsvqkw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tLL6o-000000002JR-1ZW6;
-	Wed, 11 Dec 2024 12:42:26 +0100
-Date: Wed, 11 Dec 2024 12:42:26 +0100
-From: Johan Hovold <johan@kernel.org>
-To: "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>
-Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>, Marc Zyngier <maz@kernel.org>,
-	Xilin Wu <wuxilin123@gmail.com>, Abel Vesa <abel.vesa@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/8] arm64: dts: qcom: x1e80100-dell-xps13-9345: Fix USB
- QMP PHY supplies
-Message-ID: <Z1l6omxQoKKAyqSS@hovoldconsulting.com>
-References: <20241210-x1e80100-usb-qmp-supply-fix-v1-0-0adda5d30bbd@linaro.org>
- <20241210-x1e80100-usb-qmp-supply-fix-v1-5-0adda5d30bbd@linaro.org>
- <CAMcHhXpvwR50GCkTvtkmWW4mvV5o9vbMvrvqLiEkJpKDHP_REA@mail.gmail.com>
- <CY5PR19MB61475B208EC527ED7143B536BA3E2@CY5PR19MB6147.namprd19.prod.outlook.com>
+	s=arc-20240116; t=1733917441; c=relaxed/simple;
+	bh=mo9kAiTvLc24ao3l4ExpOMo+b7f8ffD3Pea6qUFfjDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NlvJ++NNlE2XzOCjq0rnQcwOgt/na81q4y+XHRRyL5gKnqqvZPFs5RU0uFfSGGabLdOk4F7ObSXkmA0KNsVHeyssadiG/ZTt9HUKnffPsve3yhxKHkXynGrZkD5ICoM4lwMKsyB1ONdGzVs2vS/Eao84DcoCbkgfOYKvMk55Q3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB20C1063;
+	Wed, 11 Dec 2024 03:44:26 -0800 (PST)
+Received: from [10.1.37.59] (e127648.arm.com [10.1.37.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08CC23F5A1;
+	Wed, 11 Dec 2024 03:43:55 -0800 (PST)
+Message-ID: <f16b11fa-bb2d-4e7e-81f9-80cf3a1f7a6c@arm.com>
+Date: Wed, 11 Dec 2024 11:43:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY5PR19MB61475B208EC527ED7143B536BA3E2@CY5PR19MB6147.namprd19.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for
+ EAS
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>
+References: <5861970.DvuYhMxLoT@rjwysocki.net>
+ <2989520.e9J7NaK4W3@rjwysocki.net>
+ <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com>
+ <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 11:35:37AM +0000, Tudor, Laurentiu wrote:
+On 12/11/24 11:29, Rafael J. Wysocki wrote:
+> On Wed, Dec 11, 2024 at 11:33 AM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> On 11/29/24 16:00, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> Make it possible to use EAS with cpufreq drivers that implement the
+>>> :setpolicy() callback instead of using generic cpufreq governors.
+>>>
+>>> This is going to be necessary for using EAS with intel_pstate in its
+>>> default configuration.
+>>>
+>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>> ---
+>>>
+>>> This is the minimum of what's needed, but I'd really prefer to move
+>>> the cpufreq vs EAS checks into cpufreq because messing around cpufreq
+>>> internals in topology.c feels like a butcher shop kind of exercise.
+>>
+>> Makes sense, something like cpufreq_eas_capable().
+>>
+>>>
+>>> Besides, as I said before, I remain unconvinced about the usefulness
+>>> of these checks at all.  Yes, one is supposed to get the best results
+>>> from EAS when running schedutil, but what if they just want to try
+>>> something else with EAS?  What if they can get better results with
+>>> that other thing, surprisingly enough?
+>>
+>> How do you imagine this to work then?
+>> I assume we don't make any 'resulting-OPP-guesses' like
+>> sugov_effective_cpu_perf() for any of the setpolicy governors.
+>> Neither for dbs and I guess userspace.
+>> What about standard powersave and performance?
+>> Do we just have a cpufreq callback to ask which OPP to use for
+>> the energy calculation? Assume lowest/highest?
+>> (I don't think there is hardware where lowest/highest makes a
+>> difference, so maybe not bothering with the complexity could
+>> be an option, too.)
 > 
-> Internal Use - Confidential
-
-Looks like you need to fix your mail setup for when you're interacting
-with the community and mailing lists.
-
-> > -----Original Message-----
-> > From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-> > Sent: Tuesday, December 10, 2024 10:45 PM
-> >
-> > On Tue, 10 Dec 2024 at 10:07, Stephan Gerhold <stephan.gerhold@linaro.org>
-> > wrote:
-> > >
-> > > On the X1E80100 CRD, &vreg_l3e_1p2 only powers &usb_mp_qmpphy0/1
-> > (i.e.
-> > > USBSS_3 and USBSS_4). The QMP PHYs for USB_0, USB_1 and USB_2 are
-> > > actually powered by &vreg_l2j_1p2.
-> > >
-> > > Since x1e80100-dell-xps13-9345 mostly just mirrors the power supplies
-> > > from the x1e80100-crd device tree, assume that the fix also applies here.
-> >
-> > Though I can't verify schematics (perhaps Laurentiu can?)can confirm USBs
-> > still work as expected with this change.
+> In the "setpolicy" case there is no way to reliably predict the OPP
+> that is going to be used, so why bother?
 > 
-> Yep, just checked the schematics and can confirm.
+> In the other cases, and if the OPPs are actually known, EAS may still
+> make assumptions regarding which of them will be used that will match
+> the schedutil selection rules, but if the cpufreq governor happens to
+> choose a different OPP, this is not the end of the world.
 
-Thanks for confirming.
+"Not the end of the world" as in the model making incorrect assumptions.
+With the significant power-performance overlaps we see in mobile systems
+taking sugov's guess while using powersave/performance (the !setpolicy
+case) at least will make worse decisions.
+See here for reference, first slide.
+https://lpc.events/event/16/contributions/1194/attachments/1114/2139/LPC2022_Energy_model_accuracy.pdf
 
-Johan
+What about the config space, are you fine with everything relying on
+CONFIG_CPU_FREQ_GOV_SCHEDUTIL?
 
