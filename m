@@ -1,165 +1,133 @@
-Return-Path: <linux-kernel+bounces-441628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A500E9ED0DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:09:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17C69ED0E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:10:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2895167B6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3942288B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A2A1D63CA;
-	Wed, 11 Dec 2024 16:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ROIUKUk0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Se1C2ctl";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ROIUKUk0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Se1C2ctl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B941D9A7F;
+	Wed, 11 Dec 2024 16:09:57 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D16C1DBB0C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108E11D5CDD;
+	Wed, 11 Dec 2024 16:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733933297; cv=none; b=kU1QjNrUr+fVlpy92gs0bGBpWf8/Wz/Uv3Ldx2LFgFlwDQnn8dx1KxRQfDMRxzlJiuHrQrj9CkvMU4mfl6SLk1XJWFv5+mGq8LMbpj6ThnHV8t046g44KHYgjZjTMcUBgsszeIBqBh51uAAiW2H4MnLaFEq1xpnx7JgnP0P+4II=
+	t=1733933397; cv=none; b=ctXO8yEwXGU6AQDaQGQZB6TQECl8MSvRTYLpMcNw+U/Uus3I1DJIW/IemGtDELHjxonhEQSL5u8JiPjbfkml5ZZtK1yjpuXtV+7iFjASeXtDeVJ2uhHiIOWMVRR7AYS7sqKBjF+3ndy30dvVqncM+IGKK6GiANj3XNKC/C5KyyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733933297; c=relaxed/simple;
-	bh=tuI7MK9zBdpQseSyOX6KKaBQeCWr7ro/OeiS1nHrqhY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=p4vtBdYEjGqWcNQsxe+EvU83weyFGcMnIqUzmk5h4e5KOHxiFGsvq76hz3k5XEsrKuWlIs2LPYfmCH+uXL+ou1W3LhKzawzuNB0hUbKoTEoHOWe/c5yBu+OMMphnSEcSAESGLrugKRRpclC7tmY3LXlL97Nfu4EEVHkqFpi5NUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ROIUKUk0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Se1C2ctl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ROIUKUk0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Se1C2ctl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EA3F1F38C;
-	Wed, 11 Dec 2024 16:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733933293; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjvTT5N3QMcR+eVeVqsTAHalXtEBVa2ZyuCBe66dF+g=;
-	b=ROIUKUk0iiXbvewwmljfnGJp7E3SKdZJI8qzfIKnghUfEAoASVfhFzYZGwNB/DeHUPcdfx
-	QLpx8TbWjS9E9EjD0plCKInBOQbD/38OmSDUzQ0eSw8n4/u4VgVW02BAUNEcS6ck/0CuVZ
-	KtR6dKU05yqRKm37Ir1CjqjPHA+QZF0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733933293;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjvTT5N3QMcR+eVeVqsTAHalXtEBVa2ZyuCBe66dF+g=;
-	b=Se1C2ctl6PJQq1kEyS9X+vmjFCn6QOUlF8J4vXEM28AM5k/KFNZQ4oowJrDQraVBY5JDiA
-	UWj4TzYEDhqi5fCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ROIUKUk0;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Se1C2ctl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733933293; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjvTT5N3QMcR+eVeVqsTAHalXtEBVa2ZyuCBe66dF+g=;
-	b=ROIUKUk0iiXbvewwmljfnGJp7E3SKdZJI8qzfIKnghUfEAoASVfhFzYZGwNB/DeHUPcdfx
-	QLpx8TbWjS9E9EjD0plCKInBOQbD/38OmSDUzQ0eSw8n4/u4VgVW02BAUNEcS6ck/0CuVZ
-	KtR6dKU05yqRKm37Ir1CjqjPHA+QZF0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733933293;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjvTT5N3QMcR+eVeVqsTAHalXtEBVa2ZyuCBe66dF+g=;
-	b=Se1C2ctl6PJQq1kEyS9X+vmjFCn6QOUlF8J4vXEM28AM5k/KFNZQ4oowJrDQraVBY5JDiA
-	UWj4TzYEDhqi5fCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 030F213983;
-	Wed, 11 Dec 2024 16:08:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qMFSL+y4WWchUQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 11 Dec 2024 16:08:12 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, "hanqi@vivo.com" <hanqi@vivo.com>
-Subject: Re: Unicode conversion issue
-In-Reply-To: <Z1mzu4Eg6CPURra3@google.com> (Jaegeuk Kim's message of "Wed, 11
-	Dec 2024 15:46:03 +0000")
-Organization: SUSE
-References: <Z1mzu4Eg6CPURra3@google.com>
-Date: Wed, 11 Dec 2024 11:08:07 -0500
-Message-ID: <87v7vqyzh4.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1733933397; c=relaxed/simple;
+	bh=e7Bl6Cb/5z1UBwu0TtPLrts9zF7L2AqUtvtZt5smbn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ftAtuSTJ2cVjSnwlLiOcfLO2eThzlhrjp56LGPo6I7TQe0Yj9n/U6Wf7TOHrindMrtPTvK8gmmSdUGLJRX6J6XJbazUutuZoIY8qyUECowBbru+tzXjKSS1OQoGPZxAmm+OPDekG77A5V9Jaxq6YV4WJiPhNv6pQzRWcztRjVks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B408AC4CED2;
+	Wed, 11 Dec 2024 16:09:55 +0000 (UTC)
+Date: Wed, 11 Dec 2024 11:09:52 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] fgraph: Use CPU hotplug mechanism to initialize idle
+ shadow stacks
+Message-ID: <20241211110952.6d89e0d8@batman.local.home>
+In-Reply-To: <CACRpkdaEXUxSuVzztcVOh2VMzPHr+6jsrEC1w6ecWEd0qzgU4w@mail.gmail.com>
+References: <20241018214300.6df82178@rorschach>
+	<CACRpkdaTBrHwRbbrphVy-=SeDz6MSsXhTKypOtLrTQ+DgGAOcQ@mail.gmail.com>
+	<20241211082427.01208632d3dd5486abb3e090@kernel.org>
+	<CACRpkdaEXUxSuVzztcVOh2VMzPHr+6jsrEC1w6ecWEd0qzgU4w@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 6EA3F1F38C
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Jaegeuk Kim <jaegeuk@kernel.org> writes:
+On Wed, 11 Dec 2024 15:23:05 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> Hi Linus/Gabriel,
->
-> Once Android applied the below patch [1], some special characters started to be
-> converted differently resulting in different length, so that f2fs cannot find
-> the filename correctly which was created when the kernel didn't have [1].
->
-> There is one bug report in [2] where describes more details. In order to avoid
-> this, could you please consider reverting [1] asap? Or, is there any other
-> way to keep the conversion while addressing CVE? It's very hard for f2fs to
-> distinguish two valid converted lengths before/after [1].
+> If I boot without any tracing enabled from the cmdline and:
+> 
+> echo 0 > tracing_on
+> echo function_graph > current_tracer
+> echo do_idle > set_graph_function
+> echo 1 > tracing_on
+> 
+> I don't get any output either.
+> 
+> It works for other functions, such as
+> 
+> echo ktime_get > set_graph_function
+> 
+> It seems it's the set_graph_function thing that isn't working
+> with do_idle at all after this patch. Why just this function...
+> The function is clearly there:
+> 
+> cat available_filter_functions | grep do_idle
+> do_idle
+> 
+> I can also verify that this function is indeed getting invoked
+> by adding prints to it (it's invoked all the time on any normal
+> system). Does this have something to do with the context
+> where do_idle is called? It's all really confusing...
 
-I got this report yesterday. I'm looking into it.
+Yeah, I figured it out. That commit moved the initialization before
+fgraph was registered, and we had in ftrace_graph_init_idle_task():
 
-It seems commit 5c26d2f1d3f5 ("unicode: Don't special case ignorable
-code points") has affected more than ignorable code points, because that
-U+2764 is not marked as Ignorable in the unicode database.
+        if (ftrace_graph_active) {
+                unsigned long *ret_stack;
+                        
+                ret_stack = per_cpu(idle_ret_stack, cpu);
+                if (!ret_stack) {
+                        ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
+                        if (!ret_stack)
+                                return;
+                        per_cpu(idle_ret_stack, cpu) = ret_stack;
+                }
+                graph_init_task(t, ret_stack);
+        }
 
-I still think the solution to the original issue is eliminating
-ignorable code points, and that should be fine.  Let me look at why this
-block of characters is mishandled.
+But because ftrace_graph_active was not set yet, the initialization
+didn't happen.
 
->
-> [1] 5c26d2f1d3f5 ("unicode: Don't special case ignorable code points")
-> [2] https://bugzilla.kernel.org/show_bug.cgi?id=219586
+Can you try this patch?
 
--- 
-Gabriel Krisman Bertazi
+-- Steve
+
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 43f4e3f57438..4706a7dce93a 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1160,13 +1160,19 @@ void fgraph_update_pid_func(void)
+ static int start_graph_tracing(void)
+ {
+ 	unsigned long **ret_stack_list;
+-	int ret;
++	int ret, cpu;
+ 
+ 	ret_stack_list = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
+ 
+ 	if (!ret_stack_list)
+ 		return -ENOMEM;
+ 
++	/* The cpu_boot init_task->ret_stack will never be freed */
++	for_each_online_cpu(cpu) {
++		if (!idle_task(cpu)->ret_stack)
++			ftrace_graph_init_idle_task(idle_task(cpu), cpu);
++	}
++
+ 	do {
+ 		ret = alloc_retstack_tasklist(ret_stack_list);
+ 	} while (ret == -EAGAIN);
 
