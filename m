@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-442257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1FB9ED9DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E58B9ED9E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:34:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13F52819C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8809281B36
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08441FA8E7;
-	Wed, 11 Dec 2024 22:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD89E1FA8DC;
+	Wed, 11 Dec 2024 22:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mt21d5jK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qv6gvZPd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B93B1FA8D1;
-	Wed, 11 Dec 2024 22:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FF31FA8FF;
+	Wed, 11 Dec 2024 22:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956347; cv=none; b=AeK8B1piYu/zO2NxOft4j+Gy94uCPy2hFrfO6gfiUdcyeYxyMMYhFXrdfg0npd6UlbMB2W1v+Eb5mm01tEO51/PQM6WHeYosFA3xQXfTQTlWr8PiIGI4SM6EL6dqsgv4Ss1UD6KU6ik2d6BEur7OPlJu3ITj/p7d7bjJ5vxwDQo=
+	t=1733956349; cv=none; b=VLo7clw6Ql40dWKU/1ZFpIqMTBrTBa6w4fUdcbcKAV/UbtUEoovZojBT5o3anAEPjcGtYF7c6uoodQ4/gEENp/rh0rGedligKeaBsqTY0JekttdToUFddTjM9HJVTtqALH1O9SkLXb7ZtyRHY92tfXpPWBFwTL10KrDjdydl8Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956347; c=relaxed/simple;
-	bh=u4gaXs5sosKWY77rmkfUwUca79BA3tp4W9GgBMx4WJM=;
+	s=arc-20240116; t=1733956349; c=relaxed/simple;
+	bh=BsLL13WVfc3NzEKIjd52mjnoMrC/Et1GCt0kRWiLCQo=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cNOSrEq1UMNukFtbvKPfEVIurIJK9Ej4sf8h+Q1AUoQ6OSRCBGymfl9l8Gk2MOLCxXPpb0cs6UpdS6pDmal9ZokWTBvVfIVnYdNWLt9i7yYJVxiYGpRRJZl1CdvUGp0Y6HS+6amxPvrCrEia0cqHxCTDI9d6c+cBnLzhc91cwKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mt21d5jK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CD1C4CED2;
-	Wed, 11 Dec 2024 22:32:27 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=bPth9QcmsZNdlBbPF7WHBbwtm8uYLNUDlciBjNkTVzk3utk+02KTIJPJEzhisp4M/zntbH7im217JL2FN6IPsvdGHmbOGqs8pApGIs8pLHyXwqBYHzzN0RU7b1Wb/iMM9m2gI2BmwS6PwAzwXjEmdHdotnbk9I+Hd/Bm1LoC7ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qv6gvZPd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AB6C4CED2;
+	Wed, 11 Dec 2024 22:32:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733956347;
-	bh=u4gaXs5sosKWY77rmkfUwUca79BA3tp4W9GgBMx4WJM=;
+	s=k20201202; t=1733956348;
+	bh=BsLL13WVfc3NzEKIjd52mjnoMrC/Et1GCt0kRWiLCQo=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mt21d5jKVhkwSjxHePxlM4O/zLpsGeiRd5tjyK2pX0BJTm98heLfhm4LJOYBbfwZa
-	 atA+ZiFZbqY75h4AxHIgC/2D/ZDPVaj88Q1VIPtRxek+GeuHfna2eGz2IcTu7E2bjF
-	 y+8Y/884d5ESblaH6xap/fCr939WefZ6WXlf3u2jHPjxUjx0H6/BcBNZYsujX1rhDZ
-	 rsTDJm+pOrnde3dqEJnLiOkbyX+OwHMfU3XQn3f+uTAfMXXMKEt8ozQzF8UdLES1WW
-	 E07AquHPMxaLvuLu+zuiGq5SPDEJll7lePXJFRX+UNYglftZp2s4gTIYeuYtmaZ8Zx
-	 Uw+ir5YffFaMw==
+	b=qv6gvZPdDzbdVPybtFSPx8+F0xql/LHjAUoa61PxHbq7BiNILQmSVN3xV/Fk+jm3l
+	 eRj2euKpGQwhzha10D0yvWpJ5jdjr8+V1iYsps4/RL/90xpWyAoPlqxLTgT8H2p1Qr
+	 znxHE8HzGGVb3bxCyQgvVT/2hoGKZW56OU+GylgAoSP4eq7TpXB3MZRt3VoyD522af
+	 qGwcNNMDDsGqYKHkYodSX7oguHOLk4TTwi/8Q8fATZ6k5VUR9Dw7CkfxIhk8aSQAz0
+	 q46lv24Cq5nGqzFQZkxa8IXK7+L/Hgf8e5dM0N1jW5ubxUNiav+to559ZbObo4j7v8
+	 24oLtA9z8Jf7w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70A6C380A965;
-	Wed, 11 Dec 2024 22:32:44 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFBE380A965;
+	Wed, 11 Dec 2024 22:32:45 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] pinctrl: k210: Undef K210_PC_DEFAULT
+Subject: Re: [PATCH 1/2] asm-generic: provide generic page_to_phys and
+ phys_to_page implementations
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173395636298.1729195.9726718788225234944.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Dec 2024 22:32:42 +0000
-References: <20241113071201.5440-1-zhangjiao2@cmss.chinamobile.com>
-In-Reply-To: <20241113071201.5440-1-zhangjiao2@cmss.chinamobile.com>
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: linux-riscv@lists.infradead.org, dlemoal@kernel.org,
- linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <173395636448.1729195.13128530873311699126.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 22:32:44 +0000
+References: <20241023053644.311692-2-hch@lst.de>
+In-Reply-To: <20241023053644.311692-2-hch@lst.de>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-riscv@lists.infradead.org, arnd@arndb.de,
+ linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+ linux-arch@vger.kernel.org
 
 Hello:
 
-This patch was applied to riscv/linux.git (fixes)
-by Linus Walleij <linus.walleij@linaro.org>:
+This series was applied to riscv/linux.git (fixes)
+by Arnd Bergmann <arnd@arndb.de>:
 
-On Wed, 13 Nov 2024 15:12:01 +0800 you wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Wed, 23 Oct 2024 07:36:36 +0200 you wrote:
+> page_to_phys is duplicated by all architectures, and from some strange
+> reason placed in <asm/io.h> where it doesn't fit at all.
 > 
-> When the temporary macro K210_PC_DEFAULT is not needed anymore,
-> use its name in the #undef statement instead of
-> the incorrect "DEFAULT" name.
+> phys_to_page is only provided by a few architectures despite having a lot
+> of open coded users.
 > 
-> Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Provide generic versions in <asm-generic/memory_model.h> to make these
+> helpers more easily usable.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4] pinctrl: k210: Undef K210_PC_DEFAULT
-    https://git.kernel.org/riscv/c/7e86490c5dee
+  - [1/2] asm-generic: provide generic page_to_phys and phys_to_page implementations
+    https://git.kernel.org/riscv/c/c5c3238d9b8c
+  - [2/2] asm-generic: add an optional pfn_valid check to page_to_phys
+    https://git.kernel.org/riscv/c/3e25d5a49f99
 
 You are awesome, thank you!
 -- 
