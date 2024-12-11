@@ -1,171 +1,87 @@
-Return-Path: <linux-kernel+bounces-440845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9FF9EC54C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:03:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FCD9EC550
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:05:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58D4285C62
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23AD188847A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158971C5F1F;
-	Wed, 11 Dec 2024 07:02:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EC11C5CB1;
+	Wed, 11 Dec 2024 07:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+hG83Z3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22A51C683;
-	Wed, 11 Dec 2024 07:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266F01C683;
+	Wed, 11 Dec 2024 07:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733900565; cv=none; b=UhraoAplJ7bTC9K7IZIzxdppzwQGyTQbDa3UfW8iVxraHRl/NDEjjO/U9yLSiwuCja89kTgwVx39sLDHvtoXzpNqQ09UYciQgDNaBLJ1K3IeNebv8/S1BWtCe2PdoNQsMwRsgdIpzRcWyjJY+qaGXWGX7zFWoU1KBxojjlxKVRs=
+	t=1733900707; cv=none; b=u85iGG+ZgK+8R+XRCjMeFkMMug/IQDsoPN1cQSS5RDEUq3i90itM+lX1D48k8jT/ZpxpzotY+B2v3NILGH3u7oGRmmIJinkXBOASRDwA1skH1UcrfccozEFVS/bE281kEhOOYpqbrgmdglsA57eAIvjHuHmU2l254hiKdb4mq8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733900565; c=relaxed/simple;
-	bh=k5sjJ8nrggBioJqqgJeatYmHk/RmV7oX9sAki5wR/Sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hgrzWFpqxgQfANVPtU/z2tfAkELgwZ8+r/lRuCzPijl79v8BaZzgXnxFsvmpU4PdvVzUoH3XyGcvzziyazHmNRtGaNSxZFqYsWISYNof/Hzz5xvGth0FqVXumaLgwgNrSDd3nPzxWUeOLbsK8R+/B10F9cR1hd6d0fNUOp1VvP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Y7RPY1fW8z9t4Z;
-	Wed, 11 Dec 2024 08:02:41 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ke-WcrxaszkX; Wed, 11 Dec 2024 08:02:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Y7RPY0Vj8z9t4W;
-	Wed, 11 Dec 2024 08:02:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id ED9BB8B76E;
-	Wed, 11 Dec 2024 08:02:40 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id BSgjR7epYr8H; Wed, 11 Dec 2024 08:02:40 +0100 (CET)
-Received: from [10.25.209.139] (unknown [10.25.209.139])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2664A8B763;
-	Wed, 11 Dec 2024 08:02:40 +0100 (CET)
-Message-ID: <427e840b-d4f5-4554-b798-c70a5b67040e@csgroup.eu>
-Date: Wed, 11 Dec 2024 08:02:39 +0100
+	s=arc-20240116; t=1733900707; c=relaxed/simple;
+	bh=v/EsnuxQHEXkYShXZUNLcRpHaWK9XeacMD7tK4LZlLI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c7V04agifSKkMuDMCLnwpELgLPYqYPLsuoffr+Zxwqg8iXhm5z0sCasyHsjlQtAvZ1Spx+dYCn1YfCsf0RXH0hW7u1ArdXjEoqGDpjNBuOyZsYDF0Xp0Pk7gnVqVdnSaKs8jblpc2UwrxBlquuP00cwkYkx/A0B+wOqyhnxAjDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+hG83Z3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE90C4CED2;
+	Wed, 11 Dec 2024 07:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733900706;
+	bh=v/EsnuxQHEXkYShXZUNLcRpHaWK9XeacMD7tK4LZlLI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=H+hG83Z3FlgRicGpip0ZUlxS/bdrxtnyLr4Wf541Q0OSSkWmdZ7Prva5nP9ilZB2V
+	 kXbcNWGT4SasD+U5SEIT2sMO0LsfC6/tcFveVrC2KZjxCeS9RTocr9dM8FGtCIi11D
+	 gAYVzpNDw3q1sE/A1egUiYq8i12OjbeUEI+tE5D0vx5NOJtYR61+O0cjCoId5yiKWW
+	 hUq6QSd0BWrOC1Jc2tyHnDea3Fg64td3aIlZ+VhxyWjenqDLJX5PhXDyAk+4ptD7X0
+	 sUnF4+K4JQiTpTWs4ZWeM4AFiDy3PfX6DpDytdudoNdPrIgegrEL0/gL3uoOWOx6ub
+	 O9ZrRjYxm8AUw==
+From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+To: ardb@kernel.org
+Cc: linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Subject: [PATCH] efi/esrt: remove esre_attribute::store()
+Date: Wed, 11 Dec 2024 08:05:03 +0100
+Message-ID: <20241211070503.87386-1-jirislaby@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/19] powerpc/papr_scm: Convert timeouts to
- secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
- <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
- Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi
- <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jeroen de Borst <jeroendb@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
- Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann
- <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>,
- Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
- Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Louis Peens <louis.peens@corigine.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org, linux-mm@kvack.org,
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
- oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>
-References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
- <20241210-converge-secs-to-jiffies-v3-5-ddfefd7e9f2a@linux.microsoft.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241210-converge-secs-to-jiffies-v3-5-ddfefd7e9f2a@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+esre_attribute::store() is not needed since commit af97a77bc01c (efi:
+Move some sysfs files to be read-only by root). Drop it.
 
+Found by https://github.com/jirislaby/clang-struct.
 
-Le 10/12/2024 à 23:02, Easwar Hariharan a écrit :
-> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-> secs_to_jiffies(). As the value here is a multiple of 1000, use
-> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
-> 
-> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
-> the following Coccinelle rules:
-> 
-> @@ constant C; @@
-> 
-> - msecs_to_jiffies(C * 1000)
-> + secs_to_jiffies(C)
-> 
-> @@ constant C; @@
-> 
-> - msecs_to_jiffies(C * MSEC_PER_SEC)
-> + secs_to_jiffies(C)
-> 
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org
+---
+ drivers/firmware/efi/esrt.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-> ---
->   arch/powerpc/platforms/pseries/papr_scm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
-> index f84ac9fbe203c111046464b9100866dddae687bb..f7c9271bda58433f395648063e60409a8d3c11d9 100644
-> --- a/arch/powerpc/platforms/pseries/papr_scm.c
-> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
-> @@ -544,7 +544,7 @@ static int drc_pmem_query_health(struct papr_scm_priv *p)
->   
->   	/* Jiffies offset for which the health data is assumed to be same */
->   	cache_timeout = p->lasthealth_jiffies +
-> -		msecs_to_jiffies(MIN_HEALTH_QUERY_INTERVAL * 1000);
-> +		secs_to_jiffies(MIN_HEALTH_QUERY_INTERVAL);
->   
->   	/* Fetch new health info is its older than MIN_HEALTH_QUERY_INTERVAL */
->   	if (time_after(jiffies, cache_timeout))
-> 
+diff --git a/drivers/firmware/efi/esrt.c b/drivers/firmware/efi/esrt.c
+index 7a81c0ce4780..4bb7b0584bc9 100644
+--- a/drivers/firmware/efi/esrt.c
++++ b/drivers/firmware/efi/esrt.c
+@@ -75,8 +75,6 @@ static LIST_HEAD(entry_list);
+ struct esre_attribute {
+ 	struct attribute attr;
+ 	ssize_t (*show)(struct esre_entry *entry, char *buf);
+-	ssize_t (*store)(struct esre_entry *entry,
+-			 const char *buf, size_t count);
+ };
+ 
+ static struct esre_entry *to_entry(struct kobject *kobj)
+-- 
+2.47.1
 
 
