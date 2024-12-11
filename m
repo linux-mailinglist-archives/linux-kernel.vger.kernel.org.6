@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-441531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2593E9ECFDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:35:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8CA1188A1FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:35:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D822F1B6CE5;
-	Wed, 11 Dec 2024 15:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="VlU4gdHm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KmMALQrg"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010EE9ECFE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:36:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF89A1A4E9E;
-	Wed, 11 Dec 2024 15:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF8B2833D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:36:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12341D6DB5;
+	Wed, 11 Dec 2024 15:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bazZVbay"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7DD1CB9E2
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931320; cv=none; b=IHT7PIl7qqnuYfeITjAK1tmuJ3TTFgAhvlqAvcDkGkeYjfiP9BK3nFolDQdb2bB4CV8jUretzYLPwVCjW+a1cg3Gk5CrfmtuMYgINnMtE/svA2RfVK88uyp30W9HotiSsyyoEhxMrsDFpRZjCpUjClQUKM+LWw3eNqxOihekLSA=
+	t=1733931387; cv=none; b=d0oopKc8IxWJZftqvq8g3oisHv8pID+fR8P9MOZRYq5cSEFko6DV3jdItzlIzgADB6trt0opB1wNPPwszhptPwEmCi14FhGR6M725fmB4dxOF/vrASqLxsWXY/+6PCvupPJxU6E2YssEgzHGbCDHUGYTBjhM7n7nudEunyiePp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931320; c=relaxed/simple;
-	bh=CBrRXCBDXzJyRcpKO1KAvD9x3v4k3C8W/5ulgYUbhHE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NDjLOsLvpWFgi+8jdjG93+ZyQYQPJTSarEik+2Xo7v9W8+T5TbnimGkD/KNns22inHV5Nax3gu8RIwGHxOk7S98JKloplpYiX29oguGvNupJCix21thTO3+YeJfKsN+bs4+5EwL1eAeu0NQ3Gs5LxdbREEq4qLmLAFHmIZXfoX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=VlU4gdHm; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KmMALQrg reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1733931387; c=relaxed/simple;
+	bh=qVmb2cEOOy2URRr7LMgKXLM54fLGCfPF5xxAhZNt9Qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZhb5EQXPOPfsF6tXjDgx9yInfIL4jukUNAg+2p/egWcRFOP55zDRqfMKfkFrlKJgaBM5DZwoOVrRsTW/52+tH1t8cDHyZCvQWr9lPdbWFl0jORVTlDhmz8P3SaNs3cmWGm+D5AM0JB0Y1TQJRntXwo9N2b/Ich18WT+t9NtTJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bazZVbay; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a1fe2b43so69043655e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:36:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733931316; x=1765467316;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=2XwkcdEsEk4eyD2TGy648qZkGwuJpx7ENIxAqvrs4cY=;
-  b=VlU4gdHmqCiLLsY5lKShzxHeQLxQHHzvCNDALxA/HVuIga9kARXy4XR+
-   Vq15w2lbwfggOsqTfy75Fmw8NhAXDO5IfuYQLZkssgDVwdOk4orhaHNBw
-   IWMNezYVyjSDiQUF5678Pwwv18ajEcMu8kCY3LCzQLB5nT8iGj+cd7oTL
-   uLx0U4ykQ1uUcP6Hd57sW0ABnkY7V8oEkW3WFgrcFd9SkiT01LuVq6/+X
-   0tYsY69I1JmyMKu3S3m16btYsCSQMpEp4S1X8m4jnOeQSI4TSjSyesK2k
-   0YcUuPBJGkFAYETri7+++ldBWCPaIbf/i2hmSKd4qx/lgfIrQwivSOgA8
-   A==;
-X-CSE-ConnectionGUID: BMgRZIHISrGsDDZhmNE+Vg==
-X-CSE-MsgGUID: ZQ26mmc8RAauFlKe0OQOYA==
-X-IronPort-AV: E=Sophos;i="6.12,226,1728943200"; 
-   d="scan'208";a="40542880"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 11 Dec 2024 16:35:06 +0100
-X-CheckPoint: {6759B12A-21-2508CA35-F8546865}
-X-MAIL-CPID: 7E02583DD20E2049FCEA9FD40FC1EB8F_4
-X-Control-Analysis: str=0001.0A682F24.6759B12B.000D,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C9F816AB31;
-	Wed, 11 Dec 2024 16:35:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733931302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2XwkcdEsEk4eyD2TGy648qZkGwuJpx7ENIxAqvrs4cY=;
-	b=KmMALQrgKkt7/hI2EmKa37WANn2nOrO3oRF/8dlIpKGqklh11C7RO836W5MlSceSYR01KW
-	FfG0+EhTYzmEn5E46GP0sMp9m65VWQlQIrb5UcHLWSSPlXEw9nHVxJh1KjukZJpRSo5kuF
-	NoDqQsGM46ET+t8NXmlb9AF1yM1RaFqXBBub9+iJnf6VfcelGiEibcRcskiid4vVkHQrew
-	6HHXVefbf4wsOFy4VIei1LGIKQ1s2tYQSsPb0dniNHUD192pvpcPRHSP+kcWPwcRHFzXwh
-	wbggZcFyX3DzaCjMWks6Ik3xdySEVocPnpyBwYLeb2yzL20Z7TXB6lmLZL1+gQ==
-Message-ID: <3ceb31ad50046ada646f91e45c857f6350a06116.camel@ew.tq-group.com>
-Subject: Re: [PATCH 0/4] gpio-tqmx86: cleanup + changing directions
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux@ew.tq-group.com, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 11 Dec 2024 16:35:01 +0100
-In-Reply-To: <CAMRc=Mcw-r3b_a0XmpfVbF04MuZYnmM05AZqGav8GA_PM0-ozA@mail.gmail.com>
-References: <cover.1733739697.git.matthias.schiffer@ew.tq-group.com>
-	 <CAMRc=Mcw-r3b_a0XmpfVbF04MuZYnmM05AZqGav8GA_PM0-ozA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+        d=suse.com; s=google; t=1733931383; x=1734536183; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/ihY/7RqJ5fXy5Xq9Xt+ABfVpkdihIRe/JdW9Dhwlc=;
+        b=bazZVbay3qUNX+fgSYHkU6AYJXl4dCbBX9OM1nLnl7Lv+WlvGtarqVCT49Q06VAtZC
+         MXlGSP79PirEdL0lWK/pjZkr+5uRFWGLL3zx6kuX7j7+kTWV3iVN67riqciS1xA8f5iS
+         RwRDkvfyWdZG1SVhc4NCZT2iyRZy0Sv5Pkqrta4HsI88Fqn6//rjQf2t8oggXKtbYxDW
+         TTpYc7vOV2r0Bi09jEbptD2La9niPsMb+wAOf2hkD5o9QxzSKtrPWJKXS9a3aTKUTOuc
+         R1m5zY/R0/3vcPRTrRWWn0LnYFIubbgA/kj7eNiIs0EEiuaQWsR+xwwlCEHHTv5WrDKF
+         RbNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733931383; x=1734536183;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o/ihY/7RqJ5fXy5Xq9Xt+ABfVpkdihIRe/JdW9Dhwlc=;
+        b=YQbkBA/o/eXwNYzMK4uey/wRNBZBAlGZQcII62nfho+WKPpxNyuaNMyTso6wJfDXrM
+         ucNq6UD4ev7nbc6MnvR4U1s714qXF8WJT2VCiSC+zO5IpV5mG5DHy4Uvm8h9DMXV2d+X
+         1JorCHYi/eRBY7VAk5qtqFhZMGIBNTgwIUs/XbLmpyW5gof5pjiNjwTIcObYmpgKHNAm
+         sGWBMSTMgrA9yELZPtAJpRyz17v3w8mnrRNoLDHFWIf1MJQlrRoWXmfSNGX4aojQZrls
+         W/QaEaFF24c+zw9P+QfLEuW+qy7IhvpNuup/4JV3iKmgyg6tfqaaWQrILfJ0BCi5+IBX
+         IgLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCKmw9EPtWyhErzAwu0VhFu5fG9X4ld0vYMd1LQjOFAKRERdUBQXfnNlE2V+HYwLkPpdAlpSFmedkf6hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4NGiXp8EP42d5Mcqilb5Jn0elggKYwoTY1+v+yxKueLx9nPNt
+	J7BhO6SeupaAF3mI2Hd3uNCeqpuh/ZMxXeYLWE5bR1vRrHnm2oNjGH4rQY3DYg0=
+X-Gm-Gg: ASbGnctz4sznyL6Acu1E7DaVoDirIRCNV7hP8aAzhBgcpou3B3CiiwOCnOqC2UG4HaX
+	sE/UamvUGJJYpDiADGjzHHrTYRdlPGjYykQ7XHDZX2/qSJ0pixNth/7iojepAmIoqGtyGgubhrk
+	e6fcIFSA8MW+H/4EurXNbC43EesLleutS/dJhSOhCITpOUNTns4/45VRp42kracJltKEbgmnyQi
+	Fo4UlYF+lDT54fIjlXqFH85h4l4CViifveun69GVo1gGFUFHv6E9+qo
+X-Google-Smtp-Source: AGHT+IGYV519GikDbEXhTVWnAYl5OLwhUIMaHgkoMcLtOXroJi97SR1KtUKWcRMqV6BsR2qfT8K4tg==
+X-Received: by 2002:a05:6000:490a:b0:385:f996:1bb9 with SMTP id ffacd0b85a97d-3878768e743mr44747f8f.23.1733931383594;
+        Wed, 11 Dec 2024 07:36:23 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514dd9sm1511955f8f.69.2024.12.11.07.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 07:36:23 -0800 (PST)
+Date: Wed, 11 Dec 2024 16:36:20 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hillf Danton <hdanton@sina.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Marco Elver <elver@google.com>, Tejun Heo <tj@kernel.org>, 
+	tglx@linutronix.de, syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3] kernfs: Use RCU for kernfs_node::name and ::parent
+ lookup.
+Message-ID: <utvrepwokhocoqipz3l2nwe6gc7ly7jbvanr2q4mfngw4lt5aw@tsb36jutqrci>
+References: <20241121175250.EJbI7VMb@linutronix.de>
+ <q77njpa2bvo52lvlu47fa7tlkqivqwf2mwudxycsxqhu2mf35s@ye4i3gsy4bl7>
+ <20241125180226.Qo_rHBoM@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
-
-On Wed, 2024-12-11 at 16:12 +0100, Bartosz Golaszewski wrote:
->=20
-> On Mon, Dec 9, 2024 at 11:36=E2=80=AFAM Matthias Schiffer
-> <matthias.schiffer@ew.tq-group.com> wrote:
-> >=20
-> > This is the first of two series adding new features to the gpio-tqmx86
-> > driver. The first 3 patches are cleanup/preparation and the last patch
-> > adds support for changing the directions of GPIOs.
-> >=20
-> > Once this is merged, the final series will add support for new TQMx86
-> > variants (SMARC and COM-HPC) that feature up to 14 GPIOs and full IRQ
-> > support on all lines.
-> >=20
->=20
-> It's not like this series is very big, what stops you from posting the
-> entire thing right away? It would probably add more context to this
-> series.
->=20
-> Bart
-
-The second series is bigger and involves both the GPIO and MFD drivers. I k=
-inda
-expect a few rounds of reviews to be needed before it gets accepted, so my
-intention was to get these smaller, more obvious patches out of the way fir=
-st.
-
-Best regards,
-Matthias
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3p4anewuwpjg34dh"
+Content-Disposition: inline
+In-Reply-To: <20241125180226.Qo_rHBoM@linutronix.de>
 
 
+--3p4anewuwpjg34dh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 25, 2024 at 07:02:26PM GMT, Sebastian Andrzej Siewior <bigeasy@=
+linutronix.de> wrote:
+> Assuming the parent can't vanish in these cases, name could during the
+> invocation.
+                                                   ^^^^^^^^^^
+
+So those R-locks are likely missing even prior this RCUization (as
+pointed out by Tejun).
+If I don't miss context, this would be better a separate pre-patch.
+
+> I can't keep the RCU read section open while there is a
+> sleep within the call chain. Therefore I added the lock so the
+> rcu_dereference.*() is quiet.
+
+Ah, right.
 
 >=20
-> >=20
-> > Matthias Schiffer (4):
-> >   gpio: tqmx86: add macros for interrupt configuration
-> >   gpio: tqmx86: consistently refer to IRQs by hwirq numbers
-> >   gpio: tqmx86: introduce tqmx86_gpio_clrsetbits() helper
-> >   gpio: tqmx86: add support for changing GPIO directions
-> >=20
-> >  drivers/gpio/gpio-tqmx86.c | 135 +++++++++++++++++++++++--------------
-> >  1 file changed, 84 insertions(+), 51 deletions(-)
-> >=20
-> > --
-> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
-Germany
-> > Amtsgericht M=C3=BCnchen, HRB 105018
-> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
- Schneider
-> > https://www.tq-group.com/
-> >=20
+> > (Perhaps it's related to second observation I have -- why there is
+> > sometimes kernfs_rcu_get_parent() whereas there are other call sites
+> > with mere rcu_dereference(kn->parent)?)
+>=20
+> rcu_dereference() is used where I was sure that there is always a RCU
+> read section. I have kernfs_rcu_get_parent() when there is either a RCU
+> read section or the kernfs_rwsem (or just the lock).=20
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+I think context-less rcu_dereference_check wrapper (with a comment)
+could capture that semantics too.
+
+Michal
+
+--3p4anewuwpjg34dh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ1mxcgAKCRAt3Wney77B
+SQdYAP4xk/4CTJ7fWogypO0Dt09jGOyiNxVJUQugBgfaFQbGYQD9EW3R1Qi/QFqD
+qkOEh4cjP7OqrAZCggBM6AxfpWqIygk=
+=icLy
+-----END PGP SIGNATURE-----
+
+--3p4anewuwpjg34dh--
 
