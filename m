@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-441630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B979ED0EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:12:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9E19ED0F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE20528E842
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:12:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4749828F566
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86A61DACAA;
-	Wed, 11 Dec 2024 16:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4561DA622;
+	Wed, 11 Dec 2024 16:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OT85b+bt"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kRLamtuY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C981D5CDD;
-	Wed, 11 Dec 2024 16:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4D1D63CA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733933516; cv=none; b=fNW2XwtzsXSt8vl1Y9YVuKczGDFS78Ac2VdkDW4ZDUWu9YDQnSCAk+bpcZCI1c5Dmfhpx8rbwCSe8bHd2XDPrvzDvx/FcapoRWkjjda1BTg4+MwKmAyiBbu84uDFhMuD1/aDfeKe/LVi4gUmM88LRlO6FJin8W4l5NhkAMg4RfY=
+	t=1733933567; cv=none; b=Cw9b016OeDosfdURhClp9kcavb5XQAAh2zdbilZ0mtsr0evTsohzL7HHIlelkyFISLcsUTFfZAwT9GNWg7/MoPVA/FxmkUuH4QG2gIlaKJlDkQ/ZjQVLX74eU4oMA6jULwd+h+K/h1ImnQa00y9zkbpNiOiBiGsjWXi6z6knLz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733933516; c=relaxed/simple;
-	bh=wJ5OqJBeGWWmdsTg8ym9xIvebDAVnS+p9nEVLIRJrxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jp+uLedB8oJhkHQVCI1xIAsNbjQLk6iedvZ+SfPT0GQjHvnCybY4GaRDOFKAMKhgO9qZYmq+mKBaPrcnwRR6MR0xVeAY/09Am/pLH55tgK+GOEvhP5X+StwFACXa2bWeaQmdPm9BpvWMho0/+fD8tUU39DCr5EHSdXLrrTthCgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OT85b+bt; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=SAnZ8YcNssD3ArYzWOAZV328GFxY+hCoZbW29XHAxwg=; b=OT85b+btxfKhjBTUI7TRpGfoY/
-	VBXcKnHcHhi4lQKkyxkP+4JFJQsvw5L/gfyXot6Pu2jlJgbXV0sweGt82SDoCsF+aIFwQazY3c6Hx
-	ZMAZRhm+pHyRhSJIdblGcjHGULJHVTWTt+l8NnczYwwDslyE4kmG0yKiB6Wf0mxNeLSg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tLPJM-0007FE-LU; Wed, 11 Dec 2024 17:11:40 +0100
-Date: Wed, 11 Dec 2024 17:11:40 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Robert Hodaszi <robert.hodaszi@digi.com>
-Cc: netdev@vger.kernel.org, vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
-	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: tag_ocelot_8021q: fix broken reception
-Message-ID: <41a2686b-d549-40c5-9f6f-bad8f308b729@lunn.ch>
-References: <20241211142932.1409538-1-robert.hodaszi@digi.com>
+	s=arc-20240116; t=1733933567; c=relaxed/simple;
+	bh=9Jo/QG5uCHIhBbOHzVrrtX8I9RxfyI5PLb6JOEaIJVM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HSvH+63qldK5lYUCVOJ8RELQesUEl8b/yU++0VASLRxKz6UzBaQd/h4yHdsYOvdd2z1gpMAb8ZuaMwtWB+xpQ9/gSKHCfONS/vVbf7aVL1cyLEL0JKMmuS4jhhIVN1EM+58xo2Nn2Sdh274lZSxqzpi1ELVpdOquSNML/I33fJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kRLamtuY; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733933566; x=1765469566;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9Jo/QG5uCHIhBbOHzVrrtX8I9RxfyI5PLb6JOEaIJVM=;
+  b=kRLamtuY5oNFXHsi2390/Med1YTcNkxw5OX8UUH7pMvGypf/r3egmP/4
+   T5ugPC4vIG0Ylq/ecDUGhRlw7UKEvRQeaMSDB3hyCprnrN+/ORpinfGHz
+   MtJodHn3yUFZs4ma2fn1fNzBsU7s0iI1h08ZrwBadAU6rRngq3TXKSusw
+   TqtAdi9BBIgc28VXHBzN/wkQ7RL3V/L/iDmylXkwGM5R+X6leFvEhinAY
+   keZ3C56lWV3TMqYna2qSG73UezEqTPnlXKUwdU3eEQQcUZ9aCXBmW82gx
+   7VHmrGXl/ZbOlGmtH75UH4x0gkWdLZffo/o7rB5NG2cHix3cf6tEQdK1k
+   Q==;
+X-CSE-ConnectionGUID: BM3NZjQKQiSEctg24qCwhw==
+X-CSE-MsgGUID: qs/GVY7bSvqjtcHE45idZg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="33639210"
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="33639210"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 08:12:45 -0800
+X-CSE-ConnectionGUID: b2HILBxBQSupaQTZek4XlA==
+X-CSE-MsgGUID: MbAzxJ4RT0yPdhuNapVvOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="96054445"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa008.fm.intel.com with ESMTP; 11 Dec 2024 08:11:13 -0800
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	linux-kernel@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel/uncore: Add Clearwater Forest support
+Date: Wed, 11 Dec 2024 08:11:46 -0800
+Message-Id: <20241211161146.235253-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211142932.1409538-1-robert.hodaszi@digi.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 03:29:32PM +0100, Robert Hodaszi wrote:
-> Commit dcfe7673787b4bfea2c213df443d312aa754757b ("net: dsa: tag_sja1105:
-> absorb logic for not overwriting precise info into dsa_8021q_rcv()")
-> added support to let the DSA switch driver set source_port and
-> switch_id. tag_8021q's logic overrides the previously set source_port
-> and switch_id only if they are marked as "invalid" (-1). sja1105 and
-> vsc73xx drivers are doing that properly, but ocelot_8021q driver doesn't
-> initialize those variables. That causes dsa_8021q_rcv() doesn't set
-> them, and they remain unassigned.
-> 
-> Initialize them as invalid to so dsa_8021q_rcv() can return with the
-> proper values.
-> 
-> Fixes: dcfe7673787b ("net: dsa: tag_sja1105: absorb logic for not overwriting precise info into dsa_8021q_rcv()")
-> Signed-off-by: Robert Hodaszi <robert.hodaszi@digi.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Hi Robert
+From the perspective of the uncore PMU, the Clearwater Forest is the
+same as the previous Sierra Forest. The only difference is the event
+list, which will be supported in the perf tool later.
 
-The code is easy, processes are hard.
-
-We ask that you put a version number in the subject
-
-[PATCH v2 net] ....
-
-That helps us keep track of the different versions of a patch.
-
-Please wait 24 hours, and then post v3 with Vladimirs suggestions.
-
-    Andrew
-
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
-pw-bot: cr
+ arch/x86/events/intel/uncore.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index d98fac567684..e7aba7349231 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -1910,6 +1910,7 @@ static const struct x86_cpu_id intel_uncore_match[] __initconst = {
+ 	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT,	&adl_uncore_init),
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,	&gnr_uncore_init),
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	&gnr_uncore_init),
++	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X,	&gnr_uncore_init),
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(x86cpu, intel_uncore_match);
+-- 
+2.38.1
+
 
