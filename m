@@ -1,174 +1,181 @@
-Return-Path: <linux-kernel+bounces-441876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AD39ED526
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:55:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F9789ED552
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E63EF28417A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA96281BA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7DB243B94;
-	Wed, 11 Dec 2024 18:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230CD2479AC;
+	Wed, 11 Dec 2024 18:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G3pycDTM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnLoHd6+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F14320A5CF;
-	Wed, 11 Dec 2024 18:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D68924799B;
+	Wed, 11 Dec 2024 18:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943090; cv=none; b=dbApn/r+vGoKXQxtafB6+NFefN/Yuz9qvAJXC2lfWeE5vulut/msYDf3KnUbiV2T7CmSCmgzA16A4GlRwmNg3L9Zq94MGo8GrhbhxqANN7kQsIyRLdMKmZ15zHv0crxO3Hi28jdBlw5opBmtBMSYbfvtKx0wVW8Pbs94aYw8U2U=
+	t=1733943137; cv=none; b=VV2FNEOdReCD9y9ip6TrB8z5ay7oIAl66TxFe1lDPrST5cE+ugGhC+73R5pYX3TUmJXHohMG1EwfwoY+edvmM0SAnG6X/v+jOL2sApF9nHGaw+vqnlhYvnYgT8e5+eU797O951N66+PbP4QIA+DEtp/uUbMNmNaA4p223+c0+Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943090; c=relaxed/simple;
-	bh=WoyA7OWH5Qvlen/f3neg+ScdJPR1D5h1M4EMJoCaJTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=riNsjwxpqdTZc9LkntXXMv8Gnf9k7OLNCkUYsBeqGMmk3VHFPjNR3P5OQ1C5cT7ZRUBZ9J3SPwSoeQmMvuFyDC1eOfPvpJN5oDJaZ87DuC0C2cURFczlmjo4HztRkG8ifosEh0XNtqzkiv+DTDTdxb7yJZItMoHKqjzkfxGlj68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G3pycDTM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BC2E640E0286;
-	Wed, 11 Dec 2024 18:51:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id eoAceNr_HFv2; Wed, 11 Dec 2024 18:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733943079; bh=RA2H9U4SxryZDWZnv9X2f5ptbQod2yGxSYJICJzMCz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G3pycDTMFk8B3cISrO2F6Z0q59dVwQ/FUYRL8QOxOEIE85iLHEHOICBOz2VAYWRxQ
-	 No5+BgmcDlYoDIboRebBepFj6GOnlkJfwRCHP0ESPNSvnb/r/5XwQ9Nq5OQBWCdMyb
-	 cPWN2Irxf8y1BSkIgYq529I8MvyaXfjRteIOGg2suIom6BHnDYYrxLIHLYMlkqFjqK
-	 5YGNnFpRzWJIQUcxuI0ncudCNJtkSkCigcZBGRrzcJcBH+lNT4J+PxwLJUPnKUc+g/
-	 bjNzKsqyKFOeWLjRvFV5rF+lYQr6ue6X4MHayOxBVGtuoU5gD+wHNGNhmhuQkzBiR5
-	 KjHZcni/9UQeZtjgoTTMt2/+LpJcpmlFyS02WFqAraVPzQu7h1c4py4/K7kUK+bMki
-	 c4icbj29bhnWgqFxFpmyFAp7vHxjjo30QI7wpCb+FuTCEZsh/tvHmT9QQiiY/U/pVP
-	 T3r+hzjUE6k5UMJF9DlA6frXok/cyMXekNk/jQnrpqaldlmm1eRl7VkEtHBnWReKLF
-	 NzA5sRDlvLs0yzDuQZKU2kk0V1FDmkaw3aK2WCwvM8c/uQE0eSNN2E9AUO9zJk1n0C
-	 EyZdYPT9hTc6jBgOLErNUiBpzL/4gwm14L/D5O1MA9h01XFAQmUZXcE5rw1RgOJqL6
-	 8OL6tLgSq5VS9cedbGkuZFwc=
-Received: from zn.tnic (p200300ea971f93ce329c23ffFea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:93ce:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7C19E40E0289;
-	Wed, 11 Dec 2024 18:51:15 +0000 (UTC)
-Date: Wed, 11 Dec 2024 19:51:09 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Avadhut Naik <avadhut.naik@amd.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] EDAC/amd64: Fix possible module load failure on some
- UMC usage combinations
-Message-ID: <20241211185109.GFZ1nfHQBJB4rdXXSI@fat_crate.local>
-References: <20241210212054.3895697-1-avadhut.naik@amd.com>
- <20241211110729.GAZ1lycaGYmjgNDGv9@fat_crate.local>
- <20241211154637.GA1923270@yaz-khff2.amd.com>
+	s=arc-20240116; t=1733943137; c=relaxed/simple;
+	bh=cMHujGTwR/Y+8zeiO+d9MOKlVyHMMOTiGn/MHw7K/Kg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GHlACVCJl6cpPd0q3AJ9pQZDc/uVxQZChW4UxFNS4uzLND6BxCvHaNu7y6xsPPSD1S4RM2m7R8L0cLG657EZp9ZWEXjYh8a2fOrRvrTWdN0WkA/SEHVAh1fXRoB3o/UBQ7iOLopYvWf/DwhDjKugPTRI02q2aayongRBmRbDs6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnLoHd6+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E62C4CED2;
+	Wed, 11 Dec 2024 18:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733943137;
+	bh=cMHujGTwR/Y+8zeiO+d9MOKlVyHMMOTiGn/MHw7K/Kg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EnLoHd6+vg6kNCXo7K4QwZpTHlX0NLpsUT4/dJ5plVQ1ig7TKr+XXXfmeZOY3R1wH
+	 NHjPmyvlD81XFtSJaAb8aTNJZl9ojD1MEe5jsjpAsJPcVc9/mXQ/BOseyrSvMt8Eri
+	 q4naOUDfo1Su4rPbbsNJEYnnRbdXXK00GNU27C1CS40T3SL5Pd7WsKgpfWD8PCPD21
+	 l/oDttxfYS6CyXLcl0w4C+OwxTvBBKE1VkEGLEoAKP4PfRB+FNksj98lbudVtLVyj0
+	 Wh59YGYJ977BmptbMF25ZcOfCPYnCtgtXmRRcNyvJqLeAQ/JPffgUzUV2/BLSn79Cg
+	 Le1it/891+ItA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: James Hilliard <james.hilliard1@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 01/23] watchdog: it87_wdt: add PWRGD enable quirk for Qotom QCML04
+Date: Wed, 11 Dec 2024 13:51:38 -0500
+Message-ID: <20241211185214.3841978-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241211154637.GA1923270@yaz-khff2.amd.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.65
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 10:46:37AM -0500, Yazen Ghannam wrote:
-> Looks good overall. We can even remove the "nid" variable and just use
-> "pvt->mc_node_id" directly in the debug message. This is another remnant
-> from when this function did register accesses.
+From: James Hilliard <james.hilliard1@gmail.com>
 
-Ok, done.
+[ Upstream commit 43439076383a7611300334d1357c0f8883f40816 ]
 
-Avadhut, can you pls verify this fixes your issue too?
+For the watchdog timer to work properly on the QCML04 board we need to
+set PWRGD enable in the Environment Controller Configuration Registers
+Special Configuration Register 1 when it is not already set, this may
+be the case when the watchdog is not enabled from within the BIOS.
 
-I'll run it on my boxes too, to make sure nothing breaks.
-
-Thx.
-
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20241025063441.3494837-1-james.hilliard1@gmail.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Wed, 11 Dec 2024 12:07:42 +0100
-Subject: [PATCH] EDAC/amd64: Simplify ECC check on unified memory controllers
+ drivers/watchdog/it87_wdt.c | 39 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-The intent of the check is to see whether at least one UMC has ECC
-enabled. So do that instead of tracking which ones are enabled in masks
-which are too small in size anyway and lead to not loading the driver on
-Zen4 machines with UMCs enabled over UMC8.
-
-Fixes: e2be5955a886 ("EDAC/amd64: Add support for AMD Family 19h Models 10h-1Fh and A0h-AFh")
-Reported-by: Avadhut Naik <avadhut.naik@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: <stable@kernel.org>
-Link: https://lore.kernel.org/r/20241210212054.3895697-1-avadhut.naik@amd.com
----
- drivers/edac/amd64_edac.c | 32 ++++++++++----------------------
- 1 file changed, 10 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index ddfbdb66b794..5d356b7c4589 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -3362,36 +3362,24 @@ static bool dct_ecc_enabled(struct amd64_pvt *pvt)
+diff --git a/drivers/watchdog/it87_wdt.c b/drivers/watchdog/it87_wdt.c
+index 843f9f8e39177..239947df613db 100644
+--- a/drivers/watchdog/it87_wdt.c
++++ b/drivers/watchdog/it87_wdt.c
+@@ -20,6 +20,8 @@
  
- static bool umc_ecc_enabled(struct amd64_pvt *pvt)
- {
--	u8 umc_en_mask = 0, ecc_en_mask = 0;
--	u16 nid = pvt->mc_node_id;
- 	struct amd64_umc *umc;
--	u8 ecc_en = 0, i;
-+	bool ecc_en = false;
-+	int i;
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-+	/* Check whether at least one UMC is enabled: */
- 	for_each_umc(i) {
- 		umc = &pvt->umc[i];
++#include <linux/bits.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -40,6 +42,7 @@
+ #define VAL		0x2f
  
--		/* Only check enabled UMCs. */
--		if (!(umc->sdp_ctrl & UMC_SDP_INIT))
--			continue;
--
--		umc_en_mask |= BIT(i);
--
--		if (umc->umc_cap_hi & UMC_ECC_ENABLED)
--			ecc_en_mask |= BIT(i);
-+		if (umc->sdp_ctrl & UMC_SDP_INIT &&
-+		    umc->umc_cap_hi & UMC_ECC_ENABLED) {
-+			ecc_en = true;
-+			break;
-+		}
- 	}
+ /* Logical device Numbers LDN */
++#define EC		0x04
+ #define GPIO		0x07
  
--	/* Check whether at least one UMC is enabled: */
--	if (umc_en_mask)
--		ecc_en = umc_en_mask == ecc_en_mask;
--	else
--		edac_dbg(0, "Node %d: No enabled UMCs.\n", nid);
--
--	edac_dbg(3, "Node %d: DRAM ECC %s.\n", nid, (ecc_en ? "enabled" : "disabled"));
-+	edac_dbg(3, "Node %d: DRAM ECC %s.\n", pvt->mc_node_id, (ecc_en ? "enabled" : "disabled"));
+ /* Configuration Registers and Functions */
+@@ -71,6 +74,12 @@
+ #define IT8784_ID	0x8784
+ #define IT8786_ID	0x8786
  
--	if (!ecc_en)
--		return false;
--	else
--		return true;
-+	return ecc_en;
++/* Environment Controller Configuration Registers LDN=0x04 */
++#define SCR1		0xfa
++
++/* Environment Controller Bits SCR1 */
++#define WDT_PWRGD	0x20
++
+ /* GPIO Configuration Registers LDN=0x07 */
+ #define WDTCTRL		0x71
+ #define WDTCFG		0x72
+@@ -233,6 +242,21 @@ static int wdt_set_timeout(struct watchdog_device *wdd, unsigned int t)
+ 	return ret;
  }
  
- static inline void
++enum {
++	IT87_WDT_OUTPUT_THROUGH_PWRGD	= BIT(0),
++};
++
++static const struct dmi_system_id it87_quirks[] = {
++	{
++		/* Qotom Q30900P (IT8786) */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "QCML04"),
++		},
++		.driver_data = (void *)IT87_WDT_OUTPUT_THROUGH_PWRGD,
++	},
++	{}
++};
++
+ static const struct watchdog_info ident = {
+ 	.options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
+ 	.firmware_version = 1,
+@@ -254,8 +278,10 @@ static struct watchdog_device wdt_dev = {
+ 
+ static int __init it87_wdt_init(void)
+ {
++	const struct dmi_system_id *dmi_id;
+ 	u8  chip_rev;
+ 	u8 ctrl;
++	int quirks = 0;
+ 	int rc;
+ 
+ 	rc = superio_enter();
+@@ -266,6 +292,10 @@ static int __init it87_wdt_init(void)
+ 	chip_rev  = superio_inb(CHIPREV) & 0x0f;
+ 	superio_exit();
+ 
++	dmi_id = dmi_first_match(it87_quirks);
++	if (dmi_id)
++		quirks = (long)dmi_id->driver_data;
++
+ 	switch (chip_type) {
+ 	case IT8702_ID:
+ 		max_units = 255;
+@@ -326,6 +356,15 @@ static int __init it87_wdt_init(void)
+ 		superio_outb(0x00, WDTCTRL);
+ 	}
+ 
++	if (quirks & IT87_WDT_OUTPUT_THROUGH_PWRGD) {
++		superio_select(EC);
++		ctrl = superio_inb(SCR1);
++		if (!(ctrl & WDT_PWRGD)) {
++			ctrl |= WDT_PWRGD;
++			superio_outb(ctrl, SCR1);
++		}
++	}
++
+ 	superio_exit();
+ 
+ 	if (timeout < 1 || timeout > max_units * 60) {
 -- 
 2.43.0
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
