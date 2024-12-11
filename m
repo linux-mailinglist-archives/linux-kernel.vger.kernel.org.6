@@ -1,282 +1,169 @@
-Return-Path: <linux-kernel+bounces-442177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E483B9ED8F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:48:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042D69ED903
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:49:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701472850BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606BD16538F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F4D1EC4D2;
-	Wed, 11 Dec 2024 21:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EC01EC4F0;
+	Wed, 11 Dec 2024 21:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LgkHhlrc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IS7zsrRJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882951D31B5;
-	Wed, 11 Dec 2024 21:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468B81D8DFE;
+	Wed, 11 Dec 2024 21:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733953720; cv=none; b=Lq9et6scDkOfKo3dx+XZBBzJtKK2sd5noUeBBzPGXNn6K3ORrUUhzEFu8G1oY+hkmKD084V0nOauxoN8RTuGPDFBzWt4NkokFTqnMQEctVOHfgLQnXd1gBXDcG0uib2n0jv/fH58zl1UUmC/xZjVuFv88pbGN0LcuAWkezCKS4w=
+	t=1733953771; cv=none; b=WhGUzHfTP2fFNnSSaa7OYLLOtMJ+0SWoQby4pqGXPtQoxR2vU1boW9Hlmo7b8IYC1Q8QIqvsMz67VtfvUcGyP+vvNa5ZOAISqIvwqjzAiKB/XBR8qA6gxf7mkOZNmi+a+Vg2+8f/mF+dsiRsPmHpo89I2fhmMi3P0KARphDRXCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733953720; c=relaxed/simple;
-	bh=alwEGtJsoPyU7sBPmbz0mKL3eWfknZd7WQ2Ac6kO+io=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iH+Zpu7Qgv8Niyb9KWbbZlYOhw3+YJtM+Vi2ikopHi3DAxLxYu0P7Gesuhnv3nWg549BqJrPBj/cZGjpov3VCqnJfe1QeNqZry6jJt6n+7jLjP5JAlR7RK0Y/HUPTZ3ytniDEs0rpx630Ul+qaaQ+EJ1N03pyFx24JnTiYANlTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LgkHhlrc; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733953719; x=1765489719;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=alwEGtJsoPyU7sBPmbz0mKL3eWfknZd7WQ2Ac6kO+io=;
-  b=LgkHhlrcq/lA1/d7MFJ7jap6pU7FDR/I8nv3ImKmTnK5iOUP4dfB4tlw
-   0EyJU3tRD3JaEqj7KM03Sf3eJno/yX3iknlLhGJmbWpJhu3/IVtM23ihH
-   LU3WmrjdCWVmNAF2q8BhpNsaQSaV1NXJ6P1hJ84Ub7UGklqzySHE1kQbE
-   oQx+/SQ/gtzM+noMv4UYvrH5eF3vHMfsAXXfNQRkgqvlz+LEsb6e4U5Wv
-   0m13aGGyKRFUdhUjjQYDxzFnD1eT6mcKCdv0nRo8Q7Blei8sEIBCa06Ks
-   nQC6OAmaYPn+VA3uV6sL/B9p83CWs9/rmej0pmd7HGc1TMQYd9w9i/Jsr
-   w==;
-X-CSE-ConnectionGUID: jiIrvU5FRNKn4kRLHDBbZw==
-X-CSE-MsgGUID: iL+qtiMBSeaGZ449JB2Lrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34079329"
-X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
-   d="scan'208";a="34079329"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 13:48:38 -0800
-X-CSE-ConnectionGUID: 3q7nRbSDTzGE9iEQ4U4S2g==
-X-CSE-MsgGUID: iQ5QFexWTkyBKwm/TWxE7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="133352145"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.110.50])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 13:48:38 -0800
-Message-ID: <9756bf2904470c7729d306e5d534c577705e30b3.camel@linux.intel.com>
-Subject: Re: [PATCH] iio: hid-sensor-prox: Merge information from different
- channels
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>, Ricardo Ribalda
- <ribalda@chromium.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Wed, 11 Dec 2024 13:48:37 -0800
-In-Reply-To: <20241211184018.063e4534@jic23-huawei>
-References: <20241205-fix-hid-sensor-v1-1-9b789f39c220@chromium.org>
-	 <20241208163851.41c47c3f@jic23-huawei>
-	 <CANiDSCsD2gGBPVaFMU4uhtpWf3dUr4-MA5MpcjZRcLMgBmtjZg@mail.gmail.com>
-	 <20241211184018.063e4534@jic23-huawei>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733953771; c=relaxed/simple;
+	bh=LMgevCQ5N/CnT/QEPN2NC0QGREgKKkesG5Lwe03JUPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ONpZVYbXQWtfs1McnxtbI+rHA1ybArrodSZIvajkZA0cjAzcnEELO7ki/N7zfmclyC9unk/J/NpWMK2OpFVil85OKvQbGV9Xjw/S25YiLJu8/nLj7akTh+3yBK8dbONg8kTp960G4lpvmJhcLnbZ1ag/iC8yCfY5tBl6ZwnwwcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IS7zsrRJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D80EC4CED2;
+	Wed, 11 Dec 2024 21:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733953770;
+	bh=LMgevCQ5N/CnT/QEPN2NC0QGREgKKkesG5Lwe03JUPg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IS7zsrRJ2pfoHUC8c1Htiiw5DGSrXlMutxWMdKVpdbs4dC460extVwes5E7HboSAk
+	 bQZNPQ3U24FJ5iUJVAyBlsxQ+E6YhQ4H16/wYyq0nNrwn5d+WqCSySV7+QK9j6dGhH
+	 wXHW/27gRxO12lR6rYfisLpsepqUn05c/wie4DfzqsUfLD2pignQaRrbW7TGIkAE2j
+	 Lq+SOALtN6BqsDFQpHC31DV03CrzqqtSpLRK61Md95YY9zi3lfnsEybsXBt/4p/Wl0
+	 pfvf342edeqsRPNxcXy2pejVvXMrssRz7m7EA9TVHSqMbXBHySdahw1px0Ve97ZMuu
+	 cvaJnMrDS8Nfw==
+Date: Wed, 11 Dec 2024 22:49:24 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] rust: platform: add Io support
+Message-ID: <Z1oI5JwExd1stnT-@pollux.localdomain>
+References: <20241211-topic-panthor-rs-platform_io_support-v3-1-08ba707e5e3b@collabora.com>
+ <Z1nbsNyOBvFTL1-6@pollux.localdomain>
+ <A3F6B6C6-33B3-4522-8240-15421F240D3A@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A3F6B6C6-33B3-4522-8240-15421F240D3A@collabora.com>
 
-On Wed, 2024-12-11 at 18:40 +0000, Jonathan Cameron wrote:
-> On Sun, 8 Dec 2024 21:09:16 +0100
-> Ricardo Ribalda <ribalda@chromium.org> wrote:
->=20
-> > Hi Jonathan
-> >=20
-> >=20
-> > On Sun, 8 Dec 2024 at 17:39, Jonathan Cameron <jic23@kernel.org>
-> > wrote:
-> > >=20
-> > > On Thu, 05 Dec 2024 12:59:20 +0000
-> > > Ricardo Ribalda <ribalda@chromium.org> wrote:
-> > > =C2=A0
-> > > > The device only provides a single scale, frequency and
-> > > > hysteresis for
-> > > > all the channels. Fix the info_mask_* to match the reality of
-> > > > the
-> > > > device.
-> > > >=20
-> > > > Without this patch:
-> > > > in_attention_scale
-> > > > in_attention_hysteresis
-> > > > in_attention_input
-> > > > in_attention_offset
-> > > > in_attention_sampling_frequency
-> > > > in_proximity_scale
-> > > > in_proximity_sampling_frequency
-> > > > in_proximity_offset
-> > > > in_proximity0_raw
-> > > > in_proximity_hysteresis
-> > > >=20
-> > > > With this patch:
-> > > > hysteresis
-> > > > scale
-> > > > sampling_frequency
-> > > > in_attention_input
-> > > > in_attention_offset
-> > > > in_proximity0_offset
-> > > > in_proximity0_raw
-> > > >=20
-> > > > Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for
-> > > > more channels")
-> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>=C2=A0=20
-> > >=20
-> > > whilst perhaps not ideal use of the ABI, what is there today is
-> > > not wrong
-> > > as such.=C2=A0 If the ABI above was all introduce in the recent patch
-> > > I might
-> > > be fine adjusting it as you suggestion. However it wasn't,
-> > > in_proximity_scale
-> > > has been there a long time so this would be an ABI change.
-> > > Those are generally only ok if there is a bug.
-> > >=20
-> > > Drivers are always allowed to provide finer granularity than
-> > > necessary
-> > > so in this case I don't see this as a bug.=C2=A0=20
-> >=20
-> > Is it ok that changing the attention_sampling frequency the
-> > proximity_sampling frequency changes as well?
-> > (Just asking for my own education, not complaining :) )
->=20
-> Yes.=C2=A0 In general the ABI has always had to allow for interactions
-> because
-> there are lots of non obvious ones between attributes for different
-> channels
-> as well as those for the same channels.
+On Wed, Dec 11, 2024 at 06:00:31PM -0300, Daniel Almeida wrote:
+> Hi Danilo,
+> 
+> > On 11 Dec 2024, at 15:36, Danilo Krummrich <dakr@kernel.org> wrote:
+> >> +///
+> >> +///     // Read and write a 32-bit value at `offset`. Calling `try_access()` on
+> >> +///     // the `Devres` makes sure that the resource is still valid.
+> >> +///     let data = iomem.try_access().ok_or(ENODEV)?.readl(offset);
+> >> +///
+> >> +///     iomem.try_access().ok_or(ENODEV)?.writel(data, offset);
+> >> +///
+> >> +///     // Unlike `ioremap_resource_sized`, here the size of the memory region
+> >> +///     // is not known at compile time, so only the `try_read*` and `try_write*`
+> >> +///     // family of functions are exposed, leading to runtime checks on every
+> >> +///     // access.
+> >> +///     let iomem = pdev.ioremap_resource(0, None)?;
+> >> +///
+> >> +///     let data = iomem.try_access().ok_or(ENODEV)?.try_readl(offset)?;
+> >> +///
+> >> +///     iomem.try_access().ok_or(ENODEV)?.try_writel(data, offset)?;
+> >> +///
+> >> +///     # Ok::<(), Error>(())
+> >> +/// }
+> >> +/// ```
+> >> +///
+> >> +pub struct IoMem<const SIZE: usize = 0> {
+> >> +    io: IoRaw<SIZE>,
+> >> +    res_start: u64,
+> >> +    exclusive: bool,
+> >> +}
+> > 
+> > I think both the `Resource` and `IoMem` implementation do not belong into
+> > platform.rs. Neither of those depends on any platform bus structures. They're
+> > only used by platform structures.
+> > 
+> > I think we should move this into files under rust/kernel/io/ and create separate
+> > commits out of this one.
+> 
+> Just to be clear, one commit with the boilerplate to create rust/kernel/io, and another one with
+> kernel::io::Resource and kernel::io::IoMem?
 
-In general if this is by a soft sensor in the hub, then likely all will
-change the same sampling frequency internally since they don't have a
-real sensor in the back.
+I don't think there will be much boilerplate. I was thinking of one for
+io/resource.rs and one for io/mem.rs. Does that make sense?
 
-Thanks,
-Srinivas
+> 
+> > 
+> >> +
+> >> +impl<const SIZE: usize> IoMem<SIZE> {
+> >> +    /// Creates a new `IoMem` instance.
+> >> +    ///
+> >> +    /// # Safety
+> >> +    ///
+> >> +    /// The caller must ensure that `IoMem` does not outlive the device it is
+> >> +    /// associated with, usually by wrapping the `IoMem` in a `Devres`.
+> > 
+> > More precisely, `Devres` revokes when the device is unbound from the matched
+> > driver, i.e. the driver should not be able to control the device anymore. This
+> > may be much earlier than when the device disappears.
+> > 
+> >> +    unsafe fn new(resource: &Resource<'_>, exclusive: bool) -> Result<Self> {
+> >> +        let size = resource.size();
+> >> +        if size == 0 {
+> >> +            return Err(ENOMEM);
+> >> +        }
+> >> +
+> >> +        let res_start = resource.start();
+> >> +
+> >> +        // SAFETY:
+> >> +        // - `res_start` and `size` are read from a presumably valid `struct resource`.
+> >> +        // - `size` is known not to be zero at this point.
+> >> +        // - `resource.name()` returns a valid C string.
+> >> +        let mem_region =
+> >> +            unsafe { bindings::request_mem_region(res_start, size, resource.name().as_char_ptr()) };
+> > 
+> > This should only be called if exclusive == true, right?
+> 
+> Yes (oops)
+> 
+> > 
+> > Btw. what's the use-case for non-exclusive access? Shouldn't we rather support
+> > partial exclusive mappings?
+> 
+> Rob pointed out that lots of drivers do not call `request_mem_region` in his review for v2, which
+> Is why I added support for non-exclusive access.
+> 
+> What do you mean by `partial exclusive mappings` ?
 
+I was assuming that the reason for non-exclusive access would be that a single
+resource contains multiple hardware interfaces, hence multiple mappings.
 
->=20
-> >=20
-> > Also, what about ?:
-> > in_attention_scale
-> > in_attention_hysteresis
-> > in_attention_input
-> > in_attention_offset
-> > in_attention_sampling_frequency
-> > in_proximity0_scale
-> > in_proximity0_sampling_frequency
-> > in_proximity0_offset
-> > in_proximity0_raw
-> > in_proximity0_hysteresis
-> >=20
-> > Would that be acceptable? I think that if we are giving the false
-> > impression that every sampling frequency is independent we should
-> > go
-> > all the way in. WDYT?
->=20
-> It's indeed far from ideal, but so is changing an ABI we've exposed
-> to
-> userspace. We definitely can't touch anything in a release kernel but
-> if
-> there are clear improvements to be made on stuff that we can sort of
-> term
-> a fix we can maybe get away with it.
->=20
->=20
-> >=20
-> > Thanks!
-> >=20
-> > ps: this patch is in the queue in case you missed it
-> > https://lore.kernel.org/linux-iio/20241122-fix-processed-v2-1-b9f606d3b=
-519@chromium.org/
-> It's in patchwork so i'll get to it. Not sure why I haven't applied
-> it, maybe a tree
-> management thing and lack of time last weekend to check for what was
-> unblocked by
-> the rebase.=C2=A0 I'll catch up soon.
->=20
-> Jonathan
->=20
-> >=20
-> > That one is a real fix for the driver :)
-> >=20
-> > >=20
-> > > Jonathan
-> > >=20
-> > > =C2=A0
-> > > > ---
-> > > > =C2=A0drivers/iio/light/hid-sensor-prox.c | 8 +++++---
-> > > > =C2=A01 file changed, 5 insertions(+), 3 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/iio/light/hid-sensor-prox.c
-> > > > b/drivers/iio/light/hid-sensor-prox.c
-> > > > index e8e7b2999b4c..f21d2da4c7f9 100644
-> > > > --- a/drivers/iio/light/hid-sensor-prox.c
-> > > > +++ b/drivers/iio/light/hid-sensor-prox.c
-> > > > @@ -49,9 +49,11 @@ static const u32
-> > > > prox_sensitivity_addresses[] =3D {
-> > > > =C2=A0#define PROX_CHANNEL(_is_proximity, _channel) \
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {\
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 .type =3D _is_proximity ? IIO_PROXIMITY :
-> > > > IIO_ATTENTION,\
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .info_mask_separate =3D _is_proximity ?
-> > > > BIT(IIO_CHAN_INFO_RAW) :\
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> > > > BIT(IIO_CHAN_INFO_PROCESSED),\
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .info_mask_shared_by_type =3D
-> > > > BIT(IIO_CHAN_INFO_OFFSET) |\
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .info_mask_separate =3D \
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 (_is_proximity ? BIT(IIO_CHAN_INFO_RAW) :\
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_PROCESSED)) |\
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 BIT(IIO_CHAN_INFO_OFFSET),\
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 .info_mask_shared_by_all =3D \
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_SCALE) |\
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_SAMP_FREQ) |\
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_HYSTERESIS),\
-> > > >=20
-> > > > ---
-> > > > base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-> > > > change-id: 20241203-fix-hid-sensor-62e1979ecd03
-> > > >=20
-> > > > Best regards,=C2=A0=20
-> > > =C2=A0
-> >=20
-> >=20
->=20
+If we allow partial mappings of the resource and make them exclusive instead it
+would be a better solution IMHO.
 
+But this presumes that we don't need non-exclusive access for different reasons.
+
+If not for the reason of having multiple hardware interfaces in the same
+resource, which reasons do we have (in Rust) to have multiple mappings of the
+same thing?
 
