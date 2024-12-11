@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-442134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAC39ED86E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:22:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A289ED873
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 301551886E70
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099041612AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F031F2C2A;
-	Wed, 11 Dec 2024 21:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47351F2C50;
+	Wed, 11 Dec 2024 21:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QpUrHs82"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CmqoNzRw"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5C71F0E51
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726F41F2396
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733952043; cv=none; b=CO3Y9ywuqUjdOyYcFje7mLvKiUcHhX1Y5fPJYs23pRTv0xAG9+VIX1TSbgEZa8A+rELlVGrAnJ+ZAKnUSpjMQpWWU3rlqq/TzNl9ccHO52yR+SiHmOJRhQgYGG7vZIOE4SxAFvzozyln7IvTa+0immPWzKcDn21fhA8MKE7FOS4=
+	t=1733952045; cv=none; b=dLDonbvsRlsuOYL7iz4/UqEjCC8bS6Ny7U7rdlY0jLAG+GwKPdIGApwfPsAHjggPqsZ1vRgdzPZnN+TDgjj0JbiORDHmbNqnccghZoADEf5DiRvPIMnM4r0eWxpDuCHPjKcx/UT3db81exzuMp6WRpFwqdlQML5dm8wambpoZkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733952043; c=relaxed/simple;
-	bh=2jfORmA3BpQKqPymRv0Q7ztYndICOlLeutvP3frs5fM=;
+	s=arc-20240116; t=1733952045; c=relaxed/simple;
+	bh=9BNoKvvCDKbyXYRvGcmAgiOTx+VjuHH2W8Or3dRTMpc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z0Pq/bMTa0TWijBTo9u7HFQTKO94cv13hHcJ7enIPf0BBlSy/5FMiiA5PtP8n1FHsanyuLXeIHj5bDnYEBO7T/KjOASZMDiJVGJOltRFBMt33H68TRE7Kr22ZREyxo9vBnFbFpccuTD90JCnHB8b4tpHIG4K/Aw+xe9FKNe1XW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QpUrHs82; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=mVg7M4zQl0kIbmSBapaHyYwrd9bJvXiUBXaOZIhaZ8O5EeqLdt1wVz4WCh4LZH2pxEMPr9jV1umazzMmDNJ8dUxbO+8g+E/JJPVoR8xaLfxq+k+zU+ypqDjf7OVCTH7CBuuiKlRYyD2aBPUP6njOHtpV7mjVWahl3Dz8Hdm3uU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmqoNzRw; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ef6ef9ba3fso5584548a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:20:41 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ee36569f4cso7321411a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:20:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733952041; x=1734556841; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733952043; x=1734556843; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FM/slA5nw2rdy331TOQTDkUyJFKnKJSONZ98aa2Mh9o=;
-        b=QpUrHs82Lfzkpb4bh88YPonXIc2OHBMG7p1aAmHjJxaC8xraR+Uu6zD9S74AW32u0u
-         xq5RfJnyXaY7RJRGiuvddTtGfkm57hGOvXrxaCXl7HTHN3IDVUB8ldPyA56t9Y8xCpSp
-         2sT6xAfGWseL7D7FCfZxo0UJI6ymhSIly1+y3DeG+8RotVdydKj4fic4efHv5K8y3ZmU
-         lQmC2uAwxpGGbWMoi+7K5lPdffYFAzvevUpoy949QgccEHhthS2+F2QC/988h+4Zqrsy
-         Kq/K22bE1Yd7bgaNo0wwJW9u6svSrZf0wcXcB9htD9vlByVbUG4GLs6EdscKgkKW0kGO
-         8/xA==
+        bh=745mn/S2xe1Z43WeSOTvQvgzJ70pexQD0FqzrefhnYc=;
+        b=CmqoNzRwnz58z4wKlWaK9VJkxia4k9usxdlLwfnj89aTSmvyfW6pbOXhjN6AgsT8dZ
+         UDeNxuHPP5ykljoCbTmFcRC+aCWsVJYaQH/RHJZuqVPKgw7J0GmbJ1sZc37COOMZf5r2
+         Q0ZrmcBDCgmXdjd7SU+N2yG1DFtowAH6IkwD20Gs+Wuiuky+8kKBXB7awyhDVqGSfwJo
+         BjcOUoR2zVqCXEgJaDDw8a+cfTLgraLyMTqsSJfBtSEFcq2Rwb2JqlFCBSJZbjsw9Ejr
+         jZ8bSQu0rYTqgKQVM7S0t0DjhmGJrsycFOTHpHOq4/DUKJnhjaInb28ywKZO8nTPpo+x
+         VHyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733952041; x=1734556841;
+        d=1e100.net; s=20230601; t=1733952043; x=1734556843;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FM/slA5nw2rdy331TOQTDkUyJFKnKJSONZ98aa2Mh9o=;
-        b=lwXo+LmCjsZX/SRzLQo5Eyg/foT/OONww0ziwWQ3c3kEf3SvyKpR0LHWp9tilHfKft
-         3GKEWW8hdca4KdC599rmvvv8qHlQ0I6J4vBjb6iJT7DNd/n63oAoZ+QFI+p0B0r4EIdr
-         9qvFE9OPXGRkititOIeiANy7CBXqA2we5EdvtPS+FtdV0MCBwtTaaEWRb0nlo3rKdlNf
-         URkX9dzQ8DLc5tDZ4V+XCWqaV3HzeFMeRisplK95gtRZHkEkLhkdwZgWBazU8weZr29i
-         frPqRLgXE0S5Qq9UMEofA55KNh3GKEBqxxck/O1fJmCtpJpbd0gfgZ5kPInRtNKb6h+7
-         Ckvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPIhcQYQUWPYa1J5SNLfCsB2vmLkDAmD4uDZ1cI2RVJR4k7WJbcPbygELFsORxtWDcevupTboFrXtygfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTGgAsek/XfA4919SX3wc6oLZU033ro7+VSQ4R0UeqAF/MDX8Y
-	AOQBuDPOyAQ24BAqSEZ3+ag/5YL7TRUqX2fqUSlHPXfZSMtPaDJR6bXEFISy9uNHeM87N754DR1
-	fOkeSP4J0613/MWYfOEzFrA==
-X-Google-Smtp-Source: AGHT+IFKGSYNgoQ2YviqqfiKTGp9vrd+/ZJrCWTHUKyr11+B2AR5/fODajQoxs0yxpOTuQOugTCOlKnFKeu/B0rvlA==
-X-Received: from pjbtb5.prod.google.com ([2002:a17:90b:53c5:b0:2ea:7d73:294e])
+        bh=745mn/S2xe1Z43WeSOTvQvgzJ70pexQD0FqzrefhnYc=;
+        b=SH2PICgSynK80PqwKKn0l7N7T/JISfn8CPnH0HfG63EgpI/oZQv8+84z2gIbsjLwUn
+         TIzhp2ItX0AWP8QYviLkIViNI4PTDJXr/JgbQ/dSUtOUVv5nnfFMUEiUASqMctCWcoee
+         oi5uduf+hrLgrf+o3hivTDFIciTzCtE9KXqxbkM0VlwiU/HVUGWmVN0jm4H3KxBrMBeX
+         7UmTTTy77J6vCYkIPS4hIZ7DdHbTo+OpxSFtwaz7ljDUXO5c8+uKroi4mixpK7aMsEVw
+         JvIwWx2mf3jXzF+o4nacuoOAVC7qPrOvnh6B1B30psFnm18AW2Sn919Cn2wSQ5ZeeD8t
+         oNGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjslLvMpXVkbjlrNEcjVVpva0AXtDDTgJwEC2yLTsopBajCStBYdyUGzPmFIjlcEo0VOrWd9/z4O4H84I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlalaAZb47n68xcHJGDe+WH71GzqnMLgARK01rWBC4iTwvGU/T
+	Gz/GLOWlcqaj2aAYJx6bQm2MoUKBdeYitR91IukwIR+sGvfziwQBh0jNZvZhVCOPPpWGhCQ/v5r
+	L48fNWimF8YEtkN6FuxTTRw==
+X-Google-Smtp-Source: AGHT+IF2uRXFUQriUo4tvi6x2FYHwsywKL7Zw3vDn+zO9RvFZ2JyJoMpQxG3APMIfW/ed/zYgqVVYVaPi7Sv7tAlhg==
+X-Received: from pjbsp5.prod.google.com ([2002:a17:90b:52c5:b0:2ea:6b84:3849])
  (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2b50:b0:2ee:9a82:5a93 with SMTP id 98e67ed59e1d1-2f127fbd84dmr7212398a91.14.1733952041202;
- Wed, 11 Dec 2024 13:20:41 -0800 (PST)
-Date: Wed, 11 Dec 2024 21:20:31 +0000
+ 2002:a17:90b:17ce:b0:2ee:b26c:10a3 with SMTP id 98e67ed59e1d1-2f139329035mr1977597a91.36.1733952042875;
+ Wed, 11 Dec 2024 13:20:42 -0800 (PST)
+Date: Wed, 11 Dec 2024 21:20:32 +0000
 In-Reply-To: <20241211212033.1684197-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241211212033.1684197-1-almasrymina@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241211212033.1684197-5-almasrymina@google.com>
-Subject: [PATCH net-next v4 4/5] page_pool: disable sync for cpu for dmabuf
- memory provider
+Message-ID: <20241211212033.1684197-6-almasrymina@google.com>
+Subject: [PATCH net-next v4 5/5] net: Document netmem driver support
 From: Mina Almasry <almasrymina@google.com>
 To: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
 	Mina Almasry <almasrymina@google.com>, Pavel Begunkov <asml.silence@gmail.com>, 
@@ -84,133 +83,107 @@ To: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
 	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 
-dmabuf dma-addresses should not be dma_sync'd for CPU/device. Typically
-its the driver responsibility to dma_sync for CPU, but the driver should
-not dma_sync for CPU if the netmem is actually coming from a dmabuf
-memory provider.
+Document expectations from drivers looking to add support for device
+memory tcp or other netmem based features.
 
-The page_pool already exposes a helper for dma_sync_for_cpu:
-page_pool_dma_sync_for_cpu. Upgrade this existing helper to handle
-netmem, and have it skip dma_sync if the memory is from a dmabuf memory
-provider. Drivers should migrate to using this helper when adding
-support for netmem.
-
-Also minimize the impact on the dma syncing performance for pages. Special
-case the dma-sync path for pages to not go through the overhead checks
-for dma-syncing and conversion to netmem.
-
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Signed-off-by: Mina Almasry <almasrymina@google.com>
 
 ---
 
 v4:
-- Special case pages to reduce perf overhead (Jakub)
-- Add page_pool flag to set dma syncing for cpu (Jakub)
+- Address comments from Randy.
+- Change docs to netmem focus (Jakub).
+- Address comments from Jakub.
 
 ---
- include/net/page_pool/helpers.h | 35 ++++++++++++++++++++++++++++-----
- include/net/page_pool/types.h   |  3 ++-
- net/core/devmem.c               |  1 +
- net/core/page_pool.c            |  1 +
- 4 files changed, 34 insertions(+), 6 deletions(-)
+ Documentation/networking/index.rst  |  1 +
+ Documentation/networking/netmem.rst | 62 +++++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+ create mode 100644 Documentation/networking/netmem.rst
 
-diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
-index 95af7f0b029e..e555921e5233 100644
---- a/include/net/page_pool/helpers.h
-+++ b/include/net/page_pool/helpers.h
-@@ -422,7 +422,21 @@ static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
-  */
- static inline dma_addr_t page_pool_get_dma_addr(const struct page *page)
- {
--	return page_pool_get_dma_addr_netmem(page_to_netmem((struct page *)page));
-+	dma_addr_t ret = page->dma_addr;
+diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
+index 46c178e564b3..058193ed2eeb 100644
+--- a/Documentation/networking/index.rst
++++ b/Documentation/networking/index.rst
+@@ -86,6 +86,7 @@ Contents:
+    netdevices
+    netfilter-sysctl
+    netif-msg
++   netmem
+    nexthop-group-resilient
+    nf_conntrack-sysctl
+    nf_flowtable
+diff --git a/Documentation/networking/netmem.rst b/Documentation/networking/netmem.rst
+new file mode 100644
+index 000000000000..f9f03189c53c
+--- /dev/null
++++ b/Documentation/networking/netmem.rst
+@@ -0,0 +1,62 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA)
-+		ret <<= PAGE_SHIFT;
++================
++Netmem
++================
 +
-+	return ret;
-+}
 +
-+static inline void __page_pool_dma_sync_for_cpu(const struct page_pool *pool,
-+						const dma_addr_t dma_addr,
-+						u32 offset, u32 dma_sync_size)
-+{
-+	dma_sync_single_range_for_cpu(pool->p.dev, dma_addr,
-+				      offset + pool->p.offset, dma_sync_size,
-+				      page_pool_get_dma_dir(pool));
- }
- 
- /**
-@@ -441,10 +455,21 @@ static inline void page_pool_dma_sync_for_cpu(const struct page_pool *pool,
- 					      const struct page *page,
- 					      u32 offset, u32 dma_sync_size)
- {
--	dma_sync_single_range_for_cpu(pool->p.dev,
--				      page_pool_get_dma_addr(page),
--				      offset + pool->p.offset, dma_sync_size,
--				      page_pool_get_dma_dir(pool));
-+	__page_pool_dma_sync_for_cpu(pool, page_pool_get_dma_addr(page), offset,
-+				     dma_sync_size);
-+}
++Introduction
++============
 +
-+static inline void
-+page_pool_dma_sync_netmem_for_cpu(const struct page_pool *pool,
-+				  const netmem_ref netmem, u32 offset,
-+				  u32 dma_sync_size)
-+{
-+	if (!pool->dma_sync_for_cpu)
-+		return;
++Device memory TCP, and likely more upcoming features, are reliant on netmem
++support in the driver. This outlines what drivers need to do to support netmem.
 +
-+	__page_pool_dma_sync_for_cpu(pool,
-+				     page_pool_get_dma_addr_netmem(netmem),
-+				     offset, dma_sync_size);
- }
- 
- static inline bool page_pool_put(struct page_pool *pool)
-diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
-index bd1170e16cff..6ae003d3647c 100644
---- a/include/net/page_pool/types.h
-+++ b/include/net/page_pool/types.h
-@@ -164,7 +164,8 @@ struct page_pool {
- 
- 	bool has_init_callback:1;	/* slow::init_callback is set */
- 	bool dma_map:1;			/* Perform DMA mapping */
--	bool dma_sync:1;		/* Perform DMA sync */
-+	bool dma_sync:1;		/* Perform DMA sync for device */
-+	bool dma_sync_for_cpu:1;	/* Perform DMA sync for cpu */
- #ifdef CONFIG_PAGE_POOL_STATS
- 	bool system:1;			/* This is a global percpu pool */
- #endif
-diff --git a/net/core/devmem.c b/net/core/devmem.c
-index 3ebdeed2bf18..0b6ed7525b22 100644
---- a/net/core/devmem.c
-+++ b/net/core/devmem.c
-@@ -335,6 +335,7 @@ int mp_dmabuf_devmem_init(struct page_pool *pool)
- 	 * dma_sync_for_cpu/device. Force disable dma_sync.
- 	 */
- 	pool->dma_sync = false;
-+	pool->dma_sync_for_cpu = false;
- 
- 	if (pool->p.order != 0)
- 		return -E2BIG;
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 060450082342..51b8264de74a 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -201,6 +201,7 @@ static int page_pool_init(struct page_pool *pool,
- 	memcpy(&pool->slow, &params->slow, sizeof(pool->slow));
- 
- 	pool->cpuid = cpuid;
-+	pool->dma_sync_for_cpu = true;
- 
- 	/* Validate only known flags were used */
- 	if (pool->slow.flags & ~PP_FLAG_ALL)
++
++Driver support
++==============
++
++1. The driver must support page_pool. The driver must not do its own recycling
++   on top of page_pool.
++
++2. The driver must support the tcp-data-split ethtool option.
++
++3. The driver must use the page_pool netmem APIs. The netmem APIs are
++   currently 1-to-1 correspond with page APIs. Conversion to netmem should be
++   achievable by switching the page APIs to netmem APIs and tracking memory via
++   netmem_refs in the driver rather than struct page * :
++
++   - page_pool_alloc -> page_pool_alloc_netmem
++   - page_pool_get_dma_addr -> page_pool_get_dma_addr_netmem
++   - page_pool_put_page -> page_pool_put_netmem
++
++   Not all page APIs have netmem equivalents at the moment. If your driver
++   relies on a missing netmem API, feel free to add and propose to netdev@ or
++   reach out to almasrymina@google.com for help adding the netmem API.
++
++4. The driver must use the following PP_FLAGS:
++
++   - PP_FLAG_DMA_MAP: netmem is not dma-mappable by the driver. The driver
++     must delegate the dma mapping to the page_pool.
++   - PP_FLAG_DMA_SYNC_DEV: netmem dma addr is not necessarily dma-syncable
++     by the driver. The driver must delegate the dma syncing to the page_pool.
++   - PP_FLAG_ALLOW_UNREADABLE_NETMEM. The driver must specify this flag iff
++     tcp-data-split is enabled.
++
++5. The driver must not assume the netmem is readable and/or backed by pages.
++   The netmem returned by the page_pool may be unreadable, in which case
++   netmem_address() will return NULL. The driver must correctly handle
++   unreadable netmem, i.e. don't attempt to handle its contents when
++   netmem_address() is NULL.
++
++   Ideally, drivers should not have to check the underlying netmem type via
++   helpers like netmem_is_net_iov() or convert the netmem to any of its
++   underlying types via netmem_to_page() or netmem_to_net_iov(). In most cases,
++   netmem or page_pool helpers that abstract this complexity are provided
++   (and more can be added).
++
++6. The driver must use page_pool_dma_sync_netmem_for_cpu() in lieu of
++   dma_sync_single_range_for_cpu(). For some memory providers, dma_syncing for
++   CPU will be done by the page_pool, for others (particularly dmabuf memory
++   provider), dma syncing for CPU is the responsibility of the userspace using
++   dmabuf APIs. The driver must delegate the entire dma-syncing operation to
++   the page_pool which will do it correctly.
 -- 
 2.47.0.338.g60cca15819-goog
 
