@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-442276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38599EDA22
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:39:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6E09EDA29
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63E9A166910
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:39:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B3DF188ABAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883A61F37B4;
-	Wed, 11 Dec 2024 22:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A93120ADD2;
+	Wed, 11 Dec 2024 22:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWKDnM8z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fv6EdEzj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19082080C5;
-	Wed, 11 Dec 2024 22:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AD5209F32;
+	Wed, 11 Dec 2024 22:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956381; cv=none; b=Lz9FFVnz6SMN/zLQecwibFgSyb1j1c7eY60Tp+uK2112Nv+JelSZcAEjW1kXdCFGUIhHha7hp8eKEjObXSBY+fDMwQf//j8MGBv922RiqkN9HMnglnERTSkEJWpfvXlhflnuQ9DIeZYUD/JE3YP+yklfPtIXG1ZmYCfoVWr82o0=
+	t=1733956383; cv=none; b=OuYT5lexmcSAgypMbg6QYPZg+NXciPnwtfoOKeZHtY8+8oaRgWLl6sb7VRXtXQQJEGbiLEkYMpeUkEoJ2SpB3t0MyTfTfe1knDsSyCrDUI0BDCrGflQLQYXrwlaOoOHiXNnLjmdijzkW1OYBI0zwaT90khB6+l0Q0kt3DKpkjyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956381; c=relaxed/simple;
-	bh=22J+gOpjU9cUBjJTCfbYoXOQOQ02vFL/kmDAmitv0Oc=;
+	s=arc-20240116; t=1733956383; c=relaxed/simple;
+	bh=+zX0j0yQ/dPDZSP+fxyWSJqlH6s+OGzUjy0SbKMkGbU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fY5UEvozfHIZAp5lC8zqbdNd9Vi7etQCzkBM7Q6R7GDGZEUHp/xl+xBF3oyQ1IiHb3I91JaCbFsbaGQ84Xmgi0+7D0YYuV8w7mxbhQLb+vCVpAVuOt27xXKYeKoSoNbV3pk4Lj6btq/TplbIxhFRNDOuF3FxCGJLGkU1yc1J0qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWKDnM8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92BFC4CED2;
-	Wed, 11 Dec 2024 22:33:01 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=vBTs18h5OFb8MSkv3cg659tmhWJtfegKyMtnln7W72VSb3LTjDQVeQ5d0X3JXd/Xye+gvUnYebk/7QW/H5n8g+iUPmqeCER3jCvzvBIhNtEDqWmolPY1sLM4l2RmGKiNAWWgkLqSnMVOMKjadrl49wWXlBaf9x375A5B4QbaWRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fv6EdEzj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E66C0C4CED2;
+	Wed, 11 Dec 2024 22:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733956381;
-	bh=22J+gOpjU9cUBjJTCfbYoXOQOQ02vFL/kmDAmitv0Oc=;
+	s=k20201202; t=1733956382;
+	bh=+zX0j0yQ/dPDZSP+fxyWSJqlH6s+OGzUjy0SbKMkGbU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nWKDnM8zbcIF2djxC8fiOIOI3aUWr7TPAJCWU7ymE3mh5w2HYnJyAIXKcD5Z/72Ik
-	 RXR4O9F/aU40PoBXvJ7XQXthLV2s4bsqOgfr50SDKFPRdnN9Us4sRkg4wVPA1v1sWs
-	 kmuwkRDqP/9t5kMphxqk619d2ax7wRCqOpRNHKzjgvwJVCBNZYsBwGByJZh6bRNViD
-	 yrqc1wHdhtHkBz1Bsd0sAtAVRFHXuN3A8nyxlLFqzm4TGzLspNaCqc2nuGjGhk5Ngr
-	 pRCorRCtj+x28DI2Z1vxcZ2g3p4dEWd2sTvDRfb/s5xPU/4+C8mw0GfDgU2OE3HHnZ
-	 3Ww2yKRibpabg==
+	b=Fv6EdEzjB+ClZcT5XXjvvL8R0qv9cVp4ruaqWJxXtGOWOcQoyGEAS8Pb/H+3Jt3Z8
+	 KS5bIikbe3isnz/XHY/2K4rXXYGxp0UUgbbWlxBY57leO+Wxb6/a1aYcLXfNj0z8/G
+	 K14p1/SKCguldWlMFtdGjjRCJc1I5RMUJxdJ1lEa3XO093kMbPhVJd8KNizgw4DYBS
+	 tYQXl5vIBfwrXmJgQh6/OMVKXbTltBhmxwSafjmpNN4wH/0IHTB6/ziLkhvj6ud/Wu
+	 /x5zwr5BkQjmS1JGI5sgZViQu4FPRLcunVzHTjM3akGC564AW19Zw9lQihXS/uqVaE
+	 o180AvbEFjG3w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACB2380A965;
-	Wed, 11 Dec 2024 22:33:18 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C2C380A965;
+	Wed, 11 Dec 2024 22:33:20 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,52 +51,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2] ftrace: Make ftrace_regs abstract and consolidate code
+Subject: Re: [PATCH] dma-mapping: Save base/size instead of pointer to shared DMA
+ pool
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173395639774.1729195.5975449690225774291.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Dec 2024 22:33:17 +0000
-References: <20241008230527.674939311@goodmis.org>
-In-Reply-To: <20241008230527.674939311@goodmis.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-arch@vger.kernel.org, x86@kernel.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, mark.rutland@arm.com,
- catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org,
- kernel@xen0n.name, mpe@ellerman.id.au, npiggin@gmail.com,
- christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
- borntraeger@linux.ibm.com, svens@linux.ibm.com, tglx@linutronix.de,
- mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com
+ <173395639900.1729195.15505065425946747500.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 22:33:19 +0000
+References: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
+In-Reply-To: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-riscv@lists.infradead.org, quic_obabatun@quicinc.com,
+ robh@kernel.org, hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com,
+ iommu@lists.linux.dev, linux-renesas-soc@lists.infradead.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to riscv/linux.git (fixes)
-by Steven Rostedt (Google) <rostedt@goodmis.org>:
+This patch was applied to riscv/linux.git (fixes)
+by Christoph Hellwig <hch@lst.de>:
 
-On Tue, 08 Oct 2024 19:05:27 -0400 you wrote:
-> This is based on:
+On Tue, 12 Nov 2024 19:39:37 +0100 you wrote:
+> On RZ/Five, which is non-coherent, and uses CONFIG_DMA_GLOBAL_POOL=y:
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/
->      ftrace/for-next
-> 
-> ftrace_regs was created to hold registers that store information to save
-> function parameters, return value and stack. Since it is a subset of
-> pt_regs, it should only be used by its accessor functions. But because
-> pt_regs can easily be taken from ftrace_regs (on most archs), it is
-> tempting to use it directly. But when running on other architectures, it
-> may fail to build or worse, build but crash the kernel!
+>     Oops - store (or AMO) access fault [#1]
+>     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-rc1-00015-g8a6e02d0c00e #201
+>     Hardware name: Renesas SMARC EVK based on r9a07g043f01 (DT)
+>     epc : __memset+0x60/0x100
+>      ra : __dma_alloc_from_coherent+0x150/0x17a
+>     epc : ffffffff8062d2bc ra : ffffffff80053a94 sp : ffffffc60000ba20
+>      gp : ffffffff812e9938 tp : ffffffd601920000 t0 : ffffffc6000d0000
+>      t1 : 0000000000000000 t2 : ffffffffe9600000 s0 : ffffffc60000baa0
+>      s1 : ffffffc6000d0000 a0 : ffffffc6000d0000 a1 : 0000000000000000
+>      a2 : 0000000000001000 a3 : ffffffc6000d1000 a4 : 0000000000000000
+>      a5 : 0000000000000000 a6 : ffffffd601adacc0 a7 : ffffffd601a841a8
+>      s2 : ffffffd6018573c0 s3 : 0000000000001000 s4 : ffffffd6019541e0
+>      s5 : 0000000200000022 s6 : ffffffd6018f8410 s7 : ffffffd6018573e8
+>      s8 : 0000000000000001 s9 : 0000000000000001 s10: 0000000000000010
+>      s11: 0000000000000000 t3 : 0000000000000000 t4 : ffffffffdefe62d1
+>      t5 : 000000001cd6a3a9 t6 : ffffffd601b2aad6
+>     status: 0000000200000120 badaddr: ffffffc6000d0000 cause: 0000000000000007
+>     [<ffffffff8062d2bc>] __memset+0x60/0x100
+>     [<ffffffff80053e1a>] dma_alloc_from_global_coherent+0x1c/0x28
+>     [<ffffffff80053056>] dma_direct_alloc+0x98/0x112
+>     [<ffffffff8005238c>] dma_alloc_attrs+0x78/0x86
+>     [<ffffffff8035fdb4>] rz_dmac_probe+0x3f6/0x50a
+>     [<ffffffff803a0694>] platform_probe+0x4c/0x8a
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/2] ftrace: Make ftrace_regs abstract from direct use
-    https://git.kernel.org/riscv/c/7888af4166d4
-  - [v2,2/2] ftrace: Consolidate ftrace_regs accessor functions for archs using pt_regs
-    (no matching commit)
+  - dma-mapping: Save base/size instead of pointer to shared DMA pool
+    https://git.kernel.org/riscv/c/22293c33738c
 
 You are awesome, thank you!
 -- 
