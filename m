@@ -1,145 +1,110 @@
-Return-Path: <linux-kernel+bounces-441533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010EE9ECFE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:36:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED4E9ECFE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:36:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF8B2833D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11888188A919
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12341D6DB5;
-	Wed, 11 Dec 2024 15:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2F11D2B1C;
+	Wed, 11 Dec 2024 15:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bazZVbay"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u5SCX4mq"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7DD1CB9E2
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B40A1A76D4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931387; cv=none; b=d0oopKc8IxWJZftqvq8g3oisHv8pID+fR8P9MOZRYq5cSEFko6DV3jdItzlIzgADB6trt0opB1wNPPwszhptPwEmCi14FhGR6M725fmB4dxOF/vrASqLxsWXY/+6PCvupPJxU6E2YssEgzHGbCDHUGYTBjhM7n7nudEunyiePp4=
+	t=1733931384; cv=none; b=uDFGxes915b+7p29f1hF7fLT9bOzn4dUdU7bb7jd6ZL/oQIfopUljVb3y4KYRRSGkLXZri5UQ/edjDW8IbBcZjlT7fazGMB/ViJTG1gFFrPePJaFWATe5T2C0bJSCmZdOnniAXRC4Wl7Ro2XbbrLXDBDeC3LHNotgWi7RL7Ljrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931387; c=relaxed/simple;
-	bh=qVmb2cEOOy2URRr7LMgKXLM54fLGCfPF5xxAhZNt9Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lZhb5EQXPOPfsF6tXjDgx9yInfIL4jukUNAg+2p/egWcRFOP55zDRqfMKfkFrlKJgaBM5DZwoOVrRsTW/52+tH1t8cDHyZCvQWr9lPdbWFl0jORVTlDhmz8P3SaNs3cmWGm+D5AM0JB0Y1TQJRntXwo9N2b/Ich18WT+t9NtTJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bazZVbay; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a1fe2b43so69043655e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:36:25 -0800 (PST)
+	s=arc-20240116; t=1733931384; c=relaxed/simple;
+	bh=T2LCy7TaoiKqJOZvO21IBs0qwYbo5Fc1sIddbn+N978=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f4AJaPLhM4nh5K86MwRJ3uoN0fPUT/ZA8IfGAA+jCgbma5tDa/p93GdCjcvfa8MbztsHbN2ON1UVfbU48LQ5vRpPcX6kBrpmo9PbygVEFhz9p6ya9HymKU0hKKcGFftDumBIug1wDZ/73t+N3YQsmV6+mT8BmOhpTIxdsdobLY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u5SCX4mq; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cec9609303so8336117a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:36:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733931383; x=1734536183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/ihY/7RqJ5fXy5Xq9Xt+ABfVpkdihIRe/JdW9Dhwlc=;
-        b=bazZVbay3qUNX+fgSYHkU6AYJXl4dCbBX9OM1nLnl7Lv+WlvGtarqVCT49Q06VAtZC
-         MXlGSP79PirEdL0lWK/pjZkr+5uRFWGLL3zx6kuX7j7+kTWV3iVN67riqciS1xA8f5iS
-         RwRDkvfyWdZG1SVhc4NCZT2iyRZy0Sv5Pkqrta4HsI88Fqn6//rjQf2t8oggXKtbYxDW
-         TTpYc7vOV2r0Bi09jEbptD2La9niPsMb+wAOf2hkD5o9QxzSKtrPWJKXS9a3aTKUTOuc
-         R1m5zY/R0/3vcPRTrRWWn0LnYFIubbgA/kj7eNiIs0EEiuaQWsR+xwwlCEHHTv5WrDKF
-         RbNg==
+        d=linaro.org; s=google; t=1733931381; x=1734536181; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d5P83OAh9oowkPZhX/FCrb2KmUC/mQW6tgdnMEWWNNc=;
+        b=u5SCX4mqf2ye/bldAr3V2KYo59Ced9hXW+xwbHJd3SpnI0q5xqmD79GnqVkribQuc1
+         RG2l+JFCJLRSfnMtFQqO6rD91tRxAujYJTENy8q3E21ScM62vokgSCo/a18oivJZLMHq
+         v9m80on1w/le9hf+lpKzDx0CPag9KgwmwHD8y3sq4jvc/6XAo3yjGba6qAWOHlIkU8ML
+         p5lqMAjJF30x3NJpKcLdTAL84VUu1gn5Wj0UEsdiR9FOJR/r81e+4rzaZcvEQ11uciIR
+         2Gal/ZRTwI6emWcbcqpowz6NPf6ur3Ip0gse1n2u9ljAe5z5gojxpOe5Tuv7tCyXYWkN
+         yJ6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733931383; x=1734536183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o/ihY/7RqJ5fXy5Xq9Xt+ABfVpkdihIRe/JdW9Dhwlc=;
-        b=YQbkBA/o/eXwNYzMK4uey/wRNBZBAlGZQcII62nfho+WKPpxNyuaNMyTso6wJfDXrM
-         ucNq6UD4ev7nbc6MnvR4U1s714qXF8WJT2VCiSC+zO5IpV5mG5DHy4Uvm8h9DMXV2d+X
-         1JorCHYi/eRBY7VAk5qtqFhZMGIBNTgwIUs/XbLmpyW5gof5pjiNjwTIcObYmpgKHNAm
-         sGWBMSTMgrA9yELZPtAJpRyz17v3w8mnrRNoLDHFWIf1MJQlrRoWXmfSNGX4aojQZrls
-         W/QaEaFF24c+zw9P+QfLEuW+qy7IhvpNuup/4JV3iKmgyg6tfqaaWQrILfJ0BCi5+IBX
-         IgLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCKmw9EPtWyhErzAwu0VhFu5fG9X4ld0vYMd1LQjOFAKRERdUBQXfnNlE2V+HYwLkPpdAlpSFmedkf6hw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4NGiXp8EP42d5Mcqilb5Jn0elggKYwoTY1+v+yxKueLx9nPNt
-	J7BhO6SeupaAF3mI2Hd3uNCeqpuh/ZMxXeYLWE5bR1vRrHnm2oNjGH4rQY3DYg0=
-X-Gm-Gg: ASbGnctz4sznyL6Acu1E7DaVoDirIRCNV7hP8aAzhBgcpou3B3CiiwOCnOqC2UG4HaX
-	sE/UamvUGJJYpDiADGjzHHrTYRdlPGjYykQ7XHDZX2/qSJ0pixNth/7iojepAmIoqGtyGgubhrk
-	e6fcIFSA8MW+H/4EurXNbC43EesLleutS/dJhSOhCITpOUNTns4/45VRp42kracJltKEbgmnyQi
-	Fo4UlYF+lDT54fIjlXqFH85h4l4CViifveun69GVo1gGFUFHv6E9+qo
-X-Google-Smtp-Source: AGHT+IGYV519GikDbEXhTVWnAYl5OLwhUIMaHgkoMcLtOXroJi97SR1KtUKWcRMqV6BsR2qfT8K4tg==
-X-Received: by 2002:a05:6000:490a:b0:385:f996:1bb9 with SMTP id ffacd0b85a97d-3878768e743mr44747f8f.23.1733931383594;
-        Wed, 11 Dec 2024 07:36:23 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514dd9sm1511955f8f.69.2024.12.11.07.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 07:36:23 -0800 (PST)
-Date: Wed, 11 Dec 2024 16:36:20 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hillf Danton <hdanton@sina.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Marco Elver <elver@google.com>, Tejun Heo <tj@kernel.org>, 
-	tglx@linutronix.de, syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com
-Subject: Re: [PATCH v3] kernfs: Use RCU for kernfs_node::name and ::parent
- lookup.
-Message-ID: <utvrepwokhocoqipz3l2nwe6gc7ly7jbvanr2q4mfngw4lt5aw@tsb36jutqrci>
-References: <20241121175250.EJbI7VMb@linutronix.de>
- <q77njpa2bvo52lvlu47fa7tlkqivqwf2mwudxycsxqhu2mf35s@ye4i3gsy4bl7>
- <20241125180226.Qo_rHBoM@linutronix.de>
+        d=1e100.net; s=20230601; t=1733931381; x=1734536181;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d5P83OAh9oowkPZhX/FCrb2KmUC/mQW6tgdnMEWWNNc=;
+        b=Qi+atRVKNPJUsojTmc99dMwP4JPl6YaAdpQfZdMi2O5gVlKBFBM7y1WuLOX32RxgnX
+         ohKi/lA+IMOcKIjJUdH8IOGIZwN/VOWJZb8RZ1dCxXpo1CD2vKuHlzEQQQf9E06fuYOT
+         HH2RTFLrXRjUkL3br9Q8XlBbUyR3QAvG5+nPsKh/7hKj017WW7DX3ItmZetzypo6VsL2
+         Z8vnNsP4KZ8nY+jzmPMvs4bLKOiDSOi9Ve7U7c6p8z2lJ07wvwONzMBnxFka6tBIDl+D
+         CafnU8gCPQF8vwKz7qbCLWMgiuZBjq+AETXCprbAgb8THrhbtJbXov3ll7wRy6aLHGTG
+         wDkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXWLYqgnwUYnQJOL/IV8pJa+haE48sxjpBZkmbufYvreEnLA8WxLmHgU9/0Txpzxjf9HBXB3CcP2E/tMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAvycBJNlPYEUNIasPDepGDFdAVp4HS5V3rhO+KFzPNTSKsGTK
+	ANwfv5lYgYh9tGwc1NQatCCyNHJ23rSgy1fz5m9yLv7U82IgZuwlv8f9+TvLDhs=
+X-Gm-Gg: ASbGnctGW8SV0i1eu8C6EOxvux+FK6ynCbtrg/59KpCV+RLySP3SkjRQMrd2qOpiCtU
+	nHJqK/EIsSY6dJDvcnjzHyC+ngw/MGwqhwYdPFV1VLcb5ibCQp8PV6HQtKhS+JrcI3RXw3y1WWm
+	8UiAUkVIms0ffX6TbDiLZR1y9wNUqwWOkb5fmdbbTTYFVXiv5qAo/h7BqIHigRoNRYKf/L0h14y
+	qhrx5hCC4OnYcBdfg02zxkTghV+6ZjFzKyauQNwS64kW2imMv8u3TCKtDWH7E7dl9E=
+X-Google-Smtp-Source: AGHT+IHatiBoQj6Xuonudb8Upnrf8L1LWgUj0MXYi4G2nUPAC3KEoRXoMBGg29UMXHdRgWC0yX9McA==
+X-Received: by 2002:a05:6402:5386:b0:5d0:c67e:e26a with SMTP id 4fb4d7f45d1cf-5d445b0cf92mr37496a12.1.1733931381459;
+        Wed, 11 Dec 2024 07:36:21 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ef026a41sm5541772a12.15.2024.12.11.07.36.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 07:36:21 -0800 (PST)
+Message-ID: <12704563-f2d5-4e2b-a6ad-53b8ab5c5df8@linaro.org>
+Date: Wed, 11 Dec 2024 15:36:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3p4anewuwpjg34dh"
-Content-Disposition: inline
-In-Reply-To: <20241125180226.Qo_rHBoM@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/16] media: qcom: camss: Add sm8550 support
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241211140738.3835588-1-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+@Depeng.
 
---3p4anewuwpjg34dh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Some of the patches at the top of the stack here - won't apply once 
+Vikram's 7280 patches are applied.
 
-On Mon, Nov 25, 2024 at 07:02:26PM GMT, Sebastian Andrzej Siewior <bigeasy@=
-linutronix.de> wrote:
-> Assuming the parent can't vanish in these cases, name could during the
-> invocation.
-                                                   ^^^^^^^^^^
+Could you please rebase your series with Vikram's patches applied and in 
+v7 send a link in your cover-letter to highlight the dependency.
 
-So those R-locks are likely missing even prior this RCUization (as
-pointed out by Tejun).
-If I don't miss context, this would be better a separate pre-patch.
+You can get fixed up shared patches from my x1e tree here:
 
-> I can't keep the RCU read section open while there is a
-> sleep within the call chain. Therefore I added the lock so the
-> rcu_dereference.*() is quiet.
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc1+camss?ref_type=heads
 
-Ah, right.
-
->=20
-> > (Perhaps it's related to second observation I have -- why there is
-> > sometimes kernfs_rcu_get_parent() whereas there are other call sites
-> > with mere rcu_dereference(kn->parent)?)
->=20
-> rcu_dereference() is used where I was sure that there is always a RCU
-> read section. I have kernfs_rcu_get_parent() when there is either a RCU
-> read section or the kernfs_rwsem (or just the lock).=20
-
-I think context-less rcu_dereference_check wrapper (with a comment)
-could capture that semantics too.
-
-Michal
-
---3p4anewuwpjg34dh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ1mxcgAKCRAt3Wney77B
-SQdYAP4xk/4CTJ7fWogypO0Dt09jGOyiNxVJUQugBgfaFQbGYQD9EW3R1Qi/QFqD
-qkOEh4cjP7OqrAZCggBM6AxfpWqIygk=
-=icLy
------END PGP SIGNATURE-----
-
---3p4anewuwpjg34dh--
+---
+bod
 
