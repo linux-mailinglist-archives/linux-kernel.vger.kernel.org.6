@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-442298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D2F9EDA57
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:46:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80E69EDA56
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:46:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6FE11884B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:46:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A881F282F27
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F6A1F2390;
-	Wed, 11 Dec 2024 22:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAAA1F0E22;
+	Wed, 11 Dec 2024 22:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jqhFX5Xj"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="rxk48gwt"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685FF1D934B
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761D72594A0
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957169; cv=none; b=ktMbbq5a64rAiJ3o1E3MhvXA4FmswoUuzRZeo3oaQ6lYKkfJ34DMbElc7ZTI4J3fwhnHeDSUb7IvXEnPd0qpTpHwTQ848UWh3YRV4xMisnFhRVuDaMp3bCgKChVs7tk0ZFt9lF2q3jAfUGC4y9t/l9XxgcmJkPlAgg91fQVGBwc=
+	t=1733957167; cv=none; b=oiuS0MUK0KaG0ocB3kBDYaOY1UOqC6cEqVq4ANrb3x6BQnZryRg2zeoZZ8nC6KePlL0XB7znS5M5Uo1qjt3Bjke7HSDNEF/QdHBKZmJEuSYEemZUcTv8WhVXXzDC1lIhTxpzixQvSDO4F2Nm7umY1MMraqkfNBcD3rSjPC3gSkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957169; c=relaxed/simple;
-	bh=FcSfuk63zX4e+IOlVIn6NBUThr7+axWMhxL5rCaztjI=;
+	s=arc-20240116; t=1733957167; c=relaxed/simple;
+	bh=cE27Nk5cmH4butM+9uY8zJsEUsYtbbcH45KG7WReNZY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q58RCNW4KzAKLmDtQ17VSy9leGC42nNg/+QgjvRkf3M3/esq5q45Uhdh0iIGVR3AzZ8iDwouOmVSAMtDwwLEVDphf/cngQn6vP1oxGsx0gA+DnVoQXamO2YDA5ELhbk7rEFe/DtJWbC20cKDbtG8w0c0XOJbM7aaz+lNlI8N0/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jqhFX5Xj; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=sF+Ugkjc89IJMxs2r8RcIeDeyR7pBfjJGDPLVmLGUpvygrr1nnSdGByPpBdlli6BxVzF6kC/cz9o/4+F/uZUzklbdmExFFp6sId3CxuKozcRcbbUWVahEzGPKMwr9c/h8Wo6MrPi4DdMDRHbYntOdhHG0qTtY6pLHxKVDnbPyxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=rxk48gwt; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -36,38 +36,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=J4uMrsFePi+DBZGlK5bC9jVrtcVa4XLjgvOYdofBgAk=; b=jqhFX5XjB/uFDDyAKv3HRztSoj
-	04+EpIK8Wy8R0kLFcrvEvVJ3CXHLSU4O0LAzyunfRuJTWluoX/By3EFoPcR1z+HTClA9Sla1E2W4h
-	JWKcWX1fnjsXPpGHTyHDyd2M/Yx/bYbpNupYoPe08Jv+P+Dp9LCxfwFu6Ack0xgu9YahDdG9eb3WZ
-	MGMPBlrNKG4PCMnNdQowdxBMIgyd4mtcGg0ddjfqI5i4hx3MaB/cGLcqmGvDfFNE7WI0JLCH0S+y/
-	oWuBcILHtr7MSRIvvKSAIdLPlrWh6dVemfTyjv308c+UEiGlXh5V2LdtrzOucZgrM/kRiV3Sn16Qx
-	sneBq5Og==;
+	bh=hTTJ7OXYyAx1ZfgndTqE4h/ckOFQ/YcOcAae/xgQEag=; b=rxk48gwtwxdly6V7kB9jzrpiHP
+	MHVGl65qKQC+teywOmweE8tYOCUobbt6HUZXL/4IBedWNWsIhmmdYWNioXllEWuH0HDWaCHKAP3C/
+	XvvR1DhmrKg+EJ7MZXHxQO6epJgNCk5Kg1OvGIZA1gPiC3jm0apA5YCoRiYXpRy7E+bTBMI+bxIva
+	tfUMM3WSfVeQV+MnBlEgSz039UVtbHKuELZczrjjcbHvmMrakp1uKkvQ6Cev/CVw0y3nsKx5Acoy6
+	OuPHNGQYFskLSOdc2yC2gEHRyrgqNv01AAefVYe3mFCXIedNyTlsob1yJJ+NBuq0it3elEty/1VAm
+	MwtRSJWg==;
 Received: from i53875bc4.versanet.de ([83.135.91.196] helo=phil.fritz.box)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1tLVSi-0000ON-0w; Wed, 11 Dec 2024 23:45:44 +0100
+	id 1tLVSj-0000ON-3w; Wed, 11 Dec 2024 23:45:45 +0100
 From: Heiko Stuebner <heiko@sntech.de>
-To: Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	kernel@collabora.com,
+To: hjc@rock-chips.com,
+	andy.yan@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: dw_hdmi_qp: Simplify clock handling
-Date: Wed, 11 Dec 2024 23:45:39 +0100
-Message-ID: <173395708761.2509957.6810456712864653104.b4-ty@sntech.de>
+	linux-kernel@vger.kernel.org,
+	Piotr Zalewski <pZ010001011111@proton.me>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH drm-misc-next] rockchip/drm: vop2: don't check color_mgmt_changed in atomic_enable
+Date: Wed, 11 Dec 2024 23:45:41 +0100
+Message-ID: <173395708760.2509957.1013367330408721282.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241202-dw-hdmi-qp-rk-clk-bulk-v1-1-60a7cc9cd74e@collabora.com>
-References: <20241202-dw-hdmi-qp-rk-clk-bulk-v1-1-60a7cc9cd74e@collabora.com>
+In-Reply-To: <20241206192013.342692-3-pZ010001011111@proton.me>
+References: <20241206192013.342692-3-pZ010001011111@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,16 +77,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 02 Dec 2024 22:27:34 +0200, Cristian Ciocaltea wrote:
-> Make use of the recently introduced devm_clk_bulk_get_all_enabled()
-> helper to simplify the code a bit.
+On Fri, 06 Dec 2024 19:26:10 +0000, Piotr Zalewski wrote:
+> Remove color_mgmt_changed check from vop2_crtc_atomic_try_set_gamma to
+> allow gamma LUT rewrite during modeset when coming out of suspend. Add
+> a check for color_mgmt_changed directly in vop2_crtc_atomic_flush.
 > 
+> This patch fixes the patch adding gamma LUT support for vop2 [1].
 > 
+> [1] https://lore.kernel.org/linux-rockchip/20241101185545.559090-3-pZ010001011111@proton.me/
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] drm/rockchip: dw_hdmi_qp: Simplify clock handling
-      commit: 19851fa2ba9824bede16f55234f63d9423897c3d
+[1/1] rockchip/drm: vop2: don't check color_mgmt_changed in atomic_enable
+      commit: 9c22b6ece2e5c2308f41ba4bec27cfa158397fa7
 
 Best regards,
 -- 
