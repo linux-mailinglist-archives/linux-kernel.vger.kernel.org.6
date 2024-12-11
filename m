@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-441617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315FA9ED0C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:05:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843539ED0C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC23B1885D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E411880A42
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AB61DA116;
-	Wed, 11 Dec 2024 16:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7B61DAC8E;
+	Wed, 11 Dec 2024 16:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kon1QaTR"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jq4owwYm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9217F1442F2
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3A015CD74;
+	Wed, 11 Dec 2024 16:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733933012; cv=none; b=YlZgwU/iOCIZAtwtMeNYOH/BVjTZYQTkQjrlSbYc8gG7TaTD01m46VaAjCWrouhXVwYWCXrcUxcy3aZijIPAEV4kmp0YPjgNWD9CtUvLw5cmUq3mVHKcUwWYLOeagpufWOAMVZUUSs2bcOPXEctQBbtO17XkPmWnwxX2QvjgsTY=
+	t=1733933091; cv=none; b=pJKpLL8z/u2UBltW2bY2MvkRM9RHpwnY2QZRu+D5PSW25p8jumPv7kNqcfFzaOkJo1C4enDqwEdcKpZM8d/9zr3FMzGNmSxrfiY1Hjl8gtkLhgL6A/T6RChVM1Kxp1AcW7db9ITRvMVvR9K8pHzUm72IlJm+deNFgKuPnY/3i9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733933012; c=relaxed/simple;
-	bh=o9NBCAJibBE7Cg/Mwi3++Bxz6puXmkfI8Fuw1rijxM0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PxA9u3IVT8UL5uWkT+ZkD79MLoBZCk49bkf2ouAX1sbrOgshi9y9wSdFQjwfMaLbwt4YGsspXHsCOv1Z/owK7og9LMzSz86Ky2DEEzFiFS/1qOP5ByXoZPcAimvHDzUCb1vmE1jbbwtkw03V6sGZ0X9dAsiBuyUqXuaFdV74CKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kon1QaTR; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d3cf094768so8342995a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:03:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733933009; x=1734537809; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=i5RH8KE9lwCw2dJZrNysrG24xTalE49KqC5ZdyyDDKk=;
-        b=Kon1QaTR8FkOLe3+OHyisYBVCt0EH4Pz7D1+l321yNMl3xNtYW7+x5CwJr0b+ODpTo
-         h4F8dxub+IUHhjV6hA2AUsCbPRthA/+E+TgTrgBidw771bMWc3/qCfsHIorPsL+iZed/
-         1hCsX8HP6xPk92XC69mdd99mNN1LUqxE5IRb9RT9/8kbZqZq970SYs3lV4Q3DsOXWiu3
-         pysiGBEHjXoBwy9/rz4bLW1wN6ROhrUUGE2kGZXgn6IgVzU+ed0LKC74zij05gGz4q8w
-         7wNqUPc/bfbgeR7NXSrAOR6CS/qa3+XPRyPC6LFG5vz6OfGAlvbnRq6gcki1umR1aOcP
-         7wTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733933009; x=1734537809;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i5RH8KE9lwCw2dJZrNysrG24xTalE49KqC5ZdyyDDKk=;
-        b=X4PZqsOP74C5iR3xx+RQTA4iF1kvZ4Juw+mN8s0g0j/fj7+BcmaMX7emeMFuzWXCt2
-         E/ur2DfnfWSYGuOy+bIBgs6yl6UxbFlEzlZco61DDeZQM8eQ64HI9EXypiFXAAw295aa
-         zR2X468k/tsvzMhfv0/nUWUlQfSU7NLQiWjtBcgDHO9Y7mTnRIP9FE57BUr5dq0eZeYR
-         XJQv3uceEdwhip5IGz/Qvc5cd2tX+kL8C07TWc5xaEu0bMS4hAgthuIWcMu2L2RlXDzf
-         peNG0hToLH0KCK8Cpa/z60YJ9zHRjO0ZMpoq/wGST8ioiOfCAi/7HXyyTrlLXeDbdAfm
-         1gCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqPxEXnEUMkdYiwJQ4gLQIG+Pb2uAssLx+s8Z6OhGm1kRrA7RbHCffi6L/qQAVRozC/ODfazUYpEzzD7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx60EsgYtntVoGeyWpYEnWQ/PecOz3O3KG0vEoEETmPezY56OQj
-	6AVHx/30VMLpO7AaQCaBWFtE7jfAnFi2yzh4uv+8pKp8o0KA2zT1g9+cE7Ntwfg=
-X-Gm-Gg: ASbGncuiqqQc+OkP/XtbGampjTUFRo9Z+KsJHNPa9ysCeodkx6ZKP1TqFVIJ+PEUakC
-	2SooEouPcWxCleI03iu1+AUfohrjvZS6/NHaNaNSlFoYLT2ONTa2Tmre2v3OTHIHYVW3UExy1rj
-	MCcPbz3L0SH2C3dg0Ltkpc3AmJr21yxyVt17eI76Ke2VrZ/98pOJnZ6QE21F3l53cyBxDVB5Cc6
-	qa6BOKJgNNmFma4p64LeUrqvCzBYVEXwZeeVDzcuf4fnPUocR5VggoEO4EssxeVJQA=
-X-Google-Smtp-Source: AGHT+IG2FdkJPT94HQEtRGwYWaBTAxIlJjHQeKSD0iBM++VhPK90sU5ykr6gyv375oO439qmFde18Q==
-X-Received: by 2002:a17:907:7712:b0:aa6:87e8:1cff with SMTP id a640c23a62f3a-aa6b11b33d2mr276373966b.24.1733933007333;
-        Wed, 11 Dec 2024 08:03:27 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6b473e496sm107680366b.99.2024.12.11.08.03.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 08:03:26 -0800 (PST)
-Message-ID: <63828150-ef52-49c4-bc60-72c1f6bff202@linaro.org>
-Date: Wed, 11 Dec 2024 16:03:25 +0000
+	s=arc-20240116; t=1733933091; c=relaxed/simple;
+	bh=iyyii2WdrTSdhD9GW0lqQShar6Q26yCBEEXXmmtlegc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=meMhTFRnRl6EPW6nt921HAhxHW/7QF1M9yRBhuaJGiU9WbRiyBX6VvyY+XI7Ivv4cuSnMZriXD6L62jh+xh1EhKmMS6ZPNOoCM5BxJ8HrUQXoS0He5EizawoLEo4BnzZDEaz1adQ6KLthxQUF7k43dXLMH+2Maf7MFu3p6s8FOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jq4owwYm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C821E13C;
+	Wed, 11 Dec 2024 17:04:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733933053;
+	bh=iyyii2WdrTSdhD9GW0lqQShar6Q26yCBEEXXmmtlegc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jq4owwYmIXPgO9G4CUxnM+C/3UV7w4RDbJKsn7m0dSLCRaCqjxWvW5KLSVtKfnAje
+	 UEKZ7g5kl8O9IuVNMb0ebncg49W36qFjkKR9Ds7bfCCSyWjIPAYVIxmMu3rz+NpIFQ
+	 dK8RA8ebBNysVYuP6FNHRjpdel8W9GVl0uA+b1W4=
+Date: Wed, 11 Dec 2024 17:04:44 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: keke.li@amlogic.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
+	laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com
+Subject: Re: [PATCH v4 06/10] media: Add C3ISP_PARAMS and C3ISP_STATS meta
+ formats
+Message-ID: <6h2epavsgxonytbar2wv7qv6ojuzryst6gqjcceuccoxubwh64@5wqchwktrivu>
+References: <20241205-c3isp-v4-0-cb1868be0105@amlogic.com>
+ <20241205-c3isp-v4-6-cb1868be0105@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/16] media: qcom: camss: Add sm8550 support
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
- <12704563-f2d5-4e2b-a6ad-53b8ab5c5df8@linaro.org>
-Content-Language: en-US
-In-Reply-To: <12704563-f2d5-4e2b-a6ad-53b8ab5c5df8@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241205-c3isp-v4-6-cb1868be0105@amlogic.com>
 
-On 11/12/2024 15:36, Bryan O'Donoghue wrote:
-> @Depeng.
-> 
-> Some of the patches at the top of the stack here - won't apply once 
-> Vikram's 7280 patches are applied.
-> 
-> Could you please rebase your series with Vikram's patches applied and in 
-> v7 send a link in your cover-letter to highlight the dependency.
-> 
-> You can get fixed up shared patches from my x1e tree here:
-> 
-> https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/ 
-> x1e80100-6.13-rc1+camss?ref_type=heads
-> 
+Hi Keke
+
+On Thu, Dec 05, 2024 at 05:04:32PM +0800, Keke Li via B4 Relay wrote:
+> From: Keke Li <keke.li@amlogic.com>
+>
+> C3ISP_PARAMS is the C3 ISP Parameters format.
+> C3ISP_STATS is the C3 ISP Statistics format.
+>
+> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Signed-off-by: Keke Li <keke.li@amlogic.com>
 > ---
-> bod
-> 
+>  drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
+>  include/uapi/linux/videodev2.h       | 4 ++++
+>  2 files changed, 6 insertions(+)
+>
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 0304daa8471d..dae34b1170d7 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1460,6 +1460,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A Parameters"; break;
+>  	case V4L2_META_FMT_RK_ISP1_STAT_3A:	descr = "Rockchip ISP1 3A Statistics"; break;
+>  	case V4L2_META_FMT_RK_ISP1_EXT_PARAMS:	descr = "Rockchip ISP1 Ext 3A Params"; break;
+> +	case V4L2_META_FMT_C3ISP_PARAMS:	descr = "Amlogic C3 ISP Parameters"; break;
+> +	case V4L2_META_FMT_C3ISP_STATS:		descr = "Amlogic C3 ISP Statistics"; break;
+>  	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
+>  	case V4L2_PIX_FMT_NV12M_8L128:	descr = "NV12M (8x128 Linear)"; break;
+>  	case V4L2_PIX_FMT_NV12_10BE_8L128:	descr = "10-bit NV12 (8x128 Linear, BE)"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index e7c4dce39007..eda30640a7a3 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -858,6 +858,10 @@ struct v4l2_pix_format {
+>  #define V4L2_META_FMT_RK_ISP1_STAT_3A	v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A Statistics */
+>  #define V4L2_META_FMT_RK_ISP1_EXT_PARAMS	v4l2_fourcc('R', 'K', '1', 'E') /* Rockchip ISP1 3a Extensible Parameters */
+>
+> +/* Vendor specific - used for C3_ISP */
+> +#define V4L2_META_FMT_C3ISP_PARAMS	v4l2_fourcc('C', 'P', 'R', 'M') /* Amlogic C3 ISP Parameters */
+> +#define V4L2_META_FMT_C3ISP_STATS	v4l2_fourcc('C', 'S', 'T', 'S') /* Amlogic C3 ISP Statistics */
 
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc2+camss?ref_type=heads
+I would have used ('C', '3', 'P', 'M') and ('C', '3', 'S', 'T').
+Matter of tastes I guess, but if you will happen to have a different
+format for, say, C7, this would help keeping them separate.
 
-Same patches on rc2.
+Up to you
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
----
-bod
+Thanks
+  j
+
+> +
+>  /* Vendor specific - used for RaspberryPi PiSP */
+>  #define V4L2_META_FMT_RPI_BE_CFG	v4l2_fourcc('R', 'P', 'B', 'C') /* PiSP BE configuration */
+>  #define V4L2_META_FMT_RPI_FE_CFG	v4l2_fourcc('R', 'P', 'F', 'C') /* PiSP FE configuration */
+>
+> --
+> 2.47.0
+>
+>
+>
 
