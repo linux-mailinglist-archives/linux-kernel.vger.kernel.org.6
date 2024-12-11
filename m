@@ -1,205 +1,158 @@
-Return-Path: <linux-kernel+bounces-440661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8B69EC292
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A49DA9EC296
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A19618892E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55D01888E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85341FBE87;
-	Wed, 11 Dec 2024 02:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0486A1FCD0B;
+	Wed, 11 Dec 2024 02:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D05Sull4"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2087.outbound.protection.outlook.com [40.107.93.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WOB79qNU"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5EA2451F9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733885712; cv=fail; b=HPhmKcFCIKFj6bTZ1AX1gaPuPVftihTOBJqlm8hFD+8Le+Fk/8nQXrrH6l94stsRn/jJmacObcD3kpF3Rbffcws6E2WF7H6PH5Cowr3hfojbOlIZbUz7hCM6tc76Jua3SZ+K+J9PxCW0nJweEX+bPYu8tlJ5aIgQOzDue02zNWM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733885712; c=relaxed/simple;
-	bh=0xz33O51rVSHPFf0OznBqLHDUzM9kbGIj+AFXNC6HKE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jFoY/FgPzwGNlShPjo5cD1x0S6m6fyR9y1oiT/kiq3QtR9aNOyV9gKXJP+Ch0+WAV3cxTNCWUjsPu5urcj1y8n4NYEu9P2vqSdZZwL+WXqW/aGeTd2OsvdGathXbZ9ppeRPrMKjeb8Idzwu1q/k28il5EQFdU4vrUiOEkvOhfcM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D05Sull4; arc=fail smtp.client-ip=40.107.93.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=evwLjypFoVXhMEW6Ic1qT8ZVm94ggdekPV7vlvHp23Xm6qZUS3mLpjVqXi465ACkjshJl5u95SZfQwj3kdWM3mqawAkSugvue86+VZn4SYeW0n+QDr36JX94XnLNWV/TWmAkA9926oUETRtRdT+WvspUGfdN3rawHUaZfIc7uMxk4VVL0KbXDYq0OLL4P/fX2Z8VRunw/omPj7Ss4GU0uj8h7CAc21peCw6toWuGyc/XWiQs7OOc6rlOGkSXHweLuirT2F38sLYejiAKz0kV7UnJVvZvaOwkKGp4nSCuODFApBa/P0xJos2b71XP8GM+qae0eUtWo1/joPMFIeVutw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0xz33O51rVSHPFf0OznBqLHDUzM9kbGIj+AFXNC6HKE=;
- b=Euetp9JtnIkOQn31EJFKz00snYfIHmLJH6gIcGx7FQSWancKfNNzRBW29shCl8hTatBb4tvm9fXFc7O9Wx1oj2tnG5cdVWgJji2TtvL8PQj3j0/oWbp87iJwGkIKNsK0cdfdmWssvh2yA1oindjVA44bUFDLxR33E/UzwgOe6H+JBpQQqoWaVTGYEDj7yv3VdSd/Kpr1eZt5yaG1LAJ+HkOHqz5jd/bXXiyX+V459OWbLxruO4vV8Kg35nIKAEEZFhari1zgOhS9z8yE7JSbi+yOBCmVSII7uJzpaN2cqCSRZcRUrkdovWjW1RNxjhYRvSE9hLEAXA54j5qkF/WoAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0xz33O51rVSHPFf0OznBqLHDUzM9kbGIj+AFXNC6HKE=;
- b=D05Sull4H9mmfyDlN07iQsh84479EjZoGOTWBPCboeuk+un7oFlXKsY0dkvsUyVTkBPedobzY+72iGOPoW/gF6k37mv4aZHk2NCxNuHMm1Vvorwv1Wveu9WCqNMlrW3GqYDVOyP52TodEFmaOo38NOT04nVBziF68LLukC/pDxvq5tRvx6AHxGhku0LtnMdFai4RbbcEi304uc/ZsqSooacdjpMtTDAM83LLBKE3S2pAcjMZMkr2zkuUwFHukVd1aIAZHUFE4D13Xv6KlNPyst+0ykhb2Fw5pedITUGfoT8tvAAkeJUO84U5HHUV5p4kPr0GqhvQFLhKZIULXHEKNw==
-Received: from IA1PR12MB6531.namprd12.prod.outlook.com (2603:10b6:208:3a4::7)
- by PH7PR12MB8180.namprd12.prod.outlook.com (2603:10b6:510:2b6::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.20; Wed, 11 Dec
- 2024 02:55:07 +0000
-Received: from IA1PR12MB6531.namprd12.prod.outlook.com
- ([fe80::782a:dd11:178:2784]) by IA1PR12MB6531.namprd12.prod.outlook.com
- ([fe80::782a:dd11:178:2784%5]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
- 02:55:07 +0000
-From: Timur Tabi <ttabi@nvidia.com>
-To: "jiapeng.chong@linux.alibaba.com" <jiapeng.chong@linux.alibaba.com>,
-	"kherbst@redhat.com" <kherbst@redhat.com>
-CC: "simona@ffwll.ch" <simona@ffwll.ch>, "lyude@redhat.com"
-	<lyude@redhat.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "nouveau@lists.freedesktop.org"
-	<nouveau@lists.freedesktop.org>, "dakr@redhat.com" <dakr@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"abaci@linux.alibaba.com" <abaci@linux.alibaba.com>, "airlied@gmail.com"
-	<airlied@gmail.com>
-Subject: Re: [PATCH -next] drm/nouveau/gsp/r535: Modify mismatched function
- name
-Thread-Topic: [PATCH -next] drm/nouveau/gsp/r535: Modify mismatched function
- name
-Thread-Index: AQHbS3EIV/J7crBS30uYyC1u+X3t7rLgWUgA
-Date: Wed, 11 Dec 2024 02:55:07 +0000
-Message-ID: <31c145cd3aa9d0ee8f33270268ce118c20dd5cf8.camel@nvidia.com>
-References: <20241211015834.47562-1-jiapeng.chong@linux.alibaba.com>
-In-Reply-To: <20241211015834.47562-1-jiapeng.chong@linux.alibaba.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.52.3-0ubuntu1 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR12MB6531:EE_|PH7PR12MB8180:EE_
-x-ms-office365-filtering-correlation-id: 4111e3a3-4271-4232-6896-08dd198f388e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VS92NzhaTVVFNWJ3OXZVamxXazVtdTM2cWdXOUN1YnR3d0oyeW9XUFNFMzBr?=
- =?utf-8?B?eXVCdEhhTm5GVXJSMkovalNqUWdGQllZNFoyYnlxNi9lWWR2a215VnFYb1oz?=
- =?utf-8?B?ekRFbGkzbmg4OXoyc2ttUjl0cTVRRzhxMVhvampYcUpiN1VJQk5KTzJFbC9T?=
- =?utf-8?B?WVhpNVp5eTdRTXk5aFNGeUlMWVJPaXlXSFR1OHhyL0xqazZZVTByY1NTVmpO?=
- =?utf-8?B?SDB2ZmZSOTFxSjE1VTBpRlFwWC83ZHJaM01pV1ZWM3gxd01WUnB0Ny9lSGNt?=
- =?utf-8?B?UGJOTnpwQVRHaE9xd2MrSXpGY3pQMzRhNXN4SGk4OW1nY3c3djl3cVVab2tv?=
- =?utf-8?B?V2h4c0d6SXBxSExUdktEOGU5YTFCM0t2ZzFoSURkMVhXRGMvOEVmT01GUm9M?=
- =?utf-8?B?NXNybHl3SFc5SDZqa25yZ0dDVmluZ0IxNFBZUGZQeUh6Ung0TXJtMUVKZDZz?=
- =?utf-8?B?R1dNVERVNmkvYXF4R21GRG80anVrU2FJelJyNTB2dEdVeFVBTURTcTVOYkpk?=
- =?utf-8?B?bmZyUCswc2IvVEhxZmxBbU9KZVRlMi9yRGRFQjRySlRZaW9ScXZMVUNRWHE5?=
- =?utf-8?B?TzExTDJDT09OREYyckRLN0NhTHZzU3Eya1RnRlAxRjZZR3I5c2huSjRYbHIv?=
- =?utf-8?B?RXN6VGVQT0R0dVlTazhDQjR2ZlgwRm50RU9vVThaSm9BaEwyZjFOZVZvMjNM?=
- =?utf-8?B?WlBsYWlsMjI3N3VHTUN1M1pQVmpLNnZ2WGx0VW9qNEJHTXFZN1lobE9wbkxG?=
- =?utf-8?B?ZkNRRjdJMTBTNXhGWE8rbmZVeUR3OWFBbThXMytZNGZ5QmQwK3ZmUW1MRjht?=
- =?utf-8?B?WnJHcEdzWnV3L2tIZGRMcUJnYmJNNGlMc3E3N2FFalBUdUl3Zjk5M0ppME9i?=
- =?utf-8?B?YlhUZVVrc3p6UFd0alVHQ0NPc3V4STBsek9lSWdRaGxyQWJMWVBhOVgyRWxK?=
- =?utf-8?B?L0ZQV2o2ejN5ZFZZNnAvdGFnZDFtdnR2SGcvUGt6V1FrZFM2V1prU3VmTks2?=
- =?utf-8?B?elRzZGFtSnpvaHhEelhOeU1UcFJLcXFzQzJuTEtyeU54Z09UWDBpMGo3ck42?=
- =?utf-8?B?ZHo2Rk1aMHJkdVpxMGR0MmVpOGxKYUswV0tmUDA0ZVlzWHZIVzVOTHpBVFB0?=
- =?utf-8?B?NlZ0NU1sYzVHQnpGZVF0bmJKKzR3STZLelAzWEg1bjljSGlLaG9LTXVzK0xV?=
- =?utf-8?B?bDFDK2FEVS9sdDhEZ0ZHQ2NieVY1cFZkQ0RGM0hzeitLNmxCaGpRMmpicXhE?=
- =?utf-8?B?OXR0MHFUZTNNZnkzVFdaaTR4eEE4L0d2V1VsMWpySjBRVFZSYUYvQ2ZVWE41?=
- =?utf-8?B?S3VNb2xKejgzT2RCMXJWRHhBZFZaYU83UXVmZUdhZ0FCWEZxSW1YeGI0UDJu?=
- =?utf-8?B?ajRsY20rZVR4RytVcTdZSndxckRCQStxWE9oZWwvNk5HWEt0cHVnajJ5MnVn?=
- =?utf-8?B?QklCcHdrazJvMVVCRG5DeVdDU1R0WU96ckFacUJWVDVtVjErbmZ0a1laNGwx?=
- =?utf-8?B?NU13QVJIY3BocENONHB1QXovK0o0NWFEc0hYZlUyU21LbjA4U3dEUnFMQ1Mx?=
- =?utf-8?B?K0cwWWVnb3Q3QjRpb20rby9qL3ptWnV4OHRhQWVhYkowbDlyNytQZkZxd3JK?=
- =?utf-8?B?ZUw1RE4wdEhRK0JXeGtLQW9ZTjdDZDBSWm1WOUdhNmpmb3dTT3lndUFQU0VT?=
- =?utf-8?B?UERTQmhSYmRBV01WT3RvUi9Ca1d0RXpKeXkwaUhKajlZemJMc215NWRkOTht?=
- =?utf-8?B?K1FKdXRsUmw3MWVJSnJQMDFaQXNkQ1JuT21CaHZ3NmR0TFJVRjJrVDhNWDhp?=
- =?utf-8?B?K3ArSndkWTBkM0RCeTVvQzFDWkJ5bURrK0UzRXlQWi81MHl3dWpXQ2NYL0xJ?=
- =?utf-8?B?RkJJN005ZnJ1K05jVWtXdHhIVjFVVUtHZkR4L21yVmN3bkE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6531.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?U05YbHl5clQrdmd0OEJDQnI3ZGc5TCtRM054MjRNS0hReVI1Y2tYc2t1THdi?=
- =?utf-8?B?b3BKVENnZjhQbU9hODlQUTkxb0NXZC9GZGc3c3hmN1dLcU1QRTZDcUpvT0ZS?=
- =?utf-8?B?Q0FodzROVVNSUXNnNHYwY2QrMVd0TFdVLzcrL1FVdW5MbWlaSWNtT3NYeTRT?=
- =?utf-8?B?Z2F5cDhQYlRocndFRFE2MlZzMUpueFNGSmxkTDQ0Q2hHWW1BRWxGeXAxVzlL?=
- =?utf-8?B?TzdTcDU0TytZc1ZNVlJmazVVOUVvZXVzaGhlRjVDNnJiVXNuNERDdTIxeXFk?=
- =?utf-8?B?b1UwdCtuVkJ0eGZkb0pBUHVIVjZhN1pVa2NPRVpUTkgxdW5ZdStDYUt3OUpF?=
- =?utf-8?B?eXRZZThsOEIrS2tuU1E3NjQ3bmFLd3E3NCt1WTR3dnV3TmxNMGNJSmh5clN6?=
- =?utf-8?B?OXJUWDZ5aFdxditPTFc4RGczczdKSjZseW5WZ1B2V0VyYkJEQ1NudEpuY3Nh?=
- =?utf-8?B?TFkvcVhrb2tiR05RY0dYSEwrVWVsTWFoaTdweWcyWmM3YjhWb3pQZnptLzRv?=
- =?utf-8?B?TC83WWFBTWRjd0wwYmhYQ1hPaXFUbmRnNDdaaWsrM0hZWEMrdlpsbGFHcVph?=
- =?utf-8?B?RFhmSHo5TElxTEtFamtOTjNXT3ZUOWRBRzBPa2dENTV6N0xEZTgzS3BwUGlq?=
- =?utf-8?B?TGdIVkxhYzlBM3I3UytoY09FRm9JVXV6aVpTRmk2cnBidHNESGU1VVEyRURq?=
- =?utf-8?B?VFNNaU9BWjhmRUZqTmRWbGJQaWlOaHR6K2RBZ3ZpKzBVM0VvQW96YjFGVGM0?=
- =?utf-8?B?R2hETmRVdUZqWmkxVy9JYTRkeVZBNlNzV2FBaEQ1UXJSeFhoOXFTL0k4dmhy?=
- =?utf-8?B?WEFkSFAwT3l5eENTejBiY1BOSk9YN3JqVUgzZ1BDTENaamFlSnJsTHBOVFVp?=
- =?utf-8?B?K2NhT3lIR0Z0NU1IYmwxc3R3ZDFha0h6c3ZkeCswbmZHdysyeGxWMXZTQnJZ?=
- =?utf-8?B?SGlSaGhBWXgxbFl5eUc0eFlCWktTMjRUSTkwTE41TndyZWM3cFFCWEdYdm9t?=
- =?utf-8?B?dlNyR1J0K0RGcTJjTEhOWWxZa1Q5WHpqeFpsOWNPTDVKK04venBrR2hiSGQ0?=
- =?utf-8?B?Ym1veTJsWklkQ1IxdjhoSzhJcU56T3FTdEthZEE5UHlPRHlxbDM5ZTk5T2Ux?=
- =?utf-8?B?MjNFYWdPb2tHS3djUFN1dDRSMjF4ckFpR3BPTm9hcFJLZ0NjR1dGM0VnLzNx?=
- =?utf-8?B?Qjk5VGxFSEpCdVd5amhacEl4eWxaSmlqaGJKNHRybm9XdkV1RDI5ZGMwZlVr?=
- =?utf-8?B?MmpJNFpaa3pBYnZxdGl2clZIUTk0ajlFanFpdXJ0SVlmR3d1ZUZPZ2d6YW8z?=
- =?utf-8?B?b3NKRXlkejZZWmlOL1BFMVJIRmtXSkhvaWczYjFLQkU0VFlYYmRRZlgyRDZB?=
- =?utf-8?B?WXVWN01MZzVXVWpYbVoyL29qRUFzRjFKTkMwR0tzeUNGK0JaUjRDRExjM2Zl?=
- =?utf-8?B?SlUwVWxmY0NjZ1BiK2lrYWxPZTc4eVlscFlJTmFzQ0o3SjJMdXR1TTJTbUts?=
- =?utf-8?B?RFlQSklCcFg1WXFzMjUyZFFucTMwSFBnaTlROFVidnFoQzNOL25vMlZ0c1FD?=
- =?utf-8?B?aCtBVlBObWNQeDBrbnFIYmlGU09uam1PUEw3WnJQeW8reXVtcWhXWDJ6aWl5?=
- =?utf-8?B?YzkyMGJnNElJZWpvVGFyN3o1NFpFUTZTUEpXckNWOGFKYXNjb2NDZ1BYN2Qr?=
- =?utf-8?B?b2MxTXA0b3psblBwRkZQNUZjUTNGZWhRYzF6MkFiT3ZpSUhvMkNJbjhwZ09p?=
- =?utf-8?B?MUZPbTlYSG1WZnNoZUs2eFN2eWpibitrUjVJM3NEMkIxdnFWM2hUNWhFWVJj?=
- =?utf-8?B?UVRac3dLMUJlbGtKQTcydGRyYk5IZzZ1RHRJNXp5MXFwUDJiaU5OblREOG9v?=
- =?utf-8?B?STZFRmdCZGdKa3BkM3VXSFl5LzEzODVCOHVYN1Btenh5dnpUemZ4a25kUUlY?=
- =?utf-8?B?dHk3MVg0eitnUStMcHNGMERrSkVMT3ZLbWp0dElNMDBhL3pFcTg0blZWWU9B?=
- =?utf-8?B?VmdlaThTYXhhSlNiU3FjQWFTVE52UnlRSzBPck1ZeHdkRm1nV0VVckc4YlZp?=
- =?utf-8?B?d2ZKSGZpMHlCcFc0bEJvSVRJQmN3NmFsdVhJQ2FCK1pIWW1KVUlYcEhQNks3?=
- =?utf-8?Q?nfucrl7yZxWzNwOtSJoZ20uzB?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <06CC5BFA190C844BA8ECB969EC76B502@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3C51FC104
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733885739; cv=none; b=DS2pZJm2rL+/XUV5JZuRCFN4By+sTuBWir+Z6YS8uzLEoUBkb2o7E8DwOb5AV4E5psnuN6FIGenxY+Op8A8qo1wedfVh39BQruC2gpHIDYQLpVZGDaeQggZxnMD8hMBXvAXUga88RgURDtV7871rwCxhFva69RLiSTHVpcvNZX4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733885739; c=relaxed/simple;
+	bh=Sw8qwKP5Mjvc92ndpHaw95kF/VIlsOKmmdEgToCodR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=upOzlnQdIEGY/H7e41xsd6miLeGPKkpR66lpj3VNxrW6ujLb3xKcpC0B+glAErEU6Y6dfxxbc5MVn2naWE4VzodNEmlrtB98RcLjo0mCtfl9O4bNTyUsv84V0ofoXQ0ZuYG1P13Mkg6n6CUmaHBEponhoBajWivnktflKdiCNws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WOB79qNU; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2164b1f05caso29981205ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 18:55:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733885737; x=1734490537; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=piHU200dFKtsmyLyhlKF3Y91bwGI1DoICgmV0GUXM0Q=;
+        b=WOB79qNUBaxzoTKSn1t+JdxgyFqK2A3umWJ9LZqn1zlM3iLL9yD5i7gP6WI1A/qhLa
+         YuCnS20ip9WgXljdi4AfB0THgPP08av4kZZGanx9dSdxNYUW5+TfaX8KTSBWC6es+iO/
+         DoLBNbSRVhDBMkh2GoM+V27r2ngILJo7rdVPem044IN9pp3/VqK0kj7OAfKzy6qbDz7l
+         VLNrUo1MKL1fZOC1WHswXp+5Hf+q/us4J6yR1Xi6m7qoGUo7oSW5pDVNzG4fBiTaTiTB
+         +gnT/hEyKd0F5tBp/yqmPXpJE9OUoX7g8WAevKudvRZo5QzKlN2lp5oF0MQtwyT7NmDb
+         4FzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733885737; x=1734490537;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=piHU200dFKtsmyLyhlKF3Y91bwGI1DoICgmV0GUXM0Q=;
+        b=FDjO+tH5AlMArvWSDNVrVbKe3e645lvZOU8Wxi1DJgjqeB60/EGfsPm8/4X5PKNfuG
+         8AxKCbz5Bvr4XFZzUj9ln+Vzr/+J6JlUYn8CaFzieE8pAx2+rckYr9sO1F6CfqdwYDpY
+         l+V7eNQb/4370SsMvpX8MhRknq6HbD3f53PiPUvOp8vrNKi0PEucAx0zX/h5sBC+WfWm
+         UKYSdHirF+ujVFNBN92fgD8FP6AyPvTtizdenjbnVgE0T43b6Hnw9uf6WnQJo1r60yh8
+         iZZC6u5grfvP10DPs/lRZNJhD9ogyRmTTR9karAFbscCHIvC6i4rfVZbWTY8WTrF6WV0
+         44tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQaZ2EuApIh/8nhis/k51vRlKPTbE5FWs9tdDzo/F3HUtG9t0ozA9Rfbp/xIZNfYkT7GCP8jjJ983ecRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxthoknIvwBDYfDXlUjrijhL3FU1Zp2spak2SIZmRD0kKIMe5Q7
+	tDf2dB9GQ8hwZlIUu6lt+W7Js4MTW4DriqJg3e+8wHKUKGNUomKaqR4DQcmWWw==
+X-Gm-Gg: ASbGncvqjK/g1nKubG8NyIr55knLY3vTx9gdgeikBimTnA8N53OSaKTZteex1ismQeZ
+	OQCfwRh0F5kVN84vtj2qAu2aOTpx4B9u8ShKhFXYmtkWscj2R9Zgm0pjEU7RelONNMQ5LTjzX0A
+	x4CwEl0n/LutRBwtdL14VWJE84ZolDT+vqaHzRdHZNxDUJ/n7ui1l1HQ27JRhH39vp8lqgTXNpL
+	P2DUeUQMWAMtupOpHmQeEKxvnE2Wzfu4mQyypzs6jlv2+zF5qoOz/1Hla4EwDkfkK4cB9nYS/yA
+	NZO3W3GAk5cpT8n613rtBzhZG/ECxD6Ks6N8vU53n8UoHyqFeXLb
+X-Google-Smtp-Source: AGHT+IEFDbvNFnnUCGvlIHi60aKS6Y53fiAmKXiI38k2LXQkGTfNbOOvQbHeFT61eEagzjXtKdQr9A==
+X-Received: by 2002:a17:902:c94a:b0:216:3466:7414 with SMTP id d9443c01a7336-217785059abmr24941895ad.44.1733885736953;
+        Tue, 10 Dec 2024 18:55:36 -0800 (PST)
+Received: from ?IPV6:2a00:79e0:2e14:7:b50f:e19c:87e4:10bc? ([2a00:79e0:2e14:7:b50f:e19c:87e4:10bc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216796e2101sm17149335ad.167.2024.12.10.18.55.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 18:55:36 -0800 (PST)
+Message-ID: <df40c098-2bd7-43c6-be53-77171b9b90d9@google.com>
+Date: Tue, 10 Dec 2024 18:55:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6531.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4111e3a3-4271-4232-6896-08dd198f388e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2024 02:55:07.5849
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 823EYD8FW54/h7D5ZYnloOL8MwPY0bR1fsz4ViQ49iUVyUh4OLEFUYZmFZydd/jscoFjEPJf6rbcrRBgu3h3iQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: connector: Add pd-revision property
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Kyle Tso <kyletso@google.com>, RD Babiera <rdbabiera@google.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20241205-get_rev_upstream-v1-0-90158ee7d75f@google.com>
+ <20241205-get_rev_upstream-v1-1-90158ee7d75f@google.com>
+ <20241210230615.GA766674-robh@kernel.org>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <20241210230615.GA766674-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gV2VkLCAyMDI0LTEyLTExIGF0IDA5OjU4ICswODAwLCBKaWFwZW5nIENob25nIHdyb3RlOg0K
-PiBObyBmdW5jdGlvbmFsIG1vZGlmaWNhdGlvbiBpbnZvbHZlZC4NCj4gDQo+IGRyaXZlcnMvZ3B1
-L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2dzcC9yNTM1LmM6MjE3NDogd2FybmluZzogZXhwZWN0
-aW5nDQo+IHByb3RvdHlwZSBmb3IgY3JlYXRlX2RlYnVmZ3MoKS4gUHJvdG90eXBlIHdhcyBmb3Ig
-Y3JlYXRlX2RlYnVnZnMoKSBpbnN0ZWFkLg0KPiANCj4gUmVwb3J0ZWQtYnk6IEFiYWNpIFJvYm90
-IDxhYmFjaUBsaW51eC5hbGliYWJhLmNvbT4NCj4gQ2xvc2VzOiBodHRwczovL2J1Z3ppbGxhLm9w
-ZW5hbm9saXMuY24vc2hvd19idWcuY2dpP2lkPTEyMjkyDQo+IFNpZ25lZC1vZmYtYnk6IEppYXBl
-bmcgQ2hvbmcgPGppYXBlbmcuY2hvbmdAbGludXguYWxpYmFiYS5jb20+DQo+IC0tLQ0KPiDCoGRy
-aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2dzcC9yNTM1LmMgfCAyICstDQo+IMKg
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZ3NwL3I1MzUuYw0K
-PiBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2dzcC9yNTM1LmMNCj4gaW5k
-ZXggNTg1MDIxMDI5MjZiLi45M2E3NTI4YTExOTMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2dzcC9yNTM1LmMNCj4gKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZ3NwL3I1MzUuYw0KPiBAQCAtMjE2Miw3ICsyMTYyLDcg
-QEAgcjUzNV9nc3BfbXNnX2xpYm9zX3ByaW50KHZvaWQgKnByaXYsIHUzMiBmbiwgdm9pZA0KPiAq
-cmVwdiwgdTMyIHJlcGMpDQo+IMKgfQ0KPiDCoA0KPiDCoC8qKg0KPiAtICogY3JlYXRlX2RlYnVm
-Z3MgLSBjcmVhdGUgYSBibG9iIGRlYnVnZnMgZW50cnkNCj4gKyAqIGNyZWF0ZV9kZWJ1Z2ZzIC0g
-Y3JlYXRlIGEgYmxvYiBkZWJ1Z2ZzIGVudHJ5DQoNClVnaCwgSSB0aG91Z2h0IEkgY2F1Z2h0IGFs
-bCBvZiB0aGVzZS4gIEhvdyBlbWJhcnJhc3NpbmcuDQoNCkFja2VkLWJ5OiBUaW11ciBUYWJpIDx0
-dGFiaUBudmlkaWEuY29tPg0KDQoNCg==
+Hi Rob,
+
+On 12/10/24 3:06 PM, Rob Herring wrote:
+> On Thu, Dec 05, 2024 at 11:46:08PM -0800, Amit Sunil Dhamne wrote:
+>> Add pd-revision property definition, to specify the maximum Power
+>> Delivery Revision and Version supported by the connector.
+>>
+>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>> ---
+>>   Documentation/devicetree/bindings/connector/usb-connector.yaml | 6 ++++++
+>>   Documentation/devicetree/bindings/usb/maxim,max33359.yaml      | 1 +
+>>   2 files changed, 7 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>> index 67700440e23b5b7ca0db2c395c8a455bcf650864..341d2872e8d43450d219b7b72d48790051dc4e2b 100644
+>> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>> @@ -293,6 +293,12 @@ properties:
+>>         PD negotiation till BC1.2 detection completes.
+>>       default: 0
+>>   
+>> +  pd-revision:
+>> +    description: Specifies the maximum USB PD revision and version supported by
+>> +      the connector. This property is specified in the following order;
+>> +      <revision_major, revision_minor, version_major, version_minor>.
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> Always exactly 4 entries? Then:
+>
+> maxItems: 4
+
+Thanks for the catch! Updating it in the next revision.
+
+Regards,
+
+Amit
+
+>> +
+>>   dependencies:
+>>     sink-vdos-v1: [ sink-vdos ]
+>>     sink-vdos: [ sink-vdos-v1 ]
+>> diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> index 20b62228371bdedf2fe92767ffe443bec87babc5..350d39fbf2dcd4d99db07cb8f099467e6fc653ee 100644
+>> --- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> +++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+>> @@ -70,6 +70,7 @@ examples:
+>>                                          PDO_FIXED_DUAL_ROLE)
+>>                                          PDO_FIXED(9000, 2000, 0)>;
+>>                   sink-bc12-completion-time-ms = <500>;
+>> +                pd-revision = /bits/ 8 <0x03 0x01 0x01 0x08>;
+>>               };
+>>           };
+>>       };
+>>
+>> -- 
+>> 2.47.0.338.g60cca15819-goog
+>>
 
