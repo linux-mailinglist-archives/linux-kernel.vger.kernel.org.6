@@ -1,121 +1,157 @@
-Return-Path: <linux-kernel+bounces-441013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A849EC7EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:57:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994699EC7F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:57:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59281888EC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4539E162EE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22D41F2379;
-	Wed, 11 Dec 2024 08:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5B81F2385;
+	Wed, 11 Dec 2024 08:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CO9Lmqk0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4x8tEW6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25F21F2367
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9711F2360;
+	Wed, 11 Dec 2024 08:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907416; cv=none; b=spkHTxnFnjnzwbuAhwmvmyestf5EqRnVjLQyT4VwEAkserKCzXKnWrwNMnQ6LOkW5Pb6BXwo4oENyacAKOt6a2obqGtJnycQQ4nfkudLUhF/sRcrI4koSorkdk8Q1gLK6HSF2Rz1cP7A86xrmgCuYu8vhlIW/LnpaRZO2Ic0Az0=
+	t=1733907438; cv=none; b=aMid4V/qR9ttoJwK15xr5Tsblj30QYwFwkRXpGjaSpA5w3wlCy+h8Dx0FKCNpEK5/WLTi1+MiWUSKBprOmBtliEAWRKQ214oNwNUkPAnplL8mRP5tWtkhjhcv/nMWnTV6N1d8M5xD2o3Ei4K4aQd7rViKEcwWpy4NF1x57nuPOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907416; c=relaxed/simple;
-	bh=cyIwLAKJrKHsHqsCqBfcxjQwI+X5qPRd5NeoIz855ho=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BrLUR9JwtPtqBE1Rntjr9f03tyYSCHTTXRYHpnA8ZAuuTSKg9N5ec3f/Um035y0S0mqTXoKK1/mDgJLMD7B5JSS8T2yM8gAL6g/u543nuN1FZI8F889XdJa/vbXf4kUbew2k6ctooepzlzbzKLfYFCeHU4Q6zmOk5obzusQwsRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CO9Lmqk0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB2OrXb001566;
-	Wed, 11 Dec 2024 08:56:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=mnkTWhh/H73fvu1GHFu+JR
-	PYbASHz6VCplZ/mfBshIw=; b=CO9Lmqk0An9arlh8FZgDZE7STlv4M4BJFrQ8k6
-	xVi9udZAY2eyJKPwmM/MqppeghA4JSuTtYRrgkOXH//4qeOdPCpQzp9rGvFKMPGO
-	GEP+/IlixjPdEBcGQLv+i2OnruGxmNEIjPoeZAUr+xl66iUad6QiZB+7e3OT+/fB
-	mPMz5mf8sw1rDGXmn2ES5PABXJeeD3V6q9v6K1MXPLUZX+72PLQWIhMHHo3Q43Rm
-	3l5t5Bf7kbua6Jxqj282a3X5UPimgtZxPJla6XIT11ffSy9jN1ODZemMGsbUttGa
-	zxwN9PYhunNvXkjOGHb19FX9LDbN6xwZV8Y42Vbb5Ye5ihhg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f1xd11f8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 08:56:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB8ujk3004945
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 08:56:45 GMT
-Received: from ap-kernel-sh01-lnx.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Dec 2024 00:56:43 -0800
-From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-To: <akpm@linux-foundation.org>, <surenb@google.com>,
-        <kent.overstreet@linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Zhenhua Huang
-	<quic_zhenhuah@quicinc.com>
-Subject: [PATCH] mm/code_tag: Skip displaying the code_tag if it is not called
-Date: Wed, 11 Dec 2024 16:56:16 +0800
-Message-ID: <20241211085616.2471901-1-quic_zhenhuah@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733907438; c=relaxed/simple;
+	bh=le+Mh1wjBLqBi2bTTLZH6gClWn3WW5fXnLXugLgMUN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bv4A/wkZP4tNMhHMMOq0GadJFFSiyZ++cRsC3UVfg1lwG9zVm7o4M8s3xMp3Lj0iKfcujx7av9KeWwMJmjsrm2AyRreXzsBlJ8ltXnaXL7IGNkV/AISVgO6u1kZCsQuz5WZ7Cp4vb5QeXQODXj971Lt3Hm44to33A3rA0XDczfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4x8tEW6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCC81C4CED2;
+	Wed, 11 Dec 2024 08:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733907437;
+	bh=le+Mh1wjBLqBi2bTTLZH6gClWn3WW5fXnLXugLgMUN0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=G4x8tEW6qh3o72XqlueHI99hHI5sdgY7JzBvC/ssQPnsr241HDBap/SW6bpTjx29d
+	 1OyEje2fmgLrmgDzruHlDK2OHbxeIngPoRdhxiyB7KBMVaW7Kf0GvYwMZLkF2uHOBI
+	 Y20t+42nJ/OR/sZzpFGNg2TIyKZ//bMFf/elyM8fYnm+rqK9rCtn48zOa6w0e51SnQ
+	 kRCAyg4M0AT55he3dau35ARu/sHsK5r65wiqSwU6yrxE51k3uAChFn4osqSab8XTSQ
+	 Q1MlUhtD0890xIk4ZrVHrI0MsihvikSh/Uv39l1WF1ly7AVy53dx9aqmGDycfYWvnY
+	 gM7y5fcXPIEhw==
+Date: Wed, 11 Dec 2024 09:57:11 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
+ <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, "Rafael J.
+ Wysocki" <rafael.j.wysocki@intel.com>, Dan Carpenter
+ <dan.carpenter@linaro.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 6/7] ACPI: bus: implement acpi_device_hid when !ACPI
+Message-ID: <20241211095711.19909f0b@foz.lan>
+In-Reply-To: <Z1lR869cuIw_p2-l@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+	<20241210-fix-ipu-v3-6-00e409c84a6c@chromium.org>
+	<Z1isHpuHqHSX-jHd@kekkonen.localdomain>
+	<CANiDSCt64N5iheWgE0UhmTriLC8duraAaTaiX5fb7+NpXBRiUw@mail.gmail.com>
+	<Z1lF0ij99KpbVKQs@kekkonen.localdomain>
+	<20241211094037.26aa369a@foz.lan>
+	<Z1lR869cuIw_p2-l@kekkonen.localdomain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KUm7iSj61Yk96K2urOeeGbp4dpFiyd5R
-X-Proofpoint-GUID: KUm7iSj61Yk96K2urOeeGbp4dpFiyd5R
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 clxscore=1011 bulkscore=0 adultscore=0
- suspectscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110067
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-/proc/allocinfo is full of callsites which are not called at all.
-Let's only output if the callsite actually been invoked.
+Em Wed, 11 Dec 2024 08:48:51 +0000
+Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 
-Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
----
- lib/alloc_tag.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> Hi Mauro,
+> 
+> On Wed, Dec 11, 2024 at 09:40:37AM +0100, Mauro Carvalho Chehab wrote:
+> > Em Wed, 11 Dec 2024 07:57:06 +0000
+> > Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
+> >   
+> > > Hi Ricardo,
+> > > 
+> > > On Tue, Dec 10, 2024 at 11:35:35PM +0100, Ricardo Ribalda wrote:  
+> > > > On Tue, 10 Dec 2024 at 22:01, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:    
+> > > > >
+> > > > > Hi Ricardo,
+> > > > >
+> > > > > On Tue, Dec 10, 2024 at 07:56:03PM +0000, Ricardo Ribalda wrote:    
+> > > > > > Provide an implementation of acpi_device_hid that can be used when
+> > > > > > CONFIG_ACPI is not set.
+> > > > > >
+> > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > > ---
+> > > > > >  include/acpi/acpi_bus.h | 5 +++++
+> > > > > >  1 file changed, 5 insertions(+)
+> > > > > >
+> > > > > > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> > > > > > index 4f1b3a6f107b..c25914a152ee 100644
+> > > > > > --- a/include/acpi/acpi_bus.h
+> > > > > > +++ b/include/acpi/acpi_bus.h
+> > > > > > @@ -1003,6 +1003,11 @@ static inline int unregister_acpi_bus_type(void *bus) { return 0; }
+> > > > > >
+> > > > > >  static inline int acpi_wait_for_acpi_ipmi(void) { return 0; }
+> > > > > >
+> > > > > > +static inline const char *acpi_device_hid(struct acpi_device *device)
+> > > > > > +{
+> > > > > > +     return "";
+> > > > > > +}    
+> > > > >
+> > > > > I wonder if any caller might expect something of a string if provided?
+> > > > > Valid _HIDs are either 7 or 8 characters whereas the proper version of the
+> > > > > function returns "device" when one cannot be found (dummy_hid in
+> > > > > drivers/acpi/scan.c). Unlikely to be a problem perhaps.    
+> > > > 
+> > > > Good point. I changed it to return "device"    
+> > > 
+> > > When ACPI is disabled, it's unlikely that string would be used anyway, vs.
+> > > the case when ACPI is enabled but there's no _HID. So I think an empty
+> > > string should be fine. I wonder what others think.
+> > >   
+> > Returning "" also caused me some attention at the original patch. IMO,
+> > placing a pseudo-valid HID would be better, but I guess "device" is also
+> > invalid, as, at least I always saw HIDs in uppercase. Also, I guess it
+> > is always a vendor ID + a 4 digit number.
+> > 
+> > so, IMHO, something like "DEVC9999" would be a better name if we fill it.  
+> 
+> How about post a patch changing "device" in drivers/acpi/scan.c? :-)
 
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index 35f7560a309a..06fb7eb5c0bc 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -95,10 +95,12 @@ static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
- 	struct alloc_tag_counters counter = alloc_tag_read(tag);
- 	s64 bytes = counter.bytes;
- 
--	seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
--	codetag_to_text(out, ct);
--	seq_buf_putc(out, ' ');
--	seq_buf_putc(out, '\n');
-+	if (bytes || counter.calls) {
-+		seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
-+		codetag_to_text(out, ct);
-+		seq_buf_putc(out, ' ');
-+		seq_buf_putc(out, '\n');
-+	}
- }
- 
- static int allocinfo_show(struct seq_file *m, void *arg)
--- 
-2.25.1
+Yeah, keeping it coherent makes sense, but see:
 
+	static const char *dummy_hid = "device";
+
+This is compiled for production kernels, and not just for COMPILE_TEST,
+while:
+
+	static inline const char *acpi_device_hid(struct acpi_device *device)
+	{
+		return "foo";
+	}
+
+is only COMPILE_TEST. They don't need to be aligned.
+
+> But I
+> think the string also needs to be an invalid as a _HID object so it's not
+> masking an actual hardware ID used by a real device.
+
+It doesn't matter if if ever conflicts to a real device, as this is
+for COMPILE_TEST only.
+
+Anyway, from my side, I'm just giving my 2 cents. I'm ok either way: 
+"", "device", "DEVC999", ...
+
+Thanks,
+Mauro
 
