@@ -1,81 +1,77 @@
-Return-Path: <linux-kernel+bounces-441471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54EA9ECEC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:37:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02F99ECEC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:38:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5529C283398
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:37:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A9B18829EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7C018628F;
-	Wed, 11 Dec 2024 14:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569221A01BD;
+	Wed, 11 Dec 2024 14:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UsIky6zH"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2052.outbound.protection.outlook.com [40.107.236.52])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aQyfZfCN"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2078.outbound.protection.outlook.com [40.107.20.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A21F1802AB;
-	Wed, 11 Dec 2024 14:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DB9187870;
+	Wed, 11 Dec 2024 14:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.78
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733927854; cv=fail; b=E0TVytLPHo+FKeo4huMQiFf7/O3df7UXcpiUjQmZ4KSqq+RBMS0QnupEGaCokipCYhwP4/eJxsXy6a+WtWc2JfCMUqYpbEt4GxIKevrFKmYZ6lsp3zkN+76ZhjgDvsBOVzfAAxPvpnxu18M8hv1AutgrNzsBucMLpgZRwEudgz0=
+	t=1733927863; cv=fail; b=Zv5BLskBuV+Jivl23wmmKwEyfwmwaPc3PdZiDaNjm7N7fH98dhry4bAZ9B8M/u+/WJmV8dqoRr7WNsDt3R0ZT4gItSsp/SdX/e2uLMuFPIHYxNZ0HMlJ2XlzZ8Nx6yA7egbMUUhKIfTXBFDGwZft0BhxjtIxpRl081qC1pGJj18=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733927854; c=relaxed/simple;
-	bh=KukEGMtLXeqFpZ3TadZDc5cOfzdXMjkDrw2dgGTS7Go=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=Q3WOSVhWefjgp4jZgFmUuKrFZ4Bpo7VlkoOLNvEtDA3x+gmRrJVqlPGfiE6nv+uC9yxIdA9srGnZ0/gMTJqzQDHRmxOyYOX255tCyzN2c5GP3CD7KsmPIape/CV3hJMQSF8wv+fOUz2x/jKmGt8+V0wQ8/r9kLJJiiQuM6tunpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UsIky6zH; arc=fail smtp.client-ip=40.107.236.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1733927863; c=relaxed/simple;
+	bh=NAUrkGXqC7vV4Pn5aaHqVt5VOGBiHg2tQ4AAdczG6jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DmF0LuskWHPcoPAeNrQeomssTkPjbBYxjCCSa2Xp28mmfU4mfnEsGYvQpgkXs3Qi3FmQ27SmnuLnGAxOJENkPM04vC2uXaPwW5UpNd9pFQh8+J9xl8RBdEu2QRQ8NBfsdk8u5bSje9iXBoAuSWPUfDerNzWhJQT6B6I997AREIA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aQyfZfCN; arc=fail smtp.client-ip=40.107.20.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VmTVECsR0+R9NGdnaAPTbpcIU3089WSJlzvPVTrSY0PiODosptOd3N4sr3QUJncSJ27vCvUDVdd7I8/0YOEvdPT4zpU2RpwAM7Weuzk3nKRXQ4TI/WK78tvByf96+63VCh31KOU8ECeOBYprOLdb8Hzh5iF6FXBTsjQlMlZHYKo5Q2e5Y7xxn9HPxZMZ+WACQCGLtx+X9hwv+5ODdk1z2/P3WYXUZg1UyKkwp+eu1RZ+kS4skPiPu6Qq8TBk7iZ91TEknzYBaYbBcVc6U3Vt9Pisj10JLcFiw5bMJwfj3Lu8+Q6NNCLXbH1p6IPq/l1GLBh2/URPdikhbIW91qkEyA==
+ b=r5F3d9YRM0RZhRex1FhcrSy2BpWtFErJiP1sNcoIvmUL0eFmmLeQDCe0TXxcaXz07s/Fr6+9PHiuk24wR5fWlRC7JHB8a73WF1aDU6FmLiSLsbAb/yUEudkcWVUevekUfWup+SxSTrUU+NKG0InNRC+vjvelxx9XlV+cl3UTFQcmuGUvQIOu5dtkANBMQHiP9N1TCT9lWBMJ5eR2D05Lwsyxr3WUX+rG9S27bDhJiFCGoJ2Vf15AHbHlKTY5qgg5U8U7Dc+NAuneeiRsFcwyke5QV71BSbeZqRs38vOLDgIzGJTpTqftg00bFmCkj7uCX2JIvdv/ZLyfvzxtIXAE4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bMv4iFTb1m6U/leJ0sl5ZvxLbpowdemdEfNdk1QiLX8=;
- b=h2XxkikDqF+aeo4sogJVlvWFxdzySf2NhP6FGT/1vMxKHP0Qx9oCKVVJ9qwLmIybaPuueq7+pXTsERqCB0bPn1sJOhFSyjNvEMYA4R01TJJD11Q1hLg1RYAzzu50KXGvRwVaJJxQc2sk2N/RUdMUbdbFR6PXpamA/QEFo08sehA49g7Jmh99TBQHrRHukJSI8ab3prbGvveqylsoPfv55Jw1nPBZO4U4RphK5IrhWQNWpmAdtfNpleLe/R9o53xf2B3XyJV1gEjhL/eKNAAtoKC0B30lsGO6kEzHOtPhiuCi1pzKWkNxo5Ibp8ysP+h1X6jiC+6I9DyemO2lodkmvw==
+ bh=ZLrX8/YOBvMCfCH5Hw59p9XiZYNzYQYhDS0I+YWkXLI=;
+ b=iKaEPJ19CrmtCP8Aan0Dn+zKU9zuZzyDHAMEjrRI0klDh7LFvrkfvjyvVsBs4VnNFyMupPzun9S2smrMcaevGKj1ZTgik3fheXdZYsRIGh6VK2/vlrWN9jwYPrbXmZJFVo2eJ3h60A0EKGD3orIHurd4DRtVhdb6HTJtyqv2qzZ06P/pJpIG45mamOn87XAdC4enYyXCCnVaeiY1Y2I0tbHgE/BA111hnjFNa1EAQdP3TXV0soyjpN8J6CTC56fuIRiIsfB2FFCW3k8VRPsaxe2OuYmKaoFIyhsV6gp0UgjszXXyKkHaah9JAsYZBI7Et8N1vuufPSfyzS0m6D0vBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bMv4iFTb1m6U/leJ0sl5ZvxLbpowdemdEfNdk1QiLX8=;
- b=UsIky6zHeF0NQdGT4AILE13m/CD38oGvAINWVuaS/IOSsUdcnguA+k7O4ixEAfYkaeX8TIDWQSpbDncT5abp47QkacE4YFrYhakwqe6Nn7GiULsP2uUKXfhMBZJp9Nh1gCAwIFM69UwhH08VkaYV0eBFAxTp3rxYIKBayiJBSnk=
+ bh=ZLrX8/YOBvMCfCH5Hw59p9XiZYNzYQYhDS0I+YWkXLI=;
+ b=aQyfZfCNL5MLoJZvRc3mpPkqtgZhjwcGqKx9++vt/KgSAZM+9l/e21xl0zKZod973kZ01zyHqu9IFbzSbIQzP7COWHWcY3fScef1rgYqFfR6QFd/2DN5bshadd0Q5K1DkXMMkIlvj8GZHIpwNOjHwgJMlEN0uiAIO9T80NVDu9Oy/+uTtlhc2BgpHYGU8+UimnGcyc+6+ElxEPvfHDLKrpnFZnizWmkGOtPTzBurd7uasR2Gd94nRF/oiEhQ/89RInZ+jrRlXy+Am9fg9nq/SUh9gkn9kLBMxVZhGhD70NMbSoLNbHdJ7lQ09EKOsIpKN8Nm2lPk+ZpNwYXwQWEHAg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by SA1PR12MB6972.namprd12.prod.outlook.com (2603:10b6:806:24f::19) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AM8PR04MB7284.eurprd04.prod.outlook.com (2603:10a6:20b:1dc::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
- 2024 14:37:28 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 14:37:28 +0000
-Message-ID: <c64099db-33b3-9438-536e-7882bae614e0@amd.com>
-Date: Wed, 11 Dec 2024 08:37:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Sean Christopherson <seanjc@google.com>
-Cc: Simon Pilkington <simonp.git@mailbox.org>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, regressions@lists.linux.dev
-References: <52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org>
- <Z1hiiz40nUqN2e5M@google.com>
- <93a3edef-dde6-4ef6-ae40-39990040a497@mailbox.org>
- <9e827d41-a054-5c04-6ecb-b23f2a4b5913@amd.com> <Z1jEDFpanEIVz1sY@google.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [REGRESSION] from 74a0e79df68a8042fb84fd7207e57b70722cf825: VFIO
- PCI passthrough no longer works
-In-Reply-To: <Z1jEDFpanEIVz1sY@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR05CA0012.namprd05.prod.outlook.com
- (2603:10b6:805:de::25) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Wed, 11 Dec
+ 2024 14:37:37 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
+ 14:37:37 +0000
+Date: Wed, 11 Dec 2024 16:37:34 +0200
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Robert Hodaszi <robert.hodaszi@digi.com>
+Cc: netdev@vger.kernel.org, claudiu.manoil@nxp.com,
+	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: tag_ocelot_8021q: fix broken reception
+Message-ID: <20241211143734.d3motemj7kwao4td@skbuf>
+References: <20241211124657.1357330-1-robert.hodaszi@digi.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211124657.1357330-1-robert.hodaszi@digi.com>
+X-ClientProxiedBy: VI1PR06CA0185.eurprd06.prod.outlook.com
+ (2603:10a6:803:c8::42) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,207 +79,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|SA1PR12MB6972:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e880088-5bdc-4326-ba74-08dd19f15654
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM8PR04MB7284:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3dac541b-5e52-4597-32a3-08dd19f15bbd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RnFDZkxCOXB1L0xqSFBoMEYraVZtZ1dvQlJpNzNuTTBXUm1oS010WlpsT0or?=
- =?utf-8?B?TVcvYUpvRVJjWmhaOXNsTC9hUDdNbmxtd1hQNmh4Ti8zblJDQU9BV1UwSTJM?=
- =?utf-8?B?UGppNmpNQkpDZkdkb2xQQjUwMHBRYXY3TGxsQVgvTE5ySExUejZZRjhFa2p6?=
- =?utf-8?B?aTU0MHdzQXQwQTRENWYxNlFmWitUR2lETGhlNTlpU2RGY1lsRlpUdURLR1ZH?=
- =?utf-8?B?dHBTa0diL1M5L1FwZXMwbmhuRFEyVmZ1bWsvVEk5bTFoeDVBdktpNFl4WVh4?=
- =?utf-8?B?dW9ZaWhqaGkrSEdMUGxhL3RXTE13dFBTNHZxZk4rRXl4UExHN3I0UWpuVzZl?=
- =?utf-8?B?KytDZVdzeXRmR1lkUFBlUGNKeFBZclNvTlprT1dJOEM5WnZQN2tKdUdFMmts?=
- =?utf-8?B?MDVMTklxNjNlVEVVbXNlaW5aT25Mdmw3UDIvSm4yR092dEFlMlhVcm43V3dz?=
- =?utf-8?B?MFdNcUxFK2w0VlVYRXhsbHArK2VFYnVSOWM0U1lucjZLVlpGWGh5UVlKR1hX?=
- =?utf-8?B?TmxVcVZhSkNDVkFaN3FNdEdLRE9ZRkZJajltMUhiNGRDOGRBa3FKd2E5eFFz?=
- =?utf-8?B?cUxGbi9aMHhpcktlVlFBTHBWb09ncFp6bTZvSnlzSE16NlVrdFdURWNUbTRC?=
- =?utf-8?B?V2wzUkVFU2hMWHFZRm9RSGNhWERQcTdtZU5SZm1uRGJyc2pUSkFTK1hjZ05q?=
- =?utf-8?B?WFIyazIvTTBXNGV2YWRwU21hcnBwcTluZFdSblg4dVY3ZnBtd0NRZHpxeGZ2?=
- =?utf-8?B?REtiWFdCTUE3Z2V2U2hWZXE3QzJaeDEzQUhua2h2UTdKS2ZNdW0wMFZGYzJr?=
- =?utf-8?B?VlJYNkR5WDljS0ptTUJRcXg0THo3Q2VBdzlqcGdYUzk2TmFHcjEyd291NW1G?=
- =?utf-8?B?WEc3Y1lUNmZ2cUo1dFlzZ0FzU3JUK2pjM0hSZGVjek81a0t1aHI1cVUva1E5?=
- =?utf-8?B?dkphZGJJdjZ3K0Z0K3NjbFVsRkVnYjRWN0l3STRHNGxyUDl3WnlhTXpuQzJM?=
- =?utf-8?B?N1hGR0NUR0wyOHhHY3FFR2IyWjlLOVRtN0lEM3VodVY3UHhWWm1BSjBBVnRR?=
- =?utf-8?B?YnZ3SW0xcTBWZnlQOGE1R01yQ2RocWxUcmR0UTViRVZhSTRSZ2REaWtWcXhz?=
- =?utf-8?B?UTY3NDZ5VTNteVZucHRkTlJKSlRmMVlKL0xTc3JDUWdaQzVkU2ZOSUtCaDVE?=
- =?utf-8?B?dmFqSHoxcTJ0NVExWmZ6RXNiM3Z4YXJ6SHZtNmtwM0FwMGhPRHpMVFo0Mkpy?=
- =?utf-8?B?bUtrWEU3ZEhCSy8vU0dWZm5vZGpxZjZtOTN4eDBFYlJ3U0FaRzByN2xsZjBV?=
- =?utf-8?B?eUkxSVZkU04xd2l3L29JUzZ1VnFFNFdnSlpQbFJQZ1FoQ1FlV211MWgvWS8w?=
- =?utf-8?B?VU1VNm9tOStiYjVPQmlZK3VUTHhoby83MUFLTjkyQnUvWXNmVmkyQ3k4RWVC?=
- =?utf-8?B?OExLdEtqV2FpcllsRlNqTWpjZG0zZEVyR2dBYUdROHpKb001RHZrZW1laUpi?=
- =?utf-8?B?WDhDU0dhVWJNb0svRHhDU1ZqNTg5Q2RCQ2YySlR6UHhUVmVFTnpGVGM0bjRT?=
- =?utf-8?B?U3cwTlM0VGJtVWR1Rlh6cm1Bb016YUJmVDYrd1dZQ3BqZ3dzb1RBWm9ybk1h?=
- =?utf-8?B?cXorc2lRb0xGUjVyd0FmMjZLdG5xNTR1MlpFbys3bzZicW9Rc2crdVZHWTQy?=
- =?utf-8?B?VWlYOW9PQUZuMWhMUk5ib1hLY1F0MExrcWdvZ3VNQ2FRbFN1UW1rUUI2RktG?=
- =?utf-8?B?dEU0WGowb0MxSVNteHp5NWRsUkhKc2IvZVB4NUcydHRaUy8wT3NzS0dkS3NT?=
- =?utf-8?B?UStzTnpScWM3QW4yQituZz09?=
+	=?us-ascii?Q?5Mt5DICb1Ng/DEtI9aolvwU6QWzKtW0A2Par+fy8HD1QYbzA+MdjPE4yOYMz?=
+ =?us-ascii?Q?4Bs+sol9aeNG/cS55yQO4Lf1YIxGQZqc64DadFXmke7YxnIvlCSuraQ+Azrf?=
+ =?us-ascii?Q?5FsRd9iBQFBzp3fi1o61BbNVUvmVtZaiFENL8WFbrG5sihkva5YSGrg0A76m?=
+ =?us-ascii?Q?mS6ssFJFZslhYLCty2QLSA3WPWPRVJH99PaqF+gTpcDbUKEBZWQwt+YexHFC?=
+ =?us-ascii?Q?4coCifI5iTBxP4hrKCSrs8Vgu5AHwLZh1TvyPeri3xihnXJUkikJ7m7CdF6J?=
+ =?us-ascii?Q?vbmqwDuUBej4lqxupv+5MbB8LFFqox1nJjsk0FhPugzbnFkE3M3Oa+vvaUsD?=
+ =?us-ascii?Q?0BYRNyu5TFlfih9U5Eh6u0lR+nqDNyJelS/m/5f58tuXR1MfJENk09/utm9d?=
+ =?us-ascii?Q?eCSOjJp2FnFRcn5vbW7BQ609T1N0w5EuVKNA+S2QTrt/0MMabe44hOMqbpTJ?=
+ =?us-ascii?Q?vO8pRrvQ7IWD6bBe+J68t4lCoD9Mj050BSknq39myDhbQak6amNyYQ6vJ1/h?=
+ =?us-ascii?Q?FoZugdfzr6wAViXC4SwGqXIAtJN0z4H3hD++3XiPHES+mChufA1WeR8dnhOZ?=
+ =?us-ascii?Q?3Hs7m32+jeYBKXMThImj/Zq3xqUynC0QtL/AU31Ltm2nrDTQz5oeGW+jgGYb?=
+ =?us-ascii?Q?rf1r4eQxG4AMM8xxfXUj07GByZ885J2q0E5RGcPUbOXBJnX54qFoBPTgDg7H?=
+ =?us-ascii?Q?n538yr1n4I0TnhWbokCEb+GSAvd+rRhvsKbCzMTiWCHosr5Am0fugXZyIOKG?=
+ =?us-ascii?Q?7ueWnZDnAQFiBhibxfOoqa2Pd8UWd6DhnyaGvtKq2GqFA6BKD3W3O4FaHfV3?=
+ =?us-ascii?Q?nwNdlST6EiJ7ar2vOCIoKsDuNIZ5oHiWpg/ME2WBHqGUBxhe4Ah9C/a5m6NL?=
+ =?us-ascii?Q?hMBj9K1bv6b8VZoJ6vrm3EwrrqStWa97y8BsXYU8SUCVeemS6Jg3KF6l2bzU?=
+ =?us-ascii?Q?w7Fjbk621aO1ScVLxM86xtVmOTMvqKqiHhK/8UiL8JXJ85TyaHkju2DwbrOy?=
+ =?us-ascii?Q?5QizL4Vfm44f7fFbB246BI3Z5OULbHutyOgG7ePmeamjTKNjysz+7UIMO3r9?=
+ =?us-ascii?Q?4GXN1aeQaPz0JLalhI/weFr1L7yf7455pjCjHCwbTaGXFBmXedipFhRARoyo?=
+ =?us-ascii?Q?I3IDd67fjZixBo5KFHbYLQfNGBe2Cgpuffhahzel5CKsIX1u634PZ4nXPlJ6?=
+ =?us-ascii?Q?47mLVAteey1pr1jT1AG7G0Xcj6Zlovu4kSZ9MQI8BosnbTF2A8JYFzBAxj+t?=
+ =?us-ascii?Q?E/RYQrJQu8cQadFzMF/U4o609mMLXG2f2Pg5xk4wUFvbeZ0vznFQx+0JGZby?=
+ =?us-ascii?Q?74KXV160YG0ss7zkmnDMDR1yhgNCaRKp4cBaDWGw5nRuTw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bi9BUitCRHdKNGFra3d1WXovWW40K1czN0R6VTZDSVBjRFFxNlpId2hEemN5?=
- =?utf-8?B?N0ZMMzVIWDdjZ2VFZ1JDcmE4S0VZZWtMZTZlazFlelBpdTJnSGFqTTZLb0E0?=
- =?utf-8?B?UWxUb2FKL0hReGw4dnNVMitUMCsyb25SYkRxYW1WTDZrTDVqYXJ1cndXSzhy?=
- =?utf-8?B?VDZySUlLUUlJYTM0WEw2bnZjc1RlRFVGNmJYNUZ0dGU1anFBbHdTeFAwOW1m?=
- =?utf-8?B?YnZ1dndjMmJWODBlaHlxQTRBZDlHdHc1Y2lxSlBzVkN4ZXNIQ3RXSlFxVkYz?=
- =?utf-8?B?R290SnVFeERiTTArSVViRDB6aWROK0VIWVl5WVBBV1ovNnFpZHp3Y2JtdVlG?=
- =?utf-8?B?U3NTQ3krVmpxNGV4SWN3NDdKQXlpQnFEUHJqWnpXQmNFMVcxcC9xWCtENXYy?=
- =?utf-8?B?UmZBVC83b2R2RDdUZVdoZmp1L1ViZ2RwdU5QeG1RMExsemd0b3FUa2lrLy9v?=
- =?utf-8?B?bTdjRUoyV3lIZFpKd2djaXpQWWsrbXh2Q2IvQkdsZUx1NUd2VDNSTVVpSjds?=
- =?utf-8?B?dzBpVmcvemdUckcrTE1rd1QzVk5iMmxvcjFTOEt6S241NGVENUZLbEJ0bkhJ?=
- =?utf-8?B?VGlQL1RLUVJzeXZtNHZmajBjazJCenYvNWU5SjFDMC9GSTJMMnBSZ3VTOUpz?=
- =?utf-8?B?K1o5Uk94b1pYOE44SFVJSlEwVDd0QnpnM0MxM0FlN1FidENZeXY3NmRKWTRs?=
- =?utf-8?B?eHdERk9iblRwZndYMDNxVUJ1N0t0RlltQVlQejFWdmtkcUFiNVpmU0JqeFpn?=
- =?utf-8?B?ZFpwRWxFWGJhWE9nRGdPMEk5V2l0NXA4a1FNVGxzdTlJc21nT0JhYnZoaklL?=
- =?utf-8?B?VldBaWRmdGp3NDF0empJd1VRL20xcGRMdVZBY2dEQ1BIT0Mxa3Mrb09HbFNa?=
- =?utf-8?B?RCtXUFdBZFZDOGEyT0FLYWgyRHNVUXhwK21iNmpYYWgyYVV3Yjl5THFIOVNm?=
- =?utf-8?B?T1NFY1htK201NnhmVC9ha3NsU1dMQVJoQ2lLeVBHaG1xM3F1MEt3b2lxMDQ2?=
- =?utf-8?B?MXpQMXZGdTJsZkxROGdUeXQ0eENVejdyMGdzYm1nWEl0aFF1RzJGMkNmM1Q1?=
- =?utf-8?B?TC9ZZmhLZDNNV09qQW05aUpoSDZCaXM1VkxaQnR4bjlUNjhqK3ZIWjVGNVBK?=
- =?utf-8?B?T0RMLyswNXFNcUFrcHI2ZjV1d1lWZ1BTUVRzNXpCOC81cHdwTmhwQlptOVAx?=
- =?utf-8?B?MU0xaENqM0x0MGNXa3dvOVB4UVFZTGtkdHkvN0pOZ0pmMWE3V3lCSkU2YytQ?=
- =?utf-8?B?QjVsRTBZYU5ESVBCR2FkNmQ2OUtFTFJBNEhJOXpJeVI0bVBvcTdRc3FXZ0gr?=
- =?utf-8?B?VnpGNHpETFJiOTFxaTFUNG4wTVhKNUtlNHJyZzBIc3U2WDRpNXdzT00ra2lr?=
- =?utf-8?B?V0hwejVkRndDRXg0NjFCbmw0Zkx6ZHh3dFo4Q3JLSWNPbWtrVzVsQ2VkcEtB?=
- =?utf-8?B?UlREbjNGenZ4SnAwWE9BcVpXTEVSV0NJaWFyVEJ2MVdaeDRXWHJodEJUaE41?=
- =?utf-8?B?VlZXbjV0ZlloemlKZEVBUEhQaVk1MmREMWp4TXNpM1FDclV4c3BiOW5hVEo4?=
- =?utf-8?B?dG9yT1JtWkExV2xhVUZTT2MwK3M4ekpPRFZ3RXhocWdkTzkwL29xUXBRTkVp?=
- =?utf-8?B?SDRqdUFSN3NqN1ZlRUtlWVpoaGVlbi9tTGcweHhyVjg1ajlMdzJWWWV5eXpU?=
- =?utf-8?B?c2dnN0JsWWJmclFhRkR4OVlXdC8yQkdqU1ZwUll6S1BRMURheU9QU3hsbHF5?=
- =?utf-8?B?cWV6dGFERUxqdnliTmw2Lzl5cTJ2Q1FBblFWTWpXNGQxRGRqN3RZR083b1Bw?=
- =?utf-8?B?U3ROcnQwSXVobS9ZTXpvbzY2UnFjK2VSVE5temR5KzFqNndwZ1dHZS9aTmpz?=
- =?utf-8?B?V1JFUStSUGhmZVE5QW1tWHZKeXg5ZElNc251WGdkTUE3d2R0Z3d6eXlVbERH?=
- =?utf-8?B?U2RwMzczdzRLUWphdlJJWEd0dnE1d25paiszNDRmbjRBcHR5cGY1c0lIK3Fr?=
- =?utf-8?B?WHUvcnVKcXdia2xiSjhWL0hwdHlRODcwUXhYTWljM21lb2kwSXI0VFJNUG1r?=
- =?utf-8?B?eWJUcVNZL1ZKSG41VEQ0clY0amlrejBhNWVhNW1scDFrcTBoRFdqaXpUQnJ3?=
- =?utf-8?Q?x26E1M3wftAMJ1LcHxruupTFR?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e880088-5bdc-4326-ba74-08dd19f15654
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+	=?us-ascii?Q?h8irYzOmOJc90sSk5o5MrGvx6CmnPD760h8SWb/nVuODYyhPHm0D3rAaeDBG?=
+ =?us-ascii?Q?ArgrMIxZhY9ROShtzA9yJUmwRue54KLJWe+Q4opAu+Nf4BPI/2xYox9y5pGd?=
+ =?us-ascii?Q?aWRH7qdnt8qHjZmPOv905TaVCjH2LO5AbdWWm8kD/7M+fz6sGvJU9FxgO8Vx?=
+ =?us-ascii?Q?nqoQPXS9DVQrozL0rKmhCGvKVoTHZyopNh18NsJMKFnJSol+srSxdNl7x8Rh?=
+ =?us-ascii?Q?72FkTbdaPdhXBViZoJ+lI124NBsHTBC08N7C/eeGhbhdfEDrWnMYRlsU45zk?=
+ =?us-ascii?Q?hYdZQPwB0wFl+Hz7++2NA1D+Ys2mnvqNxDibPKX6TorWdTsbVag4unIqB027?=
+ =?us-ascii?Q?WSlXp2jwnrerTNLozn59rxJXOGBAWjHIjPncs01OL9a2ATbcRpgVrdDz7Gcx?=
+ =?us-ascii?Q?4p8QTygsrXPGJSPvO4YE2uuLfGd9GMSy3vIHnyiR3u2mEPtodeiHICxj7tyQ?=
+ =?us-ascii?Q?ts4bg5O/knwSBvEu5+D/s7DRAvbEISxrpIQdsutaiOmocwK42c5WkdFhIr1X?=
+ =?us-ascii?Q?YfOGASekVlwCHc14BciD9JKGjqMBFrTLx6QYUeD2Wb5s22/rPFtqtX1UbuBk?=
+ =?us-ascii?Q?nDFFuP3LfKUZxKba3U9gSMvHo1vCWrG/cftuFqgEIHZKNjfLyIkKs/mRuSn/?=
+ =?us-ascii?Q?edI7WuQd3BxK2IcZBFf3EjfFVGY6AabBLJ05zgMmhT7ua8pa3CvkjGsOgfTM?=
+ =?us-ascii?Q?6Bb9vpb1inJTiAKD4ReV5LbMKSJ/mbXdig2OYLrg9ZlWE5S6AeS8KVnomZD7?=
+ =?us-ascii?Q?kq2uufXvuR6ghazPCfl8izMvY10Pr2Mvg2WLTrG5e7846AzG/6F7GSnwBjL2?=
+ =?us-ascii?Q?NN2evyLdPAZBTqGNBt7elZBs42zMnlgB0v4dUglzvmzgspvqcZQmAbT2dj8U?=
+ =?us-ascii?Q?F21WSPtmwFTkTL4Ib8xHXMc05wOtPSrPiZMWKg8fiX21qDzAIOQtbOm291Qn?=
+ =?us-ascii?Q?FMW3pYQAYH8SAXpBiMiedlJgO8A9Tlj4nMZpUvn5BGJt7GmovKwzy92ffyoC?=
+ =?us-ascii?Q?yAu8SNYkEw/ZdnfsYHPJRS8oElSC4FhbNycVxD9EV+g1UumsncoctQKPyAaZ?=
+ =?us-ascii?Q?pZLKWnrzJKnk86vKtA/Yjg94E4KXcPIRoCDrygwmiWwwN/mN15knpkhlUgD9?=
+ =?us-ascii?Q?aG5FT3Zwa2WEAUEzwjHNLntzWiypVAWT6l8UrKaHdhY5Ujj3D4vJKDJxJWf/?=
+ =?us-ascii?Q?ziP3QxYQOYviSj3nPpbsvp3YxXAXv94F44W7r5CfTtG/qrtTcjjsqLvNXsjR?=
+ =?us-ascii?Q?Tbb2Z/6dKuNyfjf4zW95ELVPYSkDEPCY8awnu3vNLIzZxm5AKD0g6UX7mElf?=
+ =?us-ascii?Q?n0zWCeJhIBZekJdswcp4Y8evmsOcqT+Cp/XRms0clpYNufxWArQb02MCN/Xv?=
+ =?us-ascii?Q?mpcXb9XsQE4mtTdOkbGFoD+Yps+pJKuwiMKp/d9XPQnBJCXOH2DJ6PTXdJkp?=
+ =?us-ascii?Q?z0LJ3s1mLWt3eHiNw6RxC+Ey606/3UtBWZY4tm/qMOso6jbwgZYbW/3GpOPM?=
+ =?us-ascii?Q?lSpmJbaV2n5hDdR/f1pRdDZQDdVUUdYotjLAu4gdBVJ2bkg9Hc/MIRluLrCa?=
+ =?us-ascii?Q?h6G71iIPbcMgSbVYvi+UEYEvogab0vqyAnKaTsBjzozu5Zm2LBhdbtBEJLTx?=
+ =?us-ascii?Q?rA=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dac541b-5e52-4597-32a3-08dd19f15bbd
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 14:37:28.4259
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 14:37:37.4985
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TCRWF94G2um6wIhpTXFWvhAF3/7o/KEn47K+hS6NTWK+wZiC8aZP2dVnXLvCvR+xrDY8pF+MXoH1tat0TZEPig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6972
+X-MS-Exchange-CrossTenant-UserPrincipalName: goPvGyGIIQKsQn2SLmI7oQLgKG8Arz1wMeXe5fY+KwDiQCJsXpoXohV/FFk5q0PRm+LWMNZP3cGqaMRl4/xBoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7284
 
-On 12/10/24 16:43, Sean Christopherson wrote:
-> On Tue, Dec 10, 2024, Tom Lendacky wrote:
->> On 12/10/24 14:33, Simon Pilkington wrote:
->>> On 10/12/2024 16:47, Sean Christopherson wrote:
->>>> Can you run with the below to see what bits the guest is trying to set (or clear)?
->>>> We could get the same info via tracepoints, but this will likely be faster/easier.
->>>>
->>>> ---
->>>>  arch/x86/kvm/svm/svm.c | 12 +++++++++---
->>>>  1 file changed, 9 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
->>>> index dd15cc635655..5144d0283c9d 100644
->>>> --- a/arch/x86/kvm/svm/svm.c
->>>> +++ b/arch/x86/kvm/svm/svm.c
->>>> @@ -3195,11 +3195,14 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->>>>  	case MSR_AMD64_DE_CFG: {
->>>>  		u64 supported_de_cfg;
->>>>  
->>>> -		if (svm_get_feature_msr(ecx, &supported_de_cfg))
->>>> +		if (WARN_ON_ONCE(svm_get_feature_msr(ecx, &supported_de_cfg)))
->>>>  			return 1;
->>>>  
->>>> -		if (data & ~supported_de_cfg)
->>>> +		if (data & ~supported_de_cfg) {
->>>> +			pr_warn("DE_CFG supported = %llx, WRMSR = %llx\n",
->>>> +				supported_de_cfg, data);
->>>>  			return 1;
->>>> +		}
->>>>  
->>>>  		/*
->>>>  		 * Don't let the guest change the host-programmed value.  The
->>>> @@ -3207,8 +3210,11 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->>>>  		 * are completely unknown to KVM, and the one bit known to KVM
->>>>  		 * is simply a reflection of hardware capabilities.
->>>>  		 */
->>>> -		if (!msr->host_initiated && data != svm->msr_decfg)
->>>> +		if (!msr->host_initiated && data != svm->msr_decfg) {
->>>> +			pr_warn("DE_CFG current = %llx, WRMSR = %llx\n",
->>>> +				svm->msr_decfg, data);
->>>>  			return 1;
->>>> +		}
->>>>  
->>>>  		svm->msr_decfg = data;
->>>>  		break;
->>>>
->>>> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
->>>
->>> Relevant dmesg output with some context below. VM locked up as expected.
->>>
->>> [   85.834971] vfio-pci 0000:0c:00.0: resetting
->>> [   85.937573] vfio-pci 0000:0c:00.0: reset done
->>> [   86.494210] vfio-pci 0000:0c:00.0: resetting
->>> [   86.494264] vfio-pci 0000:0c:00.1: resetting
->>> [   86.761442] vfio-pci 0000:0c:00.0: reset done
->>> [   86.761480] vfio-pci 0000:0c:00.1: reset done
->>> [   86.762392] vfio-pci 0000:0c:00.0: resetting
->>> [   86.865462] vfio-pci 0000:0c:00.0: reset done
->>> [   86.977360] virbr0: port 1(vnet1) entered learning state
->>> [   88.993052] virbr0: port 1(vnet1) entered forwarding state
->>> [   88.993057] virbr0: topology change detected, propagating
->>> [  103.459114] kvm_amd: DE_CFG current = 0, WRMSR = 2
->>> [  161.442032] virbr0: port 1(vnet1) entered disabled state // VM shut down
->>
->> That is the MSR_AMD64_DE_CFG_LFENCE_SERIALIZE bit. Yeah, that actually
->> does change the behavior of LFENCE and isn't just a reflection of the
->> hardware.
->>
->> Linux does set that bit on boot, too (if LFENCE always serializing isn't
->> advertised 8000_0021_EAX[2]), so I'm kind of surprised it didn't pop up
->> there.
+On Wed, Dec 11, 2024 at 01:46:56PM +0100, Robert Hodaszi wrote:
+> Commit dcfe7673787b4bfea2c213df443d312aa754757b ("net: dsa: tag_sja1105:
+> absorb logic for not overwriting precise info into dsa_8021q_rcv()")
+> added support to let the DSA switch driver set source_port and
+> switch_id. tag_8021q's logic overrides the previously set source_port
+> and switch_id only if they are marked as "invalid" (-1). sja1105 and
+> vsc73xx drivers are doing that properly, but ocelot_8021q driver doesn't
+> initialize those variables. That causes dsa_8021q_rcv() doesn't set
+> them, and they remain unassigned.
 > 
-> Linux may be running afoul of this, but it would only become visible if someone
-> checked dmesg.  Even the "unsafe" MSR accesses in Linux gracefully handle faults
-> these days, the only symptom would be a WARN.
+> Initialize them as invalid to so dsa_8021q_rcv() can return with the
+> proper values.
 > 
->> I imagine that the above CPUID bit isn't set, so an attempt is made to
->> set the MSR bit.
-> 
-> Yep.  And LFENCE_RDTSC _is_ supported, otherwise the supported_de_cfg check would
-> have failed.  Which means it's a-ok for the guest to set the bit, i.e. KVM won't
-> let the guest incorrectly think it's running on CPU for which LFENCE is serializing.
-> 
-> Unless you (Tom) disagree, I vote to simply drop the offending code, i.e. make
-> all supported bits fully writable from the guest.  KVM is firmly in the wrong here,
-> and I can't think of any reason to disallow the guest from clearing LFENCE_SERIALIZE.
-> 
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 6a350cee2f6c..5a82ead3bf0f 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -3201,15 +3201,6 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->                 if (data & ~supported_de_cfg)
->                         return 1;
->  
-> -               /*
-> -                * Don't let the guest change the host-programmed value.  The
-> -                * MSR is very model specific, i.e. contains multiple bits that
-> -                * are completely unknown to KVM, and the one bit known to KVM
-> -                * is simply a reflection of hardware capabilities.
-> -                */
-> -               if (!msr->host_initiated && data != svm->msr_decfg)
-> -                       return 1;
-> -
+> Signed-off-by: Robert Hodaszi <robert.hodaszi@digi.com>
+> Cc: stable@vger.kernel.org
+> ---
 
-That works for me.
+Thank you for the patch, and sorry for the breakage. I suggest the
+following alternative commit message:
 
-Thanks,
-Tom
+  The blamed commit changed the dsa_8021q_rcv() calling convention to
+  accept pre-populated source_port and switch_id arguments. If those are
+  not available, as in the case of tag_ocelot_8021q, the arguments must
+  be preinitialized with -1.
 
->                 svm->msr_decfg = data;
->                 break;
->         }
-> 
+  Due to the bug of passing uninitialized arguments, dsa_8021q_rcv()
+  does not detect that it needs to populate the source_port and
+  switch_id, and this makes dsa_conduit_find_user() fail, and leads to
+  packet loss on reception.
+
+  Fixes: dcfe7673787b ("net: dsa: tag_sja1105: absorb logic for not overwriting precise info into dsa_8021q_rcv()")
+  Signed-off-by: Robert Hodaszi <robert.hodaszi@digi.com>
+  Cc: stable@vger.kernel.org
 
