@@ -1,172 +1,601 @@
-Return-Path: <linux-kernel+bounces-441486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF659ECF07
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:52:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38799ECF1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9CF61682EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:52:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06B1188A1FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257CF19FA93;
-	Wed, 11 Dec 2024 14:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A191A01BD;
+	Wed, 11 Dec 2024 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Yd/RFprO"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2070.outbound.protection.outlook.com [40.107.20.70])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="BJQiYfyV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBC218A6D3;
-	Wed, 11 Dec 2024 14:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC641494CC;
+	Wed, 11 Dec 2024 14:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733928755; cv=fail; b=T+0CMHdtWzkebYMrrodgxjBC1R3idgSRIUP7NZtfSwwOMZeWDzNuvtYUBWVp4E/vl1bnnGrx1ap8Oc3F8KpGzs8HUsrAab5Xb1mHA+0b9qwWwzgeySOHejiR1lyubLUMjD3+m8ISPvipVpWYiw0TkVvVj5+3Ta0YGuvJNxPbmy8=
+	t=1733928843; cv=pass; b=ZrO8iiye1qI8ci/r+rQnwLpoFUeWeSaPBcEwCMne6H0YQR8gnXq2GGZbnURlM+VM+zW+NWtatyYrdv2Kdaj3qm8rTW+ZQfs+vfIE33CK1muH3ffvYyVhT3bmPBeOx4QLlcQ8RlP2MCA4nh20qlJi7FkY52VwkZfZmkoZFqI+Q/o=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733928755; c=relaxed/simple;
-	bh=55qvlISLx8cP57VclRhFyWAnz/9q8AGhve/OCbK/ZTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LzDEcTYVOfvs4IRkB29gL1k5c+r88igVTFDnPQ17ReQMOL8ueSSWd7tumXz9F+AmeBFGPU+wzQLcUL1d/EVpz3PQX0nNwkDsn79+yqxUAs2/GFayWsw4cOjj1VcwWaSBBrvGpwiNhDdD4r9+FxHLBbzbDdZobqQaLNV+qt80vqI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Yd/RFprO; arc=fail smtp.client-ip=40.107.20.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UErRBK6IQJ95BZu8kms6Sy+zVuLbaf0f/Z/7IxPe2K6oHEq3BDpZ96T4be15dg7eoRgsxbTiZ5DZkOJtpdOKmdb2Pe8HdBQl+xsCf3oR3TdD7W1ucV7zoyBDrwV7ENgfcUtpU/WF8nQ/KxRv4ltU58VgupMJAeT/0zNfs00G0gVdGu1Bpswe7hhH1uHf6nOk+16ZWn6kWlugvMY3GY2A5g2Q1EgacpjuihNhnlMyZMysFEAbunf1wCmDFJ+cnfrXyuk3o1GbLjCv9xsbNImeuvx2sep9EH+ZO/dGQoUmniLfhGShlSS71a2YHpOMen3Tn5g3Vw6o7f3NtepDFJ2o4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GJ7CeY9yOQsrxKMc+w/4PGzX0R0Mviq/3ghWH2E0TM4=;
- b=g+6IXj5Suj68uINVNTzTlhtuOfgKFTrjU6QptLCxtIx4ZasLjKYNb/KNqQnn4e7xxDQkNiZfdEWigwaRTkGH/tUaldF72ea84mYL32bA/hisKrD6cqinueW0Y2b2NbR5Yu6fPK03KH/jBnLuiIAHc4uf8OodguYGdON1Ck0AJSrIS76N5xyEhJM+M3T9sMCU6cwkn+8SNNQEkuWMzDR5JDjafebow2m8VxgaXj+LwwpK8HXLAdQmUodU8u8xvKuS5OdnWe86ju8/iF5Lf3y7Yco2IZ4nUuE9DFjuGV+Da9xhrh92LVhe2gvxlh2xVh9tf6hDoMonRbkzfaTlWrfaSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GJ7CeY9yOQsrxKMc+w/4PGzX0R0Mviq/3ghWH2E0TM4=;
- b=Yd/RFprOWqM+RXk+SPEVd8MJwNmk1JVrG5T6tN9vk+wfymTg/GhUJ8BxDq+7et/XnMbO6Is4M4lUc852+rbc60Ylu7/notmSs8cX19TkwNLflJeuVhU7zcuFrEwx7072IWR5Q58ZuiaUEF/x3VfLvAmP/r9T3/viWROTFLf1ke71mp6P5ax81M+9A7MsX16sRtgeIP9n+CHVPMZmis8y2VbwcYwqpuvChmHytiUwM0aodWknyHhhSfWLc1roqlF1mJpm32Ov0pzgxPZoD7+2Yt7sQrpRvXaEuNhm4LS+lb4D3xO1XwLfh4tEYXECwt/Gm2VNMj9jNQjVmUiXTfMN1w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PR3PR04MB7228.eurprd04.prod.outlook.com (2603:10a6:102:8c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
- 2024 14:52:30 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 14:52:30 +0000
-Date: Wed, 11 Dec 2024 16:52:27 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Robert Hodaszi <robert.hodaszi@digi.com>
-Cc: netdev@vger.kernel.org, claudiu.manoil@nxp.com,
-	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-	andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net v2] net: dsa: tag_ocelot_8021q: fix broken reception
-Message-ID: <20241211145227.k2azhkaeqxz5szmh@skbuf>
-References: <20241211144741.1415758-1-robert.hodaszi@digi.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211144741.1415758-1-robert.hodaszi@digi.com>
-X-ClientProxiedBy: VI1PR09CA0133.eurprd09.prod.outlook.com
- (2603:10a6:803:12c::17) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	s=arc-20240116; t=1733928843; c=relaxed/simple;
+	bh=UIWky3ex/k5L6KRTSSs1e2IkNUC9a5Rx+3kFXhJBrvg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=T116hRF7aIdut/cSWcjl9DDhyqptwb4M/e6aEfZ5s+U7AG8/kK1X1OseHWCzmdf9gNBKWQV/suHqaME+2qkMcL1ADFlLkXTViul+8IZXW3RmKSGvdGtBRY/iljb9dMDCiaIycBv0EwR+PYgKMN1RLrlwh1M1KGNYQkeR2I6d+Mw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=BJQiYfyV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733928796; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Cm19pc1oDFuD+8xrNwsKFvKy+4fXp3KWRCjyiUnyJH3QC2qYVfBOaGozm5FDF4lryii+U8DB2QS6AYmIj1/D37D/Roui6Em7u2JoxgA0+mibu/s68liWDHLMhjQ7u80VSwYMkXRx0/e4FnMHHthtkrEkgw/U3/sxmOSfMpm2CK0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733928796; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=La5d4CeOyUbXhv/hA3YkVuNUHhTc6V2xvbNkhh7eqVk=; 
+	b=nQrTzlLpWJxTwdO+YHH/m5pFDFT/c+MwHy1NpJ9ycV9eMHeyk3tmbTXlyxz4bEFAcadoGFw/K6e4wf6WqSTQeeAxqrOHushrw92gQUJt+pCnwvNtAzJcuKkPKgOf09PsW91fYB47nHqNo8HHUY0k68upbCJHjzUAktdX0pEJeMY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733928796;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=La5d4CeOyUbXhv/hA3YkVuNUHhTc6V2xvbNkhh7eqVk=;
+	b=BJQiYfyVwzWF0KWsPUV2tMc4SzNAdwmuO2+6PgnUhO84Nqiig2qLIACLQw2QlraR
+	N+qbY/S3NXgep128O7HsgY1dAIfSVcyjt1vppu7MkjhfvQYFR0q/WCi8Eenpl9tQhdA
+	g3mzZHoixvGXrrZm5Jnk7KiubhKAsMTOAmQQJDVs=
+Received: by mx.zohomail.com with SMTPS id 173392879429365.08449904994575;
+	Wed, 11 Dec 2024 06:53:14 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PR3PR04MB7228:EE_
-X-MS-Office365-Filtering-Correlation-Id: 066809a4-8921-4bba-371d-08dd19f36fd4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Za7HoCrdoMFFsSgflmMOhtxOAL2AkQwgkjRC/HmyDHmq7UX3PrHU31wxHoB6?=
- =?us-ascii?Q?5puQ3ecYmCjVy/bZRV3aaUh2etTzJCEYaPzwdTqp3VIE92YdbDmTEcL5LddL?=
- =?us-ascii?Q?M7rmXQK7HRtfgLmM/si/QXQdUsgWu2WnTniTDxmieELID5YItFLs5w8K666w?=
- =?us-ascii?Q?XwjxJlSF2tPYlYz6VSQixngTc1SxEzVVR7hiNs5+uVlsXi8JjIxgs7Hy5vLa?=
- =?us-ascii?Q?+4FoWmkHJqP5lb6LsA52lQfSekZEmOXMEat8abZevSP291w3B5Wx+kFqMAcm?=
- =?us-ascii?Q?QdN5lpMcKDsapwO6tShDrFdCDAdb5UImovlZcZahZXvnxncnMcc33zHNPPNQ?=
- =?us-ascii?Q?sphmkFEDgyNv+tnb+C7sJp5I+xrm3/JXjdZGuBhi/AYBuIxH0zzbAOuPguUk?=
- =?us-ascii?Q?yRG6U/iEdnHpUD5nbQjcI3QPcTKWM4BQRzr92uLG3OvbZJ2SOcpOAjav1Oyx?=
- =?us-ascii?Q?yvxDoylGEaomnEXAXKwHwxYbegfd2PvqXvG5G70I7wmlF6CRQf4GH3bE1FQR?=
- =?us-ascii?Q?b/yKqcGTH8E8ub2ri4mzTZoXRUMGMvw718azrtmRxycr4EZKNEgCVZMUnVAN?=
- =?us-ascii?Q?0z8YVkDHxk5lcb8/V6uHTh8V0+Vm30SD9CVp3aPxKqaxlMEmgRWHi0BIpC3w?=
- =?us-ascii?Q?NIkyL3dP0dA63Xh8xkGyMZhxqhzPEb/iaaskniV2vjrZgiIgs122+7JdHD+t?=
- =?us-ascii?Q?QEuF9tsUCiYoy3IO6GUW+RTzTyo/oV2lbZQK/6593x3lBZrwgbyX1k3Jx085?=
- =?us-ascii?Q?nf/lLcZIp0PTdW+g0mGDjK7SIEgN4g+71RanFQH5D4iD6G9+cMe24Z6XTsWm?=
- =?us-ascii?Q?ueKKb/3alnsFf6oun5GcMr0FcITZd2zquFloFAqsV/xfNwRo83YQOMXo/tEJ?=
- =?us-ascii?Q?JvsHuMtzeZtaYlG0HrVi3elH77kJED/Lth9xwyS28ulFYUTJc+i4h6OW0AWd?=
- =?us-ascii?Q?MlxY0BtEoE4aXRZje8P1frG2Lj3zZYN8GsVAzDf2GV+px1BdpBvx8H+cEYk/?=
- =?us-ascii?Q?1jITtDOn843cdPs0JNrr3GhEPIAMxA2P2hmJhHwrNJQF31H4Y8SeLkeed+oK?=
- =?us-ascii?Q?zpG+2Jri2bmEyDZMj7lkibUBi+0ZCMMI4grH0z7GvzUmIZ90iPceoEx9VRL9?=
- =?us-ascii?Q?T0yDJu2pYM1s08q0T1bHMUFfNjyDnGHNCjupKiKTvl6Dp/7e45a6LVdUxBvq?=
- =?us-ascii?Q?SJJEAco40DJ6bD7dWHEmldwjxrAJM+LRP/rZkraJIe4VdnIXfwwqnjSTtZFE?=
- =?us-ascii?Q?3wrVQXTd8avq+3ispkhrdaNwNNWDrzXL5+ymrWYM0xbzwPnqXSUgYnrsMF9Y?=
- =?us-ascii?Q?A1Fjeb29Fuw/32xmyzhXl3l0FxHhnP6FG30XIO3pCGnPdw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/mSQDLO3y+kJ3gduyB15d7WmSY6+MIwYFlsCCe+AQcsNnkO6O8THrkNzh3F1?=
- =?us-ascii?Q?1KKW7huxIbveLImeCCge1Ask/sV6WOkprnM2Bjp3FXbO/TSfB3uJ64MbvZ5c?=
- =?us-ascii?Q?M8Fe11NROvS1Z1qxKkOvCEBfbmOQhWdci00gzA4ECvU2WRqAgpBsJuZPEOSj?=
- =?us-ascii?Q?0M0rQw8sx84hN9lDExbLXUZVawv2J1fsSK2zqZ5IqvVfJVUZaW1YLXmw6wbl?=
- =?us-ascii?Q?nTSin669BS/AfBeksyKtRIB0r+21Nr8fXz8dkDCs0HNqMfUM5SYYp2/n752U?=
- =?us-ascii?Q?a7aUGJHfHzIgRvNiJV+a+CHyQvt/v8I5zprcLNjRnBeHpKiyOGKYkdeh1DmE?=
- =?us-ascii?Q?LpBF7wcAA3HFj4jd3SzN2HdLbgp/Y8nx+XcciVkBbvsG04ipXP+DWmYjsIDR?=
- =?us-ascii?Q?3sPZuAAIZl2nwM0AMeKH9QmphLkP0cdfV3rMyNqseQlU6w/6YCaQ+upNHU82?=
- =?us-ascii?Q?9mKwvZg4EHJ4jLpQTelkH/km/IdUhpTzB2smK5b9Js0b4rK+Ogt1DC6ffzT+?=
- =?us-ascii?Q?HZWZShIU0dXNMtxfhE21VAp3FJ5EfRCW7EOjfgrxz7P/eBgLuxXELD5J3Z0U?=
- =?us-ascii?Q?7VSHQhwiBDNDwm38UM8DKonnMb4lu8J7pFM6Qv/iCXHPUvT5uI1gBIJscC9e?=
- =?us-ascii?Q?LyMX+iePM2RjqaW1o9YpKolHjxgydfGHEXNeOYS1oIbn1eUKDdfbAMNOYJbc?=
- =?us-ascii?Q?yWHL7dHQjWkWdVa63miWs1puuprATIYvbcnd9AI9CoTc4Bcpjzc9KmjGlu/R?=
- =?us-ascii?Q?dtxOv0x7by6wKDMPRYaQuhw9M7TV6CP4hVWhlP5tW1kkdu9r0hJ6i9INtDA+?=
- =?us-ascii?Q?X9dpL3QtGawcXrI5WUOOboXeST8GpzHkDcxfQnfkBYwZZcShXFggddfuInBM?=
- =?us-ascii?Q?gaDYFT9SqbcNaIu6GByaefS3qvo23QWo9r/++OYn6Wjazxy2vQQXUgRaUBiX?=
- =?us-ascii?Q?c8/eCo48jnsd3A8wJ6gjyhbMz62iBOndMbeGjwMWK9RHuFHwCNBqUQULdXQ7?=
- =?us-ascii?Q?JgdZ6FhLMlW5AbhUvQnCRUOxEcDjtISScQOfSDG15MsGWrIlKMMlU2pQaOh9?=
- =?us-ascii?Q?pJp8/q+XJby90HY6WSpY3Vf+T9CmLt9kDnsWeQsZfREmketR2CXPKK768kBz?=
- =?us-ascii?Q?SHzjoQeuZ9VhQr3/s21ST32dwDnwfMNGSvCux2Jz7glJnd39YZSbH2ciT2R4?=
- =?us-ascii?Q?m/ib3KhajQMhDIJ7uH11iTY5AIdmbWZo+RnnFnNEvql6Noe/bw1yf62I+cC0?=
- =?us-ascii?Q?bKV2c7euixqiR/9LUweIDAgfwbndIlkdcTmEx3At8d0EMRYX9QLl/bgGCI1i?=
- =?us-ascii?Q?A26xYHosDuRZMIk2/R/A0V20fYYJr8ZKUk/1btg6y6YgFS+Yqu3nzweLl94R?=
- =?us-ascii?Q?ScidyWzkv+EgILkIP9pEYSKlaNbMB4iay4JhTgqEWcZYZvmsR3CrKxO2BJ6R?=
- =?us-ascii?Q?yVak4/VPDiASj/zCa3/8Llcl4l9Y7EbL/QsoqpKu8E/OWsQ/MwCz80zw09Qa?=
- =?us-ascii?Q?yP6ZVVoWBXx3GuVU29muoPqI0d/xdPetcL0L2VxVtooTSL/d6F0aRuWg2U6O?=
- =?us-ascii?Q?mKwW/wDD4BsZ+Hkq1ODTEXLz9SVhrmuYY6NWCYhvblfTTW74qqhTZpI3CU/S?=
- =?us-ascii?Q?6w=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 066809a4-8921-4bba-371d-08dd19f36fd4
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 14:52:30.1596
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +kZc/IvvhlL60VZFYcrDcnf6uBWYhIPVyPa8vAfKVPP4/bw7u26m8NnArnEP1cDsaHJOnNiOMTFWIiL8HdETGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7228
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v4 06/13] rust: add `io::{Io, IoRaw}` base types
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20241205141533.111830-7-dakr@kernel.org>
+Date: Wed, 11 Dec 2024 11:52:55 -0300
+Cc: gregkh@linuxfoundation.org,
+ rafael@kernel.org,
+ bhelgaas@google.com,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ tmgross@umich.edu,
+ a.hindborg@samsung.com,
+ aliceryhl@google.com,
+ airlied@gmail.com,
+ fujita.tomonori@gmail.com,
+ lina@asahilina.net,
+ pstanner@redhat.com,
+ ajanulgu@redhat.com,
+ lyude@redhat.com,
+ robh@kernel.org,
+ saravanak@google.com,
+ dirk.behme@de.bosch.com,
+ j@jannau.net,
+ fabien.parent@linaro.org,
+ chrisi.schrefl@gmail.com,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <747785E6-600F-4D6B-9EB4-6E5CC8BDFD60@collabora.com>
+References: <20241205141533.111830-1-dakr@kernel.org>
+ <20241205141533.111830-7-dakr@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Wed, Dec 11, 2024 at 03:47:41PM +0100, Robert Hodaszi wrote:
-> The blamed commit changed the dsa_8021q_rcv() calling convention to
-> accept pre-populated source_port and switch_id arguments. If those are
-> not available, as in the case of tag_ocelot_8021q, the arguments must be
-> pre-initialized with -1.
-> 
-> Due to the bug of passing uninitialized arguments in tag_ocelot_8021q,
-> dsa_8021q_rcv() does not detect that it needs to populate the
-> source_port and switch_id, and this makes dsa_conduit_find_user() fail,
-> which leads to packet loss on reception.
-> 
-> Fixes: dcfe7673787b ("net: dsa: tag_sja1105: absorb logic for not overwriting precise info into dsa_8021q_rcv()")
-> Signed-off-by: Robert Hodaszi <robert.hodaszi@digi.com>
+Hi Danilo,
+
+> On 5 Dec 2024, at 11:14, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> I/O memory is typically either mapped through direct calls to =
+ioremap()
+> or subsystem / bus specific ones such as pci_iomap().
+>=20
+> Even though subsystem / bus specific functions to map I/O memory are
+> based on ioremap() / iounmap() it is not desirable to re-implement =
+them
+> in Rust.
+>=20
+> Instead, implement a base type for I/O mapped memory, which =
+generically
+> provides the corresponding accessors, such as `Io::readb` or
+> `Io:try_readb`.
+>=20
+> `Io` supports an optional const generic, such that a driver can =
+indicate
+> the minimal expected and required size of the mapping at compile time.
+> Correspondingly, calls to the 'non-try' accessors, support compile =
+time
+> checks of the I/O memory offset to read / write, while the 'try'
+> accessors, provide boundary checks on runtime.
+>=20
+> `IoRaw` is meant to be embedded into a structure (e.g. pci::Bar or
+> io::IoMem) which creates the actual I/O memory mapping and initializes
+
+Maybe the in-flight platform::IoMem would be the other example? I see no =
+`io::IoMem` in
+your patch other than the one in the doctest.
+
+> `IoRaw` accordingly.
+>=20
+> To ensure that I/O mapped memory can't out-live the device it may be
+> bound to, subsystems must embed the corresponding I/O memory type =
+(e.g.
+> pci::Bar) into a `Devres` container, such that it gets revoked once =
+the
+> device is unbound.
+>=20
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
+> rust/helpers/helpers.c |   1 +
+> rust/helpers/io.c      | 101 ++++++++++++++++
+> rust/kernel/io.rs      | 260 +++++++++++++++++++++++++++++++++++++++++
+> rust/kernel/lib.rs     |   1 +
+> 4 files changed, 363 insertions(+)
+> create mode 100644 rust/helpers/io.c
+> create mode 100644 rust/kernel/io.rs
+>=20
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 060750af6524..63f9b1da179f 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -14,6 +14,7 @@
+> #include "cred.c"
+> #include "err.c"
+> #include "fs.c"
+> +#include "io.c"
+> #include "jump_label.c"
+> #include "kunit.c"
+> #include "mutex.c"
+> diff --git a/rust/helpers/io.c b/rust/helpers/io.c
+> new file mode 100644
+> index 000000000000..1dde6374c0e2
+> --- /dev/null
+> +++ b/rust/helpers/io.c
+> @@ -0,0 +1,101 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/io.h>
+> +
+> +void __iomem *rust_helper_ioremap(phys_addr_t offset, size_t size)
+> +{
+> + return ioremap(offset, size);
+> +}
+> +
+> +void rust_helper_iounmap(volatile void __iomem *addr)
+> +{
+> + return iounmap(addr);
+> +}
+> +
+> +u8 rust_helper_readb(const volatile void __iomem *addr)
+> +{
+> + return readb(addr);
+> +}
+> +
+> +u16 rust_helper_readw(const volatile void __iomem *addr)
+> +{
+> + return readw(addr);
+> +}
+> +
+> +u32 rust_helper_readl(const volatile void __iomem *addr)
+> +{
+> + return readl(addr);
+> +}
+> +
+> +#ifdef CONFIG_64BIT
+> +u64 rust_helper_readq(const volatile void __iomem *addr)
+> +{
+> + return readq(addr);
+> +}
+> +#endif
+> +
+> +void rust_helper_writeb(u8 value, volatile void __iomem *addr)
+> +{
+> + writeb(value, addr);
+> +}
+> +
+> +void rust_helper_writew(u16 value, volatile void __iomem *addr)
+> +{
+> + writew(value, addr);
+> +}
+> +
+> +void rust_helper_writel(u32 value, volatile void __iomem *addr)
+> +{
+> + writel(value, addr);
+> +}
+> +
+> +#ifdef CONFIG_64BIT
+> +void rust_helper_writeq(u64 value, volatile void __iomem *addr)
+> +{
+> + writeq(value, addr);
+> +}
+> +#endif
+> +
+> +u8 rust_helper_readb_relaxed(const volatile void __iomem *addr)
+> +{
+> + return readb_relaxed(addr);
+> +}
+> +
+> +u16 rust_helper_readw_relaxed(const volatile void __iomem *addr)
+> +{
+> + return readw_relaxed(addr);
+> +}
+> +
+> +u32 rust_helper_readl_relaxed(const volatile void __iomem *addr)
+> +{
+> + return readl_relaxed(addr);
+> +}
+> +
+> +#ifdef CONFIG_64BIT
+> +u64 rust_helper_readq_relaxed(const volatile void __iomem *addr)
+> +{
+> + return readq_relaxed(addr);
+> +}
+> +#endif
+> +
+> +void rust_helper_writeb_relaxed(u8 value, volatile void __iomem =
+*addr)
+> +{
+> + writeb_relaxed(value, addr);
+> +}
+> +
+> +void rust_helper_writew_relaxed(u16 value, volatile void __iomem =
+*addr)
+> +{
+> + writew_relaxed(value, addr);
+> +}
+> +
+> +void rust_helper_writel_relaxed(u32 value, volatile void __iomem =
+*addr)
+> +{
+> + writel_relaxed(value, addr);
+> +}
+> +
+> +#ifdef CONFIG_64BIT
+> +void rust_helper_writeq_relaxed(u64 value, volatile void __iomem =
+*addr)
+> +{
+> + writeq_relaxed(value, addr);
+> +}
+> +#endif
+> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
+> new file mode 100644
+> index 000000000000..36aa2ec1bcc8
+> --- /dev/null
+> +++ b/rust/kernel/io.rs
+> @@ -0,0 +1,260 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Memory-mapped IO.
+> +//!
+> +//! C header: =
+[`include/asm-generic/io.h`](srctree/include/asm-generic/io.h)
+> +
+> +use crate::error::{code::EINVAL, Result};
+> +use crate::{bindings, build_assert};
+> +
+> +/// Raw representation of an MMIO region.
+> +///
+> +/// By itself, the existence of an instance of this structure does =
+not provide any guarantees that
+> +/// the represented MMIO region does exist or is properly mapped.
+> +///
+> +/// Instead, the bus specific MMIO implementation must convert this =
+raw representation into an `Io`
+> +/// instance providing the actual memory accessors. Only by the =
+conversion into an `Io` structure
+> +/// any guarantees are given.
+> +pub struct IoRaw<const SIZE: usize =3D 0> {
+> +    addr: usize,
+> +    maxsize: usize,
+> +}
+> +
+> +impl<const SIZE: usize> IoRaw<SIZE> {
+> +    /// Returns a new `IoRaw` instance on success, an error =
+otherwise.
+> +    pub fn new(addr: usize, maxsize: usize) -> Result<Self> {
+> +        if maxsize < SIZE {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        Ok(Self { addr, maxsize })
+> +    }
+> +
+> +    /// Returns the base address of the MMIO region.
+> +    #[inline]
+> +    pub fn addr(&self) -> usize {
+> +        self.addr
+> +    }
+> +
+> +    /// Returns the maximum size of the MMIO region.
+> +    #[inline]
+> +    pub fn maxsize(&self) -> usize {
+> +        self.maxsize
+> +    }
+> +}
+> +
+> +/// IO-mapped memory, starting at the base address @addr and spanning =
+@maxlen bytes.
+> +///
+> +/// The creator (usually a subsystem / bus such as PCI) is =
+responsible for creating the
+> +/// mapping, performing an additional region request etc.
+> +///
+> +/// # Invariant
+> +///
+> +/// `addr` is the start and `maxsize` the length of valid I/O mapped =
+memory region of size
+> +/// `maxsize`.
+> +///
+> +/// # Examples
+> +///
+> +/// ```no_run
+> +/// # use kernel::{bindings, io::{Io, IoRaw}};
+> +/// # use core::ops::Deref;
+> +///
+> +/// // See also [`pci::Bar`] for a real example.
+> +/// struct IoMem<const SIZE: usize>(IoRaw<SIZE>);
+> +///
+> +/// impl<const SIZE: usize> IoMem<SIZE> {
+> +///     /// # Safety
+> +///     ///
+> +///     /// [`paddr`, `paddr` + `SIZE`) must be a valid MMIO region =
+that is mappable into the CPUs
+> +///     /// virtual address space.
+> +///     unsafe fn new(paddr: usize) -> Result<Self>{
+> +///         // SAFETY: By the safety requirements of this function =
+[`paddr`, `paddr` + `SIZE`) is
+> +///         // valid for `ioremap`.
+> +///         let addr =3D unsafe { bindings::ioremap(paddr as _, =
+SIZE.try_into().unwrap()) };
+> +///         if addr.is_null() {
+> +///             return Err(ENOMEM);
+> +///         }
+> +///
+> +///         Ok(IoMem(IoRaw::new(addr as _, SIZE)?))
+> +///     }
+> +/// }
+> +///
+> +/// impl<const SIZE: usize> Drop for IoMem<SIZE> {
+> +///     fn drop(&mut self) {
+> +///         // SAFETY: `self.0.addr()` is guaranteed to be properly =
+mapped by `Self::new`.
+> +///         unsafe { bindings::iounmap(self.0.addr() as _); };
+> +///     }
+> +/// }
+> +///
+> +/// impl<const SIZE: usize> Deref for IoMem<SIZE> {
+> +///    type Target =3D Io<SIZE>;
+> +///
+> +///    fn deref(&self) -> &Self::Target {
+> +///         // SAFETY: The memory range stored in `self` has been =
+properly mapped in `Self::new`.
+> +///         unsafe { Io::from_raw(&self.0) }
+> +///    }
+> +/// }
+> +///
+> +///# fn no_run() -> Result<(), Error> {
+> +/// // SAFETY: Invalid usage for example purposes.
+> +/// let iomem =3D unsafe { IoMem::<{ core::mem::size_of::<u32>() =
+}>::new(0xBAAAAAAD)? };
+> +/// iomem.writel(0x42, 0x0);
+> +/// assert!(iomem.try_writel(0x42, 0x0).is_ok());
+> +/// assert!(iomem.try_writel(0x42, 0x4).is_err());
+> +/// # Ok(())
+> +/// # }
+> +/// ```
+> +#[repr(transparent)]
+> +pub struct Io<const SIZE: usize =3D 0>(IoRaw<SIZE>);
+> +
+> +macro_rules! define_read {
+> +    ($(#[$attr:meta])* $name:ident, $try_name:ident, $type_name:ty) =
+=3D> {
+> +        /// Read IO data from a given offset known at compile time.
+> +        ///
+> +        /// Bound checks are performed on compile time, hence if the =
+offset is not known at compile
+> +        /// time, the build will fail.
+> +        $(#[$attr])*
+> +        #[inline]
+> +        pub fn $name(&self, offset: usize) -> $type_name {
+> +            let addr =3D self.io_addr_assert::<$type_name>(offset);
+> +
+> +            // SAFETY: By the type invariant `addr` is a valid =
+address for MMIO operations.
+> +            unsafe { bindings::$name(addr as _) }
+> +        }
+> +
+> +        /// Read IO data from a given offset.
+> +        ///
+> +        /// Bound checks are performed on runtime, it fails if the =
+offset (plus the type size) is
+> +        /// out of bounds.
+> +        $(#[$attr])*
+> +        pub fn $try_name(&self, offset: usize) -> Result<$type_name> =
+{
+> +            let addr =3D self.io_addr::<$type_name>(offset)?;
+> +
+> +            // SAFETY: By the type invariant `addr` is a valid =
+address for MMIO operations.
+> +            Ok(unsafe { bindings::$name(addr as _) })
+> +        }
+> +    };
+> +}
+> +
+> +macro_rules! define_write {
+> +    ($(#[$attr:meta])* $name:ident, $try_name:ident, $type_name:ty) =
+=3D> {
+> +        /// Write IO data from a given offset known at compile time.
+> +        ///
+> +        /// Bound checks are performed on compile time, hence if the =
+offset is not known at compile
+> +        /// time, the build will fail.
+> +        $(#[$attr])*
+> +        #[inline]
+> +        pub fn $name(&self, value: $type_name, offset: usize) {
+> +            let addr =3D self.io_addr_assert::<$type_name>(offset);
+> +
+> +            // SAFETY: By the type invariant `addr` is a valid =
+address for MMIO operations.
+> +            unsafe { bindings::$name(value, addr as _, ) }
+> +        }
+> +
+> +        /// Write IO data from a given offset.
+> +        ///
+> +        /// Bound checks are performed on runtime, it fails if the =
+offset (plus the type size) is
+> +        /// out of bounds.
+> +        $(#[$attr])*
+> +        pub fn $try_name(&self, value: $type_name, offset: usize) -> =
+Result {
+> +            let addr =3D self.io_addr::<$type_name>(offset)?;
+> +
+> +            // SAFETY: By the type invariant `addr` is a valid =
+address for MMIO operations.
+> +            unsafe { bindings::$name(value, addr as _) }
+> +            Ok(())
+> +        }
+> +    };
+> +}
+> +
+> +impl<const SIZE: usize> Io<SIZE> {
+> +    /// Converts an `IoRaw` into an `Io` instance, providing the =
+accessors to the MMIO mapping.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that `addr` is the start of a valid I/O =
+mapped memory region of size
+> +    /// `maxsize`.
+> +    pub unsafe fn from_raw<'a>(raw: &IoRaw<SIZE>) -> &'a Self {
+> +        // SAFETY: `Io` is a transparent wrapper around `IoRaw`.
+> +        unsafe { &*core::ptr::from_ref(raw).cast() }
+> +    }
+> +
+> +    /// Returns the base address of this mapping.
+> +    #[inline]
+> +    pub fn addr(&self) -> usize {
+> +        self.0.addr()
+> +    }
+> +
+> +    /// Returns the maximum size of this mapping.
+> +    #[inline]
+> +    pub fn maxsize(&self) -> usize {
+> +        self.0.maxsize()
+> +    }
+> +
+> +    #[inline]
+> +    const fn offset_valid<U>(offset: usize, size: usize) -> bool {
+> +        let type_size =3D core::mem::size_of::<U>();
+> +        if let Some(end) =3D offset.checked_add(type_size) {
+> +            end <=3D size && offset % type_size =3D=3D 0
+> +        } else {
+> +            false
+> +        }
+> +    }
+> +
+> +    #[inline]
+> +    fn io_addr<U>(&self, offset: usize) -> Result<usize> {
+> +        if !Self::offset_valid::<U>(offset, self.maxsize()) {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        // Probably no need to check, since the safety requirements =
+of `Self::new` guarantee that
+> +        // this can't overflow.
+> +        self.addr().checked_add(offset).ok_or(EINVAL)
+> +    }
+> +
+> +    #[inline]
+> +    fn io_addr_assert<U>(&self, offset: usize) -> usize {
+> +        build_assert!(Self::offset_valid::<U>(offset, SIZE));
+> +
+> +        self.addr() + offset
+> +    }
+> +
+> +    define_read!(readb, try_readb, u8);
+> +    define_read!(readw, try_readw, u16);
+> +    define_read!(readl, try_readl, u32);
+> +    define_read!(
+> +        #[cfg(CONFIG_64BIT)]
+> +        readq,
+> +        try_readq,
+> +        u64
+> +    );
+> +
+> +    define_read!(readb_relaxed, try_readb_relaxed, u8);
+> +    define_read!(readw_relaxed, try_readw_relaxed, u16);
+> +    define_read!(readl_relaxed, try_readl_relaxed, u32);
+> +    define_read!(
+> +        #[cfg(CONFIG_64BIT)]
+> +        readq_relaxed,
+> +        try_readq_relaxed,
+> +        u64
+> +    );
+> +
+> +    define_write!(writeb, try_writeb, u8);
+> +    define_write!(writew, try_writew, u16);
+> +    define_write!(writel, try_writel, u32);
+> +    define_write!(
+> +        #[cfg(CONFIG_64BIT)]
+> +        writeq,
+> +        try_writeq,
+> +        u64
+> +    );
+> +
+> +    define_write!(writeb_relaxed, try_writeb_relaxed, u8);
+> +    define_write!(writew_relaxed, try_writew_relaxed, u16);
+> +    define_write!(writel_relaxed, try_writel_relaxed, u32);
+> +    define_write!(
+> +        #[cfg(CONFIG_64BIT)]
+> +        writeq_relaxed,
+> +        try_writeq_relaxed,
+> +        u64
+> +    );
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 200c5f99a805..d1f30b1a05fb 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -79,6 +79,7 @@
+>=20
+> #[doc(hidden)]
+> pub use bindings;
+> +pub mod io;
+> pub use macros;
+> pub use uapi;
+>=20
+> --=20
+> 2.47.0
+>=20
 
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+I rebased platform::IoMem on top of this, and it still works fine.
+
+As I said, I am testing it by modifying the compatible in =
+`rust_driver_platform`, and
+I=E2=80=99ve been able to successfully map and read from a memory-mapped =
+device register.
+
+It=E2=80=99s a read-only register containing some information about the =
+device, and the value
+read matches what we get in the C driver.
+
+Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+Reviewed-by: Daniel Almeida  <daniel.almeida@collabora.com>
+
 
