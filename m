@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-441387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1FE9ECDA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:48:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0581B9ECDA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:49:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69DA2819B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:48:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E728188374E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E7C230274;
-	Wed, 11 Dec 2024 13:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856E32336A1;
+	Wed, 11 Dec 2024 13:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZGQcZ/uG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uGWJ1/QJ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CxUd0+aw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33F422913A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A686381AA;
+	Wed, 11 Dec 2024 13:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733924897; cv=none; b=sNDIAx157smpndTbARM+iOQeHU3yuEEQ2h1XXj8sB31x5qCUtqcyKLbuX2GThAAbhT0wgSLEwvjm2nMXgHqDVd9GnHGvGWJe33apU5PrC65g4Ds2XzIjPHJw7UicXs1nUbAChWPP/fa45Wskwq/WzgesLvR1/EM79XxLPJDbevo=
+	t=1733924969; cv=none; b=FRAviQ9n6WYLlOvrSQQo8DxUZ34ICgh4PDW9duMUL89gcEyTjFblNX5MWS4xkbbcl7qUenJ4xZQufGQvmUhkGXZcmsJNFn6LcXh0kvYHdRZlKYVRoxl3eoCAr/t1HwL81nPWYt9X8HI30XLyWrhDyt1UJ2SBcqhUJ4mltNi20Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733924897; c=relaxed/simple;
-	bh=FcEdyf32adcRhq16rtWJRAyApwazxa43Y8h9mC5uJpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C86ujJDwCZPY9bs7GNUhPHeHopFEooiEM2bq3HIeftKnEF+oMb9kmTMYf7UanTJikUeJW0jteh1qh3krZJxVGtYXWLMNjV7zZZ57WasGSw0NbRGaJ6LyHi89E91JQltXIXQtUiciVu9gw8VtG6KgHg37tIcm5ku1QqkuCsMtC90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZGQcZ/uG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uGWJ1/QJ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 11 Dec 2024 14:48:11 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733924892;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FcEdyf32adcRhq16rtWJRAyApwazxa43Y8h9mC5uJpw=;
-	b=ZGQcZ/uGgidddEs3TRPAx70QGE3OqHBArWQm7LVbRXrH5zIpemuLwluP9BPgjfarNJE6VR
-	Gzxooaltlx1/u2IwRGJO52dzZGQwj0Ms2OoAuQZeeX6AsBBjyW4/AgU4NjBafj+cf7S7MY
-	7Kh7/ZXdSTtRZ9uwX2i5YMsGj5j1JibsBKKZARQOkXdYifAlL+gcPRAUkrCwGkAguD3FgN
-	ANx019KPS3XZArgZhr3v/7ngtE8B9Cc7QwNjjcZvBmIPyHDw2avGieG0NAQLcUKLk0Uysk
-	7R0CR9ju70YGRTU51uj7HfXwOINQR09eq8hBMjZUhn6CWSmFpL50yoneP/aARw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733924892;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FcEdyf32adcRhq16rtWJRAyApwazxa43Y8h9mC5uJpw=;
-	b=uGWJ1/QJNPCk1yC0pohHZHR/KTLJ5f/gqbruvx+vLUe+FfiAu8MBPugFmO1OS8sANofSdq
-	tSQ1JxBa0i/sKKAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org,
-	linux-rt-devel@lists.linux.dev, Ard Biesheuvel <ardb@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 2/4] ARM: Disable HIGHPTE on PREEMPT_RT kernels
-Message-ID: <20241211134811.wM_UADhQ@linutronix.de>
-References: <20241210160556.2341497-1-arnd@kernel.org>
- <20241210160556.2341497-3-arnd@kernel.org>
+	s=arc-20240116; t=1733924969; c=relaxed/simple;
+	bh=aDNIZMP4Heu/UaUPCpgZF8IeN6hBHJZJawOZYsJ1D7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IbRqZuF46H2z0n+hAH54mXLX3lAtP/h9hHQro3oD1IOYdhav1akY1JghNKyqgua4rjmh9ajOGM9sQQeaZ4cg7RvcmDJq+L2N5YWmvUuPgMv62Ggq+SaRZ3bB8t+XAD3k5YRw2Z1E1OEvqLGlzhrj+yGJKz1uwvmCSiSSmXYm3so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CxUd0+aw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB9LixT006671;
+	Wed, 11 Dec 2024 13:49:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wsQPQmTi0QLjK8xZhCLBK2/HVzraYQl8VNA8bbxeub4=; b=CxUd0+awTeDdiwNw
+	UqW5V6ruzcESm+m+PQro1wxJKOqxwXq+/M1pTnP+o/4Lkxx4iqwmj6JfR97zjCrL
+	fokyyu7vMlHbWMJUUXn1qcsSofcXMSUu3Iaf9gbr3ZjxVkVO2sXyVY0c5xIMTm4/
+	SZNvjF61BojjhloWfKwMVIudmMIDOKJ1HiSZs6J7PRRl8SaxCKt0oqH/KDnpnFAu
+	cpx5I6iY0c+EO+jeWGiqM0WQus6Xkyozvh59AhoCzoCBoU1vhMoHBnQTaqbFkpwv
+	tqTzza0H1H/dxGHFxGdCWqyX+HnhB+YKAW4Bjh1ssBVw/ZVta9ykhAPOHr0LTba1
+	/4NWaA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eyg628hx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 13:49:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBDnFf4029542
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 13:49:15 GMT
+Received: from [10.50.13.102] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
+ 2024 05:49:12 -0800
+Message-ID: <ec650bc7-5348-479c-9977-3efc7fc03a37@quicinc.com>
+Date: Wed, 11 Dec 2024 19:18:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241210160556.2341497-3-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: llcc: Enable LLCC_WRCACHE at boot on X1
+To: Konrad Dybcio <konradybcio@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>
+CC: Marijn Suijten <marijn.suijten@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Konrad
+ Dybcio" <konrad.dybcio@oss.qualcomm.com>
+References: <20241207-topic-llcc_x1e_wrcache-v1-1-232e6aff49e4@oss.qualcomm.com>
+Content-Language: en-US
+From: Rajendra Nayak <quic_rjendra@quicinc.com>
+In-Reply-To: <20241207-topic-llcc_x1e_wrcache-v1-1-232e6aff49e4@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CyPnjXuDKNtwBZy7dtB3JAvf8xJAbMpA
+X-Proofpoint-ORIG-GUID: CyPnjXuDKNtwBZy7dtB3JAvf8xJAbMpA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ mlxlogscore=999 phishscore=0 suspectscore=0 mlxscore=0 clxscore=1011
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110100
 
-On 2024-12-10 17:05:54 [+0100], Arnd Bergmann wrote:
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->=20
-> gup_pgd_range() is invoked with disabled interrupts and invokes
-> __kmap_local_page_prot() via pte_offset_map(), gup_p4d_range().
 
-s@gup_pgd_range@gup_fast_pgd_range@
-s@gup_p4d_range@gup_fast_p4d_range@
-
-The functions got renamed=E2=80=A6
-
-> With HIGHPTE enabled, __kmap_local_page_prot() invokes kmap_high_get()
-> which uses a spinlock_t via lock_kmap_any(). This leads to an
-> sleeping-while-atomic error on PREEMPT_RT because spinlock_t becomes a
-> sleeping lock and must not be acquired in atomic context.
->=20
-> The loop in map_new_virtual() uses wait_queue_head_t for wake up which
-> also is using a spinlock_t.
->=20
-> Since HIGHPTE is rarely needed at all, turn it off for PREEMPT_RT
-> to allow the use of get_user_pages_fast().
->=20
-> [arnd: rework patch to turn off HIGHPTE instead of HAVE_PAST_GUP]
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-
-This version works, too. Thanks.
-
+On 12/7/2024 7:34 PM, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Do so in accordance with the internal recommendations.
+> 
+> Fixes: b3cf69a43502 ("soc: qcom: llcc: Add configuration data for X1E80100")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
-> There is an open question about whether HIGHPTE is still needed
-> at all, given how rare 32-bit machines with more than 4GB
-> are on any architecture. If we instead decide to remove HIGHPTE
-> altogether, this patch is no longer needed.
 
-HIGHPTE isn't much about 4GiB+ but about the page-table which is
-offloaded to HIGHMEM. Maybe it is more likely to be needed with 4GiB+ of
-memory. No idea. X86 had support for up to 64GiB of memory and is the
-only architecture supporting HIGHPTE :)
+Reviewed-by: Rajendra Nayak <quic_rjendra@quicinc.com>
 
-I guess if you have boxes with 4GiB+ and can proof that the performance
-improves without HIGHPTE (since you don't have to map the page table).
-The question is then how much of low mem has to be used instead and when
-does it start to hurt.
-
-Sebastian
+>   drivers/soc/qcom/llcc-qcom.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> index 32c3bc887cefb87c296e3ba67a730c87fa2fa346..1560db00a01248197e5c2936e785a5ea77f74ad8 100644
+> --- a/drivers/soc/qcom/llcc-qcom.c
+> +++ b/drivers/soc/qcom/llcc-qcom.c
+> @@ -3004,6 +3004,7 @@ static const struct llcc_slice_config x1e80100_data[] = {
+>   		.fixed_size = true,
+>   		.bonus_ways = 0xfff,
+>   		.cache_mode = 0,
+> +		.activate_on_init = true,
+>   	}, {
+>   		.usecase_id = LLCC_CAMEXP0,
+>   		.slice_id = 4,
+> 
+> ---
+> base-commit: ebe1b11614e079c5e366ce9bd3c8f44ca0fbcc1b
+> change-id: 20241207-topic-llcc_x1e_wrcache-647070e2d130
+> 
+> Best regards,
 
