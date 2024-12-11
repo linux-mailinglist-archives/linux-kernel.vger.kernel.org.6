@@ -1,99 +1,206 @@
-Return-Path: <linux-kernel+bounces-441771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779A09ED3F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:46:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1FD9ED403
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF68F1887530
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C2B71888AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053D71FF1DE;
-	Wed, 11 Dec 2024 17:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373ED1FF5E3;
+	Wed, 11 Dec 2024 17:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Un/3+NR1"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FG49E3Q+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A08D246335
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B62246335;
+	Wed, 11 Dec 2024 17:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733939202; cv=none; b=sq0lIJjo+bZhvdCs8TYshlZ1WjDZumfey5v+jErhoYEZYGGBN655mYves5osGPKM4eVzhjji0hht5XkaPtZLwbxBumE2AsGzf/7yhSz9JYuggT5trG8P9xAf2QmP+lPBVKp6fjaDZ3Dm5FPcltrK9Dbtcgze0i3SogYInMBsQcw=
+	t=1733939278; cv=none; b=jPD+MvF2qS6BiYqAYjUApQOoAo1KF3YFKNyiiPVNPt8MyHysPUT8ec4sfOuuUrCUUnwMI0sPxJXe+jeSR6lJSj73RRYHH6JOn7VUCivQXU4//4XTVZqXNZ7sG42JQ0QvHy/vXubDMm8Arxm+uu45RGrB3yP+iFJQBVWmwE9neW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733939202; c=relaxed/simple;
-	bh=uTbQ+v0ZMAwULkEAlk1ZZxsNk1tcZ6KbogLMS1sAtG4=;
+	s=arc-20240116; t=1733939278; c=relaxed/simple;
+	bh=TOa90gglsAMWtT4I7yLrFSBUAjraBKJ6HPeTieiLqG8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f6DfTd8hNmApwWpHiOBuM4QKSPMPNTKP2usviNdepN8AiOKw/vkf07aGQ1rm62Z5oQBA/sn+ASF4/bA8exZD1WwKmd/Q/P2ZW5pnZpPezatvdMlJXXPYtIoiLqEAn2WHFUAdm1UZwTbNxSbEimI1orC+fZNAWMjsnPMVpowszlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Un/3+NR1; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21628b3fe7dso43574755ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:46:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733939200; x=1734544000; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yk47WhmNKyrWOe8f3zYl0zI6xnknlbcC9pXMEPbH0aI=;
-        b=Un/3+NR1+wySaTEuZiJhoNF9cunFX6lA+VoK5vCjsMHpsOIWNXlz052lnGLIO8W6Nx
-         sDsGrI2facEeQAqhXHjBOqCC7qTZbwfGzeIF1pK4xcq57QARt1V1/hxfbHIUA/x+eY0b
-         m43JtR5u8U0PaujD3lNHuXaPu06ii2jZXLE+tFzD72zHYsYF0dKtqUK4O+aVMjhyX9XQ
-         jdOHIm+gUOLcoqy/NUKrRPCl02KiQjky4TwAP3YEQekOqXbHmLEL+XWaCqyMhUKOgoJ7
-         uahQw/dOElCxr8xdbhHWZSdnLzs8u8+yL/f3IaUAvR4FelH2QIf010OE4eNjt+tTmrx5
-         j8Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733939200; x=1734544000;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yk47WhmNKyrWOe8f3zYl0zI6xnknlbcC9pXMEPbH0aI=;
-        b=Bgyu/yTFf9JUgi/l9Hn4jQCCIpHK8lQR3QrBuh6N+VDH5GqbjBeM98WRUtQEddhHZN
-         ogI3GcLvHJCREI8TPiihdgsmPU5JmvzBLXC/OlgZRIyxt7dBbfRoZNy2U5unrhB1Yk9j
-         WvJbe0Bj1255W4zJ1ppgpCAwNcmtgC1ZYo+2B1J5Z0QjL+ug2xR8onpA64pu4UQ00EBk
-         MshKnJ2H6CYaN5ae8fed7f4bOwdiqEXLi/T1+ZKnSjkn32DCCzUiGbcUVSy3I88pskBg
-         jDZDw9XWEpil+j8w46oljr1xhFUNdvhRZsQdoPs8L8DPah81RSho1rsR/He+adQypmJk
-         Opew==
-X-Forwarded-Encrypted: i=1; AJvYcCWwvBx5UeK86cIqvlBfPDE5AnrL4gghMEMKTENQMTA6imkdExJtNv56x+SRD10kVYEJJqYSzPRopAh9UKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq9jUjSx88jacdBnyYMBxUyBXvw//3HYDojweytSEXRljsGNk7
-	NfUHm2+yH9+UGBjCuI0xz5QG9k1z0VT9fnnnxJDWqn1BqFNnCJaBs4YfXA==
-X-Gm-Gg: ASbGncurNwiruFK1Dd1AhHLeWY2fhF6aGIq8DJR/BF7VIChBWJ/vs5VXH3r+X1GcOXj
-	9Rye7LHWks6VqhsPJ7euB6pJh3nh5s3VMbtjCtUN4ZYNbGgLbcuA/pbqxKLuiyHoJzkwJ4cfMdU
-	W93MF15UyL1b6qYURFo4vplNa0ORMETFrL+qk8+90tRhKQd7qwb47U6dLGIHOhwMinq/LZ0pMb/
-	bhjXQz7z3pivcgFXyY+NL3Y/NKtfkmyA+WhAqPFwohKVaRlPQqmmw==
-X-Google-Smtp-Source: AGHT+IFI5imUpL04bZrvw7CEzobJVzuRtaERVUYo2kAOyH2h5d7vLRXb0uSRfuiMpKKOl4ojmibIdg==
-X-Received: by 2002:a17:902:e5d0:b0:215:cbbf:8926 with SMTP id d9443c01a7336-2178aeed27dmr9700125ad.35.1733939200115;
-        Wed, 11 Dec 2024 09:46:40 -0800 (PST)
-Received: from localhost ([216.228.125.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216364e45d8sm68211035ad.175.2024.12.11.09.46.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 09:46:39 -0800 (PST)
-Date: Wed, 11 Dec 2024 09:46:36 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] sched_ext: Introduce per-NUMA idle cpumasks
-Message-ID: <Z1nP_Ooe3_vYfhOQ@yury-ThinkPad>
-References: <20241209104632.718085-1-arighi@nvidia.com>
- <20241209104632.718085-2-arighi@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRX5sRze6a4K2k7tH5RDsawFe/LTsAXZpR7eoxlV479YWmENDVqcE6ZcGfO/UPdSMyZJ7MZz/VQmMI26Xp8Q5z+pSI03fGsstiPVho2yWB4m4JUIw4mpQ99KsqztrCDrU/QAC9WAW/bkzn6VghMvdDd8X3gyl+6cFf8iJ8It5Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FG49E3Q+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F11EC4CED2;
+	Wed, 11 Dec 2024 17:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733939278;
+	bh=TOa90gglsAMWtT4I7yLrFSBUAjraBKJ6HPeTieiLqG8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FG49E3Q+siZrzENpjbDA5cUgsmXhazVqIjDVHOf9bsfRStdHLCDI4TGKszxLN2qLX
+	 Onlce2Ey9PKE1nO4Vc9b7KbXea6Scgvl7hM2ep1lwi5cQEnhSCfPYCNCZLVIOjkZuc
+	 frmDm1MmUoHkzeaJvUim9z5DPDoRwl5Rt/rnXUc6vkgX2LdW0KwJ+FdBVvdjHcCJmw
+	 uGcNSUdi0WeUziTsaZ+Og8pPJRWDxf9SqpGTNBVrSzj7r9Fb4V6HUsQ2d6+bmy16Xf
+	 8KR6T5t/U/h7HhwdgZJ/aTTgOcPxWQBCBNaqsG/hDozq01Cc3Vl1kIH+GDhFbiNQ6f
+	 xY4ajavOL0nyQ==
+Date: Wed, 11 Dec 2024 18:47:44 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, FUKAUMI Naoki <naoki@radxa.com>
+Subject: Re: [PATCH v2 3/5] drm/rockchip: vop2: Improve display modes
+ handling on RK3588 HDMI0
+Message-ID: <a4ex3s23r4k6wehyoaw3aylpcexfrclrxxykjpabhdfne2jgmu@ii6riiiga2zj>
+References: <20241211-vop2-hdmi0-disp-modes-v2-0-471cf5001e45@collabora.com>
+ <20241211-vop2-hdmi0-disp-modes-v2-3-471cf5001e45@collabora.com>
+ <64vc5pkj44w3qxf5wkcxgghpwhvoagzemcsfqmi7fhsxt7vlqd@yfcgloi45ygh>
+ <1820767.5KxKD5qtyk@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="u3dawvlh3uphzrsa"
 Content-Disposition: inline
-In-Reply-To: <20241209104632.718085-2-arighi@nvidia.com>
+In-Reply-To: <1820767.5KxKD5qtyk@diego>
 
-> +static struct cpumask *get_curr_idle_cpumask(void)
-> +{
-> +	int node = cpu_to_node(smp_processor_id());
 
-numa_node_id()
+--u3dawvlh3uphzrsa
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 3/5] drm/rockchip: vop2: Improve display modes
+ handling on RK3588 HDMI0
+MIME-Version: 1.0
 
-> +	return get_idle_cpumask_node(node);
-> +}
+On Wed, Dec 11, 2024 at 06:23:03PM +0100, Heiko St=FCbner wrote:
+> Am Mittwoch, 11. Dezember 2024, 18:07:57 CET schrieb Maxime Ripard:
+> > On Wed, Dec 11, 2024 at 12:15:07PM +0200, Cristian Ciocaltea wrote:
+> > > The RK3588 specific implementation is currently quite limited in terms
+> > > of handling the full range of display modes supported by the connected
+> > > screens, e.g. 2560x1440@75Hz, 2048x1152@60Hz, 1024x768@60Hz are just a
+> > > few of them.
+> > >=20
+> > > Additionally, it doesn't cope well with non-integer refresh rates like
+> > > 59.94, 29.97, 23.98, etc.
+> > >=20
+> > > Make use of HDMI0 PHY PLL as a more accurate DCLK source to handle
+> > > all display modes up to 4K@60Hz.
+> > >=20
+> > > Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+> > > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> > > ---
+> > >  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 34 ++++++++++++++++++=
+++++++++++
+> > >  1 file changed, 34 insertions(+)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/g=
+pu/drm/rockchip/rockchip_drm_vop2.c
+> > > index 8b2f53ffefdbf1cc8737b3a86e630a03a7fd9348..393fe6aa170aaee9663c4=
+a6d98c1cd6a5ef79392 100644
+> > > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > > @@ -158,6 +158,7 @@ struct vop2_video_port {
+> > >  	struct drm_crtc crtc;
+> > >  	struct vop2 *vop2;
+> > >  	struct clk *dclk;
+> > > +	struct clk *dclk_src;
+> > >  	unsigned int id;
+> > >  	const struct vop2_video_port_data *data;
+> > > =20
+> > > @@ -212,6 +213,7 @@ struct vop2 {
+> > >  	struct clk *hclk;
+> > >  	struct clk *aclk;
+> > >  	struct clk *pclk;
+> > > +	struct clk *pll_hdmiphy0;
+> > > =20
+> > >  	/* optional internal rgb encoder */
+> > >  	struct rockchip_rgb *rgb;
+> > > @@ -220,6 +222,8 @@ struct vop2 {
+> > >  	struct vop2_win win[];
+> > >  };
+> > > =20
+> > > +#define VOP2_MAX_DCLK_RATE		600000 /* kHz */
+> > > +
+> > >  #define vop2_output_if_is_hdmi(x)	((x) =3D=3D ROCKCHIP_VOP2_EP_HDMI0=
+ || \
+> > >  					 (x) =3D=3D ROCKCHIP_VOP2_EP_HDMI1)
+> > > =20
+> > > @@ -1033,6 +1037,9 @@ static void vop2_crtc_atomic_disable(struct drm=
+_crtc *crtc,
+> > > =20
+> > >  	vop2_crtc_disable_irq(vp, VP_INT_DSP_HOLD_VALID);
+> > > =20
+> > > +	if (vp->dclk_src)
+> > > +		clk_set_parent(vp->dclk, vp->dclk_src);
+> > > +
+> > >  	clk_disable_unprepare(vp->dclk);
+> > > =20
+> > >  	vop2->enable_count--;
+> > > @@ -2049,6 +2056,27 @@ static void vop2_crtc_atomic_enable(struct drm=
+_crtc *crtc,
+> > > =20
+> > >  	vop2_vp_write(vp, RK3568_VP_MIPI_CTRL, 0);
+> > > =20
+> > > +	/*
+> > > +	 * Switch to HDMI PHY PLL as DCLK source for display modes up
+> > > +	 * to 4K@60Hz, if available, otherwise keep using the system CRU.
+> > > +	 */
+> > > +	if (vop2->pll_hdmiphy0 && mode->crtc_clock <=3D VOP2_MAX_DCLK_RATE)=
+ {
+> > > +		drm_for_each_encoder_mask(encoder, crtc->dev, crtc_state->encoder_=
+mask) {
+> > > +			struct rockchip_encoder *rkencoder =3D to_rockchip_encoder(encode=
+r);
+> > > +
+> > > +			if (rkencoder->crtc_endpoint_id =3D=3D ROCKCHIP_VOP2_EP_HDMI0) {
+> > > +				if (!vp->dclk_src)
+> > > +					vp->dclk_src =3D clk_get_parent(vp->dclk);
+> > > +
+> > > +				ret =3D clk_set_parent(vp->dclk, vop2->pll_hdmiphy0);
+> > > +				if (ret < 0)
+> > > +					drm_warn(vop2->drm,
+> > > +						 "Could not switch to HDMI0 PHY PLL: %d\n", ret);
+> > > +				break;
+> > > +			}
+> > > +		}
+> > > +	}
+> > > +
+> >=20
+> > It seems pretty fragile to do it at atomic_enable time, even more so
+> > since you don't lock the parent either.
+> >=20
+> > Any reason not to do it in the DRM or clock driver probe, and make sure
+> > you never change the parent somehow?
+>=20
+> On rk3588 we have 3 dclk_s and 2 hdmi controllers. Each video-port can
+> use the clock generated from either the hdmi0phy or hdmi1phy, depending
+> on which hdmi-controller it uses.
+>=20
+> So you actually need to know which vpX will output to which hdmiY to then
+> reparent that dclk to the hdmiphy output.
+
+The Rockchip nomenclature isn't super obvious to me, sorry. Is there a
+datasheet for this somewhere? Also, does this vpX -> HDMI-Y mapping need
+to be dynamic?
+
+Maxime
+
+--u3dawvlh3uphzrsa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1nQOgAKCRAnX84Zoj2+
+dpISAYCKW2fMrHXRE79PeBqD3AHvy8GHUKEwGGeX3BAas8xqO9fecnaVOhTd/jgF
+aHFKnB0BfiU6mRKoWOuEJkaaWPp04WJJkVX8YXQRkPWfKNs3xRzzajcAb5TYSDLW
+8BxwZc4ZsA==
+=vWbG
+-----END PGP SIGNATURE-----
+
+--u3dawvlh3uphzrsa--
 
