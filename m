@@ -1,205 +1,368 @@
-Return-Path: <linux-kernel+bounces-442030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898589ED724
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:20:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD059ED72B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:21:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0EF16752D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE58428369F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A07209F4B;
-	Wed, 11 Dec 2024 20:20:26 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793E31D8E10;
+	Wed, 11 Dec 2024 20:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gMXNwD1Z"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2083.outbound.protection.outlook.com [40.107.96.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831262594BF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733948426; cv=none; b=S+sb3DMMAjTnLOB2z5yjPHKrsOov4HBZJ1ivLVEM1Cj824sUDvUq1vVPD8xDAAVi87+bSdlbOY06mA0ZCJjKN6FHLTcnxXVsw4vpSF0Bhn8LrAX+eeu03T3unj6uA/a8rXYircdLslDjCnluAFjiZCfJ5c/bUd7O3Opk4Y2oor8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733948426; c=relaxed/simple;
-	bh=618zjw2ouKaWswwmR6WpFUxRSJtunl2om/z6huOxLjg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TW4Rz+JQ+1seo6ybJjn1sHcsGLRuEJkZwjJWebOlvdHqQfUbFB7y3xEkCeTe+ys2tJvmSJ5zNQPgxJj16QlxvT1OGJexulwLiK6CtsqiQ9GhHst5LGcJp0rKFJeD5+k0oVLtx9+aoVBc2pZ+2Y6DbjBGiVFpQVARtIKHT4hdMEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7de3ab182so148570215ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:20:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733948423; x=1734553223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqCNbZY6U72+aSL9l8AE7zjsD7QGr2gDR64WahnMA+4=;
-        b=DN+sM5TfSOob2iKrOPoOiRquZ4H2VLKgNgwQs00GOGE32aKlnWIO6SGrwrM+4Aa4zb
-         r/oPafyZj8gHpa3m/QiInNzBf8Vdp2xaqMQNKBV2ZsP+M7V7m8EcEoMM+Kx6ug7T98MM
-         u0aM7Gt5rjb3fdm6V7XEkmuepVGeJyQHpMFARWifMe2pjesilJd0J5vmAVZ4fX7k1qkF
-         x1SVMlJJBXJqQ62i0ZnmCt6KmjXZeMDDHpWdJKX+EOcx5mb5OOTVYVNrDsTq/PQxM2iy
-         LHKofsaExis9stSm+5CzVkGWCjposkGLZ6xo/B5RITs9EfWnU8qX6VjDb+zV2yF1FJNj
-         5woQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAzzL7OUWusRhz6lJF7S/M9ZvG4QVKZwCaVIkSSFymiAmvXB1/1myUf0dlvJuLluj864Uh9UHuLg5JM1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt11KoV1RNE6YjusODPSYee1uY9jd7Ipt5TlEhMIvjkEYWFLdO
-	tNNDPKmpKq5E7cVpZ7+LxjW0MfPNQt5gygvB0oi7P7AvzYSlYfmROZ2BkXlLFtpXN2ik2nzliOA
-	8IdvGbghx3++A5Tf6ID8rMHsjiteL5ZULV1RAmxZiA/2FgOGpY3dc7kk=
-X-Google-Smtp-Source: AGHT+IESYvZmO5MOjmUDuXdsPDP7Ff75vG0N8pmEovXTdk0Qmx02SxIJjz+5VHsUuG5b30brRAO9rrebfNTCUqiHq7cK8AZqlUF4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0345120B812
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733948469; cv=fail; b=bmTmUCRTrQQ2ETstpqBXgPc52g/ghGK5IW7lDpSoeftjn87h/0SX8wBvCzP8rerg3adXJmUCs/JdghR4kJhVr+mEpadsT8Yqi3+lJneYMXrAZyn6qQsJsAEZB8hC9SO3JBscwFKJ7vtDPXZCIziP91JZSaKAd9GYUKJgxix8Ueo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733948469; c=relaxed/simple;
+	bh=EBE6/y0pKID+F7fJBX6LcEJZjdEfDx31NzESBsK4LuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=o7DdZV+tY0w11n1yxoz9uvXOL/N39L2SChtPTNzdsfpc7kfOqz+sPhXjzpvjd0lBSjyBJMwwoZ4NvdU5ETZjigsJBwoCM4ULdovqfGQK61cKuZn5skKE2K3CmRd4akRbccCaqqFctndC8O/fj+7KdKTsQ+HM47UJ3Nh54j87PEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gMXNwD1Z; arc=fail smtp.client-ip=40.107.96.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OiJJyG1O9x+LxojeP0v5ooIwPXhyVLhYeJwCz9zsVDqxS/HB46ZdBohJumrJd0+BUgFqz1/jwny5jMldjbFbrG3l2UTV9sv1yce2u0RkEqadjVNZZCjH34il6f4fmanootNZXFLfjY/K84NeRTwUJ9k1imc6QGx8sayfZBk+lCWqaygPfqZMsAIUXBxOu6p0Fi04Q+pDgfN61c0xoc6EvgxEdnYWSP3gaLdxupYCx7yiPnR3DQ05YXtMAB/q7WQbbnhuSZxpLTMIZ21zO+PCiAWtnefuE+Jk/xaxMo71K737zGWaYRdWnnlb0sZiOU4ngY/7KYdC471Y/lYS6qTGwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9bubESZ0AB0IJmWz7a3d7w/3Qaf0W4yRmFwwV3FzyUw=;
+ b=lCYiVEKhVki7tpT2UXAnhvIu1BTQCy46p/RMGIMlNbMZMryN7cEHX/fs82xwbjAnNgRUC12AHzvqfOasesEKkQ8PZTcSo28FT9OZsSvQ3WilyPdxLk/cFUpp3NCLw4V91xeG5f6W2xqsR16A1UkFqzWCUfznHwc2RIrexvMlPuj44fvjITwMz2v5gGo1CdWglwbufckDD8o9wO1qE5QOlCUsQwMZG2fRj2O7aoey2haUX+jHJBhiSwxvVxNNvWjboagBH+Xr807pJFR9IpQExRZD8SpuQjRlMVHzwckNIxhBw3MAgQXu4vg8u5suXohdBFUANCvzMS4wt0I8auviUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9bubESZ0AB0IJmWz7a3d7w/3Qaf0W4yRmFwwV3FzyUw=;
+ b=gMXNwD1Zm0GbIE8j0aSM0TiozuaCmJrXaM6BxBg2kbs/S3JdiRVIBhnOPEt3ekwD4b82rRxOfVPeuG4kXOE2wir1DcmcFwiX4YMvtcWkjEHSh5yGKk1BQgVayTocxm9u146Q3IZFu9gLNH4Xhc5AhJtNC1o8HxExFuCqdxXgyg0BHCpIZNf2VKCPtrDN5PrkGdC3gQPm6lOoAFekogoge1+zgW2Rlau/ukPRFI6qsdlZUG6R5zE5K3/CTkHHmTtodwqsV3iSEK4r6ezjW4mNXocSLSKRz22NxQjMyyIzZFoH+2Osz53MMsmo91p2E+tFToHlCWPb4Mj41kzZEIqVRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by DS7PR12MB5767.namprd12.prod.outlook.com (2603:10b6:8:76::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.20; Wed, 11 Dec
+ 2024 20:21:01 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%3]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
+ 20:21:00 +0000
+Date: Wed, 11 Dec 2024 21:20:56 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] sched_ext: Introduce NUMA aware idle cpu kfunc
+ helpers
+Message-ID: <Z1n0KLQcA-F2DVa8@gpd3>
+References: <20241209104632.718085-1-arighi@nvidia.com>
+ <20241209104632.718085-5-arighi@nvidia.com>
+ <Z1nPPhe_83lBTna4@yury-ThinkPad>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1nPPhe_83lBTna4@yury-ThinkPad>
+X-ClientProxiedBy: FR0P281CA0044.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:48::7) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c265:0:b0:3a7:e528:6f1e with SMTP id
- e9e14a558f8ab-3ac48caa3d7mr9076445ab.11.1733948423762; Wed, 11 Dec 2024
- 12:20:23 -0800 (PST)
-Date: Wed, 11 Dec 2024 12:20:23 -0800
-In-Reply-To: <000000000000e7813b0601a3af69@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6759f407.050a0220.1ac542.000f.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] INFO: task hung in exfat_sync_fs
-From: syzbot <syzbot+205c2644abdff9d3f9fc@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|DS7PR12MB5767:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ca5c834-c778-4694-b070-08dd1a21544f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?P9vBKVnj0R+BJ3uqa64NfWr3tWkvGuz/SACgzIN0+6U7pyw1LMbwrpXrwcBp?=
+ =?us-ascii?Q?FDynSy47DHES1wcaJ8Umoo1ynSmim07p/4O6p9HHOuBnaYrn06n8IEgq12Rv?=
+ =?us-ascii?Q?zzZRC/cwuCvR+m4/GOQoYPk3/lVabH5lMZu+gxeFp79fbrFhHJ3DAyEpvxOR?=
+ =?us-ascii?Q?WkcVf8XkooVyBPaT+vpMQtTQleKorGHZOlMrTdrbefm/uPQKIXlAt5i3iRAN?=
+ =?us-ascii?Q?8VYhO/0IHSoDXx6rvhocQvW6CnNWMayuzJxnwEVPZvifvJvg5/J6gjHkAwYa?=
+ =?us-ascii?Q?RXWcQ8n/gd0py89AvTQlKMbCarj2sZyDmsM1NrjIDEDaY9OSQ3qWhZjm/blt?=
+ =?us-ascii?Q?NQokUvYdts0R8USH2QA0Sg3mHfrH0Uz5RoJ9S46m7LJqjqoPmvEROYqcB8TL?=
+ =?us-ascii?Q?++oPPnYpEoQvpM6IFS/kOEsGCJZsncwpPnWPmfIlQMgij6VlCwcUzYGApQuN?=
+ =?us-ascii?Q?cWV81ni2XGENRTkVKgDBzftUWErRVTzv8+JrH/4U2okPvSR6poWmYl3lX41y?=
+ =?us-ascii?Q?VkVki7agWGwLjw5rXuN062V84A8SdsFlI34X/V3pVg+dM7eaH6ke7QzEZbJ+?=
+ =?us-ascii?Q?mPink3r0pNs9i7zsswRYZP0M20csfHmx93Q7aGPOoJAek0H4srbxPUMYINz8?=
+ =?us-ascii?Q?EioxYAJ7o/St7MqN4kcgvciFdXU8bAsD2wQnznZvLnoBM9ZHYk85/nsmFrfB?=
+ =?us-ascii?Q?Ru5yl89Nq7N9oI8QLOvMpcSkY+qFbdj2Z6j42QEf6U/y29n4OBTW18te1wnd?=
+ =?us-ascii?Q?C07Frv4UGpPs9guhQGNI8iW4fRHCS2wN5xJjKbbs45XkdnINpSmBuOLHIuS3?=
+ =?us-ascii?Q?h5GLltvdJy5qYhQVy6sBQsHOzC8Lp5lKPSy0Pj33VCsxhk8f37+8S6ptge2l?=
+ =?us-ascii?Q?hkQa7eN24gP8gWiQkTeXuixrfVumo4GJte2AVeGDPAvKOQ3db/bkrr1SkB1h?=
+ =?us-ascii?Q?fchorJL1GDcM5aDFJo96yWGLDSVzwKrtFGAylIDpn3Y/Vt+xC97rCfYfxth4?=
+ =?us-ascii?Q?MV6k2CKAMNr41eFg1HfTCvvQjHaNIJZh2KVet/PJ8846BBm6WbVHfFMSAAvY?=
+ =?us-ascii?Q?DzP+FgKGOZkFW79B9e2kEGo7/UQsu36o08Q5wXSZ46C1iN4zJz3V1CA5f6Jb?=
+ =?us-ascii?Q?jhv9r8ZcpOV1me17QJzuWXfrmTvqbxJCLpsT9RrbUvjNKWg6ABteJLwGPSuj?=
+ =?us-ascii?Q?8QOF0ofl2kARuWExqM/GjwiQRpSGOlxl5ed6ElvH4GRwT7q0jtB8ztWPwoB7?=
+ =?us-ascii?Q?iSaKvieOENiPWDN7bUN/NcCHP0CbiN09WA54hsUK3Aq2WcL56YecKh8s81TB?=
+ =?us-ascii?Q?DRR59zP+J1GB4oyj3ZazWoHv/fP4K/T7I+t3ckc4UUBetA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xGLIM4814MYAqbxoMoU2QkujUSZ1IY5E+ofQkOGeL7opfREAJelhH2UjlKaA?=
+ =?us-ascii?Q?cPLLyzVTeIrLf/MaPJ8AUXiU2l6jGeDV/FBuSyLLhXcRlST1daKz4CkZfmVH?=
+ =?us-ascii?Q?MsG/gItvQjNjE4A0tB5KwmQleN7s2q9ecMBw3mai1f02QMJKhjAOf3wdsh+h?=
+ =?us-ascii?Q?383wh3Lj7wdALROKQ9KYe77DOu+Eyke9/sCO6+DgXE0pcUqfifZ3kWZcWy2s?=
+ =?us-ascii?Q?mOiRkNc+PQM0/mvqtTEep0TK1t55VUL/7yRGopiVdpoW8QN+7YimRbX6kGMk?=
+ =?us-ascii?Q?7pIzfkcDaCEjMyaG+qObi2fOmkRhntcB5AVKuHUjDJWsPZCeSC1Qs/X9zZ45?=
+ =?us-ascii?Q?6efIsYczTXzQUtzv9+T0hDrWa372Qt73QZYX60258YvzGVBuyZSYsQCZdYNH?=
+ =?us-ascii?Q?RuMPA3A0d9jLYt85ip3pNIE7Wj24Ws1WbqH95fYbbWyGr+vGCRIYzOFeladd?=
+ =?us-ascii?Q?mFsjk+ZU4nGL3BccR9BR3vu8X7bgH0ryLUkyH5a2OIS/iu/a9vbJI0EhtZTr?=
+ =?us-ascii?Q?6p1uTwCi0AO8dMvKeSA3RYQftiMuDwyO6g4JGXr5OmOtYTOgcmRjXHYta0od?=
+ =?us-ascii?Q?Y+HEzBgIXr9vI1QaJ4yX8YdhkL1ax9RoAQhPzASnZG08nahWc0Ul7l8IEKIB?=
+ =?us-ascii?Q?pw0Y6uU6scYBsnZqMGqKlApNf0kUn3OD5v3cVdZwKmo/X97fQfVam3dKN6P3?=
+ =?us-ascii?Q?Dxx27nL/PHLAx3rpuFkqXk0tLDa3g2VrCj6v9blRHRPJJ2QPYTJx6hOj1AWT?=
+ =?us-ascii?Q?GOgDwUViCqcvtLIn2cSr+HKe63IFQX/tRxfqAeqaIUo8yBMWVhEbKzU3FqOw?=
+ =?us-ascii?Q?l40QyFsu1ociXkXpclO09/SifP7uBqRB/megxUUVvOGznZRNnHqvJWmBgpyG?=
+ =?us-ascii?Q?DUh5+NHws+tcR+m8D1Xh94MexfKzR6oehS0fzbKlqmP9cZyRIhptuTqDdazV?=
+ =?us-ascii?Q?vSgRFTSZbtMRN1G5evDmLvx6aS8xIQ9HYIwnURjq9IhKnk2jYv6WJbBrb3j2?=
+ =?us-ascii?Q?78r++CZlWcKc/fuHLqJEzueaPoRlScJFLCy5tgDDwWLcs74HocH1ZSBbtnel?=
+ =?us-ascii?Q?92KIgFWQqLayYVXg7IPQut7wLvxg9nEEF03JXOqoI2ie4BqHmRRpqxMUfSzh?=
+ =?us-ascii?Q?cwvlBThbelXpGShDG+1HTmiqPcMO0/y2TJdBlhrFnpfPDrgNOmTG6jRgpapt?=
+ =?us-ascii?Q?t6FjoQPYFUmuhSbFtSrQ7eeG48cWEDKwKnI14Y5fPP0kRU14GIsVkKNrPtXJ?=
+ =?us-ascii?Q?xmgOs52meuK9ehPMct4p2S/FsL3N2u3aqxINppTGhLMaV5IketfcbWyqJhBd?=
+ =?us-ascii?Q?e5HGbQk8RFH+WsCaBPcBFO1+z4/JkAkTaosKPYbvT/ibG7Vc1iEUrkPCCuYE?=
+ =?us-ascii?Q?RTPBFfYTc3vVu2wF5F3ksQAz7mlnC07pq+UlYYyu3+04VZnAdWe0B/72+VdU?=
+ =?us-ascii?Q?ClecXYwkFy7BRWxxsJumSs/NETfA/oa9/XHD9at+n3wgUx9Yi4fwIimolfHM?=
+ =?us-ascii?Q?tx1PfEbfx7uMmBlx1ijvXZJHCdmruekUVEiN0SoYB900wYSYjSmboBZAHBXz?=
+ =?us-ascii?Q?h+UKqd8Z0FBNcPIeo0NsXQbUYel13Wq4iVCWd/Ki?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ca5c834-c778-4694-b070-08dd1a21544f
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 20:21:00.8820
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zq5N0ILkaNgs3yAI5MGarnm/JPkdDuDYjP3ie3LwNVntHGdHJx/Y2Tq5maRMn39fOzs6ckFWVFEE6dEe5IWpNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5767
 
-syzbot has found a reproducer for the following issue on:
+On Wed, Dec 11, 2024 at 09:43:26AM -0800, Yury Norov wrote:
+> On Mon, Dec 09, 2024 at 11:40:58AM +0100, Andrea Righi wrote:
+> > Add the following kfunc's to provide scx schedulers direct access to
+> > per-node idle cpumasks information:
+> > 
+> >  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
+> >  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
+> >  s32 scx_bpf_pick_idle_cpu_node(int node,
+> >                                 const cpumask_t *cpus_allowed, u64 flags)
+> >  int scx_bpf_cpu_to_node(s32 cpu)
+> > 
+> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> > ---
+> >  kernel/sched/ext.c                       | 96 +++++++++++++++++++++++-
+> >  tools/sched_ext/include/scx/common.bpf.h |  4 +
+> >  tools/sched_ext/include/scx/compat.bpf.h | 19 +++++
+> >  3 files changed, 117 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> > index d0d57323bcfc..ea7cc481782c 100644
+> > --- a/kernel/sched/ext.c
+> > +++ b/kernel/sched/ext.c
+> > @@ -433,6 +433,7 @@ struct sched_ext_ops {
+> >  	 * - scx_bpf_select_cpu_dfl()
+> >  	 * - scx_bpf_test_and_clear_cpu_idle()
+> >  	 * - scx_bpf_pick_idle_cpu()
+> > +	 * - scx_bpf_pick_idle_cpu_node()
+> >  	 *
+> >  	 * The user also must implement ops.select_cpu() as the default
+> >  	 * implementation relies on scx_bpf_select_cpu_dfl().
+> > @@ -955,6 +956,8 @@ static struct cpumask *get_idle_cpumask_node(int node)
+> >  	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
+> >  		return idle_masks[0]->cpu;
+> >  
+> > +	if (node < 0 || node >= num_possible_nodes())
+> > +		return NULL;
+> 
+> 1. This sanity should go before the check above.
+> 2. In-kernel users don't need to do sanity checks. BPF users should,
+>    but for them you need to move it in BPF wrapper.
+> 3. -1 is a valid parameter, means NUMA_NO_NODE. 
 
-HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=165e73e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c7c9f223bfe8924e
-dashboard link: https://syzkaller.appspot.com/bug?extid=205c2644abdff9d3f9fc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1619bb30580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115e73e8580000
+Ok, but what would you return with NUMA_NO_NODE, in theory we should return
+a global system-wide cpumask, that doesn't exist with the per-node
+cpumasks. Maybe just return cpu_none_mask? That's what I've done in the
+next version, that seems safer than returning NULL.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5b8875fea73b/disk-f92f4749.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bf1ea2d28b68/vmlinux-f92f4749.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/21f786c9f90d/bzImage-f92f4749.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d6e372cd93dd/mount_0.gz
+> 
+> >  	return idle_masks[node]->cpu;
+> >  }
+> >  
+> > @@ -963,6 +966,8 @@ static struct cpumask *get_idle_smtmask_node(int node)
+> >  	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
+> >  		return idle_masks[0]->smt;
+> >  
+> > +	if (node < 0 || node >= num_possible_nodes())
+> > +		return NULL;
+> >  	return idle_masks[node]->smt;
+> >  }
+> >  
+> > @@ -7469,6 +7474,16 @@ __bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
+> >  	return nr_cpu_ids;
+> >  }
+> >  
+> > +/**
+> > + * scx_bpf_cpu_to_node - Return the NUMA node the given @cpu belongs to
+> > + */
+> > +__bpf_kfunc int scx_bpf_cpu_to_node(s32 cpu)
+> > +{
+> > +	if (cpu < 0 || cpu >= nr_cpu_ids)
+> > +		return -EINVAL;
+> > +	return cpu_to_node(cpu);
+> > +}
+> 
+> I believe this wrapper should be declared somewhere in
+> kernel/sched/topology.c, and better be a separate patch.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+205c2644abdff9d3f9fc@syzkaller.appspotmail.com
+Maybe kernel/bpf/helpers.c? And name it bpf_cpu_to_node()?
 
-INFO: task syz-executor405:5841 blocked for more than 143 seconds.
-      Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor405 state:D stack:27504 pid:5841  tgid:5838  ppid:5837   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x17fb/0x4be0 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6905
- __mutex_lock_common kernel/locking/mutex.c:665 [inline]
- __mutex_lock+0x7e7/0xee0 kernel/locking/mutex.c:735
- exfat_sync_fs+0xb0/0x160 fs/exfat/super.c:56
- iterate_supers+0xc6/0x190 fs/super.c:934
- ksys_sync+0xdb/0x1c0 fs/sync.c:104
- __do_sys_sync+0xe/0x20 fs/sync.c:113
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff13f9f4849
-RSP: 002b:00007ff13f98a218 EFLAGS: 00000246 ORIG_RAX: 00000000000000a2
-RAX: ffffffffffffffda RBX: 00007ff13fa7c6d8 RCX: 00007ff13f9f4849
-RDX: 00007ff13f9cdfb6 RSI: 0000000000000000 RDI: 00007ff13f98afb0
-RBP: 00007ff13fa7c6d0 R08: 00007ffce2fc7077 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff13fa48086
-R13: 00007ff13fa4807e R14: 633d73726f727265 R15: 0030656c69662f2e
- </TASK>
+> 
+> > +
+> >  /**
+> >   * scx_bpf_get_possible_cpumask - Get a referenced kptr to cpu_possible_mask
+> >   */
+> > @@ -7499,11 +7514,32 @@ __bpf_kfunc void scx_bpf_put_cpumask(const struct cpumask *cpumask)
+> >  	 */
+> >  }
+> >  
+> > +/**
+> > + * scx_bpf_get_idle_cpumask_node - Get a referenced kptr to the idle-tracking
+> > + * per-CPU cpumask of a target NUMA node.
+> > + *
+> > + * Returns an empty cpumask if idle tracking is not enabled, if @node is not
+> > + * valid, or running on a UP kernel.
+> > + */
+> > +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
+> > +{
+> > +	if (!static_branch_likely(&scx_builtin_idle_enabled)) {
+> > +		scx_ops_error("built-in idle tracking is disabled");
+> > +		return cpu_none_mask;
+> > +	}
+> > +	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
+> > +		scx_ops_error("per-node idle tracking is disabled");
+> > +		return cpu_none_mask;
+> > +	}
+> 
+> Nub question: is it possible that scx_builtin_idle_per_node is enable,
+> but scx_builtin_idle_enabled not? From my naive perspective, we can't
+> enable per-node idle masks without enabling general idle masks. Or I
+> mislead it?
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6744
-2 locks held by getty/5572:
- #0: ffff88814d4a10a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc900032fb2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-3 locks held by syz-executor405/5840:
-2 locks held by syz-executor405/5841:
- #0: ffff88807d95a0e0 (&type->s_umount_key#64){.+.+}-{4:4}, at: __super_lock fs/super.c:58 [inline]
- #0: ffff88807d95a0e0 (&type->s_umount_key#64){.+.+}-{4:4}, at: super_lock+0x27c/0x400 fs/super.c:120
- #1: ffff88807d9580e8 (&sbi->s_lock){+.+.}-{4:4}, at: exfat_sync_fs+0xb0/0x160 fs/exfat/super.c:56
+In theory a BPF scheduler could set SCX_OPS_BUILTIN_IDLE_PER_NODE (without
+SCX_OPS_KEEP_BUILTIN_IDLE) in .flags while implementing ops.update_idle().
 
-=============================================
+In this way we would have scx_builtin_idle_enabled==false and
+scx_builtin_idle_per_node==true, which doesn't make much sense, so we
+should probably handle this case in validate_ops() and trigger an error.
 
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
- watchdog+0xff6/0x1040 kernel/hung_task.c:397
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 5840 Comm: syz-executor405 Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
-RIP: 0010:rcu_is_watching+0x10/0xb0 kernel/rcu/tree.c:737
-Code: 84 00 00 00 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 41 57 41 56 53 65 ff 05 48 db 7e 7e <e8> db 5d 3b 0a 89 c3 83 f8 08 73 7a 49 bf 00 00 00 00 00 fc ff df
-RSP: 0018:ffffc9000401f488 EFLAGS: 00000083
-RAX: 0000000000000001 RBX: 0000000000000001 RCX: ffffffff81a7289c
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff90183af0
-RBP: ffffc9000401f5f8 R08: ffffffff90183af7 R09: 1ffffffff203075e
-R10: dffffc0000000000 R11: fffffbfff203075f R12: 0000000000000246
-R13: dffffc0000000000 R14: 0000000000000200 R15: 00000000000000a0
-FS:  00007ff13f9ab6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555571eef738 CR3: 0000000073fd8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- trace_irq_disable+0x3b/0x120 include/trace/events/preemptirq.h:36
- lookup_bh_lru fs/buffer.c:1359 [inline]
- __find_get_block+0x190/0x1150 fs/buffer.c:1394
- bdev_getblk+0x33/0x670 fs/buffer.c:1425
- __bread_gfp+0x86/0x400 fs/buffer.c:1485
- sb_bread include/linux/buffer_head.h:346 [inline]
- exfat_get_dentry+0x53b/0x730 fs/exfat/dir.c:672
- exfat_readdir fs/exfat/dir.c:118 [inline]
- exfat_iterate+0x9f9/0x2ce0 fs/exfat/dir.c:242
- wrap_directory_iterator+0x91/0xd0 fs/readdir.c:65
- iterate_dir+0x571/0x800 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:403 [inline]
- __se_sys_getdents64+0x1e2/0x4b0 fs/readdir.c:389
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff13f9f4849
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff13f9ab218 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 00007ff13fa7c6c8 RCX: 00007ff13f9f4849
-RDX: 0000000000001000 RSI: 0000000020000f80 RDI: 0000000000000004
-RBP: 00007ff13fa7c6c0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff13fa48086
-R13: 00007ff13fa4807e R14: 633d73726f727265 R15: 0030656c69662f2e
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.207 msecs
+Good catch!
 
+> 
+> > +
+> > +	return get_idle_cpumask_node(node) ? : cpu_none_mask;
+> > +}
+> >  /**
+> >   * scx_bpf_get_idle_cpumask - Get a referenced kptr to the idle-tracking
+> >   * per-CPU cpumask of the current NUMA node.
+> >   *
+> > - * Returns NULL if idle tracking is not enabled, or running on a UP kernel.
+> > + * Returns an emtpy cpumask if idle tracking is not enabled, or running on a UP
+> > + * kernel.
+> >   */
+> >  __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(void)
+> >  {
+> > @@ -7515,12 +7551,35 @@ __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(void)
+> >  	return get_curr_idle_cpumask();
+> >  }
+> >  
+> > +/**
+> > + * scx_bpf_get_idle_smtmask_node - Get a referenced kptr to the idle-tracking,
+> > + * per-physical-core cpumask of a target NUMA node. Can be used to determine
+> > + * if an entire physical core is free.
+> > + *
+> > + * Returns an empty cpumask if idle tracking is not enabled, if @node is not
+> > + * valid, or running on a UP kernel.
+> > + */
+> > +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
+> > +{
+> > +	if (!static_branch_likely(&scx_builtin_idle_enabled)) {
+> > +		scx_ops_error("built-in idle tracking is disabled");
+> > +		return cpu_none_mask;
+> > +	}
+> > +	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
+> > +		scx_ops_error("per-node idle tracking is disabled");
+> > +		return cpu_none_mask;
+> > +	}
+> 
+> Can you add vertical spacing between blocks?
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+You mean a blank between the two blocks, right?
+
+Anyway, ...
+
+> 
+> Also, because you use this construction more than once, I think it
+> makes sense to make it a helper.
+
+With a proper error check in validate_ops() we can just get rid of the
+scx_builtin_idle_enabled block and simply check scx_builtin_idle_per_node.
+
+> 
+> > +
+> > +	return get_idle_smtmask_node(node) ? : cpu_none_mask;
+> > +}
+> > +
+> >  /**
+> >   * scx_bpf_get_idle_smtmask - Get a referenced kptr to the idle-tracking,
+> >   * per-physical-core cpumask of the current NUMA node. Can be used to determine
+> >   * if an entire physical core is free.
+> >   *
+> > - * Returns NULL if idle tracking is not enabled, or running on a UP kernel.
+> > + * Returns an empty cumask if idle tracking is not enabled, or running on a UP
+> > + * kernel.
+> >   */
+> >  __bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask(void)
+> >  {
+> > @@ -7569,6 +7628,35 @@ __bpf_kfunc bool scx_bpf_test_and_clear_cpu_idle(s32 cpu)
+> >  		return false;
+> >  }
+> >  
+> > +/**
+> > + * scx_bpf_pick_idle_cpu_node - Pick and claim an idle cpu from a NUMA node
+> > + * @node: target NUMA node
+> > + * @cpus_allowed: Allowed cpumask
+> > + * @flags: %SCX_PICK_IDLE_CPU_* flags
+> > + *
+> > + * Pick and claim an idle cpu in @cpus_allowed from the NUMA node @node.
+> > + * Returns the picked idle cpu number on success. -%EBUSY if no matching cpu
+> > + * was found.
+> > + *
+> > + * Unavailable if ops.update_idle() is implemented and
+> > + * %SCX_OPS_KEEP_BUILTIN_IDLE is not set or if %SCX_OPS_KEEP_BUILTIN_IDLE is
+> > + * not set.
+> > + */
+> > +__bpf_kfunc s32 scx_bpf_pick_idle_cpu_node(int node, const struct cpumask *cpus_allowed,
+> > +				      u64 flags)
+> > +{
+> 
+> Sanity checks here?
+
+Indeed, thanks!
+
+-Andrea
 
