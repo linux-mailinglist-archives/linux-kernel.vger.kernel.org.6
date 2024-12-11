@@ -1,186 +1,70 @@
-Return-Path: <linux-kernel+bounces-441734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897DB9ED33E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:20:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC519ED343
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 285C2166EC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:20:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4791687A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96081DE89A;
-	Wed, 11 Dec 2024 17:20:38 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D631DE8B4;
+	Wed, 11 Dec 2024 17:20:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A2C24634B;
-	Wed, 11 Dec 2024 17:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45261DE4FF;
+	Wed, 11 Dec 2024 17:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733937638; cv=none; b=D7Dm+klA5OZnRhWVq2vFPtcQGDYS7xdiTP5W4x8EzAA1hYAo+F/Y7VvfhieNHPwLBklODnEW/mSg9qfsMBNTyRt1uoe+IVOR1f2NZEYTihEuPuv1X1v6/dTzomkXvECTmTreyp9h7nSUiAAhvv6tLqii53s1IT+nme16z8PUn58=
+	t=1733937647; cv=none; b=DwSYX0iqMZ5ipkA3t0oSbL8ZtaF2WpdwztNTwTv6F46+c9wNaZ7ceUF962eyJIgwZfyax0p9NAI24W9BiSxoDtROn4CjPKRChZ0LEMiPT8C56wBkqq4d3dYLRR5VtMHK2R82Fb6DmStJg1AGozKXnyFzA/qbnzdnDm5L9hPN770=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733937638; c=relaxed/simple;
-	bh=GdZ1DHL5cHABEC8SeDbmRc7vM5/d+eorNKelweENk/c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LEr0aBRu9vFqBCmSD5b4MUGetxMhX5PasD8D9cXp05Ns34SKssowkCHR3al4Fr4MbXM4f8Tm3y1jQBj/4lLHAeoux9ynrTyoi7EE9SSpqgQTZVu6VljMkOwRVbwHDOPNdoqxCDymcf7VX/zf9bDfWKtbxdmU1utJyKI+/Gv9JYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tLQNF-0000000015w-1wQM;
-	Wed, 11 Dec 2024 12:19:45 -0500
-Message-ID: <6bc895883abca3522c9efc0c56189741194581e5.camel@surriel.com>
-Subject: Re: [PATCH] memcg: allow exiting tasks to write back data to swap
-From: Rik van Riel <riel@surriel.com>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
- Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt
- <shakeel.butt@linux.dev>, Muchun Song	 <muchun.song@linux.dev>, Andrew
- Morton <akpm@linux-foundation.org>, 	cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, 	kernel-team@meta.com,
- Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 11 Dec 2024 12:19:45 -0500
-In-Reply-To: <CAJD7tkYpk4kZChj9f-2EMp0XET6OUNbHqfVBgdFTEMnN+iomww@mail.gmail.com>
-References: <20241211105336.380cb545@fangorn>
-	 <CAJD7tkboc5a4MDHvF7K4zx5WP0DE4rsGW_24s16Hx+Vvy2RQLQ@mail.gmail.com>
-	 <768a404c6f951e09c4bfc93c84ee1553aa139068.camel@surriel.com>
-	 <CAJD7tkYpk4kZChj9f-2EMp0XET6OUNbHqfVBgdFTEMnN+iomww@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1733937647; c=relaxed/simple;
+	bh=24LHVsPPGzRM7HsZ0yR/+9TkDvB1RkUeOujKaY5kCpI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=L+uN3pHg/w6azWw9vn3APfhp2LAw4dFWsDaSIEES64zgyyryxC41aHMyoQ0WBflnSu+8z8pguctZ9QfP7tRYBz03cfuR1qhYHIZUU1xcl7t9KCxAC8wU5h90SaxbjUOMvg784vvd/qkY0M3NR9ieopZ3Wb8rd5epraGUTUCTzpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40664C4CEDD;
+	Wed, 11 Dec 2024 17:20:47 +0000 (UTC)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Sriram R <quic_srirrama@quicinc.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+ Rameshkumar Sundaram <quic_ramess@quicinc.com>, 
+ linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <755becb1-819b-484d-8fac-9a2db53ced1b@stanley.mountain>
+References: <755becb1-819b-484d-8fac-9a2db53ced1b@stanley.mountain>
+Subject: Re: [PATCH next] wifi: ath12k: Off by one in
+ ath12k_wmi_process_csa_switch_count_event()
+Message-Id: <173393764722.2156603.16648228152971339085.b4-ty@oss.qualcomm.com>
+Date: Wed, 11 Dec 2024 09:20:47 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
-
-On Wed, 2024-12-11 at 09:00 -0800, Yosry Ahmed wrote:
-> On Wed, Dec 11, 2024 at 8:34=E2=80=AFAM Rik van Riel <riel@surriel.com>
-> wrote:
-> >=20
-> > On Wed, 2024-12-11 at 08:26 -0800, Yosry Ahmed wrote:
-> > > On Wed, Dec 11, 2024 at 7:54=E2=80=AFAM Rik van Riel <riel@surriel.co=
-m>
-> > > wrote:
-> > > >=20
-> > > > +++ b/mm/memcontrol.c
-> > > > @@ -5371,6 +5371,15 @@ bool
-> > > > mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!zswap_is_enabled())
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 return true;
-> > > >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Always allow exiting =
-tasks to push data to swap. A
-> > > > process in
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * the middle of exit ca=
-nnot get OOM killed, but may
-> > > > need
-> > > > to push
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * uncompressible data t=
-o swap in order to get the
-> > > > cgroup
-> > > > memory
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * use below the limit, =
-and make progress with the
-> > > > exit.
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ((current->flags & PF_EXIT=
-ING) && memcg =3D=3D
-> > > > mem_cgroup_from_task(current))
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return true;
-> > > > +
-> > >=20
-> > > I have a few questions:
-> > > (a) If the task is being OOM killed it should be able to charge
-> > > memory
-> > > beyond memory.max, so why do we need to get the usage down below
-> > > the
-> > > limit?
-> > >=20
-> > If it is a kernel directed memcg OOM kill, that is
-> > true.
-> >=20
-> > However, if the exit comes from somewhere else,
-> > like a userspace oomd kill, we might not hit that
-> > code path.
->=20
-> Why do we treat dying tasks differently based on the source of the
-> kill?
->=20
-Are you saying we should fail allocations for
-every dying task, and add a check for PF_EXITING
-in here?
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
 
-        if (unlikely(task_in_memcg_oom(current)))
-                goto nomem;
+On Fri, 06 Dec 2024 15:52:29 +0300, Dan Carpenter wrote:
+> The ahvif->vif->link_conf[] array has IEEE80211_MLD_MAX_NUM_LINKS elements
+> so this should be >= instead of > to avoid an out of bounds access.
+> 
+> 
 
+Applied, thanks!
 
-> > However, we don't know until the attempted zswap write
-> > whether the memory is compressible, and whether doing
-> > a bunch of zswap writes will help us bring our memcg
-> > down below its memory.max limit.
->=20
-> If we are at memory.max (or memory.zswap.max), we can't compress
-> pages
-> into zswap anyway, regardless of their compressibility.
->=20
-Wait, this is news to me.
+[1/1] wifi: ath12k: Off by one in ath12k_wmi_process_csa_switch_count_event()
+      commit: 58fa8109fa8dae2947567e8f56dbd55ad81bc35c
 
-This seems like something we should fix, rather
-than live with, since compressing the data to
-a smaller size could bring us below memory.max.
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
-Is this "cannot compress when at memory.max"
-behavior intentional, or just a side effect of
-how things happen to be?
-
-Won't the allocations made from zswap_store
-ignore the memory.max limit because PF_MEMALLOC
-is set?
-
-> > >=20
-> > > (b) Should we use mem_cgroup_is_descendant() or mm_match_memcg()
-> > > in
-> > > case we are reclaiming from an ancestor and we hit the limit of
-> > > that
-> > > ancestor?
-> > >=20
-> > I don't know if we need or want to reclaim from any
-> > other memcgs than those of the exiting process itself.
-> >=20
-> > A small blast radius seems like it could be desirable,
-> > but I'm open to other ideas :)
->=20
-> The exiting process is part of all the ancestor cgroups by the
-> hierarchy.
->=20
-> If we have the following hierarchy:
-> root
-> =C2=A0=C2=A0 |
-> =C2=A0 A
-> =C2=A0=C2=A0 |
-> =C2=A0 B
->=20
-> Then a process in cgroup B could be getting OOM killed due to hitting
-> the limit of A, not B. In which case, reclaiming from A helps us get
-> below the limit. We can check if the cgroup is an ancestor and it hit
-> its limit, but maybe that's an overkill.
-
-Since we're dealing with a corner case anyway, I
-suppose there's no harm using mm_match_cgroup,
-which also happens to be cleaner than the code
-I have right now.
---=20
-All Rights Reversed.
 
