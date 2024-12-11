@@ -1,224 +1,187 @@
-Return-Path: <linux-kernel+bounces-441001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24679EC7B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:52:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116C79EC7B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25874285E51
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBA528702B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8B11E9B31;
-	Wed, 11 Dec 2024 08:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B25A1E9B19;
+	Wed, 11 Dec 2024 08:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FOJv3Q6Y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uNZ1ZfwH"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611BF1C5F12;
-	Wed, 11 Dec 2024 08:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928101E9B0A;
+	Wed, 11 Dec 2024 08:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907124; cv=none; b=lpKKFNqL9skBl3Bvwrju+2NyojslPRTUmGfa4PAYbCmwmU6PXUTl00HpXcPBIE64n6Mv3hJPTU6yUH88dFwbcxMwfKAAkW6URKBLqc4Z3NwA0pJ0i8CxkOOE2v1m6VswS2qpJspR4IPKdKLBRM+UkldZxEaH9e0sFB/lbE+3T3A=
+	t=1733907140; cv=none; b=qq2UQUI4q9uRdS2RcG81X6O1CzzRVUxp+kPrZSnDTUP4cpnip5eCqUXf6xheOutEP5xwyA8V2rkvvYOAjQVrC0pwmC59axCYBqXMByM8KWPWwSiWpc3z5B2bHbC/voJYp97aXXtcEjXe7aW9324UAVzZAJQgLcRc8QYvjwPRS8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907124; c=relaxed/simple;
-	bh=OR8GK2qCpYkeFCoDWc0Yi9aA9fxuV+z2O5O/jlCHIJs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIjJ4bLITs7R2Q9hGwPyIK+RW60J+NAmRGZzqB4UGt1cz1bxDcqe7uB7Xswy8pkHK5txo6V5Q+X/N0MRkvv92pbOg6EwRDz0w47ebgvq7V9qszNjJQlxmgDwVFFC4PBnvfkjqmUo+zRV+2lqSs5Sbl+4gi7Cb/5ilNDPlFFXV9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FOJv3Q6Y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB7vssq010224;
-	Wed, 11 Dec 2024 08:51:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=pT3aJLtYzwxFJMkqscc1jyxr
-	QBDSZ2yr8Uk3IsegLgQ=; b=FOJv3Q6Y4zRt9LfTYlSxeNGEQVwWawQGuFgGBdgE
-	5grG7rekFusQzCDrYNxBq2ihOTKlsVnVBdkeaKs2qV0XZxM718gcSTKV+fFPKcZD
-	vpXi0fSVQ70P6ghRsMckrHyoTHDHao+ys6Cvd/gqVW3YVaqyxdQ4ODtWvDN5Xt3E
-	mE0d7jWWQLq0Aq1f7V6Lk4ebUZPB3HzKhvbOe0cQ+KMiLEA/wLA0o5JYcntIXHgA
-	lcU+NKsfd76JJJz/6tGqq6MYM1ZisV+/2wCcBpe918r0U/uk45eb97MFoTmOoJJa
-	tf40XvTV9mTDmZSZDOepk54R69vM/ecmMOIs6fTf9cSsZg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f6tf84pc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 08:51:50 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB8pnDC018156
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 08:51:49 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Dec 2024 00:51:43 -0800
-Date: Wed, 11 Dec 2024 14:21:40 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <p.zabel@pengutronix.de>,
-        <quic_nsekar@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>
-Subject: Re: [PATCH v2 1/6] dt-bindings: phy: qcom,uniphy-pcie: Document PCIe
- uniphy
-Message-ID: <Z1lSnLyh6LSpk4z1@hu-varada-blr.qualcomm.com>
-References: <20241204113329.3195627-1-quic_varada@quicinc.com>
- <20241204113329.3195627-2-quic_varada@quicinc.com>
- <7js7lswzde67izdradhuzgvlixwiblgf7aosdvavknbclbtjew@6w3y2e2k3mtk>
+	s=arc-20240116; t=1733907140; c=relaxed/simple;
+	bh=0g8KQ0cBy9cJOMUG0RDKiqYP29dhTZAP9MiHlSqGUDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=llQyRXoraADpgvKHw0Bybt5SnuWNZiUFIFyNMY/6PBvl7hzQvlpRixNidcbINVAZ/6eQLHO16lSD2r/vPbgjidn8vzT2tMQuLtLhmhHviMeyicTesp+BVdHOatMpZolCq1seREAcZ2AaZHdfO/odFgz4DH2dffbd31xqyYI+oqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uNZ1ZfwH; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fAWS/sRlgeB+YbEy/eqhplKSQ984OPXnrFLfa4o96GQ=; b=uNZ1ZfwHa1YAQBxuf/XLDVsosm
+	nDJww0n5aeFUeUp9Rc09P1QndQ1+eKRrRp3bAuWA5+r0SijMwzsz2XOUP9lC1sehu8rhLBUOGFG2L
+	qtVX314epcUUf80JvFJWZWZBS7sgubO6kS4vdZ7k3ooOTGTHpya4Ep1/B+mVpyS/HVrzc/wtiagUv
+	bDO2Fy40GXvIcnckzGKB3Z+lZZAUp5rmK5P8D2N5h5G35F76m63zP3tdLkQRVeS3WG2wsO1bK1es9
+	hJfThXSrAK3/LPufn8RC1HmKbzPsLRH8zCq0Ooe7jubaPHp3f11NmxrrPchNRfkGUgQNeuXycRIK7
+	eYPGTFOw==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tLIS3-0000HG-JO; Wed, 11 Dec 2024 09:52:11 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andy Yan <andyshrk@163.com>
+Cc: hjc@rock-chips.com, krzk+dt@kernel.org, s.hauer@pengutronix.de,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, derek.foreman@collabora.com,
+ detlev.casanova@collabora.com, Andy Yan <andy.yan@rock-chips.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>
+Subject: Re: [PATCH v5 01/18] drm/rockchip: vop2: Add debugfs support
+Date: Wed, 11 Dec 2024 09:52:10 +0100
+Message-ID: <3527424.cLl3JjQhRp@diego>
+In-Reply-To: <121ab3c0.68d0.193b48b32ed.Coremail.andyshrk@163.com>
+References:
+ <20241209122943.2781431-1-andyshrk@163.com> <4471861.MSiuQNM8U4@diego>
+ <121ab3c0.68d0.193b48b32ed.Coremail.andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <7js7lswzde67izdradhuzgvlixwiblgf7aosdvavknbclbtjew@6w3y2e2k3mtk>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: v3Oe2qP-ofqk72OOu_4Usb1Fc0-6LfOo
-X-Proofpoint-ORIG-GUID: v3Oe2qP-ofqk72OOu_4Usb1Fc0-6LfOo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110066
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 10:38:05AM +0100, Krzysztof Kozlowski wrote:
-> On Wed, Dec 04, 2024 at 05:03:24PM +0530, Varadarajan Narayanan wrote:
-> > From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+Hi Andy,
+
+Am Mittwoch, 11. Dezember 2024, 08:07:21 CET schrieb Andy Yan:
+> At 2024-12-10 19:57:44, "Heiko St=C3=BCbner" <heiko@sntech.de> wrote:
+> >Am Montag, 9. Dezember 2024, 13:29:13 CET schrieb Andy Yan:
+> >> From: Andy Yan <andy.yan@rock-chips.com>
+> >>=20
+> >> /sys/kernel/debug/dri/vop2/summary:  dump vop display state
+> >> /sys/kernel/debug/dri/vop2/regs: dump whole vop registers
+> >> /sys/kernel/debug/dri/vop2/active_regs: only dump the registers of
+> >> activated modules
+> >>=20
+> >> Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
+> >> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> >> Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
+> >> Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+> >> ---
 > >
-> > Document the Qualcomm UNIPHY PCIe 28LP present in IPQ5332.
+> >> +static void __vop2_regs_dump(struct seq_file *s, bool active_only)
+> >> +{
+> >> +	struct drm_info_node *node =3D s->private;
+> >> +	struct vop2 *vop2 =3D node->info_ent->data;
+> >> +	struct drm_minor *minor =3D node->minor;
+> >> +	struct drm_device *drm_dev =3D minor->dev;
+> >> +	const struct vop2_regs_dump *dump;
+> >> +	unsigned int i;
+> >> +
+> >> +	drm_modeset_lock_all(drm_dev);
+> >> +
+> >> +	regcache_drop_region(vop2->map, 0, vop2_regmap_config.max_register);
+> >> +
+> >> +	if (vop2->enable_count) {
+> >> +		for (i =3D 0; i < vop2->data->regs_dump_size; i++) {
+> >> +			dump =3D &vop2->data->regs_dump[i];
+> >> +			vop2_regs_print(vop2, s, dump, active_only);
+> >> +		}
+> >> +	} else {
+> >> +		seq_printf(s, "VOP disabled\n");
+> >> +	}
+> >> +	drm_modeset_unlock_all(drm_dev);
+> >> +
 > >
-> > Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v2: Rename the file to match the compatible
->
-> Either I look at wrong v1 from your cover letter or there was no such
-> file in v1, so how it can be a rename?
->
-> What happened here?
-
-This driver was pulled in from [1] "Enable IPQ5018 PCI support (Nitheesh Sekar)"
-
-In that review, there was this feedback [4]
-
-	-------------------------------
-	> +++
-	> b/Documentation/devicetree/bindings/phy/qcom,uniphy-pcie-28lp.yaml
-
-	Filename should match compatibles and they do not use 28lp.
-	-------------------------------
-
-> >     Drop 'driver' from title
-> >     Dropped 'clock-names'
-> >     Fixed 'reset-names'
-> > --
-> >  .../bindings/phy/qcom,uniphy-pcie.yaml        | 82 +++++++++++++++++++
-> >  1 file changed, 82 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml
+> >nit: not needed empty line at the end of the function
+>=20
+> Will fixed in V6.
+>=20
 > >
-> > diff --git a/Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml b/Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml
-> > new file mode 100644
-> > index 000000000000..e0ad98a9f324
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml
->
-> This does not match compatible, so I don't see how it even matches your
-> changelog.
+> >> +}
+> >> +
+> >
+> >> +static void vop2_debugfs_init(struct vop2 *vop2, struct drm_minor *mi=
+nor)
+> >> +{
+> >> +	struct dentry *root;
+> >> +	unsigned int i;
+> >> +
+> >> +	root =3D debugfs_create_dir("vop2", minor->debugfs_root);
+> >> +	if (!IS_ERR(root)) {
+> >> +		for (i =3D 0; i < ARRAY_SIZE(vop2_debugfs_list); i++)
+> >> +			vop2_debugfs_list[i].data =3D vop2;
+> >> +
+> >> +		drm_debugfs_create_files(vop2_debugfs_list,
+> >> +					 ARRAY_SIZE(vop2_debugfs_list),
+> >> +					 root, minor);
+> >> +	}
+> >> +}
+> >> +
+> >> +static int vop2_crtc_late_register(struct drm_crtc *crtc)
+> >> +{
+> >> +	struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
+> >> +	struct vop2 *vop2 =3D vp->vop2;
+> >> +
+> >> +	if (drm_crtc_index(crtc) =3D=3D 0)
+> >> +		vop2_debugfs_init(vop2, crtc->dev->primary);
+> >> +
+> >> +	return 0;
+> >> +}
+> >
+> >I'm wondering about, shoudln't there be an unregister step too?
+> >I.e. the late_register callback says:
+> >"should be unregistered in the early_unregister callback" [0].
+> >
+> >And there exists drm_debugfs_remove_files(), though it doesn't
+> >seem t be used much - just by tegra.
+> >
+> >I haven't managed to find drm code handling that automatically though?
+>=20
+> Did a little digging=EF=BC=9A
+>  rockchip_drm_unbind --=E3=80=8Bdrm_dev_unregister(drm_dev)--=E3=80=8Bdrm=
+_debugfs_dev_fini
+> --=E3=80=8Bdebugfs_remove_recursive(dev->debugfs_root);
+> This will remove all the debugfs file under /dri/0-->display-subsystem  w=
+hen we
+> remove rockchipdrm when it build as module.
 
-Since this phy has both single and dual line capabilities I used
-the phy's name alone for the file name. Will rename this as
+thanks a lot for finding this. And yes, that covers all possible cases.
 
-	qcom,ipq5332-uniphy-pcie-phy.yaml
+> If it is builtin, whether we remove them seems to make no difference when=
+ we
+> reboot or thutdown the system ?
+> I also searched for other platforms using similar late register hook, and=
+ it seems they haven't remove debugfs  either.
 
-If this is not suitable, can you please suggest one that would be
-apt for this phy.
+unbind can be called even if the driver is builtin - i.e. a driver
+does not need to be a module to be unbount/rebound again.
 
-> > @@ -0,0 +1,82 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/phy/qcom,uniphy-pcie.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm UNIPHY PCIe 28LP PHY
-> > +
-> > +maintainers:
-> > +  - Nitheesh Sekar <quic_nsekar@quicinc.com>
-> > +  - Varadarajan Narayanan <quic_varada@quicinc.com>
-> > +
-> > +description:
-> > +  PCIe and USB combo PHY found in Qualcomm IPQ5332 SoC
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - qcom,ipq5332-uniphy-pcie-gen3x1
->
-> Odd naming. Did anyone suggest this? I would expect something matches
-> like everything else recent (see X1 for example).
+But the drm_debugfs_dev_fini() function you found, solves that
+in all cases, so this patch can stay as it is - minus the empty line.
 
-It was not suggested by anyone. Since [4] didn't comment on this
-continued to use it. Will change it as follows (similar to
-qcom,x1e80100-qmp-gen4x2-pcie-phy)
+Thanks a lot
+Heiko
 
-	qcom,ipq5332-uniphy-gen3x1-pcie-phy
-	qcom,ipq5332-uniphy-gen3x2-pcie-phy
->
-> > +      - qcom,ipq5332-uniphy-pcie-gen3x2
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 2
->
-> What happened here? This cannot be minItems and it never was.
 
-Will fix this.
-
-> > +
-> > +  resets:
-> > +    minItems: 2
-> > +    maxItems: 3
->
-> Why this varies?
->
-> This patch is odd. Confusing changelog, v1 entirely different and not
-> matching what is here, unusual and incorrect code in the binding itself.
->
-> Provide changelog explaining WHY you did such odd changes.
-
-This series combines [1] and [2]. [1] introduces IPQ5018 PCIe
-support and [2] depends on [1] to introduce IPQ5332 PCIe support.
-Since the community was interested in [2] (please see [3]), tried
-to revive IPQ5332's PCIe support with this patch. Apologies for
-not expressing this in the cover letter.
-
-> Open *LATEST* existing Qcom bindings and look how they do it. Do not
-> implement things differently.
-
-Sure.
-
-Thanks
-Varada
-
-1. Enable IPQ5018 PCI support (Nitheesh Sekar) - https://lore.kernel.org/all/20231003120846.28626-1-quic_nsekar@quicinc.com/
-2. Add PCIe support for Qualcomm IPQ5332 (Praveenkumar I) - https://lore.kernel.org/linux-arm-msm/20231214062847.2215542-1-quic_ipkumar@quicinc.com/
-3. Community interest - https://lore.kernel.org/linux-arm-msm/20240310132915.GE3390@thinkpad/
-4. dt-bindings feedback - https://lore.kernel.org/all/4bc021c1-0198-41a4-aa73-bf0cf0c0420a@linaro.org/
 
