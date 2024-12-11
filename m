@@ -1,169 +1,122 @@
-Return-Path: <linux-kernel+bounces-441293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713BB9ECC65
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:45:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87416163C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:45:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B32223694C;
-	Wed, 11 Dec 2024 12:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uV2CY1df"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2065.outbound.protection.outlook.com [40.107.100.65])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80289ECC4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:43:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB211233688;
-	Wed, 11 Dec 2024 12:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733920963; cv=fail; b=Mzyl2U56930OMIVNDX8o8L0k5RsJR9m6u4aoePhaQAp8e+IhG83cwTBw6nuJkR0ZWl5peBiT43K9QqDcK2UO3pfFM49vK0brznK5ZCkqoKf8E/tYxKG0K1RMOvuZTQ/h3T5kS1IbVxZYpyZuJciQaXIGi83OEzKf64auq3v5+5I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733920963; c=relaxed/simple;
-	bh=P8dOCnwxyAdDekTcVCIYi2kq6wFUKjaNQ/Y+6I+dxLI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nkUTaEHwTtKeJx1nXYQAeCW/IYTppHTifR3F119RZz3m8u8EQ2u+S9ppnzNccNR237EKHQ/z4H37nCwuvJ71rCNkJOpzP4EpYxkjEx5t5BMmnADR5KrJm39Flk8xAiqXokiD6Km2gcaQgIoxkrSh8IOidm/aWGtYW32TbB60t1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uV2CY1df; arc=fail smtp.client-ip=40.107.100.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Sl7YZXCK0nx7Hho5wfPTtXaT1PC/qzdxl62HOqckyO9DtnTJDCD2rgVEChmuDJLmbFOo4uLo4okRTgel5445lDxXDxIAJ8bsqZLUBfrf7HvYhNMYo+xzvLi4RvAvNewwSARvZrqiQwF+2AUeM889OoowAVDjZJuBIDo4LDicrOlBHyGhp7xpkMD1vEFG2X3ZRW/xseVtjmqTvIFLWSSOujPu1sOh6NEwNyLluq6tIguqowclfrCLJzy4TxuFHA+119MHeUtnUzvPnyZBis9JqXEsurM9KGS87CI+Sn7u6AtDqRA7mhynq+0RyJoqygOM25TrcMp2WIzwl/iKkfvcaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e0eGlusPZwUYlUVPnZGo0MqCxZ9XjiR4Us6+ra3ROos=;
- b=QrTwu0yr99fZG04SMQc7vryaL/YfZE/fTOWHhh+zOMozXMCJDjNz9wc5eRwrVWMUd7obvXLkYVoi52B7zs6BavCAGjAi+dEUTdeiB2Nqbnh0IrGmXMOC7/f5qff/+30+ZPHGF1vqO8vHvFdp8G8HVhvbASfKk+Yk5a5lUAFCjA571/Iw8OIZ66cJElMpKnzLsQKgAnRvLnoBtyGidX4HjmwYhdmxruykx+TOtXO2jUuXTTE32n0y8tA+oW4lJgld5r9fxxZ22brz0bZnlHL+zF0cdMY5nFSlDyPQZv545yNJminVt/VjvRvC2Z0oMv4nsxkOC+GtDrCXX6YpN/koDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e0eGlusPZwUYlUVPnZGo0MqCxZ9XjiR4Us6+ra3ROos=;
- b=uV2CY1dfoT3hBzFbX3dDfQuFzDR+zj01vHHCYgM9SAyITNw6Zsu+7sEGV8i3dtd+NZsjupreEOvm/+5/eNr2BQ08vxylvFIhraHJLU/3OrCWuHkiVyoENNiX/jWbGX8xWjmxgNANTFPSYyQFbUItsJmaCmdmuCDEQ86EFlMtX5Y=
-Received: from BL1PR13CA0408.namprd13.prod.outlook.com (2603:10b6:208:2c2::23)
- by SN7PR12MB7347.namprd12.prod.outlook.com (2603:10b6:806:29a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.20; Wed, 11 Dec
- 2024 12:42:36 +0000
-Received: from BL6PEPF0001AB57.namprd02.prod.outlook.com
- (2603:10b6:208:2c2:cafe::ee) by BL1PR13CA0408.outlook.office365.com
- (2603:10b6:208:2c2::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.14 via Frontend Transport; Wed,
- 11 Dec 2024 12:42:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB57.mail.protection.outlook.com (10.167.241.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8251.15 via Frontend Transport; Wed, 11 Dec 2024 12:42:36 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Dec
- 2024 06:42:34 -0600
-From: Michal Simek <michal.simek@amd.com>
-To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
-	<michal.simek@xilinx.com>, <git@xilinx.com>
-CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE
- AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated
- list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 15/15] ARM: zynq: Remove ethernet0 alias from Microzed
-Date: Wed, 11 Dec 2024 13:41:34 +0100
-Message-ID: <f4189063a8923ad380675f8e426e739ee3110baa.1733920873.git.michal.simek@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1733920873.git.michal.simek@amd.com>
-References: <cover.1733920873.git.michal.simek@amd.com>
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD790288056
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:43:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD622368E0;
+	Wed, 11 Dec 2024 12:42:08 +0000 (UTC)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EE72336AD;
+	Wed, 11 Dec 2024 12:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733920928; cv=none; b=fcxJ994bHX7XBB6kZVLVsbeDQYDajLbrRitm6HDU8YYhYPEnC+hKdDD4Kgql2RcCIt7+8nCrIysFZYoUQqwy+SYBByaCP5TjaHgFr8Ap414vd8uN6uTwrep5uuv+ddEokoji3XkT7h34Af156WfuTheTBK7cc3GlEmL0nimExpQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733920928; c=relaxed/simple;
+	bh=pCrnFWl9qk9VOVOQzq/ZUQHHi5QCS7nCqkeJpUcwJnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C0YMgFiQ+6Uofo7asKwW1irBDhDLGSbWmgJj2Pn0Wml/Fary1dZapuJBkMPZp7WiCt8FGHrRNtvehrw92hMzKppI/D4roXYkIQ0krdiEjvrw7+kTzzJNokqJc4CwQ/NKQgTPt84tGPrGWql14eZDpATmhz2889PRhLhlZGgGlHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85bafa89d73so1027801241.2;
+        Wed, 11 Dec 2024 04:42:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733920923; x=1734525723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1BDSnq8xcYZhg4ixe82LPtNR03KdprjXeey0ZFOStPw=;
+        b=TbXr40h4vsQ/uJKp95VJIkeK/1klrm+k2QOxpp3tPWHubaiRk0Sp2h+9OGQps/oAjx
+         iUOiXC7b4ufQgdIY/Z94/ATSe1J7L4pm7qY7aViL5ofKRJLh42Z9P71WSxY6Kgkkzy6p
+         CJ+HZLByHqcKbOddCIjdnRqkPJN40XaTuHKH9RR+lfcdVMNwzRsIo0lz2Umx2nXFqKOb
+         MZLoSAX4F0CyruTvXnK+llo32XBZBlDPEXKtWZXSEMeIwb4mwXIpmfL6O6QAo+TPQubk
+         MePHERuTkBDYMQnsbDpIrYHbXgt8aqoMSgf45J1iRdNYmrpWVNbFZtgE5TL3E70qt5yj
+         PS1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVmNk/xPkTfCmTHIQDmiOH5fL33PQpjL2LZr7k7K9Qxx+cjwKlyrSMwA8KUb1lFNB4kJY4M43lOtZOi@vger.kernel.org, AJvYcCVqE3i1xBQAos/Z57uJIGT2m0psWLp+/M/6O5MMFbPurFmREjfF0PYrjDFeugoIYre4oEFXoL3kc5Jy@vger.kernel.org, AJvYcCWYokCRkXHFmUzFYfvvnN5gpubB3xAXYNmTZX3+0Uao0FIad+wZzC3lXDi/IwJkkj2bO7vq91YkreAlPKUW@vger.kernel.org, AJvYcCXbXWtzp5qTtgLJKfUH4iNc8pqOyu45F6CmkapEXY58uQX/tlBhxWdvwTd8eSOLDnSy5wC9dSQpCgdZe9EknZ9LzSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy42VWr8fCntptOhrybZgFW4SJ/wwA8O0p+Wcgt3OQfEmoklrWe
+	MwL1tbSEPyGi9TPRw7iZBMlHKu9pHK76KZMtGBYQIHUfiYJHuK04rOvamwA8
+X-Gm-Gg: ASbGncutGzEC8sPEQQB+dx3RD6ExbbgZfsFWmqZl3eiXteTyOc1VxJIMGG3tlu6jBTy
+	0TeWVgSOk4Z/jjGq5jxWG20lwfKrHVTHUbTUOsb9oBG88ypKnSaRTcxSI1E5IekQ7cuhlzFFl/x
+	2EdBOZUl+RCZoMoSWVmjY7eJFvtHl5EfXtDMXANmYQKZkoexnaM7Pg+8EnPVjC1K6UXvmiiaoq/
+	g03BKJrqXT4qiekWFYx/jlZJRzE1Mid2Let7mGqvr0PEtT/T9SEnqXB6rE5sXf8iRjNe8Vrt64u
+	lEGEMP7KchGYjkUq
+X-Google-Smtp-Source: AGHT+IFBeAwZ5QX7mIUaa551OL9Q1HX0P1qqH2VB32uujgc+oMvlv73IqmvodeOQm64HBHBtqxhxbg==
+X-Received: by 2002:a67:eec7:0:b0:4b1:8b53:2987 with SMTP id ada2fe7eead31-4b18b532a92mr1485304137.1.1733920923270;
+        Wed, 11 Dec 2024 04:42:03 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afe6969140sm1074686137.7.2024.12.11.04.42.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 04:42:02 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4aff620b232so1090864137.0;
+        Wed, 11 Dec 2024 04:42:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUu2nFW73mxV05tsUJTC7Aw92TQgtsS1KHwvxa2+jcemg0IrLecG2bEjsi2Lj4Z8eakxtzzugLU27DL@vger.kernel.org, AJvYcCVvvsNTz6AHjL9Yse+UPu5yNFlvC31OkgaTjpNQgTmavj+a8guoesFdgqZOFuGHARWC7BGDCUp9Nvtu+Gmo@vger.kernel.org, AJvYcCWlTbj4ZqmSe+WjteGSvlmDIDsodbCRLrAerPGS4UltinHehwSkccNjV5SOXuoFJOiKvd53Kkxmdmq/@vger.kernel.org, AJvYcCWnma1sYdqWwN4NksXbjgFjUkP3jTttPxbXixExd9r5qzOac+Rb+J6YKjVBp0Vy3mbisnf2Frum+UzDab85+9qWs0w=@vger.kernel.org
+X-Received: by 2002:a05:6102:ccb:b0:4b0:2d7c:43e1 with SMTP id
+ ada2fe7eead31-4b12913b88fmr2367405137.20.1733920921942; Wed, 11 Dec 2024
+ 04:42:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=702; i=michal.simek@amd.com; h=from:subject:message-id; bh=P8dOCnwxyAdDekTcVCIYi2kq6wFUKjaNQ/Y+6I+dxLI=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhvTIjvq+1wUtUeYaU6bPVl6e6Kj6+NfbVRMj2t7Ku4cls 2eGTvHqiGVhEGRikBVTZJG2uXJmb+WMKcIXD8vBzGFlAhnCwMUpABMR6GFY0FrBejL79Nsf6a89 tZnLX7YVKcS6MMwPZtjNvr7gBKNJ/WKrNBc2lwWHOB4AAA==
-X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB57:EE_|SN7PR12MB7347:EE_
-X-MS-Office365-Filtering-Correlation-Id: c595fc3e-c141-4dfc-7498-08dd19e14aa0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QxHe7DwCp9hADvIRIcmD+Rll8oTX+0UEQAX/n1wNbPSGlqSkNRYKH0yYRqiR?=
- =?us-ascii?Q?B/92i574WyQXynxhqEqv7dGTStPnZIBTGbyzDIyK1xT8gd3V4qc9kNUX88+t?=
- =?us-ascii?Q?EIj0S6rgokKoCiJYDnE8v5OGhqNmctjN0ovEq6ntflQ/LcIrf+VE/lgNI69N?=
- =?us-ascii?Q?JrCu+Edvd50c8dFsaFcQQz9Y/ESfzcxQ8+VNG2A98/nWb2FKsQJY6E0D6K9i?=
- =?us-ascii?Q?ubJ7/YRKl6UHtTI0FqBBx4N7+/dEXU3kc/Xh0+SExMsdwdpJSMXLWPa65jkn?=
- =?us-ascii?Q?VtHm1mbbTj5OYrDDK5pmpfnkOfti3Hyo2amPAIkGMHHxAqTvHNTf/EDR+mp4?=
- =?us-ascii?Q?lJ7TsS8tiEX9qEtZqS47p3ifm+rf7QbHm28Fft/s6EAcnyVvqeBd3mRpgm9c?=
- =?us-ascii?Q?+QT6bTYQVvhNGPYfPm/9vjGIocIACZlS4UGjqLZH2hc0A4kf5ATu+8uG4gQJ?=
- =?us-ascii?Q?bNKq0eIULJ+E0bVg4c2wAOJtEkoQzwPRDYzseuriOcfLlcKyVLDRz0a8EaQE?=
- =?us-ascii?Q?UqYGTrW6IIXC9y9aaw10DY/XMeXcp0FfgGOT5lJD5w553nCfNpFyUISJE8EH?=
- =?us-ascii?Q?HkP0oU9cr6+IWj0R8j/NfXQLSU0tHOJNVSZRwQt37UzaFz4TtCxSwSNxUMpN?=
- =?us-ascii?Q?M8JewBcZTjeylxdnaWgZzxBNafn/F9bLG12FIp4pqYSKu3WqjN2em8aE61q4?=
- =?us-ascii?Q?NSH8aglImm3JO2ogJFf27u14KAOFbebT/5wplIHPhaXKcKLp9U1Eyg4w4UJO?=
- =?us-ascii?Q?XSJzp38bT4tt0ZPkPldCaDbDq5B3Fl1dDv5V54acKaqkdM+nhJZNcdGt/3f0?=
- =?us-ascii?Q?V5akjMV9iYqTov7ImLv1XhpUL2ZCMQ7YbEom/LmDlbmJ8c2GULi30KM0gTyq?=
- =?us-ascii?Q?mlyndZMe7lSHGwFOGHsZ82QIH1L009g40DAYZXJ+IMN7q5dimq5U5mrOLYtH?=
- =?us-ascii?Q?+VvCbdYBJkBME/xqUrpkVpBoLLA8xXN+hKJ5IBsSCVrJQNfFkIiyDPKOE5h7?=
- =?us-ascii?Q?rbM7gXs2ewLEN+/wpS4K1cRBNQ7WYd89/+P4VYEbe0m9+kZqjGPPcwF7yujO?=
- =?us-ascii?Q?vQjkJSpCcSbsiOtjq243N19arZQeLAHPmRQGVwp/ZkFXPam2G3Ck+9FYFHNw?=
- =?us-ascii?Q?i1g8UecyuLDvm3tiGutcfcsSfWIStw2nnL9Uk9syZ4it2MYBavIUOpOFWNnP?=
- =?us-ascii?Q?oU/hJUYGoWAU5An4sO7LvcAVszmE8GD+RJqKWgVzdkJSic1dYMnP0g++ruG+?=
- =?us-ascii?Q?bHrTbPBCGxxpSwcOvDgXieusK9bhVYHtPPe5LVk8TY4RWLXOnGSMlp+0xcG5?=
- =?us-ascii?Q?yu16H4VSbOYhwJ7jr/2w8toLJZ+Jnp9M54g3ikAwpWn/OrSLcRJyLCZr0q/q?=
- =?us-ascii?Q?/dVbP90Dgh96RuCckJ4vwB5bBmXnperG0GgLWO276YwWTBUjlBAUsO49j649?=
- =?us-ascii?Q?ttdzVruRqRzOpAjzHMzj5llye22/IPwp?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 12:42:36.6062
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c595fc3e-c141-4dfc-7498-08dd19e14aa0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB57.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7347
+References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com> <20241210170953.2936724-23-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241210170953.2936724-23-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Dec 2024 13:41:49 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWk-KYbzifGfk9hLrEXVoPLrZys2A=ULyLzZarJybCKmg@mail.gmail.com>
+Message-ID: <CAMuHMdWk-KYbzifGfk9hLrEXVoPLrZys2A=ULyLzZarJybCKmg@mail.gmail.com>
+Subject: Re: [PATCH v4 22/24] arm64: dts: renesas: Add da7212 audio codec node
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
+	lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ethernet is not using alias for ID assignment that's why alias is not
-needed and can be removed.
+On Tue, Dec 10, 2024 at 6:10=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add the da7212 audio codec node. Along with it regulators nodes were
+> reworked to be able to re-use them on da7212.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v4:
+> - collected tags
+> - dropped #address-cells, #size-cells
+> - moved #sound-dai-cells after clock names to align with the
+>   documentation example
 
-Signed-off-by: Michal Simek <michal.simek@amd.com>
----
+Thanks, will queue in renesas-devel for v6.14.
 
- arch/arm/boot/dts/xilinx/zynq-microzed.dts | 1 -
- 1 file changed, 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/xilinx/zynq-microzed.dts b/arch/arm/boot/dts/xilinx/zynq-microzed.dts
-index 20c04862679d..68b867e8369e 100644
---- a/arch/arm/boot/dts/xilinx/zynq-microzed.dts
-+++ b/arch/arm/boot/dts/xilinx/zynq-microzed.dts
-@@ -11,7 +11,6 @@ / {
- 	compatible = "avnet,zynq-microzed", "xlnx,zynq-microzed", "xlnx,zynq-7000";
- 
- 	aliases {
--		ethernet0 = &gem0;
- 		serial0 = &uart1;
- 		spi0 = &qspi;
- 		mmc0 = &sdhci0;
--- 
-2.43.0
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
