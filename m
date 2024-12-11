@@ -1,73 +1,98 @@
-Return-Path: <linux-kernel+bounces-440664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F509EC29A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:57:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACEF9EC2A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0FB162CA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E86C1889785
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7261FCD09;
-	Wed, 11 Dec 2024 02:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E991FCD0B;
+	Wed, 11 Dec 2024 02:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGBFh4Q8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BCC1422A8;
-	Wed, 11 Dec 2024 02:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="If7iQc4S"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573141FC104;
+	Wed, 11 Dec 2024 02:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733885815; cv=none; b=NrRtBn1fs4xdG9q4hXoHdJbhs7cAhzikheZiDTnykA95jiHXC8/7iRm2XVMHID4x5TTIYJcvttyvdnDUPEKem5vrQ+gUfNHXX8GkQ64qy9Bai+00kqV8Y8z2Xwd8F0HYXCyGDG8fpLeAolhUzUv+h5dS625UyQjGbRnr4TqXlKU=
+	t=1733885890; cv=none; b=l5rTJMA+pwGMZezh8NRcvQ6tlUiRVZ4kMBhywc+5kwMI99UWwYIetaurUgXa6TWEnXJvfjBRVPK1Mz8cCOrJB813atGnQiFRoFWQ+bAPVIIcvxCkMikrLmVpiOZuGmqZcJKsBdnVH+am6zBbSnLPd2d/Svuq3NkOp/JJBKqjFT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733885815; c=relaxed/simple;
-	bh=o3JmklEEpYi+85RJMrYvYgONB8Y6N2ylZ+A8lqo4PsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=agul6hzNicp6Vnz8akK49BmNbqmzhbBMbCl4g402xlmp08coi/WFTdh4+g/kxpazfWp4wMRxjD+0UUJd3f9AmdpcnZyKfMT4qUGK1Oe3WG9HaUrzeP9UY9wFTfXtV/zqNb1NoAgsa3Bbf9FrsBhKWvcYhODCy8xeil9mVpta5Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGBFh4Q8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8018C4CED6;
-	Wed, 11 Dec 2024 02:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733885815;
-	bh=o3JmklEEpYi+85RJMrYvYgONB8Y6N2ylZ+A8lqo4PsQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eGBFh4Q8wx8y/7XVjXop2OVsRrur2njZy+CW38EP6he2u0i1E8Bw9+Xerwr9XWwt5
-	 wBQaxq6xrj4L/hF83bjfAW3tpfCUo3OK+yGwQCAOExACr+isG7/EtAHNIRfCBt8F84
-	 e/AC89niUjtIv3bdxoyBnwLDwUJFON3Gu/LPG8eMu9E7phNjPRpd5ccWM1D7JoOLfr
-	 mADknKE8Y9Zvsj2KeCwVD9D8Weoqmbmrwsr629/4MML+7rwSFQE7Z7X/KEQFB629Ti
-	 OT/ckezmGyVaGuPcgiOqKnaJGW8kCXnO7aCCicRq1M8j5iSfYwuo7sRmM9nT5TmOBD
-	 675nyOjjlLpEA==
-Date: Tue, 10 Dec 2024 18:56:53 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Woojung Huh
- <woojung.huh@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com, Phil Elwell
- <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 11/11] net: usb: lan78xx: Improve error
- handling in WoL operations
-Message-ID: <20241210185653.3c41fcec@kernel.org>
-In-Reply-To: <20241209130751.703182-12-o.rempel@pengutronix.de>
-References: <20241209130751.703182-1-o.rempel@pengutronix.de>
-	<20241209130751.703182-12-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1733885890; c=relaxed/simple;
+	bh=Jltp9bnlx2+n18ClWB5oOsVvGL80S3zLfY6neFVpMps=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bB9IZlq1rsjle+4jLDM3FRoKIHCAG2WvhRQ/bz4Cdq1SicJ56dzoBYDfWabhvwcPrvjO8ZSJuJrQOoKR+Zp3aVZT+nMQKUN7OMo+xQXIPzOwFWpyb/dW7WUwXIN0I3nhi1SQFLCNKF1EtLYn3Gw0809H44vyrndlSgCLlrpigUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=If7iQc4S; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=G8bXT
+	8guXuEHe3zwPNQ59rUUL4Ht2a1ZJXky8kfhCQA=; b=If7iQc4SNWZOftbp6+ZLg
+	7znREEBvYFUS5Sc/8KeXsfcSzbYbvT4eifhadtog7gdVLISPbaXMEwaTCTNwjKb3
+	HB38bL4DRH7jfWRaO0G1rOlEafS2X8s4tCaHYfyLo48cCuwT4Si/mMmmv8WlPSFo
+	fWTdMSanK7XONetgmPG5Bk=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDn6lCK_1hnW695AA--.9130S4;
+	Wed, 11 Dec 2024 10:57:31 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: liviu.dudau@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	ayan.halder@arm.com,
+	james.qian.wang@arm.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/komeda: Add check for komeda_get_layer_fourcc_list()
+Date: Wed, 11 Dec 2024 10:57:12 +0800
+Message-Id: <20241211025712.824391-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn6lCK_1hnW695AA--.9130S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKrWDtFyrtry3ZrW3tFykGrg_yoWDKrXEkF
+	1UJr1UXr4UCF9rZw12kw1fX34I9w4ayF4kJr1SqrySvr1xCrsFv3yxXwn8u3WUuay7XF4q
+	k3Z8GF1UA3yxWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUT7K3UUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqQ6ybmdY+gDRqgAAsF
 
-On Mon,  9 Dec 2024 14:07:51 +0100 Oleksij Rempel wrote:
-> +set_wol_done:
+Add check for the return value of komeda_get_layer_fourcc_list()
+to catch the potential exception.
 
-exit_pm_put: ?
+Fixes: 5d51f6c0da1b ("drm/komeda: Add writeback support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
->  	usb_autopm_put_interface(dev->intf);
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+index ebccb74306a7..f30b3d5eeca5 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+@@ -160,6 +160,10 @@ static int komeda_wb_connector_add(struct komeda_kms_dev *kms,
+ 	formats = komeda_get_layer_fourcc_list(&mdev->fmt_tbl,
+ 					       kwb_conn->wb_layer->layer_type,
+ 					       &n_formats);
++	if (!formats) {
++		kfree(kwb_conn);
++		return -ENOMEM;
++	}
+ 
+ 	err = drm_writeback_connector_init(&kms->base, wb_conn,
+ 					   &komeda_wb_connector_funcs,
+-- 
+2.25.1
+
 
