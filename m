@@ -1,140 +1,282 @@
-Return-Path: <linux-kernel+bounces-442176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD469ED8F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:46:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E483B9ED8F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:48:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83073161D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701472850BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263761EC4CA;
-	Wed, 11 Dec 2024 21:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F4D1EC4D2;
+	Wed, 11 Dec 2024 21:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3D9Zf4p"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LgkHhlrc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF37C259498;
-	Wed, 11 Dec 2024 21:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882951D31B5;
+	Wed, 11 Dec 2024 21:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733953551; cv=none; b=cDQA0CoG8wdKxzs0JYlF4rMV2h7lxOQdrGmD6ibkEEEbwY2ITDAEvVnSUNv9ClYo4xLeUwm567XOdWmAL+pmFJyS6tVyPAHtog6Cv7CblJYmxL5HY9/qj5inXS/dhGE4yXnnTDtOhaRQGU6huR8cbxx3lfbr71LhosOt55ReViI=
+	t=1733953720; cv=none; b=Lq9et6scDkOfKo3dx+XZBBzJtKK2sd5noUeBBzPGXNn6K3ORrUUhzEFu8G1oY+hkmKD084V0nOauxoN8RTuGPDFBzWt4NkokFTqnMQEctVOHfgLQnXd1gBXDcG0uib2n0jv/fH58zl1UUmC/xZjVuFv88pbGN0LcuAWkezCKS4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733953551; c=relaxed/simple;
-	bh=uZxErtAMqBRDn+WZll10y/bkFTDcTuIEHN0JHfb5GqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y9ESx4Z5y/+AsX9CyARyS15FjWLMNf/OaA1NEZIuYRZyQvZlwSbR8rHKz+BawYrY68e4g9A793g7LrR77tCOic+6kqlz8shbnAMwXxdyA3zM/mRPCKb8H/D9hzEQODuNtVjbbcPjaWhkVsZd7ibGgrxyj/XFIHfr56tomDkG3tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3D9Zf4p; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-435f8f29f8aso14997635e9.2;
-        Wed, 11 Dec 2024 13:45:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733953548; x=1734558348; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kKHGYhS/cBN9KevNGUo8edo38c3cn7FpEtFnnmWm5xE=;
-        b=W3D9Zf4pRGkXziYgoVZJng90TrqmS2zBYiimMc6TQBMg2Y9Jep1NH5H87ZdoJ0M8oP
-         uFn2/h+z6pxvyZjl4FtOUfzCPxrZIeT/B0om8OSfULWloBqDUZaHB9hESqf5euW/ARx1
-         fmjmC1FR29OuQ0uVEF9dgr+IbRkgF7rvIPw6mSM32r0qRUQRtTels30rSsEyXS6jjC+d
-         qZJ7EkjM76T5FmswUkXetdkn7Nu8+eH8iJNXru4OsDkxEq/Ge1eXPhIXqJmibjOR7/7Z
-         askuRMnJk5H9OH/sW8bVKW58bVg8H8hbdU2+esTODohwhnPcbIRPU4IH11yhqojdhbvO
-         Do3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733953548; x=1734558348;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKHGYhS/cBN9KevNGUo8edo38c3cn7FpEtFnnmWm5xE=;
-        b=t3K6nSk2nowfwftaAPYfOncqu1rkR8lnn15438HPqeXJzRq0hIq/s6APc009ezcekc
-         4sViBdhxmJy4Y94hL6+wO9jX7huXiypIGWnvh27zlxpGD2YkP4WbQwXBSi90O9k2OuPz
-         8NPkiAI34MndpMkfGUrkcMZlzaNKQkRhGUGimS4AovpR3Yzj42WX5Zu6kh1AFLfMSLF/
-         EujMakUNauHBubSOsdo5pUVpAzIBUBVKE/rj9DZ8WGPlh8l/TT+tixkGJvCzGq6AvzAY
-         C7afcogZA/HittvBOBbIGKLt0zQlPcfw7qtwnhOAfjL5Za7RwysmUQ7nk3VH1RCrk56s
-         dhFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpb00K3LXQxhsHhCeQfP69Y2Jgw2QDQizDrOdHbZJb/vw1jyTedNMnh3Ongwt7wsXG+9xI+gUF+wOZXJhz@vger.kernel.org, AJvYcCWvLA7KZ2A2kAZ0iuCls+SHXRYe8v5xhlB0+dSdEnBetoMIrz54FR1yNi/x1wy9UdJA7p0=@vger.kernel.org, AJvYcCXQNfq/DfPygTOx2Q7Ie74O4h7ek7MDU4g0Cxr7aXwFy1X5Zmkl+6wqSJkQrQ2wz7gFn3EWHfec9kuXa2IGKBb1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/q9rU/74TaTMHOU1e/u+sVwOdUyGzA6uIgQE++O5yAU+KdbMz
-	reUpy2ngA01GTZof1jR+vCXinqE9E/blOnIPheTvKF1+v/lWnVGE
-X-Gm-Gg: ASbGncvqgXFiZ6hdmIyFKrpBMIm9EIbARjQ1w8UQx6D8mwICXHu2PYEWJ2N6YbV7dKT
-	xKzjyJ8pduzdmG+LHSx+XiGO7/3V7HlDniK6eSNjefWcmKbGlheBFSPUgpNvDSJr/BM/PsTpS6Y
-	ZPHT7Uz8z+Y/JR/nzp0D/3vA2jfEemch1l4pInsu/l+egJ4ZqPKP/pRC2SUwjJXXcMBFwmAc+Bp
-	Bcg6xrozd2YTVluUSsYuXlInUOFgrdJdBON4RUUAKwgvtfIWzU96G5NOblgkzP3L+emWjZhdQOA
-	XDCOIJC0IHdm5hfFESUX8BE=
-X-Google-Smtp-Source: AGHT+IH6R1p/+7YyxKtU/3Pv+FwIn+it1MCc11BigiVlTByBTldrdq5Oc6JbbUCqjWW52cCOGaoVsA==
-X-Received: by 2002:a5d:6daa:0:b0:385:f17b:de54 with SMTP id ffacd0b85a97d-3864ce894d5mr4038779f8f.5.1733953547810;
-        Wed, 11 Dec 2024 13:45:47 -0800 (PST)
-Received: from ?IPV6:2a02:8012:e013:0:1ab3:1f25:931:4d97? ([2a02:8012:e013:0:1ab3:1f25:931:4d97])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782527520sm2145157f8f.109.2024.12.11.13.45.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 13:45:47 -0800 (PST)
-Message-ID: <fba03de3-f44b-4a2d-a15a-4071c5b09427@gmail.com>
-Date: Wed, 11 Dec 2024 21:45:44 +0000
+	s=arc-20240116; t=1733953720; c=relaxed/simple;
+	bh=alwEGtJsoPyU7sBPmbz0mKL3eWfknZd7WQ2Ac6kO+io=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iH+Zpu7Qgv8Niyb9KWbbZlYOhw3+YJtM+Vi2ikopHi3DAxLxYu0P7Gesuhnv3nWg549BqJrPBj/cZGjpov3VCqnJfe1QeNqZry6jJt6n+7jLjP5JAlR7RK0Y/HUPTZ3ytniDEs0rpx630Ul+qaaQ+EJ1N03pyFx24JnTiYANlTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LgkHhlrc; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733953719; x=1765489719;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=alwEGtJsoPyU7sBPmbz0mKL3eWfknZd7WQ2Ac6kO+io=;
+  b=LgkHhlrcq/lA1/d7MFJ7jap6pU7FDR/I8nv3ImKmTnK5iOUP4dfB4tlw
+   0EyJU3tRD3JaEqj7KM03Sf3eJno/yX3iknlLhGJmbWpJhu3/IVtM23ihH
+   LU3WmrjdCWVmNAF2q8BhpNsaQSaV1NXJ6P1hJ84Ub7UGklqzySHE1kQbE
+   oQx+/SQ/gtzM+noMv4UYvrH5eF3vHMfsAXXfNQRkgqvlz+LEsb6e4U5Wv
+   0m13aGGyKRFUdhUjjQYDxzFnD1eT6mcKCdv0nRo8Q7Blei8sEIBCa06Ks
+   nQC6OAmaYPn+VA3uV6sL/B9p83CWs9/rmej0pmd7HGc1TMQYd9w9i/Jsr
+   w==;
+X-CSE-ConnectionGUID: jiIrvU5FRNKn4kRLHDBbZw==
+X-CSE-MsgGUID: iL+qtiMBSeaGZ449JB2Lrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34079329"
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="34079329"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 13:48:38 -0800
+X-CSE-ConnectionGUID: 3q7nRbSDTzGE9iEQ4U4S2g==
+X-CSE-MsgGUID: iQ5QFexWTkyBKwm/TWxE7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="133352145"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.110.50])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 13:48:38 -0800
+Message-ID: <9756bf2904470c7729d306e5d534c577705e30b3.camel@linux.intel.com>
+Subject: Re: [PATCH] iio: hid-sensor-prox: Merge information from different
+ channels
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>, Ricardo Ribalda
+ <ribalda@chromium.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Wed, 11 Dec 2024 13:48:37 -0800
+In-Reply-To: <20241211184018.063e4534@jic23-huawei>
+References: <20241205-fix-hid-sensor-v1-1-9b789f39c220@chromium.org>
+	 <20241208163851.41c47c3f@jic23-huawei>
+	 <CANiDSCsD2gGBPVaFMU4uhtpWf3dUr4-MA5MpcjZRcLMgBmtjZg@mail.gmail.com>
+	 <20241211184018.063e4534@jic23-huawei>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Enhance event delivery error handling
-To: Sean Christopherson <seanjc@google.com>, Ivan Orlov <iorlov@amazon.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com,
- pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, hpa@zytor.com,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, x86@kernel.org, pdurrant@amazon.co.uk,
- dwmw@amazon.co.uk
-References: <20241111102749.82761-1-iorlov@amazon.com>
- <Z1nX8aCfZMvJ4co4@google.com>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <Z1nX8aCfZMvJ4co4@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 12/11/24 18:20, Sean Christopherson wrote:
-> On Mon, Nov 11, 2024, Ivan Orlov wrote:
->> Currently, the situation when guest accesses MMIO during vectoring is
->> handled differently on VMX and SVM: on VMX KVM returns internal error,
->> when SVM goes into infinite loop trying to deliver an event again and
->> again.
->>
->> This patch series eliminates this difference by returning a KVM internal
->> error when guest performs MMIO during vectoring for both VMX and SVM.
->>
->> Also, introduce a selftest test case which covers the error handling
->> mentioned above.
->>
->> V1 -> V2:
->> - Make commit messages more brief, avoid using pronouns
->> - Extract SVM error handling into a separate commit
->> - Introduce a new X86EMUL_ return type and detect the unhandleable
->> vectoring error in vendor-specific check_emulate_instruction instead of
->> handling it in the common MMU code (which is specific for cached MMIO)
->>
->> Ivan Orlov (6):
->>    KVM: x86: Add function for vectoring error generation
->>    KVM: x86: Add emulation status for vectoring during MMIO
->>    KVM: VMX: Handle vectoring error in check_emulate_instruction
->>    KVM: SVM: Handle MMIO during vectroing error
->>    selftests: KVM: extract lidt into helper function
->>    selftests: KVM: Add test case for MMIO during vectoring
-> 
-> Minor nits throughout, but unless you disagree with my suggestions, I'll fix them
-> up when applying, i.e. no need to post a v3.
-> 
+On Wed, 2024-12-11 at 18:40 +0000, Jonathan Cameron wrote:
+> On Sun, 8 Dec 2024 21:09:16 +0100
+> Ricardo Ribalda <ribalda@chromium.org> wrote:
+>=20
+> > Hi Jonathan
+> >=20
+> >=20
+> > On Sun, 8 Dec 2024 at 17:39, Jonathan Cameron <jic23@kernel.org>
+> > wrote:
+> > >=20
+> > > On Thu, 05 Dec 2024 12:59:20 +0000
+> > > Ricardo Ribalda <ribalda@chromium.org> wrote:
+> > > =C2=A0
+> > > > The device only provides a single scale, frequency and
+> > > > hysteresis for
+> > > > all the channels. Fix the info_mask_* to match the reality of
+> > > > the
+> > > > device.
+> > > >=20
+> > > > Without this patch:
+> > > > in_attention_scale
+> > > > in_attention_hysteresis
+> > > > in_attention_input
+> > > > in_attention_offset
+> > > > in_attention_sampling_frequency
+> > > > in_proximity_scale
+> > > > in_proximity_sampling_frequency
+> > > > in_proximity_offset
+> > > > in_proximity0_raw
+> > > > in_proximity_hysteresis
+> > > >=20
+> > > > With this patch:
+> > > > hysteresis
+> > > > scale
+> > > > sampling_frequency
+> > > > in_attention_input
+> > > > in_attention_offset
+> > > > in_proximity0_offset
+> > > > in_proximity0_raw
+> > > >=20
+> > > > Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for
+> > > > more channels")
+> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>=C2=A0=20
+> > >=20
+> > > whilst perhaps not ideal use of the ABI, what is there today is
+> > > not wrong
+> > > as such.=C2=A0 If the ABI above was all introduce in the recent patch
+> > > I might
+> > > be fine adjusting it as you suggestion. However it wasn't,
+> > > in_proximity_scale
+> > > has been there a long time so this would be an ABI change.
+> > > Those are generally only ok if there is a bug.
+> > >=20
+> > > Drivers are always allowed to provide finer granularity than
+> > > necessary
+> > > so in this case I don't see this as a bug.=C2=A0=20
+> >=20
+> > Is it ok that changing the attention_sampling frequency the
+> > proximity_sampling frequency changes as well?
+> > (Just asking for my own education, not complaining :) )
+>=20
+> Yes.=C2=A0 In general the ABI has always had to allow for interactions
+> because
+> there are lots of non obvious ones between attributes for different
+> channels
+> as well as those for the same channels.
 
-Hi Sean,
+In general if this is by a soft sensor in the hub, then likely all will
+change the same sampling frequency internally since they don't have a
+real sensor in the back.
 
-Thanks a lot for the review :)
+Thanks,
+Srinivas
 
-I don't have any conceptual disagreement with your suggestions, so 
-please feel free to fix them when applying the patches. Thanks!
 
--- 
-Kind regards,
-Ivan Orlov
+>=20
+> >=20
+> > Also, what about ?:
+> > in_attention_scale
+> > in_attention_hysteresis
+> > in_attention_input
+> > in_attention_offset
+> > in_attention_sampling_frequency
+> > in_proximity0_scale
+> > in_proximity0_sampling_frequency
+> > in_proximity0_offset
+> > in_proximity0_raw
+> > in_proximity0_hysteresis
+> >=20
+> > Would that be acceptable? I think that if we are giving the false
+> > impression that every sampling frequency is independent we should
+> > go
+> > all the way in. WDYT?
+>=20
+> It's indeed far from ideal, but so is changing an ABI we've exposed
+> to
+> userspace. We definitely can't touch anything in a release kernel but
+> if
+> there are clear improvements to be made on stuff that we can sort of
+> term
+> a fix we can maybe get away with it.
+>=20
+>=20
+> >=20
+> > Thanks!
+> >=20
+> > ps: this patch is in the queue in case you missed it
+> > https://lore.kernel.org/linux-iio/20241122-fix-processed-v2-1-b9f606d3b=
+519@chromium.org/
+> It's in patchwork so i'll get to it. Not sure why I haven't applied
+> it, maybe a tree
+> management thing and lack of time last weekend to check for what was
+> unblocked by
+> the rebase.=C2=A0 I'll catch up soon.
+>=20
+> Jonathan
+>=20
+> >=20
+> > That one is a real fix for the driver :)
+> >=20
+> > >=20
+> > > Jonathan
+> > >=20
+> > > =C2=A0
+> > > > ---
+> > > > =C2=A0drivers/iio/light/hid-sensor-prox.c | 8 +++++---
+> > > > =C2=A01 file changed, 5 insertions(+), 3 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/iio/light/hid-sensor-prox.c
+> > > > b/drivers/iio/light/hid-sensor-prox.c
+> > > > index e8e7b2999b4c..f21d2da4c7f9 100644
+> > > > --- a/drivers/iio/light/hid-sensor-prox.c
+> > > > +++ b/drivers/iio/light/hid-sensor-prox.c
+> > > > @@ -49,9 +49,11 @@ static const u32
+> > > > prox_sensitivity_addresses[] =3D {
+> > > > =C2=A0#define PROX_CHANNEL(_is_proximity, _channel) \
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {\
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 .type =3D _is_proximity ? IIO_PROXIMITY :
+> > > > IIO_ATTENTION,\
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 .info_mask_separate =3D _is_proximity ?
+> > > > BIT(IIO_CHAN_INFO_RAW) :\
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > BIT(IIO_CHAN_INFO_PROCESSED),\
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 .info_mask_shared_by_type =3D
+> > > > BIT(IIO_CHAN_INFO_OFFSET) |\
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 .info_mask_separate =3D \
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 (_is_proximity ? BIT(IIO_CHAN_INFO_RAW) :\
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_PROCESSED)) |\
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 BIT(IIO_CHAN_INFO_OFFSET),\
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 .info_mask_shared_by_all =3D \
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_SCALE) |\
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_SAMP_FREQ) |\
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_HYSTERESIS),\
+> > > >=20
+> > > > ---
+> > > > base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> > > > change-id: 20241203-fix-hid-sensor-62e1979ecd03
+> > > >=20
+> > > > Best regards,=C2=A0=20
+> > > =C2=A0
+> >=20
+> >=20
+>=20
+
 
