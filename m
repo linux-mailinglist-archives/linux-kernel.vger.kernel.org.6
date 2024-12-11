@@ -1,203 +1,150 @@
-Return-Path: <linux-kernel+bounces-441716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025AB9ED2FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB02D9ED2FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2740F281C3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0868A281300
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D30B1DE3BC;
-	Wed, 11 Dec 2024 17:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BFC1D90AC;
+	Wed, 11 Dec 2024 17:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="paYsb7ic"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QJGbhKeR"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A81B85DF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE7017BEC6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936480; cv=none; b=PKmNxN7Ts136ZOqVC8+29l+oO2ox4l8oqhNhl+TllbiHf9ALH/KFDItQ0P3o/R9HzvY+vQWHxlNZxL+Nq/055C3cynJSG6zHaV+2rQI/B6+QZhkamszexLB4tyx3XG/7Ax0ellQJY18GABOK4rdTnuxzhJT1xn4stuwFAonkFtY=
+	t=1733936459; cv=none; b=btpVl5Tthevda8xhCDYedkHTaVuV4wB/+jaspmi+eW7CeOyO2d8pMBAjGN3mQgx74bpDbxpwBZYph9Eze5VRMGxBgZHiCb4Z4lk8FXPrnvhsNJPLu7csxoIzjmtNnnDDhM/WJQeW9kCR2p5erhhR9RG9kPNRzWzCUvn+NlS1cfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936480; c=relaxed/simple;
-	bh=/ZbyPvlmWHc3e07gfoe3MkLTRtGvzbwhy3G+ln2u+LI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=db0V5CQbpNw4G7FP5hgK5f8qJl92vLfBMk0H0/WW4JegEXQ9vLFVbuZvRVdj44KnrRS/B6YK2jwLED/8dU4bCh+3sC0n5G6hhzxYpCiZjSI0TE1tb4W3jsrDs9dCUaG9K8O9cx1BaEPB7R078PIRjfJ+JvovYkWeoGm7cfyf7X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=paYsb7ic; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b6d6fe8b16so304467585a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:01:18 -0800 (PST)
+	s=arc-20240116; t=1733936459; c=relaxed/simple;
+	bh=B2sRIu+XnZuTeAjXW4x8wJh4gUlYpUujlvC+LJUIei0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gwb5YfVbn7rBnZO5nraaIrmHEOE/JSQmPvpq4nrfZzRWIHDZUezBfBdnM74KTcy4tSWxMXG9++WoN3S7kJ0b/gr59nfUB1uXkoZlrNw1HjUGMYQMiq8ws54Xvw/syyX/pnxVFKPirRVjpcMr+ZzLCYMJg7nsV1DhaiPdYcV9TuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QJGbhKeR; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385e2880606so5705345f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:00:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733936478; x=1734541278; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DWR8Jat9HqWQD4tgYwKhNycvduSOkRomQGq1rzYJLCw=;
-        b=paYsb7ic3ZgFlwB5YtYMpxRFJmB/U/JRNzPti21jXHQ8JpkKVxL2mXiWaprmpweDsI
-         ehbH9yEThqwTG8yz2iMYW5TBiLozRPM1aNrHZW2zltj3TLEgeyIoVbkCpKXmAVj1mqJV
-         tjW1CbE71fJpqg/9WY2cGTCSCaMn1Ds5RZAdNulLUV8YcrseAxh3xnxs2mWFqnDrKroS
-         uKKvgFph1dAmRrv5vaKm4Dlgf17O6vA6bhQwc4qllLeaHMH+DpOXaWr/BnZNV4xlKkUq
-         RxkHqc18SZIwuLmINMKyLEAcmVP9tDkfkf8Hmkadp8KQjKntOxnJcONJbJOfjshtsB2x
-         IZSg==
+        d=suse.com; s=google; t=1733936456; x=1734541256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/HyPQF1lbC/2X66nKlz9IG/RYEBhoNWgSBjs8SKK7a8=;
+        b=QJGbhKeR81fk4bd0gnjTvlEbPTnAXhAzIYSES4HfcKyXHN1sjUU8Od2sDXRMdiN3sO
+         w8/MAsFpR+wUTDQuD/SGbKmm8QRdERdDCrxjE2RKsIhMnoaEXP0kyyjjdVI5X8Nw2U/9
+         uV63PUaqJ+oaSubbG9eiB4gD6CxEqIx5vP/HMbsOrwA+UlYBW4VSBFOF+XB5pZ/fp/Ok
+         qJNx6NPDHD90Xn8DU+LjJf2nxzOT2aOB0gH/5y7F/eJUu/JeJQysd57IAywOYtj6mLD/
+         cQBTcc3aly5uMDLsMxG34+xsU9bAN6PYFfGd5CvGzb7UzJBg2diV3je9Q9BrB20Y65vG
+         5Vjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733936478; x=1734541278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DWR8Jat9HqWQD4tgYwKhNycvduSOkRomQGq1rzYJLCw=;
-        b=bh2oowJ3No2scyw3ejQXlrCkiJyyxqLy7+flzeQufQCofY42lRaLbcwdiLb6Ol7XXC
-         nz3vRvzhqr4z7RhH39CvKzsmhOzHBKWi910ciDCCgM/aKUcfk3kkkvZw4/sjbROKcwBh
-         +rAGFTUvJPyfAzwSHKzfKRF+V7nDRtMjNLEGU1KjAsB8sSM/H15VsAdPxusg5F0vdVVG
-         cShIUHFihnQ6SHae+CoSnJkkDEgp8cKuLqAGSMvxOEWCD4AJkQvH/sK/lhEh13g8/5pk
-         hbrwP/gyO6aVXijswTM77VI+8trfrjs6YxZ4H+D3mJw7tgYvkt1AX9iY403BIrY5kKQm
-         V8gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkzp7jP6oNSS+7WeZExdRfieIj150hRAT4+o7Ymzm0ypIqTgWWRNvAkiLTGixzk8YVnhUaRmKzuNARaNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb+l5mSfVyhrMIYiVF3VVAUlESTUrZs5R04hE9JLethRBooKuE
-	gzh9qy5PYEfbFNMEJNZSTVpXw8AbIu3RKhcLe3NyIymX81HIEJY0Ky1cEqsTRuf3ibFVp0thQ2L
-	SfiLmlfBEhkkZL5T6BB5VbO6RCuiOIGRfWYxR
-X-Gm-Gg: ASbGncuaZt6xVOrCVzIEhJE6RA4d5yzOSuA9JnT+2TpEo9ZukNqLZ+GtLTQTyoxK9dt
-	/Lc3qWaYs5dOTlfzGWL2SPI6XSJgV94wU
-X-Google-Smtp-Source: AGHT+IGpw/zsckT4h9+kIHBMmJKYloAZQjEK4AQAEQl8yxWUFUcCtydY97rkPoueLrkZMwCwaCVxH/io1qSKn8f+tas=
-X-Received: by 2002:a05:6214:b6d:b0:6d8:b3a7:759e with SMTP id
- 6a1803df08f44-6d934c10eb0mr49278136d6.46.1733936477556; Wed, 11 Dec 2024
- 09:01:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733936456; x=1734541256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/HyPQF1lbC/2X66nKlz9IG/RYEBhoNWgSBjs8SKK7a8=;
+        b=cJB8iTsGihgj8y5zl3rXn3iaByD61hQRDhf2HeTAPxw0BxPiU+zuESDr6hFFG+Ciyw
+         Dlhj14GScu6EowHkFthwlZkBWO+WKi/iMYdJaJ/vwW1nAKCSFT9sE3SFhKF1QSMLSZGn
+         VOm6hTSNzTGu/slYzgGjhdGMsBK92Oguslv7OusCx/KDPz5qPXVsoZRsBNx9r+YC+Grg
+         X+UEyeAvSiK2ZvfFDmal+LmKPdCvJ4XYXh/4+H6KM6ZoPNnnBy8iO9xD/soF5A8mmYSZ
+         PmQvYGzwER8AgNGpeskFa0XwjcR59OxHkTnDdgurhef9UEXseUypo4bQqjZNJpIPB/ZO
+         NQXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyUmWhpWJxU2PN98B2PBDbgQy1d/4hFZWpeNmX13fbyiyKoKMBr6SrjZyo7Rga+wyJWBeESq8PprZuVWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWHL5MK9sjeHxErhyzpAW/IW0PTo4720XY5A7KZXn0lY8/yQ/Y
+	2FWYQPXqO4ByJCfks3odsUtFzCVW7TMpeP893AzaVu2CJ1HP24jUWol5HBGFurY=
+X-Gm-Gg: ASbGncttm7KumdjBrVcGnqsS1Q4uOwPWWMen4rPlxFklaaYRs0m0/FCQmS4INYOB3Qt
+	NF7Tj9IHclJ1Rw2ZMN0mL6bJk2JPFhIBTKYD/APoZu29Pb4LqLFGK8ztx48v2LfMjJmlbyOKxdD
+	5gjlpGkr7fdCIV4fqjPRMUV/cuA+zFC+jlCTxifsHcxT++O9Dv8XRaLvcLIJPCb46lCELdWVKtq
+	J/pbM1wqwMOg+gAyxKzjOSNjNmkdAjgOQY/L8Fa0CfwN1ssA+U5Zb0Z
+X-Google-Smtp-Source: AGHT+IE+PH8kQNKr4K63S3Fg+sNQObK7n1xFImaHq5etBibCIiT8JmgSKVK+KNbJor5JCoeWXzVFGQ==
+X-Received: by 2002:a5d:5983:0:b0:386:3903:86eb with SMTP id ffacd0b85a97d-3864ce97148mr3155156f8f.23.1733936455548;
+        Wed, 11 Dec 2024 09:00:55 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824cab97sm1667458f8f.62.2024.12.11.09.00.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 09:00:55 -0800 (PST)
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Frederic Weisbecker <fweisbecker@suse.com>
+Subject: [PATCH] Documentation: sched/RT: Update paragraphs about RT bandwidth control
+Date: Wed, 11 Dec 2024 18:00:52 +0100
+Message-ID: <20241211170052.2449581-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211105336.380cb545@fangorn> <CAJD7tkboc5a4MDHvF7K4zx5WP0DE4rsGW_24s16Hx+Vvy2RQLQ@mail.gmail.com>
- <768a404c6f951e09c4bfc93c84ee1553aa139068.camel@surriel.com>
-In-Reply-To: <768a404c6f951e09c4bfc93c84ee1553aa139068.camel@surriel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 11 Dec 2024 09:00:41 -0800
-X-Gm-Features: AbW1kvYHmQoq0lrIhLl4tU96ViOyzQC6VHiYAXY8dGp-cFK14P1Q9i_02Qg3ru8
-Message-ID: <CAJD7tkYpk4kZChj9f-2EMp0XET6OUNbHqfVBgdFTEMnN+iomww@mail.gmail.com>
-Subject: Re: [PATCH] memcg: allow exiting tasks to write back data to swap
-To: Rik van Riel <riel@surriel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 8:34=E2=80=AFAM Rik van Riel <riel@surriel.com> wro=
-te:
->
-> On Wed, 2024-12-11 at 08:26 -0800, Yosry Ahmed wrote:
-> > On Wed, Dec 11, 2024 at 7:54=E2=80=AFAM Rik van Riel <riel@surriel.com>
-> > wrote:
-> > >
-> > > +++ b/mm/memcontrol.c
-> > > @@ -5371,6 +5371,15 @@ bool
-> > > mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
-> > >         if (!zswap_is_enabled())
-> > >                 return true;
-> > >
-> > > +       /*
-> > > +        * Always allow exiting tasks to push data to swap. A
-> > > process in
-> > > +        * the middle of exit cannot get OOM killed, but may need
-> > > to push
-> > > +        * uncompressible data to swap in order to get the cgroup
-> > > memory
-> > > +        * use below the limit, and make progress with the exit.
-> > > +        */
-> > > +       if ((current->flags & PF_EXITING) && memcg =3D=3D
-> > > mem_cgroup_from_task(current))
-> > > +               return true;
-> > > +
-> >
-> > I have a few questions:
-> > (a) If the task is being OOM killed it should be able to charge
-> > memory
-> > beyond memory.max, so why do we need to get the usage down below the
-> > limit?
-> >
-> If it is a kernel directed memcg OOM kill, that is
-> true.
->
-> However, if the exit comes from somewhere else,
-> like a userspace oomd kill, we might not hit that
-> code path.
+This has slightly changed with the introduction of fair_server.
+Update the most relevant parts.
 
-Why do we treat dying tasks differently based on the source of the kill?
+Link: https://lore.kernel.org/r/Z0c8S8i3qt7SEU14@jlelli-thinkpadt14gen4.remote.csb/
+Signed-off-by: Michal Koutný <mkoutny@suse.com>
+---
+ Documentation/scheduler/sched-deadline.rst | 13 +++++++------
+ Documentation/scheduler/sched-rt-group.rst |  8 ++++----
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
->
-> > Looking at the other thread with Michal, it looks like it's because
-> > we
-> > have to go into reclaim first before we get to the point of force
-> > charging for dying tasks, and we spend too much time in reclaim. Is
-> > that correct?
-> >
-> > If that's the case, I am wondering if the real problem is that we
-> > check  mem_cgroup_zswap_writeback_enabled() too late in the process.
-> > Reclaim ages the LRUs, isolates pages, unmaps them, allocates swap
-> > entries, only to realize it cannot swap in swap_writepage().
-> >
-> > Should we check for this in can_reclaim_anon_pages()? If zswap
-> > writeback is disabled and we are already at the memcg limit (or zswap
-> > limit for that matter), we should avoid scanning anon memory to begin
-> > with. The problem is that if we race with memory being freed we may
-> > have some extra OOM kills, but I am not sure how common this case
-> > would be.
->
-> However, we don't know until the attempted zswap write
-> whether the memory is compressible, and whether doing
-> a bunch of zswap writes will help us bring our memcg
-> down below its memory.max limit.
+diff --git a/Documentation/scheduler/sched-deadline.rst b/Documentation/scheduler/sched-deadline.rst
+index 22838ed8e13aa..a727827b8dd52 100644
+--- a/Documentation/scheduler/sched-deadline.rst
++++ b/Documentation/scheduler/sched-deadline.rst
+@@ -591,12 +591,13 @@ Deadline Task Scheduling
+ 
+  The system wide settings are configured under the /proc virtual file system.
+ 
+- For now the -rt knobs are used for -deadline admission control and the
+- -deadline runtime is accounted against the -rt runtime. We realize that this
+- isn't entirely desirable; however, it is better to have a small interface for
+- now, and be able to change it easily later. The ideal situation (see 5.) is to
+- run -rt tasks from a -deadline server; in which case the -rt bandwidth is a
+- direct subset of dl_bw.
++ For now the -rt knobs are used for -deadline admission control and with
++ CONFIG_RT_GROUP_SCHED the -deadline runtime is accounted against the (root)
++ -rt runtime. With !CONFIG_RT_GROUP_SCHED the knob only serves for the -dl
++ admission control. We realize that this isn't entirely desirable; however, it
++ is better to have a small interface for now, and be able to change it easily
++ later. The ideal situation (see 5.) is to run -rt tasks from a -deadline
++ server; in which case the -rt bandwidth is a direct subset of dl_bw.
+ 
+  This means that, for a root_domain comprising M CPUs, -deadline tasks
+  can be created while the sum of their bandwidths stays below:
+diff --git a/Documentation/scheduler/sched-rt-group.rst b/Documentation/scheduler/sched-rt-group.rst
+index d685609ed3d7a..80b05a3009ea2 100644
+--- a/Documentation/scheduler/sched-rt-group.rst
++++ b/Documentation/scheduler/sched-rt-group.rst
+@@ -92,10 +92,10 @@ The system wide settings are configured under the /proc virtual file system:
+ /proc/sys/kernel/sched_rt_runtime_us:
+   A global limit on how much time real-time scheduling may use. This is always
+   less or equal to the period_us, as it denotes the time allocated from the
+-  period_us for the real-time tasks. Even without CONFIG_RT_GROUP_SCHED enabled,
+-  this will limit time reserved to real-time processes. With
+-  CONFIG_RT_GROUP_SCHED=y it signifies the total bandwidth available to all
+-  real-time groups.
++  period_us for the real-time tasks. Without CONFIG_RT_GROUP_SCHED enabled,
++  this only serves for admission control of deadline tasks. With
++  CONFIG_RT_GROUP_SCHED=y it also signifies the total bandwidth available to
++  all real-time groups.
+ 
+   * Time is specified in us because the interface is s32. This gives an
+     operating range from 1us to about 35 minutes.
+-- 
+2.47.0
 
-If we are at memory.max (or memory.zswap.max), we can't compress pages
-into zswap anyway, regardless of their compressibility.
-
-So what I am saying is, if we are already at the limit (pages cannot
-go into zswap), and writeback is disabled (pages cannot go into
-swapfiles), then we should probably avoid scanning the anon LRUs and
-spending all those wasted cycles trying to isolate, unmap, and reclaim
-them only to fail at the last step.
-
->
-> >
-> > (b) Should we use mem_cgroup_is_descendant() or mm_match_memcg() in
-> > case we are reclaiming from an ancestor and we hit the limit of that
-> > ancestor?
-> >
-> I don't know if we need or want to reclaim from any
-> other memcgs than those of the exiting process itself.
->
-> A small blast radius seems like it could be desirable,
-> but I'm open to other ideas :)
-
-The exiting process is part of all the ancestor cgroups by the hierarchy.
-
-If we have the following hierarchy:
-root
-   |
-  A
-   |
-  B
-
-Then a process in cgroup B could be getting OOM killed due to hitting
-the limit of A, not B. In which case, reclaiming from A helps us get
-below the limit. We can check if the cgroup is an ancestor and it hit
-its limit, but maybe that's an overkill.
-
->
-> > (c) mem_cgroup_from_task() should be called in an RCU read section
-> > (or
-> > we need something like rcu_access_point() if we are not dereferencing
-> > the pointer).
-> >
-> I'll add this in v2.
->
-> --
-> All Rights Reversed.
 
