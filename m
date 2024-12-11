@@ -1,250 +1,394 @@
-Return-Path: <linux-kernel+bounces-441180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D40D9ECAB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:54:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CCB1883119
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:54:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6AB211A09;
-	Wed, 11 Dec 2024 10:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RRoujXST";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tEiSaknI"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31FD9ECAB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:54:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5C7208973
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733914418; cv=fail; b=DTEm8kdlZctLTfYpdDNgNyqmJXS4qc5v3B9E8v9pfT+wh43S0lo/dPksrVP0OjG6aDs9rfDZuaXgvfzY+RdUQ83UxQCPrrOUYZ0pfI45GilWIIVk5xV068DFtiStVeJmljUw47ISRXE0C1bR3JPXG/x6IUR8rl8+FSOrP8JXCAk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733914418; c=relaxed/simple;
-	bh=CXkl8iFTtRZlpw0zJgzvCNqSmc54wdT5GnNTMNhYe5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OpZAFnInOIVEq0+5qai5o5tOCw9I+vaesd2m0JIafAcNHY2aTDvF9BqZufRrz3gyWKHMIFPeQf/TC8vCkfacVQi6LmSinWmfTrYdIrGBfmRpePUjvhIoGTlu1ZEA/Alu1qmsh0iqaVTleTa83djXK++BQYf7T9BOE7jfHINNo+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RRoujXST; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tEiSaknI; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB8ROiV022584;
-	Wed, 11 Dec 2024 10:53:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=GbJImlsHsQGAQIft
-	Hxb7/rE4tfWx3qAQf7T+C0T+4VI=; b=RRoujXSTwuRLA2Wz7puhkygxNdQHjDbs
-	t0f+kKLvPOHsgzVTH5MR7o2ak7CRVH8bvDaJd+3vIBVu8vo9PMDZIjj8LWmK2WxD
-	8/q4VwvZb6KBHgXeFxzZ6ozEj9L2dXHLmbfu7KS5ieSQ2ZEEYfRRwFg9vlboOJyQ
-	+A93StY0R0fIVklhDqDBEvG+a+ZMJID6tDYmdKoTtDS3q+AGCiEeMCtZf1QdCwPi
-	DhkOqHEY7GPZoLFkhoSDyhXBQVyj6Qr4w8834ez6cIqOwLqKYAW2hFFd3TqqmTWO
-	gPEj9ZqZ+CU+0CPqd4+qFKV7c/Jp1SKn4GNADGtqA6O5Zlxi3dM+0A==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cewt8bq6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 10:53:24 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBAisRq035700;
-	Wed, 11 Dec 2024 10:53:23 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43cct9usha-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 10:53:23 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gIpDQki1bvA8XsnlJuU/C+/uwTcw4gJcpUMfmlDKQO41CgTQJcLMEM2KJPkvDKc4I0KcOayYg9YSd19SjuFKcyMpY0BY2VFHg7FthEhDSogP23F6h+RgbDnWk0ruxvRu9Qm5M+r3JXp6AweHniCulbKR0gnqomLQK0B/09tc2/xONuu/I4neXOTK9UGUe9gljB5KhgweNcQRY9q968/7DYgo6l9/OpClylDwyQFvGFQUZ48EFkjwAePF802PzWdX0BjCY5Hsa2Eb2OiWnwgnSlWi2yRnQ0+T9hzJgs/7DkXOkmt3AQHJwMiCZRsoKQM7N25rHmD6XhQdml0hOzoeuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GbJImlsHsQGAQIftHxb7/rE4tfWx3qAQf7T+C0T+4VI=;
- b=IF9xqH3GhmRY2+Rj43MFSi1WiLaelERNLsAqToYuQ1Xm3IauCMQ+StXe5xAeVM8Davj9LovXZ+RpBCPqCgeiAjgenQAFz6AOww34ItvGkTEAUp/3DkwWdFGscWM0Q9h2F3LDSf4CRHcVG4k5CEjWZk5E7WL18O4cGHuwubj9tapS9Nm//r9fstT5eonAnrhVB+IL4FX1wyp0NHRmBNJEpWj0upcqkLE4FIn/T2g+HeuXtOLFK89uLiPW//HP8DpekoDleRBJtmo/c98hGd5jFcHVR+QdLR0ltozIVMAuOVFxMz7mf5VLs9ploDQOi1CBAe7UdhZfh1iUoJM3RDThfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GbJImlsHsQGAQIftHxb7/rE4tfWx3qAQf7T+C0T+4VI=;
- b=tEiSaknIPwlRwLzxS0tzjIbcB9qcdCmfe7H45RAdKeQ6N8pcKiUFD5/6WLctQL45QQEKKHwHedEFkkW/U6DE90so6hgv2uAR1AhlJpo/74pSUQbhaH1W5dX+MtoUR3746e7ZZfyX9D8S0Rcu+c/oZCl0xdMS+jhOS0pCf277kAE=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by MN2PR10MB4191.namprd10.prod.outlook.com (2603:10b6:208:1d1::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
- 2024 10:53:21 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 10:53:21 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH] MAINTAINERS: update MEMORY MAPPING section
-Date: Wed, 11 Dec 2024 10:53:15 +0000
-Message-ID: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.47.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P123CA0101.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:139::16) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F3C28ACB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:54:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE261EE7BB;
+	Wed, 11 Dec 2024 10:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VO/SKcbh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2698239BC4;
+	Wed, 11 Dec 2024 10:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733914491; cv=none; b=Au7j6ekknkBA/W0p+zZo+1IHy8C3WC9r5QJMRYW1DqrQIX5T7HcLPD6FRkt0EJdD2z4a2AiuAGMnFeb+UdgYVKo0Wrrmxte06BCy6KUSTWI/4JrCRiNhfRZ0nUtzjBm9H2mP+cahHpf4Zx6Zlg96mJB3vNjCR7iSzNftVPzTGiE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733914491; c=relaxed/simple;
+	bh=88xhvCZVVQ7MMWEjV5gF/Jgx9nuJ7UiTlfm2nIm28bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxeEbi+F5qdKcT8st/d0+REuIReA7/BEKmwtM1ME6XJO/7Ll/FglKfG74ktUHZVi8wMeBz1QH1K3RhV43jfDhpHp0d9Ot6yR7eoO/LMTAynWRltUox5Gd7V+aXuP0ltmcxxsPpfDac/lixQPvAtaL994s5XBVjD3m4r9oAZqiD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VO/SKcbh; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733914490; x=1765450490;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=88xhvCZVVQ7MMWEjV5gF/Jgx9nuJ7UiTlfm2nIm28bs=;
+  b=VO/SKcbhDw6+vzifQrfvORGLpxQl1z32IEcxZxK1Vefhy2sJTuY8sAHR
+   vs1Nb0BDQhAVBHbSv9YH+zedro+ujoPoNDH/aPAyT5EnHBc+cJs+hVPN7
+   Mq+evMTTDaGP3g1Wg+oRsrC7vlRqpEKohNCT9mWaeiLEH/honitDGNMtc
+   9gV1gggrWUAuUqdT146qy56NRJmYlhNSm93D58W+NjJKPm6782hJxC6i4
+   wlrMYBS4bI7QKx0oUcig28E5Z22xW/0Zjks/WIhBte1EtAoae7RSBLd16
+   +mjp8iUX8/SBpidFjgCIZXrsQnA/VKsyncArKJmEX5uYTbDb05BUCouPB
+   Q==;
+X-CSE-ConnectionGUID: d/ciWB+JSLiOjr2G7WqVEg==
+X-CSE-MsgGUID: WGL3Imu8R4KkEsj5b2R6YA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="33608787"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="33608787"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 02:54:49 -0800
+X-CSE-ConnectionGUID: BHu3gHueTVi+j0VZZSIKLQ==
+X-CSE-MsgGUID: rOeH2C9eSM2PphypSv/M2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="95591184"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2024 02:54:46 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLKMe-0006ZB-2i;
+	Wed, 11 Dec 2024 10:54:44 +0000
+Date: Wed, 11 Dec 2024 18:53:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] tracing: Fix trace output when pointer hash is disabled
+Message-ID: <202412111800.LkbDgOfH-lkp@intel.com>
+References: <20241210172533.04bcd5f7@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|MN2PR10MB4191:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2367bd07-1a52-4e7a-6764-08dd19d20717
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9+h9TEfgB6lB/RPPGkh+oVY4JX/L81HoXO62yKgf4ZdTtWkEEdnUUAIWvM+i?=
- =?us-ascii?Q?icGIUhz6zh9k69HhP8w3BMNAujd4segReQsQjTD5V7Z6tbzpLnPiW1KY8IEk?=
- =?us-ascii?Q?ykgPVnOkyI8l0+UlG3E1EdiDqz1js73cJ9DaCdxl/rbTdUc7CKmxzJtsUg6G?=
- =?us-ascii?Q?nARBWsV58f0AHp/3AhG810IgbNLLbBwb9An76j0zKrve9DiuDJkhaVQikc4M?=
- =?us-ascii?Q?nJIo1U4d45oj0ZaBDaHIUtpRHz5ySldM5u6DOdA+tIDROvkTzAg4oOZKA+J9?=
- =?us-ascii?Q?zEqsv+zmzIZlm/cIY1rPysAjpDeqGRtifRJVvXfhnjMpZ70D5bRogXDr24x6?=
- =?us-ascii?Q?hpJPExEvksKQTBcmFZmdQHN0h71rV+3z2Vc64WAcospStqHW4rOe6WTj+RcS?=
- =?us-ascii?Q?DICy2mfbE0QP8fs87YNZHp/6oS57hdBZZbtUs1eYF4XYl/MDO+ptxhNulWp6?=
- =?us-ascii?Q?fxRWyxmpeQ5P9qB4FImFXOTDkehTRnhjb5fJ7itWAiJ3CvhmOgDbwbRl94b2?=
- =?us-ascii?Q?7GvCR/64wAa2apTF30zrXZYe5pZgq7TBLplx5+RIyNJBtdDEP7pQNrULxwgc?=
- =?us-ascii?Q?vRvBLsbyXOFlYJZ12uc2A+CchFzJOrKBGaAyLIxolylr0AgndBOcpf4vCTQC?=
- =?us-ascii?Q?zROKepwSlgRRS0wbkHh2MUTkt40vrhf2v1E/Ka5l77sAgIkazLTplHjcqVZS?=
- =?us-ascii?Q?EQ0rw50U9HxSDQHL4yI+6ZynILJlx+HNrBF6OsRMUs2h+6p/1tqigQh8duMC?=
- =?us-ascii?Q?UzlFIdxMZp6lM44S9Na8UDbDM4sbLKczEcufdcBZ96gKYT60Y8A8GRJV6FQ0?=
- =?us-ascii?Q?5YHLJsysmm7xG1bNdIOwN6epz0mxhP8yGs9zx067BiBC6G2nqrVJ5G3ckB+4?=
- =?us-ascii?Q?YgvC7SMCaQ3hAzZac7r2/yKqEtirnavtONBbxMZP6ZKo+IoQ5DeX/UTWnnaB?=
- =?us-ascii?Q?qDPMqstpGeGe/6KZGn/sKxAtXSHZcZ+NDCEwNC6yRZyzhf+oNqh3G13Eq6J1?=
- =?us-ascii?Q?BHD+GMaCfa+dcheO27vWIjPljm6E4zzlUYJq+xN7jDb9ojQ17tXnmYBdc3Zj?=
- =?us-ascii?Q?2yriQQeezUx7zkyvMLeVn7DVVa+fgVZps7mIkAmYDNDn01s8AVwSRV9njRn1?=
- =?us-ascii?Q?dQFLxc1XzI3+P10eEYxy+Gdhml+2VwTkYB3vvkWtmEhBT5KjlcKvzDBmPjqq?=
- =?us-ascii?Q?RDJQwPEyCBHTCx+bcRxRUF6jYDRuitpLWmbZ4iL13Siokbj1Qxoq6UMscvvk?=
- =?us-ascii?Q?6Df35m9+dlTJJselDoaUz35/8GpAnxeVEP4TD1hKYD05q0jKeYogsMxTpugG?=
- =?us-ascii?Q?ldQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?V2Tfk94RpVY++uv7FqmGL+YhY/C8H6eB3zTmaAJL3d/0jbgx+IwEe9LRpNk8?=
- =?us-ascii?Q?qCMoh9fVl6AQEcuhC0lfUTxup4ZHifatUw5FM3njecK3t4BOAubOPv+Oy7sw?=
- =?us-ascii?Q?V+BHxrTlWe2q5O9vFzVpqlQByI5VIeQK5x9AWlbNb3jQRPYZF3JAcdgDSa+B?=
- =?us-ascii?Q?gowPsbrIDFjcALbQX6p1/Yg+UFg9qehgCdv56QgGdgLnlQ52x9C4yqm6CVyl?=
- =?us-ascii?Q?PpbmKbXIG/iPjS/STx5ylHZOaxlCPp689FS6GpPqaxPY255LaPs/X5XxjGtH?=
- =?us-ascii?Q?IBIuGNJk8JFByy+bQWAKFenToSigNLFvwPaQtt32TJyqpvYvcW/OcIA4aJHL?=
- =?us-ascii?Q?L8MGPAA2slM9oLRjEAGp6aiV1xgAE5yoTdkMsY4UUEHcHLAmMah710jGbbGj?=
- =?us-ascii?Q?26V73hyyreLnxhdieAuNYatfY4JjhrvGtnHjSX+9XE27cGVvW3IRVIovBYxq?=
- =?us-ascii?Q?j8otwdtHHZmmuAshef5Q0GwdYKAMngx3Vy0/UuEqFEviTzIbrczDKoxABXgv?=
- =?us-ascii?Q?6P0iowDBtCXYTKbSVZQxQj16G5KLclDgdhwMVIw8zkspjZOL+Ic8wkFGdDDn?=
- =?us-ascii?Q?gWSqIIzhWrlDq29NkafFc0s6nnw+uFX40IAfsEqNZ7LE+3rETn2uyugoRGuX?=
- =?us-ascii?Q?nj3IenfrsKFIsBxkMsV5kvjsCNAsn1yRNwE8FnVwrInc21kqrPLx/fHTRRCv?=
- =?us-ascii?Q?ufbNMhniwWCwtlHLSuhHjbPiqop9/8yL0HUMOX3UZactYoFD8ZrtgpKUPXlr?=
- =?us-ascii?Q?9C37BGCnlx7rYu3cFOorW+k9aVUbA58VFCLF478AZcq7YriUw/R/hYZkxIvI?=
- =?us-ascii?Q?ZjNNi5q823YzCz4gTKgznbvINRHFENspNH2okdy6KNt5bhQFkH/6sVXxEdNf?=
- =?us-ascii?Q?bfxIXJCp/HZe5etGuAa7Ai2yx93kaNlAMCaahw37kvZ/H8cEMnV4MV7slR4l?=
- =?us-ascii?Q?065Rim+qz0rIRcVRjgm912X0r1PBjx00h12WnHIIYI6Pkt+t6IycqnezfXn0?=
- =?us-ascii?Q?pcgKm3l1rYtol6i0UuV5GM80pOF72ZZCUix8M5et/zXZJfM1wicCNAPR7VL7?=
- =?us-ascii?Q?PUOcbRHPtYRMJaKwG05rLEHcn5Uo6uLKbjbNfBiSuFAYy2gtKIreR5Elvo2k?=
- =?us-ascii?Q?KMduq8mDXJgPGtv82HYOjOEmmL0LlHet2UBl7NiT5rb0VesYh7WZ/duIjg3e?=
- =?us-ascii?Q?q1uB1n+cLF+7tD6IbBzahj06UzCZsKufQbZUbVRt7wciH1VMjwpWEOt8ssgS?=
- =?us-ascii?Q?T0AEYHfCBkRnPQvU+KPwcpYYVFSs0w87Q4tudzcVTIVl/oQMeJ3Wi9dAX+UP?=
- =?us-ascii?Q?cSR4kcWvjc4+71nL1LaeiqGgdzqEnwkisXOeLqcuNz1Cid/7UQUqRnmDNmdj?=
- =?us-ascii?Q?pbIpuU8BggDFEILtn+J28AKC83xuJHhD+W6pROTNgU904D1/uZ4Zw6vmzcl1?=
- =?us-ascii?Q?HoKyJm6MxzPO83pP0K/S7belKcuIEvmkWzNZgGROTiYnYd1+gi62L/oHzoGd?=
- =?us-ascii?Q?tT+UEKr8XCHD+XCb+TnGCmJi+HBSAiDtWTM3aJ3d7tp61Unq267kw4GzY2sO?=
- =?us-ascii?Q?rcZoSguD4LLSouY/VBB0jPl+GhCVszd2K96yNsEQAdXV/nyzfYRj7DopKPtP?=
- =?us-ascii?Q?dQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	EbFnz62sSLX6aIzh64jjaNWNvmDJ9fgs9ezayzD9WEvKJs56MNTE/fQ3NOldO6NWSzFvZWQVoanv/bX2MZ94QineouIg8L6xkltUDah6iHfHTublnmsewS4asjGuKUg/X0uT4ZVuWPz4wv/ZXOKwo58OyRWLvZE5t1nlSPOxlFhxk5iH5xsZfj9ZwR8XcNR28+JsoiLrzj7sSXd6Yv8btMJMqT0wLMbZr+6gvGsCIU13p8uGEDdHRhcg88O04GGK18dmRVt6Nle+C7qNJl7OjMgKQupFVXaojbmORkW/AbSNRFCKDLTe2vB1OIYh6lvPaLWMlqiZ1HLFZTiNrs1CPmjVt0r+LxbYbVS1QxvNzRDOdupr0Sy1tEFT7wTJMOvG5ZAY6DuqzqQjBrgTBRJPVgmSw9DzrbeMrVocF59i2YlRF6c1c0tJpVMN68RrOLlkWqt5pKf2L1rentusb/V5yTc823Cp8aqvAmh1dkPi0sLUqh85krIPCPeb1Wmrc+nrImdho0f0mVJAs5dbeQZrY3FVCpXc7/s0iu0FNOzY6pU73YZvOmRQLxNF41AfUD/H5JGvmMmmL9dMweqzv49jiKXofWANEuRIsKhfPfKbyuA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2367bd07-1a52-4e7a-6764-08dd19d20717
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 10:53:21.0362
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YsL8C7Sis3lmyZfOrXYww0VU5iR2ssqRXHsNYuZW/h7kvOM7yNwxlcMVFPXW2UzLCJ1v7WKDSWEYFF65OZUih3pIBWUl3W4xj2PM6LpTp6s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4191
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-11_10,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412110082
-X-Proofpoint-ORIG-GUID: cvFskWivMXW-4xYL9Pa2wUZWzOAx_d8d
-X-Proofpoint-GUID: cvFskWivMXW-4xYL9Pa2wUZWzOAx_d8d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210172533.04bcd5f7@batman.local.home>
 
-Update the MEMORY MAPPING section to contain VMA logic as it makes no
-sense to have these two sections separate.
+Hi Steven,
 
-Additionally, add files which permit changes to the attributes and/or
-ranges spanned by memory mappings, in essence anything which might alter
-the output of /proc/$pid/[s]maps.
+kernel test robot noticed the following build warnings:
 
-This is necessarily fuzzy, as there is not quite as good separation of
-concerns as we would ideally like in the kernel. However each of these
-files interacts with the VMA and memory mapping logic in such a way as to
-be inseparatable from it, and it is important that they are maintained in
-conjunction with it.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.13-rc2 next-20241211]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- MAINTAINERS | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Fix-trace-output-when-pointer-hash-is-disabled/20241211-062827
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241210172533.04bcd5f7%40batman.local.home
+patch subject: [PATCH] tracing: Fix trace output when pointer hash is disabled
+config: i386-buildonly-randconfig-003-20241211 (https://download.01.org/0day-ci/archive/20241211/202412111800.LkbDgOfH-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412111800.LkbDgOfH-lkp@intel.com/reproduce)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 68d825a4c69c..fb91389addd7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15071,7 +15071,15 @@ L:	linux-mm@kvack.org
- S:	Maintained
- W:	http://www.linux-mm.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-+F:	mm/mlock.c
- F:	mm/mmap.c
-+F:	mm/mprotect.c
-+F:	mm/mremap.c
-+F:	mm/mseal.c
-+F:	mm/vma.c
-+F:	mm/vma.h
-+F:	mm/vma_internal.h
-+F:	tools/testing/vma/
- 
- MEMORY TECHNOLOGY DEVICES (MTD)
- M:	Miquel Raynal <miquel.raynal@bootlin.com>
-@@ -25019,21 +25027,6 @@ F:	include/uapi/linux/vsockmon.h
- F:	net/vmw_vsock/
- F:	tools/testing/vsock/
- 
--VMA
--M:	Andrew Morton <akpm@linux-foundation.org>
--M:	Liam R. Howlett <Liam.Howlett@oracle.com>
--M:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
--R:	Vlastimil Babka <vbabka@suse.cz>
--R:	Jann Horn <jannh@google.com>
--L:	linux-mm@kvack.org
--S:	Maintained
--W:	https://www.linux-mm.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
--F:	mm/vma.c
--F:	mm/vma.h
--F:	mm/vma_internal.h
--F:	tools/testing/vma/
--
- VMALLOC
- M:	Andrew Morton <akpm@linux-foundation.org>
- R:	Uladzislau Rezki <urezki@gmail.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412111800.LkbDgOfH-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from kernel/trace/trace.c:15:
+   In file included from include/linux/ring_buffer.h:5:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> kernel/trace/trace.c:3749:8: warning: variable 'p' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+    3749 |                         if (!trace_iter_expand_format(iter))
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/trace/trace.c:3900:7: note: uninitialized use occurs here
+    3900 |         if (*p)
+         |              ^
+   kernel/trace/trace.c:3749:4: note: remove the 'if' if its condition is always false
+    3749 |                         if (!trace_iter_expand_format(iter))
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    3750 |                                 goto print;
+         |                                 ~~~~~~~~~~
+   kernel/trace/trace.c:3739:6: warning: variable 'p' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+    3739 |         if (iter->fmt == static_fmt_buf)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/trace/trace.c:3900:7: note: uninitialized use occurs here
+    3900 |         if (*p)
+         |              ^
+   kernel/trace/trace.c:3739:2: note: remove the 'if' if its condition is always false
+    3739 |         if (iter->fmt == static_fmt_buf)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    3740 |                 goto print;
+         |                 ~~~~~~~~~~
+   kernel/trace/trace.c:3724:6: warning: variable 'p' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+    3724 |         if (static_branch_unlikely(&trace_no_verify))
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/jump_label.h:497:40: note: expanded from macro 'static_branch_unlikely'
+     497 | #define static_branch_unlikely(x)                                               \
+         |                                                                                 ^
+     498 | ({                                                                              \
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     499 |         bool branch;                                                            \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     500 |         if (__builtin_types_compatible_p(typeof(*x), struct static_key_true))   \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     501 |                 branch = arch_static_branch_jump(&(x)->key, false);             \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     502 |         else if (__builtin_types_compatible_p(typeof(*x), struct static_key_false)) \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     503 |                 branch = arch_static_branch(&(x)->key, false);                  \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     504 |         else                                                                    \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     505 |                 branch = ____wrong_branch_error();                              \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     506 |         unlikely_notrace(branch);                                                       \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     507 | })
+         | ~~
+   kernel/trace/trace.c:3900:7: note: uninitialized use occurs here
+    3900 |         if (*p)
+         |              ^
+   kernel/trace/trace.c:3724:2: note: remove the 'if' if its condition is always false
+    3724 |         if (static_branch_unlikely(&trace_no_verify))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    3725 |                 goto print;
+         |                 ~~~~~~~~~~
+   kernel/trace/trace.c:3715:9: note: initialize the variable 'p' to silence this warning
+    3715 |         char *p;
+         |                ^
+         |                 = NULL
+   4 warnings generated.
+
+
+vim +3749 kernel/trace/trace.c
+
+  3696	
+  3697	/**
+  3698	 * trace_check_vprintf - Check dereferenced strings while writing to the seq buffer
+  3699	 * @iter: The iterator that holds the seq buffer and the event being printed
+  3700	 * @fmt: The format used to print the event
+  3701	 * @ap: The va_list holding the data to print from @fmt.
+  3702	 *
+  3703	 * This writes the data into the @iter->seq buffer using the data from
+  3704	 * @fmt and @ap. If the format has a %s, then the source of the string
+  3705	 * is examined to make sure it is safe to print, otherwise it will
+  3706	 * warn and print "[UNSAFE MEMORY]" in place of the dereferenced string
+  3707	 * pointer.
+  3708	 */
+  3709	void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+  3710				 va_list ap)
+  3711	{
+  3712		long text_delta = 0;
+  3713		long data_delta = 0;
+  3714		const char *str;
+  3715		char *p;
+  3716		char save_ch;
+  3717		char *buf = NULL;
+  3718		bool good;
+  3719		int i, j;
+  3720	
+  3721		if (WARN_ON_ONCE(!fmt))
+  3722			return;
+  3723	
+  3724		if (static_branch_unlikely(&trace_no_verify))
+  3725			goto print;
+  3726	
+  3727		/*
+  3728		 * When the kernel is booted with the tp_printk command line
+  3729		 * parameter, trace events go directly through to printk().
+  3730		 * It also is checked by this function, but it does not
+  3731		 * have an associated trace_array (tr) for it.
+  3732		 */
+  3733		if (iter->tr) {
+  3734			text_delta = iter->tr->text_delta;
+  3735			data_delta = iter->tr->data_delta;
+  3736		}
+  3737	
+  3738		/* Don't bother checking when doing a ftrace_dump() */
+  3739		if (iter->fmt == static_fmt_buf)
+  3740			goto print;
+  3741	
+  3742		if (fmt != iter->fmt) {
+  3743			int len = strlen(fmt);
+  3744			while (iter->fmt_size < len + 1) {
+  3745				/*
+  3746				 * If we can't expand the copy buffer,
+  3747				 * just print it.
+  3748				 */
+> 3749				if (!trace_iter_expand_format(iter))
+  3750					goto print;
+  3751			}
+  3752			strscpy(iter->fmt, fmt, iter->fmt_size);
+  3753		}
+  3754		p = iter->fmt;
+  3755		while (*p) {
+  3756			bool star = false;
+  3757			int len = 0;
+  3758	
+  3759			j = 0;
+  3760	
+  3761			/*
+  3762			 * We only care about %s and variants
+  3763			 * as well as %p[sS] if delta is non-zero
+  3764			 */
+  3765			for (i = 0; p[i]; i++) {
+  3766	
+  3767				if (p[i] == '\\' && p[i+1]) {
+  3768					i++;
+  3769					continue;
+  3770				}
+  3771				if (p[i] == '%') {
+  3772					/* Need to test cases like %08.*s */
+  3773					for (j = 1; p[i+j]; j++) {
+  3774						if (isdigit(p[i+j]) ||
+  3775						    p[i+j] == '.')
+  3776							continue;
+  3777						if (p[i+j] == '*') {
+  3778							star = true;
+  3779							continue;
+  3780						}
+  3781						break;
+  3782					}
+  3783					if (p[i+j] == 's')
+  3784						break;
+  3785	
+  3786					if (text_delta && p[i+1] == 'p' &&
+  3787					    ((p[i+2] == 's' || p[i+2] == 'S')))
+  3788						break;
+  3789	
+  3790					star = false;
+  3791				}
+  3792				j = 0;
+  3793			}
+  3794			/* If no %s found then just print normally */
+  3795			if (!p[i])
+  3796				break;
+  3797	
+  3798			/* Print up to the %s */
+  3799			save_ch = p[i];
+  3800			p[i] = '\0';
+  3801			trace_seq_vprintf(&iter->seq, p, ap);
+  3802			p[i] = save_ch;
+  3803	
+  3804			/* Add delta to %pS pointers */
+  3805			if (p[i+1] == 'p') {
+  3806				unsigned long addr;
+  3807				char fmt[4];
+  3808	
+  3809				fmt[0] = '%';
+  3810				fmt[1] = 'p';
+  3811				fmt[2] = p[i+2]; /* Either %ps or %pS */
+  3812				fmt[3] = '\0';
+  3813	
+  3814				addr = va_arg(ap, unsigned long);
+  3815				addr += text_delta;
+  3816				trace_seq_printf(&iter->seq, fmt, (void *)addr);
+  3817	
+  3818				p += i + 3;
+  3819				continue;
+  3820			}
+  3821	
+  3822			/*
+  3823			 * If iter->seq is full, the above call no longer guarantees
+  3824			 * that ap is in sync with fmt processing, and further calls
+  3825			 * to va_arg() can return wrong positional arguments.
+  3826			 *
+  3827			 * Ensure that ap is no longer used in this case.
+  3828			 */
+  3829			if (iter->seq.full) {
+  3830				p = "";
+  3831				break;
+  3832			}
+  3833	
+  3834			if (star)
+  3835				len = va_arg(ap, int);
+  3836	
+  3837			/* The ap now points to the string data of the %s */
+  3838			str = va_arg(ap, const char *);
+  3839	
+  3840			good = trace_safe_str(iter, str, star, len);
+  3841	
+  3842			/* Could be from the last boot */
+  3843			if (data_delta && !good) {
+  3844				str += data_delta;
+  3845				good = trace_safe_str(iter, str, star, len);
+  3846			}
+  3847	
+  3848			p += i;
+  3849	
+  3850			/*
+  3851			 * If you hit this warning, it is likely that the
+  3852			 * trace event in question used %s on a string that
+  3853			 * was saved at the time of the event, but may not be
+  3854			 * around when the trace is read. Use __string(),
+  3855			 * __assign_str() and __get_str() helpers in the TRACE_EVENT()
+  3856			 * instead. See samples/trace_events/trace-events-sample.h
+  3857			 * for reference.
+  3858			 */
+  3859			if (WARN_ONCE(!good, "fmt: '%s' current_buffer: '%s'",
+  3860				      fmt, seq_buf_str(&iter->seq.seq))) {
+  3861				int ret;
+  3862	#define TEMP_BUFSIZ 1024
+  3863	
+  3864				if (!buf) {
+  3865					char *buf = kmalloc(TEMP_BUFSIZ, GFP_KERNEL);
+  3866					if (!buf) {
+  3867						/* Need buffer to read address */
+  3868						trace_seq_printf(&iter->seq, "(0x%px)[UNSAFE-MEMORY]", str);
+  3869						goto print;
+  3870					}
+  3871				}
+  3872				if (len >= TEMP_BUFSIZ)
+  3873					len = TEMP_BUFSIZ - 1;
+  3874	
+  3875				/* Try to safely read the string */
+  3876				if (star) {
+  3877					ret = copy_from_kernel_nofault(buf, str, len);
+  3878					buf[len] = 0;
+  3879				} else {
+  3880					ret = strncpy_from_kernel_nofault(buf, str, 1024);
+  3881				}
+  3882				if (ret < 0)
+  3883					trace_seq_printf(&iter->seq, "(0x%px)", str);
+  3884				else
+  3885					trace_seq_printf(&iter->seq, "(0x%px:%s)", str, buf);
+  3886				trace_seq_puts(&iter->seq, "[UNSAFE-MEMORY]");
+  3887			} else {
+  3888				save_ch = p[j + 1];
+  3889				p[j + 1] = '\0';
+  3890				if (star)
+  3891					trace_seq_printf(&iter->seq, p, len, str);
+  3892				else
+  3893					trace_seq_printf(&iter->seq, p, str);
+  3894				p[j + 1] = save_ch;
+  3895			}
+  3896	
+  3897			p += j + 1;
+  3898		}
+  3899	 print:
+  3900		if (*p)
+  3901			trace_seq_vprintf(&iter->seq, p, ap);
+  3902		kfree(buf);
+  3903	}
+  3904	
+
 -- 
-2.47.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
