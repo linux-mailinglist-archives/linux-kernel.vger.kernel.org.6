@@ -1,181 +1,196 @@
-Return-Path: <linux-kernel+bounces-441214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABDE9ECB2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:29:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574239ECB3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:31:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D8D2863B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:29:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D99C1888D45
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF15238E2C;
-	Wed, 11 Dec 2024 11:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F011F191E;
+	Wed, 11 Dec 2024 11:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lK50pNOb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cTqxYv6A"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECBB238E00;
-	Wed, 11 Dec 2024 11:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975821C5CD3;
+	Wed, 11 Dec 2024 11:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733916560; cv=none; b=MLdXQ7lxpE0DoZurdKRGR28aZhnTgnHT1mmEcUqudTJRNg5nJ/fsUQsRx31nZJ7yh9UbX/UxKxjue/CLniezlZNJswJl6SQEUaWpq352zOB3bsaULw46iUUtGAUgtU7Pm7J6jcHoJoNK5agxCqrUaJq3kG5dl9o/D3VDnCM5ckc=
+	t=1733916643; cv=none; b=caVBBNtb4UC6yBy4Fl8HffOKphj4F9wWRUrOrjvN1Rp6PhiSC9/ZlTAtZbuXbyBRR9PIIornkjSpggFwVt+a/ECg8OdYUrCcj9Z6LWYBkgFBRSNLWMV7BCL5qCKUeRSe/6fpyND5ZaLILibfJziOwKbAG+o5nebCGRYnxE6+ijk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733916560; c=relaxed/simple;
-	bh=ChFMD/TJZoNYCCTjWR4VQwXawEd4b6Oh3ancYuOGsr4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XJRash8NwMQDrA98A4foFOorth7fOsBLmjUDI06fczXlm3ZXJ/p3zUELERNi4XzEBEgPfKOFBBcDkD6+gs3ilxIQ9wLnXMT33l+N+Chx9P2T3VvsE57S5oMY1f/NRN4Q97g/5lioVHw4zsDEM5H6+2AdbozhIgkMibaOafmVEf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lK50pNOb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA84C4CED2;
-	Wed, 11 Dec 2024 11:29:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733916559;
-	bh=ChFMD/TJZoNYCCTjWR4VQwXawEd4b6Oh3ancYuOGsr4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lK50pNOb0nHGGkW4mVV5bhiz7bsspcKoFcLfREHmOv3A5xAbt3MNSo6Gpfedw3PHD
-	 znTkzfMS0mV5wTqSohyfMvTPpQctVwcnSBIZTN3j/hFYnSHa7MChSh22IymBauKqhA
-	 UUbc9528OEkRAr36ok7yR5ztFCq5cPIM/M/XkEyWiaD65xWVWAHzYEUaTgkH7T4h2b
-	 5YVxZY/SmBgRB+mHIqOy+sh7BUyDquHFu/TNC6yOgRs/A7H7fTJMDTVUli9t3zmNs9
-	 jSxR/ADi2+7VgIYqGeqvT7HL77p1a0xJU3pCsGWypPJDhnWJyui8SnL8Fg2ps8UemU
-	 Z0DYW9VYCXoMA==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5f2b21a0784so860185eaf.1;
-        Wed, 11 Dec 2024 03:29:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWP/Hay9yawJLgD+hJUamfSIzULilCZ/8Lm1eHMqCDWMSNzNVcp89JlANLH+R5VysAbnaDoW/YWbTrNA4w=@vger.kernel.org, AJvYcCXMpkCijqIpntktlrwAzCjvAd1SpBI4MJ8q4hdjbeKsRtoWyBSPXdeBNwDLZDJWy4NyrY6QlXyZ4CQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS2e59wxJdm7KsUe320AT0f/aq2Uwl65HJBaaR6nR5GKXy/ykQ
-	oPyMrWfM3+AbeGasBAYz0QezUEhR5LCI0gcNpyagmlPUh3eYA83lwy1M8H29Smwv4/Uof5lL7Kz
-	hXUkxO+ySdvDUuvHEiQWhUiG2Cic=
-X-Google-Smtp-Source: AGHT+IFFnbgug8nncq+ouFS3/0JGDsX7Q+Z5N9j8cezEiUxBqsYNlT9f8b/01L/qti7+aHS/rt6e3udOpnKthL8J2yE=
-X-Received: by 2002:a05:6820:2701:b0:5f2:37de:5839 with SMTP id
- 006d021491bc7-5f2da14850amr1061762eaf.7.1733916559116; Wed, 11 Dec 2024
- 03:29:19 -0800 (PST)
+	s=arc-20240116; t=1733916643; c=relaxed/simple;
+	bh=iPOrmQo40/Y6+1KGTiFI9GGLEnsZAFtFPdeZ4AoSdPk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=AnNGA5RLV9MN1BOlrpP2d3I7jrEa+/26GNliaKjqji76Aine22YY4OzPw2VWaRvAH4aXnTKEwV2lt2jWtmLbn8PO7dTC3rOr6h355gYKZZMR6Mt0l1iFAumhmNMR+6IlML9uaGUD0+baDn2QgPvtpoRV3qJsCwx0pZtVpFYlkPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cTqxYv6A; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733916641; x=1765452641;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=iPOrmQo40/Y6+1KGTiFI9GGLEnsZAFtFPdeZ4AoSdPk=;
+  b=cTqxYv6AIZSqi6PEa3ARg1lV2Z5pL0nel9hwRWdjosOFuhmOv7BmI+7J
+   xDQvmCXi0irRUqsVwMcB4t5wumaNTIdtALWnOotYK+vO6DZeWdyqIQOHX
+   uvvvctE8MDbSUgUmmkAKKL+96rOBtgztlxiavFeyo98XH1Olu+sYbsvIV
+   zb/2xFhxPrJo2S+83Zu959P8QDg+hmrKOx9yqqlW2ZPTC8A7U+ZdfPGNo
+   jOM6Shc9U7OlY7caJyhzIYsspkVetZgz/f/IirOlgIPQZrgu7NCcUgzMI
+   ssVLdakuVGofFSJHQlVGC/mWZav92o4wPceChD+O9vdCyUNhVjTxwX5/V
+   w==;
+X-CSE-ConnectionGUID: z6mtNcPgQSWb4wbULwIckA==
+X-CSE-MsgGUID: PZhcstPRSaC5msD+A2iNsg==
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="35084913"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Dec 2024 04:30:34 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 11 Dec 2024 04:30:03 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 11 Dec 2024 04:29:59 -0700
+From: Charan Pedumuru <charan.pedumuru@microchip.com>
+Date: Wed, 11 Dec 2024 16:59:22 +0530
+Subject: [PATCH] dt-bindings: mfd: atmel,at91sam9260: Convert to json
+ schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5861970.DvuYhMxLoT@rjwysocki.net> <2989520.e9J7NaK4W3@rjwysocki.net>
- <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com>
-In-Reply-To: <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 11 Dec 2024 12:29:08 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
-Message-ID: <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
-Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for EAS
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241211-matrix-v1-1-5ef0104a3af4@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAJF3WWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0MD3dzEkqLMCl1jAwMjQzNzs7QkszQloOKCotS0zAqwQdGxtbUAbCM
+ x6VgAAAA=
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Nicolas
+ Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Charan Pedumuru
+	<charan.pedumuru@microchip.com>
+X-Mailer: b4 0.14.1
 
-On Wed, Dec 11, 2024 at 11:33=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 11/29/24 16:00, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Make it possible to use EAS with cpufreq drivers that implement the
-> > :setpolicy() callback instead of using generic cpufreq governors.
-> >
-> > This is going to be necessary for using EAS with intel_pstate in its
-> > default configuration.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > This is the minimum of what's needed, but I'd really prefer to move
-> > the cpufreq vs EAS checks into cpufreq because messing around cpufreq
-> > internals in topology.c feels like a butcher shop kind of exercise.
->
-> Makes sense, something like cpufreq_eas_capable().
->
-> >
-> > Besides, as I said before, I remain unconvinced about the usefulness
-> > of these checks at all.  Yes, one is supposed to get the best results
-> > from EAS when running schedutil, but what if they just want to try
-> > something else with EAS?  What if they can get better results with
-> > that other thing, surprisingly enough?
->
-> How do you imagine this to work then?
-> I assume we don't make any 'resulting-OPP-guesses' like
-> sugov_effective_cpu_perf() for any of the setpolicy governors.
-> Neither for dbs and I guess userspace.
-> What about standard powersave and performance?
-> Do we just have a cpufreq callback to ask which OPP to use for
-> the energy calculation? Assume lowest/highest?
-> (I don't think there is hardware where lowest/highest makes a
-> difference, so maybe not bothering with the complexity could
-> be an option, too.)
+Convert old text based binding to json schema.
+Changes during conversion:
+Add a fallback for all compatibles as the IP core is compatible
+with `syscon`.
 
-In the "setpolicy" case there is no way to reliably predict the OPP
-that is going to be used, so why bother?
+Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
+---
+ .../bindings/mfd/atmel,at91sam9260-matrix.yaml     | 54 ++++++++++++++++++++++
+ .../devicetree/bindings/mfd/atmel-matrix.txt       | 26 -----------
+ 2 files changed, 54 insertions(+), 26 deletions(-)
 
-In the other cases, and if the OPPs are actually known, EAS may still
-make assumptions regarding which of them will be used that will match
-the schedutil selection rules, but if the cpufreq governor happens to
-choose a different OPP, this is not the end of the world.
+diff --git a/Documentation/devicetree/bindings/mfd/atmel,at91sam9260-matrix.yaml b/Documentation/devicetree/bindings/mfd/atmel,at91sam9260-matrix.yaml
+new file mode 100644
+index 000000000000..0e827882823f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/atmel,at91sam9260-matrix.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/atmel,at91sam9260-matrix.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Microchip AT91 Bus Matrix
++
++maintainers:
++  - Nicolas Ferre <nicolas.ferre@microchip.com>
++
++description:
++  The Bus Matrix (MATRIX) implements a multi-layer AHB, based on the
++  AHB-Lite protocol, that enables parallel access paths between multiple
++  masters and slaves in a system, thus increasing the overall bandwidth.
++
++properties:
++  compatible:
++    anyOf:
++      - items:
++          - enum:
++              - atmel,at91sam9260-matrix
++              - atmel,at91sam9261-matrix
++              - atmel,at91sam9263-matrix
++              - atmel,at91sam9rl-matrix
++              - atmel,at91sam9g45-matrix
++              - atmel,at91sam9n12-matrix
++              - atmel,at91sam9x5-matrix
++              - atmel,sama5d3-matrix
++          - const: syscon
++      - items:
++          - const: microchip,sam9x60-matrix
++          - const: atmel,at91sam9x5-matrix
++          - const: syscon
++      - items:
++          - const: microchip,sam9x7-matrix
++          - const: atmel,at91sam9x5-matrix
++          - const: syscon
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    matrix@ffffec00 {
++        compatible = "atmel,sama5d3-matrix", "syscon";
++        reg = <0xffffec00 0x200>;
++    };
+diff --git a/Documentation/devicetree/bindings/mfd/atmel-matrix.txt b/Documentation/devicetree/bindings/mfd/atmel-matrix.txt
+deleted file mode 100644
+index 6e5f83614e83..000000000000
+--- a/Documentation/devicetree/bindings/mfd/atmel-matrix.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-* Device tree bindings for Atmel Bus Matrix
+-
+-The Bus Matrix registers are used to configure Atmel SoCs internal bus
+-behavior (master/slave priorities, undefined burst length type, ...)
+-
+-Required properties:
+-- compatible:		Should be one of the following
+-			"atmel,at91sam9260-matrix", "syscon"
+-			"atmel,at91sam9261-matrix", "syscon"
+-			"atmel,at91sam9263-matrix", "syscon"
+-			"atmel,at91sam9rl-matrix", "syscon"
+-			"atmel,at91sam9g45-matrix", "syscon"
+-			"atmel,at91sam9n12-matrix", "syscon"
+-			"atmel,at91sam9x5-matrix", "syscon"
+-			"atmel,sama5d3-matrix", "syscon"
+-			"microchip,sam9x60-matrix", "syscon"
+-			"microchip,sam9x7-matrix", "atmel,at91sam9x5-matrix", "syscon"
+-- reg:			Contains offset/length value of the Bus Matrix
+-			memory region.
+-
+-Example:
+-
+-matrix: matrix@ffffec00 {
+-	compatible = "atmel,sama5d3-matrix", "syscon";
+-	reg = <0xffffec00 0x200>;
+-};
 
-Yes, you could have been more energy-efficient had you chosen to use
-schedutil, but you chose otherwise and that's what you get.
+---
+base-commit: 1b2ab8149928c1cea2d7eca30cd35bb7fe014053
+change-id: 20241210-matrix-30021676fb6f
 
-> >
-> > ---
-> >  kernel/sched/topology.c |   10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > Index: linux-pm/kernel/sched/topology.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/kernel/sched/topology.c
-> > +++ linux-pm/kernel/sched/topology.c
-> > @@ -217,6 +217,7 @@ static bool sched_is_eas_possible(const
-> >       bool any_asym_capacity =3D false;
-> >       struct cpufreq_policy *policy;
-> >       struct cpufreq_governor *gov;
-> > +     bool cpufreq_ok;
-> >       int i;
-> >
-> >       /* EAS is enabled for asymmetric CPU capacity topologies. */
-> > @@ -251,7 +252,7 @@ static bool sched_is_eas_possible(const
-> >               return false;
-> >       }
-> >
-> > -     /* Do not attempt EAS if schedutil is not being used. */
-> > +     /* Do not attempt EAS if cpufreq is not configured adequately */
-> >       for_each_cpu(i, cpu_mask) {
-> >               policy =3D cpufreq_cpu_get(i);
-> >               if (!policy) {
-> > @@ -261,11 +262,14 @@ static bool sched_is_eas_possible(const
-> >                       }
-> >                       return false;
-> >               }
-> > +             /* Require schedutil or a "setpolicy" driver */
-> >               gov =3D policy->governor;
-> > +             cpufreq_ok =3D gov =3D=3D &schedutil_gov ||
-> > +                             (!gov && policy->policy !=3D CPUFREQ_POLI=
-CY_UNKNOWN);
-> >               cpufreq_cpu_put(policy);
-> > -             if (gov !=3D &schedutil_gov) {
-> > +             if (!cpufreq_ok) {
-> >                       if (sched_debug()) {
-> > -                             pr_info("rd %*pbl: Checking EAS, scheduti=
-l is mandatory\n",
-> > +                             pr_info("rd %*pbl: Checking EAS, unsuitab=
-le cpufreq governor\n",
-> >                                       cpumask_pr_args(cpu_mask));
-> >                       }
-> >                       return false;
->
-> The logic here looks fine to me FWIW.
->
->
+Best regards,
+-- 
+Charan Pedumuru <charan.pedumuru@microchip.com>
+
 
