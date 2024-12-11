@@ -1,77 +1,126 @@
-Return-Path: <linux-kernel+bounces-441646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8549ED171
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:26:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0A89ED189
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6267428443C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C199F287FBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB241DD871;
-	Wed, 11 Dec 2024 16:26:29 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C431DD886;
+	Wed, 11 Dec 2024 16:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QaGJhj1N"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1331494CC;
-	Wed, 11 Dec 2024 16:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CEE1DBB0C;
+	Wed, 11 Dec 2024 16:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733934388; cv=none; b=P//ejn8/Guibnze70VHea+qQ0+5nAr3F2bXCqcuAH4HjMofg0uUrLh4XTNylEZzk5i+AbbV2AQPSnIMduHmtb0iB+siT1tQF9+0VYZ6l6NNCSXhJp0qyKtkQPgRGj9svmgsWaFiLti7sBX3PWtLI38C4f6A3edCJfdg0Z9zNXG4=
+	t=1733934480; cv=none; b=QVvAoLCMXoNiyO2iviyxOl4pw7lL0yBy3Iy/sOO3C2PrD70S80dJMNznhna9P4otmndc10BU9F2FLjD3dZH7M8lBjvD7exJ2MmhCPwfN6Acvbf9tBPzilrJuzgLs8boTHIxya+CZsiizl8l6s+bhXDSyIcEJfXmifiEf8GpixWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733934388; c=relaxed/simple;
-	bh=TjwtmRyuULJ+JNo0a8DdJRb63bWXAawkuH/n7S56JmY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pBbfHMLixMIwzptUdX/maSfn0X6PhnrRNfYsJZFpJr8wh7SsgdraOULS++Z1HTJ/j6U9t7xL1Axos7OoT7aJp/vIUdP5/gLP6LeIfIkSnzaKfQ19fzTNTq/da2auJRTWUSyzP/yGmWPkrecJcI/iD74AEpa8Et2kgRtaCr6Dzr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y7gpd74z5z6GC4d;
-	Thu, 12 Dec 2024 00:21:45 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D01F21400C9;
-	Thu, 12 Dec 2024 00:26:23 +0800 (CST)
-Received: from localhost (10.48.145.145) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 11 Dec
- 2024 17:26:23 +0100
-Date: Wed, 11 Dec 2024 16:26:21 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Mahesh
- J Salgaonkar" <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>,
-	Lukas Wunner <lukas@wunner.de>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
-	<kw@linux.com>, <linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v6 3/8] PCI: Make pcie_read_tlp_log() signature same
-Message-ID: <20241211162621.00007e61@huawei.com>
-In-Reply-To: <20240913143632.5277-4-ilpo.jarvinen@linux.intel.com>
-References: <20240913143632.5277-1-ilpo.jarvinen@linux.intel.com>
-	<20240913143632.5277-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1733934480; c=relaxed/simple;
+	bh=yyNvLDoRqw3n7kygorYC0ZKcQZ8W0My3Qn5ah/JVOfA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=k5rVAib9+jaJQu5RaYxFCUluF0yn7cI26iGjCxu+aj5ibMXENz2TuQcPYtK8CnhlhVUrNJtcZclQ8h3JYXVrLfETFQ3OvVuoinRCVQqu02SpSNSyFF+eoUh1q3A6unxtOHO9TJ1UBhUnaWopsqQxJm0gWkysbvmqGDNP2gQhpHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QaGJhj1N; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8CABC240006;
+	Wed, 11 Dec 2024 16:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733934470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vlmO94F6PCr3MRVBDoCJwKj3tmn8SRl8fag8OJSDsvI=;
+	b=QaGJhj1N3BXKsF4O/l0gE0WlKZyiCvorqS52KoWtT2bdoVKaxA+oGgtUiH5uwDzuyeAdM6
+	Cf+K+BzvksSUYfGTl9kQTrBiY+E3LG06f0XxihpBetSiKqEZqrn9Xd+1jS5m+qgFG05qpZ
+	CbkJyddITIADD5ebZp3/AvCRI3sSOJUQ11LpEO3xS0DR7dxP5lKehCeGEcw1LQMNXO4rhu
+	6IyKDb19TJOZUOCiXn7E/dbk1zQ9ZvsvuRgwXzrGe8Tv4Kt/lZSiC+QScQUj5HyLhDeWbw
+	2s6Df9qB+5pr0PLZI2Qr6P39Mlbs/PPeKzW7wcvYU3TRatcw64dTvCY0SZQDuQ==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH 0/5] Add support for the AAEON UP board FPGA
+Date: Wed, 11 Dec 2024 17:27:15 +0100
+Message-Id: <20241211-aaeon-up-board-pinctrl-support-v1-0-24719be27631@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGO9WWcC/yXNyw6CMBCF4Vchs3ZMucQIr2JYDGXQSaSt05aYE
+ N7dRpbfWZx/h8gqHGGodlDeJIp3BfWlAvsi92SUuRga03Smbw0SsXeYA06edMYgziZ9Y8wheE3
+ Y3xfqyLSm6w2Uk6C8yPcfeIynlT+5dNI5wkSR0fp1lTRU2+1at6i2hvE4fvbG9fWdAAAA
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@ucw.cz>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-leds@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+ DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Fri, 13 Sep 2024 17:36:27 +0300
-Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+This is the revival of the AAEON UP boards FPGA.
+The latest version was sent one year ago [1].
 
-> pcie_read_tlp_log()'s prototype and function signature diverged due to
-> changes made while applying.
->=20
-> Make the parameters of pcie_read_tlp_log() named identically.
->=20
-> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-Good to clean this up.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+I started a new series, as I re-wrote all the drivers using the AAEON
+DKMS driver [2] as reference. I also read all series sent to the ML to
+collect the comments sent by the maintainers and reviewers (to not
+reproduce the same errors).
+
+The FPGA acts as a level shifter between the Intel SoC and the HAT interfaces.
+The pinctrl driver shall manage FPGA pins in tandem with the corresponding
+Intel SoC pins. In the previous series [2], this was done using Intel pinctrl
+code (included in the FPGA pinctrl driver).
+Now this code was removed and gpiolib is used to drive the SoC pins.
+
+The FPGA also drives some LEDs.
+
+This series adds support for UP and UP Squared boards.
+
+More informations (like the HAT mapping) are available on the UP community
+wiki [3].
+
+[1] https://lore.kernel.org/all/20231031015119.29756-1-larry.lai@yunjingtech.com/
+[2] https://github.com/up-division/pinctrl-upboard
+[3] https://github.com/up-board/up-community/wiki
+
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Thomas Richard (5):
+      mfd: Add support for AAEON UP board FPGA
+      leds: Add AAEON UP board LED driver
+      gpiolib: add gpiochip_add_pinlist_range() function
+      pinctrl: Add pin controller driver for AAEON UP boards
+      MAINTAINERS: Add entry for AAEON UP board FPGA drivers
+
+ MAINTAINERS                       |    8 +
+ drivers/gpio/gpiolib.c            |   74 ++-
+ drivers/leds/Kconfig              |    9 +
+ drivers/leds/Makefile             |    1 +
+ drivers/leds/leds-upboard.c       |  126 +++++
+ drivers/mfd/Kconfig               |   12 +
+ drivers/mfd/Makefile              |    2 +
+ drivers/mfd/upboard-fpga.c        |  325 +++++++++++
+ drivers/pinctrl/Kconfig           |   14 +
+ drivers/pinctrl/Makefile          |    1 +
+ drivers/pinctrl/pinctrl-upboard.c | 1090 +++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h       |   12 +
+ include/linux/mfd/upboard-fpga.h  |   55 ++
+ 13 files changed, 1709 insertions(+), 20 deletions(-)
+---
+base-commit: cbc4912199deab59fdbd830b115d81941d0add46
+change-id: 20240930-aaeon-up-board-pinctrl-support-98fa4a030490
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
+
 
