@@ -1,159 +1,247 @@
-Return-Path: <linux-kernel+bounces-442227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B839ED997
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:24:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBB19ED99A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643BB164C84
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CB7164D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA461EC4F9;
-	Wed, 11 Dec 2024 22:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC131F0E55;
+	Wed, 11 Dec 2024 22:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yPLatFto"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/xTczJ7"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1A71EC4D6
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115441A841F;
+	Wed, 11 Dec 2024 22:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733955863; cv=none; b=OsVvZ9Gv2mJXuKO6R5Une2ptnGjbbYS8TSW7pcuK6m/oZcHCzW7M2CTXVFq5GoheRMb8PunnQ6qxYh79qzHM0kYPhFQBNTZdAYbvWN9fNMVjRzHEkPgHGsSLMYOwwtRc42wdWnDciOrg7evaVlIaJ5dliSJeRvDSIUZXGL94Ck4=
+	t=1733955934; cv=none; b=nj8aRQ+1sgTnBe7Pq+F+4xCv2fQUlHlw9GXnDY6G7hY3J0WL+pMLa6QkckerpB5AiKGr2bb3pPT8ZXzq5rUDOB0suQdoc9LXNMNO4GqWs8aUGgXNzjdFReAhQIgUEoCtNBoAxmuJIc0JvqJ4vHUITps2Xc370HCcYM06qR2fvr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733955863; c=relaxed/simple;
-	bh=/5rTDPj4eG5P/dMMZ3UaadXwQgo5sue2mf716YTlQyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcuBz840eX8nzKny1kNwqM0mNSjv7ZmdwCs1LEh6pXAkQS+B7zunEJ6pmM162GpXr5SXra+HcvnF3Ij6OGbfyiGTcarr71KaSxUVcdDLzZ1dJjgIrLZ6/4chxt1aDztnxe8oebT2lsiQzN21Ng0eXaEhys3X4YmuMPtM2kccijc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yPLatFto; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53ff1f7caaeso5051584e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:24:20 -0800 (PST)
+	s=arc-20240116; t=1733955934; c=relaxed/simple;
+	bh=WcP8puCu5E/iDC54GFAUuXvtSp716LObvesLuvgYsRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h4sd3zgRWyIhocPK1sFghP70rtpRt5QWwemlXqBpmgwb/F6GOmHprO+1x5KQCgXUvBvNGDsiGMAwgtivzcHMfgHfX7CqAabBmuUfJYsdvRFZ7FjYjK0ZIwpZBWZU1jEqufxt2e2+5fsyNI7xsloq4CL8+rcbPJ1olN8n3BTvrBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/xTczJ7; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ef28f07dbaso5327025a91.2;
+        Wed, 11 Dec 2024 14:25:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733955859; x=1734560659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQt0c/B79tzZ92JCkmXyGPgoiCeeT1lFWyXxnDRmJf0=;
-        b=yPLatFtoMKuH4FXESGbbTvaGZ+10m/VvbZBti7LIVYQtJAm9YzNizCgVm30urLp1TO
-         oxZNLfzVszBTJjWGn4r3ME7LuP7oDN/owZQHPeaEHuiBNf62zgUaS+niDFjHH4OMM+FE
-         7anw1O8AQ2zPxGmKlSaG4wYQGpVXjXO4KpgCG79YF4CHxvrhFL4gFFhgI9DA8FZyOx+F
-         JRN67TWDRrtmhKHiKfcowV7W/RMq4q3pPPrB/sW65xzJ9aSpUnuHlpf62gu46aA2UHWY
-         5wHDQNO+i1EyosLB5ndgR8ldafJXWLKexH6tsrX+RQZb5YnFpstzggWmY8GbKiW5JB2X
-         Easw==
+        d=gmail.com; s=20230601; t=1733955932; x=1734560732; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xv4FsWqTskXRjULZFj9NoFjvesUrabAkk8N5KhmRpII=;
+        b=D/xTczJ7fDCFcOM3R+M9IGSXvLzYlB0UfX3XCJVpEsPPW4HYkvgyw/nQtgyHGADgIz
+         TLobRUQz+9o7reYSa1ZR3yOMcQJTj0aIuqujWR41g1YRghzufEG009hcy446BiyJ0BXn
+         3JqGbRmYK7UeJyb0IpGT2wh0p4UNl7WeSX8sJe9dCKV63pjFl/Wgu0QrWs+h5qv/nKZI
+         j/ypMnfV6hPQjcPdAite2iJU6UaJX1Eov/zpM6cBMWVWlduwrPXW5UP1ZdpG28JfHfAY
+         aLlSElcne1PG1Bw6Vhh4Bi3abLStJUVVjgbcoJw55jyXBd4+VjXPto/ZkKm8r5+P0mni
+         ESUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733955859; x=1734560659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TQt0c/B79tzZ92JCkmXyGPgoiCeeT1lFWyXxnDRmJf0=;
-        b=kvluWHT/dRvKWModkJIkOa5SAkwh4rofV/63EfAJ9gNvtX9G+MDVGmZD/LFJfTgBzB
-         h9zA+KJhaLrb8MUMQjG/mFOj2W4nicbVqMP+52qLGTVjHCY+rj7RHYyRkfKzlWjLQStI
-         gTjpgmIJgjXUEeKspde8xKGLqopFSdmPsCPN92e1IYgzleuOQ5pQjgFLwI4ho1VQoBzP
-         ykk0edQOJK6w7LHzCl0YBr6ePK+lY/UrYAGDjZLMhlTXrWTK00m7CiTdoB92rGdOX7AC
-         koKcfezMJSqx3ywz9MxwcsSRlMSw5KjB9tc3bZtqISD6JR4mvJcgKb0/LSOhpUe9c4JZ
-         4Lqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1hR28QG9GSXNrjatw2aPsFQQMOJ/vihXbLZCDeXb3zm1H93AdoBLdbvCnM2421TsgEbndjOnbK8HobxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjW7OaK15bZ3nv9I1e4Bl8Tk1k2JI7kxWcHlotST5P2ZDVj9EK
-	0Eo6EooCGeN5INiF1EvZMUgdoJfbc1A+bYdBRoEYWaFhB14LAJAknGb8o58jwDU=
-X-Gm-Gg: ASbGncts+DvlTMpndGv8NV+aqKc43BDlvIH7i7rMQ9PUrsJVpDOrhBoYdKV636DhVNP
-	vq4Uvl+TQ7stoFqvMIFgV7i70f5jlaWKnfcR0tdfmJmFqcrclfVE0CNSndq3OqjrBaA8PPkqMis
-	qQoDGNI5wJo4jpKR6NtZ+u2ecU/Fn0cYftkdkgbWpWhgwzoYwseS3oEJ0jZlFIoOBg4zu9FcZ9G
-	vVI7lefUhn5BK9oiJtsbTFQKJOpvkhk7j1ZQGuMI4GpBPbXVHcZLhulXrZJfnXlfvTpYCPlaEwS
-	70siv3y9s3Se1p43K7RlwgXmElhA2xcRnQ==
-X-Google-Smtp-Source: AGHT+IGUjnHXz8xm14gX4NMTwgGnSmfUk9Frni6oN0Mq2JYlv9txb+UhgRCFjpynV3Xptsxw0hq6Fg==
-X-Received: by 2002:a05:6512:238b:b0:53e:39b7:54a3 with SMTP id 2adb3069b0e04-5402a5daa14mr1547884e87.24.1733955859171;
-        Wed, 11 Dec 2024 14:24:19 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3c48b122sm1519955e87.65.2024.12.11.14.24.16
+        d=1e100.net; s=20230601; t=1733955932; x=1734560732;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xv4FsWqTskXRjULZFj9NoFjvesUrabAkk8N5KhmRpII=;
+        b=mFfldcuf/2kuVkHoqgK1NJ2FAhKQNuV24JrippzdUne0K28JSD4buQYPeKQP4BzgMg
+         3tJh2jE9ZED72t8jo3sSxBXyqpUfE9Mrm6rVa5qyzgH0W1o8l+F4pfAkpDQje85j+PDy
+         L0kdydKohSG8tn3uQcExXn7ORvD4Bh7vkJjyPMJXwFSCG6GQvOPsgQA1qHa2ddqvgZ7X
+         YC85OIgGL7fzPfAU8KF4SDMaLVXpBKXhiw7bC6VQmuL5HNzdTVScuNh80PxziQ0elwyY
+         kc9FrzuCs25JRFIRMuiX8XyOWZZhVTECsxyL8TmTrMZVJxyX4foRvWdPkMwz7cSXf8vL
+         5qCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzd4QSWgZNZfw7R11246PKeQcy9z10AhCU4C8mm/r9D1JK5JzLaGQoLJ8x5biDPbfxEEfhxpZ652HjPaI=@vger.kernel.org, AJvYcCWDgkMGgddTEt5YamgmkttH7G1pgJwhYmC4Avlw+HOhrwvSiVCbp/XtNJ8/9cwQk3xeGwmKZY/OgeUIhAUYImvrdQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXodSuADCl0fm1TtUBJuXfhVyusc05JdtdsjNeAfcx4AssBuwH
+	EYsLkYSZghq7bOQ8X9FgPMLRbufFcJH4fJLgChwIZ9NurmoR916+
+X-Gm-Gg: ASbGncuMOSVUrrAtlcJKpn9TKec3O3mWyQr/64MsBtgp4pob4mJBIOu1jy/BRxYeQc8
+	aCGTmYCQzWw1NJxp6SdM9LbIUxqIQAJmBnuuTQzFXOEoAjGpZehhb1yTbTCY5HKepxFFpRPT9cv
+	Bp0D9s2PG+oIKd1L0DaZmKCGlvfAEW7+IO7YBGr2CmDkGyFSNPoWJzLqYcPRM7cXlBHhtgkLNnZ
+	rZlQOEZzDJT2Ifeug8BCxSIlQeIbnjU8VjjRRl9cD6/l02YKV/ZQXSL7uupS5sDVz/iY0oeOY5i
+	K6dGmTqo8Q==
+X-Google-Smtp-Source: AGHT+IHkhgo64hBSIkDb8tXLO6YdgvzziWD/2PaaeEPKCrpx17NbdL7MwkxUqm4GBvBNMmGKYS4h7g==
+X-Received: by 2002:a17:90b:1e50:b0:2ee:af31:a7bd with SMTP id 98e67ed59e1d1-2f127f565eemr7208460a91.5.1733955932177;
+        Wed, 11 Dec 2024 14:25:32 -0800 (PST)
+Received: from mbp.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef6d1fd68asm11241561a91.36.2024.12.11.14.25.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 14:24:17 -0800 (PST)
-Date: Thu, 12 Dec 2024 00:24:12 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/3] drm/msm/dpu: allow using two SSPP blocks for a
- single plane
-Message-ID: <hpmxj7tjmvbo55izoxgygqmysbabnpb35mprvn6w53vbtehnwe@yxmiigoeuyf3>
-References: <20241130-dpu-virtual-wide-v7-0-991053fcf63c@linaro.org>
- <20241130-dpu-virtual-wide-v7-2-991053fcf63c@linaro.org>
- <160151f0-9cc6-40f6-9f53-466185835e4d@quicinc.com>
+        Wed, 11 Dec 2024 14:25:31 -0800 (PST)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org
+Cc: namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v11 00/10] perf record --off-cpu: Dump off-cpu samples directly
+Date: Wed, 11 Dec 2024 14:25:18 -0800
+Message-ID: <20241211222528.945590-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <160151f0-9cc6-40f6-9f53-466185835e4d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 01:51:51PM -0800, Abhinav Kumar wrote:
-> 
-> 
-> On 11/29/2024 5:55 PM, Dmitry Baryshkov wrote:
-> > Virtual wide planes give high amount of flexibility, but it is not
-> > always enough:
-> > 
-> > In parallel multirect case only the half of the usual width is supported
-> > for tiled formats. Thus the whole width of two tiled multirect
-> > rectangles can not be greater than max_linewidth, which is not enough
-> > for some platforms/compositors.
-> > 
-> > Another example is as simple as wide YUV plane. YUV planes can not use
-> > multirect, so currently they are limited to max_linewidth too.
-> > 
-> > Now that the planes are fully virtualized, add support for allocating
-> > two SSPP blocks to drive a single DRM plane. This fixes both mentioned
-> > cases and allows all planes to go up to 2*max_linewidth (at the cost of
-> > making some of the planes unavailable to the user).
-> > 
-> 
-> Overall looks so much cleaner after unification!
-> 
-> One small nit below,
-> 
-> 
-> You can still have,
-> 
-> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> Note: we have started testing this series with sc7180 CrOS, and will report
-> our findings/ give tested-by this week.
-> 
-> 
-> <snip>
-> 
-> > +static bool dpu_plane_try_multirect_parallel(struct dpu_sw_pipe *pipe, struct dpu_sw_pipe_cfg *pipe_cfg,
-> > +					     struct dpu_sw_pipe *r_pipe, struct dpu_sw_pipe_cfg *r_pipe_cfg,
-> > +					     struct dpu_hw_sspp *sspp, const struct msm_format *fmt,
-> > +					     uint32_t max_linewidth)
-> > +{
-> > +	r_pipe->sspp = NULL;
-> > +
-> > +	pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> > +	pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> > +
-> > +	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> > +	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> > +
-> 
-> 
-> There are two places where the multirect_index and multirect_mode are reset.
-> Would it be better to just have a small api dpu_plane_reset_multirect() and
-> do this there?
+Changes in v11:
+ - Modify the options used in the off-cpu tests, as I changed the unit
+   of the off-cpu threshold to milliseconds.
 
-I'm not sure, what's the benefit. We can add an API to reset one pipe
-(to also be able to use it in _dpu_plane_atomic_disable()), but then
-it's just deduplication for the sake of deduplication.
+Changes in v10:
+ - Move the commit "perf record --off-cpu: Add --off-cpu-thresh option"
+   to where the direct sample feature is completed.
+ - Make --off-cpu-thresh use milliseconds as the unit.
 
+Changes in v9:
+ - Add documentation for the new option '--off-cpu-thresh', and include
+   an example of its usage in the commit message
+ - Set inherit in evsel__config() to prevent future modifications
+ - Support off-cpu sample data collected by perf before this patch series
+
+Changes in v8:
+ - Make this series bisectable
+ - Rename off_cpu_thresh to off_cpu_thresh_us and offcpu_thresh (in BPF)
+   to offcpu_thresh_ns for clarity
+ - Add commit messages to 'perf evsel: Expose evsel__is_offcpu_event()
+   for future use' commit
+ - Correct spelling mistakes in the commit message (s/is should be/should be/)
+ - Add kernel-doc comments to off_cpu_dump(), and comments to the empty
+   if block
+ - Add some comments to off-cpu test
+ - Delete an unused variable 'timestamp' in off_cpu_dump()
+
+Changes in v7:
+ - Make off-cpu event system-wide
+ - Use strtoull instead of strtoul
+ - Delete unused variable such as sample_id, and sample_type
+ - Use i as index to update BPF perf_event map
+ - MAX_OFFCPU_LEN 128 is too big, make it smaller.
+ - Delete some bound check as it's always guaranteed
+ - Do not set ip_pos in BPF
+ - Add a new field for storing stack traces in the tstamp map
+ - Dump the off-cpu sample directly or save it in the off_cpu map, not both
+ - Delete the sample_type_off_cpu check
+ - Use __set_off_cpu_sample() to parse samples instead of a two-pass parsing
+
+Changes in v6:
+ - Make patches bisectable
+
+Changes in v5:
+ - Delete unnecessary copy in BPF program
+ - Remove sample_embed from perf header, hard code off-cpu stuff instead
+ - Move evsel__is_offcpu_event() to evsel.h
+ - Minor changes to the test
+ - Edit some comments
+
+Changes in v4:
+ - Minimize the size of data output by perf_event_output()
+ - Keep only one off-cpu event
+ - Change off-cpu threshold's unit to microseconds
+ - Set a default off-cpu threshold
+ - Print the correct error message for the field 'embed' in perf data header
+
+Changes in v3:
+ - Add off-cpu-thresh argument
+ - Process direct off-cpu samples in post
+
+Changes in v2:
+ - Remove unnecessary comments.
+ - Rename function off_cpu_change_type to off_cpu_prepare_parse
+
+v1:
+
+As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
+
+Currently, off-cpu samples are dumped when perf record is exiting. This
+results in off-cpu samples being after the regular samples. This patch
+series makes possible dumping off-cpu samples on-the-fly, directly into
+perf ring buffer. And it dispatches those samples to the correct format
+for perf.data consumers.
+
+Before:
+```
+     migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+            perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+     migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+     migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+
+sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
+	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+	    585690935cca [unknown] (/usr/bin/sshd)
+```
+
+After:
+```
+            perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+            perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+         swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+         swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+    blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+    blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+         swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+     dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+```
+
+Howard Chu (10):
+  perf evsel: Expose evsel__is_offcpu_event() for future use
+  perf record --off-cpu: Parse off-cpu event
+  perf record --off-cpu: Preparation of off-cpu BPF program
+  perf record --off-cpu: Dump off-cpu samples in BPF
+  perf evsel: Assemble offcpu samples
+  perf record --off-cpu: Disable perf_event's callchain collection
+  perf script: Display off-cpu samples correctly
+  perf record --off-cpu: Dump the remaining samples in BPF's stack trace
+    map
+  perf record --off-cpu: Add --off-cpu-thresh option
+  perf test: Add direct off-cpu test
+
+ tools/perf/Documentation/perf-record.txt |   9 ++
+ tools/perf/builtin-record.c              |  26 +++++
+ tools/perf/builtin-script.c              |   4 +-
+ tools/perf/tests/builtin-test.c          |   1 +
+ tools/perf/tests/shell/record_offcpu.sh  |  35 ++++++-
+ tools/perf/tests/tests.h                 |   1 +
+ tools/perf/tests/workloads/Build         |   1 +
+ tools/perf/tests/workloads/offcpu.c      |  16 ++++
+ tools/perf/util/bpf_off_cpu.c            | 117 ++++++++++++++---------
+ tools/perf/util/bpf_skel/off_cpu.bpf.c   |  97 ++++++++++++++++++-
+ tools/perf/util/evsel.c                  |  41 +++++++-
+ tools/perf/util/evsel.h                  |   2 +
+ tools/perf/util/off_cpu.h                |   3 +-
+ tools/perf/util/record.h                 |   1 +
+ 14 files changed, 296 insertions(+), 58 deletions(-)
+ create mode 100644 tools/perf/tests/workloads/offcpu.c
 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
