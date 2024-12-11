@@ -1,278 +1,184 @@
-Return-Path: <linux-kernel+bounces-440782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45ECD9EC429
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:14:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8C39EC427
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FD3167444
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC81C1886503
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD781C07FE;
-	Wed, 11 Dec 2024 05:14:18 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.103])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB05D1C07C4;
-	Wed, 11 Dec 2024 05:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9001C07FE;
+	Wed, 11 Dec 2024 05:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XdH1zUkz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27701BDAA0;
+	Wed, 11 Dec 2024 05:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733894057; cv=none; b=on6s9ItDjVU1xHoruI3YTiKtM7twyHE9J+NmXmF5hCFqcgpa/syoTxuACFTytnagxKGx+wSkjoVY+7Y2hd2tW4RB/VCRPLV/NZsygT3eRWJe4m4WEUeB5aLs2ncy2dT8hhz54p+Zc17EKxEud1Rofp98CVlEAGFM+1yhGH21JCM=
+	t=1733893972; cv=none; b=QQePcSyQYWXVTc6DZevszPBlA8ksqjrGD+4DjrLTgF9IqfSt7cV32Azoswb+1sPxEyEyrXtfzgJwhAQB267cS6TpkB9zUcRNhYmlMkECIxX9lL8KO4y289WcmuYhzVs//9n17crX3Aqa1WwCd9o5kcI7oPrYUdH2Y/Mgz+ai7Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733894057; c=relaxed/simple;
-	bh=xOKJ7qt0WfS0XyDsy5u7icGNxiFNPCNQRKosTSntKOk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pcPCd6RKH79z4Wno8EkVVHvSmvpEBm4jlUqF60eQH8mgYqZI7lO4pZFhHQOukAA3c+8GFwuEcUdpgeNn7NvVmScBXIU1qfYCGpJF5N27J+UC3BTlzZFbVzXI3vgtmSQcsdYd56GHlpKIZu0JU4kvkXAuVZ6+nyHRKrE/SE3ox48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.243.18:7884.121043416
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-123.150.8.42 (unknown [10.158.243.18])
-	by 189.cn (HERMES) with SMTP id 1E938100208;
-	Wed, 11 Dec 2024 13:10:21 +0800 (CST)
-Received: from  ([123.150.8.42])
-	by gateway-153622-dep-5c5f88b874-pd459 with ESMTP id 4e5728c57c8d4093b2d6a3afacd6fde7 for krzk@kernel.org;
-	Wed, 11 Dec 2024 13:10:22 CST
-X-Transaction-ID: 4e5728c57c8d4093b2d6a3afacd6fde7
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 123.150.8.42
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-From: Song Chen <chensong_2000@189.cn>
-To: krzk@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	lee@kernel.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	Song Chen <chensong_2000@189.cn>
-Subject: [PATCH v2] regulator:s5m8767: Fully convert to GPIO descriptors
-Date: Wed, 11 Dec 2024 13:10:19 +0800
-Message-Id: <20241211051019.176131-1-chensong_2000@189.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733893972; c=relaxed/simple;
+	bh=TmSuMxI+37qp//b+Vc1lTofp/uZJ35cEAzMFBvx1dhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2h5JnKqNXgBKDBOy6scftRLETwRpJZ0Sqei28K6tO4Ipu2OgqnEn5DZWz56UPs8HWbcijG6Xlpj1Cxl/tr/SBFoWG5zUhUaQE3R5wDpYpj/pvCe67K2xcbEm/M5PBo/I6wIBSZnGLwpnRs3EENsfRM/hD5QDkN6hb2RziCMizc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XdH1zUkz; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733893970; x=1765429970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TmSuMxI+37qp//b+Vc1lTofp/uZJ35cEAzMFBvx1dhw=;
+  b=XdH1zUkzuEAEePZl7khXDrBC5Fgh+QVTRjQV4iH3nE6JNvs2qUoch9tM
+   +APab0HRsPg+UER6JsK7Rh/FffhS1HLuCXBnrC7q+9EJQTVcEQH53/e1i
+   3D9xKHtiUJ8OLTZE+IY1bTJNwyZsyRmajq4jsO1YKGJlpIRWg2w1NWLAK
+   NMx2xx23fwN5xSdn8ASOYPjBUW1WKl1FC2JVuqUFNiD1/EQfqB0oe4tBK
+   JGGr6Y1z54TVXrAUXIyH74c/a6HrWjEv/N+cAWE9jq2/mg1oQ32mBbIa6
+   UQkPIHpE3PQSAdoxRQaPCKvd+urk6aaiorHas0gIpIEFQXYK0Uj/CbjS/
+   Q==;
+X-CSE-ConnectionGUID: tczH6gCSTc+LRu0ZHqMomw==
+X-CSE-MsgGUID: BfhAedCTRJ6izDy0y+hAvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="33989696"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="33989696"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 21:12:49 -0800
+X-CSE-ConnectionGUID: aq4+8XcnQbiDK1Q+Njg5aA==
+X-CSE-MsgGUID: sEnUX6MqT9ajffeP+66V+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="100715439"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 10 Dec 2024 21:12:46 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLF1f-0006J7-0o;
+	Wed, 11 Dec 2024 05:12:43 +0000
+Date: Wed, 11 Dec 2024 13:12:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	linux-ext4@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Mingming Cao <cmm@us.ibm.com>, Kalpak Shah <kalpak@clusterfs.com>,
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	syzbot+57934e2c8e7a99992e41@syzkaller.appspotmail.com
+Subject: Re: [PATCH] ext4: only test for inode xattr state when expanding
+ inode
+Message-ID: <202412111225.cNzuFVRM-lkp@intel.com>
+References: <20241210174850.4027690-1-cascardo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210174850.4027690-1-cascardo@igalia.com>
 
-This converts s5m8767 regulator driver to use GPIO descriptors.
+Hi Thadeu,
 
----
-v1 - v2:
-1, reedit commit message.
-2, remove development code.
-3, print error msg in dev_err_probe.
-4, doesn't set gpiod directions until successfully requesting
-   all gpiods. It's pretty much equivalent with original code.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Song Chen <chensong_2000@189.cn>
----
- drivers/regulator/s5m8767.c      | 106 ++++++++++++++-----------------
- include/linux/mfd/samsung/core.h |   4 +-
- 2 files changed, 48 insertions(+), 62 deletions(-)
+[auto build test WARNING on tytso-ext4/dev]
+[also build test WARNING on linus/master v6.13-rc2 next-20241210]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index d25cd81e3f36..b23df037336b 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -5,7 +5,7 @@
- 
- #include <linux/cleanup.h>
- #include <linux/err.h>
--#include <linux/of_gpio.h>
-+#include <linux/of.h>
- #include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -35,8 +35,8 @@ struct s5m8767_info {
- 	u8 buck2_vol[8];
- 	u8 buck3_vol[8];
- 	u8 buck4_vol[8];
--	int buck_gpios[3];
--	int buck_ds[3];
-+	struct gpio_desc *buck_gpios[3];
-+	struct gpio_desc *buck_ds[3];
- 	int buck_gpioindex;
- };
- 
-@@ -272,9 +272,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
- {
- 	int temp_index = s5m8767->buck_gpioindex;
- 
--	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
--	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
--	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-+	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-+	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-+	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
- 
- 	return 0;
- }
-@@ -283,9 +283,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
- {
- 	int temp_index = s5m8767->buck_gpioindex;
- 
--	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
--	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
--	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-+	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-+	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-+	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
- 
- 	return 0;
- }
-@@ -486,16 +486,19 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
- 			struct sec_platform_data *pdata,
- 			struct device_node *pmic_np)
- {
--	int i, gpio;
-+	int i;
-+	char label[32];
- 
- 	for (i = 0; i < 3; i++) {
--		gpio = of_get_named_gpio(pmic_np,
--					"s5m8767,pmic-buck-dvs-gpios", i);
--		if (!gpio_is_valid(gpio)) {
--			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
--			return -EINVAL;
--		}
--		pdata->buck_gpios[i] = gpio;
-+		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
-+		pdata->buck_gpios[i] = devm_fwnode_gpiod_get_index(
-+					iodev->dev,
-+					of_fwnode_handle(pmic_np),
-+					"s5m8767,pmic-buck-dvs",
-+					i, GPIOD_OUT_LOW, label);
-+		if (IS_ERR(pdata->buck_gpios[i]))
-+			return dev_err_probe(iodev->dev, PTR_ERR(pdata->buck_gpios[i]),
-+						"can't get GPIO\n");
- 	}
- 	return 0;
- }
-@@ -504,16 +507,19 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
- 			struct sec_platform_data *pdata,
- 			struct device_node *pmic_np)
- {
--	int i, gpio;
-+	int i;
-+	char label[32];
- 
- 	for (i = 0; i < 3; i++) {
--		gpio = of_get_named_gpio(pmic_np,
--					"s5m8767,pmic-buck-ds-gpios", i);
--		if (!gpio_is_valid(gpio)) {
--			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
--			return -EINVAL;
--		}
--		pdata->buck_ds[i] = gpio;
-+		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
-+		pdata->buck_ds[i] = devm_fwnode_gpiod_get_index(
-+					iodev->dev,
-+					of_fwnode_handle(pmic_np),
-+					"s5m8767,pmic-buck-ds",
-+					i, GPIOD_OUT_LOW, label);
-+		if (IS_ERR(pdata->buck_ds[i]))
-+			return dev_err_probe(iodev->dev, PTR_ERR(pdata->buck_ds[i]),
-+						"can't get GPIO\n");
- 	}
- 	return 0;
- }
-@@ -788,57 +794,37 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
- 	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
- 						pdata->buck4_gpiodvs) {
- 
--		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
--			!gpio_is_valid(pdata->buck_gpios[1]) ||
--			!gpio_is_valid(pdata->buck_gpios[2])) {
-+		if (IS_ERR(pdata->buck_gpios[0]) ||
-+			IS_ERR(pdata->buck_gpios[1]) ||
-+			IS_ERR(pdata->buck_gpios[2])) {
- 			dev_err(&pdev->dev, "GPIO NOT VALID\n");
- 			return -EINVAL;
- 		}
- 
--		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
--					"S5M8767 SET1");
--		if (ret)
--			return ret;
--
--		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
--					"S5M8767 SET2");
--		if (ret)
--			return ret;
--
--		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
--					"S5M8767 SET3");
--		if (ret)
--			return ret;
--
- 		/* SET1 GPIO */
--		gpio_direction_output(pdata->buck_gpios[0],
-+		gpiod_direction_output(pdata->buck_gpios[0],
- 				(s5m8767->buck_gpioindex >> 2) & 0x1);
- 		/* SET2 GPIO */
--		gpio_direction_output(pdata->buck_gpios[1],
-+		gpiod_direction_output(pdata->buck_gpios[1],
- 				(s5m8767->buck_gpioindex >> 1) & 0x1);
- 		/* SET3 GPIO */
--		gpio_direction_output(pdata->buck_gpios[2],
-+		gpiod_direction_output(pdata->buck_gpios[2],
- 				(s5m8767->buck_gpioindex >> 0) & 0x1);
- 	}
- 
--	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
--	if (ret)
--		return ret;
--
--	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
--	if (ret)
--		return ret;
--
--	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
--	if (ret)
--		return ret;
-+	if (IS_ERR(pdata->buck_ds[0]) ||
-+		IS_ERR(pdata->buck_ds[1]) ||
-+		IS_ERR(pdata->buck_ds[2])) {
-+		dev_err(&pdev->dev, "GPIO NOT VALID\n");
-+		return -EINVAL;
-+	}
- 
- 	/* DS2 GPIO */
--	gpio_direction_output(pdata->buck_ds[0], 0x0);
-+	gpiod_direction_output(pdata->buck_ds[0], 0x0);
- 	/* DS3 GPIO */
--	gpio_direction_output(pdata->buck_ds[1], 0x0);
-+	gpiod_direction_output(pdata->buck_ds[1], 0x0);
- 	/* DS4 GPIO */
--	gpio_direction_output(pdata->buck_ds[2], 0x0);
-+	gpiod_direction_output(pdata->buck_ds[2], 0x0);
- 
- 	regmap_update_bits(s5m8767->iodev->regmap_pmic,
- 			   S5M8767_REG_BUCK2CTRL, 1 << 1,
-diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-index 750274d41fc0..c06fff66e755 100644
---- a/include/linux/mfd/samsung/core.h
-+++ b/include/linux/mfd/samsung/core.h
-@@ -79,8 +79,8 @@ struct sec_platform_data {
- 	struct sec_opmode_data		*opmode;
- 	int				num_regulators;
- 
--	int				buck_gpios[3];
--	int				buck_ds[3];
-+	struct gpio_desc		*buck_gpios[3];
-+	struct gpio_desc		*buck_ds[3];
- 	unsigned int			buck2_voltage[8];
- 	bool				buck2_gpiodvs;
- 	unsigned int			buck3_voltage[8];
+url:    https://github.com/intel-lab-lkp/linux/commits/Thadeu-Lima-de-Souza-Cascardo/ext4-only-test-for-inode-xattr-state-when-expanding-inode/20241211-015015
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+patch link:    https://lore.kernel.org/r/20241210174850.4027690-1-cascardo%40igalia.com
+patch subject: [PATCH] ext4: only test for inode xattr state when expanding inode
+config: csky-randconfig-002-20241211 (https://download.01.org/0day-ci/archive/20241211/202412111225.cNzuFVRM-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412111225.cNzuFVRM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412111225.cNzuFVRM-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   fs/ext4/inode.c: In function '__ext4_expand_extra_isize':
+>> fs/ext4/inode.c:5818:41: warning: variable 'header' set but not used [-Wunused-but-set-variable]
+    5818 |         struct ext4_xattr_ibody_header *header;
+         |                                         ^~~~~~
+
+
+vim +/header +5818 fs/ext4/inode.c
+
+ac27a0ec112a089 Dave Kleikamp                 2006-10-11  5811  
+c03b45b853f5829 Miao Xie                      2017-08-06  5812  static int __ext4_expand_extra_isize(struct inode *inode,
+c03b45b853f5829 Miao Xie                      2017-08-06  5813  				     unsigned int new_extra_isize,
+c03b45b853f5829 Miao Xie                      2017-08-06  5814  				     struct ext4_iloc *iloc,
+c03b45b853f5829 Miao Xie                      2017-08-06  5815  				     handle_t *handle, int *no_expand)
+c03b45b853f5829 Miao Xie                      2017-08-06  5816  {
+c03b45b853f5829 Miao Xie                      2017-08-06  5817  	struct ext4_inode *raw_inode;
+c03b45b853f5829 Miao Xie                      2017-08-06 @5818  	struct ext4_xattr_ibody_header *header;
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5819  	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5820  	struct ext4_inode_info *ei = EXT4_I(inode);
+c03b45b853f5829 Miao Xie                      2017-08-06  5821  	int error;
+c03b45b853f5829 Miao Xie                      2017-08-06  5822  
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5823  	/* this was checked at iget time, but double check for good measure */
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5824  	if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5825  	    (ei->i_extra_isize & 3)) {
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5826  		EXT4_ERROR_INODE(inode, "bad extra_isize %u (inode size %u)",
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5827  				 ei->i_extra_isize,
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5828  				 EXT4_INODE_SIZE(inode->i_sb));
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5829  		return -EFSCORRUPTED;
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5830  	}
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5831  	if ((new_extra_isize < ei->i_extra_isize) ||
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5832  	    (new_extra_isize < 4) ||
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5833  	    (new_extra_isize > inode_size - EXT4_GOOD_OLD_INODE_SIZE))
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5834  		return -EINVAL;	/* Should never happen */
+4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5835  
+c03b45b853f5829 Miao Xie                      2017-08-06  5836  	raw_inode = ext4_raw_inode(iloc);
+c03b45b853f5829 Miao Xie                      2017-08-06  5837  
+c03b45b853f5829 Miao Xie                      2017-08-06  5838  	header = IHDR(inode, raw_inode);
+c03b45b853f5829 Miao Xie                      2017-08-06  5839  
+c03b45b853f5829 Miao Xie                      2017-08-06  5840  	/* No extended attributes present */
+555d75b1e3bf941 Thadeu Lima de Souza Cascardo 2024-12-10  5841  	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR)) {
+c03b45b853f5829 Miao Xie                      2017-08-06  5842  		memset((void *)raw_inode + EXT4_GOOD_OLD_INODE_SIZE +
+c03b45b853f5829 Miao Xie                      2017-08-06  5843  		       EXT4_I(inode)->i_extra_isize, 0,
+c03b45b853f5829 Miao Xie                      2017-08-06  5844  		       new_extra_isize - EXT4_I(inode)->i_extra_isize);
+c03b45b853f5829 Miao Xie                      2017-08-06  5845  		EXT4_I(inode)->i_extra_isize = new_extra_isize;
+c03b45b853f5829 Miao Xie                      2017-08-06  5846  		return 0;
+c03b45b853f5829 Miao Xie                      2017-08-06  5847  	}
+c03b45b853f5829 Miao Xie                      2017-08-06  5848  
+8994d11395f8165 Jan Kara                      2022-12-07  5849  	/*
+8994d11395f8165 Jan Kara                      2022-12-07  5850  	 * We may need to allocate external xattr block so we need quotas
+8994d11395f8165 Jan Kara                      2022-12-07  5851  	 * initialized. Here we can be called with various locks held so we
+8994d11395f8165 Jan Kara                      2022-12-07  5852  	 * cannot affort to initialize quotas ourselves. So just bail.
+8994d11395f8165 Jan Kara                      2022-12-07  5853  	 */
+8994d11395f8165 Jan Kara                      2022-12-07  5854  	if (dquot_initialize_needed(inode))
+8994d11395f8165 Jan Kara                      2022-12-07  5855  		return -EAGAIN;
+8994d11395f8165 Jan Kara                      2022-12-07  5856  
+c03b45b853f5829 Miao Xie                      2017-08-06  5857  	/* try to expand with EAs present */
+c03b45b853f5829 Miao Xie                      2017-08-06  5858  	error = ext4_expand_extra_isize_ea(inode, new_extra_isize,
+c03b45b853f5829 Miao Xie                      2017-08-06  5859  					   raw_inode, handle);
+c03b45b853f5829 Miao Xie                      2017-08-06  5860  	if (error) {
+c03b45b853f5829 Miao Xie                      2017-08-06  5861  		/*
+c03b45b853f5829 Miao Xie                      2017-08-06  5862  		 * Inode size expansion failed; don't try again
+c03b45b853f5829 Miao Xie                      2017-08-06  5863  		 */
+c03b45b853f5829 Miao Xie                      2017-08-06  5864  		*no_expand = 1;
+c03b45b853f5829 Miao Xie                      2017-08-06  5865  	}
+c03b45b853f5829 Miao Xie                      2017-08-06  5866  
+c03b45b853f5829 Miao Xie                      2017-08-06  5867  	return error;
+c03b45b853f5829 Miao Xie                      2017-08-06  5868  }
+c03b45b853f5829 Miao Xie                      2017-08-06  5869  
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
