@@ -1,166 +1,105 @@
-Return-Path: <linux-kernel+bounces-441725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B3D9ED31B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:11:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB5A188425A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:11:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AC61DE4D8;
-	Wed, 11 Dec 2024 17:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="fzK6gjUj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804559ED31C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:11:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3367824634B;
-	Wed, 11 Dec 2024 17:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733937081; cv=pass; b=dnVOxjdC/kDnE3WKbKOf/VwdkkTCJa9aiXHArKtsDDD92SeuElBrTa+kRzMXnqwZWMeejqYSwzF6POSogWqD1t/8N51nMr9JidfMhTkGJt3ak+MgHkYSMIWAI+llkOXG5huiDthXbw67+1uPHGWWrmngQM6jVe/nE7FewG6iHzc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733937081; c=relaxed/simple;
-	bh=uvPixkTNJKh52GHWvhtoPvfZNxhexWKWuiNbWKgY31I=;
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D257284CB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:11:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D281DE8B3;
+	Wed, 11 Dec 2024 17:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brDbfpvF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527E61DE890
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733937083; cv=none; b=ofkQXBSlRim8ejupeu2B+eopbmVbg4ZywFD1a0/3IQ1HRCnPFTZX8p+VwJ8BelMoKYXT4AQ36JnAeu4ciGYj1lM3ZBWKXpsUPIzyGqSIbG/3kmDfujGPckqr8xD0gh429rMx266JaKkzQ4S6r+Mo6roL8YHZxaECt0DoZ1y+uZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733937083; c=relaxed/simple;
+	bh=ZjqLUTJeWOjXACbZOVh3wgYJhq52PKF8DhiW1ihUFXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJZ4fX+TCJwCRrHwL1eKAQZlPy+5pzzIb0dUK9Ha/C+JqR91S8c774g6z2a+QscIywu8BEGqjddN+FntIEN1pMOMcvVFOQK50OX7MQMvQR+Iv9ReMh5qfZE2ZMeWUveBbgrknqPyBFjVnL4MIoy4rAS9GIXwBvlKEtF+kB3ebUI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=fzK6gjUj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733937061; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MqDxC5RCWqj6frARveTY+iBLr/DNp2amjN9WKm9gl1GerCyqulp+ounDB/0XEDlcIEfGyZU3VJ38VzK8JIvfbXW9FVAqoWaUFULxbsmsiTa2aEGHoWnKXo9DFn7g3/XGpp8pa2XwrFz9OTs40mluKyN2j+F+GbzUn+VRDaQNNH0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733937061; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=o6mgR9JSMbzuDpvHOfYMWLmhuCb2AgVcK+vn11JpoMQ=; 
-	b=MXJme1FJztZTmm3P1gKLG7Nu5KV+p40obUz5OdwQdPKtWdDUiRoM6i+Ye4NLVHWGO8AGcXm4vLr7BA4xXHI+VnI4hpCJFbMgsKCduKgjvJ5xjwWe1bk2XTJD+FYIIYKGNkVVV4Qnnxelmy5KvQb/CPY+uqjPi6U85hMgPwTJJMI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733937061;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=o6mgR9JSMbzuDpvHOfYMWLmhuCb2AgVcK+vn11JpoMQ=;
-	b=fzK6gjUjXS3j31LavblxZCCPDzUAOWyEA8fJnHdsskJL+zIaeEX31O6u2GL5K7t6
-	8l0WPBUG7YhDqqt6M1UZiPeFWzbFnQWbqgaSGPzzs4UwacadgN5ff7xHrDLmXZ3nFrx
-	nYTMC8ZZgWRsMpNoiQNkcZ6MlJ6J9lE5POxTSLVI=
-Received: by mx.zohomail.com with SMTPS id 1733937059334981.4575681462861;
-	Wed, 11 Dec 2024 09:10:59 -0800 (PST)
-Date: Wed, 11 Dec 2024 18:10:52 +0100
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Nathan Hebert <nhebert@chromium.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Hsin-Yi Wang <hsinyi@chromium.org>,
-	Fritz Koenig <frkoenig@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6 3/3] media: mediatek: vcodec: add description for vsi
- struct
-Message-ID: <20241211171052.wl4wqoka7yyeso2l@basti-XPS-13-9310>
-References: <20241116031616.15656-1-yunfei.dong@mediatek.com>
- <20241116031616.15656-4-yunfei.dong@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLxu/a2O+En/0ebGi4LiWwfPi61BkQ8GRPmxN7pF92xMmoe10V6rM1BNrasYjQITzRbRyVfNZXr4M7xnLwmxe51cw0dNQBBfX33Gmr1ZOC9UkidbLUOQFdkuMs/nswyVkysar5812xl4bSpGuaWQuHN37OiVzoxI7wgpV6fuNKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brDbfpvF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDC4C4CEDE;
+	Wed, 11 Dec 2024 17:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733937082;
+	bh=ZjqLUTJeWOjXACbZOVh3wgYJhq52PKF8DhiW1ihUFXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=brDbfpvFmbj+5WN7Qa8cCcQ+ir/eS47ia+krt4FqmcYcuG9dKADaBEVXickH+Ex8s
+	 W3+CgGj+CG3jGHqXfUbqCOZfJDeo109qrxjWITz0If3Ibvn7MuXANi8CcDdVWMKJ0G
+	 m0186biZQ/7rlQSw797yMw9r4ZrxyiSNMYwGVsLmIOE0SxYyVU2tHRk4A/vPISq7O6
+	 OX39q//AYj1pV+QEFpui4iq5birpGqQZfV0AuGNvPnCFaquSZ5T1y930olz0Fm7FBj
+	 VL1dxR75xQ0lkTPsO6AWvZHdWawjbpnOOmP/8VDC7dO4DA2Y/rDrsK1MJvi+beNP28
+	 rGwA7J1CyPHSQ==
+Date: Wed, 11 Dec 2024 18:11:12 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] drm/bridge: move
+ drm_atomic_helper_connector_hdmi_check() to drm_bridge_connector
+Message-ID: <cizvtql3vgh2eb66cywietr5dntctp6s7tj7krpchaoucergjl@7sx6mebum2ui>
+References: <20241210-bridge_hdmi_check-v1-0-a8fdd8c5afa5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ypf273q5igxgmj35"
 Content-Disposition: inline
-In-Reply-To: <20241116031616.15656-4-yunfei.dong@mediatek.com>
-X-ZohoMailClient: External
+In-Reply-To: <20241210-bridge_hdmi_check-v1-0-a8fdd8c5afa5@linaro.org>
 
-Hey Yunfei,
 
-On 16.11.2024 11:16, Yunfei Dong wrote:
->If the video shared information (vsi) is changed accidentally,
+--ypf273q5igxgmj35
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/4] drm/bridge: move
+ drm_atomic_helper_connector_hdmi_check() to drm_bridge_connector
+MIME-Version: 1.0
 
-How can that struct be changed accidentally?
+On Tue, Dec 10, 2024 at 04:16:46PM +0200, Dmitry Baryshkov wrote:
+> Reduce boilerplate code and move calls to
+> drm_atomic_helper_connector_hdmi_check() to the drm_bridge_connector.
+> Initially the drm_bridge_connector didn't use HDMI state helpers
+> directly, so each driver had to call that function on its own. Since the
+> commit 9a71cf8b6fa4 ("drm/bridge-connector: reset the HDMI connector
+> state") it depends on DRM_DISPLAY_HDMI_STATE_HELPER, allowing us to use
+> the helper from the generic code too.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
->will leading to play h264 bitstream fail if the firmware won't
->be changed at the same time.
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-Okay I guess you mean that the struct has to be memcpy'd to the firmware
-to synchronize it right?
-Also is this really just a H264 thing? I would imagine that incorrect
-data in the firmware will cause issues no matter which codec.
+Maxime
 
->Marking the shared struct with "shared interface with firmware".
+--ypf273q5igxgmj35
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Can we do anything more to ensure that the firmware doesn't fall out of
-sync besides adding a comment to the description?
+-----BEGIN PGP SIGNATURE-----
 
-To fix grammatical issues the description above should be changed to:
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1nHsAAKCRAnX84Zoj2+
+dtCSAXwNO/fyrfSInuatzozSoYsfh/3NePNgNcP1I3uvQr8PTMO3RWV4oLXQCpJC
+GnjHiu4BgL36QE4VHYKeZPAFfIZwx0XiK8izZVvIUgMazMO0UMcYb6nqcWsC0Guu
+bU3bTJgmEw==
+=3AHp
+-----END PGP SIGNATURE-----
 
-The vsi (video shared information) struct needs to be synchronized
-between the firmware and the host, as a change that is only done in the
-host version of the struct but isn't synchronized to the firmware can
-lead to decoding issues with H264 bitstreams. Highlight this requirement
-within the struct descriptions.
-
-But as highlighted above it is not clear to me whether the content of
-this message is right yet.
-
->
->Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
->Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
->Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->---
-> .../mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c    | 5 +++--
-> 1 file changed, 3 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c
->index a7de95b9a7c0..5a202691e209 100644
->--- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c
->+++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c
->@@ -30,6 +30,7 @@ enum vdec_h264_core_dec_err_type {
->
-> /**
->  * struct vdec_h264_slice_lat_dec_param  - parameters for decode current frame
->+ *        (shared interface with firmware)
->  *
->  * @sps:		h264 sps syntax parameters
->  * @pps:		h264 pps syntax parameters
->@@ -48,7 +49,7 @@ struct vdec_h264_slice_lat_dec_param {
-> };
->
-> /**
->- * struct vdec_h264_slice_info - decode information
->+ * struct vdec_h264_slice_info - decode information (shared interface with firmware)
->  *
->  * @nal_info:		nal info of current picture
->  * @timeout:		Decode timeout: 1 timeout, 0 no timeout
->@@ -72,7 +73,7 @@ struct vdec_h264_slice_info {
->
-> /**
->  * struct vdec_h264_slice_vsi - shared memory for decode information exchange
->- *        between SCP and Host.
->+ *        between SCP and Host (shared interface with firmware).
-
-In this case, I feel like the previous description made the fact, that
-this is shared data between the host and the firmware, rather clear
-already.
-
->  *
->  * @wdma_err_addr:		wdma error dma address
->  * @wdma_start_addr:		wdma start dma address
->-- 
->2.46.0
->
->
-Regards,
-Sebastian Fricke
+--ypf273q5igxgmj35--
 
