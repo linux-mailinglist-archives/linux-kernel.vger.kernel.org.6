@@ -1,283 +1,261 @@
-Return-Path: <linux-kernel+bounces-440824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BE39EC4C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D192B9EC4C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 564E6168A92
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FA0168A50
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EA11C5499;
-	Wed, 11 Dec 2024 06:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C725B1C462D;
+	Wed, 11 Dec 2024 06:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZEecOv7O"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KEyfhzQa"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636CF1B85F8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168B11B0F01;
 	Wed, 11 Dec 2024 06:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733898618; cv=none; b=Ke8xg7RVVlXZ8zLvyk6cxZ1LgHWY6VtHjX6+YsXL+zVSbbSoHL5oq/a54VO0AKD+NhCRxcs0qkPona1gBQeMioBkXZNcw/ZhHRzYwTE/dJ/51VirQoA1HrhNj2/A9pKKn7LQ1fa2xtmsFxyTPT5lDajF4hpwjJVqB7FQLiSCdo8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733898618; c=relaxed/simple;
-	bh=k1BxJHbleykfubxbLq3WM1bUxZIXi+Nircdv7l1clW4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZWyyGiM6Nz81F48/UtGI/1zflZhyPHdKCSAr9KFGAiY2gN66kG7IWIZs913FDi/+Edxaph9GtP8qUxp0tqJRsg/4+LX6vco5tZ8qg3Papg57fFlHSw49rTlsHCBsLT0jG97A1ieSvyjITqSLkX6NWfomede+XA4e9mP0WtEHrao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZEecOv7O; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4BB6TmbqE3341241, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1733898589; bh=k1BxJHbleykfubxbLq3WM1bUxZIXi+Nircdv7l1clW4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=ZEecOv7OvWYb/gof0sCamLmUnxAkJ9V91nhZpqu/DAm6I6CVrLy4WN46cpWEMXti8
-	 r5+mlpwrETW316o7zShI0HE1aCOMpfJ50GwT1Gzvxdp3vg/9odr7LuSxCU5ppj48Mq
-	 QvKLULQ2vw+KvYJzTklokfZxTpH2LrCr55I8mIK4Wnteu14WpIrvHRiWyoDmFRC6dJ
-	 UjKu84fbe55GC0rKrhOk7Y57xZrILqlHo9GmnRjgRTLGpcXY7MrXJqF/kxiW6tb0CV
-	 yajiSnevNeVUXpCpVggNNvvLYEEgCECxCHpAXIIZrcH8OZz0idY0+E6ewiX+5ez4/5
-	 RP2+z8Z9t6ZKw==
-Received: from RSEXH36502.realsil.com.cn (msx.realsil.com.cn[172.29.17.3])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4BB6TmbqE3341241
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-	Wed, 11 Dec 2024 14:29:49 +0800
-Received: from RS-EX-MBS3.realsil.com.cn (172.29.17.103) by
- RSEXH36502.realsil.com.cn (172.29.17.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 11 Dec 2024 14:29:48 +0800
-Received: from RSEXH36502.realsil.com.cn (172.29.17.3) by
- RS-EX-MBS3.realsil.com.cn (172.29.17.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Wed, 11 Dec 2024 14:29:48 +0800
-Received: from 172.29.32.27 (172.29.32.27) by RSEXH36502.realsil.com.cn
- (172.29.17.3) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 11 Dec 2024 14:29:48 +0800
-From: ChunHao Lin <hau@realtek.com>
-To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        ChunHao Lin
-	<hau@realtek.com>
-Subject: [PATCH net-next] r8169: add support for RTL8125D rev.b
-Date: Wed, 11 Dec 2024 14:29:46 +0800
-Message-ID: <20241211062946.3716-1-hau@realtek.com>
-X-Mailer: git-send-email 2.34.1
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733898616; cv=fail; b=RBo4BJzokg9lwdUjpbaR2nIQrP5HCzF+LrbILh+Q18ey7pw5eJVZw0VAyhtW41JDaP8V8lD9gHYYkV/th9eeeyMeJbEOEZSqpU+/OsqpODoQab0GX+I+sVMmpLjmMBse1wgPyIvqUBE8obuuXqPS7Mlj0d0kL/73d/RwV7q7rac=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733898616; c=relaxed/simple;
+	bh=ALdbzLSvGjGijv5C505uJMbcTnpqAvO/A31/vzCjon4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mHMvuF3s8il5Jpf+cuHeoTZXJFrOOfCPp2qezddA2b1Duw70FTRww4p6bw87n2p6tyqdjMGp8Y6ZGFkAl9QAY0mW40iogmha4f/FwzNmAkBuSDz2tSrWm1DtzBkzRcnvT1NQrTx4DDAWmoK4epa3M2jXaZBktTEKX82q1hv7wwE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KEyfhzQa; arc=fail smtp.client-ip=40.107.236.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kX/mbW5ohOFEB0jUiu1x692+jpRrorVmhSqyHz2iyK2LYq1fjryOCX4WcLbn7AnKxfUNxqoNZ3cdrRrjCLBWluBAXH7CBt63JxXMoaikLhZ0ggmiJ8f0BZZr3FaJzTRIRdGgL16jjJirbaLa4CnQlWYjdyfJiyqwuB2mMirDQJwCX63Qoc4hvb0eprdI8udILps6FU1rh9erYLXAH2RCPyex3RoonRWXm1XINBaJOtEHewcaWlErzhBW+yTYGoFwP0GJnQjDzd/aYDjvg90PYRrpfF2j/GqpP1PMw2zEUct6PkOH9921MXL5KibtmMtHnOdRAY6WUATW9uLd6+GuTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LEex5AhBb67/hEA0CNwXGITDPOLHRSuc3voPeVpHZbY=;
+ b=wq2TWResxVvJHk9ccFDhsvSghcY/Z0Ilj5iGTg7SmNYtwnNHFZnM65sFqqxQW4DfJkTF1pPw6cCW1z87gBMMUyFmExtNp/0XXV+4/9KJbehBIXdwciwdttNwo6Oc/VMuafZKQuSezdEi0RsVcz0aCqeKk/Eim0kpGQbGvZSGR//ac1MDxAp/EB3HRNhHDN9qPygns2Z4+f14tfYbN3jHjNx3pOAPXFCWKN+rOfxTVpIfn6GxloJk+3GKFS2g09ltlzbQwQFkO6Bmijd5YmEoX3BpN9142/FbRzOuW6TxZPRhG8nQgkHzlLzva20W2y0jwl5zGSQB4XAC05wem62UZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LEex5AhBb67/hEA0CNwXGITDPOLHRSuc3voPeVpHZbY=;
+ b=KEyfhzQaqKTJIobapEpRoWxC43+XK7NGuLDj6U8mvOUyGLrpoLU+0Tn+pNk6JUP24M1+wv9u0a51Mg8BHfxywKIO5mPFH7ozv1oIqilEdRBchrm3Dn8zVxC0FL7r5n4SrO+CnD8vDD05MP01X3WubhLhq5pd+VttXokIvSUi/SY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ IA1PR12MB7686.namprd12.prod.outlook.com (2603:10b6:208:422::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
+ 2024 06:30:11 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
+ 06:30:10 +0000
+Date: Wed, 11 Dec 2024 11:59:57 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Perry Yuan <perry.yuan@amd.com>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Subject: Re: [PATCH] cpufreq/amd-pstate: Detect preferred core support before
+ driver registration
+Message-ID: <Z1kxZStQDIexNQ89@BLRRASHENOY1.amd.com>
+References: <20241210032557.754-1-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210032557.754-1-kprateek.nayak@amd.com>
+X-ClientProxiedBy: PN0PR01CA0052.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:49::21) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|IA1PR12MB7686:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ed62c45-6a54-428e-f234-08dd19ad4325
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NpZyRWNqs7mAcQkhTvI/YO/AU1DrxxgKQBVTHr73Yzo8qicXIYKIDBEIVzpy?=
+ =?us-ascii?Q?PdmXC7ZVASkZa4X9Ac5RN6k0IhDvRzHVEZ/6bubS+dt9f/dpFu1AkHr1ch0p?=
+ =?us-ascii?Q?miO6xVy22y7s65/m+CzbRrSSZ4wbc5U83g0cmu7H2SUDH3t4kDz/VILf5s0l?=
+ =?us-ascii?Q?eeB12+6EvMDf9yvshXaemdWkBawtTv86ZLH0vAoIbLNkwmsETyDBuFCpoxmV?=
+ =?us-ascii?Q?zzbMLlGCcCIvDmGguxtcFc4AoBHhU17ppnrL9kfJQeyRcrzeaw6pwuuGvV84?=
+ =?us-ascii?Q?7Sv1x00yP5gB8WN39R/0B0pHvQzwRq8WgGoz0Dhfdn0JZh6a2rfyPF3kw2v6?=
+ =?us-ascii?Q?ymr2OSWe3kECVYsCkZa87DUTxq6HnmoiXVq6nLWLkFcMqC4A2Jhl2X6XMVBI?=
+ =?us-ascii?Q?iBtT87qy+is8ZqqJ6pxNHE2mUiwL7qFlRsWPJA3QXF32DrvBgNKnyMufwKil?=
+ =?us-ascii?Q?lLOjP53fnzcynrTfyEmzGlIbOPcQyxmvhLfWiU5O0hJuiHUj/E41fEWJgQJc?=
+ =?us-ascii?Q?JjOCCcxD11tllmWGZ44U0VDW3sDMICM9kJtjLK50n8U4k1gWBO3Y29tHRlFC?=
+ =?us-ascii?Q?AltFnRUATOzWft+/0bTQa1JHxmE0nN1jFdQNJj4QKr3QTp/H+w9tXx870TMn?=
+ =?us-ascii?Q?boIR6nQK/ZU4KSibvwNiKAGuJ9qo6A6r4nF4QQi4pa+ux0DUgW/RdfALHOg7?=
+ =?us-ascii?Q?WdWIGcEGkPhcV8kZ/w5v8cJup3QRq7XMGr1jow/wSPr8F7IJmMy5C1Z0zo/f?=
+ =?us-ascii?Q?SkvwYzePyP5sklWG8rBhzd3Duxxi2lLokQ7dta72SxeX3Ti7DgNYovgQ1bPa?=
+ =?us-ascii?Q?RqeT5GN3gL9ydAateclGW2GJoE/qIuEywgV7uqp/VnNI0hrxMEzTsylaTmKQ?=
+ =?us-ascii?Q?TUed7R55A4nndeAfxNSu1YushF99qJMfpXR4Vgq5VhEUGdJQ3nK2xFoFMvuX?=
+ =?us-ascii?Q?zkqquO3iyQXMNjQON4wYk61Rzvi0IIJ7sfdq3Vvkg04pH7Ft3EQaeF+JgT49?=
+ =?us-ascii?Q?ap9lpUXQhk2U8VP0M5o9w6M4e2d4KVXwI8Emwsj73WU8BMRInQpeWJCpJjRZ?=
+ =?us-ascii?Q?eYy6T6zKMsbHgzHbs0jmuJwtK+ZPN8W0HAkGJ4xCKRM5eBL/KHDPdkVuzVIY?=
+ =?us-ascii?Q?qcXT4l+svlfNGdfhxzdoY8xfVxi01sM5MzpPJy6KvnbUPc+9Ul0yxh5UnsU/?=
+ =?us-ascii?Q?di0HDA7CkOMPJFfhaM7rfo0sOexFHyT8j6VlpPXAkeTU31OacumKEcKCLoUU?=
+ =?us-ascii?Q?YGiOrJvl4JGSvewJCDcesiw1l8iPt5sgJoi9sTIwyXyMFQSpJek+VIOZ8hbV?=
+ =?us-ascii?Q?xm8kvugVPhvxIquG30lS0t3rjdAFhQV0C0SUb45Mn16p2A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xNYwsFC8YuBloGuWo3wWJ6A7i79jNI7JrB7PLOF67ErZCviN8FmLbW6wW7f/?=
+ =?us-ascii?Q?yV7x9lRwBtwm2QpFgomIB7vjkQzG6DOiysQYuD/IDkalU8/JL7ylWejMpZWd?=
+ =?us-ascii?Q?lQi7foKIqALQkUC6SGMOO7zV8mc34cqtAnkzd3WPUzR0rWDPVtl2loxB323Y?=
+ =?us-ascii?Q?b7/mUHatK5ARGDTepNrBdP6oZCvU1pgVkf6eGxY5dO5dIVsIBHN41le3lcpv?=
+ =?us-ascii?Q?Ukd9oHTEcR7p5Ko6fiv8Em44VuzZscefDWJUmf+HBZWmlXT/xvL64LAg0r+r?=
+ =?us-ascii?Q?rqRthQ4G+AU8sEDo8GiU4sTPUBCfwiAWN0j7eTba1yN3CbhevUUOMXfdbd8v?=
+ =?us-ascii?Q?iL6EWy7USktXvuSSPWAODZEmGutYK+0rR7kXMJmiReFAt3vVsLHTRINCLZYs?=
+ =?us-ascii?Q?PdWSWrqTDZcZv+NKa05NJf+MaUdIEFEREUX+8BOBxwkvkguFongCfGDCwd2n?=
+ =?us-ascii?Q?AQj9DsVclO0FZA4kLBsivt47eYp1VBK7zoKeWnZhfIWJ9beG7LdJo6A7QKl1?=
+ =?us-ascii?Q?mP7l6uYZRqBIsqzVK387Ei02tuBjxrla/p84SG7euVPctqRCNLlzZwIPsMDS?=
+ =?us-ascii?Q?SehLXMLqry6OB16BdRL4M+EnNZZ5KeFKXVuBHildWblIPArcOIyFXj1lt8Ew?=
+ =?us-ascii?Q?lZPiUe7rU1bL9zpZuPADYG3oWXATwWguRojmp5nY1yBwmJi1q29iGfgJdM+o?=
+ =?us-ascii?Q?t2A2nZ18k5cwmj7Rc/h71dP6Oz0RnMAzvxgspGSuJyoGqA8opxgs5pzlGlLr?=
+ =?us-ascii?Q?RQeXYKvZEa6wmCEpXN+Zdpv68heP4jhRyJexYnftvHu02Rt+HAkkHfEo2XGq?=
+ =?us-ascii?Q?WE3V6YUwRcmJgocfRkuSo3QRtrzu1l9jR2CqqxqTtIdm5VRLUiHkrwni14si?=
+ =?us-ascii?Q?c1EcncTtjuDEbUtVWDP4CiycdTPeH3qjhtEssWB+/Ux4bhM7hWGgfZNxj9Y/?=
+ =?us-ascii?Q?tla+tBGQBZtYOCEl8kaWSjTOuZcGHT3ZgZ3k94rDvawxih6zspRdxvP/9+HH?=
+ =?us-ascii?Q?khRL+JrY8aPfo1JMrE6eBfym+9RpBXIGYtCXSLO7Q4/vPngO9EW4Dzv6XYDa?=
+ =?us-ascii?Q?BdZ+Rq3B8srjupaSCt0yZvoec3gRBsPqZMUxwHh2ofgKeKDzjqTJcGYZlLlm?=
+ =?us-ascii?Q?GS6iKxaj5pkB/vGCZU7t+LTt25ckv9IYuaYXerKPcn4LGu1lACMgQnTNhlj+?=
+ =?us-ascii?Q?ZglmvP2GzHg6bNSEiL6f57qcQi7ahn2HgQUIyZedcTAH/uL62RvRH8TwDkQR?=
+ =?us-ascii?Q?o6eN2ClUrFlLaluBKdjIOiWsjoe2OxTdXuFaBeDwGTKHkZrlHvzk9psBbrY/?=
+ =?us-ascii?Q?dxr3Ul9Jg6RSbGXUtIAP/KE1kMFLRqSzEfH74K2mcYhI4B8cIlauT6W0eol1?=
+ =?us-ascii?Q?U7FD/AfkX5gVwORno7Rkmjd+N62/VhTDm+A8vTbJkWvLmT0gDuxAVG0atuie?=
+ =?us-ascii?Q?x6sGyFpdQNGahf0UFCi3M9L5CTHyT/dq/cORT1zA1dHPG6q4WD6l4nqPrUOB?=
+ =?us-ascii?Q?hpg4NbEYfk0CPqxqRP2i2/xEDPpaqtTdhSKA0q0xTI2WQl/eC+FqH3FBV6mV?=
+ =?us-ascii?Q?B0h5jt4Qf1+wfMY0sPwykNPUYGClMtaZhclLanfZ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ed62c45-6a54-428e-f234-08dd19ad4325
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 06:30:10.7941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D/TwzZI+bBVq9y5ajfENn+Eacc3PewGT9UI9FOAKCzLQo/PCfRbLZEUc7AyCFmZZwGw7RdQLPbnPGhW/Uq5g+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7686
 
-Add support for RTL8125D rev.b. Its XID is 0x689. It is basically
-based on the one with XID 0x688, but with different firmware file.
+On Tue, Dec 10, 2024 at 03:25:57AM +0000, K Prateek Nayak wrote:
+> Booting with amd-pstate on 3rd Generation EPYC system incorrectly
+> enabled ITMT support despite the system not supporting Preferred Core
+> ranking. amd_pstate_init_prefcore() called during amd_pstate*_cpu_init()
+> requires "amd_pstate_prefcore" to be set correctly however the preferred
+> core support is detected only after driver registration which is too
+> late.
+> 
+> Swap the function calls around to detect preferred core support before
+> registring the driver via amd_pstate_register_driver(). This ensures
+> amd_pstate*_cpu_init() sees the correct value of "amd_pstate_prefcore"
+> considering the platform support.
+> 
+> Fixes: 279f838a61f9 ("x86/amd: Detect preferred cores in amd_get_boost_ratio_numerator()")
+> Fixes: ff2653ded4d9 ("cpufreq/amd-pstate: Move registration after static function call update")
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
-Signed-off-by: ChunHao Lin <hau@realtek.com>
----
- drivers/net/ethernet/realtek/r8169.h          |  1 +
- drivers/net/ethernet/realtek/r8169_main.c     | 32 +++++++++++--------
- .../net/ethernet/realtek/r8169_phy_config.c   |  1 +
- 3 files changed, 21 insertions(+), 13 deletions(-)
+Thanks for this fix.
 
-diff --git a/drivers/net/ethernet/realtek/r8169.h b/drivers/net/ethernet/realtek/r8169.h
-index 8904aae41aca..5b87c89363b3 100644
---- a/drivers/net/ethernet/realtek/r8169.h
-+++ b/drivers/net/ethernet/realtek/r8169.h
-@@ -71,6 +71,7 @@ enum mac_version {
- 	RTL_GIGA_MAC_VER_64,
- 	RTL_GIGA_MAC_VER_65,
- 	RTL_GIGA_MAC_VER_66,
-+	RTL_GIGA_MAC_VER_67,
- 	RTL_GIGA_MAC_NONE
- };
- 
-diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 6934bdee2a91..c97cfbf876af 100644
---- a/drivers/net/ethernet/realtek/r8169_main.c
-+++ b/drivers/net/ethernet/realtek/r8169_main.c
-@@ -57,6 +57,7 @@
- #define FIRMWARE_8125A_3	"rtl_nic/rtl8125a-3.fw"
- #define FIRMWARE_8125B_2	"rtl_nic/rtl8125b-2.fw"
- #define FIRMWARE_8125D_1	"rtl_nic/rtl8125d-1.fw"
-+#define FIRMWARE_8125D_2	"rtl_nic/rtl8125d-2.fw"
- #define FIRMWARE_8126A_2	"rtl_nic/rtl8126a-2.fw"
- #define FIRMWARE_8126A_3	"rtl_nic/rtl8126a-3.fw"
- 
-@@ -142,6 +143,7 @@ static const struct {
- 	[RTL_GIGA_MAC_VER_64] = {"RTL8125D",		FIRMWARE_8125D_1},
- 	[RTL_GIGA_MAC_VER_65] = {"RTL8126A",		FIRMWARE_8126A_2},
- 	[RTL_GIGA_MAC_VER_66] = {"RTL8126A",		FIRMWARE_8126A_3},
-+	[RTL_GIGA_MAC_VER_67] = {"RTL8125D",		FIRMWARE_8125D_2},
- };
- 
- static const struct pci_device_id rtl8169_pci_tbl[] = {
-@@ -706,6 +708,7 @@ MODULE_FIRMWARE(FIRMWARE_8107E_2);
- MODULE_FIRMWARE(FIRMWARE_8125A_3);
- MODULE_FIRMWARE(FIRMWARE_8125B_2);
- MODULE_FIRMWARE(FIRMWARE_8125D_1);
-+MODULE_FIRMWARE(FIRMWARE_8125D_2);
- MODULE_FIRMWARE(FIRMWARE_8126A_2);
- MODULE_FIRMWARE(FIRMWARE_8126A_3);
- 
-@@ -1228,7 +1231,7 @@ static void rtl_writephy(struct rtl8169_private *tp, int location, int val)
- 	case RTL_GIGA_MAC_VER_31:
- 		r8168dp_2_mdio_write(tp, location, val);
- 		break;
--	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_67:
- 		r8168g_mdio_write(tp, location, val);
- 		break;
- 	default:
-@@ -1243,7 +1246,7 @@ static int rtl_readphy(struct rtl8169_private *tp, int location)
- 	case RTL_GIGA_MAC_VER_28:
- 	case RTL_GIGA_MAC_VER_31:
- 		return r8168dp_2_mdio_read(tp, location);
--	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_67:
- 		return r8168g_mdio_read(tp, location);
- 	default:
- 		return r8169_mdio_read(tp, location);
-@@ -1574,7 +1577,7 @@ static void __rtl8169_set_wol(struct rtl8169_private *tp, u32 wolopts)
- 		break;
- 	case RTL_GIGA_MAC_VER_34:
- 	case RTL_GIGA_MAC_VER_37:
--	case RTL_GIGA_MAC_VER_39 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_39 ... RTL_GIGA_MAC_VER_67:
- 		r8169_mod_reg8_cond(tp, Config2, PME_SIGNAL, wolopts);
- 		break;
- 	default:
-@@ -2047,7 +2050,7 @@ static void rtl_set_eee_txidle_timer(struct rtl8169_private *tp)
- 		tp->tx_lpi_timer = timer_val;
- 		r8168_mac_ocp_write(tp, 0xe048, timer_val);
- 		break;
--	case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_67:
- 		tp->tx_lpi_timer = timer_val;
- 		RTL_W16(tp, EEE_TXIDLE_TIMER_8125, timer_val);
- 		break;
-@@ -2259,6 +2262,7 @@ static enum mac_version rtl8169_get_mac_version(u16 xid, bool gmii)
- 		{ 0x7cf, 0x649,	RTL_GIGA_MAC_VER_65 },
- 
- 		/* 8125D family. */
-+		{ 0x7cf, 0x689,	RTL_GIGA_MAC_VER_67 },
- 		{ 0x7cf, 0x688,	RTL_GIGA_MAC_VER_64 },
- 
- 		/* 8125B family. */
-@@ -2526,7 +2530,7 @@ static void rtl_init_rxcfg(struct rtl8169_private *tp)
- 	case RTL_GIGA_MAC_VER_61:
- 		RTL_W32(tp, RxConfig, RX_FETCH_DFLT_8125 | RX_DMA_BURST);
- 		break;
--	case RTL_GIGA_MAC_VER_63 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_63 ... RTL_GIGA_MAC_VER_67:
- 		RTL_W32(tp, RxConfig, RX_FETCH_DFLT_8125 | RX_DMA_BURST |
- 			RX_PAUSE_SLOT_ON);
- 		break;
-@@ -2658,7 +2662,7 @@ static void rtl_wait_txrx_fifo_empty(struct rtl8169_private *tp)
- 	case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_61:
- 		rtl_loop_wait_high(tp, &rtl_rxtx_empty_cond, 100, 42);
- 		break;
--	case RTL_GIGA_MAC_VER_63 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_63 ... RTL_GIGA_MAC_VER_67:
- 		RTL_W8(tp, ChipCmd, RTL_R8(tp, ChipCmd) | StopReq);
- 		rtl_loop_wait_high(tp, &rtl_rxtx_empty_cond, 100, 42);
- 		rtl_loop_wait_high(tp, &rtl_rxtx_empty_cond_2, 100, 42);
-@@ -2901,7 +2905,7 @@ static void rtl_enable_exit_l1(struct rtl8169_private *tp)
- 	case RTL_GIGA_MAC_VER_37 ... RTL_GIGA_MAC_VER_38:
- 		rtl_eri_set_bits(tp, 0xd4, 0x0c00);
- 		break;
--	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_67:
- 		r8168_mac_ocp_modify(tp, 0xc0ac, 0, 0x1f80);
- 		break;
- 	default:
-@@ -2915,7 +2919,7 @@ static void rtl_disable_exit_l1(struct rtl8169_private *tp)
- 	case RTL_GIGA_MAC_VER_34 ... RTL_GIGA_MAC_VER_38:
- 		rtl_eri_clear_bits(tp, 0xd4, 0x1f00);
- 		break;
--	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_67:
- 		r8168_mac_ocp_modify(tp, 0xc0ac, 0x1f80, 0);
- 		break;
- 	default:
-@@ -2953,7 +2957,7 @@ static void rtl_hw_aspm_clkreq_enable(struct rtl8169_private *tp, bool enable)
- 
- 		switch (tp->mac_version) {
- 		case RTL_GIGA_MAC_VER_46 ... RTL_GIGA_MAC_VER_48:
--		case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_66:
-+		case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_67:
- 			/* reset ephy tx/rx disable timer */
- 			r8168_mac_ocp_modify(tp, 0xe094, 0xff00, 0);
- 			/* chip can trigger L1.2 */
-@@ -2965,7 +2969,7 @@ static void rtl_hw_aspm_clkreq_enable(struct rtl8169_private *tp, bool enable)
- 	} else {
- 		switch (tp->mac_version) {
- 		case RTL_GIGA_MAC_VER_46 ... RTL_GIGA_MAC_VER_48:
--		case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_66:
-+		case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_67:
- 			r8168_mac_ocp_modify(tp, 0xe092, 0x00ff, 0);
- 			break;
- 		default:
-@@ -3839,6 +3843,7 @@ static void rtl_hw_config(struct rtl8169_private *tp)
- 		[RTL_GIGA_MAC_VER_64] = rtl_hw_start_8125d,
- 		[RTL_GIGA_MAC_VER_65] = rtl_hw_start_8126a,
- 		[RTL_GIGA_MAC_VER_66] = rtl_hw_start_8126a,
-+		[RTL_GIGA_MAC_VER_67] = rtl_hw_start_8125d,
- 	};
- 
- 	if (hw_configs[tp->mac_version])
-@@ -3855,6 +3860,7 @@ static void rtl_hw_start_8125(struct rtl8169_private *tp)
- 	switch (tp->mac_version) {
- 	case RTL_GIGA_MAC_VER_61:
- 	case RTL_GIGA_MAC_VER_64:
-+	case RTL_GIGA_MAC_VER_67:
- 		for (i = 0xa00; i < 0xb00; i += 4)
- 			RTL_W32(tp, i, 0);
- 		break;
-@@ -4092,7 +4098,7 @@ static void rtl8169_cleanup(struct rtl8169_private *tp)
- 		RTL_W8(tp, ChipCmd, RTL_R8(tp, ChipCmd) | StopReq);
- 		rtl_loop_wait_high(tp, &rtl_txcfg_empty_cond, 100, 666);
- 		break;
--	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_67:
- 		rtl_enable_rxdvgate(tp);
- 		fsleep(2000);
- 		break;
-@@ -4249,7 +4255,7 @@ static unsigned int rtl_quirk_packet_padto(struct rtl8169_private *tp,
- 
- 	switch (tp->mac_version) {
- 	case RTL_GIGA_MAC_VER_34:
--	case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_67:
- 		padto = max_t(unsigned int, padto, ETH_ZLEN);
- 		break;
- 	default:
-@@ -5267,7 +5273,7 @@ static void rtl_hw_initialize(struct rtl8169_private *tp)
- 	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_48:
- 		rtl_hw_init_8168g(tp);
- 		break;
--	case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_66:
-+	case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_67:
- 		rtl_hw_init_8125(tp);
- 		break;
- 	default:
-diff --git a/drivers/net/ethernet/realtek/r8169_phy_config.c b/drivers/net/ethernet/realtek/r8169_phy_config.c
-index b28b30390e84..bfdcadebe486 100644
---- a/drivers/net/ethernet/realtek/r8169_phy_config.c
-+++ b/drivers/net/ethernet/realtek/r8169_phy_config.c
-@@ -1164,6 +1164,7 @@ void r8169_hw_phy_config(struct rtl8169_private *tp, struct phy_device *phydev,
- 		[RTL_GIGA_MAC_VER_64] = rtl8125d_hw_phy_config,
- 		[RTL_GIGA_MAC_VER_65] = rtl8126a_hw_phy_config,
- 		[RTL_GIGA_MAC_VER_66] = rtl8126a_hw_phy_config,
-+		[RTL_GIGA_MAC_VER_67] = rtl8125d_hw_phy_config,
- 	};
- 
- 	if (phy_configs[ver])
--- 
-2.43.0
+So, the test for this is to check the `sched_domain` flags for
+SD_ASYM_PACKING on EPYC, right?
 
+We should add this to our test harness to catch any regressions in the future.
+
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+
+--
+Thanks and Regards
+gautham.
+
+
+
+> ---
+> This patch is based on the latest superm1/linux:bleeding-edge and was
+> also tested on v6.13-rc2 upstream release. Following is the behavior on
+> a 3rd Generation EPYC system with and without this fix:
+> 
+> o v6.13-rc2
+> 
+>     # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+>     amd-pstate
+> 
+>     # cat /proc/sys/kernel/sched_itmt_enabled
+>     1
+> 
+>     # echo Y > /sys/kernel/debug/sched/verbose
+>     # cat /sys/kernel/debug/sched/domains/cpu0/domain*/flags
+>     SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_CPUCAPACITY SD_SHARE_LLC SD_PREFER_SIBLING
+>     SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_LLC SD_ASYM_PACKING SD_PREFER_SIBLING
+>     ...
+> 
+> o v6.13-rc2 + this patch
+> 
+>     # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+>     amd-pstate
+> 
+>     # cat /proc/sys/kernel/sched_itmt_enabled
+>     cat: /proc/sys/kernel/sched_itmt_enabled: No such file or directory
+> 
+>     root@yamuna:/home/amd# echo Y > /sys/kernel/debug/sched/verbose
+>     root@yamuna:/home/amd# cat /sys/kernel/debug/sched/domains/cpu0/domain*/flags
+>     SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_CPUCAPACITY SD_SHARE_LLC SD_PREFER_SIBLING
+>     SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_SHARE_LLC SD_PREFER_SIBLING
+>     ...
+> 
+> System was booted with "amd_pstate=passive" cmdline.
+> ---
+>  drivers/cpufreq/amd-pstate.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 66fb7aee95d2..cb03f7d6575c 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1862,18 +1862,18 @@ static int __init amd_pstate_init(void)
+>  		static_call_update(amd_pstate_set_epp, shmem_set_epp);
+>  	}
+>  
+> -	ret = amd_pstate_register_driver(cppc_state);
+> -	if (ret) {
+> -		pr_err("failed to register with return %d\n", ret);
+> -		return ret;
+> -	}
+> -
+>  	if (amd_pstate_prefcore) {
+>  		ret = amd_detect_prefcore(&amd_pstate_prefcore);
+>  		if (ret)
+>  			return ret;
+>  	}
+>  
+> +	ret = amd_pstate_register_driver(cppc_state);
+> +	if (ret) {
+> +		pr_err("failed to register with return %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	dev_root = bus_get_dev_root(&cpu_subsys);
+>  	if (dev_root) {
+>  		ret = sysfs_create_group(&dev_root->kobj, &amd_pstate_global_attr_group);
+> 
+> base-commit: 1f2f221668b210107f1277901bb757f1d77de842
+> -- 
+> 2.34.1
+> 
 
