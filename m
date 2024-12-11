@@ -1,182 +1,123 @@
-Return-Path: <linux-kernel+bounces-441042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643699EC896
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:13:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE869ECA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58BCB1888346
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E243188C5B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F4A1C3314;
-	Wed, 11 Dec 2024 09:13:32 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF18F1EC4E8;
+	Wed, 11 Dec 2024 10:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AVJzolj0"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2F51FF1C0;
-	Wed, 11 Dec 2024 09:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DB31A8406
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908411; cv=none; b=myZH9W/2F5a+Yu2LHnvk4qi6uuCGhSWAEqyV0GK7rM14fekJtM2iVsW6UOOUzIRr2oHDgMxbewywUJDXX4mVN7cUP3qsKkaKBnmy1UhYZlV8A37nVMdZFCxnN2R1bhUvh+jgEs1XsZtMaoM+BYPDifJHN/p4ZZHam83JGxOFq74=
+	t=1733911917; cv=none; b=fbzJAJ6x60ig3ePIcskxZImLiz53DynAtRbgJHN2INVPz4IZ31VMjnY/JBx+mNg0ocDJ4ZRCX1dddmwm686OiFXKt7jPvFFlIVaR5pKbyNBmITFQQ8I8oHWe8TzTkRzkwOgfUYenoUkShezDNwoHHtLohZtpHk8h/qMp/UhwiDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908411; c=relaxed/simple;
-	bh=XRUbHwyQJfMjlhl4yYYx2nMCEEWfAaFjnaY1xKjMuzs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UENgNZTOZpwu7t9FEx5Dh4infSA5lTsP18hB/lJSc5SUlSuaKSqwOPy9Fpz/S24QTC5OIhpXR4mR7BxjwXCmbeX4Ey6juZiwwkCbKdRRHOaI1ZFOaajguTCxgimc7PWiuJ3qQwTINZ8AMIfCWwaRXyVDM4ZJyE8W24f+XEbdjMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB6pZao008972;
-	Wed, 11 Dec 2024 01:13:18 -0800
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx1u4046-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 11 Dec 2024 01:13:18 -0800 (PST)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Wed, 11 Dec 2024 01:13:04 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Wed, 11 Dec 2024 01:13:01 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <jdamato@fastly.com>, <gregkh@linuxfoundation.org>,
-        <jianqi.ren.cn@windriver.com>
-CC: <kuba@kernel.org>, <edumazet@google.com>, <patches@lists.linux.dev>,
-        <stable@vger.kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <sashal@kernel.org>, <jamie.bainbridge@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6.1.y] net: napi: Prevent overflow of napi_defer_hard_irqs
-Date: Wed, 11 Dec 2024 18:10:55 +0800
-Message-ID: <20241211101055.2070018-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733911917; c=relaxed/simple;
+	bh=UNSkvp5Fi4jdAsiQOX2ohUox6oA4Eol6M3ew5tYCm7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oc2npkRqF9VJNCrjot0mvH/qJ8lTJQC6gN/OfFzt4xgmxEoSY8Q4x0GWNUJg6w3mqElqI6gxHVbiSQOUmk5LVWN9PDAf1kbSnBB6Do06m9RPol+EiVzuahe4ph4/VRsIe/F+D9bgSxc0lEaKYcvucPkt80VfBR6y6D1dDTLfp1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AVJzolj0; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434f150e9b5so28815e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:11:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733911914; x=1734516714; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k5/pBdgJ0WtdygNIfcUkdF80xl9r4Rk30sip5q/77pY=;
+        b=AVJzolj0y6b9j8Df+2Hqn/HJ6q2G2WOy3xsnAE/mbCjWBySihJlM9IfeOJt2a1cFvq
+         7ETI6DGkxIRCTgM/ZCGRTOTgG+K1l2wwgTrOzeDuE19NkXZEmjHFK/VQYXvsfvnxhso7
+         afVJkLmTJMM40qb97hpXd3HPzOizR9+R0OWdMCzzf1BL5drFifz59Ig9DlT4D5/NftPG
+         PwUCrpy3y7U30WgYOjQo1JT593dipwaXLHUHgWyuzQHm6/kaBcVdF8QaLb6+tqVEBzqX
+         TFscrrx3rVSrI4tt/zvUES31LqXbna/nUSk8nXb9BACdE9OOsEkbkGjKBWuq5yeO51bN
+         tHvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733911914; x=1734516714;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k5/pBdgJ0WtdygNIfcUkdF80xl9r4Rk30sip5q/77pY=;
+        b=qG2P+g7B9P72DHNwONvAUQsAb6a3/b75GUAc06LHQkudwaDx2bfB85ke5K5EhOKI/a
+         tafBtt1oop8b0oc38FDEPSDfQcpZJJbea3PMx/XKaK57eso0Gr3jqCxYn1ThOJzamH+C
+         tug5Oemmi2FGPUO+jmHVUMu4m8mc3cvjXwYw5kqtqOXVR1RgkLMY98JQHv/zA6Ujiz9D
+         HFFHjqNqD5bGQnV2XBiINY2K6NmLWiMXN11WL/8UuLq+N3mnDSzRarIxsmfWIUJx7y8/
+         aXXXoSPBbRwABViaHWi0a5xmJwbejh+vahNF0PSNLIK88ZvDy2USeuMQDJlOKCTlnvLA
+         wYnA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/hY+9oLPFXccuaYWNKfuMSPzL3+nt1z29rDDur7LdR7YoPlmEf2Y7IFBZgxLpAHk88S3c09PucaBLDZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNpZPXZxLbZAKldV/t/6gcy4JiCvyQqt/38deybX7JR0ZgN1ED
+	V6S1yDCKN+uFs0UYvZY2xBAvnlizF9SiJNw/QbRD8+lGve3Zs4yEonMy0NRFr0TP36/frbNWTci
+	tbiKTQsGwgxUkLqdJtKGb9niOSG67nM9d/gpx
+X-Gm-Gg: ASbGnctLnkIbclETm/ntpk8xzGu4NdgfrXRsu/Gca8CvDx8xrxN2BMuygzrAZjC6/o8
+	OzAzMlOpIlVkQjL6WYHAPD4YWhklFn69vXHdQZWRe9paz3xvA+P88ulZzrc1Rp4S8
+X-Google-Smtp-Source: AGHT+IHKlxzo1xy4xRwvjpYoXuxiOd/XjNGW14dtMQxwLOZNl9tNvycqqdCoKpeiFlUtFyA39Sdg5yzXDCdFY1hYk7g=
+X-Received: by 2002:a05:600c:490a:b0:42c:9e35:cde6 with SMTP id
+ 5b1f17b1804b1-4361c0e320bmr987705e9.2.1733911913821; Wed, 11 Dec 2024
+ 02:11:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=H/shw/Yi c=1 sm=1 tr=0 ts=675957ae cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=bC-a23v3AAAA:8 a=Cy2GHhHaAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=t7CeM3EgAAAA:8
- a=rXHdJJzl5kBpg4_CTW8A:9 a=-FEs8UIgK8oA:10 a=FO4_E8m0qiDe52t0p3_H:22 a=bTms1Ghn32FVZww6NAbk:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: IDDmhlwAS5WRW5iySiboI35XiGXuTXdA
-X-Proofpoint-GUID: IDDmhlwAS5WRW5iySiboI35XiGXuTXdA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-11_09,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015
- impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2411120000 definitions=main-2412110069
+References: <20241203103735.2267589-1-qperret@google.com> <20241203103735.2267589-16-qperret@google.com>
+ <CA+EHjTzOjwNyUkS5_zSUiAbiCauLKKgkKU6TM_-+Wsh9A0FdRQ@mail.gmail.com> <Z1iaof2DgZfZxc4l@google.com>
+In-Reply-To: <Z1iaof2DgZfZxc4l@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Wed, 11 Dec 2024 10:11:17 +0000
+Message-ID: <CA+EHjTyzh_tqH-M4zSDEQ9meK_W_c-sQDvJ6H4kBd4e_MCmLfA@mail.gmail.com>
+Subject: Re: [PATCH v2 15/18] KVM: arm64: Introduce __pkvm_host_mkyoung_guest()
+To: Quentin Perret <qperret@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
+	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Joe Damato <jdamato@fastly.com>
+Hi Quentin,
 
-[ Upstream commit 08062af0a52107a243f7608fd972edb54ca5b7f8 ]
+On Tue, 10 Dec 2024 at 19:46, Quentin Perret <qperret@google.com> wrote:
+>
+> On Tuesday 10 Dec 2024 at 15:14:03 (+0000), Fuad Tabba wrote:
+> > > +int __pkvm_host_mkyoung_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu)
+> > > +{
+> > > +       struct pkvm_hyp_vm *vm = pkvm_hyp_vcpu_to_hyp_vm(vcpu);
+> > > +       u64 ipa = hyp_pfn_to_phys(gfn);
+> > > +       u64 phys;
+> > > +       int ret;
+> > > +
+> > > +       host_lock_component();
+> > > +       guest_lock_component(vm);
+> > > +
+> > > +       ret = __check_host_unshare_guest(vm, &phys, ipa);
+> >
+> > While I'm bikeshedding some more, does the name
+> > __check_host_unshare_guest() make sense? Should it be something like
+> > __check_host_changeperm_guest(), or something along those lines? (feel
+> > free to ignore this :) )
+>
+> I understand the comment, but not a huge fan of 'changeperm' as that
+> sounds like we're only allowing permission changes while we use this
+> all over the place. Maybe __check_host_is_shared_guest()? Naming is
+> hard, so happy to take suggestions :-)
 
-In commit 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
-napi_defer_irqs was added to net_device and napi_defer_irqs_count was
-added to napi_struct, both as type int.
+I've gone and done it now :) I almost like that, it's the *is* part I
+don't like since it implied a boolean return. Maybe just
+__check_host_shared_guest(), no is?
 
-This value never goes below zero, so there is not reason for it to be a
-signed int. Change the type for both from int to u32, and add an
-overflow check to sysfs to limit the value to S32_MAX.
-
-The limit of S32_MAX was chosen because the practical limit before this
-patch was S32_MAX (anything larger was an overflow) and thus there are
-no behavioral changes introduced. If the extra bit is needed in the
-future, the limit can be raised.
-
-Before this patch:
-
-$ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-$ cat /sys/class/net/eth4/napi_defer_hard_irqs
--2147483647
-
-After this patch:
-
-$ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-bash: line 0: echo: write error: Numerical result out of range
-
-Similarly, /sys/class/net/XXXXX/tx_queue_len is defined as unsigned:
-
-include/linux/netdevice.h:      unsigned int            tx_queue_len;
-
-And has an overflow check:
-
-dev_change_tx_queue_len(..., unsigned long new_len):
-
-  if (new_len != (unsigned int)new_len)
-          return -ERANGE;
-
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Link: https://patch.msgid.link/20240904153431.307932-1-jdamato@fastly.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- include/linux/netdevice.h | 4 ++--
- net/core/net-sysfs.c      | 6 +++++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index fbbd0df1106b..8379e938cd89 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -352,7 +352,7 @@ struct napi_struct {
- 
- 	unsigned long		state;
- 	int			weight;
--	int			defer_hard_irqs_count;
-+	u32			defer_hard_irqs_count;
- 	unsigned long		gro_bitmask;
- 	int			(*poll)(struct napi_struct *, int);
- #ifdef CONFIG_NETPOLL
-@@ -2193,7 +2193,7 @@ struct net_device {
- 
- 	struct bpf_prog __rcu	*xdp_prog;
- 	unsigned long		gro_flush_timeout;
--	int			napi_defer_hard_irqs;
-+	u32			napi_defer_hard_irqs;
- #define GRO_LEGACY_MAX_SIZE	65536u
- /* TCP minimal MSS is 8 (TCP_MIN_GSO_SIZE),
-  * and shinfo->gso_segs is a 16bit field.
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 8a06f97320e0..4ce57e75d139 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -30,6 +30,7 @@
- #ifdef CONFIG_SYSFS
- static const char fmt_hex[] = "%#x\n";
- static const char fmt_dec[] = "%d\n";
-+static const char fmt_uint[] = "%u\n";
- static const char fmt_ulong[] = "%lu\n";
- static const char fmt_u64[] = "%llu\n";
- 
-@@ -405,6 +406,9 @@ NETDEVICE_SHOW_RW(gro_flush_timeout, fmt_ulong);
- 
- static int change_napi_defer_hard_irqs(struct net_device *dev, unsigned long val)
- {
-+	if (val > S32_MAX)
-+		return -ERANGE;
-+
- 	WRITE_ONCE(dev->napi_defer_hard_irqs, val);
- 	return 0;
- }
-@@ -418,7 +422,7 @@ static ssize_t napi_defer_hard_irqs_store(struct device *dev,
- 
- 	return netdev_store(dev, attr, buf, len, change_napi_defer_hard_irqs);
- }
--NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_dec);
-+NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_uint);
- 
- static ssize_t ifalias_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t len)
--- 
-2.25.1
-
+Cheers,
+/fuad
 
