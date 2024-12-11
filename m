@@ -1,319 +1,133 @@
-Return-Path: <linux-kernel+bounces-441021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4255E9EC828
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:01:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D83E9EC825
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:01:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF6F284771
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C8F1886428
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7379217F30;
-	Wed, 11 Dec 2024 09:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0A5216E14;
+	Wed, 11 Dec 2024 09:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="TpWuLp5v"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011029.outbound.protection.outlook.com [52.103.67.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nlD/PJmy"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C28217F34;
-	Wed, 11 Dec 2024 09:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907665; cv=fail; b=ctO388U3tUwiNwfVZNP56r3gxRh5agV8t7g+2utW3Zm6OI83ke1DaAziCOXHsrTjKCS1wKTVq64eb1l0iAloiuqvPFYJ9UBiHvOBYf9sz5hF/joSB9RLMrA9D1oHqn5DPsgo/HvgznbNGzGWw8J7idznt5Gqu0b/D/3VHKUsZEw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907665; c=relaxed/simple;
-	bh=XkzV1OGLCOzcFLo2lWWFDzPki633M+IzWvGF4Kbo4Hw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nEANdKVHlnwUmuEcwjctc04FSBEFw18H4A+71cPUvYedQlkPHwUXJModLxG73oTJYi2NImpu1IDWx7lmrJq4G3A+jOqBPiaKMJHuFcm1c6JLLauvhzWRk53ZcyeWjZaaEAWPsbEXx2VkncmNtkQqRbeF4ZLCPPObHdDSVt1QB3U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=TpWuLp5v; arc=fail smtp.client-ip=52.103.67.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hBzFL4spw+wAIx5j77ksebVUpy4XRo9+48jkh9rU88cCYsAXu8xlvtYB5R5kJskSRJ9iQ3ek2nXcsTv0D/fg0m68SA1OrZnXyNwg1Ya2HAwwMcIFBXYxRp1O4R/biKNqkr96JkQLe9TyFSM0xg7Z+Er6RqYYrfmA0MZj8wFUt2UQ6ivntYDS5rwcRtSEjEew6LMf+JAG2ziWh7w39raCTOfUGuxhQS1BEh317eci5sgHdG9mkDdcg+awGfI6RTidnUWkl/DEu8fBZ7ibZHpvhfW9EgBr6grtP0Rx+dikQXt/ZVX9tXqhZdsog/dNcXn0w7edlj5WCWVtM/rQprsv9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h6pMR4zrBklJEknNRNWg6wl6duICDMw7i8fdWyTcChU=;
- b=Dx32cYXAQkyZ2QCL5mXRCYR0dZlXdLh0l6rNhRh8Q0mHiqCCkhn+otbfpLES+znYUv9Z7EPE/yvFa787StiPQ3MOGmLE7TgThYM3bEMB9KUjQUR+Fas6f7G39ULxm1VTOO25mHCb8gKcanNbzINa9SAkX2/+ZGGsCc8NgLTEWxrtk4p/mxvbErcwYYUg+p45svTknf4WTFkTnmkQHMR0nwP9N7UQnnsh72GoYFsJvMGaCKVpk2ePJMIrMOCkihdMsFWBxHbAB1c/yL+P+lPH4gT7fvbCOORlC8kayo3BGqZqE/V0vVdtImv3mZo/LE8pVtTUzR/LCn2BU60b3UQJIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h6pMR4zrBklJEknNRNWg6wl6duICDMw7i8fdWyTcChU=;
- b=TpWuLp5vBTaShTEwuwuTB5VUbROQbI5PvRYbgGaslB7Lw2r5lEWt/YaAxo4x7mfv45ysJldekUvBMNdd0RjW+DcelIK7zJNYudUgz4fXh9fwGIddxuSN5h4Cx2W0Cr0PMYFKTUiJ7LSbc4WPK2jkr3v1utFssBAcapAB7Ijxa/FQCWge0sq1oe10pBqwGlYBCmX8CedtKDnCoJwZMZKylNYQFGr01wy8tNoE103xGc2rqz7m9KJ8HzR9deJS1nR7r+lDwOaUNYUjsDUGKb591kAWdR2V2ZEtxuPEc0s7qXv25mIprqLxjDUK/ZjCPFItbHKxvQU8RPse6jqoolc+ZA==
-Received: from BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b01:13::10)
- by PN3PR01MB6683.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:81::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
- 2024 09:00:51 +0000
-Received: from BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::d3b0:ebc1:c2d0:d13a]) by BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::d3b0:ebc1:c2d0:d13a%6]) with mapi id 15.20.8207.010; Wed, 11 Dec 2024
- 09:00:51 +0000
-Message-ID:
- <BM1PR01MB4515ECD36D8FC6ECB7D161C5FE3E2@BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM>
-Date: Wed, 11 Dec 2024 17:00:44 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
-To: Bjorn Helgaas <helgaas@kernel.org>, Chen Wang <unicornxw@gmail.com>
-Cc: kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
- arnd@arndb.de, bhelgaas@google.com, conor+dt@kernel.org, guoren@kernel.org,
- inochiama@outlook.com, krzk+dt@kernel.org, lee@kernel.org,
- lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, pbrobinson@gmail.com, robh@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
-References: <20241210173350.GA3222084@bhelgaas>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20241210173350.GA3222084@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0057.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::10) To BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b01:13::10)
-X-Microsoft-Original-Message-ID:
- <012506a1-0358-475e-83da-7c2331336ed2@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45240215710
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733907655; cv=none; b=fEe/uZZdRc/8z4BRqa20dWYFXode1Y6mC9cWrAAgdrIbROsMPa+26uskXtt648CVXZ4JiDlR/+mutZh/dc/306/a5QwDNqloQNmWfF054i/zG+2Okhz+Ew/Hmw+w02p9Ckx7Y278tK0n6liT1T5WmwlKcR+0UNA9Q8LeU02GaaQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733907655; c=relaxed/simple;
+	bh=rOgeUWSp6bFTjRYXEmRP5Xg9oywmiCVNYTXOjviZUf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4tyt6Va2iJNnMPqIbvLaw04JAfjLMAUCf3Ej8cTMSp/AYV9TABmFPdmzSusCZOqxD0Nbo5+wCBqEyIdv5BTIP0txZrgU5Q7kHCwgIInydEXLL6OmhAYxmulf4MK35yyagUMrmUfgiWroTJQAMDtzw7/RphqjoBkcT3xc1r04TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nlD/PJmy; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so2257295e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:00:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733907651; x=1734512451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ehgtAI9FILi9H1ERbtTxfeQX/RXwTuwJwbHxNT8tUfM=;
+        b=nlD/PJmy/wMi4Evqi5ovj64VCsZg6jCpvhWGFft091WBv+5yMMBTp1Z6FAmi0SP0Ut
+         BF7/9Y3agKYNuSMV9Cq4rhH07fncHWgtwexaHsqAdsAO8D64rebJGVC/VSY+W0N0TU5D
+         dtuliPa7mH5tcg/H52iPiAbNbrbTnKvSbIasqpbAB/JmROrh8h7FSwriEQGHQJC2LVlo
+         CB6V1Rcgd8BhrtYszn4rTpcpb4iilu2zuQCCKTUaX0KPMZ3mR3UF3/s083ySMsw3WXKm
+         DKzydzTtABEWZVYbBjkMMp/HkP2lsKdOpepUMYHUQA+vTHVYQQ1hHRzRhcI6b259eT8S
+         5hig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733907651; x=1734512451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ehgtAI9FILi9H1ERbtTxfeQX/RXwTuwJwbHxNT8tUfM=;
+        b=YBI0xXhpkka5x9Emvr5jf7rBYELha3yNhlwo/0/o3f+y/JA+fV0UohEli7uXSPE0tn
+         qet4J+Xg+Vfm+JDWV4LRZ66rbcsYH8vsC/DTNuwZCCAtzHnYgvbk9oQEsTRAzIsqTMLm
+         h8TDjJh8pWjxRIEWZmMgm1hOcoatuIQDk74b/Lq3rUtcK0lvocywLbJuDdcw37TyQJw2
+         6tQd/jnGcLe+4YiJYKKrFHOgAZwyISSbrr/cW5Tmjvrd/zImM3ddydD0j0ENcNohFz8X
+         1KjZlGiv+dg0u005T7K7LlbXwhHMOeYYq7ynEvyKHijEfeCobJurjr85momlNwFnweCM
+         eqIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCf4hosKSQtZUmFZRTBLyIj8IHIAJzj6Fz4DxRjisPRqnfBDQNodVTj2Vd5HK4lxVi7sMD1PlZNcnp90o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeTuG4PMuxjhT2yQbt56z6Bq/J3z1fUa+puJf3e1bFbQAsa1A/
+	wSvJ2PXNgxZkahVgXrQb08njjirNRwaJgB10PJO0vV659J5xPGd3e89bkZJ52JQ=
+X-Gm-Gg: ASbGncvCc1xyWdDejjuu8/vc3TRaF5F8dkeFSe9OcRNQTZObrLfrtUuvim0ZQ8K+4bV
+	yLu1wzC+ilmeZPpT3vV+hUf/rIvw2Df0/PxOLQYYZagtHaGrPsysfQY30FhQCy//SbmuS0OrmtX
+	PbhegQMsUZbWpVvZuG6DzTV5kq3NfdiHDSSLQVDmvkmAz7kd8xx9tZF05ioCCrRKhcCCqHr+Qve
+	nEH9GYtJXF4QiUgwai1EhpcIa6+9xi0JD1jQmrudevaVdMABIEo2Vf8+j4=
+X-Google-Smtp-Source: AGHT+IFrbT6yUxTVKlbXZAWJjA6u6YhH7qTzIBw1u2o+5qJHy+OJ03YHoWeo2ICrxH825yoy49qOMQ==
+X-Received: by 2002:a05:6000:156d:b0:385:fa26:f0d9 with SMTP id ffacd0b85a97d-3864cdec006mr1484907f8f.0.1733907651524;
+        Wed, 11 Dec 2024 01:00:51 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514f29sm805341f8f.77.2024.12.11.01.00.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 01:00:51 -0800 (PST)
+Date: Wed, 11 Dec 2024 12:00:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
+	~lkcamp/patches@lists.sr.ht, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] staging: rtl8723bs: delete
+ HAL_DEF_DBG_RX_INFO_DUMP enum
+Message-ID: <6a5f8451-32cb-4784-b8c0-ca4a07df8764@stanley.mountain>
+References: <20241210210741.17101-1-rodrigo.gobbi.7@gmail.com>
+ <20241210210741.17101-3-rodrigo.gobbi.7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BM1PR01MB4515:EE_|PN3PR01MB6683:EE_
-X-MS-Office365-Filtering-Correlation-Id: 653cf6c0-fe4a-41c3-8e1e-08dd19c24f8f
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|7092599003|8060799006|19110799003|461199028|6090799003|15080799006|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V0JEYW9jWWpJQVRWeDBsMjFVSzltSUlQRllYSXo0THRpQ3hkcGtnaUVhcFRj?=
- =?utf-8?B?ZnRITm9BZ1NoK0I1RGFaelN4RWQ4VGUydzdOS0VyeTh4SDhjRll5QUtOMWl4?=
- =?utf-8?B?cmNnTWg4ZEkwYUpoM2o5d3BpMDc1OXJLWExCQkNWd1FWV3RRM3Y1TDBwTGNn?=
- =?utf-8?B?a25NMnEzT2Y5Nm44blo5dGdSYUNYM0I3WGVWTDBSa2hSbzdqTGp1eml6eDNR?=
- =?utf-8?B?UDN4UjA4a1JhQUU3OHJuRnpHZ25ITTIzSWh1ZElSL2xnNFRDZWtvQitCdFRi?=
- =?utf-8?B?ekpHRENKREo1S281ZTdienNMZVdOMmVMNVBNYjhHZWJsMkE5MlBvK1NvOEVT?=
- =?utf-8?B?Tzl0bWdSY3FmWVZKUjg3VUJBcjFwT295MTVOd0NIekRFWnlFNjVRd1IzbUFy?=
- =?utf-8?B?dmlBa2c2VGU5WWlBVjczY1Uxcy9qYWdjb0RJRE9nbFVxM1FqOWdIaWszK1ZD?=
- =?utf-8?B?QnVobEx4dTRJVEhVc0tVTmg5Nmo2RDJZQ055UFltY2VOM2xnOHZtNFRvSUdm?=
- =?utf-8?B?ZStoR1l4cGc3cWRleHNnc2dEaE5jWkg5NmxZUDE4RDVkbFB6WENiclZSS1hi?=
- =?utf-8?B?blV2TFJsY0NXVlpmZjVxZ0RXaHpBckJBKzFPNXBIZFJWVFZBa2NrVDQ1ZVdt?=
- =?utf-8?B?Y1hhK3FhNk5hd0V5b2d5L1hjR0ozN1VoYlFLZk51WndiSGpkR25IZ0ludWFp?=
- =?utf-8?B?MHpxZmM0TWtTYmRqM29DZllOc0gyZmh0QU1BZ0tYRnpFbzU4Uk5oTm1pY0Zo?=
- =?utf-8?B?cDZlcjY1UUJwSUI5WjM4NUZlNHlJSWRDUlVaWXNPSnZPdFhwVGdpNWp6dlpZ?=
- =?utf-8?B?UVJubnhoRmZWNnJDL0dURFQveU9EMEg0ODc1K2FiZmtnT3V2cWpxQ0FtV0Qv?=
- =?utf-8?B?RjNoSlFXN2xlUkN4SmFVMUZkeVFtUkZmT1dnelZ5WDhqQS9uR3d3dnVsLzBK?=
- =?utf-8?B?YWNhVVdhWXNNTDV1czR6RVVQYWlqKzJYSkxBOFJxZVlMZ3ppSDRoeDdHVkdw?=
- =?utf-8?B?SmZvZ1ZSU0RBN3p2QkJ3U0hBZkNYalQ2dW8ydjYwdFlsVUZPRm1JR08xRklJ?=
- =?utf-8?B?YXNZWVlCQ2xNN1pZZWFCNkYxSTNmamdsNURZN01TWHBkOU5jVFNkdmdKTzNT?=
- =?utf-8?B?b0FVUUE0Yk5Bc3FDS0lSeDNsYlEzczlha0x2NmFqY2J0VlJqdmFDek1tbTNH?=
- =?utf-8?B?elZLNmorY05HZFNoMnByYnBzbTNCWTFTUnRueTkrMzNPTXpqYXFUSTF1VGtz?=
- =?utf-8?B?ZFdCQ212aG1FNlcwZGJLbFlnRWtYWVJYNkZmQ25hNTc5ZDc3V1VJeHNsOWpk?=
- =?utf-8?B?cTNDUzI1dnJKdkhVNVF1NlByYkxZNmYxZ3V3S1IzeDVMckk5anNsbGs2TFR2?=
- =?utf-8?B?bW5VK3IxeEpaQ3ZLZXBwZkdNYWFxWlpOYkFGbkJFYzhxaTBUNGltdnZoOTd2?=
- =?utf-8?Q?mcw0s8xL?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dGdaNWVZNGVJcUJETy81NWdBVkZMU251NkhzbERGWDBlVElMYVRBQXRwc0dS?=
- =?utf-8?B?VHlLbDBlVFZXK1R2VXZkSWxkS1EzelRGbEF5NW1uVXhMZXBRSEdmS2FyaWFh?=
- =?utf-8?B?VUp5cjR6TmdGZ2lTTW5pbWNlaVFMcU00blVxbzFOL1kzNlJ5M0JNVFMwb0N0?=
- =?utf-8?B?UnhyaFNZNWV3WEJQZGpOZ0g1T1o5cmlqVzZyb1J6SnBzZTZjS2xyY2ZQaTNi?=
- =?utf-8?B?WUJVYUg1ZTdqYjhtaU9INktsaGF2ZjN0NUV3OWtkS1JDYkZhY3phdnNqN1Fu?=
- =?utf-8?B?LzNpbVQ4K0NxaFhYWDZEUWRCSFVkb3JCdlpIQXdyZ2dOcnJWU2tOZDRZcHZ0?=
- =?utf-8?B?eFBtRXBickRmMTFBWEp5NEFTWlJLQ0VranA5VFRiVlRVWE8wQmhDd2ZyS1V2?=
- =?utf-8?B?UFZJT0x4bDNQb1N5eCtpaTNVT0tJeVdvU1JQRHpBVUxJNFh5WGFZY1IrVVdT?=
- =?utf-8?B?OHlLaW9RRUxDMEsra2d0SER2dHZLejFGNmRrNUlIbXYyUW5WT01oRDF5cVNp?=
- =?utf-8?B?emhGQ0E4RHc0cEZMR28wQXB0MFBTd29TNFB3UFpzNEYrUHNneGM1eVdrR0Zz?=
- =?utf-8?B?L090UWhjcWFxRzdJd1Arbit1bmkrWmp4aVJVbXVGT2JrZXl1MGVYMitoN0JH?=
- =?utf-8?B?ZkVWck9rWEs5Q2l2YVZzNVFXbEMvRW1zdFp3MzlYRUt4aGFIdTVYVWRoUXdi?=
- =?utf-8?B?ZGE2MXZSTzgyak9ZbGhSWmdKZ2JORzVQL2ZnSlAvcy96RXNCcExXb3hUbm9Y?=
- =?utf-8?B?ZUIzeGl4NTQrOEVOOHQ5V1BJM3JqZUxOQVQ5ZDAxenBTamxCUTIrRFd3K0dP?=
- =?utf-8?B?dzdOaTRHTnQvQVozNzRPYjJzeFp6ZlZJZXRGN2hydUx2dzUzVWRFSTVhT1FR?=
- =?utf-8?B?STgvOWxJaEdxdC9yL1Z4cjZSUTltbEloSlVYcWpkY2xHd3NHemNjWDlLcUQ4?=
- =?utf-8?B?VjU3SnZiWS9TeEpzY0xGVmgwYW52Ym4rNWt6SUtWL3ZRSTUwaWF3Rkx6WmRv?=
- =?utf-8?B?VDhpY2E0K29Pdk11T3BOVGNSc2FoSmYvMkwraSt6dy83LzNyVjZXR2NNbnBy?=
- =?utf-8?B?MEltUjNUWHlheWJzOXA4ZXNvQk42Rjc3S0dmWjRZZFFxanFjbTZwTEdFelps?=
- =?utf-8?B?YUtTbjAzbVpTZ2x5VFlCYlVGVVpnQ3dZTk9pMFRyU0FleHVjU1ZoTXZMVXBK?=
- =?utf-8?B?YnJtbGdncXZoT3pHbzNlQ0xNYURMR2Z4UzZtaUNlV3hvVjJOWHVXbDlreVJm?=
- =?utf-8?B?djBLQnBqWVBXQmkvR3N6aVVkWmZxeGJTZFUxYTd1WGdKWlN2Nm05eWpHR3U1?=
- =?utf-8?B?dFdGMEJRQk1rSGlvcHdKRGtEVjhLOURtVjUwS3RteTI1U2t2dkNnend1Mjdk?=
- =?utf-8?B?bWlMd1NRSmJSOTFIVXM2ZGFVL0dGTldVSGpXMGpyaTNibk1PSldacVE3NVhO?=
- =?utf-8?B?R1F2MUU1R3prRzFEMnlJUXJaeDlvVEkranF0ZHdtME84UnViYWtFRGdsQSs3?=
- =?utf-8?B?UU5lTENLb2RTRE8rRTB0QlZvTEkrQ3AvYW9zZlViS3hCNUJWRTdIQ0w0YUVy?=
- =?utf-8?B?cGtYTzd0aFhVQUtqWXgvcHhkVHF1R29lbnRXNlNkUjczTXBQaGJjb2VZWG93?=
- =?utf-8?B?K29DYTNGZDhMQkxseW9aa2NsQVl4eXZSVXZhYnlCVWVaL0k5bEo0M2lrcnlY?=
- =?utf-8?Q?E8RFHDtdITidQmKXNaIv?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 653cf6c0-fe4a-41c3-8e1e-08dd19c24f8f
-X-MS-Exchange-CrossTenant-AuthSource: BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 09:00:51.1487
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB6683
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210210741.17101-3-rodrigo.gobbi.7@gmail.com>
 
+On Tue, Dec 10, 2024 at 05:48:19PM -0300, Rodrigo Gobbi wrote:
+> After removing code isolated by DBG_RX_SIGNAL_DISPLAY_RAW_DATA cflag,
+> HAL_DEF_DBG_RX_INFO_DUMP enum lost it's use.
+> 
+> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/hal/hal_com.c      | 2 --
+>  drivers/staging/rtl8723bs/include/hal_intf.h | 1 -
+>  2 files changed, 3 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
+> index 1803c0cd3a7e..b41ec89932af 100644
+> --- a/drivers/staging/rtl8723bs/hal/hal_com.c
+> +++ b/drivers/staging/rtl8723bs/hal/hal_com.c
+> @@ -682,8 +682,6 @@ u8 SetHalDefVar(
+>  	u8 bResult = _SUCCESS;
+>  
+>  	switch (variable) {
+> -	case HAL_DEF_DBG_RX_INFO_DUMP:
+> -		break;
+>  	case HW_DEF_ODM_DBG_FLAG:
+>  		ODM_CmnInfoUpdate(odm, ODM_CMNINFO_DBG_COMP, *((u64 *)value));
+>  		break;
+> diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
+> index 282e141616b0..85de862823c2 100644
+> --- a/drivers/staging/rtl8723bs/include/hal_intf.h
+> +++ b/drivers/staging/rtl8723bs/include/hal_intf.h
+> @@ -144,7 +144,6 @@ enum hal_def_variable {
+>  	HAL_DEF_PCI_AMD_L1_SUPPORT,
+>  	HAL_DEF_PCI_ASPM_OSC, /*  Support for ASPM OSC, added by Roger, 2013.03.27. */
+>  	HAL_DEF_MACID_SLEEP, /*  Support for MACID sleep */
+> -	HAL_DEF_DBG_RX_INFO_DUMP,
 
-On 2024/12/11 1:33, Bjorn Helgaas wrote:
-> On Mon, Dec 09, 2024 at 03:19:38PM +0800, Chen Wang wrote:
->> Add binding for Sophgo SG2042 PCIe host controller.
->> +  sophgo,pcie-port:
-> This is just an index, isn't it?  I don't see why it should include
-> "sophgo" unless it encodes something sophgo-specific.
-I previously understood that if it is not a standard attribute defined 
-by the dts schema, such as pcie-port, which is defined by me, it must be 
-prefixed with vendor. Is that right?
->
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      SG2042 uses Cadence IP, every IP is composed of 2 cores(called link0
-> Add space before "(".  More instances below.
-ok
->
->> +      & link1 as Cadence's term). "sophgo,pcie-port" is used to identify which
->> +      core/link the pcie host controller node corresponds to.
-> s/pcie/PCIe/ for consistency in the text.  More instances below.
-ok
->
->> +      The Cadence IP has two modes of operation, selected by a strap pin.
->> +
->> +      In the single-link mode, the Cadence PCIe core instance associated
->> +      with Link0 is connected to all the lanes and the Cadence PCIe core
->> +      instance associated with Link1 is inactive.
->> +
->> +      In the dual-link mode, the Cadence PCIe core instance associated
->> +      with Link0 is connected to the lower half of the lanes and the
->> +      Cadence PCIe core instance associated with Link1 is connected to
->> +      the upper half of the lanes.
-> I assume this means there are two separate Root Ports, one for Link0
-> and a second for Link1?
-Yes. So the naming of pcie_rcX is wrong, I will correct it, thanks.
->
->> +      SG2042 contains 2 Cadence IPs and configures the Cores as below:
->> +
->> +                     +-- Core(Link0) <---> pcie_rc0   +-----------------+
->> +                     |                                |                 |
->> +      Cadence IP 1 --+                                | cdns_pcie0_ctrl |
->> +                     |                                |                 |
->> +                     +-- Core(Link1) <---> disabled   +-----------------+
->> +
->> +                     +-- Core(Link0) <---> pcie_rc1   +-----------------+
->> +                     |                                |                 |
->> +      Cadence IP 2 --+                                | cdns_pcie1_ctrl |
->> +                     |                                |                 |
->> +                     +-- Core(Link1) <---> pcie_rc2   +-----------------+
->> +
->> +      pcie_rcX is pcie node ("sophgo,sg2042-pcie-host") defined in DTS.
->> +      cdns_pcie0_ctrl is syscon node ("sophgo,sg2042-pcie-ctrl") defined in DTS
->> +
->> +      cdns_pcieX_ctrl contains some registers shared by pcie_rcX, even two
->> +      RC(Link)s may share different bits of the same register. For example,
->> +      cdns_pcie1_ctrl contains registers shared by link0 & link1 for Cadence IP 2.
-> An RC doesn't have a Link.  A Root Port does.
->
->> +      "sophgo,pcie-port" is defined to flag which core(link) the rc maps to, with
->> +      this we can know what registers(bits) we should use.
->> +
->> +  sophgo,syscon-pcie-ctrl:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Phandle to the PCIe System Controller DT node. It's required to
->> +      access some MSI operation registers shared by PCIe RCs.
-> I think this probably means "shared by PCIe Root Ports", not RCs.
-> It's unlikely that this hardware has multiple Root Complexes.
-Ok, I will fix this.
->
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - vendor-id
->> +  - device-id
->> +  - sophgo,syscon-pcie-ctrl
->> +  - sophgo,pcie-port
-> It looks like vendor-id and device-id apply to PCI devices, i.e.,
-> things that will show up in lspci, I assume Root Ports in this case.
-> Can we make this explicit in the DT, e.g., something like this?
->
->    pcie@62000000 {
->      compatible = "sophgo,sg2042-pcie-host";
->      port0: pci@0,0 {
->        vendor-id = <0x1f1c>;
->        device-id = <0x2042>;
->      };
+You have to combine patch 2 and 3 together otherwise it breaks the build.
+The fact that any mistakes break the build is what makes this sort of patch
+easy to review.
 
-Sorry, I don't understand your meaning very well.  Referring to the 
-topology diagram I drew above, is it okay to write DTS as follows?
+regards,
+dan carpenter
 
-pcie@7060000000 {
-     compatible = "sophgo,sg2042-pcie-host";
-     ...... // other properties
-     pci@0,0 {
-       vendor-id = <0x1f1c>;
-       device-id = <0x2042>;
-     };
-}
-
-pcie@7062000000 {
-     compatible = "sophgo,sg2042-pcie-host";
-     ...... // other properties
-     pci@0,0 {
-       vendor-id = <0x1f1c>;
-       device-id = <0x2042>;
-     };
-}
-
-pcie@7062800000 {
-     compatible = "sophgo,sg2042-pcie-host";
-     ...... // other properties
-     pci@1,0 {
-       vendor-id = <0x1f1c>;
-       device-id = <0x2042>;
-     };
-
-}
-
-And with this change, I can drop the “pcie-port”property and use the 
-port name to figure out the port number, right?
-
-
->> +additionalProperties: true
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/irq.h>
->> +
->> +    pcie@62000000 {
->> +      compatible = "sophgo,sg2042-pcie-host";
->> +      device_type = "pci";
->> +      reg = <0x62000000  0x00800000>,
->> +            <0x48000000  0x00001000>;
->> +      reg-names = "reg", "cfg";
->> +      #address-cells = <3>;
->> +      #size-cells = <2>;
->> +      ranges = <0x81000000 0 0x00000000 0xde000000 0 0x00010000>,
->> +               <0x82000000 0 0xd0400000 0xd0400000 0 0x0d000000>;
->> +      bus-range = <0x80 0xbf>;
->> +      vendor-id = <0x1f1c>;
->> +      device-id = <0x2042>;
->> +      cdns,no-bar-match-nbits = <48>;
->> +      sophgo,pcie-port = <0>;
->> +      sophgo,syscon-pcie-ctrl = <&cdns_pcie1_ctrl>;
->> +      msi-parent = <&msi_pcie>;
->> +      msi_pcie: msi {
->> +        compatible = "sophgo,sg2042-pcie-msi";
->> +        msi-controller;
->> +        interrupt-parent = <&intc>;
->> +        interrupts = <123 IRQ_TYPE_LEVEL_HIGH>;
->> +        interrupt-names = "msi";
->> +      };
->> +    };
->> -- 
->> 2.34.1
->>
 
