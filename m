@@ -1,204 +1,123 @@
-Return-Path: <linux-kernel+bounces-441270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83DD9ECC25
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:36:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 507769ECC2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C011188937B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59881889A0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DEB229127;
-	Wed, 11 Dec 2024 12:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Blc9NYK5"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595A9229127;
+	Wed, 11 Dec 2024 12:37:49 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1425225A52;
-	Wed, 11 Dec 2024 12:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170A4238E23;
+	Wed, 11 Dec 2024 12:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733920596; cv=none; b=gDOIKfNFZAQnjMETwT5AUDf7v2hm9KrDpX4X19h3qsBicn9TeYtiUmWx2MK+KPYuY21Pe/pk+1omSseHtXu7S3MAodnUVhDxyfh09VjDa50C09IwzB5PShrCAnON4pEMWx4TSBKSeeLbub+szUwsg/nONRF2k+ifPON2qzHwa04=
+	t=1733920669; cv=none; b=nEKnDwZZ6/R2tBFGnUEaRDy4qAdaXnBEcpppy6S2UzKxWm6bHq7y2egzGJ63gzUpVbt2fC0KmkWve4pT7NvV46bAwRvgy0EjWGkKYSoi9aPBZZaxubV/XxBGyCuk+f9BRBhZe6WjQmfWgGft03HFwSWfZHzcV/llvUQl1KWW+Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733920596; c=relaxed/simple;
-	bh=d+3c4oeYnNG5VZggoWcVgV1cEkYGeGV7XnEQJqAKBEA=;
+	s=arc-20240116; t=1733920669; c=relaxed/simple;
+	bh=8A5CrmteiQlZfEh6qwztWqlsCGBp53ZNUov14BzudeE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/vYXWv5YstD9xozOvFqUq1+lGUaEetiSdeBNravRoCJ86/Fb+3JOCFcd+Z8pZExcBuu/NdApguItWCY0+Qq919XIGQwYmQFHjJW1lDzl9FNCB0uouhI5OB0U0VCmRqT2mUgA3cpu+wjyT9tZJRsOLHaa26Tge6lzuos7k5nko4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Blc9NYK5; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=bpNO0OXNV6NBOIombSsuIiBBAc+yqcNKnEU1iWhkPTdx7QvfZxxXxkT1kwNjDmZUYUQ6hvoDhOkNLXuIJsYFUQ8tz0KC7tuOO8RW0/xcqF6QFjm4XoeUZya4YuYqrE7+WrSIIrKfCYLPNBLMyU/vYYPLh3KYHocDLN0CSoC8wpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43621d27adeso205085e9.2;
-        Wed, 11 Dec 2024 04:36:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733920593; x=1734525393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h/kOzw7CTerxYmVUA4xiFtkocX/wHzc5BLZXQPSJs9I=;
-        b=Blc9NYK5xWGcCijNTGZ0b1vxDI6R+OXpacc1sG53HqnCYKazvT09dxi1XcNVoa0qvD
-         PcgbnZ1aBq01c3B9VZ/KnZoTG8QPTePbbJCpDtaFLDkKBiaj+gpQYfDnkLKuNgUVW+SK
-         fFRmh4oJuRVelwfROi9ywtVSjAXtNN27k7Ur8l3PHGi/P7lzXg2WLC0ro53lyPBReIrr
-         eFZ8fNbLcAMlkZOzut5eQ1CgjTNWyKcsaMzU5iH/iP7oIx/ZQ6VXV00IRqCrE1bcWrvO
-         XUDQvp5Zjee+XIncTBh6vAqGIe1NfXDtNjZrG9ltyaU7MBZax9HiWKdBQ2YJ5CbyYBMm
-         5g7Q==
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5188c6f260cso650500e0c.1;
+        Wed, 11 Dec 2024 04:37:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733920593; x=1734525393;
+        d=1e100.net; s=20230601; t=1733920665; x=1734525465;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h/kOzw7CTerxYmVUA4xiFtkocX/wHzc5BLZXQPSJs9I=;
-        b=q1XMFIoC1dfptG62almVSOO9q0rY7s51kEJLztZ1SFWS+XBOVhSjZM2aLWYQj7BZEl
-         Z+nkS7lB4jlffaIlWqGN5LvYdMBAIp4c0eyrAvktAHMT7p8XiMbC9W0f/EncPRVRBin6
-         LiIQa0FQfzkSqpxTGMpvs3GPyaB0Qdyg09hdVLPglIYNzrqUWT/CjBpK9JxGGSB7NQY+
-         6KKzMTv0133+AVHO/4vjZZwww+LJMshjaUc5Ak7ewcbAH34XsRUu/8Miu3l3XvmS6Kvd
-         klBNbDZqKwh71wlCBtqNQkSBEsiEgt3yS9lgE2JU9Auvt8jjmsP7C0rt39n6FD+AP6+x
-         Fylw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6A7TQBkOFqr4wSPoAX85WvgCbmGVMIoT5N/JSVbcv69ADh2l06aqoC+4Ntq/N2mWexbi+NOdePGxc/g11c6pz@vger.kernel.org, AJvYcCXyITyGFS9ihC1M6MUAo9BD439RFIF0kyAkc3qmVQOU+uKDqoe1LiJQwf9hgLuAMfVjIXXNlcX9D+iIKLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3K0X+4gmzhhBcgBvhizqUs0ave/cSFNFiQ5497Sw4wKh79O4L
-	Wsfwpo4HERannxdQWH2vH+NXTEUkhCFy8z8/FwLuOMkHl5BpjjXPLqnEJ2DA8gdncAkl4m3y+Q/
-	CXhBx2/SthpJkzlpjML0L1Hw+KHE=
-X-Gm-Gg: ASbGncv8t/V33i2wGNGCotyO2MQu4vzxQ2niKl5PnKhSkw3bnsZJGMtCJhga4+08myE
-	hVqOlKnCv7Texx9cfALRJn+n71R/vuxu4ng==
-X-Google-Smtp-Source: AGHT+IGDXwe2mrxulLuRTp4RHhGp2pKNTl00StdYb7EW+YLHYwkZN1XElvD83fcuTqegxhuiCCpTxdRdc8oRwqvuzxk=
-X-Received: by 2002:a05:6000:471b:b0:385:e88b:1a76 with SMTP id
- ffacd0b85a97d-3864ce601cbmr2245543f8f.30.1733920592915; Wed, 11 Dec 2024
- 04:36:32 -0800 (PST)
+        bh=AJ86Ezt1IhboGcICgfmJZa79KW8rXDylHzrx2Yfcbis=;
+        b=rkychT3T7YofPubweOY0YVCym+ZlA+5uIQNnd89WAafunuygUuza3ZxmoaHPJjCYYQ
+         thR6uajMNqxE+Iw1+oPXSf+1bU2px+u0LwYgEdEu+1ta2CSg91NP6sKvFRLTwnjleetJ
+         7dsA7KUpoA9NECgxZb5xH6A6OrzN1n7ddTFOdLkv8xH+8H1+L2zirUOwjSvhHfsZw4Dd
+         njy148PtzGSjxi2t0Q2cVexCZhP4H96e5tl0ulDsze2RlCarhIH8oLz8VliipZYar2ZZ
+         cUomOexoPEuu4W4R7wuOfSNArHshVEHOOJ4Qdjzl/1XggYXpoVGfhaCJMz2ySQKBIE2O
+         nWjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCsbkKV1x6lvhVGX0q3hkw4Gmgm3lyNTzHr1Iu0KSrU6DKRgIoYronlHY9Rir8T9eT8wGqfc03iHvg@vger.kernel.org, AJvYcCV2LyXWeCWxvau0BcQUGkHuvJGZWQR2CuEJSTVKNZTCmIbXJRlSIhFrruGW300f82WJVOjW96xluVF0LZ/a@vger.kernel.org, AJvYcCVdm/mAVqxAeuuNiUvwyTsZlepEYGnA3/zhM5hXyCrjzk4OrvPC3DOkscPBr9SvPD7o//f2wfx25L9E/PkjwO052ow=@vger.kernel.org, AJvYcCWOCOMUOBDdvcgTTEaOR0AgWgwgTB8qWbfPTz8/hvq3mNVcA/aSkRWNo0IEOHkuEWvdmFkFluPlDQs2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztx6nxI5kHGTRMi8VYyx6p9/5mIdpXsJAbCG0WTVBEIoYsudze
+	+Uxw2Sts0aAhhquR6Y7/hUkUrTPeHXpm96PB8tWIq4PHi3UgjbQgEuCJ/LsV
+X-Gm-Gg: ASbGnctWwePu11wA1GAxXXnA0zPIfgV1emnHFd3xDqs7rj7GXRErJ5jpYlTtRRuADI1
+	axQf2BIzn3jdZS8anRYFE6vNxPBkhDId6ppycZ3ra2v7tYEYcHCmG0o1D5PHyyncharELOSPg2w
+	fxwMC5eMy6krQr18EmXbMKlWzeCCrU05YTb8uOE4ZrKyqXJ1RsLCXSrCzLRp8QdFpfLVfUbjOo+
+	6B7RbZR5bmWuDBhqNMxko1ChWkJJThGeNQb2fgHvlcFuGoTB6TDOQn3nrL//iQZdv4OmZIdRsDH
+	FYqCp8Nh5ew3aJ83
+X-Google-Smtp-Source: AGHT+IE1D2lQ91hapezxrAZkcziBE8Uk7ryteiqJY5E7XwGExYGCBR+saT/fdIqDLeZ/yZ0nI7fPBA==
+X-Received: by 2002:a05:6122:408b:b0:516:1ab5:fab0 with SMTP id 71dfb90a1353d-518a3c23627mr2223215e0c.12.1733920664649;
+        Wed, 11 Dec 2024 04:37:44 -0800 (PST)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eae68d96sm1128813e0c.28.2024.12.11.04.37.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 04:37:44 -0800 (PST)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4afefc876c6so1048864137.2;
+        Wed, 11 Dec 2024 04:37:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUu7U7/qhreU4mT5bs1NV0nE3V1y6/qEn9sveePL9vWRlKpNxBWVa2RKW4vUsPyyvaG//AmQNT1RC9l@vger.kernel.org, AJvYcCW11vywDpTW30bzBlyoghN+tfCeFa2Ph8fwt2CwEUbywrfQoKrUjageyr94tAuRkJc2Dm+W2rIhnVQ4bGtdaIAaL3c=@vger.kernel.org, AJvYcCW1XlUhdVWTFFN34exMmZ5JPdSrlF9oWQXti3xi7cfRIXdC2h5ce+CdKHChoU/dsNqfMWhfB5+NVEVVuNTl@vger.kernel.org, AJvYcCWRGU11CSWSoyZAXKFsjSIwjq7kv+nzib3aseGTGpmLVm9kZBmkSUNojUmWDa3nvxnwTFPg8xrXZNb0@vger.kernel.org
+X-Received: by 2002:a05:6102:c86:b0:4af:ef82:ce8b with SMTP id
+ ada2fe7eead31-4b12919eb17mr2932281137.26.1733920663802; Wed, 11 Dec 2024
+ 04:37:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209-b4-ovpn-v14-0-ea243cf16417@openvpn.net>
- <20241209-b4-ovpn-v14-17-ea243cf16417@openvpn.net> <CABAhCOSJCoZFuevjcwvdJ+==TpGEJZPmvvHfT=U3Kf_-Ob+BnA@mail.gmail.com>
- <5a3d1c9b-f000-45c1-afd3-c7a10d2a50e8@openvpn.net>
-In-Reply-To: <5a3d1c9b-f000-45c1-afd3-c7a10d2a50e8@openvpn.net>
-From: Xiao Liang <shaw.leon@gmail.com>
-Date: Wed, 11 Dec 2024 20:35:56 +0800
-Message-ID: <CABAhCOSNRu1QfVr_0Las+dSMsbrVE=HLT6pzqQHODkUTxBi0-Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v14 17/22] ovpn: implement peer
- add/get/dump/delete via netlink
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, 
-	ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
+References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com> <20241210170953.2936724-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241210170953.2936724-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Dec 2024 13:37:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXB6RiCpm-znuQVSH-o9a-SoQgORD4hJVTn-pDpj_Fd-A@mail.gmail.com>
+Message-ID: <CAMuHMdXB6RiCpm-znuQVSH-o9a-SoQgORD4hJVTn-pDpj_Fd-A@mail.gmail.com>
+Subject: Re: [PATCH v4 05/24] ASoC: renesas: rz-ssi: Use only the proper
+ amount of dividers
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
+	lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 7:30=E2=80=AFPM Antonio Quartulli <antonio@openvpn.=
-net> wrote:
+On Tue, Dec 10, 2024 at 6:10=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Hi Xiao and thanks for chiming in,
+> There is no need to populate the ckdv[] with invalid dividers as that
+> part will not be indexed anyway. The ssi->audio_mck/bclk_rate should
+> always be >=3D 0. While at it, change the ckdv type as u8, as the divider
+> 128 was previously using the s8 sign bit.
 >
-> On 11/12/2024 04:08, Xiao Liang wrote:
-> > On Mon, Dec 9, 2024 at 6:48=E2=80=AFPM Antonio Quartulli <antonio@openv=
-pn.net> wrote:
-> > [...]
-> >> +/**
-> >> + * ovpn_nl_peer_modify - modify the peer attributes according to the =
-incoming msg
-> >> + * @peer: the peer to modify
-> >> + * @info: generic netlink info from the user request
-> >> + * @attrs: the attributes from the user request
-> >> + *
-> >> + * Return: a negative error code in case of failure, 0 on success or =
-1 on
-> >> + *        success and the VPN IPs have been modified (requires rehash=
-ing in MP
-> >> + *        mode)
-> >> + */
-> >> +static int ovpn_nl_peer_modify(struct ovpn_peer *peer, struct genl_in=
-fo *info,
-> >> +                              struct nlattr **attrs)
-> >> +{
-> >> +       struct sockaddr_storage ss =3D {};
-> >> +       struct ovpn_socket *ovpn_sock;
-> >> +       u32 sockfd, interv, timeout;
-> >> +       struct socket *sock =3D NULL;
-> >> +       u8 *local_ip =3D NULL;
-> >> +       bool rehash =3D false;
-> >> +       int ret;
-> >> +
-> >> +       if (attrs[OVPN_A_PEER_SOCKET]) {
-> >
-> > Similar to link attributes in other tunnel drivers (e.g. IFLA_GRE_LINK,
-> > IFLA_GRE_FWMARK), user-supplied sockets could have sockopts
-> > (e.g. oif, fwmark, TOS). Since some of them may affect encapsulation
-> > and routing decision, which are supported in datapath? And do we need
-> > some validation here?
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
 >
-> Thanks for pointing this out.
-> At the moment ovpn doesn't expect any specific socket option.
-> I haven't investigated how they could be used and what effect they would
-> have on the packet processing.
-> This is something we may consider later.
->
-> At this point, do you still think I should add a check here of some sort?
->
+> Changes in v4:
+> - changed the ckdv type from s8 to u8 and updated patch description
+>   to reflect it
 
-I think some sockopts are important. Especially when oif is a VRF,
-the destination can be totally different than using the default routing
-table. If we don't support them now, it would be good to deny sockets
-with non-default values.
+Fixes: 03e786bd43410fa9 ("ASoC: sh: Add RZ/G2L SSIF-2 driver")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> >
-> > [...]
-> >> +static int ovpn_nl_send_peer(struct sk_buff *skb, const struct genl_i=
-nfo *info,
-> >> +                            const struct ovpn_peer *peer, u32 portid,=
- u32 seq,
-> >> +                            int flags)
-> >> +{
-> >> +       const struct ovpn_bind *bind;
-> >> +       struct nlattr *attr;
-> >> +       void *hdr;
-> >> +
-> >> +       hdr =3D genlmsg_put(skb, portid, seq, &ovpn_nl_family, flags,
-> >> +                         OVPN_CMD_PEER_GET);
-> >> +       if (!hdr)
-> >> +               return -ENOBUFS;
-> >> +
-> >> +       attr =3D nla_nest_start(skb, OVPN_A_PEER);
-> >> +       if (!attr)
-> >> +               goto err;
-> >> +
-> >> +       if (nla_put_u32(skb, OVPN_A_PEER_ID, peer->id))
-> >> +               goto err;
-> >> +
-> >
-> > I think it would be helpful to include the netns ID and supported socko=
-pts
-> > of the peer socket in peer info message.
->
-> Technically the netns is the same as where the openvpn process in
-> userspace is running, because it'll be it to open the socket and pass it
-> down to ovpn.
+Gr{oetje,eeting}s,
 
-A userspace process could open UDP sockets in one namespace
-and the netlink socket in another. And the ovpn link could also be
-moved around. At this moment, we can remember the initial netns,
-or perhaps link-netns, of the ovpn link, and validate if the socket
-is in the same one.
+                        Geert
 
-Thanks.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> Therefore I am not sure there is any value in echoing back the netns ID.
-> Wouldn't you agree?
->
-> Regarding sockopts, as mentioned above, this is somewhat unsupported for
-> now, so I Am not sure we have anything to send back.
->
->
-> Regards,
->
-> --
-> Antonio Quartulli
-> OpenVPN Inc.
->
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
