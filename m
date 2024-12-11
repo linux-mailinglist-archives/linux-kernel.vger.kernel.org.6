@@ -1,220 +1,172 @@
-Return-Path: <linux-kernel+bounces-442066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334289ED785
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:54:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7049ED787
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:54:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89DBE1889C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D4E28343F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466322288CB;
-	Wed, 11 Dec 2024 20:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238E82288E5;
+	Wed, 11 Dec 2024 20:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="UHBXB+K/"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hgs2mhW4"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E25B211A0B
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C1F211A0B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733950466; cv=none; b=Igd+NJ/o9SFMEE6aclYjeOZxs7Xug6LtnU8M41D91C3LridSh8m9BMKv8LOi33dqgeeIZdAYhRqCGNg8dp2MvPt89LjvKm5cX6Os5dzEW/9W+XsxIaPXo4vdUY2X0/l4HE121i4pHUGQPc21vBW2ZoT65hD4BCXKUisrPBBWr8g=
+	t=1733950473; cv=none; b=rWnIX6c8C9Eo7gRJzClaM71TfF0cmNSI2eAjlaj5UJo1kqwF/oIpeUfhZr/vq2greF7Aiv3lUE+Ao1p8xsDTcpNQUZjIVR+nPLwoWX+vjE88VN6I2G6yVeMxYJunTaMqdTmJ8cjF6jd4nEdyETY1C8CqMaE5Qm8fGjaCg2r+gm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733950466; c=relaxed/simple;
-	bh=lzTKxdg9CiwLG8Mb+IW6XOFzKRazhl7sBeUUxZG7AUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g272olKtyHVkVMc4J17j+z3p4SNJvpOlHrps0PNf4OcK8AWnRXpWCi03XkhIpAH2/61ImRRUzZKJesYd+D9Kt1UOChHzGdw1qwY++Ne9+zMn+9WAhxvjLDgnnoByRAErYn8Iv4ynNmhTZTi0d+3vLG79exaWbXfdDi+et91V8PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=UHBXB+K/; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-85c15e283bfso1389984241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:54:23 -0800 (PST)
+	s=arc-20240116; t=1733950473; c=relaxed/simple;
+	bh=M8rBj1IljQtNyRfls9tPtsK1h0RFHLNTVO3V2E4tMqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VdQOZKfNiCh51MitXDLEn9gGYq9wOQsPVCEX+UjGktDyznp+5pWHlFuzD3Bm5unO4da+eMV6nTzTCSmxGw0sfWMv0MzuEd48pj1Tr2u7T50SpwvDmrbZ5wem4JU/X446tM4MHO7eGyaS6VRb1IqY2gwvgq5CRJ7TXkzrodELyQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hgs2mhW4; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a77bd62fdeso33616645ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:54:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1733950462; x=1734555262; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYliTF35nPNFNRmXPIOQ4ksdgvuWl/AzFHNeTIQ3J/I=;
-        b=UHBXB+K/JmvoFXlqeKXFnhxUFPmcm4hU+HGtfvPT9QVzn3LpJGPZQi57NrMaMzTNWB
-         eLQye3V2ULNKRgPVSlwLIsHaintS4g2mfHVaf/N6c9S9BOruc30Jx956+ZnU57mkp9pE
-         WVm9FdCT2Tq54ydJNfrxnY0hsTzjZ5EaI63fOFA8gNiQbTc++785NmpP59JhuFbRzgp+
-         9BOllmASrhhjTt2QoE9q93jBWsezme4apvQA4Gp7Un7FSddq1yPgkkbaP4WwUIyu1V1e
-         ZbZGCWnyP3Y6xHZcw2B6e+LPuh1D05u3CKtBFwYwoyuSGQnAVAHHnGMrrqnLQ5dppIGS
-         57KQ==
+        d=linuxfoundation.org; s=google; t=1733950470; x=1734555270; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vdUZxJPlOyqm9HlhNWGKr+g7jlb5DGzBTeX9RjzfBIk=;
+        b=hgs2mhW4SyJK0rx3o6qCjz21ixamGYhqQO59pp8VVqz3mDli496Q4PFzOLpEglt9Bn
+         pMW5osnn1kzXHc8Ntq+UcICDGxZbg+cxulHkmqlXTlvsNxtitygVia0E65xHo2fMvDD9
+         IMmDdF+ZN3H6fhmGs7bYQzV9qjPpKpxxDjwYs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733950462; x=1734555262;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dYliTF35nPNFNRmXPIOQ4ksdgvuWl/AzFHNeTIQ3J/I=;
-        b=l3OC558A7OwA7NN3D/98BIg0WCeCYStrqEYYGNUS0LNfEfOnzMk3lYCBWRABbuRRa9
-         COxrVOPqbevVuvD0w9QbSWAR59LzdIQDzX6O1O3DZHphH4qnhSSZZ7NO0sIBOu08L0L7
-         Lx1M83oAB4JBDpwocj5TUHyDTgmKuFinwiAvnGCOs0/iESVPCkj98K95/jI3GI62hfI3
-         WLkx7WNJw9uNDGaGL21VEw48Xh5xfW3wCrK5zlvsjyisV5WC9dfHQCD3r/wzGyJKPyRs
-         Nm5g4fdXfzLYKtUJZSXzYMGf5ZLrkw6fRzFheb0iOWBUTRS1mUX/0dP2zL+u2+bX7pF1
-         9ExA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Mobr0zRNXvPakhV56zi5JjPQhQCtD2FtkhpQU7iBpWoISOq2KSmjtoo3i3w1hhrgtKIJVno81XCYgPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1BqJL2/O6DeGJr7FrdeXwRhJQ+35+x4yJfnqLqbDUltn6VR9k
-	ij1Vz7qgSJ1ioZNFyypA3zGni32gpu5vY+M29HaoOffzTWvKxMz6bR01aieNHscjTV5q9r/niTe
-	7wk8CW+0Q3SAVn7/JGB9xpfijdMzb3DlYuD5iwQ==
-X-Gm-Gg: ASbGncuvx4xFYLgxWR4OQmAp00Nf5+1rVL1W1UX0F2IjWSCOYF6Yx4YJcl/Kl2E1bzi
-	Slo6rZPJdESQ1/PUjuVOXJXde4WXxcvjwFRaxhqxUlO5eMMo/ZeiKpSufQmy/0/by3w==
-X-Google-Smtp-Source: AGHT+IFDJ3hxR2NNeGvlMcd40FPBdx04p3qGo6Inh+bBqmvdcNtdNFdP1cY9W4nm5HsXXzcK6b0wp6lE6uUBauKHkAs=
-X-Received: by 2002:a05:6102:50ac:b0:4af:d487:45f3 with SMTP id
- ada2fe7eead31-4b2478d8b65mr1386165137.23.1733950462194; Wed, 11 Dec 2024
- 12:54:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733950470; x=1734555270;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdUZxJPlOyqm9HlhNWGKr+g7jlb5DGzBTeX9RjzfBIk=;
+        b=N3Zcns01957aTalAn/xirKilHFBB0B9MAY9ISuCNgAoXSL07kUBLGSKtbDLgyqjBpR
+         6lovSpTG0IerkhXV/NJidtru5lphR+qTixHKohyXBi2MdvFs7Jfar5ZBBMxhJhROz3kC
+         4HvH3rU9WLSQj3HB/pdLkxDMH8hgXAIR+btdWaW7VCXem3I/4PMAAizlbVJRpkl/ulSv
+         RdBowYe9rIqwpjeJqujs7Jl5twI+DQ1yg2tYPpZ/juGmot5cp3Y9LviN8G4dVkOqudcP
+         MbVgkWub7S65vgjv7Sb1zohMKk94alP3OIJZrM6BWiUfK+sXgKi3V9nKEXPCntATWaVX
+         wsxg==
+X-Gm-Message-State: AOJu0Yze8WbwRQOf1hxe8cgkXRCvWfo2hsBHm9xxHFd9u/RR75NodsnI
+	7DH6moo2g30xMurz2/MsdoABViEXzZbIB91Lhbb3AenjwFR6O+n0PCa5DiDJreA=
+X-Gm-Gg: ASbGnct1gqZGa632Qb16cFeBmnT784YIDGekt+EY6wHzztFI8dXHTRGFgyQCS64XsgA
+	nHT/3ZbgmRGT+RdBv8rZsyRQboR+bRxR3+hKE9NYMnv8xJMmCzTDKu4yRRwpHI93f4wB3l+AT44
+	h7DQszZmXEHvh4/6NlZuykysYYRWhEgHX+hpJGJC8cLvY4Dc70MilaKHWooq5PDZwhNinVk7hd9
+	uB1JbFL+EHrua3ittG8skE+4B+ulCcRVqVIJJsUVj6odbrwhPHEG2GeKrJPE3pbOg==
+X-Google-Smtp-Source: AGHT+IFZWSEkNX9E1xvb5Yis84qOQViHxVTlB7kMTpgprOsy8jLaKebBWk2JUnkf5Ygn4PNGztoSvw==
+X-Received: by 2002:a05:6e02:1685:b0:3a7:44d9:c7dd with SMTP id e9e14a558f8ab-3ac483fe4bfmr12769875ab.6.1733950470069;
+        Wed, 11 Dec 2024 12:54:30 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a816297961sm32619605ab.19.2024.12.11.12.54.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 12:54:29 -0800 (PST)
+Message-ID: <0985bb0c-091e-4e5a-b066-5b9cfd072aa8@linuxfoundation.org>
+Date: Wed, 11 Dec 2024 13:54:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025124515.14066-1-svarbanov@suse.de> <20241025124515.14066-9-svarbanov@suse.de>
- <4bbdf9ed-f429-411b-8f5f-e51857f0f9d0@broadcom.com> <f9f49030-0518-4e30-91a7-3c088c31180b@suse.de>
- <474e5e38-37a4-439b-b25a-fe60df03f25b@broadcom.com>
-In-Reply-To: <474e5e38-37a4-439b-b25a-fe60df03f25b@broadcom.com>
-From: Jonathan Bell <jonathan@raspberrypi.com>
-Date: Wed, 11 Dec 2024 20:54:12 +0000
-Message-ID: <CADQZjwci2SVN=AG178kj3yN=17nVixOHEZOjZCs9LSUihbby4Q@mail.gmail.com>
-Subject: Re: [PATCH v4 08/10] PCI: brcmstb: Adjust PHY PLL setup to use a
- 54MHz input refclk
-To: James Quinlan <james.quinlan@broadcom.com>
-Cc: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Jim Quinlan <jim2101024@gmail.com>, 
-	Nicolas Saenz Julienne <nsaenz@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Andrea della Porta <andrea.porta@suse.com>, 
-	Phil Elwell <phil@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cpupower: fix TSC MHz calculation for Mperf monitor
+To: He Rongguang <herongguang@linux.alibaba.com>, trenn@suse.com,
+ shuah@kernel.org, jwyatt@redhat.com, jkacur@redhat.com
+Cc: linux-kernel@vger.kernel.org, shannon.zhao@linux.alibaba.com,
+ linux-pm@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <60562222-6186-4eec-9c20-08b1cebb1311@linux.alibaba.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <60562222-6186-4eec-9c20-08b1cebb1311@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 11 Dec 2024 at 19:39, James Quinlan <james.quinlan@broadcom.com> wrote:
->
-> On 12/10/24 08:42, Stanimir Varbanov wrote:
-> > Hi Jim
-> >
-> > On 12/10/24 12:52 AM, James Quinlan wrote:
-> >> On 10/25/24 08:45, Stanimir Varbanov wrote:
-> >>> The default input reference clock for the PHY PLL is 100Mhz, except for
-> >>> some devices where it is 54Mhz like bcm2712C1 and bcm2712D0.
-> >>>
-> >>> To implement this adjustments introduce a new .post_setup op in
-> >>> pcie_cfg_data and call it at the end of brcm_pcie_setup function.
-> >>>
-> >>> The bcm2712 .post_setup callback implements the required MDIO writes that
-> >>> switch the PLL refclk and also change PHY PM clock period.
-> >>>
-> >>> Without this RPi5 PCIex1 is unable to enumerate endpoint devices on
-> >>> the expansion connector.
-> >>>
-> >>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> >>> ---
-> >>> v3 -> v4:
-> >>>    - Improved patch description (Florian)
-> >>>
-> >>>    drivers/pci/controller/pcie-brcmstb.c | 42 +++++++++++++++++++++++++++
-> >>>    1 file changed, 42 insertions(+)
-> >>>
-> >>> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/
-> >>> controller/pcie-brcmstb.c
-> >>> index d970a76aa9ef..2571dcc14560 100644
-> >>> --- a/drivers/pci/controller/pcie-brcmstb.c
-> >>> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> >>> @@ -55,6 +55,10 @@
-> >>>    #define PCIE_RC_DL_MDIO_WR_DATA                0x1104
-> >>>    #define PCIE_RC_DL_MDIO_RD_DATA                0x1108
-> >>>    +#define PCIE_RC_PL_PHY_CTL_15                0x184c
-> >>> +#define  PCIE_RC_PL_PHY_CTL_15_DIS_PLL_PD_MASK        0x400000
-> >>> +#define  PCIE_RC_PL_PHY_CTL_15_PM_CLK_PERIOD_MASK    0xff
-> >>> +
-> >>>    #define PCIE_MISC_MISC_CTRL                0x4008
-> >>>    #define  PCIE_MISC_MISC_CTRL_PCIE_RCB_64B_MODE_MASK    0x80
-> >>>    #define  PCIE_MISC_MISC_CTRL_PCIE_RCB_MPS_MODE_MASK    0x400
-> >>> @@ -251,6 +255,7 @@ struct pcie_cfg_data {
-> >>>        u8 num_inbound_wins;
-> >>>        int (*perst_set)(struct brcm_pcie *pcie, u32 val);
-> >>>        int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
-> >>> +    int (*post_setup)(struct brcm_pcie *pcie);
-> >>>    };
-> >>>      struct subdev_regulators {
-> >>> @@ -826,6 +831,36 @@ static int brcm_pcie_perst_set_generic(struct
-> >>> brcm_pcie *pcie, u32 val)
-> >>>        return 0;
-> >>>    }
-> >>>    +static int brcm_pcie_post_setup_bcm2712(struct brcm_pcie *pcie)
-> >>> +{
-> >>> +    const u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030,
-> >>> 0x5030, 0x0007 };
-> >>> +    const u8 regs[] = { 0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e };
-> >>> +    int ret, i;
-> >>> +    u32 tmp;
-> >>> +
-> >>> +    /* Allow a 54MHz (xosc) refclk source */
-> >>> +    ret = brcm_pcie_mdio_write(pcie->base, MDIO_PORT0,
-> >>> SET_ADDR_OFFSET, 0x1600);
-> >>> +    if (ret < 0)
-> >>> +        return ret;
-> >>> +
-> >>> +    for (i = 0; i < ARRAY_SIZE(regs); i++) {
-> >>> +        ret = brcm_pcie_mdio_write(pcie->base, MDIO_PORT0, regs[i],
-> >>> data[i]);
-> >>> +        if (ret < 0)
-> >>> +            return ret;
-> >>> +    }
-> >>> +
-> >>> +    usleep_range(100, 200);
-> >>> +
-> >>> +    /* Fix for L1SS errata */
-> >>> +    tmp = readl(pcie->base + PCIE_RC_PL_PHY_CTL_15);
-> >>> +    tmp &= ~PCIE_RC_PL_PHY_CTL_15_PM_CLK_PERIOD_MASK;
-> >>> +    /* PM clock period is 18.52ns (round down) */
-> >>> +    tmp |= 0x12;
-> >>> +    writel(tmp, pcie->base + PCIE_RC_PL_PHY_CTL_15);
-> >> Hi Stan,
-> >>
-> >> Can you please say more about where this errata came from?  I asked the
-> >> 7712 PCIe HW folks and they said that there best guess was that it was a
-> >> old workaround for a particular Broadcom Wifi endpoint.  Do you know its
-> >> origin?
-> > Unfortunately, I don't know the details. See the comments on previous
-> > series version [1]. My observation shows that MDIO writes are
-> > implemented in RPi platform firmware only for pcie2 (where RP1 south
-> > bridge is connected) but not for pcie1 expansion connector.
->
-> Well, I think my concern is more about the comment "Fix for L1SS errata"
-> rather than the code.  If this is a bonafide errata it should have an
-> identifier and some documentation somewhere. Declaring it to be an
-> unknown errata provides little info.
+On 12/10/24 20:20, He Rongguang wrote:
+>  From e17f252433c923578e9c386a998200e488d9567d Mon Sep 17 00:00:00 2001
+> From: He Rongguang <herongguang@linux.alibaba.com>
+> Date: Thu, 28 Nov 2024 16:50:05 +0800
+> Subject: [PATCH] cpupower: fix TSC MHz calculation
+> 
+> Commit 'cpupower: Make TSC read per CPU for Mperf monitor' (c2adb1877b7)
+> changes TSC counter reads per cpu, but left time diff global (from start
+> of all cpus to end of all cpus), thus diff(time) is too large for a
+> cpu's tsc counting, resulting in far less than acutal TSC_Mhz and thus
+> `cpupower monitor` showing far less than actual cpu realtime frequency.
+> 
+> /proc/cpuinfo shows frequency:
+> cat /proc/cpuinfo | egrep -e 'processor' -e 'MHz'
+> ...
+> processor : 171
+> cpu MHz   : 4108.498
+> ...
+> 
+> before fix (System 100% busy):
+>      | Mperf              || Idle_Stats
+>   CPU| C0   | Cx   | Freq  || POLL | C1   | C2
+>   171|  0.77| 99.23|  2279||  0.00|  0.00|  0.00
+> 
+> after fix (System 100% busy):
+>      | Mperf              || Idle_Stats
+>   CPU| C0   | Cx   | Freq  || POLL | C1   | C2
+>   171|  0.46| 99.54|  4095||  0.00|  0.00|  0.00
+> 
+> Fixes: c2adb1877b76 ("cpupower: Make TSC read per CPU for Mperf monitor")
+> Signed-off-by: He Rongguang <herongguang@linux.alibaba.com>
+> ---
+> Changes in v2:
+> - Fix scripts/checkpatch.pl style warnings.
+> - Link to v1:
+> https://lore.kernel.org/linux-pm/269b8bb2-85b5-4cc9-9354-a1270f2eed35@linux.alibaba.com/T/#u
+> ---
 
-I'm the originator of this thunk - erratum is perhaps the wrong description.
-If the reference clock provided to the RC is 54MHz and not 100MHz, as
-is the case on BCM2712, then many of the L1 sub-state timers run
-slower which means state transitions are unnecessarily lengthened.
+Are you sure you sent me the right patch. I am seeing exact
+same errors. How are you sending your patches.
 
-This change, and the MDIO manipulation above, should be applied
-regardless of the RC instance and/or connected EP.
+Here are the problems I am seeing:
 
-> Code-wise, you could use u32p_replace_bits(..., PM_CLK_PERIOD_MASK) to
-> do the field value insertion.
->
-> All the above being said, I have no objection since this code is
-> specific to the RPi platform.
->
-> Jim Quinlan  Broadcom STB/CM
->
-> >
-> > ~Stan
-> >
-> > [1] https://www.spinics.net/lists/linux-pci/msg160842.html
-> >
->
+ERROR: patch seems to be corrupt (line wrapped?)
+#103: FILE: :173:
+double *percent,
 
-Regards
-Jonathan
+WARNING: It's generally not useful to have the filename in the file
+#108: FILE: :177:
++		timediff = max_frequency * timespec_diff_us(time_start[cpu],
+
+WARNING: It's generally not useful to have the filename in the file
+#119: FILE: :210:
++		time_diff = timespec_diff_us(time_start[cpu], time_end[cpu]);
+
+WARNING: It's generally not useful to have the filename in the file
+#130: FILE: :230:
++		clock_gettime(CLOCK_REALTIME, &time_start[cpu]);
+
+WARNING: It's generally not useful to have the filename in the file
+#138: FILE: :245:
++		clock_gettime(CLOCK_REALTIME, &time_end[cpu]);
+
+WARNING: It's generally not useful to have the filename in the file
+#149: FILE: :351:
++	time_start = calloc(cpu_count, sizeof(struct timespec));
+
+WARNING: It's generally not useful to have the filename in the file
+#150: FILE: :352:
++	time_end = calloc(cpu_count, sizeof(struct timespec));
+
+WARNING: It's generally not useful to have the filename in the file
+#158: FILE: :365:
++	free(time_start);
+
+WARNING: It's generally not useful to have the filename in the file
+#159: FILE: :366:
++	free(time_end);
+
+thanks,
+-- Shuah
+
 
