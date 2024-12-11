@@ -1,104 +1,181 @@
-Return-Path: <linux-kernel+bounces-441851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C1E9ED4DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D6C9ED4E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 419F71888197
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C845E188830E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EDC209F3C;
-	Wed, 11 Dec 2024 18:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7905D209F3C;
+	Wed, 11 Dec 2024 18:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P70w6UIK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TucUnsGm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBCE1C3F27;
-	Wed, 11 Dec 2024 18:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8AF1C3F27;
+	Wed, 11 Dec 2024 18:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733942910; cv=none; b=AqYTOQHWHstkYfo2oCxNve05EcW0Sx2e738zWHR2nTvNWd31u/PUmpPWmpxOogb2jPpFVMSpUxIbFHCilu2V4lC/pQm4Z+ehU/J7xzNqIO/he/IXCuTb2XKFos/WLzd4hfxHZBhAmNK8o6BfLfn6H057yYZ3Iih1yHTySvJa/6s=
+	t=1733943030; cv=none; b=u4jZD9wqRNsB/8UM6BhY2fP3o7mO5gLFQS6Z2Fsoa1o8Ro861TV+aMSLTsOxVK6cyWOmabatEfV9nHvg7r1XcSBTFBR54MEY30tS5DCovOsFMs/QgFTkGW23MObjnqdEgKOmBR+82Zk0193dYSaTz9p+EbEKGQlHlzY/PRA1HPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733942910; c=relaxed/simple;
-	bh=AY7y1pz3aYKq5RkIzqUfYOmw2nUVDajhefeF/OTXuhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C28yxd4v3tw4ypMLh2ITP3Qt/E7Rj4Le7TgDqpIry+jFy2uq7oSsyz1NGX7NHopjnlgjlYp5Mx7ex++od/+wILoKWU6h/96vw/IhNvZTLK7qjna8b68kbvVp5BbXt9ilogLVmr/s/V1ldM/E+8d4tL8KJN6VLYAev2jzvibtAiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P70w6UIK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249B7C4CED2;
-	Wed, 11 Dec 2024 18:48:29 +0000 (UTC)
+	s=arc-20240116; t=1733943030; c=relaxed/simple;
+	bh=si+HkGWTUu5iJBmrPqw+Eij7fvLdWJDbVQ5PJ6PzaAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XJd03pwnQtkpF6W8ayh7CfcSMxtJDZb3Jt4fsS07zlYJXFNfJvqd3JPMXdwB9wCL+wdjIFfhbVBb2wjiD3ClrwigkUPWR2mV/2Z1gg/Z7kqj5hhqZnVXVTVR0dxGKedDjyby9WLlMN2Flj5SvrTGIEYQxESoCbGahGQqUx3FTN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TucUnsGm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE30CC4CED2;
+	Wed, 11 Dec 2024 18:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733942909;
-	bh=AY7y1pz3aYKq5RkIzqUfYOmw2nUVDajhefeF/OTXuhs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P70w6UIK+2bmfq2QZjCfL1+L0CCdMlwIlFBSNusSwvYRdMMV1Utve7UjkBpGg4bjn
-	 RhklwVNGVbcy52FZAFXxH5CgEJLKSFZ5hUhqG/nDHoH/hoqbGzSLiAHffhgaDZGrno
-	 ty6tnX4YzNoN7NRFvgvlP1/RdM+C7kOyu2meEZ3RJT8bBFh8wMlRMrhKZQ7OpmezAX
-	 PqArN9B9ynwK8x5vWZXSQ1zCs9xjBqmmBVC9ccp2v/3HPS8/3PR5qNd3ABkZRUGABV
-	 EP58+MgNsUokdNt4I4srqCoFJmYC+YW92OTZSVaqvX2cllZBWCRDuRwZSwYaZ737K1
-	 ZBRWYjfSXkt9w==
-Date: Wed, 11 Dec 2024 10:48:27 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Mingwei Zhang <mizhang@google.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [REGRESSION] 'perf mem record' on a Intel hybrid system broken
-Message-ID: <Z1nee9PakNKG_mL3@google.com>
-References: <Z1CVTJ5jzIyNiB1R@x1>
- <Z1CsX3n5U_q5ehRp@google.com>
- <63eac289-07cb-4c3b-b34d-ea5bd009441a@linux.intel.com>
+	s=k20201202; t=1733943030;
+	bh=si+HkGWTUu5iJBmrPqw+Eij7fvLdWJDbVQ5PJ6PzaAs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TucUnsGmc8ieuXiLGh5rNWVeDExDH8En559wEDDsP0+7zBie8xxhljzAOG5q72wdk
+	 2yXLPhHfcxlBpPMmCtV2jV3zDLaFPCMEQEc1K2mOCpn06VrZr1G/0TtCYWTOY35s0Y
+	 VYgZlkSlcRekO1aWosMwxMAEi2FstoM5ljjk50cYv+2pclDIZUNhtOorth5xy1WOSy
+	 4nhCnJw1dCCoTeojslbOYSVqW+QYWruIlboKKU4+EZ2x+W3p3f3Qihov5xcYbabuWu
+	 +WLS63rX9OiyrzA+WfDVP/BFfVgBphDNLUx8g76EI16NXP0ISsV3v9zkwSSYmPH0vi
+	 B94UVg9qExVWw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: James Hilliard <james.hilliard1@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 01/36] watchdog: it87_wdt: add PWRGD enable quirk for Qotom QCML04
+Date: Wed, 11 Dec 2024 13:49:17 -0500
+Message-ID: <20241211185028.3841047-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <63eac289-07cb-4c3b-b34d-ea5bd009441a@linux.intel.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.4
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 12:55:03PM -0500, Liang, Kan wrote:
-> On 2024-12-04 2:24 p.m., Namhyung Kim wrote:
-> > I think I got a related report from the kernel test robot but it was a
-> > Sapphire Rapids machine.  I don't have a Intel hybrid machine in hand.
-> > I'll try to take a look at it on Sapphire Rapids.
-> 
-> The default precise_ip level for perf mem is always 3.
-> 
-> For the latest intel platforms, it implies PDist, which is only
-> available on GP 0.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/intel/core.c#n4412
-> 
-> However, the mem-load PEBS event is available on all GP counters but GP
-> 0. :(
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/intel/ds.c#n1176
-> 
-> So the precise_ip-- is required.
-> 
-> The failure of scheduling returns -EINVAL.
-> 
-> But Namhyung's patch assumes that the kernel return -EOPNOTSUPP when PMU
-> doesn't support the given precise level.
-> (Sorry, I didn't notice the case early.)
-> 
-> Is it possible to reduce the precise_ip for the -EINVAL as well?
+From: James Hilliard <james.hilliard1@gmail.com>
 
-Sure, please see https://lore.kernel.org/r/Z1DV0lN8qHSysX7f@google.com
+[ Upstream commit 43439076383a7611300334d1357c0f8883f40816 ]
 
-Thanks,
-Namhyung
+For the watchdog timer to work properly on the QCML04 board we need to
+set PWRGD enable in the Environment Controller Configuration Registers
+Special Configuration Register 1 when it is not already set, this may
+be the case when the watchdog is not enabled from within the BIOS.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20241025063441.3494837-1-james.hilliard1@gmail.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/watchdog/it87_wdt.c | 39 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/drivers/watchdog/it87_wdt.c b/drivers/watchdog/it87_wdt.c
+index 3e8c15138edda..1a5a0a2c3f2e3 100644
+--- a/drivers/watchdog/it87_wdt.c
++++ b/drivers/watchdog/it87_wdt.c
+@@ -20,6 +20,8 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/bits.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -40,6 +42,7 @@
+ #define VAL		0x2f
+ 
+ /* Logical device Numbers LDN */
++#define EC		0x04
+ #define GPIO		0x07
+ 
+ /* Configuration Registers and Functions */
+@@ -73,6 +76,12 @@
+ #define IT8784_ID	0x8784
+ #define IT8786_ID	0x8786
+ 
++/* Environment Controller Configuration Registers LDN=0x04 */
++#define SCR1		0xfa
++
++/* Environment Controller Bits SCR1 */
++#define WDT_PWRGD	0x20
++
+ /* GPIO Configuration Registers LDN=0x07 */
+ #define WDTCTRL		0x71
+ #define WDTCFG		0x72
+@@ -240,6 +249,21 @@ static int wdt_set_timeout(struct watchdog_device *wdd, unsigned int t)
+ 	return ret;
+ }
+ 
++enum {
++	IT87_WDT_OUTPUT_THROUGH_PWRGD	= BIT(0),
++};
++
++static const struct dmi_system_id it87_quirks[] = {
++	{
++		/* Qotom Q30900P (IT8786) */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "QCML04"),
++		},
++		.driver_data = (void *)IT87_WDT_OUTPUT_THROUGH_PWRGD,
++	},
++	{}
++};
++
+ static const struct watchdog_info ident = {
+ 	.options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
+ 	.firmware_version = 1,
+@@ -261,8 +285,10 @@ static struct watchdog_device wdt_dev = {
+ 
+ static int __init it87_wdt_init(void)
+ {
++	const struct dmi_system_id *dmi_id;
+ 	u8  chip_rev;
+ 	u8 ctrl;
++	int quirks = 0;
+ 	int rc;
+ 
+ 	rc = superio_enter();
+@@ -273,6 +299,10 @@ static int __init it87_wdt_init(void)
+ 	chip_rev  = superio_inb(CHIPREV) & 0x0f;
+ 	superio_exit();
+ 
++	dmi_id = dmi_first_match(it87_quirks);
++	if (dmi_id)
++		quirks = (long)dmi_id->driver_data;
++
+ 	switch (chip_type) {
+ 	case IT8702_ID:
+ 		max_units = 255;
+@@ -333,6 +363,15 @@ static int __init it87_wdt_init(void)
+ 		superio_outb(0x00, WDTCTRL);
+ 	}
+ 
++	if (quirks & IT87_WDT_OUTPUT_THROUGH_PWRGD) {
++		superio_select(EC);
++		ctrl = superio_inb(SCR1);
++		if (!(ctrl & WDT_PWRGD)) {
++			ctrl |= WDT_PWRGD;
++			superio_outb(ctrl, SCR1);
++		}
++	}
++
+ 	superio_exit();
+ 
+ 	if (timeout < 1 || timeout > max_units * 60) {
+-- 
+2.43.0
 
 
