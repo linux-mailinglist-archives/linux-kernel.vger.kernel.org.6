@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-442311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475B89EDA75
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:54:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3426C9EDA77
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06F31686AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B3D1886CB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AB01BC085;
-	Wed, 11 Dec 2024 22:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDA91EC4FF;
+	Wed, 11 Dec 2024 22:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KICnKP93"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JAQqtacC"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73F31DD885;
-	Wed, 11 Dec 2024 22:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C071F2396
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957683; cv=none; b=s/MZaxwP/1mpOljVYcVyJ3nMn2tSay8gHXhuUEc0Xp3LR/OvVRm8hvCKtJ44FTnv2ywmnjKOt8UNf7ayt4XFA91zN3OcunWQ3kS1uKuKYtQVQCpg6Etm2i47ZoCxTqAc/LKpxvtQWZUaMkPB8aHPmPqwG7v0hcT0KTBOgxEjPxg=
+	t=1733957688; cv=none; b=ruaD/b7qXaj8IhmZdnwGMTNiwRTUi9czfMcrDIVHWR8jUdMTl49f1rx/V2cdn+4iZa89TKcNxALEQtEt17kCGun8t/5xMDVABqwveVdQAPBMk6zNjxM+CbT6+RS81RuJ6kQsmbouknIg582KfaPGdNE1otWyk0BzxJL+kehzCfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957683; c=relaxed/simple;
-	bh=k3atfXh62Q7mbstu7AQML+pvSvuCfejuzNLa8edlgKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mprt9oARSN+5b7oN/MT+gCaz1YxLcHJr05qqElRYONEtWGB7eXNQ2nEf8eosfIsuY1BFtG96jJAqeX8kpNS7Sevcm+KNiBQk+URdClO1jte6Fixhm3c9SHGxBrOyuV8I37hvOaBqHor7ZzJuH0Y3/HNAbwtQV4u+IcZ+Zzsc5Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KICnKP93; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1733957672;
-	bh=OHIhfm/AKJaEurTUHS45+taXE8ZcesaGGJuuh4BwAO4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KICnKP93ZdEABpZggFrhAgIYGeD8NvRYt30ZyBE6HPjaKBVLR4NpQO/vT+el8NN+K
-	 +H2C+ty0TnzZy/Z1gDpD3xJYIDR+MJYwhgdK1l5nrkTfkVkrobHunydU6KXIdgvhTP
-	 GghANPt/y2cFczF4/ha8PDUkTalA53ttBVrF/jBfgRWZZA+yYUwtkV0fuBSDkheMt2
-	 oRexd2SlhnZFjzYYy0fXqowm36oiDYz6CI88kaKIRtiI2AhndlA5vm5XVVgv+0a7xi
-	 62osIxfl/fsdYFdSvpNn8PADYZ5Y2ovmcNQKSyRoEmJiXfZmlSpPF+0vIOjNqMGWJC
-	 JOfQCg58yjqDA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y7rWr1jb5z4wc3;
-	Thu, 12 Dec 2024 09:54:32 +1100 (AEDT)
-Date: Thu, 12 Dec 2024 09:54:36 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Erin Shepherd <erin.shepherd@e43.eu>, Amir Goldstein
- <amir73il@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20241212095436.4285940b@canb.auug.org.au>
+	s=arc-20240116; t=1733957688; c=relaxed/simple;
+	bh=RHwlBu6Z4VBS0gNpoSsmbFxwAtZwdYd+jvGCWb3rbeU=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wit5XvvDhu2VIIhRFdzfspmFwkIbnu69W4KqvD/Ou3Y5VIax8b4MC7k9y8BuCOGxSWpo45S+IKYErpoWzFJ2vIULu6zaefHNsbYpvkIISglOLDixniNjMxUJRyGno7KUggBmTQCvPwNOHLa2Juso16/b0X5fQrA1caI2CeHzr8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JAQqtacC; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d87ab49423so78506d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:54:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733957686; x=1734562486; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RHwlBu6Z4VBS0gNpoSsmbFxwAtZwdYd+jvGCWb3rbeU=;
+        b=JAQqtacCfPzXSST/08Ym4H1CBwnqvBkRARCcHKF8HaZvMyl08jSyeTPU19LRez91Tc
+         J2dhxWTrjHYA5g1qPrfklh0mUSuPdy1DFhgUcj1NZQ0N/1uua/gvlJ8+sQd/WFe6Net+
+         xmZgGG/PTqwSfDWWQgmwHDYTbhWKxHOjOsn74=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733957686; x=1734562486;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RHwlBu6Z4VBS0gNpoSsmbFxwAtZwdYd+jvGCWb3rbeU=;
+        b=moyTHn2UO76bQe8YE1/kQetnfsNdVx50klW356DGfSWNlxQweh1fn/fEV/+Q4FtT3F
+         h/jFe1BUalPipZUQGS/ti2zZhjjsTVHsuTKDhqRQm4E9Zd4squ9t010YnAoPp+ghODVB
+         oOJ5+Iwb7Y1EVNyMw2fZojJ+M9laobEdvzIwu7ZVHu1Y8SXkDY8huHHlv/NoSNFDNYI+
+         jWRqViMBcKw8hm7a6Fnp8XLUhpedbWm3pfLQeXizmNernVSbz7mswVpIVZvRXk+nJBlU
+         CRH2wLgZEUFWtmMmvsRhNg5uEys2huwKUx11IxeIdaoNhLnuZp3XkMhu1oUI41mp5L7E
+         O1Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjbqgprg1ZwIrcqnZEBjmmWwIuFi/5b+fxq7yg3YFgulQgtc5EWrW6HwyT9K0DQ5yvI9DHaeZ8/ObOm38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVFB+yNs7HaC1F0wbsLiioxhLbxTjZEfi3rk5psZRjb0XFphde
+	sRP4AvfHbtr9R3kTYuQOOYnHC64X8KuNFcY/2WHR3LX25CcSX8QbTAhwTMp30wllCakohtvomHf
+	scVJDZr0IGxfHXGcm63Zy5RRzwFlRGNcg52hb
+X-Gm-Gg: ASbGncsIL8qBBvro/tMFDQrQ8iOqyPmOl3Zz4Edhq3pQYoWTQoDCu8ZEx94sWKvV4Wp
+	mdJ5Zflp2Hnmbl3y2/DaH1GfOTuZa1vPC54ZwFnOzmkwbmP8c59dMwZ+W17hbpJc=
+X-Google-Smtp-Source: AGHT+IEGC9lOWNlVRcNf6fxO1C9k5anq2FzZawxvc9QRt3uAELPSdgB+RMMmxVMt78OAlW3P2cd1g7RFAijwaS3fIQA=
+X-Received: by 2002:a05:6214:27c2:b0:6d8:850a:4d6a with SMTP id
+ 6a1803df08f44-6dae38e5086mr22115606d6.1.1733957685843; Wed, 11 Dec 2024
+ 14:54:45 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 14:54:45 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ls7Ryb3InLvXRMSOo=FNEyM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-12-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-12-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 14:54:45 -0800
+Message-ID: <CAE-0n509sQEBscLmRCBMBzgYpWX4=62+hKtHcdE-W83LjdcqPA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/14] drm/msm/dp: move more AUX functions to dp_aux.c
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/Ls7Ryb3InLvXRMSOo=FNEyM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Quoting Dmitry Baryshkov (2024-12-02 02:06:42)
+> Move several misnamed functions accessing AUX bus to dp_aux.c, further
+> cleaning up dp_catalog submodule.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Hi all,
-
-After merging the vfs-brauner tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-fs/pidfs.c:641:27: error: 'EXPORT_OP_LOCAL_FILE_HANDLE' undeclared here (no=
-t in a function)
-  641 |         .flags          =3D EXPORT_OP_LOCAL_FILE_HANDLE,
-      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  ccb189ccdd28 ("pidfs: implement file handle support")
-
-I have used the vfs-brauner tree from next-20241211 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Ls7Ryb3InLvXRMSOo=FNEyM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdaGCwACgkQAVBC80lX
-0GyVYAgAisNqYAxZlKjclktKx7/3S1T7zgmlYuufOLIYuAaEwTzqDTzy0J25NvgH
-1skhFB7ovXK282C2PbIFLNSVrRH0XhBiP77JXc0LwrS7G7MDlKT/KYvw0Y0/S2q8
-jE9mHg24Bg5TOdiYwIDhcsdGkTYyujuzhmNKsuJtk7G/1uOrRv/MJMs/RgBq66I/
-x9CWsw8IDZs/P1FZmKrCtKEowR65qKV0rucfCXWgNQXvT1IUFFkTnr4hDupCTccE
-Nxl7CkNwbxHTmvfZFtCxlH7u90TyPGV+PKCBUl8sYST0Tbq6dpYnNagihK5hQ66z
-kgd8nSlw66srybSiGeVwtr8qvt3U5Q==
-=1Mc4
------END PGP SIGNATURE-----
-
---Sig_/Ls7Ryb3InLvXRMSOo=FNEyM--
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
