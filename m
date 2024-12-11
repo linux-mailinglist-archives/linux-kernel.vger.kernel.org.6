@@ -1,235 +1,212 @@
-Return-Path: <linux-kernel+bounces-441481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C57E9ECEEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:46:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE679ECEF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:48:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15FD0162EEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A50D283787
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC50C246342;
-	Wed, 11 Dec 2024 14:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C6A199E8D;
+	Wed, 11 Dec 2024 14:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rq/PSI3n"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b="dKndCu5P"
+Received: from outbound-ip8a.ess.barracuda.com (outbound-ip8a.ess.barracuda.com [209.222.82.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C85524635E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733928371; cv=none; b=ZFy+mu+27udMMVYmStZV+KT6shTFxJZjQdLCoBGOK/qdhrKgzNQoLLg7yEcrDKWl2FOzwh9/q1+E1wRL2FZYweoWtosQpxQ5o/Vzr7yp2jf/CDHZSyKuJD+cdNNmHTTyf3G3yplOT+hp6ZSyqbVuzjRl8V6GokLpIgtEUgwEw4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733928371; c=relaxed/simple;
-	bh=hQXNzo3YYXIGb+U0LwiMJsQWn00dDZC3pOaGkXS6WV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yks4AZg113Ok0QYAC8TBmU6nuFMzafuHkri4MmK4X/Kq6P5Q8o4yfcca6tMHAkVSfEHw1s2s0C3gAPEaBwHRK1mdyej9QzGalZsX1m/lZm/U2b//fDGWzb+P0bAcHe/TbhI+KTEcA9zXMPW7rtOmirsJnMlEpuEvdu1kYn8taHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rq/PSI3n; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a2033562so58803775e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:46:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733928368; x=1734533168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yIM3tjvqjBXsdeMXPCxUx4fKCuQFSNEkzfrtEz+uAQE=;
-        b=Rq/PSI3nwvgvZN25l+vQb3+v4axdiTYwUuXPJREGE6+6g/4MJmul3p190MwmfjPfav
-         xwt6KND6iiLyfp+eB5ebvlTXaxViTDpvD6fXsqz2XInUajmrQ3OBwxh97VLi6kWI/ACs
-         8fbKnVmUvtSI6miNpV476KR+NsEVReT2Dcw79EOw9KW6JYULe8PJNYJjGn9tJKYE1go5
-         kQEr2GsBU44anYRLx5BBB22YN1DikpS6pEX1a4L74V4uwt6hE1sFEi0EYalPkgw1LGrA
-         pBMhjCHsY2S459RnJUPGtpBIUJvJp25CCQkqcSG6ogRrfkhbsV7gK350EGwxWAbmRowV
-         J28Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733928368; x=1734533168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yIM3tjvqjBXsdeMXPCxUx4fKCuQFSNEkzfrtEz+uAQE=;
-        b=fbAUcpJSDIHQXXcX83+UdpNZw9Xa/h2lip/BnpbGFHgRTXhPiIZieUts+uySSbfE7v
-         xRBrzrbRcms5Jzxhg5IW62NG7mYB2KAbN8ruvZ/1UROs6iPuCjk1SHpzdJMSAD8oVumS
-         MSjXo0HDYYhH5tIrnbAy6i3XKGZOq8WhF9Q50d73ta9RBrOH2qjlsE9zU7ojBmgkRQCa
-         Upj072OH82XUiERDz6AXiun8gl3fscriBwz61lZxaoa4RO0UvpvBIS/BM0EZe6BkiD2T
-         KcPw2hP6YJ3pSBc77tzvBDBC+xacKO72Y/7PLYY+cHmdDIPw7JbYeVQ27Jr0ukkgc2hy
-         01jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcOTSTlv7EFTIfqXNdNPXhSVyqqi1gvWJS7ZoSkcI8qpyVfTj7cU3bPgfvy5j8KdH3xqgjRN212QQ4vgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZyFKs696UhZklnnxz73+ng6u+/sdCX8aKfiD+Cp1JnbDnH/VL
-	r/D3+7OB6WXjjzusrDYIzmwK9+uxNmzGwHxmcSnnUKy3V7B1AbFa4Sz2hHe4skMgkKkTFgseYtG
-	/gQSsEry8fFeLpoEiquREDKnP2gBu+8nnpDIx
-X-Gm-Gg: ASbGnctec3wAK4wuuWwgGoo4QtB2vzWf5g/HFYCgfaX/JuRSXkbTQFEmSxB6Z6G0UOA
-	kU8xAL0qDXUmk2uV27aTBlMQvDkJiD3b85359dQjGFlVSl8RmXTACyIWdHWWOnkMFjQ==
-X-Google-Smtp-Source: AGHT+IHCVQlnpKeO+7li6U9/tvmg7UYB+zAluD5gIYTSG7lO5NmS1Ncyz+GySvI5UHOLsyPseBu7ol909J7MBfzKkUU=
-X-Received: by 2002:a5d:64a1:0:b0:385:ed1e:2105 with SMTP id
- ffacd0b85a97d-3864ce5f9b2mr2891188f8f.26.1733928367647; Wed, 11 Dec 2024
- 06:46:07 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D3C246342;
+	Wed, 11 Dec 2024 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733928513; cv=fail; b=efW2v6vXk9osdqak9MkD3+plyoJdDaNgdPIgd9v4E8JgIz52aa6ZvF2Txxf3uJv0XHB9kpFIG4eEzlNuOzy0JejCNSqdqbFVqpH6IHjy38RL8TgL9yeaQJ1SftDGR35gKvG+wUhn76V2Na1Ngb6w4xfUzGRM3wKIZFEPzHlIBhA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733928513; c=relaxed/simple;
+	bh=kOWQIYJKHf01kIWdB1KE07+7p/UHyCTLGXfqWBJXkl0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uea2RrCCWT+60s/PAdDOcVTQ/1qn8X02kJSuojLrHK23wly6HF6a4La/pUWjgIKRwra8atjhBD4How1KqycU6D7qyUs8t3O/nHL+p0VTZ1jzsl6HDXTqkRyMs3ecaGz0VFQtdErp0Pyu36UDZdjxcfElum8cxf3/55eRyv+3WT8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com; spf=pass smtp.mailfrom=digi.com; dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b=dKndCu5P; arc=fail smtp.client-ip=209.222.82.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digi.com
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2040.outbound.protection.outlook.com [104.47.55.40]) by mx-outbound12-219.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 11 Dec 2024 14:48:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u3dYJ7ZKqwlhHer2dcOZHMwkZfhPT4ELHWHatgFOke8F/APo+RopScdrexQcUZyFLOA5pFYyoswWygONQ1QFEOQMCN/Mbs2LzSqiq+W6JBdj83Zd8WmIHl/pkCjcx5zugO5zyeHPsTSF7fb+0O3/ETZiTbEARyaXfGPU6KQKAq6fkvVpgmveZPIixviMTaJ7lej6429VG5z0HsbnpwgKB0GbPd4BvRKUO/7VzCGZ32f5CYJ59zmjNNMe6fmdfZza1MRQ41KrX+54TaP/rIlUUa5IuntwjUXxHEZ4bid4a6uGl0KYZ1lloiR3CgOxi59vlNX6urC3KRJqhoBWA9+6Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/dS3WOnmLOszx5DbYaxjrsIwX9m9SbHOM1RE9ftZ2wA=;
+ b=I6qpdLQjFlN0T93EOI7beWpBUkkcKQ7ZmJMmSXyhcBnXOWT0duDyn+mAaBTKPBByOAIEG8U4xYJHcNrKwcFNVmCibWnwQxU5eslytwalaew7xSUY8dFxerVKfWOKy7IT301544wDGWNbW5EkDNBS4I9SK+qOwtOWBEl8DfzpZfsR9XUYhaTBSzcXvBlzPGsnyCBWHNKYske1b9d5JfQ2I20DinDJzCIVdFpVaHpFforJXF3uP5fcwSxaWYz8hzw8cporISFyzoskjmrxcZF3LNTzPv/Ljt70k8NbmI/G7jRiL9FLs4M2fqluw753JO/sxjIkjwNm2rkqVQ7Vc5O6Lw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=digi.com; dmarc=pass action=none header.from=digi.com;
+ dkim=pass header.d=digi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digi.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/dS3WOnmLOszx5DbYaxjrsIwX9m9SbHOM1RE9ftZ2wA=;
+ b=dKndCu5PQ97a0DOFaA6hZVTCaTyZ3YvV9iyTsE4cZLzkeajnKtHeuHlq3OcYUqix/dufmPtD+5fMlwXwLNUBAPlyPNXpBekSDljYWGulrjBCLkU3aF/oGeh2gfQqsPez7l2vGglq82LkCknz/psBDz1sm+aCalNOnqx8UPtq7dVjcKh7P3UhyHffrwlijEvH6rasPDwEVBR9LTEjDYeHm1Ol4tAo43TFm3enKkjW7PK7+/UJOsYesHkhrKEqUMXchvZgznINT7tl6GZzmDcffdsyK3P5+keCDR4P3GfRG3efox8Oa00RsN1MvURz5bAodetrj4GLT3sNdlEpx4c6ww==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=digi.com;
+Received: from CO1PR10MB4561.namprd10.prod.outlook.com (2603:10b6:303:9d::15)
+ by CH3PR10MB6835.namprd10.prod.outlook.com (2603:10b6:610:152::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
+ 2024 14:48:09 +0000
+Received: from CO1PR10MB4561.namprd10.prod.outlook.com
+ ([fe80::ecc0:e020:de02:c448]) by CO1PR10MB4561.namprd10.prod.outlook.com
+ ([fe80::ecc0:e020:de02:c448%4]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
+ 14:48:09 +0000
+From: Robert Hodaszi <robert.hodaszi@digi.com>
+To: netdev@vger.kernel.org,
+	vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com,
+	alexandre.belloni@bootlin.com,
+	UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Robert Hodaszi <robert.hodaszi@digi.com>,
+	stable@vger.kernel.org
+Subject: [PATCH net v2] net: dsa: tag_ocelot_8021q: fix broken reception
+Date: Wed, 11 Dec 2024 15:47:41 +0100
+Message-ID: <20241211144741.1415758-1-robert.hodaszi@digi.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI1P293CA0021.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::14) To CO1PR10MB4561.namprd10.prod.outlook.com
+ (2603:10b6:303:9d::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210224947.23804-2-dakr@kernel.org> <2024121112-gala-skincare-c85e@gregkh>
- <2024121111-acquire-jarring-71af@gregkh> <2024121128-mutt-twice-acda@gregkh>
- <2024121131-carnival-cash-8c5f@gregkh> <Z1mEAPlSXA9c282i@cassiopeiae>
- <Z1mG14DMoIzh6xtj@cassiopeiae> <2024121109-ample-retrain-bde0@gregkh>
- <Z1mUG8ruFkPhVZwj@cassiopeiae> <CAH5fLgh3rwS1sFmrhx3zCaSBbAJfhJTV_kbyCVX6BhvnBZ+cQA@mail.gmail.com>
- <Z1mh2rPC3ZOjg-pO@cassiopeiae>
-In-Reply-To: <Z1mh2rPC3ZOjg-pO@cassiopeiae>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 11 Dec 2024 15:45:53 +0100
-Message-ID: <CAH5fLgjg82x5EiWa1BTC7DpbhteBm5Or8XtpLAL0hQz+huXMCw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR10MB4561:EE_|CH3PR10MB6835:EE_
+X-MS-Office365-Filtering-Correlation-Id: 03c3c6ea-93cc-498e-b181-08dd19f2d46f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KGCZh7j+KIHF9om6IkHPjQ8NyO5x8XbDr3CumgE4sh6FsHTL40c2PH8I8Zdt?=
+ =?us-ascii?Q?qezWWsMkLteMNNbetWfi5XlMmaJxPKtIgKCgqsGdJiaUo+l8IsAru8cidMbT?=
+ =?us-ascii?Q?bjIpa8eCJSw6f01CHE5ElJQDKn+LJm/c2LVT1Z/SxXTFg5e5oQkLaT6X1SxT?=
+ =?us-ascii?Q?eARuB5a7ou+aFkFODJDBcify5hEmtvep/fmGjB+yW+YxbXK91+MSZrr/p3HJ?=
+ =?us-ascii?Q?G2tnA36chD+4YBHvrOHMSd4RGqWzIgH663mCGIipH5k73+j1SAwuIPq39/BW?=
+ =?us-ascii?Q?psEVS/9ajqnke1qsDQINazxrt0wV4lHXJvtXL1NYXx0p2ECt+uRwXH8KnnMU?=
+ =?us-ascii?Q?7MNQ3USVOsJCOI8dKQQ/W2UWMBBdmAwjJIArbHIPn14eDW2oEAz7DFQZM5aN?=
+ =?us-ascii?Q?SR0kRprUxdBdJmYyrlUlUul/dhsd1Gc7dvjcN81SDeH+AvFOYOaZWWdCKW7H?=
+ =?us-ascii?Q?gavRiLxEuEwocEgah0Q1MWpTJxZcRDq3dt3ZBsXwCTRuGLxWC5+N/xD0wE/U?=
+ =?us-ascii?Q?XthJg9XIYXLtwOH9rxUDJGnAN4czCsqe7fU9fDpLwPChvRmYUODnWAuIsfcn?=
+ =?us-ascii?Q?dHzOat2Zlu8J9OcoPZu1W2vBMenw5M6Emx2iL9p0X3b1O3GufBxXYvQArO9h?=
+ =?us-ascii?Q?ojoG8IQX/tpD13AINqIuHVXGlLb0BkML2VM1BoycDLjAEdSRX3xYbDzlhIgd?=
+ =?us-ascii?Q?jX6BN+xb6osHOQnHATUkAE0fdVu7b/QS/TJCH4vCACDdEEI1WWOShCTsQ3kS?=
+ =?us-ascii?Q?T8thfBp0OApfFAZxM2TQJLcwqXrGSJhR92dcWbmete6ZfiH3BUjymTANM/Qc?=
+ =?us-ascii?Q?/CbOfbPcQZhHnomrQBmrsAHSj3k1QvslOxcLWPHkHkQgevYAH28cnsAlYuat?=
+ =?us-ascii?Q?KAiHJsuzP06APwW+PbWDnPZ8/oB+54f843ttCDO/W5KWd+lLSJZ82PgqJ4U2?=
+ =?us-ascii?Q?ZjvNDIyZbADIu2gHlK5x3VtVxGoKJObd2qQGMb2/SqGtBsvXeOSY7SJtEStl?=
+ =?us-ascii?Q?qLAA7ESpYSYA7XlBi+WnE+MmuZ8/nZZZFR51UrXF3dEUUKJYz1yUJPMvcEwM?=
+ =?us-ascii?Q?HdG1dBNZzYEfPzMojy2Cky+Ust3Y+wcdAnu1cNiI4zh9rDVdaRSh6hihiMvG?=
+ =?us-ascii?Q?ptIjO9vq6oA5JEtfsy1jViZE0DAriRTA4MOOaReFglJXAQ6xfEOFtrqSpEsp?=
+ =?us-ascii?Q?gYUK6aW7XJ6K/WuVDIVo+4ykHcI4h2/0MBJbD1TnfNdHfN88zoUe6zUJWimL?=
+ =?us-ascii?Q?+wfY3TRFtHKLWRTlc49MWX+RrcxltmcM41uxwuSlrZu+eBXyNnFfET6A7TbX?=
+ =?us-ascii?Q?vipBDpgwrmDmygHwyzOahQSzV3+xk5gN+u0pABtGueKUshCnY2g2pJXPfyU9?=
+ =?us-ascii?Q?GCGTZnhJy+maR/JZAQlw8DGKLZWhH6PhyXOm9z6znGbMuto7GkbbB4sZ9D+Z?=
+ =?us-ascii?Q?ho+Undv5ACY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR10MB4561.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sUmR3SePA5rgq+JS4gXh5xT6iRri4RhWjkmtVa+npfclaxZ7OCI4IIbVJ7Qv?=
+ =?us-ascii?Q?kBV0RxpJsePKyEI1rn2tQhiHs34UFKtusfooRII/ZL6OPOUcvr7bPvePkyDh?=
+ =?us-ascii?Q?b7N+jXDM+Cr9X4uc2Qx3R7NAlq74s6pBAIrvJ4E1YKXcJx91qHGj0E0Q6NCJ?=
+ =?us-ascii?Q?6DaPaww2Mzt3nzZgang02qjD6rC5b/lS/cJD9noYzFFdnAMTfGSa4vEvBhEL?=
+ =?us-ascii?Q?8bNxUQgmgVKYuzFtzMdyXT88JETyQRnu0OIchSrsSRYdHTf6rMC3J1QO5s3Z?=
+ =?us-ascii?Q?3vh7vM72M0RcnDZQ5Dm8JYtcbQ3N8cq2r73pNvqhIMw0/NbBXBbtM90qK9Ki?=
+ =?us-ascii?Q?hU/w7pc8esnUO16ugl5XaDNO1+/xhOm2Tz/3qD1IukCsqzmuVyN/MyKSygcU?=
+ =?us-ascii?Q?AbBXK+TNG7W9y35HBawZ4n8xotRvgBWi8BLCSs9pkaFVlX8vRVOrf5aRucSR?=
+ =?us-ascii?Q?L/u9KfxLCa4lS1IZ8aHC98jgw1x74ge0+15Upk8n9zHTPdOWA+C5sHIiT95y?=
+ =?us-ascii?Q?cMh1RTez8n/8kkZWd/SDrmhi43+D7wpn9C/hH6gzqDj+YMXyZIlX+HVbq8+3?=
+ =?us-ascii?Q?RoaNjSJjUBgv2HBZGGqfY9LNXjEfgeEzTlu5uiHpu72/ONJF3EluEvF7cN30?=
+ =?us-ascii?Q?+xiN2SEUgqf6VyyYGctcQix/3S4q6ddmvvLl0TTfIadE5kjuHSuVwyuMS1FM?=
+ =?us-ascii?Q?OPQYx4Oq8WbmmWA/bsLwQfDq2AKohcxfNscSyGfOBcEASMwxBytPK43JqGiN?=
+ =?us-ascii?Q?9MA+YLNAokfIuBEvhfvGlX1iP9mQmYf62EfSJbXV72th61tjuBMRztO1VrWJ?=
+ =?us-ascii?Q?AkL1sVHrN34oebRHkACSMEz3XxkAh5mMCGHmBuLtC5maGJS80jYZC/tXGXNi?=
+ =?us-ascii?Q?wlAXjICYwRxUcqASw8uLHoq0XO5RzOiEl4edRvN2z4qMpuorgmzCX2xTNHLm?=
+ =?us-ascii?Q?fxPFY0zF1kSsSdrKrZm0t/6eWsYDwo+QMeHV0IDgZPelDnbdZ6SMiK82UKtB?=
+ =?us-ascii?Q?SVvaux8t8wPf/cLx1spTuxiOA3pCB0ExQi0OxGNTqjfLSIqMYMi75BS5UB9Q?=
+ =?us-ascii?Q?5X1a7TjyJoSQpH/hLdWslR7yHbpAhaNeOtZCXgj0ZYbbIAiqNrHyvBiKXZQ2?=
+ =?us-ascii?Q?bw1seR4nuwhvbjcbnwMVrDirZZZgX0dIgwkyTEK5YtFdHIyx17sPE+2e9ShR?=
+ =?us-ascii?Q?S7ChbHBUWnHyA6xlVtbQ30oS2WRUvYN0LiSKh5Qo+N2UgKCgClEA2hc+Qxlz?=
+ =?us-ascii?Q?Dt2ITl0rGZjweJcF2W2DvvUbjyyJINUteyI2pJg9nN7JbLM2uNnawX7jjY4X?=
+ =?us-ascii?Q?0S7MRkVxZR0f9zh7QigwDjoGzW7sHM2J2N5VKltiaVVzVmybkSQ1t6jqv/xD?=
+ =?us-ascii?Q?2rUvRKUNlCSFPSBm+Nc0BNKCDKXtXTugEiwITwxvur3TICFN4YgByLJguwGA?=
+ =?us-ascii?Q?7297yuKleBqTrRUpwrpnPYezGT1/0oyrWX9oW780/SykMB1xnSPhPCjO3kCQ?=
+ =?us-ascii?Q?2iy2e4yoeGdW166k85z8hq8dKdo6sWpBAnQ+fg3UTOfhOU1wS8Ty75eBZtJE?=
+ =?us-ascii?Q?gzb/vYx2lYZP1YkchB373LyxZvrQsLw5di49pZvf?=
+X-OriginatorOrg: digi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03c3c6ea-93cc-498e-b181-08dd19f2d46f
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR10MB4561.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 14:48:09.6315
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: abb4cdb7-1b7e-483e-a143-7ebfd1184b9e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BikEa1w2DCpCo87KVqYfUcBfzdgwHiy0mebQwmnG7DSLl4FH1x/BHuCmKfLhP0GlJO5hUa7MKH3ZedAW9ro2EQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6835
+X-BESS-ID: 1733928494-103291-13513-6992-1
+X-BESS-VER: 2019.1_20241205.2350
+X-BESS-Apparent-Source-IP: 104.47.55.40
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZGpkZAVgZQ0CI10djI1NzUJN
+	UwLckk0TjRwMgkKdXQPNXC2MTAzMxcqTYWABllJuBBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.261038 [from 
+	cloudscan21-129.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS112744 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-On Wed, Dec 11, 2024 at 3:29=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Wed, Dec 11, 2024 at 02:34:54PM +0100, Alice Ryhl wrote:
-> > On Wed, Dec 11, 2024 at 2:31=E2=80=AFPM Danilo Krummrich <dakr@kernel.o=
-rg> wrote:
-> > >
-> > > On Wed, Dec 11, 2024 at 02:14:37PM +0100, Greg KH wrote:
-> > > > On Wed, Dec 11, 2024 at 01:34:31PM +0100, Danilo Krummrich wrote:
-> > > > > On Wed, Dec 11, 2024 at 01:22:33PM +0100, Danilo Krummrich wrote:
-> > > > > > On Wed, Dec 11, 2024 at 12:05:10PM +0100, Greg KH wrote:
-> > > > > > > On Wed, Dec 11, 2024 at 11:59:54AM +0100, Greg KH wrote:
-> > > > > > > > On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
-> > > > > > > > > On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
-> > > > > > > > > > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummr=
-ich wrote:
-> > > > > > > > > > > In a subsequent patch we introduce the `Registration`=
- abstraction used
-> > > > > > > > > > > to register driver structures. Some subsystems requir=
-e the module name on
-> > > > > > > > > > > driver registration (e.g. PCI in __pci_register_drive=
-r()), hence pass
-> > > > > > > > > > > the module name to `Module::init`.
-> > > > > > > > > >
-> > > > > > > > > > Nit, we don't need the NAME of the PCI driver (well, we=
- do like it, but
-> > > > > > > > > > that's not the real thing), we want the pointer to the =
-module structure
-> > > > > > > > > > in the register_driver call.
-> > > > > > > > > >
-> > > > > > > > > > Does this provide for that?  I'm thinking it does, but =
-it's not the
-> > > > > > > > > > "name" that is the issue here.
-> > > > > > > > >
-> > > > > > > > > Wait, no, you really do want the name, don't you.  You re=
-fer to
-> > > > > > > > > "module.0" to get the module structure pointer (if I'm re=
-ading the code
-> > > > > > > > > right), but as you have that pointer already, why can't y=
-ou just use
-> > > > > > > > > module->name there as well as you have a pointer to a val=
-id module
-> > > > > > > > > structure that has the name already embedded in it.
-> > > > > > > >
-> > > > > > > > In digging further, it's used by the pci code to call into =
-lower layers,
-> > > > > > > > but why it's using a different string other than the module=
- name string
-> > > > > > > > is beyond me.  Looks like this goes way back before git was=
- around, and
-> > > > > > > > odds are it's my fault for something I wrote a long time ag=
-o.
-> > > > > > > >
-> > > > > > > > I'll see if I can just change the driver core to not need a=
- name at all,
-> > > > > > > > and pull it from the module which would make all of this go=
- away in the
-> > > > > > > > end.  Odds are something will break but who knows...
-> > > > > > >
-> > > > > > > Nope, things break, the "name" is there to handle built-in mo=
-dules (as
-> > > > > > > the module pointer will be NULL.)
-> > > > > > >
-> > > > > > > So what you really want is not the module->name (as I don't t=
-hink that
-> > > > > > > will be set), but you want KBUILD_MODNAME which the build sys=
-tem sets.
-> > > > > >
-> > > > > > That's correct, and the reason why I pass through this name arg=
-ument.
-> > > > > >
-> > > > > > Sorry I wasn't able to reply earlier to save you some time.
-> > > > > >
-> > > > > > > You shouldn't need to pass the name through all of the subsys=
-tems here,
-> > > > > > > just rely on the build system instead.
-> > > > > > >
-> > > > > > > Or does the Rust side not have KBUILD_MODNAME?
-> > > > > >
-> > > > > > AFAIK, it doesn't (or didn't have at the time I wrote the patch=
-).
-> > > > > >
-> > > > > > @Miguel: Can we access KBUILD_MODNAME conveniently?
-> > > > >
-> > > > > Actually, I now remember there was another reason why I pass it t=
-hrough in
-> > > > > `Module::init`.
-> > > > >
-> > > > > Even if we had env!(KBUILD_MODNAME) already, I'd want to use it f=
-rom the bus
-> > > > > abstraction code, e.g. rust/kernel/pci.rs. But since this is gene=
-ric code, it
-> > > > > won't get the KBUILD_MODNAME from the module that is using the bu=
-s abstraction.
-> > > >
-> > > > Rust can't do that in a macro somehow that all pci rust drivers can=
- pull
-> > > > from?
-> > >
-> > > The problem is that register / unregister is encapsulated within meth=
-ods of the
-> > > abstraction types. So the C macro trick (while generally possible) is=
-n't
-> > > applicable.
-> > >
-> > > I think we could avoid having an additional `name` parameter in `Modu=
-le::init`,
-> > > but it would still need to be the driver resolving `env!(KBUILD_MODNA=
-ME)`
-> > > passing it into the bus abstraction.
-> > >
-> > > However, similar to what Alice suggested in another thread, we could =
-include
-> > > this step in the `module_*_driver!` macros.
-> > >
-> > > Modules that don't use this convenience macro would need to do it by =
-hand
-> > > though. But that's probably not that big a deal.
-> >
-> > I think we can do it in the core `module!` macro that everyone has to u=
-se.
->
-> How? The `module!` macro does not know about the registration instances w=
-ithin
-> the module structure.
+The blamed commit changed the dsa_8021q_rcv() calling convention to
+accept pre-populated source_port and switch_id arguments. If those are
+not available, as in the case of tag_ocelot_8021q, the arguments must be
+pre-initialized with -1.
 
-You could have the module! macro emit something along these lines:
+Due to the bug of passing uninitialized arguments in tag_ocelot_8021q,
+dsa_8021q_rcv() does not detect that it needs to populate the
+source_port and switch_id, and this makes dsa_conduit_find_user() fail,
+which leads to packet loss on reception.
 
-impl ModuleName for {type_} {
-    const NAME: &'static CStr =3D c_str!(env!("KBUILD_MODNAME"));
-}
+Fixes: dcfe7673787b ("net: dsa: tag_sja1105: absorb logic for not overwriting precise info into dsa_8021q_rcv()")
+Signed-off-by: Robert Hodaszi <robert.hodaszi@digi.com>
+---
+Cc: stable@vger.kernel.org
+---
+ net/dsa/tag_ocelot_8021q.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Then you can do `<Self as ModuleName>::NAME` to obtain the name elsewhere.
+diff --git a/net/dsa/tag_ocelot_8021q.c b/net/dsa/tag_ocelot_8021q.c
+index 8e8b1bef6af6..11ea8cfd6266 100644
+--- a/net/dsa/tag_ocelot_8021q.c
++++ b/net/dsa/tag_ocelot_8021q.c
+@@ -79,7 +79,7 @@ static struct sk_buff *ocelot_xmit(struct sk_buff *skb,
+ static struct sk_buff *ocelot_rcv(struct sk_buff *skb,
+ 				  struct net_device *netdev)
+ {
+-	int src_port, switch_id;
++	int src_port = -1, switch_id = -1;
+ 
+ 	dsa_8021q_rcv(skb, &src_port, &switch_id, NULL, NULL);
+ 
+-- 
+2.43.0
 
-Alice
 
