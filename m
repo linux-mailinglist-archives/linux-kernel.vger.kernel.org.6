@@ -1,392 +1,160 @@
-Return-Path: <linux-kernel+bounces-442002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9A69ED6B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:42:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE3C9ED6B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:43:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37166165FB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6842716644A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE69207A25;
-	Wed, 11 Dec 2024 19:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D65A20A5F9;
+	Wed, 11 Dec 2024 19:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a/rSrIFh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FzjvPjNt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNe3R0MC"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781101C303E;
-	Wed, 11 Dec 2024 19:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071331DD885
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733946160; cv=none; b=cWaVmatvdud9Y63LmFQTdI9PgHHKJaTE0tlzzgY7UpI2RRM2C3pNSW5EaDqKIu7jR2HLiKOV/v/pNxlwvJCD8UfgvZhOWBVdwiwzpNTvIk14N2lcCw9iLXwFmrPf1LCe+Ozmi5aPIpwQRPeXX8L4IILpySZkFTpl0S8M4qepSlI=
+	t=1733946161; cv=none; b=S44cwb92TfgIAhQQlnm5xjj79/6imk2ofxCxHgjT8aoptkcz2vKdddEp5Ihb4vQtvlwDGUbANKjHfDGTx5h/O+Ni27iXuhesP35NobdD4dasddq+w1FA9/JhPtH0VCZ1HF0CTZVEENvb1GYFcp3kpEf6jf1k4ePnflynITvWWxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733946160; c=relaxed/simple;
-	bh=+dDPu/GXBL909b/WWV+MxkrEoWGlI93vY7xuZm+MU8U=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=S/l57mIEmm7kVTWMsOnlFSQznumhnhVOv29xvQckG1YGmHYRYuAMCE73xSN8Y2rUm7mcNiR/EsDY77VkyEwzrheuB58Lc1M2zYKLi89tlg9Yy4P/ki/4uzzCeFLxWnZ8kX9KmzXhRT4rszBjKinfVnjkg6O5dF5AQ4ICaa5WXPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a/rSrIFh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FzjvPjNt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 11 Dec 2024 19:42:35 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733946156;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZeL5IFw7EX6PX5PbU4+Oly1SKx5ycGDg/axodGqS0u8=;
-	b=a/rSrIFhKeJ6OJm4iOPVFmP5DW9RfPSwFwl6ghIqs0ppKOPzVs7MU4TTmxZpTbf13tMyk9
-	4RcRfgFwq87I7XPtzi+A8RQi9d0wSKy0JD24PeahobDfYd1RI6jGIhwSqTXZHEPYW8/Hw+
-	/8aanVzD5j2Viv+l0X+q220bpYOmaF6ocS0KknmrGaRRXKtOc9OAjWxASBugkhLcEB4f37
-	/m+HtBMWajzYzyvwt4KhriPC31KUX1+8i8tIwSrfvQNTiEIxYQOsv3X/nC/4HHos6R4Mti
-	zqjCYZaDQWVjKE3C7zIG21whlU6UiiOfHFCkVtjtmH663zR53Fy7H8jjwa1zEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733946156;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZeL5IFw7EX6PX5PbU4+Oly1SKx5ycGDg/axodGqS0u8=;
-	b=FzjvPjNtdplvZ0YLcHA7gw4tOy5nX0UXrsga78pRXzKlLKz3UqZQJ/vv8YSoRmBs7ctRwC
-	i7fFNQKUREIoFcAg==
-From: "tip-bot2 for Eliav Farber" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] kexec: Consolidate machine_kexec_mask_interrupts()
- implementation
-Cc: Eliav Farber <farbere@amazon.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241204142003.32859-2-farbere@amazon.com>
-References: <20241204142003.32859-2-farbere@amazon.com>
+	s=arc-20240116; t=1733946161; c=relaxed/simple;
+	bh=XyOkt5ib8aWsKpIvF89r5dE0RH8x90F9mgNYhpJ0UIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VXoDQLBxZaBjiZVew/sG6s9pGR5f/OrCR5oxBD/BVTpK9zkhrfdi2aIOxi/fj/hO5/uydLsjzGgdu2nd4Yfsaa0JAlKII3oWBPHkIG6A/TG2xkxnwSgYgs5wBqThVl0Gg0JG1Vpg6VE5ARXxyJbdDLnuU62bEBbOJPcWsmdyoNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNe3R0MC; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-216728b1836so21277595ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 11:42:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733946159; x=1734550959; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=lj1zpDLbQ67q+xn4Tg+T12p4jMesEEeen1UDILleHrY=;
+        b=gNe3R0MCpRgB472y9PBxoIVl2BhAF3OOLozZHYGBf9JJPlByq75EzZwZ+TZPKD2kCa
+         AAxGev9ArRS0s8j5gfMWMSFMWPI0YEOHHUu37hBZ/nYIXlsqP0fM79fokxX50NXg6bfv
+         LpRuM6qDQM4QOxiczkBqygpIAbQGFut+CSA5eqegYYj0kEnJEINPvtkQXhYhj8af5I3c
+         VH7o8mFxM/PIBIQqb4li0s9iTWcRO8kmjfpiruzMHB2ciqj83CaJeeGJ1sz4jBHeL+Gx
+         1W7MISxxlLpSuIUe86kvDPxPP3MAjF067wcMsuRxPxcZDISTLRAQCHm/xddiIfANHcMs
+         sfIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733946159; x=1734550959;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lj1zpDLbQ67q+xn4Tg+T12p4jMesEEeen1UDILleHrY=;
+        b=rjckviQGDFrnVWtqWTe9+ZH3ny52hjhhevOZls2RZlBBZdf9oqHKlMPW8yYcjrR+RW
+         v1OCm4CyTGbgcQp9ZO/vqoAYDFoB4TWb/UtyACnwtF7gfnMYM1iy8ckwq1PZFBTYed+H
+         ZwoAPKrJJK1p9p3+8jbIqUuzIjCaENj4+bXLn5XzhcLzrYkQSEmpgBgpZpmLQwuHKtEZ
+         mgvBYShiP7I8ufefXdqM1FjN7VUGOPdJt2twpzuMxYoEEaC6DnxgvCN7b9xC2cKybI9k
+         feVoU8inBC8CbIzSRqijJEONCtXr+UIfSxfK16M9PIpjchTrBNwocjMYFVIPsmpBq94/
+         RJ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVpVwZ+3XueAaWlp57yc2SXl15IHHjyoNMcvUyFpX/RjM07AyF5AMx+eZuOzwLgnbT9C6barp7/g4Q1ZBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLXORKjTOUeehzKiPN3+aMiotp62Zc3/6uL01rCgWyU17ncx6W
+	p1wOZSPrSyM74equMqqYOPY37XU/WL3NcbWGdxdh4O8Llo2fmbasb1xMZA==
+X-Gm-Gg: ASbGnctEfeQZ/NZ4eKXbDFrXJTtBw1fOM9dxttCA+UhNGbLN3B9Kra9ATCLQkVW6L1+
+	5WLY60uSFSL1i9PvimH8QmQI82zADGaRaNZNWFfqFvSgMFZgZOrFOYdsxQdKWK5RZatY27NXBN+
+	PqT8uChqd9611+NCfK4fJkyFHN5JB5eg+W3S7m350DAj2J1lbYP8+VlJF64yHx2wgDJOzSUD148
+	ZSYohJ/q8UKpCJAWxesqKFiOWUXmCWHQ/JEU8eKWi8tnAzjDuwocW+VlZPEE8CoxFXtlt2TBvMc
+	38Cs+N67+uyJ6Ixps+JoxnUPf3A=
+X-Google-Smtp-Source: AGHT+IHVkA8DVUJYDwX+EPn3giKM/n6cInzivkc5RJH3XpPbPzFpgQyyW3v2CSEkeuHacnnFqFOkjA==
+X-Received: by 2002:a17:902:d48c:b0:215:b9a6:5cb9 with SMTP id d9443c01a7336-2178ae4c25dmr14877385ad.5.1733946159160;
+        Wed, 11 Dec 2024 11:42:39 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2161eb94f17sm89412675ad.220.2024.12.11.11.42.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 11:42:38 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <670d63a3-6b20-41a3-a4db-96b407b80202@roeck-us.net>
+Date: Wed, 11 Dec 2024 11:42:36 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173394615569.412.14549389930277757733.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] staging: gpib: Fix i386 build issue
+To: Dave Penkler <dpenkler@gmail.com>, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, geert@linux-m68k.org
+References: <20241211164452.27464-1-dpenkler@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241211164452.27464-1-dpenkler@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
+On 12/11/24 08:44, Dave Penkler wrote:
+> These drivers cast resource_type_t to void * causing the build to fail.
+> 
+> With a 32 bit build and PHYS_ADDR_T_64BIT enabled the resource_size_t
+> type is a 64bit unsigned int which cannot be cast to a 32 bit pointer.
+> 
+> Disable these drivers if not 64BIT and PHYS_ADDR_T_64BIT are configured.
+> 
+> Link: https://lore.kernel.org/linux-staging/2c6c7e9d-ca10-47a9-82a7-a2e26b1f51ef@roeck-us.net/
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net/
+> Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
+> Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporation GPIB driver")
+> Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
+> Fixes: 0cd5b05551e0 ("staging: gpib: Add TNT4882 chip based GPIB driver")
+> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 
-Commit-ID:     bad6722e478f5b17a5ceb039dfb4c680cf2c0b48
-Gitweb:        https://git.kernel.org/tip/bad6722e478f5b17a5ceb039dfb4c680cf2c0b48
-Author:        Eliav Farber <farbere@amazon.com>
-AuthorDate:    Wed, 04 Dec 2024 14:20:02 
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 11 Dec 2024 20:32:34 +01:00
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-kexec: Consolidate machine_kexec_mask_interrupts() implementation
+Guenter
 
-Consolidate the machine_kexec_mask_interrupts implementation into a common
-function located in a new file: kernel/irq/kexec.c. This removes duplicate
-implementations from architecture-specific files in arch/arm, arch/arm64,
-arch/powerpc, and arch/riscv, reducing code duplication and improving
-maintainability.
-
-The new implementation retains architecture-specific behavior for
-CONFIG_GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD, which was previously implemented
-for ARM64. When enabled (currently for ARM64), it clears the active state
-of interrupts forwarded to virtual machines (VMs) before handling other
-interrupt masking operations.
-
-Signed-off-by: Eliav Farber <farbere@amazon.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241204142003.32859-2-farbere@amazon.com
-
----
- arch/arm/kernel/machine_kexec.c   | 23 +-----------------
- arch/arm64/Kconfig                |  1 +-
- arch/arm64/kernel/machine_kexec.c | 31 +-----------------------
- arch/powerpc/include/asm/kexec.h  |  1 +-
- arch/powerpc/kexec/core.c         | 22 +-----------------
- arch/powerpc/kexec/core_32.c      |  1 +-
- arch/riscv/kernel/machine_kexec.c | 23 +-----------------
- include/linux/irq.h               |  3 ++-
- kernel/irq/Kconfig                |  6 +++++-
- kernel/irq/Makefile               |  2 +-
- kernel/irq/kexec.c                | 40 ++++++++++++++++++++++++++++++-
- 11 files changed, 52 insertions(+), 101 deletions(-)
- create mode 100644 kernel/irq/kexec.c
-
-diff --git a/arch/arm/kernel/machine_kexec.c b/arch/arm/kernel/machine_kexec.c
-index 80ceb5b..dd43047 100644
---- a/arch/arm/kernel/machine_kexec.c
-+++ b/arch/arm/kernel/machine_kexec.c
-@@ -127,29 +127,6 @@ void crash_smp_send_stop(void)
- 	cpus_stopped = 1;
- }
- 
--static void machine_kexec_mask_interrupts(void)
--{
--	unsigned int i;
--	struct irq_desc *desc;
--
--	for_each_irq_desc(i, desc) {
--		struct irq_chip *chip;
--
--		chip = irq_desc_get_chip(desc);
--		if (!chip)
--			continue;
--
--		if (chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
--			chip->irq_eoi(&desc->irq_data);
--
--		if (chip->irq_mask)
--			chip->irq_mask(&desc->irq_data);
--
--		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
--			chip->irq_disable(&desc->irq_data);
--	}
--}
--
- void machine_crash_shutdown(struct pt_regs *regs)
- {
- 	local_irq_disable();
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 100570a..dcc3551 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -149,6 +149,7 @@ config ARM64
- 	select GENERIC_IDLE_POLL_SETUP
- 	select GENERIC_IOREMAP
- 	select GENERIC_IRQ_IPI
-+	select GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
- 	select GENERIC_IRQ_PROBE
- 	select GENERIC_IRQ_SHOW
- 	select GENERIC_IRQ_SHOW_LEVEL
-diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 82e2203..6f121a0 100644
---- a/arch/arm64/kernel/machine_kexec.c
-+++ b/arch/arm64/kernel/machine_kexec.c
-@@ -207,37 +207,6 @@ void machine_kexec(struct kimage *kimage)
- 	BUG(); /* Should never get here. */
- }
- 
--static void machine_kexec_mask_interrupts(void)
--{
--	unsigned int i;
--	struct irq_desc *desc;
--
--	for_each_irq_desc(i, desc) {
--		struct irq_chip *chip;
--		int ret;
--
--		chip = irq_desc_get_chip(desc);
--		if (!chip)
--			continue;
--
--		/*
--		 * First try to remove the active state. If this
--		 * fails, try to EOI the interrupt.
--		 */
--		ret = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
--
--		if (ret && irqd_irq_inprogress(&desc->irq_data) &&
--		    chip->irq_eoi)
--			chip->irq_eoi(&desc->irq_data);
--
--		if (chip->irq_mask)
--			chip->irq_mask(&desc->irq_data);
--
--		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
--			chip->irq_disable(&desc->irq_data);
--	}
--}
--
- /**
-  * machine_crash_shutdown - shutdown non-crashing cpus and save registers
-  */
-diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-index 270ee93..601e569 100644
---- a/arch/powerpc/include/asm/kexec.h
-+++ b/arch/powerpc/include/asm/kexec.h
-@@ -61,7 +61,6 @@ struct pt_regs;
- extern void kexec_smp_wait(void);	/* get and clear naca physid, wait for
- 					  master to copy new code to 0 */
- extern void default_machine_kexec(struct kimage *image);
--extern void machine_kexec_mask_interrupts(void);
- 
- void relocate_new_kernel(unsigned long indirection_page, unsigned long reboot_code_buffer,
- 			 unsigned long start_address) __noreturn;
-diff --git a/arch/powerpc/kexec/core.c b/arch/powerpc/kexec/core.c
-index b8333a4..58a930a 100644
---- a/arch/powerpc/kexec/core.c
-+++ b/arch/powerpc/kexec/core.c
-@@ -22,28 +22,6 @@
- #include <asm/setup.h>
- #include <asm/firmware.h>
- 
--void machine_kexec_mask_interrupts(void) {
--	unsigned int i;
--	struct irq_desc *desc;
--
--	for_each_irq_desc(i, desc) {
--		struct irq_chip *chip;
--
--		chip = irq_desc_get_chip(desc);
--		if (!chip)
--			continue;
--
--		if (chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
--			chip->irq_eoi(&desc->irq_data);
--
--		if (chip->irq_mask)
--			chip->irq_mask(&desc->irq_data);
--
--		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
--			chip->irq_disable(&desc->irq_data);
--	}
--}
--
- #ifdef CONFIG_CRASH_DUMP
- void machine_crash_shutdown(struct pt_regs *regs)
- {
-diff --git a/arch/powerpc/kexec/core_32.c b/arch/powerpc/kexec/core_32.c
-index c95f968..deb28eb 100644
---- a/arch/powerpc/kexec/core_32.c
-+++ b/arch/powerpc/kexec/core_32.c
-@@ -7,6 +7,7 @@
-  * Copyright (C) 2005 IBM Corporation.
-  */
- 
-+#include <linux/irq.h>
- #include <linux/kexec.h>
- #include <linux/mm.h>
- #include <linux/string.h>
-diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/machine_kexec.c
-index 3c830a6..2306ce3 100644
---- a/arch/riscv/kernel/machine_kexec.c
-+++ b/arch/riscv/kernel/machine_kexec.c
-@@ -114,29 +114,6 @@ void machine_shutdown(void)
- #endif
- }
- 
--static void machine_kexec_mask_interrupts(void)
--{
--	unsigned int i;
--	struct irq_desc *desc;
--
--	for_each_irq_desc(i, desc) {
--		struct irq_chip *chip;
--
--		chip = irq_desc_get_chip(desc);
--		if (!chip)
--			continue;
--
--		if (chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
--			chip->irq_eoi(&desc->irq_data);
--
--		if (chip->irq_mask)
--			chip->irq_mask(&desc->irq_data);
--
--		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
--			chip->irq_disable(&desc->irq_data);
--	}
--}
--
- /*
-  * machine_crash_shutdown - Prepare to kexec after a kernel crash
-  *
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index fa711f8..25f51bf 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -694,6 +694,9 @@ extern int irq_chip_request_resources_parent(struct irq_data *data);
- extern void irq_chip_release_resources_parent(struct irq_data *data);
- #endif
- 
-+/* Disable or mask interrupts during a kernel kexec */
-+extern void machine_kexec_mask_interrupts(void);
-+
- /* Handling of unhandled and spurious interrupts: */
- extern void note_interrupt(struct irq_desc *desc, irqreturn_t action_ret);
- 
-diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
-index 529adb1..875f25e 100644
---- a/kernel/irq/Kconfig
-+++ b/kernel/irq/Kconfig
-@@ -141,6 +141,12 @@ config GENERIC_IRQ_DEBUGFS
- 
- 	  If you don't know what to do here, say N.
- 
-+# Clear forwarded VM interrupts during kexec.
-+# This option ensures the kernel clears active states for interrupts
-+# forwarded to virtual machines (VMs) during a machine kexec.
-+config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
-+	bool
-+
- endmenu
- 
- config GENERIC_IRQ_MULTI_HANDLER
-diff --git a/kernel/irq/Makefile b/kernel/irq/Makefile
-index f19d308..c0f44c0 100644
---- a/kernel/irq/Makefile
-+++ b/kernel/irq/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-y := irqdesc.o handle.o manage.o spurious.o resend.o chip.o dummychip.o devres.o
-+obj-y := irqdesc.o handle.o manage.o spurious.o resend.o chip.o dummychip.o devres.o kexec.o
- obj-$(CONFIG_IRQ_TIMINGS) += timings.o
- ifeq ($(CONFIG_TEST_IRQ_TIMINGS),y)
- 	CFLAGS_timings.o += -DDEBUG
-diff --git a/kernel/irq/kexec.c b/kernel/irq/kexec.c
-new file mode 100644
-index 0000000..0f9548c
---- /dev/null
-+++ b/kernel/irq/kexec.c
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqdesc.h>
-+#include <linux/irqnr.h>
-+
-+#include "internals.h"
-+
-+void machine_kexec_mask_interrupts(void)
-+{
-+	struct irq_desc *desc;
-+	unsigned int i;
-+
-+	for_each_irq_desc(i, desc) {
-+		struct irq_chip *chip;
-+		int check_eoi = 1;
-+
-+		chip = irq_desc_get_chip(desc);
-+		if (!chip)
-+			continue;
-+
-+		if (IS_ENABLED(CONFIG_GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD)) {
-+			/*
-+			 * First try to remove the active state from an interrupt which is forwarded
-+			 * to a VM. If the interrupt is not forwarded, try to EOI the interrupt.
-+			 */
-+			check_eoi = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
-+		}
-+
-+		if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
-+			chip->irq_eoi(&desc->irq_data);
-+
-+		if (chip->irq_mask)
-+			chip->irq_mask(&desc->irq_data);
-+
-+		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
-+			chip->irq_disable(&desc->irq_data);
-+	}
-+}
 
