@@ -1,55 +1,75 @@
-Return-Path: <linux-kernel+bounces-441058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5DB9EC8D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:20:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1ED188D184
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:20:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFA7233695;
-	Wed, 11 Dec 2024 09:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mpKm2Rk3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E699EC8C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:19:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE10A2336A4;
-	Wed, 11 Dec 2024 09:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C27280AB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:19:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1402336A7;
+	Wed, 11 Dec 2024 09:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MbQCZRk3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4440F1A8408;
+	Wed, 11 Dec 2024 09:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908763; cv=none; b=LYLXqYoeAttqrL5pdJb2eMhBJ/Tty+qGtFb02VX8kSnZdLK19KRHTSraEjn1kohXSoTkUxiipJOhgcZ47IVui91zi2O60utT8GCcxU8uq6G08nbRbQ+qtHO2/uqNFnV7Ep5b8sEphOJF7sEA4/IVjrwcuWGyHS30ZGZyIDanR/g=
+	t=1733908746; cv=none; b=eoxQdwrylcZPQEzlFFKMMDgKX2A8u/xum9d7EWvl3uqjGOSLoJesab3Z47koG26g1QI83+pvf914YlmVjjSfOQX+uckuTU3DrZIfgKM+JCs+WPDltZl7cQKZ5ZcxDjLz3eZbhP4zskm0cRJ0kVxXRBM5GeGt8COaKyCcyV+bVTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908763; c=relaxed/simple;
-	bh=5Zj9F6Cp4uvMjjvZ3FuxT+1lsAKj5je8ROGKo0mRbJI=;
+	s=arc-20240116; t=1733908746; c=relaxed/simple;
+	bh=EAZc5BG/lGj4Chm2b9mW1NY7iiGPZNBIY+xChKuEvmo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqasIWTMzx2J3A/lpTfdLjxdHaMI4r3Pxvis2cDUYOlhlJ16eddQFSm0xZdAoVBkVOtoyF0O6qjyZBpKB7nCoj18TuRw0bPdkQmDHQq2qgVIouzhudgnlEDmU7pt7T1xjJjKLgecCWPGqgB0LzykzxiJLJ80mdghsR1d7TjMglg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mpKm2Rk3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05104C4CED2;
-	Wed, 11 Dec 2024 09:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733908762;
-	bh=5Zj9F6Cp4uvMjjvZ3FuxT+1lsAKj5je8ROGKo0mRbJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mpKm2Rk3FddeI8Ei4uiZbNP7W1JvxK1fjaXlSowmJSskMVf1tZL2SPV1FX+gKZ43s
-	 Td3tN+RR+0gxseyXWQYRmOzGJw91VjqZe2az5MyFaENi5MVyPbsCF7lqUeqMCSVDCx
-	 hr5qo4trOKn6qjN7jfEsS6DWi7iC2RGNmyX37hos=
-Date: Wed, 11 Dec 2024 10:18:46 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: jianqi.ren.cn@windriver.com
-Cc: cratiu@nvidia.com, dtatulea@nvidia.com, tariqt@nvidia.com,
-	pabeni@redhat.com, patches@lists.linux.dev, stable@vger.kernel.org,
-	saeedm@nvidia.com, leon@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, roid@nvidia.com,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.1.y] net/mlx5e: Don't call cleanup on profile rollback
- failure
-Message-ID: <2024121114-subsidize-tattered-dd8c@gregkh>
-References: <20241211100953.2069964-1-jianqi.ren.cn@windriver.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvkGvTUO+yJcmjDnYlDoLgJKa2Xb6ffJkPDJlMous8vRMY3zkcmasofS0dZTQOh2W6PCF+2vIM19Q3S+X0vzc+u86c4lraoPvZo+jokbQUGIpPplZfbEx3f9Ew/4V94bgF2UWMsHnYOBz/sdnnxXm8F30kBGElorExjrKgCHn0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MbQCZRk3; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733908741; x=1765444741;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EAZc5BG/lGj4Chm2b9mW1NY7iiGPZNBIY+xChKuEvmo=;
+  b=MbQCZRk3tX1ryDDg+dN4pAH/aFVV3GSoeKA4NTguBVRjKhze9GFDAI45
+   lHP76WLph0MRDV6GqykZPPmQ739ogVfO2UePT5Wb1ZfTVs5CJHFJMozaM
+   s0mrVbpA2ai+mEmeztb/jk+dfmjpSQ5i0D/LsaZvaCRJSlFOXiWwD+QrE
+   2OI2760cNUjEeugDJpJvfDZkrNxpt5GLx6cUveDr0/TDkeBaSUBm1KfH6
+   HDt9AyFH9nkGsiSsrCqJawHwVCwbZ6HhgPoKRIF7esaIwPwss8KHFJZkH
+   5MiNzX26WKT4lcjALYKwqkpmv88J+12vMdKAZIwyREn4xz/KCeNVkeMZ3
+   Q==;
+X-CSE-ConnectionGUID: n6NGchO+T+6myJ2PV9dDKg==
+X-CSE-MsgGUID: /jsb/KS2RPyWx4k9Hy2kJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="44951279"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="44951279"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 01:18:58 -0800
+X-CSE-ConnectionGUID: yOTttQY1SJmWD38zPJwHSw==
+X-CSE-MsgGUID: AIOLTSZPRBmMr4J7M5fB/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="96203619"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa009.fm.intel.com with SMTP; 11 Dec 2024 01:18:52 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 11 Dec 2024 11:18:51 +0200
+Date: Wed, 11 Dec 2024 11:18:51 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Badhri Jagan Sridharan <badhri@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpm/tcpci_maxim: fix error code in
+ max_contaminant_read_resistance_kohm()
+Message-ID: <Z1lY-9ik5T76U_Yn@kuha.fi.intel.com>
+References: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,25 +78,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241211100953.2069964-1-jianqi.ren.cn@windriver.com>
+In-Reply-To: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
 
-On Wed, Dec 11, 2024 at 06:09:53PM +0800, jianqi.ren.cn@windriver.com wrote:
-> From: Cosmin Ratiu <cratiu@nvidia.com>
+On Fri, Dec 06, 2024 at 04:09:18PM +0300, Dan Carpenter wrote:
+> If max_contaminant_read_adc_mv() fails, then return the error code.  Don't
+> return zero.
 > 
-> [ Upstream commit 4dbc1d1a9f39c3711ad2a40addca04d07d9ab5d0 ]
+> Fixes: 02b332a06397 ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Please note that we can not apply a commit to an older stable tree that
-is NOT in newer ones as you would obviously have a regression when
-moving to a newer kernel.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-I am guessing that you are being tasked with backporting CVE fixes to
-older stable kernels, which is great, but please work "down the release
-list" by starting with the newest one, and then moving to the older
-ones.  Otherwise we just can't take these and you are causing a lot of
-extra review/checking time on our side here to verify you are doing it
-all correctly :(
+> ---
+>  drivers/usb/typec/tcpm/maxim_contaminant.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
+> index 22163d8f9eb0..0cdda06592fd 100644
+> --- a/drivers/usb/typec/tcpm/maxim_contaminant.c
+> +++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
+> @@ -135,7 +135,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
+>  
+>  		mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+>  		if (mv < 0)
+> -			return ret;
+> +			return mv;
+>  
+>  		/* OVP enable */
+>  		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCOVPDIS, 0);
+> @@ -157,7 +157,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
+>  
+>  	mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+>  	if (mv < 0)
+> -		return ret;
+> +		return mv;
+>  	/* Disable current source */
+>  	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, SBURPCTRL, 0);
+>  	if (ret < 0)
+> -- 
+> 2.45.2
 
-thanks,
-
-greg k-h
+-- 
+heikki
 
