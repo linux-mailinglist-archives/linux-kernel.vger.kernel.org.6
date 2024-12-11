@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-442330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571859EDB05
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:12:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 128459EDB0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CEF21883E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:12:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9091689EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117E61F2C20;
-	Wed, 11 Dec 2024 23:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46BE1F2390;
+	Wed, 11 Dec 2024 23:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmeWeDr6"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NOUYG+Mx"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38A11EC4FF;
-	Wed, 11 Dec 2024 23:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A8C195
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733958756; cv=none; b=HWaU49HJK2mC0aBc7alwGmkStbphVmqeqq03m1V2Xz0u4N7NrTJBVxSlyHBU9uoW0oBpv16EcPIUr2QYqZq5/9nnxOHGZQTJsp0RL87tgVpAk59E4FmemTCj59DVfnn0nuoYCljfVSHcYLCoUKWkCSuArhhsRD79vor3wi3MXD8=
+	t=1733958877; cv=none; b=nYS69o92pPqLimbjmDru3EniR3Q1odBODxnzC8+2Y9QAxIGfpKVhesgzxnmn/v5eBre5a0eN7S9f65SSk+znKa6meviF1DWgqERKqev1hlAMSJ7M3lIIdG2HTvyV83H5dcHWDK9Vd91W4pA1e8eUJM+mVBGNOWgiiSKk+05CsNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733958756; c=relaxed/simple;
-	bh=EAhbE5FnzPrjYNKQthkW7n6a3bm7zIYVzKfWffn+RC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RBqS5QF8yu7ON3JSG8l8njwCa5lVFNP31vrmtISRiTWAGLChHMTjz+hzJfK0aIhF0XpIwcHgI3ZoJz3dt1Bm2Ykh8pJZL0oYwc7bSaggD1n48Ha842htWFvw2KEo/Wc0tGUm6X0T5H2NWUDVUZk8SPUgrRxarShkrAzTEb6Sw9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmeWeDr6; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385ed7f6605so3298342f8f.3;
-        Wed, 11 Dec 2024 15:12:34 -0800 (PST)
+	s=arc-20240116; t=1733958877; c=relaxed/simple;
+	bh=WrNfaLLMK3uWC1leCYvhijKU/AyCY0tnfOj8dWBChLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tp6vMTPnF1PiWEcD/uRLGhrlF1tWbfX/LOpKYgJOtjyw+n+APp5vbtpB+wRz3Ulc68Bjv6KFbw7DUvqiINmGgonK2fWYiAgRuk6Fat37/Y2ZQ4PvZenRETdtfcedPDjmqsml04hDlCnVuI5vgOfipsPLRwQmeVIKT7uZWMncOr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NOUYG+Mx; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1411277166b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:14:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733958753; x=1734563553; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H0G/tFvxt07BfyGaMcXOJ1EEDxLzNA9gUV0WXr7dWt8=;
-        b=bmeWeDr6M+tDpHxrzDca1w4nZnNStkiMQvdGA1CMqcWEXszGCJoN068GyFWL50q7Bc
-         vF1VEX1gx4aUZp/UyAaNExNtNKkrzp/ggBzv71AaDrPOr2i4r+fARkDC9a842N2uaIyK
-         pMi6p+TqXYhjhA55Fn+ZVkGPUaTccugu1on7+vQNGVbQxdkO8bqFTD8uTIAUylNjldRh
-         YBvCqzVU/Eb+1791v4/mTTThzNJ6kIlw3UUJMfAbcaFWnz68PMyw3fKwjHjKqtkIFbxH
-         ZrytkbA96Rk9JngVyh4KcT3YKWVnnQf/MMvANmfjdEgx059BjXDWz+XMmu73nDde1UHt
-         VCwg==
+        d=google.com; s=20230601; t=1733958874; x=1734563674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lyrwn/8iC91fqxvEN4VFGVfM2i80Tjda+ammClFpARY=;
+        b=NOUYG+MxDTMfGRKkAPzHOyofWQMGn/5aakOMTvddwRKmwG3aQqS8aX3g0Cojlx0M0z
+         U/sdmp0EurlXXBTRkGK8kwE3pOU4ccViw3rblyiBwTvM1pXy9imyr1qcTxqc0RjxLuq9
+         wygY7j0xA/98gSeq2wkiYZIW2ElsYCYaBC10YCXxvHS+QopaVFnrhHNsXPCUNIkXs7Nr
+         hgwru27vRn667Q6cdS/o6i47f9TKdWJy7xzJmV0Vp0O8Ypm2ddwiEw/c5ein86ev+v76
+         IEF1zgcEkkru8Bcjq9692hDt88eTnOjwOAUkzeeUh3prUEhfnFrfcCILzlpkQrcp/HNv
+         tv4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733958753; x=1734563553;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H0G/tFvxt07BfyGaMcXOJ1EEDxLzNA9gUV0WXr7dWt8=;
-        b=DEfbvZPggqEJx/CPuGYjIV7tjHDzQgsY8oywLgJxoDzTjm+8X4MLCiX1n7fb+qHBbv
-         KX+FhJ8RkQtkiJhjPOuCWaUt0H7vGa/k079gv+Pp92MEaWXqgPLrL+fgo00++1uRXlg6
-         ltPM2Cnp2lgu7IKs1CTRXRpxu1qvWV6hpJLkk6VnPf5acju2801fvDg+p9fUKDq0bEyk
-         CWZ0PGLlY1PYuPOyJ82CblgC+RAJvAu55RW9rwFEAKmORN3t4hvrYp9WnjPGJ3LA3wlI
-         2zitg/Qb/oPZuO1N/Qi8XFHIXcFycD17Tz3mTsgH8otnkxJkp7TsNsjL08EKa52bAW/X
-         Ui/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ4FbzneGiG2Y6C841Y9sXD1tL+UzmhpP4mJtCKDqpR56qcUpFNBEdvu51M66Mr/cSRFABCs4L+dtTpFCEl/vd@vger.kernel.org, AJvYcCV5SvG/akYCNRKus+7iIihafVbtoXjYgVAyAiT2spmKNchHz4aVRaExfFORNCxVDqmDOfZQO2vraxz9pvc5@vger.kernel.org, AJvYcCX/VfdYgFIYXu5bVn1TLRwv4In92/4Cy57YUOKbPLK+Jugg8a2TZH1rPwuvCwYFQHmAXSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3ZEzGb4CuJs1G/rn3afbHVjEZ8GRVBW8nv6nuU2Bjb43xEQqy
-	E8KrTW/hoTmPt1NIp/MWNrCqBlxitrmwXxSPxW/Hp2M6BNGpqVkMQPj/Qg==
-X-Gm-Gg: ASbGncugv6L/YoiwTc5ZCiEz/ihBJaognPF1/D6LX6WeSQiS12/Un6hCt4LilnznsWN
-	XdMGGqTGaQb/6Yj8WZ3D+rMuBnW7l/xEqPrAaS/Ajvw+jJkZ2Mup58O59MoccDxpn9lOmlebxXi
-	1hqo/pBqtJ2Pp2sV/ygxHHhskGr6DtcLMfHny2Qdfl0KrOMgb4p/WIVUqVgwIsoguV/4Tljaf9D
-	ZDxIPRPV4491+WKhToL48nvxjXpWIZQnWmMX7Pr2fKwKvJKg/0tbZnb7nCuYTaY1fns+xTKVRNA
-	JxdVNRmotmvqx828Xjb0zxU=
-X-Google-Smtp-Source: AGHT+IFDEYUGEXXWANtZGVvGV93et6FVrxvSd5oSyDoZDY/bBfBGHmy3MYjduVrqTIfsaEDluJiOTQ==
-X-Received: by 2002:a05:6000:1449:b0:385:f409:b42 with SMTP id ffacd0b85a97d-3864cea44c2mr4278755f8f.53.1733958752995;
-        Wed, 11 Dec 2024 15:12:32 -0800 (PST)
-Received: from ?IPV6:2a02:8012:e013:0:1ab3:1f25:931:4d97? ([2a02:8012:e013:0:1ab3:1f25:931:4d97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0be4sm273633405e9.28.2024.12.11.15.12.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 15:12:32 -0800 (PST)
-Message-ID: <2b75550c-0dc7-4bcc-ac60-9ad4402c17f8@gmail.com>
-Date: Wed, 11 Dec 2024 23:12:29 +0000
+        d=1e100.net; s=20230601; t=1733958874; x=1734563674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lyrwn/8iC91fqxvEN4VFGVfM2i80Tjda+ammClFpARY=;
+        b=U5FpLl1xqkBXp93h8GhQmlOJvT/KbX+dEefu3SuhnpTPrDG3cs4O+/05amaoETFHHf
+         T6vklnBcSNj5Sbq+lIX9KDxjHhFDs3u5RfsX5pF9kNP6ddKVfLSYskVk9K188kg1zzGM
+         rGmKt4iRugTv/yetU+2bUlSkYoJ5hDdMXVyznJTw4LQZGm2K6YW7WyvUOgaF7ZekFnMl
+         28VpuLkTTqKy9tzthRGgbT33TA9kzv+EdwE/B0PhuH+fIa8JIq96+zsONBLRwa1mhcOw
+         z/ONU1BmU2IMZvGbmtpR5Hd5MXia8BxCaUnqadg/YNhEp65C6PdJp7knHOaK3CjknLJU
+         vI/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX3DLEROQPUD78v4TgLpcpzCDVNNTVjgSS1F5AMZgeCKeehssGB1i6IDgRV8pWjHY/jmxIFxOGdEhoPGHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3y5TWImZKqwICi4u0qpQYNlW7kmlxfr5F5rGAgJ/c+uPChGwH
+	IK1ihDmbgGb6h08zxnsPG37EjDad//kZ1yFG4l5QhRuPbFo5JgD7fOcy0k4tMbA6Eoy8CbczhXV
+	VNA5mDtjncvjsy2HPuQYX2H13EFEzJa0W9NM=
+X-Gm-Gg: ASbGncsCv6MYbe0mdNyljV5MZvh+UD4/dW+QBK5rwoPBaNFRQDLZG8IdLAXNNo2e8ya
+	bfmvYnhjeC7OI97OCc5QgCgZ70+QR2h510Wd5Ph5Z8SRwWXApi0y6q7BeZkGnIDii
+X-Google-Smtp-Source: AGHT+IF3XmfEYysIxUvDXnEBTbcGjvh64bFgdS2rcyofdKik49jXRaUIypCcc4ZKueDrFTFW+pFCU3B3eA24Sd6Hj5s=
+X-Received: by 2002:a17:907:1587:b0:aa6:6e02:e885 with SMTP id
+ a640c23a62f3a-aa6b13b1375mr349607866b.47.1733958873660; Wed, 11 Dec 2024
+ 15:14:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] KVM: VMX: Handle vectoring error in
- check_emulate_instruction
-To: Sean Christopherson <seanjc@google.com>, Ivan Orlov <iorlov@amazon.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com,
- pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, hpa@zytor.com,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, x86@kernel.org, pdurrant@amazon.co.uk,
- dwmw@amazon.co.uk
-References: <20241111102749.82761-1-iorlov@amazon.com>
- <20241111102749.82761-4-iorlov@amazon.com> <Z1nWykQ3e4D5e2C-@google.com>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <Z1nWykQ3e4D5e2C-@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241211213527.3278-1-spasswolf@web.de> <75a27bab5671c43d2be6a26ac23916b731204086.camel@web.de>
+In-Reply-To: <75a27bab5671c43d2be6a26ac23916b731204086.camel@web.de>
+From: John Stultz <jstultz@google.com>
+Date: Wed, 11 Dec 2024 15:14:22 -0800
+X-Gm-Features: AZHOrDmu8xZLSzl7R7-uGdp3QXt7U4Nui-WfmacvNjW2x7XjjDnf99GuRbQHVl0
+Message-ID: <CANDhNCoNMtjKmgWbCfScK1xGqQrKTh2a0cw+VYTgiT-dw2haLQ@mail.gmail.com>
+Subject: Re: commit 894d1b3db41c leads to frequent hangs when booting
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Metin.Kaya@arm.com, boqun.feng@gmail.com, bsegall@google.com, 
+	daniel.lezcano@linaro.org, dave@stgolabs.net, dietmar.eggemann@arm.com, 
+	joelaf@google.com, juri.lelli@redhat.com, kernel-team@android.com, 
+	kprateek.nayak@amd.com, linux-kernel@vger.kernel.org, longman@redhat.com, 
+	mgorman@suse.de, mingo@redhat.com, paulmck@kernel.org, peterz@infradead.org, 
+	qyousef@layalina.io, rostedt@goodmis.org, tglx@linutronix.de, 
+	vincent.guittot@linaro.org, vschneid@redhat.com, will@kernel.org, 
+	xuewen.yan94@gmail.com, zezeozue@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/11/24 18:15, Sean Christopherson wrote:
-> Hmm, this should probably be "pf_mmio", not just "mmio".  E.g. if KVM is emulating
-> large swaths of guest code because unrestricted guest is disabled, then can end up
-> emulating an MMIO access for "normal" emulation.
-> 
-> Hmm, actually, what if we go with this?
-> 
->    static inline bool kvm_can_emulate_event_vectoring(int emul_type)
->    {
-> 	return !(emul_type & EMULTYPE_PF) ||
-> 	       (emul_type & EMULTYPE_WRITE_PF_TO_SP);
->    }
-> 
+On Wed, Dec 11, 2024 at 2:46=E2=80=AFPM Bert Karwatzki <spasswolf@web.de> w=
+rote:
+>
+> Am Mittwoch, dem 11.12.2024 um 22:35 +0100 schrieb Bert Karwatzki:
+> > I have confirmed that I that linux-next-20241210 is fixed by the same r=
+evert
+> > as v6.13-rc2 (ten boots without incident is the criterion for a good co=
+mmit)
+> >
+> >
+> > Bert Karwatzki
+>
+> Also this bug only occurs with CONFIG_PREEMPT_RT=3Dy, I've just checked v=
+6.13-rc2
+> without the revert and the following preempt settings and got 10 clean bo=
+ots:
+>
 
-Hm, by the way, what is the desired behaviour if EMULTYPE_ALLOW_RETRY_PF 
-is set? Is it correct that we return an internal error if it is set 
-during vectoring? Or KVM may try to unprotect the page and re-execute?
+Hrm. That matches the case where the fix here helped:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
+id=3D82f9cc094975240885c93effbca7f4603f5de1bf
 
-If so, we may need something like
 
-static inline bool kvm_can_emulate_event_vectoring(int emul_type)
-{
-	return !(emul_type & EMULTYPE_PF) ||
-	       (emul_type & ~(EMULTYPE_PF));
-}
+I'm still working on getting a minimal delta from your config booting
+in my environment, but in the meantime, I'd be curious if the
+following reduced revert helps?
+  https://github.com/johnstultz-work/linux-dev/commit/60c60f85670fb1f4708ad=
+be55e15ab918d96f9f0
 
-So it returns true if EMULTYPE_PF is not set or if it's not the only set 
-bit.
+Basically just trying to clarify if the problem is moving the wakeup
+to the wake_q or if some other interaction (maybe with the
+preempt_disables) could be causing the issue.
+(I'm assuming you have 82f9cc094975 applied when you test with that change)
 
--- 
-Kind regards,
-Ivan Orlov
+thanks
+-john
 
