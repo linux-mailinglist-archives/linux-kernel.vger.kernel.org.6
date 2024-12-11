@@ -1,126 +1,94 @@
-Return-Path: <linux-kernel+bounces-442035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D209ED737
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF3A9ED73A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA24281127
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:27:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0342816C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C5620A5EF;
-	Wed, 11 Dec 2024 20:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FGT3KQ75"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0D620C030;
+	Wed, 11 Dec 2024 20:28:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A0D1FF1DC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91056207A18
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733948836; cv=none; b=esIiiOMe4+zyxZAKLsAHw0UpeodjvdsmXtvJXTP2l+XHgW1wLNXYS7yYvZ1hXpnk94SbWeozmcPTu7zhryERwpm4MvnvnrCIhs+oeqD+tT1ZTQtfgIIpNUZhkLW1cOk/GIpSpvifwM4TCQCyPAs1D0oZYXIc3q8o1zWOJ1bv32Y=
+	t=1733948885; cv=none; b=mQGOUz5vKoYT90/BxCEjGyQwPo3RrmFdwzVrgR3SQ5KFSwoQXtMtVBPjazx7eC+RppubtJBTrgxVgROTHora8bS7ixp4hU1qvNYMlbi4Sw88PK6SKfTp1OdrSI6aPAbydHs+PHBLP12Gav55ms4Kf8KOQLNCo/0H6LmdYGeVdRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733948836; c=relaxed/simple;
-	bh=+6KsVTKiBNf0T5WxKiyslicNcKH5uqheARr/KeXIbME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=odqUZK4oTpTI7n/19tMKX1XsGSTvVuydWmxQoYfdFP7PBqmMiw+UmrqTZegOML2uDQG8/zbrJcXi5FCwEhxfoC5CAbqftAO+aFDrfQW7IdnmECYC4YdG3l+Cv8doRgth7Wg0zz3WfLDhHog7l2uni9HPfDsiYSPg2uTrzgHEuzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FGT3KQ75; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa67f31a858so699089466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:27:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733948833; x=1734553633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rbt6Qzp7kYp6+9v+n7g2ohZVarku/bMVIveHt2W9FqM=;
-        b=FGT3KQ75NXtTst9Vwss35Xha/GeCGPBfOGHDwOD6rhZhI60lJMkoeePKLofWRfZ1hw
-         lxNHzDMTiGbXHX6yrBseDCr2tyBJUYb7/5sg7+ZcnBuitB8kC0hHAbYZPKPdhvsvof1K
-         m4rDjmnx96RrR7apMNy6KF2j3UV9uBVqj6mVNQkqmrSRrNgBBzuRfYpztS+awjlNoP6N
-         q9WhEubpheYa8wV1SZTXmto+6qsyyrp/Z5cQGrJvspEaMJUXxtYjvcOFHnxKsiPZAYRo
-         BktImywkYWjMX0PayuHH0nGJZiVUMOMwM+4M22/Zgstkc8emtL/kEmVjdhO54ZQqU1Gi
-         aaoQ==
+	s=arc-20240116; t=1733948885; c=relaxed/simple;
+	bh=BxTkdHAwDUKkT0yu7rQNK7RCeSpDgxVH7CyMEcU05oE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=txNoPz3Uq2a8gpE3qZhecCWMhM917VTfb/zytoA5tsEK9aZ9uEOu63WOeD8p6M6X0vFMntprTSGjTiEIHmskJ/ihgBF/AfZH6Dpzf6zDJKdM1l7j45Kqvr2pIuCXyge7JaGwMJ0NjicnbTV0v36lD22/jtd+uyqWkupsgUxI/qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a817e4aa67so52636505ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:28:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733948833; x=1734553633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rbt6Qzp7kYp6+9v+n7g2ohZVarku/bMVIveHt2W9FqM=;
-        b=UkA5tB9mGzwlmluI1KzZidmFVnoIjvGbSIHD83zgrzD+Bkt7/emvglpLfXjBdb3qmJ
-         7ErPM5Gev17VMcpod5NC4cTQSIfPiJPZw1MV2+87QEVci0TCPSu+X07LjS+fANtRDyW1
-         5MzKRLZpTld7rl7iZ9u23QvyQqGDDMiwrKyRlE44PiCMw0Y6OOP79HFp+wDBm7CTJdKE
-         Xm9LABY9z5nLrQY0I3PSgFQYLQ6vKi7Ejx7tKEk5kYHZKeh96JUCiJeavokIImDHFCeY
-         hA968/gK4sAV6t89CUHyxXk6sy5OqZo1REtbbMUisryg3t7LR1AHSDCOJE+e3xG3ruql
-         HPVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJtk63Jc8uho4gZeJget+UiifYyyw33MQsrbP3++go01hXAPsjOE2oY473gl3kg/OeMX7ZWuaNFnqMHgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4c0D6LJeZjhzHDezhMy8GWnY2r13ZR6z6Iy24Ss/BwABBLyPi
-	RcY9+yjSOuRB2L3bZPyyPHoWe0XauKYhJvwe/suytxCLUMEN2XOcOwhiTaNRugdsLQAlTgZxM0W
-	LTzNiYPZThDlb38rfTW/YGBizS0jxlOL2sl0=
-X-Gm-Gg: ASbGncvdX4HTg32qpavqB2l0QiLVElR/PdjAri6uzdJDUn8LR4G3NL4Fdd9KHc2AouC
-	yBmQADMHQmurfnMJNqyHSomaoPK+H/u5mojXEbcXE1DbGi/N3P8IKcyFjCi8mxpuQ
-X-Google-Smtp-Source: AGHT+IHNnX0wYMBVFIGSe3M7v6rxr1UdkIt6jQEfX0+/0Dw3pXAiHvkuUd/5zMEGoWF0m8wBGNewTzim10IA85r2BNc=
-X-Received: by 2002:a17:906:2931:b0:aa6:7d82:5411 with SMTP id
- a640c23a62f3a-aa6b1395822mr338067966b.40.1733948833441; Wed, 11 Dec 2024
- 12:27:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733948883; x=1734553683;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWvuUMY0G+wmikjDT3RK+2qc8QdMPprFL6z15qVZK/A=;
+        b=sZRihlUywIejeMmAoYTN+KT/h8izEahTb5oVpWofCdeWeygIJaTgAXSLhuCcGKG/UX
+         YoeE/MiWA+qTvivxxCKDXWHJD/iGJlJXyrNlWLlqC07VM0eWTKFlRexPU7+F4s0heKxK
+         K1Uvlz+QwStOlk+Iyjhsdrrv0H4g5zRykDjeIhRvt8vCvm81aodl4bMrngBePBa2hAtJ
+         MVi+QF1kNtERckM7x/P00Nm2iyvpAgCgwUJsMvXGUKiGGHj8dW3KIagSMUAOf44+yKUN
+         vXBnFFjWyiIp2uTdq7GoFXlhHWXL8agSR42j0pVDdsJ5BIF3+jVdqI+sOoHj4XKmguPu
+         lunA==
+X-Forwarded-Encrypted: i=1; AJvYcCXI3CkuinWCmMCIyC4dovS8WpI4cKlwrYAiZ1mDkJYg1I7pHMsAUsbTQ4rduWD3PlEBMKBF3MTU9IbnqdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFxvBdtK4II/G55ba2o7ywOc9f1/WMEAfK9mW+ajP+1ZBTPCfk
+	TsR5TgvBWlCisO+AEkcQubbF3N0dItbxrmT0MbCklfs76uJvVqNkcvjSZ7udUefLfQVdRvQ1VeD
+	FDw7EVABD628F6nwylmL8AvRa3dsulJPM2BeOAT04pW7Er19yf8DNvUI=
+X-Google-Smtp-Source: AGHT+IFU4/JJhgeFmeUgOTOiFlptRuRRWPCJkZ0E7Hx/P2REuhArQvWWkxw4t8dMVmrVYchAgd8/ib9uHjlZQsLpg9MXrqKFdQ0W
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211182502.2915-1-spasswolf@web.de> <87wmg69gex.ffs@tglx>
-In-Reply-To: <87wmg69gex.ffs@tglx>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 11 Dec 2024 12:27:00 -0800
-X-Gm-Features: AZHOrDkJ2hJzF4GYWYCBBvsb_CcFqGLq00nD3GWsedOE0i_vDtVJ-VAbJtB0obw
-Message-ID: <CANDhNCpUWk_7Ocp0fvvjsLgZavcxvFcr3ac6psaZOa0xySfxZw@mail.gmail.com>
-Subject: Re: commit 894d1b3db41c leads to frequent hangs when booting
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Bert Karwatzki <spasswolf@web.de>, Metin.Kaya@arm.com, boqun.feng@gmail.com, 
-	bsegall@google.com, daniel.lezcano@linaro.org, dave@stgolabs.net, 
-	dietmar.eggemann@arm.com, joelaf@google.com, juri.lelli@redhat.com, 
-	kernel-team@android.com, kprateek.nayak@amd.com, linux-kernel@vger.kernel.org, 
-	longman@redhat.com, mgorman@suse.de, mingo@redhat.com, paulmck@kernel.org, 
-	peterz@infradead.org, qyousef@layalina.io, rostedt@goodmis.org, 
-	vincent.guittot@linaro.org, vschneid@redhat.com, will@kernel.org, 
-	xuewen.yan94@gmail.com, zezeozue@google.com
+X-Received: by 2002:a05:6e02:1609:b0:3a7:c3aa:a82b with SMTP id
+ e9e14a558f8ab-3ac49fdfa0emr11002455ab.1.1733948882793; Wed, 11 Dec 2024
+ 12:28:02 -0800 (PST)
+Date: Wed, 11 Dec 2024 12:28:02 -0800
+In-Reply-To: <20241211200240.103853-1-leocstone@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6759f5d2.050a0220.17f54a.0045.GAE@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in __alloc_frozen_pages_noprof
+From: syzbot <syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@gmail.com, ericvh@kernel.org, 
+	leocstone@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
+	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org, 
+	v9fs-developer@lists.sourceforge.net, v9fs@lists.linux.dev, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 11:19=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->
-> On Wed, Dec 11 2024 at 19:25, Bert Karwatzki wrote:
-> > I tried to debug this with CONFIG_LOCKDEP=3Dy in v6.13-rc2, but using C=
-ONFIG_LOCKDEP=3Dy
-> > makes the hangs disappear or far less likely, and I get this warning
-> > (2 examples from two boots):
-> >
-> > [   17.203857] [   T1337] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
->
-> config LOCKDEP_CHAINS_BITS
->         int "Bitsize for MAX_LOCKDEP_CHAINS"
->         depends on LOCKDEP && !LOCKDEP_SMALL
->         range 10 21
->         default 16
->         help
->           Try increasing this value if you hit "BUG: MAX_LOCKDEP_CHAINS t=
-oo low!" message.
->
-> Can you increase the chain bits config and try again?
->
+Hello,
 
-Thanks for the report and bisecting this down!
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Can you double check that the following commit is in your tree? I
-think it has landed just in the last few days upstream:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D82f9cc094975240885c93effbca7f4603f5de1bf
+drivers/gpu/drm/i915/gt/intel_rc6.c:139:19: error: static assertion expression is not an integral constant expression
+drivers/gpu/drm/i915/gt/intel_rc6.c:140:12: error: static assertion expression is not an integral constant expression
+fs/bcachefs/str_hash.c:164:2: error: expected expression
+fs/bcachefs/str_hash.c:165:30: error: use of undeclared identifier 'inode'
+fs/bcachefs/str_hash.c:169:55: error: use of undeclared identifier 'inode'
+fs/bcachefs/str_hash.c:171:40: error: use of undeclared identifier 'inode'
 
-thanks
--john
+
+Tested on:
+
+commit:         91e71d60 Add linux-next specific files for 20241211
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76f158395f6f15fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=03fb58296859d8dbab4d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12987544580000
+
 
