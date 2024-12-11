@@ -1,190 +1,258 @@
-Return-Path: <linux-kernel+bounces-440804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A3A9EC476
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:51:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5781886B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:51:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED7B1C1F34;
-	Wed, 11 Dec 2024 05:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MiX1K6rA"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5901C9EC47A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:53:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760A586331;
-	Wed, 11 Dec 2024 05:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2520284D8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:53:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D2B1C32FE;
+	Wed, 11 Dec 2024 05:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AnEQHZ8s"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94702451CC;
+	Wed, 11 Dec 2024 05:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733896275; cv=none; b=lq15MH9u4U8elZZ7d40pHNXRv6IHPr/e/WgPAcj2FbK3uMU+p2AepBdPgRkuvYDYfVSCLMFqX1ps9OcUMEt6ReBOiM4JMYf+MAqSSIrFK4b+e25PUEdCA/NIOmH1pdFlU/A4nLYWNKhnRXN/OheeAIkmGlBGJsH2ONOF0c8AIsw=
+	t=1733896416; cv=none; b=T1jPEGEeM7P3ETnwYSpLPFWXvTAyDg6fah0ELqYUDmARl4x9A/ItTOkXzMz5yUYsofDHh/Stwm1IWhR24LL1PLzPPs6RpVbH5af0cU4zEuGswY8sT6znW9iry79tUP87O24A1IAH8sShAENYvJVv0s+Cxcy70C78vSIgug1c7F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733896275; c=relaxed/simple;
-	bh=ER+WHciIHxIvXcURIVwfoibHDHpRI8TU75YZ2VVMrmo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZQKHWkJywkilTV+hC14+BC/aYr8UO9lNhn++ldgsqHAJTlNeBbPPXiVORm3g2CwHM9hVi39XA87cpJYEK80SDgP7BQwPiaGTOlbDOBzT6vaQv7FKdObZDV/fnv0xqjAITkwxT7OOlvNhlrVOjsbp9/DCawVn2pnsenRb9oLvlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MiX1K6rA; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BB5orHM2575121
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 23:50:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733896254;
-	bh=elDffjx4OH6SRJ4sYrMr/jtN2gDKhRQX2JMdW7ThPak=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=MiX1K6rANJ762nagAgnOCCends7HgNQkNptdpkG7a3hwItvApyoEsDjp+dr89XRnt
-	 FVREdbLDKIxd5coDOkbMcyLhRD7P7KlAlXrTs1QDKunL1oue5yQepiCBZeoqRpEbuK
-	 kbmvJB5pEaErrB7Kv3ayv/AxKv2VreL/sTRpOQiw=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BB5orpZ103007
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 10 Dec 2024 23:50:53 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
- Dec 2024 23:50:53 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 10 Dec 2024 23:50:53 -0600
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BB5oqsI039946;
-	Tue, 10 Dec 2024 23:50:53 -0600
-Date: Wed, 11 Dec 2024 11:20:52 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Vivek yadav <linux.ninja23@gmail.com>
-CC: <linux-newbie@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <daniel.lezcano@linaro.org>, <lpieralisi@kernel.org>,
-        <krzk@kernel.org>, <christian.loehle@arm.com>, <sudeep.holla@arm.com>,
-        <quic_sibis@quicinc.com>, <cristian.marussi@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <vigneshr@ti.com>, <khilman@ti.com>, <sebin.francis@ti.com>,
-        <d-gole@ti.com>
-Subject: Re: Fwd: ARM64: CPUIdle driver is not select any Idle state other
- then WFI
-Message-ID: <20241211055052.gbxnyqpui3t3zpw5@lcpd911>
-References: <CAO6a-9_aPLCx2CqecQBGbK78_=+-tT44RepPkrBjpkWSvjj4Tg@mail.gmail.com>
- <CAO6a-98cdSvyd7jgAyGNmsC2nxmRSyr3GppxvZU9yHU1xqwz3g@mail.gmail.com>
+	s=arc-20240116; t=1733896416; c=relaxed/simple;
+	bh=QxRpAVNXkbIAVUiz32iWyuxIOggkmsPVhFGj9HPj798=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SH9+3554vY1zabAgnIfHZs6JPbZzzZ4knLnb3YQSr8JIINEnmjVj1bqDtVyTyJDEDf4Gq1B3Me6sKzQf0fRf7soVF5M/xcKL9nX4/t3NWr/2KRLHKczQm7zyXk3WoxEI8k9PzAOTYImhYRVHTin5CwMPmhmIpJcUiguMLKBfsgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AnEQHZ8s; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB4mim3027746;
+	Wed, 11 Dec 2024 05:53:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wJqIu8MlLVnjkO5uOkWhWu+8Cc+eMZUqFilakTEtHnI=; b=AnEQHZ8sxEneL9Ld
+	LIWZA36P9WJU3XgLSLxoslCtKdpnMvNVFfXh3gSXuPsnuOBR4w5TegRgI67Q+2Cx
+	65QpcJsiyg5t5wmYUsfSkbgBZVskv1xLbCXKTjJjR3MhimWI9jjO47sN6y4crZ1q
+	iSlakjeDItoeR7Lsb0A1j0DjV0U3UtpeLPQmbZg8t9HHo08VfFQVUlLEa8YAJZ+O
+	NQfRPq4tbfvwIkib20BVflzH+KKXiiTkmLZLqqB1LfQlQIy9k6M9sKi5H3aJGH6F
+	cq0Z2e/8kKfHoRhCaUqflM3uBjSZO2aYO+W+qRSqG/3T8lEDTrZCgNz6DqWiYNZ+
+	2sjv3w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eg9ekn4n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 05:53:27 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB5rQsD000968
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 05:53:26 GMT
+Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
+ 2024 21:53:21 -0800
+Message-ID: <7eb71706-1393-4e49-996e-1cf9d8c98d16@quicinc.com>
+Date: Wed, 11 Dec 2024 13:53:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO6a-98cdSvyd7jgAyGNmsC2nxmRSyr3GppxvZU9yHU1xqwz3g@mail.gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] Bluetooth: qca: Add support in firmware-name to
+ load board specific nvm
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao
+	<quic_rjliao@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
+        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
+References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
+ <20241210151636.2474809-3-quic_chejiang@quicinc.com>
+ <wxb6oo3f7cri27eq3fnqttbl74lkn3rjo5o5rfttbwz7k5v2ug@w4hlrtig2nza>
+Content-Language: en-US
+From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+In-Reply-To: <wxb6oo3f7cri27eq3fnqttbl74lkn3rjo5o5rfttbwz7k5v2ug@w4hlrtig2nza>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EnniXAaPZ-SipArb8z28DOaSyrQ1FHLa
+X-Proofpoint-ORIG-GUID: EnniXAaPZ-SipArb8z28DOaSyrQ1FHLa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 phishscore=0 spamscore=0 mlxscore=0 suspectscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412110042
 
-Hi Vivek,
+Hi Dmitry, 
 
-On Oct 14, 2024 at 16:06:34 +0530, Vivek yadav wrote:
-> ---------- Forwarded message ---------
-> From: Vivek yadav <linux.ninja23@gmail.com>
-> Date: Fri, Oct 11, 2024 at 3:14 PM
-> Subject: ARM64: CPUIdle driver is not select any Idle state other then WFI
-> To: <linux-pm@vger.kernel.org>
-
-+ Kevin, Vignesh and few colleagues at TI who have been working on this as
-well.
-
+On 12/10/2024 11:28 PM, Dmitry Baryshkov wrote:
+> On Tue, Dec 10, 2024 at 11:16:34PM +0800, Cheng Jiang wrote:
+>> Different connectivity boards may be attached to the same platform. For
+>> example, QCA6698-based boards can support either a two-antenna or
+>> three-antenna solution, both of which work on the sa8775p-ride platform.
+>> Due to differences in connectivity boards and variations in RF
+>> performance from different foundries, different NVM configurations are
+>> used based on the board ID.
+>>
+>> Therefore, in the firmware-name property, if the NVM file has an
+>> extension, the NVM file will be used. Otherwise, the system will first
+>> try the .bNN (board ID) file, and if that fails, it will fall back to
+>> the .bin file.
+>>
+>> Possible configurations:
+>> firmware-name = "QCA6698/hpnv21";
+>> firmware-name = "QCA6698/hpnv21.bin";
+>>
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>>  drivers/bluetooth/btqca.c | 67 +++++++++++++++++++++++++++++++++++++--
+>>  1 file changed, 65 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+>> index dfbbac922..deb2b1753 100644
+>> --- a/drivers/bluetooth/btqca.c
+>> +++ b/drivers/bluetooth/btqca.c
+>> @@ -272,6 +272,27 @@ int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
+>>  }
+>>  EXPORT_SYMBOL_GPL(qca_send_pre_shutdown_cmd);
+>>  
+>> +static bool qca_get_alt_nvm_path(char *path, size_t max_size)
+>> +{
+>> +	char fwname[64];
+>> +	const char *suffix;
+>> +
+>> +	suffix = strrchr(path, '.');
+>> +
+>> +	/* nvm file name has a suffix, replace with .bin */
+>> +	if (suffix && suffix != path && *(suffix + 1) != '\0' && strchr(suffix, '/') == NULL) {
+>> +		strscpy(fwname, path, suffix - path + 1);
+>> +		snprintf(fwname + (suffix - path), sizeof(fwname) - (suffix - path), ".bin");
+>> +		/* If nvm file is already the default one, return false to skip the retry. */
+>> +		if (strcmp(fwname, path) == 0)
+>> +			return false;
+>> +
+>> +		snprintf(path, max_size, "%s", fwname);
+>> +		return true;
+>> +	}
+>> +	return false;
+>> +}
+>> +
+>>  static int qca_tlv_check_data(struct hci_dev *hdev,
+>>  			       struct qca_fw_config *config,
+>>  			       u8 *fw_data, size_t fw_size,
+>> @@ -564,6 +585,19 @@ static int qca_download_firmware(struct hci_dev *hdev,
+>>  					   config->fwname, ret);
+>>  				return ret;
+>>  			}
+>> +		}
+>> +		/* For nvm, if desired nvm file is not present and it's not the
+>> +		 * default nvm file(ends with .bin), try to load the default nvm.
+>> +		 */
+>> +		else if (config->type == TLV_TYPE_NVM &&
+>> +			 qca_get_alt_nvm_path(config->fwname, sizeof(config->fwname))) {
+>> +			bt_dev_info(hdev, "QCA Downloading %s", config->fwname);
+>> +			ret = request_firmware(&fw, config->fwname, &hdev->dev);
+>> +			if (ret) {
+>> +				bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
+>> +					   config->fwname, ret);
+>> +				return ret;
+>> +			}
+>>  		} else {
+>>  			bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
+>>  				   config->fwname, ret);
+>> @@ -730,6 +764,26 @@ static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
+>>  			 "qca/%snv%02x.b%02x", stem, rom_ver, bid);
+>>  }
+>>  
+>> +static void qca_get_nvm_name_by_board(char *fwname, size_t max_size,
+>> +		const char *firmware_name, struct qca_btsoc_version ver,
+>> +		enum qca_btsoc_type soc_type, u16 bid)
+>> +{
+>> +	const char *variant;
+>> +
+>> +	/* Set the variant to empty by default */
+>> +	variant = "";
+>> +	/* hsp gf chip */
+>> +	if (soc_type == QCA_WCN6855) {
+>> +		if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) == QCA_HSP_GF_SOC_ID)
+>> +			variant = "g";
+>> +	}
+>> +
+>> +	if (bid == 0x0 || bid == 0xffff)
+>> +		snprintf(fwname, max_size, "qca/%s%s.bin", firmware_name, variant);
+>> +	else
+>> +		snprintf(fwname, max_size, "qca/%s%s.b%02x", firmware_name, variant, bid);
 > 
+> So, we have qca_generate_hsp_nvm_name(), qca_get_nvm_name_generic(), now
+> you are adding a third one. Can we please have a single function that
+> handles that?
 > 
-> Hi @all,
+Ack, will use a single function to handle this.
+>> +}
+>> +
+>>  int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>  		   enum qca_btsoc_type soc_type, struct qca_btsoc_version ver,
+>>  		   const char *firmware_name)
+>> @@ -739,6 +793,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>  	u8 rom_ver = 0;
+>>  	u32 soc_ver;
+>>  	u16 boardid = 0;
+>> +	const char *suffix;
+>>  
+>>  	bt_dev_dbg(hdev, "QCA setup on UART");
+>>  
+>> @@ -816,8 +871,16 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>  	/* Download NVM configuration */
+>>  	config.type = TLV_TYPE_NVM;
+>>  	if (firmware_name) {
+>> -		snprintf(config.fwname, sizeof(config.fwname),
+>> -			 "qca/%s", firmware_name);
+>> +		/* The firmware name has suffix, use it directly */
+>> +		suffix = strrchr(firmware_name, '.');
+>> +		if (suffix && suffix != firmware_name &&
+>> +			*(suffix + 1) != '\0' && strchr(suffix, '/') == NULL) {
 > 
-> I am working on one custom SoC. Where I add one CPUIdle state for
-> ``arm,cortex-a55`` processor.
-
-Any further luck on this?
-
-I have also been working on something similar[1] but on an A53 core on
-TI-K3 AM62x processor.
-
+> The have-suffix code should be extracted to a helper function. You have
+> two copies of it.
 > 
-> idle-states {
->       entry-method = "psci";
->        cpu_ret_l: cpu-retention-l {
->          compatible = "arm,idle-state";
->          arm,psci-suspend-param = <0x00010001>;
->          local-timer-stop;
->          entry-latency-us = <55>;
->           exit-latency-us = <140>;
->           min-residency-us = <780>;
->     };
-> };
+Ack.
+>> +			snprintf(config.fwname, sizeof(config.fwname), "qca/%s", firmware_name);
+>> +		} else {
+>> +			qca_read_fw_board_id(hdev, &boardid);
+>> +			qca_get_nvm_name_by_board(config.fwname, sizeof(config.fwname),
+>> +				 firmware_name, ver, soc_type, boardid);
+>> +		}
+>>  	} else {
+>>  		switch (soc_type) {
+>>  		case QCA_WCN3990:
+>> -- 
+>> 2.25.1
+>>
 > 
-> I am using ``Menu governor`` with the ``psci_idle driver`` in its original form.
-> After booting Linux I find out that the CPUIdle core is never going
-> inside the ``cpu-retention`` state.
-> To check time spent by CPU in any state. I am using the below command.
-> 
-> ``cat /sys/devices/system/cpu/cpu*/cpuidle/state*/time``
 
-What I was seeing is in a multi core system (2 or more) all cores don't
-enter the idle-state simultaneously. There's something keeping atleast 1
-core always busy. However I could definitely see entry into TF-A from 1
-core at a time.
-I then switched to a single core system to see if we were atall able to
-enter TF-A when only 1 core was available for linux, it turned out that
-with the "local-timer-stop" property that we have, this is never
-possible.
-
-See this chunk in the kernel cpuidle driver:
-	if (broadcast && tick_broadcast_enter()) {
-
-When I dug deeper into tick_broadcast_enter it always returns something
-non zero and hence in my case it was entering the if block and tried to
-find a deepest state. Then the deepest state would always return WFI and
-not the idle-state I had added.
-
-What we found out was on our kernel we end up using 
-
-kernel/time/tick-broadcast-hrtimer.c 
-
-This always seems to be keeping atleast 1 CPU busy and prevents idle.
-If we remove the local-timer-stop it was helping us, but we still need
-to dig into the full impact of what that entails and I am still
-interested in finding out how so many other users of similar idle-state
-implementation are able to do so without trouble.
-
-Arm64 recommends to use arch_timer instead of external timers. Once we
-enter el3, timer interrupts to el1 is blocked and hence it's equivalent
-to local-timer-stop, so it does make sense to keep this property, but
-then how are others able to enter idle-states for all plugged CPUs at
-the same time?
-
-> 
-> OUTPUT:
-> 0 ===>CPU0 state0 (WFI)
-> 0 ===>CPU0 state1 (cpu-retention)
-> 
-> increasing some time value ===>CPU1 state0 (WFI)
-> 0 ===>CPU1 state1 (cpu-retention)
-> 
-> increasing some time value
-> 0
-> 
-> increasing some time value
-> 0
-> 
-> What am I doing wrong? Why does ``cpu-retention`` state time not increase?
-> Any pointer will be helpful.
-
-I had asked a similar qn. on IRC [2], but didn't get much response. I
-am still interested in finding out what the right thing to do here is.
-
-[1] https://github.com/DhruvaG2000/v-linux/commit/0fd088d624276a2e72b8dc6660d261ab6d194f4b#diff-34369928f669d14776f8f5bdbe3fc3d75306196a2ac28b1a4d7e17402b9c3995R160
-[2] https://libera.irclog.whitequark.org/armlinux/2024-08-23 
-
--- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
 
