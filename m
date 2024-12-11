@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-441848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E77CD9ED4D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:45:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20E29ED4DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:46:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFBD2283F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D785284118
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8291E200BA9;
-	Wed, 11 Dec 2024 18:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0328A209F3C;
+	Wed, 11 Dec 2024 18:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j8qxzUGE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DPpm3HIw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VMpaOa/v"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC92A1DE4CE
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D1D1C3F27;
+	Wed, 11 Dec 2024 18:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733942715; cv=none; b=e1WJXKBSbqn8oBvDs07Xo2v24kvVpvN7xIhcF541i5aXS+OUMapehUVl9BRcGV64ggPnGtf9foUQmz2Lp1PxOb+XiINSukaL1/G5yYC3Cn75VwkffEO7APbrNE5xOxH6+Po2BpVagP6eipxNwkoGvTTtBIU3L/YrcFS28h/E3/Q=
+	t=1733942795; cv=none; b=ib29hTdK7OJjDVyKn0XCZ7quxD2fH2O9+irFwG8/IMOxqlrFsuTANBXy52pGFcrQSezKsAaJng7XE+tZ3DUqdNE+4X73+MyF9zzxahv1iC04tvOI6wLLccSTEJSLxfrbZULFrbVDBJOucNBN2rNrSFEjcBSCynL07ySAVZwaxHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733942715; c=relaxed/simple;
-	bh=eU/4DpxYd+wyY6Bvp4R3AQ92VftffXdSunAYKonF6e8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tSLgsRnA5qEjkeYyK9qhPM8gW/0JJPcN99pfBz56MmVT7qYXuM0PDRd3Y+0dPGYDJUnH+AtxrIXXWjiHWkipZRPvMzfja+Oy7oj4MyebYsndZ2vQWzcUUJa6WSj/nKUfbwKv71/W8CRw6g9zU7/7YZAhe1RdMYooKA5/46N3/5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j8qxzUGE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DPpm3HIw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733942710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k/tmyaOywwMu5T6fg6dqSCNBPfMkmlhPfbF0uH10OYQ=;
-	b=j8qxzUGEwcFw2DYmDW6F5F50nxZ51r93QvUUl8YLHULIpHSg2YR064xImtFs5k2PLYhVDA
-	s2UnRpTaygkHoR31d3VuG1EqIiGmY3YHqQekPz2ZV1xojulVubc1evJkZiChZSTUwqFieY
-	i9HDoE0ueD1VsvMHtBfnoYxgtVYILUSuyMT/jW+tI2xofvlDgX7F6PLp3wXoRBReOuG3R3
-	agrxLdHrMIzPdH4/VU3EgkEFGQY7+mjanZphnHiWdfsihnSJnDxefrjIXvQqjat5hQqy2u
-	kIRKFIDhCPR+yTbZhMwZiyxrocplcJRbm78eVzH2dXcqV4pBbj5ccDs3vVbgdQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733942710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k/tmyaOywwMu5T6fg6dqSCNBPfMkmlhPfbF0uH10OYQ=;
-	b=DPpm3HIwUD6dN/5F/I/4TOhdhEB/8w0mAM43FdxmROtk1/UvqnjKCI9VSGGc7iLQo7Ajdl
-	7KqPPax7pzUwKkAw==
-To: Saravana Kannan <saravanak@google.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1] cpu/suspend: Do a partial hotplug during suspend
-In-Reply-To: <CAGETcx_wv_sC+FhChr8OaV6wjkHxTf9W66AoBQihV=m70G=_iQ@mail.gmail.com>
-References: <20241119020519.832013-1-saravanak@google.com>
- <20241119092829.GF11903@noisy.programming.kicks-ass.net>
- <CAGETcx_vABsh8HgMi1rYRWmB5RhYwqGT6kKJ+9LX0HrcP8i7yA@mail.gmail.com>
- <20241120084240.GA19989@noisy.programming.kicks-ass.net>
- <CAGETcx_wv_sC+FhChr8OaV6wjkHxTf9W66AoBQihV=m70G=_iQ@mail.gmail.com>
-Date: Wed, 11 Dec 2024 19:45:10 +0100
-Message-ID: <87bjxiawjt.ffs@tglx>
+	s=arc-20240116; t=1733942795; c=relaxed/simple;
+	bh=8SEPiAG5/bZ3zubyts3IFkmbUAYRgHOi97EOjXc5kaI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=m3yVq9Q7QOATpkQ5Etx5f2yIzLdj7SZPiEBt8qo6iXeMpV651VUWWgq4f2kkuaY0VVq1g2yPDDrPbacEV3xpZbxnOKgj/kh01N/HoelAke4XazCT6wdy/eI9EPnwC7lEGNRj9L/AsZHbeVyPNCI2/d0qPYIspTq0WsUZsb7laOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VMpaOa/v; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHDGPu003065;
+	Wed, 11 Dec 2024 18:46:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KKBF9MwwWdxtyhM/vZBDK5wtGQUQme8Sdv89LX9q3k4=; b=VMpaOa/v9X6ACdwL
+	WSIwXzqzOZAiz0No5IAwdkcsl/NUELLHv13Y+iDNo0DBlyRDlJ/d9b1D3WpBxz42
+	3j/Ll/6n1K5RNXJ3dHUfvFQhkVbcTr+HZ0zzlZxk7sl3BzoN1bPZDZccosxldwd9
+	XsUGXYIRPbw8wT4o3UmY2erS80vBspj7U7Nx/woMK3mypS3d0CeCyglgrYWGBlgc
+	WpZ7vOB92Z4PHHejAZJo65k6EwFa27BLNI5KQspL+t9nqXJg0MJIWMtPXjkH5TZm
+	CPPUkykdZi+uqtdCYwWQ1aL0NgvsgZTvnbwWld94Gwq80jkgwDpf+WseqiVKZv0T
+	pFCpgg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f0r9txqv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 18:46:10 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBIk9WK017308
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 18:46:10 GMT
+Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
+ 2024 10:46:09 -0800
+Message-ID: <f353a230-b9ab-4c25-846b-6e5f0e404ca0@quicinc.com>
+Date: Wed, 11 Dec 2024 10:46:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/7] arm64: dts: qcom: Add board dts files for SM8750
+ MTP and QRD
+From: Melody Olvera <quic_molvera@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20241204-sm8750_master_dt-v3-0-4d5a8269950b@quicinc.com>
+ <20241204-sm8750_master_dt-v3-6-4d5a8269950b@quicinc.com>
+ <b9225284-7830-4aa4-aed2-7f58fb7320e8@oss.qualcomm.com>
+ <79e55e6e-e560-4f43-8d6e-bbaf7fcf157a@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <79e55e6e-e560-4f43-8d6e-bbaf7fcf157a@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Fn3miiM-g8wIKGJTEFmkh3ST2ifxULdN
+X-Proofpoint-GUID: Fn3miiM-g8wIKGJTEFmkh3ST2ifxULdN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 mlxlogscore=889
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110134
 
-On Wed, Nov 20 2024 at 13:02, Saravana Kannan wrote:
-> On Wed, Nov 20, 2024 at 12:42=E2=80=AFAM Peter Zijlstra <peterz@infradead=
-.org> wrote:
-> I was thinking before CPUHP_BP_PREPARE_DYN because I saw some drivers
-> doing whatever the heck they do in CPUHP_BP_PREPARE_DYN. It'll be much
-> easier to do audits of non-dynamic stuff and keep it within
-> requirements.
+
+
+On 12/5/2024 10:21 AM, Melody Olvera wrote:
 >
->> WORKQUEUE_PREP seems awefully random, and the
->> typical purpose of the _PREPARE stages is to allocate memory/resources
->> such that STARTING can do its thing, similarly _DEAD is about freeing
->> resources that got unused during _DYING.
 >
-> Yeah, I understood all this. I wanted to pick CPUHP_TMIGR_PREPARE
-> (mentioned in my first email) because it was right before
-> CPUHP_BP_PREPARE_DYN (and if you skip over CPUHP_MIPS_SOC_PREPARE
-> which sounds like a hardware step). But hrtimers seem to have a bug --
-> if the sequence fails anywhere in between CPUHP_AP_HRTIMERS_DYING and
-> CPUHP_HRTIMERS_PREPARE things fail badly.
-
-Yes, that's known and someone is working on it. Here is the thread:
-
-  https://lore.kernel.org/all/87wmg9oyzk.ffs@tglx
-
-> So, for now I'd say we get in something like CPUHP_SUSPEND wherever it
-> works right now (after WORKQUEUE_PREP) and slowly move it up till we
-> get it right before CPUHP_BP_PREPARE_DYN.
+> On 12/5/2024 8:45 AM, Konrad Dybcio wrote:
+>> On 5.12.2024 12:18 AM, Melody Olvera wrote:
+>>> Add MTP and QRD dts files for SM8750 describing board clocks, 
+>>> regulators,
+>>> gpio keys, etc.
+>>>
+>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>>> ---
+>> [...]
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>>> +&tlmm {
+>>> +    /* reserved for secure world */
+>>> +    gpio-reserved-ranges = <36 4>, <74 1>;
+>>> +};
+>> Any chance you could describe what those specifically are?
+>>
 >
->> So the most logical setup would be to skip the entire _DEAD/_PREPARE
->> cycle.
->
-> Makes sense to me.
->
-> On a separate note, I'm kinda confused by state machine stages where
-> only one of the startup/teardown callbacks are set up. For example,
-> I'd think the workqueue_prepare_cpu() would be combined with
-> workqueue_online_cpu()/workqueue_offline_cpu(). Why is online() not
-> sufficient to undo whatever offline() did?
+> I'm not too certain, and even if I was, I'm not certain I'd be at 
+> liberty to say.
 
-Some of this is purely historical and was more or less blindly converted
-from the original notifier chains.
-
-Other things are one-off initializations to allocate and initialize
-memory, which is never freed again under the assumption that the CPUs
-will come back online.
-
-But yes, this needs to be looked at on a state by state basis.
+Spoke w some folks; looks like we're suing these for NFC eSE. I can add 
+in next ps.
 
 Thanks,
-
-        tglx
+Melody
 
