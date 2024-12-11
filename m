@@ -1,96 +1,65 @@
-Return-Path: <linux-kernel+bounces-442024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21119ED6F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:03:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294289ED6FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:07:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7D018876A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:07:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0309209F57;
+	Wed, 11 Dec 2024 20:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="hNfSouNg"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7182C282D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:03:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46459209F57;
-	Wed, 11 Dec 2024 20:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCFqnATY"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BD72594B3;
-	Wed, 11 Dec 2024 20:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED25D2594B3;
+	Wed, 11 Dec 2024 20:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733947421; cv=none; b=NfYa9v3o12nDwkIph2ZWqLXyWLOXYyq8lV4zGewa3hdvaxpcrGmOXT7YW6HC5CrISxiNnT4FXdhRkbIvcV4emQbk1E5xUQXDU0H80iyIZkobsArAPp5RpQ9SUMuR9Ao6YET+8/ncdCmYfeiZu/owkouSO0nETVHbkU2arlKUcA0=
+	t=1733947645; cv=none; b=iyPwXdB3lwvgBKSK/k81aJ8dnGiMqnSwJu6V+9Po4ZpC/jhHi+LjlXhaI5eGLGhXf/gT2cHwvDAw8eTvsIMUQnHa+2qSNrW1XuMduFwd3e2i3Ysb46Mkvbnnm2fywhKgKlN/jlzp2ccTC4Fni7UdEBPz7b1aRNr6K+xL+xyiUPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733947421; c=relaxed/simple;
-	bh=c+2c10RP4eGxCZIDeYuweNxkKIm5rRVnujDbzoBRRQI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lctoM4N7lcm6ZYW7jl5o4qzwzVcDffFXvi7oSwjSzpMKkuyx9hwxdGNH5gAUadxodukULkm51tnGi9NFG8bGQ/OmorILGKC8hMf7X8AkII6JQvImRFMEYPIEDjIoUP9X3IYBv6F2fASw/UOjXJWF0HeuDO3SLncEFJ9KILuKcw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCFqnATY; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso5162569a91.0;
-        Wed, 11 Dec 2024 12:03:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733947419; x=1734552219; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zjpNgAxO5KyvvV+aPXyUgI2o0mazz3K0LzFSUucmqIA=;
-        b=YCFqnATYSunrFPR/xMGodMXv0YD20QQJzz0i18a6NchhuOlfzVxnorFb6WppvXl3GR
-         22/9j8azIvanopYeQveeX2JdPPEAz3hl5Qn2OyCOBSoKzhr1sv//KgDzzLT7feyfPt31
-         oX+OYRXjWlUZBIx1+MCN8OeuYmfuT4p654PGYCOZcnYqVY6Np0oUDHeSGLLvTwjVzT7L
-         jLMkWnTqabn5Cd8/FI/YSq8xl5xUAHNDdwoUBKzZ23sSWeczGfpFcL54OsHu3Hdeh490
-         O6Fspf7J+PKl+1Fe0T3XHUrjGCpavXhefsi9hBaNaL1CNzf4TQAHd1WrwpqUkblEavyh
-         29CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733947419; x=1734552219;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zjpNgAxO5KyvvV+aPXyUgI2o0mazz3K0LzFSUucmqIA=;
-        b=hY8HXfA7D/7GDfZF4oMOOANWz/VOjwdJEMZE7CcIihbLDwAzM0H2FM7Q16Mj24Pj+B
-         f5R7RLyb0Wm/abfVbz7VlvPYslifcywyGPWUGfOcodxPeRyyMP3/31uiIuy5KRswq9MF
-         mH7CWKpnEBhg5MBkt/lTFELWZZwqPOmkUQfVDlCvBZc5Mpv29Nx6DBaM8CYUkYlzj+lb
-         zlJjc9619XXsAhcsbA8lpTnQrUXMsK0E6hRuc8cz9E8BEQ549X1unDhCPkovqTP5lIQA
-         5/ZvbeRK1hNAdyEWbfSjrl0u4DXu/hsoaFOgd1UnEZNoqdM/i3Kf+BDQ7x0X27TtxZis
-         JoFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlAvoBTFcVbVz13RahuG6BwISuYr2TnzcBn1PrNU3mTLu78p2Jy8XL6ZwIoQloqKV3TFbcfPvNBn3Bc1dv@vger.kernel.org, AJvYcCWALotstSXHoGkEkj6hO0u+Bvs5pZdoQIgGfbmASbRX+r5E2r8sbDP96GiEysZ3dOIIg+iZrMGCmCedJrc6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymt/RyOYSBzNa1KjAVtGicd68DO5kuCN6rZX75VYqo16+gDYK8
-	ZmDIY3ZOI2AX8rsvMeVSeQHpk55bWublur+o+ZeycEwShc6904cT
-X-Gm-Gg: ASbGncsghyzoOcsnzexkpxJaP8y/lFEd0fOHdWcIG7sU8A3F787jaDXCBiiQoo9xHOr
-	l5kJlAWgb71ZZz2T3G4ktuUlQ73bl8iJx0A20HZ9ius6lqpq3i1+4TKug0DEkZPv7F/Id4N4px8
-	O+7x7+cSrry126ZF2psHHlt8ZXnQxs3uCcrm9V5Y2i0tMv94xaq7+Gx375mTc3u1wZb+B4uW8Je
-	JDaq3A6qvMMYUZfA8tWNVzmWSCjN4Wgh9gxhzBPhk0s9LOuU1TUyYt0ZtjW9+D6KSntsw==
-X-Google-Smtp-Source: AGHT+IFkpFW//odQIKH7vFlXlfPhvueJRWLMq59qElOmOHMBZNOyfMpmd6lTVOFk+xCH3IcDg/u63A==
-X-Received: by 2002:a17:90b:1c87:b0:2ee:aa28:79aa with SMTP id 98e67ed59e1d1-2f127f7e587mr6242980a91.6.1733947418716;
-        Wed, 11 Dec 2024 12:03:38 -0800 (PST)
-Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:a69f:44ab:93c9:b027])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4757691dsm6158725a12.18.2024.12.11.12.03.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 12:03:38 -0800 (PST)
-From: Leo Stone <leocstone@gmail.com>
-To: syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com
-Cc: asmadeus@codewreck.org,
-	ericvh@gmail.com,
-	ericvh@kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1733947645; c=relaxed/simple;
+	bh=wA3oVvLpAgxe8CvxFtANDWuAFMcWUw5ldGi9z48/H/0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DEthxc7JIk2q0AFAOt2KeZB48vjzV7vOsx2xIM8ZKT5I3f2yTU6S8pXc1F3Zuz29T4JOLIx8auH9W7DNd8w3l6Cpk90X1WuXlFPR+VYuBFocnkBrZ9pVE5R7v5cMM7R2+Z8ViccS5FGP0qbya8KIFsMvcIzaBHZ66qwthi8xgmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=hNfSouNg; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=hLo5WCIwboskEetZXyQZ/7dDVeMDVJPejPBCeeGEZXw=; b=hNfSouNgSlUhJpG0KsSUIaraYR
+	2w+l9m+byCTe+SQzTMomXg45KSHeXmFP0//zXiz55lJg6YkfZ6ij7ocu9IyOMzKM9XVlEvs4tSqY6
+	Hrne+MdCVjKeDe1eE4IKuoX7pHnuJeHut3T7ZgmF2zNXQkVLFsyJQPAYUBXDDB7vY9o7wfDCpZEuz
+	lT9EPz5Qxyo5iBxRZN6SNm8F7ceHMC3qMSjZqVO3GlNANdntSuzzOi9ATURgnsX1BvBwmwbad6ehS
+	+IDTb1ikYbSBf8WCAPEIU2Nn/7Q5W8tJOsMdGiuZFXJFPYVy4dMmz8PtA3W+awvCe8OU31lcniQbe
+	TeXR1okw==;
+Received: from 179-125-91-250-dinamico.pombonet.net.br ([179.125.91.250] helo=quatroqueijos.lan)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tLSzL-00247n-RI; Wed, 11 Dec 2024 21:07:16 +0100
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: linux-ext4@vger.kernel.org
+Cc: "Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
 	linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com,
-	lucho@ionkov.net,
-	syzkaller-bugs@googlegroups.com,
-	torvalds@linux-foundation.org,
-	v9fs-developer@lists.sourceforge.net,
-	v9fs@lists.linux.dev,
-	viro@zeniv.linux.org.uk,
-	Leo Stone <leocstone@gmail.com>
-Subject: Re: WARNING in __alloc_frozen_pages_noprof
-Date: Wed, 11 Dec 2024 12:02:40 -0800
-Message-ID: <20241211200240.103853-1-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <675963eb.050a0220.17f54a.0038.GAE@google.com>
-References: <675963eb.050a0220.17f54a.0038.GAE@google.com>
+	kernel-dev@igalia.com,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	syzbot+57934e2c8e7a99992e41@syzkaller.appspotmail.com
+Subject: [PATCH v2] ext4: only test for inode xattr state when expanding inode
+Date: Wed, 11 Dec 2024 17:06:00 -0300
+Message-Id: <20241211200600.21115-1-cascardo@igalia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241210174850.4027690-1-cascardo@igalia.com>
+References: <20241210174850.4027690-1-cascardo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,45 +68,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-syzbot creates a pipe and writes some data to it. It then creates a v9fs
-mount using the pipe as transport. The data in the pipe specifies an ACL
-of size 9 TB (9895604649984 bytes) for the root inode, causing kmalloc
-to fail.
+When expanding inode size, a check for the xattr magic code could fail
+because the underlying data was corrupt or changed by directly writing to
+the block device.
 
-KMALLOC_MAX_SIZE is probably too loose of an upper bound for the size of
-an ACL, but I didn't see an existing limit for V9FS like in e.g. NFS:
+But instead of detecting such corruption, the current test would clear the
+data but keep the EXT4_STATE_XATTR bit set in the inode state.
 
-include/linux/nfsacl.h:
->/* Maximum number of ACL entries over NFS */
->#define NFS_ACL_MAX_ENTRIES     1024
->
->#define NFSACL_MAXWORDS         (2*(2+3*NFS_ACL_MAX_ENTRIES))
->#define NFSACL_MAXPAGES         ((2*(8+12*NFS_ACL_MAX_ENTRIES) + PAGE_SIZE-1) \
->                                 >> PAGE_SHIFT)
->        
->#define NFS_ACL_MAX_ENTRIES_INLINE      (5)
->#define NFS_ACL_INLINE_BUFSIZE  ((2*(2+3*NFS_ACL_MAX_ENTRIES_INLINE)) << 2)
+When later deleting the inode, this would lead for a test for such bit to
+succeed and then an out-of-bounds access.
 
-#syz test
+Since the state could only be set when the magic code has been detected
+(and when such bit is cleared, so is the magic code), it is sufficient to
+test for such state when deciding whether expanding the inode size is safe.
 
+Here is the KASAN report.
+
+[   35.283769] ==================================================================
+[   35.284710] BUG: KASAN: use-after-free in ext4_xattr_delete_inode+0xa33/0xa70
+[   35.285676] Read of size 4 at addr ffff88800aaee000 by task repro/188
+[   35.286694]
+[   35.286912] CPU: 4 UID: 0 PID: 188 Comm: repro Not tainted 6.13.0-rc1+ #281
+[   35.287560] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[   35.288709] Call Trace:
+[   35.289368]  <TASK>
+[   35.289790]  dump_stack_lvl+0x68/0xa0
+[   35.290621]  print_report+0xcb/0x620
+[   35.291400]  ? __virt_addr_valid+0x222/0x400
+[   35.292325]  ? ext4_xattr_delete_inode+0xa33/0xa70
+[   35.293198]  kasan_report+0xbd/0xf0
+[   35.293738]  ? ext4_xattr_delete_inode+0xa33/0xa70
+[   35.294461]  ext4_xattr_delete_inode+0xa33/0xa70
+[   35.295200]  ? __pfx_ext4_xattr_delete_inode+0x10/0x10
+[   35.295975]  ? __ext4_journal_start_sb+0x7b/0x520
+[   35.296849]  ? lock_is_held_type+0x9e/0x120
+[   35.297711]  ext4_evict_inode+0x64b/0x14f0
+[   35.298225]  ? __pfx_lock_release+0x10/0x10
+[   35.298724]  ? do_raw_spin_lock+0x131/0x270
+[   35.299256]  ? __pfx_ext4_evict_inode+0x10/0x10
+[   35.299824]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[   35.300593]  evict+0x334/0x790
+[   35.300991]  ? __pfx_evict+0x10/0x10
+[   35.301890]  ? do_raw_spin_unlock+0x58/0x220
+[   35.302817]  ? _raw_spin_unlock+0x23/0x40
+[   35.303676]  ? iput+0x441/0x610
+[   35.304218]  vfs_rmdir+0x44b/0x5a0
+[   35.304769]  ? lookup_one_qstr_excl+0x24/0x150
+[   35.305297]  do_rmdir+0x28e/0x370
+[   35.305678]  ? __pfx_do_rmdir+0x10/0x10
+[   35.306148]  ? trace_kmem_cache_alloc+0x24/0xb0
+[   35.306703]  ? getname_flags+0xb3/0x410
+[   35.307190]  __x64_sys_rmdir+0x40/0x50
+[   35.307641]  do_syscall_64+0xc1/0x1d0
+[   35.308096]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   35.308701] RIP: 0033:0x7f071988381b
+[   35.309147] Code: f0 ff ff 73 01 c3 48 8b 0d 02 36 0e 00 f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 84 00 00 00 00 00 f3 0f 1e fa b8 54 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 d1 35 0e 00 f7 d8
+[   35.311700] RSP: 002b:00007ffc6ed5f4f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000054
+[   35.313089] RAX: ffffffffffffffda RBX: 00007ffc6ed62948 RCX: 00007f071988381b
+[   35.314271] RDX: 0000000000000000 RSI: 000056215a1fd2e0 RDI: 00007ffc6ed606c0
+[   35.315464] RBP: 00007ffc6ed605e0 R08: 0000000000000073 R09: 0000000000000000
+[   35.316537] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
+[   35.317452] R13: 00007ffc6ed62958 R14: 00005621223ddc70 R15: 00007f07199d6000
+[   35.318345]  </TASK>
+[   35.318625]
+[   35.318827] The buggy address belongs to the physical page:
+[   35.319896] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x67 pfn:0xaaee
+[   35.320879] flags: 0x80000000000000(node=0|zone=1)
+[   35.321361] raw: 0080000000000000 ffffea00002abbc8 ffffea00002ac348 0000000000000000
+[   35.322478] raw: 0000000000000067 0000000000000000 00000000ffffffff 0000000000000000
+[   35.323460] page dumped because: kasan: bad access detected
+[   35.324149]
+[   35.324347] Memory state around the buggy address:
+[   35.324958]  ffff88800aaedf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   35.326113]  ffff88800aaedf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   35.327190] >ffff88800aaee000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   35.328162]                    ^
+[   35.328700]  ffff88800aaee080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   35.329505]  ffff88800aaee100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   35.330516] ==================================================================
+[   35.332287] Disabling lock debugging due to kernel taint
+
+Reported-by: syzbot+57934e2c8e7a99992e41@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=57934e2c8e7a99992e41
+Fixes: 6dd4ee7cab7e ("ext4: Expand extra_inodes space per the s_{want,min}_extra_isize fields")
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
 ---
- fs/9p/acl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/inode.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-index eed551d8555f..1b9681d58f8d 100644
---- a/fs/9p/acl.c
-+++ b/fs/9p/acl.c
-@@ -28,6 +28,8 @@ static struct posix_acl *v9fs_fid_get_acl(struct p9_fid *fid, const char *name)
- 		return ERR_PTR(size);
- 	if (size == 0)
- 		return ERR_PTR(-ENODATA);
-+	if (size > KMALLOC_MAX_SIZE)
-+		return ERR_PTR(-ERANGE);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 89aade6f45f6..38a1012d4a14 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5844,7 +5844,6 @@ static int __ext4_expand_extra_isize(struct inode *inode,
+ 				     handle_t *handle, int *no_expand)
+ {
+ 	struct ext4_inode *raw_inode;
+-	struct ext4_xattr_ibody_header *header;
+ 	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	int error;
+@@ -5864,11 +5863,8 @@ static int __ext4_expand_extra_isize(struct inode *inode,
  
- 	value = kzalloc(size, GFP_NOFS);
- 	if (!value)
+ 	raw_inode = ext4_raw_inode(iloc);
+ 
+-	header = IHDR(inode, raw_inode);
+-
+ 	/* No extended attributes present */
+-	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) ||
+-	    header->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC)) {
++	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR)) {
+ 		memset((void *)raw_inode + EXT4_GOOD_OLD_INODE_SIZE +
+ 		       EXT4_I(inode)->i_extra_isize, 0,
+ 		       new_extra_isize - EXT4_I(inode)->i_extra_isize);
 -- 
-2.43.0
+2.34.1
 
 
