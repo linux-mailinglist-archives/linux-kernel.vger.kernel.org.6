@@ -1,39 +1,51 @@
-Return-Path: <linux-kernel+bounces-441232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8AA9ECB81
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:44:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1109ECB83
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21DB6165F8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:44:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E795188A855
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472B7211A2A;
-	Wed, 11 Dec 2024 11:44:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942CD238E27;
-	Wed, 11 Dec 2024 11:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FD6211A2A;
+	Wed, 11 Dec 2024 11:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="kuRM/eZ/"
+Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2128211A26
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 11:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733917441; cv=none; b=SgXVy0yYXf1OONvOwbNh/KlMLCkjwuWEWbynJ0YsojS12YT4sbfb2JqsBBOvqOD5TXUFPiYFgXEW3DAJGYbCHQ7DFl9ow+WF08j/iNv63a6KOoY2hbFOYpJY3sd7NAQW3kUReGOsMOoyVOA0aPE9/rY3UEbhST0/y+sn22ohOac=
+	t=1733917458; cv=none; b=DWfRh2bxjJybXccIRIokxNB6fi63wB3h56S/+Gg2cXDZLjb5eh4tfl+oSlmA/0iD0hANhj8bkqtBi+JP0rTAf63vttz60JsdHdXwdH9+9MKllXa7WTrana5MPUCNYyIejzzfFLK3HkHVJxmXmHA9Rg0Lwuua3etS4BqY4H8C0gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733917441; c=relaxed/simple;
-	bh=mo9kAiTvLc24ao3l4ExpOMo+b7f8ffD3Pea6qUFfjDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NlvJ++NNlE2XzOCjq0rnQcwOgt/na81q4y+XHRRyL5gKnqqvZPFs5RU0uFfSGGabLdOk4F7ObSXkmA0KNsVHeyssadiG/ZTt9HUKnffPsve3yhxKHkXynGrZkD5ICoM4lwMKsyB1ONdGzVs2vS/Eao84DcoCbkgfOYKvMk55Q3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB20C1063;
-	Wed, 11 Dec 2024 03:44:26 -0800 (PST)
-Received: from [10.1.37.59] (e127648.arm.com [10.1.37.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08CC23F5A1;
-	Wed, 11 Dec 2024 03:43:55 -0800 (PST)
-Message-ID: <f16b11fa-bb2d-4e7e-81f9-80cf3a1f7a6c@arm.com>
-Date: Wed, 11 Dec 2024 11:43:53 +0000
+	s=arc-20240116; t=1733917458; c=relaxed/simple;
+	bh=RYufHWxSlkzSmjLTGP6SJrhGZCpAoM0Qu5uSmhrjUgk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=srja1ObPWkaWPPwMG9h4/qBXz7fgse1yoZIALzPAZUzaJGAGSHzI1zym6XkHVd2cMiQN9BsoT9Xmdswpo3Qo6jhGN8+B9c8fBtcEDsbyCv6AxLUwFaveX/mjHXm9KZGLhT59bEH18yBHQv8GcC7bnng/D4pHbalZXwEZHdTKtLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=kuRM/eZ/; arc=none smtp.client-ip=17.58.6.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733917456;
+	bh=olsUnbbcCu4bwm3gBuWccI/504DZmXXYNoZZOMNxRa4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type:
+	 x-icloud-hme;
+	b=kuRM/eZ/ATjHo1O4i0Ug8Tvies0uy9YI9hphNsvITSWbkJNF+SmfMg7o4kuHBjG6v
+	 y//ey3faQrpbRDaHJODNHv1Sdiaf8b7A4Wgu0GfiG6xbRl3vaY6SVwyTWXxVMOcfjT
+	 i27oEVLtFbbckO56N04hRrU4rlbeqyZGImng4gXpGKSE7zBCJFYwroEJZAb+SMZTP1
+	 a/G7W0P3sfcs+lQVecYxySIrD0ufrnHeka0pbf1RCJH+bSvha6veL2wmnfLly7Hdqx
+	 D0pFq8oCJnRYXvwjTWlR1Mj/dqZLr79AMLuCakK+jTAR/x4wUoBQk8vbZ/NPJMd32X
+	 7o4wlkF+rfTbw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id EC3CF2010252;
+	Wed, 11 Dec 2024 11:44:12 +0000 (UTC)
+Message-ID: <696f754e-605e-4564-9d17-b197b72ec055@icloud.com>
+Date: Wed, 11 Dec 2024 19:44:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,83 +53,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for
- EAS
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>
-References: <5861970.DvuYhMxLoT@rjwysocki.net>
- <2989520.e9J7NaK4W3@rjwysocki.net>
- <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com>
- <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: Re: [PATCH 05/10] of: Fix available buffer size calculating error in
+ API of_device_uevent_modalias()
+To: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>, Maxime Ripard
+ <mripard@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Grant Likely <grant.likely@secretlab.ca>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241206-of_core_fix-v1-0-dc28ed56bec3@quicinc.com>
+ <20241206-of_core_fix-v1-5-dc28ed56bec3@quicinc.com>
+ <CAL_JsqL+CRmCQMzcF4-A-PRBrCsfK8nduJtOO=RrsDtCUUR7og@mail.gmail.com>
+ <14fe473e-5f56-4a61-899c-bbb79e2aed3b@icloud.com>
+ <CAL_Jsq+Aap9Kjzcd5H5m9ArcXMWRogoT0CdPnz4-d8OeRgadUA@mail.gmail.com>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+Aap9Kjzcd5H5m9ArcXMWRogoT0CdPnz4-d8OeRgadUA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: Gwo7sHspSDEBi0l84sogjbAdEQ_lpRxJ
+X-Proofpoint-GUID: Gwo7sHspSDEBi0l84sogjbAdEQ_lpRxJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-11_10,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=999 phishscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412110086
 
-On 12/11/24 11:29, Rafael J. Wysocki wrote:
-> On Wed, Dec 11, 2024 at 11:33 AM Christian Loehle
-> <christian.loehle@arm.com> wrote:
->>
->> On 11/29/24 16:00, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> Make it possible to use EAS with cpufreq drivers that implement the
->>> :setpolicy() callback instead of using generic cpufreq governors.
->>>
->>> This is going to be necessary for using EAS with intel_pstate in its
->>> default configuration.
->>>
->>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> ---
->>>
->>> This is the minimum of what's needed, but I'd really prefer to move
->>> the cpufreq vs EAS checks into cpufreq because messing around cpufreq
->>> internals in topology.c feels like a butcher shop kind of exercise.
->>
->> Makes sense, something like cpufreq_eas_capable().
->>
->>>
->>> Besides, as I said before, I remain unconvinced about the usefulness
->>> of these checks at all.  Yes, one is supposed to get the best results
->>> from EAS when running schedutil, but what if they just want to try
->>> something else with EAS?  What if they can get better results with
->>> that other thing, surprisingly enough?
->>
->> How do you imagine this to work then?
->> I assume we don't make any 'resulting-OPP-guesses' like
->> sugov_effective_cpu_perf() for any of the setpolicy governors.
->> Neither for dbs and I guess userspace.
->> What about standard powersave and performance?
->> Do we just have a cpufreq callback to ask which OPP to use for
->> the energy calculation? Assume lowest/highest?
->> (I don't think there is hardware where lowest/highest makes a
->> difference, so maybe not bothering with the complexity could
->> be an option, too.)
+On 2024/12/10 22:10, Rob Herring wrote:
+> Ah, right. However, we still end up with a truncated value though it
+> is nul terminated.
 > 
-> In the "setpolicy" case there is no way to reliably predict the OPP
-> that is going to be used, so why bother?
-> 
-> In the other cases, and if the OPPs are actually known, EAS may still
-> make assumptions regarding which of them will be used that will match
-> the schedutil selection rules, but if the cpufreq governor happens to
-> choose a different OPP, this is not the end of the world.
+>> 2) both env->buflen and env->envp_idx are not updated once @env->buf
+>> does not enough spaces then failed.
+>>
+>> current logic has no difference with normal add_uevent_var() usage.
+> There is one major difference. add_uevent_var() will not output
+> anything if the whole string doesn't fit. Whereas we might output a
+> truncated value because the add_uevent_var() call updated env->buflen
+> and env->envp_idx. We could unwind that I suppose, but that involves
+> even more mucking with the internals of the env struct.
 
-"Not the end of the world" as in the model making incorrect assumptions.
-With the significant power-performance overlaps we see in mobile systems
-taking sugov's guess while using powersave/performance (the !setpolicy
-case) at least will make worse decisions.
-See here for reference, first slide.
-https://lpc.events/event/16/contributions/1194/attachments/1114/2139/LPC2022_Energy_model_accuracy.pdf
+you are right.
+i would like to try to solve involved issue in next revision. (^^)
 
-What about the config space, are you fine with everything relying on
-CONFIG_CPU_FREQ_GOV_SCHEDUTIL?
 
