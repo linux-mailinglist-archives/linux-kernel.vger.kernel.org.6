@@ -1,90 +1,154 @@
-Return-Path: <linux-kernel+bounces-440997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8CF9EC7A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:48:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DE79EC7A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:49:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4FBC285288
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE7C1888876
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB75B1E9B23;
-	Wed, 11 Dec 2024 08:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A78C1E9B25;
+	Wed, 11 Dec 2024 08:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnjETjGA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J1CXcQDj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180C71C1F21;
-	Wed, 11 Dec 2024 08:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FA01C5F12;
+	Wed, 11 Dec 2024 08:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733906875; cv=none; b=X1TdrkGnO00Jox9ladKroDa+kNMDTD1sJm54QlUWQCkxXgHWyqnA0AWxegnTjnTFmQ4FtcMwqUfeqC/HiwH93BbLHUybhF3TYc63kzEC/jl7sXYY0QQ0TX0MVp0iDA+hIopkgCdXY8RFUcs8pt1OR9ZAvtlPJlGUeo2SU7ciyEI=
+	t=1733906939; cv=none; b=GKFNdRf89nA2W9zWtMCEzWaxdQP7fq6RBfSXsHGuvu5Zbhh7vrf9qme8MrXDw/R0qOw2zs7IU5uAJTl3ELbBoxbvW067bwR+ql4r796l0Xu0RxITALs0vtlMkjqmEJUfOkzFyrD1x8l3L/dXSR3ZBBpZx4qc3ZbFasI/RBzd+Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733906875; c=relaxed/simple;
-	bh=KVhmteNEHcOPz5cljjEj4xcA3NrjZZYzaVqrSUqxelc=;
+	s=arc-20240116; t=1733906939; c=relaxed/simple;
+	bh=j+vqd/a5a5hgbl3tcDMK9EMkSQgtkl+vvBnHssubgDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OWua7bel9P7WvyzRohcHCrHr84+x6RvSZaSvbBMBqbcXqdpGFBWNsu0VQ4VW/vI3/5xReIxa2UJPYn/Q92U3rqf6ocUuYBApJmyIpzToklE+dihLW43RQIGsvxyOwQnKMLnIRWi2f4BTfssRyrOB1TaSrKFbM+zNyGyJmy9iRpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnjETjGA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CF0C4CED2;
-	Wed, 11 Dec 2024 08:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733906874;
-	bh=KVhmteNEHcOPz5cljjEj4xcA3NrjZZYzaVqrSUqxelc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mnjETjGAk1VuEJZ9wePQ6s9JAtCq0q8SMrZkTWH+BYdJegNKLPcodnvnVyBZuNgt6
-	 T0HNa4hYQgVyjFYRqfRkF7FszeC/y0r4evDD16peovgTNp6TUSXLFdo+wSwoO963Rj
-	 CrrMEiwvodShjHOPwL6bqVFcmv5oRvH2hgkboNLf9DDfq4j6Jb5sisO0tJXEfKgJxn
-	 sTFm7u5LS5HZR/8flFdsIH4Eo+v6TOTzxedqEZersA2BmF5IHxmtW/n+7N/21ObKJD
-	 kyg0aBMmxye7nILu6Xm7WgjHC/1BwJd+8iYYmeXR8XJzZ/ED9YHn4a5Ty2M/iv0wA+
-	 +MSd5n5vTXQag==
-Date: Wed, 11 Dec 2024 09:47:51 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: arm: Add label in the coresight
- components
-Message-ID: <ee5g6cy3kpwwyhlop7ex7zm5fombbmqbvp34exhm6dv22v5fwh@5o4xxwam3mnk>
-References: <20241210122253.31926-1-quic_jinlmao@quicinc.com>
- <20241210122253.31926-2-quic_jinlmao@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/xcznoVyYAaLXpgHb73TtHeAdxAeQgkYU5XzoZwJ2q2A8cG3r/MbpbgBbhy6ycxNy1qQDjrbN+/A/BGEhOeiIX26oFFU7CaR4cG55tbASJlBxyKToOghe9HPqagTWdgSoFfSVY7o5yBHvCUHGJQQ5Uu2HNdg1woYhE8mFuU/s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J1CXcQDj; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733906937; x=1765442937;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j+vqd/a5a5hgbl3tcDMK9EMkSQgtkl+vvBnHssubgDs=;
+  b=J1CXcQDjqM9YLnjrdYaSJevDGPA2JJQO6WIxsfmIvbdvUjJ97FxjB6a4
+   DdoE8Aiw2An4ICk6nJgSUVNAlWcqZHc3ImeFqOGnC94yl09Jirt7Y2twS
+   26adQC2GYKEr6z+126z9UccjXrfwTp/KwGD8wCdd+5s6zcJD/71OSA3Al
+   aY6kSJuljXyFv7ejDRrLzrWuQi5IxbpCqwtgnG7dWxd4V9XhmvswTDh8w
+   iVy1wKTHJ6I/vI3GY8g0C4eSvdcUTp3bdG+9y/TzcW7dqHERLDq5+9zxr
+   i7cBL/cvSJwd4TZYkm2LuvwFNZjcRhjjhRlsFJquNBVoj0xd4A7CoGDQT
+   g==;
+X-CSE-ConnectionGUID: pqNUoLOORAOmpzseWZADPw==
+X-CSE-MsgGUID: pWqr35LNSjGhEzubVYzFqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="44946662"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="44946662"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 00:48:56 -0800
+X-CSE-ConnectionGUID: Q1ogiordSHGSAV9fQnvLlA==
+X-CSE-MsgGUID: EGEskwiASuGo+htXH3OG7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="99809895"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 00:48:54 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 67CF011F99E;
+	Wed, 11 Dec 2024 10:48:51 +0200 (EET)
+Date: Wed, 11 Dec 2024 08:48:51 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 6/7] ACPI: bus: implement acpi_device_hid when !ACPI
+Message-ID: <Z1lR869cuIw_p2-l@kekkonen.localdomain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-6-00e409c84a6c@chromium.org>
+ <Z1isHpuHqHSX-jHd@kekkonen.localdomain>
+ <CANiDSCt64N5iheWgE0UhmTriLC8duraAaTaiX5fb7+NpXBRiUw@mail.gmail.com>
+ <Z1lF0ij99KpbVKQs@kekkonen.localdomain>
+ <20241211094037.26aa369a@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210122253.31926-2-quic_jinlmao@quicinc.com>
+In-Reply-To: <20241211094037.26aa369a@foz.lan>
 
-On Tue, Dec 10, 2024 at 08:22:52PM +0800, Mao Jinlong wrote:
-> Current name of coresight component's folder consists of prefix of
-> the device and the id in the device list. When run 'ls' command,
-> we can get the register address of the device. Take CTI for example,
-> if we want to set the config for modem CTI, but we can't know which
-> CTI is modem CTI from all current information.
-> 
-> cti_sys0 -> ../../../devices/platform/soc@0/138f0000.cti/cti_sys0
-> cti_sys1 -> ../../../devices/platform/soc@0/13900000.cti/cti_sys1
-> 
-> Add label to show hardware context information of each coresight
-> device. There will be a sysfs node label in each device folder.
-> 
-> cat /sys/bus/coresight/devices/cti_sys0/label
-> 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+Hi Mauro,
 
-It is impossible to figure out what changed here comparing to previous
-version (see details in cover letter). I will skip the review.
+On Wed, Dec 11, 2024 at 09:40:37AM +0100, Mauro Carvalho Chehab wrote:
+> Em Wed, 11 Dec 2024 07:57:06 +0000
+> Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
+> 
+> > Hi Ricardo,
+> > 
+> > On Tue, Dec 10, 2024 at 11:35:35PM +0100, Ricardo Ribalda wrote:
+> > > On Tue, 10 Dec 2024 at 22:01, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:  
+> > > >
+> > > > Hi Ricardo,
+> > > >
+> > > > On Tue, Dec 10, 2024 at 07:56:03PM +0000, Ricardo Ribalda wrote:  
+> > > > > Provide an implementation of acpi_device_hid that can be used when
+> > > > > CONFIG_ACPI is not set.
+> > > > >
+> > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > ---
+> > > > >  include/acpi/acpi_bus.h | 5 +++++
+> > > > >  1 file changed, 5 insertions(+)
+> > > > >
+> > > > > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> > > > > index 4f1b3a6f107b..c25914a152ee 100644
+> > > > > --- a/include/acpi/acpi_bus.h
+> > > > > +++ b/include/acpi/acpi_bus.h
+> > > > > @@ -1003,6 +1003,11 @@ static inline int unregister_acpi_bus_type(void *bus) { return 0; }
+> > > > >
+> > > > >  static inline int acpi_wait_for_acpi_ipmi(void) { return 0; }
+> > > > >
+> > > > > +static inline const char *acpi_device_hid(struct acpi_device *device)
+> > > > > +{
+> > > > > +     return "";
+> > > > > +}  
+> > > >
+> > > > I wonder if any caller might expect something of a string if provided?
+> > > > Valid _HIDs are either 7 or 8 characters whereas the proper version of the
+> > > > function returns "device" when one cannot be found (dummy_hid in
+> > > > drivers/acpi/scan.c). Unlikely to be a problem perhaps.  
+> > > 
+> > > Good point. I changed it to return "device"  
+> > 
+> > When ACPI is disabled, it's unlikely that string would be used anyway, vs.
+> > the case when ACPI is enabled but there's no _HID. So I think an empty
+> > string should be fine. I wonder what others think.
+> > 
+> Returning "" also caused me some attention at the original patch. IMO,
+> placing a pseudo-valid HID would be better, but I guess "device" is also
+> invalid, as, at least I always saw HIDs in uppercase. Also, I guess it
+> is always a vendor ID + a 4 digit number.
+> 
+> so, IMHO, something like "DEVC9999" would be a better name if we fill it.
 
-Best regards,
-Krzysztof
+How about post a patch changing "device" in drivers/acpi/scan.c? :-) But I
+think the string also needs to be an invalid as a _HID object so it's not
+masking an actual hardware ID used by a real device.
 
+-- 
+Kind regards,
+
+Sakari Ailus
 
