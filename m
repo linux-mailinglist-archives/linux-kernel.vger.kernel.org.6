@@ -1,369 +1,220 @@
-Return-Path: <linux-kernel+bounces-440857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCF19EC582
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:26:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEB89EC587
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:28:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00405167F25
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502521681C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835521C5F10;
-	Wed, 11 Dec 2024 07:26:45 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159911C5F14;
+	Wed, 11 Dec 2024 07:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k1bOJhmG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9B3179BD
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733902004; cv=none; b=ub9LlkFCwYJ209jXgh+JHmQmDRLxAdjpG4b/+/wpxXx+/m/eyvWRcOda+CnFoWo0Wm9KOawszzeB45rUSFhv8UBYTRmtpl+7oMqBULJ6nQLEm0xpuZvblTvnyn0kkrmE5FEodkEUUzLXZ/gSlnDnErqrGZ6LO1pU/DtYKPSiFZc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733902004; c=relaxed/simple;
-	bh=Uwfth/kVsHh9uEBP1j2/QhPHZL/QqLz6IsJPvfYTDOs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ItZM3Ao0Quy373eCdubZZMWrK3/T78K4Jv9Qyt3oNdAb0dOztNqNn8pjJmILEuZjfT8Z5DfMG6uJBcntt2lHYJNl2D0vG825iwA/U9AvfHIKpc8YTgFopT6wl+OsED+5BAxbTxFh7GdbdM6Zgv1h6YnZZWbZRtJRSBjPrtsVkIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3f0db582b79111efa216b1d71e6e1362-20241211
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:2d4d3f3a-fe11-4c78-b5b5-147a63612342,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:188a94398502bcf48ee9c22bda035b93,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0,EDM:-3,
-	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 3f0db582b79111efa216b1d71e6e1362-20241211
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <liuye@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 2046970107; Wed, 11 Dec 2024 15:26:32 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 87DDDB807587;
-	Wed, 11 Dec 2024 15:26:32 +0800 (CST)
-X-ns-mid: postfix-67593EA8-451944370
-Received: from [172.30.70.73] (unknown [172.30.70.73])
-	by node2.com.cn (NSMail) with ESMTPA id 4194AB807587;
-	Wed, 11 Dec 2024 07:26:29 +0000 (UTC)
-Subject: Re: [PATCH v2 RESEND] mm/vmscan: Fix hard LOCKUP in function
- isolate_lru_folios
-To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Mel Gorman <mgorman@techsingularity.net>,
- Yang Shi <yang@os.amperecomputing.com>, Minchan Kim <minchan@kernel.org>,
- Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Bharata B Rao <bharata@amd.com>, Yu Zhao <yuzhao@google.com>
-References: <20240919021443.9170-1-liuye@kylinos.cn>
- <20241119060842.274072-1-liuye@kylinos.cn>
- <20241129192228.6f08e74a555bedcad71d32f4@linux-foundation.org>
- <1733382994392357.312.seg@mailgw.kylinos.cn>
-From: liuye <liuye@kylinos.cn>
-Message-ID: <1826c705-fc5b-ab58-9205-b5d35bac1cba@kylinos.cn>
-Date: Wed, 11 Dec 2024 15:26:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45DE1C5F0B;
+	Wed, 11 Dec 2024 07:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733902082; cv=fail; b=rcCCb0VSqDn+mLoyVwTNgxI9/IVD15J/TWI92sBxFGXziLe8hOj17ql3r6rsHTt4LY2Xv9GoAaTjGhxtBHWj5crUE5bNzmEjWa6gP7LJ3PpxLK++6rUKSM1mHcA8mEnLOARs0AAcsFcgAH969AzuEGpBH3UZT0IZebcQcGpoyLE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733902082; c=relaxed/simple;
+	bh=DuNNXy9lgd56pCoejvfMh83rXfFG3Pn1MxuaqFFtgv8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jrgqlNkn1jzUhSX7tz0HiqV4WPrM+P6A5VD/0gorM1KwcKPzRSyaJkL9EMROST32QWzoAXu9MCTfz2rmemZc/VxqLRLW7L2mQUcZtMpl2jJOM/BoOCqt2j/wkAOC+Ayp3fbWVliWuZtfgvDhxTJFfPX3gEDyAIzjS9aLGXPiXrc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k1bOJhmG; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733902080; x=1765438080;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DuNNXy9lgd56pCoejvfMh83rXfFG3Pn1MxuaqFFtgv8=;
+  b=k1bOJhmGNBuisSepv+DPKu7dPolMxbhVtlUNjTwU/ARQGSXncRSlEBAw
+   xXwpfv/ckRxnCbdLThNKRYB3VeqZc0LdMistFcKmpP0l4LUyFH7o554Qy
+   LE/8FxGUvNxPSCUD1uyq387qcj2NftRfcvgfd42MHZGcM7XK+H0NZnb/a
+   OcQyPnDC0MxfIZ+jcbZcZ7UHysO7DGFcDj9KDah0VKIm+SC4rd8WM05I/
+   fzX3MAIgBVBsEHBHxTbr+slLTR9QtqqliQYlzORVEZjXyUZk5c1G2+ep3
+   6aHuKDvFUJzt/Y62Z6xxMvxg7fs8xeiBv1sMIYC993G3ukPHfsyNrDSsk
+   A==;
+X-CSE-ConnectionGUID: WNvKnbCNQGuHqzbXnRqEXQ==
+X-CSE-MsgGUID: 38bFgbx0SX6vynL/celo4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="21854746"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="21854746"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 23:27:58 -0800
+X-CSE-ConnectionGUID: 1GgazKeMQp2l+WrGdmyTug==
+X-CSE-MsgGUID: 1B1+XgIJQc+3Rnz8FqEynw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="126619530"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Dec 2024 23:27:58 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Dec 2024 23:27:57 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Dec 2024 23:27:57 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Dec 2024 23:27:56 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VUQBWhC2tvRqok6MVshW0EEDB1o1i6hkBM452saEDKJWIZOF2tTIosL0wRoztki+qgeTzBGEY/uYZAEyyNgogT1gT+cDM77iAc5O3AOma+uRNyTdi7rxhYHPWk2ThI7ETXCdIq1/g+c0oe4ushXcGk7ROKEywx5/SDqHgJG95r/0Uq8JL8Y1DQ94tPQR2L7OMu1XaDjt76+6SbY5n1AomBMAAZyC9V+2CyKKIlghc6ap6Bqh6ZySXg9AdFbWGVyhW0ZHzHWjYr1nBThHP+Z0gADB3FYKHQpnFilbqbyUIkq4KhZ/410vgXgi3UtihItZ4ZVN+GdCjKF4E/QBHdtpmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YlylXyVD1Ev4BGnT8q3VBcyrXHmTIsC5wfGjOxlyauA=;
+ b=Co5+oQGZyANGGuS37uvdq4crDzBizlQ+Dfomak7PVWgSoVZI6lOBUr7la9U9wUpSCXmioRexrV8106l5uaj3msBnhUaRhogHv9+N1DiqwxwZfEmDrCmO4dg52QLBtuePQFMBbFnm2YI7uPP/uVnLCiU6qAoulHk8CMhcr3ZtuWyacJ2W4hX5i7zSrDANcmhL5CVIprRW+rHPs1wUOMaUTcXfx/7UkzC+vVCkjIidL/53n1vtoYKvZeCjC9MiWruY2KGHDpwrH/oSISRGF0mXLMDLkmbSm4IIxSOOOMUxsY371TJttENWDczstGH5w/CjrfuEc4aHbUYvDTO2Ebq89A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by IA1PR11MB6537.namprd11.prod.outlook.com (2603:10b6:208:3a3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.14; Wed, 11 Dec
+ 2024 07:27:41 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
+ 07:27:40 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"will@kernel.org" <will@kernel.org>
+CC: "corbet@lwn.net" <corbet@lwn.net>, "joro@8bytes.org" <joro@8bytes.org>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>, "dwmw2@infradead.org"
+	<dwmw2@infradead.org>, "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "eric.auger@redhat.com" <eric.auger@redhat.com>,
+	"jean-philippe@linaro.org" <jean-philippe@linaro.org>, "mdf@kernel.org"
+	<mdf@kernel.org>, "mshavit@google.com" <mshavit@google.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "ddutile@redhat.com" <ddutile@redhat.com>, "Liu, Yi L"
+	<yi.l.liu@intel.com>
+Subject: RE: [PATCH v2 01/13] iommufd/fault: Add an iommufd_fault_init()
+ helper
+Thread-Topic: [PATCH v2 01/13] iommufd/fault: Add an iommufd_fault_init()
+ helper
+Thread-Index: AQHbRdBGeLxaINfdSk2XKhoLewYkS7LgsEXw
+Date: Wed, 11 Dec 2024 07:27:40 +0000
+Message-ID: <BN9PR11MB5276A65935F9E6339FBA49918C3E2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <cover.1733263737.git.nicolinc@nvidia.com>
+ <3bc49512a42b88130cf447a7ac10acf5c02e056c.1733263737.git.nicolinc@nvidia.com>
+In-Reply-To: <3bc49512a42b88130cf447a7ac10acf5c02e056c.1733263737.git.nicolinc@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|IA1PR11MB6537:EE_
+x-ms-office365-filtering-correlation-id: dacc7a16-fbe9-44c3-d81f-08dd19b54bc1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?WQN8e7dlXYNQ7KWHoLut1yMeW1IPtw0Km9DlNnT+eUlAvCjvmQNOTJQol/2a?=
+ =?us-ascii?Q?IvWuR8cxzga2MTtcJYqLwIZws2nB8RgY4R0VyczFNhqClzS7yT8GYz7JqtNz?=
+ =?us-ascii?Q?UGqohIkNouJlUH/ejaGnlztTtfrBnSbM/YeeVSfYHmPIHUfpmllwDShNdWjN?=
+ =?us-ascii?Q?AINC3sJOdNrEDF59iGZYb2aWVMzh2QCawhWXexzbBfklRAqmRyXQ9MhEkgGX?=
+ =?us-ascii?Q?+E85cUOhGFsv5g9K7fnuacn+DnwJYClB6DV39Vxkybp8yHFQc3idgT1v7RfW?=
+ =?us-ascii?Q?rAbtDECkxgG7EblYJF18AisS1Y1xcETbieT3m6Y1/I7t9oG6Z7MjekiuAtcF?=
+ =?us-ascii?Q?r0yqOO6mQ7QL48VKj5ne5DdaEru37yv3MO3iamRxFqJubFBkc2bXQFDGby39?=
+ =?us-ascii?Q?QhY9ycCqqYuJjxzT3HGFdtIN1ex7JgjTYDdgYFvVSBKEWYwTHJbw0wN4nt0S?=
+ =?us-ascii?Q?hgT9V4ipm/RUcxFF6E4EiWE5OZiGYoeSLwDUH/DzG1w1+PpiFiwJNlC3wmf5?=
+ =?us-ascii?Q?Mg6hk/cMTpmLr1leQ+g/F5GOj/DHGafkaDk0Dgsqq2TT3uroe4OqXUeLHb4K?=
+ =?us-ascii?Q?Tf8UwrD8TbeFPhWlWJECvus30yF9wPd2yP+/ySvF8ghzW6o0duSU/nMO2ccX?=
+ =?us-ascii?Q?yv4mIcgYO5vaHbf7r0K226pfzc/ZbMVtCHK7x2baHymv6r+rzP+kmhEPWRO3?=
+ =?us-ascii?Q?ZOXyvdhYF9O5fcEtrJmwG6f2ujB9mOjXKIFCO9gDgggwQgf6/7WngJ/O60iD?=
+ =?us-ascii?Q?uxdsDVTc3QomMfOhTJN0O7EV7EdZyOQ+vJztuk2OOG3vYyMR7QWEIM3Rx3an?=
+ =?us-ascii?Q?olOY/p+hn0B3Gxu/0pppqczMl3b2LwNDv3wWnsDxnjuYCblJel6cjGCvyjAg?=
+ =?us-ascii?Q?WP3ltG4jfrzceH72sJsBus0kriZ0+Q/mbpE/eUDgwYi+q0IgKJ3svO+HcnwN?=
+ =?us-ascii?Q?LOowPJ0MAvHHmdzAsrAORoRkW0FU21vAJiCu5Nu23D9qr1KnpzR8qEfSVg2U?=
+ =?us-ascii?Q?2BLNxqn4VgGcajE4oSqcckCfUgoBARDHrVy+Wyi3+6LOscbNaLOX3McKM/u2?=
+ =?us-ascii?Q?nnR+d8728k7e0G/VgoyfeR2qiNJde+Oam6sMWwi/tLReAzy+nei2FVNROkom?=
+ =?us-ascii?Q?H8bXHJP38w1QzTaE9h7BhWzEkxLGO/AwaMEucz/ui62VK4/jVj7iLR6vU2Oa?=
+ =?us-ascii?Q?4hUb7hzQWq8OujVwiAlgTgj3ZGnPYowaawPx5VKbvJzvndcyvadp1NnrlnbY?=
+ =?us-ascii?Q?i9GG0R9Gh84+VQcEI6vcnPk8OcUCCkKt+TEvuY30V9zP0OB+q2KxLxKjYlba?=
+ =?us-ascii?Q?R/kM0E/xRLtqRktk4VJmYChprXJY/w9nMKOJZIALo0n60tyhmxXvQJMuWaBw?=
+ =?us-ascii?Q?kLIKeo5OK6PQPemuB///AVn14cUQgTR7609MEcdyptYz1p9Hug=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?OtRCASdD84lL/gcEcd2VX6o+AHyClCZ9c01sDFJLewN7i27r35YZ33JrGNZy?=
+ =?us-ascii?Q?2srnVovV3JOCGVhvXPb+usIrBg+5SejaULT94z4MzTGzTdr0d1jESBxjVA6e?=
+ =?us-ascii?Q?NfVMr5BT1jn6majHCZkzm9C9VZ+bDnpOpdqgT5+kWJlEfAPdFmZlgtbevfYr?=
+ =?us-ascii?Q?hQv+ZEeheSCT9shV85vBsthlgcI0u8CaiCjTEqaKMmvCQ6VWTO39/aXcIBJL?=
+ =?us-ascii?Q?Fd8qWHtSsJF3DCCMeHf2TwikB0PuQ2GqyRYb6K53Rh+nDR51yEwRW/A+2bic?=
+ =?us-ascii?Q?I1KszGjFDWaRAv1vHX+7kXKgVNzdpeifFbA9vnDSfRMpOZwk9Gd406VpMRTJ?=
+ =?us-ascii?Q?vvXK2l3DoV3GMk6dqMirGLRktj394+rYsNqtibb6dQLW5Zn62kSV6h6qiloB?=
+ =?us-ascii?Q?vaIOkrudnhIhS+t9kV24xbnNtImrb8v2n2ykWq4FXDSA8fPacqP1pvjjSAc3?=
+ =?us-ascii?Q?wHrdhjSe1bM5TPow5cYC1tDIvom7OI0jI8V4do3jFa/aEt1Uxc+7JyUl7hHL?=
+ =?us-ascii?Q?GbqyJ9QhaUIH9cuM0Tl7jKPEVcWdaW3QiphWGNr1W2EHzuL8Jj/cD9WqRcbh?=
+ =?us-ascii?Q?mR9IKGubwZSL5pOkAbYHXwJENlVwE0mrOAl+vkN+9Nl1Zm/2i7YN6Vt6G7VN?=
+ =?us-ascii?Q?gUzQOmP1kb3Yhb7Jnf+K10ypYl4sVPxHMYjLTeV8ff2yHWLH461rvw7wE8oE?=
+ =?us-ascii?Q?gEMuN479ZDmnNJge55u/XkoX7gONExYnqvIkKar8xJ8PYN2wf3VK006BOQlB?=
+ =?us-ascii?Q?xn9e3ZV66z7vvi5Kkc/7VlZnjObOiRFPaZi27aw/Z/uvADLEFtAceNVv/0by?=
+ =?us-ascii?Q?nZVtMMu73dQjfa79luZo1CKzkbFDgPylWWll566qnKS/19WxAZ/OuJx3f2VL?=
+ =?us-ascii?Q?SOyjStDONHwxgRndF+BFpnfkGJiE/Ny1KpS97qoJQGEWkeMxvyOpUPxxTJVB?=
+ =?us-ascii?Q?MsnfxxFaEDdbdkFVjavZyn4dW/VrEbtWT0IWLxILtXA8Wq8JGpAwhH2RmMsl?=
+ =?us-ascii?Q?NmYPhF2oUTtWAa76BYeFGTxQdFKUQM4jjzKlMK5P7Q++oHYBdKVIyCH/tYFt?=
+ =?us-ascii?Q?H1iTd1+MSrPwuoMPCE10DpXt7RW3Wje+f8SrYLewG/UgtPG8Yg26oLBKwPQL?=
+ =?us-ascii?Q?ovyTeBrXChD/9ybG6NugN2//q/Hsea5JRsis1fGWlEaGgSKKJXbjfpKq345o?=
+ =?us-ascii?Q?oxi51SfMA/f5j3mtJbqq036cxpfhcbijgTmTlJaCNGfiPKRvv6UHZZB4Ibp/?=
+ =?us-ascii?Q?d5MRlffZfEEVUA/paKGwYbrEjmqC5HiKLHx8Qy5NcXFLFdbgCY3BJyR3zgR0?=
+ =?us-ascii?Q?i1VrywUBGSb+95me0bfMfS3lFXe34ncZMxW/HkYg8KJdKjdGbQSMlx3eoI67?=
+ =?us-ascii?Q?0DnvrBQ5ZTG9lOpD2vUcqnwKZXT5TUrEmIfoQy1tRlBEPguooebVPjWh/4Fv?=
+ =?us-ascii?Q?AaCGDJs42Vyl0DP0LpjcPezly2NsKUuDT8m+5CkzP6R/pwStR/eFuepkaqkb?=
+ =?us-ascii?Q?v7BVePZmBWyZ3jVhBIF3MJbHK/FLHOnfq14pJAp+0dyGVo+n6FsdBig11jHp?=
+ =?us-ascii?Q?7AD7KSBoVW3BW3UJydI9LV7qANxo+D9LU4zZ/5Iy?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1733382994392357.312.seg@mailgw.kylinos.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dacc7a16-fbe9-44c3-d81f-08dd19b54bc1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2024 07:27:40.6978
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rAtu+tHgoJsmMaYAOM/Fx7phPopqYDvG5GlxfGfidClxp/yMN3Z9nt8KxlqVkE6nSbxKyOwllqdKxxF/T5e8Sg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6537
+X-OriginatorOrg: intel.com
 
+> From: Nicolin Chen <nicolinc@nvidia.com>
+> Sent: Wednesday, December 4, 2024 6:10 AM
+>=20
+> +static int iommufd_fault_init(struct iommufd_fault *fault, char *name,
+> +			      struct iommufd_ctx *ictx)
+> +{
+> +	struct file *filep;
+> +	int fdno;
+> +
+> +	fault->ictx =3D ictx;
 
+while at it could you move this line behind iommufd_ctx_get(fault->ictx).
+usually we want the two together.
 
-On 2024/12/5 =E4=B8=8A=E5=8D=8811:55, Hugh Dickins wrote:
-> On Fri, 29 Nov 2024, Andrew Morton wrote:
->> On Tue, 19 Nov 2024 14:08:42 +0800 liuye <liuye@kylinos.cn> wrote:
->>
->>> This fixes the following hard lockup in function isolate_lru_folios
->>> when memory reclaim.If the LRU mostly contains ineligible folios
->>> May trigger watchdog.
->>>
->>> watchdog: Watchdog detected hard LOCKUP on cpu 173
->>> RIP: 0010:native_queued_spin_lock_slowpath+0x255/0x2a0
->>> Call Trace:
->>> 	_raw_spin_lock_irqsave+0x31/0x40
->>> 	folio_lruvec_lock_irqsave+0x5f/0x90
->>> 	folio_batch_move_lru+0x91/0x150
->>> 	lru_add_drain_per_cpu+0x1c/0x40
->>> 	process_one_work+0x17d/0x350
->>> 	worker_thread+0x27b/0x3a0
->>> 	kthread+0xe8/0x120
->>> 	ret_from_fork+0x34/0x50
->>> 	ret_from_fork_asm+0x1b/0x30
->>>
->>> lruvec->lru_lock owner=EF=BC=9A
->>>
->>> PID: 2865     TASK: ffff888139214d40  CPU: 40   COMMAND: "kswapd0"
->>>  #0 [fffffe0000945e60] crash_nmi_callback at ffffffffa567a555
->>>  #1 [fffffe0000945e68] nmi_handle at ffffffffa563b171
->>>  #2 [fffffe0000945eb0] default_do_nmi at ffffffffa6575920
->>>  #3 [fffffe0000945ed0] exc_nmi at ffffffffa6575af4
->>>  #4 [fffffe0000945ef0] end_repeat_nmi at ffffffffa6601dde
->>>     [exception RIP: isolate_lru_folios+403]
->>>     RIP: ffffffffa597df53  RSP: ffffc90006fb7c28  RFLAGS: 00000002
->>>     RAX: 0000000000000001  RBX: ffffc90006fb7c60  RCX: ffffea04a2196f=
-88
->>>     RDX: ffffc90006fb7c60  RSI: ffffc90006fb7c60  RDI: ffffea04a21970=
-48
->>>     RBP: ffff88812cbd3010   R8: ffffea04a2197008   R9: 00000000000000=
-01
->>>     R10: 0000000000000000  R11: 0000000000000001  R12: ffffea04a21970=
-08
->>>     R13: ffffea04a2197048  R14: ffffc90006fb7de8  R15: 0000000003e3e9=
-37
->>>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
->>>     <NMI exception stack>
->>>  #5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
->>>  #6 [ffffc90006fb7cf8] shrink_active_list at ffffffffa597f788
->>>  #7 [ffffc90006fb7da8] balance_pgdat at ffffffffa5986db0
->>>  #8 [ffffc90006fb7ec0] kswapd at ffffffffa5987354
->>>  #9 [ffffc90006fb7ef8] kthread at ffffffffa5748238
->>> crash>
->>>
->>> Scenario:
->>> User processe are requesting a large amount of memory and keep page a=
-ctive.
->>> Then a module continuously requests memory from ZONE_DMA32 area.
->>> Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm re=
-ached.
->>> However pages in the LRU(active_anon) list are mostly from
->>> the ZONE_NORMAL area.
->>>
->>> Reproduce:
->>> Terminal 1: Construct to continuously increase pages active(anon).
->>> mkdir /tmp/memory
->>> mount -t tmpfs -o size=3D1024000M tmpfs /tmp/memory
->>> dd if=3D/dev/zero of=3D/tmp/memory/block bs=3D4M
->>> tail /tmp/memory/block
->>>
->>> Terminal 2:
->>> vmstat -a 1
->>> active will increase.
->>> procs ---memory--- ---swap-- ---io---- -system-- ---cpu--- ...
->>>  r  b   swpd   free  inact active   si   so    bi    bo
->>>  1  0   0 1445623076 45898836 83646008    0    0     0
->>>  1  0   0 1445623076 43450228 86094616    0    0     0
->>>  1  0   0 1445623076 41003480 88541364    0    0     0
->>>  1  0   0 1445623076 38557088 90987756    0    0     0
->>>  1  0   0 1445623076 36109688 93435156    0    0     0
->>>  1  0   0 1445619552 33663256 95881632    0    0     0
->>>  1  0   0 1445619804 31217140 98327792    0    0     0
->>>  1  0   0 1445619804 28769988 100774944    0    0     0
->>>  1  0   0 1445619804 26322348 103222584    0    0     0
->>>  1  0   0 1445619804 23875592 105669340    0    0     0
->>>
->>> cat /proc/meminfo | head
->>> Active(anon) increase.
->>> MemTotal:       1579941036 kB
->>> MemFree:        1445618500 kB
->>> MemAvailable:   1453013224 kB
->>> Buffers:            6516 kB
->>> Cached:         128653956 kB
->>> SwapCached:            0 kB
->>> Active:         118110812 kB
->>> Inactive:       11436620 kB
->>> Active(anon):   115345744 kB
->>> Inactive(anon):   945292 kB
->>>
->>> When the Active(anon) is 115345744 kB, insmod module triggers
->>> the ZONE_DMA32 watermark.
->>>
->>> perf record -e vmscan:mm_vmscan_lru_isolate -aR
->>> perf script
->>> isolate_mode=3D0 classzone=3D1 order=3D1 nr_requested=3D32 nr_scanned=
-=3D2
->>> nr_skipped=3D2 nr_taken=3D0 lru=3Dactive_anon
->>> isolate_mode=3D0 classzone=3D1 order=3D1 nr_requested=3D32 nr_scanned=
-=3D0
->>> nr_skipped=3D0 nr_taken=3D0 lru=3Dactive_anon
->>> isolate_mode=3D0 classzone=3D1 order=3D0 nr_requested=3D32 nr_scanned=
-=3D28835844
->>> nr_skipped=3D28835844 nr_taken=3D0 lru=3Dactive_anon
->>> isolate_mode=3D0 classzone=3D1 order=3D1 nr_requested=3D32 nr_scanned=
-=3D28835844
->>> nr_skipped=3D28835844 nr_taken=3D0 lru=3Dactive_anon
->>> isolate_mode=3D0 classzone=3D1 order=3D0 nr_requested=3D32 nr_scanned=
-=3D29
->>> nr_skipped=3D29 nr_taken=3D0 lru=3Dactive_anon
->>> isolate_mode=3D0 classzone=3D1 order=3D0 nr_requested=3D32 nr_scanned=
-=3D0
->>> nr_skipped=3D0 nr_taken=3D0 lru=3Dactive_anon
->>>
->>> See nr_scanned=3D28835844.
->>> 28835844 * 4k =3D 115343376KB approximately equal to 115345744 kB.
->>>
->>> If increase Active(anon) to 1000G then insmod module triggers
->>> the ZONE_DMA32 watermark. hard lockup will occur.
->>>
->>> In my device nr_scanned =3D 0000000003e3e937 when hard lockup.
->>> Convert to memory size 0x0000000003e3e937 * 4KB =3D 261072092 KB.
->>>
->>>    [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
->>>     ffffc90006fb7c30: 0000000000000020 0000000000000000
->>>     ffffc90006fb7c40: ffffc90006fb7d40 ffff88812cbd3000
->>>     ffffc90006fb7c50: ffffc90006fb7d30 0000000106fb7de8
->>>     ffffc90006fb7c60: ffffea04a2197008 ffffea0006ed4a48
->>>     ffffc90006fb7c70: 0000000000000000 0000000000000000
->>>     ffffc90006fb7c80: 0000000000000000 0000000000000000
->>>     ffffc90006fb7c90: 0000000000000000 0000000000000000
->>>     ffffc90006fb7ca0: 0000000000000000 0000000003e3e937
->>>     ffffc90006fb7cb0: 0000000000000000 0000000000000000
->>>     ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812cbd3000
->>>
->>> About the Fixes:
->>> Why did it take eight years to be discovered?
->=20
-> I don't think it took eight years to be discovered: it was long known
-> as a potential issue, but awkward to solve properly, and most of us hav=
-e
-> survived well enough in practice that we've never given the time to it.
->=20
-Are there any discussions about this? URL?
-
->>>
->>> The problem requires the following conditions to occur:
->>> 1. The device memory should be large enough.
->>> 2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL=
- area.
->>> 3. The memory in ZONE_DMA32 needs to reach the watermark.
->>>
->>> If the memory is not large enough, or if the usage design of ZONE_DMA=
-32
->>> area memory is reasonable, this problem is difficult to detect.
->>>
->>> notes:
->>> The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL,
->>> but other suitable scenarios may also trigger the problem.
->>>
->>> Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-nod=
-e basis")
->>>
->>
->> Thanks.
->>
->> This is old code.  I agree on b2e18757f2c9 and thanks for digging that
->> out.
->=20
-> I disagree.  Although that commit is the root cause of what led to this
-> hard lockup problem, I believe there was no such hard lockup in it:
-> if I thought that this patch were a good fix, I would say
->=20
-> Fixes: 791b48b64232 ("mm: vmscan: scan until it finds eligible pages")
->=20
-> which allowed the previously SWAP_CLUSTER_MAX-limited scan to go
-> skipping indefinitely while holding spinlock with interrupts disabled;
-> which this patch here now limits to 32k, but that still seems way too
-> many to me.
->=20
-> And then after its 32k skips, it gives up and reclaims a few unsuitable
-> folios instead, just so that it can return a non-0 number to the caller=
-.
-> Unlikely to find and reclaim the suitable folios that it's looking for:
-> which, despite its faults, the unpatched code does manage to do.
->=20
-
-This value should not be too large, the earliest value is 32,=20
-before b2e18757f2c9.
-
- #define SWAP_CLUSTER_MAX 32UL
-+#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
-
-To prevent lock contention and lockup, this value should be neither too
-small nor too large. Depending on the CPU frequency, the time to trigger=20
-the lockup will vary. Not sure if this value of SWAP_CLUSTER_MAX_SKIPPED=20
-is the most appropriate, but it does work.
-
->>
->> I'll add a cc:stable and shall queue it for testing, pending review
->> from others (please).  It may be that the -stable tree maintainers ask
->> for a backport of this change into pre-folio-conversion kernels.  But
->> given the obscurity of the workload, I'm not sure this would be worth
->> doing.  Opinions are sought?
->=20
-> I think I've been Cc'ed because git blame fingered some nearby isolatio=
-n
-> cleanups from me: I'm not the best person to comment, but I would give
-> this patch a NAK.  If we are going to worry about this after seven year=
-s
-> (and with MGLRU approaching), I'd say the issue needs a better approach=
-.
->=20
-> Liuye, please start by reverting 791b48b64232 (which seems to have been
-> implemented at the wrong level, inviting this hard lockup), and then
-> studying its commit message and fixing the OOM kills which it was tryin=
-g
-> to fix - if they still exist after all the intervening years of tweaks.
->=20
-
-Memory reclaim skips a large number of ineligible zones's pages, causing =
-OOM.=20
-The memory reclaim mechanism needs to be optimized. But I think this=20
-optimization should not be triggered by "mm/vmscan: fix hard lock in=20
-function isolate_lru_folios". I suggest fixing the current issue first.
-
-Thanks,
-Liuye
-
-> Perhaps it's just a matter of adjusting get_scan_count() or shrink_lruv=
-ec(),
-> to be more persistent in the reclaim_idx high-skipping case.
->=20
-> I'd have liked to suggest an actual patch, but that's beyond me.
->=20
-> Thanks,
-> Hugh
->=20
->>
->>> --- a/include/linux/swap.h
->>> +++ b/include/linux/swap.h
->>> @@ -223,6 +223,7 @@ enum {
->>>  };
->>> =20
->>>  #define SWAP_CLUSTER_MAX 32UL
->>> +#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
->>>  #define COMPACT_CLUSTER_MAX SWAP_CLUSTER_MAX
->>> =20
->>>  /* Bit flag in swap_map */
->>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>> index 28ba2b06fc7d..0bdfae413b4c 100644
->>> --- a/mm/vmscan.c
->>> +++ b/mm/vmscan.c
->>> @@ -1657,6 +1657,7 @@ static unsigned long isolate_lru_folios(unsigne=
-d long nr_to_scan,
->>>  	unsigned long nr_skipped[MAX_NR_ZONES] =3D { 0, };
->>>  	unsigned long skipped =3D 0;
->>>  	unsigned long scan, total_scan, nr_pages;
->>> +	unsigned long max_nr_skipped =3D 0;
->>>  	LIST_HEAD(folios_skipped);
->>> =20
->>>  	total_scan =3D 0;
->>> @@ -1671,9 +1672,12 @@ static unsigned long isolate_lru_folios(unsign=
-ed long nr_to_scan,
->>>  		nr_pages =3D folio_nr_pages(folio);
->>>  		total_scan +=3D nr_pages;
->>> =20
->>> -		if (folio_zonenum(folio) > sc->reclaim_idx) {
->>> +		/* Using max_nr_skipped to prevent hard LOCKUP*/
->>> +		if (max_nr_skipped < SWAP_CLUSTER_MAX_SKIPPED &&
->>> +		    (folio_zonenum(folio) > sc->reclaim_idx)) {
->>>  			nr_skipped[folio_zonenum(folio)] +=3D nr_pages;
->>>  			move_to =3D &folios_skipped;
->>> +			max_nr_skipped++;
->>>  			goto move;
->>>  		}
->>> =20
->>> --=20
->>> 2.25.1
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
