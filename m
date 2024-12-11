@@ -1,200 +1,173 @@
-Return-Path: <linux-kernel+bounces-441119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D029EC9E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:00:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D769EC9EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:03:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416FF1884C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D536288E2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4441B1EC4E8;
-	Wed, 11 Dec 2024 10:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322EC1B21A0;
+	Wed, 11 Dec 2024 10:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="cZ0UTD76"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KwdKOa36"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730CA1A83ED
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1E4236FA9
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733911242; cv=none; b=CNXELKCZ53abhXqY/kgHMdM5AFBBP4d4YKba/MCvscCaVHOx5ESlKCfgLr2c+2T2pzCMhae3IrdOB5FJOmDsgUaery9Otb44VqJrqMhFwlZmjBfeH1O1LuzjApWOQLDs4lNIPmzsu6iAqzA/YU+ZRwOEsrGQbwBmaB/Ocn4F470=
+	t=1733911412; cv=none; b=RJc2OjDYIa+WfhWgeiLqw1PNRThaX64odV4/TqbAv6rwcHLfK8zBk12hpGIva3DLS7OVexovO1OejdGVd/zDZfXfnAGDDiLZ0R+5DalfKXZO7jwFB08ReKBabD/io/ASWjI1hdmxjIQOb1LZCqIH34r5qriUt1QIptf1dAF0Cb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733911242; c=relaxed/simple;
-	bh=l2HDRx9s3IYeilf56T9MMX/eWgMp5kRY3lPIhRZpvMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ozmw4oqbKleOlXMMah4aGu7JHiN+LIBxY3Eg1pXGfOp0P7bWwYMuzCx4v9mmNulyQBnJOwoBYN+vEWTf/CzuyJZrUEblYowjIs20po0ATVgLg3p2Ax1t2dfPhmgbjhKMga0ykVGcBTO0/5roV8egwSJkr3r8qV7byzfo92jlkpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=cZ0UTD76; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3862df95f92so3291111f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:00:40 -0800 (PST)
+	s=arc-20240116; t=1733911412; c=relaxed/simple;
+	bh=I7e2UE0n90FPZgbYCqwjYe9I0fH+uvt69aDGJHawIS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvTbsbPb+ReXCEuFJxGBALTsZ6oXOfRok84kCOt5RgPWLkaAYGO6TkS0rH1G6B+iUcNN5yo2kWpzTC3B2/gIC1COr8rjYodzvJ95Tv9UpOfuq/tZSPMHw44UAkSO8gxcqXva+HO89MEh4V096KIpNxzP/vL283rvtO3Xwtdq3Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KwdKOa36; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d3e6f6cf69so6096102a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:03:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1733911239; x=1734516039; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMc2ax6F38dbcr0u1xo9DcpAMAHTz5GuKuNJd8GscqI=;
-        b=cZ0UTD76I9lPYMeAOnvbrHCjl7Y8zfBdRZLtO4mnk0/DPC8Y18ZiSWV4G8X9jT1OK2
-         520uTj3t8o6V3Klr8B5PIDtZx+bdygBJ7OtraTjjHzSZjDaPojK5Aj6O4xOLseKxEG1a
-         ziLpYP73iGPnofQHvho9PHhz9hP0oQixOm/cfRszqG8PbtzOZuQ4GweiPuenHXukPh04
-         Amh7EUxi07o3YF/ZrCN9/716dZvtzn9VTxiKow34L8BTkyr+N7Z2HqxgkMwzYdZPSU3j
-         au7n5HbovaFvg1gUZHva/6cLtcHDhMQu+fYlAuXL7U57tdejEqlqb8rmWaOlnyebMqDX
-         P1XA==
+        d=google.com; s=20230601; t=1733911409; x=1734516209; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCeBFQbxDNcGU8eAxUj/y7sI+rg04GZNTgWblO08pkI=;
+        b=KwdKOa36k5Ks2vDYj6CA4cS2/4rwFZBTNnyHJByAJTgqtabhGBUEV/vt+hPH5egfBz
+         VtHT1LBrPRodyeMfuWSjBJQT+sLBhx7LqbBZY7nz/tDp7ldiZ3I7BRHKwpjNetxXvUAS
+         QacrlAZ8Gl3/JVhtpc2pZ7gxqldfzA+wVz28qtGySKDtC/0a5JPxc9pFo91wfJk/eIlr
+         Eq3i0O7LcBO9lqxaUzW5iH+ig3hKfcpbnDkXkqOHPKNWcyVi0MQCTwCzRZimm4YujyX4
+         IroBwGrDwRGo1HiE7LsNXPDqiuiNLwlE59A76W+C7VTA6lvZ2LOKOGNdex1H7gyZu8sm
+         B0Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733911239; x=1734516039;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1733911409; x=1734516209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UMc2ax6F38dbcr0u1xo9DcpAMAHTz5GuKuNJd8GscqI=;
-        b=vE57IV+3zow2NU+gN7RkzCpHFFT8mDebqD1px6ZHVhfcf1Xdav55rDRs30sAxcFHHK
-         UsvKDVcsGXMhsaDQc1Z/CMK15YemrONddT3aH5jUjfZpyNBKe/rzR7uM8OFI68VVgRlf
-         FdgP4jOhHQRzAMY2EXrjbvWnGH7UZ900fERVldZX3lyukNoZAzNu6ifia7ID7S+7bvw1
-         sVJjbt1osCnuqLaX9qMp9CPztOFC+txsktosLty3PWSHVSKgINFfXfHJBPWBsER2vE94
-         pF/pgsQXsBsgmkdf0iRCyt1+CqkEJR+c09MVwA+HMJcVazs6S8cd4vviKSG5SXNhtXSZ
-         g+bA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjxo47z6sNDgju9fgNN+27aAjSbuW+19o/gD/ZhCiB8H2pT60WXEoDkeyoZoPInuP6WufMwK+eS4RR+zQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiR01z47Vhq+W7KLNvKUs3mUlGxnx0GmUh6P8J9rx9iJki9n13
-	CzQpntFrYpCb5Ds7M+D3a0ImhDNoAyLY3u1e4yHsnQiVIjVpiJq799MHC3t/EHc=
-X-Gm-Gg: ASbGncuMv4NvaZ5zMxi2P3zpdfn8uN6+UlpHz6r7w3Cp+lhIPaGXBUjOrnX2LLEr0K5
-	7RxhuHZM44eimMAydwitFqLzhbmOZxEXZTOoqU6RBJs9Qvpxk4kDKIkJQamS7heR+1tmXOnglcB
-	9vUNnbmHgByp2gOPARf0NVBzH42VXOXclss7lJ7acxABXSXkqF3CmeaDJEMtOIqx5aMSiGbzLqK
-	6dAsknu1L7ioDWS3saDl6ap8yfw7CDPCwDjC/H8lmRgbC5l1TkAc44YTaoSRblmQq+EbyarjlrF
-	ejnDOv/wlnxj8g==
-X-Google-Smtp-Source: AGHT+IHcJjJ+FCos6cp/acUTFedh+NmuPc3H1sR775qCVahz0+y7bhu/h2jxV0OaPytf1HoxK6EI5A==
-X-Received: by 2002:a05:6000:2ad:b0:386:3918:16a8 with SMTP id ffacd0b85a97d-3864ce54d8amr1878672f8f.13.1733911238681;
-        Wed, 11 Dec 2024 02:00:38 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:f6e8:f722:d96d:abb? ([2001:67c:2fbc:1:f6e8:f722:d96d:abb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ea3sm902187f8f.28.2024.12.11.02.00.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 02:00:38 -0800 (PST)
-Message-ID: <cee54e4f-a909-43bb-9a46-b12aca404d08@openvpn.net>
-Date: Wed, 11 Dec 2024 11:01:22 +0100
+        bh=uCeBFQbxDNcGU8eAxUj/y7sI+rg04GZNTgWblO08pkI=;
+        b=wHsDCDVQDGINtt/ku2d6NfUgrA8bo7Lc+817XJ9Q6d38+EQOGOQjrATNAHuyo82w9K
+         ZIjU26ckuEnn3qWffLeUbk5nUdm6sxYPWRSUi6yOwKTP+HzekfCKVx0dvxFS4SMHDbMa
+         VVqGAumP/sZRz16JMsQmyLDkrbFtQ3xTGG0M7QHmrO+hsd/Alyr1Se4ahVIv+iz71bLc
+         9A2wfW0yWG9b1pxTgHbKEwWistGAOQLVmibxbLssF68xX5TqfYAsl4xAtW4Q9JpssTc6
+         OpKro1Xw/Zs8y1N+kPQinQDXtis4LQhiVLxZVHDDT7N3/9OaOMfzMfkgG94/Ifn0VU/y
+         ZGWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGnWfqZzBZ4fedhxOSlJ7GRmvE9+AUecXCd4nO2OsT3g9ZiXT0eOkAgVS3QEo2ghJmoMsLqx1PRVeCH5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysyDTsAhI1dYiajDIHS27CzloIz/oAnqImxlmaJN0qUVAUZiLJ
+	nlyo9EN4wl5LjVoRPbyeNz/wKpjKuUFyK37s+r3e7SuekNCaj1+nMOhI6ELGdQ==
+X-Gm-Gg: ASbGnctHYhZCX2ECymG6L0N95DoQQqYJhiV/R/6IHtEhxlPJdnvEZmmef31Bdyi7hNd
+	fE7O6NV958F/SNABEx9HPorrD5RxdCwhko3j1Fc3ZTeOtK7BXVZ+9cX4sldlB3IMwrBpQWwjl/B
+	QiFL7GxDQ39vE1vVGObAM5oXt0uOinxx8bjvpAhtaLIvnhyfxIh+mZKJXnJHYI9uB2ooP1TOqeA
+	fhsN6lSbU6kJxOBzN38BCk1Zoq2ScaugFc2aAVtgH7Gij+AziRe3qtTcipbmksuMx58Vki57eQy
+	GHL8fHppeNNu
+X-Google-Smtp-Source: AGHT+IFlnlrpokPXa68KO5qLY5+q1kB5CE8QSEZpGK7a+vw6fuvmt14yba9TOC/UESn8Ss3rIxUq4w==
+X-Received: by 2002:a17:906:30d1:b0:aa6:6e41:ea55 with SMTP id a640c23a62f3a-aa6b112c3c6mr209577866b.7.1733911408899;
+        Wed, 11 Dec 2024 02:03:28 -0800 (PST)
+Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68880b3f7sm433504366b.92.2024.12.11.02.03.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 02:03:28 -0800 (PST)
+Date: Wed, 11 Dec 2024 10:03:24 +0000
+From: Quentin Perret <qperret@google.com>
+To: Fuad Tabba <tabba@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 16/18] KVM: arm64: Introduce __pkvm_tlb_flush_vmid()
+Message-ID: <Z1ljbPFsUdUC8AD3@google.com>
+References: <20241203103735.2267589-1-qperret@google.com>
+ <20241203103735.2267589-17-qperret@google.com>
+ <CA+EHjTw_e_q5TFkgxvVDKxwj-C5S0Hd1OfVO4_FitrB8_J2Rpw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v14 22/22] testing/selftests: add test tool and
- scripts for ovpn module
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241209-b4-ovpn-v14-0-ea243cf16417@openvpn.net>
- <20241209-b4-ovpn-v14-22-ea243cf16417@openvpn.net>
- <20241210164715.GB6554@kernel.org>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <20241210164715.GB6554@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+EHjTw_e_q5TFkgxvVDKxwj-C5S0Hd1OfVO4_FitrB8_J2Rpw@mail.gmail.com>
 
-On 10/12/2024 17:47, Simon Horman wrote:
-> On Mon, Dec 09, 2024 at 09:53:31AM +0100, Antonio Quartulli wrote:
->> The ovpn-cli tool can be compiled and used as selftest for the ovpn
->> kernel module.
->>
->> [NOTE: it depends on libmedtls for decoding base64-encoded keys]
->>
->> ovpn-cli implements the netlink and RTNL APIs and can thus be integrated
->> in any script for more automated testing.
->>
->> Along with the tool, 4 scripts are provided that perform basic
->> functionality tests by means of network namespaces.
->> These scripts take part to the kselftest automation.
->>
->> The output of the scripts, which will appear in the kselftest
->> reports, is a list of steps performed by the scripts plus some
->> output coming from the execution of `ping`, `iperf` and `ovpn-cli`
->> itself.
->> In general it is useful only in case of failure, in order to
->> understand which step has failed and why.
->>
->> Cc: linux-kselftest@vger.kernel.org
->> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
->> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+On Tuesday 10 Dec 2024 at 15:23:02 (+0000), Fuad Tabba wrote:
+> Hi Quentin,
 > 
-> ...
+> On Tue, 3 Dec 2024 at 10:38, Quentin Perret <qperret@google.com> wrote:
+> >
+> > Introduce a new hypercall to flush the TLBs of non-protected guests. The
+> > host kernel will be responsible for issuing this hypercall after changing
+> > stage-2 permissions using the __pkvm_host_relax_guest_perms() or
+> > __pkvm_host_wrprotect_guest() paths. This is left under the host's
+> > responsibility for performance reasons.
+> >
+> > Note however that the TLB maintenance for all *unmap* operations still
+> > remains entirely under the hypervisor's responsibility for security
+> > reasons -- an unmapped page may be donated to another entity, so a stale
+> > TLB entry could be used to leak private data.
+> >
+> > Signed-off-by: Quentin Perret <qperret@google.com>
+> > ---
+> >  arch/arm64/include/asm/kvm_asm.h   |  1 +
+> >  arch/arm64/kvm/hyp/nvhe/hyp-main.c | 17 +++++++++++++++++
+> >  2 files changed, 18 insertions(+)
+> >
+> > diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> > index 6178e12a0dbc..df6237d0459c 100644
+> > --- a/arch/arm64/include/asm/kvm_asm.h
+> > +++ b/arch/arm64/include/asm/kvm_asm.h
+> > @@ -87,6 +87,7 @@ enum __kvm_host_smccc_func {
+> >         __KVM_HOST_SMCCC_FUNC___pkvm_teardown_vm,
+> >         __KVM_HOST_SMCCC_FUNC___pkvm_vcpu_load,
+> >         __KVM_HOST_SMCCC_FUNC___pkvm_vcpu_put,
+> > +       __KVM_HOST_SMCCC_FUNC___pkvm_tlb_flush_vmid,
+> >  };
+> >
+> >  #define DECLARE_KVM_VHE_SYM(sym)       extern char sym[]
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> > index de0012a75827..219d7fb850ec 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> > @@ -398,6 +398,22 @@ static void handle___kvm_tlb_flush_vmid(struct kvm_cpu_context *host_ctxt)
+> >         __kvm_tlb_flush_vmid(kern_hyp_va(mmu));
+> >  }
+> >
+> > +static void handle___pkvm_tlb_flush_vmid(struct kvm_cpu_context *host_ctxt)
+> > +{
+> > +       DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
+> > +       struct pkvm_hyp_vm *hyp_vm;
+> > +
+> > +       if (!is_protected_kvm_enabled())
+> > +               return;
+> > +
+> > +       hyp_vm = get_pkvm_hyp_vm(handle);
+> > +       if (!hyp_vm)
+> > +               return;
+> > +
+> > +       __kvm_tlb_flush_vmid(&hyp_vm->kvm.arch.mmu);
+> > +       put_pkvm_hyp_vm(hyp_vm);
+> > +}
 > 
->> +/**
->> + * Helper function used to easily add attributes to a rtnl message
->> + */
-> 
-> Hi Antonio,
-> 
-> This comment starts with a '/**' but is otherwise not formatted as
-> a Kernel doc. Probably it is best to simply start the comment with '/*'.
-> 
-> Likewise elsewhere in this patch.
+> Since this is practically the same as kvm_tlb_flush_vmid(), does it
+> make sense to modify that instead (handle___kvm_tlb_flush_vmid()) to
+> do the right thing depending on whether pkvm is enabled? Thinking as
+> well for the future in case we want to support the rest of the
+> kvm_tlb_flush_vmid_*().
 
-Will fix all instances of this issue.
+I considered it, but the two implementations want different arguments --
+pkvm wants the handle while standard KVM uses the kvm struct address
+directly. I had an implementation at some point that multiplexed the
+implementations on a single HVC (we'd interpret the arguments
+differently depending on pKVM being enabled or not) but that felt more
+error prone than simply having two HVCs.
 
-> 
-> Flagged by ./scripts/kernel-doc -none
-
-Darn, I have been running kernel-doc only against drivers/net/ovpn.
-Thanks for pointing this out.
-
-Regards,
-
-> 
->> +static int ovpn_addattr(struct nlmsghdr *n, int maxlen, int type,
->> +			const void *data, int alen)
-> 
-> ...
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Happy to reconsider if we can find a good way to make it work though.
 
