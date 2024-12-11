@@ -1,99 +1,127 @@
-Return-Path: <linux-kernel+bounces-442297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80E69EDA56
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:46:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F129EDA59
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A881F282F27
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8828E282CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAAA1F0E22;
-	Wed, 11 Dec 2024 22:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D131EC4F0;
+	Wed, 11 Dec 2024 22:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="rxk48gwt"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="HEHg4QN+"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761D72594A0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17782594A0
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957167; cv=none; b=oiuS0MUK0KaG0ocB3kBDYaOY1UOqC6cEqVq4ANrb3x6BQnZryRg2zeoZZ8nC6KePlL0XB7znS5M5Uo1qjt3Bjke7HSDNEF/QdHBKZmJEuSYEemZUcTv8WhVXXzDC1lIhTxpzixQvSDO4F2Nm7umY1MMraqkfNBcD3rSjPC3gSkw=
+	t=1733957217; cv=none; b=FvlAbwztwGhZ6RJwxoSdO81QC5q/DrXAp4AzqTG2fapWWY7MM/kEudziUdNbp5xnCv7/+FFjqUkQJF4KZyWbZZw4AGn1+oPca7yNkIbBY2v8rXNEsu9SRCfYs0tdmvBqjvIuCEAcAZPzGpXLJKFGIXIdMlbioe09WfQNdxEyM9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957167; c=relaxed/simple;
-	bh=cE27Nk5cmH4butM+9uY8zJsEUsYtbbcH45KG7WReNZY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sF+Ugkjc89IJMxs2r8RcIeDeyR7pBfjJGDPLVmLGUpvygrr1nnSdGByPpBdlli6BxVzF6kC/cz9o/4+F/uZUzklbdmExFFp6sId3CxuKozcRcbbUWVahEzGPKMwr9c/h8Wo6MrPi4DdMDRHbYntOdhHG0qTtY6pLHxKVDnbPyxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=rxk48gwt; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hTTJ7OXYyAx1ZfgndTqE4h/ckOFQ/YcOcAae/xgQEag=; b=rxk48gwtwxdly6V7kB9jzrpiHP
-	MHVGl65qKQC+teywOmweE8tYOCUobbt6HUZXL/4IBedWNWsIhmmdYWNioXllEWuH0HDWaCHKAP3C/
-	XvvR1DhmrKg+EJ7MZXHxQO6epJgNCk5Kg1OvGIZA1gPiC3jm0apA5YCoRiYXpRy7E+bTBMI+bxIva
-	tfUMM3WSfVeQV+MnBlEgSz039UVtbHKuELZczrjjcbHvmMrakp1uKkvQ6Cev/CVw0y3nsKx5Acoy6
-	OuPHNGQYFskLSOdc2yC2gEHRyrgqNv01AAefVYe3mFCXIedNyTlsob1yJJ+NBuq0it3elEty/1VAm
-	MwtRSJWg==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tLVSj-0000ON-3w; Wed, 11 Dec 2024 23:45:45 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: hjc@rock-chips.com,
-	andy.yan@rock-chips.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH drm-misc-next] rockchip/drm: vop2: don't check color_mgmt_changed in atomic_enable
-Date: Wed, 11 Dec 2024 23:45:41 +0100
-Message-ID: <173395708760.2509957.1013367330408721282.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241206192013.342692-3-pZ010001011111@proton.me>
-References: <20241206192013.342692-3-pZ010001011111@proton.me>
+	s=arc-20240116; t=1733957217; c=relaxed/simple;
+	bh=XmpTB5P/asjgarifWBAVexcPHqExuER4d7PMPYHy4CA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=k9TsyY3839/OG39F51oLoCYanfhG6Q9BkGhosbrrYp7TKcDiHJrM02hRjY5s1NcUgEIM62J0/QrMij9O/4OFlQgTs77hKKe+NHNRDmV1c8MxevX7/MW2OvjY14P2OLFbfmtN1OY5B7OPvDaK7azqPEIrfh+qLDbXK2B1I2AWjrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=HEHg4QN+; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1733957190; x=1734561990; i=spasswolf@web.de;
+	bh=XmpTB5P/asjgarifWBAVexcPHqExuER4d7PMPYHy4CA=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HEHg4QN+M90I4L1WdUjMgCx8DVG10Q+GiW8G7e8AVR+Tqy2sT0o09Swg7nVofqwS
+	 HTUQZYIc5VlrFpsRUiIGlHIB/oY2Nw7DYtxLVeE5iq/XXYgXkrGY0XwEoCMy4zsMU
+	 UI6UQ2lMxCsuxM+ktRy83tPoE8Di/elj1xhfwMfsFpZ2wLCPOYgh7yCTGHQQoNEbr
+	 WZ+Hdsgr0uy2nqtkUymy82HmZUQp0eppjq84j0jWmVfalvhf6HWCJEEYwDNGR69iW
+	 D+3sTeYrWk5RLM9M/E54h9618FlegDKopZhfy5XOtVNAVwTKlaRIwOqDlsUygnYw3
+	 lLh5QzaVLVKlnmZcDQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4NDG-1tmgoC2wGk-016YGW; Wed, 11
+ Dec 2024 23:46:30 +0100
+Message-ID: <75a27bab5671c43d2be6a26ac23916b731204086.camel@web.de>
+Subject: Re: commit 894d1b3db41c leads to frequent hangs when booting
+From: Bert Karwatzki <spasswolf@web.de>
+To: jstultz@google.com
+Cc: Metin.Kaya@arm.com, boqun.feng@gmail.com, bsegall@google.com, 
+	daniel.lezcano@linaro.org, dave@stgolabs.net, dietmar.eggemann@arm.com, 
+	joelaf@google.com, juri.lelli@redhat.com, kernel-team@android.com, 
+	kprateek.nayak@amd.com, linux-kernel@vger.kernel.org, longman@redhat.com, 
+	mgorman@suse.de, mingo@redhat.com, paulmck@kernel.org,
+ peterz@infradead.org, 	qyousef@layalina.io, rostedt@goodmis.org,
+ tglx@linutronix.de, 	vincent.guittot@linaro.org, vschneid@redhat.com,
+ will@kernel.org, 	xuewen.yan94@gmail.com, zezeozue@google.com,
+ spasswolf@web.de
+Date: Wed, 11 Dec 2024 23:46:26 +0100
+In-Reply-To: <20241211213527.3278-1-spasswolf@web.de>
+References: <20241211213527.3278-1-spasswolf@web.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:b3w36GzgeUomm/gZwauiR76zHBz2rePbPKlR0WHY3m8ruZzcm7I
+ bA00zD1F25RVWBANit8cnWfFtKDwh4xfvXj3X//Ig8OXD/9fJ0LNFxYBlGO/is6B49MlMYY
+ XHmwLgq5xEDpETx/1RbZUYMQEull0FL1jwxC481CmKIKfM4YUn2BCPtDT7fgEmOsluRfhy1
+ bWqlVn0dMefEXiS8Axo0Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+n79VlMm6Qk=;2cWKFcfXzgtA65gFMhRYR/emH09
+ Mb0Rj+xq1JosHMEmZvGRKFvfjgEhM7OY9sv9YAhflylh+U1K+qkMk6+ujZWTVnxU9FchO0uJi
+ KV7tcKKW7dZFyEHMtgovKUh532T6fQpX8d5hsU5jrBkQrTo2Te0F87Vr2h8tn/mjHhuwhpixw
+ ch8sRrW1PICHWV+pDJT6dwQ6CGnGVGCd+eMb8gQvD+Ms7VX9axwqpZs8fwlqE0DLglOoew4rr
+ nb0AImV6vU77cSNQa3v0L+ZCooMkH0pLPFaIcULeTyrUKvBG07yLGdOLc57zU5JqfjHqwvJ+2
+ 0V4w3ZPmaWIE/t4xrs17g/712ZcPVmrfJDsXn6lWjrDiN6i66rtGsECgS2lVof4o6Y0KSNAE7
+ YHabBUaRZm6MPgekJj8ixZIvvFl+8DFmMpCqX9h4naL+Xg4DokUwsqyfew5SjoviEXbG8Hfkv
+ uuG8yqpNf71Ti/g2JSZ7pmtdQfxvoFqzq7KBsc6oe1U3y2qNHLwIJazlAcvV6fJPcyD9NhrG6
+ bmJE2Esr8QYtIijYwSE2Bj2H+egVnZflvfoyzkEugnMKbt/mfV+N2nzgzVnu0+udXkY486c4+
+ QILck1srtEQqXzn2CTv1XD2i9us44ZsvdLqwcFLYPg/3uy4g+Th6G7pT8ooycJF2eXBoRx9N3
+ bFUxsSL3NPx02shh0UVtcRqiLsGq9iJLWzAlXMb1ZN8RdEHSE+SuUcCo93ngCwZHBYfVGdP7g
+ kIvpX+f78aNHD0b+/hZ3Ya3+YIb0qpiMPJVfdpFETmZBXLwfZuYdzqy0KlIXYXXJyoQ7AqEwQ
+ stk7iIOrtcMLOcGNUicAkfe2eLsw+myJnH8LCymFpikrxkUWXyd158akBUSq5VQfUOzXkLqYz
+ /KBUnPNddo2zsUxhbCF1zcdTPqP33l+7TOOoyVlvFizJIjJXsxo9cw+WvXXbYR57TX2E0HYSF
+ 1e4drZIOSeuF0a9XNIlLN+2ewwsgNZehrfxpxeljnX/6JUybtUcSzqub/JP94+ne7jM4IF8I4
+ 7Ral/hGeqfAUYULq8AJTBmLAfKkPAnddeCMvI9f0Fa31D2vAuFAQI6vubfNVG3K+kyoIDX4DB
+ SmOFJ4thk=
+
+Am Mittwoch, dem 11.12.2024 um 22:35 +0100 schrieb Bert Karwatzki:
+> I have confirmed that I that linux-next-20241210 is fixed by the same re=
+vert
+> as v6.13-rc2 (ten boots without incident is the criterion for a good com=
+mit)
+>
+>
+> Bert Karwatzki
+
+Also this bug only occurs with CONFIG_PREEMPT_RT=3Dy, I've just checked v6=
+.13-rc2
+without the revert and the following preempt settings and got 10 clean boo=
+ts:
 
 
-On Fri, 06 Dec 2024 19:26:10 +0000, Piotr Zalewski wrote:
-> Remove color_mgmt_changed check from vop2_crtc_atomic_try_set_gamma to
-> allow gamma LUT rewrite during modeset when coming out of suspend. Add
-> a check for color_mgmt_changed directly in vop2_crtc_atomic_flush.
-> 
-> This patch fixes the patch adding gamma LUT support for vop2 [1].
-> 
-> [1] https://lore.kernel.org/linux-rockchip/20241101185545.559090-3-pZ010001011111@proton.me/
-> 
-> [...]
+CONFIG_PREEMPT_BUILD=3Dy
+CONFIG_ARCH_HAS_PREEMPT_LAZY=3Dy
+# CONFIG_PREEMPT_NONE is not set
+# CONFIG_PREEMPT_VOLUNTARY is not set
+CONFIG_PREEMPT=3Dy
+# CONFIG_PREEMPT_LAZY is not set
+# CONFIG_PREEMPT_RT is not set
+CONFIG_PREEMPT_COUNT=3Dy
+CONFIG_PREEMPTION=3Dy
+CONFIG_PREEMPT_DYNAMIC=3Dy
+CONFIG_SCHED_CORE=3Dy
 
-Applied, thanks!
+Bert Karwatzki
 
-[1/1] rockchip/drm: vop2: don't check color_mgmt_changed in atomic_enable
-      commit: 9c22b6ece2e5c2308f41ba4bec27cfa158397fa7
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
 
