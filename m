@@ -1,103 +1,84 @@
-Return-Path: <linux-kernel+bounces-440755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371BE9EC3BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:49:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51419EC3B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07D19188BCAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF84916102A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A116235894;
-	Wed, 11 Dec 2024 03:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F202248A4;
+	Wed, 11 Dec 2024 03:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbIsJENH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqQGwu0q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB2A217F40;
-	Wed, 11 Dec 2024 03:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C062620968D;
+	Wed, 11 Dec 2024 03:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733888867; cv=none; b=HGs4WpMCzduSHah8iVT05S8yXAee76fII++yj9Wti/mvB8BISIcAKGjQj+66+mVpiMm1chftLj4w4hC5qJh+qf4toxMEvATaEl+eUWMpDPQGkhgshWTMBx5JftiGaNryk/6x8VtpVa/YAIqrz23SbHKguFhMzoDkSPQXOntU/M0=
+	t=1733888883; cv=none; b=XfIBtLRPlZA3asd+Xl/+626SHw0a97purOCvZyo5bviXg45Wg0YDG7lXcAF+JdQLCpVuJGgA+HCVWXOLhwrH1uoDuKI1kkYfDcy8DlNE30Ah7ojxmR+183Aha+40iOvrdiHgf04fLDAGlrjZJZxAKPr9p/ni9FBUc9CpxSOaz/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733888867; c=relaxed/simple;
-	bh=4VXvFe7m050VpSVNBvTDwFfGuKPuf2l5vzRdP3v5/38=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WSzoxaOSqAsrOjy3RsAZ5Lsb7JKrtJ5EOarpiQyLqCR//YZyusiYmRDiIsPov61AtVPe/ORbdv8BmraNoBGPpa4SkpF4ANgdjiPUK+iEhb9fECp3zR/8UGIINnXK+Szu13HQsn/aMwm+sX1rP0AyrZtMeYPt4OYdcDX0DX0shUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbIsJENH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86041C4CED2;
-	Wed, 11 Dec 2024 03:47:46 +0000 (UTC)
+	s=arc-20240116; t=1733888883; c=relaxed/simple;
+	bh=1Qm+Nh0K/a8ZjPcVF/jDjNWrfNGJjtMU1/Mfh1MwYvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFIkkbvqBIOZLL0CjH780hQmpZqWNrenN+Lzs/75MsT+jD/diDNy1GHTlKBLmzsjaqw5kmALaa77a9vfj7lXcVnZHTBS4E9xezZ39bUjjocTSxG25z/hElQnfUUYU2GrY1OZ4NdPV+KelHZatfTdgfS8eaipn3Fun4jloMnlO0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GqQGwu0q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0697DC4CED2;
+	Wed, 11 Dec 2024 03:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733888867;
-	bh=4VXvFe7m050VpSVNBvTDwFfGuKPuf2l5vzRdP3v5/38=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fbIsJENHb8B/oO7g0wQh/evbS6I87BuukPBtB+x9SvC74OEqDcRqtobK9rzX1bewj
-	 CCYKFmGmRcHlbX18y+CMzs25nqfW7lvg7XSaDAjTISRDUNstRxvgTserXRCfdn1rZX
-	 wqfSWP+u7FfNZR2qbA1FtPKtF8ro3KGEsVto0s3ckulJgE09n4eI8LUNxut5SiKwgq
-	 BPiXWKrZYWUj5YaExjUrnXHwATFtCBXtgb8Pgzoiim+MKV9Ea/RIx8Nz5rm5dZ1CAf
-	 gxsfiszwIbWz6rOWyXa9/JlZ2lzp/7nQEU+mF+zVCod1WZxeQC9qmlL+q/v63JNcmk
-	 FbJWus52JkPlw==
-Date: Tue, 10 Dec 2024 19:47:45 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>, Kaiyuan
- Zhang <kaiyuanz@google.com>, Willem de Bruijn <willemb@google.com>,
- Samiullah Khawaja <skhawaja@google.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jesper
- Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>
-Subject: Re: [PATCH net-next v3 4/5] page_pool: disable sync for cpu for
- dmabuf memory provider
-Message-ID: <20241210194745.7a0a319e@kernel.org>
-In-Reply-To: <20241209172308.1212819-5-almasrymina@google.com>
-References: <20241209172308.1212819-1-almasrymina@google.com>
-	<20241209172308.1212819-5-almasrymina@google.com>
+	s=k20201202; t=1733888883;
+	bh=1Qm+Nh0K/a8ZjPcVF/jDjNWrfNGJjtMU1/Mfh1MwYvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GqQGwu0qocJc0u9pVcMFiz5DEX6nzLztNHbRv7FP0Cx7nIBWcc8VMwEt6iowweWJP
+	 YT48sPljRgp+y30peYdWIIZH80i0zE3MwRiYfdoZt3k8D1PtT6DmXHErXbt4DCGk5o
+	 MLhKvp5agQnqOF5G7PZGD+VREsntReBHbXJY/a487sf7nlP0aT5qvw9143WWcIdPtO
+	 5lmb/1REfqHYYdWbbTYyXX5ZvvdWwSl2jI/9+uR45bGv9XQaPMMq2TPOwIuDOoekVl
+	 dkGLLRruhSQ5C+yLIZfuXeOWi0cpBaoncFd6FhVQYQ2XwFCNA4uthoVaQMO2+cbzvH
+	 Y3OgSVAjdb3tA==
+Date: Tue, 10 Dec 2024 19:48:01 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Ole Schuerks <ole0811sch@gmail.com>
+Cc: deltaone@debian.org, jan.sollmann@rub.de, jude.gyimah@rub.de,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
+	thorsten.berger@rub.de
+Subject: Re: [PATCH v6 01/11] kconfig: Add PicoSAT interface
+Message-ID: <Z1kLcQmBKC4bzm73@bombadil.infradead.org>
+References: <Z1DgqAb2wnlDjnLR@bombadil.infradead.org>
+ <20241209005713.52352-1-ole0811sch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209005713.52352-1-ole0811sch@gmail.com>
 
-On Mon,  9 Dec 2024 17:23:07 +0000 Mina Almasry wrote:
-> -static inline void page_pool_dma_sync_for_cpu(const struct page_pool *pool,
-> -					      const struct page *page,
-> -					      u32 offset, u32 dma_sync_size)
-> +static inline void
-> +page_pool_dma_sync_netmem_for_cpu(const struct page_pool *pool,
-> +				  const netmem_ref netmem, u32 offset,
-> +				  u32 dma_sync_size)
->  {
-> +	if (pool->mp_priv)
+On Mon, Dec 09, 2024 at 01:57:13AM +0100, Ole Schuerks wrote:
+> Thanks for all the feedback.
+> 
+> > This just deals with the first error and there is no unwinding, is that OK?
+> 
+> This should be OK. dlsym() only retrieves the address of a symbol from an
+> already loaded object. The calls to dlsym() thus should not need to be
+> unwound, it's sufficient to unload the object via dlclose().
 
-Let's add a dedicated bit to skip sync. The io-uring support feels
-quite close. Let's not force those guys to have to rejig this.
+OK thanks, maybe add a comment about it.
 
-> +		return;
-> +
->  	dma_sync_single_range_for_cpu(pool->p.dev,
-> -				      page_pool_get_dma_addr(page),
-> +				      page_pool_get_dma_addr_netmem(netmem),
->  				      offset + pool->p.offset, dma_sync_size,
->  				      page_pool_get_dma_dir(pool));
->  }
->  
-> +static inline void page_pool_dma_sync_for_cpu(const struct page_pool *pool,
-> +					      struct page *page, u32 offset,
-> +					      u32 dma_sync_size)
-> +{
-> +	page_pool_dma_sync_netmem_for_cpu(pool, page_to_netmem(page), offset,
-> +					  dma_sync_size);
+> > Other than that, did you run this through checkpatch.pl?
+> 
+> I ran all patches through checkpath.pl. The only reported issues with this
+> patch are the ones related to the use of the X-macro and one about the
+> typedef for the PicoSAT type. 
 
-I have the feeling Olek won't thank us for this extra condition and
-bit clearing. If driver calls page_pool_dma_sync_for_cpu() we don't
-have to check the new bit / mp_priv. Let's copy & paste the
-dma_sync_single_range_for_cpu() call directly here.
+I don't know what x-macro is so I don't have any clear opinion on that.
+
+  Luis
 
