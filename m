@@ -1,167 +1,221 @@
-Return-Path: <linux-kernel+bounces-441808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993929ED44B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:00:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0C19ED450
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33EA188A7CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDDB1889DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A402A1FF1CD;
-	Wed, 11 Dec 2024 18:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D7D1FF1DA;
+	Wed, 11 Dec 2024 18:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cZpOFeet"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DE31DE2DF;
-	Wed, 11 Dec 2024 18:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0C83S1fq"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7651BD9CA;
+	Wed, 11 Dec 2024 18:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733940040; cv=none; b=iEn1g2ciTSxI3NfeW9FLOaGARKTUqUzIZBsyPrtR20wID53IDCqJa6fnBVh9J98b9ZOZ3a8nQSehA9Ewlq36JkuOvzaDpZUwO2E7UGG4CRILsUCAbR9OZYC9miAi4tbiPaA4aywA3HWjnlHNooM+9RPJ5GpH07/ze61oEkRpYg8=
+	t=1733940103; cv=none; b=YXttx4Hq7Ubfz3VrWr1GCg4p8xKwTANvmssP2oPhD7O4mW8e65itR2GYT0YnfuV7ET17TjDWUmpcWEvc5uYfWGJtzgBm8a8ZlEhTNWeN9e8o75C0SuT5E/EFIWjDUnPYOb3Q2tsKe5IWdCAaDW7w8nJLN8XNrkLeyI1yu5Q4aCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733940040; c=relaxed/simple;
-	bh=NNbOsGSC//EdeMszMnVRP4wtv265fEiLNJXCoy30Qi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k64zuWHTcqsfr2n1fVSHt0+Y6aTx1bq6XnCCe/XIjnCfwSp4DdU3e/Afu/SGm73dSInZjf/d90hkqaErcdTpEsGNe1wFKM9cwROFU+EsHwMGYDkuz1U5c2XpZMwn+5VIO/esdFLW+bhtLM4+0VB2r5WP1qb3NLVkmQ0yHTRcvMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=cZpOFeet; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii. (c-98-225-44-166.hsd1.wa.comcast.net [98.225.44.166])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A17C1204721C;
-	Wed, 11 Dec 2024 10:00:37 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A17C1204721C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733940037;
-	bh=b895POQEkPicrgi43bLCfxOD1pFPcie/UcJzv4HRE9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cZpOFeetZdSphtj0i+JUmDvk+/LOvQYuHwNjeiF1G1dWb7L9gkvtN/+4GpvucyKVQ
-	 MA7gJRr+Z33URkZ4a/aHst+J6S0U3RbWiP+EB/c4r9WU1ID8jHnx4La7DEkjYZTxSz
-	 kQ+17XKTcP5gVkr6YOZNdYm8BacasCAzK3L+/D+Y=
-Date: Wed, 11 Dec 2024 10:00:35 -0800
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/hyperv: Set X86_FEATURE_TSC_RELIABLE unconditionally
-Message-ID: <20241211180035.GA20385@skinsburskii.>
-References: <173143547242.3415.16207372030310222687.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <SN6PR02MB41575A98314B82C498A3D312D4592@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20241120005106.GA18115@skinsburskii.>
- <SN6PR02MB4157121B6CD9F5CAAFB39637D4232@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20241125222457.GA28630@skinsburskii.>
- <SN6PR02MB4157344DE32DF479543CC2CED42F2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1733940103; c=relaxed/simple;
+	bh=3BWFuw1tcoh+KSQaVbmI6GMqbUaoPZlODkZt6GIdBiI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rKh1PcrhLicdx17LO4AuiesAcesoRAmbrGoyWaFAN9drexWD+4L8ssaqTULoR94/HSi0B4IsxJGUxklsqY3n6qXTjDoIfUDiU8wLu6gKHxdi1sflH2sbWNWdaOjUF9LWZ44K4G8zw/1IrDo4NlNdHyR1Dws0mQMixRdH9Zlvfpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0C83S1fq; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=IVHnpLKAbs1P9zKMMrgIzagDvO+w36oIPk+2jsToDwg=; b=0C83S1fq97gn53rq0T/CVl46e6
+	3XCpKkwcn/RffyjiKXUeijI3P7o0clz7e3okpsFw+Vu+NCkLJtwSAQvZ4+pzDUFo4yKl3xs0VJ+pI
+	Dk+Uysaeqc9JOI8qAO9pxQag0R8KtNHGxBwxgzYuVBhvPBsH8kTBk3Q0BAPFGYWv+bujjBFQI++PW
+	oIixUfFkDdQYMLwKE49C/PyMKq6aMutb6tM0MobIhmmsiP8Auqs81KTEz1sKxv2GMwLNRVLw5ODwZ
+	fVe/rxSQtnmMUNIKqgLKz8+7/BJ678z81Stnzhk78oncTkAdB4KsVT8Hc9g+8H+WBZVYaDJ1PN5F6
+	83mXfeyg==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tLR1Q-0006Ul-Ql; Wed, 11 Dec 2024 19:01:16 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ FUKAUMI Naoki <naoki@radxa.com>
+Subject:
+ Re: [PATCH v2 3/5] drm/rockchip: vop2: Improve display modes handling on
+ RK3588 HDMI0
+Date: Wed, 11 Dec 2024 19:01:15 +0100
+Message-ID: <1756448.izSxrag8PF@diego>
+In-Reply-To: <a4ex3s23r4k6wehyoaw3aylpcexfrclrxxykjpabhdfne2jgmu@ii6riiiga2zj>
+References:
+ <20241211-vop2-hdmi0-disp-modes-v2-0-471cf5001e45@collabora.com>
+ <1820767.5KxKD5qtyk@diego>
+ <a4ex3s23r4k6wehyoaw3aylpcexfrclrxxykjpabhdfne2jgmu@ii6riiiga2zj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157344DE32DF479543CC2CED42F2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Tue, Nov 26, 2024 at 06:11:10AM +0000, Michael Kelley wrote:
-> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Monday, November 25, 2024 2:25 PM
-> > 
-> > On Fri, Nov 22, 2024 at 06:33:12PM +0000, Michael Kelley wrote:
-> > > From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Tuesday,
-> > November 19, 2024 4:51 PM
-> > > >
-> > > > On Tue, Nov 12, 2024 at 07:48:06PM +0000, Michael Kelley wrote:
-> > > > > From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Tuesday,
-> > > > November 12, 2024 10:18 AM
-> > > > > >
-> > > > > > Enable X86_FEATURE_TSC_RELIABLE by default as X86_FEATURE_TSC_RELIABLE
-> > is
-> > > > > > independent from invariant TSC and should have never been gated by the
-> > > > > > HV_ACCESS_TSC_INVARIANT privilege.
-> > > > >
-> > > > > I think originally X86_FEATURE_TSC_RELIABLE was gated by the Hyper-V
-> > > > > TSC Invariant feature because otherwise VM live migration may cause
-> > > > > the TSC value reported by the RDTSC/RDTSCP instruction in the guest
-> > > > > to abruptly change frequency and value. In such cases, the TSC isn't
-> > > > > useable by the kernel or user space.
-> > > > >
-> > > > > Enabling the Hyper-V TSC Invariant feature fixes that by using the
-> > > > > hardware scaling available in more recent processors to automatically
-> > > > > fixup the TSC value returned by RDTSC/RDTSCP in the guest.
-> > > > >
-> > > > > Is there a practical problem that is fixed by always enabling
-> > > > > X86_FEATURE_TSC_RELIABLE?
-> > > > >
-> > > >
-> > > > The particular problem is that HV_ACCESS_TSC_INVARIANT is not set for the
-> > > > nested root, which in turn leads to keeping tsc clocksource watchdog
-> > > > thread and TSC sycn check timer around.
-> > >
-> > > I have trouble keeping all the different TSC "features" conceptually
-> > > separate. :-( The TSC frequency not changing (and the value not
-> > > abruptly jumping?) should already be represented by
-> > > X86_FEATURE_TSC_CONSTANT.  In the kernel, X86_FEATURE_TSC_RELIABLE
-> > > effectively only controls whether the TSC clocksource watchdog is
-> > > enabled, and in spite of the live migration foibles, I don't see a need
-> > > for that watchdog in a Hyper-V VM. So maybe it's OK to always set
-> > > X86_FEATURE_TSC_RELIABLE in a Hyper-V VM, as you have
-> > > proposed.
-> > >
-> > > The "tsc_reliable" flag is also exposed to user space as part of the
-> > > /proc/cpuinfo "flags" output, so theoretically some user space
-> > > program could change behavior based on that flag. But that seems
-> > > a bit far-fetched. I know there are user space programs that check
-> > > the CPUID INVARIANT_TSC flag to know whether they can use
-> > > the raw RDTSC instruction output to do start/stop timing. The
-> > > Hyper-V TSC Invariant feature makes that work correctly, even
-> > > across live migrations.
-> > >
-> > 
-> > It sounds to me that if X86_FEATURE_TSC_CONSTANT is available
-> > on Hyper-V, then we can set X86_FEATURE_TSC_RELIABLE.
-> > Is it what you are saying?
-> > 
-> 
-> No. Sorry I wasn't clear. X86_FEATURE_TSC_CONSTANT will
-> be set only when the Hyper-V TSC Invariant feature is enabled, so
-> tying X86_FEATURE_TSC_RELIABLE to that is what happens now.
-> 
-> What I'm suggesting is to take your patch "as is". In other words,
-> always enable X86_FEATURE_TSC_RELIABLE. From what I can tell,
-> TSC_RELIABLE is only used to disable the TSC watchdog. Since I
-> can't see a use for the TSC watchdog in a VM, always setting
-> TSC_RELIABLE probably makes sense. TSC_RELIABLE doesn't
-> say anything about whether the TSC frequency might change, such
-> as across a VM live migration. TSC_CONSTANT is what tells you that
-> the frequency won't change.
-> 
-> My caveat is that I don't know the history of TSC_RELIABLE. I
-> don't see any documentation on the details of what it is supposed
-> to convey, especially in a VM. Maybe someone on the "To:" list
-> who knows for sure can confirm what I'm thinking.
-> 
-> Michael
+Am Mittwoch, 11. Dezember 2024, 18:47:44 CET schrieb Maxime Ripard:
+> On Wed, Dec 11, 2024 at 06:23:03PM +0100, Heiko St=FCbner wrote:
+> > Am Mittwoch, 11. Dezember 2024, 18:07:57 CET schrieb Maxime Ripard:
+> > > On Wed, Dec 11, 2024 at 12:15:07PM +0200, Cristian Ciocaltea wrote:
+> > > > The RK3588 specific implementation is currently quite limited in te=
+rms
+> > > > of handling the full range of display modes supported by the connec=
+ted
+> > > > screens, e.g. 2560x1440@75Hz, 2048x1152@60Hz, 1024x768@60Hz are jus=
+t a
+> > > > few of them.
+> > > >=20
+> > > > Additionally, it doesn't cope well with non-integer refresh rates l=
+ike
+> > > > 59.94, 29.97, 23.98, etc.
+> > > >=20
+> > > > Make use of HDMI0 PHY PLL as a more accurate DCLK source to handle
+> > > > all display modes up to 4K@60Hz.
+> > > >=20
+> > > > Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+> > > > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> > > > ---
+> > > >  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 34 ++++++++++++++++=
+++++++++++++
+> > > >  1 file changed, 34 insertions(+)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers=
+/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > > > index 8b2f53ffefdbf1cc8737b3a86e630a03a7fd9348..393fe6aa170aaee9663=
+c4a6d98c1cd6a5ef79392 100644
+> > > > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > > > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > > > @@ -158,6 +158,7 @@ struct vop2_video_port {
+> > > >  	struct drm_crtc crtc;
+> > > >  	struct vop2 *vop2;
+> > > >  	struct clk *dclk;
+> > > > +	struct clk *dclk_src;
+> > > >  	unsigned int id;
+> > > >  	const struct vop2_video_port_data *data;
+> > > > =20
+> > > > @@ -212,6 +213,7 @@ struct vop2 {
+> > > >  	struct clk *hclk;
+> > > >  	struct clk *aclk;
+> > > >  	struct clk *pclk;
+> > > > +	struct clk *pll_hdmiphy0;
+> > > > =20
+> > > >  	/* optional internal rgb encoder */
+> > > >  	struct rockchip_rgb *rgb;
+> > > > @@ -220,6 +222,8 @@ struct vop2 {
+> > > >  	struct vop2_win win[];
+> > > >  };
+> > > > =20
+> > > > +#define VOP2_MAX_DCLK_RATE		600000 /* kHz */
+> > > > +
+> > > >  #define vop2_output_if_is_hdmi(x)	((x) =3D=3D ROCKCHIP_VOP2_EP_HDM=
+I0 || \
+> > > >  					 (x) =3D=3D ROCKCHIP_VOP2_EP_HDMI1)
+> > > > =20
+> > > > @@ -1033,6 +1037,9 @@ static void vop2_crtc_atomic_disable(struct d=
+rm_crtc *crtc,
+> > > > =20
+> > > >  	vop2_crtc_disable_irq(vp, VP_INT_DSP_HOLD_VALID);
+> > > > =20
+> > > > +	if (vp->dclk_src)
+> > > > +		clk_set_parent(vp->dclk, vp->dclk_src);
+> > > > +
+> > > >  	clk_disable_unprepare(vp->dclk);
+> > > > =20
+> > > >  	vop2->enable_count--;
+> > > > @@ -2049,6 +2056,27 @@ static void vop2_crtc_atomic_enable(struct d=
+rm_crtc *crtc,
+> > > > =20
+> > > >  	vop2_vp_write(vp, RK3568_VP_MIPI_CTRL, 0);
+> > > > =20
+> > > > +	/*
+> > > > +	 * Switch to HDMI PHY PLL as DCLK source for display modes up
+> > > > +	 * to 4K@60Hz, if available, otherwise keep using the system CRU.
+> > > > +	 */
+> > > > +	if (vop2->pll_hdmiphy0 && mode->crtc_clock <=3D VOP2_MAX_DCLK_RAT=
+E) {
+> > > > +		drm_for_each_encoder_mask(encoder, crtc->dev, crtc_state->encode=
+r_mask) {
+> > > > +			struct rockchip_encoder *rkencoder =3D to_rockchip_encoder(enco=
+der);
+> > > > +
+> > > > +			if (rkencoder->crtc_endpoint_id =3D=3D ROCKCHIP_VOP2_EP_HDMI0) {
+> > > > +				if (!vp->dclk_src)
+> > > > +					vp->dclk_src =3D clk_get_parent(vp->dclk);
+> > > > +
+> > > > +				ret =3D clk_set_parent(vp->dclk, vop2->pll_hdmiphy0);
+> > > > +				if (ret < 0)
+> > > > +					drm_warn(vop2->drm,
+> > > > +						 "Could not switch to HDMI0 PHY PLL: %d\n", ret);
+> > > > +				break;
+> > > > +			}
+> > > > +		}
+> > > > +	}
+> > > > +
+> > >=20
+> > > It seems pretty fragile to do it at atomic_enable time, even more so
+> > > since you don't lock the parent either.
+> > >=20
+> > > Any reason not to do it in the DRM or clock driver probe, and make su=
+re
+> > > you never change the parent somehow?
+> >=20
+> > On rk3588 we have 3 dclk_s and 2 hdmi controllers. Each video-port can
+> > use the clock generated from either the hdmi0phy or hdmi1phy, depending
+> > on which hdmi-controller it uses.
+> >=20
+> > So you actually need to know which vpX will output to which hdmiY to th=
+en
+> > reparent that dclk to the hdmiphy output.
+>=20
+> The Rockchip nomenclature isn't super obvious to me, sorry. Is there a
+> datasheet for this somewhere? Also, does this vpX -> HDMI-Y mapping need
+> to be dynamic?
 
-We had a long ionternal discussion with hypervisor folks and it looks
-like we will propose a more robust solution to go forward.
-The hypervisor will provide an additional CPUID bit, which guarantees
-TSC reliability (including across live migration).
+VPs are CRTCs in drm-language and each of them can drive a differing
+number of output encoders. Those video-ports also have differing output
+characteristics in terms of supported resolution and other properties.
 
-I'll prepare an updated version.
+The rk3588 TRM has leaked in a number of places, and if you find a
+TRM-part2, there is a section labeled "Display Output Interface Description"
+that has a nice graphic for that.
 
-Thanks,
-Stanislav
+Or in short:
+=2D CRTC(VP)0 supports 8K resolution and can drive DP0+1, HDMI0+1, eDP0+1
+  [if I'm reading things correctly, 8K together with CRTC1 somehow)
+=2D CRTC(VP)1 supports 4K resolution and can drive DP0+1, HDMI0+1, eDP0+1
+=2D CRTC(VP)2 supports 4K resolution and can drive DP0+1, HDMI0+1, eDP01, D=
+SI0+1
+=2D CRTC(VP)3 supports 2K resolution and can drive DSI0+1 and some BT1120,B=
+T656
 
-> 
-> 
-> 
-> 
+so for the 3 higher resolution CRTCs there are essentially 6 or 8 output op=
+tions
+depending on the board design
+
+
 
