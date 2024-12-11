@@ -1,148 +1,106 @@
-Return-Path: <linux-kernel+bounces-441061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B7C9EC8DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:21:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030659EC8DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:21:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A242283280
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:21:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B353165525
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916A71A83E9;
-	Wed, 11 Dec 2024 09:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C9F233695;
+	Wed, 11 Dec 2024 09:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="veK6Eqjz"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr3BRNSz"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFED4233680;
-	Wed, 11 Dec 2024 09:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8372A233680;
+	Wed, 11 Dec 2024 09:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908898; cv=none; b=AiPPqXzI0h0DRQZhi8vVLismFtmu3XC/oxEeXnwnOVgQdEODMJk2lBp2kZbePXZ7mu43OcO2HL8kr5kTfqfjlmiXhjHUJFFLKqacUpKdvLV+bHGrUAKcXs7Mp+OYDwvZ3+R7OjgsSHqYVQoiea58kqI7Z0F7IhpkzCNg/MfMtO8=
+	t=1733908890; cv=none; b=NqZr1SdR5/voQbwmQ/pd/npWnoJfi5+ngZP6WjIz2ZPyw8VJgRnKLwpX4da1/BmnRtfsyFsdV2eOSjIGxGHgxRxxBJBMGf0rW1lUPAZ+n+HX1/V36QJza/P0x43Ta8Q04jBgvIBYsO7Z9slY39lA7KGch2O3PPstAc5K0y6PV0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908898; c=relaxed/simple;
-	bh=a2nBastnrCJ+Q8H/sRyw6AmS0iybgPTtu8YvzJdxEl0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RMAyud8LaICXJUK3+jj4IoUNVqB3svDwG6W/ijBOhbkUeax+ke9lvYVRuzpu6lnNiQVJl1vGlAl80gwPtB0Tiu8Px2D1NHDdEGap6JviDxznXcGKwQqEdxnHmFnd/lZg1j9fsBc+6gx8DmwBZO65IOCs6vW8V0jZflRNxg357Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=veK6Eqjz; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733908892; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=BTRNYGHrd82xYJL1vADKA/NPF30Dt6eN5hXvBItCJ9o=;
-	b=veK6EqjzviyojYQW71NhM1GVkKg5CBWy7AS/hUR3SQ6mjOz/VR6HhRqw7aLhZaZj+jIp1Mx5/JQH0s1TOj3Gmym/bps6dIrN5NHBoXnUsQ9w6J145Q6aYwwo8ledNhTc34UT1B/xOEwTAkJWV8TzsM34OAx7KkGKxycaFHXiG0E=
-Received: from localhost.localdomain(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WLHtOnE_1733908891 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Dec 2024 17:21:31 +0800
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2 1/6] net/smc: protect link down work from execute after lgr freed
-Date: Wed, 11 Dec 2024 17:21:16 +0800
-Message-Id: <20241211092121.19412-2-guangguan.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20241211092121.19412-1-guangguan.wang@linux.alibaba.com>
-References: <20241211092121.19412-1-guangguan.wang@linux.alibaba.com>
+	s=arc-20240116; t=1733908890; c=relaxed/simple;
+	bh=Vbr7zBVOm/pARfCcOcrQIFDxRG1mJaGjCYWMOmqortY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bK4e/jHJJ+TGW+6HYW7SjpmuZE5+6YhKxJimG7qzK4u7qONObF4i3+mzZ1TV+2qriyFd6Wqw/veEtLQVOx65WZejAmNkm2v7iWxTCzrNvSQ5mf8SqKRRR/ILy7+V3Q02xoHjNFIwwwrGg9+DLrSr/PvupMHqvFASHJs7374JgZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr3BRNSz; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-29e65257182so3177960fac.2;
+        Wed, 11 Dec 2024 01:21:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733908888; x=1734513688; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4C7h5QSxdQhEkPXm8Dh6pX6yYARA5FoXrNT66IKEhzU=;
+        b=Dr3BRNSzrr6emiU12EqAC7OJ0mVlRYI63EziHgjCtE7WXeytcmtGgNssEfIwU3N7De
+         zAfOQqK52pTs9iJHAzxkAVQU2ZNHLSZsDGIvO45C5Tn6MhDO0XMm8/BSgOInXyb+5mhr
+         F7a8G6lqVjIxNQs2EUfns+cAeew5j8kJZRXx5HuGBbRJm0LSJWCtVgum9W0ni/HsnZJM
+         gzyd16otCB0D2OZSI5cr/u4aTJ1JGI1rXcT525m9LVMIzvKboah3U3FmB7t3T4aVAd2b
+         fjBLoGbvd4E9ewhmtoQcrXaA8jhiFu56m9d41wch+REyj5lJ6UCietM6ih+aQjI02RyU
+         wDUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733908888; x=1734513688;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4C7h5QSxdQhEkPXm8Dh6pX6yYARA5FoXrNT66IKEhzU=;
+        b=LNf7wYnnydv8aeOhH8AqZjjgtFau/Z3dLusO6xQEPT+7NOqI2GnMeZdUp+aTGSVvMm
+         NZ3cc2Qru4j3PhV74LBaz05ou79dIlkHCm5jdG72O+zHRaC4eArNvYNFUwCBN0CewKpA
+         kTf/9RH9pn+/pNCoaOqEk8KjRHrXxO8qcz5e9/Hyg+radO8dy8HJGQgaLiZOsv5GvGYT
+         v2fjrxzk7w0plyulhgthKO5FrFWBqY5QewjaOVo6nRlL9dlgEgCLCgCOpChIV6USwe/y
+         gGXSHyOALqq7dJA850bcBD0tFx0FAH7J/ivzJ69qTqP9PdrTnjVTOsnFxYM+jxfQwGWe
+         iBRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjxLqQHpdUQ7E6CcT9IS1qjxxVOU919PSNJMyqujrNRjIJImK9g1Z/lakJ+yzX32Q3BNeYpjdW@vger.kernel.org, AJvYcCX1QQod1jlY5D8vKHcNR3VQwPKw6bDmmOsV+J3jN4HZF2w8SgjPCAWhYncq0rFOXj5x31YK94s0vZptIpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2ppefFOdFxH4N7jL6hdkItUauwFf/hlr0I6SWFRkuqPhwgg5I
+	sPAZTzw0nWDG9/vqrbJi3RRH/r2HOb9EZ0JmV9/Xc/dqV+AK4JcqxwM5dBf90QYFY1racxr74pQ
+	RP2s7WMN8s5WjKfbZMokIdKCSYHk=
+X-Gm-Gg: ASbGncvt8jnhH8z4mstOhOdOTmp3jtan7Pd6yRMpggeYfO1GA1b+yKhYImTq5MucN5K
+	vjbdZ9oBCsJEjWoEhOAVpPyrHmT7zM/vRklohovhRbY5c42t3Wk/R75pdADKtK4ndLQ==
+X-Google-Smtp-Source: AGHT+IHHzpkUx+85WfKb6z7dl1FfQiVarlRubmXVZVAhAXjutW57Dv2ET8VHr18PaRsAOXGkhPrgH1pQDP3YXgk10NA=
+X-Received: by 2002:a05:6870:9687:b0:29e:6b6a:d6f3 with SMTP id
+ 586e51a60fabf-2a012e24defmr895276fac.39.1733908888398; Wed, 11 Dec 2024
+ 01:21:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1733755068.git.jstancek@redhat.com> <ce653225895177ab5b861d5348b1c610919f4779.1733755068.git.jstancek@redhat.com>
+ <20241210192650.552d51d7@kernel.org>
+In-Reply-To: <20241210192650.552d51d7@kernel.org>
+From: Donald Hunter <donald.hunter@gmail.com>
+Date: Wed, 11 Dec 2024 09:21:17 +0000
+Message-ID: <CAD4GDZzwVhiJjJ=dqXMSqN39EeVBrUbO3QYB=ZhrExC86yybNg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] tools: ynl: provide symlinks to user-facing
+ scripts for compatibility
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jan Stancek <jstancek@redhat.com>, stfomichev@gmail.com, pabeni@redhat.com, 
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-link down work may be scheduled before lgr freed but execute
-after lgr freed, which may result in crash. So it is need to
-hold a reference before shedule link down work, and put the
-reference after work executed or canceled.
+On Wed, 11 Dec 2024 at 03:26, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Mon,  9 Dec 2024 15:47:14 +0100 Jan Stancek wrote:
+> > For backwards compatibility provide also symlinks from original location
+> > of user facing scripts.
+>
+> Did someone ask for this? Does everything work without the symlinks?
+> If the answers are "no", "yes" then let's try without this patch.
+> In tree users should be able to adjust.
 
-The relevant crash call stack as follows:
- list_del corruption. prev->next should be ffffb638c9c0fe20,
-    but was 0000000000000000
- ------------[ cut here ]------------
- kernel BUG at lib/list_debug.c:51!
- invalid opcode: 0000 [#1] SMP NOPTI
- CPU: 6 PID: 978112 Comm: kworker/6:119 Kdump: loaded Tainted: G #1
- Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS 2221b89 04/01/2014
- Workqueue: events smc_link_down_work [smc]
- RIP: 0010:__list_del_entry_valid.cold+0x31/0x47
- RSP: 0018:ffffb638c9c0fdd8 EFLAGS: 00010086
- RAX: 0000000000000054 RBX: ffff942fb75e5128 RCX: 0000000000000000
- RDX: ffff943520930aa0 RSI: ffff94352091fc80 RDI: ffff94352091fc80
- RBP: 0000000000000000 R08: 0000000000000000 R09: ffffb638c9c0fc38
- R10: ffffb638c9c0fc30 R11: ffffffffa015eb28 R12: 0000000000000002
- R13: ffffb638c9c0fe20 R14: 0000000000000001 R15: ffff942f9cd051c0
- FS:  0000000000000000(0000) GS:ffff943520900000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007f4f25214000 CR3: 000000025fbae004 CR4: 00000000007706e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- PKRU: 55555554
- Call Trace:
-  rwsem_down_write_slowpath+0x17e/0x470
-  smc_link_down_work+0x3c/0x60 [smc]
-  process_one_work+0x1ac/0x350
-  worker_thread+0x49/0x2f0
-  ? rescuer_thread+0x360/0x360
-  kthread+0x118/0x140
-  ? __kthread_bind_mask+0x60/0x60
-  ret_from_fork+0x1f/0x30
+I asked for the symlinks for cli.py and ethtool.py to avoid surprising
+people when they move. The ynl-gen- scripts are primarily used in-tree
+via Makefiles so I didn't think they should be symlinked. Happy to go
+with your suggestion to drop this if you'd prefer not to have any
+symlinks.
 
-Fixes: 541afa10c126 ("net/smc: add smcr_port_err() and smcr_link_down() processing")
-Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Reviewed-by: Tony Lu <tonylu@linux.alibaba.com>
----
- net/smc/smc_core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-index 500952c2e67b..3b125d348b4a 100644
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -1818,7 +1818,9 @@ void smcr_link_down_cond_sched(struct smc_link *lnk)
- {
- 	if (smc_link_downing(&lnk->state)) {
- 		trace_smcr_link_down(lnk, __builtin_return_address(0));
--		schedule_work(&lnk->link_down_wrk);
-+		smcr_link_hold(lnk); /* smcr_link_put in link_down_wrk */
-+		if (!schedule_work(&lnk->link_down_wrk))
-+			smcr_link_put(lnk);
- 	}
- }
- 
-@@ -1850,11 +1852,14 @@ static void smc_link_down_work(struct work_struct *work)
- 	struct smc_link_group *lgr = link->lgr;
- 
- 	if (list_empty(&lgr->list))
--		return;
-+		goto out;
- 	wake_up_all(&lgr->llc_msg_waiter);
- 	down_write(&lgr->llc_conf_mutex);
- 	smcr_link_down(link);
- 	up_write(&lgr->llc_conf_mutex);
-+
-+out:
-+	smcr_link_put(link); /* smcr_link_hold by schedulers of link_down_work */
- }
- 
- static int smc_vlan_by_tcpsk_walk(struct net_device *lower_dev,
--- 
-2.24.3 (Apple Git-128)
-
+Thanks,
+Donald
 
