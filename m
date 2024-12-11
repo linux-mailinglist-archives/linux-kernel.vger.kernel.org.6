@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-441845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D541A9ED4CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:42:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6168C9ED4D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:43:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B7A1886C83
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9FA28421C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0025320ADC5;
-	Wed, 11 Dec 2024 18:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Rekdrgya"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE86209F22
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D3020A5CF;
+	Wed, 11 Dec 2024 18:43:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC92F209F3C;
+	Wed, 11 Dec 2024 18:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733942557; cv=none; b=mAgfNwJyEJkQ8aFqVPWuvXDI9fy7CgLogXnf7tb57rEFG4t5QZNuV8zjvdSA4ZHLfjacqRXD6id+NfwPEHSBpiyTKr1ey6GxwuQ0VQioWvMvcuOPS6r9y2VagqTGVxH0UNiS9pzN/aiYwTC8Q9l4Bpy2FT04/UD3NkQK3AGAnBY=
+	t=1733942579; cv=none; b=onCSej8QIajD1YSaHz8c9No2UgiU089NhW87fs9FDUDeJ5cpNMJLKVQwWeiptKP3CHTLXBiI1Wsfavf/pEUY2zVoLdcXwgGgftS5zwQO1/SWSXZ78lJttnW7J7TwZ8h9GLIsYRtq3D5H9u+4J5MMS3Kgh1r/3Ve3kda3V31AV0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733942557; c=relaxed/simple;
-	bh=SkpeHUB+DvSm6pjTjc2XWRWHLlFEQA0k5ibgRjASxjQ=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=g1/XlCgkVgL97ePy3C3EZUgSau5X24WsZk1ZHe3de1oowJz2G4XgLrvKgxhPAor5HOBJRpYvvCeMVFnkuXXEJKpc7AkzaKTht952bAQ20DsXw0gAm+YlVOKrLd1kRsAWAnJm4It3ABq/CakNpmv1Bn0oQaD1Z357+ZECgJIX8WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Rekdrgya; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b6dd0347dbso210100985a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1733942555; x=1734547355; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=04pC3QGQRTjTk+8Lsd4Sud0CdSb7C3narM3VOyiHdY4=;
-        b=RekdrgyaJyAhHM2C/jJkK760uWHAUafwyHjhBW86aOYefF7u937EIyHZigFdl86tO6
-         eB/ZBeoTkzDCtEDUXEcf/SZdjFz8PZnCQgdDBCPeXz4YIm6FGzb60wIhuTkVrCrh6+Ob
-         epI52hb02Sr0JlET0PYmj73cyO88PdM9dVUjdRRl+Ly6mamnoen5ytGFbUCTCai8GlYT
-         8r/A5JFbvae+BER88/b7qb9sZMia/8l+L9pPAwle2NXCRJUbRCo57DAsz06GKYjfaEja
-         2wFGNTarHdI3nJy8jdahVv0t+lj1+Vjjz9P+ja8VehqxcmHyKn+NKa8augRZ7dAQOx7D
-         6E2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733942555; x=1734547355;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=04pC3QGQRTjTk+8Lsd4Sud0CdSb7C3narM3VOyiHdY4=;
-        b=Zbs9v5h5LyHer29VnJtKE0gsEEbwnCJZXvpDIVqxUNNYK+xlBkTVHpVjez+fgCnCa5
-         Hd/vo6j7uMjaC4jVOasWU76GcFwlzEPv7Or0e7B4a1aDgWD0kbkxPlUDax8ZTBOzWGRb
-         pEm2ORTyfZWRZBkg4rd2uO2wb6s+qV6ZunAJE4wS/rSMI8G5xvtkjcBZd1Nm1AdGafHI
-         bJBx//2y+pKqRHdeCyUW8OcMSnjDSLaRNQxXPwONV8xjPn9IBuEEnuMekSpeT/xpmNQQ
-         dqToOeuVffjJ76VsccmeOVr/xf7pmluE3/WyuARaYBiBlb0oGqnROls/71H3yX+bFBhB
-         FcnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrNqHjsnutUjCLpd4cVFrpInJeHTdqD39pHYeTaLsZdhEeyYSfKCedxyHR5sHljWrKivqzfngXYcN5oDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRmWwaL+XD3egGCKJy/yFRQJX7mvaoTlD1EKqzS/IDpBdqKAjc
-	HSLb5zIv2lg4AWbVASdC/6heY1m2QVY4pL4EINZuIISagSkvSMcZeYL7VFmfEA==
-X-Gm-Gg: ASbGnctSSUkjPXqzHxTArkbet+ij93Lg9i+r/ND8A/rrrvlfgkWVmMD+08YvPCk3Tyr
-	zPrlhgZmgt0hU/O1JJuQkE0UczfsYRGTojZR5xiHQNre40svVVxqww2C8AKpE5YWagZSIt7mj3G
-	YUEXiCqLbZGE4AnF4TActM3tQ0w8kZvctYAPfxOQI4SFXatuDocY5MohfXz5oUnAS+NlW5jAfN1
-	p8ICjTFY+1SvyhzZSL6Zr3jsGVM5cCejW9PcRTv3GNdAWlE
-X-Google-Smtp-Source: AGHT+IF8JGBQo7vcnwREb0hv0tLiDlDa3CzKzT+euqnc01x3sznCCGYD4tzOwAdA7vudAvAWm/Vg9A==
-X-Received: by 2002:a05:6214:1d26:b0:6d8:99b2:63c5 with SMTP id 6a1803df08f44-6dae38edf96mr5007076d6.12.1733942554726;
-        Wed, 11 Dec 2024 10:42:34 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da66db6fsm72504186d6.10.2024.12.11.10.42.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 10:42:34 -0800 (PST)
-Date: Wed, 11 Dec 2024 13:42:33 -0500
-Message-ID: <e9fa92d65ef886d1f5ac8daf1bbc3939@paul-moore.com>
+	s=arc-20240116; t=1733942579; c=relaxed/simple;
+	bh=nOxaA7vXSE8dZXi+JIJESbM9FVIYY69Bj4Igv6fd1WQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lOV/lxTonm7+6IEZn2hYKlbZG5PXG2W/w4D/4y3Np2kCrW0zHyR0afEjUy6g90A7GSn+nIA5qHtUprxmGLHJCq29Ut/87r0h+L4KyAS+mW7T8VMSqasH9E063dves7ENraUeU7/FKB0wmWe+AKwFxpC7Voyv1HwUbuvkbEO2nXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 216EE1007;
+	Wed, 11 Dec 2024 10:43:25 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29D3D3F720;
+	Wed, 11 Dec 2024 10:42:55 -0800 (PST)
+Message-ID: <9e8fea35-9ec7-412b-8ce2-712c44a48021@arm.com>
+Date: Wed, 11 Dec 2024 18:42:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20241211_1304/pstg-lib:20241211_1304/pstg-pwork:20241211_1304
-From: Paul Moore <paul@paul-moore.com>
-To: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Subject: Re: [PATCH v2] selinux: add generated av_permissions.h to targets
-References: <20241127-selinux-clean-v2-1-a6e528c1ff93@linutronix.de>
-In-Reply-To: <20241127-selinux-clean-v2-1-a6e528c1ff93@linutronix.de>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] iommu: document missing def_domain_type return
+To: Matthew Rosato <mjrosato@linux.ibm.com>,
+ Baolu Lu <baolu.lu@linux.intel.com>, joro@8bytes.org, will@kernel.org,
+ gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
+Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+ svens@linux.ibm.com, borntraeger@linux.ibm.com, farman@linux.ibm.com,
+ clegoate@redhat.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org
+References: <20241209192403.107090-1-mjrosato@linux.ibm.com>
+ <20241209192403.107090-6-mjrosato@linux.ibm.com>
+ <3db6f346-0cb4-41f7-b532-91bcb0265849@linux.intel.com>
+ <0e80948b-7593-4b59-bb77-2f78f00ad2c3@linux.ibm.com>
+ <e2c80012-bf7a-4420-a478-482aac4903b8@arm.com>
+ <b6edaea3-3ccb-424b-bd84-762936b7448e@linux.ibm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <b6edaea3-3ccb-424b-bd84-762936b7448e@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Nov 27, 2024 =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de> wrote:
+On 10/12/2024 10:06 pm, Matthew Rosato wrote:
+> On 12/10/24 1:42 PM, Robin Murphy wrote:
+>> On 10/12/2024 4:26 pm, Matthew Rosato wrote:
+>>> On 12/9/24 9:57 PM, Baolu Lu wrote:
+>>>> On 12/10/24 03:24, Matthew Rosato wrote:
+>>>>> In addition to IOMMU_DOMAIN_DMA, def_domain_type can also return
+>>>>> IOMMU_DOMAIN_DMA_FQ when applicable, else flush queues will never be
+>>>>> used.
+>>>>>
+>>>>> Signed-off-by: Matthew Rosato<mjrosato@linux.ibm.com>
+>>>>> ---
+>>>>>     include/linux/iommu.h | 1 +
+>>>>>     1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>>>> index 05279109c732..d0da1918d2de 100644
+>>>>> --- a/include/linux/iommu.h
+>>>>> +++ b/include/linux/iommu.h
+>>>>> @@ -585,6 +585,7 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
+>>>>>      * @def_domain_type: device default domain type, return value:
+>>>>>      *        - IOMMU_DOMAIN_IDENTITY: must use an identity domain
+>>>>>      *        - IOMMU_DOMAIN_DMA: must use a dma domain
+>>>>> + *              - IOMMU_DOMAIN_DMA_FQ: dma domain with batch invalidation
+>>>>
+>>>> In which case must an iommu driver return IOMMU_DOMAIN_DMA_FQ?
+>>>>
+>>>> The flush queue is a policy of "when and how to synchronize the IOTLB"
+>>>> in dma-iommu.c. The iommu driver actually has no need to understand such
+>>>> policy.
+>>>
+>>> If you look ahead to the next patch where I implement def_domain_type for s390, I found that if I only ever return IOMMU_DOMAIN_DMA from ops->def_domain_type then when go through iommu_dma_init_domain() we will never call iommu_dma_init_fq() regardless of IOMMU_CAP_DEFERRED_FLUSH because of the if (domain->type == IOMMU_DOMAIN_DMA_FQ) check.  So something isn't right here.
+>>
+>> Conceptually I don't think it ever makes sense for a driver to *require* a device to use deferred invalidation. Furthermore it's been the whole design for a while now that drivers should never see nor have to acknowledge IOMMU_DOMAIN_DMA_FQ, it's now just an internal type which exists largely for the sake of making the sysfs interface work really neatly. Also beware that a major reason for overriding iommu_def_domain_type with a paging domain is for untrusted devices, so massaging the result based on iommu_dma_strict is still not necessarily appropriate anyway.
+>>
+>> It appears the real underlying issue is that, like everyone else in the same situation, you're doing def_domain_type wrong. If and when you can't support IOMMU_DOMAIN_IDENTITY, the expectation is that you make __iommu_alloc_identity_domain() fail, such that if iommu_def_domain_type is then ever set to passthrough, iommu_group_alloc_default_domain() falls back to IOMMU_DOMAIN_DMA by itself, and the user gets told they did a silly thing.
 > 
-> av_permissions.h was not declared as a target and therefore not cleaned
-> up automatically by kbuild.
+> OK, I almost see where this all fits to throw out def_domain_type for this series...  but looking at __iommu_alloc_identity_domain, the preferred approach is using a static identity domain which turns __iommu_alloc_identity_domain into a nofail case once you define the identity_domain:
+>   
+> if (ops->identity_domain)
+> 	return ops->identity_domain;
 > 
-> Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
-> Link: https://lore.kernel.org/lkml/CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com/
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> Changes in v2:
-> - Adopt Masahiro's suggestion
-> - Link to v1: https://lore.kernel.org/r/20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de
-> ---
-> I left out the modifications to the grouped target comments.
-> The current state doesn't hurt and I was not able to come up with
-> something actually nice.
-> ---
->  security/selinux/Makefile | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+> So it seems to me to be an all-or-nothing thing, whereas what I'm trying to achieve is a device-based decision on whether the group is allowed to use that identity domain.  Which reminds me that this is ultimately why I ended up looking into def_domain_type in the first place.
 
-Looks good to me, merging into selinux/dev.  Thanks everyone!
+Well, yeah, the static domain is very much designed for the typical case 
+where it *is* unconditionally available. Simple options right now would 
+be to have two sets of ops and select them per-instance, or if it's a 
+system-wide property perhaps have non-const ops and populate/clear 
+identity_domain as appropriate, or possibly even just stick with the 
+ops->domain_alloc(IOMMU_DOMAIN_IDENTITY) path (perhaps eventually 
+evolving into a specialised domain_alloc_identity op to also become 
+per-device?). What we should not have is mechanisms like the 
+def_domain_type hack where something claims to be available, but then 
+some other thing tries to say "oh but you mustn't touch that".
 
---
-paul-moore.com
+Thanks,
+Robin.
+
+> If I need __iommu_alloc_identity_domain to fail, I guess what I'm looking to do boils down to something like...
+> 
+> if (ops->identity_domain) {
+> 	if (!ops->allow_identity || ops->allow_identity(dev))
+> 		return ops->identity_domain;
+> 	else
+> 		return ERR_PTR(-EOPNOTSUPP);
+> }
+> 
+> 
+> 
+> 
+> 
+> 
 
