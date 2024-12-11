@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-441296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659E69ECC6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0589ECC6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:45:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC20D1645B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B6028AC80
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C794523369E;
-	Wed, 11 Dec 2024 12:43:18 +0000 (UTC)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C254A23FD30;
+	Wed, 11 Dec 2024 12:43:08 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A9F23FD34;
-	Wed, 11 Dec 2024 12:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B3A23FD2E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733920998; cv=none; b=JoLL5xRCbSY74GdMlg2p/IF3cT5Q4z3xVVfIxfBxLj5Qbxj/QZy/qAExyoHZr4x2HMo3VtFuA6G1GTsiES67KuQ8fl0ZZmsbRUY4igpeHTT3celG2XWGs3+fS3zKDrA3Nz1IO2BGfznPtBewV0prAOjMy2C5/XYdhnVxGqIdr/s=
+	t=1733920988; cv=none; b=SOHvg7RhZieqfgiiu7auT3NUsdQZYD1zjaWIFhsfiSVkI6P9D9GJ96KfmrOBw+qIUPEOLeQr1XmD8Yb28b7Rvq+MvgN7SEQnZe1G+63IxJnAg+QEz55ooZuID8TYbhKFuAw/QXl8450RF0Qt/bZbl7vz3I4NklE+yL0CLdEPLOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733920998; c=relaxed/simple;
-	bh=Pjzv9rYanq0So6Xz8lRteoxftfHkgIEnaA+sNGK5d1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sFRIN+Toe4CtIRrQGlnMHjW+JhTifxFTyvLfBCRM9rQ7TMtcoOugMmVzDbOzz1fikk+3fpUXe39uhc9jLhqtF5anVIUxzAbzyWiZjGoNeK8x9RG5Si2YmA1MtYYloEwuvHxsbkF7IbPRxGyNrAPqbh2v+gvN+OQ9djZRttQr4Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4b11a11a4f0so662984137.3;
-        Wed, 11 Dec 2024 04:43:16 -0800 (PST)
+	s=arc-20240116; t=1733920988; c=relaxed/simple;
+	bh=sqtRPZsNWTWDlPIEGxrgjYqWFdMNBbprHYcE+zLlGdo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FbsdwWHGYk/bdawErr99ahCgEgDvEEGKXkyHBzknDD3UF6m3lda7rI25vMO3UAuSdM5+t81mhzoIIAMqQ5ljyK5FGogyIvFxJRyh/pgVLmgFGJ9CZzQYe8TEXloy3rnZtXbmFML8P+ZrHVsPzhx6h4t87hC5WwkT9/jxBYBUWSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a817be161bso5703435ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 04:43:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733920994; x=1734525794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TMEcM2Vxiv+upGXTWO8pvAgZSwCW6PcJ5zIP5uxGg5E=;
-        b=vSG5EBapsKqXveNIiwwxMg6ZWuy1Cy2mPiT/lgeCH+z3LUJeKk4YAjCAcy4LwgChhm
-         gEPhYJfnI0Y5BLXFgcvvup0/X0makREl71ZzQn37iy/nR/ypcIfAz9aKCzaht6WG9NGV
-         dVGKRdTCskf3y+JrjEjpIudMCknfHWJZJzVzk6151ffAr507FT2COhB/bM82MCIzvYOD
-         SOxU6xEbz204Rq4TSR5kskGVbc/nBLbN7aH5MVFu4YHwcDa+B30Wt9tOl2iq7BWh50YS
-         H3nJKcWDWgNdFQ4eOrONVaHoMBa39ffjy46oMJsigDt9VX8wQjGQK6J6HDYjU83K5enI
-         mDrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqTT13Qu01iRbxdkWslTAw1TXOk8+1lzgll4PXAtxCbmBF0maH+ocB149CmOm4gzbvItecJLkePa4rq0L095Wpwy0=@vger.kernel.org, AJvYcCWgw2R7X9OK2mQ1B1+lR3IjunTp/q0Fqtn2dKdWN0NteuPWypv2I9ZjO6TMwx2k7/tPqW2vDHIzmcxW6tAc@vger.kernel.org, AJvYcCXNLciKIYwT8tf/vpu1eJ1AvsJwgEIzuGhgBMIQ4gRhHCzNw/iOzjEXxyhUxKKTLClBzk6S7J3pLEpR@vger.kernel.org, AJvYcCXY5qFadah8IL1iWHq7PdE0W53VMsMmleVxONe00cUp1O4hasXgkUPDmKxzAtD9C0uhw9M4fHZQhYDL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEy57tr48QI+6MM5iK1Qj8E6ErIWILSen6ImAUTCZek5HXRmRQ
-	KJFVDXccFjx/aRAzRs9GLc+hZiQ2EzjdkOrk5YtRFhqS+ZHuwldsH1HNeNVW
-X-Gm-Gg: ASbGncvY73zGw1hlhnA9VlF5AhpkrCzOil90wo5/eaXE/JuOW3QhW4upDFR6mHpWLng
-	BRXf3ieHCbs/m6InRe49vB7yw2Tz3FjYdXr3T4RqPnsEBhpBs29sR5c3wzb18b3Dpiez6F+z13g
-	zYe7H5r0m8g9zTvsRhnaOKYwhdvqerKxPV6QoHUSAr18senP1eN0vZ1wR69hX28wct19usOK/XZ
-	Q4wxWDUHNDUORumx0QsAU9VFMNdELmM27zpf4B8JqRjb+NaEEPD+9223cnPWFBcJKU89je9Ites
-	AHiSNKxNqss8dtHw
-X-Google-Smtp-Source: AGHT+IEo35NpT0A1qvoR0WVAWsXQOD8sI2uSHQOi2FjNpMyieZUY4Q7AbIvvkxBIKWAWh45wWIU72Q==
-X-Received: by 2002:a05:6102:3ec8:b0:4af:be6e:f0aa with SMTP id ada2fe7eead31-4b1291b9832mr2124770137.25.1733920994386;
-        Wed, 11 Dec 2024 04:43:14 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afd95c33f2sm1199979137.9.2024.12.11.04.43.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 04:43:13 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4afeb79b52fso1041721137.0;
-        Wed, 11 Dec 2024 04:43:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUR8xblPt0aspN049TSaFcGs/MzrzOW8zg5w/RpA2rQBDbZ7bN2trJ0dvCqXQ0cU4A6/fpxE1PZOyxS2dMS@vger.kernel.org, AJvYcCX2w3UKWDe2kFqOaeYRmJRLM0wt/wFP/rgcNHEf99JFBQsM35UOzJuHCc7PGRdP9nLtnF4kp6MVh0Ub@vger.kernel.org, AJvYcCXSVhd72xZJ5AK5/lmGlA3iTKzff7ZhPQzGGnQbroC4n7aFmBFr2HCADL80ykyxphHvUKw5xJu4I0E9@vger.kernel.org, AJvYcCXdqn0NX4jeeeboi9hN8h1xb+kXDsJIYG/zJZSBh3Xx8oZ+RM7Lef4zvJCKMpC7FfJOlG0AKBNx2aU75vy7FIdBo5M=@vger.kernel.org
-X-Received: by 2002:a05:6102:a49:b0:4b1:1b24:7241 with SMTP id
- ada2fe7eead31-4b12904a4b3mr2174344137.15.1733920993297; Wed, 11 Dec 2024
- 04:43:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733920985; x=1734525785;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yS4brN7M5UJILtP3MfPsPHuCfolhJONCsCbiFPCvNDs=;
+        b=VFHbKKfpUag7ZCQU1uvPvv1Z0QUcVflQj2tUAY7RSo4LFkx12s4REwjfJ7qpQQup3Q
+         NMKmJqdXrDV+1R+7sw+RNoGC/fwvIcbDKy2iDmtjKr991nJGCxVPlIH17TD+uHm9FX/v
+         YAIdvk0ojD/PqS7WnmTJUI4Uven7SBVHqtoJAcRhjh9Vmcx+AyCtZGv2oGlj0oeNRW1u
+         N68pld5I8mj+YjD3lYlunm+6bqppLsjk8IG40EcxXwERhsU8T0yIG/5gwPyW5fcw/vqv
+         i2evHt9nGKu/gJ56GnAod8XHwxPxg+NhS/m6C2XNtwGnu8xJHM1TNbABUPRvHHoOtEGu
+         F+2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDWTansVDI2dsBdjpNt2ULSOfvBzLao3Tlz5Cf3x5HtjjhuberUhHHTNnPrrtsEguEP2buKfpt7kX6vGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo2c5U97v2rixIyC2PbMCV/lWdxxIZuXwx6Jcqt8r/DNCfHnjN
+	6ImtuVyEnqBZGps62onWQ03ZWn4j+TXukrZnKR+s38w77W2lM1uLRVry3laF7oVCGC5m6LU1VTF
+	SD39bW1yQrpJDxKXACHIBvBqJOxCytggIEpvlWmrYj2POiFDMBXS0Cg0=
+X-Google-Smtp-Source: AGHT+IEnNiwI5Yer1www7xiZ1HWqZAEwixrGx2P4FCUjXi4s7SXW3L1xHrZ+Q5WTDiI767M+Aqry4hSNYUTnRzTWQIb9lKXg0yGI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com> <20241210170953.2936724-25-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241210170953.2936724-25-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Dec 2024 13:43:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUOHX2dCmPBBarPoPC879zEt9QsWC_iKerm9pesH_MHdA@mail.gmail.com>
-Message-ID: <CAMuHMdUOHX2dCmPBBarPoPC879zEt9QsWC_iKerm9pesH_MHdA@mail.gmail.com>
-Subject: Re: [PATCH v4 24/24] arm64: dts: renesas: rzg3s-smarc: Add sound card
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
-	lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+X-Received: by 2002:a92:d246:0:b0:3a9:d32c:d312 with SMTP id
+ e9e14a558f8ab-3aa1cdfea9bmr21357475ab.9.1733920985456; Wed, 11 Dec 2024
+ 04:43:05 -0800 (PST)
+Date: Wed, 11 Dec 2024 04:43:05 -0800
+In-Reply-To: <20241211.203019.1906828475608694378.konishi.ryusuke@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675988d9.050a0220.1ac542.000c.GAE@google.com>
+Subject: Re: [syzbot] [nilfs?] WARNING in nilfs_btree_propagate (2)
+From: syzbot <syzbot+b2b14916b77acf8626d7@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 6:11=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v4:
-> - collected tags
+Hello,
 
-Thanks, will queue in renesas-devel for v6.14.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Gr{oetje,eeting}s,
+Reported-by: syzbot+b2b14916b77acf8626d7@syzkaller.appspotmail.com
+Tested-by: syzbot+b2b14916b77acf8626d7@syzkaller.appspotmail.com
 
-                        Geert
+Tested on:
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+commit:         f92f4749 Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=135db3e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5a0b1b189561bf60
+dashboard link: https://syzkaller.appspot.com/bug?extid=b2b14916b77acf8626d7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13a5c20f980000
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Note: testing is done by a robot and is best-effort only.
 
