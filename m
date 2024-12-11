@@ -1,523 +1,290 @@
-Return-Path: <linux-kernel+bounces-441235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420C49ECB88
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:46:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40469ECB8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:49:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6BDD1886FC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:49:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6D92210F3;
+	Wed, 11 Dec 2024 11:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rrYhCjil"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2079.outbound.protection.outlook.com [40.107.101.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDBD2831B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:46:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16992040AE;
-	Wed, 11 Dec 2024 11:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aT1Zl6bJ"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217D0238E0F;
-	Wed, 11 Dec 2024 11:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733917598; cv=none; b=V6iR+261YhjRtjgDGAy+IY/IswYtaivmyNbo9AV+g5n188hODivjU636U347/QR8C8IEIPKaXlAETQQpzwQLXd552eSligejkRkyuV6XxwUykis69SfB1tfW7LTn26ZroYkLEofpV4Nd3SOxF9AsT8I9i5uRLnkSe8+jfU1vRqA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733917598; c=relaxed/simple;
-	bh=zDtqtHSzU+HGgJQPZx044iADiBuKiJuzC8p/X23W4Yk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FmwYHHiP94UE3fLskG9dEM2CK+oN6lwmgNp7Pba9qLLn5xuezCAn5lPN32Qcjc44M4DZdFvWjmpWysY0LN0BQY1fVJ7zu2TGv9kSldxcsvW5kvNk/NK2fe9OjlkwVj66j+T0go32TP2UfkSAca3HZpI1abIPTNIWj9seLTWczB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aT1Zl6bJ; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e39f43344c5so6111517276.1;
-        Wed, 11 Dec 2024 03:46:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733917595; x=1734522395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w5D96SRj9jglkN0dqEzyp7zP2piK7fg62skqOU4zGhQ=;
-        b=aT1Zl6bJHZX/i+r9shnURyOmneevjQ5mdeLwQ01FYiAwEzTPueIm/oOgcGzoVYgLMf
-         TV6GPOaEcW8WWT/thunRBGkMG2v0b7496FegTwk6CySJVQiELp/euan7qrLnRhn0DkGa
-         +xoNpbbAHIhtYO7EsOuRboZyn6e0i9z1N87jTHSYImHl0FqWOCOQDl4iazDCwrDdBsxk
-         ckj4ynbPLbE9NPReVpOdTCuZaVjMHJv3J3GhY5II142pqZT+rdcmwBxj9Y5cGZO7Huo6
-         41+u4wVKrPcbGiFnoV8SbSnEuwX/4GodWP1u/JlBnTST+J3IKSQHzZOeEMQFiOyKjeeV
-         Y7mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733917595; x=1734522395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w5D96SRj9jglkN0dqEzyp7zP2piK7fg62skqOU4zGhQ=;
-        b=e39DXDMA+vpQDJ3AzpcDH55R2lcQ7r5h5Gj6Ed7mZQs8UDVXmDKlzzw5Cu+5FhmyNY
-         v33PMNT7r4Wv4SpW+3nm3CrVa2XGXG9K4ARpNdgXKsyvP8UZ97Xj2yugVSiliLlt0wuh
-         I7BaBG+0ja+zvCfV/Wl4Kb0i9kpyOrsc7HMqmr4kDuggGVx4rzVQpALkTp9qJKiN0AGE
-         gRFJwOiJ5n+/IQ3ypeqXM/7gP5aZU1ishG7xcUAQlMRM4HdoHaUcy5hz8sGLBdpVAShy
-         uMNz6CpjL3MYdmnBVwgOQM37pzoNFlMqBnauDHR+wrBl8e2/no93/tc9o4TQ0dDbbcNu
-         uaqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWurvfxfEuUI/JnAcxq3P7gBx2Sd24Jxut4SOfA8Wfg1EEOJw81QNr78yT9v8B5vz5flSVKqLclAyD1X92J@vger.kernel.org, AJvYcCX3mBeq9jcfv+98y8w4LwIkZWafA6RRTEmMJ0EBZFJhdheAaawCZA0QMwqRku4MSUi866a9KtW3tA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEyTCuDbdeS31nc277xByy8EJ/tBxPi9a4h6KdJpfGXeGkslf4
-	K2evQMhhbh2WpM5Tkdo1/NL6M1zCrorMDraSamF8gOYcIklDheQ0ViDO6LbU6uVrJ/Nl7xPopKW
-	/7IAgcB3TU+nN3rAGzi7IIJ4SERI=
-X-Gm-Gg: ASbGncvJKGYyV2OutAPLnYOCru/IKyrFLt7VVcLJEatwrXK5NxF4LJR6mvEfe7lcFJb
-	gYgLHJRQ7EJ5BAwdGmGXAweR+4VnbYRYvk7fATVx2Dc60MxmgWmCuHZF6EOy71EPS9vx+ew==
-X-Google-Smtp-Source: AGHT+IGkJwaPIlNzWyRQlrcbT1+dqY3WwpdO/YvDEolz+UuM0NCmjJY9Yfm92nUPP8HmotysT6QHOD9Vt29DrQ9xVlk=
-X-Received: by 2002:a05:6902:2481:b0:e38:b34d:121f with SMTP id
- 3f1490d57ef6-e3c8e45ca3dmr2705381276.15.1733917594768; Wed, 11 Dec 2024
- 03:46:34 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCBA211A2A;
+	Wed, 11 Dec 2024 11:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733917754; cv=fail; b=f9VsbQ0Vxpzf4WXOwopzRwu06xkaownHCD3Zh6Qf5RWwTctG5ajSrH7ZBd2GjMLXLZmuvdxA2rkyAYwrKArlHWHqp3QA4eaXXGjUYjq3bq8dgTL/MkvCAxQQ7cdEHnd8U6nXIaviVF5jpNtcA5AR5BJ9HGsi2zljKGLzqRuS85o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733917754; c=relaxed/simple;
+	bh=GsOwKZ9M1Z86e6UcccOXYX947vjry2k1TrwtYMdYy0Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QOvi73NBEUhuNEtCTchgLMj4aeSQ9Fe72my0iBCbTUAWDqM/EXE9saNAGsGK8K3GaW5OTX7W255uz24F1GIV6cYCrH8AaiWAIWji5R0mekg2RY0NlCSJXbeWB5nhygIpe9gT8VP4A9FHqwR0MvSuYeImX76Qzt0BBu0Mo5Oe7n8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rrYhCjil; arc=fail smtp.client-ip=40.107.101.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dt+z0gNdnsKvU4dqIZA9XgL7igvRqIfyw/iA+N4s/IIV/GgrhlKwv0V5pwRXv+KAqzkuXDRCMF+XVpDM61WAHT+2yby/KPp72fqmP7BcP7MK4qxrNDeylu3HhaP1KBmbC/hbhHmnQVA017QEQGenB1YMecBYqaKibMbmTtzkkmlFfY7a2Ug3aXOfpP0DNSOEV1TkF5nQfXBB2ak7a7/dSaV/b5RzvY+TIFJZ2nQ1wfA+sSWL9DidnkkpvB3xr3T+H4Zk+sh/WHQP7yZ1xC4EQf1m2RiPUE7fg5YfYnYoKY5crw3L/KY+pPT/MWqKNgHtjjDlmDFBmG1u1GbkAVSstA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OLMCJdsIuVvNdQ2t8dI2LneQ0JVku9vc4KDGkirJy48=;
+ b=DcW9XrAC+o4qDD2/nObv4m++HYnHoN4RnfYgZBEfff+IqE5OxlwxL7BzOwJJkWUtimC9c9+JqsmSoh7SWVeYAqxOaADdMf6wSNN32rVnSOsM/1ZNcvWBf857bKmQHjqkCp+8xluGAj3U61j2BnjSv+miEPlcUvvGl8okKrya7ONytRJZDeWr2i2Mf0mCVwX9QzETT0RUUH3SGvbnU7pqnnWRFMAX2nvjAL5qLpOX4s4uDpaVQo6PK55zFC9209JsVL4K5RjpTLbbpxiXqMLkW5nmaesnuyDo74GYWvtbcTpvYo8qGBKzun34iF+dXvHfNHEEF/G61ObSOasjES5jcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OLMCJdsIuVvNdQ2t8dI2LneQ0JVku9vc4KDGkirJy48=;
+ b=rrYhCjilRz3IWXZq3vZq4xYTBEtByXJNmiK7dAGl7zRReqsn69qqb39h0tMYXhewXppBPzLcXx+EAwGVuZXWRL5qWrUyOXUy+n1LMZ0fpK6tMbDP3doBaEwcWpAeiEUTtlPqDzZBdD/+daVW5zT3BzKrAe5hvPUPXVFVJIG1ZkE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
+ by CH3PR12MB8901.namprd12.prod.outlook.com (2603:10b6:610:180::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Wed, 11 Dec
+ 2024 11:49:10 +0000
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30%5]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
+ 11:49:10 +0000
+Message-ID: <844282e1-1c69-4d66-bd98-f9188901c7ac@amd.com>
+Date: Wed, 11 Dec 2024 12:48:59 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: zynqmp: add clock-output-names property in
+ clock nodes
+To: Naman Trivedi <naman.trivedimanojbhai@amd.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, senthilnathan.thangaraj@amd.com
+Cc: linux-kernel@vger.kernel.org
+References: <20241122095712.1166883-1-naman.trivedimanojbhai@amd.com>
+Content-Language: en-US
+From: Michal Simek <michal.simek@amd.com>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ 3i3l5DA=
+In-Reply-To: <20241122095712.1166883-1-naman.trivedimanojbhai@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1P190CA0038.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:800:1bb::9) To SJ2PR12MB8109.namprd12.prod.outlook.com
+ (2603:10b6:a03:4f5::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADZouDRFJ9jtXHqkX-PTKeT=GxSwdMC42zEsAKR34psuG9tUMQ@mail.gmail.com>
- <1a779207-4fa8-4b8e-95d7-e0568791e6ac@kernel.dk>
-In-Reply-To: <1a779207-4fa8-4b8e-95d7-e0568791e6ac@kernel.dk>
-From: chase xd <sl1589472800@gmail.com>
-Date: Wed, 11 Dec 2024 12:46:23 +0100
-Message-ID: <CADZouDQEe6gZgobLOAR+oy1u+Xjc4js=KW164n0ha7Yv+gma=g@mail.gmail.com>
-Subject: Re: possible deadlock in __wake_up_common_lock
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|CH3PR12MB8901:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fcacf1d-2efe-4866-1514-08dd19d9d37e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b3M3MnlwZDhaZU5PQ2lsMUpjMitndyt4c01TTk1IR3J1dy9qV1BkTmJzTDM4?=
+ =?utf-8?B?TUh4MlMvQlh4MzhGZ051alVzQS9QU3VpOTlOYko5SmpoalIvbWtoWXJ4YjVk?=
+ =?utf-8?B?T0Y5M0Q1YndiQ3NzVnZ2M2xuenlKRWNiVnJyVEZobGlQR1BhUHNCUUxLbTFO?=
+ =?utf-8?B?Z0ZzZG43ZEdoLzRaZEpaMExta1UrWUxMeDZWajlUT0NDbXZLT2huK1pOTzFl?=
+ =?utf-8?B?Rkp6L2FvOFNrR3dlcTVGOGJRTUU3d3p6dXM2alpLVFUvSSsvMHlsQStIVnBX?=
+ =?utf-8?B?RGxmVWZJaDdWZFZ5NG16MTVYNjh4NTF1bkRtNXBUbmFlWVpGMGMyZnJ6QUxP?=
+ =?utf-8?B?UG5OTHpkdk1GVlRlbXd1dk54V0pGL2ZXZEdrbS9IdjRZVFQ5VXUxT3NlaEZM?=
+ =?utf-8?B?OEtKZHc4ZHNYN3NZZ0ZnUGVkM21WeG42QTB5SG0rTlMvYm1CcjRNY3RvUEp0?=
+ =?utf-8?B?T3lESVVjUU5najJvT29xN1VPL05qeXNvdXYrbDlvWG04dW1QR3VJQ0xZajZ6?=
+ =?utf-8?B?OGNEbUtiWCtjZmZoSzJtb2RJbWZMQUowRDM4bHo5VUpDdldtcXlLSnQ5Ylpt?=
+ =?utf-8?B?Q2xVM3ZyREFxTWFYVE1HNGluOFFUQ09qZHhEOGpjdlF0VDdvWmlVRVZPcXM4?=
+ =?utf-8?B?TmZWYjlrcXVlWnhuM2dwZVljeEFHeGJQcDY0ZWRjd3R0UXlWM2FtWHUyT0ta?=
+ =?utf-8?B?TVh1MTVoQ2hsRi9BZTFkV2ZMY1BQTlhjWFVMcjV1N1p0MVBDTmRXcDRBcGRt?=
+ =?utf-8?B?TGdKbVVyVnpwMm9OaElZYzZ6UmErdW1KRTZIcVl5dWcxNmJPSE9vZlk4S21X?=
+ =?utf-8?B?YlVpRXRhTmhYZlZOSzYvQ2dLMEIvMWowbHpOd3AwdXdJOCtkTnFyM2ZHSWlu?=
+ =?utf-8?B?SmFJb1RIQXJIcG91TDBEUEllakg0K0FmcENrNHE2cy9RSFZ5dUlJak41MFYz?=
+ =?utf-8?B?czQ2MzhzQW05VWloQmUvd1BEWjhJdW44QzFMdU44SEszdEFhaUQ5UGx6ZzZT?=
+ =?utf-8?B?QXN4L2NJc2pObFkwaHhoQ29uN2hMazR0MGRrMStvdHJwL2x3Y09YU1kyeitT?=
+ =?utf-8?B?MW9neXo4U1Z6UHdpekdTM0VZdlFxcmI3d3Nkd1VrWTROWmJYYWhiNGVaR2VO?=
+ =?utf-8?B?SUZwS1dDei8zdE9SSlgxMzRtaEtEKzdhTTNaYk5LOG1TdzZ0d0ptY2hpVnBV?=
+ =?utf-8?B?c0NjcHVad0RMZkVoQzhXb1dERnp0VVJRQUd4UzRvOXZkRk4rV3BoR1hSeDVl?=
+ =?utf-8?B?cUhtTzhsNGJxL2xEcTFiR0V0TjBSaGplcmpCaGZ4SkRLc0dUWHIzcXNEMU52?=
+ =?utf-8?B?amFpY2pFcjg1U0lqbmtsOUZTZTRHc2RuS3BhTG9ZTVk4L1JaSzg4OXZJRnJ2?=
+ =?utf-8?B?dFJFaDJMWlNScWl3T1p6K1hrMWlLOE1PNDZXaXdoaTlNSWVSZzNrWTBHM0ZD?=
+ =?utf-8?B?UTgxNjgzWjl6RS84ZzVoUHYySUNwSVkyNjNwa2d5K3pXbFc3MjI4RlNML1Zn?=
+ =?utf-8?B?S25rVk83QzlCVjJvYnpzZEhFS21IVC9Gb3hnbjZFVGg3VUJNaDgzbGJpd0g0?=
+ =?utf-8?B?SUJITHJpUmNaeWtySnFwd3BYNmFsbXNqY3k5M1pHRnN6S3Ztc3d4ejEyaEJj?=
+ =?utf-8?B?YmNhOHdibWFHbk9vMXhnajVWVmRudERRZFR3VytDejVYM2JrUncyYVdkTDhh?=
+ =?utf-8?B?eURRdGZZaWlDL0w2d3AxcTVVYWNzRUpKeDRaMWllMXFKTlB6ZjhlemJ1ZTJo?=
+ =?utf-8?Q?hOf8FkP86tsWgaYsZo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WWtIZTl2dnZGMjV5UXczcFpiL0pKZ0lrZkpOTS9zSlQ0SmRPSWtVcy9GN3dy?=
+ =?utf-8?B?bFg5TnQzVlpwU1dFRCs1enI5YUs0U005QkdsL09uN1JUcG5ZYjNOK0pITkVS?=
+ =?utf-8?B?ZEVhTDBpYUJpZ0JvRWdhUGpkMTV2SEQxRHhXcnh1bWtnRjZBbGNtVjdncnZC?=
+ =?utf-8?B?YkxyZ2lRb20vRXJFTEljSXMvbmlHYm9PeWtHZ1hjdmRxNkVwUXhSc0MvQTdE?=
+ =?utf-8?B?bUU2TGMycTNFb3JCSTQyUE1MNmY5a1NiTnRWV2VxQitVVDU2anpUSG1Bb3d1?=
+ =?utf-8?B?dTh5QWdKNFBCTTZCRjBITkhPM1ZidTZQdy9sT0JSTFo2ZTdSSCtlcCtWdkFj?=
+ =?utf-8?B?cDRlZTZSNXc2eEg4UVdiZmFNSFloWDhHdktJTGR0SkVXbjFxeDV5Z1hJLyt1?=
+ =?utf-8?B?MUNuLzZyNHBqVlQ4Nmp3TzlHdEpISHBVczNYYXd3anB6NHUrV0RjZUVEZDJp?=
+ =?utf-8?B?WDU0VWVoVDlKWExLVms5MGJDYW83NHhFZkQ2ZnZXeEJPQ2h1Nk5Hd1NHZTZ2?=
+ =?utf-8?B?UXJoV25LRFF5ZGhDVGh1eENWZ0tZTzdJWVBEaUpaRStoRDFxTXZxVThWT0k0?=
+ =?utf-8?B?cWZ0UVdqVUYvQzlXSWFlUXhaNCtRY01GNC9sNnUvdnNhdUNuOWdRalc3bm9x?=
+ =?utf-8?B?UGlGK3NhRkR4dFZSOU4vdFlOZDRrUXpwR0UxeGk5UjZqWC9RRWthQ2d6YXF1?=
+ =?utf-8?B?WUt3RFI1SjVOSjVoZW13MWVSZ1FLNmlzY0RrZlpkV1lFSHlxR0RKd0xUN002?=
+ =?utf-8?B?QXo1a2NreFMreFpTTTQvS2pkeGNhVTFqK1V5Nk83VjJrZW1FRy9ZMUJZMnBS?=
+ =?utf-8?B?d0pXdFdYYWg5MUVjRnQwZm0xeWU2SVVhSWtXb1Q4N1RkY2NFUHNPTGNNV3Ju?=
+ =?utf-8?B?V3hEV0ZiamdlM3ZlWENPd0ZGei9JMW1xd2hSVTNyRG9yTmNxSExLVnllM1Zp?=
+ =?utf-8?B?eTdRZUhSQjg5VGZuWmZ6TGxhdjRjQ3VZQUZFWEZKTlNXVERqTWYyNytSVDUx?=
+ =?utf-8?B?UjFCZ3ZWanBvajJEdExIS0RlL1VBdWpoNWtIb1dlcVlORDFUZWp1dmoxT2Fo?=
+ =?utf-8?B?enRJUkNLMVdqQXlsVjNHZ09USXptYXM2WTRTYXlFVlFicGptdlhaYVRLSFdP?=
+ =?utf-8?B?UmdLMlAxdHNhc09GY0lRQnowWE5Hd0VyK1hycVoyZ3NIWXZUdkVmVCsxVWMy?=
+ =?utf-8?B?SStoMVB2WmtMWU5FVzhMKzduamVlWTFNczFrS0Vwd3NpVnNuamlmN2ZrWUN2?=
+ =?utf-8?B?S1crYnFtUElTM2hSME15NGlaUXNrV3N3QldYYmZLRWhtd0RuYVJveXZjVFhL?=
+ =?utf-8?B?SnRVbFN6UFpsT2RpUUFKNmU4bk9EemY3UjhiLysyUkdiVlk0bFpzVTJzN1Zz?=
+ =?utf-8?B?OHA1WDFZVnhpT25MRUVJQnczOUNRS3dWcStzUitxN1pXRjhSb0RXQjI4Zjd1?=
+ =?utf-8?B?K05neloyRkRaZ1dGc29EWXI3Z2dUKzIrdTJSell0SHNoUFVzL2tjazh6VGh1?=
+ =?utf-8?B?Yjk3WU55Sk5vOVFOLy9ISHVrR0JYWExpdTB3eSs2UFhScWIxeHROd3ZDM08w?=
+ =?utf-8?B?bEd5VGZqclVBeEU0MXd4cXowNHVSTk9VVklkMkIwVkdWazAyZC9DcEUvU0Zm?=
+ =?utf-8?B?eXNwUmZGbGVROXVKaFByMGV0czhWQmVkNExVajFWRkYxbW1MeWZaUVJUQWpX?=
+ =?utf-8?B?K1pWS1lyS1NTRUlDMHRidGRpR2s1OW5HVjFsN2liR1ZPejcvblR2OEh1YnQz?=
+ =?utf-8?B?bUFwL1J3ektyeFFGZVhxSGJVQUU4U2F4cE53OFVmZ3BQcVlydGI4NGxrc2Z5?=
+ =?utf-8?B?MVphclY5RVlZMWJ1Ny9obElHSWt1NFpyanhXZWdmdnowUnJlWHlrQUE4YnZH?=
+ =?utf-8?B?WDh4UDd3OHhwcE5DalVYVFpKT2NDajNuTm03eHhzcTVUcU1yd1JPQUYzZFVD?=
+ =?utf-8?B?Y3p3c2NZdkk4Mk10cm02WVF1WjdRN2xZVklBQ1VnM3BoZHFsa2RwbzRYWENt?=
+ =?utf-8?B?OUxnU1hoSlZGd0ZZUHBSaW9lZXQxNk1OQ293RW40b0JKTmZPQTBSOExiV3NT?=
+ =?utf-8?B?UUd4UzFxZitSbzlHampRbXhDYjF1NmQ3N3Zyd0NPUFRrT3V5RnBkNURBV3d3?=
+ =?utf-8?Q?QFWTPBbbVFn72EAMeOxH7MIlM?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fcacf1d-2efe-4866-1514-08dd19d9d37e
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 11:49:10.5731
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: woSzZLwRfoHS+34gaeH+Weg0BclcQ3aAMFUAGBHiqM+6ssUVgH9ICPoZC0LdiBlE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8901
 
-Hi, the same payload triggers another deadlock scene with the fix:
 
 
-[   52.511552][ T6505]
-[   52.511814][ T6505] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-[   52.512391][ T6505] WARNING: possible recursive locking detected
-[   52.512960][ T6505] 6.1.119-dirty #4 Not tainted
-[   52.513403][ T6505] --------------------------------------------
-[   52.513971][ T6505] a.out/6505 is trying to acquire lock:
-[   52.514442][ T6505] ffff888020d36378 (&ctx->cq_wait){....}-{2:2},
-at: __wake_up_common_lock+0xb8/0x140
-[   52.515193][ T6505]
-[   52.515193][ T6505] but task is already holding lock:
-[   52.515762][ T6505] ffff888020d36378 (&ctx->cq_wait){....}-{2:2},
-at: __wake_up_common_lock+0xb8/0x140
-[   52.516505][ T6505]
-[   52.516505][ T6505] other info that might help us debug this:
-[   52.517133][ T6505]  Possible unsafe locking scenario:
-[   52.517133][ T6505]
-[   52.517711][ T6505]        CPU0
-[   52.517969][ T6505]        ----
-[   52.518229][ T6505]   lock(&ctx->cq_wait);
-[   52.518561][ T6505]   lock(&ctx->cq_wait);
-[   52.518922][ T6505]
-[   52.518922][ T6505]  *** DEADLOCK ***
-[   52.518922][ T6505]
-[   52.519670][ T6505]  May be due to missing lock nesting notation
-[   52.519670][ T6505]
-[   52.520440][ T6505] 2 locks held by a.out/6505:
-[   52.520857][ T6505]  #0: ffff888020d360a8
-(&ctx->uring_lock){+.+.}-{3:3}, at:
-__do_sys_io_uring_enter+0x8fc/0x2130
-[   52.521678][ T6505]  #1: ffff888020d36378
-(&ctx->cq_wait){....}-{2:2}, at: __wake_up_common_lock+0xb8/0x140
-[   52.522445][ T6505]
-[   52.522445][ T6505] stack backtrace:
-[   52.522903][ T6505] CPU: 1 PID: 6505 Comm: a.out Not tainted 6.1.119-dir=
-ty #4
-[   52.523470][ T6505] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.15.0-1 04/01/2014
-[   52.524188][ T6505] Call Trace:
-[   52.524469][ T6505]  <TASK>
-[   52.524705][ T6505]  dump_stack_lvl+0x5b/0x85
-[   52.525069][ T6505]  __lock_acquire.cold+0x219/0x3bd
-[   52.525472][ T6505]  ? lockdep_hardirqs_on_prepare+0x420/0x420
-[   52.525940][ T6505]  lock_acquire+0x1e3/0x5e0
-[   52.526293][ T6505]  ? __wake_up_common_lock+0xb8/0x140
-[   52.526711][ T6505]  ? lock_release+0x7c0/0x7c0
-[   52.527078][ T6505]  ? lockdep_hardirqs_on_prepare+0x420/0x420
-[   52.527545][ T6505]  ? hlock_class+0x4e/0x130
-[   52.527898][ T6505]  ? __lock_acquire+0x1291/0x3650
-[   52.528298][ T6505]  _raw_spin_lock_irqsave+0x3d/0x60
-[   52.528707][ T6505]  ? __wake_up_common_lock+0xb8/0x140
-[   52.529206][ T6505]  __wake_up_common_lock+0xb8/0x140
-[   52.529693][ T6505]  ? __wake_up_common+0x650/0x650
-[   52.530163][ T6505]  ? __io_req_task_work_add+0x2f6/0xd60
-[   52.530678][ T6505]  __io_req_task_work_add+0x4a4/0xd60
-[   52.531176][ T6505]  io_poll_wake+0x3cb/0x550
-[   52.531601][ T6505]  __wake_up_common+0x14c/0x650
-[   52.532059][ T6505]  __wake_up_common_lock+0xd4/0x140
-[   52.532541][ T6505]  ? __wake_up_common+0x650/0x650
-[   52.533007][ T6505]  ? lock_downgrade+0x6f0/0x6f0
-[   52.533460][ T6505]  ? rwlock_bug.part.0+0x90/0x90
-[   52.533919][ T6505]  ? io_arm_poll_handler+0x679/0xd70
-[   52.534410][ T6505]  __io_submit_flush_completions+0x778/0xba0
-[   52.534877][ T6505]  ? __sanitizer_cov_trace_switch+0x4e/0x90
-[   52.535340][ T6505]  ? io_submit_sqes+0xa78/0x1ce0
-[   52.535726][ T6505]  io_submit_sqes+0xa78/0x1ce0
-[   52.536107][ T6505]  __do_sys_io_uring_enter+0x907/0x2130
-[   52.536539][ T6505]  ? find_held_lock+0x2d/0x120
-[   52.536913][ T6505]  ? io_run_task_work_sig+0x190/0x190
-[   52.537331][ T6505]  ? rcu_is_watching+0x12/0xc0
-[   52.537705][ T6505]  ? __do_sys_io_uring_register+0x10a/0x1310
-[   52.538171][ T6505]  ? io_run_local_work+0x70/0x70
-[   52.538557][ T6505]  ? lockdep_hardirqs_on_prepare+0x17f/0x420
-[   52.539033][ T6505]  ? syscall_enter_from_user_mode+0xa7/0x140
-[   52.539504][ T6505]  do_syscall_64+0x3a/0xb0
-[   52.539852][ T6505]  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-[   52.540343][ T6505] RIP: 0033:0x7fe9e68ed719
-[   52.540706][ T6505] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00
-00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b
-4c 28
-[   52.542316][ T6505] RSP: 002b:00007ffc120f1ba8 EFLAGS: 00000216
-ORIG_RAX: 00000000000001aa
-[   52.543011][ T6505] RAX: ffffffffffffffda RBX: 00007ffc120f1ce8
-RCX: 00007fe9e68ed719
-[   52.543651][ T6505] RDX: 0000000000000000 RSI: 000000000000331b
-RDI: 0000000000000003
-[   52.544315][ T6505] RBP: 00007ffc120f1bd0 R08: 0000000000000000
-R09: 0000000000000000
-[   52.544988][ T6505] R10: 0000000000000000 R11: 0000000000000216
-R12: 0000000000000000
-[   52.545640][ T6505] R13: 00007ffc120f1cf8 R14: 000056073c9e1dd8
-R15: 00007fe9e6a06020
-[   52.546299][ T6505]  </TASK>
-[  157.556099][    C0] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks=
-:
-[  157.556774][    C0] rcu:     1-...!: (1 GPs behind)
-idle=3D2104/1/0x4000000000000000 softirq=3D11084/11090 fqs=3D1
-[  157.557694][    C0]  (detected by 0, t=3D10505 jiffies, g=3D3593, q=3D12=
-3 ncpus=3D2)
-[  157.558297][    C0] Sending NMI from CPU 0 to CPUs 1:
-[  157.558745][    C1] NMI backtrace for cpu 1
-[  157.558750][    C1] CPU: 1 PID: 6505 Comm: a.out Not tainted 6.1.119-dir=
-ty #4
-[  157.558758][    C1] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.15.0-1 04/01/2014
-[  157.558760][    C1] RIP: 0010:native_queued_spin_lock_slowpath+0x128/0x9=
-a0
-[  157.558775][    C1] Code: 00 00 00 65 48 2b 04 25 28 00 00 00 0f 85
-0d 08 00 00 48 81 c4 88 00 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc
-cc c0
-[  157.558777][    C1] RSP: 0018:ffffc9000e947788 EFLAGS: 00000002
-[  157.558780][    C1] RAX: 0000000000000000 RBX: 0000000000000001
-RCX: ffffffff8920a35b
-[  157.558782][    C1] RDX: ffffed10041a6c6d RSI: 0000000000000004
-RDI: ffff888020d36360
-[  157.558783][    C1] RBP: ffff888020d36360 R08: 0000000000000000
-R09: ffff888020d36363
-[  157.558784][    C1] R10: ffffed10041a6c6c R11: 3e4b5341542f3c20
-R12: 0000000000000003
-[  157.558785][    C1] R13: ffffed10041a6c6c R14: 0000000000000001
-R15: 1ffff92001d28ef2
-[  157.558788][    C1] FS:  00007fe9e67e9740(0000)
-GS:ffff88807ec00000(0000) knlGS:0000000000000000
-[  157.558791][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  157.558792][    C1] CR2: 00000000200024c0 CR3: 000000004d418000
-CR4: 00000000000006e0
-[  157.558794][    C1] Call Trace:
-[  157.558807][    C1]  <NMI>
-[  157.558810][    C1]  ? nmi_cpu_backtrace.cold+0x30/0x10c
-[  157.558814][    C1]  ? nmi_cpu_backtrace_handler+0xc/0x20
-[  157.558817][    C1]  ? nmi_handle+0x166/0x440
-[  157.558820][    C1]  ? native_queued_spin_lock_slowpath+0x128/0x9a0
-[  157.558822][    C1]  ? default_do_nmi+0x6c/0x170
-[  157.558825][    C1]  ? exc_nmi+0xeb/0x110
-[  157.558827][    C1]  ? end_repeat_nmi+0x16/0x67
-[  157.558830][    C1]  ? native_queued_spin_lock_slowpath+0xab/0x9a0
-[  157.558832][    C1]  ? native_queued_spin_lock_slowpath+0x128/0x9a0
-[  157.558834][    C1]  ? native_queued_spin_lock_slowpath+0x128/0x9a0
-[  157.558836][    C1]  ? native_queued_spin_lock_slowpath+0x128/0x9a0
-[  157.558838][    C1]  </NMI>
-[  157.558839][    C1]  <TASK>
-[  157.558840][    C1]  ? __pv_queued_spin_lock_slowpath+0xb80/0xb80
-[  157.558841][    C1]  ? lock_acquire+0x1e3/0x5e0
-[  157.558845][    C1]  do_raw_spin_lock+0x211/0x2c0
-[  157.558851][    C1]  ? rwlock_bug.part.0+0x90/0x90
-[  157.558853][    C1]  ? __lock_acquire+0x1291/0x3650
-[  157.558855][    C1]  _raw_spin_lock_irqsave+0x45/0x60
-[  157.558859][    C1]  ? __wake_up_common_lock+0xb8/0x140
-[  157.558861][    C1]  __wake_up_common_lock+0xb8/0x140
-[  157.558863][    C1]  ? __wake_up_common+0x650/0x650
-[  157.558867][    C1]  ? __io_req_task_work_add+0x2f6/0xd60
-[  157.558871][    C1]  __io_req_task_work_add+0x4a4/0xd60
-[  157.558881][    C1]  io_poll_wake+0x3cb/0x550
-[  157.558884][    C1]  __wake_up_common+0x14c/0x650
-[  157.558886][    C1]  __wake_up_common_lock+0xd4/0x140
-[  157.558888][    C1]  ? __wake_up_common+0x650/0x650
-[  157.558890][    C1]  ? lock_downgrade+0x6f0/0x6f0
-[  157.558892][    C1]  ? rwlock_bug.part.0+0x90/0x90
-[  157.558894][    C1]  ? io_arm_poll_handler+0x679/0xd70
-[  157.558897][    C1]  __io_submit_flush_completions+0x778/0xba0
-[  157.558900][    C1]  ? __sanitizer_cov_trace_switch+0x4e/0x90
-[  157.558905][    C1]  ? io_submit_sqes+0xa78/0x1ce0
-[  157.558906][    C1]  io_submit_sqes+0xa78/0x1ce0
-[  157.558910][    C1]  __do_sys_io_uring_enter+0x907/0x2130
-[  157.558913][    C1]  ? find_held_lock+0x2d/0x120
-[  157.558915][    C1]  ? io_run_task_work_sig+0x190/0x190
-[  157.558917][    C1]  ? rcu_is_watching+0x12/0xc0
-[  157.558920][    C1]  ? __do_sys_io_uring_register+0x10a/0x1310
-[  157.558922][    C1]  ? io_run_local_work+0x70/0x70
-[  157.558924][    C1]  ? lockdep_hardirqs_on_prepare+0x17f/0x420
-[  157.558926][    C1]  ? syscall_enter_from_user_mode+0xa7/0x140
-[  157.558929][    C1]  do_syscall_64+0x3a/0xb0
-[  157.558931][    C1]  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-[  157.558933][    C1] RIP: 0033:0x7fe9e68ed719
-[  157.558948][    C1] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00
-00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b
-4c 28
-[  157.558950][    C1] RSP: 002b:00007ffc120f1ba8 EFLAGS: 00000216
-ORIG_RAX: 00000000000001aa
-[  157.558956][    C1] RAX: ffffffffffffffda RBX: 00007ffc120f1ce8
-RCX: 00007fe9e68ed719
-[  157.558957][    C1] RDX: 0000000000000000 RSI: 000000000000331b
-RDI: 0000000000000003
-[  157.558958][    C1] RBP: 00007ffc120f1bd0 R08: 0000000000000000
-R09: 0000000000000000
-[  157.558959][    C1] R10: 0000000000000000 R11: 0000000000000216
-R12: 0000000000000000
-[  157.558960][    C1] R13: 00007ffc120f1cf8 R14: 000056073c9e1dd8
-R15: 00007fe9e6a06020
-[  157.558962][    C1]  </TASK>
-[  157.559721][    C0] rcu: rcu_preempt kthread starved for 10500
-jiffies! g3593 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x0 ->cpu=3D0
-[  157.598366][    C0] rcu:     Unless rcu_preempt kthread gets
-sufficient CPU time, OOM is now expected behavior.
-[  157.599182][    C0] rcu: RCU grace-period kthread stack dump:
-[  157.599640][    C0] task:rcu_preempt     state:R  running task
-stack:28016 pid:18    ppid:2      flags:0x00004000
-[  157.600500][    C0] Call Trace:
-[  157.600764][    C0]  <TASK>
-[  157.600996][    C0]  __schedule+0xbe8/0x56e0
-[  157.601374][    C0]  ? rcu_is_watching+0x12/0xc0
-[  157.601827][    C0]  ? io_schedule_timeout+0x160/0x160
-[  157.602293][    C0]  ? rcu_is_watching+0x12/0xc0
-[  157.602677][    C0]  ? lockdep_init_map_type+0x2cb/0x7d0
-[  157.603171][    C0]  schedule+0xe7/0x1c0
-[  157.603529][    C0]  schedule_timeout+0x101/0x240
-[  157.603928][    C0]  ? usleep_range_state+0x190/0x190
-[  157.604377][    C0]  ? do_init_timer+0x110/0x110
-[  157.604790][    C0]  ? _raw_spin_unlock_irqrestore+0x41/0x70
-[  157.605292][    C0]  ? prepare_to_swait_event+0xf5/0x490
-[  157.605722][    C0]  rcu_gp_fqs_loop+0x190/0xa20
-[  157.606095][    C0]  ? rcu_dump_cpu_stacks+0x470/0x470
-[  157.606562][    C0]  ? lockdep_hardirqs_on_prepare+0x17f/0x420
-[  157.607045][    C0]  rcu_gp_kthread+0x279/0x380
-[  157.607416][    C0]  ? rcu_gp_init+0x13f0/0x13f0
-[  157.607799][    C0]  ? _raw_spin_unlock_irqrestore+0x58/0x70
-[  157.608253][    C0]  ? __kthread_parkme+0xc4/0x200
-[  157.608647][    C0]  ? rcu_gp_init+0x13f0/0x13f0
-[  157.609019][    C0]  kthread+0x24e/0x2e0
-[  157.609336][    C0]  ? _raw_spin_unlock_irq+0x23/0x50
-[  157.609742][    C0]  ? kthread_complete_and_exit+0x20/0x20
-[  157.610179][    C0]  ret_from_fork+0x22/0x30
-[  157.610531][    C0]  </TASK>
-[  157.610770][    C0] rcu: Stack dump where RCU GP kthread last ran:
-[  157.611261][    C0] CPU: 0 PID: 624 Comm: kworker/u5:4 Not tainted
-6.1.119-dirty #4
-[  157.611868][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.15.0-1 04/01/2014
-[  157.612760][    C0] Workqueue: events_unbound toggle_allocation_gate
-[  157.613274][    C0] RIP: 0010:smp_call_function_many_cond+0x350/0xcf0
-[  157.613787][    C0] Code: d0 7c 08 84 d2 0f 85 b5 08 00 00 41 8b 46
-08 a8 01 74 2f 48 89 ca 49 89 cf 48 c1 ea 03 41 83 e7 07 48 01 da 41
-83 c1
-[  157.615290][    C0] RSP: 0018:ffffc900039f79b0 EFLAGS: 00000202
-[  157.615767][    C0] RAX: 0000000000000011 RBX: dffffc0000000000
-RCX: ffff88807ec420c8
-[  157.616423][    C0] RDX: ffffed100fd88419 RSI: 1ffff110059879c9
-RDI: ffffffff8b399968
-[  157.617053][    C0] RBP: 0000000000000200 R08: 0000000000000000
-R09: 0000000000000000
-[  157.617755][    C0] R10: ffffed10059879ca R11: 0000000000000000
-R12: 0000000000000001
-[  157.618462][    C0] R13: ffff88802cc3ce48 R14: ffff88807ec420c0
-R15: 0000000000000003
-[  157.619112][    C0] FS:  0000000000000000(0000)
-GS:ffff88802cc00000(0000) knlGS:0000000000000000
-[  157.619835][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  157.620346][    C0] CR2: 000056339ab60690 CR3: 000000000b68e000
-CR4: 00000000000006f0
-[  157.621009][    C0] Call Trace:
-[  157.621267][    C0]  <IRQ>
-[  157.621491][    C0]  ? rcu_check_gp_kthread_starvation.cold+0x1d3/0x1d5
-[  157.622024][    C0]  ? do_raw_spin_unlock+0x54/0x230
-[  157.622448][    C0]  ? rcu_sched_clock_irq+0x2408/0x2460
-[  157.622881][    C0]  ? rcu_note_context_switch+0x1870/0x1870
-[  157.623334][    C0]  ? _raw_spin_unlock_irqrestore+0x41/0x70
-[  157.623796][    C0]  ? timekeeping_advance+0x651/0x920
-[  157.624256][    C0]  ? rwlock_bug.part.0+0x90/0x90
-[  157.624706][    C0]  ? change_clocksource+0x250/0x250
-[  157.625147][    C0]  ? hrtimer_run_queues+0x21/0x3c0
-[  157.625582][    C0]  ? tick_sched_do_timer+0x280/0x280
-[  157.626000][    C0]  ? update_process_times+0xe8/0x160
-[  157.626416][    C0]  ? tick_sched_handle+0x6f/0x130
-[  157.626827][    C0]  ? tick_sched_timer+0xb2/0xd0
-[  157.627261][    C0]  ? __hrtimer_run_queues+0x193/0xb30
-[  157.627732][    C0]  ? enqueue_hrtimer+0x340/0x340
-[  157.628129][    C0]  ? kvm_clock_get_cycles+0x18/0x30
-[  157.628543][    C0]  ? hrtimer_interrupt+0x2f9/0x790
-[  157.628943][    C0]  ? __local_bh_enable+0x7b/0x90
-[  157.629331][    C0]  ? __sysvec_apic_timer_interrupt+0x18e/0x560
-[  157.629876][    C0]  ? sysvec_apic_timer_interrupt+0xa3/0xc0
-[  157.630420][    C0]  </IRQ>
-[  157.630688][    C0]  <TASK>
-[  157.630942][    C0]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[  157.631459][    C0]  ? smp_call_function_many_cond+0x350/0xcf0
-[  157.632004][    C0]  ? optimize_nops+0x2e0/0x2e0
-[  157.632402][    C0]  ? __kmem_cache_alloc_node+0xb5/0x2e0
-[  157.632869][    C0]  ? smp_call_on_cpu+0x210/0x210
-[  157.633281][    C0]  ? text_poke_memset+0x60/0x60
-[  157.633693][    C0]  ? optimize_nops+0x2e0/0x2e0
-[  157.634098][    C0]  on_each_cpu_cond_mask+0x3b/0x70
-[  157.634561][    C0]  ? __kmem_cache_alloc_node+0xb5/0x2e0
-[  157.635020][    C0]  text_poke_bp_batch+0x1c5/0x5d0
-[  157.635456][    C0]  ? alternatives_enable_smp+0xe0/0xe0
-[  157.635915][    C0]  ? __jump_label_patch+0x28c/0x330
-[  157.636335][    C0]  ? arch_jump_label_transform_queue+0xa5/0x110
-[  157.636836][    C0]  text_poke_finish+0x1a/0x30
-[  157.637238][    C0]  arch_jump_label_transform_apply+0x17/0x30
-[  157.637704][    C0]  static_key_enable_cpuslocked+0x167/0x230
-[  157.638167][    C0]  static_key_enable+0x15/0x20
-[  157.638539][    C0]  toggle_allocation_gate+0xeb/0x310
-[  157.638953][    C0]  ? wake_up_kfence_timer+0x20/0x20
-[  157.639399][    C0]  ? sched_core_balance+0xe80/0xe80
-[  157.639858][    C0]  ? read_word_at_a_time+0xe/0x20
-[  157.640284][    C0]  process_one_work+0x88c/0x1490
-[  157.640687][    C0]  ? lock_release+0x7c0/0x7c0
-[  157.641095][    C0]  ? pwq_dec_nr_in_flight+0x230/0x230
-[  157.641569][    C0]  ? rwlock_bug.part.0+0x90/0x90
-[  157.642010][    C0]  worker_thread+0x59f/0xed0
-[  157.642419][    C0]  ? process_one_work+0x1490/0x1490
-[  157.642875][    C0]  kthread+0x24e/0x2e0
-[  157.643204][    C0]  ? _raw_spin_unlock_irq+0x23/0x50
-[  157.643637][    C0]  ? kthread_complete_and_exit+0x20/0x20
-[  157.644146][    C0]  ret_from_fork+0x22/0x30
-[  157.644562][    C0]  </TASK>
+On 11/22/24 10:57, Naman Trivedi wrote:
+> Add clock-output-names property to clock nodes, so that the resulting
+> clock name do not change when clock node name is changed.
+> Also, replace underscores with hyphens in the clock node names as per
+> dt-schema rule.
+> 
+> Signed-off-by: Naman Trivedi <naman.trivedimanojbhai@amd.com>
+> ---
+> v1: https://lore.kernel.org/all/c5d6effa-bdcf-49e3-a4bf-3713db889b70@kernel.org
+> Changes v1 -> v2:
+> - Fix the clock node names by replacing underscore with hyphen.
+> ---
+>   arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi | 15 ++++++++++-----
+>   1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi
+> index 60d1b1acf9a0..385fed8a852a 100644
+> --- a/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi
+> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi
+> @@ -10,39 +10,44 @@
+>   
+>   #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
+>   / {
+> -	pss_ref_clk: pss_ref_clk {
+> +	pss_ref_clk: pss-ref-clk {
+>   		bootph-all;
+>   		compatible = "fixed-clock";
+>   		#clock-cells = <0>;
+>   		clock-frequency = <33333333>;
+> +		clock-output-names = "pss_ref_clk";
+>   	};
+>   
+> -	video_clk: video_clk {
+> +	video_clk: video-clk {
+>   		bootph-all;
+>   		compatible = "fixed-clock";
+>   		#clock-cells = <0>;
+>   		clock-frequency = <27000000>;
+> +		clock-output-names = "video_clk";
+>   	};
+>   
+> -	pss_alt_ref_clk: pss_alt_ref_clk {
+> +	pss_alt_ref_clk: pss-alt-ref-clk {
+>   		bootph-all;
+>   		compatible = "fixed-clock";
+>   		#clock-cells = <0>;
+>   		clock-frequency = <0>;
+> +		clock-output-names = "pss_alt_ref_clk";
+>   	};
+>   
+> -	gt_crx_ref_clk: gt_crx_ref_clk {
+> +	gt_crx_ref_clk: gt-crx-ref-clk {
+>   		bootph-all;
+>   		compatible = "fixed-clock";
+>   		#clock-cells = <0>;
+>   		clock-frequency = <108000000>;
+> +		clock-output-names = "gt_crx_ref_clk";
+>   	};
+>   
+> -	aux_ref_clk: aux_ref_clk {
+> +	aux_ref_clk: aux-ref-clk {
+>   		bootph-all;
+>   		compatible = "fixed-clock";
+>   		#clock-cells = <0>;
+>   		clock-frequency = <27000000>;
+> +		clock-output-names = "aux_ref_clk";
+>   	};
+>   };
+>   
 
-On Mon, Dec 9, 2024 at 3:59=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/9/24 5:03 AM, chase xd wrote:
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > WARNING: possible recursive locking detected
-> > 6.1.119-dirty #3 Not tainted
-> > --------------------------------------------
-> > syz-executor199/6820 is trying to acquire lock:
-> > ffff88807c386378 (&ctx->cq_wait){....}-{2:2}, at:
-> > __wake_up_common_lock+0xb8/0x140 kernel/sched/wait.c:137
-> >
-> > but task is already holding lock:
-> > ffff88807c386378 (&ctx->cq_wait){....}-{2:2}, at:
-> > __wake_up_common_lock+0xb8/0x140 kernel/sched/wait.c:137
-> >
-> > other info that might help us debug this:
-> >  Possible unsafe locking scenario:
-> >
-> >        CPU0
-> >        ----
-> >   lock(&ctx->cq_wait);
-> >   lock(&ctx->cq_wait);
-> >
-> >  *** DEADLOCK ***
-> >
-> >  May be due to missing lock nesting notation
-> >
-> > 2 locks held by syz-executor199/6820:
-> >  #0: ffff88807c3860a8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-> > __do_sys_io_uring_enter+0x8fc/0x2130 io_uring/io_uring.c:3313
-> >  #1: ffff88807c386378 (&ctx->cq_wait){....}-{2:2}, at:
-> > __wake_up_common_lock+0xb8/0x140 kernel/sched/wait.c:137
-> >
-> > stack backtrace:
-> > CPU: 7 PID: 6820 Comm: syz-executor199 Not tainted 6.1.119-dirty #3
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
-/01/2014
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:88 [inline]
-> >  dump_stack_lvl+0x5b/0x85 lib/dump_stack.c:106
-> >  print_deadlock_bug kernel/locking/lockdep.c:2983 [inline]
-> >  check_deadlock kernel/locking/lockdep.c:3026 [inline]
-> >  validate_chain kernel/locking/lockdep.c:3812 [inline]
-> >  __lock_acquire.cold+0x219/0x3bd kernel/locking/lockdep.c:5049
-> >  lock_acquire kernel/locking/lockdep.c:5662 [inline]
-> >  lock_acquire+0x1e3/0x5e0 kernel/locking/lockdep.c:5627
-> >  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-> >  _raw_spin_lock_irqsave+0x3d/0x60 kernel/locking/spinlock.c:162
-> >  __wake_up_common_lock+0xb8/0x140 kernel/sched/wait.c:137
-> >  __io_cqring_wake io_uring/io_uring.h:224 [inline]
-> >  __io_cqring_wake io_uring/io_uring.h:211 [inline]
-> >  io_req_local_work_add io_uring/io_uring.c:1135 [inline]
-> >  __io_req_task_work_add+0x4a4/0xd60 io_uring/io_uring.c:1146
-> >  io_poll_wake+0x3cb/0x550 io_uring/poll.c:465
-> >  __wake_up_common+0x14c/0x650 kernel/sched/wait.c:107
-> >  __wake_up_common_lock+0xd4/0x140 kernel/sched/wait.c:138
-> >  __io_cqring_wake io_uring/io_uring.h:224 [inline]
-> >  __io_cqring_wake io_uring/io_uring.h:211 [inline]
-> >  io_cqring_wake io_uring/io_uring.h:231 [inline]
-> >  io_cqring_ev_posted io_uring/io_uring.c:578 [inline]
-> >  __io_cq_unlock_post io_uring/io_uring.c:586 [inline]
-> >  __io_submit_flush_completions+0x778/0xba0 io_uring/io_uring.c:1346
-> >  io_submit_flush_completions io_uring/io_uring.c:159 [inline]
-> >  io_submit_state_end io_uring/io_uring.c:2203 [inline]
-> >  io_submit_sqes+0xa78/0x1ce0 io_uring/io_uring.c:2317
-> >  __do_sys_io_uring_enter+0x907/0x2130 io_uring/io_uring.c:3314
-> >  do_syscall_x64 arch/x86/entry/common.c:51 [inline]
-> >  do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:81
-> >  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-> > RIP: 0033:0x7fa54e70640d
-> > Code: 28 c3 e8 46 1e 00 00 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-> > 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-> > 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007ffd0ad80be8 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-> > RAX: ffffffffffffffda RBX: 00007ffd0ad80df8 RCX: 00007fa54e70640d
-> > RDX: 0000000000000000 RSI: 000000000000331b RDI: 0000000000000003
-> > RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> > R13: 00007ffd0ad80de8 R14: 00007fa54e783530 R15: 0000000000000001
-> >  </TASK>
->
-> I think this backport of:
->
-> 3181e22fb799 ("io_uring: wake up optimisations")
->
-> should fix that. Can you try?
->
->
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 4f0ae938b146..0b1361663267 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -582,6 +582,16 @@ static inline void __io_cq_unlock_post(struct io_rin=
-g_ctx *ctx)
->         io_cqring_ev_posted(ctx);
->  }
->
-> +static inline void __io_cq_unlock_post_flush(struct io_ring_ctx *ctx)
-> +       __releases(ctx->completion_lock)
-> +{
-> +       io_commit_cqring(ctx);
-> +       spin_unlock(&ctx->completion_lock);
-> +       io_commit_cqring_flush(ctx);
-> +       if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-> +               __io_cqring_wake(ctx);
-> +}
-> +
->  void io_cq_unlock_post(struct io_ring_ctx *ctx)
->  {
->         __io_cq_unlock_post(ctx);
-> @@ -1339,7 +1349,7 @@ static void __io_submit_flush_completions(struct io=
-_ring_ctx *ctx)
->                 if (!(req->flags & REQ_F_CQE_SKIP))
->                         __io_fill_cqe_req(ctx, req);
->         }
-> -       __io_cq_unlock_post(ctx);
-> +       __io_cq_unlock_post_flush(ctx);
->
->         io_free_batch_list(ctx, state->compl_reqs.first);
->         INIT_WQ_LIST(&state->compl_reqs);
->
-> --
-> Jens Axboe
+Apply.
+
+M
 
