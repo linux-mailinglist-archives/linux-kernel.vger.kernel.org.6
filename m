@@ -1,109 +1,200 @@
-Return-Path: <linux-kernel+bounces-441152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83839ECA68
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:34:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F2B9ECA6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15B6F188CF17
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CA116772F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94501F0E48;
-	Wed, 11 Dec 2024 10:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340E9210F51;
+	Wed, 11 Dec 2024 10:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sHSxBhVS"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUeGxr/m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820D7187872
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517831EC4FF;
+	Wed, 11 Dec 2024 10:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733913289; cv=none; b=rrvv5WqkI/CBkmlmCgoqwBsYKXn4C56JLzhLaEO42tPSJIEJXVMFdRuEsTBV/HAVlFCdps45OrVRLloa24k5kBecPiAy2ZLQrGJ9fLtC3SNupqG7/Ug+lu3i8DHLkbEr2Y4pdG+3oQHh2b/S9iiqBCn3YhxVSZsAONIRA44Q6GQ=
+	t=1733913305; cv=none; b=D3pVx1RARRIToWYydE9h9YlbPnxi+9DoyduuIjC/Gy+4TJmL4EYqp2RkwlhtX8B44sbyBa/44ANB0jb2TULxvHqwquSJALipcuPPTS4y8rHF5x39RAz9pg7R87H5TlJHkMnoIGXv9dr6UZrcdlmb2CWfr4HKOqcEpCN7QE20y88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733913289; c=relaxed/simple;
-	bh=F7KIKW7J+BGVxbry91OimwuExdPUPVb2HBrGO+PaP7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HQAahGlmPLnMMITRccGDQBMqGBoYFh+Wk7EeRjwMt4kKVhjBogOJM637q7XvA4QnodyhWGuDI2NPkylIAXVL5peFn9ZVxduDRQ2o5eG20mB1I6azD2Trjs9lu5NWURel2KDilUzqiBH/5x+LChd0f3UDtqvZGKzJuF3GD6x7ik4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sHSxBhVS; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53e3a5fa6aaso572578e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:34:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733913286; x=1734518086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F7KIKW7J+BGVxbry91OimwuExdPUPVb2HBrGO+PaP7A=;
-        b=sHSxBhVShK6cwd6IZrPsoxKhebzHQJIfTaCKZJ/OfLkSrtkQzlltoBDDhcxx67l6VL
-         0RemwlrrsdawJBqodhhKPlauH36zpUuQOVA94PREUAmhLqknfyH/dq6WlMkYAQI0emFX
-         7fxhNxTLFLd+/XN7qWNMeZtqsknLu9xxrFNvh4CUWJnyAVzo2QCS+u7S8WEMV5YBUpxK
-         +9UuxC4uumPtHUmF/e/54PzRGRy9CEIQTvyNtdm70FhskdH1BqXRhR6vLpJ3qYCD6xnr
-         Aur13clCcctuuoSRQNXuSuDj+BK30fbwORuWSKP34WdbrOq3y0ePTmVkimD4Wrca6tp8
-         Dq+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733913286; x=1734518086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F7KIKW7J+BGVxbry91OimwuExdPUPVb2HBrGO+PaP7A=;
-        b=OkpoKxJNDpGbX/zdu4aB/f84azTmXUAP6O+Skou9acPpnaNJseBnAuwj/v4lLuTrUQ
-         c44JXS5nmFswJeTHrFYBD1qCWcdp1VU11Se1Vp4qYdzdzc3j2mZ0X1FyyO4O/uS90i2R
-         dDcwvBYIYCCPnpLYvTx65nW8BmP4to5fXe3xN5vaYmjTzDPHPZp2q9MFioUCOHyfuL1C
-         tzFjWGqKOxiZY87nwRy8v5xY6Gx2CAotvXwz7T57KZe3CBPYe9kBxZnUnqeRQ0KBZrRW
-         l2kJ6aDfdUwpg7onjUK/e1zsfvu4qSLJtaUUnlWDTofJ/pm12ckq24cKuTEDgo0RYT4e
-         dLFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgj2NOiTPC0vwkwlyUONZM/GGraPs3g6FcqdmQfxuuAu4TVn8fOowZ9LXUQMgHnR00mr0LG8D07UutdcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw75tXmruR8p/RviRT1LBGSKPLNFe14GzsgWiMfUBQZG+xD2XXi
-	eOVpR2MNdZ6lQ/yhwokWz4oRisoIOeaqPOqc2TfesGIG862VjscHhq8ZF1zK48J3cNBo/9kHUd0
-	M6dH1ysjBqqeYWaSEJRtkkJSkv50feCEbg70TRIQGtpw4Fs6PIxE=
-X-Gm-Gg: ASbGncvL/AUfaQze70OIpni1P0Diookjgm3x0Dd6rboeed19/5heYkDOa/yl4gudv95
-	CqDpzDuqfYfjaib78NRTqti7CgTNsVF+ftw==
-X-Google-Smtp-Source: AGHT+IEIzF7TzpGGOuEOvb5mn1FpOkiF+vDhRngOQ1SKyw/OD9NX/30zYA3n7HT3xgkbQLl1uo9Edg4dhzoo7+83kh0=
-X-Received: by 2002:a05:6512:ba5:b0:540:20eb:80be with SMTP id
- 2adb3069b0e04-5402a783b7dmr685573e87.25.1733913285595; Wed, 11 Dec 2024
- 02:34:45 -0800 (PST)
+	s=arc-20240116; t=1733913305; c=relaxed/simple;
+	bh=PifCWoxA41DNQhBe6905odZu+s/j0m25J2naw6/B7nQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=O0hF+6ZuKxKLKPv2C1T2bXw47qsAE7SA2wUek6pX/U+9BGwrluoTVXzQRn9bEd7siGclYadbKEaCG6UzlqdbGu4pnT/es6yS+u2+ib/Bgi1ejp8aM61q600U8ZlY18SFlF84oV6s5++ch4PLqNy8AYQkQregEj54CEWT/KEBuwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUeGxr/m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02434C4CED2;
+	Wed, 11 Dec 2024 10:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733913304;
+	bh=PifCWoxA41DNQhBe6905odZu+s/j0m25J2naw6/B7nQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=RUeGxr/m9s/dSkYW7+Ydh8aBk14fUAhaFmzWAA56kIv4TNuTkqqrCfF+n1aosk0ow
+	 FMmtfAHb8X1cYQSjMF65VBH23ymeTkjqBal0zhUxSuZuh0+iN0PGDZ6BIXNIfSFWjW
+	 hGydlTxJAeFX8jLYbN3W9z5CJAInMtQFiKiAFLJHeNFjTpbQleBjYfInsA4G0nGIy4
+	 9acT7zBhA3eC7/WCM6eqSHW+UIOmC/0TjdBz8bdyGC5G/zF105MhH2Rwtp70UMqBwi
+	 yuY8c42XebqdjCB3CYFjpQwYzeqWR1PdpXGlAsx9Ow0aoRM+/c3ocpmhAzPvmTa03G
+	 3MTi8HshPgjAQ==
+Message-ID: <4f722a25-65f3-49cd-9c45-8710e8242248@kernel.org>
+Date: Wed, 11 Dec 2024 11:34:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211011201.261935-1-linux@treblig.org>
-In-Reply-To: <20241211011201.261935-1-linux@treblig.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 11 Dec 2024 11:34:34 +0100
-Message-ID: <CACRpkdaarPM3vx6vAVhdSv+KHDZq6MTDo0JpQYGj1gJnaE7OrQ@mail.gmail.com>
-Subject: Re: [PATCH] ata: sata_gemini: Remove unused gemini_sata_reset_bridge()
-To: linux@treblig.org
-Cc: dlemoal@kernel.org, cassel@kernel.org, p.zabel@pengutronix.de, 
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom,qmp-pcie: add optional current
+ load properties
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, vkoul@kernel.org,
+ kishon@kernel.org, dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+ neil.armstrong@linaro.org, andersson@kernel.org, konradybcio@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241204105249.3544114-1-quic_ziyuzhan@quicinc.com>
+ <20241204105249.3544114-2-quic_ziyuzhan@quicinc.com>
+ <qvjtwilukxbeaxnbyzfkdsfkktm6p4yv3sgx3rbugpb6qkcbjy@rohvixslizhh>
+ <20241211062053.vxdpovlmetvyx3za@thinkpad>
+ <33697bd9-02f4-4a9a-b8c0-4930d7fdaee2@kernel.org>
+ <20241211082404.p7fbmhooikmipxvm@thinkpad>
+ <3c7ddb08-38db-44b3-a7a7-ec7b270a408f@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <3c7ddb08-38db-44b3-a7a7-ec7b270a408f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 2:12=E2=80=AFAM <linux@treblig.org> wrote:
+On 11/12/2024 10:52, Krzysztof Kozlowski wrote:
+> On 11/12/2024 09:24, Manivannan Sadhasivam wrote:
+>> On Wed, Dec 11, 2024 at 09:09:18AM +0100, Krzysztof Kozlowski wrote:
+>>> On 11/12/2024 07:20, Manivannan Sadhasivam wrote:
+>>>> On Thu, Dec 05, 2024 at 11:23:11AM +0100, Krzysztof Kozlowski wrote:
+>>>>> On Wed, Dec 04, 2024 at 06:52:47PM +0800, Ziyue Zhang wrote:
+>>>>>> On some platforms, the power supply for PCIe PHY is not able to provide
+>>>>>> enough current when it works in LPM mode. Hence, PCIe PHY driver needs to
+>>>>>> set current load to vote the regulator to HPM mode.
+>>>>>>
+>>>>>> Document the current load as properties for each power supply PCIe PHY
+>>>>>> required, namely vdda-phy-max-microamp, vdda-pll-max-microamp and
+>>>>>> vdda-qref-max-microamp, respectively.PCIe PHY driver should parse them to
+>>>>>> set appropriate current load during PHY power on.
+>>>>>>
+>>>>>> This three properties are optional and not mandatory for those platforms
+>>>>>> that PCIe PHY can still work with power supply.
+>>>>>
+>>>>>
+>>>>> Uh uh, so the downstream comes finally!
+>>>>>
+>>>>> No sorry guys, use existing regulator bindings for this.
+>>>>>
+>>>>
+>>>> Maybe they got inspired by upstream UFS bindings?
+>>>> Documentation/devicetree/bindings/ufs/ufs-common.yaml:
+>>>>
+>>>> vcc-max-microamp
+>>>> vccq-max-microamp
+>>>> vccq2-max-microamp
+>>>
+>>> And it is already an ABI, so we cannot do anything about it.
+>>>
+>>>>
+>>>> Regulator binding only describes the min/max load for the regulators and not
+>>>
+>>> No, it exactly describes min/max consumers can use. Let's quote:
+>>> "largest current consumers may set"
+>>> It is all about consumers.
+>>>
+>>>> consumers. What if the consumers need to set variable load per platform? Should
+>>>
+>>> Then each platform uses regulator API or regulator bindings to set it? I
+>>> don't see the problem here.
+>>>
+>>>> they hardcode the load in driver? (even so, the load should not vary for each
+>>>> board).
+>>>
+>>> The load must vary per board, because regulators vary per board. Of
+>>> course in practice most designs could be the same, but regulators and
+>>> their limits are always properties of the board, not the SoC.
+>>>
+>>
+>> How the consumer drivers are supposed to know the optimum load?
+>>
+>> I don't see how the consumer drivers can set the load without hardcoding the
+>> values. And I could see from UFS properties that each board has different
+>> values.
+> 
+> 
+> Drivers do not need to know, it's not the driver's responsibility. If
+> these are constraints per board, then regulator properties apply and
+> there is no difference between this "vdd-max-microamp = 10" and
+> "regulator-max-microamp".
+> 
+> If this varies runtime, then your property is already not suitable and
+> very limited and you should use OPP table.
+> 
+Plus let's recap the commit msg which is supposed to fully explain the
+hardware:
+"the power supply for PCIe PHY is not able to provide
+enough current"
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> gemini_sata_reset_bridge() was added in 2017 by the initial
-> commit be4e456ed3a5 ("ata: Add driver for Faraday Technology FTIDE010")
-> but has never been used.
->
-> Remove it.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Well, that's 100% property of power supply - so the regulator node in
+PMIC, not the UFS device (consumer).
 
-Right it was never used because the corresponding reset in
-the low-level PATA driver didn't work so I patched it out before
-submitting.
+With that commit msg it is clear the properties are placed wrongly.
+However maybe just commit msg is wrong, but then how could we possibly
+know what is the real hardware, right? :)
 
-But should you not also remove sata0_reset and
-sata1_reset from struct sata_gemini and the code fetching
-the two reset lines? And even #include <linux/reset.h>?
 
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
 
