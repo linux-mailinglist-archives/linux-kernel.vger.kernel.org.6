@@ -1,182 +1,159 @@
-Return-Path: <linux-kernel+bounces-441738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E008E9ED34F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:23:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1939ED34B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:23:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D517280EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8C3E161A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6C41FECB2;
-	Wed, 11 Dec 2024 17:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2W5Hs4dE"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7021FECC0;
+	Wed, 11 Dec 2024 17:23:23 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C9E1FF1BB;
-	Wed, 11 Dec 2024 17:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722141FECA1
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733937814; cv=none; b=faDnz5KXgN8LPDFJqRpQL9euk9gCkuezgvRHNo4rJToyU2NjKL6DhOkJtQhfORkQQ638eYE7rKVzHPxMBfNUm9+0JWU35Ipmnx+A05E8JShZr+RiU1/2GnmOCr9z8RyIYMD3QblygGzCzd5jEv+K/C5OVViYoaYr1/WghLp4buE=
+	t=1733937803; cv=none; b=dV526OBPx4OvF/Z71MQnmxnyV2XGtCbz7qPtdDLF2O8iY2lkXbb6yS6wZ7DyMYODWx7mzRgUZB1KgJoAxy0Q9VeTQOs4xlAS/Cr26nQ1a2vzHxpE9uOLltiChEkTZQ07YxwUoE0eU8m1Si5HGawKarIb/gUaMRid1NeoJmRuedU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733937814; c=relaxed/simple;
-	bh=UUQ/DzUFyCwcxIK3PMsUVm1c4BxQMhiQ/9Nqzn7iDcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H1YSAXxFEgghUpCGZ9T/q2fBXMMTKv3ezdPo6bxH61dDRatRIFhGRASHER6MCLHEh/V2QP4RcHsIzSW3TmBgrmdrutPGEcRGH82cAnSpQRazty5GJqXqVsh2UzdynJpm7lYb5isK6Nvnahy38u6JOchOR26pfMJqTBVwWxd9344=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2W5Hs4dE; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=u003TtXLqRdl21a2NWcQiJL7JcZsNB0P9eljCYzTzjc=; b=2W5Hs4dExuwoJVN6KAAy7vsVT8
-	q8ibUEy9c8pdKQrMtX4D57ESDxDZMe9l6EsD9jXwvIsbgUT5878dNDDjXO3Dw+O/7w7Bq/hP9jOkX
-	wX2Zs3uIAu/MV2PAAw5nEzIpkIvvq0UR07OAuOONfXY1lXVt64sh/sgrk2c20vi3XVmkEP2ulBfog
-	E2wpfVvR4vypUbQiDtJDA1t2K8gUR00uMBbUPxlOgWkHF6oQWSyd50veAACWTqlcN6DfKStMmFgCm
-	0K5cg/n4Ex8wYoFM9fUkBAmqTnMxHK1dsV5jg2g6Jt+QW5GCpZnjltNrlFvWnbkX5jtPVfrSf6usd
-	FyEOxEQg==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tLQQS-00063M-PG; Wed, 11 Dec 2024 18:23:04 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- FUKAUMI Naoki <naoki@radxa.com>
-Subject:
- Re: [PATCH v2 3/5] drm/rockchip: vop2: Improve display modes handling on
- RK3588 HDMI0
-Date: Wed, 11 Dec 2024 18:23:03 +0100
-Message-ID: <1820767.5KxKD5qtyk@diego>
-In-Reply-To: <64vc5pkj44w3qxf5wkcxgghpwhvoagzemcsfqmi7fhsxt7vlqd@yfcgloi45ygh>
-References:
- <20241211-vop2-hdmi0-disp-modes-v2-0-471cf5001e45@collabora.com>
- <20241211-vop2-hdmi0-disp-modes-v2-3-471cf5001e45@collabora.com>
- <64vc5pkj44w3qxf5wkcxgghpwhvoagzemcsfqmi7fhsxt7vlqd@yfcgloi45ygh>
+	s=arc-20240116; t=1733937803; c=relaxed/simple;
+	bh=IdYyK45BBh7f/4V4ntwntZE9St/TyZ24rrMt5FYpbbg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=a+nCPwo5peNUAcsVRbpovoLMmfA9F0ShxVQENfBAFvSTTVNagchVN4yYXU/Xsa09SR5VXv0cFt2ffHuMcn9DdOL11V9gSrY6esDtVGjFIK52Q+cQiqhK+MN8UJZAeWjedk+SuA35IuATiHMRqOCSWax6vdWXV3MwYPRgIRQS1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7e4bfae54so69698955ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:23:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733937799; x=1734542599;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6zIba66nBBaj0pJFFxdj0qayV1im2oVhQgHCS7G4314=;
+        b=RpFsYCeesogO7Mc9b0r3b1rbG2A34b/lAFkm8l1XQXjyO9TgCoopBv2NsZ/KL1xd5n
+         NEYA8+qYmoHXJbHWlNjNzIfOWYWkvk5FgwuS/LG/nlApr8f3oFX8nH7NZG0n/P//UpFB
+         FDCK87vBZAVR1yjkbEcPwXA5SRUtc+o6uW7QzIRpvLXF4LP1B59+Cax9Qt/gaxuvqCnL
+         LFk/jTrWxqK/YP9NQy0+69xEFc5s1kFzGrL0cnWm7cT+61y+KZYNRHOiVINrFtD+Zny/
+         g4RQJYWTPf7CwgUxb9skAn+FzoJvB2tk8j2r8tzDBBzck9zbP+uM7V2NJIHYdI/caOA8
+         L+lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULfNJFTEGWWlOaDwnfubq0ZOAfWto0/WfXew1o65ztZ8VhQiu7p/sTIMWDc3ASH8Dq4483xt73UT62fZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRM2KuIUhPCp9l7TikEyPndn/TMitXMHCRu0cO+UwvAeMteCCJ
+	2Dr3Ut8aJT2A5KTGqvhRKT20IubxVGkCW0ZbEFrdX1SV92f49Hj8fsQQm5Tf0xKzpDuvLhiDZA2
+	pQ6SnKOVRK2IDyOQx2zImqlTaWDusQ30Jc55xDXvZoCN/0B06qxWGvUA=
+X-Google-Smtp-Source: AGHT+IEIGIvHwDwx6+RQ0NnRjZl+8AoAo3/8F4AQhkNRaFV1BQ/6Fm0cR7O5PoDYsyerVYVDX6ORpUf1dWrctfkDoyD3+/W/Uxpr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Received: by 2002:a05:6e02:160b:b0:3a7:e67f:3c5b with SMTP id
+ e9e14a558f8ab-3ac47a61e9fmr4104265ab.2.1733937799620; Wed, 11 Dec 2024
+ 09:23:19 -0800 (PST)
+Date: Wed, 11 Dec 2024 09:23:19 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6759ca87.050a0220.1ac542.000e.GAE@google.com>
+Subject: [syzbot] [kvm?] WARNING in __srcu_check_read_flavor
+From: syzbot <syzbot+4a606091891fbc6811cf@syzkaller.appspotmail.com>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am Mittwoch, 11. Dezember 2024, 18:07:57 CET schrieb Maxime Ripard:
-> On Wed, Dec 11, 2024 at 12:15:07PM +0200, Cristian Ciocaltea wrote:
-> > The RK3588 specific implementation is currently quite limited in terms
-> > of handling the full range of display modes supported by the connected
-> > screens, e.g. 2560x1440@75Hz, 2048x1152@60Hz, 1024x768@60Hz are just a
-> > few of them.
-> > 
-> > Additionally, it doesn't cope well with non-integer refresh rates like
-> > 59.94, 29.97, 23.98, etc.
-> > 
-> > Make use of HDMI0 PHY PLL as a more accurate DCLK source to handle
-> > all display modes up to 4K@60Hz.
-> > 
-> > Tested-by: FUKAUMI Naoki <naoki@radxa.com>
-> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> > ---
-> >  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 34 ++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> > index 8b2f53ffefdbf1cc8737b3a86e630a03a7fd9348..393fe6aa170aaee9663c4a6d98c1cd6a5ef79392 100644
-> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> > @@ -158,6 +158,7 @@ struct vop2_video_port {
-> >  	struct drm_crtc crtc;
-> >  	struct vop2 *vop2;
-> >  	struct clk *dclk;
-> > +	struct clk *dclk_src;
-> >  	unsigned int id;
-> >  	const struct vop2_video_port_data *data;
-> >  
-> > @@ -212,6 +213,7 @@ struct vop2 {
-> >  	struct clk *hclk;
-> >  	struct clk *aclk;
-> >  	struct clk *pclk;
-> > +	struct clk *pll_hdmiphy0;
-> >  
-> >  	/* optional internal rgb encoder */
-> >  	struct rockchip_rgb *rgb;
-> > @@ -220,6 +222,8 @@ struct vop2 {
-> >  	struct vop2_win win[];
-> >  };
-> >  
-> > +#define VOP2_MAX_DCLK_RATE		600000 /* kHz */
-> > +
-> >  #define vop2_output_if_is_hdmi(x)	((x) == ROCKCHIP_VOP2_EP_HDMI0 || \
-> >  					 (x) == ROCKCHIP_VOP2_EP_HDMI1)
-> >  
-> > @@ -1033,6 +1037,9 @@ static void vop2_crtc_atomic_disable(struct drm_crtc *crtc,
-> >  
-> >  	vop2_crtc_disable_irq(vp, VP_INT_DSP_HOLD_VALID);
-> >  
-> > +	if (vp->dclk_src)
-> > +		clk_set_parent(vp->dclk, vp->dclk_src);
-> > +
-> >  	clk_disable_unprepare(vp->dclk);
-> >  
-> >  	vop2->enable_count--;
-> > @@ -2049,6 +2056,27 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
-> >  
-> >  	vop2_vp_write(vp, RK3568_VP_MIPI_CTRL, 0);
-> >  
-> > +	/*
-> > +	 * Switch to HDMI PHY PLL as DCLK source for display modes up
-> > +	 * to 4K@60Hz, if available, otherwise keep using the system CRU.
-> > +	 */
-> > +	if (vop2->pll_hdmiphy0 && mode->crtc_clock <= VOP2_MAX_DCLK_RATE) {
-> > +		drm_for_each_encoder_mask(encoder, crtc->dev, crtc_state->encoder_mask) {
-> > +			struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
-> > +
-> > +			if (rkencoder->crtc_endpoint_id == ROCKCHIP_VOP2_EP_HDMI0) {
-> > +				if (!vp->dclk_src)
-> > +					vp->dclk_src = clk_get_parent(vp->dclk);
-> > +
-> > +				ret = clk_set_parent(vp->dclk, vop2->pll_hdmiphy0);
-> > +				if (ret < 0)
-> > +					drm_warn(vop2->drm,
-> > +						 "Could not switch to HDMI0 PHY PLL: %d\n", ret);
-> > +				break;
-> > +			}
-> > +		}
-> > +	}
-> > +
-> 
-> It seems pretty fragile to do it at atomic_enable time, even more so
-> since you don't lock the parent either.
-> 
-> Any reason not to do it in the DRM or clock driver probe, and make sure
-> you never change the parent somehow?
+Hello,
 
-On rk3588 we have 3 dclk_s and 2 hdmi controllers. Each video-port can
-use the clock generated from either the hdmi0phy or hdmi1phy, depending
-on which hdmi-controller it uses.
+syzbot found the following issue on:
 
-So you actually need to know which vpX will output to which hdmiY to then
-reparent that dclk to the hdmiphy output.
+HEAD commit:    af2ea8ab7a54 Add linux-next specific files for 20241205
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1267ab30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76f158395f6f15fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=4a606091891fbc6811cf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8af0861258fa/disk-af2ea8ab.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ffb38cf7a344/vmlinux-af2ea8ab.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6fbd2e50358a/bzImage-af2ea8ab.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4a606091891fbc6811cf@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+CPU 0 old state 10 new state 1
+WARNING: CPU: 0 PID: 7665 at kernel/rcu/srcutree.c:734 __srcu_check_read_flavor+0x107/0x150 kernel/rcu/srcutree.c:734
+Modules linked in:
+CPU: 0 UID: 0 PID: 7665 Comm: syz.1.296 Not tainted 6.13.0-rc1-next-20241205-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__srcu_check_read_flavor+0x107/0x150 kernel/rcu/srcutree.c:734
+Code: c6 c8 01 00 00 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0 75 38 41 8b 36 48 c7 c7 60 cc 0b 8c 89 ea 44 89 f9 e8 7a 8e db ff 90 <0f> 0b 90 90 eb a2 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 64 ff ff ff
+RSP: 0018:ffffc90003d8f638 EFLAGS: 00010246
+RAX: 7f55abc023df8500 RBX: ffffe8ffffc66be0 RCX: ffff88801eb93c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 000000000000000a R08: ffffffff81600dd2 R09: 1ffff110170c519a
+R10: dffffc0000000000 R11: ffffed10170c519b R12: dffffc0000000000
+R13: 0000607f47666bc0 R14: ffffe8ffffc66d88 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007faaec237000 CR3: 00000000250bc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ srcu_check_read_flavor include/linux/srcutree.h:269 [inline]
+ srcu_read_lock include/linux/srcu.h:247 [inline]
+ kvm_mmu_notifier_release+0x2f/0xd0 virt/kvm/kvm_main.c:863
+ mn_hlist_release mm/mmu_notifier.c:321 [inline]
+ __mmu_notifier_release+0x3e4/0x670 mm/mmu_notifier.c:359
+ mmu_notifier_release include/linux/mmu_notifier.h:402 [inline]
+ exit_mmap+0x142/0xd50 mm/mmap.c:1239
+ __mmput+0x115/0x3c0 kernel/fork.c:1350
+ exit_mm+0x220/0x310 kernel/exit.c:570
+ do_exit+0x9b2/0x28e0 kernel/exit.c:925
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1087
+ get_signal+0x16b2/0x1750 kernel/signal.c:3017
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xce/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc5e197fed9
+Code: Unable to access opcode bytes at 0x7fc5e197feaf.
+RSP: 002b:00007fc5e27460e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007fc5e1b46088 RCX: 00007fc5e197fed9
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fc5e1b46088
+RBP: 00007fc5e1b46080 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc5e1b4608c
+R13: 0000000000000000 R14: 00007fff899d8670 R15: 00007fff899d8758
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
