@@ -1,104 +1,99 @@
-Return-Path: <linux-kernel+bounces-442286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE429EDA3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:41:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFCD9EDA3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:41:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F6A328211C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:41:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BF3416790F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0D1F4E5F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1DD1F2392;
 	Wed, 11 Dec 2024 22:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f9HKNs6d"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d6S9nbdo"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D2C1F2395
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ACA1F2399
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956543; cv=none; b=pjVDQM6ZkqWzSbbfqzM/ZLSZ+DgA8gMS3qywQcNroPTljgsXVG+2xcp4onEtR8Voyx1zbbvnsgAdZDqN43dYzA0T8E1SZGmuZe1zrHZq71SLdZDfIfywnIvs6xWuMR6yh6RFlXX1UsJAbcoxfdaAk9Cx2rG5SfmoEvncd2fEChg=
+	t=1733956544; cv=none; b=IoFjtEgRPXQLk92hgYuPgQRg16pOp4Znk8tCYbW5abQJbpA6Vdok9ExtgU+m1e2g4c2hZsetltjknXHqnU75QOWN05EtAloEABFx+28EWuR3CD+y65xwSOvZTpG2wDW3TOvvnhspdY3Mrxh/Uc/9604y8dim1ym4RgqeBg7lXYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956543; c=relaxed/simple;
-	bh=lt4zBLD00go+8ZTh4scuZr6KDyf46ul1zxnocObd+bg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L/0uHCRvOBYyvPk/nGWL6/zrwwzvedgYLiQ+eiKBBawIG3IvnyfMBjpcN05ZAkS/9j82ZIIXZeSNc5Q4+FnIKjNKlm3pvYDfZh6GP3mmfUkgEvCFz9Z0dzLbx9SjGdKVkx7qXTJiWdD8KNc8O5jtHMScDG/D/IqpnuASvi0/NvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f9HKNs6d; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2efc4196ca0so3271798a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:35:41 -0800 (PST)
+	s=arc-20240116; t=1733956544; c=relaxed/simple;
+	bh=WkXMEqZ/gF/xnWJ/mhzzg/miOHHNVWajJShRngxnHGY=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T4loyrKCjVD5kImzhzG94Eo6YuZmV8/RAfi5ieVngCPi5lwiYfYXAS5vcRPJ2AIF7rZ1fl1MBVGL2IcY2JVPgltvePZVsa6OGgmc5p2xJ8LgFQ+o+2NQOIRXPqnVnQESpYUmLT3W4/CBsaqHI7bcibaiBEQiA2cEF4tQHdPPEsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d6S9nbdo; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-46677ef6910so65298111cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:35:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733956541; x=1734561341; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVG8ahP/XXrJwp/ghgbGxkrwSNTwBGi72igr84vZWsw=;
-        b=f9HKNs6drD3an/kEN0U0KNQZ2s8TSHVJn8UBfCQG3ol9STtymLOxDq7PVvsX3vyp66
-         gwZQIlx6pVpYU1qaakSdbjLDxf5iTEKcBlCAeUHx4HF6EUFy8tGr6bBMVB0RHvU+lOSi
-         henWblFsm84YO8qsL1mjNV7rUwWDNXWCJfHBlLObyo9xWUhjB9ly0Z7O7SxOAv5+WmxG
-         XtSNODavZ354qcn4xqceJdcijWA/ODdy65/W7T4CyLF2xuodYWftbeZC2P1o836waytB
-         KinTQYoIqD2Kl/cTtzegT/bksVOTJ+e570OXSb203TeA+2lfA8qkAcTy0SgIbTC5hiAM
-         /AGQ==
+        d=chromium.org; s=google; t=1733956542; x=1734561342; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WkXMEqZ/gF/xnWJ/mhzzg/miOHHNVWajJShRngxnHGY=;
+        b=d6S9nbdoiEdi9fVG8d87uCvOSqbWjEz+a+2B76mwiV0Lu0YQfK0QZESqU2O4Is3unQ
+         Uhw8EMdhwQfex8Hbooa/zGMsqJ7aakt+UTGuvFeipo2uNpQ9ncWtp1DC05MHiiW+Ww7W
+         lngHBg8DqPcxtTz9wkaHoVeP3x7fV5XR8w20U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733956541; x=1734561341;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVG8ahP/XXrJwp/ghgbGxkrwSNTwBGi72igr84vZWsw=;
-        b=evJOWvY1mWhR1x0cUZ9UtXYm6th/rt+zvd0bgDkYROKHsku321SFO7CFr5MnjYbJ0o
-         0eUEMrwlM9LI8ZFssRud3Vxlk8Dksw5V6z61443ELmkt3x+KMgNIsoMem/iTxs2SdgyU
-         CULKPTBb4UqNCoyel8QNLn68va26NrX4ba59oOPjC1MSBY3tJB9YSIk0vv7f8nXVVttc
-         WdCSAZL1+HUvxRLqWryiSoCodH4kuKUu5lsU6HdJigfOy2lsnizhfK8LouQpyAmPzgif
-         bsU+2lY03v3TDBuIgTGSqkMUnPqfOvQpgqkGtonnC2Aex0Vd7K6jyHtDtdQPS7uFKn7o
-         a54g==
-X-Forwarded-Encrypted: i=1; AJvYcCWASW0+O5NazbRjhpXUtzCmQ+ZEsISt1Rq94aGow5CaajJPLGWnrBqN7yDh2kiQ2dYF2uU/y08ZwtVuOIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwMStzE2MPrJuQ/eYP0CydeLp3GiPgP5mpqDMNfemrPoDEkwUR
-	8CX5deAqO7FCy6VW+StriVhYGkbFi50te+0RX8L0P07Sregge6JcspeCbXC92eTDS8iUodkpe5D
-	C+g==
-X-Google-Smtp-Source: AGHT+IGOKgLtrZFpctzdhq5n5IysWDqxKWjxJrTJsdkk765OEG8e8e8bmISVxnp1jIvzrNIQtklA1qJsYYY=
-X-Received: from pjbqx4.prod.google.com ([2002:a17:90b:3e44:b0:2ea:3a1b:f48f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e48:b0:2ee:741c:e9f4
- with SMTP id 98e67ed59e1d1-2f1392938a2mr2342276a91.11.1733956540841; Wed, 11
- Dec 2024 14:35:40 -0800 (PST)
-Date: Wed, 11 Dec 2024 14:35:39 -0800
-In-Reply-To: <20241211203816.GHZ1n4OFXK8KS4K6dC@fat_crate.local>
+        d=1e100.net; s=20230601; t=1733956542; x=1734561342;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WkXMEqZ/gF/xnWJ/mhzzg/miOHHNVWajJShRngxnHGY=;
+        b=DpK2B2eRErF+tXGS6A8s1qYcRAQTwPYkjCx2Jn9KOmlNvsjJFHi6ts73EzGBhWnKfL
+         P+BXa+iqFd5Hs1gMBb4qvchjN4vQGzsZKTC11mtNweh5A3GrSEB9ME+DOBJsHwoYM6bN
+         JE6PmRM4yuS/qP7aF/4ewqu9OcyfP3b6EtYowEA1M+yvrFxRSAIMQzyr1WsOEHq1PNjn
+         CDlT0/EtkYqMdkg+/rRl7Frq42cQsM85vEItMSKljqnUc2fGdpslP2OElLPeLDPMwuT0
+         m07TtXNjVQiMPAi/5oUbn2vjjiqfL5zAqlGfPs5mKUDoQh7zapHMgYGJUKWpO0nG2cb1
+         QD8g==
+X-Forwarded-Encrypted: i=1; AJvYcCU+xlpK+S6w4p4y4WXbdFZ+68jFp1Y69bu4GNyJPEhCgJnr4X8zGDJEpcHTGQnVqM1JvnKZ9NywCrWbGUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyigjH/iib33GN/XLqHA5Lw0ACOq4Zjdx5uh5IP0mpXVWzmrkKy
+	x8VtVwYGhFbSpgVfxgHJMC9iSzJ4QRwQfax63Acqy+1ds+ZQn1bqVPSc/i3p2WaHvN0nRDgtNuJ
+	wnQQHriaqzmUxcdczavIPIFciidAcu7qW9Uc/iM/4xw0Yps0=
+X-Gm-Gg: ASbGncuHyKNRg01kumKI66hmp4CGZ3CMNNAlEKRp33vPI7Qvk/S/9d4IumlhUcKngtb
+	3WbVxmHSxGg9J0xwHopeGStfJSi4wIpB8WfTBhscIrVsYyr0FMMhudjd6idre1rxTAA==
+X-Google-Smtp-Source: AGHT+IG9f7BHz8iDa6A37ISXD8md+OMJZHRpC/Cm+CFql7zV4E9ytytJpMb018vR23ZL3eujA5g0+FW3B1/RL8ezpns=
+X-Received: by 2002:ac8:5e54:0:b0:467:43c1:f0ea with SMTP id
+ d75a77b69052e-467961786bbmr14756091cf.16.1733956541804; Wed, 11 Dec 2024
+ 14:35:41 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 14:35:41 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241202120416.6054-1-bp@kernel.org> <20241202120416.6054-2-bp@kernel.org>
- <20241210065331.ojnespi77no7kfqf@jpoimboe> <20241210153710.GJZ1hgJpVImYZq47Sv@fat_crate.local>
- <20241211075315.grttcgu2ht2vuq5d@jpoimboe> <20241211203816.GHZ1n4OFXK8KS4K6dC@fat_crate.local>
-Message-ID: <Z1oTu37PmOvK6OlN@google.com>
-Subject: Re: [PATCH v2 1/4] x86/bugs: Add SRSO_USER_KERNEL_NO support
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	KVM <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-11-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-11-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 14:35:41 -0800
+Message-ID: <CAE-0n52kSzNeFazUpL0e1C-tTZHv7nzOCYinYCX72pKk-E9_XQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/14] drm/msm/dp: move/inline audio related functions
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Dec 11, 2024, Borislav Petkov wrote:
-> Btw, Sean, how should we merge this?
-> 
-> Should I take it all through tip and give you an immutable branch?
+Quoting Dmitry Baryshkov (2024-12-02 02:06:41)
+> Move audio-related functions to dp_audio.c, following up the cleanup
+> done by the rest of the submodules. Inline functions with simple
+> register access patterns.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Hmm, that should work.  I don't anticipate any conflicts other than patch 2
-(Advertise SRSO_USER_KERNEL_NO to userspace), which is amusingly the most trivial
-patch.
-
-Patch 2 is going to conflict with the CPUID/cpu_caps rework[*], but the conflict
-won't be hard to resolve, and I'm pretty sure that if I merge in your branch after
-applying the rework, the merge commit will show an "obviously correct" resolution.
-Or if I screw it up, an obviously wrong resolution :-)
-
-Alternatively, take 1, 3, and 4 through tip, and 2 through my tree, but that
-seems unnecessarily convoluted.
-
-[*] https://lore.kernel.org/all/20241128013424.4096668-40-seanjc@google.com
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
