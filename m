@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-441045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F669EC89E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:15:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB0E9EC8AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95001653A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9C91885858
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852CB207A22;
-	Wed, 11 Dec 2024 09:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36A51FF1A1;
+	Wed, 11 Dec 2024 09:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vymOPRtk"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OGH+62Ob"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC501FECB5
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15921207A3F;
+	Wed, 11 Dec 2024 09:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908500; cv=none; b=ZwtFKBViK38pkmjBYcg1Yu3IWoII3JrdH63LzZl7k8Zfa85+53sEa2NPRYhn8QPyb4isBf/a5AtR8XH2o27g0qvyDxVzneJl5xl4hE8H3r9rQdOrdBPnXP8e1L1fQ4VqlWuubJVZL/FdKkMqnVmCkIpDPawTCJ9K37habfdkcVU=
+	t=1733908582; cv=none; b=svc3qSMiduR3EPBSc0K04zyixt79+P9wxC57TbfK8AZCyiUXDggWuYNzTfQSmW59ryUodU75IiJIJUUbZsfeEbx4XyXqynK45q+dnLrJwVcGEDr6m4QDpOmNToBZhC4pbIr6DRnUonemfZ7lzj43yLdmBu69/1vwXWY+rEF970I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908500; c=relaxed/simple;
-	bh=JUXrxkRS6ra3CHJ9SyF7bUw/4jbQj+KL0Fb1Fh2MyHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7vxLV0mltNNPxvny4/dKQniRF7oN5nG9yeX/40RLHjlLQbNffaIyKSb0JzlmaSlcwVmCmmsyPt1cl8iRKFI08WVibc2wudjyup0OTFVwPSlr87Hd2cemzz+KzBYi9VpuNwss7wDE31YIx8RqII6MnTi6IVucP3rkGy/Iy/ruiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vymOPRtk; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so1645445e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733908497; x=1734513297; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FDO3wL3i1XscIg74LPG2N/BXo43Ca59PIHDAIDDUjg=;
-        b=vymOPRtkPVD6OqtxNN3Zn78DuUPGf0D2EtPIVzre4dUGjBcy72cxW+ZKSHV9Uh8NWy
-         L+XdJKYILHL2gZ2nItX9wAJX0DeDjSg1ZjXi777nGzj7YWMBE0jvKlIaUwet6VyZUxtw
-         QNxJ0CfcHrvC8MEZ2mGb7sx9ZXQqix2buzRBYdfhLEX76dVWIIzfLU4v0AUXUmFoTTwV
-         Dy61krov4I8gSzSXaSKRhFqA9nQLxYbJ1fRWV2TAGqvLm9QDPBXcoOvZE3xC1cgHqhHe
-         ub1KvME6gyPg5rEe/pnxTaIFo+JKSEpujW2gEtBYZw7JMYz93jvG+/Hvxdw07gBNpXBi
-         Dghg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733908497; x=1734513297;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6FDO3wL3i1XscIg74LPG2N/BXo43Ca59PIHDAIDDUjg=;
-        b=gAGNIw97VPmOeqZ2jL/DlXdN3pKCxDE7LPOBLny9EqTnOWzhcQJNbXTccWvKxfxZls
-         KzKE/z2ywCdP2KD3xXmLBsg06RtlfPVSe9PXh1tngs5JmswCk3e18/kg4MclNUEaZNtQ
-         58/bejH5CdudBTSEs0T1CW6vgQGdEVyut75lFlXtx10CrcVeZCtrVycN78r7hvQfXF+2
-         i+w/k1Zp1hBJC3gL87W2L+LINZ1dojiwl4G1g3+vG+SyS6Qwp8HWEFruTASTwm6p2Gbm
-         i732gLLAwA4pnLVtJtc8UFyZ5lFLTwvq3zjs10mVqI8HMszDwAdt4UTqq+Q1zBoP3xdT
-         hWjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1l0uA7E2sem/4b1X16LRGX25CwG7/3Elkz8npyYiK5+w2YHdEBqDnemR7x/QYm2a+Wh5vROPqFotVNMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7L3cvbnSAjFjTW8ZiO2vyNzaoSQ4XFNpaA4AmHyG3tgdanear
-	ET/HlhQJTNl9b1EXQVPLYmoIOAm/G2T4kSaZe8JNMtU1C7KhCeF4yMqd8QZ5vkU=
-X-Gm-Gg: ASbGnctzVxo8peqgdSn6Ui/IU+nBra5TpLnt16d1LGUAoi1MsjtzskFnxzNCBtMBLVx
-	ci1TCQN3jEZ33egRIkH0WybZXz2QUNYCIn5e2dmmbCK+bY/UazcNamvhWtg58n8+X1hW/wVAFgw
-	/kVkQpXhNUZk1cAXExVW6n+0OGq1Y4KcsjHyeHA8db8OBG6v9J5w05z5/r7335CdUi/WKg6HGzx
-	Pe7gJr2W8NfCk8kxSYHqwOcFNR0l3t0bKMtcdf/rpn472uZySS5VpHiWD8=
-X-Google-Smtp-Source: AGHT+IHOLK/ljbtyNYazbMd4hvX84Qm4ErHQ/BEuJGZ5dGRRjqOpg37GnjWdhZty1q73L7x1DOcRRA==
-X-Received: by 2002:a05:6000:178e:b0:386:3702:d2d8 with SMTP id ffacd0b85a97d-3864ced69c8mr1574947f8f.58.1733908496679;
-        Wed, 11 Dec 2024 01:14:56 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514dd9sm803351f8f.69.2024.12.11.01.14.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 01:14:56 -0800 (PST)
-Date: Wed, 11 Dec 2024 12:14:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
-Subject: Re: [PATCH v3 7/7] media: ipu-bridge: Remove unneeded conditional
- compilations
-Message-ID: <a91a3993-6c81-4abc-8609-8f41804fdf62@stanley.mountain>
-References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
- <20241210-fix-ipu-v3-7-00e409c84a6c@chromium.org>
- <20241211091954.42a5c778@foz.lan>
- <Z1lOCGJvgFcqmR3R@kekkonen.localdomain>
- <CANiDSCvPNf2KiEpr6Tboon6bjUxwEkD=+_AQjhiOA7RDTTpnCw@mail.gmail.com>
- <20241211094854.407ddd54@foz.lan>
+	s=arc-20240116; t=1733908582; c=relaxed/simple;
+	bh=Pbr8TFnAH68Uxd3BnYtQuKKBAuRerzWhYOPBr/hv+kI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f4jOqu1OptYQmbdMq8Rap4CoNWcx/P+v7KEzseXUDYtOialGTbCm3BwFTCTlolIGb+JtOYwmaFLK0WRJ+5hJ7ByoVcviO4fz8n/wxsvO4iiP+Hi3N5rwEOkmlBJp664UMy0VR61HZdPyl49KG7frAJ/KWsTX8aJQBPxVSBAz/O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OGH+62Ob; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733908575;
+	bh=Pbr8TFnAH68Uxd3BnYtQuKKBAuRerzWhYOPBr/hv+kI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OGH+62ObJppBdxcPFolFdTnI9ixx/WRUjU6WB3rUcDMneG/sUIK7N55TJ6AkuBQS5
+	 tlDAI5hnXQdgtmMlDnP6UJHk1SA5LoyUJCROujtY4S4NNQ/PwYklz8Hgsp/ufsQcer
+	 WwqA/gQDa7TzXEGECnjEAG2Toq35f5jZtuqzhlzfqOfk1rnrU9CaAeTBlq4lCk2Ghj
+	 AWp2DkhXbKO9yeBWi99t13YGayFkL+qqNhVYGhE7hqSLlqVuNlUx85ex6UuDT3N+WE
+	 Cuuur/HxdxyI/MyRtKYQgkNu7iPVq5YNyLWhAQ80DGjVgB5PlgQS+loZpNno/7n8+t
+	 WBLnqLjYI8iIA==
+Received: from [192.168.1.90] (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 21E4A17E35CF;
+	Wed, 11 Dec 2024 10:16:15 +0100 (CET)
+Message-ID: <43ae0fc5-d775-49d7-80cd-af111ff8fb25@collabora.com>
+Date: Wed, 11 Dec 2024 11:16:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211094854.407ddd54@foz.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add support for HDMI1 output on RK3588 SoC
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alexandre ARNOUD <aarnoud@me.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com>
+ <12942826.iMDcRRXYNz@diego>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <12942826.iMDcRRXYNz@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 09:48:54AM +0100, Mauro Carvalho Chehab wrote:
-> Yet, based on the title, enforced by its description:
+Hi Heiko,
+
+On 12/11/24 10:46 AM, Heiko Stübner wrote:
+> Hi Cristian,
 > 
-> 	> One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
-> 	> throws the following smatch warning:
-> 	> drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
+> Am Mittwoch, 11. Dezember 2024, 00:06:13 CET schrieb Cristian Ciocaltea:
+>> The patches provide the basic support to handle the second HDMI output
+>> port found on Rockchip RK3588 SoC.
+>>
+>> For now I enabled it on Radxa ROCK 5B only, the board I've been using to
+>> validate this.
+>>
+>> ** IMPORTANT **
+>>
+>> The series has a runtime dependency on "phy: phy-rockchip-samsung-hdptx:
+>> Don't use dt aliases to determine phy-id", a patch submitted recently by
+>> Heiko [1].  Without applying it, the functionality on both HDMI TX ports
+>> will break.
 > 
-> I don't think it makes sense to c/c stable, as this is just a smatch
-> warning, for a configuration that will never be used in production.
+> Looking at the drm/rockchip patch, that should not cause disruptions on
+> its own, right?
+> 
+> Only with the dts-parts enabled would we run into phy-issue.
+> (Asking, because things go through different trees and the drm
+> part looks ready)
 
-Yes.  Plus that check has a lot of false positives if you don't have the cross
-function DB enabled.  I thought I had fixed it, but I still need to work on it
-more.
+That's right, I should have better explained this - all patches except
+the last one (that is actually enabling HDMI1 on a specific board) can
+be safely applied.
 
-regards,
-dan carpenter
-
+Thanks,
+Cristian
 
