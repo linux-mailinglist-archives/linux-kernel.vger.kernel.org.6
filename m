@@ -1,410 +1,138 @@
-Return-Path: <linux-kernel+bounces-440807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D84D9EC482
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:58:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AFC9EC48C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:00:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE5B1888A30
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE512842FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A38D1C3F27;
-	Wed, 11 Dec 2024 05:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A991C330D;
+	Wed, 11 Dec 2024 06:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l8TtSvI+"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xipfkh1P"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438431C3038
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9EE86338
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733896715; cv=none; b=TIL/rXVYooPHm3lsLinorpyTuo+Dl9lE6R2oUwoNm1rHjocmpxabgZZtCtJ9l8QqmGa5fZ5rQYAqp8FxADZSyIVsxaBhaevUFreZVWPdA2eSzfJ+v5XNSbGmbxOJ8AtRV/c3jH//jGktH/efQztJupBFOCUSm+u0Jgacpj8esfE=
+	t=1733896817; cv=none; b=gxob2rR2rijrC3IGeCubTu/omxlxh8Mrp0BGG+YRQwY/+VkOnblihAQ5sQ98xrFv0QKNefdwbw/LsL9nunDtTUsiPquBBVHQRiezuPOcTlIYcKOTGS5jgSlLQgUA1axNA/a7403+p6ZwkhBSi57Wb2+auEH0U5KejZCU4r0Sy1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733896715; c=relaxed/simple;
-	bh=1rr4WSEJLWh0ZQ/J3tTJf5AitGNc165bAPGlyKH4pjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cNq8eMi24ktd5pwYuLkxeS+yhWqgfMf9WTTivTMPUgiGfnrTMu/WrSdzrs90R/bCiIaknOLEyPIJFHZvE4duVR8VNevLvQ/YGotPbI61MpgzMOU6C1QZHA/WfSGJNBr05U2UPB06Bd4LIk68XP2wn67x7MVIxjOq8A+v1RGK0+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l8TtSvI+; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71e111248a2so120659a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:58:33 -0800 (PST)
+	s=arc-20240116; t=1733896817; c=relaxed/simple;
+	bh=O/HUgr1J4WfobxzE8q+ngELR/opzNqY/jg3OvkCE2s0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCeljTdDIhpBsqx1iNcRVYly6OMAo7wDCbl/xoMetnik7DVyZbbdJTkFZPYu2ewxHoonXjd5KCBiYrrVKNcxSYOpFetLxuG3HCwdyqaBzuvqXZH5rmChFK8W3S0qVvlYBYem88/VcKAV8C4B3uUZ9I4cr+Smx8sXAOTJArlrJYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xipfkh1P; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-725ed193c9eso2600151b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:00:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733896712; x=1734501512; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p0sAJv/zc11a1dyl/0kh6A++rdaAgBOXFp2owb4QL9A=;
-        b=l8TtSvI+HI6eU9Bgzivj2En7pEQ8TeKIXJ1MfyAdjzTEk08LuUBYqsAjNJEGtcuCgU
-         8a5la7zlF+m35Ep07494F9MPvb2QE3bz84V8NpKbxOKokpVtMKYvhsgNCObBJZ9aFa1p
-         8CdYMrBeITNZCI8EwvjB9p2XdSlAZNcwUtVGw=
+        d=linaro.org; s=google; t=1733896813; x=1734501613; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=o6D+5UJWf2Pb6ZMQTYtdZG9lwxLVemgiQeSinsEy4PM=;
+        b=Xipfkh1PvJuKvPJZA7QDTVaH9AbL+BKKgPGprps+M/GhJuYzBDbulJXXzCdi2MfGAw
+         2QP5+r9UJ9YFXPrMs/qaLI8pumzLBFksbTdfYGxePxMDZzaPx7WvTpRXDPn2dVxBNVLZ
+         fQqKlhOrMHW3awuIyJ2lmVEFILvo/FrxlR6Zi2iZF+5CGA0SOVjlg89FHcQETRyMgvrx
+         gpIlldISzDi0I3f96jFAd66i/W6ozkMBgNW5gEvmCqn1ERQ4D3iyp56ZJv7ISLre7DQB
+         K1TZxAfJtShua6RfpDKhNj/uv5KK2u9UXVcg5lj4jMQMZnPJA40Mkk2WL0HYgm/gReUH
+         RgAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733896712; x=1734501512;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p0sAJv/zc11a1dyl/0kh6A++rdaAgBOXFp2owb4QL9A=;
-        b=nLzNMlZHBszX8/J5I5K10yahOepdsHW70OOL2nwqtOohRljXWUk314e3vgCqPswXgO
-         qwYrhHLWBsHt42ZV26+/CKfnkFadQH7bQf9OAaZr2E22Z9F6aAHp9LUdegPbZFDEgJHH
-         7EEsXB5yZBcUot5QGvsIE60J5L66TkvadKPTNJUEJK87MupXNTJgw6Omxs7rvpJ5gCS+
-         xlT5fckClVnHdLhL29P0ZaCKwd8ukdBtkaeu6BK5Aylrz6k/xqKT2tf9Oe8x2ACbGnfk
-         9FGN2GNSO+2BllUffp+wtwOIWkM+J7Q6w8hjm9QvgWQlPGeSqddwG5bcW3QM/9RdQlCc
-         VSrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt8+332HaWBD2ZzwCN8+ZbpqjLTN1gzrhVHHt6U2D4WsnhPCu+zP6bCHCMqEPc7SeiBHDgYhHYkCR4mEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQBDNh/JIBZDmlYFDIi8Qk5kctkmHJ/n2ttZGtc6N9xK9zQLel
-	Y+g4DbE28DeZCmNcAoETW1mG2FuBzwKJpfgeqN9yNEs7sKwr3IMS+UnhEe9DyY1Asw35fOkXib8
-	nkN3c75Rt5rNZePLV5ifapFdPQdqRAJRqbM/v
-X-Gm-Gg: ASbGncvQAklNhwaOxM47bu7UbCQmUQWO/ZO/1rhDOsRuzOFNSm+9xVWZ2rMwtkSGpdY
-	nB0q7WD/aUOOvuCBns6Dcp3Zyh1EKnuHgpRyt1tL0+SNkgFuE+COCtpd73kWWxxNA
-X-Google-Smtp-Source: AGHT+IFWzRyo3sigjXQaXNRE0zJOKdOE97zQB8Qb/LzAWIR5oIPzvwnBYUV8BligiFsQCjyK8c4pDf7RW5TR0gaPX8M=
-X-Received: by 2002:a05:6870:1584:b0:29e:32e7:5f0d with SMTP id
- 586e51a60fabf-2a012f34085mr305197fac.10.1733896712155; Tue, 10 Dec 2024
- 21:58:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733896813; x=1734501613;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o6D+5UJWf2Pb6ZMQTYtdZG9lwxLVemgiQeSinsEy4PM=;
+        b=BbhVfoQlaUurYHSsEsug/txsWrnpAynT1Acg+XtWq9+lUEIU706UARUWhsqlRCXOai
+         qo3QRr4SsBpsazRDxAEG1tvNz/tzvXja3mrv1nbw5rLF2X48ljrtoI8CzxauropE/N12
+         aL4iWZXgq86dZu1ANYF79szuy+4neEY/dpWNwbyvV/LYgHrYC0ZLtCMEO/8GopN432Za
+         MOjS/HrjH2WJ5stSkgjk6ELIp/7tx/5YZf+IIdZ5ptNmYNLV6mvcPo71lUloGpeUe0ir
+         ptqFXD2QjIxTgeKKac6Gr7lll0Ze7YMlP9hCgaD/ww1miSLmOrBtFb0+6roC2nktZDKV
+         qD1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVd0NWjYSuefy9JQUZ0CP2pNTTDN5uaprcZ/Mq4HLdxy0uTz5gD9aZWRWPqsjAPhJPDtuZ4fZJFYwBV2DE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ0sqjkLtAzlAFGYhmefLHk/gmmGmv4YQMfwyrEMke/SF6fjzt
+	eEXkYDPDKMRqb7Z2F9r9J5jhijeBLWfoXEsQ+ARltbJzibc6vcIwbAnzEgTIIg==
+X-Gm-Gg: ASbGnct0L/f79Nr0Rhj6Oiq4+6OCIBmDrC1qL5CZrGcLCl1GpOW4+GT/G+pyBhHtotN
+	aHRdBtH3gI5Fp+90iWDfnxgOUaxCLmz2PdQ06kf8dFF7rn5e/Z5i4Awn+4c/7QNPXdZhZcFbWZh
+	fjlse8x8CKoILX7m0+svHnyBfXIdjSXS5glqMHk/0tNF4l5oaV6aDot1Ojw8Zzor2PiDDzMVSTD
+	k1RuYbd1VOoBI6xr3eqErAtLogPHJXQr2sWuoJKnxAvv0GT0nEk/8STjA5NWsg=
+X-Google-Smtp-Source: AGHT+IETlOHgTkLxhqU/G3R9N0fR+q6nWJP5t1CaevYyD+oehCnYRHb6VBsIy/3q5g8vtc8rjNY1ow==
+X-Received: by 2002:a05:6a20:d50c:b0:1e0:d5f3:f3ed with SMTP id adf61e73a8af0-1e1c129622amr3306101637.19.1733896813626;
+        Tue, 10 Dec 2024 22:00:13 -0800 (PST)
+Received: from thinkpad ([120.60.55.53])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e6e024e4sm5434850b3a.153.2024.12.10.22.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 22:00:13 -0800 (PST)
+Date: Wed, 11 Dec 2024 11:30:00 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: PCI: Add binding for qps615
+Message-ID: <20241211060000.3vn3iumouggjcbva@thinkpad>
+References: <20241112-qps615_pwr-v3-1-29a1e98aa2b0@quicinc.com>
+ <20241204212559.GA3007963@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205160925.230119-1-mic@digikod.net> <20241205160925.230119-2-mic@digikod.net>
-In-Reply-To: <20241205160925.230119-2-mic@digikod.net>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 10 Dec 2024 21:58:21 -0800
-Message-ID: <CABi2SkUjvPKOr2H6f7i=iRdzc=w1+LVDziU1QKZTFwkhccqrew@mail.gmail.com>
-Subject: Re: [PATCH v22 1/8] exec: Add a new AT_EXECVE_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241204212559.GA3007963@bhelgaas>
 
-On Thu, Dec 5, 2024 at 8:10=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> Add a new AT_EXECVE_CHECK flag to execveat(2) to check if a file would
-> be allowed for execution.  The main use case is for script interpreters
-> and dynamic linkers to check execution permission according to the
-> kernel's security policy. Another use case is to add context to access
-> logs e.g., which script (instead of interpreter) accessed a file.  As
-> any executable code, scripts could also use this check [1].
->
-> This is different from faccessat(2) + X_OK which only checks a subset of
-> access rights (i.e. inode permission and mount options for regular
-> files), but not the full context (e.g. all LSM access checks).  The main
-> use case for access(2) is for SUID processes to (partially) check access
-> on behalf of their caller.  The main use case for execveat(2) +
-> AT_EXECVE_CHECK is to check if a script execution would be allowed,
-> according to all the different restrictions in place.  Because the use
-> of AT_EXECVE_CHECK follows the exact kernel semantic as for a real
-> execution, user space gets the same error codes.
->
-> An interesting point of using execveat(2) instead of openat2(2) is that
-> it decouples the check from the enforcement.  Indeed, the security check
-> can be logged (e.g. with audit) without blocking an execution
-> environment not yet ready to enforce a strict security policy.
->
-> LSMs can control or log execution requests with
-> security_bprm_creds_for_exec().  However, to enforce a consistent and
-> complete access control (e.g. on binary's dependencies) LSMs should
-> restrict file executability, or measure executed files, with
-> security_file_open() by checking file->f_flags & __FMODE_EXEC.
->
-> Because AT_EXECVE_CHECK is dedicated to user space interpreters, it
-> doesn't make sense for the kernel to parse the checked files, look for
-> interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
-> if the format is unknown.  Because of that, security_bprm_check() is
-> never called when AT_EXECVE_CHECK is used.
->
-> It should be noted that script interpreters cannot directly use
-> execveat(2) (without this new AT_EXECVE_CHECK flag) because this could
-> lead to unexpected behaviors e.g., `python script.sh` could lead to Bash
-> being executed to interpret the script.  Unlike the kernel, script
-> interpreters may just interpret the shebang as a simple comment, which
-> should not change for backward compatibility reasons.
->
-> Because scripts or libraries files might not currently have the
-> executable permission set, or because we might want specific users to be
-> allowed to run arbitrary scripts, the following patch provides a dynamic
-> configuration mechanism with the SECBIT_EXEC_RESTRICT_FILE and
-> SECBIT_EXEC_DENY_INTERACTIVE securebits.
->
-> This is a redesign of the CLIP OS 4's O_MAYEXEC:
-> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d=
-6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> This patch has been used for more than a decade with customized script
-> interpreters.  Some examples can be found here:
-> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=3DO_MA=
-YEXEC
->
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Acked-by: Paul Moore <paul@paul-moore.com>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> Link: https://docs.python.org/3/library/io.html#io.open_code [1]
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241205160925.230119-2-mic@digikod.net
-> ---
->
-> Changes since v21:
-> * Remove the audit changes, requested by Paul.
-> * Add Acked-by: Paul Moore.
-> * Fix a typo in comments and in commit message.
-> * Add SPDX-License-Identifier header to the documentation.
-> * Rebase on v6.13-rc1 .
->
-> Changes since v20:
-> * Rename AT_CHECK to AT_EXECVE_CHECK, requested by Amir Goldstein and
->   Serge Hallyn.
-> * Move the UAPI documentation to a dedicated RST file.
-> * Add Reviewed-by: Serge Hallyn
->
-> Changes since v19:
-> * Remove mention of "role transition" as suggested by Andy.
-> * Highlight the difference between security_bprm_creds_for_exec() and
->   the __FMODE_EXEC check for LSMs (in commit message and LSM's hooks) as
->   discussed with Jeff.
-> * Improve documentation both in UAPI comments and kernel comments
->   (requested by Kees).
->
-> New design since v18:
-> https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
-> ---
->  Documentation/userspace-api/check_exec.rst | 37 ++++++++++++++++++++++
->  Documentation/userspace-api/index.rst      |  1 +
->  fs/exec.c                                  | 20 ++++++++++--
->  include/linux/binfmts.h                    |  7 +++-
->  include/uapi/linux/fcntl.h                 |  4 +++
->  security/security.c                        | 10 ++++++
->  6 files changed, 76 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/userspace-api/check_exec.rst
->
-> diff --git a/Documentation/userspace-api/check_exec.rst b/Documentation/u=
-serspace-api/check_exec.rst
-> new file mode 100644
-> index 000000000000..393dd7ca19c4
-> --- /dev/null
-> +++ b/Documentation/userspace-api/check_exec.rst
-> @@ -0,0 +1,37 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. Copyright =C2=A9 2024 Microsoft Corporation
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Executability check
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +AT_EXECVE_CHECK
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Passing the ``AT_EXECVE_CHECK`` flag to :manpage:`execveat(2)` only perf=
-orms a
-> +check on a regular file and returns 0 if execution of this file would be
-> +allowed, ignoring the file format and then the related interpreter depen=
-dencies
-> +(e.g. ELF libraries, script's shebang).
-> +
-> +Programs should always perform this check to apply kernel-level checks a=
-gainst
-> +files that are not directly executed by the kernel but passed to a user =
-space
-> +interpreter instead.  All files that contain executable code, from the p=
-oint of
-> +view of the interpreter, should be checked.  However the result of this =
-check
-> +should only be enforced according to ``SECBIT_EXEC_RESTRICT_FILE`` or
-> +``SECBIT_EXEC_DENY_INTERACTIVE.``.
-> +
-> +The main purpose of this flag is to improve the security and consistency=
- of an
-> +execution environment to ensure that direct file execution (e.g.
-> +``./script.sh``) and indirect file execution (e.g. ``sh script.sh``) lea=
-d to
-> +the same result.  For instance, this can be used to check if a file is
-> +trustworthy according to the caller's environment.
-> +
-> +In a secure environment, libraries and any executable dependencies shoul=
-d also
-> +be checked.  For instance, dynamic linking should make sure that all lib=
-raries
-> +are allowed for execution to avoid trivial bypass (e.g. using ``LD_PRELO=
-AD``).
-> +For such secure execution environment to make sense, only trusted code s=
-hould
-> +be executable, which also requires integrity guarantees.
-> +
-> +To avoid race conditions leading to time-of-check to time-of-use issues,
-> +``AT_EXECVE_CHECK`` should be used with ``AT_EMPTY_PATH`` to check again=
-st a
-> +file descriptor instead of a path.
-> diff --git a/Documentation/userspace-api/index.rst b/Documentation/usersp=
-ace-api/index.rst
-> index 274cc7546efc..6272bcf11296 100644
-> --- a/Documentation/userspace-api/index.rst
-> +++ b/Documentation/userspace-api/index.rst
-> @@ -35,6 +35,7 @@ Security-related interfaces
->     mfd_noexec
->     spec_ctrl
->     tee
-> +   check_exec
->
->  Devices and I/O
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 98cb7ba9983c..e3f461096e84 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -892,7 +892,8 @@ static struct file *do_open_execat(int fd, struct fil=
-ename *name, int flags)
->                 .lookup_flags =3D LOOKUP_FOLLOW,
->         };
->
-> -       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) !=3D 0)
-> +       if ((flags &
-> +            ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_EXECVE_CHECK)) !=
-=3D 0)
->                 return ERR_PTR(-EINVAL);
->         if (flags & AT_SYMLINK_NOFOLLOW)
->                 open_exec_flags.lookup_flags &=3D ~LOOKUP_FOLLOW;
-> @@ -1541,6 +1542,21 @@ static struct linux_binprm *alloc_bprm(int fd, str=
-uct filename *filename, int fl
->         }
->         bprm->interp =3D bprm->filename;
->
-> +       /*
-> +        * At this point, security_file_open() has already been called (w=
-ith
-> +        * __FMODE_EXEC) and access control checks for AT_EXECVE_CHECK wi=
-ll
-> +        * stop just after the security_bprm_creds_for_exec() call in
-> +        * bprm_execve().  Indeed, the kernel should not try to parse the
-> +        * content of the file with exec_binprm() nor change the calling
-> +        * thread, which means that the following security functions will=
- not
-> +        * be called:
-> +        * - security_bprm_check()
-> +        * - security_bprm_creds_from_file()
-> +        * - security_bprm_committing_creds()
-> +        * - security_bprm_committed_creds()
-> +        */
-> +       bprm->is_check =3D !!(flags & AT_EXECVE_CHECK);
-> +
->         retval =3D bprm_mm_init(bprm);
->         if (!retval)
->                 return bprm;
-> @@ -1836,7 +1852,7 @@ static int bprm_execve(struct linux_binprm *bprm)
->
->         /* Set the unchanging part of bprm->cred */
->         retval =3D security_bprm_creds_for_exec(bprm);
-> -       if (retval)
-> +       if (retval || bprm->is_check)
->                 goto out;
->
->         retval =3D exec_binprm(bprm);
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index e6c00e860951..8ff0eb3644a1 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -42,7 +42,12 @@ struct linux_binprm {
->                  * Set when errors can no longer be returned to the
->                  * original userspace.
->                  */
-> -               point_of_no_return:1;
-> +               point_of_no_return:1,
-> +               /*
-> +                * Set by user space to check executability according to =
-the
-> +                * caller's environment.
-> +                */
-> +               is_check:1;
->         struct file *executable; /* Executable to pass to the interpreter=
- */
->         struct file *interpreter;
->         struct file *file;
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 6e6907e63bfc..a15ac2fa4b20 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -155,4 +155,8 @@
->  #define AT_HANDLE_MNT_ID_UNIQUE        0x001   /* Return the u64 unique =
-mount ID. */
->  #define AT_HANDLE_CONNECTABLE  0x002   /* Request a connectable file han=
-dle */
->
-> +/* Flags for execveat2(2). */
-> +#define AT_EXECVE_CHECK                0x10000 /* Only perform a check i=
-f execution
-> +                                          would be allowed. */
-> +
->  #endif /* _UAPI_LINUX_FCNTL_H */
-> diff --git a/security/security.c b/security/security.c
-> index 09664e09fec9..dae7e903947f 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1248,6 +1248,12 @@ int security_vm_enough_memory_mm(struct mm_struct =
-*mm, long pages)
->   * to 1 if AT_SECURE should be set to request libc enable secure mode.  =
-@bprm
->   * contains the linux_binprm structure.
->   *
-> + * If execveat(2) is called with the AT_EXECVE_CHECK flag, bprm->is_chec=
-k is
-> + * set.  The result must be the same as without this flag even if the ex=
-ecution
-> + * will never really happen and @bprm will always be dropped.
-> + *
-> + * This hook must not change current->cred, only @bprm->cred.
-> + *
->   * Return: Returns 0 if the hook is successful and permission is granted=
-.
->   */
->  int security_bprm_creds_for_exec(struct linux_binprm *bprm)
-> @@ -3098,6 +3104,10 @@ int security_file_receive(struct file *file)
->   * Save open-time permission checking state for later use upon file_perm=
-ission,
->   * and recheck access if anything has changed since inode_permission.
->   *
-> + * We can check if a file is opened for execution (e.g. execve(2) call),=
- either
-> + * directly or indirectly (e.g. ELF's ld.so) by checking file->f_flags &
-> + * __FMODE_EXEC .
-> + *
->   * Return: Returns 0 if permission is granted.
->   */
->  int security_file_open(struct file *file)
-> --
-> 2.47.1
->
-Reviewed-by: Jeff Xu < jeffxu@chromium.org>
-Tested-by: Jeff Xu <jeffxu@chromium.org>
+On Wed, Dec 04, 2024 at 03:25:59PM -0600, Bjorn Helgaas wrote:
+> On Tue, Nov 12, 2024 at 08:31:33PM +0530, Krishna chaitanya chundru wrote:
+> > Add binding describing the Qualcomm PCIe switch, QPS615,
+> > which provides Ethernet MAC integrated to the 3rd downstream port
+> > and two downstream PCIe ports.
+> 
+> > +$defs:
+> > +  qps615-node:
+> > +    type: object
+> > +
+> > +    properties:
+> > +      qcom,l0s-entry-delay-ns:
+> > +        description: Aspm l0s entry delay.
+> > +
+> > +      qcom,l1-entry-delay-ns:
+> > +        description: Aspm l1 entry delay.
+> 
+> To match spec usage:
+> s/Aspm/ASPM/
+> s/l0s/L0s/
+> s/l1/L1/
+> 
+> Other than the fact that qps615 needs the driver to configure these,
+> there's nothing qcom-specific here, so I suggest the names should omit
+> "qcom" and include "aspm".
+> 
 
->
+In that case, these properties should be documented in dt-schema:
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-bus-common.yaml
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
