@@ -1,175 +1,159 @@
-Return-Path: <linux-kernel+bounces-441036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469AA9EC877
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:09:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8414A9EC9F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:08:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0007F284ABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3B6188664B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBC02210C4;
-	Wed, 11 Dec 2024 09:09:23 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F081DF755;
+	Wed, 11 Dec 2024 10:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q900rVDd"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA46B2210C7;
-	Wed, 11 Dec 2024 09:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCA4236FA9
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908163; cv=none; b=i4vD37hkENtiXx2+1doQYw1FbQl2LV1jOKCawEsvc31vKGUT62kfX/4W4vi59qhedgxdyV77Cvt6LYEIrQ4VPsjCH54HWCH7vqM8kgSDK24/BSQRCWz1H2MkYJRRQWZdQPSrRaEJbnPL9tCfxBaxuQvu/jwjWDyf3vlMzHSssO8=
+	t=1733911676; cv=none; b=Bl0SP6Azxu6a4xEQs7U/ZKSaHgSbJBc+kYI8oivTRzzbPD/9Q5ZJMMplGwFhqHL0U0Hj5j5TFyp0O3jrt13jgUoPGOjpxOWaqPVVrlJcffi2LUca2z80YPCuaUfwdDZ+1MdpiwMHkzbxGrKk3xuDIqmodh0dP03hWSpESwgG8zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908163; c=relaxed/simple;
-	bh=GDGTPi4d5yIoDO2bhGqiLBL86hh2U9JhaHeZ9Z+T7wc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pTScgrrEBXwj5Vkn1fjlCihp/Xs0ybBJZrYxUeliZo4rQifN3S59wdSu23DdrnpiBjuwNO5o/5ou4JDSYVYMlJmcQ/nRwmbd9IKf6/IheaWrw3unPVMWJfGbqX4PJxZl4swAmrKEDirpgWSVoAjgxGSJRfmwyhYvCfP4fTDB5oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB7fYB0012824;
-	Wed, 11 Dec 2024 09:09:14 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4xby8r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 11 Dec 2024 09:09:14 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Wed, 11 Dec 2024 01:09:13 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Wed, 11 Dec 2024 01:09:07 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <sohaib.nadeem@amd.com>, <gregkh@linuxfoundation.org>
-CC: <patches@lists.linux.dev>, <alexander.deucher@amd.com>,
-        <daniel.wheeler@amd.com>, <mario.limonciello@amd.com>,
-        <josip.pavic@amd.com>, <aurabindo.pillai@amd.com>,
-        <stable@vger.kernel.org>, <harry.wentland@amd.com>,
-        <sunpeng.li@amd.com>, <Rodrigo.Siqueira@amd.com>,
-        <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <wayne.lin@amd.com>, <sashal@kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <charlene.liu@amd.com>, <gabe.teeger@amd.com>,
-        <amd-gfx@lists.freedesktop.org>, <Nicholas.Kazlauskas@amd.com>
-Subject: [PATCH 6.1.y] drm/amd/display: fixed integer types and null check locations
-Date: Wed, 11 Dec 2024 18:07:01 +0800
-Message-ID: <20241211100701.2069799-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733911676; c=relaxed/simple;
+	bh=IzJHcTYEe6dNyeAoXCkYo1Oyp5gniRm+ej/UyY7tdNo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UHDIIhTPcG7CJkrV4ZTv+iaK3J888Od9CjPF7TfPSMs5aCrBobf3pOmo55nytqTOvvRmahIw2fiAFMrYWvkbtMjoLV3Ckyqk6BPeplTfvI/3LnctYosOMhS91yk3/R5X304qND32KWLsAHnSCNxkKY/HVTDJHeI6zec7Gw7S/94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q900rVDd; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-435b0df5dbdso28415e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:07:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733911673; x=1734516473; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x1c2ofmQLNeYYeju/JrDqhCfX9sIwSgC4rLZyCHsseg=;
+        b=q900rVDd5Odql8902tc1eo201XowNQj6kNLhsWEO2S+SuNyDFb1kskc0r/nrAIpCyP
+         ghAb4TFRRMiR6isgyOH29zojClWQS9WjGFwZmsX9fKS5iVIaF2h5iEmWG0kwbQf0wLlP
+         PMST0vzJWV7R783jPWb1sx0rT7sgojUf09GwOMio1v9b2BCgcUzoT/NVJSzD+q1XEVbo
+         LeUhA3pwauvUlj3issB/zn8U9d9R/5ON/xTheCJHd1Blw8ELvlcxSirQF82dzLM6ZzrW
+         EWzSGRSPccbvfMijKREzXlDmwZwZ+CrQZLqurWLkLU0HRiLpwEriaXo9en1cAHh4IM39
+         n1gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733911673; x=1734516473;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x1c2ofmQLNeYYeju/JrDqhCfX9sIwSgC4rLZyCHsseg=;
+        b=E3gqlpB4/NIsEfMd8K7aTJo1bIVsx9IzYCgkgUBlWru4ZcWoqhOMtxcWyZv1ezcx+B
+         aoHSRUF0tTBdpIhFIj49OYGXrcGjhV5aA7hE+5Nad4X76hDP1ynmDMi7oXIfsV7unU4w
+         8FXoxAG1BR+zR4YRCeij2h7v883UgrNFLlbvRQPMtmQkMk1p9UoDyv7jwl4F8PceQIWv
+         Xoe9Iga07v54fSJOt2nDJ9imTxk36WPBwJswbwAjpiSWZAVjCKOa0ZPqCkTJlYJnIZls
+         DaIrynkUoY5culfuG1gh3nbGCrTzDezFRd1o/RKz2kKjztQcaknBgIMqb1yt3DvES3BV
+         VwBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXY68MrzS4DVizgrnurEomHf2MXIvvYENNC7PPDNTU1qLh1HWMf5jgMkIPs1mqBPA03QcZJ8tywdNwKv8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9dGLq+6jzINBK5HzRJ+eY+hKDEl+3M5ESMyD3iqnnJxxHZTaq
+	YLYU5MLj45qT7Irp9w3r/85ZRPbyt5QrxIseJsJRgIgwvJhQ+u3vLjLPD1vY3vUlMl6pjHTquAh
+	A9BR//3tEHxZBc7nMoWpDMMGvlFBo5JKF5GA7
+X-Gm-Gg: ASbGncuNLRAT3tCHr6xpooAYzk0Zg7V71tzdSM1wxbuGtObk0R8OQrE0bfx/cZG2ZcL
+	M7dRi6G2i51hW0Atkb9UyX45O4J9lJUN6NPCFJHSR9GlFp4ZEbwgZGoQTuloT4Z9X
+X-Google-Smtp-Source: AGHT+IGEK/kmaBbvJg7dQQuM7x7JBMiV8OyKxexKpfiXpXx2u22fSrw6Y0U2iME6zU8KhU7EMyWrc0PbCi5O2GMxpU4=
+X-Received: by 2002:a05:600c:2105:b0:434:9fac:3408 with SMTP id
+ 5b1f17b1804b1-4361c0f4f80mr1026945e9.2.1733911672546; Wed, 11 Dec 2024
+ 02:07:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 8BfToSjv8ncYxNP0D0vx4TLj3G2rPXal
-X-Proofpoint-ORIG-GUID: 8BfToSjv8ncYxNP0D0vx4TLj3G2rPXal
-X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=675956ba cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=fmNT8XcYnNex_eyvA98A:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-11_08,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 clxscore=1011 malwarescore=0 priorityscore=1501
- phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2411120000 definitions=main-2412110068
+References: <20241203103735.2267589-1-qperret@google.com> <20241203103735.2267589-11-qperret@google.com>
+ <CA+EHjTwHSyQ1FJc7axbLNuBxSWpRVE6brb34nO+F59=QRmfQEg@mail.gmail.com>
+ <Z1hhHRdpCZcLs046@google.com> <CA+EHjTw4GX3j_ssN-tWnf780xkvyKO5mBN6fnvXeWvQcBDmcNg@mail.gmail.com>
+ <Z1liL3BtoPnSyvlh@google.com>
+In-Reply-To: <Z1liL3BtoPnSyvlh@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Wed, 11 Dec 2024 10:07:16 +0000
+Message-ID: <CA+EHjTw+3oAcp3ujjPmbcu42=95nw8WA=rZHYFL91ZK_Wfs_vA@mail.gmail.com>
+Subject: Re: [PATCH v2 10/18] KVM: arm64: Introduce __pkvm_host_share_guest()
+To: Quentin Perret <qperret@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
+	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Sohaib Nadeem <sohaib.nadeem@amd.com>
+On Wed, 11 Dec 2024 at 09:58, Quentin Perret <qperret@google.com> wrote:
+>
+> On Tuesday 10 Dec 2024 at 15:51:01 (+0000), Fuad Tabba wrote:
+> > On Tue, 10 Dec 2024 at 15:41, Quentin Perret <qperret@google.com> wrote:
+> > > > Initially I thought the comment was related to the warning below,
+> > > > which confused me.
+> > >
+> > > It actually is about the warning below :-)
+> > >
+> > > > Now I think what you're trying to say is that we'll
+> > > > allow the share, and the (unrelated to the comment) warning is to
+> > > > ensure that the PKVM_PAGE_SHARED_OWNED is consistent with the share
+> > > > count.
+> > >
+> > > So, the only case where the host should ever attempt do use
+> > > __pkvm_host_share_guest() on a page that is already shared is for a page
+> > > already shared *with an np-guest*. The page->host_share_guest_count being
+> > > elevated is the easiest way to check that the page is indeed in that
+> > > state, hence the warning.
+> > >
+> > > If for example the host was trying to share with an np-guest a page that
+> > > is currently shared with the hypervisor, that check would fail. We can
+> > > discuss whether or not we would want to allow it, but for now there is
+> > > strictly no need for it so I went with the restrictive option. We can
+> > > relax that constraint later if need be.
+> > >
+> > > > I think what you should have here, which would work better with the
+> > > > comment, is something like:
+> > > >
+> > > >                 /* Only host to np-guest multi-sharing is tolerated */
+> > > > +               if (pkvm_hyp_vcpu_is_protected(vcpu))
+> > > > +                       return -EPERM;
+> > > >
+> > > > That would even make the comment unnecessary.
+> > >
+> > > I would prefer not adding this here, handle___pkvm_host_share_guest() in
+> > > hyp-main.c already does that for us.
+> >
+> > I understand now, and I agree that an additional check isn't
+> > necessary. Could you clarify the comment though? It's the word "only"
+> > that threw me off, since to me it implied that the check was enforcing
+> > the word "only". Maybe:
+> >
+> > >                 /* Tolerate host to np-guest multi-sharing. */
+>
+> I guess 'only' is somewhat important, it is the _only_ type of
+> multi-sharing that we allow and the check enforces precisely that. The
+> WARN_ON() will be triggered for any other type of multi-sharing, so we
+> are really checking that _only_ np-guest multi-sharing goes through.
+>
+> Perhaps the confusing part is that the code as-is relies on WARN_ON()
+> being fatal for the enforcement. Would it help if I changed the 'break'
+> statement right after to 'fallthrough' so we proceed to return -EPERM?
+> In practice we won't return anything as the hypervisor will panic, but
+> I presume it is better from a logic perspective.
 
-[ Upstream commit 0484e05d048b66d01d1f3c1d2306010bb57d8738 ]
+It would, but then we wouldn't be tolerating np-guest multisharing,
+but like you said, it's not like we're tolerating it now anyway.
 
-[why]:
-issues fixed:
-- comparison with wider integer type in loop condition which can cause
-infinite loops
-- pointer dereference before null check
+I wonder if it would be better simply not to allow multisharing at all for now.
 
-Cc: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Josip Pavic <josip.pavic@amd.com>
-Acked-by: Aurabindo Pillai <aurabindo.pillai@amd.com>
-Signed-off-by: Sohaib Nadeem <sohaib.nadeem@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- .../gpu/drm/amd/display/dc/bios/bios_parser2.c   | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Cheers,
+/fuad
 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-index 4d2590964a20..75e44d8a7b40 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-@@ -1862,19 +1862,21 @@ static enum bp_result get_firmware_info_v3_2(
- 		/* Vega12 */
- 		smu_info_v3_2 = GET_IMAGE(struct atom_smu_info_v3_2,
- 							DATA_TABLES(smu_info));
--		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
- 		if (!smu_info_v3_2)
- 			return BP_RESULT_BADBIOSTABLE;
- 
-+		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
-+
- 		info->default_engine_clk = smu_info_v3_2->bootup_dcefclk_10khz * 10;
- 	} else if (revision.minor == 3) {
- 		/* Vega20 */
- 		smu_info_v3_3 = GET_IMAGE(struct atom_smu_info_v3_3,
- 							DATA_TABLES(smu_info));
--		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
- 		if (!smu_info_v3_3)
- 			return BP_RESULT_BADBIOSTABLE;
- 
-+		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
-+
- 		info->default_engine_clk = smu_info_v3_3->bootup_dcefclk_10khz * 10;
- 	}
- 
-@@ -2439,10 +2441,11 @@ static enum bp_result get_integrated_info_v11(
- 	info_v11 = GET_IMAGE(struct atom_integrated_system_info_v1_11,
- 					DATA_TABLES(integratedsysteminfo));
- 
--	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
- 	if (info_v11 == NULL)
- 		return BP_RESULT_BADBIOSTABLE;
- 
-+	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
-+
- 	info->gpu_cap_info =
- 	le32_to_cpu(info_v11->gpucapinfo);
- 	/*
-@@ -2654,11 +2657,12 @@ static enum bp_result get_integrated_info_v2_1(
- 
- 	info_v2_1 = GET_IMAGE(struct atom_integrated_system_info_v2_1,
- 					DATA_TABLES(integratedsysteminfo));
--	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
- 
- 	if (info_v2_1 == NULL)
- 		return BP_RESULT_BADBIOSTABLE;
- 
-+	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
-+
- 	info->gpu_cap_info =
- 	le32_to_cpu(info_v2_1->gpucapinfo);
- 	/*
-@@ -2816,11 +2820,11 @@ static enum bp_result get_integrated_info_v2_2(
- 	info_v2_2 = GET_IMAGE(struct atom_integrated_system_info_v2_2,
- 					DATA_TABLES(integratedsysteminfo));
- 
--	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
--
- 	if (info_v2_2 == NULL)
- 		return BP_RESULT_BADBIOSTABLE;
- 
-+	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
-+
- 	info->gpu_cap_info =
- 	le32_to_cpu(info_v2_2->gpucapinfo);
- 	/*
--- 
-2.25.1
 
+> Cheers,
+> Quentin
 
