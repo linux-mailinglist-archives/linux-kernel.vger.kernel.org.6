@@ -1,89 +1,69 @@
-Return-Path: <linux-kernel+bounces-441572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54E29ED04A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:48:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5D39ED04F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:48:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C82C416B624
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EC51884FDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78791D88BB;
-	Wed, 11 Dec 2024 15:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TuAWOjKb"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5971DE3C1;
+	Wed, 11 Dec 2024 15:46:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F491A2557
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EB61D9A70
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931983; cv=none; b=OH70lAosrDs6YF0Csz9CjrAlme3cEuMj+lLN5ZBenmc3XHN0VuBcYaX/YqFJjBnbcPuV4rQ2OSNZolU/Qsv28uJnJQYUW3XmcLxLpy/n2yWRjbZvAsNUZ2I9TTTdtySlfF2vgQw4jczFLu36nHoS4QSOrR/Gn1dX3qPXXp1XjCg=
+	t=1733932013; cv=none; b=dbEvIDemcT1pQFPi88XS98q1UeliloPNJGpxLFhhVUD2i+iYHNRnBdhhwkyZcSWLhJCX1sgpCGJMTMwhK9dRgYKmvBFziALP2Et4Z2uzqv696v+IKHaMmXsctEonG5vepOppY9dRMWYoSCYI60DFfuEm6NgPiYU7Xj69XaR2I7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931983; c=relaxed/simple;
-	bh=IC53HRb8V9iRnpBWfxbNXmj/88s49PLXKEG+dC8i5fY=;
+	s=arc-20240116; t=1733932013; c=relaxed/simple;
+	bh=/zAfzpAkPkOWmzhSZL2j6b0wGOmk5NXn2k27snm/Kxc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kn4E4rrGrM3bs0c99C24IlLNPi5Z3xm7xKyGf/RuKhvTJu6G705z7QVJbTooC+heL9sALAyqK4pj3V0COewoHhXxc6hSFgFMYak07kWBQmP7CI+Bagq0Z+iloNUVSMhlNkux2rj/TGTjgLh5yYurC1HpcqK8Z8jvLr7pBA3Unxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TuAWOjKb; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3862ca8e0bbso4259630f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:46:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733931979; x=1734536779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B2rrjtFYCNa+l0opUFsEhFJAlzA2QKbBJlwN52j4330=;
-        b=TuAWOjKbpPy1WmYPC4QZoR6IIcNGO5jcCDJUEUioo4LO88WGvAZZ9yiuZNd153rJUc
-         nfdgz7608NiY2ucd26uUcJtFpmY7wFAFyRuD/vZIhWyrvtn0xaPyZPEkNmwWzYaF4XOP
-         UypRU+V2sygDqHleFs5uZOnB2xOIlMkWTieulWJ6M820yELaobg4nFpLtsKvv5MjYuSp
-         FfnCm1lMUJsoDNvugqo4cXn/J16HAKUT4sPgjOtvO6KarJ4oMAJigVSpVqIJgzI6pTPE
-         7SYum6XlkdLh05jU0RVfSYMrQJd8zgcTRkgoB+frcB1ZGVYbCPG7ucfAqtc8mh/WWgPt
-         OPGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733931979; x=1734536779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B2rrjtFYCNa+l0opUFsEhFJAlzA2QKbBJlwN52j4330=;
-        b=quJCGIq0QZmTMvP11t5RiVVOnSVkxeEpBUBBS4uxgY3Z4odRaioALL4eOFuJEm6pUR
-         oNnIiH2vioCgJ/DBIggFZzDHry2XH6UOQCwZUaZ+yBf86EfANTg1tMjIl6i8IUGzJecC
-         fm8LrHqieULb3BepUKUDA5mMnY25g4d1yBVJCBi0H8hxgJ1nbaM++oQRvEkHW6BBqwcS
-         6DsXn5J0/LoW3MM3jixaG9H7iQr/OlMRFRj7zIlE2BI5yc2jd8PHxm9dZWiD99wPX0ww
-         iqBJA+9OHxQ2WtG0swRL2haTfBonHUAGD3Om8HQ4wny6WRfdzvmDKllRzvyHTjW5Jm1W
-         Pp9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWjr9ioaxLsa+FCB5yfsUMMdj5oQ+NdfQdhhVzv3FPw7+AKUfFObSQ4eXPvz5YypXLWUkCrnX4X2N8PImQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+dLGVC2CaXHbapzZ6n5MgWjENP+dq3MC+7+/Ff+031PUEvrNM
-	gEe7pG+3gh2lgZTr8oYtCIExdXkFecGwnKS0DHjp4L/vyVkdKalqjSoy8bgJdww=
-X-Gm-Gg: ASbGncsILeWWpFZtHhZ/LCrADd+uXWHO9wydxXF2DP1CxStr2gaT4Vj+aaLw4RlMkJV
-	B6hOyEBT5eXqg8Vi04yXZvdPWFMS7+ZlCcUUxf0rBLfkSNnDAPkAGcw8jwa0sWg3KvGMnbcZTn7
-	ThENrnmAAbqZvd9d9Nt32BKBDBpnDgskS3VZ2rrTsRmjZxJYuzB2TJbiBi5wAIQp1IJnIlHCx82
-	Dyi2P9pKkHSokIMChh1JorWg138qtZsMUPq/6kC1gwYbkJSpg3kn1vAl3Y=
-X-Google-Smtp-Source: AGHT+IElAjFrQA1BOKFF5sD8uSomr+adDjCh2fxba5+aLmeIQZ30HWVdJYlj+iWlHcRAJRttZ0NMfA==
-X-Received: by 2002:a05:6000:1ac8:b0:386:3213:5ba1 with SMTP id ffacd0b85a97d-3864ce97262mr3126317f8f.24.1733931979554;
-        Wed, 11 Dec 2024 07:46:19 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878251dba9sm1532151f8f.98.2024.12.11.07.46.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 07:46:18 -0800 (PST)
-Date: Wed, 11 Dec 2024 18:46:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Meghana Malladi <m-malladi@ti.com>
-Cc: vigneshr@ti.com, matthias.schiffer@ew.tq-group.com, robh@kernel.org,
-	u.kleine-koenig@baylibre.com, javier.carrasco.cruz@gmail.com,
-	diogo.ivo@siemens.com, horms@kernel.org, pabeni@redhat.com,
-	kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
-	andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com, Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com
-Subject: Re: [PATCH net v4 1/2] net: ti: icssg-prueth: Fix firmware load
- sequence.
-Message-ID: <304870d9-10c7-43b3-8255-8f2b0422d759@stanley.mountain>
-References: <20241211135941.1800240-1-m-malladi@ti.com>
- <20241211135941.1800240-2-m-malladi@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0EPqoj4CA+6ev1b3W/Xlfp4I1NaE+dVqcwQnr5YpBekskq8gBTXTqQWKCcJWzv0mBdZRjLSMZw14JkfkzQ/UlRxO7wwE4GXvc+CTZWp3uuKG1C0I5hRMwv8/x60kFn/LF1GtACNxXwrLtEJtuhIvkuknTMbmWD1OSkPWoNUrgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLOut-0005Vo-5J; Wed, 11 Dec 2024 16:46:23 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLOur-002t9g-2A;
+	Wed, 11 Dec 2024 16:46:22 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLOus-00AVnV-12;
+	Wed, 11 Dec 2024 16:46:22 +0100
+Date: Wed, 11 Dec 2024 16:46:22 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengfei Li <pengfei.li_1@nxp.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 2/2] thermal: imx91: Add support for i.MX91 thermal
+ monitoring unit
+Message-ID: <20241211154622.f2jwwrqansk6il3o@pengutronix.de>
+References: <20241210-imx91tmu-v2-0-5032aad4d88e@nxp.com>
+ <20241210-imx91tmu-v2-2-5032aad4d88e@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,117 +72,428 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241211135941.1800240-2-m-malladi@ti.com>
+In-Reply-To: <20241210-imx91tmu-v2-2-5032aad4d88e@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2024 at 07:29:40PM +0530, Meghana Malladi wrote:
-> -static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
-> +static int prueth_emac_start(struct prueth *prueth, int slice)
->  {
->  	struct icssg_firmwares *firmwares;
->  	struct device *dev = prueth->dev;
-> -	int slice, ret;
-> +	int ret;
+On 24-12-10, Frank Li wrote:
+> From: Pengfei Li <pengfei.li_1@nxp.com>
+> 
+> Introduce support for the i.MX91 thermal monitoring unit, which features a
+> single sensor for the CPU. The register layout differs from other chips,
+> necessitating the creation of a dedicated file for this.
+> 
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change from v1 to v2
+> - use low case for hexvalue
+> - combine struct imx91_tmu and tmu_sensor
+> - simplify imx91_tmu_start() and imx91_tmu_enable()
+> - use s16 for imx91_tmu_get_temp(), which may negative value
+> - use reverse christmas tree style
+> - use run time pm
+> - use oneshot to sample temp
+> - register thermal zone after hardware init
+> ---
+>  drivers/thermal/Kconfig         |  10 ++
+>  drivers/thermal/Makefile        |   1 +
+>  drivers/thermal/imx91_thermal.c | 265 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 276 insertions(+)
+> 
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index d3f9686e26e71..da403ed86aeb1 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -296,6 +296,16 @@ config IMX8MM_THERMAL
+>  	  cpufreq is used as the cooling device to throttle CPUs when the passive
+>  	  trip is crossed.
 >  
->  	if (prueth->is_switch_mode)
->  		firmwares = icssg_switch_firmwares;
-> @@ -177,16 +177,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
->  	else
->  		firmwares = icssg_emac_firmwares;
->  
-> -	slice = prueth_emac_slice(emac);
-> -	if (slice < 0) {
-> -		netdev_err(emac->ndev, "invalid port\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	ret = icssg_config(prueth, emac, slice);
-> -	if (ret)
-> -		return ret;
-> -
->  	ret = rproc_set_firmware(prueth->pru[slice], firmwares[slice].pru);
->  	ret = rproc_boot(prueth->pru[slice]);
-
-This isn't introduced by this patch but eventually Colin King is going to
-get annoyed with you for setting ret twice in a row.
-
->  	if (ret) {
-> @@ -208,7 +198,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
->  		goto halt_rtu;
->  	}
->  
-> -	emac->fw_running = 1;
->  	return 0;
->  
->  halt_rtu:
-> @@ -220,6 +209,78 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
->  	return ret;
->  }
->  
-> +static int prueth_emac_common_start(struct prueth *prueth)
-> +{
-> +	struct prueth_emac *emac;
-> +	int ret = 0;
-> +	int slice;
+> +config IMX91_THERMAL
+> +	tristate "Temperature sensor driver for NXP i.MX91 SoC"
+> +	depends on ARCH_MXC || COMPILE_TEST
+> +	depends on OF
+> +	help
+> +	  Support for Temperature sensor found on NXP i.MX91 SoC.
+> +	  It supports one critical trip point and one passive trip point. The
+> +	  cpufreq is used as the cooling device to throttle CPUs when the passive
+> +	  trip is crossed.
 > +
-> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
+>  config K3_THERMAL
+>  	tristate "Texas Instruments K3 thermal support"
+>  	depends on ARCH_K3 || COMPILE_TEST
+> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> index 9abf43a74f2bb..08da241e6a598 100644
+> --- a/drivers/thermal/Makefile
+> +++ b/drivers/thermal/Makefile
+> @@ -50,6 +50,7 @@ obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
+>  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
+>  obj-$(CONFIG_IMX_SC_THERMAL)	+= imx_sc_thermal.o
+>  obj-$(CONFIG_IMX8MM_THERMAL)	+= imx8mm_thermal.o
+> +obj-$(CONFIG_IMX91_THERMAL)	+= imx91_thermal.o
+>  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
+>  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
+>  obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
+> diff --git a/drivers/thermal/imx91_thermal.c b/drivers/thermal/imx91_thermal.c
+> new file mode 100644
+> index 0000000000000..ebb59eda92951
+> --- /dev/null
+> +++ b/drivers/thermal/imx91_thermal.c
+> @@ -0,0 +1,265 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2024 NXP.
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/nvmem-consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/thermal.h>
+> +
+> +#define CTRL0			0x0
+
+Unused
+
+> +
+> +#define STAT0			0x10
+> +#define STAT0_DRDY0_IF_MASK	BIT(16)
+> +
+> +#define DATA0			0x20
+> +
+> +#define THR_CTRL01		0x30
+> +#define THR_CTRL23		0x40
+
+Both are unused too
+
+> +#define CTRL1			0x200
+
+Unused
+
+> +#define CTRL1_SET		0x204
+> +#define CTRL1_CLR		0x208
+> +#define CTRL1_EN		BIT(31)
+> +#define CTRL1_START		BIT(30)
+> +#define CTRL1_STOP		BIT(29)
+> +#define CTRL1_RES_MASK		GENMASK(19, 18)
+> +#define CTRL1_MEAS_MODE_MASK	GENMASK(25, 24)
+> +#define   CTRL1_MEAS_MODE_SINGLE	0
+> +#define   CTRL1_MEAS_MODE_CONTINUES	1
+> +#define   CTRL1_MEAS_MODE_PERIODIC	2
+> +
+> +#define REF_DIV			0x280
+> +#define DIV_EN			BIT(31)
+> +#define DIV_MASK		GENMASK(23, 16)
+> +
+> +#define PUD_ST_CTRL		0x2B0
+> +#define PUDL_MASK		GENMASK(23, 16)
+> +
+> +#define TRIM1			0x2E0
+> +#define TRIM2			0x2F0
+					^
+				still upper-case
+
+> +#define TMU_TEMP_LOW_LIMIT	-40000
+> +#define TMU_TEMP_HIGH_LIMIT	125000
+> +
+> +#define DEFAULT_TRIM1_CONFIG 0xb561bc2d
+> +#define DEFAULT_TRIM2_CONFIG 0x65d4
+> +
+> +struct imx91_tmu {
+> +	void __iomem *base;
+> +	struct clk *clk;
+> +	struct device *dev;
+> +	struct thermal_zone_device *tzd;
+> +};
+> +
+> +static void imx91_tmu_start(struct imx91_tmu *tmu, bool start)
+> +{
+> +	u32 val = start ? CTRL1_START : CTRL1_STOP;
+> +
+> +	writel_relaxed(val, tmu->base + CTRL1_SET);
+> +}
+> +
+> +static void imx91_tmu_enable(struct imx91_tmu *tmu, bool enable)
+> +{
+> +	u32 reg = enable ? CTRL1_SET : CTRL1_CLR;
+> +
+> +	writel_relaxed(CTRL1_EN, tmu->base + reg);
+> +}
+> +
+> +static int imx91_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
+> +{
+> +	struct imx91_tmu *tmu = thermal_zone_device_priv(tz);
+> +	s16 data;
+> +	int ret;
+> +	u32 val;
+> +
+> +	ret = pm_runtime_resume_and_get(tmu->dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = readl_relaxed_poll_timeout(tmu->base + STAT0, val,
+> +					 val & STAT0_DRDY0_IF_MASK, 1000,
+> +					 40000);
+> +	if (ret)
+> +		return -EAGAIN;
+		 ^
+Missing pm_runtime_put(). Instead goto out;
+
+> +
+> +	/* DATA0 is 16bit signed number */
+> +	data = readw_relaxed(tmu->base + DATA0);
+> +	*temp = data * 1000 / 64;
+> +	if (*temp < TMU_TEMP_LOW_LIMIT || *temp > TMU_TEMP_HIGH_LIMIT)
+> +		return -EAGAIN;
+			^
+		ret = -EAGAIN;
+		goto out;
+
+out:
+> +
+> +	pm_runtime_put(tmu->dev);
+> +
+> +	return 0;
+	
+	return ret;
+> +}
+> +
+> +static struct thermal_zone_device_ops tmu_tz_ops = {
+> +	.get_temp = imx91_tmu_get_temp,
+> +};
+> +
+> +static int imx91_init_from_nvmem_cells(struct imx91_tmu *tmu)
+> +{
+> +	struct device *dev = tmu->dev;
+> +	u32 trim1, trim2;
+> +	int ret;
+> +
+> +	ret = nvmem_cell_read_u32(dev, "trim1", &trim1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = nvmem_cell_read_u32(dev, "trim2", &trim2);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (trim1 == 0 || trim2 == 0)
 > +		return -EINVAL;
 > +
-> +	/* clear SMEM and MSMC settings for all slices */
-> +	memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
-> +	memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
+> +	writel_relaxed(trim1, tmu->base + TRIM1);
+> +	writel_relaxed(trim2, tmu->base + TRIM2);
 > +
-> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
-> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
+> +	return 0;
+> +}
 > +
-> +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
-> +		icssg_init_fw_offload_mode(prueth);
-> +	else
-> +		icssg_init_emac_mode(prueth);
+> +static int imx91_tmu_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+
+Since you already have the dev pointer, you can make use of it...
+
+> +	struct imx91_tmu *tmu;
+> +	unsigned long rate;
+> +	u32 div;
+> +	int ret;
 > +
-> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
-> +		emac = prueth->emac[slice];
-> +		if (emac) {
-> +			ret |= icssg_config(prueth, emac, slice);
-> +			if (ret)
-> +				return ret;
+> +	tmu = devm_kzalloc(&pdev->dev, sizeof(struct imx91_tmu), GFP_KERNEL);
+				^
+				here
+> +	if (!tmu)
+> +		return -ENOMEM;
+> +
+> +	tmu->dev = &pdev->dev;
 
-Here we return directly.
+	and here
 
-> +		}
-> +		ret |= prueth_emac_start(prueth, slice);
+> +
+> +	tmu->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(tmu->base))
+> +		return PTR_ERR(tmu->base);
+			^
+		dev_err_probe();
 
-Here we continue.  Generally, I would expect there to be some clean up
-on this error path like this:
+> +
+> +	tmu->clk = devm_clk_get_enabled(dev, NULL);
+> +	if (IS_ERR(tmu->clk))
+> +		return dev_err_probe(dev, PTR_ERR(tmu->clk), "failed to get tmu clock\n");
+> +
+> +	platform_set_drvdata(pdev, tmu);
+> +
+> +	/* disable the monitor during initialization */
+> +	imx91_tmu_enable(tmu, false);
+> +	imx91_tmu_start(tmu, false);
 
-		ret = prueth_emac_start(prueth, slice);
-		if (ret)
-			goto unwind_slices;
+No need to disable it here since both bits (ENABLE and START) are 0
+after a reset.
 
-	...
+> +	ret = imx91_init_from_nvmem_cells(tmu);
+> +	if (ret) {
+> +		writel_relaxed(DEFAULT_TRIM1_CONFIG, tmu->base + TRIM1);
+> +		writel_relaxed(DEFAULT_TRIM2_CONFIG, tmu->base + TRIM2);
+			^
+Can you please anwer if _relaxed API is sufficient? I don't know why you
+making use of the _relaxed API here anyway. We have only a few MMIO
+accesses here, so why can't we use the writel() instead? This applies to
+the whole driver.
 
-	return 0;
+> +	}
+> +
+> +	/* The typical conv clk is 4MHz, the output freq is 'rate / (div + 1)' */
+> +	rate = clk_get_rate(tmu->clk);
+> +	div = (rate / 4000000) - 1;
+> +	if (div > FIELD_GET(DIV_MASK, DIV_MASK))
+			^
+This misuse the FIELD_GET() API. Instead please add a define e.g. DIV_MAX.
 
-unwind_slices:
-	while (--slice >= 0)
-		prueth_emac_stop(prueth, slice);
+> +		return -EINVAL;
+			^
+		dev_err_probe()
+> +
+> +	/* Set divider value and enable divider */
+> +	writel_relaxed(DIV_EN | FIELD_PREP(DIV_MASK, div), tmu->base + REF_DIV);
+> +
+> +	/* Set max power up delay: 'Tpud(ms) = 0xFF * 1000 / 4000000' */
+> +	writel_relaxed(FIELD_PREP(PUDL_MASK, 100U), tmu->base + PUD_ST_CTRL);
+		^
+You dont need to repeat the default value, so this line can be dropped.
 
-	return ret;
+> +
+> +	/*
+> +	 * Set resolution mode
+> +	 * 00b - Conversion time = 0.59325 ms
+> +	 * 01b - Conversion time = 1.10525 ms
+> +	 * 10b - Conversion time = 2.12925 ms
+> +	 * 11b - Conversion time = 4.17725 ms
+> +	 */
+> +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x3), tmu->base + CTRL1_CLR);
+> +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x1), tmu->base + CTRL1_SET);
 
-I dread to see how the cleanup is handled on this path...
+Same here, you repeat the module default after reset, so please drop it.
 
-Ok.  I've looked at it and, nope, it doesn't work.  This is freed in
-prueth_emac_common_stop() but partial allocations are not freed.
-Also the prueth_emac_stop() is open coded as three calls to
-rproc_shutdown() which is ugly.
+> +	writel_relaxed(CTRL1_MEAS_MODE_MASK, tmu->base + CTRL1_CLR);
+> +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, CTRL1_MEAS_MODE_SINGLE),
+> +		       tmu->base + CTRL1_SET);
+> +
+> +	clk_disable_unprepare(tmu->clk);
 
-I've written a blog which describes a system for writing error
-handling code.  If each function cleans up after itself by freeing
-its own partial allocations then you don't need to have a variable
-like "prueth->prus_running = 1;" to track how far the allocation
-process went before failing.
-https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/
+Drop this, and
 
-regards,
-dan carpenter
+> +	pm_runtime_set_suspended(dev);
 
+replace this with: pm_runtime_set_active()
+
+> +	pm_runtime_enable(dev);
+		^
+devm_pm_runtime_enable()
+
+> +	tmu->tzd = devm_thermal_of_zone_register(dev, 0, tmu, &tmu_tz_ops);
+> +	if (IS_ERR(tmu->tzd))
+> +		return dev_err_probe(dev, PTR_ERR(tmu->tzd),
+> +				     "failed to register thermal zone sensor\n");
+
+
+pm_runtime_put()
+
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void imx91_tmu_remove(struct platform_device *pdev)
+> +{
+> +	struct imx91_tmu *tmu = platform_get_drvdata(pdev);
+> +
+> +	/* disable tmu */
+> +	imx91_tmu_start(tmu, false);
+
+No need to clear the START bit since we are running in
+single-shot-measurements now.
+
+> +	imx91_tmu_enable(tmu, false);
+> +}
+> +
+> +static int imx91_tmu_runtime_suspend(struct device *dev)
+> +{
+> +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
+> +
+> +	/* disable tmu */
+> +	imx91_tmu_start(tmu, false);
+
+Can be dropped.
+
+> +	imx91_tmu_enable(tmu, false);
+> +
+> +	clk_disable_unprepare(tmu->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx91_tmu_runtime_resume(struct device *dev)
+> +{
+> +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(tmu->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	imx91_tmu_enable(tmu, true);
+> +	imx91_tmu_start(tmu, true);
+
+Drop imx91_tmu_start() from the resume since this isn't related to the
+runtime-pm. Instead the function needs to be called within
+imx91_tmu_get_temp().
+
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops imx91_tmu_pm_ops = {
+> +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+> +	RUNTIME_PM_OPS(imx91_tmu_runtime_suspend, imx91_tmu_runtime_resume, NULL)
+> +};
+
+DEFINE_RUNTIME_DEV_PM_OPS()
+
+> +
+> +static const struct of_device_id imx91_tmu_table[] = {
+> +	{ .compatible = "fsl,imx91-tmu", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, imx91_tmu_table);
+> +
+> +static struct platform_driver imx91_tmu = {
+> +	.driver = {
+> +		.name	= "i.MX91_thermal",
+				^
+Please don't use such names, instead use imx91_thermal.
+
+Regards,
+  Marco
+
+> +		.pm	= pm_ptr(&imx91_tmu_pm_ops),
+> +		.of_match_table = imx91_tmu_table,
+> +	},
+> +	.probe = imx91_tmu_probe,
+> +	.remove = imx91_tmu_remove,
+> +};
+> +module_platform_driver(imx91_tmu);
+> +
+> +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
+> +MODULE_DESCRIPTION("i.MX91 Thermal Monitor Unit driver");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
