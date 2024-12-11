@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-442109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CC59ED808
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:03:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6723D9ED816
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:06:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21756281ACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:03:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C05188117E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CB2229687;
-	Wed, 11 Dec 2024 21:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546C020B81C;
+	Wed, 11 Dec 2024 21:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i699xUTH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F7A20B81C;
-	Wed, 11 Dec 2024 21:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="y+5nP3QY"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B031D88D3;
+	Wed, 11 Dec 2024 21:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733950985; cv=none; b=piMHiF9rvdn5ApnD/lkGiR/u4njs0kKO8tpRKF6DYAx2zvO0hwqEQ9VoBGS2SBqQaAdRdgqfAONq4bp3hJAm1St9l553TvmjAjR2/OrOqOvLDeV0vuLX68miUDvHVgVZCZhnCgCki+NKKyTe8mrsB1cK+nqKCMeSiOUS55+D+2w=
+	t=1733951089; cv=none; b=V6o05D+g/tt0LZqRZJaC+qPRZPSqGyTbyKiV2dCuz9dJTFS+W0+hhjLwqNOd+crjHdNCd/zr+zILjEYyIRCBKmkHSkTo6hrbonK2sdx3M8RFR1008z+EaOUPS6pAJYeHZZfHQU5sut/zZfvAiw2bR+aeqxDCpjneFo8gk2OsEZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733950985; c=relaxed/simple;
-	bh=wKJnPm5lMavO6XE0LeAKRNBBXes4QK1QVjgJ3j9A/D8=;
+	s=arc-20240116; t=1733951089; c=relaxed/simple;
+	bh=WI81K0IRhvS0cIvzKIoFClUG4rorxMB2odxnrP9cOFY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VtXmf3FK+Kgye4GjM6i8M8OKf0nVuLJy1zXwO+Ugc+5yeHzSCDfph/wzHQsO1RU77WHwHrACeWP6tE9ZufznhyY7gLkcNMT5FUWJMszCm2imoUvofe9d4kJPZTeSY++1SWNyoYBC7iCupbn6bDASQyJYQ+5efdBKnv0MD8GG3LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i699xUTH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4591DC4CED2;
-	Wed, 11 Dec 2024 21:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733950985;
-	bh=wKJnPm5lMavO6XE0LeAKRNBBXes4QK1QVjgJ3j9A/D8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i699xUTHZtdgA8pqfap7bhaRw5RjyYwOrYUdF7ZFmD08xuDlEAnrsKOdWlfXHftIe
-	 KlJBn0oYQ9hzWfetSPfZ+HOoFz0AgdCIK/y7wyOvRD8X9AftdI7o8Ors1JH6lx410z
-	 OSnwUwQHTILTWix0D+FtsbQMi59V0ZyK0Bxdr0qaVIWUkkxufHjYDnJTJLOkv8OVHj
-	 4/mHPW374fhfZGBI/XTyy3PKrKSKTyjOyYZ+w8gKH/cnme0vrzTUomqHD2DnvPB1+/
-	 vUs4QX8IQn3TMEOMarEm6YYNn0nRb2qYKW+n0NvNzAcNPUV8VkyFilr0nYXnjRjpma
-	 28MAT+9gx2eNA==
-Date: Wed, 11 Dec 2024 11:03:04 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Ihor Solodrai <ihor.solodrai@pm.me>
-Cc: David Vernet <void@manifault.com>, sched-ext@meta.com,
-	kernel-team@meta.com, linux-kernel@vger.kernel.org,
-	bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH sched_ext/for-6.13-fixes] sched_ext: Fix invalid irq
- restore in scx_ops_bypass()
-Message-ID: <Z1n-CEHxgn2YaTVQ@slm.duckdns.org>
-References: <20241209152924.4508-1-void@manifault.com>
- <qC39k3UsonrBYD_SmuxHnZIQLsuuccoCrkiqb_BT7DvH945A1_LZwE4g-5Pu9FcCtqZt4lY1HhIPi0homRuNWxkgo1rgP3bkxa0donw8kV4=@pm.me>
- <Z1n9v7Z6iNJ-wKmq@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFK2C4XX/8c3YF4GOycZOo1ZSW9c0POJEyOnF9d6vfhp/raqaNl639G3mA18ylqXAiIQSZ1gHtXxMmYpryw0WXTF5dYhkHrU1rdE5883aLAqaI4ZtBqlLAzggn/tShr50bFgnJO8OyYZCjd8TznDeAGpfmnkpZ5RYCK9tp6PlrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=y+5nP3QY; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 9D1C414C1E1;
+	Wed, 11 Dec 2024 22:04:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1733951079;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DlVkfk0rJ4LeWz9ql6yoaPE0Ei1VM+gQ/8uRLa2OXOQ=;
+	b=y+5nP3QY7x5hvzAES3PzKJOKXhuW5jq7hRI8yRO6Y9qckm0cws3QbXUrGfo0aZitLRJQyw
+	IVIR5F4NK/6MItL/FbXOD2JZY6awJNJKqsEU5CuhqLp3saJmVX1+fOw9hX5hB7BvvIG6EF
+	4IzfP1/KU5D5h8Pu5MVgalPf/g+RY9PP1Xnot6m4gKZumfBgEZr6RlcQJyi7QcS3CEem06
+	KONIS41SP8koC4SWNFO6D/Wu0VOv4rU1d2BIXSkmXagUKAHHLq9CiH9VJc1e4j+azEHwUX
+	WWmC6yc/7JEUeSeg/ybCqa/sWsTDcXP0hJT3MtBJ92Lr1vcapVFJUdYdA3YsCw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 7c6a0dba;
+	Wed, 11 Dec 2024 21:04:32 +0000 (UTC)
+Date: Thu, 12 Dec 2024 06:04:17 +0900
+From: asmadeus@codewreck.org
+To: Leo Stone <leocstone@gmail.com>
+Cc: syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com, ericvh@gmail.com,
+	ericvh@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com,
+	lucho@ionkov.net, syzkaller-bugs@googlegroups.com,
+	torvalds@linux-foundation.org, v9fs-developer@lists.sourceforge.net,
+	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Seth Forshee <sforshee@kernel.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Alloc cap limit for 9p xattrs (Was: WARNING in
+ __alloc_frozen_pages_noprof)
+Message-ID: <Z1n-Ue19Pa_AWVu0@codewreck.org>
+References: <675963eb.050a0220.17f54a.0038.GAE@google.com>
+ <20241211200240.103853-1-leocstone@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z1n9v7Z6iNJ-wKmq@slm.duckdns.org>
+In-Reply-To: <20241211200240.103853-1-leocstone@gmail.com>
 
-On Wed, Dec 11, 2024 at 11:01:51AM -1000, Tejun Heo wrote:
-> While adding outer irqsave/restore locking, 0e7ffff1b811 ("scx: Fix raciness
-> in scx_ops_bypass()") forgot to convert an inner rq_unlock_irqrestore() to
-> rq_unlock() which could re-enable IRQ prematurely leading to the following
-> warning:
-> 
->   raw_local_irq_restore() called with IRQs enabled
->   WARNING: CPU: 1 PID: 96 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x30/0x40
->   ...
->   Sched_ext: create_dsq (enabling)
->   pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->   pc : warn_bogus_irq_restore+0x30/0x40
->   lr : warn_bogus_irq_restore+0x30/0x40
->   ...
->   Call trace:
->    warn_bogus_irq_restore+0x30/0x40 (P)
->    warn_bogus_irq_restore+0x30/0x40 (L)
->    scx_ops_bypass+0x224/0x3b8
->    scx_ops_enable.isra.0+0x2c8/0xaa8
->    bpf_scx_reg+0x18/0x30
->   ...
->   irq event stamp: 33739
->   hardirqs last  enabled at (33739): [<ffff8000800b699c>] scx_ops_bypass+0x174/0x3b8
->   hardirqs last disabled at (33738): [<ffff800080d48ad4>] _raw_spin_lock_irqsave+0xb4/0xd8
-> 
-> Drop the stray _irqrestore().
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Ihor Solodrai <ihor.solodrai@pm.me>
-> Link: http://lkml.kernel.org/r/qC39k3UsonrBYD_SmuxHnZIQLsuuccoCrkiqb_BT7DvH945A1_LZwE4g-5Pu9FcCtqZt4lY1HhIPi0homRuNWxkgo1rgP3bkxa0donw8kV4=@pm.me
-> Fixes: 0e7ffff1b811 ("scx: Fix raciness in scx_ops_bypass()")
-> Cc: stable@vger.kernel.org # v6.12
+Leo Stone wrote on Wed, Dec 11, 2024 at 12:02:40PM -0800:
+> syzbot creates a pipe and writes some data to it. It then creates a v9fs
+> mount using the pipe as transport. The data in the pipe specifies an ACL
+> of size 9 TB (9895604649984 bytes) for the root inode, causing kmalloc
+> to fail.
 
-Applying to sched_ext/for-6.13-fixes.
+grmbl.
 
-Thanks.
+Sorry about that, there's been some paches ages ago to either cap xattrs
+allocations to XATTR_SIZE_MAX, KMALLOC_MAX_SIZE, look into
+vfs_getxattr_alloc or just flag the alloc __GFP_NOWARN:
+https://lore.kernel.org/all/20240304-xattr_maxsize-v1-1-322357ec6bdf@codewreck.org/T/#u
 
--- 
-tejun
+and it was left forgotten because no decision was taken on something I
+don't have time to think about
+
+I've re-added everyone involved in Ccs, let's pick one and be done with
+it.
+
+Christian Schoenebeck's suggestion was something like this -- I guess
+that's good enough for now and won't break anything (e.g. ACLs bigger
+than XATTR_SIZE_MAX), so shall we go with that instead?
+
+I don't care but let's get something in this cycle, the first patch is
+almost one year old and this is ridiculous...
+
+diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
+index 8604e3377ee7..97f60b73bf16 100644
+--- a/fs/9p/xattr.c
++++ b/fs/9p/xattr.c
+@@ -37,8 +37,8 @@ ssize_t v9fs_fid_xattr_get(struct p9_fid *fid, const char *name,
+ 	if (attr_size > buffer_size) {
+ 		if (buffer_size)
+ 			retval = -ERANGE;
+-		else if (attr_size > SSIZE_MAX)
+-			retval = -EOVERFLOW;
++		else if (attr_size > KMALLOC_MAX_SIZE)
++			retval = -E2BIG;
+ 		else /* request to get the attr_size */
+ 			retval = attr_size;
+ 	} else {
+
+--
+Dominique,
+sleepy
 
