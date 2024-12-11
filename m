@@ -1,129 +1,160 @@
-Return-Path: <linux-kernel+bounces-441397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFBF9ECDC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:56:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368B49ECDC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 630F918842BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72A14160EE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EBA23691B;
-	Wed, 11 Dec 2024 13:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B0C2368E5;
+	Wed, 11 Dec 2024 13:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YRjCGjH0"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gEhqgPWo"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8595D2368EA
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C5522C353
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733925390; cv=none; b=arzymCfQ7iSHgoEatkqp2rEPsCm1ohHAE7f5Tl/POs10ej7qd20VYdrhTJVTBKYhHFAuxhzfnXPRMG86RoK1J+75AoVnTBMCweFHCerYPXkdqQXjviyKzNxrQ2TkIFbvMMvxdvCfsq1g0axB+K/CDhVETC4rBtpCSMXfhqnUBi4=
+	t=1733925449; cv=none; b=r2A1NgfRjr9oaqizpY2dXKk9JxO0ipvvNP6pSPM2D3zOEdFSvySiMDgTDNsHCo+bWMsJ+1Xz6cA4h9xdPyq+q8aLc+8aZD6oiTkL8+gs8XC8M74cTktEHo8mFv9b6zb8CwRiDPR9jWmMFWUHCy+CSOVb1XhnPrgp9cU0CJJBolQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733925390; c=relaxed/simple;
-	bh=cOZOBUKJFU3Lf4npohtP1sWNz5qJuMjZHm3Mj9pQHuE=;
+	s=arc-20240116; t=1733925449; c=relaxed/simple;
+	bh=JhwlRQCUlSido+cOopKgWGuxkf6VA5zfN500pz/rIjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CZTCcFlQLMdlbZXQXCLvVnXDvpCKKXU4DdYuwny8eu6ufecLT97bpTbpFxdWR2t3ghiBTda7KPgQTmB3sIjYLK4EOeXc8Q1XMdrx9zxOcKaWQeQDNNgHZYrSU5PjZhUVrvUfO3nimlBXBA+XAyASHeM4jtInc1qCsJCWWd3yFYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YRjCGjH0; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3862f32a33eso2289979f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:56:27 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pz7hYBrHsVLkYzMl4/3FPp7Tbn9Fw09xERuFZclQFu5Q/abB4l37L8367cNxVP3RXAi8Z3s7XNz9wj1OdeBEzYc1fphztijP9Jt/p/t/ZIx1+9x/Z38cCMJYKkDRbjZtHNy9bI+2dlJYN7eujt/RwNU9pFtYudawtnB+xixIIhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gEhqgPWo; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43540bdb448so12638345e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:57:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733925386; x=1734530186; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733925446; x=1734530246; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GqFZPLxg9uXUUbFYl64NJ+hd5kjKxlZzEdF/XByvoc8=;
-        b=YRjCGjH0FDXNesp4KlYc/6BPk1QPyKv5y2laOSxyOuAvg4FRNFcgY6VYDMhgK/gBeX
-         +pmlMtf7Ak97q0MfYwGDCeBPxqxkmSoJF9FTSDl1mJnYkFtv3iLgQ6OgUz0nKTQh3Rm+
-         DmLzrjaHCs91GYwdzD5SqzRT05ACJjStG9SUxQV2D1Kq5IOZ7RBA3rOf0kPhdBCSyrpk
-         sHBj8w9FkydJ6zoGUm0SvdHimvJ7MQwuEfJSQiitjxYRiqEanWMFOQDCiOqYWh/ooUer
-         T2G5+LdJuPOT8xODEbLxFfrNxnYEsglxAt9gv2WRIsybTYwNDJky28v8iPla7pWD06mE
-         wtig==
+        bh=O4+3IBZgQdDXFwyfmcTHMczi/2LVRqIwQiyJZ1onodg=;
+        b=gEhqgPWopHRmtCG0E57BKyWnL6k1/eYgGMjvdmXP/5AujETDEa5uWiR/TjKFSfqXEs
+         tUX/+rnSJHRZ6W6ReSjROaqCQyEQI77QayYvauaKATk5XGYYxPhPKDoEyFh5yS2/X7cJ
+         kzaeCJ+Apjss4NoLeB2pqmzbMHXpsac/SaycrwROV3Xz5E8SDn74VXFFGAn3B+7ao8Hy
+         5ZX0dMkMb+hb+7YEJ753Vh7ioH1c2W2dZ10DqmdrF4dAlWBmNX61BKugnFqN+B0R3B+c
+         exlv6sxFrVslgY19Z/9ui5qzL/y6Il7/L1jHWLFp0gycdHPXfKuHyG0KvRV5S62eX1gd
+         hWwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733925386; x=1734530186;
+        d=1e100.net; s=20230601; t=1733925446; x=1734530246;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GqFZPLxg9uXUUbFYl64NJ+hd5kjKxlZzEdF/XByvoc8=;
-        b=P+koa8+M0OaAZC8X2mksUZws1DhVirmGocX2tT5KqMDd1SWTYjrMAxKS7ErSaeLeXA
-         ds/QHkvnDXDedzpnw/yqOKZsbj+zpral4elGli2hIGltuTJCKPmAX6ATE15sxKqu7ZFn
-         5oYsosWukmGubU00F4FE80e2fsuqfKg/8R0AWvrnOnGOlz9EsDeMqNubZUNStPsfw26o
-         FMHO8teb50X1OS2yz7NOSxy4Qd5ZDMgpdkKklqVQGyTcL7lQwSfw6CRr3EXQLmzrR0JU
-         9DmHjdPRZ2bCLzROi3sLsl1CKCZ/AIXQ4oL8fpp2nHZSgaRgW/2wIYyfqVZaMoc+p/Cw
-         Znvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGWtoCJk5Z9WA0W1Dgvt9u6Ukp47NaMHZ5for6C1osZWHD7QDiTTeIWcW969qnGnqHRIxyC9xDeB27xGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwOwsGl0kQnZnEmDcHwRv9qLDev4QZOLOvuSdzieu9i8jRmAqH
-	Ax63uPiRHdFYQ1O1df3AzE/y3bXRHF+41Pcb14l3CecfqeLjdBzC2xjIE98NFdw=
-X-Gm-Gg: ASbGncv6n99OAFSTrVppV97UAZWwNS69zRbYFfW449Xxclu2sIKzeKsDi9NtnS6xhK3
-	XIpctt7xU+E4iCv+g8L9yxxA+Bnln0VCD9C0xnjiYIJ621RWXgAe3pMqfsDpJzDgF4w+2/5wLdA
-	S4tCI1ifp/PlpV+owwp1ULZbXqeT8yEoNcnWvcKLXM5t5slHrRMg6JOAMYZWclfMt7F2jc/PV8d
-	iGskrjEkawVCU+Ae1XALjLh6KKNChfLMCul5H7kWMbx7irK9670ZBWR
-X-Google-Smtp-Source: AGHT+IGN/tlBgq07nEHIVsqXdpp57QSK2WTSNBZ8RFtj64TIKDFnIwFbJhJRViM0/qs5EItfPlBiCw==
-X-Received: by 2002:a05:6000:4609:b0:386:3327:bf85 with SMTP id ffacd0b85a97d-3864ced1fa5mr2757678f8f.53.1733925385737;
-        Wed, 11 Dec 2024 05:56:25 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878248f810sm1342192f8f.22.2024.12.11.05.56.24
+        bh=O4+3IBZgQdDXFwyfmcTHMczi/2LVRqIwQiyJZ1onodg=;
+        b=tXCkeSruXVaSfGnnAWVCmPpL/ope10+FqbneEqI86u6ZEUrHEJdiI17lhK/P3uo8Tk
+         VewAaHkBWUQrZqLThJCWODWNARA7VX123x1C3xMea2T11tl+xG5J9NZ0/HfM++ZnYFkG
+         EkwJAdsnwgOOzhAeIGb/RIlaXe3jLpXgqjh0R6piI2TspDpHgllL6kQ0F4MJK5vEDNRN
+         tkzb0PomBkmf4pa0xIF/YilyHdjn+b1i62XkLuxhhsKDtf08fypWGsNFhIzCbMSCTLZi
+         JJGUQZk5Jt1gjOhmICtZMGIB/anWFHIzd9CogIc4QFLx32XHJvls59eUYBEXpuvWhKwT
+         0ocg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnHOWXDWW7if8oOtZQDuMuGO7IEH+GkSFonUbzU1+cOPWuTDoXFmsTqUbZgr45adq6Vt0JJKlxck+Vs6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK19PVknRnGeBTgPPS4A43AlcJyxyj39MiIc0eGSORnPUfwxT4
+	adMYRcYwBgZd3Sqb2kFuMMvLlKGIoiY/MhHA4vq+uyrILAgMOVAjK0UHL3jn9Jc=
+X-Gm-Gg: ASbGnctfeMXQinuifTnoDQa8ycY75E0Eyy/2UVIafej8jAghhcqba5IquxPAN5nw0nF
+	MNvhZg9b8PWbDi909WSiNJxbfCqYSqehjmkb6Qq8EsmY04Rql2PRmzGY/tfYghLGJi186QdpqOm
+	olhZNMLAND1VqzakT6FGZwrPY+ehxWMb0YLt51iwObLTcE31y6l8VKszg643lMUI9Tper6G+1Kw
+	U64gHS+3EceROCNsmp/XrmNzDzHwAOeDqszhT1+lWTaeiqj2avf
+X-Google-Smtp-Source: AGHT+IGj6e56QapjjDkMGtxmigoFIildblF7J2AdVirl2LbBPSwWrReDkRoqBxNuZpY75ur5m0i4WQ==
+X-Received: by 2002:a05:600c:b86:b0:434:f5c0:32b1 with SMTP id 5b1f17b1804b1-4361c3755afmr24750765e9.15.1733925444346;
+        Wed, 11 Dec 2024 05:57:24 -0800 (PST)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824c8aadsm1332447f8f.60.2024.12.11.05.57.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 05:56:25 -0800 (PST)
-Date: Wed, 11 Dec 2024 14:56:22 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: mingo@redhat.com, peterz@infradead.org, hannes@cmpxchg.org, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	surenb@google.com, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 3/4] sched, psi: Don't account irq time if
- sched_clock_irqtime is disabled
-Message-ID: <wvqotmnk2kad3lyigbsc5vtq4ymdtaxqcjijaj2f5mdcp6m742@ltmazfge3eu4>
-References: <20241211131729.43996-1-laoar.shao@gmail.com>
- <20241211131729.43996-4-laoar.shao@gmail.com>
+        Wed, 11 Dec 2024 05:57:23 -0800 (PST)
+Date: Wed, 11 Dec 2024 15:57:22 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: [PATCH v3 3/3] Revert "arm64: dts: qcom: x1e80100: enable OTG on
+ USB-C controllers"
+Message-ID: <Z1maQhIyS1LVfDc6@linaro.org>
+References: <20241210111444.26240-1-johan+linaro@kernel.org>
+ <20241210111444.26240-4-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2oebmfrqcf4dfbrm"
-Content-Disposition: inline
-In-Reply-To: <20241211131729.43996-4-laoar.shao@gmail.com>
-
-
---2oebmfrqcf4dfbrm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241210111444.26240-4-johan+linaro@kernel.org>
 
-On Wed, Dec 11, 2024 at 09:17:28PM GMT, Yafang Shao <laoar.shao@gmail.com> =
-wrote:
-> @@ -1286,7 +1286,7 @@ struct psi_trigger *psi_trigger_create(struct psi_g=
-roup *group, char *buf,
->  	bool privileged;
->  	u32 window_us;
-> =20
-> -	if (static_branch_likely(&psi_disabled))
-> +	if (static_branch_likely(&psi_disabled) || !irqtime_enabled())
->  		return ERR_PTR(-EOPNOTSUPP);
+On 24-12-10 12:14:44, Johan Hovold wrote:
+> This reverts commit f042bc234c2e00764b8aa2c9e2f8177cdc63f664.
+> 
+> A recent change enabling role switching for the x1e80100 USB-C
+> controllers breaks UCSI and DisplayPort Alternate Mode when the
+> controllers are in host mode:
+> 
+> 	ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: PPM init failed, stop trying
+> 
+> As enabling OTG mode currently breaks SuperSpeed hotplug and suspend,
+> and with retimer (and orientation detection) support not even merged
+> yet, let's revert at least until we have stable host mode in mainline.
+> 
+> Fixes: f042bc234c2e ("arm64: dts: qcom: x1e80100: enable OTG on USB-C controllers")
+> Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Link: https://lore.kernel.org/all/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef
+> Link: https://lore.kernel.org/lkml/Z1gbyXk-SktGjL6-@hovoldconsulting.com/
+> Cc: Jonathan Marek <jonathan@marek.ca>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-Beware this jumps out for _any_ PSI metric when only irq is disabled.
-I meant to add a guard to psi_show() (this is psi_trigger_create()).
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-Michal
-
---2oebmfrqcf4dfbrm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ1mZ/AAKCRAt3Wney77B
-SR4pAQDZtCgrhq8IrES7YK3U84zIRXuk9NSntgVE5ogCjw0juwD9ECxBZNCypCnG
-VlpO2CR82SghljzRb9NsiPYRqe+KSAQ=
-=/a7w
------END PGP SIGNATURE-----
-
---2oebmfrqcf4dfbrm--
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 1740fdf7b1de..4c1e01605e87 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -4422,8 +4422,6 @@ usb_1_ss2_dwc3: usb@a000000 {
+>  
+>  				dma-coherent;
+>  
+> -				usb-role-switch;
+> -
+>  				ports {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+> @@ -4677,8 +4675,6 @@ usb_1_ss0_dwc3: usb@a600000 {
+>  
+>  				dma-coherent;
+>  
+> -				usb-role-switch;
+> -
+>  				ports {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+> @@ -4777,8 +4773,6 @@ usb_1_ss1_dwc3: usb@a800000 {
+>  
+>  				dma-coherent;
+>  
+> -				usb-role-switch;
+> -
+>  				ports {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+> -- 
+> 2.45.2
+> 
 
