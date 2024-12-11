@@ -1,102 +1,96 @@
-Return-Path: <linux-kernel+bounces-441632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9E19ED0F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:12:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D8A9ED0EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:12:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4749828F566
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:12:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE196169164
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4561DA622;
-	Wed, 11 Dec 2024 16:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091C91DA10A;
+	Wed, 11 Dec 2024 16:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kRLamtuY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mg10jpqb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4D1D63CA
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607681D6DDA;
+	Wed, 11 Dec 2024 16:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733933567; cv=none; b=Cw9b016OeDosfdURhClp9kcavb5XQAAh2zdbilZ0mtsr0evTsohzL7HHIlelkyFISLcsUTFfZAwT9GNWg7/MoPVA/FxmkUuH4QG2gIlaKJlDkQ/ZjQVLX74eU4oMA6jULwd+h+K/h1ImnQa00y9zkbpNiOiBiGsjWXi6z6knLz0=
+	t=1733933529; cv=none; b=TZr7AXebqZ0X15oh9IsjKPsdmvaLX+GDJoK8PgbfB5WO8pauDsbskpR8RTfuERg1pyj4vWqDXffEkc66MDvbqPFbrn5N3lyG9lkwFfMsuHNASEC86exdUR1vDhmaM63Hamcf1u3fAB9nsUuBvl0u6eNR9AVixVTobyf9ThzfVEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733933567; c=relaxed/simple;
-	bh=9Jo/QG5uCHIhBbOHzVrrtX8I9RxfyI5PLb6JOEaIJVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HSvH+63qldK5lYUCVOJ8RELQesUEl8b/yU++0VASLRxKz6UzBaQd/h4yHdsYOvdd2z1gpMAb8ZuaMwtWB+xpQ9/gSKHCfONS/vVbf7aVL1cyLEL0JKMmuS4jhhIVN1EM+58xo2Nn2Sdh274lZSxqzpi1ELVpdOquSNML/I33fJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kRLamtuY; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733933566; x=1765469566;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9Jo/QG5uCHIhBbOHzVrrtX8I9RxfyI5PLb6JOEaIJVM=;
-  b=kRLamtuY5oNFXHsi2390/Med1YTcNkxw5OX8UUH7pMvGypf/r3egmP/4
-   T5ugPC4vIG0Ylq/ecDUGhRlw7UKEvRQeaMSDB3hyCprnrN+/ORpinfGHz
-   MtJodHn3yUFZs4ma2fn1fNzBsU7s0iI1h08ZrwBadAU6rRngq3TXKSusw
-   TqtAdi9BBIgc28VXHBzN/wkQ7RL3V/L/iDmylXkwGM5R+X6leFvEhinAY
-   keZ3C56lWV3TMqYna2qSG73UezEqTPnlXKUwdU3eEQQcUZ9aCXBmW82gx
-   7VHmrGXl/ZbOlGmtH75UH4x0gkWdLZffo/o7rB5NG2cHix3cf6tEQdK1k
-   Q==;
-X-CSE-ConnectionGUID: BM3NZjQKQiSEctg24qCwhw==
-X-CSE-MsgGUID: qs/GVY7bSvqjtcHE45idZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="33639210"
-X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
-   d="scan'208";a="33639210"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 08:12:45 -0800
-X-CSE-ConnectionGUID: b2HILBxBQSupaQTZek4XlA==
-X-CSE-MsgGUID: MbAzxJ4RT0yPdhuNapVvOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
-   d="scan'208";a="96054445"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa008.fm.intel.com with ESMTP; 11 Dec 2024 08:11:13 -0800
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86/intel/uncore: Add Clearwater Forest support
-Date: Wed, 11 Dec 2024 08:11:46 -0800
-Message-Id: <20241211161146.235253-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1733933529; c=relaxed/simple;
+	bh=DqM4wCTUO4f59fvNBwQ8cFCi83F+Kt7OieUpfQQZmpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbGIYqEnvsWngQOfSfugdqB0xRS1nnpYlIcbr01qKddNm5TybQXfLuiX2V1jrtDuwRXnaDDlyXsJWlbydGkdNf5XkU3J+NCeHlfJL5juOA/raVM1P80eq0v2A7v2EjYK1N2ZWRr+GLfvrW44TyZI93TpZ5iNEnIJX3vhXvjkOUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mg10jpqb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D383AC4CED2;
+	Wed, 11 Dec 2024 16:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733933528;
+	bh=DqM4wCTUO4f59fvNBwQ8cFCi83F+Kt7OieUpfQQZmpU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=mg10jpqbk9V8zSR7Ud4yFygPi27WtWtitQ7HOXMr5weZZYKKNzVbrAyBHBAYctYYh
+	 4fglQwzX8S8GzmQRACOIvtFevI5WDfOTKsr8aKu3agoboMclf9Ocqxgsw28HA47CJx
+	 vPvpnH/RKRD+gYZ3lP9WqYGTj+0Od0TeT8SEU8VcV8cL0s7oxbowaGpCsqHBbE4pA+
+	 uF5PFKITPCf05qdDDDCl3OJ+hZ7FJ+IuP8oXoGYPOb9zKMdti0OvhzJMT55ZgGE93D
+	 hq7LmZaZdqXXEk7QhPwJneNLf22sHXRHebnRs/k9q/uV0o8RCFta/LgB7Rv9ATqHSM
+	 aIJvB/a9CoKrw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7CA5FCE0EE1; Wed, 11 Dec 2024 08:12:08 -0800 (PST)
+Date: Wed, 11 Dec 2024 08:12:08 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [RFC v1 0/5] Move kvfree_rcu() into SLAB
+Message-ID: <bd3f3892-c3a8-42c7-a42a-aa0acd316985@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241210164035.3391747-1-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210164035.3391747-1-urezki@gmail.com>
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tue, Dec 10, 2024 at 05:40:30PM +0100, Uladzislau Rezki (Sony) wrote:
+> Hello!
+> 
+> This series is based on v6.12 kernel. It is an attempt to move the kvfree_rcu()
+> into MM from the kernel/rcu/ place. I split the series into a few patches so it
+> is easier to follow a migration process.
+> 
+> As a result of this series, the main functionality is located under MM.
+> 
+> Uladzislau Rezki (Sony) (5):
 
-From the perspective of the uncore PMU, the Clearwater Forest is the
-same as the previous Sierra Forest. The only difference is the event
-list, which will be supported in the perf tool later.
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/uncore.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index d98fac567684..e7aba7349231 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -1910,6 +1910,7 @@ static const struct x86_cpu_id intel_uncore_match[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT,	&adl_uncore_init),
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,	&gnr_uncore_init),
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	&gnr_uncore_init),
-+	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X,	&gnr_uncore_init),
- 	{},
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_uncore_match);
--- 
-2.38.1
-
+>   rcu/kvfree: Temporary reclaim over call_rcu()
+>   mm/slab: Copy main data structures of kvfree_rcu()
+>   mm/slab: Copy internal functions of kvfree_rcu()
+>   mm/slab: Copy a function of kvfree_rcu() initialization
+>   mm/slab: Move kvfree_rcu() into SLAB
+> 
+>  include/linux/slab.h |   1 +
+>  init/main.c          |   1 +
+>  kernel/rcu/tree.c    | 866 ------------------------------------------
+>  mm/slab_common.c     | 875 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 877 insertions(+), 866 deletions(-)
+> 
+> -- 
+> 2.39.5
+> 
+> 
+> 
 
