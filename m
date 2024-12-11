@@ -1,145 +1,160 @@
-Return-Path: <linux-kernel+bounces-441446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F62A9ECE7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:23:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A11B9ECE85
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84819188261B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:23:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 666D818860FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588DF15A858;
-	Wed, 11 Dec 2024 14:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770816EB42;
+	Wed, 11 Dec 2024 14:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g9apzlzy"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="isK9gr98"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81D6246326
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF891CD3F;
+	Wed, 11 Dec 2024 14:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733927000; cv=none; b=d2AZVGGDXcmqD4SfJTeuQY11KUm+7zjllKCcdyjzv7enRGpweFSiqMS9U9ZEYqUj55J3519jC0J7AJUJkCfrYxOUV600SuytpHykNjzJFfedpxR61uU7aM03dVk0KOd/dU4OANMqjetmdiZdIzCvTutriLQmAprwVTnH5sZNRPY=
+	t=1733927105; cv=none; b=ZqWk485675NuQ7yHZ3a+7NKwNKentsZp8Qa1Cy6sKc+6vvuxLiAE9Q2QxJMqBl5FV2AuiYpfLE3tM7uKLumJwdChh8/ZxELf84abNtMgIvvJIM5mlrVF6T+PgHz3+bjs3VdFlfcKC48FJ0VFmyi5xqTf1IT5U0PMg1N+xeFLeMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733927000; c=relaxed/simple;
-	bh=sbh7AWaShd2GfI0imEetw26zJRmTeK0wkuB3XXGUF6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JSsPMl6dsnyOUqnV7yTfh6A1eYiska1DovD/2Fw6QqJXJCzSRc6RqBiPTinBSNwNzhzd5fz4p32zc/ZGaQf1ojDcejtHezQOt6TdAoYVf35DvSJqftEIbnA+cq5FrPn17iC0XvTLzrExSxRVekv6XJCu7FmVlbvkHGPKoKv0zoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g9apzlzy; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53f22fd6887so4125375e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:23:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733926997; x=1734531797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sbh7AWaShd2GfI0imEetw26zJRmTeK0wkuB3XXGUF6k=;
-        b=g9apzlzydgJ4Q6ULFHgnRbTsqlj5aB0C5meVMSK/UNmDqyc/uQbfs5PQAtaCz7K7ja
-         FslTws/n3vsJ1uTp8N4P8ryGEvGlNOn32LK1NjPHQp1YTN37naNtQtJO74iy+/9XeGKW
-         Bz31Qx5DQjQUYfoJqhGsuPaJJy+4sF0WqZZpxgar/5vPUfDfwAQeE3Ox3rpxRcofCqHY
-         fd1j2dxIQV56PQq8Z5wmeHtasKMFRG0STSNmaink+s3SLcKCwZmJkIrSwXI3LFO+NJ3r
-         VDmhohhZR9mSRoPR25jxYQjV9fbwdwZZmGNYJi9rP/3yMYDZNqc+UibLYZrQSiCurd5e
-         UK3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733926997; x=1734531797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sbh7AWaShd2GfI0imEetw26zJRmTeK0wkuB3XXGUF6k=;
-        b=xGWs6+y4ETFjK6MVjgIW1W380mrAFDeTThPlH7/SCyvBsNDw3uYU9dRh7thzil/ZMe
-         0S15RcTD2t0mc79bSJw4aFrP2frPofVhz5NWVoso5cYTxnY9nAW/OFYIp6sfVo3NJ+o1
-         XQ68vKz3g8puDmThNHLamQUiseECJtl5rZnxnU/J7qMM0FHeJUyfQEHUA3ekyRtRZynU
-         TU/k5szkmHZXhgRMGknQYzKYc6C0TEhhLb5JsiKikeS/xBMmt1YrvjByc9khILhT8qQg
-         FFte6NXi1NfCRdd6Y5bMYoVXyYmyUe8+FhyZQ2Uun5AtF7mm+hJacd0+PJiFrxtQ1mYV
-         QSXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXhZEcrRIV4V1t07jm9wt1y3+LYz3+tHsR0gOhV9B3JI5OHGJPc+R/lQ4BAryRqX9HbGx0J7J1Ba3d+CQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYo1J2LQyPw+Psvoboy1ZcJfNr5R7AV+47t9i9X3JUDN7eE40X
-	UdRuGJsSdHpE+BIggGlD18w3kCe8sq02zommOT0vrsOEHlrZOtOP1Cg4zTND9+P2ZZmP/6bhxdG
-	1oreq9YzijziMrjUhXg1mtwknWw4bHWYAx8xYKw==
-X-Gm-Gg: ASbGncvMGdsRakVTuLWQSDImWgzakvbFcQpq8VEskKFX/MEnbokv08PWJHTrcyeEMl5
-	8oWSG6FrvN8sanxTPsEsq5UHEGusIXutJlQ==
-X-Google-Smtp-Source: AGHT+IFwc3R4PMoFIypjPPrlyu+bP54qbrkqb6SdTFcVtmAjqvNQet3Sk08y9AmHyRfPr3eq0SXHvcppFqWjVobZmrI=
-X-Received: by 2002:a05:6512:6cc:b0:540:2292:50b2 with SMTP id
- 2adb3069b0e04-5402a60af0emr966019e87.52.1733926996913; Wed, 11 Dec 2024
- 06:23:16 -0800 (PST)
+	s=arc-20240116; t=1733927105; c=relaxed/simple;
+	bh=TO+YB/Y/4TCTstWKm/S0FbmmY68P0DKD/Yt8QeePxEs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K4MoOr3GLa9saZzu3jgWffR6KHB8gVYxSPXyCump+W2BhitX3EpkbG/WR4Ku65Ejw1HY71pS6j1uAF8FlFPktRDwTQVX6GzOois833H7liu6xcoYz/0CGtQo9gSkFuwtCn8+yQthdVJNf3BJo+MeBbPhuwuki8ObgVYJs8DXEys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=isK9gr98; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733927104; x=1765463104;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=TO+YB/Y/4TCTstWKm/S0FbmmY68P0DKD/Yt8QeePxEs=;
+  b=isK9gr98RRG6Va3ErPD5wdE+iN9n51mXsJ18nTnKZcPgeHgDD8b3pLAK
+   BSvRR07Rp3S5xTyP/WZyn6j034ZMQdldhpVIIrn8GM8pygkWpm7fz5mAb
+   McwEgP8jyRqiK7YpfqGKENPpDWox7/jtKi32UvchAhivXQFam4nCkHTJF
+   I53XfTiqnL4YdJ1/F+aOgMDIWoAX/+snDuL0Vew3HqH5+4nwkK957CCV6
+   0NKldBBH6DoPm1zkkJA/+Q/XqfqLA74FbySvslQkC3JDWEoAAo1nIbyz6
+   f8BqFnQ6CsdtG05RWFJzae0LDxLVnPW4ZhVglig1mCWf/fssaAkMBuKZS
+   Q==;
+X-CSE-ConnectionGUID: IlHltZeBQ1akvRu9exo9Uw==
+X-CSE-MsgGUID: 31C75q+ZQFujCYCU8aE+sA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="44979297"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="44979297"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 06:25:03 -0800
+X-CSE-ConnectionGUID: Kd1QKuo+QR6IoKNW4XOJAw==
+X-CSE-MsgGUID: kCNsvwGPQyyYK8GHI13fsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="99920819"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.242])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 06:23:41 -0800
+Message-ID: <8d736607552e88f28672ef5217431f61951df126.camel@linux.intel.com>
+Subject: Re: [PATCH v9 1/9] HID: hid-sensor-hub: don't use stale
+ platform-data on remove
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Jiri Kosina <jikos@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, jic23@kernel.org, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ jdelvare@suse.com,  linux@roeck-us.net, bentiss@kernel.org,
+ dmitry.torokhov@gmail.com, pavel@ucw.cz,  ukleinek@debian.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+ stable@vger.kernel.org
+Date: Wed, 11 Dec 2024 06:23:40 -0800
+In-Reply-To: <n914pn7o-pr9n-5ss0-p744-73402nnn843p@xreary.bet>
+References: <20241107114712.538976-1-heiko@sntech.de>
+	 <20241107114712.538976-2-heiko@sntech.de>
+	 <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
+	 <4934964.GXAFRqVoOG@diego>
+	 <nycvar.YFH.7.76.2411071534110.20286@cbobk.fhfr.pm>
+	 <20241112143732.GG8552@google.com> <20241211120844.GD7139@google.com>
+	 <n914pn7o-pr9n-5ss0-p744-73402nnn843p@xreary.bet>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018214300.6df82178@rorschach> <CACRpkdaTBrHwRbbrphVy-=SeDz6MSsXhTKypOtLrTQ+DgGAOcQ@mail.gmail.com>
- <20241211082427.01208632d3dd5486abb3e090@kernel.org>
-In-Reply-To: <20241211082427.01208632d3dd5486abb3e090@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 11 Dec 2024 15:23:05 +0100
-Message-ID: <CACRpkdaEXUxSuVzztcVOh2VMzPHr+6jsrEC1w6ecWEd0qzgU4w@mail.gmail.com>
-Subject: Re: [PATCH] fgraph: Use CPU hotplug mechanism to initialize idle
- shadow stacks
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 12:24=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.=
-org> wrote:
+On Wed, 2024-12-11 at 13:24 +0100, Jiri Kosina wrote:
+> On Wed, 11 Dec 2024, Lee Jones wrote:
+>=20
+> > > > > This change was more or less a surprise find, because I
+> > > > > wanted to make
+> > > > > the platform_data pointer in the mfd_cell struct const and
+> > > > > this the hid
+> > > > > sensor hub stood out as doing something strange ;-) .
+> > > > >=20
+> > > > > So patch 2 of this series actually depends on this change to
+> > > > > not cause
+> > > > > build errors.
+> > > >=20
+> > > > Ah, right.
+> > > >=20
+> > > > > But seeing that we're after -rc6 alredy, I would assume the
+> > > > > brunt of the=20
+> > > > > mcu series might need to wait after 6.13-rc1 anyway - but I
+> > > > > guess that=20
+> > > > > depends on how Lee sees things ;-) .
+> > > >=20
+> > > > OK, I am keeping my hands off it for the time being.
+> > >=20
+> > > I can take it now with an Ack.
+> >=20
+> > Looking to apply this set now.
+> >=20
+> > Ack please.
+>=20
+> I'd preferer if Srinivas could ack this as the more specific
+> maintainer.=20
+> Srinivas, please?=20
+My ACK is already in the patch:
 
-> > cd /sys/kernel/debug/tracing
-> > cat trace
-> >
-> > Gives an empty trace :(
-> >
-> > And:
-> >
-> > cat current_tracer
-> > function_graph
-> > cat set_graph_function
-> > do_idle
-> > cat tracing_on
-> > 1
-> >
-> > So all *is* set up, just not performing
-> >
-> > I tried to figure out why this happens but I'm not good with tracing
-> > internals. Any ideas?
->
-> Interesting. Does this happen only on boot-time tracing or after boot too=
-?
-> If it does not work only for boot-time, cpuhp_setup_state() may not work
-> before starting boot-time function graph tracing.
+Fixes: e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous
+reads")
+Cc: stable@vger.kernel.org
+Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-If I boot without any tracing enabled from the cmdline and:
 
-echo 0 > tracing_on
-echo function_graph > current_tracer
-echo do_idle > set_graph_function
-echo 1 > tracing_on
+Thanks,
+Srinivas
 
-I don't get any output either.
+>=20
+> Thanks,
+>=20
 
-It works for other functions, such as
-
-echo ktime_get > set_graph_function
-
-It seems it's the set_graph_function thing that isn't working
-with do_idle at all after this patch. Why just this function...
-The function is clearly there:
-
-cat available_filter_functions | grep do_idle
-do_idle
-
-I can also verify that this function is indeed getting invoked
-by adding prints to it (it's invoked all the time on any normal
-system). Does this have something to do with the context
-where do_idle is called? It's all really confusing...
-
-Yours,
-Linus Walleij
 
