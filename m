@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-442248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2339ED9C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:32:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 639539ED9C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:32:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555EF2822A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:32:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77262825AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7BA1F2C2F;
-	Wed, 11 Dec 2024 22:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31A81F2C53;
+	Wed, 11 Dec 2024 22:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmF1fS0z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RDlVokYh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D21F239D;
-	Wed, 11 Dec 2024 22:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3D51F2388;
+	Wed, 11 Dec 2024 22:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956335; cv=none; b=bh2W+34K9Dpyma5lY0pKYcsxWsbjzrJJDljKjUL6dS4RoAFpOu2tvw4TUbhoHscmPyyHc1pKWk3e1I4GtPZuOSn1vQnUFuWpUwXkyqRN8rAp8bW0HNBK3hK2TLw1RlhVKd5M0/0FHNbvAHS30kJt8IKzHIR3Xhp++WflxsspUHA=
+	t=1733956336; cv=none; b=ZtLHmRUgiZvriMOTkBfiOH7TgvdZGiWRUIbPDKcyYn0VG65K91o7HQQxC/bHIHn8Q7VHmth65zwTfKxrLU8KsVdAksoT3zzTOZ5qJbkbOGzyHbZYMG8GmPXIzGtljwbjHzn+GWkq7LmULVE9xSYrUeK2HWqamU5um2p2eD6PZQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956335; c=relaxed/simple;
-	bh=H8GLjR52AOObBuTGRF97jUFOPtYaGcj14R3/x3FDoxo=;
+	s=arc-20240116; t=1733956336; c=relaxed/simple;
+	bh=awhd+qYBZdWAIqJRcAxRI8ocm3yOwTpT8RsZsQR3PAk=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WQaixqCRXyclamAMvvwLAgETx/Zs9mlDQjYOarMz3DykbibZC6rywUJOGu3n+4KXwJsD9NjaiuZqYtIbCjAUyMfRERoSzAuPcECpVVC/YomLgrhYjPzsxtavwkEBOspED5sbUGyS/DQeQZo0NNZDLWsRmz/zewSuHDFVZ3Rg26Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmF1fS0z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67AA3C4CED2;
-	Wed, 11 Dec 2024 22:32:14 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=G1EaeKvyRhfSYJi7Pb85jVFOfDe8pu2XBz0gHAQLraL0a3IMQx2Z/cY++zvDCT0QYE1iB1pdC80Mbn6SwvuydRVpASunaspLiFNmErwzm2H6yX/hXZAY/VmB49qv/AbhaTeF4ZYDn1WNlY7wmR5wXRCfT1Wb6CDemf9jMmiW4Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RDlVokYh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BF6C4CED2;
+	Wed, 11 Dec 2024 22:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733956334;
-	bh=H8GLjR52AOObBuTGRF97jUFOPtYaGcj14R3/x3FDoxo=;
+	s=k20201202; t=1733956335;
+	bh=awhd+qYBZdWAIqJRcAxRI8ocm3yOwTpT8RsZsQR3PAk=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lmF1fS0zHS+wP2mJFmAvBAT0uY006ohKN/qRAdUT3w17Jl2nhVTsKlFEbNZip+aER
-	 BFU//jH27hu2mcsj5VlcxQDRcusC9jwZB8GxY+Ncjs8mHLjLTwEa+u2pQKz98uvCz+
-	 +V1ILKanbZ1h3ZH6t0mNGKaaur3anEyK7cjG0EBkcx3F+AKPNgPg3nwMBQwPZ3DyF3
-	 2yQ0/Vcs0ov6Kjt3XXx3hjacpMOZhtkv4Y8Sy+WwwcD543RecaQKzzZkHd2aiEhf75
-	 blJ0BtUiDFW8KFswUcm8yNqx+6Wm8xXzQSxIsusD7Iv2m38B0ghf1VD0zOG4FJtAvU
-	 o144tp4L+hcIA==
+	b=RDlVokYh0l4AVx9EUxhtB7Pl4dZihyS9aPE4663P+x5ykYHBIc9Ir1CrrdeDXtzsp
+	 iwQwrJx/XOQMKP3c7yqhem1/iuE6FN0OUfXvl0ipFE42Hhea+t+EqAkvqFCjYqNGyR
+	 KCZnki4f6Pqba1ciquWr69X8whEgMReywX3iFv3/dpNSOczT8LePmK+pmflbCq86BK
+	 nCkOguK4Mf3Xb9+0/gJTuirhA9N+uawZaztOziKAnOUhyHKobudckD0JSnzr7HFzyD
+	 vvd0EPNUT6ie9EfVyom9Ue5ajs3C2ICsPvYKbY2faMDnnksBMPkcVWSVZTbwLPQ4Os
+	 N4V4Z9+pQUc0g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD74380A965;
-	Wed, 11 Dec 2024 22:32:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34141380A965;
+	Wed, 11 Dec 2024 22:32:33 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,88 +51,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 00/20] Remove PERF_HAVE_DWARF_REGS
+Subject: Re: [PATCH v8 0/5] Add Svade and Svadu Extensions Support
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173395635051.1729195.13191557882673334015.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Dec 2024 22:32:30 +0000
-References: <20241108234606.429459-1-irogers@google.com>
-In-Reply-To: <20241108234606.429459-1-irogers@google.com>
-To: Ian Rogers <irogers@google.com>
-Cc: linux-riscv@lists.infradead.org, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, john.g.garry@oracle.com,
- will@kernel.org, james.clark@linaro.org, mike.leach@linaro.org,
- leo.yan@linux.dev, guoren@kernel.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, terrelln@fb.com,
- mhiramat@kernel.org, changbin.du@huawei.com, amadio@gentoo.org,
- yangjihong@bytedance.com, adityag@linux.ibm.com, atrajeev@linux.vnet.ibm.com,
- masahiroy@kernel.org, maobibo@loongson.cn, chenhuacai@kernel.org,
- kjain@linux.ibm.com, atishp@rivosinc.com, liangshenlin@eswincomputing.com,
- anup@brainfault.org, oliver.upton@linux.dev, sesse@google.com,
- linux@treblig.org, cp0613@linux.alibaba.com, dima@secretsauce.net,
- przemyslaw.kitszel@intel.com, davem@davemloft.net,
- aleksander.lobakin@intel.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org
+ <173395635176.1729195.3092998721998204770.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 22:32:31 +0000
+References: <20240726084931.28924-1-yongxuan.wang@sifive.com>
+In-Reply-To: <20240726084931.28924-1-yongxuan.wang@sifive.com>
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com,
+ vincent.chen@sifive.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu
 
 Hello:
 
 This series was applied to riscv/linux.git (fixes)
-by Namhyung Kim <namhyung@kernel.org>:
+by Anup Patel <anup@brainfault.org>:
 
-On Fri,  8 Nov 2024 15:45:45 -0800 you wrote:
-> These changes were originally on top of:
-> https://lore.kernel.org/lkml/20241017001354.56973-1-irogers@google.com/
+On Fri, 26 Jul 2024 16:49:25 +0800 you wrote:
+> Svade and Svadu extensions represent two schemes for managing the PTE A/D
+> bit. When the PTE A/D bits need to be set, Svade extension intdicates that
+> a related page fault will be raised. In contrast, the Svadu extension
+> supports hardware updating of PTE A/D bits. This series enables Svade and
+> Svadu extensions for both host and guest OS.
 > 
-> Prior to these patches PERF_HAVE_DWARF_REGS indicated the presence of
-> dwarf-regs.c in the arch directory. dwarf-regs.c provided upto 4
-> functions:
+> Regrading the mailing thread[1], we have 4 possible combinations of
+> these extensions in the device tree, the default hardware behavior for
+> these possibilities are:
+> 1) Neither Svade nor Svadu present in DT => It is technically
+>    unknown whether the platform uses Svade or Svadu. Supervisor
+>    software should be prepared to handle either hardware updating
+>    of the PTE A/D bits or page faults when they need updated.
+> 2) Only Svade present in DT => Supervisor must assume Svade to be
+>    always enabled.
+> 3) Only Svadu present in DT => Supervisor must assume Svadu to be
+>    always enabled.
+> 4) Both Svade and Svadu present in DT => Supervisor must assume
+>    Svadu turned-off at boot time. To use Svadu, supervisor must
+>    explicitly enable it using the SBI FWFT extension.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4,01/20] perf bpf-prologue: Remove unused file
-    https://git.kernel.org/riscv/c/2bf7692eadc5
-  - [v4,02/20] perf dwarf-regs: Remove PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
-    https://git.kernel.org/riscv/c/6ac75289b288
-  - [v4,03/20] perf dwarf-regs: Add EM_HOST and EF_HOST defines
-    https://git.kernel.org/riscv/c/ae894b77923e
-  - [v4,04/20] perf disasm: Add e_machine/e_flags to struct arch
-    https://git.kernel.org/riscv/c/cd6c9dca9d4b
-  - [v4,05/20] perf dwarf-regs: Pass accurate disassembly machine to get_dwarf_regnum
-    https://git.kernel.org/riscv/c/9fc4489a16f4
-  - [v4,06/20] perf dwarf-regs: Pass ELF flags to get_dwarf_regstr
-    https://git.kernel.org/riscv/c/a784847c2da1
-  - [v4,07/20] perf dwarf-regs: Move x86 dwarf-regs out of arch
-    https://git.kernel.org/riscv/c/bf4e799a0a33
-  - [v4,08/20] perf arm64: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/6f8e8add5a0a
-  - [v4,09/20] perf arm: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/0c0a20ecdf67
-  - [v4,10/20] perf dwarf-regs: Move csky dwarf-regs out of arch
-    https://git.kernel.org/riscv/c/d4a0c4f22121
-  - [v4,11/20] perf loongarch: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/1d37bd8366d8
-  - [v4,12/20] perf mips: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/8a768a2f6592
-  - [v4,13/20] perf dwarf-regs: Move powerpc dwarf-regs out of arch
-    https://git.kernel.org/riscv/c/285b523c2da2
-  - [v4,14/20] perf riscv: Remove dwarf-regs.c and add dwarf-regs-table.h
-    https://git.kernel.org/riscv/c/a90c4519186d
-  - [v4,15/20] perf s390: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/b232b704a781
-  - [v4,16/20] perf sh: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/04150f29e212
-  - [v4,17/20] perf sparc: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/85567a2a8d42
-  - [v4,18/20] perf xtensa: Remove dwarf-regs.c
-    https://git.kernel.org/riscv/c/a4747c09507d
-  - [v4,19/20] perf dwarf-regs: Remove get_arch_regstr code
-    https://git.kernel.org/riscv/c/3ef6b89a129a
-  - [v4,20/20] perf build: Remove PERF_HAVE_DWARF_REGS
-    https://git.kernel.org/riscv/c/ddbfb6f20c1b
+  - [v8,1/5] RISC-V: Add Svade and Svadu Extensions Support
+    https://git.kernel.org/riscv/c/94a7734d0967
+  - [v8,2/5] dt-bindings: riscv: Add Svade and Svadu Entries
+    https://git.kernel.org/riscv/c/b8d481671703
+  - [v8,3/5] RISC-V: KVM: Add Svade and Svadu Extensions Support for Guest/VM
+    https://git.kernel.org/riscv/c/97eccf7db4f2
+  - [v8,4/5] KVM: riscv: selftests: Fix compile error
+    (no matching commit)
+  - [v8,5/5] KVM: riscv: selftests: Add Svade and Svadu Extension to get-reg-list test
+    https://git.kernel.org/riscv/c/c74bfe4ffe8c
 
 You are awesome, thank you!
 -- 
