@@ -1,157 +1,268 @@
-Return-Path: <linux-kernel+bounces-441352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACD09ECD2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:29:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09799ECD2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:30:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B537A281AE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C318C168145
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B02022C342;
-	Wed, 11 Dec 2024 13:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B73233682;
+	Wed, 11 Dec 2024 13:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X1oD+Zho"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RV4yZDiP"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9181523FD04
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14B422C356
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733923784; cv=none; b=JR9+9v6P+B3t5c/gEFSzYRyhFB77EGG7EiYTFOAU5V6pnf4lIgM985J2KijL1PNUbFrZXUNRS7OSnzzGOnna4CojflgLc1vAkG9iZ7VxvPdM1dJxo0By6sldK8ki65grCn2pthyKlWmxiGs4grjzarldEJXDlKwQOrAlvTHL0uo=
+	t=1733923788; cv=none; b=BDVgWogOiDUW8bdBIzJcA02k/pYfLWny5BgfuULTP+ZQtaoW+zY2XiKfCsnRo2FDZl7ynaKVya8RYZFBy/i1ZFKKM8e17Ar5LutigTTwFVACyuAPzyd6e/lVC91J5YjIoH3tJ8vysZEgINHwpodtE83+pqI8kI/DlWxr0C2uoiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733923784; c=relaxed/simple;
-	bh=pBszRuBW18HohSRop+i8jodKGiC4y4kU/qCMAftwYv8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qwioKlDsGuLnepxD2zltst20ch3O8IVWXQ4st8EnJ2I7rJ1Xgw9GpWC7bqJEJzzwOCJZU9TqlAbxxU/lxtgeJL9hAElDVqUp8wplXQzYODqPi3R7r+0lM59w5C1Gphxknb7vurRpiBBpodH2c+AJl5CyGekp5ZtsWxyvvML2B7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X1oD+Zho; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54020b0dcd2so724511e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:29:42 -0800 (PST)
+	s=arc-20240116; t=1733923788; c=relaxed/simple;
+	bh=4YXjyAoD98+cfiKscwgre+GWi+bFfECJxhiIsEr0EBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D354iKV/YnHJ2eETPGD4SP71m6BfYq97Ufz1BmEoneaj51N+4tvODYcmXcG7MHAEuisTiogFLX4tsWYoepT/q35N8QiJGS1c96OpwjuF9O/KkNPpPO7g+LxGDPQMIPwWbSsaU2hfGWKxkBKS4LHrEKXSckkYuYThD+pvOPNjWxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RV4yZDiP; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434f80457a4so4040395e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:29:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733923781; x=1734528581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u7zPCRbNobZB2rLY4klNUfuL4Nc1TSS5AqwC+M05YI8=;
-        b=X1oD+Zhof6N/N+SO7M4OblFZhtdki4y2XGhp4/rAmKaLxOba4GFIWp60XyjkTE+8TP
-         XjLkXa7onR8xYYL0LhoeLG0vLtmN9c22dS2TKBpjTBiCNhfImj4OG8RfD7RHGbc2r7Dv
-         3EEefvtJPpI1oIe9beqSpTKVnFln5xkpwxGiVnCZn5ngIRX/jPQAHT86EVAoXuij3qJz
-         RtBBq8R2xWqeNmfkJvIDovmmida8ylblFTPgwD5qhKaSDw5pwMnQScwxNu4CccFxPv+r
-         w8c0RvuKtWcqo9ylpZe+TYJxGh8NC7GftjRlU8evBCAQgXGEOOIorsx3WUnbT9B7mYj6
-         nsUA==
+        d=tuxon.dev; s=google; t=1733923784; x=1734528584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZAzVPgqaMUfEWjQsC1i4irC02Ex7gL3bmsg03DGegR0=;
+        b=RV4yZDiPXoFWF10cXkxm9RGlEXNfHcpyhrKFxRvKvT6TjbrMQUq4nQuoREFKitb0zp
+         U+DFbbh6SpJInkP37On80o5w3UQQ1BDOBYkO3I9yB1finZjNyZaHfuUWEVAAKE5M6i0H
+         oJRK9QTO34l2i7pj2qnp5tzcgUXorWb1yxWRFyeWgfuGvyDitD+kTQet3Qh7ysFMuHY6
+         lMVNuk3QYQc4Ed1UHycztPTmelad6jHdQlAnsKoe7veeeHuaurIQIB5+L1G0k5KCPd0R
+         oRLzkRy9/f48r+pimJ3se7LUXf289/EACuQus4hZrFK08mqQZ2wQSo5chXSucG7dgIDd
+         9djw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733923781; x=1734528581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u7zPCRbNobZB2rLY4klNUfuL4Nc1TSS5AqwC+M05YI8=;
-        b=TjVf9NVSD18tTGwwIE3Tv+msKSjv/0Rrg7X1qToqd0cFOf3n6J07Gez1AWqLaPYJbg
-         3Y3NxMY1wW/N5s18H0u6dgqptX8dFYDnN5RYhplXsfJuE8/5BvhUdhX9RFGoJOSeUL7N
-         Lpq5J5bsykUWaEHQNufgWk9Me3jB5LLCVx5B7+vcC9vV6Og2VZdWIri8wewbpsZYvkMJ
-         0nExoHjNrZY2cFuEixrswmIdJ612rQGHRWRNdp4HaUTcZ2AJ+bcDQAgLPtVq1I9aeyry
-         4Fjo5XBvxiQmub5Dyp3an/Fq9Gm3QyHbu1rwtTEfxFiTemqMslzwUpb4FXsFP4a8Plzw
-         GaYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOrkcOjviB+4qjCDjkQXZWL3nX7P3aekbOrf6YXSN55EJfgDHkdfozOvUd6h+CzA7jYbARR1J1BufcZJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt5foPJREOe0TKynGFDfyL2656dFddjyPUbtPYvryfv0Vk1Cbu
-	V4vN1rcsZXF7cTyzvwkYYHTIrlFA5u/BosGjHdVjgz2/dWCIVpOQvf+TK7utPGCHDZcUAXHKok6
-	j7vGZ2hpv3DCTRotx5pgS2z2z54uj46cIzX0zEA==
-X-Gm-Gg: ASbGnct9FfLHCQ1S1FuQLt5GVnM0rYWkbWPtaEsICumpEzA/pUUUq3G9NayXRhEiLf9
-	up/UabHGOtk+yBdJUL8olWod+eCs+ceKixA==
-X-Google-Smtp-Source: AGHT+IFgSwAzChMV6MPtTrzqAT5fEZJhpVqpZ7rEneJDnxJfXq2+f607r/zOzxJe6hnLdIwQ0jSdAOyNE+c9jLtr2FA=
-X-Received: by 2002:a05:6512:3d9e:b0:53e:2246:c262 with SMTP id
- 2adb3069b0e04-5402a6ba964mr927083e87.0.1733923780650; Wed, 11 Dec 2024
- 05:29:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733923784; x=1734528584;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZAzVPgqaMUfEWjQsC1i4irC02Ex7gL3bmsg03DGegR0=;
+        b=dbrcE9uwmRqJmGj9iL83YwT3IKowKHgpveHPM9WEbAbMNxRIwokPxlp1V4GEF11IpC
+         bYJnmK4QHMIlFsrNHhQBf9Sp8BuzDAc5pMnCtdNu+OU81S49lwrgHKpXB7HYHWz5IB99
+         FzPu7JE0OdKt8Jw5ssAmiXLbOz+wpiBtPvkl/ZfW7QMraSLgM3vNbSaKwv1XJ4rnuTSz
+         ovJi44BknXxiToFPwb2sk+j4as32qoasBDBwvCHYo337khzHCHm/cNigEpfFZYl5GDFB
+         z45HVJ5tS1AP7VT7XHS2XevNoHG5aPgHddTPSiT76cNUHFeO9wfaISm8Js3o9SqjrdA+
+         R7aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3IGizb/eCK3Y0mhOGqBDKxslWmydSSzcrlk/gg8gkkSEML96+ffCdoVaT5hMLvbPKU2K4vKaLmg3Gzxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpjALBj2PGvcWPrB6VmUPo7eDjCqFuKB7Ch4qnLeI3sohE7ygi
+	OHvCSNibzCNqo1QJCWZbK+GkGD3aM1KrSQvgqZp99rXa9H6q8mazLoLjJ+iti4s=
+X-Gm-Gg: ASbGnctwFhF0KU9IrYswzxFKuClNivoQpz9IuFmrQcUoX0UoYTwhiYMbWR1staB6YM0
+	zlrDY1dnifsm0awX2x/RGuYEUZm4+vsVpXWqHQek4QLpiYnnDz8PFkCFRpDag5vlzaP0CBiDfY/
+	09K0NT3LK3oQf9T0rgsZJB+acGG20OPVWmnC2WjCU2FNOx2XiR+0C328d8gtGPaAG/Fq8DNPL3D
+	+wFNNwMFHMOGKGKwFpf+wn7MktLJ++ECVNA78sk1cpAppZo761c39rTsaPTHYE=
+X-Google-Smtp-Source: AGHT+IGcI12gDXybQxwcAzQEejE9ZVyUNB6RappGD5rtEDkW1ikp9QuBYtlqVjXICVCqXZ+/45HwDA==
+X-Received: by 2002:a05:600c:8a3:b0:42c:baf1:4c7 with SMTP id 5b1f17b1804b1-4361c5a2ec2mr18849105e9.4.1733923783947;
+        Wed, 11 Dec 2024 05:29:43 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f063357csm141361975e9.22.2024.12.11.05.29.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 05:29:43 -0800 (PST)
+Message-ID: <5418a6e3-0f90-4922-ac91-c16da9677b32@tuxon.dev>
+Date: Wed, 11 Dec 2024 15:29:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210160556.2341497-1-arnd@kernel.org> <20241210160556.2341497-3-arnd@kernel.org>
-In-Reply-To: <20241210160556.2341497-3-arnd@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 11 Dec 2024 14:29:29 +0100
-Message-ID: <CACRpkdZaoD2vqbCi1AFUa6mF2_=c3Nu4R0CvxFAep0VMgtMtOQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] ARM: Disable HIGHPTE on PREEMPT_RT kernels
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org, linux-rt-devel@lists.linux.dev, 
-	Ard Biesheuvel <ardb@kernel.org>, Clark Williams <clrkwllms@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Matthew Wilcox <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Russell King <linux@armlinux.org.uk>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org,
+ yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+ <20241210184542.GA4077820-robh@kernel.org>
+ <437b8d13-8ec1-40c7-b95c-ddb836e123d6@tuxon.dev>
+ <CAL_Jsq+sdX+3R0USwfYT2yqC9aTGc+LzwyPsQiT770fJ1BgEAw@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAL_Jsq+sdX+3R0USwfYT2yqC9aTGc+LzwyPsQiT770fJ1BgEAw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 10, 2024 at 5:06=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
-te:
 
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->
-> gup_pgd_range() is invoked with disabled interrupts and invokes
 
-There is no gup_pgd_range() in the kernel, is this patch a bit
-old?
+On 11.12.2024 14:46, Rob Herring wrote:
+> On Wed, Dec 11, 2024 at 6:23 AM Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+>>
+>> Hi, Rob,
+>>
+>> On 10.12.2024 20:45, Rob Herring wrote:
+>>> On Tue, Nov 26, 2024 at 11:20:36AM +0200, Claudiu wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The RZ/G3S system controller (SYSC) has registers to control signals that
+>>>> are routed to various IPs. These signals must be controlled during
+>>>> configuration of the respective IPs. One such signal is the USB PWRRDY,
+>>>> which connects the SYSC and the USB PHY. This signal must to be controlled
+>>>> before and after the power to the USB PHY is turned off/on.
+>>>>
+>>>> Other similar signals include the following (according to the RZ/G3S
+>>>> hardware manual):
+>>>>
+>>>> * PCIe:
+>>>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+>>>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>>>>   register
+>>>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>>>>
+>>>> * SPI:
+>>>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>>>>   register
+>>>>
+>>>> * I2C/I3C:
+>>>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>>>>   (x=0..3)
+>>>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>>>>
+>>>> * Ethernet:
+>>>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>>>>   registers (x=0..1)
+>>>>
+>>>> Add #renesas,sysc-signal-cells DT property to allow different SYSC signals
+>>>> consumers to manage these signals.
+>>>>
+>>>> The goal is to enable consumers to specify the required access data for
+>>>> these signals (through device tree) and let their respective drivers
+>>>> control these signals via the syscon regmap provided by the system
+>>>> controller driver. For example, the USB PHY will describe this relation
+>>>> using the following DT property:
+>>>>
+>>>> usb2_phy1: usb-phy@11e30200 {
+>>>>      // ...
+>>>>      renesas,sysc-signal = <&sysc 0xd70 0x1>;
+>>>>      // ...
+>>>> };
+>>>>
+>>>> Along with it, add the syscon to the compatible list as it will be
+>>>> requested by the consumer drivers. The syscon was added to the rest of
+>>>> system controller variants as these are similar with RZ/G3S and can
+>>>> benefit from the implementation proposed in this series.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>> - none; this patch is new
+>>>>
+>>>>
+>>>>  .../soc/renesas/renesas,rzg2l-sysc.yaml       | 23 ++++++++++++++-----
+>>>>  1 file changed, 17 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>> index 4386b2c3fa4d..90f827e8de3e 100644
+>>>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>> @@ -19,11 +19,13 @@ description:
+>>>>
+>>>>  properties:
+>>>>    compatible:
+>>>> -    enum:
+>>>> -      - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+>>>> -      - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+>>>> -      - renesas,r9a07g054-sysc # RZ/V2L
+>>>> -      - renesas,r9a08g045-sysc # RZ/G3S
+>>>> +    items:
+>>>> +      - enum:
+>>>> +          - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+>>>> +          - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+>>>> +          - renesas,r9a07g054-sysc # RZ/V2L
+>>>> +          - renesas,r9a08g045-sysc # RZ/G3S
+>>>> +      - const: syscon
+>>>>
+>>>>    reg:
+>>>>      maxItems: 1
+>>>> @@ -42,9 +44,17 @@ properties:
+>>>>        - const: cm33stbyr_int
+>>>>        - const: ca55_deny
+>>>>
+>>>> +  "#renesas,sysc-signal-cells":
+>>>> +    description:
+>>>> +      The number of cells needed to configure a SYSC controlled signal. First
+>>>> +      cell specifies the SYSC offset of the configuration register, second cell
+>>>> +      specifies the bitmask in register.
+>>>> +    const: 2
+>>>
+>>> If there's only one possible value, then just fix the size in the users.
+>>> We don't need #foo-cells until things are really generic. Plus patch
+>>> 8 already ignores this based on the schema. And there's implications to
+>>> defining them. For example, the pattern is that the consumer property
+>>> name is renesas,sysc-signals, not renesas,sysc-signal.
+>>
+>> OK, I'll fix the size in users.
+> 
+> You already did for the one in this series.
+> 
+>>>
+>>> Maybe someone wants to create a 'h/w (signal) control' subsystem (and
+>>> binding) that is just 'read, assert, or deassert a h/w signal'. Perhaps
+>>
+>> Until then, is it OK for you to keep it as proposed here?
+> 
+> Yes.
+> 
+>>> even the reset subsystem could be morphed into that as I think there
+>>> would be a lot of overlap.
+>>
+>> The USB PWRRDY signal handling has been initially implemented though a
+>> reset controller driver but, after discussion with Philipp it has been
+>> concluded that it should be handled differently, since it is not a reset
+>> signal.
+> 
+> Every reset is a signal, but every signal is not a reset.
+> 
+>>> Maybe that would cut down on a lot of these
+>>> syscon phandle properties. I would find that a lot more acceptable than
+>>> the generic 'syscons' and '#syscon-cells' binding that was proposed at
+>>> some point.
+>>>
+>>>
+>>>> +
+>>>>  required:
+>>>>    - compatible
+>>>>    - reg
+>>>> +  - "#renesas,sysc-signal-cells"
+>>>
+>>> New required properties are an ABI break.
+>>
+>> I've added it as in the old DTs the system-controller node is disabled.
+> 
+> Ok, so it depends if the consumers treat this node as required or not.
 
-There is gup_fast_pgd_range().
-See 23babe1934d7637b598e4c9d9f3876e318fa63a4
-gup.c contains:
+The only current consumer is the the RZ/G3S USB PHY which is added along
+with this series.
 
-  get_user_pages_fast attempts to pin user pages by
-  walking the page tables directly and avoids taking locks.
-(...)
-   Let's consistently call the "fast-only" part of GUP "GUP-fast"
-   and rename all relevant internal functions to start with
-   "gup_fast", to make it clearer that this is not ordinary GUP.
-   The current mixture of "lockless",  "gup" and "gup_fast" is
-   confusing.
+> Or maybe they are all disabled too.
+> 
+>> With that, do you consider it OK to keep it?
+> 
+> No, as we're dropping the property aren't we?
 
-So fast GUP is supposed to be lockless, and should just not
-have this problem. So it can't be addressing gup_fast_pgd_range()
-right?
+You're right! Stupid question from me, sorry.
 
-> __kmap_local_page_prot() via pte_offset_map(), gup_p4d_range().
-> With HIGHPTE enabled, __kmap_local_page_prot() invokes kmap_high_get()
-> which uses a spinlock_t via lock_kmap_any(). This leads to an
-> sleeping-while-atomic error on PREEMPT_RT because spinlock_t becomes a
-> sleeping lock and must not be acquired in atomic context.
+Thank you for your review,
+Claudiu
 
-I think this needs to be inspected by David Hildenbrand, if he consistently
-rename the GPU functions to be "fast" and there is a lock somewhere
-deep in there, something must be wrong and violating the API
-contract.
-
-> The loop in map_new_virtual() uses wait_queue_head_t for wake up which
-> also is using a spinlock_t.
->
-> Since HIGHPTE is rarely needed at all, turn it off for PREEMPT_RT
-> to allow the use of get_user_pages_fast().
->
-> [arnd: rework patch to turn off HIGHPTE instead of HAVE_PAST_GUP]
-
-HAVE_FAST_GUP
-
-I'm still confused, how can something that is supposed to be
-lockless "fast" acquire a spinlock? Something is odd here.
-
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> There is an open question about whether HIGHPTE is still needed
-> at all, given how rare 32-bit machines with more than 4GB
-> are on any architecture. If we instead decide to remove HIGHPTE
-> altogether, this patch is no longer needed.
-
-I'm more asking if HIGHPTE even acquires a spinlock anymore
-as it is supposed to be "fast"/lockless. If it does, it is clearly violatin=
-g
-the "fast" promise of the fast GUP API and should not exist.
-
-Yours,
-Linus Walleij
+> 
+> Rob
 
