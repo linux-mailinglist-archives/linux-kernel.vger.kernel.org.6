@@ -1,97 +1,77 @@
-Return-Path: <linux-kernel+bounces-441711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD579ED2E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E959ED2E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:58:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA60A1685FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9306B168B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1554A1DE3A9;
-	Wed, 11 Dec 2024 16:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMBgc627"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FF81DE3A8;
+	Wed, 11 Dec 2024 16:58:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA9E1D63CA;
-	Wed, 11 Dec 2024 16:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A706D1D63CA;
+	Wed, 11 Dec 2024 16:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936277; cv=none; b=AX8SKqcFigUzy5z16tdMnDA+tW3yThFr4hfCyJdiF7pR4VW/amL/nKOm4eXtqt1KEbMF1uHpzCObGaMwbaGXMIOcVGA5BMNgTb4DcNj8+PBMojDlUxDULTR0uPNEu+A69fyTKZp8Zy7YjDe3cPGfCCXhxXKf82QCtDp35p58Zi4=
+	t=1733936306; cv=none; b=cGp9cA5W+yevGBulXQs77ObRCmmy0M3asHlHW1aioZQ9Xgy9iGj9muFK1VFCjlwlK9Ls+bV6fKmLCyWn0A8olN5t0cmsQ2OMIcDTrt5e7yOX9rHRb+9Yp4B+OWu/FWTP+cEsfYgHEWY1gtjsEYq44VVY64WTBNZ/wLaBYdI8B9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936277; c=relaxed/simple;
-	bh=1yIWus27OtZE7bJMyA2cso+dtL6NIpeS6Aafk4CnEz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G4DmRmA3Is7S2ES5riwX8G5UGm+FoJt2Wz/8Be1ypI7HcR5Cu9VSNPehpDCQX9Y+4nhqHm+d3YtKlL7L/0JkBrOIV8Afme2UfWd19nFx6CtpR7uYtgHc4j+yXLl+KZL11gshenZC/H+BSaQR8cjsPD+5MtkOd9hFOcykRr+xQXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMBgc627; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A8EC4CED2;
-	Wed, 11 Dec 2024 16:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733936277;
-	bh=1yIWus27OtZE7bJMyA2cso+dtL6NIpeS6Aafk4CnEz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VMBgc6278Cqxq3Ef8j4RI7sPxNL8KGlOEXqFR3ncDfyNJDh9fo8ioFSlxytsavnyG
-	 a4m6KQfUIdeEFhGyDrR4kmgHzdQVBeC5oFo0Hmw4nKuKNnMFHSQNsbpUXk2YxOzLg1
-	 pisPX6uTpX/zXb4N7LlQjeGrHwpXJdDM/XPT3f6L4K7FoJ64W21fsUZVhyadHxhAH/
-	 EZ1R/mGt+sJKUunuzbXpDbhCL4XrEezcb8VnzRxvbtO1snWWibwpllKRL4uadE6MwL
-	 w9zEIh2EzcF9U5dd4nQQ+209lVUFtjtn6WUeW3bD8QsDtT3wnrwYRRtu2AIYyYdnx7
-	 mbMrXiPGoi7vw==
-Date: Wed, 11 Dec 2024 16:57:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Iker Pedrosa <ikerpedrosam@gmail.com>
-Cc: linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, javierm@redhat.com
-Subject: Re: [PATCH v2] dt-bindings: devicetree: explain how to get CS
- active-high
-Message-ID: <aac3c2a2-6034-4cd1-b03e-3582f03f18c8@sirena.org.uk>
-References: <20241211165054.254164-1-ikerpedrosam@gmail.com>
+	s=arc-20240116; t=1733936306; c=relaxed/simple;
+	bh=YsSQ5PWOqY1DjPncfWijRqa6XfvetZCZqlLKKbI1uIE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fufbd8TM7Ga521X3h42Af1HVDrKh7TLUWk4HW/4F+50d4sQfBa63vbwuSEglLrfxJnjhijqIgywzusEldoW9SSWc1k108TN0oXp3JyiIG5HCfUm8cmrzA3ptXPIvPnZdfHsIMrCV4t0ajuDLneNwwlztFSVoRlL7ogguBeyxYc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y7hWX3H1Hz6K6KJ;
+	Thu, 12 Dec 2024 00:53:44 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5EB781400CA;
+	Thu, 12 Dec 2024 00:58:22 +0800 (CST)
+Received: from localhost (10.48.145.145) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 11 Dec
+ 2024 17:58:21 +0100
+Date: Wed, 11 Dec 2024 16:58:20 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Mahesh
+ J Salgaonkar" <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>,
+	Lukas Wunner <lukas@wunner.de>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+	<kw@linux.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 8/8] PCI/AER: Add prefixes to printouts
+Message-ID: <20241211165820.000014fe@huawei.com>
+In-Reply-To: <20240913143632.5277-9-ilpo.jarvinen@linux.intel.com>
+References: <20240913143632.5277-1-ilpo.jarvinen@linux.intel.com>
+	<20240913143632.5277-9-ilpo.jarvinen@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YWrt2eyDDIld0rVQ"
-Content-Disposition: inline
-In-Reply-To: <20241211165054.254164-1-ikerpedrosam@gmail.com>
-X-Cookie: Every path has its puddle.
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Fri, 13 Sep 2024 17:36:32 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
---YWrt2eyDDIld0rVQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Dec 11, 2024 at 05:50:50PM +0100, Iker Pedrosa wrote:
-> The current documentation does not clearly explain how to invert the SPI
-> CS signal to make it active-high. This makes it very difficult to
-> understand.
-
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---YWrt2eyDDIld0rVQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdZxI8ACgkQJNaLcl1U
-h9ADhwf5AZKYVSZtRXMACXd+PAZ6HtnJLoJD1+C2KMjRWsG1q63iBYuQqTkIxCLo
-6eUtg8lbmWMbhY5PJa9/W086T3h5tafwpRuIcBblkws723aVnHoawIR2/085Kupp
-lTCvhnTXRjxu5S2j0vCt2eCL/dQGizPfrYwndYP4c6UTLCcEqBFA0w7njr3YIsBq
-AKzrc3gKIq+HMXBZ4sCecZB0HUawH0OB896lBn5LOmcsRR8azK6KBO3f6uTIjYZ3
-OMoSaZIGUORwJnDuk5av5XouZOEXW35BFaGxdoFV9XAebJ7EO/ebIJSvuL85YoPi
-T2VAoZrOgGRaTYowIChhVGPflxpYkA==
-=1xoi
------END PGP SIGNATURE-----
-
---YWrt2eyDDIld0rVQ--
+> Only part of the AER diagnostic printouts use "AER:" prefix because
+> they use low-level pci_printk() directly to allow selecting level.
+>=20
+> Add "AER:" prefix to lines that are printed with pci_printk().
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+Makes sense.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
