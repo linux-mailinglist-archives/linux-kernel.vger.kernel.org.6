@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-440652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19009EC259
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:40:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF449EC25D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:40:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0751886CC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:40:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D57CF2849BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C291FCCF2;
-	Wed, 11 Dec 2024 02:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C961BD9E6;
+	Wed, 11 Dec 2024 02:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAGueN2B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svMowYqC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90388C148;
-	Wed, 11 Dec 2024 02:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE7A1FCF78;
+	Wed, 11 Dec 2024 02:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733884816; cv=none; b=q1cFM0jJIS7D7kRDQzd7/a4HNoc4z4/FMrQemOeauFwwdHUFUwGxnZcHcBgrjXge4VtXD8XdGSZ/IBYMu87qCzd18m+V7BEaT1GssSWChCZ5eL8kpfvJ1zwRUAoSEcSqfaf29fRtQVRJ6bFuvO+UAtIZUoCx3K9N2Jcz0YO00p8=
+	t=1733884822; cv=none; b=fwhNOhhrcuhRfz5L7G/yeYY299HrfCxr9P7GpNVgbSFEH/R5aK5eSIjzZS/kUCxXhO0od4sBB2NxNHXC4Xd8psbJuVSqavqYATD3sWIgGGgLyypGMHzfC2DFXd92Fi450APDZPje5h6fYg9iYOZ+GzCERojfAwsBQ9E7eIJb910=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733884816; c=relaxed/simple;
-	bh=KWPTezuc2CnyasfCtn0nr7jKT+1IrhtzhpPoRrDrKO8=;
+	s=arc-20240116; t=1733884822; c=relaxed/simple;
+	bh=8cIQXMiCby+3yuGNOfE5BSFWLVI70HuzLn9UPvD2Hdg=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jwFlZ1nM1rMhDIs+/FRIN9jPkQWdLhSSWNjrWyTwrQczQzuRz2lW3lhJ0gsm6+m8mgOzfJBCiSmQ64MaBkqMP2v9RmekeJE84c+n6sRMt+80yN+fU1k/YpzbK9C2OBuFZQ0dOUZvMJCZXN1q2YGw8bc/oMwlk+U2H63HU0RCkyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAGueN2B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21240C4CED6;
-	Wed, 11 Dec 2024 02:40:16 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=hCl7oD/QXMWYjqNdVRKiHezqwgYi4Qa/eqSKCISGu6ZRjLaMXtTLVfqo5Zb/fDv+cooez2VnhRS9xocug7a6gfTT521/zmEG85odZxHzhM+BT0b1QP2jeun0pfcx088ER9Vls8Bm+BhW2YkdQ684O6Ek/Q9tfCb7gKkty0qgWUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svMowYqC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD386C4CED6;
+	Wed, 11 Dec 2024 02:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733884816;
-	bh=KWPTezuc2CnyasfCtn0nr7jKT+1IrhtzhpPoRrDrKO8=;
+	s=k20201202; t=1733884821;
+	bh=8cIQXMiCby+3yuGNOfE5BSFWLVI70HuzLn9UPvD2Hdg=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bAGueN2BCe5lnWbHDF8+YApAa15WGLZIoVn/q/WG6lySc/V2KjA2zEHaKaDaDc8to
-	 +P3XK2ggRziEseKWQC+EzhfL6uc1DYzn/mx5PMkgyI48aFbMj4RVTEbpkyFvK7y7ro
-	 wGQlrQwDQLjgDx7epXUvtRMRJKx2nTYOr116Qb3Z42I8IUTvWXj9B5jYEfVf63LDgt
-	 ZY7p7A2ryeqNgDMuH/+eE97SHPU7haIVva7GtG5fbCRSaWFBGiRSzvhpZFOZ/l6D4V
-	 V7M929GbS5XdCwKzEV0L8ZTLKo2FTshabjt1sh+wN1sV08YYP2xLcyUHGTV3i7QAck
-	 Om0oSIXOg4ysw==
+	b=svMowYqC0ePX6rl1zvfxXUVeVllEGcQCv6NyKN40gsgCpIkxd/XKocgQR+Al6d7hG
+	 xggt7ajn5R2pcWfEd7PqmZnSOyZQHNeK8uADxIYLIh2ikAD5NSMJV8DE0LVlctTToE
+	 psGusYWoLF4/PM+lBpwRo5ygu7SLDZo8BU+L3x8SCdX33RM/BdoeKWLLf3bhzzpUFJ
+	 DydOoImLxLldSUBNLxiowhpmDkHTKk/TKjlsu+G34G4M3K2z5GxNha2lT9JGEdW8gM
+	 mMYNbNnxV054zl5WTYG8K6wgFHa3eHrBRCA8gYcmAHx8bYn/erBxNywaGil9GohT5N
+	 sL+hqlecL4Ouw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34213380A954;
-	Wed, 11 Dec 2024 02:40:33 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD7A380A954;
+	Wed, 11 Dec 2024 02:40:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] tcp: check space before adding MPTCP SYN options
+Subject: Re: [PATCH net-next] net: phy: dp83822: Replace DP83822_DEVADDR with
+ MDIO_MMD_VEND2
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173388483201.1093253.5330438869580330905.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Dec 2024 02:40:32 +0000
-References: <20241209-net-mptcp-check-space-syn-v1-1-2da992bb6f74@kernel.org>
-In-Reply-To: <20241209-net-mptcp-check-space-syn-v1-1-2da992bb6f74@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, edumazet@google.com, davem@davemloft.net,
- dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- fw@strlen.de, cpaasch@apple.com, martineau@kernel.org, geliang@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, moyuanhao3676@163.com,
- stable@vger.kernel.org
+ <173388483774.1093253.9609358542133634563.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 02:40:37 +0000
+References: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
+In-Reply-To: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
+To: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dima.fedrau@gmail.com,
+ dimitri.fedrau@liebherr.com
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 09 Dec 2024 13:28:14 +0100 you wrote:
-> From: MoYuanhao <moyuanhao3676@163.com>
+On Mon, 09 Dec 2024 18:50:42 +0100 you wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > 
-> Ensure there is enough space before adding MPTCP options in
-> tcp_syn_options().
+> Instead of using DP83822_DEVADDR which is locally defined use
+> MDIO_MMD_VEND2.
 > 
-> Without this check, 'remaining' could underflow, and causes issues. If
-> there is not enough space, MPTCP should not be used.
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] tcp: check space before adding MPTCP SYN options
-    https://git.kernel.org/netdev/net/c/06d64ab46f19
+  - [net-next] net: phy: dp83822: Replace DP83822_DEVADDR with MDIO_MMD_VEND2
+    https://git.kernel.org/netdev/net-next/c/4eb0308d78d3
 
 You are awesome, thank you!
 -- 
