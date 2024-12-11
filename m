@@ -1,140 +1,163 @@
-Return-Path: <linux-kernel+bounces-441957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8251F9ED60E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:12:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E740D9ED61A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:14:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EAC280F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B72716B1C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C68258DD5;
-	Wed, 11 Dec 2024 18:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0651FF1B8;
+	Wed, 11 Dec 2024 18:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGNwEJRP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8kTmkzJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F54258DBE;
-	Wed, 11 Dec 2024 18:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10332594B7;
+	Wed, 11 Dec 2024 18:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943295; cv=none; b=V3NPfCcRQjp7TwYjZ8XjpZMd/6Q6hYFXEAMJVAt6RvJKdJDI3B+SG0cnD/7qkvVcVVbjoeWixElbLkTKC2LH+4T0kBO0Fi2zHlFf9vUMJMYX7W/Kb8xudeTHEFHCbgwGBX36LKkH7AIGi7b4BhU1HYwnolUrB59K1zBghG2+MTM=
+	t=1733943339; cv=none; b=XIAz+9dxDuh/J6DcnBftkuJF023t6ElbULn71dSJCwPrM+qz9DKTsV8pvd85TN5QsoembdcRW5XFaKKVuadMAddVolGk+yPU2Ofgjmsr4u3/8H4f4fN0maGb2v4q0CwpD81u5WD1zLTWv5c+zmiyfi+gJBM4beUr640LZz7F6R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943295; c=relaxed/simple;
-	bh=jNZQ0zi8NAueW2lyQFKyaIzSOngIk/Se6jwSwXItvds=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=alOUYwkSli1qkMDnB8BM2QL51jZ0W0ax7KpiT9k3BHB+CbHIZf6AEHnmIO3YHvpSTVuHImX+5IaNJDzaU9kIC3Pme4x4RSPIS3fCImvUYuTra4uLy500qPdygX3XAMyCIDCiH0zwsVlDTPgURuCUT3Sc/Bb5TC6cTHmCltwQr1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGNwEJRP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274F6C4CEE0;
-	Wed, 11 Dec 2024 18:54:54 +0000 (UTC)
+	s=arc-20240116; t=1733943339; c=relaxed/simple;
+	bh=J2jRrAud14RereDlpOYXUQ9nuI89TwVV1bsZj25HWTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kbzoPCNPFcm70zR/w/KPKpoHE9IOHvL+hes7+7kzmNfBHP777x+fp+LGWweeWHGOQWDR6cN+cIHnXYpehW7uPOeT0scuwXv83bH/uPvgbJ8/IWfqbdkbq6B9kUq+mCZIFq0YRLqK19WmybVxydQtZ8aNNWg3wF8iyCT5N+LIpyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8kTmkzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CEBAC4CED2;
+	Wed, 11 Dec 2024 18:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733943295;
-	bh=jNZQ0zi8NAueW2lyQFKyaIzSOngIk/Se6jwSwXItvds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QGNwEJRPPwlMm+H/cuJPUnjmptLnKTUhwcqI/UUvV3NWjNKRcO12bz8D3g52xf2Nm
-	 YdAUsB2/vszZAANGe1bJCt5eC6P1HfG9HbeyWOTZgdKDVfxreqaThCH3xHTukwO1KU
-	 B20yRT+QVV9+xtST45KkupRCGo8ay9u9b6RtrGXFy4QiDJqqsFehV9EaAqJiaqWcF4
-	 sLwZfjhFUX5yriVXcZvgTq8DZ8qbfPXtC2fx1o1lsV3nVcGJHP69I16/jPUaJf8yyo
-	 jwGn6iTYLtTuRMzU3/SDaF5dtiN5i0Jaox4QJOQDo/8tt1/uX3GrsC/sTc/WlFfJAC
-	 hLcGct4lEACUw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ming Lei <ming.lei@redhat.com>,
-	Yi Sun <yi.sun@unisoc.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	virtualization@lists.linux.dev,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 7/7] virtio-blk: don't keep queue frozen during system suspend
-Date: Wed, 11 Dec 2024 13:54:40 -0500
-Message-ID: <20241211185442.3843374-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241211185442.3843374-1-sashal@kernel.org>
-References: <20241211185442.3843374-1-sashal@kernel.org>
+	s=k20201202; t=1733943339;
+	bh=J2jRrAud14RereDlpOYXUQ9nuI89TwVV1bsZj25HWTA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j8kTmkzJH4GLWX9qrhW2FSJoOyxUigG59kSrgz63rKzMgqwEItghFeMbpVxnd6P0D
+	 JJbB/ACOF8TXC0WJxCFHDiv6gQVm3Tb2BDz3o8A1LzNzApdFR/hencQGbIPTbwUB5n
+	 xdXXrkS+0k2ygzkWqoKWBTeB+ezeUhDymOX+t+ePuLY6X2fyZ3d9pDht+iojgV7lpj
+	 uPmkzEzr+daeNGr3DJ//naZA+W6r9qUkFQtBFfHiIn5zo4oYpljhG1HzBNjUQVhJ18
+	 S2v8xOKg6zmwFKxnV6dkyVIRWUcovlW9rUrBubqS5QxUHrJ5JG57R8JGWKiFuOSwhK
+	 4Aw1SYE0l+mig==
+Date: Wed, 11 Dec 2024 18:55:30 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v5 03/10] iio: accel: adxl345: measure right-justified
+Message-ID: <20241211185530.16abfb25@jic23-huawei>
+In-Reply-To: <CAFXKEHbPmFc8DNZW=Ww39j+XkAfLOyFY2qgvz+uEUaBYri_3hA@mail.gmail.com>
+References: <20241205171343.308963-1-l.rubusch@gmail.com>
+	<20241205171343.308963-4-l.rubusch@gmail.com>
+	<20241208133458.4a8428b7@jic23-huawei>
+	<CAFXKEHbPmFc8DNZW=Ww39j+XkAfLOyFY2qgvz+uEUaBYri_3hA@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.286
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Ming Lei <ming.lei@redhat.com>
+On Mon, 9 Dec 2024 23:18:45 +0100
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-[ Upstream commit 7678abee0867e6b7fb89aa40f6e9f575f755fb37 ]
+> Dear IIO-ML, Hi Jonathan!
+>=20
+> On Sun, Dec 8, 2024 at 2:35=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> >
+> > On Thu,  5 Dec 2024 17:13:36 +0000
+> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> > =20
+> > > Make measurements right-justified, since it is the default for the
+> > > driver and sensor. By not setting the ADXL345_DATA_FORMAT_JUSTIFY bit,
+> > > the data becomes right-judstified. This was the original setting, the=
+re
+> > > is no reason to change it to left-justified, where right-justified
+> > > simplifies working on the registers.
+> > >
+> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com> =20
+> >
+> > I'm still confused by this one.  Does this change affect the data output
+> > to userspace?  If seems like it definitely should. If it does we have
+> > an ABI regression somewhere. Is it currently broken and wasn't at some
+> > earlier stage, or is this the patch breaking things? =20
+>=20
+> No, it should not affect the userspace.
+>=20
+> This setting opens the mask for regmap/update bits to allow for
+> changing the data format.
+> My point is rather, does it actually makes sense to allow to change
+> the data format, since
+> the driver will use just one format. The bit was never applied, it's
+> just the mask here.
+Ah.  Got it.
 
-Commit 4ce6e2db00de ("virtio-blk: Ensure no requests in virtqueues before
-deleting vqs.") replaces queue quiesce with queue freeze in virtio-blk's
-PM callbacks. And the motivation is to drain inflight IOs before suspending.
+>=20
+> May I ask you, if you could also could give me a brief feedback to the
+> three questions in
+> the cover letter to this series?
+Reading cover letters? Never! :)
+Thanks for the heads up. I tend to skip straight past them unless
+I am looking for something specific... oops.
 
-block layer's queue freeze looks very handy, but it is also easy to cause
-deadlock, such as, any attempt to call into bio_queue_enter() may run into
-deadlock if the queue is frozen in current context. There are all kinds
-of ->suspend() called in suspend context, so keeping queue frozen in the
-whole suspend context isn't one good idea. And Marek reported lockdep
-warning[1] caused by virtio-blk's freeze queue in virtblk_freeze().
+>=20
+> I would really appreciate, since I'm still unsure if I actually
+> verified everything correctly.
+> From what I did about this bit, I removed and set the justified bit in
+> STREAM and in
+> BYPASSED mode (current mode), without any difference in the results in
+> iio_info or
+> iio_readdev. The numbers look generally odd to me, though. And, I'd
+> rather like to ask
+> to still wait with applying the patches, if this is ok for you? But,
+> perhaps with the answers
+> of the cover letter items, it could become clearer to me. I'm still
+> about to measure and
+> verify against the old and the input driver results as comparison.
 
-[1] https://lore.kernel.org/linux-block/ca16370e-d646-4eee-b9cc-87277c89c43c@samsung.com/
+I'd use the tools/iio tooling. It pretty prints channel data.  I suspect
+there are tools in the set you are using that do that but I'm not the
+person to ask.
 
-Given the motivation is to drain in-flight IOs, it can be done by calling
-freeze & unfreeze, meantime restore to previous behavior by keeping queue
-quiesced during suspend.
+Jonathan
 
-Cc: Yi Sun <yi.sun@unisoc.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: virtualization@lists.linux.dev
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
-Link: https://lore.kernel.org/r/20241112125821.1475793-1-ming.lei@redhat.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/block/virtio_blk.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 3afc07b59477b..b1c5bcae9b318 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -1062,9 +1062,12 @@ static void virtblk_remove(struct virtio_device *vdev)
- static int virtblk_freeze(struct virtio_device *vdev)
- {
- 	struct virtio_blk *vblk = vdev->priv;
-+	struct request_queue *q = vblk->disk->queue;
- 
- 	/* Ensure no requests in virtqueues before deleting vqs. */
--	blk_mq_freeze_queue(vblk->disk->queue);
-+	blk_mq_freeze_queue(q);
-+	blk_mq_quiesce_queue_nowait(q);
-+	blk_mq_unfreeze_queue(q);
- 
- 	/* Ensure we don't receive any more interrupts */
- 	vdev->config->reset(vdev);
-@@ -1088,8 +1091,8 @@ static int virtblk_restore(struct virtio_device *vdev)
- 		return ret;
- 
- 	virtio_device_ready(vdev);
-+	blk_mq_unquiesce_queue(vblk->disk->queue);
- 
--	blk_mq_unfreeze_queue(vblk->disk->queue);
- 	return 0;
- }
- #endif
--- 
-2.43.0
+>=20
+> Best,
+> L
+>=20
+>=20
+> > If it worked and currently doesn't send a fix.  If this changes a previ=
+ously
+> > working ABI then drop this patch.  Alternative being to fix up the scale
+> > handling to incorporate this justification change.
+> >
+> > Jonathan
+> > =20
+> > > ---
+> > >  drivers/iio/accel/adxl345_core.c | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > >
+> > > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adx=
+l345_core.c
+> > > index 88df9547bd6..98ff37271f1 100644
+> > > --- a/drivers/iio/accel/adxl345_core.c
+> > > +++ b/drivers/iio/accel/adxl345_core.c
+> > > @@ -184,7 +184,6 @@ int adxl345_core_probe(struct device *dev, struct=
+ regmap *regmap,
+> > >       struct iio_dev *indio_dev;
+> > >       u32 regval;
+> > >       unsigned int data_format_mask =3D (ADXL345_DATA_FORMAT_RANGE |
+> > > -                                      ADXL345_DATA_FORMAT_JUSTIFY |
+> > >                                        ADXL345_DATA_FORMAT_FULL_RES |
+> > >                                        ADXL345_DATA_FORMAT_SELF_TEST);
+> > >       int ret; =20
+> > =20
 
 
