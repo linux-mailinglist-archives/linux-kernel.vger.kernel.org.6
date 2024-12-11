@@ -1,125 +1,104 @@
-Return-Path: <linux-kernel+bounces-441248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2409ECBB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:05:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96FD9ECBBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBE2B188B5AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191D81682AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BD02210E7;
-	Wed, 11 Dec 2024 12:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05432210E7;
+	Wed, 11 Dec 2024 12:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="LcijISB4"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+1j6WHK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26490238E2A;
-	Wed, 11 Dec 2024 12:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374CC238E2A;
+	Wed, 11 Dec 2024 12:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733918715; cv=none; b=Nv1lwIjWSkhOo2DP9fOF6fldWeQBc24OfKGUgBDcArPxzjyrvrgrf1ARgil+wbICOVR5QyZGMQHXknHDW+8gL+Sc+O/bUVG/SpeO2Bpy/2k189KBQtwUGlY3I8kUhQxpvuts9nBM9gZx3uhmyU95WWCjI4Zya9AKGi1o4UxyXEI=
+	t=1733918797; cv=none; b=gMIyH2SDBMLsDSNzyU/vqlOXbBjGQc8nT88+B1roA1Jstm8uu3GGLpz50rt4SaZvykX4HN+MDwBIoO+R35geOaGL9iTy0Z+ptOLn4rKEFS8Z4/MBb3bt73XIxh91dvdz2X5jQCOh9xBAqigJ2PXmWBPoYrLcq85jGqDkI2k8+Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733918715; c=relaxed/simple;
-	bh=u4XWX926mDyaQJxp4ycS42AhC/tMjf4h0McUvfYw+GQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DjJVH2FRwZ6m2Iqe157D5Ilg98ZQk6QhWO+XfpWqRUONL2tCnAZ/sLTzr32VxPsDake50q8ir6DNRB3ZDmV4aNMtLNUbxcFjsKXVamhRIHYtBe8Dhk5I8kQVtEKuzffS8c10NFAOQwPz5PHnXGK2X9ZzXDgwQesGFx23Pi3frYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=LcijISB4; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=2pRZ/eXShbUq1MO5oovE7csxNQQTAqDIDmPLX+j1Ssk=; b=LcijISB4joU+uEFF
-	66gZmz/W13GKmAnDF30NXP7irkoyxCrALJtUK6FBaEVQC73liZR2rokWB+0swelpTGErRYdq59r9S
-	DKbdOPR6a3uuf7+9lFoTj7MEkKjEZkR9SZSRJvkbOewCaWnntVVbMNKgDn5nxQ/W1Ic0+EV/fms+i
-	+L6daAOrQM7zcJbkiwbr0kFgndyDh3QozgprqoiD2TZaBzrF8QclH5sijmTmrZqEv3MMXlqKoFDme
-	gRmwcqRvItnl/shOG4PPPXnau9+c4On15jQUUSMsK0+9W4jDnctgtG5O7Uh6t7DFbjeW5TIv7KBtp
-	fkMVd9hwuqAgWPhjHA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tLLSl-004jUW-2W;
-	Wed, 11 Dec 2024 12:05:07 +0000
-Date: Wed, 11 Dec 2024 12:05:07 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: rogerq@kernel.org, tony@atomide.com, krzk@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memory: omap-gpmc: deadcode a pair of functions
-Message-ID: <Z1l_85Cq10KbRWl2@gallifrey>
-References: <20241210220628.237604-1-linux@treblig.org>
- <202412111932.lp8jHbeT-lkp@intel.com>
+	s=arc-20240116; t=1733918797; c=relaxed/simple;
+	bh=URHkU87kc3SnecwGaVrovMnEpPnArukzBkxsCWKks/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hBMaSmwCRvDWk9aPq5H7NKFFKcwZvOCQJkzybLtCdOvMKcHvSyCwFnqckEUFdNK64XbfpSMJI+oJNlOsTe0RNF8bfmc6bvOM8KB9vXgSPsa4GANU536RFg6uMmnVYsRyr9iZMZubTjFUD64bBbNTDB7PiaUH4pccXukLWHUoKWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+1j6WHK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36CB3C4CED2;
+	Wed, 11 Dec 2024 12:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733918796;
+	bh=URHkU87kc3SnecwGaVrovMnEpPnArukzBkxsCWKks/4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p+1j6WHKXt6208ircTn/scVv4le3ox79hEv1y7oSS7A8/3Oq4EUdK+b2EeiiI4Mrh
+	 0yeYNmPc0ZLTb/m/vPAf0iYplB3TCUaKfnJELbYfpbCSqRvqPNNnvvOFrZ3WXUZrlP
+	 SG/6JRCE0ueMgEW8dvfxByFEsmRknMDXj3ikVSw49uAYZx3rABve1OTsnNvMP3+MJX
+	 cHb6W2XtQgVwn29GAULHMyhR3rWdArCRSSArb4TlLbCnV0wpoBUSaNqfTfc8qadwln
+	 LebvVMquVkffowk9fP5G4TVq2gIqr3afa4Qws1gvv5yyTfAJpaNLZgNtmKUsc4+65i
+	 bmB9FPyjd02aA==
+Message-ID: <6aa70be5-59d0-4441-9432-79cb87fdd915@kernel.org>
+Date: Wed, 11 Dec 2024 17:36:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <202412111932.lp8jHbeT-lkp@intel.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 12:04:29 up 216 days, 23:18,  1 user,  load average: 0.02, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Signed-off-by missing for commit in the dmaengine
+ tree
+To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
+ Vinod Koul <vkoul@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20241209075036.055e0729@canb.auug.org.au>
+ <Z1hzMRuORVOQvKLW@vaman> <2e61add7-8e72-4ef4-b696-8bb5c0e83d01@prolan.hu>
+Content-Language: en-US
+From: Vinod Koul <vkoul@kernel.org>
+In-Reply-To: <2e61add7-8e72-4ef4-b696-8bb5c0e83d01@prolan.hu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-* kernel test robot (lkp@intel.com) wrote:
+On 11/12/24 14:39, Csókás Bence wrote:
 > Hi,
 > 
-> kernel test robot noticed the following build warnings:
+> On 2024. 12. 10. 17:58, Vinod Koul wrote:
+>> On 09-12-24, 07:50, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Commit
+>>>
+>>>    1ad2ebf3be83 ("dt-bindings: dmaengine: Add Allwinner suniv F1C100s 
+>>> DMA")
+>>>
+>>> is missing a Signed-off-by from its author.
+>>>
+>>> Scripting confused by the comma in the origin SoB line?
+>>
+>> Yes I guess so, checked again yes b4 seems to eat it up
+>>
+>>>
+>>> Also, please keep all the commit message tags together at the end of
+>>> the commit message.
+>>
+>> Again scripting is going bonkers here
+>>
+>> I have fixed it up now
+>>
+> 
+> Still broken in these:
+> 
+> commit eeca1b601381 ("dma-engine: sun4i: Add a quirk to support 
+> different chips")
+> commit 1f738d0c2f67 ("dma-engine: sun4i: Add has_reset option to quirk")
 
-Good bot!
+Fixed all.. looks like all patches from you have this issue :-(
 
-> [auto build test WARNING on krzk-mem-ctrl/for-next]
-> [also build test WARNING on linus/master v6.13-rc2 next-20241211]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/linux-treblig-org/memory-omap-gpmc-deadcode-a-pair-of-functions/20241211-062027
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git for-next
-> patch link:    https://lore.kernel.org/r/20241210220628.237604-1-linux%40treblig.org
-> patch subject: [PATCH] memory: omap-gpmc: deadcode a pair of functions
-> config: i386-buildonly-randconfig-002-20241211 (https://download.01.org/0day-ci/archive/20241211/202412111932.lp8jHbeT-lkp@intel.com/config)
-> compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412111932.lp8jHbeT-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202412111932.lp8jHbeT-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> drivers/memory/omap-gpmc.c:361:21: warning: 'gpmc_clk_ticks_to_ns' defined but not used [-Wunused-function]
->      361 | static unsigned int gpmc_clk_ticks_to_ns(unsigned int ticks, int cs,
->          |                     ^~~~~~~~~~~~~~~~~~~~
-
-Ooh, right, I'll clean that out as well and send a v2.
-
-Dave
-
-> 
-> 
-> vim +/gpmc_clk_ticks_to_ns +361 drivers/memory/omap-gpmc.c
-> 
-> a3551f5b0c3ca7a arch/arm/mach-omap2/gpmc.c Adrian Hunter 2010-12-09  360  
-> 3950fffdf0c088d drivers/memory/omap-gpmc.c Baoyou Xie    2016-08-28 @361  static unsigned int gpmc_clk_ticks_to_ns(unsigned int ticks, int cs,
-> 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  362  					 enum gpmc_clk_domain cd)
-> 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  363  {
-> 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  364  	return ticks * gpmc_get_clk_period(cs, cd) / 1000;
-> 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  365  }
-> 7f2e8c58ae9e352 drivers/memory/omap-gpmc.c Robert ABEL   2015-02-27  366  
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+~Vinod
+
 
