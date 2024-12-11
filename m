@@ -1,161 +1,159 @@
-Return-Path: <linux-kernel+bounces-441990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A489ED672
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:25:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C53679ED683
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:29:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3F01674F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF2B282702
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80352594A8;
-	Wed, 11 Dec 2024 19:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3E01C4609;
+	Wed, 11 Dec 2024 19:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JG6pPT31"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BHXkqup9"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9104259483
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE3E2594B2
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733944979; cv=none; b=FwV9L+P0TRpiAT27EbPkw73juThXbryXayb3Y3k+mFSUBIQ5d15TA60vAB0IX9zxukQNlzB0R+glJQESD5CI+/Mswy28OB/3HEQklGFz/zb711szxLwIt5+WBRjxxkAWO9NaCSzWr1yJIeCWaMuYh2J7MIREtGQ//NKuQqPnNqo=
+	t=1733945335; cv=none; b=gY/pkbGyj4605oYoRusQRcpAKWNkpza3JqWz/jqmGYeCfJr+H9nLA9s/ShH7iWuC7qtKfVkyXmjnnoUuTwg0o5Ub+TvLFXxcruIyjBC4VgZu3cEqfGYwR05HGGww+F3k7uW7mFirJgIek+Xv3T/mNfb5EnXKt70/pI0vTxM6JNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733944979; c=relaxed/simple;
-	bh=iQWh6opfFLUpylYa6ZE0+Z5y0oJlV/Z158lXDuLo6Uk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WL0iHYCDzb+Bcv6XMpR8YOuPaqRxrWb3eI6ACIdw1HHzhEhbLo0J1DShp3eAWcce/S/L0+Hyf5j+/aTQqetfQZp8XWDz8znSfU3Y+jINb/6JY+7Fjs1icqNcFOU2HDtkhV9BMVf4ThESDRAOEvREdvZ6JDlIwX/pskhPFsXF9hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JG6pPT31; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa66c1345caso327486566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 11:22:56 -0800 (PST)
+	s=arc-20240116; t=1733945335; c=relaxed/simple;
+	bh=saI+TJ4WwQAKgDdrklhcfnFFyZMNGfi+r+nYwnAQ5lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErYlwW+vNT6DJEd52u9pHNuqcma2OLSvqdXfv/rS9mD7QyKU1Q1MpXPWqCsaRZc/L8/O8hTaU777oWMCrjV+dPclbC3lxw9zm374dIablXJgIILwyURAho9aUxSI8H1aPoARq4G4IXISzR86OZZH5thZVmPVub1wfiHgv+6juOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BHXkqup9; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53ff1f7caaeso4868077e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 11:28:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733944975; x=1734549775; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/YhOBi0LQaIKNfwYjxglNoh+vEhk+Q/xwvKfIoew8c=;
-        b=JG6pPT31TqFltg2am67QVelPmQthtQfGxphD8yrF7y8Vp5DJDtYIeJ8Zm+Kwd1GuTi
-         /d2EVtejMMyO3gkSvyM4McUXP7comgvXCBrvfH8JZVYrAhvpmCjHpPaY3Y40hIFJR2Ac
-         HsTfCvn03DcAvzj1A103cxPNooeUHsLvGasRA=
+        d=linaro.org; s=google; t=1733945332; x=1734550132; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aNVz/ArW/lLNjVQfl87+kX9B15NlodHN27QuCLAE0kw=;
+        b=BHXkqup9Y/cmRamG56yF+N9RKYHjpfdvEZA40eLUkK4wV74ALF7+EX3b+Mq/wa66W8
+         xGmeGp1cD+f2QWkkm5R6RjjDyINZ+fmcB8m5U3nAKDkJObjt47InkBlZYnQrXShUdOkS
+         DQ8cr+iPdpFeYiLR5yFworFlJKZ9ePZrMPI4HxoX0QSDCoMA1Nv9oq2//POsxzWndCKs
+         DydgprNCHQ23jWUDIuCl82DMHnt+sLh/rEFKI+1M9RVYsoWVKovXsJMcbEgp+Kg8KjGa
+         pLhdPyLWEgIBeoLwmsWPgzAbdVYLfKuXCtivx6eSlH00GjLjdoeelow20g+NeVgOM80y
+         pgpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733944975; x=1734549775;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z/YhOBi0LQaIKNfwYjxglNoh+vEhk+Q/xwvKfIoew8c=;
-        b=wnRLjydcLQ6vsSisV0r7eeKDpLVUxQyjByzIJytwLGv3iL/ZSpd3Mhxg4Gqi26aDHD
-         ru/ylqepTlrUE/TVIQDiONB/+Go3GUr4RDlHhXb9H5PRofiUO4jcrUJVa9Md5ORb8OPN
-         YKDHSGI5qEnZ3w8/7OnWRWCy5lHcDJcsbQgSV/pgadzyU83dyhiIkpScmyHA7MEshG2D
-         WzBM7DWfbYkdPAzb58p+EQSO2+4X34fLTHbEUlOtv7H3thHSLUFqia5Dq5JjuJIvW98o
-         W3b7I1jJwGMprFUV3w7cdpDQ4d254heOe2qMNDqtp8s7jUw3Sb9ghdB/kgp3ckZ2Xvwr
-         rINA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVgA441dUXsq9mH74g7R/KIrpTrn2G8IwAyT3FSNHCxig5xIGImUsExf9EeuZM0whjO1tBhUOxrEvTrTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWORr8oxXW0SrXAcsJjdrtX7Gcr/P7KeVUzxcvlHr5aiJ9Nb1H
-	X54QOuam9ZQ8ORGEBVwiZBE6MNQY09oWARPdygI4Agrrc6VLCP19fdckCZA1EB5JUrsI3fqPUBd
-	qO/w=
-X-Gm-Gg: ASbGncu1fP5zNq7FgyadgdH56Pcqp1yFWNYuzjvaUU8Ck9Sq1bA2Vv0DmTg8GEezUkX
-	w/hadtQllTDRxCeWNW23qtdW+Dm+dMhRGW6hmJz/1GcKnCHom/ka4PImkCpVv0IwAAYI1MH1Aap
-	F2G15UQOxWy4qQ6SswrYHSFz/FLVDKT+EhIbacnhOQ/5TXfVfPx1HD32vT8AD1szRMJxFH86mA/
-	dwbCNfopKxpLifEDx23C6rMsondeWsQfMD6CZUCFZpvqoGDSDt8ooyatexOyCJWPS4kiH2dLbiq
-	3tpzBOlXtKHcBvX/PMtjcz02IhaG
-X-Google-Smtp-Source: AGHT+IFjsKNlwdwvw08YjmmS9N5rXpUtnjkU8uKMliDlaU/Qs+j3wNYTqeZWXyQBHw0eFOeBugmrGg==
-X-Received: by 2002:a17:907:c906:b0:aa6:3da3:db48 with SMTP id a640c23a62f3a-aa6c1d1309cmr88546366b.53.1733944974786;
-        Wed, 11 Dec 2024 11:22:54 -0800 (PST)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa677c4970bsm599212166b.112.2024.12.11.11.22.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 11:22:54 -0800 (PST)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa69077b93fso525405466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 11:22:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXf/wIUgFyjGGFDy0pZR4hAdn9Jyfq0qkQ5KhCa1kankzalV+KlbH3sZPK58u6aXNpQX0GGfIYmKQGXQYk=@vger.kernel.org
-X-Received: by 2002:a17:906:30cf:b0:aa6:748e:d20d with SMTP id
- a640c23a62f3a-aa6c1b103c1mr100558266b.32.1733944973650; Wed, 11 Dec 2024
- 11:22:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733945332; x=1734550132;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aNVz/ArW/lLNjVQfl87+kX9B15NlodHN27QuCLAE0kw=;
+        b=NIxc1UjCNpsZq/bXrPZdB6yfAju6ZmcUZnKkVgVdTRYBWhErO/QeXgDQkfD//tkpNC
+         m1diY4xgpdjlnEPhI1iFhsH+CYvOSL52/TREGVKkPL7JQdK7BuKrmyiyh2zQJCrbkr+s
+         MSlEnZolLO9lymc/M0MMX3422FlzdJg/T2jyMs4yKNpqE2SZXN5+p6hBKdDoqveEamVl
+         mlK1Y4iluwAGOpBb+6nI/bhlG6iFm3RPMt2o8EWKM1N5GnOSQSZK9+1AIEOe569PbGNn
+         v32Dx5W6ec49M7TL1B+nZtIhscVXGIAs4nvaGMf1P9EfhqERMvbNgidKrmo2fF1LXJSO
+         A17g==
+X-Forwarded-Encrypted: i=1; AJvYcCX07PG8ARL9f3Rz+VWn9JTMRr6tbQvsUCAV4IOmzMk7GdlWsaANzaX8OdE+LBDhQQPtpvpJJ7sGQrbj0uE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH41jKjUTposyyQDToa4YiB5BvWgTd4kGl5D2LIA7HOSIa2bCU
+	uWqVAFnpQKOMFtgBK+1z0LzDdu6J95J6bnbTAH/A5ApMGtoLJp9suSmULDsB0ig=
+X-Gm-Gg: ASbGncuKKU2RqHEvr2N9ReuRxD8xLulM3TCvNXFgJNAkdlUO4wNYwBJZGTsUulfAdMC
+	4mUYaXgemybdrGY/1lRKqQoMXZbPkRsQq2M2mOMd7GeVNSFZZfO8XQuf7SLHJBzvbmsaH86FW+x
+	BLccE3o1Nr7lq031xiBhcJBAisGpPQ2PCbg4EK4FjLywYK/zW4kANcnJDo//7qFnhHyq1X/2i3X
+	8h3X1NCwUMQCd3E/1o92y2oqSensT41yiXvjKPSI8OsVbf0Ye2XDCGJLAXbzJIo5DZ5QnlKYRvw
+	K1JCLZizfGDB8ezneIX5jzE5V4H0wBhV1Q==
+X-Google-Smtp-Source: AGHT+IGOfbXPT4dn2jZV1RKLOlrX7K+m2akt+BVMHTUk1WVTQ0bQV6RFUx4RBGUDnQfN4dhyAyjPRA==
+X-Received: by 2002:a05:6512:1391:b0:53e:20af:db96 with SMTP id 2adb3069b0e04-5402a5d3993mr1464865e87.10.1733945331546;
+        Wed, 11 Dec 2024 11:28:51 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e2fbbb0c0sm1773317e87.191.2024.12.11.11.28.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 11:28:50 -0800 (PST)
+Date: Wed, 11 Dec 2024 21:28:47 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, 
+	Rocky Liao <quic_rjliao@quicinc.com>, linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_jiaymao@quicinc.com, 
+	quic_shuaz@quicinc.com, quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
+Subject: Re: [PATCH v4 1/4] dt-bindings: net: bluetooth: qca: Expand
+ firmware-name property
+Message-ID: <dukhhbf22w2hcr32jtjuvminpuzgi3a3tkkux7pd32j4d4gzkx@mvgckzd22she>
+References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
+ <20241210151636.2474809-2-quic_chejiang@quicinc.com>
+ <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
+ <62afbaea-67b1-4572-9e78-d1dbe5fae20a@quicinc.com>
+ <f818f089-0490-42da-9aee-1a7006c11978@kernel.org>
+ <65fd0932-4519-44ac-ba9d-55ee97b43233@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z1mzu4Eg6CPURra3@google.com> <87v7vqyzh4.fsf@mailhost.krisman.be>
-In-Reply-To: <87v7vqyzh4.fsf@mailhost.krisman.be>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Dec 2024 11:22:37 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgF7AjODAyO9n+8SfTiQd9-=zTLKh4SQP-xEpeMUPHvAw@mail.gmail.com>
-Message-ID: <CAHk-=wgF7AjODAyO9n+8SfTiQd9-=zTLKh4SQP-xEpeMUPHvAw@mail.gmail.com>
-Subject: Re: Unicode conversion issue
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "hanqi@vivo.com" <hanqi@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <65fd0932-4519-44ac-ba9d-55ee97b43233@quicinc.com>
 
-On Wed, 11 Dec 2024 at 08:08, Gabriel Krisman Bertazi <krisman@suse.de> wrote:
->
-> It seems commit 5c26d2f1d3f5 ("unicode: Don't special case ignorable
-> code points") has affected more than ignorable code points, because that
-> U+2764 is not marked as Ignorable in the unicode database.
+On Wed, Dec 11, 2024 at 06:16:44PM +0800, Cheng Jiang (IOE) wrote:
+> Hi Krzysztof,
+> 
+> On 12/11/2024 5:48 PM, Krzysztof Kozlowski wrote:
+> > On 11/12/2024 10:39, Cheng Jiang (IOE) wrote:
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>> index 7bb68311c..2782d2325 100644
+> >>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>> @@ -101,7 +101,10 @@ properties:
+> >>>>    max-speed: true
+> >>>>  
+> >>>>    firmware-name:
+> >>>> -    description: specify the name of nvm firmware to load
+> >>>> +    description:
+> >>>> +      If one item is present, specify the name of the NVM firmware to load.
+> >>>> +      If two items are present, the first item specifies the name of the NVM,
+> >>>> +      and the second specifies the name of the rampatch firmware to load.
+> >>>
+> >>> Don't repeat constraints in free form text. Use proper constraints so
+> >>> you can validate your DTS. And then actually do validate your DTS...
+> >>>
+> >> It seems unnecessary to add this description, so I will drop this change. Is that okay?
+> > 
+> > You need to list the items and describe them. See how all other bindings
+> > do it.
+> > 
+> The firmware names are not fixed strings; they vary depending on the chip, board, or platform.
+> 
+> How about the following description? Thank you!
+> 
+>   firmware-name:
+>     $ref: /schemas/types.yaml#/definitions/string
+>     description: |
+>       List of firmware names. The first item is the name of the NVM firmware
+>       to load. The second item is the name of the rampatch firmware to load,
+>       if present.
+>     minItems: 1
+>     maxItems: 2
 
-It's not U+2764 - "Heavy Black Heart".
+I think this is better:
 
-It's U+2764 _and_ U+FE0F - "Variation Selector-16 (VS16)"
+firmware-name:
+  minItems: 1
+  items:
+    - description: NVM firmware to load (extend the desription)
+    - description: rampatch (extend the description)
 
-And VS16 asks that the heart be shown as an emoji, which in turn turns
-that black heart red.
+> > Best regards,
+> > Krzysztof
+> 
 
-And presumably that VS16 is one of those idiotic "ignorable" characters.
-
-Christ, I don't understand why some people still think that
-casefolding is sane.  It damn well isn't, exactly because it causes
-these kinds of insane situations, because the "case folding" of "mark
-it as an emoji" is damn well undefined.
-
-> I still think the solution to the original issue is eliminating
-> ignorable code points, and that should be fine.  Let me look at why this
-> block of characters is mishandled.
-
-I suspect we'll have to revert, and re-examine.
-
-Of course, in the meantime, somebody has probably already created
-files with the *new* hashing, so even reverting might not "fix" the
-issue.
-
-The real fix is to not do casefolding, or at least to never *EVER*
-trust the hashing of case-folded crap, because the hash is
-fundamentally not reliable.
-
-What a case-folding filesystem should do is
-
- (a) preserve case and hash with that preserved case (which is
-equivalent to NOT DOING CASE FOLDING! The user gave you binary data,
-you *treat* it as binary sacred data instead of corrupting it)
-
- (b) only using case folding for "I didn't find the exact case, let's
-do an approximate search".
-
-but decades of history has shown that filesystem people seem to be
-unable to understand the whole notion of "you don't screw with peoples
-data".
-
-That (a) guarantees that you get sane semantics for 1:1 names and that
-you can *always* access the file using the preserved case.
-
-And (b) is the "you get the insane case folded semantics for the
-insane situation where it's needed, and never anywhere else".
-
-Alternatively,  case-folding should only fold the really damn obvious
-cases. That was the problem with the horrendous "ignorable code
-points", where case-folding reacted to non-case characters by simply
-ignoring them.
-
-Damn how I hate broken filesystems that "interpret" the data that they
-are given. Pure unadulterated garbage.
-
-If I wanted made-up random crap and hallucinations, I'd ask ChatGPT,
-not my filesystem.
-
-                Linus
+-- 
+With best wishes
+Dmitry
 
