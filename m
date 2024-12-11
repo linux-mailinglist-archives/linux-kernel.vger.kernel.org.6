@@ -1,168 +1,268 @@
-Return-Path: <linux-kernel+bounces-440522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BC19EBFAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:57:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FC09EBFBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:00:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EEB5163EEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 23:57:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A121888643
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0996522C36C;
-	Tue, 10 Dec 2024 23:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC135672;
+	Wed, 11 Dec 2024 00:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NSiV5939"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f1DYDUDT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB3A1EE7BE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04861367
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733875027; cv=none; b=j66ZaYfpwCNXp/FfFETCPHTfb2YOmHmMvSxLgAbrLXUwQLeWFox+d45pFGRrAONbB3sQUO/7zH0gNdk4JOpGkhXuOiaKliFaK5siAhyL8uHD3GAUscw4bzRcUHL38YOWJ6ySPtlAQRAWTHtqZmFJN8moJqSgvaG42aHkOU7U6lI=
+	t=1733875250; cv=none; b=RPmezaZS5HMswYPbwRAvThe5ndIifsiy3HlbWBiMIwoHv78l9hnr8gCR1PSeVoS+5RBDb20D0hFSCNuv9nALYHHQ55rzEZXAfpvbdtdEAq+RYXdVhOyFW9BYmXKuD+aiUNDnR7nl7zv+U8XQanwcUssyHEWVdf/28tC5/zC17KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733875027; c=relaxed/simple;
-	bh=EqygIXHKtdGNvOsZOigbsmCEMu5TwQj3TkApYZIr7Qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BwMRXYBCGOPy7q9tqfLFeEno5WONkSsKDH/WFlJFaJBY4+SrghLshVmFL8BdOAU/q1B/l2qf3f7OpeIkVgH+jN2fMoqOdS8fuE7SaxBX5E3YaGLwOtLzB4ngv90k7Q4ZZygCheE/u/df8Atwk9+cII5gVqP/nDM7fskzFpBk11Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NSiV5939; arc=none smtp.client-ip=192.198.163.16
+	s=arc-20240116; t=1733875250; c=relaxed/simple;
+	bh=LuygsJojapZ3qBWYFPssV1LYQDlwLpvn1iOfh5weznw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DEvZZGDbeKAQVzXpRb9PbpcasK4Xhs0694BJyWFBc+/D3Mxzrp5vcty/Hn2xMT//3HyO8FkmE7eWEDfQXRPeBtx3pQdb0R8rfMVQfE3LVoGdaLiaZzpC9HmQgN0+ximWtYuY1FIpRfzyeHcP/05fPjCLh0yLULt1hf2BOJkPkBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f1DYDUDT; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733875024; x=1765411024;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=EqygIXHKtdGNvOsZOigbsmCEMu5TwQj3TkApYZIr7Qg=;
-  b=NSiV5939DxjD8tDHT4MX0tkaf+3GsHg210QgzWfFtX6SlB8dh9pmD2p7
-   UE/sldfuAyYlJ87PWYUA+TcHEShVNkQurJcSX6YtS0ixdSuXNAI3vGXjq
-   XibkYqMwkLYUIs2pE0hvyKGh/GB366zh/1IOrG/afjAs4stzF2kcE0nJa
-   RCF3p9Z0sVr0lud74Y2XmK+oQHc207FmExiTOIviQt+Yak23MsQhv0+jK
-   AcUrzsqQx6IgimyLnV99rjQ+IYT6xhIbmHQK0p/5dxZU8nxLb5Snplhhu
-   1Ah4qT5LH45XFS4Fr3OYVl/EdK58bCv5Q5HdjJX4cy2EvLtf9OPiG/GJ1
-   w==;
-X-CSE-ConnectionGUID: YF60KkbUSoeVg744rGoWqQ==
-X-CSE-MsgGUID: aKyHLsuCQy+IX1kWwfBLzA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="21822786"
+  t=1733875248; x=1765411248;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=LuygsJojapZ3qBWYFPssV1LYQDlwLpvn1iOfh5weznw=;
+  b=f1DYDUDTSxW+N9oo1zS1gP0KGZ9p4nQRZ5/9EBy+xp1jJdwVJhDCRTXI
+   hSSBmGAZWc0F7Ze8U8KZvQgi+5eZ0ixXuvXzfo1cftYBqQbg976wtXqyl
+   c44nS+4TSEIfFKvNt3RpFDuZ6wUFgbkJFwzjrtbLh3I6cE1W+0XkCTH2F
+   AfKKCdOyMqfNLY1PP/bUHGt+fygPbsApueKVEpiOg6r/p57tfMXf76Q3Q
+   AXx8FoJKT4YQPpM1foHE6iCzd/ykVnM7iKArKZilnNBepLt5Z0JDfkA68
+   Q5LTM9r9pokTe7TNRat3Vj0JlkB3Y/H/wW7UbOmkodhzH59dXzamhfFvL
+   A==;
+X-CSE-ConnectionGUID: Ol+8CeIETGWUcZ6+gVG7sg==
+X-CSE-MsgGUID: mTnl9Jz4SsCz9ukTbCF3rg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="56720472"
 X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="21822786"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 15:57:03 -0800
-X-CSE-ConnectionGUID: H9RSBiuQQkeD7vOv3ITWxw==
-X-CSE-MsgGUID: 7hYt4exhRru4UJVfrJofKg==
+   d="scan'208";a="56720472"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 16:00:47 -0800
+X-CSE-ConnectionGUID: niJVfmm5TY+avYEetcNHIg==
+X-CSE-MsgGUID: kCCrWKLRQjSxpifzgbXPBw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="95638404"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 10 Dec 2024 15:57:02 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLA67-00064Y-1o;
-	Tue, 10 Dec 2024 23:56:59 +0000
-Date: Wed, 11 Dec 2024 07:56:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ashutosh Dixit <ashutosh.dixit@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>
-Subject: drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in
- initializer (different address spaces)
-Message-ID: <202412110733.NL3DGHyV-lkp@intel.com>
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="95922340"
+Received: from ldmartin-desk2.corp.intel.com (HELO ldmartin-desk2) ([10.125.109.223])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 16:00:44 -0800
+Date: Tue, 10 Dec 2024 18:00:33 -0600
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Luca Coelho <luciano.coelho@intel.com>, 
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, jani.saarinen@intel.com, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFT] Revert "lockdep: Enable PROVE_RAW_LOCK_NESTING with
+ PROVE_LOCKING."
+Message-ID: <c5r46che35oqieotvytdfj2utelhtidnbjgyfijfik64mtgmlt@6mi42dmtz2wh>
+References: <20241209135602.2716023-1-luciano.coelho@intel.com>
+ <djny2tqz7mck5omsadowtn7flnegizoxgmpymyyfr3gvw4x7vf@67pbgkqftwxf>
+ <Z1jG53Hy0PZKdJG2@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1jG53Hy0PZKdJG2@intel.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7cb1b466315004af98f6ba6c2546bb713ca3c237
-commit: cdf02fe1a94a768cbcd20f5c4e1a1d805f4a06c0 drm/xe/oa/uapi: Add/remove OA config perf ops
-date:   6 months ago
-config: csky-randconfig-r121-20241211 (https://download.01.org/0day-ci/archive/20241211/202412110733.NL3DGHyV-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241211/202412110733.NL3DGHyV-lkp@intel.com/reproduce)
++Peter and Thomas, for question below about the use of raw_spinlock_t in perf
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412110733.NL3DGHyV-lkp@intel.com/
+[ Note that the patch by itself is not proposing this revert to be merged in
+   any tree going to Linus - that would just shoot the messenger - it's
+   just a temporary stop gap to get our CI running again. Below I'm
+   looking for a real solution... ]
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long [usertype] *ptr @@     got void [noderef] __user * @@
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse:     expected unsigned long long [usertype] *ptr
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse:     got void [noderef] __user *
->> drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __user *__p @@     got unsigned long long [usertype] *ptr @@
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     expected void const [noderef] __user *__p
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     got unsigned long long [usertype] *ptr
-   drivers/gpu/drm/xe/xe_oa.c: note: in included file (through include/linux/sched/task.h, include/linux/sched/signal.h, include/linux/rcuwait.h, ...):
-   include/linux/uaccess.h:102:38: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const *from @@     got void const [noderef] __user *from @@
-   include/linux/uaccess.h:102:38: sparse:     expected void const *from
-   include/linux/uaccess.h:102:38: sparse:     got void const [noderef] __user *from
+On Tue, Dec 10, 2024 at 05:55:35PM -0500, Rodrigo Vivi wrote:
+>On Tue, Dec 10, 2024 at 09:00:13AM -0800, Lucas De Marchi wrote:
+>> On Mon, Dec 09, 2024 at 03:53:51PM +0200, Luca Coelho wrote:
+>> > This reverts commit 560af5dc839eef08a273908f390cfefefb82aa04.
+>> >
+>> > Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+>> > ---
+>> >
+>> > It seems that we have a few issues with this configuration in xe and
+>> > in i915.  Let's try to revert it to see if the problems we're seeing
+>> > go away.
+>> >
+>> > Note, these are _real_ issues, but only if CONFIG_RT is enabled, so the actual issues need to be solved properly, but we can revert this change until then, to avoid regressions.
+>>
+>> +Jani Nikula, +Rodrigo
+>>
+>> I'm thinking about landing this in topic/core-for-CI.  It seems we have
+>> quite a few locks to revisit - we are taking spinlocks while holding
+>> raw_spinlocks and until now there's no warning about this bug.
+>
+>could you point to one case? I don't see us using the raw_spinlocks...
 
-vim +401 drivers/gpu/drm/xe/xe_oa.c
+main entrypoint is perf pmu. All these purple results:
+https://intel-gfx-ci.01.org/tree/drm-tip/shards-all.html?testfilter=perf
 
-   377	
-   378	/**
-   379	 * xe_oa_remove_config_ioctl - Removes one OA config
-   380	 * @dev: @drm_device
-   381	 * @data: pointer to struct @drm_xe_perf_param
-   382	 * @file: @drm_file
-   383	 */
-   384	int xe_oa_remove_config_ioctl(struct drm_device *dev, u64 data, struct drm_file *file)
-   385	{
-   386		struct xe_oa *oa = &to_xe_device(dev)->oa;
-   387		struct xe_oa_config *oa_config;
-   388		u64 arg, *ptr = u64_to_user_ptr(data);
-   389		int ret;
-   390	
-   391		if (!oa->xe) {
-   392			drm_dbg(&oa->xe->drm, "xe oa interface not available for this system\n");
-   393			return -ENODEV;
-   394		}
-   395	
-   396		if (xe_perf_stream_paranoid && !perfmon_capable()) {
-   397			drm_dbg(&oa->xe->drm, "Insufficient privileges to remove xe OA config\n");
-   398			return -EACCES;
-   399		}
-   400	
- > 401		ret = get_user(arg, ptr);
-   402		if (XE_IOCTL_DBG(oa->xe, ret))
-   403			return ret;
-   404	
-   405		ret = mutex_lock_interruptible(&oa->metrics_lock);
-   406		if (ret)
-   407			return ret;
-   408	
-   409		oa_config = idr_find(&oa->metrics_idr, arg);
-   410		if (!oa_config) {
-   411			drm_dbg(&oa->xe->drm, "Failed to remove unknown OA config\n");
-   412			ret = -ENOENT;
-   413			goto err_unlock;
-   414		}
-   415	
-   416		WARN_ON(arg != oa_config->id);
-   417	
-   418		sysfs_remove_group(oa->metrics_kobj, &oa_config->sysfs_metric);
-   419		idr_remove(&oa->metrics_idr, arg);
-   420	
-   421		mutex_unlock(&oa->metrics_lock);
-   422	
-   423		drm_dbg(&oa->xe->drm, "Removed config %s id=%i\n", oa_config->uuid, oa_config->id);
-   424	
-   425		xe_oa_config_put(oa_config);
-   426	
-   427		return 0;
-   428	
-   429	err_unlock:
-   430		mutex_unlock(&oa->metrics_lock);
-   431		return ret;
-   432	}
-   433	
+Example:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+<4> [96.732915] =============================
+<4> [96.732950] [ BUG: Invalid wait context ]
+<4> [96.732982] 6.13.0-rc2-CI_DRM_15816-g2223c2c738ec+ #1 Not tainted
+<4> [96.733026] -----------------------------
+<4> [96.733056] swapper/0/0 is trying to lock:
+<4> [96.733088] ffff888129513910 (&pmu->lock){....}-{3:3}, at: i915_pmu_enable+0x48/0x3a0 [i915]
+<4> [96.733485] other info that might help us debug this:
+<4> [96.733536] context-{5:5}
+<4> [96.733565] 1 lock held by swapper/0/0:
+<4> [96.733606]  #0: ffff88885f432038 (&cpuctx_lock){....}-{2:2}, at: __perf_install_in_context+0x3f/0x360
+<4> [96.733710] stack backtrace:
+<4> [96.733742] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.13.0-rc2-CI_DRM_15816-g2223c2c738ec+ #1
+<4> [96.733841] Hardware name: Intel Corporation Meteor Lake Client Platform/MTL-P LP5x T3 RVP, BIOS MTLPFWI1.R00.3471.D91.2401310918 01/31/2024
+<4> [96.733971] Call Trace:
+<4> [96.734002]  <TASK>
+<4> [96.734029]  dump_stack_lvl+0x91/0xf0
+<4> [96.734078]  dump_stack+0x10/0x20
+<4> [96.734118]  __lock_acquire+0x990/0x2820
+<4> [96.734177]  lock_acquire+0xc9/0x300
+<4> [96.734222]  ? i915_pmu_enable+0x48/0x3a0 [i915]
+<4> [96.734533]  _raw_spin_lock_irqsave+0x49/0x80
+<4> [96.734568]  ? i915_pmu_enable+0x48/0x3a0 [i915]
+<4> [96.734800]  i915_pmu_enable+0x48/0x3a0 [i915]
+<4> [96.735031]  i915_pmu_event_add+0x71/0x90 [i915]
+
+I started converting the pmu->lock innside i915_pmu.c. I´t be great if
+it was only that, but it's clear it's not sufficient. I tried to move a few locks
+around to avoid having to convert uncore->lock, but ultimately couldn't avoid
+it, which leads to converting a few more. So far:
+
+	raw_spin_lock_init(&guc->timestamp.lock);
+	raw_spin_lock_init(&pmu->lock);
+	raw_spin_lock_init(&i915->mmio_debug.lock);
+	raw_spin_lock_init(&uncore->lock);
+
+And it's still not sufficient, because intel_ref_tracker tries to
+allocate while holding one of those and I'm not confident on making that
+pass GFP_ATOMIC. Maybe that allocation could be moved to init, but I ran out
+of time for this and will try again later.
+
+[  204.706501] swapper/0/0 is trying to lock:
+[  204.710565] ffff88810005ead8 (&n->list_lock){-.-.}-{3:3}, at: get_partial_node.part.0+0x27/0x3a0
+[  204.719278] other info that might help us debug this:
+[  204.724285] context-{5:5}
+[  204.726891] 2 locks held by swapper/0/0:
+[  204.730785]  #0: ffff88888cc32038 (&cpuctx_lock){....}-{2:2}, at: __perf_install_in_context+0x3f/0x360
+[  204.739995]  #1: ffff88815265cf40 (&guc->timestamp.lock){....}-{2:2}, at: guc_engine_busyness+0x45/0x2c0 [i915]
+[  204.750171] stack backtrace:
+[  204.753038] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G     U             6.13.0-rc2-xe+ #13
+[  204.761729] Tainted: [U]=USER
+[  204.764678] Hardware name: Intel Corporation Raptor Lake Client Platform/RPL-S ADP-S DDR5 UDIMM CRB, BIOS RPLSFWI1.R00.5045.A00.2401260733 01/26/2024
+[  204.777913] Call Trace:
+[  204.780355]  <TASK>
+[  204.782450]  dump_stack_lvl+0x91/0xf0
+[  204.786090]  dump_stack+0x10/0x20
+[  204.789383]  __lock_acquire+0x990/0x2820
+[  204.793276]  ? lock_acquire+0x29c/0x300
+[  204.797088]  lock_acquire+0xc9/0x300
+[  204.800642]  ? get_partial_node.part.0+0x27/0x3a0
+[  204.805310]  _raw_spin_lock_irqsave+0x49/0x80
+[  204.809635]  ? get_partial_node.part.0+0x27/0x3a0
+[  204.814302]  get_partial_node.part.0+0x27/0x3a0
+[  204.818794]  ___slab_alloc+0x792/0x12f0
+[  204.822600]  ? ref_tracker_alloc+0xd7/0x270
+[  204.826754]  ? __lock_acquire+0x11a1/0x2820
+[  204.830906]  ? ref_tracker_alloc+0xd7/0x270
+[  204.835058]  __kmalloc_cache_noprof+0x277/0x480
+[  204.839554]  ? __kmalloc_cache_noprof+0x277/0x480
+[  204.844221]  ref_tracker_alloc+0xd7/0x270
+[  204.848206]  ? ref_tracker_alloc+0xd7/0x270
+[  204.852357]  guc_engine_busyness+0x122/0x2c0 [i915]
+
+
+>
+>>
+>> It's a real problem only for PREEMPT_RT since otherwise there's
+>> no difference between the 2 lock types. However fixing this may involve
+>> quite a few changes: if we convert the lock to raw we may need to
+>> cascade the conversions to additional locks.  The ones I identified are:
+>> pmu->lock, which would also need to have uncore->lock converted, which
+>> would then probably cascade to quite a few others :-/. I'm not sure
+>> converting uncore->lock will actually be a good thing.
+>
+>hmm raw_spinlocks for the lowlevel might not be a bad idea, but perhaps
+>we need to convert the other way around the upper levels?
+
+that would mean:
+
+<4> [96.733606]  #0: ffff88885f432038 (&cpuctx_lock){....}-{2:2}, at: __perf_install_in_context+0x3f/0x360
+
+so inside the perf event infra, that has been using raw_spinlock_t
+since forever. I'm surprised we got this only 10 years later :-/.
+I don't think perf can sleep in that context, but Cc'ing a few people
+and lkml for that question.
+
+thanks
+Lucas De Marchi
+
+>
+>>
+>> I will keep digging.
+>
+>Ack on getting this to topic/core-for-CI so we don't block our
+>CI while we investigate and fix this.
+>
+>Thanks,
+>Rodrigo.
+>
+>>
+>>
+>> Lucas De Marchi
+>>
+>>
+>> >
+>> >
+>> > lib/Kconfig.debug | 12 ++++++++++--
+>> > 1 file changed, 10 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>> > index f3d723705879..de4ffe09323b 100644
+>> > --- a/lib/Kconfig.debug
+>> > +++ b/lib/Kconfig.debug
+>> > @@ -1397,14 +1397,22 @@ config PROVE_LOCKING
+>> > 	 For more details, see Documentation/locking/lockdep-design.rst.
+>> >
+>> > config PROVE_RAW_LOCK_NESTING
+>> > -	bool
+>> > +	bool "Enable raw_spinlock - spinlock nesting checks"
+>> > 	depends on PROVE_LOCKING
+>> > -	default y
+>> > +	default n
+>> > 	help
+>> > 	 Enable the raw_spinlock vs. spinlock nesting checks which ensure
+>> > 	 that the lock nesting rules for PREEMPT_RT enabled kernels are
+>> > 	 not violated.
+>> >
+>> > +	 NOTE: There are known nesting problems. So if you enable this
+>> > +	 option expect lockdep splats until these problems have been fully
+>> > +	 addressed which is work in progress. This config switch allows to
+>> > +	 identify and analyze these problems. It will be removed and the
+>> > +	 check permanently enabled once the main issues have been fixed.
+>> > +
+>> > +	 If unsure, select N.
+>> > +
+>> > config LOCK_STAT
+>> > 	bool "Lock usage statistics"
+>> > 	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
+>> > --
+>> > 2.45.2
+>> >
 
