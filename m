@@ -1,329 +1,239 @@
-Return-Path: <linux-kernel+bounces-441708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E219ED2D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:55:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4239ED2DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:56:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B241889F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F032814EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEE31DED6C;
-	Wed, 11 Dec 2024 16:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965331DDC3A;
+	Wed, 11 Dec 2024 16:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jgj6aki9"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y+XP+nUw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDD71DE4C8
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DBA1D63CA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936081; cv=none; b=mZC4WYUlG3gsS8/e0nHUNjqvKd2RJqw2YQnE8pDcmA+bXAu+BxTG9VmkD4Zn6Diq5fOYjCf0ugzxJ3gJnii6gS82TdemU82N6R59mVa1KXSvqzQMyJTE//CpH/CiIzhxoKhdCmcEtPbhD4baKEc9MmzDuBSYnu1d+zNIc5elpHI=
+	t=1733936165; cv=none; b=m3yiNuEUgAHPlVULqCPFPri299W0sRv2RGaQ6wBDQXWpg1UNj66HGodWD4Vn0gUH57xKiJRo68jF4UAqlkQfQopvj9jyqZ7txTB3Pb768CNpPknIVuVKDwivwm5wO9w7E1H/5yESXZNdCdkyDqkC0/sx2zVbKAQfF8ahwZxhVK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936081; c=relaxed/simple;
-	bh=efeXa7kgYwb3mHLsGpDYh6uMOUyyIgGO03EJS/PZJpA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g0NV8NQ2ItOZrAa9O9plO9IYXDa5nuKogxkVgo2YRoWAoWzMNwuzIIbM1e8gf4l9o7R63uXpH0yz1quVmfh8HCZVkypcN7R3gLI064ORm+KaVHE2RFcwen30CNEVL1EkhJmBMHulrrxkhguVdcptpiva/0l3U/3HO0auDsQX78g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jgj6aki9; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9e44654ae3so1113500966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:54:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733936077; x=1734540877; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LT4Y4IAOHXINu1wqdwJVPtJlO3Wbe04qhOh0Y3ZXAqs=;
-        b=Jgj6aki95z26nMzwi0wlPg0FiAwbwzp5DngkaDce8ORexPnDi+5Ydx/gk3cku6kQLq
-         jP1Ab9OILcZ3NnzgJgD1Ys6ZOZ1TZ8fl90B+n6jKM9xksv3PiTtf31Yt7CRQRMYCl/pT
-         uQswnENZMID7hyLDQlbxrQiiJm2bbBbDsmqU1aMEL7BMSA5VZ1GpB8WlEa5K9zA6PcyH
-         EgYLtysryVNhr1FDOLhecllcSUTbSyEKs8NdkC2skwI3qH7rkOO5BHPOTG0fgFIsROlJ
-         gunyb6ZCOstxhBg8ewVtKQzxf/nCb9EXrC8yzYne4HOApGw+n8xIKI4LyVtWX5sCPoAk
-         7/YA==
+	s=arc-20240116; t=1733936165; c=relaxed/simple;
+	bh=zWHe5m7AniP5NqIBCK2sx2UfrdBjUDZpM6IE2aIbD2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ScDpt/mxFBC9SYjCqWL9B6ZDyPU1QpAVD1H0ccIA/gGnlY7+mB84NX/n/128474AZu3LUROLLD3+NfhMIDE6BAjJaqe/RY/m9vigxhfICDTvm4htzM/SnNnVMB8xe/wM3XrvybFB6AatOtlzaNf+odbFHyA6f8R7vagVpxsOvZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y+XP+nUw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733936163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ogy79Ehv4IBlVwhQwJCnxs68QdXDU89Tk1u2sMU6U2Y=;
+	b=Y+XP+nUwKejVs/8Y2M8tpqHwY0vPUtDf7NisDAlzxuTcBoidqu9d8JnH/a3ymrB8vgKHHK
+	ztAmF0IZS+dYPacg19+zHaG4JCRlzRyuumSzj0esTTEucxdXeEYlz74E0EsZlaHEjjO8yd
+	9QyXLh5hzc0MMcZgZB1/ya5g9yqqGOw=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-310-taLjk4NAMsyx4Z63Zi06dA-1; Wed, 11 Dec 2024 11:56:02 -0500
+X-MC-Unique: taLjk4NAMsyx4Z63Zi06dA-1
+X-Mimecast-MFC-AGG-ID: taLjk4NAMsyx4Z63Zi06dA
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-6effbb8c9ffso51028507b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:56:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733936077; x=1734540877;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733936161; x=1734540961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LT4Y4IAOHXINu1wqdwJVPtJlO3Wbe04qhOh0Y3ZXAqs=;
-        b=Uy4PT8xbtlDEZWyaKtRSlnezkviZ5xhyz2R9ZmjMeDW4XrmYsPXnrqkNVTCO2H8vo7
-         YtSGcVpoPBLhmRYyJxxRgj5EQWTAyhaxP12kG77evrHekD2hL5HNsZaZ+aMknkQZpAJ3
-         QLyTTItBd5TP3HGClkXAV+2aBVyOtHwUOym4a6mhDYOtMoQN+zNGLhK6k4m6D8fQUbhW
-         YOI8QN0j7+yw+gEUyd2euhRpqgOKVhiyAtMXla+Ip09zbtMyylFFVE/4xI0645yQR29Z
-         UVEOqVNaqe0F+rkMg6DjNlT0Np/xr0SL7rFcAjMn2L63MfVA3z8/vShZSUYM5r+UP+h3
-         MdeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnr8+NDSy032nEjY8RQ+VvnEYjVnN+WzfDMp4jAY3C2HFXEjKq31+RCEpI4kgbCq2pLuAoBENVk58/QDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx47pUU6bu/9OcU/41Nkju4xUnqLMNATgXhGyd2hNtT5xZ4I+yd
-	oL9a7ICP+XuDoTFgiqazAvBiGcawrRvbRcl0nQEhM13btAJTcamisZpvGbIoh1I=
-X-Gm-Gg: ASbGncsFCO9ezfgmNdgzwR5s8Pel1z+wd8cKLwraBFVW/C0wWAVyazJ9OtO2XLcx3bP
-	ljfp7yd0VFTSfWB2H85qlGFKUcfPKaP0zV6+IkOLVVtT/Xfk4EpYGLq1wC008eFm61L5HtFdDpi
-	NE6wxu8R+eorAjrh0iQin+QoemtHxB7WJVfMnS5NXGIGr1VZ0c866Of65ALwoa2pA58cyWCum2V
-	DoMwelLqW5R5A0DRhwgI1vSZFkiLFro0knMG9RnoNqmas7vd2IMLeAIbJepve4=
-X-Google-Smtp-Source: AGHT+IG2KfzjXRF8C9q1+x+mUMJK8e9Aju/8Okxr9ZzQ+192LiiZ+ttwURACIw3KklZE95rySqsAsQ==
-X-Received: by 2002:a17:906:3ca1:b0:aa6:9e40:ca66 with SMTP id a640c23a62f3a-aa6b11eab02mr318706266b.28.1733936077472;
-        Wed, 11 Dec 2024 08:54:37 -0800 (PST)
-Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66c646defsm651623866b.181.2024.12.11.08.54.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 08:54:37 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Wed, 11 Dec 2024 16:54:34 +0000
-Subject: [PATCH v8 3/3] clk: qcom: Support attaching GDSCs to multiple
- parents
+        bh=Ogy79Ehv4IBlVwhQwJCnxs68QdXDU89Tk1u2sMU6U2Y=;
+        b=fj3UoSK7rZFOjRFgBEld4EErUZPNZQdP4gKEsiEpEzJBQoeWxj8JatugKJN89XQaf/
+         Z1dVNPvm91hhU1LWTGgTYVkbboAVuc2AcCZJmPtaibZ2NHKdohxu9EfAQr0uyOdnraEc
+         P6qa4UWUBVwVnikm+XkZL7HtPF7QdGaRR0V6aEzzLweBh4PL/Mai6yN2gYZYuu6OzD6j
+         j5MiWWbxj58tVKTfRqhTFMduNqqt5vgRSBAEkFPo7lfkO528NWifpYSzDFTd9UjGe5Gj
+         eMKtXOEz1MVYkmmFUtOK9+Wzn//XU4FWVi7MUAyDIyzPhcrtXXnPGEBnnPrOFbATbecy
+         I2Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVzcM7a8UolvXkZ8DLzOKEJQLmPvC8QdC5W3Cd/gUVD7SN3ZMxcys6xKTxNBRU+pF7nv+9TK2VMl1REn54=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx00IXmgpO23t2PWx/8nnrkmVk93BxF10dXdIDDKnavLL2ZgFDu
+	eToT5hG7FTUbtqoONAwyBh8qHshLn3aAi9zvBX7sS0Qur8JW2kuPgsICkoaTNHTtM667v8XK8s5
+	yQ1M9L+85N0NYLcsYsc+PBjwp8ATzQEwvc0H2QTeQU/BH2h3+POBBgR2WCQpIguS0xKaEonr+Xa
+	/I4R6u+QYAcETiXqDEDoWY28XS7IB05D0m4G7c
+X-Gm-Gg: ASbGncuxPm5TDfTdPlGrDEhwtmKYFm2kEbnA8WCIHQ8pDsnVoYj8amIK/Qsjn4Sl8Hl
+	CfT4BEKjiRzFKsbHr4UrLaRtZWgzexDyFCQ==
+X-Received: by 2002:a05:690c:6112:b0:6ef:522a:1c28 with SMTP id 00721157ae682-6f19e85f643mr2789677b3.35.1733936161589;
+        Wed, 11 Dec 2024 08:56:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGYbotFlEwV4sK4ywFMOqX+paW36g080UIMfoKoScxUSJrCf7vtKNkAJL0n2QmxoNxSc4ETRNmaLswGLGxR1/M=
+X-Received: by 2002:a05:690c:6112:b0:6ef:522a:1c28 with SMTP id
+ 00721157ae682-6f19e85f643mr2789247b3.35.1733936161221; Wed, 11 Dec 2024
+ 08:56:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-3-5d93cef910a4@linaro.org>
-References: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-0-5d93cef910a4@linaro.org>
-In-Reply-To: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-0-5d93cef910a4@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-355e8
+References: <20241210143423.101774-1-sgarzare@redhat.com> <20241210143423.101774-4-sgarzare@redhat.com>
+ <f8c6c1e0-a42d-6fa6-a10e-925592d7992f@amd.com>
+In-Reply-To: <f8c6c1e0-a42d-6fa6-a10e-925592d7992f@amd.com>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Wed, 11 Dec 2024 17:55:49 +0100
+Message-ID: <CAGxU2F4EG_uAcSbdjroW=sUo5yu6zQw8yJ4R_b+zxX7Sk-bDZg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-coco@lists.linux.dev, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, x86@kernel.org, 
+	Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho <cclaudio@linux.ibm.com>, 
+	Dov Murik <dovmurik@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When a clock-controller has multiple power-domains we need to attach the
-GDSCs provided by the clock-controller to each of the list of power-domains
-as power subdomains of each of the power-domains respectively.
+On Wed, Dec 11, 2024 at 5:31=E2=80=AFPM Tom Lendacky <thomas.lendacky@amd.c=
+om> wrote:
+>
+> On 12/10/24 08:34, Stefano Garzarella wrote:
+> > From: James Bottomley <James.Bottomley@HansenPartnership.com>
+> >
+> > If the SNP boot has a SVSM, probe for the vTPM device by sending a
+> > SVSM_VTPM_QUERY call (function 8). The SVSM will return a bitmap with
+> > the TPM_SEND_COMMAND bit set only if the vTPM is present and it is able
+> > to handle TPM commands at runtime.
+> >
+> > If a vTPM is found, register a platform device as "platform:tpm" so it
+> > can be attached to the tpm_platform.c driver.
+> >
+> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> > [CC] Used SVSM_VTPM_QUERY to probe the TPM
+> > Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
+> > [SG] Code adjusted with some changes introduced in 6.11
+> > [SG] Used macro for SVSM_VTPM_CALL
+> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > ---
+> >  arch/x86/coco/sev/core.c | 64 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 64 insertions(+)
+> >
+> > diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> > index c5b0148b8c0a..ec0153fddc9e 100644
+> > --- a/arch/x86/coco/sev/core.c
+> > +++ b/arch/x86/coco/sev/core.c
+> > @@ -21,6 +21,7 @@
+> >  #include <linux/cpumask.h>
+> >  #include <linux/efi.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/tpm_platform.h>
+> >  #include <linux/io.h>
+> >  #include <linux/psp-sev.h>
+> >  #include <linux/dmi.h>
+> > @@ -2578,6 +2579,51 @@ static struct platform_device sev_guest_device =
+=3D {
+> >       .id             =3D -1,
+> >  };
+> >
+> > +static struct platform_device tpm_device =3D {
+> > +     .name           =3D "tpm",
+> > +     .id             =3D -1,
+> > +};
+> > +
+> > +static int snp_issue_svsm_vtpm_send_command(u8 *buffer)
+> > +{
+> > +     struct svsm_call call =3D {};
+> > +
+> > +     call.caa =3D svsm_get_caa();
+> > +     call.rax =3D SVSM_VTPM_CALL(SVSM_VTPM_CMD);
+> > +     call.rcx =3D __pa(buffer);
+> > +
+> > +     return svsm_perform_call_protocol(&call);
+> > +}
+> > +
+> > +static bool is_svsm_vtpm_send_command_supported(void)
+> > +{
+> > +     struct svsm_call call =3D {};
+> > +     u64 send_cmd_mask =3D 0;
+> > +     u64 platform_cmds;
+> > +     u64 features;
+> > +     int ret;
+> > +
+> > +     call.caa =3D svsm_get_caa();
+> > +     call.rax =3D SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
+> > +
+> > +     ret =3D svsm_perform_call_protocol(&call);
+> > +
+> > +     if (ret !=3D SVSM_SUCCESS)
+> > +             return false;
+> > +
+> > +     features =3D call.rdx_out;
+> > +     platform_cmds =3D call.rcx_out;
+> > +
+> > +     /* No feature supported, it must be zero */
+> > +     if (features)
+> > +             return false;
+>
+> I think this check should be removed. The SVSM currently returns all
+> zeroes for the features to allow for future support. If a new feature is
+> added in the future, this then allows a driver that supports that
+> feature to operate with a version of an SVSM that doesn't have that
+> feature implemented. It also allows a version of the driver that doesn't
+> know about that feature to work with an SVSM that has that feature.
 
-GDSCs come in three forms:
+I couldn't find much in the specification, but is a feature considered
+additive only?
 
-1. A GDSC which has no parent GDSC in the controller and no child GDSCs.
-2. A GDSC which has no parent GDSC in the controller and has child GDSCs.
-3. A child GDSC which derives power from the parent GDSC @ #2.
+Let me explain, since there's no negotiation, the driver can't disable
+features, so if these are just additive, it's perfectly fine to remove
+this check, but if these can change the behavior of the device, then
+it's risky.
 
-Cases 1 and 2 are "top-level" GDSCs which depend on the power-domains - the
-power-rails attached to the clock-controller to power-on.
+I'll give an example, let's say a future version of TCG TPM changes
+the format of requests for whatever reason, I guess in that case we
+could use a feature to tell the driver to use the new format. What
+happens if the driver is old and doesn't support it?
 
-When dtsi::power-domains = <> points to a single power-domain, Linux'
-platform probe code takes care of hooking up the referenced power-domains
-to the clock-controller.
+Maybe in this case we can define a new supported command, so if we are
+sure that the features are just additive, we can remove this check.
 
-When dtsi::power-domains = <> points to more than one power-domain we must
-take responsibility to attach the list of power-domains to our
-clock-controller.
+>
+> A feature added to the vTPM shouldn't alter the behavior of something
+> that isn't using or understands that feature.
 
-An added complexity is that currently gdsc_enable() and gdsc_disable() do
-not register the top-level GDSCs as power subdomains of the controller's
-power-domains.
+Okay, so this confirms that features are only additive.
+BTW it wasn't perfectly clear from the specification, so if it can be
+added it would be better IMHO.
 
-This patch makes the subdomain association between whatever list of
-top-level GDSCs a clock-controller provides and the power-domain list of
-that clock-controller.
+>
+> > +
+> > +     /* TPM_SEND_COMMAND - platform command 8 */
+> > +     send_cmd_mask =3D 1 << 8;
+> > +
+> > +     return (platform_cmds & send_cmd_mask) =3D=3D send_cmd_mask;
+> > +}
+> > +
+> >  static int __init snp_init_platform_device(void)
+> >  {
+> >       struct sev_guest_platform_data data;
+> > @@ -2593,6 +2639,24 @@ static int __init snp_init_platform_device(void)
+> >               return -ENODEV;
+> >
+> >       pr_info("SNP guest platform device initialized.\n");
+> > +
+> > +     /*
+> > +      * The VTPM device is available only if we have a SVSM and
+> > +      * its VTPM supports the TPM_SEND_COMMAND platform command
+>
+> s/VTPM/vTPM/g
 
-What we don't do here is take responsibility to adjust the voltages on
-those power-rails when ramping clock frequencies - PLL rates - inside of
-the clock-controller.
+I'll fix it!
 
-That voltage adjustment should be performed by operating-point/performance
-setpoint code in the driver requesting the new frequency.
-
-There are some questions that it is worth discussing in the commit log:
-
-1. Should there be a hierarchy of power-domains in the clock-controller ?
-
-   In other words if a list of dtsi::power-domains = <pd_a, pd_b, ..>
-   should a specific hierarchy be applied to power pd_a then pd_b etc.
-
-   It may be appropriate to introduce such a hierarchy however reasoning
-   this point out some more, any hierarchy of power-domain dependencies
-   should probably be handled in dtsi with a chain of power-domains.
-   One power-domain provider would point to another via
-   dtsi::power-domains = <>.
-
-   For the case of GDSC on/off there is no clear use-case to implement
-   a mechanism for a dependency list in the GDSC logic in-lieu of already
-   existing methods to do dependencies in dtsi::power-domains = <>.
-
-   A defacto ordering happens because the first power-domain pd_a will be
-   powered before pd_b as the list of domains is iterated through linearly.
-
-   This defacto hierarchical structure would not be reliable and should
-   not be relied upon.
-
-   If you need to have a hierarchy of power-domains then structuring the
-   dependencies in the dtsi to
-
-   Do this:
-
-   pd_a {
-	compat = "qcom, power-domain-a";
-        power-domains = <&pd_c>;
-   };
-
-   pd_b {
-        compat = "qcom, power-domain-b";
-
-   };
-
-   pd_c {
-        compat = "qcom, power-domain-c";
-   };
-
-   clock-controller {
-       compat ="qcom, some-clock-controller";
-       power-domains = <&pd_a, &pd_b>;
-   }
-
-   Not this:
-
-   pd_a {
-	compat = "qcom, power-domain-a";
-   };
-
-   pd_b {
-        compat = "qcom, power-domain-b";
-
-   };
-
-   pd_c {
-        compat = "qcom, power-domain-c";
-   };
-
-   clock-controller {
-       compat ="qcom, some-clock-controller";
-       power-domains = <&pd_c, &pd_a, &pd_b>;
-   }
-
-   Thus ensuring that pd_a directly references its dependency to pd_c
-   without assuming the order of references in clock-controller imparts
-   or implements a deliberate and specific dependency hierarchy.
-
-2. Should each GDSC inside a clock-controller be attached to each
-   power-domain listed in dtsi::power-domains = <> ?
-
-   In other words should child GDSCs attach to the power-domain list.
-
-   The answer to this is no. GDSCs which are children of a GDSC within a
-   clock-controller need only attach to the parent GDSC.
-
-   With a single power-domain or a list of power-domains either way only
-   the parent/top-level GDSC needs to be a subdomain of the input
-   dtsi::power-domains = <>.
-
-3. Should top-level GDSCs inside the clock-controller attach to each
-   power-domain in the clock-controller.
-
-   Yes a GDSC that has no parent GDSC inside of the clock-controller has an
-   inferred dependency on the power-domains powering the clock-controller.
-
-4. Performance states
-   Right now the best information we have is that performance states should
-   be applied to a power-domain list equally.
-
-   Future implementations may have more detail to differentiate the option
-   to vote for different voltages on different power-domains when setting
-   clock frequencies.
-
-   Either way setting the performance state of the power-domains for the
-   clock-controller should be represented by operating-point code in the
-   hardware driver which depends on the clocks not in the
-   gdsc_enable()/gdsc_disable() path.
-
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/clk/qcom/common.c |  1 +
- drivers/clk/qcom/gdsc.c   | 35 +++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h   |  1 +
- 3 files changed, 37 insertions(+)
-
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index b79e6a73b53a4113ca324d102d7be5504a9fe85e..9e3380fd718198c9fe63d7361615a91c3ecb3d60 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -323,6 +323,7 @@ int qcom_cc_really_probe(struct device *dev,
- 		scd->dev = dev;
- 		scd->scs = desc->gdscs;
- 		scd->num = desc->num_gdscs;
-+		scd->pd_list = cc->pd_list;
- 		ret = gdsc_register(scd, &reset->rcdev, regmap);
- 		if (ret)
- 			return ret;
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 4fc6f957d0b846cc90e50ef243f23a7a27e66899..cb4afa6d584899f3dafa380d5e01be6de9711737 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -506,6 +506,36 @@ static int gdsc_init(struct gdsc *sc)
- 	return ret;
- }
- 
-+static int gdsc_add_subdomain_list(struct dev_pm_domain_list *pd_list,
-+				   struct generic_pm_domain *subdomain)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < pd_list->num_pds; i++) {
-+		struct device *dev = pd_list->pd_devs[i];
-+		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+
-+		ret = pm_genpd_add_subdomain(genpd, subdomain);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void gdsc_remove_subdomain_list(struct dev_pm_domain_list *pd_list,
-+				       struct generic_pm_domain *subdomain)
-+{
-+	int i;
-+
-+	for (i = 0; i < pd_list->num_pds; i++) {
-+		struct device *dev = pd_list->pd_devs[i];
-+		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+
-+		pm_genpd_remove_subdomain(genpd, subdomain);
-+	}
-+}
-+
- int gdsc_register(struct gdsc_desc *desc,
- 		  struct reset_controller_dev *rcdev, struct regmap *regmap)
- {
-@@ -558,6 +588,9 @@ int gdsc_register(struct gdsc_desc *desc,
- 			ret = pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
- 		else if (!IS_ERR_OR_NULL(dev->pm_domain))
- 			ret = pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
-+		else if (desc->pd_list)
-+			ret = gdsc_add_subdomain_list(desc->pd_list, &scs[i]->pd);
-+
- 		if (ret)
- 			return ret;
- 	}
-@@ -580,6 +613,8 @@ void gdsc_unregister(struct gdsc_desc *desc)
- 			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
- 		else if (!IS_ERR_OR_NULL(dev->pm_domain))
- 			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
-+		else if (desc->pd_list)
-+			gdsc_remove_subdomain_list(desc->pd_list, &scs[i]->pd);
- 	}
- 	of_genpd_del_provider(dev->of_node);
- }
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 1e2779b823d1c8ca077c9b4cd0a0dbdf5f9457ef..dd843e86c05b2f30e6d9e978681580016333839d 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -80,6 +80,7 @@ struct gdsc_desc {
- 	struct device *dev;
- 	struct gdsc **scs;
- 	size_t num;
-+	struct dev_pm_domain_list *pd_list;
- };
- 
- #ifdef CONFIG_QCOM_GDSC
-
--- 
-2.45.2
+Thanks for the review,
+Stefano
 
 
