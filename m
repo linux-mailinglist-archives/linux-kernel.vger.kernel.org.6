@@ -1,116 +1,98 @@
-Return-Path: <linux-kernel+bounces-440589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46D59EC15A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:12:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4A99EC15D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95B7166FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6026166F70
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A877E792;
-	Wed, 11 Dec 2024 01:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4551126C18;
+	Wed, 11 Dec 2024 01:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="db/Y1zdM"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iS/3PWM9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2252770B;
-	Wed, 11 Dec 2024 01:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9D52770B;
+	Wed, 11 Dec 2024 01:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733879535; cv=none; b=KP7dB3977RH0m5JOrYlycQt6TyDlNHqPPW2bYapOVCb834jXxiZErm/I/3lD2RDJLe4N5qxDPsFDfzR1fNdaHdjRualS6UhlJ1n8cqO82y5L/OZeyEN+FF6RHUxzhYK0TeEIZZwwKA4FMdRWFTpnGB6uyxEDzCdlTxMZJkRLG2s=
+	t=1733879636; cv=none; b=DUGz12uxEB1NCDFo0fvteHiGLePuzFzAgQmnirQM3yVFknq4s13NHFDa+tndB6xusqAzvl9ACwjhieAv7NtEWgYgFKvFUqjp1BhSM91i3x/NwyWhNUyc9keygXfa1vIV/TpDbOySNjPusuzzgCLD21FudlENG4EwJXrnX3XHbco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733879535; c=relaxed/simple;
-	bh=cnnP4hCKIWi7SwF3nDS+Egk4DRR+dl0e4kvTBUDu3Mo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tv4EvJYtFUIlKIwebn5jo3roxBDirrW3VQunev+19N+N4WqlU4d3OCnFc532jVXxt72iO4o5B66hSGX8t85NIDukeByas+wHeCSMBtIkLSkFBmtMtbpFnKSvsUMLERRrf2GGoeqm7/nKMHCEuEf5o/xyG7oE1jAXq3Rr/z/T2+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=db/Y1zdM; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=JA6yJI3hAs3QVLpLQ9RJ1pSSqXOxxGKSknL8PWgYp8I=; b=db/Y1zdMYe7eiJqK
-	Pzbm9ZoUmRIWEarB1xob+V3oQ3Sz73JdBupybMRb0KwIB+Ou+Yp3SCqWedi1u9lzvS70Fy/CJFHWj
-	9L6Xs79M1PBdtJQepbmJ1q4mXv4LNFw/CUC5OXbsUQbij3IZ9Ss7tokqw+wtT3aq/+XCLn50BeMB/
-	zqZVeudcDBNnjWKj98cP7ub0BqILGOB9WeUwypHDgQeQwU/qSUPKlH/r0vNV2p+D6AEpx8k/pqCfr
-	tj8qVcA5pktD83Wmg/2Af6xL6dU5lg6h9OgHgbumo4gwaOHwMy9pfLr1t/M4qin5YXWhxkGhr9sbk
-	3t/jHDn6KxCg2feflA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tLBGk-004eQy-2h;
-	Wed, 11 Dec 2024 01:12:02 +0000
-From: linux@treblig.org
-To: linus.walleij@linaro.org,
-	dlemoal@kernel.org,
-	cassel@kernel.org
-Cc: p.zabel@pengutronix.de,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] ata: sata_gemini: Remove unused gemini_sata_reset_bridge()
-Date: Wed, 11 Dec 2024 01:12:01 +0000
-Message-ID: <20241211011201.261935-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733879636; c=relaxed/simple;
+	bh=WXYFL2lzpahBm9B+v7DU3pKQd5XfIBdEGGOSasUIPzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+ukUg2/oeqZUJFqTsbfvs8fCu+tKYEUue2uU1/vRlQSplphm81TnzYi4xWVQxNwdZ7e3Hwi0sqQqhon8zT1BPtUH/jsVgJvH/80dEenrBSjOJ+HwhvRHC5ltBjpuxbjLF+JlILcZeNwOxjJZhATGxmSNQ9jealKWzoU1x3v3oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iS/3PWM9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91169C4CED6;
+	Wed, 11 Dec 2024 01:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733879635;
+	bh=WXYFL2lzpahBm9B+v7DU3pKQd5XfIBdEGGOSasUIPzI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iS/3PWM9TNlHS7RGLrXMkZAdwOkldLNzoXEaOeoqgBMx5ECYOict+BBcv0x/hvTYJ
+	 4+N5Jv0yQTjXHhbj7h3A0h7YsYbbnYIg6B2GI584k/gTZd94F72j47lunKkC/DGK0m
+	 5E9yQokf1WvYnWUltojmWOiab1zudFtSzncq1sQ8T7o79V5iGjAjddaa6r1DsDCmHM
+	 j8EDEhMAf71gMbVt0NY9r55TRtxtYbetNeJBxWBozJIOKi/86G10z+mka3ccWpMWT4
+	 CsLknvFUygFyYVCakkAfqMcUNKGKcFegooKAU+uMGGCMdFfjWeZBx5dHpRkB0cwQJx
+	 VvXsLHYhlowdA==
+Date: Tue, 10 Dec 2024 19:13:52 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Pavan Kondeti <quic_pkondeti@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Elliot Berman <quic_eberman@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
+Message-ID: <iyknardi445n4h74am22arpgc4vlchh6z6cvkbff2xg76pd655@nozwz7snt476>
+References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
+ <CAF6AEGtKfWOGpd1gMfJ96BjCqwERZzBVmj5GzmjKxw8_vmSrJg@mail.gmail.com>
+ <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Tue, Dec 10, 2024 at 02:22:27AM +0530, Akhil P Oommen wrote:
+> On 12/10/2024 1:24 AM, Rob Clark wrote:
+> > On Mon, Dec 9, 2024 at 12:20 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+> >>
+> >> When kernel is booted in EL2, SECVID registers are accessible to the
+> >> KMD. So we can use that to switch GPU's secure mode to avoid dependency
+> >> on Zap firmware. Also, we can't load a secure firmware without a
+> >> hypervisor that supports it.
+> > 
+> > Shouldn't we do this based on whether zap node is in dtb (and not disabled)?
+> 
+> This is better, isn't it? Otherwise, multiple overlays should be
+> maintained for each soc/board since EL2 can be toggled from bootloader.
+> And this feature is likely going to be more widely available.
+> 
 
-gemini_sata_reset_bridge() was added in 2017 by the initial
-commit be4e456ed3a5 ("ata: Add driver for Faraday Technology FTIDE010")
-but has never been used.
+The DeviceTree passed to the OS needs to describe the world that said OS
+is going to operate in. If you change the world you need to change the
+description.
+There are several other examples where this would be necessary
+(remoteproc and watchdog to name two examples from the Qualcomm upstream
+world).
 
-Remove it.
+So, if we can cover this by zap-shader being enabled or disabled, that
+sounds like a clean and scaleable solution.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/ata/sata_gemini.c | 12 ------------
- drivers/ata/sata_gemini.h |  1 -
- 2 files changed, 13 deletions(-)
-
-diff --git a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
-index d040799bf9cb..821ca31effe7 100644
---- a/drivers/ata/sata_gemini.c
-+++ b/drivers/ata/sata_gemini.c
-@@ -224,18 +224,6 @@ void gemini_sata_stop_bridge(struct sata_gemini *sg, unsigned int bridge)
- }
- EXPORT_SYMBOL(gemini_sata_stop_bridge);
- 
--int gemini_sata_reset_bridge(struct sata_gemini *sg,
--			     unsigned int bridge)
--{
--	if (bridge == 0)
--		reset_control_reset(sg->sata0_reset);
--	else
--		reset_control_reset(sg->sata1_reset);
--	msleep(10);
--	return gemini_sata_setup_bridge(sg, bridge);
--}
--EXPORT_SYMBOL(gemini_sata_reset_bridge);
--
- static int gemini_sata_bridge_init(struct sata_gemini *sg)
- {
- 	struct device *dev = sg->dev;
-diff --git a/drivers/ata/sata_gemini.h b/drivers/ata/sata_gemini.h
-index 6f6e691d6007..b6e4a5c86e01 100644
---- a/drivers/ata/sata_gemini.h
-+++ b/drivers/ata/sata_gemini.h
-@@ -17,6 +17,5 @@ bool gemini_sata_bridge_enabled(struct sata_gemini *sg, bool is_ata1);
- enum gemini_muxmode gemini_sata_get_muxmode(struct sata_gemini *sg);
- int gemini_sata_start_bridge(struct sata_gemini *sg, unsigned int bridge);
- void gemini_sata_stop_bridge(struct sata_gemini *sg, unsigned int bridge);
--int gemini_sata_reset_bridge(struct sata_gemini *sg, unsigned int bridge);
- 
- #endif
--- 
-2.47.1
-
+Regards,
+Bjorn
 
