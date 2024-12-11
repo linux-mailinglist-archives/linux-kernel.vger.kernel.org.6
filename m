@@ -1,101 +1,57 @@
-Return-Path: <linux-kernel+bounces-441504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2562B9ECF5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:06:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00EE39ECF58
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:06:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC0D188C595
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4B7281E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5DA1D8A0A;
-	Wed, 11 Dec 2024 15:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3771A0BCF;
+	Wed, 11 Dec 2024 15:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkKLyBHz"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dwUGHTIF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3771D63C8;
-	Wed, 11 Dec 2024 15:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0D6246345;
+	Wed, 11 Dec 2024 15:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733929524; cv=none; b=tcgJLy6rSyv/RBkVXqd6224W3obP4TYB1ZSQLYQyYXlTdhxGpNDfwModSDzIW1Kn/pKuewfkdhTC3VQzJwk85aFDp1anjD+G/yEnXB4+AV4V7eBYHSaK48DIxEL2U+4sWFd7ODucVedwydTzcJ84psKPI6W3U+iw7e2GTjgNmp8=
+	t=1733929547; cv=none; b=AeszTa6Gf9lN5UmY9HfTkrhIUGaUBQSsV1BpY+FTuOu5yc4hUwpYbV8AbPELCCjWUJ4tGmb0ZbJbRLUnZTyz29lMCsulWjePU3uLAsvkOUWv7Hq/k8HdwgJjK6BaPer3WgnwgxYahVjGmObyDGbPdnRMfIQta8/kxU4UHDK5VHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733929524; c=relaxed/simple;
-	bh=zBAP9mh8OPUKcmyV9VNqiPkVz3ps9OJpez4j8qjPT2A=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cONqVQ0lmjB+9c2xHDEY9BpQ6kDggleOZrJGXU39lX1iNkXpSgzmDJIYHYXV43nc75MaGSEGi54obcnA9+jNAnb7synqWbzAJ/gIOdNcxgsmxhtF+BMOxyaAgOyX7BZqZ+OwJPXe1NiyBnZdgMUzc1wivnbRrFTUajQNSpP4URY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkKLyBHz; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa6a92f863cso332853266b.1;
-        Wed, 11 Dec 2024 07:05:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733929519; x=1734534319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fmuSRYRsN+CVodQCjU4cJzoXt2OifyhdBUg+LTTXX5I=;
-        b=YkKLyBHzwIIjh1ID1+J7E3MIvvgO96Aq+MemS2iP1KZhSLIcFNvK7lI0q1+t082izp
-         7AePbFVCdFkawO3c690HdLLGzmUNQS+xSeDjCOr5YJ4pU/SkpOj2guuqr+VAiRPicftH
-         uRIAwMTlkeogxyo+AftkKrubTLnxLDKGDgGMk0bUbaBCi2q1wL8Zjiyuamq9xdj5xs96
-         /fiAXZZgq2NvsAaLxLQIX3v8xL+7X/hUnRQPrjCdPx0rZIIcPLN4yFc73aBl+XTsQZhf
-         K6WDwDAQ80Z7CSopyj1uKAd7+sguUFlX32z+Difqqvbt5306GzQmmN7D8dEVi6mh1AH3
-         gigA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733929519; x=1734534319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fmuSRYRsN+CVodQCjU4cJzoXt2OifyhdBUg+LTTXX5I=;
-        b=pFEVzNDrp1OsI8L+Iq22kJ6PIfmP8ElWJOEGZblD8fL7tfy6blNm1zvLocAq7E3rqu
-         gnoZZVGT9nOPVvKmoE6E6QmDtRL8NDSQK5uWsXJEk9ScJx6mentwUan1K9I/JdmkrYam
-         uaoonPB7tmPISjPlYugBPxJzZCh47QazPDtYE/Voljz3aKXO7ks04X+RVqb4mfDdkbFO
-         2KrjsNgRhxUZlNODcoDLqwa5dOXeW8S9jpjTaleGYMU+oYgKLzp+6JH5evOH0mhuwQxy
-         jEO1yd5c8V1N1kel0Sk8zzFiHSVaL0PkDv4yx4MHAoK7+cKDhruZzCN7LusJ+Who0sTg
-         wJHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVCH4barhEG5FzVA/96mJCehF4M2LiX5vx52aqtQqtEt3//Kk0srgS43tfKfvlIwrAn+8GZbTq8WZsbpnn@vger.kernel.org, AJvYcCXnyZ41EQQaZY1EsDDmsf7ha8YsW+OsRGyqQmud/nvE6mNF539de3qGsMIh4zOe2n6G5hsQzVHJU/dQm+oRG0DVHQ==@vger.kernel.org, AJvYcCXrIyz9PhELvU9TLnwnuOinFP1Fq2buOmtLMj6QC3YLU73hfQ20Bx6JpkLTEoqRxhG6rNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq9Cmef8dHYeEFpbRycTqhbrUDfkY7NNKQkSql0kxtDh9ulCi/
-	D8dpUef8hIozDVzjojT9BFmYBkRyzd/ohBNKnW9nrFkX1TCmEy2y
-X-Gm-Gg: ASbGncsqBnb2IvivxbFzC94f7RYrbhohA1nn/59dcabdw6ehqNUS23xtc96iqeNnMJk
-	HUb6CBMFmwUDjZrWzIRxjdzRksT1OjCnKkEmHP/tdeCCdOM8oj9HLewEwUafbOwEp0bbr6wWnbQ
-	1xTa/LKriTiCjt52ckt9K/o6pWVlph52pCa1RmLYv3fLStoYcdh9es3lPFJGrDblmPDtHH+QWee
-	XoGa22FXQ7cP2RPnXR7k3n8OBuBPAs1y78mcsb2ZIIA7ErR46oNSHLy1qpHgfINK6zXQ0m/09Tc
-	DZcz8N1+GCiYqI8N3hG9sMZYRjc=
-X-Google-Smtp-Source: AGHT+IFLqy5ye4iT4eGtn9cgCHM7T7Xqhx1toNYhHYc9h0YsfMhXBP1rDtSH6hw3JVfTojL6m1mg1A==
-X-Received: by 2002:a17:907:3a18:b0:aa6:6e10:61f1 with SMTP id a640c23a62f3a-aa6b10f56d7mr267950166b.1.1733929516706;
-        Wed, 11 Dec 2024 07:05:16 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6a3dcbcc2sm260913266b.117.2024.12.11.07.05.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 07:05:16 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 11 Dec 2024 16:05:14 +0100
-To: Leo Yan <leo.yan@arm.com>
-Cc: Quentin Monnet <qmo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Nick Terrell <terrelln@fb.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Guilherme Amadio <amadio@gentoo.org>, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] tools build: Add feature test for libelf with ZSTD
-Message-ID: <Z1mqKpXBcl303IDY@krava>
-References: <20241211093114.263742-1-leo.yan@arm.com>
- <20241211093114.263742-2-leo.yan@arm.com>
+	s=arc-20240116; t=1733929547; c=relaxed/simple;
+	bh=Xn1bRBCrBZyfsMfTclG8G1ekwObh2rzI4N3qryEVgBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tW+oBn3gUYNxrrASlcq3z6wbYmITRp6cEwW9dvMU/LqcKikJsWcAHl677Z0lqcGcs1gM1VvbdaEDe3g1OkDr9gfNcF+2XC0vJMAImGSSG/+d5Kszd7KOdarbE2uUtwcw8vLsSOQqkbac7WOpXc1euG8xJnSbNC5FHrNEUblFBSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dwUGHTIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA20BC4CED2;
+	Wed, 11 Dec 2024 15:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733929547;
+	bh=Xn1bRBCrBZyfsMfTclG8G1ekwObh2rzI4N3qryEVgBA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dwUGHTIF/xKuArd1deUS5GFuta1yLbITmLzhSaFv889t08SCznjaHVU0fuPRKfjKL
+	 O38dd+ngx9U5p8IhjRZJf6/30IE88Tm/MNyVay8gqTdTjyM267MVUmi3DrifbxqtX7
+	 9XbYqgALmQTuOy24tIE9bhKsszUL2HBVXgsfA03U=
+Date: Wed, 11 Dec 2024 16:05:44 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Stafford Horne <shorne@gmail.com>
+Subject: Re: [PATCH 6.6 000/676] 6.6.64-rc1 review
+Message-ID: <2024121138-skyrocket-online-3fda@gregkh>
+References: <20241206143653.344873888@linuxfoundation.org>
+ <e05374de-a45d-46b6-9ac2-a4aba932c6d2@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,96 +60,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241211093114.263742-2-leo.yan@arm.com>
+In-Reply-To: <e05374de-a45d-46b6-9ac2-a4aba932c6d2@roeck-us.net>
 
-On Wed, Dec 11, 2024 at 09:31:12AM +0000, Leo Yan wrote:
-> Add a test for checking if libelf supports ZSTD compress algorithm.
+On Tue, Dec 10, 2024 at 02:01:56AM -0800, Guenter Roeck wrote:
+> On 12/6/24 06:26, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.6.64 release.
+> > There are 676 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sun, 08 Dec 2024 14:34:52 +0000.
+> > Anything received after that time might be too late.
+> > 
 > 
-> The macro ELFCOMPRESS_ZSTD is defined for the algorithm, pass it as an
-> argument to the elf_compress() function.  If the build succeeds, it
-> means the feature is supported.
+> Building openrisc:defconfig ... failed
+> --------------
+> Error log:
+> drivers/tty/serial/earlycon.c: In function 'earlycon_map':
+> drivers/tty/serial/earlycon.c:43:9: error: implicit declaration of function 'set_fixmap_io'
 > 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-
-lgtm
-
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-jirka
-
-> ---
->  tools/build/Makefile.feature           | 1 +
->  tools/build/feature/Makefile           | 4 ++++
->  tools/build/feature/test-all.c         | 4 ++++
->  tools/build/feature/test-libelf-zstd.c | 9 +++++++++
->  4 files changed, 18 insertions(+)
->  create mode 100644 tools/build/feature/test-libelf-zstd.c
+> Bisect points to:
 > 
-> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-> index bca47d136f05..b2884bc23775 100644
-> --- a/tools/build/Makefile.feature
-> +++ b/tools/build/Makefile.feature
-> @@ -43,6 +43,7 @@ FEATURE_TESTS_BASIC :=                  \
->          libelf-getphdrnum               \
->          libelf-gelf_getnote             \
->          libelf-getshdrstrndx            \
-> +        libelf-zstd                     \
->          libnuma                         \
->          numa_num_possible_cpus          \
->          libperl                         \
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index 043dfd00fce7..f12b89103d7a 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -28,6 +28,7 @@ FILES=                                          \
->           test-libelf-getphdrnum.bin             \
->           test-libelf-gelf_getnote.bin           \
->           test-libelf-getshdrstrndx.bin          \
-> +         test-libelf-zstd.bin                   \
->           test-libdebuginfod.bin                 \
->           test-libnuma.bin                       \
->           test-numa_num_possible_cpus.bin        \
-> @@ -196,6 +197,9 @@ $(OUTPUT)test-libelf-gelf_getnote.bin:
->  $(OUTPUT)test-libelf-getshdrstrndx.bin:
->  	$(BUILD) -lelf
->  
-> +$(OUTPUT)test-libelf-zstd.bin:
-> +	$(BUILD) -lelf -lz -lzstd
-> +
->  $(OUTPUT)test-libdebuginfod.bin:
->  	$(BUILD) -ldebuginfod
->  
-> diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-> index 80ac297f8196..67125f967860 100644
-> --- a/tools/build/feature/test-all.c
-> +++ b/tools/build/feature/test-all.c
-> @@ -58,6 +58,10 @@
->  # include "test-libelf-getshdrstrndx.c"
->  #undef main
->  
-> +#define main main_test_libelf_zstd
-> +# include "test-libelf-zstd.c"
-> +#undef main
-> +
->  #define main main_test_libslang
->  # include "test-libslang.c"
->  #undef main
-> diff --git a/tools/build/feature/test-libelf-zstd.c b/tools/build/feature/test-libelf-zstd.c
-> new file mode 100644
-> index 000000000000..a1324a1db3bb
-> --- /dev/null
-> +++ b/tools/build/feature/test-libelf-zstd.c
-> @@ -0,0 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <stddef.h>
-> +#include <libelf.h>
-> +
-> +int main(void)
-> +{
-> +	elf_compress(NULL, ELFCOMPRESS_ZSTD, 0);
-> +	return 0;
-> +}
-> -- 
-> 2.34.1
+> > Stafford Horne <shorne@gmail.com>
+> >      openrisc: Implement fixmap to fix earlycon
+> > 
 > 
+> Applying commit 7f1e2fc49348 ("openrisc: Use asm-generic's version of
+> fix_to_virt() & virt_to_fix()") fixes the problem because it adds the missing
+> "#include <asm-generic/fixmap.h>" to arch/openrisc/include/asm/fixmap.h.
+
+Thanks, now queued up.
+
+greg k-h
 
