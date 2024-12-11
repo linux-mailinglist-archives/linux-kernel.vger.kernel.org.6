@@ -1,121 +1,141 @@
-Return-Path: <linux-kernel+bounces-442304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12739EDA62
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:50:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 156DB9EDA66
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:51:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E897E18855A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:50:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E11167B6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAA61F0E55;
-	Wed, 11 Dec 2024 22:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC571F237B;
+	Wed, 11 Dec 2024 22:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9nM8x6O"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IkMvmag8"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6151DC9AB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D3C1DD885
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957443; cv=none; b=M5f2/8RFQLIeUpjnTSdHRxbTix6aK5hpYKUw6yWjEzV3VZK4pILie90sakyPOskxZfzJn4myz83xBegvr5bvz13lyFUSHYhR1zu/cj6H7P+UXY6NncBfTdIdDH2zBcHMu7SQv6Oy9QqMz5F4vEEMpyVSMr922hJqViXt5cfYJG4=
+	t=1733957470; cv=none; b=OThvtQpsZw4zxV2zYWY4ZyjvNL7qSXfmCOnf0s+b5LqexCjcwp12ey86gNCqshWhTonuBjVMFTJ4gHO62HD/LHowUIxDwm/8l7Vwpk7SsS5ofCkPgjaISQ50BGaPWGFjkTX9c7n4obuHUfT/+tfoM0GHOhuy/5YUegLLr0VaNOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957443; c=relaxed/simple;
-	bh=qLPHbexhku9g9Zx0tU2cdtwR915l4cxWmGkn09DrlaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2vG8t6WHEHMPtPSYmoBzdYBGdP7wHJTBl7xg0fk3/g2GRx4LeAVziR2R4fyHM+iZYWN5KBAAmILGk6t9ui6is6HhSKf2nWMgNG7OEDzfWLMiFjHcZJnyD8leN2laFjRV1Ownlk2BKm6IOMlLDxgHtotzmpNTapKV5LNdCr9bSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9nM8x6O; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53f22fd6832so4437505e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:50:41 -0800 (PST)
+	s=arc-20240116; t=1733957470; c=relaxed/simple;
+	bh=FPSw2nF/lJm2UWC2sCJezAEzDmgl9FQYGt/yXj/bTk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DAeCG4cS9USBx4Ep7bdRFvXjSntQ6ky+3ex+7TX3VrqZfllTQ1SM0S6zGPZrEd5tz5HbeEDOpNxhGRp2ek0jmhf2ozUTg09EgeK1lOe+6ABYbyDsnVPBkQmZiQjcM2F+uBh5ld5akyvF+kkrLRUS98hYJXJdVQM3KxDCM7QUEes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IkMvmag8; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53e389d8dc7so5460753e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:51:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733957440; x=1734562240; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZhObuxr/02KFb2isXPxGgNEnZ1jE84bLOSCb6UyuS5M=;
-        b=M9nM8x6OfO03jDEkTq8YZGOvXgDOkRxXSZVnc4K2RUBV//ortf2AXVBy/BiRQjwlh4
-         bGTVhmeZHuoW7FgAusHJ1WAOTEV8JFPOQpq0FhMDKwr8ZUKbdltMNq+jM2IFTaUU7d+R
-         dEsghChiiFBpU8sl0J/8FXC8AZ+KgYEMQEoe8TWWWT0eah9rNbEcObp61v79Th1rUYJ5
-         Go1AD9NaSIe73mKk4BAaCXD14TWoQ/xSVicXDYuEsZs4h3KqbFPCiVcBQt+qCPxzXj32
-         LuGLaqXPkeSYs/jEiExQzSrD7+aVpWydQf/pJtT1glfeZtOkct4lRVrtkHLuMj4m5pRC
-         h+7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733957440; x=1734562240;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1733957465; x=1734562265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZhObuxr/02KFb2isXPxGgNEnZ1jE84bLOSCb6UyuS5M=;
-        b=WmCfMBbmfn7VQ4BBuSyXrE9V6QK3ZD/qOCEvVACSmZYmo/9Sxq9FFJYYhWiOjhRz9E
-         0CEGA8QI05E5hCOpUfSTaObE0azYbYIwmT8ISXqKhmqN6nu2VH6BoY3xd27uBe8SZQUW
-         dCJRgYttipsJSLfoGZOG2tHUf+AqBsr7KtQEyfeVPezXW4pRIaMeFEMJk1EDfJA4EEO8
-         npjXf31e6KFDkU2KbC5FLC0sBDEnef+9mQk9aVHZVtnc8x5omZB7yBkE5SsDnvwpUEO9
-         v7Vuq0cNepcYNGyvimSEm6QYx/PwlImCK/N3V3X8py+Nxu3SxvPmjiVRhdzUGrV5VwsI
-         B8oA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbsyfNpTylC54/W3rtsdgR5GX2HO9/WzY5iCWxMfPcwOGhVonUJkwD4/8bFxthFUNUYSYzD57EigKHP6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDEZqgGmB02MdhqFIFe7d/VYG/mCM1+SI5EkOhjIwpQkkmtAuL
-	waDneY0GpbFKMbEVQQDd5dWQbc/n7mNiNijK61r38N6ufsG079o7yo8WiWLmuKA=
-X-Gm-Gg: ASbGncuhfUBpgawD9edx1uuDLm1ue0IBmHJXBcm33YIVNoNhkkgueMqCmjnBjBDo0lo
-	IpRmf9zT5FA6gITtCFvFHlHTLa+rHmsGmNOm9/mNxws6+lJp1fLgLrI6ia45/jCq/J7F+nPJe4D
-	EM8kiN5VkYryet/F0npSWbJOc50nYRbVvt9JAzxokEeE7MmiZepESczEZKy8MzOChxKfVtvCwuA
-	/DUhr9MgfyoKdieDBfU3olqjWRFL069UgIh/D47paGWj1VkefMJ1tpQ7YYPmufZEXsTZI1PZLs2
-	5WMGo70pfq8gTdwftBxtwH4Hs1gOdhFRsQ==
-X-Google-Smtp-Source: AGHT+IFfopIZRMQLZAH8vRQxGl2sNJnS4PO0XzwFwmFMQsUTluQcT38x+rS7eG9hh809gTG97MV1HA==
-X-Received: by 2002:a05:6512:2387:b0:53e:391c:e985 with SMTP id 2adb3069b0e04-5402a5e8309mr1405330e87.32.1733957439569;
-        Wed, 11 Dec 2024 14:50:39 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401e51bafesm1154464e87.221.2024.12.11.14.50.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 14:50:38 -0800 (PST)
-Date: Thu, 12 Dec 2024 00:50:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, robdclark@gmail.com
-Subject: Re: [PATCH v3 2/2] drm/tests: Add test for
- drm_atomic_helper_commit_modeset_disables()
-Message-ID: <njx2ogued4bbu3ub5jlnczql3x2dr4i72onhmh35tgxyuf3lek@3liwh4butumk>
-References: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
- <20241211-abhinavk-modeset-fix-v3-2-0de4bf3e7c32@quicinc.com>
+        bh=wKgmtaCixVS2eTp9TrZ+8kVzXwyvmutreSuRkttynvI=;
+        b=IkMvmag89aMHktcgnpoEMPTecMUFOpFJ8KJHuc7GdO3lK4v1OrOYSQDk2Ej527FFMR
+         bwyVr5iKlZf8ik4s8J+cnj5mW/9en8ClzQkp60qt+fsK/Y/ahJ8RmdXzI4qfsPmJk5+f
+         gONEo21rWe30csPX9KEZRyjFq9D/Q8yjXsch4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733957465; x=1734562265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wKgmtaCixVS2eTp9TrZ+8kVzXwyvmutreSuRkttynvI=;
+        b=atncuO8cq9z6ZpkAViFKPuHxR9GDLzNLUvEQlAO+iIIhPTN2Ys3isHv845mw+hIDse
+         +BPgDVyANNtdOW2Q9H+dnvTHK3u/D02O2Egz+oZ/RXC1aviOaRnlenxp9cRFTN8+Ym9j
+         syH6hcpf0Irz1DLU3GKSSsDg0HrYmcFbRWkwP4is85KpTqgsbn6wXQ8gd+hxH2jxaIA/
+         YCx6RPGdZVRZGUzbjZZpYYpbKmuvL414MEuFBMIio8nv+3dhAE2O9m2o7ScBLCXLueDj
+         9NQl/hv9z10DKjN7YU+bBZEh4R4CISCxWrIQA7LnyUorLf99AA4gpg0H+9X06M8Vo1Oo
+         IE8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOLwI0S2Hr8p92hG7UhvH5KNnBy/Utxz41It24gGdKLj31CCtKHmaupbUJn1n1yQ772Q5HGYypcRBPJcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3KsN3cjSpX6v+jLFvcsr1jA/CsJwrZBmL40KjTaq+uG2oEQT8
+	cF8ZbH5pbw8Dc3vbUdPdj28Z7uJ0ZSlvG7q9+agBE5JdE+y/rwqhgoF2BV6aaOyTgsWKBA0qVZm
+	M+8s2
+X-Gm-Gg: ASbGncuI+G/4Z8I1nHsMc78I2/fmHzRjTfYdUeKrdNkXo1jcH2gemqGzPoRmD6zwSLi
+	NgX7cunV/GerqFW3fy/rV+hF7d6EgesxdmifP8EXjUtdaFhTxTzrubmEO/iJr7fds8JrbbIFlN/
+	irgVjS8HY9XNXMpa0bOBmXTOStCG+r44Pje7RJpUEzGEFRTNyKMK2ipl8acrpBh6RO3Bek/ncDz
+	HHguxTbDH65F0wOctmd2LpEiGAMgMKipWjw+7xYgWdfcWFTuoq37RQhECsXXD/IpVOsQTqLPd3V
+	ooMxyIOim5IQVxzB2c02uw==
+X-Google-Smtp-Source: AGHT+IHXxOJ9gIHqikyDE7oivpASeJKk3nQ+J5RMP7ynv7AHANGE/MMJXZ61CJFCW5BvOm5D4+3Srg==
+X-Received: by 2002:a05:6512:1188:b0:53f:8c46:42b3 with SMTP id 2adb3069b0e04-5402a5d3f22mr1415782e87.12.1733957464653;
+        Wed, 11 Dec 2024 14:51:04 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401f432380sm1124812e87.101.2024.12.11.14.51.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 14:51:03 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3003d7ca01cso48284351fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:51:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX+ZMwrY0HpzPKLBieT7niyX+Cf6WHksSsN4BjKak91dKRv2l1xOZ1zcI7tHQP06UNBYTiDv4ogmUc7D08=@vger.kernel.org
+X-Received: by 2002:a05:6512:3d11:b0:540:17ac:b379 with SMTP id
+ 2adb3069b0e04-5402a5e5682mr1002664e87.25.1733957462810; Wed, 11 Dec 2024
+ 14:51:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211-abhinavk-modeset-fix-v3-2-0de4bf3e7c32@quicinc.com>
+References: <20241211-check-state-before-dump-v2-1-62647a501e8c@quicinc.com>
+In-Reply-To: <20241211-check-state-before-dump-v2-1-62647a501e8c@quicinc.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 11 Dec 2024 14:50:51 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=V33utY6rby5e+RkRfUQQ40g2Bq3xr=G9q3if8TNoq1kg@mail.gmail.com>
+X-Gm-Features: AZHOrDlpR97b9ybDcxqzZ165UcoKpL_oopMC2BgdmlXON_-hpEKkrEAlm1wccLg
+Message-ID: <CAD=FV=V33utY6rby5e+RkRfUQQ40g2Bq3xr=G9q3if8TNoq1kg@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/msm/dpu: check dpu_plane_atomic_print_state() for
+ valid sspp
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 01:18:43PM -0800, Jessica Zhang wrote:
-> Add a subtest to check that modeset is called when the connector is
-> changed
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Hi,
+
+On Wed, Dec 11, 2024 at 11:51=E2=80=AFAM Abhinav Kumar
+<quic_abhinavk@quicinc.com> wrote:
+>
+> Similar to the r_pipe sspp protect, add a check to protect
+> the pipe state prints to avoid NULL ptr dereference for cases when
+> the state is dumped without a corresponding atomic_check() where the
+> pipe->sspp is assigned.
+>
+> Fixes: 31f7148fd370 ("drm/msm/dpu: move pstate->pipe initialization to dp=
+u_plane_atomic_check")
+> Reported-by: Stephen Boyd <swboyd@chromium.org>
+> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/67
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > ---
-> Changes in v3:
-> - Use BUILD_BUG_ON to check connectors and encoders array sizes (Dmitry)
-> - Renamed functions to be more test-specific (Dmitry)
-> - Added comment description for test (Dmitry)
-> - Return get_modes_fixed() directly within the encoder get_modes
->   function (Dmitry)
-> - Move drm_connector local variable declaration to top of function
->   (Dmitry)
-> - Changed drm_test_modeset() to a more descriptive name
+> To: Rob Clark <robdclark@gmail.com>
+> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> To: Sean Paul <sean@poorly.run>
+> To: Marijn Suijten <marijn.suijten@somainline.org>
+> To: David Airlie <airlied@gmail.com>
+> To: Simona Vetter <simona@ffwll.ch>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Stephen Boyd <swboyd@chromium.org>
 > ---
->  drivers/gpu/drm/tests/Makefile                |   1 +
->  drivers/gpu/drm/tests/drm_atomic_state_test.c | 244 ++++++++++++++++++++++++++
->  2 files changed, 245 insertions(+)
-> 
+> Changes in v2:
+> - move pstate->stage out of the pipe->sspp check
+> - add reported-by credits for Stephen
+> - Link to v1: https://lore.kernel.org/r/20241209-check-state-before-dump-=
+v1-1-7a9d8bc6048f@quicinc.com
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
--- 
-With best wishes
-Dmitry
+Tested-by: Douglas Anderson <dianders@chromium.org>
 
