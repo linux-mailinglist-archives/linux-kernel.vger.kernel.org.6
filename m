@@ -1,135 +1,99 @@
-Return-Path: <linux-kernel+bounces-442218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC7F9ED97A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1569ED975
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775C92821CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F35A2829B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590B11F2381;
-	Wed, 11 Dec 2024 22:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LbthixgF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2692F1F2360;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55BB1F0E53;
 	Wed, 11 Dec 2024 22:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MOdJO1/2"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0FA1DB956
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733955505; cv=none; b=i/aN1AOUf2S0fH2X9a9waD17IPlPKGJpR+S6cQ8Hd27guwJYN1hyAUWANYDaNOQQNJMZ1pXpuwoo3nzywtGJtRnITwPglJUHCExFc7MuqS7MV/3W+h0HPJ/aoZWJ9+eXfiWaZRagP6Au7W9epmynYTJrHcpx7v0Fp6uNMXYEpNI=
+	t=1733955503; cv=none; b=oYkiiFEdEQ5xGB4dwOfAq8jEgoDvK8pavA3a6SrJI2NSXRoGJDonIwMlYL/OmwzB4vmt7NFQ7OP+f72ZR83MyB9nhUSlGVsjsWU8pEvQxV2X5jXJxtxvDqmHDo5HnKA3yolED7gQsh35hJOTcwOvREiAoI8Dxh6CVvl1UNLZixM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733955505; c=relaxed/simple;
-	bh=RU7JEwDXb/NNK1SC/cKVBh0dMOSbGzWgfg2o+0Wox24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OtmfKdMARMKUpY8uuBKj0ua/NiBmqoZJwRZMaCfZFIPnpr0tIn/50z3aYdDerD7fVNiitSCLfs2Zql3lUtNE0hrTHdXeihwyBM65O9XN2ba5ILxcrsfa38aN8TTUTWX26rE5mEjudt+gG3OuCf5iJp3RjTSflCYuA9KpT7nRoss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LbthixgF; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733955504; x=1765491504;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RU7JEwDXb/NNK1SC/cKVBh0dMOSbGzWgfg2o+0Wox24=;
-  b=LbthixgFxOh2h7GwF2RBDqdyovTLv/oMB4CpxNrd7fNCfFD3EA9Qs7wn
-   49uwQu8cFdGxg9/lyQ/x1CIRZJo+07kIa7KD3q+DH+DerEqcXoOzkalLS
-   MA8qCEA9TO9kzkivMKDGbVBe0/f0ILAn+sMbPbWKG+I4cE4nKTKTcXBXz
-   OusWkYD3UlElRWEcRMePm3DywUH9w0qJ1A8aWwi+EDXBdogcZaYk/cvro
-   uXMel6/ntHAQ0IRv2UOe5f5/yapo7j9tqR0rQt+qi6RP74xCTQVsnnTqx
-   0H0Nv1zbczP+742RUrjTkUGSKgMNT/TjlXnRdnwSXq8ma5/PYbWbpvR2U
-   g==;
-X-CSE-ConnectionGUID: IFYKAd1XTQqq1OIr5VoUnA==
-X-CSE-MsgGUID: 1LWXYwiMSy2jsb0C2pOSEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34483467"
-X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
-   d="scan'208";a="34483467"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 14:18:23 -0800
-X-CSE-ConnectionGUID: mVW+lHN2RmWm9oEd/Ls7ag==
-X-CSE-MsgGUID: kdgG+cDmR8qMoXCWeM0NPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="96792761"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 11 Dec 2024 14:18:17 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLV26-00079T-1j;
-	Wed, 11 Dec 2024 22:18:14 +0000
-Date: Thu, 12 Dec 2024 06:17:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>,
-	Moudy Ho <moudy.ho@mediatek.com>,
-	Xavier Chang <xavier.chang@mediatek.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v2 6/8] soc: mediatek: Add programming flow for
- unsupported subsys ID hardware
-Message-ID: <202412120633.avM5EfRz-lkp@intel.com>
-References: <20241211032256.28494-7-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1733955503; c=relaxed/simple;
+	bh=0rt+LftUaiIAtV8Lnqx/UsM/DKwcWcCSJ7gULGGysG8=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oWH0thXcIGfN188bum5C0l3BDXZOOQgbrGgwSgQXtawRH8NJ6rBjVWLBCVPdN5rs8QqDhY89p4X6iGf4esPZSV7NkNou/kGmybgbJkIUWRcZlOSS2Pfw3kehx5y/wIH6ykEXaOBr4RE5QxOLJS4ExJl86bt4t66UjaTCI2VdMi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MOdJO1/2; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6d8adbda583so80977716d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:18:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733955500; x=1734560300; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0rt+LftUaiIAtV8Lnqx/UsM/DKwcWcCSJ7gULGGysG8=;
+        b=MOdJO1/2u1msu9ZAIleGiLmpT4S4X9UBG8BCKWZeWSQCzjp7kRHRNtB6yeVSIvKhEB
+         LQvtb+qRfDcBBqLpP1ThZcWGNpXGHfSJ260ig4ouZCUwBX4zSrtGnShkCT9+gSPRLmIv
+         E9R6Kz6Eisa8xIWrGxlhPfpwsuvEcux+8pd2Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733955500; x=1734560300;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0rt+LftUaiIAtV8Lnqx/UsM/DKwcWcCSJ7gULGGysG8=;
+        b=ofV+BKUKluMcF/kFyo4jXZo5oYDp3qGjfVgBk02bFXAHh1fs3S3GrtLCN7MzZ3ggK2
+         Zmvq7cylzH9lBqNSGsJygmZT1pYnB9AE8dlYLUTbHFf322vl2F2uDrJJDMRfkmlM3z/K
+         FifZJBemtooYwsjO61qeI4chp8e6ojYKWr/CzAONMxKMeUkQkzShKKOn1qp6JlcZ0zJk
+         wSS9JNnFpu5DlZ9R7Pb9Y58NVs1xGqpeb0AhcAGB/Bf144pDgCb3N74KmeEEtQ6l0yN2
+         FZG0hOSCixaShv+eQtoAZBAq2dZyORbEPoudgLYelTAbQGK7gfeVOgHHyYaA47t8+3/2
+         0atA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkxC+S/b8Or42AaY5RBEn+FtCDMuQfDfLb6AqwWFtEk6cj2iaWCPjslI0Eb8lFnJI2tldgA1bc5AukS8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPT7/UgHJelsGZOXPlw80mJMlIXkdCJ2QipJXmBfdnJn4z9q4e
+	DqEHKmlSQouNkRryAS4MXc9BJB4VrJgOnBGNz7G5B39saCw7K43C/x96tXLNh5uCZ0cpLzdfgV8
+	BZzxxErU5V2s/BNY5MnfH3v/FeS+YL/4Yoi0N
+X-Gm-Gg: ASbGnctPHA+qW0YmJUoHz8FBzqcs/+QJ0f6VHsw/ZF8fvNFH1Opl3xklEGOZbRppR1E
+	EqCGX2/6n9FatAiQ/kTs736yYIAhLuaDVYFexPcdycPytW2rk0Pbf0+RCrPtAWhM=
+X-Google-Smtp-Source: AGHT+IEh22eo0rd7CRUaBnizbOTPapamAsVOnD5oqCjCeDY0vRSnRalP/VlK+LQ2LP76cy7+yeYmUI+Cf2UJpD/kvGU=
+X-Received: by 2002:a05:6214:d68:b0:6d8:8e0f:8c03 with SMTP id
+ 6a1803df08f44-6dae38f5720mr18047506d6.18.1733955500628; Wed, 11 Dec 2024
+ 14:18:20 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 14:18:20 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211032256.28494-7-jason-jh.lin@mediatek.com>
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-4-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-4-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 14:18:20 -0800
+Message-ID: <CAE-0n53V9xmrktUBpfNd9Me7pig=c3sP1AcCPdKnpDd-RSuakw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/14] drm/msm/dp: pull I/O data out of msm_dp_catalog_private()
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jason-JH.Lin,
+Quoting Dmitry Baryshkov (2024-12-02 02:06:34)
+> Having I/O regions inside a msm_dp_catalog_private() results in extra
+> layers of one-line wrappers for accessing the data. Move I/O region base
+> and size to the globally visible struct msm_dp_catalog.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.13-rc2 next-20241211]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/dt-bindings-mailbox-mediatek-Add-GCE-header-file-for-MT8196/20241211-112605
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241211032256.28494-7-jason-jh.lin%40mediatek.com
-patch subject: [PATCH v2 6/8] soc: mediatek: Add programming flow for unsupported subsys ID hardware
-config: arm64-randconfig-002-20241212 (https://download.01.org/0day-ci/archive/20241212/202412120633.avM5EfRz-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241212/202412120633.avM5EfRz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412120633.avM5EfRz-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: cmdq_subsys_is_valid
-   >>> referenced by mtk-mmsys.c:173 (drivers/soc/mediatek/mtk-mmsys.c:173)
-   >>>               drivers/soc/mediatek/mtk-mmsys.o:(mtk_mmsys_update_bits) in archive vmlinux.a
-   >>> referenced by mtk-mutex.c:976 (drivers/soc/mediatek/mtk-mutex.c:976)
-   >>>               drivers/soc/mediatek/mtk-mutex.o:(mtk_mutex_enable_by_cmdq) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
