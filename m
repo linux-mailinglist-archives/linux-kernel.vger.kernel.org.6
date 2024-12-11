@@ -1,468 +1,132 @@
-Return-Path: <linux-kernel+bounces-441436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6E59ECE5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:15:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56221888456
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:13:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C8124634B;
-	Wed, 11 Dec 2024 14:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BmfQYnvs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5050C9ECE09
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:08:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84780246325;
-	Wed, 11 Dec 2024 14:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B503C2833E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:08:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A48236920;
+	Wed, 11 Dec 2024 14:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUmp0cVm"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA1F381AA;
+	Wed, 11 Dec 2024 14:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733926190; cv=none; b=u4v1Q03DuoS4xAArqpaBepSvnocYiEDrG7VBOSN8O8Rc9kf0B1AN6l5HYOz7XIGGJdI4cxSqSgVIFlZFlgwSSJqBcjB2Ch0sgf8D6WBn1vvMcvgnkwMb9qbIWYxA/Eb2sPkqRhRtdrh6KNYQ2+P4Q2u5MavVw8KpfMHIJ9jJEuw=
+	t=1733926101; cv=none; b=LDc7JpbNev0mV33ceykUIP5WqWWJUvAB8PjLT/7XtHI6NLix6H08T1z7g/L50IsFSqTFmu2SSALmzgI8YbN2c8SQeWvtgibuDWt6eK2IRXu7uz/aUPcpCHXC7XcfuVu/z8Ltm2v24FsxN1Xr/OsfzmVYM0XjhxAmdS4y8OH9qU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733926190; c=relaxed/simple;
-	bh=ClNhQ+m60Vl62CRVShhUbB8xDN2iLPte3EHhmj33pDI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X0mh2pKP/R4MffHonklAVvz/9idS5eG20lOOGWMkk+/ir6JUS43Xn4HTmfq1HH7RCvqOmKjqnxDyJLh6QVhdKsRmCyoAIJBjdH2296s8ZlIBPhTA6inINcWhal6dfXq7nZtgbeO/iImWr15EVjLXmRN5rPahlHd5uYk/uU4zfLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BmfQYnvs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB8BeHo006109;
-	Wed, 11 Dec 2024 14:09:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yloky09RIw0iQXMHoWf65ydgiEDOQ0/zO3AyG18i0L0=; b=BmfQYnvsxEw2U1lQ
-	gVL9gmAPABs2IyCkYIiAqlSBoSpi6GStFCVu8fAuqf0rHSk39avpqesSBwDVtooC
-	ihWpf0c+eNxCN4+Mu7hXZbcGU3wpsf+7/oksXB53u7vCsvNuORIwa2yDrVqAgA9U
-	XwjeBvTlQwDRiOgIcNRZy+Uo423uG2X+q+6iH7waeSlHzguJRMg3GZAYw1oDAlqm
-	TVHrk8Zp4NxMpYzzVmWLRvmYrcZB1j6T3/pnjtFZHCxl76FhELzbt5ETzX2N4cg4
-	8DmbcTCviRSbYvY6eeH4uIQafXNdi//CmxHuSZF9/3ugBVKIX/W9r5NYIMEQfBB/
-	kNTZrQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f70w12f4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 14:09:43 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBE9hsJ019678
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 14:09:43 GMT
-Received: from hu-depengs-sha.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Dec 2024 06:09:36 -0800
-From: Depeng Shao <quic_depengs@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vladimir.zapolskiy@linaro.org>
-CC: <quic_eberman@quicinc.com>, <quic_depengs@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-Subject: [PATCH 16/16] media: qcom: camss: Add support for VFE 780
-Date: Wed, 11 Dec 2024 19:37:38 +0530
-Message-ID: <20241211140738.3835588-17-quic_depengs@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241211140738.3835588-1-quic_depengs@quicinc.com>
-References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
+	s=arc-20240116; t=1733926101; c=relaxed/simple;
+	bh=gzAq8YL0jZhrC7JLCuhzyeIX1l6HQa3wImNAgsCJI1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NRRsU9sRdTANpscdwYtYqYpGjq0RxV1GqZgVxn4Ym4cfYQHNQP4JGIkl63uNT5jTriqixIQukWgEokMb0rEqNmP5yk62Afir7R0zgK63OYeIzl2zusaaNxl8T4cfdHcMUkSL9zsJdzHbyR7CULjUOE8hKBIsy8DoTzZPX38g5QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUmp0cVm; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d91653e9d7so24844336d6.1;
+        Wed, 11 Dec 2024 06:08:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733926098; x=1734530898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cCFHk8l64EnyqlgOuq7wPYYVMgx4PCOWKLcisFLb+jw=;
+        b=IUmp0cVmTHyJUGI6/6WSrrs4r8Ljs/V2iLXq0ruUcKYcHEilRu7QK/HtTRb9WJmI5C
+         MH0wmsYyVALVn3TiveMICMM11bhUabEGfS7VDlNKA54ZpQ2ts6q8Tbi/eWQb/86cJ4d9
+         aV8QpDibCvSQL2J0tqyM6+37H1nqiC3a+bR+/jSP0TVAKZ5rgJHbZpuG7Y1tSf7/4uwF
+         Klr9ZxZo3/b5q2SWn+MCPfeYLyEozlleTyV4/vkSNWGwWMUW3IiIahZucL7MLyG4HEjd
+         Hnrz0ID+SWa2eOVfKoavSgp59m3ElImG0aUtv0NmsKjXmQnEvpDNaywsQL0f+Q44beNc
+         vNng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733926098; x=1734530898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cCFHk8l64EnyqlgOuq7wPYYVMgx4PCOWKLcisFLb+jw=;
+        b=HP0aqjSYSdhbNRSkj6QeqyWu9sbQuIWXhbsWqrr+4azcSa1u+Fg3IRGq3KncVK/MQp
+         ObLII1Qy8azvVtNjQwhgwd4FohryaiOcGUN81l9XNx+aBzyil4BcEuv74isC9o3ADgoW
+         nuaSr/Wnpumb0sdnr8GFb8eZb5wxgzBErwmBFihgwi6kRpIAAFD4moEWFLQf25UvjAHd
+         /LabCWVAick4cxionvMl0D1ykbib727SzVtkmJpQhXWr+GrurLixAgAA7uvrkCH+SvsJ
+         j/9FY3xWM2CAyk42rtJfH1rAl2d/rnsY8uhRGYbG042A/Q/eB4nrdfw+y935985mt7N0
+         dNkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXb3KReAhA4oFNmgTX42oLkDvF5vXaT10gLOoDHmmSD0zIz5rj4taf9+9UTtCH6pm+rZH+5NctP@vger.kernel.org, AJvYcCXwJkBIRffuC4XtPNqPDQwl3/mJTktpTjZJd2vgEjDESPblQ9P5+IZ5o9o0tDrFJXKG1NMEo+/WJp3wG+yj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7xupDF3D5rqfZWlwtF8nvjBcjprHE7aSmB+cWIPARiaXXEF3Q
+	6AHTlWQaYzCiU5/w+2chf++prsAeb4DZTR8NBi9AHywxYqUX9eBo02ENag/QGdcXQdm5hSup7mk
+	lPClHi4vRAo7LZrILO0615QsNW0E=
+X-Gm-Gg: ASbGnctOISXuYq7+y1KyaTgsYFyZPCtRkiNm6a8U2ngfDO3/QioAl9LZQqm9ijOtZNt
+	lYLG0xlo9gQDu+Gx8ZYPPCj/gtFMH5eDE991q
+X-Google-Smtp-Source: AGHT+IFs8a2HVux/ZsemMM1DT8Fr1MzZ/o/HDNSwSWyhxHCXnkDWQDaqDw69ZIj7wMUYANBgqvw9mXYTTpZfCHZkaDw=
+X-Received: by 2002:ad4:4ea9:0:b0:6d3:7a47:2034 with SMTP id
+ 6a1803df08f44-6d9348d211emr43589956d6.3.1733926098096; Wed, 11 Dec 2024
+ 06:08:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6iDjbql2Cif2KryPwqt4JSk9S5pTdbRy
-X-Proofpoint-ORIG-GUID: 6iDjbql2Cif2KryPwqt4JSk9S5pTdbRy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110101
+References: <20241211131729.43996-1-laoar.shao@gmail.com> <20241211131729.43996-4-laoar.shao@gmail.com>
+ <wvqotmnk2kad3lyigbsc5vtq4ymdtaxqcjijaj2f5mdcp6m742@ltmazfge3eu4>
+In-Reply-To: <wvqotmnk2kad3lyigbsc5vtq4ymdtaxqcjijaj2f5mdcp6m742@ltmazfge3eu4>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 11 Dec 2024 22:07:41 +0800
+Message-ID: <CALOAHbB_i9rpG03FVKE5gyue0hpM-gE5V=X2gcjTXHjP2yNTGA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] sched, psi: Don't account irq time if
+ sched_clock_irqtime is disabled
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: mingo@redhat.com, peterz@infradead.org, hannes@cmpxchg.org, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	surenb@google.com, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for VFE found on SM8550 (Titan 780). This implementation is
-based on the titan 480 implementation. It supports the normal and lite
-VFE.
+On Wed, Dec 11, 2024 at 9:56=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
+>
+> On Wed, Dec 11, 2024 at 09:17:28PM GMT, Yafang Shao <laoar.shao@gmail.com=
+> wrote:
+> > @@ -1286,7 +1286,7 @@ struct psi_trigger *psi_trigger_create(struct psi=
+_group *group, char *buf,
+> >       bool privileged;
+> >       u32 window_us;
+> >
+> > -     if (static_branch_likely(&psi_disabled))
+> > +     if (static_branch_likely(&psi_disabled) || !irqtime_enabled())
+> >               return ERR_PTR(-EOPNOTSUPP);
+>
+> Beware this jumps out for _any_ PSI metric when only irq is disabled.
+> I meant to add a guard to psi_show() (this is psi_trigger_create()).
 
-Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
-Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
-Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/media/platform/qcom/camss/Makefile    |   1 +
- .../media/platform/qcom/camss/camss-vfe-780.c | 159 ++++++++++++++++++
- drivers/media/platform/qcom/camss/camss-vfe.c |   2 +
- drivers/media/platform/qcom/camss/camss-vfe.h |   1 +
- drivers/media/platform/qcom/camss/camss.c     | 121 +++++++++++++
- 5 files changed, 284 insertions(+)
- create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-780.c
+My apologies, I'll fix it in the next version. How about the following
+change instead?
 
-diff --git a/drivers/media/platform/qcom/camss/Makefile b/drivers/media/platform/qcom/camss/Makefile
-index 9a723e8712a2..f6db5b3b5ace 100644
---- a/drivers/media/platform/qcom/camss/Makefile
-+++ b/drivers/media/platform/qcom/camss/Makefile
-@@ -17,6 +17,7 @@ qcom-camss-objs += \
- 		camss-vfe-4-8.o \
- 		camss-vfe-17x.o \
- 		camss-vfe-480.o \
-+		camss-vfe-780.o \
- 		camss-vfe-gen1.o \
- 		camss-vfe.o \
- 		camss-video.o \
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe-780.c b/drivers/media/platform/qcom/camss/camss-vfe-780.c
-new file mode 100644
-index 000000000000..b9812d70f91b
---- /dev/null
-+++ b/drivers/media/platform/qcom/camss/camss-vfe-780.c
-@@ -0,0 +1,159 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm MSM Camera Subsystem - VFE (Video Front End) Module v780 (SM8550)
-+ *
-+ * Copyright (c) 2024 Qualcomm Technologies, Inc.
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+
-+#include "camss.h"
-+#include "camss-vfe.h"
-+
-+#define BUS_REG_BASE			(vfe_is_lite(vfe) ? 0x200 : 0xC00)
-+
-+#define VFE_BUS_WM_CGC_OVERRIDE		(BUS_REG_BASE + 0x08)
-+#define		WM_CGC_OVERRIDE_ALL		(0x7FFFFFF)
-+
-+#define VFE_BUS_WM_TEST_BUS_CTRL	(BUS_REG_BASE + 0xDC)
-+
-+#define VFE_BUS_WM_CFG(n)		(BUS_REG_BASE + 0x200 + (n) * 0x100)
-+#define		WM_CFG_EN			BIT(0)
-+#define		WM_VIR_FRM_EN			BIT(1)
-+#define		WM_CFG_MODE			BIT(16)
-+#define VFE_BUS_WM_IMAGE_ADDR(n)	(BUS_REG_BASE + 0x204 + (n) * 0x100)
-+#define VFE_BUS_WM_FRAME_INCR(n)	(BUS_REG_BASE + 0x208 + (n) * 0x100)
-+#define VFE_BUS_WM_IMAGE_CFG_0(n)	(BUS_REG_BASE + 0x20c + (n) * 0x100)
-+#define		WM_IMAGE_CFG_0_DEFAULT_WIDTH	(0xFFFF)
-+#define VFE_BUS_WM_IMAGE_CFG_2(n)	(BUS_REG_BASE + 0x214 + (n) * 0x100)
-+#define		WM_IMAGE_CFG_2_DEFAULT_STRIDE	(0xFFFF)
-+#define VFE_BUS_WM_PACKER_CFG(n)	(BUS_REG_BASE + 0x218 + (n) * 0x100)
-+
-+#define VFE_BUS_WM_IRQ_SUBSAMPLE_PERIOD(n)	(BUS_REG_BASE + 0x230 + (n) * 0x100)
-+#define VFE_BUS_WM_IRQ_SUBSAMPLE_PATTERN(n)	(BUS_REG_BASE + 0x234 + (n) * 0x100)
-+#define VFE_BUS_WM_FRAMEDROP_PERIOD(n)		(BUS_REG_BASE + 0x238 + (n) * 0x100)
-+#define VFE_BUS_WM_FRAMEDROP_PATTERN(n)		(BUS_REG_BASE + 0x23c + (n) * 0x100)
-+
-+#define VFE_BUS_WM_MMU_PREFETCH_CFG(n)		(BUS_REG_BASE + 0x260 + (n) * 0x100)
-+#define VFE_BUS_WM_MMU_PREFETCH_MAX_OFFSET(n)	(BUS_REG_BASE + 0x264 + (n) * 0x100)
-+
-+/*
-+ * Bus client mapping:
-+ *
-+ * Full VFE:
-+ * 23 = RDI0, 24 = RDI1, 25 = RDI2
-+ *
-+ * VFE LITE:
-+ * 0 = RDI0, 1 = RDI1, 2 = RDI3, 4 = RDI4
-+ */
-+#define RDI_WM(n)			((vfe_is_lite(vfe) ? 0x0 : 0x17) + (n))
-+
-+static void vfe_wm_start(struct vfe_device *vfe, u8 wm, struct vfe_line *line)
-+{
-+	struct v4l2_pix_format_mplane *pix =
-+		&line->video_out.active_fmt.fmt.pix_mp;
-+
-+	wm = RDI_WM(wm);
-+
-+	/* no clock gating at bus input */
-+	writel(WM_CGC_OVERRIDE_ALL, vfe->base + VFE_BUS_WM_CGC_OVERRIDE);
-+
-+	writel(0x0, vfe->base + VFE_BUS_WM_TEST_BUS_CTRL);
-+
-+	writel(ALIGN(pix->plane_fmt[0].bytesperline, 16) * pix->height >> 8,
-+	       vfe->base + VFE_BUS_WM_FRAME_INCR(wm));
-+	writel((WM_IMAGE_CFG_0_DEFAULT_WIDTH & 0xFFFF),
-+	       vfe->base + VFE_BUS_WM_IMAGE_CFG_0(wm));
-+	writel(WM_IMAGE_CFG_2_DEFAULT_STRIDE,
-+	       vfe->base + VFE_BUS_WM_IMAGE_CFG_2(wm));
-+	writel(0, vfe->base + VFE_BUS_WM_PACKER_CFG(wm));
-+
-+	/* no dropped frames, one irq per frame */
-+	writel(0, vfe->base + VFE_BUS_WM_FRAMEDROP_PERIOD(wm));
-+	writel(1, vfe->base + VFE_BUS_WM_FRAMEDROP_PATTERN(wm));
-+	writel(0, vfe->base + VFE_BUS_WM_IRQ_SUBSAMPLE_PERIOD(wm));
-+	writel(1, vfe->base + VFE_BUS_WM_IRQ_SUBSAMPLE_PATTERN(wm));
-+
-+	writel(1, vfe->base + VFE_BUS_WM_MMU_PREFETCH_CFG(wm));
-+	writel(0xFFFFFFFF, vfe->base + VFE_BUS_WM_MMU_PREFETCH_MAX_OFFSET(wm));
-+
-+	writel(WM_CFG_EN | WM_CFG_MODE, vfe->base + VFE_BUS_WM_CFG(wm));
-+}
-+
-+static void vfe_wm_stop(struct vfe_device *vfe, u8 wm)
-+{
-+	wm = RDI_WM(wm);
-+	writel(0, vfe->base + VFE_BUS_WM_CFG(wm));
-+}
-+
-+static void vfe_wm_update(struct vfe_device *vfe, u8 wm, u32 addr,
-+			  struct vfe_line *line)
-+{
-+	wm = RDI_WM(wm);
-+	writel((addr >> 8) & 0xFFFFFFFF, vfe->base + VFE_BUS_WM_IMAGE_ADDR(wm));
-+
-+	dev_dbg(vfe->camss->dev, "wm:%d, image buf addr:0x%x\n",
-+		wm, addr);
-+}
-+
-+static void vfe_reg_update(struct vfe_device *vfe, enum vfe_line_id line_id)
-+{
-+	int port_id = line_id;
-+
-+	camss_reg_update(vfe->camss, vfe->id, port_id, false);
-+}
-+
-+static inline void vfe_reg_update_clear(struct vfe_device *vfe,
-+					enum vfe_line_id line_id)
-+{
-+	int port_id = line_id;
-+
-+	camss_reg_update(vfe->camss, vfe->id, port_id, true);
-+}
-+
-+static const struct camss_video_ops vfe_video_ops_780 = {
-+	.queue_buffer = vfe_queue_buffer_v2,
-+	.flush_buffers = vfe_flush_buffers,
-+};
-+
-+static void vfe_subdev_init(struct device *dev, struct vfe_device *vfe)
-+{
-+	vfe->video_ops = vfe_video_ops_780;
-+}
-+
-+static void vfe_global_reset(struct vfe_device *vfe)
-+{
-+	vfe_isr_reset_ack(vfe);
-+}
-+
-+static irqreturn_t vfe_isr(int irq, void *dev)
-+{
-+	/* nop */
-+	return IRQ_HANDLED;
-+}
-+
-+static int vfe_halt(struct vfe_device *vfe)
-+{
-+	/* rely on vfe_disable_output() to stop the VFE */
-+	return 0;
-+}
-+
-+const struct vfe_hw_ops vfe_ops_780 = {
-+	.global_reset = vfe_global_reset,
-+	.hw_version = vfe_hw_version,
-+	.isr = vfe_isr,
-+	.pm_domain_off = vfe_pm_domain_off,
-+	.pm_domain_on = vfe_pm_domain_on,
-+	.reg_update = vfe_reg_update,
-+	.reg_update_clear = vfe_reg_update_clear,
-+	.subdev_init = vfe_subdev_init,
-+	.vfe_disable = vfe_disable,
-+	.vfe_enable = vfe_enable_v2,
-+	.vfe_halt = vfe_halt,
-+	.vfe_wm_start = vfe_wm_start,
-+	.vfe_wm_stop = vfe_wm_stop,
-+	.vfe_buf_done = vfe_buf_done,
-+	.vfe_wm_update = vfe_wm_update,
-+};
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 1c9b6569fbe5..c95b127a7e2e 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -344,6 +344,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
- 	case CAMSS_845:
- 	case CAMSS_8250:
- 	case CAMSS_8280XP:
-+	case CAMSS_8550:
- 		switch (sink_code) {
- 		case MEDIA_BUS_FMT_YUYV8_1X16:
- 		{
-@@ -1964,6 +1965,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
- 	case CAMSS_845:
- 	case CAMSS_8250:
- 	case CAMSS_8280XP:
-+	case CAMSS_8550:
- 		ret = 16;
- 		break;
- 	default:
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.h b/drivers/media/platform/qcom/camss/camss-vfe.h
-index 977710d6655e..2a2e2d82dd51 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.h
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.h
-@@ -242,6 +242,7 @@ extern const struct vfe_hw_ops vfe_ops_4_7;
- extern const struct vfe_hw_ops vfe_ops_4_8;
- extern const struct vfe_hw_ops vfe_ops_170;
- extern const struct vfe_hw_ops vfe_ops_480;
-+extern const struct vfe_hw_ops vfe_ops_780;
- 
- int vfe_get(struct vfe_device *vfe);
- void vfe_put(struct vfe_device *vfe);
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index c0e336f3916b..e8cc96d3d0d2 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -1823,6 +1823,125 @@ static const struct camss_subdev_resources csid_res_8550[] = {
- 	}
- };
- 
-+static const struct camss_subdev_resources vfe_res_8550[] = {
-+	/* VFE0 */
-+	{
-+		.regulators = {},
-+		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe0_fast_ahb",
-+			   "vfe0", "cpas_vfe0", "camnoc_axi" },
-+		.clock_rate = { { 0 },
-+				{ 80000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 },
-+				{ 466000000, 594000000, 675000000, 785000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 } },
-+		.reg = { "vfe0" },
-+		.interrupt = { "vfe0" },
-+		.vfe = {
-+			.line_num = 3,
-+			.is_lite = false,
-+			.has_pd = true,
-+			.pd_name = "ife0",
-+			.hw_ops = &vfe_ops_780,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE1 */
-+	{
-+		.regulators = {},
-+		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe1_fast_ahb",
-+			   "vfe1", "cpas_vfe1", "camnoc_axi" },
-+		.clock_rate = {	{ 0 },
-+				{ 80000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 },
-+				{ 466000000, 594000000, 675000000, 785000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 } },
-+		.reg = { "vfe1" },
-+		.interrupt = { "vfe1" },
-+		.vfe = {
-+			.line_num = 3,
-+			.is_lite = false,
-+			.has_pd = true,
-+			.pd_name = "ife1",
-+			.hw_ops = &vfe_ops_780,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE2 */
-+	{
-+		.regulators = {},
-+		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe2_fast_ahb",
-+			   "vfe2", "cpas_vfe2", "camnoc_axi" },
-+		.clock_rate = {	{ 0 },
-+				{ 80000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 },
-+				{ 466000000, 594000000, 675000000, 785000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 } },
-+		.reg = { "vfe2" },
-+		.interrupt = { "vfe2" },
-+		.vfe = {
-+			.line_num = 3,
-+			.is_lite = false,
-+			.has_pd = true,
-+			.pd_name = "ife2",
-+			.hw_ops = &vfe_ops_780,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE3 lite */
-+	{
-+		.regulators = {},
-+		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe_lite_ahb",
-+			   "vfe_lite", "cpas_ife_lite", "camnoc_axi" },
-+		.clock_rate = {	{ 0 },
-+				{ 80000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 },
-+				{ 400000000, 480000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 } },
-+		.reg = { "vfe_lite0" },
-+		.interrupt = { "vfe_lite0" },
-+		.vfe = {
-+			.line_num = 4,
-+			.is_lite = true,
-+			.hw_ops = &vfe_ops_780,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE4 lite */
-+	{
-+		.regulators = {},
-+		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe_lite_ahb",
-+			   "vfe_lite", "cpas_ife_lite", "camnoc_axi" },
-+		.clock_rate = {	{ 0 },
-+				{ 80000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 },
-+				{ 400000000, 480000000 },
-+				{ 300000000, 400000000 },
-+				{ 300000000, 400000000 } },
-+		.reg = { "vfe_lite1" },
-+		.interrupt = { "vfe_lite1" },
-+		.vfe = {
-+			.line_num = 4,
-+			.is_lite = true,
-+			.hw_ops = &vfe_ops_780,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+};
-+
- static const struct resources_icc icc_res_sm8550[] = {
- 	{
- 		.name = "ahb",
-@@ -2861,11 +2980,13 @@ static const struct camss_resources sm8550_resources = {
- 	.pd_name = "top",
- 	.csiphy_res = csiphy_res_8550,
- 	.csid_res = csid_res_8550,
-+	.vfe_res = vfe_res_8550,
- 	.csid_wrapper_res = &csid_wrapper_res_sm8550,
- 	.icc_res = icc_res_sm8550,
- 	.icc_path_num = ARRAY_SIZE(icc_res_sm8550),
- 	.csiphy_num = ARRAY_SIZE(csiphy_res_8550),
- 	.csid_num = ARRAY_SIZE(csid_res_8550),
-+	.vfe_num = ARRAY_SIZE(vfe_res_8550),
- 	.link_entities = camss_link_entities
- };
- 
--- 
-2.34.1
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 7341d33d9118..263c26a36511 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -1233,6 +1233,9 @@ int psi_show(struct seq_file *m, struct
+psi_group *group, enum psi_res res)
+        if (static_branch_likely(&psi_disabled))
+                return -EOPNOTSUPP;
 
++       if (!irqtime_enabled() && res =3D=3D PSI_IRQ)
++               return -EOPNOTSUPP;
++
+        /* Update averages before reporting them */
+        mutex_lock(&group->avgs_lock);
+        now =3D sched_clock();
+
+
+
+--
+Regards
+Yafang
 
