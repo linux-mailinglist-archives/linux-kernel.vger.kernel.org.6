@@ -1,123 +1,172 @@
-Return-Path: <linux-kernel+bounces-440604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021DD9EC1A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:36:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB4B9EC1A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0DE418825C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:36:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3E91693DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F09166F06;
-	Wed, 11 Dec 2024 01:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FA113C914;
+	Wed, 11 Dec 2024 01:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWXuqS/O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="iLXQvmIz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287064A08;
-	Wed, 11 Dec 2024 01:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733880954; cv=none; b=FRcd2FclOOHssh8S81vY6ScnctC+Sj9GHGzbv7/qFrIg3/boaCioaST2QRvHb2UGX88x7P8Bb6LqmTejf2cqCGZaO5kVpzbV8oK6lGEZgPvIQC90WkZ67tvUE1lS2KpMFsO7bTzdFjgY97Q1fY66dERyk3k6if25Btksww3EFvE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733880954; c=relaxed/simple;
-	bh=Dz1h0dkmrv6Ze1cxU8t5rn465fyVUykxbTsS0X2OpsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SbYGXO1EW8Nx/B0Ix2UEJEZF4xQdyly1BAin6X+UDXC7JThmXoJ3s6QSvSNLRzE5isfLIM4Ra45XyDap9bQL1tq7gTZoxceNGQupJ9eBvM8ed5ariMK1X4rJS0v7spUsyqAUQd37W2XhLOoJPSoVUBKkcqGGD8P+LNM+ftBVz1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWXuqS/O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199D6C4CED6;
-	Wed, 11 Dec 2024 01:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733880952;
-	bh=Dz1h0dkmrv6Ze1cxU8t5rn465fyVUykxbTsS0X2OpsA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lWXuqS/OGpuLDDn3e6rd0Ny3W9lOBqxl6ouihxGY5DI5BnIAz9k8OvBxV/WkkoGKL
-	 hvX4IUIFhNQrpaU/cm1/wigfic0JSqIb6VAvnSxeGoBEhxQ8j23ePZ7Up9KKZysBId
-	 uO/7yQ7qC/+pZb6ESDTBeZAbwesJTCLTy1XLYAF4mlcKRBKyoFjzB5pZOEDAYCVUSK
-	 PtvZkQ2HN8nf8vIhBE/HaUtHV2aj4U1eGeFDoHxYziwThc1ReVtXl39rfXh3mERvJ2
-	 23iH30lOevYf8TCz5YvtH3bGmPPNofPB05oCl1pJa3BU8K8c+a39qY+xcVUgGWrb0g
-	 vGjoGdbfKJTPg==
-Date: Tue, 10 Dec 2024 17:35:48 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Easwar Hariharan
- <eahariha@linux.microsoft.com>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Pablo Neira Ayuso
- <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Julia Lawall
- <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack
- <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert
- Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Ofir
- Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>, Lucas De
- Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- James Smart <james.smart@broadcom.com>, Dick Kennedy
- <dick.kennedy@broadcom.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Roger Pau =?UTF-8?B?TW9ubsOp?=
- <roger.pau@citrix.com>, Jens Axboe <axboe@kernel.dk>, Kalle Valo
- <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel
- Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
- <sbranden@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>, Ilya
- Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jiri
- Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr Mladek
- <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Louis Peens
- <louis.peens@corigine.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, cocci@inria.fr,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org, linux-mm@kvack.org,
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
- oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen
- <anna-maria@linutronix.de>
-Subject: Re: [PATCH v3 00/19] Converge on using secs_to_jiffies()
-Message-ID: <20241210173548.5d32efe0@kernel.org>
-In-Reply-To: <20241210153604.cf99699f264f12740ffce5c7@linux-foundation.org>
-References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-	<315e9178-5b10-4de0-bdcf-7243e0e355bb@oss.qualcomm.com>
-	<20241210153604.cf99699f264f12740ffce5c7@linux-foundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D540C3A8F7;
+	Wed, 11 Dec 2024 01:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733881102; cv=pass; b=RYePl54Up2v4q3QtqxGGPIC6VW0GeUxJBJqaJl5mxHQpXbobIGwE9ezDsUQg0CoE89GhwGdXvbjA5KO+SQmtwW4v2GmUmVwAy+al1U6Sur8m4ZnsLcqbVR3AI+l7urXi9qGCK/eAEgFbm02FridztEObnO6X+ExEAF8L95QlO78=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733881102; c=relaxed/simple;
+	bh=MiANRQxAdGZ9xEmS1eGwBnT+TtfM8IekXWmhnbTeeJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncvv3hwwh4sewkuNwd3iI6+3pMdH7VlpfpzxO5gXAHRLe6gTjL7ZhO4KJ6uY6n49/7KgN94e3YQOB4ddkP/HQDLpX8B8B8r4SUPeZCmHkAlxDwPK5N4Off7GoY+IpcbaqBFuPS+BbKZmKmIv4qS79JK8umA47yl7BtQE3sJR3cg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=iLXQvmIz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733881091; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MBbJ6zXRPQCvT/XYWEwRK20WqjTmUqwU16AiK4vyrVhNj/jHI/BhIhqlrKjhXO0G/fxUu9GbaTYAoxzAa+rIeCcHZemngcSgtl/eh7vK5MCBaDj1TmRB9zLWdtMEtdvZMggo66LqvC9DjOn/Mzeck+DSWbkjr1cZFD26ssZmitQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733881091; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=i5QT+7FiT6szOyqoDxYnm2QjssftX3943ZiJ+wM6JZM=; 
+	b=IvluER+xWZeoKGtYBmI4qjXR0zOzaYpNfoSJeSgCzLsG9U2pRBULhGp567xLuokXQiMrL5Hy7DQZTROWHR27yv5RmkormaGoB+MyDk2S2BbwIjdM54yjIeTWKT2LlrlO4ZVW5mgkThHWhFAq0rkrjYNMEgWpWhOX9TQdeHFVvjs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733881091;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=i5QT+7FiT6szOyqoDxYnm2QjssftX3943ZiJ+wM6JZM=;
+	b=iLXQvmIzD4wQRi76Q+4y7LuJO/nVikOQPc4jQ/LZKc13jLdvOdqSC1tfOwdotlOd
+	tIkyF75XoziQj3QexsQPiqXJlRz0PVhRS9y32OgX9atYaErXilVkGLdnoa9TZ+MqPVd
+	Yp6KlTiWJemeZ8u0mBke7Ij2XxwzmSHW2KccWPF8=
+Received: by mx.zohomail.com with SMTPS id 173388108866529.45962812053415;
+	Tue, 10 Dec 2024 17:38:08 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id 63B0B10604B1; Wed, 11 Dec 2024 02:38:03 +0100 (CET)
+Date: Wed, 11 Dec 2024 02:38:03 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mike Looijmans <mike.looijmans@topic.nl>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] power/supply: Add support for ltc4162-f/s and
+ ltc4015
+Message-ID: <b5mhivpuhyfj3knw3w5wmi2kxyyej7cdnh3kd6wyenumfy7qpr@vnfvfj5gsmtx>
+References: <20241210060506.10295-1-kimseer.paller@analog.com>
+ <20241210060506.10295-2-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="esba6m4ei4fw3vbd"
+Content-Disposition: inline
+In-Reply-To: <20241210060506.10295-2-kimseer.paller@analog.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/233.855.81
+X-ZohoMailClient: External
 
-On Tue, 10 Dec 2024 15:36:04 -0800 Andrew Morton wrote:
-> > I have the same question as before: How do you expect these to land?
-> > Do you now have a maintainer who will take all of them?
-> > Or do you want individual maintainers to take the ones applicable to them?  
-> 
-> I'll just grab everything and see if anyone complains ;)
 
-I may, if this leads to a conflict :(
+--esba6m4ei4fw3vbd
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 2/2] power/supply: Add support for ltc4162-f/s and
+ ltc4015
+MIME-Version: 1.0
 
-Easwar, please break this up per subsystem.
+Hi,
+
+On Tue, Dec 10, 2024 at 02:05:06PM +0800, Kim Seer Paller wrote:
+>  static int ltc4162l_get_ibat(struct ltc4162l_info *info,
+>  			     union power_supply_propval *val)
+>  {
+> +	const struct ltc4162l_chip_info *chip_info =3D info->chip_info;
+>  	unsigned int regval;
+>  	int ret;
+> =20
+> @@ -249,9 +356,8 @@ static int ltc4162l_get_ibat(struct ltc4162l_info *in=
+fo,
+>  	if (ret)
+>  		return ret;
+> =20
+> -	/* Signed 16-bit number, 1.466=CE=BCV / RSNSB amperes/LSB. */
+>  	ret =3D (s16)(regval & 0xFFFF);
+> -	val->intval =3D 100 * mult_frac(ret, 14660, (int)info->rsnsb);
+> +	val->intval =3D mult_frac(ret, chip_info->ibat_resolution_uv, info->rsn=
+sb);
+
+ibat_resolution_uv is in picovolt as far as I can see:
+
+1.466 uV / RSNSB =3D 1466 nV / RSNSB =3D 1466000 pV / RSNSB
+
+RSNSB is provided in microOhm and picoVolt / microOhm equals
+microAmp, which is the unit expected by the power-supply
+subsystem.
+
+>  	return 0;
+>  }
+> @@ -260,6 +366,7 @@ static int ltc4162l_get_ibat(struct ltc4162l_info *in=
+fo,
+>  static int ltc4162l_get_input_voltage(struct ltc4162l_info *info,
+>  				      union power_supply_propval *val)
+>  {
+> +	const struct ltc4162l_chip_info *chip_info =3D info->chip_info;
+>  	unsigned int regval;
+>  	int ret;
+> =20
+> @@ -267,8 +374,7 @@ static int ltc4162l_get_input_voltage(struct ltc4162l=
+_info *info,
+>  	if (ret)
+>  		return ret;
+> =20
+> -	/* 1.649mV/LSB */
+> -	val->intval =3D  regval * 1694;
+> +	val->intval =3D  regval * chip_info->vin_resolution_mv;
+
+I believe it should be vin_resolution_uv. Microvolt is what the
+power-supply subsystem wants and 1.649 mV (from the comment above) is
+1649 uV (from the chip_info->vin_resolution_mv value) :)
+
+> =20
+>  	return 0;
+>  }
+
+Otherwise LGTM.
+
+-- Sebastian
+
+--esba6m4ei4fw3vbd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdY7PMACgkQ2O7X88g7
++prZOw//Q9E81WqnzJLQB8b1yVZZRDrkWWCkh3Szb4nJa9ejJcxu8un4xz/PMlO0
+yBxnavwvni/qrPG+ctI0gBg952XSeY6CqMdx2ZzUt93BjqE5VsaQXa2PyKmfOmrb
+JM63fjjJbCzRMnsUEobmoMQjILZNFC93c7Iy+XDSXzVeTS5WL4lU9i91TkSAMTNC
+r/Erb/l9Xv9wa+yCgmvZuMRXS0T+ef0+7iySJVFV9vAJ1ywPjhybJsvtmCdjH+Oq
+BuP61RfDc8fbsm77VJoVhKfZCSwzrhcYNRNrC5r7xYDbobZnZDqmu5bUprN4ld0j
+5KgFeQ8blpFT+cyl6DWQJxe5obX9XM6xroWJMy5vG3MzN9DktkKews9SnXErcSOi
+hR061UxKPn9qy8cEwI5ATZSPhA596pIcQl1LVI4qJazYrdrHxFKpWJPAcY2+fW4+
+yK4uD+R1sJbfupukfa1dW+suvyTQJF0xpfZvqnSHs6GuMOhXK0m8oGqOwpRq6f8b
+UcLroEuFBzx3tf6W5oX8p3RqAwNr/QgVJayQvl7l+DDgWTcLRp4TBcaD5mMWZn2U
+Y5cO+PRSxplVDaqSg/gEOArVglT6WPDYJfJ3O6fYAVV5b6F7CxQ03hLOpzJQJ3+H
+MaEHozCOBf42+PtoxJPLGKkT9uSg1ZYunVZbb/kW1Bho42JSmL4=
+=DZFE
+-----END PGP SIGNATURE-----
+
+--esba6m4ei4fw3vbd--
 
