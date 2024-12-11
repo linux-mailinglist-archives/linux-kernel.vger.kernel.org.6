@@ -1,169 +1,90 @@
-Return-Path: <linux-kernel+bounces-440622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BEC9EC1D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:59:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB379EC1D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:00:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144A8285779
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA92188B9CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A774A1DFD97;
-	Wed, 11 Dec 2024 01:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5641DF75C;
+	Wed, 11 Dec 2024 01:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UqQ93OPx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="g8y8Ihdr"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7162C1DF254;
-	Wed, 11 Dec 2024 01:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242F61E0DCE
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733882365; cv=none; b=WlT5iXrci/Dwc76p6R75WIbHIK7tVQuAoNBtHqo+jqi/wMbnE21X+/Bc69t9dRD5PwyvJyzhNXzuCgpmqBEafJkJFnlLRmOif11vvs/4fvnPJ2sqv8IWZRoJk8R5pyiMKtzyyBNQrJLx3BjsBCB4PDMwsjVkU8j08lMSkcrRGz8=
+	t=1733882375; cv=none; b=fNy6MiA8hvVGgI+GYkd3O6ekT9GhcsuMoYK27CgwOChs7TUdZqIDMQhX3XpMHy+G+Usaw3XDBixUHpfsCq9uPLpB4WuIutSIPZ0yR/6/Cav2CwEFqgLCsNWK/zAjUaCPy/Dq30gFSjnWiC4pSpew0Q20VfN9j39L0DJ+IW/4Y8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733882365; c=relaxed/simple;
-	bh=AKjYRcMWeksudFdm74PjE0YJmfDEHmNUYsP/z7eIXQI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Jz15B1HdFsr7al7il2TQvjgwjdPVW3PDsnkOaGzgLZoRhevEIcRC6MmSd4X2RKeDlCyEFgsmUONyLG54wPPcJW0c1ClGAmznR62XWnxo1iH4hbn/rsVDJnlabQ7xM/Y790BOfkOoqQpBdx7UZ5mev8MwqEvAh16WFjsIph1GGBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UqQ93OPx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAEnAoq029986;
-	Wed, 11 Dec 2024 01:59:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8el/D2aQmJAFrpkqw5bHxq8FObstuyoUH2NqOrA6j5g=; b=UqQ93OPxfYRqQllb
-	rCfoGO6HqCFKULVFZiD7tT8AiMgAAzXlbCR+tzDEgtl3lsJAjJuR2YFbOjp1EWoM
-	LyK3lRt3aND1Qfe/ofCowN3K9pk620w9qZQaHLPz4z55DYv+PJufHIqBbSXbAeSh
-	m8n8SP29GSimwOwa7rSW+Rcy1/oFbnYPNo9uhGt8UoCcQ6rXhzqgad+itx1MTESm
-	hBIWqOTevv6Gm43toyDO8otIfKys0yWIZjrcSKJX52Guyo4VNC9Hsh7TV8p8x447
-	W7uavsZyaEJkmOndFfM0KN8FdQtrxC+rVCCNeL5mAhYg3QHygZg67/6d3Y2o1p/G
-	jLEAVQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eqr31mdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 01:59:19 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB1xIaP025723
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 01:59:18 GMT
-Received: from songxue-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Dec 2024 17:59:14 -0800
-From: Song Xue <quic_songxue@quicinc.com>
-Date: Wed, 11 Dec 2024 09:57:58 +0800
-Subject: [PATCH 2/2] arm64: dts: qcom: Enable secondary USB controller on
- QCS615 Ride
+	s=arc-20240116; t=1733882375; c=relaxed/simple;
+	bh=Lx+0Iqkp8+dDzJFn/6UO9R1nwb0jHmHFo/eOrmSei80=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YTTY5NbAh/XoQYdIiWjygXGF7G371dz/sTRFKFVLWXwVmUalRKb+MZoWrEzfUvKMIf4GLKe7yxhT5rWYXCr6AN/1ko80vinpfK4hhepTojKx+jPa9ahDDfMiXo8bfdnu3M74r27/Kd19Cztr8o+yiimagsda/AYEjgMZiwdM5Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=g8y8Ihdr; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733882363; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=uNKa5z04ZraNM6iZozg2spe37vtJmJIyeDj6cALGgG4=;
+	b=g8y8IhdrLh+gwvg4pK6XWD44JU4ECtCOh9e8/Z17HLsqSUty/5Y8vfOI2UYRKKrKzknTQ99QqW2kNglElRJfB2b4R9rAKI2fF+ifegySmg2iXVtDSZKRbamwv0sY6V/KzEeMKG3+QLs/k8o9GSXiGKx943QK8kt5yjHLzMXJO/s=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WLGQprG_1733882315 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 11 Dec 2024 09:59:23 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: kherbst@redhat.com
+Cc: lyude@redhat.com,
+	dakr@redhat.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] drm/nouveau/gsp/r535: Modify mismatched function name
+Date: Wed, 11 Dec 2024 09:58:34 +0800
+Message-Id: <20241211015834.47562-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241211-add_usb_host_mode_for_qcs615-v1-2-edce37204a85@quicinc.com>
-References: <20241211-add_usb_host_mode_for_qcs615-v1-0-edce37204a85@quicinc.com>
-In-Reply-To: <20241211-add_usb_host_mode_for_qcs615-v1-0-edce37204a85@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Krishna Kurapati
-	<krishna.kurapati@oss.qualcomm.com>,
-        Song Xue <quic_songxue@quicinc.com>
-X-Mailer: b4 0.15-dev-88a27
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733882348; l=1398;
- i=quic_songxue@quicinc.com; s=20240911; h=from:subject:message-id;
- bh=kKe4s3XKwFQfTeZ9bwf41VARC1I80JIcgi/PxB6/egw=;
- b=L6VAd3xipHBcOw9v33MY0waJaEmfo4EBapeePNhrateByCj2mxR9d3YwNsS9OOAwuc9sl5ube
- dbFehwLsJONDI2Q7odCg/Dkd6aMGdWFaIrF43ytCD2PRnIBf2ea0A7V
-X-Developer-Key: i=quic_songxue@quicinc.com; a=ed25519;
- pk=Z6tjs+BBbyg1kYqhBq0EfW2Pl/yZdOPXutG9TOVA1yc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qB_ViVdEB65Gvvux-s--rFTnxgaat272
-X-Proofpoint-GUID: qB_ViVdEB65Gvvux-s--rFTnxgaat272
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 mlxlogscore=713
- suspectscore=0 mlxscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110014
+Content-Transfer-Encoding: 8bit
 
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+No functional modification involved.
 
-Enable secondary USB controller on QCS615 Ride platform. The secondary
-USB controller is made "host", as it is a Type-A port.
+drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c:2174: warning: expecting prototype for create_debufgs(). Prototype was for create_debugfs() instead.
 
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Co-developed-by: Song Xue <quic_songxue@quicinc.com>
-Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=12292
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 ---
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index f41319ff47b983d771da52775fa78b4385c4e532..26ce0496d13ccbfea392c6d50d9edcab85fbc653 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -203,6 +203,15 @@ &gcc {
- 		 <&sleep_clk>;
- };
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
+index 58502102926b..93a7528a1193 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
+@@ -2162,7 +2162,7 @@ r535_gsp_msg_libos_print(void *priv, u32 fn, void *repv, u32 repc)
+ }
  
-+&pm8150_gpios {
-+	usb2_en_state: usb2-en-state {
-+		pins = "gpio10";
-+		function = "normal";
-+		output-high;
-+		power-source = <0>;
-+	};
-+};
-+
- &pon_pwrkey {
- 	status = "okay";
- };
-@@ -248,6 +257,25 @@ &usb_1_dwc3 {
- 	dr_mode = "peripheral";
- };
- 
-+&usb_hsphy_2 {
-+	vdd-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+	vdda-phy-dpdm-supply = <&vreg_l13a>;
-+
-+	status = "okay";
-+};
-+
-+&usb_2 {
-+	pinctrl-0 = <&usb2_en_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&usb_2_dwc3 {
-+	dr_mode = "host";
-+};
-+
- &watchdog {
- 	clocks = <&sleep_clk>;
- };
-
+ /**
+- * create_debufgs - create a blob debugfs entry
++ * create_debugfs - create a blob debugfs entry
+  * @gsp: gsp pointer
+  * @name: name of this dentry
+  * @blob: blob wrapper
 -- 
-2.25.1
+2.32.0.3.g01195cf9f
 
 
