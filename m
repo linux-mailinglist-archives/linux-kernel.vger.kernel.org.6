@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-441629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17C69ED0E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:10:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B979ED0EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3942288B15
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE20528E842
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B941D9A7F;
-	Wed, 11 Dec 2024 16:09:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86A61DACAA;
+	Wed, 11 Dec 2024 16:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OT85b+bt"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108E11D5CDD;
-	Wed, 11 Dec 2024 16:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C981D5CDD;
+	Wed, 11 Dec 2024 16:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733933397; cv=none; b=ctXO8yEwXGU6AQDaQGQZB6TQECl8MSvRTYLpMcNw+U/Uus3I1DJIW/IemGtDELHjxonhEQSL5u8JiPjbfkml5ZZtK1yjpuXtV+7iFjASeXtDeVJ2uhHiIOWMVRR7AYS7sqKBjF+3ndy30dvVqncM+IGKK6GiANj3XNKC/C5KyyQ=
+	t=1733933516; cv=none; b=fNW2XwtzsXSt8vl1Y9YVuKczGDFS78Ac2VdkDW4ZDUWu9YDQnSCAk+bpcZCI1c5Dmfhpx8rbwCSe8bHd2XDPrvzDvx/FcapoRWkjjda1BTg4+MwKmAyiBbu84uDFhMuD1/aDfeKe/LVi4gUmM88LRlO6FJin8W4l5NhkAMg4RfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733933397; c=relaxed/simple;
-	bh=e7Bl6Cb/5z1UBwu0TtPLrts9zF7L2AqUtvtZt5smbn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ftAtuSTJ2cVjSnwlLiOcfLO2eThzlhrjp56LGPo6I7TQe0Yj9n/U6Wf7TOHrindMrtPTvK8gmmSdUGLJRX6J6XJbazUutuZoIY8qyUECowBbru+tzXjKSS1OQoGPZxAmm+OPDekG77A5V9Jaxq6YV4WJiPhNv6pQzRWcztRjVks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B408AC4CED2;
-	Wed, 11 Dec 2024 16:09:55 +0000 (UTC)
-Date: Wed, 11 Dec 2024 11:09:52 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] fgraph: Use CPU hotplug mechanism to initialize idle
- shadow stacks
-Message-ID: <20241211110952.6d89e0d8@batman.local.home>
-In-Reply-To: <CACRpkdaEXUxSuVzztcVOh2VMzPHr+6jsrEC1w6ecWEd0qzgU4w@mail.gmail.com>
-References: <20241018214300.6df82178@rorschach>
-	<CACRpkdaTBrHwRbbrphVy-=SeDz6MSsXhTKypOtLrTQ+DgGAOcQ@mail.gmail.com>
-	<20241211082427.01208632d3dd5486abb3e090@kernel.org>
-	<CACRpkdaEXUxSuVzztcVOh2VMzPHr+6jsrEC1w6ecWEd0qzgU4w@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733933516; c=relaxed/simple;
+	bh=wJ5OqJBeGWWmdsTg8ym9xIvebDAVnS+p9nEVLIRJrxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jp+uLedB8oJhkHQVCI1xIAsNbjQLk6iedvZ+SfPT0GQjHvnCybY4GaRDOFKAMKhgO9qZYmq+mKBaPrcnwRR6MR0xVeAY/09Am/pLH55tgK+GOEvhP5X+StwFACXa2bWeaQmdPm9BpvWMho0/+fD8tUU39DCr5EHSdXLrrTthCgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OT85b+bt; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=SAnZ8YcNssD3ArYzWOAZV328GFxY+hCoZbW29XHAxwg=; b=OT85b+btxfKhjBTUI7TRpGfoY/
+	VBXcKnHcHhi4lQKkyxkP+4JFJQsvw5L/gfyXot6Pu2jlJgbXV0sweGt82SDoCsF+aIFwQazY3c6Hx
+	ZMAZRhm+pHyRhSJIdblGcjHGULJHVTWTt+l8NnczYwwDslyE4kmG0yKiB6Wf0mxNeLSg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tLPJM-0007FE-LU; Wed, 11 Dec 2024 17:11:40 +0100
+Date: Wed, 11 Dec 2024 17:11:40 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Robert Hodaszi <robert.hodaszi@digi.com>
+Cc: netdev@vger.kernel.org, vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
+	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: tag_ocelot_8021q: fix broken reception
+Message-ID: <41a2686b-d549-40c5-9f6f-bad8f308b729@lunn.ch>
+References: <20241211142932.1409538-1-robert.hodaszi@digi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211142932.1409538-1-robert.hodaszi@digi.com>
 
-On Wed, 11 Dec 2024 15:23:05 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
-
-> If I boot without any tracing enabled from the cmdline and:
+On Wed, Dec 11, 2024 at 03:29:32PM +0100, Robert Hodaszi wrote:
+> Commit dcfe7673787b4bfea2c213df443d312aa754757b ("net: dsa: tag_sja1105:
+> absorb logic for not overwriting precise info into dsa_8021q_rcv()")
+> added support to let the DSA switch driver set source_port and
+> switch_id. tag_8021q's logic overrides the previously set source_port
+> and switch_id only if they are marked as "invalid" (-1). sja1105 and
+> vsc73xx drivers are doing that properly, but ocelot_8021q driver doesn't
+> initialize those variables. That causes dsa_8021q_rcv() doesn't set
+> them, and they remain unassigned.
 > 
-> echo 0 > tracing_on
-> echo function_graph > current_tracer
-> echo do_idle > set_graph_function
-> echo 1 > tracing_on
+> Initialize them as invalid to so dsa_8021q_rcv() can return with the
+> proper values.
 > 
-> I don't get any output either.
-> 
-> It works for other functions, such as
-> 
-> echo ktime_get > set_graph_function
-> 
-> It seems it's the set_graph_function thing that isn't working
-> with do_idle at all after this patch. Why just this function...
-> The function is clearly there:
-> 
-> cat available_filter_functions | grep do_idle
-> do_idle
-> 
-> I can also verify that this function is indeed getting invoked
-> by adding prints to it (it's invoked all the time on any normal
-> system). Does this have something to do with the context
-> where do_idle is called? It's all really confusing...
+> Fixes: dcfe7673787b ("net: dsa: tag_sja1105: absorb logic for not overwriting precise info into dsa_8021q_rcv()")
+> Signed-off-by: Robert Hodaszi <robert.hodaszi@digi.com>
 
-Yeah, I figured it out. That commit moved the initialization before
-fgraph was registered, and we had in ftrace_graph_init_idle_task():
+Hi Robert
 
-        if (ftrace_graph_active) {
-                unsigned long *ret_stack;
-                        
-                ret_stack = per_cpu(idle_ret_stack, cpu);
-                if (!ret_stack) {
-                        ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
-                        if (!ret_stack)
-                                return;
-                        per_cpu(idle_ret_stack, cpu) = ret_stack;
-                }
-                graph_init_task(t, ret_stack);
-        }
+The code is easy, processes are hard.
 
-But because ftrace_graph_active was not set yet, the initialization
-didn't happen.
+We ask that you put a version number in the subject
 
-Can you try this patch?
+[PATCH v2 net] ....
 
--- Steve
+That helps us keep track of the different versions of a patch.
 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 43f4e3f57438..4706a7dce93a 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1160,13 +1160,19 @@ void fgraph_update_pid_func(void)
- static int start_graph_tracing(void)
- {
- 	unsigned long **ret_stack_list;
--	int ret;
-+	int ret, cpu;
- 
- 	ret_stack_list = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
- 
- 	if (!ret_stack_list)
- 		return -ENOMEM;
- 
-+	/* The cpu_boot init_task->ret_stack will never be freed */
-+	for_each_online_cpu(cpu) {
-+		if (!idle_task(cpu)->ret_stack)
-+			ftrace_graph_init_idle_task(idle_task(cpu), cpu);
-+	}
-+
- 	do {
- 		ret = alloc_retstack_tasklist(ret_stack_list);
- 	} while (ret == -EAGAIN);
+Please wait 24 hours, and then post v3 with Vladimirs suggestions.
+
+    Andrew
+
+---
+pw-bot: cr
 
