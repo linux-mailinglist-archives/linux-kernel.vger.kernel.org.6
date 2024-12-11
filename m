@@ -1,93 +1,51 @@
-Return-Path: <linux-kernel+bounces-441587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4309ED06C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:51:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4F29ED070
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23CF81885FA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D965A16C80F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE951D9A6F;
-	Wed, 11 Dec 2024 15:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA31D1D0F50;
+	Wed, 11 Dec 2024 15:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c3pTggp2"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bNJWgtxs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FBA1D61BB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEAC1CB9E2;
+	Wed, 11 Dec 2024 15:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932153; cv=none; b=MEStkSYqAbE0fzpoBbkVxeEDw7B6q7KqIAL+vI069UCwELI2TNwx1uJhkMphzOejBQVFobll1T00GcggeRCa7xeIsDsvKmQMBsuaeImDheo7FRqn/0eTmlP4xrDBf+H3zusxT3DXRSxVvdWUZytnbjHli+3fV2XI2UzOCSjX44M=
+	t=1733932195; cv=none; b=EXAEz9sNTo86S7suTYypO1PpCmYdZuHuudgqs7S9n2Kj9vR0AxIgTpa/DfTKmZNrHUsadKIeAIKM+agrr/uhGuOe+uUVPAUNhxLYWcSnQeLAA6fS5JeT/eEiNpCxiaeiJNTgyDYqfY4NOPwSI9uW5BKHdmyMft71NaTTKQl6Vs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932153; c=relaxed/simple;
-	bh=J38ibBNH3Aw6lYafA9TGz9uhaMK3mS6IigwLX9amwzI=;
+	s=arc-20240116; t=1733932195; c=relaxed/simple;
+	bh=YOJGGRfp8+qF19EtEIelJTodNG+/t3iDdU57j118hgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzZTiVEzhLZp8sZLY62Qx90RCk6lzWb/e2UkM6t4GU4xXPHy4PTFdZ9dwX1/ydBnDCv1UZKZrWZBwoj1UMykCTKFHTGhq15mLa9u4HIlfMW5hpiOrDU10dXBKBWgaecUFfy+80QaWSMp8o+wWs2NIUrWXB4vPEWtyhiQPCaTAAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c3pTggp2; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4361d5dcf5bso9188725e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:49:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733932150; x=1734536950; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfBv9YP8uyTkbd048cu0wiwdrnwl82wTzZ/vbZn1Plg=;
-        b=c3pTggp2Xs/U+kezgNAyKUczbfPw0tUbAoVPukVmqBmTiWgfn4bh1grEGyBQB9DxKt
-         fSrI3Tu+OlIpjOCmiREEZBwuL6yLfXAmVJju4J+dBKThpv/RoTwd9gkHEVYnPF5aratv
-         KRynGqGnbqD02jhqhMR7DtwmUJOEtQe3V0lwUK3kjY88T9/7R7o6v+4tvgIWa97X69Yx
-         d1+/eXGpnhWs8xWjXKNCbgVeI0LNJymIUhmlPVjZ78Jw+q3BZ0X42OfQXZsvSosESbsl
-         HrOKSDo+/vrGrm+b3/8K8n63GRB/19vvZze0kqPwTtaJKQLjETYrCHKJ3ShPgl1ZTFJV
-         k+rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733932150; x=1734536950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DfBv9YP8uyTkbd048cu0wiwdrnwl82wTzZ/vbZn1Plg=;
-        b=JbWaMrdLPgycGzAcJmQN/mYVOyqhvF2yqYB9YRhQc6XPFqjZF57AwIdTN50n9OKuAp
-         Ws8Ttfrmd5xN/q4+lVdnmo/TmLdjISoz+RkJNphkOE/GiKtL6vjW1MZc+TtOpYchpNlu
-         ghZ5BX7ciKl5duV76aA3YP6YSG1OeB9OGinNa4Gq2LJJiqootyz+kFbWK2+WIeD+ZCQt
-         ELYpNQcuqj08XH9+MkOJC8hXCnB3YZiaRTYrzizQ53PxY6CT2QbrTnnuqJwC/0n95vxZ
-         1/ujeL1QCt37/lYLx60L2xRHxYtBHt6K1pREBZqo5nigLfGh4jYpGoyQBYP4YWtW8qm5
-         C7Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWW18sJRIKKcRIlujQZtYAk6TQLU8jeN2XfOMI8egsOumt23q8bzMFtbpbFXlk3N01WKhMIFFva/DYnIW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzxujGpH8+NxCHEfQWhRpgPG6SKubUkT00/VqFpMpceqsrXsot
-	Tb+IaJLuGjsD2CmeNwvSA/VFCnFrxQhXRTIW0/rzHzSkNZ5EBEs9zi9P7ajacDs=
-X-Gm-Gg: ASbGncuw3Zr4NOfy0ZJlxcE1REMeM8VrgoTeJK8u0JBRwQq+hVtEAjeiSId+KIiVcTo
-	w9Qf+kj8sKMgAe8fuWjAW1sf+H9cCl7njok+/TiUgPGgaUPzqIvCjEPahTXM0jPA56j5CbkH+hn
-	mXCPw5Ro7gUb40pbIQooDldtpFwHjSycGyY9ea4DoU3JsIs+NV34MLw/4ER1SE7nVN8A8KTaYDV
-	F4u5o0weYrn2gYh1/+N8aPHlUFON1M3AqTZhQTqpwmcnrhK1F4j1VrvW6A=
-X-Google-Smtp-Source: AGHT+IHgVguIQX7zRdkeSiogpetBA09LUoU9WaRTxjvY87GzH77emXIzHenGyofWFwiTSdXlRShTKQ==
-X-Received: by 2002:a05:6000:401f:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38787688392mr90463f8f.1.1733932150243;
-        Wed, 11 Dec 2024 07:49:10 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ea3sm1550192f8f.28.2024.12.11.07.49.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 07:49:09 -0800 (PST)
-Date: Wed, 11 Dec 2024 18:49:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Laight <David.Laight@aculab.com>
-Cc: Julian Anastasov <ja@ssi.bg>, Simon Horman <horms@verge.net.au>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"lvs-devel@vger.kernel.org" <lvs-devel@vger.kernel.org>,
-	"netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
-	"coreteam@netfilter.org" <coreteam@netfilter.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH net] ipvs: Fix clamp() order in ip_vs_conn_init()
-Message-ID: <6b363719-0250-48c1-9d89-0d4ae86accf8@stanley.mountain>
-References: <1e0cf09d-406f-4b66-8ff5-25ddc2345e54@stanley.mountain>
- <7e01a62a5cb4435198f13be27c19de26@AcuMS.aculab.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eh67ikPweIvmmY1jxpLo8V+cq3IJTuL7jEEzBwXbMyFa7+mTjnGeW/PpwqSqYZSoE2M4lxnU1VZWnT9DWYQHMIi8cn27JAf2+hlLk9cr6vtZl9UGmhB68G2qlOiWNoe9xFXLVNEFa0MK7NC5gsbSFnA+hu+LZuCwDOnTdN2ykwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bNJWgtxs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C82CC4CED2;
+	Wed, 11 Dec 2024 15:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733932194;
+	bh=YOJGGRfp8+qF19EtEIelJTodNG+/t3iDdU57j118hgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bNJWgtxsOcTOvXRlyiNqhaS/Z6p+XcqQ4WVRb1CS7fAjvH4Tf4PL25iqXpoA6l8Yy
+	 hJ4HXAHLN7DlktaScESt02pHJvlmk3OBr7WoIWaFP8wHsoMEJBMlwbTNpmnXfRNAZU
+	 AtSjAOLMOrGlwmZAFGEKCU64Y413a+y8Z53jjc/Y=
+Date: Wed, 11 Dec 2024 16:49:50 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jun Yan <jerrysteve1101@gmail.com>
+Cc: zaitcev@redhat.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@jeremyfiggins.com
+Subject: Re: [PATCH] USB: usblp: return error when setting unsupported
+ protocol
+Message-ID: <2024121141-bobtail-retiree-5ba6@gregkh>
+References: <20241211154244.534745-1-jerrysteve1101@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,22 +54,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7e01a62a5cb4435198f13be27c19de26@AcuMS.aculab.com>
+In-Reply-To: <20241211154244.534745-1-jerrysteve1101@gmail.com>
 
-On Wed, Dec 11, 2024 at 02:27:06PM +0000, David Laight wrote:
-> From: Dan Carpenter
-> > Sent: 11 December 2024 13:17
-> > 
-> > We recently added some build time asserts to detect incorrect calls to
-> > clamp and it detected this bug which breaks the build.  The variable
-> > in this clamp is "max_avail" and it should be the first argument.  The
-> > code currently is the equivalent to max = max(max_avail, max).
+On Wed, Dec 11, 2024 at 11:42:43PM +0800, Jun Yan wrote:
+> Fix the regression introduced by commit d8c6edfa3f4e ("USB:
+> usblp: don't call usb_set_interface if there's a single alt"),
+> which causes that unsupported protocols can also be set via
+> ioctl when the num_altsetting of the device is 0.
 > 
-> The fix is correct but the description above is wrong.
+> Move the check for protocol support to the earlier stage.
+> 
+> Fixes: d8c6edfa3f4e ("USB: usblp: don't call usb_set_interface if there's a single alt")
+> Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
+> ---
+>  drivers/usb/class/usblp.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/class/usblp.c b/drivers/usb/class/usblp.c
+> index 5a2e43331064..ff1a941fd2ed 100644
+> --- a/drivers/usb/class/usblp.c
+> +++ b/drivers/usb/class/usblp.c
+> @@ -1337,11 +1337,12 @@ static int usblp_set_protocol(struct usblp *usblp, int protocol)
+>  	if (protocol < USBLP_FIRST_PROTOCOL || protocol > USBLP_LAST_PROTOCOL)
+>  		return -EINVAL;
+>  
+> +	alts = usblp->protocol[protocol].alt_setting;
+> +	if (alts < 0)
+> +		return -EINVAL;
+> +
+>  	/* Don't unnecessarily set the interface if there's a single alt. */
+>  	if (usblp->intf->num_altsetting > 1) {
+> -		alts = usblp->protocol[protocol].alt_setting;
+> -		if (alts < 0)
+> -			return -EINVAL;
+>  		r = usb_set_interface(usblp->dev, usblp->ifnum, alts);
+>  		if (r < 0) {
+>  			printk(KERN_ERR "usblp: can't set desired altsetting %d on interface %d\n",
+> -- 
+> 2.47.1
+> 
+> 
 
-Aw yes, it's max = min(max_avail, max);  I'll resend.
+Hi,
 
-regards,
-dan carpenter
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
