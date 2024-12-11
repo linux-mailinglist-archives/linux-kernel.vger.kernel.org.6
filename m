@@ -1,144 +1,119 @@
-Return-Path: <linux-kernel+bounces-441044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D16D9EC89B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:14:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F669EC89E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ADBD1884F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:14:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95001653A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBE3202F80;
-	Wed, 11 Dec 2024 09:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852CB207A22;
+	Wed, 11 Dec 2024 09:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dAG2KN3n"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vymOPRtk"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6751207A18
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC501FECB5
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908482; cv=none; b=mjFncSRl9HKn327jvpmsr+JveMn1rG36fRnNYSfBr9cN9zj45+d7ak0tljKEH1/tYhWdEFHi3/AasO0BVYW78i/uhfjgdUtaextbZ8lZywfPH2JUKsk8LgH2wMXtu1+BEAHb/tVfqLMfhx3hslveosaoz/QQXai5daWs5SCFhBI=
+	t=1733908500; cv=none; b=ZwtFKBViK38pkmjBYcg1Yu3IWoII3JrdH63LzZl7k8Zfa85+53sEa2NPRYhn8QPyb4isBf/a5AtR8XH2o27g0qvyDxVzneJl5xl4hE8H3r9rQdOrdBPnXP8e1L1fQ4VqlWuubJVZL/FdKkMqnVmCkIpDPawTCJ9K37habfdkcVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908482; c=relaxed/simple;
-	bh=Ox+dvyXza+TX7ZDpJ8HAcztROBmWclSerpmh0X86Alk=;
+	s=arc-20240116; t=1733908500; c=relaxed/simple;
+	bh=JUXrxkRS6ra3CHJ9SyF7bUw/4jbQj+KL0Fb1Fh2MyHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aNk7hI8v7DTJs09WFAkEcfoWy5rwBN1nry7a4mjptUzJXLYMXpyWs1tNEL4c6PnhYXLKFqsgKoNgPBxKgcUc2+7V0Iy92Cl2DtXTSvAJoN5sNjYhv7a1HhBDpEImsMFlc4wlOQuwKqp7VKvuZLPTZiGIl2mSHQ0244yuP3h28CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dAG2KN3n; arc=none smtp.client-ip=209.85.214.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7vxLV0mltNNPxvny4/dKQniRF7oN5nG9yeX/40RLHjlLQbNffaIyKSb0JzlmaSlcwVmCmmsyPt1cl8iRKFI08WVibc2wudjyup0OTFVwPSlr87Hd2cemzz+KzBYi9VpuNwss7wDE31YIx8RqII6MnTi6IVucP3rkGy/Iy/ruiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vymOPRtk; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2165448243fso33615365ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:14:38 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so1645445e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:14:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733908478; x=1734513278; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oUFybBHAtKBg9XAbRfnlqLJtUAS0jaNbKaZp0A764TQ=;
-        b=dAG2KN3nE4vO8Wbzja222Y0MPHoVAEgTLJHUKvG7m+ikMGr334rMGU2cf4OpRmZuDe
-         xwzNcRgN7NNhOgkhz2Rt1WhX+NUhiv2ezU8RUw0eT9oIKmzU5vokUyCeEYGiuYRGUIEY
-         aFo0Vgags/f/+mgxCsD3lpjNiJ6aj6RbqDJ2mFkjPYvfuuReCN4S5BX7IZCNPuZgOPsl
-         rEL9fkHDoOHpE5B73TVeS+p9zUOHoVeG3HzOBevdLUrUzfYErYy2i5grYTlBhBoGj2ET
-         N37JXnGPAIA7fROGRq/FaJq4a74Xza7X+rvHftrmIoG77yZBu82l5VeL7F9IX4byK1jR
-         grxg==
+        d=linaro.org; s=google; t=1733908497; x=1734513297; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6FDO3wL3i1XscIg74LPG2N/BXo43Ca59PIHDAIDDUjg=;
+        b=vymOPRtkPVD6OqtxNN3Zn78DuUPGf0D2EtPIVzre4dUGjBcy72cxW+ZKSHV9Uh8NWy
+         L+XdJKYILHL2gZ2nItX9wAJX0DeDjSg1ZjXi777nGzj7YWMBE0jvKlIaUwet6VyZUxtw
+         QNxJ0CfcHrvC8MEZ2mGb7sx9ZXQqix2buzRBYdfhLEX76dVWIIzfLU4v0AUXUmFoTTwV
+         Dy61krov4I8gSzSXaSKRhFqA9nQLxYbJ1fRWV2TAGqvLm9QDPBXcoOvZE3xC1cgHqhHe
+         ub1KvME6gyPg5rEe/pnxTaIFo+JKSEpujW2gEtBYZw7JMYz93jvG+/Hvxdw07gBNpXBi
+         Dghg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733908478; x=1734513278;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oUFybBHAtKBg9XAbRfnlqLJtUAS0jaNbKaZp0A764TQ=;
-        b=YHngs0LYwDs408KYcprTJfeH9qIaWen2h8P5w8Dweq74f2bIoKSlAZSxR8DZPgzfua
-         nQgYtUrRSV4KxRVQEg90g/ModXkOUdkyVsYMX3/w0hwrPTQ9Ime+Vxe/IskxDrNskf5K
-         lFl08Ia72a1qtvKar08DQUBxQJQ7MSvk6ScWtGA70duQmxkfe5tNgCiO+8T98hFbGKVI
-         xsb4joNoIt2mrzTLH+MEk64RVSosPJmSI8ldBU5ZLcO93Pw/9cj4pXd6IkrEaGEY8Nly
-         EZ1k74OHLaJcNZKUr/jXxe+Wvr8eET7jL3+msxuusIqRngZYvFs9PABrc3WFq0DkVW3z
-         mlQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvuqqjbTZ9cGzmxFoUGvVj9JSURQ1HfAdHkbVOMadsTqAwrD3gvAA5nfcuHLyDqaDhj370eqVPkT/EhEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9OtKy7BagpId+SCKv44B25GWd4j8oyFdZ2vcN4kk2hOuL7V0f
-	2VesMcRV4fu6WJ6UEQgLzcf7ddvfPM9TolCHuFDbUVG2S9JfwXD2d9Pc+SmFcA==
-X-Gm-Gg: ASbGncvqkc0ZMYIO7++K9LmuqJ+clSzfQC9ozqG8kqJ9hi5jfKIfFXAHR4oJsuAUSyM
-	yhMXJNeY74SSJfjx2IkXY2fzU3riggEYOZhdgMuNFYvT6eOumKO6AXcrRAxA3EvFaCQpps60p5L
-	hnVtr3d9zwlVVEW7KnLyzodBQ/FAa44YFRceYGQcuigzFF5vu/tR3avlStmkgXF1eBY8k+FOrKy
-	9CtRdgp/r52R6ama6nnSTXJOorppC3ubT/lka9UHLDRWlbboeyZE1NUeoLIjbo=
-X-Google-Smtp-Source: AGHT+IE7knwn48LdhJslFzK1Zi2TZQ4t5PfbLv5V67ShOU5zUeOc6EVVuqUeQ7tRigEaD2ORk66xQw==
-X-Received: by 2002:a17:903:1d2:b0:20c:9936:f0ab with SMTP id d9443c01a7336-21778696456mr33767495ad.47.1733908477842;
-        Wed, 11 Dec 2024 01:14:37 -0800 (PST)
-Received: from thinkpad ([120.60.55.53])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2164252350dsm54976385ad.43.2024.12.11.01.14.33
+        d=1e100.net; s=20230601; t=1733908497; x=1734513297;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6FDO3wL3i1XscIg74LPG2N/BXo43Ca59PIHDAIDDUjg=;
+        b=gAGNIw97VPmOeqZ2jL/DlXdN3pKCxDE7LPOBLny9EqTnOWzhcQJNbXTccWvKxfxZls
+         KzKE/z2ywCdP2KD3xXmLBsg06RtlfPVSe9PXh1tngs5JmswCk3e18/kg4MclNUEaZNtQ
+         58/bejH5CdudBTSEs0T1CW6vgQGdEVyut75lFlXtx10CrcVeZCtrVycN78r7hvQfXF+2
+         i+w/k1Zp1hBJC3gL87W2L+LINZ1dojiwl4G1g3+vG+SyS6Qwp8HWEFruTASTwm6p2Gbm
+         i732gLLAwA4pnLVtJtc8UFyZ5lFLTwvq3zjs10mVqI8HMszDwAdt4UTqq+Q1zBoP3xdT
+         hWjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1l0uA7E2sem/4b1X16LRGX25CwG7/3Elkz8npyYiK5+w2YHdEBqDnemR7x/QYm2a+Wh5vROPqFotVNMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7L3cvbnSAjFjTW8ZiO2vyNzaoSQ4XFNpaA4AmHyG3tgdanear
+	ET/HlhQJTNl9b1EXQVPLYmoIOAm/G2T4kSaZe8JNMtU1C7KhCeF4yMqd8QZ5vkU=
+X-Gm-Gg: ASbGnctzVxo8peqgdSn6Ui/IU+nBra5TpLnt16d1LGUAoi1MsjtzskFnxzNCBtMBLVx
+	ci1TCQN3jEZ33egRIkH0WybZXz2QUNYCIn5e2dmmbCK+bY/UazcNamvhWtg58n8+X1hW/wVAFgw
+	/kVkQpXhNUZk1cAXExVW6n+0OGq1Y4KcsjHyeHA8db8OBG6v9J5w05z5/r7335CdUi/WKg6HGzx
+	Pe7gJr2W8NfCk8kxSYHqwOcFNR0l3t0bKMtcdf/rpn472uZySS5VpHiWD8=
+X-Google-Smtp-Source: AGHT+IHOLK/ljbtyNYazbMd4hvX84Qm4ErHQ/BEuJGZ5dGRRjqOpg37GnjWdhZty1q73L7x1DOcRRA==
+X-Received: by 2002:a05:6000:178e:b0:386:3702:d2d8 with SMTP id ffacd0b85a97d-3864ced69c8mr1574947f8f.58.1733908496679;
+        Wed, 11 Dec 2024 01:14:56 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514dd9sm803351f8f.69.2024.12.11.01.14.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 01:14:37 -0800 (PST)
-Date: Wed, 11 Dec 2024 14:44:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, vigneshr@ti.com, s-vadapalli@ti.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, theo.lebrun@bootlin.com,
-	thomas.petazzoni@bootlin.com, kwilczynski@kernel.org,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	gregory.clement@bootlin.com, u-kumar1@ti.com
-Subject: Re: [PATCH] PCI: j721e: In j721e_pcie_suspend_noirq() check
- reset_gpio before to use it
-Message-ID: <20241211091421.4empou7mbm35ynxq@thinkpad>
-References: <20241210154256.GA3242512@bhelgaas>
- <6c7cb07c-af9e-4f69-84df-2b59a57e4182@bootlin.com>
+        Wed, 11 Dec 2024 01:14:56 -0800 (PST)
+Date: Wed, 11 Dec 2024 12:14:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 7/7] media: ipu-bridge: Remove unneeded conditional
+ compilations
+Message-ID: <a91a3993-6c81-4abc-8609-8f41804fdf62@stanley.mountain>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-7-00e409c84a6c@chromium.org>
+ <20241211091954.42a5c778@foz.lan>
+ <Z1lOCGJvgFcqmR3R@kekkonen.localdomain>
+ <CANiDSCvPNf2KiEpr6Tboon6bjUxwEkD=+_AQjhiOA7RDTTpnCw@mail.gmail.com>
+ <20241211094854.407ddd54@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c7cb07c-af9e-4f69-84df-2b59a57e4182@bootlin.com>
+In-Reply-To: <20241211094854.407ddd54@foz.lan>
 
-On Wed, Dec 11, 2024 at 09:59:30AM +0100, Thomas Richard wrote:
-> On 12/10/24 16:42, Bjorn Helgaas wrote:
-> > On Mon, Dec 09, 2024 at 12:23:21PM +0100, Thomas Richard wrote:
-> >> The reset_gpio is optional, so in j721e_pcie_suspend_noirq() check if it is
-> >> not NULL before to use it.
-> > 
-> > If you have occasion to post a v2, update subject to:
-> > 
-> >   PCI: j721e: Check reset_gpio for NULL before using it
-> > 
-> > s/before to use it/before using it/
-> > 
-> > Did you trip over a NULL pointer dereference here?  Or maybe found via
-> > inspection?
+On Wed, Dec 11, 2024 at 09:48:54AM +0100, Mauro Carvalho Chehab wrote:
+> Yet, based on the title, enforced by its description:
 > 
-> By inspection
+> 	> One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
+> 	> throws the following smatch warning:
+> 	> drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
 > 
-> > 
-> > It looks like gpiod_set_value_cansleep(desc) *should* be a no-op if
-> > desc is NULL, based on this comment [1]:
-> > 
-> >  * This descriptor validation needs to be inserted verbatim into each
-> >  * function taking a descriptor, so we need to use a preprocessor
-> >  * macro to avoid endless duplication. If the desc is NULL it is an
-> >  * optional GPIO and calls should just bail out.
-> > 
-> > and the fact that the VALIDATE_DESC_VOID() macro looks like it would
-> > return early in that case.
-> > 
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpiolib.c?id=v6.12#n2316
-> 
-> Oh yes you're right.
-> In fact, the if statement in probe() and resume_noirq() is for msleep(),
-> not really for gpiod_set_value_cansleep().
-> 
-> So this patch is useless.
-> 
+> I don't think it makes sense to c/c stable, as this is just a smatch
+> warning, for a configuration that will never be used in production.
 
-Yes. Almost all of the GPIO APIs accepting desc (except few) use VALIDATE_DESC()
-to check for NULL descriptor. So explicit check is not needed.
+Yes.  Plus that check has a lot of false positives if you don't have the cross
+function DB enabled.  I thought I had fixed it, but I still need to work on it
+more.
 
-- Mani
+regards,
+dan carpenter
 
--- 
-மணிவண்ணன் சதாசிவம்
 
