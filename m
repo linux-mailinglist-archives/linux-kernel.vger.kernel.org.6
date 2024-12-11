@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-441066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187069EC8F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:23:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D461167224
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:22:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DF62368EF;
-	Wed, 11 Dec 2024 09:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yMWogaph"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1659EC8F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:23:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5ED233690;
-	Wed, 11 Dec 2024 09:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934C5284AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:23:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C10236FBD;
+	Wed, 11 Dec 2024 09:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w5tOqLQ8"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089F6236FAA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908901; cv=none; b=heOK+9YlUvtf6tRewMry7Ch6slX19tsWH0oOkQxo94Ky7CyIy+r6HiP76Y6y+GZ4XKNcNaw/LsfI9CEnTG3oCWJHKCGtLLx7P+JOcc7ZxbkwhRtm7Or9kwA8TVv9HlxeRm7Ij58Cc6vMjiKkIp4OgGtgIydVzYoQ+5rgPh+r0uI=
+	t=1733908906; cv=none; b=er61aAXYoC51YBa5vyo5I1hw/JhHznNpvyvauWY12jrdBXoxYskRtoMb+E5r9lFOEvdQG6F2ZZrqGRKYG34WZ9mLHvIxO0Mop6PfTOgOJ4olzJv38Vm8rr+j8hlVugPdjqrrAc5QXiD6eDW1JJ01q2+HG3Pbxu2++ftcdWbxNdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908901; c=relaxed/simple;
-	bh=6ZImDWzluYteV9HOhP6VykJDvpaBaAic9nqullcoOVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bfRewQkt8KxwwpScE0aNA56WfNuHBTMFcTSIKGoZhHoltJyvn3Plv6SbpiLAfhA6h9MC+sNge9JgppFM3SqxsySlu2tEJ/UeG4bienGZyC3gI8wuaj32Uc0uPeb996u6hzn0XjRlYucO36UjWD8WnU2uaBLuA0tFvlUTLxY8kLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yMWogaph; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733908895; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=VMcxHdfXm940/aFlZ2Z5NABcxYXIJPXBAIVqkgct7sA=;
-	b=yMWogaph12Gq8nBerXoZ6jIuXeb4KSCi3CrWwES1osSyLSyCnjFyutazT1ctC4FmOiRSLniXh+kPYnhMAXZp6QdFU1uyKd+OVB/JC33XppuYo3+6Wp5xEnqF2nMZLRxmXK9mU/vrzSqp6LVqr8q3iYYMw1Jy3TxzqGj1faUqMEM=
-Received: from localhost.localdomain(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WLHtOpa_1733908894 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Dec 2024 17:21:35 +0800
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2 6/6] net/smc: check return value of sock_recvmsg when draining clc data
-Date: Wed, 11 Dec 2024 17:21:21 +0800
-Message-Id: <20241211092121.19412-7-guangguan.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20241211092121.19412-1-guangguan.wang@linux.alibaba.com>
-References: <20241211092121.19412-1-guangguan.wang@linux.alibaba.com>
+	s=arc-20240116; t=1733908906; c=relaxed/simple;
+	bh=8s9qU3NpcFIH9Ro8KpQpyXvRMnrSRjRKQsDDyH7NfpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KXIn58OWzpb1UvIpmdk2/TS24tJ92X8roZGVcfNolqS9zP5kjVfDXK+/vIGQLi7b6+ZfZ0ZrnWU6OqBxwb1w1OmThcrxu33erQ0uXpx9XKybSHon6iDR2nRpRyMMt5bq6OHQeeQgiFBH48t/O2v1Oe3RHFlbNysoWn9yVdd9b78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w5tOqLQ8; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434fef8203fso16510405e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:21:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733908903; x=1734513703; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0DLsS1CyBK/Moo7ZlFFxPYN1OuvOVl2Ay8BHF7WI398=;
+        b=w5tOqLQ8gwo1ial/8x5zs3Ko239KwgcdYt2Y8xrAixNNRQ8Z9a+Mfk0EDhmHGOxIU3
+         B3MUmKWLB0JUIZnWuF4F1lxnZK0SbmduZYNEgbtJPgrOyvetMtCm3wJaYE63rWGUd73a
+         m3+xXHnEKEd4jnRqiWxgKv9riDgJqe7XCr4y0ov8JoogtX8JTAeAGQHstWfgLbKtqk9R
+         Jkrd8xHOFlEjVxWg/tdR7Ri0ZNsTKatpxG4X9qgzyafM63aPAw4LnHkQHdMNdGipqlmS
+         58sxhf5SUvnKkQS9C2fgAbGfBqBmWmI8iPm5cv4S1umnPBMpbU5qNOuBKk8J3gO6J3jx
+         doig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733908903; x=1734513703;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0DLsS1CyBK/Moo7ZlFFxPYN1OuvOVl2Ay8BHF7WI398=;
+        b=rPp3nTLS9Sl8qOU4kzRKKdBDJxYdxYvysqpUP8XTqZa7bH/wf+ZFPfHLpPKn0y+708
+         MMvUnzzfWhTDII/jp/8SkRuq0ENUpMRZydsTmZEaFGRneqt4mP1zEqTEuPdf/PXL4gZd
+         dmBNhX3gIUA0l+tgcUmFYbszqlyf4sg4okqkN0r+p8LFxdQ3BFVeac2tTIBqRYZofni5
+         MnhoIl6yEDko/jY2qCRT/gWBIGXZcl/1CbhVN6U9U4BcyJ7Da4/6/9IJOH5Vrg/PL8Zq
+         c/vBDR427fiCzQj8BMOUDWBNSGdaxy+QMO+Op4Tdx9GlJuxIa3VNtDksTpWTxVNqw5Iu
+         0MqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHXBN51T3LpFGgruwJV8YLJv+/o8IYFc+MaetSa9zplf1QfCee35sVaTynH818a2dw7ra5ox17O3wtL/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg0bucpYl8XCUbYOOnFdFH1h3/DnAy8DeypDAVFFnUzJJrUdyc
+	ExoHPv60k7L9s3dzlCVNwa/Fg9/fJx4+91V4SbmLg77WOoJw80vRgDlNJUHgU28=
+X-Gm-Gg: ASbGncsrrOzTWmXU3wE/fCYPVtipz+nRsH9gW/5PhY1oEyA9Xx99Q6SLISphRk+AAnD
+	Y/NXu0/lKzQOQed8iDN4L+2z4RofcFP8tRSUGvMos/O+kzdV2Dz/2z1Nzt6ILMV2NCfaKiJrghj
+	lMg+fok7/0lUJRhhb3+So0vAMhukbRLoPcA0H2f+r4XFUOuyDFyHDeizctBnnSyJOs2c75s1ZAM
+	nPwN6KczXjW3YrnLCXTo3NXK4NUuM4hI52HAUxq2/6S3OH1a5d2vFe4Qes=
+X-Google-Smtp-Source: AGHT+IGPYeRitgpKtJOXyRZn4COfRNxYFbNQZ+CVZoA5uGWAMNXxGSSG6fybBnG6Xshn8ee/kKy9Ig==
+X-Received: by 2002:a05:600c:1907:b0:434:a902:97cd with SMTP id 5b1f17b1804b1-4361c3b9d1bmr13850245e9.12.1733908903351;
+        Wed, 11 Dec 2024 01:21:43 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361e54ef20sm12271745e9.5.2024.12.11.01.21.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 01:21:42 -0800 (PST)
+Date: Wed, 11 Dec 2024 12:21:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] binfmt_elf: Fix potential Oops in load_elf_binary()
+Message-ID: <5952b626-ef08-4293-8a73-f1496af4e987@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-When receiving clc msg, the field length in smc_clc_msg_hdr indicates the
-length of msg should be received from network and the value should not be
-fully trusted as it is from the network. Once the value of length exceeds
-the value of buflen in function smc_clc_wait_msg it may run into deadloop
-when trying to drain the remaining data exceeding buflen.
+This function call was changed from allow_write_access() which has a NULL
+check to exe_file_allow_write_access() which doesn't.  Check for NULL
+before calling it.
 
-This patch checks the return value of sock_recvmsg when draining data in
-case of deadloop in draining.
-
-Fixes: fb4f79264c0f ("net/smc: tolerate future SMCD versions")
-Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Reviewed-by: Wen Gu <guwen@linux.alibaba.com>
-Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+Fixes: 871387b27c20 ("fs: don't block write during exec on pre-content watched files")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- net/smc/smc_clc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/binfmt_elf.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/smc/smc_clc.c b/net/smc/smc_clc.c
-index f721d03efcbd..521f5df80e10 100644
---- a/net/smc/smc_clc.c
-+++ b/net/smc/smc_clc.c
-@@ -774,6 +774,11 @@ int smc_clc_wait_msg(struct smc_sock *smc, void *buf, int buflen,
- 						SMC_CLC_RECV_BUF_LEN : datlen;
- 		iov_iter_kvec(&msg.msg_iter, ITER_DEST, &vec, 1, recvlen);
- 		len = sock_recvmsg(smc->clcsock, &msg, krflags);
-+		if (len < recvlen) {
-+			smc->sk.sk_err = EPROTO;
-+			reason_code = -EPROTO;
-+			goto out;
-+		}
- 		datlen -= len;
- 	}
- 	if (clcm->type == SMC_CLC_DECLINE) {
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 8054f44d39cf..db9cb4c20125 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1354,9 +1354,10 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	kfree(interp_elf_ex);
+ 	kfree(interp_elf_phdata);
+ out_free_file:
+-	exe_file_allow_write_access(interpreter);
+-	if (interpreter)
++	if (interpreter) {
++		exe_file_allow_write_access(interpreter);
+ 		fput(interpreter);
++	}
+ out_free_ph:
+ 	kfree(elf_phdata);
+ 	goto out;
 -- 
-2.24.3 (Apple Git-128)
+2.45.2
 
 
