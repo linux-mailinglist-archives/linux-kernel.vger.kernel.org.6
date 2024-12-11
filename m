@@ -1,237 +1,186 @@
-Return-Path: <linux-kernel+bounces-441561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561809ED01B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6099ED01E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:44:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE3828620D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF60282E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC9C1DF989;
-	Wed, 11 Dec 2024 15:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DE01D61A2;
+	Wed, 11 Dec 2024 15:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeZxyPTB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXQLhsR5"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586751DF27B;
-	Wed, 11 Dec 2024 15:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773421D5CF4;
+	Wed, 11 Dec 2024 15:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931694; cv=none; b=h+AmeKnFy4eY+Dob3a9Jc6gpSWjVSGn9t5yUB57Wv23kdVndDFp0VzHMHEL3RQocZImVXMtkQgAnE6dptUZ1n5V4XbEiFNCgDXsh3H2FXF62lu5LHWb3xUZFIzMLUbGXeL6xMAMjSqnMxGqZJ2tE7KK2OXmRbzwOB/WQCfVoI/0=
+	t=1733931705; cv=none; b=j50IZm4YPCx45ZKRrbU0w9t9zROyKeRRmofTegH0m3i/aXbp41dbt8h+VC9sUzGpEHZswRtKdLDPOLVcrNPxVwb5PiGqSQLSmx1me8N40UtxYhFWy15B/UPZRbHAk7R41JWUSmSNn4cX2ef2gixVzcvyF6z5izgFvkUWHZg8Q+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931694; c=relaxed/simple;
-	bh=9aeWcWAxUG/Mp8IMEYRHTSNeq/qUiOC5UB4GZCXF+1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KzQzHD9zetNN48IxW2RMu753LYn220bx8/Yk/3gO6TmncdHueGBb0nlaVi2FIJUWv1XC6hLXe14cUD8P3/HX8jAA5cgOlncSORqVP2mVCNfpvmblw2uTjhk3aWu7lX1OBYj2+UY7B2zS9PjTQzQV/PqFJUhJ0qygbiZ61WX1dUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeZxyPTB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A4A4C4CED7;
-	Wed, 11 Dec 2024 15:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733931694;
-	bh=9aeWcWAxUG/Mp8IMEYRHTSNeq/qUiOC5UB4GZCXF+1Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NeZxyPTBhnrqjdVFY7qc3JfLNb5Lu2eObgwuX++tOqct+fnUOzQzAORS2nPgPbyN5
-	 YLANM06j5uj0PzuvdQ+v9QmRV3o+QjUGz4+oSRf8YNiclghealyOxWmN4p2xLHKAwz
-	 fLBd5HK5dFe1UehoE0dKdUCm5K1eM3L1clcgUenyQDqHpYEtRBPKHb0WOj0u42wZdN
-	 Q/23nTjMSoz668KduCu/wUlf1OGZnvTYMdfntg1dJ3t0rNDI0KDkJ7PPvNPrsuf8i1
-	 0awH7ZSEABIBBYcS18lGnZalUUcm6yV/yNQYYJWaJyEf3/ekXfzF5k5a+OerQuSJer
-	 VhfZaX1qqSE5Q==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michal Hocko <mhocko@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 19/19] rcu: Use kthread preferred affinity for RCU exp kworkers
-Date: Wed, 11 Dec 2024 16:40:32 +0100
-Message-ID: <20241211154035.75565-20-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241211154035.75565-1-frederic@kernel.org>
-References: <20241211154035.75565-1-frederic@kernel.org>
+	s=arc-20240116; t=1733931705; c=relaxed/simple;
+	bh=NOZBo1+JNL4bPIBugXKrBr3qkhzKzwYQr3Ic7KNnheo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kKV6eKbrLSfQjYzIWc/FM7KO4xbRqScywbuf9tf7zNDY5+OdItRBxo47UyW5W/MnJgcikD0z0f+eGp/9pCHY8mHbICDWFY2pSIaO2CNK9naB/BdvgJEFFcFzpKauN7FtprGcYn7Eh9/y5i8Y9F0zCF+F83LKynMfnNuL90vIOmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXQLhsR5; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3023c51146cso9404221fa.1;
+        Wed, 11 Dec 2024 07:41:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733931702; x=1734536502; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5ff9cb+2nLD8JalOVi1PdsyNf0i1E46g/pErfpxjw4A=;
+        b=PXQLhsR5vaY0R/7Kx78kZTMOHnuWC3+ZkhRE6Qlx9WXcFXNby8rY3GpFdWWmlZ3yv9
+         o0Ay9LRVonafM2aByJL9tuIMzKpTtFMASNPpuLWLKLpNPQ9tdH7x+EdujlCxm4jTViK5
+         xS6TQze19ZfL3HtgCZPB2PVwDVmqYEXjw9NsBDfaH5+WAde+MujLz6FcxhXQr/lqJ1P6
+         U81fQ186DvtXYgwNJ/mmDLuzRK1xEtc80lfi4aLpirERw6azLyrg0kXmOYeRo9Un4xnX
+         IazQ66VmT7U0g3CqVB43OZfgMkdiLOdEDt3sghunypAF7MVehbYTIs6i9EvJmyWd4rM3
+         hCjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733931702; x=1734536502;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5ff9cb+2nLD8JalOVi1PdsyNf0i1E46g/pErfpxjw4A=;
+        b=q9prTEcDpa5xy93zbQpnBBOWdOqMe/BxuB5zKcnnjoo2rMTCGrnRrexGHxfAZJcKNb
+         YpoxV+n61J0dCNGtSNsuAzM3JciI9VJ0Ind80hbLQlnmw/pCFrpBY0wBhvYpuYRVKf6Q
+         7F5ymi1hWtHOwirHxN8W6eDphAZNVR0GEU4yXeGveqAjZ5HtB4lYS3SenZmFbqJaJ6Pt
+         1o5nHn47VljtojO1YcvYjNtyGoY3HvKsE8T8VD95Bt7HzPwDJsaHXVlSq8OwAPHCT6cJ
+         mh8dmzBMGOeOPJB2BzHo6UmiuECXRpW8WUYQCnvSzzM3kBU6vzSp8hv3hxlosxfaliw2
+         CgEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYMhJvVIhDxzX2wsRzBvvgpx1qjCNDNa2q1d35wx+HOAgwuui/lfzA6UzirsAkeFcPnLrCi1pJkA6qvLlN4Rc=@vger.kernel.org, AJvYcCXCk444+YE3jDwiRgaskmAl34xn9MVBBslxC9mNqoH3KFjGvxGQvpEzEhPZSHnUwvXy5VxO1AA+/s3dK+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtoNe934rMpZ5vDV7DPJwvmZvGTa3rWEqZ6LTUrRShi6k1X58U
+	e9LwrGnS3Yzz5gEz6BLB28sqZf5/R2zbAy+UxMaS3cwD3vhJxrtVyk//MAcrDdC4iR4frMAiO6R
+	8L/vPbRzvAq1vKd8NJ+ojx+ZTiH+ZLKkL8Zs=
+X-Gm-Gg: ASbGnct1jVGIk261Jjv3BoEEGeDhwabNEG5Dn/4X9SM6CcaeZ4d/Pcm1Cxz/vcMJWOs
+	OGRwicbpm0hyo1gOM4qQc3/gNPC+k2sfCoI4BCrfYukvugMhf83k=
+X-Google-Smtp-Source: AGHT+IEhS065GR8GCdLWIHmfihcTZwj5WW5a8mAJYES5//bs1giVZolIENRsdb3Xm9KdMTKYbCfEwCFOjZQsFAeoU8c=
+X-Received: by 2002:a2e:a5c4:0:b0:2ff:bc33:b6d6 with SMTP id
+ 38308e7fff4ca-30241bc9872mr12985781fa.0.1733931701353; Wed, 11 Dec 2024
+ 07:41:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241203-rust-xarray-bindings-v11-0-58a95d137ec2@gmail.com>
+ <20241203-rust-xarray-bindings-v11-2-58a95d137ec2@gmail.com> <CAH5fLgjPir8LfzfouBd3PYBvfCkWgQEw+im-=Vo7z8kBmFLtrw@mail.gmail.com>
+In-Reply-To: <CAH5fLgjPir8LfzfouBd3PYBvfCkWgQEw+im-=Vo7z8kBmFLtrw@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 11 Dec 2024 10:41:05 -0500
+Message-ID: <CAJ-ks9=oyLSkqAsAkO5VSM9js2G2AFvvrA-qHRKNYnsZyUx=mA@mail.gmail.com>
+Subject: Re: [PATCH v11 2/2] rust: xarray: Add an abstraction for XArray
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that kthreads have an infrastructure to handle preferred affinity
-against CPU hotplug and housekeeping cpumask, convert RCU exp workers to
-use it instead of handling all the constraints by itself.
+On Wed, Dec 11, 2024 at 10:04=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> > +    fn iter(&self) -> impl Iterator<Item =3D core::ptr::NonNull<T::Poi=
+ntedTo>> + '_ {
+> > +        // TODO: Remove when https://lore.kernel.org/all/2024091321304=
+1.395655-5-gary@garyguo.net/ is applied.
+> > +        const MAX: core::ffi::c_ulong =3D core::ffi::c_ulong::MAX;
+>
+> I think you can use kernel::ffi::c_ulong already. Enough things were
+> merged in 6.13 for that to work. If you import kernel::ffi::c_ulong at
+> the top of this file, then you can just do c_ulong::MAX in the
+> function calls below.
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree.c | 105 +++++++++-------------------------------------
- 1 file changed, 19 insertions(+), 86 deletions(-)
+This isn't about using kernel::ffi::c_ulong; it's about using
+usize::MAX. I'll clarify the comment and change this to use
+kernel::ffi::c_ulong for now.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index d4b8e87a473b..c160e05dfb7c 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -4894,6 +4894,22 @@ rcu_boot_init_percpu_data(int cpu)
- 	rcu_boot_init_nocb_percpu_data(rdp);
- }
- 
-+static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
-+{
-+	cpumask_var_t affinity;
-+	int cpu;
-+
-+	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
-+		return;
-+
-+	for_each_leaf_node_possible_cpu(rnp, cpu)
-+		cpumask_set_cpu(cpu, affinity);
-+
-+	kthread_affine_preferred(t, affinity);
-+
-+	free_cpumask_var(affinity);
-+}
-+
- struct kthread_worker *rcu_exp_gp_kworker;
- 
- static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
-@@ -4906,7 +4922,7 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
- 	if (rnp->exp_kworker)
- 		return;
- 
--	kworker = kthread_run_worker(0, name, rnp_index);
-+	kworker = kthread_create_worker(0, name, rnp_index);
- 	if (IS_ERR_OR_NULL(kworker)) {
- 		pr_err("Failed to create par gp kworker on %d/%d\n",
- 		       rnp->grplo, rnp->grphi);
-@@ -4916,16 +4932,9 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
- 
- 	if (IS_ENABLED(CONFIG_RCU_EXP_KTHREAD))
- 		sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
--}
- 
--static struct task_struct *rcu_exp_par_gp_task(struct rcu_node *rnp)
--{
--	struct kthread_worker *kworker = READ_ONCE(rnp->exp_kworker);
--
--	if (!kworker)
--		return NULL;
--
--	return kworker->task;
-+	rcu_thread_affine_rnp(kworker->task, rnp);
-+	wake_up_process(kworker->task);
- }
- 
- static void __init rcu_start_exp_gp_kworker(void)
-@@ -5010,79 +5019,6 @@ int rcutree_prepare_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
--{
--	cpumask_var_t affinity;
--	int cpu;
--
--	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
--		return;
--
--	for_each_leaf_node_possible_cpu(rnp, cpu)
--		cpumask_set_cpu(cpu, affinity);
--
--	kthread_affine_preferred(t, affinity);
--
--	free_cpumask_var(affinity);
--}
--
--/*
-- * Update kthreads affinity during CPU-hotplug changes.
-- *
-- * Set the per-rcu_node kthread's affinity to cover all CPUs that are
-- * served by the rcu_node in question.  The CPU hotplug lock is still
-- * held, so the value of rnp->qsmaskinit will be stable.
-- *
-- * We don't include outgoingcpu in the affinity set, use -1 if there is
-- * no outgoing CPU.  If there are no CPUs left in the affinity set,
-- * this function allows the kthread to execute on any CPU.
-- *
-- * Any future concurrent calls are serialized via ->kthread_mutex.
-- */
--static void rcutree_affinity_setting(unsigned int cpu, int outgoingcpu)
--{
--	cpumask_var_t cm;
--	unsigned long mask;
--	struct rcu_data *rdp;
--	struct rcu_node *rnp;
--	struct task_struct *task_exp;
--
--	rdp = per_cpu_ptr(&rcu_data, cpu);
--	rnp = rdp->mynode;
--
--	task_exp = rcu_exp_par_gp_task(rnp);
--
--	/*
--	 * If CPU is the boot one, this task is created later from early
--	 * initcall since kthreadd must be created first.
--	 */
--	if (!task_exp)
--		return;
--
--	if (!zalloc_cpumask_var(&cm, GFP_KERNEL))
--		return;
--
--	mutex_lock(&rnp->kthread_mutex);
--	mask = rcu_rnp_online_cpus(rnp);
--	for_each_leaf_node_possible_cpu(rnp, cpu)
--		if ((mask & leaf_node_cpu_bit(rnp, cpu)) &&
--		    cpu != outgoingcpu)
--			cpumask_set_cpu(cpu, cm);
--	cpumask_and(cm, cm, housekeeping_cpumask(HK_TYPE_RCU));
--	if (cpumask_empty(cm)) {
--		cpumask_copy(cm, housekeeping_cpumask(HK_TYPE_RCU));
--		if (outgoingcpu >= 0)
--			cpumask_clear_cpu(outgoingcpu, cm);
--	}
--
--	if (task_exp)
--		set_cpus_allowed_ptr(task_exp, cm);
--
--	mutex_unlock(&rnp->kthread_mutex);
--
--	free_cpumask_var(cm);
--}
--
- /*
-  * Has the specified (known valid) CPU ever been fully online?
-  */
-@@ -5111,7 +5047,6 @@ int rcutree_online_cpu(unsigned int cpu)
- 	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
- 		return 0; /* Too early in boot for scheduler work. */
- 	sync_sched_exp_online_cleanup(cpu);
--	rcutree_affinity_setting(cpu, -1);
- 
- 	// Stop-machine done, so allow nohz_full to disable tick.
- 	tick_dep_clear(TICK_DEP_BIT_RCU);
-@@ -5328,8 +5263,6 @@ int rcutree_offline_cpu(unsigned int cpu)
- 	rnp->ffmask &= ~rdp->grpmask;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 
--	rcutree_affinity_setting(cpu, cpu);
--
- 	// nohz_full CPUs need the tick for stop-machine to work quickly
- 	tick_dep_set(TICK_DEP_BIT_RCU);
- 	return 0;
--- 
-2.46.0
+> > +        let mut index =3D 0;
+> > +
+> > +        // SAFETY: `self.xa` is always valid by the type invariant.
+> > +        iter::once(unsafe {
+> > +            bindings::xa_find(self.xa.get(), &mut index, MAX, bindings=
+::XA_PRESENT)
+> > +        })
+> > +        .chain(iter::from_fn(move || {
+> > +            // SAFETY: `self.xa` is always valid by the type invariant=
+.
+> > +            Some(unsafe {
+> > +                bindings::xa_find_after(self.xa.get(), &mut index, MAX=
+, bindings::XA_PRESENT)
+> > +            })
+> > +        }))
+> > +        .map_while(|ptr| core::ptr::NonNull::new(ptr.cast()))
+>
+> You use core::ptr::NonNull in many places. Consider importing it.
 
+Will do.
+
+> > +    /// Stores an entry in the array.
+> > +    ///
+> > +    /// May drop the lock if needed to allocate memory, and then reacq=
+uire it afterwards.
+> > +    ///
+> > +    /// On success, returns the entry which was previously at the give=
+n index.
+> > +    ///
+> > +    /// On failure, returns the entry which was attempted to be stored=
+.
+> > +    pub fn store(
+> > +        &mut self,
+> > +        index: usize,
+> > +        value: T,
+> > +        gfp: alloc::Flags,
+> > +    ) -> Result<Option<T>, (T, Error)> {
+>
+> We can see in your examples that this return type is inconvenient.
+> Perhaps it would be better to make a new error type containing a T and
+> an Error, and implement From so that the question mark can convert
+> directly to Error (throwing away the T).
+
+Will do.
+
+> > +// SAFETY: It is safe to send `XArray<T>` to another thread when the u=
+nderlying `T` is `Send`
+> > +// because XArray is thread-safe and all mutation operations are synch=
+ronized.
+> > +unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
+> > +
+> > +// SAFETY: It is safe to send `&XArray<T>` to another thread when the =
+underlying `T` is `Sync`
+> > +// because it effectively means sharing `&T` (which is safe because `T=
+` is `Sync`); additionally, it
+> > +// needs `T` to be `Send` because any thread that has a `&XArray<T>` m=
+ay lock it and get a
+> > +// `Guard<T>` on that thread, so the thread may ultimately access `T` =
+using a mutable reference, for
+> > +// example, using `get_mut` or `remove`.
+> > +unsafe impl<T: ForeignOwnable + Send + Sync> Sync for XArray<T> {}
+>
+> I don't think Sync is needed due to the spinlock.
+
+Agreed. How's this phrasing for the comment?
+
+// SAFETY: It is safe to send `&XArray<T>` to another thread when the
+underlying `T` is `Send`
+// because any thread that has a `&XArray<T>` may lock it and get a
+`Guard<T>` on that thread, so
+// the thread may ultimately access `T` using a mutable borrow, for
+example, using `get_mut` or
+// `remove`. It is not necessary for `T` to be `Sync` because access
+to immutable borrows of `T` is
+// also synchronized through `Guard<T>`.
 
