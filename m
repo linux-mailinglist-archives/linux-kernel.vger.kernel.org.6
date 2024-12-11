@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-440886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC699EC5F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78DBA9EC5FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6430A163924
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CDB91639C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4A81C9EAA;
-	Wed, 11 Dec 2024 07:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB0E1D6194;
+	Wed, 11 Dec 2024 07:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n8FqMhg7"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GkF7aFKk"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C731A1CACF3
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440D51D2B0E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733903399; cv=none; b=Q+YXR/sGPRuGskb/OXxus1acRGVWoKSpnzNo8fQvG/Cxmeu4lrNAE3Wei32MKL/KBfagA8jeXr6FaNQFbrBMb5uX9s9/FVer+95nkkepZ52CYGeDvHC7/yrLZhF1ZHSA1dSSj/Oa4wduSU2Q8mRCWCmVn0lHNK2+eE1gojcrPco=
+	t=1733903408; cv=none; b=WqYwulpGT87r1mMKT0KjFwi9gspocl80SREaKTxMoYn4wi2ftaXpJjVzN/i2SoGDxwOTIDQPn+HzhavZojR1KQO01M95xDR5NjxHerNoMvsuQNVj3n9WHZy6u04X5+Z06Fg/cKexa9bKCmSrZ/KcwEhV/PmSaO4wxu3N5MCdpCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733903399; c=relaxed/simple;
-	bh=R4JRU1wwpj4gJaPCPuHVg/GU0aFIBHykhTf+OJgifac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZ9P+387F218mQ7vuYX3dbdC0APsIzS92PWevPKDimFvLFGCM/k8PZCp3CBcDoF4sjycVQwcBeOkyAtYbYf/hXJAmmpuipLIjn0cN4TNEVwRB+AMLM3f5Nc92Aw7UWOBI7uHEz1H7Lkm4WD/2ObMR7q62CeQP352DeOZkPIUCXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n8FqMhg7; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-216634dd574so18538905ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:49:57 -0800 (PST)
+	s=arc-20240116; t=1733903408; c=relaxed/simple;
+	bh=byCXBbBMkzxnWu1JfDLHLINiG67d/FWoOMVk8Wzbj/E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=U3x70Su+kr3LPFRI8sDyzBOQpKM2KGE+KatQyUmnBA7jnc4MFkX0qM9+eDc+vx3tZnvgqg4Fq88vKgnJJWAN/ETpSoQ+njht+GgaZ2KI+wUjPrRB8HfxzuKyXePBfM26e/9IXt2yDq1K5dWRATyT1FfnLdi4jYiZwpnJ5kEB/DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GkF7aFKk; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434e91ac3d4so3084035e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 23:50:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733903397; x=1734508197; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gh7jJBz4Hlp1C/HnjHjxeskziRu/Aqy/U+q0/grM/lc=;
-        b=n8FqMhg7zA0r3CRmwAoq1WwB4uw58mHNGuZX7Wkq/iLgsPENNF9YpOtBGZTgfHSZsk
-         YuBvRDtQcte2mZmXAC9DoazCZ+UyxJvxyrv8OWAA2eD3lq5dRGojDP8XYehLXqPzQmD6
-         axKLF+XoqPDdKK9AkbB8Pm1f8GE3Kbn7FIPTw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733903397; x=1734508197;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1733903404; x=1734508204; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gh7jJBz4Hlp1C/HnjHjxeskziRu/Aqy/U+q0/grM/lc=;
-        b=nFSJDHMswk5whcunCwAt0Xwj7cihmhSLr1rXYO+Efk7WgOQVMq2nCxXufgAJL+N3L1
-         UF+nt8Qh7GQxZHECV5fdG95GOmEUT4mvnhfb99wAVH9OaiTw8OVIF/yVqF1hMApGfCfd
-         mnIoM4u1hhGMZ/gQidvNAQz4uBzM+YOGh8VZU1RoANtJvMQyTY1yG2rvHnDfL9sjDObs
-         mBGpL3uKOjXZ/Gm2n1Ae/73AWB5xDCRfOi6UalDdCaSFGgCpZXYbXYII7EltVakTN6TP
-         LD2UiBB9B0J8sdR7Z8CyGav2oTYXEV1UFfGzJmIaAaGxnMqR6H62ITOX0J7iyep3CbVF
-         Cv7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVYFFtLpZ7n3Sd4tTeprhyZydmj1/HgTXTS+buy/y2EvhYAUxIrVTPxKFQu4wyt9bectYQusG3VIr0ap6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg3+SIjAhGvqOQgIXioLLj76oQQLGKfZzc3As8iTYj5218rfer
-	Bw7880xxaCEKL/1Yqqqt0gXWBNNKEdIwCnl7wPodIs8M9dOFOr/G3nZ7hSYmwQ==
-X-Gm-Gg: ASbGnctZ86BP35HQIZuXnZdeycq6laiRdyu7ODYy5o+vlYoBNazmOg+Xg9QMmBH9XvT
-	1fiY6Un34DquBY9m5/qr97y1ryUFNO8wSjgShYkGpDszgkJlBYar+YzxbC89fbubmf16IhN7F8X
-	AJflmeDBbpuD5VDf6gsBpUdQuBpyKMIVM6WL/8Xz5q+JYtS5hUtGycdpg+wqcKV5Jw5AQm68AKn
-	Q4LawGV3K4zh/0QnvMdDX0gsXYRVqun3XTNaizBIv0E/MnaX4ns6IoL9Q==
-X-Google-Smtp-Source: AGHT+IGSlNUF7KIOYCUwpKVcHSymyAaxeCJJAsfNxmcP9F1/4Se1zEfx7f6/D60Sb7fISVeFpmHqhg==
-X-Received: by 2002:a17:902:fc50:b0:215:97a3:5ec5 with SMTP id d9443c01a7336-21778509f8cmr39019975ad.22.1733903397017;
-        Tue, 10 Dec 2024 23:49:57 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:4d97:9dbf:1a3d:bc59])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f3d9c4sm101045665ad.274.2024.12.10.23.49.55
+        bh=NR5y5SI21qqr719CHt05ra6RVhCy3LYtwxpSH0rstSA=;
+        b=GkF7aFKkdO5PjXqskM6RTWdDMytEhzWlRZ1cY7fdOg1j2e/6oWK87FJZCAQksCoVhz
+         Yo47J7d9sr9HoUV/h5jfgekgy3sSn6eBJQtnmebqivIntV9McC1ulLyEKTETwUMAOt4E
+         Y6dje6V1rvmdr+uHZT4u1JL2lh+4zc/YJEN16+clgvNsB2oxUCYMmTuwYgE7xeppCFWU
+         n1JUA8P779Fa03pnH8yxRqjUrrQe/ijF/nr6OBpyA+nknYwDfcGxkKPAe41FKll3eMWj
+         wGY5mppFqG+jDmnOW1fMTvwAlDINV/mSkh1hRQ4TPL6Y7bMClARdoFvNt9MoZmnAKe+u
+         oSeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733903404; x=1734508204;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NR5y5SI21qqr719CHt05ra6RVhCy3LYtwxpSH0rstSA=;
+        b=hN8+O/FfBkzvarknV9MMWVMOFnOHZk+g/lM0+y2egVxl2Fut5q2BGtarc5ZnjNLJwu
+         kOnwhPOtT2JNVrWcjGRWuuQ3bCLfE7/mwO5f9oLJODCuk7RISxGV890KqfTBF+qu8JuI
+         EzPkB4VCUaU0HIyUP6+r24QYOQt2/kZg59cGKRbZJaUaTzc8ai/5HcdiDL1pw6So5gBo
+         NhWjgp75CjejgCy6lHbPVD9vUYxtN2Ao6B5y940otSJGDXNuVSWoC9DNOKDdYnkkqwhM
+         6zDRVDQIf+2uu/nG7adfz1KF7EScUf/yF4QTIbkxpEX0CsiRmW65i7WhCDUye8X9/6Ix
+         zoZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWv6c8hlYF81Q2m+d5dBj8QsJU4U9gRvRzhX1cbta8OKkQkoJOlyYLE7wO3DcZRyPt54yULfZDXNoD4UNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdkeHByfDuuCIYwn1GNMkKh+pO/vAhqoK/516CTihz03pMfiEB
+	Ea1g08heMma8h0f65ijTeOJSBca2HQwwYijB/qayLCHNIMIb2s2TDeKoTFviDxOOCPvYGMWU/w8
+	u
+X-Gm-Gg: ASbGncsXvC7cLrzxBuvUQ65uV1XB4F2SkaCQEc+G/IzCz4Sclo5vLa5GtHgQSjDz4Rk
+	eTqcy07ey9AMdpHdhBXIpSjhxv7N88bBw4G9uYPvzS03uF8jtDQdXuDDhQwa0lFZSoR0PjQWQCn
+	NUQGEi1TXb0vZgeYQcQofE0bhdIasTWUHiBICTkSMp4eKtwXFGlFMK75h8rOOe3oa5ReROsbbvA
+	PbAWC2w2zoV6UlqOV7g19PzOYtk1EL1eVnEX46C9M5HsAWFEY8LXaGbz4jwnXT4mUZnag==
+X-Google-Smtp-Source: AGHT+IHzOkWDq3KGGPDZsVQbPi+YFqSrAVZOEWrnqAZJZ2wtM0+/RjpL+t5H9Or+bcHPIqDSNw5ORQ==
+X-Received: by 2002:a05:600c:1d20:b0:430:52ec:1e2a with SMTP id 5b1f17b1804b1-4361c441982mr4065105e9.7.1733903404111;
+        Tue, 10 Dec 2024 23:50:04 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361b6d6ea0sm22222385e9.16.2024.12.10.23.50.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 23:49:56 -0800 (PST)
-Date: Wed, 11 Dec 2024 16:49:53 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] zram: cond_resched() in writeback loop
-Message-ID: <20241211074953.GD2091455@google.com>
-References: <20241210105420.1888790-1-senozhatsky@chromium.org>
- <20241210105420.1888790-2-senozhatsky@chromium.org>
- <20241210165456.288ed82b8a66a08ac36a4d15@linux-foundation.org>
- <20241211041112.GC2091455@google.com>
+        Tue, 10 Dec 2024 23:50:03 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Taewan Kim <trunixs.kim@samsung.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20241206025139.2148833-1-trunixs.kim@samsung.com>
+References: <CGME20241206025156epcas2p3e1ce9ff35589d821735a7c038b9ac9da@epcas2p3.samsung.com>
+ <20241206025139.2148833-1-trunixs.kim@samsung.com>
+Subject: Re: [PATCH v4 0/1] support watchdog for exynosautov920
+Message-Id: <173390340180.16989.11837691973342827218.b4-ty@linaro.org>
+Date: Wed, 11 Dec 2024 08:50:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211041112.GC2091455@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On (24/12/11 13:11), Sergey Senozhatsky wrote:
-> On (24/12/10 16:54), Andrew Morton wrote:
-> > On Tue, 10 Dec 2024 19:53:55 +0900 Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
-> > 
-> > > Writeback loop can run for quite a while (depending on
-> > > wb device performance, compression algorithm and the
-> > > number of entries we writeback), so we need to do
-> > > cond_resched() there, similarly to what we do in
-> > > recompress loop.
-> > > 
-> > > ...
-> > >
-> > > --- a/drivers/block/zram/zram_drv.c
-> > > +++ b/drivers/block/zram/zram_drv.c
-> > > @@ -889,6 +889,8 @@ static ssize_t writeback_store(struct device *dev,
-> > >  next:
-> > >  		zram_slot_unlock(zram, index);
-> > >  		release_pp_slot(zram, pps);
-> > > +
-> > > +		cond_resched();
-> > >  	}
-> > >  
-> > >  	if (blk_idx)
-> > 
-> > Should this be treated as a hotfix?  With a -stable backport?
+
+On Fri, 06 Dec 2024 11:51:37 +0900, Taewan Kim wrote:
+> Add support for the ExynosAutoV920 SoC. Basically this is almost
+> similar to ExynosAuto V9 or Exynos850 such as two watchdog instance for
+> each cluster but some CPU configuration are quite different.
+> Therefore device tree, compatibles and drvdata should be added.
 > 
-> Actually... can I please ask you to drop this [1] particular patch for
-> now?  The stall should not happen, because submit_bio_wait() is a
-> rescheduling point (in blk_wait_io()).  So I'm not sure why I'm seeing
-> unhappy watchdogs.
+> In v3, the first and second patches were approved by watchdog maintainer and added as next-git.
+> - Link: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=bt.cho
+> 
+> [...]
 
-OK, so.  submit_bio_wait() is not necessarily a rescheduling point.
-By the time it calls blk_wait_io() the I/O can already be completed
-so it won't schedule().  Why would I/O be completed is another story.
-For instance, the backing device may have BD_HAS_SUBMIT_BIO bit set
-so __submit_bio() would call disk->fops->submit_bio(bio) on the backing
-device directly.  So on such setups we end up in a loop
+Applied, thanks!
 
-		for_each (target slot) {
-			decompress slot
-			submit bio
-				disk->fops->submit_bio
-		}
+[1/1] arm64: dts: exynosautov920: add watchdog DT node
+      https://git.kernel.org/krzk/linux/c/41979b81b22a35322817733b15407167164be58e
 
-without rescheduling.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
