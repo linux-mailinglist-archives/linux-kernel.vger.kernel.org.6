@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-441774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720589ED405
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:48:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B396316270D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:48:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1569F1FF5F4;
-	Wed, 11 Dec 2024 17:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYsYsDTV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DECF9ED407
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:49:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB38246335;
-	Wed, 11 Dec 2024 17:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5266228300C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:49:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2051FF5F7;
+	Wed, 11 Dec 2024 17:49:48 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30365246335;
+	Wed, 11 Dec 2024 17:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733939312; cv=none; b=kdz1H/TpUg7aFOQ9Zw9hNUcokr7Hjui/wg9UBY7qss/JH55oBsGoHt4o8pGX+afD/ElXQ4l59EFOLMtWqT1Pg6TI+c1FYxwxl8N6H62Ar0zhvo4pCjxXQaFTAg1VOH7dF3JP0xOvF5w7wjaJYxsT+ALzuoktk9g/zhC2eGJtdV4=
+	t=1733939387; cv=none; b=Qoh7RBYaDjFHYM8DLT9zZDHdYu613xdAjECmHXPSdCPF3Cf/wF5L/x3/NAOvc2FSwmMRlw2ql4QR9wuGJdLXLxu1vsztlrDKI9tCzs13hR/oK8FYf2HUZ6+M7efrpO7/9MwhcA82/bDq4rtEmHK2O8H1kWwZtVlQMYdyz/xLGbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733939312; c=relaxed/simple;
-	bh=C3jdAMDUKCSbHx0c0FGHkPQ6TCnn3KZhOtYPiraikqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pRxxYWXzg67pCUcJRARNqgZdH7AsWpSEXaCFHLOxMKOE00UsdaBq3hy5JWdiGGXAV7GaCYKrYRq5KMywQPRbRHyz1cYVN9eVHAz20c/iru2GNcyRMCfrYvAycHmAwJ0qJDa+hQDv8yeyytyxcqiEWXZIKyiDCIHtVzJ86nLyG1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYsYsDTV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE44C4CED2;
-	Wed, 11 Dec 2024 17:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733939312;
-	bh=C3jdAMDUKCSbHx0c0FGHkPQ6TCnn3KZhOtYPiraikqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IYsYsDTVgfkyGOmgXDtMKsXf2WJjfVCtBCzNgLdlPMyuE8SqkA6daRM+XCQqoVT1y
-	 s1URlUyFSBozW59ceyK8zumRAYKvu2eNfh2ykjD/8n/xJ8Sk9P2SqNJgsyTIiM4nqb
-	 Y1bUOhro157b73l3POT0Egce0MOisXWuy473s8Tp3EGIb+F5bPoXP7/T1zrx5YkjnM
-	 vQA3Gvs6PG5yaf52PRmR6WrDHBgMzEik/iS94vuoENctJdwnLmdApA8SD51UrhvY0h
-	 kzZYMlAKrYsozN/WClbdfGDEnZevuVy1Str++VRAwXIWbdC21YJxLpbPXrRCty0NlX
-	 lUWAlGZazRGhQ==
-Date: Wed, 11 Dec 2024 09:48:30 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v3 07/19] unwind: Add user space unwinding API
-Message-ID: <20241211174830.3l3kxbjg6ctyxnqq@jpoimboe>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <f89a9137e983902f22611e5379606062a64b2382.1730150953.git.jpoimboe@kernel.org>
- <978a9ecd-47e9-442b-8daa-aee8f3d93dbb@linux.ibm.com>
- <20241209205458.vzwkh3ubch5sx5c7@jpoimboe>
- <c74dc535-a09d-48bc-816e-7e465211fa64@linux.ibm.com>
+	s=arc-20240116; t=1733939387; c=relaxed/simple;
+	bh=Zbxk7SMv9dvH+dCvhBsL+l2jdoBHxcBW9kSrVlqpGSE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z6ySo+2rmTCoy8OSaRV9D+D5nw0f/WX3pMabH+1tEC3huSBSm1WOPJfHllTmnRvgNvtU0w+UtpANilX+Ylk5/4GYsWRVju0P/h/Ax4g+KXPGGzUVjQ/vvYl9vS4QmQIcb5cr5ofPw8jupRHCNtSfpnREt+omAFk92xnkqyUvWfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tLQpx-000000001OJ-0Wh1;
+	Wed, 11 Dec 2024 12:49:25 -0500
+Message-ID: <4e72ebcd6c12f0641c8c9040bbcdd7fc4cd54287.camel@surriel.com>
+Subject: Re: [PATCH] memcg: allow exiting tasks to write back data to swap
+From: Rik van Riel <riel@surriel.com>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt
+ <shakeel.butt@linux.dev>, Muchun Song	 <muchun.song@linux.dev>, Andrew
+ Morton <akpm@linux-foundation.org>, 	cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 	kernel-team@meta.com,
+ Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 11 Dec 2024 12:49:24 -0500
+In-Reply-To: <CAJD7tkZ9gSxdPUCgz_NaHSDPTC+HEhxNRbinp619sNSshScJ0A@mail.gmail.com>
+References: <20241211105336.380cb545@fangorn>
+	 <CAJD7tkboc5a4MDHvF7K4zx5WP0DE4rsGW_24s16Hx+Vvy2RQLQ@mail.gmail.com>
+	 <768a404c6f951e09c4bfc93c84ee1553aa139068.camel@surriel.com>
+	 <CAJD7tkYpk4kZChj9f-2EMp0XET6OUNbHqfVBgdFTEMnN+iomww@mail.gmail.com>
+	 <6bc895883abca3522c9efc0c56189741194581e5.camel@surriel.com>
+	 <CAJD7tkZ9gSxdPUCgz_NaHSDPTC+HEhxNRbinp619sNSshScJ0A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c74dc535-a09d-48bc-816e-7e465211fa64@linux.ibm.com>
+Sender: riel@surriel.com
 
-On Wed, Dec 11, 2024 at 03:53:26PM +0100, Jens Remus wrote:
-> On 09.12.2024 21:54, Josh Poimboeuf wrote:
-> > if (cfa <= state->sp)
-> > 	goto the_end;
-> 
-> Assuming the x86 definition of the CFA (CFA == SP at call site) this
-> translates into:
-> 
-> if (sp <= state->sp)
-> 	goto the_end;
-> 
-> That won't work for architectures that pass the return address in a
-> register instead of on the stack, such as s390. At least in the
-> topmost frame the unwound SP may be unchanged. For instance when in
-> the function prologue or when in a leaf function.
-> 
-> One of my patches for s390 support introduces a state->first flag,
-> indicating whether it is the topmost user space frame. Using that
-> your check could be extended to:
-> 
-> if ((state->first && sp < state->sp) || (!state->first && sp <= state->sp))
-> 	goto the_end;
-> 
-> Which could be simplified to:
-> 
-> if (sp <= state->sp - state->first)
-> 	goto the_end;
+On Wed, 2024-12-11 at 09:30 -0800, Yosry Ahmed wrote:
+> On Wed, Dec 11, 2024 at 9:20=E2=80=AFAM Rik van Riel <riel@surriel.com>
+> wrote:
+> >=20
+> > On Wed, 2024-12-11 at 09:00 -0800, Yosry Ahmed wrote:
+> > > On Wed, Dec 11, 2024 at 8:34=E2=80=AFAM Rik van Riel <riel@surriel.co=
+m>
+> > > wrote:
+> > > > >=20
+> > > > If it is a kernel directed memcg OOM kill, that is
+> > > > true.
+> > > >=20
+> > > > However, if the exit comes from somewhere else,
+> > > > like a userspace oomd kill, we might not hit that
+> > > > code path.
+> > >=20
+> > > Why do we treat dying tasks differently based on the source of
+> > > the
+> > > kill?
+> > >=20
+> > Are you saying we should fail allocations for
+> > every dying task, and add a check for PF_EXITING
+> > in here?
+>=20
+> I am asking, not really suggesting anything :)
+>=20
+> Does it matter from the kernel perspective if the task is dying due
+> to
+> a kernel OOM kill or a userspace SIGKILL?
+>=20
+Currently, it does. I'm not sure it should, but
+currently it does :/
 
-Since my patches are x86-only, how about I leave the "sp <= state->sp"
-check and then you add something like that in your patches on top?
+We are dealing with two conflicting demands here.
 
-> Btw. neither would work for architectures with an upwards-growing
-> stack, such as hppa. Not sure if that needs to be considered.
+On the one hand, we want the exit code to be able
+to access things like futex memory, so it can
+properly clean up everything the program left behind.
 
-I don't think that's needed until if/when sframe becomes supported for
-such an arch.
+On the other hand, we don't want the exiting
+program to drive up cgroup memory use, especially
+not with memory that won't be reclaimed by the
+exit.
 
--- 
-Josh
+My patch is an attempt to satisfy both of these
+demands, in situations where we currently exhibit
+a rather pathological behavior (glacially slow
+exit).
+
+--=20
+All Rights Reversed.
 
