@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-441463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA2B9ECEAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:32:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B129ECEB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4654218899DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A32616B4D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B82A1DD877;
-	Wed, 11 Dec 2024 14:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18FA188583;
+	Wed, 11 Dec 2024 14:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cn+DWU9z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="okDG0J9h"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3E91DBB36;
-	Wed, 11 Dec 2024 14:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5225217736
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733927456; cv=none; b=S7Z1XgGXZah9ATJWcMm1IybxlcAJWEGglWMBk22MANaQoMy3YVV8BeXn2E85FuwZr0/ayV/GK+CP4IVzqtsnkv+2ilK4jHQxU+cYTkKy4bEHMrUeLfBgiZoSwWoBMhugBsP8PWQViB9GVXIgHuV7FL9h6nHEneArIxZJOT7MBQU=
+	t=1733927501; cv=none; b=fYFHfdav3mMNunCLSF9YsPZs6kdw1Q3lNA/0QyuKIMLlbyHFFxIrbcM8WOSNuRNpd3gD8otoHJ8NEFo93feU5T7XcER6706pJI9QxjZ3ZUisD+Sqiqjw3TJsYBCm0VCYbUWjxu52t/l7Jwr31VYxBdXxJUBXSiLX/gFXLeS2AOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733927456; c=relaxed/simple;
-	bh=sf7J34p1Pkgecwlqi0r21A5mwW0XxASsI9vA7F+tTXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+Rqn0FdMWnV2oDa/6pma33/28N6BbqUalGl3C0ChmmM85TqM6/mO2Cbj4rlA5X4f4gzOeF2CfRWoX2jZwxmjKKq97EEMtpBR8UIyeAE23quStVM5VPXOaXQfiU7DV2LJZmDG4eO11pXwxnbukW+Shhl0+bsOvbnwFzzoCzRSpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cn+DWU9z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C011C4CED7;
-	Wed, 11 Dec 2024 14:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733927455;
-	bh=sf7J34p1Pkgecwlqi0r21A5mwW0XxASsI9vA7F+tTXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cn+DWU9zl9GpkkoxEqCTeyb7BGrEYTypixBsHMeE/OtdnJzNWe77iqFyRuaJcyFoa
-	 Ua7/8PXPk1vhC/o/JUg/+udsySvAXM8M8mh55hRQXIEearsPOFXkoZp2l7Tx3MfDJx
-	 narR0WuypGXUu4dRaf3nvKKcbsNJnZtu0clytarY=
-Date: Wed, 11 Dec 2024 15:30:52 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
-Message-ID: <2024121102-promotion-other-e7dc@gregkh>
-References: <2024121112-gala-skincare-c85e@gregkh>
- <2024121111-acquire-jarring-71af@gregkh>
- <2024121128-mutt-twice-acda@gregkh>
- <2024121131-carnival-cash-8c5f@gregkh>
- <Z1mEAPlSXA9c282i@cassiopeiae>
- <Z1mG14DMoIzh6xtj@cassiopeiae>
- <2024121109-ample-retrain-bde0@gregkh>
- <Z1mUG8ruFkPhVZwj@cassiopeiae>
- <2024121121-gimmick-etching-40fb@gregkh>
- <Z1mgATmU2WgYwCGZ@cassiopeiae>
+	s=arc-20240116; t=1733927501; c=relaxed/simple;
+	bh=6MstwZEDzmfmfSlqeYA+EvXsVRXXP3jiezLL4oDN1/M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OfkeALMBJDsdUFhRugESbJbu4MyaxyP7wkFfFo0pY6RKfwsj1ZD9xGaVlRPHnvtrN4V1Vdwm9KROVHLRYvD5TGJjCoF26p3lA8WG/lVpOQwR2rOpH7O/c7aLC+Z/1b0mz0MPElr7a49c1WnOWVETuKy8N6Pm7hPLJGqnBOciVAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=okDG0J9h; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5401c52000fso3384952e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:31:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733927497; x=1734532297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=joWVG6YN6QwtMFozXajr6ob38hx5tuGFB2YqQJWxAV8=;
+        b=okDG0J9h+GUQCa2yMvVwm1l7Ki01aCLTLF11MY2wD+Mc6rjns2xGm4dCpK9dmAxrsV
+         AAne91oiXMkG+cEYGaJpfDqgQFzYYy1Mrc1TUZpM7nVQIFK56IJoZ9vnFOccSksPQdg9
+         gAuVWRVbjiSbNB3sO9uKPfi7g8y+jxGVchT1IXoaIy+o8HpFAlc3ySKague/UHOqyCb7
+         CuqJOLLCca2pesWYpGZejOtcjMg8WO5Z8TjBVPr0hYch9tivLk4EF4tVFzCS4L4eQHTi
+         VvAJYHl0ZjO2psus9fhtLiSI/oPFY9pLOvzbKN+ri3nqd0/wtCp9ukZXuiUALrW/K2Ne
+         ih0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733927497; x=1734532297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=joWVG6YN6QwtMFozXajr6ob38hx5tuGFB2YqQJWxAV8=;
+        b=Vd3jtjOvPGet53EmmzCn1Lkb9p/IVqOi/DSM2l3sdg/76x56pds8hZfgLalhuMUSgf
+         WVWypWqPwDp9IbnfJ7knpclbj7a7s3s+XeAYwOED50wZMHhVzUIv78UPpxtfYzSxSKQL
+         nDXlsI/AnQ4vA2ycKefxINvc/3wcGTw0/M336Z/fTEsgOMlwbJPkaJzVMeFqvSpkrSI1
+         6rX+jyYZLD3BUuWqY9s2qM7Eu58viyg3sevknchnUy9Xbie8/787yh4euumoToSLJcBM
+         wrmZATQ/WJ1gUmb1ulmtvlyua5aDUlBDSG9ytZRw7jh1fsVYkqT405gYKf2gWjFtS5zT
+         ifgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHp8L/aLafwaM1rGwYDGtSToREgO3THoC6OQJzlplOacBhEpvXAADL762upKSoc8CG1YYSppKBtMh+eDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/xMWWlESfTd99vAgig6kS66qpD5AxWOU0bpWBnRTfPZwhv45M
+	b+0rnDj23sFUOXtKIsbxkJcOyCKAYaSlaUU3nSHvezZUEG7ZVMgd8ztjgM13lbm7Z3dIj68yUkx
+	vrQrw1zi6i1HkfuxDZt5VcPUukmlRVQwPM8awuQ==
+X-Gm-Gg: ASbGncum82qG17pr3pg+W+lPJbDLDB8eTXFB5eoF23/NRDLbvYrl6EKmjWBUCVn7jhD
+	A16FPmFLdb0GX5Yek8nQrWk34lpit9GeJhg==
+X-Google-Smtp-Source: AGHT+IHhJBv1eQWShQpfw9LCRRpH2r8wN7wS8bE66kjHN+lCkD0sEsOjQXTbJhT/aLj/ehPesnm+dGREvL7jpex48dI=
+X-Received: by 2002:a05:6512:1592:b0:53f:22f5:afdb with SMTP id
+ 2adb3069b0e04-5402a6055f8mr981790e87.35.1733927497423; Wed, 11 Dec 2024
+ 06:31:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1mgATmU2WgYwCGZ@cassiopeiae>
+References: <20241210160556.2341497-1-arnd@kernel.org> <20241210160556.2341497-4-arnd@kernel.org>
+ <CACRpkdZoRbJ4DwRpZQMKbEAvzg4AAdp4B+94SFLm1ssiQmjUwQ@mail.gmail.com> <Z1mYufbtXpeEwTAq@shell.armlinux.org.uk>
+In-Reply-To: <Z1mYufbtXpeEwTAq@shell.armlinux.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 11 Dec 2024 15:31:26 +0100
+Message-ID: <CACRpkdb0g4zGQ-xu3yW=rRmz0zOVYnr-c-KaTSr155YvbrAv8A@mail.gmail.com>
+Subject: Re: [PATCH 3/4] ARM: drop CONFIG_HIGHPTE support
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org, 
+	linux-rt-devel@lists.linux.dev, Ard Biesheuvel <ardb@kernel.org>, 
+	Clark Williams <clrkwllms@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Matthew Wilcox <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 03:21:53PM +0100, Danilo Krummrich wrote:
-> > Really?  You can't have something in a required "register()" type function?
-> > Something for when the driver "instance" is created as part of
-> > pci::Driver?  You do that today in your sample driver for the id table:
-> > 	const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
-> > 
-> > Something else called DRIVER_NAME that you could then set:
-> > 	const DRIVER_NAME: env!(KBUILD_MODNAME);
-> 
-> Sure, that's possible. But that means that the driver has to set it explicitly
-> -- even when e.g. module_pci_driver! is used.
-> 
-> In C you don't have that, because there it's implicit within the
-> pci_register_driver() macro. (Regardless of whether it's a single module for a
-> single driver or multiple drivers per module.)
-> 
-> Anyways, like I mentioned, given that we have `env!(KBUILD_MODNAME)` (which we
-> still need to add), there are other options to make it work similarly, e.g. add
-> a parameter to `pci::Adapter` and bake this into `module_pci_driver!`.
+On Wed, Dec 11, 2024 at 2:51=E2=80=AFPM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+> On Wed, Dec 11, 2024 at 02:32:51PM +0100, Linus Walleij wrote:
+> > On Tue, Dec 10, 2024 at 5:06=E2=80=AFPM Arnd Bergmann <arnd@kernel.org>=
+ wrote:
+> >
+> > > From: Arnd Bergmann <arnd@arndb.de>
+> > >
+> > > CONFIG_HIGHPTE was added in linux-2.6.32, a few years before 64-bit
+> > > support. At the time it made sense, as the CONFIG_ARM_LPAE option all=
+owed
+> > > systems with 16GB of memory that made lowmem a particularly scarce
+> > > resource, and the HIGHPTE implementation gave feature parity with 32-=
+bit
+> > > x86 and frv machines.
+> > >
+> > > Since Arm is the last architecture remaining that uses this, and almo=
+st
+> > > no 32-bit machines support more than 4GB of RAM, the cost of continui=
+ng
+> > > to maintain HIGHPTE seems unjustified, so remove it here to allow
+> > > simplifying the generic page table handling.
+> > >
+> > > Link: https://lore.kernel.org/lkml/20241204103042.1904639-8-arnd@kern=
+el.org/T/#u
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > I'm in favor of this if the x86 patch goes in. We need to get rid
+> > of highmem anyway and this will need to happen sooner or later
+> > either way.
+>
+> Well... I use highmem routinely.
 
-Ok, I'm all for that, just don't modify the module rust functions for it :)
+Oh I don't mean we should get rid of it without any replacement. Certainly
+systems with big physical memories need to be usable.
 
-> For this particular option, it would mean that for modules registering multiple
-> drivers a corresponding name would need to be passed explicitly.
+I am pursuing two ideas (inspired by Arnd and MM people):
 
-True.
+1. The easy option - "densemem", on systems with a "hole" in the physical
+    memory making the 1:1 linear phys-to-virt map run out too soon and
+    overconsume virual memory, actually collect the physical memory on low
+    virtual addresses by elaborate phys-to-virt virt-to-phys and page
+    numbering that isn't 1:1.
 
-> > Also, I think you will want this for when a single module registers
-> > multiple drivers which I think can happen at times, so you could
-> > manually override the DRIVER_NAME field.
-> 
-> My proposal above would provide this option, but do we care? In C no one ever
-> changes the name. There is zero users of __pci_register_driver(), everyone uses
-> pci_register_driver() where the name is just KBUILD_MODNAME. Same for
-> __platform_driver_register().
+2. The hard option - 4G-by-4G splitting, making the kernel and userspace
+    virtual memory spaces separate as it is in hardware on S/390, so the
+    kernel can use a while 4G of memory for its needs. I banged my head
+    against this a fair amount of time, so I might be incompetent to do it,
+    but I still try.
 
-You are right.  But I see other drivers messing with that field, oh no,
-wait, that's just the EDAC layer doing really odd things (a known issue
-as that layer does very many odd things.)
-
-So nevermind, multiple drivers per module isn't going to be an issue, if
-you all can move it to a macro (best yet, like what Alice pointed out),
-that would be fine with me.
-
-thanks,
-
-greg k-h
+Yours,
+Linus Walleij
 
