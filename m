@@ -1,138 +1,247 @@
-Return-Path: <linux-kernel+bounces-441299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FF29ECC7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544899ECC78
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCED1676E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64690284E58
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487B323FD27;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8752210E5;
 	Wed, 11 Dec 2024 12:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jLH76Wpd"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcYlxUDm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E782A23FD26
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DED523FD10;
+	Wed, 11 Dec 2024 12:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733921186; cv=none; b=DzaJpRVyijp/CJPlq9XCXj1GC3656r1QDI5wKGiFJsYwjyZ4fJoFU+uSWrCBRpaXbdmoKof6c+tYBAxP0Mhw94BYShA3NbtMSmC5dN0uL/vWZTGTdSQ4Ibiir79D27MNKz6gruV9hK0AVRhdlPbYhqhm9BqamfoW6YP0KFFdjcs=
+	t=1733921187; cv=none; b=NjE8iA6tRGPk96CY7wWZnMi+AjN0dEeUBTrjVZ+XNG0wy73Rpz+Zk2pomZORF5T0hlARiMUV/7clWGJ0jd4ly/LePhoaLtAaXGjedL+2G63c5FqWQBvO66jnSSQuK4+YcMSzEc3mkGgSB3MmMHi759vpknkmA69UsZe1bqaEltw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733921186; c=relaxed/simple;
-	bh=ljytafcL4yuL6A3mBTqsDzIsfHaoog36bhny0bY+VLA=;
+	s=arc-20240116; t=1733921187; c=relaxed/simple;
+	bh=EkVzbf3G5rM9qDm6rnu4x6G4ljxJpqFU6D3ZAwpBTqo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M1Q6qg5HNA4oi4Vt9s97d1I/Vqgx6HB7far7Vo2obKfGnSY4K5f+PjIyQurMFCbGh6BeVb7yUCMaCrPInWPJX6sxxZxKd1OYXkRgJ5Z4JpEtpuoH/TL4bHF+2wUSd6XfkuxA5ETeOX9RRYhJJ7tDtlJ3jsm/4aiLiEAONt7IJCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jLH76Wpd; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso71607081fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 04:46:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733921183; x=1734525983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fMRrLT8PBkUb9uwSo3UZOKSbeLIunajxVCGqM67QreU=;
-        b=jLH76Wpd0C0oMGqzQv4/KNkLyf+MP0zmD+BLvtwo0hYDG57HDm+0OIh/SRbPkjIWDM
-         Y30SOYh2eu9Rham1AE6QsuYzNVJQR4SEiBNwLWa17mDli8DFhtXcALgj+0RyKKSMdgLr
-         CcsDTLiKF95tDavEA59gnrS0fjlCOU0bb2HH9iYQambCbjzWcPMvTtpaNWV2hsB7R5Av
-         SNatHInKJuVN5Op7nXO10fwbDJr/GpcDRivwrIToC3qRA0cL888EFyjlNWQujClQxV31
-         uTxAcuRROaE8Rt70yiwYJUz5/3jq2DT06WSwB8ShrS1wdhPqzDImkk8LpWUlGlmQZnOP
-         QtYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733921183; x=1734525983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fMRrLT8PBkUb9uwSo3UZOKSbeLIunajxVCGqM67QreU=;
-        b=C6Mr4/m0n8dpx/zxqOESGJRw0sA+rrFCUSDuJ5MJ61tKp2nY8CLQ/W0mPkAMGdcMhG
-         OkedyRb7wccM+VWw+o8wicOTUakcMJ5VJ4IzK05broncngR6T4MRGnCwC03NcVHEERz8
-         4htRplduxcOwpVzH8f+PBH2nx0SFKqeF1XjsSbZy1HqCu9h2ulHSs7cVkAyvk20o3jOd
-         5x+KtorOcWZY0eIOJNW2q9C580jiEcYKhR6mghQDz+hbgu9OcMdyRxH2CubOosIg4Tvb
-         dJHGxk7Q2tf8/sdTJrNoNMlMPEd7okhUaydL14bjhLx2BXW2SaDQVrLrpQDnvp8rSsRH
-         owXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCxEwFVh+wUlkZRKgBJhrd8ke7W5ELS1Hfv6L3tKVpux4TbN6R+BgfMt+Rx8d1Vrtwtub0KhLXGHnFqJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVKJkx6lG2ms3hQM29Jat2Pv01DIlbWS1nLGNKfeynEtfY+rzk
-	CtaSemqT5qJHXJWB0El7SFRkYqXKkGQaAwBPLRYjgZeVyGPuMJGekGmmQQdmEDZXOk6/lL8vs2D
-	+pbYF2Hwjc7tSsSnwdCvXsKxNgBOYHThmCdBAWx5RB15VxWcd
-X-Gm-Gg: ASbGncuK0kHMwDqISfTpNkGNL/fF8F46ZIg4Ty/j055qdvY0dZsB5obh9sK+fA9kEM9
-	SVALhoNBLkJr6ekG7O3fEIcgTtmbJ3oNvOumjksVklxqhTn0zJa5Dzz/IdIHI7/HU8B5oIg==
-X-Google-Smtp-Source: AGHT+IGSGpq67S3KPhxv0QaGyYpi7Ds7VIRtelTKmN8kUlCb5EZQ5DwEZ8oJuL//LObkvog2EV/g3poagrgtfeFDHng=
-X-Received: by 2002:a2e:9fcb:0:b0:302:2620:ec89 with SMTP id
- 38308e7fff4ca-30240cfb673mr9672121fa.19.1733921182952; Wed, 11 Dec 2024
- 04:46:22 -0800 (PST)
+	 To:Cc:Content-Type; b=I6SkGPCxmDMCVY7XB9l1iAoRUJ0pzLW8LKib6IXyhK8xwdp0H+ZoRztfZrB6wVYf0BzWXHNGyaO/2kpiQE32ZJYjq/+EwiBi7q34MJNw/MPLQDyQFJwuV9nYpqyy4/6jk3j20sYgN6Ll7lbTfJ0Nz+kAo1bLS91/eNBVCjy0iKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcYlxUDm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95691C4CEE4;
+	Wed, 11 Dec 2024 12:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733921186;
+	bh=EkVzbf3G5rM9qDm6rnu4x6G4ljxJpqFU6D3ZAwpBTqo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rcYlxUDmt70x52hloJFIxDPxv41BVpk0S0BIGtg4gvV0ThEqONuaF2y46d41bK8W4
+	 K0nFiHeZzbY8/AT1NVnc4UGKs2PMiRDpqw7lnVCd6fHJOEAW6fCEXGZDOxMdnITdNn
+	 DDO5Z4jZsmRnMYzplLrsl74A8k0kBrfxyXSwj4nR7I8unpryiJrJz4ZuCa4j0spi90
+	 ABfVa/FleHrMiitDQaRfRwpK/gbIKuMcns1C8p8f/T/vKgBmUMpmKyaks72vHyMBHV
+	 VQmkBDXW1ZeiBc7bcmog0INFk5yX1KS9BEq35C7cWUvIoN7FGEHbQJcw/8RIqBeWSZ
+	 bbtHv2ViVCH1w==
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3990bbe22cso5507298276.1;
+        Wed, 11 Dec 2024 04:46:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVJy1RRLYB4IKO33CbcRZzxFf1mDTpDAOVmJg9jqcuB3zjdg9nJFw+QDlR/WPUP5szQJpl0B2wEJeVf@vger.kernel.org, AJvYcCVOn5BtGKJdr6vAH8X4ThgkTykTSwCM7lSFTs3SMA2mTvj85qms45M+xpnrxN0qhD0DCWxjQsuh0R2i@vger.kernel.org, AJvYcCVV48xrwhk3vtFAOhWLKBaFZaOcVrxPgkPhBkZyo+lAP73ZxMUT0+02Jr2Eulf48BLDojq17868y9dt/SO/@vger.kernel.org, AJvYcCWwbzOhwKfur2zHI5Tzn5qq4cJnJvqCFNPgnBMYKUnfrZeRWrs/BVenc8kEeGuxK4kwuNKxhHL12w46wrqmi7Mlqkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTwRw7+Syyltlz7M5fSqFYi4/px7V9LTI0igo82Mk1jzdORx7M
+	A7tj2MtsYixLziJ305h2saZdjTwu/Y1nvXiweLRRDnxKhi3NfT5B/GHAK1xyK7sxSQnW0aMCAhq
+	PY2pdkzPwQx9Oz6RmxdaXgvz8Kw==
+X-Google-Smtp-Source: AGHT+IHNpYJO6aDWAk8XmMc0DlN3Slr9o3xM35rzk7b1IHRTtwZ/GiqTwCD/k2ZnNmZtSytykpHpx9Uc1ENKHwldLbM=
+X-Received: by 2002:a05:6902:120d:b0:e39:a780:d104 with SMTP id
+ 3f1490d57ef6-e3c8e614af9mr2455162276.24.1733921185643; Wed, 11 Dec 2024
+ 04:46:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com>
- <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain> <CA+G9fYv5gW1gByakU1yyQ__BoAKWkCcg=vGGyNep7+5p9_2uJA@mail.gmail.com>
- <bd95d7249ff94e31beb11b3f71a64e87@AcuMS.aculab.com>
-In-Reply-To: <bd95d7249ff94e31beb11b3f71a64e87@AcuMS.aculab.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 11 Dec 2024 13:46:11 +0100
-Message-ID: <CAMRc=Mf8CmKs-_FddnLFU7aoOAPU6Xv8MqyZo8x9Uv-Eu+hs_g@mail.gmail.com>
-Subject: Re: arm64: include/linux/compiler_types.h:542:38: error: call to
- '__compiletime_assert_1050' declared with attribute error: clamp() low limit
- min greater than high limit max_avail
-To: David Laight <David.Laight@aculab.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>, 
-	Linux Regressions <regressions@lists.linux.dev>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	"netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Johannes Berg <johannes.berg@intel.com>, 
-	"toke@kernel.org" <toke@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	"kernel@jfarr.cc" <kernel@jfarr.cc>, "kees@kernel.org" <kees@kernel.org>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+ <20241210184542.GA4077820-robh@kernel.org> <437b8d13-8ec1-40c7-b95c-ddb836e123d6@tuxon.dev>
+In-Reply-To: <437b8d13-8ec1-40c7-b95c-ddb836e123d6@tuxon.dev>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 11 Dec 2024 06:46:14 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+sdX+3R0USwfYT2yqC9aTGc+LzwyPsQiT770fJ1BgEAw@mail.gmail.com>
+Message-ID: <CAL_Jsq+sdX+3R0USwfYT2yqC9aTGc+LzwyPsQiT770fJ1BgEAw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, gregkh@linuxfoundation.org, 
+	yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 3:20=E2=80=AFAM David Laight <David.Laight@aculab.co=
-m> wrote:
+On Wed, Dec 11, 2024 at 6:23=E2=80=AFAM Claudiu Beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
 >
-> From: Naresh Kamboju
-> > Sent: 05 December 2024 18:42
+> Hi, Rob,
+>
+> On 10.12.2024 20:45, Rob Herring wrote:
+> > On Tue, Nov 26, 2024 at 11:20:36AM +0200, Claudiu wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> The RZ/G3S system controller (SYSC) has registers to control signals t=
+hat
+> >> are routed to various IPs. These signals must be controlled during
+> >> configuration of the respective IPs. One such signal is the USB PWRRDY=
+,
+> >> which connects the SYSC and the USB PHY. This signal must to be contro=
+lled
+> >> before and after the power to the USB PHY is turned off/on.
+> >>
+> >> Other similar signals include the following (according to the RZ/G3S
+> >> hardware manual):
+> >>
+> >> * PCIe:
+> >> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+> >> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+> >>   register
+> >> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+> >>
+> >> * SPI:
+> >> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+> >>   register
+> >>
+> >> * I2C/I3C:
+> >> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+> >>   (x=3D0..3)
+> >> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+> >>
+> >> * Ethernet:
+> >> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+> >>   registers (x=3D0..1)
+> >>
+> >> Add #renesas,sysc-signal-cells DT property to allow different SYSC sig=
+nals
+> >> consumers to manage these signals.
+> >>
+> >> The goal is to enable consumers to specify the required access data fo=
+r
+> >> these signals (through device tree) and let their respective drivers
+> >> control these signals via the syscon regmap provided by the system
+> >> controller driver. For example, the USB PHY will describe this relatio=
+n
+> >> using the following DT property:
+> >>
+> >> usb2_phy1: usb-phy@11e30200 {
+> >>      // ...
+> >>      renesas,sysc-signal =3D <&sysc 0xd70 0x1>;
+> >>      // ...
+> >> };
+> >>
+> >> Along with it, add the syscon to the compatible list as it will be
+> >> requested by the consumer drivers. The syscon was added to the rest of
+> >> system controller variants as these are similar with RZ/G3S and can
+> >> benefit from the implementation proposed in this series.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >> ---
+> >>
+> >> Changes in v2:
+> >> - none; this patch is new
+> >>
+> >>
+> >>  .../soc/renesas/renesas,rzg2l-sysc.yaml       | 23 ++++++++++++++----=
+-
+> >>  1 file changed, 17 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg=
+2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-=
+sysc.yaml
+> >> index 4386b2c3fa4d..90f827e8de3e 100644
+> >> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc=
+.yaml
+> >> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc=
+.yaml
+> >> @@ -19,11 +19,13 @@ description:
+> >>
+> >>  properties:
+> >>    compatible:
+> >> -    enum:
+> >> -      - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+> >> -      - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+> >> -      - renesas,r9a07g054-sysc # RZ/V2L
+> >> -      - renesas,r9a08g045-sysc # RZ/G3S
+> >> +    items:
+> >> +      - enum:
+> >> +          - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+> >> +          - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+> >> +          - renesas,r9a07g054-sysc # RZ/V2L
+> >> +          - renesas,r9a08g045-sysc # RZ/G3S
+> >> +      - const: syscon
+> >>
+> >>    reg:
+> >>      maxItems: 1
+> >> @@ -42,9 +44,17 @@ properties:
+> >>        - const: cm33stbyr_int
+> >>        - const: ca55_deny
+> >>
+> >> +  "#renesas,sysc-signal-cells":
+> >> +    description:
+> >> +      The number of cells needed to configure a SYSC controlled signa=
+l. First
+> >> +      cell specifies the SYSC offset of the configuration register, s=
+econd cell
+> >> +      specifies the bitmask in register.
+> >> +    const: 2
 > >
-> > On Thu, 5 Dec 2024 at 20:46, Dan Carpenter <dan.carpenter@linaro.org> w=
-rote:
-> > >
-> > > Add David to the CC list.
-> >
-> > Anders bisected this reported issue and found the first bad commit as,
-> >
-> > # first bad commit:
-> >   [ef32b92ac605ba1b7692827330b9c60259f0af49]
-> >   minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
+> > If there's only one possible value, then just fix the size in the users=
+.
+> > We don't need #foo-cells until things are really generic. Plus patch
+> > 8 already ignores this based on the schema. And there's implications to
+> > defining them. For example, the pattern is that the consumer property
+> > name is renesas,sysc-signals, not renesas,sysc-signal.
 >
-> That 'just' changed the test to use __builtin_constant_p() and
-> thus gets checked after the optimiser has run.
->
-> I can paraphrase the code as:
-> unsigned int fn(unsigned int x)
-> {
->         return clamp(10, 5, x =3D=3D 0 ? 0 : x - 1);
-> }
-> which is never actually called with x <=3D 5.
-> The compiler converts it to:
->         return x < 0 ? clamp(10, 5, 0) : clamp(10, 5, x);
-> (Probably because it can see that clamp(10, 5, 0) is constant.)
-> And then the compile-time sanity check in clamp() fires.
->
-> The order of the arguments to clamp is just wrong!
->
->         David
->
+> OK, I'll fix the size in users.
 
-The build is still failing with today's next, should the offending
-commit be reverted?
+You already did for the one in this series.
 
-Bartosz
+> >
+> > Maybe someone wants to create a 'h/w (signal) control' subsystem (and
+> > binding) that is just 'read, assert, or deassert a h/w signal'. Perhaps
+>
+> Until then, is it OK for you to keep it as proposed here?
+
+Yes.
+
+> > even the reset subsystem could be morphed into that as I think there
+> > would be a lot of overlap.
+>
+> The USB PWRRDY signal handling has been initially implemented though a
+> reset controller driver but, after discussion with Philipp it has been
+> concluded that it should be handled differently, since it is not a reset
+> signal.
+
+Every reset is a signal, but every signal is not a reset.
+
+> > Maybe that would cut down on a lot of these
+> > syscon phandle properties. I would find that a lot more acceptable than
+> > the generic 'syscons' and '#syscon-cells' binding that was proposed at
+> > some point.
+> >
+> >
+> >> +
+> >>  required:
+> >>    - compatible
+> >>    - reg
+> >> +  - "#renesas,sysc-signal-cells"
+> >
+> > New required properties are an ABI break.
+>
+> I've added it as in the old DTs the system-controller node is disabled.
+
+Ok, so it depends if the consumers treat this node as required or not.
+Or maybe they are all disabled too.
+
+> With that, do you consider it OK to keep it?
+
+No, as we're dropping the property aren't we?
+
+Rob
 
