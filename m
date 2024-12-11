@@ -1,232 +1,237 @@
-Return-Path: <linux-kernel+bounces-440684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062269EC2DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:09:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1C79EC2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2371880845
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:09:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A91165F96
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F9E204F79;
-	Wed, 11 Dec 2024 03:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B8520968D;
+	Wed, 11 Dec 2024 03:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FuEG8ifs"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vd5onoxz"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2065.outbound.protection.outlook.com [40.107.22.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16840CA4E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 03:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733886543; cv=none; b=HLfIb8BXPOWOqp8C3Ppl5aNWbJgA462HI/a9yhVCQsDSCy14EEt08geiOmYsS3YzrTbCcI0DbEU8ApQI9SQ1j/nJD8m0aB+XdJwUBNeHmMWUpeEaEnbTUWwgz4pDOaDfblIqToY4bz/wmV+pfcIMJDjkkwQkls2JJjkEdFWxF4g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733886543; c=relaxed/simple;
-	bh=rl/bH3ncMLElfsEL/vmPX3sHU67tJp/k8u4tqzTHJ4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zzy+5AeAgEcNkckH8xqEmx7wbq41TXPTMayJykwdKiviasjlpHZ1PBR9X/nDxx1GqfR7teNHRN6g4N7CjGAp0A3S/CwbRC9PJGxurb2dooj/ThTjNkKy61WYoE9kXMfsC7426zE5x380vvSIbCu8qkmwJmVsz7+JqQ0A76hQydg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FuEG8ifs; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3022c61557cso21398741fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 19:09:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733886539; x=1734491339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tJYiplpN21nOYm4w/gDDPNv7XNfDm2uH3FMwqWHdt5k=;
-        b=FuEG8ifsaEzPZLvIZuSl8atkPYenbD6Kj2nfKv4j5cNemcpFrhPi/p69CCT1SuEgjZ
-         6qmAJ/JTqs9ZpeG8w/qE1LpBdsP617RgyU9IJPPnD3GnwQHbHFhksFU9vP5oHd6sYWCx
-         NvmA3yalPgtgU28B71huAZKlcfKRmP05gVk/5mVtyvHMcRbI2A79X19A6oh+HJnM7g0W
-         p8al7CnzYEkgtsQaXxlLJV+FRMvdyV0hyFwFtiLFbz8GMDuMoNgPRNT4omR1hCqAQcbo
-         ftbY9gtiT5yNIrd9XxMX6Fn6OFQ7zGp/G6NQ3DKAGD5Mqt6e23O12ADIPY/Q29zSWGhx
-         8Hdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733886539; x=1734491339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tJYiplpN21nOYm4w/gDDPNv7XNfDm2uH3FMwqWHdt5k=;
-        b=dBoOq3ZgkeSWTKKk6xqX0U2l3d/UFjpXdiMWgDHNhDqln89ihlrTSTiIcOBG/I4gJf
-         BQuHu8wwGFqKhTQ7tIAtbuuhDPD/A3cYq8jBgsYdsepo5JHhKkSx8rUne3IVWy8piRd2
-         h7/uQeCfkhyAMc+lBgy8ib4WhwwI4aV8lVp+wWgB4opLDj2vRTIT8bw7fY9NY9J1QAvB
-         qMPCRSFCMUE3+o0b/FXEhxOcVmXNUU+eDyCmuaECS/5U8jFtEvkDEmo+2V7L1viqzDxP
-         OMJdW5qAa9vVeyzXaxbvf4HdrZsYqdQdmiAXvpZErh7cYHXm7W51mC0Na4FYzHrPYt2g
-         qcwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjRdtBO1nKYwP6hkv2MdkszbW1lqASrng851WetEchzlPHtsiN2lzqtvkjeeKt2IixIqr9JjnMMCwNQaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPfpeX1H0c4mC607SEm36vISz0rjcS9tQpxLnqFCbOb355Wpv5
-	LAqZWLeHhRyGsMLzTGNlLE6j3iyetOLlxT7k1jBzPk2Wcypluzi9r1CGLPQtQ3ssBNxrweDVxVT
-	/+E9wBEuzgJvX92jSqhdPEl2AE3w=
-X-Gm-Gg: ASbGncvM0fsP6KWdeNRY1+54tmRjLONOhrjkvHuJxsAiyJLAdShawp7qlE+Wa2tIg1W
-	MIHfySt6UCIXahrf7Bv/yxjQa2puhRUS6VFP4
-X-Google-Smtp-Source: AGHT+IHdI5rHVz7RsYzjySox+XBa4vG7b27828fJowbfJJbRZGGzIM87e/rIEnj07lRvF5hLfpOjv9WTw67kIAFQ32c=
-X-Received: by 2002:a2e:a541:0:b0:300:5c57:526b with SMTP id
- 38308e7fff4ca-30240d4fbe0mr4077391fa.11.1733886538822; Tue, 10 Dec 2024
- 19:08:58 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECDB209667;
+	Wed, 11 Dec 2024 03:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733886603; cv=fail; b=kaUFwWQ3gaClLbdzrlhn/QxBdi24qFef810rp+nNwTfgmL2rZuVbX2T2qByHIObb1KbWJnbIaEzlZSsrPZeDpqNAil8IxoDIKiWbON9lKfuNNKaAKuBdUZ9jb/BZ7GB4ulpVGfSw338CREpQRlyOOt6Cshyvabsz0bBY/AaeeiM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733886603; c=relaxed/simple;
+	bh=gZkLO50quKZneUjLKq0ymP1vgsn6uoCTsQzLJ+jTS64=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=XVFzaL7Cg/nCjvAayvD26ysjboRXnsDImetTRryMGRDFbkuZYLpL+IL07xk8sapLX5W1jAXJvUkQdvAFLgRGlYR2pAH3cHawZSDWk9WusRuwgfO8dUIJ8zR6yRIHwF0gcYtiO4P3m/Xbn15dkJUG4jQH/yHJaMReGLhvsvhyd4c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Vd5onoxz; arc=fail smtp.client-ip=40.107.22.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NDmXOlATyxFdgtj/ae9WNUwkcG7IjdqkyVIMtd+6OVM4G9AZxtxExK41Bh1Sg5Fzzbop81BmDEMlO9dVoGyNazgsf5TtKy8CGGwMsAQNjqOp3/OFOHHr0PGkJsm6ljlXNNCzvaSn0PCs8iK7K//j4Fh7bfRSpytvYfCW0l5VqDCHuGIQIPE8+dzDtzkK8xwUKDXRwbebYw39+1x/oebtAq/uDLr0IsT+Kue4bj8XrSnNYuotbiaO3jEw2yVbcXOi0DksYpn/LFc0iGTE2HCa5xpmZreO+V8FFiF6yKIFzt8Ln0y001YG8BUfVWRQuPVzcu7nCbSJVq+gZJIixulCWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zal/wzdQq/rIXs68lVbcx3KnHpTzn6yzH8JcSZgZiwk=;
+ b=VxnKlN89APwyYDgBjNXmSnpfpNmecFm4Zh+XfdR1YVfyY3i+Md9LqsAHB/1UsfZYcfzjagJ0QSKWt86/76kaLWY4wuPKcqZLhzKFSTN3g02wSoSrtQVdnpvHhUkPEM+dITTwDQ4Z7RAlnnV/hAJm7KF4iFuAObvJ6NT3L0NYnEyH2h4lbNAE6Mh7CiRlB/MAxywR69TuoONBQFCfljPK1C4CVDxAmBxjz6VhB53f1DPyJ8veTGb0ARIu3SjfH+3g22lTpjFB58BbBNwoL86onRBK+kxKFr8sfC2DiukXRixOz4Q5s3wVbAczMdvv00tE/T+TgbwenmuFlBX1tFyK6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zal/wzdQq/rIXs68lVbcx3KnHpTzn6yzH8JcSZgZiwk=;
+ b=Vd5onoxzoWPgT99HKs4n04/dL45/RMYqqB+bYR7cxTj27/EdKa/JBsgooNQr8Sh7JoDEWLKnUUdKdxGRBu4941AgQ20bftKUo1DRibe+kfep3aSWAT0eH3DMCK0gHeq+gkLfNUys8IludpVu7iOTtQhYAhe+hucjAG7QFzenSiznK9Q86sVGvVAlra3iQYENHKxlkIMslikkfCPeWqvIOK8dP4v4SEj0qRjFV337NXzgJKqskVm4iPi7LhIACKzioeq/RpCE3a4nVAeKtx3RWOdO36WpaIfGFWXp192mExp7erdpJUoTB6Nn3go4gZCnB4eEovyDYujR0AIJqR3byA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by AM8PR04MB8033.eurprd04.prod.outlook.com (2603:10a6:20b:234::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Wed, 11 Dec
+ 2024 03:09:59 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%6]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
+ 03:09:58 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: vkoul@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v6 0/6] ASoC: fsl: add memory to memory function for ASRC
+Date: Wed, 11 Dec 2024 11:08:43 +0800
+Message-Id: <20241211030849.1834450-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0032.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::12) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104034545.497907-1-yi.sun@unisoc.com> <20241104034545.497907-6-yi.sun@unisoc.com>
-In-Reply-To: <20241104034545.497907-6-yi.sun@unisoc.com>
-From: yi sun <sunyibuaa@gmail.com>
-Date: Wed, 11 Dec 2024 11:08:22 +0800
-Message-ID: <CALpufv34r8cMv0BtGXWLd_LEBjtMGM+CZ=XpnsL8Qr8WOsOk6Q@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] f2fs: Optimize f2fs_truncate_data_blocks_range()
-To: Yi Sun <yi.sun@unisoc.com>
-Cc: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	niuzhiguo84@gmail.com, Hao_hao.Wang@unisoc.com, ke.wang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|AM8PR04MB8033:EE_
+X-MS-Office365-Filtering-Correlation-Id: c571b104-274c-413c-7483-08dd19914b92
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WpwKlmp8cHyNOygygAsNPlAEf4CjhD0SWgYUMR3jeR9JexDK6NMSc0gmeS+0?=
+ =?us-ascii?Q?5Q/rM878Gh7fI6LMnZQK2Eiy6N27hc3Q48UuW1yVel0sjmdtsR7jtS+QiEhP?=
+ =?us-ascii?Q?HfUsE0QfBUyun7+EOCPl6lT/+z/DpJVw0C1XcUfb6D9KKnQLePfzL3E6YwZR?=
+ =?us-ascii?Q?hiJ0OOttqrsmojZA+PLiZeSLwsa3BccjpuF5cqRGkHNL6xGpgkyDM5xCpAlW?=
+ =?us-ascii?Q?D6K3QQO/AnY9PuRuim/LMdugHtyVRCZosudAk/KpsG8bFF0yH06BeUwXRBpV?=
+ =?us-ascii?Q?Oc1rVssT6gChw6dB9p2WbbMe+AVh2p6n9r83gI28L7o3ndfpFxLp6HC3Kr6A?=
+ =?us-ascii?Q?5hJUyz3XDn4QyjSij7AYzxz8uAasW0KjXPkCnQ3H2Tm7/k/+Ap+0jFDS0sRm?=
+ =?us-ascii?Q?39V7wbTJyTyWnfCX9RJqkD1A88UaECV8QKMdazzS8IpcNCwiLLmcX5eYhTVd?=
+ =?us-ascii?Q?2UTYf7yKAu0h0UJFSJeAuCJ5wsJk8pHW6Uazd6XZeiqBfSF8Wj64a+EIbAKc?=
+ =?us-ascii?Q?rsFVoHm7Rd3oKM35Dfo3WL6xcqaXyUPy44X2LptcnwXxRrWEFjqXhf6t2+Y2?=
+ =?us-ascii?Q?8uYDIaO37t99qkLCjSSmbcmhj6YzrJAOTpjTgHGJ7+ApcW53ZTVrvsnzmIiK?=
+ =?us-ascii?Q?sN88GsDmOsa1FT1+oYRqO6F2HOAAG/qfhEQ7280d2YqwYMvkulOadkyAYiXx?=
+ =?us-ascii?Q?nO2zXDIYHIibGrchtgOl8umLH3cUgDQwaOY+ArsPw7Tsq5uK2S1eVotO5H0X?=
+ =?us-ascii?Q?B9MLdAkTuI4KAT+rnGyFuOmUducaGH+flR2UBUcng8+7isPXHsuo1WN60xih?=
+ =?us-ascii?Q?3Muo9gtDzEq+zBMQRMugp6lKkSPjmJMjL/7Nrq439tBZRhLShqv/MPD0TnBP?=
+ =?us-ascii?Q?Z+158w4LocMPZbNUc67rqhlMX8XQf2ewszUMLp/GwzrVT4j7Gog9jYjB09Kc?=
+ =?us-ascii?Q?Z9mudonMdz+WEhv8fOGlZ6FdiweyC7ZJnw0+hcAgbADqSwEsEyQKsNRNa74D?=
+ =?us-ascii?Q?97HocySqKRqonBBDivBp7EUDe+gGJfy56zBlEqB4Q8ZlDN479JGNDeosDLQs?=
+ =?us-ascii?Q?Jn9q+8lv6UXgDGB3vijBa4Avo6nd0MGC5hxhf7jAWK1LhXJTQcEBsY37Zsrz?=
+ =?us-ascii?Q?gTejbzmjpDexJ0SaymcXNRawzI0tWoGrvXo+cndxH8Y8Iy+0uIBTN/O8pTAp?=
+ =?us-ascii?Q?OIBUsqUvTZs3mGQEXVOGkkMqsfrh9zPIl3VtKC26Yv5lV/DBcGALeUQNTphe?=
+ =?us-ascii?Q?rIvn/bnBaJPjG6rjrbFNRTURt+w5itahWZ2V4rU+gsseB0kXKpt3HFXcce4B?=
+ =?us-ascii?Q?xOjAB+q32UBx+5IMXmlArFmQWTZpz8fNYh07DcHCyDrPDSkK1CtQBaScQ2zt?=
+ =?us-ascii?Q?ZKQDgsW+aMMjgLnMP4jbIYY2V1Eg9tjHoPxgpd4K0FmPXOZz4/NBBaeTuoDF?=
+ =?us-ascii?Q?QGJZ4YS9rIE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FYZMnARaoFmJG7CsDdll4twW3+kGTjt+iYG8cCBFqWssUFMgUXQ9st8UbYaJ?=
+ =?us-ascii?Q?nRZgHKyeQCg5h3JR8LDAOlfX0yL6jyXk755broSHnzdBpjQ4oATYoYS3zI8J?=
+ =?us-ascii?Q?xFr87QZ/ZeC2VdA6z/5huPMdn559oasfvCl23/i4K3inrMRjEAHmfDWonBNV?=
+ =?us-ascii?Q?FPUVQcBSnF0qFfvbX4GBsBFqxjj/AHG4HY0j7duzZaEN/sefuCFRlC3RkbeL?=
+ =?us-ascii?Q?QMHtpnE6Ejxv6yDNOkyH0QrT+5dczU6X7i+rySPU0oqKJz0nObIKx0MEGiBg?=
+ =?us-ascii?Q?alEHDWO9TKgFP0JOFt5JcXvd8lwBkRtrNTN+k4fGvp8NpDb+ffFZsjjxY/RQ?=
+ =?us-ascii?Q?xBCyeeFqZBR613mcVgT8OPg3roXGVLqvErYfXznoqRJx22olF66JlIuk+AOv?=
+ =?us-ascii?Q?9ekfoaxIT0pEwsqiQGGuHIG/Yy7W5dqV710d2kETbK8DTByd2rwVcuUXOBwV?=
+ =?us-ascii?Q?h/+zv/H0yran86Ptmw/u60OhqaWxdW3UNrwsHsayqbskoQNs3xufsLC+sd8u?=
+ =?us-ascii?Q?QpIQCYGFg911QPjvWc2SxABnOKPGmIJ/AbQeLw74GIdXyqnIgimuUgWYEGeW?=
+ =?us-ascii?Q?yK7wQyrWYOEY9vrGlroFWOhF6iZbGDv77Ae2Twzn9/qPSxQeNtJ4DViqHFLv?=
+ =?us-ascii?Q?1FgGgLi0pMA+che4wVbLRsBdpUQpp7BsjrxZJXhuZWVaEXXouWx5Z36YJO1d?=
+ =?us-ascii?Q?Ri0SSnMgyLRMcEiR4I1mjx5xkjTEvlEqRL4lWBprRYk5fu+2CrylbSx7ZUIo?=
+ =?us-ascii?Q?UNUXXjOWYUzdJj/brG4rhN4WEwhMU2JRHzJ3tOS1C1Mlrgmalp0K4/WStvgM?=
+ =?us-ascii?Q?xBeDpNeS3vJN9UkdJAdqTUwaeu0eJwu6TrtblZgK6CTHFGBgpnkeKUjCZkQw?=
+ =?us-ascii?Q?z4mj7xE93gY7s5u1USGkTjZ6olkffce1QqBpEyIrXmOMXp73Lz84VTYVkO/A?=
+ =?us-ascii?Q?CAhivWvYkbbXM7yaOn/ZD5+8pk3RgDjcwUsjTcEj5MPyDClQ4o6PtsJuTpBX?=
+ =?us-ascii?Q?znbye5/13M+XUO1tqnDE6EeHzxGa9XHfFt0TvC+P6ZhcWw0LEdxzEfB1G+oL?=
+ =?us-ascii?Q?bQH/5uZW5ORhBeiZf6H+QXhSWwckWu61OTmTOFzjdzzxzuSUxDBr236Qav/o?=
+ =?us-ascii?Q?+yPhKiyjCtzt5RjclnhyjCgsolVauHM6QTkLRfixf0XXGgkH9gHpPkDdV0B2?=
+ =?us-ascii?Q?BjpAvOqQOLYMsu6J0IjiQYRrE5BCmJ+5LBS0Eajgt69n2KrAbsCmUv15ZBGO?=
+ =?us-ascii?Q?zNCjaUjFDA1NbNDPbuJqyszFmUQtWz/r1zqWsbcJd24iA3S69/kniIQ38ZkM?=
+ =?us-ascii?Q?PDiRYXilcLO4U8ilHi0jvHOci8eFGunDlL2AioKVh6U2h7tfmRLm9kr0yqFd?=
+ =?us-ascii?Q?ITsbH4ZdADWy0PE5EoxSCzumHlZiACqbo7PlQdxZX3qNA1vFtV4UiY+CjlFB?=
+ =?us-ascii?Q?5c/85DP40RdEE0368d85ZxWcZJVtbOLzDukUpAy5KuAfoiFcPJpfDYQRG11A?=
+ =?us-ascii?Q?esTaVkMPDsIXX23r6+6kJM9Vj7/ZinwEjrZSL3G/VB4hPQ+qUuCtihSTQ9fu?=
+ =?us-ascii?Q?8DPP/U/PFaNUQLcC4XIvTug+Pk061iuq62yhcEEg?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c571b104-274c-413c-7483-08dd19914b92
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 03:09:58.7505
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /gVELQOvUZIptM647QZ7rx8lTphwkrIuRN3Uy5FrrRYoEi2IefcDJsxoHvtCfX3wQQ4Qd3znZ4cu72G8eQ7UBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB8033
 
-Kindly ping.
-I think there are no problems with the first few patches, but the
-current patch may still have room for improvement. Do you have any
-good suggestions?
+This function is base on the accelerator implementation
+for compress API:
+04177158cf98 ("ALSA: compress_offload: introduce accel operation mode")
 
-On Mon, Nov 4, 2024 at 11:46=E2=80=AFAM Yi Sun <yi.sun@unisoc.com> wrote:
->
-> Function f2fs_invalidate_blocks() can process continuous
-> blocks at a time, so f2fs_truncate_data_blocks_range() is
-> optimized to use the new functionality of
-> f2fs_invalidate_blocks().
->
-> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
-> ---
->  fs/f2fs/file.c | 72 +++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 68 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 9366e7fc7c39..d20cc5f36d4c 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -612,6 +612,15 @@ static int f2fs_file_open(struct inode *inode, struc=
-t file *filp)
->         return finish_preallocate_blocks(inode);
->  }
->
-> +static bool check_curr_block_is_consecutive(struct f2fs_sb_info *sbi,
-> +                                       block_t curr, block_t end)
-> +{
-> +       if (curr - end =3D=3D 1 || curr =3D=3D end)
-> +               return true;
-> +       else
-> +               return false;
-> +}
-> +
->  void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count=
-)
->  {
->         struct f2fs_sb_info *sbi =3D F2FS_I_SB(dn->inode);
-> @@ -621,8 +630,27 @@ void f2fs_truncate_data_blocks_range(struct dnode_of=
-_data *dn, int count)
->         int cluster_index =3D 0, valid_blocks =3D 0;
->         int cluster_size =3D F2FS_I(dn->inode)->i_cluster_size;
->         bool released =3D !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks=
-);
-> +       /*
-> +        * Temporary record location.
-> +        * When the current  @blkaddr and @blkaddr_end can be processed
-> +        * together, update the value of @blkaddr_end.
-> +        * When it is detected that current @blkaddr is not continues wit=
-h
-> +        * @blkaddr_end, it is necessary to process continues blocks
-> +        * range [blkaddr_start, blkaddr_end].
-> +        */
-> +       block_t blkaddr_start, blkaddr_end;
-> +       /*.
-> +        * To avoid processing various invalid data blocks.
-> +        * Because @blkaddr_start and @blkaddr_end may be assigned
-> +        * NULL_ADDR or invalid data blocks, @last_valid is used to
-> +        * record this situation.
-> +        */
-> +       bool last_valid =3D false;
-> +       /* Process the last @blkaddr separately? */
-> +       bool last_one =3D true;
->
->         addr =3D get_dnode_addr(dn->inode, dn->node_page) + ofs;
-> +       blkaddr_start =3D blkaddr_end =3D le32_to_cpu(*addr);
->
->         /* Assumption: truncation starts with cluster */
->         for (; count > 0; count--, addr++, dn->ofs_in_node++, cluster_ind=
-ex++) {
-> @@ -638,24 +666,60 @@ void f2fs_truncate_data_blocks_range(struct dnode_o=
-f_data *dn, int count)
->                 }
->
->                 if (blkaddr =3D=3D NULL_ADDR)
-> -                       continue;
-> +                       goto next;
->
->                 f2fs_set_data_blkaddr(dn, NULL_ADDR);
->
->                 if (__is_valid_data_blkaddr(blkaddr)) {
->                         if (time_to_inject(sbi, FAULT_BLKADDR_CONSISTENCE=
-))
-> -                               continue;
-> +                               goto next;
->                         if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
->                                                 DATA_GENERIC_ENHANCE))
-> -                               continue;
-> +                               goto next;
->                         if (compressed_cluster)
->                                 valid_blocks++;
->                 }
->
-> -               f2fs_invalidate_blocks(sbi, blkaddr, 1);
-> +
-> +               if (check_curr_block_is_consecutive(sbi, blkaddr, blkaddr=
-_end)) {
-> +                       /*
-> +                        * The current block @blkaddr is continuous with
-> +                        * @blkaddr_end, so @blkaddr_end is updated.
-> +                        * And the f2fs_invalidate_blocks() is skipped
-> +                        * until @blkaddr that cannot be processed
-> +                        * together is encountered.
-> +                        */
-> +                       blkaddr_end =3D blkaddr;
-> +                       if (count =3D=3D 1)
-> +                               last_one =3D false;
-> +                       else
-> +                               goto skip_invalid;
-> +               }
-> +
-> +               f2fs_invalidate_blocks(sbi, blkaddr_start,
-> +                                       blkaddr_end - blkaddr_start + 1);
-> +               blkaddr_start =3D blkaddr_end =3D blkaddr;
-> +
-> +               if (count =3D=3D 1 && last_one)
-> +                       f2fs_invalidate_blocks(sbi, blkaddr, 1);
-> +
-> +skip_invalid:
-> +               last_valid =3D true;
->
->                 if (!released || blkaddr !=3D COMPRESS_ADDR)
->                         nr_free++;
-> +
-> +               continue;
-> +
-> +next:
-> +               /* If consecutive blocks have been recorded, we need to p=
-rocess them. */
-> +               if (last_valid =3D=3D true)
-> +                       f2fs_invalidate_blocks(sbi, blkaddr_start,
-> +                                       blkaddr_end - blkaddr_start + 1);
-> +
-> +               blkaddr_start =3D blkaddr_end =3D le32_to_cpu(*(addr + 1)=
-);
-> +               last_valid =3D false;
-> +
->         }
->
->         if (compressed_cluster)
-> --
-> 2.25.1
->
+Audio signal processing also has the requirement for memory to
+memory similar as Video.
+
+This asrc memory to memory (memory ->asrc->memory) case is a non
+real time use case.
+
+User fills the input buffer to the asrc module, after conversion, then asrc
+sends back the output buffer to user. So it is not a traditional ALSA playback
+and capture case.
+
+Because we had implemented the "memory -> asrc ->i2s device-> codec"
+use case in ALSA.  Now the "memory->asrc->memory" needs
+to reuse the code in asrc driver, so the patch 1 and patch 2 is for refining
+the code to make it can be shared by the "memory->asrc->memory"
+driver.
+
+Other change is to add memory to memory support for two kinds of i.MX ASRC
+modules.
+
+changes in v6:
+- rebase to latest tree, change to use 'MODULE_IMPORT_NS("DMA_BUF")'
+- Add Acked-by: Vinod Koul for patch 1/6
+
+changes in v5:
+- Drop Jaroslav Kysela's patch as it has been merged.
+- Add Jaroslav Kysela's Acked-by tag, received in v3.
+
+changes in v4:
+- remove the RFC tag, no comments receive in v3
+- Add Jaroslav Kysela's patch in this patch set. because it may be
+  better for reviewing in a full patch set.
+- Fix the list_for_each_entry_reverse to list_for_each_entry_safe_reverse
+- Fix some coding style issues in Jaroslav Kysela's patch
+
+changes in v3:
+- use Jaroslav's suggestion for header file compress_params.h (PATCH 01)
+- remove the ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE definition
+- remove ASRC_RATIO_MOD in this version because it uses .set_metadata()
+  Will wait Jaroslav's update or other better method in the future.
+- Address some comments from Pierre.
+
+changes in v2:
+- Remove the changes in compress API
+- drop the SNDRV_COMPRESS_SRC_RATIO_MOD
+- drop the SND_AUDIOCODEC_SRC and struct snd_dec_src
+- define private metadata key value
+  ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE/ASRC_RATIO_MOD
+
+Shengjiu Wang (6):
+  ALSA: compress: Add output rate and output format support
+  ASoC: fsl_asrc: define functions for memory to memory usage
+  ASoC: fsl_easrc: define functions for memory to memory usage
+  ASoC: fsl_asrc_m2m: Add memory to memory function
+  ASoC: fsl_asrc: register m2m platform device
+  ASoC: fsl_easrc: register m2m platform device
+
+ include/uapi/sound/compress_params.h |  23 +-
+ sound/soc/fsl/Kconfig                |   1 +
+ sound/soc/fsl/Makefile               |   2 +-
+ sound/soc/fsl/fsl_asrc.c             | 179 ++++++-
+ sound/soc/fsl/fsl_asrc.h             |   2 +
+ sound/soc/fsl/fsl_asrc_common.h      |  70 +++
+ sound/soc/fsl/fsl_asrc_m2m.c         | 727 +++++++++++++++++++++++++++
+ sound/soc/fsl/fsl_easrc.c            | 261 +++++++++-
+ sound/soc/fsl/fsl_easrc.h            |   4 +
+ 9 files changed, 1260 insertions(+), 9 deletions(-)
+ create mode 100644 sound/soc/fsl/fsl_asrc_m2m.c
+
+-- 
+2.34.1
+
 
