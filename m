@@ -1,104 +1,85 @@
-Return-Path: <linux-kernel+bounces-441249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96FD9ECBBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:06:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DED9ECBBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191D81682AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D6F168308
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05432210E7;
-	Wed, 11 Dec 2024 12:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2602163A7;
+	Wed, 11 Dec 2024 12:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+1j6WHK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGeAkrV3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374CC238E2A;
-	Wed, 11 Dec 2024 12:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B34238E2A;
+	Wed, 11 Dec 2024 12:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733918797; cv=none; b=gMIyH2SDBMLsDSNzyU/vqlOXbBjGQc8nT88+B1roA1Jstm8uu3GGLpz50rt4SaZvykX4HN+MDwBIoO+R35geOaGL9iTy0Z+ptOLn4rKEFS8Z4/MBb3bt73XIxh91dvdz2X5jQCOh9xBAqigJ2PXmWBPoYrLcq85jGqDkI2k8+Ag=
+	t=1733918802; cv=none; b=Zgd9+wWu0/oJWnEUrvsKJRkQ+geWMT8cl60aq+vv+zWu4LyfNj0T/t744KEyCjnLYL/dZEiCqf8YkvRDZy9q33bISPFuANB/9yKUWjtpNjONXyEfHB8Yu9GaasnedSruDhpdNr27HEISMvwS6HT7kNhdrxb2VLdpTI/wky0mgno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733918797; c=relaxed/simple;
-	bh=URHkU87kc3SnecwGaVrovMnEpPnArukzBkxsCWKks/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBMaSmwCRvDWk9aPq5H7NKFFKcwZvOCQJkzybLtCdOvMKcHvSyCwFnqckEUFdNK64XbfpSMJI+oJNlOsTe0RNF8bfmc6bvOM8KB9vXgSPsa4GANU536RFg6uMmnVYsRyr9iZMZubTjFUD64bBbNTDB7PiaUH4pccXukLWHUoKWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+1j6WHK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36CB3C4CED2;
-	Wed, 11 Dec 2024 12:06:34 +0000 (UTC)
+	s=arc-20240116; t=1733918802; c=relaxed/simple;
+	bh=pz6E4MM8uu6qFR81tOsB8zWIkdX7kJlWA6QAWbSj828=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=a71ItOj9AxPZvlGJcGnP8b+rcsSJ63GxqpDekRXY5mfkW/WqPPISjqU853zRwfXR5TzG8I6DS32e9zZB071ElRT3bbFt3cvTU4j3MaiYL8tsWuN8r08tUt8IQBRTOswKdklPD1acKDO/FaSx7vtKBjYnMT8U65cQgWDCVvT5brs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGeAkrV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB72C4CED2;
+	Wed, 11 Dec 2024 12:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733918796;
-	bh=URHkU87kc3SnecwGaVrovMnEpPnArukzBkxsCWKks/4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p+1j6WHKXt6208ircTn/scVv4le3ox79hEv1y7oSS7A8/3Oq4EUdK+b2EeiiI4Mrh
-	 0yeYNmPc0ZLTb/m/vPAf0iYplB3TCUaKfnJELbYfpbCSqRvqPNNnvvOFrZ3WXUZrlP
-	 SG/6JRCE0ueMgEW8dvfxByFEsmRknMDXj3ikVSw49uAYZx3rABve1OTsnNvMP3+MJX
-	 cHb6W2XtQgVwn29GAULHMyhR3rWdArCRSSArb4TlLbCnV0wpoBUSaNqfTfc8qadwln
-	 LebvVMquVkffowk9fP5G4TVq2gIqr3afa4Qws1gvv5yyTfAJpaNLZgNtmKUsc4+65i
-	 bmB9FPyjd02aA==
-Message-ID: <6aa70be5-59d0-4441-9432-79cb87fdd915@kernel.org>
-Date: Wed, 11 Dec 2024 17:36:32 +0530
+	s=k20201202; t=1733918801;
+	bh=pz6E4MM8uu6qFR81tOsB8zWIkdX7kJlWA6QAWbSj828=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=EGeAkrV39l2sRE27yvcxdxdVnQb8PTUdp7zAcNfkufkTxrw6Ju4/9nF4VfMD4AEGd
+	 k8nrPqqxN/V9RojRFhrTHE6inHPvcVk24kkVWAv8ccCwztajIHI0QXw+Z8l94IBwxA
+	 avwGsm6um/5BjlC1fm/OMKxhJyT3Fq9gBrpDSf4VbdkR3jng7tfgpuYccQV5HgOBo2
+	 XE4I7mauxdM5EgEqlxumb486H2Bobro+Qw0prdTDMAqy+Nk89pgnGoBrRZZ/R6uDPd
+	 DzjdL0X9XDp9w62nRcKLxigqvPLzpBb5v2y8kUxKxE0E4fsjHq5WfzseG8fF9X1Vgo
+	 E7k0HuKF9t32g==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, wens@csie.org, Dragan Simic <dsimic@manjaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+In-Reply-To: <cover.1731415409.git.dsimic@manjaro.org>
+References: <cover.1731415409.git.dsimic@manjaro.org>
+Subject: Re: [PATCH 0/2] Use devm_register_power_off_handler() where
+ appropriate
+Message-Id: <173391880034.747721.14412327221387015230.b4-ty@kernel.org>
+Date: Wed, 11 Dec 2024 12:06:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Signed-off-by missing for commit in the dmaengine
- tree
-To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
- Vinod Koul <vkoul@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241209075036.055e0729@canb.auug.org.au>
- <Z1hzMRuORVOQvKLW@vaman> <2e61add7-8e72-4ef4-b696-8bb5c0e83d01@prolan.hu>
-Content-Language: en-US
-From: Vinod Koul <vkoul@kernel.org>
-In-Reply-To: <2e61add7-8e72-4ef4-b696-8bb5c0e83d01@prolan.hu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On 11/12/24 14:39, Csókás Bence wrote:
-> Hi,
+On Tue, 12 Nov 2024 13:46:46 +0100, Dragan Simic wrote:
+> This is a tiny series that simplifies the code a bit in a couple of MFD
+> drivers by using devm_register_power_off_handler(), which is a purpose-
+> specific wrapper for devm_register_sys_off_handler().
 > 
-> On 2024. 12. 10. 17:58, Vinod Koul wrote:
->> On 09-12-24, 07:50, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Commit
->>>
->>>    1ad2ebf3be83 ("dt-bindings: dmaengine: Add Allwinner suniv F1C100s 
->>> DMA")
->>>
->>> is missing a Signed-off-by from its author.
->>>
->>> Scripting confused by the comma in the origin SoB line?
->>
->> Yes I guess so, checked again yes b4 seems to eat it up
->>
->>>
->>> Also, please keep all the commit message tags together at the end of
->>> the commit message.
->>
->> Again scripting is going bonkers here
->>
->> I have fixed it up now
->>
+> No intended functional changes are introduced.
 > 
-> Still broken in these:
+> Dragan Simic (2):
+>   mfd: axp20x: Use devm_register_power_off_handler()
+>   mfd: stpmic1: Use devm_register_power_off_handler()
 > 
-> commit eeca1b601381 ("dma-engine: sun4i: Add a quirk to support 
-> different chips")
-> commit 1f738d0c2f67 ("dma-engine: sun4i: Add has_reset option to quirk")
+> [...]
 
-Fixed all.. looks like all patches from you have this issue :-(
+Applied, thanks!
 
--- 
-~Vinod
+[1/2] mfd: axp20x: Use devm_register_power_off_handler()
+      commit: c8729f5dc9aacd4bad8ac93487c2f5ee1c409f2c
+[2/2] mfd: stpmic1: Use devm_register_power_off_handler()
+      commit: d893a7ed58430259cbc939cd001e24833df93a75
+
+--
+Lee Jones [李琼斯]
 
 
