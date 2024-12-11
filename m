@@ -1,129 +1,189 @@
-Return-Path: <linux-kernel+bounces-441494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D9A9ECF2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:57:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562629ECF36
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB701696CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA7418871E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEE71A0BED;
-	Wed, 11 Dec 2024 14:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B6D1A83F4;
+	Wed, 11 Dec 2024 14:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hqna+FOR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqUSXot9"
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245E7189B8B;
-	Wed, 11 Dec 2024 14:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98419F116;
+	Wed, 11 Dec 2024 14:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733929011; cv=none; b=D/WMnfYtzbw+kAo4zY2bvJcdkfp6ZIFdn6DorRWslHZA3aZXHQK0IDPTdZvhZzDEf3RL3HPeO1BMPC+ebIMjgiY9bObzG6NvCvd04/xzn/A7PRTMXW6zsmBMVu+y46Pn0y+3SvZPnVRJq4pLOCN6l0xGKVylZN3ScT/gJcyl3KM=
+	t=1733929159; cv=none; b=OOLm07ja1fc6gPzPsagLSOUIvyvhmXPfp0U2EBrXuCYH/4kR1phuHyqQpXBHQFft2SxX1l82Y70idi9p+V/g6vjZHC4wddAdIg4qQf9Bd+Wlo6xKmwXo4hJmAEt8RV3btv2YG5lZ8KTXKgqjdLFJ8Gb5YM0K2GG69Xsu+GK07Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733929011; c=relaxed/simple;
-	bh=OREpjiujqd4SpEZvxAc06dWhF5wUZtZuOpJQ2zmJ8fo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ioao4Cmc9pvTgV0hhRbRwWptCD6pfbg6GjyCJmLMBnoyg/TloePjjXWwrp3HiL5Ee2fqbnzfy32O0otDyKXtTBoxn8Sy1Ko7Jo0NywdG0bvYCDCMznBECdSCMsYJK/MvnREzCeBGP4K2nJsYP4ekBRDLHmw2Uy55YS4laNuOBeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hqna+FOR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5AA8C4CED4;
-	Wed, 11 Dec 2024 14:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733929010;
-	bh=OREpjiujqd4SpEZvxAc06dWhF5wUZtZuOpJQ2zmJ8fo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hqna+FORRl5s+hoVNX1PHcAkrXrpDQAzfv3NlWXzozI+wZiDZ9WBguGPAcyZkoVQ5
-	 0CtxxAowC8RaEdJMSlzLkrp3IUwDW3JMLdjLrSs41emwNl+Y6yzhrDM546MppyN+Yl
-	 nnw8RlLR7bspvO+J+GDQsGPpmPxzMB7JWfnwOtasrvSfgVWx91ff+nLOU0TIihH8wJ
-	 nLGG/wQEzgYZ2vliQ3sVwcAHKGmrmcW356DKkU4Spduc1T7ehj0yZm5P5bkqDMHsdq
-	 RwyjSvRidsZIryVplu/6/gBL92iRjHH0Jt5G7eu/eUprRLUrfMYIZXTKJePQiOOk24
-	 TPuRWRdoA1Dag==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tLO8z-000000003BN-11Dy;
-	Wed, 11 Dec 2024 15:56:53 +0100
-Date: Wed, 11 Dec 2024 15:56:53 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v2 4/4] drm/msm/dp: Add support for LTTPR handling
-Message-ID: <Z1moNToiIIB9auSl@hovoldconsulting.com>
-References: <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-0-d5906ed38b28@linaro.org>
- <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-4-d5906ed38b28@linaro.org>
+	s=arc-20240116; t=1733929159; c=relaxed/simple;
+	bh=tm+XYf5eyhi5AgwnwhFjnz+5HTDe+tvhTnN4isbxBIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YGIDRLO8RPGKfzIxOFSPG+BFmCI1sXG9+mXyHUUzOCA7SNELzgbT1lbJ0Ljs9WIL28vejv8xuGIXJ90+xO7V1tcz8bJjLdggiQIpjWjWEyNW2iOMTnu5jemQoJpAy7EGF2Y1iOb6Nyacar3B4SaU1T0Epq73upUjiipR6vqZc0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZqUSXot9; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-85c4c9349b3so1157916241.3;
+        Wed, 11 Dec 2024 06:59:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733929156; x=1734533956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qISq7GajMdBCcxBbvv6KzdEHLpfNlyE+uR1h/30xNC8=;
+        b=ZqUSXot9D9GoFGHIHt1/f2mzBl3Qz/F7E3gi6c6ZX961It8TFEfAye8FzQ1REylUKr
+         xQ0V6i2HY2exMKDui/Db/F7CuiovehjgLhrpQ7R99oNezzENInG/37vYI1FdeNcRRBgz
+         Bxx7rGhwOv7yp6mbadGcD/qlgtrJzVIFCiJn1iVyK8y7rFFJnXfJceObzDfphVpmQLVz
+         WZpmeqXOuMMuKHcqhPDUW1PghCbWjZcUDKqkaX0+WBj1uo0UdkHaWBfCbvcBZvstWHhc
+         p8aPwGxrUJLaNUzMAZdsjBFTEEgX0nExGi3WQFL4jHwoVTm3r2mmnHjWdLV8E0E0t2Pn
+         vANA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733929156; x=1734533956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qISq7GajMdBCcxBbvv6KzdEHLpfNlyE+uR1h/30xNC8=;
+        b=NUf4u3Sn1ySkD96jGCd2Hg1aokUiCtSqtphPMNfIHc1BBYEaOfPUnDa7mt2ZT2FAL9
+         9c0Va5DkAorQfmPLQuK0e0hv13Ubfriaj2i5Mgk5PPgWBZ8dE6ATPE7zQ9my0Nc6Tii2
+         PQqRaHvTaXHOXPkAYHESuru59VlEso6tI6IejQT46EcGsnDjq+lMvbZV3wS5ZWi1F/kn
+         x7B0qNtdAnDx0HZVXTTu8JkLCJDXd7rHwtwHdffMxlbs9V1jN+yBtBr+LYc6gg02c1tz
+         DZKSRY/g2BsRrE2T9yphwUkF/NWbcsU7P3gTDCiyBgO6mDaNT8DXnsee4uRMAwyFdFRy
+         acXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpKBy3c6Sz4+FGaUdCS0Ky2lRyTXZZcAlB+Uk0XqVZ+D75FFDv8qmu3hpMfUA6cuc6o1LDjxZOScoXJRE=@vger.kernel.org, AJvYcCUr2FjC6hAl0V4BMiXERVj4+A+ZlxyILcS1OdJa8fIQZfR8Pp1TahwGxKeNSZD8F19jStldfZcv+A1s@vger.kernel.org, AJvYcCV7aiQHcIPt58QyBIvCLLhw7bV0BF1tKyzMJOgtirs9fbj+z61EcI3GLKhLe++qrfqhm/rcBW4AGiQ=@vger.kernel.org, AJvYcCXMLfuSndeIf1xrCk2CWofc0lrgfWPlJJd45+P3NDqVmI/sRuTVXkxERZWoUjcZd0u6JyqU3gg7/mtFLA==@vger.kernel.org, AJvYcCXgsLj7cO28HHgKWMMMQGlhLDvLKKnY3wRZgbPzgg1syUs/5il25cSCVc2DxvQbYc2Up/GLZLXbsLX+nFJ5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBeUW/4HrBXYqZ7EH7J+pzu3Il52GK/uBT43wAfGWjPLY8ufxw
+	4uPvymC899tJXyyog7g9mK9fpY/0m3HmLo8+0b3T+G6yBHgu+fexGsXGlx7TPgr5H9rceaB+BRT
+	4mUGq0vdUy1fdk4zBVrtJrLPfrWw=
+X-Gm-Gg: ASbGncuaynHAHfdk43aktfedFN7cAwQ2qtHnRFua6h4NtO1DhcKVkWff6O3V0SFvkNe
+	+aAOTvR7qQ2EGIuCm7JLyRGtkndRaqMK2CQ==
+X-Google-Smtp-Source: AGHT+IFDABXEejeuf1IKWb+Gu9FePZZpIgNOQ4IYdnMw3Kzd/38DL0IjJiFWqIpwT6VMj6TTqmfk4vxvTsyrCXE6AH8=
+X-Received: by 2002:a05:6102:4b89:b0:4b1:5cc5:8ffd with SMTP id
+ ada2fe7eead31-4b15cc59238mr3092106137.11.1733929156563; Wed, 11 Dec 2024
+ 06:59:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-4-d5906ed38b28@linaro.org>
+References: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
+ <20241209-starqltechn_integration_upstream-v11-3-dc0598828e01@gmail.com> <7qt7thbuh5mvoaknxaiteusbmcmiusc23k2oiyvq3bwn4l6wsw@p4qid73hmiry>
+In-Reply-To: <7qt7thbuh5mvoaknxaiteusbmcmiusc23k2oiyvq3bwn4l6wsw@p4qid73hmiry>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Wed, 11 Dec 2024 17:59:05 +0300
+Message-ID: <CABTCjFD4ipvapWX9gJF1KXWpzj_jhL9pYB0z+Q4sEi-cu6mx7Q@mail.gmail.com>
+Subject: Re: [PATCH v11 3/9] dt-bindings: power: supply: max17042: split on 2 files
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
+	Hans de Goede <hdegoede@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, Purism Kernel Team <kernel@puri.sm>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 03:04:15PM +0200, Abel Vesa wrote:
- 
-> +static void msm_dp_display_lttpr_init(struct msm_dp_display_private *dp)
-> +{
-> +	int lttpr_count;
-> +
-> +	if (drm_dp_read_lttpr_common_caps(dp->aux, dp->panel->dpcd,
-> +					  dp->lttpr_caps))
-> +		return;
-> +
-> +	lttpr_count = drm_dp_lttpr_count(dp->lttpr_caps);
+=D0=B2=D1=82, 10 =D0=B4=D0=B5=D0=BA. 2024=E2=80=AF=D0=B3. =D0=B2 10:38, Krz=
+ysztof Kozlowski <krzk@kernel.org>:
+>
+> On Mon, Dec 09, 2024 at 02:26:27PM +0300, Dzmitry Sankouski wrote:
+> > Move max17042 common binding part to separate file, to
+> > reuse it for MFDs with platform driver version.
+> >
+> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/power/supply/maxim,max17042-base.yam=
+l | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml    =
+  | 49 +------------------------------------------------
+> >  MAINTAINERS                                                           =
+  |  2 +-
+> >  3 files changed, 68 insertions(+), 49 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max17=
+042-base.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max170=
+42-base.yaml
+> > new file mode 100644
+> > index 000000000000..1653f8ae11f7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042-bas=
+e.yaml
+> > @@ -0,0 +1,66 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/power/supply/maxim,max17042-base.ya=
+ml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Maxim 17042 fuel gauge series
+> > +
+> > +maintainers:
+> > +  - Sebastian Reichel <sre@kernel.org>
+> > +
+> > +allOf:
+> > +  - $ref: power-supply.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - maxim,max17042
+> > +      - maxim,max17047
+> > +      - maxim,max17050
+> > +      - maxim,max17055
+> > +      - maxim,max77705-battery
+> > +      - maxim,max77849-battery
+>
+> Shared schemas define only shared properties, not compatibles. But the
+> main problem is you did not answer nor resolve my previous concerns -
+> either this device has separate address and probably is a separate
+> device on the same or different bus.
+>
+> Plus this was not tested and does not really work, but anyway let's
+> focus on my previous concerns first.
+>
 
-I was gonna say shouldn't you handle errors here, but that explains the
-non-negative check I commented on the first patch in the series.
+Ah, indeed, the device tree in this and previous patches doesn't
+reflect hardware wiring.
 
-This looks error prone, but I think you should at least update the
-kernel doc comment to drm_dp_lttpr_init() in the first patch so that
-it's clear that you pass in the number of LTTPRs *or* an errno.
+MAX77705 fuel gauge has a separate i2c address, i.e. I may move it out of t=
+he
+MAX77705 MFD node. However, the device on that address has additional featu=
+res,
+like measuring system and input current, which is out of fuel gauge
+responsibility.
 
-> +
-> +	drm_dp_lttpr_init(dp->aux, lttpr_count);
-> +}
-> +
->  static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
->  {
->  	struct drm_connector *connector = dp->msm_dp_display.connector;
->  	const struct drm_display_info *info = &connector->display_info;
->  	int rc = 0;
->  
-> +	msm_dp_display_lttpr_init(dp);
+So I guess I should create another MFD for fuel gauge, i. e. max77705 examp=
+le
+would look like:
 
-It looks like you ignore errors on purpose so I guess that's fine.
+...
+  pmic@66 {
+    compatible =3D "maxim,max77705";
+...
+  };
 
-> +
->  	rc = msm_dp_panel_read_sink_caps(dp->panel, connector);
->  	if (rc)
->  		goto end;
+  meter@36 {
+    compatible =3D "maxim,max77705-meter";
 
-Either way, this is needed for external display on my x1e80100 machines,
-while not breaking the X13s:
+    // max17042 fuel gauge driver in platform mode
+    fuel-gauge {
+      power-supplies =3D <&max77705_charger>;
+      maxim,rsns-microohm =3D <5000>;
+      interrupt-parent =3D <&pm8998_gpios>;
+      interrupts =3D <11 IRQ_TYPE_LEVEL_LOW>;
+    };
+  };
 
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
+--=20
+Best regards and thanks for review,
+Dzmitry
 
