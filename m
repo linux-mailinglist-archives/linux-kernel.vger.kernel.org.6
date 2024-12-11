@@ -1,150 +1,158 @@
-Return-Path: <linux-kernel+bounces-441243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B1C9ECBA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:59:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C1289ECBAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:03:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93588285F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF93285975
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4E52210E7;
-	Wed, 11 Dec 2024 11:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D989208985;
+	Wed, 11 Dec 2024 12:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMBJ15UY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W9tArFSB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B467B1DA634;
-	Wed, 11 Dec 2024 11:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1958C238E2C;
+	Wed, 11 Dec 2024 12:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733918375; cv=none; b=AlXWOlSakneUMcQ8QRqLbUE7S1DWmtDdHM42yC6OYvxxxYO6VfKzmihZ8+Hxzvy+VkW7daOxrNQAh+D1AKB0vNDx9xxGAgebneL8+yUuTGRlN4Lfz/y3iR1Pg8pSw/aLiQmHCeE58fpFj8vYvAYUqyyxqtaK/jA7iNZLfU8G5Cc=
+	t=1733918571; cv=none; b=lVMOk0pasfRSCqOrgaEZj+zbxosmCOOPv+oqjZD1F77f7tRfd2qA8EfPenyjVnbab6BP2XKDqvLhN2oVTW9wVAviKACtNxU8WDhKYGNEnBjZQLAu3EtBv7oxYkOyrK0BzOK8l4mz7UmkyhDrgZxBF5MnbjIl8L1UQLhE8p+Knh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733918375; c=relaxed/simple;
-	bh=MNkBA6TIZGvG0Roqh9owptn5qC3KsvWV8eG6jC0NJlU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RaZ4FwLl8UT4dQU3dOzJ9DD1umOIuzhwR+Z/J6i6jnpuap2Smukupd9KVKOUmIoBQIIiB85baTEu+pB9pdij7tCVG1vYvfN48G/XXzsLGzKlIh7RfXGnXoKwbsv+v+/anu18To+XYpf1n4i09LghHAXU/85Sdxa9YpRVXQ1wr3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMBJ15UY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7D6C4CEE0;
-	Wed, 11 Dec 2024 11:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733918375;
-	bh=MNkBA6TIZGvG0Roqh9owptn5qC3KsvWV8eG6jC0NJlU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dMBJ15UYkDC/eYnczfESv5opqwm0EnpWmXVK+LMGDSqZ1P9Yn4z+XMvkr7iKWEUh4
-	 t+yIjBQ9DIIjHnUQuy718busqMpZMbIqGneq0hIBH/kH0AzvQnnS7SfGkvonzMIIrO
-	 plrfhenxeWU1/VfED2g4GvfM4X8k6RwbKK9pfV0BjPs9GP6GoPstULMGWYRi7Ws4A7
-	 gHYHT6iJ8NNlAoYuuS3zA3AGzNlztbJysn5je6QBFTMXSRj8JXB3T8wcU0+/kO/NxB
-	 V74o9NZCYQTZmaS6NRLtAvidYaubmdpK3KJBRpjWOIz3lCVDPjuS6DM906VM6uJi30
-	 dyLRsHSq5BGFA==
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71e0d4f2874so428337a34.2;
-        Wed, 11 Dec 2024 03:59:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMQJFOnfTsnDtT5uV9ZP236qSRd+mDNKEjDvWW7Tdl+XyFxMlSOyynde5mhu5+16RotCIhDE/cSAA=@vger.kernel.org, AJvYcCW8ShasSgG7bQnBthY7Oh0NxwoqYq1ndkXgjYZqx1yttMf6Xl2PRfP+2vxeok+p329p7riAVlFz3c2Wgj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2vozm6n0RZD/jI4OVgbxAj1BEBE9DuoBLN1Kfvn3NG32ScNE+
-	Qi5ra9DLLvptZGv9fqDzVSj/emM1F+iAnqgDJugYRIm2KbjAhqClFTeD2eLxWcF8YTy/PVusGEK
-	lNzaWKs2dL5/xrNizwyX7I9COVQE=
-X-Google-Smtp-Source: AGHT+IENekl+hCD5HhEEY9wNj8jUl9RU7uJ+CBX7y3We2HOmIlquZ6N4zE+5e0b2LivS5aqdyboY6z9FE7cexSMSf9Y=
-X-Received: by 2002:a05:6830:670b:b0:71d:f343:5f5b with SMTP id
- 46e09a7af769-71e197e2e59mr1288502a34.12.1733918374423; Wed, 11 Dec 2024
- 03:59:34 -0800 (PST)
+	s=arc-20240116; t=1733918571; c=relaxed/simple;
+	bh=ew4ix9I12b6Z8AdUyxYwTokUlh/HE4u6/P4gz1mtiyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X8tREK3AmU81FYbv8WPUfiHRg2lWH47iMzM7m5S1bR5tmg4pU0VSx1+k1DKuKeogtdd0JjhdGIdaJ886m1qVtloVQLLQgSZAED5OoY6UHEvThhz4sazdil1P0nyJKHI6164BMN4WLfkw8xFe68L9yvTIt2qHn/m8MS1tL0m/d1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W9tArFSB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBC0Ucu005970;
+	Wed, 11 Dec 2024 12:02:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=3YcRWK
+	xg1s7nYSdDzKaz4bSI+E2OJ91ZRGVWd8WWROA=; b=W9tArFSBILJRm1Gj9MZRJF
+	ZjUB407XjUYczM+ravYd1EB9aflntIMoG0ykvWM48irOsHVYORVs8HQjgPULXA5X
+	s8IEQ09PeP80N3MyE6pBB5WMH0RdLvPeTJPm2wXcHjR5TsHxL4cRzV0jSejMKieu
+	h7rq8JvPl1Gxv34NKgQX27Yh3KWdWL10Pq0I6quRiMn2C/Op9intoWh6t3KlHrWW
+	E5hvr634TEgULRBe8IsaOSP0nQe9taCtL49lKFO+JCrO11cAHas1df0c/ASVxBeR
+	IhIHK9yEIi7xyt9tA7j+vsIgdLwj9n0KOIR3khC+bOV+BYa9PC3AvK5eZhTSF1WQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vw2dm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 12:02:36 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BBBeeiK032543;
+	Wed, 11 Dec 2024 12:02:36 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vw2df-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 12:02:36 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB8tT4n016944;
+	Wed, 11 Dec 2024 12:02:34 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12y9fas-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 12:02:34 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BBC2V8R56754458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Dec 2024 12:02:31 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F330820043;
+	Wed, 11 Dec 2024 12:02:30 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 72A612004B;
+	Wed, 11 Dec 2024 12:02:28 +0000 (GMT)
+Received: from [9.43.88.53] (unknown [9.43.88.53])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Dec 2024 12:02:28 +0000 (GMT)
+Message-ID: <2907ca2f-b973-42fd-ae03-99732dfda7a1@linux.ibm.com>
+Date: Wed, 11 Dec 2024 17:32:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5861970.DvuYhMxLoT@rjwysocki.net> <2989520.e9J7NaK4W3@rjwysocki.net>
- <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com> <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
- <f16b11fa-bb2d-4e7e-81f9-80cf3a1f7a6c@arm.com>
-In-Reply-To: <f16b11fa-bb2d-4e7e-81f9-80cf3a1f7a6c@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 11 Dec 2024 12:59:23 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hyWN8hzw2k7JjO9Ap4Nx-sqpXYwzHQPo-dOxr+nxA4GA@mail.gmail.com>
-Message-ID: <CAJZ5v0hyWN8hzw2k7JjO9Ap4Nx-sqpXYwzHQPo-dOxr+nxA4GA@mail.gmail.com>
-Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for EAS
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/perf/arch/powerpc: Add register mask for power11
+ PVR in extended regs
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org,
+        jolsa@kernel.org, adrian.hunter@intel.com, irogers@google.com,
+        namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com, hbathini@linux.ibm.com
+References: <20241206135637.36166-1-atrajeev@linux.vnet.ibm.com>
+Content-Language: en-US
+From: kajoljain <kjain@linux.ibm.com>
+In-Reply-To: <20241206135637.36166-1-atrajeev@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: PWzkMmgLJu_lWuUEdCvWTYlogUkihnG3
+X-Proofpoint-ORIG-GUID: O2jEXNPWBRJ0QuaUNiPyGvgMWWIqTpuX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 phishscore=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110087
 
-On Wed, Dec 11, 2024 at 12:44=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 12/11/24 11:29, Rafael J. Wysocki wrote:
-> > On Wed, Dec 11, 2024 at 11:33=E2=80=AFAM Christian Loehle
-> > <christian.loehle@arm.com> wrote:
-> >>
-> >> On 11/29/24 16:00, Rafael J. Wysocki wrote:
-> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>
-> >>> Make it possible to use EAS with cpufreq drivers that implement the
-> >>> :setpolicy() callback instead of using generic cpufreq governors.
-> >>>
-> >>> This is going to be necessary for using EAS with intel_pstate in its
-> >>> default configuration.
-> >>>
-> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>> ---
-> >>>
-> >>> This is the minimum of what's needed, but I'd really prefer to move
-> >>> the cpufreq vs EAS checks into cpufreq because messing around cpufreq
-> >>> internals in topology.c feels like a butcher shop kind of exercise.
-> >>
-> >> Makes sense, something like cpufreq_eas_capable().
-> >>
-> >>>
-> >>> Besides, as I said before, I remain unconvinced about the usefulness
-> >>> of these checks at all.  Yes, one is supposed to get the best results
-> >>> from EAS when running schedutil, but what if they just want to try
-> >>> something else with EAS?  What if they can get better results with
-> >>> that other thing, surprisingly enough?
-> >>
-> >> How do you imagine this to work then?
-> >> I assume we don't make any 'resulting-OPP-guesses' like
-> >> sugov_effective_cpu_perf() for any of the setpolicy governors.
-> >> Neither for dbs and I guess userspace.
-> >> What about standard powersave and performance?
-> >> Do we just have a cpufreq callback to ask which OPP to use for
-> >> the energy calculation? Assume lowest/highest?
-> >> (I don't think there is hardware where lowest/highest makes a
-> >> difference, so maybe not bothering with the complexity could
-> >> be an option, too.)
-> >
-> > In the "setpolicy" case there is no way to reliably predict the OPP
-> > that is going to be used, so why bother?
-> >
-> > In the other cases, and if the OPPs are actually known, EAS may still
-> > make assumptions regarding which of them will be used that will match
-> > the schedutil selection rules, but if the cpufreq governor happens to
-> > choose a different OPP, this is not the end of the world.
->
-> "Not the end of the world" as in the model making incorrect assumptions.
-> With the significant power-performance overlaps we see in mobile systems
-> taking sugov's guess while using powersave/performance (the !setpolicy
-> case) at least will make worse decisions.
-> See here for reference, first slide.
-> https://lpc.events/event/16/contributions/1194/attachments/1114/2139/LPC2=
-022_Energy_model_accuracy.pdf
 
-I've never said it won't make worse decisions, but whoever decides
-which governor to use should be able to check which one is better.
 
-> What about the config space, are you fine with everything relying on
-> CONFIG_CPU_FREQ_GOV_SCHEDUTIL?
+On 12/6/24 19:26, Athira Rajeev wrote:
+> Perf tools side uses extended mask to display the platform
+> supported register names (with -I? option) to the user
+> and also send this mask to the kernel to capture the extended registers
+> as part of each sample. This mask value is decided based on
+> the processor version ( from PVR ).
+> 
+> Add PVR value for power11 to enable capturing the extended regs
+> as part of sample in power11.
 
-Yes, that's fine.
+Patch looks fine to me.
 
-I think that schedultil should be the default governor for EAS, but I
-don't see why it should be regarded as the only one possible and so
-enforced.
+Reviewed-by: Kajol Jain <kjain@linux.ibm.com>
+
+
+> 
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> ---
+> 
+>  tools/perf/arch/powerpc/util/perf_regs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/arch/powerpc/util/perf_regs.c b/tools/perf/arch/powerpc/util/perf_regs.c
+> index e8e6e6fc6f17..bd36cfd420a2 100644
+> --- a/tools/perf/arch/powerpc/util/perf_regs.c
+> +++ b/tools/perf/arch/powerpc/util/perf_regs.c
+> @@ -16,6 +16,7 @@
+>  
+>  #define PVR_POWER9		0x004E
+>  #define PVR_POWER10		0x0080
+> +#define PVR_POWER11		0x0082
+>  
+>  static const struct sample_reg sample_reg_masks[] = {
+>  	SMPL_REG(r0, PERF_REG_POWERPC_R0),
+> @@ -207,7 +208,7 @@ uint64_t arch__intr_reg_mask(void)
+>  	version = (((mfspr(SPRN_PVR)) >>  16) & 0xFFFF);
+>  	if (version == PVR_POWER9)
+>  		extended_mask = PERF_REG_PMU_MASK_300;
+> -	else if (version == PVR_POWER10)
+> +	else if ((version == PVR_POWER10) || (version == PVR_POWER11))
+>  		extended_mask = PERF_REG_PMU_MASK_31;
+>  	else
+>  		return mask;
+
 
