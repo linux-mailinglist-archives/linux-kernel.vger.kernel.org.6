@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-442143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840FC9ED88E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:32:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B649ED8C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4A05282E51
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CDCC283212
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C271EC4EB;
-	Wed, 11 Dec 2024 21:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7790B1F237C;
+	Wed, 11 Dec 2024 21:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aadq7fII"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGiodUnE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57161C5488
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAF71EC4D6;
+	Wed, 11 Dec 2024 21:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733952767; cv=none; b=l/Jn8MjREJLqilW9HsV6azg0/qFgdh2zN2gNBw5YNwHVwk2hHrM1NJZyuD7OZp9fv/k8e6Aq6bT86W3uCxPE3Bl+PjnP48WndJekXBDdQ9RHE+cTrAc7qn57IjQXV8VtHnpB+s4ZS0tEfq+RZ0Et7TwFI2goaPH/E3oFhC9wPpQ=
+	t=1733952858; cv=none; b=YNEuYG4QmRJhblTdoziOyeiKzKOUY0//acGQd4N0dGsnxTCH3ZdlIQ+wq7G1Ebo6Tq5121FDTcHIy2e0XIq4Lx4uI8Qvk5LjrbiqXgS1ZWRfzBAC6wvgPf8TBrdog27uamB02dBWmdE5Ya4ccL1dIXy6sfOTfxm8RN/KCQtt9Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733952767; c=relaxed/simple;
-	bh=iQHe9o0OFC8o625cYkLtRXrWxS/+TJviekTccK7gui8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pLMuvistT3fXQvyAyGTo9RBoA2UJqcswl6hgk1sgnFPcva1F0qWvqPev8CSzDIYTrfnnG6WkpF5g9zyAeytHTcDStUD5HwOS+2HiBL0SqDdo4NwHd2VnEJICGS/DPQyD3xQyCGNUS24dVuJtnid9NDQ50Db9ji1wYc8kZobaZJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aadq7fII; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9ec267b879so1420146466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:32:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733952764; x=1734557564; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R3OGAQ5vsTFqn13bOxJ7t9i7h4BntnMNyLupbofgMFg=;
-        b=aadq7fII2fL8ex3+lDDV9EGkdTqfTzL/UoHTco4/gqmQDof31jhslLJUhnwAEJJ3ev
-         ZfxLj5B/eXyUXVsacHR0gZXDCqINscDL/7WjGs66DHqppd2Oat9A7PkkdvvdtPpNINkH
-         b8H+4n2MMuFdjQhINS7SuisFFWjilafN1CXN0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733952764; x=1734557564;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R3OGAQ5vsTFqn13bOxJ7t9i7h4BntnMNyLupbofgMFg=;
-        b=iGyi9rLYox0KZKQiGQfuP5wr5UUcMR78SXI5raf9y4P4LIOgcp0Kk4CF+yOR8P+jeA
-         DN59tWbuloBob71dhgi0oqZBoA9Tz6Il/uLCsY15UrtBbyxdYcj+E1ec5rmerte7b0cI
-         AIY6AV4btr/6Z9IL8Vi7Y8nTtAo2fJvLePKLNF0QdVyuNaR+b6iGQq044t1W2AEtBzRa
-         1VyL3QHBJEVrkzW4UaPW9KYsNWSaotoWL/9KXjcEDGpg1JiVfboHtep5KiMUFfvNrSfb
-         WXbNie3xKGKwHGmcAAWoIRYkGw1lTJRMwKPfu1uST51xnRptarEd1EMEPiD1inAP3uFn
-         IsAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxV00jw1Vy7AM7QoIfzaw7innSY1jEpPb2YnDekPHpOLn9Q7lJkhXFTYKmQj5M6dbY/USb9qfzd+kBHG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfI4Kkznmxl4EVoJkn8D3+RJEDMiuv0CqE7w/hsokzBmwBi4Lo
-	SMBbxi6pEgxRO92Pa1+VYop/sSX873CxRS0REur0J4Alas/JHhm9Ov7BiDehV3eWkFbDS/jQFEn
-	t8G0=
-X-Gm-Gg: ASbGncsVghOdIzVrLXxW2ZbEZUKLRVUmtz+VR/sGH2a0Cc3dO1wioJ5ul84a5IqYzZQ
-	QKRH+IannU/4Ko53fsjgv16E5oqHqljcMIzYX9hTi0V/G2xrkT+HOjTEDjR+6WvF/d6Y0Fn1pYm
-	azzIhgozVZmMPYwIwtJm7WqrCsPO9OYaxUnAMuH/522p/ZJSHSO9IzN6Zq9Emuu8jf8d2riVrVR
-	yBrqguL1thZ+8t6GEj7b4g+V79uWdOynww8pOXrVf4+548AuCabYWxGbKEhQDsyOMzZ7hgVAp62
-	EpQak1Q9PNRqY/0o6ZY8blQ0BbcR
-X-Google-Smtp-Source: AGHT+IEPiwr+fqBqbWSBh32g/MuKTveHLsaEKZE1HDWRbuporPTHojvSeYwXB/c/kr8ZABkgz2q4YA==
-X-Received: by 2002:a17:907:cb21:b0:aa6:83cc:7996 with SMTP id a640c23a62f3a-aa6b13b139bmr363323466b.42.1733952763802;
-        Wed, 11 Dec 2024 13:32:43 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66ef6409esm655728366b.149.2024.12.11.13.32.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 13:32:42 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9ec267b879so1420141566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:32:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXTPqHjJV4Nme7cWY9VGFUej0Bc47uKk6vNRnTy9qKNekuTw14zQui5hffE6YqJk3swoQpCh0SqYmpX+JE=@vger.kernel.org
-X-Received: by 2002:a17:907:7747:b0:aa6:8935:ae71 with SMTP id
- a640c23a62f3a-aa6b10f5d3amr449688366b.12.1733952762458; Wed, 11 Dec 2024
- 13:32:42 -0800 (PST)
+	s=arc-20240116; t=1733952858; c=relaxed/simple;
+	bh=A4SsJa/gV21qeqY5SupSQf+YT6zTnX33XWVSHXjPKLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9ArUbntPqDMnLwQSFoStcfl4R0e47WpHtomt3PbfR3CjqBvLpx75QwxYzIYe3o6F8ybhasYLW2amph6c+iNJA5RlBQfLX7ZDbOALJuVVhCwo2yFkjLTry6ZEJ5hIdn1puUpe/jIzAPuoqPlfb3XM747Ed5OmKdLylJmMvHfzE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGiodUnE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731DAC4CED2;
+	Wed, 11 Dec 2024 21:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733952857;
+	bh=A4SsJa/gV21qeqY5SupSQf+YT6zTnX33XWVSHXjPKLE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qGiodUnETIVdlukXlYOxY5nBS8nYII7/A7aVBVY0mCY7ks8RUzNdDi2051tUWc4hF
+	 bPRduByAPOoINo6L1VyQZ2taADNS5SmUeRduni+lqMGoh6+yUeohi8GT7H8na9Z6KK
+	 TWlIrR6x6m6GyWWu1/5jZTQDAygYOW9JDWjWnUlFBomEFP695vOa2HD2Shjn5785ki
+	 qMdh0zoevPYStzIF9xFofWBQKwOREhsFfowu4PBQNtHPpGethamkGVgvV6aOWkH9aU
+	 jqvlfkBU0cxj4M/JyAWIzQKxAjWrVPJd7e+TwGGrvKQeeJv9XXlWBN/UYJFGzCIF1a
+	 Qz20EKMWmRrDw==
+Date: Wed, 11 Dec 2024 21:34:11 +0000
+From: Will Deacon <will@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Julius Werner <jwerner@chromium.org>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Roxana Bradescu <roxabee@google.com>,
+	bjorn.andersson@oss.qualcomm.com,
+	linux-arm-kernel@lists.infradead.org,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org,
+	james.morse@arm.com
+Subject: Re: [PATCH 0/6] arm64: errata: Add Qualcomm CPUs to the Spectre
+ mitigation lists
+Message-ID: <20241211213410.GB17486@willie-the-truck>
+References: <20241209174430.2904353-1-dianders@chromium.org>
+ <20241210155604.GA15918@willie-the-truck>
+ <CAD=FV=U5xraosVuDGXxBN5Ajo0n=s50JZqtgQGPs1C9jM3YaFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <675963eb.050a0220.17f54a.0038.GAE@google.com> <20241211200240.103853-1-leocstone@gmail.com>
- <Z1n-Ue19Pa_AWVu0@codewreck.org>
-In-Reply-To: <Z1n-Ue19Pa_AWVu0@codewreck.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Dec 2024 13:32:26 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiH+FmLBGKk86ung9Qbrwd0S-7iAnEAbV9QDvX5vAjL7A@mail.gmail.com>
-Message-ID: <CAHk-=wiH+FmLBGKk86ung9Qbrwd0S-7iAnEAbV9QDvX5vAjL7A@mail.gmail.com>
-Subject: Re: Alloc cap limit for 9p xattrs (Was: WARNING in __alloc_frozen_pages_noprof)
-To: asmadeus@codewreck.org
-Cc: Leo Stone <leocstone@gmail.com>, 
-	syzbot+03fb58296859d8dbab4d@syzkaller.appspotmail.com, ericvh@gmail.com, 
-	ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	syzkaller-bugs@googlegroups.com, v9fs-developer@lists.sourceforge.net, 
-	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk, 
-	Fedor Pchelkin <pchelkin@ispras.ru>, Seth Forshee <sforshee@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=U5xraosVuDGXxBN5Ajo0n=s50JZqtgQGPs1C9jM3YaFw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, 11 Dec 2024 at 13:04, <asmadeus@codewreck.org> wrote:
->
-> Christian Schoenebeck's suggestion was something like this -- I guess
-> that's good enough for now and won't break anything (e.g. ACLs bigger
-> than XATTR_SIZE_MAX), so shall we go with that instead?
+On Tue, Dec 10, 2024 at 08:53:46AM -0800, Doug Anderson wrote:
+> On Tue, Dec 10, 2024 at 7:56 AM Will Deacon <will@kernel.org> wrote:
+> > On Mon, Dec 09, 2024 at 09:43:10AM -0800, Douglas Anderson wrote:
+> > >
+> > > Since Qualcomm CPUs are all derivatives of ARM cores they all have
+> > > unique MIDR values. This means that the tables listing necessary
+> > > Spectre mitigations need special entries for them. However, those
+> > > entries are not present and that means that some Spectre mitigations
+> > > are lacking for Qualcomm CPUs.
+> > >
+> > > I've made an attempt at **GUESSING** what the right patches should be
+> > > to enable mitigations for Qualcomm CPUs. This is mostly me searching
+> > > the web to figure out what ARM cores various Qualcomm cores are based
+> > > off of.
+> > >
+> > > These patches get more and more sketchy as the series progresses and I
+> > > have noted that the later patces DON'T EVEN COMPILE. I have included
+> > > them to make it obvious that I think these cores are affected even if
+> > > I don't have all the right information to mitigate them. Hopefully
+> > > Qualcomm can come and fix this mess for me.
+> > >
+> > > I'll note that I am certainly no expert on Spectre. Mostly I ended up
+> > > here running `lscpu` on a device and noticing that it thought that it
+> > > wasn't affected by Spectre v2 when I thought it was.
+> >
+> > Whilst only Qualcomm can say definitively whether or not they are
+> > affected (and what values of 'k' are required for the loop-based
+> > workarounds), I can't help but wonder whether the current mitigation
+> > code is structured the wrong way around in this case.
+> >
+> > It looks to me like we don't have a way to identify a "vulnerable" CPU
+> > for Spectre-BHB; either a CPU has some sort of mitigation or it's
+> > unaffected. That means that there's very little incentive for vendors
+> > to add their CPUs to one of the lists -- if they do nothing, userspace
+> > is told that everything is golden and they don't pay the performance
+> > hit of a workaround!
+> >
+> > So I think we should consider turning this on its head and assume that
+> > CPUs we don't know about are vulnerable, having a list of unaffected
+> > cores that predate the introduction of CSV2.3 which can be queried by
+> > is_spectre_bhb_affected(). We can do that without the assistance of the
+> > CPU vendors.
+> >
+> > Does that make sense, or did I miss something?
+> 
+> It makes sense to me. I'm not sure I'd be the best person to actually
+> implement that, though. Maybe someone CCed on this thread could take a
+> stab at it? It seems like folks from ARM would know the most about the
+> various mitigations and which pre-CSV2.3 cores were safe.
 
-Please use XATTR_SIZE_MAX. The KMALLOC_MAX_SIZE limit seems to make no
-sense in this context.
+I think we could start with an empty list tbh. If you take a stab at it,
+I'm happy to review it. Folks with knowledge about the specific CPUs
+can send patches on top.
 
-Afaik the VFS layer doesn't allow getting an xattr bigger than
-XATTR_SIZE_MAX anyway, and would return E2BIG for them later
-regardless, so returning anything bigger wouldn't work anyway, even if
-p9 tried to return such a thing up to some bigger limit.
-
-No?
-
-           Linus
+Will
 
