@@ -1,169 +1,109 @@
-Return-Path: <linux-kernel+bounces-442178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042D69ED903
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:49:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD649ED90B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606BD16538F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:49:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EAE51880513
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EC01EC4F0;
-	Wed, 11 Dec 2024 21:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315E81F0E4F;
+	Wed, 11 Dec 2024 21:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IS7zsrRJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ESMRf68M"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468B81D8DFE;
-	Wed, 11 Dec 2024 21:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734D81F0E46;
+	Wed, 11 Dec 2024 21:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733953771; cv=none; b=WhGUzHfTP2fFNnSSaa7OYLLOtMJ+0SWoQby4pqGXPtQoxR2vU1boW9Hlmo7b8IYC1Q8QIqvsMz67VtfvUcGyP+vvNa5ZOAISqIvwqjzAiKB/XBR8qA6gxf7mkOZNmi+a+Vg2+8f/mF+dsiRsPmHpo89I2fhmMi3P0KARphDRXCo=
+	t=1733953775; cv=none; b=e4PpDMJC6h1xa9u725NuXmwTihoFrFfEgGSiQdpLjjqcJu3gOvJarhuR2e1kfCmAyN8OWhhZ7BYsZRZZ/IGaskYkbfAoqWdGGrUbbBPEJR6ElJp6P5UhYPaWTA86gAmqeVg51mmEkeRSAplsHAMXutw5eBp6PYrQl4XFoRBid84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733953771; c=relaxed/simple;
-	bh=LMgevCQ5N/CnT/QEPN2NC0QGREgKKkesG5Lwe03JUPg=;
+	s=arc-20240116; t=1733953775; c=relaxed/simple;
+	bh=M3VYE1fkYXJOpTlxEoXKr0jePHi6WHdNKQA6iivFvdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ONpZVYbXQWtfs1McnxtbI+rHA1ybArrodSZIvajkZA0cjAzcnEELO7ki/N7zfmclyC9unk/J/NpWMK2OpFVil85OKvQbGV9Xjw/S25YiLJu8/nLj7akTh+3yBK8dbONg8kTp960G4lpvmJhcLnbZ1ag/iC8yCfY5tBl6ZwnwwcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IS7zsrRJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D80EC4CED2;
-	Wed, 11 Dec 2024 21:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733953770;
-	bh=LMgevCQ5N/CnT/QEPN2NC0QGREgKKkesG5Lwe03JUPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IS7zsrRJ2pfoHUC8c1Htiiw5DGSrXlMutxWMdKVpdbs4dC460extVwes5E7HboSAk
-	 bQZNPQ3U24FJ5iUJVAyBlsxQ+E6YhQ4H16/wYyq0nNrwn5d+WqCSySV7+QK9j6dGhH
-	 wXHW/27gRxO12lR6rYfisLpsepqUn05c/wie4DfzqsUfLD2pignQaRrbW7TGIkAE2j
-	 Lq+SOALtN6BqsDFQpHC31DV03CrzqqtSpLRK61Md95YY9zi3lfnsEybsXBt/4p/Wl0
-	 pfvf342edeqsRPNxcXy2pejVvXMrssRz7m7EA9TVHSqMbXBHySdahw1px0Ve97ZMuu
-	 cvaJnMrDS8Nfw==
-Date: Wed, 11 Dec 2024 22:49:24 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] rust: platform: add Io support
-Message-ID: <Z1oI5JwExd1stnT-@pollux.localdomain>
-References: <20241211-topic-panthor-rs-platform_io_support-v3-1-08ba707e5e3b@collabora.com>
- <Z1nbsNyOBvFTL1-6@pollux.localdomain>
- <A3F6B6C6-33B3-4522-8240-15421F240D3A@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GtmO1rGJhT4w0b/Fhu6C7Imwv2nbt2j/G/Z+c7lLRmNaCtqTREJHLAy4Hb8hdxYUq/dNJC48oXiVJLbwIedEQpq/F+YzwIc0DlrAhsXinlofKXFVrwyyX+WXnI0eZaTDWNVpaCbYeRno8/2LAgDtHNgPbq24ELn/YwcSf7V74gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ESMRf68M; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=YvFl5vXBOHL4Yiib0tLp9DkGN23UexMQ09qm1i2a69I=; b=ESMRf68MbRX49I6y
+	OA1xFHdtcc+HfksK2R9XVUHqsSepvZKBV1DsoVMc8NG1vniU+0bmF1mxOOcVM49LGlZhxCtxxNfq1
+	HhI5XmDtaBzsd8MrCLNLGpcfbjtncg7seWhnQlmicOCLpKhAHY3lok5ZIQW6rm5ff9ARvfYy7tEdx
+	x2MYeEXCyE0iG2lCvB5VNpNKxBUIPQpT4ziaS0LgRRa1IUybVIHQ6y4/az77tdyvz3FQSmur0VGio
+	pCcYDlB29YE9RqYgZ9FrALqUByhmK1E6/2J1kIkiCvEgvoG7d6E2cHMwNmh1Cj/A6wQRqML1xCC5U
+	S0WceRwfo10bRWFCcQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tLUaH-004rZO-2V;
+	Wed, 11 Dec 2024 21:49:29 +0000
+Date: Wed, 11 Dec 2024 21:49:29 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: dlemoal@kernel.org, cassel@kernel.org, p.zabel@pengutronix.de,
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: sata_gemini: Remove unused
+ gemini_sata_reset_bridge()
+Message-ID: <Z1oI6cAAhGrcIVw9@gallifrey>
+References: <20241211011201.261935-1-linux@treblig.org>
+ <CACRpkdaarPM3vx6vAVhdSv+KHDZq6MTDo0JpQYGj1gJnaE7OrQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <A3F6B6C6-33B3-4522-8240-15421F240D3A@collabora.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdaarPM3vx6vAVhdSv+KHDZq6MTDo0JpQYGj1gJnaE7OrQ@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:48:15 up 217 days,  9:02,  1 user,  load average: 0.13, 0.06,
+ 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Wed, Dec 11, 2024 at 06:00:31PM -0300, Daniel Almeida wrote:
-> Hi Danilo,
+* Linus Walleij (linus.walleij@linaro.org) wrote:
+> On Wed, Dec 11, 2024 at 2:12 AM <linux@treblig.org> wrote:
 > 
-> > On 11 Dec 2024, at 15:36, Danilo Krummrich <dakr@kernel.org> wrote:
-> >> +///
-> >> +///     // Read and write a 32-bit value at `offset`. Calling `try_access()` on
-> >> +///     // the `Devres` makes sure that the resource is still valid.
-> >> +///     let data = iomem.try_access().ok_or(ENODEV)?.readl(offset);
-> >> +///
-> >> +///     iomem.try_access().ok_or(ENODEV)?.writel(data, offset);
-> >> +///
-> >> +///     // Unlike `ioremap_resource_sized`, here the size of the memory region
-> >> +///     // is not known at compile time, so only the `try_read*` and `try_write*`
-> >> +///     // family of functions are exposed, leading to runtime checks on every
-> >> +///     // access.
-> >> +///     let iomem = pdev.ioremap_resource(0, None)?;
-> >> +///
-> >> +///     let data = iomem.try_access().ok_or(ENODEV)?.try_readl(offset)?;
-> >> +///
-> >> +///     iomem.try_access().ok_or(ENODEV)?.try_writel(data, offset)?;
-> >> +///
-> >> +///     # Ok::<(), Error>(())
-> >> +/// }
-> >> +/// ```
-> >> +///
-> >> +pub struct IoMem<const SIZE: usize = 0> {
-> >> +    io: IoRaw<SIZE>,
-> >> +    res_start: u64,
-> >> +    exclusive: bool,
-> >> +}
-> > 
-> > I think both the `Resource` and `IoMem` implementation do not belong into
-> > platform.rs. Neither of those depends on any platform bus structures. They're
-> > only used by platform structures.
-> > 
-> > I think we should move this into files under rust/kernel/io/ and create separate
-> > commits out of this one.
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > gemini_sata_reset_bridge() was added in 2017 by the initial
+> > commit be4e456ed3a5 ("ata: Add driver for Faraday Technology FTIDE010")
+> > but has never been used.
+> >
+> > Remove it.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 > 
-> Just to be clear, one commit with the boilerplate to create rust/kernel/io, and another one with
-> kernel::io::Resource and kernel::io::IoMem?
+> Right it was never used because the corresponding reset in
+> the low-level PATA driver didn't work so I patched it out before
+> submitting.
 
-I don't think there will be much boilerplate. I was thinking of one for
-io/resource.rs and one for io/mem.rs. Does that make sense?
+Ah right.
 
-> 
-> > 
-> >> +
-> >> +impl<const SIZE: usize> IoMem<SIZE> {
-> >> +    /// Creates a new `IoMem` instance.
-> >> +    ///
-> >> +    /// # Safety
-> >> +    ///
-> >> +    /// The caller must ensure that `IoMem` does not outlive the device it is
-> >> +    /// associated with, usually by wrapping the `IoMem` in a `Devres`.
-> > 
-> > More precisely, `Devres` revokes when the device is unbound from the matched
-> > driver, i.e. the driver should not be able to control the device anymore. This
-> > may be much earlier than when the device disappears.
-> > 
-> >> +    unsafe fn new(resource: &Resource<'_>, exclusive: bool) -> Result<Self> {
-> >> +        let size = resource.size();
-> >> +        if size == 0 {
-> >> +            return Err(ENOMEM);
-> >> +        }
-> >> +
-> >> +        let res_start = resource.start();
-> >> +
-> >> +        // SAFETY:
-> >> +        // - `res_start` and `size` are read from a presumably valid `struct resource`.
-> >> +        // - `size` is known not to be zero at this point.
-> >> +        // - `resource.name()` returns a valid C string.
-> >> +        let mem_region =
-> >> +            unsafe { bindings::request_mem_region(res_start, size, resource.name().as_char_ptr()) };
-> > 
-> > This should only be called if exclusive == true, right?
-> 
-> Yes (oops)
-> 
-> > 
-> > Btw. what's the use-case for non-exclusive access? Shouldn't we rather support
-> > partial exclusive mappings?
-> 
-> Rob pointed out that lots of drivers do not call `request_mem_region` in his review for v2, which
-> Is why I added support for non-exclusive access.
-> 
-> What do you mean by `partial exclusive mappings` ?
+> But should you not also remove sata0_reset and
+> sata1_reset from struct sata_gemini and the code fetching
+> the two reset lines? And even #include <linux/reset.h>?
 
-I was assuming that the reason for non-exclusive access would be that a single
-resource contains multiple hardware interfaces, hence multiple mappings.
+Oh I see, I was just looking for entirely unreferenced functions
+but that takes a little more following to notice.
 
-If we allow partial mappings of the resource and make them exclusive instead it
-would be a better solution IMHO.
+I'm happy to do that; are you OK with it as a follow up patch or
+do you want a v2? (And can you test it, I don't have the hardware).
 
-But this presumes that we don't need non-exclusive access for different reasons.
+Dave
 
-If not for the reason of having multiple hardware interfaces in the same
-resource, which reasons do we have (in Rust) to have multiple mappings of the
-same thing?
+> Yours,
+> Linus Walleij
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
