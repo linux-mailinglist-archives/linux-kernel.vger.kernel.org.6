@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-441760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0379ED3D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:40:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7EF9ED3D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5CC516056E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1807165625
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D909E1D9A6F;
-	Wed, 11 Dec 2024 17:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617E4209F52;
+	Wed, 11 Dec 2024 17:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEPgyLsJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VT+sjqve"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020161FECD6;
-	Wed, 11 Dec 2024 17:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F30207A1B;
+	Wed, 11 Dec 2024 17:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733938828; cv=none; b=eW82S+7mopailZu5GpajYMJ0LoorijwRe63Q6EkReSJcfQ8dfawWPwI/odEAUefw0yY5bC1c6168YWLffCZoVTm/ymyDb7g50zBD1yQR/8VFDaUrRjOXnZzjEzkNlU6JtOsD7UgVfuugD2cFg3cKWoJuLqbxH/u4kNizxqZrqWM=
+	t=1733938830; cv=none; b=C2YqWeUmqrV70YBFEzFS/lmniYxfzuT/tsCBqVqOZxLsQTx9iaDXt08z6SVLhiS670eDokQPsaTUAx5huaxllvPcmlGjrMhv4P1nIVwVPxB31VcidamYtInb68A2KsJVnd9C0WlKP0vy5EynMmXVAk8PUbvpkhgmM6MrD8JuNA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733938828; c=relaxed/simple;
-	bh=//XpFKTWinzR8Hvtule+Stbus3QCr5X6Hs7xeTCg8MA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J7AWDa+4yiVttBSpGrQzVc/YKmPgs0nDNKWDoy9TPu+qLUTZQTnM2dfJ1YriDk2IxutynYZJT9ikcNKJU2Dj6fUYg3BCI7FvizdFhMVcXeAcgnYexroLacNUhWZyL4nSh5iPbvVgLfVssR6ItodOqcIQPAC7KKb1WY++fnshDeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEPgyLsJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9D975C4CEE1;
-	Wed, 11 Dec 2024 17:40:27 +0000 (UTC)
+	s=arc-20240116; t=1733938830; c=relaxed/simple;
+	bh=2+F/X1bbGIHQ/mssm4ic+1dPk7ifq8G4W/p2zLLRRpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sn36fNkdfYrYf00u8uWPhy7j0NAiWUdhtOkTtXKYrkYnX1CjA1I4KwL1sJlCEQxo7Xc4EjOon8WZTTtZRGhido+DiA0b+D2/5HuEfGg17bMp34SLtTtvrmd98r+WT5s6bqJG41Wg1Pej7QZYBUFH2VHt8WV9Toq+pSGiV/LUM90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VT+sjqve; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 265AAC4CED4;
+	Wed, 11 Dec 2024 17:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733938827;
-	bh=//XpFKTWinzR8Hvtule+Stbus3QCr5X6Hs7xeTCg8MA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lEPgyLsJtiho+ts6uvjqZDgX8yDjdRJ+5oaWMTkG0HBh6mGEnKMP7Z8aZDIu2IVgX
-	 csd1LzpqMGYr2zNlJf2+Eu2w0IEM5qC/qu5W4dwKdCtNkorISBjp9S1zByp4pH1S2w
-	 /0fKuFYQGUUGQFSBLPG0666efRaLPWOCTI1vwGRqzu9GzgnIQ3rqJ1jIAcn3iwG/5p
-	 fA+QHYGQ5z8ye8VgXMQrf/xgL1ijLOes+dfI5/rx526AweCFIx8vGM8XQ9hsNQzK7X
-	 vG2sly2MJoul1mpXNFhnFXdXwDwUvxSgWCfUgS4v3pCmFE9dACWv0xv+HZ5JG0vAiX
-	 JBJewxtZwsT/w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90856E7717D;
-	Wed, 11 Dec 2024 17:40:27 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Wed, 11 Dec 2024 23:10:18 +0530
-Subject: [PATCH 3/3] scsi: ufs: qcom: Power down the controller/device
- during system suspend for SM8550/SM8650 SoCs
+	s=k20201202; t=1733938830;
+	bh=2+F/X1bbGIHQ/mssm4ic+1dPk7ifq8G4W/p2zLLRRpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VT+sjqveVKdK/NfGq4n5cyb2pqWjeE9nbhy4BqvoVAvd3BJ+S+Y7ekVeIz++JHo3H
+	 9gk0J3lAkoB2xAlkUVp6X39V+/6170gRQNWynBhSltC/k0XBRY7X42pcIXnk4o5Gdr
+	 Kxx9swpTtNz1/oIHcsX7+9VbE84QO6yqt8a1z7i39VsQnYBnzjpuzXWIgjJE8aieDK
+	 z8mi+1JZanjpIeTKsyfU5JpKb/Ns0si0VbxtdBBZvcogq34A905nR77sH+/93gZNge
+	 p2+EmWU6FIwxnykdMOxvlacAUCpz+wfbv56G6Pw9jYsk41IYJBJG8o/nFg83zyfShK
+	 5qj57TQhY4ZSg==
+Date: Wed, 11 Dec 2024 09:40:29 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Bingwu Zhang <xtex@envs.net>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>,
+	Bingwu Zhang <xtex@aosc.io>, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+	~xtex/staging@lists.sr.ht
+Subject: Re: [PATCH] Documentation: filesystems: fix two misspells
+Message-ID: <20241211174029.GC6698@frogsfrogsfrogs>
+References: <20241208035447.162465-2-xtex@envs.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241211-ufs-qcom-suspend-fix-v1-3-83ebbde76b1c@linaro.org>
-References: <20241211-ufs-qcom-suspend-fix-v1-0-83ebbde76b1c@linaro.org>
-In-Reply-To: <20241211-ufs-qcom-suspend-fix-v1-0-83ebbde76b1c@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, 
- Nitin Rawat <quic_nitirawa@quicinc.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3031;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=m5hbLz2BGZb5dhnCo0YRsTuGrLlxs9RKo35x8MdorCc=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnWc6Jug+g5MxE/VtEK2FjzQbk0JDLOIwfZX5Tl
- Vf22pIM+W+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ1nOiQAKCRBVnxHm/pHO
- 9ZaeCACitOr4/p3gF5QRQdrXLl85xxdiyVtcay3Km0nrxGt/olEHn09g41akBMRRYCz7KRxHV+o
- 8ZCk+K7D5TAoKrro2bSxB2+4HOnj+e+1fMcIk0g5kXGR2SEH3duAHwDFIG1lLnaZ+X8yZTG5IXq
- ClAFlu1QUyMWm5dS/HVj8U3+ozYaBH4j/dBkTfU2zKr2n3JSlFOKfYdFvU1o9IXaFIbQLYwMbv9
- nAvAAimgyWBXS3549KJVEn0GSekNDL+lWYbdv1ltewh8mRNpUTSHoRezXW/s8IvwOF2/PnXIGU5
- jsRrfks0BFX/Ol+usp5F+KPrcHrJYJsgO56/SyZqQC6hOsVF
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208035447.162465-2-xtex@envs.net>
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Sun, Dec 08, 2024 at 11:54:47AM +0800, Bingwu Zhang wrote:
+> From: Bingwu Zhang <xtex@aosc.io>
+> 
+> This fixes two small misspells in the filesystems documentation.
+> 
+> Signed-off-by: Bingwu Zhang <xtex@aosc.io>
 
-SM8550 and SM8650 SoCs doesn't support UFS PHY retention. So once these
-SoCs reaches the low power state (CX power collapse) during system suspend,
-all the PHY hardware state gets lost. This leads to the UFS resume failure:
+Yep, typoes happun, thanks for the patch.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
-ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
-ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
-ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
-ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
+--D
 
-With the default system suspend level of UFS_PM_LVL_3, the power domain for
-UFS PHY needs to be kept always ON to retain the state. But this would
-prevent these SoCs from reaching the CX power collapse state, leading to
-poor power saving during system suspend.
-
-So to fix this issue without affecting the power saving, set
-'ufs_qcom_drvdata::no_phy_retention' to true which sets 'hba->spm_lvl' to
-UFS_PM_LVL_5 to allow both the controller and device (in turn the PHY) to
-be powered down during system suspend for these SoCs by default.
-
-Cc: stable@vger.kernel.org # 6.3
-Fixes: 35cf1aaab169 ("arm64: dts: qcom: sm8550: Add UFS host controller and phy nodes")
-Fixes: 10e024671295 ("arm64: dts: qcom: sm8650: add interconnect dependent device nodes")
-Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/ufs/host/ufs-qcom.c | 5 +++++
- drivers/ufs/host/ufs-qcom.h | 1 +
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 35ae8c8fc301..edf62430cabe 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -1069,6 +1069,7 @@ static int ufs_qcom_init(struct ufs_hba *hba)
- 	struct device *dev = hba->dev;
- 	struct ufs_qcom_host *host;
- 	struct ufs_clk_info *clki;
-+	const struct ufs_qcom_drvdata *drvdata = of_device_get_match_data(hba->dev);
- 
- 	host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
- 	if (!host)
-@@ -1148,6 +1149,9 @@ static int ufs_qcom_init(struct ufs_hba *hba)
- 		dev_warn(dev, "%s: failed to configure the testbus %d\n",
- 				__func__, err);
- 
-+	if (drvdata && drvdata->no_phy_retention)
-+		hba->spm_lvl = UFS_PM_LVL_5;
-+
- 	return 0;
- 
- out_variant_clear:
-@@ -1866,6 +1870,7 @@ static void ufs_qcom_remove(struct platform_device *pdev)
- 
- static const struct ufs_qcom_drvdata ufs_qcom_sm8550_drvdata = {
- 	.quirks = UFSHCD_QUIRK_BROKEN_LSDBS_CAP,
-+	.no_phy_retention = true,
- };
- 
- static const struct of_device_id ufs_qcom_of_match[] __maybe_unused = {
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index e85cc6fc072e..5a7b2fe4a7c9 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -219,6 +219,7 @@ struct ufs_qcom_host {
- 
- struct ufs_qcom_drvdata {
- 	unsigned int quirks;
-+	bool no_phy_retention;
- };
- 
- static inline u32
-
--- 
-2.25.1
-
-
+> ---
+> I found these typos when learning about OverlayFS recently.
+> ---
+>  Documentation/filesystems/iomap/operations.rst | 2 +-
+>  Documentation/filesystems/overlayfs.rst        | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index ef082e5a4e0c..2c7f5df9d8b0 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -104,7 +104,7 @@ iomap calls these functions:
+>  
+>      For the pagecache, races can happen if writeback doesn't take
+>      ``i_rwsem`` or ``invalidate_lock`` and updates mapping information.
+> -    Races can also happen if the filesytem allows concurrent writes.
+> +    Races can also happen if the filesystem allows concurrent writes.
+>      For such files, the mapping *must* be revalidated after the folio
+>      lock has been taken so that iomap can manage the folio correctly.
+>  
+> diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
+> index 4c8387e1c880..d2a277e3976e 100644
+> --- a/Documentation/filesystems/overlayfs.rst
+> +++ b/Documentation/filesystems/overlayfs.rst
+> @@ -156,7 +156,7 @@ A directory is made opaque by setting the xattr "trusted.overlay.opaque"
+>  to "y".  Where the upper filesystem contains an opaque directory, any
+>  directory in the lower filesystem with the same name is ignored.
+>  
+> -An opaque directory should not conntain any whiteouts, because they do not
+> +An opaque directory should not contain any whiteouts, because they do not
+>  serve any purpose.  A merge directory containing regular files with the xattr
+>  "trusted.overlay.whiteout", should be additionally marked by setting the xattr
+>  "trusted.overlay.opaque" to "x" on the merge directory itself.
+> 
+> base-commit: 7503345ac5f5e82fd9a36d6e6b447c016376403a
+> -- 
+> 2.47.1
+> 
 
