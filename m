@@ -1,268 +1,123 @@
-Return-Path: <linux-kernel+bounces-440523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FC09EBFBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:00:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A121888643
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:00:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC135672;
-	Wed, 11 Dec 2024 00:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f1DYDUDT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FB79EBFBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:05:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04861367
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36DD12836F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:04:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876B529A1;
+	Wed, 11 Dec 2024 00:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="YpLjZILz"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3274FA50
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733875250; cv=none; b=RPmezaZS5HMswYPbwRAvThe5ndIifsiy3HlbWBiMIwoHv78l9hnr8gCR1PSeVoS+5RBDb20D0hFSCNuv9nALYHHQ55rzEZXAfpvbdtdEAq+RYXdVhOyFW9BYmXKuD+aiUNDnR7nl7zv+U8XQanwcUssyHEWVdf/28tC5/zC17KI=
+	t=1733875479; cv=none; b=gnMdwBrblWMHGNpiI9A7j3xlr2TMqM7MQYiJH/BCEtfKce+FlXI7SVRJyf/BapW7brodHAS9EmNqYYiO8oCgmChgs43dB7LZ21qARMtM7mqujsIOjYKEGWAXq9Jb0lQ83Z6OmbpRZFUJ1qkWcG0f7s4WGLoQHVJ4QkM88OVxoC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733875250; c=relaxed/simple;
-	bh=LuygsJojapZ3qBWYFPssV1LYQDlwLpvn1iOfh5weznw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEvZZGDbeKAQVzXpRb9PbpcasK4Xhs0694BJyWFBc+/D3Mxzrp5vcty/Hn2xMT//3HyO8FkmE7eWEDfQXRPeBtx3pQdb0R8rfMVQfE3LVoGdaLiaZzpC9HmQgN0+ximWtYuY1FIpRfzyeHcP/05fPjCLh0yLULt1hf2BOJkPkBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f1DYDUDT; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733875248; x=1765411248;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=LuygsJojapZ3qBWYFPssV1LYQDlwLpvn1iOfh5weznw=;
-  b=f1DYDUDTSxW+N9oo1zS1gP0KGZ9p4nQRZ5/9EBy+xp1jJdwVJhDCRTXI
-   hSSBmGAZWc0F7Ze8U8KZvQgi+5eZ0ixXuvXzfo1cftYBqQbg976wtXqyl
-   c44nS+4TSEIfFKvNt3RpFDuZ6wUFgbkJFwzjrtbLh3I6cE1W+0XkCTH2F
-   AfKKCdOyMqfNLY1PP/bUHGt+fygPbsApueKVEpiOg6r/p57tfMXf76Q3Q
-   AXx8FoJKT4YQPpM1foHE6iCzd/ykVnM7iKArKZilnNBepLt5Z0JDfkA68
-   Q5LTM9r9pokTe7TNRat3Vj0JlkB3Y/H/wW7UbOmkodhzH59dXzamhfFvL
-   A==;
-X-CSE-ConnectionGUID: Ol+8CeIETGWUcZ6+gVG7sg==
-X-CSE-MsgGUID: mTnl9Jz4SsCz9ukTbCF3rg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="56720472"
-X-IronPort-AV: E=Sophos;i="6.12,223,1728975600"; 
-   d="scan'208";a="56720472"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 16:00:47 -0800
-X-CSE-ConnectionGUID: niJVfmm5TY+avYEetcNHIg==
-X-CSE-MsgGUID: kCCrWKLRQjSxpifzgbXPBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="95922340"
-Received: from ldmartin-desk2.corp.intel.com (HELO ldmartin-desk2) ([10.125.109.223])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 16:00:44 -0800
-Date: Tue, 10 Dec 2024 18:00:33 -0600
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Luca Coelho <luciano.coelho@intel.com>, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, jani.saarinen@intel.com, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFT] Revert "lockdep: Enable PROVE_RAW_LOCK_NESTING with
- PROVE_LOCKING."
-Message-ID: <c5r46che35oqieotvytdfj2utelhtidnbjgyfijfik64mtgmlt@6mi42dmtz2wh>
-References: <20241209135602.2716023-1-luciano.coelho@intel.com>
- <djny2tqz7mck5omsadowtn7flnegizoxgmpymyyfr3gvw4x7vf@67pbgkqftwxf>
- <Z1jG53Hy0PZKdJG2@intel.com>
+	s=arc-20240116; t=1733875479; c=relaxed/simple;
+	bh=OCHV6HmvuE1qzKNAPSoYhRL/7FV4ReXNkxuSygUjwFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TenxGcqHlN5rr8mREsQJS0WILqgnlyJdoDDxw3fSWPjOmxpmY9mgeW+hdZV5vqavW8py6+mG5nXrwFuiiBEP/zzR6b2n6j9Kv+WfK6Hj8vTnlyPhzNitBC69JA8+3W0dqUBNzNcnVlf37aRXkB4e4Mt9ew2cpeSNYK1HhqykvJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=YpLjZILz; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e39fb8548e2so5054736276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 16:04:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1733875477; x=1734480277; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OCHV6HmvuE1qzKNAPSoYhRL/7FV4ReXNkxuSygUjwFc=;
+        b=YpLjZILzLMYgXC7X3hw3H3EPw5j4ApF7GiexGBB+lCJcoVysqfJDNhgGbn3MTUGS11
+         vt+LQTNUBG2/RV6wYQUAcf4Yl/tMbLy58Fj5WAacs1QD0H7VMR4ZR4g3TwScRCEMN+vp
+         ML4mzeT6dy5kpGBM0I1acJnIeEQof47hQ85Mk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733875477; x=1734480277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OCHV6HmvuE1qzKNAPSoYhRL/7FV4ReXNkxuSygUjwFc=;
+        b=apx17Xgx7iVk2jjhyBGxrcaRYNazv5OwV7TUZODa5a2E4+m79Z8yPHwI9wOTOjfMuH
+         M1XYIHpMBsi5Iw6vABWwlJPbw8zNfvXrlDjK6RZuWvbpUdIa8SDfMQOPB1ysnFWy6Eed
+         w8hHXvtP+TqXp/mhUEGiTgR1JPy3Tcmf+v14QnlA/t9IrL7AdEa+fTQViYyY7TsHlZu6
+         8OWEjbLaqZdmfKOW4kx7+ikL4MNogMRjsUp4PppA+zVmw/bhvZNtVzhprj6tp/a+YtRR
+         U+u6cx0T6FKZblTr+ssyFTBuurLukO7VwbCorn38ij4VBPwcyLvf3kYnznGZPUeDDU9D
+         Wb1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtSwbUZ2ZbMIiojsUKhEtMO3RgY6cBHT/gLTCDCFnCWOmeIaWfgaDaXH4SGIjZO9nGGpIy1pKatXChWv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJkkEo8sShwGEzFqyHEHeo9QlLWAYgH62d9AJPqjUYbwkQwDFq
+	20bkHsSmNh+Y6/scbKbqC8JheuWdYe3S4aw+nK2NRPW0xCxK3oBbiR+8XGWlFWPKncbn0upMn7r
+	0PkVr8m74/gVA0hLIaWhNZoQF80fgNU20nL5Ryw==
+X-Gm-Gg: ASbGncszBuy2i0pTtOCs9ze/6LRKb4rmvj93APmcrWE+AZOVdo2t+7b5LySJhxNl9q5
+	mVvzZNIUKjy9+4QUc88T+qak0yIDJ9Txu2D+h
+X-Google-Smtp-Source: AGHT+IHAdKnSSZvTjoIr7mwXDQmX65FsKpemA7psolWqer3VHIGe/o3rpMktPHVLVXQ+RdM6hXLdwcEW5U5tsp0AJDI=
+X-Received: by 2002:a05:6902:120c:b0:e2b:e0ba:d50 with SMTP id
+ 3f1490d57ef6-e3c8e42e3a6mr1140093276.5.1733875477096; Tue, 10 Dec 2024
+ 16:04:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1jG53Hy0PZKdJG2@intel.com>
+References: <20241204-udmabuf-fixes-v2-0-23887289de1c@google.com>
+ <20241204-udmabuf-fixes-v2-1-23887289de1c@google.com> <CAEXW_YRb4PsFgEvHW2QBDY5dxJ+aoMTn3qtj5v9eboxO3SxPLg@mail.gmail.com>
+ <CAG48ez2cTrD2_4iKo3+zrPH=e29znYOKLBkC4OLA3yhsu5oMNA@mail.gmail.com>
+In-Reply-To: <CAG48ez2cTrD2_4iKo3+zrPH=e29znYOKLBkC4OLA3yhsu5oMNA@mail.gmail.com>
+From: Joel Fernandes <joel@joelfernandes.org>
+Date: Tue, 10 Dec 2024 19:04:26 -0500
+Message-ID: <CAEXW_YRUVwWxuoWs1fU8OCsOf+vAWc__csX2Ed0W+yVr0Y49aA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] udmabuf: fix racy memfd sealing check
+To: Jann Horn <jannh@google.com>
+Cc: Gerd Hoffmann <kraxel@redhat.com>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, John Stultz <jstultz@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org, Julian Orth <ju.orth@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+Peter and Thomas, for question below about the use of raw_spinlock_t in perf
-
-[ Note that the patch by itself is not proposing this revert to be merged in
-   any tree going to Linus - that would just shoot the messenger - it's
-   just a temporary stop gap to get our CI running again. Below I'm
-   looking for a real solution... ]
-
-On Tue, Dec 10, 2024 at 05:55:35PM -0500, Rodrigo Vivi wrote:
->On Tue, Dec 10, 2024 at 09:00:13AM -0800, Lucas De Marchi wrote:
->> On Mon, Dec 09, 2024 at 03:53:51PM +0200, Luca Coelho wrote:
->> > This reverts commit 560af5dc839eef08a273908f390cfefefb82aa04.
->> >
->> > Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
->> > ---
->> >
->> > It seems that we have a few issues with this configuration in xe and
->> > in i915.  Let's try to revert it to see if the problems we're seeing
->> > go away.
->> >
->> > Note, these are _real_ issues, but only if CONFIG_RT is enabled, so the actual issues need to be solved properly, but we can revert this change until then, to avoid regressions.
->>
->> +Jani Nikula, +Rodrigo
->>
->> I'm thinking about landing this in topic/core-for-CI.  It seems we have
->> quite a few locks to revisit - we are taking spinlocks while holding
->> raw_spinlocks and until now there's no warning about this bug.
+On Tue, Dec 10, 2024 at 6:12=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
 >
->could you point to one case? I don't see us using the raw_spinlocks...
-
-main entrypoint is perf pmu. All these purple results:
-https://intel-gfx-ci.01.org/tree/drm-tip/shards-all.html?testfilter=perf
-
-Example:
-
-<4> [96.732915] =============================
-<4> [96.732950] [ BUG: Invalid wait context ]
-<4> [96.732982] 6.13.0-rc2-CI_DRM_15816-g2223c2c738ec+ #1 Not tainted
-<4> [96.733026] -----------------------------
-<4> [96.733056] swapper/0/0 is trying to lock:
-<4> [96.733088] ffff888129513910 (&pmu->lock){....}-{3:3}, at: i915_pmu_enable+0x48/0x3a0 [i915]
-<4> [96.733485] other info that might help us debug this:
-<4> [96.733536] context-{5:5}
-<4> [96.733565] 1 lock held by swapper/0/0:
-<4> [96.733606]  #0: ffff88885f432038 (&cpuctx_lock){....}-{2:2}, at: __perf_install_in_context+0x3f/0x360
-<4> [96.733710] stack backtrace:
-<4> [96.733742] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.13.0-rc2-CI_DRM_15816-g2223c2c738ec+ #1
-<4> [96.733841] Hardware name: Intel Corporation Meteor Lake Client Platform/MTL-P LP5x T3 RVP, BIOS MTLPFWI1.R00.3471.D91.2401310918 01/31/2024
-<4> [96.733971] Call Trace:
-<4> [96.734002]  <TASK>
-<4> [96.734029]  dump_stack_lvl+0x91/0xf0
-<4> [96.734078]  dump_stack+0x10/0x20
-<4> [96.734118]  __lock_acquire+0x990/0x2820
-<4> [96.734177]  lock_acquire+0xc9/0x300
-<4> [96.734222]  ? i915_pmu_enable+0x48/0x3a0 [i915]
-<4> [96.734533]  _raw_spin_lock_irqsave+0x49/0x80
-<4> [96.734568]  ? i915_pmu_enable+0x48/0x3a0 [i915]
-<4> [96.734800]  i915_pmu_enable+0x48/0x3a0 [i915]
-<4> [96.735031]  i915_pmu_event_add+0x71/0x90 [i915]
-
-I started converting the pmu->lock innside i915_pmu.c. I´t be great if
-it was only that, but it's clear it's not sufficient. I tried to move a few locks
-around to avoid having to convert uncore->lock, but ultimately couldn't avoid
-it, which leads to converting a few more. So far:
-
-	raw_spin_lock_init(&guc->timestamp.lock);
-	raw_spin_lock_init(&pmu->lock);
-	raw_spin_lock_init(&i915->mmio_debug.lock);
-	raw_spin_lock_init(&uncore->lock);
-
-And it's still not sufficient, because intel_ref_tracker tries to
-allocate while holding one of those and I'm not confident on making that
-pass GFP_ATOMIC. Maybe that allocation could be moved to init, but I ran out
-of time for this and will try again later.
-
-[  204.706501] swapper/0/0 is trying to lock:
-[  204.710565] ffff88810005ead8 (&n->list_lock){-.-.}-{3:3}, at: get_partial_node.part.0+0x27/0x3a0
-[  204.719278] other info that might help us debug this:
-[  204.724285] context-{5:5}
-[  204.726891] 2 locks held by swapper/0/0:
-[  204.730785]  #0: ffff88888cc32038 (&cpuctx_lock){....}-{2:2}, at: __perf_install_in_context+0x3f/0x360
-[  204.739995]  #1: ffff88815265cf40 (&guc->timestamp.lock){....}-{2:2}, at: guc_engine_busyness+0x45/0x2c0 [i915]
-[  204.750171] stack backtrace:
-[  204.753038] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G     U             6.13.0-rc2-xe+ #13
-[  204.761729] Tainted: [U]=USER
-[  204.764678] Hardware name: Intel Corporation Raptor Lake Client Platform/RPL-S ADP-S DDR5 UDIMM CRB, BIOS RPLSFWI1.R00.5045.A00.2401260733 01/26/2024
-[  204.777913] Call Trace:
-[  204.780355]  <TASK>
-[  204.782450]  dump_stack_lvl+0x91/0xf0
-[  204.786090]  dump_stack+0x10/0x20
-[  204.789383]  __lock_acquire+0x990/0x2820
-[  204.793276]  ? lock_acquire+0x29c/0x300
-[  204.797088]  lock_acquire+0xc9/0x300
-[  204.800642]  ? get_partial_node.part.0+0x27/0x3a0
-[  204.805310]  _raw_spin_lock_irqsave+0x49/0x80
-[  204.809635]  ? get_partial_node.part.0+0x27/0x3a0
-[  204.814302]  get_partial_node.part.0+0x27/0x3a0
-[  204.818794]  ___slab_alloc+0x792/0x12f0
-[  204.822600]  ? ref_tracker_alloc+0xd7/0x270
-[  204.826754]  ? __lock_acquire+0x11a1/0x2820
-[  204.830906]  ? ref_tracker_alloc+0xd7/0x270
-[  204.835058]  __kmalloc_cache_noprof+0x277/0x480
-[  204.839554]  ? __kmalloc_cache_noprof+0x277/0x480
-[  204.844221]  ref_tracker_alloc+0xd7/0x270
-[  204.848206]  ? ref_tracker_alloc+0xd7/0x270
-[  204.852357]  guc_engine_busyness+0x122/0x2c0 [i915]
-
-
+> On Tue, Dec 10, 2024 at 11:51=E2=80=AFPM Joel Fernandes <joel@joelfernand=
+es.org> wrote:
+> > On Wed, Dec 4, 2024 at 11:27=E2=80=AFAM Jann Horn <jannh@google.com> wr=
+ote:
+> > > The current check_memfd_seals() is racy: Since we first do
+> > > check_memfd_seals() and then udmabuf_pin_folios() without holding any
+> > > relevant lock across both, F_SEAL_WRITE can be set in between.
+> > > This is problematic because we can end up holding pins to pages in a
+> > > write-sealed memfd.
+> > >
+> > > Fix it using the inode lock, that's probably the easiest way.
+> > > In the future, we might want to consider moving this logic into memfd=
+,
+> > > especially if anyone else wants to use memfd_pin_folios().
+> >
+> > I am curious, why is it not possible to have a reproducer for this
+> > issue, is it not reproducible and is theoretical?
 >
->>
->> It's a real problem only for PREEMPT_RT since otherwise there's
->> no difference between the 2 lock types. However fixing this may involve
->> quite a few changes: if we convert the lock to raw we may need to
->> cascade the conversions to additional locks.  The ones I identified are:
->> pmu->lock, which would also need to have uncore->lock converted, which
->> would then probably cascade to quite a few others :-/. I'm not sure
->> converting uncore->lock will actually be a good thing.
->
->hmm raw_spinlocks for the lowlevel might not be a bad idea, but perhaps
->we need to convert the other way around the upper levels?
+> Sorry, I think I must have forgotten about this part when I wrote the
+> cover letter: The original bug reporter (Julian) linked to a
+> reproducer that is linked in the bugzilla bug report, at
+> <https://github.com/mahkoh/udmabuf-seal>. I haven't tried running it
+> myself though.
 
-that would mean:
+Thanks, I appreciate the pointer to the reproducer.
 
-<4> [96.733606]  #0: ffff88885f432038 (&cpuctx_lock){....}-{2:2}, at: __perf_install_in_context+0x3f/0x360
+Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-so inside the perf event infra, that has been using raw_spinlock_t
-since forever. I'm surprised we got this only 10 years later :-/.
-I don't think perf can sleep in that context, but Cc'ing a few people
-and lkml for that question.
+thanks,
 
-thanks
-Lucas De Marchi
-
->
->>
->> I will keep digging.
->
->Ack on getting this to topic/core-for-CI so we don't block our
->CI while we investigate and fix this.
->
->Thanks,
->Rodrigo.
->
->>
->>
->> Lucas De Marchi
->>
->>
->> >
->> >
->> > lib/Kconfig.debug | 12 ++++++++++--
->> > 1 file changed, 10 insertions(+), 2 deletions(-)
->> >
->> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
->> > index f3d723705879..de4ffe09323b 100644
->> > --- a/lib/Kconfig.debug
->> > +++ b/lib/Kconfig.debug
->> > @@ -1397,14 +1397,22 @@ config PROVE_LOCKING
->> > 	 For more details, see Documentation/locking/lockdep-design.rst.
->> >
->> > config PROVE_RAW_LOCK_NESTING
->> > -	bool
->> > +	bool "Enable raw_spinlock - spinlock nesting checks"
->> > 	depends on PROVE_LOCKING
->> > -	default y
->> > +	default n
->> > 	help
->> > 	 Enable the raw_spinlock vs. spinlock nesting checks which ensure
->> > 	 that the lock nesting rules for PREEMPT_RT enabled kernels are
->> > 	 not violated.
->> >
->> > +	 NOTE: There are known nesting problems. So if you enable this
->> > +	 option expect lockdep splats until these problems have been fully
->> > +	 addressed which is work in progress. This config switch allows to
->> > +	 identify and analyze these problems. It will be removed and the
->> > +	 check permanently enabled once the main issues have been fixed.
->> > +
->> > +	 If unsure, select N.
->> > +
->> > config LOCK_STAT
->> > 	bool "Lock usage statistics"
->> > 	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
->> > --
->> > 2.45.2
->> >
+ - Joel
 
