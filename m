@@ -1,257 +1,149 @@
-Return-Path: <linux-kernel+bounces-441483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75909ECEFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:50:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0709ECF00
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F23188793C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71758167963
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE48219F11F;
-	Wed, 11 Dec 2024 14:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4D919CCF4;
+	Wed, 11 Dec 2024 14:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cDPvctMl"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nW5chrzA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDFB246342;
-	Wed, 11 Dec 2024 14:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733928619; cv=fail; b=rJiongc9JhU45Q7t/698obQD/AYaCRVGmFdy0K50i4I/lXbhgFNAniiJkRQHMJfMJPkDJ87yXC745jJaOit9RzzrRzpLBJ+wJR6j7bn3SUoJmqnCaZvXZ6IaX8p8pNOEDlibDSx/YL8vEcmOjbz1PkSBhfqRUdzOgJj8gBNAbhc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733928619; c=relaxed/simple;
-	bh=6dlV+5gO2Av+7ilIrq82kx/iNlTF/SAbPNc6H2DDtJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G3d7KhY2IjySmBZVVoqHlVAtoJ1RlJm9wcplTd3c31hTIXWc9mllo8OyDDdwqqtwjCvTUzkwOSoU+gTt4nOLG3QjzH4dv2fwSMCSoq5/E/ZQHHzoG+0K9ceNKCQSGCTnd7YMUDTcYXCOKwTM4SVABwQbrVgZuvGKGA4eSlyhU2Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cDPvctMl; arc=fail smtp.client-ip=40.107.93.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n8RLCZdhROYH8EfD3qs9Du3BNBLKtC5WAQdKJUBJOClnCvF4V27cZGAsXLtETSQd7mtU6xR/gSi6SVwDgNA96lUHD8pBeFQ751bIT6rE254zkPwJkVSlP70RHwIMQdupknbPNdaUihdGhDelUnJBAF78gv7XmrwIplYnQHB4Uw6yU1wZXR1oKy7GV4Y+WyO4Tg91lQ0yg+NqnBnVD6Z3E5QT7kLpcmqXZr4b52vadkpZHdQ+6LLlBeAeUDdB6KkXT4mmuuCmUDIMaDKnhmbjCRbTunPY1fZJcMj6YN3sBZAtsj0tzMpcjJyh7sCvoE6Ysm0Hxsdvh2xjdluKpxgOEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I7uRMzaEaYb/682/e5a+MPtyhlcJmQIP9ctnIwOHmxw=;
- b=jipHS6/tqZVx+SO7Fo08YfBH2IYRdbXNvFQ4cT4z7soBkyqEdY6e6516AiB1vVKz9ceHHI04vfu38Rb79x0+dV1AUYv/euyT1PQFjfCkkJ2WiqcGZ0MGU452bIUKgnRNyADVthgLxMsMGZCFsvFLw9cJklPVxS1m5uDpjLjDhsZameiXFskJZWnjGF2SwBLxpLdkRxkjmPoWSucS1aeBrKx41GqjUd9KUZoFe9PmHUYnOLUqSm+xZ7abzBtmRnsZNG/qdkhFNlakAPVm/Dz84N5N/lNMSX4UjD6PrA0kBnQbwyG99O0w0YybX8ZRbyy9f2ckbPfFdVmBcg6gmIx7Kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I7uRMzaEaYb/682/e5a+MPtyhlcJmQIP9ctnIwOHmxw=;
- b=cDPvctMleUmOS5U7ED/4gObgRQJ701SaR5/+xMLTyrJXUkvPp4u2/Z3c10XSglatYNRJDv4ZKazTEEWwJc63xGpFvsRnOuiYazhRGcwMFwE55K7kqvBJ4hhmJl6BgDOX9mhsB2iPDh/J46Bzx6uxY9ELsmk6G5DFGBSRe294C/2LnDMebP/8v4rqQU0pHsmHFbde9F59UBfBRzsqeNgvzEpKQRCxRF831QSTAgO9N5hhVb1NXAJqabtCv/aiLnhzyblvbIMKRo4YIjMsAV0f7eACy6ON+1W1k4wvDk+ih5vBqlgWo1DNYBtQZtGGjJu6Ijg56Q0G0zJzEQ/hhloUnQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by PH0PR12MB8150.namprd12.prod.outlook.com (2603:10b6:510:293::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Wed, 11 Dec
- 2024 14:50:14 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8%4]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 14:50:14 +0000
-Date: Wed, 11 Dec 2024 16:50:04 +0200
-From: Ido Schimmel <idosch@nvidia.com>
-To: Jonas Gorski <jonas.gorski@bisdn.de>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Roopa Prabhu <roopa@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Hans Schultz <schultz.hans@gmail.com>,
-	"Hans J. Schultz" <netdev@kapio-technology.com>,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] net: bridge: handle ports in locked mode for ll
- learning
-Message-ID: <Z1mmnIPjYCyBWYLG@shredder>
-References: <20241210140654.108998-1-jonas.gorski@bisdn.de>
- <20241210143438.sw4bytcsk46cwqlf@skbuf>
- <CAJpXRYTGbrM1rK8WVkLERf5B_zdt20Zf+MB67O5M0BT0iJ+piw@mail.gmail.com>
- <20241210145524.nnj43m23qe5sbski@skbuf>
- <CAJpXRYS3Wbug0CADi_fnaLXdZng1LSicXRTxci3mwQjZmejsdQ@mail.gmail.com>
- <Z1lQblzlqCZ-3lHM@shredder>
- <CAJpXRYRsJB1JC+6F8TA-0pYPpqTja5xqmDZzSM06PSudxVVZ6A@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJpXRYRsJB1JC+6F8TA-0pYPpqTja5xqmDZzSM06PSudxVVZ6A@mail.gmail.com>
-X-ClientProxiedBy: TLZP290CA0006.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:9::16) To SA3PR12MB7901.namprd12.prod.outlook.com
- (2603:10b6:806:306::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7A618A6D3
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733928675; cv=none; b=YGeluji/dCj5Ju69wfXZFRlm6CWLEnKC5SEmAeWtZpVdFVRl9V0q29nEF7alG0y9WM4o5O4tsaQJPZGKzprF8vuWWw2WcCBorgjxnqcMZxhVbbCCarHXpXYO3QcpXwQbfiUhadFtoHLu2gDMIohyWpaqSSSYbWtOppPobZnHBys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733928675; c=relaxed/simple;
+	bh=Vh1QztaHzm+Qph1KJjgwrCQhNw49ue66pzGRs1ZOQhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mk165isO07zJL3CIGqgl/3ZKOABgXyOVyec8Q075r4FxrwmFVgKEYuvw0CwURWrtb9Ij9wO2M02WWgz4rKhm2e44jX6XiPbMmwsa/c0ukKzkjnb/piEdqAeRyVL4PHFLTY/AOo1PspkN7/YFXKbUopQfRoclorgiKOHGkdFTu6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nW5chrzA; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733928674; x=1765464674;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Vh1QztaHzm+Qph1KJjgwrCQhNw49ue66pzGRs1ZOQhk=;
+  b=nW5chrzAUGPsuZHfiFwUv8GS1cBs2rlOgneK4KqCFiXXo7yiYOv8RziE
+   tBRubrnBva8bPcaXsuNpUIffrmAN+GNUKkLuKgcBnJzvbyiHAQjPBScHQ
+   jFMm8OYH7xm7rNW2A16MH5GYpvtEG5J5Fv9Vomgo0htyZ6mZ+nukaO0PU
+   elN0hDNgEpsjUoPueMqDLvbfKLng3KDh9tbXcLckbLdHIY/WqPumzX+Ek
+   EZFtB315Y78QqiiR3t+mB/3+xgWxfssQCAAOpRjFu6pP0iNqkQ3x3nYzk
+   ACBF8qjo3sYBirACjCqUygpx7O9GrpBSyjUugWgYLSzqxYFYKpPbbDZ/w
+   A==;
+X-CSE-ConnectionGUID: e62o1qydTrWcdK8+Gjr7LA==
+X-CSE-MsgGUID: DgxF40XNSjuklj6DGVodmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34213117"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="34213117"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 06:51:13 -0800
+X-CSE-ConnectionGUID: y0Cq/jipTOuPs4KOsT0BnA==
+X-CSE-MsgGUID: qQPafaD4Rd6MvJxuZmUz5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="96313555"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Dec 2024 06:51:12 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLO3R-0006lh-1F;
+	Wed, 11 Dec 2024 14:51:09 +0000
+Date: Wed, 11 Dec 2024 22:50:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Mike Rapoport (IBM)" <rppt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>
+Subject: arch/powerpc/mm/mem.c:428:2: error: call to
+ '__compiletime_assert_303' declared with 'error' attribute: BUILD_BUG_ON
+ failed: TASK_SIZE > MODULES_VADDR
+Message-ID: <202412112259.KBIIdlFd-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|PH0PR12MB8150:EE_
-X-MS-Office365-Filtering-Correlation-Id: 591731d0-5500-4e46-2b7d-08dd19f31ebe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r7SyYCLHe0c6mD4NnqXN5e+/0k0IeT8uDuJNFZA48FwUJNMFy0q23ZNyiYwo?=
- =?us-ascii?Q?pT8XWC2l4PZrgbK6NaAj/M605XOEIg1YkPvIq29o2ugh/DyR+wqh+371Hg1O?=
- =?us-ascii?Q?etRa54YpdBZcb4iqbsHgNwioOgia2Zl7kPEJRrZY7EbqldwapJyQDKGdFAU1?=
- =?us-ascii?Q?cts+R/eWuHmqWe4zByscQnQCeIWCZ2Fwno5A4JhzmYYn+ahm9e7vdUqSDClq?=
- =?us-ascii?Q?NOdILeT/Oh7wD7+ATfK/qKzl4RtVAV8pys/rKA/qeLIB7T3JppS+Hf8OzIWU?=
- =?us-ascii?Q?OvgrYbE7mhUhz4I0yJDga3tcqk305D7TYRcF0+hcRG5amqGd3tFCEwwEwCgH?=
- =?us-ascii?Q?Z3tfRL3A+9lvwvfFWJFMZh2LDCxnPQsAP70XUy/9uBSjFKQfu+Z8rJ/ZDCrd?=
- =?us-ascii?Q?PGIqgyGDKeot3FAvSHj2T/cbEY9c/gyku+8G/GuKt93q/Q8mLcSGt1BtpzEl?=
- =?us-ascii?Q?oUSC4C4Nf55Q9gQydHZGn/N72mCoz/JRnDCnis9NAh4Y9cmtqAO2CRkjJQFY?=
- =?us-ascii?Q?EaNFcjl8j/Kp0Bc2tV6VYheaQ2Oay0jwV3V9Ib0epIzFc8llk1glntxtqv+R?=
- =?us-ascii?Q?zaUq7p6wXHWSk5HnMnq9U7Q0oKyZ7QpSIXT7ntoLeR0DatWjN7tFkTQ42XnV?=
- =?us-ascii?Q?l7i+E/Rjua/Mo15se/UuFU3dmo2mwBF48cbrUGSlgAPJGOj3GB8h/9XIB+ye?=
- =?us-ascii?Q?STZTb62xZ+4YXAqDhAZObMv93QkFa/e6uAR3ldckJe/3CqtQFc5UL+NiCfuE?=
- =?us-ascii?Q?qzCvhff9pQrLv/+Jccd8pJKo1H7zSoIpwSskIG2k2Id6eSzzuvKkULSn875+?=
- =?us-ascii?Q?UMESX91WiW78FlFpzou6cEND0O191+Wuwa1uH8PqMmKwjKFxGChGEvfoq7Q5?=
- =?us-ascii?Q?glk+yClg7MZxwqVWk1wG3iUXDWkghs7YuhqYWFBladkcTM7v5ZE2Pn43l6iE?=
- =?us-ascii?Q?3N6eS6Un1XarO4OsfjdqPnN6nXEwZImhvaNTkBnFh5+HsJne219jUrr2PQ0B?=
- =?us-ascii?Q?6FOvMW8Y9uTTtkCdL7whKBPlwklh7b0yj5tmPgsixdEHhS92m93b5TNGVqs1?=
- =?us-ascii?Q?ek7LiQvWmFX74zGaZQhWt4uIkHqEzw/Mx6vnTvlXkSpjxLYvK6h5+kk+iZqA?=
- =?us-ascii?Q?izDcpl6ASfnRT4Gkebnhk6boVwhupvidRqYFUZ5nbkjfSGv/qlmi/kUlzN9N?=
- =?us-ascii?Q?+XUE8MPSvIKSfWQBFC/41nAEDEiqM1bC1ysER8YdRwmRfyhtXrh3Zxf7y3nZ?=
- =?us-ascii?Q?HKr+srSXN8k9nP2xl2IDH9DaJh65Gz2kGgH3ntgGJEfPv0OOAGC2I7ovVMzN?=
- =?us-ascii?Q?U9CvCGVGJy6lB9fbqTjJ6nqq3LgHnsLTWrwIYNwmjKPZGw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KWSE/GGqZ0WjX+VqxR+WEcdSqp2yJzcl1PTnrAkmUs7TpSvnv29WWkMjyZ45?=
- =?us-ascii?Q?KUg6trvXpcjElNO8K1PsR/Gwo3GR5TZ5uVvwdTgQSw1l5EIQm7lnVclu/HxD?=
- =?us-ascii?Q?5wqNN91r9zpxujjfh/bN11TiSbAcKQohVkcu1hF3AZCkiyZb7Qy3zMYoGyeN?=
- =?us-ascii?Q?n2MBqKlGMb4azUlV6gLhH/TgPv6NooCYLymrPbkaeUJ6qIGO2VFyZSWvOZr7?=
- =?us-ascii?Q?atIepYjgN9KuM4XF9L++UXIkrpAMdO53kuLr1Hy97rb8wDN4gasn7+tTYAH5?=
- =?us-ascii?Q?jJTZEnvOMnMylVBIm3n6+oJp+7fvenNcx+X076cZ2AnPjX3eJmHBGjOaTPoC?=
- =?us-ascii?Q?oG9y395EC+aVjeAfgAYEcRQ+gk8iENAmHuFHFRtcpBAcUZ3B1ggKVagMLyP0?=
- =?us-ascii?Q?b/vaWIy2a2vI0rMZHWlBOf2gGVYyw8DX/bFRa7uSvIMkAk5LCuUhrK8qwDBi?=
- =?us-ascii?Q?lE9RP6CrRpQdkAW1rSHtZR2vXgc3lckSE1C0DKQg2DXqi/sD9a+7VLSferEZ?=
- =?us-ascii?Q?7sxg8c3QT/MqaiCFl1g0q9m2guUX4wPs/r5Q/hoVXiMt5MLX05bpyzfjvRE4?=
- =?us-ascii?Q?qnbLpEOnpaOAaczF7GfaWmHEpFxPgqT1qRhfLbG+s11Si1anwQnTC2OR1G/p?=
- =?us-ascii?Q?qarX/oPss4KXwW3DC5f9Ak4OhmbqOMhzuLhMFcBcLKVJx4WxsBFFyxyLxNgD?=
- =?us-ascii?Q?5fC8PvwJt94bct5jvAsgLEbkkd3HIafY3lSN4ePz9GcsAkRFixpBcHeXl486?=
- =?us-ascii?Q?ZQN00PNb9yTgtkYVlhDj0rjLQJwjWmUxOY8oyIwadPnGhSAOhgNN20hmo6gv?=
- =?us-ascii?Q?dFOa3dj5YtUTY7NCipSezvY6NG//5Np8adXCd4urep7pmpv+OGY5/QYhmATR?=
- =?us-ascii?Q?WuDtDWG33+qB4OLLGXrTEYwCNaWWmXDE+Wznh2m5DFgPIdoO4mLITAM7BPTX?=
- =?us-ascii?Q?AKIJf2BjikWWmqNdkNGO1hn1Hy0hrb4oHOZGWIuHPl4E7MBcQVKIF6hqNd4x?=
- =?us-ascii?Q?5orXiNTkiceC1V6CU9Ab92yhgYbOMYgA7jF5zaPWBaitH+Y3PCltNZ1sxK/J?=
- =?us-ascii?Q?Q8B2UjMVDdcbLRqBS6FaDMS4jLeppk+OeVsUxzD/wjd7IxRRHCnoYZX0QkBj?=
- =?us-ascii?Q?M/Tj6ZL5QU1SsKqnTeZQTrU4aA9zbZMq09EG0ul8Rr2EJnbr2/YugjfW5Rgr?=
- =?us-ascii?Q?5whPp2UduJM6ZeB4b2j4emD+Ali3sqNVj72UWI4jfD7iqeveNCxAT2mLBLsj?=
- =?us-ascii?Q?IZyfQsmK5j0cmfA3+3y731Yr846bL4qHZYF/s3qzMTH5rTpGEV3liiN21M9m?=
- =?us-ascii?Q?Afc3IP5AgLRR42sZxiH2CpUyiAXWYuCAWabMD2+ZMeVm5CtlwPL16j7bt2qo?=
- =?us-ascii?Q?NVOmPwuEw9EG7FSzpgQV+hggS1gHuxhcqK+HEUTDCDRCbOP8z0bWhsJuphoP?=
- =?us-ascii?Q?c2sMxDER55cUoeNSKSH1vd2U0goiKFZhtCjgtm+mcQutaf6yhT3FMtKGh7Eh?=
- =?us-ascii?Q?pcACmsSw53qP8064D4Sw0lUeRAHMajl2lQUnyQ/vd5E11TVi7+PLiWsPNT3G?=
- =?us-ascii?Q?6aJj5DgofcCdBeDt6NOfrlWBSTCh3y5uzYzmhZkD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 591731d0-5500-4e46-2b7d-08dd19f31ebe
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 14:50:14.3111
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cS4maZgZ6p33+Do5T7WrHiuMHYesGD5t/zcFWUZgk3TLSPHSVxHAsKWa98kmOCAj+SndfUKbDp0Ax2mz/KbaXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8150
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Dec 11, 2024 at 11:32:38AM +0100, Jonas Gorski wrote:
-> Am Mi., 11. Dez. 2024 um 09:42 Uhr schrieb Ido Schimmel <idosch@nvidia.com>:
-> >
-> > On Tue, Dec 10, 2024 at 04:28:54PM +0100, Jonas Gorski wrote:
-> > > Thanks for the pointer. Reading the discussion, it seems this was
-> > > before the explicit BR_PORT_MAB option and locked learning support, so
-> > > there was some ambiguity around whether learning on locked ports is
-> > > desired or not, and this was needed(?) for the out-of-tree(?) MAB
-> > > implementation.
-> >
-> > There is a use case for learning on a locked port even without MAB. If
-> > user space is granting access via dynamic FDB entires, then you need
-> > learning enabled to refresh these entries.
-> 
-> AFAICT this would still work with my patch, as long learning is
-> enabled for the port. The difference would be that new dynamic entries
-> won't be created anymore from link local learning, so userspace would
-> now have to add them themselves. But any existing dynamic entries will
-> be refreshed via the normal input paths.
-> 
-> Though I see that this would break offloading these, since USER
-> dynamic entries are ignored in br_switchdev_fdb_notify() since
-> 927cdea5d209 ("net: bridge: switchdev: don't notify FDB entries with
-> "master dynamic""). Side note, br_switchdev_fdb_replay() seems to
-> still pass them on. Do I miss something or shouldn't replay also need
-> to ignore/skip them?
-> 
-> > > But now that we do have an explicit flag for MAB, maybe this should be
-> > > revisited? Especially since with BR_PORT_MAB enabled, entries are
-> > > supposed to be learned as locked. But link local learned entries are
-> > > still learned unlocked. So no_linklocal_learn still needs to be
-> > > enabled for +locked, +learning, +mab.
-> >
-> > I mentioned this in the man page and added "no_linklocal_learn" to
-> > iproute2, but looks like it is not enough. You can try reposting the
-> > original patch (skip learning from link-local frames on a locked port)
-> > with a Fixes tag and see how it goes. I think it is unfortunate to
-> > change the behavior when there is already a dedicated knob for what you
-> > want to achieve, but I suspect the change will not introduce regressions
-> > so maybe people will find it acceptable.
-> 
-> Absolutely not your fault; my reference was the original cover letters
-> for BR_PORT_LOCKED and BR_PORT_MAB and reading br_input.c where the
-> flags are handled (not even looking at if_link.h's doc comments). And
-> there the constraint/side effect isn't mentioned anywhere, so I
-> assumed it was unintentional. And I never looked at any man pages,
-> just used bridge link help to find out what the arguments are to
-> (un)set those port flags. So I looked everywhere except where this
-> constraint is pointed out.
-> 
-> Anyway, I understand your concern about already having a knob to avoid
-> the issue, my concern here is that the knob isn't quite obvious, and
-> that you do need an additional knob to have a "secure" default. So
-> IMHO it's easy to miss as an inexperienced user. Though at least in
-> the !MAB case, disabling learning on the port is also enough to avoid
-> that (and keeps learning via link local enabled for unlocked ports).
-> 
-> At least in the case of having enabled BR_PORT_MAB, I would consider
-> it a bug that the entries learned via link local traffic aren't marked
-> as BR_FDB_LOCKED. If you agree, I can send in a reduced patch for
-> that, so that the entries are initially locked regardless the source
-> of learning.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f92f4749861b06fed908d336b4dee1326003291b
+commit: 0cc2dc4902f425e346d46deeea2352d9fba75375 arch: make execmem setup available regardless of CONFIG_MODULES
+date:   7 months ago
+config: powerpc-randconfig-003-20241209 (https://download.01.org/0day-ci/archive/20241211/202412112259.KBIIdlFd-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412112259.KBIIdlFd-lkp@intel.com/reproduce)
 
-I will give a bit of background so that my answer will make more sense.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412112259.KBIIdlFd-lkp@intel.com/
 
-AFAICT, there are three different ways to deploy 802.1X / MAB:
+All errors (new ones prefixed by >>):
 
-1. 802.1X with static FDB entries. In this case learning can be
-disabled.
+   In file included from arch/powerpc/mm/mem.c:15:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:2210:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> arch/powerpc/mm/mem.c:428:2: error: call to '__compiletime_assert_303' declared with 'error' attribute: BUILD_BUG_ON failed: TASK_SIZE > MODULES_VADDR
+     428 |         BUILD_BUG_ON(TASK_SIZE > MODULES_VADDR);
+         |         ^
+   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^
+   include/linux/compiler_types.h:467:2: note: expanded from macro 'compiletime_assert'
+     467 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^
+   include/linux/compiler_types.h:455:2: note: expanded from macro '_compiletime_assert'
+     455 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ^
+   include/linux/compiler_types.h:448:4: note: expanded from macro '__compiletime_assert'
+     448 |                         prefix ## suffix();                             \
+         |                         ^
+   <scratch space>:100:1: note: expanded from here
+     100 | __compiletime_assert_303
+         | ^
+   1 warning and 1 error generated.
 
-2. 802.1X with dynamic FDB entries. In this case learning needs to be
-enabled so that entries will be refreshed by incoming traffic.
 
-3. MAB. In this case learning needs to be enabled so that user space
-will be notified about hosts that are trying to communicate through the
-bridge.
+vim +428 arch/powerpc/mm/mem.c
 
-When the original patch was posted I was not aware of the last two use
-cases that require learning to be enabled.
+   413	
+   414	struct execmem_info __init *execmem_arch_setup(void)
+   415	{
+   416		pgprot_t kprobes_prot = strict_module_rwx_enabled() ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
+   417		pgprot_t prot = strict_module_rwx_enabled() ? PAGE_KERNEL : PAGE_KERNEL_EXEC;
+   418		unsigned long fallback_start = 0, fallback_end = 0;
+   419		unsigned long start, end;
+   420	
+   421		/*
+   422		 * BOOK3S_32 and 8xx define MODULES_VADDR for text allocations and
+   423		 * allow allocating data in the entire vmalloc space
+   424		 */
+   425	#ifdef MODULES_VADDR
+   426		unsigned long limit = (unsigned long)_etext - SZ_32M;
+   427	
+ > 428		BUILD_BUG_ON(TASK_SIZE > MODULES_VADDR);
 
-In any scenario where you have +learning +locked (regardless of +/-mab)
-you need to have +no_linklocal_learn for things to work correctly, so
-the potential for regressions from the original patch seems low to me.
-
-The original patch also provides a more comprehensive solution to the
-problem than marking entries learned from link local traffic with
-BR_FDB_LOCKED. It applies regardless of +/-mab (i.e., it covers both
-cases 2 and 3 and not only 3). That is why I prefer the original patch
-over the proposed approach.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
