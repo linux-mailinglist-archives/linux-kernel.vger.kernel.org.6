@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-441977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E7C9ED644
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:17:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979999ED66E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:23:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70F5428347E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A079D188E961
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121F722A7F2;
-	Wed, 11 Dec 2024 19:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE3B231A5E;
+	Wed, 11 Dec 2024 19:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQTMVI2r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOKrypyn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA2F1D63F9;
-	Wed, 11 Dec 2024 19:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28041C548F;
+	Wed, 11 Dec 2024 19:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733944536; cv=none; b=SKS93nfr8LyoL3p/fnVYB9HwNt7FIrvKJgYPQZ9iluZrZFYT/QE8dNbsJLUNbASaQ2XoeOuw8F9he9CLZDq18LdJGJjqg2AWoXzMNI+04E8ZDSbQ9DE6CyJVl1RTWuQNOtmq4G4kAb4rVdFKW2OuLVvtGAyBuAVINc43lokvysE=
+	t=1733944545; cv=none; b=q+t2p2ckj+Ra58jLtfTwTlkQVGsN8viJMuUwEJhlVZzE7YxmEJzjcmTAOw1NiCfEIHBNh+JelVmtg0HKnhbK5oMECnmS3wFvtWIgtW2h8aFybOQlRrf4Ze6eXDW6Fbgz1/ov0IW3ehnpsXf3s7oLdhUB3+Attih/gbdV0e8YvpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733944536; c=relaxed/simple;
-	bh=QKMUe0IVB3GFMAU3+QDC3w0vBJ/jEc6BgiyRMSB0qfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjeohbXwf9fiutYzbseGcwYd0M0iq7lpOZlsmvnI6D5m0NYCU5RQJoIAUgBh8V95Jl7vhgEyKSwwLSjYEQfW2xHARdC6sBowYYHdJd8KS3M+uJLittPHSH8qGG9Skm+m9Trl2LvNolmMAmb0QqhelFKzXlki99LsKaVUpUYfIvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQTMVI2r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A127C4CED2;
-	Wed, 11 Dec 2024 19:15:35 +0000 (UTC)
+	s=arc-20240116; t=1733944545; c=relaxed/simple;
+	bh=TycHuwKOqMmwmgXtlpvbcP6Cd7VjA6M0ekrYMGO/yEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c6y1JWkehDF55nFYy2PR64XUvjwRi66AiyGf4ZPJR4XIqNR8olrd/m4YVx+DqrNjw2eD+q9OpZnEPEUH22ddIDCrd73SBkaklOFwS5fSx6e1awqkU+920srK6LYlgDQRuoRgsNLjRHwuavTAWalSIwHg1mRuWm94gh2CsF0tbhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOKrypyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F2E1C4CED2;
+	Wed, 11 Dec 2024 19:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733944535;
-	bh=QKMUe0IVB3GFMAU3+QDC3w0vBJ/jEc6BgiyRMSB0qfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lQTMVI2rRwoIO6NH1H10upzpK9DNOY2fT/CMvqf/e1gbjdh6sAodYj8SVe89W4W96
-	 v6+bFsFsqjQxjeFZZpBROMafItlwPcnHm1NXWJcTnVosdFMjKv8S9csN9ohUZpZuKw
-	 VfWENj6QpCtDbf7IyQKafm9k5AhYDqWzLY1RBJEZMdjoLF6ybace1JXFMeHBqZXFPG
-	 BetgmiGHq4KNEkH9umSYSat3dEVp3dl+lGri2a3KkwVF1obMxSwBSTvwjB0nN8zKrn
-	 JK49TQrInBE1R2fyc3xxgAMROgZojX040+FffswaBxBX6J1y854IZ9xGGO+vcZqSA0
-	 IEwD+Iv0B9P+g==
-Date: Wed, 11 Dec 2024 11:15:34 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, nick.forrington@arm.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] perf lock: Add percpu-rwsem for type filter
-Message-ID: <Z1nk1gxH9siszkwG@google.com>
-References: <20241210200847.1023139-1-ctshao@google.com>
- <20241210200847.1023139-2-ctshao@google.com>
+	s=k20201202; t=1733944545;
+	bh=TycHuwKOqMmwmgXtlpvbcP6Cd7VjA6M0ekrYMGO/yEk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HOKrypynG4At1cB14qOLL/okQZnfH9pGms2vTOQTsuWpmc3DqdEVOuG5Acsxv+faT
+	 j4Haut7R+d2d1Kz+QdZoJa3LEq4Qkwhg872K9rTqXE7LDiQPIB9Nw07pAdNEtBA4K1
+	 gF02VL4duNd5yPCfVqAVN1C5XyUSm8NI0hiIomaJNqEX+Y9S1G+gg8t+PrYesTkJDQ
+	 Df33m49aHVpa9hMpxr1GsrHr/8yhcOVraVRpWAxINJmSCWzezSVSVS+P9FPiteXI87
+	 3LNpR3cQd3i8rBHtUyAuaihf9RZfY5bJ822lk6zEUzHpNS0nlQEkoIsH9JAlEDebU4
+	 M+1PVhiLgEpMA==
+Date: Wed, 11 Dec 2024 19:15:36 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, Lothar Rubusch <l.rubusch@gmail.com>,
+ lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lkp@intel.com,
+ oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark
+ events
+Message-ID: <20241211191536.224c89e9@jic23-huawei>
+In-Reply-To: <dc914326-7eae-4e4a-8c93-ae1a7007bcc9@stanley.mountain>
+References: <20241205171343.308963-11-l.rubusch@gmail.com>
+	<dc914326-7eae-4e4a-8c93-ae1a7007bcc9@stanley.mountain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241210200847.1023139-2-ctshao@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 10, 2024 at 12:08:21PM -0800, Chun-Tse Shao wrote:
-> percpu-rwsem was missing in man page. And for backward compatibility,
-> replace `pcpu-sem` with `percpu-rwsem` before parsing lock name.
-> Tested `./perf lock con -ab -Y pcpu-sem` and `./perf lock con -ab -Y
-> percpu-rwsem`
+On Tue, 10 Dec 2024 11:47:37 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+
+> Hi Lothar,
 > 
-> Fixes: 4f701063bfa2 ("perf lock contention: Show lock type with address")
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+> kernel test robot noticed the following build warnings:
 
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+Ah. This was the report you were referring to I guess.  Just fix these in v6 version
+of this patch.
 
 Thanks,
-Namhyung
 
-> ---
->  tools/perf/Documentation/perf-lock.txt | 4 ++--
->  tools/perf/builtin-lock.c              | 3 +++
->  2 files changed, 5 insertions(+), 2 deletions(-)
+Jonathan
+
 > 
-> diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Documentation/perf-lock.txt
-> index 57a940399de0..d3793054f7d3 100644
-> --- a/tools/perf/Documentation/perf-lock.txt
-> +++ b/tools/perf/Documentation/perf-lock.txt
-> @@ -187,8 +187,8 @@ CONTENTION OPTIONS
->  	Show lock contention only for given lock types (comma separated list).
->  	Available values are:
->  	  semaphore, spinlock, rwlock, rwlock:R, rwlock:W, rwsem, rwsem:R, rwsem:W,
-> -	  rtmutex, rwlock-rt, rwlock-rt:R, rwlock-rt:W, pcpu-sem, pcpu-sem:R, pcpu-sem:W,
-> -	  mutex
-> +	  rtmutex, rwlock-rt, rwlock-rt:R, rwlock-rt:W, percpu-rwmem, pcpu-sem,
-> +	  pcpu-sem:R, pcpu-sem:W, mutex
->  
->  	Note that RW-variant of locks have :R and :W suffix.  Names without the
->  	suffix are shortcuts for the both variants.  Ex) rwsem = rwsem:R + rwsem:W.
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 7e36bbe3cb80..50630551adad 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -2365,7 +2365,10 @@ static int parse_lock_type(const struct option *opt __maybe_unused, const char *
->  		/*
->  		 * Otherwise `tok` is `name` in `lock_type_table`.
->  		 * Single lock name could contain multiple flags.
-> +		 * Replace alias `pcpu-sem` with actual name `percpu-rwsem.
->  		 */
-> +		if (!strcmp(tok, "pcpu-sem"))
-> +			tok = (char *)"percpu-rwsem";
->  		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
->  			if (!strcmp(lock_type_table[i].name, tok)) {
->  				if (add_lock_type(lock_type_table[i].flags)) {
-> -- 
-> 2.47.1.545.g3c1d2e2a6a-goog
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Lothar-Rubusch/iio-accel-adxl345-refrase-comment-on-probe/20241206-011802
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+> patch link:    https://lore.kernel.org/r/20241205171343.308963-11-l.rubusch%40gmail.com
+> patch subject: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark events
+> config: nios2-randconfig-r072-20241210 (https://download.01.org/0day-ci/archive/20241210/202412101132.Kj6R6i3h-lkp@intel.com/config)
+> compiler: nios2-linux-gcc (GCC) 14.2.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202412101132.Kj6R6i3h-lkp@intel.com/
+> 
+> smatch warnings:
+> drivers/iio/accel/adxl345_core.c:441 adxl345_event_handler() warn: unsigned 'int_stat' is never less than zero.
+> 
+> vim +/ret +321 drivers/iio/accel/adxl345_core.c
+> 
+> 55d2386488598bb Lothar Rubusch 2024-12-05  433  static irqreturn_t adxl345_event_handler(int irq, void *p)
+> 55d2386488598bb Lothar Rubusch 2024-12-05  434  {
+> 55d2386488598bb Lothar Rubusch 2024-12-05  435  	struct iio_dev *indio_dev = p;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  436  	struct adxl345_state *st = iio_priv(indio_dev);
+> 55d2386488598bb Lothar Rubusch 2024-12-05  437  	u8 int_stat;
+>                                                         ^^^^^^^^^^^
+> 
+> 55d2386488598bb Lothar Rubusch 2024-12-05  438  	int samples;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  439  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  440  	int_stat = adxl345_get_status(st);
+> 55d2386488598bb Lothar Rubusch 2024-12-05 @441  	if (int_stat < 0)
+>                                                             ^^^^^^^^^^^^
+> signedness bug
+> 
+> 55d2386488598bb Lothar Rubusch 2024-12-05  442  		return IRQ_NONE;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  443  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  444  	if (int_stat == 0x0)
+> 55d2386488598bb Lothar Rubusch 2024-12-05  445  		goto err;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  446  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  447  	if (int_stat & ADXL345_INT_OVERRUN)
+> 55d2386488598bb Lothar Rubusch 2024-12-05  448  		goto err;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  449  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  450  	if (int_stat & (ADXL345_INT_DATA_READY | ADXL345_INT_WATERMARK)) {
+> 55d2386488598bb Lothar Rubusch 2024-12-05  451  		samples = adxl345_get_samples(st);
+> 55d2386488598bb Lothar Rubusch 2024-12-05  452  		if (samples < 0)
+> 55d2386488598bb Lothar Rubusch 2024-12-05  453  			goto err;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  454  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  455  		if (adxl345_fifo_push(indio_dev, samples) < 0)
+> 55d2386488598bb Lothar Rubusch 2024-12-05  456  			goto err;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  457  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  458  	}
+> 55d2386488598bb Lothar Rubusch 2024-12-05  459  	return IRQ_HANDLED;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  460  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  461  err:
+> 55d2386488598bb Lothar Rubusch 2024-12-05  462  	adxl345_fifo_reset(st);
+> 55d2386488598bb Lothar Rubusch 2024-12-05  463  
+> 55d2386488598bb Lothar Rubusch 2024-12-05  464  	return IRQ_HANDLED;
+> 55d2386488598bb Lothar Rubusch 2024-12-05  465  }
+> 
+
 
