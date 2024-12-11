@@ -1,123 +1,83 @@
-Return-Path: <linux-kernel+bounces-441025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FC29EC843
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:04:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2368F9EC85D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:07:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0FBC2819A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1885518884CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3245240368;
-	Wed, 11 Dec 2024 09:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BC81FA8FB;
+	Wed, 11 Dec 2024 09:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="P9Awzop1"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlcB/ZRc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB2222D77
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AC51FA8C9;
+	Wed, 11 Dec 2024 09:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907859; cv=none; b=mwlV86VdFg75WCL5N9Vk9cMB3hBt53Gcl9poocMn1MXFW6XH8tR8St0GJRHydyAeir0mIW8WcTOzFUyFNkbvCJwClmxIbr+4RXxmatd3rlJL1cjW1tV+eQZ9OBdRwpG5KMogfg6teosIGe3wfQuRViteR1WxVxcLuJOJJ+75U9k=
+	t=1733908022; cv=none; b=Vj4pCJH2N1reUg8NzvyPRWFzYNicwjEpTCn3pW68M6393xtInwFAjws6baWDGabSymlAIGkAjoaIrOQaYpWFVhONlsodHH+qCJ0nK0AefdPh6jpChUB01LSUJxirVz5BTYrUy43/pGeKpwJUDMCARtlyi0TQQrj6YZkyKUaIhDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907859; c=relaxed/simple;
-	bh=GTn8h1cILJZxRD/WPjB/UJpuuiM1eVhQlkQeJgDh5NM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=apiKQCXfXlam3l+0e3PVmlhCaflYeYmBsbksL+WhQOr9S2hEu4hrllUhSBJlhXBC1kyOfhcCsJykAPSqcxKj6aeSlOb3u9LQNUtg3P4mJ26QVNrpNUiqAYI541iJF+OXNanaApK8zbf+q2KXA+5lMinTdymE8HO+isf97RNYVyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=P9Awzop1; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1733907844;
-	bh=cqjMnbVmK1LhKXPepmKCsyi8lbW9EtlYn+9I8xwf1ms=;
-	h=From:To:Cc:Subject:Date;
-	b=P9Awzop1+LURX6XLI5RG5393fB2fHo26kgS/KTf1kQ2RiiqC99iZp3D/JClSgPger
-	 V1z6jnpHaCNNOT6iC2BIl7HtqtmUJALGvY0KJ69OasEqakBq+NnbWlhtc4NaohUoX2
-	 o3vHucvLMWk+BmeYHlFxM20Z9OGXhpIsgCP+CgrA=
-Received: from yangang-TM1701.. ([223.70.159.239])
-	by newxmesmtplogicsvrszc25-0.qq.com (NewEsmtp) with SMTP
-	id 1011BCCC; Wed, 11 Dec 2024 17:04:01 +0800
-X-QQ-mid: xmsmtpt1733907841tzs7a4spc
-Message-ID: <tencent_0FE3ED0442E69C9D86C0AEEE338A49F90305@qq.com>
-X-QQ-XMAILINFO: Ni8Yhdca2hoVflPFEakEGBA6MZIsGTtyedeHR6Bjr8xZsS8Ftp/KmRfYPTocQY
-	 dAjPEpChLf3eygMKsdRHTNa0mzWUI3OhiqBBod/+j4YIA0RHYhftZwzlj7KAeQDhNZyZcRXu4nfe
-	 4ASDtftpblDf9yDGmlvX/6FKHe8SlQZOp+UU6eqoUDpbH/OAUix9i57OXrJgFdXoMUFh/2lZkQ9y
-	 8VdHPLbF3S9fOMhOptuF3zGHP/m2Uz1tD1a/eGJ02+jY8tMqJ7AOx7GU85KPUiF/3+oJx9HXCmCT
-	 LUM4ckSmOwMSY06xK7Cn+puH27Mb45yH0O9X7mInLMUsByP9TN6wIQrg3gG7N/eMq0F6NPp2U9Iw
-	 oQtk/De7aQweLL0lrdU4A73Y5YED5mhV9KlKtam+DuqAzs3N7sClRuVD6f2gVymjoWBzmvhIp8hM
-	 Wv2JfINXg1Ynf7/61ZW9GxgyZUvv1hbL0VJzqVv97/m7y50SUrymPRCToCei2cgqwIUu39QvIXoI
-	 vkMhp+7dVKWTqK8gi9guo32FSEM/jF1HIVUOyQKV/B4eplxThvIm8e6xIXIykZbwqoOhZwiwqfG8
-	 3Ye268FLWtygR39u3NwFzWodk88in9sGFDeaLtheuC6URKLhivRDiivAsFFN+JUfT0SXD4MlXkNG
-	 u6QPt388m0N60YzpDJ9OOC3v8fI0C6aPr6Lt/PNYOMsh8ztTcQRYemNemI8dxfCu7K4fA2fYQz2R
-	 YqGYqp8dzKzIuFnji5Img0JAuuTGoFSPRyQf0+Nhu6on8pBr0Zfqn1o3dRcVWNTOQOyvURAWYW/C
-	 +YNdWAFv/NuTFISRGJpCeZDujOqZte6FQy8tffkYvB9cfJbI0msicBqzVoTnuaSkwFYYBrSxG3d3
-	 NmmudrE/Oi9Ea6iB/rlpePhVSlF9eHQU/LLCwBBwoUFIjtMO/zWrl/yHwHTpq4tsKK0+wZC8lyXB
-	 p64OirwF4=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Gang Yan <gang_yan@foxmail.com>
-To: Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Gang Yan <yangang@kylinos.cn>,
-	netdev@vger.kernel.org,
-	mptcp@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [mptcp-next] mptcp: fix invalid addr occupy 'add_addr_accepted'
-Date: Wed, 11 Dec 2024 17:03:58 +0800
-X-OQ-MSGID: <20241211090400.4646-1-gang_yan@foxmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733908022; c=relaxed/simple;
+	bh=DiGUbD7xWdGFywNvLEFW1NGBQYsE/SozjDV/iopg888=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTZz0eQIv1fHEAv1zIxRoxLG1CBkDIQX47mznfBGfdZgdootns3qecGIbAsr3Z0/zQNUhJA5Yxuv9pxAu0f/VcNeTc4zwxnYz4+fH3ZWD447SxSZB+y02zM9DPpuLrISFJ2/KV/ftUn6Vz0oamaUxIEeYZ1pbkMc07LpE2JCsj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlcB/ZRc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C1DC4CEE0;
+	Wed, 11 Dec 2024 09:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733908021;
+	bh=DiGUbD7xWdGFywNvLEFW1NGBQYsE/SozjDV/iopg888=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SlcB/ZRcZbpjLdDUebZxf+cmjaVc5bPwsGUhWlfA8XJjphUyy8Z40dBOcAg5K/oDL
+	 o5aRaOZ0ADHms6HUUgw52GuUdI2XOFk5fx/Emkfb0a1CwbDXyWNOixDTW3vMz/5P0d
+	 MUCoHM+30GPRPbGsDTVH9K3QOJ0PwiKBqp/907t6Ovq9HUDdMSLCbC5VHKGJ5rh99A
+	 BeQrteuMkW9VNzRzCM7lA7qBUa1DzBccgNW+AxTAMmQXgFS/27zrcHZYHpboy4JPf7
+	 MDyVKEHjmlzeEsBrIesnDGZ2kaCTF0Vs5OZgQhGXy7F/AVrd1WumvmiN27zXzPA+4g
+	 KoTEB6DENN3Zw==
+Date: Wed, 11 Dec 2024 10:06:58 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, festevam@gmail.com, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, frank.li@nxp.com, aisheng.dong@nxp.com, daniel.baluta@gmail.com, 
+	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, iuliana.prodan@nxp.com, 
+	a.fatoum@pengutronix.de
+Subject: Re: [PATCH v3 5/6] arm64: dts: imx8mp: Add fsl,dsp-ctrl property for
+ dsp
+Message-ID: <l3z3mu5inmfc23v4mymtcb4gnzic5zupqfpcuk7vqeweluy5jn@c2b5ex4lkdgc>
+References: <20241210125338.104959-1-daniel.baluta@nxp.com>
+ <20241210125338.104959-6-daniel.baluta@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241210125338.104959-6-daniel.baluta@nxp.com>
 
-From: Gang Yan <yangang@kylinos.cn>
+On Tue, Dec 10, 2024 at 02:53:37PM +0200, Daniel Baluta wrote:
+> Audio block control contains a set of registers some of them used for
+> DSP configuration.
+> 
+> Drivers (rproc, SOF) are using fsl,dsp-ctrl property to access those
+> registers in order to control the operations of the DSP (e.g for
+> start, reset, etc).
 
-This patch fixes an issue where an invalid address is announce as a
-signal, the 'add_addr_accepted' is incorrectly added several times
-when 'retransmit ADD_ADDR'. So we need to update this variable
-when the connection is removed from conn_list by mptcp_worker. So that
-the available address can be added in time.
+This should have been implemented as reset controller, not syscon. It's
+really poor choice to call everything syscon. It does not scale, does
+not provide you runtime PM or probe ordering (device links). Quick look
+at your drivers suggest that you have exacvtly that problems.
 
-In fact, the 'add_addr_accepted' is only declined when 'RM_ADDR'
-by now, so when subflows are getting closed from the other peer,
-the new signal is not accepted as well.
-
-We noticed there have exist some problems related to this.I think
-this patch effectively resolves them.
-
-Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/498
-Signed-off-by: Gang Yan <yangang@kylinos.cn>
----
- net/mptcp/protocol.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-index 21bc3586c33e..f99dddca859d 100644
---- a/net/mptcp/protocol.c
-+++ b/net/mptcp/protocol.c
-@@ -2569,6 +2569,10 @@ static void __mptcp_close_subflow(struct sock *sk)
- 			continue;
- 
- 		mptcp_close_ssk(sk, ssk, subflow);
-+
-+		if (READ_ONCE(subflow->remote_id) &&
-+		    --msk->pm.add_addr_accepted < mptcp_pm_get_add_addr_accept_max(msk))
-+			WRITE_ONCE(msk->pm.accept_addr, true);
- 	}
- 
- }
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
