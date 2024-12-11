@@ -1,146 +1,87 @@
-Return-Path: <linux-kernel+bounces-441374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4ED59ECD62
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:38:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0061632F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:37:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18950238E0B;
-	Wed, 11 Dec 2024 13:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwKPDwJL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9A09ECD44
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:34:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7992368EF;
-	Wed, 11 Dec 2024 13:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5EF281C58
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:34:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4142230270;
+	Wed, 11 Dec 2024 13:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ron5fLPA"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1098F23FD1E;
+	Wed, 11 Dec 2024 13:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733924179; cv=none; b=msmbkLgBoC2r23+t78qnN5zKEzPQPHI+/vK/BsnIJkR6aAmhORhE4XZTkgCzWIfF0a/xdQ2GxRoC/FzwFkfxA3XK8orivdHZwViSRvjFeaTBviGroLm5TrTc3LQbqvZtDd80LEPSp7jP4OMLrloMVtQoz7KP+KJmAdBVzkIPSQA=
+	t=1733924057; cv=none; b=XMqsITALsiZfx0TG79NqPj6AYAlwSDs3MdLOnlS45j/lnn/r+oXmpPBlp5pZSJvYRJ3hDpJE3LGgkbkoBUVduIH6DTdPLo+xnW1l/OsZKzIZ8VYzARNYw5h//WOLe9JQ9TgzM5fmPBqrBwX/RdaZn5uSMMTmzeDGmeAuMbEkIi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733924179; c=relaxed/simple;
-	bh=ztxN7nzwUWr4QzxZKHnancBay3JT0i2VtQ+cjXHy2tA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mPp0vLg62PbGcL9lJT0z6bTjCx0W+J312p6o9FXJuvSZWnlbJ0A+Qr7KOqAwqLLk7rg9o3YKw19tLkddBgvr79EkLgJLBAUd5ReiGsNoplBaxSNAvEFnVFHD8/z3L6Pub6aTyXoD79H97AbP4UmU94LXZSaLLp+e3vx4Clw2vvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwKPDwJL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C6EC4CED2;
-	Wed, 11 Dec 2024 13:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733924178;
-	bh=ztxN7nzwUWr4QzxZKHnancBay3JT0i2VtQ+cjXHy2tA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iwKPDwJLQAt1JS8a6Un25ef2oMlp4ycTW4moj9ToixK1Zn4JuGU0BlhHonj9Kld9Y
-	 4Qd/ZDT6Da8naRKdArvgyKBJe/1ksjdNtmwNt6uEnIEw2rr/clVAA4/wFV3DeRWpaH
-	 L7I+EnBRE4qw9UCkvwonSBcFSOyA2eFmV3S0dHhVMIv+2m8MUSkPSKinG405/t+iRv
-	 ea3LHi2HH36pNXsIHZoqECkL5lZ7XMeMp7A7x6J9VHsRiTctZj7pnxwaiui00eMCby
-	 MDpsYkiXfFYUV5+2OihRXPZm9weT9H1bQ5dHJ+s/CkgvNtRqGv0WHyVXVxmAVrBXC/
-	 h6CmdnrEpxFrg==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH bpf-next 12/13] selftests/bpf: Add uprobe syscall sigill signal test
-Date: Wed, 11 Dec 2024 14:34:01 +0100
-Message-ID: <20241211133403.208920-13-jolsa@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241211133403.208920-1-jolsa@kernel.org>
-References: <20241211133403.208920-1-jolsa@kernel.org>
+	s=arc-20240116; t=1733924057; c=relaxed/simple;
+	bh=WszZcEp+hm9oobZQ0cpYfNt6xlUzCkv3qvAcbh8jlQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkFYOTVNfQd85I6+BsVbA4gG8rl5WHsfB/EIPZqfW+dX5C+n1O7bQsU1Jn3Bef4+5FQdKKX73K0WMi1b/4+7aNIfBzgPOg3HyiDP93VnFzbJFFNLrWisMlkRgaZl47wlkbleeSSSXXnb1zxcMgh1ku9xAaFU4cD9edtM0gJ1XUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ron5fLPA; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=sDFfLRnwNPdpPqXLbuUXlu1XVZL5ZhlVr6oeF4VaGas=; b=ron5fLPA1q7RbMNK3S0gPcITab
+	PTQFbtHPTHB4du9033xdgWbr+uxGrDdCceb6LK/OyZZkfNmehh4eSoWBarXEOPwmgSMpv8EzI0irJ
+	0M0flG2utvVjJLaQGQn3smP6aV8bwqPgCIw7IXtdeNdBtrPqHud5Fv58iJGGNaaZlTm8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tLMqo-0006Dq-Fk; Wed, 11 Dec 2024 14:34:02 +0100
+Date: Wed, 11 Dec 2024 14:34:02 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Robert Hodaszi <robert.hodaszi@digi.com>
+Cc: netdev@vger.kernel.org, vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
+	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: tag_ocelot_8021q: fix broken reception
+Message-ID: <fe505333-7579-4470-852d-6fddd20197ab@lunn.ch>
+References: <20241211124657.1357330-1-robert.hodaszi@digi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211124657.1357330-1-robert.hodaszi@digi.com>
 
-Make sure that calling uprobe syscall from outside uprobe trampoline
-results in sigill signal.
+On Wed, Dec 11, 2024 at 01:46:56PM +0100, Robert Hodaszi wrote:
+> Commit dcfe7673787b4bfea2c213df443d312aa754757b ("net: dsa: tag_sja1105:
+> absorb logic for not overwriting precise info into dsa_8021q_rcv()")
+> added support to let the DSA switch driver set source_port and
+> switch_id. tag_8021q's logic overrides the previously set source_port
+> and switch_id only if they are marked as "invalid" (-1). sja1105 and
+> vsc73xx drivers are doing that properly, but ocelot_8021q driver doesn't
+> initialize those variables. That causes dsa_8021q_rcv() doesn't set
+> them, and they remain unassigned.
+> 
+> Initialize them as invalid to so dsa_8021q_rcv() can return with the
+> proper values.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- .../selftests/bpf/prog_tests/uprobe_syscall.c | 41 +++++++++++++++++++
- 1 file changed, 41 insertions(+)
+Hi Robert
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-index eacd14db8f8d..12631abc7017 100644
---- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-+++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-@@ -607,6 +607,40 @@ static void test_uprobe_race(void)
- 	for (i = 0; i < nr; i++)
- 		pthread_join(threads[i], NULL);
- }
-+
-+#ifndef __NR_uprobe
-+#define __NR_uprobe 336
-+#endif
-+
-+static void test_uprobe_sigill(void)
-+{
-+	int status, err, pid;
-+
-+	pid = fork();
-+	if (!ASSERT_GE(pid, 0, "fork"))
-+		return;
-+	/* child */
-+	if (pid == 0) {
-+		asm volatile (
-+			"pushq %rax\n"
-+			"pushq %rcx\n"
-+			"pushq %r11\n"
-+			"movq $" __stringify(__NR_uprobe) ", %rax\n"
-+			"syscall\n"
-+			"popq %r11\n"
-+			"popq %rcx\n"
-+			"retq\n"
-+		);
-+		exit(0);
-+	}
-+
-+	err = waitpid(pid, &status, 0);
-+	ASSERT_EQ(err, pid, "waitpid");
-+
-+	/* verify the child got killed with SIGILL */
-+	ASSERT_EQ(WIFSIGNALED(status), 1, "WIFSIGNALED");
-+	ASSERT_EQ(WTERMSIG(status), SIGILL, "WTERMSIG");
-+}
- #else
- static void test_uretprobe_regs_equal(void)
- {
-@@ -647,6 +681,11 @@ static void test_uprobe_race(void)
- {
- 	test__skip();
- }
-+
-+static void test_uprobe_sigill(void)
-+{
-+	test__skip();
-+}
- #endif
- 
- void test_uprobe_syscall(void)
-@@ -667,4 +706,6 @@ void test_uprobe_syscall(void)
- 		test_uprobe_usdt();
- 	if (test__start_subtest("uprobe_race"))
- 		test_uprobe_race();
-+	if (test__start_subtest("uprobe_sigill"))
-+		test_uprobe_sigill();
- }
--- 
-2.47.0
+Since this is a fix, it needs a Fixes: tag. Please also base it on net.
 
+There is more here:
+
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+
+	Andrew
 
