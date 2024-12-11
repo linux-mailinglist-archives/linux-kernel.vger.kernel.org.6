@@ -1,362 +1,142 @@
-Return-Path: <linux-kernel+bounces-441768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFFE9ED3DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:43:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21FF9ED3F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:46:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD3B1610B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:43:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AE4C282985
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7921FF1B2;
-	Wed, 11 Dec 2024 17:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF371FF5F4;
+	Wed, 11 Dec 2024 17:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqdxFQqI"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiAKsZet"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C901D6DA4
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4DD1DE880;
+	Wed, 11 Dec 2024 17:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733939012; cv=none; b=HEqW7BkOrJCRvGzayJT8JrFPiSTf9xBPI/ll6REL30l3JyrxUwSS6DEiDBUQZEtMBgPJcc5rAdHTehDFLgtQKAvxkHL4hE70OqQHpjrAqBIM0SvbWc2avM1fDJ5uhJQidQ5FzTQJ/2gql2k7cawIWHaKSIZLGKeKJjlXTvBihzY=
+	t=1733939175; cv=none; b=DKQ32fEbgbkkM7ZrPgy23iew7MyFaH/bfKq290YbposrFS3553lhHRlpl07FX3hgpyRaI0irXrLqx8VEjI0hweIxbvoTRQ6jljKnTBLJffpui+GQ10P6WyAM34vkUOn9voSfYLeWT5yCgYpZnWpWm0oKvHpZIu/vjUwqsCRl7w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733939012; c=relaxed/simple;
-	bh=cEr/qqQUgmVCu78IO95yZkuBiVTRwRaaAfVivRCrUIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d9KBRqDgBfDYV8cP7gvcL96MMj7wH+RGCb+79tsHCTPmCqjqLe7LxvmuVdLfI4YGaJRSQukBEwuIVhhUwrPpNdf7yOfF98wj1HJLZ2EQr7g4Z9V7NdoHDHFseeupCHmfS1YffidSvBlP6DZ4S9+SW45VWPdHqlKTVR1MdrPiZUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqdxFQqI; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-728d1a2f180so817137b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:43:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733939010; x=1734543810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VKfwGZf3t30W3AvAZx55H+w/zcQCcR/FMX1vKa9UJjo=;
-        b=CqdxFQqIn/LGnewyg+c5eY50KgruI7arINvdksQEBBv1R5FIDHYtWylofr+1YofxoB
-         Rk/kwTGPWYXTrPsF+z5rEsNhqyP+ozk4KAzPWtPR8eWq83AGaUpFUPY0z4S/Du4f9TYK
-         tN53bEKZMsm3LP4K2L1aeV74EZipzDFNzZfHmYrhuZ38gWs1EL5uKC0Q2UJUg8gw8UDy
-         LpqsYrQSGVdjbC7oq3DVKmGQF2H9XzHA2zeZ1jiv8dnZBGRAWIi+qChVpx9osBrzitwG
-         tCIZ+C66Hm/vwYdb6D5XFp0KIBBBFa8VgQyvp1w/SDBorhpcelV0D3pRlqbr2Lq8u6yu
-         as3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733939010; x=1734543810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VKfwGZf3t30W3AvAZx55H+w/zcQCcR/FMX1vKa9UJjo=;
-        b=mH3ZFRolZLRDr719FxmtVH8JRjNY+j1PYjK3oeyoWPjtZm+rfhlEA5RxHKNf7v9Tzl
-         OLV7K6g6WOWbm0FSraTGDXsGfE0WXMHzaThmBxL8KDKGGydg1K8E/U8oeiH5UDszqnUP
-         CG444uKtlys7BvCQd7Lc0T4IJmLm7uNkMyKWwKdR+K3KqQfLBsVmQ9IHepWXcxZwNMiH
-         alAzAuFu578rWmEvJmeaqFlD8mWBMmHhQP/PslXDM10dd2QkqmUon3rHApN4K49VrNF/
-         sViNbRwRn4A5a6ZTMhZXPn9pZMhYmphjYG03YhA6LwygE6LAoCtB9vrPzsuDOUW+wEA5
-         0dNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBGQGbA59pwYE9Im4EAGSaA54G97AydalPFU1xn1wd5XEt/T0heUrN8ZKYiTleuWLENPopOZA/SGlo7Dk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNXwOLxHArVvkW4hDVtHCbnmaLm/cyTXpnRwoJLWMvor1rfoc9
-	6NZm4dxnrRKrGex3X5yAchXzov/6BsXxZkN2LRwZoOW8vut+Wag/
-X-Gm-Gg: ASbGncuEmE0c05RCDz5Xr7rMVEO9YrR2A4MI4RqZColzuIj8g5x6CgZ0MkqlsBk3Sy1
-	TUfPFikc93K+yf2IcLuEllfAngKE2mo1K6+d2cxqJ+/I4+yallLG4Xo8cx0QDzrPB9vfung2Ufi
-	TaowQiakTDs+XrJ8kqXtNTEFMm+E1W5FGp1eWOrHKLaxAz2kQ/ICsLtJkJPKkSZJzKZtvA8oiJ/
-	1IjJDJs9UKy+4y2bRJpkmuwgiGFbfb4yNqvntg+80oug+tFQEFy5Q==
-X-Google-Smtp-Source: AGHT+IHLIvTe9+eBtbDAg/Pj6Nw07rvJMNAIkxKGfuZfZx4pXL4Mq7QZbk53hptHUp2Ju3tnmIuTdw==
-X-Received: by 2002:a05:6a00:852:b0:71e:60d9:910d with SMTP id d2e1a72fcca58-728fac7bf12mr81996b3a.6.1733939009845;
-        Wed, 11 Dec 2024 09:43:29 -0800 (PST)
-Received: from localhost ([216.228.125.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725ede70e4dsm5708530b3a.93.2024.12.11.09.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 09:43:29 -0800 (PST)
-Date: Wed, 11 Dec 2024 09:43:26 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] sched_ext: Introduce NUMA aware idle cpu kfunc
- helpers
-Message-ID: <Z1nPPhe_83lBTna4@yury-ThinkPad>
-References: <20241209104632.718085-1-arighi@nvidia.com>
- <20241209104632.718085-5-arighi@nvidia.com>
+	s=arc-20240116; t=1733939175; c=relaxed/simple;
+	bh=vOVt9wIICb4stJ86oXlAZKMSYQkw7EDhkwpdVdVl2AY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ERt9TdatKQwRPrdNATLq6O5AKfxilzqk+KmUfNl12PuD4ULvfMSGKoZbJFn90bAI1gB6x/vIxxpwcTM5wz+XbaoPgyP0OGuhP/cQ6ycNZD5CnCUybaURBAElEeNMYWPwzlrM9mWLEIBEw90PbwkV1L+uOOrOwmx6h1sb1NMVUeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SiAKsZet; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23BF1C4CED2;
+	Wed, 11 Dec 2024 17:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733939175;
+	bh=vOVt9wIICb4stJ86oXlAZKMSYQkw7EDhkwpdVdVl2AY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SiAKsZetgCXQ5lTUnNEl+W5N8Nj8MZABFwAJcICPIpy8XTo0mT7K5XK3HkCZY1XVs
+	 Lr/rH8CTvmoGmUcgv528aOdr5gyWeacRr6KwVn8VElZz48MpuAj+c3A73RRpQ0D6rM
+	 qLfah4JEaxW3+FPEFZleXd1RZQdIv/mwsAQob8KaRdyyELb0+ggro3L72VXUw3Hzq2
+	 qURHfIpkVCZOO5nT2+MpQ8v/FX5jGtXxY5LJCscpA+Y+Zrd1Q/3CP0Y5vEWxzTnx0i
+	 mUW4l/8VZDCSnKIzFCUuqhUUBh9B5XWGg6MF4Cu3DOe6jnO3RsdXTfuHqfuXHTNi5K
+	 os89zKR5XwUIw==
+From: Mark Brown <broonie@kernel.org>
+To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+ lgirdwood@gmail.com, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+ perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+ Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: (subset) [PATCH v3 00/25] Add audio support for the Renesas
+ RZ/G3S SoC
+Message-Id: <173393917085.1376442.1457625888835465190.b4-ty@kernel.org>
+Date: Wed, 11 Dec 2024 17:46:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209104632.718085-5-arighi@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On Mon, Dec 09, 2024 at 11:40:58AM +0100, Andrea Righi wrote:
-> Add the following kfunc's to provide scx schedulers direct access to
-> per-node idle cpumasks information:
+On Wed, 13 Nov 2024 15:35:15 +0200, Claudiu wrote:
+> Series enables the audio support for the Renesas RZ/G3S
+> SoC along with runtime PM and suspend to RAM.
 > 
->  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
->  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
->  s32 scx_bpf_pick_idle_cpu_node(int node,
->                                 const cpumask_t *cpus_allowed, u64 flags)
->  int scx_bpf_cpu_to_node(s32 cpu)
+> Patches:
+> -    01/25 - add clock, reset and power domain support
+> - 02-04/25 - update versaclock3 clock generator driver to support the
+>              5L35023 hardware variant; versaclock3 provides clocks for
+>              the audio devices (SSIF, DA7212 codec)
+> -    05/25 - add pin control support for audio
+> - 06-20/25 - add SSIF support for the RZ/G3S SoC; fixes and cleanups
+>              were also included
+> - 21-25/25 - add device tree support
 > 
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> ---
->  kernel/sched/ext.c                       | 96 +++++++++++++++++++++++-
->  tools/sched_ext/include/scx/common.bpf.h |  4 +
->  tools/sched_ext/include/scx/compat.bpf.h | 19 +++++
->  3 files changed, 117 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index d0d57323bcfc..ea7cc481782c 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -433,6 +433,7 @@ struct sched_ext_ops {
->  	 * - scx_bpf_select_cpu_dfl()
->  	 * - scx_bpf_test_and_clear_cpu_idle()
->  	 * - scx_bpf_pick_idle_cpu()
-> +	 * - scx_bpf_pick_idle_cpu_node()
->  	 *
->  	 * The user also must implement ops.select_cpu() as the default
->  	 * implementation relies on scx_bpf_select_cpu_dfl().
-> @@ -955,6 +956,8 @@ static struct cpumask *get_idle_cpumask_node(int node)
->  	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
->  		return idle_masks[0]->cpu;
->  
-> +	if (node < 0 || node >= num_possible_nodes())
-> +		return NULL;
+> [...]
 
-1. This sanity should go before the check above.
-2. In-kernel users don't need to do sanity checks. BPF users should,
-   but for them you need to move it in BPF wrapper.
-3. -1 is a valid parameter, means NUMA_NO_NODE. 
+Applied to
 
->  	return idle_masks[node]->cpu;
->  }
->  
-> @@ -963,6 +966,8 @@ static struct cpumask *get_idle_smtmask_node(int node)
->  	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
->  		return idle_masks[0]->smt;
->  
-> +	if (node < 0 || node >= num_possible_nodes())
-> +		return NULL;
->  	return idle_masks[node]->smt;
->  }
->  
-> @@ -7469,6 +7474,16 @@ __bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
->  	return nr_cpu_ids;
->  }
->  
-> +/**
-> + * scx_bpf_cpu_to_node - Return the NUMA node the given @cpu belongs to
-> + */
-> +__bpf_kfunc int scx_bpf_cpu_to_node(s32 cpu)
-> +{
-> +	if (cpu < 0 || cpu >= nr_cpu_ids)
-> +		return -EINVAL;
-> +	return cpu_to_node(cpu);
-> +}
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-I believe this wrapper should be declared somewhere in
-kernel/sched/topology.c, and better be a separate patch.
+Thanks!
 
-> +
->  /**
->   * scx_bpf_get_possible_cpumask - Get a referenced kptr to cpu_possible_mask
->   */
-> @@ -7499,11 +7514,32 @@ __bpf_kfunc void scx_bpf_put_cpumask(const struct cpumask *cpumask)
->  	 */
->  }
->  
-> +/**
-> + * scx_bpf_get_idle_cpumask_node - Get a referenced kptr to the idle-tracking
-> + * per-CPU cpumask of a target NUMA node.
-> + *
-> + * Returns an empty cpumask if idle tracking is not enabled, if @node is not
-> + * valid, or running on a UP kernel.
-> + */
-> +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
-> +{
-> +	if (!static_branch_likely(&scx_builtin_idle_enabled)) {
-> +		scx_ops_error("built-in idle tracking is disabled");
-> +		return cpu_none_mask;
-> +	}
-> +	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
-> +		scx_ops_error("per-node idle tracking is disabled");
-> +		return cpu_none_mask;
-> +	}
+[06/25] ASoC: renesas: rz-ssi: Terminate all the DMA transactions
+        commit: 541011dc2d7c4c82523706f726f422a5e23cc86f
+[07/25] ASoC: renesas: rz-ssi: Use only the proper amount of dividers
+        commit: 55c209cd4318c701e6e88e0b2512a0f12dd02a7d
+[08/25] ASoC: renesas: rz-ssi: Fix typo on SSI_RATES macro comment
+        commit: 100c6b22d6c70adabdf45dcb346d7d853bff6a30
+[09/25] ASoC: renesas: rz-ssi: Remove pdev member of struct rz_ssi_priv
+        commit: a73710a25808a585a2bf0a8325eb16fd6a2f370c
+[10/25] ASoC: renesas: rz-ssi: Remove the rz_ssi_get_dai() function
+        commit: dec61e16e72db196e8dc1daf7f7022fd98e6d921
+[11/25] ASoC: renesas: rz-ssi: Remove the first argument of rz_ssi_stream_is_play()
+        commit: 109e60866f11c7db8f720f01b0bda3105c47b463
+[12/25] ASoC: renesas: rz-ssi: Use readl_poll_timeout_atomic()
+        commit: 4bf77dfa3308b7cfda29d9c4ead1dc32f1ceefa9
+[13/25] ASoC: renesas: rz-ssi: Use temporary variable for struct device
+        commit: 403366d2a43eb7c911c6cddf1d7882e429d1212d
+[14/25] ASoC: renesas: rz-ssi: Use goto label names that specify their actions
+        commit: f0c155c9da7536ab33687b5207eb21e704122a56
+[15/25] ASoC: renesas: rz-ssi: Rely on the ASoC subsystem to runtime resume/suspend the SSI
+        commit: e8fcf25f562891d5c0734d4f49c44bb6aa72bc15
+[16/25] ASoC: renesas: rz-ssi: Enable runtime PM autosuspend support
+        commit: cf3a79e4f826fc680fd7bfef7c427e2cc6023bc3
+[17/25] ASoC: renesas: rz-ssi: Add runtime PM support
+        commit: 3888672495fcaee98b90196c0a899b1c2eb57d5b
+[18/25] ASoC: renesas: rz-ssi: Issue software reset in hw_params API
+        commit: fc2a31affb22394d1d74d3ecc86b5c68da33d52a
+[19/25] ASoC: renesas: rz-ssi: Add suspend to RAM support
+        commit: 1fc778f7c833aeb13041adc06f016f1a2dff7350
+[20/25] ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
+        commit: 699a9733a354d74482ae4d4304acdbb0c0318a23
 
-Nub question: is it possible that scx_builtin_idle_per_node is enable,
-but scx_builtin_idle_enabled not? From my naive perspective, we can't
-enable per-node idle masks without enabling general idle masks. Or I
-mislead it?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> +
-> +	return get_idle_cpumask_node(node) ? : cpu_none_mask;
-> +}
->  /**
->   * scx_bpf_get_idle_cpumask - Get a referenced kptr to the idle-tracking
->   * per-CPU cpumask of the current NUMA node.
->   *
-> - * Returns NULL if idle tracking is not enabled, or running on a UP kernel.
-> + * Returns an emtpy cpumask if idle tracking is not enabled, or running on a UP
-> + * kernel.
->   */
->  __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(void)
->  {
-> @@ -7515,12 +7551,35 @@ __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(void)
->  	return get_curr_idle_cpumask();
->  }
->  
-> +/**
-> + * scx_bpf_get_idle_smtmask_node - Get a referenced kptr to the idle-tracking,
-> + * per-physical-core cpumask of a target NUMA node. Can be used to determine
-> + * if an entire physical core is free.
-> + *
-> + * Returns an empty cpumask if idle tracking is not enabled, if @node is not
-> + * valid, or running on a UP kernel.
-> + */
-> +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
-> +{
-> +	if (!static_branch_likely(&scx_builtin_idle_enabled)) {
-> +		scx_ops_error("built-in idle tracking is disabled");
-> +		return cpu_none_mask;
-> +	}
-> +	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
-> +		scx_ops_error("per-node idle tracking is disabled");
-> +		return cpu_none_mask;
-> +	}
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Can you add vertical spacing between blocks?
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Also, because you use this construction more than once, I think it
-makes sense to make it a helper.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-> +
-> +	return get_idle_smtmask_node(node) ? : cpu_none_mask;
-> +}
-> +
->  /**
->   * scx_bpf_get_idle_smtmask - Get a referenced kptr to the idle-tracking,
->   * per-physical-core cpumask of the current NUMA node. Can be used to determine
->   * if an entire physical core is free.
->   *
-> - * Returns NULL if idle tracking is not enabled, or running on a UP kernel.
-> + * Returns an empty cumask if idle tracking is not enabled, or running on a UP
-> + * kernel.
->   */
->  __bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask(void)
->  {
-> @@ -7569,6 +7628,35 @@ __bpf_kfunc bool scx_bpf_test_and_clear_cpu_idle(s32 cpu)
->  		return false;
->  }
->  
-> +/**
-> + * scx_bpf_pick_idle_cpu_node - Pick and claim an idle cpu from a NUMA node
-> + * @node: target NUMA node
-> + * @cpus_allowed: Allowed cpumask
-> + * @flags: %SCX_PICK_IDLE_CPU_* flags
-> + *
-> + * Pick and claim an idle cpu in @cpus_allowed from the NUMA node @node.
-> + * Returns the picked idle cpu number on success. -%EBUSY if no matching cpu
-> + * was found.
-> + *
-> + * Unavailable if ops.update_idle() is implemented and
-> + * %SCX_OPS_KEEP_BUILTIN_IDLE is not set or if %SCX_OPS_KEEP_BUILTIN_IDLE is
-> + * not set.
-> + */
-> +__bpf_kfunc s32 scx_bpf_pick_idle_cpu_node(int node, const struct cpumask *cpus_allowed,
-> +				      u64 flags)
-> +{
+Thanks,
+Mark
 
-Sanity checks here?
-
-> +	if (!static_branch_likely(&scx_builtin_idle_enabled)) {
-> +		scx_ops_error("built-in idle tracking is disabled");
-> +		return -EBUSY;
-> +	}
-> +	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
-> +		scx_ops_error("per-node idle tracking is disabled");
-> +		return -EBUSY;
-> +	}
-> +
-> +	return scx_pick_idle_cpu_from_node(node, cpus_allowed, flags);
-> +}
-> +
->  /**
->   * scx_bpf_pick_idle_cpu - Pick and claim an idle cpu
->   * @cpus_allowed: Allowed cpumask
-> @@ -7705,14 +7793,18 @@ BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap)
->  BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur)
->  BTF_ID_FLAGS(func, scx_bpf_cpuperf_set)
->  BTF_ID_FLAGS(func, scx_bpf_nr_cpu_ids)
-> +BTF_ID_FLAGS(func, scx_bpf_cpu_to_node)
->  BTF_ID_FLAGS(func, scx_bpf_get_possible_cpumask, KF_ACQUIRE)
->  BTF_ID_FLAGS(func, scx_bpf_get_online_cpumask, KF_ACQUIRE)
->  BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
->  BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_ACQUIRE)
-> +BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_node, KF_ACQUIRE)
->  BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_ACQUIRE)
-> +BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_node, KF_ACQUIRE)
->  BTF_ID_FLAGS(func, scx_bpf_put_idle_cpumask, KF_RELEASE)
->  BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle)
->  BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_RCU)
-> +BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_node, KF_RCU)
->  BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_RCU)
->  BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
->  BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
-> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-> index 625f5b046776..9bbf6d5083b5 100644
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -59,14 +59,18 @@ u32 scx_bpf_cpuperf_cap(s32 cpu) __ksym __weak;
->  u32 scx_bpf_cpuperf_cur(s32 cpu) __ksym __weak;
->  void scx_bpf_cpuperf_set(s32 cpu, u32 perf) __ksym __weak;
->  u32 scx_bpf_nr_cpu_ids(void) __ksym __weak;
-> +int scx_bpf_cpu_to_node(s32 cpu) __ksym __weak;
->  const struct cpumask *scx_bpf_get_possible_cpumask(void) __ksym __weak;
->  const struct cpumask *scx_bpf_get_online_cpumask(void) __ksym __weak;
->  void scx_bpf_put_cpumask(const struct cpumask *cpumask) __ksym __weak;
->  const struct cpumask *scx_bpf_get_idle_cpumask(void) __ksym;
-> +const struct cpumask *scx_bpf_get_idle_cpumask_node(int node) __ksym __weak;
->  const struct cpumask *scx_bpf_get_idle_smtmask(void) __ksym;
-> +const struct cpumask *scx_bpf_get_idle_smtmask_node(int node) __ksym __weak;
->  void scx_bpf_put_idle_cpumask(const struct cpumask *cpumask) __ksym;
->  bool scx_bpf_test_and_clear_cpu_idle(s32 cpu) __ksym;
->  s32 scx_bpf_pick_idle_cpu(const cpumask_t *cpus_allowed, u64 flags) __ksym;
-> +s32 scx_bpf_pick_idle_cpu_node(int node, const cpumask_t *cpus_allowed, u64 flags) __ksym __weak;
->  s32 scx_bpf_pick_any_cpu(const cpumask_t *cpus_allowed, u64 flags) __ksym;
->  bool scx_bpf_task_running(const struct task_struct *p) __ksym;
->  s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
-> diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
-> index d56520100a26..587650490743 100644
-> --- a/tools/sched_ext/include/scx/compat.bpf.h
-> +++ b/tools/sched_ext/include/scx/compat.bpf.h
-> @@ -125,6 +125,25 @@ bool scx_bpf_dispatch_vtime_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter,
->  	false;									\
->  })
->  
-> +#define __COMPAT_scx_bpf_cpu_to_node(cpu)                                       \
-> +	(bpf_ksym_exists(scx_bpf_cpu_to_node) ?                                 \
-> +	 scx_bpf_cpu_to_node(cpu) : 0)
-> +
-> +#define __COMPAT_scx_bpf_get_idle_cpumask_node(node)                            \
-> +	(bpf_ksym_exists(scx_bpf_get_idle_cpumask_node) ?                       \
-> +	 scx_bpf_get_idle_cpumask_node(node) :                                  \
-> +	 scx_bpf_get_idle_cpumask())                                            \
-> +
-> +#define __COMPAT_scx_bpf_get_idle_smtmask_node(node)                            \
-> +	(bpf_ksym_exists(scx_bpf_get_idle_smtmask_node) ?                       \
-> +	 scx_bpf_get_idle_smtmask_node(node) :                                  \
-> +	 scx_bpf_get_idle_smtmask())                                            \
-> +
-> +#define __COMPAT_scx_bpf_pick_idle_cpu_node(node, cpus_allowed, flags)          \
-> +	(bpf_ksym_exists(scx_bpf_pick_idle_cpu_node) ?                          \
-> +	 scx_bpf_pick_idle_cpu_node(node, cpus_allowed, flags) :                \
-> +	 scx_bpf_pick_idle_cpu(cpus_allowed, flags))
-> +
->  /*
->   * Define sched_ext_ops. This may be expanded to define multiple variants for
->   * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
-> -- 
-> 2.47.1
 
