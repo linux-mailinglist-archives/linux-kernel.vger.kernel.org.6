@@ -1,144 +1,197 @@
-Return-Path: <linux-kernel+bounces-441102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BA79EC9A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:48:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1499EC9A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048D118855B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFCE1884517
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9791DF755;
-	Wed, 11 Dec 2024 09:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DAC1EC4C5;
+	Wed, 11 Dec 2024 09:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvYWfXxY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="edyLe1FQ"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBC2236FA9;
-	Wed, 11 Dec 2024 09:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3522C1EC4D5
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733910503; cv=none; b=Rg0+L12HjE7ZunMfevyB6pBqHOCs4fL53hVWQtyOG8tMr0n6rSmRSGl/0+M+df9VeHttIl+URtaAM6RWbJ80yFhtXULs6TePiGguvTGxkC4WlaARE88IGdeTbBoirQOUhgk/zaaXSrzb+8oG6MnxqfMPthsK9Ap77txYsVPKnBU=
+	t=1733910523; cv=none; b=GxrEqD6T5YScVNxAzwlAscYQb41evV+6hHYl+43qAsxATKMMPYsdSkLSZQYEpfpFPPlaChGeniZqixwG3r1JBcASwry6iownUIKrwH1cC55by0rnI5vmW+aW158F5cLwxCwY3Mne+oZLx55SpfUEn6ltfQn+FxMkGdWt4RJBEqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733910503; c=relaxed/simple;
-	bh=PzJ50m4BDRg1Cy0XQKIOaQwF/EIB3tiAhH96mrMxmMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3ljxb2xzOL8ezjSyg+fiZwo7yFUEq11XV8LCgVNIw1bFW98ZZiqRjqX62rMuCorsB4SXZncy8PfhprMfBoAFFKFoRan2OiiN0bbGVjcxrQfzBVTWhqt1xmmJ8BDNnj6A5q/uBcTTbloEhy0RWF2dLNtaWehMDI6Mw8Lm1F7iz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FvYWfXxY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8DEC4CED2;
-	Wed, 11 Dec 2024 09:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733910503;
-	bh=PzJ50m4BDRg1Cy0XQKIOaQwF/EIB3tiAhH96mrMxmMQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FvYWfXxYpLmDdBBYotX92qXlwo2x/c82HRq9BDyPIIlny2Dxq5fqxbWaItsnkoTRM
-	 NTTmQm6555A/BuNIu15awhhdT6GZokvHb1I3XHg8+4ZHoayPXShh1o1jojlEcZby0J
-	 +qx0mwawolgDDlyL2XPGQppLLN0AGjgCZsIjrfRN5IeJbGFfYnz4xuzOVDcSH204sn
-	 5FeODFXzcgXXEtX4peStxaoAO3HKg5M9o7hYNHxVBcwHplEuaYcBiGpyN8Xd6egt/h
-	 0SApJ3aRVoTkkVcRhKmNJGKAgtqWQfjy5sHzXN/huocyMNQfXFMxoANaUWmZPhobpI
-	 RyLbIzrZSAvgg==
-Message-ID: <f818f089-0490-42da-9aee-1a7006c11978@kernel.org>
-Date: Wed, 11 Dec 2024 10:48:15 +0100
+	s=arc-20240116; t=1733910523; c=relaxed/simple;
+	bh=ZKaxjHmeS7EBCn4efUXAggiPsRojJiDnotoal15ttGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G4Igs0G33HasAKkJAX9jICsaoVES+j0nRax47ajloi7+H45wVR6uabBX3QYRhLQKA8P3c1T2XJybEaB17C7w8x/MZS3KaosUl4F4TgUmRgJQcPkuIb53MztnALd4ErBUeeUrmc6TQmDKBI8uovgThazxDtzW5LGBpGN/PjW1kyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=edyLe1FQ; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3862a4b8ec2so2720819f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733910519; x=1734515319; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OPkuDVmQ8I0bPStjeQByqCDXTekXQdwOcRMPaf2EPFY=;
+        b=edyLe1FQq3AnZlpeY1UASTnu/MEy3sHd/DrwDQvAssz1EZpCbZa14hxw4nRdAcXMxC
+         Jkb05wyAFXkZv4QnDghirz7G8GMQx2A8MTq5xfEoAMTyr8qf5gCJ1X6FbXI5yPtu20B6
+         u4BXun0pdqVQZCqtlTjEEFd5ru58Fp//Nhc0GzjK4zPerqWZMjL5P03tMZEbRDbjLT4j
+         bkz8F4pwn79yMkho1DgDZC5cd8Hf/t38LhkkpnSY+bktmf25TNFEu19wve4ROf7qTylp
+         c2JgGtInPnykvPOtWL+ve3NLA5WFfGPFZsDhDxq25dzNB0ZRKiAyTPKw0f4K9tY2hwmW
+         KM8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733910519; x=1734515319;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OPkuDVmQ8I0bPStjeQByqCDXTekXQdwOcRMPaf2EPFY=;
+        b=RIOzfTxEV0jDdntSkcpD7rGqh0ARQtMSVlTLhhdBG87qQFPKgU34cdtK4t4QQ0wWYr
+         Dj/IeOXRq5cVP67bvMvlVUN/qZq7/jiUk6ZJ4zTG5q/oLiktpsPQglrhymhjSVAgPnnC
+         GDdma6wk0apCSY0/l2KENni3nSuEcNvXc1KxDgNDuLMwMGjhJjVWV92eC239/ugmM8j3
+         Ov7UZ1hBZdtSJzUeurMkqTPyTNxnQgcgrLIqaMTYAvU8100SHdDfnUrNqGMFKL+nnfPg
+         yz59xAcgBtKxVfnerof/Uj6i9p/nRly2Ziu++iPXaqC0Zfj9jElVJNp0w7ZM8k1stk52
+         QPgQ==
+X-Gm-Message-State: AOJu0YzSOsaafJIlhusfBGWUDeOaoKnmjgp27gqaSrsUjtQrqP2C1mfX
+	Wj8Wjkij8nFKU8UU5SEmzF/FoIGf8Qf6LR0+xFVO6c3lkCQb8rv1w2WI8j31iTevhwZgIt1Gboo
+	NU1O8VQTvtfIwhw6p6/FTAcJjnl2x1CPmemjQ
+X-Gm-Gg: ASbGncswbvu0E0/19dlYpV15pRmxth87ZfmhpDHXCwR4lA8cYS9MXph7vTfS51Fqiw/
+	b+CsFw/IE2CoFEYjuYhPepbwH5b0y+Xyw91HwuCxL0yUty1lsE6XZiChDNLESQHG4Mw==
+X-Google-Smtp-Source: AGHT+IGgLsoa3jV2scUrxGJs3M3c7OjkCrlHZsyu8jTWcAJIYLV9qXmSt5/Cg8qsliTSfr6/wIq7uJuo1wJlePE++No=
+X-Received: by 2002:a05:6000:410f:b0:385:f2a2:50df with SMTP id
+ ffacd0b85a97d-3864cea200amr1277675f8f.27.1733910519359; Wed, 11 Dec 2024
+ 01:48:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: net: bluetooth: qca: Expand
- firmware-name property
-To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
- Rocky Liao <quic_rjliao@quicinc.com>, linux-bluetooth@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, quic_jiaymao@quicinc.com,
- quic_shuaz@quicinc.com, quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
-References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
- <20241210151636.2474809-2-quic_chejiang@quicinc.com>
- <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
- <62afbaea-67b1-4572-9e78-d1dbe5fae20a@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <62afbaea-67b1-4572-9e78-d1dbe5fae20a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241210001802.228725-1-fujita.tomonori@gmail.com>
+ <20241210001802.228725-6-fujita.tomonori@gmail.com> <CAH5fLgiShKMGo6AYWM-4S8JK+iDA+tUfz9uxkns82g0nLW--NQ@mail.gmail.com>
+ <20241211.094054.1429837669366274024.fujita.tomonori@gmail.com>
+In-Reply-To: <20241211.094054.1429837669366274024.fujita.tomonori@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 11 Dec 2024 10:48:27 +0100
+Message-ID: <CAH5fLgj9rBOrcQa193RpuA708CFK1ojMqhmiNWF7dbyNFPJcJA@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] rust: Add warn_on and warn_on_once
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	x86@kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, peterz@infradead.org, hpa@zytor.com, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org, 
+	kernel@xen0n.name, tangyouling@loongson.cn, hejinyang@loongson.cn, 
+	yangtiezhu@loongson.cn, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@kernel.org, tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/2024 10:39, Cheng Jiang (IOE) wrote:
->>>
->>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>> index 7bb68311c..2782d2325 100644
->>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>> @@ -101,7 +101,10 @@ properties:
->>>    max-speed: true
->>>  
->>>    firmware-name:
->>> -    description: specify the name of nvm firmware to load
->>> +    description:
->>> +      If one item is present, specify the name of the NVM firmware to load.
->>> +      If two items are present, the first item specifies the name of the NVM,
->>> +      and the second specifies the name of the rampatch firmware to load.
->>
->> Don't repeat constraints in free form text. Use proper constraints so
->> you can validate your DTS. And then actually do validate your DTS...
->>
-> It seems unnecessary to add this description, so I will drop this change. Is that okay?
+On Wed, Dec 11, 2024 at 1:41=E2=80=AFAM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> On Tue, 10 Dec 2024 10:05:07 +0100
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>
+> > On Tue, Dec 10, 2024 at 1:19=E2=80=AFAM FUJITA Tomonori
+> > <fujita.tomonori@gmail.com> wrote:
+> >>
+> >> Add warn_on and warn_on_once macros. Wrapping the C's WARN_* and BUG_*
+> >> macros doesn't work so this uses the assembly code exported by the C
+> >> side via ARCH_WARN_ASM macro. Like the static branch code, this
+> >> generates the assembly code for rust dynamically by using the C
+> >> preprocessor.
+> >>
+> >> file()! macro doesn't work for the Rust inline assembly in the same
+> >> way as __FILE__ for the C inline assembly. So the code to handle a
+> >> file name is different from the C assembly code (similar to the
+> >> arm64/loongarch assembly).
+> >>
+> >> ASM_REACHABLE definition works in the same way to get objtool's
+> >> reachable asm code. The architectures which use objtool (x86 and
+> >> loongarch) needs it.
+> >>
+> >> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> >
+> >> +#[macro_export]
+> >> +#[doc(hidden)]
+> >> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML)))]
+> >> +#[cfg(any(target_arch =3D "x86_64", target_arch =3D "riscv64"))]
+> >
+> >> +#[macro_export]
+> >> +#[doc(hidden)]
+> >> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML)))]
+> >> +#[cfg(any(target_arch =3D "aarch64", target_arch =3D "loongarch64"))]
+> >
+> > What's the reason for this arch-specific code? The file!()/line!()
+> > invocations? Could they be passed as an argument to the asm instead so
+> > that we don't need target_arch cfgs? I understand that they don't work
+> > exactly the same way, but maybe it could still work?
+>
+> Because of "error: named argument never used" in Rust inline assembly:
+>
+> All the archs define ARCH_WARN_ASM macro in the same way:
+>
+> #define ARCH_WARN_ASM(file, line, flags, size)
+>
+> However, only x86 and risc-v asm code use the size argument. Without
+> the cfgs, I'll get the following on arm64/loongarch:
+>
+> error: named argument never used
+>   --> /home/fujita/git/linux-rust/drivers/block/rnull.rs:54:9
+>    |
+> 54 |         warn_on!(true);
+>    |         ^^^^^^^^^^^^^^ named argument never used
+>    |
+>    =3D help: if this argument is intentionally unused, consider using it =
+in an asm comment: `"/* {size} */"`
+>    =3D note: this error originates in the macro `$crate::warn_flags` whic=
+h comes from the expansion of the macro `warn_on` (in Nightly builds, run w=
+ith -Z macro-backtrace for more info)
+>
+>
+> Any way to make the compiler to ignore this?
 
-You need to list the items and describe them. See how all other bindings
-do it.
+The error message suggests adding an asm comment. Does that not work?
 
-Best regards,
-Krzysztof
+You could even add the comment unconditionally on the Rust side. It's
+not like the comment hurts on the platforms that *do* use the size
+parameter.
+
+> >> +#[macro_export]
+> >> +#[doc(hidden)]
+> >> +#[cfg(all(CONFIG_BUG, CONFIG_UML))]
+> >> +macro_rules! warn_flags {
+> >> +    ($flags:expr) =3D> {
+> >> +        // SAFETY: Just an FFI call.
+> >> +        unsafe {
+> >> +            $crate::bindings::warn_slowpath_fmt(
+> >> +                $crate::c_str!(::core::file!()).as_ptr() as *const ::=
+core::ffi::c_char,
+> >> +                line!() as i32,
+> >> +                $flags as u32,
+> >> +                ::core::ptr::null() as *const ::core::ffi::c_char,
+> >
+> > I wonder if this could be written to utilize Location::caller()
+> > instead so that `#[track_caller]` works?
+>
+> You meant that we could make warn_flags() function instead of macro
+> with Location::caller()?
+>
+> If so, we need to add cfgs to warn_on and warn_on_once because both macro
+> and function of warn_flags are necessary?
+
+Well, I'm not sure! I don't know if it's feasible at all, since using
+Location::caller() would mean that the file/line is not a compile-time
+constant. But if we can, then I think #[track_caller] support would be
+nice.
+
+Alice
 
