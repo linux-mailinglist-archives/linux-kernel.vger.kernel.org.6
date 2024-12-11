@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-442307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBBA9EDA69
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:52:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A729EDA6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:53:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF82A1885606
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313DC281AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5CA1EC4E0;
-	Wed, 11 Dec 2024 22:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDC51F2376;
+	Wed, 11 Dec 2024 22:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VsqtcorI"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpTLodq4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14571C5497
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD011F2395;
+	Wed, 11 Dec 2024 22:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957564; cv=none; b=EPzRgti3IeAXxPJDgWifXY210DSfweGm2fImpqNkQ9fzA1q16IuOk2aglRFmt4fNJKPX6m0SbjwEKahCv3fzBiVOO49yLjz05bNeC5/+SM9Jh6SHbj7NiOZG359iYhFcTPPLukDasC+jTZ/z86HZyb+XeRit09K2veoiEe1HkaA=
+	t=1733957624; cv=none; b=SX0fY1wnH6zbBOEaq484vZM70DSq3pL9cqId6wT2sgpMSFI1UBbEM5bjouYIea32CiG/XoQ1+aTDq0sJCp9gfA+TEjKFUmeN0m3RafOiAo7TczpO3bzKJyFF7sO/NVmBlZgxb0Rga/QQAelJWLub3jQHAFbG1Y7voBTjKZdpNQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957564; c=relaxed/simple;
-	bh=vrvqy58xGiO1WMhROBtmXIyu9sVa+DLAprL0zNPPebM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nde8cz8mdiJ6MNak03slNywk4+ZR+deEpsLjZjnpEGZZ/qowoHOtUgzn/8wdNvyqVpyiSgAZ9bFrLsxUMFjEzu9F3UkYs32fQpJaCd/8+oyWTPOOISjqguIaX9IKQlJg0au3h25TFbh77eVUAqptwmKszmF7rSaHTnTWvuGa0VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VsqtcorI; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53ff1f7caaeso5077865e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:52:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733957560; x=1734562360; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NY0DaHYgseRDWZY4d4IDidbyN2YiOVi5DaD5aAxmd4A=;
-        b=VsqtcorIkH8HLjbGQT7XYDEULYbjOvHCDy4AFo4NGy5VMY6U5pq5b6ERUCXIirjCJR
-         41SOim1hKB1gciAJF+5CmUQS1dSXODK9pNOUvAGTa7bYy4ZhM5bHz9Q7it2Q6lznOUSw
-         Zwk+R2rP9FrAa4v0NtTPVzIXCzsDiZe9tfuyvKhpEArAeU6ps2cMXO7pW/Spte9VHGeN
-         l+glnChL+qKiKEou7d2hm2pMag9ab2E1ezOtgjYlWE5lWvjNgHvWwLLCIPvbNo1CnEt/
-         p2fb9ROlkb6KIUlZbk1foWnR9np4tWhXaDtr2dhF9R0TC77tVjFo8fr5DJPWn9iZOPLq
-         cZ1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733957560; x=1734562360;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NY0DaHYgseRDWZY4d4IDidbyN2YiOVi5DaD5aAxmd4A=;
-        b=aWuJA8CJe3guPtb31sWnNkSK/GatKSDlirLbB4YOoJkmZd9KmPEuw3UtU6fS3RD9e8
-         jP0nPDg3G/eWbfSDWZmOsMWkfKjqgz8Nc8X35bt/kGde+sv7DZn38w0C/76ZfEmsG4Ia
-         li1hCdNUw1TFC/qsL/DR9jWCOg53h2WewIdzHdA0ph7JZkEY7FbpiOXAde9+yO/bdD+8
-         IDCw2H6XxzWGzf9rQJsjHJV5HtaoMS8Zu8HNSRLL0gsSMG3vICtNi5phjANx6c1/ayJG
-         /AFaLDWTsV7IDYxKS2IxqSO78UoeEeaAQB4iSJJVsYCWmxKmzYwqQDQ3paMirJq/lqie
-         P3bA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsT2vkBEnrcut6xSdlmtkeDS6jkJFGtp7OYSQDQs3PRKj/BZE3YyLC3AkczogM6QgL80oVyW8vks/FzE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOwfmCF2Tv5/YyVjsa1Q6Bs31wTePmwe7jSJABtTuRRQvoK1a1
-	BhVh8Y3OE1NZzKuWtXBoD3NopoaycdAdhrcwOV6GnLgTcA9hoUAxHGl4hXdqqng=
-X-Gm-Gg: ASbGncuJUGxTH2EQazuwmxzUbWnkBKa+xEIYwqZbFZ0vlqLIeN+PJieYFZIqtqjiuEr
-	YGKxQ9KMNfQy4p0erBeAceMQm/9ISevWcAOXHE/dj4/KDfzwH2zD3bCBlAAPNioS45US+o5W6FS
-	k6UuvpldNZPquxM/YCCqGg6+bol54980ARsB9C92PKUgQ7ARuy5Elb6FhIElqZL0hQ5PK1HsZCb
-	pC87HSy0Qz35SNDGoxDUUNAmg3IUFpVfRUC+zCF3WpcN8SRQFcMiEO7h6AiBfpZiur+3S4yyjX4
-	8fagBNlNBqkRWmVZ305Bzi/8++NAGBwizw==
-X-Google-Smtp-Source: AGHT+IF9HHn7otIsRRSetNzaUeXvxCJbkji7UoBVMa3gLuVqW6w3nM5oSY6llrPi+iNGIGJkdw3BTA==
-X-Received: by 2002:a05:6512:3e05:b0:53e:350a:7298 with SMTP id 2adb3069b0e04-5402a5e4b93mr1104975e87.25.1733957559885;
-        Wed, 11 Dec 2024 14:52:39 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401a5360bcsm1378038e87.174.2024.12.11.14.52.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 14:52:38 -0800 (PST)
-Date: Thu, 12 Dec 2024 00:52:36 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] drm: bridge: adv7511: fill i2s stream capabilities
-Message-ID: <rilzmak24odk34q3rglnkmi23e7warmd6dytx2opkhjl3kjujm@fqxqydwhcluy>
-References: <20241210134254.2967524-1-olivier.moysan@foss.st.com>
- <20241210134254.2967524-2-olivier.moysan@foss.st.com>
+	s=arc-20240116; t=1733957624; c=relaxed/simple;
+	bh=wVSNOH6u4FTmDwvcAz5QnT7H4sQvF7ruHANUwyK3/DI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h/FlsK5S4HXkR+hl7fA3/lzatePmjp2OfJItVO7EqaQnLZlYazuYXki88N1i00ihF/qrRrcN6BNJfoe86HfTBr/rNU0IU6UWbfr0OhdxoIq9G87FRjBWwwH1BVcayWNDvxrTxfmHT/+Ib5re8O1JH4YgQvq9qBEjLiUKlkCI+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpTLodq4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E18C4CED2;
+	Wed, 11 Dec 2024 22:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733957624;
+	bh=wVSNOH6u4FTmDwvcAz5QnT7H4sQvF7ruHANUwyK3/DI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RpTLodq4bRWFG7QjAKEWqgFLGlxNywNIoEPGBh6tb/S3NTiASWjiPLU0M/SL3AHbE
+	 A3GwBe9liytQyxBzlndBc9gfd6q94hHBgL0PVtGIi2aVG7AzPc7JFFDVpD4GN5oIkp
+	 VQu0TT1JhwuZT5G6060GgFwKXL4W5gmJUZBSHCY8Twx3753H8m2IPBKdJ/m64HL9Px
+	 7ezhyoeZCRCY1bn4aPLANHVZinWee+nkL4zRczslfqe+TMGi/Ljeabp3v9RRIaVu71
+	 4sdeonkWSOuYi5y00YczfWcD2AFaPU8OnlJ82anRksRgOdfvq+T5kRW16f6hSNsN4v
+	 snu+zYREG9Pdg==
+Message-ID: <d74c3d02-e4e2-4f78-bf30-3940f50af39b@kernel.org>
+Date: Thu, 12 Dec 2024 07:53:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210134254.2967524-2-olivier.moysan@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ata: sata_gemini: Remove unused
+ gemini_sata_reset_bridge()
+To: "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: cassel@kernel.org, p.zabel@pengutronix.de, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241211011201.261935-1-linux@treblig.org>
+ <CACRpkdaarPM3vx6vAVhdSv+KHDZq6MTDo0JpQYGj1gJnaE7OrQ@mail.gmail.com>
+ <Z1oI6cAAhGrcIVw9@gallifrey>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <Z1oI6cAAhGrcIVw9@gallifrey>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 10, 2024 at 02:42:52PM +0100, Olivier Moysan wrote:
-> Set no_i2s_capture flag in hdmi_codec_pdata structure to report
-> that the ADV7511 HDMI bridge does not support i2s audio capture.
+On 12/12/24 06:49, Dr. David Alan Gilbert wrote:
+> * Linus Walleij (linus.walleij@linaro.org) wrote:
+>> On Wed, Dec 11, 2024 at 2:12 AM <linux@treblig.org> wrote:
+>>
+>>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>>>
+>>> gemini_sata_reset_bridge() was added in 2017 by the initial
+>>> commit be4e456ed3a5 ("ata: Add driver for Faraday Technology FTIDE010")
+>>> but has never been used.
+>>>
+>>> Remove it.
+>>>
+>>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+>>
+>> Right it was never used because the corresponding reset in
+>> the low-level PATA driver didn't work so I patched it out before
+>> submitting.
 > 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 1 +
->  1 file changed, 1 insertion(+)
+> Ah right.
 > 
-> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> index 61f4a38e7d2b..28ae81ca3651 100644
-> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> @@ -234,6 +234,7 @@ static const struct hdmi_codec_pdata codec_data = {
->  	.ops = &adv7511_codec_ops,
->  	.max_i2s_channels = 2,
->  	.i2s = 1,
-> +	.no_i2s_capture = 1,
+>> But should you not also remove sata0_reset and
+>> sata1_reset from struct sata_gemini and the code fetching
+>> the two reset lines? And even #include <linux/reset.h>?
+> 
+> Oh I see, I was just looking for entirely unreferenced functions
+> but that takes a little more following to notice.
+> 
+> I'm happy to do that; are you OK with it as a follow up patch or
+> do you want a v2? (And can you test it, I don't have the hardware).
 
-Does it support spdif capture?
+I already applied your previous patch. But I can replace it. So either an
+incremental patch or a v2 is fine with me. Thanks.
 
->  	.spdif = 1,
->  };
->  
-> -- 
-> 2.25.1
 > 
+> Dave
+> 
+>> Yours,
+>> Linus Walleij
+
 
 -- 
-With best wishes
-Dmitry
+Damien Le Moal
+Western Digital Research
 
