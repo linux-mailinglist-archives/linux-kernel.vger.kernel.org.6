@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-440819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3759EC4B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:24:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18D69EC4B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A90E168C7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E61188B613
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9030D1C3F04;
-	Wed, 11 Dec 2024 06:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDA51C549E;
+	Wed, 11 Dec 2024 06:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="B3u8YTuk"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Hj5YnUae"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1BD2451C0;
-	Wed, 11 Dec 2024 06:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC331C462D;
+	Wed, 11 Dec 2024 06:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733898282; cv=none; b=kM2TcVGwpn0Zo9kSQCtZ1SZ3V4pF8gjmwBtUp+4FK0fQJe29rasvDIfiEXeQERM8e2lCgRiEIyT+ZzMEN7UJAEOZZGqIJHrnQeQ7JKw7DB6FFBe97Z5SWIforyCIgXQtRRYpbqo6hSWn0BPyKmJIVgodh9hJNQKi1ICjOpiTSgk=
+	t=1733898289; cv=none; b=EPN4bkLh1PNTVTUifBmsZQsXojWu54owLfAuEv8SMHvr3pVZAIB4Kja92jfmUN/X2S91aY5b+455NFBCgNDtHQTsqUksXC+04NLYnaaCjOU+J6zFSMWXgOpI209b2j0ea+h2sD/Usw1JuVoFCEs1gQh1b7n5YYfQCuHnwCoMvRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733898282; c=relaxed/simple;
-	bh=nv4XefQTe1dFzpfb4j2X/y6wb4VxbLNIsZWdQa2sWHE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e7Bo8eLV/PlqqXYRz3QNzCKDes/vrZIxzkcBuUMqgXmSeDpPtMEZJLm1Q/hC28AKRObWAdqodXFAuc8Zz6DyDdflT9VpBCQqULd1I2tLgt5pxALKAKQIwngZnSjYGg42RmCcGcuQWcPpUWOykuZHEWgs70Vi2pm7FcTKihg3eg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=B3u8YTuk; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BANtmxa028631;
-	Tue, 10 Dec 2024 22:24:29 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=E/aQuxosOoaXJrhrjZ6OwkL
-	ichZ7znZ+m2fdN7g/axQ=; b=B3u8YTukpMjRbTE3AHT/7AKwyLAXGU/thghd6UD
-	iXRoYRe6MXXv3rMMvqfkzxwzg/U5H7unvgbb4xUx2lI3L6Id93oaWPob9bboN3BR
-	mw476Omwvdeeb/SCXD4cumXT1Sf6c38+HxeaSFfnUyqiI07VJxIwHx9mUBBbG+xk
-	AyadAs/jvO+PIHFQmVYbYFwRBgRVMGnuB97IkFoSns1SJXYOZhKADFRs1yaDnzFV
-	RGQ78IVpYlk2ctr3RWm2YLNj/+ytouluiB9A9WXP30R1qUh0nFXQD6dPf71YsViz
-	HWvAVcoJ8J333uAr3hkPb36arAr+Z+YNxT2VJebCPaWygog==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 43eyqh0pu7-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 22:24:29 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 10 Dec 2024 22:24:28 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 10 Dec 2024 22:24:28 -0800
-Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
-	by maili.marvell.com (Postfix) with ESMTP id A37633F7090;
-	Tue, 10 Dec 2024 22:24:24 -0800 (PST)
-From: Bharat Bhushan <bbhushan2@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <bbhushan2@marvell.com>
-CC: kernel test robot <lkp@intel.com>
-Subject: [net-next PATCH] cn10k-ipsec: Fix compilation error when CONFIG_XFRM_OFFLOAD disabled
-Date: Wed, 11 Dec 2024 11:54:19 +0530
-Message-ID: <20241211062419.2587111-1-bbhushan2@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733898289; c=relaxed/simple;
+	bh=y7aZHwpgi27v8ZTlv7YlS3FJfZiEfiPR2Bpm7+DPGJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+5eMNwFiW6oDw4XrpcHDCLOr4DdUpyX2OeBNCZcWuFKhrbAeHsv89ZI+yFDdk3HRCdcwj/UPTxxKXJ5/h6eLi7GSJXtkUcnE6Jrpz1sKEXItdKEXL1gGdp2lSBnN0YG4zin3wddV4KiT37ryJub65nIwGGOZqME8ia65mt/T1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Hj5YnUae; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733898280;
+	bh=y7aZHwpgi27v8ZTlv7YlS3FJfZiEfiPR2Bpm7+DPGJo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hj5YnUaeQAs5jb6PfRT6vy2lo43gPnqlBH3DYu+Hr07ugu7fe47ya0s4kPR8GNWnf
+	 BrA8qk/QLBD1RFKO9Evifp10s7ZtUYAWLVrbE1JDSUW2W7nR5eOMQMHXFI5UA4c+O7
+	 m/UDbyxHeTGtFCZq0WpwFugz9bC5T1qKeZ/SW4ow=
+Date: Wed, 11 Dec 2024 07:24:40 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Ihor Solodrai <ihor.solodrai@pm.me>
+Cc: Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Kui-Feng Lee <kuifeng@fb.com>, 
+	Alan Maguire <alan.maguire@oracle.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] kbuild, bpf: Enable reproducible BTF generation
+Message-ID: <3b834807-9f20-4f04-b788-f45dfac5cb1f@t-8ch.de>
+References: <20241211-pahole-reproducible-v1-1-22feae19bad9@weissschuh.net>
+ <REDzg-0aL2-Qw7QvYCKTfsLGh6E6Iq8dgWJPo5a94ym2x5DiUkwdHA-naUtaDO7HJgvOr6zd201E5P_WAquOyOFIiUij6Bi183EyxPusDuo=@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: J489MHfhrq8fAOGGUuQJieJA4r_pXKhe
-X-Proofpoint-ORIG-GUID: J489MHfhrq8fAOGGUuQJieJA4r_pXKhe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+In-Reply-To: <REDzg-0aL2-Qw7QvYCKTfsLGh6E6Iq8dgWJPo5a94ym2x5DiUkwdHA-naUtaDO7HJgvOr6zd201E5P_WAquOyOFIiUij6Bi183EyxPusDuo=@pm.me>
 
-Define static branch variable "cn10k_ipsec_sa_enabled"
-in "otx2_txrx.c". This fixes below compilation error
-when CONFIG_XFRM_OFFLOAD is disabled.
+Hi Ihor,
 
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.o:(__jump_table+0x8): undefined reference to `cn10k_ipsec_sa_enabled'
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.o:(__jump_table+0x18): undefined reference to `cn10k_ipsec_sa_enabled'
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.o:(__jump_table+0x28): undefined reference to `cn10k_ipsec_sa_enabled'
+On 2024-12-11 00:17:02+0000, Ihor Solodrai wrote:
+> On Tuesday, December 10th, 2024 at 3:23 PM, Thomas Weißschuh <linux@weissschuh.net> wrote:
+> 
+> > 
+> > 
+> > Pahole v1.27 added a new BTF generation feature to support
+> > reproducibility in the face of multithreading.
+> > Enable it if supported and reproducible builds are requested.
+> > 
+> > As unknown --btf_features are ignored, avoid the test for the pahole
+> > version to keep the line readable.
+> > 
+> > Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and generate BTF with multithreading.")
+> > Fixes: 72d091846de9 ("kbuild: avoid too many execution of scripts/pahole-flags.sh")
+> > Link: https://lore.kernel.org/lkml/4154d202-5c72-493e-bf3f-bce882a296c6@gentoo.org/
+> > Link: https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v1-1-3eaafb1842da@weissschuh.net/
+> > Signed-off-by: Thomas Weißschuh linux@weissschuh.net
+> > 
+> > ---
+> > scripts/Makefile.btf | 1 +
+> > 1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
+> > index c3cbeb13de503555adcf00029a0b328e74381f13..da23265bc8b3cf43c0a1c89fbc4f53815a290e13 100644
+> > --- a/scripts/Makefile.btf
+> > +++ b/scripts/Makefile.btf
+> > @@ -22,6 +22,7 @@ else
+> > 
+> > # Switch to using --btf_features for v1.26 and later.
+> > pahole-flags-$(call test-ge, $(pahole-ver), 126) = -j$(JOBS) --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func,decl_tag_kfuncs
+> > +pahole-flags-$(if $(KBUILD_BUILD_TIMESTAMP),y) += --btf_features=reproducible_build
+> 
+> Hi Thomas,
+> 
+> There are a couple of issues with reproducible_build flag which I
+> think are worth mentioning here. I don't know all the reasons behind
+> adding this now, and it's optional too, so feel free to discard my
+> comments.
+> 
+> Currently with this flag, the BTF output is deterministic for a given
+> order of DWARF compilation units. So the BTF will be the same for the
+> same vmlinux binary. However, if the vmlinux is rebuilt due to an
+> incremental change in a source code, my understanding is that there is
+> no guarantee that DWARF CUs will be in the same order in the binary.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202412110505.ZKDzGRMv-lkp@intel.com/
-Fixes: 6a77a158848a ("cn10k-ipsec: Process outbound ipsec crypto offload")
-Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c | 2 --
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c   | 2 ++
- 2 files changed, 2 insertions(+), 2 deletions(-)
+The goal behind reproducible builds is to produce bit-by-bit idential
+binaries. If the CUs are in a different order then that requirement
+would have been broken there already.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-index c333e04daad3..09a5b5268205 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-@@ -14,8 +14,6 @@
- #include "otx2_struct.h"
- #include "cn10k_ipsec.h"
+For an incremental build a full relink with *all* CUs is done, not only
+the changed once, so the order should always be the same.
+
+> At the same time, reproducible_build slows down BTF generation by
+> 30-50%, maybe more depending on the kernel config.
+
+If a user explicitly requests reproducibility then they should get it,
+even if it is slower.
+
+> Hopefully these problems will be solved in upcoming pahole releases.
+
+I don't see it as big problem. This is used for release builds, not
+during development.
  
--DEFINE_STATIC_KEY_FALSE(cn10k_ipsec_sa_enabled);
--
- static bool is_dev_support_ipsec_offload(struct pci_dev *pdev)
- {
- 	return is_dev_cn10ka_b0(pdev) || is_dev_cn10kb(pdev);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
-index 4e0133d1d892..224cef938927 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
-@@ -27,6 +27,8 @@
-  */
- #define PTP_SYNC_SEC_OFFSET	34
- 
-+DEFINE_STATIC_KEY_FALSE(cn10k_ipsec_sa_enabled);
-+
- static bool otx2_xdp_rcv_pkt_handler(struct otx2_nic *pfvf,
- 				     struct bpf_prog *prog,
- 				     struct nix_cqe_rx_s *cqe,
--- 
-2.34.1
+> Question: why KBUILD_BUILD_TIMESTAMP flag? Isn't it more appropriate
+> to use a separate flag for this particular feature?
 
+Adding an additional variable would need to be documented and would
+makes the feature harder to use. KBUILD_BUILD_TIMESTAMP already needs to
+be set by the user if they are building for reproducibility.
+
+> > ifneq ($(KBUILD_EXTMOD),)
+> > module-pahole-flags-$(call test-ge, $(pahole-ver), 126) += --btf_features=distilled_base
+> > 
+> > ---
+> > base-commit: 7cb1b466315004af98f6ba6c2546bb713ca3c237
+> > change-id: 20241124-pahole-reproducible-2b879ac8bdab
+> > 
+> > Best regards,
+> > --
+> > Thomas Weißschuh linux@weissschuh.net
+> > 
+> > 
+> 
 
