@@ -1,187 +1,114 @@
-Return-Path: <linux-kernel+bounces-442025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294289ED6FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:07:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC2C9ED711
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7D018876A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431B0166C77
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0309209F57;
-	Wed, 11 Dec 2024 20:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6593E1D6DA4;
+	Wed, 11 Dec 2024 20:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="hNfSouNg"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FATNfFS1"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED25D2594B3;
-	Wed, 11 Dec 2024 20:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192471C1F22
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733947645; cv=none; b=iyPwXdB3lwvgBKSK/k81aJ8dnGiMqnSwJu6V+9Po4ZpC/jhHi+LjlXhaI5eGLGhXf/gT2cHwvDAw8eTvsIMUQnHa+2qSNrW1XuMduFwd3e2i3Ysb46Mkvbnnm2fywhKgKlN/jlzp2ccTC4Fni7UdEBPz7b1aRNr6K+xL+xyiUPs=
+	t=1733947960; cv=none; b=R8IfYg0fsgl6b/AkJ7tAU/F6fdA2J6P405eLScRBXS3GUOJ6WVSsXz5eTpxO4N6JKgH5WgtYE67oIb+7mKbB86ev0BH4FAVJIhDvlS+2DudFdmt5v9rKL2O1dyq6YEAYnpijtPyVg/k8Nm3JvYy29rCEQC/+Um79OruzuzIbhoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733947645; c=relaxed/simple;
-	bh=wA3oVvLpAgxe8CvxFtANDWuAFMcWUw5ldGi9z48/H/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DEthxc7JIk2q0AFAOt2KeZB48vjzV7vOsx2xIM8ZKT5I3f2yTU6S8pXc1F3Zuz29T4JOLIx8auH9W7DNd8w3l6Cpk90X1WuXlFPR+VYuBFocnkBrZ9pVE5R7v5cMM7R2+Z8ViccS5FGP0qbya8KIFsMvcIzaBHZ66qwthi8xgmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=hNfSouNg; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=hLo5WCIwboskEetZXyQZ/7dDVeMDVJPejPBCeeGEZXw=; b=hNfSouNgSlUhJpG0KsSUIaraYR
-	2w+l9m+byCTe+SQzTMomXg45KSHeXmFP0//zXiz55lJg6YkfZ6ij7ocu9IyOMzKM9XVlEvs4tSqY6
-	Hrne+MdCVjKeDe1eE4IKuoX7pHnuJeHut3T7ZgmF2zNXQkVLFsyJQPAYUBXDDB7vY9o7wfDCpZEuz
-	lT9EPz5Qxyo5iBxRZN6SNm8F7ceHMC3qMSjZqVO3GlNANdntSuzzOi9ATURgnsX1BvBwmwbad6ehS
-	+IDTb1ikYbSBf8WCAPEIU2Nn/7Q5W8tJOsMdGiuZFXJFPYVy4dMmz8PtA3W+awvCe8OU31lcniQbe
-	TeXR1okw==;
-Received: from 179-125-91-250-dinamico.pombonet.net.br ([179.125.91.250] helo=quatroqueijos.lan)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tLSzL-00247n-RI; Wed, 11 Dec 2024 21:07:16 +0100
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: linux-ext4@vger.kernel.org
-Cc: "Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	syzbot+57934e2c8e7a99992e41@syzkaller.appspotmail.com
-Subject: [PATCH v2] ext4: only test for inode xattr state when expanding inode
-Date: Wed, 11 Dec 2024 17:06:00 -0300
-Message-Id: <20241211200600.21115-1-cascardo@igalia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241210174850.4027690-1-cascardo@igalia.com>
-References: <20241210174850.4027690-1-cascardo@igalia.com>
+	s=arc-20240116; t=1733947960; c=relaxed/simple;
+	bh=/fVcvfI/nJgq0KL9QHFEEc3B//jpEClgu6sMbVc2hJE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ij/OydOoOz4khqG0+CIEks2lxwX2mS+/LseV1yN0rBtqbiMBRZr9PwCXBWen+xbkexxJj024Nr81pIgx+zEAi/m+ewF6b7HdvaHQHu2lO70T0YrHnuOKDHphqOwSQDQvBSStj/jptGerp/fEMrWFX2w33F9NoyJKq/5Lv+1kk30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FATNfFS1; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385e1fcb0e1so3821822f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:12:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733947957; x=1734552757; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TPN2+AhDq4P0SWNYP6pOLiBUFHEUMd0r1OKMpQRaBeY=;
+        b=FATNfFS18kvqaKIJKr/FAXZZq8pJ/DSe7M5/JRLICn/BMsu08fL3+FZjtQ8m4JgnMf
+         opTGKwMkj/aDAc5KoTV90802yFTRaaKVvfbnhqPtKXQcL5MgSBA0K4cNb08RJlVWMur9
+         Bo8EH0L1D0ez1LbfxXYS3zE78TJPNRw/CE5xVP/OvqtBTk4l2iHy0Qhmj2wGGnY1Jt9T
+         kMa9GWTIFfpM9YOnu4B5+7EbpePIh5tJ9DDb35Zes1aVxb4i4T0t3tQ51N1LKWXNMHi2
+         CKdhHQUxhz35Vckk+VlLIMgNUiQKrHd4oHbwGxjgBmYanNhAwg0skyxrGtZEWHBrVCe2
+         QhdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733947957; x=1734552757;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TPN2+AhDq4P0SWNYP6pOLiBUFHEUMd0r1OKMpQRaBeY=;
+        b=ibIUwC2CQMre3A7MaOQk00wq2wfdxAxqGsf2HaERuGJ9bdyH5dvoetmn/OnhIYL7qh
+         k60Hx6kKGG0x/s4kB5cmtcg5gKjPAFthJlNrd6U9e4/UgorYEab5xptTN2n9de835NgP
+         S3nRyc+9BNUgd0fBizeBbYOcLBgDQ6dAircYKuV1Tv57z5DbrCmTHikns/G118bC+wM5
+         v7eEMq6Z+sKMGdPjIMHENPZEEDdc52jEXkeC2Uy3c+7MjJ/611ChH+nOoojq+/INal7C
+         liQLG4awgifFZ2ndq8ATza7NWUiYAgx3Zii6YeEufyIl1QRE+BaTwNNrZcTGeMjNrTAo
+         ZUPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbdBgGKnR4o0oh3BGCmvpOzG6LlaN8p9aNwepWf7YiVskj10tHWxbgJL7Y8tMreHryISq81aF+UkDatuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBVVdz0JNRFdR7qZr/8nYenZCqf1POHYHjFJm3wg/tRXjrnxWG
+	pSH1btvdMpJbw90K3VJQAuXNwLsZ7JABJaC0wgdPjuKm22DwsEIEoT8z5+clR5Q=
+X-Gm-Gg: ASbGncsSge0oe4E5F96hxS+HifPqq31ItqTj1jfRBEFexZLqV306queROd5xqlbH8MC
+	v4l1xxQmKkuwVYCeeT1dqO9NK2547w4WM/+5YVIt7Dvs0w4GSZ//8dlm8kj8ewuAUSGE2V6tKJV
+	FduAUI4Kbo2X3eK6A3359sq0L1s3wXWaD4em6RdxWSo+1FE08fpuSJ6VFHfSMaPDCDF2tNLzzXa
+	2Ptv0dB85tkA99MRqTWZX9iOkYX65HrfCuhA8tl6nOi6xOF4ua+OnYS
+X-Google-Smtp-Source: AGHT+IGhKdHf66Trsg0Xay3Wa/RqDWr8rS+2Oi6F9OIapryWlc50G8eqxXs0nor3X97sj8+KlZI9gA==
+X-Received: by 2002:a5d:5984:0:b0:385:edd1:2245 with SMTP id ffacd0b85a97d-3864cea45bbmr3619738f8f.30.1733947957412;
+        Wed, 11 Dec 2024 12:12:37 -0800 (PST)
+Received: from localhost ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361ee54736sm23968785e9.41.2024.12.11.12.12.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 12:12:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 11 Dec 2024 20:12:36 +0000
+Message-Id: <D69592H3JKB6.21HDMPXX9Q6OF@linaro.org>
+Cc: <broonie@kernel.org>, <konradybcio@kernel.org>,
+ <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+ <srinivas.kandagatla@linaro.org>, <tiwai@suse.com>, <lgirdwood@gmail.com>,
+ <perex@perex.cz>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <dmitry.baryshkov@linaro.org>,
+ <linux-sound@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 05/10] dt-bindings: arm: qcom-soc: extend pattern
+ matching for QRB4210/QRB2210 SoCs
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241101053154.497550-1-alexey.klimov@linaro.org>
+ <20241101053154.497550-6-alexey.klimov@linaro.org>
+ <ghlkqehfs5sagxrcvyywixfkt6ie3pwwtqm2j3n3c3xytjl3sb@d435kwmo3nki>
+In-Reply-To: <ghlkqehfs5sagxrcvyywixfkt6ie3pwwtqm2j3n3c3xytjl3sb@d435kwmo3nki>
 
-When expanding inode size, a check for the xattr magic code could fail
-because the underlying data was corrupt or changed by directly writing to
-the block device.
+On Fri Nov 1, 2024 at 7:54 AM GMT, Krzysztof Kozlowski wrote:
+> On Fri, Nov 01, 2024 at 05:31:49AM +0000, Alexey Klimov wrote:
+> > Add missing QRB platform name to the pattern matching Qualcomm compatib=
+les.
+> >=20
+> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/arm/qcom-soc.yaml | 4 ++--
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-But instead of detecting such corruption, the current test would clear the
-data but keep the EXT4_STATE_XATTR bit set in the inode state.
-
-When later deleting the inode, this would lead for a test for such bit to
-succeed and then an out-of-bounds access.
-
-Since the state could only be set when the magic code has been detected
-(and when such bit is cleared, so is the magic code), it is sufficient to
-test for such state when deciding whether expanding the inode size is safe.
-
-Here is the KASAN report.
-
-[   35.283769] ==================================================================
-[   35.284710] BUG: KASAN: use-after-free in ext4_xattr_delete_inode+0xa33/0xa70
-[   35.285676] Read of size 4 at addr ffff88800aaee000 by task repro/188
-[   35.286694]
-[   35.286912] CPU: 4 UID: 0 PID: 188 Comm: repro Not tainted 6.13.0-rc1+ #281
-[   35.287560] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-[   35.288709] Call Trace:
-[   35.289368]  <TASK>
-[   35.289790]  dump_stack_lvl+0x68/0xa0
-[   35.290621]  print_report+0xcb/0x620
-[   35.291400]  ? __virt_addr_valid+0x222/0x400
-[   35.292325]  ? ext4_xattr_delete_inode+0xa33/0xa70
-[   35.293198]  kasan_report+0xbd/0xf0
-[   35.293738]  ? ext4_xattr_delete_inode+0xa33/0xa70
-[   35.294461]  ext4_xattr_delete_inode+0xa33/0xa70
-[   35.295200]  ? __pfx_ext4_xattr_delete_inode+0x10/0x10
-[   35.295975]  ? __ext4_journal_start_sb+0x7b/0x520
-[   35.296849]  ? lock_is_held_type+0x9e/0x120
-[   35.297711]  ext4_evict_inode+0x64b/0x14f0
-[   35.298225]  ? __pfx_lock_release+0x10/0x10
-[   35.298724]  ? do_raw_spin_lock+0x131/0x270
-[   35.299256]  ? __pfx_ext4_evict_inode+0x10/0x10
-[   35.299824]  ? __pfx_do_raw_spin_lock+0x10/0x10
-[   35.300593]  evict+0x334/0x790
-[   35.300991]  ? __pfx_evict+0x10/0x10
-[   35.301890]  ? do_raw_spin_unlock+0x58/0x220
-[   35.302817]  ? _raw_spin_unlock+0x23/0x40
-[   35.303676]  ? iput+0x441/0x610
-[   35.304218]  vfs_rmdir+0x44b/0x5a0
-[   35.304769]  ? lookup_one_qstr_excl+0x24/0x150
-[   35.305297]  do_rmdir+0x28e/0x370
-[   35.305678]  ? __pfx_do_rmdir+0x10/0x10
-[   35.306148]  ? trace_kmem_cache_alloc+0x24/0xb0
-[   35.306703]  ? getname_flags+0xb3/0x410
-[   35.307190]  __x64_sys_rmdir+0x40/0x50
-[   35.307641]  do_syscall_64+0xc1/0x1d0
-[   35.308096]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   35.308701] RIP: 0033:0x7f071988381b
-[   35.309147] Code: f0 ff ff 73 01 c3 48 8b 0d 02 36 0e 00 f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 84 00 00 00 00 00 f3 0f 1e fa b8 54 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 d1 35 0e 00 f7 d8
-[   35.311700] RSP: 002b:00007ffc6ed5f4f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000054
-[   35.313089] RAX: ffffffffffffffda RBX: 00007ffc6ed62948 RCX: 00007f071988381b
-[   35.314271] RDX: 0000000000000000 RSI: 000056215a1fd2e0 RDI: 00007ffc6ed606c0
-[   35.315464] RBP: 00007ffc6ed605e0 R08: 0000000000000073 R09: 0000000000000000
-[   35.316537] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-[   35.317452] R13: 00007ffc6ed62958 R14: 00005621223ddc70 R15: 00007f07199d6000
-[   35.318345]  </TASK>
-[   35.318625]
-[   35.318827] The buggy address belongs to the physical page:
-[   35.319896] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x67 pfn:0xaaee
-[   35.320879] flags: 0x80000000000000(node=0|zone=1)
-[   35.321361] raw: 0080000000000000 ffffea00002abbc8 ffffea00002ac348 0000000000000000
-[   35.322478] raw: 0000000000000067 0000000000000000 00000000ffffffff 0000000000000000
-[   35.323460] page dumped because: kasan: bad access detected
-[   35.324149]
-[   35.324347] Memory state around the buggy address:
-[   35.324958]  ffff88800aaedf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[   35.326113]  ffff88800aaedf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[   35.327190] >ffff88800aaee000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[   35.328162]                    ^
-[   35.328700]  ffff88800aaee080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[   35.329505]  ffff88800aaee100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[   35.330516] ==================================================================
-[   35.332287] Disabling lock debugging due to kernel taint
-
-Reported-by: syzbot+57934e2c8e7a99992e41@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=57934e2c8e7a99992e41
-Fixes: 6dd4ee7cab7e ("ext4: Expand extra_inodes space per the s_{want,min}_extra_isize fields")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
----
- fs/ext4/inode.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 89aade6f45f6..38a1012d4a14 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5844,7 +5844,6 @@ static int __ext4_expand_extra_isize(struct inode *inode,
- 				     handle_t *handle, int *no_expand)
- {
- 	struct ext4_inode *raw_inode;
--	struct ext4_xattr_ibody_header *header;
- 	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
- 	struct ext4_inode_info *ei = EXT4_I(inode);
- 	int error;
-@@ -5864,11 +5863,8 @@ static int __ext4_expand_extra_isize(struct inode *inode,
- 
- 	raw_inode = ext4_raw_inode(iloc);
- 
--	header = IHDR(inode, raw_inode);
--
- 	/* No extended attributes present */
--	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) ||
--	    header->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC)) {
-+	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR)) {
- 		memset((void *)raw_inode + EXT4_GOOD_OLD_INODE_SIZE +
- 		       EXT4_I(inode)->i_extra_isize, 0,
- 		       new_extra_isize - EXT4_I(inode)->i_extra_isize);
--- 
-2.34.1
+Since I am not going to use "qrb" in this patches, should I resend
+it as a separate patch? Because we have platforms qrb4210 and etc.?
 
 
