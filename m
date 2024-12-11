@@ -1,162 +1,146 @@
-Return-Path: <linux-kernel+bounces-440648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031609EC24E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:37:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218BD9EC250
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF378167EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABC11885868
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4991FCCE1;
-	Wed, 11 Dec 2024 02:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCCF1FCD0D;
+	Wed, 11 Dec 2024 02:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDZQ5TfR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEm3QReU"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7F3C148;
-	Wed, 11 Dec 2024 02:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13351ABEA5;
+	Wed, 11 Dec 2024 02:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733884649; cv=none; b=IXMLYFAuqml7VXAhsWRyISPYNdgOX77cEUhvuYU3lMHNjAePNZJjaXHfYgriv9GOhWeY4XTRUR4RSz10cw3qt72sTKHBDyzFp5Yoqv8TwIpYqhfKa58edYbus/WAYuO3FEXg1snrsaGf8wAJVFTXuOCFjECLcgiGFw+2ES0EGnc=
+	t=1733884722; cv=none; b=dUmdP8UV5aN/rGXFiWKBodYD3X72o3vkkpBEnqdqMeHkJ9rFpJVq/WeOh1kvbTmyWuhhkTmf0TK7n1/UitY0kiHX1tkFtgiIDRJiPK+34Bsh1UKtTt2BTNqVD9O392x0Fe34yqAFzt1iMSDWmfoaUd1hyQQJPBMWcXR7cxmpPcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733884649; c=relaxed/simple;
-	bh=DUGkTeY3nF0d2mRRcn/oCpk/z0595BnJpRO/MgGaiaQ=;
+	s=arc-20240116; t=1733884722; c=relaxed/simple;
+	bh=4OLQwQO0LdwaulrgdF6TOJDcMwzUcT+bJ7H1QUHqX3M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jdHGRwHUBFoyrdyIvaR64F/gGAiV6FMq1eHcrKxQlTQkDp2OPfeiAbymXqCtp5jrcK0Zeg10WMGObnZcbgcMgQjDc1l68s4MzbxIe+kum4mnr/dm1O8X3K9Khh0YjSndiJfcnruUwRYQeToeOq5yCUqEI49dX7fFRfpkbdjcLYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDZQ5TfR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE954C4CEDD;
-	Wed, 11 Dec 2024 02:37:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733884646;
-	bh=DUGkTeY3nF0d2mRRcn/oCpk/z0595BnJpRO/MgGaiaQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aDZQ5TfR+4C1PqenyMh1oqQju/YOUFkb6ygJR8YzB1WOKjmo5tNGwigXcPSvQ/h6U
-	 1l8VaztRWGNz/QuhI5AiGWRL9ShooogOqFidV1X9FsEWUdB9gFhhFfUsY1FxsZ0ArV
-	 9nkUs/lWqYZnPBxZDoela9CTfLYqZulfpsh4EzsucipTznBMjCSwFGuuZbqqlClvuC
-	 5Z6cK/PE8uOBKYHnY3bTvNXfwEU6xQhSvywHILzhTvYtK6Xkjj+PpGWVUaIFRW+myo
-	 QgAULhYb8nApF6Rq+lsFsVkTxoNeboVwvyiJFZ7wWiqrAPytThVw/N20D7G1qp0yGj
-	 QdRSm4/ciAUzg==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-540254357c8so1569796e87.1;
-        Tue, 10 Dec 2024 18:37:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVaAPszQoGTFO7URlq1eiYq5Ng3zsLYx4rUQwGBxIhQxVYaxt5LvlRjHKYDWtvgsKLefO+n6KgN950qKHY=@vger.kernel.org, AJvYcCXg2F7NaTSz3sJHzre9dtT4YS0lj02Pi/2z+E7krPSSfGOaxIFRwOqZ3J0dAG89nnAsIDOdTAsaPlfUJMNiAsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUBWtDWdgwF/gCSUZJT6x3aNN/WN0UwLmTNP6q+afA/wkwV9DJ
-	XRgsmPhmeWizN4CydXase6cmtK37+BgEzMKbnsOXCE/wZeM0rYN/rq4cneUQh7uvmfuKrgML4SM
-	X/xyoGx4/wg4+1VWdASKOLId7g8I=
-X-Google-Smtp-Source: AGHT+IHisRqzbuD8pT7SfEVDcme2Sdu/LmQSV5wOJ2448T01ybCZo4dCmRJBHcF7WEz49Yxqox0CwmVDEgAWJqSqBAA=
-X-Received: by 2002:a05:6512:108f:b0:53e:12dc:e805 with SMTP id
- 2adb3069b0e04-5402a5ff555mr264802e87.45.1733884645446; Tue, 10 Dec 2024
- 18:37:25 -0800 (PST)
+	 To:Cc:Content-Type; b=nhd3sMZTSpfLRLWhZNhssbxHzM1RIXV6/XYRV1NTr0YMspcq/dulZnXiHpDjrKhcFiPq2hiz7Lh+OuyjvcgawwLGFSP1dWcc2LZTOFaJvuDD6DhGisFib8fEQAZUJkLmVVDz2ibgI5b8JFZ6dKiPeOEXRrm5+NWa4GxsKHdd7Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEm3QReU; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3862f11a13dso449327f8f.2;
+        Tue, 10 Dec 2024 18:38:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733884718; x=1734489518; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eI+hPb6isny6xU/Mw22BE9CM1MN0WgOmna79UINL7uE=;
+        b=kEm3QReU+eIh//SNf2o9MMDCWgSfpDCx59tMTHtrZlzZFsBUl5H4CefsmDQtdYc3qj
+         r1UCKE+M4vFoHObaZL06eOzDT5K1odflNIpTT/Ti+Jex1YrZvbQCqR8E0baFOYILxApj
+         qLaPofD+uU1yM8U58UN/MrkC8wS1Fxa6aj9B8mQQWdg+OOXq01FC4qqRq/bn1FRyVJXf
+         Kqvzvz2WDaCR1I2GBDWqcDFOjoSOu8xYsf60T6Z1D5xvCuylehYRfeV6l12AlQAzaW1f
+         pL8FtGMzV9gZOnsIp2H3qf1TU55sxW3NFSscu1Sn7docH7wclrBw1p3XIJM2tqUnMnZr
+         n35A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733884718; x=1734489518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eI+hPb6isny6xU/Mw22BE9CM1MN0WgOmna79UINL7uE=;
+        b=D/zdOOIUNDeWuc1FiK6209eH4oESzowZ3T41mUP84WlElJGfgZPMX30SwucOw7kZ3d
+         qVUONwYJX+49/zGpbpFIfmllonTN5wtnific7qWRmwPxGxMU9SruuKSQq98mUkXnH3n4
+         S8nStx0ZRaflyXLMQp8uPSXzWKnXsHsM6K6P4lC7FZdztL4K0kWxjzu4R9S85tBEVsT2
+         om/Hau5CP2D4GVLxSYf74JvH56P6/kZa/ZMtlceSrTukx/d9mFUR5Umy58Cj8SwrY/In
+         3GYWJLopZpQWTuzJyLaMGnc+wdkCniqoABNY4gTFe9ICVx+ImuZy3KCsFkHG1iLjohEc
+         fSxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV10E5mQl8Vetxiw0EpKcg8/SJmoWqjVfu8vX2NDbfNk9xUOUK2g8ziR7j3gzNmFsdB35OMoYu2WBJgQg==@vger.kernel.org, AJvYcCWoPUcMpYpcrJsVDxp+isJi67aJfBPLMKOku1mP44d2DuEQqp8BbSNk8Txh26v/ocYzYP8tFweK/d6YuHQy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4VGlCicTVId3thTy5QC3DMfkpJ0IeniBzwVfmzzmsiau1gk43
+	WEWV+rADEwYd93OcDFp01LrhDxQM/kY8LP11hGJD6C4FqUhjueHF17Y/ZLf8fTq07wf01di0iim
+	U54KoI2tMTJA3C807Vwm1h4I67Ds=
+X-Gm-Gg: ASbGnct4jLazk/bIDUo5K0g0n/J2Kr9Z/0c/hE7VulMGmAmd38VbFvVKbHG9rJRElfe
+	tRhXfmKXQGCuEDGF7CJcOcWUPnC70mqtX/LIx
+X-Google-Smtp-Source: AGHT+IEXrBFHN2Zc2n+KTcO5hImGo+X0S04uITF8TJNMKxHmx8tnI06cHhfEH6FkFqf6i2PcWNNYECd772oeGVJ362I=
+X-Received: by 2002:a05:600c:510e:b0:434:fecf:cb2f with SMTP id
+ 5b1f17b1804b1-4361c3af2bemr2303305e9.5.1733884717627; Tue, 10 Dec 2024
+ 18:38:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110013649.34903-1-masahiroy@kernel.org> <20241110013649.34903-6-masahiroy@kernel.org>
- <82FA2E02-05A5-4297-B364-9D7D89001D9D@linux.dev> <1116D946-05F3-4463-A61F-DE221F258A3F@linux.dev>
- <CAK7LNAQ1MvB_wXa6F8aZB_srrLTQupRXNsz6Rav27fyjznXZJQ@mail.gmail.com> <838D0FCD-EA9C-46C8-BCA7-FECFD3DC04D8@linux.dev>
-In-Reply-To: <838D0FCD-EA9C-46C8-BCA7-FECFD3DC04D8@linux.dev>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 11 Dec 2024 11:36:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARi9t1mtUAW=X7bxiR_xWzaXX+Tq4dd8FfXW+LSm6o=ww@mail.gmail.com>
-Message-ID: <CAK7LNARi9t1mtUAW=X7bxiR_xWzaXX+Tq4dd8FfXW+LSm6o=ww@mail.gmail.com>
-Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
- module directory with M=
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, cocci@inria.fr
+References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+ <20241209115522.3741093-2-yukuai1@huaweicloud.com> <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
+ <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com> <7081765f-28d7-f594-1221-6034b9e88899@huaweicloud.com>
+ <d9733af5-b16b-4644-9d6d-84fbacf334e0@acm.org>
+In-Reply-To: <d9733af5-b16b-4644-9d6d-84fbacf334e0@acm.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Wed, 11 Dec 2024 10:38:26 +0800
+Message-ID: <CAHJ8P3J-KwGU_ZffmSmoFkhUX1q=9Q7Dk15yPEXYME_JQHH5tA@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
+ the tag reservation code"
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, akpm@linux-foundation.org, 
+	yang.yang@vivo.com, ming.lei@redhat.com, osandov@fb.com, 
+	paolo.valente@linaro.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	"yukuai (C)" <yukuai3@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 8:06=E2=80=AFPM Thorsten Blum <thorsten.blum@linux.=
-dev> wrote:
+Bart Van Assche <bvanassche@acm.org> =E4=BA=8E2024=E5=B9=B412=E6=9C=8811=E6=
+=97=A5=E5=91=A8=E4=B8=89 04:33=E5=86=99=E9=81=93=EF=BC=9A
 >
-> On 10. Dec 2024, at 11:47, Masahiro Yamada wrote:
-> > On Mon, Dec 9, 2024 at 10:56=E2=80=AFPM Thorsten Blum wrote:
-> >> On 9. Dec 2024, at 14:46, Thorsten Blum wrote:
-> >>> On 10. Nov 2024, at 02:34, Masahiro Yamada wrote:
-> >>>>
-> >>>> Currently, Kbuild always operates in the output directory of the ker=
-nel,
-> >>>> even when building external modules. This increases the risk of exte=
-rnal
-> >>>> module Makefiles attempting to write to the kernel directory.
-> >>>>
-> >>>> This commit switches the working directory to the external module
-> >>>> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
-> >>>> some build artifacts.
-> >>>>
-> >>>> The command for building external modules maintains backward
-> >>>> compatibility, but Makefiles that rely on working in the kernel
-> >>>> directory may break. In such cases, $(objtree) and $(srctree) should
-> >>>> be used to refer to the output and source directories of the kernel.
-> >>>>
-> >>>> The appearance of the build log will change as follows:
-> >>>>
-> >>>> [Before]
-> >>>>
-> >>>> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
-> >>>> make: Entering directory '/path/to/my/linux'
-> >>>> CC [M]  /path/to/my/externel/module/helloworld.o
-> >>>> MODPOST /path/to/my/externel/module/Module.symvers
-> >>>> CC [M]  /path/to/my/externel/module/helloworld.mod.o
-> >>>> CC [M]  /path/to/my/externel/module/.module-common.o
-> >>>> LD [M]  /path/to/my/externel/module/helloworld.ko
-> >>>> make: Leaving directory '/path/to/my/linux'
-> >>>>
-> >>>> [After]
-> >>>>
-> >>>> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
-> >>>> make: Entering directory '/path/to/my/linux'
-> >>>> make[1]: Entering directory '/path/to/my/externel/module'
-> >>>> CC [M]  helloworld.o
-> >>>> MODPOST Module.symvers
-> >>>> CC [M]  helloworld.mod.o
-> >>>> CC [M]  .module-common.o
-> >>>> LD [M]  helloworld.ko
-> >>>> make[1]: Leaving directory '/path/to/my/externel/module'
-> >>>> make: Leaving directory '/path/to/my/linux'
-> >>>>
-> >>>> Printing "Entering directory" twice is cumbersome. This will be
-> >>>> addressed later.
-> >>>>
-> >>>> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> >>>> ---
-> >>>
-> >>> Hi Masahiro,
-> >>>
-> >>> I get the following error since this patch is in master, but only whe=
-n
-> >>> using COCCI=3D in combination with M=3D<relative or absolute path>.
-> >>>
-> >>> It works when I either use COCCI=3D or M=3D, but not with both.
-> >>
-> >> Using the absolute path of the cocci script fixes my problem, but this
-> >> used to work with relative paths too.
-> >>
-> >> $ make coccicheck COCCI=3D$(pwd)/scripts/coccinelle/misc/flexible_arra=
-y.cocci M=3Darch/
+> On 12/9/24 10:22 PM, Yu Kuai wrote:
+> > First of all, are we in the agreement that it's not acceptable to
+> > sacrifice performance in the default scenario just to make sure
+> > functional correctness if async_depth is set to 1?
+>
+> How much does this affect performance? If this affects performance
+> significantly I agree that this needs to be fixed.
+>
+> > If so, following are the options that I can think of to fix this:
 > >
-> > M=3D looks a bit weird for the upstream code, but
-> > I think using the absolute path is the right thing to do.
+> > 1) make async_depth read-only, if 75% tags will hurt performance in som=
+e
+> > cases, user can increase nr_requests to prevent it.
+> > 2) refactor elevator sysfs api, remove eq->sysfs_lock and replace it
+> > with q->sysfs_lock, so deadline_async_depth_store() will be protected
+> > against changing hctxs, and min_shallow_depth can be updated here.
+> > 3) other options?
 >
-> The documentation[1] uses M=3D and also COCCI=3D with relative paths and
-> some of the examples don't work anymore.
-
-I know.
-
-This is what cocci people hoped to work.
-
-If something is broken in coccicheck, it must be fixed.
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+> Another option is to remove the ability to configure async_depth. If it
+> is too much trouble to get the implementation right without causing
+> regressions for existing workloads, one possibility is to remove support
+> for restricting the number of asynchronous requests in flight.
+Hi Bart,
+I think it is very useful to restrict asynchronous requests when IO
+loading is very heavy by aysnc_depth.
+the following is my androidbench experiment in android device(sched_tag=3D1=
+28):
+1. setting heavy IO
+while true; do fio -directory=3D/data -direct=3D0 -rw=3Dwrite -bs=3D64M
+-size=3D1G -numjobs=3D5 -name=3Dfiotest
+2. run androidbench  and results=EF=BC=9A
+                orignial async_depth
+async_depth=3Dnr_requests*3/4      delta
+seq read             33.176                                216.49
+                      183.314
+seq write             28.57                                  62.152
+                         33.582
+radom read         1.518                                  1.648
+                        0.13
+radom write         3.546                                  4.27
+                          0.724
+and our customer also feedback there is optimization when they test
+APP cold start and benchmark after tunning async_depth.
+thanks=EF=BC=81
+>
+> Thanks,
+>
+> Bart.
+>
 
