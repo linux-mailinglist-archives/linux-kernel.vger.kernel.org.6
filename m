@@ -1,180 +1,132 @@
-Return-Path: <linux-kernel+bounces-440565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8089EC10D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:46:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D18F9EC10F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60112281DD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19797284174
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D614D8A3;
-	Wed, 11 Dec 2024 00:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D31B46434;
+	Wed, 11 Dec 2024 00:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KjCTQrhB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="AcfAA+MW"
+Received: from esa5.hc1455-7.c3s2.iphmx.com (esa5.hc1455-7.c3s2.iphmx.com [68.232.139.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAE81F5EA;
-	Wed, 11 Dec 2024 00:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DAB70803;
+	Wed, 11 Dec 2024 00:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733878006; cv=none; b=AtWsIhr/uSXpNGGDpkNronxlZ8arxtwDXz/yBBcWA1RGFwUNIMi9d3loxhkO3IwGzrB3v0vFnUEG3F2OlJYYDRgYNa+Xaqf0PgjgdX6an3a8eYzRuQPT53A7lMeTc9YjIBppwI2Q6SyhMSIJYMgQsqo+ZnPfdryCl3CZIrjFgNg=
+	t=1733878024; cv=none; b=quSubgNqf1/OKFJu01T1t9gjPHmCCcI+sabGXnLh1kbwEiX30hlgsUdx96D65q0FZRHTUICPE233Jp9+i8okd8ovtA79719zxh6Jmw5ZCTYdTqOLyCG3R5pkLoU+MAkm7DXuABke/8g3G27CcKEMhnmx5ny30Zl7cfw8ViiTlcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733878006; c=relaxed/simple;
-	bh=1H3cIATD0dXLlSVUR/ldxmWO5MYq4IIJi3J0Hk+r9dY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=This7hUD2SpQwiQYcWKzJ+68txULhjMeyPBxPMLVfx4RcNOQgzrxQBmYyZpukzXTv9flvk+Nf/x3CZ+1ZRQwZ8IiP8mZVdaSQZtCG8abITtdIGneuf3mOPZPAHv/SzFq2VMB4+htoatatFw5JlzlnuW2M/u8LE7feE3mrTbSlSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KjCTQrhB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADXbp4014608;
-	Wed, 11 Dec 2024 00:46:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pOvQ4kEW5+JbIoo3oLAx3A6GmkI7mBSEDvoz1mE4eXw=; b=KjCTQrhBUH38ytjN
-	RUtbiO/IEO49nRXsFTPDMtuOEqVqcvodDRVk5i8iitWNs2a8WE6Q1ZwVJo7OQi7y
-	cXvEum9l7opxX4RhHY4nXSUoZsL2bnmNBCwwS2+i05Q2THqox6sGVMGx7mueioXY
-	PnJ24Hy3X644/kanKm5OxEu7Os4VR507b4b6Wm9pTB6GcvB/TTJC5aJ+0XbD6rzn
-	nSCS2LnaRLNzK70P7nXChTrJVcaCll0nh3ht+BLRbF9pxgvZaw1g9vaoNCmRVKt9
-	/HP8JdX0Ahy2FZwpmOoN0CqY5JBJvx+jsnKQqYu0uoY2F/nhObKJp11xoPFcKtLd
-	4MFU3Q==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3nb71x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 00:46:25 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB0kPcP029536
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 00:46:25 GMT
-Received: from [10.64.16.135] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
- 2024 16:46:18 -0800
-Message-ID: <527baded-f348-48a8-81cd-3f84c0ff1077@quicinc.com>
-Date: Wed, 11 Dec 2024 08:46:16 +0800
+	s=arc-20240116; t=1733878024; c=relaxed/simple;
+	bh=q6X2kMRHBE6WwDLDJhj6QszSmONNL1SPo5EUKxyj+gY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PzCZri25RPOtJnoc0QWB6ebXnCpW4BHD0greF7iT/hgFrDCgKMz6kkqzp8WSw4HtCjv8nzb1tlYxjD7XQGcz7hzUvYKX++DNLw496o0fiRjzaIcNKcDZ0vqq6sASkmfYSeB25jaPpFg6QtT7hF1+rh9BTviwewznM7U4FPJNXOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=AcfAA+MW; arc=none smtp.client-ip=68.232.139.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1733878023; x=1765414023;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=q6X2kMRHBE6WwDLDJhj6QszSmONNL1SPo5EUKxyj+gY=;
+  b=AcfAA+MWTtR66bSFLknUl7o6zrkZxGKI76m9G55kgMnxetbkn4/SO9KE
+   PZ3IUMog/5FBxQJxClgFlJ85YLvf5VrhKJ2GT9STXu1LQSY+X7Kw/ZSnv
+   1wOHn1Dgr+F1DQ09UyFJsec2uPgiyG8LOKNbrqMBKp+PzHHWRF3Q2pxIx
+   qtYAnPvPJDS77F5OHp3Ofwi+nCm3/Dya8uWDNCqGdJkMYRG1kVmLIiDYT
+   E1pBdd94R8Hy+STQ6zpegnZh7lUvIlWPT80C3EY8HeFypRxSmDp1kAeT9
+   MGAoO0O7780jQVDZNjJDVT5EkODRy1qZZs4ltKL6+3wSBiKjEqRCKuLur
+   Q==;
+X-CSE-ConnectionGUID: 51TY1MJLQh2qnAI+2Ta6eg==
+X-CSE-MsgGUID: /nHwJF7fQ1Kn4L4N9mIH6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="182472789"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728918000"; 
+   d="scan'208";a="182472789"
+Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
+  by esa5.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 09:45:50 +0900
+Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
+	by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id 2371AD4C42;
+	Wed, 11 Dec 2024 09:45:48 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id F106DD7283;
+	Wed, 11 Dec 2024 09:45:47 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 7AD7620076D0F;
+	Wed, 11 Dec 2024 09:45:47 +0900 (JST)
+Received: from iaas-rdma.. (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id CA2891A000B;
+	Wed, 11 Dec 2024 08:45:46 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: shuah@kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH v4] selftests/zram: gitignore output file
+Date: Wed, 11 Dec 2024 08:46:25 +0800
+Message-ID: <20241211004625.5308-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on
- QCS615
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Kuogee
- Hsieh" <quic_khsieh@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        "Kishon
- Vijay Abraham I" <kishon@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_lliu6@quicinc.com>,
-        <quic_fangez@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
- <20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef@quicinc.com>
- <CAA8EJppOR_UXoVpMt-dhfWdCz3UNfsXGdz8X9NqpaSmYj3AZDg@mail.gmail.com>
- <5ea14162-567b-462d-be02-b73b954b7507@quicinc.com>
- <5whv4z7u6fkfwlv5muox5dmv6fow4mga76ammapw7wph7vwv3f@xibcjdfqorgf>
- <iqcofcntirmlwcpyfr4yabymqfcgyrij57bibf337tmxpa73t6@npkt6wquenf6>
-From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-In-Reply-To: <iqcofcntirmlwcpyfr4yabymqfcgyrij57bibf337tmxpa73t6@npkt6wquenf6>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ygGzruQ_LQRZ7QNeIARNz0cm5J1Cy4Os
-X-Proofpoint-ORIG-GUID: ygGzruQ_LQRZ7QNeIARNz0cm5J1Cy4Os
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412110004
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28852.000
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28852.000
+X-TMASE-Result: 10--12.315400-10.000000
+X-TMASE-MatchedRID: 49D3s4su4CaAIpLP/qXbGbnHu4BcYSmtegIHHX2L4YyjEIt+uIPPOBka
+	AZoftHktcMrdJyab/PE7316J37LffS8oE1Ngob6lrMZ+BqQt2NrJ5SXtoJPLyFcZNuxCoduSsaY
+	IF6sQsQ50RL7pOTKrHkwECQaT0DBZXSJ4c3nT+QfNgrlT5Ajc7sE5XPQnBzGXWAuSz3ewb20HV6
+	CRl0Ild2xeoKLN1RJD6L2S69zMjXkoDz0/aX3Nnp4CIKY/Hg3AaZGo0EeYG95p9JuvPBKN/Cq2r
+	l3dzGQ1PefUoUh8dMOuvBmzg2L+ap8ACOxIAKTb3sjTEKSi09whbpx7Sgcyeg==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
+After `make run_tests`, the git status complains:
+Untracked files:
+    (use "git add <file>..." to include in what will be committed)
+        zram/err.log
 
+This file will be cleaned up when execute 'make clean'
 
-On 12/10/2024 11:09 PM, Dmitry Baryshkov wrote:
-> On Thu, Dec 05, 2024 at 08:31:24PM +0200, Dmitry Baryshkov wrote:
->> On Thu, Dec 05, 2024 at 09:26:47PM +0800, Xiangxu Yin wrote:
->>>
->>>
->>> On 11/29/2024 10:33 PM, Dmitry Baryshkov wrote:
->>>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
->>>>>
->>>>> Extended DP support for QCS615 USB or DP phy. Differentiated between
->>>>> USBC and DP PHY using the match table’s type, dynamically generating
->>>>> different types of cfg and layout attributes during initialization based
->>>>> on this type. Static variables are stored in cfg, while parsed values
->>>>> are organized into the layout structure.
->>>>
->>>> We didn't have an understanding / conclusion whether
->>>> qcom,usb-ssphy-qmp-usb3-or-dp PHYs are actually a single device / PHY
->>>> or two PHYs being placed next to each other. Could you please start
->>>> your commit message by explaining it? Or even better, make that a part
->>>> of the cover letter for a new series touching just the USBC PHY
->>>> driver. DP changes don't have anything in common with the PHY changes,
->>>> so you can split the series into two.
->>>>
->>> Before implement DP extension, we have discussed with abhinav and krishna about whether use combo, usbc or separate phy.
->>
->> What is "DP extension"?
->>
-I'm sorry confusion casued by my description. It's means extend DP implemnt for USBC phy driver.
->>>
->>> We identified that DP and USB share some common controls for phy_mode and orientation.
->>> Specifically, 'TCSR_USB3_0_DP_PHYMODE' controls who must use the lanes - USB or DP,
->>> while PERIPH_SS_USB0_USB3PHY_PCS_MISC_TYPEC_CTRL controls the orientation.
->>> It would be more efficient for a single driver to manage these controls. 
->>
->> The question is about the hardware, not about the driver.
->>
->>> Additionally, this PHY does not support Alt Mode, and the two control registers are located in separate address spaces. 
->>> Therefore, even though the orientation for DP on this platform is always normal and connected to the video output board, 
->>> we still decided to base it on the USBC extension.
->>
->> Could you please clarify, do usb3-or-dp PHYs support DP-over-USB-C? I
->> thought that usbc-or-dp platforms support that, but they don't
->> support DP+USB pin configuration. Note, the question is broader than
->> just QCS615, it covers the PHY type itself.
->>
->> Also, is TCSR configuration read/write or read-only? Are we supposed to
->> set the register from OS or are we supposed to read it and thus detemine
->> the PHY mode?
-> 
-> Any updates on these two topics?
-> 
-Still confirming detail info with HW & design team.
-I’ll update the information that has been confirmed so far.
-This phy support DP-over-USB-C,but it's not support alt-mode which 2 lane work for DP, other 2 lane work for USB.
-TCSR phy mode is read/write reg and we can read for determine phy mode.
+Cc: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+Hello,
+Cover letter is here.
 
+This patch set aims to make 'git status' clear after 'make' and 'make
+run_tests' for kselftests.
+---
+V4:
+   Remove duplicate Signed-off-by # Shuah
+
+V3:
+  Add Copyright description
+V2:
+   split as a separate patch from a small one [0]
+   [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
+---
+ tools/testing/selftests/zram/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 tools/testing/selftests/zram/.gitignore
+
+diff --git a/tools/testing/selftests/zram/.gitignore b/tools/testing/selftests/zram/.gitignore
+new file mode 100644
+index 000000000000..088cd9bad87a
+--- /dev/null
++++ b/tools/testing/selftests/zram/.gitignore
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++err.log
+-- 
+2.44.0
 
 
