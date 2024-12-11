@@ -1,160 +1,108 @@
-Return-Path: <linux-kernel+bounces-441448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A11B9ECE85
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:25:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED30C9ECE7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:24:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 666D818860FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2972E188364B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770816EB42;
-	Wed, 11 Dec 2024 14:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1CD13B5AE;
+	Wed, 11 Dec 2024 14:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="isK9gr98"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bm2B4NqQ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF891CD3F;
-	Wed, 11 Dec 2024 14:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F292A246322
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733927105; cv=none; b=ZqWk485675NuQ7yHZ3a+7NKwNKentsZp8Qa1Cy6sKc+6vvuxLiAE9Q2QxJMqBl5FV2AuiYpfLE3tM7uKLumJwdChh8/ZxELf84abNtMgIvvJIM5mlrVF6T+PgHz3+bjs3VdFlfcKC48FJ0VFmyi5xqTf1IT5U0PMg1N+xeFLeMQ=
+	t=1733927078; cv=none; b=myo7JK6I9Zi1Q2sRkJAj5g6e9V7te53vZ3HR+aKWUr0XOr1OK6ItGduGKPwKz2GpJG1m6uFuqbn0ITWnt+cc8bXKCgKFI/kkwz1Z2XaoACqKBbb0i2wqdfxwkzdGVbj1Thl4TQUD1KZCOOnXFqXYIgHYVceKNPc8ZIGzdZEjB3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733927105; c=relaxed/simple;
-	bh=TO+YB/Y/4TCTstWKm/S0FbmmY68P0DKD/Yt8QeePxEs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K4MoOr3GLa9saZzu3jgWffR6KHB8gVYxSPXyCump+W2BhitX3EpkbG/WR4Ku65Ejw1HY71pS6j1uAF8FlFPktRDwTQVX6GzOois833H7liu6xcoYz/0CGtQo9gSkFuwtCn8+yQthdVJNf3BJo+MeBbPhuwuki8ObgVYJs8DXEys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=isK9gr98; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733927104; x=1765463104;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=TO+YB/Y/4TCTstWKm/S0FbmmY68P0DKD/Yt8QeePxEs=;
-  b=isK9gr98RRG6Va3ErPD5wdE+iN9n51mXsJ18nTnKZcPgeHgDD8b3pLAK
-   BSvRR07Rp3S5xTyP/WZyn6j034ZMQdldhpVIIrn8GM8pygkWpm7fz5mAb
-   McwEgP8jyRqiK7YpfqGKENPpDWox7/jtKi32UvchAhivXQFam4nCkHTJF
-   I53XfTiqnL4YdJ1/F+aOgMDIWoAX/+snDuL0Vew3HqH5+4nwkK957CCV6
-   0NKldBBH6DoPm1zkkJA/+Q/XqfqLA74FbySvslQkC3JDWEoAAo1nIbyz6
-   f8BqFnQ6CsdtG05RWFJzae0LDxLVnPW4ZhVglig1mCWf/fssaAkMBuKZS
-   Q==;
-X-CSE-ConnectionGUID: IlHltZeBQ1akvRu9exo9Uw==
-X-CSE-MsgGUID: 31C75q+ZQFujCYCU8aE+sA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="44979297"
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="44979297"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 06:25:03 -0800
-X-CSE-ConnectionGUID: Kd1QKuo+QR6IoKNW4XOJAw==
-X-CSE-MsgGUID: kCNsvwGPQyyYK8GHI13fsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="99920819"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.242])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 06:23:41 -0800
-Message-ID: <8d736607552e88f28672ef5217431f61951df126.camel@linux.intel.com>
-Subject: Re: [PATCH v9 1/9] HID: hid-sensor-hub: don't use stale
- platform-data on remove
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Jiri Kosina <jikos@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, jic23@kernel.org, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jdelvare@suse.com,  linux@roeck-us.net, bentiss@kernel.org,
- dmitry.torokhov@gmail.com, pavel@ucw.cz,  ukleinek@debian.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org, 
- linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
- stable@vger.kernel.org
-Date: Wed, 11 Dec 2024 06:23:40 -0800
-In-Reply-To: <n914pn7o-pr9n-5ss0-p744-73402nnn843p@xreary.bet>
-References: <20241107114712.538976-1-heiko@sntech.de>
-	 <20241107114712.538976-2-heiko@sntech.de>
-	 <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
-	 <4934964.GXAFRqVoOG@diego>
-	 <nycvar.YFH.7.76.2411071534110.20286@cbobk.fhfr.pm>
-	 <20241112143732.GG8552@google.com> <20241211120844.GD7139@google.com>
-	 <n914pn7o-pr9n-5ss0-p744-73402nnn843p@xreary.bet>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733927078; c=relaxed/simple;
+	bh=uzP4mXKgzQ8050Z+jX1ltzRvcoKhnE2DNPViE0ZQMOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjwDLtZCfbDR9WHKEy7wVpbPlpXO5747l5oAUL2o8cujFtyFvN5DWuYVhmcYqbEkfJFpCfS3XY/rMr/FZWAgWS6xaDC5GDz/HcqAlkMelko83Zu/RKO7YYP/62SoJnOOWU0jfj39VDkCNK/JS+0G7HuI1LyYMKuXQ3WIkWHy07g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bm2B4NqQ; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a044dce2so75787785e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:24:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733927074; x=1734531874; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AUik0fZMAd+bqv0OcocEi5jmwaoyxM+p5pKd8cBHnJg=;
+        b=Bm2B4NqQIuPjLCX388jmJ6WQWJKwGYfsIhTB3AkUBJKW+XqLs5/ReOwgRw/VjzRQIa
+         +eiBFiNTWTEQb8tv+q5MdbrDD3DRjSe09UvcEhFDO7YeDPkdezW5dz2b+ZjcXBk9unBe
+         U6yihMiw5ZFRnxMO/H+Bv1TSqyY0QerYijEghAUXs7MK4APU4UPERA/wbfOI6wNeLIcO
+         zArBQGAsxeECaXKos5qel4B/8Q1LpKEv6z6I+7aEMgjsFlUF2h/47Nl3YRx9rDm9eWAU
+         7NC9mU0pZHToajE2mEAVaAd0FvyIkYxHaMQ07qwOtg3hKVrDiSDLNZmo3PC3UKH5eYCm
+         CVYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733927074; x=1734531874;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AUik0fZMAd+bqv0OcocEi5jmwaoyxM+p5pKd8cBHnJg=;
+        b=T7S8zIpwqdj3HzGmq87MDc0VFkQyupP7Smb2vpL4WgxsYvZKNUkmdb8Ese64hZKCNd
+         juoT94jesqSAe+BtHGbestnCKPDl4osR1HlZ4MDoVG72yLsuMlMpM4emqCsxNnPq+SQs
+         XDKmgXbDxE17ofwfrNxZobiIFzJrkp5c71d67dQ8XswWRFbScWJCRRCgCsM+f1vHqQ58
+         GUFKt8Q/AeL2gNdfTLbl4AEUMlkTBPXmCnob3ftSZVao1J+uoIOvwY1nnWic7lbMW89T
+         FCIA17XXA4hIOI3C8vn+r7vnpz1A5tdQityoGMwnVgiKWUreCcsxox2wcRKQW0OWLKVc
+         MUVA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2rR5Gy0SSYjf5/qpmgNtm63TffpmdYE08je0bGkeajT1KOCzuAdEMquReb+MT/sOmaDneiC0WDYNdYGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1Ej/sC8NHTxOmYi2Z+9NfpyfA62vDJdj4sT3rusOObZamnrLz
+	0t1VRAjYN0p/+0J4Oofv2HDGSwihoH7he3DRbclxtw/Bm4g5bXl3ugNBNFMKAIY=
+X-Gm-Gg: ASbGncvIUpo1cHLpKprKt93OMkVCuhJg9omjJoZuyr+HMSa0kJbG7GGgKoTyM+5wpuD
+	caMVv4Qbs5JUZ0SmvPLvDq9pCT3pcYAnw9HrpCtj7gmLj4M//AnKCR2QHQ4ShfV3Zna4ClKJEcp
+	r5FcvkaFGQ0nXOKRZD4t5wVv37odUPoALrRpKNNpG9a7WiJMNXnUPrq1IbtYc69+0mu80a1GfP3
+	ZoIDF8rx8Tce3T5tMoSDG3PP/tsxdJyQ90qT1YwrwVhX26KUpdIVM4=
+X-Google-Smtp-Source: AGHT+IGp4grbvGAuPffIKwRuF0sE3gDdsLgNCa2O6zdjP6Rny0gZfL4sX2ge75TOX4NmvgcuqUKbtA==
+X-Received: by 2002:a5d:64cc:0:b0:385:e877:c037 with SMTP id ffacd0b85a97d-3864cec7417mr2710692f8f.42.1733927074219;
+        Wed, 11 Dec 2024 06:24:34 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef2708becesm13526259a91.52.2024.12.11.06.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 06:24:33 -0800 (PST)
+Date: Wed, 11 Dec 2024 15:24:25 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	Rik van Riel <riel@surriel.com>, Omar Sandoval <osandov@meta.com>
+Subject: Re: [PATCH printk v1 1/2] printk: Remove redundant deferred check in
+ vprintk()
+Message-ID: <Z1mgmT8HlkGR6UEN@pathway.suse.cz>
+References: <20241209111746.192559-1-john.ogness@linutronix.de>
+ <20241209111746.192559-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209111746.192559-2-john.ogness@linutronix.de>
 
-On Wed, 2024-12-11 at 13:24 +0100, Jiri Kosina wrote:
-> On Wed, 11 Dec 2024, Lee Jones wrote:
->=20
-> > > > > This change was more or less a surprise find, because I
-> > > > > wanted to make
-> > > > > the platform_data pointer in the mfd_cell struct const and
-> > > > > this the hid
-> > > > > sensor hub stood out as doing something strange ;-) .
-> > > > >=20
-> > > > > So patch 2 of this series actually depends on this change to
-> > > > > not cause
-> > > > > build errors.
-> > > >=20
-> > > > Ah, right.
-> > > >=20
-> > > > > But seeing that we're after -rc6 alredy, I would assume the
-> > > > > brunt of the=20
-> > > > > mcu series might need to wait after 6.13-rc1 anyway - but I
-> > > > > guess that=20
-> > > > > depends on how Lee sees things ;-) .
-> > > >=20
-> > > > OK, I am keeping my hands off it for the time being.
-> > >=20
-> > > I can take it now with an Ack.
-> >=20
-> > Looking to apply this set now.
-> >=20
-> > Ack please.
->=20
-> I'd preferer if Srinivas could ack this as the more specific
-> maintainer.=20
-> Srinivas, please?=20
-My ACK is already in the patch:
+On Mon 2024-12-09 12:23:45, John Ogness wrote:
+> The helper printk_get_console_flush_type() is already calling
+> is_printk_legacy_deferred() to determine if legacy printing is
+> to be offloaded. Therefore there is no need for vprintk() to
+> perform this check as well. Remove the redundant check from
+> vprintk().
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-Fixes: e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous
-reads")
-Cc: stable@vger.kernel.org
-Acked-by: Benjamin Tissoires <bentiss@kernel.org>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Great catch!
 
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Thanks,
-Srinivas
-
->=20
-> Thanks,
->=20
-
+Best Regards,
+Petr
 
