@@ -1,210 +1,104 @@
-Return-Path: <linux-kernel+bounces-441346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7EF9ECD1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:25:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B624F9ECD20
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56165188650D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:25:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81061886431
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDA823FD06;
-	Wed, 11 Dec 2024 13:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E3F22C342;
+	Wed, 11 Dec 2024 13:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jiiwCirL"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow/qtzLQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B03229127
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F2523FD06;
+	Wed, 11 Dec 2024 13:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733923529; cv=none; b=W1tDBy+gs9EX2pjsiLPPtp66fGGJ3MsbLJtLKBdJpzbiPC03Wez8CXuGvba3SHd8G26vbF5mQjtbrhXwWkTOSydY/okU2fhwVuaRjKyA0ZBs8KbrrYm9pVrqXUEZWoxqlwJSzDIjBdyeljx7GuL6BFzJV1C0D8y0mgKzUtinxMU=
+	t=1733923550; cv=none; b=mU+TLg7+trMHKQr0fWSOqneJbPzokw/hLsjwx+UqnsErLVYz8LajL0a24a8L5RuBKMiiS/c6WT8iLEIHESKLdG9yq0vhHunUDZ6YVbPb9kDoSpaVDEtAhE145dPdARMIpTbLpY69Dcji0lF7+8rWXeNnSg9FNHRLZpy59zWieJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733923529; c=relaxed/simple;
-	bh=F7ClRSDPlmowTlTkYA2vtwRH/X0CYiJxPiRuh6lXYdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kDj53idhspIBkLEDoE4D9jRIff/ShwiGigxfIuIEiwz5davjBjCNr5PkApSuCHpXPUpupQg0AkZYy/Uoc0QAp35dVOY5d850oLsACrkAfPsLZcNMUbvH391hruqNQgQZ348RB41Jimz9UwU3utXiW/8+IEvnGDJsZDweySZFAnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jiiwCirL; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-728ea1e0bdbso1309495b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:25:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733923526; x=1734528326; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=52qsJbrEZBJTL67kYW0LzbQH1uz/zTKWXiiEV8CLW5g=;
-        b=jiiwCirLVcSDzUznPwnq5orItEpouivq+veabgM6hG/c4RtINN/C0wJj0+nGyAtdAp
-         LoDXc4bZQT58825+ghJWYMKNFaerYWm4P/tHMdT+9PwtFDlIGLoeN1/2IP/5yJg0pAS3
-         LEddRTOSqjUsvAwgkM1IJYMfKMH/8Z2zX22LKA+mSnqIAyH2YXLTIgz2UnHPf4XW/1r5
-         XlgUKsGEaEvNZztb/De04RlZrLlUzs653D7iXEDXSq/zqgx5U/PyT6+9zRbU2+sxZsu6
-         5DD7YPhxeoAFmTSK6Igxlda/sz1Uk2/x7EyLaD4tbzQdCMqoBixO5N4C1w5XTsDCZgMs
-         /pJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733923526; x=1734528326;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=52qsJbrEZBJTL67kYW0LzbQH1uz/zTKWXiiEV8CLW5g=;
-        b=fH4brRK4u8bGAos1wD+9TVcT0e/VnnwEk5NRQR18cLeNsdfK37BwKl9lHt53RUWtf8
-         3TynYzSkE6hqEeKSWOboZYMjfMz87cHvQDIGHGzs2oi7GcWkYe9zUBR5bPlmbgeC5OZX
-         YI0ZiKSHrrR/Fc53JUfdwm4JG4Qj4jfmStnrs46JCIcU/qEquLW2ZF5aL8Q9NMRe8I5p
-         HlJuB5fp1vwa2ZYqPXnNGPFU9suYRDprAkTB8SigSMrh0tXGM9h8i/Ctjo/Nxr49bOrS
-         BEOokLqBIFx+oo2j003n9i/X8CMK2u8gci7SudNzJcMDLBs0tXr0GCKrQ1z3u333qlDB
-         l0vA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbf4LA0zRA7VQsTPNi7gspSw80LlITzKTO5VFs/kpBMox6vUBvERpxygp1uU7BTt+6WAs7VeCkkulxSrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4zZTHETDQk/iLmumD/wzTBNzs2Io2TeRWMRqbsLoADVmbGdXy
-	unLKHPdo2/HZjFuxqbIUzL40znd8U9O0rJKE5lQ37pjZ8Y81Hr/emj/dciJDIlY0lQ4hqcYCZ7P
-	cxTHTj3svqdxLeCRcbCR0WvNjRuiOC7ZrQaRJSQ==
-X-Gm-Gg: ASbGncuL1QnvrR6qxcV6gqszCa1z65748St9NEVi2oh9TzpWDSZmZNhq0NcKIGb3jdC
-	iNXm3EymWGPECiMTI4YFArkbj7fj3Jhi1OZxIJ0mYbmla+Nwqi+3gMRHbyN8N7Hl6
-X-Google-Smtp-Source: AGHT+IGTCHkH/wdKKewfl7Mq3kAimCKhjttvHwdMKbWRkk/0ABXJnggUAYQVK6V95ADdRM3Tir/W2Qni7OFgz2q4CqY=
-X-Received: by 2002:a05:6a20:d50c:b0:1e1:3a97:bdb0 with SMTP id
- adf61e73a8af0-1e1c12aabc8mr5272462637.9.1733923526475; Wed, 11 Dec 2024
- 05:25:26 -0800 (PST)
+	s=arc-20240116; t=1733923550; c=relaxed/simple;
+	bh=8jyEiPx2XgjKHn81uoDheb1vwz2easQKgcFU/SqHuU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RL23tsu2DfeKibXvB2iKYBV0lSDJikArzhUoXTrS+60DazqTbqu8y1hSHiEFYQTar6lmOcVbw/tLm1Rkn7MN3D6xnjMGF84wnsqksC90DBhPGeJqo56oVLXU1yv0xjkpC/IOF/araGwcDxMyc4rbh0YNVR+WpQ3q+6zq3HhNjwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ow/qtzLQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD91C4CED2;
+	Wed, 11 Dec 2024 13:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733923549;
+	bh=8jyEiPx2XgjKHn81uoDheb1vwz2easQKgcFU/SqHuU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ow/qtzLQFm5l9O+TFeF8+Zlm0mI2x18auLMcnkodVh1b7aW6xDajDKyWAKHwlTVyw
+	 7sA7egQ2Z94m9iZyRiLwql7gfz8jGw/wmammusegaYIpeJ2rfFGEB+/He01WXlvYD+
+	 AIPyVpjiFhpcowdCwqjKWDHgSoLiZwk5tvnYVWRbJcpVQIgjF5loE43nbuaLXPO6xR
+	 pHdnBdyvLbgpfkgyDftk7bdoNNq7cOKbkf806qoasQTLWgkKc4dijbUUgGFTRFZF+d
+	 JKX0xCS0DcGfh+wr1SiWRla5XmnsRQYq1jiS5ZrYgP/lWkWpZvzkJcMYu1rgsthgRi
+	 6vGJENM2YWdhQ==
+Date: Wed, 11 Dec 2024 13:25:44 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Song Chen <chensong_2000@189.cn>
+Cc: krzk@kernel.org, lgirdwood@gmail.com, lee@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2] regulator:s5m8767: Fully convert to GPIO descriptors
+Message-ID: <8ecd5325-f347-4869-9049-2731b719f5d2@sirena.org.uk>
+References: <20241211051019.176131-1-chensong_2000@189.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5861970.DvuYhMxLoT@rjwysocki.net> <2989520.e9J7NaK4W3@rjwysocki.net>
- <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com> <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 11 Dec 2024 14:25:14 +0100
-Message-ID: <CAKfTPtAdo7OADEFuMeg1PpO=rk=bXmiw1Avj7frsoNWZuceewA@mail.gmail.com>
-Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for EAS
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x23V6mMyBfeeNdU5"
+Content-Disposition: inline
+In-Reply-To: <20241211051019.176131-1-chensong_2000@189.cn>
+X-Cookie: Every path has its puddle.
+
+
+--x23V6mMyBfeeNdU5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Dec 2024 at 12:29, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Dec 11, 2024 at 11:33=E2=80=AFAM Christian Loehle
-> <christian.loehle@arm.com> wrote:
-> >
-> > On 11/29/24 16:00, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > Make it possible to use EAS with cpufreq drivers that implement the
-> > > :setpolicy() callback instead of using generic cpufreq governors.
-> > >
-> > > This is going to be necessary for using EAS with intel_pstate in its
-> > > default configuration.
-> > >
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >
-> > > This is the minimum of what's needed, but I'd really prefer to move
-> > > the cpufreq vs EAS checks into cpufreq because messing around cpufreq
-> > > internals in topology.c feels like a butcher shop kind of exercise.
-> >
-> > Makes sense, something like cpufreq_eas_capable().
-> >
-> > >
-> > > Besides, as I said before, I remain unconvinced about the usefulness
-> > > of these checks at all.  Yes, one is supposed to get the best results
-> > > from EAS when running schedutil, but what if they just want to try
-> > > something else with EAS?  What if they can get better results with
-> > > that other thing, surprisingly enough?
-> >
-> > How do you imagine this to work then?
-> > I assume we don't make any 'resulting-OPP-guesses' like
-> > sugov_effective_cpu_perf() for any of the setpolicy governors.
-> > Neither for dbs and I guess userspace.
-> > What about standard powersave and performance?
-> > Do we just have a cpufreq callback to ask which OPP to use for
-> > the energy calculation? Assume lowest/highest?
-> > (I don't think there is hardware where lowest/highest makes a
-> > difference, so maybe not bothering with the complexity could
-> > be an option, too.)
->
-> In the "setpolicy" case there is no way to reliably predict the OPP
-> that is going to be used, so why bother?
->
-> In the other cases, and if the OPPs are actually known, EAS may still
-> make assumptions regarding which of them will be used that will match
-> the schedutil selection rules, but if the cpufreq governor happens to
-> choose a different OPP, this is not the end of the world.
+On Wed, Dec 11, 2024 at 01:10:19PM +0800, Song Chen wrote:
+> This converts s5m8767 regulator driver to use GPIO descriptors.
+>=20
+> ---
+> v1 - v2:
+> 1, reedit commit message.
+> 2, remove development code.
+> 3, print error msg in dev_err_probe.
+> 4, doesn't set gpiod directions until successfully requesting
+>    all gpiods. It's pretty much equivalent with original code.
+>=20
+> Signed-off-by: Song Chen <chensong_2000@189.cn>
+> ---
 
-Should we add a new cpufreq governor fops to return the guest estimate
-of the compute capacity selection ? something like
-cpufreq_effective_cpu_perf(cpu, actual, min, max)
-EAS needs to estimate what would be the next OPP; schedutil uses
-sugov_effective_cpu_perf() and other governor could provide their own
+Your signoff needs to be before the ---, and the changelog after the
+---.  The tools will get very confused and remove your signoff here.
 
->
-> Yes, you could have been more energy-efficient had you chosen to use
-> schedutil, but you chose otherwise and that's what you get.
+--x23V6mMyBfeeNdU5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Calling sugov_effective_cpu_perf() for another governor than schedutil
-doesn't make sense. and do we handle the case when
-CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not selected
+-----BEGIN PGP SIGNATURE-----
 
->
-> > >
-> > > ---
-> > >  kernel/sched/topology.c |   10 +++++++---
-> > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > >
-> > > Index: linux-pm/kernel/sched/topology.c
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > --- linux-pm.orig/kernel/sched/topology.c
-> > > +++ linux-pm/kernel/sched/topology.c
-> > > @@ -217,6 +217,7 @@ static bool sched_is_eas_possible(const
-> > >       bool any_asym_capacity =3D false;
-> > >       struct cpufreq_policy *policy;
-> > >       struct cpufreq_governor *gov;
-> > > +     bool cpufreq_ok;
-> > >       int i;
-> > >
-> > >       /* EAS is enabled for asymmetric CPU capacity topologies. */
-> > > @@ -251,7 +252,7 @@ static bool sched_is_eas_possible(const
-> > >               return false;
-> > >       }
-> > >
-> > > -     /* Do not attempt EAS if schedutil is not being used. */
-> > > +     /* Do not attempt EAS if cpufreq is not configured adequately *=
-/
-> > >       for_each_cpu(i, cpu_mask) {
-> > >               policy =3D cpufreq_cpu_get(i);
-> > >               if (!policy) {
-> > > @@ -261,11 +262,14 @@ static bool sched_is_eas_possible(const
-> > >                       }
-> > >                       return false;
-> > >               }
-> > > +             /* Require schedutil or a "setpolicy" driver */
-> > >               gov =3D policy->governor;
-> > > +             cpufreq_ok =3D gov =3D=3D &schedutil_gov ||
-> > > +                             (!gov && policy->policy !=3D CPUFREQ_PO=
-LICY_UNKNOWN);
-> > >               cpufreq_cpu_put(policy);
-> > > -             if (gov !=3D &schedutil_gov) {
-> > > +             if (!cpufreq_ok) {
-> > >                       if (sched_debug()) {
-> > > -                             pr_info("rd %*pbl: Checking EAS, schedu=
-til is mandatory\n",
-> > > +                             pr_info("rd %*pbl: Checking EAS, unsuit=
-able cpufreq governor\n",
-> > >                                       cpumask_pr_args(cpu_mask));
-> > >                       }
-> > >                       return false;
-> >
-> > The logic here looks fine to me FWIW.
-> >
-> >
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdZktgACgkQJNaLcl1U
+h9CpeQf+KrcJKSJOMXnfO3IPgQISl9QlxNWu4k3eOOqxEe0amoy7O37YkvXfRW9Q
+oA52J1TAjdA5NpPVTiFC0FRYfQeD22cYE4IMWrc2UgmKeWBoxWNQwWGqxnKx1Vi+
+a8E5H/vnQ0S3pjjTX80sE/8tqug3Yg0HS/lTMjP4B90VsUlp6HMkbbeaW2JR7Jiu
+xz2bfGU/4tC2NvzDBrLlTikzmDfBTD1m/k8uLMSe4ZTJd2aGxsEohWsJXGW32/yd
+/DDo9nUva5a58Vzxa+5RrKZDE18Fyr1b+LsqzTvT46zNlTsM4tNy3H2BV2ia4fKG
+K7SCmuZreZ2jH080IHmoIiZ5D8U3Og==
+=7ltg
+-----END PGP SIGNATURE-----
+
+--x23V6mMyBfeeNdU5--
 
