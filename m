@@ -1,143 +1,201 @@
-Return-Path: <linux-kernel+bounces-441979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979999ED66E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:23:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB5D9ED65A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:20:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A079D188E961
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE1D16C258
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE3B231A5E;
-	Wed, 11 Dec 2024 19:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794EB2336BF;
+	Wed, 11 Dec 2024 19:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOKrypyn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tC0Rtszh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28041C548F;
-	Wed, 11 Dec 2024 19:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE5520A5E9;
+	Wed, 11 Dec 2024 19:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733944545; cv=none; b=q+t2p2ckj+Ra58jLtfTwTlkQVGsN8viJMuUwEJhlVZzE7YxmEJzjcmTAOw1NiCfEIHBNh+JelVmtg0HKnhbK5oMECnmS3wFvtWIgtW2h8aFybOQlRrf4Ze6eXDW6Fbgz1/ov0IW3ehnpsXf3s7oLdhUB3+Attih/gbdV0e8YvpU=
+	t=1733944568; cv=none; b=Vgr6Uh3GBLLLvlswH85cFvFTQO9KAQJv2JVK2L4sXEIrwN2osn37DMGC8q5bvYMcCc+IaeJABFQ+YD7NV93dXWfQvYObfNDPOj1icqatMADfiBhl8G3YTU2BN3i0fyCu/SuTbnGj6Tai82U4XdhezsuJ/8b90V5Wme/ZY1r9R+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733944545; c=relaxed/simple;
-	bh=TycHuwKOqMmwmgXtlpvbcP6Cd7VjA6M0ekrYMGO/yEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c6y1JWkehDF55nFYy2PR64XUvjwRi66AiyGf4ZPJR4XIqNR8olrd/m4YVx+DqrNjw2eD+q9OpZnEPEUH22ddIDCrd73SBkaklOFwS5fSx6e1awqkU+920srK6LYlgDQRuoRgsNLjRHwuavTAWalSIwHg1mRuWm94gh2CsF0tbhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOKrypyn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F2E1C4CED2;
-	Wed, 11 Dec 2024 19:15:39 +0000 (UTC)
+	s=arc-20240116; t=1733944568; c=relaxed/simple;
+	bh=p0I3eAlC7b3PnBkktDgRru+nX0TcY+mtMy1hmXYQsL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHF6jaGVxXu7jfNu1/Fucp5kwGvLQ2e9pBoe7SHoKEGzVv/+kZHp5M0jNWR3jrUC4ml096sIj98cjQbrTEEXlrOiEZzz2mXtnlgCchNgTs3I/hDWbTS6DK+x4h3NdCsbJ9KrRJRHKNRTjb81liu9KYxQC9rBkBd+X02RVRl/LmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tC0Rtszh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE628C4CED2;
+	Wed, 11 Dec 2024 19:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733944545;
-	bh=TycHuwKOqMmwmgXtlpvbcP6Cd7VjA6M0ekrYMGO/yEk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HOKrypynG4At1cB14qOLL/okQZnfH9pGms2vTOQTsuWpmc3DqdEVOuG5Acsxv+faT
-	 j4Haut7R+d2d1Kz+QdZoJa3LEq4Qkwhg872K9rTqXE7LDiQPIB9Nw07pAdNEtBA4K1
-	 gF02VL4duNd5yPCfVqAVN1C5XyUSm8NI0hiIomaJNqEX+Y9S1G+gg8t+PrYesTkJDQ
-	 Df33m49aHVpa9hMpxr1GsrHr/8yhcOVraVRpWAxINJmSCWzezSVSVS+P9FPiteXI87
-	 3LNpR3cQd3i8rBHtUyAuaihf9RZfY5bJ822lk6zEUzHpNS0nlQEkoIsH9JAlEDebU4
-	 M+1PVhiLgEpMA==
-Date: Wed, 11 Dec 2024 19:15:36 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Lothar Rubusch <l.rubusch@gmail.com>,
- lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, lkp@intel.com,
- oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark
- events
-Message-ID: <20241211191536.224c89e9@jic23-huawei>
-In-Reply-To: <dc914326-7eae-4e4a-8c93-ae1a7007bcc9@stanley.mountain>
-References: <20241205171343.308963-11-l.rubusch@gmail.com>
-	<dc914326-7eae-4e4a-8c93-ae1a7007bcc9@stanley.mountain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1733944568;
+	bh=p0I3eAlC7b3PnBkktDgRru+nX0TcY+mtMy1hmXYQsL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tC0Rtszhjo2e6+97zK24za+HDrsByCbDBDvOT4BGYUH6o8G+E/nbXp/1hxkWTWau/
+	 t0RFiupyYTW/iqZTXvo+cr/YNDVtF1qSuSLAaimwIXZm84cQMWQWSU9MsZyD0lDLcU
+	 hpr83/H48RsqrDsnKHRzneoE+EOMXRXKnx14fIyVeFHA+wZ0bmLnRKuPIFmb1AWYwY
+	 qMc9ooTwL0g7RgcwIXAqe0S4V/1cWarvN2NjW5JL4pGaSHGNmlpmNlECaltnOF/EvD
+	 xUwVXVQisTvImA/bSx/wSZTLebbJ3qcHgnb3kkRUy8+K0sX7B5xfkAqZFtpntiiPjq
+	 mmMCDCLMfkC1w==
+Date: Wed, 11 Dec 2024 11:16:06 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, nick.forrington@arm.com,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] perf lock: Rename fields in lock_type_table
+Message-ID: <Z1nk9owKE_xHVh1i@google.com>
+References: <20241210200847.1023139-1-ctshao@google.com>
+ <20241210200847.1023139-3-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241210200847.1023139-3-ctshao@google.com>
 
-On Tue, 10 Dec 2024 11:47:37 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-> Hi Lothar,
+On Tue, Dec 10, 2024 at 12:08:22PM -0800, Chun-Tse Shao wrote:
+> `lock_type_table` contains `name` and `str` which can be confusing.
+> Rename them to `flags_name` and `lock_name` and add descriptions to
+> enhance understanding.
+> Tested by building perf for x86.
 > 
-> kernel test robot noticed the following build warnings:
+> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 
-Ah. This was the report you were referring to I guess.  Just fix these in v6 version
-of this patch.
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 
 Thanks,
+Namhyung
 
-Jonathan
-
+> ---
+>  tools/perf/builtin-lock.c | 33 +++++++++++++++++++--------------
+>  1 file changed, 19 insertions(+), 14 deletions(-)
 > 
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> index 50630551adad..74085c8e32d3 100644
+> --- a/tools/perf/builtin-lock.c
+> +++ b/tools/perf/builtin-lock.c
+> @@ -1575,8 +1575,13 @@ static void sort_result(void)
+>  
+>  static const struct {
+>  	unsigned int flags;
+> -	const char *str;
+> -	const char *name;
+> +	/*
+> +	 * Name of the lock flags (access), with delimeter ':'.
+> +	 * For example, rwsem:R of rwsem:W.
+> +	 */
+> +	const char *flags_name;
+> +	/* Name of the lock (type), for example, rwlock or rwsem. */
+> +	const char *lock_name;
+>  } lock_type_table[] = {
+>  	{ 0,				"semaphore",	"semaphore" },
+>  	{ LCB_F_SPIN,			"spinlock",	"spinlock" },
+> @@ -1593,24 +1598,24 @@ static const struct {
+>  	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex",	"mutex" },
+>  };
+>  
+> -static const char *get_type_str(unsigned int flags)
+> +static const char *get_type_flags_name(unsigned int flags)
+>  {
+>  	flags &= LCB_F_MAX_FLAGS - 1;
+>  
+>  	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+>  		if (lock_type_table[i].flags == flags)
+> -			return lock_type_table[i].str;
+> +			return lock_type_table[i].flags_name;
+>  	}
+>  	return "unknown";
+>  }
+>  
+> -static const char *get_type_name(unsigned int flags)
+> +static const char *get_type_lock_name(unsigned int flags)
+>  {
+>  	flags &= LCB_F_MAX_FLAGS - 1;
+>  
+>  	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+>  		if (lock_type_table[i].flags == flags)
+> -			return lock_type_table[i].name;
+> +			return lock_type_table[i].lock_name;
+>  	}
+>  	return "unknown";
+>  }
+> @@ -1717,7 +1722,7 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
+>  
+>  	switch (aggr_mode) {
+>  	case LOCK_AGGR_CALLER:
+> -		fprintf(lock_output, "  %10s   %s\n", get_type_str(st->flags), st->name);
+> +		fprintf(lock_output, "  %10s   %s\n", get_type_flags_name(st->flags), st->name);
+>  		break;
+>  	case LOCK_AGGR_TASK:
+>  		pid = st->addr;
+> @@ -1727,7 +1732,7 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
+>  		break;
+>  	case LOCK_AGGR_ADDR:
+>  		fprintf(lock_output, "  %016llx   %s (%s)\n", (unsigned long long)st->addr,
+> -			st->name, get_type_name(st->flags));
+> +			st->name, get_type_lock_name(st->flags));
+>  		break;
+>  	case LOCK_AGGR_CGROUP:
+>  		fprintf(lock_output, "  %s\n", st->name);
+> @@ -1768,7 +1773,7 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
+>  
+>  	switch (aggr_mode) {
+>  	case LOCK_AGGR_CALLER:
+> -		fprintf(lock_output, "%s%s %s", get_type_str(st->flags), sep, st->name);
+> +		fprintf(lock_output, "%s%s %s", get_type_flags_name(st->flags), sep, st->name);
+>  		if (verbose <= 0)
+>  			fprintf(lock_output, "\n");
+>  		break;
+> @@ -1780,7 +1785,7 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
+>  		break;
+>  	case LOCK_AGGR_ADDR:
+>  		fprintf(lock_output, "%llx%s %s%s %s\n", (unsigned long long)st->addr, sep,
+> -			st->name, sep, get_type_name(st->flags));
+> +			st->name, sep, get_type_lock_name(st->flags));
+>  		break;
+>  	case LOCK_AGGR_CGROUP:
+>  		fprintf(lock_output, "%s\n",st->name);
+> @@ -2343,10 +2348,10 @@ static int parse_lock_type(const struct option *opt __maybe_unused, const char *
+>  	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
+>  		bool found = false;
+>  
+> -		/* `tok` is `str` in `lock_type_table` if it contains ':'. */
+> +		/* `tok` is a flags name if it contains ':'. */
+>  		if (strchr(tok, ':')) {
+>  			for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> -				if (!strcmp(lock_type_table[i].str, tok) &&
+> +				if (!strcmp(lock_type_table[i].flags_name, tok) &&
+>  				    add_lock_type(lock_type_table[i].flags)) {
+>  					found = true;
+>  					break;
+> @@ -2363,14 +2368,14 @@ static int parse_lock_type(const struct option *opt __maybe_unused, const char *
+>  		}
+>  
+>  		/*
+> -		 * Otherwise `tok` is `name` in `lock_type_table`.
+> +		 * Otherwise `tok` is a lock name.
+>  		 * Single lock name could contain multiple flags.
+>  		 * Replace alias `pcpu-sem` with actual name `percpu-rwsem.
+>  		 */
+>  		if (!strcmp(tok, "pcpu-sem"))
+>  			tok = (char *)"percpu-rwsem";
+>  		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> -			if (!strcmp(lock_type_table[i].name, tok)) {
+> +			if (!strcmp(lock_type_table[i].lock_name, tok)) {
+>  				if (add_lock_type(lock_type_table[i].flags)) {
+>  					found = true;
+>  				} else {
+> -- 
+> 2.47.1.545.g3c1d2e2a6a-goog
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Lothar-Rubusch/iio-accel-adxl345-refrase-comment-on-probe/20241206-011802
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-> patch link:    https://lore.kernel.org/r/20241205171343.308963-11-l.rubusch%40gmail.com
-> patch subject: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark events
-> config: nios2-randconfig-r072-20241210 (https://download.01.org/0day-ci/archive/20241210/202412101132.Kj6R6i3h-lkp@intel.com/config)
-> compiler: nios2-linux-gcc (GCC) 14.2.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202412101132.Kj6R6i3h-lkp@intel.com/
-> 
-> smatch warnings:
-> drivers/iio/accel/adxl345_core.c:441 adxl345_event_handler() warn: unsigned 'int_stat' is never less than zero.
-> 
-> vim +/ret +321 drivers/iio/accel/adxl345_core.c
-> 
-> 55d2386488598bb Lothar Rubusch 2024-12-05  433  static irqreturn_t adxl345_event_handler(int irq, void *p)
-> 55d2386488598bb Lothar Rubusch 2024-12-05  434  {
-> 55d2386488598bb Lothar Rubusch 2024-12-05  435  	struct iio_dev *indio_dev = p;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  436  	struct adxl345_state *st = iio_priv(indio_dev);
-> 55d2386488598bb Lothar Rubusch 2024-12-05  437  	u8 int_stat;
->                                                         ^^^^^^^^^^^
-> 
-> 55d2386488598bb Lothar Rubusch 2024-12-05  438  	int samples;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  439  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  440  	int_stat = adxl345_get_status(st);
-> 55d2386488598bb Lothar Rubusch 2024-12-05 @441  	if (int_stat < 0)
->                                                             ^^^^^^^^^^^^
-> signedness bug
-> 
-> 55d2386488598bb Lothar Rubusch 2024-12-05  442  		return IRQ_NONE;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  443  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  444  	if (int_stat == 0x0)
-> 55d2386488598bb Lothar Rubusch 2024-12-05  445  		goto err;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  446  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  447  	if (int_stat & ADXL345_INT_OVERRUN)
-> 55d2386488598bb Lothar Rubusch 2024-12-05  448  		goto err;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  449  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  450  	if (int_stat & (ADXL345_INT_DATA_READY | ADXL345_INT_WATERMARK)) {
-> 55d2386488598bb Lothar Rubusch 2024-12-05  451  		samples = adxl345_get_samples(st);
-> 55d2386488598bb Lothar Rubusch 2024-12-05  452  		if (samples < 0)
-> 55d2386488598bb Lothar Rubusch 2024-12-05  453  			goto err;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  454  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  455  		if (adxl345_fifo_push(indio_dev, samples) < 0)
-> 55d2386488598bb Lothar Rubusch 2024-12-05  456  			goto err;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  457  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  458  	}
-> 55d2386488598bb Lothar Rubusch 2024-12-05  459  	return IRQ_HANDLED;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  460  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  461  err:
-> 55d2386488598bb Lothar Rubusch 2024-12-05  462  	adxl345_fifo_reset(st);
-> 55d2386488598bb Lothar Rubusch 2024-12-05  463  
-> 55d2386488598bb Lothar Rubusch 2024-12-05  464  	return IRQ_HANDLED;
-> 55d2386488598bb Lothar Rubusch 2024-12-05  465  }
-> 
-
 
