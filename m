@@ -1,236 +1,136 @@
-Return-Path: <linux-kernel+bounces-442333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ADE9EDB0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:16:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876919EDB0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:17:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D0A1889BB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:16:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442271889DF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486C61F2367;
-	Wed, 11 Dec 2024 23:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE69F1F239D;
+	Wed, 11 Dec 2024 23:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="p/aMxKYP"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evwN6Vh4"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC0B17838C;
-	Wed, 11 Dec 2024 23:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733958952; cv=fail; b=Jes8s0ujOPcoklKhNfNUvOnOHIDyxHHmOo6LgFKBo44bNGWHQY23HRdcduUNemhUKzJ+nS9hJ9XrmrXDQixrJt7TFrW1YjjFT6eIwxnpNMIJAD2okQjmrHI4bpKJ36tmi/cRrnOslyLL2J1xzB1q7AcCFKF/K+oMOp6FYwYbwkI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733958952; c=relaxed/simple;
-	bh=W6v2AHDC3+b9ZC8UtZGAGkvUNj8I5fAJ/aq/g313bqA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=S0S+VwH5TSkbk7EocZkUP93t2FCa4bZe66x5YoZOWeBoq8Vz9rRvfySSfIIOwVIhlO1qk1zzd/2cByGVMZNh1/lZkYlQKpk4ubiPj5axTIuMn9ZQrnIAyXdC/OXKwFxNVVbjH6UhcZ3MtAGHXFNphjB+nPSr5ZozfvqUiz+Wvdg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=p/aMxKYP; arc=fail smtp.client-ip=40.107.92.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=abx+jXkmMk0YxW98agXi3wIlHCrcMnPtDW1SPm1xBE8oGBUsSNG75qXkSiahoMdL5xgbbe/MuZeT26QJ64Wj4DFi8Ff4incU56ZZ8orB2rBbZXx/JcemawqKEqVND3Y0qMVCdiSf4duaYKVn56bm7Rhkvg5sj3883LiqbFdQTT1RBAC4IYMhGSSIBQwwkU+2GXl/dr5A8PFb491N+3OKiLbZBcIFIl9LKREg7Pdu+V/EArR7oGv5XI2O+CFCiTprWFId15PP1SgWihQcygwWU8m63GkCfLJqDYbC4bv3lwHJhC0ZIAc/HNL6StxX/roMbKeftPsrCIMBnMJvMjcxOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8QH3TzJ2RDWfGiKovofjJQNBsPyrIcb1as5bhbck7OE=;
- b=hcpU3gvKg57HTe2C10zGlmx/xPWOc1IjnTAoEGjc+TL6emFh5a4dlSR4lKGcyDeDxYYvmWWD9qDLOWgsfB+4uYdEO1ycaFzc97JlJAMnwcAZk7LYPMqKxV/imk2xDphreTVIj4tD1fgVKpOJkz7tpLtl0IZvC4cDKiZfNoAP9e7y68SO6LlmdywGP/2nXl53Y1SYAn44uMcrkGoApm8AHUWghGQhvRjvLl8sUShJvjnvAjQcWsUSbd8uusPTjxDxkJ2PMtufDKMxZ93vO+KGJf4M2Gjtdv3yAHbJ8A+sjV/Llw6qnAR7yoVc/FWNzKfAxN1VSUABDKC3ymZ2LjJaiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8QH3TzJ2RDWfGiKovofjJQNBsPyrIcb1as5bhbck7OE=;
- b=p/aMxKYPWdNRG/A0YtWDZspfUshUgeqLYQUUOebkqm3DlRw5GQ0FPXL5ySenmnD4EC4Jdfkrnrxf9nxEsPW0/JcyGc7I8X2meOuF/hyXdohoxj+IPcBQu2mOhXU7xMjeSpdWBWpV1rFfZSRCApeniQiQj9ZxnKZdbjdMZj0pmdxqRnRUVodGaidLMvuHxPprkdS9GpVixSwWKDhqynPQFBzC+cl2MVwbcPwD+1cG+IDR11uYJXjoGsuzlQU38jcUI/uR7F/wh6UEJk96LCWOeSqs+DKm/qwqUDK6Ok67cM04MoRcykTmTfEQSnxHlNSGQvKD7dGNNiyJ5CQZXW7UFA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA1PR12MB7272.namprd12.prod.outlook.com (2603:10b6:806:2b6::7)
- by PH8PR12MB6746.namprd12.prod.outlook.com (2603:10b6:510:1c1::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Wed, 11 Dec
- 2024 23:15:40 +0000
-Received: from SA1PR12MB7272.namprd12.prod.outlook.com
- ([fe80::a970:b87e:819a:1868]) by SA1PR12MB7272.namprd12.prod.outlook.com
- ([fe80::a970:b87e:819a:1868%6]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
- 23:15:40 +0000
-Message-ID: <766a28a1-c82b-46fd-b3b0-fe3b6024f462@nvidia.com>
-Date: Thu, 12 Dec 2024 10:15:35 +1100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memcg: allow exiting tasks to write back data to swap
-Content-Language: en-GB
-To: Rik van Riel <riel@surriel.com>, Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>
-References: <20241211105336.380cb545@fangorn>
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <20241211105336.380cb545@fangorn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR08CA0014.namprd08.prod.outlook.com
- (2603:10b6:805:66::27) To SA1PR12MB7272.namprd12.prod.outlook.com
- (2603:10b6:806:2b6::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3D21C1F22;
+	Wed, 11 Dec 2024 23:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733959017; cv=none; b=dG5L22K6n7lODEYP88e8ucNeBysgySYnHA8XjprP2E3zBrwxIkcrkMj0Q/LrCpQK9X4yEurJfZQ1btVKR1KB3izLctsd825MLoCQCZ3CC/qCM9kIdIb19VDSM2N3ecSJuMBde2vkJECbYIQbk4sntzTS4VAVY1cHI8RKuFzgUeo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733959017; c=relaxed/simple;
+	bh=i6ZrtWtzAyOy8gdWcoPcDlt/eQnm2NOjmoi9dL7VXZg=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=TryxdLnwcf6HdwpISRx5IFlI0p3VxszMaYzGzkuPvvD/OkIzE9X6HlM8LP8MMyCWBz+ddz0ShLfFjS0QLV22neCREotFrXgNktUcK+2RGg2r3XoBCev3HVcwgfbUKMvNsPMsWut+R/iyD/chIHO+1pC/w+ixdmzpIS8Pk6tyIXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evwN6Vh4; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-725ee6f56b4so6823b3a.3;
+        Wed, 11 Dec 2024 15:16:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733959015; x=1734563815; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ShXp0MbnAr4ggsRDnYhR5uR6lsM/ajKdCXbVIq5oTug=;
+        b=evwN6Vh469dg39IHRL9DPDwqhccKWfnjIlcb2ISW4iq1WVX72nCZVYEPviq+Zim1AP
+         vcQyU047XnfAcUZ/DOgeQeVnAtbj/dmn803f2aMcpqlA4Qu6e3KJp7RQRxep8LHzw0GA
+         F1yblHUqU6iPv1tPORf+rk+wL92EVKOcuz7zwpMkAfIojQX4w1syVpitIjfxjDXzka2b
+         Zagm3oZOBtTVfatmeKV1YHPc2PRwltsmT5ed/8u7bt/dO9wCFzuBcOtsqjeFu1g2geSr
+         zfKlrC+9W9tjUdy3LAF2Eind1ni5rqGhTT0CVlg6ruMfwjuhQFHI/hhNazDZfwIXtuRR
+         kIjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733959015; x=1734563815;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ShXp0MbnAr4ggsRDnYhR5uR6lsM/ajKdCXbVIq5oTug=;
+        b=KnQKfXY7GeoabsebjDy1R35976KBrGnASflhqDf2OwGCchvkCtzYEelhSiLz3XvdS2
+         FI1spw0KAglqVbTvGG1XDu0dTsz9I3ndZBLiBXgElif0mvt0TjtONP2X13Dq8FsmJUS5
+         WAeVhH3FA3R9h9Bh+UjPR52ldjsu3/uJrbSEcAlYG7qPDpkqC+Psq+3erlXeI+iH+H8H
+         aeCJOCVBCNGY1YNyO5YYJQCLf9nJI7sujXTWYna5byQDnM6KWAIU9cEu2BBGCgO8XtNj
+         1x53h0qh1wamv0M0zxgShSDq60V3alsyvMzU6RiLDFO7ozFXvtwFakroVHJEDgE3rCw3
+         Kl0A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+nO3/hRJCWYvd2xrIOKekG8JpgPrrvAFUTnvBmM446hv0a2Jv8yyxJbU+6icgd8hsCbSehS77mdTNycU=@vger.kernel.org, AJvYcCXLtjE/KwOK8o+OIljvapR/Q2bfmUcWBG0EAvvSoID/lVkYd07ARKOXvG855Vy5dhD0JO4JXEg+JRtG5xKUKY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwshQ8E9WEHjRSoXBfOyvhtqwGE4Sddnw28tJFV8ld5pAZ3488Z
+	rXCMq4q+yHmE5fqa5gqEq3271zKdp0NWO/kE8NZcHewzj5HezxsR
+X-Gm-Gg: ASbGncsQ2Kr39zgteRJk0v3yYGg6ox7fnRaUmxpkjee7ANS+GuWjtMe2Od/oWz0uB1h
+	M0cL6wJI6cVZsCesdBr6O+kGaeHkPoKCt6hrOTVCIu5ntZtVr+p4Rt8zLoyfSPKU9BwdZUX4Wkq
+	PbcdBbAOQivkEnGrZ6dglonYcrEYl6GbTe6H2dMbOehFLWJojPoh/Xl3nXKgQ0hfRWaRFn/j++n
+	b8VCLOzQfs6UQnj2B91p4Fpee9oGXbSqfata2TOjwzOfkctEuYdJZkYzcRuwjzzba45K6DCpFDI
+	ZW5OcrtJN+UWCNfmzzrGVwuuxzt0unOAzALM
+X-Google-Smtp-Source: AGHT+IHiOZwkIkfA6zUyxiG0lm10+eI/mHdViFN+Pz4GPmJYmGkPLqez5E4FZA5uA6Zaeh8N3oG8TQ==
+X-Received: by 2002:a05:6a00:92a6:b0:725:f18a:da42 with SMTP id d2e1a72fcca58-728fa9bf4abmr1705891b3a.2.1733959015026;
+        Wed, 11 Dec 2024 15:16:55 -0800 (PST)
+Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725cf238777sm8304590b3a.47.2024.12.11.15.16.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 15:16:54 -0800 (PST)
+Date: Thu, 12 Dec 2024 08:16:39 +0900 (JST)
+Message-Id: <20241212.081639.1353664129364117890.fujita.tomonori@gmail.com>
+To: chenhuacai@kernel.org
+Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, peterz@infradead.org,
+ hpa@zytor.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, catalin.marinas@arm.com, will@kernel.org,
+ kernel@xen0n.name, tangyouling@loongson.cn, hejinyang@loongson.cn,
+ yangtiezhu@loongson.cn, ojeda@kernel.org, alex.gaynor@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+ tmgross@umich.edu
+Subject: Re: [PATCH v1 4/5] loongarch/bug: Add ARCH_WARN_ASM macro for
+ BUG/WARN asm code sharing with Rust
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <CAAhV-H7BxE7xeA982Pr4PFxgfNpgXs6H4OZ2LydmYAtYjvYNaw@mail.gmail.com>
+References: <20241210001802.228725-1-fujita.tomonori@gmail.com>
+	<20241210001802.228725-5-fujita.tomonori@gmail.com>
+	<CAAhV-H7BxE7xeA982Pr4PFxgfNpgXs6H4OZ2LydmYAtYjvYNaw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB7272:EE_|PH8PR12MB6746:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ceddbce-1a51-41a2-ae69-08dd1a39bab1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?THN4cStoaXJnaVIrb1c5RW1uNEkwV21qZ3pPUnpJYUhVUnpMK3Z5TUdVbzBL?=
- =?utf-8?B?Z1plNVoxb2dIMW1wa3hJMDJVeFdJbnJvSENjNjRZaGxVR1FrNkZEekxWTm1E?=
- =?utf-8?B?d1FuK1drOU9XZXF3ZDh2Ym5PYjV4ZTk3cEZRbnBUL1pGbm41YlhwWGRDUmtW?=
- =?utf-8?B?NTRoVXhRQTl1enNPcGQ5bXFiVGdiRWlqeGp5MUZINDVyakZnMlJjZWtHRmZ1?=
- =?utf-8?B?RStRM21LeFJtN2tPaUZ3VERFcE1MalVXMTJHN2k5bkx5YS9MYWNFY0gxcW5u?=
- =?utf-8?B?ZTczTCtiOWlaUDBxdjNOSzZuOGZWSmI0cHZyWGJSb2pLS0xWOW95M2kydXJI?=
- =?utf-8?B?OXVXNUNibDRLVDlCai9XWDNuRjYvcExpSk5OMWozUFhhQ3FldWRxYlY5dnV4?=
- =?utf-8?B?YzMycEZtaytUZHB3QmFoOERqS2I4RTg2VWdkM2h2ZStrLzlQN3ZOT2hkaHhw?=
- =?utf-8?B?aDMxRFJFem4wSFFmTmxwdXc2eE1tRUVpR0VqQ2R0VWpIOHRROFdab21kNUFY?=
- =?utf-8?B?MStCMEgyS2NKZUs5WGJFMnQ3cGdyTk8wNnErcktiY3R1MDh3OGR2NmM2b0tI?=
- =?utf-8?B?Vk11cVZXeUJuWDlBbFNLVXc4ZC9rMkx3dncvWDRpYWpQeWFpN1loaU9TUzVJ?=
- =?utf-8?B?Z1JJSEpUMUhSV3FxMTM4TTJWcFFHbXdOSXlhVitMYjllblRrRTdzRmFPQ3hL?=
- =?utf-8?B?V25ZTndEbUR2N1dSM3N0SjMyZUdCUGcyZDVuTmpJTWJZeGJLVWMyUUxGeXFW?=
- =?utf-8?B?dXJyYklmbG1nZVpjZHd0dURpbk1OcEdLcytFRUVEYVQ0Ry9CV1lPWE5OUkIy?=
- =?utf-8?B?Z2swNFlYYldqeWd5dEhlZ3Z6NE1jSnZrWVY3TGZ6VnhlU0Nha0cwU2YxdlFU?=
- =?utf-8?B?RUYrbGR2VUdIUEZCWG1IV2haUDgyL3VKT1pKelBKWVRudjVkTzBOWUtEUUN3?=
- =?utf-8?B?cDVCVGN2Y092T05TdGJzQzdQR0wwbEQ0bDgzSXFTSDhqYXdBbmQ2SkF2Wmpw?=
- =?utf-8?B?T2JiYWpvU0dwU0hJTjZvMjE4QmNjUzlGakpwZjhjZVpPS0xqV0VFYVVnQ0lh?=
- =?utf-8?B?cEdyaHNSd1M4bjdMNlJ5aGx2bmYwSkdtdWlsVGJLUlBtcFFxWmdialFGNWMz?=
- =?utf-8?B?cXNzcnM4UlRYMy9iTDFrV3FkODdNU1VuMGRiaUt3Q01TQ0VXNytEQXJKU1NE?=
- =?utf-8?B?VzNXN1M3SlZZN1Z1L1duMmFoN0xjejJtZERDZEJ4M2FTeld5K3B3Rm5WSFli?=
- =?utf-8?B?TGZjL2VVN2tEUjJCVXBzbUl1cUdFMmVmZ3Y0RDVNaUw5WDVhU1ZWWUpyOXRu?=
- =?utf-8?B?c05LSDI2RU1VUHhwWFZhK2RPV1ZqTUhwNUtwZW9iSjFxVlJyalpZZGNNWEk5?=
- =?utf-8?B?aE8rNzNMcTdxK1FXaEpQbjRhTUtJWlk3QUlpcVFPUmdWZC9EVzArQUMvbUFY?=
- =?utf-8?B?MHQvRytjTzFWWVNuNWpDT3RZZmU1dWE1Rmh4R2ZTVUpwTzA5SUhpVjhzdHc5?=
- =?utf-8?B?OGsvVzllZVY3Vm9VNEZra1RTUkN4THJhd2wvbmQxQlZ4R0FYNUU1UFZkSXZz?=
- =?utf-8?B?MnBUS2F0dGd4WCtDTHNCV0NheHhJQ0VES29uMitPK3Y1T2F6Q3FCUThnTk93?=
- =?utf-8?B?M2hPK0pkazhFaVlyNldKU1FxczlyaWp0Szl0Q1Ztd3g3aFpYOHN6U0VKNGgr?=
- =?utf-8?B?L1BrRTlDaE1LanJiQm9iRzFsbmZlKzYzODdEVmNzMnBUR2FxOG40TGFFd2Nn?=
- =?utf-8?B?TFFkY2F0UllpSzZiVVAvTE1LNTROcDNkMEtneERCUXZidU05czVIditURmla?=
- =?utf-8?B?UUlMY3UzUE5odEJkSzBvUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7272.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZzVRQ3RIVWlpaG02RjA0MXZzcnJpWlJlSnpXZjhqeXJzZ09xVUVzbnVuQTlu?=
- =?utf-8?B?VUZNdlBUSDA2T04xWm9CRTh0SmRYeEw3MXB5bFpDL3FQYTJCUmMrNzJZSTJz?=
- =?utf-8?B?TW1pNU0vRGovWWd4L3hNckFMSDJKMEh2N1BvV2RPRzlUaXp0YzhtdXdPcjFo?=
- =?utf-8?B?RDAxbkgwMUdxSnByTTVZaFlQdkxoWHVXVDY3Z1NRN08yOHZZVzM2RkFSSnJq?=
- =?utf-8?B?STFSSXo3Y2FUZFM0SkV3SnFsck9ZcXZTdWNaVGRaWUlHMnZ1ZFpkZDRIWU1K?=
- =?utf-8?B?b2JlQisybklmNm9VL1hoVUpHMTZqSjRLczVaR25sZHJldUZBRGxhbGpxekZV?=
- =?utf-8?B?RzZqKzNMa1dUdFVHVDB4Qk84NUJJb0htdUovVEZGUUxwTXVaSjBRa0RiWkZ4?=
- =?utf-8?B?TlVTK2R3QjFtL0RYMTQxZ3JKQllxVE1oa3NGUDVLQ1AvWWs0THgxZ1l3Ujl3?=
- =?utf-8?B?K05wUFhxdDFhdVRzSlo0Q1h3cU0zTFJ4US9BR1VPQmZJTDZGVjhXMWU0STVt?=
- =?utf-8?B?dGtISDdqQUFrVDJVc2p4cVpVZ3B4TU5ROFpLSkRMU3BvWTFZc3cyTE1yNElE?=
- =?utf-8?B?LzFrbzcvaVJEZk5oOVV2QlgrWVUrV0VuUGRHeGV5K0xJbmR2cHV1ZVBpR3N2?=
- =?utf-8?B?YWlQUlZCb25ySHkvQjZCUUkyanNzVmg5WEFKSkcweXhwR2x3RzN5SGd1cDRL?=
- =?utf-8?B?WmZzbFdRaGZxNmVhdmk4TmlpSXlMZFBGU05PT3FicEFPUnVTZHVTU0gxVDF1?=
- =?utf-8?B?dzBxYnFFMlR0Nkh2bkJxUXdIN25aQTUvQ3dDN2UyVkczbUtMY2szNU9kN0Jy?=
- =?utf-8?B?M1NpdThucjdYcVpWM0o5ZTduT1lWU09uVW9rQnBaWlNRZXRLNkNadWh4dUdh?=
- =?utf-8?B?OXJYVUV4a3g2WWpaVDNvZ2FSRnJXOS9sdlBlTEJnNUN1RGNlangyUGxJZ1FF?=
- =?utf-8?B?K01HcjJOZnJNUE52OXVvdVRlTi9BSEJ5akhsa2FaZlEycTBLWERVem02QnBQ?=
- =?utf-8?B?bDA1YWlobU56TWVmL3hNRXdDUzRGWVBnL3JiZ1V0MTlBbUlFSDRhcWlrUk5a?=
- =?utf-8?B?QjRDaWdQNEtSYlNuWkFNWEl3b3FhU0h6Q1k4NzVXbWtCaXBjTDNhZGlNcVZS?=
- =?utf-8?B?M2RkR0JFcGQzcUtaNHFYc1R4dUdrQ1ZOQXNuQ3VLdlB2US96NjZzaXhuTHRS?=
- =?utf-8?B?UUZmMjBNS1g0dXNjMEVLcDNiNklxQ2U4cWtiQmJjRzNhZXZQbnBpcVRLUDdl?=
- =?utf-8?B?Umx1Mi9yV0w4Yk9jekh6QVRKSU5kTUpkMFpOcWF0TUV0eUtuRTM4SVhZOGRw?=
- =?utf-8?B?S3NpZHpqQmkveEZjMStCdTl2NVMrLy9OdEN0enRFaWs3Wkl6TUhxbC84Vm9v?=
- =?utf-8?B?ZDB6V1lsSkFpUUFRbzYxTWxUdGVqZi83NDVwUVFFVVVocExnRmdxVW9SeERn?=
- =?utf-8?B?VERaaXBUdDhON3R6a24reXFFWlowTTVNdjFENjBHdGhwK2FKT28yRUV1NCtk?=
- =?utf-8?B?RldaQXp0QUFnell6emoyNWpVWEovcC9nVkdFdnlSQjhINy9hbjQxOVdlN2Vs?=
- =?utf-8?B?ZVhaeW1PZDVzZVhDODZoVjNHSE9BdVRkV0NKN0gvcnRSK1VpcGZocVNkQThq?=
- =?utf-8?B?R0xjTUdBakYreXRnS050MkhZUVM0MVAwTUdjLzkyZmZEQmdZcE9OeVdaRGNP?=
- =?utf-8?B?OTk5WmRQdXpUYldSZHdIdWo3TmxKZ0tPbUJHN0lsQzdudlg3amJwalFtUWE3?=
- =?utf-8?B?NlZGRjcwUEpBQ1ZoQ1JjTk5UMmk2THFhTDgyRDNxa1JuQWRySWlHUHVuT0Fn?=
- =?utf-8?B?SThhSTBqbklBa05adkFpdkljMG9kSGVvMGg3ODhYY1hjVDZvYnNadk1MUWdJ?=
- =?utf-8?B?amVuelF4VEM3cUNoNW5lbHZJVEt4VXVIaENYakwzd2xwQTMxcXhQa2RKaUZX?=
- =?utf-8?B?V1JyVC9PNVozRVZjOWxNS1hTNnZRR3JDREY5SW1nTmlDcEJSSDR3ZjAxSDhY?=
- =?utf-8?B?VWJrejJZeVBmbE1ycHZybjQxQnYxTG12cHRDVEJQQWJtL29WTVJlbHV2ZW1p?=
- =?utf-8?B?cUxIL2xmY0wvRFBKb2grL1RwOGlrVmxGRXQwa2VsRHNmdlh6T2ZDUGhYeUtO?=
- =?utf-8?Q?nt5vivf+CkTtivA0RFq5yW2nR?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ceddbce-1a51-41a2-ae69-08dd1a39bab1
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7272.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 23:15:40.7166
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QHftuwv0LsrzGi07q5i3XSSWXEQqmHmOV1gLuifKufda4GySsfmY6+d2Yo+CS4Tx1B2YzXGhjHZdvGyF2zew8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6746
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On 12/12/24 02:53, Rik van Riel wrote:
-> A task already in exit can get stuck trying to allocate pages, if its
-> cgroup is at the memory.max limit, the cgroup is using zswap, but
-> zswap writeback is enabled, and the remaining memory in the cgroup is
-> not compressible.
-> 
-> This seems like an unlikely confluence of events, but it can happen
-> quite easily if a cgroup is OOM killed due to exceeding its memory.max
-> limit, and all the tasks in the cgroup are trying to exit simultaneously.
-> 
-> When this happens, it can sometimes take hours for tasks to exit,
-> as they are all trying to squeeze things into zswap to bring the group's
-> memory consumption below memory.max.
-> 
-> Allowing these exiting programs to push some memory from their own
-> cgroup into swap allows them to quickly bring the cgroup's memory
-> consumption below memory.max, and exit in seconds rather than hours.
-> 
-> Loading this fix as a live patch on a system where a workload got stuck
-> exiting allowed the workload to exit within a fraction of a second.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> ---
->  mm/memcontrol.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 7b3503d12aaf..03d77e93087e 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5371,6 +5371,15 @@ bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
->  	if (!zswap_is_enabled())
->  		return true;
->  
-> +	/*
-> +	 * Always allow exiting tasks to push data to swap. A process in
-> +	 * the middle of exit cannot get OOM killed, but may need to push
-> +	 * uncompressible data to swap in order to get the cgroup memory
-> +	 * use below the limit, and make progress with the exit.
-> +	 */
-> +	if ((current->flags & PF_EXITING) && memcg == mem_cgroup_from_task(current))
-> +		return true;
-> +
->  	for (; memcg; memcg = parent_mem_cgroup(memcg))
->  		if (!READ_ONCE(memcg->zswap_writeback))
->  			return false;
+On Wed, 11 Dec 2024 16:41:42 +0800
+Huacai Chen <chenhuacai@kernel.org> wrote:
 
-Rik,
+>> +#ifdef CONFIG_DEBUG_BUGVERBOSE
+>> +#define __BUG_LOCATION_STRING(file, line)              \
+>> +               ".long " file "- .;"                    \
+>> +               ".short " line ";"
+>> +#else
+>> +#define __BUG_LOCATION_STRING(_file, _line)
+>> +#endif
+> Can we use file and line instead of _file and _line, which is the same
+> as the CONFIG_DEBUG_BUGVERBOSE case?
 
-I am unable to understand the motivation here, so we want 
-mem_cgroup_zswap_writeback_enabled() to return true, it only
-returns false if a memcg in the hierarchy has zswap_writeback
-set to 0 (false). In my git-grep I can't seem to find how/why
-that may be the case. I can see memcg starts of with the value
-set to true, if CONFIG_ZSWAP is enabled.
+Of course, I'll fix in v2. I should have done that.
 
-Your changelog above makes sense, but I am unable to map it to
-the code changes.
+>> +
+>> +#define __BUG_ENTRY_STRING(file, line, flags)          \
+>> +               __stringify(__BUG_ENTRY_START)          \
+>> +               __BUG_LOCATION_STRING(file, line)       \
+>> +               ".short " flags ";"                     \
+>> +               __stringify(__BUG_ENTRY_END)
+>> +
+>> +#define ARCH_WARN_ASM(file, line, flags, size)         \
+>> +       __BUG_ENTRY_STRING(file, line, flags)           \
+>> +       __stringify(break BRK_BUG) ";"
+>> +
+> Can we use the same indentation in this file?
 
-Balbir
+Oops, I'll fix in v2.
+
+Thanks!
 
