@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-442278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AB19EDA24
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:39:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF11E9EDA28
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE7A283055
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:39:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C33F28241E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B84120B81D;
-	Wed, 11 Dec 2024 22:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42C620D4E1;
+	Wed, 11 Dec 2024 22:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvaMCh3E"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inlR6bAm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4908020B206
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4C520C494;
+	Wed, 11 Dec 2024 22:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956384; cv=none; b=unmsnLQMo8wPjoV0iqmbvdMJG1c9Ncsc3vGISi/8ib9TuE+4Nvgp2WFXk7fNPRArMVseo/rEs57etQxe/pVyQOiHdjVtFvedPnv/kQeb7XRMOVPqMFsozRA9jXEV/miZ00lR09uOmTW+PpR4RpQbnDNFATLuktWqmiRj9EEVu3w=
+	t=1733956386; cv=none; b=rmehXZcEJJUwGwPR/w3O64m19XYEa8DOgfrQ+eyjT4f3BN9waZhCTX8aJfwfEr2QC8JTetWy9r3plh/Xe7FK7tR95qShFiu5GEp59rjCv6RKTS2AzVUQU0BzB1YpiRNKQ0+MCw3PINe1swj8Ko6jiigVcf73/gB+egJVCFFpmII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956384; c=relaxed/simple;
-	bh=dfkE6O/egkW2YpK2IvJJiv33ml4HlWyuyxOZmVAxw9c=;
+	s=arc-20240116; t=1733956386; c=relaxed/simple;
+	bh=BQx5g38MiMqbRkVexhZZjvYaNed5OXR/zfHMkJHDPQc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XyEw2zS8wPAXhGkpZ5GyHF4HiF52VZ9Tt4SiDBAzo/2DkC/R/VE84zTH1Zyh1icssl58aw3MNwHsOVneL0txHEQRjt4/2QQ7gi503h9rj8UBGqw/Qla3qSDIGy2aPfbPd2IqXscoRcSP3FpaiJ4S+s5nPpMNmUwZp+Lenm6csI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvaMCh3E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B139C4CED2;
-	Wed, 11 Dec 2024 22:33:04 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=AlNAQkC4P8jDGFPAX4LuYn0D9TqvAbqKBor/Rjs004vKbPKAIY4eKT2ZGzo/rY0WDOLArn3LIx5+ls9BQuXcl8Ug7LP8m9mVAIBFKHVk1Ukk22Gk8hvBJjFbC2OIDWVSmepO25402CKLpbpmgsA0q6g9zKA//MvgAzaqXGi23lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inlR6bAm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1CB6C4CED2;
+	Wed, 11 Dec 2024 22:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733956384;
-	bh=dfkE6O/egkW2YpK2IvJJiv33ml4HlWyuyxOZmVAxw9c=;
+	s=k20201202; t=1733956385;
+	bh=BQx5g38MiMqbRkVexhZZjvYaNed5OXR/zfHMkJHDPQc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZvaMCh3EMlbzjJV5gz6GKVrjYMFfRsCEB0itM/x4pbq1+of24OYlFqoE5I0JX04Y8
-	 W0WxYmXjG+uttUOWn1z8tvw9Wm/4xBI/gF+nIi+hS3jL01gSRT7CaP2RflsUkMOr1V
-	 pOj61xt1kvg9nWPVgUq1Ej4SlLJonIisLTBdxm750YWAmRzm2onP7af9scPO30Jeak
-	 iNvIihIP4CoD7N29Vqx89SWkRaPFvnkSXPDfRpYh212GYyEfkuaBYFF6rNte+nft8q
-	 11wKmGfUABzhnUIzm3vDt6oYIEYNyGg2X4uIkYrjjawlifbrdRROY72L+y2a1joTB/
-	 rTyJykfYjrFHw==
+	b=inlR6bAm7WQYJIQEmpSkRhblsgJZHnayLs4YjKOF+R1EchCBO/2+6ACaOBekxCOke
+	 LAAZmH5uSnKupJdGy/u9N17XWtnr7hvZroeu7sbD83rh7qy3rEKoDQRdDGG0/Agfmq
+	 6PMrzuEXRAjB5pSRZFc/oKSIL+1IbsLpMhwByfWt3h4KjoJDYJGBmgGDO64c2dsLqb
+	 v4fPf7RVPXRcb+Oz0GH5sAh+uiT9oT6swGnR1DKOPLILa0m2uoDikkwbEiNc8LTSLB
+	 LKWX4SR9SL1sW74acq+eCy0QZLomZN8OEDnHaYDDKbdXbCL/Ycug8vrlbaoXm06gY8
+	 tRyC/PdTnFHwA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DB0380A965;
-	Wed, 11 Dec 2024 22:33:21 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE05380A965;
+	Wed, 11 Dec 2024 22:33:22 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,36 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH -fixes] riscv: Fix wrong usage of __pa() on a fixmap address
+Subject: Re: [PATCH] perf, riscv: Wire up perf trace support for RISC-V
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173395640024.1729195.13342843889585643305.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Dec 2024 22:33:20 +0000
-References: <20241209074508.53037-1-alexghiti@rivosinc.com>
-In-Reply-To: <20241209074508.53037-1-alexghiti@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, usamaarif642@gmail.com,
- robh@kernel.org, linux-kernel@vger.kernel.org
+ <173395640149.1729195.11467040098314252452.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 22:33:21 +0000
+References: <20241024190353.46737-1-bjorn@kernel.org>
+In-Reply-To: <20241024190353.46737-1-bjorn@kernel.org>
+To: =?utf-8?b?QmrDtnJuIFTDtnBlbCA8Ympvcm5Aa2VybmVsLm9yZz4=?=@codeaurora.org
+Cc: linux-riscv@lists.infradead.org, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ bjorn@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, anup@brainfault.org, atishp@rivosinc.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+by Namhyung Kim <namhyung@kernel.org>:
 
-On Mon,  9 Dec 2024 08:45:08 +0100 you wrote:
-> riscv uses fixmap addresses to map the dtb so we can't use __pa() which
-> is reserved for linear mapping addresses.
+On Thu, 24 Oct 2024 12:03:51 -0700 you wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
 > 
-> Fixes: b2473a359763 ("of/fdt: add dt_phys arg to early_init_dt_scan and early_init_dt_verify")
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/kernel/setup.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> RISC-V does not currently support perf trace, since the system call
+> table is not generated.
+> 
+> Perform the copy/paste exercise, wiring up RISC-V system call table
+> generation.
+> 
+> [...]
 
 Here is the summary with links:
-  - [-fixes] riscv: Fix wrong usage of __pa() on a fixmap address
-    https://git.kernel.org/riscv/c/c796e1872012
+  - perf, riscv: Wire up perf trace support for RISC-V
+    https://git.kernel.org/riscv/c/8c0d1202bad3
 
 You are awesome, thank you!
 -- 
