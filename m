@@ -1,557 +1,654 @@
-Return-Path: <linux-kernel+bounces-441307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E999ECC8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:49:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 011BA9ECC72
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9900280FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B36285D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EA1211A14;
-	Wed, 11 Dec 2024 12:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB7C23FD06;
+	Wed, 11 Dec 2024 12:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zkEILlR7"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.46])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6Q/DwlT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069AB23FD05;
-	Wed, 11 Dec 2024 12:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD0323FD05;
+	Wed, 11 Dec 2024 12:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733921358; cv=none; b=jFgAfwxU2SFk8ZKdA93WQEcfhpKLJ0kZtZ/gwU8VVgO6PByu61aaaGsgxu/kg/tDPNBSnB5hMlY/stcaMLv45W3C3IbedPiIzioy+7EpI5ZC5++s9LqD9Q21U7JQNnvhE6OauKK4usIKnGJNHYKxvUcVpqwduJnBrv9T3UicKgk=
+	t=1733921167; cv=none; b=S/aUGSA0uCRlC0dr1XeCe0Xv9PjvkHSNmbvHYPRztacSZ1wxM8Pkoi5gmUapylMegJBNSlHZWZU9QKaZkHfBWslC/5a/Qq8xfkaRezdi2jjZmISXt0HDKHQEu1uL5YvyqRYb/8el0OjYqtyw0jqsFjvH5YjScEajF8owWIR9waE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733921358; c=relaxed/simple;
-	bh=EXI0Sik4whIh5ECVSIqOGP9mkywjzyuxKbj4RhVQi7k=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=Iv2uXVB+06AXy65ppCjZVTdEzq6XL4E2S5KZ6r/n5UZVt4ZxsJW8vbpoN0eQfJ2RsS/jYP5pTj4WqXt+l2kUZGxcwgChK6m3BHw3PqCn7unkvY/PNEmLNwljWLXj1GSxDKRE4jBQxsF5YURYr9S9Di9ZxalFs9IROnx6GgbQTeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zkEILlR7; arc=none smtp.client-ip=43.163.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1733921042; bh=djEHWMRArDHkpDFhPxHyVOdc3fGbBS1HH6ddEgpTSIc=;
-	h=From:To:Cc:Subject:Date;
-	b=zkEILlR7ZyTd0peP0Vwsn+os6oNqvfA5KosbOTy+ehRRIz4Wv0HQtCEU12bQ9nyWE
-	 U9tAUaEBqPCunZS5PtDtqZsWdzOPI5vYzRCvOU7skAe4gdI4skU+khuq9WfDA6uaU9
-	 Qcqb0lJTtE8Pll29rU3ACb1chgfhqOja2NfxcgZY=
-Received: from jckeep-Lenovo-XiaoXinAir-14IIL-2020.bbrouter ([124.240.55.41])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id B0037ACE; Wed, 11 Dec 2024 20:44:00 +0800
-X-QQ-mid: xmsmtpt1733921040tp07qc2l0
-Message-ID: <tencent_6FBA3773CF74B276166B63D292CB2E8D3D07@qq.com>
-X-QQ-XMAILINFO: NDRJhlKLIrRLRM31PKPp6wULlD8lLuTf2bgQSuL1SqG1glVV1oUtwcmscZ2vXv
-	 aQTWrv/dMv8XaVMvmiwnHMpAFJCLDFY4ZxDovxIRxFF/a0Gzef8qUThtlycqrKWaNt6kz0GXzp/N
-	 wYg+OhfZ9bwLHCkSffgBjOOKLcShCF9Cb+8lMXijcQCbWJWbs5nW3MDv4lCDs3T1seDhs3KKfX6x
-	 XvLlzcOiFnYVbfLcWooy6ZNPL5gBJfvNSZKTtwskbj3jA/5b7ZAhA9rDh17L1L6Snug46C6QwuyK
-	 zJhcz/L1wJo7fY9S+GlAv7Gl6Pcr5LVlAMajEXekKtthUixYbtuFwqgpEuh6oud9ymkLF/JZj0uK
-	 Jf41phvW7FL2jA5XIt/+jfgW4N+m7mLI+DqBE50x1G9TjvQnReZ50ZR4GWKMr27rjJukaufXK6fR
-	 Fqlt1oZw4A1+tjRyyj0Z79bs++v8W2HU/wexGmRtybKP3Rgn+KAMgEeT5m6sQdL2J+WBZGDcMNl8
-	 ydNvigbv02gB1vVrxid5XkX/aswfdJcrDzHBD7Uz1Zz8y28udYFE/e+g/zu8PbaGBZTy/RJ5DzZ2
-	 MIYqfCle+PqGBk2GWJTo5haRqgMNBhax1ackhHxjUZubOZmzfBK5tXsrW41H/6Migs1fxFNNisT4
-	 iQyZ9EgXOaRakHEflPjS4drwy1jueNK8yI4v6cb8+uutN46AdCNU4XpnEd/NG6VT1EPtCmDm25Xf
-	 urbtoamm548LCKRtLU0tXlZgScHCFlhk7jbHCn7zceyEkC31VIWQGezaWClMO6aJnlcB3jxkRnTK
-	 3VgEmdc8x4coxM49pvut2vfZWx2Je5APdGqDdbnzqrrownApfn6m8eJjOzSTwPesOUS6mo40iRE1
-	 SXrseX6g/+0Esk7AlaA4YjrPEqsyXuQC6Bd+dnFSLTpyMxT3tUrP0f8kZjPDA4fsbhnT67cKpe1A
-	 20DU1X4pOFa6UU5yza3Q==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Guangbo Cui <2407018371@qq.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
+	s=arc-20240116; t=1733921167; c=relaxed/simple;
+	bh=XsQvw05l+MBKEe/OKXoMtCsjqTCUKENBllGOtwUyk9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbNqaoQ8Fut5YHURzl9p25S0XFOWvxYgogEeGyyKM3+7mxSpjnbybkmxLwzmxb8h4sVo5K9NGrELMvQZa6elYzSQ+mro3iSi01Hz5CrMd0VsRmkrmbrTWDJQuxqsAEgZ5vEUloLAHzRmQI1VbLoZdIS8IgwcbPb5OzUbwoNWH9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6Q/DwlT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB52DC4CED2;
+	Wed, 11 Dec 2024 12:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733921166;
+	bh=XsQvw05l+MBKEe/OKXoMtCsjqTCUKENBllGOtwUyk9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p6Q/DwlTGe5OkvLAIpwvVkRcMbf6XssAOG4upS+/LYwfipH5phdUQha3us8aauUJv
+	 qhgPWeAq5QkvjOGN0IkT7sMdJ1d9M8xB/0nA6h7KCHLZfvJHY5AHndy/n07kwucwiu
+	 d8R2tHkV3RZbt5RiUL86faGRndQmWvwv5EZlLoNdg3RMIo9qsnDxEoAE6TwydID5yr
+	 7sgiLT3sjsVIysvxsbRsM7vBFPfnpHM2QF3+cfl/P6PVR/euMhIQzh3lossZCdzH+n
+	 vmndyvvQQsqr/T61FucYVE6/7hPJOG2QudbHFcfcOsJ4IFJ7w9aHaSoTF8y/mSBzdJ
+	 k1iXBDSDNnSAg==
+Date: Wed, 11 Dec 2024 12:45:56 +0000
+From: Lee Jones <lee@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guangbo Cui <2407018371@qq.com>
-Subject: [RFC PATCH] Add UIO (Userspace I/O) device rust abstraction
-Date: Wed, 11 Dec 2024 20:43:36 +0800
-X-OQ-MSGID: <20241211124335.2511397-1-2407018371@qq.com>
-X-Mailer: git-send-email 2.34.1
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v6 2/7] mfd: nxp-siul2: add support for NXP SIUL2
+Message-ID: <20241211124454.GE7139@google.com>
+References: <20241113101124.1279648-1-andrei.stefanescu@oss.nxp.com>
+ <20241113101124.1279648-3-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241113101124.1279648-3-andrei.stefanescu@oss.nxp.com>
 
-This patch implements the necessary Rust abstractions to implement
-UIO device in Rust.
+Mark,
 
-I am preparing to refactor our company’s UIO driver in Rust, targeting
-both user space and kernel space. As the first step, I plan to focus on
-implementing the UIO device abstraction as foundational infrastructure and
-eager to explore potential improvements and suggestions from the
-community.
+Seeing as the vast majority of this 400 line driver pertains to Regmap
+handling (!), would you be kind enough to cast your expert eye over it
+please?
 
-Signed-off-by: Guangbo Cui <2407018371@qq.com>
----
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/lib.rs              |   2 +
- rust/kernel/uio.rs              | 420 ++++++++++++++++++++++++++++++++
- 3 files changed, 423 insertions(+)
- create mode 100644 rust/kernel/uio.rs
+On Wed, 13 Nov 2024, Andrei Stefanescu wrote:
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index e9fdceb568..0d9abe7853 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -31,6 +31,7 @@
- #include <linux/security.h>
- #include <linux/slab.h>
- #include <linux/tracepoint.h>
-+#include <linux/uio_driver.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
- #include <trace/events/rust_sample.h>
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 1b4b533b38..03f95edaab 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -79,6 +79,8 @@
- pub mod transmute;
- pub mod types;
- pub mod uaccess;
-+#[cfg(CONFIG_UIO)]
-+pub mod uio;
- pub mod workqueue;
- 
- #[doc(hidden)]
-diff --git a/rust/kernel/uio.rs b/rust/kernel/uio.rs
-new file mode 100644
-index 0000000000..2c868d1c13
---- /dev/null
-+++ b/rust/kernel/uio.rs
-@@ -0,0 +1,420 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Abstractions for the uio driver.
-+//!
-+//! C header: [`include/linux/uio_driver.h`](srctree/include/linux/uio_driver.h)
-+
-+use core::{marker::PhantomData, mem::MaybeUninit, slice};
-+
-+use crate::{
-+    device,
-+    error::{to_result, Result, VTABLE_DEFAULT_ERROR},
-+    ffi,
-+    mm::virt::VmAreaNew,
-+    prelude::*,
-+    types::{ARef, ForeignOwnable, Opaque},
-+};
-+
-+/// Maximum number of memory maps supported by UIO.
-+pub const MAX_UIO_MAPS: usize = bindings::MAX_UIO_MAPS as _;
-+
-+/// Options for configuring a UIO (Userspace I/O) device.
-+///
-+/// This struct provides the necessary configuration to register a UIO device,
-+/// including its name, version, interrupt settings, and memory maps.
-+pub struct UioDeviceOptions {
-+    /// device name
-+    pub name: &'static CStr,
-+    /// device version
-+    pub version: &'static CStr,
-+    /// interrupt
-+    pub irq: u32,
-+    /// uio memory maps
-+    pub mem: [UioDeviceMemOptions; MAX_UIO_MAPS],
-+}
-+
-+impl UioDeviceOptions {
-+    /// create a default uio device options
-+    pub const fn new(name: &'static CStr, version: &'static CStr) -> Self {
-+        Self {
-+            name,
-+            version,
-+            irq: irq::UIO_IRQ_NONE,
-+            mem: [const { UioDeviceMemOptions::new() }; MAX_UIO_MAPS],
-+        }
-+    }
-+
-+    /// Converts the `UioDeviceOptions` into a kernel-compatible `struct uio_info`.
-+    ///
-+    /// This method transforms the Rust representation of UIO device options into the
-+    /// kernel's `uio_info` structure. It also registers the relevant callbacks for
-+    /// device operations such as `open`, `release`, `mmap`, `handler`, and `irqcontrol`.
-+    pub fn into_raw_info<T: UioDevice>(self) -> bindings::uio_info {
-+        const fn maybe_fn<T: Copy>(check: bool, func: T) -> Option<T> {
-+            if check {
-+                Some(func)
-+            } else {
-+                None
-+            }
-+        }
-+
-+        // SAFETY: zero initialize, valid
-+        let mut result: bindings::uio_info = unsafe { MaybeUninit::zeroed().assume_init() };
-+        result.name = self.name.as_char_ptr();
-+        result.version = self.version.as_char_ptr();
-+        result.irq = self.irq as i32 as _;
-+
-+        // SAFETY: kernel `struct uio_mem` and `UioDeviceMemmap` has same memory layout
-+        result.mem.copy_from_slice(unsafe {
-+            slice::from_raw_parts(self.mem.as_ptr().cast(), MAX_UIO_MAPS)
-+        });
-+        result.open = Some(uio_open::<T>);
-+        result.release = Some(uio_release::<T>);
-+        result.mmap = maybe_fn(T::HAS_MMAP, uio_mmap::<T>);
-+        result.handler = maybe_fn(T::HAS_HANDLER, uio_handler::<T>);
-+        result.irqcontrol = maybe_fn(T::HAS_IRQCONTROL, uio_irqcontrol::<T>);
-+
-+        result
-+    }
-+}
-+
-+/// Options for configuring a UIO (Userspace I/O) device memory.
-+#[repr(transparent)]
-+pub struct UioDeviceMemOptions(bindings::uio_mem);
-+
-+impl UioDeviceMemOptions {
-+    /// Creates a new, zero-initialized `UioDeviceMemmap`.
-+    pub const fn new() -> Self {
-+        // SAFETY: `MaybeUninit::zeroed()` ensures the memory is initialized to zero,
-+        // which is a valid initial state for `uio_mem`.
-+        unsafe { MaybeUninit::zeroed().assume_init() }
-+    }
-+
-+    /// Sets the name of the memory region.
-+    ///
-+    /// This method assigns a name to the memory region, which can be used to
-+    /// identify it in user space.
-+    pub fn set_name(&mut self, name: &CStr) {
-+        self.0.name = name.as_char_ptr();
-+    }
-+
-+    /// Sets the address of the memory region.
-+    ///
-+    /// This method specifies the physical or virtual address of the memory region.
-+    pub fn set_addr(&mut self, addr: usize) {
-+        self.0.addr = addr as _;
-+    }
-+
-+    /// Sets the memory type for the region.
-+    ///
-+    /// The memory type determines how the memory region is mapped or accessed.
-+    pub fn set_type(&mut self, ty: MemType) {
-+        self.0.memtype = ty as _;
-+    }
-+
-+    /// Sets the size of the memory region.
-+    ///
-+    /// This method specifies the size of the memory region in bytes.
-+    pub fn set_size(&mut self, size: usize) {
-+        self.0.size = size as _;
-+    }
-+}
-+
-+/// uio registration
-+#[pin_data(PinnedDrop)]
-+pub struct Registration<T> {
-+    #[pin]
-+    uio_info: Opaque<bindings::uio_info>,
-+    _phantom: PhantomData<T>,
-+}
-+
-+// SAFETY: It is allowed to call `__uio_register_device` on a different thread from where you called
-+// `__uio_register_device`.
-+unsafe impl<T> Send for Registration<T> {}
-+// SAFETY: It is safe to call them in parallel.
-+unsafe impl<T> Sync for Registration<T> {}
-+
-+impl<T: UioDevice> Registration<T> {
-+    /// register an uio driver
-+    pub fn register<'a>(
-+        module: &'static ThisModule,
-+        dev: &'a device::Device,
-+        options: UioDeviceOptions,
-+    ) -> impl PinInit<Self, Error> + use<'a, T> {
-+        try_pin_init!(Self {
-+            uio_info <- Opaque::try_ffi_init(move |slot: *mut bindings::uio_info| {
-+                // SAFETY: The initializer can write to the provided `slot`.
-+                unsafe { slot.write(options.into_raw_info::<T>()) };
-+
-+                // SAFETY: We just wrote the uio device options to the slot. The uio device will
-+                // get unregistered before `slot` is deallocated because the memory is pinned and
-+                // the destructor of this type deallocates the memory.
-+                // INVARIANT: If this returns `Ok(())`, then the `slot` will contain a registered
-+                // uio device.
-+                to_result(unsafe {
-+                    bindings::__uio_register_device(module.as_ptr(), dev.as_raw(), slot)
-+                })
-+            }),
-+            _phantom: PhantomData,
-+        })
-+    }
-+
-+    /// get the uio driver info
-+    pub fn info(&self) -> &Info {
-+        // SAFETY: self.uio_info is valid.
-+        unsafe { &*self.uio_info.get().cast() }
-+    }
-+}
-+
-+#[pinned_drop]
-+impl<T> PinnedDrop for Registration<T> {
-+    fn drop(self: Pin<&mut Self>) {
-+        // SAFETY: We know that the device is registered by the type invariants.
-+        unsafe {
-+            bindings::uio_unregister_device(self.uio_info.get());
-+        };
-+    }
-+}
-+
-+/// A trait representing a UIO (Userspace I/O) device.
-+///
-+/// This trait provides an interface for implementing UIO device behavior in Rust.
-+/// It defines methods for handling device lifecycle events (`open`, `release`) and
-+/// optional functionalities such as interrupt handling and memory mapping. Implementors
-+/// can customize these methods to suit the specific requirements of their device.
-+#[vtable]
-+pub trait UioDevice {
-+    /// The type of pointer used to wrap `Self`.
-+    type Ptr: ForeignOwnable + Send + Sync;
-+
-+    /// Called when the UIO device is opened.
-+    fn open(_info: &Info) -> Result<Self::Ptr>;
-+
-+    /// Called when the UIO device is released.
-+    fn release(device: Self::Ptr, _info: &Info) {
-+        drop(device);
-+    }
-+
-+    /// Called to control device interrupts.
-+    fn irqcontrol(
-+        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+        _info: &Info,
-+        _irq_on: i32,
-+    ) -> Result<()> {
-+        kernel::build_error(VTABLE_DEFAULT_ERROR)
-+    }
-+
-+    /// Called to handle an interrupt for the UIO device.
-+    fn handler(
-+        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+        _info: &Info,
-+        _irq: ffi::c_int,
-+    ) -> bindings::irqreturn_t {
-+        kernel::build_error(VTABLE_DEFAULT_ERROR)
-+    }
-+
-+    /// Called to handle memory mapping for the UIO device.
-+    fn mmap(
-+        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-+        _info: &Info,
-+        _vma: &VmAreaNew,
-+    ) -> Result<()> {
-+        kernel::build_error(VTABLE_DEFAULT_ERROR)
-+    }
-+}
-+
-+/// # Safety
-+///
-+/// `info` must be a valid `struct uio_info` that is associated with `T`.
-+/// `inode` must be the inode for a file that is being released.
-+unsafe extern "C" fn uio_open<T: UioDevice>(
-+    info: *mut bindings::uio_info,
-+    _inode: *mut bindings::inode,
-+) -> ffi::c_int {
-+    // SAFETY: The caller provides a info that is valid.
-+    let ptr = match T::open(unsafe { Info::from_raw(info) }) {
-+        Ok(ptr) => ptr,
-+        Err(err) => return err.to_errno(),
-+    };
-+
-+    // SAFETY: The `T::open` implementation guarantees that the returned pointer is valid.
-+    // We safely store it in the `priv_` field of the `uio_info` structure.
-+    unsafe {
-+        (*info).priv_ = ptr.into_foreign().cast_mut();
-+    }
-+
-+    0
-+}
-+
-+/// # Safety
-+///
-+/// `info` must be a valid `struct uio_info` that is associated with `T`.
-+/// `inode` must be the inode for a file that is undergoing initialization.
-+unsafe extern "C" fn uio_release<T: UioDevice>(
-+    info: *mut bindings::uio_info,
-+    _inode: *mut bindings::inode,
-+) -> ffi::c_int {
-+    // SAFETY: The caller guarantees that `info` is a valid pointer to a `struct uio_info`.
-+    let private = unsafe { (*info).priv_ };
-+    // SAFETY: The `priv_` field is expected to point to a valid instance of the type managed
-+    // by `ForeignOwnable` for `T::Ptr`. The caller must ensure this invariant.
-+    let ptr = unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private) };
-+    // SAFETY: The caller provides a info that is valid.
-+    let info = unsafe { Info::from_raw(info) };
-+
-+    T::release(ptr, info);
-+
-+    0
-+}
-+
-+/// # Safety
-+///
-+/// `info` must be a valid `struct uio_info` that is associated with `T`.
-+unsafe extern "C" fn uio_irqcontrol<T: UioDevice>(
-+    info: *mut bindings::uio_info,
-+    irq_on: ffi::c_int,
-+) -> ffi::c_int {
-+    // SAFETY: The caller guarantees that `info` is a valid pointer to a `struct uio_info`.
-+    let private = unsafe { (*info).priv_ };
-+    // SAFETY: The `priv_` field is expected to point to a valid instance of the type
-+    // managed by `ForeignOwnable` for `T::Ptr`. The caller must ensure this invariant.
-+    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-+    // SAFETY: The caller provides a info that is valid.
-+    let info = unsafe { Info::from_raw(info) };
-+
-+    match T::irqcontrol(device, info, irq_on as _) {
-+        Ok(()) => 0,
-+        Err(err) => err.to_errno(),
-+    }
-+}
-+
-+/// # Safety
-+///
-+/// `info` must be a valid `struct uio_info` that is associated with `T`.
-+unsafe extern "C" fn uio_handler<T: UioDevice>(
-+    irq: ffi::c_int,
-+    dev_info: *mut bindings::uio_info,
-+) -> bindings::irqreturn_t {
-+    // SAFETY: The caller guarantees that `info` is a valid pointer to a `struct uio_info`.
-+    let private = unsafe { (*dev_info).priv_ };
-+    // SAFETY: The `priv_` field is expected to point to a valid instance of the type
-+    // managed by `ForeignOwnable` for `T::Ptr`. The caller must ensure this invariant.
-+    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-+    // SAFETY: The caller provides a info that is valid.
-+    let info = unsafe { Info::from_raw(dev_info) };
-+
-+    T::handler(device, info, irq)
-+}
-+
-+/// # Safety
-+///
-+/// `info` must be a valid `struct uio_info` that is associated with `T`.
-+/// `vma` must be a vma that is currently being mmap'ed with this file.
-+unsafe extern "C" fn uio_mmap<T: UioDevice>(
-+    info: *mut bindings::uio_info,
-+    vma: *mut bindings::vm_area_struct,
-+) -> ffi::c_int {
-+    // SAFETY: The caller guarantees that `info` is a valid pointer to a `struct uio_info`.
-+    let private = unsafe { (*info).priv_ };
-+    // SAFETY: The `priv_` field is expected to point to a valid instance of the type
-+    // managed by `ForeignOwnable` for `T::Ptr`. The caller must ensure this invariant.
-+    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-+    // SAFETY: The caller provides a vma that is undergoing initial VMA setup.
-+    let area = unsafe { VmAreaNew::from_raw(vma) };
-+    // SAFETY: The caller provides a info that is valid.
-+    let info = unsafe { Info::from_raw(info) };
-+
-+    match T::mmap(device, info, area) {
-+        Ok(()) => 0,
-+        Err(err) => err.to_errno(),
-+    }
-+}
-+
-+/// Wrapper for the kernel's `struct uio_info`.
-+#[repr(transparent)]
-+pub struct Info {
-+    inner: Opaque<bindings::uio_info>,
-+}
-+
-+impl Info {
-+    /// Gets a raw pointer to the underlying `struct uio_info`.
-+    #[inline]
-+    pub fn as_raw(&self) -> *mut bindings::uio_info {
-+        self.inner.get()
-+    }
-+
-+    /// Creates a reference to `Info` from a raw pointer to `struct uio_info`.
-+    ///
-+    /// # Safety
-+    /// - Callers must ensure that `ptr` is valid for the duration of 'a
-+    /// - Callers must ensure that `ptr` point to a valid `struct uio_info`, which
-+    ///   initialize by `__uio_register_device`
-+    #[inline]
-+    pub unsafe fn from_raw<'a>(ptr: *mut bindings::uio_info) -> &'a Self {
-+        // SAFETY: The caller ensures that the invariants are satisfied for the duration of 'a.
-+        unsafe { &*ptr.cast() }
-+    }
-+
-+    /// Notifies the kernel that an event has occurred on the UIO device.
-+    pub fn notify(&self) {
-+        // SAFETY: Only from `Info::from_raw`, which guarantee that `inner` is valid.
-+        unsafe {
-+            bindings::uio_event_notify(self.inner.get());
-+        }
-+    }
-+
-+    /// Return `Device` associated with this `Info`
-+    pub fn get_device(&self) -> Device {
-+        // SAFETY: Only from `Info::from_raw`, which guarantee that `inner` is valid.
-+        let udev = unsafe { (*self.inner.get()).uio_dev };
-+        // SAFETY: `(*udev).dev` is a valid device.
-+        let dev = unsafe { device::Device::get_device(&mut (*udev).dev) };
-+        // SAFETY: `dev` is from `uio_device`.
-+        unsafe { Device::from_dev(dev) }
-+    }
-+}
-+
-+/// IRQ (Interrupt Request) types for UIO.
-+pub mod irq {
-+    /// A custom IRQ type defined by the driver.
-+    /// Used when the interrupt mechanism does not conform to standard types.
-+    pub const UIO_IRQ_CUSTOM: u32 = bindings::UIO_IRQ_CUSTOM as _;
-+    /// No interrupt is used. The driver does not signal the user-space application via IRQs.
-+    pub const UIO_IRQ_NONE: u32 = bindings::UIO_IRQ_NONE as _;
-+}
-+
-+/// Types of memory address mapping for UIO devices.
-+pub enum MemType {
-+    /// No memory is mapped.
-+    None = bindings::UIO_MEM_NONE as _,
-+    /// Physical memory address mapping.
-+    Physical = bindings::UIO_MEM_PHYS as _,
-+    /// Logical memory address mapping.
-+    Logical = bindings::UIO_MEM_LOGICAL as _,
-+    /// Virtual memory address mapping.
-+    Virtual = bindings::UIO_MEM_VIRTUAL as _,
-+    /// IO virtual address (IOVA) mapping.
-+    IoVirtual = bindings::UIO_MEM_IOVA as _,
-+}
-+
-+/// kernel's `struct uio_device`
-+#[derive(Clone)]
-+pub struct Device(ARef<device::Device>);
-+
-+impl Device {
-+    /// Convert a raw kernel device into a `Device`
-+    ///
-+    /// # Safety
-+    ///
-+    /// `dev` must be an `Aref<device::Device>` whose underlying `bindings::device` is a member of a
-+    /// `bindings::uio_device`.
-+    pub unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
-+        Self(dev)
-+    }
-+}
-+
-+impl AsRef<device::Device> for Device {
-+    fn as_ref(&self) -> &device::Device {
-+        &self.0
-+    }
-+}
+> SIUL2 (System Integration Unit Lite) is a hardware module which
+> implements various functionalities:
+> - reading SoC information
+> - pinctrl
+> - GPIO (including interrupts)
+> 
+> This commit only adds support for pinctrl&GPIO(one cell). Further
+> commits will add nvmem functionality(a second cell).
+
+It's not an MFD until it has more than one device.
+
+Please add that now or it cannot be accepted.
+
+[pausing my review here for the time being]
+
+> There are multiple register types in the SIUL2 module:
+> - MIDR (MCU ID Register)
+> 	* contains information about the SoC.
+> - Interrupt related registers
+> 	* There are 32 interrupts named EIRQ. An EIRQ
+> 	  may be routed to one or more GPIOs. Not all
+> 	  GPIOs have EIRQs associated with them
+> - MSCR (Multiplexed Signal Configuration Register)
+> 	* handle pinmuxing and pinconf
+> - IMCR (Input Multiplexed Signal Configuration Register)
+> 	* are part of pinmuxing
+> - PGPDO/PGPDI (Parallel GPIO Pad Data Out/In Register)
+> 	* Write/Read the GPIO value
+> 
+> There are two SIUL2 modules in the S32G SoC. This driver handles
+> both because functionality is shared between them. For example:
+> some GPIOs in SIUL2_0 have interrupt capability but the registers
+> configuring this are in SIUL2_1.
+> 
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> ---
+>  drivers/mfd/Kconfig           |  12 +
+>  drivers/mfd/Makefile          |   1 +
+>  drivers/mfd/nxp-siul2.c       | 410 ++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/nxp-siul2.h |  55 +++++
+>  4 files changed, 478 insertions(+)
+>  create mode 100644 drivers/mfd/nxp-siul2.c
+>  create mode 100644 include/linux/mfd/nxp-siul2.h
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index f9325bcce1b9..fc590789e8b3 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1098,6 +1098,18 @@ config MFD_NTXEC
+>  	  certain e-book readers designed by the original design manufacturer
+>  	  Netronix.
+>  
+> +config MFD_NXP_SIUL2
+> +	tristate "NXP SIUL2 MFD driver"
+> +	select MFD_CORE
+> +	select REGMAP_MMIO
+> +	depends on ARCH_S32 || COMPILE_TEST
+> +	help
+> +	  Select this to get support for the NXP SIUL2 (System Integration
+> +	  Unit Lite) module. This hardware block contains registers for
+> +	  SoC information, pinctrl and GPIO functionality. This will
+> +	  probe a MFD driver which will contain cells for a combined
+> +	  pinctrl&GPIO driver and nvmem drivers for the SoC information.
+> +
+>  config MFD_RETU
+>  	tristate "Nokia Retu and Tahvo multi-function device"
+>  	select MFD_CORE
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 2a9f91e81af8..7b19ea014221 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -226,6 +226,7 @@ obj-$(CONFIG_MFD_INTEL_PMC_BXT)	+= intel_pmc_bxt.o
+>  obj-$(CONFIG_MFD_PALMAS)	+= palmas.o
+>  obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
+>  obj-$(CONFIG_MFD_NTXEC)		+= ntxec.o
+> +obj-$(CONFIG_MFD_NXP_SIUL2) 	+= nxp-siul2.o
+>  obj-$(CONFIG_MFD_RC5T583)	+= rc5t583.o rc5t583-irq.o
+>  obj-$(CONFIG_MFD_RK8XX)		+= rk8xx-core.o
+>  obj-$(CONFIG_MFD_RK8XX_I2C)	+= rk8xx-i2c.o
+> diff --git a/drivers/mfd/nxp-siul2.c b/drivers/mfd/nxp-siul2.c
+> new file mode 100644
+> index 000000000000..7751992e4df3
+> --- /dev/null
+> +++ b/drivers/mfd/nxp-siul2.c
+> @@ -0,0 +1,410 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * SIUL2(System Integration Unit Lite) MFD driver
+> + *
+> + * Copyright 2024 NXP
+> + */
+> +#include <linux/init.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/nxp-siul2.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +
+> +#define S32G_NUM_SIUL2 2
+> +
+> +#define S32_REG_RANGE(start, end, name, access)		\
+> +	{						\
+> +		.reg_name = (name),			\
+> +		.reg_start_offset = (start),		\
+> +		.reg_end_offset = (end),		\
+> +		.reg_access = (access),			\
+> +		.valid = true,				\
+> +	}
+> +
+> +#define S32_INVALID_REG_RANGE		\
+> +	{				\
+> +		.reg_name = NULL,	\
+> +		.reg_access = NULL,	\
+> +		.valid = false,		\
+> +	}
+> +
+> +static const struct mfd_cell nxp_siul2_devs[] = {
+> +	{
+> +		.name = "s32g-siul2-pinctrl",
+> +	}
+> +};
+> +
+> +/**
+> + * struct nxp_siul2_reg_range_info: a register range in SIUL2
+> + * @reg_name: the name for the register range
+> + * @reg_start_offset: the first valid register offset
+> + * @reg_end_offset: the last valid register offset
+> + * @reg_access: the read/write access tables if not NULL
+> + * @valid: whether the register range is valid or not
+> + */
+> +struct nxp_siul2_reg_range_info {
+> +	const char *reg_name;
+> +	unsigned int reg_start_offset;
+> +	unsigned int reg_end_offset;
+> +	const struct regmap_access_table *reg_access;
+> +	bool valid;
+> +};
+> +
+> +static const struct regmap_range s32g2_siul2_0_imcr_reg_ranges[] = {
+> +	/* IMCR0 - IMCR1 */
+> +	regmap_reg_range(0, 4),
+> +	/* IMCR3 - IMCR61 */
+> +	regmap_reg_range(0xC, 0xF4),
+> +	/* IMCR68 - IMCR83 */
+> +	regmap_reg_range(0x110, 0x14C)
+> +};
+> +
+> +static const struct regmap_access_table s32g2_siul2_0_imcr = {
+> +	.yes_ranges = s32g2_siul2_0_imcr_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_0_imcr_reg_ranges)
+> +};
+> +
+> +static const struct regmap_range s32g2_siul2_0_pgpd_reg_ranges[] = {
+> +	/* PGPD*0 - PGPD*5 */
+> +	regmap_reg_range(0, 0xA),
+> +	/* PGPD*6 - PGPD*6 */
+> +	regmap_reg_range(0xE, 0xE),
+> +};
+> +
+> +static const struct regmap_access_table s32g2_siul2_0_pgpd = {
+> +	.yes_ranges = s32g2_siul2_0_pgpd_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_0_pgpd_reg_ranges)
+> +};
+> +
+> +static const struct regmap_range s32g2_siul2_1_irq_reg_ranges[] = {
+> +	/* DISR0 */
+> +	regmap_reg_range(0x10, 0x10),
+> +	/* DIRER0 */
+> +	regmap_reg_range(0x18, 0x18),
+> +	/* DIRSR0 */
+> +	regmap_reg_range(0x20, 0x20),
+> +	/* IREER0 */
+> +	regmap_reg_range(0x28, 0x28),
+> +	/* IFEER0 */
+> +	regmap_reg_range(0x30, 0x30),
+> +};
+> +
+> +static const struct regmap_access_table s32g2_siul2_1_irq = {
+> +	.yes_ranges = s32g2_siul2_1_irq_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_irq_reg_ranges),
+> +};
+> +
+> +static const struct regmap_range s32g2_siul2_1_irq_volatile_reg_range[] = {
+> +	/* DISR0 */
+> +	regmap_reg_range(0x10, 0x10)
+> +};
+> +
+> +static const struct regmap_access_table s32g2_siul2_1_irq_volatile = {
+> +	.yes_ranges = s32g2_siul2_1_irq_volatile_reg_range,
+> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_irq_volatile_reg_range),
+> +};
+> +
+> +static const struct regmap_range s32g2_siul2_1_mscr_reg_ranges[] = {
+> +	/* MSCR112 - MSCR122 */
+> +	regmap_reg_range(0, 0x28),
+> +	/* MSCR144 - MSCR190 */
+> +	regmap_reg_range(0x80, 0x138)
+> +};
+> +
+> +static const struct regmap_access_table s32g2_siul2_1_mscr = {
+> +	.yes_ranges = s32g2_siul2_1_mscr_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_mscr_reg_ranges),
+> +};
+> +
+> +static const struct regmap_range s32g2_siul2_1_imcr_reg_ranges[] = {
+> +	/* IMCR119 - IMCR121 */
+> +	regmap_reg_range(0, 8),
+> +	/* IMCR128 - IMCR129 */
+> +	regmap_reg_range(0x24, 0x28),
+> +	/* IMCR143 - IMCR151 */
+> +	regmap_reg_range(0x60, 0x80),
+> +	/* IMCR153 - IMCR161 */
+> +	regmap_reg_range(0x88, 0xA8),
+> +	/* IMCR205 - IMCR212 */
+> +	regmap_reg_range(0x158, 0x174),
+> +	/* IMCR224 - IMCR225 */
+> +	regmap_reg_range(0x1A4, 0x1A8),
+> +	/* IMCR233 - IMCR248 */
+> +	regmap_reg_range(0x1C8, 0x204),
+> +	/* IMCR273 - IMCR274 */
+> +	regmap_reg_range(0x268, 0x26C),
+> +	/* IMCR278 - IMCR281 */
+> +	regmap_reg_range(0x27C, 0x288),
+> +	/* IMCR283 - IMCR286 */
+> +	regmap_reg_range(0x290, 0x29C),
+> +	/* IMCR288 - IMCR294 */
+> +	regmap_reg_range(0x2A4, 0x2BC),
+> +	/* IMCR296 - IMCR302 */
+> +	regmap_reg_range(0x2C4, 0x2DC),
+> +	/* IMCR304 - IMCR310 */
+> +	regmap_reg_range(0x2E4, 0x2FC),
+> +	/* IMCR312 - IMCR314 */
+> +	regmap_reg_range(0x304, 0x30C),
+> +	/* IMCR316 */
+> +	regmap_reg_range(0x314, 0x314),
+> +	/* IMCR 318 */
+> +	regmap_reg_range(0x31C, 0x31C),
+> +	/* IMCR322 - IMCR340 */
+> +	regmap_reg_range(0x32C, 0x374),
+> +	/* IMCR343 - IMCR360 */
+> +	regmap_reg_range(0x380, 0x3C4),
+> +	/* IMCR363 - IMCR380 */
+> +	regmap_reg_range(0x3D0, 0x414),
+> +	/* IMCR383 - IMCR393 */
+> +	regmap_reg_range(0x420, 0x448),
+> +	/* IMCR398 - IMCR433 */
+> +	regmap_reg_range(0x45C, 0x4E8),
+> +	/* IMCR467 - IMCR470 */
+> +	regmap_reg_range(0x570, 0x57C),
+> +	/* IMCR473 - IMCR475 */
+> +	regmap_reg_range(0x588, 0x590),
+> +	/* IMCR478 - IMCR480*/
+> +	regmap_reg_range(0x59C, 0x5A4),
+> +	/* IMCR483 - IMCR485 */
+> +	regmap_reg_range(0x5B0, 0x5B8),
+> +	/* IMCR488 - IMCR490 */
+> +	regmap_reg_range(0x5C4, 0x5CC),
+> +	/* IMCR493 - IMCR495 */
+> +	regmap_reg_range(0x5D8, 0x5E0),
+> +};
+> +
+> +static const struct regmap_access_table s32g2_siul2_1_imcr = {
+> +	.yes_ranges = s32g2_siul2_1_imcr_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_imcr_reg_ranges)
+> +};
+> +
+> +static const struct regmap_range s32g2_siul2_1_pgpd_reg_ranges[] = {
+> +	/* PGPD*7 */
+> +	regmap_reg_range(0xC, 0xC),
+> +	/* PGPD*9 */
+> +	regmap_reg_range(0x10, 0x10),
+> +	/* PDPG*10 - PGPD*11 */
+> +	regmap_reg_range(0x14, 0x16),
+> +};
+> +
+> +static const struct regmap_access_table s32g2_siul2_1_pgpd = {
+> +	.yes_ranges = s32g2_siul2_1_pgpd_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(s32g2_siul2_1_pgpd_reg_ranges)
+> +};
+> +
+> +static const struct nxp_siul2_reg_range_info
+> +s32g2_reg_ranges[S32G_NUM_SIUL2][SIUL2_NUM_REG_TYPES] = {
+> +	/* SIUL2_0 */
+> +	{
+> +		[SIUL2_MPIDR] = S32_REG_RANGE(4, 8, "SIUL2_0_MPIDR", NULL),
+> +		/* Interrupts are to be controlled from SIUL2_1 */
+> +		[SIUL2_IRQ] = S32_INVALID_REG_RANGE,
+> +		[SIUL2_MSCR] = S32_REG_RANGE(0x240, 0x3D4, "SIUL2_0_MSCR",
+> +					     NULL),
+> +		[SIUL2_IMCR] = S32_REG_RANGE(0xA40, 0xB8C, "SIUL2_0_IMCR",
+> +					     &s32g2_siul2_0_imcr),
+> +		[SIUL2_PGPDO] = S32_REG_RANGE(0x1700, 0x170E,
+> +					      "SIUL2_0_PGPDO",
+> +					      &s32g2_siul2_0_pgpd),
+> +		[SIUL2_PGPDI] = S32_REG_RANGE(0x1740, 0x174E,
+> +					      "SIUL2_0_PGPDI",
+> +					      &s32g2_siul2_0_pgpd),
+> +	},
+> +	/* SIUL2_1 */
+> +	{
+> +		[SIUL2_MPIDR] = S32_REG_RANGE(4, 8, "SIUL2_1_MPIDR", NULL),
+> +		[SIUL2_IRQ] = S32_REG_RANGE(0x10, 0xC0, "SIUL2_1_IRQ",
+> +					    &s32g2_siul2_1_irq),
+> +		[SIUL2_MSCR] = S32_REG_RANGE(0x400, 0x538, "SIUL2_1_MSCR",
+> +					     &s32g2_siul2_1_mscr),
+> +		[SIUL2_IMCR] = S32_REG_RANGE(0xC1C, 0x11FC, "SIUL2_1_IMCR",
+> +					     &s32g2_siul2_1_imcr),
+> +		[SIUL2_PGPDO] = S32_REG_RANGE(0x1700, 0x1716,
+> +					      "SIUL2_1_PGPDO",
+> +					      &s32g2_siul2_1_pgpd),
+> +		[SIUL2_PGPDI] = S32_REG_RANGE(0x1740, 0x1756,
+> +					      "SIUL2_1_PGPDI",
+> +					      &s32g2_siul2_1_pgpd),
+> +	},
+> +};
+> +
+> +static const struct regmap_config nxp_siul2_regmap_irq_conf = {
+> +	.val_bits = 32,
+> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.cache_type = REGCACHE_FLAT,
+> +	.use_raw_spinlock = true,
+> +	.volatile_table = &s32g2_siul2_1_irq_volatile,
+> +};
+> +
+> +static const struct regmap_config nxp_siul2_regmap_generic_conf = {
+> +	.val_bits = 32,
+> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.cache_type = REGCACHE_FLAT,
+> +	.use_raw_spinlock = true,
+> +};
+> +
+> +static const struct regmap_config nxp_siul2_regmap_pgpdo_conf = {
+> +	.val_bits = 16,
+> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
+> +	.reg_bits = 32,
+> +	.reg_stride = 2,
+> +	.cache_type = REGCACHE_FLAT,
+> +	.use_raw_spinlock = true,
+> +};
+> +
+> +static const struct regmap_config nxp_siul2_regmap_pgpdi_conf = {
+> +	.val_bits = 16,
+> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
+> +	.reg_bits = 32,
+> +	.reg_stride = 2,
+> +	.cache_type = REGCACHE_NONE,
+> +	.use_raw_spinlock = true,
+> +};
+> +
+> +static int nxp_siul2_init_regmap(struct platform_device *pdev,
+> +				 void __iomem *base, unsigned int siul)
+> +{
+> +	const struct regmap_config *regmap_configs[SIUL2_NUM_REG_TYPES] = {
+> +		[SIUL2_MPIDR]	= &nxp_siul2_regmap_generic_conf,
+> +		[SIUL2_IRQ]	= &nxp_siul2_regmap_irq_conf,
+> +		[SIUL2_MSCR]	= &nxp_siul2_regmap_generic_conf,
+> +		[SIUL2_IMCR]	= &nxp_siul2_regmap_generic_conf,
+> +		[SIUL2_PGPDO]	= &nxp_siul2_regmap_pgpdo_conf,
+> +		[SIUL2_PGPDI]	= &nxp_siul2_regmap_pgpdi_conf,
+> +	};
+> +	const struct nxp_siul2_reg_range_info *tmp_range;
+> +	struct regmap_config tmp_conf;
+> +	struct nxp_siul2_info *info;
+> +	struct nxp_siul2_mfd *priv;
+> +	void __iomem *reg_start;
+> +	int i;
+> +
+> +	priv = platform_get_drvdata(pdev);
+> +	info = &priv->siul2[siul];
+> +
+> +	for (i = 0; i < SIUL2_NUM_REG_TYPES; i++) {
+> +		if (!s32g2_reg_ranges[siul][i].valid)
+> +			continue;
+> +
+> +		tmp_range = &s32g2_reg_ranges[siul][i];
+> +		tmp_conf = *regmap_configs[i];
+> +		tmp_conf.name = tmp_range->reg_name;
+> +		tmp_conf.max_register =
+> +			tmp_range->reg_end_offset - tmp_range->reg_start_offset;
+> +
+> +		if (tmp_conf.cache_type != REGCACHE_NONE)
+> +			tmp_conf.num_reg_defaults_raw =
+> +				tmp_conf.max_register / tmp_conf.reg_stride;
+> +
+> +		if (tmp_range->reg_access) {
+> +			tmp_conf.wr_table = tmp_range->reg_access;
+> +			tmp_conf.rd_table = tmp_range->reg_access;
+> +		}
+> +
+> +		reg_start = base + tmp_range->reg_start_offset;
+> +		info->regmaps[i] = devm_regmap_init_mmio(&pdev->dev, reg_start,
+> +							 &tmp_conf);
+> +		if (IS_ERR(info->regmaps[i]))
+> +			return dev_err_probe(&pdev->dev,
+> +					     PTR_ERR(info->regmaps[i]),
+> +					     "regmap %d init failed: %ld\n", i,
+> +					     PTR_ERR(info->regmaps[i]));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int nxp_siul2_parse_dtb(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct of_phandle_args pinspec;
+> +	struct nxp_siul2_mfd *priv;
+> +	void __iomem *base;
+> +	char reg_name[16];
+> +	int i, ret;
+> +
+> +	priv = platform_get_drvdata(pdev);
+> +
+> +	for (i = 0; i < priv->num_siul2; i++) {
+> +		ret = snprintf(reg_name, ARRAY_SIZE(reg_name), "siul2%d", i);
+> +		if (ret < 0 || ret >= ARRAY_SIZE(reg_name))
+> +			return ret;
+> +
+> +		base = devm_platform_ioremap_resource_byname(pdev, reg_name);
+> +		if (IS_ERR(base))
+> +			return dev_err_probe(&pdev->dev, PTR_ERR(base),
+> +					     "Failed to get MEM resource: %s\n",
+> +					     reg_name);
+> +
+> +		ret = nxp_siul2_init_regmap(pdev, base, i);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
+> +						       i, &pinspec);
+> +		if (ret)
+> +			return ret;
+> +
+> +		of_node_put(pinspec.np);
+> +
+> +		if (pinspec.args_count != 3)
+> +			return dev_err_probe(&pdev->dev, -EINVAL,
+> +					     "Invalid pinspec count: %d\n",
+> +					     pinspec.args_count);
+> +
+> +		priv->siul2[i].gpio_base = pinspec.args[1];
+> +		priv->siul2[i].gpio_num = pinspec.args[2];
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int nxp_siul2_probe(struct platform_device *pdev)
+> +{
+> +	struct nxp_siul2_mfd *priv;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->num_siul2 = S32G_NUM_SIUL2;
+> +	priv->siul2 = devm_kcalloc(&pdev->dev, priv->num_siul2,
+> +				   sizeof(*priv->siul2), GFP_KERNEL);
+> +	if (!priv->siul2)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +	ret = nxp_siul2_parse_dtb(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
+> +				    nxp_siul2_devs, ARRAY_SIZE(nxp_siul2_devs),
+> +				    NULL, 0, NULL);
+> +}
+> +
+> +static const struct of_device_id nxp_siul2_dt_ids[] = {
+> +	{ .compatible = "nxp,s32g2-siul2" },
+> +	{ .compatible = "nxp,s32g3-siul2" },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, nxp_siul2_dt_ids);
+> +
+> +static struct platform_driver nxp_siul2_mfd_driver = {
+> +	.driver = {
+> +		.name		= "nxp-siul2-mfd",
+> +		.of_match_table	= nxp_siul2_dt_ids,
+> +	},
+> +	.probe = nxp_siul2_probe,
+> +};
+> +
+> +module_platform_driver(nxp_siul2_mfd_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("NXP SIUL2 MFD driver");
+> +MODULE_AUTHOR("Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>");
+> diff --git a/include/linux/mfd/nxp-siul2.h b/include/linux/mfd/nxp-siul2.h
+> new file mode 100644
+> index 000000000000..238c812dba29
+> --- /dev/null
+> +++ b/include/linux/mfd/nxp-siul2.h
+> @@ -0,0 +1,55 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later
+> + *
+> + * S32 SIUL2 core definitions
+> + *
+> + * Copyright 2024 NXP
+> + */
+> +
+> +#ifndef __DRIVERS_MFD_NXP_SIUL2_H
+> +#define __DRIVERS_MFD_NXP_SIUL2_H
+> +
+> +#include <linux/regmap.h>
+> +
+> +/**
+> + * enum nxp_siul2_reg_type - an enum for SIUL2 reg types
+> + * @SIUL2_MPIDR - SoC info
+> + * @SIUL2_IRQ - IRQ related registers, only valid in SIUL2_1
+> + * @SIUL2_MSCR - used for pinmuxing and pinconf
+> + * @SIUL2_IMCR - used for pinmuxing
+> + * @SIUL2_PGPDO - writing the GPIO value
+> + * @SIUL2_PGPDI - reading the GPIO value
+> + */
+> +enum nxp_siul2_reg_type {
+> +	SIUL2_MPIDR,
+> +	SIUL2_IRQ,
+> +	SIUL2_MSCR,
+> +	SIUL2_IMCR,
+> +	SIUL2_PGPDO,
+> +	SIUL2_PGPDI,
+> +
+> +	SIUL2_NUM_REG_TYPES
+> +};
+> +
+> +/**
+> + * struct nxp_siul2_info - details about one SIUL2 hardware instance
+> + * @regmaps: the regmaps for each register type for a SIUL2 hardware instance
+> + * @gpio_base: the first GPIO in this SIUL2 module
+> + * @gpio_num: the number of GPIOs in this SIUL2 module
+> + */
+> +struct nxp_siul2_info {
+> +	struct regmap *regmaps[SIUL2_NUM_REG_TYPES];
+> +	u32 gpio_base;
+> +	u32 gpio_num;
+> +};
+> +
+> +/**
+> + * struct nxp_siul2_mfd - driver data
+> + * @siul2: info about the SIUL2 modules present
+> + * @num_siul2: number of siul2 modules
+> + */
+> +struct nxp_siul2_mfd {
+> +	struct nxp_siul2_info *siul2;
+> +	u8 num_siul2;
+> +};
+> +
+> +#endif /* __DRIVERS_MFD_NXP_SIUL2_H */
+> -- 
+> 2.45.2
+> 
+
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
 
