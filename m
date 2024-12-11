@@ -1,273 +1,219 @@
-Return-Path: <linux-kernel+bounces-441050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357F29EC8B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:17:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5809EC8AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D45F163BEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59DA3166A8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E9A2210F0;
-	Wed, 11 Dec 2024 09:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBB11FECBE;
+	Wed, 11 Dec 2024 09:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XygKTfGu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oSGR8zXR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BC220409E;
-	Wed, 11 Dec 2024 09:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52207209F32;
+	Wed, 11 Dec 2024 09:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908631; cv=none; b=Kphc0SRPbwuWU0OXXOY3Ht91nfFK8cactlwqo3q02ZHcIVlKk+NWoZDFAkstdJoUh8DiqgCYCbuTaj+h4nt2t5WnQjRMhKZ1yBQ/acezVuKZlCyPkImQHJejMgJazpfDysGBwNsjh7EpsS9UcYerlihr6JkI6G7Ky+OwG5fnrrk=
+	t=1733908601; cv=none; b=KNt7ccWN8P8NNz3Yd8Umhb66CQOUXk8iK/QNd/jlG0vkuJY0w2Jvm9ceausWgetMY4VBu/Rjn88oIlX2AL/Prv+KhnoVz84OnTuOjgtCgLltAg1QT5uSb1eBqFsoLo3kAh4Z06wwF3NnSkywTqvwb/x9YC/3gBx40yvOIWGG8pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908631; c=relaxed/simple;
-	bh=cLClDIMs70WvGvtzo+tHXm+M/BCDnZJu+Z3Kov1rqp8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=X+o/e4Yv3feSb03+rBdneqXCn2cEISTP/mm3qK/i2D7yUnMq5L3m4SCJdW48WgDhJkXQTfwmqy9BVdsk11cqH9GiJCHMUJ8tM0pmK/vtIDZcLQKxqH9VEnbfl/H9z686K9KnMCCNb3MNy6S0tk4GbnwmA/H+vqIu+jdUB8CCSHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XygKTfGu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5b3ja003641;
-	Wed, 11 Dec 2024 09:17:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Gq0OjpQFpBlu/IZSy2zO4H
-	tvw2/5xtg/8eSc4QqrmWg=; b=XygKTfGuY+GwIEg6msFNOLUKquGJVE2jIAl6Z5
-	Zf0Gm3l82tjyyeAcZIDgOfsmmepAw/lFm75QchD18NB59AJp17doH9WV6tuABghu
-	3rl05lv8Pf0DFwTQgPMSR/ZnB76Cqxf5kaJsRrzYhCBRqOtYLSudDgQHss4VmgNM
-	rnW4+SLLWr8snHDDDmcxN/J8PdqwWatrSRiZprvaNfzGu+EEd0w6r8YstMCWkPG0
-	IhgXyfZdcEMKr5hi8onXLyLJ5IzC12YZnxrmzJCcQW84JgPLnAPG9HBdHk1FOrRs
-	pZXlDOlCRs1K8FCF7/XpXouqyR/M+cgZssKdQ8TRpoAusrNQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw47auq-1
+	s=arc-20240116; t=1733908601; c=relaxed/simple;
+	bh=nO2/rXlhT6z2WIEgeQu1Kh9yv+VGkoTEdmgWngBYtoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mguv8U/8Ak175y8mUXbIzXkmBK5NEg+DhnK/o44kCF2gK8Jz8k9pb+iQNRMP5FCygLOWy0tr5Tvawxhsq7t3XBaAb5DT7qtVkEKQzvPJzlC050Ko+WdZem8+oboPZl6XM99awyrdSTfdnudMcfhWoZ47UtahRC3Wp3Wp3WLG20s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oSGR8zXR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB0lxqc007174;
+	Wed, 11 Dec 2024 09:16:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=bOSpyn
+	DVrOA2O7/zbdTQRDjiVSCatZs+bu2VrIWa9GQ=; b=oSGR8zXRNqmT1dNkkihPqJ
+	LN7VDmoz4258N/CC9sv0jxHtFKZhyXvoD/bGP/XgbNuYMNzyV2mOUPl6KXh+g6fT
+	dlWEw5kMm0JGjRoo3vokuyubn+VUtqX/fA4TZlUKWrCLHP8GR8TUV0GdMSc4qJjP
+	u+or2VUS95gkYZ19dWoIhnArurxO6q//p8jkbSQEcCOhrd2GgY0N5Xlq8suSXUFS
+	s25m2+gDzDNaDoYcxQQAHn/bdWBbqv64Wdn6bt3uHGxjLjJ49LsFK0FOurivM7ff
+	YhqSzzkpvVbcQLF3KZnq39CnWhrV0B6Ot4MfPOV3rfejLL4nO+TjBzUFFss/dAXA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8v955-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:17:05 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB9H4ko028123
+	Wed, 11 Dec 2024 09:16:32 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BB9Al58010399;
+	Wed, 11 Dec 2024 09:16:31 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8v94x-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:17:04 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Dec 2024 01:16:58 -0800
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Date: Wed, 11 Dec 2024 17:16:15 +0800
-Subject: [PATCH] arm64: dts: qcom: qcs615-ride: Fixing power issue in LPM
+	Wed, 11 Dec 2024 09:16:31 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB7NMP0023047;
+	Wed, 11 Dec 2024 09:16:30 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wk0a23-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 09:16:30 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BB9GTaf20710030
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Dec 2024 09:16:30 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DEB8F58056;
+	Wed, 11 Dec 2024 09:16:29 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 14D1F5803F;
+	Wed, 11 Dec 2024 09:16:26 +0000 (GMT)
+Received: from [9.171.85.18] (unknown [9.171.85.18])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Dec 2024 09:16:25 +0000 (GMT)
+Message-ID: <e6128372-6dea-4d24-a7c7-7c3e90183836@linux.ibm.com>
+Date: Wed, 11 Dec 2024 14:46:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
+ gcc-13+ and FORTIFY_SOURCE
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        briannorris@chromium.org, kees@kernel.org, gustavoars@kernel.org,
+        steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
+        gjoyce@ibm.com, linux-crypto@vger.kernel.org, linux@weissschuh.net
+References: <20241208161315.730138-1-nilay@linux.ibm.com>
+ <Z1XkhhBqFYtbvQYp@yury-ThinkPad> <20241209193558.GA1597021@ax162>
+ <2d9f4b56-3a8f-4fd7-a356-022f973da5e0@linux.ibm.com>
+ <20241210161458.GA1305110@ax162>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20241210161458.GA1305110@ax162>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241211-bug-fix-qcs615-ride-dts-lpm-power-issue-v1-1-a08d12c415f0@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGBYWWcC/5WPS27DMAxErxJoXRYmJSd2V71HkYVE0QmB+hPJd
- hMEvntV5wRdzgB88/g0WZJKNh+Hp0myatZxKAHfDoavfrgIaCzZUEUOCRHCcoFO73DjfMQakka
- BOGf4nnqYxh9JoDkvAs6JtdzELtpoCm1KUs72pa/zKye5LWVwfpUm+CzAY9/rXAQC+dCga1tqG
- Fk8xZOwtxVHW4dw6qRCV9XW/LGumucxPfYnVtxh//ZdERCo6Vo6upYt+c8ixzrwe1Ey523bfgE
- eQLXYLAEAAA==
-X-Change-ID: 20241211-bug-fix-qcs615-ride-dts-lpm-power-issue-44e33c8dfd3d
-To: <tingweiz@qti.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <fenglinw@qti.qualcomm.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733908618; l=6422;
- i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=cLClDIMs70WvGvtzo+tHXm+M/BCDnZJu+Z3Kov1rqp8=;
- b=2ATpWHer3ttcMqDFnHJ2FSLko2Vm+AQZ5ViQATNcM0h3IUl1ItjLMSEUHTUgsFvPvDgntT9Wj
- 0xNIvDizQG4C3pLyDmfRb/LxdGi8UWyxKT6KbxrdCZHAwsid1A/KPW2
-X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
- pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 9mbbhhucb51Nk2DRBL1HdN_uu5uP0PZg
-X-Proofpoint-GUID: 9mbbhhucb51Nk2DRBL1HdN_uu5uP0PZg
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZhhcLldIpLJJAudxb7SfMQevVa93IgNh
+X-Proofpoint-ORIG-GUID: bvrRETJkKciETVaWBMKs7C8Z0MNsB_ks
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=977
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110070
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110067
 
-Change all LPM to HPM for regulators init-mode and disallowed setting
-mode. LPM mode provides at most 10/30mA current for consumers such as
-UFS,eMMC,PCIe. That caused problems because consumers take much more
-than that. At the same time, a lot of drivers didn't set load in code
-that makes it impossible for regulator framework to know exaclty when
-to switch mode.
 
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
----
-At the beginning, The QCS615-ride device gets some power issues when 
-enabling peripherals on the board as well as in the SoC. After figuring 
-out the root cause which pointed to that drivers should tell the regula
-tor framework the required current the devices need separately, so the 
-regulator framework can get to know when to switch modes to satisfy the 
-requirment. But a lot of drivers did not set load for peripherals. Some 
-did setting and some did not, which sometimes caused problem when LPM 
-of regulators is allowed. E.g. LDO12 supplies UFS and USB. UFS sets the 
-load of AmA(HPM), while USB PHY does not set any(0mA LPM). In this case, 
-USB can encounter insufficient power supply when UFS's going to sleep. 
 
-There is some discussion about this:
-https://lore.kernel.org/all/5tbevb5wv2s43pccytv4qol4yhq4s7iw2mmqp23vt3ujqd6xev@hkioqmwoitbd/
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 52 +++++---------------------------
- 1 file changed, 8 insertions(+), 44 deletions(-)
+On 12/10/24 21:44, Nathan Chancellor wrote:
+> On Tue, Dec 10, 2024 at 01:58:00PM +0530, Nilay Shroff wrote:
+>> Okay so I think you (and Greg) were suggesting instead of disabling 
+>> -Wstringop-overread globally or tuning it off for a particular source
+>> file, lets disable it on gcc-13+ while we invoke bitmap_copy() as shown
+>> below: 
+> 
+> I cannot speak for Greg but yes, this is generally what I had in mind, I
+> have a few comments below.
+> 
+>> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+>> index d0ed9583743f..e61b9f3ff6a7 100644
+>> --- a/include/linux/compiler-gcc.h
+>> +++ b/include/linux/compiler-gcc.h
+>> @@ -139,6 +139,18 @@
+>>  #define __diag_GCC_8(s)
+>>  #endif
+>>  
+>> +#if GCC_VERSION >= 130000
+>> +#define __diag_GCC_13(s)       __diag(s)
+>> +#else
+>> +#define __diag_GCC_13(s)
+>> +#endif
+>> +
+>> +#if GCC_VERSION >= 140000
+>> +#define __diag_GCC_14(s)       __diag(s)
+>> +#else
+>> +#define __diag_GCC_14(s)
+>> +#endif
+> 
+> You do not need to add __diag_GCC_14 because __diag_GCC_13 covers
+> GCC 13 and newer.
+Yeah ok, I would remove __diag_GCC_14.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index a25928933e2b66241258e418c6e5bc36c306101e..32db107dc660cff9d2ccbf19eceb5c5539c591a9 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -71,30 +71,21 @@ vreg_l1a: ldo1 {
- 			regulator-name = "vreg_l1a";
- 			regulator-min-microvolt = <488000>;
- 			regulator-max-microvolt = <852000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l2a: ldo2 {
- 			regulator-name = "vreg_l2a";
- 			regulator-min-microvolt = <1650000>;
- 			regulator-max-microvolt = <3100000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l3a: ldo3 {
- 			regulator-name = "vreg_l3a";
- 			regulator-min-microvolt = <1000000>;
- 			regulator-max-microvolt = <1248000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l5a: ldo5 {
-@@ -102,9 +93,6 @@ vreg_l5a: ldo5 {
- 			regulator-min-microvolt = <875000>;
- 			regulator-max-microvolt = <975000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l7a: ldo7 {
-@@ -112,9 +100,6 @@ vreg_l7a: ldo7 {
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <1900000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l8a: ldo8 {
-@@ -122,9 +107,6 @@ vreg_l8a: ldo8 {
- 			regulator-min-microvolt = <1150000>;
- 			regulator-max-microvolt = <1350000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l10a: ldo10 {
-@@ -132,59 +114,41 @@ vreg_l10a: ldo10 {
- 			regulator-min-microvolt = <2950000>;
- 			regulator-max-microvolt = <3312000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l11a: ldo11 {
- 			regulator-name = "vreg_l11a";
- 			regulator-min-microvolt = <1232000>;
- 			regulator-max-microvolt = <1260000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l12a: ldo12 {
- 			regulator-name = "vreg_l12a";
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <1890000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l13a: ldo13 {
- 			regulator-name = "vreg_l13a";
- 			regulator-min-microvolt = <3000000>;
- 			regulator-max-microvolt = <3230000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l15a: ldo15 {
- 			regulator-name = "vreg_l15a";
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <1904000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l16a: ldo16 {
- 			regulator-name = "vreg_l16a";
- 			regulator-min-microvolt = <3000000>;
- 			regulator-max-microvolt = <3312000>;
--			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
--			regulator-allow-set-load;
--			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
--						   RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l17a: ldo17 {
+> 
+>>  #define __diag_ignore_all(option, comment) \
+>>         __diag(__diag_GCC_ignore option)
+>>  
+>> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+>> index 9278a50d514f..6885856e38b0 100644
+>> --- a/include/linux/cpumask.h
+>> +++ b/include/linux/cpumask.h
+>> @@ -836,7 +836,23 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
+>>  static __always_inline
+>>  void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
+>>  {
+>> +       /*
+>> +        * Silence -Wstringop-overead warning generated while copying cpumask
+>> +        * bits on gcc-13+ and CONFIG_FORTIFY_SOURCE=y. The gcc-13+ emits
+>> +        * warning suggesting "we're trying to copy nbits which potentially
+>> +        * exceeds NR_CPUS. Apparently, this seems false positive and might be
+>> +        * a gcc bug as we know that large_cpumask_bits should never exceed
+>> +        * NR_CPUS.
+> 
+> I think the last sentence needs to be either dropped entirely or needs
+> to have more assertive language. While this might be a false positive, I
+> think it is entirely unreasonable to expect GCC to know that
+> large_cpumask_bits when it is nr_cpu_ids is bounded by NR_CPUS because
+> it does not have the definition of nr_cpu_ids visible at this point and
+> even if it did, it is still a global variable, so it has to assume that
+> value could be anything in lieu of an explicit bounds check.
+> 
+> Maybe something like this for the full comment?
+> 
+> /*
+>  * Silence instances of -Wstringop-overread that come from the memcpy() in
+>  * bitmap_copy() that may appear with GCC 13+, CONFIG_FORTIFY_SOURCE=y, and
+>  * and CONFIG_NR_CPUS > 256, as the length of the memcpy() in bitmap_copy() will
+>  * not a compile time constant. Without an explicit bounds check on the length
+>  * of the copy in this path, GCC will assume the length could be 0 to UINT_MAX,
+>  * which would trigger an overread of the source if it were to happen. As
+>  * nr_cpu_ids is known to be bounded by NR_CPUS, this copy will always be in
+>  * bounds.
+>  */
+Okay I would update comment.
+> 
+>> +        */
+>> +       __diag_push();
+>> +       __diag_ignore(GCC, 13, "-Wstringop-overread",
+>> +               "Ignore string overflow warning while copying cpumask bits");
+>> +       __diag_ignore(GCC, 14, "-Wstringop-overread",
+>> +               "Ignore string overflow warning while copying cpumask bits");
+> 
+> This __diag_ignore() can be dropped as well.
+Agreed.
+> 
+>> +
+>>         bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
+>> +
+>> +       __diag_pop();
+>>  }
+>>
+>> Does the above change look good to everyone?
+> 
+> I think this seems reasonable to me, but it might be good to get some
+> feedback from the hardening folks.
+> 
+> Cheers,
+> Nathan
 
----
-base-commit: 1b2ab8149928c1cea2d7eca30cd35bb7fe014053
-change-id: 20241211-bug-fix-qcs615-ride-dts-lpm-power-issue-44e33c8dfd3d
-
-Best regards,
--- 
-Tingguo Cheng <quic_tingguoc@quicinc.com>
-
+Thanks,
+--Nilay
 
