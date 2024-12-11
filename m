@@ -1,184 +1,179 @@
-Return-Path: <linux-kernel+bounces-441729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AF19ED32A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:14:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9439ED338
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B808166114
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CCC1888563
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1FC1DE4FB;
-	Wed, 11 Dec 2024 17:14:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DB71DE89A;
+	Wed, 11 Dec 2024 17:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N1sOs//g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA361DDC11;
-	Wed, 11 Dec 2024 17:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FD61DDC3E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733937252; cv=none; b=HvgICeJEJzVOWIDH4gRxCtAbTisxTZM4JJElb3MuT88ZIl3l51g+HIaXmUhEHoPBLjcBDO+tHUSzGbL8QO2+A1GSUDRNAKuKFtxy6nqHdXviL8LuR0HKYX8AUKbsIESegy+RgMFMWQ9i8QaErqneQPcgQCSw3L4FDiuImhGmNCU=
+	t=1733937536; cv=none; b=UZ8C0fansZshQsgvgB495OXb5AcFf8n4W0rCPhXEASzjInAcJIKiw526SZNvkVuXWDHOUaKXyPPeRX8WG01XlPUhYnN51nRuB+3fgLJ4B3WZB5IK18mqCzjOaqvkDO4vNrLB4k/UFhZlbfpT4bggLlBUlvYTSSXXWG4zpBZ+ic4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733937252; c=relaxed/simple;
-	bh=fU5Co7BoEUGYUT5Kq7BdcI2z8iurhlfvLHCAF12ktpM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IuuKyT6SjxcwVQtgR42lEcPq8wsOAD8qXhyigEDbs9vEFcHYrdp1DQ8Tc3P31ssJSpbugZYtfrh4nwfEB1ZdZDN+dTdV5V+FCvEA/eiM8FAMfJXZm+XTWOY/jefcqxafiXTNtg65zSLE9VNmqMPRyIe8H5q4LjF7lZdkLuKSqo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y7hy04ljJz6D8xn;
-	Thu, 12 Dec 2024 01:13:12 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 186E5140AB8;
-	Thu, 12 Dec 2024 01:14:07 +0800 (CST)
-Received: from localhost (10.48.145.145) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 11 Dec
- 2024 18:14:05 +0100
-Date: Wed, 11 Dec 2024 17:14:03 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Lukas Wunner <lukas@wunner.de>
-CC: Niklas Schnelle <niks@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Wilczy??ski" <kw@linux.com>, "Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>, Krishna chaitanya chundru
-	<quic_krichai@quicinc.com>, Srinivas Pandruvada
-	<srinivas.pandruvada@linux.intel.com>, "Rafael J . Wysocki"
-	<rafael@kernel.org>, <linux-pm@vger.kernel.org>, Smita Koralahalli
-	<Smita.KoralahalliChannabasappa@amd.com>, <linux-kernel@vger.kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, Mika Westerberg
-	<mika.westerberg@linux.intel.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>
-Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
- 2.5 GT/s
-Message-ID: <20241211171403.00002fa3@huawei.com>
-In-Reply-To: <Z1lF468L8c84QJkD@wunner.de>
-References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
-	<Z1gSZCdv3fwnRRNk@wunner.de>
-	<70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
-	<Z1lF468L8c84QJkD@wunner.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1733937536; c=relaxed/simple;
+	bh=Ck+PVhr4fHniz5Eg+zhhB78UyZZdlCm0HtuiQWn6AFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c97AHr6W1XW4/Oi9wRs3D3aA3wECLlY1ou4YtASPXmXWi15Tg57KiHNfc2KURpAvgvztWtJtXxdDrTNtqUiN+ZF/+P+K7tmhkmmPnnvZrq9i9TuiJvKoebvi4aUwr+Qw3Lt89/UOoH55TOsCZEC4ccOwnX9ylgfOopbetu/KVTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N1sOs//g; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733937534; x=1765473534;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ck+PVhr4fHniz5Eg+zhhB78UyZZdlCm0HtuiQWn6AFk=;
+  b=N1sOs//gvWV6Z/gjh8MQfdElQZE0dQ70v0FiAcOo2t/wfOnWzoqKgSuw
+   ro3zPTukoDJx95s4HtfS+B1fm0BG/OiyArhUXoyPDKWuXNowQGwOW96Jx
+   ZhqzdApQcU69TzfPhq/zxkf/CuYt/Fz8m8AwckqT58tVcYXJV3b5sa2S8
+   I6MiQIA+xBu9iGiVLhDwQmvVEoB/SBSNo+kxn7fkfjGdQebBx8StlC6QU
+   y7u86DDF82cWyOJuioN7epyEsU4wo1Y//ABkLtYK7a60WkALoa86a5JKb
+   OThT9LFEIPqtNQr8BPxkWC0OrYUqfZpAJojSOKFAwSdLnK5ip2+HUacG9
+   w==;
+X-CSE-ConnectionGUID: l874XxqQSPWmerL4a4Q+Yw==
+X-CSE-MsgGUID: D/nBKsfDSxqATZpl/mS46g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34203258"
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="34203258"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 09:18:54 -0800
+X-CSE-ConnectionGUID: CBUOilqoRsm+7CIBPNeM7Q==
+X-CSE-MsgGUID: DwmC44QBSTyW/BFN3cRSbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="95714130"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2024 09:18:52 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLQML-0006vf-1b;
+	Wed, 11 Dec 2024 17:18:49 +0000
+Date: Thu, 12 Dec 2024 01:18:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hao Ge <hao.ge@linux.dev>, surenb@google.com, kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, hao.ge@linux.dev,
+	Hao Ge <gehao@kylinos.cn>, Ben Greear <greearb@candelatech.com>
+Subject: Re: [PATCH v3] mm/alloc_tag: Fix panic when CONFIG_KASAN enabled and
+ CONFIG_KASAN_VMALLOC not enabled
+Message-ID: <202412120143.l3g6vx8b-lkp@intel.com>
+References: <20241211025755.56173-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211025755.56173-1-hao.ge@linux.dev>
 
-On Wed, 11 Dec 2024 08:57:23 +0100
-Lukas Wunner <lukas@wunner.de> wrote:
+Hi Hao,
 
-> On Tue, Dec 10, 2024 at 09:45:18PM +0100, Niklas Schnelle wrote:
-> > On Tue, 2024-12-10 at 11:05 +0100, Lukas Wunner wrote:  
-> > > First of all, the Supported Link Speeds field in the Link Capabilities
-> > > register (which you're querying here) was renamed to Max Link Speed in
-> > > PCIe r3.1 and a new Link Capabilities 2 register was added which contains
-> > > a new Supported Link Speeds field.  Software is supposed to query the
-> > > latter if the device implements the Link Capabilities 2 register
-> > > (see the other Implementation Note at the end of PCIe r6.2 sec 7.5.3.18).  
-> > 
-> > Would it maybe make sense to update the comment for PCI_EXP_LNKCAP_SLS
-> > in pci_regs.h to point out that in PCIe r3.1 and newer this is called
-> > the Max Link Speed field? This would certainly helped me here.  
-> 
-> The macros for the individual speeds (e.g. PCI_EXP_LNKCAP_SLS_2_5GB)
-> already have code comments which describe their new meaning.
-> 
-> I guess the reason why the code comment for PCI_EXP_LNKCAP_SLS wasn't
-> updated is that it seeks to document the meaning of the "SLS" acronym
-> (Supported Link Speeds).
-> 
-> But yes, amending that with something like...
-> 
-> /* Max Link Speed (Supported Link Speeds before PCIe r3.1) */
-> 
-> ...probably make sense, so feel free to propose that in a separate patch.
-> 
-> 
-> > > So to make this future-proof what you could do is check whether only a
-> > > *single* speed is supported (which could be something else than 2.5 GT/s
-> > > if future spec versions allow that), i.e.:
-> > > 
-> > > -		if (linkcap & PCI_EXP_LNKCAP_LBNC)
-> > > +		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
-> > > +		    hweight8(dev->supported_speeds) > 1)  
-> > 
-> > This also makes sense to me in that the argument holds that if there is
-> > only one supported speed bwctrl can't control it. That said it is
-> > definitely more general than this patch.
-> > 
-> > Sadly, I tried it and in my case it doesn't work. Taking a closer look
-> > at lspci -vvv of the Thunderbolt port as well as a debug print reveals
-> > why:
-> > 
-> > 07:00.0 PCI bridge: Intel Corporation JHL7540 Thunderbolt 3 Bridge [Titan Ridge 4C 2018] (rev 06) (prog-if 00 [Normal decode])
-> >        ...
-> >                 LnkCap: Port #0, Speed 2.5GT/s, Width x4, ASPM L1, Exit Latency L1 <1us
-> >                         ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
-> >                 LnkCtl: ASPM Disabled; LnkDisable- CommClk+
-> >                         ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-> >                 LnkSta: Speed 2.5GT/s, Width x4
-> >                         TrErr- Train- SlotClk+ DLActive- BWMgmt+ ABWMgmt-
-> > 	...
-> >                 LnkCap2: Supported Link Speeds: 2.5-8GT/s, Crosslink- Retimer- 2Retimers- DRS-
-> >                 LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-, Selectable De-emphasis: -6dB
-> >                          Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
-> >                          Compliance Preset/De-emphasis: -6dB de-emphasis, 0dB preshoot
-> > 	...
-> > 
-> > So it seems that on this Thunderbolt chip the LnkCap field
-> > says 2.5 GT/s only as per the USB 4 spec you quoted but LnkCap2
-> > is 0x0E i.e. 2.5-8 GT/s.
-> > 
-> > I wonder if this is related to why the hang occurs. Could it be that
-> > bwctrl tries to enable speeds above 2.5 GT/s and that causes links to
-> > fail?  
-> 
-> Ilpo knows this code better than I do but yes, that's plausible.
-> The bandwidth controller does't change the speed by itself,
-> it only monitors speed changes.  But it does provide a
-> pcie_set_target_speed() API which is called by the thermal driver
-> as well as the pcie_failed_link_retrain() quirk.  I suspect the
-> latter is the culprit here.  If that suspicion is correct,
-> you should be seeing messages such as...
-> 
-> "removing 2.5GT/s downstream link speed restriction"
-> 
-> ...in dmesg but I think you wrote that you're not getting any
-> messages at all, right?  Perhaps if you add "early_printk=efi"
-> to the kernel command line you may see what's going on.
-> 
-> One idea in this case would be to modify pcie_get_supported_speeds()
-> such that it filters out any speeds in the Link Capabilities 2 register
-> which exceed the Max Link Speed in the Link Capabilties register.
-> However the spec says that software should look at the Link Capabilities 2
-> register to determine supported speeds if that register is present.
-> So I think we may not conform to the spec then.
-> 
-> The better option is thus probably to add a DECLARE_PCI_FIXUP_EARLY()
-> quirk for Titan Ridge which sets the supported_speeds to just 2.5 GT/s.
-> *If* you want to go with the future-proof option which checks that
-> just one speed is supported.
+kernel test robot noticed the following build errors:
 
-I'd definitely support going with the future proof solution here if
-we can.
+[auto build test ERROR on akpm-mm/mm-everything]
 
-> 
-> Titan Ridge is an old chip.  I'm not sure if newer discrete Thunderbolt
-> controllers exhibit the same issue but likely not.
-> 
-> Thanks,
-> 
-> Lukas
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Ge/mm-alloc_tag-Fix-panic-when-CONFIG_KASAN-enabled-and-CONFIG_KASAN_VMALLOC-not-enabled/20241211-110206
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20241211025755.56173-1-hao.ge%40linux.dev
+patch subject: [PATCH v3] mm/alloc_tag: Fix panic when CONFIG_KASAN enabled and CONFIG_KASAN_VMALLOC not enabled
+config: i386-buildonly-randconfig-005-20241211 (https://download.01.org/0day-ci/archive/20241212/202412120143.l3g6vx8b-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241212/202412120143.l3g6vx8b-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412120143.l3g6vx8b-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   lib/alloc_tag.c: In function 'vm_module_tags_populate':
+>> lib/alloc_tag.c:409:40: error: 'KASAN_SHADOW_SCALE_SHIFT' undeclared (first use in this function)
+     409 |                                  (2 << KASAN_SHADOW_SCALE_SHIFT) - 1) >> KASAN_SHADOW_SCALE_SHIFT;
+         |                                        ^~~~~~~~~~~~~~~~~~~~~~~~
+   lib/alloc_tag.c:409:40: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +/KASAN_SHADOW_SCALE_SHIFT +409 lib/alloc_tag.c
+
+   402	
+   403	static int vm_module_tags_populate(void)
+   404	{
+   405		unsigned long phys_end = ALIGN_DOWN(module_tags.start_addr, PAGE_SIZE) +
+   406					 (vm_module_tags->nr_pages << PAGE_SHIFT);
+   407		unsigned long new_end = module_tags.start_addr + module_tags.size;
+   408		unsigned long phys_idx = (vm_module_tags->nr_pages +
+ > 409					 (2 << KASAN_SHADOW_SCALE_SHIFT) - 1) >> KASAN_SHADOW_SCALE_SHIFT;
+   410		unsigned long new_idx = 0;
+   411	
+   412		if (phys_end < new_end) {
+   413			struct page **next_page = vm_module_tags->pages + vm_module_tags->nr_pages;
+   414			unsigned long more_pages;
+   415			unsigned long nr;
+   416	
+   417			more_pages = ALIGN(new_end - phys_end, PAGE_SIZE) >> PAGE_SHIFT;
+   418			nr = alloc_pages_bulk_array_node(GFP_KERNEL | __GFP_NOWARN,
+   419							 NUMA_NO_NODE, more_pages, next_page);
+   420			if (nr < more_pages ||
+   421			    vmap_pages_range(phys_end, phys_end + (nr << PAGE_SHIFT), PAGE_KERNEL,
+   422					     next_page, PAGE_SHIFT) < 0) {
+   423				/* Clean up and error out */
+   424				for (int i = 0; i < nr; i++)
+   425					__free_page(next_page[i]);
+   426				return -ENOMEM;
+   427			}
+   428	
+   429			vm_module_tags->nr_pages += nr;
+   430	
+   431			new_idx = (vm_module_tags->nr_pages +
+   432				  (2 << KASAN_SHADOW_SCALE_SHIFT) - 1) >> KASAN_SHADOW_SCALE_SHIFT;
+   433	
+   434			/*
+   435			 * Kasan allocates 1 byte of shadow for every 8 bytes of data.
+   436			 * When kasan_alloc_module_shadow allocates shadow memory,
+   437			 * its unit of allocation is a page.
+   438			 * Therefore, here we need to align to MODULE_ALIGN.
+   439			 *
+   440			 * For every KASAN_SHADOW_SCALE_SHIFT, a shadow page is allocated.
+   441			 * So, we determine whether to allocate based on whether the
+   442			 * number of pages falls within the scope of the same KASAN_SHADOW_SCALE_SHIFT.
+   443			 */
+   444			if (phys_idx != new_idx)
+   445				kasan_alloc_module_shadow((void *)round_up(phys_end, MODULE_ALIGN),
+   446							  (new_idx - phys_idx) * MODULE_ALIGN,
+   447							  GFP_KERNEL);
+   448		}
+   449	
+   450		/*
+   451		 * Mark the pages as accessible, now that they are mapped.
+   452		 * With hardware tag-based KASAN, marking is skipped for
+   453		 * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
+   454		 */
+   455		kasan_unpoison_vmalloc((void *)module_tags.start_addr,
+   456					new_end - module_tags.start_addr,
+   457					KASAN_VMALLOC_PROT_NORMAL);
+   458	
+   459		return 0;
+   460	}
+   461	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
