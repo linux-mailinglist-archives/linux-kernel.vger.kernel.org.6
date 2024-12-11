@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-442033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301959ED731
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 798C89ED736
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6897D188A0DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:24:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42ABB188A0A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2510720B20A;
-	Wed, 11 Dec 2024 20:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cx2r9xO8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7373B1C4A36;
-	Wed, 11 Dec 2024 20:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D2520CCC2;
+	Wed, 11 Dec 2024 20:26:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C8D1C4A36;
+	Wed, 11 Dec 2024 20:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733948651; cv=none; b=GB/367GEDqBbpNT2tklxGY/KVW/vcqbFBtfex7J7xj066NiuDc7xowC4b1Uyy89lvolXYZvKpmn3LqBzGgL8Vq+iGF0D9hvTj38vscKma8BqhWuRtqg+3ax/YswHuaNf69Q2esKXGpuweb+GGgSkPSif9tH88PWHs4cQ26ThnxQ=
+	t=1733948801; cv=none; b=SWSEDPjyyQP2BjMwY7EKUwRptl0ZzSquo/U3twWuCyXBNw/h6WM1+g5/kNzEkq/c0omnlP5toG+CNTUyzUYi0h8j2iIs5JAFP4nd9OdRTjp2k5Sj3VhpQ45V7AOAaHu4uCM2Vr/lly6D/VWiVanDMfcU0mJBG3c2PJDYuATmDKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733948651; c=relaxed/simple;
-	bh=yOVE+KCLnL0G/rxLAXTZ9ej8maw36A8IfDnAQICINJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hfkP/rB83YDHp4NkgCDcMnZ/Pusg2wDGjiCXrE7vbymykVwl8t3aswBHQbKrqzPQk5E9i9M8QB33VVE+l9SDvsccf62bHr8OCC2RyEWmqV3x5gqXVV6MdPZhImcA5I0acssXXtUmm3yFBWkEeBFROwOuHkRJ1gBuD+oVsLWzgtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cx2r9xO8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC91C4CED2;
-	Wed, 11 Dec 2024 20:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733948651;
-	bh=yOVE+KCLnL0G/rxLAXTZ9ej8maw36A8IfDnAQICINJI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Cx2r9xO8BA+5R3kqdtPbHgKc0SB+T8twQUdgeeilcmsRt3ODTEfboCsRxO+qRbWA0
-	 ZBgzobKuPR0r7SGnjNNQhdt9mZ0Tb4eTkBAkDrSWtbjQQhUIV3EhINgYoUK3aqV3Wi
-	 OOTZgU8ulJhEWbXIpQBDymEbR1Yu5TKJhTdp6kG4yZRc1XuIZGbOKpSDx/R7QDFK1R
-	 IgjhIwV96L4AsNBCw6FzNgDp3xEwi8KEbXyiENt7HHQQ0Oj0UMd+fl/VjgBUnE22qN
-	 3ER2inDG3/8ORfjHmnFu5HM2TkP8f/uMKBuZN3yTh7NxCxuY1ylnhHggM8g0XRJeFX
-	 bX229EITTmyGw==
-Date: Wed, 11 Dec 2024 14:24:09 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Thomas Richard <thomas.richard@bootlin.com>, vigneshr@ti.com,
-	s-vadapalli@ti.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, bhelgaas@google.com, theo.lebrun@bootlin.com,
-	thomas.petazzoni@bootlin.com, kwilczynski@kernel.org,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	gregory.clement@bootlin.com, u-kumar1@ti.com,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] PCI: j721e: In j721e_pcie_suspend_noirq() check
- reset_gpio before to use it
-Message-ID: <20241211202409.GA3305505@bhelgaas>
+	s=arc-20240116; t=1733948801; c=relaxed/simple;
+	bh=SIpF4uhuTecqxWTELI9e+fB5dAfCaf88LicXJ2ILHzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fB0MEf4FJilWWKp3qxF3Of1brNBlOSO/m3+x6fqoeWUnt1Arz/K49dVcZ4eHYGsY9+QzDkH/ep/2y3mMgi05CX9sAJJQ3kdJgOj3VsdeU18fYXerlmZJmzLs3vZMV9jVXBhpPZhoOfTqJXalCXDn/kxr6lFIqKRDsAEiubZ2Ftg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6054E1007;
+	Wed, 11 Dec 2024 12:27:05 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D49AD3F5A1;
+	Wed, 11 Dec 2024 12:26:36 -0800 (PST)
+Date: Wed, 11 Dec 2024 20:26:30 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Quentin Monnet <qmo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Nick Terrell <terrelln@fb.com>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Guilherme Amadio <amadio@gentoo.org>, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] bpftool: Fix the static linkage failure
+Message-ID: <20241211202630.GA3169297@e132581.arm.com>
+References: <20241211093114.263742-1-leo.yan@arm.com>
+ <Z1mREhJElE6cSrPT@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,50 +63,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241211091421.4empou7mbm35ynxq@thinkpad>
+In-Reply-To: <Z1mREhJElE6cSrPT@x1>
 
-[+cc GPIO folks in case they think it's worthwhile to document that
-it's safe to pass NULL pointers to gpiod_*() interfaces]
+On Wed, Dec 11, 2024 at 10:18:10AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Dec 11, 2024 at 09:31:11AM +0000, Leo Yan wrote:
+> > This series follows up on the discussion in [1] for fixing the static
+> > linkage issue in bpftool.
+> >
+> > Patch 01 introduces a new feature for libelf-zstd.  If this feature
+> > is detected, it means the zstd lib is required by libelf.
+> >
+> > Patch 02 is a minor improvement for linking the zstd lib in the perf.
+> >
+> > Patch 03 fixes the static build failure by linking the zstd lib when
+> > the feature-libelf-zstd is detected.
+>
+> So, this was originally reported as a perf build failure when trying a
+> static build, so something not so common, no urgency, I guess, but it
+> involves a tools/perf/bpftool/Makefile change, I think I can process
+> this as I'll then test it in the many build containers for old distros I
+> have, ok?
 
-On Wed, Dec 11, 2024 at 02:44:21PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Dec 11, 2024 at 09:59:30AM +0100, Thomas Richard wrote:
-> > On 12/10/24 16:42, Bjorn Helgaas wrote:
-> > > On Mon, Dec 09, 2024 at 12:23:21PM +0100, Thomas Richard wrote:
-> > >> The reset_gpio is optional, so in j721e_pcie_suspend_noirq()
-> > >> check if it is not NULL before to use it.
+As Quentin said in another reply, there is a delta change between the
+Linux perf tree and bpf-next tree.  So this series has a conflict on
+bpf-next tree but it can be applied cleanly on perf tree.
 
-> > >> +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> > >> @@ -644,7 +644,9 @@ static int j721e_pcie_suspend_noirq(struct device *dev)
-> > >>         struct j721e_pcie *pcie = dev_get_drvdata(dev);
-> > >> 
-> > >>         if (pcie->mode == PCI_MODE_RC) {
-> > >> -               gpiod_set_value_cansleep(pcie->reset_gpio, 0);
-> > >> +               if (pcie->reset_gpio)
-> > >> +                       gpiod_set_value_cansleep(pcie->reset_gpio, 0);
-> > >> +
-> > >>                 clk_disable_unprepare(pcie->refclk);
-> > >>         }
+Before I respin to update the commit logs based on comments, I need BPF
+maintainers agreement with Arnaldo on proceeding on which source tree
+to proceed with.
 
-> > > It looks like gpiod_set_value_cansleep(desc) *should* be a no-op if
-> > > desc is NULL, based on this comment [1]:
-> > > 
-> > >  * This descriptor validation needs to be inserted verbatim into each
-> > >  * function taking a descriptor, so we need to use a preprocessor
-> > >  * macro to avoid endless duplication. If the desc is NULL it is an
-> > >  * optional GPIO and calls should just bail out.
-> > > 
-> > > and the fact that the VALIDATE_DESC_VOID() macro looks like it would
-> > > return early in that case.
-> > > 
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpiolib.c?id=v6.12#n2316
-
-> Yes. Almost all of the GPIO APIs accepting desc (except few) use
-> VALIDATE_DESC() to check for NULL descriptor. So explicit check is
-> not needed.
-
-I think it would be nice if the kernel-doc for these functions
-mentioned this somewhere.  It's kind of a pain for every user to have
-to deduce this.
-
-Bjorn
+Thanks,
+Leo
 
