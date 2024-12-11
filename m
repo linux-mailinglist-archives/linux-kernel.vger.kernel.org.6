@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-441791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05169ED41D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:54:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2449ED420
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4399A280FDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8A8280FE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8531FF61A;
-	Wed, 11 Dec 2024 17:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C06E200BB2;
+	Wed, 11 Dec 2024 17:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hs3m8neY"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="f9z8sX2j"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7DE1FF1DF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461E31FF1CB;
+	Wed, 11 Dec 2024 17:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733939652; cv=none; b=pgNPOM24D9grBxqrQ+RB73uPzYa8jwXw0LAdlYEkYvcdfYpF+BGTsc3iGibAFC1yCHS8BOJxzS4rsHuhhOaypZ8Jev4nyKSYVStiz7+hfXCYZlWLjCYhfUxVbh4TOjvso7xIcaiML5g9bBzfpZFif73PhiH/bDyfPnfk2RGaEyw=
+	t=1733939683; cv=none; b=cgvIJtb6V1Udnx1AFLGRUQVqtuPe8/x5j534Fm7/9UlumcWn5Z+75qxziD2vPAIbNHauKe8d148dl26gXLaer8Jzl66ZIzXkhafwq3hBKfTAZIqwJw6Pg3tjsxp6576zk1VWYrWiwgREefpoQ64zVVwHX66rB0HFGTBY7+GqvbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733939652; c=relaxed/simple;
-	bh=SBAUUgHHCorAYYhe1b/RpcaSfhfVVFDNGT3lM1F0Fxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jnn0zLrKPCWPvfEtO81VFsrhn72AvQbQYNqe/F23UV0iTIjfN41e0YXz+u28y3wJPSHTFi+Ks6Jb65iYNAsciGoEN9uJ3e5Oek90B29krFq7BGjrCFGZbS36SXf5eG9pcMgKcF9G7fHc15ryw+9Vak8geQcGci/8eFCff4aZ9CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hs3m8neY; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3eb87127854so288307b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:54:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733939650; x=1734544450; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SBAUUgHHCorAYYhe1b/RpcaSfhfVVFDNGT3lM1F0Fxg=;
-        b=Hs3m8neYcFQmat+Z0mFFTxjDikX4Mwuk94t3ojvAnoHxDlMkOyFWNObjPHOCG5MBa+
-         ya+3ODDO+leNdv6Yo9xCwY8vFDcdBNPMFPtjkWX4VFh2SrDXk4sZDdF36QwkZ8vvXVLk
-         my5MYV0ekQxnqq+Z+HHut8SjzCRyMSTGzota/MTmkbEEWI5AFsuhwNwhfxARLw2rfAUW
-         9EZb7jd6ysQL1upHb/5Hqm7QpWJV5KFIitVk53kPXHAtl/dEf1XRSF1gJltGMH84Z6bS
-         Bn6oOE9ZXzO5CvX+XLRRDpGrG5HjEhUhrkNHgRVUKkNBtTrAwirc+5EAPYHARiCw1UhX
-         j4Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733939650; x=1734544450;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SBAUUgHHCorAYYhe1b/RpcaSfhfVVFDNGT3lM1F0Fxg=;
-        b=O305VtNfelPb1X1p+/Jm7UZxLklJB1YqOjgxmgazOzrN/iZBOBIbkkQDBVs2gJVutc
-         GL7pPZR3MahcQrMwYZUJBbzjIK5wZuEcEL0Ayvll0jEeLiyMJrmvCepiYljmdd/E11Aa
-         /cx8XoWCmdIoLagYQ24/awqUJb+65lTGwXg3kyf0KUuxYKhveT5xSurWweZV9BACUx24
-         wXvBWP4tnixH1Na0klA5VyY3JrfG9oCRPudOxLGYGMY1uUDHrUXoh9Uh6cyNbS/ChfQ6
-         HDyWnVXCUTZwWWE/JHeAD5ZYRk3lRN1gmwJkjCTql4xJtnkKETyXdDsEcbAZtFz/Ra8H
-         uv+w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1xvt6BHtZ1MwErKk8/y38w4DfbrfcHp3O9YylV+cBBpMzKLCBWaKjxTMH/Ff1EC3KhrRpke3mkrihGjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztmKlY98FM8thgRIeHquP7i5/Vs/fl0ps/dJ+z9Lso4ZV39bgg
-	O90oYewEwGXcpeUK38ihYGEWbySJClztMhuS+EUPjgOBccJakLpC2+lytxdXkOnZR4ib4WDTuCo
-	irt+f/z5ClMISrvlz2N0tUR83Ag7NLFHjdxRsXQ==
-X-Gm-Gg: ASbGncv/+xjI9vweLsVD6235YiTO4rA1cwMs/nXVpHlN21WBk0SJGvzBk/Y6Rd5kCGB
-	TY9aMiz08oHVjMtBsNFX6P8W3lmp7KBp1YC8=
-X-Google-Smtp-Source: AGHT+IFfj39z5VsWFUtc547a2JiE2gqj7fMrc6Hgv7LJC75wfYKzbNhVcat1Y4z8nTrgUp65iUPhRZVJvBmlgSE3NeQ=
-X-Received: by 2002:a05:6808:1304:b0:3eb:3cca:8829 with SMTP id
- 5614622812f47-3eb85d14a42mr2424138b6e.34.1733939649689; Wed, 11 Dec 2024
- 09:54:09 -0800 (PST)
+	s=arc-20240116; t=1733939683; c=relaxed/simple;
+	bh=a+k4hV2xTJ37p8HqssBx9OAk45I4nz4hnYFF9s1nuKY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kyGIYfPp35UkBmFjag/u9Z/DGRbv1joRJ6/xwf6xpM+DO8MUZwNODG/yQ2j5wwsiRcWhj4+Rb4AGE/otKi0EE0utVC3ZLHBbUxmcf30hgUcWqo6hP02byT2aisWUzA9MFLtGD6qPqa4feGib04auonz77H4MVVlRNkfdkhfqWfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=f9z8sX2j; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733939680;
+	bh=a+k4hV2xTJ37p8HqssBx9OAk45I4nz4hnYFF9s1nuKY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=f9z8sX2j0pCWggWWbG7IlwRYOuZPOUTMR1iZCaRaSEn/6cR82zjpNtikHJqHgdyMC
+	 cPYNIVzUW9k966KiJaNznrtcrhrsBRtyQI/XNqo0Gz1Xgj1y8eyt8bA9jcaew1RyhX
+	 zOgzfai3XrZrzsRhSLPr/E2crYDs1tQWpRr4XS/w=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/5] s390: Constify 'struct bin_attribute'
+Date: Wed, 11 Dec 2024 18:54:38 +0100
+Message-Id: <20241211-sysfs-const-bin_attr-s390-v1-0-be01f66bfcf7@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <20241206-gs101-phy-lanes-orientation-phy-v4-7-f5961268b149@linaro.org> <CADrjBPrz1qUxbEVFR8OT785xLPwWmu3_ZThSne+EtpS8_NHEEg@mail.gmail.com>
-In-Reply-To: <CADrjBPrz1qUxbEVFR8OT785xLPwWmu3_ZThSne+EtpS8_NHEEg@mail.gmail.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 11 Dec 2024 17:53:57 +0000
-Message-ID: <CADrjBPqW81kaK=Wco7wMg50APTXGRwhnfFjbnogrSQ-T_mWnUQ@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] phy: exynos5-usbdrd: allow DWC3 runtime suspend
- with UDC bound (E850+)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	Roy Luo <royluo@google.com>, kernel-team@android.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAN7RWWcC/x3MQQqEMAxA0atI1gZsdWG8yiBSa6rZ1KEpooh3t
+ 7h8i/9vUE7CCkN1Q+JDVPZYYOoK/ObiyihLMdjGdsYag3ppUPR71IyzxMnlnFBbajD01JEjbsn
+ PUPp/4iDn9/6Nz/MCPFlBK2sAAAA=
+X-Change-ID: 20241211-sysfs-const-bin_attr-s390-f8949a9e39cb
+To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Niklas Schnelle <schnelle@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+ Vineeth Vijayan <vneethv@linux.ibm.com>, 
+ Peter Oberparleiter <oberpar@linux.ibm.com>, 
+ Harald Freudenberger <freude@linux.ibm.com>, 
+ Holger Dengler <dengler@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733939680; l=1267;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=a+k4hV2xTJ37p8HqssBx9OAk45I4nz4hnYFF9s1nuKY=;
+ b=Ef4k7XzU2jzhW1+B22pe8RtnDVYkpIlwAtlAk/68VjlyDMlVOOgDbtp6O/QhGpIn+Khtah4kk
+ lsO51Auh8/eDZqisTYTyCpYDCqHsgiPYhbOWNWP0iwuHiaSxLftdMqd
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Hi Andr=C3=A9,
+The sysfs core now allows instances of 'struct bin_attribute' to be
+moved into read-only memory. Make use of that to protect them against
+accidental or malicious modifications.
 
-On Sat, 7 Dec 2024 at 22:03, Peter Griffin <peter.griffin@linaro.org> wrote=
-:
->
-> Hi Andr=C3=A9,
->
-> On Fri, 6 Dec 2024 at 16:31, Andr=C3=A9 Draszik <andre.draszik@linaro.org=
-> wrote:
-> >
-> > To make USB runtime suspend work when a UDC has been bound, the phy
-> > needs to inform the USBDRD controller (DWC3) that Vbus and bvalid are
-> > gone, so that it can in turn raise the respective gadget interrupt with
-> > event =3D=3D DWC3_DEVICE_EVENT_DISCONNECT, which will cause the USB sta=
-ck
-> > to clean up, allowing DWC3 to enter runtime suspend.
-> >
-> > On e850 and gs101 this isn't working, as the respective signals are not
-> > directly connected, and instead this driver uses override bits in the
-> > PHY IP to set those signals. It currently forcefully sets them to 'on',
-> > so the above mentioned interrupt will not be raised, preventing runtime
-> > suspend.
-> >
-> > To detect that state, update this driver to act on the TCPC's
-> > orientation signal - when orientation =3D=3D NONE, Vbus is gone and we =
-can
-> > clear the respective bits. Similarly, for other orientation values we
-> > re-enable them.
-> >
-> > This makes runtime suspend work on platforms with a TCPC (like Pixel6),
-> > while keeping compatibility with platforms without (e850-96).
-> >
-> > With runtime suspend working, USB-C cable orientation detection now
-> > also fully works on such platforms, and the link comes up as Superspeed
-> > as expected irrespective of the cable orientation and whether UDC /
-> > gadget are configured and active.
-> >
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->
-> As mentioned on the last patch, in my testing cable orientation
-> detection is working, but Pixel is detected as a superspeed device in
-> one orientation, and high speed device in the other orientation. So
-> you should either change the wording of the last paragraph in the
-> commit message (assuming you get the same results as me) or make it
-> detect as superspeed in both orientations.
+drivers/s390/cio/chp.c is handled in [0].
 
-You can disregard this point, I had a typo in my test setup :( I just
-confirmed that it is detected as SuperSpeed in both orientations.
+[0] https://lore.kernel.org/lkml/20241205-sysfs-const-bin_attr-groups_macro-v1-1-ac5e855031e8@weissschuh.net/
 
-Thanks,
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (5):
+      s390/crypto/cpacf: Constify 'struct bin_attribute'
+      s390/ipl: Constify 'struct bin_attribute'
+      s390/pci: Constify 'struct bin_attribute'
+      s390/sclp: Constify 'struct bin_attribute'
+      s390/pkey: Constify 'struct bin_attribute'
 
-Peter
+ arch/s390/kernel/cpacf.c         |  36 +++++-----
+ arch/s390/kernel/ipl.c           | 142 +++++++++++++++++++--------------------
+ arch/s390/pci/pci_sysfs.c        |  12 ++--
+ drivers/s390/char/sclp_config.c  |   4 +-
+ drivers/s390/char/sclp_sd.c      |   4 +-
+ drivers/s390/crypto/pkey_sysfs.c | 128 +++++++++++++++++------------------
+ 6 files changed, 163 insertions(+), 163 deletions(-)
+---
+base-commit: f92f4749861b06fed908d336b4dee1326003291b
+change-id: 20241211-sysfs-const-bin_attr-s390-f8949a9e39cb
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
