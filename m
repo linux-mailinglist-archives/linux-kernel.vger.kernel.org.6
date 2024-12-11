@@ -1,281 +1,150 @@
-Return-Path: <linux-kernel+bounces-441684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AF49ED280
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:47:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555E19ED286
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FCAB289C37
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2714289EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A7E1D6DDA;
-	Wed, 11 Dec 2024 16:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E992B1DE2D2;
+	Wed, 11 Dec 2024 16:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3s4iGSZu"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="kmc6W85V"
+Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B1838DE9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BA61F949;
+	Wed, 11 Dec 2024 16:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733935616; cv=none; b=alzMoMHm63s3vuvz35YS6aXNN01Eg0Htn2rwdQGgyB/Qwjfiel88PeMgbBLGBfLLSjzHxsye7EknpGhDIdPaJJxpCxaro2djlT+VlRpaFOGqnBBvCQ910t3aJ6dCl0ms6JyuPOGCK02aKaI23yvM+OZr/acnzl08mbk/g47jsTc=
+	t=1733935617; cv=none; b=IYJT3+My8eEwUKu6YzoWt+P8XiDkqPPEq56iNDngfOt6ifY/NKqsOPWT+OBwHZpbdpcIp8ow+beAoPkKntBAaXmrEK2je4mr0pgfIpJjxni2bsdDTKiznL6y5pEN0rfuu/XuMitpWLak/uUz7fCl20fL0XRCM4TMoZZAJ5SLrMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733935616; c=relaxed/simple;
-	bh=Jvh9m2eR58tWwYOd1spsTd4SgwQ/NF6KLcHWGyeuio4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rmAcBFZAVloCxtheKySp4lmpr3sfREe2Ux6LzJu/vYAnITq/hzfK0k6evYcn1v8ERMMjTIzIt88y0l1bI1hHaVybPuJAq6sJFgqdxEnupAsfZQt/t3izend1+SHQ/0oJpMSc5jHiFLt8C2wy9RgwAhlWrzDluUAsT8jO1WGrVNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3s4iGSZu; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e399e904940so5397665276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733935614; x=1734540414; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lf5DeGd1KGvRHPAl6oCPopiiLWk62kqkSqUUB0+G7x8=;
-        b=3s4iGSZuqDVjvu97Le84FaHgrp+BcWWiZFMuWCDZTHl1errljGgV+kdLNthGd2Hp2F
-         xmBuxgoYCCKw+MDe/7Cy34HmTBnUs1AXa5kvBWkKn7Od4Gk86vuhYa9hz7tjYfZ7f8xY
-         rOImV00+uvAQdexz1+jTMBTBLE1pu5zz3L4A94WKuceYOacbJ3MB7UUgStd2QpbA0MAV
-         /iC/EewkBJ4QDULM9lG3rFMkq/Q5BFl23uEYD17UqlrrzAH+fRZcFlXlt6b3dJzE1Dqs
-         mF5krhMaKAJJxtLL/IoRAOphNTBSRPL6BVnU9cesjhflbfzhqsfuT/+oDy9yjt2En0Lj
-         uyjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733935614; x=1734540414;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lf5DeGd1KGvRHPAl6oCPopiiLWk62kqkSqUUB0+G7x8=;
-        b=nKxYWbq+EKpQysr1crRqJZ6nlEybtCFE8Jy9l9R4v7I1DVPbSZ+ybMxHjBkvqilvaI
-         UY2Gkqnw81BnJah1puRK4gO9MztMobM7McUpe5UOlH+z43qMRPH+9pzDAzaIyaWtBh7Y
-         wDvZoJQDYQaQFrulbaUB9x6h9p93mZdmNeSyVZKBSWjQdFb44p5idoLPfjIA4zfav5m/
-         9aGxNUBdTIjpuovbkdsNcwfsqi/Wq3uA+D3zoGa0CsUlGhHsCBYvarlBwCXyFSaVwRlI
-         B0v6obXaeuhfTKytAG080cRNelND6Xt9WkGEl2Xb0gC7Yeuyduqz7pt6RGRNRzIHCP9h
-         Kv5w==
-X-Forwarded-Encrypted: i=1; AJvYcCX6kQfGeyOsnB+scH5S+b4GC7CSeOcOKh8w+QJotBdAT2hW8g56ik33nLBJLkYiWiUYTl/YD6kjEDEyke4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+vSfSyBbYCKZhqD1hY65jPMfCMej5XyGp36Ih10mMuDjtzR3V
-	JD7meMpYINbisRqu3GGl+ZTPYrzVisAXdPcxANQK6YDQB6vmQKu4JITPbEI6FWJiLvAtSc1qyRY
-	EWbGXc3xyaQbCzvU4grUceecM8mmyhuTT3PHE4lNTOpHD8Yb5sHUrH1rexOXZ
-X-Gm-Gg: ASbGncsYXox1678zQAzXp4RtMj7/9qs6+1s98hzVj1fUe2GpzrWTBIHUhFgZD9YVqI+
-	5w1jCQOCbkQRjev0e+dPtc1m0vjf5N9eI926nU6D1Vv3shs9TxEU34SXVczY6
-X-Google-Smtp-Source: AGHT+IF6N8vwOQ96UWylhlRr8FRba/nYJlSYE3yE4mdgjIxA5ohkyrAaivms93hJYIRn18O7beh8woCjA4bWTIN44w4=
-X-Received: by 2002:a05:6902:2206:b0:e3a:235a:4da3 with SMTP id
- 3f1490d57ef6-e3da0d5c17dmr65414276.24.1733935613799; Wed, 11 Dec 2024
- 08:46:53 -0800 (PST)
+	s=arc-20240116; t=1733935617; c=relaxed/simple;
+	bh=96Cayvso728TmhS6qmHKdvsuIfX5z5hnZTLixJoAqcM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jmbtEZ/YPqWP1I7DClVyB0z8s2Bt0jd3A7DvIKTlDobNJTcwMbEydOAfa8js6WoK6hzuddEvMWhhx3vGK54yLIzAqTZyMY5enewCDREboVl/eOAqolTnZWCO6O0ERBxv0SqYBk4lHJMFxABNGkoytiJpqxjkH5vLJoLK+4ya+Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=kmc6W85V; arc=none smtp.client-ip=193.238.174.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mx.ssi.bg (localhost [127.0.0.1])
+	by mx.ssi.bg (Potsfix) with ESMTP id CBACC23557;
+	Wed, 11 Dec 2024 18:46:45 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
+	:content-type:content-type:date:from:from:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=ssi;
+	 bh=2FvUHXc/TMwGrU7X3V1Wpacmv3StILxOEravI0TKj2E=; b=kmc6W85V+Hog
+	L5grwQ6YCMdmMw+56yrRz0b297gPiKDi6cKLeEeEaMq1zYhjDvES2Tcbe52mKpzU
+	1tAt2EpWy9TrDpsZVeB9qwJrF9TsH4P7ZErLh3NnpDjs/TwyIhDChoZSXuPVtKha
+	0+paW9WzxsmGbjgYfV2iU7b0pJ0dOBc+O0LB8p6ZWqgMuAxSikEmXQbOb/BnJ5Uv
+	xZcZBjK2g9uoTUp08xBdZpTfkoQ5xuIWzYga4fl6Hrse2crOqej6YJf0fcF7/TP2
+	U2lR3BJ/RILAsVqD9yRqo5gDrBGO8s24ygt0ln3oQPDw31IE6BllsoT2NISwG4Wz
+	yAJFFWLp0uY8n2lkLp1Y9oN+BOad4Cky19XMRh0LjGwZ2nWBJLp0duwywh1gvzh3
+	q6xnQnh3SbiUvUAeJBgpX+gW9uu3dJsWXCJYTUH93HNyKQqUUnxjBPb1wyEJleBf
+	w2DCUTXxrmbCC0Lz7YDFsQ1AlTXpWq/LsdPYdwRirhQdhgkTkvfVn3mCaM1Ca133
+	iHiSe2zoqqN8vKhFePBuCCiEUMVVnqYx1ABbzLFluKVA/mnxHN6rk+PcTGE1t2NO
+	Gm+Q0DokXHYGuOhBL9g0ERIZv5ogUbdufURKQdwkVGvCIQsxZWx2yOV34/V9iOuF
+	lLfSOZviyk8DYDtBNrcHcG72//7XPcw=
+Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
+	by mx.ssi.bg (Potsfix) with ESMTPS;
+	Wed, 11 Dec 2024 18:46:44 +0200 (EET)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by ink.ssi.bg (Postfix) with ESMTPSA id A842015D48;
+	Wed, 11 Dec 2024 18:46:36 +0200 (EET)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 4BBGkRAC056570;
+	Wed, 11 Dec 2024 18:46:28 +0200
+Date: Wed, 11 Dec 2024 18:46:27 +0200 (EET)
+From: Julian Anastasov <ja@ssi.bg>
+To: David Laight <David.Laight@ACULAB.COM>
+cc: "'Dan Carpenter'" <dan.carpenter@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "lvs-devel@vger.kernel.org" <lvs-devel@vger.kernel.org>,
+        "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
+        "coreteam@netfilter.org" <coreteam@netfilter.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: RE: [PATCH net] ipvs: Fix clamp() order in ip_vs_conn_init()
+In-Reply-To: <7e01a62a5cb4435198f13be27c19de26@AcuMS.aculab.com>
+Message-ID: <af5b4872-4645-2bf3-19c1-72a45fda18b1@ssi.bg>
+References: <1e0cf09d-406f-4b66-8ff5-25ddc2345e54@stanley.mountain> <7e01a62a5cb4435198f13be27c19de26@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210213050.2839638-1-bgeffon@google.com> <20241210213050.2839638-2-bgeffon@google.com>
-In-Reply-To: <20241210213050.2839638-2-bgeffon@google.com>
-From: Marco Vanotti <mvanotti@google.com>
-Date: Wed, 11 Dec 2024 13:46:17 -0300
-Message-ID: <CADMPHGtENiESdnHsoMCsVA2FNBg4jLS4kMZJfGOmvv7=9k_+HA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] mm: mremap: Fix new_addr being used as a hint
- with MREMAP_DONTUNMAP
-To: Brian Geffon <bgeffon@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Jann Horn <jannh@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000005bf88a0629015879"
+Content-Type: text/plain; charset=US-ASCII
 
---0000000000005bf88a0629015879
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 6:31=E2=80=AFPM Brian Geffon <bgeffon@google.com> w=
-rote:
->
-> Two non-mutually exclusive paths can land in mremap_to, MREMAP_FIXED
-> and MREMAP_DONTUNMAP which are called from mremap(). In the case of
-> MREMAP_FIXED we must validate the new_addr to ensure that the new
-> address is valid. In the case of MREMAP_DONTUNMAP without MREMAP_FIXED
-> a new address is specified as a hint, just like it would be in the
-> case of mmap. In this second case we don't need to perform any checks
-> because get_unmapped_area() will align new_addr, just like it would in
-> the case of mmap.
->
-> This patch only fixes the behavior that was inadvertently added
-> with MREMAP_DONTUNMAP.
->
-> v2:
->   - Addressed comment from Marco Vanotti to consolidate these checks
->     into existing MREMAP_FIXED blocks.
->
-> Signed-off-by: Brian Geffon <bgeffon@google.com>
-> Reported-by: Marco Vanotti <mvanotti@google.com>
-Reviewed-By: Marco Vanotti <mvanotti@google.com>
-> ---
->  mm/mremap.c | 29 +++++++++++++++++++----------
->  1 file changed, 19 insertions(+), 10 deletions(-)
->
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 60473413836b..62aec72bbe42 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -912,16 +912,6 @@ static unsigned long mremap_to(unsigned long addr, u=
-nsigned long old_len,
->         unsigned long ret;
->         unsigned long map_flags =3D 0;
->
-> -       if (offset_in_page(new_addr))
-> -               return -EINVAL;
-> -
-> -       if (new_len > TASK_SIZE || new_addr > TASK_SIZE - new_len)
-> -               return -EINVAL;
-> -
-> -       /* Ensure the old/new locations do not overlap */
-> -       if (addr + old_len > new_addr && new_addr + new_len > addr)
-> -               return -EINVAL;
-> -
->         /*
->          * move_vma() need us to stay 4 maps below the threshold, otherwi=
-se
->          * it will bail out at the very beginning.
-> @@ -940,6 +930,25 @@ static unsigned long mremap_to(unsigned long addr, u=
-nsigned long old_len,
->                 return -ENOMEM;
->
->         if (flags & MREMAP_FIXED) {
-> +               /*
-> +                * Two non-mutually exclusive paths can land in mremap_to=
-, MREMAP_FIXED
-> +                * and MREMAP_DONTUNMAP which are called from mremap(). I=
-n the case of
-> +                * MREMAP_FIXED we must validate the new_addr to ensure t=
-hat the new
-> +                * address is valid. In the case of MREMAP_DONTUNMAP with=
-out MREMAP_FIXED
-> +                * a new address is specified as a hint, just like it wou=
-ld be in the
-> +                * case of mmap. In this second case we don't need to per=
-form any checks
-> +                * because get_unmapped_area() will align new_addr, just =
-like it would in
-> +                * the case of mmap.
-> +                */
-> +               if (offset_in_page(new_addr))
-> +                       return -EINVAL;
-> +
-> +               if (new_len > TASK_SIZE || new_addr > TASK_SIZE - new_len=
-)
-> +                       return -EINVAL;
-> +
-> +               /* Ensure the old/new locations do not overlap */
-> +               if (addr + old_len > new_addr && new_addr + new_len > add=
-r)
-> +                       return -EINVAL;
->                 /*
->                  * In mremap_to().
->                  * VMA is moved to dst address, and munmap dst first.
-> --
-> 2.47.0.338.g60cca15819-goog
->
+	Hello,
 
---0000000000005bf88a0629015879
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+On Wed, 11 Dec 2024, David Laight wrote:
 
-MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-dse5AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNtdmFub3R0aUBnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFLnoaPhnYXx5
-pj5LfE9mu0kpE3fkMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQDQ
-RDODjaJ7Sb/dqzbTZr/xcacY7QyDvKjrNfBPa33/WilRhBboYY4FOF7645JjBi1lgILfYG0xaSzX
-E8BoWb8YNSnJ537eMDSz71KBsIisoEiVGuQ+dAl9dpb7mpJoN33HAYdhHjjHopTg64v7GG0mHiSI
-KDJiDvh/p6AX2GLPqh9pFojEEwmUJ7DA7fO3e5//PNKYJxR3Rozw34nVP3W73S/xh6h3skYX8j21
-XonJ/b1fjEKh52XqsyTOaE1VYuoKW3H36t8S5AG6pLxMWljM27Wg+nViRg0kGWuryJfmjQQwJtzm
-msjSHemKMeufSQ25XIJ/sSjQbgJj32wjRgOISUea6p+TC2kkvTKZCOHoKy3u+JvUtvTF1r21N4Ml
-ZU066dYKa1oAfNWm9pyy79xr7UtiMOGTjepILioA7xPljuFpCTKFreDjBl1q9y6PLHfmzazJ3Zna
-pOD0O2El81W12dxmFvODQmfBAE6r8IVD94FKgrrv6PHnroFYLkyYOoXyy4khQmqxRsNpgxGkJRRW
-hN0zokj+sl6k2AQ3kpY0jGHX1I/Q7YMwjCYXX3cMPvDDB+Z1X8U/1MMhKnmNCNiwocEeY7NALbzz
-WoscHXUz4AfS9fQp6ajna/gsWvqjUzs+or538lKoev6Ady0Jzxlo2XdNJK2vLDit2yI4FqYCnDGC
-AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAeWUamp5nfwjqzpGndHP
-pTANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgwD+aCwRK6A4xbNbVvyHXh4chlzCX
-vmumTUGMreySrvAwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
-MjExMTY0NjU0WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBAF+C5XjPvg+TylCjWs3PfPxwpCpUcwN6J1EioOmJadmQt+no
-NiV67AdlEhuWUVR9pR46iCDfxBoWrgz+llVC4qmikYYBiOSMhb1EzkN80KhRPNFjg+UaIzehpgMh
-UV+lmrMpGsIU61EQyf/W0TXqhKf1b4qW2rC1ayryMHuUf8NTOrl1QR7hH6+wFo6TN+tkUwQchv8d
-2bTUfTc4iAVdofpjj5cC26sLkfz6I40fewGzn42aBgX34P36hMFc8e9Cjs9yWDFgulfYIT1v807a
-2mBOfCXIK+kDFvOLuzfEObZrEzAZRtoDMveXnuQVIBdbtUznm6UvXJnW11wdvA3HUcE=
---0000000000005bf88a0629015879--
+> From: Dan Carpenter
+> > Sent: 11 December 2024 13:17
+> > 
+> > We recently added some build time asserts to detect incorrect calls to
+> > clamp and it detected this bug which breaks the build.  The variable
+> > in this clamp is "max_avail" and it should be the first argument.  The
+> > code currently is the equivalent to max = max(max_avail, max).
+> 
+> The fix is correct but the description above is wrong.
+> When run max_avail is always larger than min so the result is correct.
+> But the compiler does some constant propagation (for something that
+> can't happen) and wants to calculate the constant 'clamp(max, min, 0)'
+> Both max and min are known values so the build assert trips.
+> 
+> I posted the same patch (with a different message) last week.
+
+	I was still waiting for v2 from David Laight as
+he can put more specific explanation for the bad 3rd arg
+to clamp() and to add the Fixes header.
+
+	David, let me know what should we do, I prefer
+to see v2 from you but if you prefer we can go with the
+latest version from Dan...
+
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > Closes:
+> > https://lore.kernel.org/all/CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com/
+> > Fixes: 4f325e26277b ("ipvs: dynamically limit the connection hash table")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > I've been trying to add stable CC's to my commits but I'm not sure the
+> > netdev policy on this.  Do you prefer to add them yourself?
+> > 
+> >  net/netfilter/ipvs/ip_vs_conn.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_conn.c
+> > index 98d7dbe3d787..9f75ac801301 100644
+> > --- a/net/netfilter/ipvs/ip_vs_conn.c
+> > +++ b/net/netfilter/ipvs/ip_vs_conn.c
+> > @@ -1495,7 +1495,7 @@ int __init ip_vs_conn_init(void)
+> >  	max_avail -= 2;		/* ~4 in hash row */
+> >  	max_avail -= 1;		/* IPVS up to 1/2 of mem */
+> >  	max_avail -= order_base_2(sizeof(struct ip_vs_conn));
+> > -	max = clamp(max, min, max_avail);
+> > +	max = clamp(max_avail, min, max);
+> >  	ip_vs_conn_tab_bits = clamp_val(ip_vs_conn_tab_bits, min, max);
+> >  	ip_vs_conn_tab_size = 1 << ip_vs_conn_tab_bits;
+> >  	ip_vs_conn_tab_mask = ip_vs_conn_tab_size - 1;
+> > --
+> > 2.45.2
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
+
 
