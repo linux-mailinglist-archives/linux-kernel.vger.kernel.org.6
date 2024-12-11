@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-441674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154309ED23E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:39:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9923C9ED240
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:40:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C9EF165194
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206C5281F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3501DE2A2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD051DE3A9;
 	Wed, 11 Dec 2024 16:39:41 +0000 (UTC)
 Received: from smtp.ps-zuehlke.com (smtp.ps-zuehlke.com [193.135.254.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285A724635B;
-	Wed, 11 Dec 2024 16:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285F5748A;
+	Wed, 11 Dec 2024 16:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.135.254.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733935180; cv=none; b=umXfpRxULRdxEGP5WMNGgfuyUOr8gD4I9CuyZrbnpoVcdzzxfHqvLGK41aiVbDzElfvGs0936Hw6EE8Az+eBCvRgWiRD7TTAg/WicJQHXzYa5LLmlAh/g5UwTNzJpujoFM3INXBGM9E4dsemVnVOw4NLGD8DV3ghow8+893UQp0=
+	t=1733935181; cv=none; b=hrUY/oIRrLTztSm+3IFcfcBK/9EnTihrnPRpgv0UY0ESx/+yKRfYypaJZuDHJqW7FTvwJu7aZlVwapwBI5XlCJLWabQLne9cc832tG8aST2t09V1AqLYfoY1RwhnWaq/GJuoRyLMdDnnCTbP3XiWCeCYH1zOwgH67BYULrSRgIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733935180; c=relaxed/simple;
-	bh=eBVMF9KKaCTuPJwYSYTzpRoFRPJG6hmrgAglBk+tkI8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ji9oGY/jHcx92KxZIvu5pvEY+etbUaSG057WwoLT11+QurF2DCjYKzWiDDs+RVUfToc+tC9cSS5XFerxrsFV4qqFxD7Y9Jf/vd/joEy77ODUc9My7zL4EXzpeUcNGVXuUzdWd7ZumgKnWFWEvGl1KCpHMfmxJR2B/YWJEbECLxo=
+	s=arc-20240116; t=1733935181; c=relaxed/simple;
+	bh=xKi0xZNR9LI7N0XonUL/BcURXG8Z3KjhIAdVmVip0CY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oYK0b8Hm4ljY16RoaqP6w3YtswmL1cTA8lbhkeRHbPifioJZWvBTBmMCri9Y7nc+w9t53ZEdg7E5eS6HtuwhGW3pXQFeEw5vOmLxpJ9lyK1JQ1fM9JqaiVUkunrJU7DWpIOh0gwXZ8lgsev5xRJomNFc6UGTZkwOpNy7EzZyVv8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zuehlke.com; spf=pass smtp.mailfrom=zuehlke.com; arc=none smtp.client-ip=193.135.254.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zuehlke.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zuehlke.com
 Received: from ZUEN49445. (unknown [10.195.248.60])
-	by smtp.ps-zuehlke.com (Postfix) with ESMTP id B46062B5;
+	by smtp.ps-zuehlke.com (Postfix) with ESMTP id BACA82B6;
 	Wed, 11 Dec 2024 17:32:57 +0100 (CET)
 From: Oliver Facklam <oliver.facklam@zuehlke.com>
-Subject: [PATCH v3 0/3] usb: typec: hd3ss3220: enhance driver with port
- type, power opmode, and role preference settings
-Date: Wed, 11 Dec 2024 17:32:44 +0100
-Message-Id: <20241211-usb-typec-controller-enhancements-v3-0-e4bc1b6e1441@zuehlke.com>
+Date: Wed, 11 Dec 2024 17:32:45 +0100
+Subject: [PATCH v3 1/3] usb: typec: hd3ss3220: configure advertised power
+ opmode based on fwnode property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,11 +41,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKy+WWcC/43O0Q6CIBQG4FdxXEcDNMSueo/WBeExWQoOkGXOd
- w/d2urOy//f2fefGXlwGjw6ZzNyELXX1qSQHzKkWmkegHWdMmKEFZSSAo/+jsM0gMLKmuBs14H
- DYNKtgh5M8JiLkrKiKljVEJScwUGjX9vG9ZZyq32wbtomI13br17u0CPFBOdCcEWlUlCzy3uEt
- nvCUdkerX5kPybd83Fkq8lZXnJx4hLkv7ksywcH7Ih4KAEAAA==
-X-Change-ID: 20241104-usb-typec-controller-enhancements-6871249429f0
+Message-Id: <20241211-usb-typec-controller-enhancements-v3-1-e4bc1b6e1441@zuehlke.com>
+References: <20241211-usb-typec-controller-enhancements-v3-0-e4bc1b6e1441@zuehlke.com>
+In-Reply-To: <20241211-usb-typec-controller-enhancements-v3-0-e4bc1b6e1441@zuehlke.com>
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
  Biju Das <biju.das@bp.renesas.com>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -55,53 +53,118 @@ Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
  Michael Glettig <michael.glettig@zuehlke.com>, 
  Oliver Facklam <oliver.facklam@zuehlke.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733934778; l=1736;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733934778; l=3556;
  i=oliver.facklam@zuehlke.com; s=20241107; h=from:subject:message-id;
- bh=eBVMF9KKaCTuPJwYSYTzpRoFRPJG6hmrgAglBk+tkI8=;
- b=6K0HC1cOhKnLaJOrGQHAktrsQzYlzVnZQN3qj9M1HOwBRY+V4399aHr3+sblBtbNsDz6qSmz1
- wqAYCzAFnSJDVl/2JrP2xHEOoSORjW+m301CtQej3dxNDI1NB0pMiLT
+ bh=xKi0xZNR9LI7N0XonUL/BcURXG8Z3KjhIAdVmVip0CY=;
+ b=npFp+weFko2uC98gLaVwRpg0UFyaJZ3doyfemFiJMDHGS5zfqrZd4yHUPciGmQdGau1n4xxrL
+ P+PAwrkJM8+BYPyDj2//6NsoTqbFYklTO6cn8wWwtSH+LJtesuDyDXq
 X-Developer-Key: i=oliver.facklam@zuehlke.com; a=ed25519;
  pk=bMlB+nko+ewJHQJLwq2t26VDbmRmNDPr/1woleqp7Lw=
 
-The TI HD3SS3220 Type-C controller supports configuring the port type,
-the advertised power operation mode, and its role preference
-through its I2C register map.
+The TI HD3SS3220 Type-C controller supports configuring its advertised
+power operation mode over I2C using the CURRENT_MODE_ADVERTISE field
+of the Connection Status Register.
 
-This patch series adds support for configuring these registers
-based on existing fwnode properties and typec_operations.
+Configure this power mode based on the existing (optional) property
+"typec-power-opmode" of /schemas/connector/usb-connector.yaml
 
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Oliver Facklam <oliver.facklam@zuehlke.com>
 ---
-Changes in v3:
-- Drop PATCH 2/4 from v2 (using typec_get_fw_cap() for capability
-  parsing)
-- Implement parsing manually to have better control over
-  each property being present / absent.
-- If the "power-role"/"try-power-role" property is absent, we don't
-  set the corresponding register during probe anymore, but let the
-  chip use its default.
-- Link to v2: https://lore.kernel.org/r/20241114-usb-typec-controller-enhancements-v2-0-362376856aea@zuehlke.com
+ drivers/usb/typec/hd3ss3220.c | 53 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-Changes in v2:
-- Better support optional fwnode properties being absent by setting
-  defaults in struct typec_capability and checking return code of
-  typec_get_fw_cap()
-- Link to v1: https://lore.kernel.org/r/20241107-usb-typec-controller-enhancements-v1-0-3886c1acced2@zuehlke.com
+diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+index fb1242e82ffdc64a9a3330f50155bb8f0fe45685..56f74bf70895ca701083bde44a5bbe0b691551e1 100644
+--- a/drivers/usb/typec/hd3ss3220.c
++++ b/drivers/usb/typec/hd3ss3220.c
+@@ -16,10 +16,17 @@
+ #include <linux/delay.h>
+ #include <linux/workqueue.h>
+ 
++#define HD3SS3220_REG_CN_STAT		0x08
+ #define HD3SS3220_REG_CN_STAT_CTRL	0x09
+ #define HD3SS3220_REG_GEN_CTRL		0x0A
+ #define HD3SS3220_REG_DEV_REV		0xA0
+ 
++/* Register HD3SS3220_REG_CN_STAT */
++#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_MASK		(BIT(7) | BIT(6))
++#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_DEFAULT	0x00
++#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_MID		BIT(6)
++#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_HIGH		BIT(7)
++
+ /* Register HD3SS3220_REG_CN_STAT_CTRL*/
+ #define HD3SS3220_REG_CN_STAT_CTRL_ATTACHED_STATE_MASK	(BIT(7) | BIT(6))
+ #define HD3SS3220_REG_CN_STAT_CTRL_AS_DFP		BIT(6)
+@@ -43,6 +50,31 @@ struct hd3ss3220 {
+ 	bool poll;
+ };
+ 
++static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
++{
++	int current_mode;
++
++	switch (power_opmode) {
++	case TYPEC_PWR_MODE_USB:
++		current_mode = HD3SS3220_REG_CN_STAT_CURRENT_MODE_DEFAULT;
++		break;
++	case TYPEC_PWR_MODE_1_5A:
++		current_mode = HD3SS3220_REG_CN_STAT_CURRENT_MODE_MID;
++		break;
++	case TYPEC_PWR_MODE_3_0A:
++		current_mode = HD3SS3220_REG_CN_STAT_CURRENT_MODE_HIGH;
++		break;
++	case TYPEC_PWR_MODE_PD: /* Power delivery not supported */
++	default:
++		dev_err(hd3ss3220->dev, "bad power operation mode: %d\n", power_opmode);
++		return -EINVAL;
++	}
++
++	return regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT,
++				  HD3SS3220_REG_CN_STAT_CURRENT_MODE_MASK,
++				  current_mode);
++}
++
+ static int hd3ss3220_set_source_pref(struct hd3ss3220 *hd3ss3220, int src_pref)
+ {
+ 	return regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+@@ -162,6 +194,23 @@ static irqreturn_t hd3ss3220_irq_handler(int irq, void *data)
+ 	return hd3ss3220_irq(hd3ss3220);
+ }
+ 
++static int hd3ss3220_configure_power_opmode(struct hd3ss3220 *hd3ss3220,
++					    struct fwnode_handle *connector)
++{
++	/*
++	 * Supported power operation mode can be configured through device tree
++	 */
++	const char *cap_str;
++	int ret, power_opmode;
++
++	ret = fwnode_property_read_string(connector, "typec-power-opmode", &cap_str);
++	if (ret)
++		return 0;
++
++	power_opmode = typec_find_pwr_opmode(cap_str);
++	return hd3ss3220_set_power_opmode(hd3ss3220, power_opmode);
++}
++
+ static const struct regmap_config config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+@@ -223,6 +272,10 @@ static int hd3ss3220_probe(struct i2c_client *client)
+ 		goto err_put_role;
+ 	}
+ 
++	ret = hd3ss3220_configure_power_opmode(hd3ss3220, connector);
++	if (ret < 0)
++		goto err_unreg_port;
++
+ 	hd3ss3220_set_role(hd3ss3220);
+ 	ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL, &data);
+ 	if (ret < 0)
 
----
-Oliver Facklam (3):
-      usb: typec: hd3ss3220: configure advertised power opmode based on fwnode property
-      usb: typec: hd3ss3220: support configuring port type
-      usb: typec: hd3ss3220: support configuring role preference based on fwnode property and typec_operation
-
- drivers/usb/typec/hd3ss3220.c | 207 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 184 insertions(+), 23 deletions(-)
----
-base-commit: 237d4e0f41130a5ff0e1c7dc1cb41ee2fe21cd2a
-change-id: 20241104-usb-typec-controller-enhancements-6871249429f0
-
-Best regards,
 -- 
-Oliver Facklam <oliver.facklam@zuehlke.com>
+2.34.1
 
 
