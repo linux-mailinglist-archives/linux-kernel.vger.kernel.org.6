@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-441611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4349ED0B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3069ED0B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B661167025
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:03:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98BCC16409C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957251D9A50;
-	Wed, 11 Dec 2024 16:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEC41DD885;
+	Wed, 11 Dec 2024 16:03:02 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638C21D63FA;
-	Wed, 11 Dec 2024 16:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E4C1D63CA;
+	Wed, 11 Dec 2024 16:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932981; cv=none; b=DiAySV2AJtLDuf8wtvih1B8XZegpslihmotg5b7M7dqpdpkEZH6hLJ7IzG2PSZhQM3G9uKXiZ5sWThONNd1xRMEqmMZDlEsPrDaW43+3Rqik3H3t4K4MAIv0Xz0fkwm9DDfBdVOV6R2Ju8PQnm9t5IM5Wd1A9Sqi7rsVhVPA8e0=
+	t=1733932982; cv=none; b=XWutG4UcLXTRLY82rSQ3MUvDq+yCJYixPi42NurnuzxlROQplQe0RzL1DDXUDRBYcEwpQ3WQ3+y/X8IGFNiu/toxtYhyfgrQr9WFgXBEWFhbKo0X0xOxEG+aTE1V7YbvVgyIWVVnynLp6nC8HNR5y8iJLpu5Iiw371KywVMTRiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932981; c=relaxed/simple;
-	bh=j5cRxslKRVzKYbY/rD7eInMUBBXSi81btqYbZV2gLTk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FaYG6xKz9Ywkx7Jr75eVl5sFyc1pCW8WD/3qFpeK1mTmcG24HOlQhVjkUAQ9n30e1Nf1PpR9gNsIOHmC7jzyQMpFdMqIVxNhaYvW6p+DohjSMy6uoBu0B/aBrOdFJ/L1V8pgDGe2UNsNqGFdt+SGcEJ41AuCFuyMLb9Y//J3m2A=
+	s=arc-20240116; t=1733932982; c=relaxed/simple;
+	bh=M12C/rqNOn4PmgzITi2hwHA4DckgrKjjVVNmtRic7Ns=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MfYGuVehbxOuUYKqYhKU3deaFCM1L9R5QmJQB9/vvmMwAS+auwakjfUMb8HnxaHjcDre0MnBXriQJEa0JnRKPk2W9bpCxSbsKTBDnRra46k17PstX9DX8yfIWQ3+fBhodrXTQ8kjDwvnaMRrnv2s9JOVy9J1OfeCGuIhsqlbUV8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3B4F1063;
-	Wed, 11 Dec 2024 08:03:25 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BEB415A1;
+	Wed, 11 Dec 2024 08:03:28 -0800 (PST)
 Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.1.196.66])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D7383F5A1;
-	Wed, 11 Dec 2024 08:02:55 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED4963F5A1;
+	Wed, 11 Dec 2024 08:02:57 -0800 (PST)
 From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
 To: ryan.roberts@arm.com,
 	catalin.marinas@arm.com,
@@ -46,10 +47,12 @@ Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kvmarm@lists.linux.dev
-Subject: [RESEND RFC PATCH v1 0/5] Initial BBML2 support for contpte_convert()
-Date: Wed, 11 Dec 2024 16:01:36 +0000
-Message-ID: <20241211160218.41404-1-miko.lenczewski@arm.com>
+Subject: [RESEND RFC PATCH v1 1/5] arm64: Add TLB Conflict Abort Exception handler to KVM
+Date: Wed, 11 Dec 2024 16:01:37 +0000
+Message-ID: <20241211160218.41404-2-miko.lenczewski@arm.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241211160218.41404-1-miko.lenczewski@arm.com>
+References: <20241211160218.41404-1-miko.lenczewski@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,98 +62,60 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Resending as had wrong address for linux-doc and kvmarm. Apologies for
-spam.
+Currently, KVM does not handle the case of a stage 2 TLB conflict abort
+exception. The Arm ARM specifies that the worst-case handling of such an
+exception requires a `tlbi vmalls12e1`. Perform such an invalidation
+when this exception is encountered.
 
-Hi All,
+Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+---
+ arch/arm64/include/asm/esr.h | 8 ++++++++
+ arch/arm64/kvm/mmu.c         | 6 ++++++
+ 2 files changed, 14 insertions(+)
 
-This patch series seeks to gather feedback on adding initial support
-for level 2 of the Break-Before-Make arm64 architectural feature,
-specifically to contpte_convert().
-
-This support reorders a TLB invalidation in contpte_convert(), and
-optionally elides said invalidation completely which leads to a 12%
-improvement when executing a microbenchmark designed to force the
-pathological path where contpte_convert() gets called. This
-represents an 80% reduction in the cost of calling contpte_convert().
-
-However, the elision of the invalidation is still pending review to
-ensure it is architecturally valid. Without it, the reodering also
-represents a performance improvement due to reducing thread contention,
-as there is a smaller time window for racing threads to see an invalid
-pagetable entry (especially if they already have a cached entry in their
-TLB that they are working off of).
-
-This series is based on v6.13-rc2 (fac04efc5c79).
-
-Break-Before-Make Level 2
-=========================
-
-Break-Before-Make (BBM) sequences ensure a consistent view of the
-page tables. They avoid TLB multi-hits and ensure atomicity and
-ordering guarantees. BBM level 0 simply defines the current use
-of page tables. When you want to change certain bits in a pte,
-you need to:
-
-- clear the pte
-- dsb()
-- issue a tlbi for the pte
-- dsb()
-- repaint the pte
-- dsb()
-
-When changing block size, or toggling the contiguous bit, we
-currently use this BBM level 0 sequence. With BBM level 2 support,
-however, we can relax the BBM sequence and benefit from a performance
-improvement. The hardware would then either automatically handle the
-TLB invalidations, or would take a TLB Conflict Abort Exception.
-
-This exception can either be a stage 1 or stage 2 exception, depending
-on whether stage 1 or stage 2 translations are in use. The architecture
-currently mandates a worst-case invalidation of vmalle1 or vmalls12e1,
-when stage 2 translation is not in-use and in-use respectively.
-
-Outstanding Questions and Remaining TODOs
-=========================================
-
-Patch 4 moves the tlbi so that the window where the pte is invalid is
-significantly smaller. This reduces the chances of racing threads
-accessing the memory during the window and taking a fault. This is
-confirmed to be architecturally sound.
-
-Patch 5 removes the tlbi entirely. This has the benefit of
-significantly reducing the cost of contpte_convert(). While testing
-has demonstrated that this works as expected on Arm-designed CPUs, we
-are still in the process of confirming whether it is architecturally
-correct. I am requesting review while that process is on-going. Patch 5
-would be dropped if it turns out to be architecturally unsound.
-
-Another note is that the stage 2 TLB conflict handling is included as
-patch 1 of this series. This patch could (and probably should) be sent
-separately as it may be useful outside this series, but is included for
-reference.
-
-Thanks,
-Miko
-
-Mikołaj Lenczewski (5):
-  arm64: Add TLB Conflict Abort Exception handler to KVM
-  arm64: Add BBM Level 2 cpu feature
-  arm64: Add errata and workarounds for systems with broken BBML2
-  arm64/mm: Delay tlbi in contpte_convert() under BBML2
-  arm64/mm: Elide tlbi in contpte_convert() under BBML2
-
- Documentation/arch/arm64/silicon-errata.rst |  32 ++++
- arch/arm64/Kconfig                          | 164 ++++++++++++++++++++
- arch/arm64/include/asm/cpufeature.h         |  14 ++
- arch/arm64/include/asm/esr.h                |   8 +
- arch/arm64/kernel/cpufeature.c              |  37 +++++
- arch/arm64/kvm/mmu.c                        |   6 +
- arch/arm64/mm/contpte.c                     |   3 +-
- arch/arm64/mm/fault.c                       |  27 +++-
- arch/arm64/tools/cpucaps                    |   1 +
- 9 files changed, 290 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+index d1b1a33f9a8b..8a66f81ca291 100644
+--- a/arch/arm64/include/asm/esr.h
++++ b/arch/arm64/include/asm/esr.h
+@@ -121,6 +121,7 @@
+ #define ESR_ELx_FSC_SEA_TTW(n)	(0x14 + (n))
+ #define ESR_ELx_FSC_SECC	(0x18)
+ #define ESR_ELx_FSC_SECC_TTW(n)	(0x1c + (n))
++#define ESR_ELx_FSC_TLBABT	(0x30)
+ 
+ /* Status codes for individual page table levels */
+ #define ESR_ELx_FSC_ACCESS_L(n)	(ESR_ELx_FSC_ACCESS + (n))
+@@ -464,6 +465,13 @@ static inline bool esr_fsc_is_access_flag_fault(unsigned long esr)
+ 	       (esr == ESR_ELx_FSC_ACCESS_L(0));
+ }
+ 
++static inline bool esr_fsc_is_tlb_conflict_abort(unsigned long esr)
++{
++	esr = esr & ESR_ELx_FSC;
++
++	return esr == ESR_ELx_FSC_TLBABT;
++}
++
+ /* Indicate whether ESR.EC==0x1A is for an ERETAx instruction */
+ static inline bool esr_iss_is_eretax(unsigned long esr)
+ {
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index c9d46ad57e52..c8c6f5a97a1b 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -1756,6 +1756,12 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+ 	ipa = fault_ipa = kvm_vcpu_get_fault_ipa(vcpu);
+ 	is_iabt = kvm_vcpu_trap_is_iabt(vcpu);
+ 
++	if (esr_fsc_is_tlb_conflict_abort(esr)) {
++		// does a `tlbi vmalls12e1is`
++		__kvm_tlb_flush_vmid(&vcpu->kvm->arch.mmu);
++		return 1;
++	}
++
+ 	if (esr_fsc_is_translation_fault(esr)) {
+ 		/* Beyond sanitised PARange (which is the IPA limit) */
+ 		if (fault_ipa >= BIT_ULL(get_kvm_ipa_limit())) {
 -- 
 2.45.2
 
