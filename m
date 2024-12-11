@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-442334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876919EDB0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:17:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E389EDB12
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442271889DF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D393168A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE69F1F239D;
-	Wed, 11 Dec 2024 23:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAD31F239A;
+	Wed, 11 Dec 2024 23:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evwN6Vh4"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MWbAuH7t"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3D21C1F22;
-	Wed, 11 Dec 2024 23:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A5C17838C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733959017; cv=none; b=dG5L22K6n7lODEYP88e8ucNeBysgySYnHA8XjprP2E3zBrwxIkcrkMj0Q/LrCpQK9X4yEurJfZQ1btVKR1KB3izLctsd825MLoCQCZ3CC/qCM9kIdIb19VDSM2N3ecSJuMBde2vkJECbYIQbk4sntzTS4VAVY1cHI8RKuFzgUeo=
+	t=1733959122; cv=none; b=MznM4V0nzi8ct9lOoB2vu3rz4lccV9Emcvck4kIZgx63gmcAv3S6ul5wWWrXN6sBcRiJbqPqFqvQBVWG/9FbbVO72z4YWX7byUWo8H5cJ6uXlvW3HVosr8zEN/iaPIUL0hjnqcJjurzmfiBncEyacQ4hE4QPGQkairGooR5GcHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733959017; c=relaxed/simple;
-	bh=i6ZrtWtzAyOy8gdWcoPcDlt/eQnm2NOjmoi9dL7VXZg=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=TryxdLnwcf6HdwpISRx5IFlI0p3VxszMaYzGzkuPvvD/OkIzE9X6HlM8LP8MMyCWBz+ddz0ShLfFjS0QLV22neCREotFrXgNktUcK+2RGg2r3XoBCev3HVcwgfbUKMvNsPMsWut+R/iyD/chIHO+1pC/w+ixdmzpIS8Pk6tyIXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evwN6Vh4; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-725ee6f56b4so6823b3a.3;
-        Wed, 11 Dec 2024 15:16:55 -0800 (PST)
+	s=arc-20240116; t=1733959122; c=relaxed/simple;
+	bh=Vw0Rd6A8CkPce9mRpc49aoMHEVtyn7wqJ1+SvBkbGsU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=heb48NNgRwyooeikEGVkTpRx5pfGJoFuZ9/azlJSrC8sOv6Vd6EVLvFsOZ+joWif42n9NDw/ziXFov4ZH7ishLHMSFd3Tseu9dNl5z2QwpTzaL0f/6ck7h8bqLlG8ap81f4u1z4n+ClzECuCRSgLlgptQUfK5kgaJBYQ9RZLyHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MWbAuH7t; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso7868215e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:18:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733959015; x=1734563815; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ShXp0MbnAr4ggsRDnYhR5uR6lsM/ajKdCXbVIq5oTug=;
-        b=evwN6Vh469dg39IHRL9DPDwqhccKWfnjIlcb2ISW4iq1WVX72nCZVYEPviq+Zim1AP
-         vcQyU047XnfAcUZ/DOgeQeVnAtbj/dmn803f2aMcpqlA4Qu6e3KJp7RQRxep8LHzw0GA
-         F1yblHUqU6iPv1tPORf+rk+wL92EVKOcuz7zwpMkAfIojQX4w1syVpitIjfxjDXzka2b
-         Zagm3oZOBtTVfatmeKV1YHPc2PRwltsmT5ed/8u7bt/dO9wCFzuBcOtsqjeFu1g2geSr
-         zfKlrC+9W9tjUdy3LAF2Eind1ni5rqGhTT0CVlg6ruMfwjuhQFHI/hhNazDZfwIXtuRR
-         kIjw==
+        d=linaro.org; s=google; t=1733959119; x=1734563919; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rRHUZTWrw/enXmUg5HJUc+kp5QUA2QAYg8TadYFylJU=;
+        b=MWbAuH7ta3ztE4lKmo1WnN7lPC2b8xNu5vZtA4i+UH0PjfVviZz3NA4W4JifwCVm6F
+         /2XLeSkAc4cj7+Gal2NjL0Qu8Vi+mdTgoSSM3DSPOe8hsl6g2xFrQ06yBxj/U6DXtjc+
+         3AHGvrsoSKQpRlwqWgPmmKOUAi3cpeEj4QAzPcM2/dYYgl2j061tfDsMXVVDLG/E4L1H
+         JvuMpf0p7xz7Y6wbi/8q6nJuapyPvaFKxYoM/wUG9PvZ7FxlifEBkPE86g7SzczeOUUA
+         SvaaAWUxG9D/1+DhRggYpiIzY53s28VkGsZgbTpAHottubI055oPD7pWiHv9Q8rLfyRm
+         sDXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733959015; x=1734563815;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ShXp0MbnAr4ggsRDnYhR5uR6lsM/ajKdCXbVIq5oTug=;
-        b=KnQKfXY7GeoabsebjDy1R35976KBrGnASflhqDf2OwGCchvkCtzYEelhSiLz3XvdS2
-         FI1spw0KAglqVbTvGG1XDu0dTsz9I3ndZBLiBXgElif0mvt0TjtONP2X13Dq8FsmJUS5
-         WAeVhH3FA3R9h9Bh+UjPR52ldjsu3/uJrbSEcAlYG7qPDpkqC+Psq+3erlXeI+iH+H8H
-         aeCJOCVBCNGY1YNyO5YYJQCLf9nJI7sujXTWYna5byQDnM6KWAIU9cEu2BBGCgO8XtNj
-         1x53h0qh1wamv0M0zxgShSDq60V3alsyvMzU6RiLDFO7ozFXvtwFakroVHJEDgE3rCw3
-         Kl0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU+nO3/hRJCWYvd2xrIOKekG8JpgPrrvAFUTnvBmM446hv0a2Jv8yyxJbU+6icgd8hsCbSehS77mdTNycU=@vger.kernel.org, AJvYcCXLtjE/KwOK8o+OIljvapR/Q2bfmUcWBG0EAvvSoID/lVkYd07ARKOXvG855Vy5dhD0JO4JXEg+JRtG5xKUKY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwshQ8E9WEHjRSoXBfOyvhtqwGE4Sddnw28tJFV8ld5pAZ3488Z
-	rXCMq4q+yHmE5fqa5gqEq3271zKdp0NWO/kE8NZcHewzj5HezxsR
-X-Gm-Gg: ASbGncsQ2Kr39zgteRJk0v3yYGg6ox7fnRaUmxpkjee7ANS+GuWjtMe2Od/oWz0uB1h
-	M0cL6wJI6cVZsCesdBr6O+kGaeHkPoKCt6hrOTVCIu5ntZtVr+p4Rt8zLoyfSPKU9BwdZUX4Wkq
-	PbcdBbAOQivkEnGrZ6dglonYcrEYl6GbTe6H2dMbOehFLWJojPoh/Xl3nXKgQ0hfRWaRFn/j++n
-	b8VCLOzQfs6UQnj2B91p4Fpee9oGXbSqfata2TOjwzOfkctEuYdJZkYzcRuwjzzba45K6DCpFDI
-	ZW5OcrtJN+UWCNfmzzrGVwuuxzt0unOAzALM
-X-Google-Smtp-Source: AGHT+IHiOZwkIkfA6zUyxiG0lm10+eI/mHdViFN+Pz4GPmJYmGkPLqez5E4FZA5uA6Zaeh8N3oG8TQ==
-X-Received: by 2002:a05:6a00:92a6:b0:725:f18a:da42 with SMTP id d2e1a72fcca58-728fa9bf4abmr1705891b3a.2.1733959015026;
-        Wed, 11 Dec 2024 15:16:55 -0800 (PST)
-Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725cf238777sm8304590b3a.47.2024.12.11.15.16.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 15:16:54 -0800 (PST)
-Date: Thu, 12 Dec 2024 08:16:39 +0900 (JST)
-Message-Id: <20241212.081639.1353664129364117890.fujita.tomonori@gmail.com>
-To: chenhuacai@kernel.org
-Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, x86@kernel.org,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, peterz@infradead.org,
- hpa@zytor.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, catalin.marinas@arm.com, will@kernel.org,
- kernel@xen0n.name, tangyouling@loongson.cn, hejinyang@loongson.cn,
- yangtiezhu@loongson.cn, ojeda@kernel.org, alex.gaynor@gmail.com,
- boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
- tmgross@umich.edu
-Subject: Re: [PATCH v1 4/5] loongarch/bug: Add ARCH_WARN_ASM macro for
- BUG/WARN asm code sharing with Rust
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <CAAhV-H7BxE7xeA982Pr4PFxgfNpgXs6H4OZ2LydmYAtYjvYNaw@mail.gmail.com>
-References: <20241210001802.228725-1-fujita.tomonori@gmail.com>
-	<20241210001802.228725-5-fujita.tomonori@gmail.com>
-	<CAAhV-H7BxE7xeA982Pr4PFxgfNpgXs6H4OZ2LydmYAtYjvYNaw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1733959119; x=1734563919;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rRHUZTWrw/enXmUg5HJUc+kp5QUA2QAYg8TadYFylJU=;
+        b=lmu4WkxgprfrdDtDzNcY4sLX3zuYxRhqNNxKGMfvaJCnVwKguS7WIkcfaIFr1Htbsm
+         TwqkAYJqpYJENn2ZQyenNeGbhCjNgA70jnLw+202zsi2CRFag4dYOqNhDUSTeSVEoaoL
+         EzlM+wFqCQiuxKh7dwS3+yF8QLYXQu7N0MsuGnT2QAe1JLfZOxekQCn+GNhJKkUjJOqG
+         A7y8BF6nnyAnbfZbI3SkSTfoNr0wCfuNIrtYWmLMzfs0MUUP6UVJdDw6BWyDEBD+uZT2
+         UxArtcdHoov3qE6ZEGVHM/WtHQxgGRYNPuKJiqozEh7iYs/QBRJraMn1bKRuirTjxHpP
+         AurQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFtCjVT/I47K0qEFEeUtmnCFxhs+DaAIg5zBVbjoUWeLGWJ/Jgi1XCCn1bCauv9aKbOCPUHREJpq+vhGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0jK/Xiz3xqNWGILv20D1wIbg2EK41rNJwe5Lx0mlSGxrLgao+
+	rrZJQb+YBSJudqEjGdilPisS7+OK7FP+w5K4JKA1YSxcLmYKI7BoBX0yefCCAzY=
+X-Gm-Gg: ASbGncuIEJBpB0nYzfR0dNIDPqhBbxRZLuZh3OxuTfIk3OQeUZB+L5Kayfxa0IfhaWS
+	NtEHgOS+EoH80vci6shO/0I4+gkOAd2j3GhKF8kBvALHjR1pHAEpeaY5Mz9vbaI21D+M718udIY
+	u7qfQh+WZi7q2CwUT3CYsQh4ptKaj9VcjNrG9ISZCLaQVv6yE7apKsY8SDW7Aab3gFvSeGZRpvf
+	EFeLIoxwf2iDQQM866q8KMTuW16J1m5zmDQ0UikFL7EiNWO+gYVKvHa
+X-Google-Smtp-Source: AGHT+IHm4dUrixa2oAB3OPqhfx0NrTgK9S/ClAQ/+/CAsZLq77t7Elt6vMKKQ3p5VLAN/iyTfeDFTg==
+X-Received: by 2002:a05:600c:3acf:b0:434:a802:e99a with SMTP id 5b1f17b1804b1-4361c346253mr39230375e9.4.1733959118933;
+        Wed, 11 Dec 2024 15:18:38 -0800 (PST)
+Received: from localhost ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0be4sm273741395e9.28.2024.12.11.15.18.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 15:18:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 11 Dec 2024 23:18:37 +0000
+Message-Id: <D6997HYLIQ6L.3FN664SYBLTXM@linaro.org>
+Cc: <tiwai@suse.com>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <dmitry.baryshkov@linaro.org>, <linux-sound@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 08/10] arm64: dts: qcom: qrb4210-rb2: enable wsa881x
+ amplifier
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, <broonie@kernel.org>,
+ <konradybcio@kernel.org>, <andersson@kernel.org>,
+ <srinivas.kandagatla@linaro.org>
+X-Mailer: aerc 0.18.2
+References: <20241101053154.497550-1-alexey.klimov@linaro.org>
+ <20241101053154.497550-9-alexey.klimov@linaro.org>
+ <8078589d-d724-422e-a5f0-f5b6c67deafe@oss.qualcomm.com>
+In-Reply-To: <8078589d-d724-422e-a5f0-f5b6c67deafe@oss.qualcomm.com>
 
-On Wed, 11 Dec 2024 16:41:42 +0800
-Huacai Chen <chenhuacai@kernel.org> wrote:
+On Sat Nov 2, 2024 at 9:30 AM GMT, Konrad Dybcio wrote:
+> On 1.11.2024 6:31 AM, Alexey Klimov wrote:
+> > One WSA881X amplifier is connected on QRB4210 RB2 board
+> > hence only mono speaker is supported. This amplifier is set
+> > to work in analog mode only. Also add required powerdown
+> > pins/gpios.
+> >=20
+> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 45 ++++++++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot=
+/dts/qcom/qrb4210-rb2.dts
+> > index fc71f5930688..76b9ae1b0ebc 100644
+> > --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> > +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> > @@ -63,6 +63,16 @@ hdmi_con: endpoint {
+> >  		};
+> >  	};
+> > =20
+> > +	i2c0_gpio: i2c0 {
+> > +		compatible =3D "i2c-gpio";
+> > +
+> > +		sda-gpios =3D <&tlmm 4 GPIO_ACTIVE_HIGH>;
+> > +		scl-gpios =3D <&tlmm 5 GPIO_ACTIVE_HIGH>;
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <0>;
+> > +		status =3D "disabled";
+>
+> Does it not work with &i2c1?
 
->> +#ifdef CONFIG_DEBUG_BUGVERBOSE
->> +#define __BUG_LOCATION_STRING(file, line)              \
->> +               ".long " file "- .;"                    \
->> +               ".short " line ";"
->> +#else
->> +#define __BUG_LOCATION_STRING(_file, _line)
->> +#endif
-> Can we use file and line instead of _file and _line, which is the same
-> as the CONFIG_DEBUG_BUGVERBOSE case?
-
-Of course, I'll fix in v2. I should have done that.
-
->> +
->> +#define __BUG_ENTRY_STRING(file, line, flags)          \
->> +               __stringify(__BUG_ENTRY_START)          \
->> +               __BUG_LOCATION_STRING(file, line)       \
->> +               ".short " flags ";"                     \
->> +               __stringify(__BUG_ENTRY_END)
->> +
->> +#define ARCH_WARN_ASM(file, line, flags, size)         \
->> +       __BUG_ENTRY_STRING(file, line, flags)           \
->> +       __stringify(break BRK_BUG) ";"
->> +
-> Can we use the same indentation in this file?
-
-Oops, I'll fix in v2.
+Actually it does work with i2c1 (non-gpio version).
+I am going to use that and will see how it behaves.
 
 Thanks!
+
+Best regards,
+Alexey
+
 
