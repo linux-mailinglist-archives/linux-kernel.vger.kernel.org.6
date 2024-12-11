@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-440574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4110E9EC123
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:58:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EB29EC132
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:00:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46355284FA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 00:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23ACE1684B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4946F30C;
-	Wed, 11 Dec 2024 00:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1A0146588;
+	Wed, 11 Dec 2024 01:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="nYHDq9fy"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E748489;
-	Wed, 11 Dec 2024 00:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oU8Wxq8f"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749342451D8;
+	Wed, 11 Dec 2024 01:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733878688; cv=none; b=u6vv4kGMFFlavqXbDfPg7AFj+E2V1wIb1UxZcFrRd/RaHktVIwZRAc3qmzOIOAA+aroFoGeHhA0gUeEns2vjOfeh5BuIWFNPd12qwIogUEb+ylXQVIacCFbc8NG0qx7ckwldvtGYt0vF9NiOVr3ntCo8NDhXChBC7+8avMQAULg=
+	t=1733878828; cv=none; b=MUB8H9RteLOJDiSbI8EU3ZbMqAEHnDTdKIDmOnjMFxPwyr2P6AGqND61iXDVHhgSV/0P2fTmdv6IQ1Vk/n/2x2kl7L+fsxQyRjCgs9WvRP5Tvf005rZySEopuzbcNUYYAxutXizlWimZXyo3T1iRcJ5l/Pu59OACzbH+xXIWUDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733878688; c=relaxed/simple;
-	bh=/dgDte9i+UBwJ6YJ9HUdJIzR1rUDImFcX3hu8N9e+ws=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZdSM46gZdECDCcInMW/1lW5YHVM+1TLU+l/ednGTj8Jch+foOuBU8ObICXVGmXZMH6GfNgQfue9UyqntOLrsoMR/Lud5yTWu41d33m5qhzaW4d9eR0S7f0vYalxER7KGz/nyU++7/E8MO9g/rS/yf41EorxBVGZsRDVkCmicEZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=nYHDq9fy; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=gLLqSB3NkG3XAYDbGklYCoOXTb9yE5C+VLnEkrpzXg4=; b=nYHDq9fyMS9NdyST
-	wmcvMYH1W0Y1GYaBqXT4awyBpYei9Gl3ygumK11tyYL9pwAqsV6OQi7oL7Tf/jPh/3aVmEwxVb0Eg
-	nfGwI2h6k+WKdRP0322pRfA40gkAnxKDl/10flqXSX35AeyLxJWC8zA7qUa/KnUdlSZzXeEMDFi8/
-	lHhRdmB0DvVZl2/tnttS+22adnct8IIh/FIv3FpThtZmbs5kwt9SNQgivwuLRG3DBr5f9fveh63xI
-	wwUF4FeRWekRo6hkTiQZ/DRi7W0IxC6f3izLa8CprFRn9IS8JjkgoNJM+RiD0+JNcms4O9g+1j7Ey
-	p5A2aQh+weyHpWf3Gw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tLB3D-004eI4-2e;
-	Wed, 11 Dec 2024 00:58:03 +0000
-From: linux@treblig.org
-To: isdn@linux-pingi.de,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] isdn: Remove unused get_Bprotocol4id()
-Date: Wed, 11 Dec 2024 00:58:02 +0000
-Message-ID: <20241211005802.258279-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733878828; c=relaxed/simple;
+	bh=0BvstVVeKRVCLoTLCxrmHus0YKemmAtOgNTEx7/Hua4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=C1nJGUkRWkf3xUtiBP9NVXqLlVsTzdBBvy5sE8AB01Sr8H5g4bV92vyArKaSmvDg+JOp5vycxXGmNyLNdd1RvLdhnB6VKlGT/0JI5kKJvaf1RWFnEx5RJI9wNHINIX+nhkY/2MUcImKXpRPPjoP2CKoox3dND1N+AlzTYiNJFI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oU8Wxq8f; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.224.195] (unknown [20.236.10.66])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3DB3C204722A;
+	Tue, 10 Dec 2024 17:00:23 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3DB3C204722A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1733878825;
+	bh=QUGnAohdjtquVH/2okVPvYsuli7DzTd7KNzArXZ6FX8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=oU8Wxq8f38kSwtMyloVNW6CTihWbqiihpmp0Kmbf9489s89C/Z1o5JZmtxg0WiGWP
+	 5xvVb1XhicfPH1o/xdUSq84/qeX5nOMyN7dJOgbbvoyqRelv8RbAXLy4i6uQ7bi++o
+	 Gm59sZekWoiwe5TvchRr+7Gxo8CyNIMiE5EA50Kw=
+Message-ID: <422470cd-84f0-469e-93c2-493c5091391d@linux.microsoft.com>
+Date: Tue, 10 Dec 2024 17:00:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
+ <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
+ Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi
+ <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ James Smart <james.smart@broadcom.com>,
+ Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+ Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Jack Wang <jinpu.wang@cloud.ionos.com>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Louis Peens <louis.peens@corigine.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-mm@kvack.org,
+ linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
+ live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
+ oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>
+Subject: Re: [PATCH v3 00/19] Converge on using secs_to_jiffies()
+To: Andrew Morton <akpm@linux-foundation.org>
+References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
+ <20241210163520.95fa1c8aa83e1915004ed884@linux-foundation.org>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <20241210163520.95fa1c8aa83e1915004ed884@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 12/10/2024 4:35 PM, Andrew Morton wrote:
+> On Tue, 10 Dec 2024 22:02:31 +0000 Easwar Hariharan <eahariha@linux.microsoft.com> wrote:
+> 
+>> This is a series that follows up on my previous series to introduce
+>> secs_to_jiffies() and convert a few initial users.
+> 
+> Thanks, I added this to mm.git.  I suppressed the usual added-to-mm
+> emails because soooo many cc's!
+> 
+> I'd ask relevant maintainers to send in any acks and I'll paste them
+> into the relevant changelogs.
 
-get_Bprotocol4id() was added in 2008 in
-commit 1b2b03f8e514 ("Add mISDN core files")
-but hasn't been used.
+Thank you, Andrew!
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/isdn/mISDN/core.c | 14 --------------
- drivers/isdn/mISDN/core.h |  1 -
- 2 files changed, 15 deletions(-)
-
-diff --git a/drivers/isdn/mISDN/core.c b/drivers/isdn/mISDN/core.c
-index e34a7a46754e..8ec2d4d4f135 100644
---- a/drivers/isdn/mISDN/core.c
-+++ b/drivers/isdn/mISDN/core.c
-@@ -294,20 +294,6 @@ get_Bprotocol4mask(u_int m)
- 	return NULL;
- }
- 
--struct Bprotocol *
--get_Bprotocol4id(u_int id)
--{
--	u_int	m;
--
--	if (id < ISDN_P_B_START || id > 63) {
--		printk(KERN_WARNING "%s id not in range  %d\n",
--		       __func__, id);
--		return NULL;
--	}
--	m = 1 << (id & ISDN_P_B_MASK);
--	return get_Bprotocol4mask(m);
--}
--
- int
- mISDN_register_Bprotocol(struct Bprotocol *bp)
- {
-diff --git a/drivers/isdn/mISDN/core.h b/drivers/isdn/mISDN/core.h
-index 42599f49c189..5617c06de8e4 100644
---- a/drivers/isdn/mISDN/core.h
-+++ b/drivers/isdn/mISDN/core.h
-@@ -55,7 +55,6 @@ extern void	__add_layer2(struct mISDNchannel *, struct mISDNstack *);
- 
- extern u_int		get_all_Bprotocols(void);
- struct Bprotocol	*get_Bprotocol4mask(u_int);
--struct Bprotocol	*get_Bprotocol4id(u_int);
- 
- extern int	mISDN_inittimer(u_int *);
- extern void	mISDN_timer_cleanup(void);
--- 
-2.47.1
-
+- Easwar
 
