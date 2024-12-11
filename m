@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-442270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EE39EDA10
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:38:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFAC9EDA11
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321EA1638AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7215B16749D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4597420626B;
-	Wed, 11 Dec 2024 22:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0381206267;
+	Wed, 11 Dec 2024 22:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOONck9Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFPfpZPn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD121F2C53;
-	Wed, 11 Dec 2024 22:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9CC20626E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956370; cv=none; b=SMOUDJAoTuuHrDRvXZtiITfc2nqgTAu8m9/i1UsBFITrL1JaXMRTbkr9AB3T3egFHTQHcSPByMqhdXvAXF7H1DV2acPbLQ/H8qZ4NbhLvjXfpsjg1IEdvR47xo4ZPj10f1Nu3otiNbdF3vOhrlZ7NCDD+qN5t+p2tSwkn7mR004=
+	t=1733956372; cv=none; b=fyV3EfeoDxxBoFJ64si0oEQArI+586scozIA3ANZ8xoso+SiIUyC749Cc8J7D/H8yBYKnX2z3du9H9ySWC8+WUHd6hvGwbX8HKXzwYzA1ubHQl5aaFFfFE/EX/scUlpC4nwTqZMMpGfwCrn/M0v3vBe8V21/sHMsAzZ9Z9heNpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956370; c=relaxed/simple;
-	bh=HsV2hgf0fbYGgHmLxzKHUU+rPda90YFsJKEFrTRZGjc=;
+	s=arc-20240116; t=1733956372; c=relaxed/simple;
+	bh=OFUDKl/zfGVkDxLHgqMZHOS0MzDnMONqvySriFeHPp0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nKBVoQvoC5p3eeby4Qo8gg/D4wYk2kmACIH10fywT+OFfuPu+LeC1tGnBGh2G//OHwkKNpj9NWiMvcofR4jUhTHbkcQPKbQ1rgElVJBvtOdkew17bpej2ULNHRF/pN6D2l4fup2dra8Ofs6TzlTnnAllGEZSHVNZdfjsuCmeQYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOONck9Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF38C4CEDD;
-	Wed, 11 Dec 2024 22:32:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lskq0sY1o9quejfzHuUPhsJ84M+x35bA6V0XxwrUvLwvJXk6AJ7d44X21leX54yj0ylsgQ6g3IJaCu3Zrj19j3nxt0sJS0oaHZbcuXPtLs/AuLlqCd6gkwMRHjObzzayobgJNYNo0NAEDietDA9gpda2FRgH8+fPJ19FntFBDWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFPfpZPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FF0C4CED2;
+	Wed, 11 Dec 2024 22:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733956370;
-	bh=HsV2hgf0fbYGgHmLxzKHUU+rPda90YFsJKEFrTRZGjc=;
+	s=k20201202; t=1733956371;
+	bh=OFUDKl/zfGVkDxLHgqMZHOS0MzDnMONqvySriFeHPp0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=vOONck9QSCmGFAHL/+qROtp77YjI5J4I/SNx0ir3wUFq4T7bxTbb2voI8ut/Ww9hs
-	 umsbLAHyc22326U3EC8FWHJ3RCF4ulGvVPT8unOrZjZcpbnYzq8lhQ8KZU/C75OtUl
-	 TO35ohplFrGjkcnKUJpkMytFDmtP45NC6yfOPGcqz1mXjqA+0VDaJ219FdT3oRfhjQ
-	 +iTuIQURyuJN/K99Xa7QwlpMG5dyEGecunWyNHIBydjo4JIfHZWyknpdRE7t11ztmj
-	 /DFlKfV5HP6jQUF0INgFoLP6GW3gvNPKM3C4afp9/wcwEriIMhkxgMsNY64t5aAjCO
-	 +zJCDNgxMnL1A==
+	b=VFPfpZPnfMb8GpVKtoWEoUUOzp46P1OPdg2x3WnquEHa70Gm3KUoK3prDBBttmgri
+	 POJnlOPmjIPs0A0b7GMzlLSc9xoozFz/4bRTqKL7Be87NYzNneldg3Pbv67rfRs0iE
+	 eD/CKd61Gho2+txPMmKMXVX4DcU97PYobMKMFMmwueAoLCN4dFZ+cBDVBJqGoRcbs9
+	 zgQyRWgbrTkVEweHThpu4P1212B4wj7dXE1X0MrYPUakdt0wkUB6Caepi+n1DawbpY
+	 n/9S7iLtZh2j+OfsVyFSH2V9OpgagDSWavgZNy2SqJ0+5JRApbdkWDavyJxQTC0Nyy
+	 rm93Me0cAP7lA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710F2380A965;
-	Wed, 11 Dec 2024 22:33:07 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADDA380A965;
+	Wed, 11 Dec 2024 22:33:08 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,50 +51,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] firmware: Switch back to struct platform_driver::remove()
+Subject: Re: [RESEND PATCH] mm: Move set_pxd_safe() helpers from generic to
+ platform
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173395638610.1729195.7835904976463124425.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Dec 2024 22:33:06 +0000
-References: <36974feb6035201d53384557259ec72fe311053b.1731397962.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <36974feb6035201d53384557259ec72fe311053b.1731397962.git.u.kleine-koenig@baylibre.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40baylibre=2Ecom=3E?=@codeaurora.org
-Cc: linux-riscv@lists.infradead.org, sudeep.holla@arm.com,
- cristian.marussi@arm.com, tzungbi@kernel.org, briannorris@chromium.org,
- jwerner@chromium.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, conor.dooley@microchip.com,
- daire.mcnamara@microchip.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, somlo@cmu.edu, mst@redhat.com,
- florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
- dinguyen@kernel.org, michal.simek@amd.com, gregkh@linuxfoundation.org,
- wahrenst@gmx.net, laurent.pinchart@ideasonboard.com,
- jay.buddhabhatti@amd.com, ronak.jain@amd.com, radhey.shyam.pandey@amd.com,
- praveen.teja.kundanala@amd.com, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-mediatek@lists.infradead.org, qemu-devel@nongnu.org,
- linux-rpi-kernel@lists.infradead.org
+ <173395638752.1729195.1601200589696534900.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 22:33:07 +0000
+References: <20241003044842.246016-1-anshuman.khandual@arm.com>
+In-Reply-To: <20241003044842.246016-1-anshuman.khandual@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-riscv@lists.infradead.org, linux-mm@kvack.org,
+ akpm@linux-foundation.org, paul.walmsley@sifive.com,
+ dave.hansen@linux.intel.com, palmer@dabbelt.com, tglx@linutronix.de,
+ david@redhat.com, ryan.roberts@arm.com, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
-by Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+by Andrew Morton <akpm@linux-foundation.org>:
 
-On Tue, 12 Nov 2024 09:35:20 +0100 you wrote:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
+On Thu,  3 Oct 2024 10:18:42 +0530 you wrote:
+> set_pxd_safe() helpers that serve a specific purpose for both x86 and riscv
+> platforms, do not need to be in the common memory code. Otherwise they just
+> unnecessarily make the common API more complicated. This moves the helpers
+> from common code to platform instead.
 > 
-> Convert all platform drivers below drivers/firmware to use .remove(),
-> with the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: x86@kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - firmware: Switch back to struct platform_driver::remove()
-    https://git.kernel.org/riscv/c/5770e9f237b6
+  - [RESEND] mm: Move set_pxd_safe() helpers from generic to platform
+    https://git.kernel.org/riscv/c/d7d65b103901
 
 You are awesome, thank you!
 -- 
