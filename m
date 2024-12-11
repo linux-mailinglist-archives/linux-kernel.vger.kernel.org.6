@@ -1,216 +1,131 @@
-Return-Path: <linux-kernel+bounces-441743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686F69ED35B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:27:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EF39ED3AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148BF282B61
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:27:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D72AD281E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9D31FECCA;
-	Wed, 11 Dec 2024 17:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B351FF1C6;
+	Wed, 11 Dec 2024 17:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddn5fk6u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VUfGzhSO"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEB81DDC19;
-	Wed, 11 Dec 2024 17:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BD51FF1C2
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733938034; cv=none; b=c1zN0b15E3/j0sX3qLw8JobMDm+GFGKAlPyAzJSbmUo1UvJqv4+S0BqdqBi4BvP5LyinVBsn4W+efGuMNqvE6gkaQ2sJUCE2aydDx9J3sKSwtomdlvzncx9SL0FG9tqoT7qH6IwTU8sraB8ymws5bEeBRmIztc8MNL6wwfraIYw=
+	t=1733938199; cv=none; b=GHIoT8YjH+WfNVM9iIk4kIVZIyQzaTbGK3P1o2fLuJBtYm2TFilkn3lQBSvqc2afc9qBdtF3igBiYnBfEyC9GL5unOBsylxybfj5z561ZA1ZV/3QXBAMVpz+swUYZDamQyHc8wwo3mQpDhwxuNUuZrguyVVEkuLgUuNCNe3Bj+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733938034; c=relaxed/simple;
-	bh=1Dq89mUoAyecauYn1vRBUl6V2ZG+L0xgVwuUvqtLUjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayHjHwntUlENK1QUXTcGuHB0odRmwmjTOH1n9vUA2ED9IATYgKMApMtbMgi91uf1ELT61IknL3GobMUqz+7SYXIU+AqqiSY+gTqtgPl6/hF/cvTMttSGsfVECLnfZWRgkZ2EvKtRofZTVezizs5/RxmMM2SFPX2WqPABT7ax+aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddn5fk6u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CDDC4CED2;
-	Wed, 11 Dec 2024 17:27:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733938034;
-	bh=1Dq89mUoAyecauYn1vRBUl6V2ZG+L0xgVwuUvqtLUjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ddn5fk6uaOqUOUqUTMjUfslZibV/i9Vj09od4R1LRDQPuCIEnBE/eWg51/bRDGk7t
-	 5PuLtngLj+87SvX47riZpXeGNHqslk4xj9/B38o71QHMIShFIlecPebxmXQu3cqoX+
-	 J1Yi6atvIFb3V8fU3o0ACSOIDbmwAebtvDc5E+X6pgHOGwsYbvCMzcGvgNZC2mHhqf
-	 jQ3yUa4fVYAsVKtLIR3Gc8WSE8BXfMKBWx6VhmKoFlOpcG5tWM2VSlPAqH9ezHqUWL
-	 g7sqRCWQCOG1e57Dar0TEkN2aGGTywTmhoMMB8fNjL3gdidjUwt9MfqvMOr4GuNV17
-	 22MFpAFY4EJNw==
-Date: Wed, 11 Dec 2024 09:27:12 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	James Clark <james.clark@linaro.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Mingwei Zhang <mizhang@google.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [linus:master] [perf tools]  af954f76ee:
- perf-sanity-tests.Test_data_symbol.fail
-Message-ID: <Z1nLcMDTFAFuX809@google.com>
-References: <202411301431.799e5531-lkp@intel.com>
- <Z04ZUHaGdsBapIEL@google.com>
- <Z1BhfpYWpUQ0p+qR@xsang-OptiPlex-9020>
- <Z1DNJpDzCIBFrIZT@google.com>
- <Z1DV0lN8qHSysX7f@google.com>
- <Z1HHClaOwjJnR5gr@x1>
+	s=arc-20240116; t=1733938199; c=relaxed/simple;
+	bh=Lk+Ha5wxFQ+Mh3b1LwsGP/EOGKHkzmqvcnz+ZP8JKUg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rUfnwUynzLrcAOXh2PZmdWlxaJQ/ok+1PJ3fL6cre1/XVzdfTTL9RMFRlNHeej31d4nuK/jyPWtgiu+W2t+ZRb7Wvt+KGTB52dwCi+lkNzNCYBxFxA+nnRtrodacB48t6ThnfjomT7UK1HQbuZpf3HAW1iJ4E76wv4fYyuxujD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VUfGzhSO; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ee36569f4cso7136809a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:29:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733938196; x=1734542996; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cs2OyeuqVZvLJyvF9hJVcimYDZMHCiD1C4FXtPFGvoo=;
+        b=VUfGzhSOBiXl7PhmBtQS7TouC3yLN/c85kiqD38kGl2WfYvYei+T9HUKKLQ508STpg
+         bQJqP35zjjctlsoS8X0pd9/cotzJio9esuPESdprzdU0P3puDBl59Vo2BeRfXH699tuh
+         aoVpGRQmxYl51XT2Ai+XDktTYA/71e9FnKKeuurcc1b+yK2U/Sd1qERVV5KykOZ4iNwA
+         Kz3oBcmyFLqKtblhXB3chw0vd5zqvj5RWiQ2D1AeJwtdhRTLfMcnrSaDT/t9lar6muRU
+         PswXS/0p/vWWA2ggadgmZ48bXjvhAbaD+fnCEqW/Dm5fEK+65mJsfBO2sCgkkrtOXVWA
+         CG8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733938196; x=1734542996;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cs2OyeuqVZvLJyvF9hJVcimYDZMHCiD1C4FXtPFGvoo=;
+        b=SvhOcoBNYJ8k5MH29zK+uwqhDZNdU8ULhPvUYHgZBezouHpuVx5YAdFx1LHbw0GWCf
+         xAVgT74hgOCK5z3v5s9c5X8ebG8vMuZYpNN0Z4M07qUEj7Rdent9rEoRoTD0cKt9PkCj
+         5Ky+LOIBh7/AyWzZ5JaD+J0u/ckgvBU5u6CO3sGUOPiVgMHZOPq5uMXVsgfFx3PcGJ5k
+         qJAj2SCAAx3iOOr2RTHC+zZ/D47DkJpYJRNmDXCCfvAeE5sXVWhYVE23bNf6lgw82H6I
+         wYPG1pRyWUnqECA28LzJ9n/Mk9H12MaEEMZl/mq1PXphwQtpQd3nMZscIw6yFz6RKvKp
+         fuEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxDINPCtVqYxrlZQqsfX5TJqYFWRDVjVrf59ff7O9M+VZKE1zOGz/caiLvu+/lrJTnEWEA/Tn1hynw7/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuihJNnQOO4nBS/Qp/J2jhpyk+4Iu9Zkdw2w4pBgcYeuRqa2p+
+	I6nttBJCFPxpjXItYJNP4EFzhQ6DqAOmBWZPMYdUtKo0KWxafpwcmJmasSCw5od4jclDYMONGa3
+	cLQ==
+X-Google-Smtp-Source: AGHT+IFufc8TXj11zrpajD1CnjIdyF+fE49Tlzc87TuIZTOcSb7mTLdHCVV9hJ4SvHQ7hecMnEHAOzzXzPI=
+X-Received: from pjg3.prod.google.com ([2002:a17:90b:3f43:b0:2ef:78ff:bc3b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a8c:b0:2ee:45fe:63b5
+ with SMTP id 98e67ed59e1d1-2f1392577ebmr1129021a91.3.1733938196340; Wed, 11
+ Dec 2024 09:29:56 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 11 Dec 2024 09:29:52 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z1HHClaOwjJnR5gr@x1>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241211172952.1477605-1-seanjc@google.com>
+Subject: [PATCH] KVM: SVM: Allow guest writes to set MSR_AMD64_DE_CFG bits
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Simon Pilkington <simonp.git@mailbox.org>, Tom Lendacky <thomas.lendacky@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 12:30:18PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Dec 04, 2024 at 02:21:06PM -0800, Namhyung Kim wrote:
-> > On Wed, Dec 04, 2024 at 01:44:06PM -0800, Namhyung Kim wrote:
-> > [SNIP]
-> > >   perf_event_attr:
-> > >     type                             4 (cpu)
-> > >     size                             136
-> > >     config                           0x1cd (mem-loads)
-> > >     { sample_period, sample_freq }   4000
-> > >     sample_type                      IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT
-> > >     read_format                      ID|LOST
-> > >     freq                             1
-> > >     precise_ip                       3
-> > >     sample_id_all                    1
-> > >     { bp_addr, config1 }             0x1f
-> > >   ------------------------------------------------------------
-> > >   sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
-> > >   sys_perf_event_open failed, error -22
-> > >   Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
-> > >   Error:
-> > >   The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu/mem-loads,ldlat=30/).
-> > >   "dmesg | grep -i perf" may provide additional information.
-> > > 
-> > > There's an issue with fallback on the inherit bit with the sample read.
-> > > I'll take a look.
-> > 
-> > Hmm, no.  It doesn't have neight SAMPLE_READ nor inherit.  So the error
-> > message was misleading.  Maybe it should be printed when it actually
-> > clears the bits.
-> > 
-> > Anyway, I've tested with the old code and realzed that it might be due
-> > to precise_ip being 3.  I expected it'd return EOPNOTSUPP for the case
-> > but it seems to return EINVAL sometimes.  Then it should check it after
-> > the missing features like below.  Can you please test?
-> 
-> Before:
-> 
-> root@number:/tmp# perf mem record -a sleep 1s
-> Error:
-> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_core/mem-loads,ldlat=30/).
-> "dmesg | grep -i perf" may provide additional information.
-> 
-> root@number:/tmp# 
-> 
-> With your patch:
-> 
-> root@number:/tmp# perf mem record -a sleep 1s
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 11.211 MB perf.data (14616 samples) ]
-> root@number:/tmp# perf evlist
-> cpu_atom/mem-loads,ldlat=30/P
-> cpu_atom/mem-stores/P
-> cpu_core/mem-loads-aux/
-> cpu_core/mem-loads,ldlat=30/
-> cpu_core/mem-stores/P
-> dummy:u
-> # Tip: use 'perf evlist -g' to show group information
-> root@number:/tmp# perf evlist -v
-> cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-> cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-> cpu_core/mem-loads-aux/: type: 4 (cpu_core), size: 136, config: 0x8203 (mem-loads-aux), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-> cpu_core/mem-loads,ldlat=30/: type: 4 (cpu_core), size: 136, config: 0x1cd (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, freq: 1, precise_ip: 2, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-> cpu_core/mem-stores/P: type: 4 (cpu_core), size: 136, config: 0x2cd (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-> dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-> # Tip: use 'perf evlist -g' to show group information
-> root@number:/tmp#
-> 
-> But there is something strange, 'cpu_core/mem-loads-aux/' doesn't have
-> /P, i.e. shouldn't try to set precise_ip to 3, but according to 'perf
-> evlist -v' it is setting it to 3.
-> 
-> I thought maybe it could be related to groups, but:
-> 
-> root@number:/tmp# perf evlist -g
-> cpu_atom/mem-loads,ldlat=30/P
-> cpu_atom/mem-stores/P
-> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
-> cpu_core/mem-stores/P
-> dummy:u
-> root@number:/tmp# 
-> 
-> But then, in tools/perf/arch/x86/util/mem-events.c
-> 
-> struct perf_mem_event perf_mem_events_intel[PERF_MEM_EVENTS__MAX] = {
->         E("ldlat-loads",        "%s/mem-loads,ldlat=%u/P",      "mem-loads",    true,   0),
->         E("ldlat-stores",       "%s/mem-stores/P",              "mem-stores",   false,  0),
->         E(NULL,                 NULL,                           NULL,           false,  0),
-> };
-> 
-> struct perf_mem_event perf_mem_events_intel_aux[PERF_MEM_EVENTS__MAX] = {
->         E("ldlat-loads",        "{%s/mem-loads-aux/,%s/mem-loads,ldlat=%u/}:P", "mem-loads",    true,   MEM_LOADS_AUX),
->         E("ldlat-stores",       "%s/mem-stores/P",              "mem-stores",   false,  0),
->         E(NULL,                 NULL,                           NULL,           false,  0),
-> };
-> 
-> It has the :P for that group, maybe that is going to fallback?
-> 
-> I tried:
-> 
-> Breakpoint 1, evsel__precise_ip_fallback (evsel=0xf4a260) at util/evsel.c:1969
-> 1969	{
-> (gdb) bt
-> #0  evsel__precise_ip_fallback (evsel=0xf4a260) at util/evsel.c:1969
-> #1  0x00000000005dfb09 in evsel__open_cpu (evsel=0xf4a260, cpus=0xf53840, threads=0xf5bfa0, start_cpu_map_idx=0, end_cpu_map_idx=16) at util/evsel.c:2577
-> #2  0x00000000005dfc54 in evsel__open (evsel=0xf4a260, cpus=0xf53840, threads=0xf5bfa0) at util/evsel.c:2603
-> #3  0x000000000042cbea in record__open (rec=0xec2ce0 <record>) at builtin-record.c:1370
-> #4  0x00000000004304a1 in __cmd_record (rec=0xec2ce0 <record>, argc=2, argv=0xf58180) at builtin-record.c:2489
-> #5  0x0000000000434840 in cmd_record (argc=2, argv=0xf58180) at builtin-record.c:4260
-> #6  0x0000000000469e93 in __cmd_record (argc=3, argv=0x7fffffffde20, mem=0x7fffffffd260, options=0x7fffffffd080) at builtin-mem.c:170
-> #7  0x000000000046b2f3 in cmd_mem (argc=4, argv=0x7fffffffde20) at builtin-mem.c:538
-> #8  0x00000000004c0414 in run_builtin (p=0xec6098 <commands+696>, argc=5, argv=0x7fffffffde20) at perf.c:351
-> #9  0x00000000004c06bb in handle_internal_command (argc=5, argv=0x7fffffffde20) at perf.c:404
-> #10 0x00000000004c0814 in run_argv (argcp=0x7fffffffdc0c, argv=0x7fffffffdc00) at perf.c:448
-> #11 0x00000000004c0b5d in main (argc=5, argv=0x7fffffffde20) at perf.c:560
-> (gdb) print evsel__name(evsel)
-> $1 = 0xf529b0 "cpu_core/mem-loads,ldlat=30/"
-> (gdb) p evsel->core.attr.precise_ip 
-> $2 = 3
-> (gdb) p evsel->precise_max
-> $3 = true
-> (gdb)
-> 
-> And it fell back to precise_ip=2, the previous attempt at opening with 3
-> resulted in EINVAL.
-> 
-> It should have that precise level reflected in the evsel name :-\
-> 
-> Ran out of time, hope the above helps.
-> 
-> Apart from that, from a purely regression fix, your patch gets the
-> previous behaviour, from this isolated test I made, so:
-> 
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Drop KVM's arbitrary behavior of making DE_CFG.LFENCE_SERIALIZE read-only
+for the guest, as rejecting writes can lead to guest crashes, e.g. Windows
+in particular doesn't gracefully handle unexpected #GPs on the WRMSR, and
+nothing in the AMD manuals suggests that LFENCE_SERIALIZE is read-only _if
+it exists_.
 
-Applied to perf-tools, thanks!
+KVM only allows LFENCE_SERIALIZE to be set, by the guest or host, if the
+underlying CPU has X86_FEATURE_LFENCE_RDTSC, i.e. if LFENCE is guaranteed
+to be serializing.  So if the guest sets LFENCE_SERIALIZE, KVM will provide
+the desired/correct behavior without any additional action (the guest's
+value is never stuffed into hardware).  And having LFENCE be serializing
+even when it's not _required_ to be is a-ok from a functional perspective.
 
-Best regards,
-Namhyung
+Fixes: 74a0e79df68a ("KVM: SVM: Disallow guest from changing userspace's MSR_AMD64_DE_CFG value")
+Fixes: d1d93fa90f1a ("KVM: SVM: Add MSR-based feature support for serializing LFENCE")
+Reported-by: Simon Pilkington <simonp.git@mailbox.org>
+Closes: https://lore.kernel.org/all/52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/svm/svm.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index dd15cc635655..21dacd312779 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -3201,15 +3201,6 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+ 		if (data & ~supported_de_cfg)
+ 			return 1;
+ 
+-		/*
+-		 * Don't let the guest change the host-programmed value.  The
+-		 * MSR is very model specific, i.e. contains multiple bits that
+-		 * are completely unknown to KVM, and the one bit known to KVM
+-		 * is simply a reflection of hardware capabilities.
+-		 */
+-		if (!msr->host_initiated && data != svm->msr_decfg)
+-			return 1;
+-
+ 		svm->msr_decfg = data;
+ 		break;
+ 	}
+
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+-- 
+2.47.0.338.g60cca15819-goog
 
 
