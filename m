@@ -1,128 +1,165 @@
-Return-Path: <linux-kernel+bounces-441093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91D79EC955
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:39:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D94B9EC959
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:40:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B5B281D99
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F381882B88
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44961C5F00;
-	Wed, 11 Dec 2024 09:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D939F1C548E;
+	Wed, 11 Dec 2024 09:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="VOTY1GM3"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XvHAG5d7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134821A83F1;
-	Wed, 11 Dec 2024 09:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7171A83FE;
+	Wed, 11 Dec 2024 09:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733909984; cv=none; b=qolSn0qTkA5XsEY6Gkj2aoNoXGmiklnv6oIpE5wmiBjeBiES9OTwkv+7sEqsuXUfuzcrNjnNk6bPvJS1k4ofwEDm57AxvgDrDm9iJ49vHzNfbvT+mErUWuM/8Chm9fquk0gxW4X1g3dXkkebSweIqigPBKiZiozkN3zRqhj3ayw=
+	t=1733910003; cv=none; b=adp/XAFTxl3/msGX9DCNUEREKpInU9A8Jgx3aOqYjvzvba0e0ekYWDAWHDaJAbGjR/G+SlIrlUyq/1secFSdSh7as3RNRTTIPSyHGQ2bHwhP0+PJtiUbDQrRFal4fbv3J3i6cJru2a4J08WEUd+j8fDvin/KiCfKdfzgs54iMKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733909984; c=relaxed/simple;
-	bh=uNyEf575JGyMABK2IicpmY65Fjj1XGV+8co33oXnZm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJLMx2tbo4TbL2/5r1zW26ZVec8pZq3QqLEVac+OeLpJ0K+BeRUIAGGlh61XzWDL0Jy3Hd3H6UyYOttCWHndPgUeL5QfsHhEHAkzMiM79G1hXh6tWqMiqgSv+aNlWxleyy6fCyj/z2qo81AfjvHaVTq/3JE+96ZxnpK+ElnLybA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=VOTY1GM3; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Qqv1Ckd+GSAVyFgCgoZ2cbk9PY96hUlWhS6ami2Y8/E=; b=VOTY1GM38aeo33J4odoZJApRSZ
-	fKl3wu4tZ0GC7SNOVn8yvwgmNzeaT/EZDMSPJZf6kwpIsnN+oS9wsYaWrB0OzGaDEbidp3GkCQct8
-	dM14yTNPMWyjmzHjT4EPmfx+DQL2sWLptP1PNgg8pkexEXuob5tmwQWNJu5Dkj/lMnvfarMqywn+S
-	hW5IuagzihfU1WvVZG+23jZM9VnpqEcHukwN9PfcoVBXcVzX3/Li/oqBYezzUb2szi1N0GVouNxJi
-	ePY9wdvdKJDnhVbueoXzRR+rFPD2J5xhvODQlmhgK15TdLTqdN0GaeklQRnRn2l8hPpV5K+8+W5p3
-	uOhBb0tA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tLIys-000iOY-2J;
-	Wed, 11 Dec 2024 17:39:28 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 11 Dec 2024 17:39:27 +0800
-Date: Wed, 11 Dec 2024 17:39:27 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com,
-	Richard van Schagen <vschagen@icloud.com>
-Subject: Re: [PATCH v8 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
- engine support
-Message-ID: <Z1ldzyPKgoD8GZfx@gondor.apana.org.au>
-References: <20241210204853.18765-1-ansuelsmth@gmail.com>
- <20241210204853.18765-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1733910003; c=relaxed/simple;
+	bh=mHQ+ad39TvGwZRHDCEPD0kzUEV03xj3+IaU03Zrdm/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UuXE9Vjl1dlPQ5MV685/0dyH/0CwBwvRBC/iTjVYjc31CqIZGU8PDZeKjSLcfI1iRLY4VTxYd/Hd1OwFpDm5ez4axAt8wREd6ydYcIHVECzp0zfI+Tvu8CvP4W0WxtIHhwJi825suN5DyZzMQOw/kPImSHcGpwjbgys8TXqgppQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XvHAG5d7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB42jbs029986;
+	Wed, 11 Dec 2024 09:39:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7Ka+weawCvsnlrfXVb4OAOsW+ZIREokDJZdciu4q1R8=; b=XvHAG5d7IO1Ste2N
+	3CcCL3IQn75FQIkaZaZNPBfAu12L6rWkviwZy8ZggU0YzccYuO++1L5f9iqNMNVC
+	sX/a6KJjYEM+FyQkMvMJTL9c3h8KyYV42qIiFUc4o+nfn0557l2DYFxteqx7hpAA
+	Qdh8jrMpB+KmxlwIFbBefAXcKBehQqp8GtzNw//cC4PsTFWRomLMJHmYI4w0uY+/
+	Ek6xbmi2yxcPF4vaLcjPb/VEyjzJ+tu6QUJTMUby3V1nygcew5uASpZlj86xJUAG
+	R5Innn15mc5GormbsZWwSUkZOtJVtxJcSbyS+G/vDfjbw2Th0uFsmNHtfoAhRd6V
+	KB3r4w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eqr32uh5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 09:39:56 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB9dtFD013485
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 09:39:55 GMT
+Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
+ 2024 01:39:49 -0800
+Message-ID: <62afbaea-67b1-4572-9e78-d1dbe5fae20a@quicinc.com>
+Date: Wed, 11 Dec 2024 17:39:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210204853.18765-4-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] dt-bindings: net: bluetooth: qca: Expand
+ firmware-name property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao
+	<quic_rjliao@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
+        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
+References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
+ <20241210151636.2474809-2-quic_chejiang@quicinc.com>
+ <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
+Content-Language: en-US
+From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+In-Reply-To: <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 52UO7AVT3UtDZNe9f-x84-hwdxQ55qum
+X-Proofpoint-GUID: 52UO7AVT3UtDZNe9f-x84-hwdxQ55qum
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
+ suspectscore=0 mlxscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110072
 
-On Tue, Dec 10, 2024 at 09:48:33PM +0100, Christian Marangi wrote:
->
-> +static int eip93_hash_export(struct ahash_request *req, void *out)
-> +{
-> +	struct eip93_hash_reqctx *rctx = ahash_request_ctx(req);
-> +	struct eip93_hash_export_state *state = out;
-> +
-> +	/* Save the first block in state data */
-> +	if (rctx->len) {
-> +		struct mkt_hash_block *block;
-> +
-> +		block = list_first_entry(&rctx->blocks,
-> +					 struct mkt_hash_block,
-> +					 list);
-> +
-> +		memcpy(state->data, block->data,
-> +		       SHA256_BLOCK_SIZE - rctx->left_last);
-> +	}
-> +
-> +	eip93_hash_export_sa_state(req, state);
-> +
-> +	eip93_hash_free_data_blocks(req);
-> +	eip93_hash_free_sa_state(req);
-> +	eip93_hash_free_sa_record(req);
+Hi Krzysztof,
 
-The export function should be idempotent so it shouldn't be freeing
-anything.
+On 12/11/2024 4:53 PM, Krzysztof Kozlowski wrote:
+> On Tue, Dec 10, 2024 at 11:16:33PM +0800, Cheng Jiang wrote:
+>> Expand the firmware-name property to specify the names of NVM and
+>> rampatch firmware to load. This update will support loading specific
+>> firmware (nvm and rampatch) for certain chips, like the QCA6698
+>> Bluetooth chip, which shares the same IP core as the WCN6855 but has
+>> different RF components and RAM sizes, requiring new firmware files.
+>>
+>> We might use different connectivity boards on the same platform. For
+>> example, QCA6698-based boards can support either a two-antenna or
+>> three-antenna solution, both of which work on the sa8775p-ride platform.
+>> Due to differences in connectivity boards and variations in RF
+>> performance from different foundries, different NVM configurations are
+>> used based on the board ID.
+>>
+>> So In firmware-name, if the NVM file has an extension, the NVM file will
+>> be used. Otherwise, the system will first try the .bNN (board ID) file,
+>> and if that fails, it will fall back to the .bin file.
+>>
+>> Possible configurations:
+>> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
+>> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+>> firmware-name = "QCA6698/hpnv21.bin";
+>>
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml           | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>> index 7bb68311c..2782d2325 100644
+>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>> @@ -101,7 +101,10 @@ properties:
+>>    max-speed: true
+>>  
+>>    firmware-name:
+>> -    description: specify the name of nvm firmware to load
+>> +    description:
+>> +      If one item is present, specify the name of the NVM firmware to load.
+>> +      If two items are present, the first item specifies the name of the NVM,
+>> +      and the second specifies the name of the rampatch firmware to load.
+> 
+> Don't repeat constraints in free form text. Use proper constraints so
+> you can validate your DTS. And then actually do validate your DTS...
+> 
+It seems unnecessary to add this description, so I will drop this change. Is that okay?
 
-In fact this indicates a bigger problem with how DMA is being used
-in the driver.  You shouldn't be leaving DMA memory mapped after
-the init (or update) function completes.  It is perfectly legal
-for a user to call init and then abandon the request by freeing it
-directly without ever calling final.  In that case you will be
-leaking the DMA mappings.
+> Best regards,
+> Krzysztof
+> 
 
-So make sure that DMA is mapped only when needed, and freed before
-you call the user callback.
-
-The import/export functions should only be touching kernel memory,
-not DMA.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
