@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-442284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9789EDA35
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:40:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0989EDA38
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:41:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03A09167776
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43DEC282D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCF020E6F3;
-	Wed, 11 Dec 2024 22:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276131F238E;
+	Wed, 11 Dec 2024 22:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="j/ejm0YH"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fGw0QeOQ"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47121F4E2C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC6C1F0E4B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956416; cv=none; b=cwGpUMS8q5BoSv+vjkLf8cVboeQVuQTZUjHS4g57SrcmOJ5ncCKYrVaMK3JjTQv5MiYLHqyuy8edJ7GnFLtURbPOqUJXVAawRmm9vYyzRYgFlF0j4pZ6L9akng+/PzLOgGKnSvaEnv08b1oRWO/+SV6PGBb/FjBLmdpcJm/NfhI=
+	t=1733956495; cv=none; b=iyzJJwbdx5DQoZETZFaHwSU7BkoCrbLsn5SopBOTXwqwTy7PPN/V5oZKD3spnhIIBRLSXIGhhmUn+HBGjKvKt4iKfkVZ40sfkMvuBiDAKyFQiBST7NWPceAV5PfJHgPA3CfklbVzg9grJ96XoEjuDalHajaHPhsPkitB4gvQnP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956416; c=relaxed/simple;
-	bh=VOGzIGGSxqcC7jyFVRhHAo+5MH48iBCMJkB64VO7HdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YS56IJill4oVZsrdavx2ZeHPzpdriCZ2bxoT1JWZny0JSYkEG6DPafFmJ03TaDVLwhzVDi3k4gDgnX/te3LFY6qESi0eRzktL8wt5PGCnI6XmE3VgoPFQOtZSABx32+r1u73Uv6DKei2tW9sdKG+9yn4kbesfxpCr/osNMwS0pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=j/ejm0YH; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2efe25558ddso1523648a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:33:34 -0800 (PST)
+	s=arc-20240116; t=1733956495; c=relaxed/simple;
+	bh=tDf4ejwfEGIsqo0gECgqbJNHrXI26Cw2gJA0n3bcwhE=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CEq9iLtmUGq3OfC02MEG5X1llQBGD4K+M9puJjHdBMTnosMUVRFz9vJ81IhrVF8mqGNYjEnE7C1jysQtuFjE6dAnZ4Oeliat2NV+D8WyVDVKyMUh0dh9f9TTM3o3AbQW+KMjeZhmkLa3YGUGaUGbFIQEmXIr60xS7wDBrHwSi+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fGw0QeOQ; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6d8f75b31bfso41258206d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:34:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1733956414; x=1734561214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ngWPL7F+k5wxiISlgKbwW4fjhxxXTEP4BljwhbzST3s=;
-        b=j/ejm0YH6vC3JTn6aSaULZwKVb89iCsaOgno1knpGPttaxzaexerLkwhwtTgTAYe3i
-         6Q2kT/jo7vdHRRcLmk+qxinVMGJWI/wgVjkal81UtOU3esAlKVxiJ12O1QhU1uWvvI8X
-         ZSxrcig/cUDx+ROYR1l0ciOET5DvuSjfDeuONsH1i0wqXUmYDuhm/KUq3Uh5iBa/a/rC
-         Up0NzYZQezfMvegZ6nMR4LICpIUHTEBLpt6+bS47f98Ush3v5BkEHaPPlZSMSOOExoo5
-         8dnh69STWKdciRv4FW8E2707xhq9LVyjTJLasZ7EUpFsj0J6eGhtGRoKO2RIsoebYdg/
-         NMNw==
+        d=chromium.org; s=google; t=1733956493; x=1734561293; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xk9mjVxKh0Cpv8VTlttHozyBPYsnqFLG9k7nQi8tKJA=;
+        b=fGw0QeOQVU7VJTzKmZvZqdm9GA2U9ba5DisWL0rmigRG6FhOOpPEO9mDaGDEPmsct0
+         Hdn83XICMJmzHpfS8ezDyM7w3Jz1TxwoIwu9soDlfMRZhVKDw5NDWR7IPkhwswF8ckLg
+         szBiJH3g7MChELUg9TDg1XIKTYZy8OOP0TWVo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733956414; x=1734561214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1733956493; x=1734561293;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ngWPL7F+k5wxiISlgKbwW4fjhxxXTEP4BljwhbzST3s=;
-        b=OeOUv21KBoZBB2wRj1NYFfltTwLlNE//vBYP8LHRfGiGUyoyY0zoiyaBkV44+qnx0c
-         oQyklimu7OfsClRCkpa46376IULyqaXkYk44ktPed3UNzlFI5KZWrmz8tz2kw7Mfuo3G
-         xBDE3mocJX1jGrvb9/+OjG3rYt+OMjJnEjIkpuHjzvoTGYgrKONHxmqXiWdDFnRUUgDE
-         2uhmf9t4/n0EIOm9GsEv+lvQgCDCfiF8UmP9Ey2i6Xjk3gfQgi0P4ccswXzjAFXiPcC3
-         ULrbBWgJKRNZgA2Jzx8EiVXQJxdBovlWZITgwU+K1eUq0G/M1QKzKIEBhGMUV/qgH29d
-         zCxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrW9+Md6e80ZQN+lo8ocEmHez5uxvqcc0w1Ko7ZCjgPKY/8K3OpXrOrZvk2g6zqE/VImVrLRbybkMrKMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQfeOTsek+nYV1op2BOvzQB2zJwa3Z4Pw/Jnraicd2BfmunFIP
-	q1hkdHi2j/VDZW2Gc+tC3VIkYrvcKpWkU/1wt47KkWEOkWnjvQv1Qkvxb7LL+x0=
-X-Gm-Gg: ASbGncv6IZ5mGZV0IWoakHuyEtU1+LSo/MZRY+Ryms4k1aow93PYflLbtF2kwd6rZP6
-	t9RbPLH8n4ztttXNUZPoVqyhQDUGyWaN85FNRhi3DQ+YyD7V28Lh8PfNWNOkfTV5GDZXg0ugLJl
-	ajVG7AVSJUs65YoeNr/OHAc6ETfwMdbF4ERinwz52lE47fYvzLDFd/+CrkM7wiGbrEIyKKWTt/r
-	v7Fwq/F/gbqRI49l80KGUx1pb+84N6KJNpKeiDZQL2NaxSn/SlaoXnFSFticQjzKJFMQEIGJBo/
-	RiLSqkbz6DxqnHEk2+SBeT8CgXY=
-X-Google-Smtp-Source: AGHT+IEVKuZamiHIkIRgt4sKWSN/CxUsh7q1Rtn5YMJ8loDhLinrZmWvhpreTWA49/k9SjEkFUp/vQ==
-X-Received: by 2002:a17:90b:358b:b0:2ee:c457:bf83 with SMTP id 98e67ed59e1d1-2f1392b7518mr2309164a91.19.1733956413993;
-        Wed, 11 Dec 2024 14:33:33 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45ff77b9sm12072842a91.36.2024.12.11.14.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 14:33:33 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tLVGr-00000009ZKP-40OP;
-	Thu, 12 Dec 2024 09:33:29 +1100
-Date: Thu, 12 Dec 2024 09:33:29 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>,
-	John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
- details
-Message-ID: <Z1oTOUCui9vTgNoM@dread.disaster.area>
-References: <cover.1733902742.git.ojaswin@linux.ibm.com>
- <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
- <20241211181706.GB6678@frogsfrogsfrogs>
+        bh=xk9mjVxKh0Cpv8VTlttHozyBPYsnqFLG9k7nQi8tKJA=;
+        b=vOW8Z/KvkMhgPSvXZkyXhuvC6rpl0yKC+A0P3RUCC+p/UIj1Zs3CWjS7EDcDmI6mYa
+         5rswtV2qBlnCqztGl7ldFj7MrVOSBkzvyQItLrEr6cfjodxRp+c7H6E5twlfct36qXvQ
+         gExYkAnWlwMpmDRibs5JnDQfWvFWGQ/yEB8okOQD97j13HCStCEgtsusLGhwwM9ADhwt
+         o2akg8QI9dYQzEUsqu44K59eQENWc7U7FYDN6ZVXTNLQl8xSaiswWIWwf3J5SdaCn3/k
+         Umzjia0dM4xMS3f9i84fOm7pEa7QwVd50DSxv79+uN54lxDkjJVu97g1Xu0hvj9Tn4SL
+         fP7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUOJM0dkGVvGlPfDn4F4lNEAauYrMuX6o3/ykGoxnGlxIzX/47CUPFHggcqM1wTeQSZ9RrVd1yH82oLw6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9GJX4jBQ0ROrvCatzM4nAyuf14Ju3OwiKiygb5WwZvCDAJtbo
+	iahsT7+R95TokSCJbE3idEKw8yKrLcLx/eS5twoIpWanItku6LnxdVpATb6LB7LJdMP0YfgNOX4
+	MGjgDfTV2prsHwQMRTEgbxkboLN9ZFpVLV1JwX9JXjt+LbSQ=
+X-Gm-Gg: ASbGncsEbOgHKBfhD7kTfWOVub1941iy8RgHNwv8+PW2nWs0t2RQHwsuryyQxX2Oyb7
+	ZSWgkcBvIyMDDbwQJLD94rHtcv8gIuzG5jTaG03tYSN2+ev32J+zNU+Yrkxdg0lY=
+X-Google-Smtp-Source: AGHT+IEmNl1A02u+Et+QaYelQl7de4pzHAlegixn/lag8TVHIDn3QbqOGZ1uvtk5TAuOj8J/cuxjMvpZP+M69zQwnG4=
+X-Received: by 2002:a05:6214:d83:b0:6d8:9c50:52be with SMTP id
+ 6a1803df08f44-6dae39a1d71mr15934046d6.44.1733956493056; Wed, 11 Dec 2024
+ 14:34:53 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 14:34:52 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211181706.GB6678@frogsfrogsfrogs>
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-9-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-9-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 14:34:52 -0800
+Message-ID: <CAE-0n50Ei+DodV6VRmm_aSEZ_DdeMZ_vMnK7Mq0=X441B+YreQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/14] drm/msm/dp: use msm_dp_utils_pack_sdp_header()
+ for audio packets
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
-> On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
-> > Currently with stat we only show FS_IOC_FSGETXATTR details
-> > if the filesystem is XFS. With extsize support also coming
-> > to ext4 make sure to show these details when -c "stat" or "statx"
-> > is used.
-> > 
-> > No functional changes for filesystems other than ext4.
-> > 
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  io/stat.c | 38 +++++++++++++++++++++-----------------
-> >  1 file changed, 21 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/io/stat.c b/io/stat.c
-> > index 326f2822e276..d06c2186cde4 100644
-> > --- a/io/stat.c
-> > +++ b/io/stat.c
-> > @@ -97,14 +97,14 @@ print_file_info(void)
-> >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
-> >  }
-> >  
-> > -static void
-> > -print_xfs_info(int verbose)
-> > +static void print_extended_info(int verbose)
-> >  {
-> > -	struct dioattr	dio;
-> > -	struct fsxattr	fsx, fsxa;
-> > +	struct dioattr dio;
-> > +	struct fsxattr fsx, fsxa;
-> > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
-> >  
-> > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-> > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
-> 
-> Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
-> print whatever is returned, no matter what filesystem we think is
-> feeding us information?
+Quoting Dmitry Baryshkov (2024-12-02 02:06:39)
+> Use msm_dp_utils_pack_sdp_header() and call msm_dp_write_link() directly
+> to program audio packet data. Use 0 as Packet ID, as it was not
+> programmed earlier.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Yes, please. FS_IOC_FSGETXATTR has been generic functionality for
-some time, we should treat it the same way for all filesystems.
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-> e.g.
-> 
-> 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
-> 				  errno != ENOTTY))
-> 			perror("FS_IOC_GETXATTR");
+> diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/dp/dp_audio.c
+> index 5cbb11986460d1e4ed1890bdf66d0913e013083c..1aa52d5cc08684a49102e45ed6e40ac2b13497c7 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_audio.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_audio.c
+[...]
+> +               .HB0 = 0x00,
+> +               .HB1 = 0x06,
+> +               .HB2 = 0x0f,
+> +               .HB3 = 0x00,
+> +       };
+> +       u32 header[2];
+> +       u32 reg;
+> +
+> +       /* XXX: is it necessary to preserve this field? */
 
-Why do we even need "is_xfs_fd" there? XFS will never give a
-EOPNOTSUPP or ENOTTY error to this or the FS_IOC_GETXATTRA ioctl...
+Maybe qcom can comment.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> +       reg = msm_dp_read_link(catalog, MMSS_DP_AUDIO_ISRC_1);
+> +       sdp_hdr.HB3 = FIELD_GET(HEADER_3_MASK, reg);
+> +
+> +       msm_dp_utils_pack_sdp_header(&sdp_hdr, header);
+> +
 
