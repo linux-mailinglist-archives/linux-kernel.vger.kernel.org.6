@@ -1,185 +1,200 @@
-Return-Path: <linux-kernel+bounces-441110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0078F9EC9B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 805D09EC9BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0A21885233
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67FAF1889229
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9E31EC4D5;
-	Wed, 11 Dec 2024 09:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZCNOb9F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EC11DFE26;
+	Wed, 11 Dec 2024 09:54:26 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2591DC9BD;
-	Wed, 11 Dec 2024 09:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02F21C5CAC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733910739; cv=none; b=aU+iPw9z7uJKIKFKKVlqZkEEGYdY+NP6olcfhht5nB7hYwYsIYjVU1P2IaiIoCUo65VyNDdIVnCYMcyJfWWrvybjRmJ0pKS+ks5Wc8boYmgXDxUUhvrPz7IAUS6EOGlYjaFMsHwmycGepnp0WQr5jHSWBcL8RXi99trA0MMLLWs=
+	t=1733910866; cv=none; b=ITLruX6PBnTK4A//yqFXApxXPRe045720bP68R0EivNEOcsSBS7ttUukviWDVIuug/OlgLI63fcSX9OeILEAru0+9FHn5/F+yOumkHmg82oQtvwfDyricMJgKVi37TB5G+H1h2P+g/ah7ZMRJQTjg3z7X42iLToh1ylaxIcGSEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733910739; c=relaxed/simple;
-	bh=1MvPVOm2KT4I3D3hDmh8qUenmdswE/c+r2gVB3m84Fk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aKcf06DP6pL6omoG+U/g8Dbfiq8uAnrN7brpgEC1g0EfCwEpqzHGMPThqRnetdAcrM520V9/p5pDUb4QKlBCq9MWbtV/x/7DNbJQj+uo7rpPwhDXkE5O+NxW+ybCJ5kPVqn3NufDvunl6GOX5r5+L5fZTnNda+PsMfm5CDFCYG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZCNOb9F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E1CC4CEDE;
-	Wed, 11 Dec 2024 09:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733910739;
-	bh=1MvPVOm2KT4I3D3hDmh8qUenmdswE/c+r2gVB3m84Fk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BZCNOb9F091Lge08SDZcjO25UI/Ji+Hkv0ozwWHtSXP/7LtzkHkpCUVpxB3+JuWG8
-	 cBw41kTpv9gpt99Iy4Rq/4rurBdoeAdifDKR+N39lQBudF6QMu43DndXVIj7184C7i
-	 i84xVfDLYCc2jjjxnAQ9478drcrZl5ciES4jDCXk+kC190/WUygReGVB67YL4EyGAZ
-	 kfDb/uo/pbXmwgKVXXUH1MRLpSf24mp5BY1lTmnpvwsexZRZhd1LaR4krT9l5lOnqk
-	 IiZKKYSPChXvKAABvVqKb+/ChHWLoH63DCwpCE1S7cA62X1mjTaIv3wrdaBXKkX0wc
-	 PuDnMGpPriC/g==
-Message-ID: <3c7ddb08-38db-44b3-a7a7-ec7b270a408f@kernel.org>
-Date: Wed, 11 Dec 2024 10:52:11 +0100
+	s=arc-20240116; t=1733910866; c=relaxed/simple;
+	bh=neLcSCO7FuPXRHDl0h5zIFHBBVXZPhwo4Laj50ozTns=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YZ3Rb8oI8aR8+SP9LdQRW++d5so5cQk8lvS14IIVeyhqY/hSMsDrHj13cO0WE/x/ICAbmH+3UZyzl2Y4hs3i1paJuPMV/aBs2bGWasdOgWy7vPMKfK7YXS+HRzsRcQme9EsfOS0aqTlXvPt1O0UT8D390Eg6mX0ahsnqSxQYFQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a812f562bbso93333235ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:54:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733910864; x=1734515664;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O+fay17taHXFBDh4RbEffJkLVWBjiLfW/1BhMdmhSiI=;
+        b=e1cHjgGJ5tLf9dZMH66QMbfIA3cHrXfunnX7+A0JycldtQnjHo3cQAoNlm0k6MDdJV
+         CQDWl+XFs3WmrFmkmKBVcKVBfJJ0iGY9z95hU77QimSLbSfC+Kim0ZNabw39lQfT5pnc
+         SP2EmUp7k5oU3T1wtiG9p1uMU5Y93hFdA/V9MftIZgnq0+m6VmGu7Zf8/pm7x2nEQTNG
+         CJV4S35EYqyAIksGeuNyIhVEyZhtMX8QQ/wy/I2IgOPEfb4ZCv9gs+FvkrhiPQEepbdE
+         Ljo50DoX8PWNLOiyqUtvJpiLHW9DW5rQGKdIzcerrvMSxkeUgSDpGLIznjJ96xzvl44T
+         Dvug==
+X-Forwarded-Encrypted: i=1; AJvYcCX2jm2KBm4NmBHYqAeox+ra/yVLytkNkAU7P1h9cGNGG1gXi7I+76+OpMqtdwq6CFLiJd0LdEjZK116wtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVmGPh8PqaBLu7w94t8gKeK/ngDhFWZmrVfBpRq0Gk94ltatBS
+	2yfP1EAF7aCxanPw15MoRz/W4qceWmXnIs7ehw/SHErpryAnOWPJjhLT6XA0gGNxVPtvPED1z3C
+	qwkuYBTjXHE2cjKDe4dkwk/cErAaVs4AZ3flhJdk1Dh9ZPJqL1SUlEDE=
+X-Google-Smtp-Source: AGHT+IGbvplk2JkcgSvwMRBVRcM92vGsL+VcGpCHS/oEXj4M3gRbrpQCz+K9yF7+aqRSMA9s2xhNlKn5LyyYPaZRDMuh/n39p1Se
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom,qmp-pcie: add optional current
- load properties
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, vkoul@kernel.org,
- kishon@kernel.org, dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
- neil.armstrong@linaro.org, andersson@kernel.org, konradybcio@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241204105249.3544114-1-quic_ziyuzhan@quicinc.com>
- <20241204105249.3544114-2-quic_ziyuzhan@quicinc.com>
- <qvjtwilukxbeaxnbyzfkdsfkktm6p4yv3sgx3rbugpb6qkcbjy@rohvixslizhh>
- <20241211062053.vxdpovlmetvyx3za@thinkpad>
- <33697bd9-02f4-4a9a-b8c0-4930d7fdaee2@kernel.org>
- <20241211082404.p7fbmhooikmipxvm@thinkpad>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241211082404.p7fbmhooikmipxvm@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:cd88:0:b0:3a7:c5cb:8bf3 with SMTP id
+ e9e14a558f8ab-3aa0616248bmr25586175ab.9.1733910863763; Wed, 11 Dec 2024
+ 01:54:23 -0800 (PST)
+Date: Wed, 11 Dec 2024 01:54:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6759614f.050a0220.17f54a.0037.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_alloc_sectors_start_trans
+From: syzbot <syzbot+7727bbb9b847a6d3d8de@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/12/2024 09:24, Manivannan Sadhasivam wrote:
-> On Wed, Dec 11, 2024 at 09:09:18AM +0100, Krzysztof Kozlowski wrote:
->> On 11/12/2024 07:20, Manivannan Sadhasivam wrote:
->>> On Thu, Dec 05, 2024 at 11:23:11AM +0100, Krzysztof Kozlowski wrote:
->>>> On Wed, Dec 04, 2024 at 06:52:47PM +0800, Ziyue Zhang wrote:
->>>>> On some platforms, the power supply for PCIe PHY is not able to provide
->>>>> enough current when it works in LPM mode. Hence, PCIe PHY driver needs to
->>>>> set current load to vote the regulator to HPM mode.
->>>>>
->>>>> Document the current load as properties for each power supply PCIe PHY
->>>>> required, namely vdda-phy-max-microamp, vdda-pll-max-microamp and
->>>>> vdda-qref-max-microamp, respectively.PCIe PHY driver should parse them to
->>>>> set appropriate current load during PHY power on.
->>>>>
->>>>> This three properties are optional and not mandatory for those platforms
->>>>> that PCIe PHY can still work with power supply.
->>>>
->>>>
->>>> Uh uh, so the downstream comes finally!
->>>>
->>>> No sorry guys, use existing regulator bindings for this.
->>>>
->>>
->>> Maybe they got inspired by upstream UFS bindings?
->>> Documentation/devicetree/bindings/ufs/ufs-common.yaml:
->>>
->>> vcc-max-microamp
->>> vccq-max-microamp
->>> vccq2-max-microamp
->>
->> And it is already an ABI, so we cannot do anything about it.
->>
->>>
->>> Regulator binding only describes the min/max load for the regulators and not
->>
->> No, it exactly describes min/max consumers can use. Let's quote:
->> "largest current consumers may set"
->> It is all about consumers.
->>
->>> consumers. What if the consumers need to set variable load per platform? Should
->>
->> Then each platform uses regulator API or regulator bindings to set it? I
->> don't see the problem here.
->>
->>> they hardcode the load in driver? (even so, the load should not vary for each
->>> board).
->>
->> The load must vary per board, because regulators vary per board. Of
->> course in practice most designs could be the same, but regulators and
->> their limits are always properties of the board, not the SoC.
->>
-> 
-> How the consumer drivers are supposed to know the optimum load?
-> 
-> I don't see how the consumer drivers can set the load without hardcoding the
-> values. And I could see from UFS properties that each board has different
-> values.
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    9a6e8c7c3a02 Merge tag 'drm-fixes-2024-12-07' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12020820580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dcc2c6db74766fbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=7727bbb9b847a6d3d8de
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5d7d5a6fd94d/disk-9a6e8c7c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a82a9827cbbc/vmlinux-9a6e8c7c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3f2d0bbaf255/bzImage-9a6e8c7c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7727bbb9b847a6d3d8de@syzkaller.appspotmail.com
+
+bcachefs (loop1): stripes_read... done
+bcachefs (loop1): snapshots_read... done
+bcachefs (loop1): check_allocations... done
+bcachefs (loop1): going read-write
+bcachefs (loop1): done starting filesystem
+=====================================================
+BUG: KMSAN: uninit-value in writepoint_find fs/bcachefs/alloc_foreground.c:1313 [inline]
+BUG: KMSAN: uninit-value in bch2_alloc_sectors_start_trans+0x44a/0x32b0 fs/bcachefs/alloc_foreground.c:1413
+ writepoint_find fs/bcachefs/alloc_foreground.c:1313 [inline]
+ bch2_alloc_sectors_start_trans+0x44a/0x32b0 fs/bcachefs/alloc_foreground.c:1413
+ __bch2_write+0x7f8/0x8540 fs/bcachefs/io_write.c:1437
+ bch2_write+0xec0/0x1d10 fs/bcachefs/io_write.c:1631
+ closure_queue include/linux/closure.h:270 [inline]
+ closure_call include/linux/closure.h:432 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:449 [inline]
+ bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:641
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2702
+ filemap_fdatawrite_wbc mm/filemap.c:397 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ filemap_write_and_wait_range+0x59d/0x850 mm/filemap.c:684
+ bchfs_truncate+0xab2/0x1490
+ bch2_setattr+0x29f/0x2f0 fs/bcachefs/fs.c:1163
+ notify_change+0x1a8e/0x1b80 fs/attr.c:552
+ do_truncate+0x22a/0x2b0 fs/open.c:65
+ vfs_truncate+0x5d4/0x680 fs/open.c:111
+ do_sys_truncate+0x104/0x240 fs/open.c:134
+ __do_compat_sys_truncate fs/open.c:152 [inline]
+ __se_compat_sys_truncate fs/open.c:150 [inline]
+ __ia32_compat_sys_truncate+0x6c/0xa0 fs/open.c:150
+ ia32_sys_call+0xa62/0x4180 arch/x86/include/generated/asm/syscalls_32.h:93
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Uninit was stored to memory at:
+ bch2_writepage_io_alloc fs/bcachefs/fs-io-buffered.c:477 [inline]
+ __bch2_writepage+0x39d9/0x3f10 fs/bcachefs/fs-io-buffered.c:599
+ write_cache_pages+0xc9/0x280 mm/page-writeback.c:2659
+ bch2_writepages+0x11f/0x3c0 fs/bcachefs/fs-io-buffered.c:639
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2702
+ filemap_fdatawrite_wbc mm/filemap.c:397 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ filemap_write_and_wait_range+0x59d/0x850 mm/filemap.c:684
+ bchfs_truncate+0xab2/0x1490
+ bch2_setattr+0x29f/0x2f0 fs/bcachefs/fs.c:1163
+ notify_change+0x1a8e/0x1b80 fs/attr.c:552
+ do_truncate+0x22a/0x2b0 fs/open.c:65
+ vfs_truncate+0x5d4/0x680 fs/open.c:111
+ do_sys_truncate+0x104/0x240 fs/open.c:134
+ __do_compat_sys_truncate fs/open.c:152 [inline]
+ __se_compat_sys_truncate fs/open.c:150 [inline]
+ __ia32_compat_sys_truncate+0x6c/0xa0 fs/open.c:150
+ ia32_sys_call+0xa62/0x4180 arch/x86/include/generated/asm/syscalls_32.h:93
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4110 [inline]
+ slab_alloc_node mm/slub.c:4153 [inline]
+ kmem_cache_alloc_lru_noprof+0x91c/0xe20 mm/slub.c:4172
+ __bch2_new_inode+0x98/0x450 fs/bcachefs/fs.c:401
+ bch2_new_inode fs/bcachefs/fs.c:427 [inline]
+ bch2_inode_hash_init_insert+0x7d/0x3a0 fs/bcachefs/fs.c:447
+ bch2_lookup_trans fs/bcachefs/fs.c:622 [inline]
+ bch2_lookup+0x1605/0x2360 fs/bcachefs/fs.c:659
+ lookup_open fs/namei.c:3627 [inline]
+ open_last_lookups fs/namei.c:3748 [inline]
+ path_openat+0x292f/0x6200 fs/namei.c:3984
+ do_filp_open+0x268/0x600 fs/namei.c:4014
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_compat_sys_openat fs/open.c:1479 [inline]
+ __se_compat_sys_openat fs/open.c:1477 [inline]
+ __ia32_compat_sys_openat+0x298/0x300 fs/open.c:1477
+ ia32_sys_call+0x2fb4/0x4180 arch/x86/include/generated/asm/syscalls_32.h:296
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+CPU: 0 UID: 0 PID: 7718 Comm: syz.1.753 Not tainted 6.13.0-rc1-syzkaller-00239-g9a6e8c7c3a02 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
 
 
-Drivers do not need to know, it's not the driver's responsibility. If
-these are constraints per board, then regulator properties apply and
-there is no difference between this "vdd-max-microamp = 10" and
-"regulator-max-microamp".
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-If this varies runtime, then your property is already not suitable and
-very limited and you should use OPP table.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Best regards,
-Krzysztof
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
