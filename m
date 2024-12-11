@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-441834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A419ED4B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:28:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B9D9ED4B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24132188A6B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:28:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC680188AB63
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DE62040AC;
-	Wed, 11 Dec 2024 18:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8C62040A0;
+	Wed, 11 Dec 2024 18:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6DSssme"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkyQ1Hh3"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247431AF0B4;
-	Wed, 11 Dec 2024 18:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56613202F9D;
+	Wed, 11 Dec 2024 18:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733941715; cv=none; b=Fo05+zFDRQ25csKEU4ReAb4vnC/kw/yEdsD0fLt32PH5PTgg/vqesF4A9pxLDOCyDuS3URrVmdF7hieKO+Z0Q/1O21M5HrRNqzxZtX0EM/ueVXflBjNrmBmvkuKbDIEWripkojy12uTp3Dpd/Y8zk6SLFNjGVxTYyGx3pLq3vg8=
+	t=1733941716; cv=none; b=n2TTVV36/wp8GUiqKP/yuMQZyo2MXbG3LI5WKNk3pywa7JOXyqfJme9VGgoRHzJSCPBUvDdfJyft+oJ4v8F8G+/Hf0V+Po4giIAPAl79UEiImkOq6ru7PASqRXtQjkpEfjzXTN7sayonFI+KD51CJoz23jjEo8heDaoTTU+RmY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733941715; c=relaxed/simple;
-	bh=JU4/hbf8LqaPk3w9vxQmPNCv7yc8PUm7ADZHQhjLaoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UWQ0ij7rm0yOTdL29ZW5xP9STqKgWMJe4hIiY3dL+IQxtxec5l8VXrmfkrNKifhyIZb0O7rKYwRr7fHckoqN4pL6Nd3+AKXDZpL8RBOaoWAM66uYQozU5Nv3Qx9n4KzpNLfdNBXw1sJgdK6J2Z1rBtuu0vBnc81Po/WO4D+q3ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6DSssme; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8326BC4CED2;
-	Wed, 11 Dec 2024 18:28:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733941713;
-	bh=JU4/hbf8LqaPk3w9vxQmPNCv7yc8PUm7ADZHQhjLaoY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r6DSssmeU18QTcKa3b/Dic7+wNzV8rV/DC3hk6bCBVkkm8BivtQMtxTpw8A7I7DGF
-	 6gcMKml4Qqi3Cnaokzt0Ho2AhsoCm3BYlgtA1Y8Ok+YUpsU2Nr60X+wSPA/kILu+zM
-	 Y6l2D5+WTimIA09EkRkDknpoI2hW6ruxJ09+9/WHyUKAmCJuIZmfSIt06vbWG/5WM9
-	 SAEUSyBrS6ozSe9cp4d6lXrAJ4EJPs5KhjOIpJrh64AD4JYhyK75fC4gBXdwb+wY+K
-	 1MFK5FjnAlGttHu/20yM4xPhSYEjylRk1YN2tANQPJcXMxalxlBlwReYNFRk+OKd/v
-	 8C1CDXi4SequA==
-Date: Wed, 11 Dec 2024 18:28:17 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yu-Hsian Yang <j2anfernee@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
- venture@google.com, yuenn@google.com, benjaminfair@google.com,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
- andriy.shevchenko@linux.intel.com, marcelo.schmitt@analog.com,
- olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
- matteomartelli3@gmail.com, alisadariana@gmail.com, gstols@baylibre.com,
- thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
- mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
- yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: adc: add Nuvoton NCT720x ADC driver
-Message-ID: <20241211182817.12d63645@jic23-huawei>
-In-Reply-To: <CA+4VgcLDQrTcTFjr7MYGtMYpqhzm0gym=zzkt33JGRHFkCXGVg@mail.gmail.com>
-References: <20241203091540.3695650-1-j2anfernee@gmail.com>
-	<20241203091540.3695650-3-j2anfernee@gmail.com>
-	<20241208172236.18441e64@jic23-huawei>
-	<CA+4Vgc+veFb6hCP4A7mPH_uiUCnmbsa=guWySRekYj660osQyg@mail.gmail.com>
-	<CA+4VgcLDQrTcTFjr7MYGtMYpqhzm0gym=zzkt33JGRHFkCXGVg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733941716; c=relaxed/simple;
+	bh=R1w76iXvEh8RjSnDIzsROlPp+t/AX6qtZWx1Ex3EUlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gb6bwSjNl/zt+7aCEvhwS5ws4tLuG5FQLN+s8jlrDo1JtciDEvJ38wcxQx7zc6vjBbfNgRoc5CAY/md30kKOjUpshvSsSbhViH9MQ8oW5S+gBxcCyF/lH39jab4Cz7cM1IE7yCMBHHni7ZJ1fcBQ2kRekH+bLJlk7x0hOEpoGd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RkyQ1Hh3; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ee9b1a2116so799793a91.3;
+        Wed, 11 Dec 2024 10:28:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733941714; x=1734546514; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zhNDvbH/jJh7gKYq6lUH62SQyHaya50vnTSn0IAQDPM=;
+        b=RkyQ1Hh3Wev61ogen6AxpEaurqTqm/QHgjW0pSn8NtRCyfEK2iRgHBF2HlxRRqd5xV
+         kaeA09wUAfx4xhoZrKZTX3Gy+S7546SIu7QzCcf/gUrYDVbP/5TpxbiCt+1ukM4H4H6P
+         NScC19As4BFaCKhMPb2M7CUsK5E0Pka41yme4zNtNpsmBPgvJcdpSHjcbR1GAujsj09V
+         VqzirerV7DAACEEV1EUvxw9fbNQ7sslshGtWlgAGeAI4JRVCo+E6rSNJi7ZALIUgzrLo
+         XSZUCg66cvfEDB3ikLhqrI6SKo6WkW5/ApHU2tVp2xyOmWuZ72M6KC43eqrL3PkelCkY
+         TIrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733941714; x=1734546514;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zhNDvbH/jJh7gKYq6lUH62SQyHaya50vnTSn0IAQDPM=;
+        b=Kj82rziF013KHQv4M+27Fyx3u83LMey1pptETGAuAs/00r7DGJi9Nj8JDsDhQKlojh
+         eni56lazkw9JTkPfvzMuIochT1fFMRHQYIAD8NDpXkOvR7NNgtWDVUZ0602IoEPFoiR+
+         w2xQG59woMMuxfzpxbFX6iAAyDeHVe35RWSVKeqWggOlAGP7rP9tRFFsTFWX3IYH0qwG
+         zNk/ELEbnyCUjwIhwVGJsTlysO5lH2TkC/ziGkHRpaF4KihInfVxM0aK2uvPIJwI3KQH
+         ZkZisTp58zBuVNtW4PUvqSM3jdnaYDjjmLCA4K0SAuhK7uudXLzLvr8V0MItMq06XB6K
+         8lRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNDJGnI8/arKUW/wDxITBOKFOmNQC73BpIamwo6mwKCCP5wt/eMVXYn7jgOPdZw7GY+expCRY6VPD0tWXZAp4=@vger.kernel.org, AJvYcCWZc+sefcPkQ+tMqO6+YI66/UbqdGVhlmKETWx5+Cw5hNM2IE483MzfeOIHS0yfsJKwUYNUA2FWZqc94F0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Kkwsd0NkwXt4yU3cZPPMb43sf29gQgvkLQjE+eb+rSEerqVW
+	pt1kdQ1anZWCH8ORGOdMXPurodH1Wn6hGFHObgnt/K2kvU5+ZTU2aS9JHzor0mthwM7LULhi9VD
+	rqnSgVf9QnoP0Tpc3OHRli3Lwobk=
+X-Gm-Gg: ASbGncuiTOAkOUdY+Yepp7Qvzg7xqDSrZZ1eL/aAm2JBQpMkchu/jKW6YxDI7GAOe0y
+	eFv9uXVXt+IdolG9nKSjQPWh5BQEAU3W6Wg0=
+X-Google-Smtp-Source: AGHT+IHR9vYiMHmJxEf1G8508se5jLW5vkJSOH+3hAASak59a4r5x9U8VB6HtbLTpTTJDoCFJX+qXu2rWcygXHD8eQ8=
+X-Received: by 2002:a17:90b:1b0f:b0:2ea:5e0c:2844 with SMTP id
+ 98e67ed59e1d1-2f12802cf2emr2244193a91.5.1733941714559; Wed, 11 Dec 2024
+ 10:28:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241211181639.19848-1-eisantosh95@gmail.com>
+In-Reply-To: <20241211181639.19848-1-eisantosh95@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 11 Dec 2024 19:28:22 +0100
+Message-ID: <CANiq72kYsb0AwDC-AEKUGpFK4gzj1nd9jukrM+gesssjF6hveA@mail.gmail.com>
+Subject: Re: [PATCH] rust: Fix EXPORT_SYMBOL_RUST_GPL macro to follow guidelines
+To: eisantosh95@gmail.com
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Dec 2024 13:47:25 +0800
-Yu-Hsian Yang <j2anfernee@gmail.com> wrote:
+On Wed, Dec 11, 2024 at 7:16=E2=80=AFPM <eisantosh95@gmail.com> wrote:
+>
+> From: Santosh Mahto <eisantosh95@gmail.com>
+>
+> Warning found by checkpatch.pl script.
 
-> Dear Jonathan Cameron,
-> 
-> Sorry the above mail is not finished and just sent it.
-> I would explain why we can't use bulk read sequential bytes in our chips.
-Ah! I replied to previous. Let me see what you added.
+Thanks for the patch!
 
+Which warning? I guess you mean:
 
-> > > > +
-> > > > +     guard(mutex)(&chip->access_lock);
-> > > > +     err  = regmap_read(chip->regmap, REG_CHANNEL_ENABLE_1, &value);
-> > > > +     if (err < 0)
-> > > > +             return err;
-> > > > +     data[0] = (u8)value;
-> > > > +
-> > > > +     err  = regmap_read(chip->regmap, REG_CHANNEL_ENABLE_2, &value);
-> > > > +     if (err < 0)
-> > > > +             return err;  
-> > >
-> > > Here I think you can use a bulk read as the registers are next to each other.
-> > >  
-> >  
-> Generally, registers with 8 bits support Byte format, and registers
-> with more than 8 bits support Word format.
-> If transmission a Word command to a register that supports Byte
-> format, the second byte will get 0xFF.
-> Here, if we use regmap_bulk_read(), we would get first byte correct
-> and second byte is wrong 0xff.
-> 
-> I use i2ctransfer command to demo it.
-> root@evb-npcm845:~# i2ctransfer -f -y 5 w1@0x1d 0x13 r1
-> 0xff
-> root@evb-npcm845:~# i2ctransfer -f -y 5 w1@0x1d 0x14 r1
-> 0x0f
-> 
-> root@evb-npcm845:~# i2ctransfer -f -y 5 w1@0x1d 0x13 r2
-> 0xff 0xff
-> And if we read four bytes, you can see the first and third byte as we wanted.
-> root@evb-npcm845:~# i2ctransfer -f -y 5 w1@0x1d 0x13 r4
-> 0xff 0xff 0x0f 0xff
-> 
-> so we can't use bulk read directly since it would get a second byte 0xff.
-> The safe method is to  use read byte twice.
-That command does not do the same thing as regmap_bulk_read() will here.
-It will issue a series of byte reads.
+    WARNING: EXPORT_SYMBOL(foo); should immediately follow its function/var=
+iable
 
-Jonathan
+But this is not a normal use of `EXPORT_SYMBOL*()`, and anyway the
+patch would break the build since the name is not declared otherwise.
 
+Did you try to build the kernel after the patch with Rust enabled?
 
+Cheers,
+Miguel
 
