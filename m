@@ -1,114 +1,186 @@
-Return-Path: <linux-kernel+bounces-441764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7EF9ED3D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:41:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2B39ED3DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1807165625
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A8D1889B95
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617E4209F52;
-	Wed, 11 Dec 2024 17:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A2E1FF1C6;
+	Wed, 11 Dec 2024 17:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VT+sjqve"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jN0+EohD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F30207A1B;
-	Wed, 11 Dec 2024 17:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119091FF1B4;
+	Wed, 11 Dec 2024 17:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733938830; cv=none; b=C2YqWeUmqrV70YBFEzFS/lmniYxfzuT/tsCBqVqOZxLsQTx9iaDXt08z6SVLhiS670eDokQPsaTUAx5huaxllvPcmlGjrMhv4P1nIVwVPxB31VcidamYtInb68A2KsJVnd9C0WlKP0vy5EynMmXVAk8PUbvpkhgmM6MrD8JuNA0=
+	t=1733938840; cv=none; b=J+uhkj3GE8l45lFUtswbWJ+M+u/e/8uxSUXVwwdVRsbA3Z2iCaTP100zs0D70IgPWfsD0pp7iMKRDrbSDkNJyILv0oVutg8DJ4W/LSNVHypUgBrBdeRyXo/AXOKB3G29bu8DWrbyrPtx5jd+d5VDItemZHZohJWSiFm6khr+rEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733938830; c=relaxed/simple;
-	bh=2+F/X1bbGIHQ/mssm4ic+1dPk7ifq8G4W/p2zLLRRpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sn36fNkdfYrYf00u8uWPhy7j0NAiWUdhtOkTtXKYrkYnX1CjA1I4KwL1sJlCEQxo7Xc4EjOon8WZTTtZRGhido+DiA0b+D2/5HuEfGg17bMp34SLtTtvrmd98r+WT5s6bqJG41Wg1Pej7QZYBUFH2VHt8WV9Toq+pSGiV/LUM90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VT+sjqve; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 265AAC4CED4;
-	Wed, 11 Dec 2024 17:40:30 +0000 (UTC)
+	s=arc-20240116; t=1733938840; c=relaxed/simple;
+	bh=7yO+0JOWcw0rv4ZXgLl4IZjD04zJh6IohJpO9cxyyR4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s5Tvcc7nM3bcfkzXIp/QZgoAV8a/lEwvofWGlW0AE+XjJKrRYKXub5BZDLW1yXM2/QsSKJIv/ywl3Zd2s+ulQIHXL1hlStj0gdbbjbFYIwUvN+9iDlCq97GhNNAQVxOAOXlZZ3u5UiHacPO+f/Sg5g6WceyGrUKXUwRyXBaqXDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jN0+EohD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A0FC4CED2;
+	Wed, 11 Dec 2024 17:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733938830;
-	bh=2+F/X1bbGIHQ/mssm4ic+1dPk7ifq8G4W/p2zLLRRpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VT+sjqveVKdK/NfGq4n5cyb2pqWjeE9nbhy4BqvoVAvd3BJ+S+Y7ekVeIz++JHo3H
-	 9gk0J3lAkoB2xAlkUVp6X39V+/6170gRQNWynBhSltC/k0XBRY7X42pcIXnk4o5Gdr
-	 Kxx9swpTtNz1/oIHcsX7+9VbE84QO6yqt8a1z7i39VsQnYBnzjpuzXWIgjJE8aieDK
-	 z8mi+1JZanjpIeTKsyfU5JpKb/Ns0si0VbxtdBBZvcogq34A905nR77sH+/93gZNge
-	 p2+EmWU6FIwxnykdMOxvlacAUCpz+wfbv56G6Pw9jYsk41IYJBJG8o/nFg83zyfShK
-	 5qj57TQhY4ZSg==
-Date: Wed, 11 Dec 2024 09:40:29 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bingwu Zhang <xtex@envs.net>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bingwu Zhang <xtex@aosc.io>, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-	~xtex/staging@lists.sr.ht
-Subject: Re: [PATCH] Documentation: filesystems: fix two misspells
-Message-ID: <20241211174029.GC6698@frogsfrogsfrogs>
-References: <20241208035447.162465-2-xtex@envs.net>
+	s=k20201202; t=1733938839;
+	bh=7yO+0JOWcw0rv4ZXgLl4IZjD04zJh6IohJpO9cxyyR4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jN0+EohD6he6UDoJlTpTfDWT/wwFototv80uKDF1b5BMq6m036pgZ+IgmxeBqnKpF
+	 fc3+FO1HDyrs3NEoh9O+5mfLuqYQvVivDSWCu0hqokW/8phl6au4ToL9gSmoZT3nWn
+	 Afe201ZRmJJgjyYkXEhLLLc0+9WorLzkIA2kI5YAVKP4UxKZ7DTbGnEvLc0mH33swc
+	 P6Xx5kTW5Tq32xHNBbepXxXzeC3JefDmQ8y6lo5Zz2n3vncjHI9QLukrphrc/A+BZ7
+	 hkb39ihNED62ZcKleRTqf+JYp4I+lXeYfAmDfmOXuZ6wPOgNsg3t/veK4w16tqrmVy
+	 90Z8qKtxj5uzg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tLQhR-002lbb-7S;
+	Wed, 11 Dec 2024 17:40:37 +0000
+Date: Wed, 11 Dec 2024 17:40:36 +0000
+Message-ID: <86o71irucr.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>
+Cc: ryan.roberts@arm.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	corbet@lwn.net,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [RESEND RFC PATCH v1 1/5] arm64: Add TLB Conflict Abort Exception handler to KVM
+In-Reply-To: <20241211160218.41404-2-miko.lenczewski@arm.com>
+References: <20241211160218.41404-1-miko.lenczewski@arm.com>
+	<20241211160218.41404-2-miko.lenczewski@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208035447.162465-2-xtex@envs.net>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: miko.lenczewski@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sun, Dec 08, 2024 at 11:54:47AM +0800, Bingwu Zhang wrote:
-> From: Bingwu Zhang <xtex@aosc.io>
-> 
-> This fixes two small misspells in the filesystems documentation.
-> 
-> Signed-off-by: Bingwu Zhang <xtex@aosc.io>
+On Wed, 11 Dec 2024 16:01:37 +0000,
+Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
+>=20
+> Currently, KVM does not handle the case of a stage 2 TLB conflict abort
+> exception. The Arm ARM specifies that the worst-case handling of such an
+> exception requires a `tlbi vmalls12e1`.
 
-Yep, typoes happun, thanks for the patch.
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Not quite. It says (I_JCCRT):
 
---D
+<quote>
+* For the EL1&0 translation regime, when stage 2 translations are in
+  use, either VMALLS12E1 or ALLE1.
+</quote>
 
+> Perform such an invalidation when this exception is encountered.
+
+What you fail to describe is *why* this is needed. You know it, I know
+it, but not everybody does. A reference to the ARM ARM would
+definitely be helpful.
+
+>=20
+> Signed-off-by: Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com>
 > ---
-> I found these typos when learning about OverlayFS recently.
-> ---
->  Documentation/filesystems/iomap/operations.rst | 2 +-
->  Documentation/filesystems/overlayfs.rst        | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-> index ef082e5a4e0c..2c7f5df9d8b0 100644
-> --- a/Documentation/filesystems/iomap/operations.rst
-> +++ b/Documentation/filesystems/iomap/operations.rst
-> @@ -104,7 +104,7 @@ iomap calls these functions:
->  
->      For the pagecache, races can happen if writeback doesn't take
->      ``i_rwsem`` or ``invalidate_lock`` and updates mapping information.
-> -    Races can also happen if the filesytem allows concurrent writes.
-> +    Races can also happen if the filesystem allows concurrent writes.
->      For such files, the mapping *must* be revalidated after the folio
->      lock has been taken so that iomap can manage the folio correctly.
->  
-> diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-> index 4c8387e1c880..d2a277e3976e 100644
-> --- a/Documentation/filesystems/overlayfs.rst
-> +++ b/Documentation/filesystems/overlayfs.rst
-> @@ -156,7 +156,7 @@ A directory is made opaque by setting the xattr "trusted.overlay.opaque"
->  to "y".  Where the upper filesystem contains an opaque directory, any
->  directory in the lower filesystem with the same name is ignored.
->  
-> -An opaque directory should not conntain any whiteouts, because they do not
-> +An opaque directory should not contain any whiteouts, because they do not
->  serve any purpose.  A merge directory containing regular files with the xattr
->  "trusted.overlay.whiteout", should be additionally marked by setting the xattr
->  "trusted.overlay.opaque" to "x" on the merge directory itself.
-> 
-> base-commit: 7503345ac5f5e82fd9a36d6e6b447c016376403a
-> -- 
-> 2.47.1
-> 
+>  arch/arm64/include/asm/esr.h | 8 ++++++++
+>  arch/arm64/kvm/mmu.c         | 6 ++++++
+>  2 files changed, 14 insertions(+)
+>=20
+> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+> index d1b1a33f9a8b..8a66f81ca291 100644
+> --- a/arch/arm64/include/asm/esr.h
+> +++ b/arch/arm64/include/asm/esr.h
+> @@ -121,6 +121,7 @@
+>  #define ESR_ELx_FSC_SEA_TTW(n)	(0x14 + (n))
+>  #define ESR_ELx_FSC_SECC	(0x18)
+>  #define ESR_ELx_FSC_SECC_TTW(n)	(0x1c + (n))
+> +#define ESR_ELx_FSC_TLBABT	(0x30)
+> =20
+>  /* Status codes for individual page table levels */
+>  #define ESR_ELx_FSC_ACCESS_L(n)	(ESR_ELx_FSC_ACCESS + (n))
+> @@ -464,6 +465,13 @@ static inline bool esr_fsc_is_access_flag_fault(unsi=
+gned long esr)
+>  	       (esr =3D=3D ESR_ELx_FSC_ACCESS_L(0));
+>  }
+> =20
+> +static inline bool esr_fsc_is_tlb_conflict_abort(unsigned long esr)
+> +{
+> +	esr =3D esr & ESR_ELx_FSC;
+> +
+> +	return esr =3D=3D ESR_ELx_FSC_TLBABT;
+> +}
+> +
+>  /* Indicate whether ESR.EC=3D=3D0x1A is for an ERETAx instruction */
+>  static inline bool esr_iss_is_eretax(unsigned long esr)
+>  {
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index c9d46ad57e52..c8c6f5a97a1b 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1756,6 +1756,12 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+>  	ipa =3D fault_ipa =3D kvm_vcpu_get_fault_ipa(vcpu);
+>  	is_iabt =3D kvm_vcpu_trap_is_iabt(vcpu);
+> =20
+> +	if (esr_fsc_is_tlb_conflict_abort(esr)) {
+> +		// does a `tlbi vmalls12e1is`
+
+nit: this isn't a very useful comment.
+
+> +		__kvm_tlb_flush_vmid(&vcpu->kvm->arch.mmu);
+> +		return 1;
+> +	}
+
+That's not enough, unfortunately. A nested VM has *many* VMIDs (the
+flattening of all translation contexts that the guest uses).
+
+So you can either iterate over all the valid VMIDs owned by this
+guest, or more simply issue a TLBI ALLE1, which will do the trick in a
+much more efficient way.
+
+The other thing is that you are using an IS invalidation, which is
+farther reaching than necessary. Why would you invalidate the TLBs for
+CPUs that are only innocent bystanders? A non-shareable invalidation
+seems preferable to me.
+
+> +
+>  	if (esr_fsc_is_translation_fault(esr)) {
+>  		/* Beyond sanitised PARange (which is the IPA limit) */
+>  		if (fault_ipa >=3D BIT_ULL(get_kvm_ipa_limit())) {
+
+But it also begs the question: why only KVM, and not the host? This
+handler will only take effect for a TLB Conflict abort delivered from
+an EL1 guest to EL2.
+
+However, it doesn't seem to me that the host is equipped to deal with
+this sort of exception for itself. Shouldn't you start with that?
+
+Thanks,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
