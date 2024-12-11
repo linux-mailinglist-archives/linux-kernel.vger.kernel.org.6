@@ -1,76 +1,57 @@
-Return-Path: <linux-kernel+bounces-441568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046EB9ED03E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:47:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21D29ED03A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:46:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B80188CEBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892DD288A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB221D6DBB;
-	Wed, 11 Dec 2024 15:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D77D1DA62E;
+	Wed, 11 Dec 2024 15:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbLbG1Cy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k30l5vjG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9461D6DBE;
-	Wed, 11 Dec 2024 15:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46381D9A6F;
+	Wed, 11 Dec 2024 15:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733931911; cv=none; b=AaIoygG8jecAcby8CV/HaQVgttyjIKvBYSaxH1L6E14CnJLQfchIPIKXritLygaXoFd6XCb1wgdirFNRwaLTUqe4JBQ4P06RMWjdxODqD0jqStMkdEJJ8Qxt1mLDQ1yV0qGI6KABYV5ehYOEYshQJhYe3b+HsRSqkEGSEbbJFyE=
+	t=1733931944; cv=none; b=b9IyjJBRfVmWEQGT3bbD+gSu2SNLva/cjV4MnST8+pV20Xs7WjVZDi7XYsn5aZfmYieCqjD7yXz5IMURvSmQkym2tZ6nxUo6Db6jRS9ZvNMDzswDqFMD8Emg73q1wHZHokDZpzzfYuAPq2nhODFEFUs61Moe1zbiYaXRGpTMMH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733931911; c=relaxed/simple;
-	bh=MBbRNgdop2g+7oHTiSpbX1PwiZ7XpUad/UNENbU5KRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfNcAJ11uIMnMODKQWAdESh9cL5/xwRslDaFxy//U6rfbboEG9o4V7FA5DftH8kdHEcHWOwguIZc1/j2NLLppKn3caxtJUS3GkMlnmFAYIBmr1PYrkpscCano+0s3XSzAtgteFZ8rxasqeLhceYqO2oXy/XJh79ZBZdEWVdajMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbLbG1Cy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84E3BC4CED2;
-	Wed, 11 Dec 2024 15:45:10 +0000 (UTC)
+	s=arc-20240116; t=1733931944; c=relaxed/simple;
+	bh=PwwMZGkK4SSHChHwBFdQwXcUukP/uWJujvZw7L2Qc0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BcZPMFC3kZsKng666tTXeEI/178sZk3wfbfWzWLDMRSMlv9km7roDFJShk1bWqGPuCl/a6ZP6s+sgEhFSDScRvOeTcq4lFTGcVkJ5QZDgdMYE9muVVoDzt6eC51s3RAvf3r/U3HGWfoell2F0G5IyKj45qtrJRQbpCeQsBZPS74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k30l5vjG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C48DC4CED7;
+	Wed, 11 Dec 2024 15:45:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733931910;
-	bh=MBbRNgdop2g+7oHTiSpbX1PwiZ7XpUad/UNENbU5KRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qbLbG1CyrO+FxeF77MAmWKG+jumCQK39mbiCtU98j4Xp5Yix84b1ubTCJFT1uxgkD
-	 XMYWYtm0LdDwhVGDBSQRwBQZHiI45PBJF74eQEmFaxxD4p+/omD71kMJQGS1TqUSP9
-	 BYx+yRr0O6OaHkIosWeNaGcrb33ywbtGhfz+8W73phHRWKx0fBp+z7+O6KqogteCkD
-	 weAzsmoJqcerU1E7qKeRMA2msE6k6U47NLIKCoFzFbNj3tE3ndBe/hssCA83fFMKRF
-	 DjH+sevrK8eKUuQv0LMddIfBtd27bESZGDpwX8wjaqBzDw9nRtcSMiZywMh//EsBvT
-	 gjopTpCU8nSBw==
-Date: Wed, 11 Dec 2024 09:45:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 04/10] dt-bindings: display: renesas,du: Add r8a779h0
-Message-ID: <20241211154508.GA3075383-robh@kernel.org>
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-4-d74c2166fa15@ideasonboard.com>
+	s=k20201202; t=1733931944;
+	bh=PwwMZGkK4SSHChHwBFdQwXcUukP/uWJujvZw7L2Qc0Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k30l5vjGrlLUjrAU92+0WXq+MxZZllGYPpBfk+uaO++Gc+x0N6claUhYx1E+JYMLI
+	 XPk0o6RS+hOs48cfZnGKId3HMJPZ9YpeomGuQLZEIaDvyxdMVr8CO0kHZUW+MDtg+p
+	 Z6vyYNRxmL+Xa6GR1GVdGASvrKti+tBrNIqX55bneN+4Y+mnII6Ojw5QTIDZnPBVV0
+	 +e6DXiyvP/vkerTJsdX7xpCjkSY1jQWOqG50jmSm/jhIesoGcOAe1uj0hIFM4n8HWC
+	 Yk7/eFb8ELuCML3M5DF5hWKEEw6pB0IadQaHZ9e6ja+ztYcqaxLCYIy1bKJYB+cBYa
+	 meFWDvGDW12sA==
+Date: Wed, 11 Dec 2024 12:45:41 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1 next] tools build: Remove the libunwind feature tests
+ from the ones detected when test-all.o builds
+Message-ID: <Z1mzpfAUi8zeiFOp@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,111 +60,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206-rcar-gh-dsi-v3-4-d74c2166fa15@ideasonboard.com>
 
-On Fri, Dec 06, 2024 at 11:32:37AM +0200, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> 
-> Extend the Renesas DU display bindings to support the r8a779h0 V4M.
-> 
-> Note that we remove the requirement for two ports from the global part
-> of the bindings, as each conditional part defines the number of required
-> ports already. This came up with r8a779h0 as it's the first one that has
-> only one port.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  .../devicetree/bindings/display/renesas,du.yaml    | 52 ++++++++++++++++++++--
->  1 file changed, 48 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> index c5b9e6812bce..7dec47aea052 100644
-> --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> @@ -41,6 +41,7 @@ properties:
->        - renesas,du-r8a77995 # for R-Car D3 compatible DU
->        - renesas,du-r8a779a0 # for R-Car V3U compatible DU
->        - renesas,du-r8a779g0 # for R-Car V4H compatible DU
-> +      - renesas,du-r8a779h0 # for R-Car V4M compatible DU
->  
->    reg:
->      maxItems: 1
-> @@ -69,10 +70,6 @@ properties:
->          $ref: /schemas/graph.yaml#/properties/port
->          unevaluatedProperties: false
->  
-> -    required:
-> -      - port@0
-> -      - port@1
-> -
->      unevaluatedProperties: false
->  
->    renesas,cmms:
-> @@ -807,6 +804,53 @@ allOf:
->          - reset-names
->          - renesas,vsps
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a779h0
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Functional clock
-> +
-> +        clock-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        interrupts:
-> +          maxItems: 1
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DSI 0
-> +            port@1: false
-> +            port@2: false
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +
-> +        renesas,vsps:
-> +          minItems: 1
+We have a tools/build/feature/test-all.c that has the most common set of
+features that perf uses and are expected to have its development files
+available when building perf.
 
-maxItems? The min is already 1.
+When we made libwunwind opt-in we forgot to remove them from the list of
+features that are assumed to be available when test-all.c builds, remove
+them.
 
-Note maxItems is missing in all the other cases too. Since the top-level 
-definition has no constraints, all the constraints under if/then schemas 
-need both minItems and maxItems. (Unless there's no max).
+Before this patch:
 
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +        - renesas,vsps
-> +
->  additionalProperties: false
->  
->  examples:
-> 
-> -- 
-> 2.43.0
-> 
+  $ rm -rf /tmp/b ; mkdir /tmp/b ; make -C tools/perf O=/tmp/b feature-dump ; grep feature-libunwind-aarch64= /tmp/b/FEATURE-DUMP
+  feature-libunwind-aarch64=1
+  $
+
+Even tho this not being test built and those header files being
+available:
+
+  $ head -5 tools/build/feature/test-libunwind-aarch64.c
+  // SPDX-License-Identifier: GPL-2.0
+  #include <libunwind-aarch64.h>
+  #include <stdlib.h>
+
+  extern int UNW_OBJ(dwarf_search_unwind_table) (unw_addr_space_t as,
+  $
+
+After this patch:
+
+  $ grep feature-libunwind- /tmp/b/FEATURE-DUMP
+  $
+
+Now an audit on what is being enabled when test-all.c builds will be
+performed.
+
+Fixes: 176c9d1e6a06f2fa ("tools features: Don't check for libunwind devel files by default")
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/build/Makefile.feature | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index b2884bc23775e986..9cde51104c2d70ec 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -90,13 +90,6 @@ FEATURE_TESTS_EXTRA :=                  \
+          libbfd-liberty                 \
+          libbfd-liberty-z               \
+          libopencsd                     \
+-         libunwind-x86                  \
+-         libunwind-x86_64               \
+-         libunwind-arm                  \
+-         libunwind-aarch64              \
+-         libunwind-debug-frame          \
+-         libunwind-debug-frame-arm      \
+-         libunwind-debug-frame-aarch64  \
+          cxx                            \
+          llvm                           \
+          clang                          \
+-- 
+2.47.0
+
 
