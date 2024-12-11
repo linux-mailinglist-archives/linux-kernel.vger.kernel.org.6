@@ -1,161 +1,111 @@
-Return-Path: <linux-kernel+bounces-441035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC739EC876
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:09:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E339EC87A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:09:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D1E282B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA2C287276
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157B02210D9;
-	Wed, 11 Dec 2024 09:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B042210D2;
+	Wed, 11 Dec 2024 09:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fdy1xN+b"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="O6BQweN1"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA3F2210C0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD232210DF;
+	Wed, 11 Dec 2024 09:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733908131; cv=none; b=o5tz04IuuSpjbYId/4PjITNHMQyiO027DLYNg0pnhNvAdp5ybKXCNqflXgavJHXnfqIMYYVeT3EUNWFPJlg0Ucexdb6LNR7deTCOuR2aLsmsuVNFAQx5eg4FvbAiKCtuJlCm3gFp1+QR5auCgnaeksuR3yLdyee4hpVbolTyd44=
+	t=1733908182; cv=none; b=pESoQ1NGvTS36dnEKA2sTu+U15A4VabxsKFqrhygU4BfUmBKpAgIPw6Ybh3Zcu8E6o9O191It645X9NI1NkS/Zm9q7eJnlxllXry9roWuKQGqZ5bRcWnyc1r7xkkW4LfibyNEJBYrCgcDY6Fg1KozxGdkECQJJnzn1rHxow5JrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733908131; c=relaxed/simple;
-	bh=/LIgJnzCbqzJuTqbvSMCFhlSCDOqqbcZpQ7MPJ4mhdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDbwv1taqKg2zYBhxwab1zL5KCpQ9qXyS1WWFLEQaELpO1SU0/xvBkEJn2LVRzUah3YZrCDpeEyMo3CbYgzKD4NXh+IyB9vPfKIVHITVQkCOvYnIyF94W4NOnasOJaINeCqfp1lUkEjGpLZqHxXr4gYQcj7JgPiiip1Up4QkNlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fdy1xN+b; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4361f664af5so2571225e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 01:08:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733908128; x=1734512928; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vEtBjFWv0oJ9eIaHpJrX0BFB+4qp8phO4ofGzRE0Nw=;
-        b=fdy1xN+bGV4jtA9pu0Ud3SNvpXAzDudKrRRYlqzfLCVFXhcrzBK+As9/u9gexAMjpS
-         JtEXtsvWjZPfWzhdjLELVisLIxQnQUjU5xQTQUlrPWjefpaJfwrdDVrlGiPf74pgBOEW
-         p5lhNPngzsD5BY4m+1uFTTPfhsx3+VQB3wWPJlMrNaHnWxytvnkkWUHCvvlvUnUOmOly
-         ImfcNl5ee98uc1WMghMQeMr4Ig8tYNFtkoNErADC7+cOVmVPRm3PXBw22jJv0dCtoERu
-         cEHBdVVULbh7WfEwmR0aH3Ed6rZ7703mqDz82AIHtBd/zbO/z1xpr6zr35gBPziRWcnS
-         pcew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733908128; x=1734512928;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9vEtBjFWv0oJ9eIaHpJrX0BFB+4qp8phO4ofGzRE0Nw=;
-        b=RvG4uAy1N3sE+4tkap2g8pM7Xup6+ow0O0MxhYT3uHN3oWPyLF13t78V8GnFwaYOPO
-         aVgfSfO2X58etIeEzhdpMIOlrlYNlvAOBJ+kH0IiYFVUCO+igIehe/QdfuSBeARVgygZ
-         SQwhYb25yye88D2j6W+Bs8UBSjnwBgSxlciCaFlSMvYKFqaldTMVVxonk390YeFOZUfc
-         SpSNM7lt9+CQo1J85GHjpEuAvVzttQQScPf258tUz+Scbj2CikphNRyI4ULaxQf+nLQ2
-         JCelzoJpHU4ZpNUx2+99wWMB2AcnmT0gErlX/QS3LCwFA0vYzmRk5bwH7MK0lmhYBrZY
-         LOAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3uvsvprCZrI7o+3jRwHvfu5xfIGuJS1I1yIjOuX5qbdyGwczE9pI/s3+/6B+tO4T11IveFsQf9InsLrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg5taq00USv/oQije8TtZfDP0UOSkEN6rGIyjq5Xe7FPcxP0Ie
-	zz9EMk39negMBt+rD3IMi9yanc1yBZlKa7fkOTCFL/nvFWxH3n0n9kCYaW7iN8Q=
-X-Gm-Gg: ASbGncvrto1R6W4tPmUp7XgBYxhg4oaXOsP6E2kjoSQMQcPKndIqWnJq07kFGgv6aa7
-	KSJYDfbDQy5hT4LjgIa88SIHdgB2oaRvRcsJJt3K81k8ZnPZSINXQjh/nX7I1gB2Y3ahh4wyxgZ
-	NDBq2IcG/wtroYOGbDlTS1j99NIjQb3sn2DUJL1L06bEYiN1LnPqOc+Dl69JVbkxtkfUKFWEA2D
-	3JkSZb8eZx2dV4OyjWZlAiN0x4tJbOXczEjnwgPfbrazTbD2qci
-X-Google-Smtp-Source: AGHT+IGD0J/JRFizsjyOq9cq12J2ujkcAmyNKzRhsrMcAI97nrwbSWWcCwaN8qi6JkWUTmtl0C7NHQ==
-X-Received: by 2002:a5d:64cf:0:b0:385:ec8d:8ca9 with SMTP id ffacd0b85a97d-3864cec5b76mr1446900f8f.42.1733908127884;
-        Wed, 11 Dec 2024 01:08:47 -0800 (PST)
-Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4815sm807610f8f.26.2024.12.11.01.08.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 01:08:47 -0800 (PST)
-Date: Wed, 11 Dec 2024 11:08:45 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH RFC 2/4] drm/nouveau/dp: Use the generic helper to
- control LTTPR transparent mode
-Message-ID: <Z1lWnY+TxSptkBiY@linaro.org>
-References: <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-0-cafbb9855f40@linaro.org>
- <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-2-cafbb9855f40@linaro.org>
- <hh26gzyjhygphlrmhh2zkskoz7vezkgdepbx7fnzgfch75simf@hmr5ezp4khwi>
+	s=arc-20240116; t=1733908182; c=relaxed/simple;
+	bh=GrcM3ijr1YJaugRX/YZaBRAi26Voavni1D6ZneGWyD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g3xUQNwbAeuPElOjb9Ge1bnAGNl0wiSLPsyIrMJYmr/H9DrpzloHYKVfqOiK9trs8lPTYmRd9CwAWZDibS1yjmS2At3vhO54RYDogEomfGzw4O98ceqDnF5nSoWJx860M9SSD+9CMJE9gchUOtv5CbCINnZwDV6kkLyARrWahKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=O6BQweN1; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 6278CA0788;
+	Wed, 11 Dec 2024 10:09:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=sj38z4dgdwT7fdiU77z2
+	qi8dSAhvaQf6WJZny2MW7JQ=; b=O6BQweN1RzG6r8MkluDgmqYa/yhXD/6Dh74T
+	/or7DLn3zkX4RzppNexBRAkqQQ3P0Fzew/odqHsGOgtiF3yX+FMIXASCG8bt1oKg
+	zqXs9dSBABLtgLDtbla2AAxF1Jp15ZYhBFY2r7pUZpaIvmVoKKxUWH0g98bY/Pyr
+	BzOobus+ct3KhP5dlhzBKxGrxWaxFALBq0WU++S0X8qWntCmn90IaFEqhcU7eUNe
+	1AV8b3+lOUvsn5JLqgtt22YrTGlq5KaNe2HI0hjkBh/wgcZ5Yoc2Zy7YUl7QQi0+
+	Xr4ERADZeou6XlCFy0a3+8marZOL0UwXa0UIWas3J5OWmzFYEKMsQzxEff+hQANs
+	WviVzEyAfhmihX9G7Y4f1UJUvUgsrXeHTfZdQT6M9uMKiEf5qDdpyDHoul3k8MpP
+	GoPHrblNQtI3NTMvWubEex0iExmTu4x6iijCfN3ENs+nR07Qa2I6QILw4kMCPkqY
+	ldPGpfPAxFvSu+GHEHscB2nyRwpNEmh7KcpUVgUqbRAjOmWa1Bhyrr62f/2HzeLl
+	IV9FnHNqVMOe3RshrpyEatU3FAicyDfE198N8lOGw9FmTKOam8fNuYyg5TsKQXHt
+	TvJuX/R5VPjsQYL7ougaf4vBDH5/sUDbpFGXwii3o+v+GcCEV+2J6C/kBthioAKI
+	Yb9tbRc=
+Message-ID: <2e61add7-8e72-4ef4-b696-8bb5c0e83d01@prolan.hu>
+Date: Wed, 11 Dec 2024 10:09:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <hh26gzyjhygphlrmhh2zkskoz7vezkgdepbx7fnzgfch75simf@hmr5ezp4khwi>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Signed-off-by missing for commit in the dmaengine
+ tree
+To: Vinod Koul <vkoul@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Linux Next
+ Mailing List" <linux-next@vger.kernel.org>
+References: <20241209075036.055e0729@canb.auug.org.au>
+ <Z1hzMRuORVOQvKLW@vaman>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <Z1hzMRuORVOQvKLW@vaman>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855627263
 
-On 24-10-31 18:44:55, Dmitry Baryshkov wrote:
-> On Thu, Oct 31, 2024 at 05:12:46PM +0200, Abel Vesa wrote:
-> > LTTPRs operating modes are defined by the DisplayPort standard and the
-> > generic framework now provides a helper to switch between them.
-> > So use the drm generic helper instead as it makes the code a bit cleaner.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >  drivers/gpu/drm/nouveau/nouveau_dp.c | 9 +++------
-> >  1 file changed, 3 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_dp.c b/drivers/gpu/drm/nouveau/nouveau_dp.c
-> > index bcda0105160f1450df855281e0d932606a5095dd..80264e6186246903fa037861fe37493646de0c6e 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_dp.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_dp.c
-> > @@ -80,15 +80,12 @@ nouveau_dp_probe_dpcd(struct nouveau_connector *nv_connector,
-> >  		int nr = drm_dp_lttpr_count(outp->dp.lttpr.caps);
-> >  
-> >  		if (nr) {
-> > -			drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE,
-> > -						DP_PHY_REPEATER_MODE_TRANSPARENT);
-> > +			drm_dp_lttpr_set_transparent_mode(aux, true);
-> >  
-> >  			if (nr > 0) {
-> > -				ret = drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE,
-> > -							      DP_PHY_REPEATER_MODE_NON_TRANSPARENT);
-> > +				ret = drm_dp_lttpr_set_transparent_mode(aux, false);
-> >  				if (ret != 1) {
-> > -					drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE,
-> > -								DP_PHY_REPEATER_MODE_TRANSPARENT);
-> > +					drm_dp_lttpr_set_transparent_mode(aux, true);
-> >  				} else {
-> >  					outp->dp.lttpr.nr = nr;
-> >  				}
-> 
-> Could you please extract this true-false-true dance to a new helper too?
-> This way Intel driver can use the simple helper, the rest of the drivers
-> can benefit having the common code.
+Hi,
 
-Will be part of the new version.
+On 2024. 12. 10. 17:58, Vinod Koul wrote:
+> On 09-12-24, 07:50, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Commit
+>>
+>>    1ad2ebf3be83 ("dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA")
+>>
+>> is missing a Signed-off-by from its author.
+>>
+>> Scripting confused by the comma in the origin SoB line?
+> 
+> Yes I guess so, checked again yes b4 seems to eat it up
+> 
+>>
+>> Also, please keep all the commit message tags together at the end of
+>> the commit message.
+> 
+> Again scripting is going bonkers here
+> 
+> I have fixed it up now
+> 
 
-> 
-> > 
-> > -- 
-> > 2.34.1
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Still broken in these:
+
+commit eeca1b601381 ("dma-engine: sun4i: Add a quirk to support 
+different chips")
+commit 1f738d0c2f67 ("dma-engine: sun4i: Add has_reset option to quirk")
+
+Bence
+
 
