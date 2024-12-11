@@ -1,116 +1,119 @@
-Return-Path: <linux-kernel+bounces-442184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C0D9ED91E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:56:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65ED9ED921
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:57:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA1AA164819
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:55:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8107C282709
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD5B1A2872;
-	Wed, 11 Dec 2024 21:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73ACE1EC4D2;
+	Wed, 11 Dec 2024 21:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y0972Ano"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fu4f4Uel"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDE41D63CA
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAA21DBB13
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733954155; cv=none; b=u8MaLeHQ14uGUca/mCYF0+S8tAeFHJn+90NwkNiTa/tpOPa+qXApNGIPbCQz9uxz47NmTLK17H/geEOUEGYzvTCJ069ycTu11j7rTrbAXsc6Yb/L70yJ0VYSDfw6ni6RJBKC8dBJDzm1HH9p0fpph9XrpXMb6qOIf7b9IJh7YFw=
+	t=1733954227; cv=none; b=rqrEhj3KmOCMWbRvZ7sl8s1d5wXfedb/RxSqLK/BdJ6M7cLdrEUVXyvTbXxI8DVsEuT272UOvmcA5DNXGwHKWsTnGQ/9vqcoA7v1/CBOM0vVgtyWZaOWvM1I0jWKRuSX4KejXDjzEH5bP7lNn32JtYpt05TQEoWjK/QUA4hSc8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733954155; c=relaxed/simple;
-	bh=JjNDGyhZRcofBHcBLf7je5rl2TBTgB1GQVEGlYse7mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ODIL3epRQkf85rGQtLFeOtZM8+VW6aZ4T7/Dy+e4CnaAkBUVYTb67M2urHxw7hcLSoxeOzpNl3hAseOY1QyzGCuhyfIrNF6WuzxnLJ2W+Gof7zIb28pXYz2O0251eSQTgZrTzW/+HSxKybUabH240y5CN3yaekfdqzakwmu72Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y0972Ano; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3862a921123so4317790f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:55:53 -0800 (PST)
+	s=arc-20240116; t=1733954227; c=relaxed/simple;
+	bh=XhFHkK4EH7ripxut0rTEo60ntAYNCbRPNz8/oZfn5ZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FkK2vLWrI8E+ZjnNvINLXCjY1ApcYCg6Z8CHzBGN+FNr8HEPV+w3iAzDjnli39phEZ5yVDGjxXmqHP8+1/tOG7sKW7ZK0VYQ4xfwiyWJAtsliaH5HOu/UOnmdI9LO93Z9OVt4xQ5CcjQT0Q57HMnQ9oBDlcfP6ZxFik7poivyFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fu4f4Uel; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d3e9a88793so7190238a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:57:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733954152; x=1734558952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fEL/ngtdEw8neicpLCHejnO5DowOyBjzk0ap1ZcfbTY=;
-        b=y0972Anov0HOMt71WrAg4DFLKd8ucDNo8Fiu8pwjrX44xf8BCxJeFmbzU7BMy+Pvjl
-         Y/c85nYA/K4YIZZwyD3ieyS1uuXb8Ux3oVgo5HyS/KHvll/RpkPbalOzCA3jEV5pB59p
-         jDj0J/MkOjyUns87p9ca2tdmUCgH9zJ90rjzjXYzaiujU416PCCZAxWWufaveRLk6RAW
-         Xi/yN0Manfv3+wH5dVqgIOqD575CLYoKSdkOl+haC5zy8MTQr05i30R1uL8MnYsH2eI1
-         iGaev0x/emdQgEdF7cddeLewgoWaApTHG4B+QoSLdyvqD8TOarmxl1Ji6q7JOSlIckbq
-         BRuw==
+        d=linux-foundation.org; s=google; t=1733954224; x=1734559024; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKxs298nGNGkrDha0ysKIASdV/ZG9FoC6k4s5+vTLeo=;
+        b=fu4f4Uel8Kwtr1L2iiYjVTFXMn9qe863xQt+/XJoManO9kz2cExh2Z22oNxwpDI7uG
+         BnVbdbbi3kROANZc7l+qY80RmbE+4exiV5rEfaYDgQcaPYbPZJT8j/6LsGo5MZymk4YT
+         44lFSUHDZy2hREsF2Xc5/auYsnrCAsP38cCQ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733954152; x=1734558952;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fEL/ngtdEw8neicpLCHejnO5DowOyBjzk0ap1ZcfbTY=;
-        b=HP1qKUdK5MVBVanRDsZcfh6c14FPTBSZZT8RZjgalF13DJ4ThXxjK/UOyC9BNshvEu
-         HluxO4JBkU4ay2+RpgDETciTWnHnikrGrxmHMyXCE+72T9vTEb+UEY68U9oqR8vJY0gH
-         E1po7/BsKYWCSYj2IrnF0iij8IqXiRtEymCJ8UCA/qmLnmdLRQ2icx5IiERFbpRsa4xz
-         LZsZYN2SOaMRMSs+ZdQV0Wl29QL5yEmMcf6Da1gfLjKvHQMtbUwSxMyyTadJV9pt5P0r
-         +o0N9SZHGESpmec74dK+nzGuYoLNn4k3uNif96zzdg4LWimjmifiKJdWf4nrXJW7OKvq
-         6DVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYobRlrNyBGUAakzngPVyN7hGerKHFkSQ+p0NPBnYJ5JvQPos2YZ7nPx6SpyJ7pptdwdCjwm4ahDAa7GI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaEmt1LxC3k4ZnWziI7sTQgzSxIXtkVJ74Hqi086NFxKqV+Ejd
-	k/PzYPIP0jH3VbgHveT1bUHt3/owD2UHrgzmLfGbHjqM4hYc6/4I+jzQtwQS8hs=
-X-Gm-Gg: ASbGnctW4qiQpQuhAkWYA3yGGICKAV+fI+eQb/Y1yfaJ1UOp92M9WAkm9ZYPhEPzvjI
-	6V8tnFQHrfDvZk5iqakPTZ1XUCHmu1NmoucbJsUTYBsmKjYseV1ekkmzwCJSyXRFg8fop9LUQyJ
-	jGnlPvA+GqJaLpnUdh4jZsS+5D/AWHHGSijf58SkywMGDDrLYpEAhUqUfOPUt/EjCN/EJJ1ygn0
-	kE38abYOIf4AJV0PM4KrWg8ykJ4Ue7ZSIbb5cRvHNmokAMi2R+TVh6OIrKRvhQx6lU=
-X-Google-Smtp-Source: AGHT+IGuZnMKThgf4eD8YAuWutLkKfQCQWNUHlMDV+U1hMo6NUpM8D0pvxDc/5kFCuDbLvPC0Vi7Uw==
-X-Received: by 2002:a05:6000:4911:b0:385:df2c:91b5 with SMTP id ffacd0b85a97d-38787524a7amr999734f8f.0.1733954152175;
-        Wed, 11 Dec 2024 13:55:52 -0800 (PST)
-Received: from [192.168.0.27] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a5005sm2192808f8f.41.2024.12.11.13.55.49
+        d=1e100.net; s=20230601; t=1733954224; x=1734559024;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KKxs298nGNGkrDha0ysKIASdV/ZG9FoC6k4s5+vTLeo=;
+        b=FLC7vXyrlrDCtwhAJknZYBerLGDYBTEdw4yw+iWh8prOV5s12VY7ymE58bbaaAMF5O
+         rD6S84Q7D6xwhGAGWYdp2W+DDfiARZAm3zKQooEQq2xXJA2AI7VlQXGVlZ8rf3d3T36i
+         uQ4N/CDvC0RiHhNgVBhQZMwkKjeoKPu5rSZSkxEn7u1opLIWutymixrcLAMvmLvAAAPP
+         jpAAMz4zf+OvKL7T9bxIvayP2o7T6GvKbLhWKf5ugTWWzp14vQQom/0AiMXSl16lNbqm
+         TevKKMfwNx1L43Oo6CppxG3/zRcapCvaZ6WhdpppqOnGRZJbkqyW94qSHqsBoTQSmW7E
+         LRXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgAeLvnLWgRnz6je3m/c6bJH/GZeB1xbD4aLTRt/oD2zJnGerLDL3fUYzfse7FvsiOQTug+boadhuqxrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTTj4Qa9BzgE9NlbIJlH7AFWVf7HoNfirIBzAN2Iw/fDDPBbF+
+	VQGN5EBLC4Q7Vif7RC/S6vTdR321vNGzsLBb27rBhG6YQ2aNl4FOIMtnG1/UqNuid0QbzIQLsrU
+	aAsY=
+X-Gm-Gg: ASbGncsRUzmY5cjW8xOb3rhYWUlkYbRE8PfUtxcjqTKh9GmIKYJb1p7ipziGQbwnjY/
+	6w4ub3j7eCx+RGhCyIX0e6Dp1qOSJOHJGfIyDqLeowqKnfCKga4rTXZzcaWOq+4SUEAU0iitLwj
+	U5SK94ib23nmlspIvBF/jPCebIZnTaCWdkIo62rUa7agbLooAb6B0loIe1vd9Qj6KVHO3IIBuha
+	ZV/AN8D3g1QjoqsfVY3rS0u0LZUvMwKM+kBE5BrYbh1lxjW4YvnqhILF9bI3pPKSwdZKQOs6OPM
+	e1xRntajzc8JuYFUCichWvrWD1gQ
+X-Google-Smtp-Source: AGHT+IHeL0zkRALhPpGfmnAPWSLHLPq2+wpZxM6IMMzIXgTbNcx4NpqCCvqJ02/uCP2IOXdg+oKoPQ==
+X-Received: by 2002:a17:906:3112:b0:aa6:8bb4:502f with SMTP id a640c23a62f3a-aa6b13cad1amr381980266b.50.1733954223806;
+        Wed, 11 Dec 2024 13:57:03 -0800 (PST)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6845ab4absm535667966b.73.2024.12.11.13.57.02
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 13:55:51 -0800 (PST)
-Message-ID: <86015568-a283-42f5-a8c0-6bfdf078bc91@linaro.org>
-Date: Wed, 11 Dec 2024 21:55:49 +0000
+        Wed, 11 Dec 2024 13:57:03 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa69107179cso706901966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:57:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWFBC8nizAfObSrQdVRQJnGsU1/xj6tW6bvezB9SbAkzysr5/xkXJQ2dKcgNTLFkff6LLei0qK+iSX9JN4=@vger.kernel.org
+X-Received: by 2002:a17:906:cca:b0:aa6:81bd:5478 with SMTP id
+ a640c23a62f3a-aa6b13e33cdmr372644166b.60.1733954221923; Wed, 11 Dec 2024
+ 13:57:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/16] media: qcom: camss: csid: Add v4l2 ctrl if TPG mode
- isn't disabled
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
- <20241211140738.3835588-12-quic_depengs@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241211140738.3835588-12-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <Z1mzu4Eg6CPURra3@google.com> <87v7vqyzh4.fsf@mailhost.krisman.be>
+ <Z1nG-PSEe6tPOZIG@google.com> <87cyhyuhow.fsf@mailhost.krisman.be>
+ <CAHk-=wice8YV5N1jjyz42uNi-eZTvG-G2M46qaN7T9VsSaCP_Q@mail.gmail.com>
+ <CAHk-=wiC3evUXq8QTcOBFTMu1wsUR_dYiS8eGxy0Hh7VbL55yA@mail.gmail.com>
+ <875xnqudr1.fsf@mailhost.krisman.be> <CAHk-=wi+ZB4fNiMTHOYo2__-NnBXryQwxJ_bHN+cUDsfBBt_MA@mail.gmail.com>
+ <Z1oJ7PgRvLyctn0X@google.com>
+In-Reply-To: <Z1oJ7PgRvLyctn0X@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 11 Dec 2024 13:56:45 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whB_YjwB4sGsRGJx8AbxR8wRAJBfy+x2KhsAQ4QssZpMg@mail.gmail.com>
+Message-ID: <CAHk-=whB_YjwB4sGsRGJx8AbxR8wRAJBfy+x2KhsAQ4QssZpMg@mail.gmail.com>
+Subject: Re: Unicode conversion issue
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "hanqi@vivo.com" <hanqi@vivo.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/12/2024 14:07, Depeng Shao wrote:
-> There is no CSID TPG in some modern HW, so the v4l2 ctrl in CSID driver
-> shouldn't be registered. Checking the supported TPG modes to indicate
-> if the TPG HW is existing or not, and only register v4l2 ctrl for CSID
->   only when TPG HW is existing.
-> 
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-"media: qcom: camss: csid: Add v4l2 ctrl if TPG mode isn't disabled"
+On Wed, 11 Dec 2024 at 13:53, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> Casefolding supports f2fs and ext4 per Android request, and only f2fs
+> constructs hash-based directory structure. If we use hash of the
+> case-preserving entry, we had no easy solution to distinguish file_A and file_a.
 
-The double negation is confusing
+I really wish people had just done case-folding as a slow case, and
+not used the hash at all.
 
-->
+Does that mean that you have to walk the directory linearly? Yes it
+does. But that's my point: you shouldn't optimize for the idiocy of
+case-folding. You should optimize for the sane case, and actively try
+to discourage people from doing stupid bad things.
 
-"media: qcom: camss: csid: Only add TPG v4l2 ctrl if TPG hardware is 
-available"
+Oh well. Too late now.
 
----
-bod
+             Linus
 
