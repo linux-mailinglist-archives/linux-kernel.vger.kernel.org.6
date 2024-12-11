@@ -1,173 +1,149 @@
-Return-Path: <linux-kernel+bounces-440928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B5B9EC68F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:06:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DECA9EC62C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:58:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC871884FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:06:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E24188A2BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1D71C5F21;
-	Wed, 11 Dec 2024 08:06:10 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8FB1CD1E1;
+	Wed, 11 Dec 2024 07:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="N4Q8Urke"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B2578F40;
-	Wed, 11 Dec 2024 08:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C686D1C726D;
+	Wed, 11 Dec 2024 07:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733904370; cv=none; b=OH+3Iexu4VXXUVNR17XIlkMuPKoHV/Gdk0UkTNCMER6lSwEq7t8kjDQnLvH0in9Yt3zfT69a3MLTbUYbjhOisV12oD39FarZ9HkxKIawCQYYf0ufdrwDgdTTcQEJK6n2A022g6ddgx05deTTQ8SHRLz1wChJU0mYZ8/IW2uVBO8=
+	t=1733903890; cv=none; b=PGvtTlAQLmFRGgvwiTvyRj6gLe25HMPx5Y7t/wrX3qZSegPpSPGwuvT0a1d77gzZ0tQLHrvHUJYYAdvQnX0u+8BhLh39A8p6kAqa0mLdhJ5M0i/JNgPwxGovhLjq9lf9zacHB9gcCkTlN5+qDKzD0k9ArNUUoPpm3jSeON983Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733904370; c=relaxed/simple;
-	bh=2lpg8Qm3GiRa97KUHnH0N1dMtBglvRTfu1J7vBXsmmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgjbiwa6RMqL/CM3QYxGdq2njCZN5rHnhGAIsklQJKvpzfZwR1hrKM0PN5ty/u7bS50fui+0vPzDOw2XkvHIMM4RcxZHvDzG1TrOgjuEXpC1CBfj4WQhoC1SI8Qb46Og4Sq8B2giB9eTm521CCF7FiPxc5+vnyeUKVGPcwAJLPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id DF9BF100D9401;
-	Wed, 11 Dec 2024 08:57:23 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id AD03A603AE3; Wed, 11 Dec 2024 08:57:23 +0100 (CET)
-Date: Wed, 11 Dec 2024 08:57:23 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Niklas Schnelle <niks@kernel.org>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>
-Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
- 2.5 GT/s
-Message-ID: <Z1lF468L8c84QJkD@wunner.de>
-References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
- <Z1gSZCdv3fwnRRNk@wunner.de>
- <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
+	s=arc-20240116; t=1733903890; c=relaxed/simple;
+	bh=n8zCjiDsfiS//FqtctNEGW1zxuO3fu5pAeaCg5jeZ8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJxlqRjBvYorpjD4QamK/HWsnUm+aW/PpGEzOgfIadvzFMHTQopkL1fWaOYkiDn4JqIdzNEdBxAOcRRplYefJD634umad6pjdLnZfiCP1mW3W/ynEjndFIA4K9E8Apnml8Zf42V4ZTb43P0uUaupsZqIzEU1k2AF9V9R4MMulHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=N4Q8Urke; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BANODjQ025855;
+	Wed, 11 Dec 2024 07:58:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=OFoUqZ/J95ZNxIxu6/8FRWrZlwXn2VwUvqiep8eIC
+	ug=; b=N4Q8UrkeFnruPYf2H4m3YF41A+g+nhkBM8shQ0VNw4mfw1ilo2y4LBftr
+	lgKhA6sdLWBEC7hD0CccsnAYR4pPE86bxtr5PL2x+qtlwify2bY2DbOEoh+0a82U
+	Dft6NAciSweLGWnbkcgYt/iN8EkVYkgHdh/s/oKNj5ySFUWgk9yZtMkosU0k168F
+	OOF3yBUMThBUx8Mm/69Kf9eA8Dur51jY22Ho+jee3Rn1NpLuPxVblYlaK+8pM56l
+	YFyEqsLi6p5mVTFl08FXDyLEOxXwHfl0Vhft3q5Eff8YsuGzML6nfdcdzFatDVNc
+	cJfs3/1hhoD+tEmLUxKXOBj4GO96A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqb3wm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 07:58:00 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BB7sHo4002061;
+	Wed, 11 Dec 2024 07:58:00 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqb3wh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 07:58:00 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5CLk3032727;
+	Wed, 11 Dec 2024 07:57:59 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psgf6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 07:57:59 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BB7vwr530736894
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Dec 2024 07:57:58 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5ADC20043;
+	Wed, 11 Dec 2024 07:57:57 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 47C7C2004D;
+	Wed, 11 Dec 2024 07:57:56 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.39.30.217])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Dec 2024 07:57:56 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+        John Garry <john.g.garry@oracle.com>, dchinner@redhat.com,
+        Nirjhar Roy <nirjhar@linux.ibm.com>
+Subject: [RFC v2 0/6] ext4: Implement support for extsize hints
+Date: Wed, 11 Dec 2024 13:27:49 +0530
+Message-ID: <cover.1733901374.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ptlQF1DH1KmiKi9soGJ5W4sr5n5A0NZf
+X-Proofpoint-GUID: YPfVYoE84Ga92X9MseYjPKbvOcRjj2ir
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=839 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110056
 
-On Tue, Dec 10, 2024 at 09:45:18PM +0100, Niklas Schnelle wrote:
-> On Tue, 2024-12-10 at 11:05 +0100, Lukas Wunner wrote:
-> > First of all, the Supported Link Speeds field in the Link Capabilities
-> > register (which you're querying here) was renamed to Max Link Speed in
-> > PCIe r3.1 and a new Link Capabilities 2 register was added which contains
-> > a new Supported Link Speeds field.  Software is supposed to query the
-> > latter if the device implements the Link Capabilities 2 register
-> > (see the other Implementation Note at the end of PCIe r6.2 sec 7.5.3.18).
-> 
-> Would it maybe make sense to update the comment for PCI_EXP_LNKCAP_SLS
-> in pci_regs.h to point out that in PCIe r3.1 and newer this is called
-> the Max Link Speed field? This would certainly helped me here.
+** Changes since rfc v1 [1] **
 
-The macros for the individual speeds (e.g. PCI_EXP_LNKCAP_SLS_2_5GB)
-already have code comments which describe their new meaning.
+1. Allocations beyond EOF also respect extsize hint however we 
+   unlink XFS, we don't trim the blocks allocated beyond EOF due
+   to extsize hints. The reasoning behind this is explained in 
+   patch 6/6.
 
-I guess the reason why the code comment for PCI_EXP_LNKCAP_SLS wasn't
-updated is that it seeks to document the meaning of the "SLS" acronym
-(Supported Link Speeds).
+2. Minor fixes in extsize ioctl handling logic.
 
-But yes, amending that with something like...
+Rest of the design detials can be in individual patches as well as
+the original cover leter which can be found here:
 
-/* Max Link Speed (Supported Link Speeds before PCIe r3.1) */
+[1]
+https://lore.kernel.org/linux-ext4/cover.1726034272.git.ojaswin@linux.ibm.com/
 
-...probably make sense, so feel free to propose that in a separate patch.
+Further, xfsprogs changes to enable extsize get/set for ext4 can be
+found here:
+https://lore.kernel.org/linux-ext4/cover.1733902742.git.ojaswin@linux.ibm.com/T/#t
 
+Comments and suggestions are welcome!
 
-> > So to make this future-proof what you could do is check whether only a
-> > *single* speed is supported (which could be something else than 2.5 GT/s
-> > if future spec versions allow that), i.e.:
-> > 
-> > -		if (linkcap & PCI_EXP_LNKCAP_LBNC)
-> > +		if (linkcap & PCI_EXP_LNKCAP_LBNC &&
-> > +		    hweight8(dev->supported_speeds) > 1)
-> 
-> This also makes sense to me in that the argument holds that if there is
-> only one supported speed bwctrl can't control it. That said it is
-> definitely more general than this patch.
-> 
-> Sadly, I tried it and in my case it doesn't work. Taking a closer look
-> at lspci -vvv of the Thunderbolt port as well as a debug print reveals
-> why:
-> 
-> 07:00.0 PCI bridge: Intel Corporation JHL7540 Thunderbolt 3 Bridge [Titan Ridge 4C 2018] (rev 06) (prog-if 00 [Normal decode])
->        ...
->                 LnkCap: Port #0, Speed 2.5GT/s, Width x4, ASPM L1, Exit Latency L1 <1us
->                         ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
->                 LnkCtl: ASPM Disabled; LnkDisable- CommClk+
->                         ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
->                 LnkSta: Speed 2.5GT/s, Width x4
->                         TrErr- Train- SlotClk+ DLActive- BWMgmt+ ABWMgmt-
-> 	...
->                 LnkCap2: Supported Link Speeds: 2.5-8GT/s, Crosslink- Retimer- 2Retimers- DRS-
->                 LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-, Selectable De-emphasis: -6dB
->                          Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
->                          Compliance Preset/De-emphasis: -6dB de-emphasis, 0dB preshoot
-> 	...
-> 
-> So it seems that on this Thunderbolt chip the LnkCap field
-> says 2.5 GT/s only as per the USB 4 spec you quoted but LnkCap2
-> is 0x0E i.e. 2.5-8 GT/s.
-> 
-> I wonder if this is related to why the hang occurs. Could it be that
-> bwctrl tries to enable speeds above 2.5 GT/s and that causes links to
-> fail?
+Regards,
+ojaswin
 
-Ilpo knows this code better than I do but yes, that's plausible.
-The bandwidth controller does't change the speed by itself,
-it only monitors speed changes.  But it does provide a
-pcie_set_target_speed() API which is called by the thermal driver
-as well as the pcie_failed_link_retrain() quirk.  I suspect the
-latter is the culprit here.  If that suspicion is correct,
-you should be seeing messages such as...
+Ojaswin Mujoo (6):
+  ext4: add aligned allocation hint in mballoc
+  ext4: allow inode preallocation for aligned alloc
+  ext4: support for extsize hint using FS_IOC_FS(GET/SET)XATTR
+  ext4: pass lblk and len explicitly to ext4_split_extent*()
+  ext4: add extsize hint support
+  ext4: make extsize work with EOF allocations
 
-"removing 2.5GT/s downstream link speed restriction"
+ fs/ext4/ext4.h              |  12 +-
+ fs/ext4/ext4_jbd2.h         |  15 ++
+ fs/ext4/extents.c           | 224 +++++++++++++++----
+ fs/ext4/inode.c             | 435 ++++++++++++++++++++++++++++++++----
+ fs/ext4/ioctl.c             | 122 ++++++++++
+ fs/ext4/mballoc.c           | 126 +++++++++--
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |   2 +
+ 8 files changed, 836 insertions(+), 101 deletions(-)
 
-...in dmesg but I think you wrote that you're not getting any
-messages at all, right?  Perhaps if you add "early_printk=efi"
-to the kernel command line you may see what's going on.
+-- 
+2.43.5
 
-One idea in this case would be to modify pcie_get_supported_speeds()
-such that it filters out any speeds in the Link Capabilities 2 register
-which exceed the Max Link Speed in the Link Capabilties register.
-However the spec says that software should look at the Link Capabilities 2
-register to determine supported speeds if that register is present.
-So I think we may not conform to the spec then.
-
-The better option is thus probably to add a DECLARE_PCI_FIXUP_EARLY()
-quirk for Titan Ridge which sets the supported_speeds to just 2.5 GT/s.
-*If* you want to go with the future-proof option which checks that
-just one speed is supported.
-
-Titan Ridge is an old chip.  I'm not sure if newer discrete Thunderbolt
-controllers exhibit the same issue but likely not.
-
-Thanks,
-
-Lukas
 
