@@ -1,222 +1,105 @@
-Return-Path: <linux-kernel+bounces-441165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AF89ECA80
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:40:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331E29ECA87
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:44:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247DB289A66
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66EB71888A1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A06C239BAA;
-	Wed, 11 Dec 2024 10:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D84239BAD;
+	Wed, 11 Dec 2024 10:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noWAWngN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="GPXVlF94"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE79F239BA0;
-	Wed, 11 Dec 2024 10:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A985239BA0;
+	Wed, 11 Dec 2024 10:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733913606; cv=none; b=jpi4zht3Hfzh67m08KCJS7lA8eUWuzhT/h2DWno5R0HkV9ddpifYMsljgsMdV3jj24cpr4QS38afVzap/EVXQhV/LCVuoXuLhl14Zvfs1Qjykp4vLVlkgkWXKw9aJ+M1ksoeKDjNMFqAo4+71xRovNyQZAQBzd3D78TOH8K1xek=
+	t=1733913857; cv=none; b=Yl9l8B24egftSnpY3fkkDvYCqMg+efu+Jj9BFOlryts3VGwKjc6orD5isvqsUvoft5SIVYrsx8fnNa222RcDg9K5mofDtWP3/rEysviJ97XzqD1IE1/sBjvzhRgKMNbG94QNo2+AxTHnguN0biNmOnYVvG4VgvWrlcEfeGWeU04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733913606; c=relaxed/simple;
-	bh=t82GYym6sYXkwYHFKbUNwczVpT4+Pzss6XRP9JPCUDE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pxrKVAsqYxHQKcLDXyVn79n+kviZvm6cACBKGWijlxDLoZ6Z8vhCkBfvqae2d4pt4b1PAdaKXKOoGm8r97icW8dmXU+4cGk+24HnSt8o2Lkbp6iYxDilHWRjdwNo4PImmxz/5ifijWd3fMAwcEy7m/OW9+K4wkHTUElJ834MzKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noWAWngN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C48C4CED2;
-	Wed, 11 Dec 2024 10:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733913606;
-	bh=t82GYym6sYXkwYHFKbUNwczVpT4+Pzss6XRP9JPCUDE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=noWAWngNql9dKYob5AyZaw+cnVxhtwRWgj7TNoC3MNkQsrMRf0Vbtn4h8dWUm74DS
-	 M7j4LakUfAzAMmoDNGrLUncUpWpLx0UvGrFfEeRBdfCZgaxFnzUeXt+KqMGGMWiOMp
-	 uWyyT/znJEgzytqre2pLme5qhFkeFR9SVT0GJnm72utdHL6i2yxO9ARzlw0uzsZ7KW
-	 96n60qZtP038+EwpjwmwaoShJFGu9HUl3WEMa+0Icq3UGhLPFMPUmG3QJpmaTI0FDD
-	 11yaeyZMCWZ1bjCOob1r0yCUXj/hHOzgGQrAfXmjBaLJ9DDI54qGcaimfTDKj683IS
-	 6xU9zsG00FZWQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tLK8R-002dSW-Hv;
-	Wed, 11 Dec 2024 10:40:03 +0000
-Date: Wed, 11 Dec 2024 10:40:02 +0000
-Message-ID: <86sequsdtp.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Pavan Kondeti <quic_pkondeti@quicinc.com>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	Rob Clark
-	<robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio
-	<konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	"Dmitry\
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten
-	<marijn.suijten@somainline.org>,
+	s=arc-20240116; t=1733913857; c=relaxed/simple;
+	bh=u3hWEDf3jNATqhRTwv5ZXzI4pW2CBusFMxBkF3C/zMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hxDtAMIuOTparj8RQ1jd5jcFTKWBERpodLZ1+7eJvRVIbUPrc6wfxMlWPmrXJZu9XwcuUevB4wYcnNWStZrq8DrKPM69XpHL7KsLfMIMRBdkt4BE7SIaTmvkHHbqHJfSvHM4y591pRq2KNSGNjiv+rjpZ/q4RfAY7xLS/b5uf00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=GPXVlF94; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EV0DzN/aRpIaOzSPvYfCHGoC2ttPbO09aHLQyIdly64=; b=GPXVlF94a82JRfXo0MuftR38+o
+	EPuKL7i9Bbdnlhjixyj/tPflX+n7eqReFh5PEE3ff4jbMdHlhRqNRovWS13UH3kY/aqf80tj5sCv4
+	FkUaHkdorBrYAWxiVC2uLb1m50H/TloWhkQffIkRc0kAoAD4E4vv1tz5xBU6e5fCnlRZ4UM3SFM67
+	wVJ9yp5ioiYBDStUdfNR41mtofEe27i+4qfV7uyEP5tR3JgWNl/VKTAa7nLLxR4xanoMIkvqibB0J
+	wI4uYmjgn/93sKeen5ecCOF/05jNdGISz0yYyTrljgIlO/k14nMlVGlgerWbUTAZLAOvjvVqnfg90
+	on7vqbcw==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tLKC8-0001Vg-Hx; Wed, 11 Dec 2024 11:43:52 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>,
-	"Simona\
- Vetter" <simona@ffwll.ch>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	<linux-arm-msm@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>,
-	<freedreno@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-In-Reply-To: <92cee905-a505-4ce9-9bbc-6fba4cea1d80@quicinc.com>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
-	<87ed2fs03w.wl-maz@kernel.org>
-	<92cee905-a505-4ce9-9bbc-6fba4cea1d80@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Alexandre ARNOUD <aarnoud@me.com>,
+	kernel@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/4] Add support for HDMI1 output on RK3588 SoC
+Date: Wed, 11 Dec 2024 11:43:42 +0100
+Message-ID: <173391381115.2426313.13144345816370660962.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com>
+References: <20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: quic_pkondeti@quicinc.com, quic_akhilpo@quicinc.com, robdclark@gmail.com, sean@poorly.run, konradybcio@kernel.org, quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch, quic_eberman@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
-
-On Wed, 11 Dec 2024 00:37:34 +0000,
-Pavan Kondeti <quic_pkondeti@quicinc.com> wrote:
->=20
-> On Tue, Dec 10, 2024 at 09:24:03PM +0000, Marc Zyngier wrote:
-> > > +static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +#ifdef CONFIG_ARM64
-> > > +	/*
-> > > +	 * We can access SECVID_TRUST_CNTL register when kernel is booted i=
-n EL2 mode. So, use it
-> > > +	 * to switch the secure mode to avoid the dependency on zap shader.
-> > > +	 */
-> > > +	if (is_kernel_in_hyp_mode())
-> > > +		goto direct_switch;
-> >=20
-> > No, please. To check whether you are *booted* at EL2, you need to
-> > check for is_hyp_available(). Whether the kernel runs at EL1 or EL2 is
-> > none of the driver's business, really. This is still absolutely
-> > disgusting from an abstraction perspective, but I guess we don't have
-> > much choice here.
-> >=20
->=20
-> Thanks Marc. Any suggestions on how we can make is_hyp_mode_available()
-> available for modules? Do you prefer exporting
-> kvm_protected_mode_initialized and __boot_cpu_mode symbols directly or
-> try something like [1]?
-
-Ideally, neither. These were bad ideas nine years ago, and they still
-are. The least ugly hack I can come up with is the patch below, and
-you'd write something like:
-
-	if (cpus_have_cap(ARM64_HAS_EL2_OWNERSHIP))
-		blah();
-
-This is obviously completely untested.
-
-It also doesn't solve the problem of the kernel booted on bare-metal
-at EL1, or with a hypervisor that doesn't change the programming
-interface of the device under the guest's feet. Eventually, someone
-will have to address these cases.
-
-Thanks,
-
-	M.
-
-=46rom 4823e7bb868d3ac2b938ecc4c3dbbdd460656af1 Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <maz@kernel.org>
-Date: Wed, 11 Dec 2024 10:02:25 +0000
-Subject: [PATCH] arm64: Expose kernel ownership of EL2 via a capability
-
-It appears that some drivers have to jump through a lot of hoops
-to initialise correctly when running under a particular hypervisor,
-while they can directly do it when running bare-metal.
-
-Unfortunately, said hypervisor cannot be directly identified as it
-doesn't implement the correct SMCCC interface, leaving the driver
-with a certain amount of guesswork.
-
-Being booted at EL2 provides at least an indication that there is no
-non-nesting hypervisor, which is good enough to discriminate the
-humpy hypervisor.
-
-For this purpose, expose a new system-wide CPU capability aptly named
-ARM64_HAS_EL2_OWNERSHIP, which said driver can check.
-
-Note that this doesn't solve the problem of a kernel booted at EL1
-without a hypervisor, or with a hypervisor that doesn't break the
-device programming interface.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- arch/arm64/kernel/cpufeature.c | 11 +++++++++++
- arch/arm64/tools/cpucaps       |  1 +
- 2 files changed, 12 insertions(+)
-
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 36c7b29ddf9e8..8fdc3ef23d9dc 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1868,6 +1868,11 @@ static bool has_nv1(const struct arm64_cpu_capabilit=
-ies *entry, int scope)
- 		  is_midr_in_range_list(read_cpuid_id(), nv1_ni_list)));
- }
-=20
-+static bool has_el2_ownership(const struct arm64_cpu_capabilities *entry, =
-int scope)
-+{
-+	return is_hyp_mode_available();
-+}
-+
- #if defined(ID_AA64MMFR0_EL1_TGRAN_LPA2) && defined(ID_AA64MMFR0_EL1_TGRAN=
-_2_SUPPORTED_LPA2)
- static bool has_lpa2_at_stage1(u64 mmfr0)
- {
-@@ -3012,6 +3017,12 @@ static const struct arm64_cpu_capabilities arm64_fea=
-tures[] =3D {
- 		ARM64_CPUID_FIELDS(ID_AA64PFR1_EL1, GCS, IMP)
- 	},
- #endif
-+	{
-+		.desc =3D "Kernel owns EL2",
-+		.capability =3D ARM64_HAS_EL2_OWNERSHIP,
-+		.type =3D ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.matches =3D has_el2_ownership,
-+	},
- 	{},
- };
-=20
-diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-index 1e65f2fb45bd1..94ce3462e6298 100644
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@ -24,6 +24,7 @@ HAS_DIT
- HAS_E0PD
- HAS_ECV
- HAS_ECV_CNTPOFF
-+HAS_EL2_OWNERSHIP
- HAS_EPAN
- HAS_EVT
- HAS_FPMR
---=20
-2.39.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---=20
-Without deviation from the norm, progress is not possible.
+On Wed, 11 Dec 2024 01:06:13 +0200, Cristian Ciocaltea wrote:
+> The patches provide the basic support to handle the second HDMI output
+> port found on Rockchip RK3588 SoC.
+> 
+> For now I enabled it on Radxa ROCK 5B only, the board I've been using to
+> validate this.
+> 
+> ** IMPORTANT **
+> 
+> [...]
+
+Applied, thanks!
+
+[1/4] drm/rockchip: dw_hdmi_qp: Add support for RK3588 HDMI1 output
+      commit: 0f818db20c77506ddd870761785740f8230a4207
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
