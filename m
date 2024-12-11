@@ -1,134 +1,218 @@
-Return-Path: <linux-kernel+bounces-441608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E1F9ED0AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:02:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4449ED0AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A363F162269
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AB21887559
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4B21D8E1A;
-	Wed, 11 Dec 2024 16:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197421D9350;
+	Wed, 11 Dec 2024 16:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KkRguggI"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jO85U3a7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741F3195FEF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897C61442F2;
+	Wed, 11 Dec 2024 16:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932957; cv=none; b=nuGknf1RjzjEfBmVZD+l4Zg0u4Hru+S05sHGpjQowjj6uu5M2Dhg75lLY9y22aCB9b4t1bQy/44F598YSYOzlBier/rxrymf2xy9V6CtNMbfnuRQeY7JwRdmFcjwG4CmHFBdEvHZZ9JnIn3r/IxlqWgsSoE+0kaDfwvO2GSD0GI=
+	t=1733932969; cv=none; b=KvhWOEFUyAclvtoUOKdfnpUddjGGShdpkv3giRdxEevFVht5N7xDku+t8414xJx3ChH+AgenUtcdGVyFWhdBSqwAT2WxwSUwM4CRL8DfT0fMizh9VW3s68jSYmMqpnwokCLZrZSEnJn7jBH/El6k8GiANRVJd+ByLg968+OL62o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932957; c=relaxed/simple;
-	bh=22m9Hqe7UwQ03I8qCrH/Y8yM7muurEK3JAYeyu895HQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0TrxNjmKZD8keNxyby3nIz56BnNt3DYUnLLo0rYFZ6y8eFc3xFHKZvAhGT1qEkFHVR1nsgzgRQOqGIU2nPMk5LvsCFvMXAxgOpZiDvjdRxkGiHOa3MKpNiu31q0iZGp+eIFKnR6JTnwNWVQYPRiXj/S+kL1cy1hIYGdj4pvTQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KkRguggI; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385e0e224cbso3513722f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:02:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733932954; x=1734537754; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=22m9Hqe7UwQ03I8qCrH/Y8yM7muurEK3JAYeyu895HQ=;
-        b=KkRguggIF9oJNUf9GPmRPvwNbExRMoE0X2J7NKM/5e5YLi2ghlqPB901PRFZE4m19Z
-         OcomBwfxQ0jcHRfz2P5AJZjaXY39Nm4JCUv7LJNj+iX4w1Uxs2C/AbTXlyQNuIGoVbR4
-         0l80RWuPlHDLvJ04+yQ2Ei1W7gW5kbpcte8+1YI3UADwmCXObGbs4w5JfoNUIB+A9l7J
-         QO8pJfgk6to95KCfE98UWrAar0IHOUXFIgR3DXd3hExWEnpjZPcvAiIf9L8ivkhxxQ67
-         y79W2xFUWJ8aqQbcbh3tyoz6OXg6+yf2HkLyzc45nzy0+NMWr8/oNlfhKznLIKE6mjPh
-         RaKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733932954; x=1734537754;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22m9Hqe7UwQ03I8qCrH/Y8yM7muurEK3JAYeyu895HQ=;
-        b=ElsdPDbGsCPPU/jZXDy/LA3SF0JYFIlo4yM60vxZJXhEJvdJoxBQdR9lWu0RLWBU6N
-         rnifnVemrCvcI0jaalZ3YIYaFYjeZXsS5U+lVE8uB5BjpLruyaHbl5uoF86woVa7pjCj
-         Ks6c2EVkt2FTunN6MLUvPSLltxICFD9HJjgZk+z40Ra+NV0zw6vOA8ZEBN/XKqiswlBj
-         wohTRPfedENz0VMlddGp/WkVgGo2Y1qdA+ff6UfAyozWwSwUgnxTKblfupPajS/Nttzk
-         WqbA8WPyKik0p9N5S5NIPXZdYC71wTDZYy1vudOMReAgZyBOuxdWFNhpfiGUaKzPrEDj
-         f38w==
-X-Forwarded-Encrypted: i=1; AJvYcCU0juhW8X/xvpP5VeOv+NOq20DgguuIR4QDdoUO1bsTKBhErAjtL5eLOSCxXMSvDlPUYwQfPIshseTWPGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY98iwjViPoNubrtYZGEw6R6zzgjNmch8tFx0ADzetg+xYzNag
-	wO1OY6nti+9Q2mVhzpNgrxrhbYY2i0e+GGJeFQfsxvGjZThKAOughBrent6B5bk=
-X-Gm-Gg: ASbGncs0E39bTwSysdj2qR3P5tuCJu/wNuvYHJNL8cyhwFjfRDDRHRLhn2fdnTYyahS
-	R/72dQ0LAS45qBtGnuOyW3gKQ6asWa5cnU6mo230HOZbTEEPqlofOS0+1E+uL9HLGckMaFak80n
-	q7atlEk5uk7BTrC/fcSZ4mplYuOotdnGOPnHOy1+bCtkmADHEHTCwJHMeJyEmrPPfqSsLMP8Dc8
-	kC2kNdhr7CRjoEtjGbS1CWr59yw2yOMMlineKnNt98936JRIvTfnTbo
-X-Google-Smtp-Source: AGHT+IH28TTauO49D9CRhnae4582tXQC/DhGKODCAEE6KjSHtwVG8K+kWU2MVLOD4bfL62IP7MIxJQ==
-X-Received: by 2002:a05:6000:471c:b0:385:e303:8dd8 with SMTP id ffacd0b85a97d-3864ce602abmr2797853f8f.26.1733932951931;
-        Wed, 11 Dec 2024 08:02:31 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824bf249sm1584652f8f.52.2024.12.11.08.02.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 08:02:31 -0800 (PST)
-Date: Wed, 11 Dec 2024 17:02:29 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: Tejun Heo <tj@kernel.org>, peterz@infradead.org, 
-	Valentin Schneider <vschneid@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, linux-kernel@vger.kernel.org, 
-	wangweiyang2@huawei.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH] freezer, sched: report the frozen task stat as 'D'
-Message-ID: <j5kjjy5ibp2yw4zhaxc7jm5bw65we4oifhawlljvtjzdox5ck2@kdgpgawwr7kf>
-References: <20241111135431.1813729-1-chenridong@huaweicloud.com>
- <xhsmhv7wrb3sc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <4f78d752-52ab-493d-8bf5-f12dc4f554c8@huaweicloud.com>
- <ZzYo19k9ZvkC7V-1@slm.duckdns.org>
- <2f755161-ec7e-4785-b0ca-ea68c01785a2@huaweicloud.com>
- <ZzajsLHrXXtYk04l@slm.duckdns.org>
- <3b03520e-775d-416a-91b1-1d78f3e91b1d@huaweicloud.com>
- <c56b2347-7475-4190-85a5-a38954ae9c08@huaweicloud.com>
+	s=arc-20240116; t=1733932969; c=relaxed/simple;
+	bh=yZV4wFsvTjVmy2hy69LP2ALNu/X9FZ8UBCHjdsnzqLk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZkrqgyphOitLpV8QKu6YJG16syxu7lI68obeJuNRElBdqvacNnRPr1gpyH6JQXj2YLSqqxKzO89VFBd753xSxtdx3C02ELhyyFzbl2F805GWaguTodnvd8rxm0iqcsF7FoR0Nn9f2ikqjSpXMK3e+oJt3L43BrPXCEErJfbkm+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jO85U3a7; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733932968; x=1765468968;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yZV4wFsvTjVmy2hy69LP2ALNu/X9FZ8UBCHjdsnzqLk=;
+  b=jO85U3a7IAiwgqXbKAuGfDIf/8nCLIxmvxmbpD9agDc3ph//Gt4PK600
+   f3OjGlN/2USGO2byxT5kidemEByKxkdE5Ya61D9Obi8W4A/+vECC+mSK7
+   /NG4Egi1qNNxVAfaiVOXQVhy+q24E/V3MIwQG8zG7K/FZC8Iz+vzXhzqN
+   jWcWRwbz+O2bqZkV/Du/6oFwzkeaWoL7jW+eA6uZZJQ/hr2H/o0H4p36M
+   yFetXP5/NkholsP2qzDJuX01rkBkIHg0grmSdwlmfCB5fEU1O4A65Vc03
+   f4B/V8/w2i80Pl1x69qUnPwyEzVQ6G6UClkxUeVmsiTFW7eWivSptGJsr
+   w==;
+X-CSE-ConnectionGUID: +W5EDeLSQ8qdofe3id6tOw==
+X-CSE-MsgGUID: JvwBga8GT1237wpm5UFg9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34458978"
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="34458978"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 08:02:47 -0800
+X-CSE-ConnectionGUID: E23TXczYRZOJLb1jjjoncQ==
+X-CSE-MsgGUID: iOwPjAlDRa2affFXYVT/1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="95686231"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa010.jf.intel.com with ESMTP; 11 Dec 2024 08:02:46 -0800
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	ak@linux.intel.com,
+	james.clark@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: irogers@google.com,
+	eranian@google.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V5 1/2] perf/x86/intel: Support RDPMC metrics clear mode
+Date: Wed, 11 Dec 2024 08:03:17 -0800
+Message-Id: <20241211160318.235056-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4gtmoob7ji7byu5o"
-Content-Disposition: inline
-In-Reply-To: <c56b2347-7475-4190-85a5-a38954ae9c08@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+
+From: Kan Liang <kan.liang@linux.intel.com>
+
+The new RDPMC enhancement, metrics clear mode, is to clear the
+PERF_METRICS-related resources as well as the fixed-function performance
+monitoring counter 3 after the read is performed. It is available for
+ring 3. The feature is enumerated by the
+IA32_PERF_CAPABILITIES.RDPMC_CLEAR_METRICS[bit 19]. To enable the
+feature, the IA32_FIXED_CTR_CTRL.METRICS_CLEAR_EN[bit 14] must be set.
+
+Two ways were considered to enable the feature.
+- Expose a knob in the sysfs globally. One user may affect the
+  measurement of other users when changing the knob. The solution is
+  dropped.
+- Introduce a new event format, metrics_clear, for the slots event to
+  disable/enable the feature only for the current process. Users can
+  utilize the feature as needed.
+The latter solution is implemented in the patch.
+
+The current KVM doesn't support the perf metrics yet. For
+virtualization, the feature can be enabled later separately.
+
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+The V4 can be found at
+https://lore.kernel.org/lkml/20240926184558.3797290-1-kan.liang@linux.intel.com/
+
+Change since V4:
+- Split the doc update into a dedicated patch
 
 
---4gtmoob7ji7byu5o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ arch/x86/events/intel/core.c      | 20 +++++++++++++++++++-
+ arch/x86/events/perf_event.h      |  1 +
+ arch/x86/include/asm/perf_event.h |  4 ++++
+ 3 files changed, 24 insertions(+), 1 deletion(-)
 
-Hi.
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 2e1e26846050..e76e892f44cd 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2816,6 +2816,9 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
+ 			return;
+ 
+ 		idx = INTEL_PMC_IDX_FIXED_SLOTS;
++
++		if (event->attr.config1 & INTEL_TD_CFG_METRIC_CLEAR)
++			bits |= INTEL_FIXED_3_METRICS_CLEAR;
+ 	}
+ 
+ 	intel_set_masks(event, idx);
+@@ -4071,7 +4074,12 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 	 * is used in a metrics group, it too cannot support sampling.
+ 	 */
+ 	if (intel_pmu_has_cap(event, PERF_CAP_METRICS_IDX) && is_topdown_event(event)) {
+-		if (event->attr.config1 || event->attr.config2)
++		/* The metrics_clear can only be set for the slots event */
++		if (event->attr.config1 &&
++		    (!is_slots_event(event) || (event->attr.config1 & ~INTEL_TD_CFG_METRIC_CLEAR)))
++			return -EINVAL;
++
++		if (event->attr.config2)
+ 			return -EINVAL;
+ 
+ 		/*
+@@ -4680,6 +4688,8 @@ PMU_FORMAT_ATTR(in_tx,  "config:32"	);
+ PMU_FORMAT_ATTR(in_tx_cp, "config:33"	);
+ PMU_FORMAT_ATTR(eq,	"config:36"	); /* v6 + */
+ 
++PMU_FORMAT_ATTR(metrics_clear,	"config1:0"); /* PERF_CAPABILITIES.RDPMC_METRICS_CLEAR */
++
+ static ssize_t umask2_show(struct device *dev,
+ 			   struct device_attribute *attr,
+ 			   char *page)
+@@ -4699,6 +4709,7 @@ static struct device_attribute format_attr_umask2  =
+ static struct attribute *format_evtsel_ext_attrs[] = {
+ 	&format_attr_umask2.attr,
+ 	&format_attr_eq.attr,
++	&format_attr_metrics_clear.attr,
+ 	NULL
+ };
+ 
+@@ -4723,6 +4734,13 @@ evtsel_ext_is_visible(struct kobject *kobj, struct attribute *attr, int i)
+ 	if (i == 1)
+ 		return (mask & ARCH_PERFMON_EVENTSEL_EQ) ? attr->mode : 0;
+ 
++	/* PERF_CAPABILITIES.RDPMC_METRICS_CLEAR */
++	if (i == 2) {
++		union perf_capabilities intel_cap = hybrid(dev_get_drvdata(dev), intel_cap);
++
++		return intel_cap.rdpmc_metrics_clear ? attr->mode : 0;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 82c6f45ce975..31c2771545a6 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -624,6 +624,7 @@ union perf_capabilities {
+ 		u64	pebs_output_pt_available:1;
+ 		u64	pebs_timing_info:1;
+ 		u64	anythread_deprecated:1;
++		u64	rdpmc_metrics_clear:1;
+ 	};
+ 	u64	capabilities;
+ };
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index cb9c4679f45c..1ac79f361645 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -41,6 +41,7 @@
+ #define INTEL_FIXED_0_USER				(1ULL << 1)
+ #define INTEL_FIXED_0_ANYTHREAD			(1ULL << 2)
+ #define INTEL_FIXED_0_ENABLE_PMI			(1ULL << 3)
++#define INTEL_FIXED_3_METRICS_CLEAR			(1ULL << 2)
+ 
+ #define HSW_IN_TX					(1ULL << 32)
+ #define HSW_IN_TX_CHECKPOINTED				(1ULL << 33)
+@@ -372,6 +373,9 @@ static inline bool use_fixed_pseudo_encoding(u64 code)
+ #define INTEL_TD_METRIC_MAX			INTEL_TD_METRIC_MEM_BOUND
+ #define INTEL_TD_METRIC_NUM			8
+ 
++#define INTEL_TD_CFG_METRIC_CLEAR_BIT		0
++#define INTEL_TD_CFG_METRIC_CLEAR		BIT_ULL(INTEL_TD_CFG_METRIC_CLEAR_BIT)
++
+ static inline bool is_metric_idx(int idx)
+ {
+ 	return (unsigned)(idx - INTEL_PMC_IDX_METRIC_BASE) < INTEL_TD_METRIC_NUM;
+-- 
+2.38.1
 
-On Wed, Dec 04, 2024 at 09:52:15AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
-> Does anyone have any opinions?
-
-When an 'R' task is frozen (v1) and it's shown as (unchanged) 'R' it's
-acceptable.
-When an 'S' task is equally frozen and its apparent state switches to
-'R', I agree it's confusing.
-
-Showing 'D' state in any case of a frozen task (like before that rework)
-makes sense too. Please add Fixes: if you need to restore this behavior.
-
-HTH,
-Michal
-
---4gtmoob7ji7byu5o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ1m3kwAKCRAt3Wney77B
-SQ3XAQCY6+efIUgmD1GEW265e9Zu6yyIDhxzcZ4xnq/qNuVYlQEAkbW0YC7Nnl7Y
-DpKMllh4g0NwWY3XFvALc88mhLrLAgU=
-=uTyp
------END PGP SIGNATURE-----
-
---4gtmoob7ji7byu5o--
 
