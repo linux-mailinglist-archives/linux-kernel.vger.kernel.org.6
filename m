@@ -1,120 +1,157 @@
-Return-Path: <linux-kernel+bounces-441126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135339EC9FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:11:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF2E9EC88F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCFC167F20
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:10:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD441652FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D461DEFF8;
-	Wed, 11 Dec 2024 10:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BB70WKd3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD222210E4;
+	Wed, 11 Dec 2024 09:12:19 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373A51A8406;
-	Wed, 11 Dec 2024 10:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D872210C6;
+	Wed, 11 Dec 2024 09:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733911856; cv=none; b=KWZ+nD5li9NKGj47+8jxysuOb4Sf73pTEic4BohybErs6Qi3woyvUHn9qi4n+rsHQYRU2LW318y/rDxRsVljwJbZBSTPC7Zf7jL8E1Jewu+3M8rkto95nOYVARgnBkCux8jYVN5vPKOZLDnBkHnt5yiekaUYhDqpTawl9jZAAlc=
+	t=1733908338; cv=none; b=kwup7nAafQy7lABhNw+HzkR3smHV2LUhLKbA2XB2f0sHbPIEj7ELstSxP2dwh82+OYDb3Y5zZe/uQy6Wk/wLGejuQoP4XiwtXsfA/IyYgrcVeynRQiBaVHqukFU6KUhy/Q7DI+t+H6Mn3uj55N2SM0ffdvgT5XLv3yG8SIOvx8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733911856; c=relaxed/simple;
-	bh=sNNiv+krDX57PlrYyuWWXeuKjkBe0UFYHO9uiQNqXG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSBd1yx69aK4ZFEqUy/ivipQdS5YSF+80mZZyvXNtYuYpYRCk8OOhoy0aTQVodANlhhHdFed0Am8/7MlOXkpuT4ni5B6wxs/GrcjRXKTc9obB5AaYFLhkJfNt9eThdHmA9YFsLqrh6OaYOueZdVNggOQaT2ira8mmLjlCgABPAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BB70WKd3; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733911855; x=1765447855;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sNNiv+krDX57PlrYyuWWXeuKjkBe0UFYHO9uiQNqXG0=;
-  b=BB70WKd3mJXjInV3bUIyLKvewQm9YpG1PtFnTh2Geecmaaut4fwMB/vx
-   r51DUUWd47mAGmeJg7w6a35qHiZmLDdObkFX3laGA2UJGGO4AXR4XqeJl
-   6TX+Aezl4asA6pN+YHd+Dbuaqkxo2d2lDwEWvcIMacXd4Rotx5ZIzBLHu
-   3vw89eUpSa/TBa1JwjzlqU2clVqzdGKH2oMGf2GngrHxXvXeLxeSOGjtA
-   5cqEz1Gzktfd3VQVS+zOEvKLGxRsXuQ/Ehb/RIIlvxPMqaWgG2FbZpSE0
-   FcU4NcfpWoFazEzSYtIQ/eePyowr6yujjyWesyVfaLNONkYgTWqNmVel2
-   A==;
-X-CSE-ConnectionGUID: s69Z9zIAQa+M129nli7WUw==
-X-CSE-MsgGUID: DNXS+8jXTgC/f9/10D886A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="51691219"
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="51691219"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 02:10:54 -0800
-X-CSE-ConnectionGUID: Nrl286v4QTazqEvqznmoJQ==
-X-CSE-MsgGUID: fIyu/4MPR3acJyQWLcffgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="126675079"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa001.fm.intel.com with SMTP; 11 Dec 2024 02:09:43 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 11 Dec 2024 12:09:42 +0200
-Date: Wed, 11 Dec 2024 12:09:42 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev, akuchynski@google.com,
-	pmalani@chromium.org, jthies@google.com,
-	dmitry.baryshkov@linaro.org, badhri@google.com,
-	rdbabiera@google.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] usb: typec: Print err when displayport fails to
- enter
-Message-ID: <Z1lk5pf-tGeNd342@kuha.fi.intel.com>
-References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
- <20241206153813.v4.3.I6cff9d767b0f8ab6458d8940941e42c920902d49@changeid>
+	s=arc-20240116; t=1733908338; c=relaxed/simple;
+	bh=Knj5TIsDQgyLg8p5+cY2aWCAJDz82Z4lK2SWfH0yCD8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=heaIi3xNiS74qT0/6CN5ry05rRPFcP0IpBE1wctF7C6zRx2PRkyKRD0YSqNA01fQmawPP2pjVYqPLUxC/2D+q1TBaNj+YOAegmkWPxClpYg3aeMbvCtdXPdl7DOwvuo+SuiBdzo/au9NtZ56UVqw7Ql/4a84vX1vZ5mSxnNS//Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB7fYB5012824;
+	Wed, 11 Dec 2024 09:12:05 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4xbybu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 11 Dec 2024 09:12:04 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 11 Dec 2024 01:12:03 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 11 Dec 2024 01:11:59 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <cratiu@nvidia.com>, <gregkh@linuxfoundation.org>
+CC: <dtatulea@nvidia.com>, <tariqt@nvidia.com>, <pabeni@redhat.com>,
+        <patches@lists.linux.dev>, <stable@vger.kernel.org>,
+        <saeedm@nvidia.com>, <leon@kernel.org>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <roid@nvidia.com>,
+        <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 6.1.y] net/mlx5e: Don't call cleanup on profile rollback failure
+Date: Wed, 11 Dec 2024 18:09:53 +0800
+Message-ID: <20241211100953.2069964-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206153813.v4.3.I6cff9d767b0f8ab6458d8940941e42c920902d49@changeid>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: QoGXlSgbYD0qKXE6BvwAKD0aea_IgHQn
+X-Proofpoint-ORIG-GUID: QoGXlSgbYD0qKXE6BvwAKD0aea_IgHQn
+X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=67595764 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8 a=t7CeM3EgAAAA:8 a=O6WMtLnDkRuORcTRUxwA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-11_08,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 clxscore=1011 malwarescore=0 priorityscore=1501
+ phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2411120000 definitions=main-2412110068
 
-On Fri, Dec 06, 2024 at 03:38:14PM -0800, Abhishek Pandit-Subedi wrote:
-> Print the error reason for typec_altmode_enter so users can understand
-> why displayport failed to enter.
-> 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> ---
-> 
-> (no changes since v1)
-> 
->  drivers/usb/typec/altmodes/displayport.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
-> index 3245e03d59e6..e292780ec309 100644
-> --- a/drivers/usb/typec/altmodes/displayport.c
-> +++ b/drivers/usb/typec/altmodes/displayport.c
-> @@ -252,7 +252,8 @@ static void dp_altmode_work(struct work_struct *work)
->  	case DP_STATE_ENTER:
->  		ret = typec_altmode_enter(dp->alt, NULL);
->  		if (ret && ret != -EBUSY)
-> -			dev_err(&dp->alt->dev, "failed to enter mode\n");
-> +			dev_err(&dp->alt->dev, "failed to enter mode: %d\n",
-> +				ret);
+From: Cosmin Ratiu <cratiu@nvidia.com>
 
-One line is enough.
+[ Upstream commit 4dbc1d1a9f39c3711ad2a40addca04d07d9ab5d0 ]
 
->  		break;
->  	case DP_STATE_ENTER_PRIME:
->  		ret = typec_cable_altmode_enter(dp->alt, TYPEC_PLUG_SOP_P, NULL);
+When profile rollback fails in mlx5e_netdev_change_profile, the netdev
+profile var is left set to NULL. Avoid a crash when unloading the driver
+by not calling profile->cleanup in such a case.
 
-thanks,
+This was encountered while testing, with the original trigger that
+the wq rescuer thread creation got interrupted (presumably due to
+Ctrl+C-ing modprobe), which gets converted to ENOMEM (-12) by
+mlx5e_priv_init, the profile rollback also fails for the same reason
+(signal still active) so the profile is left as NULL, leading to a crash
+later in _mlx5e_remove.
 
+ [  732.473932] mlx5_core 0000:08:00.1: E-Switch: Unload vfs: mode(OFFLOADS), nvfs(2), necvfs(0), active vports(2)
+ [  734.525513] workqueue: Failed to create a rescuer kthread for wq "mlx5e": -EINTR
+ [  734.557372] mlx5_core 0000:08:00.1: mlx5e_netdev_init_profile:6235:(pid 6086): mlx5e_priv_init failed, err=-12
+ [  734.559187] mlx5_core 0000:08:00.1 eth3: mlx5e_netdev_change_profile: new profile init failed, -12
+ [  734.560153] workqueue: Failed to create a rescuer kthread for wq "mlx5e": -EINTR
+ [  734.589378] mlx5_core 0000:08:00.1: mlx5e_netdev_init_profile:6235:(pid 6086): mlx5e_priv_init failed, err=-12
+ [  734.591136] mlx5_core 0000:08:00.1 eth3: mlx5e_netdev_change_profile: failed to rollback to orig profile, -12
+ [  745.537492] BUG: kernel NULL pointer dereference, address: 0000000000000008
+ [  745.538222] #PF: supervisor read access in kernel mode
+<snipped>
+ [  745.551290] Call Trace:
+ [  745.551590]  <TASK>
+ [  745.551866]  ? __die+0x20/0x60
+ [  745.552218]  ? page_fault_oops+0x150/0x400
+ [  745.555307]  ? exc_page_fault+0x79/0x240
+ [  745.555729]  ? asm_exc_page_fault+0x22/0x30
+ [  745.556166]  ? mlx5e_remove+0x6b/0xb0 [mlx5_core]
+ [  745.556698]  auxiliary_bus_remove+0x18/0x30
+ [  745.557134]  device_release_driver_internal+0x1df/0x240
+ [  745.557654]  bus_remove_device+0xd7/0x140
+ [  745.558075]  device_del+0x15b/0x3c0
+ [  745.558456]  mlx5_rescan_drivers_locked.part.0+0xb1/0x2f0 [mlx5_core]
+ [  745.559112]  mlx5_unregister_device+0x34/0x50 [mlx5_core]
+ [  745.559686]  mlx5_uninit_one+0x46/0xf0 [mlx5_core]
+ [  745.560203]  remove_one+0x4e/0xd0 [mlx5_core]
+ [  745.560694]  pci_device_remove+0x39/0xa0
+ [  745.561112]  device_release_driver_internal+0x1df/0x240
+ [  745.561631]  driver_detach+0x47/0x90
+ [  745.562022]  bus_remove_driver+0x84/0x100
+ [  745.562444]  pci_unregister_driver+0x3b/0x90
+ [  745.562890]  mlx5_cleanup+0xc/0x1b [mlx5_core]
+ [  745.563415]  __x64_sys_delete_module+0x14d/0x2f0
+ [  745.563886]  ? kmem_cache_free+0x1b0/0x460
+ [  745.564313]  ? lockdep_hardirqs_on_prepare+0xe2/0x190
+ [  745.564825]  do_syscall_64+0x6d/0x140
+ [  745.565223]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [  745.565725] RIP: 0033:0x7f1579b1288b
+
+Fixes: 3ef14e463f6e ("net/mlx5e: Separate between netdev objects and mlx5e profiles initialization")
+Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
+Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index 385904502a6b..8ee6a81b42b4 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -5980,7 +5980,9 @@ static void mlx5e_remove(struct auxiliary_device *adev)
+ 	mlx5e_dcbnl_delete_app(priv);
+ 	unregister_netdev(priv->netdev);
+ 	mlx5e_suspend(adev, state);
+-	priv->profile->cleanup(priv);
++	/* Avoid cleanup if profile rollback failed. */
++	if (priv->profile)
++		priv->profile->cleanup(priv);
+ 	mlx5e_devlink_port_unregister(priv);
+ 	mlx5e_destroy_netdev(priv);
+ }
 -- 
-heikki
+2.25.1
+
 
