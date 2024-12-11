@@ -1,156 +1,108 @@
-Return-Path: <linux-kernel+bounces-441229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E049ECB76
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:40:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417029ECB79
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3761635DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536DB165EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9EF211A28;
-	Wed, 11 Dec 2024 11:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D225A211A37;
+	Wed, 11 Dec 2024 11:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0wQ26Bk"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWj+zK/a"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4D91F191E;
-	Wed, 11 Dec 2024 11:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76E4238E27;
+	Wed, 11 Dec 2024 11:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733917218; cv=none; b=ghHFKcRkFRtLtJjaDubPB0KH+yCSvcKEysM3ln3hDdIGkrcJ1j5p5xQrY+k5hv6jiQKa5ANuegU8HWD+Qkfy7qi71FAeHnZxazN8Y9mKX5sdGHymolkviPbARnxWHjCR89WswaG1ynVdebSz6fBdP+4iXkeii0eDNFLX12/sG7I=
+	t=1733917301; cv=none; b=iiY0sC1cgRoXf+Y1eVClBafnDod3WdkGkBbiglOvtnhx2Y5DnpnOmFB1K7wjfcoCCH5DmpZOl6q9oJslrOwLquOzuH0ULAxtULv6KjDcbvDIy66BrXmbbnueFu2IBN0ziGFqM6MviR7dWkPeH1jXMyO1Tz172IrKgzeKctYrkAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733917218; c=relaxed/simple;
-	bh=VHGL3u0EdA+ohBMKTYCA0Q8nxt8Cql2CiG/tIRN+9OE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlQPhytARtdHt2x/Y1iV+Ydx3gIHRFuV9gqAECDLVVH/mMZiGo9R9OiVMTYANPnoc9tnJEOgUcW/16dAIxBPO9brmwx5TgqfCXSUNz9ISrl7cupNoCUKA/vAzgVYXmcnbde/XC7fWPrQJMMTAoh4LBJcl+5Q7TNfICodFE02tpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G0wQ26Bk; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1733917301; c=relaxed/simple;
+	bh=1mhHRf1Ma1uEypkWhhQBKWHLQA7xnihYcYLQFZydAQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eAkC2Z52Ym8XQuvo9YHo6n6f8Y+AiZ+1ocB8C9Hr20qTCAjwLmBlWrGZjRgd6gYzChZiUr3eMlsYJC+YCPnTrcoZIx9F7Z5EuTg4shwDP3y51j9PVQN1/MulSqC1KnlUp0ZekOSzndrqY5JbkgahEniLJOGzqjvY/HWEEKO2EU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWj+zK/a; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385d7b4da2bso5429819f8f.1;
-        Wed, 11 Dec 2024 03:40:16 -0800 (PST)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ee8ecb721dso1140609a91.3;
+        Wed, 11 Dec 2024 03:41:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733917215; x=1734522015; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qlvml2G4Xi5ig1v0QjPfVDw4ozpGhiPCOsava1Ml8Js=;
-        b=G0wQ26Bkr30QmoBom3XYFBtnK5pGnHEwGodCoU0KmNUIG71QoIhts55l8RsDNlf2n4
-         ZBnhbzNww1oqepNxO9jY95ZtJXltO8OEsF9RbvfqUJh7KaqOQeagmhdXDVIV4/vd7AZi
-         Nzc1Pth7ht8vcp/Dv15zT11TQKAL8zRB+V23INop+2wqJw7YYtWQ0OQ3JlblSwfMheaY
-         90Lwa4GMXyNAqAdflvGqMs9uG8WVstHQt7n+CyuodHKQWh9p4UJnvKhugQ7N7uWIE+Oy
-         4+3lNlN3ittxeoJyzv+lyNHnbT4Umaf9RzRUIcgFRBuBPPfKl9X18oTb3RjTE1lRR2KC
-         VlXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733917215; x=1734522015;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733917299; x=1734522099; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qlvml2G4Xi5ig1v0QjPfVDw4ozpGhiPCOsava1Ml8Js=;
-        b=xJXmGzEe7dZoKURDF8Qyiv1Xnli4FFkN0QNkHcsNCtpjiP46aVmO0bM0IJJ5qSEAS1
-         v1K0IiEplob9ZzVRW+b5yHCxsDtREiANkw+sRZPSSBl1CCetiO7/bHZAg4NP6ZXZHJgq
-         F1PI3Tq55mqJeqXaQ7e877bCvvRZUg2NIGWXKS1sts++X1yNAFuyfSM/kDWj30/Zz5VM
-         UtWAwM2wRd54NYi3oiy+7H6vNDR13I+x2Zzq98lUXNSjHirPo9/n3Sa0VfAqCjBzWywb
-         LCJ4iVtFP/kQHkf0fmC6z/66aDBT5xP1jp93sH4Nkcd0ldmezVmHx1wlw1NNz76WAtMv
-         kX2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWj19dDu5WwQ/d0M+6zR5SIutG1tOeWLbqepM1Oa7eG4zkpnRsy6KzQCWeG1ocbN5celIZTlkPyfhceK0qW@vger.kernel.org, AJvYcCWjosWYz8wTIl4mSh5WPZ8QXOkUlcM+IMClP6OOPDOYAlYCjnGEf6hZaxDZGbuKlNGonxHUfCHZXXDz@vger.kernel.org, AJvYcCWwjRcDlSwQQldMaLMXbJQvcNW/MYOCS+Hjkeo5SJj2VfIkzDhIfS9h06FQckmk6W73rE1RbyVPDSTzR4j+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaJlhp1I0SCIyj/jOBCmSZOl1aMKQYou0lfp3gxgCCWDA1qxEH
-	LVYOyWaeFLGYvrTWCv2Cr6F4BKLmxWusInUVwRpxV6ji8jrECRjY
-X-Gm-Gg: ASbGncsXLAnpImDhqaqW3YBRot6yUsG8MEkxkfviZIQjBtuMP1EsqdvgJSxX48o6haj
-	9fbF61s2SMGhPZghVKlQTkPEfCuU0PRk8b0c+F/GKUWUIZB1XWek/63JQiyQGbC/3hBPyH5dq/l
-	JzcjkNhhPpibvBZBvw+VLxrFLP8w/0h3YQqAaOlyiPZ0mHvU7cjo7v8LVqT92jCk5H/lkHo+s/6
-	0DIBgNoV0+hGYxATbr8wGIU9mmJhFJwuEUac8Ara+IWICQiTvNinENjkQ/Pvifsi5LkA8+usTfz
-	mWfoYp9jew==
-X-Google-Smtp-Source: AGHT+IFiA1Xf7QFgwYwlmpgBDu0fCeGNMpapKx4zkoOoVFH/jisTnTeHhTBy5KZBO/+3QOQXv20ouQ==
-X-Received: by 2002:a5d:6d03:0:b0:385:e4a7:df09 with SMTP id ffacd0b85a97d-3864cec7063mr2403857f8f.44.1733917214360;
-        Wed, 11 Dec 2024 03:40:14 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824c2bf2sm1079314f8f.55.2024.12.11.03.40.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 03:40:14 -0800 (PST)
-Message-ID: <67597a1e.5d0a0220.9b04.2bef@mx.google.com>
-X-Google-Original-Message-ID: <Z1l6GYZY1dHMKb2S@Ansuel-XPS.>
-Date: Wed, 11 Dec 2024 12:40:09 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com,
-	Richard van Schagen <vschagen@icloud.com>
-Subject: Re: [PATCH v8 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
- engine support
-References: <20241210204853.18765-1-ansuelsmth@gmail.com>
- <20241210204853.18765-4-ansuelsmth@gmail.com>
- <Z1ldzyPKgoD8GZfx@gondor.apana.org.au>
+        bh=O/+snhFpulgjg/b9milrZ1XE3OxDySVi/UqtwUb6x78=;
+        b=iWj+zK/axtl3hChs+3pl73aN08aM+BmeMawWCKn5AZWLJPzkbFMy3v1EBL5ZA6EZN1
+         aiOuoCuTOPDtnhNYmfOMYO0h2d+1sIQe+qs6gnkHMkElTknR8iSeAJroVXQlqtLU9YTP
+         UL//dPtXF0/tiRM6217biYnRE2Y6iR395puHi+zEJxBFopziWnFAqmQPTL5n6FydImIH
+         oD84+6LdJRo5E5NxK+Ys7coU8xVi5Y+CvZvaHfKTje08nbPtoMaa5Rdx40ngdgJ2OKgO
+         CJQUs43UVseJcNMqvncnTwe+8a3/ytDsSb8TOc8InWJbT3H6RB1c2Iun39/EfaUvyb/z
+         pg7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733917299; x=1734522099;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O/+snhFpulgjg/b9milrZ1XE3OxDySVi/UqtwUb6x78=;
+        b=JOX1lAnz16gAJRHnZInOjXdkDnZA+WNtY/4IW6EY1eXwkMJwu0dhZbPtG8MyRBNLiP
+         M6rGlpKzkmI8pkOzwQ2iO7o/eWX0co4XDeGG8faJtQpokJKeoeR3kKGzPfkoMpYqnSOS
+         KzTNTKwN4/yD3xnYOz/gyif5VGycCFxuDXETWmLgFBi+DLpN0oGB0HiOWdt+rwohinmS
+         lXrNFXFR5peh1SMEXYV1Do47VYZpZKw7rDIjU6Zq/IlwWVEdDqJu6XBlHrE9BE3FKf/m
+         yMowzhJYVSDm5FhbD7I58IjSCpLaWd/+4qfOiJb1qD5FoTIV1Cc9PMoHisOwOfnI1sHY
+         ECNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxOFz5NdvogZSJ5Ln9E4TdRgaBDYEOAwYtoxvWUWYyVSNh4ha+7+wZL2SVHtzgpiOllKeaQjUIj3xb8L6H81o=@vger.kernel.org, AJvYcCWgw7KpWqirLVOAq0kHLauji86C3p2JHnfdeLCSzWS3UkOoGBJtPA28OVo3vVnvomAcBugkvo7pscrM6JWu@vger.kernel.org, AJvYcCWyxiu8vZqMPh4tc4meZN7qBfsJtlHB1u2oKHbhiPQxMrTn/ORvcLLab5uSNhaRm3kVzr2lDNzffaIT@vger.kernel.org, AJvYcCXfLMkUidy12xM6utmiA3TnJNxZy4oz7ouxqNLY+RBRcJIhOBhvo3kxAkZYEdJc1SlBg46I0grRljco@vger.kernel.org
+X-Gm-Message-State: AOJu0YziuVeC0YU3C/NDqw3DQNbck7h3IdYs2jHaUSgzvjkWpsxNqjXD
+	qMGnfPmkbq2rIUHCHtZ+YFr9f36/exlbsewVQVYwbLhX1BlBQaK/qds8PffKA0CDe22cdIGPB/3
+	hgNfRPapoJBC44ij/KoEW97MfALw=
+X-Gm-Gg: ASbGncs8ZvST444CMCkWcaym6k4O+2fo+t5kbg3+BNwg4D9WrB9uGupFqHJWSlwf+3B
+	ZHr+A2ySD3/RON54rXZ22Vf4zlxY75NpDnYc=
+X-Google-Smtp-Source: AGHT+IHaaP1PLWt8qXFf6NILDDcKKeQTWVOrXdIHgPTZI1P4nTIGd0AzO5ffZ4lvYAVw4J6pFlGFuJKgHZ4K79IvwiQ=
+X-Received: by 2002:a17:90b:1a92:b0:2ee:35a1:c291 with SMTP id
+ 98e67ed59e1d1-2f127fbeba0mr1510079a91.3.1733917299136; Wed, 11 Dec 2024
+ 03:41:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1ldzyPKgoD8GZfx@gondor.apana.org.au>
+References: <20241210224947.23804-1-dakr@kernel.org> <20241210224947.23804-2-dakr@kernel.org>
+ <2024121112-gala-skincare-c85e@gregkh> <2024121111-acquire-jarring-71af@gregkh>
+ <2024121128-mutt-twice-acda@gregkh> <2024121131-carnival-cash-8c5f@gregkh>
+In-Reply-To: <2024121131-carnival-cash-8c5f@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 11 Dec 2024 12:41:26 +0100
+Message-ID: <CANiq72nMkzHLb9gi_i6RbQYkzP-1W5QbtGVx+z1f8nfp3y_CwQ@mail.gmail.com>
+Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
+	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 05:39:27PM +0800, Herbert Xu wrote:
-> On Tue, Dec 10, 2024 at 09:48:33PM +0100, Christian Marangi wrote:
-> >
-> > +static int eip93_hash_export(struct ahash_request *req, void *out)
-> > +{
-> > +	struct eip93_hash_reqctx *rctx = ahash_request_ctx(req);
-> > +	struct eip93_hash_export_state *state = out;
-> > +
-> > +	/* Save the first block in state data */
-> > +	if (rctx->len) {
-> > +		struct mkt_hash_block *block;
-> > +
-> > +		block = list_first_entry(&rctx->blocks,
-> > +					 struct mkt_hash_block,
-> > +					 list);
-> > +
-> > +		memcpy(state->data, block->data,
-> > +		       SHA256_BLOCK_SIZE - rctx->left_last);
-> > +	}
-> > +
-> > +	eip93_hash_export_sa_state(req, state);
-> > +
-> > +	eip93_hash_free_data_blocks(req);
-> > +	eip93_hash_free_sa_state(req);
-> > +	eip93_hash_free_sa_record(req);
-> 
-> The export function should be idempotent so it shouldn't be freeing
-> anything.
-> 
-> In fact this indicates a bigger problem with how DMA is being used
-> in the driver.  You shouldn't be leaving DMA memory mapped after
-> the init (or update) function completes.  It is perfectly legal
-> for a user to call init and then abandon the request by freeing it
-> directly without ever calling final.  In that case you will be
-> leaking the DMA mappings.
-> 
-> So make sure that DMA is mapped only when needed, and freed before
-> you call the user callback.
-> 
-> The import/export functions should only be touching kernel memory,
-> not DMA.
-> 
+On Wed, Dec 11, 2024 at 12:05=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> Or does the Rust side not have KBUILD_MODNAME?
 
-Just to make sure, this is only limited to DMA or it's also problematic
-to the block list? Aka NO FREE should be done in export or NO DMA FREE
-should be done in export?
+We can definitely give access to it at compile-time with e.g. `env!`:
 
--- 
-	Ansuel
+    pr_info!("{}\n", env!("KBUILD_MODNAME"));
+
+Cheers,
+Miguel
 
