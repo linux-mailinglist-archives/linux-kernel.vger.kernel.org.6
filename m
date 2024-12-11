@@ -1,265 +1,262 @@
-Return-Path: <linux-kernel+bounces-441889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6938C9ED54D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:58:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 136F49ED4E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:50:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D50A160872
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22BC0282400
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6611B247983;
-	Wed, 11 Dec 2024 18:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOpaReZU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D28A207A18;
+	Wed, 11 Dec 2024 18:49:58 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1499246B3C;
-	Wed, 11 Dec 2024 18:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16611C3F27;
+	Wed, 11 Dec 2024 18:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943119; cv=none; b=abXGzsoN1G6dI0rLyLu0T7iolEAaGMC/h1VCFmIfVG6uJyOCAWKLDLov9LUKjbaCAdcNlqy1fHk3Pa4iw/WhN6fe0B9r3EeaAgn56UzarLItNcTmcEYBaOzYGnn/QJ9OTFtGepxs1uqdPkJGrTXY4WGsAS/9GDU3n+IDsMxOKaA=
+	t=1733942997; cv=none; b=fyGD6cnjPiOv5LlEXtcJ0otPSwu3vIbQPVj80IthDDCaHn3ij6MaziUZltTGccrIYRNB6VQJf9XpUmeJOVtowr75nIf/V73uNPP2KfXpTrMyAYP0GWJ0DUC9gWyzum07ijo6FeAwmOkCc/rvTFbUFGg1upxppHU9ToO5G4fRqzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943119; c=relaxed/simple;
-	bh=0ApqLa5ohk2HCuhaPK/iP86UCfKeLgHYSZtpGd/yALg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u6VLRLQ6l9xKFa3gau7ej1U5RM7aNy2aaZ6cCyzjtqAv/RCuGQqZf8KjsmsXFQQNWGt9QMV4TQBARnPwbeRTI7OxAspEGi1vBnteqy1yVsdgh/mq8xVZNWxyNU/2g3vLEipjbldBe34CsnYlEKjWj07tAM16Rx6kBbnnXmkVJjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOpaReZU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 367CDC4CED2;
-	Wed, 11 Dec 2024 18:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733943119;
-	bh=0ApqLa5ohk2HCuhaPK/iP86UCfKeLgHYSZtpGd/yALg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fOpaReZUKhy+fuXAy+2RsPvfXZE6U3+8nqjBozNG560ApGWbQmmIi6Gts6UfKcdAa
-	 VaqTUMZYE0xV13A3Kf4nJAuS9HR07iTlnqo9eIBGB56uxurmSNTVgHZEOqWbWdqJfy
-	 885snMzhfa72aFjp52drRlPg4qLPJibHZBStHt/qvhPW73JG2BseUswGALalaojzG1
-	 2MoxlRXvqzMCnutZlESgp1KBxY45+QZ0PU46XGa0Rn0Gk+PowEXepUBTIu+JuAq/fU
-	 koDFz+HKLlQe4cf0hkYuRLtHu1c56HgHHNn26vFOR7UbKSwqmhtG7EIAsQaW9Jseks
-	 69ZE3Mb8ML2Ow==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ming Lei <ming.lei@redhat.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Luck Tony <tony.luck@intel.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 36/36] blk-mq: move cpuhp callback registering out of q->sysfs_lock
-Date: Wed, 11 Dec 2024 13:49:52 -0500
-Message-ID: <20241211185028.3841047-36-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241211185028.3841047-1-sashal@kernel.org>
-References: <20241211185028.3841047-1-sashal@kernel.org>
+	s=arc-20240116; t=1733942997; c=relaxed/simple;
+	bh=R2X2+Rg4gZ4Otv4c0CzKb4uZ6UjdpqXDSDT0oHwTEgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WTIO+oASx6z4HPRJ2LfhQsqIr2Z3kGXZ30nr8BVlVGGaq/eLSHDvusfdf+5m16apT/FqVo5lbAIBUpeC0BvoaOm6kVX60SL7aPEHhyfBW1pjUNgLXNrRqp8xLOAFefJ0uh/jfSRkI50zVRa2uFv/BX216ClKeGV+g/wd8cabZEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 640BCC4CED2;
+	Wed, 11 Dec 2024 18:49:56 +0000 (UTC)
+Date: Wed, 11 Dec 2024 13:49:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v2] tracing: Fix trace output when pointer hash is disabled
+Message-ID: <20241211134954.66d20807@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.4
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-[ Upstream commit 22465bbac53c821319089016f268a2437de9b00a ]
+The "%p" in the trace output is by default hashes the pointer. An option
+was added to disable the hashing as reading trace output is a privileged
+operation (just like reading kallsyms). When hashing is disabled, the
+iter->fmt temp buffer is used to add "x" to "%p" into "%px" before sending
+to the svnprintf() functions.
 
-Registering and unregistering cpuhp callback requires global cpu hotplug lock,
-which is used everywhere. Meantime q->sysfs_lock is used in block layer
-almost everywhere.
+The problem with using iter->fmt, is that the trace_check_vprintf() that
+makes sure that trace events "%pX" pointers are not dereferencing freed
+addresses (and prints a warning if it does) also uses the iter->fmt to
+save to and use to print out for the trace file. When the hash_ptr option
+is disabled, the "%px" version is added to the iter->fmt buffer, and that
+then is passed to the trace_check_vprintf() function that then uses the
+iter->fmt as a temp buffer. Obviously this caused bad results.
 
-It is easy to trigger lockdep warning[1] by connecting the two locks.
+This was noticed when backporting the persistent ring buffer to 5.10 and
+added this code without the option being disabled by default, so it failed
+one of the selftests because the sched_wakeup was missing the "comm"
+field:
 
-Fix the warning by moving blk-mq's cpuhp callback registering out of
-q->sysfs_lock. Add one dedicated global lock for covering registering &
-unregistering hctx's cpuhp, and it is safe to do so because hctx is
-guaranteed to be live if our request_queue is live.
+     cat-907     [006] dN.4.   249.722403: sched_wakeup: comm= pid=74 prio=120 target_cpu=006
 
-[1] https://lore.kernel.org/lkml/Z04pz3AlvI4o0Mr8@agluck-desk3/
+Instead of showing:
 
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Peter Newman <peternewman@google.com>
-Cc: Babu Moger <babu.moger@amd.com>
-Reported-by: Luck Tony <tony.luck@intel.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Link: https://lore.kernel.org/r/20241206111611.978870-3-ming.lei@redhat.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  <idle>-0       [004] dNs6.    49.076464: sched_wakeup: comm=sshd-session pid=896 prio=120 target_cpu=0040
+
+To fix this, change trace_check_vprintf() to modify the iter->fmt instead
+of copying to it. If the fmt passed in is not the iter->fmt, first copy
+the entire fmt string to iter->fmt and then iterate the iter->fmt. When
+the format needs to be processed, perform the following like actions:
+
+  save_ch = p[i];
+  p[i] = '\0';
+  trace_seq_printf(&iter->seq, p, str);
+  p[i] = save_ch;
+
+Cc: stable@vger.kernel.org
+Fixes: efbbdaa22bb78 ("tracing: Show real address for trace event arguments")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- block/blk-mq.c | 103 +++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 92 insertions(+), 11 deletions(-)
+Changes since v1: https://lore.kernel.org/20241210172533.04bcd5f7@batman.local.home
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index c4012cb3adbf1..6dd849d607c03 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -43,6 +43,7 @@
- 
- static DEFINE_PER_CPU(struct llist_head, blk_cpu_done);
- static DEFINE_PER_CPU(call_single_data_t, blk_cpu_csd);
-+static DEFINE_MUTEX(blk_mq_cpuhp_lock);
- 
- static void blk_mq_insert_request(struct request *rq, blk_insert_t flags);
- static void blk_mq_request_bypass_insert(struct request *rq,
-@@ -3740,13 +3741,91 @@ static int blk_mq_hctx_notify_dead(unsigned int cpu, struct hlist_node *node)
- 	return 0;
- }
- 
--static void blk_mq_remove_cpuhp(struct blk_mq_hw_ctx *hctx)
-+static void __blk_mq_remove_cpuhp(struct blk_mq_hw_ctx *hctx)
+- Added "goto print_fmt;" to jump to the "give up and print fmt" code as
+  p is no longer "const char *" and wasn't initialized to point to const char *fmt.
+  (caught by kernel test robot)
+
+
+ kernel/trace/trace.c | 90 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 55 insertions(+), 35 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index be62f0ea1814..fbc9cdfd9c22 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3711,8 +3711,10 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
  {
--	if (!(hctx->flags & BLK_MQ_F_STACKING))
-+	lockdep_assert_held(&blk_mq_cpuhp_lock);
-+
-+	if (!(hctx->flags & BLK_MQ_F_STACKING) &&
-+	    !hlist_unhashed(&hctx->cpuhp_online)) {
- 		cpuhp_state_remove_instance_nocalls(CPUHP_AP_BLK_MQ_ONLINE,
- 						    &hctx->cpuhp_online);
--	cpuhp_state_remove_instance_nocalls(CPUHP_BLK_MQ_DEAD,
--					    &hctx->cpuhp_dead);
-+		INIT_HLIST_NODE(&hctx->cpuhp_online);
+ 	long text_delta = 0;
+ 	long data_delta = 0;
+-	const char *p = fmt;
+ 	const char *str;
++	char save_ch;
++	char *buf = NULL;
++	char *p;
+ 	bool good;
+ 	int i, j;
+ 
+@@ -3720,7 +3722,7 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 		return;
+ 
+ 	if (static_branch_unlikely(&trace_no_verify))
+-		goto print;
++		goto print_fmt;
+ 
+ 	/*
+ 	 * When the kernel is booted with the tp_printk command line
+@@ -3735,8 +3737,21 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 
+ 	/* Don't bother checking when doing a ftrace_dump() */
+ 	if (iter->fmt == static_fmt_buf)
+-		goto print;
++		goto print_fmt;
+ 
++	if (fmt != iter->fmt) {
++		int len = strlen(fmt);
++		while (iter->fmt_size < len + 1) {
++			/*
++			 * If we can't expand the copy buffer,
++			 * just print it.
++			 */
++			if (!trace_iter_expand_format(iter))
++				goto print_fmt;
++		}
++		strscpy(iter->fmt, fmt, iter->fmt_size);
 +	}
-+
-+	if (!hlist_unhashed(&hctx->cpuhp_dead)) {
-+		cpuhp_state_remove_instance_nocalls(CPUHP_BLK_MQ_DEAD,
-+						    &hctx->cpuhp_dead);
-+		INIT_HLIST_NODE(&hctx->cpuhp_dead);
-+	}
-+}
-+
-+static void blk_mq_remove_cpuhp(struct blk_mq_hw_ctx *hctx)
-+{
-+	mutex_lock(&blk_mq_cpuhp_lock);
-+	__blk_mq_remove_cpuhp(hctx);
-+	mutex_unlock(&blk_mq_cpuhp_lock);
-+}
-+
-+static void __blk_mq_add_cpuhp(struct blk_mq_hw_ctx *hctx)
-+{
-+	lockdep_assert_held(&blk_mq_cpuhp_lock);
-+
-+	if (!(hctx->flags & BLK_MQ_F_STACKING) &&
-+	    hlist_unhashed(&hctx->cpuhp_online))
-+		cpuhp_state_add_instance_nocalls(CPUHP_AP_BLK_MQ_ONLINE,
-+				&hctx->cpuhp_online);
-+
-+	if (hlist_unhashed(&hctx->cpuhp_dead))
-+		cpuhp_state_add_instance_nocalls(CPUHP_BLK_MQ_DEAD,
-+				&hctx->cpuhp_dead);
-+}
-+
-+static void __blk_mq_remove_cpuhp_list(struct list_head *head)
-+{
-+	struct blk_mq_hw_ctx *hctx;
-+
-+	lockdep_assert_held(&blk_mq_cpuhp_lock);
-+
-+	list_for_each_entry(hctx, head, hctx_list)
-+		__blk_mq_remove_cpuhp(hctx);
-+}
-+
-+/*
-+ * Unregister cpuhp callbacks from exited hw queues
-+ *
-+ * Safe to call if this `request_queue` is live
-+ */
-+static void blk_mq_remove_hw_queues_cpuhp(struct request_queue *q)
-+{
-+	LIST_HEAD(hctx_list);
-+
-+	spin_lock(&q->unused_hctx_lock);
-+	list_splice_init(&q->unused_hctx_list, &hctx_list);
-+	spin_unlock(&q->unused_hctx_lock);
-+
-+	mutex_lock(&blk_mq_cpuhp_lock);
-+	__blk_mq_remove_cpuhp_list(&hctx_list);
-+	mutex_unlock(&blk_mq_cpuhp_lock);
-+
-+	spin_lock(&q->unused_hctx_lock);
-+	list_splice(&hctx_list, &q->unused_hctx_list);
-+	spin_unlock(&q->unused_hctx_lock);
-+}
-+
-+/*
-+ * Register cpuhp callbacks from all hw queues
-+ *
-+ * Safe to call if this `request_queue` is live
-+ */
-+static void blk_mq_add_hw_queues_cpuhp(struct request_queue *q)
-+{
-+	struct blk_mq_hw_ctx *hctx;
-+	unsigned long i;
-+
-+	mutex_lock(&blk_mq_cpuhp_lock);
-+	queue_for_each_hw_ctx(q, hctx, i)
-+		__blk_mq_add_cpuhp(hctx);
-+	mutex_unlock(&blk_mq_cpuhp_lock);
- }
++	p = iter->fmt;
+ 	while (*p) {
+ 		bool star = false;
+ 		int len = 0;
+@@ -3748,14 +3763,6 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 		 * as well as %p[sS] if delta is non-zero
+ 		 */
+ 		for (i = 0; p[i]; i++) {
+-			if (i + 1 >= iter->fmt_size) {
+-				/*
+-				 * If we can't expand the copy buffer,
+-				 * just print it.
+-				 */
+-				if (!trace_iter_expand_format(iter))
+-					goto print;
+-			}
  
- /*
-@@ -3797,8 +3876,6 @@ static void blk_mq_exit_hctx(struct request_queue *q,
- 	if (set->ops->exit_hctx)
- 		set->ops->exit_hctx(hctx, hctx_idx);
- 
--	blk_mq_remove_cpuhp(hctx);
--
- 	xa_erase(&q->hctx_table, hctx_idx);
- 
- 	spin_lock(&q->unused_hctx_lock);
-@@ -3815,6 +3892,7 @@ static void blk_mq_exit_hw_queues(struct request_queue *q,
- 	queue_for_each_hw_ctx(q, hctx, i) {
- 		if (i == nr_queue)
+ 			if (p[i] == '\\' && p[i+1]) {
+ 				i++;
+@@ -3788,10 +3795,11 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 		if (!p[i])
  			break;
-+		blk_mq_remove_cpuhp(hctx);
- 		blk_mq_exit_hctx(q, set, hctx, i);
+ 
+-		/* Copy up to the %s, and print that */
+-		strncpy(iter->fmt, p, i);
+-		iter->fmt[i] = '\0';
+-		trace_seq_vprintf(&iter->seq, iter->fmt, ap);
++		/* Print up to the %s */
++		save_ch = p[i];
++		p[i] = '\0';
++		trace_seq_vprintf(&iter->seq, p, ap);
++		p[i] = save_ch;
+ 
+ 		/* Add delta to %pS pointers */
+ 		if (p[i+1] == 'p') {
+@@ -3837,6 +3845,8 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 			good = trace_safe_str(iter, str, star, len);
+ 		}
+ 
++		p += i;
++
+ 		/*
+ 		 * If you hit this warning, it is likely that the
+ 		 * trace event in question used %s on a string that
+@@ -3849,41 +3859,51 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+ 		if (WARN_ONCE(!good, "fmt: '%s' current_buffer: '%s'",
+ 			      fmt, seq_buf_str(&iter->seq.seq))) {
+ 			int ret;
++#define TEMP_BUFSIZ 1024
++
++			if (!buf) {
++				char *buf = kmalloc(TEMP_BUFSIZ, GFP_KERNEL);
++				if (!buf) {
++					/* Need buffer to read address */
++					trace_seq_printf(&iter->seq, "(0x%px)[UNSAFE-MEMORY]", str);
++					p += j + 1;
++					goto print;
++				}
++			}
++			if (len >= TEMP_BUFSIZ)
++				len = TEMP_BUFSIZ - 1;
+ 
+ 			/* Try to safely read the string */
+ 			if (star) {
+-				if (len + 1 > iter->fmt_size)
+-					len = iter->fmt_size - 1;
+-				if (len < 0)
+-					len = 0;
+-				ret = copy_from_kernel_nofault(iter->fmt, str, len);
+-				iter->fmt[len] = 0;
+-				star = false;
++				ret = copy_from_kernel_nofault(buf, str, len);
++				buf[len] = 0;
+ 			} else {
+-				ret = strncpy_from_kernel_nofault(iter->fmt, str,
+-								  iter->fmt_size);
++				ret = strncpy_from_kernel_nofault(buf, str, 1024);
+ 			}
+ 			if (ret < 0)
+ 				trace_seq_printf(&iter->seq, "(0x%px)", str);
+ 			else
+-				trace_seq_printf(&iter->seq, "(0x%px:%s)",
+-						 str, iter->fmt);
+-			str = "[UNSAFE-MEMORY]";
+-			strcpy(iter->fmt, "%s");
++				trace_seq_printf(&iter->seq, "(0x%px:%s)", str, buf);
++			trace_seq_puts(&iter->seq, "[UNSAFE-MEMORY]");
+ 		} else {
+-			strncpy(iter->fmt, p + i, j + 1);
+-			iter->fmt[j+1] = '\0';
++			save_ch = p[j + 1];
++			p[j + 1] = '\0';
++			if (star)
++				trace_seq_printf(&iter->seq, p, len, str);
++			else
++				trace_seq_printf(&iter->seq, p, str);
++			p[j + 1] = save_ch;
+ 		}
+-		if (star)
+-			trace_seq_printf(&iter->seq, iter->fmt, len, str);
+-		else
+-			trace_seq_printf(&iter->seq, iter->fmt, str);
+ 
+-		p += i + j + 1;
++		p += j + 1;
  	}
- }
-@@ -3838,11 +3916,6 @@ static int blk_mq_init_hctx(struct request_queue *q,
- 	if (xa_insert(&q->hctx_table, hctx_idx, hctx, GFP_KERNEL))
- 		goto exit_flush_rq;
- 
--	if (!(hctx->flags & BLK_MQ_F_STACKING))
--		cpuhp_state_add_instance_nocalls(CPUHP_AP_BLK_MQ_ONLINE,
--				&hctx->cpuhp_online);
--	cpuhp_state_add_instance_nocalls(CPUHP_BLK_MQ_DEAD, &hctx->cpuhp_dead);
--
- 	return 0;
- 
-  exit_flush_rq:
-@@ -3877,6 +3950,8 @@ blk_mq_alloc_hctx(struct request_queue *q, struct blk_mq_tag_set *set,
- 	INIT_DELAYED_WORK(&hctx->run_work, blk_mq_run_work_fn);
- 	spin_lock_init(&hctx->lock);
- 	INIT_LIST_HEAD(&hctx->dispatch);
-+	INIT_HLIST_NODE(&hctx->cpuhp_dead);
-+	INIT_HLIST_NODE(&hctx->cpuhp_online);
- 	hctx->queue = q;
- 	hctx->flags = set->flags & ~BLK_MQ_F_TAG_QUEUE_SHARED;
- 
-@@ -4415,6 +4490,12 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
- 	xa_for_each_start(&q->hctx_table, j, hctx, j)
- 		blk_mq_exit_hctx(q, set, hctx, j);
- 	mutex_unlock(&q->sysfs_lock);
-+
-+	/* unregister cpuhp callbacks for exited hctxs */
-+	blk_mq_remove_hw_queues_cpuhp(q);
-+
-+	/* register cpuhp for new initialized hctxs */
-+	blk_mq_add_hw_queues_cpuhp(q);
+  print:
+ 	if (*p)
+ 		trace_seq_vprintf(&iter->seq, p, ap);
++	kfree(buf);
++	return;
++ print_fmt:
++	trace_seq_vprintf(&iter->seq, fmt, ap);
  }
  
- int blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
+ const char *trace_event_format(struct trace_iterator *iter, const char *fmt)
 -- 
-2.43.0
+2.45.2
 
 
