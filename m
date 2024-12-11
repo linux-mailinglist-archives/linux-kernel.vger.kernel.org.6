@@ -1,212 +1,222 @@
-Return-Path: <linux-kernel+bounces-442010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B292F9ED6D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:53:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D26F9ED6DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:54:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F7642820EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADD621886433
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB41209F31;
-	Wed, 11 Dec 2024 19:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292BD209695;
+	Wed, 11 Dec 2024 19:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fH/EZ2AE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYzPXr6S"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16EF1C3F27;
-	Wed, 11 Dec 2024 19:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A098C1C3F27;
+	Wed, 11 Dec 2024 19:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733946813; cv=none; b=XmC+aKajN7IA45K0VCb2RBx5A/+mbfk/KWxa3U+Oj+gjTgwB35qgkQshSZNsghCl2FJOBCo5l9j7wtpW8RIg6lqqYqmyhcCDHX3cCdH4/zHlWpJYweQ1ARf05tcURQxgwbe6D7o9jhZHJbSYLgLIhqvrfA/XpOrtqeclvSmrPj8=
+	t=1733946831; cv=none; b=rGRvtV5HKrQWjfMsT2rdK2zsO7QutDgSqbydK2PtSpcYyJBNfO1KvgTxtM1SOy4X5bBIH28EDMY55gViRpBQu4M6YreJi3SK1D1eQCOjT7akoa/sE/MgQf1ppg9CHLqBBkSX+cz/cYmTyYaMnQayGfsKWsxjNmGTZv/o3a427UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733946813; c=relaxed/simple;
-	bh=/Islhx5QPnsZFTF/qi0yWZBLeMxaGO8x2YhrOZpsYTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=csMhw6pnwor5oBuraItcCkliGCCwZUekZ22Yf4YMLU7DxRPig8SbyzjVpfJAbkYcYAwmDjjfK1mUz66EEjJP63zFS9ooQjGacgliJp3BKGr4p4VEnTF9N3TQFt8LtqeCrFKMqKOL0WobsaHhsM6zhGzij7UZAzpESuWunKpqdg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fH/EZ2AE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F412C4CED2;
-	Wed, 11 Dec 2024 19:53:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733946813;
-	bh=/Islhx5QPnsZFTF/qi0yWZBLeMxaGO8x2YhrOZpsYTw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fH/EZ2AE2pqH53MRSScd31eG/ObA/GfsrmQtufCSl4yPoy+MCOaa72mq2tTkS/Ptt
-	 MElV3mKuCIyouF7O4TeLksAGyBsjRyyLeNIyCIB3ew5+d2s/AoWfVhNt6/nEerEueP
-	 lsEbi36/ME73ZGwcBD9JV1emQNX/HjB79qiLo2p2jp4Vd5vSmEtM1AlVEEISmjaB/v
-	 g4N+HiAvMqiueLdx51+uGAUPUuNsOAH5p5tavAZcJm5094U4UxAJwv9624a8nmihmv
-	 POMTYqt3LTct+4Fgrr5FfhhslujOt5dVSWkZOavas1KrgLzaRfknHtIs9GeNbFzjQX
-	 QNnQ+32ufo7aw==
-From: SeongJae Park <sj@kernel.org>
-To: Yuanchu Xie <yuanchu@google.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-	Khalid Aziz <khalid.aziz@oracle.com>,
-	Henry Huang <henry.hj@antgroup.com>,
-	Yu Zhao <yuzhao@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Gregory Price <gregory.price@memverge.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Tejun Heo <tj@kernel.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Mike Rapoport <rppt@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Watson <ozzloy@each.do>,
-	cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 0/9] mm: workingset reporting
-Date: Wed, 11 Dec 2024 11:53:29 -0800
-Message-Id: <20241211195329.60224-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAJj2-QFdP6DKVQJ4Tw6rdV+XtgDihe=UOnvm4cm-q61K0hq6CQ@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1733946831; c=relaxed/simple;
+	bh=awILHNQ8O38EIuFqxBPqIuRrNjOaY4wzupNrF0qkS2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oL9Z4CXxEGgUvq1Ckl4fMFsbRXSJVRR1gTSbNyUjbqFnEd+2PH1k8uqotmVhw732QBYEMiVoLO8NwIkeDNyJxmUR7eI2fo+/3kjSm0lZs7r5Af+ycx+uI4E+zYKzdkIRBgz4yOzyJugu2OAdhSZa52HqUGdVYtaPhrRMdaM5nQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYzPXr6S; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfa1ec3b94so9833188a12.2;
+        Wed, 11 Dec 2024 11:53:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733946828; x=1734551628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pUkg/yF7ykYCR3YM3sPZ1dL76jj3S9T17dsWcGrfYpk=;
+        b=XYzPXr6S1lgMtHO80dSrwg3Vk/LlcO70wjcZ3tyKuLJMEtx1tPd8duBges0+GFqs0k
+         r2jeAgF+z8TMYaHBexMllhdShTeynBNF1xScrL1Tq1aHN3NB56MOfWBv50/1gPSt9BQJ
+         ZgbkOcbGOkU+AeDtQZP6uOlJWHUA1IY+sDVtLZCK0zj0bIZppZ6YyDOmdoyRmPUG/5P4
+         41lnF22+PagWVuhaNk46YsFoLOlRDpYGSSAM80/zCQHojquBk3zCEv67ELNcwHmEmRX7
+         dOLFKom9L7oezJvGB11e2a+Tr317elDgsljrgHQeexkNAV0CgNcnOXOuxTUXISdeXDT2
+         wMfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733946828; x=1734551628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pUkg/yF7ykYCR3YM3sPZ1dL76jj3S9T17dsWcGrfYpk=;
+        b=F3cLukEbNozsL6AA9cppq6tBG2FvqGCEeLFpphJs7RIurpwyRyOuMG8wuc+dyB8OV1
+         NGaXMI8x1OSKPT9oMmYVFzyiKjB8C75tOxysqcFlifEhRMGWIyVxCp+FFn115f3X5iLc
+         fs4xNVHBc5+ksLjy52FQB4wRFkICkeoo5thWt8ydMoDxCPurwVDHD9gIBf6mvMlIphiJ
+         IjRYYgqm+vkMXAbwQLhRC81tFskzO228s/BpicB8LhoSt7terpECmRTPNLlCkjF3t+IF
+         t9mlRUPORD9TCFAdedZy5cbz9o/LUdzLj+5S7GyQ0lZQ0TvUseF/kV5L89iK8HDI6ts1
+         uaSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3mzbjMxdxO8iWvREWYYF7KOpreBoWhd3vhaQQsHkImR2PTwd0nhmh+1MgTM0ZTkz6/42on2AE96D/@vger.kernel.org, AJvYcCVIE95vvHkkm2fp2S9s4Dj5vzQ97XRKCii4rtcOk9FkcFo2seHBC1uqQ+lvqDPKlhMsKEp006lSl9EmlTWR@vger.kernel.org, AJvYcCVwzORWP5JOf1Bn0bU5yVDQIaOEz/TQcuwMITXMVAlpZiHRO5gG7ZPZdCJobMe2kARgsKjWIZOWJtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf59oY7Nzcf3JJyn7JMxZnSTAHgJMOKQkxf8AaE2QFKEFkGb2f
+	ShTIrlYkZEojwTo0y9YZ9r9YZkd3ekakImoRsFAJHoGA+uRWWodZXc0/dWigVDiQyz2AcDBPa49
+	aCWHBUW5D1jxUaHW1lXOvVbfkpdk=
+X-Gm-Gg: ASbGnct2wYPv3mwriT/6lQuf9KnkeiBkX5BrftnKcGgOq+s8fDuxYesfFDmDTOMPU0o
+	jWPbPWBjmsSwSLKKykElABzoWwuMAIOwW4vVN
+X-Google-Smtp-Source: AGHT+IFv9Sczsd0mQ9Rbff05mKNUzboS24htjzD9Z2VVbj8mRpyVeCykSOxdH3C+PWYJ9RVkG/vNjP/KNUylPlL22qo=
+X-Received: by 2002:a17:906:23f1:b0:aa6:a228:afa9 with SMTP id
+ a640c23a62f3a-aa6c1ab6290mr122294366b.3.1733946827671; Wed, 11 Dec 2024
+ 11:53:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241211143044.9550-1-sebastian.reichel@collabora.com> <20241211143044.9550-4-sebastian.reichel@collabora.com>
+In-Reply-To: <20241211143044.9550-4-sebastian.reichel@collabora.com>
+From: Peter Geis <pgwipeout@gmail.com>
+Date: Wed, 11 Dec 2024 14:53:34 -0500
+Message-ID: <CAMdYzYqLq=kSC8fiBapRS_8w0s8PaL9Yd46VgM56YbTEmUG1xA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/7] pmdomain: rockchip: forward rockchip_do_pmu_set_power_domain
+ errors
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Elaine Zhang <zhangqing@rock-chips.com>, 
+	=?UTF-8?Q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Chen-Yu Tsai <wens@csie.org>, 
+	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kernel@collabora.com, 
+	Dragan Simic <dsimic@manjaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 6 Dec 2024 11:57:55 -0800 Yuanchu Xie <yuanchu@google.com> wrote:
+On Wed, Dec 11, 2024 at 9:32=E2=80=AFAM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
+>
+> Currently rockchip_do_pmu_set_power_domain prints a warning if there
+> have been errors turning on the power domain, but it does not return
+> any errors and rockchip_pd_power() tries to continue setting up the
+> QOS registers. This usually results in accessing unpowered registers,
+> which triggers an SError and a full system hang.
+>
+> This improves the error handling by forwarding the error to avoid
+> kernel panics.
 
-> Thanks for the response Johannes. Some replies inline.
-> 
-> On Tue, Nov 26, 2024 at 11:26\u202fPM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Tue, Nov 26, 2024 at 06:57:19PM -0800, Yuanchu Xie wrote:
-> > > This patch series provides workingset reporting of user pages in
-> > > lruvecs, of which coldness can be tracked by accessed bits and fd
-> > > references. However, the concept of workingset applies generically to
-> > > all types of memory, which could be kernel slab caches, discardable
-> > > userspace caches (databases), or CXL.mem. Therefore, data sources might
-> > > come from slab shrinkers, device drivers, or the userspace.
-> > > Another interesting idea might be hugepage workingset, so that we can
-> > > measure the proportion of hugepages backing cold memory. However, with
-> > > architectures like arm, there may be too many hugepage sizes leading to
-> > > a combinatorial explosion when exporting stats to the userspace.
-> > > Nonetheless, the kernel should provide a set of workingset interfaces
-> > > that is generic enough to accommodate the various use cases, and extensible
-> > > to potential future use cases.
-> >
-> > Doesn't DAMON already provide this information?
-> >
-> > CCing SJ.
-> Thanks for the CC. DAMON was really good at visualizing the memory
-> access frequencies last time I tried it out!
+Good Afternoon,
 
-Thank you for this kind acknowledgement, Yuanchu!
+I think we should merge your patch here with my patch for returning
+errors from rockchip_pmu_set_idle_request [1].
 
-> For server use cases,
-> DAMON would benefit from integrations with cgroups.  The key then would be a
-> standard interface for exporting a cgroup's working set to the user.
+>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/pmdomain/rockchip/pm-domains.c | 34 +++++++++++++++++---------
+>  1 file changed, 22 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/ro=
+ckchip/pm-domains.c
+> index a161ee13c633..8f440f2883db 100644
+> --- a/drivers/pmdomain/rockchip/pm-domains.c
+> +++ b/drivers/pmdomain/rockchip/pm-domains.c
+> @@ -533,16 +533,17 @@ static int rockchip_pmu_domain_mem_reset(struct roc=
+kchip_pm_domain *pd)
+>         return ret;
+>  }
+>
+> -static void rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *=
+pd,
+> -                                            bool on)
+> +static int rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *p=
+d,
+> +                                           bool on)
+>  {
+>         struct rockchip_pmu *pmu =3D pd->pmu;
+>         struct generic_pm_domain *genpd =3D &pd->genpd;
+>         u32 pd_pwr_offset =3D pd->info->pwr_offset;
+>         bool is_on, is_mem_on =3D false;
+> +       int ret;
+>
+>         if (pd->info->pwr_mask =3D=3D 0)
+> -               return;
+> +               return 0;
+>
+>         if (on && pd->info->mem_status_mask)
+>                 is_mem_on =3D rockchip_pmu_domain_is_mem_on(pd);
+> @@ -557,16 +558,21 @@ static void rockchip_do_pmu_set_power_domain(struct=
+ rockchip_pm_domain *pd,
+>
+>         wmb();
+>
+> -       if (is_mem_on && rockchip_pmu_domain_mem_reset(pd))
+> -               return;
+> +       if (is_mem_on) {
+> +               ret =3D rockchip_pmu_domain_mem_reset(pd);
+> +               if (ret)
+> +                       return ret;
+> +       }
+>
+> -       if (readx_poll_timeout_atomic(rockchip_pmu_domain_is_on, pd, is_o=
+n,
+> -                                     is_on =3D=3D on, 0, 10000)) {
+> -               dev_err(pmu->dev,
+> -                       "failed to set domain '%s', val=3D%d\n",
+> -                       genpd->name, is_on);
+> -               return;
+> +       ret =3D readx_poll_timeout_atomic(rockchip_pmu_domain_is_on, pd, =
+is_on,
+> +                                       is_on =3D=3D on, 0, 10000);
+> +       if (ret) {
+> +               dev_err(pmu->dev, "failed to set domain '%s' %s, val=3D%d=
+\n",
+> +                       genpd->name, on ? "on" : "off", is_on);
+> +               return ret;
+>         }
+> +
+> +       return 0;
+>  }
+>
+>  static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power_o=
+n)
+> @@ -592,7 +598,11 @@ static int rockchip_pd_power(struct rockchip_pm_doma=
+in *pd, bool power_on)
+>                         rockchip_pmu_set_idle_request(pd, true);
+>                 }
+>
+> -               rockchip_do_pmu_set_power_domain(pd, power_on);
+> +               ret =3D rockchip_do_pmu_set_power_domain(pd, power_on);
+> +               if (ret < 0) {
+> +                       clk_bulk_disable(pd->num_clks, pd->clks);
+> +                       return ret;
 
-I show two ways to make DAMON supports cgroups for now.  First way is making
-another DAMON operations set implementation for cgroups.  I shared a rough idea
-for this before, probably on kernel summit.  But I haven't had a chance to
-prioritize this so far.  Please let me know if you need more details.  The
-second way is extending DAMOS filter to provide more detailed statistics per
-DAMON-region, and adding another DAMOS action that does nothing but only
-accounting the detailed statistics.  Using the new DAMOS action, users will be
-able to know how much of specific DAMON-found regions are filtered out by the
-given filter.  Because we have DAMOS filter type for cgroups, we can know how
-much of workingset (or, warm memory) belongs to specific groups.  This can be
-applied to not only cgroups, but for any DAMOS filter types that exist (e.g.,
-anonymous page, young page).
+Looking at it, we shouldn't return directly from here because the
+mutex never gets unlocked.
+Instead of repeating clk_bulk_disable and return ret for each failure,
+we can initialize ret =3D 0, have a goto: out pointing to
+clk_bulk_disable, and change return 0 to return ret at the end.
 
-I believe the second way is simpler to implement while providing information
-that sufficient for most possible use cases.  I was anyway planning to do this.
+What do you think?
 
-> It would be good to have something that will work for different
-> backing implementations, DAMON, MGLRU, or active/inactive LRU.
+Very Respectfully,
+Peter Geis
 
-I think we can do this using the filter statistics, with new filter types.  For
-example, we can add new DAMOS filter that filters pages if it is for specific
-range of MGLRU-gen of the page, or whether the page belongs to active or
-inactive LRU lists.
+[1] https://lore.kernel.org/linux-rockchip/20241210013010.81257-2-pgwipeout=
+@gmail.com/
 
-> 
-> >
-> > > Use cases
-> > > ==========
-[...]
-> > Access frequency is only half the picture. Whether you need to keep
-> > memory with a given frequency resident depends on the speed of the
-> > backing device.
-[...]
-> > > Benchmarks
-> > > ==========
-> > > Ghait Ouled Amar Ben Cheikh has implemented a simple policy and ran Linux
-> > > compile and redis benchmarks from openbenchmarking.org. The policy and
-> > > runner is referred to as WMO (Workload Memory Optimization).
-> > > The results were based on v3 of the series, but v4 doesn't change the core
-> > > of the working set reporting and just adds the ballooning counterpart.
-> > >
-> > > The timed Linux kernel compilation benchmark shows improvements in peak
-> > > memory usage with a policy of "swap out all bytes colder than 10 seconds
-> > > every 40 seconds". A swapfile is configured on SSD.
-[...]
-> > You can do this with a recent (>2018) upstream kernel and ~100 lines
-> > of python [1]. It also works on both LRU implementations.
-> >
-> > [1] https://github.com/facebookincubator/senpai
-> >
-> > We use this approach in virtually the entire Meta fleet, to offload
-> > unneeded memory, estimate available capacity for job scheduling, plan
-> > future capacity needs, and provide accurate memory usage feedback to
-> > application developers.
-> >
-> > It works over a wide variety of CPU and storage configurations with no
-> > specific tuning.
-> >
-> > The paper I referenced above provides a detailed breakdown of how it
-> > all works together.
-> >
-> > I would be curious to see a more in-depth comparison to the prior art
-> > in this space. At first glance, your proposal seems more complex and
-> > less robust/versatile, at least for offloading and capacity gauging.
-> We have implemented TMO PSI-based proactive reclaim and compared it to
-> a kstaled-based reclaimer (reclaiming based on 2 minute working set
-> and refaults). The PSI-based reclaimer was able to save more memory,
-> but it also caused spikes of refaults and a lot higher
-> decompressions/second. Overall the test workloads had better
-> performance with the kstaled-based reclaimer. The conclusion was that
-> it was a trade-off.
-
-I agree it is only half of the picture, and there could be tradeoff.  Motivated
-by those previous works, DAMOS provides PSI-based aggressiveness auto-tuning to
-use both ways.
-
-> I do agree there's not a good in-depth comparison
-> with prior art though.
-
-I would be more than happy to help the comparison work agains DAMON of current
-implementation and future plans, and any possible collaborations.
-
-
-Thanks,
-SJ
+> +               }
+>
+>                 if (power_on) {
+>                         /* if powering up, leave idle mode */
+> --
+> 2.45.2
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
