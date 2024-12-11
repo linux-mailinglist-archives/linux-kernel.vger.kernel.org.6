@@ -1,373 +1,221 @@
-Return-Path: <linux-kernel+bounces-442086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A07E9ED7E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:59:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DAE9ED7BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:57:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99C718853D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:59:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829A31889C8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3E923A199;
-	Wed, 11 Dec 2024 20:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FCF23692D;
+	Wed, 11 Dec 2024 20:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bMSwM9xH"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ei0HkYuJ"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2046.outbound.protection.outlook.com [40.107.236.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15EE23E6C0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733950533; cv=none; b=iTd/aMdvjtt77HFhD/xY0EnrKWHFDSVyPzCn6FXtbIL3FPW4Vow+Rt8ez3Vu4EQwnIzsMGtdfsWUJapgi0t05VlKIaR4vFTaYOV6XpBx9lcsCfyjA8OGJ2SMG545nmdoC40Rz5/TTHkW+AhdDFymKCaHCXXRiLqhBhLvxgzvmNc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733950533; c=relaxed/simple;
-	bh=OzAu1y/H3v98Oh+obJXz2LVpGi8e3bYBOTQLvfGilLE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TdwY38UcggoixbXGwt0M+0FbJ/46TXzBwUgkuVI9ecYPpTKc74wzuRqu5lema+wLt84wCnGk9nCSIQDD7eo4yNaQZIwZOnVG9ti2kmRtDYSSCMEKDih8jg9z6RvRBqrf4q5Oj/2hXlxTIY/hrdyW+P2mwRaf4G+a3SvN37DafTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bMSwM9xH; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-71decc7de4eso1082230a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:55:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733950530; x=1734555330; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UIG6sINpyGyOIxw92FCk6jPcVNBP3Duj2CqVoFPTTHM=;
-        b=bMSwM9xHzsq1QkBxECtKTZYr3usMseHCs9OeG4rs3pLB5gUTPv6CuFBuijIvI48Twd
-         bhbblW5ui+wmAHA5TWSOz1iBQ//Yk4fOO9VBrKWJdS6lpCZ8tCxGc70CvU1MAjSuGDJv
-         nywyZbydRprQbq560XJW+/6YHA22Swn8+FzVsLOE4JhE7kWlNafbOCTDvcCdMCluw+nF
-         AjsLdJugpDHohNlv07Xs4XIrz2lLoOqxO+iPPIqchcKSpHifi4ZwhjUeZIRE4Ibs2OkK
-         v/f41Bxdn17PoeFsZqNEe9uFbsorCT9GZ4oswLaLsecHqPNwr4eAYLYOCwAY7C10DFoL
-         f/4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733950530; x=1734555330;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UIG6sINpyGyOIxw92FCk6jPcVNBP3Duj2CqVoFPTTHM=;
-        b=ex2P8qBerWCNMwF68FjjieB2g6+CYAqxg3whkwhAZw7PYUWZJlCVSe5naLsF2N0D6b
-         Hum9KlILLsYG8rsrzA0nDoEBzmtxCY0Aly4+uS2EGNNHHgVQwacDP9IiLjcvFzOBD+5P
-         INN2HMdcTP8J2pMcVHoM+N5iZRFel5rPGArM9wQLMCLwcnBcJexMIimGMnmnOqbQRxDC
-         2Qh94z3xrmIxmHP+19Gj7/0jVuGVvL27xIyqW9kvuDLfqDw6cp7L81dzTw8DDl9QT/eI
-         BULrjVNgk3WTZ21EivxCYRU2RhvlbJKwdcdk60Mi9BMTfrLkWNMS51nflJ+w6FZ07DK0
-         tNMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKO4CTcnavvJGaZLwqd7RdMwdZHGJJgGA/mEVQ/j2DI8LhZe3b4JwHnmPYnVoWeqGRqcjdDmx4PHnEhmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGGRtpUvAuHvZ7Wk86hcLtLfvUkjVYngjcJ7RN4xb6I7OkkMYR
-	QY3R7xETgihnZ5NzLQU5AyYgTGKjlsO7tfaPbDlqshEWTim/FDPxsr1G5Q69L2g=
-X-Gm-Gg: ASbGncuDd6Z4cNyHsaNcimLRUgmdAY/ImIGeRlaN+rfDjOIns3y2kUkmRxCvnOFn8Cm
-	V98HourD3HAljSNs2lkbqlCwqcd98t5RYoHrzKByvnOuYB2KJWYSVqaWNxg3BAu4GIEt+VSQR5t
-	vhuVWLlSfAXDxK+5veW5k2M9HTmWD5SStd+QZLjC/jwgCGXoA31mAFgQ1h9x0pTxrLvpWMka0Nq
-	VW3CnnThnXv/m7wro48MfjvUA8sjDCrnSmMqEIu1T5HfVR6CEwp//WBn4PoRmYuTjlBt6fKmJ9w
-	2CecYLfjOQ==
-X-Google-Smtp-Source: AGHT+IEFT/scxcmkfgIOkKvLV+l02WCW6R4Q/Nhv22dR9dP0pLo0cFMOt9o0Fzd4itbazmNHYYYouQ==
-X-Received: by 2002:a05:6830:438d:b0:718:6da0:72b with SMTP id 46e09a7af769-71e29baca4emr609402a34.7.1733950530105;
-        Wed, 11 Dec 2024 12:55:30 -0800 (PST)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71def651fb2sm1888288a34.27.2024.12.11.12.55.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 12:55:29 -0800 (PST)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 11 Dec 2024 14:54:54 -0600
-Subject: [PATCH v6 17/17] iio: dac: ad5791: Add offload support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E52229685
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733950514; cv=fail; b=twgxvQ6aexFNPRsPGLZjpteCQ/QCN/vX75lzUNSCbEgzipbFMB/jiwMK+kS0XQx/faP9VuawXJ2Djy8VEZ+R4G43Svp+M0DY5owyss/jvy+7WNyDFanRRS8gYuCIDNawN/16V65ciWBE8YQttZKMRGk3jb/73KzsvFosbCh9uWo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733950514; c=relaxed/simple;
+	bh=cMKR/ryIfT0PLHC5g5DxtoX16VqOwqeKP2PXHg9JAVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FG+2RU9i6NFZImxLiuqBBgg8At5v0JY6UHWLcZ3cHvGnvpMznIyWSAI0VOwSqlnMgFhKYq8QkKFWrq6LltGD22eNju+BzIXWb+hY+y/6eQXIOilfADowt13//zTvoE7HCitzVOmB1n8dsYMnQIwPxap/FGMyPZhlQp7JEM9tzKI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ei0HkYuJ; arc=fail smtp.client-ip=40.107.236.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y/EepAqvEW71O5iWgLvLMpaTjsyYh0z6kK2odW35Rgy1MENRjduOCZfTLrzeRKN0XK1+nxyo5NzMYs4o72gA1V2K4NopSIEFZPzhpyx3HszVexJ2TmfizUTRHgDFfABpxF/TRBJ5BQbqCVaydlCecJdjR4M/zMjdd5EQAEoed4XGLfW7sXsfj5uMYD7rOQ2zutzn0Ps/81Ix4UCpR1QN46BLghjebL20GKZ0+kGTzVVOezz8YC9gcIHtA9KkCSvIzA1BHrv/YunWEZDmiYJN8S4quNk+uDky5kJ0mMKgIXHe+RNc2ChzH1Rd9HyhA2uhwn++Wj7h7Ec+steoC40tOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZAv7KRx89DhcXcVv6bLoGdu/cM2Loc4RW/Vc9i+/tv4=;
+ b=GZ1gC+7CIT30IlszSYdJgeYj+HbKVGlZWjjD5PKDlC9hQeCUEIn9urTrRBPXvjBtWphBRswn8bPPymf8jmn8CQPs67T5DxaFMWXwPQJfqmWqMeDzxrNQuJRQcR9YY5wz9uQe2BzpiZIXmcq1KkUp9xqHX2zF/7lpxDkwn/YlfDgR0XDlZeRUCPgkXfBCxuc0TBpA3Q5qWUQGFzPAZwPd2Dqmfokc+pW7owGYzf10GCDSib43819bsfkFejnwlUnveSaObK3PyqPnsacHDJS7qxVOGiE7hHCAmxYaQx7kRs+a3BCqRRCZhLByv+Q7LJIQqLDDsVPXu5NKlmpDZO/gIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZAv7KRx89DhcXcVv6bLoGdu/cM2Loc4RW/Vc9i+/tv4=;
+ b=ei0HkYuJChAuiDS0hf8XCrtE49KlcFtl2S/eTjbt6rGwySYyBgQA3Uy3VwOeezB8fgyvJuZBMFlyEivZ9wc+fr/gqmRcibUPDjs6vasC6inxQJwhruQOm+2PPLu9veQUSxP2cA+ZIeEN+D1jFB8p/E7pwEHyUfLsar3O3MeRNUA=
+Received: from BL0PR02CA0136.namprd02.prod.outlook.com (2603:10b6:208:35::41)
+ by PH8PR12MB6794.namprd12.prod.outlook.com (2603:10b6:510:1c5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Wed, 11 Dec
+ 2024 20:55:07 +0000
+Received: from BL02EPF0002992E.namprd02.prod.outlook.com
+ (2603:10b6:208:35:cafe::64) by BL0PR02CA0136.outlook.office365.com
+ (2603:10b6:208:35::41) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.15 via Frontend Transport; Wed,
+ 11 Dec 2024 20:55:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0002992E.mail.protection.outlook.com (10.167.249.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8251.15 via Frontend Transport; Wed, 11 Dec 2024 20:55:06 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Dec
+ 2024 14:55:06 -0600
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Dec
+ 2024 14:55:06 -0600
+Received: from [172.28.102.118] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 11 Dec 2024 14:55:05 -0600
+Message-ID: <27be3779-a192-4e64-a882-cf6e6c9bb549@amd.com>
+Date: Wed, 11 Dec 2024 15:55:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] xen/cppc: introduce cppc data upload sub-hypercall
+To: Penny Zheng <Penny.Zheng@amd.com>, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>
+CC: Ray Huang <Ray.Huang@amd.com>, Xenia Ragiadakou
+	<Xenia.Ragiadakou@amd.com>, <xen-devel@lists.xenproject.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241205054252.471761-1-Penny.Zheng@amd.com>
+ <20241205054252.471761-5-Penny.Zheng@amd.com>
+Content-Language: en-US
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <20241205054252.471761-5-Penny.Zheng@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241211-dlech-mainline-spi-engine-offload-2-v6-17-88ee574d5d03@baylibre.com>
-References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
-In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
-To: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>, 
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
- Axel Haslam <ahaslam@baylibre.com>, David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
+Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0002992E:EE_|PH8PR12MB6794:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62bd73dd-5c0c-4121-15a2-08dd1a2617ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SndveURHc2JwOFYrdFVkUXBkakxiRm9NV1Rhc1EzeFBsZ2tzcjVjTWoyMEZP?=
+ =?utf-8?B?b2xKQVRMNElRV3ZoenlGZmc2TXdSV2V2K04xUFovVzMvWTRUbGN4cEk2L3k1?=
+ =?utf-8?B?OTBFRXNWNzY0Ui9RalJZOE5QYmd4THhpRHdBQ2ZtSkxZTVdYME1QNmtpTzNV?=
+ =?utf-8?B?bVFkTHhiMEtibDBCcnNNY2o4cTMxWUxOdWZlQUN4YUZ5cm1Cb0FMOGtrOWlE?=
+ =?utf-8?B?SUJYSWZoaUtyV1pTTkQ4ZzIrQW11VWI2WGJTMGg4ZDRzbVFPNUpOK3pRak5y?=
+ =?utf-8?B?TlJqeXFZYzNMZk93QUdOb2FsOWhDb2pITWVkSW91WmlESEhMRTlIZlRpTitv?=
+ =?utf-8?B?SzNKY2tPU09qd3hGWG4zalpkSHlkNWk3aUdybUlZUURrYXkydENCOXpjV2Vn?=
+ =?utf-8?B?dTFnTjZUY1hVbW1YdFgzYllHcFkrYTB0M1oxb21MT3VVWTJNNElVTm1uSTZE?=
+ =?utf-8?B?ZzUvSEdKd0Q2WWxvb2Q4N2wrM01oeU1WR2RiOFQ2UjI1MmdGSmlTTWJCT2JN?=
+ =?utf-8?B?aEpEZk92N3FJQTRmb0QyRTlIZlVGWTA0bm1STS9Zb2hpZzhPam4reTZPV2c2?=
+ =?utf-8?B?L3o1ZGxHOEVTcTgydlExRHd5dGJrRnFYWU1GNld6T3N3MzRTcGhialhXcTJx?=
+ =?utf-8?B?MG1iYWorTWkvN1hkc3BNMTQrMWdub2RpZm9BVUhZRGV5TFhUZmpzRlU1UXRV?=
+ =?utf-8?B?WHFEc0dLSzJSMTFiK0x3MmlwYXNObzZzWHhnOWJlWlc1am52cGlURXRHdUdj?=
+ =?utf-8?B?REM2UkNZcjA2YkxuajgrOGo2aSswTVF1NmUwaUhhYWo1Wlp4Q1BSaE9ybTVQ?=
+ =?utf-8?B?RGtGaFN3NUlNWlBuMnN4U1hWcjdHd055Mi91M3lUNVZwaUZxemppekNxVmZN?=
+ =?utf-8?B?Y0ZLMGZNOTdNWG5BcXpYU09MVmo5bHpqQjVnd0NUN0REWVk4SUJmL2JVOGYy?=
+ =?utf-8?B?Y21FNGh5MmhlWnd0d2JUMzBhc0VxM0UzMHgxbGNtclVyNHJBSTZjdFNNYnRX?=
+ =?utf-8?B?VlB5djBDdXkyb0gybXJzcWdSV2RYNGVXMUY2UC9OYmlEdnY5N1dleUtaaXpx?=
+ =?utf-8?B?bkdVblg4OFpVZTJEcWEyVEpDdS9ZSTRsLy91eUZ3aXc1ODBOa1MvZXpjTEw1?=
+ =?utf-8?B?dFdqZ1FWWjJQQnIra1FlMDJPTU13M1l3dUR5RzhwSUxKTFRZZ0pDNktvVGhZ?=
+ =?utf-8?B?VXJ3QkhJU0ZVMExkMlk3TXZXVTIrVUZFNW5JdmNJeTAybWRpYktXaDZWMEF2?=
+ =?utf-8?B?M1VhcTkvUEczWTlCVDJsY2haM2M4ekY0WFR2dmw0eC8vWlJHZ3lMdUtEbXVm?=
+ =?utf-8?B?djBBM0FNMXJyazJzc2JlVUpweW45TDdmZlpnN3BObXVyazhZc1AzOENEUmxO?=
+ =?utf-8?B?TUhUM1orVkZJQzJrQVVQUlBZZlRQOFdERXM2aytlanZ2d1Eyem5NMVdMb2dO?=
+ =?utf-8?B?R0M2VUEwVEFEK2lkcm5ERnRnckNheGozdEdITWM1cnJqRXEyOEtqRGIxUXlI?=
+ =?utf-8?B?eHpOek8xWlJxcFhxZDdhM1pOTDlMV1o3N2FKQ3RQZmplcTZ2b0hndUJkUFht?=
+ =?utf-8?B?ekd6L25yS1VPUVdYSzVLc21rbGJURjYxRVZmUEFVVDFKSnNFc0M1Z1dPeG96?=
+ =?utf-8?B?T1Z6T1NmcXJiaTJwVGU0N2hyS0Z2OTBod0FVQ3lpOFBsbW9yRTFIdktIOE5o?=
+ =?utf-8?B?V1VrU1lFREk4M3djZloyZmlNL1pLSzZ0M1pYbHc3cG5Ydy9Ock9aRjBQRmEw?=
+ =?utf-8?B?Ym1SdTlBVlpmZEdLTW9wUmcvdWFGaXd0NGFQMk90SEJjZ1ZaeGR3cU1nL2or?=
+ =?utf-8?B?MGNqNnhDb09kUE5xZjNRZVJGSlBQSWRpOWl6c2s3eDYyTEdBVzZMLzV6RWdW?=
+ =?utf-8?B?R1NFSmt1UkdTS1ZsZjdwRlc3YlNwOUhuaWVFSmxZdzQ4TjUwTzdwbTlFWURp?=
+ =?utf-8?Q?iOUzpS1LscNjIzw2xuUzXmV9SfoP+MTe?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 20:55:06.8280
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62bd73dd-5c0c-4121-15a2-08dd1a2617ec
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0002992E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6794
 
-From: Axel Haslam <ahaslam@baylibre.com>
 
-Add SPI offload support to stream TX buffers using DMA.
-This allows loading samples to the DAC with a rate of 1 MSPS.
 
-Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
+On 2024-12-05 00:42, Penny Zheng wrote:
+> As Xen is uncapable of parsing the ACPI dynamic table, this commit
+> introduces a new sub-hypercall XEN_PM_CPPC to deliver CPPC perf
+> caps data.
+> 
+> Signed-off-by: Penny Zheng <Penny.Zheng@amd.com>
 
-v6 changes: new patch in v6
----
- drivers/iio/dac/Kconfig  |   3 +
- drivers/iio/dac/ad5791.c | 150 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 153 insertions(+)
+> @@ -208,6 +213,44 @@ static int xen_copy_pct_data(struct acpi_pct_register *pct,
+>   	dst_pct->address = pct->address;
+>   	return 0;
+>   }
+> +static int push_cppc_to_hypervisor(struct acpi_processor *_pr)
+> +{
+> +	int ret = 0;
+> +	struct xen_platform_op op = {
+> +		.cmd            = XENPF_set_processor_pminfo,
+> +		.interface_version  = XENPF_INTERFACE_VERSION,
+> +		.u.set_pminfo.id    = _pr->acpi_id,
+> +		.u.set_pminfo.type  = XEN_PM_CPPC,
+> +	};
+> +	struct cppc_perf_caps *cppc_perf = acpi_cppc_data + _pr->acpi_id;
+> +
+> +	op.u.set_pminfo.cppc_data.highest_perf = cppc_perf->highest_perf;
+> +	op.u.set_pminfo.cppc_data.lowest_perf = cppc_perf->lowest_perf;
+> +	op.u.set_pminfo.cppc_data.nominal_perf = cppc_perf->nominal_perf;
+> +	op.u.set_pminfo.cppc_data.lowest_nonlinear_perf = cppc_perf->lowest_nonlinear_perf;
+> +	op.u.set_pminfo.cppc_data.lowest_freq = cppc_perf->lowest_freq;
+> +	op.u.set_pminfo.cppc_data.nominal_freq = cppc_perf->nominal_freq;
+> +
+> +	if (!no_hypercall)
+> +		ret = HYPERVISOR_platform_op(&op);
+> +
+> +	if (!ret) {
+> +		pr_debug("ACPI CPU%u - CPPC uploaded.\n", _pr->acpi_id);
+> +		pr_debug("     highest_perf: %d\n", cppc_perf->highest_perf);
+> +		pr_debug("     lowest_perf: %d\n", cppc_perf->lowest_perf);
+> +		pr_debug("     lowest_nonlinear_perf: %d\n", cppc_perf->lowest_nonlinear_perf);
+> +		pr_debug("     nominal_perf: %d\n", cppc_perf->nominal_perf);
+> +		pr_debug("     lowest_freq: %d Mhz\n", cppc_perf->lowest_freq);
+> +		pr_debug("     nominal_freq: %d Mhz\n", cppc_perf->nominal_freq);
+> +	} else if ((ret != -EINVAL) && (ret != -ENOSYS))
+> +		/* EINVAL means the ACPI ID is incorrect - meaning the ACPI
+> +		 * table is referencing a non-existing CPU - which can happen
+> +		 * with broken ACPI tables. */
+> +		pr_warn("(_CPC): Hypervisor error (%d) for ACPI CPU%u\n",
+> +			ret, _pr->acpi_id);
+> +
+> +		return ret;
 
-diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-index 4cde34e8c8e3356aa41bcd2cba38d67d5c6f8049..f6c5cb632acbdc2432f60b163452bb0c5f89fa72 100644
---- a/drivers/iio/dac/Kconfig
-+++ b/drivers/iio/dac/Kconfig
-@@ -296,6 +296,9 @@ config AD5770R
- config AD5791
- 	tristate "Analog Devices AD5760/AD5780/AD5781/AD5790/AD5791 DAC SPI driver"
- 	depends on SPI
-+	select SPI_OFFLOAD
-+	select IIO_BUFFER
-+	select IIO_BUFFER_DMAENGINE
- 	help
- 	  Say yes here to build support for Analog Devices AD5760, AD5780,
- 	  AD5781, AD5790, AD5791 High Resolution Voltage Output Digital to
-diff --git a/drivers/iio/dac/ad5791.c b/drivers/iio/dac/ad5791.c
-index 24462cb020e19e8e2c6faa13109ac047cf423c37..a2953a9a4e5d5bc17c9c4a8281be4b41b1af5de8 100644
---- a/drivers/iio/dac/ad5791.c
-+++ b/drivers/iio/dac/ad5791.c
-@@ -15,9 +15,12 @@
- #include <linux/module.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
-+#include <linux/spi/offload/consumer.h>
- #include <linux/spi/spi.h>
- #include <linux/sysfs.h>
-+#include <linux/units.h>
- 
-+#include <linux/iio/buffer-dmaengine.h>
- #include <linux/iio/dac/ad5791.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-@@ -64,11 +67,13 @@
-  * struct ad5791_chip_info - chip specific information
-  * @name:		name of the dac chip
-  * @channel:		channel specification
-+ * @channel_offload:	channel specification for offload
-  * @get_lin_comp:	function pointer to the device specific function
-  */
- struct ad5791_chip_info {
- 	const char *name;
- 	const struct iio_chan_spec channel;
-+	const struct iio_chan_spec channel_offload;
- 	int (*get_lin_comp)(unsigned int span);
- };
- 
-@@ -81,6 +86,11 @@ struct ad5791_chip_info {
-  * @gpio_clear:		clear gpio
-  * @gpio_ldac:		load dac gpio
-  * @chip_info:		chip model specific constants
-+ * @offload_msg:	spi message used for offload
-+ * @offload_xfer:	spi transfer used for offload
-+ * @offload:		offload device
-+ * @offload_trigger:	offload trigger
-+ * @offload_trigger_hz:	offload sample rate
-  * @vref_mv:		actual reference voltage used
-  * @vref_neg_mv:	voltage of the negative supply
-  * @ctrl:		control register cache
-@@ -96,6 +106,11 @@ struct ad5791_state {
- 	struct gpio_desc		*gpio_clear;
- 	struct gpio_desc		*gpio_ldac;
- 	const struct ad5791_chip_info	*chip_info;
-+	struct spi_message		offload_msg;
-+	struct spi_transfer		offload_xfer;
-+	struct spi_offload		*offload;
-+	struct spi_offload_trigger	*offload_trigger;
-+	unsigned int			offload_trigger_hz;
- 	unsigned short			vref_mv;
- 	unsigned int			vref_neg_mv;
- 	unsigned			ctrl;
-@@ -232,6 +247,25 @@ static int ad5780_get_lin_comp(unsigned int span)
- 		return AD5780_LINCOMP_10_20;
- }
- 
-+static int ad5791_set_sample_freq(struct ad5791_state *st, int val)
-+{
-+	struct spi_offload_trigger_config config = {
-+		.type = SPI_OFFLOAD_TRIGGER_PERIODIC,
-+		.periodic = {
-+			.frequency_hz = val,
-+		},
-+	};
-+	int ret;
-+
-+	ret = spi_offload_trigger_validate(st->offload_trigger, &config);
-+	if (ret)
-+		return ret;
-+
-+	st->offload_trigger_hz = config.periodic.frequency_hz;
-+
-+	return 0;
-+}
-+
- static int ad5791_read_raw(struct iio_dev *indio_dev,
- 			   struct iio_chan_spec const *chan,
- 			   int *val,
-@@ -259,6 +293,9 @@ static int ad5791_read_raw(struct iio_dev *indio_dev,
- 		do_div(val64, st->vref_mv);
- 		*val = -val64;
- 		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		*val = st->offload_trigger_hz;
-+		return IIO_VAL_INT;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -299,6 +336,24 @@ static const struct ad5791_chip_info _name##_chip_info = {		\
- 			},						\
- 			.ext_info = ad5791_ext_info,			\
- 	},								\
-+	.channel_offload = {						\
-+			.type = IIO_VOLTAGE,				\
-+			.output = 1,					\
-+			.indexed = 1,					\
-+			.address = AD5791_ADDR_DAC0,			\
-+			.channel = 0,					\
-+			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
-+			.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-+				BIT(IIO_CHAN_INFO_OFFSET),		\
-+			.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
-+			.scan_type = {					\
-+				.sign = 'u',				\
-+				.realbits = (bits),			\
-+				.storagebits = 32,			\
-+				.shift = (_shift),			\
-+			},						\
-+			.ext_info = ad5791_ext_info,			\
-+	},								\
- }
- 
- AD5791_DEFINE_CHIP_INFO(ad5760, 16, 4, ad5780_get_lin_comp);
-@@ -322,16 +377,95 @@ static int ad5791_write_raw(struct iio_dev *indio_dev,
- 
- 		return ad5791_spi_write(st, chan->address, val);
- 
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		if (val < 0 || val2 < 0)
-+			return -EINVAL;
-+		return ad5791_set_sample_freq(st, val);
- 	default:
- 		return -EINVAL;
- 	}
- }
- 
-+static int ad5791_buffer_preenable(struct iio_dev *indio_dev)
-+{
-+	struct ad5791_state *st = iio_priv(indio_dev);
-+	struct spi_offload_trigger_config config = {
-+		.type = SPI_OFFLOAD_TRIGGER_PERIODIC,
-+		.periodic = {
-+			.frequency_hz = st->offload_trigger_hz,
-+		},
-+	};
-+
-+	if (st->pwr_down)
-+		return -EINVAL;
-+
-+	return spi_offload_trigger_enable(st->offload, st->offload_trigger,
-+					 &config);
-+}
-+
-+static int ad5791_buffer_postdisable(struct iio_dev *indio_dev)
-+{
-+	struct ad5791_state *st = iio_priv(indio_dev);
-+
-+	spi_offload_trigger_disable(st->offload, st->offload_trigger);
-+
-+	return 0;
-+}
-+
-+static const struct iio_buffer_setup_ops ad5791_buffer_setup_ops = {
-+	.preenable = &ad5791_buffer_preenable,
-+	.postdisable = &ad5791_buffer_postdisable,
-+};
-+
-+static int ad5791_offload_setup(struct iio_dev *indio_dev)
-+{
-+	struct ad5791_state *st = iio_priv(indio_dev);
-+	struct spi_device *spi = st->spi;
-+	struct dma_chan *tx_dma;
-+	int ret;
-+
-+	st->offload_trigger = devm_spi_offload_trigger_get(&spi->dev,
-+		st->offload, SPI_OFFLOAD_TRIGGER_PERIODIC);
-+	if (IS_ERR(st->offload_trigger))
-+		return dev_err_probe(&spi->dev, PTR_ERR(st->offload_trigger),
-+				     "failed to get offload trigger\n");
-+
-+	ret = ad5791_set_sample_freq(st, 1 * MEGA);
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret,
-+				     "failed to init sample rate\n");
-+
-+	tx_dma = devm_spi_offload_tx_stream_request_dma_chan(&spi->dev,
-+							     st->offload);
-+	if (IS_ERR(tx_dma))
-+		return dev_err_probe(&spi->dev, PTR_ERR(tx_dma),
-+				     "failed to get offload TX DMA\n");
-+
-+	ret = devm_iio_dmaengine_buffer_setup_with_handle(&spi->dev,
-+		indio_dev, tx_dma, IIO_BUFFER_DIRECTION_OUT);
-+	if (ret)
-+		return ret;
-+
-+	st->offload_xfer.len = 4;
-+	st->offload_xfer.bits_per_word = 24;
-+	st->offload_xfer.offload_flags = SPI_OFFLOAD_XFER_TX_STREAM;
-+
-+	spi_message_init_with_transfers(&st->offload_msg, &st->offload_xfer, 1);
-+	st->offload_msg.offload = st->offload;
-+
-+	return devm_spi_optimize_message(&spi->dev, st->spi, &st->offload_msg);
-+}
-+
- static const struct iio_info ad5791_info = {
- 	.read_raw = &ad5791_read_raw,
- 	.write_raw = &ad5791_write_raw,
- };
- 
-+static const struct spi_offload_config ad5791_offload_config = {
-+	.capability_flags = SPI_OFFLOAD_CAP_TRIGGER |
-+			    SPI_OFFLOAD_CAP_TX_STREAM_DMA,
-+};
-+
- static int ad5791_probe(struct spi_device *spi)
- {
- 	const struct ad5791_platform_data *pdata = dev_get_platdata(&spi->dev);
-@@ -416,6 +550,21 @@ static int ad5791_probe(struct spi_device *spi)
- 	indio_dev->channels = &st->chip_info->channel;
- 	indio_dev->num_channels = 1;
- 	indio_dev->name = st->chip_info->name;
-+
-+	st->offload = devm_spi_offload_get(&spi->dev, spi, &ad5791_offload_config);
-+	ret = PTR_ERR_OR_ZERO(st->offload);
-+	if (ret && ret != -ENODEV)
-+		return dev_err_probe(&spi->dev, ret, "failed to get offload\n");
-+
-+	if (ret != -ENODEV) {
-+		indio_dev->channels = &st->chip_info->channel_offload;
-+		indio_dev->setup_ops = &ad5791_buffer_setup_ops;
-+		ret =  ad5791_offload_setup(indio_dev);
-+		if (ret)
-+			return dev_err_probe(&spi->dev, ret,
-+					     "fail to setup offload\n");
-+	}
-+
- 	return devm_iio_device_register(&spi->dev, indio_dev);
- }
- 
-@@ -452,3 +601,4 @@ module_spi_driver(ad5791_driver);
- MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
- MODULE_DESCRIPTION("Analog Devices AD5760/AD5780/AD5781/AD5790/AD5791 DAC");
- MODULE_LICENSE("GPL v2");
-+MODULE_IMPORT_NS("IIO_DMAENGINE_BUFFER");
+I just saw gcc warn about misleading indent here given the lack of { } 
+on else if above.  I think you just want a single tab indent for return.
 
--- 
-2.43.0
+Regards,
+Jason
 
+> +}
+>   static int push_pxx_to_hypervisor(struct acpi_processor *_pr)
+>   {
+>   	int ret = 0;
 
