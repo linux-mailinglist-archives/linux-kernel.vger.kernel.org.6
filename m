@@ -1,165 +1,168 @@
-Return-Path: <linux-kernel+bounces-440948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7219EC6EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:19:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D363F9EC6F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E91169DC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BA8188C09B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D871D799C;
-	Wed, 11 Dec 2024 08:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6821D88D3;
+	Wed, 11 Dec 2024 08:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DOjM1Ndw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lIY9plcr"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B471D63FF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1A61C175A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733905162; cv=none; b=Pw81VkmWrajPv58gPTxeF3xnrn/zpF3WRIdQN8aCL5PPYXdRpOozUuMO7VyI5IBBkYCNnsfpWLreO5A0HjjzCJ3uE1HcERdl9OQXYwgBf//1NGb+Bl/JcUJ2nADiyg1oGUUdseOe/10j6iMBq76bzpcsxqyV06p1wesTmgFYb1o=
+	t=1733905163; cv=none; b=qtlB+fLJ3coKW7SY/ukg+KOvWTusKeAjC1UzXwo71v4d26S7CbfQWF9HLK2GsZFavoD6WnT7XyAMqcZE0cr20uePZ+K1/D5S3aU0MEi7UK2LRNSc7ftnKyc4F/zs8IKcXhiGzpD3dfvUcFerLwc8C+g0+06XZqfzAM5su/TRfXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733905162; c=relaxed/simple;
-	bh=kK/MJU/Q9OBs7J/to7TFQAxF5400ypJLjs8WUycDgxw=;
+	s=arc-20240116; t=1733905163; c=relaxed/simple;
+	bh=Lsm8C3031w9xBCb23/cgZ3DoZ2ls3z/NYBjnTBCzjJc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=du69L9UWOVqEM/nfgAomQKH9s+mlgvc0kO9GLnZOjqW1zbdIMaiDnF4DpN0Pa2VgsHfWSuMicCqQc/8H+adMcErHlAj41N//XNKMo3es2R9e/HA3HHyuNQbuvsHLASMqwZ3iTRDEmCgMaNqqKWEff3w0dWEPC70pjMBr1wRxKKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DOjM1Ndw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733905159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Df7gzbgWME26R9rpVKPWThUShTeBvSI36yYMQF09Oe4=;
-	b=DOjM1NdwF+VQL8bM4GQbAhAFeoLtyINdWeRlWQj62G08Zuogn/jlwYP0PqlUzXaN0/hkj3
-	lOuW3lDfVdAuuVDsG1PxJgD/XWJpEdLyLh7YrJA02lE2DfN6Ay6aWYF3WrLk7axaj3H/do
-	J8N28bC5TjZYwmy7ZuwBrD53Gm2YJeU=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-pYzKto3tMCiEDRjWTO27vA-1; Wed, 11 Dec 2024 03:19:16 -0500
-X-MC-Unique: pYzKto3tMCiEDRjWTO27vA-1
-X-Mimecast-MFC-AGG-ID: pYzKto3tMCiEDRjWTO27vA
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e38dbc5d05bso11350088276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:19:16 -0800 (PST)
+	 To:Cc:Content-Type; b=qTYi9tcqENjOGrhLWVCXRx1YfpF0bWz/glmeorcSnxMUP3mXrkwjox53NP51djvfFpYYNW/fNVhAJPxzaq20Rpuh5YzGHMUJ8prXhk6X56cCYNV6bTfC7x/RPYc0Ol2UD3EEl/bBlAA9gysFlNe/QqXIE+YWe9ohZfMjFx0mNH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lIY9plcr; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21644aca3a0so35813135ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733905161; x=1734509961; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S37tUa9+4E/BElh55Abu22jNluchZXe2JCq2BZHuzPc=;
+        b=lIY9plcrD8704hgAsJUdrcSN1nUNRJscymBh/2hFyrDBcYQnzzTZ+NgHC428E3+sXm
+         tKIqzm0qR6BxGVuwwNoHhoxTi88N/zPAV+iLvqxuoMQv9Dv8LK9RkKYM9oByHjc9kCUZ
+         J5lOFeATMXnOqrHt2yMT3kFIIPYruLHkckVKI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733905155; x=1734509955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Df7gzbgWME26R9rpVKPWThUShTeBvSI36yYMQF09Oe4=;
-        b=Hja9xdTyuI5OcLXsVkVHCaNeHET+z9r/sRACH0NlSvoYSL9mJb5vDTBfs+fFlmKJGl
-         sgAk2akIu/OvgsfH/lqmINNTkSlyAWeWaKdRYTydI7UIsBsqKYLt8ra2d2WLGgJvhTbw
-         9h/YKQqXYTfPXwcDqME/nj/uz7nEz1PNET+dxHRx+LcJNyDZPdTo9iNCYnl0DLyimU2p
-         eb0hNM8kBsg3btxjAAKum5nYkH/Z0+hDkuGKZ85qvbiU5Z521rJ7DRJo+tkmAYrYfGhE
-         YDOlYa1kGPq2JNCMAcOUQ12hVtNUO/0eRvu+v4nkN09qF7luOD59VRwepZhnzeKXHTH5
-         8Teg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfoYUW+y0kQAkX0PqMIBtMQ8fu3fbQgANIfC8tPu98xexHztQq2sRX3sxxqNoiMfTmsri/YNgl37Wr/QI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7Nl2TaBeW24N0vl5kurv0wGlN/l/2ui9/i7GMPshlK6a9poPn
-	F8xmIewI81wbsSoDWnzGesWr/TKftXdaa9bcpUaST6RO63vfbBPH6AOhxDPFPZnZH6MZSjmjfAj
-	OBHQ6cwEvdExrYVAaFC0TMoNvL5eOgu9GhfI3DkAe9d7ahQo5WHj9tjMOyvc6jF7bSoau39HZL9
-	d2/c8Rlen1mTmTOrL3b3ARpK8AA/n8XdsxM5Ry
-X-Gm-Gg: ASbGncsrrL1bNQX1WiT4/TBNOFRw3ENMCkNFeY/W5XFe1yrtKB/J3FcqtAKumaqEljW
-	gy61peN+ssT1q47FVP2UecoJ5f/RXipyR7g==
-X-Received: by 2002:a05:6902:11c9:b0:e3c:8df7:4cdb with SMTP id 3f1490d57ef6-e3c8e67b517mr2108664276.32.1733905155737;
-        Wed, 11 Dec 2024 00:19:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHOSTE2WV/b1b9f1XmObRSLBn8v86IpzkAt8gBR0gdzUUukOkFtjbiPnJpDos/gaChbfGYffrt6LB23Z0mJj7U=
-X-Received: by 2002:a05:6902:11c9:b0:e3c:8df7:4cdb with SMTP id
- 3f1490d57ef6-e3c8e67b517mr2108649276.32.1733905155363; Wed, 11 Dec 2024
- 00:19:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733905161; x=1734509961;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S37tUa9+4E/BElh55Abu22jNluchZXe2JCq2BZHuzPc=;
+        b=uaUs7BxRdl8dxWI7L1vdaHa1wIfqedN339bJxEnNaZKoZMeSy6vGeRUw/y8JwfC3/H
+         FupPQ1oH05J+xwLg2qANikCYfoKALXiCQjgRY79Nx+kAofs3Ny7i3A0IbDkot94purBb
+         UWDWCJ8ihNCVENjrUZeYp+5JxO2rwwoL2kex/BYZiFjfJtkgZdv0FMqGP9GOa+er1Ko0
+         UL6mO9nRifgDlyOshvtNpHpXnr1FF0xekqkwBiu7FgrF7XF2/icNl6uzpZjzEe3+OQNG
+         RdV2oFgTI8Sq4BqhUuO/Zzdg7fNpoGRuVjKMSmBHF3SCgWWu0tCBUKsAkTM+YeLTCDkw
+         Me/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVt1AcLNA4MIUvYBu89lw+KTh1ulCHVzXE4ZIuecyHZGA2x3+dbmEYXPWdcs2qhvMeD298luJCofQuzaaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXVcXxXj0rFBCyskq5uxyFZxtBKfVSrdSrGgy8vdxQ9iOi43fM
+	Lpflns7GXrIg/szqz0qcBVsjgbiK4F9Rwh41HmhK/+j0btbmivLf9gYkZoEUYP2KAfHjxs9Tzps
+	=
+X-Gm-Gg: ASbGnctA3XsFMqiWXjZ8KpVpjb/Ht9aJZrju3hvoiZ3mPfDT9D/2KYiR5rXps5ztqmK
+	/x4oDo2P1yhQ1dFkcliJx8RHGG7KZ7DJYWtvWA+31Yzo12hNq+9fGhA3WVRV6AX81PqOB5+2e9Z
+	mI8PTGpbe74fganNwtNXLTM7gXwIJmR9Ot8C9aXW8Uh6raFc73qZRr7zzwNWS7vx3V5VS7lNNTC
+	l4gu/uA8yROsjB3gk8VF/ur5ohHi7/EWXrLv+gjt09OAbBs9vsxzwFgeaMuryJrZ5b+2ZlCLbey
+	uwZZucy1N4qwzHxXBkQS
+X-Google-Smtp-Source: AGHT+IFsTPp7VnBUqpn2CuOz76VV+qw74nv/Pzclm9cpyJkHpeEKmESIoY0nu7iGZO5ClHkKv/Q0Gg==
+X-Received: by 2002:a17:902:ecc4:b0:205:6a9b:7e3e with SMTP id d9443c01a7336-217787a2d96mr30065505ad.56.1733905161426;
+        Wed, 11 Dec 2024 00:19:21 -0800 (PST)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com. [209.85.215.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f09146sm101662285ad.199.2024.12.11.00.19.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 00:19:19 -0800 (PST)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so5002231a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 00:19:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWPoKo4pbPKhqQpaDpz2g36kz+J7FokIQToFU/N/Et0NdGYFtJMMw7aOegpjtLRhsiRlWSqUE72ys2CTV8=@vger.kernel.org
+X-Received: by 2002:a17:90b:1d91:b0:2ee:f687:6acb with SMTP id
+ 98e67ed59e1d1-2f127fc7278mr3021275a91.13.1733905159097; Wed, 11 Dec 2024
+ 00:19:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210143423.101774-1-sgarzare@redhat.com> <20241210143423.101774-4-sgarzare@redhat.com>
- <20241210144025.GG1888283@ziepe.ca> <50a2e1d29b065498146f459035e447851a518d1a.camel@HansenPartnership.com>
- <20241210150413.GI1888283@ziepe.ca>
-In-Reply-To: <20241210150413.GI1888283@ziepe.ca>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Wed, 11 Dec 2024 09:19:04 +0100
-Message-ID: <CAGxU2F6yzqb0o_pQDakBbCj3RdKy_XfZfzGsiywnYL65g6WeGg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, linux-coco@lists.linux.dev, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Peter Huewe <peterhuewe@gmx.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, 
-	x86@kernel.org, Joerg Roedel <jroedel@suse.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho <cclaudio@linux.ibm.com>, 
-	Dov Murik <dovmurik@linux.ibm.com>, Tom Lendacky <thomas.lendacky@amd.com>
+References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
+ <20241210-fix-ipu-v3-1-00e409c84a6c@chromium.org> <20241211091147.717e53a4@foz.lan>
+In-Reply-To: <20241211091147.717e53a4@foz.lan>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Wed, 11 Dec 2024 09:19:07 +0100
+X-Gmail-Original-Message-ID: <CANiDSCvkBvdstVn4GwtdNiJhs67TO6rXVBcsdfRJNgNMXkjvKA@mail.gmail.com>
+X-Gm-Features: AZHOrDm09Y0n30eCWNJ7YxalIcoq21V7pnpLmE36rjaksDFouTGIwgN4Tsc_yGk
+Message-ID: <CANiDSCvkBvdstVn4GwtdNiJhs67TO6rXVBcsdfRJNgNMXkjvKA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] media: ipu-bridge: Fix warning when !ACPI
+To: Mauro Carvalho Chehab <maurochehab@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
+	kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 4:04=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
+Hi Mauro
+
+On Wed, 11 Dec 2024 at 09:15, Mauro Carvalho Chehab
+<maurochehab@gmail.com> wrote:
 >
-> On Tue, Dec 10, 2024 at 09:55:41AM -0500, James Bottomley wrote:
-> > On Tue, 2024-12-10 at 10:40 -0400, Jason Gunthorpe wrote:
-> > > On Tue, Dec 10, 2024 at 03:34:23PM +0100, Stefano Garzarella wrote:
-> > >
-> > > > +               if (platform_device_add_data(&tpm_device, &pops,
-> > > > sizeof(pops)))
-> > > > +                       return -ENODEV;
-> > > > +               if (platform_device_register(&tpm_device))
-> > > > +                       return -ENODEV;
-> > >
-> > > This seems like an old fashioned way to instantiate a device. Why do
-> > > this? Just put the TPM driver here and forget about pops? Simple tpm
-> > > drivers are not very complex.
+> Em Tue, 10 Dec 2024 19:55:58 +0000
+> Ricardo Ribalda <ribalda@chromium.org> escreveu:
+>
+> > One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
+> > throws the following smatch warning:
+> > drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
 > >
-> > This driver may be for the AMD SEV SVSM vTPM module, but there are
-> > other platforms where there's an internal vTPM which might be contacted
-> > via a platform specific enlightenment (Intel SNP and Microsoft
-> > OpenHCL).
+> > Fix it by replacing the condition.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/pci/intel/ipu-bridge.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+> > index a0e9a71580b5..be82bc3e27d0 100644
+> > --- a/drivers/media/pci/intel/ipu-bridge.c
+> > +++ b/drivers/media/pci/intel/ipu-bridge.c
+> > @@ -774,7 +774,7 @@ static int ipu_bridge_ivsc_is_ready(void)
+> >
+> >               for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
+> >  #else
+> > -             while (true) {
+> > +             while (false) {
+> >                       sensor_adev = NULL;
+> >  #endif
 >
-> Sure, that's what TPM drivers are for, give those platforms TPM drivers
-> too.
+> The better would be to just remove all #if and handle ACPI compatibility
+> with COMPILE_TEST inside acpi headers.
 >
-> Why put a mini driver hidden under an already mini driver?
+> Besides that, t sounds that patch 2 makes this hack unneeded, as you added
+> a false check at the for macro:
 >
-> > This separation of the platform device from the contact
-> > mechanism is designed to eliminate the duplication of having a platform
-> > device within each implementation and to make any bugs in the mssim
-> > protocol centrally fixable (every vTPM currently speaks this).
+>         #define for_each_acpi_dev_match(adev, hid, uid, hrv)                    \
+>         for (adev = NULL; false && (hid) && (uid) && (hrv);)
 >
-> That makes sense, but that isn't really what I see in this series?
+> Please place only one set of subsystem maintainers at the To: line,
+> directing to the one(s) you expect to merge this series.
 >
-> Patch one just has tpm_class_ops send() invoke pops sendrcv() after
-> re-arranging the arguments?
->
-> It looks to me like there would be mert in adding a new op to
-> tpm_class_ops for the send/recv type operating mode and have the core
-> code manage the buffer singleton (is a global static even *correct*??)
->
-> After that, there is no meaningful shared code here, and maybe the
-> TPM_CHIP_FLAG_IRQ hack can be avoided too.
+> In this particular case, the one to be added should be the ACPI
+> maintainers.
 
-IIUC you are proposing the following steps:
-- extend tpm_class_ops to add a new send_recv() op and use it in
-tpm_try_transmit()
-- call the code in tpm_platform_probe() directly in sev
+The plan was to land 1/7 via the media tree with a PR from Sakari soonish.
 
-This would remove the intermediate driver, but at this point is it
-worth keeping tpm_platform_send() and tpm_platform_recv() in a header
-or module, since these are not related to sev, but to MSSIM?
+I believe he has already picked it on his tree. I will remove you from
+Cc in the next version
 
-As James mentioned, other platforms may want to reuse it.
-
-Thanks,
-Stefano
+thanks :)
 
 >
-> Simply call tpm_chip_alloc/register from the sev code directly and
-> provide an op that does the send/recv. Let the tpm core code deal with
-> everything else. It is much cleaner than platform devices and driver
-> data..
+> Regards,
+> Mauro
 
+
+
+-- 
+Ricardo Ribalda
 
