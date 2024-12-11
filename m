@@ -1,210 +1,129 @@
-Return-Path: <linux-kernel+bounces-440715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC10B9EC33F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 547899EC344
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C279E18868A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A82A18833CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EE722FAF8;
-	Wed, 11 Dec 2024 03:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CB320CCF1;
+	Wed, 11 Dec 2024 03:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="MK2FNaR6"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="IuQZbhcY"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7B6214228;
-	Wed, 11 Dec 2024 03:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9378920C027
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 03:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733887390; cv=none; b=Ss1EARYhEeVnAyuvZMvI1Zbxvaw0TKon8i9H2zgEEfp/fQ048Mv32x/gRPzn6WDhfcQpwIoeHO95Qcuk7J3mXld2tNjCcMUvDlvKtSgM5P0YCWCrenbYKhfmnZ9r5ZYdIJmOxaYR+PO7G6adPdWaUx8xNC3vmuffKxnaYpfcP6I=
+	t=1733887536; cv=none; b=jqgErU/QkmGxyVY5bxOa5Iq6oQuYjjQtXGNPuRQ4evXiZlwXHOVjYwyKqwk4S05dLkGVUyqY7+zQWQ3xtmtMUxWC0NDEAwpwrB7J2KyqSVmOYjP67OWSH++npiVKonLQebvrWiV705um7lt31tQsfdWx9F4/8fVmgONdN3YH/28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733887390; c=relaxed/simple;
-	bh=IIjyV2JskEjfgq5nQqJYUv2JNRs2MOYUMeNB4e4IIU4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tbIhumcVpyLqgVjIxv/QKiZB7EZ/ru+wFqY/TmrBp7A5Yhy4jwAtYLVfs5hSc9v+vv017/v2BhLnQZW1WT5zdxSEz39h2RhyKeiLXC4JteSulrMlIgc3LAj3y9NyvEB874eGAHANDWmrfdEhLFG6Tja5wJNm6MoSsZFWnaQsR0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=MK2FNaR6; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 39cfd13ab76f11ef99858b75a2457dd9-20241211
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=XXYbZaarLcOFWSwit2AJs5GzodrHS17+95EDCQbDaJk=;
-	b=MK2FNaR6gOUNiXx7D2effV2Vmhn5YBYgTNBuUuu38g0UMx6RA535eGAcXyBa5pGZEJjtzqhNCqYm3o8e2qA8vrLIsO2iQowMWwLdMBJzdWgYPGgmUk0CYW3V4/2LC2XfPKJRcpj1BLSvj25/11GN/an7vlGP5HGqFxrdypyLymQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:9f4a2da2-409b-4980-afa9-4f39ed5cf47f,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:60532dc1-1c82-4420-82d9-d6eb228f5c4a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0,EDM:-3,IP
-	:nil,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: 39cfd13ab76f11ef99858b75a2457dd9-20241211
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1853415402; Wed, 11 Dec 2024 11:23:01 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 11 Dec 2024 11:22:59 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 11 Dec 2024 11:22:59 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Chun-Kuang Hu
-	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>, Singo Chang
-	<singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Moudy Ho
-	<moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v2 8/8] media: mediatek: mdp3: Add programming flow for unsupported subsys ID hardware
-Date: Wed, 11 Dec 2024 11:22:56 +0800
-Message-ID: <20241211032256.28494-9-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241211032256.28494-1-jason-jh.lin@mediatek.com>
-References: <20241211032256.28494-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1733887536; c=relaxed/simple;
+	bh=YkWxvdtxN8ODAbCifJkk+TSvwpETSCaW6KnyvrW+GEA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JSsuKfI3bvU8C5n7SCZaMHIvCUbkezERV7GaRW+XQi1LyNAQPEo17F5i9ZvAlb/Ri4y1IDmW9A5A+We9yOuo5ptUlWfDKV5ciYJ4P7RbRHxcanR/P8EFez4t/MkybVQaOCd53UKcIdKl28u+f38xnJuCvkRuDNBo1GTyc1KkTUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=IuQZbhcY; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=+f1nfrUYcs1wSQhhCmsy52L607zRZwkgSeCEyoxcG8Q=; b=IuQZbhcY43mPZuHRZgEmA67lN5
+	MjELu5RzmKigWNbWZApCcxPGdw6+D719bPVZ6fHk5y968JkEly+FI+0xEdrrzz+OIZ4d1FgDAuRyF
+	vJf14zLsN/yglbIffz3qmVxDxxYtoc4XEOMFhEZ2PWZpzL+R5qFalD+M8dV1iMldg+kCepeAmYBXl
+	OeZG23rhZAmm3bNW4z6Vz1KBrA4FsCA+W3VYjNPQCdvtCGeMxSDGfrJ4qo2/P7n0HqsVqL+MPoAXY
+	212fOI+qbYO8AW4BxJT+wMe0Vm0AjdoWpd56IKjsyIsvGp9thM0HkkaGrLP09JOtNXLTwrBIzgrVd
+	A5F1gVOA==;
+Received: from [179.118.189.35] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tLDLq-001lyu-7z; Wed, 11 Dec 2024 04:25:26 +0100
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v10 0/2] drm/atomic: Ease async flip restrictions
+Date: Wed, 11 Dec 2024 00:25:07 -0300
+Message-Id: <20241211-tonyk-async_flip-v10-0-6b1ff04847c2@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABMGWWcC/3WNsQ7CIBiEX6VhFgO0WnDSuDg6uJnGAEL7xwoNN
+ I1N03cXO7l0vO/y3U0omgAmokM2oWAGiOBdCpRsMqQb6WqD4ZkAYoQVlBCGe+/GF5ZxdPphW+g
+ wZ1xbI7TNtURJ64Kx8Fk27+h6up0vqEq4gdj7MC5Pg1jK9c1BYIKLXa6o4qIs1fMItWxBbrV//
+ z4WkxK6Yu455bQwVlll/s1qnucvQLo8EPMAAAA=
+X-Change-ID: 20241002-tonyk-async_flip-828cfe9cf3ca
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, dmitry.baryshkov@linaro.org, 
+ Simon Ser <contact@emersion.fr>, joshua@froggi.es, 
+ Xaver Hugl <xaver.hugl@gmail.com>, Daniel Stone <daniel@fooishbar.org>, 
+ ville.syrjala@linux.intel.com
+Cc: kernel-dev@igalia.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
-To support hardware without subsys IDs on new SoCs, add a programming
-flow that checks whether the subsys ID is valid. If the subsys ID is
-invalid, the flow will call 2 alternative CMDQ APIs:
-cmdq_pkt_assign() and cmdq_pkt_write_s_mask_value() to achieve the
-same functionality.
+Hi,
 
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+The goal of this work is to find a nice way to allow amdgpu to perform
+async page flips in the overlay plane as well, not only on the primary
+one. Currently, when using the atomic uAPI, this is the only type of
+plane allowed to do async flips, and every driver accepts it.
+
+This patchset re-uses the per-plane function atomic_async_check() to
+this purpose, so drivers can allow different plane types. There's a
+`bool flip` parameter so the atomic_async_check() can do different
+decisions if it's a complete page flip or a plane update.
+
+igt test: https://lore.kernel.org/igt-dev/20241211031820.115844-1-andrealmeid@igalia.com/
+
+Changelog
+ v9: https://lore.kernel.org/r/20241101-tonyk-async_flip-v9-0-681814efbfbe@igalia.com
+ - Add a 'flip' flag to indicate where the atomic_async_check() is being called from.
+
+ v8: https://lore.kernel.org/lkml/20240806135300.114469-1-andrealmeid@igalia.com/
+ - Rebased on top of 6.12-rc1 (drm/drm-next)
+
+ v7: https://lore.kernel.org/dri-devel/20240618030024.500532-1-andrealmeid@igalia.com/
+ - Complete rewrite
+
 ---
- .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    | 26 ++++++++++--
- .../platform/mediatek/mdp3/mtk-mdp3-comp.h    | 41 +++++++++++++++----
- 2 files changed, 55 insertions(+), 12 deletions(-)
+André Almeida (2):
+      drm/atomic: Let drivers decide which planes to async flip
+      drm/amdgpu: Enable async flip on overlay planes
 
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-index df0ab338ef41..58beeffd3fdf 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-@@ -320,9 +320,18 @@ static int mdp_path_config_subfrm(struct mdp_cmdq_cmd *cmd,
- 		return ret;
- 	/* Enable mux settings */
- 	for (index = 0; index < ctrl->num_sets; index++) {
-+		struct cmdq_client *cl = (struct cmdq_client *)cmd->pkt.cl;
-+
- 		set = &ctrl->sets[index];
--		cmdq_pkt_write_mask(&cmd->pkt, set->subsys_id, set->reg,
--				    set->value, 0xFFFFFFFF);
-+		if (cmdq_subsys_is_valid(cl->chan, set->subsys_id)) {
-+			cmdq_pkt_write_mask(&cmd->pkt, set->subsys_id, set->reg,
-+					    set->value, 0xFFFFFFFF);
-+		} else {
-+			/* only MMIO access, no need to check mminfro_offset */
-+			cmdq_pkt_assign(&cmd->pkt, 0, CMDQ_ADDR_HIGH(set->reg));
-+			cmdq_pkt_write_s_mask_value(&cmd->pkt, 0, CMDQ_ADDR_LOW(set->reg),
-+						    set->value, 0xFFFFFFFF);
-+		}
- 	}
- 	/* Config sub-frame information */
- 	for (index = (num_comp - 1); index >= 0; index--) {
-@@ -376,9 +385,18 @@ static int mdp_path_config_subfrm(struct mdp_cmdq_cmd *cmd,
- 	}
- 	/* Disable mux settings */
- 	for (index = 0; index < ctrl->num_sets; index++) {
-+		struct cmdq_client *cl = (struct cmdq_client *)cmd->pkt.cl;
-+
- 		set = &ctrl->sets[index];
--		cmdq_pkt_write_mask(&cmd->pkt, set->subsys_id, set->reg,
--				    0, 0xFFFFFFFF);
-+		if (cmdq_subsys_is_valid(cl->chan, set->subsys_id)) {
-+			cmdq_pkt_write_mask(&cmd->pkt, set->subsys_id, set->reg,
-+					    0, 0xFFFFFFFF);
-+		} else {
-+			/* only MMIO access, no need to check mminfro_offset */
-+			cmdq_pkt_assign(&cmd->pkt, 0, CMDQ_ADDR_HIGH(set->reg));
-+			cmdq_pkt_write_s_mask_value(&cmd->pkt, 0, CMDQ_ADDR_LOW(set->reg),
-+						    0, 0xFFFFFFFF);
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h
-index 3e5d2da1c807..f6c041934779 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h
-@@ -9,9 +9,25 @@
- 
- #include "mtk-mdp3-cmdq.h"
- 
--#define MM_REG_WRITE_MASK(cmd, id, base, ofst, val, mask, ...)	\
--	cmdq_pkt_write_mask(&((cmd)->pkt), id,			\
--		(base) + (ofst), (val), (mask), ##__VA_ARGS__)
-+#define MM_REG_WRITE_MASK(cmd, id, base, ofst, val, mask, ...)				\
-+do {											\
-+	typeof(cmd) (_cmd) = (cmd);							\
-+	typeof(id) (_id) = (id);							\
-+	typeof(base) (_base) = (base);							\
-+	typeof(ofst) (_ofst) = (ofst);							\
-+	typeof(val) (_val) = (val);							\
-+	typeof(mask) (_mask) = (mask);							\
-+	if (cmdq_subsys_is_valid(((struct cmdq_client *)_cmd->pkt.cl)->chan, _id)) {	\
-+		cmdq_pkt_write_mask(&_cmd->pkt, _id, _base + _ofst, _val,		\
-+				    _mask, ##__VA_ARGS__);				\
-+	} else {									\
-+		/* only MMIO access, no need to check mminfro_offset */			\
-+		cmdq_pkt_assign(&_cmd->pkt, 0, CMDQ_ADDR_HIGH(_base));			\
-+		cmdq_pkt_write_s_mask_value(&_cmd->pkt, 0,				\
-+					    CMDQ_ADDR_LOW(_base + _ofst), _val,		\
-+					    _mask, ##__VA_ARGS__);			\
-+	}										\
-+} while (0)
- 
- #define MM_REG_WRITE(cmd, id, base, ofst, val, mask, ...)	\
- do {								\
-@@ -49,11 +65,20 @@ do {								\
- 	cmdq_pkt_set_event(&((c)->pkt), (e));			\
- } while (0)
- 
--#define MM_REG_POLL_MASK(cmd, id, base, ofst, val, _mask, ...)	\
--do {								\
--	typeof(_mask) (_m) = (_mask);				\
--	cmdq_pkt_poll_mask(&((cmd)->pkt), id,			\
--		(base) + (ofst), (val), (_m), ##__VA_ARGS__);	\
-+#define MM_REG_POLL_MASK(cmd, id, base, ofst, val, _mask, ...)				\
-+do {											\
-+	typeof(cmd) (_cmd) = (cmd);							\
-+	typeof(id) (_id) = (id);							\
-+	typeof(base) (_base) = (base);							\
-+	typeof(ofst) (_ofst) = (ofst);							\
-+	typeof(val) (_val) = (val);							\
-+	typeof(_mask) (_m) = (_mask);							\
-+	if (cmdq_subsys_is_valid(((struct cmdq_client *)_cmd->pkt.cl)->chan, _id))	\
-+		cmdq_pkt_poll_mask(&_cmd->pkt, _id, _base + _ofst, _val,		\
-+				   _m, ##__VA_ARGS__);					\
-+	else										\
-+		cmdq_pkt_poll_addr(&_cmd->pkt, _base + _ofst, _val,			\
-+				   _m, ##__VA_ARGS__);					\
- } while (0)
- 
- #define MM_REG_POLL(cmd, id, base, ofst, val, mask, ...)	\
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    | 11 ++++---
+ drivers/gpu/drm/drm_atomic_helper.c                |  2 +-
+ drivers/gpu/drm/drm_atomic_uapi.c                  | 37 ++++++++++++++++------
+ drivers/gpu/drm/loongson/lsdc_plane.c              |  3 +-
+ drivers/gpu/drm/mediatek/mtk_plane.c               |  2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c         |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  2 +-
+ drivers/gpu/drm/tegra/dc.c                         |  3 +-
+ drivers/gpu/drm/vc4/vc4_plane.c                    |  2 +-
+ include/drm/drm_modeset_helper_vtables.h           |  7 +++-
+ 10 files changed, 49 insertions(+), 22 deletions(-)
+---
+base-commit: c40c32cf71b90d85386fcc066c19feb23eb42804
+change-id: 20241002-tonyk-async_flip-828cfe9cf3ca
+
+Best regards,
 -- 
-2.43.0
+André Almeida <andrealmeid@igalia.com>
 
 
