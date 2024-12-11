@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-442114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0B89ED827
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB3E9ED82B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9898018848D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:09:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAD56188560E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60A820C030;
-	Wed, 11 Dec 2024 21:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA97520CCDB;
+	Wed, 11 Dec 2024 21:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FLX8jkCF"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zsLsZoKq"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8581DC9BB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341071E9B16
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733951365; cv=none; b=OqwVVqx3qSfRYaVH8gyr2FfUTCF8xwRyZpHUoM7Xuc7ll3+u1JgLaZkMt8g7PTYWVm98iU9063b+vUIm2NL6g7x6y/riG8quhGK2YDfBqnIxUC/lJ6HvE2u2mtFGgbAcw5L4U7tapvs0D08wi16pzODJ9gPYhKPmxstIBm6Vfdg=
+	t=1733951376; cv=none; b=Lth70G5wq6WGH1E9WHYWrk5Yvn1fN9F5Fyi0r6wmYgCy2Nbbwtb/PHZ4OkZtmiJNrXh6Ay/HTUJeh1k5PHxxp1ocvF5tX9cH/D2Szwquje5SouE2EJZJD0DBlY4JNbHTyH6+nlSWynlfukg6u7vV641HVimLbYWdErZOR1nV0js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733951365; c=relaxed/simple;
-	bh=Ca8kqVvAVdINGWA1VQnxrxlJaZR1N1d7Xc+tsgI0o3k=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fsnXLt9yf6rOBlJdem//99y/F1uJ7TqYbC7dMqFfrO7e2MX/0xqDWQZLJHtPAE8/4W1WeXVP2gOkt/YmK5yoSLoEml/C6DHeFLZZWJzawKixz2f46t1rKRqQ7iTHSEMEUE/ZR/XeHkHckC0IOCtFCi8up89jHkt8A6D51+wy9to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FLX8jkCF; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ef7f8acc33so65937367b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:09:23 -0800 (PST)
+	s=arc-20240116; t=1733951376; c=relaxed/simple;
+	bh=M+SBjnr89ky9x9KqFq4DMNJhwJdrFehbl/hzoDeq7v0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+uf1a0wRv0LmYzjQGli1WzgMBNKGOX56WTZdh3GCK0bLxry9tfiPkeAWkw5T2tPr7xWt5BJkVjxbpnblooHpL8VhjAoWGYeWFrhv0I/AREnwbKAMEx1W6D9vDldBjL+vrvhaRQIQ0fVXLBeWQ4+ebKQLbkt4BJtetb7FybWWms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zsLsZoKq; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5401d3ea5a1so3834994e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:09:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733951362; x=1734556162; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pQDqVSakcr3mxA+wnwNeXmA0JdxuRMpWtJWg3CDfgIg=;
-        b=FLX8jkCFhRuXrU7QylKC97gLdnErAU2u5l++JsXFYXZMunPWKoN0aFIp3bPRnpnA6n
-         u8Q7LdYqHut0ejhn7GcCfv+psp8UJXikckcA3bi6HF8YD9BtFun0VSFvsyEG9MfApL5P
-         mxiTZBm6T6JEOxkN5AnhEiOfxtJHT8jDJxnXM=
+        d=linaro.org; s=google; t=1733951371; x=1734556171; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/zbqQN16b2aOiF9wSF0WnEQtgHo51A0jGYXUA3xuNJA=;
+        b=zsLsZoKqd72pnw6Nmj8KvbcwLBEDmLccujJddAXkVt4crjhe+G9B8sbeku1Hn8AiTb
+         +rW/auWpu78PgjuKukl2R5Axebe31Tp4GNSFbUXKs8CTNt+TA4bqhUkC1heqpLv89i/3
+         HyzCk2HvQVNm2wfQ+f6f4M83d1U58qnny2Ilau0Ti3lC0zfCwqql0mnA5yRyfmErPtxQ
+         iv4C6D5elBzLEFfyy03QOpIlDd5vdyxelZSjIqeudhluIttbzdUz08c2/TjhJwgegRnk
+         3HHJznZPMg+UBephNVq6D0Qlg2ljXVertA8wj008ffjEik71O5S36qfjjfHxeeXmleRk
+         AAVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733951362; x=1734556162;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1733951371; x=1734556171;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pQDqVSakcr3mxA+wnwNeXmA0JdxuRMpWtJWg3CDfgIg=;
-        b=jHfsYjodfkoeEbmpo0LIiQ7Car6Yj2hIunFT1xBNmfuYhjT4wI2uYXm4sguPAumkJN
-         cmAsA3hHfzKICzJH5Z/ys5EKu712znb5+zyg/ecZbrYlF2MuKF5wEA84N8APPoVI6y5u
-         SLG+uKYIe/GbmjaENsoM3F6vm6f+idhK+HHen2rGW1xs5qfsq/0XSc2iNqRoQSAv4ZTx
-         VGvqxOnNJ4yeIeEu5hLkIT7+sjVDyGReVIINxn+Sabt25a8hNA/MDcflAULXCDBqu9YQ
-         k6KyqqmseXPOziCGXRXeqh6PqJJwrQtkCAtS+aalPL6vANdNQvwDCpnowPosJx/rG11b
-         RgWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb4Ijc0EnYqqLqEi07uP/+b4Sv8yFfyjWQsrTx8F/V7iR9xAWgzy20dryzHEsmHc4NoYlmGq1ILYPo+lI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwP/YDRy8sBjnXuZbes+rpawKjx8MsIj2Ml7SCIG1zERJDE+wi
-	IF9fzA0rEKSWSfebidQg0EIi57nlVx9Ui9NgMQFOu/aEbUdFBXG5qieGvPw96nxKrtM7MlV7r09
-	S4gwbHWT4mAFKx8Sm7JJXpMvzEwR68gP+8TRO
-X-Gm-Gg: ASbGnctm5GrwxNNzFhznkdSkcOPMyqXrY8s5PAdbozUzsOOjU7MWlm18UUnGZpAPxnX
-	KWbtqmUT/dhEYq2AOa6KjlbO1iTFOfVJyi2tcJP4TfUEUqKFEVFNLXSIEpJymT/U=
-X-Google-Smtp-Source: AGHT+IHQYD+rGSnTOhQP00f7jJc0s1qfCuYpNpAifu02eUFcwunSxMKsHSx1sXnfiWl+na08kVCW69bpJsghQkOvSbs=
-X-Received: by 2002:a05:690c:64c4:b0:6ef:70ae:ca16 with SMTP id
- 00721157ae682-6f19e86a455mr10895707b3.39.1733951362509; Wed, 11 Dec 2024
- 13:09:22 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 11 Dec 2024 13:09:21 -0800
+        bh=/zbqQN16b2aOiF9wSF0WnEQtgHo51A0jGYXUA3xuNJA=;
+        b=MI51QYp401IC6O+QcgxDRjBoTCdrcbk95oncbqnNByyPJ+gBfxSshAP8ePXbmoLw6K
+         lWoAnDRqDc/KBHEAozJAZGeub/L13wDo3CPQsHmEdV7PZpRHRZRXWTnxR73msyl7NVLn
+         jxo+FyAV6IfxE3pM+c6+bnNE5A7ivpG6pxphEKYpl2l/ESIZ6EECLxSI4Blp3SPJBO1O
+         lZvZw4bRuUfgBog9QwhcTppQ6EndMFPF8C8TXWYT1eBcoVOgiZEUfcBatYCA6YoZvVjZ
+         WTiwlA+WfndGpj/nWgF6icJ9URnQN3ljZmUAp7UkfcJUZoVMrhPin5ac2e/hrkhD1zid
+         MvxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKoKxxSuE1xK5z3kYEhHglyBUeoqTG1WIViylztn/+OGwT/wz9t5DuBDJI1AsGTSagljVZdTgm54AriDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVdZ5zZBBz2y4RkIW6OF7jmEc7Y+DSlyqKUvyqrB8+pApn+DCI
+	xNmbM8nd8ZdmrBMeLGTld5KpfNZcgzyYUS8ydRAHkIxI6yNs0JrZHwBKpMnOAlk=
+X-Gm-Gg: ASbGncscKqh2y9Tfu1tGXasEGVf+dYjwtoID2F5nlF13y8G8kwGLpXvOa3Jkof5DaS8
+	fBESQFZhhtYiRXVeBmEHEekFhgFqP6cHd+LBjq1esCuZmrpC8WEOAPNPKA8KsEA6/uu75IZ5QUd
+	fbickoz3WdTO/iihADYUnqCft1JGXnbV7FFdeAL7wUhcypFFPzn8hk5dWWWW8Yj4HwYQlGHmgWX
+	xLHctba5nNo79aJAtOvGAAxEleG6qFXPIGfNVygeSij72pBFdgoQUD+oVJPH10UTXWhezRCgiet
+	WQe7b302JbbARF0O5FDq/ormSO3qUj/vRw==
+X-Google-Smtp-Source: AGHT+IE2nngXJnaAUtwl9k5Kp0+1aSGdWZRqw4X43BjQNC/SURzvx+f5grBltDBz9C5ghuG1lIXKDg==
+X-Received: by 2002:a05:6512:b11:b0:53e:3bb9:5e02 with SMTP id 2adb3069b0e04-5402a60b1b0mr1317831e87.56.1733951371282;
+        Wed, 11 Dec 2024 13:09:31 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3aa94b60sm1561872e87.114.2024.12.11.13.09.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 13:09:29 -0800 (PST)
+Date: Wed, 11 Dec 2024 23:09:28 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH v2] drm/msm/dpu: check dpu_plane_atomic_print_state() for
+ valid sspp
+Message-ID: <rggt2smcj547el3bovp5djilydxe5wygqasborwunejihbqygc@xanqsyxqgyke>
+References: <20241211-check-state-before-dump-v2-1-62647a501e8c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241202-fd-dp-audio-fixup-v2-5-d9187ea96dad@linaro.org>
-References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-5-d9187ea96dad@linaro.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
-Date: Wed, 11 Dec 2024 13:09:21 -0800
-Message-ID: <CAE-0n53hKPr2WsGWTy24qfsSO4TbmtnY5bOQQ51UuW4RPUz0Dg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/14] drm/msm/dp: move I/O functions to global header
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
-Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211-check-state-before-dump-v2-1-62647a501e8c@quicinc.com>
 
-Quoting Dmitry Baryshkov (2024-12-02 02:06:35)
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> index 13486c9c8703748e69e846be681951368df0a29e..2c500dc0898edfe1d6bdac2eedf3c1b78056cf6b 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
-[...]
-> +
-> +static inline u32 msm_dp_read_p0(struct msm_dp_catalog *msm_dp_catalog,
-> +                              u32 offset)
-> +{
-> +       /*
-> +        * To make sure interface reg writes happens before any other operation,
-> +        * this function uses writel() instread of writel_relaxed()
+On Wed, Dec 11, 2024 at 11:50:26AM -0800, Abhinav Kumar wrote:
+> Similar to the r_pipe sspp protect, add a check to protect
+> the pipe state prints to avoid NULL ptr dereference for cases when
+> the state is dumped without a corresponding atomic_check() where the
+> pipe->sspp is assigned.
+> 
+> Fixes: 31f7148fd370 ("drm/msm/dpu: move pstate->pipe initialization to dpu_plane_atomic_check")
+> Reported-by: Stephen Boyd <swboyd@chromium.org>
+> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/67
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+> To: Rob Clark <robdclark@gmail.com>
+> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> To: Sean Paul <sean@poorly.run>
+> To: Marijn Suijten <marijn.suijten@somainline.org>
+> To: David Airlie <airlied@gmail.com>
+> To: Simona Vetter <simona@ffwll.ch>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Stephen Boyd <swboyd@chromium.org>
+> ---
+> Changes in v2:
+> - move pstate->stage out of the pipe->sspp check
+> - add reported-by credits for Stephen
+> - Link to v1: https://lore.kernel.org/r/20241209-check-state-before-dump-v1-1-7a9d8bc6048f@quicinc.com
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
 
-It's readl_relaxed() below.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-> +        */
-> +       return readl_relaxed(msm_dp_catalog->p0_base + offset);
-> +}
+-- 
+With best wishes
+Dmitry
 
