@@ -1,226 +1,126 @@
-Return-Path: <linux-kernel+bounces-441095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38ABA9EC95C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:41:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF39D16A23B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:40:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD409236F8D;
-	Wed, 11 Dec 2024 09:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F+CWh6Xy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F039EC95D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:42:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B26B236FB7;
-	Wed, 11 Dec 2024 09:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22EC285CC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:42:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867DB1C1F22;
+	Wed, 11 Dec 2024 09:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=me.com header.i=@me.com header.b="zTnDDMAH"
+Received: from qs51p00im-qukt01080502.me.com (qs51p00im-qukt01080502.me.com [17.57.155.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23C6236FB6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733910056; cv=none; b=dvjRp0fri4skjHEtCDM9Y5nhslT2Ne6Z0BtQtPVf+wzf+hK00cU5zysi+I6Y6lN7/O8QGeBP2BkyGQAxFl1MfiF4cchRTFTVhAjbgfQdDjQ41iqKs27mJ6sORFJOGOqsjeXNC+/z7sA8ZC3tga+9jv69X6mQ55wgem3p+igW0ng=
+	t=1733910138; cv=none; b=PMkhfd/52Z3OpG7KEyfjjhVfGsBu8L17vKQrcuSlBmmJp5JpBK+TVlPPFf1nsI0FqbeARWeJowoKkTswctVBe0kckUpw8FvCZKOc4mp/BV7EWhP+JSbWIVNGT9GZx/mrySD7u8Th47VlLnjjm6jNH/5EFTYMVCNOAJpP9967VUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733910056; c=relaxed/simple;
-	bh=GS5Z33ohQY2/h9ot0AUWoBG8q6TtS3G7qEZ7HPbHInU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIrl3z1ZolgAb9bIviBCjWQh7B5sFI0gmYXID85T25/ApojygVoQjH+OWz9ynHlGUEsm0kw57c9TiHJR6XkS2J97NXIz8h17EZMX+8ZAbNdpSjF1CAHx5XqNeoGgBwckid0/Z5qIougJzDtWbU5YPhxCpa4In61eEsFh64/pvRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F+CWh6Xy; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733910054; x=1765446054;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GS5Z33ohQY2/h9ot0AUWoBG8q6TtS3G7qEZ7HPbHInU=;
-  b=F+CWh6Xy90nal7PeqTxrCEwAFSMmk0C+lhkxr+TOsWAyCx9ixXSUptNU
-   CTP+WgdB/12RgBic7hh+fX/1dj+jlm2UQQKdkpz73me+wkKtbaGZ4Q9fB
-   0oVmdpQZ1AyLVzmbgacYuTbpC/tlpERpOtPJnIG4K04GKQ9AOfne4Co/U
-   ehthCBhNpFWu0vL681Ro2jfsflNRmzMJPpBePm6/MPTLgNMN93HRey6AN
-   CLsbliecXZA/FJsdMxZdSn4/OyWBUiwY84qhztI8fRzynlQOQvQJp80qG
-   E6YyS4KDseOptuTYV2Klekdu/D31MIl/5DjVMIx3rgNb+RtzFiEyljdOG
-   A==;
-X-CSE-ConnectionGUID: a+IrBPUiTlyxNZAIez5DCw==
-X-CSE-MsgGUID: rQArnoC9T16PZ1IqClp6bA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="37117047"
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="37117047"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 01:40:54 -0800
-X-CSE-ConnectionGUID: jLknP7QSS2y7aIPjuiF0Kg==
-X-CSE-MsgGUID: ejgYfS7HRvCb5auIaQiC5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="95604206"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa009.jf.intel.com with SMTP; 11 Dec 2024 01:40:49 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 11 Dec 2024 11:40:48 +0200
-Date: Wed, 11 Dec 2024 11:40:48 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev, akuchynski@google.com,
-	pmalani@chromium.org, jthies@google.com,
-	dmitry.baryshkov@linaro.org, badhri@google.com,
-	rdbabiera@google.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] usb: typec: Only use SVID for matching altmodes
-Message-ID: <Z1leIAhqopg_We9F@kuha.fi.intel.com>
-References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
- <20241206153813.v4.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
+	s=arc-20240116; t=1733910138; c=relaxed/simple;
+	bh=F0tDbAiyUW0ypcYIWfgC7IJ8bUbLF1zDbzI7A6KxjyQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=gzXyPwmOcbA6B9Q2O7ELTU8JKFZJ8qIc8v7bnQQq74qvvtU6dkb14DFiDRZBlfIPwtXzvUu6WEuDjWXtvFeTMJvT8OlO1pWkmy5IGzewD9UyYJe2IZxO/tY+w1NUJL0S4Ik/Gu+2N0agKvIpKbMAjayzbxYrxfC6GQL7xPXbyuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=me.com; spf=pass smtp.mailfrom=me.com; dkim=pass (2048-bit key) header.d=me.com header.i=@me.com header.b=zTnDDMAH; arc=none smtp.client-ip=17.57.155.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=me.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=me.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+	t=1733910135; bh=fq9JIGFqDS16sxn3B26QdkQ1K0WJfrg2r7kx5NZceXw=;
+	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To:
+	 x-icloud-hme;
+	b=zTnDDMAH4Ey+MDZrcO8bYh3Wah8y9FtqGwW70+h1f9Z+CiMufChJPkVHKyfIl1hxN
+	 ca6Hua3p1jSGQ2r3ELcrSfgdegVVJt3J4BANb79TEGQUMwXICzGWcms0mVMbsjvwVn
+	 FYin/Tt6Rz2j1NalN8GiSAjn0BZzZlTbJZa2I3/UN5zFvG8oH7ursC8k9I5jzciYFG
+	 8HzRRK0AC1SpQzCWO/ny0avQf7q71SwrS47V/gOoah1y94s70X0cU+AefLouGnRQdv
+	 OSj5WqpFp+LwE+ZJr0wuphCWt65gYU4aTtJbkyaLYLp8sCdGrOCWIRdqIiIu90fXN9
+	 u2C/dPT+E1IdQ==
+Received: from smtpclient.apple (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
+	by qs51p00im-qukt01080502.me.com (Postfix) with ESMTPSA id BD6064E401BB;
+	Wed, 11 Dec 2024 09:42:12 +0000 (UTC)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206153813.v4.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.10\))
+Subject: Re: [PATCH v2 0/4] Add support for HDMI1 output on RK3588 SoC
+From: Alexandre ARNOUD <aarnoud@me.com>
+In-Reply-To: <20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com>
+Date: Wed, 11 Dec 2024 10:42:10 +0100
+Cc: Sandy Huang <hjc@rock-chips.com>,
+ =?utf-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ kernel@collabora.com,
+ dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BC29D61C-317D-4F82-AF42-EA3D705B0632@me.com>
+References: <20241211-rk3588-hdmi1-v2-0-02cdca22ff68@collabora.com>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+X-Mailer: Apple Mail (2.3696.120.41.1.10)
+X-Proofpoint-ORIG-GUID: uroVR0O5J6T4E2ZKwd7zwAfbk9YM3ttp
+X-Proofpoint-GUID: uroVR0O5J6T4E2ZKwd7zwAfbk9YM3ttp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-11_09,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ bulkscore=0 clxscore=1011 adultscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412110073
 
-On Fri, Dec 06, 2024 at 03:38:12PM -0800, Abhishek Pandit-Subedi wrote:
-> Mode in struct typec_altmode is used to indicate the index of the
-> altmode on a port, partner or plug. It is used in enter mode VDMs but
-> doesn't make much sense for matching against altmode drivers or for
-> matching partner to port altmodes.
-> 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Hello Cristian,
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
-> 
-> (no changes since v3)
-> 
-> Changes in v3:
-> - Removed mode from altmode device ids
-> - Updated modalias for typecd bus to remove mode
-> - Re-ordered to start of series
-> 
+> On 11 Dec 2024, at 12:06 AM, Cristian Ciocaltea =
+<cristian.ciocaltea@collabora.com> wrote:
+>=20
 > Changes in v2:
-> - Update altmode_match to ignore mode entirely
-> - Also apply the same behavior to typec_match
-> 
->  drivers/usb/typec/altmodes/displayport.c | 2 +-
->  drivers/usb/typec/altmodes/nvidia.c      | 2 +-
->  drivers/usb/typec/bus.c                  | 6 ++----
->  drivers/usb/typec/class.c                | 4 ++--
->  scripts/mod/devicetable-offsets.c        | 1 -
->  scripts/mod/file2alias.c                 | 4 +---
->  6 files changed, 7 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
-> index 2f03190a9873..3245e03d59e6 100644
-> --- a/drivers/usb/typec/altmodes/displayport.c
-> +++ b/drivers/usb/typec/altmodes/displayport.c
-> @@ -791,7 +791,7 @@ void dp_altmode_remove(struct typec_altmode *alt)
->  EXPORT_SYMBOL_GPL(dp_altmode_remove);
->  
->  static const struct typec_device_id dp_typec_id[] = {
-> -	{ USB_TYPEC_DP_SID, USB_TYPEC_DP_MODE },
-> +	{ USB_TYPEC_DP_SID },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(typec, dp_typec_id);
-> diff --git a/drivers/usb/typec/altmodes/nvidia.c b/drivers/usb/typec/altmodes/nvidia.c
-> index fe70b36f078f..2b77d931e494 100644
-> --- a/drivers/usb/typec/altmodes/nvidia.c
-> +++ b/drivers/usb/typec/altmodes/nvidia.c
-> @@ -24,7 +24,7 @@ static void nvidia_altmode_remove(struct typec_altmode *alt)
->  }
->  
->  static const struct typec_device_id nvidia_typec_id[] = {
-> -	{ USB_TYPEC_NVIDIA_VLINK_SID, TYPEC_ANY_MODE },
-> +	{ USB_TYPEC_NVIDIA_VLINK_SID },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(typec, nvidia_typec_id);
-> diff --git a/drivers/usb/typec/bus.c b/drivers/usb/typec/bus.c
-> index aa879253d3b8..ae90688d23e4 100644
-> --- a/drivers/usb/typec/bus.c
-> +++ b/drivers/usb/typec/bus.c
-> @@ -454,8 +454,7 @@ static int typec_match(struct device *dev, const struct device_driver *driver)
->  	const struct typec_device_id *id;
->  
->  	for (id = drv->id_table; id->svid; id++)
-> -		if (id->svid == altmode->svid &&
-> -		    (id->mode == TYPEC_ANY_MODE || id->mode == altmode->mode))
-> +		if (id->svid == altmode->svid)
->  			return 1;
->  	return 0;
->  }
-> @@ -470,8 +469,7 @@ static int typec_uevent(const struct device *dev, struct kobj_uevent_env *env)
->  	if (add_uevent_var(env, "MODE=%u", altmode->mode))
->  		return -ENOMEM;
->  
-> -	return add_uevent_var(env, "MODALIAS=typec:id%04Xm%02X",
-> -			      altmode->svid, altmode->mode);
-> +	return add_uevent_var(env, "MODALIAS=typec:id%04X", altmode->svid);
->  }
->  
->  static int typec_altmode_create_links(struct altmode *alt)
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 4b3047e055a3..febe453b96be 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -237,13 +237,13 @@ static int altmode_match(struct device *dev, void *data)
->  	if (!is_typec_altmode(dev))
->  		return 0;
->  
-> -	return ((adev->svid == id->svid) && (adev->mode == id->mode));
-> +	return (adev->svid == id->svid);
->  }
->  
->  static void typec_altmode_set_partner(struct altmode *altmode)
->  {
->  	struct typec_altmode *adev = &altmode->adev;
-> -	struct typec_device_id id = { adev->svid, adev->mode, };
-> +	struct typec_device_id id = { adev->svid };
->  	struct typec_port *port = typec_altmode2port(adev);
->  	struct altmode *partner;
->  	struct device *dev;
-> diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-> index 9c7b404defbd..d3d00e85edf7 100644
-> --- a/scripts/mod/devicetable-offsets.c
-> +++ b/scripts/mod/devicetable-offsets.c
-> @@ -237,7 +237,6 @@ int main(void)
->  
->  	DEVID(typec_device_id);
->  	DEVID_FIELD(typec_device_id, svid);
-> -	DEVID_FIELD(typec_device_id, mode);
->  
->  	DEVID(tee_client_device_id);
->  	DEVID_FIELD(tee_client_device_id, uuid);
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index c4cc11aa558f..218ccb7150bf 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -1343,14 +1343,12 @@ static int do_tbsvc_entry(const char *filename, void *symval, char *alias)
->  	return 1;
->  }
->  
-> -/* Looks like: typec:idNmN */
-> +/* Looks like: typec:idN */
->  static int do_typec_entry(const char *filename, void *symval, char *alias)
->  {
->  	DEF_FIELD(symval, typec_device_id, svid);
-> -	DEF_FIELD(symval, typec_device_id, mode);
->  
->  	sprintf(alias, "typec:id%04X", svid);
-> -	ADD(alias, "m", mode != TYPEC_ANY_MODE, mode);
->  
->  	return 1;
->  }
-> -- 
-> 2.47.0.338.g60cca15819-goog
+> - Override hdmi1 pinctrl-0 on rock-5b as it requires hdmim0_tx1_cec
+>  instead of hdmim2_tx1_cec (fixes a pin conflict when enabling
+>  CONFIG_SPI_ROCKCHIP_SFC)
+> - Link to v1: =
+https://lore.kernel.org/r/20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabor=
+a.com
+>=20
+> ---
+> Cristian Ciocaltea (4):
+>      drm/rockchip: dw_hdmi_qp: Add support for RK3588 HDMI1 output
+>      arm64: dts: rockchip: Add PHY node for HDMI1 TX port on RK3588
+>      arm64: dts: rockchip: Add HDMI1 node on RK3588
+>      arm64: dts: rockchip: Enable HDMI1 on rock-5b
+>=20
+> arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi  |  62 ++++++++++++
+> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts |  44 ++++++++-
+> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c  | 119 =
++++++++++++++++++++-----
+> 3 files changed, 200 insertions(+), 25 deletions(-)
+> ---
+> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> change-id: 20241207-rk3588-hdmi1-704cbb7cd75f
 
--- 
-heikki
+Tested-by: Alexandre ARNOUD <aarnoud@me.com>
+
+Works perfectly on Rock-5B, thanks for your work.
+
+Regards,
+
+Alex=
 
