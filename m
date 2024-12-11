@@ -1,130 +1,259 @@
-Return-Path: <linux-kernel+bounces-441258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738639ECBEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:22:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED573188884F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:22:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C7B225A50;
-	Wed, 11 Dec 2024 12:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iad5o/Mx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9529B9ECBF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:23:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EE11C1F10;
-	Wed, 11 Dec 2024 12:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E3028447C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:23:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5791C1F10;
+	Wed, 11 Dec 2024 12:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GcnlZ1le"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5CD1C232D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733919753; cv=none; b=Dl0W5F2h6zXAwjVv430QeD9zQol9Txy4hmavW196ndfaKKZeimFthYe4BeL0+hU9sfIIgZue/oSuTSDQYz11gjUTb3pshEtKsnGi1kunK95kCArB6O6csswzEhjcz0svrCh7wZE0j36hH5Hr5EM7juPaQGQDxwdvDz+D1GEySyk=
+	t=1733919792; cv=none; b=H2cF4+qH206wLvbSCTxlRDyTX8doewrOMPIuipKG8W27W1uMUWv/kKvFoHrYkRy/ZyIcIfkCjzEGqSXAx8in64Vljz2yaUmVTqu883HN0ULpNNQkjHTMbixOWORZwQBW6tFjQVo7IVGzC0TnyBZpQ2CuZ84PFYDHK8K0aJFjbA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733919753; c=relaxed/simple;
-	bh=SkINOBjUcEQO7aCkPmINK0GlIJlOrwRXcxwb11MfeX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmZLvQI1J0E/pH81echTxDFJ/6yLUbAn65aGqtMVD+pBtbloOSZ3rJ7/FAk1M81J36w6M7FkZjStUrkpzPw8R1o4ku26NEv1boN72B30Ddl+7aM5gnRpAOllyGtfLz2d7lIDdL04yg+Sbo1zbfgB/xO7gNJhpb11bgpHUzhzDHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iad5o/Mx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31563C4CED2;
-	Wed, 11 Dec 2024 12:22:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733919752;
-	bh=SkINOBjUcEQO7aCkPmINK0GlIJlOrwRXcxwb11MfeX8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iad5o/MxKssJwW0lhPl/ii2SkpWyWYjqLQii33cdJD/PNMlptG8YcRSmaBsJV7+TM
-	 aZOGeq5r1hrV43ZlYJS/T1xi4otiS8RH2wYPCO01yOOzY/j1grq0U6MlKx5Vtbm0HA
-	 yZ14aPxYaoK18/5qbn1lagmGefvs5iOKAxRHlsb2yOeKrfGwJnb9S1bP7GmhS4Px7/
-	 NPANgugIAwthGykCAA4uQq/oYYhWzNlVP4Iha4XMjPa53Joi//W38EcrxJxzrlpF3q
-	 GHr38m17SAMxKovs4goVVkMBhfaDncSQPwQcdM3s2ZdfYIz2LqUK3K04TkNARvvAHO
-	 rz8lZjO7r9yKw==
-Date: Wed, 11 Dec 2024 13:22:24 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
-Message-ID: <Z1mEAPlSXA9c282i@cassiopeiae>
-References: <20241210224947.23804-1-dakr@kernel.org>
- <20241210224947.23804-2-dakr@kernel.org>
- <2024121112-gala-skincare-c85e@gregkh>
- <2024121111-acquire-jarring-71af@gregkh>
- <2024121128-mutt-twice-acda@gregkh>
- <2024121131-carnival-cash-8c5f@gregkh>
+	s=arc-20240116; t=1733919792; c=relaxed/simple;
+	bh=4LmoThFKiCg6NPxt1pwJQOCUq4Ty9Yrn6QdEkSulcGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jqEIOaG3q5hzbGtV0h/X1LNAebwmQJvM5OAwTrl8D/ceAxN3plipwgmoBOLUuJbtAoqO714Wxy3SPkZwi02PlPX89f6ACt0XQlVzgd7n3BfW/SkTPPcXqDEWmS4tlbNkGafN+WsOSodBolLvfi4fwj9MH88jowYaewAsbNVOMls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GcnlZ1le; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d27243ba8bso10018704a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 04:23:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1733919788; x=1734524588; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ASQKGpCO7s4KPkalfOXfelNyrTTyYMkGNmfArDEmeBM=;
+        b=GcnlZ1leTt1dsahBLq9jtbzrF5Pac0t0OTfPep3wmLSznG3bp99gbGHJykUPgrJa1D
+         UbBKKdwv6ytOjGz8rvT5bJwyTntg245NuHeDrgQuQdACLrCM2jtpdTBFihzb90WvxPdi
+         4/8WTry2UzERCxS+XDvYeyVviYK1MwUw+NlrhqN2hC18O+KUykMwXzr8jWreVJSjozdt
+         6VC2zLm7P9imTSQD3rBbSDQ3yw/DrXP2fcVVFsZ52CMHqa9GcPZRUSjNg5+hjvzFtswU
+         ORDmhc4k4297RaMxUDLaYLPPp3uKsgLmnksRvRfYpXkqlS8nEi3l4cuSqAsrjs0IoiRe
+         kpAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733919788; x=1734524588;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ASQKGpCO7s4KPkalfOXfelNyrTTyYMkGNmfArDEmeBM=;
+        b=wmX00A6iiJXnqii7zSWJN4sIKu2wqniGKwj1F9RkD8Hm9ne8xcSoFCZOM9CN20OFw/
+         Sw/0I2ypI1WlZs5AET4UgCKWhSGXcwJJEf4X3DqOLHNomAq+g6IdagXbhlCAZ4P7CSG8
+         OOyna3eC6Uiibypuj9YcGgU/D1lJTOWmfHoFXGe83CS/Xvf9+mNruuUuoUNHbOXLaH4J
+         jrvGHpfkP7pnpwdj236JpviATV3MdpoI5aF0L/iQHY/kUcEfAHmd1CiUyVEA0MvaNH+V
+         3xjnf/VZMV+mbu6fN9VAy8gTpGVGRm8735zgE6V6ElqcAHRA9GZbifrZJKQQnFQZZp0k
+         fVJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnQodqo8hZhYJj/YRcOKEQqtl2hz+BFQo/DRKXh5LDo5MV4/JInLK+T8nurlQhwWxmuIQIwlRATvlB8Gk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTe1CzojQJhkl6DuscSSy9lQ/SpjhbsKh6Z3hFs+oWIidqdDer
+	rmu0IZPjKZSoMMvDGloZrK41CXeN2+AzOgtBIrE2DIrdA2lok9LVM/vBfcxLHwM=
+X-Gm-Gg: ASbGncvXU81aqg+7fHrECA0aC8HwslJTG1HY9xICkE5WPNOriPm7Nqfl9hD1pZMyxUW
+	sOvVrt+4dw/BpMDSz+RGsrw4p/R0UebDsnNqbLlb3kcYgURyoOOVDExHqIW50rbHmuVNckhiCQk
+	orRg3c/8RbPI+316Qaewexw5txAladGU1Uc+UrD2yCM7uRSOy4UPmid9sWABdLDmCLBFqMN185e
+	pw8Hgr5+YWyQZiuzI8FASltWGmMzILneXXTIr+3c8DiQHpvTDqLiX6TOPNkSPY=
+X-Google-Smtp-Source: AGHT+IGes3nVxEDSBxlaHGZVONLhxg58Ob1fOjsVMtO4m5ilIn457hh6A+FzVBWpzlcY83VX6o4HaQ==
+X-Received: by 2002:a05:6402:4305:b0:5d0:8498:8bed with SMTP id 4fb4d7f45d1cf-5d4330a5ce2mr2727865a12.15.1733919787869;
+        Wed, 11 Dec 2024 04:23:07 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c7aa441sm8847370a12.72.2024.12.11.04.23.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 04:23:07 -0800 (PST)
+Message-ID: <437b8d13-8ec1-40c7-b95c-ddb836e123d6@tuxon.dev>
+Date: Wed, 11 Dec 2024 14:23:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024121131-carnival-cash-8c5f@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org,
+ yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+ <20241210184542.GA4077820-robh@kernel.org>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20241210184542.GA4077820-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 12:05:10PM +0100, Greg KH wrote:
-> On Wed, Dec 11, 2024 at 11:59:54AM +0100, Greg KH wrote:
-> > On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
-> > > On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
-> > > > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummrich wrote:
-> > > > > In a subsequent patch we introduce the `Registration` abstraction used
-> > > > > to register driver structures. Some subsystems require the module name on
-> > > > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
-> > > > > the module name to `Module::init`.
-> > > > 
-> > > > Nit, we don't need the NAME of the PCI driver (well, we do like it, but
-> > > > that's not the real thing), we want the pointer to the module structure
-> > > > in the register_driver call.
-> > > > 
-> > > > Does this provide for that?  I'm thinking it does, but it's not the
-> > > > "name" that is the issue here.
-> > > 
-> > > Wait, no, you really do want the name, don't you.  You refer to
-> > > "module.0" to get the module structure pointer (if I'm reading the code
-> > > right), but as you have that pointer already, why can't you just use
-> > > module->name there as well as you have a pointer to a valid module
-> > > structure that has the name already embedded in it.
-> > 
-> > In digging further, it's used by the pci code to call into lower layers,
-> > but why it's using a different string other than the module name string
-> > is beyond me.  Looks like this goes way back before git was around, and
-> > odds are it's my fault for something I wrote a long time ago.
-> > 
-> > I'll see if I can just change the driver core to not need a name at all,
-> > and pull it from the module which would make all of this go away in the
-> > end.  Odds are something will break but who knows...
+Hi, Rob,
+
+On 10.12.2024 20:45, Rob Herring wrote:
+> On Tue, Nov 26, 2024 at 11:20:36AM +0200, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The RZ/G3S system controller (SYSC) has registers to control signals that
+>> are routed to various IPs. These signals must be controlled during
+>> configuration of the respective IPs. One such signal is the USB PWRRDY,
+>> which connects the SYSC and the USB PHY. This signal must to be controlled
+>> before and after the power to the USB PHY is turned off/on.
+>>
+>> Other similar signals include the following (according to the RZ/G3S
+>> hardware manual):
+>>
+>> * PCIe:
+>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>>   register
+>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>>
+>> * SPI:
+>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>>   register
+>>
+>> * I2C/I3C:
+>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>>   (x=0..3)
+>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>>
+>> * Ethernet:
+>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>>   registers (x=0..1)
+>>
+>> Add #renesas,sysc-signal-cells DT property to allow different SYSC signals
+>> consumers to manage these signals.
+>>
+>> The goal is to enable consumers to specify the required access data for
+>> these signals (through device tree) and let their respective drivers
+>> control these signals via the syscon regmap provided by the system
+>> controller driver. For example, the USB PHY will describe this relation
+>> using the following DT property:
+>>
+>> usb2_phy1: usb-phy@11e30200 {
+>> 	// ...
+>> 	renesas,sysc-signal = <&sysc 0xd70 0x1>;
+>> 	// ...
+>> };
+>>
+>> Along with it, add the syscon to the compatible list as it will be
+>> requested by the consumer drivers. The syscon was added to the rest of
+>> system controller variants as these are similar with RZ/G3S and can
+>> benefit from the implementation proposed in this series.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - none; this patch is new
+>>
+>>
+>>  .../soc/renesas/renesas,rzg2l-sysc.yaml       | 23 ++++++++++++++-----
+>>  1 file changed, 17 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> index 4386b2c3fa4d..90f827e8de3e 100644
+>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> @@ -19,11 +19,13 @@ description:
+>>  
+>>  properties:
+>>    compatible:
+>> -    enum:
+>> -      - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+>> -      - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+>> -      - renesas,r9a07g054-sysc # RZ/V2L
+>> -      - renesas,r9a08g045-sysc # RZ/G3S
+>> +    items:
+>> +      - enum:
+>> +          - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+>> +          - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+>> +          - renesas,r9a07g054-sysc # RZ/V2L
+>> +          - renesas,r9a08g045-sysc # RZ/G3S
+>> +      - const: syscon
+>>  
+>>    reg:
+>>      maxItems: 1
+>> @@ -42,9 +44,17 @@ properties:
+>>        - const: cm33stbyr_int
+>>        - const: ca55_deny
+>>  
+>> +  "#renesas,sysc-signal-cells":
+>> +    description:
+>> +      The number of cells needed to configure a SYSC controlled signal. First
+>> +      cell specifies the SYSC offset of the configuration register, second cell
+>> +      specifies the bitmask in register.
+>> +    const: 2
 > 
-> Nope, things break, the "name" is there to handle built-in modules (as
-> the module pointer will be NULL.)
-> 
-> So what you really want is not the module->name (as I don't think that
-> will be set), but you want KBUILD_MODNAME which the build system sets.
+> If there's only one possible value, then just fix the size in the users. 
+> We don't need #foo-cells until things are really generic. Plus patch 
+> 8 already ignores this based on the schema. And there's implications to 
+> defining them. For example, the pattern is that the consumer property 
+> name is renesas,sysc-signals, not renesas,sysc-signal.
 
-That's correct, and the reason why I pass through this name argument.
-
-Sorry I wasn't able to reply earlier to save you some time.
-
-> You shouldn't need to pass the name through all of the subsystems here,
-> just rely on the build system instead.
-> 
-> Or does the Rust side not have KBUILD_MODNAME?
-
-AFAIK, it doesn't (or didn't have at the time I wrote the patch).
-
-@Miguel: Can we access KBUILD_MODNAME conveniently?
+OK, I'll fix the size in users.
 
 > 
-> thanks,
+> Maybe someone wants to create a 'h/w (signal) control' subsystem (and 
+> binding) that is just 'read, assert, or deassert a h/w signal'. Perhaps 
+
+Until then, is it OK for you to keep it as proposed here?
+
+> even the reset subsystem could be morphed into that as I think there 
+> would be a lot of overlap. 
+
+The USB PWRRDY signal handling has been initially implemented though a
+reset controller driver but, after discussion with Philipp it has been
+concluded that it should be handled differently, since it is not a reset
+signal.
+
+> Maybe that would cut down on a lot of these 
+> syscon phandle properties. I would find that a lot more acceptable than 
+> the generic 'syscons' and '#syscon-cells' binding that was proposed at 
+> some point.
 > 
-> greg k-h
+> 
+>> +
+>>  required:
+>>    - compatible
+>>    - reg
+>> +  - "#renesas,sysc-signal-cells"
+> 
+> New required properties are an ABI break.
+
+I've added it as in the old DTs the system-controller node is disabled.
+With that, do you consider it OK to keep it?
+
+> 
+>>  
+>>  additionalProperties: false
+>>  
+>> @@ -53,7 +63,7 @@ examples:
+>>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>  
+>>      sysc: system-controller@11020000 {
+>> -            compatible = "renesas,r9a07g044-sysc";
+>> +            compatible = "renesas,r9a07g044-sysc", "syscon";
+> 
+> What happens on a new kernel and a DT without this change?
+
+The older DT have the system-controller node disabled, thus nothing will be
+probed for it.
+
+Thank you for your review,
+Claudiu
+
+> 
+> Rob
 
