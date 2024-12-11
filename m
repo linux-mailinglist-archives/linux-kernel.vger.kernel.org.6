@@ -1,140 +1,273 @@
-Return-Path: <linux-kernel+bounces-441849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20E29ED4DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:46:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153A69ED4DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:47:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D785284118
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2C41887969
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0328A209F3C;
-	Wed, 11 Dec 2024 18:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78CD20A5E9;
+	Wed, 11 Dec 2024 18:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VMpaOa/v"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="motmnIjt"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D1D1C3F27;
-	Wed, 11 Dec 2024 18:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E7D1C3F27;
+	Wed, 11 Dec 2024 18:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733942795; cv=none; b=ib29hTdK7OJjDVyKn0XCZ7quxD2fH2O9+irFwG8/IMOxqlrFsuTANBXy52pGFcrQSezKsAaJng7XE+tZ3DUqdNE+4X73+MyF9zzxahv1iC04tvOI6wLLccSTEJSLxfrbZULFrbVDBJOucNBN2rNrSFEjcBSCynL07ySAVZwaxHQ=
+	t=1733942831; cv=none; b=sDL7rNBOPc5BvMICFKf0JJsnsaGQA7cuQIYOrV2H7TbJwXosXLKwGVs3XcNF+p6DQAImDQzEh8TzFLB9YXTwq1ODINB4fv1shUuLQBZqOROEdAk0Vnf7hEGoacM10fStRsZVumNEFZ5lVbOHlicRXjqB0HC5w5h+yyfzYUmGWSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733942795; c=relaxed/simple;
-	bh=8SEPiAG5/bZ3zubyts3IFkmbUAYRgHOi97EOjXc5kaI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=m3yVq9Q7QOATpkQ5Etx5f2yIzLdj7SZPiEBt8qo6iXeMpV651VUWWgq4f2kkuaY0VVq1g2yPDDrPbacEV3xpZbxnOKgj/kh01N/HoelAke4XazCT6wdy/eI9EPnwC7lEGNRj9L/AsZHbeVyPNCI2/d0qPYIspTq0WsUZsb7laOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VMpaOa/v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHDGPu003065;
-	Wed, 11 Dec 2024 18:46:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KKBF9MwwWdxtyhM/vZBDK5wtGQUQme8Sdv89LX9q3k4=; b=VMpaOa/v9X6ACdwL
-	WSIwXzqzOZAiz0No5IAwdkcsl/NUELLHv13Y+iDNo0DBlyRDlJ/d9b1D3WpBxz42
-	3j/Ll/6n1K5RNXJ3dHUfvFQhkVbcTr+HZ0zzlZxk7sl3BzoN1bPZDZccosxldwd9
-	XsUGXYIRPbw8wT4o3UmY2erS80vBspj7U7Nx/woMK3mypS3d0CeCyglgrYWGBlgc
-	WpZ7vOB92Z4PHHejAZJo65k6EwFa27BLNI5KQspL+t9nqXJg0MJIWMtPXjkH5TZm
-	CPPUkykdZi+uqtdCYwWQ1aL0NgvsgZTvnbwWld94Gwq80jkgwDpf+WseqiVKZv0T
-	pFCpgg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f0r9txqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 18:46:10 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBIk9WK017308
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 18:46:10 GMT
-Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 10:46:09 -0800
-Message-ID: <f353a230-b9ab-4c25-846b-6e5f0e404ca0@quicinc.com>
-Date: Wed, 11 Dec 2024 10:46:09 -0800
+	s=arc-20240116; t=1733942831; c=relaxed/simple;
+	bh=gf2Jfhk6boIeLbYywNb2oQLaJgWsitZZ3gdtK/RMV/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BkKazj4Ro0V7mVvbRaVsOp2i1AKg8XIFqjAHyEcHkhX0dR5y7nJ+C5c1oNsWETj9TtjPS/gndbNAmjtORTTgBBx1hUH8xXEpLJ7RLYQp7jeZNNkvUp8be4LnYsB6Fra5hxaRQMQDOHRzYUJfYz/OPKbeyBew1oa44BeIhR0HAJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=motmnIjt; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b6f1be1daeso23014785a.0;
+        Wed, 11 Dec 2024 10:47:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733942829; x=1734547629; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k8uhDPB57MDECRT4Us6R/vXziZ7qkRk18/oYqU3SYYA=;
+        b=motmnIjtWC1K/mmAyadqlpfvynSAH898uUoMGB7jp5b1GT2Px3sHxPrhV/QqkwxsXb
+         63plefRC0sv+8U2UeaMee8a8IZfiMm6byv/WGrefV1KX2qx0hujUJjr7YF7qS1WrdXQ3
+         T/HHG5bCEQVAyqxMeNYDFerngMKnqJj2MMDu+/bEJZowWlPha7uJL6pT6BgLB9p3UXBi
+         GE0x7xu6d29YWnFUuYnk64hgLkQjjXO9ePap/xVL3wbexgrIETn1j6wiFCE8bQnVfpRx
+         wb0HmgKqSyhDgF/zMe/KWBU3DgWp5KYhFrb7V4utmMnkpj0L2LXPrU4QyhhVLK5i/4mJ
+         dV/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733942829; x=1734547629;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k8uhDPB57MDECRT4Us6R/vXziZ7qkRk18/oYqU3SYYA=;
+        b=ZoaLQISFpdcHXXhZiRZHrewpn2VdRuCbjth/mpGLR28VaHJyewt3/BpQmqCX4Rnh4K
+         YK1VGUaD9fINoSsPFhqA2OSn5wnmj2GSSJjnPs1T9gQgqYTGEV8iUHo8nv44TEmJ/J6J
+         krZWfJn6MCw8uM/yILVbJYlhzryVld4W1ixF+Rj9rBMFi122N4uy9Us4CizV3M0nDDuA
+         bAOr4SpewJdfEkxyU2udZEEfxJs4powTY7uPLg058VfyEBm60I9NtY2bgPNo4zXDVdop
+         MZKb/W5CtfneUjIDAQkX1xtjC71FfaorsdS4BMgeb795ozQQUOKrWIpMw+FRTzOfMC5s
+         nBnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUArCUgRuQEwjDTOmx7Luon2QdxeiOBz9JkaC1ZJV7+u40FjKfpjwxLdIUi96IsuZLyREh8ExytnIHj@vger.kernel.org, AJvYcCWOHmXFSRhJLWhyXOtHzDAqlJ2DksDMPCjQOR7ltT8LcnTEsjmpIZecBZQkp97ylRFbmeDUbcVxw3FcsDmW@vger.kernel.org, AJvYcCWtR4Fe3nh63LuyIkh7XcD9sQSn7xLrnGk0akrato7YjaQW5CawsdXaq0EH3Zdp2msAr6z3JyNjrdek@vger.kernel.org, AJvYcCXoeJmGuAwcwuJrUbh9R8f2qEKw5L4BNiJe2mdjGUW0jR7+d9Itt1lmDaWk01GiiVlfVvynIKfOvPQ0q21hKg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIbVWFJctn58AhzvvR0cX1VrmWbemOfPuW4Mvq6ll5EA2a9TWE
+	UCsDXVDehR9+SfLP1RjKFrx+DOMIh6BJQayTAcHDyEUDXtl0FuWk
+X-Gm-Gg: ASbGncvxwol1WHj5VcuTGHYC4+klRwTiVsYpOXzukPzl4RnEJQ6W+3YP38d8iOS5PJC
+	Lb633PppaRHD+ZRczISIVypzbRjJydUfmunISBZtUExfsgPZ3HkvuQhaTpOlzH3dM4z60W4i/Td
+	svJfxHMZZ6jw3akj09Gw/JrQ1tZdBg4tqsEVtWpwp0ieiI8IkbtjvFUQ4Y0wl3ImVuNIVl3cBZu
+	WtPxXg5s1Ckl5NJM6k95zLIksDmS3Ai//CIOccYgbBglpw0r49G/7VAe7Z+KJ2COaGuUUsXnxns
+	guMkllVQVaApMXGhJRyy10UaH9k3kGzjm69kbz4eikMz
+X-Google-Smtp-Source: AGHT+IEC0+zCA9uHtBnpgUbDy+3CdrD2hT+hX0r+vUykPSyQLC0CPy1wDeGgE7qwNvVmhe1ab9MDzQ==
+X-Received: by 2002:a05:620a:2447:b0:7b6:d4df:28a7 with SMTP id af79cd13be357-7b6f2590ce4mr46759585a.38.1733942829100;
+        Wed, 11 Dec 2024 10:47:09 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6ec9821aasm80966285a.37.2024.12.11.10.47.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 10:47:08 -0800 (PST)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 09AA61200070;
+	Wed, 11 Dec 2024 13:47:08 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Wed, 11 Dec 2024 13:47:08 -0500
+X-ME-Sender: <xms:K95ZZysFX7b5IpdSfthBeUBKsiowWkVwu1PmZnzfpJ0HDfnpkJJz0A>
+    <xme:K95ZZ3fxs1qvdduSYDrJsgdU3Zxi7E0jk8AvgQHxccTTMBIFzci7wXwa8JMN61IO_
+    iEEyoxE0YFbjB0AOA>
+X-ME-Received: <xmr:K95ZZ9wRowysOH7hI0cGtVdIYKU-VQ6wPZI67bMbiSWH5K16Zft0vUOj9yVx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkedtgdduudehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
+    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfedupdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
+    thhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegshhgvlhhgrg
+    grshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtph
+    htthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegp
+    ghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhssh
+    hinhesphhrohhtohhnrdhmvg
+X-ME-Proxy: <xmx:K95ZZ9OuLWdFZen6ZcIhS0Y_V47IzmQ1GXw9P1NMhwKEH-0cioAkZw>
+    <xmx:K95ZZy_GTFqWk7EVAsy1xHpjRZYp7Kfnlyqzg17LM99MfNqXjtlqRg>
+    <xmx:K95ZZ1U4-WLz6ND0t7_IMiiUh7IliVluBvZRrgEZkUDy3NFaYLMb3Q>
+    <xmx:K95ZZ7frsiNTGVmN-z46f5yC89mkwL5E_g9zrszIVNONV2y4HFdwlQ>
+    <xmx:LN5ZZ8eTWfr9SSAC-yMn2sE3xu1MZ89mcMwE5k74WA-i76jjNPnq1a6j>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Dec 2024 13:47:06 -0500 (EST)
+Date: Wed, 11 Dec 2024 10:47:05 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Subject: Re: [PATCH v5 04/16] rust: add rcu abstraction
+Message-ID: <Z1neKVc3g28bLjee@tardis.local>
+References: <20241210224947.23804-1-dakr@kernel.org>
+ <20241210224947.23804-5-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] arm64: dts: qcom: Add board dts files for SM8750
- MTP and QRD
-From: Melody Olvera <quic_molvera@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241204-sm8750_master_dt-v3-0-4d5a8269950b@quicinc.com>
- <20241204-sm8750_master_dt-v3-6-4d5a8269950b@quicinc.com>
- <b9225284-7830-4aa4-aed2-7f58fb7320e8@oss.qualcomm.com>
- <79e55e6e-e560-4f43-8d6e-bbaf7fcf157a@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <79e55e6e-e560-4f43-8d6e-bbaf7fcf157a@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Fn3miiM-g8wIKGJTEFmkh3ST2ifxULdN
-X-Proofpoint-GUID: Fn3miiM-g8wIKGJTEFmkh3ST2ifxULdN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 mlxlogscore=889
- malwarescore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110134
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210224947.23804-5-dakr@kernel.org>
 
+Hi Danilo,
 
+This looks good so far, could you please Cc RCU maintainers for the next
+version (if there is one).
 
-On 12/5/2024 10:21 AM, Melody Olvera wrote:
->
->
-> On 12/5/2024 8:45 AM, Konrad Dybcio wrote:
->> On 5.12.2024 12:18 AM, Melody Olvera wrote:
->>> Add MTP and QRD dts files for SM8750 describing board clocks, 
->>> regulators,
->>> gpio keys, etc.
->>>
->>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->>> ---
->> [...]
->>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>
->>> +&tlmm {
->>> +    /* reserved for secure world */
->>> +    gpio-reserved-ranges = <36 4>, <74 1>;
->>> +};
->> Any chance you could describe what those specifically are?
->>
->
-> I'm not too certain, and even if I was, I'm not certain I'd be at 
-> liberty to say.
+A few nits below, with or without, feel free to add:
 
-Spoke w some folks; looks like we're suing these for NFC eSE. I can add 
-in next ps.
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 
-Thanks,
-Melody
+On Tue, Dec 10, 2024 at 11:46:31PM +0100, Danilo Krummrich wrote:
+> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+> 
+> Add a simple abstraction to guard critical code sections with an rcu
+> read lock.
+> 
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Co-developed-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/helpers/helpers.c  |  1 +
+>  rust/helpers/rcu.c      | 13 ++++++++++++
+>  rust/kernel/sync.rs     |  1 +
+>  rust/kernel/sync/rcu.rs | 47 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 62 insertions(+)
+>  create mode 100644 rust/helpers/rcu.c
+>  create mode 100644 rust/kernel/sync/rcu.rs
+> 
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index dcf827a61b52..060750af6524 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -20,6 +20,7 @@
+>  #include "page.c"
+>  #include "pid_namespace.c"
+>  #include "rbtree.c"
+> +#include "rcu.c"
+>  #include "refcount.c"
+>  #include "security.c"
+>  #include "signal.c"
+> diff --git a/rust/helpers/rcu.c b/rust/helpers/rcu.c
+> new file mode 100644
+> index 000000000000..f1cec6583513
+> --- /dev/null
+> +++ b/rust/helpers/rcu.c
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/rcupdate.h>
+> +
+> +void rust_helper_rcu_read_lock(void)
+> +{
+> +	rcu_read_lock();
+> +}
+> +
+> +void rust_helper_rcu_read_unlock(void)
+> +{
+> +	rcu_read_unlock();
+> +}
+> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+> index 1eab7ebf25fd..0654008198b2 100644
+> --- a/rust/kernel/sync.rs
+> +++ b/rust/kernel/sync.rs
+> @@ -12,6 +12,7 @@
+>  pub mod lock;
+>  mod locked_by;
+>  pub mod poll;
+> +pub mod rcu;
+>  
+>  pub use arc::{Arc, ArcBorrow, UniqueArc};
+>  pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
+> diff --git a/rust/kernel/sync/rcu.rs b/rust/kernel/sync/rcu.rs
+> new file mode 100644
+> index 000000000000..3beef70d5f34
+> --- /dev/null
+> +++ b/rust/kernel/sync/rcu.rs
+> @@ -0,0 +1,47 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! RCU support.
+> +//!
+> +//! C header: [`include/linux/rcupdate.h`](srctree/include/linux/rcupdate.h)
+> +
+> +use crate::{bindings, types::NotThreadSafe};
+> +
+> +/// Evidence that the RCU read side lock is held on the current thread/CPU.
+> +///
+> +/// The type is explicitly not `Send` because this property is per-thread/CPU.
+> +///
+> +/// # Invariants
+> +///
+> +/// The RCU read side lock is actually held while instances of this guard exist.
+> +pub struct Guard(NotThreadSafe);
+> +
+> +impl Guard {
+> +    /// Acquires the RCU read side lock and returns a guard.
+> +    pub fn new() -> Self {
+> +        // SAFETY: An FFI call with no additional requirements.
+> +        unsafe { bindings::rcu_read_lock() };
+> +        // INVARIANT: The RCU read side lock was just acquired above.
+> +        Self(NotThreadSafe)
+> +    }
+> +
+> +    /// Explicitly releases the RCU read side lock.
+> +    pub fn unlock(self) {}
+> +}
+> +
+> +impl Default for Guard {
+> +    fn default() -> Self {
+> +        Self::new()
+> +    }
+> +}
+> +
+> +impl Drop for Guard {
+> +    fn drop(&mut self) {
+> +        // SAFETY: By the type invariants, the rcu read side is locked, so it is ok to unlock it.
+
+s/rcu/RCU
+
+when referring the RCU mechanism or the subsystem, it makes sense to use
+the capitalized abbreviation.
+
+Regards,
+Boqun
+
+> +        unsafe { bindings::rcu_read_unlock() };
+> +    }
+> +}
+> +
+> +/// Acquires the RCU read side lock.
+> +pub fn read_lock() -> Guard {
+> +    Guard::new()
+> +}
+> -- 
+> 2.47.0
+> 
 
