@@ -1,230 +1,169 @@
-Return-Path: <linux-kernel+bounces-440974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610189EC75A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:32:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619F6164023
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:31:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB211C4A1B;
-	Wed, 11 Dec 2024 08:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I5qzaJmG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B469EC75E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:32:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8533A2451EB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733905886; cv=none; b=M41U6ah1zeQY/NygeOmP/4JxdXQ26e+5iFpxhmuLZlqsv4NKCEfnRVosR0k/3WyaNCAmR9r/OMCLN5zWk/Ha2IXi5lj15PZG+njXe38ydrOnkWMe8T5NI+VR9qwJ87M0PJ5/+Ze8WcqDWkQXoQoFjCJuoBfjxHHMQleyIFe7qBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733905886; c=relaxed/simple;
-	bh=oCQUGfdcJyRGpaPeg9Xbl4BN6a85gzkbh0KBStG26pw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Pe85CgHueE7cL9Hey3SBPFwPcSNdsCorqhoi4B7gMVUSu/AKDBUthBfqY72ZlvNCyWnEPNh7QZzORPtb4QgNPPflD00XNhi30dtFJqoKuOopkheJTZaVDpPhvwWSx4RegNHVTtMxWwQNonsHgAWT5FIoLLw7Zz9glZmsytMLK9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I5qzaJmG; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733905884; x=1765441884;
-  h=date:from:to:cc:subject:message-id;
-  bh=oCQUGfdcJyRGpaPeg9Xbl4BN6a85gzkbh0KBStG26pw=;
-  b=I5qzaJmGx7aCfDWIFQcizKRQnDoHEqZyLeFDLgpXFaCqbDM3Dvr+bY7T
-   wh+f3UAFY3vOrbGBJ9q2xPnBgAjbWnxg/JsHRmtjgG2XHQQGrxqnP2h2n
-   I1Y1F1gtVyYh/xLs9cioZ+CDDpv1UShKGVCsHQWk5noxmtLAUgG417gu+
-   JDwnfb7IZpk4clK0/a/2toOYXLJ+rkMSX5z6NCiC1dSr8e508U47wuJ4C
-   h1yL8+08xWTrwMYTJHWmZl0fL4+Onf0UOihPZgaffhiFU0r1N7CtZ1hV2
-   8wPwIv9Q20dmP9RfAJI6Ss3p3IW5AVwEhCQdrjCx/30hR5Y0HgKvj6Dv9
-   A==;
-X-CSE-ConnectionGUID: xeB4U8HvSuOftxPEi6Y7/A==
-X-CSE-MsgGUID: YSHK/IPrSdGiXsJBVJoDmA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="34153198"
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="34153198"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 00:31:24 -0800
-X-CSE-ConnectionGUID: xI8bLdXqRbix1lSjA4p9lA==
-X-CSE-MsgGUID: 94tKWQJRQNWjA7M9L/838g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="133102150"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 11 Dec 2024 00:31:23 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLI7s-0006RV-1E;
-	Wed, 11 Dec 2024 08:31:20 +0000
-Date: Wed, 11 Dec 2024 16:30:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cpu] BUILD SUCCESS
- 4bf610499c429fa0bfb3fa94be450f01016224c5
-Message-ID: <202412111642.wcSh5M4f-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 324422843C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:32:12 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08821DC9AF;
+	Wed, 11 Dec 2024 08:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="N/XQQTdl"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1C486321
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733905919; cv=fail; b=rF9nYPiSzjFane/uNZnIeBbT7bOT9N/0RoH+x3vkjnbghqGCo7ApyfVY3b+kseV/CzCWnBKCaLVOLvFJwM1o6AMY7kKNJ0bM5K20nHjqQnB0ddFUmO1JA2tAHhop5EaC+X5Z1yUd46oulgYxWySCmvTOU4/JMdPjEOYOYwxAnnA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733905919; c=relaxed/simple;
+	bh=4Q8a2QqbCzPSYMB/xpXoJGgE9geP73rCsdg3EVMes70=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jNPsO7i1zR+9AK6K2yDMkvh368CnPmy6b/qYmOOgHBk+A2L/UTiLqj1MgZ5gLQ/GRXt7MHEbYKdb/5yJaRAo13ipTtWXN23KRLlugRyqgHAgf74bhle6ayYEYzKshieMI39pX6oEgU14a8a5qym/kzawwByK0KvgbxzW0zesiLA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=N/XQQTdl; arc=fail smtp.client-ip=40.107.236.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D8M/RjvoeuZGBbl/EhAUSs8a3QiMNRJHpXZK7CoBfNGQmZPY7piuWyYNbh6NOdl++lQBBnRmLGjHftfGB1sJ63e8heIQ4Pxfi0PnrK/TqFhLNRiU72ZxqYupl6WBuhTMsQc49r8VrgtxO6FBosXo/2tS4H7ZFCwjj5hCK4oE4ByOpycx0QsyYUwTFLgO+t2nnH4pJAMSfSDhGLU2L7AHHQTxdaz6xw4VAkg4zgoTFVJPmt9Sqj2gte93cFXKPSD6x37zYo+r+4n2Lpfi7QOVmwb1BSGLbSZVSKcUZzWE7gJ/VW35Vbx9k4Slh/2BIZv/EK11IwZ41ovxS+zTLYf5mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ifl0GJjD4vLVxpFp472b8IpigEwWKYLbnwW1bzim4/o=;
+ b=H4jIZ6IUg8h83I3wx573OTEPde/JqISUFB42DVgf6fXdIpH7Z7dTp9WZsZXM85ybp+tAbpg/nMM3vU5AWzJ3aD4JMZGME62JsHKv4grOBcCQa5QovEZhbzLpAbldZZRgUOEm5YrFfQlwJ/7UgYODg57r1jZY6Odxup8+6vAf2xD+QMxX2G5214g66Fsetaz9SV/H5bZ8l6DX6yNsuFFE8Wrmun666NNnbvOEsbha9pZXGNYC6PX66Jut9znX4RUKQ7+Ump8xUfahmRkMxQiddgaHo3HFfvuGXI/Qj02Jp9Z3soqwEsk3vNUUjFMbfdCm1YAWl/u+Ep60RP26IUchAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 165.85.157.49) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=gehealthcare.com; dmarc=fail (p=quarantine sp=quarantine
+ pct=100) action=quarantine header.from=gehealthcare.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gehealthcare.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ifl0GJjD4vLVxpFp472b8IpigEwWKYLbnwW1bzim4/o=;
+ b=N/XQQTdlEJJLyCDVhnrjQPAmZG8eST/RCvawA42+qvRw44VeYabtHA1wP8E+leXjgaWUy7cLZdBgvKtl5RNpF+/W0O8m73jhP6Zql0bX9bNe4jzLSP5RMPJ+Q2pb8dLj8DmNi8l5NXGLZ+1g/lZJUzjMplMikVNJBFh1lPQAX4Y/rnshW3cDir8ewbyLgI9t+wR0ugj6275z+9SHSfvLYKeWDzhRPzh+/wvWaQTuTOptje2hIutinaKsWjUDnNYCnRecv3cxF6f7indQ2RdgZqmMTq98pQY+FhjYy1uZJrofGYGrDiLc9RdMAomHp/A2pedYwemwJM2skoUwaB4WFg==
+Received: from MN0P222CA0002.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:531::7)
+ by SA1PR22MB4254.namprd22.prod.outlook.com (2603:10b6:806:373::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Wed, 11 Dec
+ 2024 08:31:53 +0000
+Received: from MN1PEPF0000ECD8.namprd02.prod.outlook.com
+ (2603:10b6:208:531:cafe::a) by MN0P222CA0002.outlook.office365.com
+ (2603:10b6:208:531::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.14 via Frontend Transport; Wed,
+ 11 Dec 2024 08:31:52 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 165.85.157.49)
+ smtp.mailfrom=gehealthcare.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=gehealthcare.com;
+Received-SPF: Fail (protection.outlook.com: domain of gehealthcare.com does
+ not designate 165.85.157.49 as permitted sender)
+ receiver=protection.outlook.com; client-ip=165.85.157.49;
+ helo=atlrelay1.compute.ge-healthcare.net;
+Received: from atlrelay1.compute.ge-healthcare.net (165.85.157.49) by
+ MN1PEPF0000ECD8.mail.protection.outlook.com (10.167.242.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.15 via Frontend Transport; Wed, 11 Dec 2024 08:31:52 +0000
+Received: from bf9ba858b69f.em.health.ge.com (unknown [10.168.174.111])
+	by builder1.em.health.ge.com (Postfix) with ESMTP id E9DA780C;
+	Wed, 11 Dec 2024 10:31:50 +0200 (EET)
+From: Ian Ray <ian.ray@gehealthcare.com>
+To:
+Cc: nandor.han@gehealthcare.com,
+	Ian Ray <ian.ray@gehealthcare.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update after GEHC spin-off
+Date: Wed, 11 Dec 2024 10:31:36 +0200
+Message-Id: <20241211083136.66-1-ian.ray@gehealthcare.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD8:EE_|SA1PR22MB4254:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 3e8bce11-9fe6-4dd2-ed8c-08dd19be43cc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hDLmH09INyFwjuyDiahZzi6bnUdnihfLJBJ4imWQqaoP3kFf8i2R19zSSl+U?=
+ =?us-ascii?Q?VJPmXF/WQLbgzwaK3M8xYmtOOIaH+c2bQ/te0ttUvvtBLX8BxJQFsCZ7v/h5?=
+ =?us-ascii?Q?RIE9yoQ+l0W8KMEJbePgLyX8bNIoFjdEpkhda2hCThOfY+bDP0tHJbBxBDqs?=
+ =?us-ascii?Q?xaexBrs1qCb4XV462i20zaCwbsa+/UCKuwyhiBul+aMRFU5DsTr+l7ug4nH4?=
+ =?us-ascii?Q?/x6+mBnRqWh0AHWPKR9YiSBtE+avR0IdkKSdLwsyo0YjXBtCmTZAD0JpsHp+?=
+ =?us-ascii?Q?YiERMHNwmrg+MAflMzN8Jk9q2jQggcg6SYCrI/aFqWGTQ6XGXoawbzi9sf9t?=
+ =?us-ascii?Q?mlk9velJ9dTgpf3Ghb3E+oi8aLXYq7UXYXoKwGjXuZ20mOSk3H1YLeTS6fjV?=
+ =?us-ascii?Q?RsonPShm1u3K4N1MxgT9xGhbWNyjdtGWjWTO5SmLmvC8y7CtncgyAOOc7/5R?=
+ =?us-ascii?Q?gJ9LWVhzTG3udsckSnBaenchbFFQQuxasgmmGEElxEbSss4aTgOpRlIASXBn?=
+ =?us-ascii?Q?2WzA6JOh/xqBohXbSAri/c+ThWs7CBQVndxS0gpJTAU/eG85jQrvIpuPyVRa?=
+ =?us-ascii?Q?cmy57tQBZLvgHvtPBu3ffs7auTlibcW0peACMdoo++bndFfZfCW+RDLy2pHu?=
+ =?us-ascii?Q?EiobYH7YPRhqy/bWTbJkQJQ7djjamITDKwHSTefNqRyozTMmluTRTXe+snoE?=
+ =?us-ascii?Q?eOJ2mU6j2yyN4UnBeyqANul9saY9TCs+EV+u/g4nHotVWyQn8cfW+LAqXHEG?=
+ =?us-ascii?Q?yOQjGpFYZHhqtm9nCOxYRR4tYrRxPf8zZWozbVfDorbB4TPA9mXw1OvipFnw?=
+ =?us-ascii?Q?RCF8CDR0Am/gLiDxazz6RjvfYkRCeZC1vdo5wljyGIPwWulN9pmgs8abReLK?=
+ =?us-ascii?Q?L6fIl/oz70I6XyVxGrX61walsp6Pb9Je63TKQ2yQhKVvvl4xPWWoXFziaCBu?=
+ =?us-ascii?Q?F9yrtL25uBQurn0wIBTv9Qz8L7Q3SESSfoamS0PDXr3p7P+MNLICFCziUpyb?=
+ =?us-ascii?Q?dFb5bzB/tyH/wwRTrI5N4lS6PiMM0wUKUbzNoREByWbaRUKZ/AhPq2jPXvbK?=
+ =?us-ascii?Q?EwQFbHa0/TxDhpZPO1jNCaLPF6rw1u9/KieUPeyH5v5aKsgaScWY4Wzb8Kre?=
+ =?us-ascii?Q?Eo5KD05PhNEHVmPPm2mSdWwtzc3fR0gtoVU2/5XsQ/ZoQaK0oG6cGM/WfaOR?=
+ =?us-ascii?Q?NzmdwT6Rrstaw9YZ0c94pONjUZp4o5W/7OSTv51c2XnuJz9Y6iw/OODluSv8?=
+ =?us-ascii?Q?MBru0U2iXUd2Jpb+zMFjrEhNnk1ZJ4w+sHVqYHx3Ij/m2bDR6Vzt/f06aV6s?=
+ =?us-ascii?Q?3zwcVVQHur7FPsaub5tfQ0G4fyKpYm6okniUji2GmFnipNyxKIyDwUnlsnSE?=
+ =?us-ascii?Q?RDLecrEKfhebfsjuUiLK3u3J0py4?=
+X-Forefront-Antispam-Report:
+	CIP:165.85.157.49;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:atlrelay1.compute.ge-healthcare.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: gehealthcare.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 08:31:52.6275
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e8bce11-9fe6-4dd2-ed8c-08dd19be43cc
+X-MS-Exchange-CrossTenant-Id: 9a309606-d6ec-4188-a28a-298812b4bbbf
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=9a309606-d6ec-4188-a28a-298812b4bbbf;Ip=[165.85.157.49];Helo=[atlrelay1.compute.ge-healthcare.net]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-MN1PEPF0000ECD8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR22MB4254
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-branch HEAD: 4bf610499c429fa0bfb3fa94be450f01016224c5  x86/cpufeature: Document cpu_feature_enabled() as the default to use
+Update our email addresses, from @ge.com to @gehealthcare.com, after GE
+HealthCare was spun-off from GE.
 
-elapsed time: 906m
+Signed-off-by: Ian Ray <ian.ray@gehealthcare.com>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-configs tested: 138
-configs skipped: 135
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 17daa9ee9384..43e40b05bd08 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14789,7 +14789,7 @@ F:	drivers/usb/mtu3/
+ 
+ MEGACHIPS STDPXXXX-GE-B850V3-FW LVDS/DP++ BRIDGES
+ M:	Peter Senna Tschudin <peter.senna@gmail.com>
+-M:	Ian Ray <ian.ray@ge.com>
++M:	Ian Ray <ian.ray@gehealthcare.com>
+ M:	Martyn Welch <martyn.welch@collabora.co.uk>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
+@@ -25866,7 +25866,7 @@ W:	http://www.marvell.com
+ F:	drivers/i2c/busses/i2c-xlp9xx.c
+ 
+ XRA1403 GPIO EXPANDER
+-M:	Nandor Han <nandor.han@ge.com>
++M:	Nandor Han <nandor.han@gehealthcare.com>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
+-- 
+2.39.5
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-arc                              allmodconfig    clang-18
-arc                              allyesconfig    clang-18
-arc                   randconfig-001-20241211    gcc-14.2.0
-arc                   randconfig-002-20241211    gcc-14.2.0
-arm                              allmodconfig    clang-18
-arm                              allyesconfig    clang-18
-arm                   randconfig-001-20241211    gcc-14.2.0
-arm                   randconfig-002-20241211    gcc-14.2.0
-arm                   randconfig-003-20241211    gcc-14.2.0
-arm                   randconfig-004-20241211    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                 randconfig-001-20241211    gcc-14.2.0
-arm64                 randconfig-002-20241211    gcc-14.2.0
-arm64                 randconfig-003-20241211    gcc-14.2.0
-arm64                 randconfig-004-20241211    gcc-14.2.0
-csky                  randconfig-001-20241211    gcc-14.2.0
-csky                  randconfig-002-20241211    gcc-14.2.0
-hexagon               randconfig-001-20241211    gcc-14.2.0
-hexagon               randconfig-002-20241211    gcc-14.2.0
-i386                             allmodconfig    clang-19
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-19
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-19
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20241211    clang-19
-i386        buildonly-randconfig-002-20241211    clang-19
-i386        buildonly-randconfig-002-20241211    gcc-11
-i386        buildonly-randconfig-003-20241211    clang-19
-i386        buildonly-randconfig-004-20241211    clang-19
-i386        buildonly-randconfig-004-20241211    gcc-11
-i386        buildonly-randconfig-005-20241211    clang-19
-i386        buildonly-randconfig-005-20241211    gcc-12
-i386        buildonly-randconfig-006-20241211    clang-19
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241211    gcc-12
-i386                  randconfig-002-20241211    gcc-12
-i386                  randconfig-003-20241211    gcc-12
-i386                  randconfig-004-20241211    gcc-12
-i386                  randconfig-005-20241211    gcc-12
-i386                  randconfig-006-20241211    gcc-12
-i386                  randconfig-007-20241211    gcc-12
-i386                  randconfig-011-20241211    gcc-12
-i386                  randconfig-012-20241211    gcc-12
-i386                  randconfig-013-20241211    gcc-12
-i386                  randconfig-014-20241211    gcc-12
-i386                  randconfig-015-20241211    gcc-12
-i386                  randconfig-016-20241211    gcc-12
-i386                  randconfig-017-20241211    gcc-12
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch             randconfig-001-20241211    gcc-14.2.0
-loongarch             randconfig-002-20241211    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                          hp300_defconfig    gcc-14.2.0
-m68k                        m5272c3_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                         bigsur_defconfig    gcc-14.2.0
-mips                        omega2p_defconfig    gcc-14.2.0
-nios2                 randconfig-001-20241211    gcc-14.2.0
-nios2                 randconfig-002-20241211    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                            defconfig    gcc-12
-parisc                            allnoconfig    clang-20
-parisc                              defconfig    gcc-12
-parisc                randconfig-001-20241211    gcc-14.2.0
-parisc                randconfig-002-20241211    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                    amigaone_defconfig    gcc-14.2.0
-powerpc                    mvme5100_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20241211    gcc-14.2.0
-powerpc               randconfig-002-20241211    gcc-14.2.0
-powerpc               randconfig-003-20241211    gcc-14.2.0
-powerpc64             randconfig-001-20241211    gcc-14.2.0
-powerpc64             randconfig-002-20241211    gcc-14.2.0
-powerpc64             randconfig-003-20241211    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20241211    clang-20
-riscv                 randconfig-002-20241211    clang-20
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20241211    clang-20
-s390                  randconfig-002-20241211    clang-20
-sh                               allmodconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-12
-sh                    randconfig-001-20241211    clang-20
-sh                    randconfig-002-20241211    clang-20
-sparc                            alldefconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                 randconfig-001-20241211    clang-20
-sparc                 randconfig-002-20241211    clang-20
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20241211    clang-20
-sparc64               randconfig-002-20241211    clang-20
-um                                allnoconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20241211    clang-20
-um                    randconfig-002-20241211    clang-20
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20241211    gcc-12
-x86_64      buildonly-randconfig-002-20241211    gcc-11
-x86_64      buildonly-randconfig-002-20241211    gcc-12
-x86_64      buildonly-randconfig-003-20241211    gcc-12
-x86_64      buildonly-randconfig-004-20241211    gcc-12
-x86_64      buildonly-randconfig-005-20241211    gcc-12
-x86_64      buildonly-randconfig-006-20241211    clang-19
-x86_64      buildonly-randconfig-006-20241211    gcc-12
-x86_64                              defconfig    clang-19
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-19
-x86_64                randconfig-001-20241211    clang-19
-x86_64                randconfig-002-20241211    clang-19
-x86_64                randconfig-003-20241211    clang-19
-x86_64                randconfig-004-20241211    clang-19
-x86_64                randconfig-005-20241211    clang-19
-x86_64                randconfig-006-20241211    clang-19
-x86_64                randconfig-007-20241211    clang-19
-x86_64                randconfig-008-20241211    clang-19
-x86_64                randconfig-071-20241211    clang-19
-x86_64                randconfig-072-20241211    clang-19
-x86_64                randconfig-073-20241211    clang-19
-x86_64                randconfig-074-20241211    clang-19
-x86_64                randconfig-075-20241211    clang-19
-x86_64                randconfig-076-20241211    clang-19
-x86_64                randconfig-077-20241211    clang-19
-x86_64                randconfig-078-20241211    clang-19
-x86_64                               rhel-9.4    clang-19
-xtensa                randconfig-001-20241211    clang-20
-xtensa                randconfig-002-20241211    clang-20
-xtensa                         virt_defconfig    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
