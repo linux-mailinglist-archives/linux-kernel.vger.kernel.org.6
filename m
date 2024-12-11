@@ -1,183 +1,200 @@
-Return-Path: <linux-kernel+bounces-441118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3114F9EC9DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:00:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D029EC9E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C9A1882D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:00:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416FF1884C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119AF1B21A0;
-	Wed, 11 Dec 2024 10:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4441B1EC4E8;
+	Wed, 11 Dec 2024 10:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="keSgyuPX"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="cZ0UTD76"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B41E1422D8
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730CA1A83ED
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733911217; cv=none; b=pY+VpJLzYogUGgbYaZbwky2aAVdsaIjYhpaLVD0weDwqcXRBLEMd+LQ9Cs/R3q7H4mnwAiPxqL6qAnXRGxpV5B3BZ/dQhj5fGnUi1bYk2gZHPMustNAgZHQ0KL0Rw/iqbGmzfCKZjWvoAWG9UVtuwAfFKNs9pqTAQhQ1AiasGyM=
+	t=1733911242; cv=none; b=CNXELKCZ53abhXqY/kgHMdM5AFBBP4d4YKba/MCvscCaVHOx5ESlKCfgLr2c+2T2pzCMhae3IrdOB5FJOmDsgUaery9Otb44VqJrqMhFwlZmjBfeH1O1LuzjApWOQLDs4lNIPmzsu6iAqzA/YU+ZRwOEsrGQbwBmaB/Ocn4F470=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733911217; c=relaxed/simple;
-	bh=qqXk888hHXN5lM/hj5UqNdhLJKFzxJyCfxlTAxkzIC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GgvUihGj4wLBMjzvd2GZpRuHAMJjmC4ZHSREWwiSpvFMzoDTiOoByVRjRypoXQH1OeKlffstt0Da/T0LlMUkFiaiznK6y3GGYKhq0x/ZhRsih7P63tEWzpJOUv2tdzH1Y9bPkwQ13/z/2wdyNtBZCpawW62pCNozialU+fOGpPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=keSgyuPX; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5401c52000dso3337061e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:00:15 -0800 (PST)
+	s=arc-20240116; t=1733911242; c=relaxed/simple;
+	bh=l2HDRx9s3IYeilf56T9MMX/eWgMp5kRY3lPIhRZpvMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ozmw4oqbKleOlXMMah4aGu7JHiN+LIBxY3Eg1pXGfOp0P7bWwYMuzCx4v9mmNulyQBnJOwoBYN+vEWTf/CzuyJZrUEblYowjIs20po0ATVgLg3p2Ax1t2dfPhmgbjhKMga0ykVGcBTO0/5roV8egwSJkr3r8qV7byzfo92jlkpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=cZ0UTD76; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3862df95f92so3291111f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:00:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733911213; x=1734516013; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0FTHrDYAt+5sU4z/xE3NqRqqJ1EH4zKbhQxiihcV6pQ=;
-        b=keSgyuPXwRLcR9mkodwZbvymknKhIp3EOL2GjltF4WWVV+xow3rpyEITHLMWqy+44o
-         EH2AwNMqzwt7tTJzp5A2SzUwc7v1Itk9krdxVCDaM8ewfjda6Gk/wSSGdtj5f9bAEgIo
-         xYbwaXn8PKS2Ck11zS6M0wENzLrNm4C7Bm39EPpPXJIBVkb7yWuv/hQByz3EQQjWduYr
-         PXl7iGWaiBAWI+gP/qfGIGtuJ4SAwR1L1TVkvJ11DBIsMknMbGHXNN6f7avZlII9Gi7K
-         6ip7MaHUeK/QJuhrRvVZy1tdL+NmP1eg68DWgjNOwDxwdYbTR6Kgsb8in/lVsd0kn8gF
-         9IUw==
+        d=openvpn.net; s=google; t=1733911239; x=1734516039; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UMc2ax6F38dbcr0u1xo9DcpAMAHTz5GuKuNJd8GscqI=;
+        b=cZ0UTD76I9lPYMeAOnvbrHCjl7Y8zfBdRZLtO4mnk0/DPC8Y18ZiSWV4G8X9jT1OK2
+         520uTj3t8o6V3Klr8B5PIDtZx+bdygBJ7OtraTjjHzSZjDaPojK5Aj6O4xOLseKxEG1a
+         ziLpYP73iGPnofQHvho9PHhz9hP0oQixOm/cfRszqG8PbtzOZuQ4GweiPuenHXukPh04
+         Amh7EUxi07o3YF/ZrCN9/716dZvtzn9VTxiKow34L8BTkyr+N7Z2HqxgkMwzYdZPSU3j
+         au7n5HbovaFvg1gUZHva/6cLtcHDhMQu+fYlAuXL7U57tdejEqlqb8rmWaOlnyebMqDX
+         P1XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733911213; x=1734516013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1733911239; x=1734516039;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0FTHrDYAt+5sU4z/xE3NqRqqJ1EH4zKbhQxiihcV6pQ=;
-        b=Eaxkm+UPQrvo5/t5edHMaUw29bbbhM+0q5o0KCb5B6E9zfU+qi4ebmy3bkWs/C5NpZ
-         6gMvIiFuzXUKnmKa/O3fnCbL99px2pWK6MMYKF+bKLt51EBjx+gX+Yz/07k6XUuKfM8N
-         SlVzhAbVqACFQxYwzP+PnPyTmdv6NXN1m8b8zDa9S0AVEz6cl3765kTClsq1sXLadUT7
-         kAORf9UZi+pOyrP3ZZyX3Quz78w7ZspfP1xGkT1G/GIwmFGsbfZKJC3qm9sKFI8te9sJ
-         M78n0nN5yJXx1mpfySrF787rIe/FLNZv8GUMWXIRvSMp63IURSnfrJf/qsJH3N/NY7g2
-         ISVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCRpqSeBUmZCqwVR/WAirh2WCvJwzbap2RoHvwNFO3Iy4Yrj4DxeSmIq3TIR2je85sLsGzklKBXOu2vm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCc8JyRr40lnd3S/ksZvfPce5ddVCPctpc5N9zMbIgEdh9JMzX
-	fz4lHKoWvp1ZsdiWEYzKgYlPr+cRLMtzroPrLfeJK88ZKd2WOOQh1beFiiqyqQs=
-X-Gm-Gg: ASbGncu7nKXQ/s7ARYCxkIh78+MkcS1iONCV0+S51leJb+5su/Q0iGmu0YXgU01EKYH
-	TvRd5ZDa0otC5c/N4CJulXqjVxqmdEUWm9Y+zeKDFgG6En79IMTOIk3t69KXwsKNRaxS4RApa+o
-	S5TTZpxmZaRpb4+v8uQ6fxkgrTfALTf7h1jEv/s1PBhKlzJw2RDtYX2vvIe5eIQwuzn6Kq89Xo3
-	BT9SrSnzeFUF+YgkDUnwnZU7e/yAh0vV77xDAN6O9w3BkLMX3ffF1c2q7ubrCSZS7I9ZpIPsZL8
-	XawIkB7/OvkheYChCNc+E6ELyEPbhlR+Sg==
-X-Google-Smtp-Source: AGHT+IHwSI2H5G/Mkb4MlxNeFcU4xm+OEFZBwe8yugoHJEmLqb/TvNYKgiOgmKZuczcoqpvpuKUFPQ==
-X-Received: by 2002:a05:6512:128a:b0:53e:2f9d:6a7c with SMTP id 2adb3069b0e04-5402a5d6fecmr658688e87.5.1733911213443;
-        Wed, 11 Dec 2024 02:00:13 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401b7ad992sm1141679e87.18.2024.12.11.02.00.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 02:00:12 -0800 (PST)
-Date: Wed, 11 Dec 2024 12:00:09 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Stefan Schmidt <stefan.schmidt@linaro.org>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Nicolas Dufresne <nicolas@ndufresne.ca>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 27/28] media: iris: enable video driver probe of
- SM8250 SoC
-Message-ID: <jsskqncqdh7qgquckoochpfxxemn7o6djyljou5ofktdidk2vz@wnqtca5vgu3h>
-References: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com>
- <20241210-qcom-video-iris-v8-27-42c5403cb1a3@quicinc.com>
- <CAEvtbuuO5Ga+wW9rstX_e_RGnm5jSNSHmyy3w3M9FTopNhKttQ@mail.gmail.com>
- <b4f35301-6361-9e07-73dc-023e87c80857@quicinc.com>
- <35tpvx2uok22tmq76fe6mluiqnkymm2es6iu5jjj2zapeio6me@l4obuknsn3gz>
- <5220b8ad-021f-38f6-8617-34352093e494@quicinc.com>
+        bh=UMc2ax6F38dbcr0u1xo9DcpAMAHTz5GuKuNJd8GscqI=;
+        b=vE57IV+3zow2NU+gN7RkzCpHFFT8mDebqD1px6ZHVhfcf1Xdav55rDRs30sAxcFHHK
+         UsvKDVcsGXMhsaDQc1Z/CMK15YemrONddT3aH5jUjfZpyNBKe/rzR7uM8OFI68VVgRlf
+         FdgP4jOhHQRzAMY2EXrjbvWnGH7UZ900fERVldZX3lyukNoZAzNu6ifia7ID7S+7bvw1
+         sVJjbt1osCnuqLaX9qMp9CPztOFC+txsktosLty3PWSHVSKgINFfXfHJBPWBsER2vE94
+         pF/pgsQXsBsgmkdf0iRCyt1+CqkEJR+c09MVwA+HMJcVazs6S8cd4vviKSG5SXNhtXSZ
+         g+bA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjxo47z6sNDgju9fgNN+27aAjSbuW+19o/gD/ZhCiB8H2pT60WXEoDkeyoZoPInuP6WufMwK+eS4RR+zQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiR01z47Vhq+W7KLNvKUs3mUlGxnx0GmUh6P8J9rx9iJki9n13
+	CzQpntFrYpCb5Ds7M+D3a0ImhDNoAyLY3u1e4yHsnQiVIjVpiJq799MHC3t/EHc=
+X-Gm-Gg: ASbGncuMv4NvaZ5zMxi2P3zpdfn8uN6+UlpHz6r7w3Cp+lhIPaGXBUjOrnX2LLEr0K5
+	7RxhuHZM44eimMAydwitFqLzhbmOZxEXZTOoqU6RBJs9Qvpxk4kDKIkJQamS7heR+1tmXOnglcB
+	9vUNnbmHgByp2gOPARf0NVBzH42VXOXclss7lJ7acxABXSXkqF3CmeaDJEMtOIqx5aMSiGbzLqK
+	6dAsknu1L7ioDWS3saDl6ap8yfw7CDPCwDjC/H8lmRgbC5l1TkAc44YTaoSRblmQq+EbyarjlrF
+	ejnDOv/wlnxj8g==
+X-Google-Smtp-Source: AGHT+IHcJjJ+FCos6cp/acUTFedh+NmuPc3H1sR775qCVahz0+y7bhu/h2jxV0OaPytf1HoxK6EI5A==
+X-Received: by 2002:a05:6000:2ad:b0:386:3918:16a8 with SMTP id ffacd0b85a97d-3864ce54d8amr1878672f8f.13.1733911238681;
+        Wed, 11 Dec 2024 02:00:38 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:f6e8:f722:d96d:abb? ([2001:67c:2fbc:1:f6e8:f722:d96d:abb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ea3sm902187f8f.28.2024.12.11.02.00.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 02:00:38 -0800 (PST)
+Message-ID: <cee54e4f-a909-43bb-9a46-b12aca404d08@openvpn.net>
+Date: Wed, 11 Dec 2024 11:01:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5220b8ad-021f-38f6-8617-34352093e494@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v14 22/22] testing/selftests: add test tool and
+ scripts for ovpn module
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ sd@queasysnail.net, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241209-b4-ovpn-v14-0-ea243cf16417@openvpn.net>
+ <20241209-b4-ovpn-v14-22-ea243cf16417@openvpn.net>
+ <20241210164715.GB6554@kernel.org>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <20241210164715.GB6554@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 02:37:15PM +0530, Dikshita Agarwal wrote:
+On 10/12/2024 17:47, Simon Horman wrote:
+> On Mon, Dec 09, 2024 at 09:53:31AM +0100, Antonio Quartulli wrote:
+>> The ovpn-cli tool can be compiled and used as selftest for the ovpn
+>> kernel module.
+>>
+>> [NOTE: it depends on libmedtls for decoding base64-encoded keys]
+>>
+>> ovpn-cli implements the netlink and RTNL APIs and can thus be integrated
+>> in any script for more automated testing.
+>>
+>> Along with the tool, 4 scripts are provided that perform basic
+>> functionality tests by means of network namespaces.
+>> These scripts take part to the kselftest automation.
+>>
+>> The output of the scripts, which will appear in the kselftest
+>> reports, is a list of steps performed by the scripts plus some
+>> output coming from the execution of `ping`, `iperf` and `ovpn-cli`
+>> itself.
+>> In general it is useful only in case of failure, in order to
+>> understand which step has failed and why.
+>>
+>> Cc: linux-kselftest@vger.kernel.org
+>> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+>> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
 > 
+> ...
 > 
-> On 12/11/2024 2:17 PM, Dmitry Baryshkov wrote:
-> > On Wed, Dec 11, 2024 at 11:54:09AM +0530, Dikshita Agarwal wrote:
-> >>
-> >>
-> >> On 12/10/2024 9:53 PM, Stefan Schmidt wrote:
-> >>> hello Dikshita,
-> >>>
-> >>> On Tue, 10 Dec 2024 at 12:08, Dikshita Agarwal
-> >>> <quic_dikshita@quicinc.com> wrote:
-> >>>>
-> >>>> Initialize the platform data and enable video driver probe of SM8250
-> >>>> SoC. Add a kernel param to select between venus and iris drivers for
-> >>>> platforms supported by both drivers, for ex: SM8250.
-> >>>>
-> >>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >>>
-> >>> [...]
-> >>>
-> >>>> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-> >>>> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> >>>> @@ -17,6 +17,8 @@ static inline bool iris_valid_cap_id(enum platform_inst_fw_cap_type cap_id)
-> >>>>  static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
-> >>>>  {
-> >>>>         switch (id) {
-> >>>> +       case V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER:
-> >>>> +               return DEBLOCK;
-> >>>>         case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
-> >>>>                 return PROFILE;
-> >>>>         case V4L2_CID_MPEG_VIDEO_H264_LEVEL:
-> >>>> @@ -32,6 +34,8 @@ static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
-> >>>>                 return 0;
-> >>>>
-> >>>>         switch (cap_id) {
-> >>>> +       case DEBLOCK:
-> >>>> +               return V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER;
-> >>>>         case PROFILE:
-> >>>
-> >>> The handling for DEBLOCK does not seem to be part of the SM8250
-> >>> enablement. Or did I miss something?
-> >>> It seems they should be part of a different patch that makes use of
-> >>> the DEBLOCK cap.
-> >>>
-> >> this cap is part of platform caps of SM8250 and the value(set by
-> >> client/default) of this will set to firmware as part of start streaming
-> >> through set APIs.
-> > 
-> > Then it still makes sense to split into two parts: one for DEBLOCK
-> > handling, one for the platform data only. Or you can safely merge
-> > DEBLOCK into the main caps commit.
-> I am just adding the platform caps for SM8250 and mapping between cap id
-> and corresponding v4l2 id in this patch.
-> Handling of all these caps are already part of main commit.
+>> +/**
+>> + * Helper function used to easily add attributes to a rtnl message
+>> + */
+> 
+> Hi Antonio,
+> 
+> This comment starts with a '/**' but is otherwise not formatted as
+> a Kernel doc. Probably it is best to simply start the comment with '/*'.
+> 
+> Likewise elsewhere in this patch.
 
-Please move the mapping too.
+Will fix all instances of this issue.
 
 > 
-> > 
-> >> {
-> >> +		.cap_id = DEBLOCK,
-> >> +		.min = 0,
-> >> +		.max = 1,
-> >> +		.step_or_mask = 1,
-> >> +		.value = 0,
-> >> +		.hfi_id = HFI_PROPERTY_CONFIG_VDEC_POST_LOOP_DEBLOCKER,
-> >> +		.set = iris_set_u32,
-> >> +	},
-> >>
-> >> Thanks,
-> >> Dikshita
-> >>> regards
-> >>> Stefan Schmidt
-> > 
+> Flagged by ./scripts/kernel-doc -none
+
+Darn, I have been running kernel-doc only against drivers/net/ovpn.
+Thanks for pointing this out.
+
+Regards,
+
+> 
+>> +static int ovpn_addattr(struct nlmsghdr *n, int maxlen, int type,
+>> +			const void *data, int alen)
+> 
+> ...
 
 -- 
-With best wishes
-Dmitry
+Antonio Quartulli
+OpenVPN Inc.
+
 
