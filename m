@@ -1,180 +1,131 @@
-Return-Path: <linux-kernel+bounces-441930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC869ED5C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:06:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE2A9ED632
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD68283D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5A6283560
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FDF253D2D;
-	Wed, 11 Dec 2024 18:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A4923FD3C;
+	Wed, 11 Dec 2024 18:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZufNAOI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btMMI284"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBEA253D02;
-	Wed, 11 Dec 2024 18:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF683231A52;
+	Wed, 11 Dec 2024 18:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943237; cv=none; b=QbzEycrZUfD4u3f1heJJ2YEMixuMRGeMJBlNMwcgescQbpHpS4C0YTUNIo2weU4n5tFe+cwnB0xL2tuZVuZEpQACqQ1ZBJ/ZL6KN+7ijNJunvykMpHFL3w4t2j2DDes3ercm6wuLIbSLEJ8QTI6Jvc1euJ99JtGkuHmgf1IVpas=
+	t=1733943089; cv=none; b=ntHZQtpnu+mBOmGeBI1IdeQXw15X+oKhu5+KSua/Li2CCJMwxOL9NVy7Yk3GMtXRvOLCTA44IzoX9F7NOAB4i7xqeWiElk9oeRvuFEeuqRTY7Ro1ML3u3m6QC3N1zRDofAfRAPgLNE3Hc2F5Xy/aGzb30mSqiVqMILTluObtShM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943237; c=relaxed/simple;
-	bh=cMHujGTwR/Y+8zeiO+d9MOKlVyHMMOTiGn/MHw7K/Kg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KoAGqu2ztN6rknOTtc4DJZAl1cbQ6TGVboJNrGrqLQ869HTaHQ73uRkOwBniAAzGzkxJaWpcl1phjE0jtOtrbvj1DfJ+khW/bjpyA24Hq+FnrZ1GtkqXLgEk5jNnvrWIpr5QFWangelwWYpr3ieDVib8f1NW/YQqud23CRqW7Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZufNAOI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85452C4CED2;
-	Wed, 11 Dec 2024 18:53:56 +0000 (UTC)
+	s=arc-20240116; t=1733943089; c=relaxed/simple;
+	bh=96r5ccacfmXcLQnwik2jHbpoWaiE2MrtcAfUX3pATWM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lAx/YFV2xhvDaPZeAV++XWihSzlZ0eOxLMz2Io/CqBkAXpsGyI/0Wq+LMo3G61ActLiccw9LdslqpQG3lgPTWkn+73JMuV5MW4q4NNo/D8V6NAg3/NxOzEkk4IW+TZh6yJkNV4IKfzjYjbno0PtOlKPJidGNvrHm1OK5VdB5ArI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btMMI284; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28714C4CEE6;
+	Wed, 11 Dec 2024 18:51:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733943237;
-	bh=cMHujGTwR/Y+8zeiO+d9MOKlVyHMMOTiGn/MHw7K/Kg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZZufNAOI0Zc+hbZ27Hr7VtnT8eejc1nzh6B/jR64d6QMi1ui/rot05ls1FKCMB3ve
-	 mMrsSx4iSlVYuMAT5IeHLR1OZZK/ela4o8/khj0ciVpBiZhVqyT3N1BPOsh/BpOrNl
-	 MFWWeT4sKmw6jBu8A9iifkGzDZuTT4YLjxibGaHmxrjjruAD4feTTwYhi3LEZkkKzT
-	 +L6EAEjRkeXwukGubwCLaV/MW/4pWpZbuOycNPB/9CKpftBv4BxMTyvVr5ulN6YGBA
-	 kN5eMx/4BB+2KZl8UFKLN87EFmNIOjy7u0WwkL7HmSUks5/9QGKmgiV3NaehgIrUui
-	 5+f6Np2bwG+yA==
+	s=k20201202; t=1733943088;
+	bh=96r5ccacfmXcLQnwik2jHbpoWaiE2MrtcAfUX3pATWM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=btMMI2844CHpivRupse72R7RZI6KL35EzZIDsrvPxtJBl0vWQW7+r4IBqEBWQOCTB
+	 qnMNlKWMP0h7ZswAF3lkQYXBtGfw/pAhX0mt2dJt1YNdpd9Poow05gg73qYMn6Lzld
+	 yEucXr5zae84/MCneCqZx2lJC4ylQJOXcoGgSMN2ihmaswwoKeAAFl6YGdxzHl+Cvf
+	 2FWFM6DHZ5vG8nAg3imynt2lKBcbjyZgFEsl/G0wxSu1quK3gwcV8o8Az3LN1AbQXq
+	 7b4GKZyoecqejWJTzNcLGTtCAhObCBmKfz9ZMrAZCe1gAW632oyGtSc0pWMDufaEng
+	 TKSp/9zrEEzHA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: James Hilliard <james.hilliard1@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
+Cc: Lion Ackermann <nnamrec@gmail.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	"David S . Miller" <davem@davemloft.net>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-watchdog@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 01/10] watchdog: it87_wdt: add PWRGD enable quirk for Qotom QCML04
-Date: Wed, 11 Dec 2024 13:53:42 -0500
-Message-ID: <20241211185355.3842902-1-sashal@kernel.org>
+	jhs@mojatatu.com,
+	xiyou.wangcong@gmail.com,
+	jiri@resnulli.us,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	cake@lists.bufferbloat.net,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 22/36] net: sched: fix ordering of qlen adjustment
+Date: Wed, 11 Dec 2024 13:49:38 -0500
+Message-ID: <20241211185028.3841047-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241211185028.3841047-1-sashal@kernel.org>
+References: <20241211185028.3841047-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.173
+X-stable-base: Linux 6.12.4
 Content-Transfer-Encoding: 8bit
 
-From: James Hilliard <james.hilliard1@gmail.com>
+From: Lion Ackermann <nnamrec@gmail.com>
 
-[ Upstream commit 43439076383a7611300334d1357c0f8883f40816 ]
+[ Upstream commit 5eb7de8cd58e73851cd37ff8d0666517d9926948 ]
 
-For the watchdog timer to work properly on the QCML04 board we need to
-set PWRGD enable in the Environment Controller Configuration Registers
-Special Configuration Register 1 when it is not already set, this may
-be the case when the watchdog is not enabled from within the BIOS.
+Changes to sch->q.qlen around qdisc_tree_reduce_backlog() need to happen
+_before_ a call to said function because otherwise it may fail to notify
+parent qdiscs when the child is about to become empty.
 
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20241025063441.3494837-1-james.hilliard1@gmail.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Lion Ackermann <nnamrec@gmail.com>
+Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/it87_wdt.c | 39 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ net/sched/sch_cake.c  | 2 +-
+ net/sched/sch_choke.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/it87_wdt.c b/drivers/watchdog/it87_wdt.c
-index 843f9f8e39177..239947df613db 100644
---- a/drivers/watchdog/it87_wdt.c
-+++ b/drivers/watchdog/it87_wdt.c
-@@ -20,6 +20,8 @@
+diff --git a/net/sched/sch_cake.c b/net/sched/sch_cake.c
+index f2f9b75008bb0..8d8b2db4653c0 100644
+--- a/net/sched/sch_cake.c
++++ b/net/sched/sch_cake.c
+@@ -1525,7 +1525,6 @@ static unsigned int cake_drop(struct Qdisc *sch, struct sk_buff **to_free)
+ 	b->backlogs[idx]    -= len;
+ 	b->tin_backlog      -= len;
+ 	sch->qstats.backlog -= len;
+-	qdisc_tree_reduce_backlog(sch, 1, len);
  
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 	flow->dropped++;
+ 	b->tin_dropped++;
+@@ -1536,6 +1535,7 @@ static unsigned int cake_drop(struct Qdisc *sch, struct sk_buff **to_free)
  
-+#include <linux/bits.h>
-+#include <linux/dmi.h>
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-@@ -40,6 +42,7 @@
- #define VAL		0x2f
+ 	__qdisc_drop(skb, to_free);
+ 	sch->q.qlen--;
++	qdisc_tree_reduce_backlog(sch, 1, len);
  
- /* Logical device Numbers LDN */
-+#define EC		0x04
- #define GPIO		0x07
+ 	cake_heapify(q, 0);
  
- /* Configuration Registers and Functions */
-@@ -71,6 +74,12 @@
- #define IT8784_ID	0x8784
- #define IT8786_ID	0x8786
+diff --git a/net/sched/sch_choke.c b/net/sched/sch_choke.c
+index 91072010923d1..757b89292e7e6 100644
+--- a/net/sched/sch_choke.c
++++ b/net/sched/sch_choke.c
+@@ -123,10 +123,10 @@ static void choke_drop_by_idx(struct Qdisc *sch, unsigned int idx,
+ 	if (idx == q->tail)
+ 		choke_zap_tail_holes(q);
  
-+/* Environment Controller Configuration Registers LDN=0x04 */
-+#define SCR1		0xfa
-+
-+/* Environment Controller Bits SCR1 */
-+#define WDT_PWRGD	0x20
-+
- /* GPIO Configuration Registers LDN=0x07 */
- #define WDTCTRL		0x71
- #define WDTCFG		0x72
-@@ -233,6 +242,21 @@ static int wdt_set_timeout(struct watchdog_device *wdd, unsigned int t)
- 	return ret;
++	--sch->q.qlen;
+ 	qdisc_qstats_backlog_dec(sch, skb);
+ 	qdisc_tree_reduce_backlog(sch, 1, qdisc_pkt_len(skb));
+ 	qdisc_drop(skb, sch, to_free);
+-	--sch->q.qlen;
  }
  
-+enum {
-+	IT87_WDT_OUTPUT_THROUGH_PWRGD	= BIT(0),
-+};
-+
-+static const struct dmi_system_id it87_quirks[] = {
-+	{
-+		/* Qotom Q30900P (IT8786) */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "QCML04"),
-+		},
-+		.driver_data = (void *)IT87_WDT_OUTPUT_THROUGH_PWRGD,
-+	},
-+	{}
-+};
-+
- static const struct watchdog_info ident = {
- 	.options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
- 	.firmware_version = 1,
-@@ -254,8 +278,10 @@ static struct watchdog_device wdt_dev = {
- 
- static int __init it87_wdt_init(void)
- {
-+	const struct dmi_system_id *dmi_id;
- 	u8  chip_rev;
- 	u8 ctrl;
-+	int quirks = 0;
- 	int rc;
- 
- 	rc = superio_enter();
-@@ -266,6 +292,10 @@ static int __init it87_wdt_init(void)
- 	chip_rev  = superio_inb(CHIPREV) & 0x0f;
- 	superio_exit();
- 
-+	dmi_id = dmi_first_match(it87_quirks);
-+	if (dmi_id)
-+		quirks = (long)dmi_id->driver_data;
-+
- 	switch (chip_type) {
- 	case IT8702_ID:
- 		max_units = 255;
-@@ -326,6 +356,15 @@ static int __init it87_wdt_init(void)
- 		superio_outb(0x00, WDTCTRL);
- 	}
- 
-+	if (quirks & IT87_WDT_OUTPUT_THROUGH_PWRGD) {
-+		superio_select(EC);
-+		ctrl = superio_inb(SCR1);
-+		if (!(ctrl & WDT_PWRGD)) {
-+			ctrl |= WDT_PWRGD;
-+			superio_outb(ctrl, SCR1);
-+		}
-+	}
-+
- 	superio_exit();
- 
- 	if (timeout < 1 || timeout > max_units * 60) {
+ struct choke_skb_cb {
 -- 
 2.43.0
 
