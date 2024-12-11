@@ -1,242 +1,149 @@
-Return-Path: <linux-kernel+bounces-440680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539B49EC2D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:07:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6CA1188831A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:07:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA22B20A5F2;
-	Wed, 11 Dec 2024 03:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEQZvE8B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F66A9EC2DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:08:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3312451C5;
-	Wed, 11 Dec 2024 03:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4C8282989
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:08:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A176207A1C;
+	Wed, 11 Dec 2024 03:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QI+OvhAN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D514CA4E;
+	Wed, 11 Dec 2024 03:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733886446; cv=none; b=ZYrG+4cc2cUNhZwRtbOdPO8O2MLC4Lq+fOOhPPOBpyqggGWlhhvrgCmmYtQJBIxRQgKg6ctBLei9vMvYNIGYVUDXHlM6Pvy2CtYjbpHC8hMV2QW8Fbfg/9w5Oto5QzqjUEYjilNAybKF1tEUF7pZx4ow6KZnEPs4HOjKOZk75gk=
+	t=1733886518; cv=none; b=tzDhG+iRT6brf5crD0/GLniHj8jA584R847nUbeiT6Roe1LQLnwU5hBtH8WvAh+MB6d1lfiqVqsaPESX7jajvtH0TsQKHoE8pU2z1YLEMynoLS6jqdCTeqw9rNGLAxFcoIdkaQjxg/LHErgIRLD66kC0DFkG09jXWCuc8HH1MSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733886446; c=relaxed/simple;
-	bh=Z6X7dtscopNLoz8nldaGstB4IaOylCRwJyOS1rJBRL8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VNLQgSanAJ/dSJUTuAH4HzSMLQybdMxgrzDj8sZw5uc8bA/946Oy7BVVUGCQSp8SQLohFaA/YipQ3LtCym100MtSIJk5cFpBqEfe9L8BrP4DsLW4ZpgMaNSjZaeaRwxgRypsGdEXMpD1dvfccifoiTT6ufFS8B6zr1YIJMzViik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEQZvE8B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A63C4C4CEE8;
-	Wed, 11 Dec 2024 03:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733886445;
-	bh=Z6X7dtscopNLoz8nldaGstB4IaOylCRwJyOS1rJBRL8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=OEQZvE8BBM6PtI7CrFIFlGfd/cAROEDjV1Ez7QpvyteHQHLf9CFKaPNzP70SnLcKI
-	 KYUIaWEOLUDV/GmjSkXTrLyNHKOtH4XpfSPTW+rTs0wQH06DU3wHmvudISnHK1urU7
-	 dSgJkA2bgR5gRjynQnFcgpQ6zD62U06bLiaAYa0eYhkdRgkcQp6JoZDEvjdE70POxt
-	 AN8W4aVVLlqiWVqZ3jsdywL3bgfkldOEFoFKxDm4UHYtw04RoWSEWqCGgsW6pBc3Do
-	 oMr7I2180W95Pvf3+VlsE+0I6d2jc4/lY3P8oy1CrtfFxIhamqfwlUxmnAn5ngwPBb
-	 zOnfK52KkEWAQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97684E77180;
-	Wed, 11 Dec 2024 03:07:25 +0000 (UTC)
-From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Date: Tue, 10 Dec 2024 19:07:09 -0800
-Subject: [PATCH v2 3/3] usb: typec: tcpm: Add new AMS for Get_Revision
- response
+	s=arc-20240116; t=1733886518; c=relaxed/simple;
+	bh=ZupiJGEYZhgT3qs0zUB4qBthfctbz/KOo9W73hhC0OA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h1lyk1yY+XgUY1eZ4zuhbLRXWDu8pFUwujzCSt7LE68OUMQ4JR92xPDRKd2XIjii7TAb1DxLtwEWFJa9NSmc0ewwZt6n1lztk+c1qOJF8UTZBu9XclEKdVKHNikoA/UjY/2g+FV+cZSVpZfeTuVBTarcJoF1mrwWqswDdmk6ChM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QI+OvhAN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADaaof019597;
+	Wed, 11 Dec 2024 03:08:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/tDBwUOTx9mIzdLxexBmtjcjcefKgdF/rlLWlMfugCE=; b=QI+OvhANY3JLOga6
+	m5cYZnTTRYZKfztVtvn/Ge2IKu/mbKxpGL81QVIaH0WyiyI25z7SBBNILlcnxvrF
+	f6wA05hOuPC0hqEEjbLF+H8+4UDysLcIjm7IY2RINkFKW0CSEqTGMMYv5k5ZABui
+	f3z0U3UldPpnsllfVKqcq8CsXyR8dvNWL4H+XxY/I1VaCq91LjwTEl1SGuAqY/oo
+	Vu42GVvLp3oKwW6x5Ns0nomVBupGYp7cm0dugjFyxnJrZYfGX66PqG3tVASDuY4w
+	0Q55MftoGXCsDAwOAkrZdPyqXWUoiROj3cgMSp9J7cYleDgPIMcii6z3Jz+YVy06
+	FaP3Bg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e341da11-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 03:08:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB38NcM021221
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 03:08:23 GMT
+Received: from [10.216.62.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
+ 2024 19:08:18 -0800
+Message-ID: <1219b46d-2aea-4377-a8ca-024039ee1499@quicinc.com>
+Date: Wed, 11 Dec 2024 08:38:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241210-get_rev_upstream-v2-3-d0094e52d48f@google.com>
-References: <20241210-get_rev_upstream-v2-0-d0094e52d48f@google.com>
-In-Reply-To: <20241210-get_rev_upstream-v2-0-d0094e52d48f@google.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Badhri Jagan Sridharan <badhri@google.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Kyle Tso <kyletso@google.com>, RD Babiera <rdbabiera@google.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, Amit Sunil Dhamne <amitsd@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733886444; l=4930;
- i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=YvUI3CfbZ7WfPHWV3UO69yuWSZoIOQnnvLn9UUmlros=;
- b=twZ9Jg43zeC+dNyfJ/GALSE7oL41cdMQiWpprn4cLvNLH3jh8ty5Ew4EenHBCJ7nptF9YdgGp
- JsaKD+KOGDTDI5AXMGEPXBWth+BM86m0mMv2gKPlMRbhzwmGF0K+uGt
-X-Developer-Key: i=amitsd@google.com; a=ed25519;
- pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
-X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
- auth_id=262
-X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
-Reply-To: amitsd@google.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Rob Clark <robdclark@gmail.com>,
+        Pavan Kondeti
+	<quic_pkondeti@quicinc.com>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
+ <CAF6AEGtKfWOGpd1gMfJ96BjCqwERZzBVmj5GzmjKxw8_vmSrJg@mail.gmail.com>
+ <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com>
+ <iyknardi445n4h74am22arpgc4vlchh6z6cvkbff2xg76pd655@nozwz7snt476>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <iyknardi445n4h74am22arpgc4vlchh6z6cvkbff2xg76pd655@nozwz7snt476>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0m9eFUcuyq9Ye7zYc1eZ8aC2lb1PuFwm
+X-Proofpoint-ORIG-GUID: 0m9eFUcuyq9Ye7zYc1eZ8aC2lb1PuFwm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
+ spamscore=0 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110022
 
-From: Amit Sunil Dhamne <amitsd@google.com>
+On 12/11/2024 6:43 AM, Bjorn Andersson wrote:
+> On Tue, Dec 10, 2024 at 02:22:27AM +0530, Akhil P Oommen wrote:
+>> On 12/10/2024 1:24 AM, Rob Clark wrote:
+>>> On Mon, Dec 9, 2024 at 12:20 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>>>
+>>>> When kernel is booted in EL2, SECVID registers are accessible to the
+>>>> KMD. So we can use that to switch GPU's secure mode to avoid dependency
+>>>> on Zap firmware. Also, we can't load a secure firmware without a
+>>>> hypervisor that supports it.
+>>>
+>>> Shouldn't we do this based on whether zap node is in dtb (and not disabled)?
+>>
+>> This is better, isn't it? Otherwise, multiple overlays should be
+>> maintained for each soc/board since EL2 can be toggled from bootloader.
+>> And this feature is likely going to be more widely available.
+>>
+> 
+> The DeviceTree passed to the OS needs to describe the world that said OS
+> is going to operate in. If you change the world you need to change the
+> description.
+> There are several other examples where this would be necessary
+> (remoteproc and watchdog to name two examples from the Qualcomm upstream
+> world).
 
-This commit adds a new AMS for responding to a "Get_Revision" request.
-Revision message consists of the following fields:
+But basic things work without those changes, right? For eg: Desktop UI
 
- +----------------------------------------------------+
- |         Header             |         RMDO          |
- |  No. of data objects = 1   |                       |
- +----------------------------------------------------+
+> 
+> So, if we can cover this by zap-shader being enabled or disabled, that
+> sounds like a clean and scaleable solution.
 
- While RMDO consists of:
-  * B31..28     Revision Major
-  * B27..24     Revision Minor
-  * B23..20     Version Major
-  * B19..16     Version Minor
-  * B15..0      Reserved, shall be set to zero.
+I think we are focusing too much on zap shader. If the driver can
+determine itself about access to its register, shouldn't it be allowed
+to use that?
 
-As per the PD spec ("8.3.3.16.2.1 PR_Give_Revision State"), a request is
-only expected when an explicit contract is established and the port is
-in ready state. This AMS is only supported for PD >= 3.0.
+-Akhil
 
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
----
- drivers/usb/typec/tcpm/tcpm.c | 41 ++++++++++++++++++++++++++++++++++++++++-
- include/linux/usb/pd.h        | 22 ++++++++++++++++++++--
- 2 files changed, 60 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 59621cfaee3d67a36f3ad6870bd1aa92d382f33a..460dbde9fe2239b10c43cfb12dce92c736b1cea9 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -185,7 +185,8 @@
- 	S(UNSTRUCTURED_VDMS),			\
- 	S(STRUCTURED_VDMS),			\
- 	S(COUNTRY_INFO),			\
--	S(COUNTRY_CODES)
-+	S(COUNTRY_CODES),			\
-+	S(REVISION_INFORMATION)
- 
- #define GENERATE_ENUM(e)	e
- #define GENERATE_STRING(s)	#s
-@@ -225,6 +226,7 @@ enum pd_msg_request {
- 	PD_MSG_CTRL_NOT_SUPP,
- 	PD_MSG_DATA_SINK_CAP,
- 	PD_MSG_DATA_SOURCE_CAP,
-+	PD_MSG_DATA_REV,
- };
- 
- enum adev_actions {
-@@ -1244,6 +1246,24 @@ static u32 tcpm_forge_legacy_pdo(struct tcpm_port *port, u32 pdo, enum typec_rol
- 	}
- }
- 
-+static int tcpm_pd_send_revision(struct tcpm_port *port)
-+{
-+	struct pd_message msg;
-+	u32 rmdo;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	rmdo = RMDO(port->pd_rev.rev_major, port->pd_rev.rev_minor,
-+		    port->pd_rev.ver_major, port->pd_rev.ver_minor);
-+	msg.payload[0] = cpu_to_le32(rmdo);
-+	msg.header = PD_HEADER_LE(PD_DATA_REVISION,
-+				  port->pwr_role,
-+				  port->data_role,
-+				  port->negotiated_rev,
-+				  port->message_id,
-+				  1);
-+	return tcpm_pd_transmit(port, TCPC_TX_SOP, &msg);
-+}
-+
- static int tcpm_pd_send_source_caps(struct tcpm_port *port)
- {
- 	struct pd_message msg;
-@@ -3547,6 +3567,17 @@ static void tcpm_pd_ctrl_request(struct tcpm_port *port,
- 				   PD_MSG_CTRL_NOT_SUPP,
- 				   NONE_AMS);
- 		break;
-+	case PD_CTRL_GET_REVISION:
-+		if (port->negotiated_rev >= PD_REV30 && port->pd_rev.rev_major)
-+			tcpm_pd_handle_msg(port, PD_MSG_DATA_REV,
-+					   REVISION_INFORMATION);
-+		else
-+			tcpm_pd_handle_msg(port,
-+					   port->negotiated_rev < PD_REV30 ?
-+					   PD_MSG_CTRL_REJECT :
-+					   PD_MSG_CTRL_NOT_SUPP,
-+					   NONE_AMS);
-+		break;
- 	default:
- 		tcpm_pd_handle_msg(port,
- 				   port->negotiated_rev < PD_REV30 ?
-@@ -3791,6 +3822,14 @@ static bool tcpm_send_queued_message(struct tcpm_port *port)
- 				tcpm_ams_finish(port);
- 			}
- 			break;
-+		case PD_MSG_DATA_REV:
-+			ret = tcpm_pd_send_revision(port);
-+			if (ret)
-+				tcpm_log(port,
-+					 "Unable to send revision msg, ret=%d",
-+					 ret);
-+			tcpm_ams_finish(port);
-+			break;
- 		default:
- 			break;
- 		}
-diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
-index d50098fb16b5d2e2d9e39c55db4329224115e8b1..3068c3084eb6176d7d9184c3959a4110282a9fa0 100644
---- a/include/linux/usb/pd.h
-+++ b/include/linux/usb/pd.h
-@@ -33,7 +33,9 @@ enum pd_ctrl_msg_type {
- 	PD_CTRL_FR_SWAP = 19,
- 	PD_CTRL_GET_PPS_STATUS = 20,
- 	PD_CTRL_GET_COUNTRY_CODES = 21,
--	/* 22-31 Reserved */
-+	/* 22-23 Reserved */
-+	PD_CTRL_GET_REVISION = 24,
-+	/* 25-31 Reserved */
- };
- 
- enum pd_data_msg_type {
-@@ -46,7 +48,9 @@ enum pd_data_msg_type {
- 	PD_DATA_ALERT = 6,
- 	PD_DATA_GET_COUNTRY_INFO = 7,
- 	PD_DATA_ENTER_USB = 8,
--	/* 9-14 Reserved */
-+	/* 9-11 Reserved */
-+	PD_DATA_REVISION = 12,
-+	/* 13-14 Reserved */
- 	PD_DATA_VENDOR_DEF = 15,
- 	/* 16-31 Reserved */
- };
-@@ -453,6 +457,20 @@ static inline unsigned int rdo_max_power(u32 rdo)
- #define EUDO_TBT_SUPPORT		BIT(14)
- #define EUDO_HOST_PRESENT		BIT(13)
- 
-+/*
-+ * Request Message Data Object (PD Revision 3.1+ only)
-+ * --------
-+ * <31:28> :: Revision Major
-+ * <27:24> :: Revision Minor
-+ * <23:20> :: Version Major
-+ * <19:16> :: Version Minor
-+ * <15:0>  :: Reserved, Shall be set to zero
-+ */
-+
-+#define RMDO(rev_maj, rev_min, ver_maj, ver_min)			\
-+	(((rev_maj) & 0xf) << 28 | ((rev_min) & 0xf) << 24 |		\
-+	 ((ver_maj) & 0xf) << 20 | ((ver_min) & 0xf) << 16)
-+
- /* USB PD timers and counters */
- #define PD_T_NO_RESPONSE	5000	/* 4.5 - 5.5 seconds */
- #define PD_T_DB_DETECT		10000	/* 10 - 15 seconds */
-
--- 
-2.47.0.338.g60cca15819-goog
-
+> 
+> Regards,
+> Bjorn
 
 
