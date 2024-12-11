@@ -1,116 +1,86 @@
-Return-Path: <linux-kernel+bounces-441304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630B29ECC87
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:49:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B1E9ECC84
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:48:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127E716189D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:48:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6728923FD18;
+	Wed, 11 Dec 2024 12:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUMLJI6a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D9B2826DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:49:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3076229154;
-	Wed, 11 Dec 2024 12:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bZ1Nsttz"
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB2323FD03;
-	Wed, 11 Dec 2024 12:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C446923FD03;
+	Wed, 11 Dec 2024 12:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733921320; cv=none; b=XLCnCp2MgsTzE/xL3U9vUoT64+pvghUA9qdo69HJ4hcbQDsx+VgkmT+5UbiGdWwsRLrRH8GO2RsOOMl/J6VtFOBl+2+iRXvuOKqqeMptQDRqaZ9WnO1ZzLyZOGUDrOaWSj0QtCB095zpuwzRIu5qBHtC6OFubXq/svNU8jqkBNI=
+	t=1733921312; cv=none; b=PjZIr3Gp65or3Vhe/XJaxmYRqZsG9FtFuT2/J+H8jV40eFZ5bxnglBfP9LZlI2sUULJY3goG0uWCOVehjMxFZD5BUVcRAiBhxHYtKJVQ/e96IdIqdCm5LduYTLl6TKmaXkSC67jjMUl3yUxR898WDk5Cc0zfF6YF7aCHT75HyNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733921320; c=relaxed/simple;
-	bh=0HQD/T+EhtMZNzLVWLdZpq19I6Pg3sk0nuO4ieD0m6A=;
-	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:To:
-	 In-Reply-To:Content-Type; b=PHZcR/s1E3ueO+HGUiZMh6C1GcWciCnm6+aregQswAX6wX9qEf49kzPfZGcNDcg4h6diPKeUjfP8flYdVFfk6KG1nXP+H5UYdfYk1nSo3x1Xvx5F2trYWLUy8Ivh0qTTOYf7tCl4Dj/yx6EpokNIbpb7hB7ZdMnaLIXljfXNfZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bZ1Nsttz; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id LM8itDHmLTOxlLM8itkffp; Wed, 11 Dec 2024 13:48:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733921308;
-	bh=UgB86qgQ2Cldtwlv8AGFJ7+9eSzwqxjNruEPaNLHTLI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=bZ1NsttzSOG9q9m82N/J+l9fKHHDLq8DILJdUGJulwHCR8sVjTYHohmXAu9scOf6N
-	 02cFsP7EOnG4JVVrSh7sPmew6oWXg6I0b3DWt0M+/cw0gMgD7CyRUWDzdZFkIJtMfG
-	 k0upo18ie7cjxuasVjrlYLQMYsDintXKPE/r0yemX5EG2jYHflrRBofZQWRcLELb+R
-	 kK2IQ4PzUogCBqdaONZWkKXEx7S8ViG1km0/u1xqtdwt3XPjNuq3V8+OSAo819kp9C
-	 A1Tp/rBqIoF7+7eD+/OjYDTBT9XBhnjXy4ax3TWWNq+RQEhwixsJBe7V0THWUWqwbH
-	 T+a9wq2dQpsZQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 11 Dec 2024 13:48:28 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <8f629dca-7085-43c2-a245-050ecba53fa3@wanadoo.fr>
-Date: Wed, 11 Dec 2024 13:48:27 +0100
+	s=arc-20240116; t=1733921312; c=relaxed/simple;
+	bh=Shdn7f+RvvA769JK9QkK9a1n///yVT69DDvUm40aFzs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EUz9nWoolOADlyTHJb3VjMJEOabpDIm5RSaFB1iBohDmb7AoRS4SokHHD7IVQlCt9nETKqwRhNjZY2aTGlFXZYCfsFBwhbalWaSc6ELy/m+D8oMiWNgxJn/J9dOcVRhEOh3iNbb7YcbtidgS4IxoK7oiGjMbQ8Vv/hNe5odfPPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUMLJI6a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB763C4CED2;
+	Wed, 11 Dec 2024 12:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733921312;
+	bh=Shdn7f+RvvA769JK9QkK9a1n///yVT69DDvUm40aFzs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=eUMLJI6aWslXKtzjUUelBLXuO54eM82Uxf0FIOMGv7c/XS++UayYe7lzfsncAf0Ep
+	 /PrhHugivdlvt3E75t6rlpLHK471YMIHm80KY634DgaJe4WWsW8XKLHbuGZV3a5+3K
+	 n75MquDxTnSl7VND/vPAQ6oMZuiHayTRW7rl0CQeKNFFtRnVoiMzVYGXrwn0icv/Q4
+	 oIdd0MY+NWjxY9w60Gl31077oojiwuCxlMJKxXj85qRg6oAT/JSQBZNRyCF6CVaPZg
+	 f7IvLYD0QDDvDnrjIpBKQR0vqfV8/2COn706heAFPZNnzFOhKcmdvhQyy0gSQIi7wr
+	 GinT4za7oOIoA==
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <0efd8e9de0ae8d62ee4c6b78cc565b04007a245d.1731430700.git.mazziesaccount@gmail.com>
+References: <0efd8e9de0ae8d62ee4c6b78cc565b04007a245d.1731430700.git.mazziesaccount@gmail.com>
+Subject: Re: (subset) [PATCH] dt-bindings: mfd: bd71815: Fix rsense and
+ typos
+Message-Id: <173392131040.792872.4075640158285084340.b4-ty@kernel.org>
+Date: Wed, 11 Dec 2024 12:48:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] power: supply: Add STC3117 fuel gauge unit driver
-Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241210080954.5067-1-bhavin.sharma@siliconsignals.io>
- <20241210080954.5067-3-bhavin.sharma@siliconsignals.io>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "From: Bhavin Sharma" <bhavin.sharma@siliconsignals.io>,
- Sebastian Reichel <sre@kernel.org>
-In-Reply-To: <20241210080954.5067-3-bhavin.sharma@siliconsignals.io>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-Le 10/12/2024 à 09:09, Bhavin Sharma a écrit :
-> Adds initial support for the STC3117 fuel gauge.
+On Tue, 12 Nov 2024 19:01:06 +0200, Matti Vaittinen wrote:
+> The sense resistor used for measuring currents is typically some tens of
+> milli Ohms. It has accidentally been documented to be tens of mega Ohms.
+> Fix the size of this resistor and a few copy-paste errors while at it.
 > 
-> The driver provides functionality to monitor key parameters including:
-> - Voltage
-> - Current
-> - State of Charge (SOC)
-> - Temperature
-> - Status
+> Drop the unsuitable 'rohm,charger-sense-resistor-ohms' property (which
+> can't represent resistors smaller than one Ohm), and introduce a new
+> 'rohm,charger-sense-resistor-micro-ohms' property with appropriate
+> minimum, maximum and default values instead.
+> 
+> [...]
 
-...
+Applied, thanks!
 
-> +	ret = device_property_read_u32(&client->dev, "shunt-resistor-micro-ohms",
-> +				       &battery_info.sense_resistor);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +					"failed to get sense-registor\n");
+[1/1] dt-bindings: mfd: bd71815: Fix rsense and typos
+      commit: 4341de296cfb2c2e46bd770ae1c94867d6c97bf2
 
-Should it be "shunt-resistor-micro-ohms"?
-
-> +	battery_info.sense_resistor = battery_info.sense_resistor / 1000;
-> +
-> +	ret = power_supply_get_battery_info(data->battery, &info);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +					"failed to get battery information\n");
-> +
-> +	battery_info.battery_capacity_mah = info->charge_full_design_uah / 1000;
-> +	battery_info.voltage_min_mv = info->voltage_min_design_uv / 1000;
-> +	battery_info.voltage_max_mv = info->voltage_max_design_uv / 1000;
-> +
-> +	ret = stc3117_init(data);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				"failed to initialization of stc3117\n");
-
-"failed initialization" of "failed to initialize"?
-
-...
-
-CJ
+--
+Lee Jones [李琼斯]
 
 
