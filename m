@@ -1,134 +1,201 @@
-Return-Path: <linux-kernel+bounces-441027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984929EC854
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:06:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A43B9EC872
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:09:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2E3282DB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053BB2819D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1385D1FA8F4;
-	Wed, 11 Dec 2024 09:06:33 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2712210D7;
+	Wed, 11 Dec 2024 09:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="f5b7fILZ"
+Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010006.outbound.protection.outlook.com [52.103.67.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF061FA8C9;
-	Wed, 11 Dec 2024 09:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907992; cv=none; b=uP+j4zQ2FeEEdQFJJHZFXwqOqXLdqrVNUvOODsYvhtF/iaeU9C01PFogyYGiv5h1sFtjq9fCqUOjEaeGwJ/tulMbhYL1vngElNtiYYnB1PQsDjpZWnzOImsm9fRJTTXu9owaepZfMlzJya91nDaYUrPtai7g8xfZscAs0jBOhFI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907992; c=relaxed/simple;
-	bh=UoJ6uBPaZ1DKSdoDtMa9yhagX8+MqXBgqPofD+3nzTs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NFYPKvC0oaLj95afWDy57RGEuORnWnmGhO/vAZ7nK1vmAL52GLQZH3VdoN3MVwqTt97/BHJVfrNZB6hgLbkBSmqBzU0eHLzzWJ5eha9OmqoLyzX7keTUkkso20EZAZ3QC0KdJa8sLimyB4U8weiQ5SBHY+isIQbxbi2glqrWllA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB6LYxG017285;
-	Wed, 11 Dec 2024 09:06:20 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy3kyn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 11 Dec 2024 09:06:19 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Wed, 11 Dec 2024 01:06:18 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Wed, 11 Dec 2024 01:06:15 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <kory.maincent@bootlin.com>, <gregkh@linuxfoundation.org>
-CC: <patches@lists.linux.dev>, <fancer.lancer@gmail.com>,
-        <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
-        <stable@vger.kernel.org>, <gustavo.pimentel@synopsys.com>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6.1.y] dmaengine: dw-edma: eDMA: Add sync read before starting the DMA transfer in remote setup
-Date: Wed, 11 Dec 2024 18:04:09 +0800
-Message-ID: <20241211100409.2069734-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E670D2210C6;
+	Wed, 11 Dec 2024 09:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733908130; cv=fail; b=VhowEDdp1KbVVpgjOZK4b40pFavZTvkGETa2nkk//IoPh3dPsP1dIZLNTnSCIhkmJ82IrnqQUf+qjY0wRZqyqWz9azAi7G1EBEIiCr4sxw8iXjNO1oGwBEBU2vA9++y8XJKaHS1KtMvd33J7TozH6eqMCRNtQ5Zz+1dx3+rzGOo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733908130; c=relaxed/simple;
+	bh=e1ysK3YO9VIwQzGW02figwd89wQdAyiyisO9r7/65P8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eLTsZlurGWo6OvEs7k06qX1SNM551qQ5Sui7dRHCKUliPidbx4oLq3jYa2RcEAhd0lxHMYILLR6Jb8giVS1rSFoBlpS6nnnGm/Xib377G7IEP9DnsnJ2ijiXQWbrMmY9JDwngP6yXxi+phkdz4NWlR7gQFdf/iowaNsBShEWb9o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=f5b7fILZ; arc=fail smtp.client-ip=52.103.67.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DGeeFLacyy4TEXE28LL7Z4d9ZjsW9ETy0qJ+du783SBjdDy/C9RK4fpHIScTQXVp2y2mP7am6Wx2/wz1OBrjjTJsdU3B6FYPnfP6Ztn9E3NZlUW7JSOS/Qe46GaOlHAmthW1D+0CVqC+EGyUK5tqXKSuDAdaG9DHiQgwLi3arLQhmvz3jnzpBPaA8j3iO4nQUu48y/BJ/fJt6fd6r7Ky/d5vXZkdSJk9MxaWAMJiwaqR6Hpl/J8gSN8HWo8U1YOb+JCThiQCgAMJ9Rz1CO/wkhs8r36IChm1qCOf4Qbp79dsZB4mvaQ3J3qVp7cN6oDVqpCGCNg4AM9+ixuEvoVrCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QdaHx2cOfQ4dHjFbFh68el/bSWfI+0WK7mLc/NXSXw8=;
+ b=ueTmmkr2CEuM0JU5TM662nvmJ/FhLeN+kvm8hOdTQRl25P6Un7nOcX7lo338dTdv9jsucxKKLglKY1ts1VH1qpCwNk8qkNndfO3TFjWzY5a47YHEp148YZicoBY+9NVq7c0rz5QkvBqvkTI0Zhd4CRz3ABzCKOj8rwYHypzHs5DvLURt9NtpJuMxJi5VgAD3vbc4bL/e8SGHAACPEwvPyJlVhvY5+1Uo4R5j3QX2q/tlHa7k2WFYuhiAJ8vV2fjQFrdQjQmcq0+DF8ho+GB2mXhNMgjg9Qooj/EPRiSyTkqk3B6soiz62Y4lKvT6FKddxAMd2pgJOIdz6Gb81veI4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QdaHx2cOfQ4dHjFbFh68el/bSWfI+0WK7mLc/NXSXw8=;
+ b=f5b7fILZCGbadf8Wwp0RtxHSo8SpsQrBZOVKPkQX7NvfAmHKJERV938ZUc0KXDDGSq2/TkMqlfmBfpRGOMUv0c/dK8F0ae5iRQgnPZA7Kz2eoZ/CG0zDZekidIL8SS0slY7/pNIq9A5UthptjDj1LJ9BSQkwkpTgpogeAf+0NlrpWLBb2X/Ca1J2LhnRy47xkm4whzi4POBsw1xN0CeGSvSKUkNukn3UFFqXldW5TnI9ik6IPsJd2jThmkg6O3lZ9NfstHA+inUF3kXY1NynKRp1RvdLkfjmFq2XfcXnVVGgMMB+0dd0csjZ3IOV417h/KbeHdGD80IMS2TgSKnbZw==
+Received: from BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b01:13::10)
+ by MA0PR01MB6106.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:7a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
+ 2024 09:08:41 +0000
+Received: from BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::d3b0:ebc1:c2d0:d13a]) by BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::d3b0:ebc1:c2d0:d13a%6]) with mapi id 15.20.8207.010; Wed, 11 Dec 2024
+ 09:08:41 +0000
+Message-ID:
+ <BM1PR01MB45151FFF3F4D5B3B5BBD1E22FE3E2@BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM>
+Date: Wed, 11 Dec 2024 17:08:36 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: interrupt-controller: Add Sophgo
+ SG2042 MSI
+To: Krzysztof Kozlowski <krzk@kernel.org>, Chen Wang <unicornxw@gmail.com>
+Cc: u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, arnd@arndb.de,
+ conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
+ krzk+dt@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ robh@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
+References: <cover.1733726057.git.unicorn_wang@outlook.com>
+ <8f857ba0d281010ddfb53d12b3dd66733ee6a810.1733726057.git.unicorn_wang@outlook.com>
+ <ww2npib4iyivjqp4l4rdilry2iz2svtidue34v4bebkfmuzpnv@o6ujlbilrtw6>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <ww2npib4iyivjqp4l4rdilry2iz2svtidue34v4bebkfmuzpnv@o6ujlbilrtw6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0054.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::13) To BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b01:13::10)
+X-Microsoft-Original-Message-ID:
+ <746bcb44-b6f8-486a-a5a7-ec830bc5f3f3@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: jZc7cSUXkJOlTh9D_w6v2Hvt0JRW_qBj
-X-Proofpoint-ORIG-GUID: jZc7cSUXkJOlTh9D_w6v2Hvt0JRW_qBj
-X-Authority-Analysis: v=2.4 cv=D7O9KuRj c=1 sm=1 tr=0 ts=6759560b cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8 a=pGLkceISAAAA:8 a=KKAkSRfTAAAA:8 a=t7CeM3EgAAAA:8
- a=UiR0G8JrladZec7fDzYA:9 a=d3PnA9EDa4IxuAV0gXij:22 a=cvBusfyB2V15izCimMoJ:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-11_08,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0
- clxscore=1011 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2411120000 definitions=main-2412110068
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BM1PR01MB4515:EE_|MA0PR01MB6106:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96fbcb01-c182-41e2-4598-08dd19c3680c
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|6090799003|461199028|19110799003|8060799006|7092599003|15080799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?STErZkE3VGZvbGZMRFlnNnI4di9Wd3YycC9vRnB0M3RxZmxpaFVCcUxGL285?=
+ =?utf-8?B?TjBOeXUwbmJFV0pzdURGRzJKc1hoUjF5MU5MNExaSDZpcTRKbjZmSWR4ZFZ3?=
+ =?utf-8?B?QktFSjdnYWcwbCtacUVJKytUUWV2RU00Y20zMnBiQ09vWXlzRDdGWHdlaGk5?=
+ =?utf-8?B?STg1Q3Rnb0xadzd3OEVjMUZqN0lldXRlMHYweHlrbVRVWHYxUHk1TU9DeGRN?=
+ =?utf-8?B?blk3MGpGM3hkRk5yOU5Hc0dyK203TU0ydWUvNXZzblJMK2dVaCtDTmtpOFBw?=
+ =?utf-8?B?d0syZ0o1aWFsVGJrZU5GS0wwbGZGTXpCY3RHY25sVXdhNnU1enY4SCt3Wnc5?=
+ =?utf-8?B?VkpEdGoxd1hZZEh1eENjQ3JpV05CMTRPM0FreHB1aU92UTdsWXBjSnQzSEZL?=
+ =?utf-8?B?VWV0MkV3Y1JCMndFc0d3TUhzaVNYTEg2emFMemc1dXJsSzlGQVM5YVJWVXJx?=
+ =?utf-8?B?WGZXVElNcmFZK1RCTjVDcjJrYXJYcEgrd2VGNUVkOUsvUEZjU21nZlVDcDZm?=
+ =?utf-8?B?WDhMc1B4N0JYWUs0WTIvSUFqY3V1bUV3Z0s4cFJZL2Z2WHNJY2xwWlQ0bk9R?=
+ =?utf-8?B?dStjRzF4SDBaMUV4bERyemFaR24wcDlyUWJ6NUg1Y2JwbG04SjJ1UmZ6MUhu?=
+ =?utf-8?B?Q0FzdnJKQW9yZG9odHNqaDM1d2JMTEVJOW9JT21xNVR0Vk5RbDNvak5GdE1j?=
+ =?utf-8?B?ZnpscHcrTWl5dGJMMjA5RmQyYVNvT2VIdHVJa1hhNWFySUl0WWx6TDN2SHRw?=
+ =?utf-8?B?U0Y0SzJ2MlVlRU5sM3FjZzNrOVR0S1ZUK2tmWVc4SlR2ZFZwSFhRSjdrY1lL?=
+ =?utf-8?B?SlljM3A2MklRSHg5YTRBNTdxQ2hWTldwb0hRMmpUZ2FlVEwxNHFvM2dySFFC?=
+ =?utf-8?B?SEtBZmxRaWNaNXBxSTlpNjNOWTVZR1Y0ZGQ4ZE5GRHd6S2RsVXBRNTBuQ2lk?=
+ =?utf-8?B?OEJ2d1MrbmIrSGpQd1JvRWJicnhQYkRDUlU1YXNWVTBsRE1KYkllTEJnaVBm?=
+ =?utf-8?B?ZlpoNllONDVJcmluaGxMcEYyMnM4V21JeHVGb0ZrbCtwZVNDbUM3ZjltNGNC?=
+ =?utf-8?B?c1JWaWt1WDdxSzJuOUprTStrV2praGVDL2s5LzFLTjQrNXc3aUZnUk9SVW8z?=
+ =?utf-8?B?dVRWa08ydFJ4cndIb0lPbUY2TGJKMEpUblZOcm94ZW1kMmhnNEpuZXB2MzBL?=
+ =?utf-8?B?Wm8wOG5GK2Zna3h2OWYyWkpDcUcxNEoxdEZid2ZPbDZ2WkpwYkxwNDF0cm5D?=
+ =?utf-8?B?RmtMY0lDNjkyY0s5bG1kSXBHbmQzcVo3NWN3THhxYnI3czJ2S3J5bi9Xell4?=
+ =?utf-8?B?Q1NlWm0vQmVxTFhXTEhkLytPNDhVYm4wWHBUMFloZTNkdlkzWHdTUTZhQzNk?=
+ =?utf-8?B?UjVSYlFub3ljbjZUVCtMYXV6QllzRmVwY3FMTjM5a3MydnlGR2hCSmpTdnhG?=
+ =?utf-8?Q?I7jvpCCQ?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V1dXZ2xLbkdVMHhCbXYzakVOOFpiRjVCenVSUDBiNDdFdE4ySU5KZ2dvUmVM?=
+ =?utf-8?B?eWdkRllEV0duaVRxSU1OWjhNeVdPY3V4SkswUHBVMXV6TkpQQXJRZWMrNThF?=
+ =?utf-8?B?TDhMTlVtRThWR0RtWisyRlJjeFpKRnVTK3lLMjd0Vm5LVmVjS3l0a2xEVFZC?=
+ =?utf-8?B?cytQRkdzYVBwclJXd2Z5SzNZYURFbWEzUUI1N1BGb1U3TlFXWHQ1U3paVGZ3?=
+ =?utf-8?B?cUE1QUFORHVFamZDTzRKUmt5Mmg3cVJOTUYzWW9PVGxIMWxWTWlKMFlkTU96?=
+ =?utf-8?B?d0JlMUVuUHBpc1d3TEYzMnZrZDV3QzVaUlB1K0M0S2kzV0ZrdGRoN05Vamh5?=
+ =?utf-8?B?a1d0K2NIeVhsdnVpdzh5eGNTNnF1VnN6S1dVNFBUNkVwUlpmU3BIdStUcHdU?=
+ =?utf-8?B?akxtN1FZTGFVTkY0KzlWWWFTd0NYcEUvSGNBMkNzR3E0YlFJWHVqRE1ZOTFz?=
+ =?utf-8?B?ZFJ6elZDY3ZZc3lpUXBwTEFpR0pTalBLS3dmUUx0d1VUR2sxaXY2SExGbFNV?=
+ =?utf-8?B?VW9Na3I3WDE0VHlKR0ZKZzBtMHRaam05TnZRVGlGNHBZZlR4L2FiRkVzUW9m?=
+ =?utf-8?B?RG1GNmZQVSt4b1pnbVRoL09wVmQ3c0k4Wkx5Q0Y1eXIyZ1RYdHJCY2l2MTM3?=
+ =?utf-8?B?SWlidlZXQVV5eGM0SmtlanE4WnNFMis4dzhka3RXaDNnbGRQRmp4RktlMWxX?=
+ =?utf-8?B?bzBZaTJJdnJvNHhlMVFnYUVMMndWa1dSSnpsSzJnL1F0OE00UlVDalpTQnRB?=
+ =?utf-8?B?TXFwdm9icHNVcncxdmk4UmtHQ2xtUkZYT1RwaGVOaWdGS0xPVVpOVnJIckN2?=
+ =?utf-8?B?cTV0NFRZSURjTXNJRlFPNzRFL2Q4RmZLbDVYQ3VEbWxNVTNnWHhTUEl4V0Jh?=
+ =?utf-8?B?NHY0K1FmRVB0Y0FhY080cGJGR2dpMzNzeXBpRFdwc2llQVlncUJCMXRUeTc4?=
+ =?utf-8?B?ZUN3cXhYZWZyS3hiY2tkWEhnQmEvUUM0dG9JNVNLQks4MjVGVldHR0ZZU0RF?=
+ =?utf-8?B?aHkxVGtld29uTEdwQmpzSGxtRlJnVXptMGVHMkdXOE9Tc2thK1o1LzFnME40?=
+ =?utf-8?B?K1dmMUt4TDk1Vms2VUxOM0FUNzhnK0NqTmpvNEtCdE94M2YzaFFmRWFqbm9N?=
+ =?utf-8?B?OXRYdkZXVzJ1S004d0R3emVVdmI4TWdLbmFRREhTU1l1MnFucWtFNXNTVDVr?=
+ =?utf-8?B?SmsvWE0xMm03d0RsM1ZvNXZUUEpGakVsTld4VU4xa3o4TUFOMjgvWEx1UXZW?=
+ =?utf-8?B?cUFTU3llWkVnYXUwTHRWc1dkZVhBWEI4SFVzZGVRU2lWMTBJQlJEY3k4RTBN?=
+ =?utf-8?B?ZldEejVKUlpvTGQ0eVF1QWJGekpTSzJzdk8zZ0JqVEhRZjFqQXFaWjAvajZy?=
+ =?utf-8?B?M2xVVlhiZFFuVFRaZjBFbWo2NEZ2WmgrS0pDZ2h1TVpUY1EwZ2JPdnFNWjdm?=
+ =?utf-8?B?ODF1OUMvck1HSlpFOE11VUpUM0s4U3hmQVhZVUlNVERuek5Relo0SG9LUkRB?=
+ =?utf-8?B?OVVtSVVwa2hOMkVXUjB0TUREc2RlaXNEU1V3Ly9URVgzZFcrYi9UVnFhTnN1?=
+ =?utf-8?B?YzJER0FXZ2hWN0pzTllBc2N2ZzE1VnZjcElwak93MGFKdmhKWG80NHU1eVk3?=
+ =?utf-8?B?TzRLNzhsWFgvTDF4VERtY1kvV2o0VnBsa2t5Z2s1YUFVeFhqNUMzcHV3aHpJ?=
+ =?utf-8?Q?XzcfoZwVSKZMzBXch0t5?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96fbcb01-c182-41e2-4598-08dd19c3680c
+X-MS-Exchange-CrossTenant-AuthSource: BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 09:08:41.4469
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB6106
 
-From: Kory Maincent <kory.maincent@bootlin.com>
 
-[ Upstream commit bbcc1c83f343e580c3aa1f2a8593343bf7b55bba ]
-
-The Linked list element and pointer are not stored in the same memory as
-the eDMA controller register. If the doorbell register is toggled before
-the full write of the linked list a race condition error will occur.
-In remote setup we can only use a readl to the memory to assure the full
-write has occurred.
-
-Fixes: 7e4b8a4fbe2c ("dmaengine: Add Synopsys eDMA IP version 0 support")
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-Link: https://lore.kernel.org/r/20240129-b4-feature_hdma_mainline-v7-6-8e8c1acb7a46@bootlin.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- drivers/dma/dw-edma/dw-edma-v0-core.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/dma/dw-edma/dw-edma-v0-core.c b/drivers/dma/dw-edma/dw-edma-v0-core.c
-index a3816ba63285..aeaae28fab85 100644
---- a/drivers/dma/dw-edma/dw-edma-v0-core.c
-+++ b/drivers/dma/dw-edma/dw-edma-v0-core.c
-@@ -357,6 +357,20 @@ static void dw_edma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
- 	#endif /* CONFIG_64BIT */
- }
- 
-+static void dw_edma_v0_sync_ll_data(struct dw_edma_chunk *chunk)
-+{
-+	/*
-+	 * In case of remote eDMA engine setup, the DW PCIe RP/EP internal
-+	 * configuration registers and application memory are normally accessed
-+	 * over different buses. Ensure LL-data reaches the memory before the
-+	 * doorbell register is toggled by issuing the dummy-read from the remote
-+	 * LL memory in a hope that the MRd TLP will return only after the
-+	 * last MWr TLP is completed
-+	 */
-+	if (!(chunk->chan->dw->chip->flags & DW_EDMA_CHIP_LOCAL))
-+		readl(chunk->ll_region.vaddr);
-+}
-+
- void dw_edma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
- {
- 	struct dw_edma_chan *chan = chunk->chan;
-@@ -423,6 +437,9 @@ void dw_edma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
- 		SET_CH_32(dw, chan->dir, chan->id, llp.msb,
- 			  upper_32_bits(chunk->ll_region.paddr));
- 	}
-+
-+	dw_edma_v0_sync_ll_data(chunk);
-+
- 	/* Doorbell */
- 	SET_RW_32(dw, chan->dir, doorbell,
- 		  FIELD_PREP(EDMA_V0_DOORBELL_CH_MASK, chan->id));
--- 
-2.39.4
-
+On 2024/12/9 17:28, Krzysztof Kozlowski wrote:
+> On Mon, Dec 09, 2024 at 03:11:29PM +0800, Chen Wang wrote:
+>> +  msi-controller: true
+>> +
+>> +  msi-ranges:
+>> +    maxItems: 1
+>> +
+>> +  sophgo,msi-doorbell-addr:
+>> +    description:
+>> +      u64 value of the MSI doorbell address
+>> +    $ref: /schemas/types.yaml#/definitions/uint64
+> reg, as asked last time. 'reg' does not mean you need to ioremap it.
+Ok, I will fix this in next version.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - msi-controller
+>> +  - msi-ranges
+>> +  - sophgo,msi-doorbell-addr
+>> +
+>> +additionalProperties: true
+> Nope, this cannot be true. There is no single device binding like that,
+> so do not introduce your own conventions.
+Got, will fix it.
+>
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    msi: msi-controller@30000000 {
+> Drop unused label.
+Got, thanks.
+>
+> Best regards,
+> Krzysztof
+>
 
