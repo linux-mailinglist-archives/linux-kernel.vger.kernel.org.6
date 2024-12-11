@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-441329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FFC9ECCEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:12:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B903E9ECCF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:15:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038EF188A935
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29393188A99D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A05229125;
-	Wed, 11 Dec 2024 13:12:27 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C182A229158;
+	Wed, 11 Dec 2024 13:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LwSrtw23"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AB623FD14
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68B0226186;
+	Wed, 11 Dec 2024 13:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733922747; cv=none; b=FwA4qo1YD9mEYgqE5Lv1uY5DUfbqda7RkDuUB7jwGLi003OPMqLDlg8OTTDZxYN9p5LYrL2GpTCnQDECDTJuGDLlJ4EkyTb/EZ3D9ZDhpLS/QvZyv+KNkkMrIBPjzYG/D3GscKzHycmac4ZFzFle9jFJKi1atvB5mmFhJ9F4hpY=
+	t=1733922916; cv=none; b=df6xqetgaZx71kFzd1DL8E8cYF+OLAmRA62NT6pfaxxripQ+BIOmaXcbxw4umRk3BT6R9XGILENCV3bvdkCUWa5I16eibhPK6YSy12GWsQs3uswMh8kOrXuX2kd5Sc3ZjLVl2Nygn+u2wrf185YPonQLD7sK+st3KzsixiTOsNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733922747; c=relaxed/simple;
-	bh=mguMlBcjhwqS366cATFtm5v705RYQobf8ix5KkB3jzM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZpA+aePk2TRh/M9tQN+JDGYIuVMtOWXN51XC6Ek0ck9TrHr9JkYWf94p2Q+pCLuFBvMDJUeCdzHk2iyTYZibHRXzcyq8qJnZOD/oxpMy3BYJ98ij1k8w/FhsX+vPfrOXP46Kt1ptRgB4WQEMKNuf2/gTcjZQh+D08orIL3fJGOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7d60252cbso6187865ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:12:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733922745; x=1734527545;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pV1WSM0uR6QzWDu1etL273q+8hX2b1Hk5gb25+FrL+s=;
-        b=Kdo/FqQC4XLNcHj5Vh8jqTNmJ1bBh8HvF37KLY+IpHAdrSOY6D8L4jHNXz89h+oPkR
-         olDP7pUQ1/DAK6E4fRyCMPN3TQlBxOjHvaRR5eEPy1doO4gpVpIGfoYkgX9yv7dH0Iby
-         gmiDB16TrzUt5HNcOS0htKjrMiWVRsRxJVjKzuOtR9vShZG6gTR9BiKxDo+4vHk+q/Ek
-         uWeIb3Mhpi7VfT0VHk2AOEkqQGBMp42RqeBehob96/teDv9/d+ra4mhngEijXEZxl6No
-         1XKS6Dm9qnXdXE620oZZfQofErEBm5W+14aNMytw1TozXJQe3hOfLno8OpaN8IJ4bWOH
-         RqzA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+SHP3vONLT0Jp3qrAru/YjV+Wa+GRBoDffhTS1VA+S4m7+9DxMUYZnLw41B6YVxkD0M8y7SE/fFFXab8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwuioCF/TV7COr5cMTuBDiXzi2maE6S5RFz0Jnuid3FMicY2Dg
-	diMX0HAR8il1t620WoYYdCQ0zzcriVg/qxdr9ZJ3kBvevN8BJlbJ/lQg3W2M7rbWtSK2+NIpLRm
-	9WpqHewvM+idmmdqhMCXLmQTs5eN2F1x5vaScGLfMD6ysc42rWNQjgLY=
-X-Google-Smtp-Source: AGHT+IGze4MxPj5iGn6/ta7knzasPXvbPwh2ZLh3kmhikB1FeOCBsHilRPjeTfeMmiCyD/JJT/JcFEsDSbjoQzk6Z2Z5uB/rpOKF
+	s=arc-20240116; t=1733922916; c=relaxed/simple;
+	bh=IfWJJWrkHUieFv0YCu1Ku2mdZQjH8pVYpe8Efo+32Cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0NSpk7hJqqeA4rC/f+ktL6X8XmSeJCqXMgvAWTBoIt/6Vp/DQjMEUHCOluS/N2SwjZ7HgRgzwSpnJX7bnAv7t5pS5dZfR0/+qTo4ZCm+kVFNFMOc37r0qPTLscCkxDGfTPhgoSR23MEgpGFKbqKqZXoKrHU8JenGpkBYya1BGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LwSrtw23; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D81C4CED2;
+	Wed, 11 Dec 2024 13:15:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733922915;
+	bh=IfWJJWrkHUieFv0YCu1Ku2mdZQjH8pVYpe8Efo+32Cc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LwSrtw23YolMvTdE8Y20anTQx0v0u2ZZVMVUMW6MCzdH2cRY5E2U+LZ9V3S80TwY+
+	 BeSGRCaVgSxe25dqPoNRM6DKefmewOuXyc3nB4ggnmP1087dizfF3uKHtcQ6FLaXTZ
+	 KvIkQNwfUz4FLjOknrRadzJop9pV/l0neRgeFjfM=
+Date: Wed, 11 Dec 2024 14:14:37 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
+Message-ID: <2024121109-ample-retrain-bde0@gregkh>
+References: <20241210224947.23804-1-dakr@kernel.org>
+ <20241210224947.23804-2-dakr@kernel.org>
+ <2024121112-gala-skincare-c85e@gregkh>
+ <2024121111-acquire-jarring-71af@gregkh>
+ <2024121128-mutt-twice-acda@gregkh>
+ <2024121131-carnival-cash-8c5f@gregkh>
+ <Z1mEAPlSXA9c282i@cassiopeiae>
+ <Z1mG14DMoIzh6xtj@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6f:b0:3a7:d02b:f653 with SMTP id
- e9e14a558f8ab-3aa12be6b10mr28449535ab.0.1733922745221; Wed, 11 Dec 2024
- 05:12:25 -0800 (PST)
-Date: Wed, 11 Dec 2024 05:12:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67598fb9.050a0220.17f54a.003b.GAE@google.com>
-Subject: [syzbot] [kvm?] WARNING in vmx_handle_exit (2)
-From: syzbot <syzbot+ac0bc3a70282b4d586cc@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	pbonzini@redhat.com, seanjc@google.com, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1mG14DMoIzh6xtj@cassiopeiae>
 
-Hello,
+On Wed, Dec 11, 2024 at 01:34:31PM +0100, Danilo Krummrich wrote:
+> On Wed, Dec 11, 2024 at 01:22:33PM +0100, Danilo Krummrich wrote:
+> > On Wed, Dec 11, 2024 at 12:05:10PM +0100, Greg KH wrote:
+> > > On Wed, Dec 11, 2024 at 11:59:54AM +0100, Greg KH wrote:
+> > > > On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
+> > > > > On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
+> > > > > > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummrich wrote:
+> > > > > > > In a subsequent patch we introduce the `Registration` abstraction used
+> > > > > > > to register driver structures. Some subsystems require the module name on
+> > > > > > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
+> > > > > > > the module name to `Module::init`.
+> > > > > > 
+> > > > > > Nit, we don't need the NAME of the PCI driver (well, we do like it, but
+> > > > > > that's not the real thing), we want the pointer to the module structure
+> > > > > > in the register_driver call.
+> > > > > > 
+> > > > > > Does this provide for that?  I'm thinking it does, but it's not the
+> > > > > > "name" that is the issue here.
+> > > > > 
+> > > > > Wait, no, you really do want the name, don't you.  You refer to
+> > > > > "module.0" to get the module structure pointer (if I'm reading the code
+> > > > > right), but as you have that pointer already, why can't you just use
+> > > > > module->name there as well as you have a pointer to a valid module
+> > > > > structure that has the name already embedded in it.
+> > > > 
+> > > > In digging further, it's used by the pci code to call into lower layers,
+> > > > but why it's using a different string other than the module name string
+> > > > is beyond me.  Looks like this goes way back before git was around, and
+> > > > odds are it's my fault for something I wrote a long time ago.
+> > > > 
+> > > > I'll see if I can just change the driver core to not need a name at all,
+> > > > and pull it from the module which would make all of this go away in the
+> > > > end.  Odds are something will break but who knows...
+> > > 
+> > > Nope, things break, the "name" is there to handle built-in modules (as
+> > > the module pointer will be NULL.)
+> > > 
+> > > So what you really want is not the module->name (as I don't think that
+> > > will be set), but you want KBUILD_MODNAME which the build system sets.
+> > 
+> > That's correct, and the reason why I pass through this name argument.
+> > 
+> > Sorry I wasn't able to reply earlier to save you some time.
+> > 
+> > > You shouldn't need to pass the name through all of the subsystems here,
+> > > just rely on the build system instead.
+> > > 
+> > > Or does the Rust side not have KBUILD_MODNAME?
+> > 
+> > AFAIK, it doesn't (or didn't have at the time I wrote the patch).
+> > 
+> > @Miguel: Can we access KBUILD_MODNAME conveniently?
+> 
+> Actually, I now remember there was another reason why I pass it through in
+> `Module::init`.
+> 
+> Even if we had env!(KBUILD_MODNAME) already, I'd want to use it from the bus
+> abstraction code, e.g. rust/kernel/pci.rs. But since this is generic code, it
+> won't get the KBUILD_MODNAME from the module that is using the bus abstraction.
 
-syzbot found the following issue on:
+Rust can't do that in a macro somehow that all pci rust drivers can pull
+from?
 
-HEAD commit:    b5f217084ab3 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1226b330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d99f0bff41614d0
-dashboard link: https://syzkaller.appspot.com/bug?extid=ac0bc3a70282b4d586cc
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d10820580000
+thanks,
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b5f21708.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4a2037d50b27/vmlinux-b5f21708.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e9e9c9c88191/bzImage-b5f21708.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ac0bc3a70282b4d586cc@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 6336 at arch/x86/kvm/vmx/vmx.c:6480 __vmx_handle_exit arch/x86/kvm/vmx/vmx.c:6480 [inline]
-WARNING: CPU: 3 PID: 6336 at arch/x86/kvm/vmx/vmx.c:6480 vmx_handle_exit+0x40f/0x1f70 arch/x86/kvm/vmx/vmx.c:6637
-Modules linked in:
-CPU: 3 UID: 0 PID: 6336 Comm: syz.0.73 Not tainted 6.13.0-rc1-syzkaller-00316-gb5f217084ab3 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__vmx_handle_exit arch/x86/kvm/vmx/vmx.c:6480 [inline]
-RIP: 0010:vmx_handle_exit+0x40f/0x1f70 arch/x86/kvm/vmx/vmx.c:6637
-Code: 07 38 d0 7f 08 84 c0 0f 85 b1 11 00 00 44 0f b6 a5 49 99 00 00 31 ff 44 89 e6 e8 8c 73 68 00 45 84 e4 75 52 e8 a2 71 68 00 90 <0f> 0b 90 48 8d bd 4a 99 00 00 c6 85 49 99 00 00 01 48 b8 00 00 00
-RSP: 0018:ffffc90003a57a58 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88803fa10000 RCX: ffffffff81319494
-RDX: ffff888021152440 RSI: ffffffff8131949e RDI: 0000000000000001
-RBP: ffffc900066bf000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: 0000000080000021 R14: ffff88803fa102d8 R15: dffffc0000000000
-FS:  00007f5d3ac1e6c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000001200e000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- vcpu_enter_guest arch/x86/kvm/x86.c:11081 [inline]
- vcpu_run+0x3047/0x4f50 arch/x86/kvm/x86.c:11242
- kvm_arch_vcpu_ioctl_run+0x44a/0x1740 arch/x86/kvm/x86.c:11560
- kvm_vcpu_ioctl+0x6ce/0x1520 virt/kvm/kvm_main.c:4340
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5d39d7fed9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5d3ac1e058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f5d39f46080 RCX: 00007f5d39d7fed9
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
-RBP: 00007f5d39df3cc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f5d39f46080 R15: 00007ffdd579bc48
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+greg k-h
 
