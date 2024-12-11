@@ -1,137 +1,224 @@
-Return-Path: <linux-kernel+bounces-441600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94769ED092
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:57:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACF19ED094
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:57:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C4E1693EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:57:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD471D8A14;
+	Wed, 11 Dec 2024 15:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="OpYDxry5"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFD928E853
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:57:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FB01D9A70;
-	Wed, 11 Dec 2024 15:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cVqfmndc"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9E91D9665
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E79B1D8A0A;
+	Wed, 11 Dec 2024 15:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932620; cv=none; b=jgqMlcEqNOqEZi5KDEjG/Ixcy/u/MLUlt9Mbz4dENILpAWLWC00lkZMbcrftgOD3uiupwaWmRS4bYV+2nnsCV4X9Q4egacpXtjytnzGwuGwUZJTWhVjw1TeuAXRRVMSlzKQrVyaPFS777gwZuvHzA6v3Ye6U93RFClXkHCIh+v8=
+	t=1733932638; cv=none; b=CRWLTCI4O7/azMu/rPJX4cWlNxnVcn2bMytzSJ7U76xxc2oe8fCk4qlOWosClTL1/Qfa4k5SMv01s26UC9mF+NMb9jIjdPTxqzTRg+kx3GKsHxQvXwN8j1GMhAENLvbFlOEEyARUr3Hr4nfAhenDuKRjqdSI0dLjhFDAsDaxz1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932620; c=relaxed/simple;
-	bh=Rv+K7hKMlEcxfuBPqiseeoq83C5g31oqxKPW9FfS0H8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q8sk4SET8/6IKYFCshIEficqBuykfxkL0ZDaE31xS8Uf/FJQZLDWfwqysw/dY6yH0KyBobpxhu1Q3ICEO0GzR8/QETf4MgCLlSvXvy1ZKE7r4V/U/MagKNQdPzB8XkOQhfrx2dlTSaVjyAjFeHnhY23k0Aw4km2hFzmkvl3oAnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cVqfmndc; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-436202dd730so4284845e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:56:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733932617; x=1734537417; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nkg3+gqCHZyZ6Sl2qTzJB3+MN185d7FZdzLmb7C7pz0=;
-        b=cVqfmndcU8ORqb/WAs3hyt8lTr4dUf+4XymZz6uPD/WxWt8yHla3SV8YlD0CU6a4Gy
-         3TpqlHJOfkOj4V3RMYw1FKEtzg1zGBg14Ii7subePb5KL3GWfBuCNVaIOzkJ0ge9xh6a
-         6yEV9b6z9jRLIEzdSQFx56dn/7bq5KAGWechEwBvG7MW9yPpwhfjdUrcZTE+KWYrg1W0
-         VY4fHsKfaw89qhDLaXDa3vkCvrkaIXF5DGLvRTtTAqspKxZz/feNwrfL76YlmX84WepO
-         kFi1NUhB6srZ/IuzW+ObeXZ+EGgjerXDDcTEn2DcObGEY1miOIFJ9G6fuuAE183gQ0ry
-         Hz0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733932617; x=1734537417;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nkg3+gqCHZyZ6Sl2qTzJB3+MN185d7FZdzLmb7C7pz0=;
-        b=cFXGJNzbeuRjZtCU0lJZi3mz40EO8AoVJOZL/I1LGrLP707emHgQQhyDchiGkhH+IY
-         XbhAPERsQp0t1p5gnlnP0plpcqmeomI1uzw+cOQxxgBEzJK011eLIV3MLSu4Fxztnwzl
-         /2SzK3Xj8SHnNjzjQPNp9szxmMh3ivu5iPq5kOMg/Cd/C8rt9PBvYHkDC8IJ7yBtBcca
-         hyl42sdEctLLo5OPYrJCEOojBkJxSfO2Qa67kuav5oV5OzeKUJhxdpSXa4yohn1YkCKF
-         haQFYf0sR9aQxtTUW5LZWDT+bgfWorhyZUjwVM8gc5M0p7t2zxjXkfEKHI+OjDosFr1R
-         NFmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUAGNLS1qbSxslN+ZxXgrwrOAAYnsgHXJUfS7QB+jukMtaAeNw/BiR3zwCkM0Q8rT1Lo3A0h/YR+cNEvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Szs3FsH6r57WLlyzMCqthb462HteHxBi3oPxSXChhmHok62R
-	SwU11WInNog8s96CK6x8DW8TbRVWzJjQZMcsbMaaoGa2qtbni8M6+H6cP49ovuk=
-X-Gm-Gg: ASbGnctHWCa8h5HJ8udSs8RII+mmuEhL08I3GLndMfrXx7nB9e9/7UxMYXkFmqKcEhd
-	Um49kx4rlXCih3hbyhHT6k8MhdyhBDyExVziQLu0qdnXGp303gu0HwojGe6UjFUkx1UJFiUK6bP
-	64PVttdeZGX2mC5LoI33yKtER3f5BymrNqghdJ92qDiOdNDc7rPv0Bp1DXPUp4uL6bLNz8U0QtM
-	2RS7rEFG+YE43s00XySEmXcN1q0PMVvx6hm9ITLdEaADrkmDma6AAr7wkA=
-X-Google-Smtp-Source: AGHT+IHswNBtDtvurvta3UIe1snbeW4EpMGUksBi4IExyjMEcI6lUxkxBWzCbW9NdBKAwxVrirF4eA==
-X-Received: by 2002:a05:600c:3541:b0:431:93dd:8e77 with SMTP id 5b1f17b1804b1-4362286bc7bmr2392765e9.31.1733932616850;
-        Wed, 11 Dec 2024 07:56:56 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514ec8sm1598464f8f.75.2024.12.11.07.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 07:56:56 -0800 (PST)
-Date: Wed, 11 Dec 2024 18:56:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Julian Anastasov <ja@ssi.bg>
-Cc: Simon Horman <horms@verge.net.au>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-	David Laight <David.Laight@aculab.com>
-Subject: [PATCH v2 net] ipvs: Fix clamp() order in ip_vs_conn_init()
-Message-ID: <Z1m2RVCy-lkXdDUa@stanley.mountain>
+	s=arc-20240116; t=1733932638; c=relaxed/simple;
+	bh=LhBWnetEa7EnH0bvc4QTUwUKxwtf1sRM8s722VoNrZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BIqWl4rVpNjOgdlJZPaBBVKUnIfoJD4lj0uBIGBjAY+vVMay/uVnDiMvx6ssoFlX0ylQd38tOvI65heFJ+uCSkuHunhJqxwtL45zGPuFAC6Lw6jNT132LZ7OAAL2pfFKNYau1v+e+dJKEczYsYfy8uaKEDS/JFblfX1sCtfHcc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=OpYDxry5; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Y7gGF6ZXwz9smr;
+	Wed, 11 Dec 2024 16:57:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1733932630;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f3Qm2BtJvGQLr3jx5ekPIHyYthuTEmSrovK+Z93kgNk=;
+	b=OpYDxry5RKhdB/XD6Id+E9LL/0nj29WPTawQuZdiqsRJ23xml701GMuCR7XeM78XmwuaS+
+	cNBaiC8oV7O3QwlNQAU7gobvCJ4NhcfOy/z5/8ZkF8zNqpyerXY7TbqmDsgOmbUoaSBNs+
+	lXHTOsdUuRxVVN2jhGE614QIg52uioCicpjPEYAsiIakvYWS3EPs6gVfrrzif1t3IPM6jx
+	2bcTutHQZkC2WOMFdqNm1pG1TFD30spFwfJ56yNuTcYhPjFg3eStmacWScieiglF9XFl0B
+	W5Y80hY965GMP9faDEg9ZpJDnU3P6jxzjzcgsUR5k7WRYlwDsHlCgW+/MRJhlw==
+Date: Thu, 12 Dec 2024 02:56:59 +1100
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Add a prctl to disable ".." traversal in path resolution
+Message-ID: <20241211.154841-core.hand.fragrant.rearview-Ajjgdy5TrwhO@cyphar.com>
+References: <20241211142929.247692-1-mjg59@srcf.ucam.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="msbivhjxhint4xzu"
 Content-Disposition: inline
+In-Reply-To: <20241211142929.247692-1-mjg59@srcf.ucam.org>
 
-We recently added some build time asserts to detect incorrect calls to
-clamp and it detected this bug which breaks the build.  The variable
-in this clamp is "max_avail" and it should be the first argument.  The
-code currently is the equivalent to max = min(max_avail, max).
 
-There probably aren't very many systems out there where we actually can
-hit the minimum value so this doesn't affect runtime for most people.
+--msbivhjxhint4xzu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC] Add a prctl to disable ".." traversal in path resolution
+MIME-Version: 1.0
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/all/CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com/
-Suggested-by: David Laight <David.Laight@ACULAB.COM>
-Fixes: 4f325e26277b ("ipvs: dynamically limit the connection hash table")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-v2: In the commit message, I said max() but it should have been min().
-    I added a note that this bug probably doesn't affect too many
-    people in real life.  I also added David Laight as a Suggested-by
-    because he did all the work root causing this bug and he already
-    sent a similar patch last week.
+On 2024-12-11, Matthew Garrett <mjg59@srcf.ucam.org> wrote:
+> Path traversal attacks remain a common security vulnerability
+> (https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=3D%22path+traversal%22)
+> and many are due to either failing to filter out ".." when validating a
+> path or incorrectly collapsing other sequences of "."s into ".." .
+> Evidence suggests that improving education isn't fixing the problem.
 
-    Added Bartosz's tested by tags.
+I was thinking about adding a RESOLVE_NO_DOTDOT which would do something
+like this but on a per-openat2-call basis.
 
- net/netfilter/ipvs/ip_vs_conn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The main problem with making this global for the entire process is that
+most tools would not be able to practically enable this for themselves
+as it would require auditing the entire execution environment as well as
+all dependencies that might dare to use ".." in a path anywhere in their
+codebase.
 
-diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_conn.c
-index 98d7dbe3d787..9f75ac801301 100644
---- a/net/netfilter/ipvs/ip_vs_conn.c
-+++ b/net/netfilter/ipvs/ip_vs_conn.c
-@@ -1495,7 +1495,7 @@ int __init ip_vs_conn_init(void)
- 	max_avail -= 2;		/* ~4 in hash row */
- 	max_avail -= 1;		/* IPVS up to 1/2 of mem */
- 	max_avail -= order_base_2(sizeof(struct ip_vs_conn));
--	max = clamp(max, min, max_avail);
-+	max = clamp(max_avail, min, max);
- 	ip_vs_conn_tab_bits = clamp_val(ip_vs_conn_tab_bits, min, max);
- 	ip_vs_conn_tab_size = 1 << ip_vs_conn_tab_bits;
- 	ip_vs_conn_tab_mask = ip_vs_conn_tab_size - 1;
--- 
-2.45.2
+Given that "nosymfollow" was added by Google because of the
+impossibility of a similar kind of audit, I feel enabling this would
+face a pretty similar issue. I get that returning an error (even if it
+kills the program) could be seen as preferable in some cases, but as a
+general-purpose tool I don't really see how any program could enable
+this without fear of issues. Even if the application itself handles
+errors gracefully, there's no way of knowing whether some dependency (or
+even the stdlib / runtime) will abort the program if it gets an error.
+
+> The majority of internet-facing applications are unlikely to require the
+> ability to handle ".." in a path after startup, and many are unlikely to
+> require it at all. This patch adds a prctl() to simply request that the
+> VFS path resolution code return -EPERM if it hits a ".." in the process.
+> Applications can either call this themselves, or a service manager can
+> do this on their behalf before execing them.
+
+I would suggest making this -EXDEV to match the rest of the RESOLVE_*
+flags (in particular, RESOLVE_BENEATH).
+
+> Note that this does break resolution of symlinks with ".." in them,
+> which means it breaks the common case of /etc/whatever/sites-available.d
+> containing site-specific configuration, with
+> /etc/whatever/sites-enabled.d containing a set of relative symlinks to
+> ../sites-available.d/ entries. In this case either configuration would
+> need to be updated before deployment, or the process would call prctl()
+> itself after parsing configuration (and then disable and re-enable the
+> feature whenever re-reading configuration). Getting this right for all
+> scenarios involving symlinks seems awkward and I'm not sure it's worth
+> it, but also I don't even play a VFS expert on TV so if someone has
+> clever ideas here we can extend this to support that case.
+
+I think RESOLVE_BENEATH is usually more along the lines of what programs
+that are trying to restrict themselves would want (RESOLVE_IN_ROOT is
+what extraction tools want, on the other hand) as it only blocks ".."
+components that move you out of the directory you expect.
+
+It also blocks absolute symlinks, which this proposal does nothing about
+(it even blocks magic-links, which can be an even bigger issue depending
+on what kind of program we are talking about). Alas, RESOLVE_BENEATH
+requires education...
+
+> Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
+> ---
+>  fs/namei.c                 | 7 +++++++
+>  include/linux/sched.h      | 1 +
+>  include/uapi/linux/prctl.h | 3 +++
+>  kernel/sys.c               | 5 +++++
+>  4 files changed, 16 insertions(+)
+>=20
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 9d30c7aa9aa6..01d0fa415b64 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2431,6 +2431,13 @@ static int link_path_walk(const char *name, struct=
+ nameidata *nd)
+> =20
+>  		switch(lastword) {
+>  		case LAST_WORD_IS_DOTDOT:
+> +			/*
+> +			 * Deny .. in resolution if the process has indicated
+> +			 * it wants to protect against path traversal
+> +			 * vulnerabilities
+> +			 */
+> +			if (unlikely(current->deny_path_traversal))
+> +				return -EPERM;
+>  			nd->last_type =3D LAST_DOTDOT;
+>  			nd->state |=3D ND_JUMPED;
+>  			break;
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index d380bffee2ef..9fc7f4c11645 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1008,6 +1008,7 @@ struct task_struct {
+>  	/* delay due to memory thrashing */
+>  	unsigned                        in_thrashing:1;
+>  #endif
+> +	unsigned                        deny_path_traversal:1;
+>  #ifdef CONFIG_PREEMPT_RT
+>  	struct netdev_xmit		net_xmit;
+>  #endif
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index 5c6080680cb2..d289acecef6c 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -353,4 +353,7 @@ struct prctl_mm_map {
+>   */
+>  #define PR_LOCK_SHADOW_STACK_STATUS      76
+> =20
+> +/* Block resolution of "../" in paths, returning -EPERM instead */
+> +#define PR_SET_PATH_TRAVERSAL_BLOCK      77
+> +
+>  #endif /* _LINUX_PRCTL_H */
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index c4c701c6f0b4..204ea88d5597 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2809,6 +2809,11 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long,=
+ arg2, unsigned long, arg3,
+>  			return -EINVAL;
+>  		error =3D arch_lock_shadow_stack_status(me, arg2);
+>  		break;
+> +	case PR_SET_PATH_TRAVERSAL_BLOCK:
+> +		if ((arg2 > 1) || arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +		current->deny_path_traversal =3D !!arg2;
+> +		break;
+>  	default:
+>  		error =3D -EINVAL;
+>  		break;
+> --=20
+> 2.47.0
+>=20
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--msbivhjxhint4xzu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZ1m2SwAKCRAol/rSt+lE
+byVvAPwNDSnF2OWpYiNQVfsXwh3F5v9rjAIAw8jPxfmD5liUpwEAjjAZyl/S97bP
+Hk6WcKgr1Lfn8CpB2fQClgTfv1aoYgE=
+=NUaL
+-----END PGP SIGNATURE-----
+
+--msbivhjxhint4xzu--
 
