@@ -1,239 +1,207 @@
-Return-Path: <linux-kernel+bounces-440830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DFD9EC4EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:40:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1029EC4F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3CD1886BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9089E188746C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C281C4A20;
-	Wed, 11 Dec 2024 06:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37FB1C548D;
+	Wed, 11 Dec 2024 06:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2R6rVc0L"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2070.outbound.protection.outlook.com [40.107.237.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C6lNLLYu"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006396DCE1;
-	Wed, 11 Dec 2024 06:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733899231; cv=fail; b=mmAqt4XnLhSKiOpzMxy5ahf0lvi/EKfBFE/w1ahnWOi5Psz/xo3RzhatkA7+NcVK+PjDUImUxV4x3ZPZwusvKLfRk9898sUp8W/lktZKZb+a1RhSYZXYEdsVacPLvi+n6TDbk16cWYtyilr2KZ/DJrbK5rlpqQi0KUDjjqvEu0g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733899231; c=relaxed/simple;
-	bh=VYgSJgC6kVFqUevDZOanxtxuc7P21xTFJf29SO+8ZZY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OSBDHuEIeZBh0KK2fbRVYzMKKTd1sFxREm6WWNur5wGqYwKkegIjZzSwhGYX3yYsMH28HLUxeTgKeMZD7/7gNk3X5sX/E7v//F0tH6Cps14u1O16gQHaDgwxYqhd7y2LrCTnaPbHDNYoINk/3k7qHquE1RbL2QXFMtNIR+Cdxrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2R6rVc0L; arc=fail smtp.client-ip=40.107.237.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JvxD77ivedByMoSqW0GlBnrv7hrOhFXDtcW30jm6TPrjwuwkGzY5wpIO34uiFhikn6IvJrbt/qbjQFy85BA+BH1QcKFujDNAWk2qFwD6BkrE5B6B7ix9pjMXnjsg81w+zCWfNW4s2fhYiG3OvNrEJXSFgZpkkHESZmWucH/nMbs3wZIgEgX6bkdyHokcf0Smt24c66kVL1XyorKpkhtLMwAQZT5nP07jarh321ZZPahvE0LZ+doLBVJtGpDjcu/+y0Awb1hK0lbzEAWfXEbecFiLPmAtMfswLjRrarjRJ1DDmgUsumgrwMDc/MdQPQC6lTWkgTHNwpGf6I7cLDPOIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D2CuFoW8waQq13+OCY4YEZemOGfpF5wXchdUh0LPv5g=;
- b=DhD647vAJd8X5Avr8llj1kR35Hyr1VoXcceabbustcrjVM/Whjrobt0kdt/wWAKwrMlzNjgUEgfcNvE+sMR6rQvMc3FcHmLWokjO+oJrNy/SStHzutC5Z/rOyHlTWxx+rmXqOdJG8x6IFTrhtcaYCf9Xv4MSOvIGGouXdBlNUlrEZzg/u6/30TAC9ieDorQXHhNdb4pWzxoYSpHJHpHiYAZ3zWYNdAO8oJ98+DImxojz0gs81gg5h/tzwoeNXY+74r0NoxWYtRf2E/gxZKKkNX4UrlbYjaNEa72d3DLa0BdYrY6BUGJUzzpK+HB05nV6lMFe2UxYHzz5Z16ykhs8dw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D2CuFoW8waQq13+OCY4YEZemOGfpF5wXchdUh0LPv5g=;
- b=2R6rVc0LSu/oGXx9MrVugRSrFeFWVhgaYKzn/dxfhYYEL27jVrbL+1wbyU6kY/rfeE7822zU3PYZH9njludRpd4YozZcjuH4EMOrGbLsbtn6vlkBPPXgtLTqBfjGOSjM2R29UAZx+Dx8rlR5xEm6X++IglNrnfBC2vRQK6FVc/4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6439.namprd12.prod.outlook.com (2603:10b6:8:c9::7) by
- CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.16; Wed, 11 Dec 2024 06:40:27 +0000
-Received: from DS0PR12MB6439.namprd12.prod.outlook.com
- ([fe80::ec83:b5e5:82dd:b207]) by DS0PR12MB6439.namprd12.prod.outlook.com
- ([fe80::ec83:b5e5:82dd:b207%4]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 06:40:26 +0000
-Message-ID: <de22dd6e-00a3-4183-a123-15cc7c53980f@amd.com>
-Date: Wed, 11 Dec 2024 12:10:14 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
-To: Dan Williams <dan.j.williams@intel.com>,
- Raghavendra K T <raghavendra.kt@amd.com>, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org
-Cc: Huang Ying <ying.huang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Alistair Popple <apopple@nvidia.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
- ilpo.jarvinen@linux.intel.com,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Fontenot Nathan <Nathan.Fontenot@amd.com>, Wei Huang <wei.huang2@amd.com>,
- regressions@lists.linux.dev
-References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
- <674fd2b4942f1_3e0f629420@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <33b4b93b-5ab6-4a3b-b3b2-c9b3cbc9d929@amd.com>
- <6752acd92baf0_10a08329424@dwillia2-xfh.jf.intel.com.notmuch>
- <2b5bb8d8-6a7d-4a58-bde7-ce42d0a23f61@amd.com>
- <675918b414c17_10a0832943b@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: Bharata B Rao <bharata@amd.com>
-In-Reply-To: <675918b414c17_10a0832943b@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0012.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:25::17) To DS0PR12MB6439.namprd12.prod.outlook.com
- (2603:10b6:8:c9::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E0F1C07E4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 06:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733899328; cv=none; b=GOn4e0lmTkt+NdwNsrO+UKRo7VTlHpI7XEej7U6HbVqfFAxqaROJY/EYS+OzgALTWJU8Gy3/s9KeTwS0siuSXp0stxgXV3IQeRj29bSlCSCRjb8bvio6LcmH8jEY/Wuul/dD3Kocr2bDhWItuOWXGzgLnT8u/EZ5R4ksl4ARMtw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733899328; c=relaxed/simple;
+	bh=fFveP77bj++EtRJvy3YCVpCGVLLJJ20B4rPICaCeOGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/NG9Smavsf4711lzNKAdBOc5cpokSj8MbBXFnJi3jJj1TWyyhGnfjt6XpL69oEHNWVHSVtJ/SCxmXciGRlRgXkGlRam83nGJWAF/FhdpZHMYYt2P1bsyPMmV6KOtiTyxejyj4z6kMI2y0DLTHzRZeJyw7BGJUlVQbIQmmbZmoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C6lNLLYu; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2156e078563so47997135ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 22:42:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733899325; x=1734504125; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SH3wSIT4qOX2QKfL+TrwrsCejAN9yTnzSj4WW/yKpJg=;
+        b=C6lNLLYuAi3iOkTWhHraGef9VKzoFa2fR73ZBzgK2WoDEYteR2UNmNFvBAdr0KjT96
+         CJP1UcaTA1cT6eqPBdY8+mZbTMX01MGuYbfjbYCPM9ezwTLtg1btDEbnrbC14bM1zvz+
+         YumdvNHhM0zhY2Qlo60fizSY7rl/xXowIwff9aF6dvwsxH6pcMICig24vNeo3Q2q+N89
+         u9XI5Z9KZ2BtdgSZPUeKcltSutLBubeTxnKYVBn1H7V5U5yCou+/9XJoOoXIYYRq7wA/
+         aQEVc2c6v3XiKvxYeflBAjubag1r/e9NXl/ps+W9XVKkHkhgaG18LIAkmCz0v4AuBTmB
+         akLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733899325; x=1734504125;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SH3wSIT4qOX2QKfL+TrwrsCejAN9yTnzSj4WW/yKpJg=;
+        b=iyHBVuwwNUS4UTOnhs02X7OBKQ+k4cURd40KqllE5KKvmqLYtYrSLCx7TLDPNx3uh6
+         Fwff8A1C1xmkmAojzLiaOOZzL9qPmT8+OkjN5452e8c9eXCgM3OXD0wu3RTYx0USJh9b
+         IJQK1l3TWLjYZ8Y2xQhFuZvG/EEGZ0G+t4sj+/kks8UmXsA6JVDbMdlUk+YegSSlIZxj
+         i73eGO2fT8buhvU7AgXb5QTNDQIHMbq4zj0K6VyjmW52myI7YSJInjOFxqiAhJCCYbu0
+         dYB512CSy6VSlZqZ0kXsjfSP+KYw0L6MOz+QyYe3/HXssrj3EGcdhU95j4XFf0RzEtxB
+         M+bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwxn4ffrKoLlXr+b2w/ZuFsQVkGwuKtVZGZFP9PCuuwxE/nhT97LQhQ1by+ksmwoh+JsytnTIWQocDubE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO7WIJgrXqkBZTDEcdzSoeUP7DiL81Cd+cyZSGojs2oTWWXFuO
+	fubtMlFp2H+5MWvemrdLhQL4LUVHGxpWqaNhQqkA5EaN/ykKIHUvsi4Dk97MLg==
+X-Gm-Gg: ASbGncuNVhbHpwQkUTXaY4vwPO9MEdHJS42g9IonaJe6DFYQiFYwyAm6GvJ0SlMSIs7
+	zOSLE+/Lhb421PdbTPFc2EbNE5XdkFQoLs93WmG6NspqygWSI0Lrj+dt7rGhI7XBsuFL2fxevgv
+	sdfdW0xo15IJvdeJmL4tVH6HJCpAIGxwYBS0xujeXloYtz7He2iOqgkxiibxhioGrkUrrOV5N6H
+	IITopPoIf1/Ms1UtpgEQg7A7uxnBz33FM2/UInm5Ey+62JnTH71UuZj84I5/LY=
+X-Google-Smtp-Source: AGHT+IH9UlXRucX87GfmhnSoQKYdfmBeTDDM2mlEgeF1Kko5nxbNbCHi9DSPm8qDL6kLUq2gp73FUQ==
+X-Received: by 2002:a17:903:32c3:b0:216:48f4:4f1a with SMTP id d9443c01a7336-2177851dc1fmr29082555ad.16.1733899324633;
+        Tue, 10 Dec 2024 22:42:04 -0800 (PST)
+Received: from thinkpad ([120.60.55.53])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21618d9beafsm82495805ad.6.2024.12.10.22.42.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 22:42:04 -0800 (PST)
+Date: Wed, 11 Dec 2024 12:11:55 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Cc: quic_krichai@quicinc.com, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] bus: mhi: host: pci_generic: Add support for QDU100
+ device
+Message-ID: <20241211064155.gqlbi3leoaaz3w6b@thinkpad>
+References: <20241209-qdu100_us-v4-1-f9010b2a09a2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6439:EE_|CH2PR12MB4262:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02d38c21-b6f2-4e7a-5f9f-08dd19aeb24d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QmdRQmY3bDVIbWlFcjU4OHBBbE5PYTl0LytZaTVteVZ4dTBJK05KWEF6U0E1?=
- =?utf-8?B?MWpqNlorQUpibzRJZ2RscC9EWUpRQnVoazFKZEVRK0NBenJhVE1vSXdlcEI3?=
- =?utf-8?B?U2s2Y0owSHZGMko2OFZoUytCaEQwS3VFZmkrblo3d3ZVSGpYUWo3RmlkLy9Z?=
- =?utf-8?B?ZGJlYkhkTVJzYzFxYWZHaFVmbjM3K2pQazl1U2pPV3lDU2p5Z0l1ZWxHWlFS?=
- =?utf-8?B?WXVKa2QwWU1wbDQ3S2NITFdybUk5QWo1T3pCMWg5bVhzK2s5U0tOcEg0T2Vp?=
- =?utf-8?B?d2FVN1Z5UEtUWTRxU2toZEZmMXNGSFh4dnRVb1liYkNabWtyTW4vUmlZYmd5?=
- =?utf-8?B?OHRIQlBtZ2htakN4RDRnSVVVWU9FMlhKdkkrT0FRbXpMRktFTTJSQTRzMkNC?=
- =?utf-8?B?MFg0TytOR2JOdGNQa3VJcmF3Ujl1Yks2UTZ6bEM1S2RzN09MRWdDMDBicm52?=
- =?utf-8?B?aW5SWWlVSVZaSGE5dStJbEYyTWR2N3JqVGs3RWxrTlV5ODBHM0NCSTlqMFJp?=
- =?utf-8?B?TThjNktGSllkMGxQTW1MT2pzT25qZkpIK1RFTko1VTlpVThIZFBjWjEzb2FZ?=
- =?utf-8?B?TWtjeE1ZRWszWWE4NmhtWFRXOTJHaXY4VWdpcDJMWjE5U0ZqL1phUGRCY3ZI?=
- =?utf-8?B?MFBoQVBXNk55VndaUkRlR2FpMm1mVXduYUJmeEl2Vlp5T05hUmdDRlUyTlo1?=
- =?utf-8?B?WGNQa2dmTU9SYkhtaDZ0Wlh3TDIyeVp3MitDWGJRVGFJYWcwTGdtdTVjdXhY?=
- =?utf-8?B?MGtGVGwvOTAwWXBxZnBxZ3lhVEtjRi9MbVFsMTQ5NGp5VGRBMUpvcTlqdXJJ?=
- =?utf-8?B?V3pFVnZlMjVXOFNOZklya0xkaFBBQjNQUmxvejdTQ3E0emtDVDRUS1dhdEVy?=
- =?utf-8?B?S1VMNzJvcWlSTUNhUmlrL2NCRWhmRTlGTlozTG9Nd2cwanJFL2NrZzhkUkMr?=
- =?utf-8?B?d1BrTEI4cHVRbFB5Ly85cmU4S1Q2TitsMHYrNnRIVFlRSWxWbFI4cXhaU2JQ?=
- =?utf-8?B?ek1qRkhSdXRnYVliczg3RHpoZ3p1MVpTYmxJNEllRVI4VzhOUVJITGt0RnhJ?=
- =?utf-8?B?QzB3a0dRVXNFQk5jR1hlcU9GUiszaGU1VFBieFJxeG9JVXVRTEV3cmcvbkRi?=
- =?utf-8?B?aUFBcDJ0ZHNCcWErR2FCZmZSR2VLcUlYL1RXcmFVZDVUc21mblF4MnZoeUtx?=
- =?utf-8?B?RjJtOFNFdUxCd2VOaEdzMVBmMi9GYTdUQ1J1SjF4VnE0cmVNNUpVUVRXbUg5?=
- =?utf-8?B?ODlIcm5XZ2IvWkpUNUs0VU9KR1VFQUdRRDBWVThVL2E0SmJHUzhJcGFaMEM5?=
- =?utf-8?B?eit3ZUg3T0F5VGhiRXNLUGRySjJCQWovQVNwa3ZTVGEza2l6VEQzeHd5aEU1?=
- =?utf-8?B?RmFxMm8xUzRqUDFZSktUSzFyc3RtK25WYnlVaVB4NmRha1g2dmdWWHhESVhF?=
- =?utf-8?B?Z2Z1OGpCK1VJaDViVkd1QXRWWDQ1dWFTbWdYVHlxWUdkZHJOUTFvNGZoR3BT?=
- =?utf-8?B?YnJBZVNPTXp3NG16dmpNdmRHMGE3VFlweHpybW9sWW1EQTFIa1l3anhvbjUw?=
- =?utf-8?B?ZHN2UENIcTgrK0Q2MjVvRGxxNmd6am1iTTh3OG5ENGtIVm5DaUdSVWtSbC9n?=
- =?utf-8?B?Qy9SS09DcUlHaUg2S2tLUzJSclVUcU9ySUpteElsZWgzTVFwYjdjNUlYV29v?=
- =?utf-8?B?YVNmWTJmckNEODNlM3hGUUxleDJrYUxWelgwb0FuQjVRbHlKMWtmNzBGQTVv?=
- =?utf-8?Q?gyiO3y4RMVeDSHXG5Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6439.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SnY2cXpEdWxRS1k3TUxYYisyd2ZUNlprTElQTlZVM1lBZkZxYjM5Wk01YzNz?=
- =?utf-8?B?dDd6ampzWlhrcStqT1VjVUdtVmE0VVFtWkdIWDlKLy9lblI3MVFPN2I1SkMv?=
- =?utf-8?B?WmhYNkFzOGZXbWhKbjJUOHNGVmdYUUFVQXl2NTFHM1lkbmp1d0hGeHVqTzN4?=
- =?utf-8?B?U2pyZFF6eHg4aTJhc1pEb252MmNaNHlMZ1lldnBSYmt3T2tlR2JrY0RuWER6?=
- =?utf-8?B?VXRWbzdQT3VjazhkNHg2alZ4WlExRHQ1bHFRMUpVM09ucTRuSm93MzZFRm5p?=
- =?utf-8?B?U3ZoUjN4SHlEZ1dYdnAvb3pEclY0dmY0VGdBVjFYdk53d1NIWnVhN2FNNGI3?=
- =?utf-8?B?WkZRMXJXeEM4R1l3LzhKNk9Ib2dmK0s3WGhPTkEvRDFjWTlrdE45Yk8yLzVt?=
- =?utf-8?B?VVFBbFByd1QrdFFiekVNeHpXMy82RDh3aUg3YURmcTJZZU1UVDhOMThKUjNC?=
- =?utf-8?B?dUJMZmIvMmdpamVJNDlxa0c3U1YyUFE5cE9DSHU0YmxRdVZuVkEycSs0SzRu?=
- =?utf-8?B?ODlWakZsT01UV2hzOGNDamx0Umo3eW5SNHdvQnBHRDRyZVg1NFpxTytVT0ox?=
- =?utf-8?B?NG9jMElOTVZGa2F0VGlrZ0JRNmxRVlY5dWZjdEdNZUN4Qk90YStmNlBaOUVS?=
- =?utf-8?B?ZHBQTHQyUVBYOGUyTDRDOEsyOHRoUHVjdGVNZG14OFNiTVZVSkNyQ0pWZzlT?=
- =?utf-8?B?emJvVURsZ2VaS3lMR0NrRHhMeGY2WE1xandKK1NxZlpISEhRWTFxejl0Sk5I?=
- =?utf-8?B?ZXlEV2tVT1dOQitQL0dYaGZKR09tY09rbitHS3A0VnZncEZNK1ZrdEZ4NUln?=
- =?utf-8?B?MlpielZCYUVncHN2eUNSMmo1NVJZOGt5bEgycnFBOHUzT09rNU5TTHo5ZWkx?=
- =?utf-8?B?a2gwUVBwSDVjc05zVWZqZzdDUkJtLzk3UExRYjIwcTF2enBxWUdSSzFYVVJl?=
- =?utf-8?B?SnA4dGR4UE5Nd0VMTXlWZVBQUVpxbzZDa0M5bThaQWRvSWR5TFdnbUpEc091?=
- =?utf-8?B?Q1R4L1JwYm9BaUtzV3pJNStQcVBEcWpLYWNRNTg3L3dsNVdDK1FkWlo2M3NG?=
- =?utf-8?B?d2E5VVRneDN5UnRQRmxwbXMvbjkwNXE1aWJOb3p3ekVHN2FWYnNqdzJvVWxl?=
- =?utf-8?B?SzM4aXoxdjRMTHVPTk0zbGpySDVvRDd4VFVWdjQzMW9JdzdCK0ZMTHlwU08z?=
- =?utf-8?B?TGhteDVGMk0wVTlUN1MrWXBubzR3ZU9NenJQYlJIV0JwNHRvNFVhbmVYUzRu?=
- =?utf-8?B?Y2RyMzhXeXBiU2VOVjZ2emhuYk5iTUt2WTRJVkJTTEZrdHFZMW96SmlMdGQy?=
- =?utf-8?B?U2VmZkhMeHBXRXUxWlljaU5uSW5GZlBtTHFla2xsc1hUNFdydUZvcEd1QU5D?=
- =?utf-8?B?ZWlCWnhBYTI2WUE3OGdtV0kyVVExZFNCTjExVDVvZ01PUlJENlBLT3JJRFky?=
- =?utf-8?B?dW83bXB2blR6UVgybHUzbjlsWkVMT3hhczFqRldsVHNwUlNpU0RhRFdPdnpK?=
- =?utf-8?B?ZTRsZmFEOWs4bmMwUG9ZNTNzZEVSRGt3VVA2YjdKbTBWdkhQT0ZTU0RkNHBx?=
- =?utf-8?B?Z2FqM2llR1cxNlpyeUt6T2FQa09EaXJNa3RRTm1vVDdkVHdlbUpnemxSVEx1?=
- =?utf-8?B?bWJFL0VVbGlQNHBWbWNWVWRodExGZTJUT0Vjb2ZDWVdNV0lVZ2orWGdlNzI3?=
- =?utf-8?B?WEY4OXEzak9BVXFmNDlsRTU3WG9iQ3Uva1BGT0x4eTZJSDdGdWQwRCtmaHRL?=
- =?utf-8?B?b1dkTXhqNXNqd2hzNkNWaGVLcnBocTlNK3pnN3MrN1h6UVhPNzBFNkZKNXBk?=
- =?utf-8?B?UkNlWnlZRW1ZUndDNUJmQ3l5VjdLWnp6UWR4ZVdUZUk1RlpNdUZlcWpMb01S?=
- =?utf-8?B?dEZNNzkxVjhKRXVrMzU4TnZoWTB0Yk54eHFTdTBadkZlZnJpUGhPYXRVOEVv?=
- =?utf-8?B?V2NuNGJBSDJ4aU13YVNOc1hiYzJ0dTdBN0N1bDNGc3o2OE52UEFsMDRETjNJ?=
- =?utf-8?B?V2Q2MVFJalk2b1gySFphcTVKb0twUkhDNWxPZ1lUc2NCdVQ2K2NpbXZpOXJp?=
- =?utf-8?B?amxtRGFCZisrTFNVK0E4OEZKOTJmYzRwOG13TisvRlRRR2ZtNmVFbW8rYmlV?=
- =?utf-8?Q?16xw4sh7GG6De5y7KpMTRJnve?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02d38c21-b6f2-4e7a-5f9f-08dd19aeb24d
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6439.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 06:40:26.8894
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4J+B7JucEFjjxo6bPk+YcDMfKnYCCeisVItxGKnHutVs4Iod6PGLQYUaOke7ptefsQDpiP8QJYwg3RCBkX0dVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4262
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241209-qdu100_us-v4-1-f9010b2a09a2@quicinc.com>
 
-On 11-Dec-24 10:14 AM, Dan Williams wrote:
+On Mon, Dec 09, 2024 at 11:09:50AM +0530, Vivek Pernamitta wrote:
+> Add MHI controller configuration for QDU100 device.
 > 
-> I was able to reproduce a similar set of conditions with the cxl_test
-> environment:
+> The Qualcomm X100 5G RAN Accelerator card is designed to enhance Open vRAN
+> servers by offloading CPUs from intensive 5G baseband functions.
 > 
-> f010000000-f04fffffff : Soft Reserved
->    f010000000-f04fffffff : CXL Window 0
->      f020000000-f03fffffff : region3
->        f020000000-f03fffffff : dax3.0
->          f020000000-f03fffffff : System RAM (kmem)
+> Link: https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
 > 
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> ---
+> changes from V3:
+> - Removed IP_SW1 and IP_SW2 support currently, will add once
+>   SW_IP1/2 channels support are added to mhi-net driver.
+> - Removed qdu100 edl images, as EDL images are not needed.
+> - Added space inbetween kernel_ulong_t and mhi_qcom_qdu100_info.
+> - QDU100 XBL FW images were pushed to linux-firmware git repo
+>   https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/qcom/qdu100
 > 
-> ...but that did not result in the bug. So there are some other details
-> missing. Can you proceed with providing the dmesg from the good and the
-> bad cases?
+> changes from V2:
+> - updated commit text.
 > 
-> gist.github.com is useful for this.
+> changes from V1:
+> - Changing naming convention from modem_qcom_qdu100*
+>   to mhi_qcom_qdu100*.
+> - Updated commit text.
+> - Fixed and corrected by passing mhi_pci_dev_info struct
+>   instead of mhi_controller_config.
+> ---
+> 
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 55 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 07645ce2119a71c9277356e962252b840379cd81..dee9fa9e7ae441fbc9a86e53694568c0ba192002 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -245,6 +245,58 @@ struct mhi_pci_dev_info {
+>  		.channel = ch_num,		\
+>  	}
+>  
+> +static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
+> +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
+> +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
+> +	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
+> +	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
+> +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
+> +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
+> +	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
+> +	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
+> +	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
+> +};
+> +
+> +static struct mhi_event_config mhi_qcom_qdu100_events[] = {
+> +	/* first ring is control+data ring */
+> +	MHI_EVENT_CONFIG_CTRL(0, 64),
+> +	/* SAHARA dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(1, 256),
+> +	/* Software channels dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(2, 64),
+> +	MHI_EVENT_CONFIG_SW_DATA(3, 256),
+> +	MHI_EVENT_CONFIG_SW_DATA(4, 256),
+> +	/* Software IP channels dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(5, 512),
+> +	MHI_EVENT_CONFIG_SW_DATA(6, 512),
+> +	MHI_EVENT_CONFIG_SW_DATA(7, 512),
+> +};
+> +
+> +static const struct mhi_controller_config mhi_qcom_qdu100_config = {
+> +	.max_channels = 128,
+> +	.timeout_ms = 120000,
+> +	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
+> +	.ch_cfg = mhi_qcom_qdu100_channels,
+> +	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
+> +	.event_cfg = mhi_qcom_qdu100_events,
+> +};
+> +
+> +static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
+> +	.name = "qcom-qdu100",
+> +	.fw = "qcom/qdu100/xbl_s.melf",
 
-Sorry for the delay in providing the data. The system wasn't available 
-for a while. Now I have put the good(6.11.0-rc6) and bad(6.13.0-rc1) 
-dmesg and iomem logs at
+Can you first push this fw to linux-firmware? I haven't enforced this
+requirement earlier, but that was my mistake.
 
-https://gist.github.com/bharata/4a57db11e044fd1d313035f3dd5f763b
+> +	.edl_trigger = true,
+> +	.config = &mhi_qcom_qdu100_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.sideband_wake = false,
+> +};
+> +
+>  static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
+>  	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
+>  	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
+> @@ -822,6 +874,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* NETPRISMA FCUN69 (SDX6X) */
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
+>  		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
+> +	/* QDU100, x100-DU */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
+> +		.driver_data = (kernel_ulong_t) &mhi_qcom_qdu100_info },
 
-What I see is that in the bad case, we hit the below shown dev_dbg 
-message (not seen in the logs that are provided)
+Did you read the comment on top of mhi_pci_id_table[]?
 
-static int hmem_register_device(struct device *host, int target_nid,
-                                 const struct resource *res)
-{
-         struct platform_device *pdev;
-         struct memregion_info info;
-         long id;
-         int rc;
+- Mani
 
-         if (IS_ENABLED(CONFIG_CXL_REGION) &&
-             region_intersects(res->start, resource_size(res), 
-IORESOURCE_MEM,
-                               IORES_DESC_CXL) != REGION_DISJOINT) {
-                 dev_dbg(host, "deferring range to CXL: %pr\n", res); <--
-                 return 0;
-         }
-
-With this, it appears that dev_dax_kmem_probe() won't happen for the CXL 
-range and hence CXL memory doesn't get detected.
-
-Let us know if you need more debug data.
-
-Regards,
-Bharata.
-
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
