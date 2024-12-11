@@ -1,145 +1,174 @@
-Return-Path: <linux-kernel+bounces-442359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C233B9EDBC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:35:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84589EDB2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:28:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 217E6280ECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BD71675AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6252C1F3D33;
-	Wed, 11 Dec 2024 23:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81641F2C43;
+	Wed, 11 Dec 2024 23:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WssAM4Tm"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iU7GxywT"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DCB1F37D2
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6801F2389
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733960102; cv=none; b=RfhwXEQUbH/AtXRdR0RVzluf1b2YBjC7Io/r2vI+NAEXkbCMrr3x/53oQwpbSVOm5JGW6i1WPc0i2fcclN8OYFWI31+AKyHsCB+QsfWJdQyGDtdLOsvFuqumipvEfiQ2C95FoDR0LTL9fOcsJxzD8qk9fujaX3G8VK9mlY8vM3Y=
+	t=1733959680; cv=none; b=BBKNsq+hjvK1AQWnBKQUHRq8n88eB1eTPQtAwo/UcwxRUeU5CVx+/ZOavdlNETFYdltyDYt2rmd8Ge1ewWvTQemOzuxC32SRcsd1nKts9riw1YSNq38r+p1RNiARAY8mfdZADS5DseI1hZUkUzXZV5IhsPruAE9zbLFcpeUL064=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733960102; c=relaxed/simple;
-	bh=rnQKE1RTYE2iSp7z3LJOQTY1avxrZxMWdJEvkL0s4RA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DQFLgOmqdJhV9YKNvOmb3lUJr9L6spZJIH2yYWGM2RffxCdyRPTdwtmz8zR1fwWGy3L+sfUCFiFr5L4A4kEPb17t2zqZuyNE8RYV1c3p/GjJvJA1/n5DSnKnfJWyZwh25FplTuiyRt7vlYFqbdIfyxNiHKn1WlPb+mYMMf+Ns1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WssAM4Tm; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ea8de14848so32777a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:35:01 -0800 (PST)
+	s=arc-20240116; t=1733959680; c=relaxed/simple;
+	bh=tkYUgsJNBXav1rnN7mRsWNxCkvx1+/sVfFghfRuojcE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=X+HWoQhGgoeXiApCVU25FkSv4BWtZiZ9JGMNCguW81aA3BH8Idgbqr2qCPQRW70jD+Vexjbqhx81L7YNJ/aobm+duK5QEA+JJHOBcnNNCI2sgBWEmPG80eM4LTSAzSFGdDQqmNA26FQfezi9v/N3GeETt3Ng0nqylxkR33fuGwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iU7GxywT; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7fd3c241975so1025652a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:27:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733960101; x=1734564901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u2J0kh/C+Q2Vqlr3kPJfElERrbZFRIeOwOwK3EB/PmQ=;
-        b=WssAM4TmXyvlbqE+cYZKYsNREaQu7CotNEhgu1uWWgNfLUeodR80tHhmBLj7fuUsi2
-         LLcCTRnxSXTQAlCz5QakzBoxOLqhdAaPzXYxweckrnDRMcx8VhjHeTYTf1QTUfJ7MgCS
-         pC8/ZeRB1BqcGy88jQBRNk11uPVZKkrMGokitEDMEbyq6KN6bgjTbreTChCQYJDh6t/x
-         Sc56LEKmC590U2lWhA3Bgo94g7ig1Gb6sPPNQmDajGArp7z3tL2R5Dt4oWm2hj8OJrnq
-         XHuXQLjzAGlJP16r6vfx9wiOvckrzXF5/T/8eHXnb4Xn4klMBQMy6NvMhe4ZCRJgrisQ
-         9nqw==
+        d=google.com; s=20230601; t=1733959678; x=1734564478; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5Y13tezS9osfEyeZZhDu0hB4QwVrkWFM3vdAGWXDL0s=;
+        b=iU7GxywTPRhv00BP/fgEg0NmrmdoZvsb18J0qNknuA9FMsK90V2SUmf3EHvcZEMqxJ
+         2K0leJKkuL/h0g5LyguBhaAzdCwf/ixV35hU2N28UlRo3iDCexPyZJlZ8ADVsUbzQdSu
+         36f6fBihpDkgrvms7FyRKG90XrZdvglESUBx38od50WwLvZKwzAq1mdoFtMhJK5InUC2
+         2maZR+72rUQpReNpLsRqs44RtGvHjZvqOxXIt3BomWgB01Pu7FsM0OeM7kooK/j+MkHg
+         7sUfGhlRaKTjZr3YSiu0HnafSMsqeck/TWmmYHeBvKSEXWEpIpYD65lm/dCdHhJMAwbD
+         3fsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733960101; x=1734564901;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u2J0kh/C+Q2Vqlr3kPJfElERrbZFRIeOwOwK3EB/PmQ=;
-        b=G85d03jzKWHGENolW1SRAQIyI6YuPd3PPInX+Efn/6eAMPv+60qFmYDJtOlr+mOIyq
-         vAYrAk2PGexhF5b52YVhN+5GY5GQz/LlQ1BY9XawAcf3DIiU0LtnE0WHK+dh7FhJVGAG
-         BV7sWmyxbRdZIxKeduEUV5ATJru2pNT0w59EM2FtIvRb8+mCno41OlZ4D7S39q0VpoaV
-         SK/lb3SgpViHJIpXAHGvaUWlidyomxv4uTZeA5RDSfZpu79QsfFjM9Rc2OqmsjvHjUZn
-         P1u0AYnwLC1LQ3JF3w06j6KVxIA9hf1BOOjKoHJtz/rnOYlvfsiRg8bORRaWcYvz9Ycv
-         bpBg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8EySqHCAGpVFOBiCRRPJmL3cXySo9VaErc1nBc/TY/Ex/oqx5ZTSRTPIE/B+rI7IwERo/j9+jM7qDu8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1upXAZtsHZbayi4zR6U8l+eMXVWf/l3HIdQQgxGaA49OfUMrz
-	u3xYNs+aTroqjRnpEN/7NYTHMJl3gposFCZwwZh2l8MUZae/tdI7
-X-Gm-Gg: ASbGncv5CHa6w0UHeBMpkOkI9XeyU+nCwoIxEEET/XvjVAuyo0oBzsdhkZBgm+i5zIX
-	z3ApsGTRQSafV1OZRGbNZTc88os2nxsgqjDe1CW1MVkK8kL+sawaPhzgc9ncNPjnjsKy2vkQz/V
-	p5YcQfPcKe9XzvEBzzsVt66FbSBSht2sqL02BSrQVtF7zCVMPgJapxSCVk9y17H1H0ET2TsJCmF
-	l14kcj2Vw2gz/2pwMYUYOTnkCFmVzo3b7idoTpf8y6uLd6eQSNOoANc8ZyACBaB3KuiS/AjdlLB
-	NPL0
-X-Google-Smtp-Source: AGHT+IFnc82dqozPBaLWZCaqdNgLRXLt2WJ+FjtNGOWGP+BFdNpaCkKzoL8v5JfEpNyLeMM9x2HLFA==
-X-Received: by 2002:a17:90b:4c48:b0:2ee:d024:e4e2 with SMTP id 98e67ed59e1d1-2f127f565bbmr7814542a91.7.1733960100523;
-        Wed, 11 Dec 2024 15:35:00 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef8a933fdbsm9229485a91.41.2024.12.11.15.34.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 15:35:00 -0800 (PST)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] staging: rtl8723bs: delete HAL_DEF_DBG_RX_INFO_DUMP enum and caller
-Date: Wed, 11 Dec 2024 20:26:40 -0300
-Message-ID: <20241211233415.37702-3-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241211233415.37702-1-rodrigo.gobbi.7@gmail.com>
-References: <20241211233415.37702-1-rodrigo.gobbi.7@gmail.com>
+        d=1e100.net; s=20230601; t=1733959678; x=1734564478;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5Y13tezS9osfEyeZZhDu0hB4QwVrkWFM3vdAGWXDL0s=;
+        b=vA3Ec12G/cqxi4E52Bwb5DXyOvVZypvGRhwJDL/+SUfaffG1Xnn+zCT5LBHX/5KE3d
+         6PT/V3+/cpIO1YfluRRURgWrFWpVrpoyL6kakAB4qLN9t5E2Ux5kWLU2BqQxrpHL1Ton
+         oYfLTO8a1ZDcp5nXgu+yIQftQNR+fioR/pJfJm5JJUYAK7iYAWO17QyokF3jNalwKOIZ
+         hXZNqpLTvhWfA0T8sW3hrStvf181q1OzWRRyQd4fy1GFfbq2JvlKJXOB1WqPsfxl5PO7
+         NMvcyLdMtqaqJ+oXWWeEswk9ZUePIUZvu/FzEyUdBSwiXoNX9jTR0IfWOcsqRrIatGln
+         lq/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVkYXkB+mwPnoOZR1SJDAcEaSewlE5qixf6hDLGlnYJfreGLoUjwqvFs5yTq5NqSO7PGflVHMOQr/M7nFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Z3OVksS0HrcA4+W2NcsKBvz+cHe2qojO4zUrTY1PWtKX+sKM
+	ZUoVw0u9VQNJN/rtCAqSCH5h2C2eFfvQZfuZM/DTCfoTVMcYkxUaPH5k35/wH3QRjdLcURZF2JB
+	NjtxICF2f1IOxvT/e3n4GsQ==
+X-Google-Smtp-Source: AGHT+IH+hxwnbTejsd5rMe6ZdiiLsQVYXh76CpSNZ1O0EO7ZME4Z+uiov/c6u6U8sBeYTnWqfHb7LFZNMZjeMUedcw==
+X-Received: from pjj11.prod.google.com ([2002:a17:90b:554b:b0:2ef:9866:6155])
+ (user=kaleshsingh job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:1f81:b0:2e2:c2b0:d03e with SMTP id 98e67ed59e1d1-2f13abc6e43mr1624666a91.5.1733959677870;
+ Wed, 11 Dec 2024 15:27:57 -0800 (PST)
+Date: Wed, 11 Dec 2024 15:27:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241211232754.1583023-1-kaleshsingh@google.com>
+Subject: [PATCH mm-unstable v2 00/16] mm: Introduce arch_mmap_hint()
+From: Kalesh Singh <kaleshsingh@google.com>
+To: akpm@linux-foundation.org, vbabka@suse.cz, yang@os.amperecomputing.com, 
+	riel@surriel.com, david@redhat.com, minchan@kernel.org, jyescas@google.com
+Cc: linux@armlinux.org.uk, tsbogend@alpha.franken.de, 
+	James.Bottomley@HansenPartnership.com, ysato@users.sourceforge.jp, 
+	dalias@libc.org, glaubitz@physik.fu-berlin.de, davem@davemloft.net, 
+	andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
+	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com, 
+	leitao@debian.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
+	kernel-team@android.com, android-mm@google.com, 
+	Kalesh Singh <kaleshsingh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-After removing code isolated by DBG_RX_SIGNAL_DISPLAY_RAW_DATA cflag,
-HAL_DEF_DBG_RX_INFO_DUMP enum lost it's use. Removing the enum
-and the caller.
+Hi all,
 
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 1 -
- drivers/staging/rtl8723bs/hal/hal_com.c       | 2 --
- drivers/staging/rtl8723bs/include/hal_intf.h  | 1 -
- 3 files changed, 4 deletions(-)
+This is v2 othe the arch_mmap_hint() series.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index 317f3db19397..952ce6dd5af9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -4959,7 +4959,6 @@ void _linked_info_dump(struct adapter *padapter)
- 					rtw_hal_get_def_var(padapter, HW_DEF_RA_INFO_DUMP, &i);
- 			}
- 		}
--		rtw_hal_set_def_var(padapter, HAL_DEF_DBG_RX_INFO_DUMP, NULL);
- 	}
- }
- 
-diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
-index 1803c0cd3a7e..b41ec89932af 100644
---- a/drivers/staging/rtl8723bs/hal/hal_com.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_com.c
-@@ -682,8 +682,6 @@ u8 SetHalDefVar(
- 	u8 bResult = _SUCCESS;
- 
- 	switch (variable) {
--	case HAL_DEF_DBG_RX_INFO_DUMP:
--		break;
- 	case HW_DEF_ODM_DBG_FLAG:
- 		ODM_CmnInfoUpdate(odm, ODM_CMNINFO_DBG_COMP, *((u64 *)value));
- 		break;
-diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
-index 282e141616b0..85de862823c2 100644
---- a/drivers/staging/rtl8723bs/include/hal_intf.h
-+++ b/drivers/staging/rtl8723bs/include/hal_intf.h
-@@ -144,7 +144,6 @@ enum hal_def_variable {
- 	HAL_DEF_PCI_AMD_L1_SUPPORT,
- 	HAL_DEF_PCI_ASPM_OSC, /*  Support for ASPM OSC, added by Roger, 2013.03.27. */
- 	HAL_DEF_MACID_SLEEP, /*  Support for MACID sleep */
--	HAL_DEF_DBG_RX_INFO_DUMP,
- };
- 
- enum hal_odm_variable {
+Changes in v2:
+  - MAP_FIXED case is also handled in arch_mmap_hint() since this is just a
+    special case of the hint addr being "enforced", per Yang Shi.
+  - Consolidate most of the error handling in arch_mmap_hint().
+  - Patch 16 ("mm: Fallback to generic_mmap_hint()") was folded into
+    Patch 2 ("mm: x86: Introduce arch_mmap_hint()")
+
+v1: https://lore.kernel.org/r/20241210024119.2488608-1-kaleshsingh@google.com/
+
+=======
+
+This series introduces arch_mmap_hint() to handle allocating VA space
+for the hint address.
+
+Patches 1-16 introduce this new helper and Patch 17 uses it to fix the
+issue of mmap hint being ignored in some cases due to THP alignment [1]
+
+[1] https://lore.kernel.org/r/20241118214650.3667577-1-kaleshsingh@google.com/
+
+Thanks,
+Kalesh
+
+
+Kalesh Singh (16):
+  mm: Introduce generic_mmap_hint()
+  mm: x86: Introduce arch_mmap_hint()
+  mm: arm: Introduce arch_mmap_hint()
+  mm: alpha: Introduce arch_mmap_hint()
+  mm: arc: Use generic_mmap_hint()
+  mm: csky: Introduce arch_mmap_hint()
+  mm: loongarch: Introduce arch_mmap_hint()
+  mm: mips: Introduce arch_align_mmap_hint()
+  mm: parisc: Introduce arch_align_mmap_hint()
+  mm: s390: Use generic_mmap_hint()
+  mm: sh: Introduce arch_mmap_hint()
+  mm: sparc32: Introduce arch_mmap_hint()
+  mm: sparc64: Introduce arch_mmap_hint()
+  mm: xtensa: Introduce arch_mmap_hint()
+  mm: powerpc: Introduce arch_mmap_hint()
+  mm: Respect mmap hint before THP alignment if allocation is possible
+
+ arch/alpha/include/asm/pgtable.h           |   1 +
+ arch/alpha/kernel/osf_sys.c                |  31 +++---
+ arch/arc/include/asm/pgtable.h             |   1 +
+ arch/arc/mm/mmap.c                         |  43 +++++----
+ arch/arm/include/asm/pgtable.h             |   1 +
+ arch/arm/mm/mmap.c                         | 107 +++++++++------------
+ arch/csky/abiv1/inc/abi/pgtable-bits.h     |   1 +
+ arch/csky/abiv1/mmap.c                     |  68 +++++++------
+ arch/loongarch/include/asm/pgtable.h       |   1 +
+ arch/loongarch/mm/mmap.c                   |  49 +++++-----
+ arch/mips/include/asm/pgtable.h            |   1 +
+ arch/mips/mm/mmap.c                        |  50 +++++-----
+ arch/parisc/include/asm/pgtable.h          |   1 +
+ arch/parisc/kernel/sys_parisc.c            |  53 +++++-----
+ arch/powerpc/include/asm/book3s/64/slice.h |   1 +
+ arch/powerpc/mm/book3s64/slice.c           |  31 ++++++
+ arch/s390/include/asm/pgtable.h            |   1 +
+ arch/s390/mm/mmap.c                        |  51 +++++-----
+ arch/sh/include/asm/pgtable.h              |   1 +
+ arch/sh/mm/mmap.c                          |  83 ++++++----------
+ arch/sparc/include/asm/pgtable_32.h        |   1 +
+ arch/sparc/include/asm/pgtable_64.h        |   1 +
+ arch/sparc/kernel/sys_sparc_32.c           |  33 ++++---
+ arch/sparc/kernel/sys_sparc_64.c           |  96 +++++++-----------
+ arch/x86/include/asm/pgtable_64.h          |   1 +
+ arch/x86/kernel/sys_x86_64.c               |  64 ++++++------
+ arch/xtensa/kernel/syscall.c               |  31 ++++--
+ include/linux/sched/mm.h                   |   9 ++
+ mm/huge_memory.c                           |  17 ++--
+ mm/mmap.c                                  |  86 +++++++++++------
+ 30 files changed, 491 insertions(+), 424 deletions(-)
+
 -- 
-2.47.0
+2.47.0.338.g60cca15819-goog
 
 
