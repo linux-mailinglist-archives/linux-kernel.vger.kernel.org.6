@@ -1,189 +1,135 @@
-Return-Path: <linux-kernel+bounces-441495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562629ECF36
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:59:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99E89ECF39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:00:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA7418871E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BBA2810DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B6D1A83F4;
-	Wed, 11 Dec 2024 14:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E801198A38;
+	Wed, 11 Dec 2024 15:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqUSXot9"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Toi6SJl1"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98419F116;
-	Wed, 11 Dec 2024 14:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C46246343
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733929159; cv=none; b=OOLm07ja1fc6gPzPsagLSOUIvyvhmXPfp0U2EBrXuCYH/4kR1phuHyqQpXBHQFft2SxX1l82Y70idi9p+V/g6vjZHC4wddAdIg4qQf9Bd+Wlo6xKmwXo4hJmAEt8RV3btv2YG5lZ8KTXKgqjdLFJ8Gb5YM0K2GG69Xsu+GK07Ps=
+	t=1733929256; cv=none; b=cCGChjqOeUwTQL0xoSa3uLxNx3+y/wc+9TtU0vpLpAuyFGBsKBTy+udkzObmxHukzfEn7Ye62gi8k3qJzwvFt0wtzGELUlPFU9qx1MIAUGcSETdrmS6ZnxzxicB0b/IpbFPJLEirabShIAlWXAcIuwFyGNXoiQXSlbjmUNpgYl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733929159; c=relaxed/simple;
-	bh=tm+XYf5eyhi5AgwnwhFjnz+5HTDe+tvhTnN4isbxBIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YGIDRLO8RPGKfzIxOFSPG+BFmCI1sXG9+mXyHUUzOCA7SNELzgbT1lbJ0Ljs9WIL28vejv8xuGIXJ90+xO7V1tcz8bJjLdggiQIpjWjWEyNW2iOMTnu5jemQoJpAy7EGF2Y1iOb6Nyacar3B4SaU1T0Epq73upUjiipR6vqZc0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZqUSXot9; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-85c4c9349b3so1157916241.3;
-        Wed, 11 Dec 2024 06:59:17 -0800 (PST)
+	s=arc-20240116; t=1733929256; c=relaxed/simple;
+	bh=tLszuGjmr5DmRzuJ37tFeyxJiAHTkhXYikVmA7/gTV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nH9jSnB+X8wB9o2ySo/e/iWfsN83k4qXzRuBthPLe0dEdJzYfFRef2U9enKRtW/eVoTOqFG+KIIby09pqIgE0EUrqNYa7MMdIDAV9YlgkPfpvyu44Nojn98rjLOhm5+YKccIFGr+LXzfhypwTBMfR99b5E5tnn4f7exJVlen89U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Toi6SJl1; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b676152a86so71967485a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:00:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733929156; x=1734533956; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qISq7GajMdBCcxBbvv6KzdEHLpfNlyE+uR1h/30xNC8=;
-        b=ZqUSXot9D9GoFGHIHt1/f2mzBl3Qz/F7E3gi6c6ZX961It8TFEfAye8FzQ1REylUKr
-         xQ0V6i2HY2exMKDui/Db/F7CuiovehjgLhrpQ7R99oNezzENInG/37vYI1FdeNcRRBgz
-         Bxx7rGhwOv7yp6mbadGcD/qlgtrJzVIFCiJn1iVyK8y7rFFJnXfJceObzDfphVpmQLVz
-         WZpmeqXOuMMuKHcqhPDUW1PghCbWjZcUDKqkaX0+WBj1uo0UdkHaWBfCbvcBZvstWHhc
-         p8aPwGxrUJLaNUzMAZdsjBFTEEgX0nExGi3WQFL4jHwoVTm3r2mmnHjWdLV8E0E0t2Pn
-         vANA==
+        d=ziepe.ca; s=google; t=1733929250; x=1734534050; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YrtmwbffSfZyT6YxRWc9FPtrtY5w8qbaif6a3GhziHU=;
+        b=Toi6SJl1+npOzcW9+TeiwHI0XkmlgzC7E9QHi4dIhLCs3M2nlMP06dauO2Jq0phb5Q
+         k/3Y/bxm4sspN/ruZxUdywsywb7kYJ8xdPRy7uS99AwnCvUAcHkR7skAU9wg2So4a5Ro
+         BJUtlrPtZGrqdddLLcwv1agZ4vW9cVlBmqfF63sJMHRxwt+Xb3C3F7SCyhVrHOlSECUd
+         i9h6hOuDyWCBPq2QaVxN78WUXl79Z0rIJPmrkuzAH992pynXaE9PlUUv5HWKTFVz17Ov
+         Jg4k2SGAiqylDcVRUxVed5Vsezx6v1ElbVKErzdnW2JkWYUITDDPSmrKqimS0h78bssn
+         0swQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733929156; x=1734533956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qISq7GajMdBCcxBbvv6KzdEHLpfNlyE+uR1h/30xNC8=;
-        b=NUf4u3Sn1ySkD96jGCd2Hg1aokUiCtSqtphPMNfIHc1BBYEaOfPUnDa7mt2ZT2FAL9
-         9c0Va5DkAorQfmPLQuK0e0hv13Ubfriaj2i5Mgk5PPgWBZ8dE6ATPE7zQ9my0Nc6Tii2
-         PQqRaHvTaXHOXPkAYHESuru59VlEso6tI6IejQT46EcGsnDjq+lMvbZV3wS5ZWi1F/kn
-         x7B0qNtdAnDx0HZVXTTu8JkLCJDXd7rHwtwHdffMxlbs9V1jN+yBtBr+LYc6gg02c1tz
-         DZKSRY/g2BsRrE2T9yphwUkF/NWbcsU7P3gTDCiyBgO6mDaNT8DXnsee4uRMAwyFdFRy
-         acXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpKBy3c6Sz4+FGaUdCS0Ky2lRyTXZZcAlB+Uk0XqVZ+D75FFDv8qmu3hpMfUA6cuc6o1LDjxZOScoXJRE=@vger.kernel.org, AJvYcCUr2FjC6hAl0V4BMiXERVj4+A+ZlxyILcS1OdJa8fIQZfR8Pp1TahwGxKeNSZD8F19jStldfZcv+A1s@vger.kernel.org, AJvYcCV7aiQHcIPt58QyBIvCLLhw7bV0BF1tKyzMJOgtirs9fbj+z61EcI3GLKhLe++qrfqhm/rcBW4AGiQ=@vger.kernel.org, AJvYcCXMLfuSndeIf1xrCk2CWofc0lrgfWPlJJd45+P3NDqVmI/sRuTVXkxERZWoUjcZd0u6JyqU3gg7/mtFLA==@vger.kernel.org, AJvYcCXgsLj7cO28HHgKWMMMQGlhLDvLKKnY3wRZgbPzgg1syUs/5il25cSCVc2DxvQbYc2Up/GLZLXbsLX+nFJ5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBeUW/4HrBXYqZ7EH7J+pzu3Il52GK/uBT43wAfGWjPLY8ufxw
-	4uPvymC899tJXyyog7g9mK9fpY/0m3HmLo8+0b3T+G6yBHgu+fexGsXGlx7TPgr5H9rceaB+BRT
-	4mUGq0vdUy1fdk4zBVrtJrLPfrWw=
-X-Gm-Gg: ASbGncuaynHAHfdk43aktfedFN7cAwQ2qtHnRFua6h4NtO1DhcKVkWff6O3V0SFvkNe
-	+aAOTvR7qQ2EGIuCm7JLyRGtkndRaqMK2CQ==
-X-Google-Smtp-Source: AGHT+IFDABXEejeuf1IKWb+Gu9FePZZpIgNOQ4IYdnMw3Kzd/38DL0IjJiFWqIpwT6VMj6TTqmfk4vxvTsyrCXE6AH8=
-X-Received: by 2002:a05:6102:4b89:b0:4b1:5cc5:8ffd with SMTP id
- ada2fe7eead31-4b15cc59238mr3092106137.11.1733929156563; Wed, 11 Dec 2024
- 06:59:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733929250; x=1734534050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YrtmwbffSfZyT6YxRWc9FPtrtY5w8qbaif6a3GhziHU=;
+        b=uMdvKMt5qHLXc0IX4MLt31PwgJ9mS04oqVDPEdcVCVNajY42+2peW7UkvGHqxJkmRe
+         TeyeVTX3DwbKToKTEvy9xS4+RromHXI6MTSyMRKRlvk0ZjXTQP01MoRYFmJRjnL7BsvU
+         2CB6sBvDj50m/fS98XtakyAfggBQK4xKc+WOCT6Phvs9z2d1JXF4VB1u53kigPa675dY
+         wjg2uuQN1yUFdS54bN3OpaIPZoza+suUrS6/uWow0p1rd2f1MH6LhmODYAGNDwil0JiB
+         1ULM92s8SZD50NhCKH6R73KDjZVR3J5nxAYYtvHMuZup14On78wfB5kt6hmffutwODOx
+         PvIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhSavFSq4hSTC0Vmyr73PclrtqhK8ulwavqz2hgEOdGCQi5J1wOi6fLzy6mcY2gYslPgltC+OArS2gsAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz16vh2gqWRKLiOJgGEtMPwKVOLI1PEqfBkvk78kAaviiG8QaUy
+	vW73KYinjKj7PXNcI7fpLyM/OhcW0BNUqmJ3gpqNJtVFrq6iej7ksQzsFqc6NBE=
+X-Gm-Gg: ASbGncv56AFMRhJ1oXgOrGkKhhAY9zQMwn7NQQJwlwQIHj4L3HeRSeeNxZMkOa/vjHF
+	JFVXKxSQfpqS7GDSRc2JfT2mPALRJwKOFmIGALTmUa+60Kt8jensbdp8DJd6AdVq8aIxhC1mdQR
+	ffz1i5eu1peQqv3g9IAPyOTremcqLyMUJ5p0q8gojeP2Bt3DB9v5lRZY4IrPTyEZOwrRnp/KZqd
+	VU2hOtGCzlIWZHd852w0tPDuAb98YnIcdS0nB9AO3QO4XhknpXmTRHnMkw0R68Fncvy4henFGzX
+	MANJb9GQbP9EHo0vyt4KMdPvvrk=
+X-Google-Smtp-Source: AGHT+IFQcbIbj/UVOC6lgBpyonYbHxz3lu1y3vK9mVU+Waihpf9zpnAftHXTy27rea7DKFP+zHsrCQ==
+X-Received: by 2002:a05:620a:4488:b0:7b1:4a2a:9ae0 with SMTP id af79cd13be357-7b6ebc2ded9mr501476085a.9.1733929250259;
+        Wed, 11 Dec 2024 07:00:50 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6ef71409dsm29466085a.121.2024.12.11.07.00.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 07:00:49 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tLOCm-0000000ADPI-0U4U;
+	Wed, 11 Dec 2024 11:00:48 -0400
+Date: Wed, 11 Dec 2024 11:00:48 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-coco@lists.linux.dev, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>, "H. Peter Anvin" <hpa@zytor.com>,
+	linux-integrity@vger.kernel.org, x86@kernel.org,
+	Joerg Roedel <jroedel@suse.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Dov Murik <dovmurik@linux.ibm.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
+Message-ID: <20241211150048.GJ1888283@ziepe.ca>
+References: <20241210143423.101774-1-sgarzare@redhat.com>
+ <20241210143423.101774-4-sgarzare@redhat.com>
+ <20241210144025.GG1888283@ziepe.ca>
+ <50a2e1d29b065498146f459035e447851a518d1a.camel@HansenPartnership.com>
+ <20241210150413.GI1888283@ziepe.ca>
+ <CAGxU2F6yzqb0o_pQDakBbCj3RdKy_XfZfzGsiywnYL65g6WeGg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
- <20241209-starqltechn_integration_upstream-v11-3-dc0598828e01@gmail.com> <7qt7thbuh5mvoaknxaiteusbmcmiusc23k2oiyvq3bwn4l6wsw@p4qid73hmiry>
-In-Reply-To: <7qt7thbuh5mvoaknxaiteusbmcmiusc23k2oiyvq3bwn4l6wsw@p4qid73hmiry>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Wed, 11 Dec 2024 17:59:05 +0300
-Message-ID: <CABTCjFD4ipvapWX9gJF1KXWpzj_jhL9pYB0z+Q4sEi-cu6mx7Q@mail.gmail.com>
-Subject: Re: [PATCH v11 3/9] dt-bindings: power: supply: max17042: split on 2 files
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Hans de Goede <hdegoede@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, Purism Kernel Team <kernel@puri.sm>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGxU2F6yzqb0o_pQDakBbCj3RdKy_XfZfzGsiywnYL65g6WeGg@mail.gmail.com>
 
-=D0=B2=D1=82, 10 =D0=B4=D0=B5=D0=BA. 2024=E2=80=AF=D0=B3. =D0=B2 10:38, Krz=
-ysztof Kozlowski <krzk@kernel.org>:
->
-> On Mon, Dec 09, 2024 at 02:26:27PM +0300, Dzmitry Sankouski wrote:
-> > Move max17042 common binding part to separate file, to
-> > reuse it for MFDs with platform driver version.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/power/supply/maxim,max17042-base.yam=
-l | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml    =
-  | 49 +------------------------------------------------
-> >  MAINTAINERS                                                           =
-  |  2 +-
-> >  3 files changed, 68 insertions(+), 49 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max17=
-042-base.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max170=
-42-base.yaml
-> > new file mode 100644
-> > index 000000000000..1653f8ae11f7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042-bas=
-e.yaml
-> > @@ -0,0 +1,66 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/power/supply/maxim,max17042-base.ya=
-ml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Maxim 17042 fuel gauge series
-> > +
-> > +maintainers:
-> > +  - Sebastian Reichel <sre@kernel.org>
-> > +
-> > +allOf:
-> > +  - $ref: power-supply.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - maxim,max17042
-> > +      - maxim,max17047
-> > +      - maxim,max17050
-> > +      - maxim,max17055
-> > +      - maxim,max77705-battery
-> > +      - maxim,max77849-battery
->
-> Shared schemas define only shared properties, not compatibles. But the
-> main problem is you did not answer nor resolve my previous concerns -
-> either this device has separate address and probably is a separate
-> device on the same or different bus.
->
-> Plus this was not tested and does not really work, but anyway let's
-> focus on my previous concerns first.
->
+On Wed, Dec 11, 2024 at 09:19:04AM +0100, Stefano Garzarella wrote:
 
-Ah, indeed, the device tree in this and previous patches doesn't
-reflect hardware wiring.
+> > After that, there is no meaningful shared code here, and maybe the
+> > TPM_CHIP_FLAG_IRQ hack can be avoided too.
+> 
+> IIUC you are proposing the following steps:
+> - extend tpm_class_ops to add a new send_recv() op and use it in
+> tpm_try_transmit()
 
-MAX77705 fuel gauge has a separate i2c address, i.e. I may move it out of t=
-he
-MAX77705 MFD node. However, the device on that address has additional featu=
-res,
-like measuring system and input current, which is out of fuel gauge
-responsibility.
+Yes, that seems to be the majority of your shared code.
 
-So I guess I should create another MFD for fuel gauge, i. e. max77705 examp=
-le
-would look like:
+> - call the code in tpm_platform_probe() directly in sev
 
-...
-  pmic@66 {
-    compatible =3D "maxim,max77705";
-...
-  };
+Yes
 
-  meter@36 {
-    compatible =3D "maxim,max77705-meter";
+> This would remove the intermediate driver, but at this point is it
+> worth keeping tpm_platform_send() and tpm_platform_recv() in a header
+> or module, since these are not related to sev, but to MSSIM?
 
-    // max17042 fuel gauge driver in platform mode
-    fuel-gauge {
-      power-supplies =3D <&max77705_charger>;
-      maxim,rsns-microohm =3D <5000>;
-      interrupt-parent =3D <&pm8998_gpios>;
-      interrupts =3D <11 IRQ_TYPE_LEVEL_LOW>;
-    };
-  };
+Reuse *what* exactly? These are 10 both line funtions that just call
+another function pointer. Where exactly is this common MSSIM stuff?
 
---=20
-Best regards and thanks for review,
-Dzmitry
+Stated another way, by adding send_Recv() op to tpm_class_ops you have
+already allowed reuse of all the code in tpm_platform_send/recv().
+
+Jason
 
