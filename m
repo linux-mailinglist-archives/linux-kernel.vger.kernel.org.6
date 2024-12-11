@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-442310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AA79EDA71
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:54:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475B89EDA75
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:54:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06F31686AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:54:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AB01BC085;
+	Wed, 11 Dec 2024 22:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KICnKP93"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C5F28262D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:54:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FD01DD885;
-	Wed, 11 Dec 2024 22:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CMXTdhTN"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FD4195
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73F31DD885;
+	Wed, 11 Dec 2024 22:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957665; cv=none; b=leB0qyJroWO5kUvZ+2d2UHyxbQBq6MtYXSvx05UfWHrf1E9E68G/yQ2tm1b2nsfCjarxYOl8h0eh2VfT6pTpf1QX8FkSKXWDav0P700A8gexSJhdXkq6N08zXi98imEkMzdyiLO2m5lbvGNRVVN4UxfhTs8vZC33kk3+K66VBLw=
+	t=1733957683; cv=none; b=s/MZaxwP/1mpOljVYcVyJ3nMn2tSay8gHXhuUEc0Xp3LR/OvVRm8hvCKtJ44FTnv2ywmnjKOt8UNf7ayt4XFA91zN3OcunWQ3kS1uKuKYtQVQCpg6Etm2i47ZoCxTqAc/LKpxvtQWZUaMkPB8aHPmPqwG7v0hcT0KTBOgxEjPxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957665; c=relaxed/simple;
-	bh=SDI061vXr1bXjeVvB4yWoqqSZ3UUm8tPpjRbBRy6MiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2pRf0/qP7em2V9LAK7By3D53IwWkssMp+DiOKb/Cw+OkHRNS7X9cLGFWg3V0UNzNqt6jS+16sLV+/UDAwPsSXiLik9WkManmE8HzpL3t4lT02t494TUAq+sDqXKsIUDNlgJkGokxIM8QR4JYkdjaqDWuNLWX+cNA8mJMKgx9Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CMXTdhTN; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3003d7ca01cso48300311fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733957661; x=1734562461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wFlcrcuOuJge6epCV9BrB4p6q6J+XOMRFHObrsI8uJk=;
-        b=CMXTdhTNs+WJKCbiL9ch7cnKnC96HeItCoJjUz+nCYU2BL0PCGkP42vU9M3VOT6UYR
-         6ciR4A3T4l+MqXy5vURpIF/b2eF0xi7oGKZLji39gO2H59awY+jJWSt4o+kAjAaLepQJ
-         TEZ76XCiUIvl3r2ypMroJJTNJx6D77ucl2EwaNjp2OXOBaKt7COYWbXt9xEBns9vBTta
-         BPGc53Vz6MbEr3czlcjsYGneZc+Ksl75RmtjInB5rMgrm6xUrKA79xVDxh2INPb4ynK8
-         kMFcJqJ3laYpxpNXbmUbGXidGUh4ZaeGD6K1Oa5D78Av3f2+5NaZQerBsq0U2EHkm3ix
-         drnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733957661; x=1734562461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wFlcrcuOuJge6epCV9BrB4p6q6J+XOMRFHObrsI8uJk=;
-        b=wORH+AIsjJXHRvsAkwicVHUMsiAXZyupmoB1uGRTrA2AA8GyCW/7xAcdtJRiOeQApW
-         YbYK4qTx9R6FSUxtwWa8/9X7+Jul18gpkDrQFJ3+SK6L1Z04csIdKjgoRSs8a+XzdnxZ
-         2k5L4+RyYxLZE+YoRIVhOaZ3XY3T55rOD1MQQBaZOAjMyOp1H7fq7GUjDrXEYugeDlF6
-         eIswEW9LlJyW+qQOztXszpp6nfSF8d8x8Yb/geC+TceEgSgX1PpNwCsLIM6SatqfMiii
-         xHypp/HLQC9cpjG8SEwv4p7fK0CWGz56TmXhnkhHXeYSkklssBjk5QPGCVMQWAiX/ikE
-         VECQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRAAARyVaNVN6gwa9AgENJQOQQojyd//iqb9lIFFr6Kgw/wvMBgQrOzXBHn7OhrYznAXExb2qU8mSD+II=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa9cd2J8uYuT9qtqOK5kYmsec+I9sAyU08Vjy5rEAlvofWPvd0
-	Jug/+yelErYtX/Pu8jftjt6RDyqPY6V5VuH7+ApZM8yZE5dvdVRDO7RDCUTBWpQ=
-X-Gm-Gg: ASbGncvXBKvxUKbslnPyoSiYcmcRwePi0BNsyREWwvQ27ZzjpCll1tBXuP7qt+d1BAM
-	osigXgaw1N6ZF3memPXJw2prsz4ePA3L6pY8VQPxFwIyLZS6Xy0qCbqeizQKD9DtBo1i7HvDorv
-	6rcP4W4M6iPTQJXVPbkztmy0Ln/FKdzd0F8g97XU+iSKWs08VGbSnrXIZrYf4rmcI5eyP24GY2q
-	vo4hcTLPwr5iGOneDQCa+g4KcRqCqaEPXAqYfTMd1/VVtu0sVWZ2SOj/EdFpghPpkHwb/z5bxTq
-	O6LBRgJWydUJdF5paPXy179ypFlNx+AO3w==
-X-Google-Smtp-Source: AGHT+IF2beMPPMfOHzFimzjUPxZBuU5TVMSgXepIkr14Wvtkhl9EzlpO//mQAjLbZ5PlDOZrQQhhMg==
-X-Received: by 2002:a05:6512:4022:b0:540:2122:faeb with SMTP id 2adb3069b0e04-5402a605bc8mr1358587e87.50.1733957661382;
-        Wed, 11 Dec 2024 14:54:21 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401a5360bcsm1378389e87.174.2024.12.11.14.54.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 14:54:20 -0800 (PST)
-Date: Thu, 12 Dec 2024 00:54:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] drm: bridge: adv7511: remove s32 format from i2s
- capabilities
-Message-ID: <ctecu2iqn4nsm2wy45ca7vt6bdj5334wafnyq32quaydjs7yf6@x4avipho6xcf>
-References: <20241210134254.2967524-1-olivier.moysan@foss.st.com>
- <20241210134254.2967524-3-olivier.moysan@foss.st.com>
+	s=arc-20240116; t=1733957683; c=relaxed/simple;
+	bh=k3atfXh62Q7mbstu7AQML+pvSvuCfejuzNLa8edlgKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mprt9oARSN+5b7oN/MT+gCaz1YxLcHJr05qqElRYONEtWGB7eXNQ2nEf8eosfIsuY1BFtG96jJAqeX8kpNS7Sevcm+KNiBQk+URdClO1jte6Fixhm3c9SHGxBrOyuV8I37hvOaBqHor7ZzJuH0Y3/HNAbwtQV4u+IcZ+Zzsc5Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KICnKP93; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733957672;
+	bh=OHIhfm/AKJaEurTUHS45+taXE8ZcesaGGJuuh4BwAO4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KICnKP93ZdEABpZggFrhAgIYGeD8NvRYt30ZyBE6HPjaKBVLR4NpQO/vT+el8NN+K
+	 +H2C+ty0TnzZy/Z1gDpD3xJYIDR+MJYwhgdK1l5nrkTfkVkrobHunydU6KXIdgvhTP
+	 GghANPt/y2cFczF4/ha8PDUkTalA53ttBVrF/jBfgRWZZA+yYUwtkV0fuBSDkheMt2
+	 oRexd2SlhnZFjzYYy0fXqowm36oiDYz6CI88kaKIRtiI2AhndlA5vm5XVVgv+0a7xi
+	 62osIxfl/fsdYFdSvpNn8PADYZ5Y2ovmcNQKSyRoEmJiXfZmlSpPF+0vIOjNqMGWJC
+	 JOfQCg58yjqDA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y7rWr1jb5z4wc3;
+	Thu, 12 Dec 2024 09:54:32 +1100 (AEDT)
+Date: Thu, 12 Dec 2024 09:54:36 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Erin Shepherd <erin.shepherd@e43.eu>, Amir Goldstein
+ <amir73il@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <20241212095436.4285940b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210134254.2967524-3-olivier.moysan@foss.st.com>
+Content-Type: multipart/signed; boundary="Sig_/Ls7Ryb3InLvXRMSOo=FNEyM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Dec 10, 2024 at 02:42:53PM +0100, Olivier Moysan wrote:
-> The ADV7511 chip allows 24 bits samples max in I2S mode, excepted for
-> direct AES3 mode (SNDRV_PCM_FORMAT_IEC958_SUBFRAME_LE format).
-> However the HDMI codec exposes S32_LE format as supported.
-> Adapt ADV7511 HDMI I2S format list to expose formats actually supported.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> index 28ae81ca3651..ce6eda87bfe0 100644
-> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> @@ -232,6 +232,9 @@ static const struct hdmi_codec_ops adv7511_codec_ops = {
->  
->  static const struct hdmi_codec_pdata codec_data = {
->  	.ops = &adv7511_codec_ops,
-> +	.i2s_formats = (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |
-> +			SNDRV_PCM_FMTBIT_S24_3LE | SNDRV_PCM_FMTBIT_S24_LE |
-> +			SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE),
+--Sig_/Ls7Ryb3InLvXRMSOo=FNEyM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This will break w/o patch 3. Please change the order of the patches so
-that after each commit the kernel can still be built and work correctly.
+Hi all,
 
->  	.max_i2s_channels = 2,
->  	.i2s = 1,
->  	.no_i2s_capture = 1,
-> -- 
-> 2.25.1
-> 
+After merging the vfs-brauner tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
--- 
-With best wishes
-Dmitry
+fs/pidfs.c:641:27: error: 'EXPORT_OP_LOCAL_FILE_HANDLE' undeclared here (no=
+t in a function)
+  641 |         .flags          =3D EXPORT_OP_LOCAL_FILE_HANDLE,
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  ccb189ccdd28 ("pidfs: implement file handle support")
+
+I have used the vfs-brauner tree from next-20241211 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ls7Ryb3InLvXRMSOo=FNEyM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdaGCwACgkQAVBC80lX
+0GyVYAgAisNqYAxZlKjclktKx7/3S1T7zgmlYuufOLIYuAaEwTzqDTzy0J25NvgH
+1skhFB7ovXK282C2PbIFLNSVrRH0XhBiP77JXc0LwrS7G7MDlKT/KYvw0Y0/S2q8
+jE9mHg24Bg5TOdiYwIDhcsdGkTYyujuzhmNKsuJtk7G/1uOrRv/MJMs/RgBq66I/
+x9CWsw8IDZs/P1FZmKrCtKEowR65qKV0rucfCXWgNQXvT1IUFFkTnr4hDupCTccE
+Nxl7CkNwbxHTmvfZFtCxlH7u90TyPGV+PKCBUl8sYST0Tbq6dpYnNagihK5hQ66z
+kgd8nSlw66srybSiGeVwtr8qvt3U5Q==
+=1Mc4
+-----END PGP SIGNATURE-----
+
+--Sig_/Ls7Ryb3InLvXRMSOo=FNEyM--
 
