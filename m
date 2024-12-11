@@ -1,175 +1,114 @@
-Return-Path: <linux-kernel+bounces-441207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A619ECB12
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:24:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14299ECAF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:21:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E93516A335
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA4E286930
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11EA237FC8;
-	Wed, 11 Dec 2024 11:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7477211A18;
+	Wed, 11 Dec 2024 11:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BEw6J3FE"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+kRs9zS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C0623027F;
-	Wed, 11 Dec 2024 11:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08622187872;
+	Wed, 11 Dec 2024 11:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733916208; cv=none; b=omuzDUgS0yovpYTv3Zemaksd2HgvVCHBIpYTNQH82OnIFh3Nz5xBxK+n9Vrvu8xzIdGb2IPcGNfTKDsbQIxI7ysY161OIqepLzOtKth44VjDA7XQKmioKddC4qOHHNAPy8Ym+hvPyBdSxSvkoXGE6v3j8vAw1TJjCdZKqcWKwFY=
+	t=1733916098; cv=none; b=LLC+8b5uFi6vKeUt62avxoW3p0pL5cIpwHSTU0F9ZNDZz40iY8kA1nQZy+tHXdC87sBTACmEoXH2y/qNhMZHe0DH8PmcCiLAhOqjFcy3LEkVgxtMVgi0FIw44buMI6ozTitCQmjotGuONzjcn8JFcFrzpaWDIJmuvGnnUV2IG5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733916208; c=relaxed/simple;
-	bh=7lcoJt3fEYxFRq8rAOGd84uCM/lkZcSDWF3TclaNims=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oVlC3NolRWRK4UNjtkj3BwoEiwKUTGLen8o4BsoU2niH3XEBx/UAwoAAasgD/ujmz3hGl8/HWCYaeE07LuguP+LV1oK7KitDk7ihUWzlDMTN89FneMFFD9/pRDVGJz8v4+8oqw78CHmSWoJYSUih4W95dDHNcbOUK9IE2foxb5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BEw6J3FE; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fc93152edcso467447a12.0;
-        Wed, 11 Dec 2024 03:23:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733916206; x=1734521006; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qlxPth3W7wbrCgZl9TutY0yGCH/wT/pCGymBpz4R5/s=;
-        b=BEw6J3FELZSeuRZzrAnEIaxmXxGCzhZHeYLKlLDhfI1/HJXLkm42PjGqA1/NnAkdhd
-         XMSt7G4MnYUKTcTpxYrQh44gMEmesHeGjMDCd9it8VAU9AxzG2vrHgyuoGv9YmBdoCID
-         zaM+lee2PhupBtvBDVsiRgwmi4EFtHd3sQJvlWR3uIA68Da4fGYRbHqOPNzIBAtTx7B7
-         Ld2aqbujhFOG57HSTodlhFCk8AikOTQdtlaNTSBos2JR7n5D+yFqlDWaeTldcTZh7dGl
-         6PkfPoM1GRrO1pZSBhHQKCygySyPyEBMslrjmUuLI3hRDbTYE5wX/pJ+w5xyfItkf27U
-         hheg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733916206; x=1734521006;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qlxPth3W7wbrCgZl9TutY0yGCH/wT/pCGymBpz4R5/s=;
-        b=oQPRsxPRo67FZ6IZKJ1fL/WQA/2pV7XdleOIfdnbRUzqLBcoB/Sy3tKn09N0FBH1JZ
-         SIilY9f2cWOv1OxVxTbEiTQr/6pyEs7ru6FxJBI0A4f1jijs8Uf13pZViE4aQUPdSAVN
-         2qmizV6Vj/UzvDN39YT8Is1JBa2IX019LkMltTx/4fWxIDAXZ/z82UFbS73ZfAVaFkiP
-         9fGXbhdnTSpcIeSWjBQKUF+AD5x6boK9FAjzzNOznqYaBWfC02p3aUugtNqlDZXzeA8x
-         P+z6GPYq/Ud3GehrXX9QUwE6JvP+Pv5jXzogPjhFRRhx6/Lf5D46CTUfWqkbyTK2msZj
-         a6CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAETTgDmt+YteL7p78vHyKs5WH/94WAc+lxsYQZkU0g3jObKCDNgyKI9lmZs+3vl5Ou0F15J5cZDw=@vger.kernel.org, AJvYcCW38Phe5oF8IzzyFN5MpDIkqCjtbqjktEJX160ucv0Whl5UH6r/8l0jfqNJcjpn8tsVjCrfkqHgAYH0@vger.kernel.org, AJvYcCXK17XtiP/2izXXRaHfvOl4cUKLVMEV9Wfy8Pj5AB7HxhycIqaisA2MNWaNEDjcSJUNtZa4z8Ms8UZkpOnU@vger.kernel.org
-X-Gm-Message-State: AOJu0YynQDz/LEhlQDji9IdxahZC9aRpqExLuwGO+ebgz71yhICwt9ql
-	CE422eK9Cplwru7mNTcZ2+NoDWPlIFtUuMsxvrFy7n/2ZoGRQLq9
-X-Gm-Gg: ASbGncs4M1Y8FkDd1OLR0ba68bKxSP/SZ3f0DquAu+oc0gH94Q+Tqc9EYHfugP+LXO+
-	9hUXhsWehW2mOOwY+mh2IChgEwzkpOSAWb98NgNaFS+lQkeiKEWV3ZhZfpY3zlNFnlucbV+quuF
-	fBOMAoXq/dJ5BxU/GpzeF5pU0oSIcF8+9QIvrbYtENHh5Mr67BnFf1QA76JFcfT719v9UaHLgif
-	FI7ELkXGjkNBylzv2QmO/btR0Azz7cr/IvwfgWHaNhBH3RutLG9Q8SlQ1mA5uQSiHgJCA==
-X-Google-Smtp-Source: AGHT+IFMuiaI6I3IF80U3p4jkCdMcH2pHwrnp13N4Jra+xHLG9sBJnqMa1fKJOB7LKNxTMS5auBS3g==
-X-Received: by 2002:a17:903:186:b0:215:742e:5cff with SMTP id d9443c01a7336-21779e6245amr31917835ad.16.1733916205923;
-        Wed, 11 Dec 2024 03:23:25 -0800 (PST)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21650ccdc7esm48956615ad.133.2024.12.11.03.23.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 03:23:25 -0800 (PST)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH 7/7] cpufreq: apple-soc: Add Apple A7-A8X SoC cpufreq support
-Date: Wed, 11 Dec 2024 19:19:34 +0800
-Message-ID: <20241211112244.18393-8-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241211112244.18393-1-towinchenmi@gmail.com>
-References: <20241211112244.18393-1-towinchenmi@gmail.com>
+	s=arc-20240116; t=1733916098; c=relaxed/simple;
+	bh=DgftItvKwlAqV6VUxDwhJgPamO/iGIKYe2fBSGOS2dQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=QbFOVOMzi1z+1LKb9DmS6xKb/FELMP02uy6jmyT5kRodp26yVenSvmgSEVR4/DSQNRwJjXLKvHdXAJ8C1mIZUTf3Wu5dFXq1Yrv1+GL4LVlw9c7q1+kZ6eGa3zUSQt96j8SJukTT3DzCjd09g9oq/WGcWjNU1Pt5OVEQXBy+4yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+kRs9zS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699FFC4CED2;
+	Wed, 11 Dec 2024 11:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733916097;
+	bh=DgftItvKwlAqV6VUxDwhJgPamO/iGIKYe2fBSGOS2dQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=S+kRs9zSROEKEbuf6pQXp6LKyYNbAyiEMMZeR6T/IukOtp0WJTxya8pmJRrBkU/hi
+	 2lH22ehLWYRh4Rsj3/gsS2NMFEM9yPi1QlYwwYRe+PRP+8L2UOb2Kh9TP7TGKsBtmp
+	 NxaDphjfl/zlxLraM34B2C+YcI8T29Pq4ha3IOXKS+NBgyyulYz0TO3LbNbdUpSc5O
+	 aQGQPRYru60pQkeCjqkECmgTuvYte+ovXbs43B5/8aJdhqusyPPeuLiIViQNpInzaJ
+	 ugJ0e99xDBPASPvYEaj5slqOQ2yBuvJM6EtmKW4uZU6qnNpyJlZdeaY6p7eMAeUSEh
+	 nicQ5MB2EUedA==
+Date: Wed, 11 Dec 2024 05:21:35 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Andrei Simion <andrei.simion@microchip.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Balakrishnan Sambath <balakrishnan.s@microchip.com>
+In-Reply-To: <20241211-sound-atmel-at91sam9g20ek-v2-1-86a0e31e6af9@microchip.com>
+References: <20241211-sound-atmel-at91sam9g20ek-v2-1-86a0e31e6af9@microchip.com>
+Message-Id: <173391609559.2340929.13321693035546295768.robh@kernel.org>
+Subject: Re: [PATCH v2] ASoC: dt-bindings: sound: atmel-at91sam9g20ek:
+ convert to json-schema
 
-These SoCs only use 3 bits for p-states, and have a different
-APPLE_DVFS_CMD_PS1 mask value.
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- drivers/cpufreq/apple-soc-cpufreq.c | 30 +++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+On Wed, 11 Dec 2024 15:16:15 +0530, Balakrishnan Sambath wrote:
+> Convert atmel-at91sam9g20ek-wm8731-audio DT binding to yaml
+> based json-schema.Change file name to match json-scheme naming.
+> 
+> Signed-off-by: Balakrishnan Sambath <balakrishnan.s@microchip.com>
+> ---
+> Changes in v2:
+> - Add missing CODEC pin options to 'atmel,audio-routing' items.
+> - Drop 'minItems' from 'atmel,audio-routing' since enum defines valid connections.
+> - Add subsystem tag to subject.
+> - Add blank line between properties and fix typo.
+> - Add audio complex description.
+> - Link to v1: https://lore.kernel.org/lkml/20240214-at91sam9g20ek-wm8731-yaml-v1-1-33333e17383b@microchip.com
+> ---
+>  .../bindings/sound/atmel,at91sam9g20ek-wm8731.yaml | 70 ++++++++++++++++++++++
+>  .../sound/atmel-at91sam9g20ek-wm8731-audio.txt     | 26 --------
+>  2 files changed, 70 insertions(+), 26 deletions(-)
+> 
 
-diff --git a/drivers/cpufreq/apple-soc-cpufreq.c b/drivers/cpufreq/apple-soc-cpufreq.c
-index 0af36f911bea..12ee9123a1c2 100644
---- a/drivers/cpufreq/apple-soc-cpufreq.c
-+++ b/drivers/cpufreq/apple-soc-cpufreq.c
-@@ -22,12 +22,14 @@
- #include <linux/pm_opp.h>
- #include <linux/slab.h>
- 
--#define APPLE_DVFS_CMD			0x20
--#define APPLE_DVFS_CMD_BUSY		BIT(31)
--#define APPLE_DVFS_CMD_SET		BIT(25)
--#define APPLE_DVFS_CMD_PS2		GENMASK(15, 12)
--#define APPLE_DVFS_CMD_PS1		GENMASK(4, 0)
--#define APPLE_DVFS_CMD_PS1_SHIFT	0
-+#define APPLE_DVFS_CMD				0x20
-+#define APPLE_DVFS_CMD_BUSY			BIT(31)
-+#define APPLE_DVFS_CMD_SET			BIT(25)
-+#define APPLE_DVFS_CMD_PS1_S5L8960X		GENMASK(24, 22)
-+#define APPLE_DVFS_CMD_PS1_S5L8960X_SHIFT	22
-+#define APPLE_DVFS_CMD_PS2			GENMASK(15, 12)
-+#define APPLE_DVFS_CMD_PS1			GENMASK(4, 0)
-+#define APPLE_DVFS_CMD_PS1_SHIFT		0
- 
- /* Same timebase as CPU counter (24MHz) */
- #define APPLE_DVFS_LAST_CHG_TIME	0x38
-@@ -36,6 +38,9 @@
-  * Apple ran out of bits and had to shift this in T8112...
-  */
- #define APPLE_DVFS_STATUS			0x50
-+#define APPLE_DVFS_STATUS_CUR_PS_S5L8960X	GENMASK(5, 3)
-+#define APPLE_DVFS_STATUS_CUR_PS_SHIFT_S5L8960X	3
-+#define APPLE_DVFS_STATUS_TGT_PS_S5L8960X	GENMASK(2, 0)
- #define APPLE_DVFS_STATUS_CUR_PS_T8103		GENMASK(7, 4)
- #define APPLE_DVFS_STATUS_CUR_PS_SHIFT_T8103	4
- #define APPLE_DVFS_STATUS_TGT_PS_T8103		GENMASK(3, 0)
-@@ -72,6 +77,15 @@ struct apple_cpu_priv {
- 
- static struct cpufreq_driver apple_soc_cpufreq_driver;
- 
-+static const struct apple_soc_cpufreq_info soc_s5l8960x_info = {
-+	.has_ps2 = false,
-+	.max_pstate = 7,
-+	.cur_pstate_mask = APPLE_DVFS_STATUS_CUR_PS_S5L8960X,
-+	.cur_pstate_shift = APPLE_DVFS_STATUS_CUR_PS_SHIFT_S5L8960X,
-+	.ps1_mask = APPLE_DVFS_CMD_PS1_S5L8960X,
-+	.ps1_shift = APPLE_DVFS_CMD_PS1_S5L8960X_SHIFT,
-+};
-+
- static const struct apple_soc_cpufreq_info soc_t8103_info = {
- 	.has_ps2 = true,
- 	.max_pstate = 15,
-@@ -99,6 +113,10 @@ static const struct apple_soc_cpufreq_info soc_default_info = {
- };
- 
- static const struct of_device_id apple_soc_cpufreq_of_match[] __maybe_unused = {
-+	{
-+		.compatible = "apple,s5l8960x-cluster-cpufreq",
-+		.data = &soc_s5l8960x_info,
-+	},
- 	{
- 		.compatible = "apple,t8103-cluster-cpufreq",
- 		.data = &soc_t8103_info,
--- 
-2.47.1
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/atmel,at91sam9g20ek-wm8731.example.dtb: sound: atmel,audio-routing:2: 'Int MIC' is not one of ['Ext Spk', 'Int Mic', 'LOUT', 'ROUT', 'LHPOUT', 'RHPOUT', 'LLINEIN', 'RLINEIN', 'MICIN']
+	from schema $id: http://devicetree.org/schemas/sound/atmel,at91sam9g20ek-wm8731.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241211-sound-atmel-at91sam9g20ek-v2-1-86a0e31e6af9@microchip.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
