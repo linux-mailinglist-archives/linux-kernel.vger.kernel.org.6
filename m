@@ -1,335 +1,212 @@
-Return-Path: <linux-kernel+bounces-442203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C809ED94A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:04:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E349ED946
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36FF41882AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:03:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674A81666C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB271F2C59;
-	Wed, 11 Dec 2024 22:02:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8421F37B4;
+	Wed, 11 Dec 2024 22:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="QPRNj1Je"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B451F0E29;
-	Wed, 11 Dec 2024 22:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEA41F0E5A;
+	Wed, 11 Dec 2024 22:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733954527; cv=none; b=Hsfs/c8n39ImPHZtFPRuUweq4omitQ70gzKApEpZN2znpJL2DWFoOoJtwJVGx5XES+ZprAzWgd/ghrlPEqDSjCDLzl+K41///sifhkLoGj/1C/fdPD82ID83Hd24PlnNLLMMzjRbizmolgcs6JNh60ot+pBKTK1cBcRpkEOBsoE=
+	t=1733954551; cv=none; b=K89GUlOseJZRowK2RJ3CwqvF3dqdxCekzfjHhkmhKZzcB0eN1qTNLcQp+d2vzZ7lPGeyTMi5qV5Puf6HRt6Z70huKZ4NtI1lYV196I3W1r4oJABKOcIMGLBnQ41U+dovNm9KXkFcUWN3hGfUfbBBaK41EwLkfyrnUFcTkxssC9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733954527; c=relaxed/simple;
-	bh=p2vlgdMbhwnliReDsyiE4pdIJoBuLB5msUkS/swcWA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gdv+ThfjfdAgahTdxIrxNb1u3ynzA0OqirlWvJdpOBpvhgBD5eSuvugQYQBvzq1CMzS0xI892YpRiUo83BcK852o95kqwxWWBr4TOOOYdCNdvNRsTUCSfKc5S+UQ5eG3tpPCBtsuNCPTzVUji4Y3HdO5twLwVcWiOFJb6Bq0waA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1E7C4CEDD;
-	Wed, 11 Dec 2024 22:02:01 +0000 (UTC)
-Date: Wed, 11 Dec 2024 22:01:59 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: ankita@nvidia.com
-Cc: jgg@nvidia.com, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com,
-	lpieralisi@kernel.org, aniketa@nvidia.com, cjia@nvidia.com,
-	kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com,
-	acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com,
-	danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com,
-	udhoke@nvidia.com, dnigam@nvidia.com, alex.williamson@redhat.com,
-	sebastianene@google.com, coltonlewis@google.com,
-	kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org,
-	akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-Message-ID: <Z1oL1yZtdvGUIW9h@arm.com>
-References: <20241118131958.4609-1-ankita@nvidia.com>
- <20241118131958.4609-2-ankita@nvidia.com>
+	s=arc-20240116; t=1733954551; c=relaxed/simple;
+	bh=HlCKWLdI+GU05LKzYNwgUMS4EpX5rXj3VH4NpDOQ5VY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bjTwEMPeKvhR3ZlLzHFu/cE063rAmGfy2HZu7g6bdfLq5TNWPe8rrD4wtq3D2WZisrs2DeN0+TwI9sUU2iIS7riLffghr/Vz7XThrD0NiY5Zr4m+CjyXEmjLSG6Z6Yy48NXCtIHg8C1F69ox2yDBiBm60l7xSzdodXokxgo1TYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=QPRNj1Je; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=HxEgA1qhpnM+73w6gjo0cgwAWhBtqqCkg0uUG05ThNA=; b=QPRNj1Je+MKDa6Yv
+	RtD5RZi+ENXM237GR5+27bSs7dlNFZ0mq41AZ1K3zgxy8Ilcgjgw7l73ORVwnNiunm/6E6fCzFiDV
+	QLKEj5FJ5u/f1d5NFD4LrLlakjEu/wvttqEYXO4pXln7HCxNSw+z0FncYi+/kQYD9/6ZdmtXzJyGI
+	MzgAY90YegqXBUcxPGAddIRuoiO7WafPqR97IBLuNo7Nz+mJyJv1cvMaGC1iPApk/RBLdo3VnAeqI
+	9acfZN1v3pejCZHD7C2EzF2EuKNgc/JST7A3pSKHCc9mbEnt4yApbdSgFKY/oRhn34uuTt2a54jmO
+	VPkidH2ZjOqwUzSYiw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tLUmk-004rlK-0Z;
+	Wed, 11 Dec 2024 22:02:22 +0000
+From: linux@treblig.org
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] crypto: lib/gf128mul - Remove some bbe deadcode
+Date: Wed, 11 Dec 2024 22:02:18 +0000
+Message-ID: <20241211220218.129099-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118131958.4609-2-ankita@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Ankit,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On Mon, Nov 18, 2024 at 01:19:58PM +0000, ankita@nvidia.com wrote:
-> Currently KVM determines if a VMA is pointing at IO memory by checking
-> pfn_is_map_memory(). However, the MM already gives us a way to tell what
-> kind of memory it is by inspecting the VMA.
-> 
-> This patch solves the problems where it is possible for the kernel to
-> have VMAs pointing at cachable memory without causing
-> pfn_is_map_memory() to be true, eg DAX memremap cases and CXL/pre-CXL
-> devices. This memory is now properly marked as cachable in KVM.
-> 
-> The pfn_is_map_memory() is restrictive and allows only for the memory
-> that is added to the kernel to be marked as cacheable. In most cases
-> the code needs to know if there is a struct page, or if the memory is
-> in the kernel map and pfn_valid() is an appropriate API for this.
-> Extend the umbrella with pfn_valid() to include memory with no struct
-> pages for consideration to be mapped cacheable in stage 2. A !pfn_valid()
-> implies that the memory is unsafe to be mapped as cacheable.
+gf128mul_4k_bbe(), gf128mul_bbe() and gf128mul_init_4k_bbe()
+are part of the library originally added in 2006 by
+commit c494e0705d67 ("[CRYPTO] lib: table driven multiplications in
+GF(2^128)")
 
-Please note that a pfn_valid() does not imply the memory is in the
-linear map, only that there's a struct page. Some cache maintenance you
-do later in the patch may fail. kvm_is_device_pfn() was changed by
-commit 873ba463914c ("arm64: decouple check whether pfn is in linear map
-from pfn_valid()"), see the log for some explanation.
+but have never been used.
 
-> Moreover take account of the mapping type in the VMA to make a decision
-> on the mapping. The VMA's pgprot is tested to determine the memory type
-> with the following mapping:
->  pgprot_noncached    MT_DEVICE_nGnRnE   device (or Normal_NC)
->  pgprot_writecombine MT_NORMAL_NC       device (or Normal_NC)
->  pgprot_device       MT_DEVICE_nGnRE    device (or Normal_NC)
->  pgprot_tagged       MT_NORMAL_TAGGED   RAM / Normal
->  -                   MT_NORMAL          RAM / Normal
-> 
-> Also take care of the following two cases that prevents the memory to
-> be safely mapped as cacheable:
-> 1. The VMA pgprot have VM_IO set alongwith MT_NORMAL or
->    MT_NORMAL_TAGGED. Although unexpected and wrong, presence of such
->    configuration cannot be ruled out.
-> 2. Configurations where VM_MTE_ALLOWED is not set and KVM_CAP_ARM_MTE
->    is enabled. Otherwise a malicious guest can enable MTE at stage 1
->    without the hypervisor being able to tell. This could cause external
->    aborts.
+Remove them.
+(BBE is Big endian Byte/Big endian bits
+Note the 64k table version is used and I've left that in)
 
-A first point I'd make - we can simplify this a bit and only allow such
-configuration if FWB is present. Do you have a platform without FWB that
-needs such feature?
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ include/crypto/gf128mul.h |  6 +---
+ lib/crypto/gf128mul.c     | 75 ---------------------------------------
+ 2 files changed, 1 insertion(+), 80 deletions(-)
 
-Another reason for the above is my second point - I don't like relying
-on the user mapping memory type for this (at some point we may have
-device pass-through without a VMM mapping). Can we use something like a
-new VM_FORCE_CACHED flag instead? There's precedent for this with
-VM_ALLOW_ANY_UNCACHED.
-
-> Introduce a new variable noncacheable to represent whether the memory
-> should not be mapped as cacheable. The noncacheable as false implies
-> the memory is safe to be mapped cacheable. Use this to handle the
-> aforementioned potentially unsafe cases for cacheable mapping.
-> 
-> Note when FWB is not enabled, the kernel expects to trivially do
-> cache management by flushing the memory by linearly converting a
-> kvm_pte to phys_addr to a KVA, see kvm_flush_dcache_to_poc(). This is
-> only possibile for struct page backed memory. Do not allow non-struct
-> page memory to be cachable without FWB.
-
-I want to be sure we actually have a real case for this for the !FWB
-case. One issue is that it introduces a mismatch between the VMM and the
-guest mappings I'd rather not have to have to deal with. Another is that
-we can't guarantee it is mapped in the kernel linear map, pfn_valid()
-does not imply this (I'll say this a few times through this patch).
-
-> The device memory such as on the Grace Hopper systems is interchangeable
-> with DDR memory and retains its properties. Allow executable faults
-> on the memory determined as Normal cacheable.
-
-As Will said, please introduce the exec handling separately, it will be
-easier to follow the patches.
-
-The exec fault would require cache maintenance in certain conditions
-(depending on CTR_EL0.{DIC,IDC}). Since you introduce some conditions on
-pfn_valid() w.r.t. D-cache maintenance, I assume we have similar
-restrictions for I/D cache coherency.
-
-> @@ -1430,6 +1425,23 @@ static bool kvm_vma_mte_allowed(struct vm_area_struct *vma)
->  	return vma->vm_flags & VM_MTE_ALLOWED;
->  }
->  
-> +/*
-> + * Determine the memory region cacheability from VMA's pgprot. This
-> + * is used to set the stage 2 PTEs.
-> + */
-> +static unsigned long mapping_type(pgprot_t page_prot)
-> +{
-> +	return FIELD_GET(PTE_ATTRINDX_MASK, pgprot_val(page_prot));
-> +}
-> +
-> +/*
-> + * Determine if the mapping type is normal cacheable.
-> + */
-> +static bool mapping_type_normal_cacheable(unsigned long mt)
-> +{
-> +	return (mt == MT_NORMAL || mt == MT_NORMAL_TAGGED);
-> +}
-
-Personally I'd not use this at all, maybe at most as a safety check and
-warn but I'd rather have an opt-in from the host driver (which could
-also ensure that the user mapping is cached).
-
-> +
->  static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  			  struct kvm_s2_trans *nested,
->  			  struct kvm_memory_slot *memslot, unsigned long hva,
-> @@ -1438,8 +1450,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	int ret = 0;
->  	bool write_fault, writable, force_pte = false;
->  	bool exec_fault, mte_allowed;
-> -	bool device = false, vfio_allow_any_uc = false;
-> +	bool noncacheable = false, vfio_allow_any_uc = false;
->  	unsigned long mmu_seq;
-> +	unsigned long mt;
->  	phys_addr_t ipa = fault_ipa;
->  	struct kvm *kvm = vcpu->kvm;
->  	struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
-> @@ -1568,6 +1581,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  
->  	vfio_allow_any_uc = vma->vm_flags & VM_ALLOW_ANY_UNCACHED;
->  
-> +	mt = mapping_type(vma->vm_page_prot);
-> +
-> +	/*
-> +	 * Check for potentially ineligible or unsafe conditions for
-> +	 * cacheable mappings.
-> +	 */
-> +	if (vma->vm_flags & VM_IO)
-> +		noncacheable = true;
-> +	else if (!mte_allowed && kvm_has_mte(kvm))
-> +		noncacheable = true;
-> +
->  	/* Don't use the VMA after the unlock -- it may have vanished */
->  	vma = NULL;
->  
-> @@ -1591,19 +1615,15 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	if (is_error_noslot_pfn(pfn))
->  		return -EFAULT;
->  
-> -	if (kvm_is_device_pfn(pfn)) {
-> -		/*
-> -		 * If the page was identified as device early by looking at
-> -		 * the VMA flags, vma_pagesize is already representing the
-> -		 * largest quantity we can map.  If instead it was mapped
-> -		 * via __kvm_faultin_pfn(), vma_pagesize is set to PAGE_SIZE
-> -		 * and must not be upgraded.
-> -		 *
-> -		 * In both cases, we don't let transparent_hugepage_adjust()
-> -		 * change things at the last minute.
-> -		 */
-> -		device = true;
-> -	} else if (logging_active && !write_fault) {
-> +	/*
-> +	 * pfn_valid() indicates to the code if there is a struct page, or
-> +	 * if the memory is in the kernel map. Any memory region otherwise
-> +	 * is unsafe to be cacheable.
-> +	 */
-> +	if (!pfn_valid(pfn))
-> +		noncacheable = true;
-
-The assumptions here are wrong. pfn_valid() does not imply the memory is
-in the kernel map.
-
-> +
-> +	if (!noncacheable && logging_active && !write_fault) {
->  		/*
->  		 * Only actually map the page as writable if this was a write
->  		 * fault.
-> @@ -1611,7 +1631,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  		writable = false;
->  	}
->  
-> -	if (exec_fault && device)
-> +	/*
-> +	 * Do not allow exec fault; unless the memory is determined safely
-> +	 * to be Normal cacheable.
-> +	 */
-> +	if (exec_fault && (noncacheable || !mapping_type_normal_cacheable(mt)))
->  		return -ENOEXEC;
->  
->  	/*
-> @@ -1641,10 +1665,19 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	}
->  
->  	/*
-> +	 * If the page was identified as device early by looking at
-> +	 * the VMA flags, vma_pagesize is already representing the
-> +	 * largest quantity we can map.  If instead it was mapped
-> +	 * via gfn_to_pfn_prot(), vma_pagesize is set to PAGE_SIZE
-> +	 * and must not be upgraded.
-> +	 *
-> +	 * In both cases, we don't let transparent_hugepage_adjust()
-> +	 * change things at the last minute.
-> +	 *
->  	 * If we are not forced to use page mapping, check if we are
->  	 * backed by a THP and thus use block mapping if possible.
->  	 */
-> -	if (vma_pagesize == PAGE_SIZE && !(force_pte || device)) {
-> +	if (vma_pagesize == PAGE_SIZE && !(force_pte || noncacheable)) {
->  		if (fault_is_perm && fault_granule > PAGE_SIZE)
->  			vma_pagesize = fault_granule;
->  		else
-> @@ -1658,7 +1691,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  		}
->  	}
->  
-> -	if (!fault_is_perm && !device && kvm_has_mte(kvm)) {
-> +	if (!fault_is_perm && !noncacheable && kvm_has_mte(kvm)) {
->  		/* Check the VMM hasn't introduced a new disallowed VMA */
->  		if (mte_allowed) {
->  			sanitise_mte_tags(kvm, pfn, vma_pagesize);
-> @@ -1674,7 +1707,15 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	if (exec_fault)
->  		prot |= KVM_PGTABLE_PROT_X;
->  
-> -	if (device) {
-> +	/*
-> +	 * If any of the following pgprot modifiers are applied on the pgprot,
-> +	 * consider as device memory and map in Stage 2 as device or
-> +	 * Normal noncached:
-> +	 * pgprot_noncached
-> +	 * pgprot_writecombine
-> +	 * pgprot_device
-> +	 */
-> +	if (!mapping_type_normal_cacheable(mt)) {
->  		if (vfio_allow_any_uc)
->  			prot |= KVM_PGTABLE_PROT_NORMAL_NC;
->  		else
-> @@ -1684,6 +1725,20 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  		prot |= KVM_PGTABLE_PROT_X;
->  	}
-
-I'd leave the device check in place, maybe rename it to something else
-to distinguish from linear map memory (e.g. !pfn_is_map_memory()) and
-only deal with the attributes for this device pfn which could be Device,
-Normal-NC or Normal-WB depending on the presence of some VM_* flags.
-Deny execution in the first patch, introduce it subsequently.
-
-> +	/*
-> +	 *  When FWB is unsupported KVM needs to do cache flushes
-> +	 *  (via dcache_clean_inval_poc()) of the underlying memory. This is
-> +	 *  only possible if the memory is already mapped into the kernel map
-> +	 *  at the usual spot.
-> +	 *
-> +	 *  Validate that there is a struct page for the PFN which maps
-> +	 *  to the KVA that the flushing code expects.
-> +	 */
-> +	if (!stage2_has_fwb(pgt) && !(pfn_valid(pfn))) {
-> +		ret = -EINVAL;
-> +		goto out_unlock;
-> +	}
-
-Cache maintenance relies on memory being mapped. That's what
-memblock_is_map_memory() gives us. Hotplugged memory ends up in memblock
-as arm64 selects ARCH_KEEP_MEMBLOCK.
-
-> +
->  	/*
->  	 * Under the premise of getting a FSC_PERM fault, we just need to relax
->  	 * permissions only if vma_pagesize equals fault_granule. Otherwise,
-> -- 
-> 2.34.1
-> 
-
+diff --git a/include/crypto/gf128mul.h b/include/crypto/gf128mul.h
+index 81330c6446f6..b0853f7cada0 100644
+--- a/include/crypto/gf128mul.h
++++ b/include/crypto/gf128mul.h
+@@ -158,12 +158,10 @@
+     64...71 72...79 80...87 88...95  96..103 104.111 112.119 120.127
+ */
+ 
+-/*	A slow generic version of gf_mul, implemented for lle and bbe
++/*	A slow generic version of gf_mul, implemented for lle
+  * 	It multiplies a and b and puts the result in a */
+ void gf128mul_lle(be128 *a, const be128 *b);
+ 
+-void gf128mul_bbe(be128 *a, const be128 *b);
+-
+ /*
+  * The following functions multiply a field element by x in
+  * the polynomial field representation.  They use 64-bit word operations
+@@ -224,9 +222,7 @@ struct gf128mul_4k {
+ };
+ 
+ struct gf128mul_4k *gf128mul_init_4k_lle(const be128 *g);
+-struct gf128mul_4k *gf128mul_init_4k_bbe(const be128 *g);
+ void gf128mul_4k_lle(be128 *a, const struct gf128mul_4k *t);
+-void gf128mul_4k_bbe(be128 *a, const struct gf128mul_4k *t);
+ void gf128mul_x8_ble(le128 *r, const le128 *x);
+ static inline void gf128mul_free_4k(struct gf128mul_4k *t)
+ {
+diff --git a/lib/crypto/gf128mul.c b/lib/crypto/gf128mul.c
+index 8f8c45e0cdcf..fbe72cb3453a 100644
+--- a/lib/crypto/gf128mul.c
++++ b/lib/crypto/gf128mul.c
+@@ -225,44 +225,6 @@ void gf128mul_lle(be128 *r, const be128 *b)
+ }
+ EXPORT_SYMBOL(gf128mul_lle);
+ 
+-void gf128mul_bbe(be128 *r, const be128 *b)
+-{
+-	be128 p[8];
+-	int i;
+-
+-	p[0] = *r;
+-	for (i = 0; i < 7; ++i)
+-		gf128mul_x_bbe(&p[i + 1], &p[i]);
+-
+-	memset(r, 0, sizeof(*r));
+-	for (i = 0;;) {
+-		u8 ch = ((u8 *)b)[i];
+-
+-		if (ch & 0x80)
+-			be128_xor(r, r, &p[7]);
+-		if (ch & 0x40)
+-			be128_xor(r, r, &p[6]);
+-		if (ch & 0x20)
+-			be128_xor(r, r, &p[5]);
+-		if (ch & 0x10)
+-			be128_xor(r, r, &p[4]);
+-		if (ch & 0x08)
+-			be128_xor(r, r, &p[3]);
+-		if (ch & 0x04)
+-			be128_xor(r, r, &p[2]);
+-		if (ch & 0x02)
+-			be128_xor(r, r, &p[1]);
+-		if (ch & 0x01)
+-			be128_xor(r, r, &p[0]);
+-
+-		if (++i >= 16)
+-			break;
+-
+-		gf128mul_x8_bbe(r);
+-	}
+-}
+-EXPORT_SYMBOL(gf128mul_bbe);
+-
+ /*      This version uses 64k bytes of table space.
+     A 16 byte buffer has to be multiplied by a 16 byte key
+     value in GF(2^128).  If we consider a GF(2^128) value in
+@@ -380,28 +342,6 @@ struct gf128mul_4k *gf128mul_init_4k_lle(const be128 *g)
+ }
+ EXPORT_SYMBOL(gf128mul_init_4k_lle);
+ 
+-struct gf128mul_4k *gf128mul_init_4k_bbe(const be128 *g)
+-{
+-	struct gf128mul_4k *t;
+-	int j, k;
+-
+-	t = kzalloc(sizeof(*t), GFP_KERNEL);
+-	if (!t)
+-		goto out;
+-
+-	t->t[1] = *g;
+-	for (j = 1; j <= 64; j <<= 1)
+-		gf128mul_x_bbe(&t->t[j + j], &t->t[j]);
+-
+-	for (j = 2; j < 256; j += j)
+-		for (k = 1; k < j; ++k)
+-			be128_xor(&t->t[j + k], &t->t[j], &t->t[k]);
+-
+-out:
+-	return t;
+-}
+-EXPORT_SYMBOL(gf128mul_init_4k_bbe);
+-
+ void gf128mul_4k_lle(be128 *a, const struct gf128mul_4k *t)
+ {
+ 	u8 *ap = (u8 *)a;
+@@ -417,20 +357,5 @@ void gf128mul_4k_lle(be128 *a, const struct gf128mul_4k *t)
+ }
+ EXPORT_SYMBOL(gf128mul_4k_lle);
+ 
+-void gf128mul_4k_bbe(be128 *a, const struct gf128mul_4k *t)
+-{
+-	u8 *ap = (u8 *)a;
+-	be128 r[1];
+-	int i = 0;
+-
+-	*r = t->t[ap[0]];
+-	while (++i < 16) {
+-		gf128mul_x8_bbe(r);
+-		be128_xor(r, r, &t->t[ap[i]]);
+-	}
+-	*a = *r;
+-}
+-EXPORT_SYMBOL(gf128mul_4k_bbe);
+-
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Functions for multiplying elements of GF(2^128)");
 -- 
-Catalin
+2.47.1
+
 
