@@ -1,448 +1,220 @@
-Return-Path: <linux-kernel+bounces-441797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3839ED42A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:55:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22AAE9ED42B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FF4160F57
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEBAC188A7B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6541FF611;
-	Wed, 11 Dec 2024 17:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FEF20102D;
+	Wed, 11 Dec 2024 17:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tTWqH3Uf"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T2gSyjZT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AD0202F9E;
-	Wed, 11 Dec 2024 17:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980BC1FF5F4;
+	Wed, 11 Dec 2024 17:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733939687; cv=none; b=rvtWOSPm6ylx27R0zg2dkAPhl+2RS1eaMIZbDjf6gVmoFtC4taMV3DxH8vDE8hW2rmqOIOb7Vg5VlB76DNWqAm9/0wuN3xJoX5NopvInoKoliU+75jRnbs8sXXDUqhVsFleOeq+RGOKkRwXeIDU+BP/mlz/5EDoUx24IYpszUkU=
+	t=1733939710; cv=none; b=dQ/x3yVh0npCYHuPhLcuL3QXgAmRlbL6rNe1wHu378l4Z1oXqAAOq4TKj1HINCob9licpdQg73BzGD0cQmFexenjtu0jjAyvMmFDRwrIH2mltkbLi0tw4tsAHT9pUiQXpXzJ7pcOBqNxjB9pTSILtVaOh5Ep/o0PmeL6Sas2LoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733939687; c=relaxed/simple;
-	bh=khp6Kp6PQ4N5d8E6nOwINYUtZHWHtP2p0DSv3OfHocI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o9IRMWMZ/76jBXUF5cz7ucRIMZPhQ+9XCeeEcnKJl/gAVE6ZI2q/6Ht8BxAX5GStw7MklkC82wUy1IS8MEaD2w2sDpC8cLR2BzGuN5iFZhvTeajUg0ME5IHHCIMU391NwHeJQImgCDJUVoB3iIyoW3Fu/B1CXGp4bXX6YcP/2/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tTWqH3Uf; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733939680;
-	bh=khp6Kp6PQ4N5d8E6nOwINYUtZHWHtP2p0DSv3OfHocI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tTWqH3UfjkXEV8dbGPLkR9aYXWMHF/H3t5hK0V4GiCaHpAYNtkMNt1rlZG6HXOK+0
-	 OZ2dde3392CtRtxAbXb5gH/u4fch+HcowSb7EeIS1vpAp0fRGI4IpS/J8VA3ovmei/
-	 IoK1qxxKr/rPH8NDXbNL5OUikDbDmvYmL7JaixJI=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 11 Dec 2024 18:54:43 +0100
-Subject: [PATCH 5/5] s390/pkey: Constify 'struct bin_attribute'
+	s=arc-20240116; t=1733939710; c=relaxed/simple;
+	bh=T2Hz8JXQvIU1IbL1FUM+v0fC6id+P9umjk3kRpUxGgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E+GUMgyKQihtD5nkHjuOxeEfgIKcKCeEa+fygH828ED8KZfMA3Gl400kA0jt16QiN1qSx2N6GK6KTlydLRpC6BPXusXbhuF+RcJYbiDtVl3eacCXqqGl8zxe7A/y/jTER7ka1EqqLijIW1SO9R+3GsNMLdJYxrk4LWSB+PBu20g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T2gSyjZT; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733939709; x=1765475709;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=T2Hz8JXQvIU1IbL1FUM+v0fC6id+P9umjk3kRpUxGgI=;
+  b=T2gSyjZTxHygv9l+HHAEIWjp5THKsDFXHKOUnjelNqpmns5C0xIi5fVq
+   PVEJL7iOCNYJuULhOu7sHs5HW6m2DcLqf6K7a10prObfg+HicdnMwOu4L
+   ZRXqppAGGI2YFlYUIPA0nxCCXBs/TDv2b33LpWUV2Bw2V2LEjHR4ENyY3
+   PU5Chq78T0TmvPTF7EYwnZMwrDSGA4wJcRBRqnXBcvY57SKXGiPgUmgJo
+   nf7i0UijiMPINwVLmg4C9TVQGLDudLQXAQCYpT9gkLVomUURbvgioKbhX
+   +NDUcoLPt70UNacEw2ez/7ZWNS3acRTw4Ij5IcXYWKuFMcOP1p4ndDuwi
+   Q==;
+X-CSE-ConnectionGUID: M0iAEfKQTD24WLa6tmPKOA==
+X-CSE-MsgGUID: CRLyQIhaSP+1Ct4Ins3sjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34462484"
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="34462484"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 09:55:08 -0800
+X-CSE-ConnectionGUID: yy+LLd+eQ+6wGmEeb2LsEA==
+X-CSE-MsgGUID: 38yPHa3qSZGERYkDYwF/Kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="133280363"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 09:55:08 -0800
+Received: from [10.246.136.4] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.4])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 95C3E20B5703;
+	Wed, 11 Dec 2024 09:55:05 -0800 (PST)
+Message-ID: <63eac289-07cb-4c3b-b34d-ea5bd009441a@linux.intel.com>
+Date: Wed, 11 Dec 2024 12:55:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] 'perf mem record' on a Intel hybrid system broken
+To: Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: James Clark <james.clark@linaro.org>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Atish Patra <atishp@atishpatra.org>,
+ Mingwei Zhang <mizhang@google.com>, Kajol Jain <kjain@linux.ibm.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Palmer Dabbelt
+ <palmer@rivosinc.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-perf-users@vger.kernel.org
+References: <Z1CVTJ5jzIyNiB1R@x1> <Z1CsX3n5U_q5ehRp@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <Z1CsX3n5U_q5ehRp@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241211-sysfs-const-bin_attr-s390-v1-5-be01f66bfcf7@weissschuh.net>
-References: <20241211-sysfs-const-bin_attr-s390-v1-0-be01f66bfcf7@weissschuh.net>
-In-Reply-To: <20241211-sysfs-const-bin_attr-s390-v1-0-be01f66bfcf7@weissschuh.net>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Niklas Schnelle <schnelle@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
- Vineeth Vijayan <vneethv@linux.ibm.com>, 
- Peter Oberparleiter <oberpar@linux.ibm.com>, 
- Harald Freudenberger <freude@linux.ibm.com>, 
- Holger Dengler <dengler@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733939680; l=14342;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=khp6Kp6PQ4N5d8E6nOwINYUtZHWHtP2p0DSv3OfHocI=;
- b=RlgLX++1AVH08W/1E8c2XzAnU0VZ837lB69QhXVzfiXnq+wd4v6nMXA5xe/kyJNT8rth7P/UT
- iwrjv2/0oU5Dw0eGxytahrGhjggyNfQXffCKW/wXIC/ImaBIaqJboVr
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The sysfs core now allows instances of 'struct bin_attribute' to be
-moved into read-only memory. Make use of that to protect them against
-accidental or malicious modifications.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/s390/crypto/pkey_sysfs.c | 128 +++++++++++++++++++--------------------
- 1 file changed, 64 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/s390/crypto/pkey_sysfs.c b/drivers/s390/crypto/pkey_sysfs.c
-index a4eb45803f5e6d6b17dec709e6068448973399f6..57edc97bafd29483eedc405d47eabe3d7f6c28fc 100644
---- a/drivers/s390/crypto/pkey_sysfs.c
-+++ b/drivers/s390/crypto/pkey_sysfs.c
-@@ -184,7 +184,7 @@ static ssize_t pkey_protkey_hmac_attr_read(u32 keytype, char *buf,
- 
- static ssize_t protkey_aes_128_read(struct file *filp,
- 				    struct kobject *kobj,
--				    struct bin_attribute *attr,
-+				    const struct bin_attribute *attr,
- 				    char *buf, loff_t off,
- 				    size_t count)
- {
-@@ -194,7 +194,7 @@ static ssize_t protkey_aes_128_read(struct file *filp,
- 
- static ssize_t protkey_aes_192_read(struct file *filp,
- 				    struct kobject *kobj,
--				    struct bin_attribute *attr,
-+				    const struct bin_attribute *attr,
- 				    char *buf, loff_t off,
- 				    size_t count)
- {
-@@ -204,7 +204,7 @@ static ssize_t protkey_aes_192_read(struct file *filp,
- 
- static ssize_t protkey_aes_256_read(struct file *filp,
- 				    struct kobject *kobj,
--				    struct bin_attribute *attr,
-+				    const struct bin_attribute *attr,
- 				    char *buf, loff_t off,
- 				    size_t count)
- {
-@@ -214,7 +214,7 @@ static ssize_t protkey_aes_256_read(struct file *filp,
- 
- static ssize_t protkey_aes_128_xts_read(struct file *filp,
- 					struct kobject *kobj,
--					struct bin_attribute *attr,
-+					const struct bin_attribute *attr,
- 					char *buf, loff_t off,
- 					size_t count)
- {
-@@ -224,7 +224,7 @@ static ssize_t protkey_aes_128_xts_read(struct file *filp,
- 
- static ssize_t protkey_aes_256_xts_read(struct file *filp,
- 					struct kobject *kobj,
--					struct bin_attribute *attr,
-+					const struct bin_attribute *attr,
- 					char *buf, loff_t off,
- 					size_t count)
- {
-@@ -234,7 +234,7 @@ static ssize_t protkey_aes_256_xts_read(struct file *filp,
- 
- static ssize_t protkey_aes_xts_128_read(struct file *filp,
- 					struct kobject *kobj,
--					struct bin_attribute *attr,
-+					const struct bin_attribute *attr,
- 					char *buf, loff_t off,
- 					size_t count)
- {
-@@ -244,7 +244,7 @@ static ssize_t protkey_aes_xts_128_read(struct file *filp,
- 
- static ssize_t protkey_aes_xts_256_read(struct file *filp,
- 					struct kobject *kobj,
--					struct bin_attribute *attr,
-+					const struct bin_attribute *attr,
- 					char *buf, loff_t off,
- 					size_t count)
- {
-@@ -254,7 +254,7 @@ static ssize_t protkey_aes_xts_256_read(struct file *filp,
- 
- static ssize_t protkey_hmac_512_read(struct file *filp,
- 				     struct kobject *kobj,
--				     struct bin_attribute *attr,
-+				     const struct bin_attribute *attr,
- 				     char *buf, loff_t off,
- 				     size_t count)
- {
-@@ -264,7 +264,7 @@ static ssize_t protkey_hmac_512_read(struct file *filp,
- 
- static ssize_t protkey_hmac_1024_read(struct file *filp,
- 				      struct kobject *kobj,
--				      struct bin_attribute *attr,
-+				      const struct bin_attribute *attr,
- 				      char *buf, loff_t off,
- 				      size_t count)
- {
-@@ -272,17 +272,17 @@ static ssize_t protkey_hmac_1024_read(struct file *filp,
- 					   buf, off, count);
- }
- 
--static BIN_ATTR_RO(protkey_aes_128, sizeof(struct protaeskeytoken));
--static BIN_ATTR_RO(protkey_aes_192, sizeof(struct protaeskeytoken));
--static BIN_ATTR_RO(protkey_aes_256, sizeof(struct protaeskeytoken));
--static BIN_ATTR_RO(protkey_aes_128_xts, 2 * sizeof(struct protaeskeytoken));
--static BIN_ATTR_RO(protkey_aes_256_xts, 2 * sizeof(struct protaeskeytoken));
--static BIN_ATTR_RO(protkey_aes_xts_128, sizeof(struct protkeytoken) + 64);
--static BIN_ATTR_RO(protkey_aes_xts_256, sizeof(struct protkeytoken) + 96);
--static BIN_ATTR_RO(protkey_hmac_512, sizeof(struct protkeytoken) + 96);
--static BIN_ATTR_RO(protkey_hmac_1024, sizeof(struct protkeytoken) + 160);
--
--static struct bin_attribute *protkey_attrs[] = {
-+static const BIN_ATTR_RO(protkey_aes_128, sizeof(struct protaeskeytoken));
-+static const BIN_ATTR_RO(protkey_aes_192, sizeof(struct protaeskeytoken));
-+static const BIN_ATTR_RO(protkey_aes_256, sizeof(struct protaeskeytoken));
-+static const BIN_ATTR_RO(protkey_aes_128_xts, 2 * sizeof(struct protaeskeytoken));
-+static const BIN_ATTR_RO(protkey_aes_256_xts, 2 * sizeof(struct protaeskeytoken));
-+static const BIN_ATTR_RO(protkey_aes_xts_128, sizeof(struct protkeytoken) + 64);
-+static const BIN_ATTR_RO(protkey_aes_xts_256, sizeof(struct protkeytoken) + 96);
-+static const BIN_ATTR_RO(protkey_hmac_512, sizeof(struct protkeytoken) + 96);
-+static const BIN_ATTR_RO(protkey_hmac_1024, sizeof(struct protkeytoken) + 160);
-+
-+static const struct bin_attribute *const protkey_attrs[] = {
- 	&bin_attr_protkey_aes_128,
- 	&bin_attr_protkey_aes_192,
- 	&bin_attr_protkey_aes_256,
-@@ -295,9 +295,9 @@ static struct bin_attribute *protkey_attrs[] = {
- 	NULL
- };
- 
--static struct attribute_group protkey_attr_group = {
--	.name	   = "protkey",
--	.bin_attrs = protkey_attrs,
-+static const struct attribute_group protkey_attr_group = {
-+	.name	       = "protkey",
-+	.bin_attrs_new = protkey_attrs,
- };
- 
- /*
-@@ -341,7 +341,7 @@ static ssize_t pkey_ccadata_aes_attr_read(u32 keytype, bool is_xts, char *buf,
- 
- static ssize_t ccadata_aes_128_read(struct file *filp,
- 				    struct kobject *kobj,
--				    struct bin_attribute *attr,
-+				    const struct bin_attribute *attr,
- 				    char *buf, loff_t off,
- 				    size_t count)
- {
-@@ -351,7 +351,7 @@ static ssize_t ccadata_aes_128_read(struct file *filp,
- 
- static ssize_t ccadata_aes_192_read(struct file *filp,
- 				    struct kobject *kobj,
--				    struct bin_attribute *attr,
-+				    const struct bin_attribute *attr,
- 				    char *buf, loff_t off,
- 				    size_t count)
- {
-@@ -361,7 +361,7 @@ static ssize_t ccadata_aes_192_read(struct file *filp,
- 
- static ssize_t ccadata_aes_256_read(struct file *filp,
- 				    struct kobject *kobj,
--				    struct bin_attribute *attr,
-+				    const struct bin_attribute *attr,
- 				    char *buf, loff_t off,
- 				    size_t count)
- {
-@@ -371,7 +371,7 @@ static ssize_t ccadata_aes_256_read(struct file *filp,
- 
- static ssize_t ccadata_aes_128_xts_read(struct file *filp,
- 					struct kobject *kobj,
--					struct bin_attribute *attr,
-+					const struct bin_attribute *attr,
- 					char *buf, loff_t off,
- 					size_t count)
- {
-@@ -381,7 +381,7 @@ static ssize_t ccadata_aes_128_xts_read(struct file *filp,
- 
- static ssize_t ccadata_aes_256_xts_read(struct file *filp,
- 					struct kobject *kobj,
--					struct bin_attribute *attr,
-+					const struct bin_attribute *attr,
- 					char *buf, loff_t off,
- 					size_t count)
- {
-@@ -389,13 +389,13 @@ static ssize_t ccadata_aes_256_xts_read(struct file *filp,
- 					  off, count);
- }
- 
--static BIN_ATTR_RO(ccadata_aes_128, sizeof(struct secaeskeytoken));
--static BIN_ATTR_RO(ccadata_aes_192, sizeof(struct secaeskeytoken));
--static BIN_ATTR_RO(ccadata_aes_256, sizeof(struct secaeskeytoken));
--static BIN_ATTR_RO(ccadata_aes_128_xts, 2 * sizeof(struct secaeskeytoken));
--static BIN_ATTR_RO(ccadata_aes_256_xts, 2 * sizeof(struct secaeskeytoken));
-+static const BIN_ATTR_RO(ccadata_aes_128, sizeof(struct secaeskeytoken));
-+static const BIN_ATTR_RO(ccadata_aes_192, sizeof(struct secaeskeytoken));
-+static const BIN_ATTR_RO(ccadata_aes_256, sizeof(struct secaeskeytoken));
-+static const BIN_ATTR_RO(ccadata_aes_128_xts, 2 * sizeof(struct secaeskeytoken));
-+static const BIN_ATTR_RO(ccadata_aes_256_xts, 2 * sizeof(struct secaeskeytoken));
- 
--static struct bin_attribute *ccadata_attrs[] = {
-+static const struct bin_attribute *const ccadata_attrs[] = {
- 	&bin_attr_ccadata_aes_128,
- 	&bin_attr_ccadata_aes_192,
- 	&bin_attr_ccadata_aes_256,
-@@ -404,9 +404,9 @@ static struct bin_attribute *ccadata_attrs[] = {
- 	NULL
- };
- 
--static struct attribute_group ccadata_attr_group = {
--	.name	   = "ccadata",
--	.bin_attrs = ccadata_attrs,
-+static const struct attribute_group ccadata_attr_group = {
-+	.name	       = "ccadata",
-+	.bin_attrs_new = ccadata_attrs,
- };
- 
- #define CCACIPHERTOKENSIZE	(sizeof(struct cipherkeytoken) + 80)
-@@ -455,7 +455,7 @@ static ssize_t pkey_ccacipher_aes_attr_read(enum pkey_key_size keybits,
- 
- static ssize_t ccacipher_aes_128_read(struct file *filp,
- 				      struct kobject *kobj,
--				      struct bin_attribute *attr,
-+				      const struct bin_attribute *attr,
- 				      char *buf, loff_t off,
- 				      size_t count)
- {
-@@ -465,7 +465,7 @@ static ssize_t ccacipher_aes_128_read(struct file *filp,
- 
- static ssize_t ccacipher_aes_192_read(struct file *filp,
- 				      struct kobject *kobj,
--				      struct bin_attribute *attr,
-+				      const struct bin_attribute *attr,
- 				      char *buf, loff_t off,
- 				      size_t count)
- {
-@@ -475,7 +475,7 @@ static ssize_t ccacipher_aes_192_read(struct file *filp,
- 
- static ssize_t ccacipher_aes_256_read(struct file *filp,
- 				      struct kobject *kobj,
--				      struct bin_attribute *attr,
-+				      const struct bin_attribute *attr,
- 				      char *buf, loff_t off,
- 				      size_t count)
- {
-@@ -485,7 +485,7 @@ static ssize_t ccacipher_aes_256_read(struct file *filp,
- 
- static ssize_t ccacipher_aes_128_xts_read(struct file *filp,
- 					  struct kobject *kobj,
--					  struct bin_attribute *attr,
-+					  const struct bin_attribute *attr,
- 					  char *buf, loff_t off,
- 					  size_t count)
- {
-@@ -495,7 +495,7 @@ static ssize_t ccacipher_aes_128_xts_read(struct file *filp,
- 
- static ssize_t ccacipher_aes_256_xts_read(struct file *filp,
- 					  struct kobject *kobj,
--					  struct bin_attribute *attr,
-+					  const struct bin_attribute *attr,
- 					  char *buf, loff_t off,
- 					  size_t count)
- {
-@@ -503,13 +503,13 @@ static ssize_t ccacipher_aes_256_xts_read(struct file *filp,
- 					    off, count);
- }
- 
--static BIN_ATTR_RO(ccacipher_aes_128, CCACIPHERTOKENSIZE);
--static BIN_ATTR_RO(ccacipher_aes_192, CCACIPHERTOKENSIZE);
--static BIN_ATTR_RO(ccacipher_aes_256, CCACIPHERTOKENSIZE);
--static BIN_ATTR_RO(ccacipher_aes_128_xts, 2 * CCACIPHERTOKENSIZE);
--static BIN_ATTR_RO(ccacipher_aes_256_xts, 2 * CCACIPHERTOKENSIZE);
-+static const BIN_ATTR_RO(ccacipher_aes_128, CCACIPHERTOKENSIZE);
-+static const BIN_ATTR_RO(ccacipher_aes_192, CCACIPHERTOKENSIZE);
-+static const BIN_ATTR_RO(ccacipher_aes_256, CCACIPHERTOKENSIZE);
-+static const BIN_ATTR_RO(ccacipher_aes_128_xts, 2 * CCACIPHERTOKENSIZE);
-+static const BIN_ATTR_RO(ccacipher_aes_256_xts, 2 * CCACIPHERTOKENSIZE);
- 
--static struct bin_attribute *ccacipher_attrs[] = {
-+static const struct bin_attribute *const ccacipher_attrs[] = {
- 	&bin_attr_ccacipher_aes_128,
- 	&bin_attr_ccacipher_aes_192,
- 	&bin_attr_ccacipher_aes_256,
-@@ -518,9 +518,9 @@ static struct bin_attribute *ccacipher_attrs[] = {
- 	NULL
- };
- 
--static struct attribute_group ccacipher_attr_group = {
--	.name	   = "ccacipher",
--	.bin_attrs = ccacipher_attrs,
-+static const struct attribute_group ccacipher_attr_group = {
-+	.name	       = "ccacipher",
-+	.bin_attrs_new = ccacipher_attrs,
- };
- 
- /*
-@@ -570,7 +570,7 @@ static ssize_t pkey_ep11_aes_attr_read(enum pkey_key_size keybits,
- 
- static ssize_t ep11_aes_128_read(struct file *filp,
- 				 struct kobject *kobj,
--				 struct bin_attribute *attr,
-+				 const struct bin_attribute *attr,
- 				 char *buf, loff_t off,
- 				 size_t count)
- {
-@@ -580,7 +580,7 @@ static ssize_t ep11_aes_128_read(struct file *filp,
- 
- static ssize_t ep11_aes_192_read(struct file *filp,
- 				 struct kobject *kobj,
--				 struct bin_attribute *attr,
-+				 const struct bin_attribute *attr,
- 				 char *buf, loff_t off,
- 				 size_t count)
- {
-@@ -590,7 +590,7 @@ static ssize_t ep11_aes_192_read(struct file *filp,
- 
- static ssize_t ep11_aes_256_read(struct file *filp,
- 				 struct kobject *kobj,
--				 struct bin_attribute *attr,
-+				 const struct bin_attribute *attr,
- 				 char *buf, loff_t off,
- 				 size_t count)
- {
-@@ -600,7 +600,7 @@ static ssize_t ep11_aes_256_read(struct file *filp,
- 
- static ssize_t ep11_aes_128_xts_read(struct file *filp,
- 				     struct kobject *kobj,
--				     struct bin_attribute *attr,
-+				     const struct bin_attribute *attr,
- 				     char *buf, loff_t off,
- 				     size_t count)
- {
-@@ -610,7 +610,7 @@ static ssize_t ep11_aes_128_xts_read(struct file *filp,
- 
- static ssize_t ep11_aes_256_xts_read(struct file *filp,
- 				     struct kobject *kobj,
--				     struct bin_attribute *attr,
-+				     const struct bin_attribute *attr,
- 				     char *buf, loff_t off,
- 				     size_t count)
- {
-@@ -618,13 +618,13 @@ static ssize_t ep11_aes_256_xts_read(struct file *filp,
- 				       off, count);
- }
- 
--static BIN_ATTR_RO(ep11_aes_128, MAXEP11AESKEYBLOBSIZE);
--static BIN_ATTR_RO(ep11_aes_192, MAXEP11AESKEYBLOBSIZE);
--static BIN_ATTR_RO(ep11_aes_256, MAXEP11AESKEYBLOBSIZE);
--static BIN_ATTR_RO(ep11_aes_128_xts, 2 * MAXEP11AESKEYBLOBSIZE);
--static BIN_ATTR_RO(ep11_aes_256_xts, 2 * MAXEP11AESKEYBLOBSIZE);
-+static const BIN_ATTR_RO(ep11_aes_128, MAXEP11AESKEYBLOBSIZE);
-+static const BIN_ATTR_RO(ep11_aes_192, MAXEP11AESKEYBLOBSIZE);
-+static const BIN_ATTR_RO(ep11_aes_256, MAXEP11AESKEYBLOBSIZE);
-+static const BIN_ATTR_RO(ep11_aes_128_xts, 2 * MAXEP11AESKEYBLOBSIZE);
-+static const BIN_ATTR_RO(ep11_aes_256_xts, 2 * MAXEP11AESKEYBLOBSIZE);
- 
--static struct bin_attribute *ep11_attrs[] = {
-+static const struct bin_attribute *const ep11_attrs[] = {
- 	&bin_attr_ep11_aes_128,
- 	&bin_attr_ep11_aes_192,
- 	&bin_attr_ep11_aes_256,
-@@ -633,9 +633,9 @@ static struct bin_attribute *ep11_attrs[] = {
- 	NULL
- };
- 
--static struct attribute_group ep11_attr_group = {
-+static const struct attribute_group ep11_attr_group = {
- 	.name	   = "ep11",
--	.bin_attrs = ep11_attrs,
-+	.bin_attrs_new = ep11_attrs,
- };
- 
- const struct attribute_group *pkey_attr_groups[] = {
+On 2024-12-04 2:24 p.m., Namhyung Kim wrote:
+> Hi Arnaldo,
+> 
+> On Wed, Dec 04, 2024 at 02:45:48PM -0300, Arnaldo Carvalho de Melo wrote:
+>> Hi Namhyung,
+>>
+>> root@number:/tmp# perf mem record -a sleep 1s
+>> Error:
+>> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_core/mem-loads,ldlat=30/).
+>> "dmesg | grep -i perf" may provide additional information.
+>>
+>> root@number:/tmp# dmesg | tail
+>> [18865.729882] ixgbe 0000:05:00.0 enp5s0: NIC Link is Up 10 Gbps, Flow Control: RX/TX
+>> [18865.848172] mlx5_core 0000:01:00.0 enp1s0f0np0: Link down
+>> [18866.057990] mlx5_core 0000:01:00.1 enp1s0f1np1: Link down
+>> [19066.396215] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input27
+>> [19078.378477] usb 2-3: current rate 16000 is different from the runtime rate 48000
+>> [21158.375680] usb 2-3: current rate 16000 is different from the runtime rate 48000
+>> [31386.186675] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input28
+>> [31409.098352] usb 2-3: current rate 16000 is different from the runtime rate 48000
+>> [36409.737615] sysrq: Emergency Sync
+>> [36409.742619] Emergency Sync complete
+>> root@number:/tmp#
+>>
+>> 	That I bisected down to:
+>>
+>> ⬢ [acme@toolbox perf-tools-next]$ git bisect good 
+>> af954f76eea56453713ae657f6812d4063f9bc57 is the first bad commit
+>> commit af954f76eea56453713ae657f6812d4063f9bc57
+>> Author: Namhyung Kim <namhyung@kernel.org>
+>> Date:   Tue Oct 15 23:23:57 2024 -0700
+>>
+>>     perf tools: Check fallback error and order
+>>     
+>>     The perf_event_open might fail due to various reasons, so blindly
+>>     reducing precise_ip level might not be the best way to deal with it.
+>>     
+>>     It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
+>>     given precise level.  Let's try again with the correct error code.
+>>     
+>>     This caused a problem on AMD, as it stops on precise_ip of 2 for IBS but
+>>     user events with exclude_kernel=1 cannot make progress.  Let's add the
+>>     evsel__handle_error_quirks() to this case specially.  I plan to work on
+>>     the kernel side to improve this situation but it'd still need some
+>>     special handling for IBS.
+>>     
+>>     Reviewed-by: James Clark <james.clark@linaro.org>
+>>     Reviewed-by: Ravi Bangoria <ravi.bangoria@amd.com>
+>>     Acked-by: Kan Liang <kan.liang@linux.intel.com>
+>>     Cc: James Clark <james.clark@arm.com>
+>>     Cc: Atish Patra <atishp@atishpatra.org>
+>>     Cc: Mingwei Zhang <mizhang@google.com>
+>>     Cc: Kajol Jain <kjain@linux.ibm.com>
+>>     Cc: Thomas Richter <tmricht@linux.ibm.com>
+>>     Cc: Palmer Dabbelt <palmer@rivosinc.com>
+>>     Link: https://lore.kernel.org/r/20241016062359.264929-8-namhyung@kernel.org
+>>     Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+>>
+>> If I revert that patch:
+>>
+>> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline -5
+>> 9a9f2d6da1ea5ef5 (HEAD -> perf-tools-next) Revert "perf tools: Check fallback error and order"
+>> d12d4cfc5033cd8c perf script python: Improve physical mem type resolution
+>> 3f79d822e331022f perf disasm: Return a proper error when not determining the file type
+>> 1a5b914261f0ebee tools features: Don't check for libunwind devel files by default
+>> 40384c840ea1944d (tag: v6.13-rc1, perf-tools/perf-tools) Linux 6.13-rc1
+>> ⬢ [acme@toolbox perf-tools-next]$
+>>
+>> And rebuild, it works again:
+>>
+>> root@number:/tmp# perf mem record -a sleep 1s
+>> [ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 13.014 MB perf.data (10316 samples) ]
+>> root@number:/tmp# perf evlist
+>> cpu_atom/mem-loads,ldlat=30/P
+>> cpu_atom/mem-stores/P
+>> cpu_core/mem-loads-aux/
+>> cpu_core/mem-loads,ldlat=30/
+>> cpu_core/mem-stores/P
+>> dummy:u
+>> # Tip: use 'perf evlist -g' to show group information
+>> root@number:/tmp# perf evlist -v
+>> cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+>> cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+>> cpu_core/mem-loads-aux/: type: 4 (cpu_core), size: 136, config: 0x8203 (mem-loads-aux), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+>> cpu_core/mem-loads,ldlat=30/: type: 4 (cpu_core), size: 136, config: 0x1cd (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, freq: 1, precise_ip: 2, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+>> cpu_core/mem-stores/P: type: 4 (cpu_core), size: 136, config: 0x2cd (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+>> dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+>> # Tip: use 'perf evlist -g' to show group information
+>> root@number:/tmp# perf evlist -g
+>> cpu_atom/mem-loads,ldlat=30/P
+>> cpu_atom/mem-stores/P
+>> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
+>> cpu_core/mem-stores/P
+>> dummy:u
+>> root@number:/tmp#
+>>
+>> Now trying to investigate this,
+> 
+> I think I got a related report from the kernel test robot but it was a
+> Sapphire Rapids machine.  I don't have a Intel hybrid machine in hand.
+> I'll try to take a look at it on Sapphire Rapids.
 
--- 
-2.47.1
+The default precise_ip level for perf mem is always 3.
 
+For the latest intel platforms, it implies PDist, which is only
+available on GP 0.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/intel/core.c#n4412
+
+However, the mem-load PEBS event is available on all GP counters but GP
+0. :(
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/intel/ds.c#n1176
+
+So the precise_ip-- is required.
+
+The failure of scheduling returns -EINVAL.
+
+But Namhyung's patch assumes that the kernel return -EOPNOTSUPP when PMU
+doesn't support the given precise level.
+(Sorry, I didn't notice the case early.)
+
+Is it possible to reduce the precise_ip for the -EINVAL as well?
+
+Thanks,
+Kan
 
