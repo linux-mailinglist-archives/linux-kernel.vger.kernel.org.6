@@ -1,62 +1,81 @@
-Return-Path: <linux-kernel+bounces-441170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6E39ECA8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:46:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334EB9ECA8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C63168FD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EE818891D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF24239BD7;
-	Wed, 11 Dec 2024 10:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC577239BDE;
+	Wed, 11 Dec 2024 10:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZO9i/ETi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ivyBg04f"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81F8239BA8
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12011239BC6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733913968; cv=none; b=RDnv/TmbKSqf2HQHkVlsx3U3R9Jun9zXvgew+QMpLuTZgqhZ/B/7MWIXf7H2S1fhLYT5d5OaP6Ybnl3DIQP4a6xkM7vp/jA24ooZvAkEWQQ3HvQVx/4p7LwdIZyKPaeG9CdllXroJItcu3mObcOcoEUVDK/IIw7KZbaQJXWz25A=
+	t=1733913956; cv=none; b=Amb4+WPE3nRXObHm7idA/e/KW1BKbPaP15gDfLY8YFAx9skDVV3bDqvoIeAxjJDUAr2sWiP0I7KAlAZfarE9HWhcO63mAUMbpb+sm8qmEMwW9Xi3JhmF4DdlgmUp/7wuY5UDg9nxCU+pn6CcvYm06zoqP7W/uLw5We8YfuL6BoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733913968; c=relaxed/simple;
-	bh=drTVui+JWkB8s0++FuEkNboTZC4hEHwkE8bvp3D077Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Oh9c4gsolRfmxsrJd/ZNcZkxXIvLHzP4eA1ZZBDzWnMnaYHfzBUKAxLl6Xyj662PR114es1WhGrG0qX3CYp4F50ogveocpKHxMT1jic23UFoaXdZUL5UZwWxoo5IuG5Qc/WHKnShuoJ510jU3GxzIC2EDlidBqEfAnvrIq6b97Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZO9i/ETi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB6KmNF002777;
-	Wed, 11 Dec 2024 10:45:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BQevAwZ0YPc2kqXNrNdRwGljTan2wotQ3zH2pn6WzPU=; b=ZO9i/ETi0KaKeRa/
-	OzLjZg/MkuYHrV7gFfAp4ulqU6B6jv2cnIgUhgjGhgkaT+SFBCGao2vV1wSyaD/T
-	XqvnfiHFATO9WFrQWDN99Ty0OzVmnbBHACaag+yXyfNwthDdCtJB3EmtlYp9uzQ4
-	nv+DQDY7m+bXd33TIik/2Jb6bbt0yfJPEFIXiIG9gnRbaT2RhTCsImp/ZWpg6r/b
-	YBIa1WWR7V33lnGrGD3VjzhJ5ymIkctXeLKOlrXQjhE+AymIC6YN0N3PlKWmEKLp
-	v7c/4clgv907msv22pQq4aHdO8ph9uXLepYU6g8y94lG5GIlaCpUB5yO/UMDDny3
-	ZNVaJQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw47juy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 10:45:52 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBAjpkv004326
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 10:45:51 GMT
-Received: from [10.239.133.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 02:45:48 -0800
-Message-ID: <1b9b0482-9a6c-4182-ae87-9202f15725ca@quicinc.com>
-Date: Wed, 11 Dec 2024 18:45:39 +0800
+	s=arc-20240116; t=1733913956; c=relaxed/simple;
+	bh=/0nz8GMgYbjibg1AJZfgbWaOMRK1pQveKRAawRj7cuE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GDGymycEIjEqDNabavGnxtyEVA2WBbS94RA6P3zkwhdP6parzEYERJKAVerZ8ulX00nl5nFfJeN9509OmMmaQUFll5lQt0bBU6Aopv+Dg/R8SfAHtRwoF/Kq4tzXWijgKEe7oYy+yaUvHgrA4un8guxiXA0QCIs+rc9bD27zATc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ivyBg04f; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385e3621518so4192284f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 02:45:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733913952; x=1734518752; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VVl9CCqA8sepv1pyuanhBg0DwqapAdDTETHeLWd/77c=;
+        b=ivyBg04fXbwPbKTo8h4WpShu1gnwvDyDxrASqdmaWi7SmbFE9nFBm1oySLI5uQNOol
+         kPoOxSuVc0YeE0fHWy0fNkg8MYGk80Cb1PQ0zv/dBoU4g3XJ1Ba68cwsQ3uIyQ564mFC
+         JvDjOfXGt9taxisQiM0ZUWuaV3ZG46nGBcNO4sCzlGrV0lRFkw71AvZpz02n5nKocjL7
+         e34z9xnWYEJX0pwpxnG+F2AdbPN3XolCzITaAn9QZbPpfTSNfCJSfDrTm+9FS8a5npcb
+         9S48giWPSEDkkeWC+2IzMJgTCUcCY8TUwmew3gSe7a7UBsIdPm35DV6QfZ3Vwd4f/sLx
+         Ca2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733913952; x=1734518752;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VVl9CCqA8sepv1pyuanhBg0DwqapAdDTETHeLWd/77c=;
+        b=tp3bagt93p7e2ekKt5sMyEsGp34bXD9DJ/b+ULChnQrfPJdxls2P+KMfARNyEypYoJ
+         JxUiP4D8rMooaqj9aQHlf0WlyKAn3P1mleINBw8xgNpny6na/fZudO0tej6QvRVlOYev
+         R2A8qt/q/LSQCRnQwsYIJUO1xPvhUn12qMbvtF9y3z5SCe7FrUJOdoNkOJhlj74BGuMN
+         ujDDnfBCdO3/d20XpvGeMVm8pqctJJvsN99qKByqvNtqxqZR6M36bEmo0vBWKc99ZbKu
+         QXCxhYKc7yAfcZEEKsWWkgkTU7VdrI5VbxuFZqQCWNMo+QLfku1yniU6H592+to0XWMY
+         XmaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB7LB0jqBJTR728/Emk9inf+9uBliLhD7SQBt2oGztfvPeOW1C85S58o0QxpoIRhjR5GsLolxDrWCmq4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySW+ti57UESPInvW2FKc8Krd7bOTquklU/hXwgLrkYLFZZpDSJ
+	l+0OA+T4+F5IXHyhN5OrGpnD0+/GIAF0mVRouXprUg2bcKputjc4GE+7CAz/D/wllveEKutVn7G
+	CgRU=
+X-Gm-Gg: ASbGnctr+WcpNDUXb0n9qEuREM69YBe25j5uOAMS/SEnCk+f5HB5QpOr9387nouE5kf
+	ltN7h40Eo8nnvXjidUzAjxWNSH2ZLMjsvlCnrZXotavR7JKxrv5YKE1wbQc12EtaDJFiWaiy7yw
+	L8Uhg71OY2Xwahv04REym8iNjGba4+qa9GP/X8aILq/PVS9bmbJ7qS0N3qAA0MMpqcxqJZh4B+Q
+	1VqTp/RJcffBIUv+4A7eaOxEarvhU5g5+XjBRRI9009/dytG+yXYhnMN1XITfN7AubwtT3OsEsX
+	AyzF3doNra/GLkPHGHmqZc61H9xB5M0=
+X-Google-Smtp-Source: AGHT+IGvs58p6vC+ErPy81oI/lMqyX+7RfNYs06Ry809HjtrsOVGa4o+oX5zS95efpqugcpJBzVN1g==
+X-Received: by 2002:a5d:5f84:0:b0:385:fd31:ca34 with SMTP id ffacd0b85a97d-3864ceab366mr1780514f8f.54.1733913952177;
+        Wed, 11 Dec 2024 02:45:52 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:d426:8f10:1673:5657? ([2a01:e0a:982:cbb0:d426:8f10:1673:5657])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cad51sm252695755e9.36.2024.12.11.02.45.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 02:45:51 -0800 (PST)
+Message-ID: <e3bee6eb-34af-4e90-9041-48ad79d3f63c@linaro.org>
+Date: Wed, 11 Dec 2024 11:45:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,117 +83,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] sched/core: Enhanced debug logs in do_task_dead()
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <mingo@redhat.com>, <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-        <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>,
-        <bsegall@google.com>, <mgorman@suse.de>, <vschneid@redhat.com>,
-        <linux-kernel@vger.kernel.org>,
-        Zhongqiu Han <quic_zhonhan@quicinc.com>
-References: <20241210134513.2179786-1-quic_zhonhan@quicinc.com>
- <20241210141823.GU35539@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-In-Reply-To: <20241210141823.GU35539@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: m60oAYt6exWg6lJHcuMaaOfL0G4_KvyQ
-X-Proofpoint-GUID: m60oAYt6exWg6lJHcuMaaOfL0G4_KvyQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110081
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v5] dmaengine: qcom: gpi: Add GPI immediate DMA support
+ for SPI protocol
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_msavaliy@quicinc.com,
+ quic_vtanuku@quicinc.com
+References: <20241209075033.16860-1-quic_jseerapu@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241209075033.16860-1-quic_jseerapu@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 12/10/2024 10:18 PM, Peter Zijlstra wrote:
-> On Tue, Dec 10, 2024 at 09:45:13PM +0800, Zhongqiu Han wrote:
->> If BUG() is a NOP, dump the problematic stack for debugging purposes.
->>
->> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
->> ---
->> If BUG() is a NOP, it should make sense for debugging purposes. However,
->> just arising the patch with RFC, because at least for now, I haven't found
->> a definition of BUG() as NOP in various architectures. Thanks~
+On 09/12/2024 08:50, Jyothi Kumar Seerapu wrote:
+> The DMA TRE(Transfer ring element) buffer contains the DMA
+> buffer address. Accessing data from this address can cause
+> significant delays in SPI transfers, which can be mitigated to
+> some extent by utilizing immediate DMA support.
 > 
-> Yeah, this don't make sense. If you want a stack-trace you shouldn't
-> have killed BUG.
+> QCOM GPI DMA hardware supports an immediate DMA feature for data
+> up to 8 bytes, storing the data directly in the DMA TRE buffer
+> instead of the DMA buffer address. This enhancement enables faster
+> SPI data transfers.
 > 
-> And yeah, having done a quick peek, I don't see how you can kill BUG
-> these days other than explicitly modyfing your source, in which case you
-> get to keep the pieces.
+> This optimization reduces the average transfer time from 25 us to
+> 16 us for a single SPI transfer of 8 bytes length, with a clock
+> frequency of 50 MHz.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+> v4 -> v5:
+>     - For Immediate DMA, instead of making dma type as 0x10 and then
+>       enable 16th bit of dword3, directly updating the dma type as 0x11.
+> 
+>     Link to v4:
+> 	https://lore.kernel.org/all/20241205170611.18566-1-quic_jseerapu@quicinc.com/
+> 
+> v3 -> v4:
+>     - Instead using extra variable(immediate_dma) for Immediate dma
+>       condition check, made it to inlined.
+>     - Removed the extra brackets around Immediate dma condition check.
+> 
+>     Link to v3:
+>          https://lore.kernel.org/lkml/20241204122059.24239-1-quic_jseerapu@quicinc.com/
+> 
+> v2 -> v3:
+>     - When to enable Immediate DMA support, control is moved to GPI driver
+>       from SPI driver.
+>     - Optimizations are done in GPI driver related to immediate dma changes.
+>     - Removed the immediate dma supported changes in qcom-gpi-dma.h file
+>       and handled in GPI driver.
+> 
+>     Link to v2:
+>          https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
+>          https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
+> 
+> v1 -> v2:
+>     - Separated the patches to dmaengine and spi subsystems
+>     - Removed the changes which are not required for this feature from
+>       qcom-gpi-dma.h file.
+>     - Removed the type conversions used in gpi_create_spi_tre.
+> 
+>     Link to v1:
+>          https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
+> 
+>   drivers/dma/qcom/gpi.c | 31 +++++++++++++++++++++++++------
+>   1 file changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+> index 52a7c8f2498f..b1f0001cc99c 100644
+> --- a/drivers/dma/qcom/gpi.c
+> +++ b/drivers/dma/qcom/gpi.c
+> @@ -18,6 +18,7 @@
+>   #include "../virt-dma.h"
+>   
+>   #define TRE_TYPE_DMA		0x10
+> +#define TRE_TYPE_IMMEDIATE_DMA	0x11
+>   #define TRE_TYPE_GO		0x20
+>   #define TRE_TYPE_CONFIG0	0x22
+>   
+> @@ -64,6 +65,7 @@
+>   
+>   /* DMA TRE */
+>   #define TRE_DMA_LEN		GENMASK(23, 0)
+> +#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
+>   
+>   /* Register offsets from gpi-top */
+>   #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
+> @@ -1711,6 +1713,7 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>   	dma_addr_t address;
+>   	struct gpi_tre *tre;
+>   	unsigned int i;
+> +	int len;
+>   
+>   	/* first create config tre if applicable */
+>   	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+> @@ -1763,14 +1766,30 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>   	tre_idx++;
+>   
+>   	address = sg_dma_address(sgl);
+> -	tre->dword[0] = lower_32_bits(address);
+> -	tre->dword[1] = upper_32_bits(address);
+> +	len = sg_dma_len(sgl);
+>   
+> -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
+> +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
+> +	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0])) {
+> +		/*
+> +		 * For Immediate dma, data length may not always be length of 8 bytes,
+> +		 * it can be length less than 8, hence initialize both dword's with 0
+> +		 */
+> +		tre->dword[0] = 0;
+> +		tre->dword[1] = 0;
+> +		memcpy(&tre->dword[0], sg_virt(sgl), len);
+>   
+> -	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+> -	if (direction == DMA_MEM_TO_DEV)
+> -		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
+> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
+> +		tre->dword[3] = u32_encode_bits(TRE_TYPE_IMMEDIATE_DMA, TRE_FLAGS_TYPE);
+> +	} else {
+> +		tre->dword[0] = lower_32_bits(address);
+> +		tre->dword[1] = upper_32_bits(address);
+> +
+> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
+> +		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+> +	}
+> +
+> +	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV,
+> +					 TRE_FLAGS_IEOT);
+>   
+>   	for (i = 0; i < tre_idx; i++)
+>   		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
 
-Hi Peter，
-Thanks a lot for your review and reply!
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
 
-My initial thought was that if BUG() is a NOP, we should dump the stack
-for debugging purposes before executing cpu_relax(), because according
-to the current do_task_dead() code comments, BUG() might be a NOP in
-some cases.
-void __noreturn do_task_dead(void)
-{
-         /* Causes final put_task_struct in finish_task_switch(): */
-         set_special_state(TASK_DEAD);
+Both platforms uses QuP SPI with GPI to communicate with the Goodix touchscreen controller,
+no regression observed.
 
-         /* Tell freezer to ignore us: */
-         current->flags |= PF_NOFREEZE;
-
-         __schedule(SM_NONE);
-         BUG();
-
-         /* Avoid "noreturn function does return" - but don't continue if
-BUG() is a NOP: */-------------------> This comments
-         for (;;)
-                 cpu_relax();
-}
-
-For example, in the code _before_ 7/4/2014 commit a4b5d580e078 ('bug:
-Make BUG() always stop the machine')., BUG() is indeed a NOP if (
-!CONFIG_BUG && !HAVE_ARCH_BUG)
-
-  #else /* !CONFIG_BUG */
-  #ifndef HAVE_ARCH_BUG
--#define BUG() do {} while (0)
-+#define BUG() do {} while (1)
-  #endif
-
-
-
-However, since 10/4/2024 commit 5284984a4fba ('bug: Fix no-return
-statement warning with !CONFIG_BUG'), with !CONFIG_BUG, the default
-BUG() is implemented to call unreachable() to ensure it does not return,
-and if all architecture-specific implementations of BUG() also do not
-return, I now think my thought should be meaningless.
-
-commit 5284984a4fba ('bug: Fix no-return-statement warning with 
-!CONFIG_BUG')
-  #else /* !CONFIG_BUG */
-  #ifndef HAVE_ARCH_BUG
--#define BUG() do {} while (1)
-+#define BUG() do {             \
-+       do {} while (1);        \
-+       unreachable();          \
-+} while (0)
-  #endif
-
-
-By the way, do you think it is reasonable to remove the cpu_relax code
-by evaluating whether BUG() does not return in all architectures and
-configurations? Additionally, _if_ some architecture-specific
-implementations of BUG() do not have the capability to output the thread
-stack, should we consider using the panic() function as a replacement?
-
-Thanks for your time.
-
-
-
--- 
-Thx and BRs,
-Zhongqiu Han
+Neil
 
