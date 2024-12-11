@@ -1,236 +1,218 @@
-Return-Path: <linux-kernel+bounces-441975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA209ED63F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:17:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EFA89ED650
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:19:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B002809E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8ACA16460E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100E220A5E4;
-	Wed, 11 Dec 2024 19:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F1B22968F;
+	Wed, 11 Dec 2024 19:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VL5E0Nek"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/GECgc6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374102594B3;
-	Wed, 11 Dec 2024 19:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD81201249;
+	Wed, 11 Dec 2024 19:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733944490; cv=none; b=XMCWnkElmY5xdu2Y6q1AsWoXy/8y+eeJ6YR/1wuoj+14QEGyiPxYY6ynXel3onABUkQQhJ6wcHrrWyxMrHoJyIgLYsizPQhVmqTlHbCXrmrl+eno/uymdPcHxsAB28x3uJtYgZHvxbdvITx3N8uiI2IT3rDa84gEm7HWjno0Szo=
+	t=1733944507; cv=none; b=N7Vtt6g7b/IJ6xLRfxNB9rObonRmUw6pzNHvM6NpYKJ066Zjz/zRR+Iev/gFFpHcjWGwg6sQqXr1/nOXphimC2D32HaFet5HJjvPGOhX0vL4LDjsfwuMajkhx1Vdd30UDPtqBa70dTgb8JlD6NhrAeE9QFV2CuE8aQtevlMemso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733944490; c=relaxed/simple;
-	bh=eAniawxBhtib03GfxX9/u4Ndstdo7x6Aj1ZRkV2OAvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gOUXvYJ0dNvuJPsuS1QWjISpdVwHVD0QIix9ZDKJY1Al3DvKf10BJ52VVetUjNM/Tu9d7gsQRJsfh1QfZmhlpSkrA0/pGhqGmHG2aYn+NLS0pbNAi7cLAnqEqRl0NC8wac6fXsLvk1hGdKA/9gjWJfR9RmdLrX3Vv0J/c2I2ykM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VL5E0Nek; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD0FC4CED2;
-	Wed, 11 Dec 2024 19:14:45 +0000 (UTC)
+	s=arc-20240116; t=1733944507; c=relaxed/simple;
+	bh=i3d4vZiS4nVX9VD7WCLyvUhVobu4CBwCVRkA91CWVDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sIKYqlzjHA5E7X9Ix79h2/PWKUwfVDfzUJXa3OoAkz+YY/m04Tcy1+m7jEutlZMab4C7QLu856vTx3O9fQ5wbTbgRjTZcQtcohtmgJPE4sq/2wpNenYtOvMfq4pkubpY5YtcmthbgEZ2NcHyNq7usubXz4uy30QfzWx/eWkqV8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/GECgc6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23922C4CED2;
+	Wed, 11 Dec 2024 19:15:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733944489;
-	bh=eAniawxBhtib03GfxX9/u4Ndstdo7x6Aj1ZRkV2OAvQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VL5E0NekGGP/+NklIqGa1wt05rnw2b98UGKvBzpJtz6HSKfCf/NFvndulLtRqtsnv
-	 rUfPrAVHWoMVEMEm90gmky87VlyBRj4r7TzLX0G0/f44np9aTYqSbZBghpnkDVuhRz
-	 2osplHggKVpYVd3zFdd4wr49zwDniH4TUb8hT4ZcHTboi977Y2jTL8A7kStLFC7Pr5
-	 HXSnZ52u1rUvlmXd3kQMlAiXad/231ku+/16X1rzvNK7PDd7e+GAzBOpqxTW54jpoe
-	 IdRiWTRlEgdhWZC3zBElbkeTZjNRvgLhiYooX+3/baOKMqAYkfJUm4hLV/QkciFORC
-	 DoWS7tP5XOdug==
-Date: Wed, 11 Dec 2024 19:14:40 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v5 10/10] iio: accel: adxl345: add FIFO with watermark
- events
-Message-ID: <20241211191440.0e6f7afd@jic23-huawei>
-In-Reply-To: <CAFXKEHaLzrBXNV=dgTrX3CatvCT751x8Lh69mCXebLK=Fh4jFw@mail.gmail.com>
-References: <20241205171343.308963-1-l.rubusch@gmail.com>
-	<20241205171343.308963-11-l.rubusch@gmail.com>
-	<20241208163418.2d57f185@jic23-huawei>
-	<CAFXKEHaLzrBXNV=dgTrX3CatvCT751x8Lh69mCXebLK=Fh4jFw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1733944506;
+	bh=i3d4vZiS4nVX9VD7WCLyvUhVobu4CBwCVRkA91CWVDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A/GECgc6ArEC1wFKQBvURTxp4u2yvImGrEsTeemOpHAAlH5geIXf2eUb0uTrub3KX
+	 HpRJQy5K5RWI0ChL8RTP8iSsbzMB9KaqJKBIzkSQZncn0WvF3I4KHQEITSW64Q104Z
+	 CC+3f0CSUHVqd3SMuaoScIvcw6bfsT8pGfPweSY2QaEwpeA8wtoUlQ4GbU2mfTUTTu
+	 Fc0Fh2qVLrWnbZk/0Swj68qzXTKiDpZ8DN2TgcZD6HoGGN3eXpkN8qPeouoeps2QcZ
+	 +GIr+TgnDzdUxutO4VBwG6SLrFxfxlVD7CE8dSbQ1ffvhvAbxqHsvHKQiftFDreLb6
+	 Zxjr6yY9dRDFg==
+Date: Wed, 11 Dec 2024 11:15:03 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, nick.forrington@arm.com,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] perf lock: Fix parse_lock_type which only
+ retrieve one lock flag
+Message-ID: <Z1nkt0F5oPoMZKbp@google.com>
+References: <20241210200847.1023139-1-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241210200847.1023139-1-ctshao@google.com>
 
-
-> > > +}
-> > > +
-> > > +/**
-> > > + * adxl345_fifo_transfer() - Read samples number of elements.
-> > > + * @st: The instance of the state object of this sensor.
-> > > + * @samples: The number of lines in the FIFO referred to as fifo_entry,
-> > > + * a fifo_entry has 3 elements for X, Y and Z direction of 2 bytes each.
-> > > + *
-> > > + * It is recommended that a multiple-byte read of all registers be performed to
-> > > + * prevent a change in data between reads of sequential registers. That is to
-> > > + * read out the data registers X0, X1, Y0, Y1, Z0, Z1 at once.  
-> >
-> > Doesn't match the code which is reading just one register lots of times.  
+On Tue, Dec 10, 2024 at 12:08:20PM -0800, Chun-Tse Shao wrote:
+> `parse_lock_type` can only add the first lock flag in `lock_type_table`
+> given input `str`. For example, for `Y rwlock`, it only adds `rwlock:R`
+> into this perf session. Another example is for `-Y mutex`, it only adds
+> the mutex without `LCB_F_SPIN` flag. The patch fixes this issue, makes
+> sure both `rwlock:R` and `rwlock:W` will be added with `-Y rwlock`, and
+> so on.
 > 
-> This is one of my painpoints, regmap_noinc_read() worked here, for a
-> linewise reading of FIFO elements. Say, I could read X0, X1, Y0,... Z1
-> in one command. Also, I tried here regmap_bulk_read(). At all, I find
-> this solution is working, but I'm not sure if there is not a total
-> differnt way to do the read out.
-
-A bulk read is defined as indexing through registers. Eg. ADDR, ADDR + 1, ADDR + 2
-etc.  regmap_noinc_read() just keeps reading the same register, so is typically
-used for fifos.
-
-I opened the datasheet. It seems to say you need to read 3 registers repeatedly
-rather than one 3 times as often.  There isn't a good way to do that sort of
-sequenced read in one go.  So you will need a loop like you have, but it
-should need a bulk read.  Curious it doesn't seem to...
-
-Ah. Device auto increments for both SPI and I2C.  So in that case
-the noinc_read and normal bulk read will actually issue the same thing and
-as these are volatile registers it doesn't matter (it would if you were
-caching the result as the data would end up cached in different places).
-
-It will do the wrong thing though if you have an i2c controller that
-is less capable and can't do large reads.  So you should definitely use
-bulk_read not noinc.
-
-Have you set available_scan_masks?  If not you want to do so as
-per comment I made in the cover letter.
-
-
-
-> > > + * @irq: The irq being handled.
-> > > + * @p: The struct iio_device pointer for the device.
-> > > + *
-> > > + * Return: The interrupt was handled.
-> > > + */
-> > > +static irqreturn_t adxl345_event_handler(int irq, void *p)
-> > > +{
-> > > +     struct iio_dev *indio_dev = p;
-> > > +     struct adxl345_state *st = iio_priv(indio_dev);
-> > > +     u8 int_stat;
-> > > +     int samples;
-> > > +
-> > > +     int_stat = adxl345_get_status(st);
-> > > +     if (int_stat < 0)
-> > > +             return IRQ_NONE;
-> > > +
-> > > +     if (int_stat == 0x0)  
-> > Doesn't this correspond to 'not our interrupt'?
-> > If that's the case return IRQ_NONE is the right way to go and not reset the
-> > interrupt.  You have registered it as maybe shared, and if it is, then this
-> > is a common thing to happen as interrupt from another device.
-> >  
+> Testing:
+>   $ ./perf lock con -ab -Y mutex,rwlock -- perf bench sched pipe
+>   # Running 'sched/pipe' benchmark:
+>   # Executed 1000000 pipe operations between two processes
 > 
-> Here I see actually
-> +     int_stat = adxl345_get_status(st);
-> +     if (int_stat < 0)
-> +             return IRQ_NONE; // a bus error, reading register not possible
-> ...and then...
-> +     if (int_stat == 0x0)
-> +             // interrupt sources were 0, so IRQ not from our sensor
+>        Total time: 9.313 [sec]
 > 
-> I'm unsure if the first IRQ_NONE here is actually correct. I mean, if
-> the bus is not working,
-> actually any IRQ usage should be considered broken. Is there a way to
-> break out of measuring?
+>          9.313976 usecs/op
+>            107365 ops/sec
+>    contended   total wait     max wait     avg wait         type   caller
 > 
-
-It is a much debated thing on what you should return if you have no
-idea if it is our interrupt or not.   There isn't really a right
-answer.  If you get a lot of IRQ_NONE and no one else claims it eventually
-the interrupt will be disabled (to break the interrupt storm freezing the
-machine).
-
-
-> > > +             goto err;
-> > > +
-> > > +     if (int_stat & ADXL345_INT_OVERRUN)
-> > > +             goto err;
-> > > +
-> > > +     if (int_stat & (ADXL345_INT_DATA_READY | ADXL345_INT_WATERMARK)) {  
-> >
-> > I think you only ever enable the INT_WATERMARK?  If so does it
-> > make sense to check for DATA_READY as well?
-> >  
+>          176      1.65 ms     19.43 us      9.38 us        mutex   pipe_read+0x57
+>           34    180.14 us     10.93 us      5.30 us        mutex   pipe_write+0x50
+>            7     77.48 us     16.09 us     11.07 us        mutex   do_epoll_wait+0x24d
+>            7     74.70 us     13.50 us     10.67 us        mutex   do_epoll_wait+0x24d
+>            3     35.97 us     14.44 us     11.99 us     rwlock:W   ep_done_scan+0x2d
+>            3     35.00 us     12.23 us     11.66 us     rwlock:W   do_epoll_wait+0x255
+>            2     15.88 us     11.96 us      7.94 us     rwlock:W   do_epoll_wait+0x47c
+>            1     15.23 us     15.23 us     15.23 us     rwlock:W   do_epoll_wait+0x4d0
+>            1     14.26 us     14.26 us     14.26 us     rwlock:W   ep_done_scan+0x2d
+>            2     14.00 us      7.99 us      7.00 us        mutex   pipe_read+0x282
+>            1     12.29 us     12.29 us     12.29 us     rwlock:R   ep_poll_callback+0x35
+>            1     12.02 us     12.02 us     12.02 us     rwlock:W   do_epoll_ctl+0xb65
+>            1     10.25 us     10.25 us     10.25 us     rwlock:R   ep_poll_callback+0x35
+>            1      7.86 us      7.86 us      7.86 us        mutex   do_epoll_ctl+0x6c1
+>            1      5.04 us      5.04 us      5.04 us        mutex   do_epoll_ctl+0x3d4
 > 
-> Watermark comes usually with data ready or overrun. I guess for the
-> FIFO watermark, just evaluating watermark is probably sufficient. For
-> other events, it then might be notification w/ a data ready set.
-> Probably better to introduce data ready when it's actually really
-> needed?
+> Fixes: d783ea8f62c4 ("perf lock contention: Simplify parse_lock_type()")
+> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 
-Yes.  That dataready is normally used when you are doing capture without
-the fifo and want to read each sample - kind of same as a watermark depth
-of 1, but less hardware turned on.  As such, may be no need to ever support it.
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 
-   return dev_err_probe(dev, ret, "Failed to add action or reset\n");
-> > >
-> > > +     if (st->irq > 0) {
-> > > +             dev_dbg(dev, "initialize for FIFO_STREAM mode\n");
-> > > +
-> > > +             ret = devm_iio_kfifo_buffer_setup(dev, indio_dev, &adxl345_buffer_ops);
-> > > +             if (ret)
-> > > +                     return ret;
-> > > +
-> > > +             ret = devm_request_threaded_irq(dev, st->irq, NULL, &adxl345_event_handler,
-> > > +                             IRQF_SHARED | IRQF_ONESHOT,
-> > > +                             indio_dev->name, indio_dev);
-> > > +             if (ret)
-> > > +                     return dev_err_probe(dev, ret, "Failed to setup triggered buffer\n");
-> > > +
-> > > +     } else {
-> > > +             dev_dbg(dev, "initialize for FIFO_BYPASS mode (fallback)\n");
-> > > +  
-> > Given you haven't removed this code from elsewhere, was the driver relying
-> > on the defaults after reset before this patch?
-> >
-> > I don't mind having this branch as a form of documentation even if that's
-> > true but maybe add a note to the patch description.
-> >  
+Thanks,
+Namhyung
+
+> ---
+>  tools/perf/builtin-lock.c | 64 ++++++++++++++++++++++++---------------
+>  1 file changed, 39 insertions(+), 25 deletions(-)
 > 
-> I'm not sure if I get you correctly. The driver before only
-> implemented "BYPASS" mode. This was the case w/o a defined
-> interrupt-name. My intention now is to keep this behavior as fallback.
-> If no IRQ is around, i.e. interrupt + interrupt-name, the sensor
-> driver will operate the sensor in BYPASS mode.
+> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> index 062e2b56a2ab..7e36bbe3cb80 100644
+> --- a/tools/perf/builtin-lock.c
+> +++ b/tools/perf/builtin-lock.c
+> @@ -1591,8 +1591,6 @@ static const struct {
+>  	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"percpu-rwsem" },
+>  	{ LCB_F_MUTEX,			"mutex",	"mutex" },
+>  	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex",	"mutex" },
+> -	/* alias for get_type_flag() */
+> -	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex-spin",	"mutex" },
+>  };
+>  
+>  static const char *get_type_str(unsigned int flags)
+> @@ -1617,19 +1615,6 @@ static const char *get_type_name(unsigned int flags)
+>  	return "unknown";
+>  }
+>  
+> -static unsigned int get_type_flag(const char *str)
+> -{
+> -	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> -		if (!strcmp(lock_type_table[i].name, str))
+> -			return lock_type_table[i].flags;
+> -	}
+> -	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> -		if (!strcmp(lock_type_table[i].str, str))
+> -			return lock_type_table[i].flags;
+> -	}
+> -	return UINT_MAX;
+> -}
+> -
+>  static void lock_filter_finish(void)
+>  {
+>  	zfree(&filters.types);
+> @@ -2350,29 +2335,58 @@ static int parse_lock_type(const struct option *opt __maybe_unused, const char *
+>  			   int unset __maybe_unused)
+>  {
+>  	char *s, *tmp, *tok;
+> -	int ret = 0;
+>  
+>  	s = strdup(str);
+>  	if (s == NULL)
+>  		return -1;
+>  
+>  	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
+> -		unsigned int flags = get_type_flag(tok);
+> +		bool found = false;
+>  
+> -		if (flags == -1U) {
+> -			pr_err("Unknown lock flags: %s\n", tok);
+> -			ret = -1;
+> -			break;
+> +		/* `tok` is `str` in `lock_type_table` if it contains ':'. */
+> +		if (strchr(tok, ':')) {
+> +			for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> +				if (!strcmp(lock_type_table[i].str, tok) &&
+> +				    add_lock_type(lock_type_table[i].flags)) {
+> +					found = true;
+> +					break;
+> +				}
+> +			}
+> +
+> +			if (!found) {
+> +				pr_err("Unknown lock flags name: %s\n", tok);
+> +				free(s);
+> +				return -1;
+> +			}
+> +
+> +			continue;
+>  		}
+>  
+> -		if (!add_lock_type(flags)) {
+> -			ret = -1;
+> -			break;
+> +		/*
+> +		 * Otherwise `tok` is `name` in `lock_type_table`.
+> +		 * Single lock name could contain multiple flags.
+> +		 */
+> +		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> +			if (!strcmp(lock_type_table[i].name, tok)) {
+> +				if (add_lock_type(lock_type_table[i].flags)) {
+> +					found = true;
+> +				} else {
+> +					free(s);
+> +					return -1;
+> +				}
+> +			}
+>  		}
+> +
+> +		if (!found) {
+> +			pr_err("Unknown lock name: %s\n", tok);
+> +			free(s);
+> +			return -1;
+> +		}
+> +
+>  	}
+>  
+>  	free(s);
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static bool add_lock_addr(unsigned long addr)
+> -- 
+> 2.47.1.545.g3c1d2e2a6a-goog
 > 
-> I was interpreting this also as the "default behavior", you mentioned
-> in the dt-binding patch? Is this correct?
-> 
-> What do you mean when the driver is relying on the defaults after reset?
-
-The driver worked without irq before now.  Which is same as this path.
-So how was the register written here being configured correctly before
-this patch?  I'm guessing it wasn't and that the value written here
-is the default on power up.
-
-Either that or I'm miss understanding what this branch of the if / else is
-about.
-
-Jonathan
-
-> 
-> > > +             fifo_ctl = ADXL345_FIFO_CTL_MODE(ADXL345_FIFO_BYPASS);
-> > > +
-> > > +             ret = regmap_write(st->regmap, ADXL345_REG_FIFO_CTL, fifo_ctl);
-> > > +             if (ret < 0)
-> > > +                     return ret;
-> > > +     }
-> > >       return devm_iio_device_register(dev, indio_dev);
-> > >  }
-> > >  EXPORT_SYMBOL_NS_GPL(adxl345_core_probe, IIO_ADXL345);  
-> >  
-> 
-
 
