@@ -1,307 +1,542 @@
-Return-Path: <linux-kernel+bounces-441964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDE29ED624
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B83A9ED62A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09885165FFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FEDA16A2EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77564242EE2;
-	Wed, 11 Dec 2024 18:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LStFnb3T";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JZc327+P"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A76243B64;
+	Wed, 11 Dec 2024 18:57:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EBD23691C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943447; cv=fail; b=f55gHlvIB3QeiqSTMY7+mZe4z4liMMnARDY7XPsO1b3lneialzbJrssE12OVhEH47/XK5AoRyUV3Ms1UZ66yLSje9UX72AQtQ53abQMKFDTXjq8CUKluVlwUkttkSYBXzF/Qj4d7vJ8II03A1oiZfLlq+7UuR5G/U8J4VuW8PS8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943447; c=relaxed/simple;
-	bh=AqbQzoTJ11CThHqhGqxWRRKp/tx4NC8NtihejR8viag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WtcbXZvMHC4IUQ/kOkxs2gbxD2YmcE7TNiI66RMuYI/V4qKTR7sbJnpgwQIWOQjyAo1Y78Q11aCQ/xfLJQa2h7qnxJkL0DBxhbcgm+J9VVk012Tzah/65ZqsuXxkEm7QR6uX/Hrckau7+gNjGLioqhM2b2oyVBexh4OcLgZL/GM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LStFnb3T; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JZc327+P; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBEMvs4022056;
-	Wed, 11 Dec 2024 18:57:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=6jcPgsO79CH2X+amn3Quui9AHa/LhsHM49vO3P6om5Y=; b=
-	LStFnb3TuTBwAR+tbq8TVXjBsM+UUz8JvRT9A/oTZPqGU+qieJ20bYG+0FMqNm6j
-	1yK7128p5yC+NbqZ6zBK6P4Yu76WxE5vSlchfm7DcsWdGxJ11ii/B/T3HMfO0pt+
-	qyuhucTj6So8peEiVI0YaNE/EfAEVc9ln18ZhMxCB3KwasVGCRTSEyRZF8uWSTZ/
-	pa+8REtS5/61jNeM3yjuynk7MnWch6fRC1ndqhaAZVyy8ipSTqBqADRefrSom+OI
-	rVOw62vQjF4UxIEypCRJFTNegBWBNayUg/Z3NpN9lqP04HAITqQ21PmQER4XTahs
-	DeIq12bu6MjUvYqPTaEp4A==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43dx5s6j00-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 18:57:15 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHxRd9009482;
-	Wed, 11 Dec 2024 18:57:14 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2046.outbound.protection.outlook.com [104.47.57.46])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43ccta4b6v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 18:57:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aFWQRo8XOJ8YyaRLC3TvwlDPnjJkpZ+JnCzAcctwp3hJRyYQyzQwCzXXJ7Q2AKLa/Zs5yBkaMiQD2C/GQI0iJj3qnlHUvZsG2IbpnRBk0SuIyjjv4s8jJvnaL/FcQDFPmKtJFhTNxGZWGhD4OZQSCzLWn6vSsOUvlvJ9Zqh2fv4fvebeCpnpVQ5HmrpAxH+DpOzxMsIYqtYBh7lZI5RL1Kpaj92UzTgkzSkR3/XyWeLqXEZkdk2lOFxWBFvSCV5W6KMgmt98XFeiMlcQvkFjfbCxZq7jGR4mQn36bcjGkj4tZUDQQX5CiNnwm9zRNoKJTe1ThE7EV+ywYeBVToSv8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6jcPgsO79CH2X+amn3Quui9AHa/LhsHM49vO3P6om5Y=;
- b=rhU9LqC4VGMzGnxYgIg/CYPS7p8EjmoyxdcOG5RASth/+FRBEk5lQXg012pk39rEG6ndbVheDpVRJhqmNE9hlTFJ8rbhCpbT/sj5J3ylrt6uu3gkVWEhdrzlXuw2W+VHWlitrnyTD0H2f+Bi2mH9eo3Vc7rtkERjlBilTnTjVNf6lcQB+tTVXFUuGqazOhUf420KIn5pn0/wul9mq6KGb3PlyYXu+5REWvGAhf3wT7QiFSdLOE/geWV2LN9KkQYp+J+ZhrIouf4z1AwvfTjz9v4ngLciWIQT5KjLufyEYtwobGGXomrYFtY43ovAMNwwj+6zVNAbaHfBXZBPi8Yhgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6jcPgsO79CH2X+amn3Quui9AHa/LhsHM49vO3P6om5Y=;
- b=JZc327+PD+G/YFCpIdMZCEbeFipOvSG+RQ4NccQdYt/L1OPsNzOTNdhZ+3lzdlibPnW9A9h0LHCvmZ6BLH3UKbFKyq/7WPWVwmCOhH1Cx9NLIFr76n7Ck6je0UKN4XHQktPjm3WnnZT+Ayc2XojeDRac6TSrvuxZnI8gGHVkqb0=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by DM4PR10MB6064.namprd10.prod.outlook.com (2603:10b6:8:bd::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.14; Wed, 11 Dec
- 2024 18:57:11 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 18:57:09 +0000
-Date: Wed, 11 Dec 2024 18:57:05 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: update MEMORY MAPPING section
-Message-ID: <a2c43cfe-5c99-481a-b599-fca8b4fe1e38@lucifer.local>
-References: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
- <CABi2SkXTSi8HKTyE1WoL3qqOTk4KDnF1-RkSOX+ne=cEFJL4qg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABi2SkXTSi8HKTyE1WoL3qqOTk4KDnF1-RkSOX+ne=cEFJL4qg@mail.gmail.com>
-X-ClientProxiedBy: LO4P265CA0142.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c4::16) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB730242F16
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733943456; cv=none; b=LLBk8/1UpmY0kF1BnYTC3SKfAD5cZcwJqNcTlVBZU1+oI2VHvGk00p6nuiq5KWRvmNA2tpGPrN3CmfjjXEdGyjBAodtOh40NvXkszm7YnNGdQbZPgzmHSByuqwBfLQBTmv9i6pwdltsbaykaKLkzRrXWQ0ijreWJK7BUY+COyfU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733943456; c=relaxed/simple;
+	bh=gzLaOdE//ITNtAZIxkl55EsI846FM5MiEbUHNlwkhoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oSAdaMONKtELbPzDq340rQFG/vQZrBPN8EVREZJa2CFgCx0gzdulUtQasIs3UwBgtvsqJUBcfLB1pqdQhC/KU4x1bx5eQwvuFBrZOk/yyVxQmlkaEdAIxwP4/tieBXwB07HqUUrfJmj2tZ46P/r5W7IyNQaDRMLMmXr0x0+4RJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLRtS-0005ua-OL; Wed, 11 Dec 2024 19:57:06 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLRtQ-002uPB-2r;
+	Wed, 11 Dec 2024 19:57:05 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLRtR-00AYei-1k;
+	Wed, 11 Dec 2024 19:57:05 +0100
+Date: Wed, 11 Dec 2024 19:57:05 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengfei Li <pengfei.li_1@nxp.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 2/2] thermal: imx91: Add support for i.MX91 thermal
+ monitoring unit
+Message-ID: <20241211185705.7b5uw26loobibzln@pengutronix.de>
+References: <20241210-imx91tmu-v2-0-5032aad4d88e@nxp.com>
+ <20241210-imx91tmu-v2-2-5032aad4d88e@nxp.com>
+ <20241211154622.f2jwwrqansk6il3o@pengutronix.de>
+ <Z1m+O1UV4HD+7Rr2@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|DM4PR10MB6064:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e1064ac-603e-4a37-c014-08dd1a159d67
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0pXTElYRnZxRDBiNEZ1SnAxVUhTcFo5YThOL21xS1B4b2txWm5aSThaQ05y?=
- =?utf-8?B?czY2eXRBZEJYS0FKRTMvNlBuM3J4aHhsVFRGaUhNUGdzR0gyZ2tldWU2ZVdk?=
- =?utf-8?B?dTFHeld5Kzhkd1k4ZTFSOG10TG5Mbm9pd09DWXFYQjdIdk1rZkVDZzgvR0My?=
- =?utf-8?B?dVVwQVI0TThhN3RibWlaVCtya1JJNHcyS3JvWHFVRGhkMUR3d0pmKzhxaWNL?=
- =?utf-8?B?dDRUajhNeGcyZ2YxdlcwY3EyNEFMYXlpKzJ0YkwwQ1k0ODJYUFFxOW9Ub1lS?=
- =?utf-8?B?UmRhUXdWVCtSYU1rVXQ3NVYxaVlmUW1pTlhxaXJQSURWeWdnVmczUFJtOVpy?=
- =?utf-8?B?dklUc0RIbVpOQmczd2ZVY2ltdWpGQWtubnJtbTMwaEtLeVNxMEVVMXJQaXh2?=
- =?utf-8?B?eHpGTVZrUEYyZHZDUlVURzUrWW9yTFR6S3FPVmlXa0N5Rm04KzloU05LblB0?=
- =?utf-8?B?Q29MS0tJMlplN3hQU3NSVkJieVhJMU9pY0JhU0E0WXVSbkY5c2JTV1pwRXFR?=
- =?utf-8?B?cTdnenpJMFdOaWRhVVN2OENjN2ZLV3NLVDRldTNmZzd0ZkVtVVU1Vm40cXRU?=
- =?utf-8?B?RlNNU2xjYjdkRm5HcEIxRUp5M3VaOFNKV2oxYVc2bWNVcW5BMDk3R0t1VVJH?=
- =?utf-8?B?VWlxZEkzR1RhR0dkVU1ZdFBMeVZMUC9CcEdWMnhOMXJqZFhaZWh0MlR1Y2pI?=
- =?utf-8?B?YThKZ0I1NUVaeHRFOC9jaXdsNEJnMVI0T0VxS1pyeFpkMi9EdFduNFh6aWYw?=
- =?utf-8?B?MlBkR21jNmk3ZmNDbGZqdmhRKzI5VEJDNEw5YjNBM29tNTFmRXNsdUZzMmNW?=
- =?utf-8?B?Y21IUHoyaDV4NTNlNURZSG1zU3BCRXNwS080dnFBLzFtbDAyM1YvTE9mUUl0?=
- =?utf-8?B?VUZhbzg3U0RjVSt1dnJTbW1obmJRUkNsRmo3OU4vZ0daUGk3UGdyS05lMGd3?=
- =?utf-8?B?Q2FHWk14dHdZbHZNVjFNcTBIYStnazR0clNYb0dDTGhEZEc5aG15RlpiVVAw?=
- =?utf-8?B?bC9sZG5FYkxpTjVyWDd4VUxlSDh2TU5GVm5XWW4wVzFFWXoyTTB1Ni9pQ2VK?=
- =?utf-8?B?YUhKL3VaQUlPWHBxT2ppUDVQNzY1MzZ0V1B5VnQ0a2Zhd2wwOHlGQUxlK2lT?=
- =?utf-8?B?VFRrUXdIcmpvdDlYazMrcTU1N09qVy90K3pxNUxqTWJSVHM0VjNZRFNVN2ls?=
- =?utf-8?B?RkNFUnJEbFFvVmMyM2hNczUzQkJnYjF0YkMrblhQZ0w1Y202VENVaHJpZjJp?=
- =?utf-8?B?aGc5MlAwajhYT2o0TjNwZDJOQjMvQ3pFaFNTdUVockZtTlZiL2tHQUhtSzBL?=
- =?utf-8?B?aU12Vy9UdGpXL0NnNjNaeGkxR0hkZGtrVHJTQjFWa0Z6K1NxS3dYcjRwSDhD?=
- =?utf-8?B?YXBuZkhSQ0h4VXJYeGRkNjl2U3VjRzNwMDY3V0RqTDY0eHA2cUVYUkhlc0Nx?=
- =?utf-8?B?SGFZNFRsRnRUOUg2VEdEWllEdTJpNm43blpyQXdCbTlIQm96aGlaY1RFbnB3?=
- =?utf-8?B?aDdacGdJVGVRUXYya0diaENYd1hvRGRZWVhOTkswUVdjNDR5YXlJQTZpWGkv?=
- =?utf-8?B?RDZuZU9sUktjQTZ2RXFlc1NPRzlOQ3pHZnhsZEZ1b3lqMHJuaURrenA1ZkMx?=
- =?utf-8?B?a0xpM0p4d250Z24xWDdWT0ZJTTI4VTN2NitSZTJyRDlVS0M2U1daRndUSGN1?=
- =?utf-8?B?MDE0bjFEejdyVEFia1BnRWpMQ0VhNnZMajVPcE00dkcybkpmanExL3ZtMi9C?=
- =?utf-8?Q?5TugRjLntXgpfXzc5E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eHhDRjcvWmtUdnErUEY3QThCUElaSlNzNW1KNjRFVUpwVUpFRGt6VDVleUNa?=
- =?utf-8?B?akVhRk9IOTczQmt1dlgxS1RqendON0hLRXBWa3V6NVZSS2llQVN6RWt6OGFr?=
- =?utf-8?B?eUg2V1JGTXZaRG54V1htT2JqT3l6anE0eHZSQWFDRUYyS3NVdWFZcThETnVP?=
- =?utf-8?B?ek9QS3J3VFVLeStLemQyelcrNHJmSXZseXhNdnowTTY0WjFlZlR2QkwwYjBE?=
- =?utf-8?B?eUNxb1JzeWp0WWZweGErUGlsSHZ3VmV3SWM4YWF1SlBOQmJXZXVIU05kUzRu?=
- =?utf-8?B?NmxvSmRzbTEremlDL2pYdFFvYlFUbkJza3FsZ1phK2x4V2xXT2oxTWNMYUdj?=
- =?utf-8?B?TFI3clhFYUx1NldWSUVWTmU1RXFBbVNYSWF2dEVZSnRIQ2RVaEdtbHpvaTdO?=
- =?utf-8?B?eVlwWm1yTDVDc3JwUytuMGJEWklXMG9CZ0lVaC9JcnAwdkJpRE1nS0FHcHpl?=
- =?utf-8?B?dlJvak9YWkp0bXZDRWJoRUErQUxBKzk0OXVTU3FBRERNYjJoUUd6MU1tUHdW?=
- =?utf-8?B?WjhVTVNqSWhLSmVnbTdGdlBSNGQ0VXZpWFhLaHJsUjV5UWtvMkNGMEYvbTRJ?=
- =?utf-8?B?ZjJYNHA1SHBSRWtBNklpazhZMUFHZ1JBY0ZYQjh5b0lBa0k1TFlUczlDU1NB?=
- =?utf-8?B?MTF3T2swdGtoQkZhVE0zL1BFcDJ4OS9FQ3ZZMng0R2gyWXpsSHgrTExJRUQ4?=
- =?utf-8?B?UmZuK0FMUDY3NklkYk40ZmEyMFFGVXJIUTgxN0RHNEJsWmphQUFWbWN1UHZB?=
- =?utf-8?B?Qm9MYkZpV0UrZyt6bXJlRUxBTC92c2pPZlNWRDl4ZTc0ZjdrTFczMGc5eDFJ?=
- =?utf-8?B?djVNWUx6S2UzamF2V3NSZlRjejdUNW9peENhSmF6TllPcHZpcm1IZFY2dE8x?=
- =?utf-8?B?ZXppMktkMERVL1U2ZEQ5Smd2MEorcURrSVE5Nkowb1hUMEh6SGRRTmJ0RHpC?=
- =?utf-8?B?NWlaQ2RucTJsOEVWbCtIMjFDQW56N0c1cFpEZG9GcmVCNFFsREQ1Z2l5ZU5F?=
- =?utf-8?B?SEkvb3F6UFNlbDl3RW8yZ09uY085ZVQ2S2NCRVc4MGVlKzRyYnlDMWRvSkll?=
- =?utf-8?B?SlJCYmxWSWZIbnhaU0JQS01QcVhlZnJ2eHlVTGRCMTQrVjdVeDhKeXBGblpH?=
- =?utf-8?B?c0VTNVFIOVpNUHFURnNXSlMwaWhtVGlMOHR4aUxlamhQZDVWanJiUG5vbk55?=
- =?utf-8?B?OXhGbGlRWGU5TUtXZzNyOVFYT0NVdzlEWXI2eEs3a2p3V0RmYmY1UGM5MitJ?=
- =?utf-8?B?RHNqQjBMc1NsZ3E3bEMxMDhLa3VsKzFvQWZHL3Qwb0hHN3Y2SHU5UUJFVDBZ?=
- =?utf-8?B?dTZ0d2Jla0hqTXVzRFhrTFp3WGQ2cXZLY3JnS2dFRHFJeHl1emNRUVJZZ05i?=
- =?utf-8?B?QndrdkFUeGI5UDhhb0g2QUwyTk9od3ZwOE5HdEVuYysvU0lrUXlVelpXV3NJ?=
- =?utf-8?B?OERiUWtUS20xcDFlMWh2K0NMUE9oRWlDaU1tcnh1UDVnTitnWTN0TVpScEc4?=
- =?utf-8?B?TklLaERNWW9FUGNRQ3NRK25WRUtaMVM2MUI5R1hCWG5RSTlOUnk1d0VBTnZT?=
- =?utf-8?B?R1dpU01yYmJzZ1V3aVF1d3htaEhKaVU0VnpUQTJmSUhhbnE1dGlENkkrSS9m?=
- =?utf-8?B?NEhGQlVLS3FXYXFxM0dhcXZMUE9LcXRmU0hqOFZ4cXRzS09oMkFzU1lLak5r?=
- =?utf-8?B?cHY3d1llZmVpTW5oMFdDY0M5QTMxbE9ML2ZoMXlTUFpMV1RQTXJLTkpYTzZp?=
- =?utf-8?B?aTF0MlJwdE5tOUVxaDZWWXpsbTN0RUZPcnIxZFlNcmlySlA3K1NBeDgvZG1i?=
- =?utf-8?B?VW0yNnY2SDdEZGc1eXgwR2lKU01zOGgzN2lBTlVRbG5FQndqbUM5RWNiTFZl?=
- =?utf-8?B?MnB1aWJyV1BzWFV0M1VJSjJnQ3BnUGRqUlRETHVoK2xxUTk5T3hJM201OEEz?=
- =?utf-8?B?L0RGc0tTRVgzZVA4djJDeE9pbzZqa0lkTThNT0tyS0lQazBkS0hDdFJERkMx?=
- =?utf-8?B?aHdLS1VTK2V1ZTV5VDNhM1pnUkpqSHFkNGpLREFVTjNRdWpEMnpHaVdrODBI?=
- =?utf-8?B?ZlJ6RytaU3JHYW1PcHRhNkdMbjdNK0VuSiswZHVrU29OUXlyK1dxdFZ5Tm9W?=
- =?utf-8?B?UFBOWjlxa3NOaGtDcjREUHlGZjgwU3dZaFl1ZjZzQ0lGNDlFeDBkZVpRMFNw?=
- =?utf-8?B?Zmc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	mkhU3N08W5mgGGuJscmNv6jP4SejbUBEDGV6LDDiOc9kOoYBL2aWFGatPaT6h8J1s8WmVSBKCGy6vVKZTasuk3qGg6yArzYtExbEc9MjDCck6JD1bscaaoPTmKVfqpALh+TmYOZqHNrkJEmjwrw7HQNmOU1eSFjUz6sOtD1K7j3q8kDqUBvdq/kq3B2TCzc3V1W2ulqJfN/bCQZ0n1vfUJvPOh0a4NbzqLLLp0sg/moiUm/qlDisXLcdR3X0xvsytV1PasZDdb5MLsy7slL2uoGjNweUcDo9E7FlGFSkO6ufivehj7Jj9XQ7edKn+d67ED+WAbUoJgi50DhXtoTNMpALe2aBA8e3GRcsKAKf3Om2VAxmkAcTb6zypn1JrlXGELEnUg6/idJaXI0xVxsYdyZIl+y7lWQZBvWUs995r+tW1tMH7w/HhVaCx4PibdMGwEE65lFsz6X3bXGzSNZ86qqGZZ/Xe6N8IF+pKrialsh+K6Nn3Db4QTmE7SA6p78lDYBqCIv7sw6u/JffMXVay4IbjuIj5AyVtr+R9SjUEDl8yupyChiHvMBy6wlNRUoM9K9IJk2ReK9TFc2SlA1Y0u05WD4DZIuc4pZcwPEwm/k=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e1064ac-603e-4a37-c014-08dd1a159d67
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 18:57:09.6660
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZAU0RMj93cbimE8A3y1hQXuGaISi3IMinV+vR2eoGxB/6wE049KwtZq/qv4gfVrTc35QmtVnanWTtQbdcEf7IwruFwNwdcNFQdD+gzJSk9U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6064
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-11_11,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
- malwarescore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412110135
-X-Proofpoint-ORIG-GUID: nb74h01bSynlTcYvc_x-M70MwYsBTodd
-X-Proofpoint-GUID: nb74h01bSynlTcYvc_x-M70MwYsBTodd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1m+O1UV4HD+7Rr2@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2024 at 10:36:42AM -0800, Jeff Xu wrote:
-> On Wed, Dec 11, 2024 at 2:53 AM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
+On 24-12-11, Frank Li wrote:
+> On Wed, Dec 11, 2024 at 04:46:22PM +0100, Marco Felsch wrote:
+> > On 24-12-10, Frank Li wrote:
+> > > From: Pengfei Li <pengfei.li_1@nxp.com>
+> > >
+> > > Introduce support for the i.MX91 thermal monitoring unit, which features a
+> > > single sensor for the CPU. The register layout differs from other chips,
+> > > necessitating the creation of a dedicated file for this.
+> > >
+> > > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > > change from v1 to v2
+> > > - use low case for hexvalue
+> > > - combine struct imx91_tmu and tmu_sensor
+> > > - simplify imx91_tmu_start() and imx91_tmu_enable()
+> > > - use s16 for imx91_tmu_get_temp(), which may negative value
+> > > - use reverse christmas tree style
+> > > - use run time pm
+> > > - use oneshot to sample temp
+> > > - register thermal zone after hardware init
+> > > ---
+> > >  drivers/thermal/Kconfig         |  10 ++
+> > >  drivers/thermal/Makefile        |   1 +
+> > >  drivers/thermal/imx91_thermal.c | 265 ++++++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 276 insertions(+)
+> > >
+> > > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> > > index d3f9686e26e71..da403ed86aeb1 100644
+> > > --- a/drivers/thermal/Kconfig
+> > > +++ b/drivers/thermal/Kconfig
+> > > @@ -296,6 +296,16 @@ config IMX8MM_THERMAL
+> > >  	  cpufreq is used as the cooling device to throttle CPUs when the passive
+> > >  	  trip is crossed.
+> > >
+> > > +config IMX91_THERMAL
+> > > +	tristate "Temperature sensor driver for NXP i.MX91 SoC"
+> > > +	depends on ARCH_MXC || COMPILE_TEST
+> > > +	depends on OF
+> > > +	help
+> > > +	  Support for Temperature sensor found on NXP i.MX91 SoC.
+> > > +	  It supports one critical trip point and one passive trip point. The
+> > > +	  cpufreq is used as the cooling device to throttle CPUs when the passive
+> > > +	  trip is crossed.
+> > > +
+> > >  config K3_THERMAL
+> > >  	tristate "Texas Instruments K3 thermal support"
+> > >  	depends on ARCH_K3 || COMPILE_TEST
+> > > diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> > > index 9abf43a74f2bb..08da241e6a598 100644
+> > > --- a/drivers/thermal/Makefile
+> > > +++ b/drivers/thermal/Makefile
+> > > @@ -50,6 +50,7 @@ obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
+> > >  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
+> > >  obj-$(CONFIG_IMX_SC_THERMAL)	+= imx_sc_thermal.o
+> > >  obj-$(CONFIG_IMX8MM_THERMAL)	+= imx8mm_thermal.o
+> > > +obj-$(CONFIG_IMX91_THERMAL)	+= imx91_thermal.o
+> > >  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
+> > >  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
+> > >  obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
+> > > diff --git a/drivers/thermal/imx91_thermal.c b/drivers/thermal/imx91_thermal.c
+> > > new file mode 100644
+> > > index 0000000000000..ebb59eda92951
+> > > --- /dev/null
+> > > +++ b/drivers/thermal/imx91_thermal.c
+> > > @@ -0,0 +1,265 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright 2024 NXP.
+> > > + */
+> > > +
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/clk.h>
+> > > +#include <linux/err.h>
+> > > +#include <linux/iopoll.h>
+> > > +#include <linux/nvmem-consumer.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/of.h>
+> > > +#include <linux/of_device.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/pm_runtime.h>
+> > > +#include <linux/thermal.h>
+> > > +
+> > > +#define CTRL0			0x0
 > >
-> > Update the MEMORY MAPPING section to contain VMA logic as it makes no
-> > sense to have these two sections separate.
+> > Unused
 > >
-> > Additionally, add files which permit changes to the attributes and/or
-> > ranges spanned by memory mappings, in essence anything which might alter
-> > the output of /proc/$pid/[s]maps.
+> > > +
+> > > +#define STAT0			0x10
+> > > +#define STAT0_DRDY0_IF_MASK	BIT(16)
+> > > +
+> > > +#define DATA0			0x20
+> > > +
+> > > +#define THR_CTRL01		0x30
+> > > +#define THR_CTRL23		0x40
 > >
-> > This is necessarily fuzzy, as there is not quite as good separation of
-> > concerns as we would ideally like in the kernel. However each of these
-> > files interacts with the VMA and memory mapping logic in such a way as to
-> > be inseparatable from it, and it is important that they are maintained in
-> > conjunction with it.
+> > Both are unused too
 > >
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> >  MAINTAINERS | 23 ++++++++---------------
-> >  1 file changed, 8 insertions(+), 15 deletions(-)
+> > > +#define CTRL1			0x200
 > >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 68d825a4c69c..fb91389addd7 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -15071,7 +15071,15 @@ L:     linux-mm@kvack.org
-> >  S:     Maintained
-> >  W:     http://www.linux-mm.org
-> >  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> > +F:     mm/mlock.c
-> >  F:     mm/mmap.c
-> > +F:     mm/mprotect.c
-> > +F:     mm/mremap.c
-> > +F:     mm/mseal.c
-> > +F:     mm/vma.c
-> > +F:     mm/vma.h
-> > +F:     mm/vma_internal.h
-> > +F:     tools/testing/vma/
+> > Unused
 > >
-> Will  madvise be here too ?
-
-No. We had a long discussion about this on another version of this patch :)
-it's blurry lines but it, in the end, is too much related to things other
-than VMA logic.
-
-We probably need better separation of stuff, but that's another thing...
-
-> I'd like to be added as a reviewer on mm/mseal.c.  Is there any way to
-> indicate this from this file ?
-
-This is something we can consider in the future, sure.
-
-However at this time you have had really significant issues in engaging
-with the community on a regular basis, so I think the community is unlikely
-to be open to this until you have improved in this area.
-
-You will, of course, remain cc'd on any mseal changes regardless, so
-functionally nothing will differ.
-
-And equally, this change doesn't alter my or Liam's role, we will apply the
-same review regardless.
-
-The purpose of this change is, as the message says, to ensure the integrity
-and maintainership of logic relating to memory mapping, and mseal is really
-entirely a VMA operation so has to be included as a result.
-
-So it is administrative in nature, ultimately.
-
->
-> >  MEMORY TECHNOLOGY DEVICES (MTD)
-> >  M:     Miquel Raynal <miquel.raynal@bootlin.com>
-> > @@ -25019,21 +25027,6 @@ F:     include/uapi/linux/vsockmon.h
-> >  F:     net/vmw_vsock/
-> >  F:     tools/testing/vsock/
+> > > +#define CTRL1_SET		0x204
+> > > +#define CTRL1_CLR		0x208
+> > > +#define CTRL1_EN		BIT(31)
+> > > +#define CTRL1_START		BIT(30)
+> > > +#define CTRL1_STOP		BIT(29)
+> > > +#define CTRL1_RES_MASK		GENMASK(19, 18)
+> > > +#define CTRL1_MEAS_MODE_MASK	GENMASK(25, 24)
+> > > +#define   CTRL1_MEAS_MODE_SINGLE	0
+> > > +#define   CTRL1_MEAS_MODE_CONTINUES	1
+> > > +#define   CTRL1_MEAS_MODE_PERIODIC	2
+> > > +
+> > > +#define REF_DIV			0x280
+> > > +#define DIV_EN			BIT(31)
+> > > +#define DIV_MASK		GENMASK(23, 16)
+> > > +
+> > > +#define PUD_ST_CTRL		0x2B0
+> > > +#define PUDL_MASK		GENMASK(23, 16)
+> > > +
+> > > +#define TRIM1			0x2E0
+> > > +#define TRIM2			0x2F0
+> > 					^
+> > 				still upper-case
 > >
-> > -VMA
-> > -M:     Andrew Morton <akpm@linux-foundation.org>
-> > -M:     Liam R. Howlett <Liam.Howlett@oracle.com>
-> > -M:     Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > -R:     Vlastimil Babka <vbabka@suse.cz>
-> > -R:     Jann Horn <jannh@google.com>
-> > -L:     linux-mm@kvack.org
-> > -S:     Maintained
-> > -W:     https://www.linux-mm.org
-> > -T:     git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> > -F:     mm/vma.c
-> > -F:     mm/vma.h
-> > -F:     mm/vma_internal.h
-> > -F:     tools/testing/vma/
-> > -
-> >  VMALLOC
-> >  M:     Andrew Morton <akpm@linux-foundation.org>
-> >  R:     Uladzislau Rezki <urezki@gmail.com>
-> > --
-> > 2.47.1
+> > > +#define TMU_TEMP_LOW_LIMIT	-40000
+> > > +#define TMU_TEMP_HIGH_LIMIT	125000
+> > > +
+> > > +#define DEFAULT_TRIM1_CONFIG 0xb561bc2d
+> > > +#define DEFAULT_TRIM2_CONFIG 0x65d4
+> > > +
+> > > +struct imx91_tmu {
+> > > +	void __iomem *base;
+> > > +	struct clk *clk;
+> > > +	struct device *dev;
+> > > +	struct thermal_zone_device *tzd;
+> > > +};
+> > > +
+> > > +static void imx91_tmu_start(struct imx91_tmu *tmu, bool start)
+> > > +{
+> > > +	u32 val = start ? CTRL1_START : CTRL1_STOP;
+> > > +
+> > > +	writel_relaxed(val, tmu->base + CTRL1_SET);
+> > > +}
+> > > +
+> > > +static void imx91_tmu_enable(struct imx91_tmu *tmu, bool enable)
+> > > +{
+> > > +	u32 reg = enable ? CTRL1_SET : CTRL1_CLR;
+> > > +
+> > > +	writel_relaxed(CTRL1_EN, tmu->base + reg);
+> > > +}
+> > > +
+> > > +static int imx91_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
+> > > +{
+> > > +	struct imx91_tmu *tmu = thermal_zone_device_priv(tz);
+> > > +	s16 data;
+> > > +	int ret;
+> > > +	u32 val;
+> > > +
+> > > +	ret = pm_runtime_resume_and_get(tmu->dev);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	ret = readl_relaxed_poll_timeout(tmu->base + STAT0, val,
+> > > +					 val & STAT0_DRDY0_IF_MASK, 1000,
+> > > +					 40000);
+> > > +	if (ret)
+> > > +		return -EAGAIN;
+> > 		 ^
+> > Missing pm_runtime_put(). Instead goto out;
+> >
+> > > +
+> > > +	/* DATA0 is 16bit signed number */
+> > > +	data = readw_relaxed(tmu->base + DATA0);
+> > > +	*temp = data * 1000 / 64;
+> > > +	if (*temp < TMU_TEMP_LOW_LIMIT || *temp > TMU_TEMP_HIGH_LIMIT)
+> > > +		return -EAGAIN;
+> > 			^
+> > 		ret = -EAGAIN;
+> > 		goto out;
+> >
+> > out:
+> > > +
+> > > +	pm_runtime_put(tmu->dev);
+> > > +
+> > > +	return 0;
+> >
+> > 	return ret;
+> > > +}
+> > > +
+> > > +static struct thermal_zone_device_ops tmu_tz_ops = {
+> > > +	.get_temp = imx91_tmu_get_temp,
+> > > +};
+> > > +
+> > > +static int imx91_init_from_nvmem_cells(struct imx91_tmu *tmu)
+> > > +{
+> > > +	struct device *dev = tmu->dev;
+> > > +	u32 trim1, trim2;
+> > > +	int ret;
+> > > +
+> > > +	ret = nvmem_cell_read_u32(dev, "trim1", &trim1);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = nvmem_cell_read_u32(dev, "trim2", &trim2);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	if (trim1 == 0 || trim2 == 0)
+> > > +		return -EINVAL;
+> > > +
+> > > +	writel_relaxed(trim1, tmu->base + TRIM1);
+> > > +	writel_relaxed(trim2, tmu->base + TRIM2);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int imx91_tmu_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct device *dev = &pdev->dev;
+> >
+> > Since you already have the dev pointer, you can make use of it...
+> >
+> > > +	struct imx91_tmu *tmu;
+> > > +	unsigned long rate;
+> > > +	u32 div;
+> > > +	int ret;
+> > > +
+> > > +	tmu = devm_kzalloc(&pdev->dev, sizeof(struct imx91_tmu), GFP_KERNEL);
+> > 				^
+> > 				here
+> > > +	if (!tmu)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	tmu->dev = &pdev->dev;
+> >
+> > 	and here
+> >
+> > > +
+> > > +	tmu->base = devm_platform_ioremap_resource(pdev, 0);
+> > > +	if (IS_ERR(tmu->base))
+> > > +		return PTR_ERR(tmu->base);
+> > 			^
+> > 		dev_err_probe();
+> >
+> > > +
+> > > +	tmu->clk = devm_clk_get_enabled(dev, NULL);
+> > > +	if (IS_ERR(tmu->clk))
+> > > +		return dev_err_probe(dev, PTR_ERR(tmu->clk), "failed to get tmu clock\n");
+> > > +
+> > > +	platform_set_drvdata(pdev, tmu);
+> > > +
+> > > +	/* disable the monitor during initialization */
+> > > +	imx91_tmu_enable(tmu, false);
+> > > +	imx91_tmu_start(tmu, false);
+> >
+> > No need to disable it here since both bits (ENABLE and START) are 0
+> > after a reset.
+> 
+> Maybe uboot enable it. We can't depend on reset value without really set
+> hardware reset bit.
+
+So the module can't be rested e.g. by disabling module power? Having a
+dedicated reset mechanism would be much simpler instead of writing each
+reg-field to the default value.
+
+> > > +	ret = imx91_init_from_nvmem_cells(tmu);
+> > > +	if (ret) {
+> > > +		writel_relaxed(DEFAULT_TRIM1_CONFIG, tmu->base + TRIM1);
+> > > +		writel_relaxed(DEFAULT_TRIM2_CONFIG, tmu->base + TRIM2);
+> > 			^
+> > Can you please anwer if _relaxed API is sufficient? I don't know why you
+> > making use of the _relaxed API here anyway. We have only a few MMIO
+> > accesses here, so why can't we use the writel() instead? This applies to
+> > the whole driver.
+> 
+> There are not big difference writel_relaxed() or writel() for this driver.
+> Just original owner pick one.
+
+NACK, the difference is that _relaxed() APIs don't guarantee the order
+the register access is done.
+
+> > > +	}
+> > > +
+> > > +	/* The typical conv clk is 4MHz, the output freq is 'rate / (div + 1)' */
+> > > +	rate = clk_get_rate(tmu->clk);
+> > > +	div = (rate / 4000000) - 1;
+> > > +	if (div > FIELD_GET(DIV_MASK, DIV_MASK))
+> > 			^
+> > This misuse the FIELD_GET() API. Instead please add a define e.g. DIV_MAX.
+> 
+> I don't think so, It avoid define another macro DIV_MAX, which may miss
+> defined, the related marco should come from one source.
+> 
+> For example:
+> 
+> DIV_MASK is GENMASK(23, 16),  DIV_MAX is 256. But if hardware upgrade,
+> DIV_MASK to GENMASK(24, 16), DIV_MAX is quite easy to forget update it and
+> hard to find such mis-match when div value < 256.
+
+We not talking about "possible" other HW. For now it's just this one and
+using FIELD_GET() this way is seems odd, at least to me.
+
+> > > +		return -EINVAL;
+> > 			^
+> > 		dev_err_probe()
+> > > +
+> > > +	/* Set divider value and enable divider */
+> > > +	writel_relaxed(DIV_EN | FIELD_PREP(DIV_MASK, div), tmu->base + REF_DIV);
+> > > +
+> > > +	/* Set max power up delay: 'Tpud(ms) = 0xFF * 1000 / 4000000' */
+> > > +	writel_relaxed(FIELD_PREP(PUDL_MASK, 100U), tmu->base + PUD_ST_CTRL);
+> > 		^
+> > You dont need to repeat the default value, so this line can be dropped.
+> >
+> > > +
+> > > +	/*
+> > > +	 * Set resolution mode
+> > > +	 * 00b - Conversion time = 0.59325 ms
+> > > +	 * 01b - Conversion time = 1.10525 ms
+> > > +	 * 10b - Conversion time = 2.12925 ms
+> > > +	 * 11b - Conversion time = 4.17725 ms
+> > > +	 */
+> > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x3), tmu->base + CTRL1_CLR);
+> > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x1), tmu->base + CTRL1_SET);
+> >
+> > Same here, you repeat the module default after reset, so please drop it.
+> >
+> > > +	writel_relaxed(CTRL1_MEAS_MODE_MASK, tmu->base + CTRL1_CLR);
+> > > +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, CTRL1_MEAS_MODE_SINGLE),
+> > > +		       tmu->base + CTRL1_SET);
+> > > +
+> > > +	clk_disable_unprepare(tmu->clk);
+> >
+> > Drop this, and
+> >
+> > > +	pm_runtime_set_suspended(dev);
+> >
+> > replace this with: pm_runtime_set_active();
+> 
+> No big difference, if set_active, we need add Enable TMU here. I can
+> change to set_active.
+
+You don't need to manually disable the clock, it would be done by the
+runtime-pm.
+
+Regards,
+  Marco
+
+
+> Frank
+> 
+> >
+> > > +	pm_runtime_enable(dev);
+> > 		^
+> > devm_pm_runtime_enable()
+> >
+> > > +	tmu->tzd = devm_thermal_of_zone_register(dev, 0, tmu, &tmu_tz_ops);
+> > > +	if (IS_ERR(tmu->tzd))
+> > > +		return dev_err_probe(dev, PTR_ERR(tmu->tzd),
+> > > +				     "failed to register thermal zone sensor\n");
 > >
 > >
+> > pm_runtime_put()
+> >
+> >
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void imx91_tmu_remove(struct platform_device *pdev)
+> > > +{
+> > > +	struct imx91_tmu *tmu = platform_get_drvdata(pdev);
+> > > +
+> > > +	/* disable tmu */
+> > > +	imx91_tmu_start(tmu, false);
+> >
+> > No need to clear the START bit since we are running in
+> > single-shot-measurements now.
+> >
+> > > +	imx91_tmu_enable(tmu, false);
+> > > +}
+> > > +
+> > > +static int imx91_tmu_runtime_suspend(struct device *dev)
+> > > +{
+> > > +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
+> > > +
+> > > +	/* disable tmu */
+> > > +	imx91_tmu_start(tmu, false);
+> >
+> > Can be dropped.
+> >
+> > > +	imx91_tmu_enable(tmu, false);
+> > > +
+> > > +	clk_disable_unprepare(tmu->clk);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int imx91_tmu_runtime_resume(struct device *dev)
+> > > +{
+> > > +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
+> > > +	int ret;
+> > > +
+> > > +	ret = clk_prepare_enable(tmu->clk);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	imx91_tmu_enable(tmu, true);
+> > > +	imx91_tmu_start(tmu, true);
+> >
+> > Drop imx91_tmu_start() from the resume since this isn't related to the
+> > runtime-pm. Instead the function needs to be called within
+> > imx91_tmu_get_temp().
+> >
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static const struct dev_pm_ops imx91_tmu_pm_ops = {
+> > > +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+> > > +	RUNTIME_PM_OPS(imx91_tmu_runtime_suspend, imx91_tmu_runtime_resume, NULL)
+> > > +};
+> >
+> > DEFINE_RUNTIME_DEV_PM_OPS()
+> >
+> > > +
+> > > +static const struct of_device_id imx91_tmu_table[] = {
+> > > +	{ .compatible = "fsl,imx91-tmu", },
+> > > +	{ },
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, imx91_tmu_table);
+> > > +
+> > > +static struct platform_driver imx91_tmu = {
+> > > +	.driver = {
+> > > +		.name	= "i.MX91_thermal",
+> > 				^
+> > Please don't use such names, instead use imx91_thermal.
+> >
+> > Regards,
+> >   Marco
+> >
+> > > +		.pm	= pm_ptr(&imx91_tmu_pm_ops),
+> > > +		.of_match_table = imx91_tmu_table,
+> > > +	},
+> > > +	.probe = imx91_tmu_probe,
+> > > +	.remove = imx91_tmu_remove,
+> > > +};
+> > > +module_platform_driver(imx91_tmu);
+> > > +
+> > > +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
+> > > +MODULE_DESCRIPTION("i.MX91 Thermal Monitor Unit driver");
+> > > +MODULE_LICENSE("GPL");
+> > >
+> > > --
+> > > 2.34.1
+> > >
+> > >
+> 
 
