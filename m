@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-441582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034249ED062
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:50:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A6B188CA6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:49:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C24F1D9A6F;
-	Wed, 11 Dec 2024 15:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8zqfTpr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80009ED052
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:49:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCA418BC3F;
-	Wed, 11 Dec 2024 15:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC1D28B91E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:49:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F071D798E;
+	Wed, 11 Dec 2024 15:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HgRhQ7i6"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318841CB9EA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932035; cv=none; b=RVppL0Ka4Rv8lk3kU5G5YB6uU6REmntTOOqfPmzEzfLJdFlOF/x6MksD7XMGr4ArGohdsZJqYQ/DdX5WD6vjpz6y4xMp0M2L++4+grBYvS1YItv6rdSguQzixBlelpFd+wSvUUCxWtXXkPibYqvApo77av1O/TANVY7fLG6YHfA=
+	t=1733932055; cv=none; b=lGBKBQbUrJxB+EhP9zg5O+d7mT16RIISjNLbdWMBySOaKFJO5679saCrG8mQZm7kOMpm89F0AlrFXr9cudjMDSSaUccSYr/YYwEorXPybKeIEgxLhN+RPpy/g8wNWHTEEXCaniYUgWb0YaREe51I0++b1IVeAVcEs/WTRFC6IkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932035; c=relaxed/simple;
-	bh=qsPmqbckC0QLNUpCrEGTyFuyNNsWpyK6tx/uRzgBwzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tZuJNHy2wubYLhyX/6Wk4qwL209QU1JcE6uuPpLX/k01uQQ9l43PTXKwBS1GD7+tltu5GGbuu/+LBo+qZQ+JV8u+HsPFIkBX7FlbXua2Bhijo2aTLXQCb5z/ka9luuFOc8cdNV0JY/i8s/vBpJMtC6i0w/ORotdbh6rInfS8EdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8zqfTpr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC786C4CED2;
-	Wed, 11 Dec 2024 15:47:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733932035;
-	bh=qsPmqbckC0QLNUpCrEGTyFuyNNsWpyK6tx/uRzgBwzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y8zqfTprkNTe1s93rc5PaCRN99PLuwqz02R0j6clNhKwEiZz7moxd1G7TSOF/sxLn
-	 tqx2PB3FNZHno/X1jtiFVA9FKqXfw+qKjYyws/jH/RGBzrLRBh0oefYfkc00uEzAOM
-	 cFH2GMIVQOedciLDQgsrRsgmTWPz4Wv7cjNxdiiao9zs/P343SngRRKTfPCsYeQaU+
-	 DcvC3zVRTIUjMWWIwIXhAig6mIbzd967tMnYkdWOXutBqmRdCIkComwQXRj+ewu6Go
-	 qtDp66bq4Z9WueQU3wTQdatO6ox7zea5ZP7ffhNMlg/aRxx+RuK+Fi9v898oL907Kj
-	 70mmTbcE3KZNQ==
-Date: Wed, 11 Dec 2024 09:47:13 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Roy Luo <royluo@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	devicetree@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	kernel-team@android.com, Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] dt-bindings: phy: samsung,usb3-drd-phy: gs101:
- require Type-C properties
-Message-ID: <173393203254.3086087.14024716233496700566.robh@kernel.org>
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <20241206-gs101-phy-lanes-orientation-phy-v4-2-f5961268b149@linaro.org>
+	s=arc-20240116; t=1733932055; c=relaxed/simple;
+	bh=PD4zhgl0BsZhU7qS8NABFOTUwyzuE3FvgIrGT7i3sOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qbXpYslSSm8mTymhc6UXjfY4LH+74t3ieOKMlttcoP/Rn20XGmiHskjjFAZuDYB71I28K69jQYVB8QdIw9bvPCcR1CNSfdC5Li0Vm7tSUkf0K3GcEmhJD+Nh/+zp0+Rh3W1W/ujlzhpqfXtz7UiTSFH35+OKK5auyKGOCh1aGO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HgRhQ7i6; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3003c0c43c0so44764481fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:47:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733932051; x=1734536851; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PD4zhgl0BsZhU7qS8NABFOTUwyzuE3FvgIrGT7i3sOo=;
+        b=HgRhQ7i6Y3y53nPLDJgWdqBi+kqHUqpoLzPfLrGbXkk2Z2uD7EqoxkNOi230ZWyou2
+         BvIErryhl3Lbr6jchGFEbOpC0ln56k+9ms1Dj3KG0dK2NL/veY52yW32q04EJwuW7iI+
+         fhClJCCohbd6sOcuJoHLv33At/CJXbtzFxAoNXEAayzfOhdlQHI+yZt6CfjwoUYO/ouL
+         19ISIa4c1gsitoAXZlaH2ITtrAiU/KGKM1Bsq0r7AqJmpxblYzcdmsIbAYs2KdodM7Nm
+         7qtf+XeaOKeSpGptVg8TkMD/pYMX+5XHSCkFc9Qf/ERQXihnwDMcgUg7do/VNiFUK/Ri
+         tLUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733932051; x=1734536851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PD4zhgl0BsZhU7qS8NABFOTUwyzuE3FvgIrGT7i3sOo=;
+        b=TMkDkXmE/3TnmLB5FnuKN8bY3ZPPNAgF8LhKH3jbn2JLnbk/1TmzzLNNCsJPdf6mBT
+         550fPEYM679RLfj81duEXnWIkUFKDoHCcf+YPm+YkX9hMdm7QII/a+mImh6zet0EZpYW
+         5IYDGq9o64NTgVziiZAdB2iF/CCNqGzIWdRI8yeb+P+AIE7VMyoqBgcrCLP7KzSjU1fL
+         ZAA9jwUsi2k/I39ltBOotOkRVYglUWXEQ2j9rc4TSE8+ww449aAJH4GD5bnL/TZv1ypu
+         QOtzBZUWLKl5Ydxg7cAz+NE5bKXIGqSnoFzW6w77ElSpwJLqNc4k3joJAienQMS3+WAf
+         WNOA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+5IdPUhoNMRic+qUfjEt3i4kRVKxS+dmxlLqZ1CKT4epxd6kjDVKal9sAYLhSaO4uWg5fHbR6MN7MIU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH8LSJBx7MawAAwmHk4XQvQ0uDBSw/mpAD6E0jftKrgGwQ0zk3
+	5lO+RLn2lK02jvT6cLcyp9l58j/5SG90gryw1hKPO61e1R6REvlW0jQ0aclx2pVw5cqtik0dp9f
+	Ma3ReacOkDX8ga4ETsXfObU+PZV8lgSffkUTdGg==
+X-Gm-Gg: ASbGncuqA4NEWo1BCjWmw8i6nym4u55D1VV6BgI3EYXcbboar6S1urp4mHuHyhEqriG
+	ghYsniNsH1EvUANtKtT6285ekQ3KJ52WRcFhax5a6sv8iLeK+noe62aCyjYAt0qO9lQY=
+X-Google-Smtp-Source: AGHT+IG1Ix1jbxaeu+naYpep6NosuFKWyNO80GDX8yaop49XV+PqcQnkEf3Al9HtsrlscO8/W4MKKpF5JoG7dR3zC0U=
+X-Received: by 2002:a2e:a815:0:b0:302:3356:7751 with SMTP id
+ 38308e7fff4ca-30240d9155dmr12363541fa.40.1733932051283; Wed, 11 Dec 2024
+ 07:47:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-2-f5961268b149@linaro.org>
+References: <cover.1733739697.git.matthias.schiffer@ew.tq-group.com>
+ <CAMRc=Mcw-r3b_a0XmpfVbF04MuZYnmM05AZqGav8GA_PM0-ozA@mail.gmail.com> <3ceb31ad50046ada646f91e45c857f6350a06116.camel@ew.tq-group.com>
+In-Reply-To: <3ceb31ad50046ada646f91e45c857f6350a06116.camel@ew.tq-group.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 11 Dec 2024 16:47:20 +0100
+Message-ID: <CAMRc=MdFP1J8cCa_-r2JjRCBLRuTgNRWUdObBc3H3E=cic-fGw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] gpio-tqmx86: cleanup + changing directions
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux@ew.tq-group.com, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 11, 2024 at 4:35=E2=80=AFPM Matthias Schiffer
+<matthias.schiffer@ew.tq-group.com> wrote:
+>
+> On Wed, 2024-12-11 at 16:12 +0100, Bartosz Golaszewski wrote:
+> >
+> > On Mon, Dec 9, 2024 at 11:36=E2=80=AFAM Matthias Schiffer
+> > <matthias.schiffer@ew.tq-group.com> wrote:
+> > >
+> > > This is the first of two series adding new features to the gpio-tqmx8=
+6
+> > > driver. The first 3 patches are cleanup/preparation and the last patc=
+h
+> > > adds support for changing the directions of GPIOs.
+> > >
+> > > Once this is merged, the final series will add support for new TQMx86
+> > > variants (SMARC and COM-HPC) that feature up to 14 GPIOs and full IRQ
+> > > support on all lines.
+> > >
+> >
+> > It's not like this series is very big, what stops you from posting the
+> > entire thing right away? It would probably add more context to this
+> > series.
+> >
+> > Bart
+>
+> The second series is bigger and involves both the GPIO and MFD drivers. I=
+ kinda
+> expect a few rounds of reviews to be needed before it gets accepted, so m=
+y
+> intention was to get these smaller, more obvious patches out of the way f=
+irst.
+>
+> Best regards,
+> Matthias
 
-On Fri, 06 Dec 2024 16:31:02 +0000, André Draszik wrote:
-> orientation-switch is the standard declaration to inform the Type-C mux
-> layer that a remote-endpoint is capable of processing orientation
-> change messages.
-> 
-> The USB PHY on gs101 needs to be configured based on the orientation of
-> the connector. For that the DTS needs a link between the phy's port and
-> a TCPCi, and we'll need to inform the phy driver that it should handle
-> the orientation (register a handler).
-> 
-> Update the schema to enforce that by requiring the orientation-switch
-> and port properties on gs101 (only). We disallow orientation-switch on
-> all other supported platforms, since other versions of this phy (or its
-> system integration) don't currently support or even need it.
-> 
-> Even though this new required gs101 property is an ABI break, the
-> intention for the driver is to behave as before if it's missing
-> (meaning for gs101 it will work in SS mode in one orientation only).
-> Other platforms are not affected.
-> 
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
-> ---
-> v3:
-> * update as per Rob's suggestion (I hope :-)
-> 
-> v2:
-> * squash original patches #2 and #3
-> * actually disallow orientation-switch on !gs101 (not just optional) (Conor)
-> * update commit message to clarify that the intention for the driver is
->   to work with old and new DTS (Conor)
-> * collect tags
-> 
-> foo
-> ---
->  Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
+Fair enough. Could you address the nits I pointed out? I'll queue these the=
+n.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Bart
 
