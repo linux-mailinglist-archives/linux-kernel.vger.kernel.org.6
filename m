@@ -1,138 +1,140 @@
-Return-Path: <linux-kernel+bounces-441958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC209ED629
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:15:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42AB5188D8A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:13:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AC925949B;
-	Wed, 11 Dec 2024 18:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LdjFUTiu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8251F9ED60E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:12:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1913B23FD2E;
-	Wed, 11 Dec 2024 18:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EAC280F37
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:12:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C68258DD5;
+	Wed, 11 Dec 2024 18:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGNwEJRP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F54258DBE;
+	Wed, 11 Dec 2024 18:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943299; cv=none; b=u2pV4sS6kGCSC2LRdUilvUYurekHJII9AB8Iq0/yTzdutGVtOT84YkCngbdxjEsmzf2bAnUT7AnqfgFuWoskZsdZ35XOOOs32CIBLtxu6rjEIosPdUkG4nJJOFRrg87buNpJSMTfQ7xnrSLCVSqEy2nTL05InhHIWWeV5o779yg=
+	t=1733943295; cv=none; b=V3NPfCcRQjp7TwYjZ8XjpZMd/6Q6hYFXEAMJVAt6RvJKdJDI3B+SG0cnD/7qkvVcVVbjoeWixElbLkTKC2LH+4T0kBO0Fi2zHlFf9vUMJMYX7W/Kb8xudeTHEFHCbgwGBX36LKkH7AIGi7b4BhU1HYwnolUrB59K1zBghG2+MTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943299; c=relaxed/simple;
-	bh=VsLFDWRcpPe3Dn5zdglydGPNIzRwNv5JSeTvfZ/Qy2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ssXZkk9aB4BD0zEVRqrCx8iih1KNcP1uuyt0i5yzrtVasaohs6Iy7M1Q4w2dJtBXh/6a844fbKLwnKeMUQzR5HN1JBgezpI0ENR9t7xjiEBCa/VVK5x+3DgpT+RVw3a6ku2mnZ1qXOHSKlvLF5/l4jmDISsri+6HYSKpy9nvIsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LdjFUTiu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBBvEqW025841;
-	Wed, 11 Dec 2024 18:54:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=tbLHFR
-	PDkwEfVtwHNEpSw/kwG8L4VWUBxBNMVuE96VA=; b=LdjFUTiuXWUKZ6mM4O9XLG
-	gmwtrZbGjjVytZHNRMRohvR+Zfz8GsPFggEzvHP/gTlainJ2H1QGiXNv2u/JS1+3
-	iWO64eJk1mc4ja/LBD2oaNu7RX6lRoqxzD4rUgpVPpm1OQCKWfr1Dh4+fp8AJ2gb
-	TbOcZaXlMhBN9A43H8/KusFR9nkye2v+/QMSEwqvTbLdwxxYWl1eWqQ2pl181gUJ
-	H/zkbXgsbDS9UfREoXocjOQxsEIYLIiFlln04LZTjt96WYA2dOoJYwzJYiY9Kdop
-	2261Lu8US03fyDY0VRbbDK5kAktE75WFB1wDiZsC2FDZi7bnnvC6/ytMx/BsdZ/A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqej7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 18:54:51 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BBIspac005666;
-	Wed, 11 Dec 2024 18:54:51 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqej7k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 18:54:51 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHIF9B017421;
-	Wed, 11 Dec 2024 18:54:50 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1u0qf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 18:54:50 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BBIskpJ62456262
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Dec 2024 18:54:47 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D37E220043;
-	Wed, 11 Dec 2024 18:54:46 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CC09520040;
-	Wed, 11 Dec 2024 18:54:45 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.81.50])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Wed, 11 Dec 2024 18:54:45 +0000 (GMT)
-Date: Wed, 11 Dec 2024 19:54:40 +0100
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
-        tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        horms@kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dust Li
- <dust.li@linux.alibaba.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH net-next RESEND v3 2/2] net/smc: support ipv4 mapped
- ipv6 addr client for smc-r v2
-Message-ID: <20241211195440.54b37a79.pasic@linux.ibm.com>
-In-Reply-To: <20241211023055.89610-3-guangguan.wang@linux.alibaba.com>
-References: <20241211023055.89610-1-guangguan.wang@linux.alibaba.com>
-	<20241211023055.89610-3-guangguan.wang@linux.alibaba.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733943295; c=relaxed/simple;
+	bh=jNZQ0zi8NAueW2lyQFKyaIzSOngIk/Se6jwSwXItvds=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=alOUYwkSli1qkMDnB8BM2QL51jZ0W0ax7KpiT9k3BHB+CbHIZf6AEHnmIO3YHvpSTVuHImX+5IaNJDzaU9kIC3Pme4x4RSPIS3fCImvUYuTra4uLy500qPdygX3XAMyCIDCiH0zwsVlDTPgURuCUT3Sc/Bb5TC6cTHmCltwQr1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGNwEJRP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274F6C4CEE0;
+	Wed, 11 Dec 2024 18:54:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733943295;
+	bh=jNZQ0zi8NAueW2lyQFKyaIzSOngIk/Se6jwSwXItvds=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QGNwEJRPPwlMm+H/cuJPUnjmptLnKTUhwcqI/UUvV3NWjNKRcO12bz8D3g52xf2Nm
+	 YdAUsB2/vszZAANGe1bJCt5eC6P1HfG9HbeyWOTZgdKDVfxreqaThCH3xHTukwO1KU
+	 B20yRT+QVV9+xtST45KkupRCGo8ay9u9b6RtrGXFy4QiDJqqsFehV9EaAqJiaqWcF4
+	 sLwZfjhFUX5yriVXcZvgTq8DZ8qbfPXtC2fx1o1lsV3nVcGJHP69I16/jPUaJf8yyo
+	 jwGn6iTYLtTuRMzU3/SDaF5dtiN5i0Jaox4QJOQDo/8tt1/uX3GrsC/sTc/WlFfJAC
+	 hLcGct4lEACUw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Ming Lei <ming.lei@redhat.com>,
+	Yi Sun <yi.sun@unisoc.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	virtualization@lists.linux.dev,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 7/7] virtio-blk: don't keep queue frozen during system suspend
+Date: Wed, 11 Dec 2024 13:54:40 -0500
+Message-ID: <20241211185442.3843374-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241211185442.3843374-1-sashal@kernel.org>
+References: <20241211185442.3843374-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.286
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ojddAGxzXGN6xT6MqxVDlPPu-LDffvjO
-X-Proofpoint-GUID: bIA3QC9xMxVzuWVB8X2EzXkTV9ipzQ-Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=639 adultscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
- suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110133
 
-On Wed, 11 Dec 2024 10:30:55 +0800
-Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
+From: Ming Lei <ming.lei@redhat.com>
 
-> AF_INET6 is not supported for smc-r v2 client before, even if the
-> ipv6 addr is ipv4 mapped. Thus, when using AF_INET6, smc-r connection
-> will fallback to tcp, especially for java applications running smc-r.
-> This patch support ipv4 mapped ipv6 addr client for smc-r v2. Clients
-> using real global ipv6 addr is still not supported yet.
-> 
-> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-> Reviewed-by: Wen Gu <guwen@linux.alibaba.com>
-> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
-> Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
-> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+[ Upstream commit 7678abee0867e6b7fb89aa40f6e9f575f755fb37 ]
 
-Sorry for the late remark, but does this need a Fixes tag? I mean
-my gut feeling is that this is a bugfix -- i.e. should have been
-working from the get go -- and not a mere enhancement. No strong
-opinions here.
+Commit 4ce6e2db00de ("virtio-blk: Ensure no requests in virtqueues before
+deleting vqs.") replaces queue quiesce with queue freeze in virtio-blk's
+PM callbacks. And the motivation is to drain inflight IOs before suspending.
 
-Halil
+block layer's queue freeze looks very handy, but it is also easy to cause
+deadlock, such as, any attempt to call into bio_queue_enter() may run into
+deadlock if the queue is frozen in current context. There are all kinds
+of ->suspend() called in suspend context, so keeping queue frozen in the
+whole suspend context isn't one good idea. And Marek reported lockdep
+warning[1] caused by virtio-blk's freeze queue in virtblk_freeze().
+
+[1] https://lore.kernel.org/linux-block/ca16370e-d646-4eee-b9cc-87277c89c43c@samsung.com/
+
+Given the motivation is to drain in-flight IOs, it can be done by calling
+freeze & unfreeze, meantime restore to previous behavior by keeping queue
+quiesced during suspend.
+
+Cc: Yi Sun <yi.sun@unisoc.com>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: virtualization@lists.linux.dev
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
+Link: https://lore.kernel.org/r/20241112125821.1475793-1-ming.lei@redhat.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/block/virtio_blk.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 3afc07b59477b..b1c5bcae9b318 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -1062,9 +1062,12 @@ static void virtblk_remove(struct virtio_device *vdev)
+ static int virtblk_freeze(struct virtio_device *vdev)
+ {
+ 	struct virtio_blk *vblk = vdev->priv;
++	struct request_queue *q = vblk->disk->queue;
+ 
+ 	/* Ensure no requests in virtqueues before deleting vqs. */
+-	blk_mq_freeze_queue(vblk->disk->queue);
++	blk_mq_freeze_queue(q);
++	blk_mq_quiesce_queue_nowait(q);
++	blk_mq_unfreeze_queue(q);
+ 
+ 	/* Ensure we don't receive any more interrupts */
+ 	vdev->config->reset(vdev);
+@@ -1088,8 +1091,8 @@ static int virtblk_restore(struct virtio_device *vdev)
+ 		return ret;
+ 
+ 	virtio_device_ready(vdev);
++	blk_mq_unquiesce_queue(vblk->disk->queue);
+ 
+-	blk_mq_unfreeze_queue(vblk->disk->queue);
+ 	return 0;
+ }
+ #endif
+-- 
+2.43.0
+
 
