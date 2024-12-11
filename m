@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-441134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF319ECA1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:16:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA573188C83A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:16:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026C523369E;
-	Wed, 11 Dec 2024 10:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="deZCx1L/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15759EC8B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:18:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91C2211A13;
-	Wed, 11 Dec 2024 10:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733912134; cv=none; b=k4aXWfZCcHnd/pNAXTKrS69w2wp5TgICqCcE1hA7h3nMGRI/aPnVNxYnuwa1E87F23BTy92ELFccDMr+wky+h6Yght9/CbCAJi5dvR7W/S73uys4Ci9sHhD3Y1XpeRpAJJwQztKCi7wOB8Qo5dIxqEqyXPs2eOkDxpsLZ5KwNZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733912134; c=relaxed/simple;
-	bh=hessQfIJrJwj7BggoR6tvCjhK3ojBPXzkTn2YrM9Boc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n54emiOJdYpxiR2GYkQUs1w2ZcBeCgq7khEf3EBiftO30N7NejXOLGIr6wuWS+lvMywhprORB3oRnttM6Afu1aI/1qdh2MZlM0dBTrWN0DHR9SIWaY8sAQETP9dKdN85AVTQb0blQ5aHDOVeXvYan14v6s2v2iyueD62zVwbhsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=deZCx1L/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733912131;
-	bh=hessQfIJrJwj7BggoR6tvCjhK3ojBPXzkTn2YrM9Boc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=deZCx1L/6GVRi5qf05X08/Szk3Opa8lESlzJN1F5kSPq6e0CztF47VYvlNzgzOnXs
-	 ObX2dHAjvpGGxgfiqqNjmU92RZh1d6ujkpiCyZX8sMF2zJ+tMV9X1GnYTaYmu8ggk4
-	 A1QcKjEqeobV5jARkrmXeXARvtheTvJotZK0VKyQXcm7mMdGJzYIK8f1vGrxoMvfYb
-	 uMt9nMM8s8owhbf9vHAHA3+POXj9Jgl/iZdkalg5+ehjKSGM8p2AfIrpWdmwANShds
-	 psQvrD04B8ko7oprwJowUMZND3+AAgCCQbisf+KTURKJ89KbqZqbVzR+92eKoIGeMj
-	 PYu0QpONCRoSA==
-Received: from localhost (unknown [188.27.48.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3419928194F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:18:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6781E2210F4;
+	Wed, 11 Dec 2024 09:17:54 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DD47E17E360F;
-	Wed, 11 Dec 2024 11:15:30 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Wed, 11 Dec 2024 12:15:09 +0200
-Subject: [PATCH v2 5/5] arm64: dts: rockchip: Add HDMI0 PHY PLL clock
- source to VOP2 on RK3588
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9628E1BCA0E;
+	Wed, 11 Dec 2024 09:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733908674; cv=none; b=Vkl9IoRAZGCAHSx6WLKrlgHuqee7EFBQjTKESCBmBT54yGrcteX14Wp0p0QJgy5m9b6Y1GzL9D27WTTdIZNoitNIABvVqJgICF/uDp4rhtYQ805es2zwqrwPiSrhwTaazbtLPH3wisvijyd++FSCd61dyXtoKSWnlGWyUiaXlv4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733908674; c=relaxed/simple;
+	bh=pxVjJM3xlHmqsLWloFW4wOs0kH3D8fuPRBOZEI5nH0Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UGS/4ngMhM4PEPepKTFuBBuBk/ylUSIvSE/VqYA8gHjpUqR2O3qluTQ9+DyaeWufQ6dUBlAJu0zwlJBI/S7EDWZyq91vZHz1iwONDj3m82+iT+6mMQ8Q+I7ZmRe0KGUfvrf7dOnB/eNHK1YY6R3BkHNIl8wE0c64ksbk5XGw964=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB5K1iM031960;
+	Wed, 11 Dec 2024 01:17:31 -0800
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx1u408p-9
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 11 Dec 2024 01:17:31 -0800 (PST)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 11 Dec 2024 01:17:28 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 11 Dec 2024 01:17:26 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <abelova@astralinux.ru>, <gregkh@linuxfoundation.org>
+CC: <patches@lists.linux.dev>, <viresh.kumar@linaro.org>, <perry.yuan@amd.com>,
+        <stable@vger.kernel.org>, <ray.huang@amd.com>, <rafael@kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 6.1.y] cpufreq: amd-pstate: add check for cpufreq_cpu_get's return value
+Date: Wed, 11 Dec 2024 18:15:20 +0800
+Message-ID: <20241211101520.2105475-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241211-vop2-hdmi0-disp-modes-v2-5-471cf5001e45@collabora.com>
-References: <20241211-vop2-hdmi0-disp-modes-v2-0-471cf5001e45@collabora.com>
-In-Reply-To: <20241211-vop2-hdmi0-disp-modes-v2-0-471cf5001e45@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- FUKAUMI Naoki <naoki@radxa.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=H/shw/Yi c=1 sm=1 tr=0 ts=675958ab cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=KP9VF9y3AAAA:8 a=HH5vDtPzAAAA:8 a=zd2uoN0lAAAA:8 a=KKAkSRfTAAAA:8 a=t7CeM3EgAAAA:8
+ a=T-_msMMreK8bA51VSmQA:9 a=4w0yzETBtB_scsjRCo-X:22 a=QM_-zKB-Ew0MsOlNKMB5:22 a=cvBusfyB2V15izCimMoJ:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: YOgFNgtlFELGftkDp30WStXb3HIkerFT
+X-Proofpoint-GUID: YOgFNgtlFELGftkDp30WStXb3HIkerFT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-11_09,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015
+ impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2411120000 definitions=main-2412110069
 
-VOP2 on RK3588 is able to use the HDMI PHY PLL as an alternative and
-more accurate pixel clock source to improve handling of display modes up
-to 4K@60Hz on video ports 0, 1 and 2.
+From: Anastasia Belova <abelova@astralinux.ru>
 
-For now only HDMI0 output is supported, hence add the related PLL clock.
+[ Upstream commit 5493f9714e4cdaf0ee7cec15899a231400cb1a9f ]
 
-Tested-by: FUKAUMI Naoki <naoki@radxa.com>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+cpufreq_cpu_get may return NULL. To avoid NULL-dereference check it
+and return in case of error.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+Reviewed-by: Perry Yuan <perry.yuan@amd.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/cpufreq/amd-pstate.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 22462e86f48027ab7c5e270f2fa04df7afcc1d24..d07be2a81f28b4cbfe314992c662d8cfb3d3d344 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -1262,14 +1262,16 @@ vop: vop@fdd90000 {
- 			 <&cru DCLK_VOP1>,
- 			 <&cru DCLK_VOP2>,
- 			 <&cru DCLK_VOP3>,
--			 <&cru PCLK_VOP_ROOT>;
-+			 <&cru PCLK_VOP_ROOT>,
-+			 <&hdptxphy_hdmi0>;
- 		clock-names = "aclk",
- 			      "hclk",
- 			      "dclk_vp0",
- 			      "dclk_vp1",
- 			      "dclk_vp2",
- 			      "dclk_vp3",
--			      "pclk_vop";
-+			      "pclk_vop",
-+			      "pll_hdmiphy0";
- 		iommus = <&vop_mmu>;
- 		power-domains = <&power RK3588_PD_VOP>;
- 		rockchip,grf = <&sys_grf>;
-
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 90dcf26f0973..106aef210003 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -309,9 +309,14 @@ static void amd_pstate_adjust_perf(unsigned int cpu,
+ 	unsigned long max_perf, min_perf, des_perf,
+ 		      cap_perf, lowest_nonlinear_perf, max_freq;
+ 	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-	struct amd_cpudata *cpudata = policy->driver_data;
++	struct amd_cpudata *cpudata;
+ 	unsigned int target_freq;
+ 
++	if (!policy)
++		return;
++
++	cpudata = policy->driver_data;
++
+ 	cap_perf = READ_ONCE(cpudata->highest_perf);
+ 	lowest_nonlinear_perf = READ_ONCE(cpudata->lowest_nonlinear_perf);
+ 	max_freq = READ_ONCE(cpudata->max_freq);
 -- 
-2.47.0
+2.25.1
 
 
