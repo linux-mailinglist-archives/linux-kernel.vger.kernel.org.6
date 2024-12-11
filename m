@@ -1,109 +1,109 @@
-Return-Path: <linux-kernel+bounces-442179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD649ED90B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAC19ED90E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EAE51880513
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B3D188BA41
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315E81F0E4F;
-	Wed, 11 Dec 2024 21:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A512B1F0E23;
+	Wed, 11 Dec 2024 21:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ESMRf68M"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFaITdJI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734D81F0E46;
-	Wed, 11 Dec 2024 21:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058721D63CA;
+	Wed, 11 Dec 2024 21:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733953775; cv=none; b=e4PpDMJC6h1xa9u725NuXmwTihoFrFfEgGSiQdpLjjqcJu3gOvJarhuR2e1kfCmAyN8OWhhZ7BYsZRZZ/IGaskYkbfAoqWdGGrUbbBPEJR6ElJp6P5UhYPaWTA86gAmqeVg51mmEkeRSAplsHAMXutw5eBp6PYrQl4XFoRBid84=
+	t=1733953790; cv=none; b=CJ2PkjH3TWBJIpIO2rRAgZTxQjIeuubK1ioPwZpV71hi1h3hQCVuo7ZeGJ1sfJqy7RJeO9Ath5m/Xb3JzpuG8JT0mAHXcmnGy9ZUfHxdH2tjgDpBHEDNfNX34ggdZjkpPvuFh6HV6zfgR1nqqpSUYpnj/p7yyyzRi2uSWL2rEaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733953775; c=relaxed/simple;
-	bh=M3VYE1fkYXJOpTlxEoXKr0jePHi6WHdNKQA6iivFvdA=;
+	s=arc-20240116; t=1733953790; c=relaxed/simple;
+	bh=9dEs7Uv/W3GFIdvWXNgPv9/RG/WPitz2vsK5/eV8epM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GtmO1rGJhT4w0b/Fhu6C7Imwv2nbt2j/G/Z+c7lLRmNaCtqTREJHLAy4Hb8hdxYUq/dNJC48oXiVJLbwIedEQpq/F+YzwIc0DlrAhsXinlofKXFVrwyyX+WXnI0eZaTDWNVpaCbYeRno8/2LAgDtHNgPbq24ELn/YwcSf7V74gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ESMRf68M; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=YvFl5vXBOHL4Yiib0tLp9DkGN23UexMQ09qm1i2a69I=; b=ESMRf68MbRX49I6y
-	OA1xFHdtcc+HfksK2R9XVUHqsSepvZKBV1DsoVMc8NG1vniU+0bmF1mxOOcVM49LGlZhxCtxxNfq1
-	HhI5XmDtaBzsd8MrCLNLGpcfbjtncg7seWhnQlmicOCLpKhAHY3lok5ZIQW6rm5ff9ARvfYy7tEdx
-	x2MYeEXCyE0iG2lCvB5VNpNKxBUIPQpT4ziaS0LgRRa1IUybVIHQ6y4/az77tdyvz3FQSmur0VGio
-	pCcYDlB29YE9RqYgZ9FrALqUByhmK1E6/2J1kIkiCvEgvoG7d6E2cHMwNmh1Cj/A6wQRqML1xCC5U
-	S0WceRwfo10bRWFCcQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tLUaH-004rZO-2V;
-	Wed, 11 Dec 2024 21:49:29 +0000
-Date: Wed, 11 Dec 2024 21:49:29 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: dlemoal@kernel.org, cassel@kernel.org, p.zabel@pengutronix.de,
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ata: sata_gemini: Remove unused
- gemini_sata_reset_bridge()
-Message-ID: <Z1oI6cAAhGrcIVw9@gallifrey>
-References: <20241211011201.261935-1-linux@treblig.org>
- <CACRpkdaarPM3vx6vAVhdSv+KHDZq6MTDo0JpQYGj1gJnaE7OrQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLbsgWcgtnGwhjGAtEurZW7dehbHsyQGd/q9PHXFNqSWbaxE8RJjgQXT1TeYk2170BG2Dl6DOIUn568xGXUIXKPyZfHmSvqD97OeltBD2GNjLNvixwybS0klpr6YHbGXM8FsB5kxV4VGY3Fqi+BRzmRUexWcv8h7ZtmU76bNtrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFaITdJI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35920C4CED2;
+	Wed, 11 Dec 2024 21:49:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733953789;
+	bh=9dEs7Uv/W3GFIdvWXNgPv9/RG/WPitz2vsK5/eV8epM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MFaITdJIkZ1IZ7UigB5f9EhJDAqOApX0es7WvCaYIyDxpBqxTVztnpMhTSDhYdiPb
+	 257hY2WpAkUzycQO10r8/Juah4PjhQt6ojA1tYClva3aSLV1cs3T9c33RHHemnCeLG
+	 4nCMZiKzpKXK9A/lDjeS1hNe3FMwIvwkeLblSVCM0LBMFZ5Na32iXF4BXNO6e0sSrP
+	 gqwHbYpID10NcowjpWJQQtu9fsCV+/MbUb/pWJ75dwC+UsqPiCuGljkzXcJK7QuY+P
+	 nA1ASb4a6HJcJxjUGb6tz3ue79ctd/UDZJ0VkUZknepBmN5hjzG7ppeQ8vOnHJlsHq
+	 dsot4KoUZvQCA==
+Date: Wed, 11 Dec 2024 21:49:40 +0000
+From: Will Deacon <will@kernel.org>
+To: Ankit Agrawal <ankita@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, "maz@kernel.org" <maz@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <20241211214939.GD17486@willie-the-truck>
+References: <20241118131958.4609-1-ankita@nvidia.com>
+ <20241118131958.4609-2-ankita@nvidia.com>
+ <20241210141334.GD15607@willie-the-truck>
+ <SA1PR12MB71991EC85E8EEDD1C5115886B03E2@SA1PR12MB7199.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdaarPM3vx6vAVhdSv+KHDZq6MTDo0JpQYGj1gJnaE7OrQ@mail.gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 21:48:15 up 217 days,  9:02,  1 user,  load average: 0.13, 0.06,
- 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <SA1PR12MB71991EC85E8EEDD1C5115886B03E2@SA1PR12MB7199.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-* Linus Walleij (linus.walleij@linaro.org) wrote:
-> On Wed, Dec 11, 2024 at 2:12 AM <linux@treblig.org> wrote:
+On Wed, Dec 11, 2024 at 02:58:38AM +0000, Ankit Agrawal wrote:
+> Thanks Will for taking a look.
 > 
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >> The device memory such as on the Grace Hopper systems is interchangeable
+> >> with DDR memory and retains its properties. Allow executable faults
+> >> on the memory determined as Normal cacheable.
 > >
-> > gemini_sata_reset_bridge() was added in 2017 by the initial
-> > commit be4e456ed3a5 ("ata: Add driver for Faraday Technology FTIDE010")
-> > but has never been used.
-> >
-> > Remove it.
-> >
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > Sorry, but a change this subtle to the arch code is going to need a _much_
+> > better explanation than the rambling text above.
 > 
-> Right it was never used because the corresponding reset in
-> the low-level PATA driver didn't work so I patched it out before
-> submitting.
+> Understood, I'll work on the text and try to make it coherent.
 
-Ah right.
+Heh, I thought it was the patch trying to make things coherent :p
 
-> But should you not also remove sata0_reset and
-> sata1_reset from struct sata_gemini and the code fetching
-> the two reset lines? And even #include <linux/reset.h>?
-
-Oh I see, I was just looking for entirely unreferenced functions
-but that takes a little more following to notice.
-
-I'm happy to do that; are you OK with it as a follow up patch or
-do you want a v2? (And can you test it, I don't have the hardware).
-
-Dave
-
-> Yours,
-> Linus Walleij
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Will
 
