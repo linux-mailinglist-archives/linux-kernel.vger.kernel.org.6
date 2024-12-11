@@ -1,320 +1,193 @@
-Return-Path: <linux-kernel+bounces-440798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B369EC460
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:36:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024381679CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:36:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A361C1F08;
-	Wed, 11 Dec 2024 05:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hGvxGSa4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952979EC462
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:40:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0504A0A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733895380; cv=fail; b=bUBzUfqwNZO1PJKMHTFfty/gQ/MaYZPDyfmJdXqnnhRXdWl6Js2tSkGMH5o1QN4PhfQ7zdzJTVqdDZdlKhNXGpWgiP2TG2BnBudBjZ3KiX4toIbKBqLNChoLJ47HEfSPIDf1TiH/UcHieItC1kV6i6dtrUXIHoDQzMDhpgVwobI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733895380; c=relaxed/simple;
-	bh=zvvhkMVWowQVJ2sLOquSIF7Zzh37ALHBwLI4Mg2fDZg=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=rWENKrGm+s6qAoacstIqBfiVEBVbmOr2m1FpsOF8UKGufodF8m+wH2h0AewVzcIWPwZrKusckeVpYIkTw807DugbgWjViMUGcCXmFZBZ6ukMXivhhauFGD7R1FhupRpKTd/dQvVHYNi6AMDPczYe+7FHFSzzLboPlPiWj6LCM5M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hGvxGSa4; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733895379; x=1765431379;
-  h=date:from:to:cc:subject:message-id:
-   content-transfer-encoding:mime-version;
-  bh=zvvhkMVWowQVJ2sLOquSIF7Zzh37ALHBwLI4Mg2fDZg=;
-  b=hGvxGSa48MV56f4I3bALcBZAfeT4TkZs2hqx7XXC0xIWuRGLEbalez/T
-   Z5bEagmzxt2UCWDC82CTG96BixZaZ/0ToU+RNWX30huH50dMZ4y04XY7z
-   /y/TGq+GdAEaqx0QZ7TvWIZ2VDEnqZ1Xo1l5NpDsWz/ZODnXEgRIVeAzH
-   Kc2QFMoMMkZhM5IcvvZBAdreWYKnAEdQglOg5nBgbIHvwfdhE6c/t8lM+
-   5D8xsGK6A+O4kka7yaK4cyXlQk5OKI17jCe2p2L6sg56M5URUqbfhPxXb
-   Q6ZGsW/h8KikhEHpPrixoVEWub3WmkadYz4BUSAjE5rJTmkwOIMiahEUy
-   Q==;
-X-CSE-ConnectionGUID: C+fQ/b1sS6uP4kTyZOqLRg==
-X-CSE-MsgGUID: RliFu4lLQ+qp3S4m09/MgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="44734678"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="44734678"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 21:36:18 -0800
-X-CSE-ConnectionGUID: XRJ9/E/SQVueyOV2094sRw==
-X-CSE-MsgGUID: P4XlnuSqR8eM7IGMuD7x0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="95870005"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Dec 2024 21:36:17 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 10 Dec 2024 21:36:17 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 10 Dec 2024 21:36:17 -0800
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.173)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 10 Dec 2024 21:36:16 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hWpLAnCWTw6P5Y1QLKS+Zn3rUxgmXNjANoTHB3Aj0pDuz6ZwHDtwwrChwoWkpEFJCgtQx3eUGo56ox6enJVkvRNHWv3TBGP06F1Vx5cQq4IwLcHzEwiYPI/PtWllMbsXRYS10zPLsiZ25RjZKWZk3OZt0cMxhNVvllslZn1Qlbaah3QIhAdU3nYh/mxI99JU2gJ/YtZ7bgwQyvChmLU18UJbqfngRRggHC6GwHQjC5CuMsJmpue9khNeTpZ1tJsdCda5UeUUpfceTiVZkXLobD7yACEeHCu9YMSLbjuoQFnkJKRZjEMN4QqrKiTMbkO1VaFsddPFeoefTm1G8BmiTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xdNFqWpzZf+er5gd/PgKG7WbhdNRGH0glH1FdREd5cs=;
- b=JklXORWAGNjoH+bxYpT2x9RksPtKkF+gcQ/EDcrV6aQwk6A47BweMqojKIYZQtbSs1+FUpBn3hhEy8JkuJ6MI4mby7HBFtwjxv/5ubkEbYcHw8L/H19y2DrViOENTr7exsiRMk3YAco2Iw0H8RqmmYBY+pYpOisl2oHW/nLxMZHXPmqqjSoo8BIa5byUF7hdVb4sOP27LnXD4RrNrGi9lQ5rEzRl49cutwLG4f64TI07ENBy4XFBjnZqO3s/78XFDoGEA1q+NLS2NnjYLj/Z/w8iwaJD4Ht7RvhPIY1B17KZQ4GuMucWh+b2peSVrfw2H0Qb+3N5xM+ISMRh8kdJaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by CY8PR11MB7799.namprd11.prod.outlook.com (2603:10b6:930:78::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Wed, 11 Dec
- 2024 05:36:14 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
- 05:36:14 +0000
-Date: Wed, 11 Dec 2024 13:36:06 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Carlos Eduardo Gallo Filho <gcarlos@disroot.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	Maxime Ripard <mripard@kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<oliver.sang@intel.com>
-Subject: [linus:master] [drm/tests]  d219425604:
- WARNING:at_drivers/gpu/drm/drm_framebuffer.c:#drm_framebuffer_free[drm]
-Message-ID: <202412111305.163da841-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: SGAP274CA0002.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::14)
- To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90308284D24
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:40:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DA41C1F0F;
+	Wed, 11 Dec 2024 05:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sVTt5JUS"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EA74A0A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733895601; cv=none; b=c1K1L2jHHgGthc3v80RM1Vbo5sFbbtMVBsmM8sQdA5WMVFeuq1VqzpghfGWOsxG6Gf6w/LufqwOTOTi8tmI4KPo5uX3ie0aIIws/8Y+KD385/HNKIN8JnQuFaUNoauq29qZeoAGIXeCsOi2jFmLhRPV7DnpWDWoW6YHu3Ino7Cc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733895601; c=relaxed/simple;
+	bh=cmLSSNnhREF3JwUwweEtDJM+TE6MLim68CUGz24LJFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MdG+9xuzVEnVpaGKHZkjFAyuSf9sqLwX/xJSEYnfa61B/S6Y2egC3TC+NMUE2Z7ofbDlZypYDeNB4dy3xQQEI2Cs0FNEGejWFT/srCPYkqGprMSjl3adUY0t6Zi4Ep3oWzgsk3jrHRU/+r8m7pB9rMIZnaPaEFt9JbfTxKZaDNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sVTt5JUS; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5189a440a65so627408e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:39:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733895598; x=1734500398; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L2JyqkiU/6R1xmttvdUUGuANembyWIMM8crCm1+D1nE=;
+        b=sVTt5JUS7UmvwiFC+vzXGMYQs/Ss/UF7U1VOEL248r35uiYLK4rxkGqoH258wNu2HH
+         GpbhfdsL+PfsJyF8zRYnbKnAvNZV6tc0Ol/h6pTyhj83RzIHSdVq1/XifVI9ORmROGbV
+         B46yvpZb78iWI0SNPObVbEJRt0in7Hl83QqUo84eDHe+nmDFSqVTuVcGXcelNy17/xQg
+         yZelDkUZl4fHw6LBAlkYYIEAfdNRuI5Zssjt5au00IU6jecCOUfcmeAmIAq/p+KHdnYF
+         GrWrxt+dLiutUpRsrgeBZ9g7dD8G2NF/0/YM8shlCQhK3bRlMpUxicIk4rfhkxdJ2GRw
+         MVqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733895598; x=1734500398;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L2JyqkiU/6R1xmttvdUUGuANembyWIMM8crCm1+D1nE=;
+        b=bdS2i/MvrUoGgdrjaA7vVGK+vsjmYsSReDVmYqRN6bwkvBldmJ3rGnSYT1Z+lkt4LV
+         ythBqkH0syYTRIm01PR8adBHBJGexpZpGWLggXJSz0UTNcx6K0wwcQ8rihXeN2k6M7hq
+         6wxb1dvRT4fbiUpv6QHYxCCaP+u9ZEv+ydYC022uDXIlTy4hhNBD73vCSI05lJt9FzUa
+         euovNbysjfh2mx3udMnbOk4qaMHIUg25ucWFCif6h5N5S1MPhJpIgqTI5o4Jly9A7v8A
+         IYFIbiw3Rx1joVB9ZhfS5VVy3hGxxTtJeCfigt3O5B/KSu9r7O0BtdZN2CcPf/bKBW46
+         k6Ew==
+X-Gm-Message-State: AOJu0YwLzFx5ysp2q7DCfRHeeVxfwUmKoO6eQzYZvWpdkblv8qoHyomk
+	vem6a3QGdG/oFA8qkfMAC5SSrzgYsraZl5svPgs0z1XOqWbdxDndZrtHatX2AAp8i0dFc+oeooY
+	NlqNHUqOX5nyCG7fB8KwUZYmyxEu313LsCWfRxbf2rA8TozPu2R0=
+X-Gm-Gg: ASbGncsVU79Du0JLYKqGO7AgqaLkFPlM9sicHW9j2eVFQHhoRSOe7GRZbH/56GiXgmE
+	dGIbBj641wYhsBxBFs1cwPzhb90Lu806TEw==
+X-Google-Smtp-Source: AGHT+IGaVQqa3Q+BI6ngTSIj2GVkueSl4Jrs/cm3+CtAoLXynlarl8woucxcn3CryRSjN8OBkzE56/rteEslmfJ/Svc=
+X-Received: by 2002:a05:6122:8292:b0:515:e4c4:3664 with SMTP id
+ 71dfb90a1353d-518a3cc3352mr1602173e0c.9.1733895597732; Tue, 10 Dec 2024
+ 21:39:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|CY8PR11MB7799:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79725e05-a54b-4f4c-8583-08dd19a5ba72
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?QCZ91SRBzpebPSufdsQDgWIpYIp1YvECUKj9bQE561lDvZEpQj/DCJeYcvl5?=
- =?us-ascii?Q?KMeoIKkYJg+08zKD0WoFWZtECqPtL4h16kMx/8hzEpPpDQuhzwbbUA0B9TD8?=
- =?us-ascii?Q?SVc+ilWDeE0QIAK/7VUuNp3Rw6jHLDfXnG/d4vsnFBCX//agHmNYkvAT1M1S?=
- =?us-ascii?Q?mTTe2LOz8FSLjZS5mC+94PyuY0mnvco8DdlJpDjITjcB2qqO+zI+shoBCVJu?=
- =?us-ascii?Q?mrzbIyBPLZHaNwRjWdQ3prFke0Z1vWhBQXQO16q1RgzrANz9X+l1Sg83tOpc?=
- =?us-ascii?Q?Mg5lVmZf7Bv0oK/k0SAsDOJBoB7zPXrhiM0yUJ4w6weooGvyYnqZQaDyZEmU?=
- =?us-ascii?Q?TUqCVPkpFj6vUIXQGn/MqxO36mcAkcJWvd4h6qgBZRrULD1ufwOzgdqaYorI?=
- =?us-ascii?Q?bAYp2XkNf035PHNOMBfix6kZE98HjDIelLO0IqN02jV/Y235gzUYVzJTfKNC?=
- =?us-ascii?Q?fXtHnXtBfMnxlOCOES5s4iYyjdBXLYnam7A31SQo541rT/h6PEYw8sO9OsL7?=
- =?us-ascii?Q?acINBtUHwNbO8T6mt0Ap5pY7Oj1rpAUJOjOu/74+7F0iXivv3hQqkN+truFS?=
- =?us-ascii?Q?5RJp8uJXufUjgjc1uf9tZHOHXxee6OCa9rgCV2iD8qhY14pw63v7J2LHsmO3?=
- =?us-ascii?Q?qhynONAQW9wKod+6f+2sQZaURYns56PqX3cxjLz2YV6UP33hx+rqyI8xzMFf?=
- =?us-ascii?Q?rNKjlc/XUn6CC9Lmy50hhaGsCFsNMY4/lAgTr1Yl+kcl6XMPrdJJcGEAQlxr?=
- =?us-ascii?Q?bZFKMZMc+3LAoor1Th3x/p90HoSoB9x0IK8iqdb7h4ajk7t6ciK1on6iWv/o?=
- =?us-ascii?Q?fwxeFS8Fti85gxya2wrC4gphgkWI+vMX00wjBjsN3+wsg5mJZbSMuTb3mOE7?=
- =?us-ascii?Q?PSe1P18x6HJnQlFVJvWzrT3AFeJd5HsgP5KVIGEgQJb6yD4plAF6TmOWLSj9?=
- =?us-ascii?Q?mMVpXtKda590B7z6bCannbRlvCMgLU4jUpG9dUoa7nH4ELjNlMUrcYZHCX3C?=
- =?us-ascii?Q?ywJKDHRAQeX+jx315zG5IB06eUMAImJ/jDAcCqGxrULCTMGy/OqNQsGUUm5O?=
- =?us-ascii?Q?OyyiQYV8qE1d6r6Rx6djUgRCZqX3ce0SwQAmV+y8SJiLU4RQOEFltxseA8f7?=
- =?us-ascii?Q?Sujj5DIFFGRsJqNSFl3/HWQOs7NpnuEsfmZ3/yFWFAJzvEqh/Mb91hNVUxGp?=
- =?us-ascii?Q?7Zubkeu5834pT1lyBZshPEtzaOrQM6X1XodriF8Fn9DY9LocOApGX+lYeU+K?=
- =?us-ascii?Q?7AdwcYbKBWo9fQuWhrwtTUU+uQwM8/SG3bvC9zh40BVXAx+Pw96Ncg7eOi0N?=
- =?us-ascii?Q?1rwoGlKa2kk4FTo8X6/VpaQLc4/ZS4rm8hkVK4rVyOh4GKuusSNLhdJza+d3?=
- =?us-ascii?Q?BLlqYrc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DuY3UpPlPY+zGNsyzbztysbR7cyk8yJQoem0Fx0hw2HBCMhmKdn6O7lxIiLa?=
- =?us-ascii?Q?kS1cYWvQERiAQV2dcbX2WcLKx+Rf/Bpk28Ugb6iHKF1EJlyKAyFxlM78v1fi?=
- =?us-ascii?Q?FXOe7k3WEekw7+stNdqE1om0+PfUX82qFYpwhqSY5+W/ejAorGxHwCRwpCSh?=
- =?us-ascii?Q?4XePFjYL+s8Ne1KrBJ8P9JOy64ueXkIHVtiXLcsgI3IqE6eMjKLlUjddlE+H?=
- =?us-ascii?Q?9xfxzSoLg0PX23Aooqx30OcyMQanggb6pkMcXOH1HU4ewRxRBHoL2yNaqHVK?=
- =?us-ascii?Q?yRCTRbFB8Nwu7IMr7HaOecoZ5gxE2DG/hBDfSMIhzWcfwPtjPnb7cA9HRdOx?=
- =?us-ascii?Q?libdh2WxoMaq5PkcJRJcwXoMLQIDr+vpeWmEdWbeB6RBgoC/D7Uk+NDGLkn0?=
- =?us-ascii?Q?rw44YRHWAnK2m85NuqrvgSvr0mWG3+6zsHiYZU4jldRuPkBTKgZmPgheRIAk?=
- =?us-ascii?Q?I662iuivKqRC93xV67vBbFZBxQUFZquljABgfE7J+Zl5IZiZpZFCaneaGuBG?=
- =?us-ascii?Q?RHCG/cmYxMdRPfEx2lt6aTIdC93euD1J3Rk37NrOYqZDxz7LT4SY11Wy6uNX?=
- =?us-ascii?Q?zxgi+HFTwSH+ejT8EOGI8oHXECvXRWvW93xrZGgob+/+7fyUKW7N671nztv8?=
- =?us-ascii?Q?g1lbAyi3dzJFN+vfNJdCfJAlFvKQ5tFSA2ZG9X2swOFyRjlv86TrEWAaSjrF?=
- =?us-ascii?Q?rCeSfX+EDZyPQ3mDcEI5PW8M+5P7phLPDaxvGb3qHBv/qHVy5tBFs+HkP4Zr?=
- =?us-ascii?Q?R8mgrM09B7ail7fTyraRibd6I/DkIxZCMKXASABaR/M+3ZbBWLBzOB3SIwcU?=
- =?us-ascii?Q?kYlS/lNWxLonm95j09/kPyE3+Ck3KU9TFDaoAchQJkie/1TNtxCb+BodrdC6?=
- =?us-ascii?Q?7A+g3lviOtXxAd6mKHBX7vdaA7EJ7Ny1ftuyoNlfJKGxiwSrijBNXFvG1xYZ?=
- =?us-ascii?Q?K5DnhvYM9/Vh6Dwpwfz17f1ApHni/UnceT9CJ+k0xoPKLTcLu5Lp/65DF8h3?=
- =?us-ascii?Q?HqLMgObEI7p4SOqk2rjUXaIol8dH7tXksHvBbNUIU7FXl9m9CnX99gJOJ45f?=
- =?us-ascii?Q?KQLmZLXzMaWNu4ebhNHU49ooiH5jfRDBc0f8ilrpurtRm05boa5TmkGIxGni?=
- =?us-ascii?Q?zVYl8j+fl2sbcDNYpufpOM2RcuZvdD1Ht6+uhqCgCPpp2/3o9o/nMkS6+H2a?=
- =?us-ascii?Q?wyMJ91LfT1pEWZ54Pd3T/iouBfalXsbacwNQzgHEcKZUjvDnquq4tw3tHy6o?=
- =?us-ascii?Q?gePGfgNTp09KdydxApZTve7emvW/djw53V/KBouts4Cbl1S7Xi0fmpPcJKXL?=
- =?us-ascii?Q?RtiNndAPU0UXpJoopdT8WVgOXII9mNA4HTUP7/AozS21vl6ZWuII+bS4Uv0s?=
- =?us-ascii?Q?ECKy3PwoFWA/uK0a6MgWXlIy624fo3q/iOAz6zz7fFcdZBjyDLDfathe2gZ3?=
- =?us-ascii?Q?lqFNAj0gORzCPBLxDAJBWIXBCU4KpGDgH94uis52uLD/QP7KFztzf8+vrCwZ?=
- =?us-ascii?Q?+1YtexxZO8YUEfFjV2fGnxJo8S6QsMvFLH4E6fbbTQWThtntGg5yB8+SifTI?=
- =?us-ascii?Q?bortynqFqmjeI1YWpKFiaiMwWVZkWjnMNM0e5IZUYmwcvY5tPt9lKbvI0lTt?=
- =?us-ascii?Q?zQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79725e05-a54b-4f4c-8583-08dd19a5ba72
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 05:36:14.5925
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ECVuUZlLsQqKi/QwikFj04FsaXNjtvWng++U5T2uH16mFxmR2e05hcTD1DgL268L8fYSGK6eoIUdfGm7hXW7Tw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7799
-X-OriginatorOrg: intel.com
+References: <CA+G9fYvcBvbabg+m7brKfpGCGZUcK+KHHTFX7hFvW6GmN2XF0g@mail.gmail.com>
+In-Reply-To: <CA+G9fYvcBvbabg+m7brKfpGCGZUcK+KHHTFX7hFvW6GmN2XF0g@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 11 Dec 2024 11:09:46 +0530
+Message-ID: <CA+G9fYuHGTKM5P+nEifZwfALPfO9uw7sraCrGo-c3YzR=JjwJg@mail.gmail.com>
+Subject: Re: selftests: core: unshare_test: WARNING: at mm/util.c:671 __kvmalloc_node_noprof
+To: open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, LTP List <ltp@lists.linux.it>
+Cc: Shuah Khan <shuah@kernel.org>, David Gow <davidgow@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Barry Song <baohua@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+[Gentle Reminder]
 
+On Mon, 26 Aug 2024 at 18:50, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> The following kernel warning is noticed on all arch and all devices while
+> running selftests: core: unshare_test on Linux next-20240823 and next-20240826.
+>
+> First seen on next-20240823.
+>   Good: next-20240822
+>   BAD:  next-20240823 and next-20240826
 
-Hello,
+This is an open issue from August.
+The reported kernel warning is still seen on linux next and mainline
+while running selftests: core: unshare_test.
 
-kernel test robot noticed "WARNING:at_drivers/gpu/drm/drm_framebuffer.c:#dr=
-m_framebuffer_free[drm]" on:
+Linux version: 6.13.0-rc2-next-20241210
 
-commit: d2194256049910d286cd6c308c2689df521d8842 ("drm/tests: Add test for =
-drm_framebuffer_free()")
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Crash log:
+> --------
+> # selftests: core: unshare_test
+> <4>[   61.084149] ------------[ cut here ]------------
+> <4>[ 61.085175] WARNING: CPU: 0 PID: 477 at mm/util.c:671
+> __kvmalloc_node_noprof (mm/util.c:671 (discriminator 1))
+> <4>[   61.088958] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce
+> sha512_ce sha512_arm64 drm fuse backlight dm_mod ip_tables x_tables
+> <4>[   61.093141] CPU: 0 UID: 0 PID: 477 Comm: unshare_test Not
+> tainted 6.11.0-rc5-next-20240826 #1
+> <4>[   61.094558] Hardware name: linux,dummy-virt (DT)
+> <4>[   61.096763] pstate: 23400009 (nzCv daif +PAN -UAO +TCO +DIT
+> -SSBS BTYPE=--)
+> <4>[ 61.097841] pc : __kvmalloc_node_noprof (mm/util.c:671 (discriminator 1))
+> <4>[ 61.099701] lr : __kvmalloc_node_noprof (mm/util.c:661)
+> <4>[   61.100448] sp : ffff800080abbce0
+> <4>[   61.100819] x29: ffff800080abbcf0 x28: fff0000004549280 x27:
+> 0000000000000000
+> <4>[   61.101744] x26: 0000000000000000 x25: 0000000000000000 x24:
+> fff0000003615e40
+> <4>[   61.102512] x23: fff0000003615ec0 x22: bfafa45863b285c8 x21:
+> 0000000200002000
+> <4>[   61.103232] x20: 00000000ffffffff x19: 0000000000400cc0 x18:
+> 0000000000000000
+> <4>[   61.104053] x17: 0000000000000000 x16: 0000000000000000 x15:
+> 0000000000000000
+> <4>[   61.104927] x14: 0000000000000000 x13: 0000000000000000 x12:
+> 0000000000000000
+> <4>[   61.105752] x11: 0000000000000000 x10: 0000000000000000 x9 :
+> 0000000000000000
+> <4>[   61.106606] x8 : 0000000000000001 x7 : 0000000000000001 x6 :
+> 0000000000000005
+> <4>[   61.107377] x5 : 0000000000000000 x4 : fff0000004549280 x3 :
+> 0000000000000000
+> <4>[   61.108207] x2 : 0000000000000000 x1 : 000000007fffffff x0 :
+> 0000000000000000
+> <4>[   61.109262] Call trace:
+> <4>[ 61.109619] __kvmalloc_node_noprof (mm/util.c:671 (discriminator 1))
+> <4>[ 61.110248] alloc_fdtable (fs/file.c:133)
+> <4>[ 61.110751] expand_files
+> (include/linux/atomic/atomic-arch-fallback.h:457
+> include/linux/atomic/atomic-instrumented.h:33 fs/file.c:177
+> fs/file.c:238)
+> <4>[ 61.111171] ksys_dup3 (fs/file.c:1337)
+> <4>[ 61.111596] __arm64_sys_dup3 (fs/file.c:1355)
+> <4>[ 61.112006] invoke_syscall (arch/arm64/include/asm/current.h:19
+> arch/arm64/kernel/syscall.c:54)
+> <4>[ 61.112480] el0_svc_common.constprop.0
+> (include/linux/thread_info.h:127 (discriminator 2)
+> arch/arm64/kernel/syscall.c:140 (discriminator 2))
+> <4>[ 61.112955] do_el0_svc (arch/arm64/kernel/syscall.c:152)
+> <4>[ 61.113384] el0_svc (arch/arm64/include/asm/irqflags.h:55
+> arch/arm64/include/asm/irqflags.h:76
+> arch/arm64/kernel/entry-common.c:165
+> arch/arm64/kernel/entry-common.c:178
+> arch/arm64/kernel/entry-common.c:713)
+> <4>[ 61.113742] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:731)
+> <4>[ 61.115181] el0t_64_sync (arch/arm64/kernel/entry.S:598)
+> <4>[   61.115709] ---[ end trace 0000000000000000 ]---
+>
+>
+> Crash Log links,
+> --------
+>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240826/testrun/24953436/suite/log-parser-test/test/check-kernel-exception-warning-cpu-pid-at-mmutilc-__kvmalloc_node_noprof/log
+>
+> Crash failed comparison:
+> ----------
+>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240826/testrun/24953436/suite/log-parser-test/test/check-kernel-exception-warning-cpu-pid-at-mmutilc-__kvmalloc_node_noprof/history/
+>
+> metadata:
+> ----
+>   git describe: next-20240823 and next-20240826
+>   git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+>   git sha: c79c85875f1af04040fe4492ed94ce37ad729c4d
+>
+> Please let me know if you need more information.
+>
 
-[test failed on linus/master      7503345ac5f5e82fd9a36d6e6b447c016376403a]
-[test failed on linux-next/master ebe1b11614e079c5e366ce9bd3c8f44ca0fbcc1b]
+Kernel warning log:
+-----------------
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241210/testrun/26261199/suite/kselftest-core/test/core_unshare_test/log
 
-in testcase: kunit
-version:=20
-with following parameters:
-
-	group: group-00
-
-
-config: x86_64-rhel-9.4-kunit
-compiler: gcc-12
-test machine: 8 threads Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz (Skylake) w=
-ith 16G memory
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new versio=
-n of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202412111305.163da841-lkp@intel.co=
-m
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20241211/202412111305.163da841-lkp@=
-intel.com
-
-
-[  152.407500][ T4768] ------------[ cut here ]------------
-[  152.418100][ T4768] drm-kunit-mock-device drm_test_framebuffer_free.drm-=
-kunit-mock-device: [drm] drm_WARN_ON(!list_empty(&fb->filp_head))
-[  152.418134][ T4768] WARNING: CPU: 6 PID: 4768 at drivers/gpu/drm/drm_fra=
-mebuffer.c:832 drm_framebuffer_free+0x126/0x1a0 [drm]
-[  152.441735][ T4768] Modules linked in: drm_framebuffer_test drm_kunit_he=
-lpers linear_ranges snd_hda_codec_hdmi snd_ctl_led snd_hda_codec_realtek sn=
-d_hda_codec_generic snd_hda_scodec_component intel_rapl_msr intel_rapl_comm=
-on x86_pkg_temp_thermal btrfs intel_powerclamp coretemp kvm_intel blake2b_g=
-eneric xor kvm raid6_pq libcrc32c snd_soc_avs snd_soc_hda_codec crct10dif_p=
-clmul snd_hda_ext_core i915 snd_soc_core sd_mod snd_compress sg snd_hda_int=
-el ipmi_devintf ipmi_msghandler crc32_generic crc32_pclmul snd_intel_dspcfg=
- cec snd_intel_sdw_acpi intel_gtt snd_hda_codec ttm snd_hda_core crc32c_int=
-el drm_display_helper snd_hwdep ahci snd_pcm mei_wdt ghash_clmulni_intel dr=
-m_kms_helper libahci wmi_bmof rapl drm_buddy snd_timer video intel_cstate m=
-ei_me snd libata intel_uncore intel_pmc_core serio_raw mei pcspkr soundcore=
- intel_pch_thermal intel_vsec wmi pmt_telemetry acpi_pad pmt_class binfmt_m=
-isc drm fuse loop dm_mod ip_tables chacha_generic poly1305_generic [last un=
-loaded: drm_format_test]
-[  152.528270][ T4768] CPU: 6 UID: 0 PID: 4768 Comm: kunit_try_catch Tainte=
-d: G S  B            N 6.11.0-rc7-01411-gd21942560499 #1
-[  152.539795][ T4768] Tainted: [S]=3DCPU_OUT_OF_SPEC, [B]=3DBAD_PAGE, [N]=
-=3DTEST
-[  152.546473][ T4768] Hardware name: HP HP Z240 SFF Workstation/802E, BIOS=
- N51 Ver. 01.63 10/05/2017
-[  152.555399][ T4768] RIP: 0010:drm_framebuffer_free+0x126/0x1a0 [drm]
-[  152.561797][ T4768] Code: 8b 74 24 50 4d 85 f6 74 28 4c 89 e7 e8 f3 fc 7=
-8 c2 48 c7 c1 80 39 4c c0 4c 89 f2 48 c7 c7 e0 39 4c c0 48 89 c6 e8 5a 08 e=
-4 c0 <0f> 0b e9 2e ff ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1
-[  152.581167][ T4768] RSP: 0018:ffffc90001397c08 EFLAGS: 00010282
-[  152.587067][ T4768] RAX: 0000000000000000 RBX: ffffc90001397cc8 RCX: 000=
-0000000000027
-[  152.594872][ T4768] RDX: 0000000000000027 RSI: 0000000000000004 RDI: fff=
-f8883c9930bc8
-[  152.602675][ T4768] RBP: ffffc90001397ca0 R08: 0000000000000001 R09: fff=
-fed1079326179
-[  152.610478][ T4768] R10: ffff8883c9930bcb R11: 0000000000000001 R12: fff=
-f888108fad000
-[  152.618275][ T4768] R13: ffff888435067000 R14: ffff888434a6ca80 R15: fff=
-fc90000a8f650
-[  152.626076][ T4768] FS:  0000000000000000(0000) GS:ffff8883c9900000(0000=
-) knlGS:0000000000000000
-[  152.634820][ T4768] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  152.641241][ T4768] CR2: 0000559f29c1e540 CR3: 000000043c06a003 CR4: 000=
-00000003706f0
-[  152.649038][ T4768] DR0: ffffffff8757a458 DR1: ffffffff8757a459 DR2: fff=
-fffff8757a45a
-[  152.656837][ T4768] DR3: ffffffff8757a45b DR6: 00000000fffe0ff0 DR7: 000=
-0000000000600
-[  152.664639][ T4768] Call Trace:
-[  152.667783][ T4768]  <TASK>
-[  152.670576][ T4768]  ? __warn+0xc8/0x250
-[  152.674496][ T4768]  ? drm_framebuffer_free+0x126/0x1a0 [drm]
-[  152.680289][ T4768]  ? report_bug+0x25d/0x2c0
-[  152.684640][ T4768]  ? handle_bug+0x3c/0x70
-[  152.688816][ T4768]  ? exc_invalid_op+0x13/0x40
-[  152.693338][ T4768]  ? asm_exc_invalid_op+0x16/0x20
-[  152.698206][ T4768]  ? drm_framebuffer_free+0x126/0x1a0 [drm]
-[  152.703996][ T4768]  ? drm_framebuffer_free+0x126/0x1a0 [drm]
-[  152.709806][ T4768]  drm_test_framebuffer_free+0x188/0x510 [drm_framebuf=
-fer_test]
-[  152.717270][ T4768]  ? __pfx_drm_test_framebuffer_free+0x10/0x10 [drm_fr=
-amebuffer_test]
-[  152.725247][ T4768]  ? __pfx_drm_mode_config_init_release+0x10/0x10 [drm=
-]
-[  152.732090][ T4768]  ? __drmm_add_action+0x19f/0x280 [drm]
-[  152.737636][ T4768]  ? __schedule+0x6ea/0x1670
-[  152.742077][ T4768]  ? __pfx_read_tsc+0x10/0x10
-[  152.746598][ T4768]  ? ktime_get_ts64+0x82/0x240
-[  152.751206][ T4768]  kunit_try_run_case+0x176/0x440
-[  152.756078][ T4768]  ? try_to_wake_up+0x74d/0x1610
-[  152.760859][ T4768]  ? __pfx_kunit_try_run_case+0x10/0x10
-[  152.766242][ T4768]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-[  152.771970][ T4768]  ? set_cpus_allowed_ptr+0x81/0xb0
-[  152.777006][ T4768]  ? __pfx_set_cpus_allowed_ptr+0x10/0x10
-[  152.782565][ T4768]  ? __pfx_kunit_try_run_case+0x10/0x10
-[  152.787945][ T4768]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x1=
-0
-[  152.794713][ T4768]  kunit_generic_run_threadfn_adapter+0x7c/0xe0
-[  152.800784][ T4768]  kthread+0x2d7/0x3c0
-[  152.804712][ T4768]  ? __pfx_kthread+0x10/0x10
-[  152.809145][ T4768]  ret_from_fork+0x30/0x70
-[  152.813410][ T4768]  ? __pfx_kthread+0x10/0x10
-[  152.817843][ T4768]  ret_from_fork_asm+0x1a/0x30
-[  152.822455][ T4768]  </TASK>
-[  152.825331][ T4768] ---[ end trace 0000000000000000 ]---
-
-
---=20
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
