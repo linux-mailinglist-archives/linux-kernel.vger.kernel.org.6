@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-440938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAAE69EC6B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:14:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313629EC6B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7601672DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD6B1887732
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1331D5CFB;
-	Wed, 11 Dec 2024 08:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670A71D7E46;
+	Wed, 11 Dec 2024 08:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQqL78pM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGvB4xdy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F130642A95;
-	Wed, 11 Dec 2024 08:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B9F1D6DB6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733904889; cv=none; b=Kt5HN0lNVKSMVypBMnxig7fCwLe/zqFTpe4Ose+XcLBrLwVMiG2Oy1knKaktuj4OCv8UPHtbFuJU0vlxuB/m9BkLL2uVh3862llOeijntHMGcFuTJZV5WeLAZLzeK6o17GUacVdlXZP/b33f+izhKUvm0eGFXvZxw3zNlSFdlB4=
+	t=1733904890; cv=none; b=FtYRaNOvbmawk//ehSsJDcuwgG9poJODeHpOtsLNhmOJmGvN5Us0BNNUP/OP6vT4OGQaBzKskBw+lT+yH18z/QkLI9pFjzTM5yJqSfu3x5Dcly54bpo/LMQP6N96aaR9JD/xx2WtfHm6zcMAzuVmVfF1Fs2X2fkvDCT0yfRRF7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733904889; c=relaxed/simple;
-	bh=V2q0zWwwsBKs962FCQ6ySi5Ynu80X0iWHQ4PkBhm/2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mGJUyZ9gZYHkxjwIL68NwRwtWgSOWC2kuoTEGwUKYbC25vpvXUFIP/KuJ+NDsbDxE1CzqJU1bQ1ltsdf8viknu5k4UCsgg1GVTerMOZBfvuyyGJxvMxtpr6XSZ6+rRYamqutJ3C/qR1GrPofKG8VR5FdDE7dGxGeyiwY82DUCs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQqL78pM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6BF2C4CED2;
-	Wed, 11 Dec 2024 08:14:44 +0000 (UTC)
+	s=arc-20240116; t=1733904890; c=relaxed/simple;
+	bh=Lw1rJMQtogGQEBRwFuD9lAbQ0MR4ONoVv23htZqM95M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elzbkDNV/QQIYr4cvQNFYolYwdsdCACfyzar7LEzOrT4hnWGUnWORSoXzo/SYaWM1Kbt2WcEgKq/gunUgeM2yq2gMr7EVMSctXiNdei8x5KEbEtkLSiDkUo/mp9cGm1GhH2emUGvwMKXHtVEVqvWln4deITJD4YJZ1cZ5cbYEWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGvB4xdy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FAF5C4CEDF;
+	Wed, 11 Dec 2024 08:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733904888;
-	bh=V2q0zWwwsBKs962FCQ6ySi5Ynu80X0iWHQ4PkBhm/2s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mQqL78pM1NNygavjXU6miUQB64oS0YBAw1RWFW//N+bQUspiMHMaD2vfaAOiYsKZx
-	 qho8R4lb1JpiIlYRwEG/f4UZoFKHa8wR3IgZ6qI+gpNN1K792eX6oCbgG8Xsi6kWKt
-	 JrZ//hnhMH5OO37ryOqc2TF+PyvzrLsmmfrSk3jK1OscedDZDGrCcO6X4f4zbUxkrg
-	 f8/EWvbGuRhPut8tUrmC4064h5zdhyoeuhuDlklQN2DWD1Q/5c1NcUjTmcKl+IYKvy
-	 bdNaYGOhvpgen2GwaElZXdqZhONEaQT0tJO0ZmS72KLheiSsKAFZK/xeRItFAerkVU
-	 HPLKnP6uFLKjg==
-Message-ID: <5199ca0e-70d8-48f6-a6f5-827242ff83e9@kernel.org>
-Date: Wed, 11 Dec 2024 09:14:42 +0100
+	s=k20201202; t=1733904890;
+	bh=Lw1rJMQtogGQEBRwFuD9lAbQ0MR4ONoVv23htZqM95M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JGvB4xdy/19SRQBWMV46mqrQSY1rGQ0/Ieb3+kH1kK6w+uMJhIPGSou0+sg1zhcwf
+	 4mT0kG+BIcUY4Ndqxcm4fSSAdOdcNtnXQQaKAmNS93ddnRqk+5kXYUq2wRt9YTv/HI
+	 OK0e06lcXV1aqAhamgvQ3nhYbJ1TgF9LvHbthi2QzkmeAJH22NYXTl7bdxDzuJfDKx
+	 7zG8ojFIEuxbR3ey5x+V5PKlY7ZFG0ZaU3xhZIPc+dECTO+JuJ5Jn8dMH6yRljIBfS
+	 uUNJZMFFDZs8Ph6hZ70hkGedQ0oTNdL4ZNsi+iQpml0vyBJykVL/+k1eJyVLVExdFA
+	 iEEJZCGQQXuCw==
+Date: Tue, 10 Dec 2024 22:14:48 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Changwoo Min <multics69@gmail.com>
+Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
+	changwoo@igalia.com, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] sched_ext: Implement scx_bpf_now_ns()
+Message-ID: <Z1lJ-AzRlFIv4OuP@slm.duckdns.org>
+References: <20241209061531.257531-1-changwoo@igalia.com>
+ <20241209061531.257531-5-changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: dt-bindings: convert rt5682.txt to dt-schema
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bard Liao <bardliao@realtek.com>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241211-topic-misc-rt5682-convert-v2-1-9e1dd4ff7093@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241211-topic-misc-rt5682-convert-v2-1-9e1dd4ff7093@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209061531.257531-5-changwoo@igalia.com>
 
-On 11/12/2024 09:09, Neil Armstrong wrote:
-> Convert the text bindings for the Realtek rt5682 and
-> rt5682i codecs to dt-schema.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
-> Changes in v2:
-> - Dropped invalid realtek,amic-delay-ms
-> - Wrapped descriptions
-> - Moved unevaluatedProperties after required
-> - Link to v1: https://lore.kernel.org/r/20241204-topic-misc-rt5682-convert-v1-1-0fedc4ab15e8@linaro.org
-> ---
+Hello,
 
+I'd roll the preceding two patches into this one.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Mon, Dec 09, 2024 at 03:15:29PM +0900, Changwoo Min wrote:
+...
+> 3) Monotonically non-decreasing clock for the same CPU: scx_bpf_now_ns()
+>  guarantees the clock never goes backward when comparing them in the same
+>  CPU. On the other hand, when comparing clocks in different CPUs, there
+>  is no such guarantee -- the clock can go backward. It provides a
+>  monotonically *non-decreasing* clock so that it would provide the same
+>  clock values in two different scx_bpf_now_ns() calls in the same CPU
+>  during the same period of when the rq clock is valid.
 
+We probably should provide helpers to calculate deltas between timestamps
+and use them consitently in SCX scheds. e.g. ops.runnable() and
+ops.running() can run on different CPUs and it'd be useful and common to
+calculate the delta between the two points in time.
 
-Best regards,
-Krzysztof
+...
+> +__bpf_kfunc u64 scx_bpf_now_ns(void)
+> +{
+> +	struct rq *rq;
+> +	u64 clock;
+> +
+> +	preempt_disable();
+> +
+> +	/*
+> +	 * If the rq clock is valid, use the cached rq clock
+> +	 * whenever the clock does not go backward.
+> +	 */
+> +	rq = this_rq();
+> +	clock = rq->scx.clock;
+> +
+> +	if (!(rq->scx.flags & SCX_RQ_CLK_VALID) ||
+> +	    (rq->scx.prev_clock >= clock)) {
+
+The clocks usually start at zero but it'd still be a good idea to use
+time_after64() and friends when comparing the ordering between timestamps.
+
+> +		/*
+> +		 * If the rq clock is invalid or goes backward,
+> +		 * start a new rq clock period with a fresh sched_clock_cpu().
+> +		 *
+> +		 * The cached rq clock can go backward because there is a
+> +		 * race with a timer interrupt. Suppose that a timer interrupt
+
+This is not limited to timer interrupts, right? This kfunc can be called
+from anywhere including tracepoints for code running in IRQ.
+
+> +		 * occurred while running scx_bpf_now_ns() *after* reading the
+> +		 * rq clock and *before* comparing the if condition. The timer
+> +		 * interrupt will eventually call a BPF scheduler's ops.tick(),
+> +		 * and the BPF scheduler can call scx_bpf_now_ns(). Since the
+> +		 * scheduler core updates the rq clock before calling
+> +		 * ops.tick(), the scx_bpf_now_ns() call will get the fresh
+> +		 * clock. After handling the timer interrupt, the interrupted
+
+This might be easier to explain with two column table explaning what each
+party is doing in what order.
+
+> +		 * scx_bpf_now_ns() will be resumed, so the if condition will
+> +		 * be compared. In this case, the clock, which was read before
+> +		 * the timer interrupt, will be the same as rq->scx.prev_clock.
+> +		 * When such a case is detected, start a new rq clock period
+> +		 * with a fresh sched_clock_cpu().
+> +		 */
+> +		clock = sched_clock_cpu(cpu_of(rq));
+> +		scx_rq_clock_update(rq, clock);
+
+Hmmm... what happens if e.g. a timer ends up performing multiple operations
+each going through rq pin/unpin?
+
+Thanks.
+
+-- 
+tejun
 
