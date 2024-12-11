@@ -1,215 +1,144 @@
-Return-Path: <linux-kernel+bounces-441596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975669ED086
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D929ED087
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:55:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64701642F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:55:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47E11D6DBB;
+	Wed, 11 Dec 2024 15:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jOB9dOe+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D3B28D9C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:55:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B371DA633;
-	Wed, 11 Dec 2024 15:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="heDTfIA/"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C381D934C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055C1D619D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932508; cv=none; b=SDSpKIIJYBiufXH3m0VXr50N1RtQsQa7rx+5kCbq4L49KZjt5oVGN808kIxsT5nghcevJoC9I/RD0f9n3CQGHTR0CuEMUxsf4hqhsWzMF33YBC7u4QD+gqcLAg+hHal9ltGB6OTBp03DAx9kTIOb3NGm1KDDsbVFMlPdBoM0OI0=
+	t=1733932538; cv=none; b=qHS+kaW8JWdayvarZ0XGFW2+QbOqK/Is2spPVexhwMkBz7wEZnBWGS+yZcbUMiOpnY/A0+Z74vV43+HK+EvBYo+yyV+3kOS580VR2Kb6vh8ZuoIHmtvSwep/fBRoHndxx7nzbZyLOkEybFd9YAbSayXwPddNeCN4y/myk2NMRqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932508; c=relaxed/simple;
-	bh=5yTQkTiLNlgzxMTI/87+m6H6CgU6XoaZc9oMqNk1wn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tCDG+AGRjj60e19OObmp0IHpIHlrun4c/ZGqA+wROCM5XyGe0TbcU0mfDwtz9pgzbUFg+HuEX1gn/ZJ15H+eOFeJSwJWQ9pP4JBX+1+hM6TThlSYee2c5yf8xv+Z9s17OMfvV0HeyR3vwx76L7ZJCk2SuEQVK49QfQJvnBbohV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=heDTfIA/; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-71e1728c307so603363a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 07:55:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733932506; x=1734537306; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cM4xWNbBQiQSKcdY0A3fSeeNjHX/5IOfsxpBhHQV0Y0=;
-        b=heDTfIA/JlWQESXRhU7fC/dWe9DVllk8GCnefxLngY3wJ0KzthA+tb50EzP0MqhabO
-         AvN5WdRDoN60df8YDV/jwntZWrtHKoZUSsxQl/fl/3pmBzRmLfDZ3kB8K0LMjWnfymmb
-         c5yxeDRayPv7OfJyA6yOecmyOWPb5MlWyiItY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733932506; x=1734537306;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cM4xWNbBQiQSKcdY0A3fSeeNjHX/5IOfsxpBhHQV0Y0=;
-        b=Xu1MjdHeeYAAC60jxco/V4Ohs/5KVRIwZnev6YrvCCuRc274xe3USq8BkMzWhV+6a/
-         4IBZ8BdpDnTK6cIvnxtsZOogfx62EsVxokqeV7dTOXrkQL6A7lmDTeqHrp350+NLcxNR
-         cAcc8DSZ1MIjjtLM0OLBMVUvs4FfP4k+RLNMCbiFdb5cMWxvpXqFeHhD82k/jDzbcR7s
-         a5M5ctcJ2mLduxi6N1T4ONMzeRCmTziDDI1RisHUUL3lOXPMeUhaJjT7lXhpE4TPehOT
-         ArAnlmKJD6OpVzodubVzyewsceEdSJKIYEwTc0ysNlms7bC/JQbSaAqT0QPxjDqZfHOS
-         nmSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Rhg2H1/91+iGUDvLV2H628ePZUfKuZ8pILocsOhYpRqdsv/X5CVO1BUT7PKLvW7O8PQqSQDbRzHAO60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC+pm12Sw8KvSG4N9ZNs+apVL0x3iknrwywZHPviE9LE8mImiA
-	yYSj1C4M2sadksCZGsTIpEDuAlr9l/N3vN5zhH9Q+oHBqk68kxmcmnhfFv9Q4NZyvu1a8UrS+d9
-	MWCzU/8pm3oDkBcaePexdV1x7Ttze0lI7vvv1
-X-Gm-Gg: ASbGncuSYSGlnrE1BsEteWpFRDGdNU2uGj5yQal+GAxOxWYyq3wFHJ3Ub4yVx8b/Iwj
-	GedsDb/a7CrAwYCTt+QyFv2GLWORTiy7CuxLGncYrk5RTqZBma197IuJMGRAt6tsg7w==
-X-Google-Smtp-Source: AGHT+IEx/8qyRNCpAGNyBiIPDTaO6ywfXdqcQHAcz/L6po3vkqyog9ldUzPG1MyazfliKkJNK0LiFAhyClCexcxNoJQ=
-X-Received: by 2002:a05:6830:6f0b:b0:71d:641b:8295 with SMTP id
- 46e09a7af769-71e19b469b3mr2387272a34.28.1733932506288; Wed, 11 Dec 2024
- 07:55:06 -0800 (PST)
+	s=arc-20240116; t=1733932538; c=relaxed/simple;
+	bh=HmOxCZxjCiU378CSb7oKJA9Sc+js1sJTAFxOWMlCJmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CviuH4nRHI9BnFsMVQBVG4LuQIY02/7jEvjF8UKGhnSB6KdNzQtZQ2DX4k0NcLIbq3gEuwiluDlTFZzrOJ72JSTXj5PD5eEKkY9VCQtPOpUTlgiIG/kABd3SvQkstnNfVuc7p1CRkS8YLYJp8RTFBhl4r1pezvOxOh1WFULn55E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jOB9dOe+; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733932535; x=1765468535;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=HmOxCZxjCiU378CSb7oKJA9Sc+js1sJTAFxOWMlCJmE=;
+  b=jOB9dOe+Rc/6Vm8vUriZqd+4CXexpI8EKw5v9SeGzNKZrAJOdFMeCyD2
+   UJw8G5AvCohYfBMRh/nyrvjSSLmtuJJKLepbd3YLT/846v2yaf1eXDcrm
+   LZekh8xQJzuB9S+sySApCZz6E9bPz26JLDKFv72+TBE1Kx9c7tZLeIOC8
+   uC+7yHhkeR8dVE4EDYscKYEERuntBrr6TFvlf8EC9+BX4pxNGaJxJF5Q8
+   nhuFssu6Uo40gTed8+XIlR96V38zl965izaP6WI8KIBpCxgEEuS2aANQr
+   VJKa3Sz+LKN6gx0gQZi7kNMtNVJmOuklZntd91pvErJ4bCcPNUpmbqTYu
+   A==;
+X-CSE-ConnectionGUID: m5I0yyY8Sq6uErtKy6NFtw==
+X-CSE-MsgGUID: qIiuIMnCTqWG3ToyOzLGWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="44988549"
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="44988549"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 07:55:35 -0800
+X-CSE-ConnectionGUID: UHIfsOldR3+nqNbRXD6RFA==
+X-CSE-MsgGUID: J0U5wcbMRZSxJwP6ZlSaoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="133238907"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 11 Dec 2024 07:55:34 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLP3j-0006pp-1K;
+	Wed, 11 Dec 2024 15:55:31 +0000
+Date: Wed, 11 Dec 2024 23:55:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Arinzon <darinzon@amazon.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Shay Agroskin <shayagr@amazon.com>
+Subject: drivers/net/ethernet/amazon/ena/ena_netdev.c:77 ena_tx_timeout()
+ warn: inconsistent indenting
+Message-ID: <202412112324.Ybl6uMc0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209064632.1705578-1-xji@analogixsemi.com> <fy6zvkdidz2srerfq5bshgcshps2wfa4syxwndwesgxcej66ws@nf5svlpkeodh>
-In-Reply-To: <fy6zvkdidz2srerfq5bshgcshps2wfa4syxwndwesgxcej66ws@nf5svlpkeodh>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Wed, 11 Dec 2024 23:54:54 +0800
-Message-ID: <CAEXTbpeC9DpLxHm2fw7hWKGfpxhUy5ZgHXtGJ0=WSxRrVa845w@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/bridge:anx7625: Update HDCP status at atomic_disable()
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	bliang@analogixsemi.com, qwen@analogixsemi.com, treapking@google.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Dimitry,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f92f4749861b06fed908d336b4dee1326003291b
+commit: 071271f39ce833a3534d1fbd47174d1bed6d9326 net: ena: Add more information on TX timeouts
+date:   10 months ago
+config: arm-randconfig-r073-20241209 (https://download.01.org/0day-ci/archive/20241211/202412112324.Ybl6uMc0-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
 
-Thanks for the review.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412112324.Ybl6uMc0-lkp@intel.com/
 
-On Wed, Dec 11, 2024 at 5:44=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Mon, Dec 09, 2024 at 02:46:32PM +0800, Xin Ji wrote:
-> > When user enabled HDCP feature, upper layer will set HDCP content
-> > to DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
-> > HDCP content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
-> > support HDCP feature.
-> >
-> > However once HDCP content turn to  DRM_MODE_CONTENT_PROTECTION_ENABLED
-> > upper layer will not update the HDCP content to
-> > DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
->
-> What is "upper layer"? Is it a kernel or a userspace?
+smatch warnings:
+drivers/net/ethernet/amazon/ena/ena_netdev.c:77 ena_tx_timeout() warn: inconsistent indenting
 
-I think Xin meant userspace, but sounds like there are some
-misunderstanding around the HDCP status.
->
-> >From drm_hdcp_update_content_protection() documentation:
->
-> No uevent for DESIRED->UNDESIRED or ENABLED->UNDESIRED,
-> as userspace is triggering such state change and kernel performs it witho=
-ut
-> fail.This function update the new state of the property into the connecto=
-r's
-> state and generate an uevent to notify the userspace.
->
->
-> >
-> > So when user dynamic change the display resolution, anx7625 driver must
-> > call drm_hdcp_update_content_protection() to update HDCP content to
-> > DRM_MODE_CONTENT_PROTECTION_UNDESIRED in bridge interface
-> > .atomic_disable().
->
-> Why?
->
-> >
-> > Signed-off-by: Xin Ji <xji@analogixsemi.com>
-> > ---
-> >  drivers/gpu/drm/bridge/analogix/anx7625.c | 25 ++++++++++++++++++-----
-> >  1 file changed, 20 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/dr=
-m/bridge/analogix/anx7625.c
-> > index a2675b121fe4..a75f519ddcb8 100644
-> > --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> > +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> > @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_dat=
-a *ctx)
-> >                                TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
-> >  }
-> >
-> > +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ct=
-x)
-> > +{
-> > +     struct device *dev =3D ctx->dev;
-> > +
-> > +     if (!ctx->connector)
-> > +             return;
-> > +
-> > +     anx7625_hdcp_disable(ctx);
-> > +
-> > +     ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> > +     drm_hdcp_update_content_protection(ctx->connector,
-> > +                                        ctx->hdcp_cp);
-> > +
-> > +     dev_dbg(dev, "update CP to UNDESIRE\n");
-> > +}
-> > +
-> >  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
-> >  {
-> >       u8 bcap;
-> > @@ -2165,11 +2181,8 @@ static int anx7625_connector_atomic_check(struct=
- anx7625_data *ctx,
-> >                       dev_err(dev, "current CP is not ENABLED\n");
-> >                       return -EINVAL;
-> >               }
-> > -             anx7625_hdcp_disable(ctx);
-> > -             ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> > -             drm_hdcp_update_content_protection(ctx->connector,
-> > -                                                ctx->hdcp_cp);
-> > -             dev_dbg(dev, "update CP to UNDESIRE\n");
-> > +
-> > +             anx7625_hdcp_disable_and_update_cp(ctx);
->
-> No. atomic_check() MAY NOT perform any changes to the hardware. It might
-> be just a probe from userspace to check if the mode or a particular
-> option can be set in a particular way. There is no guarantee that
-> userspace will even try to commit it.
+vim +77 drivers/net/ethernet/amazon/ena/ena_netdev.c
 
-So, we should move the hdcp status update from .atomic_check() to
-.atomic_enable() and .atomic_disable(), right? That is, enable HDCP
-for the chip at .atomic_enable() if it is DESIRED and disable it at
-.atomic_disable() if we enabled it previously.
+    47	
+    48	static void ena_tx_timeout(struct net_device *dev, unsigned int txqueue)
+    49	{
+    50		enum ena_regs_reset_reason_types reset_reason = ENA_REGS_RESET_OS_NETDEV_WD;
+    51		struct ena_adapter *adapter = netdev_priv(dev);
+    52		unsigned int time_since_last_napi, threshold;
+    53		struct ena_ring *tx_ring;
+    54		int napi_scheduled;
+    55	
+    56		if (txqueue >= adapter->num_io_queues) {
+    57			netdev_err(dev, "TX timeout on invalid queue %u\n", txqueue);
+    58			goto schedule_reset;
+    59		}
+    60	
+    61		threshold = jiffies_to_usecs(dev->watchdog_timeo);
+    62		tx_ring = &adapter->tx_ring[txqueue];
+    63	
+    64		time_since_last_napi = jiffies_to_usecs(jiffies - tx_ring->tx_stats.last_napi_jiffies);
+    65		napi_scheduled = !!(tx_ring->napi->state & NAPIF_STATE_SCHED);
+    66	
+    67		netdev_err(dev,
+    68			   "TX q %d is paused for too long (threshold %u). Time since last napi %u usec. napi scheduled: %d\n",
+    69			   txqueue,
+    70			   threshold,
+    71			   time_since_last_napi,
+    72			   napi_scheduled);
+    73	
+    74		if (threshold < time_since_last_napi && napi_scheduled) {
+    75			netdev_err(dev,
+    76				   "napi handler hasn't been called for a long time but is scheduled\n");
+  > 77				   reset_reason = ENA_REGS_RESET_SUSPECTED_POLL_STARVATION;
+    78		}
+    79	schedule_reset:
+    80		/* Change the state of the device to trigger reset
+    81		 * Check that we are not in the middle or a trigger already
+    82		 */
+    83		if (test_and_set_bit(ENA_FLAG_TRIGGER_RESET, &adapter->flags))
+    84			return;
+    85	
+    86		ena_reset_device(adapter, reset_reason);
+    87		ena_increase_stat(&adapter->dev_stats.tx_timeout, 1, &adapter->syncp);
+    88	}
+    89	
 
-Maybe we can keep some of the checks in .atomic_check(), but I doubt
-if those logics actually make sense.
->
-> >       }
-> >
-> >       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> > @@ -2449,6 +2462,8 @@ static void anx7625_bridge_atomic_disable(struct =
-drm_bridge *bridge,
-> >
-> >       dev_dbg(dev, "drm atomic disable\n");
-> >
-> > +     anx7625_hdcp_disable_and_update_cp(ctx);
-> > +
-> >       ctx->connector =3D NULL;
-> >       anx7625_dp_stop(ctx);
-> >
-> > --
-> > 2.25.1
-> >
->
-> --
-> With best wishes
-> Dmitry
-
-Regards,
-Pin-yen
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
