@@ -1,155 +1,208 @@
-Return-Path: <linux-kernel+bounces-440629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891C49EC1FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:10:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FDC9EC1FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9C21188B78A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC2B166FD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F971FBEB5;
-	Wed, 11 Dec 2024 02:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C911FBEBB;
+	Wed, 11 Dec 2024 02:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eLXwuQ6Q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clWa2OK8"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD3844384;
-	Wed, 11 Dec 2024 02:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF7A44384;
+	Wed, 11 Dec 2024 02:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733883038; cv=none; b=Pf1jQwZunvQw3uV76ZgBH4RbHJi2OTnB8b8d5NrmyhIe3iPaAzdlYIK2Pp1WNVEvHao0JElTl2UTP5A9Y47dSb2H4NcdjpcUOW7IgGZZS1EPe1Y63Y0PF9l/O8SDF9dkabntMj93z4QDZUXhVglBdKuC/XLQ8LtsXZwgiRjqXSM=
+	t=1733883091; cv=none; b=o361BXNfmDsdECp98ejJmeyjfMkqMBDiuuf8RG4SDm1MLBy1f6UPHnasByGFq8wOq6uCDI0l93EHxXs/36nCcyyhcRBfCCxr5jkSzveQ/0qC6qAPVhJBqFKsu3LI0l5Cl7tiTxFJ/MlaXb++Lr7hOBEsWnbf1RI9v2STosy4zgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733883038; c=relaxed/simple;
-	bh=ZISjs/hvsWRiKqvIS7x5BMxM+Zp47/6dBZVjntsLtK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qfSJN/MjeCPqMEG7FuJtFqtMaudEOrs5OTABrTMfrhO/3uOKCV70N0xb2+WoYDie+PnExk3pWAL9DF1t1Z9l+WWDCa0LvRYECqBxyvFDR7ePQA0HucGHxAYTgh0xRLJCz/VrXrqxnxQi8GvV89G1orR9v/PMPT57Edgmn1zSDx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eLXwuQ6Q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB1fJx3014853;
-	Wed, 11 Dec 2024 02:10:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2amnVrhJyNTdPfi+li73e2jRRi7A5M0l5Intio2miik=; b=eLXwuQ6QUjWrJptK
-	y7bblKBipQLusBt1tKkuU8Fjj7z8VDgS/XD6HED6lfGBRZE79xsUMV/dpodLMJHM
-	0WjhpsSGrYufAfz836cmLiGP2NpLRST3LAXGAM04JiI3xpKrcArRiviIyykqKXh4
-	xE/tcmtDh8mA+bhshpFheRt9CiGLP59U8nE40hTjITYSU535OQxb65qlshdxk0Bw
-	MU81bYRgw0QwbjNcYQm9O0i3ItP7xvY91iU05rRAXOk8b+pzoGZOPkhE1VO2Mkd5
-	h8TJXQFx3U6cFGaxn97OXy/G9lnvxkF7XLwSaQBHyWI59ZetSLQOKDkFShMhVpeK
-	41mhsA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3nbcwd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 02:10:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB2ASJZ012332
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 02:10:28 GMT
-Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
- 2024 18:10:25 -0800
-Message-ID: <d8705140-e335-47e0-ac70-47d8592fb18c@quicinc.com>
-Date: Wed, 11 Dec 2024 10:10:23 +0800
+	s=arc-20240116; t=1733883091; c=relaxed/simple;
+	bh=A5Ova/lwWOPJ/MbkngISMFhMWPWBBdzeCWK0wUhKOTI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=u6ywS/KT8LeiH7xbNWkQTLSnCFbvG5M0HAqLqNncWX+AAoUL7L1Y3junMZTV870sCk3CdkOrjkaGKt9L3SZu+p/J1a/TsbcLrRKmQDO2C+pPL+YwKWWApleqYEBeJbyAPEWpRCrRJywSwUGU0zf9unc0wmw98n4tAaHvSb0h1Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clWa2OK8; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21649a7bcdcso29043815ad.1;
+        Tue, 10 Dec 2024 18:11:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733883089; x=1734487889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZQ1DWkHzxFbmz7MOTsa2Rn30WXI+xi9D9OGX6d1SiaY=;
+        b=clWa2OK8JgKJPuoliAfFb857Kh2aPD0lClyw3D0qySj13gKHxJl06cE18SHW8zu56A
+         FLmazy3zOwx2tHz4X24e+dfeKM5LhpOxoGhuTa7RvS/hYvxhOYjYCM6BSiUe/f7fgVwg
+         a7il93h17h9d2F+KovSGyqivys8Mi9FRfcbXfRyX3zBJRW3+cTvJz0wp4dFQ7E32hj81
+         ND/NSficmTEnTQggTWT6AFu67+7TzedzBiQnAYwIxaYrakmPpkKCb++vhX7xQkSgsQ9q
+         KWfX3duqcf8DyqtAtPI6EbfBROWYHbFw29IjpIf94yifuZLDRROKGakKMKbfbQWa0GHe
+         AFyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733883089; x=1734487889;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZQ1DWkHzxFbmz7MOTsa2Rn30WXI+xi9D9OGX6d1SiaY=;
+        b=pYdOKep33bhXXJ63RywGEQGHWNOQP8O1nCFxs88Scr/rS0pMBuz3U3QKljwyvmb5x6
+         tBKDtF5IClnhsaiK89RxMVnWJoxbH3xyvGR7lpmnFZlWQnraa8TCAZybVp+v+LNzuGHi
+         9PK4j/Mr6sbXp4J12iEqVUK4RiBEdlfkLcf16WbONGg94zqaoxBTAygRT4534tqKjgmY
+         zPhx5FJCuPxU7hs1jVsUsUhfopduey72tYVk7OstxFJRvkURLqAgkhqqTrj6+PrQK39d
+         XoLKofiSIEOt4kNKwUJc4Nh36ORmO/nsSGQUnmpN9GoN0kIFk9NT900gJ0fMIcVGLAMn
+         n9ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUNR3KFhk0a5vz/yW8owAwHWpRvsIGzlsNFV2FAZnZeYSc+2DAdTZ/uG2BOd0Y0Q76kPZx2n1TRDhfEgFGl@vger.kernel.org, AJvYcCVpVgBhyQujnVFmtsuzhRiIXbhmUe7Co1cdel1ibQo9LJQfy950LqihOxt5JkUNuaul9cI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOfQRK8SCdt9yRPNwtjzBOAdCZ2dAcJkiGTI6Jc+0XAqQk6nBA
+	B1SbYgVQx87mvLwhnuqTJmNy3zJ/+el6GwbM5KJPkargY/Es58QNm4EUkA==
+X-Gm-Gg: ASbGncub5vhyEWOJVLEQCtWGY+r7+8/J7djJTh0+auHUXcB4q+YY02eY0KzgyHBPeQQ
+	hxb/5tn3+CBusmxmph6rpNFiooaVPWLWCcGXTDeyeK/evFzzPNkSpTp8g8S7ddwxK9T1Pkbxw+t
+	4NEVrYinHtCxvxZ3CeH1ZhZVL94plBVFgFIFvmqlq567NsvzCCtiNn9C9lyouBPKRWX8diuTEW8
+	wceEVhwA2To8LZ7SsDIf3ta4YNmtMp/mbDT0UZLcYg9WicG7klN2xg=
+X-Google-Smtp-Source: AGHT+IF+UKdYygc7fF7WFY9ucLIkh1eYls4XFPGPwUbfQC4yx2CEDQr7hplAFTVDGvfdDQX4VNNHcw==
+X-Received: by 2002:a17:902:f551:b0:216:5b8b:9062 with SMTP id d9443c01a7336-217786a22c1mr18877405ad.54.1733883088241;
+        Tue, 10 Dec 2024 18:11:28 -0800 (PST)
+Received: from localhost ([98.97.37.114])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2163562a838sm56449465ad.29.2024.12.10.18.11.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 18:11:27 -0800 (PST)
+Date: Tue, 10 Dec 2024 18:11:26 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Jiayuan Chen <mrpre@163.com>, 
+ bpf@vger.kernel.org
+Cc: martin.lau@linux.dev, 
+ ast@kernel.org, 
+ edumazet@google.com, 
+ jakub@cloudflare.com, 
+ davem@davemloft.net, 
+ dsahern@kernel.org, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ linux-kernel@vger.kernel.org, 
+ song@kernel.org, 
+ john.fastabend@gmail.com, 
+ andrii@kernel.org, 
+ mhal@rbox.co, 
+ yonghong.song@linux.dev, 
+ daniel@iogearbox.net, 
+ xiyou.wangcong@gmail.com, 
+ horms@kernel.org, 
+ Jiayuan Chen <mrpre@163.com>
+Message-ID: <6758f4ce604d5_4e1720871@john.notmuch>
+In-Reply-To: <20241209152740.281125-2-mrpre@163.com>
+References: <20241209152740.281125-1-mrpre@163.com>
+ <20241209152740.281125-2-mrpre@163.com>
+Subject: RE: [PATCH bpf v2 1/2] bpf: fix wrong copied_seq calculation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
- are supported
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <quic_cjhuang@quicinc.com>, <vbenes@redhat.com>
-References: <db61f998-2524-4623-8b0f-143661507e38@quicinc.com>
- <20241210084419.126723-1-jtornosm@redhat.com>
-Content-Language: en-US
-From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
-In-Reply-To: <20241210084419.126723-1-jtornosm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: D2iBK7HZnT67Bwi170oWgKBPTAmm2BtO
-X-Proofpoint-ORIG-GUID: D2iBK7HZnT67Bwi170oWgKBPTAmm2BtO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412110015
 
+Jiayuan Chen wrote:
+> 'sk->copied_seq' was updated in the tcp_eat_skb() function when the
+> action of a BPF program was SK_REDIRECT. For other actions, like SK_PASS,
+> the update logic for 'sk->copied_seq' was moved to
+> tcp_bpf_recvmsg_parser() to ensure the accuracy of the 'fionread' feature.
+> 
+> It works for a single stream_verdict scenario, as it also modified
+> 'sk_data_ready->sk_psock_verdict_data_ready->tcp_read_skb'
+> to remove updating 'sk->copied_seq'.
+> 
+> However, for programs where both stream_parser and stream_verdict are
+> active(strparser purpose), tcp_read_sock() was used instead of
+> tcp_read_skb() (sk_data_ready->strp_data_ready->tcp_read_sock)
+> tcp_read_sock() now still update 'sk->copied_seq', leading to duplicated
+> updates.
+> 
+> In summary, for strparser + SK_PASS, copied_seq is redundantly calculated
+> in both tcp_read_sock() and tcp_bpf_recvmsg_parser().
+> 
+> The issue causes incorrect copied_seq calculations, which prevent
+> correct data reads from the recv() interface in user-land.
+> 
+> Modifying tcp_read_sock() or strparser implementation directly is
+> unreasonable, as it is widely used in other modules.
+> 
+> Here, we introduce a method tcp_bpf_read_sock() to replace
+> 'sk->sk_socket->ops->read_sock' (like 'tls_build_proto()' does in
+> tls_main.c). Such replacement action was also used in updating
+> tcp_bpf_prots in tcp_bpf.c, so it's not weird.
+> (Note that checkpatch.pl may complain missing 'const' qualifier when we
+> define the bpf-specified 'proto_ops', but we have to do because we need
+> update it).
+> 
+> Also we remove strparser check in tcp_eat_skb() since we implement custom
+> function tcp_bpf_read_sock() without copied_seq updating.
+> 
+> Since strparser currently supports only TCP, it's sufficient for 'ops' to
+> inherit inet_stream_ops.
+> 
+> In strparser's implementation, regardless of partial or full reads,
+> it completely clones the entire skb, allowing us to unconditionally
+> free skb in tcp_bpf_read_sock().
+> 
+> Fixes: e5c6de5fa025 ("bpf, sockmap: Incorrectly handling copied_seq")
+> Signed-off-by: Jiayuan Chen <mrpre@163.com>
 
+[...]
 
-On 12/10/2024 4:44 PM, Jose Ignacio Tornos Martinez wrote:
->> Yes, Can you pls share the complete steps and commands?
-> Sure, I offered it before.
-> 
-> You need NetworkManager and of course NetworkManager-wifi packages installed
-> and working.
-> We are using Fedora/rhel with the default configuration and you can configure,
-> before the next steps, the wifi interface as sta from NetworkManager or not
-> (with no wifi configuration the same result happens) because it is going to
-> be unmanaged.
-> 
-> After booting (wlp1s0 is the wifi interface for ath11k and there are no other
-> wifi cards in the system), here the necessary steps with our network
-> configuration:
-> # nmcli  device set wlp1s0 managed off
-> # ip link set wlp1s0 up
-> # ip link add name wifi_br0 type bridge
-> # ip addr add 192.168.254.1/24 dev wifi_br0
-> # ip link set wifi_br0 up
-> # iw dev wlp1s0 interface add wlp1s0_0 type __ap
-> # iw dev wlp1s0 interface add wlp1s0_1 type __ap
-> # systemd-run --unit hostapd1 hostapd -dd /tmp/hostapd1.conf
-> # systemd-run --unit hostapd2 hostapd -dd /tmp/hostapd2.conf
-> # dnsmasq \
->      --pid-file=/tmp/dnsmasq_wireless.pid \
->      --port=63 \
->      --no-hosts \
->      --interface=wifi_br0 \
->      --bind-interfaces \
->      --dhcp-range=192.168.254.2,192.168.254.205,60m \
->      --dhcp-option=option:router,192.168.254.1 \
->      --dhcp-leasefile=/var/lib/dnsmasq/hostapd.leases \
->      --dhcp-lease-max=200
-> 
-> After booting I get the same issue just doing:
-> # nmcli  device set wlp1s0 managed off
-> # ip link set wlp1s0 up
-> And the step that you commented in a previous answer:
-> # iw dev wlp1s0 interface add wlp1s0_0 type __ap
-> # iw dev wlp1s0 interface add wlp1s0_1 type __ap
-> # hostapd hostapd1.conf &
-> # hostapd hostapd2.conf &
-> 
-Got it, you use Networkmanager, so that the add interface type will 
-always be managed. But it's still work fine in my device that I use 
-"hostapd hostapd2.conf" to up the second ap.
+> +/* The tcp_bpf_read_sock() is an alternative implementation
+> + * of tcp_read_sock(), except that it does not update copied_seq.
+> + */
+> +static int tcp_bpf_read_sock(struct sock *sk, read_descriptor_t *desc,
+> +			     sk_read_actor_t recv_actor)
+> +{
+> +	struct sk_buff *skb;
+> +	int copied = 0;
+> +
+> +	if (sk->sk_state == TCP_LISTEN)
+> +		return -ENOTCONN;
+> +
+> +	while ((skb = skb_peek(&sk->sk_receive_queue)) != NULL) {
+> +		u8 tcp_flags;
+> +		int used;
+> +
+> +		WARN_ON_ONCE(!skb_set_owner_sk_safe(skb, sk));
+> +		tcp_flags = TCP_SKB_CB(skb)->tcp_flags;
+> +		used = recv_actor(desc, skb, 0, skb->len);
 
-So could you share your log about it? Enable debug and tracer about 
-ath11k and mac80211, and share the the recorded trace?
+Here the skb is still on the receive_queue how does this work with
+tcp_try_coalesce()? So I believe you need to unlink before you
+call the actor which creates a bit of trouble if recv_actor
+doesn't want the entire skb.  
 
-> You can use whatever hostapd configuration (with the suitable interface name).
-> 
-> Thanks
-> 
-> Best regards
-> Jose Ignacio
-> 
+I think easier is to do similar logic to read_sock and track
+offset and len? Did I miss something.
 
+> +		/* strparser clone and consume all input skb
+> +		 * even in waiting head or body status
+> +		 */
+> +		tcp_eat_recv_skb(sk, skb);
+> +		if (used <= 0) {
+> +			if (!copied)
+> +				copied = used;
+> +			break;
+> +		}
+> +		copied += used;
+> +		if (!desc->count)
+> +			break;
+> +		if (tcp_flags & TCPHDR_FIN)
+> +			break;
+> +	}
+> +	return copied;
+> +}
+> +
+>  enum {
+>  	TCP_BPF_IPV4,
+>  	TCP_BPF_IPV6,
+> @@ -595,6 +636,10 @@ enum {
 
