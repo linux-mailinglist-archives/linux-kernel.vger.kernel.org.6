@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-441578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB4D9ED04B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:48:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D31179ED054
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:49:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B484528A6F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1746163E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 15:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C5D1DE889;
-	Wed, 11 Dec 2024 15:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011001DE89A;
+	Wed, 11 Dec 2024 15:46:57 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A40C1DE2DC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE191DE4D4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 15:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932015; cv=none; b=EzgfsksgmkrnnAFP2ZZ9lv/vwNIEahWqn5y1a/n30Gg5vFCBa7jGRts7ATuHErJePAM5FgxKj5+Y0VM4D2SsITfdub5TSJZgNLM7h0890IbXNxszugIGbo8BXsHxenxY7Cm1/vdrD1owOvwOaMcxKjE8pfD8t2HmKZQ4FN1kfA8=
+	t=1733932016; cv=none; b=QHttJ2Ldef9MB4TuOKrADXNHYeX3mCom9VKb5+03f1xP5P1noPWP2v7G7NW53Jjwui6E7OebibGxtCpuxmK5FZ7jEX82xTYI2UXlS8Mf0JF0XOH3ixLd4/eNBxNYKC3tlfvyBI1ggAsl1QotdRzJhOguXJ5MWuj9mZ0NBsS4jv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932015; c=relaxed/simple;
-	bh=pJTOe++UHDMbAPZ8TRmIriRZCC5kCu2W3Sd8nwe84u0=;
+	s=arc-20240116; t=1733932016; c=relaxed/simple;
+	bh=Hgpm0rcPetVs44CBUg381VyIeoJc1wVTprblymycJVU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m7btJgwgVLFTZE1be6qQmkV+dtC6A9VeQjEBBjef0sLk05h9Dov8wIEk2C+xNDIFgGGxvV05vixnUJbqKNqPYNd17/D8bX+wQPLT8MkYGrhLsQ3hOZq01kedZAz5L/YOcjdhkoTvNQWCJsIVKfmi41pioF65Z8v56H6mKD1r0rs=
+	 MIME-Version:Content-Type; b=DIQaAbFLdo+OpFpdImhVdJ9KpNJlz9V7cnAqqTHiB0fNYHcRkVYt+ugF5vdRYwY+3qgI67kB1td9vGU30aHKlh5VhY0EGYNJ+ZfTWorisAD42fTtQE0WOmpmWDLsXP2g4iDlBILKzBsfdmQ1nHq1eYG1QsJC6wQJzrlZZN5LBWc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D329F1713;
-	Wed, 11 Dec 2024 07:47:20 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6D481758;
+	Wed, 11 Dec 2024 07:47:22 -0800 (PST)
 Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.1.196.66])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20DFE3F5A1;
-	Wed, 11 Dec 2024 07:46:51 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E76B3F5A1;
+	Wed, 11 Dec 2024 07:46:52 -0800 (PST)
 From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -46,9 +46,9 @@ Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>,
 	liunx-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kvmarm@vger.kernel.org
-Subject: [RFC PATCH v1 3/5] arm64: Add errata and workarounds for systems with broken BBML2
-Date: Wed, 11 Dec 2024 15:45:04 +0000
-Message-ID: <20241211154611.40395-4-miko.lenczewski@arm.com>
+Subject: [RFC PATCH v1 4/5] arm64/mm: Delay tlbi in contpte_convert() under BBML2
+Date: Wed, 11 Dec 2024 15:45:05 +0000
+Message-ID: <20241211154611.40395-5-miko.lenczewski@arm.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241211154611.40395-1-miko.lenczewski@arm.com>
 References: <20241211154611.40395-1-miko.lenczewski@arm.com>
@@ -61,343 +61,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-There are systems which claim support for BBML2, but whose
-implementation of this support is broken. Add a Kconfig erratum for each
-of these systems, and a cpufeature workaround that forces the supported
-BBM level on these systems to 0.
+When converting a region via contpte_convert() to use mTHP, we have two
+different goals. We have to mark each entry as contiguous, and we would
+like to smear the dirty and young (access) bits across all entries in
+the contiguous block. Currently, we do this by first accumulating the
+dirty and young bits in the block, using an atomic
+__ptep_get_and_clear() and the relevant pte_{dirty,young}() calls,
+performing a tlbi, and finally smearing the correct bits across the
+block using __set_ptes().
+
+This approach works fine for BBM level 0, but with support for BBM level
+2 we are allowed to reorder the tlbi to after setting the pagetable
+entries. This reordering means that other threads will not see an
+invalid pagetable entry, instead operating on stale data, until we have
+performed our smearing and issued the invalidation. Avoiding this
+invalid entry reduces faults in other threads, and thus improves
+performance marginally (more so when there are more threads).
 
 Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
 ---
- Documentation/arch/arm64/silicon-errata.rst |  32 ++++
- arch/arm64/Kconfig                          | 164 ++++++++++++++++++++
- arch/arm64/kernel/cpufeature.c              |  32 +++-
- 3 files changed, 227 insertions(+), 1 deletion(-)
+ arch/arm64/mm/contpte.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
-index b42fea07c5ce..4b4c1dd9b671 100644
---- a/Documentation/arch/arm64/silicon-errata.rst
-+++ b/Documentation/arch/arm64/silicon-errata.rst
-@@ -126,16 +126,26 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A76      | #3324349        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A76      | #3696297        | ARM64_ERRATUM_3696297       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A77      | #1491015        | N/A                         |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A77      | #1508412        | ARM64_ERRATUM_1508412       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A77      | #3324348        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A77      | #3696294        | ARM64_ERRATUM_3696294       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A78      | #3324344        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A78      | #3696287        | ARM64_ERRATUM_3696287       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A78C     | #3324346,3324347| ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A78C     | #3696291        | ARM64_ERRATUM_3696291       |
-++----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A78C     | #3696292        | ARM64_ERRATUM_3696292       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A710     | #2119858        | ARM64_ERRATUM_2119858       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A710     | #2054223        | ARM64_ERRATUM_2054223       |
-@@ -144,6 +154,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A710     | #3324338        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A710     | #3696244        | ARM64_ERRATUM_3696244       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A715     | #2645198        | ARM64_ERRATUM_2645198       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A715     | #3456084        | ARM64_ERRATUM_3194386       |
-@@ -156,6 +168,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-X1       | #3324344        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-X1       | #3696287        | ARM64_ERRATUM_3696287       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-X1C      | #3324346        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-X2       | #2119858        | ARM64_ERRATUM_2119858       |
-@@ -164,10 +178,18 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-X2       | #3324338        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-X2       | #3696244        | ARM64_ERRATUM_3696244       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-X3       | #3324335        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-X3       | #3696239        | ARM64_ERRATUM_3696239       |
-++----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-X4       | #3043263        | ARM64_ERRATUM_3043263       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-X4       | #3194386        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-X925     | #3056274        | ARM64_ERRATUM_3056274       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-X925     | #3324334        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N1     | #1188873,1418040| ARM64_ERRATUM_1418040       |
-@@ -180,6 +202,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N1     | #3324349        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-N1     | #3696297        | ARM64_ERRATUM_3696297       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N2     | #2139208        | ARM64_ERRATUM_2139208       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N2     | #2067961        | ARM64_ERRATUM_2067961       |
-@@ -188,14 +212,22 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N2     | #3324339        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-N2     | #3696250        | ARM64_ERRATUM_3696250       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N3     | #3456111        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V1     | #1619801        | N/A                         |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V1     | #3324341        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-V1     | #3696285        | ARM64_ERRATUM_3696285       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V2     | #3324336        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-V2     | #3696242        | ARM64_ERRATUM_3696242       |
-++----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-V3     | #3053180        | ARM64_ERRATUM_3053180       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V3     | #3312417        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | MMU-500         | #841119,826419  | N/A                         |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 100570a048c5..9ef8418e8410 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1127,6 +1127,170 @@ config ARM64_ERRATUM_3194386
+diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+index 55107d27d3f8..fc927be800ee 100644
+--- a/arch/arm64/mm/contpte.c
++++ b/arch/arm64/mm/contpte.c
+@@ -68,9 +68,13 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
+ 			pte = pte_mkyoung(pte);
+ 	}
  
- 	  If unsure, say Y.
+-	__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
++	if (!system_supports_bbml2())
++		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
  
-+config ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	bool
+ 	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
 +
-+config ARM64_ERRATUM_3696250
-+	bool "Neoverse-N2: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Neoverse-N2 cores (r0p0, r0p1, r0p2, r0p3) declare
-+	  break-before-make level 2 support, but changing the block size
-+	  without utilising a break-before-make sequence, or mis-programming
-+	  the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696244
-+	bool "Cortex-A710/Cortex-X2: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Cortex-A710 and Cortex-X2 cores (r0p0, r1p0, r2p0, r2p1)
-+	  declare break-before-make level 2 support, but changing the block
-+	  size without utilising a break-before-make sequence, or
-+	  mis-programming the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696297
-+	bool "Cortex-A76/Neoverse-N1: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  This option adds a workaround for ARM Cortex-A76/Neoverse-N1 erratum
-+	  3696297.
-+
-+	  Affected Cortex-A76 and Neoverse-N1 cores (r0p0, r1p0, r2p0, r3p0,
-+	  r3p1, r4p0, r4p1) declare break-before-make level 2 support, but
-+	  changing the block size without utilising a break-before-make sequence,
-+	  or mis-programming the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696294
-+	bool "Cortex-A77: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  This option adds a workaround for ARM Cortex-A77 erratum 3696294.
-+
-+	  Affected Cortex-A77 cores (r0p0, r1p0, r1p1) declare break-before-make
-+	  level 2 support, but changing the block size without utilising a
-+	  break-before-make sequence, or mis-programming the contiguous hint
-+	  bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696239
-+	bool "Cortex-X3: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Cortex-X3 cores (r0p0, r1p0, r1p1, r1p2) declare
-+	  break-before-make level 2 support, but changing the block size
-+	  without utilising a break-before-make sequence, or mis-programming
-+	  the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696242
-+	bool "Neoverse-V2: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Neoverse-V2 cores (r0p0, r0p1, r0p2) declare
-+	  break-before-make level 2 support, but changing the block size
-+	  without utilising a break-before-make sequence, or mis-programming
-+	  the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696285
-+	bool "Neoverse-V1: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Neoverse-V1 cores (r0p0, r1p0, r1p1, r1p2) declare
-+	  break-before-make level 2 support, but changing the block size
-+	  without utilising a break-before-make sequence, or mis-programming
-+	  the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696287
-+	bool "Cortex-A78/Cortex-X1: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Cortex-A78 and Cortex-X1 cores (r0p0, r1p0, r1p1, r1p2)
-+	  declare break-before-make level 2 support, but changing the block
-+	  size without utilising a break-before-make sequence, or
-+	  mis-programming the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696291
-+	bool "Cortex-A78C: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Cortex-A78C cores (r0p0, r0p1, r0p2) declare
-+	  break-before-make level 2 support, but changing the block size
-+	  without utilising a break-before-make sequence, or mis-programming
-+	  the contiguous hint bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3696292
-+	bool "Cortex-A78C: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Cortex-A78C cores (r0p1, r0p2) declare break-before-make
-+	  level 2 support, but changing the block size without utilising a
-+	  break-before-make sequence, or mis-programming the contiguous hint
-+	  bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3056274
-+	bool "Cortex-X925: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Cortex-X925 cores (r0p0, r0p1) declare break-before-make
-+	  level 2 support, but changing the block size without utilising a
-+	  break-before-make sequence, or mis-programming the contiguous hint
-+	  bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3043263
-+	bool "Cortex-X4: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Cortex-X4 cores (r0p0, r0p1, r0p2) declare break-before-make
-+	  level 2 support, but changing the block size without utilising a
-+	  break-before-make sequence, or mis-programming the contiguous hint
-+	  bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
-+config ARM64_ERRATUM_3053180
-+	bool "Neoverse-V3: workaround for broken BBM level 2 support"
-+	default y
-+	select ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT
-+	help
-+	  Affected Neoverse-V3 cores (r0p0, r0p1) declare break-before-make
-+	  level 2 support, but changing the block size without utilising a
-+	  break-before-make sequence, or mis-programming the contiguous hint
-+	  bit can lead to a livelock.
-+
-+	  If unsure, say Y.
-+
- config CAVIUM_ERRATUM_22375
- 	bool "Cavium erratum 22375, 24313"
- 	default y
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 7cc94bd5da24..e6c05b330e0f 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -2167,6 +2167,36 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
- 	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
++	if (system_supports_bbml2())
++		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
  }
  
-+static bool has_bbml2(const struct arm64_cpu_capabilities *entry,
-+		      int scope)
-+{
-+	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_BROKEN_BBML2_SUPPORT)) {
-+		static const struct midr_range broken_bbml2_list[] = {
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_X4),
-+			MIDR_ALL_VERSIONS(MIDR_CORTEX_X925),
-+			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
-+			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
-+			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
-+			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
-+			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3),
-+			{}
-+		};
-+
-+		if (is_midr_in_range_list(read_cpuid_id(), broken_bbml2_list))
-+			return false;
-+	}
-+
-+	return has_cpuid_feature(entry, scope);
-+}
-+
- #ifdef CONFIG_ARM64_PAN
- static void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
- {
-@@ -2921,7 +2951,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 		.desc = "BBM Level 2 Support",
- 		.capability = ARM64_HAS_BBML2,
- 		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
--		.matches = has_cpuid_feature,
-+		.matches = has_bbml2,
- 		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, BBM, 2)
- 	},
- 	{
+ void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
 -- 
 2.45.2
 
