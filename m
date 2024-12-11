@@ -1,109 +1,108 @@
-Return-Path: <linux-kernel+bounces-442180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAC19ED90E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:51:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E21639ED914
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:52:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B3D188BA41
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEA91882D1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A512B1F0E23;
-	Wed, 11 Dec 2024 21:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFE61D31B5;
+	Wed, 11 Dec 2024 21:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFaITdJI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jTYsyoXA"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058721D63CA;
-	Wed, 11 Dec 2024 21:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20F31C304A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733953790; cv=none; b=CJ2PkjH3TWBJIpIO2rRAgZTxQjIeuubK1ioPwZpV71hi1h3hQCVuo7ZeGJ1sfJqy7RJeO9Ath5m/Xb3JzpuG8JT0mAHXcmnGy9ZUfHxdH2tjgDpBHEDNfNX34ggdZjkpPvuFh6HV6zfgR1nqqpSUYpnj/p7yyyzRi2uSWL2rEaI=
+	t=1733953888; cv=none; b=TymV/bnyzRtVHYSW+5bltz2Fu68CHYsIJDgdV7DWxkbl9EOhJqX01dZnuem8l5tJnudPMWuWhKgpjPXGfglO+zau6abzqgMJhEoBJC9OlM+Y6NtylxHNNaEWxWy6Id/7Addnl3K5aklHdE9iXwQD56VRAyYb+xkipdrbtEMtOvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733953790; c=relaxed/simple;
-	bh=9dEs7Uv/W3GFIdvWXNgPv9/RG/WPitz2vsK5/eV8epM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLbsgWcgtnGwhjGAtEurZW7dehbHsyQGd/q9PHXFNqSWbaxE8RJjgQXT1TeYk2170BG2Dl6DOIUn568xGXUIXKPyZfHmSvqD97OeltBD2GNjLNvixwybS0klpr6YHbGXM8FsB5kxV4VGY3Fqi+BRzmRUexWcv8h7ZtmU76bNtrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFaITdJI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35920C4CED2;
-	Wed, 11 Dec 2024 21:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733953789;
-	bh=9dEs7Uv/W3GFIdvWXNgPv9/RG/WPitz2vsK5/eV8epM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MFaITdJIkZ1IZ7UigB5f9EhJDAqOApX0es7WvCaYIyDxpBqxTVztnpMhTSDhYdiPb
-	 257hY2WpAkUzycQO10r8/Juah4PjhQt6ojA1tYClva3aSLV1cs3T9c33RHHemnCeLG
-	 4nCMZiKzpKXK9A/lDjeS1hNe3FMwIvwkeLblSVCM0LBMFZ5Na32iXF4BXNO6e0sSrP
-	 gqwHbYpID10NcowjpWJQQtu9fsCV+/MbUb/pWJ75dwC+UsqPiCuGljkzXcJK7QuY+P
-	 nA1ASb4a6HJcJxjUGb6tz3ue79ctd/UDZJ0VkUZknepBmN5hjzG7ppeQ8vOnHJlsHq
-	 dsot4KoUZvQCA==
-Date: Wed, 11 Dec 2024 21:49:40 +0000
-From: Will Deacon <will@kernel.org>
-To: Ankit Agrawal <ankita@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, "maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"sebastianene@google.com" <sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com" <gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-Message-ID: <20241211214939.GD17486@willie-the-truck>
-References: <20241118131958.4609-1-ankita@nvidia.com>
- <20241118131958.4609-2-ankita@nvidia.com>
- <20241210141334.GD15607@willie-the-truck>
- <SA1PR12MB71991EC85E8EEDD1C5115886B03E2@SA1PR12MB7199.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1733953888; c=relaxed/simple;
+	bh=+yXy6BdoGXWelmBPHZc9qjX32NLjGhezQ6I9xpgzboQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hSuKV1Ill+RhDbenw4hVEz9uogbRirhNLZ1WDSlRSmmiO12kncmne/T4QGhMSa+SZ1zq3XWRxeYLwKWgrHjZwQRYXclmNhv3UfF1KIpm6fPJdOGGlL/L4A7ez77so7G/WK1rTod2jNLkT0EqpkntpzXxXdQ4urLS7TbZa930tA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jTYsyoXA; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a766b475so69050365e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:51:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733953884; x=1734558684; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TYzZ2PTeVoUiFSlhq2/NIk9JdJyxHxV5vtC1J1yNmdA=;
+        b=jTYsyoXAwzydUppFwqJbLYePw3LsROjGZ2CpwhZDd+Y96kIdriPcF3eJL1Ni0i5eE3
+         zl83iTGfma+BvaQkdp1i/vnziGhYoJtoG4MoCqwxOjOMbJTmeYcWXBKmg1IcGEgR994i
+         Pl7sYVexMxOOK/lBUb582Bm/O1Oy48dIIbPZmlAUvYDIe4Yeu8Q3Fq3FFH4nuEQpHn4u
+         HkgYkvCiRkoh4GJj57MEwqZyVYLBxFjtCSxNa5CA5GwxF4kgepWBEvTnA7wMiqmywBVg
+         xAhlRAEMhMIUgSIMS5dGCjyo/7t5BeG/WRV9gKABMdd7ZOOwr3o3laEZnqxsnOFd5bi1
+         vLEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733953884; x=1734558684;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TYzZ2PTeVoUiFSlhq2/NIk9JdJyxHxV5vtC1J1yNmdA=;
+        b=QRB7j3k/wkANjwimd0RXRA/lWiax/akOuRA09p1wO5AhZ/FsV/qBw/FY4oF61EHao+
+         jB3aQh/9pUQ25R8cQnx3ZQBbpHTSK5Fxz0p6Hz0f+PDCdGMzNBkqsbg+rJFpMFyhQHmW
+         dcs0u/dSG5f/6XcnbkziRiy8w/WfYsxs+KBrLiLJY9Z5ISmEIPkYjxc8HZZK21TNAa4d
+         CkW211gR1PGYDmjKFL86QENyMrZ6xl36/6q1dgHHxO6YZ4WQwSQSO7Yv1exwX2gVTdMI
+         KRBBzq8Gn0/k1fCAlNi21D54Nz8JV7mlbPLUGsQ5yLLOmZN74pqpDSrs+5BEyz4E2tC1
+         JP/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWo6r5anZ0pKEyWOZWpyIQZ7rc3LHzaKRxNvXQaIXdN+xcu5VJAM+xgKcHW84VD0R/omAEtm0jOB0L6rew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy860zdqff/lCHBEAa0C2HStgpEM8IyvQ7/sLHxjMGWyi6weMX9
+	45JK73d9kswP/VPC8NuowmrOfq118qWXtv7ncSOjHhbe/PONR9/gZT0tFU+UNH8=
+X-Gm-Gg: ASbGncsPUZVWkhU5lU/Rhu9nZdcQ/NMOa5jQowsvkiOjrKMe+jwgqcP17CqJZg8n9Me
+	BFaEDIs6yjvgH2tTZephnxiHgZpnPui74ALdHY3FBX1SLzPl3CNhwy7hfDEwGe1Hidya+bBkPO+
+	+90w7uCcrA8Nupnc9M/x369zGTELhsMk/UMKrATix44lh0W0k3yOxHj51LXn/pQ3SVIeYuImsws
+	TUi8ogXcR15rtE0ucLl98gb53v+Wg5fCTlp266kqBwcNWFj9Y/d5gyc4q22x7Mg6tw=
+X-Google-Smtp-Source: AGHT+IERXM+Ul/wVHE5MSVkvGGBpzhvPZr2RXymggc+966GoIeTF4nY9lep+HP04CYzBcnnukQoIDA==
+X-Received: by 2002:a05:6000:4609:b0:385:df73:2f18 with SMTP id ffacd0b85a97d-3864cecfe06mr3576948f8f.51.1733953884252;
+        Wed, 11 Dec 2024 13:51:24 -0800 (PST)
+Received: from [192.168.0.27] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da119abbsm240218815e9.43.2024.12.11.13.51.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 13:51:23 -0800 (PST)
+Message-ID: <3108fcd7-7b6e-4205-bf15-529c850e2b5f@linaro.org>
+Date: Wed, 11 Dec 2024 21:51:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SA1PR12MB71991EC85E8EEDD1C5115886B03E2@SA1PR12MB7199.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/16] media: qcom: camss: csiphy-3ph: Add Gen2 v2.1.2
+ two-phase MIPI CSI-2 DPHY support
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
+ <20241211140738.3835588-15-quic_depengs@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241211140738.3835588-15-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 02:58:38AM +0000, Ankit Agrawal wrote:
-> Thanks Will for taking a look.
+On 11/12/2024 14:07, Depeng Shao wrote:
+> Add a PHY configuration sequence and PHY resource for the sm8550 which
+> uses a Qualcomm Gen 2 version 2.1.2 CSI-2 PHY.
 > 
-> >> The device memory such as on the Grace Hopper systems is interchangeable
-> >> with DDR memory and retains its properties. Allow executable faults
-> >> on the memory determined as Normal cacheable.
-> >
-> > Sorry, but a change this subtle to the arch code is going to need a _much_
-> > better explanation than the rambling text above.
+> The PHY can be configured as two phase or three phase in C-PHY or D-PHY
+> mode. This configuration supports two-phase D-PHY mode.
 > 
-> Understood, I'll work on the text and try to make it coherent.
+> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
 
-Heh, I thought it was the patch trying to make things coherent :p
-
-Will
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
