@@ -1,130 +1,80 @@
-Return-Path: <linux-kernel+bounces-440977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40DC9EC762
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:32:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4150E9EC766
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C83BA281773
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B48EB285E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E599A1DC98C;
-	Wed, 11 Dec 2024 08:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hu0zUNk/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8886F1C4A1B;
-	Wed, 11 Dec 2024 08:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B540D1D88D3;
+	Wed, 11 Dec 2024 08:34:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8465D1C07DE
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733905939; cv=none; b=krOfaN4WtHhDhCxyLhnKxloylO/bERIM4MfyDimA4XG1q+ALGfZSgAVGuwokHTiO3Y4VaxMOSoDtH4G9xXPJ7hCRyViUW/6riNARHtb6aVDi2FhWrBbBmnwF8QHJ3FgrU7T0+ic5brsmU1XOCL5Mb/QM2IQmfQl1dXVX2O1tfO4=
+	t=1733906061; cv=none; b=hMmt41Qno5tmz5w4QLYynp+86wnGWI9SJ+ucsC4nRccmw0blbpHmMrXmsxg8ZBfHrWSurjRNIKJbwTij9otRZtj8VLVTMaxY94XVFs986mfVJ7klax2aVq575aiQB+rd4F1xU8b1gvNwPlAfbDLXZgxSYkVB5IaCGHizmAz4fJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733905939; c=relaxed/simple;
-	bh=ASSddga9/M67TA3gYuvbbIyqUT/9g38+NyFTLhOga1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CeUORe4Z5jJE59FOSgkDbf6vm2pt8HTgP6ckT/EUBibworJjVI7C91e2cFVuyC63gtdR48HN448hXbIAAsBWDFi2xxLYnfZOL2ks09lna086FHFRbspLGbl/HmV060YZJOiEH76DLeUBPS3PeZfvacRtDPCq/5UHEZDmTU1QcQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hu0zUNk/; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733905938; x=1765441938;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ASSddga9/M67TA3gYuvbbIyqUT/9g38+NyFTLhOga1A=;
-  b=Hu0zUNk/hN240t21GhFl6wgKtqbt5RCYwXBseiaygn9u2tJseJt6tvy2
-   RfdQTBqLrguPQ2l+QKSlGnG8+UKKVUWb46HC2Y7KIAPIkj1MbdcBXLFza
-   11QgiRMjojzgwNXpXARp/2l23+U0Z3BM/ZvFruTEAibQdK4TrJW5UQ3v8
-   bgTvRs0+r5HtJGENI2LtzXamfNtcDpXiFeVqOgCOOUMj8pFOUz5uyD5ev
-   LWB6iJPfR8kTH+ITxZokNHULP+UdRlNNo9jAZVloGXrUERUYd1YgUN8LB
-   eHPW44f212z7safQf2helRxjqIXIhn+EM23IppvRI0ZRQoBx6rzWNmKQr
-   g==;
-X-CSE-ConnectionGUID: p6PHFotqSDCEgAaqxlm8sQ==
-X-CSE-MsgGUID: RmvcWNM1SyGXjLmhrM+WPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="34197774"
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="34197774"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 00:32:15 -0800
-X-CSE-ConnectionGUID: yGhZC1/aRCWJk+iRVq200Q==
-X-CSE-MsgGUID: TmrSgisHTB2/5QcJNlGcEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="100536367"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 00:32:11 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id EE8DD11F71F;
-	Wed, 11 Dec 2024 10:32:08 +0200 (EET)
-Date: Wed, 11 Dec 2024 08:32:08 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
-Subject: Re: [PATCH v3 7/7] media: ipu-bridge: Remove unneeded conditional
- compilations
-Message-ID: <Z1lOCGJvgFcqmR3R@kekkonen.localdomain>
-References: <20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org>
- <20241210-fix-ipu-v3-7-00e409c84a6c@chromium.org>
- <20241211091954.42a5c778@foz.lan>
+	s=arc-20240116; t=1733906061; c=relaxed/simple;
+	bh=T8hktlKaRyGbVHCVpye89ZWee6gbJk6eenpzIhLg7YI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vb9C5PNQnhiILcra7ZZFH4OREHv22OsjWeG2Y4RZoMPEMZlp7m+GZsdH7X4uzoR8s6A6eZRRtpE7BsnuXcT9Jt4Vl5AIrggVIQbHgWiw5ndsp+tvwhEZ9AvO1ufu78D6fT1oWcKUq3nE4PI9n2C82e0mVfDhipbfnFPNS/0vckM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E978E1063;
+	Wed, 11 Dec 2024 00:34:46 -0800 (PST)
+Received: from [10.162.16.49] (a077893.blr.arm.com [10.162.16.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7933F3F720;
+	Wed, 11 Dec 2024 00:34:15 -0800 (PST)
+Message-ID: <86ad5edc-ad57-43c3-86d2-0bd854a479c5@arm.com>
+Date: Wed, 11 Dec 2024 14:04:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211091954.42a5c778@foz.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/7] arm64/hw_breakpoint: Enable FEAT_Debugv8p9
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev
+References: <20241028053426.2486633-1-anshuman.khandual@arm.com>
+ <Z1hzdLQLlIPg7eV5@J2N7QTR9R3>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <Z1hzdLQLlIPg7eV5@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mauro,
 
-On Wed, Dec 11, 2024 at 09:19:54AM +0100, Mauro Carvalho Chehab wrote:
-> > @@ -768,15 +755,10 @@ static int ipu_bridge_ivsc_is_ready(void)
-> >  	unsigned int i;
-> >  
-> >  	for (i = 0; i < ARRAY_SIZE(ipu_supported_sensors); i++) {
-> > -#if IS_ENABLED(CONFIG_ACPI)
-> >  		const struct ipu_sensor_config *cfg =
-> >  			&ipu_supported_sensors[i];
-> >  
-> >  		for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
-> > -#else
-> > -		while (false) {
-> > -			sensor_adev = NULL;
-> > -#endif
-> >  			if (!ACPI_PTR(sensor_adev->status.enabled))
-> >  				continue;
-> >  
-> > 
-> 
-> Considering that you drop patch 1, and keep the ACPI dependencies
-> at the header, as proposed by patches 2-6:
-> 
-> Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kerenel.org>
 
-The 1st patch fixes a compilation warning when CONFIG_ACPI is disabled.
-Merging that patch as a temporary solution is simply easier than making
-arragements for merging the ACPI patches to the Media tree so the last
-patch may be merged, too.
+On 12/10/24 22:29, Mark Rutland wrote:
+> On Mon, Oct 28, 2024 at 11:04:19AM +0530, Anshuman Khandual wrote:
+>> This series enables FEAT_Debugv8p9 thus extending breakpoint and watchpoint
+>> support upto 64. This series is based on v6.12-rc5 although this depends on
+>> FEAT_FGT2 FGU series posted earlier, for MDSELR_EL1 handling in various KVM
+>> guest configurations.
+>>
+>> https://lore.kernel.org/all/20241001024356.1096072-1-anshuman.khandual@arm.com/
+> To avoid further confusion: since we discussed things further on the v1
+> thread after this v2 thread was posted, I'm waiting for a v3 to be
+> posted which addresses the comments there (e.g. ID reg field handling,
+> mutual exclusion for breakpoint manipulation).
 
-Besides, the fix should also be backported.
+Agreed, although I am still working on the mutual exclusion for breakpoint
+manipulation problem. Besides just carved out - MDCR_EL3.[TDS|TPM] related
+EL3 boot requirement's document update in a separate series as discussed.
 
-Ricardo: how about adding Cc: stable for that one?
-
--- 
-Regards,
-
-Sakari Ailus
+https://lore.kernel.org/all/20241211065425.1106683-1-anshuman.khandual@arm.com/
 
