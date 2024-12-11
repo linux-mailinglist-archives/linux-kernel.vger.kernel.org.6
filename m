@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-441392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156D09ECDB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:53:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896839ECDB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:54:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E18E163311
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3957285833
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DBF236906;
-	Wed, 11 Dec 2024 13:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90215236909;
+	Wed, 11 Dec 2024 13:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="We7Ro6Qp"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="omDj3KJs"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D61F381AA
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5EE2336AF
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733925209; cv=none; b=pgBM6aV8yGNKVt6pPu0yDc6AmBUBzGI29QeCI8PrOHhyyQ1QdAqHWaheKVIhflbYAjFiqBYPepefY9ZGH35jVLoLOH5BzUIM4WvhaeO47sVmPiLRqyAz+RMDv2Rg/0jtskwAH5be+YgyZr29BGwDR+gIUaTIQEx5+TGl8le6tm4=
+	t=1733925223; cv=none; b=n73sB5TwTpXaEgfpeg9RDw8kdS+3t6LYqtEMWf3wwpMwuw6av090sTDPBEevTZVilD2js851ViCyKRwdpA/Ykims6zHKfcuKdz1vX9fD2vCwKpDY2fNbR3NtMlMV1VvpdSjbtkBr3AZ4Pfrw7EATB2YveX1CK0z1gL+EtUBKiKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733925209; c=relaxed/simple;
-	bh=YSdh0Mm0FonlMgaa3imnf9PPReZOary7MqBo29RKeZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPhdqLhNWo1KMiB9q6R06E1ziz+CBlkgvi0tZOXZvQ9p53GBNtB6ow+qd9Z8wPwEeXK0OEk7Y48AMuebhL6ZOnTy1qKRljYtl2BsFuE49+fgqcThbFDsEfOA7CN9j70boa5Shtrk5TW0mzFngz8De8rTC7lHqB6+dpKn23G77uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=We7Ro6Qp; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cfa1ec3b94so9226863a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:53:27 -0800 (PST)
+	s=arc-20240116; t=1733925223; c=relaxed/simple;
+	bh=1ler+6t5wwhzmcNaLGwLWs8a2MX4ASG3Zvx3gT94VPY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AxbVi/B2HV+qJZWIrHa+6nLa3WgjHe4XeLdAzSoxl3HGocgUbRMOtOs6AGHPNgZRZz4UhK7gu5FQDzNy+5bjvhQB0fKGvBdo6uV7xBh9cFha3vi4zuljXDiu1GBry9blLyTQlFNp5A71zf+VfWFvRu5ychxknhibgkNHKZuV3GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=omDj3KJs; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3003e203acaso38137491fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:53:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733925205; x=1734530005; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2JAQ94DgwmZTsFqQuFhEr5XjtlJo5Liq/MWFSbEP7oQ=;
-        b=We7Ro6QpXdFqx1EZCLNk/BGMGe7KhGl6PAlNriTd27U4td+pcYwIjAR39eWjr3fQV3
-         hbwqiaKicF/joN8+62DAYg8Wf9/MURxT8V6z8bGdUlL0iV0Y0xNXupuRo9OjB3QYbfXB
-         csYSDW2tU10Y1v8TLomFlX/NG62h5wyDlxRXMB8/GWwUj6vIlZrublRxbyO8JQNTZs1M
-         OcPBeDjVKdSmVLyG3jFTn0n0XIj0HAlr/ZL0YbhyX4t0B5HGjOtgCwRfE8wv4qfhgf1p
-         XHhWsm3/GVeyw5+QUaPsEKGZ4IfFzeXu8dZNVG5Z9qY2DOR51vj1yLn1M/mVxfIyXI4X
-         sg9A==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733925218; x=1734530018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jyglwL7lcLajD1vfvAC6TyqBHbq3YqYRZog/vZd+lPo=;
+        b=omDj3KJsPkdP7UDkEBkr8I8BmUFjLlncQnR8U1KHRmWs4eX2Od9WNA0Ge1slgLs74D
+         hYp6a4U1CyacZbInWvPD/TL56ag2IN1BQUOKGZ24bAQo1knFloHJGpw6RLyKLgMI/Ich
+         FQ/eIr5U5m601YqwpLL3O61FD+9kURKiEawOMu3v9ORmtUW1sFkB3D9mopTziG+ajVix
+         8e0RXBaq3HeM/bK2ndvdwgZ4lgGxZ7oVSqCK3Y6ZlazYDPlzbcUJuk9BnvualA6K12vy
+         36remNoOn6ih/pluAhyQBzIt1XF6dN0GBvAskyEvdi7SBuoKVEa+r0ga5WUGsgSibr6l
+         nCRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733925205; x=1734530005;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2JAQ94DgwmZTsFqQuFhEr5XjtlJo5Liq/MWFSbEP7oQ=;
-        b=fxdTGs0RmW7goi2uRASDOERsU+az9f6P4wtc/iC+U6cyhOyPfiwqpDBkyVbwC3IjCS
-         uLPzFbuutdEypyMwsZiftTygEnyhL82jz3+f1oqaBWzgG0oeUA86xFAhV1Jvuf1qq6gN
-         5thnib8vGZQXC8h59idhUdbXSBji/L7TVs/H7sPnPNfpHpja9O4X/87fIvtVUxg/bp/b
-         jC3IV62fjJCQxaCxdT9vbmrnzUxv3pZpT+4x2ZnZeVQ/Ls4SW1RGd9/0/9G0idY9ZWqC
-         IVVs2u+V4/P0vpIbOk2AY4TlEfTviU7sjE9YM2UbxM80GQbPhAiTHhv+isxUZCR4tr4z
-         Otsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1cLxdehm2EkCSMNt31kklgNXVlOdtf/mBVbJ8IANEv+sr3+Yk1a0tEwnRKClDHYciFgteMKYbr+2+wsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEoTsJGLPok98G3FFRBSwA+8VQ+H4wXLSGOqRCQ30JcVukObPU
-	fi79VH3z2Qk/ihalHOwQM6XOfq+JZ1IzQPPXYtoztH0u/z+pvuVocZi+Mj95NeM=
-X-Gm-Gg: ASbGncv/Qhn+BovLQH8KbJxvoR/mKPD0HXy8AHlv5xJwVrVz0zZS9VqkUTfvDdko2ZW
-	xtuu8wMiryXKzuvd1bsx+++GWaL78NOLiFmwI+dLX0ow+ny8989l/JFQOywZfvbBkt5OFLuc474
-	GQNQEN2uCTLz87Oi1vsGhWNrzaEK8fKcusSKDnCIEfmr30RH5Eb1qYPUu9qyAmPuLX+7H/VePA+
-	XFNzSI/hs9m30nxvA5UDUZsD+8HNGh3+6xTL22/MirjByCo9Gpz9tEwlPtxrFs=
-X-Google-Smtp-Source: AGHT+IHhR+q/yjOR8fMgpp+HvsWmN+ncd/5Lo5Mk+pkPGE0cvah/TqVw4ZywcOYOxY2cukLaXrgmug==
-X-Received: by 2002:a17:906:b3a1:b0:aa6:75e1:186c with SMTP id a640c23a62f3a-aa6b1505cf0mr213318566b.50.1733925205362;
-        Wed, 11 Dec 2024 05:53:25 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa653d1df95sm682900766b.98.2024.12.11.05.53.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 05:53:24 -0800 (PST)
-Message-ID: <5e7d316d-2e13-436d-8474-48411e2a12d9@tuxon.dev>
-Date: Wed, 11 Dec 2024 15:53:22 +0200
+        d=1e100.net; s=20230601; t=1733925218; x=1734530018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jyglwL7lcLajD1vfvAC6TyqBHbq3YqYRZog/vZd+lPo=;
+        b=KPRIz0rfxHc6axtJgPiK5F8kRKrocuyvFXpfiSe9m7zQpGMA+r9emhNTREHbQqn6lG
+         z0BOflZfHfgIIh5oCgqJ0lZcgb33kZHzvxriprU4p7WgT7okEqCdCDrm4VW5ivUNRXCm
+         W10Pxz3gt4Z8R0nDFSAam1bhF15xQoJSVOE9E9QfLUy9BFQI45HSZbikn1GNEfGX3kcY
+         DX5zISw4uNU8oceusGGrfLKo9pHbqzEwFRBEYa6GSDpAeJ5jQxsDrisc2GjNyC/kSExJ
+         dBlQbC3i3+HzjMsMMVioGB0Xm/VSeTV7nAGGBwDR5FG/TH6nd1zldZ/WB1Eo32J+hv28
+         sstA==
+X-Forwarded-Encrypted: i=1; AJvYcCUg7WoDeBEndpJAirsySIiDLLTPkypGfdNo1hQnXQ7mF5BVK7jpTi7ttdnkH2SLhyRzn7HL/1Kqe/kPkFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJDkAkengNa9wKM3OK6SLbmp2zDAA95JYbgUsx/JtDZgUtEo4r
+	ajMZoDJ+olRmNt4iPyUwjbhJQCpMa/SXn2XlsT/rF6CMyGIVTfuXn+ybwSsMY3n/xu/BFwtTkgg
+	T8euLgNiQq3vCwi9TIHCPYztpRSUJHIpv8g0YkQ==
+X-Gm-Gg: ASbGncuyPLr7j/8zj3K8eqy05hskl5PLQq4AoG9Kw20mjDTHh/YNfRoUiMvf3d4l4uu
+	g9NECbI1NinmVy/rNa4OZ5/Qft9MLJDHn7lyBHAuMGZho6trIDnph4qwqKitB0kBuqkY=
+X-Google-Smtp-Source: AGHT+IGPGpFba0wsi4op1Gj+i5/QGCDpVBGPrx3rA3uLS79Kse28wu78qqyJ+hwtxlmidsvWthwfkHUhBW/gtPRZ2IA=
+X-Received: by 2002:a05:651c:1542:b0:300:33b1:f0d7 with SMTP id
+ 38308e7fff4ca-30240c9fc57mr9357831fa.5.1733925218339; Wed, 11 Dec 2024
+ 05:53:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/15] arm64: dts: renesas: r9a08g045: Add ADC node
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
- <20241206111337.726244-15-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVMQr9RhG7v32vQeSrepmdh2VdzzwF5obJUpdGNotGV7Q@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVMQr9RhG7v32vQeSrepmdh2VdzzwF5obJUpdGNotGV7Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1e0cf09d-406f-4b66-8ff5-25ddc2345e54@stanley.mountain>
+In-Reply-To: <1e0cf09d-406f-4b66-8ff5-25ddc2345e54@stanley.mountain>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 11 Dec 2024 14:53:27 +0100
+Message-ID: <CAMRc=McCc3G4D4rHVMfGBTdvi6z5Nbxqzg+k8iN11+vazffSnw@mail.gmail.com>
+Subject: Re: [PATCH net] ipvs: Fix clamp() order in ip_vs_conn_init()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Julian Anastasov <ja@ssi.bg>, Simon Horman <horms@verge.net.au>, 
+	Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	coreteam@netfilter.org, linux-kernel@vger.kernel.org, 
+	David Laight <David.Laight@aculab.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Geert,
+On Wed, Dec 11, 2024 at 2:16=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> We recently added some build time asserts to detect incorrect calls to
+> clamp and it detected this bug which breaks the build.  The variable
+> in this clamp is "max_avail" and it should be the first argument.  The
+> code currently is the equivalent to max =3D max(max_avail, max).
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/all/CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9=
+MRLfAbM3f6ke0g@mail.gmail.com/
+> Fixes: 4f325e26277b ("ipvs: dynamically limit the connection hash table")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> I've been trying to add stable CC's to my commits but I'm not sure the
+> netdev policy on this.  Do you prefer to add them yourself?
+>
+>  net/netfilter/ipvs/ip_vs_conn.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_c=
+onn.c
+> index 98d7dbe3d787..9f75ac801301 100644
+> --- a/net/netfilter/ipvs/ip_vs_conn.c
+> +++ b/net/netfilter/ipvs/ip_vs_conn.c
+> @@ -1495,7 +1495,7 @@ int __init ip_vs_conn_init(void)
+>         max_avail -=3D 2;         /* ~4 in hash row */
+>         max_avail -=3D 1;         /* IPVS up to 1/2 of mem */
+>         max_avail -=3D order_base_2(sizeof(struct ip_vs_conn));
+> -       max =3D clamp(max, min, max_avail);
+> +       max =3D clamp(max_avail, min, max);
+>         ip_vs_conn_tab_bits =3D clamp_val(ip_vs_conn_tab_bits, min, max);
+>         ip_vs_conn_tab_size =3D 1 << ip_vs_conn_tab_bits;
+>         ip_vs_conn_tab_mask =3D ip_vs_conn_tab_size - 1;
+> --
+> 2.45.2
+>
 
-On 11.12.2024 15:27, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Dec 6, 2024 at 12:14 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Add the device tree node for the ADC IP available on the Renesas RZ/G3S
->> SoC.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
->> @@ -87,6 +87,59 @@ rtc: rtc@1004ec00 {
->>                         status = "disabled";
->>                 };
->>
->> +               adc: adc@10058000 {
->> +                       compatible = "renesas,r9a08g045-adc";
->> +                       reg = <0 0x10058000 0 0x400>;
-> 
-> Table 5.1 ("Detailed Address Space") says the size is 4 KiB.
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.14, with the above fixed.
-
-Thank you!
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
