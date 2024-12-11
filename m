@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-442241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349809ED9B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:28:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 851649ED9B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B27A282659
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:28:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A40281C9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D011F2C53;
-	Wed, 11 Dec 2024 22:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB9D1F2360;
+	Wed, 11 Dec 2024 22:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zdTAouF9"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lakRqNgy"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0DB1F0E59
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480091F0E59
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733956066; cv=none; b=AKRXjcU14L7+vMPaAUtA7pLHmf/PzuxQO2+SFDHAJlaFoPn+LfDtZ+4rz8NMbPScHnuhPJNlOJI/ccpOzX9MdliVuMgfNn6v8loa27POhkKz9S6/jJ56zaOUZb3jAI2fi9ZyGRFaOGw4SkTUENBgegyA2Mb+ENczYippVM41EVw=
+	t=1733956189; cv=none; b=ezGbI1sr6j11Ux8E0IoSVydYl+Oh6NxL3eAs6/tUzkxTb5UibSt/rCz7zYO9k887tAHv5tA+etxSfM+WZs+mq9Piit5V9tDSxUpKpfdnNso0aGlfby0RuMR/ydgsj73Vfs9xi3ukWwbgijGSWa2eMPoAyPz+YlahVUfK6p6NKMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733956066; c=relaxed/simple;
-	bh=zfvlbXt0pmSzkKhbUQaTnd9GPrIIyhoIklT1xW6Pt7Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fGtPZHXiMISpFHCXaLa+TlR+wCUi2O/Z68eFVgLF8BVg5H3WVbQ8Q9sswOAo1TYgQCr5kPJ8u1Cf7J9ExeUiDot10c3eK311Wjov6PXn3NKg9kvSMMJvlqDD9dDex+N2uAFBWIQFVwwsSHkDkZXlc8cKJgNFELGF68gi6gd4Vlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zdTAouF9; arc=none smtp.client-ip=209.85.215.202
+	s=arc-20240116; t=1733956189; c=relaxed/simple;
+	bh=Qcc/fUmgQX6539hn3+SnUkTl2HP/l8GGH5btBJOW6+w=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=W3Y9/Y7/ueRSv42AnRpylEG8eVgdnkr+5yPinrQkvfD/alm9vCNigfhOa5t3gLkxx8m8jnO28K45hbyTlzRnT1PKNdWpNLYIZ209dzHKF+zIWIy4hpJBoC2dGFtKYhby95nYL+JGcD0EHH4fdRGQLcaughCI7HQhJMAUJs01Jzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lakRqNgy; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7fd561e68d9so9981a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:27:45 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ef7fbd99a6so4800512a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:29:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733956065; x=1734560865; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Baoz8HDL/9D+jzuoT41t0AkYhSUuididMmHyAXJrHww=;
-        b=zdTAouF9XMk67ZfPM0jr0BrmI1e9RAsxvDwtitBmOn0vXcH9GckrVU14cz3g1CjyQd
-         bbu/NN/4nHJKmdTpf+fyXhcpibcksYI3LSjk1jjUBbydbL6rDlRM0pvFD6JMudxwg5/P
-         xlTc8yKRGOjwoj/RvRsQsYe2Yt25l6SgOvnpBKUPxs5KwUrXK5b4XyIbT3G1WI/90NY1
-         Vn60UVbWFk/mr+Gd7R6lzgpvs0y4569bKxzEaYhNCCcOcw9oxKpO+Gkyk7GQMz4cdRBH
-         a7RlAqGUDLHeF8C/JaV1UOZ6Png40PVO9btbFwfwn4h/chPNZvRQnNZ8HUy5el6fDD/g
-         IJDw==
+        d=google.com; s=20230601; t=1733956187; x=1734560987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=afLzMNYSjFaV1BRnpx7y6AiSvyqc3VW7ILDJntgtX6Q=;
+        b=lakRqNgytYVboxBFS3AVIMmtlo3/zzGgAIVJdLLR2uvVOrVqIZ87+LhWknJqWCwAXY
+         Wd2LnhIl4kMRKvBP04PKTzPcP4Lsyw7rZQtPvxruO2QEAK7aHnzBHH8sPUMSBqdN3Buf
+         nABCTAQq5MKpPj2pL0T5f51NGAMFP8Nf/YnOrdg/fRnOt5b8+ZGR20g2eIn6R9qAniB0
+         5H0Tj12Fvd1iN5yXvK1j6DRIrP6qn+SiJ/Vt2Tl/VVcVCYGZgw7Fvkf/BnZbi4HSuCpJ
+         8embHja3gNIPAqzIbhmN2BI7CJgWW1kgGd9df8dGU+LSLtlmkTboEosILxk4/qUdOLTj
+         hGwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733956065; x=1734560865;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Baoz8HDL/9D+jzuoT41t0AkYhSUuididMmHyAXJrHww=;
-        b=ivMBwyB1mE18h1fvn1MDecKBVN/V2luIgVC3xPO2D9g6pnOXx2+7vtPcKRm0LZ1Apj
-         LAmKQGyhjWliavDCTNKRPgVkLSjrEDc7Sg1OKO/1/JFWWCMcdf0ov4vgpFoe5UxGqwz2
-         kCdSimK6nt4K6TZv/55cI/QRKF4mzclSFxa+H63V6i6KpboDD5oKdzyhCwz6fke2hc5K
-         PzOkAjvZYVR4ynAa0tI6fzm69juvGV7v1dPkvMXHaATcZu8QH9yEdFY9OMHOs6HjuJbx
-         NBDMuxwFGMt1up/MLy6BT7oFPt088uuyAMR2C0fsNX5hzhVApwEx55wfnBCCSBxe3aiA
-         qSRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfolYDhfedCB4kUAgufDzK9RgEKvIIcEuJEuxMQQr1y4YiAkwzJdZXR3la+cQMD5CCrk1OOA8bP7ijmK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygtCFh2S2D3DDVb2bbkZEgOnAaG5YPb0XQtm2/n/mgB3OHEPJO
-	lUJq08w3Z1EcVkEqtFhQ8J5UWHtcC/nADn2Fs3PE+AcyqWDH7oX8YyrjeUnIRrkdtBD2Monzw8c
-	R2g==
-X-Google-Smtp-Source: AGHT+IF7Glp3nlBE0Tq75FWGp2Z+wd30I0Kg/yL9mErCj7/SwuZKuKJdgZl+9j5Z7gC8Ntc4Kg3i9rHQuKw=
-X-Received: from pjbqd13.prod.google.com ([2002:a17:90b:3ccd:b0:2ef:8ef8:2701])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f86:b0:2ef:31a9:95c6
- with SMTP id 98e67ed59e1d1-2f139293c58mr2630585a91.14.1733956064657; Wed, 11
- Dec 2024 14:27:44 -0800 (PST)
-Date: Wed, 11 Dec 2024 14:27:42 -0800
-In-Reply-To: <20241202120416.6054-4-bp@kernel.org>
+        d=1e100.net; s=20230601; t=1733956187; x=1734560987;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=afLzMNYSjFaV1BRnpx7y6AiSvyqc3VW7ILDJntgtX6Q=;
+        b=hPxM4e58ILlxIRAbLXmjXYX/DMhUmLevVDs3Ob5OnzTYtxo/ZGG8Z7SHEdzLsfJX+v
+         caDurDd7OY5YBK5LIZjI2VrVKPazonBYZRhNE0IVC/pTEwPEQxre8CQQ6HmbiRb1TaXT
+         6RBknvQlT3PiC0VwVubQcPCCkcnM3QhsEUTrljHlb0py9XdTmAK30kl9Kgv9K3BVRgI7
+         TpffK21EqiP4ijF3omia2rIyIX/FWGYC5rjZfQctwaMTJ6zXMt8nu0Gtomtd1F5a2RWM
+         Uanyc+F0cgayqIIYo3SAFCoq1zx3vaIA5gpZJx1gEvAttzl6JcVPcrnmN8do4mtjU+iS
+         n8lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcIOGkcIW2ORWXpZZo8jtVvTiy+vpgbu8EnUguZcUhn1WVZpZ7SXjQddYvbjFpTq0kwxtTv5ZnFwCtzf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKKe48jSWvfVeK8OAiaVptPk+fRP6qfWHk0uH9kp7zItAJbri7
+	JeCkmyKH640CYbeTnbGyRW+Xlu/ztQtMVWHuA4o0BNgMELnV8WuKsI1ieny/dSEJrA==
+X-Google-Smtp-Source: AGHT+IHSqmGnd1iKAe1UoXeEJUP+FpZhBFsJLxPPQOZ6HRTRXmgZKGnyfdbCmr4t0iV7F/cQJyWsiI8=
+X-Received: from pjbsd15.prod.google.com ([2002:a17:90b:514f:b0:2ef:9e7a:486d])
+ (user=xur job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d47:b0:2ee:45fd:34ee
+ with SMTP id 98e67ed59e1d1-2f1280586f9mr7296484a91.37.1733956187644; Wed, 11
+ Dec 2024 14:29:47 -0800 (PST)
+Date: Wed, 11 Dec 2024 14:29:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20241202120416.6054-1-bp@kernel.org> <20241202120416.6054-4-bp@kernel.org>
-Message-ID: <Z1oR3qxjr8hHbTpN@google.com>
-Subject: Re: [PATCH v2 3/4] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@kernel.org>
-Cc: X86 ML <x86@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	KVM <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Content-Type: text/plain; charset="us-ascii"
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241211222945.1325793-1-xur@google.com>
+Subject: [PATCH 1/2] AutoFDO: Remove the architecture specific config
+From: Rong Xu <xur@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, Yabin Cui <yabinc@google.com>, 
+	Will Deacon <will@kernel.org>, Han Shen <shenhan@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Alice Ryhl <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, "Paul E. McKenney" <paulmck@kernel.org>, Rong Xu <xur@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 02, 2024, Borislav Petkov wrote:
-> diff --git a/Documentation/admin-guide/hw-vuln/srso.rst b/Documentation/admin-guide/hw-vuln/srso.rst
-> index 2ad1c05b8c88..79a8f7dea06d 100644
-> --- a/Documentation/admin-guide/hw-vuln/srso.rst
-> +++ b/Documentation/admin-guide/hw-vuln/srso.rst
-> @@ -104,7 +104,17 @@ The possible values in this file are:
->  
->     (spec_rstack_overflow=ibpb-vmexit)
->  
-> + * 'Mitigation: Reduced Speculation':
->  
-> +   This mitigation gets automatically enabled when the above one "IBPB on
-> +   VMEXIT" has been selected and the CPU supports the BpSpecReduce bit.
-> +
-> +   Currently, the mitigation is automatically enabled when KVM enables
-> +   virtualization and can incur some cost. 
+The CONFIG_AUTOFDO_CLANG option currently depends on
+ARCH_SUPPORTS_AUTOFDO_CLANG, but this dependency seems unnecessary.
 
-How much cost are we talking?
+Remove ARCH_SUPPORTS_AUTOFDO_CLANG and allow users to control AutoFDO
+builds solely through CONFIG_AUTOFDO_CLANG. This simplifies the kconfig
+and avoids potential confusion.
 
->  static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
-> @@ -2665,6 +2667,12 @@ static void __init srso_select_mitigation(void)
->  
->  ibpb_on_vmexit:
->  	case SRSO_CMD_IBPB_ON_VMEXIT:
-> +		if (boot_cpu_has(X86_FEATURE_SRSO_MSR_FIX)) {
-> +			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-> +			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-> +			break;
-> +		}
-> +
->  		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
->  			if (!boot_cpu_has(X86_FEATURE_ENTRY_IBPB) && has_microcode) {
->  				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index dd15cc635655..e4fad330cd25 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -608,6 +608,9 @@ static void svm_disable_virtualization_cpu(void)
->  	kvm_cpu_svm_disable();
->  
->  	amd_pmu_disable_virt();
-> +
-> +	if (cpu_feature_enabled(X86_FEATURE_SRSO_MSR_FIX))
-> +		msr_clear_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
->  }
->  
->  static int svm_enable_virtualization_cpu(void)
-> @@ -685,6 +688,9 @@ static int svm_enable_virtualization_cpu(void)
->  		rdmsr(MSR_TSC_AUX, sev_es_host_save_area(sd)->tsc_aux, msr_hi);
->  	}
->  
-> +	if (cpu_feature_enabled(X86_FEATURE_SRSO_MSR_FIX))
-> +		msr_set_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
+Signed-off-by: Rong Xu <xur@google.com>
+Suggested-by: Will Deacon <will@kernel.org>
+---
+ arch/Kconfig     | 4 ----
+ arch/x86/Kconfig | 1 -
+ 2 files changed, 5 deletions(-)
 
-IIUC, this magic bit reduces how much the CPU is allowed to speculate in order
-to mitigate potential VM=>host attacks, and that reducing speculation also reduces
-overall performance.
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 6682b2a53e342..0b36d74d47031 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -812,12 +812,8 @@ config LTO_CLANG_THIN
+ 	  If unsure, say Y.
+ endchoice
+=20
+-config ARCH_SUPPORTS_AUTOFDO_CLANG
+-	bool
+-
+ config AUTOFDO_CLANG
+ 	bool "Enable Clang's AutoFDO build (EXPERIMENTAL)"
+-	depends on ARCH_SUPPORTS_AUTOFDO_CLANG
+ 	depends on CC_IS_CLANG && CLANG_VERSION >=3D 170000
+ 	help
+ 	  This option enables Clang=E2=80=99s AutoFDO build. When
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 9d7bd0ae48c42..9363d9cc9a00a 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -128,7 +128,6 @@ config X86
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
+ 	select ARCH_SUPPORTS_RT
+-	select ARCH_SUPPORTS_AUTOFDO_CLANG
+ 	select ARCH_SUPPORTS_PROPELLER_CLANG    if X86_64
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF		if X86_CMPXCHG64
 
-If that's correct, then enabling the magic bit needs to be gated by an appropriate
-mitagation being enabled, not forced on automatically just because the CPU supports
-X86_FEATURE_SRSO_MSR_FIX.
+base-commit: f92f4749861b06fed908d336b4dee1326003291b
+--=20
+2.47.0.338.g60cca15819-goog
 
-And depending on the cost, it might also make sense to set the bit on-demand, and
-then clean up when KVM disables virtualization.  E.g. wait to set the bit until
-entry to a guest is imminent.
 
