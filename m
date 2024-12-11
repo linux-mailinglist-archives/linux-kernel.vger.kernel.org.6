@@ -1,215 +1,371 @@
-Return-Path: <linux-kernel+bounces-441633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E75C9ED0F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:14:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4698E9ED0FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C413167F9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10AC1188674F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FA41DAC9D;
-	Wed, 11 Dec 2024 16:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A531DAC89;
+	Wed, 11 Dec 2024 16:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3tH5r9rT"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2041.outbound.protection.outlook.com [40.107.237.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NacfUhYh"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF331D934C;
-	Wed, 11 Dec 2024 16:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733933646; cv=fail; b=G4a2SIeh55fdZiIPY+yI8R47Fqt1o4MFPDReoPYxd+LEPkNLTDnjvuvd7j0EbUFRN6w7ts3bjPIpuFJO0PjaxoTHY9lWq7vHn71VgIpVtnvhYqFHddykeMKEPQGAZkuRw4E9bjq2QpnA9Re94frdCxhRv6TEDR5IgtvNjhryl9w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733933646; c=relaxed/simple;
-	bh=3rIEiYUSgPpIrboPketHQCUcAbZPWkLNFgZAkilyHVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JEeVw60f/QZ1CQTzOTf/WiDZkW+syjWMHGTNbUq4FLVzMaBr4Igl3fvwxV4SPS190ujkK7UL8pKv+1PJMRE77ByC0FlSp2kECOyCBxhs8GXkq83UIr5N+aKCEj1b4+JfwemJ22lzNsZIzVwOHiFqf6qTHS8xFvwwmhOwsfecyAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=fail (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3tH5r9rT reason="signature verification failed"; arc=fail smtp.client-ip=40.107.237.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H7xecdvpUqR8n2IUJjxfLxVp5i6A9JFAMS1XVKK1mppwuWoyy/aIrtwitxsG3tuncCbDsRLASw/BLy+0CJI4JwQJ3H3r4+IjqC6AsdY3HddLmGRDRsQjYgNuncmv9MGp41w9MnnQ5cwyVAepP+KBauclVWBa3g9/1cIluPC/vgrOiTL6MQNRmii1vQW89fjgjL1300ZmtAiFnoncwwGd0xDeE+pcykWo+uxjlROFo65ivGWgB+54LU9t1kQGy8a+E8NhdEcZmPWehpJh3jI7coQcnrACc4Atp77Ssz/IaFnolA51FeZOJ1c/i0l2VPa2FQyLljgW+xhJ8R6O2g8MuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xEtKxEZMfAbg7jIbl+c2V2PQ6sj8WtPE31AyO6JqvFs=;
- b=QiuBCR3Ly4n2a+0thSWkdkYd29jyDEGSjLL4lX9QeC9LKeKp4nFTGB63r2/kErewQWf0HZw3TNchp+CnKSHOGhP0qgIADdDymFXWwT0rdvqQEA17amYwLGkERSMIL4xbMEWQSaCM8B2bA7j1kIMDGRwLEcHGFLvwEdNPQwgduQ5sO5FLWCfSg40iOH9ue2vetzXb+TmfVh7lyl2OftwpbmZ8w9ee+2+TpvnLUttiAwJdkZXKkZxJPK2YGz78AAUMaY+yl1zIZpBut5DOoURh/piKdIYW0rCe6MXKzoqxki8rqfB4lfS2EHOngvkl9o37xT1gKhTKQz0twrrbQq2Txg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xEtKxEZMfAbg7jIbl+c2V2PQ6sj8WtPE31AyO6JqvFs=;
- b=3tH5r9rTpNkJjARRgI7iQiBkGlVB13Mr/yp9k6fkHhAR/89MExfPVgX0PB5hsWcne/Jo1C7JGZv+xrB6hOYqFXlgfFuggwVFzVRE2m45QNuN/bS4PDdvwiYT0jpLkyNm2rT5L5StdCxBuReTi8mAN4QnCj4YIvuFgUKQkxl52KE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- CH3PR12MB8850.namprd12.prod.outlook.com (2603:10b6:610:167::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.22; Wed, 11 Dec
- 2024 16:14:00 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
- 16:13:57 +0000
-Date: Wed, 11 Dec 2024 11:13:46 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-	Suma Hegde <suma.hegde@amd.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2 14/16] x86/amd_node, platform/x86/amd/hsmp: Have HSMP
- use SMN through AMD_NODE
-Message-ID: <20241211161346.GC1923270@yaz-khff2.amd.com>
-References: <20241206161210.163701-1-yazen.ghannam@amd.com>
- <20241206161210.163701-15-yazen.ghannam@amd.com>
- <af6ecea1-1be2-6882-2c74-24ffbd26ba03@linux.intel.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <af6ecea1-1be2-6882-2c74-24ffbd26ba03@linux.intel.com>
-X-ClientProxiedBy: MN2PR08CA0016.namprd08.prod.outlook.com
- (2603:10b6:208:239::21) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880321DA103
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733933660; cv=none; b=Cw22qMJsaYHuoAmKYyi3aO3IxgZu2+o5vApTiHmBS08oCM7+4u0Ebo5e+3n8QevuQdYIGQF6lsLNGP/obAuhx6fN+Y91cZqIg5JkBgSD4ezr7OlLBmh9N1YCQhC69HpdqjV2HkuZcYD+dg4yv17nOUnP4xTYaI+Sh/PZ7rXiqkc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733933660; c=relaxed/simple;
+	bh=g97i63BeRfkeQhxv7hMs2P0YOtRY6jivirL1JdhkWi8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LIHDFeUKISW+uUDuAj2Nr/UqPdw8lfMwt/A1OkFmeil3JskzH9UCkKuJGPesrHkz9Sd6MFE9Gy2Ae7ggpLxLaXyE+zdwTc+w2ny5ukcrYOymxYUJzFAZOpHMTolUW5138vUOCYcw4ZtNO4t1lbIQDbJzTUVeeqflEDstO0xDKeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NacfUhYh; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4678c9310afso208241cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 08:14:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733933657; x=1734538457; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=phElHLYxkNBYJyvyG4lECOcpRVx5oOVRU61JUuf+v3s=;
+        b=NacfUhYhvkWov6vs7esLNalXJFoBXMPwoY33+PsngATfHi39812CPVb4W8GPS4CCCi
+         rSSw5sBYmydvOjLLY83HVfbfqiu+ihw9EYCPnDG+O3HTel+u1JAsRmTSa6pQBAQlCyHf
+         r+aSrhakw7RKX/cvIKC/8RNH/DL++padnBUmd6wtlsas1WOe+t4KDobymcGMsPE+Ya/I
+         qSWp4XFtfdhwkjdIrDVOHQoon5NgHsENiYYMyQjVNhRq5onKZ/BL5E+UShtqIX4gsd91
+         Xgc0RGj3BaIl7EM8GhREDiVcNpud2sdv3ljmJKueHlwWVBEHVoojPPUMNdIq+L+YhAx/
+         oJuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733933657; x=1734538457;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=phElHLYxkNBYJyvyG4lECOcpRVx5oOVRU61JUuf+v3s=;
+        b=vhWEQtDZbXOk/+1n8Ck/okrkP9zibkKfoz1UTYRpMA7y9OZ/eR+baeNP496GG2TAt6
+         M8PZzr5LhLNZNn5rbbz0lzaD8nQpAzHWPhFjMgFErDqhXeksm8iVRACXcpi2qqnsju1r
+         ri9eBpzu7RtOLb/ceFqmRRM7NnhKLEJNS28LkLSjtWvN+7dWopUeU6SNDMl7lBe1wjg/
+         HAsHb9gq/jrUItZnU1ba+5vAVJ9xJCp/CMqxGmPOImTCdYQDoM5m91UsapqNZWs2tda2
+         ehg8y/zFxyQ/FQlBETOvFHh/9ojhZgAGdHbd256jleZYn9YzU8B4S4fJ3LSIzgkZXyJk
+         X6JA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlIfbeyQjQiI7nAAGbrHAqpaFuv1Tq7hVDigYZ/zbJyH/PLKIk0OeyZGhQIJDnd692ooKCT1krq+t2jVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwogItu0dRibxv/STH3h1prwNM/+sLOmwfWh2wcyo/VLFVKGDTI
+	WCpbBOEpCEf1kVteY3FG6Jt3ldO93CiqOtL9gHrC0nCJNYZ9kuCBF3ygfEZEtCIaxpZNHE/w+av
+	Y7WyBz1NKxtnU2sv35XnwIWAUJMnqlL92M10x
+X-Gm-Gg: ASbGncv+vlQIczY+KPHB8o4V9zZE9aSTqScSz7jtfiGRnuI+lBpan4eS95HMWZci35M
+	RW2Z9YLWJ+4EW5A28ACJ07ue8ktOLH7S3f6xdOX6nvZ0d9xu8U7VEJcnlR0u0+6xuVA==
+X-Google-Smtp-Source: AGHT+IGFzjfV8u0+PhQ9um56OnOqrfs5vhnKjf9zf+yXxmNnp4EslbB/FiQXC1FySPFT5Ic17QmsFwH+OtK/qb2/rpo=
+X-Received: by 2002:a05:622a:256:b0:466:a3bf:41ab with SMTP id
+ d75a77b69052e-46795e6ec86mr12811cf.21.1733933657220; Wed, 11 Dec 2024
+ 08:14:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|CH3PR12MB8850:EE_
-X-MS-Office365-Filtering-Correlation-Id: cafc727c-bdfd-48be-7dd9-08dd19fed0ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?9ioiW8HQrIF68IN8SiqSw1w+8SaT5bWTiKVdHFIkDYhSET3I6bn8hspbhL?=
- =?iso-8859-1?Q?ZM5x1V+HGi+arq9d0LfluvVJR0hY18DrRdMWbSI9mYzSuBU4oad6/ueEtP?=
- =?iso-8859-1?Q?ZgMD6F0pmaSrpdkRAHHFK/2Blxx5ldIr5rDOruPfXTdSsU96DbRYtsBSlf?=
- =?iso-8859-1?Q?0wQ7N54O7y2q/Kuhz+RHjKbtQQlFsDwXeesNp5brFFUgPY/KTM2+XYkZZ8?=
- =?iso-8859-1?Q?yEnNWWnZqvZLNV/76PB8H/Lu0iWpUH0yVFJHPf2GWoxiJJ5xDjwQpYSIm6?=
- =?iso-8859-1?Q?kJ6uiD0q0wi0g3ef6JA4UNpuFvIK4vSsnPDNHKF2x0W6+PODXo4Pi5qUA6?=
- =?iso-8859-1?Q?UByBYee98maQ9hJqUzdufJxQuTeNr/3uMYD0Qcs8twWPDWqFqfjpLLYLNL?=
- =?iso-8859-1?Q?ciFbTiy/XhAVHg6fspl8fEy0mV7lLZnLshDHFZAcaeWixWcE6gMQxoRkAs?=
- =?iso-8859-1?Q?M5JPGpTgSiJ+ZplOT8UjAArFPN2Co5Kw3XTPCGTSsY7/Bhf5jkD/deBGJ1?=
- =?iso-8859-1?Q?31vmAHPzM8nJo+XZvizGqmg0erVqWDtSOQ357EG99jM3V1aXgMDQHrkcC8?=
- =?iso-8859-1?Q?aAiiZ49Ew5VjVVGRm6Z9bBmEdUe9UtYsNzHHY2sBrUxxYWNlnhcs9k4maL?=
- =?iso-8859-1?Q?MjJzkn8XCYrpRYyXl8xCoRJVtuB/h6pZRAxdA6yF/YLmVxVSYI+MT/aChF?=
- =?iso-8859-1?Q?MdTwk8JnBP/BEfp3QQTD8iTZVpWMSXlSwoL99NQ5qNDtkwtpPTpMkZO7nk?=
- =?iso-8859-1?Q?yWEqkThCwi8z4PD1k7A2elQM+hkWMfkKc1LpTr44QZnexpXmqABOLg7Tqn?=
- =?iso-8859-1?Q?1C89D8mmjyW6CPCNcGbiQfiTqkR9C4hY0MjtaYBkO6ROTVCcCc8oRPEBKr?=
- =?iso-8859-1?Q?lSN3CDEdNJD0XYTmfLzbTCNgl9T2bdpt4FTGtlwI3GISXgZA4CE4bvRgy6?=
- =?iso-8859-1?Q?noE7AsflGwt1VMVurDSWd60MBRdvacHFMAIFCocCsRb+HRQC86jb371d1Q?=
- =?iso-8859-1?Q?OXgmQoa9C1gbell0FWVvf546IxQs1QFFMB0zAg3l4aku9H6rEY+shJBtUh?=
- =?iso-8859-1?Q?MQyBzhjblQIGcaAAnOYBg2ACEWxMqpE+emHbXTy51N88i865E8y1WHGQIC?=
- =?iso-8859-1?Q?jlEjYVaG7R7WBz19EJdE7r/uk5Xs1mG5TQ8DUmUJnirfRIMUYkrIMmqKaG?=
- =?iso-8859-1?Q?xyBqSSdIXGXZe+qu8En7t5uG4DotWsLFZWWnAIsv5xItjhtOAvg7gyFuof?=
- =?iso-8859-1?Q?MejoHCATxsZLaW0d8lyM8pEeYLWBNcncKm6v+0MnNcOIQCuFQUdM9MULmq?=
- =?iso-8859-1?Q?+JPBrgHxrqOkKDZYNG83ZJ7CYoBZG4XyaOzBeULTyPHJp/XZcNWOzLexpS?=
- =?iso-8859-1?Q?Mnb6PgtAAVLhRSpQANEu94fBFzFu6frw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?mJcMAVMUkVmdV/St7OvSYHMRCEp+wgPmKz7miPYkyV4GSlvUomOEbTvLLj?=
- =?iso-8859-1?Q?qMKtSlV9odEaG9/vvhenGfqjw+i6AvhK38iYZJQvvP1CEqm/xAudqo+ew6?=
- =?iso-8859-1?Q?T+DHx1HYxVCFZbdIbWB1A5SykG7EmjVw3gxYO6Kf0qZhwoddXmqW+WRhMT?=
- =?iso-8859-1?Q?voVxUPtqcwAjaMRQMh8uNln/KKMdc5llATRh09ANyCJK3KpPsusT6L0pBK?=
- =?iso-8859-1?Q?bOP0Dk+aoKIElk6jg3CYRhaN3/PKUtuKEZiim3B76lBMI3WonMoPyhOcV5?=
- =?iso-8859-1?Q?3vrBQptz7VpWGZUFNCut0gnx241oeu0Mld7guDtQyRcAcuR124rUAR78fv?=
- =?iso-8859-1?Q?X2ZuxheDHAniVGaA6rTM0uJU1T1tVMLkSMxRT0ThI6FuUaxql2Yh2YUV8B?=
- =?iso-8859-1?Q?uNCBahrYggOiBvXwIK3d4QW5dVdMtxhb/MeQArzyu76bOSUjRNc5Do3wQ9?=
- =?iso-8859-1?Q?Djt3xrlHnlwXtYEj65R4DolbauE+68jeho/YSnTqlZTgeOVOaSgO28w2PC?=
- =?iso-8859-1?Q?ScxaCsoSmpWFzCt8+B1XcEh4ViX4crrIpzxArC4zv330J49YUceHbEHKq0?=
- =?iso-8859-1?Q?zz+tLeq43Q4moTglaWOBY/LI6aRST8iQTp+AtoadhdBjNDbaINOH1Xks27?=
- =?iso-8859-1?Q?4GZXuYJzK2p6TMWB5/jVaVh3Pgjx+dMsikWyX9CovCjKFWrDVUBSm6sxoh?=
- =?iso-8859-1?Q?Jy8XFE3vVVrWi6m0VN0u4+EFhuGlOkFczWjgg4y/rkVo8CQuwvk0uf5F6i?=
- =?iso-8859-1?Q?B+S0/MpWMpkwQhJ6nIe2rkju/ET3ROXN87lVFJrS7QlbebGPM8EOvkwHX+?=
- =?iso-8859-1?Q?fLVrcZwGEzpW8V4jQVIbEIZvFl/bGEaoPaRk9dUGw1S5azRjbVUT7BVmEC?=
- =?iso-8859-1?Q?seHXy5zHhDO4KCY122Cj1dJVAhfTx2jYcnO9QSo4HLqt84caKVkTQ5Knc0?=
- =?iso-8859-1?Q?6TVpT5xYaBWIhotDdimyoC8vLQ+UHzhYRvNTmQDi/g7enWhdf7Z+v6blV/?=
- =?iso-8859-1?Q?mjAcXxBVNgsUzAsre+BGKJbSEQTzKkaDX/ZXq2AgGx9adkZfcO31y07d4t?=
- =?iso-8859-1?Q?BMqrsrGAQN/ox7gLSLDm4lXUaGmH3dZxb7sGnyu3gmh86aR+SLCL4BDKGs?=
- =?iso-8859-1?Q?8+WHgxzgNf3oFw4I9spOPdTX1MQqq3//uW6dsF8RQbSE6JAbBnPUwd8dTg?=
- =?iso-8859-1?Q?OhthFjiiCSH4Oo4ugRKOLFHplTExIPBdFXfNRUz4w1NnJInWlZEt0GEJ6l?=
- =?iso-8859-1?Q?GOwqz8pyIjoINJ+qPKEAJybtZ+ytYOzt0JILnjoLVkrEtTfdpwtCyWxQmd?=
- =?iso-8859-1?Q?9+dCE+T4O6idTtPwOLZKfmOOhx0ArvfVG0ChgwfBo4AyTCAGPiHbUldda7?=
- =?iso-8859-1?Q?mJRBrNpzeSuoqjcsmT6NNZl1dxG8nBPeVpwyURXhORYLeiTepGVv/9EvQy?=
- =?iso-8859-1?Q?W1mbBSbRREmwv/lCVmk9hspUbsNBfFJcq7qQLzZA/O/bjjCNliNS2e1p+s?=
- =?iso-8859-1?Q?d/XVqqQ8/fyTH+tgDImztrU8c0UyPOQeVoxkXdcP1tXhjW905eBPgsMPli?=
- =?iso-8859-1?Q?KRHhRSLBqvrorW0OW1ckb0M29E79hE4tvhhH/i8ICGqV5zkYMSgahWuXnz?=
- =?iso-8859-1?Q?lkMe2oefw9hqwDjqASaSnbEPaSLeV6wu0+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cafc727c-bdfd-48be-7dd9-08dd19fed0ea
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 16:13:57.5955
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F8z3px5d8aHmI5AqmDJySco+gdy0v5c4sry5POjBSpCZ/PN9y27BYG5bxqI+8K3VWkC/Fdzo0AUThHa3LQC31Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8850
+References: <20241206225204.4008261-1-surenb@google.com> <20241206225204.4008261-5-surenb@google.com>
+ <6b29b2a5-c244-4930-a5a0-1a24a04e7e35@suse.cz> <CAJuCfpFxAZ-JwN8VqNF14zeBnsPM_pD0+-N2PDq5GcQGR1xqLQ@mail.gmail.com>
+ <643beb6c-4226-46ca-b7e9-292467479aea@suse.cz> <CAJuCfpHR3LXfAZA_oh_2KBtFe6JQPU5T3nYMZd_ooAjRJd8xUQ@mail.gmail.com>
+ <5036d089-0774-4863-88c5-eaaea1265ac7@suse.cz> <CAJuCfpGrnSTU5ZH0Vt_AXyyFX5vAyknqcOtRsfnh4dbpOeyy-A@mail.gmail.com>
+ <CAJuCfpHcweCby61FpVr8cAhcr1JkXQyZ_LbKL3HrM8fsFTGiog@mail.gmail.com> <253a0af3-6751-413c-ad37-a5d13dd9b8f0@suse.cz>
+In-Reply-To: <253a0af3-6751-413c-ad37-a5d13dd9b8f0@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 11 Dec 2024 08:14:05 -0800
+Message-ID: <CAJuCfpHOJystnxDZEY8v0iYqVQXqDYnjAoEW3U9SYcbzbzrjAg@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] mm: make vma cache SLAB_TYPESAFE_BY_RCU
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
+	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
+	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
+	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
+	hughd@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 03:32:02PM +0200, Ilpo Järvinen wrote:
-> On Fri, 6 Dec 2024, Yazen Ghannam wrote:
-
-[...]
-
-> > --- a/drivers/platform/x86/amd/hsmp/acpi.c
-> > +++ b/drivers/platform/x86/amd/hsmp/acpi.c
-> > @@ -10,7 +10,6 @@
-> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> >  
-> >  #include <asm/amd_hsmp.h>
-> > -#include <asm/amd_nb.h>
-> >  
-> >  #include <linux/acpi.h>
-> >  #include <linux/device.h>
-> > @@ -24,6 +23,8 @@
-> >  
-> >  #include <uapi/asm-generic/errno-base.h>
-> >  
-> > +#include <asm/amd_node.h>
-> > +
-> >  #include "hsmp.h"
-> >  
-> >  #define DRIVER_NAME		"amd_hsmp"
-> > @@ -321,8 +322,8 @@ static int hsmp_acpi_probe(struct platform_device *pdev)
-> >  		return -ENOMEM;
-> >  
-> >  	if (!hsmp_pdev->is_probed) {
-> > -		hsmp_pdev->num_sockets = amd_nb_num();
-> > -		if (hsmp_pdev->num_sockets == 0 || hsmp_pdev->num_sockets > MAX_AMD_SOCKETS)
-> > +		hsmp_pdev->num_sockets = amd_num_nodes();
-> > +		if (hsmp_pdev->num_sockets == 0 || hsmp_pdev->num_sockets > MAX_AMD_NUM_NODES)
-> 
-> Hi,
-> 
-> Now that this define moves outside of hsmp files, it would be useful to 
-> add static_assert() and a comment next to the attributes which are always
-> created for 0-7 sockets. That way, it can be detected on the build time if 
-> the define changes and more entires would need to be added there.
-> 
-> Other than that, this seemed okay.
+On Wed, Dec 11, 2024 at 8:05=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
+> On 12/11/24 16:30, Suren Baghdasaryan wrote:
+> > On Tue, Dec 10, 2024 at 3:01=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
+le.com> wrote:
+> >>
+> >> On Tue, Dec 10, 2024 at 9:25=E2=80=AFAM Vlastimil Babka <vbabka@suse.c=
+z> wrote:
+> >> >
+> >> > On 12/10/24 18:16, Suren Baghdasaryan wrote:
+> >> > > On Tue, Dec 10, 2024 at 8:32=E2=80=AFAM Vlastimil Babka <vbabka@su=
+se.cz> wrote:
+> >> > >>
+> >> > >> On 12/10/24 17:20, Suren Baghdasaryan wrote:
+> >> > >> > On Tue, Dec 10, 2024 at 6:21=E2=80=AFAM Vlastimil Babka <vbabka=
+@suse.cz> wrote:
+> >> > >> >>
+> >> > >> >> On 12/6/24 23:52, Suren Baghdasaryan wrote:
+> >> > >> >> > To enable SLAB_TYPESAFE_BY_RCU for vma cache we need to ensu=
+re that
+> >> > >> >> > object reuse before RCU grace period is over will be detecte=
+d inside
+> >> > >> >> > lock_vma_under_rcu().
+> >> > >> >> > lock_vma_under_rcu() enters RCU read section, finds the vma =
+at the
+> >> > >> >> > given address, locks the vma and checks if it got detached o=
+r remapped
+> >> > >> >> > to cover a different address range. These last checks are th=
+ere
+> >> > >> >> > to ensure that the vma was not modified after we found it bu=
+t before
+> >> > >> >> > locking it.
+> >> > >> >> > vma reuse introduces several new possibilities:
+> >> > >> >> > 1. vma can be reused after it was found but before it is loc=
+ked;
+> >> > >> >> > 2. vma can be reused and reinitialized (including changing i=
+ts vm_mm)
+> >> > >> >> > while being locked in vma_start_read();
+> >> > >> >> > 3. vma can be reused and reinitialized after it was found bu=
+t before
+> >> > >> >> > it is locked, then attached at a new address or to a new mm =
+while
+> >> > >> >> > read-locked;
+> >> > >> >> > For case #1 current checks will help detecting cases when:
+> >> > >> >> > - vma was reused but not yet added into the tree (detached c=
+heck)
+> >> > >> >> > - vma was reused at a different address range (address check=
+);
+> >> > >> >> > We are missing the check for vm_mm to ensure the reused vma =
+was not
+> >> > >> >> > attached to a different mm. This patch adds the missing chec=
+k.
+> >> > >> >> > For case #2, we pass mm to vma_start_read() to prevent acces=
+s to
+> >> > >> >> > unstable vma->vm_mm. This might lead to vma_start_read() ret=
+urning
+> >> > >> >> > a false locked result but that's not critical if it's rare b=
+ecause
+> >> > >> >> > it will only lead to a retry under mmap_lock.
+> >> > >> >> > For case #3, we ensure the order in which vma->detached flag=
+ and
+> >> > >> >> > vm_start/vm_end/vm_mm are set and checked. vma gets attached=
+ after
+> >> > >> >> > vm_start/vm_end/vm_mm were set and lock_vma_under_rcu() shou=
+ld check
+> >> > >> >> > vma->detached before checking vm_start/vm_end/vm_mm. This is=
+ required
+> >> > >> >> > because attaching vma happens without vma write-lock, as opp=
+osed to
+> >> > >> >> > vma detaching, which requires vma write-lock. This patch add=
+s memory
+> >> > >> >> > barriers inside is_vma_detached() and vma_mark_attached() ne=
+eded to
+> >> > >> >> > order reads and writes to vma->detached vs vm_start/vm_end/v=
+m_mm.
+> >> > >> >> > After these provisions, SLAB_TYPESAFE_BY_RCU is added to vm_=
+area_cachep.
+> >> > >> >> > This will facilitate vm_area_struct reuse and will minimize =
+the number
+> >> > >> >> > of call_rcu() calls.
+> >> > >> >> >
+> >> > >> >> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >> > >> >>
+> >> > >> >> I'm wondering about the vma freeing path. Consider vma_complet=
+e():
+> >> > >> >>
+> >> > >> >> vma_mark_detached(vp->remove);
+> >> > >> >>   vma->detached =3D true; - plain write
+> >> > >> >> vm_area_free(vp->remove);
+> >> > >> >>   vma->vm_lock_seq =3D UINT_MAX; - plain write
+> >> > >> >>   kmem_cache_free(vm_area_cachep)
+> >> > >> >> ...
+> >> > >> >> potential reallocation
+> >> > >> >>
+> >> > >> >> against:
+> >> > >> >>
+> >> > >> >> lock_vma_under_rcu()
+> >> > >> >> - mas_walk finds a stale vma due to race
+> >> > >> >> vma_start_read()
+> >> > >> >>   if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(mm->mm_lock=
+_seq.sequence))
+> >> > >> >>   - can be false, the vma was not being locked on the freeing =
+side?
+> >> > >> >>   down_read_trylock(&vma->vm_lock.lock) - suceeds, wasn't lock=
+ed
+> >> > >> >>     this is acquire, but was there any release?
+> >> > >> >
+> >> > >> > Yes, there was a release. I think what you missed is that
+> >> > >> > vma_mark_detached() that is called from vma_complete() requires=
+ VMA to
+> >> > >> > be write-locked (see vma_assert_write_locked() in
+> >> > >> > vma_mark_detached()). The rule is that a VMA can be attached wi=
+thout
+> >> > >> > write-locking but only a write-locked VMA can be detached. So, =
+after
+> >> > >>
+> >> > >> OK but write unlocking means the mm's seqcount is bumped and beco=
+mes
+> >> > >> non-equal with vma's vma->vm_lock_seq, right?
+> >> > >>
+> >> > >> Yet in the example above we happily set it to UINT_MAX and thus e=
+ffectively
+> >> > >> false unlock it for vma_start_read()?
+> >> > >>
+> >> > >> And this is all done before the vma_complete() side would actuall=
+y reach
+> >> > >> mmap_write_unlock(), AFAICS.
+> >> > >
+> >> > > Ah, you are right. With the possibility of reuse, even a freed VMA
+> >> > > should be kept write-locked until it is unlocked by
+> >> > > mmap_write_unlock(). I think the fix for this is simply to not res=
+et
+> >> > > vma->vm_lock_seq inside vm_area_free(). I'll also need to add a
+> >> >
+> >> > But even if we don't reset vm_lock_seq to UINT_MAX, then whover real=
+located
+> >> > it can proceed and end up doing a vma_start_write() and rewrite it t=
+here
+> >> > anyway, no?
+> >>
+> >> Actually, I think with a small change we can simplify these locking ru=
+les:
+> >>
+> >> static inline void vma_start_write(struct vm_area_struct *vma)
+> >> {
+> >>         int mm_lock_seq;
+> >>
+> >> -        if (__is_vma_write_locked(vma, &mm_lock_seq))
+> >> -                return;
+> >> +        mmap_assert_write_locked(vma->vm_mm);
+> >> +        mm_lock_seq =3D vma->vm_mm->mm_lock_seq;
+> >>
+> >>         down_write(&vma->vm_lock->lock);
+> >>         /*
+> >>         * We should use WRITE_ONCE() here because we can have concurre=
+nt reads
+> >>         * from the early lockless pessimistic check in vma_start_read(=
+).
+> >>         * We don't really care about the correctness of that early che=
+ck, but
+> >>         * we should use WRITE_ONCE() for cleanliness and to keep KCSAN=
+ happy.
+> >>         */
+> >>         WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
+> >>         up_write(&vma->vm_lock->lock);
+> >> }
+> >>
+> >> This will force vma_start_write() to always write-lock vma->vm_lock
+> >> before changing vma->vm_lock_seq. Since vma->vm_lock survives reuse,
+> >> the other readers/writers will synchronize on it even if vma got
+> >> reused.
+> >
+> > After thinking of all the alternatives, I think the cleanest way to
+> > handle vma detaching would be to follow the same pattern as for vma
+> > attaching. To attach a vma we do:
+> >
+> > vma->vm_mm =3D xxx;
+> > ...
+> > vma_mark_attached()
+> >     smp_wmb();
+> >     WRITE_ONCE(vma->detached, false);
+> >
+> >
+> > lock_vma_under_rcu() ensures that a vma is attached and still
+> > unchanged like this:
+> >
+> > lock_vma_under_rcu()
+> >     vma_start_read();
+> >     is_vma_detached()
+> >         detached =3D READ_ONCE(vma->detached);
+> >         smp_rmb();
+> >     if (vma->vm_mm !=3D mm)
+> >
+> > So, vm_area_free() can follow the same pattern to ensure vma reuse
+> > gets detected even if lock_vma_under_rcu() succeeds in locking the
+> > vma:
+> >
+> > vm_area_free()
+> >     vma->vm_mm =3D NULL;
+> >     smp_wmb();
+> >     WRITE_ONCE(vma->detached, true);
+> >
+> > Vlastimil, I think that should address the race you described. WDYT?
+>
+> I'm not sure. AFAIU the barriers would ensure that if lock_vma_under_rcu(=
+)
+> sees detached, it also sees vm_mm is NULL. But as it doesn't ensure that =
+it
+> will see it detached, so it also doesn't ensure we will see vm_mm as NULL=
+.
+>
+> I think the main problem is that we unlock the vma by writing to a mm, no=
+t
+> the vma, which makes it hard to apply the necessary SLAB_TYPESAFE_BY_RCU
+> validation patterns to it. I thought the direction you were discussing wi=
+th
+> PeterZ in the other thread would solve this (in addition of getting rid o=
+f
+> the rwsem, which we were considering it anyway, but enabling
+> SLAB_TYPESAFE_BY_RCU by that would be a stronger argument).
 
-Okay, will do.
+I was hoping to implement SLAB_TYPESAFE_BY_RCU independently from
+vm_lock change but you are probably right. Incorporating vma->detached
+flag into the lock itself (which survives reuse) would make things way
+easier. Let me pivot towards making that change first and see if
+SLAB_TYPESAFE_BY_RCU becomes simpler.
 
-Thanks,
-Yazen
+>
+> Perhaps a solution to this that would work with the current rwsem would b=
+e
+> that setting detached and vm_mm to NULL would be set under the down_write=
+()
+> of the rwsem. That would make sure that if lock_vma_under_rcu() succeeds =
+the
+> down_read_trylock(), it would be guaranteed to see those assignments?
+
+Yeah, that would definitely work. I was trying to avoid extra locking
+but it looks like it's unavoidable.
+Anyway, let me try replacing vm_lock first and will see where we end up.
+Thanks for the input!
+
+>
+> >>
+> >> >
+> >> > > comment for vm_lock_seq explaining these requirements.
+> >> > > Do you agree that such a change would resolve the issue?
+> >> > >
+> >> > >>
+> >> > >> > vma_mark_detached() and before down_read_trylock(&vma->vm_lock.=
+lock)
+> >> > >> > in vma_start_read() the VMA write-lock should have been release=
+d by
+> >> > >> > mmap_write_unlock() and therefore vma->detached=3Dfalse should =
+be
+> >> > >> > visible to the reader when it executed lock_vma_under_rcu().
+> >> > >> >
+> >> > >> >>   is_vma_detached() - false negative as the write above didn't=
+ propagate
+> >> > >> >>     here yet; a read barrier but where is the write barrier?
+> >> > >> >>   checks for vma->vm_mm, vm_start, vm_end - nobody reset them =
+yet so false
+> >> > >> >>     positive, or they got reset on reallocation but writes did=
+n't propagate
+> >> > >> >>
+> >> > >> >> Am I missing something that would prevent lock_vma_under_rcu()=
+ falsely
+> >> > >> >> succeeding here?
+> >> > >> >>
+> >> > >>
+> >> >
+>
 
